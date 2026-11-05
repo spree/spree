@@ -131,4 +131,343 @@ RSpec.describe Spree::Integrations::Klaviyo do
       end
     end
   end
+
+  describe 'the Klaviyo client' do
+    let(:integration) { build(:klaviyo_integration, store: store, preferred_klaviyo_private_api_key: 'pk_store_a') }
+    let(:lists_api) { instance_double(KlaviyoAPI::ListsApi, get_list_with_http_info: [{}, 200, {}]) }
+    let(:clients) { [] }
+
+    before do
+      allow(KlaviyoAPI::ListsApi).to receive(:new) do |client|
+        clients << client
+        lists_api
+      end
+    end
+
+    it "sends each integration's own key" do
+      other = build(:klaviyo_integration, store: create(:store), preferred_klaviyo_private_api_key: 'pk_store_b')
+
+      integration.can_connect?
+      other.can_connect?
+
+      expect(clients.map { |client| client.config.api_key_with_prefix('Klaviyo-API-Key') }).
+        to eq(['Klaviyo-API-Key pk_store_a', 'Klaviyo-API-Key pk_store_b'])
+    end
+
+    it 'never configures the SDK globally' do
+      expect(KlaviyoAPI).not_to receive(:configure)
+
+      integration.can_connect?
+    end
+
+    it 'times out after 10 seconds and never logs bodies' do
+      integration.can_connect?
+
+      expect(clients.first.config.timeout).to eq(10)
+      expect(clients.first.config.debugging).to be(false)
+    end
+  end
+
+  describe '#can_connect?' do
+    it 'names a missing key without calling Klaviyo' do
+      integration = build(:klaviyo_integration, store: store, preferred_klaviyo_private_api_key: '')
+
+      expect(KlaviyoAPI::ListsApi).not_to receive(:new)
+      expect(integration.can_connect?).to be(false)
+      expect(integration.connection_error_message).to match(/private API key/)
+    end
+
+    it 'names a missing list id without calling Klaviyo' do
+      integration = build(:klaviyo_integration, store: store, preferred_default_newsletter_list_id: '')
+
+      expect(KlaviyoAPI::ListsApi).not_to receive(:new)
+      expect(integration.can_connect?).to be(false)
+      expect(integration.connection_error_message).to match(/list/)
+    end
+
+    it "refuses activation with Klaviyo's own detail" do
+      integration = build(:klaviyo_integration, store: store, active: true)
+      error = KlaviyoAPI::ApiError.new(code: 404, response_headers: {},
+                                       response_body: { errors: [{ code: 'not_found', detail: 'A list with id LIST01 does not exist.' }] }.to_json)
+      allow(KlaviyoAPI::ListsApi).to receive(:new).and_return(instance_double(KlaviyoAPI::ListsApi).tap do |api|
+        allow(api).to receive(:get_list_with_http_info).and_raise(error)
+      end)
+
+      expect(integration).not_to be_valid
+      expect(integration.errors[:base]).to eq(['A list with id LIST01 does not exist.'])
+    end
+  end
+
+  describe 'API verbs' do
+    let(:integration) { build(:klaviyo_integration, store: store, preferred_default_newsletter_list_id: 'LIST01') }
+    let(:profiles_api) { instance_double(KlaviyoAPI::ProfilesApi) }
+    let(:events_api) { instance_double(KlaviyoAPI::EventsApi) }
+    let(:data_privacy_api) { instance_double(KlaviyoAPI::DataPrivacyApi) }
+
+    before do
+      allow(KlaviyoAPI::ProfilesApi).to receive(:new).and_return(profiles_api)
+      allow(KlaviyoAPI::EventsApi).to receive(:new).and_return(events_api)
+      allow(KlaviyoAPI::DataPrivacyApi).to receive(:new).and_return(data_privacy_api)
+    end
+
+    it 'imports a profile' do
+      profile = SpreeKlaviyo::Profile.new(email: 'ada@example.com', external_id: 'cus_1')
+      expect(profiles_api).to receive(:create_or_update_profile_with_http_info).with(profile.to_body).and_return([{}, 201, {}])
+
+      integration.import_profile(profile)
+    end
+
+    it 'subscribes an address to the list with email-marketing consent' do
+      expect(profiles_api).to receive(:bulk_subscribe_profiles_with_http_info) do |body|
+        expect(body.dig(:data, :type)).to eq('profile-subscription-bulk-create-job')
+        expect(body.dig(:data, :attributes, :profiles, :data, 0, :attributes)).
+          to eq(email: 'ada@example.com', subscriptions: { email: { marketing: { consent: 'SUBSCRIBED' } } })
+        expect(body.dig(:data, :relationships, :list, :data)).to eq(type: 'list', id: 'LIST01')
+        [nil, 202, {}]
+      end
+
+      integration.subscribe('ada@example.com')
+    end
+
+    it 'unsubscribes an address, revoking its email-marketing consent' do
+      expect(profiles_api).to receive(:bulk_unsubscribe_profiles_with_http_info) do |body|
+        expect(body.dig(:data, :type)).to eq('profile-subscription-bulk-delete-job')
+        expect(body.dig(:data, :attributes, :profiles, :data, 0, :attributes, :subscriptions, :email, :marketing, :consent)).
+          to eq('UNSUBSCRIBED')
+        [nil, 202, {}]
+      end
+
+      integration.unsubscribe('ada@example.com')
+    end
+
+    it 'creates an event' do
+      event = SpreeKlaviyo::MetricEvent.new(metric: 'Placed Order', email: 'ada@example.com', unique_id: 'or_1', currency: 'USD')
+      expect(events_api).to receive(:create_event_with_http_info).with(event.to_body).and_return([nil, 202, {}])
+
+      integration.create_event(event)
+    end
+
+    it 'requests a profile deletion by email' do
+      expect(data_privacy_api).to receive(:request_profile_deletion_with_http_info).with(
+        { data: { type: 'data-privacy-deletion-job',
+                  attributes: { profile: { data: { type: 'profile', attributes: { email: 'ada@example.com' } } } } } }
+      ).and_return([nil, 202, {}])
+
+      integration.request_profile_deletion('ada@example.com')
+    end
+
+    [[503, 'a 5xx'], [nil, 'a timeout'], [0, 'a failed connection']].each do |code, label|
+      it "raises #{label} as a transient error, keeping its status" do
+        allow(profiles_api).to receive(:bulk_subscribe_profiles_with_http_info).and_raise(KlaviyoAPI::ApiError.new(code: code))
+
+        expect { integration.subscribe('ada@example.com') }.
+          to raise_error(SpreeKlaviyo::TransientError) { |error| expect(error.code).to eq(code) }
+      end
+    end
+
+    it "never carries Klaviyo's headers or body in a transient error's message" do
+      error = KlaviyoAPI::ApiError.new(code: 503, response_headers: { 'X-Email' => 'ada@example.com' },
+                                       response_body: '{"detail":"ada@example.com"}')
+      allow(profiles_api).to receive(:bulk_subscribe_profiles_with_http_info).and_raise(error)
+
+      expect { integration.subscribe('ada@example.com') }.to raise_error(SpreeKlaviyo::TransientError) do |transient|
+        expect(transient.message).to eq('Klaviyo answered 503')
+        expect(transient.response_body).to include('ada@example.com')
+      end
+    end
+
+    it 'summarises a body that is JSON but not an object as having no errors' do
+      ['null', '[]', '"oops"'].each do |body|
+        error = KlaviyoAPI::ApiError.new(code: 502, response_headers: {}, response_body: body)
+
+        expect(described_class.error_summaries(error)).to eq([])
+        expect(described_class.error_details(error)).to eq([])
+      end
+    end
+
+    it 'raises any other 4xx as the SDK raised it' do
+      allow(profiles_api).to receive(:bulk_subscribe_profiles_with_http_info).and_raise(KlaviyoAPI::ApiError.new(code: 403))
+
+      expect { integration.subscribe('ada@example.com') }.to raise_error(KlaviyoAPI::ApiError) do |error|
+        expect(error).not_to be_a(SpreeKlaviyo::TransientError)
+        expect(error.code).to eq(403)
+      end
+    end
+
+    it "lets Klaviyo's error reach the caller" do
+      allow(profiles_api).to receive(:bulk_subscribe_profiles_with_http_info).and_raise(KlaviyoAPI::ApiError.new(code: 503))
+
+      expect { integration.subscribe('ada@example.com') }.to raise_error(KlaviyoAPI::ApiError) { |error| expect(error.code).to eq(503) }
+    end
+
+    it 'logs the method, path, status and duration, and no email or body' do
+      lines = []
+      allow(Rails.logger).to receive(:info) { |line| lines << line }
+      allow(profiles_api).to receive(:bulk_subscribe_profiles_with_http_info).and_return([nil, 202, {}])
+
+      integration.subscribe('ada@example.com')
+
+      expect(lines.last).to match(%r{\A\[Klaviyo\] POST /api/profile-subscription-bulk-create-jobs -> 202 \(\d+ms\)\z})
+      expect(lines.join).not_to include('ada@example.com')
+    end
+  end
+
+  # Recorded against a Klaviyo test account (Phase 8); see spec/support/klaviyo_helpers.rb.
+  describe 'against Klaviyo' do
+    describe '#can_connect?' do
+      it 'connects with a valid key and list', vcr: { cassette_name: 'connect_valid' } do
+        expect(recording_integration.can_connect?).to be(true)
+      end
+
+      it 'refuses an invalid key', vcr: { cassette_name: 'connect_bad_key' } do
+        integration = recording_integration(key: 'pk_not_a_real_key')
+
+        expect(integration.can_connect?).to be(false)
+        expect(integration.connection_error_message).to be_present
+      end
+
+      it 'refuses a key without lists:read', vcr: { cassette_name: 'connect_missing_scope' } do
+        integration = recording_integration(key: klaviyo_limited_api_key)
+
+        expect(integration.can_connect?).to be(false)
+        expect(integration.connection_error_message).to be_present
+      end
+
+      it 'refuses an unknown list', vcr: { cassette_name: 'connect_unknown_list' } do
+        integration = recording_integration(list_id: 'XXXXXX')
+
+        expect(integration.can_connect?).to be(false)
+        expect(integration.connection_error_message).to be_present
+      end
+    end
+
+    describe '#import_profile' do
+      let(:integration) { recording_integration }
+
+      def profile(email, external_id)
+        SpreeKlaviyo::Profile.new(email: email, external_id: external_id, first_name: 'Klaviyo', last_name: 'Test')
+      end
+
+      it 'creates a profile', vcr: { cassette_name: 'import_profile_create' } do
+        expect { integration.import_profile(profile(klaviyo_test_address('create'), "cus_#{SecureRandom.hex(4)}")) }.
+          not_to raise_error
+      end
+
+      it 'keeps one profile when the email changes', vcr: { cassette_name: 'import_profile_email_change' } do
+        external_id = "cus_#{SecureRandom.hex(4)}"
+        integration.import_profile(profile(klaviyo_test_address('before'), external_id))
+
+        expect { integration.import_profile(profile(klaviyo_test_address('after'), external_id)) }.not_to raise_error
+      end
+
+      # Confirmation 1: what Klaviyo does when the email matches a profile
+      # holding a different external_id. Narrowed once recorded.
+      it 'answers an import whose email holds another external id',
+         vcr: { cassette_name: 'import_profile_external_id_mismatch' } do
+        address = klaviyo_test_address('mismatch')
+        integration.import_profile(profile(address, "cus_#{SecureRandom.hex(4)}"))
+
+        outcome = begin
+          integration.import_profile(profile(address, "cus_#{SecureRandom.hex(4)}"))
+          :accepted
+        rescue KlaviyoAPI::ApiError => e
+          e.code
+        end
+
+        expect(outcome).to eq(:accepted).or(be_between(400, 499))
+      end
+
+      # Confirmation 2: the status of an identifier conflict.
+      it 'refuses an email and an external id belonging to two profiles',
+         vcr: { cassette_name: 'import_profile_identifier_conflict' } do
+        address_a = klaviyo_test_address('conflict-a')
+        external_id_y = "cus_#{SecureRandom.hex(4)}"
+        integration.import_profile(profile(address_a, "cus_#{SecureRandom.hex(4)}"))
+        integration.import_profile(profile(klaviyo_test_address('conflict-b'), external_id_y))
+
+        expect { integration.import_profile(profile(address_a, external_id_y)) }.
+          to raise_error(KlaviyoAPI::ApiError) { |error| expect(error.code).to be_between(400, 499) }
+      end
+    end
+
+    describe 'subscriptions' do
+      let(:integration) { recording_integration }
+
+      it 'subscribes an address', vcr: { cassette_name: 'subscribe' } do
+        expect { integration.subscribe(klaviyo_test_address('subscribe')) }.not_to raise_error
+      end
+
+      # Confirmation 3, read in the inbox: whether Klaviyo resends a pending
+      # double opt-in confirmation.
+      it 'accepts a second sign-up while the first is unconfirmed', vcr: { cassette_name: 'subscribe_pending_again' } do
+        address = klaviyo_test_address('pending')
+        integration.subscribe(address)
+
+        expect { integration.subscribe(address) }.not_to raise_error
+      end
+
+      it 'unsubscribes an address', vcr: { cassette_name: 'unsubscribe' } do
+        address = klaviyo_test_address('unsubscribe')
+        integration.subscribe(address)
+
+        expect { integration.unsubscribe(address) }.not_to raise_error
+      end
+    end
+
+    describe '#create_event' do
+      let(:integration) { recording_integration }
+      let(:order) do
+        create(:completed_order_with_totals, store: store).tap do |record|
+          record.update_column(:email, klaviyo_test_address('events'))
+        end
+      end
+
+      it 'sends Placed Order', vcr: { cassette_name: 'event_placed_order' } do
+        expect { integration.create_event(SpreeKlaviyo::MetricEvent.placed_order(order, notify_customer: true)) }.not_to raise_error
+      end
+
+      it 'sends Ordered Product', vcr: { cassette_name: 'event_ordered_product' } do
+        expect { integration.create_event(SpreeKlaviyo::MetricEvent.ordered_product(order.line_items.first)) }.not_to raise_error
+      end
+
+      it 'sends Fulfilled Order', vcr: { cassette_name: 'event_fulfilled_order' } do
+        fulfillment = order.fulfillments.first
+        fulfillment.update_columns(fulfilled_at: Time.current)
+
+        expect { integration.create_event(SpreeKlaviyo::MetricEvent.fulfilled_order(fulfillment, notify_customer: true)) }.
+          not_to raise_error
+      end
+
+      it 'sends Canceled Order', vcr: { cassette_name: 'event_canceled_order' } do
+        order.update_columns(canceled_at: Time.current)
+
+        expect { integration.create_event(SpreeKlaviyo::MetricEvent.canceled_order(order, notify_customer: true)) }.not_to raise_error
+      end
+
+      it 'sends Return Refunded', vcr: { cassette_name: 'event_return_refunded' } do
+        return_record = create(:received_return, store: store, order: order)
+        create(:store_credit, originator: return_record, amount: 10)
+        event = SpreeKlaviyo::MetricEvent.return_refunded(return_record, event_id: SecureRandom.uuid, published_at: Time.current)
+
+        expect { integration.create_event(event) }.not_to raise_error
+      end
+    end
+
+    describe '#request_profile_deletion' do
+      it 'requests the deletion', vcr: { cassette_name: 'request_profile_deletion' } do
+        integration = recording_integration
+        address = klaviyo_test_address('erasure')
+        integration.import_profile(SpreeKlaviyo::Profile.new(email: address))
+
+        expect { integration.request_profile_deletion(address) }.not_to raise_error
+      end
+
+      it 'is refused for a key without data-privacy:write', vcr: { cassette_name: 'request_profile_deletion_missing_scope' } do
+        integration = recording_integration(key: klaviyo_limited_api_key)
+
+        expect { integration.request_profile_deletion(klaviyo_test_address('erasure-scope')) }.
+          to raise_error(KlaviyoAPI::ApiError) { |error| expect(error.code).to eq(403) }
+      end
+    end
+  end
 end

@@ -1,6 +1,7 @@
 require 'spree_core'
 # After Rails: the SDK builds its default configuration on require, reading Rails.logger.
 require 'klaviyo-api-sdk'
+require 'spree_klaviyo/transient_error'
 require 'spree_klaviyo/engine'
 
 module SpreeKlaviyo
