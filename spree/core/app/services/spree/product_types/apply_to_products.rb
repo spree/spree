@@ -136,8 +136,9 @@ module Spree
         scoped_ids = store.products.where(id: product_ids).ids
         return [] if scoped_ids.empty?
 
-        existing = Spree::ProductCategory.where(product_id: scoped_ids, category_id: category_ids).
-                   pluck(:product_id, :category_id).to_set
+        existing_rows = Spree::ProductCategory.where(product_id: scoped_ids, category_id: category_ids).
+                        pluck(:id, :product_id, :category_id)
+        existing = existing_rows.map { |_id, product_id, category_id| [product_id, category_id] }.to_set
 
         # acts_as_list scopes position per category here (unlike option types,
         # which scope per product), so each category continues its own sequence.
@@ -160,7 +161,16 @@ module Spree
         return [] if rows.empty?
 
         Spree::ProductCategory.insert_all(rows)
+        publish_categorized_events(scoped_ids, category_ids, existing_rows.map(&:first))
+
         rows.pluck(:product_id).uniq
+      end
+
+      def publish_categorized_events(product_ids, category_ids, existing_ids)
+        created = Spree::ProductCategory.where(product_id: product_ids, category_id: category_ids).
+                  where.not(id: existing_ids)
+
+        created.each { |membership| membership.publish_event('product_category.created') }
       end
     end
   end
