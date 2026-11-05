@@ -543,10 +543,10 @@ function CollectionPickerSheet({
 }: BulkActionFormProps<CollectionsFormValues> & CopyProps) {
   const { t } = useTranslation()
   const [collectionIds, setCollectionIds] = useState<string[]>([])
-  // Only manual collections are offered — an automatic collection's members
-  // come from its rules, and the API skips it on a bulk add.
+  // Every collection is offered: a hand-picked product stays in a collection
+  // whether or not it also has rules.
   const { data: collectionsData } = useCollections()
-  const manualCollections = collectionsData?.data.filter((c) => !c.automatic)
+  const collections = collectionsData?.data
 
   return (
     <BulkDialog
@@ -561,7 +561,7 @@ function CollectionPickerSheet({
         <FieldLabel>{t('admin.fields.product.collection_ids.label')}</FieldLabel>
         <ResourceMultiAutocomplete
           {...collectionAutocompleteProps('bulk-products-collection-picker')}
-          initialItems={manualCollections}
+          initialItems={collections}
           value={collectionIds}
           onChange={setCollectionIds}
         />
