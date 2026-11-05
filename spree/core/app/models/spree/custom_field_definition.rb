@@ -19,7 +19,8 @@ module Spree
     validate :field_type_input_must_be_recognized
     validate :field_type_must_be_available
     validate :collection_condition_must_suit_field, if: :collection_condition?
-    after_commit :regenerate_custom_field_collections, if: :saved_change_to_collection_condition?
+    after_commit :regenerate_custom_field_collections,
+                 if: -> { destroyed? ? collection_condition? : saved_change_to_collection_condition? }
 
     #
     # Scopes
