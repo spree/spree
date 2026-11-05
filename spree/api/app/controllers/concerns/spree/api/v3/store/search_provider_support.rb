@@ -30,11 +30,22 @@ module Spree
             # SPA + storefront filters can pass `prod_…` keys; the search
             # provider hands the filter hash straight to Ransack on the
             # underlying scope, which expects raw integer IDs.
-            filters = decode_prefixed_id_predicates(q.except('search'))
+            filters = decode_prefixed_id_predicates(drop_multiparameter_keys(q.except('search')))
             if filters['in_collection'].present? && !published_collection?(filters['in_collection'])
               filters['in_collection'] = Spree::Collection.prefixed_id_for(0)
             end
             @search_filters = filters.presence
+          end
+
+          # Ransack folds a `key(1)` parameter into `key` while it builds the
+          # search, after the checks here have run, so `in_collection(1)` would
+          # skip the publication check. No Store API filter uses that form.
+          def drop_multiparameter_keys(filters)
+            filters.each_with_object({}) do |(key, value), kept|
+              next if key.to_s.include?('(')
+
+              kept[key] = value.is_a?(Hash) ? drop_multiparameter_keys(value) : value
+            end
           end
 
           # A collection not published on this channel filters to nothing,
