@@ -56,4 +56,31 @@ RSpec.describe Spree::ProductCategory, 'lifecycle events', events: true do
 
     expect(published.map(&:store_id)).to eq([other_store.id])
   end
+
+  describe 'removal through category_ids=' do
+    let(:other_category) { create(:category, store: other_store) }
+
+    before { product.update!(category_ids: [category.id, other_category.id]) }
+
+    it 'announces a category dropped by replacing the list' do
+      published = deleted_events { product.update!(category_ids: [category.id]) }
+
+      expect(published.size).to eq(1)
+      expect(product.reload.category_ids).to eq([category.id])
+    end
+
+    it 'announces every category dropped by clearing the list' do
+      published = deleted_events { product.update!(category_ids: []) }
+
+      expect(published.size).to eq(2)
+      expect(product.reload.category_ids).to be_empty
+    end
+
+    it 'leaves the counter caches matching the rows' do
+      product.update!(category_ids: [])
+
+      expect(product.reload.categories_count).to be_zero
+      expect(category.reload.products_count).to be_zero
+    end
+  end
 end
