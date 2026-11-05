@@ -209,10 +209,11 @@ module Spree
     #
     # @return [void]
     def enqueue_regenerate_products
-      Spree::Collections::RegenerateProductsJob.perform_later(id) if rules.exists?
+      Spree::Collections::RegenerateProductsJob.perform_later(id) if automatic?
     end
 
     # Products matching the automatic rules (mirrors Spree::Category#products_matching_rules).
+    # Pass `product_ids:` to evaluate only those products.
     #
     # @return [ActiveRecord::Relation]
     def products_matching_rules(opts = {})
@@ -222,6 +223,7 @@ module Spree
       storefront = opts[:storefront] || false
 
       all_products = store.products.not_archived
+      all_products = all_products.where(id: opts[:product_ids]) if opts.key?(:product_ids)
       all_products = all_products.active(currency: currency) if storefront
 
       any_rules_match_policy = rules_match_policy == 'any'

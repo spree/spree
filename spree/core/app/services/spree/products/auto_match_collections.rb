@@ -13,7 +13,7 @@ module Spree
       def call(product:)
         return unless product.present?
 
-        collections = Spree::Collection.automatic.where(store_id: product.store_id).includes(:rules).to_a
+        collections = Spree::Collection.automatic.where(store_id: product.store_id).includes(:rules, :store).to_a
         memberships = Spree::ProductCollection.where(product_id: product.id, collection_id: collections.map(&:id)).index_by(&:collection_id)
         excluded_ids = Spree::CollectionExclusion.where(product_id: product.id, collection_id: collections.map(&:id)).pluck(:collection_id)
 
@@ -24,7 +24,7 @@ module Spree
           membership = memberships[collection.id]
           next if membership&.source == 'manual' || excluded_ids.include?(collection.id)
 
-          matches = collection.products_matching_rules.exists?(id: product.id)
+          matches = collection.products_matching_rules(product_ids: [product.id]).exists?
           to_remove << collection if membership && !matches
           to_add << collection if membership.nil? && matches
         end

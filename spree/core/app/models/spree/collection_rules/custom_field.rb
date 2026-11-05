@@ -33,7 +33,11 @@ module Spree
         return scope.none if definition.nil?
 
         fields = Spree::CustomField.where(resource_type: 'Spree::Product', custom_field_definition_id: definition.id)
-        product_ids = definition.field_type == 'number' ? number_matches(fields) : fields.where(value_condition).select(:resource_id)
+        product_ids = if definition.field_type == 'number'
+                        number_matches(fields.where(resource_id: scope.select(:id)))
+                      else
+                        fields.where(value_condition).select(:resource_id)
+                      end
         match(scope, Spree::Product.where(id: product_ids))
       end
 
@@ -68,13 +72,7 @@ module Spree
         when 'boolean'
           column.eq(ActiveModel::Type::Boolean.new.cast(value).to_s)
         else
-          term = Spree::CustomField.sanitize_sql_like(value.to_s)
-          case match_policy
-          when 'contains', 'does_not_contain' then column.matches("%#{term}%", '\\')
-          when 'starts_with' then column.matches("#{term}%", '\\')
-          when 'ends_with' then column.matches("%#{term}", '\\')
-          else column.matches(term, '\\')
-          end
+          column.matches(like_pattern, '\\')
         end
       end
 
