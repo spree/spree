@@ -76,4 +76,18 @@ RSpec.describe Spree::ProductCategory, 'lifecycle events', events: true do
       expect(product.reload.category_ids).to be_empty
     end
   end
+
+  describe 'addition through category_ids' do
+    let(:second_category) { create(:category, store: other_store) }
+
+    it 'announces each category added' do
+      published = []
+      Spree::Events.subscribe('product_category.created', async: false) { |event| published << event }
+      Spree::Events.activate!
+
+      product.update!(category_ids: [category.id, second_category.id])
+
+      expect(published.size).to eq(2)
+    end
+  end
 end

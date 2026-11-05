@@ -29,7 +29,7 @@ module Spree
 
     # To set proper context when publishing events
     def store
-      Spree::Product.with_deleted.find_by(id: product_id)&.store
+      (product || Spree::Product.with_deleted.find_by(id: product_id))&.store
     end
 
     scope :by_best_selling, lambda { |order_direction = :desc|

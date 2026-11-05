@@ -42,4 +42,16 @@ RSpec.describe Spree::ProductCollection, 'lifecycle events', events: true do
       expect(Spree::Collection.where(id: [first.id, second.id]).count).to eq(2)
     end
   end
+
+  describe 'addition through collection_ids' do
+    it 'announces each collection added' do
+      published = []
+      Spree::Events.subscribe('product_collection.created', async: false) { |event| published << event }
+      Spree::Events.activate!
+
+      product.update!(collection_ids: [first.id, second.id])
+
+      expect(published.size).to eq(2)
+    end
+  end
 end

@@ -64,8 +64,12 @@ module Spree
     end
 
     def publish_membership_events(memberships, action)
-      name = "#{membership_class.model_name.element}.#{action}"
+      memberships = memberships.to_a
+      return if memberships.empty?
 
+      ActiveRecord::Associations::Preloader.new(records: memberships, associations: { product: :store }).call
+
+      name = "#{membership_class.model_name.element}.#{action}"
       memberships.each { |membership| membership.publish_event(name) }
     end
 
