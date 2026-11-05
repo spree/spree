@@ -608,7 +608,7 @@ export function ResourceTable<T extends Record<string, any>>({
           makes this a scroll container, and the pinned column row inside
           would then stick to THIS box rather than to the page — which is to
           say, scroll away with it. */}
-      <Card className="-mx-4 gap-0 overflow-x-clip rounded-none border-0 bg-transparent py-0 shadow-none sm:mx-0 sm:rounded-xl sm:border">
+      <Card className="-mx-4 gap-0 overflow-x-clip rounded-none border-0 bg-transparent py-0 sm:mx-0 sm:rounded-xl sm:border">
         {reorderActive ? (
           <DndContext
             sensors={sensors}

@@ -382,7 +382,7 @@ export function TimeSeriesChart({
           >
             <MetricTile metric={metric} total={result.totals[metric.name]} compare={compare} />
             {active.name === metric.name && (
-              <span className="absolute inset-x-0 bottom-0 h-0.5 bg-primary" />
+              <span className="absolute inset-x-0 bottom-0 h-0.5 bg-blue-500" />
             )}
           </button>
         ))}

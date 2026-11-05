@@ -122,7 +122,7 @@ export function JsonPreviewDrawer({
         showCloseButton={false}
         className="w-full sm:max-w-2xl bg-zinc-950 text-zinc-100 border-zinc-800 overflow-hidden"
       >
-        <SheetHeader className="border-b border-zinc-800 bg-zinc-950 text-zinc-100 rounded-t-xl">
+        <SheetHeader className="border-b border-zinc-800 bg-zinc-950 text-zinc-100 rounded-t-2xl">
           <SheetTitle className="text-zinc-100 font-mono text-base">{resolvedTitle}</SheetTitle>
           {endpoint && (
             <SheetDescription className="text-zinc-400 font-mono text-xs">

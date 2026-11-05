@@ -5,7 +5,7 @@ import { login } from './helpers'
 // store home rather than navigating somewhere specific first.
 async function openPalette(page: Page, storeId: string) {
   await page.goto(`/${storeId}`)
-  await page.getByRole('button', { name: /search anything/i }).click()
+  await page.getByRole('button', { name: /^search\b/i }).click()
   // Scoped to the dialog: the sidebar trigger and the palette's own input both
   // carry search text, so an unscoped lookup would match two elements.
   const input = page.getByRole('dialog').getByRole('combobox')
@@ -19,7 +19,7 @@ test.describe('command palette', () => {
     await page.goto(`/${creds.store_id}`)
     // The shortcut is bound after the shell mounts, so wait for the trigger to
     // appear — pressing earlier lands before the listener exists.
-    await expect(page.getByRole('button', { name: /search anything/i })).toBeVisible({
+    await expect(page.getByRole('button', { name: /^search\b/i })).toBeVisible({
       timeout: 15_000,
     })
 

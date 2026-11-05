@@ -8,22 +8,22 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        // `shadow-xs` like the outline and destructive variants: the primary
-        // action is the one thing on a page that should sit slightly above it,
-        // and it was the only variant with no lift at all.
+        // Buttons with chrome (primary, outline, destructive) take the field's
+        // `shadow-control`, so a button and the field beside it share one lift.
         // Disabled drops the fill rather than fading it: a faded black (or, in
         // dark mode, white) pill still reads as the page's live primary action.
         default:
-          'bg-primary text-primary-foreground shadow-xs hover:bg-primary/85 disabled:border-border disabled:bg-muted disabled:text-muted-foreground disabled:opacity-100 disabled:shadow-none',
+          'bg-primary text-primary-foreground shadow-control hover:bg-primary/85 disabled:border-border disabled:bg-muted disabled:text-muted-foreground disabled:opacity-100 disabled:shadow-none',
         outline:
-          'border-border/80 bg-card shadow-xs text-foreground hover:bg-accent hover:text-foreground aria-expanded:bg-accent',
+          'border-border/80 bg-card shadow-control text-foreground hover:bg-accent hover:text-foreground aria-expanded:bg-accent',
         // `group-hover/row:` — inside a hovered table row the row already wears
         // --accent, so repeating it here leaves the button at 1.03:1 against its
         // own background: invisible exactly when the pointer is on it. On a
         // hovered row it steps to --accent-strong instead.
         ghost:
           'hover:bg-accent hover:text-accent-foreground aria-expanded:bg-accent group-hover/row:hover:bg-accent-strong',
-        destructive: 'text-destructive bg-card border-border shadow-xs hover:bg-destructive/10',
+        destructive:
+          'text-destructive bg-card border-border shadow-control hover:bg-destructive/10',
         // Ghost's chrome (none until hover) with destructive's colour. The
         // inline remove buttons that sit inside a row or field want no box of
         // their own, but still need the red tint on hover rather than ghost's

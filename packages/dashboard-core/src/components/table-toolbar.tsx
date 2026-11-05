@@ -553,8 +553,7 @@ function FilterChip({
     // So it wears the outline button's own surface — `bg-card`, `shadow-xs`,
     // `rounded-md` — rather than a `bg-muted` of its own. A filled chip beside
     // outlined controls reads as a different kind of object, when the only
-    // real difference is that this one is set and they are not: the solid
-    // border already says that, against the dashed one an unused control wears.
+    // real difference is that this one is set, which its value already says.
     <span className="inline-flex h-11 shrink-0 items-center gap-0.5 rounded-md border border-border bg-card pr-1 text-sm shadow-xs lg:h-[2.125rem]">
       {onEdit ? (
         <button
@@ -718,19 +717,12 @@ function SortDropdown({
 // ============================================================================
 
 /**
- * Trigger styling shared by the three quick filters.
- *
- * A control that is not narrowing anything wears a dashed border. Solid
- * borders read as "this is set", and a row of four identical outlines made the
- * operator check each one's value to find which were actually filtering the
- * list. Dashed is the quieter state, so the ones doing work stand out without
- * having to shout — the chips beside them stay solid for the same reason.
- *
- * `Add filter` keeps its solid border: it is an action, not a filter that
- * happens to be empty.
+ * Trigger styling shared by the three quick filters: the standard outline
+ * button, sized to the toolbar. Whether a filter is narrowing the list reads
+ * from its value — "All" against the chosen name or a count — not its border.
  */
-function quickFilterTriggerClass(unset: boolean) {
-  return cn('h-11 gap-1.5 lg:h-[2.125rem]', unset && 'border-dashed')
+function quickFilterTriggerClass() {
+  return 'h-11 gap-1.5 lg:h-[2.125rem]'
 }
 
 /** "6/7" on a quick filter that narrows the list. */
@@ -879,20 +871,14 @@ function QuickEnumFilter({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm" className={quickFilterTriggerClass(allSelected)}>
-          {/* The colours of what is let through, so a narrowed status reads
-              at a glance without opening the menu. */}
-          <span aria-hidden className="flex -space-x-1">
-            {options
-              .filter((o) => selected.includes(o.value))
-              .slice(0, 4)
-              .map((o) => (
-                <StatusDot key={o.value} status={o.value} className="size-2.5 ring-2 ring-card" />
-              ))}
-          </span>
+        <Button variant="outline" size="sm" className={quickFilterTriggerClass()}>
           <span className="text-muted-foreground">{column.label}</span>
           {allSelected ? (
             <span>{t('admin.common.all')}</span>
+          ) : selected.length === 1 ? (
+            <span className="max-w-40 truncate">
+              {options.find((o) => o.value === selected[0])?.label}
+            </span>
           ) : (
             <SelectedCount selected={selected.length} total={options.length} />
           )}
@@ -983,11 +969,7 @@ function QuickResourceFilter({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="outline"
-          size="sm"
-          className={quickFilterTriggerClass(selected.length === 0)}
-        >
+        <Button variant="outline" size="sm" className={quickFilterTriggerClass()}>
           <span className="text-muted-foreground">{column.label}</span>
           {summary}
           <ChevronDownIcon className="size-3.5 text-muted-foreground" />
@@ -1077,7 +1059,7 @@ function QuickDateFilter({
       }}
     >
       <PopoverTrigger asChild>
-        <Button variant="outline" size="sm" className={quickFilterTriggerClass(active === 'all')}>
+        <Button variant="outline" size="sm" className={quickFilterTriggerClass()}>
           <span className="text-muted-foreground">{column.label}</span>
           <span>{t(`admin.components.table_toolbar.date_presets.${active}`)}</span>
           <ChevronDownIcon className="size-3.5 text-muted-foreground" />

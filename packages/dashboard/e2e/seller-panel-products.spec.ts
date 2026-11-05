@@ -72,7 +72,7 @@ test.describe('seller panel — products', () => {
       // as purchasable; the operator's search still reads the units on hand.
       const operator = await login(page)
       await page.goto(`/${operator.store_id}`)
-      await page.getByRole('button', { name: /search anything/i }).click()
+      await page.getByRole('button', { name: /^search\b/i }).click()
       await page.getByRole('dialog').getByRole('combobox').fill(name)
       await expect(
         page

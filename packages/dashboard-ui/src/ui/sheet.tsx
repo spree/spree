@@ -130,7 +130,7 @@ function SheetContent({
           // a caller can animate any of them — and a missing entry fails
           // silently, as a jump rather than an error.
           'fixed z-50 flex flex-col border border-border bg-card text-foreground text-sm shadow-lg transition-[opacity,transform,translate,scale] duration-250 ease-out',
-          'data-[side=right]:inset-y-0 data-[side=right]:right-0 data-[side=right]:h-[calc(100dvh-1rem)] data-[side=right]:max-h-[calc(100dvh-1rem)] data-[side=right]:w-[calc(100vw-1rem)] data-[side=right]:max-w-[600px] data-[side=right]:min-w-[320px] data-[side=right]:m-2 data-[side=right]:rounded-xl',
+          'data-[side=right]:inset-y-0 data-[side=right]:right-0 data-[side=right]:h-[calc(100dvh-1rem)] data-[side=right]:max-h-[calc(100dvh-1rem)] data-[side=right]:w-[calc(100vw-1rem)] data-[side=right]:max-w-[600px] data-[side=right]:min-w-[320px] data-[side=right]:m-2 data-[side=right]:rounded-2xl',
           'data-[side=left]:inset-y-0 data-[side=left]:left-0 data-[side=left]:h-full data-[side=left]:w-3/4 data-[side=left]:border-r data-[side=left]:sm:max-w-sm',
           'data-[side=bottom]:inset-x-0 data-[side=bottom]:bottom-0 data-[side=bottom]:h-auto data-[side=bottom]:border-t',
           'data-[side=top]:inset-x-0 data-[side=top]:top-0 data-[side=top]:h-auto data-[side=top]:border-b',
@@ -207,7 +207,7 @@ function SheetFooter({ className, ...props }: React.ComponentProps<'div'>) {
     <div
       data-slot="sheet-footer"
       className={cn(
-        'flex flex-col-reverse gap-2 border-t border-border-subtle bg-muted/50 p-4 sm:flex-row sm:justify-end rounded-b-xl',
+        'flex flex-col-reverse gap-2 border-t border-border-subtle bg-muted/50 p-4 sm:flex-row sm:justify-end rounded-b-2xl',
         className,
       )}
       {...props}

@@ -148,14 +148,14 @@ function Table({
   // below that the table spans the page gutter with square edges, and rounded
   // cells there would round nothing.
   const alwaysRounded =
-    'sm:[&_tbody_tr:last-child_td:first-child]:rounded-bl-xl sm:[&_tbody_tr:last-child_td:last-child]:rounded-br-xl sm:[&_tbody_tr:last-child_td:only-child]:rounded-b-xl'
+    'sm:[&_tbody_tr:last-child_td:first-child]:rounded-bl-[calc(var(--radius-xl)-1px)] sm:[&_tbody_tr:last-child_td:last-child]:rounded-br-[calc(var(--radius-xl)-1px)] sm:[&_tbody_tr:last-child_td:only-child]:rounded-b-[calc(var(--radius-xl)-1px)]'
   // Applied to the outermost wrapper, not the table: `in-[:last-child]` is
   // satisfied by *any* last-child ancestor, and the sticky variant nests two
   // more divs that are both last inside it. Gating on the wrapper the
   // pagination is actually a sibling of is the only test that means "nothing
   // follows this table".
   const roundedWhenLast =
-    'last:[&_tbody_tr:last-child_td:first-child]:rounded-bl-xl last:[&_tbody_tr:last-child_td:last-child]:rounded-br-xl last:[&_tbody_tr:last-child_td:only-child]:rounded-b-xl'
+    'last:[&_tbody_tr:last-child_td:first-child]:rounded-bl-[calc(var(--radius-xl)-1px)] last:[&_tbody_tr:last-child_td:last-child]:rounded-br-[calc(var(--radius-xl)-1px)] last:[&_tbody_tr:last-child_td:only-child]:rounded-b-[calc(var(--radius-xl)-1px)]'
   // `true`/`false` decide on the table itself; unset defers to the wrapper's
   // own position among its siblings.
   // `thead` cells carry the header's background, so the radius belongs on the
@@ -169,7 +169,7 @@ function Table({
   // down to their order in the stylesheet — and the rounding did.
   const topRounded =
     roundedTop && !headerPinned
-      ? 'sm:[&_thead_tr:first-child_th:first-child]:rounded-tl-xl sm:[&_thead_tr:first-child_th:last-child]:rounded-tr-xl sm:[&_thead_tr:first-child_th:only-child]:rounded-t-xl'
+      ? 'sm:[&_thead_tr:first-child_th:first-child]:rounded-tl-[calc(var(--radius-xl)-1px)] sm:[&_thead_tr:first-child_th:last-child]:rounded-tr-[calc(var(--radius-xl)-1px)] sm:[&_thead_tr:first-child_th:only-child]:rounded-t-[calc(var(--radius-xl)-1px)]'
       : undefined
   const tableRoundedClasses = cn(roundedBottom === true ? alwaysRounded : undefined, topRounded)
   const wrapperRoundedClasses = roundedBottom === undefined ? roundedWhenLast : undefined
