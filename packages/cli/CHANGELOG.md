@@ -1,5 +1,13 @@
 # @spree/cli
 
+## 3.6.3
+
+### Patch Changes
+
+- [#15031](https://github.com/spree/spree/pull/15031) [`d102fb7`](https://github.com/spree/spree/commit/d102fb703abcd184064637015e4b60f46e050bdb) Thanks [@mad-eel](https://github.com/mad-eel)! - `spree add paypal` now asks for `spree_paypal_checkout` at the project's Spree version or newer, since PayPal is released with Spree from 6.0.3. Before, it resolved to the 0.x gem, which does not run on Spree 6. A project on Spree 6.0.0 to 6.0.2 must upgrade Spree to 6.0.3 first.
+
+- [#15113](https://github.com/spree/spree/pull/15113) [`41bbba3`](https://github.com/spree/spree/commit/41bbba3272d9ebd8817842456670db0b72cd3b34) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added `spree sdk generate`, which writes the whole client of a package that extends Spree's SDKs from the extension it is for: it runs the extension's `rake spree:openapi:generate` and `rake spree:sdk:serializer_types`, then writes one SDK extension per resource, with a method per documented operation, and the request, filter and response types. The extension is named in the package's `package.json` (`"spree": { "extension": "../my_extension" }`); `--check` fails when the generated files are out of date, and `--no-backend` uses the committed documents.
+
 ## 3.6.2
 
 ### Patch Changes

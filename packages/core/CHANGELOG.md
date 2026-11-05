@@ -1,5 +1,11 @@
 # @spree/core
 
+## 6.0.3
+
+### Patch Changes
+
+- [#15087](https://github.com/spree/spree/pull/15087) [`5de3074`](https://github.com/spree/spree/commit/5de3074693359ad16623f9d522a6d5ab64d4b5f6) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added `randomUUID()`, which uses `crypto.randomUUID` where the browser provides it and falls back to `crypto.getRandomValues` elsewhere. Browsers only provide `crypto.randomUUID` on secure pages, so code that called it failed with "crypto.randomUUID is not a function" on a dashboard opened over plain HTTP at an address other than `localhost`. The SDKs and dashboards now use this function.
+
 ## 6.0.2
 
 ### Patch Changes
