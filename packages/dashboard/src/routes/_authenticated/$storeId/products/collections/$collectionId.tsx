@@ -1,4 +1,3 @@
-import { zodResolver } from '@hookform/resolvers/zod'
 import { SpreeError } from '@spree/admin-sdk'
 import {
   extensionFormValues,
@@ -32,6 +31,7 @@ import {
 import {
   useAddCollectionProducts,
   useCollection,
+  useCollectionFormResolver,
   useDeleteCollection,
   useRemoveCollectionProducts,
   useUpdateCollection,
@@ -39,7 +39,6 @@ import {
 import {
   COLLECTION_DEFAULTS,
   type CollectionFormValues,
-  collectionFormSchema,
   collectionToForm,
   collectionToParams,
 } from '../../../../../schemas/collection'
@@ -81,7 +80,7 @@ function CollectionDetail({ collectionId, storeId }: { collectionId: string; sto
   const removeProducts = useRemoveCollectionProducts(collectionId)
 
   const form = useForm<CollectionFormValues>({
-    resolver: zodResolver(collectionFormSchema),
+    resolver: useCollectionFormResolver(),
     defaultValues: { ...COLLECTION_DEFAULTS, ...extensionFormValues('collection', null) },
   })
 
