@@ -27,11 +27,15 @@ module Spree
               [:product]
             end
 
-            # The product is looked up in the store, so another store's id is a 404.
+            # The product is looked up in the store and within the caller's
+            # ability, like the product membership endpoints, so another store's
+            # product or one the caller cannot see is a 404.
             def build_resource
               product_id = permitted_params[:product_id]
               resource_scope.new.tap do |exclusion|
-                exclusion.product = current_store.products.find_by_prefix_id!(product_id) if product_id.present?
+                next if product_id.blank?
+
+                exclusion.product = current_store.products.accessible_by(current_ability, :show).find_by_prefix_id!(product_id)
               end
             end
           end
