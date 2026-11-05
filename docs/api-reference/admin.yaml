@@ -42923,6 +42923,21 @@ paths:
         Lists the sales channels a collection is published on, each with its optional publishing window. A collection appears on a channel's storefront only while a publication exists and its window is open.
 
         **Required scope:** `read_collections` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: publications } = await client.collections.publications.list('coll_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /collections/{collection_id}/publications
       parameters:
       - name: x-spree-api-key
         in: header
@@ -42998,6 +43013,25 @@ paths:
         Publishes a collection on a sales channel so shoppers on that channel can see it. Set `published_at` to schedule the launch and `unpublished_at` to take it down later; both are optional.
 
         **Required scope:** `write_collections` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Live on the channel from the given date; omit published_at to go live now.
+          const publication = await client.collections.publications.create('coll_UkLWZg9DAJ', {
+            channel_id: 'ch_UkLWZg9DAJ',
+            published_at: '2026-12-01T08:00:00Z',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /collections/{collection_id}/publications -d '{"channel_id":"ch_UkLWZg9DAJ","published_at":"2026-12-01T08:00:00Z"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -43065,6 +43099,26 @@ paths:
         Changes when a collection goes live on a channel, or when it comes down. The channel itself cannot be changed.
 
         **Required scope:** `write_collections` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const publication = await client.collections.publications.update(
+            'coll_UkLWZg9DAJ',
+            'cpub_UkLWZg9DAJ',
+            { unpublished_at: '2027-01-15T00:00:00Z' },
+          )
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /collections/{collection_id}/publications/{id} -d
+          '{"unpublished_at":"2027-01-15T00:00:00Z"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -43121,6 +43175,21 @@ paths:
         Takes a collection off a sales channel. Shoppers on that channel stop seeing it straight away.
 
         **Required scope:** `write_collections` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          await client.collections.publications.delete('coll_UkLWZg9DAJ', 'cpub_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /collections/{collection_id}/publications/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -43160,6 +43229,23 @@ paths:
         Lists the products kept out of a collection, whatever its rules match or a merchant picked.
 
         **Required scope:** `read_collections` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: exclusions } = await client.collections.exclusions.list('coll_UkLWZg9DAJ', {
+            expand: ['product'],
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /collections/{collection_id}/exclusions -d '{"expand":["product"]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -43229,6 +43315,24 @@ paths:
         Keeps a product out of a collection even when the collection rules match it, and removes it if it is already in. Adding the product to the collection by hand later lifts the exclusion.
 
         **Required scope:** `write_collections` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Keeps the product out, whatever the rules match or a merchant picked.
+          const exclusion = await client.collections.exclusions.create('coll_UkLWZg9DAJ', {
+            product_id: 'prod_UkLWZg9DAJ',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /collections/{collection_id}/exclusions -d '{"product_id":"prod_UkLWZg9DAJ"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -43294,6 +43398,21 @@ paths:
         Lets an excluded product back into a collection. The collection is regenerated, so the product returns if its rules still match.
 
         **Required scope:** `write_collections` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          await client.collections.exclusions.delete('coll_UkLWZg9DAJ', 'cexcl_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /collections/{collection_id}/exclusions/{id}
       parameters:
       - name: x-spree-api-key
         in: header
