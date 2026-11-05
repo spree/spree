@@ -979,7 +979,7 @@
       },
       "returnable": {
         "label": "Customers can return this",
-        "help": "Turn off for final sale items, or goods exempt from the EU right of withdrawal, such as personalised or perishable items. Sealed hygiene products are exempt only once unsealed, so leave them on and refuse opened ones when they arrive. Orders keep the setting they were placed with."
+        "help": "Turn off only where the law allows it, such as for personalised items or goods that spoil quickly. In the EU, a final sale label alone does not end the right of withdrawal, and sealed hygiene products are exempt only once unsealed. Orders keep the setting they were placed with."
       }
     },
     "image_upload": {

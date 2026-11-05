@@ -977,7 +977,7 @@
       },
       "returnable": {
         "label": "Les clients peuvent retourner cet article",
-        "help": "Désactivez pour les articles vendus sans retour ou les biens exclus du droit de rétractation de l'UE, comme les articles personnalisés ou périssables. Les produits d'hygiène scellés ne sont exclus qu'une fois descellés : laissez l'option activée et refusez les articles ouverts à leur réception. Les commandes conservent le réglage en vigueur lors de leur passation."
+        "help": "Désactivez uniquement lorsque la loi le permet, par exemple pour les articles personnalisés ou les biens qui se détériorent rapidement. Dans l'UE, la mention « vendu sans retour » ne supprime pas à elle seule le droit de rétractation, et les produits d'hygiène scellés ne sont exclus qu'une fois descellés. Les commandes conservent le réglage en vigueur lors de leur passation."
       }
     },
     "image_upload": {
