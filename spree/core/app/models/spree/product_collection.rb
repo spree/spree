@@ -30,6 +30,12 @@ module Spree
     validates :position, numericality: { only_integer: true, allow_blank: true, allow_nil: true }
     validates :collection_id, uniqueness: { scope: :product_id, message: :already_linked, allow_blank: true }
 
+    # @return [Boolean] whether a merchant picked the product. A row from
+    # before 6.1 has no source yet; on a manual collection it was picked.
+    def hand_picked?
+      source == 'manual' || (source.nil? && collection.manual?)
+    end
+
     # Makes existing rule memberships hand-picked, keeping their positions.
     #
     # @param collection_ids [Array<Integer>, ActiveRecord::Relation]
