@@ -13,6 +13,7 @@ SPREE_OPTIONAL_GEMS = %w(emails dashboard mcp opentelemetry).freeze
 # directory, so they carry the path explicitly.
 SPREE_PROVIDER_GEMS = {
   'spree_easypost' => 'providers/easypost',
+  'spree_klaviyo' => 'providers/klaviyo',
   'spree_meilisearch' => 'providers/meilisearch',
   'spree_stripe' => 'providers/stripe'
 }.freeze

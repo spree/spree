@@ -175,7 +175,7 @@ A sample builds from the record the merchant picked, else the store's latest one
 
 An integration can take over customer emails while it is active, so a marketing platform sends them instead of Spree. List their template keys in `replaced_customer_emails`:
 
-```ruby
+```ruby server/app/models/my_app/loyalty_mail_integration.rb
 module MyApp
   class LoyaltyMailIntegration < Spree::Integration
     preference :sends_order_confirmation, :boolean, default: false
@@ -193,7 +193,7 @@ Never list an email whose link carries a token Spree must later redeem: the pass
 
 A customer email your own app adds should ask the same question, so an integration can take it over too:
 
-```ruby
+```ruby server/app/subscribers/review_request_subscriber.rb
 return unless order.store.sends_customer_email?('spree/review_mailer/request_email')
 ```
 
