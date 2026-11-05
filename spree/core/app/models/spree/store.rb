@@ -606,7 +606,7 @@ module Spree
     def active_integrations
       return Spree::Current.integrations if id == Spree::Current.store&.id
 
-      integrations.active.to_a
+      integrations.active.registered.to_a
     end
 
     # Whether Spree sends this customer email for the store: customer emails

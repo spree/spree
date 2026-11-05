@@ -367,7 +367,10 @@ describe Spree::Store, type: :model, without_global_store: true do
       end
     end
 
-    before { stub_const('TestIntegrations::EmailSender', replacing_class) }
+    before do
+      stub_const('TestIntegrations::EmailSender', replacing_class)
+      allow(Spree).to receive(:integrations).and_return(['TestIntegrations::EmailSender'])
+    end
 
     def create_sender(replaced:, active: true, store: self.store)
       TestIntegrations::EmailSender.create!(store: store, active: active, preferred_replaced: replaced)
@@ -404,6 +407,12 @@ describe Spree::Store, type: :model, without_global_store: true do
 
       it "ignores another store's integration" do
         create_sender(replaced: [template_key], store: create(:store))
+
+        expect(store.sends_customer_email?(template_key)).to be(true)
+      end
+
+      it 'sends past a row whose integration gem was uninstalled' do
+        create_sender(replaced: []).update_column(:type, 'Uninstalled::Integration')
 
         expect(store.sends_customer_email?(template_key)).to be(true)
       end

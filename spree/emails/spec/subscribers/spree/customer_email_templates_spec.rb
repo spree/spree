@@ -108,7 +108,9 @@ RSpec.describe 'Customer email templates taken over by an integration' do
 
   before do
     stub_const('TestIntegrations::EmailSender', replacing_class)
-    store.update!(preferences: store.preferences.merge(send_consumer_transactional_emails: true))
+    allow(Spree).to receive(:integrations).and_return(['TestIntegrations::EmailSender'])
+    # Subscribers reload the store, so the predicate is stubbed on every instance.
+    allow_any_instance_of(Spree::Store).to receive(:prefers_send_consumer_transactional_emails?).and_return(true)
   end
 
   it 'has a trigger for every registered customer email' do

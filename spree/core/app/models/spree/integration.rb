@@ -52,6 +52,9 @@ module Spree
     # Scopes
     #
     scope :active, -> { where(active: true) }
+    # A row an uninstalled gem left behind names a class that no longer loads,
+    # and instantiating it would raise ActiveRecord::SubclassNotFound.
+    scope :registered, -> { where(type: ['Spree::Integration', *Spree.integrations.map(&:to_s)]) }
 
     # This attribute is used to temporarily store connection-related error messages
     # that can be displayed to users when testing or validating integration connections.
