@@ -20,6 +20,7 @@ import { AddLineItemDialog } from '../../../../../components/spree/orders/line-i
 import { OrderEditItemsTable } from '../../../../../components/spree/orders/order-edit-items-table'
 import { OrderTotalsCard } from '../../../../../components/spree/orders/order-totals-card'
 import { useOrder } from '../../../../../hooks/use-order'
+import { useOrderChangePreview } from '../../../../../hooks/use-order-change-preview'
 import { useOrderItemsEditor } from '../../../../../hooks/use-order-items-editor'
 import type { OrderEditFormValues } from '../../../../../schemas/order'
 
@@ -28,9 +29,11 @@ export const Route = createFileRoute('/_authenticated/$storeId/orders/$orderId/e
 })
 
 /**
- * Post-placement line-item management. Quantity changes, removals and picker
- * additions are staged in form state and applied together on Save, which is a
- * single `PATCH /orders/:id` the server runs in one transaction.
+ * Line-item management for drafts and placed orders. Quantity changes,
+ * removals and picker additions are staged in form state and applied together
+ * on Save, in one transaction. On a placed order the totals card shows the
+ * server's preview of the staged edits, and Save applies them as an order
+ * change (docs/plans/6.1-order-change-substrate.md).
  */
 function OrderEditPage() {
   const { t } = useTranslation()
@@ -40,6 +43,7 @@ function OrderEditPage() {
   const [addingItem, setAddingItem] = useState(false)
   const editor = useOrderItemsEditor(order)
   const { form } = editor
+  const preview = useOrderChangePreview(order, editor.items)
 
   async function onSubmit(values: OrderEditFormValues) {
     // Editing is a detour from the order, not a place to stay: hand the
@@ -136,7 +140,15 @@ function OrderEditPage() {
               </CardContent>
             </Card>
           }
-          sidebar={<OrderTotalsCard order={editor.savedOrder ?? order} items={editor.items} />}
+          sidebar={
+            <OrderTotalsCard
+              order={editor.savedOrder ?? order}
+              items={editor.items}
+              preview={preview.preview}
+              previewPending={preview.isPending}
+              previewError={preview.error}
+            />
+          }
         />
       </form>
 

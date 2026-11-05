@@ -8,7 +8,7 @@ module Spree
     class Resolve < Spree::Workflow
       include Spree::Refunds::OrderPayments
       include Spree::Refunds::TaxCredit
-      include Spree::Fulfillments::Replacements
+      include Spree::OrderChanges::Replacements
 
       hooks :validate, :before_settle, :after_resolve
 
@@ -77,6 +77,10 @@ module Spree
           failure(claim)
         end
         failure(claim, :not_approved) unless claim.approved?
+        # Asked before settle_tax writes the credit rows, which run outside
+        # the transaction a refused replacement would roll back.
+        refusal = Spree::OrderChanges::Begin.refusal_for(claim.order) if replacing?
+        failure(claim, refusal) if refusal
       end
 
       # Rewrites the credit rows for the money actually going back — each line's
@@ -128,7 +132,7 @@ module Spree
 
         failure(claim, :nothing_to_replace) if items.empty?
 
-        @fulfillments = build_replacements(claim, items)
+        @fulfillments = ship_replacements(claim, items, requested_by: resolver)
       end
 
       def issue_store_credit

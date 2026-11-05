@@ -187,6 +187,99 @@ A placed order is meant to stay put. Its items and prices are written when the c
 
 Where admin edits are allowed, totals are re-added from the order's existing rows rather than worked out again from scratch. Editing an order must never quietly re-apply today's promotions and hand the customer a different discount than the one they accepted.
 
+## Editing a placed order
+
+Changes to a placed order's items go through an **order change**: a set of
+actions — add a product, change a quantity, remove a line — that is previewed
+first and then applied in one go. Either every action applies or none does, and
+each applied change stays on the order as a record of who changed what, and
+when.
+
+Preview a change to see what it does to the totals before anything is saved,
+then create it with `confirm: true` to apply it. This is what the admin
+dashboard's **Edit order** screen does on a placed order.
+
+<Tabs>
+  <Tab title="Admin SDK">
+    ```typescript
+    const actions = [
+      { kind: 'update_item', line_item_id: 'li_xxx', quantity: 3 },
+      { kind: 'add_item', variant_id: 'variant_xxx', quantity: 1 },
+    ]
+
+    // What the order would look like — nothing is saved
+    const preview = await adminClient.orders.orderChanges.preview('or_xxx', { actions })
+    preview.total               // the new order total
+    preview.balance_delta       // how far the total moves
+    preview.outstanding_balance // what the customer owes after it; negative when they are owed money back
+
+    // Apply it
+    await adminClient.orders.orderChanges.create('or_xxx', { actions, confirm: true })
+
+    // Every change made to the order
+    const changes = await adminClient.orders.orderChanges.list('or_xxx')
+    ```
+  </Tab>
+  <Tab title="cURL">
+    ```bash
+    curl -X POST 'https://api.mystore.com/api/v3/admin/orders/or_xxx/order_changes/preview' \
+      -H 'X-Spree-API-Key: sk_xxx' \
+      -H 'Content-Type: application/json' \
+      -d '{ "actions": [{ "kind": "update_item", "line_item_id": "li_xxx", "quantity": 3 }] }'
+
+    curl -X POST 'https://api.mystore.com/api/v3/admin/orders/or_xxx/order_changes' \
+      -H 'X-Spree-API-Key: sk_xxx' \
+      -H 'Content-Type: application/json' \
+      -d '{ "confirm": true, "actions": [{ "kind": "update_item", "line_item_id": "li_xxx", "quantity": 3 }] }'
+    ```
+  </Tab>
+</Tabs>
+
+A few rules to know:
+
+- **No money moves on its own.** Applying a change updates the order's totals
+  and its payment status — `partially_paid` when the customer owes more,
+  `overcharged` when they are owed some back. You collect or refund the
+  difference from the order's payments, as after any other edit.
+- **One change at a time.** Created without `confirm`, a change waits as
+  `requested` until it is confirmed or canceled, and the order takes no other
+  change in the meantime.
+- **Stock is taken when the change is applied**, not while it waits. An added
+  product that sold out in between makes the change fail, with nothing applied.
+- **A line keeps the price it was sold at.** Changing a quantity never re-prices
+  the line.
+- **Drafts are edited directly** through the order. Order changes are for placed
+  orders only.
+
+Manual discounts are order changes too. Alongside item actions, a change can
+carry `add_discount` (`label`, `value`, optional `value_type` and
+`line_item_id`), `update_discount` (`discount_id` with a new `label` or
+`amount`) and `remove_discount` (`discount_id`); discounts apply after the item
+edits, so an order-level discount is spread over the lines the change leaves.
+The [order discounts endpoints](/api-reference/admin) do the same on a placed
+order, one discount per change. Discounts from promotions are read-only.
+
+Returns, exchanges and claims use the same mechanism: receiving goods back and
+shipping replacements each leave an order change on the order, linked to the
+return, exchange or claim that made it.
+
+To refuse some edits — after a cut-off time, or for products that cannot be
+added after placement — register a handler on the `order_changes.add_action.validate`
+hook. `order_changes.confirm.before_confirm` runs once a change is applied but
+before it is committed, and can still refuse it (see [Workflows](/developer/customization/workflows)).
+To settle the balance automatically — charging or refunding at your payment
+provider — subscribe to the `order_change.confirmed` [event](/developer/core-concepts/events),
+which is sent once the change is saved, rather than doing it in a hook: a
+return or claim can apply its change inside a larger step that may still fail.
+
+```ruby config/initializers/spree.rb
+Spree.hooks.register('order_changes.add_action.validate') do |workflow|
+  if workflow.kind == 'add_item' && workflow.order_change.order.completed_at < 1.day.ago
+    workflow.reject!('Orders can only gain items on the day they were placed')
+  end
+end
+```
+
 ## Money on an order
 
 Tax, discounts and fees are kept as separate records, so you can ask what tax was charged without picking through a mixed list. See [Order totals](/developer/core-concepts/order-totals).

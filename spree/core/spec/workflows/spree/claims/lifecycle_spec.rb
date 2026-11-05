@@ -98,6 +98,7 @@ RSpec.describe 'Spree::Claims workflows' do
       result = Spree::Claims::Resolve.call(claim: replacing, resolution: 'replacement', refund_method: 'crypto')
 
       expect(result).to be_success
+      expect(replacing.order_changes.sole).to be_confirmed
     end
 
     # Unallocated, the replacement is indistinguishable from a fulfillment made
@@ -177,6 +178,19 @@ RSpec.describe 'Spree::Claims workflows' do
       # Flagged, and packed once — not also saved loose beside the packed copy.
       expect(order.fulfillment_items.reload.where(replacement: true).sum(:quantity)).to eq(claim.claim_line_items.sum(:quantity))
       expect(order.fulfillment_items.where(fulfillment_id: nil)).to be_empty
+    end
+
+    # Settling tax writes outside the transaction a refused replacement rolls
+    # back, so the refusal has to come first.
+    it 'refuses a replacement before settling tax while another change to the order is open' do
+      claim = create(:approved_claim, store: store, order: order, send_replacement: true)
+      Spree::OrderChanges::Begin.call(order: order)
+      expect_any_instance_of(Spree::Claim).not_to receive(:settle_tax!)
+
+      result = Spree::Claims::Resolve.call(claim: claim, resolution: 'replacement')
+
+      expect(result.error.value).to eq(:order_change_in_progress)
+      expect(claim.reload).to be_approved
     end
   end
 

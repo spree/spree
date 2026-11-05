@@ -389,6 +389,123 @@ test.describe('order editing', () => {
   })
 })
 
+// A placed order is edited through an order change: the totals card shows the
+// server's own preview of the staged edit — balance change included — and
+// nothing is written until Save applies it.
+test.describe('placed order editing', () => {
+  test('previews the balance a quantity change leaves and applies it on save', async ({ page }) => {
+    const creds = await login(page)
+    const order = await createPlacedOrder(page, creds.accessToken, { quantity: 1, ship: false })
+    const orderUrl = `${ORDERS_PATH(creds.store_id)}/${order.id}`
+
+    await page.goto(`${orderUrl}/edit`)
+    await expect(page.getByRole('heading', { name: /edit order/i })).toBeVisible({
+      timeout: 15_000,
+    })
+
+    const quantity = page.locator('input[type="number"]').first()
+    await expect(quantity).toHaveValue('1', { timeout: 15_000 })
+    await quantity.fill('2')
+
+    await expect(page.getByText(/^balance change$/i)).toBeVisible({ timeout: 15_000 })
+    await expect(page.getByTestId('order-balance-change')).toHaveText(/^\+/)
+    await expect(page.getByText(/the customer will owe more/i)).toBeVisible()
+
+    // The preview wrote nothing: leaving without saving keeps the saved line.
+    await page.goto(orderUrl)
+    await page.goto(`${orderUrl}/edit`)
+    await expect(page.locator('input[type="number"]').first()).toHaveValue('1', {
+      timeout: 15_000,
+    })
+
+    await page.locator('input[type="number"]').first().fill('2')
+    await expect(page.getByTestId('order-balance-change')).toBeVisible({ timeout: 15_000 })
+    await page.getByRole('button', { name: /^save$/i }).click()
+    await expect(page).toHaveURL(orderUrl, { timeout: 15_000 })
+
+    await page.goto(`${orderUrl}/edit`)
+    await expect(page.locator('input[type="number"]').first()).toHaveValue('2', {
+      timeout: 15_000,
+    })
+  })
+
+  // One open change per order: a change left waiting (here, through the API)
+  // is a conflict to resolve, and the merchant is told why Save did nothing.
+  test('refuses to save while another change to the order is open', async ({ page }) => {
+    const creds = await login(page)
+    const order = await createPlacedOrder(page, creds.accessToken, { quantity: 1, ship: false })
+    const orderUrl = `${ORDERS_PATH(creds.store_id)}/${order.id}`
+    const { items } = await adminRequest<{ items: { id: string }[] }>(
+      page,
+      creds,
+      'get',
+      `/orders/${order.id}?expand=items`,
+    )
+    await adminRequest(page, creds, 'post', `/orders/${order.id}/order_changes`, {
+      actions: [{ kind: 'update_item', line_item_id: items[0].id, quantity: 5 }],
+    })
+
+    await page.goto(`${orderUrl}/edit`)
+    const quantity = page.locator('input[type="number"]').first()
+    await expect(quantity).toHaveValue('1', { timeout: 15_000 })
+    await quantity.fill('2')
+    await page.getByRole('button', { name: /^save$/i }).click()
+
+    await expect(page.getByText(/another change to this order is in progress/i)).toBeVisible({
+      timeout: 15_000,
+    })
+    await expect(page).toHaveURL(`${orderUrl}/edit`)
+  })
+
+  // A discount on a placed order is an order change too: it is recorded with
+  // the order's changes and waits for an open one like Save does.
+  test('records a discount as an order change and refuses one while another change is open', async ({
+    page,
+  }) => {
+    const creds = await login(page)
+    const order = await createPlacedOrder(page, creds.accessToken, { quantity: 1, ship: false })
+    const orderUrl = `${ORDERS_PATH(creds.store_id)}/${order.id}`
+
+    async function addDiscount(label: string) {
+      await page.getByRole('button', { name: /^add discount$/i }).click()
+      const dialog = page.getByRole('dialog')
+      await dialog.getByLabel(/label/i).fill(label)
+      await dialog.locator('input[name="value"]').fill('1.00')
+      await dialog.getByRole('button', { name: /^add discount$/i }).click()
+    }
+
+    await page.goto(orderUrl)
+    await addDiscount('Goodwill')
+    await expect(page.getByText('Goodwill')).toBeVisible({ timeout: 15_000 })
+
+    const changes = await adminRequest<{ data: { status: string; actions: { kind: string }[] }[] }>(
+      page,
+      creds,
+      'get',
+      `/orders/${order.id}/order_changes`,
+    )
+    expect(changes.data.map((change) => [change.status, change.actions[0].kind])).toEqual([
+      ['confirmed', 'add_discount'],
+    ])
+
+    const { items } = await adminRequest<{ items: { id: string }[] }>(
+      page,
+      creds,
+      'get',
+      `/orders/${order.id}?expand=items`,
+    )
+    await adminRequest(page, creds, 'post', `/orders/${order.id}/order_changes`, {
+      actions: [{ kind: 'update_item', line_item_id: items[0].id, quantity: 5 }],
+    })
+
+    await page.reload()
+    await addDiscount('Second thoughts')
+    await expect(page.getByText(/another change to this order is in progress/i)).toBeVisible({
+      timeout: 15_000,
+    })
+  })
+})
+
 test.describe('order addresses', () => {
   // Regression: the dashboard sent `shipping_address` while the API permitted
   // only `ship_address`, so the request succeeded and the address never

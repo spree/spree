@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
+  buildOrderChangeActions,
   buildOrderItemsPayload,
   type OrderEditItemValues,
   orderEditItemSchema,
@@ -11,6 +12,7 @@ import {
 function row(overrides: Partial<OrderEditItemValues>): OrderEditItemValues {
   return {
     variant_id: 'variant_1',
+    line_item_id: 'li_1',
     quantity: 1,
     removed: false,
     added: false,
@@ -28,6 +30,40 @@ function row(overrides: Partial<OrderEditItemValues>): OrderEditItemValues {
     ...overrides,
   }
 }
+
+describe('buildOrderChangeActions', () => {
+  it('omits rows the merchant did not touch', () => {
+    expect(buildOrderChangeActions([row({ quantity: 2, saved_quantity: 2 })])).toEqual([])
+  })
+
+  it('updates the saved line for a quantity change', () => {
+    expect(buildOrderChangeActions([row({ quantity: 5, saved_quantity: 2 })])).toEqual([
+      { kind: 'update_item', line_item_id: 'li_1', quantity: 5 },
+    ])
+  })
+
+  it('removes the saved line for a struck-out row', () => {
+    expect(
+      buildOrderChangeActions([row({ removed: true, quantity: 3, saved_quantity: 1 })]),
+    ).toEqual([{ kind: 'remove_item', line_item_id: 'li_1' }])
+  })
+
+  it('adds the variant for a staged addition', () => {
+    expect(
+      buildOrderChangeActions([
+        row({ added: true, line_item_id: null, quantity: 4, saved_quantity: 0 }),
+      ]),
+    ).toEqual([{ kind: 'add_item', variant_id: 'variant_1', quantity: 4 }])
+  })
+
+  it('drops an addition that was staged and then removed', () => {
+    expect(
+      buildOrderChangeActions([
+        row({ added: true, removed: true, line_item_id: null, quantity: 4, saved_quantity: 0 }),
+      ]),
+    ).toEqual([])
+  })
+})
 
 describe('buildOrderItemsPayload', () => {
   it('omits rows the merchant did not touch', () => {

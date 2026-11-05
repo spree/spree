@@ -160,9 +160,11 @@ module Spree
       # One provider round per batch rather than one per line: a fifty-line
       # cart restore must not become fifty calls to an ERP. Lines arriving
       # with a negotiated price are not asked about — the caller already
-      # answered; reverts still are, they need the catalog answer back.
+      # answered; reverts still are, they need the catalog answer back. Nor
+      # are saved lines that may not be re-priced (a placed order's), whose
+      # answer apply_resolved_price would only throw away.
       def resolve_prices
-        priceable = additions.reject(&:manual_price?)
+        priceable = additions.reject { |item| item.manual_price? || keeps_saved_price?(item) }
         return if priceable.empty?
 
         probes = priceable.map do |item|
@@ -179,7 +181,19 @@ module Spree
         @additions ||= resolved_items.reject(&:remove?)
       end
 
+      def keeps_saved_price?(item)
+        return false if item.price_provided
+
+        line_item = cart.line_items.detect { |line| line.variant_id == item.variant.id }
+        line_item.present? && !line_item.should_update_price?
+      end
+
+      # A saved line is re-priced only when the line itself allows it
+      # (Spree::LineItem#should_update_price?): never once its order is
+      # placed, and never a negotiated price.
       def apply_resolved_price(line_item)
+        return unless line_item.new_record? || line_item.should_update_price?
+
         resolution = resolved_prices[line_item.variant_id]
         return if resolution.blank?
 
@@ -231,8 +245,10 @@ module Spree
           # A provider that already quoted this line is proof the currency is
           # sellable, even when the local catalog holds no price for it — an
           # external system can be the only source for a currency. A
-          # negotiated price is a quote too, made by the merchant.
-          if !item.manual_price? && resolved_prices[item.variant.id]&.at(1)&.amount.nil? && item.variant.amount_in(cart.currency).nil?
+          # negotiated price is a quote too, made by the merchant, and so is
+          # the price a saved line keeps.
+          if !item.manual_price? && !keeps_saved_price?(item) &&
+             resolved_prices[item.variant.id]&.at(1)&.amount.nil? && item.variant.amount_in(cart.currency).nil?
             message = I18n.t('spree.cart_line_item.currency_unavailable', li_name: item.variant.name, currency: cart.currency)
             failure(item.variant, message) unless partial_success?
 

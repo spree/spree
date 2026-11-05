@@ -406,6 +406,15 @@ module Spree
       reprice(persist: true)
     end
 
+    # Returns true if the price should be updated when quantity changes
+    # Override this method to customize when prices should be recalculated
+    # By default, prices are not updated after an order is completed, and a
+    # negotiated (manual) price is never re-derived by a quantity change.
+    # @return [Boolean]
+    def should_update_price?
+      !owner.completed? && !manual_price?
+    end
+
     private
 
     def reprice(persist:)
@@ -467,15 +476,6 @@ module Spree
       if saved_change_to_quantity? && owner&.persisted? && !owner.completed?
         recalculate_price if should_update_price? && !previously_new_record? && !already_priced
       end
-    end
-
-    # Returns true if the price should be updated when quantity changes
-    # Override this method to customize when prices should be recalculated
-    # By default, prices are not updated after an order is completed, and a
-    # negotiated (manual) price is never re-derived by a quantity change.
-    # @return [Boolean]
-    def should_update_price?
-      !owner.completed? && !manual_price?
     end
 
     def update_tax_charge
