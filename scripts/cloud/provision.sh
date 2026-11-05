@@ -71,6 +71,8 @@ fi
 
 step "Installing gems"
 (cd server && { bundle check >/dev/null 2>&1 || bundle install --quiet; }) >>"$LOG" 2>&1 || fail "bundle install"
+# The commit gate runs RuboCop from the spree/ bundle (scripts/lint/rubocop).
+(cd spree && { bundle check >/dev/null 2>&1 || bundle install --quiet; }) >>"$LOG" 2>&1 || fail "bundle install (spree/)"
 
 if psql -h localhost -U postgres -lqt | cut -d'|' -f1 | tr -d ' ' | grep -qx "$DATABASE_NAME"; then
   step "Migrating $DATABASE_NAME"
