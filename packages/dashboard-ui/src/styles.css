@@ -282,29 +282,26 @@
 }
 
 .dark {
-  /* Vercel-style "true black" base, with surfaces stepping up in lightness.
+  /* A near-black base, with surfaces stepping up in lightness.
    *
    * Every neutral below is zero-chroma — a true grey, not light mode's warm
    * stone. See the palette note at the top of this file for why the two
-   * themes split. The lightness ladder is unchanged from the warm version;
-   * only the tint was removed.
+   * themes split.
    *
-   * Dark surfaces step about 3 points of OKLCH lightness, on a ground lifted
-   * off true black. A wider 4-5 point ramp on a darker ground read as harsh:
-   * every edge and fill stood out. Steps much tighter than this go the other
-   * way, as an earlier 3.5-point band did — the middle of the screen reads as
-   * one flat surface and the sidebar's edge looks lit. Cards share the sheet's
-   * colour and are told apart by their faint border, as in the reference
-   * dark dashboards this follows.
+   * A near-black ground (#0a0a0a) with surfaces stepping about 2-3 points of
+   * OKLCH lightness, as in the near-black dashboards this follows. A grey
+   * ground lifted to 22 read as washed out next to them. Cards share the
+   * sheet's colour and are told apart by their faint border; the sheet sits
+   * one step above the sidebar.
    *
-   * The ladder, ground upward: sidebar 21 / muted + background 22.5 / card 25
-   * / secondary + nested-raised 28 / accent 31.5 / accent-hover 34.5 /
-   * accent-strong 38. --card is the anchor, since the inset sheet is the
-   * surface a merchant actually reads. --accent-strong stays where it was:
-   * muted text and links have to clear 4.5:1 on it. */
-  --background: oklch(22.5% 0 0);
+   * The ladder, ground upward: sidebar + muted + background 14.5 / card 16.5
+   * / secondary + nested-raised 20 / accent 22.5 / accent-hover 25 /
+   * accent-strong 29. --card is the anchor, since the inset sheet is the
+   * surface a merchant actually reads. Muted text and links have to clear
+   * 4.5:1 on --accent-strong, the lightest surface they sit on. */
+  --background: oklch(14.5% 0 0);
   --foreground: oklch(95% 0 0);
-  --card: oklch(25% 0 0);
+  --card: oklch(16.5% 0 0);
   --card-foreground: var(--foreground);
   --popover: var(--card);
   --popover-foreground: var(--foreground);
@@ -317,24 +314,24 @@
      at or under the card's lightness erases them — while too big a step reads
      as a bright band across a full-width table header. Dark mode raises where
      light mode lowers, since a surface reads as raised by getting lighter. */
-  --secondary: oklch(28% 0 0);
+  --secondary: oklch(20% 0 0);
   --secondary-foreground: var(--foreground);
-  --muted: oklch(22.5% 0 0);
+  --muted: oklch(14.5% 0 0);
   /* Light enough to clear 4.5:1 on every dark ground, the selected
-     --accent-strong included (4.69:1; stone-400's lightness measured 3.89:1
-     there). */
-  --muted-foreground: oklch(76% 0 0);
-  --accent: oklch(31.5% 0 0);
+     --accent-strong included (about 5.7:1). Lower than white-ish greys so
+     secondary text stays secondary on the near-black ground. */
+  --muted-foreground: oklch(72% 0 0);
+  --accent: oklch(22.5% 0 0);
   --accent-foreground: var(--foreground);
-  --accent-strong: oklch(38% 0 0);
-  --accent-hover: oklch(34.5% 0 0);
-  --accent-strong-hover: oklch(44.4% 0 0);
+  --accent-strong: oklch(29% 0 0);
+  --accent-hover: oklch(25% 0 0);
+  --accent-strong-hover: oklch(34% 0 0);
   --destructive: oklch(0.704 0.191 22.216);
   /* A white veil over whatever surface it crosses, so one value works on the
      page ground and the raised sheet alike. Both shares below are half of it,
      as in light mode, so a container's edge and the rules inside it are one
      hairline weight. */
-  --border-base: oklch(1 0 0 / 9%);
+  --border-base: oklch(1 0 0 / 10%);
   --border: var(--border-base);
   /* Full strength here, where light mode takes 70%: cards and the sheet they
      sit on share --card, so in the dark the edge is the only thing that tells
@@ -344,18 +341,18 @@
   --border-subtle: color-mix(in srgb, var(--border-base) 50%, transparent);
   /* Light mode darkens the control edge away from the card; dark mode lightens
      it. Not the light value inverted — measured on this theme's own surfaces:
-     2.9:1 on the card, after the surfaces were lifted. */
-  --border-control: oklch(52% 0 0);
+     2.9:1 on the card. */
+  --border-control: oklch(48% 0 0);
   /* On a dark card a field's edge does the work a shadow does in light mode:
      a black lift barely shows here, and a firmer one read as a smudge. So the
-     field border is a step stronger than a card's (16% white against 9%). */
+     field border is a step stronger than a card's (16% white against 10%). */
   --field-border: oklch(1 0 0 / 16%);
   /* Same arrangement as light — container at the page colour, records raised
      above it, a 5.5-point step. Records take `--nested-raised` rather
      than `--card`: the card token is a step above the page, which is where the
      container would sit if it had a fill of its own. */
   --card-container: var(--background);
-  --nested-raised: oklch(28% 0 0);
+  --nested-raised: oklch(20% 0 0);
   /* Not --accent here: dark mode's accent is lighter than every raised
      surface, so a shared token would put the selected tab below its own
      track. --muted is the step under --nested-raised. */
@@ -379,17 +376,17 @@
 
      Measured against --card, not --background: the shell renders the sidebar's
      `inset` variant, so the sheet beside it is the card surface and that
-     pairing is what a merchant actually sees. Four points under it: enough for
-     the ground to recede, close enough that the sheet's edge does not glow. */
-  --sidebar: oklch(21% 0 0);
+     pairing is what a merchant actually sees. Two points under it: on a
+     near-black ground a wider step makes the sheet read as grey. */
+  --sidebar: oklch(14.5% 0 0);
   --sidebar-foreground: var(--foreground);
   --sidebar-primary: var(--primary);
   --sidebar-primary-foreground: var(--primary-foreground);
   --sidebar-accent: var(--accent);
   --sidebar-accent-foreground: var(--accent-foreground);
   --sidebar-accent-hover: var(--accent-hover);
-  --sidebar-active: oklch(42% 0 0);
-  --sidebar-active-hover: oklch(46% 0 0);
+  --sidebar-active: oklch(25% 0 0);
+  --sidebar-active-hover: oklch(28% 0 0);
   /* Matches the rule the top bar draws, so every edge framing the shell —
      the sidebar's, the top bar's, the settings header's — is one weight. */
   --sidebar-border: color-mix(in srgb, var(--border) 75%, transparent);
