@@ -56,9 +56,12 @@ module Spree
       after { Spree::Events.reset! }
 
       it 'announces a product that newly matches' do
+        subject
         newcomer = create(:product, tags: [tag])
 
-        published = events_named('product_collection.created', 'product_collection.deleted') { subject }
+        published = events_named('product_collection.created', 'product_collection.deleted') do
+          described_class.call(collection: collection)
+        end
 
         expect(published.map(&:name)).to eq(['product_collection.created'])
         expect(published.first.payload['id']).to eq(
