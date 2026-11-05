@@ -29,9 +29,8 @@ module Spree
           to_add << collection if membership.nil? && matches
         end
 
-        if to_remove.any?
-          Spree::ProductCollection.where(product_id: product.id, collection_id: to_remove.map(&:id)).where.not(source: 'manual').delete_all
-        end
+        # A row from before 6.1 has no source; on an automatic collection its rules made it.
+        Spree::ProductCollection.where(product_id: product.id, collection_id: to_remove.map(&:id), source: [nil, 'rule']).delete_all if to_remove.any?
         add(product, to_add)
 
         affected_ids = (to_remove + to_add).map(&:id)
