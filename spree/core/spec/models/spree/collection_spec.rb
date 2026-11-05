@@ -104,6 +104,13 @@ RSpec.describe Spree::Collection, type: :model do
     end
   end
 
+  it 'refuses a publication without a channel instead of unpublishing everywhere' do
+    collection = create(:collection, store: store)
+
+    expect(collection.update(publications: [{ published_at: 1.day.from_now }])).to be(false)
+    expect(collection.reload.publications).not_to be_empty
+  end
+
   it 'reports an invalid publication window on the collection' do
     collection = create(:collection, :unpublished, store: store)
 

@@ -27,6 +27,13 @@ RSpec.describe Spree::CollectionRules::Category, type: :model do
     expect(rule(preferred_include_descendants: true).apply(scope)).to contain_exactly(in_parent, in_child)
   end
 
+  it 'matches everything when negating a category that no longer exists' do
+    negated = rule(match_policy: 'is_not_equal_to')
+    parent.destroy!
+
+    expect(negated.apply(scope)).to contain_exactly(in_parent, in_child, elsewhere)
+  end
+
   it 'negates' do
     expect(rule(match_policy: 'is_not_equal_to').apply(scope)).to contain_exactly(in_child, elsewhere)
   end

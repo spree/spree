@@ -27,7 +27,7 @@ module Spree
         new_ids = matched_ids - sources.keys
 
         ApplicationRecord.transaction do
-          remove(memberships, stale_ids)
+          remove(memberships, stale_ids, excluded_ids)
           append(collection, memberships, new_ids)
         end
 
@@ -38,10 +38,13 @@ module Spree
       private
 
       # Deletes the rows and closes the gaps they leave in the positions.
-      def remove(memberships, product_ids)
+      # Excluded products go whatever their source; other stale rows only if
+      # they are still rule rows, so a hand-pick made meanwhile survives.
+      def remove(memberships, product_ids, excluded_ids)
         return if product_ids.empty?
 
-        memberships.where(product_id: product_ids).where.not(source: 'manual').delete_all
+        memberships.where(product_id: product_ids & excluded_ids).delete_all
+        memberships.where(product_id: product_ids - excluded_ids).where.not(source: 'manual').delete_all
         now = Time.current
         remaining = memberships.order(:position).pluck(:collection_id, :product_id, :source)
         return if remaining.empty?

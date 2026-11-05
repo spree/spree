@@ -167,7 +167,10 @@ export function PublishingCard<T extends FieldValues>({
           type="button"
           variant="outline"
           size="sm"
-          onClick={() => setManageOpen(true)}
+          onClick={() => {
+            setEditingIndex(null)
+            setManageOpen(true)
+          }}
           aria-label={t('admin.pages.products.publishing.manage_cta')}
         >
           <SettingsIcon className="size-4" />
