@@ -13,6 +13,8 @@ module Spree
     #
     # See docs/plans/6.0-agent-tools-from-openapi.md.
     module AdminDocument
+      FILTER_TABLES = 'x-spree-filter-tables'.freeze
+
       # Where an extension keeps its generated document, relative to its root.
       EXTENSION_PATH = File.join('openapi', 'admin.yaml')
 
@@ -173,6 +175,7 @@ module Spree
           @conflicts = []
           merged = read(core_path)
           record_sources(merged, 'spree_api')
+          @core_filter_tables = merged.dig('components', FILTER_TABLES).to_h.keys.to_set
 
           extension_paths.each do |engine, path|
             merge!(merged, read(path), engine)
@@ -260,6 +263,12 @@ module Spree
 
             existing = components[section] ||= {}
             definitions.each do |name, definition|
+              # An extension's document carries the filter tables of the core
+              # records its filters reach, as the extension's own app filters
+              # them, so its SDK types are complete. Another gem there may
+              # change one (an extra scope); core's definition stands.
+              next if section == FILTER_TABLES && @core_filter_tables.include?(name)
+
               if existing.key?(name) && existing[name] != definition
                 conflict("the #{name} #{section.singularize} is defined differently by #{engine} and an earlier document")
                 next
