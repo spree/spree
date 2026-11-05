@@ -147,7 +147,7 @@ describe('spree sdk generate', () => {
     expect(client).toContain(
       'get: (params?: { expand?: string[] }, options?: RequestOptions): Promise<QuoteSettings> =>',
     )
-    expect(client).toContain('client.extend(quoteSettings).extend(quotes)')
+    expect(client).toContain('client.extend(quotes).extend(quoteSettings)')
   })
 
   it('writes the request and filter types beside the client', async () => {
@@ -245,7 +245,155 @@ describe('spree sdk generate', () => {
     writeFileSync('ext/openapi/admin.yaml', stringify(clash))
 
     expect(() => generate(join(dir, 'ext'), out())).toThrow(
-      /would both be quotes.send; give one an operationId/,
+      /would both be quotes.send; name one with x-spree-sdk-method/,
+    )
+  })
+
+  it('keeps an action in its resource namespace when the resource itself is not documented', () => {
+    const actions = {
+      paths: {
+        '/api/v3/admin/quotes/{id}/send': adminSpec.paths['/api/v3/admin/quotes/{id}/send'],
+      },
+      components: adminSpec.components,
+    }
+    writeFileSync('ext/openapi/admin.yaml', stringify(actions))
+
+    generate(join(dir, 'ext'), out())
+
+    const client = read('admin/client.ts')
+    expect(client).toContain("export const quotes = defineAdminExtension('quotes'")
+    expect(client).toContain(
+      'send: (id: string, params: SendQuoteParams, options?: RequestOptions): Promise<Quote>',
+    )
+  })
+
+  it('refuses a namespace that is not an identifier, and merges spellings of one', () => {
+    const spelled = structuredClone(adminSpec) as typeof adminSpec & {
+      paths: Record<string, unknown>
+    }
+    spelled.paths['/api/v3/admin/quote_notes'] = { post: { summary: 'Add a note' } }
+    spelled.paths['/api/v3/admin/quote_notes/{id}'] = {
+      delete: { summary: 'Remove a note', 'x-spree-sdk-namespace': 'quoteNotes' },
+    }
+    writeFileSync('ext/openapi/admin.yaml', stringify(spelled))
+
+    generate(join(dir, 'ext'), out())
+    expect(read('admin/client.ts').match(/export const quoteNotes =/g)).toHaveLength(1)
+
+    spelled.paths['/api/v3/admin/quote_notes'] = {
+      post: { summary: 'Add a note', 'x-spree-sdk-namespace': 'default' },
+    }
+    writeFileSync('ext/openapi/admin.yaml', stringify(spelled))
+    expect(() => generate(join(dir, 'ext'), out())).toThrow(
+      /namespace default, which is not an identifier/,
+    )
+  })
+
+  it('names a method and its namespace apart from the operationId', () => {
+    const named = structuredClone(adminSpec) as typeof adminSpec & {
+      paths: Record<string, unknown>
+    }
+    named.paths['/api/v3/admin/quotes/{id}/attachments/{attachment_id}'] = {
+      delete: {
+        summary: 'Remove a file',
+        operationId: 'quotes_remove_file',
+        'x-spree-sdk-method': 'remove_attachment',
+      },
+    }
+    named.paths['/api/v3/admin/orders/{order_id}/quote_files'] = {
+      post: {
+        summary: 'Presign a file',
+        'x-spree-sdk-method': 'presign_file',
+        'x-spree-sdk-namespace': 'quotes',
+      },
+    }
+    writeFileSync('ext/openapi/admin.yaml', stringify(named))
+
+    generate(join(dir, 'ext'), out())
+
+    const client = read('admin/client.ts')
+    expect(client).toContain('removeAttachment: (id: string, attachmentId: string')
+    expect(client).not.toContain('quotesRemoveFile')
+    expect(client).toContain('presignFile: (orderId: string, options?: RequestOptions)')
+    expect(client).not.toContain("defineAdminExtension('quoteFiles'")
+  })
+
+  it('types a response declared inline from its schema', () => {
+    const inline = structuredClone(adminSpec) as typeof adminSpec & {
+      paths: Record<string, unknown>
+    }
+    inline.paths['/api/v3/admin/quotes/statuses'] = {
+      get: {
+        summary: 'List quote statuses',
+        responses: {
+          '200': {
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['data'],
+                  properties: {
+                    data: {
+                      type: 'array',
+                      items: {
+                        type: 'object',
+                        required: ['value', 'count'],
+                        properties: { value: { type: 'string' }, count: { type: 'integer' } },
+                      },
+                    },
+                    latest: { $ref: '#/components/schemas/Quote' },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    }
+    writeFileSync('ext/openapi/admin.yaml', stringify(inline))
+
+    generate(join(dir, 'ext'), out())
+
+    const client = read('admin/client.ts')
+    expect(client).toContain('export type QuotesStatusesResponse = {')
+    expect(client).toContain('  data: {\n    value: string\n    count: number\n  }[]')
+    expect(client).toContain('  latest?: Quote')
+    expect(client).toContain(
+      'statuses: (params?: { expand?: string[] }, options?: RequestOptions): Promise<QuotesStatusesResponse> =>',
+    )
+  })
+
+  it('does not wrap an inline list response in a page, and refuses two inline types of one name', () => {
+    const inline = structuredClone(adminSpec) as typeof adminSpec & {
+      paths: Record<string, Record<string, Record<string, unknown>>>
+    }
+    const page = {
+      type: 'object',
+      properties: { data: { type: 'array', items: { $ref: '#/components/schemas/Quote' } } },
+    }
+    inline.paths['/api/v3/admin/quotes'].get.responses = {
+      '200': { content: { 'application/json': { schema: page } } },
+    }
+    writeFileSync('ext/openapi/admin.yaml', stringify(inline))
+
+    generate(join(dir, 'ext'), out())
+    const client = read('admin/client.ts')
+    expect(client).toContain('Promise<QuotesListResponse>')
+    expect(client).not.toContain('PaginatedResponse')
+
+    // `quotes.listGet` and `quotesList.get` would both declare QuotesListGetResponse.
+    const inlineRead = {
+      responses: { '200': { content: { 'application/json': { schema: page } } } },
+    }
+    inline.paths['/api/v3/admin/quotes/list_get'] = { get: { summary: 'One', ...inlineRead } }
+    inline.paths['/api/v3/admin/quote_settings'].get = {
+      summary: 'Two',
+      'x-spree-sdk-namespace': 'quotes_list',
+      ...inlineRead,
+    }
+    writeFileSync('ext/openapi/admin.yaml', stringify(inline))
+    expect(() => generate(join(dir, 'ext'), out())).toThrow(
+      /would declare the response type QuotesListGetResponse, which GET .* declares too/,
     )
   })
 

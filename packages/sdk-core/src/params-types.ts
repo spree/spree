@@ -9,7 +9,7 @@ const HEADER =
 export interface ParamsSchema {
   type?: string
   format?: string
-  enum?: string[]
+  enum?: (string | number | boolean)[]
   nullable?: boolean
   deprecated?: boolean
   description?: string
@@ -19,6 +19,7 @@ export interface ParamsSchema {
   items?: ParamsSchema
   allOf?: ParamsSchema[]
   anyOf?: ParamsSchema[]
+  oneOf?: ParamsSchema[]
   $ref?: string
 }
 
@@ -110,25 +111,48 @@ function propertyDoc(property: ParamsSchema): string | undefined {
 
 const literal = (value: string) => `'${value.replaceAll('\\', '\\\\').replaceAll("'", "\\'")}'`
 
-function valueType(schema: ParamsSchema, indent: string): string {
+type RefResolver = (ref: string) => string
+
+function valueType(schema: ParamsSchema, indent: string, ref: RefResolver = refName): string {
   let type: string
   if (schema.$ref) {
-    type = refName(schema.$ref)
+    type = ref(schema.$ref)
   } else if (schema.allOf) {
-    type = schema.allOf.map((part) => valueType(part, indent)).join(' & ')
+    // A union part is parenthesized, or `&` would bind to its last member only.
+    type = schema.allOf
+      .map((part) => {
+        const partType = valueType(part, indent, ref)
+        return partType.includes(' | ') && !partType.startsWith('{') ? `(${partType})` : partType
+      })
+      .join(' & ')
   } else if (schema.anyOf) {
     // An open list: the built-in values, plus any other string an extension
     // adds, which `(string & {})` accepts without swallowing autocompletion.
     type = schema.anyOf
-      .map((part) => (part.enum ? valueType(part, indent) : `(${valueType(part, indent)} & {})`))
+      .map((part) => {
+        if (part.enum) return valueType(part, indent, ref)
+        // `null` stays outside `& {}`, which would reduce it to `never`.
+        const open = `(${valueType({ ...part, nullable: false }, indent, ref)} & {})`
+        return part.nullable ? `${open} | null` : open
+      })
       .join(' | ')
+  } else if (schema.oneOf) {
+    type = schema.oneOf.map((part) => valueType(part, indent, ref)).join(' | ')
   } else if (schema.enum) {
-    type = schema.enum.map(literal).join(' | ')
+    type = schema.enum
+      .map((value) => (typeof value === 'string' ? literal(value) : String(value)))
+      .join(' | ')
   } else if (schema.type === 'array') {
-    const item = valueType(schema.items ?? {}, indent)
+    const item = valueType(schema.items ?? {}, indent, ref)
     type = /[|& ]/.test(item) && !item.startsWith('{') ? `Array<${item}>` : `${item}[]`
-  } else if (schema.type === 'object') {
-    type = schema.properties ? objectType(schema, indent) : 'Record<string, unknown>'
+  } else if (schema.type === 'object' || schema.properties) {
+    if (schema.properties) {
+      type = objectType(schema, indent, ref)
+    } else if (typeof schema.additionalProperties === 'object') {
+      type = `Record<string, ${valueType(schema.additionalProperties, indent, ref)}>`
+    } else {
+      type = 'Record<string, unknown>'
+    }
   } else if (schema.type === 'string' || schema.type === 'boolean') {
     type = schema.type
   } else if (schema.type === 'integer' || schema.type === 'number') {
@@ -139,14 +163,14 @@ function valueType(schema: ParamsSchema, indent: string): string {
   return schema.nullable && type !== 'unknown' ? `${type} | null` : type
 }
 
-function objectType(schema: ParamsSchema, indent: string): string {
+function objectType(schema: ParamsSchema, indent: string, ref: RefResolver = refName): string {
   const inner = `${indent}  `
   const required = new Set(schema.required ?? [])
   const lines = ['{']
   for (const [key, property] of Object.entries(schema.properties ?? {})) {
     lines.push(...docComment(propertyDoc(property), inner))
     lines.push(
-      `${inner}${quoteKey(key)}${required.has(key) ? '' : '?'}: ${valueType(property, inner)}`,
+      `${inner}${quoteKey(key)}${required.has(key) ? '' : '?'}: ${valueType(property, inner, ref)}`,
     )
   }
   lines.push(`${indent}}`)
@@ -159,6 +183,15 @@ function references(schema: ParamsSchema, found = new Set<string>()): Set<string
   for (const property of Object.values(schema.properties ?? {})) references(property, found)
   if (schema.items) references(schema.items, found)
   return found
+}
+
+/**
+ * A schema an operation declares inline (a response that is not one of the
+ * package's records), as a TypeScript type. `ref` names the type a `$ref`
+ * points at.
+ */
+export function schemaType(schema: ParamsSchema, ref: RefResolver): string {
+  return valueType(schema, '', ref)
 }
 
 /**
