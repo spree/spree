@@ -25,34 +25,36 @@ test.describe('getting started', () => {
     })
   })
 
-  test('sidebar checklist goes straight to each step and minimizes', async ({ page }) => {
+  test('sidebar checklist opens its steps in a popover and goes straight to each', async ({
+    page,
+  }) => {
     const creds = await login(page)
     await page.goto(`/${creds.store_id}/orders`)
 
+    // One row in the sidebar: the steps never push the navigation down.
     const checklist = page.getByRole('navigation', { name: /^getting started$/i })
-    const header = checklist.getByRole('button', { name: /^getting started/i })
-    await expect(header).toHaveAttribute('aria-expanded', 'true', { timeout: 15_000 })
+    const trigger = checklist.getByRole('button', { name: /^getting started \d+\/\d+$/i })
+    await expect(trigger).toBeVisible({ timeout: 15_000 })
+    await expect(checklist.getByRole('listitem')).toHaveCount(0)
 
     // Steps done in place open their dialog over the current page.
-    await checklist.getByRole('button', { name: /set up storefront/i }).click()
+    await trigger.click()
+    const steps = page.getByRole('dialog', { name: /^getting started$/i })
+    await steps.getByRole('button', { name: /set up storefront/i }).click()
     await expect(page.getByRole('heading', { name: /connect your storefront/i })).toBeVisible()
     await page.keyboard.press('Escape')
     await expect(page.getByRole('heading', { name: /connect your storefront/i })).toBeHidden()
 
-    // Minimizing survives a reload, and the header brings the steps back.
-    await header.click()
-    await expect(checklist.getByRole('listitem')).toHaveCount(0)
-    await page.reload()
-    await expect(header).toHaveAttribute('aria-expanded', 'false', { timeout: 15_000 })
-    await header.click()
-
-    // Other steps link to the page where they are done.
-    await checklist.getByRole('link', { name: /set up taxes collection/i }).click()
+    // Other steps link to the page where they are done, closing the popover.
+    await trigger.click()
+    await steps.getByRole('link', { name: /set up taxes collection/i }).click()
     await expect(page).toHaveURL(new RegExp(`/${creds.store_id}/settings/taxes/rates(\\?|$)`))
+    await expect(steps).toBeHidden()
     await expect(page.getByRole('button', { name: /add tax rate/i })).toBeVisible({
       timeout: 15_000,
     })
   })
+
   test('sidebar checklist is gone once every step is done', async ({ page }) => {
     // Finishing every step for real would change the shared store other specs
     // read, so the store payload reports them done instead.
