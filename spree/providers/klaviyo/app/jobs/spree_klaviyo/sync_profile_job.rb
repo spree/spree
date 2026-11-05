@@ -7,7 +7,7 @@ module SpreeKlaviyo
       use_database_ids = integration.preferred_use_database_ids_as_external_ids
       profile =
         if record.is_a?(Spree.customer_class)
-          # Checked when the job runs: an erasure's own customer.updated, or an
+          # Checked when the job runs: an erasure's own user.updated, or an
           # older one still queued, must not write the tombstone over the profile.
           return if record.anonymized?
 

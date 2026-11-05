@@ -48,6 +48,14 @@ module Spree
       # The SDK's default is no timeout at all.
       TIMEOUT_SECONDS = 10
 
+      # The store's active Klaviyo integration, if it has one.
+      #
+      # @param store [Spree::Store, nil]
+      # @return [Spree::Integrations::Klaviyo, nil]
+      def self.active_for(store)
+        store&.active_integrations&.find { |integration| integration.is_a?(self) }
+      end
+
       # @return [Array<String>]
       def replaced_customer_emails
         REPLACED_EMAILS_BY_SWITCH.each_with_object([NEWSLETTER_CONFIRMATION]) do |(switch, keys), emails|
