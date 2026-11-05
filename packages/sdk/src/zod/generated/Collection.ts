@@ -16,6 +16,8 @@ export const CollectionSchema = z.object({
   description_html: z.string(),
   image_url: z.string().nullable(),
   square_image_url: z.string().nullable(),
+  image_alt: z.string().nullable(),
+  square_image_alt: z.string().nullable(),
   custom_fields: z.array(CustomFieldSchema).optional(),
 });
 
