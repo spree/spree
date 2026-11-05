@@ -10,6 +10,10 @@ module SpreeKlaviyo
   # A report carries the status and Klaviyo's error codes and titles, never
   # the SDK's message, which appends the response headers and body.
   class BaseJob < Spree::BaseJob
+    # The arguments carry customer email addresses, which ActiveJob would
+    # otherwise log on every enqueue and perform.
+    self.log_arguments = false
+
     queue_as { SpreeKlaviyo.queue }
 
     # Raised into Rails.error in place of the SDK's error.
