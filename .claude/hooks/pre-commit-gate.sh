@@ -4,7 +4,7 @@
 # enforces when an actual `git commit` or `git push` invocation is detected;
 # all other commands pass through.
 #
-# When triggered, runs Biome (formatting + lint) then turbo typecheck on
+# When triggered, runs RuboCop and Biome (formatting + lint) then turbo typecheck on
 # changed files vs main. Exits 2 to block the Bash tool call when either
 # fails, so the agent gets the diagnostic back and can fix before CI rejects.
 #
@@ -174,7 +174,24 @@ fi
 
 cd "$own_root" || { echo "Pre-commit gate could not cd to $own_root" >&2; exit 2; }
 
-# 1. Biome — fast (~1s), covers formatting + lint on changed files only.
+# 1. RuboCop on the Ruby files this branch changed (exits 0 when there are none).
+rubocop_out=$(scripts/lint/rubocop 2>&1)
+rubocop_exit=$?
+
+if [ $rubocop_exit -eq 3 ]; then
+  echo "$rubocop_out" >&2
+  echo "Install it, then retry: changed Ruby files must pass RuboCop before a commit or push." >&2
+  exit 2
+elif [ $rubocop_exit -ne 0 ]; then
+  echo "RuboCop failed on changed Ruby files. CI will reject this commit." >&2
+  echo "" >&2
+  echo "$rubocop_out" >&2
+  echo "" >&2
+  echo "Fix: run 'scripts/lint/rubocop --fix' to apply safe fixes, then resolve the rest by hand. Don't add files to spree/.rubocop_todo.yml." >&2
+  exit 2
+fi
+
+# 2. Biome — fast (~1s), covers formatting + lint on changed files only.
 biome_out=$(pnpm exec biome check --changed --since=main \
   --no-errors-on-unmatched --files-ignore-unknown=true \
   --reporter=summary 2>&1)
@@ -189,7 +206,7 @@ if [ $biome_exit -ne 0 ]; then
   exit 2
 fi
 
-# 2. Turbo typecheck — slower (1-9s depending on cache), runs tsc --noEmit
+# 3. Turbo typecheck — slower (1-9s depending on cache), runs tsc --noEmit
 # across the affected package graph. No --changed flag: turbo invalidates cache
 # based on file-content hashes, so untouched packages are instant.
 tsc_out=$(pnpm turbo typecheck 2>&1)

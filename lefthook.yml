@@ -1,5 +1,11 @@
 pre-commit:
   commands:
+    rubocop:
+      # The script picks the Ruby files. Without a spree/ bundle it only warns;
+      # Claude's pre-commit gate still blocks.
+      glob: "spree/**"
+      stage_fixed: true
+      run: scripts/lint/rubocop --fix {staged_files} || [ $? -eq 3 ]
     biome:
       glob: "**/*.{ts,tsx,js,jsx,mjs,cjs,mts,cts,json,jsonc}"
       stage_fixed: true
@@ -63,6 +69,9 @@ pre-commit:
 
 pre-push:
   commands:
+    rubocop:
+      # Whole branch diff vs main, like biome-ci below.
+      run: scripts/lint/rubocop || [ $? -eq 3 ]
     biome-ci:
       # No glob filter: biome ci scopes itself via --changed --since=main to
       # validate the whole branch diff vs main. A glob would skip the check

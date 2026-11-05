@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+# RuboCop for the Spree gems, configured by spree/.rubocop.yml.
+#
+#   scripts/lint/rubocop                 Ruby files this branch changed against main,
+#                                        committed or not
+#   scripts/lint/rubocop FILE...         only these files (others are skipped)
+#   scripts/lint/rubocop --fix [FILE...] same, applying safe autocorrections first
+#
+# Exits 0 when there is nothing to check, 1 on offenses, 3 when RuboCop is not
+# installed for spree/.
+set -euo pipefail
+
+# Hooks run under parents whose PATH may predate the version manager's setup.
+if command -v mise >/dev/null; then
+  eval "$(mise activate bash --shims)"
+fi
+
+root="$(git -C "$(dirname "${BASH_SOURCE[0]}")" rev-parse --show-toplevel)"
+cd "$root"
+
+fix=()
+if [ "${1:-}" = "--fix" ]; then
+  fix=(--autocorrect)
+  shift
+fi
+
+if [ $# -gt 0 ]; then
+  candidates=$(printf '%s\n' "$@")
+else
+  base=$(git merge-base HEAD origin/main 2>/dev/null || git merge-base HEAD main 2>/dev/null || true)
+  candidates=$(
+    { [ -n "$base" ] && git diff --name-only --diff-filter=d "$base" HEAD
+      git diff --name-only --diff-filter=d HEAD
+      git ls-files --others --exclude-standard; } 2>/dev/null
+  )
+fi
+
+files=()
+while IFS= read -r file; do
+  [ -n "$file" ] || continue
+  file="${file#"$root"/}"
+  case "$file" in
+    spree/*.rb | spree/*.rake | spree/*.gemspec | spree/*Gemfile | spree/*Rakefile) ;;
+    *) continue ;;
+  esac
+  [ -f "$file" ] && files+=("${file#spree/}")
+done < <(printf '%s\n' "$candidates" | sort -u)
+
+[ ${#files[@]} -gt 0 ] || exit 0
+
+cd spree
+# A PATH can reach ruby through a symlink yet miss the directory where gems put
+# their executables, which `bundle exec` needs.
+PATH="$(ruby -e 'print Gem.bindir' 2>/dev/null):$PATH"
+if ! bundle exec rubocop --version >/dev/null 2>&1; then
+  echo "RuboCop is not installed for spree/. Run: (cd spree && bundle install)" >&2
+  exit 3
+fi
+
+exec bundle exec rubocop --force-exclusion --format simple "${fix[@]}" "${files[@]}"

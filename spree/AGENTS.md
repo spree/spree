@@ -2,6 +2,11 @@
 
 Rails 8.1 engines, everything namespaced under `Spree::`. Follow Rails conventions and the Rails Security Guide; below is only what Spree does differently.
 
+## Style
+
+- Ruby passes RuboCop with rubocop-rails (`spree/.rubocop.yml`): single quotes, trailing dots on multi-line chains, nested `module` blocks, lines up to 150 characters. Hooks fix what they can after each edit and block a commit or push that still has offenses. Check by hand with `scripts/lint/rubocop [--fix] [files]`.
+- Never add entries to `spree/.rubocop_todo.yml` or `rubocop:disable` comments to get past the check. Fix the code. When you touch a file listed in the todo file, fixing its offenses and removing it from the list is welcome.
+
 ## Architecture
 
 - Logic lives in models, concerns and workflows — not controllers or serializers. Add a service only when a model or concern won't do.
