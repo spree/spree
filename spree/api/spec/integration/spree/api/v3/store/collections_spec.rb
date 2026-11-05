@@ -10,7 +10,7 @@ RSpec.describe 'Collections API', type: :request, swagger_doc: 'api-reference/st
   let!(:other_store) { create(:store) }
   let!(:other_collection) { create(:collection, store: other_store) }
 
-  before { Spree::ProductCollection.create!(collection: collection, product: product, position: 1) }
+  before { Spree::ProductCollection.create!(collection: collection, product: product, position: 1, source: 'manual') }
 
   path '/api/v3/store/collections' do
     get 'List collections' do

@@ -12,6 +12,7 @@ module Spree
             description: "Values for the rule kind's settings schema, from `GET /promotion_rules/types`."
           attribute :product_ids, :array, of: :id, permit: false, description: 'For the `product` rule.'
           attribute :category_ids, :array, of: :id, permit: false, description: 'For the `category` rule.'
+          attribute :collection_ids, :array, of: :id, permit: false, description: 'For the `collection` rule.'
           attribute :customer_ids, :array, of: :id,
             permit: false,
             description: 'For the `user` rule: the customers who qualify.'

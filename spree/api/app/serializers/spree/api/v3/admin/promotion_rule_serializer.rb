@@ -8,11 +8,14 @@ module Spree
         # admin promotion editor. Same shape as PromotionAction so the
         # frontend renders both with the same generic component.
         class PromotionRuleSerializer < BaseSerializer
-          typelize type: [:string, comment: 'Rule type. Built-in: currency, country, channel, market, item_total, product, customer, customer_group, first_order, customer_logged_in, one_use_per_user, category, option_value. Extensions may register more.'],
+          typelize type: [:string, comment: 'Rule type. Built-in: currency, country, channel, market, item_total, product, customer, ' \
+                                            'customer_group, first_order, customer_logged_in, one_use_per_user, category, collection, ' \
+                                            'option_value. Extensions may register more.'],
                    promotion_id: :string,
                    preferences: 'Record<string, unknown>',
                    product_ids: 'Array<string> | null',
                    category_ids: 'Array<string> | null',
+                   collection_ids: 'Array<string> | null',
                    customer_ids: 'Array<string> | null',
                    option_value_ids: 'Array<string> | null'
 
@@ -40,6 +43,10 @@ module Spree
             rule.categories.map(&:prefixed_id) if rule.respond_to?(:categories)
           end
 
+          attribute :collection_ids do |rule|
+            rule.collections.map(&:prefixed_id) if rule.respond_to?(:collections)
+          end
+
           attribute :customer_ids do |rule|
             rule.users.map(&:prefixed_id) if rule.respond_to?(:users)
           end
@@ -60,6 +67,10 @@ module Spree
           many :categories,
                resource: proc { Spree.api.admin_category_serializer },
                if: proc { |rule| rule.respond_to?(:categories) }
+
+          many :collections,
+               resource: proc { Spree.api.admin_collection_serializer },
+               if: proc { |rule| rule.respond_to?(:collections) }
 
           # Only for a caller who may read customers: a promotion is readable
           # under `read_promotions`, and a customer rule would otherwise carry

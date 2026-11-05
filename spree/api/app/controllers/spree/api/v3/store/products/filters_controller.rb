@@ -83,9 +83,13 @@ module Spree
               @category ||= category_id.present? ? current_store.categories.find_by_param(category_id) : nil
             end
 
+            def published_collections
+              current_store.collections.published_on(Spree::Current.channel)
+            end
+
             def collection
               collection_id = params[:collection_id]
-              @collection ||= collection_id.present? ? current_store.collections.find_by_param(collection_id) : nil
+              @collection ||= collection_id.present? ? published_collections.find_by_param(collection_id) : nil
             end
           end
         end
