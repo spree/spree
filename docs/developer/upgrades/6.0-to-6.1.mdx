@@ -1,0 +1,65 @@
+---
+title: Upgrading to Spree 6.1
+description: Guide to upgrading a Spree 6.0 application to Spree 6.1
+---
+
+<Info>
+  Before proceeding to upgrade, please ensure you're at [Spree 6.0](/developer/upgrades/5.6-to-6.0).
+</Info>
+
+## How to upgrade
+
+<Tabs>
+  <Tab title="Spree CLI">
+    ```bash
+    spree upgrade
+    ```
+  </Tab>
+  <Tab title="Without CLI">
+    ```bash
+    bundle update
+    bundle exec rake spree:install:migrations && bin/rails db:migrate
+    bundle exec rake spree:upgrade
+    ```
+  </Tab>
+</Tabs>
+
+`spree:upgrade` runs the data steps below in order. Each one is safe to run again.
+
+## Data steps
+
+| Step | What it does |
+|---|---|
+| `spree:collections:backfill_publications` | Publishes every collection that has no publication on every active channel of its store, so collections stay visible once the Store API filters on publications. |
+| `spree:collections:backfill_membership_sources` | Records where each existing collection membership came from: rule-matched on automatic collections, hand-picked on the others. |
+
+## Behavior changes
+
+### Collections are published per channel
+
+The Store API serves a collection only on channels where it is published. After the backfill every existing collection is published on every active channel, so shoppers see no change.
+
+New collections created through the Admin API, the dashboard or `Spree.collection_create_workflow` are published on every active channel unless the request sends `publications`. Code that creates collections with `Spree::Collection.create` directly must publish them itself, or they are invisible on every storefront:
+
+```ruby server/app/services/my_app/collection_importer.rb
+collection = store.collections.create!(name: 'Summer')
+store.channels.active.add_collections(collection.id)
+```
+
+A channel created after the upgrade starts with no collections. Publish them from the channel with `Channel#add_collections`.
+
+### Collections mix rules, hand-picked products and exclusions
+
+A collection with rules now accepts hand-picked products too, and any collection can exclude products. Adding products to a rule-based collection used to return a 422; it now succeeds.
+
+- `automatic` is ignored on write and deprecated. A collection is automatic while it has rules; send `rules: []` to remove them.
+- Rows of `spree_product_collections` carry a `source` (`manual` or `rule`). Code that inserts memberships directly must set it. The column becomes required in Spree 6.2.
+- A product's `collection_ids` in the Admin API lists and sets the collections it is hand-picked into. Memberships created by rules are kept when you write it.
+
+### Old collection and category permalinks keep working
+
+A request for a renamed collection or category by its old permalink now returns the record instead of a 404. Compare the returned `permalink` with the requested one to redirect.
+
+### Sale rules read their own currency
+
+`sale` collection rules compare prices in the rule's `currency`, or the store's default currency when it is empty. Existing rules have no currency, so they keep using the default currency.
