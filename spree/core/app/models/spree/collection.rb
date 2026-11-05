@@ -107,6 +107,7 @@ module Spree
     #
     scope :manual, -> { where.not(automatic: true) }
     scope :automatic, -> { where(automatic: true) }
+    scope :with_rule_types, ->(rule_types) { where(id: Spree::CollectionRule.where(type: rule_types.map(&:to_s)).select(:collection_id)) }
     # Collections live on the channel now: a publication exists and its window is open.
     scope :published_on, lambda { |channel|
       where(id: Spree::CollectionPublication.published.where(channel_id: channel&.id).select(:collection_id))

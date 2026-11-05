@@ -10,7 +10,9 @@ module Spree
 
       preference :custom_field_definition_id, :string
 
-      validate :definition_must_be_a_collection_condition, if: :collection
+      # Checked when the definition is chosen: a field later taken out of
+      # collection rules leaves the rule matching nothing, not unsaveable.
+      validate :definition_must_be_a_collection_condition, if: -> { collection && (new_record? || will_save_change_to_preferences?) }
       validate :match_policy_must_suit_field_type, if: :definition
 
       def self.match_policies

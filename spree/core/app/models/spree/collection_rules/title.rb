@@ -9,7 +9,9 @@ module Spree
 
       def apply(scope)
         pattern = like_pattern
-        matching = Mobility.with_locale(store.default_locale) { Spree::Product.i18n { name.matches(pattern, '\\') }.pluck(Spree::Product.arel_table[:id]) }
+        matching = Mobility.with_locale(store.default_locale) do
+          Spree::Product.where(store_id: store.id).i18n { name.matches(pattern, '\\') }.pluck(Spree::Product.arel_table[:id])
+        end
         match(scope, Spree::Product.where(id: matching))
       end
     end

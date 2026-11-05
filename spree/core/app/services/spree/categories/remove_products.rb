@@ -13,7 +13,7 @@ module Spree
         return if categories.blank? || products.blank?
 
         remove_memberships(categories, products)
-        Spree::Product.bulk_auto_match_collections(categories.first.store, products.pluck(:id))
+        Spree::Product.bulk_auto_match_collections(categories.first.store, products.pluck(:id), rule_types: [Spree::CollectionRules::Category])
         success(true)
       end
 

@@ -44,9 +44,10 @@ module Spree
           def limit_collection_predicates(filters)
             return unless filters.keys.any? { |key| key.to_s.start_with?('collections_') }
 
-            visible_ids = storefront_collections.ids
-            requested = filters.delete('collections_id_eq') || filters['collections_id_in']
-            ids = requested.nil? ? visible_ids : Array(requested).map(&:to_i) & visible_ids
+            ids = storefront_collections.ids
+            requested_eq = filters.delete('collections_id_eq')
+            ids &= Array(requested_eq).map(&:to_i) unless requested_eq.nil?
+            ids &= Array(filters['collections_id_in']).map(&:to_i) unless filters['collections_id_in'].nil?
             filters['collections_id_in'] = ids.presence || [0]
           end
 
