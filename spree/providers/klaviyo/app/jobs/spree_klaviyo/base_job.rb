@@ -47,15 +47,19 @@ module SpreeKlaviyo
     end
 
     def handle_rate_limit(error)
-      if rate_limit_deadline_passed?
+      wait = retry_after(error)
+
+      if rate_limit_deadline_passed?(wait)
         report(error)
       else
-        retry_job(wait: retry_after(error))
+        retry_job(wait: wait)
       end
     end
 
     # No deadline by default; an unsubscribe has one.
-    def rate_limit_deadline_passed?
+    #
+    # @param _wait [Numeric] seconds until the retry would run
+    def rate_limit_deadline_passed?(_wait)
       false
     end
 

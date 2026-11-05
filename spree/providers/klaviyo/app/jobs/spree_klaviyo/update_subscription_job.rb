@@ -24,15 +24,19 @@ module SpreeKlaviyo
     # @param subscribed [Boolean] true to subscribe, false to unsubscribe
     def perform(integration, email, subscribed:)
       return if tombstone?(email)
+      # A sign-up whose row is gone was opted out or erased while this waited.
+      return if subscribed && !Spree::NewsletterSubscriber.exists?(store_id: integration.store_id, email: email)
 
       subscribed ? integration.subscribe(email) : integration.unsubscribe(email)
     end
 
     private
 
-    def rate_limit_deadline_passed?
+    # Judged by when the retry would run, so a long Retry-After cannot carry
+    # the unsubscribe past the deletion.
+    def rate_limit_deadline_passed?(wait)
       arguments.last[:subscribed] == false && first_enqueued_at.present? &&
-        Time.current - first_enqueued_at > UNSUBSCRIBE_DEADLINE
+        Time.current + wait - first_enqueued_at > UNSUBSCRIBE_DEADLINE
     end
   end
 end

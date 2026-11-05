@@ -56,6 +56,12 @@ RSpec.describe SpreeKlaviyo::Profile do
       )
     end
 
+    it "takes the customer's own email when the order carries another" do
+      order.update_column(:email, 'someone.else@example.com')
+
+      expect(attributes(described_class.from_order(order))[:email]).to eq(customer.email)
+    end
+
     it 'identifies a guest by email alone' do
       guest_order = create(:completed_order_with_totals, store: store, customer: nil, email: 'guest@example.com')
 

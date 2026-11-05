@@ -34,7 +34,7 @@ module SpreeKlaviyo
       customer = order.customer
 
       new(
-        email: order.email,
+        email: customer&.email.presence || order.email,
         first_name: address&.first_name.presence || customer&.first_name,
         last_name: address&.last_name.presence || customer&.last_name,
         external_id: customer && external_id_for(customer, use_database_ids),
