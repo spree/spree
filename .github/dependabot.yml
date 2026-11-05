@@ -61,6 +61,9 @@ updates:
     # Dependabot bump would change package.json but never the installed version.
     ignore:
       - dependency-name: "@base-ui/react"
+      # Also pinned as one family in `overrides:`, so a bump here would leave the
+      # manifest naming a version that is never installed. Bump both together.
+      - dependency-name: "@tiptap/*"
     groups:
       typescript-packages:
         patterns:
