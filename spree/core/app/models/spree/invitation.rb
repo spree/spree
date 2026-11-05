@@ -120,9 +120,13 @@ module Spree
     # the way the account's email uniqueness is, case-insensitively, so an
     # address typed in another case still finds the one account it can belong
     # to. Resolved by record rather than by comparing strings in Ruby, whose
-    # case folding is wider than the database's.
+    # case folding is wider than the database's. The exact match goes through
+    # the model first, so an app that encrypts email still finds the account.
     def invitee_account
-      Spree.admin_user_class.where('LOWER(email) = LOWER(?)', email).first
+      return if email.blank?
+
+      Spree.admin_user_class.find_by(email: email) ||
+        Spree.admin_user_class.where('LOWER(email) = LOWER(?)', email).first
     end
 
     private

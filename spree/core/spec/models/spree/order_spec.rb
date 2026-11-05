@@ -99,6 +99,26 @@ describe Spree::Order, type: :model do
         expect(described_class.search('mary.moe@')).to eq([])
       end
 
+      # An app may encrypt the column, deterministically so it can still be
+      # looked up. SQL then only ever sees ciphertext.
+      context 'when the app encrypts email' do
+        let(:order_class) do
+          stub_const('EncryptedEmailOrder', Class.new(described_class) do
+            self.table_name = Spree::Order.table_name
+            encrypts :email, deterministic: true, downcase: true
+          end)
+        end
+
+        before { order_class.find(order_1.id).update_columns(email: 'don.roe@example.com') }
+
+        it 'returns orders based on an email, whatever the case' do
+          stored = order_class.connection.select_value(order_class.unscoped.where(id: order_1.id).select(:email).to_sql)
+          expect(stored).not_to include('example.com')
+
+          expect(order_class.search('Don.Roe@Example.com').ids).to eq([order_1.id])
+        end
+      end
+
       it 'returns orders based on the first name' do
         expect(described_class.search('don')).to eq([order_1])
         expect(described_class.search('jan')).to eq([order_2])
