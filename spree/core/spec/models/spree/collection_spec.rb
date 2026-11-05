@@ -56,6 +56,22 @@ RSpec.describe Spree::Collection, type: :model do
     end
   end
 
+  describe '#rules=' do
+    let(:collection) { create(:automatic_collection, store: store) }
+    let(:category) { create(:category, store: store) }
+
+    it 'replaces a rule whose type changes, so the new type reads its own value' do
+      rule = create(:tag_collection_rule, collection: collection, value: 'sale', match_policy: 'is_equal_to')
+
+      collection.update!(rules: [{ id: rule.prefixed_id, type: 'category', value: category.prefixed_id, match_policy: 'is_equal_to' }])
+
+      new_rule = collection.reload.rules.sole
+      expect(new_rule).to be_a(Spree::CollectionRules::Category)
+      expect(new_rule.value).to eq(category.id.to_s)
+      expect(Spree::CollectionRule.exists?(rule.id)).to be(false)
+    end
+  end
+
   describe '#publications=' do
     let(:collection) { create(:collection, :unpublished, store: store) }
     let!(:pos) { create(:channel, store: store, name: 'POS', code: 'pos') }

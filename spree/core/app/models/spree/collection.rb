@@ -289,13 +289,18 @@ module Spree
                         raise(unknown_row_type_error(Spree::CollectionRule, data[:type], "/rules/#{index}"))
         end
 
-        record = if rule_id.present?
-                   existing_by_id[Spree::PrefixedId.decode_prefixed_id(rule_id) || rule_id] ||
-                     raise(ActiveRecord::RecordNotFound.new("Couldn't find Spree::CollectionRule with param=#{rule_id}", 'Spree::CollectionRule'))
+        existing = if rule_id.present?
+                     existing_by_id[Spree::PrefixedId.decode_prefixed_id(rule_id) || rule_id] ||
+                       raise(ActiveRecord::RecordNotFound.new("Couldn't find Spree::CollectionRule with param=#{rule_id}", 'Spree::CollectionRule'))
+                   end
+
+        # A new type is a new rule: the subclass decodes and validates its own
+        # value, so the old record is replaced rather than retyped.
+        record = if existing && (data[:type].nil? || data[:type] == existing.type)
+                   existing.tap { |rule| rule.assign_attributes(data) }
                  else
-                   rules.build(data)
+                   rules.build(existing ? { type: existing.type }.merge(data) : data)
                  end
-        record.assign_attributes(data) if rule_id.present?
         retained_ids << record.id if record.persisted?
       end
 

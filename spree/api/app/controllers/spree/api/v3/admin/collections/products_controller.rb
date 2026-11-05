@@ -25,9 +25,11 @@ module Spree
             # Members the rules matched are hand-picked in place, so they stay
             # when the rules stop matching; the rest are added as usual.
             def create
-              Spree::ProductCollection.hand_pick(collection_ids: @parent_collection.id,
-                                                 product_ids: product_scope.where(id: decode_prefixed_ids(params[:product_ids])).select(:id))
-              super
+              ApplicationRecord.transaction do
+                Spree::ProductCollection.hand_pick(collection_ids: @parent_collection.id,
+                                                   product_ids: product_scope.where(id: decode_prefixed_ids(params[:product_ids])).select(:id))
+                super
+              end
             end
 
             # PATCH /api/v3/admin/collections/:collection_id/products/:id/reposition

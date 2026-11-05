@@ -5,6 +5,7 @@ module Spree
         class CollectionsController < ResourceController
           include Spree::Api::V3::HttpCaching
           include Spree::Api::V3::Store::PermalinkLookup
+          include Spree::Api::V3::Store::StorefrontCollections
 
           protected
 
@@ -19,7 +20,12 @@ module Spree
           # Only collections published on the request's channel, for list,
           # show and search alike: an unpublished collection is a 404.
           def scope
-            super.published_on(Spree::Current.channel).ordered
+            super.merge(storefront_collections).ordered
+          end
+
+          # The image alt text is read from each image's media placement.
+          def collection_includes
+            [{ media: :attachment_attachment }]
           end
 
           def find_resource

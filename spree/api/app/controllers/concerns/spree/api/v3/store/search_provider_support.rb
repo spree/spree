@@ -4,6 +4,7 @@ module Spree
       module Store
         module SearchProviderSupport
           extend ActiveSupport::Concern
+          include Spree::Api::V3::Store::StorefrontCollections
 
           # Matches `*_id_in`/`id_eq`/etc. and the bare `id_in`/`id_eq` on
           # the resource's primary key. Mirrors the regex on
@@ -39,7 +40,7 @@ module Spree
           # A collection not published on this channel filters to nothing,
           # as its own endpoints answer 404.
           def published_collection?(collection_id)
-            current_store.collections.published_on(Spree::Current.channel).find_by_param(collection_id).present?
+            storefront_collections.find_by_param(collection_id).present?
           end
 
           # A `q` sent as anything but a hash (`q=foo`) filters nothing.

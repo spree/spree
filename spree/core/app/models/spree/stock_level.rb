@@ -160,8 +160,10 @@ module Spree
     # @param value [Integer] signed change
     # @return [void]
     def adjust_allocated_count(value)
+      was_in_stock = in_stock?
       value.negative? ? decrement!(:allocated_count, value.abs) : increment!(:allocated_count, value)
       touch
+      variant&.product&.auto_match_collections(rule_types: [Spree::CollectionRules::InStock]) if was_in_stock != in_stock?
     end
 
     # Withdraws up to +units+ of promise. Only a promise that exists can be
