@@ -5,9 +5,10 @@ name: Dependabot dedupe
 # The Frontend workflow then fails `pnpm dedupe --check`. This job runs
 # `pnpm dedupe` on Dependabot's npm pull requests and pushes the result back.
 #
-# The push uses DEPENDABOT_PUSH_TOKEN (a Dependabot secret holding a GitHub App
-# or fine-grained token with contents: write on this repository), because a
-# push made with GITHUB_TOKEN does not trigger CI. Once this job has pushed,
+# The push uses DEPENDABOT_PUSH_TOKEN (a Dependabot secret holding a
+# fine-grained personal access token with contents: write on this repository),
+# because a push made with GITHUB_TOKEN does not trigger CI. A GitHub App
+# installation token does not work here: it expires after an hour. Once this job has pushed,
 # Dependabot stops rebasing the branch; comment `@dependabot recreate` to
 # rebuild it, and this job runs again.
 
