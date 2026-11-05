@@ -998,6 +998,44 @@
           "subtitle": "Sehen Sie, wer was in Ihrem Shop geändert hat und wann.",
           "title": "Änderungsprotokoll"
         },
+        "category_mapper": {
+          "benefits": {
+            "current": {
+              "description": "Produkte landen in den richtigen Kategorien, wenn sie importiert werden, wenn der Verkäufer sie ändert und wenn Sie eine Zuordnung ändern.",
+              "title": "Immer aktuell"
+            },
+            "kept": {
+              "description": "Kategorien, die Sie von Hand hinzufügen oder entfernen, bleiben so, wie Sie sie gesetzt haben. Der Mapper entfernt nur, was er selbst hinzugefügt hat.",
+              "title": "Ihre Änderungen bleiben"
+            },
+            "once": {
+              "description": "Ordnen Sie eine Kategorie des Verkäufers einer Ihrer Kategorien zu, und jedes Produkt darin folgt. Ordnen Sie dieselbe Kategorie für viele Verkäufer auf einmal zu.",
+              "title": "Einmal zuordnen"
+            }
+          },
+          "intro": "Jeder Verkäufer organisiert seine Produkte auf seine eigene Weise. Ordnen Sie die Kategorien jedes Verkäufers einmal den Kategorien Ihres Marktplatzes zu, und seine Produkte werden beim Import und bei jeder Änderung Ihren Kategorien hinzugefügt.",
+          "nav": "Kategorie-Mapper",
+          "steps": {
+            "add": {
+              "description": "Produkte werden automatisch Ihren Kategorien hinzugefügt.",
+              "title": "Hinzufügen"
+            },
+            "import": {
+              "description": "Verkäuferprodukte kommen mit den eigenen Kategorien des Verkäufers an.",
+              "title": "Import"
+            },
+            "map": {
+              "description": "Sie ordnen jede Verkäuferkategorie einer Ihrer Kategorien zu.",
+              "title": "Zuordnen"
+            },
+            "review": {
+              "description": "Produkte erreichen Ihre Prüfung bereits in ihren Kategorien.",
+              "title": "Prüfen"
+            }
+          },
+          "subtitle": "Die Produkte aller Verkäufer automatisch in Ihre Kategorien einordnen.",
+          "title": "Kategorie-Mapper"
+        },
         "company_onboarding": {
           "benefits": {
             "agreement": {

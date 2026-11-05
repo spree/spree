@@ -16,6 +16,7 @@ describe.skipIf(!ENTERPRISE_PREVIEWS_ENABLED)('Enterprise previews', () => {
     expect(childKeys('orders')).toContain('orders.quotes')
     expect(childKeys('companies')).toContain('companies.onboarding')
     expect(childKeys('sellers')).toContain('sellers.shopify')
+    expect(childKeys('sellers')).toContain('sellers.category-mapper')
     expect(childKeys('inventory')).toContain('inventory.lots')
     expect(matchPluginRoute('settings/audit-log', getPluginRoutes())?.entry.key).toBe(
       'settings.audit-log',

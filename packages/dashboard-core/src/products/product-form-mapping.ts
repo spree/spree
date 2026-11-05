@@ -195,6 +195,25 @@ export function withExtensionRowValues(
   }
 }
 
+// The API replaces each of these lists with what a save sends.
+const LIST_FIELDS = ['category_ids', 'collection_ids', 'tags'] as const
+
+/**
+ * The save payload without the category, collection and tag lists the merchant
+ * left unchanged, so a save keeps what something else added since the page loaded.
+ */
+export function omitUnchangedListFields(
+  payload: Record<string, unknown>,
+  dirtyFields: Partial<Record<(typeof LIST_FIELDS)[number], unknown>>,
+): Record<string, unknown> {
+  const trimmed = { ...payload }
+  for (const field of LIST_FIELDS) {
+    const dirty = dirtyFields[field]
+    if (!(Array.isArray(dirty) ? dirty.some(Boolean) : dirty)) delete trimmed[field]
+  }
+  return trimmed
+}
+
 // Strip UI-only fields (stock_location_name) and undefined entries so the
 // PATCH body matches the Admin API VariantUpdateParams shape exactly. The
 // Spree::Product#variants= setter reconciles by id, creates new entries,
