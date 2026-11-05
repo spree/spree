@@ -3589,7 +3589,6 @@
           "previous": "Kỳ trước"
         },
         "growth": {
-          "new": "Mới",
           "vs_previous": "so với kỳ trước"
         },
         "operations": {
@@ -3658,7 +3657,8 @@
         },
         "currency": {
           "search": "Tìm kiếm tiền tệ"
-        }
+        },
+        "chart_sparse": "Chưa đủ dữ liệu để hiển thị xu hướng"
       },
       "orders": {
         "detail": {

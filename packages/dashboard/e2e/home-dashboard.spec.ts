@@ -27,6 +27,36 @@ test.describe('home dashboard', () => {
     await expect(page.getByText(/^this period$/i)).toBeVisible()
   })
 
+  test('says when the period has too little data for a trend', async ({ page }) => {
+    const creds = await login(page)
+    // The chart query answers with one day of sales; the rest of the period
+    // is empty, as on a store that has just opened.
+    await page.route('**/api/v3/admin/reporting/query', async (route) => {
+      const response = await route.fetch().catch(() => null)
+      if (!response) return route.abort()
+      const result = await response.json()
+      if (!Array.isArray(result.rows) || result.rows.length < 2) return route.fulfill({ response })
+      const zeroed = (row: { metrics: Record<string, { value: unknown }> }) => ({
+        ...row,
+        metrics: Object.fromEntries(
+          Object.entries(row.metrics).map(([name, metric]) => [name, { ...metric, value: '0' }]),
+        ),
+      })
+      result.rows = result.rows.map((row: never, index: number) =>
+        index === result.rows.length - 1 ? row : zeroed(row),
+      )
+      await route.fulfill({ response, json: result })
+    })
+
+    await page.goto(HOME_PATH(creds.store_id))
+
+    await expect(page.getByText(/^not enough data yet to show a trend$/i)).toBeVisible({
+      timeout: 15_000,
+    })
+    // With no previous period to compare against, no growth badge is shown.
+    await expect(page.getByRole('button', { name: /total sales/i })).not.toContainText(/^new$/i)
+  })
+
   // A store selling in several currencies sums each one separately — the
   // figures are never converted — so the screen has to say which one it is
   // showing and let the merchant change it.

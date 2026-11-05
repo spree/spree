@@ -232,7 +232,6 @@
           "previous": "Período anterior"
         },
         "growth": {
-          "new": "Nuevo",
           "vs_previous": "vs período anterior"
         },
         "operations": {
@@ -301,7 +300,8 @@
         },
         "currency": {
           "search": "Buscar monedas"
-        }
+        },
+        "chart_sparse": "Aún no hay datos suficientes para mostrar una tendencia"
       },
       "orders": {
         "detail": {

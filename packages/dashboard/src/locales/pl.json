@@ -3623,7 +3623,6 @@
           "previous": "Poprzedni okres"
         },
         "growth": {
-          "new": "Nowość",
           "vs_previous": "względem poprzedniego okresu"
         },
         "operations": {
@@ -3696,7 +3695,8 @@
         },
         "currency": {
           "search": "Szukaj walut"
-        }
+        },
+        "chart_sparse": "Za mało danych, by pokazać trend"
       },
       "orders": {
         "detail": {

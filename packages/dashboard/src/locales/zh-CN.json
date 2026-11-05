@@ -3581,7 +3581,6 @@
           "previous": "上一期"
         },
         "growth": {
-          "new": "新增",
           "vs_previous": "对比上一期"
         },
         "operations": {
@@ -3648,7 +3647,8 @@
         },
         "currency": {
           "search": "搜索货币"
-        }
+        },
+        "chart_sparse": "数据不足，暂无法显示趋势"
       },
       "orders": {
         "detail": {

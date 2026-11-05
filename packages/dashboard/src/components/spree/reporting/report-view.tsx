@@ -349,6 +349,8 @@ export function TimeSeriesChart({
   )
 
   const columns = Math.min(metrics.length, 5)
+  // One bar on an empty axis reads as a broken chart, not a new store.
+  const sparse = chartData.filter((point) => point.current > 0).length <= 1
 
   return (
     <Card>
@@ -385,7 +387,12 @@ export function TimeSeriesChart({
           </button>
         ))}
       </CardHeader>
-      <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
+      <CardContent className="relative px-2 pt-4 sm:px-6 sm:pt-6">
+        {sparse && (
+          <p className="pointer-events-none absolute inset-x-0 top-1/3 z-10 mx-auto w-fit rounded-md border bg-card px-3 py-1.5 text-sm text-muted-foreground shadow-xs">
+            {t('admin.pages.home.chart_sparse')}
+          </p>
+        )}
         <ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full">
           <ComposedChart data={chartData}>
             <CartesianGrid vertical={false} />

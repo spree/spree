@@ -3589,7 +3589,6 @@
           "previous": "前期"
         },
         "growth": {
-          "new": "新規",
           "vs_previous": "前期比"
         },
         "operations": {
@@ -3658,7 +3657,8 @@
         },
         "currency": {
           "search": "通貨を検索"
-        }
+        },
+        "chart_sparse": "傾向を表示するにはデータがまだ不足しています"
       },
       "orders": {
         "detail": {
