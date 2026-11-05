@@ -90,6 +90,13 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldDefinitionsController, type: :c
       expect(defn.sortable).to eq(true)
     end
 
+    it 'persists collection_condition' do
+      post :create, params: create_params.merge(collection_condition: true, key: 'weave'), as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(json_response['collection_condition']).to eq(true)
+    end
+
     context 'with storefront_visible: false' do
       it 'persists storefront_visible as false' do
         post :create, params: create_params.merge(storefront_visible: false), as: :json
