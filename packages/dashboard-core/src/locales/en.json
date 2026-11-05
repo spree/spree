@@ -586,6 +586,11 @@
       "code": {
         "label": "Code"
       },
+      "collection_rule": {
+        "value": {
+          "label": "Value"
+        }
+      },
       "company": {
         "label": "Company"
       },

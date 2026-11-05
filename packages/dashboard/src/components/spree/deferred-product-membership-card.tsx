@@ -64,16 +64,11 @@ export type ProductMembershipReorder = (productId: string, position: number) => 
  * Reordering persists on drop rather than on Save — replaying a drag
  * sequence against server-side positions is not reliable — so it is
  * disabled while any membership change is staged.
- *
- * Pass `readOnly` where membership is derived rather than curated (an
- * automatic collection materializes its members from rules): the list still
- * renders, but every control disappears.
  */
 export function DeferredProductMembershipCard<TMember extends ProductMembershipMember = Product>({
   parentId,
   storeId,
   canEdit = true,
-  readOnly = false,
   useProducts,
   listMembersPage,
   onReorder,
@@ -87,8 +82,6 @@ export function DeferredProductMembershipCard<TMember extends ProductMembershipM
   storeId: string
   /** False for a viewer without update permission on the parent. */
   canEdit?: boolean
-  /** True when membership is rule-derived and cannot be curated at all. */
-  readOnly?: boolean
   useProducts: ProductMembershipQuery<TMember>
   /** When set, every persisted member id is excluded from the picker, not just the current list page. */
   listMembersPage?: ProductMembershipListPage<TMember>
@@ -208,8 +201,6 @@ export function DeferredProductMembershipCard<TMember extends ProductMembershipM
     staging.setRemoves(pendingRemoves.filter((existing) => existing !== id))
   }
 
-  const curatable = canEdit && !readOnly
-
   const pickerSelectedIds = useMemo(() => {
     const ids = new Set(pendingAdds.map((product) => product.id))
     for (const id of persistedMemberIds) {
@@ -232,16 +223,13 @@ export function DeferredProductMembershipCard<TMember extends ProductMembershipM
               <span className="ml-2 font-normal text-muted-foreground text-sm">{count}</span>
             )}
           </CardTitle>
-          {/* A read-only list explains itself first: it cannot be curated, so
-              its own description outranks any staging left over from before
-              the parent was switched to rule-driven membership. */}
-          {staging.dirty && curatable ? (
+          {staging.dirty && canEdit ? (
             <CardDescription>{tr('pending_changes_hint')}</CardDescription>
           ) : (
             description && <CardDescription>{description}</CardDescription>
           )}
         </div>
-        {curatable &&
+        {canEdit &&
           (selected.length > 0 ? (
             <Button
               type="button"
@@ -268,7 +256,7 @@ export function DeferredProductMembershipCard<TMember extends ProductMembershipM
           loading={isLoading}
           meta={meta}
           onPageChange={setPage}
-          readOnly={!curatable}
+          readOnly={!canEdit}
           selected={selected}
           onSelectedChange={setSelected}
           onRemove={(id) => stageRemove([id])}
@@ -276,7 +264,7 @@ export function DeferredProductMembershipCard<TMember extends ProductMembershipM
           // Reorder writes through on drop, so it would fight the staged
           // rows: positions are computed against a list that is about to
           // change. Disabled until the staged changes are saved.
-          reorderable={Boolean(onReorder) && curatable && !staging.dirty}
+          reorderable={Boolean(onReorder) && canEdit && !staging.dirty}
           onReorder={onReorder}
           extraColumns={
             typeof extraColumns === 'function' ? extraColumns(serverProducts) : extraColumns
@@ -295,8 +283,7 @@ export function DeferredProductMembershipCard<TMember extends ProductMembershipM
             filterPlaceholder: tr('filter_placeholder'),
             clearFilter: t('admin.common.clear'),
             noMatches: tr('no_matches'),
-            // `empty_automatic` only exists for parents that can be readOnly.
-            empty: tr(readOnly ? 'empty_automatic' : 'empty'),
+            empty: tr('empty'),
             loading: t('admin.common.loading'),
             columnProduct: tr('column_product'),
             selectAll: tr('select_all'),
@@ -308,7 +295,7 @@ export function DeferredProductMembershipCard<TMember extends ProductMembershipM
         />
       </CardContent>
 
-      {curatable && (
+      {canEdit && (
         <ResourcePickerSheet<Product>
           open={pickerOpen}
           onOpenChange={setPickerOpen}

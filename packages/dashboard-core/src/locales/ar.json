@@ -584,6 +584,11 @@
       "code": {
         "label": "الرمز"
       },
+      "collection_rule": {
+        "value": {
+          "label": "القيمة"
+        }
+      },
       "company": {
         "label": "الشركة"
       },

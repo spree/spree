@@ -1,3 +1,4 @@
+import { zodResolver } from '@hookform/resolvers/zod'
 import type { Collection, CollectionCreateParams, CollectionUpdateParams } from '@spree/admin-sdk'
 import {
   adminClient,
@@ -7,6 +8,9 @@ import {
 } from '@spree/dashboard-core'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import i18n from 'i18next'
+import { useCallback, useRef } from 'react'
+import type { Resolver } from 'react-hook-form'
+import { type CollectionFormValues, collectionFormSchema } from '../schemas/collection'
 import { TRANSLATIONS_QUERY_RESOURCE, useInvalidateTranslations } from './use-translations'
 
 export function useCollections() {
@@ -15,6 +19,25 @@ export function useCollections() {
     queryFn: () => adminClient.collections.list({ limit: 100, sort: 'position' }),
     staleTime: 1000 * 60 * 5,
   })
+}
+
+/**
+ * The collection form's resolver. Which rule types take no value is a fact
+ * of the types endpoint, read at validation time so a resolver created before
+ * the types load still sees them.
+ */
+export function useCollectionFormResolver(): Resolver<CollectionFormValues> {
+  const { data } = useCollectionRuleTypes()
+  const valuelessTypes = useRef<string[]>([])
+  valuelessTypes.current = (data?.data ?? [])
+    .filter((ruleType) => (ruleType as { value_required?: boolean }).value_required === false)
+    .map((ruleType) => ruleType.type)
+
+  return useCallback<Resolver<CollectionFormValues>>(
+    (values, context, options) =>
+      zodResolver(collectionFormSchema(valuelessTypes.current))(values, context, options),
+    [],
+  )
 }
 
 // The rule-kind registry is static at runtime — cache forever, not store-scoped.

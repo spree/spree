@@ -586,6 +586,11 @@
       "code": {
         "label": "コード"
       },
+      "collection_rule": {
+        "value": {
+          "label": "値"
+        }
+      },
       "company": {
         "label": "会社"
       },
