@@ -88,7 +88,9 @@ module Spree
       errors.add(:type, :invalid_collection_rule, message: I18n.t('spree.errors.messages.invalid_collection_rule'))
     end
 
+    # The flag first: regeneration reads it to tell the rules apply.
     def regenerate_collection_products
+      collection.sync_automatic!
       collection.regenerate_products(only_once: true)
     end
   end

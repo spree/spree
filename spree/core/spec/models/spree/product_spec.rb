@@ -1290,10 +1290,29 @@ describe Spree::Product, type: :model do
         to have_enqueued_job(Spree::Products::AutoMatchCollectionsJob).with(product.id)
     end
 
+    it 'still enqueues when the cache is unreachable' do
+      create(:automatic_collection, store: store)
+      allow(Rails.cache).to receive(:read).and_return(nil)
+      allow(Rails.cache).to receive(:write).and_return(nil)
+
+      expect { product.auto_match_collections }.to have_enqueued_job(Spree::Products::AutoMatchCollectionsJob)
+    end
+
+    it 'is not enqueued when stock moves without crossing zero' do
+      create(:in_stock_collection_rule, collection: create(:automatic_collection, store: store))
+      level = product.default_variant.stock_levels.first
+      level.update_columns(count_on_hand: 10, allocated_count: 0)
+
+      expect { level.reload.update!(count_on_hand: 9) }.not_to have_enqueued_job(Spree::Products::AutoMatchCollectionsJob)
+    end
+
     it 'is enqueued when stock changes and a collection uses an in-stock rule' do
       create(:in_stock_collection_rule, collection: create(:automatic_collection, store: store))
 
-      expect { product.default_variant.stock_levels.first.update!(count_on_hand: 7) }.
+      level = product.default_variant.stock_levels.first
+      level.update_columns(count_on_hand: 0, allocated_count: 0, backorderable: false)
+
+      expect { level.reload.update!(count_on_hand: 7) }.
         to have_enqueued_job(Spree::Products::AutoMatchCollectionsJob).with(product.id)
     end
   end

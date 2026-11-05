@@ -27,7 +27,17 @@ module Spree
             # SPA + storefront filters can pass `prod_…` keys; the search
             # provider hands the filter hash straight to Ransack on the
             # underlying scope, which expects raw integer IDs.
-            decode_prefixed_id_predicates(q.except('search')).presence
+            filters = decode_prefixed_id_predicates(q.except('search'))
+            if filters['in_collection'].present? && !published_collection?(filters['in_collection'])
+              filters['in_collection'] = Spree::Collection.prefixed_id_for(0)
+            end
+            filters.presence
+          end
+
+          # A collection not published on this channel filters to nothing,
+          # as its own endpoints answer 404.
+          def published_collection?(collection_id)
+            current_store.collections.published_on(Spree::Current.channel).find_by_param(collection_id).present?
           end
 
           # A `q` sent as anything but a hash (`q=foo`) filters nothing.
