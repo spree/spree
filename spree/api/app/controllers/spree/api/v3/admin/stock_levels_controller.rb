@@ -77,6 +77,15 @@ module Spree
             end
 
             result = Spree.stock_level_bulk_upsert_workflow.call(store: current_store, rows: rows)
+            if result.failure?
+              return render_error(
+                code: 'invalid_stock_levels',
+                message: result.error.to_s,
+                status: :unprocessable_content,
+                details: { rows: result.error.value[:rows] }
+              )
+            end
+
             render json: result.value
           end
 
