@@ -399,4 +399,30 @@ RSpec.describe Spree::Publishable, events: true do
       expect(Spree::OrderLineItem.event_prefix).to eq('order_line_item')
     end
   end
+
+  describe 'the context a payload is built in' do
+    let(:other_store) { create(:store) }
+    let(:product) { create(:product, store: other_store) }
+
+    before do
+      expect(other_store.id).not_to eq(Spree::Store.default.id)
+      Spree::Store.where(id: other_store.id).update_all(default_currency: 'EUR')
+      other_store.default_market&.update_columns(currency: 'EUR')
+      Spree::Current.reset
+      Spree::Current.store = nil
+    end
+
+    it 'resolves the serializer params from the store the event belongs to' do
+      params = product.send(:in_event_store) { product.send(:event_serializer_params) }
+
+      expect(params[:store].id).to eq(other_store.id)
+      expect(params[:currency]).to eq('EUR')
+    end
+
+    it 'leaves the ambient context untouched afterwards' do
+      product.send(:in_event_store) { nil }
+
+      expect(Spree::Current.store.id).to eq(Spree::Store.default.id)
+    end
+  end
 end

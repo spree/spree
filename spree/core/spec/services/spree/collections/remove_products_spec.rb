@@ -6,6 +6,14 @@ module Spree
     let!(:collection) { create(:collection, store: store) }
     let!(:products) { create_list(:product, 3) }
 
+    def events_named(name)
+      published = []
+      Spree::Events.subscribe(name, async: false) { |event| published << event }
+      Spree::Events.activate!
+      yield
+      published
+    end
+
     before { Spree::Collections::AddProducts.call(collections: [collection], products: products) }
 
     it 'removes the given products and re-packs positions' do
@@ -19,6 +27,31 @@ module Spree
       expect {
         described_class.call(collections: [collection], products: [products.second])
       }.to change { collection.reload.products_count }.from(3).to(2)
+    end
+
+    context 'events', events: true do
+      before { Spree::Events.reset! }
+      after { Spree::Events.reset! }
+
+      it 'publishes product_collection.deleted once per membership removed' do
+        Spree::Collections::AddProducts.call(collections: [collection], products: products)
+
+        published = events_named('product_collection.deleted') do
+          described_class.call(collections: [collection], products: products)
+        end
+
+        expect(published.size).to eq(products.size)
+      end
+
+      it 'says nothing about a product that was in none of the collections' do
+        outsider = create(:product)
+
+        published = events_named('product_collection.deleted') do
+          described_class.call(collections: [collection], products: [outsider])
+        end
+
+        expect(published).to be_empty
+      end
     end
   end
 end

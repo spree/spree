@@ -4346,6 +4346,8 @@
             "payment_setup_session": "Session de configuration de paiement",
             "price": "Prix",
             "product": "Produit",
+            "product_category": "Catégorie de produit",
+            "product_collection": "Collection de produits",
             "product_submission": "Soumission de produit",
             "promotion": "Promotion",
             "purchase_order": "Bon de commande",

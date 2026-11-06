@@ -30,6 +30,8 @@ import type {
   PaymentSetupSession,
   Price,
   Product,
+  ProductCategory,
+  ProductCollection,
   ProductSubmission,
   Promotion,
   PurchaseOrderEvent,
@@ -229,6 +231,10 @@ export interface WebhookEventMap {
   'product.proposed': Product
   'product.rejected': Product
   'product.updated': Product
+  'product_category.created': ProductCategory
+  'product_category.deleted': ProductCategory
+  'product_collection.created': ProductCollection
+  'product_collection.deleted': ProductCollection
   'product_submission.created': ProductSubmission
   'product_submission.deleted': ProductSubmission
   'product_submission.updated': ProductSubmission

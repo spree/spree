@@ -9,6 +9,7 @@ module Spree
     def add_memberships(groups, products)
       group_ids = groups.pluck(:id)
       product_ids = products.pluck(:id)
+      existing = membership_class.where(group_key => group_ids, product_id: product_ids).ids
       # Every group's current size in one grouped count, rather than a probe
       # per group for the position to append at.
       sizes = membership_class.where(group_key => group_ids).group(group_key).count
@@ -24,15 +25,23 @@ module Spree
       end
       membership_class.insert_all(rows)
 
+      created = membership_class.where(group_key => group_ids, product_id: product_ids).where.not(id: existing)
+
       refresh_after_membership_change(group_ids, products)
+      publish_membership_events(created, 'created')
     end
 
     # Removes the products, then re-packs the remaining positions from 1.
     def remove_memberships(groups, products)
       group_ids = groups.pluck(:id)
+      product_ids = products.pluck(:id)
+      deleted = []
 
       ApplicationRecord.transaction do
-        membership_class.where(group_key => group_ids, product_id: products.pluck(:id)).delete_all
+        # Ordered so two callers queue for the same rows in the same sequence rather than deadlocking on each other.
+        deleted = membership_class.where(group_key => group_ids, product_id: product_ids).order(:id).lock.to_a
+
+        membership_class.where(group_key => group_ids, product_id: product_ids).delete_all
 
         # What survived the delete, for every group in one read.
         remaining = membership_class.where(group_key => group_ids).order(:position).pluck(group_key, :product_id).
@@ -50,6 +59,17 @@ module Spree
       end
 
       refresh_after_membership_change(group_ids, products)
+      publish_membership_events(deleted, 'deleted')
+    end
+
+    def publish_membership_events(memberships, action)
+      memberships = memberships.to_a
+      return if memberships.empty?
+
+      ActiveRecord::Associations::Preloader.new(records: memberships, associations: { product: :store }).call
+
+      name = "#{membership_class.model_name.element}.#{action}"
+      memberships.each { |membership| membership.publish_event(name) }
     end
 
     # Bulk writes skip the join model's callbacks, so counters, caches and the

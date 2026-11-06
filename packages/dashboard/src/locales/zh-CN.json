@@ -4334,6 +4334,8 @@
             "payment_setup_session": "支付设置会话",
             "price": "价格",
             "product": "商品",
+            "product_category": "商品分类",
+            "product_collection": "商品系列",
             "product_submission": "商品提交",
             "promotion": "优惠",
             "purchase_order": "采购订单",

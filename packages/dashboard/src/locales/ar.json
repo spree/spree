@@ -4377,6 +4377,8 @@
             "payment_setup_session": "Payment setup session",
             "price": "سعر",
             "product": "منتج",
+            "product_category": "فئة المنتج",
+            "product_collection": "مجموعة المنتجات",
             "product_submission": "تقديم منتج",
             "promotion": "ترقية",
             "purchase_order": "أمر شراء",

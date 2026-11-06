@@ -4345,6 +4345,8 @@
             "payment_setup_session": "Phiên thiết lập thanh toán",
             "price": "Giá",
             "product": "Sản phẩm",
+            "product_category": "Danh mục sản phẩm",
+            "product_collection": "Bộ sưu tập sản phẩm",
             "product_submission": "Gửi sản phẩm",
             "promotion": "Khuyến mãi",
             "purchase_order": "Đơn đặt hàng",
