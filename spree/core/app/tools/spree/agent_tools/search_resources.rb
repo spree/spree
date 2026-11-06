@@ -9,7 +9,8 @@ module Spree
     # reported it as a fact.
     class SearchResources < Spree::AgentTool
       DEFAULT_LIMIT = 10
-      MAX_LIMIT = 25
+      # The Admin API's own page ceiling; asking for more returns this many.
+      MAX_LIMIT = 100
 
       tool_name 'search_resources'
       description 'Search the store. Filters are Ransack predicates ' \
@@ -24,11 +25,14 @@ module Spree
 
       param :resource, description: 'Resource key — call describe_resource for the list', required: true
       param :filters, type: :object, description: 'Ransack filter hash, e.g. {"name_cont": "shirt"}'
-      param :sort, description: 'Sort, e.g. "created_at desc"'
-      param :limit, type: :integer, description: "Max records to return (default #{DEFAULT_LIMIT})"
+      param :sort, description: 'Sort field, prefixed with - for descending, e.g. "-created_at" for newest first'
+      param :limit, type: :integer,
+                    description: "Records per page (default #{DEFAULT_LIMIT}, at most #{MAX_LIMIT}). " \
+                                 'When total exceeds count, pass next_page as page to fetch the rest.'
+      param :page, type: :integer, description: 'Page number, starting at 1 (default 1)'
       param :parent_id, description: PARENT_ID_DESCRIPTION
 
-      def call(resource:, filters: nil, sort: nil, limit: nil, parent_id: nil)
+      def call(resource:, filters: nil, sort: nil, limit: nil, page: nil, parent_id: nil)
         entry = ResourceMap.find(resource)
         return unknown_resource(resource) if entry.nil?
         return not_searchable(entry) if entry.api_path(:index).blank?
@@ -46,7 +50,7 @@ module Spree
         path = entry.path_for(:index, parent_id: parent_id)
         return not_searchable(entry) if path.nil?
 
-        response = dispatch.call(method: :get, path: path, params: query_for(applied, sort, limit))
+        response = dispatch.call(method: :get, path: path, params: query_for(applied, sort, limit, page))
         return { error: response.error_message } unless response.success?
 
         rows = Array(response.data)
@@ -59,8 +63,13 @@ module Spree
           # for a store holding hundreds.
           total: meta['count'] || rows.size,
           count: rows.size,
+          page: meta['page'],
+          pages: meta['pages'],
+          # Named outright, because a model told only "25 of 88" reports the
+          # 25 as the answer.
+          next_page: meta['next'],
           records: rows.map { |row| RecordSummary.from_payload(entry: entry, payload: row) }
-        }
+        }.compact
       end
 
       def summary(arguments)
@@ -81,11 +90,22 @@ module Spree
       # Ransack filters travel under `q`, the way every other client sends
       # them — so an unknown one is refused by the API's own filter
       # validation rather than silently widening the search here.
-      def query_for(filters, sort, limit)
-        params = { limit: capped_limit(limit) }
+      def query_for(filters, sort, limit, page)
+        params = { limit: capped_limit(limit), page: [page.to_i, 1].max }
         params[:q] = filters if filters.any?
-        params[:sort] = sort if sort.present?
+        params[:sort] = api_sort(sort) if sort.present?
         params
+      end
+
+      # The API reads `-field` for descending. Models also write Ransack's
+      # `field desc`, which reached the API as `field desc asc` and sorted
+      # ascending, so a request for the newest records paged through the
+      # oldest.
+      def api_sort(sort)
+        sort.to_s.split(',').map do |part|
+          field, direction = part.strip.split(/\s+/, 2)
+          direction.to_s.casecmp?('desc') ? "-#{field.delete_prefix('-')}" : field
+        end.join(',')
       end
 
       # Empty values match everything, so they are dropped — but `false` is a
