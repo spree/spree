@@ -143,8 +143,9 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
         // means "leave it".
         product_type_id: values.product_type_id ?? null,
         delivery_profile_id: values.delivery_profile_id ?? undefined,
-        // Both lists are the whole intent: anything the seller removed is
-        // absent here, which is what tells the API to drop it.
+        // Variants are the whole intent: one the seller removed is absent
+        // here, which tells the API to drop it. Media is not — a file left out
+        // stays, and removed files go through the media DELETE after the save.
         // The video address and the focal point ride along because the
         // cards offer both — an allow-list that omitted them let a seller
         // set a crop or paste a video URL and watch it vanish on save.

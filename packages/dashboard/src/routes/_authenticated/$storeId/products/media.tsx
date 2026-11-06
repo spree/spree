@@ -601,7 +601,7 @@ function MediaDetailSheet({
             // Deleting a file is not editing it — that lives in the grid's
             // context menu, away from the field a merchant is typing in.
             <>
-              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+              <Button type="button" variant="outline" onClick={() => handleOpenChange(false)}>
                 {t('admin.actions.cancel')}
               </Button>
               <Button type="submit" disabled={!isDirty || form.formState.isSubmitting}>

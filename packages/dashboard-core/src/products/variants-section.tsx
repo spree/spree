@@ -702,8 +702,9 @@ function VariantImagesPicker({
     <MediaPickerDialog
       open
       onOpenChange={(open) => !open && onClose()}
-      // Keyed on the files too, so one added since the last opening shows up.
-      queryKey={`variant-images-${variantId}-${options.map((o) => o.id).join(',')}`}
+      // Keyed on the files and their alt text, so a file added or renamed
+      // since the last opening shows up rather than a cached copy.
+      queryKey={`variant-images-${variantId}-${options.map((o) => `${o.id}:${o.alt ?? ''}`).join(',')}`}
       // Local, so the list is the form's — including files added this session.
       search={async (query) => ({
         data: query

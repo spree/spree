@@ -33,7 +33,7 @@ import { usePermissions } from '../providers/permission-provider'
 export function SettingsIndexPage({ tenantId }: { tenantId: string }) {
   const { t } = useTranslation()
   const snapshot = useSettingsNav()
-  const { permissions } = usePermissions()
+  const { permissions, isLoading: permissionsLoading } = usePermissions()
   const [query, setQuery] = useState('')
 
   // Permission filtering depends only on the snapshot, so it survives typing.
@@ -44,13 +44,14 @@ export function SettingsIndexPage({ tenantId }: { tenantId: string }) {
   const groups = useMemo(() => filterSettingsByQuery(allowed, query, t).groups, [allowed, query, t])
 
   const railShown = useSettingsRailShown()
-  if (railShown) {
-    const first = allowed.groups.flatMap((g) => g.entries).find((entry) => !entry.comingSoon)
-    // Nothing to open yet while permissions load; render nothing rather than
-    // flash the list the rail already shows.
-    if (!first) return null
-    return <Navigate to={`/${tenantId}/settings${first.path}` as never} replace />
-  }
+  const first = railShown
+    ? allowed.groups.flatMap((g) => g.entries).find((entry) => !entry.comingSoon)
+    : undefined
+  if (first) return <Navigate to={`/${tenantId}/settings${first.path}` as never} replace />
+  // Nothing to open yet while permissions load; render nothing rather than
+  // flash the list the rail already shows. Loaded with nothing to open, the
+  // list below says so rather than leaving the page blank.
+  if (railShown && permissionsLoading) return null
 
   return (
     <div className="flex flex-col gap-8">

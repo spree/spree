@@ -133,8 +133,6 @@ export function OrderCustomerDialog({
             </Button>
           </DialogFooter>
         </form>
-        {/* Inside the content, not beside the dialog: Base UI keeps a dialog
-              open under a layer nested in it, but closes it for one outside. */}
       </DialogContent>
     </Dialog>
   )

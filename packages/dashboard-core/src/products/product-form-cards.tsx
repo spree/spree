@@ -751,6 +751,9 @@ export function MediaCard({
                   return (await mediaLibrary.create?.({
                     signed_id: upload.signedId,
                     alt: file.name,
+                    // A video row validates its file as video; unset, it
+                    // defaults to image and the upload is refused.
+                    media_type: file.type.startsWith('video/') ? 'video' : 'image',
                   })) as Media
                 }
               : undefined

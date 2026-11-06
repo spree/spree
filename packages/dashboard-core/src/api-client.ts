@@ -266,7 +266,11 @@ export interface PanelApiClient {
   mediaLibrary?: {
     list(params?: Record<string, unknown>): Promise<{ data: PanelMediaRecord[] }>
     /** Adds an uploaded blob to the library, so the picker can offer uploads. */
-    create?(params: { signed_id: string; alt?: string }): Promise<PanelMediaRecord>
+    create?(params: {
+      signed_id: string
+      alt?: string
+      media_type?: 'image' | 'video'
+    }): Promise<PanelMediaRecord>
   }
   /**
    * CSV imports, for whichever catalog this panel manages.

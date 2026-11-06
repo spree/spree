@@ -12,6 +12,7 @@ import {
   useResourceMutation,
 } from '@spree/dashboard-core'
 import { useQuery } from '@tanstack/react-query'
+import { customerHasName } from '../components/spree/customer-combobox-option'
 
 /**
  * Shared config for any `<ResourceCombobox>` / `<ResourceMultiAutocomplete>`
@@ -47,8 +48,7 @@ export function customerAutocompleteProps(queryKey: string, companyId?: string |
     // picked.
     hydrate: (ids: string[]) => adminClient.customers.list({ id_in: ids, limit: ids.length }),
     // The name when there is one, as a merchant knows their customers by it.
-    getOptionLabel: (c: Customer) =>
-      c.first_name || c.last_name ? c.full_name : (c.email ?? c.id),
+    getOptionLabel: (c: Customer) => (customerHasName(c) ? c.full_name : (c.email ?? c.id)),
     placeholder: i18n.t('admin.customers.autocomplete.placeholder'),
     emptyText: companyId
       ? i18n.t('admin.customers.autocomplete.empty_for_company')

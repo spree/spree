@@ -16,7 +16,7 @@ export function CustomerCombobox({
   value,
   onChange,
   companyId,
-  allowCreate = true,
+  allowCreate = !companyId,
   id,
   disabled,
 }: {
@@ -26,7 +26,11 @@ export function CustomerCombobox({
   onChange: (id: string | null, customer: Customer | null) => void
   /** Narrows the search to people who may buy for this company. */
   companyId?: string | null
-  /** Off where a new customer makes no sense, such as a filter. */
+  /**
+   * Off where a new customer makes no sense, such as a filter. Off by default
+   * under a company: a new customer has no standing to buy for it, so picking
+   * them would only fail the order's validation.
+   */
   allowCreate?: boolean
   id?: string
   disabled?: boolean
