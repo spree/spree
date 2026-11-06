@@ -37,7 +37,8 @@ const itemVariants = cva(
     variants: {
       variant: {
         default: 'border-transparent',
-        outline: 'border-border',
+        // A card in small: its corner, faint border, fill and soft lift.
+        outline: 'rounded-card border-card-edge bg-card shadow-card-lift',
         muted: 'border-transparent bg-muted/50',
       },
       size: {
@@ -46,6 +47,8 @@ const itemVariants = cva(
         xs: 'gap-2 px-2.5 py-2 in-data-[slot=dropdown-menu-content]:p-0',
       },
     },
+    // An outline item takes a card's 14px inset, so the two line up.
+    compoundVariants: [{ variant: 'outline', size: 'default', className: 'px-3.5 py-3' }],
     defaultVariants: {
       variant: 'default',
       size: 'default',

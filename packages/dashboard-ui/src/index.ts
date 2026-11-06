@@ -61,6 +61,7 @@ export * from './spree/post-sale-create-dialogs'
 export * from './spree/post-sale-fields'
 export * from './spree/quantity-tier-editor'
 export * from './spree/return-dialogs'
+export * from './spree/section'
 
 // JsonPreviewDrawer and JsonValueView are intentionally NOT re-exported from
 // this barrel: they pull in `@uiw/react-json-view` (~30KB gzip), and

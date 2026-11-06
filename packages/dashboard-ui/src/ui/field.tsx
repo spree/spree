@@ -94,7 +94,13 @@ function FieldLabel({ className, ...props }: React.ComponentProps<typeof Label>)
     <Label
       data-slot="field-label"
       className={cn(
-        'group/field-label peer/field-label flex w-fit gap-2 leading-snug group-data-[disabled=true]/field:opacity-50 has-data-checked:border-blue-100 has-data-checked:bg-blue-50 has-[>[data-slot=field]]:rounded-lg has-[>[data-slot=field]]:border *:data-[slot=field]:p-2.5 dark:has-data-checked:border-blue-500/20 dark:has-data-checked:bg-blue-500/10',
+        'group/field-label peer/field-label flex w-fit gap-2 leading-snug group-data-[disabled=true]/field:opacity-50',
+        // A label wrapping a whole `Field` is a choice card: a card's corner,
+        // edge, fill, lift and inset. Checked, it takes a blue edge and tint;
+        // those rules repeat the card-label condition so they outrank the
+        // edge above rather than racing it on stylesheet order.
+        'has-[>[data-slot=field]]:rounded-card has-[>[data-slot=field]]:border has-[>[data-slot=field]]:border-card-edge has-[>[data-slot=field]]:bg-card has-[>[data-slot=field]]:shadow-card-lift *:data-[slot=field]:p-3.5',
+        'has-[>[data-slot=field]]:has-data-checked:border-blue-500 has-[>[data-slot=field]]:has-data-checked:bg-blue-50/70 dark:has-[>[data-slot=field]]:has-data-checked:bg-blue-500/10',
         // Card-shaped labels (the ones wrapping a whole `Field`) are clickable
         // targets, so they need the affordance a bare text label doesn't:
         // a pointer and a hover tint. Scoped by `has-[>[data-slot=field]]` so

@@ -8,21 +8,12 @@ function Card({
   ...props
 }: React.ComponentProps<'div'> & {
   /**
-   * `nested` is one resource listed inside a card — a fulfillment on an order,
-   * a return, a rule. It sits on a recessed surface so it reads as a thing
-   * *within* the card rather than another card beside it, and carries its own
-   * horizontal padding so its sections divide edge to edge.
+   * `nested` is one record in a list of them — a fulfillment, a return, a
+   * rule — usually under a `Section` heading. It carries its own horizontal
+   * padding so its header, sections and footer divide edge to edge.
    *
-   * The box is load-bearing once there is more than one of them: a fulfillment
-   * already divides its own rows, so grouping by rules alone would draw the
-   * boundary between two fulfillments as the same line at the same inset as
-   * the boundary between two items — and the panel's own actions would have no
-   * visible owner.
-   *
-   * `container` is the card those nested records sit in. Pair the two: the
-   * container recedes, the records stay raised. A `default` card wrapping
-   * `nested` ones puts the content in a well and the frame in front of it,
-   * which reads as the content being demoted.
+   * `container` is deprecated and renders as `default`: group records under
+   * a `Section` heading instead of wrapping them in another card.
    */
   variant?: 'default' | 'nested' | 'container'
 }) {
@@ -36,16 +27,13 @@ function Card({
         // the document, laying the whole page out wider than the viewport. `clip`
         // rather than `hidden` so `overflow-y` stays `visible` and sticky
         // descendants keep resolving against the page.
-        'group/card flex flex-col min-w-0 overflow-x-clip break-words text-card-foreground shadow-xs',
+        'group/card flex flex-col min-w-0 overflow-x-clip break-words text-card-foreground',
+        // An outline Item's frame and inset.
         variant === 'nested' &&
-          'rounded-lg border border-border-subtle bg-nested-raised px-3 shadow-none',
-        // Holds nested records rather than content, so it recedes and lets
-        // them be the raised, readable thing.
-        variant === 'container' && 'rounded-xl border border-border-card bg-card-container',
-        // `--border-card`, not `--border`: a card is a region of the sheet
-        // rather than a surface floating above it, so its edge is softer than
-        // the structural one the sheet, dialogs and dropdowns draw.
-        variant === 'default' && 'rounded-xl border border-border-card bg-card',
+          'rounded-card border border-card-edge bg-card px-3.5 shadow-card-lift',
+        // A faint border and a wide, soft lift (`--card-shadow`; none in
+        // dark mode). `container` is deprecated and renders the same.
+        variant !== 'nested' && 'rounded-card border border-card-edge bg-card shadow-card-lift',
         className,
       )}
       {...props}
@@ -58,7 +46,7 @@ function CardHeader({ className, ...props }: React.ComponentProps<'div'>) {
     <div
       data-slot="card-header"
       className={cn(
-        'group/card-header @container/card-header grid auto-rows-min items-start gap-1 group-data-[size=sm]/card:px-3 has-data-[slot=card-action]:grid-cols-[1fr_auto] has-data-[slot=card-description]:grid-rows-[auto_auto] px-3 py-2.5 border-b border-border-subtle last:border-b-0 rounded-t-[calc(var(--radius-xl)-1px)] group-data-[variant=nested]/card:rounded-none group-data-[variant=nested]/card:px-0 group-data-[variant=nested]/card:py-2 group-data-[variant=nested]/card:items-center',
+        'group/card-header @container/card-header grid auto-rows-min items-start gap-1 group-data-[size=sm]/card:px-3 has-data-[slot=card-action]:grid-cols-[1fr_auto] has-data-[slot=card-description]:grid-rows-[auto_auto] px-3.5 py-3 rounded-t-[calc(var(--radius-card)-1px)] group-data-[variant=nested]/card:rounded-none group-data-[variant=nested]/card:px-0 group-data-[variant=nested]/card:py-2 group-data-[variant=nested]/card:items-center',
         className,
       )}
       {...props}
@@ -96,7 +84,7 @@ function CardContent({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot="card-content"
-      className={cn('p-3 group-data-[variant=nested]/card:px-0', className)}
+      className={cn('p-3.5 group-data-[variant=nested]/card:px-0', className)}
       {...props}
     />
   )
@@ -107,7 +95,7 @@ function CardFooter({ className, ...props }: React.ComponentProps<'div'>) {
     <div
       data-slot="card-footer"
       className={cn(
-        'flex items-center p-3 bg-transparent border-t border-border-subtle rounded-b-[calc(var(--radius-xl)-1px)] group-data-[variant=nested]/card:rounded-none group-data-[variant=nested]/card:px-0',
+        'flex items-center p-3.5 bg-transparent border-t border-border-subtle rounded-b-[calc(var(--radius-card)-1px)] group-data-[variant=nested]/card:rounded-none group-data-[variant=nested]/card:px-0',
         className,
       )}
       {...props}

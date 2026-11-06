@@ -4,7 +4,7 @@ import { cn } from '../lib/utils'
 import { Slot } from './slot'
 
 const buttonVariants = cva(
-  "group/button inline-flex shrink-0 items-center justify-center gap-2 rounded-lg border border-transparent text-sm font-medium whitespace-nowrap cursor-pointer select-none no-underline transition-[color,background-color,border-color,box-shadow,transform,translate,scale] duration-100 ease-out outline-none active:scale-[0.98] motion-reduce:active:scale-100 focus-visible:border-blue-500 focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)] disabled:pointer-events-none disabled:opacity-70 disabled:cursor-not-allowed aria-invalid:border-destructive [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "group/button inline-flex shrink-0 items-center justify-center gap-2 rounded-xl border border-transparent text-sm font-medium whitespace-nowrap cursor-pointer select-none no-underline transition-[color,background-color,border-color,box-shadow,transform,translate,scale] duration-100 ease-out outline-none active:scale-[0.98] motion-reduce:active:scale-100 focus-visible:border-blue-500 focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)] disabled:pointer-events-none disabled:opacity-70 disabled:cursor-not-allowed aria-invalid:border-destructive [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
@@ -33,12 +33,12 @@ const buttonVariants = cva(
       },
       size: {
         default: 'h-9 px-3 py-1.5',
-        xs: "h-6 gap-1 rounded-md px-2 text-xs [&_svg:not([class*='size-'])]:size-3",
-        sm: "h-7 gap-1 rounded-md px-2 py-1 text-sm [&_svg:not([class*='size-'])]:size-3.5",
+        xs: "h-6 gap-1 rounded-lg px-2 text-xs [&_svg:not([class*='size-'])]:size-3",
+        sm: "h-7 gap-1 rounded-lg px-2 py-1 text-sm [&_svg:not([class*='size-'])]:size-3.5",
         lg: 'h-10 px-3 py-2 text-base',
         icon: 'size-9',
-        'icon-xs': "size-6 rounded-md [&_svg:not([class*='size-'])]:size-3",
-        'icon-sm': 'size-7 rounded-md',
+        'icon-xs': "size-6 rounded-lg [&_svg:not([class*='size-'])]:size-3",
+        'icon-sm': 'size-7 rounded-lg',
         'icon-lg': 'size-10',
       },
     },

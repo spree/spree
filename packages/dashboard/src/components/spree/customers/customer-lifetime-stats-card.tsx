@@ -42,7 +42,7 @@ export function CustomerLifetimeStatsCard({ customer }: { customer: Customer }) 
 
 function Stat({ label, value }: { label: string; value: ReactNode }) {
   return (
-    <Item variant="outline" className="rounded-xl border-border-card bg-card px-4 py-3 shadow-xs">
+    <Item variant="outline">
       <ItemContent>
         <ItemDescription>{label}</ItemDescription>
         <ItemTitle className="text-lg font-semibold">{value}</ItemTitle>

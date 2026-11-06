@@ -603,12 +603,13 @@ export function ResourceTable<T extends Record<string, any>>({
         allColumns={allColumns}
         hideSort={reorderActive}
       />
-      {/* `overflow-x-clip`, never `overflow-hidden`: the rows clip to the
-          rounded frame horizontally, but a `hidden` overflow on either axis
-          makes this a scroll container, and the pinned column row inside
-          would then stick to THIS box rather than to the page — which is to
-          say, scroll away with it. */}
-      <Card className="-mx-4 gap-0 overflow-x-clip rounded-none border-0 bg-transparent py-0 sm:mx-0 sm:rounded-xl sm:border">
+      {/* Borderless: the list sits on the page with no card around it, its
+          header a rounded band and its rows divided by their own rules.
+          `overflow-x-clip`, never `overflow-hidden`: a `hidden` overflow on
+          either axis makes this a scroll container, and the pinned column row
+          inside would then stick to THIS box rather than to the page — which
+          is to say, scroll away with it. */}
+      <Card className="gap-0 overflow-x-clip rounded-none border-0 bg-transparent py-0 shadow-none">
         {reorderActive ? (
           <DndContext
             sensors={sensors}
@@ -619,7 +620,7 @@ export function ResourceTable<T extends Record<string, any>>({
               items={rows.map((r) => (r as any).id)}
               strategy={verticalListSortingStrategy}
             >
-              <Table stickyHeader roundedTop roundedBottom>
+              <Table stickyHeader band>
                 <TableHeader>
                   <TableHeaderRow>
                     <TableHead className="w-8" />
@@ -689,7 +690,8 @@ export function ResourceTable<T extends Record<string, any>>({
               // checkbox sitting beneath it — checking once, then never
               // unchecking.
               <div className="pointer-events-none sticky top-header-height z-30 h-0">
-                <div className="flex h-[2.1875rem] items-center ps-10 pe-4">
+                {/* The header band's height, so the actions centre on its checkbox. */}
+                <div className="flex h-10 items-center ps-10 pe-4">
                   <div className="pointer-events-auto min-w-0 flex-1">
                     <BulkActionBar
                       selectedIds={Array.from(selectedIds)}
@@ -739,7 +741,7 @@ export function ResourceTable<T extends Record<string, any>>({
                 </section>,
                 document.body,
               )}
-            <Table stickyHeader roundedTop roundedBottom>
+            <Table stickyHeader band>
               <TableHeader>
                 {/* Column headers stay mounted with rows selected, and the bulk
                     bar is laid over them. Swapping them for one `colSpan` cell
@@ -833,10 +835,8 @@ export function ResourceTable<T extends Record<string, any>>({
                         // the panel floats over its neighbours, and without this
                         // a merchant editing a figure has to count rows to see
                         // which record they are editing.
-                        className={cn(
-                          'has-data-[popup-open]:bg-accent-strong/40',
-                          isSelected && 'bg-accent-strong/75 hover:bg-accent-strong-hover',
-                        )}
+                        // The table's `band` style paints both from these.
+                        data-selected={isSelected || undefined}
                       >
                         {selectionEnabled && (
                           <TableCell className="w-8">

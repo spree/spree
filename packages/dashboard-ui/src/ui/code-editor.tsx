@@ -242,7 +242,7 @@ function CodeEditor({
       ref={containerRef}
       data-slot="code-editor"
       className={cn(
-        'min-h-64 overflow-hidden rounded-md border border-field-border bg-card shadow-control focus-within:border-blue-500 focus-within:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)]',
+        'min-h-64 overflow-hidden rounded-lg border border-field-border bg-card shadow-control focus-within:border-blue-500 focus-within:shadow-field-focus',
         className,
       )}
     />

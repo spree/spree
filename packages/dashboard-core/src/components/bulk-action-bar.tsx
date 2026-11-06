@@ -351,6 +351,7 @@ function BulkActionBarLayout({
                 variant="ghost"
                 size="icon-sm"
                 aria-label={t('admin.actions.more_actions')}
+                className="hover:bg-accent-strong aria-expanded:bg-accent-strong"
               >
                 <EllipsisVerticalIcon className="size-4" />
               </Button>
@@ -424,10 +425,10 @@ function BulkActionButton({
       disabled={disabled}
       tabIndex={tabIndex}
       // `shrink-0` so the zero-width measuring layer can't squeeze these and
-      // report a width smaller than the button really renders at. Hover is the
-      // ghost variant's own `bg-accent` — no override needed now that the bar's
-      // muted background sits well clear of it.
-      className="shrink-0 gap-1.5 whitespace-nowrap px-2"
+      // report a width smaller than the button really renders at. Hover one
+      // step past the ghost variant's `bg-accent`, which is barely apart from
+      // the bar's own grey.
+      className="shrink-0 gap-1.5 whitespace-nowrap px-2 hover:bg-accent-strong aria-expanded:bg-accent-strong"
     >
       {action.icon}
       {action.label}
