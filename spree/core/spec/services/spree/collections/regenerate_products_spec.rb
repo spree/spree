@@ -91,5 +91,39 @@ module Spree
         expect(published.map(&:name)).to eq(['product_collection.deleted'])
       end
     end
+
+    describe 'the ids of memberships that survive' do
+      let!(:second_product) { create(:product, tags: [tag]) }
+
+      it 'keeps them across a run that changes nothing' do
+        subject
+        before = collection.product_collections.order(:product_id).pluck(:product_id, :id)
+
+        described_class.call(collection: collection)
+
+        expect(collection.product_collections.order(:product_id).pluck(:product_id, :id)).to eq(before)
+      end
+
+      it 'keeps the survivor when another product drops out' do
+        subject
+        survivor = collection.product_collections.find_by(product_id: second_product.id)
+
+        matching_product.tag_list.remove('sale')
+        matching_product.save!
+        described_class.call(collection: collection)
+
+        expect(collection.product_collections.pluck(:id)).to eq([survivor.id])
+      end
+
+      it 'closes the gap the removal leaves in the positions' do
+        subject
+        matching_product.tag_list.remove('sale')
+        matching_product.save!
+
+        described_class.call(collection: collection)
+
+        expect(collection.product_collections.order(:position).pluck(:position)).to eq([1])
+      end
+    end
   end
 end
