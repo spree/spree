@@ -46,7 +46,7 @@ RSpec.describe Spree::ProductCategory, 'lifecycle events', events: true do
 
   it 'attributes a collection membership deleted by the product going away' do
     collection = create(:collection, store: other_store)
-    Spree::ProductCollection.create!(product: product, collection: collection)
+    Spree::ProductCollection.create!(product: product, collection: collection, source: 'manual')
     Spree::Current.store = nil
 
     published = []

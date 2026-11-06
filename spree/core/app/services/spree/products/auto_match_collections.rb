@@ -11,7 +11,7 @@ module Spree
       # @param product [Spree::Product]
       # @return [Spree::ServiceModule::Base::Result]
       def call(product:)
-        return unless product.present?
+        return if product.blank?
 
         collections = Spree::Collection.automatic.where(store_id: product.store_id).includes(:rules, :store).to_a
         memberships = Spree::ProductCollection.where(product_id: product.id, collection_id: collections.map(&:id)).index_by(&:collection_id)
@@ -30,11 +30,17 @@ module Spree
         end
 
         # A row from before 6.1 has no source; on an automatic collection its rules made it.
-        Spree::ProductCollection.where(product_id: product.id, collection_id: to_remove.map(&:id), source: [nil, 'rule']).delete_all if to_remove.any?
+        removed = Spree::ProductCollection.where(product_id: product.id, collection_id: to_remove.map(&:id), source: [nil, 'rule']).to_a
+        Spree::ProductCollection.where(id: removed.map(&:id)).delete_all if removed.any?
         add(product, to_add)
 
         affected_ids = (to_remove + to_add).map(&:id)
-        refresh(product, affected_ids) if affected_ids.any?
+        return success(product) if affected_ids.empty?
+
+        refresh(product, affected_ids)
+        removed.each { |row| row.publish_event('product_collection.deleted') }
+        Spree::ProductCollection.where(product_id: product.id, collection_id: to_add.map(&:id)).
+          find_each { |row| row.publish_event('product_collection.created') }
 
         success(product)
       end
