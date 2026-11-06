@@ -265,10 +265,10 @@ test.describe('inventory', () => {
 
     await page.goto(`/${session.store_id}/settings/stock-locations?edit=${location}`)
     const movements = page.getByRole('row').filter({ hasText: sku })
-    await expect(movements.filter({ hasText: /\+10/ }).getByText(/^received$/i)).toBeVisible({
-      timeout: 15_000,
-    })
-    await expect(movements.filter({ hasText: /-1\b/ }).getByText(/^damaged$/i)).toBeVisible()
+    const change = (quantity: string) =>
+      movements.filter({ has: page.getByRole('cell', { name: quantity, exact: true }) })
+    await expect(change('+10').getByText(/^received$/i)).toBeVisible({ timeout: 15_000 })
+    await expect(change('-1').getByText(/^damaged$/i)).toBeVisible()
     await expect(movements.getByText(/inventory feed/i)).toHaveCount(0)
   })
 })
