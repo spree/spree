@@ -63,6 +63,30 @@ RSpec.describe Spree::AgentTools::SearchResources do
     end
   end
 
+  describe 'a page past the last one' do
+    it 'returns no records rather than an error' do
+      result = tool.call(resource: 'products', limit: 2, page: 5)
+
+      expect(result[:error]).to be_nil
+      expect(result[:records]).to be_empty
+      expect(result[:next_page]).to be_nil
+    end
+  end
+
+  describe 'sorting' do
+    before do
+      products.each_with_index { |product, index| product.update_columns(created_at: index.days.ago) }
+    end
+
+    it 'sorts descending whether written as -field or field desc' do
+      newest = products.first.prefixed_id
+
+      expect(tool.call(resource: 'products', sort: '-created_at', limit: 1)[:records].first[:id]).to eq(newest)
+      expect(tool.call(resource: 'products', sort: 'created_at desc', limit: 1)[:records].first[:id]).to eq(newest)
+      expect(tool.call(resource: 'products', sort: 'created_at', limit: 1)[:records].first[:id]).to eq(products.last.prefixed_id)
+    end
+  end
+
   describe 'stock levels' do
     it 'carries the quantity and location on each row' do
       stock_level = products.first.default_variant.stock_levels.first

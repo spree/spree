@@ -25,7 +25,7 @@ module Spree
 
       param :resource, description: 'Resource key — call describe_resource for the list', required: true
       param :filters, type: :object, description: 'Ransack filter hash, e.g. {"name_cont": "shirt"}'
-      param :sort, description: 'Sort, e.g. "created_at desc"'
+      param :sort, description: 'Sort field, prefixed with - for descending, e.g. "-created_at" for newest first'
       param :limit, type: :integer,
                     description: "Records per page (default #{DEFAULT_LIMIT}, at most #{MAX_LIMIT}). " \
                                  'When total exceeds count, pass next_page as page to fetch the rest.'
@@ -93,8 +93,19 @@ module Spree
       def query_for(filters, sort, limit, page)
         params = { limit: capped_limit(limit), page: [page.to_i, 1].max }
         params[:q] = filters if filters.any?
-        params[:sort] = sort if sort.present?
+        params[:sort] = api_sort(sort) if sort.present?
         params
+      end
+
+      # The API reads `-field` for descending. Models also write Ransack's
+      # `field desc`, which reached the API as `field desc asc` and sorted
+      # ascending, so a request for the newest records paged through the
+      # oldest.
+      def api_sort(sort)
+        sort.to_s.split(',').map do |part|
+          field, direction = part.strip.split(/\s+/, 2)
+          direction.to_s.casecmp?('desc') ? "-#{field.delete_prefix('-')}" : field
+        end.join(',')
       end
 
       # Empty values match everything, so they are dropped — but `false` is a
