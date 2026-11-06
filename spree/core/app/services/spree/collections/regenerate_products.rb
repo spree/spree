@@ -29,10 +29,16 @@ module Spree
         Spree::ProductCollection.where(id: removed_rows.map(&:id)).delete_all if removed_rows.any?
 
         # Close the gaps the removals left, keeping the survivors in the order
-        # they were already in, then append the newcomers.
-        retained_rows.each_with_index do |row, index|
-          row.update_columns(position: index + 1) unless row.position == index + 1
+        # they were already in. One statement rather than one per row:
+        # dropping an early member shifts every row behind it.
+        moved = retained_rows.each_with_index.filter_map do |row, index|
+          next if row.position == index + 1
+
+          { id: row.id, collection_id: collection.id, product_id: row.product_id,
+            position: index + 1, created_at: row.created_at, updated_at: Time.current }
         end
+
+        Spree::ProductCollection.upsert_all(moved, unique_by: (:id unless Spree.mysql?)) if moved.any?
 
         if added_ids.any?
           records_to_insert = added_ids.map.with_index(retained_rows.size + 1) do |product_id, position|
