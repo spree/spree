@@ -11,9 +11,11 @@ module Spree
     acts_as_list scope: :category_id
 
     with_options inverse_of: :product_categories, touch: true do
-      belongs_to :product, class_name: 'Spree::Product', counter_cache: :categories_count
+      belongs_to :product, -> { with_deleted }, class_name: 'Spree::Product', counter_cache: :categories_count
       belongs_to :category, class_name: 'Spree::Category'
     end
+
+    delegate :store, to: :product, allow_nil: true
 
     validates :position, numericality: { only_integer: true, allow_blank: true, allow_nil: true }
     # For #3494
@@ -26,11 +28,6 @@ module Spree
     after_destroy :recalculate_category_products_count
 
     self.whitelisted_ransackable_attributes = ['category_id', 'product_id']
-
-    # To set proper context when publishing events
-    def store
-      (product || Spree::Product.with_deleted.find_by(id: product_id))&.store
-    end
 
     scope :by_best_selling, lambda { |order_direction = :desc|
       left_joins(product: :orders).
