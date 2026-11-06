@@ -71,15 +71,17 @@ module Spree
       # one, because the scope belongs to the resource being imported or
       # exported — creating a product import is a product write, and reading
       # its rows exposes the uploaded data. A single static key cannot say
-      # that, so these are registered without generic writes under the
-      # broadest key the controller can demand. Creating one stays with
-      # create_import and create_export; reading, listing and deleting go to
-      # the endpoint, which checks the record's own scope.
+      # that, so these open to a caller holding the scope of any one type,
+      # in the kind the controller asks for: `read_` for an export, `write_`
+      # for an import. The endpoint then keeps to the types that key covers.
+      #
+      # Creating one stays with create_import and create_export; reading,
+      # listing and deleting go to the endpoint.
       DYNAMIC_SCOPE_RESOURCES = {
-        'imports' => { model_name: 'Spree::Import', permission: 'read_settings',
+        'imports' => { model_name: 'Spree::Import', access_kind: 'write',
                        serializer_name: 'Spree::Api::V3::Admin::ImportSerializer',
                        dashboard_path: '/settings/imports' },
-        'exports' => { model_name: 'Spree::Export', permission: 'read_settings',
+        'exports' => { model_name: 'Spree::Export', access_kind: 'read',
                        serializer_name: 'Spree::Api::V3::Admin::ExportSerializer' }
       }.freeze
 
@@ -108,7 +110,9 @@ module Spree
           registered.each { |entry| map.register(**entry) }
 
           DYNAMIC_SCOPE_RESOURCES.each do |key, attributes|
-            map.register(key: key, **attributes, api_paths: dynamic_scope_paths(attributes[:model_name]))
+            map.register(key: key, permission: nil, **attributes.except(:access_kind),
+                         api_paths: dynamic_scope_paths(attributes[:model_name]),
+                         access_permissions: type_permissions(attributes[:model_name], attributes[:access_kind]))
           end
 
           registered.size + DYNAMIC_SCOPE_RESOURCES.size
@@ -234,6 +238,15 @@ module Spree
           return {} if controller.nil?
 
           api_paths_for(controller).slice(*DYNAMIC_SCOPE_ACTIONS)
+        end
+
+        # The catalog keys that open an import or export of each registered
+        # type. A type with no scope of its own needs `read_all` or
+        # `write_all`, which no catalog key stands for, so it adds none.
+        def type_permissions(model_name, kind)
+          model_name.constantize.available_types.
+            filter_map { |type| type.required_scope.presence && "#{kind}_#{type.required_scope}" }.
+            uniq.select { |key| Spree.permissions.key?(key) }
         end
 
         # What the controller does with its own collection. A controller that

@@ -29,9 +29,11 @@ RSpec.describe Spree::AgentTools::ResourceMap do
           expect(entry.serializer_name.safe_constantize).to be_present
         end
 
-        it 'declares a permission key in the catalog' do
-          expect(Spree.permissions.key?(entry.permission)).to be(true),
-                                                              "#{entry.key} declares unknown permission #{entry.permission.inspect}"
+        it 'declares permission keys in the catalog' do
+          unknown = entry.permission_keys.reject { |key| Spree.permissions.key?(key) }
+
+          expect(entry.permission_keys).to be_present
+          expect(unknown).to be_empty, "#{entry.key} declares unknown permissions #{unknown.inspect}"
         end
 
         it 'builds a working store-scoped relation' do
@@ -195,8 +197,18 @@ RSpec.describe Spree::AgentTools::ResourceMap, 'permission alignment' do
   end
 
   it 'points every resource at a permission the catalog actually defines' do
-    unknown = described_class.all.reject { |entry| Spree.permissions.key?(entry.permission) }
+    unknown = described_class.all.reject do |entry|
+      entry.permission_keys.any? && entry.permission_keys.all? { |key| Spree.permissions.key?(key) }
+    end
 
     expect(unknown.map(&:key)).to be_empty
+  end
+
+  # Imports and exports are gated by the scope of the type each one carries,
+  # the way their controllers gate them.
+  it 'opens exports to a reader of any exported resource and imports to a writer' do
+    expect(described_class.find('exports').access_permissions).to include('read_products', 'read_orders', 'read_customers')
+    expect(described_class.find('imports').access_permissions).to include('write_products', 'write_customers')
+    expect(described_class.find('imports').access_permissions).not_to include('read_products')
   end
 end

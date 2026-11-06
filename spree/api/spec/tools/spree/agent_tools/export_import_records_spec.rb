@@ -76,6 +76,53 @@ RSpec.describe 'agent tools on exports and imports' do
     end
   end
 
+  # Each export and import is gated by the scope of the resource it carries,
+  # so that scope is what opens them to the tools, not `read_settings`.
+  context 'when the caller may read products and nothing else' do
+    let(:ability) do
+      Class.new do
+        include CanCan::Ability
+
+        def initialize = can(:manage, :all)
+        def permission_keys = %w[read_products]
+      end.new
+    end
+
+    it 'reads back the product export it made' do
+      created = tool('create_export').call(resource: 'products')
+
+      result = tool('get_resource').call(resource: 'exports', id: created[:id])
+
+      expect(result[:error]).to be_nil
+      expect(result[:record]['id']).to eq(created[:id])
+    end
+
+    it 'cannot open imports, which take a write scope' do
+      import = create(:product_import, store: store, user: admin)
+
+      result = tool('get_resource').call(resource: 'imports', id: import.prefixed_id)
+
+      expect(result[:error]).to include('permission')
+    end
+  end
+
+  context 'when the caller holds only the settings scopes' do
+    let(:ability) do
+      Class.new do
+        include CanCan::Ability
+
+        def initialize = can(:manage, :all)
+        def permission_keys = %w[read_settings write_settings]
+      end.new
+    end
+
+    it 'cannot open exports or imports' do
+      %w[exports imports].each do |key|
+        expect(Spree::AgentTools::SearchResources.new(context).call(resource: key)[:error]).to include('permission')
+      end
+    end
+  end
+
   # Creating one is a typed request the dedicated tools build; the generic
   # create would send a body the endpoint cannot read.
   it 'leaves creating them to create_export and create_import' do
