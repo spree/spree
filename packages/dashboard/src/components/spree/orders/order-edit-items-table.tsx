@@ -57,7 +57,7 @@ export function OrderEditItemsTable({
 
   return (
     <fieldset disabled={disabled} className="contents">
-      <Table>
+      <Table roundedTop>
         <TableHeader>
           <TableRow>
             <TableHead>{t('admin.orders.edit.columns.product')}</TableHead>

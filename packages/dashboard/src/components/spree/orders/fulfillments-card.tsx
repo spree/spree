@@ -16,11 +16,8 @@ import {
   Badge,
   Button,
   Card,
-  CardAction,
   CardContent,
   CardFooter,
-  CardHeader,
-  CardTitle,
   Dialog,
   DialogBody,
   DialogContent,
@@ -45,6 +42,10 @@ import {
   type PostSaleUnit,
   QuantityPicker,
   RelativeTime,
+  Section,
+  SectionActions,
+  SectionHeader,
+  SectionTitle,
   Select,
   SelectContent,
   SelectItem,
@@ -830,14 +831,14 @@ export function FulfillmentsCard({ order }: { order: Order }) {
 
   return (
     <>
-      <Card variant="container">
-        <CardHeader>
-          <CardTitle>
+      <Section>
+        <SectionHeader>
+          <SectionTitle>
             <TruckIcon className="size-4" />
             {t('admin.pages.orders.detail.section_fulfillments')}
             {groupCount > 0 && <Badge variant="outline">{groupCount}</Badge>}
-          </CardTitle>
-          <CardAction className="flex items-center gap-2">
+          </SectionTitle>
+          <SectionActions className="flex items-center gap-2">
             {order.fulfillment_status && <StatusBadge status={order.fulfillment_status} />}
             {canCreate && (
               <Button size="sm" variant="outline" onClick={() => setCreateOpen(true)}>
@@ -845,25 +846,27 @@ export function FulfillmentsCard({ order }: { order: Order }) {
                 {t('admin.orders.detail.fulfillments.create_title')}
               </Button>
             )}
-          </CardAction>
-        </CardHeader>
+          </SectionActions>
+        </SectionHeader>
         {groupCount === 0 ? (
-          <CardContent>
-            <p className="text-center text-muted-foreground py-8">
-              {t('admin.orders.detail.fulfillments.empty')}
-            </p>
-          </CardContent>
+          <Card>
+            <CardContent>
+              <p className="text-center text-muted-foreground py-8">
+                {t('admin.orders.detail.fulfillments.empty')}
+              </p>
+            </CardContent>
+          </Card>
         ) : (
-          <CardContent className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4">
             {unfulfilled.length > 0 && (
               <UnfulfilledItems rows={unfulfilled} order={order} canCreate={canCreate} />
             )}
             {fulfillments.map((fulfillment) => (
               <FulfillmentRow key={fulfillment.id} order={order} fulfillment={fulfillment} />
             ))}
-          </CardContent>
+          </div>
         )}
-      </Card>
+      </Section>
 
       {createOpen && (
         <CreateFulfillmentDialog order={order} open={createOpen} onOpenChange={setCreateOpen} />

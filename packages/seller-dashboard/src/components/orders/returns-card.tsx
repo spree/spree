@@ -22,6 +22,10 @@ import {
   DropdownMenuTrigger,
   ReturnReceiveDialog,
   ReturnRefundDialog,
+  Section,
+  SectionActions,
+  SectionHeader,
+  SectionTitle,
   StatusBadge,
   useConfirm,
 } from '@spree/dashboard-ui'
@@ -70,23 +74,23 @@ export function ReturnsCard({ order }: { order: Order }) {
   }
 
   return (
-    <Card variant="container">
-      <CardHeader className="items-center">
-        <CardTitle>
+    <Section>
+      <SectionHeader className="items-center">
+        <SectionTitle>
           <RotateCcwIcon className="size-4" />
           {t('orders.post_sale.returns.title')}
-        </CardTitle>
+        </SectionTitle>
         {canCreate && (
-          <CardAction>
+          <SectionActions>
             <Button variant="outline" size="sm" onClick={() => setCreateOpen(true)}>
               <PlusIcon className="size-4" />
               {t('orders.post_sale.returns.create')}
             </Button>
-          </CardAction>
+          </SectionActions>
         )}
-      </CardHeader>
+      </SectionHeader>
 
-      <CardContent className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4">
         {returns.length === 0 ? (
           <p className="text-muted-foreground text-sm">{t('orders.post_sale.returns.empty')}</p>
         ) : (
@@ -149,7 +153,7 @@ export function ReturnsCard({ order }: { order: Order }) {
             </Card>
           ))
         )}
-      </CardContent>
+      </div>
 
       <CreateReturnDialog order={order} open={createOpen} onOpenChange={setCreateOpen} />
       {receiving && (
@@ -167,7 +171,7 @@ export function ReturnsCard({ order }: { order: Order }) {
           onOpenChange={() => setRefunding(null)}
         />
       )}
-    </Card>
+    </Section>
   )
 }
 

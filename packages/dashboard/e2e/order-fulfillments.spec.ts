@@ -24,15 +24,15 @@ async function createDraftOrder(page: Page, storeId: string) {
 }
 
 /**
- * The Fulfillments card. Filtering `div` by contained text would match every
- * ancestor too, so anchor on the card element itself.
+ * The Fulfillments section. Filtering `div` by contained text would match every
+ * ancestor too, so anchor on the section element itself.
  */
 function fulfillmentsCard(page: Page) {
-  // The title holds an icon and a count badge beside the word, so match the
-  // text loosely; anchoring on the card element keeps sibling cards out.
-  return page.locator('[data-slot="card"]').filter({
-    has: page.locator('[data-slot="card-title"]', { hasText: /fulfillments/i }),
-  })
+  // The heading holds an icon and a count badge beside the word, so match
+  // the text loosely; anchoring on the section keeps sibling ones out.
+  return page
+    .locator('[data-slot="section"]')
+    .filter({ has: page.getByRole('heading', { name: /fulfillments/i }) })
 }
 
 test.describe('order fulfillments', () => {

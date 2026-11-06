@@ -10,10 +10,7 @@ import {
   Badge,
   Button,
   Card,
-  CardAction,
   CardContent,
-  CardHeader,
-  CardTitle,
   Dialog,
   DialogBody,
   DialogContent,
@@ -32,6 +29,10 @@ import {
   InputGroupAddon,
   InputGroupInput,
   InputGroupText,
+  Section,
+  SectionActions,
+  SectionHeader,
+  SectionTitle,
   Select,
   SelectContent,
   SelectItem,
@@ -95,15 +96,18 @@ export function PaymentsCard({ order }: { order: Order }) {
     adminClient.orders.payments.void(orderId, paymentId, {}),
   )
 
+  // Above the card rather than inside it, so the table starts the card.
+  const showSharedHelp = grouped && !awaitingGroup && !groupFailed && payments.length > 0
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>
+    <Section>
+      <SectionHeader>
+        <SectionTitle>
           <CreditCardIcon className="size-4" />
           {t('admin.pages.orders.detail.section_payments')}
           {payments.length > 0 && <Badge variant="outline">{payments.length}</Badge>}
-        </CardTitle>
-        <CardAction className="flex items-center gap-2">
+        </SectionTitle>
+        <SectionActions className="flex items-center gap-2">
           {order.payment_status && <StatusBadge status={order.payment_status} />}
           {/* Adding, capturing and voting a grouped payment acts on every
               order in the checkout, not just this one — so this order's page
@@ -114,130 +118,132 @@ export function PaymentsCard({ order }: { order: Order }) {
               {t('admin.actions.add')}
             </Button>
           )}
-        </CardAction>
-      </CardHeader>
-      {awaitingGroup ? (
-        <CardContent>
-          <Skeleton className="h-24 w-full" />
-        </CardContent>
-      ) : grouped && groupFailed ? (
-        // Distinct from the empty state below: a request that failed says
-        // nothing about whether this order was paid, and reading "no payments"
-        // off a network error is the misreading this branch exists to prevent.
-        <CardContent>
-          <p className="text-center text-destructive py-8">
-            {t('admin.orders.detail.payments_table.load_error')}
-          </p>
-        </CardContent>
-      ) : payments.length === 0 ? (
-        <CardContent>
-          <p className="text-center text-muted-foreground py-8">
-            {t('admin.pages.orders.detail.empty_payments')}
-          </p>
-        </CardContent>
-      ) : (
-        <>
-          {grouped && (
-            <p className="px-6 pb-2 text-sm text-muted-foreground">
-              {t('admin.orders.detail.payments_table.shared_help')}
+        </SectionActions>
+      </SectionHeader>
+      {showSharedHelp && (
+        <p className="text-muted-foreground text-sm">
+          {t('admin.orders.detail.payments_table.shared_help')}
+        </p>
+      )}
+      <Card>
+        {awaitingGroup ? (
+          <CardContent>
+            <Skeleton className="h-24 w-full" />
+          </CardContent>
+        ) : grouped && groupFailed ? (
+          // Distinct from the empty state below: a request that failed says
+          // nothing about whether this order was paid, and reading "no payments"
+          // off a network error is the misreading this branch exists to prevent.
+          <CardContent>
+            <p className="text-center text-destructive py-8">
+              {t('admin.orders.detail.payments_table.load_error')}
             </p>
-          )}
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>{t('admin.orders.detail.payments_table.number')}</TableHead>
-                <TableHead>{t('admin.orders.detail.payments_table.method')}</TableHead>
-                <TableHead>{t('admin.orders.detail.payments_table.state')}</TableHead>
-                <TableHead className="text-right">{t('admin.fields.amount.label')}</TableHead>
-                {grouped && (
-                  <TableHead className="text-right">
-                    {t('admin.orders.detail.payments_table.this_order')}
-                  </TableHead>
-                )}
-                <TableHead className="w-10" />
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {payments.map((payment) => (
-                <TableRow key={payment.id}>
-                  <TableCell className="font-medium">{payment.number}</TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {payment.payment_method?.name ?? '—'}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex flex-wrap items-center gap-1.5">
-                      {/* A pending card payment that can be captured holds an
+          </CardContent>
+        ) : payments.length === 0 ? (
+          <CardContent>
+            <p className="text-center text-muted-foreground py-8">
+              {t('admin.pages.orders.detail.empty_payments')}
+            </p>
+          </CardContent>
+        ) : (
+          <>
+            <Table roundedTop>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>{t('admin.orders.detail.payments_table.number')}</TableHead>
+                  <TableHead>{t('admin.orders.detail.payments_table.method')}</TableHead>
+                  <TableHead>{t('admin.orders.detail.payments_table.state')}</TableHead>
+                  <TableHead className="text-right">{t('admin.fields.amount.label')}</TableHead>
+                  {grouped && (
+                    <TableHead className="text-right">
+                      {t('admin.orders.detail.payments_table.this_order')}
+                    </TableHead>
+                  )}
+                  <TableHead className="w-10" />
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {payments.map((payment) => (
+                  <TableRow key={payment.id}>
+                    <TableCell className="font-medium">{payment.number}</TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {payment.payment_method?.name ?? '—'}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        {/* A pending card payment that can be captured holds an
                           authorization — the same thing the order's status
                           calls it, so the two never disagree. */}
-                      {payment.status === 'pending' && payment.can_capture ? (
-                        <StatusBadge
-                          status="authorized"
-                          label={t('admin.orders.payment_statuses.authorized')}
+                        {payment.status === 'pending' && payment.can_capture ? (
+                          <StatusBadge
+                            status="authorized"
+                            label={t('admin.orders.payment_statuses.authorized')}
+                          />
+                        ) : (
+                          <StatusBadge status={payment.status} />
+                        )}
+                        {(payment.avs_risky || payment.cvv_risky) && (
+                          <Badge variant="warning">
+                            <ShieldAlertIcon />
+                            {t('admin.orders.detail.payments_table.failed_card_checks')}
+                          </Badge>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-right font-medium whitespace-nowrap tabular-nums">
+                      <Money amount={payment.amount} currency={order.currency} />
+                    </TableCell>
+                    {grouped && (
+                      <TableCell className="text-right whitespace-nowrap tabular-nums">
+                        <Money
+                          amount={
+                            splits.find((split) => split.payment_id === payment.id)?.captured_amount
+                          }
+                          currency={order.currency}
                         />
-                      ) : (
-                        <StatusBadge status={payment.status} />
-                      )}
-                      {(payment.avs_risky || payment.cvv_risky) && (
-                        <Badge variant="warning">
-                          <ShieldAlertIcon />
-                          {t('admin.orders.detail.payments_table.failed_card_checks')}
-                        </Badge>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-right font-medium whitespace-nowrap tabular-nums">
-                    <Money amount={payment.amount} currency={order.currency} />
-                  </TableCell>
-                  {grouped && (
-                    <TableCell className="text-right whitespace-nowrap tabular-nums">
-                      <Money
-                        amount={
-                          splits.find((split) => split.payment_id === payment.id)?.captured_amount
-                        }
+                      </TableCell>
+                    )}
+                    <TableCell>
+                      <PaymentActionsMenu
+                        payment={payment}
                         currency={order.currency}
+                        // Capturing or voiding a grouped payment acts on every
+                        // order in the checkout, so this page only links out.
+                        canCapture={!grouped && payment.can_capture}
+                        canVoid={!grouped && payment.can_void}
+                        onCapture={async () => {
+                          if (
+                            await confirm({
+                              message: t('admin.orders.detail.confirm.capture_message'),
+                              variant: 'default',
+                              confirmLabel: t('admin.pages.orders.detail.actions.capture'),
+                            })
+                          ) {
+                            captureMutation.mutate(payment.id)
+                          }
+                        }}
+                        onVoid={async () => {
+                          if (
+                            await confirm({
+                              message: t('admin.orders.detail.confirm.void_message'),
+                              variant: 'destructive',
+                              confirmLabel: t('admin.pages.orders.detail.actions.void'),
+                            })
+                          ) {
+                            voidMutation.mutate(payment.id)
+                          }
+                        }}
                       />
                     </TableCell>
-                  )}
-                  <TableCell>
-                    <PaymentActionsMenu
-                      payment={payment}
-                      currency={order.currency}
-                      // Capturing or voiding a grouped payment acts on every
-                      // order in the checkout, so this page only links out.
-                      canCapture={!grouped && payment.can_capture}
-                      canVoid={!grouped && payment.can_void}
-                      onCapture={async () => {
-                        if (
-                          await confirm({
-                            message: t('admin.orders.detail.confirm.capture_message'),
-                            variant: 'default',
-                            confirmLabel: t('admin.pages.orders.detail.actions.capture'),
-                          })
-                        ) {
-                          captureMutation.mutate(payment.id)
-                        }
-                      }}
-                      onVoid={async () => {
-                        if (
-                          await confirm({
-                            message: t('admin.orders.detail.confirm.void_message'),
-                            variant: 'destructive',
-                            confirmLabel: t('admin.pages.orders.detail.actions.void'),
-                          })
-                        ) {
-                          voidMutation.mutate(payment.id)
-                        }
-                      }}
-                    />
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </>
-      )}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </>
+        )}
+      </Card>
       <AddPaymentDialog order={order} open={addOpen} onOpenChange={setAddOpen} />
-    </Card>
+    </Section>
   )
 }
 

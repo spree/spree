@@ -22,6 +22,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   hasMetadata,
+  Section,
+  SectionActions,
+  SectionHeader,
+  SectionTitle,
   StatusBadge,
   useConfirm,
 } from '@spree/dashboard-ui'
@@ -78,14 +82,14 @@ export function OrderExchangesCard({ order }: { order: Order }) {
 
   return (
     <>
-      <Card variant="container">
-        <CardHeader>
-          <CardTitle>
+      <Section>
+        <SectionHeader>
+          <SectionTitle>
             <RepeatIcon className="size-4" />
             {t('admin.pages.orders.detail.section_exchanges')}
             {exchanges.length > 0 && <Badge variant="outline">{exchanges.length}</Badge>}
-          </CardTitle>
-          <CardAction>
+          </SectionTitle>
+          <SectionActions>
             <Button
               variant="outline"
               size="sm"
@@ -96,9 +100,9 @@ export function OrderExchangesCard({ order }: { order: Order }) {
               <PlusIcon className="size-4" />
               {t('admin.pages.orders.detail.exchanges.actions.create')}
             </Button>
-          </CardAction>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-4">
+          </SectionActions>
+        </SectionHeader>
+        <div className="flex flex-col gap-4">
           {exchanges.length === 0 && (
             <p className="text-sm text-muted-foreground">
               {canCreate
@@ -224,8 +228,8 @@ export function OrderExchangesCard({ order }: { order: Order }) {
               </CardFooter>
             </Card>
           ))}
-        </CardContent>
-      </Card>
+        </div>
+      </Section>
 
       {creating && (
         <CreateExchangeDialog
@@ -264,14 +268,14 @@ export function OrderClaimsCard({ order }: { order: Order }) {
 
   return (
     <>
-      <Card variant="container">
-        <CardHeader>
-          <CardTitle>
+      <Section>
+        <SectionHeader>
+          <SectionTitle>
             <ShieldAlertIcon className="size-4" />
             {t('admin.pages.orders.detail.section_claims')}
             {claims.length > 0 && <Badge variant="outline">{claims.length}</Badge>}
-          </CardTitle>
-          <CardAction>
+          </SectionTitle>
+          <SectionActions>
             <Button
               variant="outline"
               size="sm"
@@ -281,9 +285,9 @@ export function OrderClaimsCard({ order }: { order: Order }) {
               <PlusIcon className="size-4" />
               {t('admin.pages.orders.detail.claims.actions.create')}
             </Button>
-          </CardAction>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-4">
+          </SectionActions>
+        </SectionHeader>
+        <div className="flex flex-col gap-4">
           {claims.length === 0 && (
             <p className="text-sm text-muted-foreground">
               {t('admin.pages.orders.detail.claims.empty')}
@@ -397,8 +401,8 @@ export function OrderClaimsCard({ order }: { order: Order }) {
               </CardFooter>
             </Card>
           ))}
-        </CardContent>
-      </Card>
+        </div>
+      </Section>
 
       {resolving && (
         <ResolveClaimDialog

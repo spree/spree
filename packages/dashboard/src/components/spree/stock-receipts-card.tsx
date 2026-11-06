@@ -2,10 +2,15 @@ import type { PaginatedResponse, StockReceipt } from '@spree/admin-sdk'
 import {
   Badge,
   Card,
+  CardAction,
   CardContent,
   CardHeader,
   CardTitle,
   RelativeTime,
+  Section,
+  SectionHeader,
+  SectionTitle,
+  StatusBadge,
   Table,
   TableBody,
   TableCell,
@@ -13,7 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from '@spree/dashboard-ui'
-import { PackageCheckIcon } from '@spree/dashboard-ui/icons'
+import { FileTextIcon, PackageCheckIcon } from '@spree/dashboard-ui/icons'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { VariantLink } from './variant-link'
@@ -36,36 +41,40 @@ export function StockReceiptsCard({
   const receipts = data?.data ?? []
 
   return (
-    <Card variant="container">
-      <CardHeader>
-        <CardTitle>
+    <Section>
+      <SectionHeader>
+        <SectionTitle>
           <PackageCheckIcon className="size-4" />
           {t('admin.stock_receipts.title')}
           {receipts.length > 0 && <Badge variant="outline">{receipts.length}</Badge>}
-        </CardTitle>
-      </CardHeader>
+        </SectionTitle>
+      </SectionHeader>
       {/* A failed request is not an empty list: saying "no deliveries" over an
           error would tell the merchant something false about their stock. */}
       {isError ? (
-        <CardContent>
-          <p className="py-8 text-center text-destructive">
-            {t('admin.stock_receipts.load_failed')}
-          </p>
-        </CardContent>
+        <Card>
+          <CardContent>
+            <p className="py-8 text-center text-destructive">
+              {t('admin.stock_receipts.load_failed')}
+            </p>
+          </CardContent>
+        </Card>
       ) : receipts.length === 0 ? (
-        <CardContent>
-          <p className="py-8 text-center text-muted-foreground">
-            {t('admin.stock_receipts.empty')}
-          </p>
-        </CardContent>
+        <Card>
+          <CardContent>
+            <p className="py-8 text-center text-muted-foreground">
+              {t('admin.stock_receipts.empty')}
+            </p>
+          </CardContent>
+        </Card>
       ) : (
-        <CardContent className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4">
           {receipts.map((receipt) => (
             <StockReceiptPanel key={receipt.id} receipt={receipt} />
           ))}
-        </CardContent>
+        </div>
       )}
-    </Card>
+    </Section>
   )
 }
 
@@ -75,20 +84,30 @@ function StockReceiptPanel({ receipt }: { receipt: StockReceipt }) {
   const items = receipt.items ?? []
 
   return (
-    <Card variant="nested" className="px-0 rounded-xl">
-      <CardHeader className="px-3!">
+    // Laid out like a fulfillment: what happened and to which document on
+    // the left, when on the right, then the counts on their own row.
+    <Card variant="nested" className="px-0">
+      <CardHeader className="px-3.5!">
         <CardTitle className="min-w-0 font-normal text-sm">
-          <span className="font-medium tabular-nums">{receipt.number}</span>
-          <span className="text-muted-foreground text-xs">
-            <RelativeTime iso={receipt.received_at} />
-          </span>
+          <StatusBadge
+            status="received"
+            tone="success"
+            label={t('admin.stock_transfers.statuses.received')}
+          />
+          <span className="text-muted-foreground tabular-nums">{receipt.number}</span>
           {receipt.reference && (
-            <span className="truncate text-muted-foreground text-xs">{receipt.reference}</span>
+            <span className="flex min-w-0 items-center gap-1.5 text-muted-foreground text-xs">
+              <FileTextIcon className="size-3 shrink-0" />
+              <span className="truncate">{receipt.reference}</span>
+            </span>
           )}
         </CardTitle>
+        <CardAction className="text-muted-foreground text-xs">
+          <RelativeTime iso={receipt.received_at} />
+        </CardAction>
       </CardHeader>
 
-      <CardContent className="flex items-center justify-between border-b border-border-subtle p-3! text-sm">
+      <CardContent className="flex items-center justify-between border-b border-border-subtle px-3.5! py-3! text-sm">
         <span className="text-muted-foreground">
           {t('admin.stock_receipts.summary', {
             accepted: receipt.quantity_accepted_total,

@@ -20,6 +20,9 @@ import {
   ErrorState,
   RelativeTime,
   ResourceLayout,
+  Section,
+  SectionHeader,
+  SectionTitle,
   Table,
   TableBody,
   TableCell,
@@ -30,6 +33,7 @@ import {
 } from '@spree/dashboard-ui'
 import {
   PackageCheckIcon,
+  PackageIcon,
   PencilIcon,
   Trash2Icon,
   Undo2Icon,
@@ -250,47 +254,54 @@ function PlannedItemsCard({ transfer }: { transfer: StockTransfer }) {
   const items = transfer.items ?? []
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('admin.stock_transfers.items_title')}</CardTitle>
-      </CardHeader>
-      <CardContent className="p-0">
-        {items.length === 0 ? (
-          <p className="p-3 text-muted-foreground text-sm">
-            {t('admin.stock_transfers.items_empty')}
-          </p>
-        ) : (
-          <Table scrollX roundedBottom>
-            <TableHeader>
-              <TableRow>
-                <TableHead>{t('admin.inventory_lines.columns.variant')}</TableHead>
-                {/* Nothing has shipped yet on a draft — this is what will. The
+    <Section>
+      <SectionHeader>
+        <SectionTitle>
+          <PackageIcon />
+          {t('admin.stock_transfers.items_title')}
+        </SectionTitle>
+      </SectionHeader>
+      <Card>
+        <CardContent className="p-0">
+          {items.length === 0 ? (
+            <p className="p-3 text-muted-foreground text-sm">
+              {t('admin.stock_transfers.items_empty')}
+            </p>
+          ) : (
+            <Table scrollX roundedTop roundedBottom>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>{t('admin.inventory_lines.columns.variant')}</TableHead>
+                  {/* Nothing has shipped yet on a draft — this is what will. The
                     receive screen keeps `quantity_shipped`, where it is past
                     tense and sits opposite Received. */}
-                <TableHead className="text-right">
-                  {t('admin.stock_transfers.columns.quantity_to_ship')}
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {items.map((item) => (
-                <TableRow key={item.id}>
-                  <TableCell>
-                    <VariantLink
-                      productId={item.product_id}
-                      name={item.variant_name}
-                      sku={item.variant_sku}
-                      thumbnailUrl={item.thumbnail_url}
-                    />
-                  </TableCell>
-                  <TableCell className="text-right tabular-nums">{item.quantity_shipped}</TableCell>
+                  <TableHead className="text-right">
+                    {t('admin.stock_transfers.columns.quantity_to_ship')}
+                  </TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        )}
-      </CardContent>
-    </Card>
+              </TableHeader>
+              <TableBody>
+                {items.map((item) => (
+                  <TableRow key={item.id}>
+                    <TableCell>
+                      <VariantLink
+                        productId={item.product_id}
+                        name={item.variant_name}
+                        sku={item.variant_sku}
+                        thumbnailUrl={item.thumbnail_url}
+                      />
+                    </TableCell>
+                    <TableCell className="text-right tabular-nums">
+                      {item.quantity_shipped}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+        </CardContent>
+      </Card>
+    </Section>
   )
 }
 
@@ -346,54 +357,63 @@ function LinesCard({ transfer }: { transfer: StockTransfer }) {
   const anyOver = items.some((item) => item.quantity_over > 0)
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('admin.stock_transfers.items_title')}</CardTitle>
-      </CardHeader>
-      <CardContent className="p-0">
-        <Table scrollX roundedBottom>
-          <TableHeader>
-            <TableRow>
-              <TableHead>{t('admin.inventory_lines.columns.variant')}</TableHead>
-              <TableHead className="text-right">
-                {t('admin.stock_transfers.columns.quantity_shipped')}
-              </TableHead>
-              <TableHead className="text-right">
-                {t('admin.stock_transfers.columns.quantity_received')}
-              </TableHead>
-              <TableHead className="text-right">
-                {t('admin.stock_transfers.columns.quantity_rejected')}
-              </TableHead>
-              {anyOver && (
+    <Section>
+      <SectionHeader>
+        <SectionTitle>
+          <PackageIcon />
+          {t('admin.stock_transfers.items_title')}
+        </SectionTitle>
+      </SectionHeader>
+      <Card>
+        <CardContent className="p-0">
+          <Table scrollX roundedTop roundedBottom>
+            <TableHeader>
+              <TableRow>
+                <TableHead>{t('admin.inventory_lines.columns.variant')}</TableHead>
                 <TableHead className="text-right">
-                  {t('admin.stock_transfers.columns.quantity_over')}
+                  {t('admin.stock_transfers.columns.quantity_shipped')}
                 </TableHead>
-              )}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {items.map((item) => (
-              <TableRow key={item.id}>
-                <TableCell>
-                  <VariantLink
-                    productId={item.product_id}
-                    name={item.variant_name}
-                    sku={item.variant_sku}
-                    thumbnailUrl={item.thumbnail_url}
-                  />
-                </TableCell>
-                <TableCell className="text-right tabular-nums">{item.quantity_shipped}</TableCell>
-                <TableCell className="text-right tabular-nums">{item.quantity_received}</TableCell>
-                <TableCell className="text-right tabular-nums">{item.quantity_rejected}</TableCell>
+                <TableHead className="text-right">
+                  {t('admin.stock_transfers.columns.quantity_received')}
+                </TableHead>
+                <TableHead className="text-right">
+                  {t('admin.stock_transfers.columns.quantity_rejected')}
+                </TableHead>
                 {anyOver && (
-                  <TableCell className="text-right tabular-nums">{item.quantity_over}</TableCell>
+                  <TableHead className="text-right">
+                    {t('admin.stock_transfers.columns.quantity_over')}
+                  </TableHead>
                 )}
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </CardContent>
-    </Card>
+            </TableHeader>
+            <TableBody>
+              {items.map((item) => (
+                <TableRow key={item.id}>
+                  <TableCell>
+                    <VariantLink
+                      productId={item.product_id}
+                      name={item.variant_name}
+                      sku={item.variant_sku}
+                      thumbnailUrl={item.thumbnail_url}
+                    />
+                  </TableCell>
+                  <TableCell className="text-right tabular-nums">{item.quantity_shipped}</TableCell>
+                  <TableCell className="text-right tabular-nums">
+                    {item.quantity_received}
+                  </TableCell>
+                  <TableCell className="text-right tabular-nums">
+                    {item.quantity_rejected}
+                  </TableCell>
+                  {anyOver && (
+                    <TableCell className="text-right tabular-nums">{item.quantity_over}</TableCell>
+                  )}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+    </Section>
   )
 }
 

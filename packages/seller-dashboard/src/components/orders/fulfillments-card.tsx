@@ -4,11 +4,8 @@ import {
   Badge,
   Button,
   Card,
-  CardAction,
   CardContent,
   CardFooter,
-  CardHeader,
-  CardTitle,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -16,6 +13,10 @@ import {
   DropdownMenuTrigger,
   FulfillmentItemList,
   FulfillmentPanel,
+  Section,
+  SectionActions,
+  SectionHeader,
+  SectionTitle,
   StatusBadge,
   useConfirm,
 } from '@spree/dashboard-ui'
@@ -54,14 +55,14 @@ export function FulfillmentsCard({ order }: { order: Order }) {
   const fulfillments = order.fulfillments ?? []
 
   return (
-    <Card variant="container">
-      <CardHeader>
-        <CardTitle>
+    <Section>
+      <SectionHeader>
+        <SectionTitle>
           <TruckIcon className="size-4" />
           {t('orders.fulfillments.title')}
           {fulfillments.length > 0 && <Badge variant="outline">{fulfillments.length}</Badge>}
-        </CardTitle>
-        <CardAction>
+        </SectionTitle>
+        <SectionActions>
           {order.fulfillment_status && (
             <StatusBadge
               status={order.fulfillment_status}
@@ -70,21 +71,25 @@ export function FulfillmentsCard({ order }: { order: Order }) {
               })}
             />
           )}
-        </CardAction>
-      </CardHeader>
+        </SectionActions>
+      </SectionHeader>
 
       {fulfillments.length === 0 ? (
-        <CardContent>
-          <p className="py-8 text-center text-muted-foreground">{t('orders.fulfillments.empty')}</p>
-        </CardContent>
+        <Card>
+          <CardContent>
+            <p className="py-8 text-center text-muted-foreground">
+              {t('orders.fulfillments.empty')}
+            </p>
+          </CardContent>
+        </Card>
       ) : (
-        <CardContent className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4">
           {fulfillments.map((fulfillment) => (
             <FulfillmentRow key={fulfillment.id} order={order} fulfillment={fulfillment} />
           ))}
-        </CardContent>
+        </div>
       )}
-    </Card>
+    </Section>
   )
 }
 

@@ -13,6 +13,10 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  Section,
+  SectionActions,
+  SectionHeader,
+  SectionTitle,
   StatusBadge,
   useConfirm,
 } from '@spree/dashboard-ui'
@@ -68,15 +72,15 @@ export function ExchangesCard({ order }: { order: Order }) {
   }
 
   return (
-    <Card variant="container">
-      <CardHeader>
-        <CardTitle>
+    <Section>
+      <SectionHeader>
+        <SectionTitle>
           <ArrowLeftRightIcon className="size-4" />
           {t('orders.post_sale.exchanges.title')}
-        </CardTitle>
-      </CardHeader>
+        </SectionTitle>
+      </SectionHeader>
 
-      <CardContent className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4">
         {exchanges.map((exchange) => (
           <Card key={exchange.id} variant="nested">
             <CardHeader>
@@ -160,8 +164,8 @@ export function ExchangesCard({ order }: { order: Order }) {
             </CardContent>
           </Card>
         ))}
-      </CardContent>
-    </Card>
+      </div>
+    </Section>
   )
 }
 
@@ -201,23 +205,23 @@ export function ClaimsCard({ order }: { order: Order }) {
   }
 
   return (
-    <Card variant="container">
-      <CardHeader>
-        <CardTitle>
+    <Section>
+      <SectionHeader>
+        <SectionTitle>
           <ShieldAlertIcon className="size-4" />
           {t('orders.post_sale.claims.title')}
-        </CardTitle>
+        </SectionTitle>
         {canCreate && (
-          <CardAction>
+          <SectionActions>
             <Button variant="outline" size="sm" onClick={() => setCreateOpen(true)}>
               <PlusIcon className="size-4" />
               {t('orders.post_sale.claims.create')}
             </Button>
-          </CardAction>
+          </SectionActions>
         )}
-      </CardHeader>
+      </SectionHeader>
 
-      <CardContent className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4">
         {claims.length === 0 ? (
           <p className="text-muted-foreground text-sm">{t('orders.post_sale.claims.empty')}</p>
         ) : (
@@ -284,7 +288,7 @@ export function ClaimsCard({ order }: { order: Order }) {
             </Card>
           ))
         )}
-      </CardContent>
+      </div>
 
       <CreateClaimDialog order={order} open={createOpen} onOpenChange={setCreateOpen} />
       {resolving && (
@@ -295,7 +299,7 @@ export function ClaimsCard({ order }: { order: Order }) {
           onOpenChange={() => setResolving(null)}
         />
       )}
-    </Card>
+    </Section>
   )
 }
 

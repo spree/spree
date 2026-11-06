@@ -4,8 +4,6 @@ import {
   Button,
   Card,
   CardContent,
-  CardHeader,
-  CardTitle,
   Dialog,
   DialogBody,
   DialogContent,
@@ -14,6 +12,9 @@ import {
   DialogTitle,
   Pagination,
   RelativeTime,
+  Section,
+  SectionHeader,
+  SectionTitle,
   StatusBadge,
   Table,
   TableBody,
@@ -51,14 +52,19 @@ export function StockHistoryCard({ title, ...scope }: StockHistoryScope & { titl
   const { t } = useTranslation()
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{title ?? t('admin.stock_history.title')}</CardTitle>
-      </CardHeader>
-      <CardContent className="p-0">
-        <StockHistoryTable {...scope} />
-      </CardContent>
-    </Card>
+    <Section>
+      <SectionHeader>
+        <SectionTitle>
+          <HistoryIcon />
+          {title ?? t('admin.stock_history.title')}
+        </SectionTitle>
+      </SectionHeader>
+      <Card>
+        <CardContent className="p-0">
+          <StockHistoryTable {...scope} startsCard />
+        </CardContent>
+      </Card>
+    </Section>
   )
 }
 
@@ -95,7 +101,11 @@ function StockHistoryTable({
   stockLocationId,
   stockTransferId,
   purchaseOrderId,
-}: StockHistoryScope) {
+  startsCard = false,
+}: StockHistoryScope & {
+  /** The table opens a card, so its header rounds into the card's corners. */
+  startsCard?: boolean
+}) {
   const { t } = useTranslation()
   const [page, setPage] = useState(1)
 
@@ -140,7 +150,7 @@ function StockHistoryTable({
       {/* The pagination bar brings its own top rule and padding, so it takes
           the bottom curve when it is there — and the last row takes it when
           the history fits on one page. */}
-      <Table scrollX roundedBottom={!paginated}>
+      <Table scrollX roundedTop={startsCard} roundedBottom={!paginated}>
         <TableHeader>
           <TableRow>
             <TableHead>{t('admin.stock_history.columns.date')}</TableHead>

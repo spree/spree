@@ -20,6 +20,9 @@ import {
   ErrorState,
   RelativeTime,
   ResourceLayout,
+  Section,
+  SectionHeader,
+  SectionTitle,
   Table,
   TableBody,
   TableCell,
@@ -30,6 +33,7 @@ import {
 } from '@spree/dashboard-ui'
 import {
   PackageCheckIcon,
+  PackageIcon,
   PencilIcon,
   Trash2Icon,
   Undo2Icon,
@@ -285,51 +289,56 @@ function ItemsCard({ purchaseOrder }: { purchaseOrder: PurchaseOrder }) {
   const anyOver = items.some((item) => item.quantity_over > 0)
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('admin.purchase_orders.items_title')}</CardTitle>
-      </CardHeader>
-      <CardContent className="flex flex-col p-0">
-        {items.length === 0 ? (
-          <p className="p-3 text-muted-foreground text-sm">
-            {t('admin.purchase_orders.items_empty')}
-          </p>
-        ) : (
-          <Table scrollX roundedBottom>
-            <TableHeader>
-              <TableRow>
-                <TableHead>{t('admin.inventory_lines.columns.variant')}</TableHead>
-                <TableHead className="text-right">
-                  {t('admin.purchase_orders.columns.quantity_ordered')}
-                </TableHead>
-                <TableHead className="text-right">
-                  {t('admin.purchase_orders.columns.quantity_received')}
-                </TableHead>
-                <TableHead className="text-right">
-                  {t('admin.purchase_orders.columns.quantity_rejected')}
-                </TableHead>
-                {anyOver && (
+    <Section>
+      <SectionHeader>
+        <SectionTitle>
+          <PackageIcon />
+          {t('admin.purchase_orders.items_title')}
+        </SectionTitle>
+      </SectionHeader>
+      <Card>
+        <CardContent className="flex flex-col p-0">
+          {items.length === 0 ? (
+            <p className="p-3 text-muted-foreground text-sm">
+              {t('admin.purchase_orders.items_empty')}
+            </p>
+          ) : (
+            <Table scrollX roundedTop roundedBottom>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>{t('admin.inventory_lines.columns.variant')}</TableHead>
                   <TableHead className="text-right">
-                    {t('admin.purchase_orders.columns.quantity_over')}
+                    {t('admin.purchase_orders.columns.quantity_ordered')}
                   </TableHead>
-                )}
-                <TableHead className="text-right">
-                  {t('admin.inventory_lines.columns.unit_cost')}
-                </TableHead>
-                <TableHead className="text-right">
-                  {t('admin.purchase_orders.columns.line_total')}
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {items.map((item) => (
-                <ItemRow key={item.id} item={item} showOver={anyOver} />
-              ))}
-            </TableBody>
-          </Table>
-        )}
-      </CardContent>
-    </Card>
+                  <TableHead className="text-right">
+                    {t('admin.purchase_orders.columns.quantity_received')}
+                  </TableHead>
+                  <TableHead className="text-right">
+                    {t('admin.purchase_orders.columns.quantity_rejected')}
+                  </TableHead>
+                  {anyOver && (
+                    <TableHead className="text-right">
+                      {t('admin.purchase_orders.columns.quantity_over')}
+                    </TableHead>
+                  )}
+                  <TableHead className="text-right">
+                    {t('admin.inventory_lines.columns.unit_cost')}
+                  </TableHead>
+                  <TableHead className="text-right">
+                    {t('admin.purchase_orders.columns.line_total')}
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {items.map((item) => (
+                  <ItemRow key={item.id} item={item} showOver={anyOver} />
+                ))}
+              </TableBody>
+            </Table>
+          )}
+        </CardContent>
+      </Card>
+    </Section>
   )
 }
 

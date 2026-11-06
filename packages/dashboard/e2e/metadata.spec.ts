@@ -73,7 +73,9 @@ test.describe('metadata', () => {
     )
 
     await page.goto(`/${session.store_id}/orders/${order.id}`)
-    const returns = page.locator('[data-slot="card"]').filter({ hasText: /^returns/i })
+    const returns = page
+      .locator('[data-slot="section"]')
+      .filter({ has: page.getByRole('heading', { name: /^returns/i }) })
     await expect(returns.getByText(orderReturn.number)).toBeVisible({ timeout: 15_000 })
     await returns.getByRole('button', { name: /actions/i }).click()
     await page.getByRole('menuitem', { name: /view metadata/i }).click()
@@ -85,9 +87,9 @@ test.describe('metadata', () => {
     await page.keyboard.press('Escape')
     await expect(sheet).toBeHidden()
 
-    const fulfillmentsCard = page.locator('[data-slot="card"]').filter({
-      has: page.locator('[data-slot="card-title"]', { hasText: /fulfillments/i }),
-    })
+    const fulfillmentsCard = page
+      .locator('[data-slot="section"]')
+      .filter({ has: page.getByRole('heading', { name: /fulfillments/i }) })
     await fulfillmentsCard
       .getByRole('button', { name: /actions/i })
       .first()

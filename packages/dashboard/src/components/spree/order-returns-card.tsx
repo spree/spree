@@ -29,6 +29,10 @@ import {
   type RefundMethod,
   ReturnReceiveDialog,
   ReturnRefundDialog,
+  Section,
+  SectionActions,
+  SectionHeader,
+  SectionTitle,
   StatusBadge,
   useConfirm,
 } from '@spree/dashboard-ui'
@@ -86,14 +90,14 @@ export function OrderReturnsCard({ order }: { order: Order }) {
 
   return (
     <>
-      <Card variant="container">
-        <CardHeader>
-          <CardTitle>
+      <Section>
+        <SectionHeader>
+          <SectionTitle>
             <RotateCcwIcon className="size-4" />
             {t('admin.pages.orders.detail.section_returns')}
             {returns.length > 0 && <Badge variant="outline">{returns.length}</Badge>}
-          </CardTitle>
-          <CardAction>
+          </SectionTitle>
+          <SectionActions>
             <Button
               variant="outline"
               size="sm"
@@ -104,9 +108,9 @@ export function OrderReturnsCard({ order }: { order: Order }) {
               <PlusIcon className="size-4" />
               {t('admin.pages.orders.detail.returns.actions.create')}
             </Button>
-          </CardAction>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-4">
+          </SectionActions>
+        </SectionHeader>
+        <div className="flex flex-col gap-4">
           {returns.length === 0 && (
             <p className="text-sm text-muted-foreground">
               {canCreate
@@ -229,8 +233,8 @@ export function OrderReturnsCard({ order }: { order: Order }) {
               <RefundSummaryFooter returnRecord={returnRecord} currency={order.currency} />
             </Card>
           ))}
-        </CardContent>
-      </Card>
+        </div>
+      </Section>
 
       {creating && (
         <CreateReturnDialog
