@@ -105,7 +105,8 @@ test.describe('inventory', () => {
     }
     await page.keyboard.press('Escape')
 
-    await expect(statusFilter).toContainText('1/5')
+    // A single state left is named rather than counted.
+    await expect(statusFilter).toContainText(/reserved/i)
     await expect(destinationRow).toBeVisible({ timeout: 15_000 })
 
     // The location filter lists every warehouse rather than asking the

@@ -155,6 +155,10 @@
      suggest where the region ends. Used by `CardContent`'s frame; a dialog or
      the sheet itself must keep --border, or the shell loses its outline. */
   --border-card: color-mix(in srgb, var(--border-base) 70%, transparent);
+  /* A card's surface: its faint border, and a wide, soft lift under it, so it
+     reads as resting on the page rather than only ruled onto it. */
+  --card-edge: var(--border-card);
+  --card-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.03), 0 4px 16px 0 rgb(0 0 0 / 0.03);
   /* Dividers *inside* a container — card header/footer splits, dialog and
      sheet separators, table row rules.
 
@@ -181,10 +185,21 @@
      happened) lands darker than it and inverts the signal outright. On this
      palette the enabled state has to stay on the card colour. */
   --border-control: oklch(86.9% 0.005 56.366);
-  /* A field's resting lift (`shadow-control`), and its border: the general
-     border in light mode, a firmer one in dark (see there). */
-  --field-shadow: 0 0.5px 1px 0 rgb(0 0 0 / 0.05);
-  --field-border: var(--border);
+  /* A field's resting lift (`shadow-control`), and its edge: a 13% black
+     hairline and a soft two-step shadow below it, which together read as a
+     box set into the page, its lower edge a touch darker than the rest. The
+     dark theme overrides the edge (see there). */
+  --field-shadow: 0 1px 2px -1px rgb(0 0 0 / 0.01), 0 3px 4px -1.5px rgb(0 0 0 / 0.03);
+  --field-border: rgb(0 0 0 / 0.13);
+  /* A switch's track when off: mid-grey, so the white knob stands clear of
+     it (about 2.5:1 on a card). */
+  --switch-off: oklch(0.9 0 0);
+  /* A focused field: the blue edge (set on the field's border), a faint halo,
+     a soft glow spreading below and a faint one inside, over the field's
+     resting shadow. */
+  --field-focus-shadow:
+    0 0 0 3px rgb(53 115 246 / 0.06), 0 4px 20px 2px rgb(53 115 246 / 0.06),
+    inset 0 0 8px 1px rgb(53 115 246 / 0.05), var(--field-shadow);
   /* A card that *holds* other records — an order's fulfillments, its returns,
      its claims — rather than holding content directly.
 
@@ -338,6 +353,10 @@
      one card from the next. The base veil is kept faint (about 1.25:1 on the
      card) so that edge outlines a card without drawing a box around it. */
   --border-card: var(--border-base);
+  /* A black shadow does nothing on a near-black ground; the border is what
+     tells one card from the next here. */
+  --card-edge: var(--border-card);
+  --card-shadow: none;
   --border-subtle: color-mix(in srgb, var(--border-base) 50%, transparent);
   /* Light mode darkens the control edge away from the card; dark mode lightens
      it. Not the light value inverted — measured on this theme's own surfaces:
@@ -347,6 +366,10 @@
      a black lift barely shows here, and a firmer one read as a smudge. So the
      field border is a step stronger than a card's (16% white against 10%). */
   --field-border: oklch(1 0 0 / 16%);
+  --switch-off: oklch(1 0 0 / 24%);
+  /* Light mode's glows vanish on a near-black ground, so the halo and the
+     glow below are firmer here. */
+  --field-focus-shadow: 0 0 0 3px rgb(53 115 246 / 0.2), 0 4px 20px 2px rgb(53 115 246 / 0.12);
   /* Same arrangement as light — container at the page colour, records raised
      above it, a 5.5-point step. Records take `--nested-raised` rather
      than `--card`: the card token is a step above the page, which is where the
@@ -455,6 +478,9 @@
      bottom edge only, so the field reads as a slightly raised well without a
      tinted fill — the fill stays on the card colour (see --border-control). */
   --shadow-control: var(--field-shadow);
+  /* Not `--shadow-card`: `--color-card` makes `shadow-card` a shadow colour. */
+  --shadow-card-lift: var(--card-shadow);
+  --shadow-field-focus: var(--field-focus-shadow);
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-nav: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.04) 0px 0px 0px 1px, rgba(0, 0, 0, 0.04) 0px 1px 2px -1px, rgba(0, 0, 0, 0.02) 0px 2px 4px 0px;
 
@@ -468,7 +494,7 @@
   /* Radius scale, remapped one step rounder than Tailwind's defaults.
      Corner radius is most of what reads as "soft", and remapping the scale
      reaches every `rounded-lg`/`rounded-xl` already written in the components
-     — including the `calc(var(--radius-xl) - 1px)` a card header derives its
+     — including the `calc(var(--radius-card) - 1px)` a card header derives its
      own corner from, which would drift out of alignment if the components
      were each edited by hand instead. */
   --radius-sm: 0.4rem;
@@ -476,6 +502,7 @@
   --radius-lg: 0.625rem;
   --radius-xl: 0.75rem;
   --radius-2xl: 1.25rem; /* 20px: the shell sheet, dialogs, sheets and toasts */
+  --radius-card: 1rem; /* 16px: cards; what a card's inside edge derives from */
 
   /* Sidebar + header tokens */
   --spacing-sidebar-width: 240px;
@@ -521,9 +548,11 @@
   --color-input: var(--input);
   --color-border: var(--border);
   --color-border-card: var(--border-card);
+  --color-card-edge: var(--card-edge);
   --color-border-subtle: var(--border-subtle);
   --color-border-control: var(--border-control);
   --color-field-border: var(--field-border);
+  --color-switch-off: var(--switch-off);
   --color-sidebar-active: var(--sidebar-active);
   --color-sidebar-active-hover: var(--sidebar-active-hover);
   --color-card-container: var(--card-container);
@@ -928,10 +957,10 @@
      corners (`roundedTop`) set the same radius, so the two never disagree. */
   [data-slot='card'] > [data-slot='card-content']:first-child > :first-child thead > tr:first-child {
     & > th:first-child {
-      border-top-left-radius: calc(var(--radius-xl) - 1px);
+      border-top-left-radius: calc(var(--radius-card) - 1px);
     }
     & > th:last-child {
-      border-top-right-radius: calc(var(--radius-xl) - 1px);
+      border-top-right-radius: calc(var(--radius-card) - 1px);
     }
   }
 

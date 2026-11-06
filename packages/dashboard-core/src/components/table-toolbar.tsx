@@ -297,7 +297,7 @@ export function TableToolbar({
                 searchPlaceholder ?? t('admin.components.table_toolbar.search_placeholder')
               }
               clearLabel={t('admin.common.clear')}
-              className="hidden h-[2.125rem] w-[240px] bg-card text-sm lg:flex"
+              className="hidden h-[2.125rem] w-[240px] bg-card text-sm lg:flex rounded-lg"
             />
 
             {/* Icon only, like sort and columns: the quick controls beside it
@@ -437,7 +437,7 @@ export function TableToolbar({
             {/* Hidden when the table is drag-reorderable, since free sorting
                 would defeat the drag. */}
             {!hideSort && sortableColumns.length > 0 && (
-              <SortDropdown columns={sortableColumns} sort={sort} onSortChange={onSortChange} />
+              <SortMenu columns={sortableColumns} sort={sort} onSortChange={onSortChange} />
             )}
 
             {/* Hidden on a phone, where too few columns are visible at once for
@@ -646,12 +646,17 @@ function ResourceFilterValue({
 // Sort Dropdown
 // ============================================================================
 
-function SortDropdown({
+/**
+ * The sort control: an icon button opening the fields to sort by and the
+ * direction. Exported so other lists — the media picker — sort the same way
+ * the resource tables do.
+ */
+export function SortMenu({
   columns,
   sort,
   onSortChange,
 }: {
-  columns: ColumnDef[]
+  columns: Pick<ColumnDef, 'key' | 'label'>[]
   sort: SortOption
   onSortChange: (sort: SortOption) => void
 }) {
@@ -1180,8 +1185,10 @@ function ColumnSelector({
 // Filter Drawer
 // ============================================================================
 
+// 10px in from a 6px list inset puts row text 16px from the panel's edge,
+// in line with the header's label.
 const panelRowClass =
-  'group/row flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50'
+  'group/row flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50'
 
 /** One value in a multi-select list of the filter panel. */
 function CheckRow({
@@ -1653,14 +1660,14 @@ function FilterPanel({
           // The field name is the way back to the field list.
           <button
             type="button"
-            className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-none border-r px-3 py-2 font-medium transition-colors hover:bg-accent focus-visible:bg-accent focus-visible:outline-none"
+            className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-none border-r px-4 py-2.5 font-medium transition-colors hover:bg-accent focus-visible:bg-accent focus-visible:outline-none"
             onClick={clearField}
           >
             <ChevronLeftIcon className="size-4 shrink-0 text-muted-foreground" />
             {column?.label ?? field}
           </button>
         ) : (
-          <span className="flex shrink-0 items-center border-r px-3 py-2 font-medium">
+          <span className="flex shrink-0 items-center border-r px-4 py-2.5 font-medium">
             {t('admin.components.table_toolbar.filter_by')}
           </span>
         )}
@@ -1674,7 +1681,7 @@ function FilterPanel({
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder={t('admin.components.table_toolbar.filter_to_placeholder')}
-            className="min-w-0 flex-1 rounded-none border-0 shadow-none focus:shadow-none"
+            className="min-w-0 flex-1 rounded-none border-0 px-3 shadow-none focus:shadow-none"
           />
         ) : (
           <span className="flex-1" />
@@ -1702,7 +1709,7 @@ function FilterPanel({
           the list from scrolling the page behind the panel; the themed
           scrollbar the popover supplies is what tells the reader there is more
           below, since the rows themselves end flush at the container's edge. */}
-      <div className="max-h-[320px] overflow-y-auto overscroll-contain p-1 text-base themed-scrollbar">
+      <div className="max-h-[320px] overflow-y-auto overscroll-contain p-1.5 text-base themed-scrollbar">
         {/* Stage one: pick a subject. */}
         {!field &&
           visibleFields.map((col) => (
@@ -1710,7 +1717,7 @@ function FilterPanel({
               key={col.key}
               type="button"
               data-slot="filter-panel-item"
-              className="flex w-full items-center justify-between gap-2 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+              className={cn(panelRowClass, 'justify-between')}
               onClick={() => chooseField(col.key)}
             >
               {col.label}
@@ -1802,7 +1809,7 @@ function FilterPanel({
             <button
               type="button"
               data-slot="filter-panel-item"
-              className="flex w-full items-center justify-between gap-2 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+              className={cn(panelRowClass, 'justify-between')}
               // Seeded with the bounds applied, so editing one end keeps the other.
               onClick={() =>
                 setCustomRange({
@@ -1819,7 +1826,7 @@ function FilterPanel({
         )}
 
         {field && dated && customRange && (
-          <div data-slot="filter-panel-controls" className="flex flex-col gap-2 p-2">
+          <div data-slot="filter-panel-controls" className="flex flex-col gap-3 p-3">
             <div className="flex flex-col gap-1">
               <span className="text-xs text-muted-foreground">
                 {t('admin.components.table_toolbar.date_range_start')}
@@ -1885,7 +1892,7 @@ function FilterPanel({
             these types — a text column's "contains" versus "starts with" is a
             real choice, where a status has nothing to choose. */}
         {field && !listed && !dated && (
-          <div data-slot="filter-panel-controls" className="flex flex-col gap-2 p-2">
+          <div data-slot="filter-panel-controls" className="flex flex-col gap-3 p-3">
             <Select items={operators} value={operator} onValueChange={setOperator}>
               {/* Default size, not `sm`: this sits directly above the value
                   input, and `sm` pins a fixed 8 height while the input only
