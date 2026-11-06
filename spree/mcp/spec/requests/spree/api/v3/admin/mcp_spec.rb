@@ -380,6 +380,45 @@ RSpec.describe 'Admin MCP endpoint', type: :request do
       expect(Spree::Variant.where(sku: sku)).to exist
     end
 
+    # The envelope is not an Admin API payload: `price` here names the file
+    # column prices come from, not an amount.
+    it 'maps an import column onto price' do
+      import = Spree::Imports::Products.new(store: store, user: admin)
+      import.attachment.attach(io: StringIO.new("Name,Price\nBobble hat,29.00\n"),
+                               filename: 'hats.csv', content_type: 'text/csv')
+      import.save!
+      Spree.import_start_mapping_workflow.call(import: import)
+
+      body = post_rpc('tools/call',
+                      { name: 'propose_import_mapping',
+                        arguments: { 'id' => import.prefixed_id, 'mapping' => { 'name' => 'Name', 'price' => 'Price' } } },
+                      headers: { 'Authorization' => "Bearer #{token}" })
+
+      expect(body['error']).to be_nil
+      expect(body.dig('result', 'isError')).to be(false)
+      expect(body.dig('result', 'structuredContent', 'mapped')).to include('price' => 'Price')
+      expect(import.mappings.find_by(schema_field: 'price').file_column).to eq('Price')
+    end
+
+    # The envelope is not checked, but a write a tool dispatches is: an
+    # amount still has to be canonical when it reaches the Admin API.
+    it 'still refuses a malformed price on a dispatched write' do
+      product = create(:product, store: store)
+      variant = product.default_variant
+      price_before = variant.amount_in(store.default_currency)
+
+      body = post_rpc('tools/call',
+                      { name: 'update_resource',
+                        arguments: { 'resource' => 'variants', 'id' => variant.prefixed_id,
+                                     'parent_id' => product.prefixed_id,
+                                     'attributes' => { 'price' => '1,599.99' } } },
+                      headers: { 'Authorization' => "Bearer #{token}" })
+
+      expect(body.dig('result', 'isError')).to be(true)
+      expect(body.dig('result', 'content', 0, 'text')).to include('decimal string')
+      expect(variant.reload.amount_in(store.default_currency)).to eq(price_before)
+    end
+
     it 'carries the endpoint\'s own refusal back as a tool error' do
       body = post_rpc('tools/call',
                       { name: 'orders_cancel', arguments: { 'order' => 'order_nope' } },
