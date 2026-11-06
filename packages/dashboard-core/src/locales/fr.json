@@ -584,6 +584,11 @@
       "code": {
         "label": "Code"
       },
+      "collection_rule": {
+        "value": {
+          "label": "Valeur"
+        }
+      },
       "company": {
         "label": "Société"
       },
@@ -1883,6 +1888,34 @@
         "tag": {
           "name": "Étiquette",
           "description": "Produits portant une étiquette correspondante"
+        },
+        "category": {
+          "name": "Catégorie",
+          "description": "Produits d'une catégorie, sous-catégories comprises au besoin"
+        },
+        "product_type": {
+          "name": "Type de produit",
+          "description": "Produits d'un type de produit"
+        },
+        "price": {
+          "name": "Prix",
+          "description": "Produits ayant une variante au-dessus ou en dessous d'un montant"
+        },
+        "in_stock": {
+          "name": "En stock",
+          "description": "Produits ayant une variante vendable maintenant"
+        },
+        "title": {
+          "name": "Titre",
+          "description": "Produits dont le nom correspond à un texte"
+        },
+        "seller": {
+          "name": "Vendeur",
+          "description": "Produits proposés par un vendeur de la marketplace"
+        },
+        "custom_field": {
+          "name": "Champ personnalisé",
+          "description": "Produits dont le champ personnalisé correspond à une valeur"
         }
       },
       "commission_rule": {
@@ -2039,6 +2072,10 @@
         "product": {
           "name": "Produit(s)",
           "description": "La commande contient le(s) produit(s) spécifié(s)"
+        },
+        "collection": {
+          "name": "Collections",
+          "description": "La commande contient des produits de collections précises"
         }
       },
       "seller_requirement": {

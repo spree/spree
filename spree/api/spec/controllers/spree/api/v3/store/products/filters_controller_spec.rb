@@ -192,7 +192,7 @@ RSpec.describe Spree::Api::V3::Store::Products::FiltersController, type: :contro
     context 'with collection_id parameter' do
       let!(:collection) { create(:collection, store: store, sort_order: 'price asc') }
 
-      before { Spree::ProductCollection.create!(collection: collection, product: product1) }
+      before { Spree::ProductCollection.create!(collection: collection, product: product1, source: 'manual') }
 
       it 'scopes filters to the collection' do
         get :index, params: { collection_id: collection.prefixed_id }

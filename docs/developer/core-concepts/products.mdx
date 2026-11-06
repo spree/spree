@@ -930,12 +930,12 @@ There are two ways to group products, and they answer different questions.
 
 **Categories** are a hierarchy — the navigation tree a shopper browses. Clothing contains T-Shirts, which contains Long Sleeve. A product can sit in several categories, and each one has a permalink built from its path.
 
-**Collections** are flat groupings — "Summer 2025", "Best Sellers", "Under $50". A collection can be curated by hand, or defined by rules so products join and leave it on their own as their price, tags or stock change.
+**Collections** are flat groupings — "Summer 2025", "Best Sellers", "Under $50". A collection can be curated by hand, defined by rules so products join and leave it on their own as their price, tags or stock change, or both.
 
 | | Categories | Collections |
 |---|---|---|
 | Shape | Nested tree | Flat list |
-| Membership | You assign it | Assigned, or matched by rules |
+| Membership | You assign it | Hand-picked, matched by rules, or both |
 | Typical use | Site navigation | Merchandising and campaigns |
 
 A brand is usually best modelled as one or the other rather than as a separate concept — a category if you want it in the navigation tree, a collection if it's a landing page.
@@ -1001,7 +1001,103 @@ curl 'https://api.mystore.com/api/v3/store/collections/summer-2025/products?limi
 
 </CodeGroup>
 
-A rule-based collection is defined once and maintains itself — set it to match everything tagged `sale` and under $50, and products appear and disappear as those facts change. Ordering can be manual or by a rule such as newest first.
+If a collection's permalink changes, its old permalink keeps working: the Store API returns the collection with its current `permalink`, so a storefront can compare the two and redirect. Categories work the same way. A collection's `image_alt` and `square_image_alt` carry the alt text of its images from the [media library](/developer/core-concepts/media).
+
+### Collection membership
+
+A collection's products come from three sources, which can be combined:
+
+- **Rules.** Products join and leave on their own as their data changes: everything tagged `sale` and priced under $50, for example. A collection matches **all** of its rules or **any** of them (`rules_match_policy`).
+- **Hand-picked products.** A merchant adds them directly. A hand-picked product stays even when the rules stop matching it. Hand-picking a product the rules already matched keeps its position.
+- **Exclusions.** An excluded product stays out, whatever the rules match or a merchant picked. Removing a rule-matched product only lasts until the rules run again, so exclude a product to keep it out for good.
+
+| Rule | Matches | Relations |
+|---|---|---|
+| `tag` | Products with a tag | equals, not equals, contains, does not contain |
+| `category` | Products in a category, optionally with its subcategories | equals, not equals |
+| `product_type` | Products of a product type | equals, not equals |
+| `seller` | Products a marketplace seller lists | equals, not equals |
+| `title` | Product names, case-insensitive | equals, not equals, contains, does not contain, starts with, ends with |
+| `price` | Products with a variant priced above or below an amount | greater than, less than |
+| `sale` | Products discounted below their compare-at price | equals, not equals |
+| `in_stock` | Products with a variant that can be sold now | equals, not equals |
+| `available_on` | Products published in the last N days | equals |
+| `custom_field` | Products whose custom field matches a value | depends on the field type |
+
+`GET /api/v3/admin/collection_rules/types` lists every rule type with the relations it accepts, including types an extension registers. A `category`, `product_type` or `seller` rule takes the record's prefixed id as its `value`. A `custom_field` rule works on product custom fields whose definition has `collection_condition` set.
+
+`price` and `sale` rules compare prices in one currency: the rule's `currency`, or the store's default currency when it is empty. A collection has one set of members for every market, so "Under $50" means $50 in that currency everywhere. For different price bands per market, create one collection per market, each with a rule in that market's currency, and link each from the storefront pages of its market. Channels and markets are separate: publishing a collection on a channel does not limit it to a market.
+
+`products_count` counts every member of the collection. The product listing's `meta.count` counts only what a shopper in the current market can buy.
+
+<CodeGroup>
+
+```typescript Admin SDK
+const collection = await adminClient.collections.create({
+  name: 'Under $50',
+  rules_match_policy: 'all',
+  rules: [
+    { type: 'price', match_policy: 'less_than', value: '50.00' },
+    { type: 'in_stock', match_policy: 'is_equal_to' },
+  ],
+})
+
+// Hand-pick a product the rules don't match
+await adminClient.collections.products.create(collection.id, ['prod_abc123'])
+
+// Keep a product out, whatever the rules match
+await adminClient.collections.exclusions.create(collection.id, { product_id: 'prod_def456' })
+```
+
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/admin/collections' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "name": "Under $50",
+    "rules_match_policy": "all",
+    "rules": [
+      { "type": "price", "match_policy": "less_than", "value": "50.00" },
+      { "type": "in_stock", "match_policy": "is_equal_to" }
+    ]
+  }'
+
+curl -X POST 'https://api.mystore.com/api/v3/admin/collections/coll_abc123/exclusions' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{ "product_id": "prod_def456" }'
+```
+
+</CodeGroup>
+
+### Publishing collections
+
+Like products, collections are published per [channel](/developer/core-concepts/channels), with an optional window. The Store API serves a collection only on channels where it is published and its window is open; anywhere else it is a 404.
+
+A new collection is published on every active channel of the store, unless the request sends its own `publications`. To stage a collection before launch, give it a future `published_at`. A channel created later starts with no collections; publish them from the channel.
+
+<CodeGroup>
+
+```typescript Admin SDK
+// Publish only on the online store, from next Monday
+await adminClient.collections.update('coll_abc123', {
+  publications: [{ channel_id: 'ch_online', published_at: '2026-11-09T08:00:00Z' }],
+})
+
+// Or manage one publication at a time
+await adminClient.collections.publications.create('coll_abc123', { channel_id: 'ch_pos' })
+```
+
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/admin/collections/coll_abc123/publications' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{ "channel_id": "ch_pos", "published_at": "2026-11-09T08:00:00Z" }'
+```
+
+</CodeGroup>
+
+Adding and removing a publication sends the `collection.published` and `collection.unpublished` [webhooks](/developer/core-concepts/webhooks).
 
 ## Publications and Sales Channels
 

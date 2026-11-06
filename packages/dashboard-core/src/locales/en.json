@@ -586,6 +586,11 @@
       "code": {
         "label": "Code"
       },
+      "collection_rule": {
+        "value": {
+          "label": "Value"
+        }
+      },
       "company": {
         "label": "Company"
       },
@@ -1885,6 +1890,34 @@
         "tag": {
           "name": "Tag",
           "description": "Products carrying a matching tag"
+        },
+        "category": {
+          "name": "Category",
+          "description": "Products in a category, optionally including its subcategories"
+        },
+        "product_type": {
+          "name": "Product type",
+          "description": "Products of a product type"
+        },
+        "price": {
+          "name": "Price",
+          "description": "Products with a variant priced above or below an amount"
+        },
+        "in_stock": {
+          "name": "In stock",
+          "description": "Products with a variant that can be sold now"
+        },
+        "title": {
+          "name": "Title",
+          "description": "Products whose name matches a text"
+        },
+        "seller": {
+          "name": "Seller",
+          "description": "Products a marketplace seller lists"
+        },
+        "custom_field": {
+          "name": "Custom field",
+          "description": "Products whose custom field matches a value"
         }
       },
       "commission_rule": {
@@ -2041,6 +2074,10 @@
         "product": {
           "name": "Product(s)",
           "description": "Order includes specified product(s)"
+        },
+        "collection": {
+          "name": "Collections",
+          "description": "Order includes products in specified collections"
         }
       },
       "seller_requirement": {

@@ -1,13 +1,13 @@
 import { registerSlot } from '@spree/dashboard-core'
 import { AdjustmentActionEditor } from './action-adjustment'
 import { CreateLineItemsActionEditor } from './action-create-line-items'
-import { CategoryRuleEditor } from './rule-category'
 import { ChannelRuleEditor } from './rule-channel'
 import { CountryRuleEditor } from './rule-country'
 import { CustomerGroupRuleEditor } from './rule-customer-group'
 import { MarketRuleEditor } from './rule-market'
 import { OptionValueRuleEditor } from './rule-option-value'
 import { ProductRuleEditor } from './rule-product'
+import { CategoryRuleEditor, CollectionRuleEditor } from './rule-records'
 import { UserRuleEditor } from './rule-user'
 import { actionFormSlot, ruleFormSlot } from './types'
 
@@ -33,6 +33,11 @@ registerSlot(ruleFormSlot('product'), {
 registerSlot(ruleFormSlot('category'), {
   id: 'builtin',
   component: CategoryRuleEditor,
+})
+
+registerSlot(ruleFormSlot('collection'), {
+  id: 'builtin',
+  component: CollectionRuleEditor,
 })
 
 registerSlot(ruleFormSlot('customer'), {

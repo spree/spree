@@ -237,9 +237,9 @@ module Spree
         let(:collection) { create(:collection, store: store) }
 
         before do
-          Spree::ProductCollection.create!(collection: collection, product: product_3).update_column(:position, 1)
-          Spree::ProductCollection.create!(collection: collection, product: product_1).update_column(:position, 2)
-          Spree::ProductCollection.create!(collection: collection, product: product_2).update_column(:position, 3)
+          Spree::ProductCollection.create!(collection: collection, product: product_3, source: 'manual').update_column(:position, 1)
+          Spree::ProductCollection.create!(collection: collection, product: product_1, source: 'manual').update_column(:position, 2)
+          Spree::ProductCollection.create!(collection: collection, product: product_2, source: 'manual').update_column(:position, 3)
         end
 
         it 'orders products by their manual position within the collection' do

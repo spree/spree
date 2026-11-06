@@ -33,6 +33,8 @@ module Spree
     delegate :product, to: :variant
 
     after_save(if: :saved_changes?) { variant.touch }
+    after_commit -> { variant&.product&.auto_match_collections(rule_types: [Spree::CollectionRules::InStock]) },
+                 if: -> { destroyed? || sellability_changed? }
     after_touch { variant.touch }
     after_destroy { variant.touch }
 
@@ -158,8 +160,10 @@ module Spree
     # @param value [Integer] signed change
     # @return [void]
     def adjust_allocated_count(value)
+      was_sellable = in_stock? || backorderable?
       value.negative? ? decrement!(:allocated_count, value.abs) : increment!(:allocated_count, value)
       touch
+      variant&.product&.auto_match_collections(rule_types: [Spree::CollectionRules::InStock]) if was_sellable != (in_stock? || backorderable?)
     end
 
     # Withdraws up to +units+ of promise. Only a promise that exists can be
@@ -231,6 +235,16 @@ module Spree
     end
 
     private
+
+    # Whether the level crossed between sellable and not, the only change an
+    # in-stock collection rule can see.
+    def sellability_changed?
+      return true if saved_change_to_backorderable?
+      return false unless saved_change_to_count_on_hand? || saved_change_to_allocated_count?
+
+      on_hand_before = count_on_hand_before_last_save.to_i - allocated_count_before_last_save.to_i
+      !backorderable? && on_hand_before.positive? != (count_on_hand.to_i - allocated_count.to_i).positive?
+    end
 
     # One atomic UPDATE, clamped at zero in the statement itself so a
     # withdrawal larger than the counter — a level whose figure was already

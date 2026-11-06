@@ -586,6 +586,11 @@
       "code": {
         "label": "コード"
       },
+      "collection_rule": {
+        "value": {
+          "label": "値"
+        }
+      },
       "company": {
         "label": "会社"
       },
@@ -1885,6 +1890,34 @@
         "tag": {
           "name": "タグ",
           "description": "一致するタグを持つ商品"
+        },
+        "category": {
+          "name": "カテゴリ",
+          "description": "カテゴリ内の商品（サブカテゴリも含められます）"
+        },
+        "product_type": {
+          "name": "商品タイプ",
+          "description": "特定の商品タイプの商品"
+        },
+        "price": {
+          "name": "価格",
+          "description": "価格が指定額より高い/低いバリアントを持つ商品"
+        },
+        "in_stock": {
+          "name": "在庫あり",
+          "description": "今すぐ販売できるバリアントを持つ商品"
+        },
+        "title": {
+          "name": "タイトル",
+          "description": "名前がテキストに一致する商品"
+        },
+        "seller": {
+          "name": "販売者",
+          "description": "マーケットプレイス販売者の商品"
+        },
+        "custom_field": {
+          "name": "カスタムフィールド",
+          "description": "カスタムフィールドが値に一致する商品"
         }
       },
       "commission_rule": {
@@ -2041,6 +2074,10 @@
         "product": {
           "name": "商品",
           "description": "指定した商品が注文に含まれる"
+        },
+        "collection": {
+          "name": "コレクション",
+          "description": "指定したコレクションの商品を含む注文"
         }
       },
       "seller_requirement": {

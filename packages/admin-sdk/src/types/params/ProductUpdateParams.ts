@@ -40,8 +40,7 @@ export type ProductUpdateParams = {
   tags?: string[]
   category_ids?: string[]
   /**
-   * Manual collections this product belongs to. Automatic collections are kept as they are, since
-   * their rules decide membership.
+   * Collections this product is hand-picked into. Memberships created by collection rules are kept.
    */
   collection_ids?: string[]
   metadata?: Record<string, unknown>

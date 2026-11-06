@@ -341,10 +341,23 @@
       },
       "delete_label": "コレクションを削除",
       "empty": "コレクションはまだありません。",
-      "fields": {
-        "automatic": {
-          "label": "ルールで自動的に商品を決める"
+      "exclusions": {
+        "confirm_message": "「{{name}}」を除外しますか？今すぐコレクションから外れ、ルールに一致しても戻りません。",
+        "confirm_title": "商品を除外",
+        "description": "ルールに関係なくこのコレクションから除外されます。ここでの変更はすぐに反映されます。",
+        "exclude": "除外",
+        "exclude_row": "{{name}} を除外",
+        "messages": {
+          "excluded": "商品を除外しました",
+          "removed": "除外を解除しました"
         },
+        "remove": "除外を解除",
+        "remove_confirm_message": "「{{name}}」の除外を解除しますか？ルールに一致すればコレクションに戻ります。",
+        "remove_confirm_title": "除外を解除",
+        "remove_row": "{{name}} の除外を解除",
+        "title": "除外された商品"
+      },
+      "fields": {
         "rule_match_policy": {
           "label": "条件"
         },
@@ -383,10 +396,8 @@
       "new_title": "新しいコレクション",
       "products": {
         "add_cta": "商品を追加",
-        "automatic_hint": "商品は上のルールで決まり、自動で更新されます。",
         "column_product": "商品",
         "empty": "このコレクションにはまだ商品がありません。",
-        "empty_automatic": "ルールに一致する商品はまだありません。",
         "filter_placeholder": "商品を絞り込む…",
         "no_matches": "絞り込みに一致する商品はありません。",
         "pending_added_badge": "新規",
@@ -396,20 +407,37 @@
         "remove": "コレクションから外す",
         "remove_selected": "外す",
         "restore": "元に戻す",
+        "rules_hint": "ルールに一致する商品は削除しても戻ります。除外すると戻らなくなります。",
         "search_placeholder": "商品を検索…",
         "select_all": "すべて選択",
         "select_row": "商品を選択",
         "title": "商品"
       },
+      "publishing": {
+        "empty": "まだどの販売チャネルにも公開されていません。",
+        "manage_description": "このコレクションをストアフロントに表示する販売チャネルを選択します。"
+      },
       "rule_match_policies": {
         "contains": "を含む",
         "does_not_contain": "を含まない",
+        "ends_with": "で終わる",
+        "greater_than": "より大きい",
         "is_equal_to": "と等しい",
-        "is_not_equal_to": "と等しくない"
+        "is_not_equal_to": "と等しくない",
+        "less_than": "より小さい",
+        "starts_with": "で始まる"
       },
       "rules": {
         "add": "ルールを追加",
-        "description": "商品を手で選ぶか、ルールでコレクションを自動的に最新にします。",
+        "amount_invalid": "49.99 のように金額を入力してください。",
+        "boolean_false": "いいえ",
+        "boolean_true": "はい",
+        "currency_label": "通貨",
+        "custom_field_empty": "コレクションルール用に設定されたカスタムフィールドはありません。",
+        "custom_field_label": "カスタムフィールド",
+        "custom_field_placeholder": "カスタムフィールドを選択…",
+        "description": "ルールで商品が自動的に選ばれます。手動で追加した商品もそのまま残ります。",
+        "include_descendants": "サブカテゴリを含める",
         "remove": "ルールを削除",
         "title": "含める商品"
       },
@@ -1413,6 +1441,10 @@
         "label": "国"
       },
       "custom_field_definition": {
+        "collection_condition": {
+          "help": "自動コレクションがこのフィールドで商品を選べるようにします。商品のテキスト・数値・はい/いいえのフィールドのみ。",
+          "label": "コレクションルールで使用"
+        },
         "field_type": {
           "label": "型",
           "options": {
@@ -4316,6 +4348,7 @@
             "cart": "カート",
             "catalog": "カタログ",
             "claim": "クレーム",
+            "collection": "コレクション",
             "company": "会社",
             "company_invitation": "会社への招待",
             "custom": "カスタム",
@@ -5098,6 +5131,7 @@
       },
       "rule_summary": {
         "category_count": "カテゴリ {{count}} 件",
+        "collection_count": "{{count}} 件のコレクション",
         "customer_count": "顧客 {{count}} 人",
         "product_count": "商品 {{count}} 件"
       },
@@ -5121,6 +5155,21 @@
         },
         "channel": {
           "label": "チャネル"
+        },
+        "collection": {
+          "empty": "一致するコレクションはありません",
+          "label": "コレクション",
+          "match_policy": {
+            "all": {
+              "description": "注文にすべてのコレクションの商品が含まれている必要があります。",
+              "label": "すべてのコレクション"
+            },
+            "any": {
+              "description": "注文に少なくとも1つのコレクションの商品が含まれている必要があります。",
+              "label": "いずれかのコレクション"
+            }
+          },
+          "search_placeholder": "コレクションを検索…"
         },
         "country": {
           "empty": "一致する国はありません",

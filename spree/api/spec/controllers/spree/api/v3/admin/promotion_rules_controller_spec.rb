@@ -50,6 +50,19 @@ RSpec.describe Spree::Api::V3::Admin::PromotionRulesController, type: :controlle
       expect(rule.preferred_market_ids.map(&:to_s)).to eq([market.id.to_s])
     end
 
+    it 'creates a collection rule and renders its collection ids' do
+      collection = create(:collection, store: store)
+
+      post :create, params: {
+        promotion_id: promotion.prefixed_id,
+        type: 'collection',
+        collection_ids: [collection.prefixed_id]
+      }, as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(json_response['collection_ids']).to eq([collection.prefixed_id])
+    end
+
     it "404s for a promotion that belongs to another store" do
       foreign_promotion = create(:promotion, store: create(:store))
 

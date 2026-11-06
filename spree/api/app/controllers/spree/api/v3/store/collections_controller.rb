@@ -4,6 +4,8 @@ module Spree
       module Store
         class CollectionsController < ResourceController
           include Spree::Api::V3::HttpCaching
+          include Spree::Api::V3::Store::PermalinkLookup
+          include Spree::Api::V3::Store::StorefrontCollections
 
           protected
 
@@ -15,19 +17,19 @@ module Spree
             Spree.api.collection_serializer
           end
 
+          # Only collections published on the request's channel, for list,
+          # show and search alike: an unpublished collection is a 404.
           def scope
-            super.ordered
+            super.merge(storefront_collections).ordered
           end
 
-          # Find by permalink or prefixed ID (SEO-friendly URLs), i18n-scoped with a
-          # fallback to the default locale — mirrors the Categories controller.
+          # The image alt text is read from each image's media placement.
+          def collection_includes
+            [{ media: :attachment_attachment }]
+          end
+
           def find_resource
-            id = params[:id]
-            if id.to_s.start_with?('coll_')
-              scope.find_by_prefix_id!(id)
-            else
-              find_with_fallback_default_locale { scope.i18n.find_by!(permalink: id) }
-            end
+            find_by_id_or_permalink!(scope, params[:id])
           end
         end
       end

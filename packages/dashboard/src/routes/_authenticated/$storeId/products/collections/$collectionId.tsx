@@ -1,4 +1,3 @@
-import { zodResolver } from '@hookform/resolvers/zod'
 import { SpreeError } from '@spree/admin-sdk'
 import {
   adminClient,
@@ -27,13 +26,13 @@ import {
   CollectionSidebar,
 } from '../../../../../components/spree/collections/collection-form'
 import {
-  EMPTY_STAGING,
   flushProductMembership,
   ProductMembershipStagingProvider,
 } from '../../../../../components/spree/product-membership-staging'
 import {
   useAddCollectionProducts,
   useCollection,
+  useCollectionFormResolver,
   useDeleteCollection,
   useRemoveCollectionProducts,
   useUpdateCollection,
@@ -41,7 +40,6 @@ import {
 import {
   COLLECTION_DEFAULTS,
   type CollectionFormValues,
-  collectionFormSchema,
   collectionToForm,
   collectionToParams,
 } from '../../../../../schemas/collection'
@@ -83,7 +81,7 @@ function CollectionDetail({ collectionId, storeId }: { collectionId: string; sto
   const removeProducts = useRemoveCollectionProducts(collectionId)
 
   const form = useForm<CollectionFormValues>({
-    resolver: zodResolver(collectionFormSchema),
+    resolver: useCollectionFormResolver(),
     defaultValues: { ...COLLECTION_DEFAULTS, ...extensionFormValues('collection', null) },
   })
 
@@ -106,16 +104,8 @@ function CollectionDetail({ collectionId, storeId }: { collectionId: string; sto
       // Membership flushes after the row saves, so a validation failure aborts
       // before any membership write. It ends by refreshing the products list —
       // the only refresh of the whole Save.
-      //
-      // Skipped once the collection is automatic: staging survives the manual →
-      // automatic toggle in form state, and the API rejects curating a
-      // rule-driven collection — flushing it would fail the Save after the
-      // collection itself already persisted. Rules own membership from here.
-      // Defensive rather than reachable today: toggling `automatic` on
-      // requires at least one rule, so the merchant cannot save straight from
-      // the toggle with products still staged.
       await flushProductMembership({
-        staging: values.automatic ? EMPTY_STAGING : values.staged_products,
+        staging: values.staged_products,
         add: (ids) => addProducts.mutateAsync(ids),
         remove: (ids) => removeProducts.mutateAsync(ids),
         queryClient,

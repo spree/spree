@@ -1,5 +1,4 @@
 import type { Channel } from '@spree/admin-sdk'
-import type { ProductFormValues } from '@spree/dashboard-core'
 import { formatStoreDateTime, StoreDatePicker, useStore } from '@spree/dashboard-core'
 import {
   Button,
@@ -26,43 +25,65 @@ import {
 import { GlobeIcon, PencilIcon, SettingsIcon } from '@spree/dashboard-ui/icons'
 import { parseISO } from 'date-fns'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Controller, type UseFormReturn, useFieldArray } from 'react-hook-form'
+import {
+  type ArrayPath,
+  Controller,
+  type FieldArray,
+  type FieldValues,
+  type Path,
+  type UseFormReturn,
+  useFieldArray,
+} from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { useChannels } from '../../../hooks/use-channels'
+import { useChannels } from '../../hooks/use-channels'
 
-type ProductForm = UseFormReturn<ProductFormValues>
+/** One row of a publications array — a product's or a collection's. */
+interface PublicationValue {
+  channel_id: string
+  published_at?: string | null
+  unpublished_at?: string | null
+}
 
-// `not_available` short-circuits when the product status (Draft/Archived) blocks
-// customer visibility, even if the per-channel publication window is open. Product
-// status is the outer gate; per-channel scheduling only matters once status is Active.
+/**
+ * Where the card reads and writes. `name` is the record's publications array
+ * (`product_publications`, `publications`); `statusField` names a status
+ * that gates visibility on top of the channel windows (a product's Draft or
+ * Archived status); `seed` fills an untouched new form once channels load.
+ */
+interface PublishingTarget<T extends FieldValues> {
+  form: UseFormReturn<T>
+  name: ArrayPath<T>
+  statusField?: Path<T>
+  /** `default`: the store's default channel. `active`: every active channel. */
+  seed?: 'default' | 'active'
+  /** Locale namespace holding `publishing.empty` and `publishing.manage_description`. */
+  translationNamespace?: string
+}
+
+// `not_available` short-circuits when the record's status (a Draft or Archived
+// product) blocks customer visibility, even if the per-channel window is open.
 type ScheduleStatus = 'live' | 'scheduled' | 'hidden' | 'not_available'
 
 function scheduleStatus(
-  productStatus: ProductFormValues['status'] | undefined,
+  status: string | undefined,
+  gated: boolean,
   publishedAt?: string | null,
   unpublishedAt?: string | null,
 ): ScheduleStatus {
-  if (productStatus !== 'active') return 'not_available'
+  if (gated && status !== 'active') return 'not_available'
   const now = Date.now()
   if (unpublishedAt && parseISO(unpublishedAt).getTime() <= now) return 'hidden'
   if (publishedAt && parseISO(publishedAt).getTime() > now) return 'scheduled'
   return 'live'
 }
 
-export function PublishingCard({
+export function PublishingCard<T extends FieldValues>({
   form,
-  seedDefaultChannel = false,
-}: {
-  form: ProductForm
-  /**
-   * On the New Product page, seed the store's default channel into the
-   * publications array once channels resolve, so the merchant doesn't have
-   * to open Manage before save. Only fires when the array is empty and
-   * untouched. Default false: the edit page uses persisted publications
-   * verbatim — no auto-seeding.
-   */
-  seedDefaultChannel?: boolean
-}) {
+  name,
+  statusField,
+  seed,
+  translationNamespace = 'admin.pages.products',
+}: PublishingTarget<T>) {
   const { t } = useTranslation()
   const [manageOpen, setManageOpen] = useState(false)
   const [editingIndex, setEditingIndex] = useState<number | null>(null)
@@ -71,13 +92,12 @@ export function PublishingCard({
     () => new Map((channelsResponse?.data ?? []).map((c) => [c.id, c])),
     [channelsResponse?.data],
   )
-  const publicationsArray = useFieldArray({
-    control: form.control,
-    name: 'product_publications',
-    keyName: '_key',
-  })
+  const publicationsArray = useFieldArray({ control: form.control, name, keyName: '_key' })
+  const rows = publicationsArray.fields as unknown as Array<PublicationValue & { _key: string }>
 
-  // Seed the default channel once. useFieldArray maintains its own
+  // Seed the channels once (the store's default on a new product, every
+  // active channel on a new collection, matching what the server does when
+  // a create omits publications). useFieldArray maintains its own
   // internal list of fields keyed by `_key`. Two pitfalls to avoid:
   // - `useFieldArray.append` unconditionally flips `isDirty=true`, which
   //   would surface the Discard button, enable Save on an empty form,
@@ -107,28 +127,32 @@ export function PublishingCard({
   // merchant who flips Online Store inactive (e.g. during maintenance)
   // would otherwise get products published to a channel the storefront
   // filters out — invisible products without a warning in the admin.
-  const defaultChannelId = channelsResponse?.data.find((c) => c.default && c.active)?.id
+  const activeChannels = (channelsResponse?.data ?? []).filter((c) => c.active)
+  const seedIds = (
+    seed === 'active' ? activeChannels : activeChannels.filter((c) => c.default)
+  ).map((c) => c.id)
+  const seedKey = seed ? seedIds.join(',') : ''
   const seededRef = useRef(false)
-  const pristineDefaultsRef = useRef<ProductFormValues | null>(null)
-  if (seedDefaultChannel && pristineDefaultsRef.current === null) {
+  const pristineDefaultsRef = useRef<T | null>(null)
+  if (seed && pristineDefaultsRef.current === null) {
     pristineDefaultsRef.current = form.getValues()
   }
   useEffect(() => {
-    if (!seedDefaultChannel) return
+    if (!seed) return
     if (seededRef.current) return
-    if (!defaultChannelId) return
+    if (!seedKey) return
     seededRef.current = true
     if (publicationsArray.fields.length > 0) return
     form.reset(
       {
-        ...(pristineDefaultsRef.current as ProductFormValues),
-        product_publications: [
-          { channel_id: defaultChannelId, published_at: null, unpublished_at: null },
-        ],
+        ...(pristineDefaultsRef.current as T),
+        [name]: seedKey
+          .split(',')
+          .map((channel_id) => ({ channel_id, published_at: null, unpublished_at: null })),
       },
       { keepDirtyValues: true },
     )
-  }, [seedDefaultChannel, defaultChannelId, publicationsArray, form])
+  }, [seed, seedKey, name, publicationsArray, form])
 
   const channelName = (id: string) => channelsById.get(id)?.name ?? channelsById.get(id)?.code ?? id
 
@@ -143,7 +167,10 @@ export function PublishingCard({
           type="button"
           variant="outline"
           size="sm"
-          onClick={() => setManageOpen(true)}
+          onClick={() => {
+            setEditingIndex(null)
+            setManageOpen(true)
+          }}
           aria-label={t('admin.pages.products.publishing.manage_cta')}
         >
           <SettingsIcon className="size-4" />
@@ -151,17 +178,17 @@ export function PublishingCard({
         </Button>
       </CardHeader>
       <CardContent className="flex flex-col gap-1">
-        {publicationsArray.fields.length === 0 && (
+        {rows.length === 0 && (
           <p className="text-sm text-muted-foreground">
-            {t('admin.pages.products.publishing.empty')}
+            {t(`${translationNamespace}.publishing.empty`)}
           </p>
         )}
-        {publicationsArray.fields.map((row, index) =>
+        {rows.map((row, index) =>
           editingIndex === index ? (
             <PublicationEditor
               key={row._key}
               form={form}
-              index={index}
+              path={`${name}.${index}`}
               channelName={channelName(row.channel_id)}
               onDone={() => setEditingIndex(null)}
             />
@@ -169,7 +196,8 @@ export function PublishingCard({
             <PublicationRow
               key={row._key}
               form={form}
-              index={index}
+              path={`${name}.${index}`}
+              statusField={statusField}
               channelName={channelName(row.channel_id)}
               onEdit={() => setEditingIndex(index)}
             />
@@ -179,7 +207,16 @@ export function PublishingCard({
       <ManageChannelsSheet
         open={manageOpen}
         onOpenChange={setManageOpen}
-        publicationsArray={publicationsArray}
+        rows={rows}
+        description={t(`${translationNamespace}.publishing.manage_description`)}
+        onAdd={(channelId) =>
+          publicationsArray.append({
+            channel_id: channelId,
+            published_at: null,
+            unpublished_at: null,
+          } as FieldArray<T, ArrayPath<T>>)
+        }
+        onRemove={(index) => publicationsArray.remove(index)}
       />
     </Card>
   )
@@ -195,33 +232,33 @@ function StatusDot({ status }: { status: ScheduleStatus }) {
   return <span className={`inline-block size-2 rounded-full ${cls}`} aria-hidden />
 }
 
-function PublicationRow({
+function PublicationRow<T extends FieldValues>({
   form,
-  index,
+  path,
+  statusField,
   channelName,
   onEdit,
 }: {
-  form: ProductForm
-  index: number
+  form: UseFormReturn<T>
+  path: string
+  statusField?: Path<T>
   channelName: string
   onEdit: () => void
 }) {
   const { t } = useTranslation()
   const { timezone } = useStore()
-  const [productStatus, publishedAt, unpublishedAt] = form.watch([
-    'status',
-    `product_publications.${index}.published_at`,
-    `product_publications.${index}.unpublished_at`,
-  ])
-  const status = scheduleStatus(productStatus, publishedAt, unpublishedAt)
+  const [publishedAt, unpublishedAt] = form.watch([
+    `${path}.published_at` as Path<T>,
+    `${path}.unpublished_at` as Path<T>,
+  ]) as [string | null | undefined, string | null | undefined]
+  const recordStatus = statusField ? (form.watch(statusField) as string | undefined) : undefined
+  const status = scheduleStatus(recordStatus, Boolean(statusField), publishedAt, unpublishedAt)
 
   const caption = (() => {
     const start = publishedAt ? formatStoreDateTime(publishedAt, timezone) : null
     const end = unpublishedAt ? formatStoreDateTime(unpublishedAt, timezone) : null
     if (status === 'not_available') {
-      const productStatusLabel = t(
-        `admin.pages.products.status_options.${productStatus ?? 'draft'}`,
-      )
+      const productStatusLabel = t(`admin.pages.products.status_options.${recordStatus ?? 'draft'}`)
       return t('admin.pages.products.publishing.caption_not_available', {
         product_status: productStatusLabel,
       })
@@ -260,20 +297,20 @@ function PublicationRow({
   )
 }
 
-function PublicationEditor({
+function PublicationEditor<T extends FieldValues>({
   form,
-  index,
+  path,
   channelName,
   onDone,
 }: {
-  form: ProductForm
-  index: number
+  form: UseFormReturn<T>
+  path: string
   channelName: string
   onDone: () => void
 }) {
   const { t } = useTranslation()
-  const publishedAtPath = `product_publications.${index}.published_at` as const
-  const unpublishedAtPath = `product_publications.${index}.unpublished_at` as const
+  const publishedAtPath = `${path}.published_at` as Path<T>
+  const unpublishedAtPath = `${path}.unpublished_at` as Path<T>
 
   return (
     <div className="flex flex-col gap-3 rounded-md border border-border bg-muted/20 px-3 py-3">
@@ -330,29 +367,26 @@ function PublicationEditor({
 function ManageChannelsSheet({
   open,
   onOpenChange,
-  publicationsArray,
+  rows,
+  description,
+  onAdd,
+  onRemove,
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
-  publicationsArray: ReturnType<
-    typeof useFieldArray<ProductFormValues, 'product_publications', '_key'>
-  >
+  rows: PublicationValue[]
+  description: string
+  onAdd: (channelId: string) => void
+  onRemove: (index: number) => void
 }) {
   const { t } = useTranslation()
   const { data: channelsResponse, isLoading } = useChannels()
   const channels = channelsResponse?.data ?? []
 
   const toggle = (channel: Channel, checked: boolean) => {
-    const existingIndex = publicationsArray.fields.findIndex((f) => f.channel_id === channel.id)
-    if (checked && existingIndex === -1) {
-      publicationsArray.append({
-        channel_id: channel.id,
-        published_at: null,
-        unpublished_at: null,
-      })
-    } else if (!checked && existingIndex !== -1) {
-      publicationsArray.remove(existingIndex)
-    }
+    const existingIndex = rows.findIndex((row) => row.channel_id === channel.id)
+    if (checked && existingIndex === -1) onAdd(channel.id)
+    else if (!checked && existingIndex !== -1) onRemove(existingIndex)
   }
 
   return (
@@ -360,9 +394,7 @@ function ManageChannelsSheet({
       <SheetContent>
         <SheetHeader>
           <SheetTitle>{t('admin.pages.products.publishing.manage_title')}</SheetTitle>
-          <SheetDescription>
-            {t('admin.pages.products.publishing.manage_description')}
-          </SheetDescription>
+          <SheetDescription>{description}</SheetDescription>
         </SheetHeader>
         <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-4">
           {isLoading && (
@@ -379,7 +411,7 @@ function ManageChannelsSheet({
           )}
           {!isLoading &&
             channels.map((channel) => {
-              const checked = publicationsArray.fields.some((f) => f.channel_id === channel.id)
+              const checked = rows.some((row) => row.channel_id === channel.id)
               return (
                 <Item
                   key={channel.id}

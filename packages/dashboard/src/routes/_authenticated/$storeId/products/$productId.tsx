@@ -47,7 +47,7 @@ import { MediaRichTextEditor } from '../../../../components/spree/media-rich-tex
 import { ProductCustomFieldsProvider } from '../../../../components/spree/products/product-custom-fields-provider'
 import { ProductReviewActions } from '../../../../components/spree/products/product-review-actions'
 import { ProductSellerCard } from '../../../../components/spree/products/product-seller-card'
-import { PublishingCard } from '../../../../components/spree/products/publishing-card'
+import { PublishingCard } from '../../../../components/spree/publishing-card'
 import { StockHistoryDialog } from '../../../../components/spree/stock-history-card'
 import { ResourceTranslationsCard } from '../../../../components/spree/translations/resource-translations-card'
 import { useDeleteProduct, useProduct, useUpdateProduct } from '../../../../hooks/use-product'
@@ -348,7 +348,7 @@ function ProductForm({ product }: { product: Product }) {
                   <ProductReviewActions productId={productId} status={formStatus ?? ''} />
                 }
               />
-              <PublishingCard form={form} />
+              <PublishingCard form={form} name="product_publications" statusField="status" />
               <CategorizationCard form={form} />
               <TaxCard form={form} />
               <SEOCard form={form} product={product} />
