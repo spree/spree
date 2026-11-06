@@ -54,10 +54,16 @@ module Spree
           # banks), and the capture webhook that follows must still be able to
           # complete its payment. Not halt! — that is forbidden inside a
           # transaction (there is nothing committed to halt with).
-          next if payment_session.reload.payment&.completed?
-
-          step :ensure_payment
-          step :complete_session
+          #
+          # Completing the owner is checked on its own, not folded into that
+          # guard: a payment can be completed (a synchronous confirmation, an
+          # earlier delivery) while the order is not, and a redelivery or job
+          # retry must still place the order or the buyer stays charged
+          # without one.
+          unless payment_session.reload.payment&.completed?
+            step :ensure_payment
+            step :complete_session
+          end
           step :complete_owner unless order.reload.completed?
         end
       rescue Spree::Workflow::FailureSignal

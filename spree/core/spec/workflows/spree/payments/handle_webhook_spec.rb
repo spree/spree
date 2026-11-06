@@ -183,6 +183,28 @@ RSpec.describe Spree::Payments::HandleWebhook do
       end
     end
 
+    # The payment can complete without the order (synchronous confirmation, or
+    # an earlier delivery whose order completion did not stick); the next
+    # delivery or job retry must still place the order.
+    context 'when the payment is completed but the order is not' do
+      before do
+        allow(Spree.carts_complete_workflow).to receive(:call)
+        subject.call(payment_method: payment_method, action: :captured, payment_session: payment_session)
+        allow(Spree.carts_complete_workflow).to receive(:call).and_call_original
+      end
+
+      it 'completes the order on the next delivery without a second payment' do
+        expect(order.reload).not_to be_completed
+        expect(order.payments.completed.count).to eq(1)
+
+        result = subject.call(payment_method: payment_method, action: :captured, payment_session: payment_session.reload)
+
+        expect(result).to be_success
+        expect(order.reload).to be_completed
+        expect(order.payments.reload.count).to eq(1)
+      end
+    end
+
     context 'when the session was completed without a payment' do
       before do
         payment_session.update_column(:status, 'completed')
