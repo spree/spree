@@ -625,7 +625,8 @@
         "delete_failed": "顧客グループを削除できませんでした",
         "deleted": "顧客グループを削除しました",
         "update_failed": "顧客グループを更新できませんでした",
-        "updated": "顧客グループを更新しました"
+        "updated": "顧客グループを更新しました",
+        "load_failed": "この顧客グループを読み込めませんでした"
       }
     },
     "customers": {
@@ -718,7 +719,26 @@
           "search_placeholder": "名前で検索…",
           "title": "顧客グループ"
         },
-        "view_members": "メンバーを見る"
+        "view_members": "メンバーを見る",
+        "detail": {
+          "details": "詳細",
+          "members": "メンバー",
+          "customer": "顧客",
+          "add_member": "顧客を追加",
+          "add_member_title": "このグループに顧客を追加",
+          "add_member_description": "既存の顧客を選択します。ほかは変わらず、このグループに加わるだけです。",
+          "members_empty": "このグループにはまだ顧客がいません",
+          "remove_member": "グループから外す",
+          "remove_confirm": {
+            "title": "このグループから外しますか？",
+            "message": "{{name}} は顧客のままで、このグループから外れるだけです。"
+          },
+          "messages": {
+            "member_added": "顧客をグループに追加しました",
+            "member_removed": "顧客をグループから外しました",
+            "member_change_failed": "グループのメンバーを更新できませんでした"
+          }
+        }
       },
       "new_sheet_description": "ここで作った顧客にはパスワードがありません。初めてログインするときにマジックリンクが届きます。",
       "privacy": {

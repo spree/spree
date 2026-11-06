@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import { cn } from '../lib/utils'
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -24,6 +25,11 @@ interface PaginationProps {
   onPageChange: (page: number) => void
   onPageSizeChange?: (size: number) => void
   pageSizeOptions?: number[]
+  /**
+   * For the foot of a card whose table runs edge to edge: a divider above and
+   * padding on every side, so the range and buttons don't touch the card edge.
+   */
+  inset?: boolean
 }
 
 export function Pagination({
@@ -31,6 +37,7 @@ export function Pagination({
   onPageChange,
   onPageSizeChange,
   pageSizeOptions = [10, 20, 25, 30, 50],
+  inset = false,
 }: PaginationProps) {
   const { t } = useTranslation()
   const showPageSize = Boolean(onPageSizeChange) && meta.count > 0
@@ -39,7 +46,12 @@ export function Pagination({
   if (!showPageSize && !showPageNav) return null
 
   return (
-    <div className="flex items-center justify-between ps-2 py-2">
+    <div
+      className={cn(
+        'flex items-center justify-between',
+        inset ? 'border-border-subtle border-t px-4 py-2.5' : 'ps-2 py-2',
+      )}
+    >
       <div className="whitespace-nowrap text-sm text-muted-foreground">
         {t('admin.components.pagination.range', {
           from: meta.from,

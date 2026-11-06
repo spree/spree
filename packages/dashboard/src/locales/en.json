@@ -625,7 +625,8 @@
         "delete_failed": "Failed to delete customer group",
         "deleted": "Customer group deleted",
         "update_failed": "Failed to update customer group",
-        "updated": "Customer group updated"
+        "updated": "Customer group updated",
+        "load_failed": "Could not load this customer group"
       }
     },
     "customers": {
@@ -718,7 +719,26 @@
           "search_placeholder": "Search by name…",
           "title": "Customer Groups"
         },
-        "view_members": "View members"
+        "view_members": "View members",
+        "detail": {
+          "details": "Details",
+          "members": "Members",
+          "customer": "Customer",
+          "add_member": "Add customer",
+          "add_member_title": "Add a customer to this group",
+          "add_member_description": "Pick an existing customer. They keep everything else; they just join this group.",
+          "members_empty": "No customers in this group yet",
+          "remove_member": "Remove from group",
+          "remove_confirm": {
+            "title": "Remove from this group?",
+            "message": "{{name}} stays a customer; they just leave this group."
+          },
+          "messages": {
+            "member_added": "Customer added to the group",
+            "member_removed": "Customer removed from the group",
+            "member_change_failed": "Couldn't update the group's members"
+          }
+        }
       },
       "new_sheet_description": "Customers created here have no password set. They'll get a magic link the first time they sign in.",
       "privacy": {

@@ -635,7 +635,8 @@
         "delete_failed": "Nie udało się usunąć grupy klientów",
         "deleted": "Usunięto grupę klientów",
         "update_failed": "Nie udało się zaktualizować grupy klientów",
-        "updated": "Zaktualizowano grupę klientów"
+        "updated": "Zaktualizowano grupę klientów",
+        "load_failed": "Nie udało się wczytać tej grupy klientów"
       }
     },
     "customers": {
@@ -730,7 +731,26 @@
           "search_placeholder": "Szukaj według nazwy…",
           "title": "Grupy klientów"
         },
-        "view_members": "Wyświetl członków"
+        "view_members": "Wyświetl członków",
+        "detail": {
+          "details": "Szczegóły",
+          "members": "Członkowie",
+          "customer": "Klient",
+          "add_member": "Dodaj klienta",
+          "add_member_title": "Dodaj klienta do tej grupy",
+          "add_member_description": "Wybierz istniejącego klienta. Nic innego się nie zmienia; po prostu dołącza do tej grupy.",
+          "members_empty": "W tej grupie nie ma jeszcze klientów",
+          "remove_member": "Usuń z grupy",
+          "remove_confirm": {
+            "title": "Usunąć z tej grupy?",
+            "message": "{{name}} pozostaje klientem; tylko opuszcza tę grupę."
+          },
+          "messages": {
+            "member_added": "Klient dodany do grupy",
+            "member_removed": "Klient usunięty z grupy",
+            "member_change_failed": "Nie udało się zaktualizować członków grupy"
+          }
+        }
       },
       "new_sheet_description": "Klienci utworzeni w tym miejscu nie mają ustawionego hasła. Przy pierwszym logowaniu otrzymają magiczny link.",
       "privacy": {

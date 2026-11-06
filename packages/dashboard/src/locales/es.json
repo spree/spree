@@ -4172,7 +4172,26 @@
           "search_placeholder": "Buscar por nombre…",
           "title": "Grupos de Clientes"
         },
-        "view_members": "Ver integrantes"
+        "view_members": "Ver integrantes",
+        "detail": {
+          "details": "Detalles",
+          "members": "Miembros",
+          "customer": "Cliente",
+          "add_member": "Añadir cliente",
+          "add_member_title": "Añadir un cliente a este grupo",
+          "add_member_description": "Elige un cliente existente. No cambia nada más; solo se une a este grupo.",
+          "members_empty": "Todavía no hay clientes en este grupo",
+          "remove_member": "Quitar del grupo",
+          "remove_confirm": {
+            "title": "¿Quitar de este grupo?",
+            "message": "{{name}} sigue siendo cliente; solo sale de este grupo."
+          },
+          "messages": {
+            "member_added": "Cliente añadido al grupo",
+            "member_removed": "Cliente quitado del grupo",
+            "member_change_failed": "No se pudieron actualizar los miembros del grupo"
+          }
+        }
       },
       "new_sheet_description": "Los clientes creados acá no tienen contraseña. Recibirán un enlace mágico la primera vez que inicien sesión.",
       "privacy": {
@@ -6244,7 +6263,8 @@
         "delete_failed": "No se pudo eliminar el grupo de clientes",
         "deleted": "Grupo de clientes eliminado",
         "update_failed": "No se pudo actualizar el grupo de clientes",
-        "updated": "Grupo de clientes actualizado"
+        "updated": "Grupo de clientes actualizado",
+        "load_failed": "No se pudo cargar este grupo de clientes"
       }
     },
     "store": {

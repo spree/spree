@@ -625,7 +625,8 @@
         "delete_failed": "Không xóa được nhóm khách hàng",
         "deleted": "Nhóm khách hàng đã bị xóa",
         "update_failed": "Không cập nhật được nhóm khách hàng",
-        "updated": "Nhóm khách hàng đã cập nhật"
+        "updated": "Nhóm khách hàng đã cập nhật",
+        "load_failed": "Không thể tải nhóm khách hàng này"
       }
     },
     "customers": {
@@ -718,7 +719,26 @@
           "search_placeholder": "Tìm kiếm theo tên…",
           "title": "Nhóm khách hàng"
         },
-        "view_members": "Xem thành viên"
+        "view_members": "Xem thành viên",
+        "detail": {
+          "details": "Chi tiết",
+          "members": "Thành viên",
+          "customer": "Khách hàng",
+          "add_member": "Thêm khách hàng",
+          "add_member_title": "Thêm khách hàng vào nhóm này",
+          "add_member_description": "Chọn một khách hàng hiện có. Không có gì khác thay đổi; họ chỉ tham gia nhóm này.",
+          "members_empty": "Chưa có khách hàng nào trong nhóm này",
+          "remove_member": "Xóa khỏi nhóm",
+          "remove_confirm": {
+            "title": "Xóa khỏi nhóm này?",
+            "message": "{{name}} vẫn là khách hàng; chỉ rời khỏi nhóm này."
+          },
+          "messages": {
+            "member_added": "Đã thêm khách hàng vào nhóm",
+            "member_removed": "Đã xóa khách hàng khỏi nhóm",
+            "member_change_failed": "Không thể cập nhật thành viên của nhóm"
+          }
+        }
       },
       "new_sheet_description": "Khách hàng tạo ở đây chưa đặt mật khẩu. Họ sẽ nhận được một liên kết kỳ diệu trong lần đăng nhập đầu tiên.",
       "privacy": {

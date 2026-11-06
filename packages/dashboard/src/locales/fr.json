@@ -625,7 +625,8 @@
         "delete_failed": "Échec de la suppression du groupe de clients",
         "deleted": "Groupe de clients supprimé",
         "update_failed": "Échec de la mise à jour du groupe de clients",
-        "updated": "Groupe de clients mis à jour"
+        "updated": "Groupe de clients mis à jour",
+        "load_failed": "Impossible de charger ce groupe de clients"
       }
     },
     "customers": {
@@ -718,7 +719,26 @@
           "search_placeholder": "Rechercher par nom…",
           "title": "Groupes de clients"
         },
-        "view_members": "Voir les membres"
+        "view_members": "Voir les membres",
+        "detail": {
+          "details": "Détails",
+          "members": "Membres",
+          "customer": "Client",
+          "add_member": "Ajouter un client",
+          "add_member_title": "Ajouter un client à ce groupe",
+          "add_member_description": "Choisissez un client existant. Rien d'autre ne change ; il rejoint seulement ce groupe.",
+          "members_empty": "Aucun client dans ce groupe pour le moment",
+          "remove_member": "Retirer du groupe",
+          "remove_confirm": {
+            "title": "Retirer de ce groupe ?",
+            "message": "{{name}} reste client ; il quitte seulement ce groupe."
+          },
+          "messages": {
+            "member_added": "Client ajouté au groupe",
+            "member_removed": "Client retiré du groupe",
+            "member_change_failed": "Impossible de mettre à jour les membres du groupe"
+          }
+        }
       },
       "new_sheet_description": "Les clients créés ici n'ont aucun mot de passe défini. Ils recevront un lien magique lors de leur première connexion.",
       "privacy": {

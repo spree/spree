@@ -625,7 +625,8 @@
         "delete_failed": "Kundengruppe konnte nicht gelöscht werden",
         "deleted": "Kundengruppe gelöscht",
         "update_failed": "Kundengruppe konnte nicht aktualisiert werden",
-        "updated": "Kundengruppe aktualisiert"
+        "updated": "Kundengruppe aktualisiert",
+        "load_failed": "Diese Kundengruppe konnte nicht geladen werden"
       }
     },
     "customers": {
@@ -718,7 +719,26 @@
           "search_placeholder": "Nach Name suchen…",
           "title": "Kundengruppen"
         },
-        "view_members": "Mitglieder anzeigen"
+        "view_members": "Mitglieder anzeigen",
+        "detail": {
+          "details": "Details",
+          "members": "Mitglieder",
+          "customer": "Kunde",
+          "add_member": "Kunden hinzufügen",
+          "add_member_title": "Kunden zu dieser Gruppe hinzufügen",
+          "add_member_description": "Wähle einen bestehenden Kunden. Sonst ändert sich nichts; er tritt nur dieser Gruppe bei.",
+          "members_empty": "Noch keine Kunden in dieser Gruppe",
+          "remove_member": "Aus Gruppe entfernen",
+          "remove_confirm": {
+            "title": "Aus dieser Gruppe entfernen?",
+            "message": "{{name}} bleibt Kunde und verlässt nur diese Gruppe."
+          },
+          "messages": {
+            "member_added": "Kunde zur Gruppe hinzugefügt",
+            "member_removed": "Kunde aus der Gruppe entfernt",
+            "member_change_failed": "Die Mitglieder der Gruppe konnten nicht aktualisiert werden"
+          }
+        }
       },
       "new_sheet_description": "Hier angelegte Kunden haben kein Passwort festgelegt. Sie erhalten beim ersten Anmelden einen Magic Link.",
       "privacy": {

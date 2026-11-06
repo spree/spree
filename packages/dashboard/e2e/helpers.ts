@@ -858,3 +858,10 @@ export async function deleteSeededRecords(page: Page) {
   }
   seededRecords = []
 }
+
+/** A titled `Section` on a detail page, found by its heading. */
+export function section(page: Page, title: RegExp) {
+  return page
+    .locator('[data-slot="section"]')
+    .filter({ has: page.getByRole('heading', { name: title }) })
+}

@@ -623,7 +623,8 @@
         "delete_failed": "删除客户组失败",
         "deleted": "客户组已删除",
         "update_failed": "更新客户组失败",
-        "updated": "客户组已更新"
+        "updated": "客户组已更新",
+        "load_failed": "无法加载此客户分组"
       }
     },
     "customers": {
@@ -716,7 +717,26 @@
           "search_placeholder": "按名称搜索…",
           "title": "客户分组"
         },
-        "view_members": "查看成员"
+        "view_members": "查看成员",
+        "detail": {
+          "details": "详情",
+          "members": "成员",
+          "customer": "客户",
+          "add_member": "添加客户",
+          "add_member_title": "将客户添加到此分组",
+          "add_member_description": "选择一位现有客户。其他不变，只是加入此分组。",
+          "members_empty": "此分组中还没有客户",
+          "remove_member": "移出分组",
+          "remove_confirm": {
+            "title": "从此分组中移出？",
+            "message": "{{name}} 仍是客户，只是离开此分组。"
+          },
+          "messages": {
+            "member_added": "已将客户添加到分组",
+            "member_removed": "已将客户移出分组",
+            "member_change_failed": "无法更新分组成员"
+          }
+        }
       },
       "new_sheet_description": "在此创建的客户未设置密码。他们首次登录时将收到一个魔法链接。",
       "privacy": {
