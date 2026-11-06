@@ -47,7 +47,10 @@ RSpec.describe Spree::Payments::HandleWebhookJob, type: :job do
 
       it 'handles the webhook in that store' do
         handled_in = nil
-        allow_any_instance_of(Spree::Payments::HandleWebhook).to receive(:call) { handled_in = Spree::Current.store }
+        allow_any_instance_of(Spree::Payments::HandleWebhook).to receive(:call) do
+          handled_in = Spree::Current.store
+          Spree::ServiceModule::Result.new(true, payment_session, nil)
+        end
 
         described_class.perform_now(
           payment_method_id: payment_method.id,
