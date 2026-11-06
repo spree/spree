@@ -47,7 +47,10 @@ RSpec.describe Spree::Payments::HandleWebhookJob, type: :job do
 
       it 'handles the webhook in that store' do
         handled_in = nil
-        allow_any_instance_of(Spree::Payments::HandleWebhook).to receive(:call) { handled_in = Spree::Current.store }
+        allow_any_instance_of(Spree::Payments::HandleWebhook).to receive(:call) do
+          handled_in = Spree::Current.store
+          Spree::ServiceModule::Result.new(true, payment_session, nil)
+        end
 
         described_class.perform_now(
           payment_method_id: payment_method.id,
@@ -75,6 +78,32 @@ RSpec.describe Spree::Payments::HandleWebhookJob, type: :job do
           payment_session_id: payment_session.id
         )
       }.not_to raise_error
+    end
+
+    it 'raises SettlementFailed when the workflow fails' do
+      failed = Spree::ServiceModule::Result.new(false, payment_session, 'Stripe timeout')
+      allow_any_instance_of(Spree::Payments::HandleWebhook).to receive(:call).and_return(failed)
+
+      expect {
+        described_class.new.perform(
+          payment_method_id: payment_method.id,
+          action: 'captured',
+          payment_session_id: payment_session.id
+        )
+      }.to raise_error(described_class::SettlementFailed, /Stripe timeout/)
+    end
+
+    it 're-enqueues the job when the workflow fails' do
+      failed = Spree::ServiceModule::Result.new(false, payment_session, 'Stripe timeout')
+      allow_any_instance_of(Spree::Payments::HandleWebhook).to receive(:call).and_return(failed)
+
+      expect {
+        described_class.perform_now(
+          payment_method_id: payment_method.id,
+          action: 'captured',
+          payment_session_id: payment_session.id
+        )
+      }.to have_enqueued_job(described_class)
     end
 
     it 'retries on ActiveRecord::Deadlocked' do
