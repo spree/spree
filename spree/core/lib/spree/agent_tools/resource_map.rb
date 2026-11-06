@@ -23,7 +23,29 @@ module Spree
       Entry = Struct.new(:key, :model_name, :permission, :serializer_name,
                          :dashboard_path, :scope_name, :write_permission,
                          :writable_attributes, :create_workflow_key, :update_workflow_key,
-                         :distinct, :api_paths, keyword_init: true) do
+                         :distinct, :api_paths, :access_permissions, keyword_init: true) do
+        # Whether this caller may read the resource.
+        #
+        # Imports and exports have no key of their own: each record is gated
+        # by the scope of the resource it carries. They list those keys in
+        # `access_permissions`, and holding any one of them is enough to
+        # reach the endpoint, which filters to the records that key covers.
+        #
+        # @param context [Spree::AgentTools::Context]
+        # @return [Boolean]
+        def readable_by?(context)
+          return context.permitted?(permission) if access_permissions.nil?
+
+          access_permissions.any? { |key| context.holds?(key) }
+        end
+
+        # Every key that can open this resource.
+        #
+        # @return [Array<String>]
+        def permission_keys
+          access_permissions || [permission]
+        end
+
         # The Admin API path for one of this resource's operations, which is
         # how a tool reaches it.
         #
@@ -381,10 +403,12 @@ module Spree
         # @param distinct [Boolean, nil] false where the controller disables
         #   DISTINCT on its own collection, which Postgres requires when the
         #   sort column is not in the select list
+        # @param access_permissions [Array<String>, nil] keys any one of which
+        #   opens the resource, in place of `permission`
         # @return [Entry]
         def register(key:, model_name:, permission:, serializer_name:, dashboard_path: nil, scope_name: nil,
                      write_permission: nil, writable_attributes: [], create_workflow_key: nil,
-                     update_workflow_key: nil, distinct: nil, api_paths: nil)
+                     update_workflow_key: nil, distinct: nil, api_paths: nil, access_permissions: nil)
           entry = Entry.new(key: key.to_s, model_name: model_name, permission: permission,
                             serializer_name: serializer_name, dashboard_path: dashboard_path,
                             scope_name: scope_name, write_permission: write_permission,
@@ -392,7 +416,8 @@ module Spree
                             create_workflow_key: create_workflow_key,
                             update_workflow_key: update_workflow_key,
                             distinct: distinct,
-                            api_paths: api_paths&.to_a)
+                            api_paths: api_paths&.to_a,
+                            access_permissions: access_permissions)
           entries[entry.key] = entry
         end
 
@@ -457,7 +482,7 @@ module Spree
         # @param context [Spree::AgentTools::Context]
         # @return [Array<Entry>]
         def available_for(context)
-          all.select { |entry| context.permitted?(entry.permission) }
+          all.select { |entry| entry.readable_by?(context) }
         end
 
         private

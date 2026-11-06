@@ -46,7 +46,7 @@ module Spree
         # own words. This check only avoids offering a tool that cannot work
         # — a resource the caller cannot even read.
         return [nil, { error: "You do not have permission to change #{entry.key}." }] unless
-          context.permitted?(entry.permission)
+          entry.readable_by?(context)
 
         [entry, nil]
       end

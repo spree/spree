@@ -36,7 +36,7 @@ module Spree
         entry = ResourceMap.find(resource)
         return unknown_resource(resource) if entry.nil?
         return not_searchable(entry) if entry.api_path(:index).blank?
-        return forbidden(entry) unless context.permitted?(entry.permission)
+        return forbidden(entry) unless entry.readable_by?(context)
 
         applied = sanitize_filters(filters)
         # Ransack drops a filter it does not recognise and returns the whole
