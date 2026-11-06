@@ -125,6 +125,18 @@ RSpec.describe SpreeMeilisearch::ProductPresenter do
         expect(member[:id]).to include(collection.prefixed_id)
       end
 
+      context 'when the collection is not manually sorted' do
+        let(:collection) { create(:collection, store: store, sort_order: 'price asc') }
+
+        it 'emits no membership doc for it (its page never sorts by position)' do
+          expect(documents.map { |d| d[:grouping_id] }).not_to include(collection.prefixed_id)
+        end
+
+        it 'still lists it in the base document collection_ids' do
+          expect(documents.reject { |d| d[:grouping_id] }.first[:collection_ids]).to include(collection.prefixed_id)
+        end
+      end
+
       it 'leaves base docs without a grouping_id/position' do
         base = documents.reject { |d| d[:grouping_id] }
 
@@ -183,6 +195,15 @@ RSpec.describe SpreeMeilisearch::ProductPresenter do
 
         expect(usd_doc[:locale]).to eq('en')
         expect(eur_doc[:locale]).to eq('de')
+      end
+
+      context 'when two markets share a currency and locale' do
+        let!(:at_market) { create(:market, store: store, name: 'AT', currency: 'EUR', default_locale: 'de', supported_locales: 'de') }
+
+        it 'builds the shared (locale, currency) document only once' do
+          expect(documents.count { |d| d[:locale] == 'de' && d[:currency] == 'EUR' }).to eq(1)
+          expect(documents.size).to eq(3)
+        end
       end
 
       it 'each document has a unique composite id' do

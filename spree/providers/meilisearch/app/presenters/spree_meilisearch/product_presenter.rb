@@ -114,11 +114,14 @@ module SpreeMeilisearch
       end
     end
 
-    # Returns all market × locale pairs for this store
+    # Returns the market × locale pairs for this store, one per distinct
+    # (currency, locale). Document ids are keyed on locale + currency, so two
+    # markets sharing both would build the same documents twice and Meilisearch
+    # would keep only the last — deduping here skips the wasted work and payload.
     def market_locale_pairs
-      @market_locale_pairs ||= store.markets.flat_map do |market|
+      @market_locale_pairs ||= store.markets.flat_map { |market|
         market.supported_locales_list.map { |locale| [market, locale] }
-      end
+      }.uniq { |market, locale| [market.currency, locale.to_s] }
     end
 
     def default_locale
@@ -181,9 +184,17 @@ module SpreeMeilisearch
       @grouping_positions ||= collection_positions.merge(category_positions)
     end
 
-    # Flat: one entry per collection with the product's ProductCollection.position.
+    # Flat: one entry per manually-sorted collection with the product's
+    # ProductCollection.position. A collection with any other sort_order never
+    # reads its membership docs — its page defaults to that sort, and an explicit
+    # `sort=manual` falls back to default ranking in the search provider — so
+    # emitting them would only multiply the index.
     def collection_positions
-      @collection_positions ||= product.product_collections.pluck(:collection_id, :position).each_with_object({}) do |(cid, pos), acc|
+      @collection_positions ||= product.product_collections.
+                                joins(:collection).
+                                where(Spree::Collection.table_name => { sort_order: 'manual' }).
+                                pluck(:collection_id, :position).
+                                each_with_object({}) do |(cid, pos), acc|
         acc[prefixed_id_for(Spree::Collection, cid)] = pos
       end
     end

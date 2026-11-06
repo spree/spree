@@ -204,6 +204,18 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
         provider.search_and_filter(scope: store.products, sort: 'manual', filters: { 'in_category' => 'ctg_Manual1' })
       end
 
+      it 'keeps the membership filter and default ranking for a non-manually-sorted collection' do
+        collection = create(:collection, store: store, sort_order: 'price asc')
+
+        expect(mock_index).to receive(:search).with(anything, satisfy { |p|
+          p[:sort].nil? &&
+            p[:filter].none? { |c| c.to_s.include?('grouping_id') } &&
+            p[:filter].any? { |c| c.to_s.include?(collection.prefixed_id) }
+        }).and_return(ms_response)
+
+        provider.search_and_filter(scope: store.products, sort: 'manual', filters: { 'in_collection' => collection.prefixed_id })
+      end
+
       it 'ignores manual sort without a grouping (falls back to default ranking)' do
         expect(mock_index).to receive(:search).with(anything, satisfy { |p| p[:sort].nil? }).and_return(ms_response)
 

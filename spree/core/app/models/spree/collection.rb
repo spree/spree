@@ -110,12 +110,35 @@ module Spree
     after_commit :regenerate_products, on: [:update], if: -> { automatic? && (saved_change_to_automatic? || saved_change_to_rules_match_policy?) }
     attribute :marked_for_regenerate_products, :boolean, default: true
 
+    # Search providers index per-collection position docs only for manually
+    # sorted collections, so switching into or out of 'manual' must refresh
+    # this collection's products in the search index.
+    after_commit :reindex_products_after_sort_order_change, on: [:update], if: :manual_sort_order_toggled?
+
     def manual?
       !automatic?
     end
 
     def manual_sort_order?
       sort_order == 'manual'
+    end
+
+    def manual_sort_order_toggled?
+      return false unless saved_change_to_sort_order?
+
+      before, after = saved_change_to_sort_order
+      (before == 'manual') != (after == 'manual')
+    end
+
+    # Guarded so DB-provider stores (no indexing) skip the query entirely;
+    # enqueue_search_index self-guards too. Mirrors
+    # Spree::Category#reindex_products_after_move.
+    def reindex_products_after_sort_order_change
+      return unless Spree.search_provider.constantize.indexing_required?
+
+      products.distinct.find_each(&:enqueue_search_index)
+    rescue NameError
+      nil
     end
 
     def slug

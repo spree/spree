@@ -168,13 +168,30 @@ module SpreeMeilisearch
       grouping_id = nil unless valid_prefixed_id?(grouping_id)
       sort = 'manual' if sort.blank? && grouping_id
 
-      if sort == 'manual' && grouping_id
+      if sort == 'manual' && grouping_id && !membership_indexed?(grouping_id)
+        # The presenter only emits membership docs for manually-sorted
+        # collections; any other collection keeps its membership filter and
+        # falls back to default ranking.
+        sort = nil
+      elsif sort == 'manual' && grouping_id
         filters = filters.except('in_collection', 'in_category').merge('grouping_id' => grouping_id)
       elsif sort == 'manual'
         sort = nil
       end
 
       [sort, filters]
+    end
+
+    # Whether the index holds per-grouping membership docs for this grouping.
+    # Categories are manual-only, so they always do. A collection does only when
+    # its sort_order is 'manual' (see ProductPresenter#collection_positions). An
+    # unknown collection id keeps the membership path, which simply matches nothing.
+    def membership_indexed?(grouping_id)
+      return true unless grouping_id.start_with?("#{Spree::Collection._prefix_id_prefix}_")
+
+      raw_id = Spree::Collection.decode_prefixed_id(grouping_id)
+      sort_order = raw_id && Spree::Collection.where(store_id: store.id, id: raw_id).pick(:sort_order)
+      sort_order.nil? || sort_order == 'manual'
     end
 
     # Execute a Meilisearch query. Returns [ms_result, facet_distribution].
