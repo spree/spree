@@ -21,7 +21,7 @@ export const CompanySchema = z.object({
   members_count: z.number(),
   get children() { return z.array(CompanySchema).optional(); },
   addresses: z.array(AddressSchema).optional(),
-  memberships: z.array(CompanyMembershipSchema).optional(),
+  get memberships() { return z.array(CompanyMembershipSchema).optional(); },
 }) as unknown as z.ZodObject<{
   id: z.ZodType<Company['id']>;
   name: z.ZodType<Company['name']>;

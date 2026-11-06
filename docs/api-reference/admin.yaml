@@ -62691,6 +62691,8 @@ components:
           type: string
         updated_at:
           type: string
+        customer:
+          "$ref": "#/components/schemas/Customer"
       required:
       - id
       - company_id

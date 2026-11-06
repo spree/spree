@@ -22,6 +22,18 @@ RSpec.describe Spree::Api::V3::Admin::Companies::MembershipsController, type: :c
       expect(row['company_id']).to eq(company.prefixed_id)
     end
 
+    it 'includes the customer when expanded' do
+      customer = create(:customer, first_name: 'Ada', last_name: 'Lovelace')
+      create(:company_membership, company: company, customer: customer)
+
+      get :index, params: { company_id: company.prefixed_id, expand: 'customer' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['data'].first['customer']).to include(
+        'id' => customer.prefixed_id, 'full_name' => 'Ada Lovelace'
+      )
+    end
+
     it '404s under another store company' do
       get :index, params: { company_id: create(:company, store: create(:store)).prefixed_id }, as: :json
 
