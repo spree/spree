@@ -9,7 +9,12 @@ module Spree
       # Fields worth showing beneath the title, in the order they are preferred.
       # Status is deliberately absent — it has its own badge on the row, and
       # repeating it would push out the field that actually adds something.
-      SUBTITLE_FIELDS = %w[display_total display_price price email number sku].freeze
+      SUBTITLE_FIELDS = %w[display_total display_price price email number sku variant_sku].freeze
+
+      # Quantities and places a list row must carry for the model to answer
+      # from the search alone. Without them a stock level row was an id and
+      # nothing else, and "how much do I have" took one lookup per row.
+      DETAIL_FIELDS = %w[count_on_hand available_count stock_location_name options_text].freeze
 
       # Anything that looks like a credential is dropped before a record can
       # reach the model. The serializers are supposed to mask these already —
@@ -151,6 +156,7 @@ module Spree
             title: title,
             subtitle: subtitle_for(attributes, title),
             status: attributes['status'],
+            details: attributes.slice(*DETAIL_FIELDS).compact.presence,
             image_url: attributes['thumbnail_url'],
             path: dashboard_path_from(entry, attributes['id'])
           }.compact
@@ -160,7 +166,7 @@ module Spree
 
         # The same preference order as a record's title, read from the payload.
         def title_from(attributes)
-          %w[name number label title email sku].each do |field|
+          %w[name number label title email sku variant_name].each do |field|
             value = attributes[field]
             return value.to_s if value.is_a?(String) && value.present?
           end

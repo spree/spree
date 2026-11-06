@@ -41,6 +41,41 @@ RSpec.describe Spree::AgentTools::SearchResources do
     end
   end
 
+  describe 'pagination' do
+    it 'returns more than 25 records when asked for them' do
+      create_list(:product, 27, store: store, status: 'active')
+
+      result = tool.call(resource: 'products', limit: 100)
+
+      expect(result[:total]).to eq(30)
+      expect(result[:records].size).to eq(30)
+      expect(result[:next_page]).to be_nil
+    end
+
+    it 'names the next page and reaches the records past the first one' do
+      first = tool.call(resource: 'products', limit: 2)
+      expect(first).to include(page: 1, pages: 2, next_page: 2)
+
+      second = tool.call(resource: 'products', limit: 2, page: first[:next_page])
+      expect(second[:records].size).to eq(1)
+      expect(second[:next_page]).to be_nil
+      expect(second[:records].pluck(:id)).not_to include(*first[:records].pluck(:id))
+    end
+  end
+
+  describe 'stock levels' do
+    it 'carries the quantity and location on each row' do
+      stock_level = products.first.default_variant.stock_levels.first
+      stock_level.set_count_on_hand(42)
+
+      result = tool.call(resource: 'stock_levels', filters: { 'count_on_hand_gteq' => 40 })
+      record = result[:records].find { |r| r[:id] == stock_level.prefixed_id }
+
+      expect(record[:title]).to eq(products.first.name)
+      expect(record[:details]).to include('count_on_hand' => 42, 'stock_location_name' => stock_level.stock_location.name)
+    end
+  end
+
   describe 'records' do
     it 'carries a title and a dashboard path for each row' do
       record = tool.call(resource: 'products', limit: 1)[:records].first
