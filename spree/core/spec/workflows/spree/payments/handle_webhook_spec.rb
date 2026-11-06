@@ -203,6 +203,14 @@ RSpec.describe Spree::Payments::HandleWebhook do
         expect(order.reload).to be_completed
         expect(order.payments.reload.count).to eq(1)
       end
+
+      it 'completes a session left processing by the earlier delivery' do
+        payment_session.update_column(:status, 'processing')
+
+        subject.call(payment_method: payment_method, action: :captured, payment_session: payment_session.reload)
+
+        expect(payment_session.reload.status).to eq('completed')
+      end
     end
 
     context 'when the session was completed without a payment' do

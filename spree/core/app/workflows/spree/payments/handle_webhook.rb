@@ -60,10 +60,8 @@ module Spree
           # earlier delivery) while the order is not, and a redelivery or job
           # retry must still place the order or the buyer stays charged
           # without one.
-          unless payment_session.reload.payment&.completed?
-            step :ensure_payment
-            step :complete_session
-          end
+          step :ensure_payment unless payment_session.reload.payment&.completed?
+          step :complete_session
           step :complete_owner unless order.reload.completed?
         end
       rescue Spree::Workflow::FailureSignal
