@@ -44,6 +44,10 @@ module Spree
                 example: -3,
                 description: 'A relative change, for feeds that report movements rather than levels. Each row needs `count_on_hand` or `adjustment`.'
               stock_level.attribute :backorderable, :boolean, nullable: true
+              stock_level.attribute :reason, :string,
+                                    nullable: true,
+                                    example: 'received',
+                                    description: 'Labels the movement in the stock history. Defaults to "Inventory feed".'
             end
           end
 
@@ -173,7 +177,8 @@ module Spree
                 stock_location_id: location_ids[row[:stock_location_id]],
                 count_on_hand: row[:count_on_hand],
                 adjustment: row[:adjustment],
-                backorderable: row[:backorderable]
+                backorderable: row[:backorderable],
+                reason: row[:reason].presence
               }.compact
             end
           end

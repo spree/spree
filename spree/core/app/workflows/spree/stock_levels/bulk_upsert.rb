@@ -13,8 +13,7 @@ module Spree
     # external system knows. The movement records the delta between what Spree
     # held and what the feed says.
     class BulkUpsert < Spree::Workflow
-
-      # What the stock history shows against a movement this service wrote.
+      # What the stock history shows against a movement whose row gave no reason.
       FEED_REASON = 'inventory_feed'.freeze
 
       # @param store [Spree::Store] whose shelves these are. Ids are resolved
@@ -23,7 +22,7 @@ module Spree
       # @param rows [Array<Hash>] one per shelf: +variant_id+ and
       #   +stock_location_id+ naming it (prefixed ids, or raw), then either
       #   +count_on_hand+ (the figure it should end at) or +adjustment+ (a
-      #   signed change); +backorderable+ optional
+      #   signed change); +backorderable+ and +reason+ optional
       # @return [Spree::ServiceModule::Result] +{ stock_level_count: N }+
       def perform(store:, rows:)
         @store = store
@@ -110,7 +109,7 @@ module Spree
           stock_level: stock_level,
           count_on_hand: row[:count_on_hand],
           adjustment: row[:adjustment],
-          reason: FEED_REASON
+          reason: row[:reason].presence || FEED_REASON
         )
         # A feed that states a figure Spree cannot read means a typo, and a
         # typo must be refused rather than obeyed: `to_i` would zero a shelf
