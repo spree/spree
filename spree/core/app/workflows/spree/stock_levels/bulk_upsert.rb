@@ -23,10 +23,12 @@ module Spree
       #   +stock_location_id+ naming it (prefixed ids, or raw), then either
       #   +count_on_hand+ (the figure it should end at) or +adjustment+ (a
       #   signed change); +backorderable+ and +reason+ optional
-      # @return [Spree::ServiceModule::Result] +{ stock_level_count: N }+
+      # @return [Spree::ServiceModule::Result] +{ stock_level_count: N }+, or a
+      #   failure naming the first row a record refused, by its position in
+      #   +rows+; nothing is written then
       def perform(store:, rows:)
         @store = store
-        rows = resolve(Array(rows).map { |row| row.with_indifferent_access })
+        rows = resolve(Array(rows).each_with_index.map { |row, index| row.with_indifferent_access.merge(index: index) })
         keyed = rows.select { |row| row[:variant_id].present? && row[:stock_location_id].present? }
         return success(stock_level_count: 0) if keyed.empty?
 
@@ -37,7 +39,11 @@ module Spree
         existing = existing_stock_levels(deduped)
         count = 0
         Spree::StockLevel.transaction do
-          deduped.each { |row| count += 1 if apply_row(row, existing) }
+          deduped.each do |row|
+            count += 1 if apply_row(row, existing)
+          rescue ActiveRecord::RecordInvalid => e
+            reject_row(row, e.record.errors)
+          end
         end
 
         success(stock_level_count: count)
@@ -117,6 +123,13 @@ module Spree
         raise ArgumentError, result.error.to_s if result.failure?
 
         result.value.count_on_hand != before
+      end
+
+      # Raised inside the transaction, so every row before this one rolls back.
+      def reject_row(row, errors)
+        failure(nil, code: 'invalid_stock_levels',
+                     message: "Row #{row[:index]}: #{errors.full_messages.to_sentence}",
+                     rows: [{ index: row[:index], errors: errors.messages }])
       end
     end
   end
