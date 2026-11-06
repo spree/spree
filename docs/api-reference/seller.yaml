@@ -14397,6 +14397,59 @@ paths:
       responses:
         '204':
           description: digital asset deleted
+  "/api/v3/seller/products/{product_id}/media/{id}":
+    parameters:
+    - name: product_id
+      in: path
+      required: true
+      description: Product ID
+      schema:
+        type: string
+    - name: id
+      in: path
+      required: true
+      description: Media ID
+      schema:
+        type: string
+    delete:
+      summary: Delete a product media file
+      tags:
+      - Products
+      security:
+      - bearer_auth: []
+      description: |
+        Removes a file from the product's gallery. Updating the product never removes a file it
+        was not sent, so this is the only way to take one off.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          await client.products.media.delete('prod_UkLWZg9DAJ', 'media_k5nR8xLqPz')
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: media deleted
+        '404':
+          description: another seller's product
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Product not found
   "/api/v3/seller/products":
     get:
       summary: List products
@@ -32771,8 +32824,9 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/SellerProductMediaParams"
-          description: 'The gallery, as a whole: a file absent from the list is removed.
-            `signed_id` attaches a fresh upload; `id` updates one already there.'
+          description: 'Files to add or update: `signed_id` attaches a fresh upload;
+            `id` updates one already there. A file left out stays; remove one with
+            `DELETE /products/{product_id}/media/{id}`.'
         variants:
           type: array
           items:
@@ -32843,8 +32897,9 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/SellerProductMediaParams"
-          description: 'The gallery, as a whole: a file absent from the list is removed.
-            `signed_id` attaches a fresh upload; `id` updates one already there.'
+          description: 'Files to add or update: `signed_id` attaches a fresh upload;
+            `id` updates one already there. A file left out stays; remove one with
+            `DELETE /products/{product_id}/media/{id}`.'
         variants:
           type: array
           items:

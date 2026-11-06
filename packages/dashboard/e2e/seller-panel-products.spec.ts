@@ -10,7 +10,7 @@ import {
   openRowMenu,
   sellerLogin,
 } from './helpers'
-import { inventoryCard } from './products-helpers'
+import { inventoryCard, mediaCard } from './products-helpers'
 
 // The card serves whatever is attached, so the shared image fixture will do.
 const DIGITAL_FILE = path.join(
@@ -106,6 +106,46 @@ test.describe('seller panel — products', () => {
 
     await page.goto(`${home}/products`)
     await expect(productRow(page, `${name} (large)`)).toBeVisible({ timeout: 15_000 })
+  })
+
+  // Saving the product never removes a file it was not sent, so removal goes
+  // through its own delete — and a later save must not try it again.
+  test('removes a gallery image on save, and saves again cleanly', async ({ page }) => {
+    const home = await sellerLogin(page, FIXTURE_SELLER_WRITER_EMAIL)
+    const name = `E2E Lamp ${Date.now()}`
+    await listProduct(page, home, name)
+
+    const media = mediaCard(page)
+    const tiles = media.locator('[data-slot="media-thumbnail"]')
+    await media.locator('input[type="file"]').setInputFiles(DIGITAL_FILE)
+    await expect(tiles).toHaveCount(1, { timeout: 15_000 })
+    await expect(media.locator('.animate-spin')).toHaveCount(0, { timeout: 15_000 })
+    await page.getByRole('button', { name: /^save$/i }).click()
+    await expect(page.getByText(/product saved/i)).toBeVisible({ timeout: 15_000 })
+    await page.reload()
+    await expect(tiles).toHaveCount(1, { timeout: 30_000 })
+
+    await tiles.first().hover()
+    await tiles.first().getByRole('checkbox').check()
+    await media.getByRole('button', { name: /^remove$/i }).click()
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: /^remove$/i })
+      .click()
+    await expect(tiles).toHaveCount(0)
+    await page.getByRole('button', { name: /^save$/i }).click()
+    await expect(page.getByText(/product saved/i).last()).toBeVisible({ timeout: 15_000 })
+
+    await page.reload()
+    await expect(page.getByRole('heading', { name })).toBeVisible({ timeout: 30_000 })
+    await expect(tiles).toHaveCount(0)
+
+    await page.locator('#product-name').fill(`${name} (desk)`)
+    await page.getByRole('button', { name: /^save$/i }).click()
+    await expect(page.getByRole('heading', { name: `${name} (desk)` })).toBeVisible({
+      timeout: 15_000,
+    })
+    await expect(page.getByText(/something went wrong/i)).toHaveCount(0)
   })
 
   // Putting a product on sale is the marketplace's decision; the seller asks.

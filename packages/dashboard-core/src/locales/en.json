@@ -1081,15 +1081,35 @@
       "signed_in_as_invitee": ". You are signed in as {{email}}."
     },
     "media_picker": {
+      "any": "Any",
       "confirm": "Add selected",
       "description": "Pick files already in your library, or upload new ones.",
+      "drop_hint_images": "Or drag and drop images here",
+      "drop_hint_media": "Or drag and drop images and videos here",
       "empty": "Your library is empty. Upload a file to get started.",
+      "filter_type": "Type",
+      "filter_usage": "Usage",
       "no_results": "No files match your search.",
       "search_placeholder": "Search by name…",
       "selected_count_one": "{{count}} selected",
       "selected_count_other": "{{count}} selected",
+      "sort_date_added": "Date added",
+      "sort_file_name": "File name",
+      "sort_file_size": "File size",
       "title": "Media library",
-      "upload": "Upload"
+      "type_image": "Images",
+      "type_video": "Videos",
+      "upload": "Upload",
+      "usage_unused": "Not in use",
+      "usage_used": "In use",
+      "view": "View",
+      "view_grid": "Grid view",
+      "view_list": "List view"
+    },
+    "media_editor": {
+      "information": "Information",
+      "details": "Details",
+      "added": "Added {{date}}"
     },
     "messages": {
       "address_removed": "Address removed",
@@ -1582,12 +1602,18 @@
         "add_video_title": "Add a video link",
         "assigned_variants_help": "Pick the variants this image represents. Leave blank to apply to all variants.",
         "assigned_variants_label": "Assigned variants",
-        "delete_confirm": "Delete this media? This cannot be undone.",
+        "delete_confirm": "Remove this media? It is deleted when you save the product.",
+        "delete_selected_confirm_one": "Remove the selected media? It is deleted when you save the product.",
+        "delete_selected_confirm_other": "Remove the {{count}} selected media? They are deleted when you save the product.",
         "drop_hint": "Drag & drop media here, or click to browse",
         "edit_title": "Edit media",
         "file_types_hint": "Images (PNG, JPG, WebP) and video (MP4, WebM, MOV)",
         "focal_point_help": "Click the image to set what stays in frame when it is cropped.",
         "focal_point_reset": "Reset",
+        "select_all": "Select all media",
+        "select_item": "Select {{name}}",
+        "selected_count_one": "{{count}} selected",
+        "selected_count_other": "{{count}} selected",
         "unsupported_file_one": "{{count}} file was not added — only images and video are supported.",
         "unsupported_file_other": "{{count}} files were not added — only images and video are supported.",
         "upload_failed": "Failed to upload {{name}}: {{message}}",
@@ -1698,6 +1724,10 @@
           "failed_to_create_option_type": "Failed to create option type",
           "failed_to_create_value": "Failed to create value"
         },
+        "images_aria": "Images for {{name}}",
+        "images_description": "Tick the product images that show this variant. They are listed in the Media card’s order, and the first one ticked becomes its thumbnail — drag images in the Media card to change which.",
+        "images_title": "Images for {{name}}",
+        "images_unsaved": "Save the product to add images to this variant",
         "keep": "Keep all",
         "option_type_label": "Option type",
         "option_type_placeholder": "Pick an option type",
@@ -1719,6 +1749,7 @@
           "carton_placeholder": "No carton",
           "pending_save": "Changes here are saved with the product."
         },
+        "thumbnail_badge": "Thumbnail",
         "title": "Variants",
         "variant_label": "Variant"
       }

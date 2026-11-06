@@ -48460,18 +48460,22 @@ paths:
           | Attribute | Kind | Predicates |
           |---|---|---|
           | `alt` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `byte_size` | Number | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `filename` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `media_type` | One of `image`, `video`, `external_video` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `position` | Number | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
 
-          **Sort by:** `alt`, `created_at`, `id`, `media_type`, `position`, `updated_at`. Prefix a field with `-` to sort descending.
+          **Sort by:** `alt`, `byte_size`, `created_at`, `filename`, `id`, `media_type`, `position`, `updated_at`. Prefix a field with `-` to sort descending.
       x-spree-filters:
         table: Media
         sortable:
         - alt
+        - byte_size
         - created_at
+        - filename
         - id
         - media_type
         - position
@@ -48914,18 +48918,22 @@ paths:
           | Attribute | Kind | Predicates |
           |---|---|---|
           | `alt` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `byte_size` | Number | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `filename` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `media_type` | One of `image`, `video`, `external_video` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `position` | Number | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
 
-          **Sort by:** `alt`, `created_at`, `id`, `media_type`, `position`, `updated_at`. Prefix a field with `-` to sort descending.
+          **Sort by:** `alt`, `byte_size`, `created_at`, `filename`, `id`, `media_type`, `position`, `updated_at`. Prefix a field with `-` to sort descending.
       x-spree-filters:
         table: Media
         sortable:
         - alt
+        - byte_size
         - created_at
+        - filename
         - id
         - media_type
         - position
@@ -49297,18 +49305,22 @@ paths:
           | Attribute | Kind | Predicates |
           |---|---|---|
           | `alt` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `byte_size` | Number | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `filename` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
           | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `media_type` | One of `image`, `video`, `external_video` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
           | `position` | Number | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
           | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
 
-          **Sort by:** `alt`, `created_at`, `id`, `media_type`, `position`, `updated_at`. Prefix a field with `-` to sort descending.
+          **Sort by:** `alt`, `byte_size`, `created_at`, `filename`, `id`, `media_type`, `position`, `updated_at`. Prefix a field with `-` to sort descending.
       x-spree-filters:
         table: Media
         sortable:
         - alt
+        - byte_size
         - created_at
+        - filename
         - id
         - media_type
         - position
@@ -88100,7 +88112,9 @@ components:
     Media:
       attributes:
         alt: text
+        byte_size: integer
         created_at: datetime
+        filename: text
         id: id
         media_type:
           enum:

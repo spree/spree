@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useCallback } from 'react'
 import type {
   PanelCollection,
   PanelDeliveryProfile,
@@ -162,9 +163,35 @@ export function useFormCartonPackageTypes() {
 }
 
 /**
- * Removing a file already on the product. A panel whose client registers no
- * deletion answers a no-op mutation, so the gallery still drops the row from
- * the form and the save reconciles it.
+ * Deletes the media a product form marked for removal, after the product
+ * itself saved. Resolves to how many deletes failed, so the form can say so.
+ */
+export function useCommitRemovedProductMedia(productId: string) {
+  const client = getApiClient()
+  const queryClient = useQueryClient()
+  const mediaKey = useResourceKey('products', productId, 'media')
+
+  return useCallback(
+    async (mediaIds: string[] | undefined) => {
+      // Independent deletes, so all at once: a bulk removal of twenty files
+      // waits on one round trip rather than twenty.
+      const results = await Promise.allSettled(
+        (mediaIds ?? []).map((mediaId) => client.deleteProductMedia?.(productId, mediaId)),
+      )
+      const failed = results.filter((result) => result.status === 'rejected').length
+      if (mediaIds?.length) await queryClient.invalidateQueries({ queryKey: mediaKey })
+      return failed
+    },
+    [client, productId, queryClient, mediaKey],
+  )
+}
+
+/**
+ * Removing a file already on the product, straight away.
+ *
+ * @deprecated The product form now removes files on save — mark them in
+ * `removed_media_ids` and commit with `useCommitRemovedProductMedia`. Kept
+ * until the next minor release.
  */
 export function useFormDeleteProductMedia(productId: string) {
   const client = getApiClient()

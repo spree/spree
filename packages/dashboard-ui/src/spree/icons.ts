@@ -83,6 +83,7 @@ export {
   KeyRoundIcon,
   LanguagesIcon,
   LayersIcon,
+  LayoutGridIcon,
   LibraryIcon,
   LinkIcon,
   ListChecksIcon,

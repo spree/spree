@@ -186,3 +186,115 @@ test.describe('edit product — media variant linking', () => {
     }
   })
 })
+
+test.describe('edit product — media selection', () => {
+  test('removes several files together, undone by Discard and kept on save', async ({ page }) => {
+    const creds = await login(page)
+    await createProduct(page, creds.store_id, `E2E Bulk Media ${Date.now()}`)
+
+    // Two saved images, so the bulk delete goes through the server.
+    const media = mediaCard(page)
+    await media.locator('input[type="file"]').setInputFiles([FIXTURE_IMAGE, FIXTURE_IMAGE])
+    await expect(media.locator('[data-slot="media-thumbnail"]')).toHaveCount(2, { timeout: 15_000 })
+    await expect(media.locator('.animate-spin')).toHaveCount(0, { timeout: 15_000 })
+    await page.getByRole('button', { name: /save product/i }).click()
+    await expect(page.getByRole('button', { name: /save product/i })).toBeDisabled({
+      timeout: 30_000,
+    })
+    await page.reload()
+    const tiles = media.locator('[data-slot="media-thumbnail"]')
+    await expect(tiles).toHaveCount(2, { timeout: 30_000 })
+
+    // Ticking one tile turns the header into a selection bar; select all takes the rest.
+    await tiles.first().hover()
+    await tiles.first().getByRole('checkbox').check()
+    await expect(media.getByText(/^1 selected$/)).toBeVisible()
+    await media.getByRole('checkbox', { name: /select all media/i }).click()
+    await expect(media.getByText(/^2 selected$/)).toBeVisible()
+
+    await media.getByRole('button', { name: /^remove$/i }).click()
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: /^remove$/i })
+      .click()
+    await expect(tiles).toHaveCount(0)
+
+    // Removal is an unsaved change: Discard brings the files back.
+    await page.getByRole('button', { name: /^discard$/i }).click()
+    await expect(tiles).toHaveCount(2)
+
+    // Removed again and saved, they are gone for good.
+    await tiles.first().hover()
+    await tiles.first().getByRole('checkbox').check()
+    await media.getByRole('checkbox', { name: /select all media/i }).click()
+    await media.getByRole('button', { name: /^remove$/i }).click()
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: /^remove$/i })
+      .click()
+    await page.getByRole('button', { name: /save product/i }).click()
+    await expect(page.getByRole('button', { name: /save product/i })).toBeDisabled({
+      timeout: 30_000,
+    })
+    await page.reload()
+    await expect(page.getByRole('heading', { name: /^e2e bulk media/i })).toBeVisible({
+      timeout: 30_000,
+    })
+    await expect(media.locator('[data-slot="media-thumbnail"]')).toHaveCount(0)
+  })
+})
+
+test.describe('edit product — variant images', () => {
+  test('picks a variant image from its row, seen by the media editor too', async ({ page }) => {
+    const creds = await login(page)
+    const colorLabel = await seedOptionType(page, creds.store_id, 'color', ['red', 'blue'])
+    await createProduct(page, creds.store_id, `E2E Variant image ${Date.now()}`)
+    await addOptionToVariants(page, colorLabel, ['Red', 'Blue'])
+    const variants = variantsCard(page)
+    await expect(variants.getByText('Red').first()).toBeVisible({ timeout: 15_000 })
+
+    const media = mediaCard(page)
+    await media.locator('input[type="file"]').setInputFiles(FIXTURE_IMAGE)
+    await expect(media.locator('.animate-spin')).toHaveCount(0, { timeout: 15_000 })
+    // Variants need ids before media can point at them.
+    await page.getByRole('button', { name: /save product/i }).click()
+    await expect(page.getByRole('button', { name: /save product/i })).toBeDisabled({
+      timeout: 30_000,
+    })
+    await page.reload()
+    await expect(media.locator('img[src]').first()).toBeVisible({ timeout: 30_000 })
+
+    // The empty square opens the product's images; Done applies the pick.
+    const square = variants.getByRole('button', { name: /^images for .*red/i })
+    await expect(square.locator('img')).toHaveCount(0)
+    await square.click()
+    const picker = page.getByRole('dialog', { name: /^images for .*red/i })
+    await picker.locator('ul > li > button').first().click()
+    await picker.getByRole('button', { name: /^done$/i }).click()
+    await expect(picker).toBeHidden()
+    await expect(square.locator('img')).toHaveCount(1)
+
+    await page.getByRole('button', { name: /save product/i }).click()
+    await expect(page.getByRole('button', { name: /save product/i })).toBeDisabled({
+      timeout: 30_000,
+    })
+    await page.reload()
+    await expect(
+      variants.getByRole('button', { name: /^images for .*red/i }).locator('img'),
+    ).toHaveCount(1, {
+      timeout: 30_000,
+    })
+
+    // The media editor's own variant picker shows the same assignment.
+    await clickMediaThumbnailAction(media, 'edit')
+    const editor = page.getByRole('dialog')
+    await expect(editor.getByRole('button', { name: /Red$/ })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    )
+    await expect(editor.getByRole('button', { name: /Blue$/ })).toHaveAttribute(
+      'aria-pressed',
+      'false',
+    )
+  })
+})

@@ -1082,15 +1082,35 @@
       "signed_in_as_invitee": ". Zalogowano jako {{email}}."
     },
     "media_picker": {
+      "any": "Dowolne",
       "confirm": "Dodaj wybrane",
       "description": "Wybierz pliki z biblioteki lub prześlij nowe.",
+      "drop_hint_images": "Lub przeciągnij i upuść obrazy tutaj",
+      "drop_hint_media": "Lub przeciągnij i upuść obrazy i filmy tutaj",
       "empty": "Twoja biblioteka jest pusta. Prześlij plik, aby zacząć.",
+      "filter_type": "Typ",
+      "filter_usage": "Użycie",
       "no_results": "Żaden plik nie pasuje do wyszukiwania.",
       "search_placeholder": "Szukaj według nazwy…",
       "selected_count_one": "Wybrano {{count}}",
       "selected_count_other": "Wybrano {{count}}",
+      "sort_date_added": "Data dodania",
+      "sort_file_name": "Nazwa pliku",
+      "sort_file_size": "Rozmiar pliku",
       "title": "Biblioteka multimediów",
-      "upload": "Prześlij"
+      "type_image": "Obrazy",
+      "type_video": "Filmy",
+      "upload": "Prześlij",
+      "usage_unused": "Nieużywane",
+      "usage_used": "Używane",
+      "view": "Widok",
+      "view_grid": "Widok siatki",
+      "view_list": "Widok listy"
+    },
+    "media_editor": {
+      "information": "Informacje",
+      "details": "Szczegóły",
+      "added": "Dodano {{date}}"
     },
     "messages": {
       "address_removed": "Usunięto adres",
@@ -1599,12 +1619,18 @@
         "add_video_title": "Dodaj link do wideo",
         "assigned_variants_help": "Wybierz warianty, które reprezentuje to zdjęcie. Pozostaw puste, aby zastosować do wszystkich wariantów.",
         "assigned_variants_label": "Przypisane warianty",
-        "delete_confirm": "Usunąć ten plik multimedialny? Tej operacji nie można cofnąć.",
+        "delete_confirm": "Usunąć ten plik? Zostanie usunięty po zapisaniu produktu.",
+        "delete_selected_confirm_one": "Usunąć zaznaczony plik? Zostanie usunięty po zapisaniu produktu.",
+        "delete_selected_confirm_other": "Usunąć zaznaczone multimedia ({{count}})? Zostaną usunięte po zapisaniu produktu.",
         "drop_hint": "Przeciągnij i upuść pliki tutaj lub kliknij, aby przeglądać",
         "edit_title": "Edytuj plik multimedialny",
         "file_types_hint": "Zdjęcia (PNG, JPG, WebP) i wideo (MP4, WebM, MOV)",
         "focal_point_help": "Kliknij zdjęcie, aby wskazać, co ma pozostać widoczne po przycięciu.",
         "focal_point_reset": "Przywróć",
+        "select_all": "Zaznacz wszystkie multimedia",
+        "select_item": "Zaznacz {{name}}",
+        "selected_count_one": "Wybrano {{count}}",
+        "selected_count_other": "Wybrano {{count}}",
         "unsupported_file_one": "Nie dodano {{count}} pliku — obsługiwane są tylko zdjęcia i wideo.",
         "unsupported_file_other": "Nie dodano {{count}} plików — obsługiwane są tylko zdjęcia i wideo.",
         "upload_failed": "Nie udało się przesłać {{name}}: {{message}}",
@@ -1719,6 +1745,10 @@
           "failed_to_create_option_type": "Nie udało się utworzyć typu opcji",
           "failed_to_create_value": "Nie udało się utworzyć wartości"
         },
+        "images_aria": "Zdjęcia dla {{name}}",
+        "images_description": "Zaznacz zdjęcia produktu, które pokazują ten wariant. Są w kolejności z karty Multimedia, a pierwsze zaznaczone staje się miniaturą — przeciągnij zdjęcia w tej karcie, aby to zmienić.",
+        "images_title": "Zdjęcia dla {{name}}",
+        "images_unsaved": "Zapisz produkt, aby dodać zdjęcia do tego wariantu",
         "keep": "Zachowaj wszystkie",
         "option_type_label": "Typ opcji",
         "option_type_placeholder": "Wybierz typ opcji",
@@ -1742,6 +1772,7 @@
           "carton_placeholder": "Brak kartonu",
           "pending_save": "Zmiany zapisują się razem z produktem."
         },
+        "thumbnail_badge": "Miniatura",
         "title": "Warianty",
         "variant_label": "Wariant"
       }

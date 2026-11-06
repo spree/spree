@@ -37,8 +37,8 @@ export type ProductUpdateParams = {
     compare_at_amount?: string | null
   }[]
   /**
-   * The gallery, as a whole: a file absent from the list is removed. `signed_id` attaches a fresh
-   * upload; `id` updates one already there.
+   * Files to add or update: `signed_id` attaches a fresh upload; `id` updates one already there. A
+   * file left out stays; remove one with `DELETE /products/{product_id}/media/{id}`.
    */
   media?: SellerProductMediaParams[]
   /**

@@ -66,6 +66,47 @@ async function addFromLibrary(page: Page, name: string, alt: string) {
 }
 
 test.describe('media library', () => {
+  test('lists files as rows and sorts them by name', async ({ page }) => {
+    const creds = await login(page)
+    await page.goto(MEDIA_PATH(creds.store_id))
+    await expect(page.getByRole('heading', { name: /^media$/i })).toBeVisible({ timeout: 15_000 })
+    const name = `e2e-sorted-${Date.now()}.png`
+    await uploadImage(page, name)
+
+    // A pick closes the view menu, and the row shows the file's details.
+    await page.getByRole('button', { name: /^view$/i }).click()
+    await page.getByRole('menuitemradio', { name: /^list view$/i }).click()
+    await expect(page.getByRole('menu')).toBeHidden()
+    const row = page.getByRole('listitem').filter({ hasText: name })
+    await expect(row).toContainText(/png/i)
+    await expect(row).toContainText(/not used yet/i)
+
+    // Sorting is kept in the URL, like the page's filters. Name and size
+    // order by the stored file rather than the media row, so the request
+    // itself is checked: a failed sort leaves the previous rows on screen.
+    const sortedBy = (field: string) =>
+      page.waitForResponse(
+        (r) =>
+          r.url().includes('/media') &&
+          new RegExp(`sort=(-|%2D)?${field}\\b`).test(r.url()) &&
+          r.request().method() === 'GET',
+      )
+    await page.getByRole('button', { name: /^sort$/i }).click()
+    let response = sortedBy('filename')
+    await page.getByRole('menuitemradio', { name: /^file name$/i }).click()
+    expect((await response).status()).toBe(200)
+    await page.getByRole('menuitemradio', { name: /^ascending$/i }).click()
+    await expect(page).toHaveURL(/sort=filename/)
+    await expect(page).toHaveURL(/direction=asc/)
+
+    response = sortedBy('byte_size')
+    await page.getByRole('menuitemradio', { name: /^file size$/i }).click()
+    expect((await response).status()).toBe(200)
+    await expect(page).toHaveURL(/sort=byte_size/)
+    await page.keyboard.press('Escape')
+    await expect(row).toBeVisible()
+  })
+
   test('uploads an image and describes it for screen readers', async ({ page }) => {
     const creds = await login(page)
     await page.goto(MEDIA_PATH(creds.store_id))
@@ -86,6 +127,40 @@ test.describe('media library', () => {
     // The grid captions a file by its description once it has one.
     await sheet.getByRole('button', { name: /^cancel$/i }).click()
     await expect(page.getByRole('listitem').filter({ hasText: 'A red test swatch' })).toBeVisible()
+  })
+
+  test('uploads into the library from the picker, finds it by filter and adds it', async ({
+    page,
+  }) => {
+    const creds = await login(page)
+    const stamp = Date.now()
+    const name = `e2e-picker-upload-${stamp}.png`
+    await createProduct(page, creds.store_id, `Picker upload ${stamp}`)
+
+    await page.getByRole('button', { name: /add from library/i }).click()
+    const picker = page.getByRole('dialog', { name: /media library/i })
+    await picker.locator('input[type="file"]').setInputFiles({
+      name,
+      mimeType: 'image/png',
+      buffer: FIXTURE_IMAGE,
+    })
+    // A new upload arrives picked, ready to add.
+    const tile = picker.getByRole('button', { name: new RegExp(name) })
+    await expect(tile).toHaveAttribute('aria-pressed', 'true', { timeout: 20_000 })
+
+    // Not on any product yet, so the "not in use" filter keeps it, in the list view too.
+    await picker.getByRole('button', { name: /^usage/i }).click()
+    await page.getByRole('menuitemradio', { name: /^not in use$/i }).click()
+    await picker.getByRole('button', { name: /^view$/i }).click()
+    await page.getByRole('menuitemradio', { name: /^list view$/i }).click()
+    await expect(picker.getByRole('button', { name: new RegExp(name) })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    )
+
+    await picker.getByRole('button', { name: /^add selected$/i }).click()
+    await expect(picker).toBeHidden()
+    await expect(page.getByRole('img', { name })).toBeVisible({ timeout: 15_000 })
   })
 
   test('a file added to a product from the library keeps its preview after saving', async ({

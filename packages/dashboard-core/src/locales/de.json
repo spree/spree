@@ -1079,15 +1079,35 @@
       "signed_in_as_invitee": ". Sie sind als {{email}} angemeldet."
     },
     "media_picker": {
+      "any": "Alle",
       "confirm": "Auswahl hinzufügen",
       "description": "Wählen Sie Dateien aus Ihrer Bibliothek oder laden Sie neue hoch.",
+      "drop_hint_images": "Oder Bilder hierher ziehen",
+      "drop_hint_media": "Oder Bilder und Videos hierher ziehen",
       "empty": "Ihre Bibliothek ist leer. Laden Sie eine Datei hoch, um zu beginnen.",
+      "filter_type": "Typ",
+      "filter_usage": "Verwendung",
       "no_results": "Keine Dateien entsprechen Ihrer Suche.",
       "search_placeholder": "Nach Namen suchen…",
       "selected_count_one": "{{count}} ausgewählt",
       "selected_count_other": "{{count}} ausgewählt",
+      "sort_date_added": "Hinzugefügt am",
+      "sort_file_name": "Dateiname",
+      "sort_file_size": "Dateigröße",
       "title": "Medienbibliothek",
-      "upload": "Hochladen"
+      "type_image": "Bilder",
+      "type_video": "Videos",
+      "upload": "Hochladen",
+      "usage_unused": "Nicht verwendet",
+      "usage_used": "In Verwendung",
+      "view": "Ansicht",
+      "view_grid": "Rasteransicht",
+      "view_list": "Listenansicht"
+    },
+    "media_editor": {
+      "information": "Informationen",
+      "details": "Details",
+      "added": "Hinzugefügt am {{date}}"
     },
     "messages": {
       "address_removed": "Adresse entfernt",
@@ -1580,12 +1600,18 @@
         "add_video_title": "Videolink hinzufügen",
         "assigned_variants_help": "Wählen Sie die Varianten aus, die dieses Bild repräsentiert. Leer lassen, um es auf alle Varianten anzuwenden.",
         "assigned_variants_label": "Zugeordnete Varianten",
-        "delete_confirm": "Dieses Medium löschen? Dies kann nicht rückgängig gemacht werden.",
+        "delete_confirm": "Dieses Medium entfernen? Es wird beim Speichern des Produkts gelöscht.",
+        "delete_selected_confirm_one": "Ausgewähltes Medium entfernen? Es wird beim Speichern des Produkts gelöscht.",
+        "delete_selected_confirm_other": "{{count}} ausgewählte Medien entfernen? Sie werden beim Speichern des Produkts gelöscht.",
         "drop_hint": "Medien hierher ziehen und ablegen oder zum Durchsuchen klicken",
         "edit_title": "Medium bearbeiten",
         "file_types_hint": "Bilder (PNG, JPG, WebP) und Videos (MP4, WebM, MOV)",
         "focal_point_help": "Klicken Sie auf das Bild, um festzulegen, was beim Zuschneiden sichtbar bleibt.",
         "focal_point_reset": "Zurücksetzen",
+        "select_all": "Alle Medien auswählen",
+        "select_item": "{{name}} auswählen",
+        "selected_count_one": "{{count}} ausgewählt",
+        "selected_count_other": "{{count}} ausgewählt",
         "unsupported_file_one": "{{count}} Datei wurde nicht hinzugefügt — nur Bilder und Videos werden unterstützt.",
         "unsupported_file_other": "{{count}} Dateien wurden nicht hinzugefügt — nur Bilder und Videos werden unterstützt.",
         "upload_failed": "Hochladen von {{name}} fehlgeschlagen: {{message}}",
@@ -1696,6 +1722,10 @@
           "failed_to_create_option_type": "Optionstyp konnte nicht erstellt werden",
           "failed_to_create_value": "Wert konnte nicht erstellt werden"
         },
+        "images_aria": "Bilder für {{name}}",
+        "images_description": "Wähle die Produktbilder, die diese Variante zeigen. Sie stehen in der Reihenfolge der Medien-Karte; das erste ausgewählte wird ihr Vorschaubild — ziehe Bilder in der Medien-Karte, um das zu ändern.",
+        "images_title": "Bilder für {{name}}",
+        "images_unsaved": "Speichere das Produkt, um dieser Variante Bilder hinzuzufügen",
         "keep": "Alle behalten",
         "option_type_label": "Optionstyp",
         "option_type_placeholder": "Optionstyp auswählen",
@@ -1717,6 +1747,7 @@
           "carton_placeholder": "Kein Karton",
           "pending_save": "Änderungen hier werden mit dem Produkt gespeichert."
         },
+        "thumbnail_badge": "Vorschaubild",
         "title": "Varianten",
         "variant_label": "Variante"
       }

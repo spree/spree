@@ -110,6 +110,7 @@ export function mediaToFormValues(media: PanelMedia, index: number, formKey = 'p
     // on a video row resolves to its poster, so none of them work here.
     videoUrl: media.video_url,
     downloadUrl: media.download_url,
+    filename: media.filename ?? null,
   }
 }
 

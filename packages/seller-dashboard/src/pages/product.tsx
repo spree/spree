@@ -18,6 +18,7 @@ import {
   productToFormValues,
   Slot,
   useAssignableVariants,
+  useCommitRemovedProductMedia,
   VariantsCard,
   variantToWirePayload,
   withExtensionRowValues,
@@ -68,6 +69,7 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
   const productId = mode === 'edit' ? params.productId : undefined
   const navigate = useNavigate()
   const queryClient = useQueryClient()
+  const commitRemovedMedia = useCommitRemovedProductMedia(productId ?? '')
 
   const productKey = ['seller', sellerId, 'product', productId]
   const {
@@ -195,6 +197,15 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
         values: withExtensionRowValues('seller.product', values, form.getValues()),
         extensionValues: extensionSubmitValues('seller.product', form),
       })
+      // Files the seller removed go only once the product itself saved.
+      if (productId && values.removed_media_ids?.length) {
+        const failed = await commitRemovedMedia(values.removed_media_ids)
+        if (failed > 0) toastManager.add({ type: 'error', title: t('common.error') })
+        // Committed: the next save must not try them again.
+        form.setValue('removed_media_ids', [], { shouldDirty: false })
+        // The product refetched on save may still list them; read it again.
+        await queryClient.invalidateQueries({ queryKey: productKey })
+      }
     } catch (err) {
       if (!mapSpreeErrorsToForm(err, form.setError)) {
         toastManager.add({
@@ -247,13 +258,13 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
           main={
             <>
               <GeneralCard form={form} />
-              <VariantsCard form={form} formKey="seller.product" />
               <MediaCard
                 productId={productId}
                 variants={assignableVariants}
                 form={form}
                 formKey="seller.product"
               />
+              <VariantsCard form={form} formKey="seller.product" />
               <PricesCard
                 form={form}
                 productName={product?.name ?? ''}

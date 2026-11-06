@@ -1037,12 +1037,18 @@
         "add_video_title": "Agregar un enlace de video",
         "assigned_variants_help": "Elegí las variantes que representa esta imagen. Dejala en blanco para aplicar a todas las variantes.",
         "assigned_variants_label": "Variantes asignadas",
-        "delete_confirm": "¿Eliminar esta multimedia? Esta acción no se puede deshacer.",
+        "delete_confirm": "¿Quitar este archivo? Se eliminará al guardar el producto.",
+        "delete_selected_confirm_one": "¿Quitar el archivo seleccionado? Se eliminará al guardar el producto.",
+        "delete_selected_confirm_other": "¿Quitar los {{count}} archivos seleccionados? Se eliminarán al guardar el producto.",
         "drop_hint": "Arrastrá y soltá multimedia acá, o hacé clic para buscar",
         "edit_title": "Editar multimedia",
         "file_types_hint": "Imágenes (PNG, JPG, WebP) y video (MP4, WebM, MOV)",
         "focal_point_help": "Hacé clic en la imagen para definir qué se mantiene en el encuadre al recortarla.",
         "focal_point_reset": "Restablecer",
+        "select_all": "Seleccionar todos los archivos",
+        "select_item": "Seleccionar {{name}}",
+        "selected_count_one": "{{count}} seleccionado",
+        "selected_count_other": "{{count}} seleccionados",
         "unsupported_file_one": "{{count}} archivo no se agregó: solo se admiten imágenes y video.",
         "unsupported_file_other": "{{count}} archivos no se agregaron: solo se admiten imágenes y video.",
         "upload_failed": "No se pudo subir {{name}}: {{message}}",
@@ -1153,6 +1159,10 @@
           "failed_to_create_option_type": "No se pudo crear el tipo de opción",
           "failed_to_create_value": "No se pudo crear el valor"
         },
+        "images_aria": "Imágenes de {{name}}",
+        "images_description": "Marca las imágenes del producto que muestran esta variante. Aparecen en el orden de la tarjeta Multimedia y la primera marcada será su miniatura; arrastra las imágenes en esa tarjeta para cambiarla.",
+        "images_title": "Imágenes de {{name}}",
+        "images_unsaved": "Guarda el producto para añadir imágenes a esta variante",
         "keep": "Conservar todas",
         "option_type_label": "Tipo de opción",
         "option_type_placeholder": "Elegir un tipo de opción",
@@ -1174,6 +1184,7 @@
           "carton_placeholder": "Sin caja",
           "pending_save": "Los cambios acá se guardan con el producto."
         },
+        "thumbnail_badge": "Miniatura",
         "title": "Variantes",
         "variant_label": "Variante"
       }
@@ -2024,15 +2035,35 @@
       "view_store": "Ver tienda"
     },
     "media_picker": {
+      "any": "Cualquiera",
       "confirm": "Agregar seleccionados",
       "description": "Elegí archivos de tu biblioteca o subí nuevos.",
+      "drop_hint_images": "O arrastra y suelta imágenes aquí",
+      "drop_hint_media": "O arrastra y suelta imágenes y vídeos aquí",
       "empty": "Tu biblioteca está vacía. Subí un archivo para empezar.",
+      "filter_type": "Tipo",
+      "filter_usage": "Uso",
       "no_results": "Ningún archivo coincide con tu búsqueda.",
       "search_placeholder": "Buscar por nombre…",
       "selected_count_one": "{{count}} seleccionado",
       "selected_count_other": "{{count}} seleccionados",
+      "sort_date_added": "Fecha de subida",
+      "sort_file_name": "Nombre del archivo",
+      "sort_file_size": "Tamaño del archivo",
       "title": "Biblioteca de multimedia",
-      "upload": "Subir"
+      "type_image": "Imágenes",
+      "type_video": "Vídeos",
+      "upload": "Subir",
+      "usage_unused": "Sin usar",
+      "usage_used": "En uso",
+      "view": "Vista",
+      "view_grid": "Vista de cuadrícula",
+      "view_list": "Vista de lista"
+    },
+    "media_editor": {
+      "information": "Información",
+      "details": "Detalles",
+      "added": "Añadido el {{date}}"
     },
     "custom_field_definitions": {
       "errors": {

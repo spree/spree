@@ -62,8 +62,10 @@ module Spree
             # operator's endpoint: it would make the server fetch a URL the
             # caller chose.
             body.attribute :media, :array,
-              as: 'SellerProductMediaParams',
-              description: 'The gallery, as a whole: a file absent from the list is removed. `signed_id` attaches a fresh upload; `id` updates one already there.' do |media_item|
+                           as: 'SellerProductMediaParams',
+                           description: 'Files to add or update: `signed_id` attaches a fresh upload; ' \
+                                        '`id` updates one already there. A file left out stays; remove ' \
+                                        'one with `DELETE /products/{product_id}/media/{id}`.' do |media_item|
               media_item.attribute :id, :id
               media_item.attribute :signed_id, :string, description: 'A `signed_id` from `POST /files`.'
               media_item.include_attributes Spree::Api::V3::MediaRequestSchema

@@ -547,6 +547,15 @@ export class SellerClient {
       delete: (productId: string, id: string, options?: RequestOptions): Promise<void> =>
         this.request<void>('DELETE', `/products/${productId}/digital_assets/${id}`, options),
     },
+
+    /**
+     * The product's gallery. Files are added and updated through the
+     * product's own `media`; removing one is its own call.
+     */
+    media: {
+      delete: (productId: string, id: string, options?: RequestOptions): Promise<void> =>
+        this.request<void>('DELETE', `/products/${productId}/media/${id}`, options),
+    },
   }
 
   /**

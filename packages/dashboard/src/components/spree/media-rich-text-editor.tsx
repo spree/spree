@@ -1,5 +1,10 @@
 import type { Media } from '@spree/admin-sdk'
-import { adminClient, MediaPickerSheet, useFileUpload } from '@spree/dashboard-core'
+import {
+  adminClient,
+  MediaPickerDialog,
+  mediaPickerListParams,
+  useFileUpload,
+} from '@spree/dashboard-core'
 import { RichTextEditor, type RichTextEditorProps } from '@spree/dashboard-ui'
 import { useCallback, useRef, useState } from 'react'
 import { useCreateMediaLibraryFile } from '../../hooks/use-media-library'
@@ -55,16 +60,16 @@ export function MediaRichTextEditor(props: Omit<RichTextEditorProps, 'onRequestI
     <>
       <RichTextEditor {...props} onRequestImage={requestImage} />
 
-      <MediaPickerSheet<Media>
+      <MediaPickerDialog<Media>
         open={picking}
         onOpenChange={handleOpenChange}
         multiple={false}
         queryKey="rich-text-image"
-        search={(query) =>
+        search={(query, options) =>
           adminClient.media.list({
             limit: 48,
+            ...mediaPickerListParams(query, options),
             media_type_eq: 'image',
-            ...(query ? { filename_cont: query } : {}),
           })
         }
         onUpload={async (file) => {

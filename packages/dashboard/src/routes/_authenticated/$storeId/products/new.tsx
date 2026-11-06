@@ -62,7 +62,16 @@ function NewProductPage() {
     // Before the placeholder variant is filtered out below, so row `i` of the
     // parse still lines up with row `i` of the form.
     const data = withExtensionRowValues('product', submitted, form.getValues())
-    const { variants, custom_fields, media, digital_assets, ...rest } = data
+    // `removed_media_ids` is UI-only: the edit page commits it after saving,
+    // and a product being created has nothing to remove.
+    const {
+      variants,
+      custom_fields,
+      media,
+      digital_assets,
+      removed_media_ids: _removedMediaIds,
+      ...rest
+    } = data
 
     // Strip the placeholder default variant if the merchant didn't touch it.
     // Spree::Product#variants= auto-creates the canonical default variant
@@ -91,10 +100,12 @@ function NewProductPage() {
     // The server's Product#media= setter attaches each blob via signed_id
     // after the product is created (deferred to after_save).
     if (media && media.length > 0) {
-      payload.media = media.map(({ previewUrl, posterUrl, videoUrl, uploadId, ...rest }, i) => ({
-        ...rest,
-        position: i + 1,
-      }))
+      payload.media = media.map(
+        ({ previewUrl, posterUrl, videoUrl, uploadId, filename, ...rest }, i) => ({
+          ...rest,
+          position: i + 1,
+        }),
+      )
     }
 
     // Pre-save digital files: strip the UI-only fields (filename/byteSize are
@@ -212,10 +223,10 @@ function NewProductPage() {
           main={
             <>
               <GeneralCard form={form} descriptionEditor={MediaRichTextEditor} />
-              <VariantsCard form={form} seedFromType />
               {/* Form-backed media uploader — files are uploaded to ActiveStorage
                 pre-save and their signed_ids ride the product POST. */}
               <MediaCard form={form} />
+              <VariantsCard form={form} seedFromType />
               <PricesCard
                 form={form}
                 productName={form.watch('name') || t('admin.pages.products.new.title')}

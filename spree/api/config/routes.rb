@@ -930,6 +930,7 @@ Spree::Core::Engine.add_routes do
 
           resources :digital_assets, controller: 'products/digital_assets',
                                      only: [:index, :create, :show, :update, :destroy]
+          resources :media, controller: 'products/media', only: [:destroy]
         end
 
 
