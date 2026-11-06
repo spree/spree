@@ -1406,7 +1406,8 @@
       },
       "company_membership": {
         "email": {
-          "help": "An existing customer joins immediately; anyone else gets an emailed invitation.",
+          "label": "Or invite by email",
+          "help": "Someone who is not a customer yet gets an emailed invitation.",
           "placeholder": "buyer@example.com"
         }
       },

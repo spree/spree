@@ -1401,7 +1401,8 @@
       },
       "company_membership": {
         "email": {
-          "help": "已有客户会立即加入；其他人将收到电子邮件邀请。",
+          "label": "或通过电子邮件邀请",
+          "help": "尚不是客户的人会收到电子邮件邀请。",
           "placeholder": "buyer@example.com"
         }
       },

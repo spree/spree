@@ -1406,7 +1406,8 @@
       },
       "company_membership": {
         "email": {
-          "help": "Ein bestehender Kunde tritt sofort bei; alle anderen erhalten eine Einladung per E-Mail.",
+          "label": "Oder per E-Mail einladen",
+          "help": "Wer noch kein Kunde ist, erhält eine Einladung per E-Mail.",
           "placeholder": "einkauf@beispiel.de"
         }
       },

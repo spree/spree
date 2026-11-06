@@ -1,11 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { Customer, GiftCard } from '@spree/admin-sdk'
+import type { GiftCard } from '@spree/admin-sdk'
 import {
   Can,
   CurrencySelect,
   currencyParts,
   mapSpreeErrorsToForm,
-  ResourceCombobox,
   ResourceTable,
   resourceSearchSchema,
   StoreDatePicker,
@@ -42,7 +41,7 @@ import { useEffect, useRef } from 'react'
 import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
-import { customerAutocompleteProps } from '../../../../hooks/use-customers'
+import { CustomerCombobox } from '../../../../components/spree/customers/customer-combobox'
 import {
   listGiftCards,
   useCreateGiftCard,
@@ -410,18 +409,10 @@ function CustomerPickerController({
             {field.value || t('admin.pages.promotions.gift_cards.no_customer')}
           </div>
         ) : (
-          <ResourceCombobox<Customer>
-            {...customerAutocompleteProps('customer-picker')}
-            value={field.value || undefined}
+          <CustomerCombobox
+            queryKey="gift-card-customer-picker"
+            value={field.value}
             onChange={(id) => field.onChange(id ?? '')}
-            renderOption={(c) => (
-              <div>
-                <div className="font-medium">{c.email}</div>
-                {(c.first_name || c.last_name) && (
-                  <div className="text-xs text-muted-foreground">{c.full_name}</div>
-                )}
-              </div>
-            )}
           />
         )
       }

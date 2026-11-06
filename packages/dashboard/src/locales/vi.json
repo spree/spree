@@ -1406,7 +1406,8 @@
       },
       "company_membership": {
         "email": {
-          "help": "Một khách hàng hiện tại tham gia ngay lập tức; bất cứ ai khác nhận được lời mời qua email.",
+          "label": "Hoặc mời qua email",
+          "help": "Người chưa là khách hàng sẽ nhận được lời mời qua email.",
           "placeholder": "người mua@example.com"
         }
       },

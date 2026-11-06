@@ -51,6 +51,25 @@ RSpec.describe Spree::Api::V3::Admin::Companies::MembershipsController, type: :c
       end
     end
 
+    context 'when given an existing customer by id' do
+      let!(:customer) { create(:customer) }
+
+      it 'creates the membership immediately' do
+        post :create, params: { company_id: company.prefixed_id, customer_id: customer.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:created)
+        expect(json_response['id']).to start_with('cmem_')
+        expect(company.memberships.sole.customer).to eq(customer)
+      end
+
+      it '404s for an unknown customer' do
+        post :create, params: { company_id: company.prefixed_id, customer_id: 'cus_unknown' }, as: :json
+
+        expect(response).to have_http_status(:not_found)
+        expect(company.memberships).to be_empty
+      end
+    end
+
     context 'when the email is unknown' do
       it 'creates an invitation instead' do
         post :create, params: { company_id: company.prefixed_id, customer_email: 'new@example.com' }, as: :json

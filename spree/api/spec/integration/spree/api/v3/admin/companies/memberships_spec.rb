@@ -37,21 +37,32 @@ RSpec.describe 'Admin Company Memberships API', type: :request, swagger_doc: 'ap
       end
     end
 
-    post 'Add a member by email' do
+    post 'Add a member' do
       tags 'Companies'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description <<~DESC
-        Adds a person to the node by email. An email matching an existing customer becomes a
-        membership immediately (a `cmem_…` id); an unknown email becomes an invitation
-        (a `cinv_…` id) and the invite email goes out.
+        Adds a person to the node, either an existing customer by `customer_id` or anyone by
+        `customer_email`. A customer, or an email matching one, becomes a membership immediately
+        (a `cmem_…` id); an unknown email becomes an invitation (a `cinv_…` id) and the invite
+        email goes out.
       DESC
       admin_scope :write, :customers
 
       admin_sdk_example 'companies/memberships/create'
 
       request_body_for
+
+      # Listed first: the last 201 example is the one the reference documents.
+      response '201', 'existing customer added by id' do
+        let!(:customer) { create(:customer, email: 'picked@example.com') }
+        let(:body) { { customer_id: customer.prefixed_id } }
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['email']).to eq('picked@example.com')
+        end
+      end
 
       response '201', 'member added' do
         let!(:customer) { create(:customer, email: 'buyer@example.com') }

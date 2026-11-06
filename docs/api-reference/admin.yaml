@@ -44204,16 +44204,17 @@ paths:
                   previous:
                   next:
     post:
-      summary: Add a member by email
+      summary: Add a member
       tags:
       - Companies
       security:
       - api_key: []
         bearer_auth: []
       description: |-
-        Adds a person to the node by email. An email matching an existing customer becomes a
-        membership immediately (a `cmem_…` id); an unknown email becomes an invitation
-        (a `cinv_…` id) and the invite email goes out.
+        Adds a person to the node, either an existing customer by `customer_id` or anyone by
+        `customer_email`. A customer, or an email matching one, becomes a membership immediately
+        (a `cmem_…` id); an unknown email becomes an invitation (a `cinv_…` id) and the invite
+        email goes out.
 
 
         **Required scope:** `write_customers` (for API-key authentication).
@@ -81395,17 +81396,20 @@ components:
     CompanyMembershipCreateParams:
       type: object
       properties:
+        customer_id:
+          type: string
+          description: An existing customer, who becomes a member immediately. Send
+            this or `customer_email`.
+          example: cus_UkLWZg9DAJ
         customer_email:
           type: string
           description: An existing customer becomes a member immediately; an unknown
             email becomes an invitation, and the response is an invitation instead
-            of a membership.
+            of a membership. Send this or `customer_id`.
           example: buyer@example.com
         metadata:
           type: object
           additionalProperties: true
-      required:
-      - customer_email
     CompanyUpdateParams:
       type: object
       properties:

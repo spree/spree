@@ -1,5 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { Address, Company, CompanyInvitation, CompanyMembership } from '@spree/admin-sdk'
+import type {
+  Address,
+  Company,
+  CompanyInvitation,
+  CompanyMembership,
+  Customer,
+} from '@spree/admin-sdk'
 import { COMPANY_KINDS } from '@spree/core'
 import {
   adminClient,
@@ -56,6 +62,7 @@ import { useTranslation } from 'react-i18next'
 import { CompanyAddressSheet } from '../../../../components/spree/company-address-sheet'
 import { CompanyKindBadge } from '../../../../components/spree/company-kind-badge'
 import { ApiCustomFieldsCard } from '../../../../components/spree/custom-fields/custom-fields-inline'
+import { CustomerCombobox } from '../../../../components/spree/customers/customer-combobox'
 import { EnterpriseUpsell } from '../../../../components/spree/enterprise-upsell'
 import { ResourceDetailSkeleton } from '../../../../components/spree/route-pending'
 import { TaxExemptionCertificatesCard } from '../../../../components/spree/tax-exemption-certificates-card'
@@ -805,6 +812,8 @@ function AddMemberDialog({
 }) {
   const { t } = useTranslation()
   const addMutation = useAddCompanyMember(companyId)
+  // An existing customer, who joins straight away, or an email to invite.
+  const [customer, setCustomer] = useState<Customer | null>(null)
   const [email, setEmail] = useState('')
   // Written by whatever the `company_membership.form_fields` slot renders (the
   // Enterprise role picker); merged into the create payload untouched, so core
@@ -812,9 +821,12 @@ function AddMemberDialog({
   const [extraParams, setExtraParams] = useState<Record<string, unknown>>({})
 
   async function handleSubmit() {
-    if (!email) return
+    if (!customer && !email) return
     await addMutation
-      .mutateAsync({ ...extraParams, customer_email: email })
+      .mutateAsync({
+        ...extraParams,
+        ...(customer ? { customer_id: customer.id } : { customer_email: email }),
+      })
       .then(() => onOpenChange(false))
       .catch(() => undefined)
   }
@@ -829,14 +841,33 @@ function AddMemberDialog({
         <DialogBody>
           <FieldGroup>
             <Field>
-              <FieldLabel htmlFor="member-email">{t('admin.fields.email.label')}</FieldLabel>
+              <FieldLabel htmlFor="member-customer">
+                {t('admin.fields.customer_id.label')}
+              </FieldLabel>
+              <CustomerCombobox
+                queryKey="company-member-customer"
+                id="member-customer"
+                allowCreate={false}
+                value={customer?.id}
+                onChange={(_id, record) => {
+                  setCustomer(record)
+                  if (record) setEmail('')
+                }}
+              />
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="member-email">
+                {t('admin.fields.company_membership.email.label')}
+              </FieldLabel>
               <Input
                 id="member-email"
                 type="email"
-                autoFocus
                 placeholder={t('admin.fields.company_membership.email.placeholder')}
                 value={email}
-                onChange={(event) => setEmail(event.target.value)}
+                onChange={(event) => {
+                  setEmail(event.target.value)
+                  if (event.target.value) setCustomer(null)
+                }}
               />
               <FieldDescription>{t('admin.fields.company_membership.email.help')}</FieldDescription>
             </Field>
@@ -865,7 +896,11 @@ function AddMemberDialog({
           >
             {t('admin.actions.cancel')}
           </Button>
-          <Button type="button" disabled={addMutation.isPending || !email} onClick={handleSubmit}>
+          <Button
+            type="button"
+            disabled={addMutation.isPending || (!customer && !email)}
+            onClick={handleSubmit}
+          >
             {addMutation.isPending ? t('admin.actions.saving') : t('admin.actions.add')}
           </Button>
         </DialogFooter>

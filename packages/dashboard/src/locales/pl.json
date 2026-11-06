@@ -1424,7 +1424,8 @@
       },
       "company_membership": {
         "email": {
-          "help": "Istniejący klient dołącza od razu; pozostali otrzymują zaproszenie e-mailem.",
+          "label": "Lub zaproś przez e-mail",
+          "help": "Osoba, która nie jest jeszcze klientem, otrzyma zaproszenie e-mailem.",
           "placeholder": "kupiec@przyklad.pl"
         }
       },

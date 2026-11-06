@@ -1,6 +1,7 @@
 import { expect, type Page, test } from '@playwright/test'
 import {
   FIXTURE_PROMO_CUSTOMER_EMAIL,
+  FIXTURE_PROMO_CUSTOMER_FULL_NAME,
   fillAddressForm,
   gotoIndex,
   login,
@@ -116,6 +117,25 @@ test.describe('companies', () => {
 
     await expect(member).toHaveCount(0, { timeout: 15_000 })
     await expect(members.getByText(/no members yet/i)).toBeVisible()
+  })
+
+  test('adds a member by picking an existing customer', async ({ page }) => {
+    const creds = await login(page)
+    await createCompany(page, creds.store_id, `E2E Picked Buyers ${Date.now()}`)
+
+    const members = card(page, /^members/i)
+    await members.getByRole('button', { name: /add member/i }).click()
+    await page.locator('#member-customer').click()
+    await page
+      .getByPlaceholder(/search/i)
+      .last()
+      .fill(FIXTURE_PROMO_CUSTOMER_EMAIL)
+    await page.getByRole('option', { name: new RegExp(FIXTURE_PROMO_CUSTOMER_FULL_NAME) }).click()
+    await page.getByRole('dialog').getByRole('button', { name: /^add$/i }).click()
+
+    await expect(members.getByRole('link', { name: FIXTURE_PROMO_CUSTOMER_EMAIL })).toBeVisible({
+      timeout: 15_000,
+    })
   })
 
   test('invites an email with no account, then revokes the invitation', async ({ page }) => {

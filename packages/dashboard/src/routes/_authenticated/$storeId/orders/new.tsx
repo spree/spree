@@ -52,11 +52,10 @@ import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { ChannelSelect } from '../../../../components/spree/channel-select'
 import { CompanyComboboxOption } from '../../../../components/spree/company-combobox-option'
-import { CustomerComboboxOption } from '../../../../components/spree/customer-combobox-option'
-import { NewCustomerSheet } from '../../../../components/spree/customers/new-customer-sheet'
+import { CustomerCombobox } from '../../../../components/spree/customers/customer-combobox'
 import { useChannels } from '../../../../hooks/use-channels'
 import { companyAutocompleteProps, useCompanyAddresses } from '../../../../hooks/use-companies'
-import { customerAutocompleteProps, useCustomerAddresses } from '../../../../hooks/use-customers'
+import { useCustomerAddresses } from '../../../../hooks/use-customers'
 import { useAllMarkets } from '../../../../hooks/use-markets'
 import {
   NEW_ORDER_DEFAULTS,
@@ -83,7 +82,6 @@ function NewOrderPage() {
   // (Customer record, picked Variants) and bespoke widgets (ResourceCombobox,
   // typeahead button list, items table), not standard form fields.
   const [customer, setCustomer] = useState<Customer | null>(null)
-  const [creatingCustomer, setCreatingCustomer] = useState(false)
   const [company, setCompany] = useState<Company | null>(null)
   const [items, setItems] = useState<PendingItem[]>([])
   const [useDefaultAddress, setUseDefaultAddress] = useState(true)
@@ -323,8 +321,9 @@ function NewOrderPage() {
                   </Field>
                   <Field>
                     <FieldLabel>{t('admin.pages.orders.new.select_customer')}</FieldLabel>
-                    <ResourceCombobox<Customer>
-                      {...customerAutocompleteProps('customer-picker', company?.id)}
+                    <CustomerCombobox
+                      queryKey="customer-picker"
+                      companyId={company?.id}
                       value={customer?.id}
                       onChange={(_id, record) => {
                         if (record?.id !== customer?.id)
@@ -333,27 +332,7 @@ function NewOrderPage() {
                             clearPickedAddresses()
                           })
                       }}
-                      renderOption={(c) => <CustomerComboboxOption customer={c} />}
-                      action={{
-                        label: t('admin.customers.autocomplete.add_new'),
-                        onSelect: () => setCreatingCustomer(true),
-                      }}
                     />
-                    {creatingCustomer && (
-                      <NewCustomerSheet
-                        open
-                        onOpenChange={setCreatingCustomer}
-                        // Picked as soon as it exists, through the same step as
-                        // choosing one from the list.
-                        onCreated={(created) => {
-                          setCreatingCustomer(false)
-                          changeSalesContext(() => {
-                            setCustomer(created)
-                            clearPickedAddresses()
-                          })
-                        }}
-                      />
-                    )}
                   </Field>
                   {!customer && (
                     <Field>

@@ -1406,7 +1406,8 @@
       },
       "company_membership": {
         "email": {
-          "help": "既存の顧客はすぐに参加し、それ以外の人には招待メールが届きます。",
+          "label": "またはメールで招待",
+          "help": "まだ顧客でない人にはメールで招待が届きます。",
           "placeholder": "buyer@example.com"
         }
       },
