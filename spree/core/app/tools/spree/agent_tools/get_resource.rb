@@ -20,7 +20,7 @@ module Spree
         entry = ResourceMap.find(resource)
         return unknown_resource(resource) if entry.nil?
         return { error: "You do not have permission to read #{entry.key}." } unless
-          context.permitted?(entry.permission)
+          entry.readable_by?(context)
 
         return { error: "#{entry.key} cannot be fetched one at a time." } if entry.api_path(:show).blank?
 

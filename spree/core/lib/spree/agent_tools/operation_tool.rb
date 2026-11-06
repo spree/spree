@@ -141,7 +141,7 @@ module Spree
       def record_for(segment, id)
         key = segment == 'id' ? operation.resource_key : operation.segment_keys[segment]
         entry = key && ResourceMap.find(key)
-        return if entry.nil? || !context.permitted?(entry.permission)
+        return if entry.nil? || !entry.readable_by?(context)
 
         entry.scope_for(context).find_by_prefix_id(id)
       rescue StandardError

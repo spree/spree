@@ -257,7 +257,7 @@ class AgentTool
       sentences << "Pass the #{owner}'s id as parent_id to reach them under it." if reachable
       # Each suggested call is one this caller may actually make; a hint
       # that leads straight to a permission refusal is worse than none.
-      readable = parent_entry && context.permitted?(parent_entry.permission)
+      readable = parent_entry&.readable_by?(context)
       writable = parent_entry&.write_permission.present? && context.permitted?(parent_entry.write_permission)
       if attribute && writable
         sentences << "Write them in the #{attribute} attribute of #{parent} — describe_resource #{parent} shows the shape and the accepted types."
