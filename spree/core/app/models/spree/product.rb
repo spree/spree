@@ -141,7 +141,7 @@ module Spree
       self.category_ids = ids
     end
 
-    has_many :product_collections, class_name: 'Spree::ProductCollection', dependent: :destroy_async, inverse_of: :product
+    has_many :product_collections, class_name: 'Spree::ProductCollection', dependent: :destroy, inverse_of: :product
     has_many :collections, through: :product_collections, dependent: :destroy
     has_many :catalog_products, class_name: 'Spree::CatalogProduct', dependent: :destroy_async, inverse_of: :product
     has_many :catalogs, through: :catalog_products
