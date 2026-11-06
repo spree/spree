@@ -25,6 +25,7 @@ If you need a new injection point in a built-in page, open a PR adding `<Slot na
 | Customers | Customer group | `customer_group.form_main`, `customer_group.form_sidebar` |
 | Customers | Company | `company.form_main`, `company.form_sidebar`, `company_membership.*` |
 | Promotions | Promotion | `promotion.form_sidebar`, `promotion.rule_form.<type>`, `promotion.action_form.<type>` |
+| Inventory | Supplier | `supplier.form_main`, `supplier.form_sidebar` |
 | Inventory | Purchase order | `purchase_order.form_main`, `purchase_order.form_sidebar` |
 | Inventory | Stock transfer | `stock_transfer.form_main`, `stock_transfer.form_sidebar` |
 | Sellers | Seller | `seller.form_main`, `seller.form_sidebar` |
@@ -236,6 +237,22 @@ On host-form pages your widget renders inside the page's `<form>` element, so a 
 | Use | Loyalty status, support-ticket summary, external CRM links |
 | Context | `{ customer }` — the full `Customer` record |
 | Host form | No — the page edits through sheets; widgets save via their own API calls |
+
+#### `supplier.form_main`
+
+| Where | Supplier page (`suppliers/$supplierId`), under the Purchase orders table |
+|---|---|
+| Use | Supplier-scoped cards — terms, lead times, catalogue sync |
+| Context | `{ supplier, canEdit }` |
+| Host form | No — the widget owns its persistence |
+
+#### `supplier.form_sidebar`
+
+| Where | Supplier page, under the Details card |
+|---|---|
+| Use | Narrow supplier-scoped cards |
+| Context | `{ supplier, canEdit }` |
+| Host form | No |
 
 #### `customer_group.form_main`
 

@@ -6426,6 +6426,12 @@
       "delete_confirm": {
         "title": "Supprimer ce fournisseur ?",
         "message": "{{name}} sera retiré de votre liste de fournisseurs."
+      },
+      "detail": {
+        "details": "Détails",
+        "orders_empty": "Aucune commande d'achat auprès de ce fournisseur pour le moment",
+        "load_error": "Impossible de charger ce fournisseur",
+        "address": "Adresse"
       }
     },
     "stock_receipts": {

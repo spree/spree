@@ -6425,6 +6425,12 @@
       "delete_confirm": {
         "title": "Diesen Lieferanten löschen?",
         "message": "{{name}} wird aus Ihrer Lieferantenliste entfernt."
+      },
+      "detail": {
+        "details": "Details",
+        "orders_empty": "Noch keine Bestellungen bei diesem Lieferanten",
+        "load_error": "Dieser Lieferant konnte nicht geladen werden",
+        "address": "Adresse"
       }
     },
     "stock_receipts": {

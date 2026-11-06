@@ -6425,6 +6425,12 @@
       "delete_confirm": {
         "title": "Delete this supplier?",
         "message": "{{name}} will be removed from your supplier list."
+      },
+      "detail": {
+        "details": "Details",
+        "orders_empty": "No purchase orders from this supplier yet",
+        "load_error": "Could not load this supplier",
+        "address": "Address"
       }
     },
     "stock_receipts": {

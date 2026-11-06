@@ -114,7 +114,7 @@ test.describe('metadata', () => {
     await expect(page.getByText('NS-0042')).toBeVisible()
   })
 
-  test('an edit sheet keeps metadata collapsed until opened', async ({ page }) => {
+  test('a supplier page keeps metadata collapsed until opened', async ({ page }) => {
     const session = await login(page)
     const name = `E2E Metadata Supplier ${Date.now()}`
     await seedRecord(page, session, '/suppliers', { name, metadata: METADATA })
@@ -122,14 +122,13 @@ test.describe('metadata', () => {
     await gotoIndex(page, `/${session.store_id}/suppliers`, /new supplier/i)
     await rowButton(page, name).click()
 
-    const sheet = page.getByRole('dialog')
-    const section = sheet.getByRole('button', { name: /^metadata\s*1$/i })
-    await expect(section).toBeVisible({ timeout: 15_000 })
-    await expect(sheet.getByText('ERP-4711')).toBeHidden()
+    const toggle = page.getByRole('button', { name: /^metadata\s*1$/i })
+    await expect(toggle).toBeVisible({ timeout: 15_000 })
+    await expect(page.getByText('ERP-4711')).toBeHidden()
 
-    await section.click()
-    await expect(sheet.getByText('erp_id')).toBeVisible()
-    await expect(sheet.getByText('ERP-4711')).toBeVisible()
+    await toggle.click()
+    await expect(page.getByText('erp_id')).toBeVisible()
+    await expect(page.getByText('ERP-4711')).toBeVisible()
   })
 
   test('an edit sheet shows external references on a record without metadata', async ({ page }) => {

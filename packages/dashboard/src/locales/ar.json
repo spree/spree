@@ -6469,6 +6469,12 @@
       "delete_confirm": {
         "title": "حذف هذا المورد؟",
         "message": "سيتم إزالة {{name}} من قائمة الموردين."
+      },
+      "detail": {
+        "details": "التفاصيل",
+        "orders_empty": "لا توجد أوامر شراء من هذا المورد بعد",
+        "load_error": "تعذر تحميل هذا المورد",
+        "address": "العنوان"
       }
     },
     "stock_receipts": {

@@ -6411,6 +6411,12 @@
       "delete_confirm": {
         "title": "删除此供应商？",
         "message": "{{name}} 将从您的供应商列表中移除。"
+      },
+      "detail": {
+        "details": "详情",
+        "orders_empty": "此供应商还没有采购单",
+        "load_error": "无法加载此供应商",
+        "address": "地址"
       }
     },
     "stock_receipts": {

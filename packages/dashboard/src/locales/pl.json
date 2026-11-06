@@ -6493,6 +6493,12 @@
       "delete_confirm": {
         "title": "Usunąć tego dostawcę?",
         "message": "{{name}} zostanie usunięty z listy dostawców."
+      },
+      "detail": {
+        "details": "Szczegóły",
+        "orders_empty": "Brak zamówień zakupu od tego dostawcy",
+        "load_error": "Nie udało się wczytać tego dostawcy",
+        "address": "Adres"
       }
     },
     "stock_receipts": {

@@ -6425,6 +6425,12 @@
       "delete_confirm": {
         "title": "この仕入れ先を削除しますか？",
         "message": "{{name}}を仕入れ先の一覧から削除します。"
+      },
+      "detail": {
+        "details": "詳細",
+        "orders_empty": "この仕入先への発注書はまだありません",
+        "load_error": "この仕入先を読み込めませんでした",
+        "address": "住所"
       }
     },
     "stock_receipts": {

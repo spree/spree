@@ -6392,6 +6392,12 @@
       "delete_confirm": {
         "title": "Xóa nhà cung cấp này?",
         "message": "{{name}} sẽ bị xóa khỏi danh sách nhà cung cấp của bạn."
+      },
+      "detail": {
+        "details": "Chi tiết",
+        "orders_empty": "Chưa có đơn mua hàng nào từ nhà cung cấp này",
+        "load_error": "Không thể tải nhà cung cấp này",
+        "address": "Địa chỉ"
       }
     },
     "stock_receipts": {

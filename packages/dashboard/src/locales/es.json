@@ -5563,6 +5563,12 @@
       "delete_confirm": {
         "title": "¿Eliminar este proveedor?",
         "message": "{{name}} se eliminará de tu lista de proveedores."
+      },
+      "detail": {
+        "details": "Detalles",
+        "orders_empty": "Todavía no hay órdenes de compra de este proveedor",
+        "load_error": "No se pudo cargar este proveedor",
+        "address": "Dirección"
       }
     },
     "reasons": {
