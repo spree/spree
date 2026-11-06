@@ -400,6 +400,25 @@ RSpec.describe 'Admin MCP endpoint', type: :request do
       expect(import.mappings.find_by(schema_field: 'price').file_column).to eq('Price')
     end
 
+    # The envelope is not checked, but a write a tool dispatches is: an
+    # amount still has to be canonical when it reaches the Admin API.
+    it 'still refuses a malformed price on a dispatched write' do
+      product = create(:product, store: store)
+      variant = product.default_variant
+      price_before = variant.amount_in(store.default_currency)
+
+      body = post_rpc('tools/call',
+                      { name: 'update_resource',
+                        arguments: { 'resource' => 'variants', 'id' => variant.prefixed_id,
+                                     'parent_id' => product.prefixed_id,
+                                     'attributes' => { 'price' => '1,599.99' } } },
+                      headers: { 'Authorization' => "Bearer #{token}" })
+
+      expect(body.dig('result', 'isError')).to be(true)
+      expect(body.dig('result', 'content', 0, 'text')).to include('decimal string')
+      expect(variant.reload.amount_in(store.default_currency)).to eq(price_before)
+    end
+
     it 'carries the endpoint\'s own refusal back as a tool error' do
       body = post_rpc('tools/call',
                       { name: 'orders_cancel', arguments: { 'order' => 'order_nope' } },
