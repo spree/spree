@@ -77,6 +77,22 @@ RSpec.describe Spree::Payments::HandleWebhookJob, type: :job do
       }.not_to raise_error
     end
 
+    it 'raises SettlementFailed when the workflow fails so the job is retried' do
+      failed = Spree::ServiceModule::Result.new(false, payment_session, 'Stripe timeout')
+      allow_any_instance_of(Spree::Payments::HandleWebhook).to receive(:call).and_return(failed)
+
+      expect(described_class.rescue_handlers).to include(
+        have_attributes(first: 'Spree::Payments::HandleWebhookJob::SettlementFailed')
+      )
+      expect {
+        described_class.new.perform(
+          payment_method_id: payment_method.id,
+          action: 'captured',
+          payment_session_id: payment_session.id
+        )
+      }.to raise_error(described_class::SettlementFailed, /Stripe timeout/)
+    end
+
     it 'retries on ActiveRecord::Deadlocked' do
       expect(described_class.rescue_handlers).to include(
         have_attributes(first: 'ActiveRecord::Deadlocked')
