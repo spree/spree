@@ -1260,7 +1260,7 @@ function ConditionRuleRow({
   const schema = ruleType?.schema
 
   return (
-    <div className="flex flex-col gap-2 rounded-md border p-3">
+    <Item variant="outline" className="flex-col items-stretch gap-2">
       <div className="flex items-center justify-between">
         <span className="text-sm">{label}</span>
         <Button
@@ -1306,6 +1306,6 @@ function ConditionRuleRow({
           )}
         />
       )}
-    </div>
+    </Item>
   )
 }

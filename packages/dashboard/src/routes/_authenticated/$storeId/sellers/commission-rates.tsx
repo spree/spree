@@ -37,6 +37,7 @@ import {
   InputGroupAddon,
   InputGroupInput,
   InputGroupText,
+  Item,
   RowActions,
   Select,
   SelectContent,
@@ -819,7 +820,7 @@ function CommissionRuleRow({
   )?.[0]
 
   return (
-    <div className="flex flex-col gap-2 rounded-md border p-3">
+    <Item variant="outline" className="flex-col items-stretch gap-2">
       <div className="flex items-center justify-between">
         <div className="flex flex-col">
           <span className="text-sm">
@@ -877,6 +878,6 @@ function CommissionRuleRow({
           )}
         />
       )}
-    </div>
+    </Item>
   )
 }

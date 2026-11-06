@@ -25,6 +25,7 @@ import {
   InputGroupAddon,
   InputGroupInput,
   InputGroupText,
+  Item,
   RowActions,
   Sheet,
   SheetContent,
@@ -616,8 +617,8 @@ function EditGiftCardFormFields({
 function GiftCardUsageSummary({ giftCard }: { giftCard: GiftCard }) {
   const { t } = useTranslation()
   return (
-    <div className="rounded-md border bg-muted/30 p-3 text-sm">
-      <div className="mb-2 font-medium">{t('admin.pages.promotions.gift_cards.usage.title')}</div>
+    <Item variant="muted" className="flex-col items-stretch gap-2">
+      <div className="font-medium">{t('admin.pages.promotions.gift_cards.usage.title')}</div>
       <div className="grid grid-cols-2 gap-1 text-muted-foreground">
         <span>{t('admin.fields.amount.label')}</span>
         <span className="text-right text-foreground tabular-nums">
@@ -638,6 +639,6 @@ function GiftCardUsageSummary({ giftCard }: { giftCard: GiftCard }) {
           </>
         )}
       </div>
-    </div>
+    </Item>
   )
 }

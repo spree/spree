@@ -47,6 +47,7 @@ import {
   FieldError,
   FieldLabel,
   Input,
+  Item,
   RichTextEditor,
   Select,
   SelectContent,
@@ -995,13 +996,13 @@ export function SEOCard({ form, product }: FormCardProps & { product?: Product }
         </CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        <div className="rounded-lg border border-border p-4 space-y-1">
+        <Item variant="outline" className="flex-col items-stretch gap-1">
           <p className="text-sm font-medium text-blue-700 truncate">{previewTitle}</p>
           <p className="text-xs text-green-700 truncate">example.com/products/{previewSlug}</p>
           {metaDescription && (
             <p className="text-xs text-muted-foreground line-clamp-2">{metaDescription}</p>
           )}
-        </div>
+        </Item>
 
         <Field>
           <FieldLabel htmlFor="product-slug">{t('admin.fields.slug.label')}</FieldLabel>
@@ -1404,12 +1405,12 @@ export function TaxCard({ form }: FormCardProps) {
         )}
 
         {overrides.length > 0 && (
-          <div className="rounded-md border bg-muted/30 p-3 text-sm">
+          <Item variant="outline" className="flex-col items-stretch gap-1">
             <p className="font-medium">{t('admin.products.tax.variant_overrides_heading')}</p>
-            <p className="text-muted-foreground mt-1">
+            <p className="text-muted-foreground">
               {t('admin.products.tax.variant_overrides_description')}
             </p>
-            <ul className="mt-3 space-y-2">
+            <ul className="mt-2 space-y-2">
               {overrides.map(({ variant, index }) => {
                 const categoryName =
                   taxCategories.find((c) => c.id === variant.tax_category_id)?.name ??
@@ -1435,7 +1436,7 @@ export function TaxCard({ form }: FormCardProps) {
                 )
               })}
             </ul>
-          </div>
+          </Item>
         )}
       </CardContent>
     </Card>

@@ -21,6 +21,11 @@ import {
   Field,
   FieldLabel,
   Input,
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemFooter,
+  ItemTitle,
   type RefundMethod,
   Select,
   SelectContent,
@@ -177,12 +182,11 @@ export function CreateExchangeDialog({
         </DialogHeader>
         <DialogBody className="flex flex-col gap-4">
           {units.map((unit) => (
-            <div
-              key={unit.id}
-              className="flex flex-col gap-2 rounded-lg border border-border-subtle p-3"
-            >
-              <div className="flex items-center justify-between gap-4">
-                <span className="text-sm truncate">{unit.label}</span>
+            <Item variant="outline" key={unit.id}>
+              <ItemContent className="min-w-0">
+                <ItemTitle className="w-full truncate font-normal">{unit.label}</ItemTitle>
+              </ItemContent>
+              <ItemActions>
                 <Input
                   type="number"
                   min={0}
@@ -196,48 +200,53 @@ export function CreateExchangeDialog({
                     })
                   }
                 />
-              </div>
+              </ItemActions>
               {(selection[unit.id] ?? 0) > 0 && (
-                <Field>
-                  <FieldLabel htmlFor={`replacement-${unit.id}`}>
-                    {t('admin.pages.orders.detail.exchanges.replacement_variant')}
-                  </FieldLabel>
-                  <ResourceCombobox<Variant>
-                    queryKey={`exchange-replacement-${unit.id}`}
-                    value={replacements[unit.id] ?? ''}
-                    onChange={(id) => setReplacements({ ...replacements, [unit.id]: id ?? '' })}
-                    // Only what the option renders. This trims the response;
-                    // the server still computes the rest.
-                    search={(query) =>
-                      adminClient.variants.list({
-                        search: query,
-                        limit: 8,
-                        fields: VARIANT_PICKER_FIELDS,
-                      })
-                    }
-                    hydrate={(ids) =>
-                      adminClient.variants.list({
-                        id_in: ids,
-                        limit: ids.length,
-                        fields: VARIANT_PICKER_FIELDS,
-                      })
-                    }
-                    getOptionLabel={(variant) => variant.product_name ?? variant.sku ?? variant.id}
-                    renderOption={(variant) => (
-                      <div className="flex flex-col">
-                        <span className="font-medium">
-                          {variant.product_name ?? variant.sku ?? variant.id}
-                        </span>
-                        <span className="text-xs text-muted-foreground">
-                          {variant.options_text && <span>{variant.options_text} · </span>}
-                          {t('admin.orders.detail.variant_search.sku_prefix')}: {variant.sku || '—'}
-                        </span>
-                      </div>
-                    )}
-                  />
-                </Field>
+                <ItemFooter className="flex-col items-stretch">
+                  <Field>
+                    <FieldLabel htmlFor={`replacement-${unit.id}`}>
+                      {t('admin.pages.orders.detail.exchanges.replacement_variant')}
+                    </FieldLabel>
+                    <ResourceCombobox<Variant>
+                      queryKey={`exchange-replacement-${unit.id}`}
+                      value={replacements[unit.id] ?? ''}
+                      onChange={(id) => setReplacements({ ...replacements, [unit.id]: id ?? '' })}
+                      // Only what the option renders. This trims the response;
+                      // the server still computes the rest.
+                      search={(query) =>
+                        adminClient.variants.list({
+                          search: query,
+                          limit: 8,
+                          fields: VARIANT_PICKER_FIELDS,
+                        })
+                      }
+                      hydrate={(ids) =>
+                        adminClient.variants.list({
+                          id_in: ids,
+                          limit: ids.length,
+                          fields: VARIANT_PICKER_FIELDS,
+                        })
+                      }
+                      getOptionLabel={(variant) =>
+                        variant.product_name ?? variant.sku ?? variant.id
+                      }
+                      renderOption={(variant) => (
+                        <div className="flex flex-col">
+                          <span className="font-medium">
+                            {variant.product_name ?? variant.sku ?? variant.id}
+                          </span>
+                          <span className="text-xs text-muted-foreground">
+                            {variant.options_text && <span>{variant.options_text} · </span>}
+                            {t('admin.orders.detail.variant_search.sku_prefix')}:{' '}
+                            {variant.sku || '—'}
+                          </span>
+                        </div>
+                      )}
+                    />
+                  </Field>
+                </ItemFooter>
               )}
-            </div>
+            </Item>
           ))}
           <ReasonField kind="return-reasons" value={reasonId} onChange={setReasonId} />
           <Field>

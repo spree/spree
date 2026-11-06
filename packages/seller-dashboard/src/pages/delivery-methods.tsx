@@ -24,6 +24,12 @@ import {
   FieldError,
   FieldLabel,
   Input,
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemDescription,
+  ItemFooter,
+  ItemTitle,
   RowActions,
   Select,
   SelectContent,
@@ -573,29 +579,26 @@ function DeliveryMethodSheet({
                   const definition = ruleTypes?.data.find((type) => type.type === rule.type)
 
                   return (
-                    <div
-                      key={rule.id ?? `${rule.type}-${index}`}
-                      className="flex flex-col gap-3 rounded-lg border border-border-subtle p-3"
-                    >
-                      <div className="flex items-center justify-between gap-4">
-                        <div className="flex flex-col">
-                          <span className="font-medium text-sm">
-                            {typeLabel('delivery_method_rule', rule.type, definition?.name)}
-                          </span>
-                          {typeDescription(
-                            'delivery_method_rule',
-                            rule.type,
-                            definition?.description,
-                          ) && (
-                            <span className="text-muted-foreground text-xs">
-                              {typeDescription(
-                                'delivery_method_rule',
-                                rule.type,
-                                definition?.description,
-                              )}
-                            </span>
-                          )}
-                        </div>
+                    <Item variant="outline" key={rule.id ?? `${rule.type}-${index}`}>
+                      <ItemContent>
+                        <ItemTitle>
+                          {typeLabel('delivery_method_rule', rule.type, definition?.name)}
+                        </ItemTitle>
+                        {typeDescription(
+                          'delivery_method_rule',
+                          rule.type,
+                          definition?.description,
+                        ) && (
+                          <ItemDescription className="text-xs">
+                            {typeDescription(
+                              'delivery_method_rule',
+                              rule.type,
+                              definition?.description,
+                            )}
+                          </ItemDescription>
+                        )}
+                      </ItemContent>
+                      <ItemActions>
                         <Button
                           type="button"
                           size="sm"
@@ -605,22 +608,24 @@ function DeliveryMethodSheet({
                         >
                           <TrashIcon className="size-4" />
                         </Button>
-                      </div>
+                      </ItemActions>
 
-                      <PreferencesForm
-                        schema={renderableSchema(definition?.schema)}
-                        currencyOptions={currencyOptions}
-                        values={rule.preferences}
-                        onChange={(next) =>
-                          form.setValue(
-                            'rules',
-                            rules.map((row, position) =>
-                              position === index ? { ...row, preferences: next } : row,
-                            ),
-                          )
-                        }
-                      />
-                    </div>
+                      <ItemFooter className="flex-col items-stretch">
+                        <PreferencesForm
+                          schema={renderableSchema(definition?.schema)}
+                          currencyOptions={currencyOptions}
+                          values={rule.preferences}
+                          onChange={(next) =>
+                            form.setValue(
+                              'rules',
+                              rules.map((row, position) =>
+                                position === index ? { ...row, preferences: next } : row,
+                              ),
+                            )
+                          }
+                        />
+                      </ItemFooter>
+                    </Item>
                   )
                 })}
 

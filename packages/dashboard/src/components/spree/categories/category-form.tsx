@@ -10,6 +10,7 @@ import {
   FieldGroup,
   FieldLabel,
   Input,
+  Item,
   Textarea,
 } from '@spree/dashboard-ui'
 import type { UseFormReturn } from 'react-hook-form'
@@ -187,13 +188,13 @@ function CategorySEOCard({ form }: { form: UseFormReturn<CategoryFormValues> }) 
         <CardTitle>{t('admin.categories.seo.title')}</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        <div className="space-y-1 rounded-lg border border-border p-4">
+        <Item variant="outline" className="flex-col items-stretch gap-1">
           <p className="truncate text-sm font-medium text-blue-700">{previewTitle}</p>
           <p className="truncate text-xs text-green-700">example.com/t/{previewSlug}</p>
           {metaDescription && (
             <p className="line-clamp-2 text-xs text-muted-foreground">{metaDescription}</p>
           )}
-        </div>
+        </Item>
 
         <Field>
           <FieldLabel htmlFor="category-permalink">{t('admin.fields.slug.label')}</FieldLabel>

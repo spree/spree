@@ -5,6 +5,7 @@ import {
   CopyToClipboardButton,
   ExternalLink,
   Input,
+  Item,
   Label,
   Sheet,
   SheetContent,
@@ -204,7 +205,7 @@ export function StorefrontConnectSheet({
             )}
           </div>
 
-          <div className="flex flex-col gap-2 rounded-lg border border-border-subtle p-4">
+          <Item variant="outline" className="flex-col items-stretch gap-2">
             <p className="font-medium text-sm">
               {t('admin.pages.getting_started.storefront_sheet.deploy_title')}
             </p>
@@ -246,7 +247,7 @@ export function StorefrontConnectSheet({
                 {t('admin.pages.getting_started.storefront_sheet.local_installation_instructions')}
               </ExternalLink>
             </div>
-          </div>
+          </Item>
 
           <form
             className="flex flex-col gap-3"

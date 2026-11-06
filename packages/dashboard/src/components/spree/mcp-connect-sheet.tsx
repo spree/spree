@@ -7,6 +7,7 @@ import {
   Field,
   FieldLabel,
   Input,
+  Item,
   Sheet,
   SheetContent,
   SheetDescription,
@@ -213,7 +214,7 @@ export function McpConnectSheet({ open, onOpenChange }: McpConnectSheetProps) {
               {/* Only once "Something else" is the choice: a merchant picking
                   a known client never sees a callback field. */}
               {selected ? null : (
-                <div className="flex flex-col gap-4 rounded-lg border p-4">
+                <Item variant="outline" className="flex-col items-stretch gap-4">
                   <Field>
                     <FieldLabel htmlFor="mcp-other-name">
                       {t('admin.fields.oauth_application.name.label')}
@@ -239,7 +240,7 @@ export function McpConnectSheet({ open, onOpenChange }: McpConnectSheetProps) {
                       {t('admin.fields.oauth_application.redirect_uri.help')}
                     </p>
                   </Field>
-                </div>
+                </Item>
               )}
             </>
           )}

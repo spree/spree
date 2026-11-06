@@ -2,6 +2,7 @@ import type { Integration, IntegrationTypeDefinition } from '@spree/admin-sdk'
 import { Can, defaultPreferences, PreferencesForm, Subject } from '@spree/dashboard-core'
 import {
   Button,
+  Item,
   Sheet,
   SheetContent,
   SheetDescription,
@@ -181,7 +182,7 @@ function TestConnectionRow({
   const { t } = useTranslation()
 
   return (
-    <div className="flex flex-col gap-2 rounded-md border p-3">
+    <Item variant="outline" className="flex-col items-stretch gap-2">
       <div className="flex items-center justify-between gap-3">
         <span className="font-medium text-sm">{t('admin.integrations.test.label')}</span>
         <Button
@@ -202,6 +203,6 @@ function TestConnectionRow({
             {result.error_message ?? t('admin.integrations.test.failure')}
           </p>
         ))}
-    </div>
+    </Item>
   )
 }

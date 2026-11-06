@@ -110,7 +110,12 @@ export function VariantsOptionsBuilder({ selected, onChange, extraOptionTypes }:
             const isEditing = expandedIndex === i
             if (isEditing && optionType) {
               return (
-                <li key={ot.id} className="rounded-lg border border-border-subtle p-3">
+                <Item
+                  variant="outline"
+                  render={<li />}
+                  key={ot.id}
+                  className="flex-col items-stretch border-border-subtle"
+                >
                   <OptionPicker
                     optionType={optionType}
                     initialValues={ot.values}
@@ -130,7 +135,7 @@ export function VariantsOptionsBuilder({ selected, onChange, extraOptionTypes }:
                       })
                     }
                   />
-                </li>
+                </Item>
               )
             }
             return (
@@ -172,14 +177,14 @@ export function VariantsOptionsBuilder({ selected, onChange, extraOptionTypes }:
       )}
 
       {isAdding ? (
-        <div className="rounded-lg border border-border-subtle p-3">
+        <Item variant="outline" className="flex-col items-stretch border-border-subtle">
           <AddOptionForm
             availableTypes={availableTypes}
             allOptionTypes={allOptionTypes}
             onCancel={() => setIsAdding(false)}
             onSave={(payload) => upsertAt(null, payload)}
           />
-        </div>
+        </Item>
       ) : (
         <div>
           <Button type="button" variant="outline" size="sm" onClick={() => setIsAdding(true)}>

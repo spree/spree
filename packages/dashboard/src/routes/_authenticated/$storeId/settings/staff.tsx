@@ -886,7 +886,7 @@ function RoleCheckboxGroup({
   }
 
   return (
-    <div className="flex flex-col gap-1.5 rounded-md border border-border p-3">
+    <Item variant="outline" className="flex-col items-stretch gap-1.5">
       {roles.map((role) => {
         const checked = value.includes(role.id)
         const id = `role-${role.id}`
@@ -901,6 +901,6 @@ function RoleCheckboxGroup({
           </label>
         )
       })}
-    </div>
+    </Item>
   )
 }

@@ -25,6 +25,7 @@ import {
   FieldError,
   FieldGroup,
   FieldLabel,
+  Item,
   Select,
   SelectContent,
   SelectItem,
@@ -224,7 +225,7 @@ export function CatalogAudienceStep({
       )}
 
       {assigning && (
-        <div className="flex flex-col gap-4 rounded-md border p-4">
+        <Item variant="outline" className="flex-col items-stretch gap-4">
           <div>
             <h3 className="font-medium text-sm">{t('admin.catalogs.assignments.add_title')}</h3>
             <p className="text-muted-foreground text-sm">
@@ -239,7 +240,7 @@ export function CatalogAudienceStep({
               setAssigning(false)
             }}
           />
-        </div>
+        </Item>
       )}
     </div>
   )

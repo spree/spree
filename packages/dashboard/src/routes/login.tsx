@@ -8,6 +8,7 @@ import {
   AlertTitle,
   Button,
   Input,
+  Item,
   Label,
   Skeleton,
 } from '@spree/dashboard-ui'
@@ -86,13 +87,13 @@ function SetupRequiredNotice() {
   if (!status.data?.setup_required) return null
 
   return (
-    <div className="grid gap-2 rounded-md border p-4">
+    <Item variant="outline" className="flex-col items-stretch gap-2">
       <p className="font-medium text-sm">{t('admin.setup.required_notice_title')}</p>
       <p className="text-sm text-muted-foreground">{t('admin.setup.required_notice_message')}</p>
       <Link to="/setup" className="link text-sm">
         {t('admin.setup.required_notice_link')}
       </Link>
-    </div>
+    </Item>
   )
 }
 

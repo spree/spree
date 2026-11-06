@@ -815,7 +815,7 @@ function CustomFieldsEmptyState({ onSetUp }: { onSetUp: () => void }) {
           <PlusIcon className="size-4" />
           {t('admin.components.custom_fields.set_up')}
         </Button>
-        <Button asChild type="button" variant="link" size="sm">
+        <Button asChild type="button" variant="ghost" size="sm">
           <Link to="/$storeId/settings/custom-field-definitions" params={{ storeId }}>
             {t('admin.components.custom_fields.manage_in_settings')}
           </Link>

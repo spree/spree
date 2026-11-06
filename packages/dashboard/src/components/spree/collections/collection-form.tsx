@@ -12,6 +12,7 @@ import {
   FieldGroup,
   FieldLabel,
   Input,
+  Item,
   Select,
   SelectContent,
   SelectItem,
@@ -210,13 +211,13 @@ function CollectionSEOCard({ form }: { form: UseFormReturn<CollectionFormValues>
         <CardTitle>{t('admin.collections.seo.title')}</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        <div className="space-y-1 rounded-lg border border-border p-4">
+        <Item variant="outline" className="flex-col items-stretch gap-1">
           <p className="truncate text-sm font-medium text-blue-700">{previewTitle}</p>
           <p className="truncate text-xs text-green-700">example.com/c/{previewSlug}</p>
           {metaDescription && (
             <p className="line-clamp-2 text-xs text-muted-foreground">{metaDescription}</p>
           )}
-        </div>
+        </Item>
 
         <Field>
           <FieldLabel htmlFor="collection-permalink">{t('admin.fields.slug.label')}</FieldLabel>

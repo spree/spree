@@ -5,7 +5,7 @@ import type {
   DeliveryZone,
 } from '@spree/admin-sdk'
 import { Can, Subject, usePermissions, useStockLocations } from '@spree/dashboard-core'
-import { Button, RowActions, useConfirm } from '@spree/dashboard-ui'
+import { Button, Item, RowActions, useConfirm } from '@spree/dashboard-ui'
 import { PlusIcon, WarehouseIcon } from '@spree/dashboard-ui/icons'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -61,7 +61,7 @@ export function DeliveryOriginGroupSection({
   }
 
   return (
-    <section className="flex flex-col gap-4 rounded-lg border p-4">
+    <Item variant="outline" render={<section />} className="flex-col items-stretch gap-4">
       <div className="flex items-start justify-between gap-2">
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2">
@@ -124,6 +124,6 @@ export function DeliveryOriginGroupSection({
           onOpenChange={(open) => !open && setEditing(false)}
         />
       )}
-    </section>
+    </Item>
   )
 }

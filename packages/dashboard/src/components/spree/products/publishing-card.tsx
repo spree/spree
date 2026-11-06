@@ -276,7 +276,7 @@ function PublicationEditor({
   const unpublishedAtPath = `product_publications.${index}.unpublished_at` as const
 
   return (
-    <div className="flex flex-col gap-3 rounded-md border border-border bg-muted/20 px-3 py-3">
+    <Item variant="outline" className="flex-col items-stretch gap-3">
       <div className="flex items-center justify-between">
         <span className="text-sm font-medium">{channelName}</span>
         <Button type="button" variant="ghost" size="sm" className="h-7 text-xs" onClick={onDone}>
@@ -323,7 +323,7 @@ function PublicationEditor({
           {t('admin.fields.product_publication.unpublished_at.help')}
         </span>
       </Field>
-    </div>
+    </Item>
   )
 }
 

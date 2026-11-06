@@ -5,6 +5,7 @@ import {
   Button,
   Checkbox,
   Input,
+  Item,
   Select,
   SelectContent,
   SelectItem,
@@ -411,7 +412,7 @@ function PostalRulesSection({
       )}
 
       {rules.map((rule, index) => (
-        <div key={keys.current[index]} className="flex flex-col gap-2 rounded-md border p-2">
+        <Item variant="outline" key={keys.current[index]} className="flex-col items-stretch gap-2">
           <div className="flex items-center gap-2">
             <Select
               items={countryOptions}
@@ -469,7 +470,7 @@ function PostalRulesSection({
               aria-label={t('admin.delivery_zones.to_placeholder')}
             />
           </div>
-        </div>
+        </Item>
       ))}
 
       <div>

@@ -18,7 +18,7 @@ import {
   useResourceKey,
   useStore,
 } from '@spree/dashboard-core'
-import { Alert, AlertDescription, DropdownMenuItem, useConfirm } from '@spree/dashboard-ui'
+import { Alert, AlertDescription, DropdownMenuItem, Item, useConfirm } from '@spree/dashboard-ui'
 import {
   CalendarOffIcon,
   CircleAlertIcon,
@@ -739,11 +739,11 @@ function RuleRow({
   }
 
   return (
-    <div className="flex w-full items-stretch rounded-md border bg-card hover:bg-accent/50">
+    <Item variant="outline" className="items-stretch gap-0 p-0 hover:bg-muted">
       <button
         type="button"
         onClick={onEdit}
-        className="min-w-0 flex-1 px-3 py-2 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-l-md"
+        className="min-w-0 flex-1 rounded-s-card px-3.5 py-3 text-left outline-none focus-visible:shadow-field-focus"
       >
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium">
@@ -754,7 +754,7 @@ function RuleRow({
         <RuleSummary draft={draft} definition={definition} />
       </button>
       <Can I="destroy" a={Subject.PriceRule}>
-        <div className="flex items-center pr-1.5">
+        <div className="flex items-center pe-3">
           <Button type="button" size="icon-xs" variant="destructive-ghost" onClick={handleRemove}>
             <TrashIcon className="size-4" />
             {/* "Remove rule", not "Remove": the confirm dialog this opens has
@@ -764,7 +764,7 @@ function RuleRow({
           </Button>
         </div>
       </Can>
-    </div>
+    </Item>
   )
 }
 

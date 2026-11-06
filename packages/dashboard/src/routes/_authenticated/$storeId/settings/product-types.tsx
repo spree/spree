@@ -40,6 +40,7 @@ import {
   FieldGroup,
   FieldLabel,
   Input,
+  Item,
   RowActions,
   Select,
   SelectContent,
@@ -573,7 +574,7 @@ function CustomFieldDefinitionsEditor({ form }: { form: UseFormReturn<ProductTyp
             items={fieldArray.fields.map((row) => row.id)}
             strategy={verticalListSortingStrategy}
           >
-            <div className="flex flex-col gap-1 rounded-md border p-2">
+            <Item variant="outline" className="flex-col items-stretch gap-1">
               {fieldArray.fields.map((row, index) => (
                 <SortableCustomFieldRow
                   key={row.id}
@@ -584,7 +585,7 @@ function CustomFieldDefinitionsEditor({ form }: { form: UseFormReturn<ProductTyp
                   onRemove={() => fieldArray.remove(index)}
                 />
               ))}
-            </div>
+            </Item>
           </SortableContext>
         </DndContext>
       )}

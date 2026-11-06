@@ -12,6 +12,7 @@ import {
 import { Field, FieldLabel } from '../ui/field'
 import { Input } from '../ui/input'
 import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from '../ui/input-group'
+import { Item, ItemActions, ItemContent, ItemFooter, ItemTitle } from '../ui/item'
 import { Textarea } from '../ui/textarea'
 import {
   type PostSaleSelection,
@@ -158,12 +159,11 @@ export function CreateClaimDialog({
               const chosenQuantity = selection[line.id] ?? 0
 
               return (
-                <div
-                  key={line.id}
-                  className="flex flex-col gap-2 rounded-lg border border-border-subtle p-3"
-                >
-                  <div className="flex items-center justify-between gap-4">
-                    <span className="min-w-0 truncate text-sm">{line.label}</span>
+                <Item variant="outline" key={line.id}>
+                  <ItemContent className="min-w-0">
+                    <ItemTitle className="w-full truncate font-normal">{line.label}</ItemTitle>
+                  </ItemContent>
+                  <ItemActions>
                     <Input
                       type="number"
                       min={0}
@@ -187,35 +187,37 @@ export function CreateClaimDialog({
                         }
                       }}
                     />
-                  </div>
+                  </ItemActions>
                   {chosenQuantity > 0 && (
-                    <Field>
-                      <FieldLabel htmlFor={`claim-amount-${line.id}`}>
-                        {t('admin.pages.orders.detail.claims.refund_amount')}
-                      </FieldLabel>
-                      <InputGroup>
-                        <InputGroupAddon>
-                          <InputGroupText>{currencySymbol}</InputGroupText>
-                        </InputGroupAddon>
-                        <InputGroupInput
-                          id={`claim-amount-${line.id}`}
-                          type="number"
-                          step="any"
-                          min="0"
-                          value={amounts[line.id] ?? ''}
-                          onChange={(event) => {
-                            setAmounts({ ...amounts, [line.id]: event.target.value })
-                            // Clearing the field hands it back to the quantity.
-                            setTypedAmounts({
-                              ...typedAmounts,
-                              [line.id]: event.target.value !== '',
-                            })
-                          }}
-                        />
-                      </InputGroup>
-                    </Field>
+                    <ItemFooter className="flex-col items-stretch">
+                      <Field>
+                        <FieldLabel htmlFor={`claim-amount-${line.id}`}>
+                          {t('admin.pages.orders.detail.claims.refund_amount')}
+                        </FieldLabel>
+                        <InputGroup>
+                          <InputGroupAddon>
+                            <InputGroupText>{currencySymbol}</InputGroupText>
+                          </InputGroupAddon>
+                          <InputGroupInput
+                            id={`claim-amount-${line.id}`}
+                            type="number"
+                            step="any"
+                            min="0"
+                            value={amounts[line.id] ?? ''}
+                            onChange={(event) => {
+                              setAmounts({ ...amounts, [line.id]: event.target.value })
+                              // Clearing the field hands it back to the quantity.
+                              setTypedAmounts({
+                                ...typedAmounts,
+                                [line.id]: event.target.value !== '',
+                              })
+                            }}
+                          />
+                        </InputGroup>
+                      </Field>
+                    </ItemFooter>
                   )}
-                </div>
+                </Item>
               )
             })}
           </div>

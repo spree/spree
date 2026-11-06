@@ -11,6 +11,7 @@ import {
   FieldError,
   FieldLabel,
   Input,
+  Item,
   Select,
   SelectContent,
   SelectItem,
@@ -122,9 +123,10 @@ export function CollectionRulesCard({ form }: { form: UseFormReturn<CollectionFo
 
             <div className="flex flex-col gap-3">
               {rules.fields.map((ruleField, index) => (
-                <div
+                <Item
+                  variant="outline"
                   key={ruleField.id}
-                  className="flex flex-col gap-3 rounded-lg border border-border-subtle p-3 sm:flex-row sm:items-start"
+                  className="flex-col items-stretch gap-3 sm:flex-row sm:items-start"
                 >
                   <Field className="flex-1">
                     <FieldLabel className="sr-only">
@@ -206,7 +208,7 @@ export function CollectionRulesCard({ form }: { form: UseFormReturn<CollectionFo
                   >
                     <Trash2Icon className="size-4" />
                   </Button>
-                </div>
+                </Item>
               ))}
 
               <Button

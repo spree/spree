@@ -1,6 +1,7 @@
 import type { EmailTemplateRevision } from '@spree/admin-sdk'
 import {
   Button,
+  Item,
   RelativeTime,
   Sheet,
   SheetContent,
@@ -47,10 +48,7 @@ export function EmailTemplateHistorySheet({
             </p>
           )}
           {revisions?.map((revision, index) => (
-            <div
-              key={revision.id}
-              className="flex flex-col gap-2 rounded-md border border-border p-3"
-            >
+            <Item variant="outline" key={revision.id} className="flex-col items-stretch gap-2">
               <div className="flex items-center justify-between gap-2 text-sm">
                 <div className="flex flex-col">
                   <span className="font-medium">
@@ -85,7 +83,7 @@ export function EmailTemplateHistorySheet({
               <pre className="max-h-40 overflow-auto rounded bg-muted p-2 font-mono text-xs">
                 {revision.body}
               </pre>
-            </div>
+            </Item>
           ))}
         </div>
       </SheetContent>
