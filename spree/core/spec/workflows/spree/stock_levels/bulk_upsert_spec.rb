@@ -44,6 +44,26 @@ RSpec.describe Spree::StockLevels::BulkUpsert do
         ])
       }.to change { level.reload.stock_movements.count }.by(1)
     end
+
+    it 'labels the movement as the feed when the row gives no reason' do
+      level = level_for(variant, location, 5)
+
+      described_class.call(store: store, rows: [
+        { variant_id: variant.prefixed_id, stock_location_id: location.prefixed_id, count_on_hand: 40 }
+      ])
+
+      expect(level.reload.stock_movements.last.reason).to eq('Inventory feed')
+    end
+
+    it 'labels the movement with the reason the row gives' do
+      level = level_for(variant, location, 5)
+
+      described_class.call(store: store, rows: [
+        { variant_id: variant.prefixed_id, stock_location_id: location.prefixed_id, adjustment: 3, reason: 'received' }
+      ])
+
+      expect(level.reload.stock_movements.last.reason).to eq('Received')
+    end
   end
 
   # The scoping lives here rather than in the one controller that used to do

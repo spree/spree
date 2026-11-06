@@ -86171,6 +86171,12 @@ components:
         backorderable:
           type: boolean
           nullable: true
+        reason:
+          type: string
+          description: Labels the movement in the stock history. Defaults to "Inventory
+            feed".
+          example: received
+          nullable: true
       required:
       - variant_id
       - stock_location_id
