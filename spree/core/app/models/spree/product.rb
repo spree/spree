@@ -80,8 +80,10 @@ module Spree
 
     has_many :product_option_types, -> { order(:position) }, dependent: :destroy, inverse_of: :product
     has_many :option_types, through: :product_option_types
-    has_many :product_categories, -> { order(created_at: :asc) }, class_name: 'Spree::ProductCategory', dependent: :delete_all, inverse_of: :product
-    has_many :categories, through: :product_categories, class_name: 'Spree::Category', source: :category, before_remove: :remove_category
+    has_many :product_categories, -> { order(created_at: :asc) }, class_name: 'Spree::ProductCategory',
+                                                                  dependent: :destroy, inverse_of: :product
+    has_many :categories, through: :product_categories, class_name: 'Spree::Category', source: :category,
+                          dependent: :destroy
     has_many :taxonomies, through: :categories, deprecated: true
 
     # @deprecated The classification_count column was renamed to categories_count in 6.0.
@@ -140,7 +142,7 @@ module Spree
     end
 
     has_many :product_collections, class_name: 'Spree::ProductCollection', dependent: :destroy_async, inverse_of: :product
-    has_many :collections, through: :product_collections, before_remove: :remove_collection
+    has_many :collections, through: :product_collections, dependent: :destroy
     has_many :catalog_products, class_name: 'Spree::CatalogProduct', dependent: :destroy_async, inverse_of: :product
     has_many :catalogs, through: :catalog_products
 
@@ -1032,20 +1034,6 @@ module Spree
       if orders.complete.any?
         errors.add(:base, :cannot_destroy_if_attached_to_line_items)
         throw(:abort)
-      end
-    end
-
-    def remove_category(category)
-      product_categories.where(category: category).find_each do |product_category|
-        product_category.remove_from_list
-        product_category.publish_event('product_category.deleted')
-      end
-    end
-
-    def remove_collection(collection)
-      product_collections.where(collection: collection).find_each do |product_collection|
-        product_collection.remove_from_list
-        product_collection.publish_event('product_collection.deleted')
       end
     end
 

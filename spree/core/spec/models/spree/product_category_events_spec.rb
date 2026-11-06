@@ -90,4 +90,15 @@ RSpec.describe Spree::ProductCategory, 'lifecycle events', events: true do
       expect(published.size).to eq(2)
     end
   end
+
+  it 'announces every membership the product takes with it' do
+    product.update!(category_ids: [category.id])
+
+    published = []
+    Spree::Events.subscribe('product_category.deleted', async: false) { |event| published << event }
+    Spree::Events.activate!
+    perform_enqueued_jobs { product.destroy }
+
+    expect(published.size).to eq(1)
+  end
 end
