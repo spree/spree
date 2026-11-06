@@ -104,7 +104,8 @@ RSpec.describe Spree::AgentTools::ResourceMap do
 
     it 'knows which resources a tool can dispatch to' do
       expect(described_class.find('products')).to be_dispatchable
-      expect(described_class.find('imports')).not_to be_dispatchable
+      expect(described_class.find('imports')).to be_dispatchable
+      expect(described_class.all.find { |entry| entry.nested?(:index) }).not_to be_dispatchable
     end
   end
 
