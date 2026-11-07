@@ -24,6 +24,14 @@ describe Spree::StoreCredits::Apply, type: :service do
         expect(order.reload.payments.store_credits.first.payment_method).to eq(payment_method)
       end
 
+      it 'does not require an available payment method when nothing is outstanding' do
+        payment_method.update!(active: false)
+        order.update_columns(total: 10, item_total: 10, payment_total: 10)
+
+        expect(subject).not_to be_success
+        expect(order.reload.payments).to be_empty
+      end
+
       it 'does not fall back to a foreign method when the store has none available' do
         payment_method.update!(active: false)
 

@@ -58,6 +58,8 @@ module Spree
       end
 
       def apply_store_credits(remaining_total, except: [])
+        return unless remaining_total.positive?
+
         payment_method = @order.store.payment_methods.store_credit.available.first
         raise 'Store credit payment method could not be found' unless payment_method
 
