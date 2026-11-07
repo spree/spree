@@ -327,6 +327,13 @@ module Spree
           Spree.user_class
         ]
 
+        # Under eager loading the V2 Platform serializers load BEFORE this
+        # block fills the list above, so they come up without the metafields
+        # relationship and `?include=metafields` 400s in production (#15062).
+        # Re-apply it now that the list is final.
+        require 'spree/core/metafields_serializer_backfill'
+        Spree::Core::MetafieldsSerializerBackfill.call
+
         Rails.application.config.spree.analytics_events = {
           product_viewed: 'Product Viewed',
           product_list_viewed: 'Product List Viewed',
