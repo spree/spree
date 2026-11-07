@@ -193,7 +193,10 @@ module Spree
       # a red XL. Every axis is therefore counted against the same variant row
       # rather than asked of the product separately — which is also what keeps
       # a filter honest once several sellers list variants on one product.
-      def self.with_option_value_ids(*ids)
+      #
+      # +variants+ narrows which variants may answer: the storefront passes
+      # +Variant.for_option_filters+, while the admin keeps every variant.
+      def self.with_option_value_ids(*ids, variants: nil)
         ids = ids.flatten.compact
         return none if ids.empty?
 
@@ -203,7 +206,7 @@ module Spree
         grouped = OptionValue.where(id: actual_ids).group_by(&:option_type_id)
         return none if grouped.empty?
 
-        matching_product_ids = Variant.where(deleted_at: nil).
+        matching_product_ids = (variants || Variant).where(deleted_at: nil).
                                joins(option_value_variants: :option_value).
                                where(OptionValue.table_name => { id: actual_ids }).
                                group(Variant.arel_table[:id]).
