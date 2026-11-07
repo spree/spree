@@ -1,8 +1,40 @@
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { createClient } from '../src'
 import { TEST_API_KEY, TEST_BASE_URL } from './helpers'
 
 describe('createClient', () => {
+  afterEach(() => vi.unstubAllGlobals())
+
+  it('uses an explicit base URL when a native window has no location', async () => {
+    vi.stubGlobal('window', {})
+    const client = createClient({ baseUrl: TEST_BASE_URL, publishableKey: TEST_API_KEY })
+    await expect(client.products.list()).resolves.toHaveProperty('data')
+  })
+
+  it('does not read browser location when an explicit base URL is configured', async () => {
+    vi.stubGlobal('window', {
+      get location() {
+        throw new Error('location is unavailable')
+      },
+    })
+    const client = createClient({ baseUrl: TEST_BASE_URL, publishableKey: TEST_API_KEY })
+    await expect(client.products.list()).resolves.toHaveProperty('data')
+  })
+
+  it('resolves an empty base URL against the browser origin', async () => {
+    vi.stubGlobal('window', { location: { origin: TEST_BASE_URL } })
+    const client = createClient({ baseUrl: '', publishableKey: TEST_API_KEY })
+    await expect(client.products.list()).resolves.toHaveProperty('data')
+  })
+
+  it('reports a missing base URL when a native window has no location', async () => {
+    vi.stubGlobal('window', {})
+    const client = createClient({ baseUrl: '', publishableKey: TEST_API_KEY })
+    await expect(client.products.list()).rejects.toThrow(
+      'baseUrl is required in non-browser environments',
+    )
+  })
+
   it('creates a client via factory function', () => {
     const client = createClient({
       baseUrl: TEST_BASE_URL,

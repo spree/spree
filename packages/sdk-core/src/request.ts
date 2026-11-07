@@ -135,8 +135,8 @@ export function createRequestFn(
     // Build URL with query params.
     // `new URL(path)` throws on a relative path. When baseUrl is empty (browser
     // hitting a same-origin proxy like Vite dev), resolve against window.location.
-    const browserOrigin = typeof window !== 'undefined' ? window.location.origin : undefined
-    const urlBase = config.baseUrl || browserOrigin
+    const urlBase =
+      config.baseUrl || (typeof window !== 'undefined' ? window.location?.origin : undefined)
     if (!urlBase) {
       throw new TypeError(
         'sdk-core: baseUrl is required in non-browser environments (no window.location to resolve relative URLs against)',
