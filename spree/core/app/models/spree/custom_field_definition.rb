@@ -9,6 +9,8 @@ module Spree
     # Associations
     #
     has_many :custom_fields, class_name: 'Spree::CustomField', dependent: :destroy
+    has_many :product_type_custom_field_definitions, class_name: 'Spree::ProductTypeCustomFieldDefinition',
+             dependent: :destroy, inverse_of: :custom_field_definition
 
     #
     # Validations
