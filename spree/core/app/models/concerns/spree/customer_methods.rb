@@ -168,7 +168,8 @@ module Spree
       end
 
       def self.search(query)
-        return none if query.blank?
+        # Ransack passes `true` when the scope is called as a bare flag (`q[search]=1`)
+        return none unless query.is_a?(String) && query.present?
 
         # `search_condition` handles sanitization itself — it escapes LIKE
         # wildcards for plain columns and compares encrypted columns by

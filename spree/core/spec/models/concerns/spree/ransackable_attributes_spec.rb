@@ -47,6 +47,14 @@ RSpec.describe Spree::RansackableAttributes do
       expect(Spree::Supplier.search('')).to include(supplier, other)
     end
 
+    it 'filters nothing when Ransack sends the scope as a bare flag' do
+      supplier = create(:supplier, store: store)
+
+      expect(Spree::Supplier.search(true)).to include(supplier)
+      expect(Spree::Supplier.search).to include(supplier)
+      expect { Spree::Supplier.ransack(search: true).result.to_a }.not_to raise_error
+    end
+
     it 'reaches through associations' do
       variant = create(:variant, sku: 'SEARCH-SKU-1')
 

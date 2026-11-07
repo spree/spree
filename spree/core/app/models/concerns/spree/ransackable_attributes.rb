@@ -74,8 +74,11 @@ module Spree::RansackableAttributes
     # @param attributes [Array<Symbol, String>]
     def self.search_by(*attributes)
       self.search_attributes = attributes.map(&:to_s).freeze
-      scope :search, ->(query) {
-        query.blank? ? all : ransack("#{search_attributes.join('_or_')}_cont" => query.to_s.strip).result
+      # Ransack calls a scope with no argument, or with `true`, when it is sent
+      # as a bare flag (`q[search]=1`); that is no term, so it filters nothing.
+      scope :search, ->(query = nil) {
+        term = query.is_a?(String) ? query.strip : ''
+        term.empty? ? all : ransack("#{search_attributes.join('_or_')}_cont" => term).result
       }
     end
 
