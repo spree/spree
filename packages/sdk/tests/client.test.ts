@@ -30,9 +30,9 @@ describe('createClient', () => {
   it('reports a missing base URL when a native window has no location', async () => {
     vi.stubGlobal('window', {})
     const client = createClient({ baseUrl: '', publishableKey: TEST_API_KEY })
-    await expect(client.products.list()).rejects.toThrow(
-      'baseUrl is required in non-browser environments',
-    )
+    const request = client.products.list()
+    await expect(request).rejects.toBeInstanceOf(TypeError)
+    await expect(request).rejects.toThrow('baseUrl is required in non-browser environments')
   })
 
   it('creates a client via factory function', () => {
