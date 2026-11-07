@@ -57,6 +57,12 @@ module Spree
         apply_store_credits(remaining_total, except: payments.map(&:source_id)) if remaining_total.positive?
       end
 
+      # Allocates credit through an active payment method owned by the order store.
+      # No method is required when the outstanding amount is zero or negative.
+      #
+      # @param remaining_total [Numeric] maximum outstanding amount to allocate
+      # @param except [Array<Integer>] credit IDs already applied to this order
+      # @return [void]
       def apply_store_credits(remaining_total, except: [])
         return unless remaining_total.positive?
 
