@@ -129,8 +129,9 @@ module Spree
             end
           end
 
-          # DELETE /api/v3/store/carts/:id
-          # Deletes/abandons the cart
+          # Abandons a cart after checking its completion claim under the row lock.
+          #
+          # @return [void]
           def destroy
             find_cart!
 

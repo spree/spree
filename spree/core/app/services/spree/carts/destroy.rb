@@ -3,6 +3,12 @@ module Spree
     class Destroy
       prepend Spree::ServiceModule::Base
 
+      # Destroys a deletable cart while serializing against checkout completion.
+      # Live completion claims leave the cart and its dependent records intact.
+      #
+      # @param cart [Spree::Cart, nil] cart to abandon
+      # @param order [Spree::Cart, Spree::Order, nil] deprecated input alias
+      # @return [Spree::ServiceModule::Result] deletion outcome
       def call(cart: nil, order: nil)
         if order
           Spree::Deprecation.warn('Calling Spree::Carts::Destroy with order: is deprecated and will be removed in Spree 6.1. Pass cart: instead.')
@@ -23,6 +29,10 @@ module Spree
 
       private
 
+      # Refuses live completion claims and settled purchases before destructive steps.
+      #
+      # @param cart [Spree::Cart, Spree::Order] purchase being checked
+      # @return [Spree::ServiceModule::Result] deletion eligibility
       def check_if_can_be_destroyed(cart:)
         return failure(false, I18n.t('spree.cart_completion_in_progress')) if cart.is_a?(Spree::Cart) && cart.completion_claimed?
 
