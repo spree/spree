@@ -53,6 +53,55 @@ RSpec.describe Spree::Api::V3::Idempotent, type: :controller do
         expect(json_response['error']['code']).to eq('idempotency_key_reused')
       end
 
+      it 'replays an unchanged query without creating another cart' do
+        request.headers['Idempotency-Key'] = idempotency_key
+        request.query_string = 'source=mobile'
+
+        post :create
+        expect(response).to have_http_status(:created)
+        first_response = json_response
+        request.query_string = 'source=mobile'
+
+        expect { post :create }.not_to change(Spree::Cart, :count)
+        expect(response.headers['Idempotent-Replayed']).to eq('true')
+        expect(json_response['id']).to eq(first_response['id'])
+      end
+
+      it 'rejects reuse of a key for a different query with the same path and body' do
+        request.headers['Idempotency-Key'] = idempotency_key
+        request.query_string = 'source=mobile'
+
+        post :create
+        expect(response).to have_http_status(:created)
+        request.query_string = 'source=web'
+
+        expect { post :create }.not_to change(Spree::Cart, :count)
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('idempotency_key_reused')
+      end
+
+      it 'separates query bytes from body bytes in the fingerprint' do
+        allow(request).to receive_messages(
+          method: 'DELETE', path: '/api/v3/store/customers/me/tax_identifier', query_string: 'kind=eu_vat', raw_post: 'a=b:'
+        )
+        first_fingerprint = controller.send(:request_fingerprint)
+        allow(request).to receive_messages(query_string: 'kind=eu_vat:a=b', raw_post: '')
+
+        expect(controller.send(:request_fingerprint)).not_to eq(first_fingerprint)
+      end
+
+      it 'supports binary request bodies with a query' do
+        allow(request).to receive_messages(method: 'POST', path: '/api/v3/store/carts', query_string: 'source=mobile', raw_post: "\xFF".b)
+
+        expect(controller.send(:request_fingerprint)).to match(/\A[0-9a-f]{64}\z/)
+      end
+
+      it 'preserves the fingerprint of requests without a query' do
+        allow(request).to receive_messages(method: 'POST', path: '/api/v3/store/carts', query_string: '', raw_post: '{}')
+
+        expect(controller.send(:request_fingerprint)).to eq(Digest::SHA256.hexdigest('POST:/api/v3/store/carts:{}'))
+      end
+
       it 'allows different idempotency keys for different requests' do
         request.headers['Idempotency-Key'] = 'key-1'
         expect { post :create }.to change(Spree::Cart, :count).by(1)
