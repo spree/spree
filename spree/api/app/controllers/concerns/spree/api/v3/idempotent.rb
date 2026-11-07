@@ -94,6 +94,11 @@ module Spree
           "spree:idempotency:#{digest}"
         end
 
+        # Binds replay to the method, path, body and exact query bytes.
+        # Separate fixed-length digests prevent query/body delimiter collisions;
+        # requests without a query retain their existing cached fingerprint.
+        #
+        # @return [String] SHA-256 request fingerprint
         def request_fingerprint
           fingerprint = Digest::SHA256.hexdigest("#{request.method}:#{request.path}:#{request.raw_post}")
           return fingerprint if request.query_string.blank?
