@@ -270,7 +270,8 @@ module Spree
     # option-value presentation (e.g. "Red", "XL"). The 3-char floor
     # keeps single-letter queries from triggering a full scan.
     def self.search(query)
-      return none if query.blank? || query.length < 3
+      # Ransack passes `true` when the scope is called as a bare flag (`q[search]=1`)
+      return none unless query.is_a?(String) && query.present? && query.length >= 3
 
       conditions = [
         search_condition(self, :sku, query),
