@@ -13,6 +13,25 @@ describe Spree::StoreCredits::Apply, type: :service do
       create(:store_credit_payment_method)
     end
 
+    context 'when another store has the first available payment method' do
+      let(:store) { create(:store) }
+      let(:store_credit) { create(:store_credit, amount: order_total, store: store) }
+      let(:order) { create(:order, customer: store_credit.customer, total: order_total, store: store) }
+      let!(:payment_method) { create(:store_credit_payment_method, store: store, position: 100) }
+
+      it 'uses the payment method belonging to the order store' do
+        expect(subject).to be_success
+        expect(order.reload.payments.store_credits.first.payment_method).to eq(payment_method)
+      end
+
+      it 'does not fall back to a foreign method when the store has none available' do
+        payment_method.update!(active: false)
+
+        expect { subject }.to raise_error('Store credit payment method could not be found')
+        expect(order.reload.payments).to be_empty
+      end
+    end
+
     context 'there is no store credit' do
       let(:order) { create(:store_credits_order_without_user, total: order_total) }
 

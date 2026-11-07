@@ -58,7 +58,7 @@ module Spree
       end
 
       def apply_store_credits(remaining_total, except: [])
-        payment_method = Spree::PaymentMethod::StoreCredit.available.first
+        payment_method = @order.store.payment_methods.store_credit.available.first
         raise 'Store credit payment method could not be found' unless payment_method
 
         spendable_store_credits.where.not(id: except).oldest_first.each do |credit|
