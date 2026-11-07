@@ -91,11 +91,9 @@ module Spree
     # multi-option-value variants don't produce duplicate Price rows —
     # the prices index has `collection_distinct?` off (PG DISTINCT +
     # ORDER BY incompat), so any join-based predicate would double up.
-    scope :search, ->(query) {
-      next all if query.blank?
-
+    search_scope(blank: :all) do |query|
       where(variant_id: Spree::Variant.search(query).select(:id))
-    }
+    end
 
     attribute :eligible_for_collection_matching, :boolean, default: false
     before_validation -> { self.eligible_for_collection_matching = new_record? ? discounted? : discounted? != was_discounted? }

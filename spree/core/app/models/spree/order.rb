@@ -336,10 +336,7 @@ module Spree
     # shows completed orders first, by their completed_at date, then uncompleted orders by their created_at
     scope :reverse_chronological, -> { order(Arel.sql('spree_orders.completed_at IS NULL'), completed_at: :desc, created_at: :desc) }
 
-    def self.search(query)
-      # Ransack passes `true` when the scope is called as a bare flag (`q[search]=1`)
-      return none unless query.is_a?(String) && query.present?
-
+    search_scope do |query|
       sanitized_query = sanitize_query_for_search(query)
 
       query_pattern = "%#{sanitized_query}%"

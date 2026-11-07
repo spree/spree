@@ -74,12 +74,36 @@ module Spree::RansackableAttributes
     # @param attributes [Array<Symbol, String>]
     def self.search_by(*attributes)
       self.search_attributes = attributes.map(&:to_s).freeze
-      # Ransack calls a scope with no argument, or with `true`, when it is sent
-      # as a bare flag (`q[search]=1`); that is no term, so it filters nothing.
-      scope :search, ->(query = nil) {
+      search_scope(blank: :all) do |term|
+        ransack("#{search_attributes.join('_or_')}_cont" => term).result
+      end
+    end
+
+    # Declares the `search` scope with matching logic of its own, for models
+    # whose search is more than a partial match on a few attributes. The block
+    # gets the stripped term (plus any extra arguments the caller passed) and
+    # returns the relation.
+    #
+    # Every `search` goes through here so they all treat input alike: Ransack
+    # calls a scope with no argument, or with `true`, when it is sent as a bare
+    # flag (`q[search]=1`), and anything that is not a string is no term. A
+    # missing or too-short term returns no records (`blank: :none`) or leaves
+    # the relation as it was (`blank: :all`).
+    #
+    #   search_scope(min_length: 3) { |term| where(sku: term) }
+    #
+    # @param min_length [Integer] shortest term worth searching for
+    # @param blank [Symbol] `:none` or `:all`, what a missing or short term returns
+    def self.search_scope(min_length: 1, blank: :none, &block)
+      define_singleton_method(:search) do |query = nil, *args, **options|
         term = query.is_a?(String) ? query.strip : ''
-        term.empty? ? all : ransack("#{search_attributes.join('_or_')}_cont" => term).result
-      }
+
+        if term.length < [min_length, 1].max
+          blank == :all ? all : none
+        else
+          instance_exec(term, *args, **options, &block)
+        end
+      end
     end
 
     # Whether an attribute, or one reached through associations

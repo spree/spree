@@ -167,10 +167,7 @@ module Spree
         find_by_token_for!(:password_reset, token)
       end
 
-      def self.search(query)
-        # Ransack passes `true` when the scope is called as a bare flag (`q[search]=1`)
-        return none unless query.is_a?(String) && query.present?
-
+      search_scope do |query|
         # `search_condition` handles sanitization itself — it escapes LIKE
         # wildcards for plain columns and compares encrypted columns by
         # equality. Pass the raw query so it can branch correctly.
