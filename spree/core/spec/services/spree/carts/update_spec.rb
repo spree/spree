@@ -99,6 +99,47 @@ module Spree
           expect(described_class.call(cart: cart, params: { company_id: first_company.prefixed_id })).to be_success
         end
 
+        it 'keeps its valid hold when an earlier origin is held by another checkout' do
+          stub_store_preferences(store, stock_reservations_enabled: true)
+          other_location = create(:stock_location, store: store, backorderable_default: false)
+          store.default_channel.stock_locations = [store_stock_location, other_location]
+          cart.update!(email: user.email)
+          cart.line_items.each do |line_item|
+            line_item.variant.stock_levels.each { |level| level.update!(count_on_hand: 0, backorderable: false) }
+            line_item.variant.product.delivery_profile.default_origin_group.stock_locations = [store_stock_location, other_location]
+            first_level = store_stock_location.stock_level_or_create(line_item.variant)
+            first_level.set_count_on_hand(1)
+            second_level = other_location.stock_level_or_create(line_item.variant)
+            second_level.set_count_on_hand(1)
+            other_cart = create(:cart, store: store, email: 'other@example.com')
+            other_line = create(:line_item, cart: other_cart, order: nil, variant: line_item.variant, quantity: 1)
+            create(:stock_reservation, cart: other_cart, order: nil, line_item: other_line, stock_level: first_level, quantity: 1)
+            create(:stock_reservation, cart: cart, order: nil, line_item: line_item, stock_level: second_level, quantity: 1)
+          end
+          own_holds = Spree::StockReservation.for_order(cart).pluck(:id)
+          expect(own_holds.size).to eq(2)
+          address = create(:address, customer: user)
+          cart.update!(ship_address: address, bill_address: address)
+          express = create(:delivery_method, store: store)
+          express.calculator.update!(preferred_amount: 15)
+          cart.recalculate_for_address_change!
+          expect(cart.fulfillments.reload).to be_present
+          cart.fulfillments.each do |fulfillment|
+            fulfillment.selected_delivery_rate_id = fulfillment.delivery_rates.find_by!(delivery_method: express).id
+          end
+          cart.reload
+          expect(cart.fulfillments.map { |fulfillment| fulfillment.selected_delivery_rate.delivery_method }).to all(eq(express))
+
+          result = described_class.call(cart: cart, params: { company_id: first_company.prefixed_id })
+
+          expect(result).to be_success
+          expect(Spree::StockReservation.for_order(cart).pluck(:id)).to match_array(own_holds)
+          expect(cart.fulfillments.reload).to be_present
+          expect(cart.fulfillments.reload.map(&:stock_location_id)).to all(eq(other_location.id))
+          expect(cart.fulfillments.map { |fulfillment| fulfillment.selected_delivery_rate.delivery_method }).to all(eq(express))
+          expect(cart.line_items.reload.pluck(:price)).to all(eq(7))
+        end
+
         it 'rolls the company change back when prices cannot be confirmed' do
           prices = cart.line_items.reload.pluck(:price)
           provider = Class.new(Spree::PricingProvider::Base) do

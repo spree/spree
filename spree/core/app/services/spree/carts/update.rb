@@ -8,7 +8,9 @@ module Spree
         @params = params.to_h.deep_symbolize_keys
         was_in_checkout = cart.in_checkout?
 
-        ApplicationRecord.transaction do
+        # The API already holds a transaction through the cart lock. A provider
+        # failure rescued below must roll back these writes, not join that lock.
+        ApplicationRecord.transaction(requires_new: true) do
           assign_cart_attributes
           clear_shipping_address_if_outside_market
           assign_address(:shipping_address)

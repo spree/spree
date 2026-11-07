@@ -114,7 +114,13 @@ test('reprices all cart lines when the buyer chooses, switches or clears a compa
           Spree::ApiKey.where(store: store).destroy_all
           customer = Spree.customer_class.find_by(email: '${email}')
           Spree::RefreshToken.revoke_all_for(customer) if customer
-          puts JSON.generate(keys: store.api_keys.count, carts: store.carts.count, products: store.products.count, catalogs: store.catalogs.count)
+          store.companies.each(&:destroy!)
+          store.stock_locations.each(&:destroy!)
+          customer.destroy! if customer
+          store.destroy!
+          puts JSON.generate(keys: store.api_keys.count, carts: store.carts.count, products: store.products.count,
+            catalogs: store.catalogs.count, companies: Spree::Company.where(store_id: store.id).count,
+            customers: Spree.customer_class.where(email: '${email}').count, stores: Spree::Store.where(code: '${code}').count)
         end
       else
         puts '{}'
