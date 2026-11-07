@@ -10,7 +10,7 @@ class FixSpreeStockItemUniqueIndex < ActiveRecord::Migration[6.1]
         reversible do |dir|
           dir.up do
             unless column_exists?(:spree_stock_items, :deleted_at_key)
-              execute <<-SQL
+              execute <<-SQL.squish
                 ALTER TABLE spree_stock_items
                 ADD COLUMN deleted_at_key DATETIME
                 AS (COALESCE(deleted_at, CAST('1970-01-01' AS DATETIME))) STORED
