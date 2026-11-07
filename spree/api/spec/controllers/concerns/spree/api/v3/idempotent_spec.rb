@@ -80,6 +80,22 @@ RSpec.describe Spree::Api::V3::Idempotent, type: :controller do
         expect(json_response['error']['code']).to eq('idempotency_key_reused')
       end
 
+      it 'separates query bytes from body bytes in the fingerprint' do
+        allow(request).to receive_messages(
+          method: 'DELETE', path: '/api/v3/store/customers/me/tax_identifier', query_string: 'kind=eu_vat', raw_post: 'a=b:'
+        )
+        first_fingerprint = controller.send(:request_fingerprint)
+        allow(request).to receive_messages(query_string: 'kind=eu_vat:a=b', raw_post: '')
+
+        expect(controller.send(:request_fingerprint)).not_to eq(first_fingerprint)
+      end
+
+      it 'supports binary request bodies with a query' do
+        allow(request).to receive_messages(method: 'POST', path: '/api/v3/store/carts', query_string: 'source=mobile', raw_post: "\xFF".b)
+
+        expect(controller.send(:request_fingerprint)).to match(/\A[0-9a-f]{64}\z/)
+      end
+
       it 'preserves the fingerprint of requests without a query' do
         allow(request).to receive_messages(method: 'POST', path: '/api/v3/store/carts', query_string: '', raw_post: '{}')
 

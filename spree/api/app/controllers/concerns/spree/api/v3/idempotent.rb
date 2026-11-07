@@ -95,9 +95,11 @@ module Spree
         end
 
         def request_fingerprint
-          path = request.path
-          path = "#{path}?#{request.query_string}" if request.query_string.present?
-          Digest::SHA256.hexdigest("#{request.method}:#{path}:#{request.raw_post}")
+          fingerprint = Digest::SHA256.hexdigest("#{request.method}:#{request.path}:#{request.raw_post}")
+          return fingerprint if request.query_string.blank?
+
+          query_fingerprint = Digest::SHA256.hexdigest(request.query_string)
+          Digest::SHA256.hexdigest("#{fingerprint}:#{query_fingerprint}")
         end
       end
     end
