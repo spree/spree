@@ -52,8 +52,8 @@ RSpec.describe Spree::RansackableAttributes do
     end
 
     it 'handles a bare flag on the customer search' do
-      expect { Spree.user_class.search(true).to_a }.not_to raise_error
-      expect(Spree.user_class.search(true)).to be_empty
+      expect { Spree.customer_class.search(true).to_a }.not_to raise_error
+      expect(Spree.customer_class.search(true)).to be_empty
     end
   end
 
