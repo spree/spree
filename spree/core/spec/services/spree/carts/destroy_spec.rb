@@ -147,6 +147,25 @@ module Spree
         end
       end
 
+      context 'when completion has claimed the cart' do
+        let(:cart) { create(:cart_with_line_items, completing_at: Time.current) }
+
+        it 'refuses direct service deletion without changing the cart or its items' do
+          cart
+          expect { subject }.not_to change(Spree::Cart, :count)
+          expect(subject).not_to be_success
+          expect(cart.reload.line_items).not_to be_empty
+          expect(cart.completion_claimed?).to be(true)
+        end
+
+        it 'allows deletion after the claim expires' do
+          cart.update_column(:completing_at, 1.hour.ago)
+
+          expect(subject).to be_success
+          expect(cart).to be_destroyed
+        end
+      end
+
       context 'when it cannot be destroyed' do
         context 'because the cart is completed' do
           let(:cart) { create(:cart_with_line_items).tap { |record| record.update_columns(completed_at: Time.current) } }
