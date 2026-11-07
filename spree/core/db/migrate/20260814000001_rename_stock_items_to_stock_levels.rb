@@ -54,6 +54,13 @@ class RenameStockItemsToStockLevels < ActiveRecord::Migration[8.1]
   # cannot honour is dropped without complaint, leaving a unique index over the
   # wrong set of rows.
   def rename_partial_uniqueness_index(from:, to:)
+    # Hosts that got the index through the generated column keep it as it is.
+    # Only the index changes name, as MariaDB cannot rebuild the expression form.
+    if column_exists?(:spree_stock_levels, :deleted_at_key)
+      rename_index :spree_stock_levels, from, to
+      return
+    end
+
     remove_index :spree_stock_levels, name: from
 
     if connection.supports_partial_index?
