@@ -42,6 +42,83 @@ module Spree
         end
       end
 
+      describe 'updating the purchase company' do
+        let(:cart) do
+          create(:cart, customer: user, store: store, currency: 'USD').tap do |purchase|
+            2.times do
+              product = create(:product, store: store)
+              create(:line_item, cart: purchase, order: nil, variant: product.default_variant)
+            end
+          end
+        end
+        let(:first_company) { create(:company, store: store) }
+        let(:second_company) { create(:company, store: store) }
+
+        before do
+          [first_company, second_company].zip([7, 13]).each do |company, amount|
+            create(:company_membership, company: company, customer: user)
+            catalog = create(:catalog, store: store)
+            create(:catalog_assignment, catalog: catalog, assignable: company)
+            price_list = create(:price_list, :active, store: store, catalog: catalog)
+            cart.line_items.each do |line_item|
+              create(:price, variant: line_item.variant, price_list: price_list, currency: 'USD', amount: amount)
+            end
+          end
+          cart.recalculate_for_address_change!
+        end
+
+        it 'reprices existing items when choosing, switching and clearing the company' do
+          base_prices = cart.line_items.reload.pluck(:price)
+
+          [first_company, second_company, nil].zip([7, 13, nil]).each do |company, amount|
+            result = described_class.call(cart: cart, params: { company_id: company&.prefixed_id })
+
+            expect(result).to be_success
+            expect(cart.reload.company).to eq(company)
+            expect(cart.line_items.pluck(:price)).to eq(amount ? Array.new(base_prices.size, amount) : base_prices)
+          end
+        end
+
+        it 'reprices every line when company and items arrive together' do
+          result = described_class.call(cart: cart, params: {
+            company_id: first_company.prefixed_id,
+            items: [{ variant_id: cart.line_items.first.variant.prefixed_id, quantity: 2 }]
+          })
+
+          expect(result).to be_success
+          expect(cart.reload.line_items.pluck(:price)).to all(eq(7))
+          expect(cart.line_items.first.quantity).to eq(2)
+        end
+
+        it 'does not rebuild delivery proposals for the unchanged company' do
+          cart.update!(company: first_company)
+          cart.recalculate_for_address_change!
+
+          expect(cart).not_to receive(:recalculate_for_address_change!)
+
+          expect(described_class.call(cart: cart, params: { company_id: first_company.prefixed_id })).to be_success
+        end
+
+        it 'rolls the company change back when prices cannot be confirmed' do
+          prices = cart.line_items.reload.pluck(:price)
+          provider = Class.new(Spree::PricingProvider::Base) do
+            def self.key = 'company_contract'
+            def price_for(_context) = raise(Timeout::Error)
+          end
+          Spree.pricing_providers << provider
+          stub_store_preferences(store, pricing_provider: 'company_contract')
+
+          result = described_class.call(cart: cart, params: { company_id: first_company.prefixed_id })
+
+          expect(result).to be_failure
+          expect(cart.company_id).to be_nil
+          expect(cart.reload.company_id).to be_nil
+          expect(cart.line_items.pluck(:price)).to eq(prices)
+        ensure
+          Spree.pricing_providers.delete(provider) if provider
+        end
+      end
+
       describe 'updating customer_note' do
         let(:params) { { customer_note: 'Leave at the door' } }
 

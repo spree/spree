@@ -62,9 +62,11 @@ module Spree
 
       # Pickup intent counts as a destination change: proposals priced for
       # shipping (or for another counter) are stale once the customer picks
-      # or clears a pickup location.
+      # or clears a pickup location. A company change also invalidates prices
+      # and proposals, even when the shipping destination stays the same.
       def destination_changed?
         cart.saved_change_to_ship_address_id? ||
+          cart.saved_change_to_company_id? ||
           cart.saved_change_to_market_id? ||
           cart.saved_change_to_preferred_stock_location_id?
       end
