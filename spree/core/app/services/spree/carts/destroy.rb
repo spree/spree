@@ -9,17 +9,23 @@ module Spree
           cart ||= order
         end
         rewrite_input!(remove: [:order], cart: cart)
-        run :check_if_can_be_destroyed
-        run :cancel_shipments
-        run :release_gift_card
-        run :void_payments
-        run :clear_addresses
-        run :destroy_order
+        return failure(false, I18n.t('spree.cannot_be_destroyed')) unless cart
+
+        cart.with_lock do
+          run :check_if_can_be_destroyed
+          run :cancel_shipments
+          run :release_gift_card
+          run :void_payments
+          run :clear_addresses
+          run :destroy_order
+        end
       end
 
       private
 
       def check_if_can_be_destroyed(cart:)
+        return failure(false, I18n.t('spree.cart_completion_in_progress')) if cart.is_a?(Spree::Cart) && cart.completion_claimed?
+
         return failure(false, I18n.t('spree.cannot_be_destroyed')) unless cart&.can_be_deleted?
 
         success(cart: cart)
