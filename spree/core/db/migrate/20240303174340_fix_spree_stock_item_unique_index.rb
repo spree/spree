@@ -9,20 +9,20 @@ class FixSpreeStockItemUniqueIndex < ActiveRecord::Migration[6.1]
       if Spree.mysql?
         reversible do |dir|
           dir.up do
-            unless column_exists?(:spree_stock_items, :deleted_at_key)
+            unless column_exists?(:spree_stock_items, :live_key)
               execute <<-SQL.squish
                 ALTER TABLE spree_stock_items
-                ADD COLUMN deleted_at_key DATETIME
-                AS (COALESCE(deleted_at, CAST('1970-01-01' AS DATETIME))) STORED
+                ADD COLUMN live_key TINYINT
+                AS (IF(deleted_at IS NULL, 1, NULL)) STORED
               SQL
             end
-            add_index :spree_stock_items, %w[stock_location_id variant_id deleted_at_key],
+            add_index :spree_stock_items, %w[stock_location_id variant_id live_key],
                       name: 'index_spree_stock_items_unique_without_deleted_at', unique: true
           end
 
           dir.down do
             remove_index :spree_stock_items, name: :index_spree_stock_items_unique_without_deleted_at
-            remove_column :spree_stock_items, :deleted_at_key if column_exists?(:spree_stock_items, :deleted_at_key)
+            remove_column :spree_stock_items, :live_key if column_exists?(:spree_stock_items, :live_key)
           end
         end
       else

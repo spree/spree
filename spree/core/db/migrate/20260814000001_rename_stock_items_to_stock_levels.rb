@@ -56,7 +56,7 @@ class RenameStockItemsToStockLevels < ActiveRecord::Migration[8.1]
   def rename_partial_uniqueness_index(from:, to:)
     # Hosts that got the index through the generated column keep it as it is.
     # Only the index changes name, as MariaDB cannot rebuild the expression form.
-    if column_exists?(:spree_stock_levels, :deleted_at_key)
+    if column_exists?(:spree_stock_levels, :live_key)
       rename_index :spree_stock_levels, from, to
       return
     end
@@ -69,10 +69,10 @@ class RenameStockItemsToStockLevels < ActiveRecord::Migration[8.1]
       # MariaDB rejects an expression in the key, so index a stored generated column.
       execute <<~SQL.squish
         ALTER TABLE spree_stock_levels
-        ADD COLUMN deleted_at_key DATETIME
-        AS (COALESCE(deleted_at, CAST('1970-01-01' AS DATETIME))) STORED
+        ADD COLUMN live_key TINYINT
+        AS (IF(deleted_at IS NULL, 1, NULL)) STORED
       SQL
-      add_index :spree_stock_levels, %w[stock_location_id variant_id deleted_at_key], name: to, unique: true
+      add_index :spree_stock_levels, %w[stock_location_id variant_id live_key], name: to, unique: true
     end
   end
 end
