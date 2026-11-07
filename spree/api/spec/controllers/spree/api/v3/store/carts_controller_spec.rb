@@ -1167,6 +1167,24 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
         expect(response).to have_http_status(:no_content)
       end
 
+      it 'rejects deletion while completion holds a live claim' do
+        cart.update_column(:completing_at, Time.current)
+
+        expect { delete :destroy, params: { id: cart.prefixed_id } }.not_to change(Spree::Cart, :count)
+
+        expect(response).to have_http_status(:conflict)
+        expect(json_response['error']['code']).to eq('completion_in_progress')
+        expect(cart.reload.completion_claimed?).to be(true)
+      end
+
+      it 'allows deletion after a completion claim expires' do
+        cart.update_column(:completing_at, 1.hour.ago)
+
+        expect { delete :destroy, params: { id: cart.prefixed_id } }.to change(Spree::Cart, :count).by(-1)
+
+        expect(response).to have_http_status(:no_content)
+      end
+
       it 'removes any stock reservations belonging to the cart' do
         line_item = cart.line_items.first
         line_item.variant.stock_levels.first.update!(backorderable: false)

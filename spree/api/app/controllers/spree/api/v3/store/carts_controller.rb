@@ -134,12 +134,14 @@ module Spree
           def destroy
             find_cart!
 
-            result = Spree.cart_destroy_service.call(cart: @cart)
+            with_order_lock do
+              result = Spree.cart_destroy_service.call(cart: @cart)
 
-            if result.success?
-              head :no_content
-            else
-              render_service_error(result.error.to_s)
+              if result.success?
+                head :no_content
+              else
+                render_service_error(result.error.to_s)
+              end
             end
           end
 
