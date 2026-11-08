@@ -666,6 +666,62 @@ module Spree
 
         expect { described_class.call(cart: ready_cart) }.to change { Spree::StockReservation.count }.by(-1)
       end
+
+      context 'when the cart holds all remaining stock' do
+        let(:line_item) { ready_cart.line_items.first }
+        let(:stock_level) { line_item.variant.stock_levels.first }
+
+        before do
+          stub_store_preferences(stock_reservations_enabled: true)
+          line_item.variant.stock_levels.each do |level|
+            level.update!(backorderable: false)
+            level.set_count_on_hand(0)
+          end
+          stock_level.set_count_on_hand(line_item.quantity)
+          create(:stock_reservation, cart: ready_cart, order: nil, line_item: line_item,
+                                     stock_level: stock_level, quantity: line_item.quantity)
+        end
+
+        it 'places the reserved units without treating its own hold as unavailable stock' do
+          expect(stock_level.reload.purchasable_count).to eq(0)
+
+          result = described_class.call(cart: ready_cart)
+
+          expect(result).to be_success
+          expect(result.value).to be_placed
+          expect(stock_level.reload.allocated_count).to eq(line_item.quantity)
+          expect(stock_level.reserved_count).to eq(0)
+        end
+
+        it 'keeps another checkout\'s hold while placing its own units' do
+          stock_level.set_count_on_hand(line_item.quantity + 1)
+          other_cart = create(:cart, store: store)
+          other_line = create(:line_item, cart: other_cart, order: nil, variant: line_item.variant)
+          other_hold = create(:stock_reservation, cart: other_cart, order: nil, line_item: other_line,
+                                                  stock_level: stock_level, quantity: 1)
+
+          result = described_class.call(cart: ready_cart)
+
+          expect(result).to be_success
+          expect(other_hold.reload.cart_id).to eq(other_cart.id)
+          expect(other_hold.order_id).to be_nil
+          expect(stock_level.reload.reserved_count).to eq(1)
+          expect(stock_level.allocated_count).to eq(line_item.quantity)
+        end
+
+        it 'returns the hold to the cart when a later copier fails' do
+          hold = ready_cart.stock_reservations.sole
+          allow(Spree).to receive(:cart_copiers).and_return([->(**) { raise 'cart copier failed' }])
+
+          expect { described_class.call(cart: ready_cart) }.to raise_error(RuntimeError, 'cart copier failed')
+
+          expect(Spree::Order.where(cart_id: ready_cart.id)).to be_empty
+          expect(hold.reload.cart_id).to eq(ready_cart.id)
+          expect(hold.order_id).to be_nil
+          expect(stock_level.reload.reserved_count).to eq(line_item.quantity)
+          expect(stock_level.allocated_count).to eq(0)
+        end
+      end
     end
 
     describe 'admin/B2B order path' do

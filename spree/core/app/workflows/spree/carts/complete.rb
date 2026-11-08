@@ -284,6 +284,8 @@ module Spree
           )
           order.save!
 
+          # Copied lines validate against the new order, so its own holds must already belong to it.
+          cart.stock_reservations.update_all(order_id: order.id, cart_id: nil)
           line_item_map = copy_line_items!(cart, order)
           fulfillment_map = copy_fulfillments!(cart, order, line_item_map)
           fee_map = copy_typed_lines!(cart, order, line_item_map, fulfillment_map)
@@ -524,7 +526,6 @@ module Spree
       def repoint_money_records!(cart, order)
         cart.payments.update_all(order_id: order.id, cart_id: nil)
         cart.payment_sessions.update_all(order_id: order.id, cart_id: nil)
-        cart.stock_reservations.update_all(order_id: order.id, cart_id: nil)
         Spree::CouponCode.where(cart_id: cart.id).update_all(order_id: order.id, cart_id: nil)
         order.payments.reset
       end
