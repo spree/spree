@@ -22,7 +22,7 @@ module Spree
       def group_class = Spree::Collection
 
       def refresh_group_counters(collection_ids)
-        collection_ids.each { |id| Spree::Collection.reset_counters(id, :product_collections) }
+        Spree::Collection.reset_counters_in_bulk(collection_ids, :product_collections)
       end
     end
   end

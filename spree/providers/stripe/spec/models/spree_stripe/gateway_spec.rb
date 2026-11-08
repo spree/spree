@@ -5,6 +5,16 @@ RSpec.describe SpreeStripe::Gateway do
   let(:gateway) { create(:stripe_gateway, store: store) }
   let(:amount) { 100 }
 
+  describe '#can_void?' do
+    it 'is false for a completed payment, which Stripe cannot cancel' do
+      expect(gateway.can_void?(build_stubbed(:payment, status: 'completed'))).to be false
+    end
+
+    it 'is true for an authorized payment' do
+      expect(gateway.can_void?(build_stubbed(:payment, status: 'pending'))).to be true
+    end
+  end
+
   describe '#payment_intent_accepted?' do
     subject { gateway.payment_intent_accepted?(stripe_payment_intent) }
 
@@ -241,7 +251,13 @@ RSpec.describe SpreeStripe::Gateway do
     subject { gateway.webhook_url }
 
     it 'returns the core payment webhook url' do
-      expect(subject).to eq("#{store.url_or_custom_domain}/api/v3/webhooks/payments/#{gateway.prefixed_id}")
+      expect(subject).to eq("#{store.formatted_url_or_custom_domain}/api/v3/webhooks/payments/#{gateway.prefixed_id}")
+    end
+
+    it 'is an absolute url when the store url is a bare host' do
+      store.update!(url: 'shop.example.com')
+
+      expect(URI.parse(subject).scheme).to be_present
     end
   end
 

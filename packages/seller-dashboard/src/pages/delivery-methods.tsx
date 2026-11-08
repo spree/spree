@@ -1,6 +1,10 @@
 import {
+  AMOUNT_BASED_CALCULATORS,
+  CURRENCY_AMOUNT_KEYS,
+  CurrencyAmountsField,
   defaultPreferences,
   filterPreferenceSchema,
+  hasCurrencyAmount,
   PageHeader,
   PreferencesForm,
   type ResourceSearch,
@@ -281,13 +285,15 @@ function DeliveryMethodSheet({
 
     form.setValue('calculator', {
       type: flatRate.type,
-      preferences: defaultPreferences(renderableSchema(flatRate.schema)),
+      preferences: calculatorDefaults(flatRate.type, flatRate.schema),
     })
   }, [calculators, methodId, form])
 
-  const calculatorSchema = renderableSchema(
+  const calculatorSchema = calculatorFormSchema(
+    calculatorType,
     calculators?.data.find((calculator) => calculator.type === calculatorType)?.schema,
   )
+  const amountBased = AMOUNT_BASED_CALCULATORS.includes(calculatorType)
 
   const save = useMutation({
     mutationFn: (values: DeliveryMethodFormValues) => {
@@ -354,7 +360,17 @@ function DeliveryMethodSheet({
           <SheetDescription>{t('delivery_methods.sheet.description')}</SheetDescription>
         </SheetHeader>
         <form
-          onSubmit={form.handleSubmit((values) => save.mutateAsync(values).catch(() => undefined))}
+          onSubmit={form.handleSubmit((values) => {
+            // An amount-based calculator with no amount in any currency would never be offered.
+            const { type, preferences } = values.calculator
+            if (AMOUNT_BASED_CALCULATORS.includes(type) && !hasCurrencyAmount(preferences)) {
+              form.setError('calculator.preferences', {
+                message: t('admin.currency_amounts.required'),
+              })
+              return
+            }
+            return save.mutateAsync(values).catch(() => undefined)
+          })}
           className="flex min-h-0 flex-1 flex-col"
         >
           <div className="flex flex-1 flex-col gap-6 overflow-y-auto p-4">
@@ -488,11 +504,10 @@ function DeliveryMethodSheet({
                         value={field.value}
                         onValueChange={(next) => {
                           field.onChange(next)
-                          const schema = renderableSchema(
-                            calculators?.data.find((calculator) => calculator.type === next)
-                              ?.schema,
-                          )
-                          form.setValue('calculator.preferences', defaultPreferences(schema))
+                          const schema = calculators?.data.find(
+                            (calculator) => calculator.type === next,
+                          )?.schema
+                          form.setValue('calculator.preferences', calculatorDefaults(next, schema))
                         }}
                       >
                         <SelectTrigger id="delivery-method-calculator">
@@ -522,13 +537,24 @@ function DeliveryMethodSheet({
                 <Controller
                   control={form.control}
                   name="calculator.preferences"
-                  render={({ field }) => (
-                    <PreferencesForm
-                      schema={calculatorSchema}
-                      values={field.value}
-                      onChange={field.onChange}
-                      currencyOptions={currencyOptions}
-                    />
+                  render={({ field, fieldState }) => (
+                    <>
+                      {amountBased && sellerProfile && (
+                        <CurrencyAmountsField
+                          values={field.value}
+                          onChange={field.onChange}
+                          currencies={currencyOptions}
+                          defaultCurrency={sellerProfile.default_currency}
+                          error={fieldState.error}
+                        />
+                      )}
+                      <PreferencesForm
+                        schema={calculatorSchema}
+                        values={field.value}
+                        onChange={field.onChange}
+                        currencyOptions={currencyOptions}
+                      />
+                    </>
                   )}
                 />
               </CardContent>
@@ -634,12 +660,33 @@ function DeliveryMethodSheet({
 /**
  * The part of a preference schema the shared form can render.
  *
- * Drops keyed maps — today the flat-rate calculator's
- * per-currency `amounts` map, which the operator edits through a dedicated
- * multi-currency control and the generic form would show as the hash itself
- * in a text box. A seller quotes in the store's currency, so `amount` and
- * `currency` are the whole question.
+ * Drops keyed maps, which the generic form would show as the hash itself in a
+ * text box.
  */
+/**
+ * A calculator's settings for the generic form: an amount-based calculator's
+ * amounts are edited per currency by the amount editor instead.
+ */
+function calculatorFormSchema(
+  type: string,
+  schema: PreferenceSchema | undefined,
+): PreferenceSchema | undefined {
+  const renderable = renderableSchema(schema)
+  if (!renderable || !AMOUNT_BASED_CALCULATORS.includes(type)) return renderable
+
+  return filterPreferenceSchema(renderable, (key) => !CURRENCY_AMOUNT_KEYS.includes(key))
+}
+
+/**
+ * A calculator's starting settings. The single amount's default is 0, which
+ * would read as a price someone set, so an amount-based calculator starts with
+ * no amount in any currency.
+ */
+function calculatorDefaults(type: string, schema: PreferenceSchema | undefined) {
+  const defaults = defaultPreferences(calculatorFormSchema(type, schema))
+  return AMOUNT_BASED_CALCULATORS.includes(type) ? { ...defaults, amount: null } : defaults
+}
+
 function renderableSchema(schema: PreferenceSchema | undefined): PreferenceSchema | undefined {
   if (!schema) return undefined
 

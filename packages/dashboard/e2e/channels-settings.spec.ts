@@ -13,6 +13,8 @@ async function createChannel(page: Page, attrs: { name: string; code?: string })
     await page.getByLabel(/^code$/i).fill(attrs.code)
   }
 
+  // The sheet's plugin slot, filled by src/testing/slot-probes.tsx.
+  await expect(page.getByText('Slot probe: channel.form_fields (new)')).toBeVisible()
   await page.getByRole('button', { name: /create sales channel/i }).click()
 }
 

@@ -94,7 +94,7 @@ module Spree
           )
           original_expiry = Spree::StockReservation.find_by(line_item_id: other_line_item.id).expires_at
 
-          Timecop.freeze(2.minutes.from_now) do
+          travel_to(2.minutes.from_now) do
             subject.call(cart: cart, line_item: line_item)
           end
 

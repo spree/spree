@@ -1,9 +1,9 @@
 import type { StockTransfer } from '@spree/admin-sdk'
+import { STOCK_TRANSFER_STATUSES } from '@spree/core'
 import { defineTable } from '@spree/dashboard-core'
 import { RelativeTime, ResourceNameCell, StatusBadge } from '@spree/dashboard-ui'
 import { ArrowLeftRightIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
-import { STOCK_TRANSFER_STATUSES } from '../schemas/inventory-operations'
 
 function statusLabel(value: string): string {
   return i18n.t(`admin.stock_transfers.statuses.${value}`)

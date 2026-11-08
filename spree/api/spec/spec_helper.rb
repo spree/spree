@@ -37,7 +37,6 @@ end
 require 'spree/api/testing_support/always_register_type_hints'
 
 require 'rspec/rails'
-require 'database_cleaner/active_record'
 require 'ffaker'
 require 'webmock/rspec'
 require 'i18n/tasks'
@@ -82,11 +81,10 @@ RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
   config.include Spree::TestingSupport::Preferences
   config.include Spree::TestingSupport::ImageHelpers
+  config.include ActiveSupport::Testing::TimeHelpers
 
   config.before(:suite) do
     Spree::Events.disable!
-    # Clean out the database state before the tests run
-    DatabaseCleaner.clean_with(:truncation)
   end
 
   # Re-enable events for specs that need them

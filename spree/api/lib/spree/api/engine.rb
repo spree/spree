@@ -2,10 +2,11 @@ require 'rails/engine'
 
 require_relative 'dependencies'
 require_relative 'configuration'
+require_relative 'admin_document'
 require_relative 'agent_write_schemas'
 require_relative 'agent_resource_map'
 require_relative 'agent_membership_map'
-require_relative 'agent_workflow_endpoints'
+require_relative 'agent_operations'
 require_relative 'oauth'
 
 module Spree
@@ -13,6 +14,17 @@ module Spree
     class Engine < Rails::Engine
       isolate_namespace Spree
       engine_name 'spree_api'
+
+      # Typelizer 0.13+ ties two things to TYPELIZER: recording the serializers'
+      # `typelize` declarations, and generating types on a development server's
+      # first request. The rswag specs build the OpenAPI schemas from those
+      # declarations, so tests record them; an app's server must never generate,
+      # or it would write Spree's SDK types into the installed gem.
+      # `rake typelizer:generate` sets TYPELIZER=true itself. Set before
+      # Typelizer reads it when configuring its DSL.
+      initializer 'spree.api.typelizer', before: 'typelizer.configure_dsl' do
+        ENV['TYPELIZER'] ||= Rails.env.test? ? 'true' : 'false'
+      end
 
       initializer 'spree.api.environment', before: :load_config_initializers do |_app|
         Spree::Api::Config = Spree::Api::Configuration.new
@@ -49,6 +61,12 @@ module Spree
         app.middleware.insert_before Rack::Runtime, Spree::Api::Middleware::RequestSizeLimit
       end
 
+      # Outside ShowExceptions, so an unknown API path's 404 carries it too.
+      initializer 'spree.api.no_index' do |app|
+        require_relative 'middleware/no_index'
+        app.middleware.insert_before Rack::Runtime, Spree::Api::Middleware::NoIndex
+      end
+
       # The resources agents may read and write are derived from the admin
       # controllers themselves (see Spree::Api::AgentResourceMap). Marked
       # stale on every reload rather than rebuilt: deriving it eager-loads the
@@ -57,6 +75,7 @@ module Spree
       # not they run an agent client. The first caller pays instead.
       config.to_prepare do
         Spree::Api::AgentResourceMap.stale!
+        Spree::Api::AgentOperations.stale!
       end
 
       # Add API event subscribers

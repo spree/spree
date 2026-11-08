@@ -17,7 +17,6 @@ module Spree
                    tax_total: [:string, nullable: false]
 
           typelize metadata: 'Record<string, unknown>',
-                   documents: "Array<{ kind: string; url: string }>",
                    provider_generates_labels: :boolean,
                    order_id: [:string, nullable: true],
                    stock_location_id: [:string, nullable: true]
@@ -31,6 +30,7 @@ module Spree
 
           # Customs forms and other paperwork the provider produced beside the
           # label; the labels themselves are listed under +labels+.
+          typelize({ kind: :string, url: :string }, multi: true)
           attribute :documents do |fulfillment|
             fulfillment.provider.documents(fulfillment).map(&:as_json)
           end
@@ -61,6 +61,7 @@ module Spree
               resource: proc { Spree.api.admin_order_serializer },
               if: proc { expand?('order') }
 
+          expandable_custom_fields admin: true
         end
       end
     end

@@ -227,6 +227,19 @@ RSpec.describe Spree::Api::V3::Admin::CustomersController, type: :controller do
         expect(customer.password_digest).to eq(original_digest)
       end
     end
+
+    # Staff never set an existing customer's password: that would let them
+    # sign in to the storefront as the customer.
+    context 'with a password' do
+      it 'ignores it' do
+        original_digest = customer.password_digest
+
+        patch :update, params: { id: customer.prefixed_id, password: 'staff-chosen', password_confirmation: 'staff-chosen' }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(customer.reload.password_digest).to eq(original_digest)
+      end
+    end
   end
 
   describe 'DELETE #destroy' do

@@ -70,6 +70,8 @@ of what exists, not an implementation.
   in `../../server/` — follow `../../server/AGENTS.md`.
 - **Destructive actions that fire straight from a click need a confirm** —
   `useConfirm()` with `variant: 'destructive'`.
+- **Prefer icons from `@spree/dashboard-ui/icons`**, the dashboard's own icon
+  set, over importing `lucide-react` directly.
 
 ## Checks
 

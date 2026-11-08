@@ -4,12 +4,18 @@ module Spree
   # alias). The category_id column was renamed in 6.0, so the association is a
   # plain #category with no foreign_key override.
   class ProductCategory < Spree.base_class
+    has_prefix_id :pctg
+
+    publishes_lifecycle_events only: %i[create delete]
+
     acts_as_list scope: :category_id
 
     with_options inverse_of: :product_categories, touch: true do
-      belongs_to :product, class_name: 'Spree::Product', counter_cache: :categories_count
+      belongs_to :product, -> { with_deleted }, class_name: 'Spree::Product', counter_cache: :categories_count
       belongs_to :category, class_name: 'Spree::Category'
     end
+
+    delegate :store, to: :product, allow_nil: true
 
     validates :position, numericality: { only_integer: true, allow_blank: true, allow_nil: true }
     # For #3494

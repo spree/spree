@@ -1,11 +1,12 @@
-import { Slot } from '@spree/dashboard-core'
-import { ErrorState, MetadataCard, ResourceLayout } from '@spree/dashboard-ui'
+import { RecordMetadataCard, Slot } from '@spree/dashboard-core'
+import { ErrorState, ResourceLayout } from '@spree/dashboard-ui'
 import { createFileRoute } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import {
   CustomFieldsInlineCard,
   EditableApiCustomFieldsProvider,
 } from '../../../../../components/spree/custom-fields/custom-fields-inline'
+import { EnterprisePreviewNote } from '../../../../../components/spree/enterprise-upsell'
 import { OrderDigitalLinksCard } from '../../../../../components/spree/order-digital-links-card'
 import {
   OrderClaimsCard,
@@ -87,14 +88,13 @@ function OrderDetailPage() {
             resourceType="order"
             resourceLabel={t('admin.nav.orders').toLowerCase()}
           >
-            <CustomFieldsInlineCard />
+            <CustomFieldsInlineCard collapsible />
           </EditableApiCustomFieldsProvider>
-          <MetadataCard
+          <RecordMetadataCard
             metadata={order.metadata}
-            title={t('admin.components.metadata_card.title')}
-            emptyTitle={t('admin.components.metadata_card.empty_title')}
-            emptyDescription={t('admin.components.metadata_card.empty_description')}
+            externalReferences={order.external_references}
           />
+          <Slot name="order.form_main" context={{ order }} />
         </>
       }
       sidebar={
@@ -107,6 +107,8 @@ function OrderDetailPage() {
           <OrderPurchaseOrderCard order={order} />
           <SpecialInstructionsCard order={order} />
           <InternalNoteCard order={order} />
+          {/* A draft is where a negotiated price starts. */}
+          {!order.completed_at && <EnterprisePreviewNote previewKey="orders.quotes" />}
           <Slot name="order.form_sidebar" context={{ order }} />
         </>
       }

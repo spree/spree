@@ -270,8 +270,10 @@ module Spree
       # describe what they held before the split, and the new one holds nothing
       # at all.
       def restate_freight_summaries(*fulfillments)
+        selected_rates = Spree::DeliveryRate.where(fulfillment_id: fulfillments.map(&:id), selected: true).order(:cost).to_a
+
         fulfillments.each do |fulfillment|
-          rate = fulfillment.reload.selected_delivery_rate
+          rate = selected_rates.find { |selected_rate| selected_rate.fulfillment_id == fulfillment.id }
           next if rate.nil?
 
           metadata = rate.metadata

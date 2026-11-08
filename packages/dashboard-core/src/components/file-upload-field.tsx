@@ -270,6 +270,7 @@ export function FileUploadField({
             </AttachmentContent>
             <AttachmentActions>
               <AttachmentAction
+                type="button"
                 aria-label={t('admin.actions.remove')}
                 onClick={handleRemove}
                 disabled={disabled || !!pending}

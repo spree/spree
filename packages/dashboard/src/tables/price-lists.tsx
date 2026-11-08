@@ -1,4 +1,5 @@
 import type { PriceList } from '@spree/admin-sdk'
+import { PRICE_LIST_STATUSES } from '@spree/core'
 import { defineTable } from '@spree/dashboard-core'
 import { ResourceNameCell } from '@spree/dashboard-ui'
 import { TagsIcon } from '@spree/dashboard-ui/icons'
@@ -35,12 +36,10 @@ defineTable<PriceList>('price-lists', {
       sortable: true,
       filterable: true,
       filterType: 'enum',
-      filterOptions: [
-        { value: 'draft', label: i18n.t('admin.fields.price_list.status.draft') },
-        { value: 'active', label: i18n.t('admin.fields.price_list.status.active') },
-        { value: 'scheduled', label: i18n.t('admin.fields.price_list.status.scheduled') },
-        { value: 'inactive', label: i18n.t('admin.fields.price_list.status.inactive') },
-      ],
+      filterOptions: PRICE_LIST_STATUSES.map((status) => ({
+        value: status,
+        label: i18n.t(`admin.fields.price_list.status.${status}`),
+      })),
       quickFilter: true,
       default: true,
       // Filters the stored `status`, which is the only thing the API can

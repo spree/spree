@@ -23,6 +23,7 @@ export interface AddressBookEntry extends AddressBlockValue {
 export function AddressBookRow({
   address,
   canEdit = true,
+  inheritedFrom,
   onEdit,
   onRemove,
   onSetDefaultBilling,
@@ -30,6 +31,11 @@ export function AddressBookRow({
 }: {
   address: AddressBookEntry
   canEdit?: boolean
+  /**
+   * Names the book this entry is inherited from. An inherited entry is read
+   * only here, and its defaults are its owner's, so neither is shown.
+   */
+  inheritedFrom?: string | null
   onEdit: () => void
   onRemove: () => void
   /** Omit either to hide that action — a book with one address has no choice. */
@@ -37,17 +43,25 @@ export function AddressBookRow({
   onSetDefaultShipping?: () => void
 }) {
   const { t } = useTranslation()
+  const inherited = inheritedFrom != null
+  const isDefaultBilling = !inherited && address.is_default_billing
+  const isDefaultShipping = !inherited && address.is_default_shipping
 
   return (
     <Item variant="outline" className="items-start">
       <ItemContent className="min-w-0">
-        {(address.label || address.is_default_billing || address.is_default_shipping) && (
+        {(address.label || inherited || isDefaultBilling || isDefaultShipping) && (
           <ItemTitle className="flex-wrap">
             {address.label}
-            {address.is_default_billing && (
+            {inherited && (
+              <Badge variant="secondary">
+                {t('admin.address_book.inherited_from', { name: inheritedFrom })}
+              </Badge>
+            )}
+            {isDefaultBilling && (
               <Badge variant="outline">{t('admin.address_book.default_billing')}</Badge>
             )}
-            {address.is_default_shipping && (
+            {isDefaultShipping && (
               <Badge variant="outline">{t('admin.address_book.default_shipping')}</Badge>
             )}
           </ItemTitle>
@@ -55,7 +69,7 @@ export function AddressBookRow({
         <AddressBlock address={address} />
       </ItemContent>
 
-      {canEdit && (
+      {canEdit && !inherited && (
         <ItemActions>
           <RowActions
             actions={[

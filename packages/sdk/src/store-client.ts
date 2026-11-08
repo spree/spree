@@ -35,6 +35,7 @@ import type {
   Country,
   CreateCartParams,
   CreateClaimParams,
+  CreateDataRequestParams,
   CreateNewsletterSubscriberParams,
   CreatePaymentParams,
   CreatePaymentSessionParams,
@@ -45,6 +46,7 @@ import type {
   CreditCard,
   Currency,
   Customer,
+  DataRequest,
   DeliveryMethod,
   DigitalLink,
   DigitalLinkFilters,
@@ -76,6 +78,7 @@ import type {
   ReturnSort,
   Seller,
   StockLocation,
+  Store,
   StoreCredit,
   UpdateCartParams,
   UpdateCompanyParams,
@@ -386,6 +389,16 @@ export class StoreClient {
       this.request<Channel>('GET', '/channel', options),
   }
 
+  readonly store = {
+    /**
+     * Get the current store's name and default SEO metadata (`seo_title`,
+     * `meta_description`) in the request locale. A field without a
+     * translation falls back to the store's default locale.
+     */
+    get: (options?: RequestOptions): Promise<Store> =>
+      this.request<Store>('GET', '/store', options),
+  }
+
   // ============================================
   // Policies
   // ============================================
@@ -573,6 +586,34 @@ export class StoreClient {
      */
     complete: (cartId: string, options?: RequestOptions): Promise<Order | OrderGroup> =>
       this.request<Order | OrderGroup>('POST', `/carts/${cartId}/complete`, options),
+
+    /**
+     * Nested resource: the addresses this cart may be shipped or billed to —
+     * the buyer's own book, plus the book of the company set as the cart's
+     * `company_id` and the sites that company inherits from the ones above
+     * it, limited to the countries the cart's market sells to. Every address
+     * listed here is accepted as `shipping_address_id` or `billing_address_id`
+     * on the cart.
+     *
+     * Requires a customer JWT (`token`), unlike the rest of the cart calls: it
+     * returns the account's address books rather than the cart's own data, so a
+     * guest cart token is not accepted. A guest cart has neither book anyway.
+     */
+    addresses: {
+      /**
+       * List the addresses this cart may use. Requires a customer JWT.
+       * @param cartId - Cart prefixed ID
+       */
+      list: (
+        cartId: string,
+        params?: ListParams<AddressFilters, AddressSort>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<Address>> =>
+        this.request<PaginatedResponse<Address>>('GET', `/carts/${cartId}/addresses`, {
+          ...options,
+          params: transformListParams({ ...params }),
+        }),
+    },
 
     /**
      * Nested resource: Line items
@@ -1054,6 +1095,42 @@ export class StoreClient {
     },
 
     /**
+     * Nested resource: GDPR data requests (a copy of the customer's data, or its erasure)
+     */
+    dataRequests: {
+      /**
+       * List the customer's data requests, most recent first
+       */
+      list: (
+        params?: ListParams,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<DataRequest>> =>
+        this.request<PaginatedResponse<DataRequest>>('GET', '/customers/me/data_requests', {
+          ...options,
+          params: transformListParams({ ...params }),
+        }),
+
+      /**
+       * Get one of the customer's data requests. Never carries the download
+       * link: that goes only to the holder of the emailed confirmation token.
+       */
+      get: (id: string, options?: RequestOptions): Promise<DataRequest> =>
+        this.request<DataRequest>('GET', `/customers/me/data_requests/${id}`, options),
+
+      /**
+       * Open a data request. Nothing happens until it is confirmed from the
+       * link emailed to the customer's address, which opens `redirect_url`
+       * with the token appended (see `client.dataRequests.confirm`). Erasure
+       * needs `current_password`.
+       */
+      create: (params?: CreateDataRequestParams, options?: RequestOptions): Promise<DataRequest> =>
+        this.request<DataRequest>('POST', '/customers/me/data_requests', {
+          ...options,
+          body: params,
+        }),
+    },
+
+    /**
      * Nested resource: Credit Cards
      */
     creditCards: {
@@ -1231,6 +1308,31 @@ export class StoreClient {
           { ...options, body: params },
         ),
     },
+  }
+
+  // ============================================
+  // Data Requests (by confirmation token)
+  // ============================================
+
+  readonly dataRequests = {
+    /**
+     * Get the data request a confirmation token belongs to, with the download
+     * link once the export is ready. Needs no signed-in customer.
+     */
+    get: (token: string, options?: RequestOptions): Promise<DataRequest> =>
+      this.request<DataRequest>('GET', `/data_requests/${encodeURIComponent(token)}`, options),
+
+    /**
+     * Confirm a data request with the token from the confirmation email, and
+     * start the work. Call it when the person presses a button, never on page
+     * load: some mail scanners open links and run the page's scripts.
+     */
+    confirm: (token: string, options?: RequestOptions): Promise<DataRequest> =>
+      this.request<DataRequest>(
+        'POST',
+        `/data_requests/${encodeURIComponent(token)}/confirmation`,
+        options,
+      ),
   }
 
   // ============================================

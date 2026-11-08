@@ -63,22 +63,24 @@ module Spree
             false
           end
 
-          # Tagging filter. Store-owned taggables (`Spree::Product`,
-          # `Spree::Order`) tenant their taggings by `store_id` via
-          # `acts_as_taggable_tenant`, so their vocabulary is bounded to the
-          # current store with a single indexed `tenant` filter. Global
-          # taggables like the customer/user type carry no store, so their tags
-          # are not store-scoped here.
+          # Tagging filter. A taggable declaring `acts_as_taggable_tenant :store_id`
+          # stores the owning store on each tagging, so its vocabulary is bounded
+          # to the current store with a single indexed `tenant` filter. Taggables
+          # without a store tenant are not store-scoped here.
           def taggings_conditions
             conditions = { taggable_type: taggable_type, context: 'tags' }
             conditions[:tenant] = current_store.id.to_s if store_tenanted_taggable?
             conditions
           end
 
-          # True for taggables whose taggings carry a store `tenant`
-          # (`acts_as_taggable_tenant :store_id`), i.e. store-owned records.
           def store_tenanted_taggable?
-            %w[Spree::Product Spree::Order].include?(taggable_type)
+            taggable_class.try(:tenant_column).to_s == 'store_id'
+          end
+
+          # `taggable_type` is already matched against `Spree.taggable_types`,
+          # so only a registered class name is ever constantized.
+          def taggable_class
+            taggable_type.constantize
           end
 
           # Per-type scope check for API-key principals: a key listing product

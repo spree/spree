@@ -85,6 +85,14 @@ setApiClient({
     delete: (id) => adminClient.packageTypes.delete(id),
   },
   deleteProductMedia: (productId, mediaId) => adminClient.products.media.delete(productId, mediaId),
+  digitalAssets: {
+    list: (productId, params) => adminClient.products.digitalAssets.list(productId, params),
+    create: (productId, params) => adminClient.products.digitalAssets.create(productId, params),
+    update: (productId, id, params) =>
+      adminClient.products.digitalAssets.update(productId, id, params),
+    delete: (productId, id) => adminClient.products.digitalAssets.delete(productId, id),
+    providers: (productId) => adminClient.products.digitalAssets.providers(productId),
+  },
   mediaLibrary: { list: (params) => adminClient.media.list(runtimeListParams(params)) },
   tags: {
     list: (params) => adminClient.tags.list(params as { taggable_type: string; q?: string }),

@@ -7,14 +7,14 @@ module Spree
         # only — a shopper never picks their packaging.
         class PackageTypeSerializer < V3::BaseSerializer
           typelize name: :string,
-                   kind: [:string, enum: Spree::PackageType::KINDS],
+                   kind: [:string, enum: Spree::PackageType::KINDS, enum_type_name: 'PackageTypeKind'],
                    length: [:string, nullable: true],
                    width: [:string, nullable: true],
                    height: [:string, nullable: true],
-                   dimensions_unit: [:string, enum: Spree::Variant::DIMENSION_UNITS],
+                   dimensions_unit: [:string, enum: Spree::Variant::DIMENSION_UNITS, enum_type_name: 'DimensionUnit'],
                    weight: [:string, nullable: true],
                    max_weight: [:string, nullable: true],
-                   weight_unit: [:string, enum: Spree::Variant::WEIGHT_UNITS],
+                   weight_unit: [:string, enum: Spree::Variant::WEIGHT_UNITS, enum_type_name: 'WeightUnit'],
                    volume: [:string, nullable: true],
                    default: :boolean,
                    seller_id: [:string, nullable: true],

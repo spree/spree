@@ -77,10 +77,8 @@ module Spree
             body.attribute :variants, :array,
               as: 'ProductVariantParams',
               description: 'Every purchasable attribute (sku, prices, stock, weight, dimensions) lives on variants. An entry without `options` upserts onto the default variant of a simple product; pass `id` to update an existing variant.' do |variant|
+              variant.extends Spree::Api::V3::Admin::VariantRequestSchema
               variant.attribute :id, :id
-              variant.include_attributes Spree::Api::V3::VariantRequestSchema
-              variant.attribute :options, :array, of: Spree::Api::V3::VariantOptionRequestSchema,
-                description: 'One pair per option type the variant takes part in (size, color). Option types and values are created when missing.'
             end
           end
 
@@ -158,6 +156,28 @@ module Spree
             run_review_workflow(Spree.product_reject_workflow, reason: params[:reason])
           end
 
+          # PATCH /api/v3/admin/products/:id/activate
+          #
+          # Puts one product on sale.
+          def activate
+            run_status_workflow(Spree.product_activate_workflow, 'active')
+          end
+
+          # PATCH /api/v3/admin/products/:id/archive
+          #
+          # Takes one product off sale, archived; activating it again puts it
+          # back on sale.
+          def archive
+            run_status_workflow(Spree.product_archive_workflow, 'archived')
+          end
+
+          # PATCH /api/v3/admin/products/:id/draft
+          #
+          # Takes one product off sale, back to a draft.
+          def draft
+            run_status_workflow(Spree.product_draft_workflow, 'draft')
+          end
+
           # POST /api/v3/admin/products/bulk_status_update
           # Body: { ids: [...], status: 'draft' | 'active' | 'archived' }
           def bulk_status_update
@@ -221,7 +241,7 @@ module Spree
 
             channels = scoped_channels
             product_ids = bulk_collection.distinct.ids
-            channels.find_each { |channel| channel.add_products(product_ids) }
+            channels.add_products(product_ids)
 
             render json: { product_count: product_ids.size, channel_count: channels.size }
           end
@@ -233,7 +253,7 @@ module Spree
 
             channels = scoped_channels
             product_ids = bulk_collection.distinct.ids
-            removed = channels.sum { |channel| channel.remove_products(product_ids) }
+            removed = channels.remove_products(product_ids)
 
             render json: { product_count: product_ids.size, channel_count: channels.size, removed: removed }
           end
@@ -291,6 +311,18 @@ module Spree
             Spree.product_update_workflow
           end
 
+          def nested_permitted_models
+            { media: Spree::Media, variants: Spree::Variant }
+          end
+
+          # A written product is serialized from a fresh read: lazy preloading
+          # does not reach records a write built, so the instance the workflow
+          # returned would query once per variant.
+          def serialize_resource(resource)
+            resource = scope.where(id: resource.id).preload_associations_lazily.take! if resource.lazy_preload_context.nil?
+            super
+          end
+
           # Use SearchProvider::Database for collection to handle price/best_selling
           # sorting correctly (counts before sorting, avoiding PG/Mobility issues).
           def collection
@@ -321,7 +353,24 @@ module Spree
           end
 
           def permitted_params
-            params.permit(*permitted_attributes).tap { |attrs| attrs.delete(:status) if review_status?(attrs[:status]) }
+            params.permit(*permitted_attributes).tap do |attrs|
+              attrs.delete(:status) if review_status?(attrs[:status])
+              scope_store_references(attrs)
+            end
+          end
+
+          # Read through the store here because the model only checks that the
+          # record exists: another store's type or tax category would otherwise
+          # be accepted, and the type would seed its option types onto the
+          # product.
+          STORE_REFERENCES = { product_type_id: :product_types, tax_category_id: :tax_categories }.freeze
+
+          def scope_store_references(attrs)
+            STORE_REFERENCES.each do |key, association|
+              next if attrs[key].blank?
+
+              attrs[key] = current_store.public_send(association).find_by_param!(attrs[key]).id
+            end
           end
 
           # A review status is an outcome, not a value to assign: `proposed`
@@ -335,6 +384,40 @@ module Spree
           end
 
           private
+
+          # Unlike bulk_status_update, which writes the column, these run the
+          # status workflow, so its hooks and its event fire. A product in
+          # review is refused: its next status is a decision, made through
+          # approve or reject (docs/plans/6.0-seller-product-submission.md).
+          #
+          # A product already in that status is answered as it is: running the
+          # workflow again would publish its event again, and every webhook
+          # subscriber would see the move twice.
+          def run_status_workflow(workflow, status)
+            @resource = find_resource
+            authorize!(:update, @resource)
+
+            return render json: serialize_resource(@resource) if @resource.status == status
+
+            if @resource.in_review?
+              return render_error(
+                code: 'product_in_review',
+                message: I18n.t('spree.errors.messages.product_in_review'),
+                status: :unprocessable_content
+              )
+            end
+
+            # Not under a row lock taken here: that would wrap the workflow in
+            # a transaction, and it publishes its event once its own
+            # transaction is done, which an outer one would no longer be.
+            result = workflow.call(product: @resource)
+
+            if result.success?
+              render json: serialize_resource(@resource.reload)
+            else
+              render_service_error(@resource.errors.presence || result.error)
+            end
+          end
 
           # Approving and rejecting are edits to the catalog, so they answer to
           # the same key as any other product write.

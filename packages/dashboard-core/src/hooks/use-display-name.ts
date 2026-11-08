@@ -1,24 +1,7 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
-/**
- * Resolves a code to its display name via `Intl.DisplayNames`, localized to a
- * given UI language. Returns `undefined` when the runtime lacks coverage so
- * callers can apply their own fallback (usually the raw code).
- *
- * Standalone (non-hook) variant for module-level use outside React.
- */
-export function intlDisplayName(
-  type: Intl.DisplayNamesType,
-  locale: string,
-  code: string,
-): string | undefined {
-  try {
-    return new Intl.DisplayNames([locale, 'en'], { type }).of(code)
-  } catch {
-    return undefined
-  }
-}
+export { intlDisplayName } from '@spree/core'
 
 /**
  * Hook returning a memoized `code -> name` resolver for one `Intl.DisplayNames`

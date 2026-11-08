@@ -43,8 +43,31 @@ module Spree
     # @return [Spree::ExternalReference, nil] nil when the reference was removed
     def set_external_id(system, external_id, metadata: nil)
       key = Spree::ExternalReference.normalize_system(system)
-      reference = external_references.for_system(key).first
+      write_external_reference(key, external_references.for_system(key).first, external_id, metadata)
+    end
 
+    # Writes several references at once, leaving systems the payload does not
+    # mention untouched — a connector states its own key without disturbing
+    # another system's. Accepts the `{ system => external_id }` map the admin
+    # serializers render, or a list of `{ system:, external_id: }` entries.
+    #
+    # @param references [Hash{String,Symbol=>String}, Array<Hash>]
+    # @return [void]
+    def assign_external_references(references)
+      entries = Spree::ExternalReference.normalize_references(references)
+      return if entries.empty?
+
+      keys = entries.map { |entry| Spree::ExternalReference.normalize_system(entry[:system]) }
+      existing = external_references.where(system: keys).order(:id).group_by(&:system).transform_values(&:first)
+
+      entries.zip(keys).each do |entry, key|
+        existing[key] = write_external_reference(key, existing[key], entry[:external_id], entry[:metadata])
+      end
+    end
+
+    private
+
+    def write_external_reference(key, reference, external_id, metadata)
       if external_id.to_s.strip.blank?
         reference&.destroy
         external_references.reset
@@ -63,21 +86,6 @@ module Spree
       external_references.reset
       reference
     end
-
-    # Writes several references at once, leaving systems the payload does not
-    # mention untouched — a connector states its own key without disturbing
-    # another system's. Accepts the `{ system => external_id }` map the admin
-    # serializers render, or a list of `{ system:, external_id: }` entries.
-    #
-    # @param references [Hash{String,Symbol=>String}, Array<Hash>]
-    # @return [void]
-    def assign_external_references(references)
-      Spree::ExternalReference.normalize_references(references).each do |reference|
-        set_external_id(reference[:system], reference[:external_id], metadata: reference[:metadata])
-      end
-    end
-
-    private
 
     # A reference belongs to the same store as the record it identifies.
     #

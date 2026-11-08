@@ -1,3 +1,4 @@
+import { isWebhookEventPattern } from '@spree/core'
 import {
   Alert,
   AlertAction,
@@ -98,6 +99,11 @@ export function WebhookEndpointFormFields({
           control={form.control}
           render={({ field }) => <EventPicker value={field.value} onChange={field.onChange} />}
         />
+        <FieldError
+          errors={
+            Array.isArray(errors.subscriptions) ? errors.subscriptions : [errors.subscriptions]
+          }
+        />
       </Field>
     </>
   )
@@ -106,6 +112,7 @@ export function WebhookEndpointFormFields({
 function EventPicker({ value, onChange }: { value: string[]; onChange: (next: string[]) => void }) {
   const { t } = useTranslation()
   const [customEvent, setCustomEvent] = useState('')
+  const [customEventInvalid, setCustomEventInvalid] = useState(false)
   const { data: catalog, isPending, isError, refetch } = useWebhookEventCatalog()
   const events = catalog?.data ?? []
   const subscribed = new Set(value)
@@ -129,8 +136,13 @@ function EventPicker({ value, onChange }: { value: string[]; onChange: (next: st
   function addCustom() {
     const trimmed = customEvent.trim()
     if (!trimmed || value.includes(trimmed)) return
+    if (!isWebhookEventPattern(trimmed)) {
+      setCustomEventInvalid(true)
+      return
+    }
     onChange([...value, trimmed])
     setCustomEvent('')
+    setCustomEventInvalid(false)
   }
 
   return (
@@ -217,22 +229,31 @@ function EventPicker({ value, onChange }: { value: string[]; onChange: (next: st
         )}
       </div>
 
-      <div className="flex items-center gap-2 border-t border-border p-3">
-        <Input
-          placeholder={t('admin.pages.settings.webhooks.events_custom_input_placeholder')}
-          value={customEvent}
-          onChange={(e) => setCustomEvent(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              e.preventDefault()
-              addCustom()
-            }
-          }}
-          className="font-mono text-xs"
-        />
-        <Button type="button" variant="outline" size="sm" onClick={addCustom}>
-          {t('admin.actions.add')}
-        </Button>
+      <div className="flex flex-col gap-2 border-t border-border p-3">
+        <div className="flex items-center gap-2">
+          <Input
+            placeholder={t('admin.pages.settings.webhooks.events_custom_input_placeholder')}
+            value={customEvent}
+            aria-invalid={customEventInvalid || undefined}
+            onChange={(e) => {
+              setCustomEvent(e.target.value)
+              setCustomEventInvalid(false)
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault()
+                addCustom()
+              }
+            }}
+            className="font-mono text-xs"
+          />
+          <Button type="button" variant="outline" size="sm" onClick={addCustom}>
+            {t('admin.actions.add')}
+          </Button>
+        </div>
+        {customEventInvalid && (
+          <FieldError>{t('admin.fields.webhook_endpoint.subscriptions.invalid')}</FieldError>
+        )}
       </div>
     </div>
   )

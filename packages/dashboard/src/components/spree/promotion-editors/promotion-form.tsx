@@ -8,7 +8,14 @@ import type {
   PromotionRuleDraftParams,
   ResourceTypeDefinition,
 } from '@spree/admin-sdk'
-import { Can, PageHeader, PreferencesForm, StoreDatePicker } from '@spree/dashboard-core'
+import { MATCH_POLICIES, type MatchPolicy } from '@spree/core'
+import {
+  Can,
+  PageHeader,
+  PreferencesForm,
+  RecordMetadataCard,
+  StoreDatePicker,
+} from '@spree/dashboard-core'
 import {
   Alert,
   AlertDescription,
@@ -77,6 +84,7 @@ import {
   TableHeader,
   TableRow,
   Textarea,
+  toastManager,
 } from '@spree/dashboard-ui'
 import { optionValueLabel } from '../../../hooks/use-option-types'
 import {
@@ -87,14 +95,13 @@ import {
 } from '../../../hooks/use-promotions'
 
 import {
-  MATCH_POLICIES,
-  type MatchPolicy,
   PROMOTION_DEFAULTS,
   PROMOTION_KINDS,
   type PromotionFormValues,
   type PromotionKind,
   promotionFormSchema,
 } from '../../../schemas/promotion'
+import { DraftCustomFieldsCard, useCustomFieldsDraft } from '../custom-fields/custom-fields-inline'
 import {
   actionDraftFromAction,
   actionDraftFromType,
@@ -194,6 +201,12 @@ export function PromotionForm({
     defaultValues: { ...PROMOTION_DEFAULTS, ...extensionFormValues('promotion', null) },
   })
 
+  // Edit only: a promotion being created has no id to hang values on yet.
+  const customFields = useCustomFieldsDraft(
+    'promotion',
+    mode === 'edit' ? (promotion?.id ?? '') : '',
+  )
+
   const rulesArray = useFieldArray({ control: form.control, name: 'rules', keyName: '_key' })
   const actionsArray = useFieldArray({ control: form.control, name: 'actions', keyName: '_key' })
 
@@ -239,7 +252,20 @@ export function PromotionForm({
       Object.assign(payload, couponFieldsForKind(values))
     }
     try {
-      await onSubmit(payload)
+      // The promotion saves first and is marked clean, so a retry after a
+      // failed custom field save sends only the custom fields — the rule and
+      // action sets would otherwise be submitted again. A failed save keeps
+      // its edits and names the fields itself.
+      const savesRecord = mode === 'create' || form.formState.isDirty
+      if (savesRecord) {
+        await onSubmit(payload)
+        if (mode === 'edit') form.reset(form.getValues())
+      }
+      const savesCustomFields = customFields.isDirty
+      // The promotion's own save toasts; a custom-field-only save has to say so.
+      if ((await customFields.save()) && savesCustomFields && !savesRecord) {
+        toastManager.add({ type: 'success', title: t('admin.messages.promotion_saved') })
+      }
     } catch (err) {
       if (!mapSpreeErrorsToForm(err, form.setError)) throw err
     }
@@ -301,7 +327,8 @@ export function PromotionForm({
                   <Button
                     type="submit"
                     disabled={
-                      form.formState.isSubmitting || (mode === 'edit' && !form.formState.isDirty)
+                      form.formState.isSubmitting ||
+                      (mode === 'edit' && !form.formState.isDirty && !customFields.isDirty)
                     }
                   >
                     {form.formState.isSubmitting
@@ -330,6 +357,8 @@ export function PromotionForm({
                 matchPolicy={form.watch('match_policy')}
               />
               <ActionsCard form={form} actionsArray={actionsArray} />
+              {mode === 'edit' && <DraftCustomFieldsCard draft={customFields} />}
+              {promotion && <RecordMetadataCard metadata={promotion.metadata} />}
             </>
           }
           sidebar={
@@ -1023,10 +1052,38 @@ function RuleEditSheet({
 
 function DefaultRuleEditor({ draft, onSave, onClose }: PromotionRuleEditorContext) {
   const { t } = useTranslation()
-  const [values, setValues] = useState<Record<string, unknown>>(draft.preferences ?? {})
+  const [values, setValues] = useState<Record<string, unknown>>(() => {
+    const preferences = draft.preferences ?? {}
+    if (draft.type !== 'item_total') return preferences
+
+    return {
+      ...preferences,
+      operator_min: preferences.operator_min === 'gte' ? 'gte' : 'gt',
+      operator_max: preferences.operator_max === 'lte' ? 'lte' : 'lt',
+    }
+  })
   const { data: typesData } = usePromotionRuleTypes()
   const schema = typesData?.data.find((type) => type.type === draft.type)?.schema
-  const hasPreferences = Object.keys(schema?.properties ?? {}).length > 0
+  const ruleSchema =
+    draft.type === 'item_total' && schema
+      ? {
+          ...schema,
+          properties: {
+            ...schema.properties,
+            operator_min: {
+              ...(schema.properties.operator_min ?? { type: 'string' }),
+              default: 'gt',
+              enum: ['gt', 'gte'],
+            },
+            operator_max: {
+              ...(schema.properties.operator_max ?? { type: 'string' }),
+              default: 'lt',
+              enum: ['lt', 'lte'],
+            },
+          },
+        }
+      : schema
+  const hasPreferences = Object.keys(ruleSchema?.properties ?? {}).length > 0
 
   function handleSave() {
     onSave({ ...draft, preferences: values })
@@ -1041,7 +1098,7 @@ function DefaultRuleEditor({ draft, onSave, onClose }: PromotionRuleEditorContex
       saveLabel={hasPreferences ? undefined : t('admin.actions.add')}
     >
       {hasPreferences ? (
-        <PreferencesForm schema={schema} values={values} onChange={setValues} />
+        <PreferencesForm schema={ruleSchema} values={values} onChange={setValues} />
       ) : (
         <p className="text-sm text-muted-foreground">
           {t('admin.promotions.rule_edit.no_options')}

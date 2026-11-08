@@ -1,17 +1,4 @@
 {
-  "accept_invitation": {
-    "failed": "无法接受该邀请。邀请可能已过期，或密码有误。",
-    "first_name": "名字",
-    "invalid_link": "此链接缺少令牌。请从邀请邮件中打开链接。",
-    "last_name": "姓氏",
-    "not_found": "此邀请已失效。请让邀请你的人重新发送一份。",
-    "password": "密码",
-    "password_confirmation": "确认密码",
-    "submit": "接受邀请",
-    "submitting": "正在接受…",
-    "subtitle": "你以 {{email}} 的身份受邀。设置密码即可完成。",
-    "title": "加入团队"
-  },
   "account": {
     "avatar": "照片",
     "avatar_help": "在面板中显示在您的姓名旁边。方形图片效果最佳。",
@@ -665,7 +652,8 @@
     "columns": {
       "name": "商品",
       "price": "价格",
-      "status": "状态"
+      "status": "状态",
+      "inventory": "库存"
     },
     "custom_fields": "商品详情",
     "details": "详情",
@@ -735,7 +723,8 @@
     "variant_remove_confirm_description": "保存后它会从商品中移除。",
     "variant_remove_confirm_title": "移除此变体？",
     "variants": "变体",
-    "variants_empty": "此商品按上述价格作为单一款式销售。添加变体即可按尺码、颜色等选项销售。"
+    "variants_empty": "此商品按上述价格作为单一款式销售。添加变体即可按尺码、颜色等选项销售。",
+    "digital_files_review_notice": "添加或替换文件会将此商品重新送审，在平台再次批准前将暂停销售。"
   },
   "profile": {
     "about": "简介",

@@ -68,7 +68,7 @@ RSpec.describe Spree::Uploads do
     it 'mints a reference that stops resolving after a day' do
       signed_id = described_class.signed_id_for(create_blob)
 
-      Timecop.travel(25.hours.from_now) do
+      travel(25.hours) do
         expect(ActiveStorage::Blob.find_signed(signed_id)).to be_nil
       end
     end

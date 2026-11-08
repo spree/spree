@@ -1,6 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { DeliveryZone } from '@spree/admin-sdk'
-import { mapSpreeErrorsToForm } from '@spree/dashboard-core'
+import {
+  extensionFormValues,
+  extensionSubmitValues,
+  HostFormSlot,
+  mapSpreeErrorsToForm,
+} from '@spree/dashboard-core'
 import {
   Button,
   Field,
@@ -36,6 +41,11 @@ import { DeliveryZoneRegionPicker } from './delivery-zone-region-picker'
  * that owns them and never move between profiles, so the profile always
  * comes from the page that opened this sheet.
  */
+// A new zone's starting values, extension fields' blanks included.
+function blankZoneValues(): DeliveryZoneFormValues {
+  return { ...DELIVERY_ZONE_DEFAULTS, ...extensionFormValues('delivery_zone', null) }
+}
+
 export function DeliveryZoneSheet({
   deliveryProfileId,
   deliveryOriginGroupId,
@@ -69,12 +79,12 @@ export function DeliveryZoneSheet({
   const form = useForm<DeliveryZoneFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(deliveryZoneFormSchema) as any,
-    defaultValues: DELIVERY_ZONE_DEFAULTS,
+    defaultValues: blankZoneValues(),
   })
 
   useEffect(() => {
     if (!zoneId) {
-      form.reset(DELIVERY_ZONE_DEFAULTS)
+      form.reset(blankZoneValues())
       return
     }
     if (!zone) return
@@ -94,19 +104,24 @@ export function DeliveryZoneSheet({
         postal_code_from: member.postal_code_from ?? '',
         postal_code_to: member.postal_code_to ?? '',
       })),
+      ...extensionFormValues('delivery_zone', zone),
     })
   }, [zone, zoneId, form])
 
   async function onSubmit(values: DeliveryZoneFormValues) {
     try {
       if (zoneId) {
-        await updateMutation.mutateAsync(deliveryZoneValuesToParams(values))
+        await updateMutation.mutateAsync({
+          ...deliveryZoneValuesToParams(values),
+          ...extensionSubmitValues('delivery_zone', form),
+        })
       } else {
-        await createMutation.mutateAsync(
-          deliveryZoneValuesToParams(values, deliveryProfileId, deliveryOriginGroupId),
-        )
+        await createMutation.mutateAsync({
+          ...deliveryZoneValuesToParams(values, deliveryProfileId, deliveryOriginGroupId),
+          ...extensionSubmitValues('delivery_zone', form),
+        })
       }
-      form.reset(zoneId ? values : DELIVERY_ZONE_DEFAULTS)
+      form.reset(zoneId ? values : blankZoneValues())
       onOpenChange(false)
     } catch (err) {
       if (!mapSpreeErrorsToForm(err, form.setError)) throw err
@@ -120,7 +135,7 @@ export function DeliveryZoneSheet({
     <Sheet
       open={open}
       onOpenChange={(next) => {
-        if (!next && !editing) form.reset(DELIVERY_ZONE_DEFAULTS)
+        if (!next && !editing) form.reset(blankZoneValues())
         onOpenChange(next)
       }}
     >
@@ -154,6 +169,15 @@ export function DeliveryZoneSheet({
               <DeliveryZoneFormFields
                 form={form}
                 siblingZones={siblingZones.filter((sibling) => sibling.id !== zoneId)}
+              />
+              <HostFormSlot
+                form={form}
+                name="delivery_zone.form_fields"
+                context={{
+                  deliveryZone: zone,
+                  deliveryProfileId,
+                  mode: editing ? 'edit' : 'new',
+                }}
               />
             </div>
             <SheetFooter>

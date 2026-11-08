@@ -5,6 +5,7 @@ import {
   type CancelOrderFormValues,
   cancelOrderFormSchema,
   mapSpreeErrorsToForm,
+  usePermissions,
   useResourceMutation,
 } from '@spree/dashboard-core'
 import { OrderCancelDialog as SharedOrderCancelDialog } from '@spree/dashboard-ui'
@@ -19,6 +20,9 @@ import { ReasonField } from '../reason-field'
  */
 export function OrderCancelDialog({ orderId, onClose }: { orderId: string; onClose: () => void }) {
   const { t } = useTranslation()
+  // Handing money back on cancel is the refunds permission's; the choice
+  // is only offered to staff who hold it.
+  const { permissionKeys } = usePermissions()
 
   const cancelMutation = useResourceMutation({
     mutationFn: (values: CancelOrderFormValues) =>
@@ -50,7 +54,7 @@ export function OrderCancelDialog({ orderId, onClose }: { orderId: string; onClo
   return (
     <SharedOrderCancelDialog
       form={form}
-      showRefund
+      showRefund={permissionKeys.includes('write_refunds')}
       reasonField={
         /* A merchant who has not curated the vocabulary can still cancel, so
            the empty choice stays available rather than forcing a reason. */

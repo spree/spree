@@ -5,4 +5,9 @@ export type CreateDataRequestParams = {
   kind?: 'access' | 'erasure'
   /** Required for `erasure`. */
   current_password?: string
+  /**
+   * The storefront page the confirmation link opens, with the token appended. Ignored unless it
+   * matches one of the store's allowed origins.
+   */
+  redirect_url?: string
 }

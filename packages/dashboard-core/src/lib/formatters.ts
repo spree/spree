@@ -1,4 +1,5 @@
-import { formatMoney, type Price } from '@spree/admin-sdk'
+import type { Price } from '@spree/admin-sdk'
+import { formatMoney } from '@spree/core'
 import { parseISO } from 'date-fns'
 import { formatInTimeZone } from 'date-fns-tz'
 import i18n from 'i18next'
@@ -19,9 +20,8 @@ export function formatPrice(
 }
 
 /**
- * Formats an API amount (a decimal string) in its currency, falling back to
- * the bare number for a currency `Intl` does not know, and to `fallback` when
- * either is missing.
+ * Formats an API amount (a decimal string) in its currency, or answers
+ * `fallback` when either is missing or `Intl` cannot format the pair.
  */
 export function formatAmount(
   amount: string | null | undefined,
@@ -29,12 +29,8 @@ export function formatAmount(
   locale?: string,
   fallback = '—',
 ): string {
-  if (amount === null || amount === undefined || amount === '' || !currency) return fallback
-  try {
-    return formatMoney(amount, currency, locale) || fallback
-  } catch {
-    return `${amount} ${currency}`
-  }
+  if (!currency) return fallback
+  return formatMoney(amount, currency, locale) || fallback
 }
 
 export function formatStoreDateTime(iso: string, timezone: string) {

@@ -9,13 +9,11 @@ describe '6.0 data migration tasks' do
     load Spree::Core::Engine.root.join('lib', 'tasks', 'typed_adjustments_migration.rake')
     load Spree::Core::Engine.root.join('lib', 'tasks', 'carts_migration.rake')
     load Spree::Core::Engine.root.join('lib', 'tasks', 'products.rake')
-    load Spree::Core::Engine.root.join('lib', 'tasks', 'order_market_backfill.rake')
     load Spree::Core::Engine.root.join('lib', 'tasks', 'store_binding_migration.rake')
     load Spree::Core::Engine.root.join('lib', 'tasks', 'fulfillment_statuses_migration.rake')
     load Spree::Core::Engine.root.join('lib', 'tasks', 'deliveries_migration.rake')
     load Spree::Core::Engine.root.join('lib', 'tasks', 'tax_zones_migration.rake')
     load Spree::Core::Engine.root.join('lib', 'tasks', 'markets.rake')
-    load Spree::Core::Engine.root.join('lib', 'tasks', 'capture_methods_migration.rake')
     load Spree::Core::Engine.root.join('lib', 'tasks', 'typed_stock_movements_migration.rake')
   end
 
@@ -121,6 +119,19 @@ describe '6.0 data migration tasks' do
       run_task('spree:migrate_shipping_to_delivery')
 
       expect(method.reload.read_attribute(:storefront_visible)).to be(true)
+    end
+
+    it 'repoints legacy shipping method calculators at the delivery method' do
+      method = create(:delivery_method)
+      calculator = method.calculator
+      calculator.update_columns(calculable_type: 'Spree::ShippingMethod')
+      expect(method.reload.calculator).to be_nil
+
+      run_task('spree:migrate_shipping_to_delivery')
+      run_task('spree:migrate_shipping_to_delivery')
+
+      expect(calculator.reload.calculable_type).to eq('Spree::DeliveryMethod')
+      expect(method.reload.calculator).to eq(calculator)
     end
 
     it 'is idempotent' do
@@ -425,6 +436,64 @@ describe '6.0 data migration tasks' do
       run_task('spree:migrate_zones_to_delivery_zones')
       expect { run_task('spree:migrate_zones_to_delivery_zones') }.not_to change(Spree::DeliveryZone, :count)
     end
+
+    context 'when the method predates its store binding (store_id nil)' do
+      before { delivery_method.update_columns(store_id: nil, delivery_profile_id: nil) }
+
+      it 'resolves the store to the default store' do
+        run_task('spree:migrate_zones_to_delivery_zones')
+
+        delivery_zone = Spree::DeliveryZone.find_by(name: zone.name)
+        expect(delivery_zone).to be_present
+        expect(delivery_zone.store_id).to eq(Spree::Store.default.id)
+        expect(delivery_method.reload.delivery_zone_id).to eq(delivery_zone.id)
+      end
+    end
+
+    it 'warns about delivery methods left without a zone' do
+      zoneless = create(:delivery_method, name: 'Zoneless method')
+      zoneless.update_columns(delivery_zone_id: nil)
+
+      expect { Rake::Task['spree:migrate_zones_to_delivery_zones'].tap(&:reenable).invoke }.
+        to output(/WARNING: 1 delivery methods have no delivery zone.*Zoneless method/m).to_stdout
+    end
+  end
+
+  describe 'PromoteShippingCategoriesToDeliveryProfiles#copy_first_zone_onto_methods' do
+    let(:connection) { ActiveRecord::Base.connection }
+    let(:migration) do
+      require Spree::Core::Engine.root.join('db/migrate/20260809150001_promote_shipping_categories_to_delivery_profiles.rb').to_s
+      PromoteShippingCategoriesToDeliveryProfiles.new
+    end
+    let(:stored_method) { create(:delivery_method) }
+    let(:unbound_method) { create(:delivery_method).tap { |method| method.update_columns(store_id: nil) } }
+
+    # DDL commits implicitly on MySQL, so the table is created and dropped
+    # outside the per-example transaction.
+    before(:all) do
+      ActiveRecord::Base.connection.create_table :spree_delivery_method_zones, force: true do |t|
+        t.references :delivery_method, null: false
+        t.references :delivery_zone, null: false
+        t.timestamps
+      end
+    end
+
+    after(:all) { ActiveRecord::Base.connection.drop_table :spree_delivery_method_zones, if_exists: true }
+
+    it 'copies the first linked zone onto every method, including those without a store' do
+      now = Time.current
+      [[stored_method.id, 11], [unbound_method.id, 21], [unbound_method.id, 22]].each do |method_id, zone_id|
+        connection.insert(
+          "INSERT INTO spree_delivery_method_zones (delivery_method_id, delivery_zone_id, created_at, updated_at) " \
+          "VALUES (#{method_id}, #{zone_id}, '#{now.to_fs(:db)}', '#{now.to_fs(:db)}')"
+        )
+      end
+
+      silence_stream($stdout) { migration.send(:copy_first_zone_onto_methods) }
+
+      expect(stored_method.reload.delivery_zone_id).to eq(11)
+      expect(unbound_method.reload.delivery_zone_id).to eq(21)
+    end
   end
 
   describe 'spree:migrate_adjustments_to_typed_rows' do
@@ -631,17 +700,6 @@ describe '6.0 data migration tasks' do
     end
   end
 
-  describe 'spree:backfill_order_markets' do
-    it 'assigns the store default market to orders missing one' do
-      order = create(:order, store: store)
-      order.update_columns(market_id: nil)
-
-      run_task('spree:backfill_order_markets')
-
-      expect(order.reload.market_id).to eq(store.default_market.id)
-    end
-  end
-
   describe 'spree:product_types:backfill' do
     it 'assigns store-less product types to the default store' do
       product_type = Spree::ProductType.create!(name: "Orphan #{Time.current.to_f}")
@@ -775,37 +833,6 @@ describe '6.0 data migration tasks' do
       run_task('spree:migrate_deliveries')
 
       expect(untracked.reload.deliveries).to be_empty
-    end
-  end
-
-  describe 'spree:migrate_capture_methods' do
-    it 'converts capture-on-authorization into charging at checkout' do
-      payment_method = create(:payment_method, store: store)
-      payment_method.update_columns(auto_capture: true, capture_method: nil)
-
-      run_task('spree:migrate_capture_methods')
-
-      expect(payment_method.reload.capture_method).to eq('checkout')
-    end
-
-    # The boolean only recorded "not at checkout"; it could not say whether
-    # dispatch or staff was meant to charge, so the store keeps deciding.
-    it 'leaves a method that did not capture on authorization inheriting' do
-      payment_method = create(:payment_method, store: store)
-      payment_method.update_columns(auto_capture: false, capture_method: nil)
-
-      run_task('spree:migrate_capture_methods')
-
-      expect(payment_method.reload.capture_method).to be_nil
-    end
-
-    it 'never overwrites a method that already has a capture method' do
-      payment_method = create(:payment_method, store: store)
-      payment_method.update_columns(auto_capture: true, capture_method: 'manual')
-
-      run_task('spree:migrate_capture_methods')
-
-      expect(payment_method.reload.capture_method).to eq('manual')
     end
   end
 

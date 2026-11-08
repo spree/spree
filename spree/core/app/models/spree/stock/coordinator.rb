@@ -22,17 +22,52 @@ module Spree
       end
 
       def packages
-        packages = build_packages
-        packages = prioritize_packages(packages)
-        packages = estimate_packages(packages)
+        estimate_packages(allocated_packages)
       end
 
-      def build_packages(packages = [])
-        stock_locations_with_requested_variants.each do |stock_location|
+      # Where each unit comes from, without quoting a rate, so a caller that
+      # only needs the origins — a checkout hold — never costs a carrier request.
+      #
+      # @param stock_locations [Array<Spree::StockLocation>] candidate origins, preferred first
+      # @return [Array<Spree::Stock::Package>]
+      def allocated_packages(stock_locations = candidate_stock_locations)
+        prioritize_packages(build_packages(stock_locations: stock_locations))
+      end
+
+      # Whether any delivery method can carry the package to the order's
+      # address, by the rule allocation ranked origins with, so no rate is requested.
+      #
+      # @param package [Spree::Stock::Package]
+      # @return [Boolean]
+      def deliverable?(package)
+        estimator.deliverable?(package)
+      end
+
+      # @param packages [Array<Spree::Stock::Package>]
+      # @return [Array<Spree::Stock::Package>] the same packages, with their delivery rates
+      def estimate_packages(packages)
+        packages.each do |package|
+          package.delivery_rates = estimator.delivery_rates(package)
+        end
+        packages
+      end
+
+      # Active locations stocking any requested variant, in database order.
+      #
+      # @return [Array<Spree::StockLocation>]
+      def candidate_stock_locations
+        order.store.stock_locations.active.joins(:stock_levels)
+             .where(Spree::StockLevel.table_name => { variant_id: requested_variant_ids }).distinct.to_a
+      end
+
+      def build_packages(packages = [], stock_locations: candidate_stock_locations)
+        stock_levels = Packer.stock_levels_by_location(stock_locations, requested_variant_ids)
+
+        stock_locations.each do |stock_location|
           units = allocatable_units_for(stock_location)
           next if units.empty?
 
-          packer = build_packer(stock_location, units)
+          packer = build_packer(stock_location, units, stock_levels: stock_levels.fetch(stock_location.id, {}))
           packages += packer.packages
         end
 
@@ -40,11 +75,6 @@ module Spree
       end
 
       private
-
-      def stock_locations_with_requested_variants
-        order.store.stock_locations.active.joins(:stock_levels).
-          where(Spree::StockLevel.table_name => { variant_id: requested_variant_ids }).distinct
-      end
 
       # An item may only be allocated from locations its delivery profile
       # covers — a profile narrowed to the cold-storage warehouse never packs
@@ -101,21 +131,14 @@ module Spree
         prioritizer.prioritized_packages
       end
 
-      def estimate_packages(packages)
-        packages.each do |package|
-          package.delivery_rates = estimator.delivery_rates(package)
-        end
-        packages
-      end
-
       # Shared between prioritization (which origins can deliver at all) and
       # the rate refresh, so both answer with the same eligibility rules.
       def estimator
         @estimator ||= Estimator.new(order)
       end
 
-      def build_packer(stock_location, inventory_units)
-        Packer.new(stock_location, inventory_units, splitters(stock_location), owner: order)
+      def build_packer(stock_location, inventory_units, stock_levels: nil)
+        Packer.new(stock_location, inventory_units, splitters(stock_location), owner: order, stock_levels: stock_levels)
       end
 
       def splitters(_stock_location)

@@ -57,7 +57,7 @@ export type TypedCommissionRule = Narrowed<CommissionRule, CommissionRulePrefere
 export type DeliveryCalculatorDigitalDeliveryPreferences = {
   amounts: Record<string, string>
   /** An amount, as an exact decimal string. */
-  amount: string
+  amount: string | null
   /** Format: `currency`. */
   currency: string
 }
@@ -71,7 +71,7 @@ export type DeliveryCalculatorFlatPercentItemTotalPreferences = {
 export type DeliveryCalculatorFlatRatePreferences = {
   amounts: Record<string, string>
   /** An amount, as an exact decimal string. */
-  amount: string
+  amount: string | null
   /** Format: `currency`. */
   currency: string
 }
@@ -91,7 +91,7 @@ export type DeliveryCalculatorFlexiRatePreferences = {
 export type DeliveryCalculatorPerItemPreferences = {
   amounts: Record<string, string>
   /** An amount, as an exact decimal string. */
-  amount: string
+  amount: string | null
   /** Format: `currency`. */
   currency: string
 }

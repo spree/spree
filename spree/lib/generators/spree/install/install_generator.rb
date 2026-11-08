@@ -1,7 +1,4 @@
 require 'rails/generators'
-require 'highline/import'
-require 'bundler'
-require 'bundler/cli'
 require 'active_support/core_ext/string/indent'
 require 'spree/core'
 
@@ -15,8 +12,6 @@ module Spree
     class_option :admin_user_class, type: :string
     class_option :admin_email, type: :string
     class_option :admin_password, type: :string
-    class_option :enforce_available_locales, type: :boolean, default: nil
-    class_option :authentication, type: :string, default: nil
 
     def self.source_paths
       paths = superclass.source_paths
@@ -28,7 +23,6 @@ module Spree
       @run_migrations = options[:migrate]
       @load_seed_data = options[:seed]
       @load_sample_data = options[:sample]
-      @authentication = options[:authentication]
 
       unless @run_migrations
         @load_seed_data = false
@@ -38,10 +32,6 @@ module Spree
 
     def add_files
       template 'config/initializers/spree.rb', 'config/initializers/spree.rb'
-    end
-
-    def install_authentication
-      generate 'spree:authentication:dummy' if @authentication == 'dummy'
     end
 
     def configure_application
@@ -54,13 +44,6 @@ module Spree
           end
         end
       APP
-
-      unless options[:enforce_available_locales].nil?
-        application <<-APP.strip_heredoc.indent!(4)
-          # Prevent this deprecation message: https://github.com/svenfuchs/i18n/commit/3b6e56e
-          I18n.enforce_available_locales = #{options[:enforce_available_locales]}
-        APP
-      end
     end
 
     def include_seed_data
@@ -91,7 +74,6 @@ module Spree
       if @load_seed_data
         say_status :loading, 'seed data'
         rake_options = []
-        rake_options << 'AUTO_ACCEPT=1' if options[:auto_accept]
         rake_options << "ADMIN_EMAIL=#{options[:admin_email]}" if options[:admin_email]
         rake_options << "ADMIN_PASSWORD=#{options[:admin_password]}" if options[:admin_password]
 
@@ -126,14 +108,6 @@ module Spree
       insert_into_file(File.join('config', 'routes.rb'),
                        after: "Rails.application.routes.draw do\n") do
         <<-ROUTES.strip_heredoc.indent!(2)
-          # This line mounts Spree's routes at the root of your application.
-          # This means, any requests to URLs such as /products, will go to
-          # Spree::ProductsController.
-          # If you would like to change where this engine is mounted, simply change the
-          # :at option to something different.
-          #
-          # We ask that you don't use the :as option here, as Spree relies on it being
-          # the default of "spree".
           mount Spree::Core::Engine, at: '/'
         ROUTES
       end

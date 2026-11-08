@@ -6,6 +6,8 @@ import {
   login,
   openRowMenu,
   rowButton,
+  saveCustomFieldOnCard,
+  withCustomFieldDefinition,
 } from './helpers'
 
 const COMPANIES_PATH = (storeId: string) => `/${storeId}/companies`
@@ -28,6 +30,26 @@ async function createCompany(page: Page, storeId: string, name: string) {
 
   await expect(page).toHaveURL(/\/companies\/[a-z]+_/, { timeout: 15_000 })
   await expect(page.getByRole('heading', { name })).toBeVisible()
+}
+
+/** Adds an address to the open company's address book through its sheet. */
+async function addCompanyAddress(page: Page, label: string, address1: string) {
+  await card(page, /^address book/i)
+    .getByRole('button', { name: /add address/i })
+    .click()
+  await expect(page.getByRole('heading', { name: /^new address$/i })).toBeVisible()
+  await fillAddressForm(page, {
+    label,
+    address1,
+    city: 'Los Angeles',
+    postalCode: '90001',
+    // Country starts at the store's own, the United States.
+    state: 'California',
+  })
+  await page
+    .getByRole('dialog')
+    .getByRole('button', { name: /^save$/i })
+    .click()
 }
 
 test.describe('companies', () => {
@@ -141,28 +163,75 @@ test.describe('companies', () => {
     await expect(addressBook.getByText('1 Test Street')).toHaveCount(0)
   })
 
-  test('adds an address to the address book', async ({ page }) => {
+  test('adds, edits, promotes to default and deletes addresses', async ({ page }) => {
     const creds = await login(page)
     await createCompany(page, creds.store_id, `E2E Depots ${Date.now()}`)
 
     const addressBook = card(page, /^address book/i)
     await expect(addressBook.getByText(/no addresses yet/i)).toBeVisible()
-    await addressBook.getByRole('button', { name: /add address/i }).click()
-    await expect(page.getByRole('heading', { name: /^new address$/i })).toBeVisible()
-    await fillAddressForm(page, {
-      label: 'Main warehouse',
-      address1: '400 Dock Rd',
-      city: 'Los Angeles',
-      postalCode: '90001',
-      // Country starts at the store's own, the United States.
-      state: 'California',
-    })
+    await addCompanyAddress(page, 'Main warehouse', '400 Dock Rd')
+    await expect(addressBook.getByText('400 Dock Rd')).toBeVisible({ timeout: 15_000 })
+
+    await addressBook.getByRole('button', { name: /open actions/i }).click()
+    await page.getByRole('menuitem', { name: /^edit$/i }).click()
+    await expect(page.getByRole('heading', { name: /^edit address$/i })).toBeVisible()
+    await fillAddressForm(page, { label: 'North warehouse' })
     await page
       .getByRole('dialog')
       .getByRole('button', { name: /^save$/i })
       .click()
+    await expect(addressBook.getByText('North warehouse')).toBeVisible({ timeout: 15_000 })
 
-    await expect(addressBook.getByText('400 Dock Rd')).toBeVisible({ timeout: 15_000 })
+    // A new address is saved as both defaults, so adding a second takes them
+    // over and leaves the first to be promoted back.
+    await addCompanyAddress(page, 'Dock 2', '500 Pier Ave')
+    const first = addressBook.locator('[data-slot="item"]').filter({ hasText: '400 Dock Rd' })
+    const second = addressBook.locator('[data-slot="item"]').filter({ hasText: '500 Pier Ave' })
+    await expect(second.getByText(/^default shipping$/i)).toBeVisible({ timeout: 15_000 })
+    await expect(first.getByText(/^default shipping$/i)).toHaveCount(0)
+    await first.getByRole('button', { name: /open actions/i }).click()
+    await page.getByRole('menuitem', { name: /set as default shipping/i }).click()
+    await expect(first.getByText(/^default shipping$/i)).toBeVisible({ timeout: 15_000 })
+    await expect(second.getByText(/^default shipping$/i)).toHaveCount(0)
+
+    await second.getByRole('button', { name: /open actions/i }).click()
+    await page.getByRole('menuitem', { name: /^delete$/i }).click()
+    await expect(page.getByRole('heading', { name: /delete this address\?/i })).toBeVisible()
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: /^delete$/i })
+      .click()
+    await expect(addressBook.getByText('500 Pier Ave')).toHaveCount(0, { timeout: 15_000 })
+    await expect(addressBook.getByText('400 Dock Rd')).toBeVisible()
+  })
+
+  // A division ships to the sites it inherits, but they stay its parent's to
+  // change: the row names where it comes from and offers no actions.
+  test("shows a parent's address on a division as inherited and read-only", async ({ page }) => {
+    const creds = await login(page)
+    const name = `E2E Parent ${Date.now()}`
+    await createCompany(page, creds.store_id, name)
+    await addCompanyAddress(page, 'Headquarters', '1 Main St')
+    await expect(card(page, /^address book/i).getByText('1 Main St')).toBeVisible({
+      timeout: 15_000,
+    })
+
+    const subUnits = card(page, /sub-units/i)
+    await subUnits.getByRole('button', { name: /add sub-unit/i }).click()
+    await page.getByRole('dialog').locator('#sub-unit-name').fill(`${name} West`)
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: /^create$/i })
+      .click()
+    await subUnits.getByRole('link', { name: new RegExp(`${name} West`) }).click()
+    await expect(page.getByRole('heading', { name: `${name} West` })).toBeVisible({
+      timeout: 15_000,
+    })
+
+    const addressBook = card(page, /^address book/i)
+    await expect(addressBook.getByText('1 Main St')).toBeVisible({ timeout: 15_000 })
+    await expect(addressBook.getByText(`Inherited from ${name}`)).toBeVisible()
+    await expect(addressBook.getByRole('button', { name: /open actions/i })).toHaveCount(0)
   })
 
   // The document goes to private storage: a PDF is refused by the public
@@ -279,5 +348,13 @@ test.describe('companies', () => {
       .click()
 
     await expect(rowButton(page, name)).toHaveCount(0, { timeout: 15_000 })
+  })
+
+  test('records a custom field on the company', async ({ page }) => {
+    const creds = await login(page)
+    await withCustomFieldDefinition(page, creds, 'company', async (label) => {
+      await createCompany(page, creds.store_id, `E2E Custom Field Co ${Date.now()}`)
+      await saveCustomFieldOnCard(page, label, 'Key account')
+    })
   })
 })

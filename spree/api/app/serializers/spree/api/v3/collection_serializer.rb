@@ -6,7 +6,7 @@ module Spree
       # back-office state exposed only by the Admin serializer.
       class CollectionSerializer < BaseSerializer
         typelize name: :string, permalink: :string, position: :number,
-                 sort_order: :string,
+                 sort_order: [:string, enum: Spree::Collection::SORT_ORDERS, enum_type_name: 'CollectionSortOrder'],
                  meta_title: [:string, nullable: true], meta_description: [:string, nullable: true], meta_keywords: [:string, nullable: true],
                  description: :string, description_html: :string,
                  image_url: [:string, nullable: true], square_image_url: [:string, nullable: true],
@@ -29,10 +29,7 @@ module Spree
           image_url_for(collection.square_image)
         end
 
-        many :storefront_custom_fields,
-             key: :custom_fields,
-             resource: proc { Spree.api.custom_field_serializer },
-             if: proc { expand?('custom_fields') }
+        expandable_custom_fields
       end
     end
   end

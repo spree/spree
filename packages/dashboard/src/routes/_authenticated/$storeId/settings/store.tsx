@@ -1,6 +1,18 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { SpreeError, type Store, type StoreDataSourceProvider } from '@spree/admin-sdk'
 import {
+  CAPTURE_METHODS,
+  DOCUMENT_NUMBER_FORMATS,
+  type LocaleCode,
+  PROVIDER_FAILURE_POLICIES,
+  STOREFRONT_ACCESSES,
+  TIME_ZONES,
+  type TimeZone,
+  UNIT_SYSTEM_WEIGHT_UNITS,
+  UNIT_SYSTEMS,
+  type UnitSystem,
+} from '@spree/core'
+import {
   extensionFormValues,
   extensionSubmitValues,
   mapSpreeErrorsToForm,
@@ -38,11 +50,12 @@ import {
   SelectValue,
   Skeleton,
   Switch,
+  Textarea,
   toastManager,
   useFormSubmitShortcut,
 } from '@spree/dashboard-ui'
 import { createFileRoute } from '@tanstack/react-router'
-import { useCallback, useEffect, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
 import {
   type Control,
   Controller,
@@ -54,62 +67,57 @@ import {
 import { useTranslation } from 'react-i18next'
 import { ChoiceCardPicker } from '../../../../components/spree/choice-card-picker'
 import {
+  DraftCustomFieldsCard,
+  useCustomFieldsDraft,
+} from '../../../../components/spree/custom-fields/custom-fields-inline'
+import { ResourceTranslationsCard } from '../../../../components/spree/translations/resource-translations-card'
+import {
   useStoreDataSources,
   useStoreSettings,
   useUpdateStoreSettings,
 } from '../../../../hooks/use-store-settings'
 import { getAvailableUiLocales } from '../../../../i18n-setup'
 import {
-  CAPTURE_METHODS,
-  DOCUMENT_NUMBER_FORMATS,
   INTERNAL_PROVIDER_KEY,
-  PROVIDER_FAILURE_POLICIES,
-  STOREFRONT_ACCESS_LEVELS,
   type StoreSettingsFormValues,
   storeSettingsFormSchema,
-  UNIT_SYSTEMS,
-  WEIGHT_UNITS,
 } from '../../../../schemas/store'
 
 export const Route = createFileRoute('/_authenticated/$storeId/settings/store')({
   component: StoreSettingsPage,
 })
 
+const SEO_TRANSLATABLE_FIELDS = ['seo_title', 'meta_description'] as const
+
 const PRICING_PROVIDER_DOCS_URL = 'https://spreecommerce.org/docs/developer/providers/pim'
 const INVENTORY_PROVIDER_DOCS_URL = 'https://spreecommerce.org/docs/developer/providers/erp'
 
-const TIMEZONES: string[] = (() => {
+// Browsers list zones under their own, sometimes older, names (`Asia/Calcutta`
+// for the `Asia/Kolkata` a store is saved with) and leave out `UTC`, the store
+// default, so Spree's suggestions are always merged in.
+const TIMEZONES: TimeZone[] = (() => {
+  let browserZones: string[] = []
   try {
-    // Browsers list only canonical zones, which leaves out `UTC` — the store's
-    // default, and a choice a merchant must be able to return to.
-    const zones = Intl.supportedValuesOf('timeZone')
-    return zones.includes('UTC') ? zones : ['UTC', ...zones]
+    browserZones = Intl.supportedValuesOf('timeZone')
   } catch {
-    // Fallback for older browsers — a small representative set.
-    return [
-      'UTC',
-      'America/New_York',
-      'America/Chicago',
-      'America/Denver',
-      'America/Los_Angeles',
-      'Europe/London',
-      'Europe/Paris',
-      'Europe/Berlin',
-      'Asia/Tokyo',
-      'Australia/Sydney',
-    ]
+    // Older browsers cannot list zones; Spree's suggestions stand alone.
   }
+  const zones = new Set<string>([...TIME_ZONES, ...browserZones])
+  zones.delete('UTC')
+  return ['UTC', ...[...zones].sort()]
 })()
 
 function storeToFormValues(store: Store): StoreSettingsFormValues {
   return {
     name: store.name,
+    seo_title: store.seo_title ?? '',
+    meta_description: store.meta_description ?? '',
     admin_locale: store.admin_locale ?? '',
     timezone: store.timezone,
-    unit_system: (store.unit_system as 'metric' | 'imperial') ?? 'metric',
+    unit_system: (store.unit_system as UnitSystem) ?? 'metric',
     weight_unit: store.weight_unit,
     storefront_access:
-      (store.storefront_access as (typeof STOREFRONT_ACCESS_LEVELS)[number]) ?? 'public',
+      (store.storefront_access as (typeof STOREFRONT_ACCESSES)[number]) ?? 'public',
     guest_checkout: store.guest_checkout ?? true,
     always_include_confirm_step: store.always_include_confirm_step ?? false,
     company_field_enabled: store.company_field_enabled ?? false,
@@ -179,12 +187,19 @@ function StoreSettingsForm({ store }: { store: Store }) {
   const updateMutation = useUpdateStoreSettings()
   const switchAdminLocale = useSwitchAdminLocale()
   const { data: dataSources } = useStoreDataSources()
+  const customFields = useCustomFieldsDraft('store', store.id)
 
   const form = useForm<StoreSettingsFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(storeSettingsFormSchema) as any,
     defaultValues: { ...storeToFormValues(store), ...extensionFormValues('store', store) },
   })
+  // Read during render: React Hook Form only tracks `isDirty` once something
+  // has read it, and the header's Save button reads its own copy.
+  const storeDirty = form.formState.isDirty
+  // A language change saved with the store but held back by a failed custom
+  // field save. The retry no longer sees it against the refreshed store.
+  const pendingLocaleSwitch = useRef(false)
 
   // Shows the merchant the shape their next order number will take. The
   // sequential preview uses the configured starting value, which is only
@@ -210,7 +225,7 @@ function StoreSettingsForm({ store }: { store: Store }) {
   // that system so the form never holds an inconsistent pair.
   const unitSystem = form.watch('unit_system')
   useEffect(() => {
-    const validUnits = WEIGHT_UNITS[unitSystem] ?? []
+    const validUnits = UNIT_SYSTEM_WEIGHT_UNITS[unitSystem] ?? []
     const current = form.getValues('weight_unit')
     if (current && !validUnits.includes(current)) {
       form.setValue('weight_unit', validUnits[0] ?? '', { shouldDirty: true })
@@ -223,49 +238,58 @@ function StoreSettingsForm({ store }: { store: Store }) {
     // Select via Controller doesn't reliably populate). Saving unrelated fields
     // (name, timezone, units) must not touch the admin's UI language.
     const code = values.admin_locale
-    const localeChanged = (code ?? '') !== (store.admin_locale ?? '')
+    const localeChanged = (code ?? '') !== (store.admin_locale ?? '') || pendingLocaleSwitch.current
     // Extension fields come from live form state — the Zod parse behind
     // `values` strips keys the first-party schema doesn't know.
     const extensionValues = extensionSubmitValues('store', form)
     try {
-      await updateMutation.mutateAsync({
-        name: values.name,
-        admin_locale: values.admin_locale || undefined,
-        timezone: values.timezone,
-        unit_system: values.unit_system,
-        weight_unit: values.weight_unit,
-        storefront_access: values.storefront_access,
-        guest_checkout: values.guest_checkout,
-        always_include_confirm_step: values.always_include_confirm_step,
-        company_field_enabled: values.company_field_enabled,
-        address_requires_phone: values.address_requires_phone,
-        capture_method: values.capture_method,
-        pricing_provider: values.pricing_provider,
-        inventory_provider: values.inventory_provider,
-        pricing_provider_failure_policy: values.pricing_provider_failure_policy,
-        inventory_provider_failure_policy: values.inventory_provider_failure_policy,
-        tax_using_ship_address: values.tax_using_ship_address,
-        track_inventory_levels: values.track_inventory_levels,
-        stock_reservations_enabled: values.stock_reservations_enabled,
-        low_stock_threshold: values.low_stock_threshold,
-        track_price_history: values.track_price_history,
-        show_products_without_price: values.show_products_without_price,
-        disable_sku_validation: values.disable_sku_validation,
-        document_number_format: values.document_number_format,
-        order_number_prefix: values.order_number_prefix,
-        order_number_suffix: values.order_number_suffix,
-        order_number_sequence_start: values.order_number_sequence_start,
-        limit_digital_download_count: values.limit_digital_download_count,
-        digital_asset_authorized_clicks: values.digital_asset_authorized_clicks,
-        limit_digital_download_days: values.limit_digital_download_days,
-        digital_asset_authorized_days: values.digital_asset_authorized_days,
-        ...extensionValues,
-      })
+      if (storeDirty) {
+        await updateMutation.mutateAsync({
+          name: values.name,
+          seo_title: values.seo_title || null,
+          meta_description: values.meta_description || null,
+          admin_locale: (values.admin_locale || null) as LocaleCode | null,
+          timezone: values.timezone,
+          unit_system: values.unit_system,
+          weight_unit: values.weight_unit,
+          storefront_access: values.storefront_access,
+          guest_checkout: values.guest_checkout,
+          always_include_confirm_step: values.always_include_confirm_step,
+          company_field_enabled: values.company_field_enabled,
+          address_requires_phone: values.address_requires_phone,
+          capture_method: values.capture_method,
+          pricing_provider: values.pricing_provider,
+          inventory_provider: values.inventory_provider,
+          pricing_provider_failure_policy: values.pricing_provider_failure_policy,
+          inventory_provider_failure_policy: values.inventory_provider_failure_policy,
+          tax_using_ship_address: values.tax_using_ship_address,
+          track_inventory_levels: values.track_inventory_levels,
+          stock_reservations_enabled: values.stock_reservations_enabled,
+          low_stock_threshold: values.low_stock_threshold,
+          track_price_history: values.track_price_history,
+          show_products_without_price: values.show_products_without_price,
+          disable_sku_validation: values.disable_sku_validation,
+          document_number_format: values.document_number_format,
+          order_number_prefix: values.order_number_prefix,
+          order_number_suffix: values.order_number_suffix,
+          order_number_sequence_start: values.order_number_sequence_start,
+          limit_digital_download_count: values.limit_digital_download_count,
+          digital_asset_authorized_clicks: values.digital_asset_authorized_clicks,
+          limit_digital_download_days: values.limit_digital_download_days,
+          digital_asset_authorized_days: values.digital_asset_authorized_days,
+          ...extensionValues,
+        })
+        // Reset FIRST so the form is no longer dirty — otherwise the language
+        // switch below reloads the page while the `beforeunload` dirty-guard is
+        // still armed, triggering the browser's "unsaved changes" prompt. It
+        // also means a retry after a failed custom field save sends only those.
+        form.reset({ ...values, ...extensionValues })
+        pendingLocaleSwitch.current = localeChanged
+      }
+      // Before the language switch, which may reload the page.
+      if (!(await customFields.save())) return
+      pendingLocaleSwitch.current = false
       toastManager.add({ type: 'success', title: t('admin.messages.store_settings_updated') })
-      // Reset FIRST so the form is no longer dirty — otherwise the language
-      // switch below reloads the page while the `beforeunload` dirty-guard is
-      // still armed, triggering the browser's "unsaved changes" prompt.
-      form.reset({ ...values, ...extensionValues })
       // When the admin language was actually changed:
       //  - a concrete value → adopt it as this admin's own UI language and switch
       //    the dashboard into it immediately (same as the profile / top-bar);
@@ -294,18 +318,23 @@ function StoreSettingsForm({ store }: { store: Store }) {
     }
   }
 
-  useFormSubmitShortcut(form, onSubmit)
+  useFormSubmitShortcut(form, onSubmit, { dirty: customFields.isDirty })
 
-  // Compute the dynamic timezone option list once. `Intl.supportedValuesOf`
-  // can be expensive on some browsers; memo keeps re-renders cheap.
-  const timezoneOptions = useMemo(() => TIMEZONES.map((tz) => ({ value: tz, label: tz })), [])
+  // The saved zone stays selectable even when neither list carries its name.
+  const timezoneOptions = useMemo(
+    () =>
+      (TIMEZONES.includes(store.timezone) ? TIMEZONES : [store.timezone, ...TIMEZONES]).map(
+        (tz) => ({ value: tz, label: tz }),
+      ),
+    [store.timezone],
+  )
   const unitSystemOptions = useMemo(
     () => UNIT_SYSTEMS.map((value) => ({ value, label: t(`admin.store.unit_systems.${value}`) })),
     [t],
   )
   const weightOptions = useMemo(
     () =>
-      (WEIGHT_UNITS[unitSystem] ?? WEIGHT_UNITS.metric).map((value) => ({
+      (UNIT_SYSTEM_WEIGHT_UNITS[unitSystem] ?? UNIT_SYSTEM_WEIGHT_UNITS.metric).map((value) => ({
         value,
         label: t(`admin.store.weight_units.${value}`),
       })),
@@ -313,7 +342,7 @@ function StoreSettingsForm({ store }: { store: Store }) {
   )
   const storefrontAccessOptions = useMemo(
     () =>
-      STOREFRONT_ACCESS_LEVELS.map((value) => ({
+      STOREFRONT_ACCESSES.map((value) => ({
         value,
         label: t(`admin.fields.store.storefront_access.options.${value}`),
       })),
@@ -386,7 +415,16 @@ function StoreSettingsForm({ store }: { store: Store }) {
               docsPath="settings/store-details"
               title={t('admin.pages.settings.store.title')}
               description={t('admin.pages.settings.store.subtitle')}
-              actions={<FormActions form={form} />}
+              actions={
+                <FormActions
+                  form={form}
+                  dirty={customFields.isDirty}
+                  onDiscard={() => {
+                    form.reset()
+                    customFields.reset()
+                  }}
+                />
+              }
             />
           }
           main={
@@ -416,6 +454,49 @@ function StoreSettingsForm({ store }: { store: Store }) {
                   </FieldGroup>
                 </CardContent>
               </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t('admin.store.seo.title')}</CardTitle>
+                  <CardDescription>{t('admin.store.seo.description')}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <FieldGroup>
+                    <Field>
+                      <FieldLabel htmlFor="store-seo-title">
+                        {t('admin.fields.store.seo_title.label')}
+                      </FieldLabel>
+                      <Input
+                        id="store-seo-title"
+                        aria-invalid={!!errors.seo_title || undefined}
+                        {...form.register('seo_title')}
+                      />
+                      <FieldDescription>{t('admin.fields.store.seo_title.help')}</FieldDescription>
+                      <FieldError errors={[errors.seo_title]} />
+                    </Field>
+                    <Field>
+                      <FieldLabel htmlFor="store-meta-description">
+                        {t('admin.fields.store.meta_description.label')}
+                      </FieldLabel>
+                      <Textarea
+                        id="store-meta-description"
+                        rows={3}
+                        aria-invalid={!!errors.meta_description || undefined}
+                        {...form.register('meta_description')}
+                      />
+                      <FieldDescription>
+                        {t('admin.fields.store.meta_description.help')}
+                      </FieldDescription>
+                      <FieldError errors={[errors.meta_description]} />
+                    </Field>
+                  </FieldGroup>
+                </CardContent>
+              </Card>
+              <ResourceTranslationsCard
+                resourceType="store"
+                resourceId={store.id}
+                fields={SEO_TRANSLATABLE_FIELDS}
+              />
 
               <Card>
                 <CardHeader>
@@ -872,6 +953,7 @@ function StoreSettingsForm({ store }: { store: Store }) {
                   </FieldGroup>
                 </CardContent>
               </Card>
+              <DraftCustomFieldsCard draft={customFields} />
               <Slot name="store.form_main" context={{ store }} />
             </>
           }

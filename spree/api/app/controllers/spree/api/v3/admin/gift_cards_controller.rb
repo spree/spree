@@ -59,14 +59,7 @@ module Spree
             return unless params.key?(:customer_id)
             return @customer = nil if params[:customer_id].blank?
 
-            unless holds_permission?('read_customers')
-              return render_error(
-                code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:access_denied],
-                message: 'Missing permission: read_customers',
-                status: :forbidden,
-                details: { required_permission: 'read_customers' }
-              )
-            end
+            return render_missing_permission('read_customers') unless holds_permission?('read_customers')
 
             @customer = Spree.customer_class.
                         accessible_by(current_ability, :show).

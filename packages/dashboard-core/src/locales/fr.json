@@ -1,5 +1,8 @@
 {
   "admin": {
+    "address_select": {
+      "none": "Aucune adresse sélectionnée"
+    },
     "app_name": "Spree Admin",
     "a11y": {
       "breadcrumb": "Fil d'Ariane",
@@ -97,6 +100,7 @@
     "address_book": {
       "default_billing": "Facturation par défaut",
       "default_shipping": "Livraison par défaut",
+      "inherited_from": "Héritée de {{name}}",
       "set_default_billing": "Définir comme adresse de facturation par défaut",
       "set_default_shipping": "Définir comme adresse de livraison par défaut"
     },
@@ -113,6 +117,7 @@
         "title": "Réinitialiser votre mot de passe"
       },
       "login": {
+        "account_deactivated": "Ce compte a été désactivé. Contactez un administrateur pour rétablir l'accès.",
         "account_not_provisioned": "Ce compte n'est pas autorisé pour cette boutique. Demandez une invitation à un administrateur.",
         "divider": "ou",
         "invalid_oauth_state": "Cette session de connexion a expiré ou n'était pas valide. Veuillez recommencer.",
@@ -361,9 +366,12 @@
         "video_title": "Aperçu de la vidéo"
       },
       "metadata_card": {
+        "copy_reference": "Copier la clé {{system}}",
         "empty_description": "Les applications et intégrations remplissent ceci automatiquement.",
         "empty_title": "Aucune métadonnée",
-        "title": "Métadonnées"
+        "external_references": "Références externes",
+        "title": "Métadonnées",
+        "view": "Voir les métadonnées"
       },
       "page_header": {
         "copy_id": "Copier l'ID",
@@ -416,6 +424,7 @@
       },
       "table_toolbar": {
         "add_filter": "Ajouter un filtre",
+        "any_field": "{{field}} : tous",
         "ascending": "Croissant",
         "clear_all": "Tout effacer",
         "columns_tooltip": "Colonnes",
@@ -436,6 +445,8 @@
         "filter_select_placeholder": "Sélectionner…",
         "filter_text_placeholder": "Filtrer…",
         "filter_to_placeholder": "Filtrer sur…",
+        "n_selected": "{{count}} sélectionnés",
+        "only": "Uniquement",
         "operators": {
           "after": "après",
           "before": "avant",
@@ -461,6 +472,7 @@
         "remove_filter": "Supprimer le filtre",
         "reset_to_default": "Réinitialiser",
         "search_placeholder": "Rechercher…",
+        "select_all": "Tout sélectionner",
         "sort_by": "Trier par",
         "sort_tooltip": "Trier",
         "visible_columns": "Colonnes visibles"
@@ -481,7 +493,21 @@
         "discard_confirm": "Abandonner",
         "discard_message": "Tout ce que vous avez saisi sera perdu. Cette action est irréversible.",
         "discard_title": "Abandonner ce brouillon ?"
+      },
+      "product_stock": {
+        "out_of_stock": "En rupture de stock",
+        "on_backorder": "En réapprovisionnement",
+        "in_stock": "{{count}} en stock",
+        "in_stock_short": "En stock",
+        "variants_one": "{{count}} variante",
+        "variants_other": "{{count}} variantes"
       }
+    },
+    "currency_amounts": {
+      "amount_in_currency": "Montant en {{currency}}",
+      "help": "Les devises laissées vides ne se voient pas proposer cette méthode de livraison.",
+      "label": "Montant",
+      "required": "Saisissez un montant dans au moins une devise."
     },
     "custom_field_definitions": {
       "errors": {
@@ -937,6 +963,14 @@
       "order_multiple": {
         "label": "Multiple de commande",
         "help": "Chaque palier au-dessus du minimum. Laisser vide pour toute quantité."
+      },
+      "store": {
+        "digital_asset_authorized_clicks": {
+          "label": "Téléchargements autorisés"
+        },
+        "digital_asset_authorized_days": {
+          "label": "Jours de disponibilité"
+        }
       }
     },
     "image_upload": {
@@ -1016,6 +1050,29 @@
         "purchase_orders": "Bons de commande"
       },
       "wizard_title": "Import"
+    },
+    "invitation": {
+      "accept": "Accepter l’invitation",
+      "accepting": "Acceptation…",
+      "could_not_accept": "Impossible d'accepter l'invitation",
+      "create_and_accept": "Créer un compte et accepter",
+      "create_to_accept": ". Créez votre compte pour accepter.",
+      "generic_error_message": "Une erreur s'est produite. Veuillez réessayer.",
+      "generic_error_title": "Impossible de charger l'invitation",
+      "invited_as_role": " en tant que {{role}}",
+      "invited_by": "{{email}} vous a invité",
+      "invited_generic": "Vous avez été invité",
+      "join_store": "Rejoindre {{store}}",
+      "loading": "Chargement de l'invitation…",
+      "missing_token_message": "Ce lien semble incomplet. Demandez à la personne qui vous a invité de vous le renvoyer.",
+      "missing_token_title": "Jeton d'invitation manquant",
+      "not_found_message": "Cette invitation a expiré, a été révoquée ou a déjà été acceptée. Demandez à la personne qui vous a invité de vous en envoyer une nouvelle.",
+      "not_found_title": "Invitation introuvable",
+      "password_confirmation": "Confirmer le mot de passe",
+      "sign_in_and_accept": "Se connecter et accepter",
+      "sign_in_to_accept": ". Connectez-vous pour accepter.",
+      "signed_in_as_another_account": "Vous êtes connecté en tant que {{email}}, mais cette invitation est destinée à {{invitee}}. Déconnectez-vous pour l’accepter.",
+      "signed_in_as_invitee": ". Vous êtes connecté en tant que {{email}}."
     },
     "media_picker": {
       "confirm": "Ajouter la sélection",
@@ -2034,6 +2091,38 @@
           "description": "Le vendeur doit fournir une adresse pour les retours"
         }
       }
+    },
+    "digital_assets": {
+      "add": "Ajouter",
+      "all_variants": "Toutes les variantes",
+      "columns": {
+        "file": "Fichier",
+        "variant": "Variante",
+        "size": "Taille",
+        "downloads": "Téléchargements",
+        "days": "Jours"
+      },
+      "delete_description": "« {{name}} » ne sera plus téléchargeable par les personnes qui l'ont acheté. Effet immédiat.",
+      "delete_title": "Supprimer ce fichier ?",
+      "description": "Fichiers que les acheteurs peuvent télécharger après l'achat. Associez-les à un produit numérique, ou à un produit physique pour livrer un manuel ou une garantie.",
+      "download": "Télécharger",
+      "drop_hint": "Glissez-déposez des fichiers ici, ou cliquez pour parcourir",
+      "empty": "Aucun fichier pour le moment",
+      "limit_invalid": "Les limites doivent être des entiers supérieurs ou égaux à 1, ou vides.",
+      "limits_help": "Laissez les limites de téléchargements et de jours vides pour utiliser les paramètres de la boutique.",
+      "source": {
+        "upload": "Téléverser un fichier"
+      },
+      "store_default": "{{count}} (par défaut)",
+      "title": "Fichiers numériques",
+      "untitled": "Fichier sans nom",
+      "upload": "Ajouter un fichier",
+      "upload_failed": "Échec du téléversement de {{name}} : {{message}}",
+      "uploading": "Téléversement de {{name}}…",
+      "uploading_short": "Téléversement…",
+      "replace": "Remplacer le fichier",
+      "replace_description": "« {{name}} » est supprimé et tous les acheteurs téléchargent le nouveau fichier depuis leurs liens existants. Effet immédiat.",
+      "replace_title": "Remplacer ce fichier ?"
     }
   }
 }

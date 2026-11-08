@@ -1,4 +1,5 @@
-import type { CurrencyCode, LocaleCode, Market, PaginatedResponse } from '@spree/admin-sdk'
+import type { Market, PaginatedResponse } from '@spree/admin-sdk'
+import type { CurrencyCode, LocaleCode } from '@spree/core'
 import { adminClient } from '../client'
 
 /**

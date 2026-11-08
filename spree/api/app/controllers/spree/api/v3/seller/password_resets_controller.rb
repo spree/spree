@@ -43,7 +43,8 @@ module Spree
             # admin who runs no seller has no panel to be sent to, and mailing
             # them a seller reset link would be an invitation to a session they
             # cannot hold.
-            if user&.seller_member?
+            # A deactivated account is treated as no account: no email is sent.
+            if user&.seller_member? && !account_deactivated?(user)
               user.publish_event(RESET_REQUESTED_EVENT, event_payload(user))
             end
 
@@ -60,6 +61,9 @@ module Spree
             # it can be revoked between the email being sent and the link being
             # opened, and signing in is what the success path does.
             return render_token_invalid unless user&.seller_member?
+            # A link sent before the account was switched off must not change
+            # its password or sign it in.
+            return render_account_deactivated if account_deactivated?(user)
 
             unless user.update(password: params[:password], password_confirmation: params[:password_confirmation])
               return render_errors(user.errors)

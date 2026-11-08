@@ -57,7 +57,7 @@ module Spree
             end
 
             def collection_includes
-              [:stock_locations]
+              [:stock_locations, :delivery_zones, :delivery_methods]
             end
 
             private

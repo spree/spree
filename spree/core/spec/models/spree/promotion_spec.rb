@@ -1030,11 +1030,56 @@ describe Spree::Promotion, type: :model do
       expect(promotion.rules.first.preferred_amount_min).to eq(25)
     end
 
-    it 'ignores rows with an unknown type' do
-      promotion.rules = [{ type: 'NotARealRule' }]
-      promotion.reload
+    # A dropped row answered the write with success and a promotion that
+    # discounted nothing; the refusal names the kinds that would have worked.
+    it 'refuses a row with an unknown type, naming the accepted ones' do
+      expect { promotion.rules = [{ type: 'item_total' }, { type: 'NotARealRule' }] }.
+        to raise_error(Spree::Preferences::InvalidPreferences) { |error|
+          expect(error.failures).to contain_exactly(hash_including(pointer: '/rules/1/type'))
+          expect(error.message).to include('NotARealRule is not a promotion rule offered here', 'item_total', 'first_order')
+        }
+    end
 
-      expect(promotion.rules).to be_empty
+    it 'refuses a row with no type' do
+      expect { promotion.rules = [{ preferences: { amount_min: '25' } }] }.
+        to raise_error(Spree::Preferences::InvalidPreferences, %r{/rules/0/type: is required})
+    end
+
+    # The rollback undoes the database; the rows built before the refusal
+    # must not linger in the loaded association for the next save to write.
+    it 'keeps nothing of a refused list for a later save' do
+      expect { promotion.rules = [{ type: 'item_total' }, { type: 'NotARealRule' }] }.
+        to raise_error(Spree::Preferences::InvalidPreferences)
+
+      promotion.save!
+
+      expect(promotion.reload.rules).to be_empty
+    end
+
+    it 'saves nothing of a new promotion whose rows carry an unknown type' do
+      fresh = build(:promotion, name: 'Unsaved')
+      fresh.rules = [{ type: 'Spree::Promotion::Rules::ItemTotal' }]
+
+      expect { fresh.save! }.to raise_error(Spree::Preferences::InvalidPreferences)
+      expect(Spree::Promotion.where(name: 'Unsaved')).not_to exist
+      # Still pending, so a retried save cannot persist the promotion bare.
+      expect(fresh).to be_pending_rules_or_actions
+    end
+
+    # The rules write before the actions; a refused action rolls them back,
+    # so a retry that corrects only the actions has to bring the rules too.
+    it 'keeps every pending list when a later one is refused' do
+      fresh = build(:promotion, name: 'Retried')
+      fresh.rules = [{ type: 'first_order' }]
+      fresh.actions = [{ type: 'NotARealAction' }]
+
+      expect { fresh.save! }.to raise_error(Spree::Preferences::InvalidPreferences)
+
+      fresh.actions = [{ type: 'free_shipping' }]
+      fresh.save!
+
+      expect(fresh.reload.rules.map { |rule| rule.class.api_type }).to eq(['first_order'])
+      expect(fresh.actions.map { |action| action.class.api_type }).to eq(['free_shipping'])
     end
 
     it 'falls through to AR when assigned PromotionRule instances' do

@@ -217,6 +217,11 @@ module Spree
         registered_subclasses.find { |klass| klass.api_type == shorthand.to_s }
       end
 
+      # @return [Array<String>] the wire name of every registered subclass
+      def api_types
+        registered_subclasses.map(&:api_type)
+      end
+
       # Returns a `[{ type:, label:, description:, schema: }]` array for every
       # registered subclass, sorted by label for stable output. `schema` is
       # the JSON Schema of the subclass's `preferences`, which never carries a

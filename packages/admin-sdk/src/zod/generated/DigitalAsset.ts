@@ -9,7 +9,6 @@ export const DigitalAssetSchema = z.object({
   authorized_clicks: z.number().nullable(),
   authorized_days: z.number().nullable(),
   byte_size: z.number().nullable(),
-  provider_settings: z.record(z.string(), z.unknown()),
   created_at: z.string(),
   updated_at: z.string(),
   provider_type: z.string().nullable(),
@@ -17,6 +16,7 @@ export const DigitalAssetSchema = z.object({
   download_url: z.string().nullable(),
   effective_authorized_clicks: z.number(),
   effective_authorized_days: z.number(),
+  provider_settings: z.record(z.string(), z.unknown()),
 });
 
 export type DigitalAsset = z.infer<typeof DigitalAssetSchema>;

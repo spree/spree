@@ -1,3 +1,4 @@
+import { ORDER_FULFILLMENT_STATUSES, subsetOf } from '@spree/core'
 import i18n from 'i18next'
 import { formatMoney } from './formatters'
 
@@ -85,6 +86,16 @@ function claimedQuantities(fulfillments: GroupableFulfillment[]): Map<string, nu
  * out", so the pages gating order editing share this list.
  */
 export const GONE_STATUSES = ['fulfilled', 'delivered']
+
+/** The order-level fulfillment statuses the order lists filter on. */
+export const FILTERABLE_ORDER_FULFILLMENT_STATUSES = subsetOf(ORDER_FULFILLMENT_STATUSES, [
+  'backorder',
+  'canceled',
+  'partial',
+  'unfulfilled',
+  'fulfilled',
+  'delivered',
+])
 
 export function fulfilledQuantities(fulfillments: GroupableFulfillment[]): Map<string, number> {
   const fulfilled = new Map<string, number>()

@@ -2,6 +2,7 @@
 import { z } from 'zod';
 import { AddressSchema } from './Address';
 import { AppliedPromotionSchema } from './AppliedPromotion';
+import { CustomFieldSchema } from './CustomField';
 import { FeeSchema } from './Fee';
 import { FulfillmentSchema } from './Fulfillment';
 import { GiftCardSchema } from './GiftCard';
@@ -14,6 +15,7 @@ export const OrderSchema = z.object({
   market_id: z.string().nullable(),
   withdrawal_period_ends_at: z.string().nullable(),
   within_withdrawal_period: z.boolean(),
+  shipping_eq_billing_address: z.boolean(),
   cart_id: z.string().nullable(),
   channel_id: z.string().nullable(),
   company_id: z.string().nullable(),
@@ -65,6 +67,7 @@ export const OrderSchema = z.object({
   shipping_address: AddressSchema.nullable(),
   gift_card: GiftCardSchema.nullable(),
   get market() { return MarketSchema.nullable(); },
+  custom_fields: z.array(CustomFieldSchema).optional(),
 });
 
 export type Order = z.infer<typeof OrderSchema>;

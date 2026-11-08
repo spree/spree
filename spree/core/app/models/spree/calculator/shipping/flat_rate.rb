@@ -3,7 +3,9 @@ module Spree
     class FlatRate < ShippingCalculator
       include Spree::Calculator::CurrencyAmounts
 
-      preference :amount, :money, default: 0
+      # Blank once its figure has moved into `amounts`, so the method quotes
+      # nothing outside the hash.
+      preference :amount, :money, default: 0, nullable: true
       # @deprecated Together with the single `amount`, superseded by the
       #   per-currency `amounts` hash; kept as the fallback for its own
       #   currency so upgraded stores quote unchanged.

@@ -1,3 +1,4 @@
+import { STOCK_LOCATION_KINDS } from '@spree/core'
 import { ActiveBadge, ResourceNameCell } from '@spree/dashboard-ui'
 import { WarehouseIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
@@ -35,14 +36,10 @@ defineTable<PanelStockLocation>('stock-locations', {
       filterable: true,
       default: true,
       filterType: 'enum',
-      filterOptions: [
-        { value: 'warehouse', label: i18n.t('admin.stock_locations.kinds.warehouse') },
-        { value: 'store', label: i18n.t('admin.stock_locations.kinds.store') },
-        {
-          value: 'fulfillment_center',
-          label: i18n.t('admin.stock_locations.kinds.fulfillment_center'),
-        },
-      ],
+      filterOptions: STOCK_LOCATION_KINDS.map((kind) => ({
+        value: kind,
+        label: i18n.t(`admin.stock_locations.kinds.${kind}`),
+      })),
       quickFilter: true,
       render: (sl) => {
         const key = `admin.stock_locations.kinds.${sl.kind}`

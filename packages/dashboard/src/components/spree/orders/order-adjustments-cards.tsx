@@ -1,14 +1,21 @@
+import type { Discount, Fee, FeeCreateParams, Order } from '@spree/admin-sdk'
 import {
   compareMoney,
-  type Discount,
-  type Fee,
-  type FeeCreateParams,
+  FEE_KINDS,
+  type FeeKind,
   isDecimalString,
   isZeroMoney,
-  type Order,
   sumMoney,
-} from '@spree/admin-sdk'
-import { adminClient, currencyParts, formatMoney, Money, percentOf } from '@spree/dashboard-core'
+} from '@spree/core'
+import {
+  adminClient,
+  currencyParts,
+  formatMoney,
+  Money,
+  percentOf,
+  useMetadataSheet,
+  ViewMetadataMenuItem,
+} from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -31,6 +38,7 @@ import {
   Field,
   FieldGroup,
   FieldLabel,
+  hasMetadata,
   Input,
   InputGroup,
   InputGroupAddon,
@@ -71,26 +79,30 @@ import {
   showsTaxabilityReason,
   type TaxLineGroup,
 } from '../../../lib/tax-line-groups'
-import { FEE_KINDS, SYSTEM_FEE_KINDS } from '../../../schemas/order'
+import { MANUAL_FEE_KINDS } from '../../../schemas/order'
 
 /** The API accepts any kind string, so unknown values fall back to the raw value. */
 function feeKindLabel(kind: string) {
-  return ([...FEE_KINDS, ...SYSTEM_FEE_KINDS] as readonly string[]).includes(kind)
+  return (FEE_KINDS as readonly string[]).includes(kind)
     ? i18n.t(`admin.orders.detail.adjustment_lines.fee_kind_${kind}`)
     : kind
 }
 
-/** Trailing action cell — renders empty (keeping column width) for undeletable rows. */
-function AdjustmentDeleteCell({
+/** Trailing action cell — renders empty (keeping column width) for rows with no actions. */
+function AdjustmentActionsCell({
+  metadata,
+  onViewMetadata,
   onDelete,
   deleting,
 }: {
+  metadata: Record<string, unknown> | null
+  onViewMetadata: () => void
   onDelete?: () => void
   deleting?: boolean
 }) {
   return (
     <TableCell className="w-10 text-right">
-      {onDelete && (
+      {(onDelete || hasMetadata(metadata)) && (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
@@ -103,10 +115,13 @@ function AdjustmentDeleteCell({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem variant="destructive" onClick={onDelete}>
-              <TrashIcon className="size-4" />
-              {i18n.t('admin.actions.delete')}
-            </DropdownMenuItem>
+            <ViewMetadataMenuItem metadata={metadata} onClick={onViewMetadata} />
+            {onDelete && (
+              <DropdownMenuItem variant="destructive" onClick={onDelete}>
+                <TrashIcon className="size-4" />
+                {i18n.t('admin.actions.delete')}
+              </DropdownMenuItem>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       )}
@@ -207,6 +222,7 @@ export function OrderDiscountsCard({ order }: { order: Order }) {
   const orderId = order.id
   const confirm = useConfirm()
   const [addDiscountOpen, setAddDiscountOpen] = useState(false)
+  const metadataSheet = useMetadataSheet()
 
   const { data: discounts } = useOrderDiscounts(orderId)
   const deleteDiscountMutation = useOrderAdjustmentLinesMutation(orderId, (id: string) =>
@@ -279,7 +295,9 @@ export function OrderDiscountsCard({ order }: { order: Order }) {
                 <TableCell className="text-right tabular-nums">
                   <Money amount={row.amount} currency={order.currency} />
                 </TableCell>
-                <AdjustmentDeleteCell
+                <AdjustmentActionsCell
+                  metadata={row.metadata}
+                  onViewMetadata={() => metadataSheet.show(row.metadata)}
                   onDelete={row.kind === 'promotion' ? undefined : () => handleDeleteDiscount(row)}
                   deleting={deleteDiscountMutation.isPending}
                 />
@@ -290,6 +308,7 @@ export function OrderDiscountsCard({ order }: { order: Order }) {
       )}
 
       <AddDiscountDialog order={order} open={addDiscountOpen} onOpenChange={setAddDiscountOpen} />
+      {metadataSheet.sheet}
     </Card>
   )
 }
@@ -299,6 +318,7 @@ export function FeesCard({ order }: { order: Order }) {
   const orderId = order.id
   const confirm = useConfirm()
   const [addFeeOpen, setAddFeeOpen] = useState(false)
+  const metadataSheet = useMetadataSheet()
 
   const { data: fees } = useOrderFees(orderId)
   const deleteFeeMutation = useOrderAdjustmentLinesMutation(orderId, (id: string) =>
@@ -360,7 +380,9 @@ export function FeesCard({ order }: { order: Order }) {
                 <TableCell className="text-right tabular-nums">
                   <Money amount={row.amount} currency={order.currency} />
                 </TableCell>
-                <AdjustmentDeleteCell
+                <AdjustmentActionsCell
+                  metadata={row.metadata}
+                  onViewMetadata={() => metadataSheet.show(row.metadata)}
                   onDelete={() => handleDeleteFee(row)}
                   deleting={deleteFeeMutation.isPending}
                 />
@@ -371,6 +393,7 @@ export function FeesCard({ order }: { order: Order }) {
       )}
 
       <AddFeeDialog order={order} open={addFeeOpen} onOpenChange={setAddFeeOpen} />
+      {metadataSheet.sheet}
     </Card>
   )
 }
@@ -570,7 +593,7 @@ function AddFeeDialog({
   const { t } = useTranslation()
   const orderId = order.id
   const [target, setTarget] = useState('order')
-  const [kind, setKind] = useState<(typeof FEE_KINDS)[number]>('surcharge')
+  const [kind, setKind] = useState<FeeKind>('surcharge')
 
   const mutation = useOrderAdjustmentLinesMutation(orderId, (params: FeeCreateParams) =>
     adminClient.orders.fees.create(orderId, params),
@@ -581,7 +604,7 @@ function AddFeeDialog({
     ...(order.items ?? []).map((item) => ({ value: item.id, label: item.name ?? item.id })),
   ]
 
-  const kindOptions = FEE_KINDS.map((value) => ({
+  const kindOptions = MANUAL_FEE_KINDS.map((value) => ({
     value,
     label: t(`admin.orders.detail.adjustment_lines.fee_kind_${value}`),
   }))
@@ -643,7 +666,7 @@ function AddFeeDialog({
                   <Select
                     items={kindOptions}
                     value={kind}
-                    onValueChange={(v) => setKind(v as (typeof FEE_KINDS)[number])}
+                    onValueChange={(v) => setKind(v as FeeKind)}
                   >
                     <SelectTrigger>
                       <SelectValue />

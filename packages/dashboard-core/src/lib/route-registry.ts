@@ -183,6 +183,35 @@ export function matchPluginRoute(
   return null
 }
 
+/**
+ * Whether a registry route outranks the file route the router matched for the
+ * same URL, so it renders in that route's place. The router sends
+ * `/sellers/shopify` to `/sellers/$sellerId`, never to the catch-all, which
+ * would leave a plugin page under a first-party section unreachable.
+ *
+ * Uses the router's own ranking: segment by segment, a fixed segment beats a
+ * `$param`. A registry route therefore takes over only an address where it is
+ * more specific, never a first-party page at its own path or through a
+ * pattern like `/sellers/$id`.
+ *
+ * @param pluginPath the registry route's path, relative to `/$storeId`
+ * @param routerPath the matched file route's path, relative to `/$storeId`
+ */
+export function outranksRouterMatch(pluginPath: string, routerPath: string): boolean {
+  const pluginSegments = pathSegments(pluginPath)
+  const routerSegments = pathSegments(routerPath)
+  for (const [index, pluginSegment] of pluginSegments.entries()) {
+    const pluginFixed = !pluginSegment.startsWith('$')
+    const routerFixed = !(routerSegments[index] ?? '$').startsWith('$')
+    if (pluginFixed !== routerFixed) return pluginFixed
+  }
+  return false
+}
+
+function pathSegments(path: string): string[] {
+  return path.split('/').filter(Boolean)
+}
+
 function isStoreRoute(entry: RouteEntry): entry is StoreRouteEntry {
   return entry.scope === undefined || entry.scope === 'store'
 }

@@ -93,12 +93,9 @@ RSpec.shared_examples 'a store credits host' do
         let(:record) { new_record(customer: older_store_credit.customer, total: record_total) }
 
         before do
-          Timecop.scale(3600)
           subject
           record.reload
         end
-
-        after { Timecop.return }
 
         it 'spends the oldest store credit first' do
           older_payment = record.payments.first

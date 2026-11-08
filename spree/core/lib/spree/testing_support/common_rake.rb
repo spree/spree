@@ -3,11 +3,12 @@ require 'generators/spree/dummy_model/dummy_model_generator'
 
 desc 'Generates a dummy app for testing'
 namespace :common do
+  # :authentication is ignored (test apps use the gem-owned auth models); it stays
+  # so extensions passing positional arguments keep working.
   task :test_app, [:authentication, :user_class, :admin_user_class] do |_t, args|
     # Support both Rake::TaskArguments (via invoke) and Hash (via execute)
     # When using execute with a Hash, args IS the hash directly
     defaults = {
-      authentication: 'dummy',
       user_class: 'Spree::Customer',
       admin_user_class: 'Spree::AdminUser',
     }
@@ -45,7 +46,7 @@ namespace :common do
       File.exist?(File.expand_path('../../../../spree.gemspec', __dir__))
     bundle_exec = use_root_gemfile ? "bundle exec --gemfile=#{root_gemfile}" : 'bundle exec'
     puts 'Running Spree install generator...'
-    system("#{bundle_exec} rails g spree:install --force --auto-accept --migrate=false --seed=false --sample=false --user_class=#{args[:user_class]} --admin_user_class=#{args[:admin_user_class]} --authentication=#{args[:authentication]}")
+    system("#{bundle_exec} rails g spree:install --force --auto-accept --migrate=false --seed=false --sample=false --user_class=#{args[:user_class]} --admin_user_class=#{args[:admin_user_class]}")
 
     unless ENV['NO_MIGRATE']
       puts 'Setting up dummy database...'

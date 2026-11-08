@@ -77,6 +77,7 @@ module Spree
 
           owner = token.resource_owner
           return false unless owner.is_a?(Spree.admin_user_class)
+          return false if account_deactivated?(owner)
 
           @current_api_key = nil
           @current_user = owner

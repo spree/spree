@@ -1,3 +1,4 @@
+import type { PackageTypeKind, PickupStockPolicy } from '@spree/core'
 /**
  * The client registry.
  *
@@ -14,7 +15,13 @@
  * promise the seller panel methods its API does not have.
  */
 
-import type { CountryCode, PermissionRule, UploadFileOptions } from '@spree/admin-sdk'
+import type {
+  DigitalAssetProvider,
+  PaginationMeta,
+  PermissionRule,
+  UploadFileOptions,
+} from '@spree/admin-sdk'
+import type { CountryCode, DimensionUnit, WeightUnit } from '@spree/core'
 
 /** What a panel may change on the signed-in person's own account. */
 export interface PanelAccountParams {
@@ -228,6 +235,29 @@ export interface PanelApiClient {
   /** Removing a file already on a product. */
   deleteProductMedia?(productId: string, mediaId: string): Promise<void>
   /**
+   * The downloadable files a digital product delivers to its buyers.
+   *
+   * Registered rather than imported for the same reason as everything else
+   * here: the Digital files card is one component serving both panels.
+   * `providers` is operator-only — a provider is the marketplace's own code
+   * reaching into its internal systems — so a seller's client leaves it out
+   * and the card offers file uploads alone.
+   */
+  digitalAssets?: {
+    list(
+      productId: string,
+      params?: { page?: number; limit?: number },
+    ): Promise<{ data: PanelDigitalAsset[]; meta?: PaginationMeta }>
+    create(productId: string, params: PanelDigitalAssetParams): Promise<PanelDigitalAsset>
+    update(
+      productId: string,
+      id: string,
+      params: PanelDigitalAssetParams,
+    ): Promise<PanelDigitalAsset>
+    delete(productId: string, id: string): Promise<void>
+    providers?(productId: string): Promise<{ data: DigitalAssetProvider[] }>
+  }
+  /**
    * The store-wide media library, for placing a file already uploaded onto
    * another product. Operator-only: a seller sees their own product's files,
    * never the marketplace's library, so their client registers none and the
@@ -332,6 +362,8 @@ export interface PanelPackageType extends PanelNamedRecord {
    * editable.
    */
   editable?: boolean
+  /** Operator-only; the seller panel's serializer leaves it out. */
+  metadata?: Record<string, unknown> | null
   /** Whose packaging this is; null is the marketplace's own. */
   seller_id?: string | null
   seller_name?: string | null
@@ -354,10 +386,10 @@ export interface PanelPackageTypeParams {
   length?: number | null
   width?: number | null
   height?: number | null
-  dimensions_unit?: PanelPackageDimensionUnit | null
+  dimensions_unit?: DimensionUnit | null
   weight?: number | null
   max_weight?: number | null
-  weight_unit?: PanelPackageWeightUnit | null
+  weight_unit?: WeightUnit | null
   default?: boolean
   /**
    * Not nullable: both SDKs take a merge, so clearing a key is sending the
@@ -386,9 +418,12 @@ export interface PanelPackageTypeWrites extends PanelPackageTypeReads {
   delete?(id: string): Promise<void>
 }
 
-export type PanelPackageTypeKind = 'box' | 'envelope' | 'carton' | 'pallet' | 'container'
-export type PanelPackageDimensionUnit = 'mm' | 'cm' | 'in' | 'ft'
-export type PanelPackageWeightUnit = 'g' | 'kg' | 'lb' | 'oz'
+/** @deprecated Use `PackageTypeKind` from `@spree/core`. */
+export type PanelPackageTypeKind = PackageTypeKind
+/** @deprecated Use `DimensionUnit` from `@spree/core`. */
+export type PanelPackageDimensionUnit = DimensionUnit
+/** @deprecated Use `WeightUnit` from `@spree/core`. */
+export type PanelPackageWeightUnit = WeightUnit
 
 /**
  * A new row must say what it is and what to call it — packaging without
@@ -492,6 +527,42 @@ export interface PanelExport {
   filename?: string | null
 }
 
+/**
+ * A downloadable file, as the Digital files card reads it. Structural, like
+ * the other records here: both serializers carry these fields, and only the
+ * operator's adds `provider_settings`.
+ */
+export interface PanelDigitalAsset {
+  id: string
+  variant_id: string | null
+  filename: string | null
+  content_type: string | null
+  byte_size: number | null
+  /** Null means the store's download settings apply. */
+  authorized_clicks: number | null
+  authorized_days: number | null
+  /** The limits in force, after the store-settings fallback. */
+  effective_authorized_clicks: number
+  effective_authorized_days: number
+  provider_type: string | null
+  provider_name: string
+  download_url: string | null
+  provider_settings?: Record<string, unknown>
+}
+
+/**
+ * What either panel writes. The provider fields are the operator's alone; a
+ * seller's API refuses them.
+ */
+export interface PanelDigitalAssetParams {
+  signed_id?: string
+  variant_id?: string
+  authorized_clicks?: number | null
+  authorized_days?: number | null
+  provider_type?: string
+  provider_settings?: Record<string, unknown>
+}
+
 /** A library file, as the picker lists it. */
 export interface PanelMediaRecord {
   id: string
@@ -584,6 +655,8 @@ export interface PanelStockLocation {
   pickup_stock_policy?: string
   pickup_ready_in_minutes?: number | null
   pickup_instructions?: string | null
+  /** Operator-only; the seller panel's serializer leaves it out. */
+  external_references?: Record<string, string>
 }
 
 /**
@@ -598,7 +671,7 @@ export type PanelStockLocationParams = Partial<
    * because plugins register their own, but the pickup policy is a fixed pair
    * the server validates, and both SDKs type it that way.
    */
-  pickup_stock_policy?: 'local' | 'any'
+  pickup_stock_policy?: PickupStockPolicy
 }
 
 /**

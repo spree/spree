@@ -195,7 +195,7 @@ module Spree
           # every seller on the page, so it loads once. Applied to the scope
           # rather than the collection so a single-seller read gets it too.
           def scope_includes
-            [:billing_address, :requirement_submissions, { stock_locations: [] },
+            [:billing_address, :requirement_submissions, :external_references, { stock_locations: [] },
              { store: :seller_requirements, logo_attachment: :blob, cover_photo_attachment: :blob }]
           end
 

@@ -8,8 +8,8 @@ module Spree
                    registration_number: [:string, nullable: true],
                    contact_email: [:string, nullable: true],
                    billing_email: [:string, nullable: true],
-                   tax_remittance: :string,
-                   payouts_schedule_interval: [:string, nullable: true],
+                   tax_remittance: [:string, enum: Spree::Seller::TAX_REMITTANCES, enum_type_name: 'TaxRemittance'],
+                   payouts_schedule_interval: [:string, nullable: true, enum: Spree::Seller::PAYOUT_INTERVALS, enum_type_name: 'PayoutScheduleInterval'],
                    minimum_payout_amount: [:string, nullable: true],
                    holiday_mode_until: [:string, nullable: true],
                    terms_accepted_at: [:string, nullable: true],
@@ -17,7 +17,7 @@ module Spree
                    products_count: :number,
                    default_currency: [:string, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'],
                    supported_currencies: [:string, multi: true, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'],
-                   timezone: [:string, nullable: true]
+                   timezone: [:string, nullable: true, enum: Spree::TimeZones::SUGGESTED, enum_type_name: 'TimeZone']
 
           attributes :timezone,
                      :status, :legal_name, :registration_number,

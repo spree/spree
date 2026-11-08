@@ -76,7 +76,19 @@ module Spree
           def permitted_params
             attrs = params.permit(*permitted_attributes)
             attrs = scope_delivery_profile(attrs)
+            attrs = scope_option_type_ids(attrs)
             scope_category_ids(attrs)
+          end
+
+          # `option_type_ids=` resolves prefixed ids with no store scoping, so a
+          # type could otherwise seed another store's option types onto every
+          # product it is applied to.
+          def scope_option_type_ids(attrs)
+            return attrs if attrs[:option_type_ids].blank?
+
+            option_type_ids = decode_ids(attrs[:option_type_ids], Spree::OptionType)
+            attrs[:option_type_ids] = Spree::OptionType.for_store(current_store).where(id: option_type_ids).pluck(:id)
+            attrs
           end
 
           # The template profile must belong to this store — a cross-store id
@@ -93,7 +105,6 @@ module Spree
           # `category_ids=` resolves prefixed ids with no store scoping, so a
           # type in this store could otherwise be pointed at another store's
           # categories. Mirrors ProductsController#apply_categories.
-          # (OptionType is global — nothing to scope there.)
           def scope_category_ids(attrs)
             return attrs if attrs[:category_ids].blank?
 

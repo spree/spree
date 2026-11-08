@@ -165,7 +165,7 @@ module Spree
           [Spree::Store, Spree::PaymentMethod, Spree::Gateway,
            Spree::DeliveryZone, Spree::DeliveryZoneMember,
            Spree::StockLocation, Spree::DeliveryProfile,
-           Spree::Market, Spree::TaxCategory, Spree::TaxRate, Spree::AllowedOrigin,
+           Spree::Market, Spree::TaxCategory, Spree::TaxRate,
            Spree::RefundReason, Spree::ReturnReason, Spree::ClaimReason,
            Spree::OrderCancellationReason, Spree::TaxExemptionReason, Spree::Channel,
            Spree::OrderRoutingRule, Spree::CustomFieldDefinition, Spree::Policy]
@@ -201,7 +201,19 @@ module Spree
         })
         catalog.register_scope(:integrations, group: :settings, resources: -> { [Spree::Integration] })
 
-        catalog.register_scope(:api_keys, group: :access, resources: -> { [Spree::ApiKey] })
+        # Sits with the other sensitive access grants rather than under
+        # settings: a task can rewrite any data in the install, so out of the
+        # box only the admin role holds it (docs/plans/6.0-maintenance-tasks.md).
+        catalog.register_scope(:maintenance_tasks, group: :access, resources: -> {
+          [Spree::MaintenanceTaskRun, :maintenance_task]
+        })
+
+        # The CORS allowlist is a credential as much as a key is: an origin on
+        # it may call the cookie-authenticated refresh endpoint from a browser
+        # and read back any signed-in admin's access token. So it sits with
+        # API keys rather than settings, under a scope a delegated OAuth token
+        # never holds.
+        catalog.register_scope(:api_keys, group: :access, resources: -> { [Spree::ApiKey, Spree::AllowedOrigin] })
         # Connecting an AI agent hands a third party a standing credential to
         # the store, so it is its own permission rather than part of settings
         # — a merchandiser who may edit a delivery zone is not thereby someone

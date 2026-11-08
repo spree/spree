@@ -2,9 +2,10 @@
 
 import type * as Filter from '@spree/sdk-core'
 
-export type AddressFields = Filter.TextFilters<'address1' | 'address2' | 'city' | 'company' | 'country_code' | 'first_name' | 'last_name' | 'phone' | 'postal_code' | 'state_code'>
+export type AddressFields = Filter.TextFilters<'address1' | 'address2' | 'city' | 'company' | 'first_name' | 'last_name' | 'phone' | 'postal_code' | 'state_code'>
   & Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'id'>
+  & Filter.CodeFilters<'country_code', Filter.CountryCode>
 
 export type CategoryFields = Filter.BooleanFilters<'automatic'>
   & Filter.RangeFilters<'children_count' | 'depth' | 'position' | 'products_count', number>
@@ -39,7 +40,7 @@ export type DataRequestFields = Filter.RangeFilters<'completed_at' | 'created_at
   & Filter.TextFilters<'email' | 'number'>
   & Filter.IdFilters<'id'>
   & Filter.EnumFilters<'kind', 'access' | 'erasure'>
-  & Filter.EnumFilters<'status', 'pending' | 'processing' | 'completed' | 'failed'>
+  & Filter.EnumFilters<'status', 'awaiting_confirmation' | 'pending' | 'processing' | 'completed' | 'failed' | 'lapsed'>
 
 export type DeliveryMethodFields = Filter.BooleanFilters<'available_to_sellers' | 'storefront_visible'>
   & Filter.RangeFilters<'created_at' | 'updated_at'>
@@ -49,17 +50,20 @@ export type DeliveryMethodFields = Filter.BooleanFilters<'available_to_sellers' 
 export type DigitalLinkFields = Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'id'>
 
-export type GiftCardFields = Filter.TextFilters<'code' | 'currency'>
+export type GiftCardFields = Filter.TextFilters<'code'>
   & Filter.RangeFilters<'created_at' | 'expires_at' | 'updated_at'>
   & Filter.IdFilters<'created_by_id' | 'customer_id' | 'gift_card_batch_id' | 'id'>
+  & Filter.CodeFilters<'currency', Filter.CurrencyCode>
   & Filter.EnumFilters<'state', 'active' | 'partially_redeemed' | 'redeemed' | 'canceled'>
   & Filter.EnumFilters<'status', 'active' | 'partially_redeemed' | 'redeemed' | 'canceled'>
 
-export type OrderFields = Filter.IdFilters<'channel_id' | 'customer_id' | 'id' | 'order_group_id' | 'seller_id'>
+export type OrderFields = Filter.IdFilters<'channel_id' | 'customer_id' | 'id' | 'market_id' | 'order_group_id' | 'seller_id'>
   & Filter.RangeFilters<'completed_at' | 'created_at' | 'delivery_total' | 'item_total' | 'total' | 'updated_at'>
-  & Filter.TextFilters<'currency' | 'number' | 'po_number'>
+  & Filter.TextFilters<'number' | 'po_number'>
   & Filter.RangeFilters<'total_quantity', number>
+  & Filter.CodeFilters<'currency', Filter.CurrencyCode>
   & Filter.EnumFilters<'fulfillment_status', 'backorder' | 'canceled' | 'partial' | 'unfulfilled' | 'fulfilled' | 'delivered' | 'pending' | 'ready' | 'shipped'>
+  & Filter.CodeFilters<'locale', Filter.LocaleCode>
   & Filter.EnumFilters<'payment_state', 'none' | 'authorized' | 'partially_paid' | 'paid' | 'partially_refunded' | 'refunded' | 'overcharged' | 'voided' | 'balance_due' | 'credit_owed' | 'failed' | 'void'>
   & Filter.EnumFilters<'payment_status', 'none' | 'authorized' | 'partially_paid' | 'paid' | 'partially_refunded' | 'refunded' | 'overcharged' | 'voided' | 'balance_due' | 'credit_owed' | 'failed' | 'void'>
   & Filter.EnumFilters<'shipment_state', 'backorder' | 'canceled' | 'partial' | 'unfulfilled' | 'fulfilled' | 'delivered' | 'pending' | 'ready' | 'shipped'>
@@ -84,8 +88,8 @@ export type SellerFields = Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.TextFilters<'name'>
 
 export type StoreCreditFields = Filter.RangeFilters<'amount' | 'created_at' | 'updated_at'>
-  & Filter.TextFilters<'currency'>
   & Filter.IdFilters<'customer_id' | 'id'>
+  & Filter.CodeFilters<'currency', Filter.CurrencyCode>
 
 export type TagFields = Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'id'>
@@ -363,7 +367,7 @@ export type OrderFilters = OrderFields
   & Filter.OrFilters
   & OrderFilterExtensions
 
-export type OrderSort = Filter.SortKey<'channel_id' | 'completed_at' | 'created_at' | 'currency' | 'customer_id' | 'delivery_total' | 'fulfillment_status' | 'id' | 'item_total' | 'number' | 'order_group_id' | 'payment_state' | 'payment_status' | 'po_number' | 'seller_id' | 'shipment_state' | 'status' | 'total' | 'total_quantity' | 'updated_at' | (keyof OrderSortExtensions & string)>
+export type OrderSort = Filter.SortKey<'channel_id' | 'completed_at' | 'created_at' | 'currency' | 'customer_id' | 'delivery_total' | 'fulfillment_status' | 'id' | 'item_total' | 'locale' | 'market_id' | 'number' | 'order_group_id' | 'payment_state' | 'payment_status' | 'po_number' | 'seller_id' | 'shipment_state' | 'status' | 'total' | 'total_quantity' | 'updated_at' | (keyof OrderSortExtensions & string)>
 
 /**
  * Filters your app adds to Policy lists. Generate them with `spree filters types`,

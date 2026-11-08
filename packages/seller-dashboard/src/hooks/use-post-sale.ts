@@ -1,3 +1,4 @@
+import type { ClaimResolution } from '@spree/core'
 import { useResourceKey, useResourceKeyBuilder } from '@spree/dashboard-core'
 import { toastManager } from '@spree/dashboard-ui'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -182,7 +183,7 @@ export function useClaimActions(orderId: string) {
       replacementLineItemIds,
     }: {
       claimId: string
-      resolution: 'refund' | 'replacement' | 'refund_and_replacement'
+      resolution: ClaimResolution
       refundMethod?: 'original_payment' | 'store_credit'
       amount?: string
       replacementLineItemIds?: string[]

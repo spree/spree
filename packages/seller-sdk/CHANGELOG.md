@@ -1,5 +1,53 @@
 # @spree/seller-sdk
 
+## 6.0.3
+
+### Patch Changes
+
+- [#15087](https://github.com/spree/spree/pull/15087) [`5de3074`](https://github.com/spree/spree/commit/5de3074693359ad16623f9d522a6d5ab64d4b5f6) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The Seller API client now works in browsers on pages served over plain HTTP at an address other than `localhost`, for example a server's IP address. It used `crypto.randomUUID` for the key that makes a retried write safe, and browsers only provide that on secure pages; it now uses `randomUUID()` from `@spree/core`.
+
+- [#15113](https://github.com/spree/spree/pull/15113) [`41bbba3`](https://github.com/spree/spree/commit/41bbba3272d9ebd8817842456670db0b72cd3b34) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added `client.extend()` and `defineSellerExtension`, so a package can add a typed namespace for an extension's own endpoints to the client, such as `client.quotes`. The extension calls through the client's own request function, so it shares the client's auth, seller, locale defaults and retries; `extend` returns a new client and refuses a name the client already has. An extension's `build` also gets `listParams` and `readParams`, which build list and read queries the way the built-in methods do, and the package now exports the `Extension` and `RequestFn` types its published declarations reference.
+
+## 6.0.2
+
+Released with Spree 6.0.2, with no changes of its own.
+
+## 6.0.1
+
+### Patch Changes
+
+- [#15015](https://github.com/spree/spree/pull/15015) [`29d95e3`](https://github.com/spree/spree/commit/29d95e388efb42568cf16ccadbe7a106195ece7e) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Fixed the invitation link redirecting anyone already signed in to the dashboard instead of letting them accept. Someone signed in as the invited account now accepts with one click, and someone signed in as another account is asked to sign out first. The seller panel's acceptance page shares these screens: an existing account confirms its password instead of being asked to set a new one, and the seller invitation lookup now says whether the invitee has an account.
+
+- [#14996](https://github.com/spree/spree/pull/14996) [`30493b4`](https://github.com/spree/spree/commit/30493b4f8e0e0f19b1c684fd8ac34bff24f51187) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added an optional `custom_fields` property to every record type that can carry custom fields, such as sellers, option types, media, orders, line items, addresses and customers. Request it with `expand: ['custom_fields']`. The Store API returns only fields marked storefront visible, and the Admin API returns every field.
+
+- [#15001](https://github.com/spree/spree/pull/15001) [`21dc28f`](https://github.com/spree/spree/commit/21dc28f68623bcd141a349b597b8b872fd57b9dd) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Typed the store's regional settings. The store's `default_country_code` is now `CountryCode`, its `admin_locale` is `LocaleCode` (send `null` to clear it), and its `timezone` — also on the seller profile — is the new `TimeZone` type, which suggests common IANA time zones while accepting any other. `TIME_ZONES` in `@spree/core` lists the suggested zones.
+
+## 6.0.0
+
+No changes in this release.
+
+## 6.0.0-rc.7
+
+Released with Spree 6.0.0.rc7, with no changes of its own. From this release the version matches the version of the Spree gems.
+
+## 1.0.0-rc.6
+
+### Minor Changes
+
+- [#14971](https://github.com/spree/spree/pull/14971) [`98a79ca`](https://github.com/spree/spree/commit/98a79cab9387f5c0cd3ee55770305fcc8285111d) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Sellers can manage the downloadable files on their own digital products. The Seller SDK adds `products.digitalAssets` (`list`, `get`, `create`, `update`, `delete`), and the seller panel's product page shows the same Digital files card as the dashboard: upload, replace and delete files, and set per-file download limits. A file the marketplace delivers through its own provider is listed but cannot be replaced by the seller. The card now lives in `@spree/dashboard-core` as `DigitalAssetsCard`, and a panel enables it by registering `digitalAssets` on its API client; `readOnly` shows the files without any way to change them and `accept` narrows the file picker.
+  
+  Seller uploads are a marketplace decision: three store settings, edited on the dashboard's Marketplace settings page, say whether sellers may upload at all (off by default), which content types their files may have, and whether a file added to or replaced on an approved product sends it back to review. The seller `/me` response carries them under `store`, and the Admin SDK's `Store` type gains the three fields.
+
+## 1.0.0-rc.5
+
+### Patch Changes
+
+- [#14933](https://github.com/spree/spree/pull/14933) [`1a86817`](https://github.com/spree/spree/commit/1a86817598711e5383d9acd663bbe808448a9dd2) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Order filter and sort types include `market_id` and `locale`. Locale, currency and country filters (`locale`, `currency`, `cost_currency`, `country_code`, `country_of_origin`) accept only `LocaleCode`, `CurrencyCode` and `CountryCode` values (new `CodeFilters` type) instead of free text.
+
+- [#14944](https://github.com/spree/spree/pull/14944) [`a0e5b66`](https://github.com/spree/spree/commit/a0e5b66419569d1e91d3b1eaf180444b73c65cd1) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added every status, kind and other value list the Spree API returns to `@spree/core`, each as a list of its values (`PRODUCT_STATUSES`, `MEDIA_TYPES`, …) and a type (`ProductStatus`, `MediaType`, …) — open where extensions may add values, closed otherwise — plus `subsetOf` for picking the values an action accepts with each one checked at compile time. The SDKs re-export these types instead of each carrying its own copy, so their names and values are unchanged. The dashboards and the seller panel build their status filters and action checks from these lists, so a status added on the server shows up without a dashboard change. Value lists the SDKs used to spell out inline, such as a seller transfer's `kind`, now have names of their own; `MediaType`, `CollectionRuleMatchPolicy` and `CollectionSortOrder` in `@spree/admin-sdk`, and `ClaimResolution` in `@spree/dashboard-ui`, now come from the generated lists under the same names. A seller's `tax_remittance` and `payouts_schedule_interval`, a claim's `resolution`, a collection's `sort_order`, a shipping label's `format`, purchase order and stock transfer statuses, and tax and commission lines' `taxability_reason` are now typed with their lists instead of as plain strings.
+
+- [#14936](https://github.com/spree/spree/pull/14936) [`06fc8b0`](https://github.com/spree/spree/commit/06fc8b06574742b63f15e355ea352f67655459c1) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Weight and dimension units are closed code lists, exported as `WeightUnit` and `DimensionUnit` (values and types) like `CountryCode` and `CurrencyCode`, and every unit field in responses and request types uses them; unit fields in requests accept `null` to fall back to the store default. The Admin and Seller SDKs publish one `VariantParams` type: `ProductVariantParams`, `VariantCreateParams` and `VariantUpdateParams` build on it. The Seller SDK's `SellerProductVariantParams` is renamed to `ProductVariantParams` (the old name stays as a deprecated alias). The variant editor and bulk variant editor now offer feet as a dimension unit.
+
 ## 1.0.0-rc.4
 
 ### Minor Changes

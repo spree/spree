@@ -1,6 +1,7 @@
+import { isZeroMoney } from '@spree/core'
 import { formatMoney, useMoneyLocale } from '@spree/dashboard-core'
 import { FulfillmentEditDialog as SharedFulfillmentEditDialog } from '@spree/dashboard-ui'
-import { type Fulfillment, isZeroMoney, SpreeError } from '@spree/seller-sdk'
+import { type Fulfillment, SpreeError } from '@spree/seller-sdk'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useFulfillmentActions } from '../../hooks/use-fulfillments'

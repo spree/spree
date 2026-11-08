@@ -3,7 +3,10 @@
 import type { CountryCode } from '../generated'
 
 export type CartAddressParams = {
-  /** An existing address of the customer to use. The other fields are then ignored. */
+  /**
+   * An existing address from the buyer's address book, or from the book of the company the cart is
+   * for. The other fields are then ignored.
+   */
   id?: string
   first_name?: string
   last_name?: string

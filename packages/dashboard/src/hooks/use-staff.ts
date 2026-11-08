@@ -9,6 +9,18 @@ export function useStaff() {
   })
 }
 
+/**
+ * One staff member with the details only the details sheet shows. `enabled`
+ * pauses fetching without dropping the data, so a closing sheet keeps it.
+ */
+export function useStaffMember(id: string, enabled: boolean) {
+  return useQuery({
+    queryKey: useResourceKey('staff', id),
+    queryFn: () => adminClient.adminUsers.get(id, { expand: ['inviter', 'sessions'] }),
+    enabled,
+  })
+}
+
 export function useInvitations() {
   return useQuery({
     queryKey: useResourceKey('invitations'),

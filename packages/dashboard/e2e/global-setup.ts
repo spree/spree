@@ -50,15 +50,23 @@ import {
   ASYNC_JOBS_INITIALIZER,
   CREDENTIALS_FILE,
   RAILS_PID_FILE,
+  SLOT_PROBES_INITIALIZER,
   TEST_INTEGRATION_INITIALIZER,
 } from './paths'
 import { API_GEM_DIR, rmIfExists, runRailsBootstrap, startRails } from './rails'
 
 const PORT = process.env.E2E_RAILS_PORT || '3010'
-// Mirrors `spec/dummy/config/database.yml`.
-const TEST_SQLITE = resolve(API_GEM_DIR, 'spec/dummy/db/spree_test.sqlite3')
+// A database of its own, so the seeded data left behind after a run never
+// reaches the API gem's RSpec suite, which shares the dummy app.
+const TEST_SQLITE = resolve(API_GEM_DIR, 'spec/dummy/db/spree_test_e2e.sqlite3')
 
-const RAILS_ENV = { ...process.env, RAILS_ENV: 'test', PORT, DASHBOARD_E2E: '1' }
+const RAILS_ENV = {
+  ...process.env,
+  RAILS_ENV: 'test',
+  PORT,
+  DASHBOARD_E2E: '1',
+  DATABASE_URL: `sqlite3:${TEST_SQLITE}`,
+}
 
 // Customer's last name is derived from the full name so the seeder and the
 // matching `full_name` assertion in promotions.spec stay in sync.
@@ -82,6 +90,9 @@ const BOOTSTRAP_RUBY = [
   `category = s.categories.where(permalink: '${FIXTURE_PROMO_TAXON_PERMALINK}').first_or_create!(name: '${FIXTURE_PROMO_TAXON}', parent: nil)`,
   `product = Spree::Product.where(name: '${FIXTURE_PROMO_PRODUCT}').first_or_create!(store: s, status: 'active')`,
   `product.default_variant.set_price(s.default_currency, 19.99)`,
+  // Published on the default channel, so the new-order item search — which
+  // lists only what the order's channel sells — offers it.
+  `Spree::ProductPublication.find_or_create_by!(product: product, channel: s.default_channel)`,
   `product.default_variant.update!(sku: '${FIXTURE_PROMO_SKU}') if product.default_variant.sku != '${FIXTURE_PROMO_SKU}'`,
   `product.categories << category unless product.categories.include?(category)`,
   // Stock the promo product on the store's default stock location so
@@ -132,6 +143,9 @@ const BOOTSTRAP_RUBY = [
   // market would otherwise surface later as opaque multi-currency failures.
   `germany = Spree::Country.find_by_iso!('DE')`,
   `s.markets.find_or_create_by!(name: 'Europe') { |m| m.currency = 'EUR'; m.default_locale = 'de'; m.countries = [germany] } unless s.markets.exists?(currency: 'EUR')`,
+  // An order's locale has to be one its market offers, so the orders list can
+  // show a German-language order in the default US market.
+  `s.default_market.update!(supported_locales: s.default_market.supported_locales_list | ['de']) unless s.default_market.supported_locales_list.include?('de')`,
   // A seller with one settled earning and one payout still owed, so the
   // marketplace ledger screens have rows to read and a settlement to mark
   // paid. Written directly: both are produced by fulfilment and the payout
@@ -233,6 +247,23 @@ export default async function globalSetup() {
       '      end',
       '    end',
       "    Spree.integrations << 'E2eRelay' unless Spree.integrations.include?('E2eRelay')",
+      '  end',
+      'end',
+      '',
+    ].join('\n'),
+  )
+
+  writeFileSync(
+    SLOT_PROBES_INITIALIZER,
+    [
+      '# Written by packages/dashboard/e2e/global-setup.ts — safe to delete.',
+      "if ENV['DASHBOARD_E2E'] == '1'",
+      '  Rails.application.config.after_initialize do',
+      '    [Spree::Media, Spree::TaxRate, Spree::Variant].each do |model|',
+      '      next if model.additional_permitted_attributes.include?({ metadata: {} })',
+      '',
+      '      model.additional_permitted_attributes += [{ metadata: {} }]',
+      '    end',
       '  end',
       'end',
       '',

@@ -1,4 +1,5 @@
 import type { PaymentMethod, PreferenceSchema } from '@spree/admin-sdk'
+import { CAPTURE_METHODS } from '@spree/core'
 import { PreferencesForm, Slot, useSlotEntries } from '@spree/dashboard-core'
 import {
   Field,
@@ -17,7 +18,6 @@ import {
 } from '@spree/dashboard-ui'
 import { Controller, type UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { CAPTURE_METHODS } from '../../../schemas/store'
 import {
   type PaymentMethodEditorContext,
   type PaymentMethodFormMode,

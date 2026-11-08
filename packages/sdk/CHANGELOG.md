@@ -1,5 +1,51 @@
 # @spree/sdk
 
+## 6.0.3
+
+### Patch Changes
+
+- [#15087](https://github.com/spree/spree/pull/15087) [`5de3074`](https://github.com/spree/spree/commit/5de3074693359ad16623f9d522a6d5ab64d4b5f6) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The Store API client now works in browsers on pages served over plain HTTP at an address other than `localhost`, for example a server's IP address. It used `crypto.randomUUID` for the key that makes a retried write safe, and browsers only provide that on secure pages; it now uses `randomUUID()` from `@spree/core`.
+
+- [#15113](https://github.com/spree/spree/pull/15113) [`41bbba3`](https://github.com/spree/spree/commit/41bbba3272d9ebd8817842456670db0b72cd3b34) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added `client.extend()` and `defineStoreExtension`, so a package can add a typed namespace for an extension's own endpoints to the client, such as `client.loyaltyPoints`. The extension calls through the client's own request function, so it shares the client's publishable key, customer token, locale defaults and retries; `extend` returns a new client and refuses a name the client already has. An extension's `build` also gets `listParams` and `readParams`, which build list and read queries the way the built-in methods do, and the package now exports the `Extension` and `RequestFn` types its published declarations reference.
+
+## 6.0.2
+
+Released with Spree 6.0.2, with no changes of its own.
+
+## 6.0.1
+
+### Patch Changes
+
+- [#14996](https://github.com/spree/spree/pull/14996) [`30493b4`](https://github.com/spree/spree/commit/30493b4f8e0e0f19b1c684fd8ac34bff24f51187) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added an optional `custom_fields` property to every record type that can carry custom fields, such as sellers, option types, media, orders, line items, addresses and customers. Request it with `expand: ['custom_fields']`. The Store API returns only fields marked storefront visible, and the Admin API returns every field.
+
+- [#14997](https://github.com/spree/spree/pull/14997) [`730c9da`](https://github.com/spree/spree/commit/730c9daa414b19fd125c03aa095ae23ea2cc91ab) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added localized storefront SEO settings. Merchants edit the store's SEO title and meta description on Store Settings and translate them for each supported language. The Store SDK reads them with `client.store.get()`, and the Admin SDK reaches the store's translations with `client.store.translations.get()`.
+
+## 6.0.0
+
+### Minor Changes
+
+- [#14982](https://github.com/spree/spree/pull/14982) [`348c5bb`](https://github.com/spree/spree/commit/348c5bbeb94eb73dacbe3dbe10b8951eb469c553) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added the `maintenance_task_run.*` webhook events (`created`, `started`, `interrupted`, `succeeded`, `errored`, `cancelled`, `updated` and `deleted`) to the typed webhook event catalog.
+
+## 6.0.0-rc.7
+
+Released with Spree 6.0.0.rc7, with no changes of its own. From this release the version matches the version of the Spree gems.
+
+## 2.0.0-rc.5
+
+### Minor Changes
+
+- [#14911](https://github.com/spree/spree/pull/14911) [`3ca1f5e`](https://github.com/spree/spree/commit/3ca1f5e32f2e3cbb249d27571388e488153afd12) Thanks [@KacperMekarski](https://github.com/KacperMekarski)! - Company members can now pick their company's addresses when choosing where an order goes. Picking a company site at checkout used to be dropped without an error, because the cart only ever looked in the buyer's own address book. A new `GET /store/carts/:id/addresses` returns everything a cart may be shipped or billed to — the buyer's book plus the sites of the company set as the cart's `company_id` and the ones it inherits, limited to the countries the cart's market sells to — and `client.carts.addresses.list()` reaches it. The company has to be set on the cart explicitly: a buyer who belongs to a single company is not assumed to be buying for it when it comes to addresses. Every `Address` now carries the `owner` it is filed under (`null` for an address in no book, such as the copy a placed order keeps), so a picker can label the two books from one response. On the Admin API this `owner` object replaces the separate `owner_id` and `owner_type` fields. Unlike the other cart endpoints this one needs a signed-in customer: it answers with the account's address books rather than the cart's own contents. Staff get the same reach: a company's sites are selectable when creating an order, and "use default addresses" takes the company's defaults for a company order. On a division's page, addresses inherited from the companies above it are labelled with their owner and cannot be edited there.
+
+- [#14934](https://github.com/spree/spree/pull/14934) [`dc2f1a7`](https://github.com/spree/spree/commit/dc2f1a786e4a11d6e36475ff9f7c5296ab817b14) Thanks [@mad-eel](https://github.com/mad-eel)! - A customer's own data request now waits for confirmation from the account's email address. `client.customer.dataRequests` lists, reads and opens requests, and `create` takes a `redirect_url` for the page the emailed link opens. `client.dataRequests.confirm(token)` confirms one from that page, and `client.dataRequests.get(token)` reads it, with the download link once the export is ready. `DataRequestStatus` gains `awaiting_confirmation` and `lapsed`. The dashboard's email editor lists the new confirmation email.
+
+### Patch Changes
+
+- [#14933](https://github.com/spree/spree/pull/14933) [`1a86817`](https://github.com/spree/spree/commit/1a86817598711e5383d9acd663bbe808448a9dd2) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Order filter and sort types include `market_id` and `locale`. Locale, currency and country filters (`locale`, `currency`, `cost_currency`, `country_code`, `country_of_origin`) accept only `LocaleCode`, `CurrencyCode` and `CountryCode` values (new `CodeFilters` type) instead of free text.
+
+- [#14944](https://github.com/spree/spree/pull/14944) [`a0e5b66`](https://github.com/spree/spree/commit/a0e5b66419569d1e91d3b1eaf180444b73c65cd1) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added every status, kind and other value list the Spree API returns to `@spree/core`, each as a list of its values (`PRODUCT_STATUSES`, `MEDIA_TYPES`, …) and a type (`ProductStatus`, `MediaType`, …) — open where extensions may add values, closed otherwise — plus `subsetOf` for picking the values an action accepts with each one checked at compile time. The SDKs re-export these types instead of each carrying its own copy, so their names and values are unchanged. The dashboards and the seller panel build their status filters and action checks from these lists, so a status added on the server shows up without a dashboard change. Value lists the SDKs used to spell out inline, such as a seller transfer's `kind`, now have names of their own; `MediaType`, `CollectionRuleMatchPolicy` and `CollectionSortOrder` in `@spree/admin-sdk`, and `ClaimResolution` in `@spree/dashboard-ui`, now come from the generated lists under the same names. A seller's `tax_remittance` and `payouts_schedule_interval`, a claim's `resolution`, a collection's `sort_order`, a shipping label's `format`, purchase order and stock transfer statuses, and tax and commission lines' `taxability_reason` are now typed with their lists instead of as plain strings.
+
+- [#14936](https://github.com/spree/spree/pull/14936) [`06fc8b0`](https://github.com/spree/spree/commit/06fc8b06574742b63f15e355ea352f67655459c1) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Weight and dimension units are closed code lists, exported as `WeightUnit` and `DimensionUnit` (values and types) like `CountryCode` and `CurrencyCode`, and every unit field in responses and request types uses them; unit fields in requests accept `null` to fall back to the store default. The Admin and Seller SDKs publish one `VariantParams` type: `ProductVariantParams`, `VariantCreateParams` and `VariantUpdateParams` build on it. The Seller SDK's `SellerProductVariantParams` is renamed to `ProductVariantParams` (the old name stays as a deprecated alias). The variant editor and bulk variant editor now offer feet as a dimension unit.
+
 ## 2.0.0-rc.4
 
 ### Minor Changes

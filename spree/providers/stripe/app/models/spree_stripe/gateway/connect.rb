@@ -93,7 +93,7 @@ module SpreeStripe
       def connect_webhook_url
         return nil unless store
 
-        "#{store.url_or_custom_domain}/api/v3/webhooks/payouts/#{prefixed_id}"
+        "#{store.formatted_url_or_custom_domain}/api/v3/webhooks/payouts/#{prefixed_id}"
       end
 
       def create_connect_webhook_endpoint

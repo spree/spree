@@ -13,6 +13,9 @@
  * Lives on the frontend (rather than as a server-rendered string) so
  * draft edits update the row immediately, before any save.
  */
+
+import { formatMoney, isDecimalString } from '@spree/core'
+
 export interface CalculatorPayload {
   /**
    * Display name for the calculator, already localized by the caller — this
@@ -101,7 +104,12 @@ function formatField(
 ): string | null {
   if (value === null || value === undefined || value === '') return null
   if (property.format === 'currency') return null
-  if (property.format === 'money') return formatMoney(value, currency)
+  if (property.format === 'money') {
+    const amount = String(value)
+    return (
+      formatMoney(amount, currency) || (isDecimalString(amount) ? `${amount} ${currency}` : amount)
+    )
+  }
   if (/(?:^|_)percent$/.test(key)) return `${value}%`
 
   const type = (Array.isArray(property.type) ? property.type : [property.type]).find(
@@ -113,19 +121,6 @@ function formatField(
   }
   if (type === 'object') return null
   return `${humanize(key)}: ${value}`
-}
-
-function formatMoney(value: unknown, currency: string): string {
-  const amount = String(value)
-  if (!/^-?\d+(\.\d+)?$/.test(amount)) return amount
-  try {
-    // `Intl` reads a numeric string exactly; its ES2022 typings only list numbers.
-    return new Intl.NumberFormat(undefined, { style: 'currency', currency }).format(
-      amount as unknown as number,
-    )
-  } catch {
-    return `${amount} ${currency}`
-  }
 }
 
 function humanize(key: string): string {

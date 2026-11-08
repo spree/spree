@@ -1,5 +1,12 @@
 import { expect, type Page, test } from '@playwright/test'
-import { escapeRegex, gotoIndex, login, openRowMenu } from './helpers'
+import {
+  escapeRegex,
+  gotoIndex,
+  login,
+  openRowMenu,
+  saveCustomFieldOnCard,
+  withCustomFieldDefinition,
+} from './helpers'
 
 const SELLERS_PATH = (storeId: string) => `/${storeId}/sellers`
 const CTA = /add seller/i
@@ -193,5 +200,14 @@ test.describe('sellers', () => {
       .click()
 
     await expect(rowLink(page, name)).toHaveCount(0, { timeout: 15_000 })
+  })
+
+  test('records a custom field on the seller', async ({ page }) => {
+    const creds = await login(page)
+    await withCustomFieldDefinition(page, creds, 'seller', async (label) => {
+      await gotoIndex(page, SELLERS_PATH(creds.store_id), CTA)
+      await createSeller(page, `E2E Custom Field Seller ${Date.now()}`)
+      await saveCustomFieldOnCard(page, label, 'Tier A')
+    })
   })
 })

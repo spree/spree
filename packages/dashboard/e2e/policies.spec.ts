@@ -8,6 +8,8 @@ async function createPolicy(page: Page, name: string) {
   await page.getByRole('button', { name: CTA }).click()
   await expect(page.getByRole('heading', { name: /^add policy$/i })).toBeVisible()
   await page.locator('#policy-name').fill(name)
+  // The sheet's plugin slot, filled by src/testing/slot-probes.tsx.
+  await expect(page.getByText('Slot probe: policy.form_fields (new)')).toBeVisible()
   await page.getByRole('button', { name: /create policy/i }).click()
   await expect(rowButton(page, name)).toBeVisible({ timeout: 15_000 })
 }

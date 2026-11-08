@@ -12,7 +12,7 @@ describe 'editable email samples' do
   end
 
   it 'registers every customer email, the layout and the shared partials' do
-    expect(Spree.editable_email_templates.emails.size).to eq(11)
+    expect(Spree.editable_email_templates.emails.size).to eq(12)
     expect(Spree.editable_email_templates['layouts/spree/base_mailer']).to be_present
     expect(Spree.editable_email_templates['spree/order_mailer/store_owner_notification_email']).to be_nil
   end

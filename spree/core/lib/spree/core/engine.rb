@@ -10,6 +10,7 @@ module Spree
                                :dependencies,
                                :payment_methods,
                                :adjusters,
+                               :cart_copiers,
                                :media_viewable_types,
                                :default_tax_provider,
                                :tax_providers,
@@ -46,6 +47,7 @@ module Spree
                                :admin_agent_tools,
                                :store_agent_tools,
                                :integrations,
+                               :maintenance_tasks,
                                :number_generators,
                                :subscribers,
                                :store_authentication_strategies,
@@ -77,7 +79,8 @@ module Spree
         # Core's defaults are concatenated in after_initialize below.
         %i[subscribers actor_classes commission_rules delivery_method_rules seller_requirements
            delivery_rate_providers tax_providers pricing_providers inventory_providers
-           payout_providers digital_asset_providers delivery_profile_types pickup_point_providers].each do |registry|
+           payout_providers digital_asset_providers delivery_profile_types pickup_point_providers
+           maintenance_tasks cart_copiers].each do |registry|
           app.config.spree[registry] = []
         end
         app.config.spree.line_item_comparison_hooks = Set.new
@@ -506,6 +509,7 @@ module Spree
           Spree::Address,
           Spree::Claim,
           Spree::Collection,
+          Spree::Company,
           Spree::CreditCard,
           Spree::Exchange,
           Spree::GiftCard,
@@ -521,6 +525,7 @@ module Spree
           Spree::Product,
           Spree::ProductType,
           Spree::Promotion,
+          Spree::PurchaseOrder,
           Spree::Refund,
           Spree::Return,
           Spree::Fulfillment,
@@ -537,6 +542,13 @@ module Spree
         ]
 
         Rails.application.config.spree.integrations = []
+
+        # Upgrade steps backed by a task class are registered from the manifests
+        # that name them, so adding a step never means editing a second list.
+        Rails.application.config.spree.maintenance_tasks.concat [
+          'Spree::MaintenanceTasks::UpgradeStep',
+          *Spree::Upgrade.steps.filter_map { |step| step['task_class'] }
+        ]
 
         Rails.application.config.spree.validators.addresses = [
           Spree::Addresses::PhoneValidator

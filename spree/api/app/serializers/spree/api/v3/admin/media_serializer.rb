@@ -86,6 +86,8 @@ module Spree
           attribute :viewable_type do |asset|
             Spree::Base.polymorphic_api_type(asset.viewable_type)
           end
+
+          expandable_custom_fields admin: true
         end
       end
     end

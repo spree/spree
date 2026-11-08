@@ -18,7 +18,7 @@ RSpec.describe Spree::Api::V3::FilterTable do
         endpoint.to_h
         # Every search needs a description in the reference.
         Spree::Api::OpenAPI::FilterDocumentation.new(
-          endpoint, querying_path: '/', search: FilterParametersHelper::SEARCH_DESCRIPTIONS[endpoint.table.name]
+          endpoint, querying_path: '/', search: Spree::Api::TestingSupport::FilterParameters::SEARCH_DESCRIPTIONS[endpoint.table.name]
         ).parameters
         endpoint.tables.each do |name, table|
           table.to_h
@@ -44,6 +44,16 @@ RSpec.describe Spree::Api::V3::FilterTable do
         'id' => 'id',
         'status' => { 'enum' => Spree::Order::STATUSES }
       )
+    end
+
+    it 'publishes locale, currency and country columns as their shared code types' do
+      expect(table['attributes']).to include('locale' => { 'code' => 'LocaleCode' }, 'currency' => { 'code' => 'CurrencyCode' })
+      expect(described_class.for_model(Spree::Market, nil).attributes).to include('default_locale' => { 'code' => 'LocaleCode' })
+      expect(described_class.for_model(Spree::Variant, nil).attributes).to include(
+        'cost_currency' => { 'code' => 'CurrencyCode' },
+        'country_of_origin' => { 'code' => 'CountryCode' }
+      )
+      expect(described_class.for_model(Spree::Address, nil).attributes).to include('country_code' => { 'code' => 'CountryCode' })
     end
 
     it 'names associated tables instead of nesting them' do

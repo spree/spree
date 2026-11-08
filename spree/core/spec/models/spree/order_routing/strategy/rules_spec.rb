@@ -36,6 +36,14 @@ RSpec.describe Spree::OrderRouting::Strategy::Rules, type: :model do
       expect(packages.map(&:stock_location)).to all(eq(preferred_loc))
     end
 
+    it "never allocates from a location the item's delivery profile does not cover" do
+      variant.product.delivery_profile.default_origin_group.stock_locations = [default_loc]
+      default_loc.stock_level_or_create(variant).update!(count_on_hand: 0, backorderable: false)
+
+      packages = subject.for_allocation
+      expect(packages.map(&:stock_location)).not_to include(preferred_loc)
+    end
+
     it 'resolves the reducer from the strategy namespace' do
       stub_const(
         "#{described_class}::Reducer",

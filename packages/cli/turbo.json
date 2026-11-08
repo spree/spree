@@ -9,6 +9,7 @@
         "$TURBO_ROOT$/scripts/sync-starter.mjs",
         "$TURBO_ROOT$/biome.json",
         "$TURBO_ROOT$/packages/*/package.json",
+        "$TURBO_ROOT$/.changeset/config.json",
         "$TURBO_ROOT$/packages/dashboard-starter/**",
         "$TURBO_ROOT$/packages/seller-dashboard-starter/**",
         "!$TURBO_ROOT$/packages/*-starter/{node_modules,dist,.turbo,.tanstack}/**",

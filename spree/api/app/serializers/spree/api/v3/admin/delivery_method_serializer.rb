@@ -59,6 +59,8 @@ module Spree
             calculator = record.calculator
             { type: calculator.class.api_type, preferences: calculator.serialized_preferences } if calculator
           end
+
+          expandable_custom_fields admin: true
         end
       end
     end

@@ -340,7 +340,7 @@ See `packages/dashboard/README.md` for the full architecture (auth, permissions,
 
 ### Working on the storefront
 
-The [Next.js storefront](https://github.com/spree/storefront) is a separate repository. `pnpm storefront:dev` clones it into `storefront/` (gitignored) on first run, on its **`6-0-dev`** branch — `main` targets the released Store API and won't work against this monorepo's backend. Unlike `server/`, the clone keeps its `.git`: commit and push storefront changes from inside `storefront/`.
+The [Next.js storefront](https://github.com/spree/storefront) is a separate repository. `pnpm storefront:dev` clones it into `storefront/` (gitignored) on first run, on its `main` branch. Unlike `server/`, the clone keeps its `.git`: commit and push storefront changes from inside `storefront/`.
 
 ```bash
 # Terminal 1: backend
@@ -361,7 +361,7 @@ Every boot regenerates `storefront/.env.local` with the backend URL and the seed
 
 ### Dashboard E2E tests
 
-The React dashboard ships an end-to-end suite running on [Playwright](https://playwright.dev/) against a real Rails backend — no mocks. The spec files exercise the full UI: login, staff invitation, invitee signup. CI runs the same suite via the `dashboard-e2e` job in `.github/workflows/packages.yml`.
+The React dashboard ships an end-to-end suite running on [Playwright](https://playwright.dev/) against a real Rails backend — no mocks. The spec files exercise the full UI: login, staff invitation, invitee signup. CI runs the same suite via the `dashboard-e2e` job in `.github/workflows/frontend.yml`.
 
 To run locally you need Ruby (the suite boots a real Rails server) and a one-time browser install:
 
@@ -404,19 +404,11 @@ A **Lefthook pre-commit hook** regenerates both whenever you commit a change to 
 To regenerate manually (useful when iterating on serializers before committing):
 
 ```bash
-cd server
-pnpm exec spree rake typelizer:generate     # regenerate TS types
-cd ..
-pnpm generate:zod                            # regenerate Zod schemas for every SDK
+pnpm generate:types   # regenerate TS types from the serializers
+pnpm generate:zod     # regenerate Zod schemas for every SDK
 ```
 
-If you'd rather avoid the Docker round-trip and have Ruby on your host, the native equivalent works too:
-
-```bash
-cd spree/api
-bundle install
-bundle exec rake typelizer:generate
-```
+`pnpm generate:types` runs with the Ruby on your machine, like the pre-commit hook, so run `bundle install` in `spree/api` once first.
 
 ### Releasing packages
 
@@ -426,9 +418,9 @@ Published packages use [Changesets](https://github.com/changesets/changesets) fo
 pnpm changeset    # from the repo root; select the affected package(s)
 ```
 
-This creates a changeset file describing your changes. Commit it with your PR. The dashboard packages (`@spree/dashboard`, `@spree/dashboard-core`, `@spree/dashboard-ui`) are a fixed group and always release together under one version — a changeset naming any of them bumps all three. See `.changeset/README.md` for the release trains.
+This creates a changeset file describing your changes. Commit it with your PR. The packages that talk to the Spree API (`@spree/sdk`, `@spree/admin-sdk`, `@spree/seller-sdk`, `@spree/core`, `@spree/dashboard`, `@spree/dashboard-core`, `@spree/dashboard-ui`, `@spree/seller-dashboard`) are a fixed group: they always release together, under the version of the Spree gems. See `.changeset/README.md`.
 
-Releasing is a two-step flow: a maintainer consumes the pending changesets (`pnpm version:preview` for the Developer Preview train, `pnpm changeset version` to include `@spree/sdk` — writes the CHANGELOGs and bumps `package.json`) and merges that bump to `main`; the release jobs in `.github/workflows/packages.yml` then detect the unpublished versions and publish with npm provenance via Trusted Publishing. Dist-tags follow the version, matching the rule in the release jobs: `0.x` versions (the Developer Preview line) publish under `next`, prerelease versions under `beta`, and stable versions as `latest`.
+Releasing is a two-step flow: a maintainer bumps `Spree::VERSION` and runs `pnpm version:packages`, which consumes the pending changesets (writes the CHANGELOGs and bumps `package.json`), and merges that bump to `main`. Pushing a tag then publishes from `.github/workflows/release.yml`: `v<Spree version>` releases the gems and the packages that share the Spree version, and `@spree/cli@<version>` or `create-spree-app@<version>` releases that tool. `pnpm version:tools` versions the tools alone, for a release between Spree releases. Dist-tags follow the version: prerelease versions publish under `beta`, stable versions as `latest`.
 
 Private packages (`@spree/dashboard-starter`, `@spree/dashboard-plugin-example`, `@spree/sdk-core`) are never published and don't need changesets.
 
@@ -436,20 +428,19 @@ Private packages (`@spree/dashboard-starter`, `@spree/dashboard-plugin-example`,
 
 Consistent code style is enforced via automated linters. Please make sure your changes pass linting before submitting a PR.
 
-**Ruby:** We use [RuboCop](https://rubocop.org/) for Ruby code. The configuration lives in `server/.rubocop.yml` and is shipped with [spree-starter](https://github.com/spree/spree-starter), so it's only available after running `pnpm server:setup`. Run it inside the container via the CLI:
+**Ruby:** We use [RuboCop](https://rubocop.org/) with [rubocop-rails](https://docs.rubocop.org/rubocop-rails/). The configuration lives in `spree/.rubocop.yml`. Only lines your branch adds or changes are checked, so existing code is never flagged or reformatted. After `cd spree && bundle install`, run from the repository root:
 
 ```bash
-cd server
-pnpm exec spree exec bundle exec rubocop
+scripts/lint/rubocop
 ```
 
-To auto-fix correctable offenses:
+To check specific files, autocorrecting the ones that are new on your branch:
 
 ```bash
-pnpm exec spree exec bundle exec rubocop -a
+scripts/lint/rubocop --fix spree/core/app/models/spree/my_new_model.rb
 ```
 
-(On the native path, drop the `pnpm exec spree exec` prefix and run `bundle exec rubocop` directly.)
+The lefthook pre-commit and pre-push hooks run the same check. CI does not run RuboCop.
 
 **TypeScript:** We use [Biome](https://biomejs.dev/) for linting and formatting TypeScript code. Run it from the repository root:
 

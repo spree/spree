@@ -6,7 +6,7 @@ export const SellerPayoutSchema = z.object({
   status: z.string(),
   currency: z.string(),
   reference: z.string().nullable(),
-  metadata: z.unknown(),
+  metadata: z.record(z.string(), z.unknown()),
   period_start: z.string().nullable(),
   period_end: z.string().nullable(),
   created_at: z.string(),

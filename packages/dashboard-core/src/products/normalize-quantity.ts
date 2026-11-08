@@ -2,10 +2,9 @@
 // `Spree::Variant`'s own validations so a merchant hears about a bad value
 // while typing rather than on save.
 
-/** What a buyer is quoted in. Stored quantities stay units at every level. */
-export const PURCHASE_UNITS = ['unit', 'carton'] as const
+import { PURCHASE_UNITS, type PurchaseUnit } from '@spree/core'
 
-export type PurchaseUnit = (typeof PURCHASE_UNITS)[number]
+export { PURCHASE_UNITS, type PurchaseUnit }
 
 /**
  * Reads a quantity rule from a number input. Blank means the rule is unset,

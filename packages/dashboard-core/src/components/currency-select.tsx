@@ -1,4 +1,4 @@
-import type { CurrencyCode } from '@spree/admin-sdk'
+import { type CurrencyCode, isCurrencyCode } from '@spree/core'
 import {
   Combobox,
   ComboboxButtonTrigger,
@@ -12,10 +12,9 @@ import {
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDisplayName } from '../hooks/use-display-name'
-import { isCurrencyCode } from '../lib/iso-codes'
 import { useOptionalStore } from '../providers/store-provider'
 
-export { ALL_CURRENCY_CODES } from '../lib/currencies'
+export { ACTIVE_CURRENCY_CODES as ALL_CURRENCY_CODES } from '@spree/core'
 
 interface CurrencySelectProps {
   /** Classes for the trigger — used to match a neighbouring control's height. */

@@ -126,6 +126,15 @@ export function useCustomerOrders(customerId: string, params: { limit: number; s
 type AddressCreateParams = Parameters<typeof adminClient.customers.addresses.create>[1]
 type AddressUpdateParams = Parameters<typeof adminClient.customers.addresses.update>[2]
 
+/** The customer's own book, for a picker that offers it. */
+export function useCustomerAddresses(customerId: string | undefined, limit = 50) {
+  return useQuery({
+    queryKey: useResourceKey('customers', customerId ?? 'noop', 'addresses', `${limit}`),
+    queryFn: () => adminClient.customers.addresses.list(customerId as string, { limit }),
+    enabled: !!customerId,
+  })
+}
+
 export function useCreateCustomerAddress(customerId: string) {
   return useResourceMutation({
     mutationFn: (params: AddressCreateParams) =>

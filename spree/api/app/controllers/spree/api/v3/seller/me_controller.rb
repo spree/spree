@@ -58,6 +58,10 @@ module Spree
             {
               user: Spree.api.seller_account_serializer.new(current_user, params: serializer_params).to_h,
               sellers: serialized_sellers,
+              # The marketplace's own settings that shape what the panel lets a
+              # seller do, read before any seller is chosen since there is one
+              # store per installation.
+              store: Spree.api.seller_store_serializer.new(serializer_params[:store], params: serializer_params).to_h,
               # Both shapes, exactly as the admin `/me`: the panel's `<Can>`
               # reads CanCanCan rules, the key gate reads keys. Sending only
               # keys left `<Can>` answering false for everything on the seller

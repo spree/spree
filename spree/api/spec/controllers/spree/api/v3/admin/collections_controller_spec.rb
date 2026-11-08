@@ -120,6 +120,17 @@ RSpec.describe Spree::Api::V3::Admin::CollectionsController, type: :controller d
       )
     end
 
+    it 'refuses a rule with an unknown type, naming the accepted ones' do
+      post :create, params: {
+        name: 'On Sale', automatic: true,
+        rules: [{ type: 'Spree::CollectionRules::Tag', value: 'summer', match_policy: 'contains' }]
+      }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['details']['/rules/0/type'].first).to include('is not a collection rule offered here', 'tag')
+      expect(Spree::Collection.where(name: 'On Sale')).not_to exist
+    end
+
     it 'returns 422 for a blank name' do
       post :create, params: { name: '' }, as: :json
       expect(response).to have_http_status(:unprocessable_content)

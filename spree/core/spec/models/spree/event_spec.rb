@@ -147,6 +147,21 @@ RSpec.describe Spree::Event do
       expect(described_class.matches?('order.line_item.update', 'order.line_item.*')).to be true
       expect(described_class.matches?('order.line_item.update', 'order.*')).to be true
     end
+
+    it 'matches a wildcard anywhere in the pattern' do
+      expect(described_class.matches?('order.created', '*.created')).to be true
+      expect(described_class.matches?('order.line_item.created', '*.created')).to be true
+      expect(described_class.matches?('order.updated', '*.created')).to be false
+      expect(described_class.matches?('order.line_item.created', 'order.*.created')).to be true
+      expect(described_class.matches?('order.created', 'order.*.created')).to be false
+    end
+
+    it 'treats regexp syntax in a pattern as literal text' do
+      expect(described_class.matches?('order.placed', 'order.(placed|canceled)')).to be false
+      expect(described_class.matches?('order.placed', 'order.p.aced')).to be false
+      expect(described_class.matches?('order.placed', '.*')).to be false
+      expect(described_class.matches?('order.placed', 'order.placed$')).to be false
+    end
   end
 
   describe '#attributes' do

@@ -1,4 +1,5 @@
-import { compareMoney, isDecimalString, type TaxRateCreateParams } from '@spree/admin-sdk'
+import type { TaxRateCreateParams } from '@spree/admin-sdk'
+import { compareMoney, isDecimalString } from '@spree/core'
 import { blankToNull, countryCodeSchema } from '@spree/dashboard-core'
 import { decimalPlacesMessage, requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
@@ -8,7 +9,9 @@ export const taxRateFormSchema = z.object({
   // The merchant types a percentage (20); the API converts it to the fraction it stores.
   rate_percent: z
     .string()
-    .regex(/^\d+(\.\d+)?$/, { error: requiredMessage('tax_rate.amount') })
+    .refine((value) => isDecimalString(value) && !value.startsWith('-'), {
+      error: requiredMessage('tax_rate.amount'),
+    })
     // Stored as a fraction to five decimals, so a percentage keeps three.
     .refine((value) => (value.split('.')[1] ?? '').length <= 3, {
       error: decimalPlacesMessage('tax_rate.amount', 3),

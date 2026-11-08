@@ -86,12 +86,37 @@ describe Spree::Order, type: :model do
       let!(:order_4) { create(:order, number: 'R300', customer: create(:user, email: 'johndoe@example.com'), bill_address: create(:address, first_name: 'Ayn', last_name: 'Rand')) }
       let!(:order_5) { create(:order, number: 'R400', customer: create(:user, email: 'john_doe@example.com'), bill_address: create(:address, first_name: 'John', last_name: 'Doe')) }
 
+      it 'returns no orders for a non-string query' do
+        expect(described_class.search(true)).to be_empty
+        expect(described_class.search(nil)).to be_empty
+      end
+
       it 'returns orders based on an email' do
         expect(described_class.search('don.roe@example.com')).to eq([order_1])
         expect(described_class.search('jane.gone@example.com')).to eq([order_2])
         expect(described_class.search('johndoe@example.com')).to eq([order_4])
         expect(described_class.search('john_doe@example.com')).to eq([order_5])
         expect(described_class.search('mary.moe@')).to eq([])
+      end
+
+      # An app may encrypt the column, deterministically so it can still be
+      # looked up. SQL then only ever sees ciphertext.
+      context 'when the app encrypts email' do
+        let(:order_class) do
+          stub_const('EncryptedEmailOrder', Class.new(described_class) do
+            self.table_name = Spree::Order.table_name
+            encrypts :email, deterministic: true, downcase: true
+          end)
+        end
+
+        before { order_class.find(order_1.id).update_columns(email: 'don.roe@example.com') }
+
+        it 'returns orders based on an email, whatever the case' do
+          stored = order_class.connection.select_value(order_class.unscoped.where(id: order_1.id).select(:email).to_sql)
+          expect(stored).not_to include('example.com')
+
+          expect(order_class.search('Don.Roe@Example.com').ids).to eq([order_1.id])
+        end
       end
 
       it 'returns orders based on the first name' do
@@ -258,7 +283,7 @@ describe Spree::Order, type: :model do
 
     context 'when canceled_at is not given' do
       it 'saves canceled_at to Time.current' do
-        Timecop.freeze(Time.current) do
+        freeze_time do
           subject
           expect(order.reload.canceled_at.to_s).to eq Time.current.to_s
           expect(Spree::Deprecation).to have_received(:warn).with(/Order#canceled_by is deprecated/)
@@ -268,7 +293,7 @@ describe Spree::Order, type: :model do
 
     context 'when canceled_at is given' do
       it 'saves canceled_at to given time' do
-        Timecop.freeze(Time.current) do
+        freeze_time do
           order.canceled_by(admin_user, Time.current - 1.day)
           expect(order.reload.canceled_at.to_s).to eq (Time.current - 1.day).to_s
         end
@@ -1247,7 +1272,7 @@ describe Spree::Order, type: :model do
         order.ship_address = nil
       end
 
-      it { expect(order.shipping_eq_billing_address?).to eq(true) }
+      it { expect(order.shipping_eq_billing_address?).to eq(false) }
     end
   end
 

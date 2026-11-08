@@ -176,6 +176,15 @@ RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
       expect(json_response['email']).to eq(user.email)
     end
 
+    it 'includes storefront visible custom fields on expand' do
+      definition = create(:custom_field_definition, resource_type: Spree.user_class.to_s)
+      create(:custom_field, resource: user, custom_field_definition: definition, value: 'public')
+
+      get :show, params: { expand: 'custom_fields' }
+
+      expect(json_response['custom_fields'].pluck('value')).to eq(['public'])
+    end
+
     it 'returns user attributes' do
       get :show
 
@@ -401,6 +410,23 @@ RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
         patch :update, params: { password: 'newpassword123', password_confirmation: 'newpassword123', current_password: 'secret123' }
 
         expect(response).to have_http_status(:ok)
+      end
+
+      it 'revokes every refresh token, so a stolen session does not outlive the change' do
+        refresh_token = Spree::RefreshToken.create_for(user, audience: 'store_api')
+
+        patch :update, params: { password: 'newpassword123', password_confirmation: 'newpassword123', current_password: 'secret123' }
+
+        expect(response).to have_http_status(:ok)
+        expect(Spree::RefreshToken.exists?(refresh_token.id)).to be(false)
+      end
+
+      it 'keeps sessions when only the profile changes' do
+        refresh_token = Spree::RefreshToken.create_for(user, audience: 'store_api')
+
+        patch :update, params: { first_name: 'Updated' }
+
+        expect(Spree::RefreshToken.exists?(refresh_token.id)).to be(true)
       end
     end
 

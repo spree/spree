@@ -132,6 +132,32 @@ RSpec.describe 'Admin Claims API', type: :request, swagger_doc: 'api-reference/a
     end
   end
 
+  path '/api/v3/admin/orders/{order_id}/claims/{id}/approve' do
+    patch 'Approve a claim' do
+      tags 'Orders'
+      admin_sdk_example 'order-claims/approve'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Accepts an open claim, the step before resolving it with a refund, a replacement or both. Only an open claim can be approved; deny it to turn it down.'
+      admin_scope :write, :orders
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :order_id, in: :path, type: :string, required: true, description: 'Order prefixed ID'
+      parameter name: :id, in: :path, type: :string, required: true, description: 'Claim prefixed ID'
+
+      response '200', 'claim approved' do
+        let(:id) { record.prefixed_id }
+
+        schema '$ref' => '#/components/schemas/Claim'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['status']).to eq('approved')
+        end
+      end
+    end
+  end
+
   path '/api/v3/admin/orders/{order_id}/claims/{id}/resolve' do
     patch 'Resolve a claim' do
       tags 'Orders'
@@ -139,7 +165,7 @@ RSpec.describe 'Admin Claims API', type: :request, swagger_doc: 'api-reference/a
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Settles an approved claim with money back, a replacement shipment, or both.'
-      admin_scope :write, :orders
+      admin_scope_note('`write_orders`, plus `write_refunds` for a resolution that refunds')
 
       admin_sdk_example 'order-claims/resolve'
 

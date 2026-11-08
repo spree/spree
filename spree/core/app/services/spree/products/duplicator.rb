@@ -42,7 +42,7 @@ module Spree
 
       def duplicate_variant(variant, include_images)
         new_variant = variant.dup
-        new_variant.sku = sku_generator(new_variant.sku)
+        new_variant.sku = sku_generator(variant)
         new_variant.deleted_at = nil
         new_variant.option_values = variant.option_values.map { |option_value| option_value }
         new_variant.prices = duplicate_prices(variant.prices)
@@ -82,10 +82,18 @@ module Spree
         new_image
       end
 
-      def sku_generator(sku)
-        return '' if sku.blank?
+      def sku_generator(variant)
+        return '' if variant.sku.blank?
 
-        "COPY OF #{Variant.unscoped.where('sku like ?', "%#{sku}").order(:created_at).last.sku}"
+        store_product_ids = Product.with_deleted.where(store_id: variant.store_id).select(:id)
+        # Matched the way the SKU uniqueness check compares, without regard
+        # to case, and within the same seller scope it reads, so the name taken
+        # from the latest match is one this seller may use.
+        sku_pattern = Variant.arel_table[:sku].matches("%#{Variant.sanitize_sql_like(variant.sku)}", '\\', false)
+        latest_match = Variant.with_deleted.for_seller(variant.resolved_seller_id).
+                       where(product_id: store_product_ids).where(sku_pattern).order(:created_at, :id).last
+
+        "COPY OF #{(latest_match || variant).sku}"
       end
 
       def duplicate_error_message(new_product)

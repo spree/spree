@@ -1,0 +1,72 @@
+module Spree
+  module Api
+    module V3
+      module Admin
+        # Admin API serializer for {Spree::MaintenanceTaskRun} — the progress
+        # the dashboard polls while a task runs, and the audit trail it shows
+        # afterwards (docs/plans/6.0-maintenance-tasks.md).
+        #
+        # Admin-only by design: there is no store counterpart, because nothing
+        # about operator-run data work is customer-facing.
+        class MaintenanceTaskRunSerializer < BaseSerializer
+          typelize task_name: :string,
+                   status: [:string, enum: Spree::MaintenanceTaskRun.statuses, enum_type_name: 'MaintenanceTaskRunStatus'],
+                   dry_run: :boolean,
+                   initiated_via: :string,
+                   tick_count: :number,
+                   tick_total: [:number, nullable: true],
+                   duration: [:number, nullable: true],
+                   tallies: 'Record<string, number>',
+                   arguments: 'Record<string, unknown>',
+                   error_class: [:string, nullable: true],
+                   error_message: [:string, nullable: true],
+                   error_backtrace: [:string, nullable: true],
+                   active: :boolean,
+                   admin_user_id: [:string, nullable: true],
+                   started_at: [:string, nullable: true],
+                   ended_at: [:string, nullable: true]
+
+          attributes :status, :dry_run, :initiated_via,
+                     :tick_count, :tick_total, :error_class, :error_message,
+                     :started_at, :ended_at, :created_at, :updated_at
+
+          # The task's short name, as `GET /upgrade_steps` gives it.
+          attribute :task_name, &:task_api_type
+
+          # to_f before rounding: the column is a decimal, and a BigDecimal
+          # serializes as a quoted string — a client reading `duration` wants a
+          # number, and the schema says it gets one.
+          attribute :duration do |run|
+            run.duration&.to_f&.round(3)
+          end
+
+          attribute :tallies do |run|
+            run.tallies || {}
+          end
+
+          attribute :arguments do |run|
+            run.arguments || {}
+          end
+
+          # The failure detail an operator needs to fix the cause. Held back
+          # from read-only callers — a backtrace names internal paths and
+          # class names that a read scope has no business seeing.
+          attribute :error_backtrace do |run|
+            run.error_backtrace if params[:show_backtrace]
+          end
+
+          attribute :active, &:active?
+
+          attribute :admin_user_id do |run|
+            run.admin_user&.prefixed_id
+          end
+
+          # Who fired it. Pass `expand=admin_user` for the record itself.
+          one :admin_user,
+              resource: proc { Spree.api.admin_admin_user_serializer },
+              if: proc { expand?('admin_user') }
+        end
+      end
+    end
+  end
+end

@@ -28,10 +28,13 @@ module Spree
             def create
               with_order_lock do
                 payment_method = current_store.payment_methods.accessible_by(current_ability, :show).find_by_prefix_id!(params[:payment_method_id])
-                @resource = @parent.payments.build(
-                  amount: params[:amount] || @parent.order_total_after_store_credit,
-                  payment_method: payment_method
-                )
+                # The default is what the order still owes, which is nothing
+                # once store credit covers it — a zero payment is refused the
+                # same way a zero amount is.
+                amount = money_param(:amount, @parent.currency) || @parent.order_total_after_store_credit
+                raise Spree::Money::InvalidFormat.new('must be greater than 0', field: :amount) unless amount.positive?
+
+                @resource = @parent.payments.build(amount: amount, payment_method: payment_method)
 
                 if params[:source_id].present? && payment_method.source_required?
                   @resource.source = find_source!(payment_method, params[:source_id])

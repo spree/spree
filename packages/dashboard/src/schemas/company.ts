@@ -3,11 +3,10 @@ import type {
   TaxExemptionCertificateCreateParams,
   TaxIdentifierCreateParams,
 } from '@spree/admin-sdk'
+import { COMPANY_KINDS } from '@spree/core'
 import { blankToNull, countryCodeSchema, signedIdParam } from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
-
-export const COMPANY_KINDS = ['company', 'division'] as const
 
 export const companyFormSchema = z.object({
   name: z.string().min(1, { error: requiredMessage('name') }),

@@ -33,10 +33,16 @@ describe 'spree:upgrade:migrate_users_to_customers' do
       t.datetime :locked_at
       t.timestamps
     end
+
+    # A pre-6.0 admin table keeps its Devise digest next to password_digest.
+    ActiveRecord::Base.connection.add_column :spree_admin_users, :encrypted_password, :string
+    Spree.admin_user_class.reset_column_information
   end
 
   after(:all) do
     ActiveRecord::Base.connection.drop_table :spree_legacy_source_users, if_exists: true
+    ActiveRecord::Base.connection.remove_column :spree_admin_users, :encrypted_password
+    Spree.admin_user_class.reset_column_information
   end
 
   before do

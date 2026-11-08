@@ -29,8 +29,9 @@ RSpec.describe 'Sellers API', type: :request, swagger_doc: 'api-reference/store.
       parameter name: :limit, in: :query, type: :integer, required: false
       filter_parameters_for
       parameter name: :expand, in: :query, type: :string, required: false,
-                description: 'Comma-separated associations to expand (`policies`). ' \
-                             'A seller\'s policies are their own published legal documents.'
+                description: 'Comma-separated associations to expand (`policies`, `custom_fields`). ' \
+                             'A seller\'s policies are their own published legal documents; ' \
+                             '`custom_fields` returns only fields marked storefront visible.'
       parameter name: :fields, in: :query, type: :string, required: false,
                 description: 'Comma-separated list of fields to include. id is always included.'
 
@@ -77,14 +78,26 @@ RSpec.describe 'Sellers API', type: :request, swagger_doc: 'api-reference/store.
       parameter name: :id, in: :path, type: :string, required: true,
                 description: 'Seller slug (e.g., sparks-audio) or prefixed ID (e.g., sel_abc123)'
       parameter name: :expand, in: :query, type: :string, required: false,
-                description: 'Comma-separated associations to expand (`policies`). ' \
-                             'A seller\'s policies are their own published legal documents.'
+                description: 'Comma-separated associations to expand (`policies`, `custom_fields`). ' \
+                             'A seller\'s policies are their own published legal documents; ' \
+                             '`custom_fields` returns only fields marked storefront visible.'
       parameter name: :fields, in: :query, type: :string, required: false,
                 description: 'Comma-separated list of fields to include. id is always included.'
 
       response '200', 'seller found by slug' do
         let(:'x-spree-api-key') { api_key.token }
         let(:id) { seller.slug }
+        let(:expand) { 'custom_fields' }
+        let(:definition) do
+          create(:custom_field_definition, resource_type: 'Spree::Seller', namespace: 'merchandising',
+                                           key: 'navigation_position', label: 'Navigation position', field_type: 'Spree::CustomFields::Number')
+        end
+
+        before do
+          create(:custom_field, resource: seller, custom_field_definition: definition, type: 'Spree::CustomFields::Number', value: 10)
+          create(:custom_field, resource: seller, value: 'internal',
+                                custom_field_definition: create(:custom_field_definition, :admin_only, resource_type: 'Spree::Seller'))
+        end
 
         schema '$ref' => '#/components/schemas/Seller'
 
@@ -92,6 +105,7 @@ RSpec.describe 'Sellers API', type: :request, swagger_doc: 'api-reference/store.
           data = JSON.parse(response.body)
           expect(data['name']).to eq('Sparks Audio')
           expect(data).not_to have_key('status')
+          expect(data['custom_fields'].pluck('key')).to eq(['merchandising.navigation_position'])
         end
       end
 

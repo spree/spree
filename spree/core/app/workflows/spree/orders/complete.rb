@@ -7,6 +7,8 @@ module Spree
     # may still need to process payments). Idempotent: an already-placed
     # order halts successfully, so interrupted completions replay safely.
     class Complete < Spree::Workflow
+      hooks :validate
+
       # Set only when the order divided between sellers.
       attr_reader :order_group
 
@@ -18,9 +20,13 @@ module Spree
       #   rollup work's call (docs/plans/6.0-b2b-wholesale-shipping.md phase 7)
       # @param notify_customer [Boolean, nil] admin drafts pass false to
       #   complete silently; nil (checkout) leaves customer notification on
+      # @param validated [Boolean] the caller already ran its own veto, so the
+      #   validate hook is skipped: checkout's finalize, whose
+      #   carts.complete.validate ran before the payment was taken, and the
+      #   orders a seller division places beside the one it came from
       # @return [Spree::ServiceModule::Result] value is the order, or the
       #   Spree::OrderGroup when it divided between sellers
-      def perform(order:, payment_pending: false, notify_customer: nil)
+      def perform(order:, payment_pending: false, notify_customer: nil, validated: false)
         super
 
         order.notify_customer = notify_customer unless notify_customer.nil?
@@ -37,19 +43,29 @@ module Spree
 
         step :ensure_not_canceled
 
-        order.with_lock do
-          unless order.reload.placed?
-            step :process_payments unless payment_pending || !order.payment_required?
-            step :split_by_seller
-            step :finalize_fulfillments
-            step :place_order
-            step :freeze_tax_exemptions
-            step :use_coupon_codes
-            step :redeem_gift_card
-            step :fulfill_auto_fulfillments
-            step :ensure_digital_links
-          end
+        placed_here = order.with_lock do
+          # A completion running alongside this one placed it while this one
+          # waited for the lock. Placed, not merely in that status: it may
+          # have been canceled since.
+          next false if order.reload.completed?
+
+          step :validate_order unless validated
+          step :process_payments unless payment_pending || !order.payment_required?
+          step :split_by_seller
+          step :finalize_fulfillments
+          step :place_order
+          step :freeze_tax_exemptions
+          step :use_coupon_codes
+          step :redeem_gift_card
+          step :fulfill_auto_fulfillments
+          step :ensure_digital_links
+          true
         end
+
+        # The run that placed it announces it and finishes what follows; this
+        # one answers as a replay would, so nothing after placement happens
+        # twice.
+        halt!(order.order_group || order) unless placed_here
 
         step :ensure_placed_status
         step :release_stock_reservations
@@ -65,6 +81,14 @@ module Spree
 
       def ensure_not_canceled
         failure(order, 'Order is canceled') if order.canceled?
+      end
+
+      # The extension veto, under the order's row lock: a handler sees the
+      # order as it is placed, and anything else that takes the lock to change
+      # it waits for the outcome. Rejecting rolls the lock back before any
+      # payment is processed.
+      def validate_order
+        run_hooks :validate
       end
 
       def process_payments
@@ -140,11 +164,16 @@ module Spree
       end
 
       def allocate_fulfillment_stock(fulfillment)
-        fulfillment.manifest.each do |item|
-          next unless item.variant.track_inventory?
-          next unless item.quantity.positive?
+        items = fulfillment.manifest.select { |item| item.variant.track_inventory? && item.quantity.positive? }
+        return if items.empty?
 
-          fulfillment.stock_location.allocate(item.variant, item.quantity, fulfillment)
+        stock_location = fulfillment.stock_location
+        # Lowest id first, as StockLocation#stock_level reads.
+        stock_levels = stock_location.stock_levels.where(variant_id: items.map { |item| item.variant.id }).order(:id).
+                       group_by(&:variant_id).transform_values(&:first)
+
+        items.each do |item|
+          stock_location.allocate(item.variant, item.quantity, fulfillment, stock_level: stock_levels[item.variant.id])
         end
       end
 
@@ -240,7 +269,9 @@ module Spree
       # wildcard subscribers dedupe on the metadata marker.
       def publish_order_placed
         metadata = { notify_customer: order.notify_customer }
-        payload = order.event_payload
+        # The payload renders every line and parcel, read back through a lazily
+        # preloading query so each association loads once rather than per row.
+        payload = Spree::Order.where(id: order.id).preload_associations_lazily.take!.event_payload
         order.publish_event('order.placed', payload, metadata)
         order.publish_event('order.completed', payload, metadata.merge(deprecated_alias_of: 'order.placed'))
       end
@@ -269,7 +300,8 @@ module Spree
       end
 
       def place_sibling(sibling)
-        result = Spree.order_complete_workflow.call(order: sibling, payment_pending: true, notify_customer: false)
+        result = Spree.order_complete_workflow.call(order: sibling, payment_pending: true, notify_customer: false,
+                                                    validated: true)
         failure(order, result.error) if result.failure?
       end
 

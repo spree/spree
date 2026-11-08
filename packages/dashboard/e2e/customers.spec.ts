@@ -64,6 +64,15 @@ test.describe('customers', () => {
     await expect(ordersCard.locator('[data-slot="card-title"]')).toHaveText('Orders')
   })
 
+  // Filled by the probes in src/testing/slot-probes.tsx.
+  test('renders the plugin slot at the end of the main column', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, CUSTOMERS_PATH(creds.store_id), CTA)
+    await createCustomer(page, `e2e-slots-${Date.now()}@example.com`)
+
+    await expect(page.getByText('Slot probe: customer.form_main')).toBeVisible()
+  })
+
   test('edits a customer profile', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, CUSTOMERS_PATH(creds.store_id), CTA)
@@ -71,15 +80,12 @@ test.describe('customers', () => {
     const email = `e2e-edit-${Date.now()}@example.com`
     await createCustomer(page, email)
 
-    // `<CardTitle>` renders as a `<div>` (not an `<h*>`), so we scope by text
-    // and pick the first Edit button under it.
-    const profileCard = page.locator('div').filter({
-      has: page.getByText('Profile', { exact: true }),
-    })
-    await profileCard
-      .getByRole('button', { name: /^edit$/i })
-      .first()
-      .click()
+    // Scoped to the Profile card itself: other cards on the page (custom
+    // fields, once a customer field is defined) carry an Edit button too.
+    const profileCard = page
+      .locator('[data-slot="card"]')
+      .filter({ has: page.locator('[data-slot="card-title"]', { hasText: /^Profile$/ }) })
+    await profileCard.getByRole('button', { name: /^edit$/i }).click()
     await expect(page.getByRole('heading', { name: /^edit customer$/i })).toBeVisible()
 
     await page.locator('#first_name').fill('Pat')

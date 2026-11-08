@@ -152,7 +152,7 @@ function UpdateNotification({ update, open }: { update: UpdateStatus; open: bool
             {t('admin.notifications.release_notes_unavailable')}
           </p>
         ) : notes.data ? (
-          <ReleaseNotes markdown={notes.data} />
+          <ReleaseNotes html={notes.data} />
         ) : null}
       </section>
     </article>

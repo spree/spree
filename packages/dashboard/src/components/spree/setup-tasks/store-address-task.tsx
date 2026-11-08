@@ -1,3 +1,4 @@
+import type { StockLocation } from '@spree/admin-sdk'
 import {
   AddressFormDialog,
   adminClient,
@@ -31,47 +32,8 @@ import type { SetupTaskSlotContext } from './types'
  */
 export function StoreAddressTask({ task }: SetupTaskSlotContext) {
   const { t } = useTranslation()
-  const queryClient = useQueryClient()
   const [editing, setEditing] = useState(false)
-  const update = useUpdateStockLocationById()
-
-  // Two filtered requests rather than one page filtered in the browser, to
-  // match `Store#primary_location` exactly: a location that accepts returns
-  // wins outright, and only then default and name decide. The list also holds
-  // every seller's warehouse on a marketplace, so the operator's own
-  // returns-enabled row can sit well past any page we could fetch — and
-  // editing the wrong one means an address their parcels never come back to.
-  //
-  // The list endpoint cannot express the preference in one call: it orders by
-  // default then name, and its `sort` param collapses to a single key.
-  const firstParty = { seller_id_null: true, active_eq: true, limit: 1 }
-  const {
-    data: takesReturns,
-    isFetching: fetchingReturns,
-    isError: returnsFailed,
-  } = useQuery({
-    queryKey: useResourceKey('stock-locations', { firstParty: true, returns: true }),
-    queryFn: () => adminClient.stockLocations.list({ ...firstParty, returns_enabled_eq: true }),
-  })
-  const hasReturnsLocation = (takesReturns?.data.length ?? 0) > 0
-  const {
-    data: anyActive,
-    isFetching: fetchingAny,
-    isError: anyFailed,
-  } = useQuery({
-    queryKey: useResourceKey('stock-locations', { firstParty: true }),
-    queryFn: () => adminClient.stockLocations.list(firstParty),
-    enabled: !!takesReturns && !hasReturnsLocation,
-  })
-
-  // `isFetching`, not `isLoading`: a disabled query stays pending forever, so
-  // the fallback request would hold the skeleton open once the first one hit.
-  const isLoading = fetchingReturns || fetchingAny
-  const location = takesReturns?.data[0] ?? anyActive?.data[0]
-  // A failed lookup must not read as "you have no warehouse" — that would
-  // send the merchant off to create a second one they do not need.
-  const failed = returnsFailed || anyFailed
-
+  const { location, isLoading, failed } = usePrimaryStockLocation()
   const hasAddress = Boolean(location?.address1)
 
   return (
@@ -101,25 +63,86 @@ export function StoreAddressTask({ task }: SetupTaskSlotContext) {
       )}
 
       {editing && location && (
-        <AddressFormDialog
-          title={t('admin.pages.getting_started.tasks.setup_address.title')}
-          address={stockLocationToEditableAddress(location)}
-          open
-          business
-          onOpenChange={setEditing}
-          onSave={async (values) => {
-            await update.mutateAsync({
-              id: location.id,
-              params: editableAddressToStockLocationParams(values),
-            })
-            // The checklist reads this address off the store payload, so the
-            // tick and the nav badge only move once the store is re-read.
-            await queryClient.invalidateQueries({ queryKey: [STORE_QUERY_RESOURCE] })
-            setEditing(false)
-          }}
-          isPending={update.isPending}
-        />
+        <StoreAddressDialog location={location} onClose={() => setEditing(false)} />
       )}
     </>
+  )
+}
+
+/**
+ * The location the store's address lives on.
+ *
+ * Two filtered requests rather than one page filtered in the browser, to
+ * match `Store#primary_location` exactly: a location that accepts returns
+ * wins outright, and only then default and name decide. The list also holds
+ * every seller's warehouse on a marketplace, so the operator's own
+ * returns-enabled row can sit well past any page we could fetch — and
+ * editing the wrong one means an address their parcels never come back to.
+ *
+ * The list endpoint cannot express the preference in one call: it orders by
+ * default then name, and its `sort` param collapses to a single key.
+ */
+export function usePrimaryStockLocation() {
+  const firstParty = { seller_id_null: true, active_eq: true, limit: 1 }
+  const {
+    data: takesReturns,
+    isFetching: fetchingReturns,
+    isError: returnsFailed,
+  } = useQuery({
+    queryKey: useResourceKey('stock-locations', { firstParty: true, returns: true }),
+    queryFn: () => adminClient.stockLocations.list({ ...firstParty, returns_enabled_eq: true }),
+  })
+  const hasReturnsLocation = (takesReturns?.data.length ?? 0) > 0
+  const {
+    data: anyActive,
+    isFetching: fetchingAny,
+    isError: anyFailed,
+  } = useQuery({
+    queryKey: useResourceKey('stock-locations', { firstParty: true }),
+    queryFn: () => adminClient.stockLocations.list(firstParty),
+    enabled: !!takesReturns && !hasReturnsLocation,
+  })
+
+  return {
+    location: takesReturns?.data[0] ?? anyActive?.data[0],
+    // `isFetching`, not `isLoading`: a disabled query stays pending forever, so
+    // the fallback request would hold the skeleton open once the first one hit.
+    isLoading: fetchingReturns || fetchingAny,
+    // A failed lookup must not read as "you have no warehouse" — that would
+    // send the merchant off to create a second one they do not need.
+    failed: returnsFailed || anyFailed,
+  }
+}
+
+export function StoreAddressDialog({
+  location,
+  onClose,
+}: {
+  location: StockLocation
+  onClose: () => void
+}) {
+  const { t } = useTranslation()
+  const queryClient = useQueryClient()
+  const update = useUpdateStockLocationById()
+
+  return (
+    <AddressFormDialog
+      title={t('admin.pages.getting_started.tasks.setup_address.title')}
+      address={stockLocationToEditableAddress(location)}
+      open
+      business
+      onOpenChange={(open) => !open && onClose()}
+      onSave={async (values) => {
+        await update.mutateAsync({
+          id: location.id,
+          params: editableAddressToStockLocationParams(values),
+        })
+        // The checklist reads this address off the store payload, so its tick
+        // only moves once the store is re-read.
+        await queryClient.invalidateQueries({ queryKey: [STORE_QUERY_RESOURCE] })
+        onClose()
+      }}
+      isPending={update.isPending}
+    />
   )
 }

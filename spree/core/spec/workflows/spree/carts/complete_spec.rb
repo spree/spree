@@ -618,6 +618,36 @@ module Spree
       end
     end
 
+    describe 'cart copiers' do
+      let(:received) { [] }
+      let(:copier) { ->(**args) { received << args } }
+
+      before { allow(Spree).to receive(:cart_copiers).and_return([copier]) }
+
+      it 'hands each copier the cart, the order and every cart line paired with its copy' do
+        order = described_class.call(cart: ready_cart).value
+
+        expect(received.size).to eq(1)
+        expect(received.first[:cart]).to eq(ready_cart)
+        expect(received.first[:order]).to eq(order)
+
+        line_item_map = received.first[:line_item_map]
+        expect(line_item_map.keys).to match_array(ready_cart.line_items.to_a)
+        expect(line_item_map.values.map(&:id)).to match_array(order.line_items.ids)
+      end
+
+      # The copy runs in the same transaction as the order, so a copier that
+      # cannot finish leaves the cart as it was rather than an order missing
+      # what the extension kept against it.
+      it 'rolls the completion back when a copier raises' do
+        allow(Spree).to receive(:cart_copiers).and_return([->(**) { raise ActiveRecord::RecordInvalid, Spree::Order.new }])
+
+        expect { described_class.call(cart: ready_cart) }.to raise_error(ActiveRecord::RecordInvalid)
+        expect(Spree::Order.where(cart_id: ready_cart.id)).to be_empty
+        expect(ready_cart.reload.completing_at).to be_nil
+      end
+    end
+
     describe 'guest checkout policy' do
       it 'fails when the channel forbids guest checkout and the cart has no customer' do
         allow_any_instance_of(Spree::Cart).to receive(:guest_checkout_disallowed?).and_return(true)

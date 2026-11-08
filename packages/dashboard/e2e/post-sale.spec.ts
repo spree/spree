@@ -104,6 +104,39 @@ test.describe('post-sale', () => {
     })
   })
 
+  test('resolves a claim with a refund once the amount is above zero', async ({ page }) => {
+    const creds = await login(page)
+    const order = await createShippedOrder(page, creds.accessToken, 1)
+    await page.goto(`/${creds.store_id}/orders/${order.id}`)
+
+    const claims = card(page, /^claims/i)
+    await claims.getByRole('button', { name: /new claim/i }).click({ timeout: 15_000 })
+    const dialog = page.getByRole('dialog')
+    await dialog.getByRole('spinbutton', { name: new RegExp(FIXTURE_PROMO_PRODUCT) }).fill('1')
+    await dialog.locator('#reason-claim-reasons').click()
+    await page.getByRole('option', { name: 'Never arrived' }).click()
+    await dialog.getByRole('button', { name: /new claim/i }).click()
+    await expect(claims.getByText(/^open$/i)).toBeVisible({ timeout: 15_000 })
+
+    await recordAction(page, /^claims/i, /^approve$/i)
+    await expect(claims.getByText(/^approved$/i)).toBeVisible({ timeout: 15_000 })
+
+    await recordAction(page, /^claims/i, /^resolve$/i)
+    const resolve = page.getByRole('dialog')
+    await expect(resolve.getByRole('heading', { name: /^resolve claim$/i })).toBeVisible()
+    const amount = resolve.getByLabel(/^refund amount$/i)
+    const submit = resolve.getByRole('button', { name: /^resolve$/i })
+
+    await amount.fill('0')
+    await expect(submit).toBeDisabled()
+    // Typed without the leading zero, as a number field allows.
+    await amount.fill('.5')
+    await expect(submit).toBeEnabled()
+    await submit.click()
+
+    await expect(claims.getByText(/^resolved$/i)).toBeVisible({ timeout: 15_000 })
+  })
+
   test('lists exchanges store-wide', async ({ page }) => {
     const creds = await login(page)
     await page.goto(`/${creds.store_id}/exchanges`)

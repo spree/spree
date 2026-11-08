@@ -4,7 +4,7 @@ module Spree
       module Seller
         class TaxIdentifierSerializer < V3::BaseSerializer
           typelize kind: [:string, comment: 'Tax identifier kind, keyed to a registered validator. Built-in: eu_vat. Extensions may register more.'], value: :string,
-                   validation_status: [:string, nullable: true, enum: Spree::TaxIdentifier::VALIDATION_STATUSES],
+                   validation_status: [:string, nullable: true, enum: Spree::TaxIdentifier::VALIDATION_STATUSES, enum_type_name: 'TaxIdentifierValidationStatus'],
                    validated_at: [:string, nullable: true]
 
           attributes :kind, :value, :validation_status, validated_at: :iso8601

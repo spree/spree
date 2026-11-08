@@ -1,4 +1,10 @@
-import { defineTable, formatMoney, formatStoreDateTime } from '@spree/dashboard-core'
+import { ORDER_PAYMENT_STATUSES } from '@spree/core'
+import {
+  defineTable,
+  FILTERABLE_ORDER_FULFILLMENT_STATUSES,
+  formatMoney,
+  formatStoreDateTime,
+} from '@spree/dashboard-core'
 import { ResourceNameCell, StatusBadge } from '@spree/dashboard-ui'
 import { PackageIcon } from '@spree/dashboard-ui/icons'
 import type { Order } from '@spree/seller-sdk'
@@ -16,26 +22,6 @@ function OrderDate({ iso }: { iso: string }) {
 
   return <>{formatStoreDateTime(iso, timezone)}</>
 }
-
-/** Mirrors the operator dashboard's order status vocabularies. */
-const FULFILLMENT_STATUSES = [
-  'unfulfilled',
-  'backorder',
-  'partial',
-  'fulfilled',
-  'delivered',
-  'canceled',
-] as const
-const PAYMENT_STATUSES = [
-  'none',
-  'authorized',
-  'partially_paid',
-  'paid',
-  'partially_refunded',
-  'refunded',
-  'overcharged',
-  'voided',
-] as const
 
 defineTable<Order>('seller-orders', {
   title: i18n.t('orders.title'),
@@ -69,7 +55,7 @@ defineTable<Order>('seller-orders', {
       label: i18n.t('orders.columns.fulfillment'),
       filterable: true,
       filterType: 'enum',
-      filterOptions: FULFILLMENT_STATUSES.map((status) => ({
+      filterOptions: FILTERABLE_ORDER_FULFILLMENT_STATUSES.map((status) => ({
         value: status,
         label: i18n.t(`orders.fulfillment_statuses.${status}`),
       })),
@@ -90,7 +76,7 @@ defineTable<Order>('seller-orders', {
       label: i18n.t('orders.columns.payment'),
       filterable: true,
       filterType: 'enum',
-      filterOptions: PAYMENT_STATUSES.map((status) => ({
+      filterOptions: ORDER_PAYMENT_STATUSES.map((status) => ({
         value: status,
         label: i18n.t(`orders.payment_statuses.${status}`),
       })),

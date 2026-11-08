@@ -64,6 +64,8 @@ interface Props {
    * whatever it already has.
    */
   seedFromType?: boolean
+  /** The product form's key — names the variant sheet's slot. */
+  formKey?: string
 }
 
 // Derive the initial selected option types from current variant rows so the
@@ -125,7 +127,7 @@ function seedFromProductType(
     .filter((entry): entry is SelectedOptionType => entry !== null)
 }
 
-export function VariantsSection({ form, seedFromType = false }: Props) {
+export function VariantsSection({ form, seedFromType = false, formKey = 'product' }: Props) {
   const { t } = useTranslation()
   const { data: optionTypesData } = useOptionTypes()
   const allOptionTypes = useMemo(() => optionTypesData?.data ?? [], [optionTypesData])
@@ -447,6 +449,7 @@ export function VariantsSection({ form, seedFromType = false }: Props) {
         <VariantEditSheet
           form={form}
           variantIndex={editingIndex}
+          formKey={formKey}
           open={sheetOpen}
           onOpenChange={(o) => {
             setSheetOpen(o)

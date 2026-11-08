@@ -69,6 +69,17 @@ describe Spree::StockMovement, type: :model do
       expect(movement).to be_valid
     end
 
+    # The column is a plain string, which MySQL caps at 255 characters.
+    it 'rejects a reason longer than 255 characters' do
+      movement = build(:stock_movement, kind: 'adjusted', reason: 'a' * 256, stock_level: stock_level)
+
+      expect(movement).to be_invalid
+      expect(movement.errors[:reason]).to be_present
+
+      movement.reason = 'a' * 255
+      expect(movement).to be_valid
+    end
+
     it 'does not require a reason for any other kind' do
       expect(build(:stock_movement, kind: 'received', reason: nil, stock_level: stock_level)).to be_valid
     end

@@ -4,6 +4,7 @@ import {
   Can,
   Money,
   PageHeader,
+  RecordMetadataCard,
   Slot,
   Subject,
   useResourceKey,
@@ -38,6 +39,7 @@ import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CloseShortDialog } from '../../../../../components/spree/close-short-dialog'
+import { ApiCustomFieldsCard } from '../../../../../components/spree/custom-fields/custom-fields-inline'
 import { InventoryStatusBadge } from '../../../../../components/spree/inventory-status-badge'
 import { ReceiveDeliveryCard } from '../../../../../components/spree/receive-delivery-card'
 import { ResourceDetailSkeleton } from '../../../../../components/spree/route-pending'
@@ -96,6 +98,9 @@ function PurchaseOrderDetailPage() {
             purchaseOrderId={purchaseOrder.id}
             title={t('admin.purchase_orders.history_title')}
           />
+          <ApiCustomFieldsCard ownerType="purchase_order" ownerId={purchaseOrder.id} collapsible />
+          <RecordMetadataCard metadata={purchaseOrder.metadata} />
+          <Slot name="purchase_order.form_main" context={{ purchaseOrder }} />
         </>
       }
       sidebar={

@@ -11,10 +11,11 @@ module Spree
                  po_document_filename: [:string, nullable: true], po_document_byte_size: ['number | null'],
                  currency: [:string, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'], locale: [:string, nullable: true, enum: Spree::Locales::ALL, enum_type_name: 'LocaleCode'], total_quantity: :number,
                  coupon_code: [:string, nullable: true],
-                 fulfillment_status: [:string, nullable: true, enum: Spree::Order::FULFILLMENT_STATUSES],
-                 payment_status: [:string, nullable: true, enum: Spree::Order::PAYMENT_STATUSES],
+                 fulfillment_status: [:string, nullable: true, enum: Spree::Order::FULFILLMENT_STATUSES, enum_type_name: 'OrderFulfillmentStatus'],
+                 payment_status: [:string, nullable: true, enum: Spree::Order::PAYMENT_STATUSES, enum_type_name: 'OrderPaymentStatus'],
                  completed_at: [:string, nullable: true],
                  withdrawal_period_ends_at: [:string, nullable: true], within_withdrawal_period: :boolean,
+                 shipping_eq_billing_address: :boolean,
                  billing_address: { nullable: true }, shipping_address: { nullable: true },
                  gift_card: { nullable: true }, market: { nullable: true }
 
@@ -28,6 +29,7 @@ module Spree
         end
 
         attribute :within_withdrawal_period, &:within_withdrawal_period?
+        attribute :shipping_eq_billing_address, &:shipping_eq_billing_address?
 
         # The checkout handle this order was born from (nil for admin drafts).
         # Lets abandonment tooling match cart.* events to the conversion.
@@ -77,6 +79,8 @@ module Spree
         one :shipping_address, resource: proc { Spree.api.address_serializer }
         one :gift_card, resource: proc { Spree.api.gift_card_serializer }
         one :market, resource: proc { Spree.api.market_serializer }
+
+        expandable_custom_fields
       end
     end
   end

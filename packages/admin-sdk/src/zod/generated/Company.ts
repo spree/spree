@@ -3,6 +3,7 @@ import { z } from 'zod';
 import type Company from '../../types/generated/Company';
 import { AddressSchema } from './Address';
 import { CompanyMembershipSchema } from './CompanyMembership';
+import { CustomFieldSchema } from './CustomField';
 
 export const CompanySchema = z.object({
   id: z.string(),
@@ -11,6 +12,7 @@ export const CompanySchema = z.object({
   po_number_required: z.boolean(),
   parent_id: z.string().nullable(),
   ancestors: z.array(z.object({ id: z.string(), name: z.string(), kind: z.string() })),
+  custom_fields: z.array(CustomFieldSchema).optional(),
   external_references: z.record(z.string(), z.string()),
   metadata: z.record(z.string(), z.unknown()).nullable(),
   created_at: z.string(),
@@ -27,6 +29,7 @@ export const CompanySchema = z.object({
   po_number_required: z.ZodType<Company['po_number_required']>;
   parent_id: z.ZodType<Company['parent_id']>;
   ancestors: z.ZodType<Company['ancestors']>;
+  custom_fields: z.ZodOptional<z.ZodType<Exclude<Company['custom_fields'], undefined>>>;
   external_references: z.ZodType<Company['external_references']>;
   metadata: z.ZodType<Company['metadata']>;
   created_at: z.ZodType<Company['created_at']>;

@@ -1,5 +1,10 @@
 import type { Supplier } from '@spree/admin-sdk'
-import { CountryCombobox, StateCombobox, useCountryStates } from '@spree/dashboard-core'
+import {
+  CountryCombobox,
+  RecordMetadataSection,
+  StateCombobox,
+  useCountryStates,
+} from '@spree/dashboard-core'
 import {
   Button,
   Field,
@@ -257,6 +262,7 @@ export function SupplierSheet({
               />
             </Field>
           </FieldGroup>
+          {id && <RecordMetadataSection metadata={supplier?.metadata} />}
         </div>
 
         <SheetFooter>

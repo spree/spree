@@ -7,6 +7,7 @@ import { AppliedPromotionSchema } from './AppliedPromotion';
 import { CartSchema } from './Cart';
 import { ChannelSchema } from './Channel';
 import { ClaimSchema } from './Claim';
+import { CustomFieldSchema } from './CustomField';
 import { CustomerSchema } from './Customer';
 import { ExchangeSchema } from './Exchange';
 import { FreightSummarySchema } from './FreightSummary';
@@ -27,6 +28,7 @@ export const OrderSchema = z.object({
   market_id: z.string().nullable(),
   withdrawal_period_ends_at: z.string().nullable(),
   within_withdrawal_period: z.boolean(),
+  shipping_eq_billing_address: z.boolean(),
   cart_id: z.string().nullable(),
   channel_id: z.string().nullable(),
   company_id: z.string().nullable(),
@@ -64,6 +66,7 @@ export const OrderSchema = z.object({
   shipping_address: AddressSchema.nullable().optional(),
   get gift_card() { return GiftCardSchema.nullable(); },
   get market() { return MarketSchema.nullable(); },
+  custom_fields: z.array(CustomFieldSchema).optional(),
   external_references: z.record(z.string(), z.string()),
   status: z.string(),
   last_ip_address: z.string().nullable(),
@@ -117,6 +120,7 @@ export const OrderSchema = z.object({
   market_id: z.ZodType<Order['market_id']>;
   withdrawal_period_ends_at: z.ZodType<Order['withdrawal_period_ends_at']>;
   within_withdrawal_period: z.ZodType<Order['within_withdrawal_period']>;
+  shipping_eq_billing_address: z.ZodType<Order['shipping_eq_billing_address']>;
   cart_id: z.ZodType<Order['cart_id']>;
   channel_id: z.ZodType<Order['channel_id']>;
   company_id: z.ZodType<Order['company_id']>;
@@ -154,6 +158,7 @@ export const OrderSchema = z.object({
   shipping_address: z.ZodOptional<z.ZodType<Exclude<Order['shipping_address'], undefined>>>;
   gift_card: z.ZodType<Order['gift_card']>;
   market: z.ZodType<Order['market']>;
+  custom_fields: z.ZodOptional<z.ZodType<Exclude<Order['custom_fields'], undefined>>>;
   external_references: z.ZodType<Order['external_references']>;
   status: z.ZodType<Order['status']>;
   last_ip_address: z.ZodType<Order['last_ip_address']>;

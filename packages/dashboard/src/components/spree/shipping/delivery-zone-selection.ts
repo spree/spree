@@ -1,4 +1,5 @@
-import type { CountryCode, DeliveryZone } from '@spree/admin-sdk'
+import type { DeliveryZone } from '@spree/admin-sdk'
+import type { CountryCode } from '@spree/core'
 import type { DeliveryZoneMemberValues } from '../../../schemas/delivery-zone'
 
 /**

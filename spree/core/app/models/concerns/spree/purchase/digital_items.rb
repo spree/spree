@@ -9,7 +9,7 @@ module Spree
         if total_quantity.zero? || line_items.empty?
           false
         else
-          line_items.includes(variant: :product).all?(&:digital?)
+          line_items_with_variants(variant: :product).all?(&:digital?)
         end
       end
 
@@ -18,7 +18,7 @@ module Spree
         if total_quantity.zero? || line_items.empty?
           false
         else
-          line_items.includes(variant: :product).any?(&:digital?)
+          line_items_with_variants(variant: :product).any?(&:digital?)
         end
       end
 
@@ -27,7 +27,7 @@ module Spree
         if total_quantity.zero? || line_items.empty?
           false
         else
-          line_items.includes(:variant).any?(&:with_digital_assets?)
+          line_items_with_variants(variant: :digital_assets).any?(&:with_digital_assets?)
         end
       end
 
@@ -54,6 +54,20 @@ module Spree
       # @return [Boolean]
       def delivery_step_required?
         line_items.any? && !digital?
+      end
+
+      private
+
+      # Lines already in memory get the associations preloaded onto them —
+      # onto every line of their preload context when they sit in a list, so
+      # the list batches them instead of querying once per purchase.
+      def line_items_with_variants(associations)
+        return line_items.includes(associations) unless read_association_in_memory?(:line_items)
+
+        loaded = line_items.to_a
+        records = loaded.first&.lazy_preload_context&.records || loaded
+        ActiveRecord::Associations::Preloader.new(records: records, associations: associations).call
+        loaded
       end
     end
   end

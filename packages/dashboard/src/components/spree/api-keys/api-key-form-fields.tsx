@@ -1,3 +1,4 @@
+import type { ApiKeyType } from '@spree/core'
 import {
   Field,
   FieldContent,
@@ -58,7 +59,7 @@ export function KeyTypeChoice({
   title,
   description,
 }: {
-  value: 'publishable' | 'secret'
+  value: ApiKeyType
   title: string
   description: string
 }) {

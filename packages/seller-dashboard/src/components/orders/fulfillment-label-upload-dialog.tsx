@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import type { CurrencyCode } from '@spree/core'
 import {
   EMPTY_FILE_UPLOAD_VALUE,
   FileUploadField,
@@ -9,7 +10,6 @@ import {
   mapSpreeErrorsToForm,
 } from '@spree/dashboard-core'
 import { LabelUploadDialog } from '@spree/dashboard-ui'
-import type { CurrencyCode } from '@spree/seller-sdk'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'

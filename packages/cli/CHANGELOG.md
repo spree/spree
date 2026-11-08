@@ -1,5 +1,53 @@
 # @spree/cli
 
+## 3.6.3
+
+### Patch Changes
+
+- [#15031](https://github.com/spree/spree/pull/15031) [`d102fb7`](https://github.com/spree/spree/commit/d102fb703abcd184064637015e4b60f46e050bdb) Thanks [@mad-eel](https://github.com/mad-eel)! - `spree add paypal` now asks for `spree_paypal_checkout` at the project's Spree version or newer, since PayPal is released with Spree from 6.0.3. Before, it resolved to the 0.x gem, which does not run on Spree 6. A project on Spree 6.0.0 to 6.0.2 must upgrade Spree to 6.0.3 first.
+
+- [#15113](https://github.com/spree/spree/pull/15113) [`41bbba3`](https://github.com/spree/spree/commit/41bbba3272d9ebd8817842456670db0b72cd3b34) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added `spree sdk generate`, which writes the whole client of a package that extends Spree's SDKs from the extension it is for: it runs the extension's `rake spree:openapi:generate` and `rake spree:sdk:serializer_types`, then writes one SDK extension per resource, with a method per documented operation, and the request, filter and response types. The extension is named in the package's `package.json` (`"spree": { "extension": "../my_extension" }`); `--check` fails when the generated files are out of date, and `--no-backend` uses the committed documents.
+
+## 3.6.2
+
+### Patch Changes
+
+- [#15063](https://github.com/spree/spree/pull/15063) [`f114556`](https://github.com/spree/spree/commit/f114556b7bfa7d3b649c035aaea8dadd855d2010) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The `spree` command now starts from `bin/spree.js`, which loads the built `dist/index.js`. Running `spree` works the same as before.
+
+- [#15022](https://github.com/spree/spree/pull/15022) [`8890e33`](https://github.com/spree/spree/commit/8890e33bae96e6edc9e66d92b90feb012561a740) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Removed the CLI's leftover Changesets dev dependencies and scripts; releases run from the repository root. Nothing changes for users of the `spree` command.
+
+## 3.6.1
+
+### Patch Changes
+
+- [#14989](https://github.com/spree/spree/pull/14989) [`70ab2cd`](https://github.com/spree/spree/commit/70ab2cd786ea4395c1669563fcb4b942267c7080) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - When Docker runs out of network addresses, `spree init`, `spree dev` and the other commands that start containers now explain why and how to remove the old networks, instead of showing only the raw Docker error.
+
+## 3.6.0
+
+### Minor Changes
+
+- [#14975](https://github.com/spree/spree/pull/14975) [`f86d75c`](https://github.com/spree/spree/commit/f86d75c467ca0fb39886a9d9813d59dfd7f73ccc) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Renamed the CLI commands and flags that were named after Rails tools, so each command describes what it does rather than which Rails tool runs it. `spree test` replaces `spree rspec`, `spree add <extension>` replaces `spree bundle add`, `spree migrate:rollback --steps n` replaces `STEP=n`, `spree build --reset-deps` replaces `--reset-bundle`, and `spree plugin new` takes `--backend-name` / `--no-backend`. `spree rails`, `spree rake`, `spree bundle`, `spree routes`, `spree rspec` and the old flags still work and print a notice naming the replacement; they will be removed in Spree 7.0. `spree test` now creates the test database when it is missing, so the suite runs on a fresh project with no setup step. Also fixed the setup-link hint `spree init` printed, which named a command that does not exist.
+
+## 3.5.0
+
+### Minor Changes
+
+- [#14980](https://github.com/spree/spree/pull/14980) [`6c126ab`](https://github.com/spree/spree/commit/6c126ab0851011b3a10658ba2527a26ef7d4d2e1) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `spree upgrade` now moves the dashboard packages and the Admin and Seller SDKs to the Spree version. From Spree 6.0 these packages share the version of the Spree gems, and a range on an older line such as `^1.0.0-rc.7` would never reach it on its own. The packages move to the Spree version the server runs after its update, so a CLI built for an earlier release still moves them all the way. A package pinned to an exact version moves to that version and stays pinned; before, `update` left it on the old release while the server moved on. A release candidate pin moving to a final version becomes a `^` range instead, since pnpm writes release candidates back as exact versions on its own. The upgrade then dedupes each app, so a dependency the new release pins, such as `@codemirror/view`, isn't left installed twice and failing type checks. Yarn 2 and later is now also recognised from the `packageManager` field. For a storefront on an older `@spree/sdk` line, the upgrade names the exact range to move to.
+
+### Patch Changes
+
+- [#14978](https://github.com/spree/spree/pull/14978) [`2df9371`](https://github.com/spree/spree/commit/2df9371e81f24b7f7ea8af915fdb2a6ea69c3dbc) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `spree upgrade`, `spree db:reset` and `spree db:console` now say plainly when Docker is not running, and show Docker's own error for other failures instead of the command that failed.
+  
+  `spree upgrade` now asks before running the upgrade tasks (data backfills), so they can be skipped like the other steps.
+
+## 3.4.1
+
+### Patch Changes
+
+- [#14948](https://github.com/spree/spree/pull/14948) [`317c01a`](https://github.com/spree/spree/commit/317c01af77) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `spree upgrade` runs `bundle install` itself when the gems in the container no longer match `Gemfile.lock`, instead of stopping and asking for it, and fails only if the bundle is still broken afterwards.
+
+- [#14966](https://github.com/spree/spree/pull/14966) [`88411f1`](https://github.com/spree/spree/commit/88411f1d4e23847702a1abee7d3195fb9580b078) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The dashboard and seller panel starters now tell search engines not to index them: a `<meta name="robots" content="noindex, nofollow">` in each shell, for a panel served from a static host, alongside the `X-Robots-Tag` header the Rails engine adds when it serves a panel itself.
+
 ## 3.4.0
 
 ### Minor Changes

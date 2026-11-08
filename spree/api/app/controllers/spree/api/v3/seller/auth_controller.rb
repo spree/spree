@@ -52,6 +52,8 @@ module Spree
             return render_authentication_failed(result.error) unless result.success?
 
             user = result.value
+            return render_account_deactivated if account_deactivated?(user)
+
             # A store's own staff share this user class, so authenticating is
             # not enough: without a role on some seller there is no panel to
             # sign in to, and minting a token would hand out an audience the
@@ -101,6 +103,14 @@ module Spree
             end
 
             user = refresh_token.user
+            # Deactivating deletes the account's refresh tokens; this catches a
+            # refresh already under way when that happened.
+            if account_deactivated?(user)
+              refresh_token.destroy
+              clear_refresh_cookie
+              return render_account_deactivated
+            end
+
             # Membership can be revoked while a session is live; the refresh is
             # where that takes effect.
             unless user.seller_member?

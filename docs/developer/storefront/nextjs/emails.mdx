@@ -20,6 +20,7 @@ Email templates are React components in `src/lib/emails/`:
 | `order-canceled.tsx` | `order.canceled` | Cancellation notice with items |
 | `shipment-shipped.tsx` | `order.fulfilled` | Tracking number and link |
 | `password-reset.tsx` | `customer.password_reset_requested` | Reset button and fallback link |
+| `data-request-confirmation.tsx` | `data_request.confirmation_requested` | Link that confirms a customer's data request |
 
 Customize a template by editing its file directly — they use `@react-email/components` for email-safe layout primitives.
 
@@ -63,6 +64,7 @@ const handler = createWebhookHandler({
     'order.canceled': handleOrderCanceled,
     'order.fulfilled': handleOrderFulfilled,
     'customer.password_reset_requested': handlePasswordReset,
+    'data_request.confirmation_requested': handleDataRequestConfirmation,
   },
 })
 ```
@@ -76,7 +78,7 @@ To add a new email type:
 
 ## Setup
 
-1. **Create a webhook endpoint** in Spree Admin → Settings → Developer → Webhooks. Subscribe to `order.placed`, `order.canceled`, `order.fulfilled`, and `customer.password_reset_requested`, and copy the secret key into `SPREE_WEBHOOK_SECRET`.
+1. **Create a webhook endpoint** in Spree Admin → Settings → Developer → Webhooks. Subscribe to `order.placed`, `order.canceled`, `order.fulfilled`, `customer.password_reset_requested` and `data_request.confirmation_requested`, and copy the secret key into `SPREE_WEBHOOK_SECRET`.
 
 2. **Receive webhooks locally.** Expose the storefront with a public URL so Spree can reach it — the simplest option is a [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/):
 

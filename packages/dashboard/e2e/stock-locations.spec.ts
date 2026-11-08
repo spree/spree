@@ -8,6 +8,8 @@ async function createStockLocation(page: Page, name: string) {
   await page.getByRole('button', { name: /add stock location/i }).click()
   await expect(page.getByRole('heading', { name: /add stock location/i })).toBeVisible()
   await page.locator('#name').fill(name)
+  // The sheet's plugin slot, filled by src/testing/slot-probes.tsx.
+  await expect(page.getByText('Slot probe: stock_location.form_fields (new)')).toBeVisible()
   await page.getByRole('button', { name: /create stock location/i }).click()
 }
 

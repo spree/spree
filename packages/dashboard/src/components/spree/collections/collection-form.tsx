@@ -1,4 +1,6 @@
 import type { Collection } from '@spree/admin-sdk'
+import { COLLECTION_SORT_ORDERS } from '@spree/core'
+import { RecordMetadataCard } from '@spree/dashboard-core'
 import {
   Card,
   CardContent,
@@ -10,7 +12,6 @@ import {
   FieldGroup,
   FieldLabel,
   Input,
-  MetadataCard,
   Select,
   SelectContent,
   SelectItem,
@@ -21,11 +22,7 @@ import {
 import type { UseFormReturn } from 'react-hook-form'
 import { Controller } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import {
-  COLLECTION_SORT_ORDERS,
-  type CollectionFormValues,
-  sortOrderLabelKey,
-} from '../../../schemas/collection'
+import { type CollectionFormValues, sortOrderLabelKey } from '../../../schemas/collection'
 import {
   CustomFieldsInlineCard,
   FormBackedCustomFieldsProvider,
@@ -96,16 +93,11 @@ export function CollectionMain({
       {collection && (
         <>
           <CollectionProductsCard collectionId={collection.id} automatic={automatic} />
+          <ResourceTranslationsCard resourceType="collection" resourceId={collection.id} />
           <FormBackedCustomFieldsProvider form={form} resourceType="collection">
             <CustomFieldsInlineCard />
           </FormBackedCustomFieldsProvider>
-          <ResourceTranslationsCard resourceType="collection" resourceId={collection.id} />
-          <MetadataCard
-            metadata={collection.metadata}
-            title={t('admin.components.metadata_card.title')}
-            emptyTitle={t('admin.components.metadata_card.empty_title')}
-            emptyDescription={t('admin.components.metadata_card.empty_description')}
-          />
+          <RecordMetadataCard metadata={collection.metadata} />
         </>
       )}
     </>

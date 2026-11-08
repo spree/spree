@@ -42,6 +42,19 @@ module Spree
             [:option_values]
           end
 
+          # Values created or changed by this write were never loaded with
+          # their swatches, so fetch every value's image in one query before
+          # rendering.
+          def serialize_resource(resource)
+            if expand_list.include?('option_values')
+              ActiveRecord::Associations::Preloader.new(
+                records: resource.option_values.to_a,
+                associations: { image_attachment: :blob }
+              ).call
+            end
+            super
+          end
+
           def permitted_params
             params.permit(*permitted_attributes)
           end

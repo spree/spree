@@ -46,6 +46,17 @@ RSpec.describe Spree::RefreshToken, type: :model do
 
       expect(token.expires_at).to be_within(1.minute).of(30.days.from_now)
     end
+
+    it 'encrypts the IP address at rest' do
+      token = described_class.create_for(user, audience: 'store_api',
+                                               request_env: { ip_address: '203.0.113.7', user_agent: 'Mozilla/5.0 Firefox/131.0' })
+
+      # Read past the model, which would decrypt.
+      raw = described_class.connection.select_value("SELECT ip_address FROM spree_refresh_tokens WHERE id = #{token.id}")
+      expect(raw).not_to include('203.0.113.7')
+      expect(token.reload.ip_address).to eq('203.0.113.7')
+      expect(token.user_agent).to eq('Mozilla/5.0 Firefox/131.0')
+    end
   end
 
   describe '#expired?' do

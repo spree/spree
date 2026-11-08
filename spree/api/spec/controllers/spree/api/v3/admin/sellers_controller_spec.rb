@@ -109,6 +109,14 @@ RSpec.describe Spree::Api::V3::Admin::SellersController, type: :controller do
       expect(json_response['contact_email']).to eq('hello@sparks.example')
     end
 
+    it 'includes the keys external systems know the seller by' do
+      seller.set_external_id('stripe_connect', 'acct_123')
+
+      get :show, params: { id: seller.prefixed_id }, as: :json
+
+      expect(json_response['external_references']).to eq('stripe_connect' => 'acct_123')
+    end
+
     it "404s on another marketplace's seller" do
       other = create(:seller, store: create(:store))
 

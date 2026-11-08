@@ -29,9 +29,11 @@ RSpec.describe Spree::AgentTools::ResourceMap do
           expect(entry.serializer_name.safe_constantize).to be_present
         end
 
-        it 'declares a permission key in the catalog' do
-          expect(Spree.permissions.key?(entry.permission)).to be(true),
-                                                              "#{entry.key} declares unknown permission #{entry.permission.inspect}"
+        it 'declares permission keys in the catalog' do
+          unknown = entry.permission_keys.reject { |key| Spree.permissions.key?(key) }
+
+          expect(entry.permission_keys).to be_present
+          expect(unknown).to be_empty, "#{entry.key} declares unknown permissions #{unknown.inspect}"
         end
 
         it 'builds a working store-scoped relation' do
@@ -88,9 +90,24 @@ RSpec.describe Spree::AgentTools::ResourceMap do
       expect(described_class.find('line_items').api_path(:index)).to include(':')
     end
 
+    # A `?` would end the path, sending a line item's delete to the order.
+    it 'keeps a caller-supplied id inside its own segment' do
+      path = described_class.find('line_items').path_for(:destroy, id: 'li_1', parent_id: 'or_1?x=y')
+
+      expect(path).to end_with('/orders/or_1%3Fx%3Dy/items/li_1')
+    end
+
+    it 'refuses a path it cannot fill completely' do
+      entry = described_class.find('line_items')
+      allow(entry).to receive(:api_path).and_return('/api/v3/admin/stores/:store_id/orders/:order_id/items/:id')
+
+      expect(entry.path_for(:show, id: 'li_1', parent_id: 'or_1')).to be_nil
+    end
+
     it 'knows which resources a tool can dispatch to' do
       expect(described_class.find('products')).to be_dispatchable
-      expect(described_class.find('imports')).not_to be_dispatchable
+      expect(described_class.find('imports')).to be_dispatchable
+      expect(described_class.all.find { |entry| entry.nested?(:index) }).not_to be_dispatchable
     end
   end
 
@@ -180,8 +197,18 @@ RSpec.describe Spree::AgentTools::ResourceMap, 'permission alignment' do
   end
 
   it 'points every resource at a permission the catalog actually defines' do
-    unknown = described_class.all.reject { |entry| Spree.permissions.key?(entry.permission) }
+    unknown = described_class.all.reject do |entry|
+      entry.permission_keys.any? && entry.permission_keys.all? { |key| Spree.permissions.key?(key) }
+    end
 
     expect(unknown.map(&:key)).to be_empty
+  end
+
+  # Imports and exports are gated by the scope of the type each one carries,
+  # the way their controllers gate them.
+  it 'opens exports to a reader of any exported resource and imports to a writer' do
+    expect(described_class.find('exports').access_permissions).to include('read_products', 'read_orders', 'read_customers')
+    expect(described_class.find('imports').access_permissions).to include('write_products', 'write_customers')
+    expect(described_class.find('imports').access_permissions).not_to include('read_products')
   end
 end

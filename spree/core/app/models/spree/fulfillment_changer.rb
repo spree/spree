@@ -138,7 +138,9 @@ module Spree
     end
 
     def reload_shipment_inventory_units
-      [current_shipment, desired_shipment].each { |shipment| shipment.fulfillment_items.reload }
+      shipments = [current_shipment, desired_shipment]
+      shipments.each { |shipment| shipment.association(:fulfillment_items).reset }
+      ActiveRecord::Associations::Preloader.new(records: shipments, associations: :fulfillment_items).call
     end
 
     def current_quantity

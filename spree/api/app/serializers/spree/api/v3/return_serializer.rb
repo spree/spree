@@ -44,6 +44,8 @@ module Spree
         many :return_line_items,
              resource: proc { Spree.api.return_line_item_serializer },
              if: proc { expand?('return_line_items') }
+
+        expandable_custom_fields
       end
     end
   end

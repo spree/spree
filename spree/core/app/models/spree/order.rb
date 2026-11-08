@@ -337,8 +337,10 @@ module Spree
     scope :reverse_chronological, -> { order(Arel.sql('spree_orders.completed_at IS NULL'), completed_at: :desc, created_at: :desc) }
 
     def self.search(query)
+      # Ransack passes `true` when the scope is called as a bare flag (`q[search]=1`)
+      return none unless query.is_a?(String) && query.present?
+
       sanitized_query = sanitize_query_for_search(query)
-      return none if query.blank?
 
       query_pattern = "%#{sanitized_query}%"
 
@@ -358,7 +360,11 @@ module Spree
         conditions << search_condition(Spree::Address, :last_name, full_name.last)
       end
 
-      left_joins(:bill_address).where(arel_table[:email].lower.eq(query.downcase)).or(where(conditions.reduce(:or)))
+      # The exact match goes through the model, so it still finds an order in
+      # an app that encrypts email, where SQL only ever sees ciphertext.
+      left_joins(:bill_address).where(email: query).
+        or(left_joins(:bill_address).where(arel_table[:email].lower.eq(query.downcase))).
+        or(where(conditions.reduce(:or)))
     end
 
     # Find an order by prefixed ID first, falling back to number, then integer id for backwards compatibility
@@ -827,7 +833,7 @@ module Spree
     #   reaches it through +Spree.carts_complete_workflow+). Removed in 6.1.
     def finalize!
       Spree::Deprecation.warn('Spree::Order#finalize! is deprecated and will be removed in Spree 6.1. Completion runs through Spree.order_complete_workflow (Spree::Orders::Complete).')
-      Spree.order_complete_workflow.call(order: self, payment_pending: true)
+      Spree.order_complete_workflow.call(order: self, payment_pending: true, validated: true)
     end
 
     def fulfill!

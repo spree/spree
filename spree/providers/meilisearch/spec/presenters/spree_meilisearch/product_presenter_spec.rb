@@ -54,6 +54,23 @@ RSpec.describe SpreeMeilisearch::ProductPresenter do
       end
     end
 
+    context 'with custom fields' do
+      let(:visible) { create(:custom_field_definition, :short_text_field, :searchable, namespace: 'custom', key: 'label') }
+      let(:hidden) { create(:custom_field_definition, :number_field, :admin_only, :sortable, namespace: 'internal', key: 'margin') }
+
+      before do
+        product.set_custom_field(visible, 'wool')
+        product.set_custom_field(hidden, '40')
+      end
+
+      it 'indexes storefront-visible values and leaves admin-only ones out' do
+        doc = documents.first
+
+        expect(doc['cf_custom_label']).to eq('wool')
+        expect(doc).not_to have_key('cf_internal_margin')
+      end
+    end
+
     context 'with categories' do
       let(:root_category) { create(:category, store: store, name: 'Apparel') }
       let(:category) { create(:category, store: store, parent: root_category) }

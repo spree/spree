@@ -130,6 +130,12 @@ module SpreeStripe
       end
     end
 
+    # Voiding cancels the PaymentIntent, which Stripe refuses once it has
+    # succeeded; a captured payment has to be refunded instead.
+    def can_void?(payment)
+      !payment.completed?
+    end
+
     def void(response_code, _source, _gateway_options)
       return failure('Response code is blank') if response_code.blank?
 

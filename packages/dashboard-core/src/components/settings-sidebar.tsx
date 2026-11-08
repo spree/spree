@@ -358,8 +358,15 @@ function SettingsItem({
       <SidebarMenuButton asChild isActive={isActive}>
         <Link to={url} tabIndex={tabIndex}>
           <NavIcon icon={Icon} isActive={isActive} />
-          <span>{label}</span>
+          {/* `truncate` so a long translated label gives way to the badge
+              rather than pushing it out of the sidebar. */}
+          <span className="truncate">{label}</span>
           {entry.comingSoon && <SidebarMenuBadge className="ms-auto">Soon</SidebarMenuBadge>}
+          {entry.badge && (
+            <span className="ms-auto shrink-0">
+              <entry.badge />
+            </span>
+          )}
         </Link>
       </SidebarMenuButton>
     </SidebarMenuItem>

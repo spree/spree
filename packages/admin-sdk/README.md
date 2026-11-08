@@ -2,7 +2,7 @@
 
 Official TypeScript SDK for the **Spree Commerce Admin API** — manage products, orders, customers, fulfillments, payments, and store configuration from server-to-server integrations or admin tooling.
 
-> **Developer Preview.** The Admin API is in active development and may change between minor versions. Pin to a specific version of `@spree/admin-sdk` in production and review the [changelog](./CHANGELOG.md) before upgrading.
+`@spree/admin-sdk` is released with Spree and carries its version: `@spree/admin-sdk@6.0.x` works with Spree 6.0.x. Review the [changelog](./CHANGELOG.md) before upgrading.
 
 ## Installation
 

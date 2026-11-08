@@ -154,16 +154,25 @@ describe('addExtension', () => {
     expect(ejectProject).not.toHaveBeenCalled()
   })
 
-  it('adds a gem released on its own unpinned, and runs its install generator when it has one', async () => {
-    vi.mocked(dockerComposeCapture).mockResolvedValue(
-      'SpreePaypalCheckout:\n  spree_paypal_checkout:install\n',
-    )
-
+  // PayPal ships with Spree since 6.0; resolving it unpinned would install the
+  // 0.x gem, which does not run on 6.0.
+  it('pins PayPal to the project version', async () => {
     await addExtension(ctx(), EXTENSIONS.paypal_checkout, { yes: false })
 
     expect(commands()).toEqual([
-      ['bundle', 'add', 'spree_paypal_checkout'],
-      ['bin/rails', 'generate', 'spree_paypal_checkout:install'],
+      ['bundle', 'add', 'spree_paypal_checkout', '--version', '>= 6.0.0.rc3'],
+      ['bin/rails', 'spree:install:migrations', 'db:migrate'],
+    ])
+  })
+
+  it('adds a gem released on its own unpinned, and runs its install generator when it has one', async () => {
+    vi.mocked(dockerComposeCapture).mockResolvedValue('SpreeAdyen:\n  spree_adyen:install\n')
+
+    await addExtension(ctx(), EXTENSIONS.adyen, { yes: false })
+
+    expect(commands()).toEqual([
+      ['bundle', 'add', 'spree_adyen'],
+      ['bin/rails', 'generate', 'spree_adyen:install'],
       ['bin/rails', 'spree:install:migrations', 'db:migrate'],
     ])
   })

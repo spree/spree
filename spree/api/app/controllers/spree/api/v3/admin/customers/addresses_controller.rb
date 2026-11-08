@@ -69,6 +69,10 @@ module Spree
               Spree.api.admin_address_serializer
             end
 
+            def collection_includes
+              [:owner]
+            end
+
             private
 
             def address_attrs

@@ -86,6 +86,7 @@ export const Subject = {
   CommissionLine: 'commission_line',
   SellerPayout: 'seller_payout',
   SellerTransfer: 'seller_transfer',
+  MaintenanceTaskRun: 'maintenance_task_run',
 } as const
 
 export type SubjectName = (typeof Subject)[keyof typeof Subject] | string

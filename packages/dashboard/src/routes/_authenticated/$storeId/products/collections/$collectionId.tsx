@@ -179,11 +179,16 @@ function CollectionDetail({ collectionId, storeId }: { collectionId: string; sto
                 }}
               />
             }
-            main={<CollectionMain form={form} collection={collection} />}
+            main={
+              <>
+                <CollectionMain form={form} collection={collection} />
+                <Slot name="collection.form_main" context={{ collection, mode: 'edit' }} />
+              </>
+            }
             sidebar={
               <>
                 <CollectionSidebar form={form} collection={collection} />
-                <Slot name="collection.form_sidebar" context={{ collection }} />
+                <Slot name="collection.form_sidebar" context={{ collection, mode: 'edit' }} />
               </>
             }
           />

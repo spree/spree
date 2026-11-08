@@ -1,4 +1,5 @@
-import { type CommissionLine, isDecimalString, type Order } from '@spree/admin-sdk'
+import type { CommissionLine, Order } from '@spree/admin-sdk'
+import { isDecimalString } from '@spree/core'
 import { formatAmount, prorateMoney } from '@spree/dashboard-core'
 import i18n, { type TFunction } from 'i18next'
 

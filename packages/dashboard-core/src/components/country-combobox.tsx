@@ -1,4 +1,4 @@
-import type { CountryCode } from '@spree/admin-sdk'
+import { type CountryCode, isCountryCode } from '@spree/core'
 import {
   Combobox,
   ComboboxButtonTrigger,
@@ -19,7 +19,6 @@ import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useCountries } from '../hooks/use-countries'
 import { useDisplayName } from '../hooks/use-display-name'
-import { isCountryCode } from '../lib/iso-codes'
 
 export type CountryOption = { iso: CountryCode; iso3: string }
 

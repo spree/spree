@@ -92,8 +92,11 @@ describe('bundled plugin template', () => {
     expect(pkg.name).toBe('@acme/brands-dashboard')
   })
 
-  // Hand-written ranges drifted to versions no published package matched.
+  // Hand-written ranges drifted to versions no published package matched. The
+  // range covers the whole major, since the CLI can release before the
+  // workspace version reaches npm.
   it('peer-depends on the admin SDK and dashboard packages released with this CLI', () => {
+    const majorOf = (dir: string) => `^${workspaceVersion(dir).split('.')[0]}.0.0-0`
     const dst = path.join(tempDir(), 'out')
     render({ src: TEMPLATE_SRC, dst, vars: SAMPLE_VARS })
 
@@ -101,9 +104,9 @@ describe('bundled plugin template', () => {
       fs.readFileSync(path.join(dst, 'packages/dashboard/package.json'), 'utf8'),
     )
     expect(pkg.peerDependencies).toMatchObject({
-      '@spree/admin-sdk': `^${workspaceVersion('admin-sdk')}`,
-      '@spree/dashboard-core': `^${workspaceVersion('dashboard-core')}`,
-      '@spree/dashboard-ui': `^${workspaceVersion('dashboard-ui')}`,
+      '@spree/admin-sdk': majorOf('admin-sdk'),
+      '@spree/dashboard-core': majorOf('dashboard-core'),
+      '@spree/dashboard-ui': majorOf('dashboard-ui'),
     })
   })
 

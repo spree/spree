@@ -3,6 +3,7 @@ import { z } from 'zod';
 import type Customer from '../../types/generated/Customer';
 import { AddressSchema } from './Address';
 import { CompanySchema } from './Company';
+import { CustomFieldSchema } from './CustomField';
 import { CustomerGroupSchema } from './CustomerGroup';
 import { NewsletterSubscriberSchema } from './NewsletterSubscriber';
 import { OrderSchema } from './Order';
@@ -23,6 +24,7 @@ export const CustomerSchema = z.object({
   default_shipping_address: AddressSchema.nullable().optional(),
   newsletter_subscriber: NewsletterSubscriberSchema.nullable().optional(),
   get customer_groups() { return z.array(CustomerGroupSchema).optional(); },
+  custom_fields: z.array(CustomFieldSchema).optional(),
   failed_attempts: z.number(),
   metadata: z.record(z.string(), z.unknown()),
   email_marketing_consent_source: z.string().nullable(),
@@ -57,6 +59,7 @@ export const CustomerSchema = z.object({
   default_shipping_address: z.ZodOptional<z.ZodType<Exclude<Customer['default_shipping_address'], undefined>>>;
   newsletter_subscriber: z.ZodOptional<z.ZodType<Exclude<Customer['newsletter_subscriber'], undefined>>>;
   customer_groups: z.ZodOptional<z.ZodType<Exclude<Customer['customer_groups'], undefined>>>;
+  custom_fields: z.ZodOptional<z.ZodType<Exclude<Customer['custom_fields'], undefined>>>;
   failed_attempts: z.ZodType<Customer['failed_attempts']>;
   metadata: z.ZodType<Customer['metadata']>;
   email_marketing_consent_source: z.ZodType<Customer['email_marketing_consent_source']>;

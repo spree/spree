@@ -37,9 +37,9 @@ RSpec.describe Spree::Api::V3::Admin::TranslatableResourcesController, type: :co
       expect(resources['collection']['readable']).to be(true)
       expect(resources['policy']['readable']).to be(true)
       expect(resources['option_type']['readable']).to be(true)
+      expect(resources['store']['readable']).to be(true)
       # Writable via batch + readable inline as children, but no standalone route.
       expect(resources['option_value']['readable']).to be(false)
-      expect(resources['store']['readable']).to be(false)
     end
   end
 end

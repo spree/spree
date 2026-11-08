@@ -24,6 +24,12 @@ module Spree
       # <script> tags must load, which is exactly that request shape.
       skip_after_action :verify_same_origin_request
 
+      # A back-office panel has no business in a search index. The header
+      # covers every response this controller sends, shell and assets alike,
+      # whatever the shell's own markup says; the shells carry a matching
+      # <meta name="robots"> for deployments that serve them from elsewhere.
+      before_action :mark_not_indexable
+
       def show
         root = dist_root
         return head :not_found unless root
@@ -40,6 +46,10 @@ module Spree
       end
 
       private
+
+      def mark_not_indexable
+        response.headers['X-Robots-Tag'] = 'noindex, nofollow'
+      end
 
       # @return [String, nil] directory holding the built bundle
       def dist_path

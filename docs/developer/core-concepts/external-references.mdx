@@ -109,7 +109,7 @@ What a write changes:
 
 ## Reading references
 
-Admin API responses for every record above except sellers include `external_references` as a flat map — the same shape you send:
+Admin API responses for every record above include `external_references` as a flat map — the same shape you send:
 
 ```json Response
 {
@@ -124,7 +124,7 @@ Admin API responses for every record above except sellers include `external_refe
 
 External references never appear in the Store API. Which ERP a merchant runs, and the keys records have in it, is back-office information.
 
-In the dashboard, references show in the **JSON** view on each record's detail page. There is no form for editing them: they are written by integrations and read by whoever is debugging a sync.
+In the dashboard, references show in the **Metadata** card, above the record's metadata, with a button to copy each key. The card sits at the end of the detail page for products, orders, categories, companies and sellers; returns and fulfillments show it from **View metadata** in their row menu, and stock locations at the bottom of their edit panel. There is no form for editing references: integrations write them, and people read them when tracing a record to another system.
 
 ## Addressing records by your keys
 

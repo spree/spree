@@ -1,4 +1,4 @@
-import { runtimeListParams, setApiClient } from '@spree/dashboard-core'
+import { i18n, runtimeListParams, setApiClient } from '@spree/dashboard-core'
 import type { SellerApiClient, SellerExportCreateParams } from '@spree/seller-sdk'
 import { createSellerClient } from '@spree/seller-sdk'
 
@@ -145,6 +145,17 @@ export function createSellerApiClient({
       create: (params) => sellerClient().packageTypes.create(params),
       update: (id, params) => sellerClient().packageTypes.update(id, params),
       delete: (id) => sellerClient().packageTypes.delete(id),
+    },
+    digitalAssets: {
+      list: (productId, params) => sellerClient().products.digitalAssets.list(productId, params),
+      // Sellers upload files only, so a file is the one thing a new asset must carry.
+      create: (productId, { signed_id, ...params }) => {
+        if (!signed_id) throw new Error(i18n.t('admin.errors.unexpected'))
+        return sellerClient().products.digitalAssets.create(productId, { ...params, signed_id })
+      },
+      update: (productId, id, params) =>
+        sellerClient().products.digitalAssets.update(productId, id, params),
+      delete: (productId, id) => sellerClient().products.digitalAssets.delete(productId, id),
     },
   })
 

@@ -6,7 +6,7 @@ module Spree
       class StockReceiptEventSerializer < BaseSerializer
         typelize number: :string,
                  received_at: :string,
-                 receivable_type: [:string, enum: %w[purchase_order stock_transfer]],
+                 receivable_type: [:string, enum: %w[purchase_order stock_transfer], enum_type_name: 'StockReceiptReceivableType'],
                  receivable_id: :string,
                  quantity_accepted_total: :number,
                  quantity_rejected_total: :number

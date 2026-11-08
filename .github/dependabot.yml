@@ -47,7 +47,9 @@ updates:
   #
   # The direct-dependency version updates below are unaffected. `cooldown`
   # mirrors the `minimumReleaseAge` in pnpm-workspace.yaml — without it
-  # Dependabot proposes versions that pnpm then refuses to install.
+  # Dependabot proposes versions that pnpm then refuses to install. Its
+  # lockfile can keep a second copy of a bumped package, which
+  # `.github/workflows/dependabot-dedupe.yml` removes with `pnpm dedupe`.
   - package-ecosystem: npm
     directory: "/"
     schedule:
@@ -55,6 +57,12 @@ updates:
     open-pull-requests-limit: 5
     cooldown:
       default-days: 2
+    # Pinned in pnpm-workspace.yaml `overrides:` (see the comment there), so a
+    # Dependabot bump would change package.json but never the installed version.
+    # Bump the manifest and the overrides together by hand.
+    ignore:
+      - dependency-name: "@base-ui/react"
+      - dependency-name: "@tiptap/*"
     groups:
       typescript-packages:
         patterns:

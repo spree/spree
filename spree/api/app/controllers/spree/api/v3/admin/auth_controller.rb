@@ -36,6 +36,8 @@ module Spree
 
             if result.success?
               user = result.value
+              return render_account_deactivated if account_deactivated?(user)
+
               refresh_token = Spree::RefreshToken.create_for(user, audience: JWT_AUDIENCE_ADMIN, request_env: request_env_for_token)
               set_refresh_cookie(refresh_token)
               render json: auth_response(user)
@@ -56,7 +58,16 @@ module Spree
           # anyone can log in — so it exposes only provider keys, kinds, labels
           # and authorization URLs.
           def providers
-            described = Spree.admin_authentication_strategies.describe { |key| issue_oauth_state(key) }
+            # The login page may load again while a sign-in is in flight, so a
+            # nonce the browser already holds is kept rather than replaced —
+            # replacing it would fail the callback of the state minted first.
+            nonce = oauth_nonce_from_cookie || SecureRandom.hex(16)
+            minted = false
+            described = Spree.admin_authentication_strategies.describe do |key|
+              minted = true
+              issue_oauth_state(key, nonce)
+            end
+            set_oauth_nonce_cookie(nonce, expires_in: OAUTH_STATE_EXPIRY) if minted
 
             render json: { providers: described }
           end
@@ -73,6 +84,9 @@ module Spree
           def callback
             return redirect_to_dashboard(error: ERROR_CODES[:invalid_oauth_state]) unless valid_oauth_state?
 
+            # Used once: a state that signed in cannot sign in again.
+            clear_oauth_nonce_cookie
+
             strategy = Spree.admin_authentication_strategies.build(
               params[:provider],
               params: params,
@@ -86,6 +100,8 @@ module Spree
             unless result.success?
               return redirect_to_dashboard(error: callback_error_code(strategy))
             end
+
+            return redirect_to_dashboard(error: ERROR_CODES[:account_deactivated]) if account_deactivated?(result.value)
 
             set_refresh_cookie(
               Spree::RefreshToken.create_for(result.value, audience: JWT_AUDIENCE_ADMIN, request_env: request_env_for_token)
@@ -119,6 +135,14 @@ module Spree
             end
 
             user = refresh_token.user
+            # Deactivating deletes the account's refresh tokens; this catches a
+            # refresh already under way when that happened.
+            if account_deactivated?(user)
+              refresh_token.destroy
+              clear_refresh_cookie
+              return render_account_deactivated
+            end
+
             new_refresh_token = refresh_token.rotate!(request_env: request_env_for_token)
             set_refresh_cookie(new_refresh_token)
 
@@ -158,10 +182,11 @@ module Spree
           # expired value fails verification.
           #
           # The provider key is signed into the payload so a state minted for one
-          # provider cannot be replayed against another's callback.
-          def issue_oauth_state(provider)
+          # provider cannot be replayed against another's callback, and the
+          # nonce ties it to the browser holding the matching cookie.
+          def issue_oauth_state(provider, nonce)
             Rails.application.message_verifier(OAUTH_STATE_PURPOSE).generate(
-              { provider: provider.to_s, nonce: SecureRandom.hex(16) },
+              { provider: provider.to_s, nonce: nonce },
               expires_in: OAUTH_STATE_EXPIRY
             )
           end
@@ -173,8 +198,10 @@ module Spree
             # The verifier round-trips through JSON, so payload keys come back as strings.
             payload = Rails.application.message_verifier(OAUTH_STATE_PURPOSE).verified(state)
             return false unless payload.is_a?(Hash)
+            return false unless payload['provider'].to_s == params[:provider].to_s
 
-            payload['provider'].to_s == params[:provider].to_s
+            nonce = oauth_nonce_from_cookie
+            nonce.present? && ActiveSupport::SecurityUtils.secure_compare(payload['nonce'].to_s, nonce)
           end
 
           # Sends the browser back to the dashboard. On failure the login page

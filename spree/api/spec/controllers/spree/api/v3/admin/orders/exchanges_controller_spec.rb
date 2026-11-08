@@ -96,6 +96,25 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ExchangesController, type: :contro
     end
   end
 
+  describe 'PATCH #fulfill' do
+    let(:exchange) { create(:received_exchange, store: store, order: order) }
+
+    # Fulfilling settles money on the units that came back, so it takes the
+    # refund authority whatever the announced difference says.
+    context 'with a key that may handle orders but not refund them' do
+      let(:secret_api_key) { create(:api_key, :secret, store: store, scopes: %w[write_orders]) }
+      let(:headers) { api_key_headers }
+
+      it 'refuses to fulfill' do
+        patch :fulfill, params: { order_id: order.prefixed_id, id: exchange.prefixed_id, refund_method: 'store_credit' }, as: :json
+
+        expect(response).to have_http_status(:forbidden)
+        expect(json_response['error']['details']['required_permission']).to eq('write_refunds')
+        expect(exchange.reload).not_to be_fulfilled
+      end
+    end
+  end
+
   describe 'PATCH #cancel' do
     it 'refuses an exchange already received' do
       exchange = create(:received_exchange, store: store, order: order)

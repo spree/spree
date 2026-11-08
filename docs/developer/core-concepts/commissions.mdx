@@ -317,7 +317,7 @@ Commission lines say what the marketplace charged. They don't move money, and th
 That is the [payout ledger's](/developer/core-concepts/sellers#payouts) job: when an order is fulfilled, a seller transfer is written for the sale *less these lines*, and payouts settle those transfers on the seller's schedule — by the built-in provider, which keeps the books and leaves the operator to pay by bank, or by Stripe Connect, which performs the transfer. A commission line is an input to that ledger, never a row in it.
 
 <Note>
-Refund clawbacks and netting across settlements, reconciliation and seller tax reporting are Spree Enterprise.
+Reconciliation against provider statements and seller tax reporting are Spree Enterprise.
 </Note>
 
 ## Related

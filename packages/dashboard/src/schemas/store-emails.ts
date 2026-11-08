@@ -1,3 +1,4 @@
+import { EMAIL_FONTS } from '@spree/core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
 
@@ -11,17 +12,6 @@ const optionalColor = z
   .or(z.literal(''))
   .nullable()
   .optional()
-
-/** Fonts customer emails can use; mirrors `Spree::Emails::Branding::FONTS`. */
-export const EMAIL_FONTS = [
-  'inter',
-  'system',
-  'helvetica',
-  'georgia',
-  'roboto',
-  'lato',
-  'merriweather',
-] as const
 
 /** Colors customer emails can be branded with, in the order the card shows them. */
 export const EMAIL_BRANDING_COLORS = [

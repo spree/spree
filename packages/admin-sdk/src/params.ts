@@ -96,8 +96,6 @@ export type ShippingLabelUploadParams = ShippingLabelCreateParams
 /** @deprecated Renamed to `ShippingLabelCreateParams`. */
 export type ShippingLabelPurchaseParams = ShippingLabelCreateParams
 
-export type MediaType = 'image' | 'video' | 'external_video'
-
 /** Where one library file is in use. */
 export interface MediaUsageReference {
   /**
@@ -145,31 +143,10 @@ export type ProductPublicationInput = ProductPublicationParams
 export type ProductVariantInput = ProductVariantParams
 
 /**
- * Default product sort applied to a collection's storefront listing. A
- * shopper's own `sort` param always wins over this; `manual` means the
- * merchant's hand-set product order.
- */
-export type CollectionSortOrder =
-  | 'manual'
-  | 'best_selling'
-  | 'price asc'
-  | 'price desc'
-  | 'available_on desc'
-  | 'available_on asc'
-  | 'name asc'
-  | 'name desc'
-
-/**
  * Wire shorthand (`api_type`) for an automatic-collection rule — what
  * `collectionRules.types()` returns. Ruby class names are not accepted.
  */
 export type CollectionRuleType = 'tag' | 'sale' | 'available_on' | (string & {})
-
-export type CollectionRuleMatchPolicy =
-  | 'is_equal_to'
-  | 'is_not_equal_to'
-  | 'contains'
-  | 'does_not_contain'
 
 /** @deprecated Renamed to `CollectionRuleParams`. */
 export type CollectionRuleParam = CollectionRuleParams
@@ -404,9 +381,10 @@ export type ImportMappingParam = NonNullable<ImportCompleteMappingParams['mappin
 
 /**
  * Owner type passed to the generic `client.customFields(ownerType, ownerId)`
- * escape hatch. The first-class seven (products, variants, orders, customers,
- * categories, collections, option_types) have dedicated
- * `client.<resource>.customFields` accessors and don't need this.
+ * accessor. Products, variants, orders, customers, categories, collections,
+ * option types and sellers also have a dedicated
+ * `client.<resource>.customFields` accessor. A `store` owner is addressed by
+ * the current store's id.
  */
 export type CustomFieldOwnerType =
   | 'product'
@@ -417,6 +395,18 @@ export type CustomFieldOwnerType =
   | 'collection'
   | 'option_type'
   | 'seller'
+  | 'promotion'
+  | 'gift_card'
+  | 'store_credit'
+  | 'stock_transfer'
+  | 'purchase_order'
+  | 'company'
+  | 'payment_method'
+  | 'delivery_method'
+  | 'tax_rate'
+  | 'product_type'
+  | 'media'
+  | 'store'
   | (string & {})
 
 export type PromotionKind = 'coupon_code' | 'automatic'

@@ -1,6 +1,9 @@
 FactoryBot.define do
   factory :store, class: Spree::Store do
-    sequence(:code)        { |i| "spree_#{i}" }
+    # The suite-wide default store outlives the process that created it, while
+    # a sequence restarts with every process, so the code also steps past
+    # whatever is already in the database.
+    sequence(:code)        { |i| "spree_#{i + Spree::Store.unscoped.count}" }
     name                   { 'Spree Test Store' }
     url                    { 'www.example.com' }
     mail_from_address      { 'no-reply@example.com' }

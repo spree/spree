@@ -17,7 +17,8 @@ module Spree
                    reference: 'string | null',
                    period_start: 'string | null',
                    period_end: 'string | null',
-                   transfers_count: :number
+                   transfers_count: :number,
+                   metadata: 'Record<string, unknown>'
 
           attributes :status, :currency, :reference, :metadata,
                      period_start: :iso8601, period_end: :iso8601,
@@ -32,8 +33,8 @@ module Spree
           #
           # Read from a count the controller made for the whole page when there
           # is one; a single payout read falls back to asking for its own.
-          attribute(:transfers_count) do |payout, params|
-            counts = params && params[:transfer_counts]
+          attribute(:transfers_count) do |payout|
+            counts = params[:transfer_counts]
 
             counts ? counts.fetch(payout.id, 0) : payout.transfers.count
           end

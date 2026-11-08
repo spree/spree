@@ -92,6 +92,7 @@ boot rather than silently reverting to the default.
 | `SPREE_LARGE_IMPORT_THRESHOLD` | `500` | Row count above which a CSV import switches to bulk processing — faster, with less live progress detail. |
 | `SPREE_EVENTS_LOG_ENABLED` | `true` | Writes every Spree event to the Rails log. |
 | `SPREE_DISABLE_MIGRATION_CHECK` | `false` | Silences the boot warning about pending engine migrations. |
+| `SPREE_MAINTENANCE_TASKS_DASHBOARD_ENABLED` | `true` | Set to `false` to refuse maintenance tasks in the dashboard and the Admin API, leaving upgrade steps to `spree upgrade` on the command line. See [Maintenance tasks](/developer/how-to/maintenance-tasks#turning-off-the-dashboard). |
 
 ## API authentication
 

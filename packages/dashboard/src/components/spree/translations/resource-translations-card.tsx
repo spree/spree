@@ -13,6 +13,8 @@ interface ResourceTranslationsCardProps {
   resourceType: TranslatableResourceType
   /** Prefixed id of the resource being translated. */
   resourceId: string
+  /** Limits the editor and the coverage summary to these field keys. */
+  fields?: readonly string[]
 }
 
 /**
@@ -25,15 +27,18 @@ interface ResourceTranslationsCardProps {
 export function ResourceTranslationsCard({
   resourceType,
   resourceId,
+  fields,
 }: ResourceTranslationsCardProps) {
   const { t } = useTranslation()
   const [open, setOpen] = useState(false)
   const { data } = useResourceTranslations(resourceType, resourceId)
 
   const targetLocales = data ? data.supported_locales.filter((l) => l !== data.default_locale) : []
-  const translatedCount = targetLocales.filter(
-    (l) => (data?.translations[l]?.translated_field_count ?? 0) > 0,
-  ).length
+  const translatedCount = targetLocales.filter((l) => {
+    const translated = data?.translations[l]
+    if (!fields) return (translated?.translated_field_count ?? 0) > 0
+    return fields.some((field) => !!translated?.[field])
+  }).length
 
   return (
     <Card>
@@ -66,6 +71,7 @@ export function ResourceTranslationsCard({
         onOpenChange={setOpen}
         resourceType={resourceType}
         resourceId={resourceId}
+        fields={fields}
       />
     </Card>
   )

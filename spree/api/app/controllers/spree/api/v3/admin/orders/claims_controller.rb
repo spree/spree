@@ -6,6 +6,7 @@ module Spree
           # Claims on a completed order.
           class ClaimsController < BaseController
             include Spree::Api::V3::Orders::ClaimActions
+            include Spree::Api::V3::Admin::RefundAuthorization
 
             # Claims are a subject of the `orders` catalog resource, so
             # `read_orders`/`write_orders` gate these endpoints. `:claims`
@@ -51,6 +52,7 @@ module Spree
             end
 
             before_action :set_resource, only: [:show, :update, :approve, :resolve, :deny, :cancel]
+            before_action :require_refund_permission!, only: :resolve, if: -> { params[:resolution].to_s.include?('refund') }
 
             # PATCH /api/v3/admin/orders/:order_id/claims/:id
             #

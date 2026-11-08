@@ -7,6 +7,8 @@ module Spree
         money_attributes :amount, :amount_used, :amount_remaining, :display_amount,
                          :display_amount_used, :display_amount_remaining
         attributes :currency
+
+        expandable_custom_fields
       end
     end
   end

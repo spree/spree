@@ -59,6 +59,7 @@ RSpec.describe 'Admin Customer Privacy API', type: :request, swagger_doc: 'api-r
   path '/api/v3/admin/customers/{id}/anonymize' do
     post 'Erase a customer\'s personal data' do
       tags 'Customers'
+      agent_tool false, reason: "Irreversible erasure of a person's data under GDPR Art. 17, which is not something to offer a model behind one confirmation prompt."
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description <<~DESC

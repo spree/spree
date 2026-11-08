@@ -29,6 +29,13 @@ module Spree
           # client is misconfigured.
           prepend_before_action :require_oauth_token!
 
+          # The body is a JSON-RPC envelope, not an Admin API payload, so a
+          # key named `price` in it may be anything: the column an import
+          # mapping reads prices from, say. Amounts are still checked where
+          # they are written — by the Admin API a tool dispatches to, or by
+          # the model's own canonical decimal setters.
+          skip_before_action :refuse_noncanonical_decimals
+
           def create
             render json: server.handle_json(request.body.read), content_type: 'application/json'
           end
@@ -151,9 +158,13 @@ module Spree
             @current_oauth_token = token if token&.accessible? && admin_audience_matches?(token)
           end
 
+          # This endpoint resolves its own caller rather than through
+          # AdminAuthentication, so it refuses a deactivated account itself:
+          # the tools that run in this process would otherwise act as an
+          # account that has been switched off.
           def oauth_resource_owner
             owner = current_oauth_token.resource_owner
-            owner if owner.is_a?(Spree.admin_user_class)
+            owner if owner.is_a?(Spree.admin_user_class) && !account_deactivated?(owner)
           end
 
           # The error text is what both the model and the person read, so it

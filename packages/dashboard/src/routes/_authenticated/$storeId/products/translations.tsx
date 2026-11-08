@@ -82,9 +82,15 @@ function TranslationsPage() {
   // A type needs both a dedicated read route and an SDK accessor before the
   // editor can open it — the registry reports the first, the type guard the
   // second. Offering a type without an accessor would open a dialog that
-  // throws when it tries to fetch.
+  // throws when it tries to fetch. The store's own text is translated on
+  // Store Settings, next to the fields it translates.
   const resourceOptions = (resources ?? [])
-    .filter((resource) => resource.readable && isTranslatableResourceType(resource.resource_type))
+    .filter(
+      (resource) =>
+        resource.readable &&
+        resource.resource_type !== 'store' &&
+        isTranslatableResourceType(resource.resource_type),
+    )
     .map((resource) => ({
       value: resource.resource_type,
       label: t(`admin.pages.translations.resource_types.${resource.resource_type}`, {

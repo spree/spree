@@ -1,5 +1,79 @@
 # @spree/admin-sdk
 
+## 6.0.3
+
+### Patch Changes
+
+- [#15092](https://github.com/spree/spree/pull/15092) [`54d3227`](https://github.com/spree/spree/commit/54d32275ed2254e1f1d09da67bb80b8073a154a1) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added `client.products.activate`, `archive` and `draft`, which move one product to that status through its workflow, so the status event fires. Unlike `bulkStatusUpdate`, they refuse a product awaiting review.
+
+- [#15087](https://github.com/spree/spree/pull/15087) [`5de3074`](https://github.com/spree/spree/commit/5de3074693359ad16623f9d522a6d5ab64d4b5f6) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The Admin API client now works in browsers on pages served over plain HTTP at an address other than `localhost`, for example a server's IP address. It used `crypto.randomUUID` for the key that makes a retried write safe, and browsers only provide that on secure pages; it now uses `randomUUID()` from `@spree/core`.
+
+- [#15113](https://github.com/spree/spree/pull/15113) [`41bbba3`](https://github.com/spree/spree/commit/41bbba3272d9ebd8817842456670db0b72cd3b34) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added `client.extend()` and `defineAdminExtension`, so a package can add a typed namespace for an extension's own endpoints to the client, such as `client.quotes`. The extension calls through the client's own request function, so it shares the client's auth, locale defaults and retries; `extend` returns a new client and refuses a name the client already has. An extension's `build` also gets `listParams` and `readParams`, which build list and read queries the way the built-in methods do, and the package now exports the `Extension` and `RequestFn` types its published declarations reference.
+
+## 6.0.2
+
+### Patch Changes
+
+- [#15057](https://github.com/spree/spree/pull/15057) [`ab0dec3`](https://github.com/spree/spree/commit/ab0dec332d93bf69deaa2ff794f5cfd7c2c75e79) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Admin API payments now return `can_void` and `can_capture`, which the payment method decides. The order page uses them to hide Void on captured payments that the gateway cannot void, such as Stripe. The dashboard no longer checks the payment status itself, so it needs a server that returns them.
+
+- [#15040](https://github.com/spree/spree/pull/15040) [`7416961`](https://github.com/spree/spree/commit/7416961c06767a0ab558b0f244b41eaaef831c3b) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The staff settings page shows each member's status (active, locked or deactivated) and when they were last active. A new "View details" action opens a sheet with when they joined, who invited them and their signed-in sessions, each with its browser, IP address and last use. The admin SDK types gain `status`, `last_active_at`, the `inviter` and `sessions` expands, and the `Session` and `AdminUserStatus` types; `@spree/dashboard-ui` adds `BrowserIcon`.
+
+## 6.0.1
+
+### Patch Changes
+
+- [#15006](https://github.com/spree/spree/pull/15006) [`f227994`](https://github.com/spree/spree/commit/f227994feffde925ee3a0b21c2b2c661d91c08c4) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The admin dashboard now shows external references (the keys an ERP, PIM or CRM knows a record by) in the Metadata card, each with a copy button. They appear on product, order, category, company and seller pages, in the metadata sheet of returns and fulfillments, and in the stock location edit panel. The Admin API now returns external references for sellers too.
+
+- [#14996](https://github.com/spree/spree/pull/14996) [`30493b4`](https://github.com/spree/spree/commit/30493b4f8e0e0f19b1c684fd8ac34bff24f51187) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added an optional `custom_fields` property to every record type that can carry custom fields, such as sellers, option types, media, orders, line items, addresses and customers. Request it with `expand: ['custom_fields']`. The Store API returns only fields marked storefront visible, and the Admin API returns every field.
+
+- [#15001](https://github.com/spree/spree/pull/15001) [`21dc28f`](https://github.com/spree/spree/commit/21dc28f68623bcd141a349b597b8b872fd57b9dd) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Typed the store's regional settings. The store's `default_country_code` is now `CountryCode`, its `admin_locale` is `LocaleCode` (send `null` to clear it), and its `timezone` — also on the seller profile — is the new `TimeZone` type, which suggests common IANA time zones while accepting any other. `TIME_ZONES` in `@spree/core` lists the suggested zones.
+
+- [#14997](https://github.com/spree/spree/pull/14997) [`730c9da`](https://github.com/spree/spree/commit/730c9daa414b19fd125c03aa095ae23ea2cc91ab) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added localized storefront SEO settings. Merchants edit the store's SEO title and meta description on Store Settings and translate them for each supported language. The Store SDK reads them with `client.store.get()`, and the Admin SDK reaches the store's translations with `client.store.translations.get()`.
+
+## 6.0.0
+
+### Minor Changes
+
+- [#14982](https://github.com/spree/spree/pull/14982) [`348c5bb`](https://github.com/spree/spree/commit/348c5bbeb94eb73dacbe3dbe10b8951eb469c553) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added maintenance task runs and upgrade steps. `upgradeSteps.list()` returns the data steps a Spree upgrade still needs, in the order they must run, each with its last run. `maintenanceTaskRuns` lists, gets and starts runs, and `maintenanceTaskRuns.cancel()` stops one. Runs belong to the whole installation, and a task is named by its short name (`capture_methods`), never a Ruby class name.
+
+## 6.0.0-rc.7
+
+Released with Spree 6.0.0.rc7, with no changes of its own. From this release the version matches the version of the Spree gems.
+
+## 1.0.0-rc.6
+
+### Minor Changes
+
+- [#14971](https://github.com/spree/spree/pull/14971) [`98a79ca`](https://github.com/spree/spree/commit/98a79cab9387f5c0cd3ee55770305fcc8285111d) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Sellers can manage the downloadable files on their own digital products. The Seller SDK adds `products.digitalAssets` (`list`, `get`, `create`, `update`, `delete`), and the seller panel's product page shows the same Digital files card as the dashboard: upload, replace and delete files, and set per-file download limits. A file the marketplace delivers through its own provider is listed but cannot be replaced by the seller. The card now lives in `@spree/dashboard-core` as `DigitalAssetsCard`, and a panel enables it by registering `digitalAssets` on its API client; `readOnly` shows the files without any way to change them and `accept` narrows the file picker.
+  
+  Seller uploads are a marketplace decision: three store settings, edited on the dashboard's Marketplace settings page, say whether sellers may upload at all (off by default), which content types their files may have, and whether a file added to or replaced on an approved product sends it back to review. The seller `/me` response carries them under `store`, and the Admin SDK's `Store` type gains the three fields.
+
+### Patch Changes
+
+- [#14952](https://github.com/spree/spree/pull/14952) [`caaaee2`](https://github.com/spree/spree/commit/caaaee2915) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - A store credit's `created_by` is now an `Actor` rather than an `AdminUser`, since a credit issued with a secret API key records the key as its issuer. The dashboard hides refunding a return, resolving a claim, fulfilling an exchange and refunding on cancel from roles without the refunds permission.
+
+- [#14970](https://github.com/spree/spree/pull/14970) [`fb8a9ce`](https://github.com/spree/spree/commit/fb8a9ce01e) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - A webhook endpoint's subscriptions must now be `*`, an event name, or a name with `*` in place of whole segments (`order.*`, `*.created`), with at most 200 entries of up to 100 characters each; the API's 422 names the rejected entries. `@spree/core` exports the rule as `WEBHOOK_EVENT_PATTERN`, `isWebhookEventPattern`, `WEBHOOK_SUBSCRIPTION_MAX_LENGTH` and `WEBHOOK_SUBSCRIPTIONS_MAX`, and the dashboard's webhook form checks it before saving, refusing an invalid custom event inline. `FieldError` no longer crashes on the sparse per-item error array react-hook-form produces.
+
+## 1.0.0-rc.5
+
+### Minor Changes
+
+- [#14911](https://github.com/spree/spree/pull/14911) [`3ca1f5e`](https://github.com/spree/spree/commit/3ca1f5e32f2e3cbb249d27571388e488153afd12) Thanks [@KacperMekarski](https://github.com/KacperMekarski)! - Company members can now pick their company's addresses when choosing where an order goes. Picking a company site at checkout used to be dropped without an error, because the cart only ever looked in the buyer's own address book. A new `GET /store/carts/:id/addresses` returns everything a cart may be shipped or billed to — the buyer's book plus the sites of the company set as the cart's `company_id` and the ones it inherits, limited to the countries the cart's market sells to — and `client.carts.addresses.list()` reaches it. The company has to be set on the cart explicitly: a buyer who belongs to a single company is not assumed to be buying for it when it comes to addresses. Every `Address` now carries the `owner` it is filed under (`null` for an address in no book, such as the copy a placed order keeps), so a picker can label the two books from one response. On the Admin API this `owner` object replaces the separate `owner_id` and `owner_type` fields. Unlike the other cart endpoints this one needs a signed-in customer: it answers with the account's address books rather than the cart's own contents. Staff get the same reach: a company's sites are selectable when creating an order, and "use default addresses" takes the company's defaults for a company order. On a division's page, addresses inherited from the companies above it are labelled with their owner and cannot be edited there.
+
+- [#14939](https://github.com/spree/spree/pull/14939) [`9c73a79`](https://github.com/spree/spree/commit/9c73a7908dbe35ecb0b3ce654f1b3d6705e9a0c3) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added custom field editing to variants, option types, sellers, promotions, gift cards, store credits, stock transfers, purchase orders, companies, payment methods, delivery methods, tax rates, product types, media and store settings. Sheets show the custom fields card only once the store defines a field for that type. On the product page, variant and media custom fields save with the sheet's Done, and widgets in their `product.variant.form_fields` and `product.media.form_fields` slots can save on Done through `onSave`. `FormActions` and `useFormSubmitShortcut` accept `dirty` for unsaved changes held outside the form. `client.customFields(ownerType, ownerId)` accepts each of these types.
+
+- [#14937](https://github.com/spree/spree/pull/14937) [`90f8f59`](https://github.com/spree/spree/commit/90f8f59209dbf287520236ca6b9eab510df9f3b9) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - New draft orders take a market, sales channel, currency and locale, chosen before any item is added. A market fixes the currency and the locales on offer. The item search on a new or existing draft order lists only what the buyer can be sold on that channel, priced as they would pay in that market; `variants.list()` accepts `order_id`, or `market_id`, `channel_id`, `customer_id`, `company_id` and `currency` for an order not yet created. `order_id` cannot be combined with the other fields, and `currency` on its own also narrows the list. Order creation refuses items the buyer cannot order on the channel, and picks a market selling the requested currency when none is named. Changing any of these after items are picked asks before removing them.
+
+### Patch Changes
+
+- [#14933](https://github.com/spree/spree/pull/14933) [`1a86817`](https://github.com/spree/spree/commit/1a86817598711e5383d9acd663bbe808448a9dd2) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Order filter and sort types include `market_id` and `locale`. Locale, currency and country filters (`locale`, `currency`, `cost_currency`, `country_code`, `country_of_origin`) accept only `LocaleCode`, `CurrencyCode` and `CountryCode` values (new `CodeFilters` type) instead of free text.
+
+- [#14934](https://github.com/spree/spree/pull/14934) [`dc2f1a7`](https://github.com/spree/spree/commit/dc2f1a786e4a11d6e36475ff9f7c5296ab817b14) Thanks [@mad-eel](https://github.com/mad-eel)! - A customer's own data request now waits for confirmation from the account's email address. `client.customer.dataRequests` lists, reads and opens requests, and `create` takes a `redirect_url` for the page the emailed link opens. `client.dataRequests.confirm(token)` confirms one from that page, and `client.dataRequests.get(token)` reads it, with the download link once the export is ready. `DataRequestStatus` gains `awaiting_confirmation` and `lapsed`. The dashboard's email editor lists the new confirmation email.
+
+- [#14944](https://github.com/spree/spree/pull/14944) [`a0e5b66`](https://github.com/spree/spree/commit/a0e5b66419569d1e91d3b1eaf180444b73c65cd1) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added every status, kind and other value list the Spree API returns to `@spree/core`, each as a list of its values (`PRODUCT_STATUSES`, `MEDIA_TYPES`, …) and a type (`ProductStatus`, `MediaType`, …) — open where extensions may add values, closed otherwise — plus `subsetOf` for picking the values an action accepts with each one checked at compile time. The SDKs re-export these types instead of each carrying its own copy, so their names and values are unchanged. The dashboards and the seller panel build their status filters and action checks from these lists, so a status added on the server shows up without a dashboard change. Value lists the SDKs used to spell out inline, such as a seller transfer's `kind`, now have names of their own; `MediaType`, `CollectionRuleMatchPolicy` and `CollectionSortOrder` in `@spree/admin-sdk`, and `ClaimResolution` in `@spree/dashboard-ui`, now come from the generated lists under the same names. A seller's `tax_remittance` and `payouts_schedule_interval`, a claim's `resolution`, a collection's `sort_order`, a shipping label's `format`, purchase order and stock transfer statuses, and tax and commission lines' `taxability_reason` are now typed with their lists instead of as plain strings.
+
+- [#14936](https://github.com/spree/spree/pull/14936) [`06fc8b0`](https://github.com/spree/spree/commit/06fc8b06574742b63f15e355ea352f67655459c1) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Weight and dimension units are closed code lists, exported as `WeightUnit` and `DimensionUnit` (values and types) like `CountryCode` and `CurrencyCode`, and every unit field in responses and request types uses them; unit fields in requests accept `null` to fall back to the store default. The Admin and Seller SDKs publish one `VariantParams` type: `ProductVariantParams`, `VariantCreateParams` and `VariantUpdateParams` build on it. The Seller SDK's `SellerProductVariantParams` is renamed to `ProductVariantParams` (the old name stays as a deprecated alias). The variant editor and bulk variant editor now offer feet as a dimension unit.
+
 ## 1.0.0-rc.4
 
 ### Minor Changes

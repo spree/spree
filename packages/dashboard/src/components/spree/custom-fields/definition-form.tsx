@@ -5,7 +5,10 @@ import {
   Input,
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
+  SelectSeparator,
   SelectTrigger,
   SelectValue,
   Switch,
@@ -73,12 +76,23 @@ export function DefinitionFormFields({
   // From the server's registry. `DEFAULT_RESOURCE_TYPES` covers the first
   // render while that request is in flight, so the select is never empty.
   const { data: resourceTypesResponse } = useCustomFieldResourceTypes()
-  const resourceTypeItems = resourceTypesResponse
-    ? resourceTypesResponse.data.map(({ resource_type, name }) => ({
-        value: resource_type,
-        label: name,
-      }))
-    : DEFAULT_RESOURCE_TYPES.map((value) => ({ value, label: resourceTypeLabel(value) }))
+  const resourceTypeItems = (
+    resourceTypesResponse?.data ??
+    DEFAULT_RESOURCE_TYPES.map((value) => ({ resource_type: value, name: undefined }))
+  ).map(({ resource_type, name }) => ({
+    value: resource_type,
+    label: resourceTypeLabel(resource_type, name),
+  }))
+  // Types the dashboard edits come first; the rest are still definable for
+  // integrations, but say so, since no screen here fills them in.
+  const editableTypes = new Set<string>(DEFAULT_RESOURCE_TYPES)
+  const byLabel = (a: { label: string }, b: { label: string }) => a.label.localeCompare(b.label)
+  const editableTypeItems = resourceTypeItems
+    .filter((item) => editableTypes.has(item.value))
+    .sort(byLabel)
+  const apiOnlyTypeItems = resourceTypeItems
+    .filter((item) => !editableTypes.has(item.value))
+    .sort(byLabel)
 
   return (
     <div className="flex flex-col gap-4">
@@ -151,11 +165,28 @@ export function DefinitionFormFields({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {resourceTypeItems.map((o) => (
-                    <SelectItem key={o.value} value={o.value}>
-                      {o.label}
-                    </SelectItem>
-                  ))}
+                  <SelectGroup>
+                    {editableTypeItems.map((o) => (
+                      <SelectItem key={o.value} value={o.value}>
+                        {o.label}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                  {apiOnlyTypeItems.length > 0 && (
+                    <>
+                      <SelectSeparator />
+                      <SelectGroup>
+                        <SelectLabel>
+                          {t('admin.fields.custom_field_definition.resource_type.api_only_group')}
+                        </SelectLabel>
+                        {apiOnlyTypeItems.map((o) => (
+                          <SelectItem key={o.value} value={o.value}>
+                            {o.label}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </>
+                  )}
                 </SelectContent>
               </Select>
             )}

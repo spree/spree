@@ -8,7 +8,7 @@ module Spree
             include Spree::Api::V3::OrderLock
 
             before_action :require_authentication!
-            before_action :find_cart!
+            before_action :find_owned_cart!
             before_action :stringify_numeric_amount, only: :create
 
             request_params 'ApplyStoreCreditParams', action: :create do |body|
@@ -49,6 +49,14 @@ module Spree
             end
 
             private
+
+            # The balance spent here is the cart owner's, so a guest token —
+            # which only proves the caller holds this cart — is not enough:
+            # the signed-in customer must be the owner.
+            def find_owned_cart!
+              @cart = resolve_cart(include_completed: false)
+              authorize_storefront_write!(@cart, token: nil)
+            end
 
             # 5.6 storefronts sent a JSON number; read it through its text so no
             # float reaches the money math.

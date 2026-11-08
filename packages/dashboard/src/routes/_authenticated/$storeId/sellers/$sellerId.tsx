@@ -1,5 +1,13 @@
 import type { Seller } from '@spree/admin-sdk'
-import { adminClient, PageHeader, Slot, Subject, usePermissions } from '@spree/dashboard-core'
+import { SELLER_STATUSES, subsetOf } from '@spree/core'
+import {
+  adminClient,
+  PageHeader,
+  RecordMetadataCard,
+  Slot,
+  Subject,
+  usePermissions,
+} from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -13,6 +21,8 @@ import { BanIcon, MailIcon, PauseIcon, UndoIcon } from '@spree/dashboard-ui/icon
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { ApiCustomFieldsCard } from '../../../../components/spree/custom-fields/custom-fields-inline'
+import { EnterprisePreviewNote } from '../../../../components/spree/enterprise-upsell'
 import { ResourceDetailSkeleton } from '../../../../components/spree/route-pending'
 import { SellerAddressCard } from '../../../../components/spree/sellers/seller-address-card'
 import { SellerAtAGlanceCard } from '../../../../components/spree/sellers/seller-at-a-glance-card'
@@ -36,6 +46,23 @@ import {
   useSuspendSeller,
 } from '../../../../hooks/use-sellers'
 import { spreeJsonLinkResolver } from '../../../../lib/json-link-resolver'
+
+// Mirrors the workflow guards, so the operator is never offered a move the
+// server would refuse.
+const INVITABLE = subsetOf(SELLER_STATUSES, ['pending', 'invited', 'canceled'])
+const APPROVABLE = subsetOf(SELLER_STATUSES, [
+  'onboarding',
+  'ready_for_review',
+  'suspended',
+  'rejected',
+])
+const SUSPENDABLE = subsetOf(SELLER_STATUSES, ['approved', 'onboarding', 'ready_for_review'])
+const REJECTABLE = subsetOf(SELLER_STATUSES, [
+  'pending',
+  'invited',
+  'onboarding',
+  'ready_for_review',
+])
 
 export const Route = createFileRoute('/_authenticated/$storeId/sellers/$sellerId')({
   component: SellerDetailPage,
@@ -89,12 +116,10 @@ function SellerBody({ seller }: { seller: Seller }) {
   const canEdit = permissions.can('update', Subject.Seller)
   const status = seller.status
 
-  // Mirrors the workflow guards, so the operator is never offered a move the
-  // server would refuse.
-  const canInvite = ['pending', 'invited', 'canceled'].includes(status)
-  const canApprove = ['onboarding', 'ready_for_review', 'suspended', 'rejected'].includes(status)
-  const canSuspend = ['approved', 'onboarding', 'ready_for_review'].includes(status)
-  const canReject = ['pending', 'invited', 'onboarding', 'ready_for_review'].includes(status)
+  const canInvite = INVITABLE.includes(status)
+  const canApprove = APPROVABLE.includes(status)
+  const canSuspend = SUSPENDABLE.includes(status)
+  const canReject = REJECTABLE.includes(status)
 
   const busy =
     approveMutation.isPending || suspendMutation.isPending || rejectMutation.isPending || !canEdit
@@ -269,6 +294,11 @@ function SellerBody({ seller }: { seller: Seller }) {
             />
             <SellerOnboardingCard seller={seller} canEdit={canEdit} />
             <SellerTeamCard seller={seller} onInvite={() => setInviting(true)} />
+            <ApiCustomFieldsCard ownerType="seller" ownerId={seller.id} collapsible />
+            <RecordMetadataCard
+              metadata={seller.metadata}
+              externalReferences={seller.external_references}
+            />
             <Slot name="seller.form_main" context={{ seller, canEdit }} />
           </>
         }
@@ -289,6 +319,7 @@ function SellerBody({ seller }: { seller: Seller }) {
               canEdit={canEdit}
               onEdit={() => setEditingSettlement(true)}
             />
+            <EnterprisePreviewNote previewKey="sellers.shopify" />
             <Slot name="seller.form_sidebar" context={{ seller, canEdit }} />
           </>
         }

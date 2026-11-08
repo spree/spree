@@ -9,6 +9,8 @@ module Spree
 
       # @param cart [Spree::Cart, Spree::Order] draft orders ride the same pipeline
       # @param line_item [Spree::LineItem, nil] the item whose change triggered this
+      # @param options [Hash] +excluded_promotion_ids:+ lists promotions to leave out of activation,
+      #   for callers that are removing a promotion's effects
       def perform(cart: nil, order: nil, line_item: nil, line_item_created: false, options: {})
         if order
           Spree::Deprecation.warn('Calling Spree::Carts::Recalculate with order: is deprecated and will be removed in Spree 6.1. Pass cart: instead.')
@@ -47,7 +49,9 @@ module Spree
       def activate_promotions
         @promotion_context = run_hooks :set_promotion_context
 
-        ::Spree::PromotionHandler::Cart.new(cart, line_item).activate
+        ::Spree::PromotionHandler::Cart.new(
+          cart, line_item, excluded_promotion_ids: options[:excluded_promotion_ids] || []
+        ).activate
       end
     end
   end

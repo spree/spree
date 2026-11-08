@@ -15,8 +15,8 @@ export function registerLogsCommand(program: Command): void {
       // process, so their logs are web's logs.
       if (service === 'worker' && !(await appServices(ctx.projectDir)).includes('worker')) {
         p.log.info(
-          `This project has no ${pc.bold('worker')} service — jobs run inside the web process ` +
-            `(Solid Queue in Puma). Streaming ${pc.bold('web')} logs; the job dashboard is at ` +
+          `This project has no ${pc.bold('worker')} service — jobs run inside the web process. ` +
+            `Streaming ${pc.bold('web')} logs; the job dashboard is at ` +
             `${pc.cyan(`http://localhost:${ctx.port}/jobs`)}.`,
         )
         await streamLogs('web', ctx.projectDir)

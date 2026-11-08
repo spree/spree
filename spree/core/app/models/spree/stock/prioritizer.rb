@@ -18,6 +18,7 @@ module Spree
 
       def prioritized_packages
         sort_packages
+        withdraw_covered_items
         adjust_packages
         prune_packages
         packages
@@ -44,11 +45,10 @@ module Spree
       end
 
       # Origins that can deliver go first, so the Adjuster fills each unit from
-      # one of them and the origins that cannot are left empty and pruned. A
-      # profile with per-region origin groups would otherwise allocate to
-      # whichever warehouse came first, and when that warehouse's group has no
-      # method for the destination the item is dropped as undeliverable even
-      # though another warehouse could have shipped it.
+      # one of them. A profile with per-region origin groups would otherwise
+      # allocate to whichever warehouse came first, and when that warehouse's
+      # group has no method for the destination the item is dropped as
+      # undeliverable even though another warehouse could have shipped it.
       #
       # The caller's order survives within each group, so routing rank and the
       # store's location order still decide between origins that can both
@@ -56,25 +56,40 @@ module Spree
       def sort_packages
         return if estimator.nil?
 
-        ranked = packages.each_with_index.sort_by do |package, index|
-          [estimator.deliverable?(package) ? 0 : 1, index]
-        end
+        deliverable, @undeliverable_packages = packages.partition { |package| estimator.deliverable?(package) }
+        packages.replace(deliverable + @undeliverable_packages)
+      end
 
-        packages.replace(ranked.map(&:first))
+      # Ordering alone loses to the Adjuster, which takes stock on hand anywhere
+      # over a backorder; a unit the capable origins cannot cover stays, so it is
+      # still reported as undeliverable rather than lost.
+      def withdraw_covered_items
+        return if @undeliverable_packages.blank? || @undeliverable_packages.size == packages.size
+
+        supplied = supplied_quantities(packages - @undeliverable_packages)
+
+        @undeliverable_packages.each do |package|
+          package.contents.each do |item|
+            package.remove_item(item) if supplied[hash_item(item)] >= item.inventory_unit.required_quantity
+          end
+        end
+      end
+
+      def supplied_quantities(packages)
+        packages.flat_map(&:contents).each_with_object(Hash.new(0)) do |item, supplied|
+          supplied[hash_item(item)] += item.quantity
+        end
       end
 
       def prune_packages
         packages.reject!(&:empty?)
       end
 
+      # A proposed unit has no fulfillment, so its line item keeps two lines of
+      # one variant apart; a pair, as XORed ids collide whenever they match.
       def hash_item(item)
-        shipment = item.inventory_unit.fulfillment
-        variant  = item.inventory_unit.variant
-        if shipment.present?
-          variant.hash ^ shipment.hash
-        else
-          variant.hash
-        end
+        unit = item.inventory_unit
+        [unit.variant, unit.fulfillment || unit.line_item_id]
       end
     end
   end

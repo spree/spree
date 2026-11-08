@@ -1,5 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { type AdminUser, type Invitation, type Role, SpreeError } from '@spree/admin-sdk'
+import {
+  type AdminUser,
+  type AdminUserStatus,
+  type Invitation,
+  type Role,
+  type Session,
+  SpreeError,
+} from '@spree/admin-sdk'
 import {
   getInitials,
   mapSpreeErrorsToForm,
@@ -34,6 +41,12 @@ import {
   FieldError,
   FieldLabel,
   Input,
+  Item,
+  ItemContent,
+  ItemDescription,
+  ItemGroup,
+  ItemMedia,
+  ItemTitle,
   RelativeTime,
   RowActions,
   requiredMessage,
@@ -49,6 +62,7 @@ import {
   SheetHeader,
   SheetTitle,
   Skeleton,
+  StatusBadge,
   Table,
   TableBody,
   TableCell,
@@ -61,16 +75,23 @@ import {
 } from '@spree/dashboard-ui'
 import {
   BanIcon,
+  BrowserIcon,
   ClockIcon,
+  EyeIcon,
+  GlobeIcon,
   LinkIcon,
   MailIcon,
+  MonitorIcon,
   PlusIcon,
+  SmartphoneIcon,
+  TabletIcon,
+  TerminalIcon,
   UserMinusIcon,
   UsersRoundIcon,
 } from '@spree/dashboard-ui/icons'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import i18n from 'i18next'
-import { useState } from 'react'
+import { type ComponentType, type ReactNode, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
@@ -83,8 +104,14 @@ import {
   useResendInvitation,
   useRoles,
   useStaff,
+  useStaffMember,
   useUpdateStaff,
 } from '../../../../hooks/use-staff'
+import {
+  type DeviceKind,
+  describeUserAgent,
+  type UserAgentDescription,
+} from '../../../../lib/user-agent'
 
 export const Route = createFileRoute('/_authenticated/$storeId/settings/staff')({
   component: StaffSettingsPage,
@@ -160,6 +187,8 @@ function StaffCard({ staff, loading }: { staff: AdminUser[]; loading: boolean })
               <TableRow>
                 <TableHead>{t('admin.pages.staff.table.member')}</TableHead>
                 <TableHead>{t('admin.pages.staff.table.roles')}</TableHead>
+                <TableHead>{t('admin.pages.staff.table.status')}</TableHead>
+                <TableHead>{t('admin.pages.staff.table.last_active')}</TableHead>
                 <TableHead className="w-12" />
               </TableRow>
             </TableHeader>
@@ -178,6 +207,7 @@ function StaffCard({ staff, loading }: { staff: AdminUser[]; loading: boolean })
 function StaffRow({ member }: { member: AdminUser }) {
   const { t } = useTranslation()
   const [editOpen, setEditOpen] = useState(false)
+  const [detailsOpen, setDetailsOpen] = useState(false)
   const removeMutation = useRemoveStaff()
   const confirm = useConfirm()
 
@@ -237,9 +267,21 @@ function StaffRow({ member }: { member: AdminUser }) {
             </div>
           )}
         </TableCell>
+        <TableCell>
+          <StaffStatusBadge status={member.status} />
+        </TableCell>
+        <TableCell className="text-sm text-muted-foreground">
+          <RelativeTime iso={member.last_active_at} />
+        </TableCell>
         <TableCell className="text-right">
           <RowActions
             actions={[
+              {
+                key: 'view',
+                label: t('admin.actions.view_details'),
+                icon: <EyeIcon className="size-4" />,
+                onSelect: () => setDetailsOpen(true),
+              },
               { key: 'edit', onSelect: () => setEditOpen(true) },
               {
                 key: 'remove',
@@ -255,7 +297,122 @@ function StaffRow({ member }: { member: AdminUser }) {
       </TableRow>
 
       <EditStaffSheet open={editOpen} onOpenChange={setEditOpen} member={member} />
+      <StaffDetailsSheet open={detailsOpen} onOpenChange={setDetailsOpen} member={member} />
     </>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Staff details sheet
+// ---------------------------------------------------------------------------
+
+function StaffDetailsSheet({
+  open,
+  onOpenChange,
+  member,
+}: {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  member: AdminUser
+}) {
+  const { t } = useTranslation()
+  // The list row renders at once; the sheet adds what only it asks for.
+  const { data: details, isLoading, isError } = useStaffMember(member.id, open)
+
+  return (
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent>
+        <SheetHeader>
+          <SheetTitle>{member.full_name || member.email}</SheetTitle>
+          {member.full_name && <SheetDescription>{member.email}</SheetDescription>}
+        </SheetHeader>
+        <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
+          <StaffStatusBadge status={member.status} />
+          <dl className="flex flex-col gap-2 text-sm">
+            <DetailRow label={t('admin.pages.staff.details.joined')}>
+              <RelativeTime iso={member.created_at} />
+            </DetailRow>
+            {!isError && (
+              <DetailRow label={t('admin.pages.staff.details.invited_by')}>
+                {isLoading ? <Skeleton className="h-4 w-32" /> : (details?.inviter?.label ?? '—')}
+              </DetailRow>
+            )}
+          </dl>
+          <section className="flex flex-col gap-2">
+            <h3 className="font-medium text-sm">{t('admin.pages.staff.sessions.title')}</h3>
+            {isError ? (
+              <p className="text-sm text-destructive" role="alert">
+                {t('admin.pages.staff.details.load_failed')}
+              </p>
+            ) : isLoading ? (
+              <Skeleton className="h-12 w-full" />
+            ) : details?.sessions?.length ? (
+              <ItemGroup className="gap-2">
+                {details.sessions.map((session) => (
+                  <SessionRow key={session.id} session={session} />
+                ))}
+              </ItemGroup>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                {t('admin.pages.staff.sessions.empty')}
+              </p>
+            )}
+          </section>
+        </div>
+      </SheetContent>
+    </Sheet>
+  )
+}
+
+const DEVICE_ICONS: Record<DeviceKind, ComponentType<{ className?: string }>> = {
+  desktop: MonitorIcon,
+  mobile: SmartphoneIcon,
+  tablet: TabletIcon,
+  other: TerminalIcon,
+}
+
+function SessionDeviceIcon({ device }: { device: UserAgentDescription | null }) {
+  // Simple Icons, where the logos come from, has no Edge logo.
+  if (device?.browser && device.browser !== 'edge') return <BrowserIcon browser={device.browser} />
+
+  const Icon = device ? DEVICE_ICONS[device.device] : GlobeIcon
+  return <Icon className="size-4" />
+}
+
+function SessionRow({ session }: { session: Session }) {
+  const { t } = useTranslation()
+  const device = session.user_agent ? describeUserAgent(session.user_agent) : null
+
+  return (
+    <Item role="listitem" variant="outline" size="sm">
+      <ItemMedia className="size-9 rounded-md bg-muted text-muted-foreground">
+        <SessionDeviceIcon device={device} />
+      </ItemMedia>
+      <ItemContent className="min-w-0">
+        <ItemTitle className="truncate" title={session.user_agent ?? undefined}>
+          {device?.label ?? t('admin.pages.staff.sessions.unknown_device')}
+        </ItemTitle>
+        <ItemDescription className="flex items-center gap-1.5 text-xs">
+          <span className="font-mono">{session.ip_address ?? '—'}</span>
+          <span aria-hidden>·</span>
+          <RelativeTime iso={session.last_active_at} />
+        </ItemDescription>
+      </ItemContent>
+    </Item>
+  )
+}
+
+function StaffStatusBadge({ status }: { status: AdminUserStatus }) {
+  const { t } = useTranslation()
+  return <StatusBadge status={status} label={t(`admin.pages.staff.status.${status}`)} />
+}
+
+function DetailRow({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <div className="flex items-center justify-between gap-4">
+      <dt className="text-muted-foreground">{label}</dt>
+      <dd>{children}</dd>
+    </div>
   )
 }
 

@@ -69,6 +69,10 @@ module Spree
               Spree.api.address_serializer
             end
 
+            def collection_includes
+              [:owner]
+            end
+
             # Reading a book and keeping one are different rights: the listing
             # includes what this node inherits, writes stay with the node that
             # owns the row. The Store API authorizes purely by what this scope

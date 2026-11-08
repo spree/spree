@@ -105,7 +105,7 @@ RSpec.describe Spree::UpdateCheck do
         expect(described_class.status).to have_attributes(releases: [], update_available?: false)
         expect(Net::HTTP).to have_received(:start).once
 
-        Timecop.travel(61.minutes.from_now) { described_class.status }
+        travel(61.minutes) { described_class.status }
         expect(Net::HTTP).to have_received(:start).twice
       end
     end

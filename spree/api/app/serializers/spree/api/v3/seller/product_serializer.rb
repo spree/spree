@@ -18,11 +18,19 @@ module Spree
           typelize status: [:string, enum: Spree::Product.statuses, enum_type_name: 'ProductStatus'], metadata: 'Record<string, unknown>',
                    product_type_id: [:string, nullable: true],
                    delivery_profile_id: [:string, nullable: true],
+                   total_on_hand: [:number, nullable: true],
                    submission: ['ProductSubmission', nullable: true]
 
           attributes :status, :metadata, created_at: :iso8601, updated_at: :iso8601
 
           prefixed_id_attributes :product_type, :delivery_profile
+
+          # Null when any variant is not tracked: its stock is unlimited, which
+          # is not a number to send.
+          attribute :total_on_hand do |product|
+            total = product.total_on_hand
+            total.to_i unless total.infinite?
+          end
 
           many :variants,
                resource: proc { Spree.api.seller_variant_serializer },

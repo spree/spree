@@ -705,6 +705,40 @@ describe Spree::Address, type: :model do
     end
   end
 
+  describe '#company' do
+    let(:company) { create(:company, name: 'Acme Logistics') }
+
+    it 'is the stored line' do
+      expect(create(:company_address, owner: company, company: 'Acme Logistics — Dock B').company).to eq('Acme Logistics — Dock B')
+    end
+
+    it "tracks the owning node's current name when nothing is stored" do
+      address = create(:company_address, owner: company, company: nil)
+      company.update!(name: 'Acme Freight')
+
+      expect(address.reload.company).to eq('Acme Freight')
+    end
+
+    it 'is nil when nothing is stored and no company owns the address' do
+      expect(create(:address, company: nil).company).to be_nil
+    end
+
+    # Stands in for a reader an app layers on the column, such as `encrypts :company, ignore_case: true`.
+    it 'reads through the attribute reader rather than the raw column' do
+      address = create(:address, company: 'acme logistics')
+      allow_any_instance_of(Spree::Address.send(:generated_attribute_methods)).to receive(:company).and_return('Acme Logistics')
+
+      expect(address.company).to eq('Acme Logistics')
+    end
+
+    it 'does not load a customer owner to find no company' do
+      address = Spree::Address.find(create(:address, user: create(:user), company: nil).id)
+
+      expect(address.company).to be_nil
+      expect(address.association(:owner)).not_to be_loaded
+    end
+  end
+
   describe '#to_s' do
     let(:address) { create(:address) }
 
@@ -992,6 +1026,45 @@ describe Spree::Address, type: :model do
     it 'lets two snapshots of the same labelled address be saved side by side' do
       expect(address.snapshot.save).to be(true)
       expect(address.snapshot.save).to be(true)
+    end
+
+    context 'of a company site' do
+      let(:company) { create(:company, name: 'Acme Logistics') }
+      let(:address) do
+        create(:company_address, owner: company, company: nil, first_name: 'Dana', last_name: 'Reyes')
+      end
+
+      it 'freezes the company line the owner was supplying' do
+        expect(snapshot.company).to eq('Acme Logistics')
+      end
+
+      it 'keeps a line the entry stored for itself' do
+        address.update!(company: 'Acme Logistics — Dock B')
+
+        expect(snapshot.company).to eq('Acme Logistics — Dock B')
+      end
+
+      # A company site names the business, not a person, and the model exempts
+      # it from needing a name. The copy has to stay exempt or placing the
+      # order fails on a first name the site never had.
+      context 'with no contact name on it' do
+        let(:address) { create(:company_address, owner: company, first_name: nil, last_name: nil) }
+
+        it 'is valid and saveable' do
+          expect(snapshot).to be_valid
+          expect(snapshot.save).to be(true)
+        end
+
+        it 'stays recognisably a business address' do
+          expect(snapshot).to be_business_owned
+        end
+      end
+
+      it 'keeps the copy out of the book it came from' do
+        expect(snapshot.owner_id).to be_nil
+        expect(snapshot.owner).to be_nil
+        expect(company.addresses.reload).not_to include(snapshot.tap(&:save!))
+      end
     end
   end
 

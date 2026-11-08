@@ -183,6 +183,11 @@ function CollapsedDropdown({
           <DropdownMenuItem key={subItem.title} asChild>
             <Link to={subItem.url} className="no-underline">
               {subItem.title}
+              {subItem.badge && (
+                <span className="ms-auto shrink-0 ps-3">
+                  <subItem.badge />
+                </span>
+              )}
             </Link>
           </DropdownMenuItem>
         ))}
@@ -261,9 +266,9 @@ function NavItemContent({
               <SidebarMenuSubItem key={subItem.title}>
                 <SidebarMenuSubButton asChild isActive={subActive}>
                   <Link to={subItem.url}>
-                    <span>{subItem.title}</span>
+                    <span className="truncate">{subItem.title}</span>
                     {subItem.badge && (
-                      <span className="ml-auto">
+                      <span className="ml-auto shrink-0">
                         <subItem.badge />
                       </span>
                     )}

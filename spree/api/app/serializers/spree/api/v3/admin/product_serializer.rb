@@ -17,6 +17,7 @@ module Spree
                    product_type_id: [:string, nullable: true],
                    delivery_profile_id: [:string, nullable: true],
                    seller_name: [:string, nullable: true],
+                   total_on_hand: [:number, nullable: true],
                    price: ['Price', nullable: true],
                    deleted_at: [:string, nullable: true],
                    metadata: 'Record<string, unknown>',
@@ -48,6 +49,13 @@ module Spree
               if: proc { expand?('seller') }
 
           prefixed_id_attributes :product_type, :tax_category
+
+          # Null when any variant is not tracked: its stock is unlimited, which
+          # is not a number to send.
+          attribute :total_on_hand do |product|
+            total = product.total_on_hand
+            total.to_i unless total.infinite?
+          end
 
           attribute :price do |product|
             price = price_for(product.default_variant)
@@ -108,9 +116,7 @@ module Spree
                resource: proc { Spree.api.admin_collection_serializer },
                if: proc { expand?('collections') }
 
-          many :custom_fields,
-               resource: proc { Spree.api.admin_custom_field_serializer },
-               if: proc { expand?('custom_fields') }
+          expandable_custom_fields admin: true
 
           many :product_publications,
                resource: proc { Spree.api.admin_product_publication_serializer },

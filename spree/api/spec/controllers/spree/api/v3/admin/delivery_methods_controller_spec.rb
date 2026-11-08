@@ -281,7 +281,7 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
       expect(delivery_method.reload.calculator).to eq(calculator)
     end
 
-    it 'stores per-currency amounts' do
+    it 'stores per-currency amounts, which alone decide where the method is offered' do
       patch :update, params: {
         id: delivery_method.prefixed_id,
         calculator: { type: 'flat_rate', preferences: { amount: '20', currency: 'USD', amounts: { 'EUR' => '15.0' } } }
@@ -293,7 +293,7 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
       calculator = delivery_method.reload.calculator
       expect(calculator.preferred_amounts).to eq('EUR' => '15.0')
       expect(calculator.amount_for('EUR')).to eq(15.0)
-      expect(calculator.amount_for('USD')).to eq(20)
+      expect(calculator.amount_for('USD')).to be_nil
     end
 
     # The dashboard sheet saves basics and conditions together.

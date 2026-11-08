@@ -23,9 +23,9 @@ module Spree
         class OrderSerializer < V3::BaseSerializer
           typelize number: :string, customer_note: [:string, nullable: true], currency: [:string, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'],
                    total_quantity: :number,
-                   fulfillment_status: [:string, nullable: true, enum: Spree::Order::FULFILLMENT_STATUSES],
-                   payment_status: [:string, nullable: true, enum: Spree::Order::PAYMENT_STATUSES],
-                   status: [:string, enum: Spree::Order::STATUSES], canceled_at: [:string, nullable: true],
+                   fulfillment_status: [:string, nullable: true, enum: Spree::Order::FULFILLMENT_STATUSES, enum_type_name: 'OrderFulfillmentStatus'],
+                   payment_status: [:string, nullable: true, enum: Spree::Order::PAYMENT_STATUSES, enum_type_name: 'OrderPaymentStatus'],
+                   status: [:string, enum: Spree::Order::STATUSES, enum_type_name: 'OrderStatus'], canceled_at: [:string, nullable: true],
                    cancel_reason_name: [:string, nullable: true], cancel_note: [:string, nullable: true],
                    internal_note: [:string, nullable: true], internal_note_html: [:string, nullable: true]
 

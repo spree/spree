@@ -89,6 +89,16 @@ module Spree
     # amount is negative, and sending one as a transfer pays the seller the
     # money it exists to take back.
     scope :awaiting_provider, -> { earnings.retryable.where(payout_id: nil) }
+    # Reversals still owing the provider a call: refused, or waiting for their
+    # earning to reach the provider first. Kept apart from `awaiting_provider`
+    # so a caller has to choose `reverse!` for these by name.
+    #
+    # A reversal of an earning nobody can account for waits with it: there is
+    # nothing to take back from until a person settles what happened.
+    scope :reversals_awaiting_provider, lambda {
+      reversals_only.retryable.where(payout_id: nil).
+        where.not(reversed_from_id: Spree::SellerTransfer.with_status('unresolved').select(:id))
+    }
     # Earned and confirmed, but not yet swept into a settlement — what the next
     # payout will pick up.
     scope :unsettled, -> { completed.where(payout_id: nil) }
@@ -136,6 +146,47 @@ module Spree
       return 0.to_d unless earning?
 
       [amount - reversals.sum(:amount).abs, 0].max
+    end
+
+    # The provider that moved this row's money, not whichever one the store
+    # uses now. A marketplace that changes provider still has money sitting
+    # with the old one, and asking the new one to reverse a transfer it never
+    # made leaves the original standing.
+    #
+    # No silent fallback when that provider is no longer installed: handing
+    # the row to a different one would mark it done while the money stayed
+    # where it was. An operator has to know.
+    #
+    # @return [Spree::PayoutProvider::Base]
+    # @raise [Spree::Core::GatewayError] when the provider is not registered
+    def payout_provider_instance
+      configured = Spree::ApiTyped.registered_class(Spree.payout_providers, provider)
+      raise Spree::Core::GatewayError, "Payout provider #{provider} is not registered" if configured.nil?
+
+      configured.new
+    end
+
+    # The settlement a reversal of part of this earning records.
+    #
+    # A clawback has to settle where its earning settled. Payouts are swept by
+    # settlement currency, so a reversal left in the sale's currency would
+    # never join the batch that pays the earning it cancels — the seller would
+    # be paid in full for goods that came back.
+    #
+    # Prorated from this earning's settled figure rather than converted at
+    # today's rate, so the money comes back at the rate it went out at.
+    #
+    # @param part [BigDecimal] how much of this earning is reversed, positive
+    # @return [Hash] negative `settled_amount` and `settled_currency`
+    def reversal_settlement(part)
+      return {} if settled_amount.blank? || amount.zero?
+
+      share = settled_amount * (part / amount)
+
+      {
+        settled_amount: -Spree::Money::Rounding.quantize(share, Spree::Money::Rounding.precision(settlement_currency)),
+        settled_currency: settled_currency
+      }
     end
 
     # @return [Boolean]

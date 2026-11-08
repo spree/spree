@@ -1,5 +1,5 @@
 import type { DeliveryProfile } from '@spree/admin-sdk'
-import { adminClient, PageHeader } from '@spree/dashboard-core'
+import { adminClient, PageHeader, Slot } from '@spree/dashboard-core'
 import { ErrorState, ResourceLayout } from '@spree/dashboard-ui'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
@@ -86,11 +86,17 @@ function DeliveryProfileDetailBody({ profile }: { profile: DeliveryProfile }) {
           })}
         />
       }
-      main={<DeliveryZonesAndMethodsSection profile={profile} search={search} />}
+      main={
+        <>
+          <DeliveryZonesAndMethodsSection profile={profile} search={search} />
+          <Slot name="delivery_profile.form_main" context={{ deliveryProfile: profile }} />
+        </>
+      }
       sidebar={
         <>
           <DeliveryProfileGeneralCard profile={profile} />
           <DeliveryProfileOriginsCard profile={profile} />
+          <Slot name="delivery_profile.form_sidebar" context={{ deliveryProfile: profile }} />
         </>
       }
     />

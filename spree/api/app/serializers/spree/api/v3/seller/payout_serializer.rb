@@ -22,8 +22,8 @@ module Spree
           # How many earnings this settlement covers. Read from a count the
           # controller made for the whole page when there is one; a single
           # payout read falls back to asking for its own.
-          attribute(:transfers_count) do |payout, params|
-            counts = params && params[:transfer_counts]
+          attribute(:transfers_count) do |payout|
+            counts = params[:transfer_counts]
 
             counts ? counts.fetch(payout.id, 0) : payout.transfers.count
           end

@@ -13,7 +13,7 @@ module Spree
                    created_at: :string
 
           attribute :variant_id do |price_history|
-            price_history.variant.prefixed_id
+            Spree::Variant.prefixed_id_for(price_history.variant_id)
           end
 
           attribute :price_id do |price_history|

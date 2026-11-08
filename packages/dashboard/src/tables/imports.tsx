@@ -1,18 +1,10 @@
 import type { Import } from '@spree/admin-sdk'
+import { IMPORT_STATUSES } from '@spree/core'
 import { defineTable } from '@spree/dashboard-core'
 import { RelativeTime, ResourceNameCell, StatusBadge } from '@spree/dashboard-ui'
 import { UploadIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
 import { importTypeLabel } from '../lib/import-types'
-
-const IMPORT_STATUSES = [
-  'pending',
-  'mapping',
-  'completed_mapping',
-  'processing',
-  'completed',
-  'failed',
-]
 
 defineTable<Import>('imports', {
   title: i18n.t('admin.pages.settings.imports.title'),

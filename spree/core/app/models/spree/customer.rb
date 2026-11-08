@@ -16,7 +16,7 @@ module Spree
     include Spree::AccountLockout
     include Spree::PasswordPolicy
 
-    validates :email, presence: true, uniqueness: { case_sensitive: false }
+    validates :email, presence: true, uniqueness: { case_sensitive: false, scope: spree_base_uniqueness_scope }
 
     attribute :accepts_email_marketing, :boolean, default: false
 

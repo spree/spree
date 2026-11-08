@@ -165,4 +165,45 @@ describe Spree::Base do
       expect { loaded.with_lock { nil } }.not_to raise_error
     end
   end
+
+  describe '.for_store' do
+    let(:store) { @default_store }
+
+    it 'reads through the association the store has for the model' do
+      expect(Spree::Product.for_store(store).to_sql).to eq(store.products.to_sql)
+    end
+
+    # A model the store cannot reach answers nothing: widening to every
+    # store's rows is how a cross-store read goes unnoticed.
+    it 'answers nothing for a model the store has no association for' do
+      expect(Spree::Zone.for_store(store)).to be_none
+    end
+  end
+
+  describe '.reset_counters_in_bulk' do
+    let(:store) { @default_store }
+    let(:collections) { create_list(:collection, 2, store: store) }
+    let(:products) { create_list(:product, 3, store: store) }
+
+    before do
+      Spree::ProductCollection.insert_all([
+        { collection_id: collections.first.id, product_id: products.first.id, position: 1 },
+        { collection_id: collections.first.id, product_id: products.second.id, position: 2 },
+        { collection_id: collections.second.id, product_id: products.first.id, position: 1 }
+      ])
+      Spree::Product.where(id: products.map(&:id)).update_all(collections_count: 9)
+    end
+
+    it 'recounts each record from its own rows, including the ones with none' do
+      Spree::Product.reset_counters_in_bulk(products.map(&:id), :product_collections)
+
+      expect(products.map { |product| product.reload.collections_count }).to eq([2, 1, 0])
+    end
+
+    it 'reads the counter column from the other side of the association' do
+      Spree::Collection.reset_counters_in_bulk(collections.map(&:id), :product_collections)
+
+      expect(collections.map { |collection| collection.reload.products_count }).to eq([2, 1])
+    end
+  end
 end

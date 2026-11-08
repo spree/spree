@@ -1,6 +1,6 @@
 import type { Customer } from '@spree/admin-sdk'
-import { PageHeader, Slot } from '@spree/dashboard-core'
-import { Badge, ErrorState, MetadataCard, ResourceLayout } from '@spree/dashboard-ui'
+import { PageHeader, RecordMetadataCard, Slot } from '@spree/dashboard-core'
+import { Badge, ErrorState, ResourceLayout } from '@spree/dashboard-ui'
 import { createFileRoute } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import {
@@ -115,14 +115,10 @@ function CustomerBody({ customer }: { customer: Customer }) {
             resourceType="customer"
             resourceLabel={t('admin.nav.customers').toLowerCase()}
           >
-            <CustomFieldsInlineCard />
+            <CustomFieldsInlineCard collapsible />
           </EditableApiCustomFieldsProvider>
-          <MetadataCard
-            metadata={customer.metadata}
-            title={t('admin.components.metadata_card.title')}
-            emptyTitle={t('admin.components.metadata_card.empty_title')}
-            emptyDescription={t('admin.components.metadata_card.empty_description')}
-          />
+          <RecordMetadataCard metadata={customer.metadata} />
+          <Slot name="customer.form_main" context={{ customer }} />
         </>
       }
       sidebar={

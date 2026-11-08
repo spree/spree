@@ -26,6 +26,8 @@ module Spree
           one :reason, resource: proc { Spree.api.admin_claim_reason_serializer }, if: proc { expand?('reason') }
           one :order, resource: proc { Spree.api.admin_order_serializer }, if: proc { expand?('order') }
           many :refunds, resource: proc { Spree.api.admin_refund_serializer }, if: proc { expand?('refunds') }
+
+          expandable_custom_fields admin: true
         end
       end
     end

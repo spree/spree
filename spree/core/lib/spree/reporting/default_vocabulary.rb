@@ -541,7 +541,7 @@ module Spree
                     # and tax category per row and throw all of it away.
                     hydrate: lambda { |store, ids, _params|
                       currency = Spree::Current.currency || store.default_currency
-                      products = store.products.with_deleted.includes(:primary_media).where(id: ids)
+                      products = store.products.with_deleted.includes(:primary_media, default_variant: :prices).where(id: ids)
                       products.to_h do |product|
                         amount = product.default_variant&.amount_in(currency)
                         [product.id, {

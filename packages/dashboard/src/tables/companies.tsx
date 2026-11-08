@@ -1,4 +1,5 @@
 import type { Company } from '@spree/admin-sdk'
+import { COMPANY_KINDS } from '@spree/core'
 import { defineTable } from '@spree/dashboard-core'
 import { RelativeTime, ResourceNameCell } from '@spree/dashboard-ui'
 import { Building2Icon } from '@spree/dashboard-ui/icons'
@@ -41,10 +42,10 @@ defineTable<Company>('companies', {
       sortable: true,
       filterable: true,
       filterType: 'enum',
-      filterOptions: [
-        { value: 'company', label: i18n.t('admin.companies.kind.company') },
-        { value: 'division', label: i18n.t('admin.companies.kind.division') },
-      ],
+      filterOptions: COMPANY_KINDS.map((kind) => ({
+        value: kind,
+        label: i18n.t(`admin.companies.kind.${kind}`),
+      })),
       quickFilter: true,
       default: true,
       render: (company) => <CompanyKindBadge kind={company.kind} />,

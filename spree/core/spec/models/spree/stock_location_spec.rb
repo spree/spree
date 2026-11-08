@@ -195,7 +195,7 @@ module Spree
 
     it 'allocates a variant to a fulfillment' do
       fulfillment = double
-      expect(subject).to receive(:move).with(variant, 2, kind: 'allocated', cause: fulfillment)
+      expect(subject).to receive(:move).with(variant, 2, kind: 'allocated', cause: fulfillment, stock_level: nil)
       subject.allocate(variant, 2, fulfillment)
     end
 
@@ -206,7 +206,7 @@ module Spree
     end
 
     it 'adjusts a variant with a reason' do
-      expect(subject).to receive(:move).with(variant, -2, kind: 'adjusted', reason: 'Damaged')
+      expect(subject).to receive(:move).with(variant, -2, kind: 'adjusted', reason: 'Damaged', stock_level: nil)
       subject.adjust(variant, -2, reason: 'Damaged')
     end
 
@@ -352,7 +352,7 @@ module Spree
         it 'touches variants and stock levels' do
           pending 'active_changed? is always false inside after_update, so nothing is touched'
 
-          Timecop.travel(1.minute.from_now) do
+          travel(1.minute) do
             expect { subject.update(active: false) }.to change { variant.reload.updated_at }.
               and change { stock_level.reload.updated_at }
           end
@@ -361,7 +361,7 @@ module Spree
 
       context 'active has not changed' do
         it 'does not touch variants' do
-          Timecop.travel(1.minute.from_now) do
+          travel(1.minute) do
             expect { subject.update(name: 'my other warehouse') }.not_to change { variant.reload.updated_at }
           end
         end

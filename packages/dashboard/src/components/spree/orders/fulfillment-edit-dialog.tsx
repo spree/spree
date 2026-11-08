@@ -1,4 +1,5 @@
-import { type Fulfillment, isZeroMoney, type Order, SpreeError } from '@spree/admin-sdk'
+import { type Fulfillment, type Order, SpreeError } from '@spree/admin-sdk'
+import { isZeroMoney } from '@spree/core'
 import { formatAmount, useMoneyLocale, useStockLocations } from '@spree/dashboard-core'
 import { FulfillmentEditDialog as SharedFulfillmentEditDialog } from '@spree/dashboard-ui'
 import { useState } from 'react'

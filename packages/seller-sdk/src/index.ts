@@ -1,7 +1,11 @@
 export type {
   AuthProvider,
   AuthProvidersResponse,
+  Extended,
+  Extension,
+  ExtensionContext,
   FileUploadCreateParams,
+  RequestFn,
   RequestOptions,
   RetryConfig,
   UploadFileOptions,
@@ -11,6 +15,7 @@ export {
   CountryCode,
   CurrencyCode,
   compareMoney,
+  DimensionUnit,
   decimalPlaces,
   formatMoney,
   isDecimalString,
@@ -21,12 +26,15 @@ export {
   SpreeError,
   subtractMoney,
   sumMoney,
+  WeightUnit,
 } from '@spree/sdk-core'
 // `Client` is the whole configured client (auth + resources + token/seller
 // setters); `SellerClient` below is just the resource group. Exported under
 // both names so hosts can say what they mean.
 export type { Client, Client as SellerApiClient, SellerClientConfig } from './client'
 export { createSellerClient } from './client'
+export type { SellerExtension } from './extensions'
+export { defineSellerExtension } from './extensions'
 export type {
   AccountUpdateParams,
   BulkProductResult,
@@ -51,6 +59,7 @@ export type {
   SellerCountry,
   SellerExportCreateParams,
   SellerExportType,
+  SellerProductVariantParams,
   StockLocationCreateParams,
   StockLocationUpdateParams,
 } from './seller-client'

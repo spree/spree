@@ -1,75 +1,125 @@
 ---
-title: "Segment shoppers with Customer Groups"
-sidebarTitle: "Customer Groups"
-description: "Create Customer Groups in Spree to segment shoppers and tailor pricing, promotions, tax rules, and access for B2B accounts, VIPs, or wholesale buyers."
+title: "Groups"
+description: "Learn how to sort customers into groups and point a promotion or a catalog at them in Spree Commerce."
 ---
 
-Customer Groups let you segment your customers into defined lists, which can then be used to personalize pricing, limit access to promotions, or power other business rules.
+A customer group is a named list of customers that pricing and promotions can point at. It holds a name, a description and its members, and nothing else. There is no price on a group, no discount percentage and no payment terms. The group is only the label, and what it changes is decided wherever that label is used.
 
-## Why use Customer Groups?
+Groups suit a set of customers you want to treat differently from everyone else, where the only thing the members have in common is that you decided to treat them that way: a VIP group for your best customers, a Dealers group for the shops that resell your products, a Staff group for your own team. Membership is yours to set, so somebody is in a group because a member of staff put them there.
 
-On their own, groups are just lists. The value comes from what you attach to them — and how Spree uses group membership to automatically personalise what each buyer sees.
+A group is not a company. A company is a business your store sells to, with its own buyers, addresses, tax registrations and purchase order rules, and its members are there because they work for that business. Reach for a company when the account you are serving is an organization whose staff buy on its behalf, such as a hotel chain placing orders from three sites. Reach for a group when the members have nothing to do with each other, such as the fifty customers who spent the most last year. See [<u>Companies</u>](/user/customers/companies).
 
-**Pricing tiers** — By assigning a [<u>Catalog</u>](https://spreecommerce.org/docs/user/catalogs/catalogs) to a customer group, every member of that group automatically sees their correct prices the moment they log in. The catalog can price your entire range, or restrict the group to specific products at their own prices. You can have as many groups and catalogs as you need — one per customer tier, one per named account — and Spree applies the right one without any manual work. When you add a new customer to a group, they inherit the pricing immediately. A buyer whose company has a catalog of its own gets that instead: company assignments win over group ones.
+To manage groups, navigate to **Customers → Groups** in the admin dashboard.
 
-**Exclusive promotions** — Promotion rules can be restricted to specific customer groups, so a discount code or automatic offer only applies to the customers it's meant for. Useful for loyalty rewards, trade-only offers, or onboarding incentives for new wholesale accounts.
+<Note>A group sets no price by itself. A discount comes from a promotion that names the group, and a different range or different prices come from a catalog assigned to it. Price lists cannot target a group at all, as their rules work on channel, market and volume.</Note>
 
-**Single storefront, multiple experiences** — Because pricing and promotions are tied to the buyer's account rather than to separate stores or URLs, retail and trade customers can shop side by side on the same storefront. Public visitors see standard prices; logged-in trade buyers see theirs. No duplicate stores to maintain, no separate login portals to manage.
+## Reviewing Groups
 
-### Example: Wholesale, Dealer, and VIP tiers
+![The Groups list, with one row per group and its member count](/docs/images/user/customers/customer-groups/1-customer-groups-list.png)
 
-An industrial supplier runs three buyer types from a single storefront:
+The list shows one row per group.
 
-- **Wholesale** — registered trade buyers who see a standard wholesale price across the catalog
-- **Dealer** — authorized dealers with a deeper discount tier and access to exclusive product bundles
-- **VIP** — high-volume accounts with individually negotiated pricing
+| Column | What it means |
+|---|---|
+| **Name** | What the group is called, with its description printed underneath. |
+| **Customers** | How many customers are in the group. |
+| **Created at** and **Updated at** | When the group was made and when it last changed. |
 
-Each group is assigned its own catalog. When a buyer logs in, Spree checks their group membership and applies the matching catalog automatically.
+**Search by name** finds a group by what it is called, so typing "Dealer" lists every group with Dealer in its name. **Add filter** narrows the list by when a group was created or updated, **Sort** orders it by any of the four columns, and **Columns** chooses which of them are shown. The **⋮** button at the end of a row opens **Edit** and **Delete**.
 
-<Note>For a full walkthrough of this setup, see [<u>Set Up Wholesale Pricing</u>](https://spreecommerce.org/docs/user/how-to/wholesale-pricing).</Note>
+### Seeing Who Is in a Group
 
-## Create a Customer Group
+![An open group, showing its name, description and member count](/docs/images/user/customers/customer-groups/2-group-details.png)
 
-To create a new customer group, navigate to **Customers → Customer Groups** in the admin dashboard.
+Clicking a group's row opens it, showing its name, its description and a count of its members. **View members** opens the Customers list filtered to that group, where the filter chip carries the group's internal ID rather than its name. **Clear all** returns the list to every customer.
 
-![The Customer Groups tab in Spree Commerce](/docs/images/user/customers/customer-groups/1-customer-groups.png)
+## How to Create a Group
 
-Here you'll see an overview of all existing customer groups, including the number of customers in each.
+1. Click **Add customer group**.
+2. Enter a **Name**, which is what your team will call the group, such as VIP.
+3. Enter a **Description** if the name alone will not tell your team what the group is for. It is internal and appears under the name in the list.
+4. Click **Create customer group**.
 
-Click the **New Customer Group** button in the top right to begin setup.
+The group appears in the list with no members. Two groups cannot share a name, and reusing one leaves the dialog open with **Name has already been taken**.
 
-## Add Group Details
+## How to Add Customers to a Group
 
-![Adding a new customer group in Spree Commerce](/docs/images/user/customers/customer-groups/2-customer-group-form.png)
+A group is filled from the customer's side rather than its own. Opening a group lets you rename it and see how many members it has, but it has no control for putting anyone in it.
 
-In the creation form, add:
+**For one customer**
 
-- **Name** — This is how the group will appear in admin interfaces
-- **Description** — Use this field to describe the purpose of the group, e.g. "North America wholesale buyers" or "Early access testers" (optional)
+1. Navigate to **Customers** and click the customer's email address.
+2. On the **Customer groups** card, click **Edit**.
+3. Search for the group and pick it. A customer can be in several groups at once.
+4. Click **Save**.
 
-Click **Create** to save the new group.
+**For several customers at once**
 
-## Add Customers to the Group
+![Adding ticked customers to a group from the Customers list](/docs/images/user/customers/customer-groups/3-add-to-group.png)
 
-![Customer group overview in Spree Commerce](/docs/images/user/customers/customer-groups/3-customer-group-edit.png)
+1. Navigate to **Customers** and narrow the list to the people you want, using the filters or the search box.
+2. Tick their rows. A bar appears above the list showing how many are selected.
+3. Click **Add to group…**, pick the groups, and click **Add**.
 
-Once the group is created, you'll be taken to its detail view.
+This second route is the quickest way to build a group of any size. Filtering first is what makes it work, because the filter does the choosing and the ticking only confirms it.
 
-To add customers to the group, click the **Add Customers** button, and a side panel will open where you can search and select customers to add.
+## How to Remove Customers from a Group
 
-![Adding customers to a customer group in Spree Commerce](/docs/images/user/customers/customer-groups/4-add-customers.png)
+Removing somebody takes the same two routes as adding them, and neither deletes the customer.
 
-Check the boxes next to the customers you want to add, then click **Add Selected**.
+- **For one customer**, open their profile, click **Edit** on the **Customer groups** card, take the group out of the picker, and click **Save**.
+- **For several at once**, tick their rows on the Customers list and click **Remove from group…**, then pick the groups and click **Remove**.
 
-![An active customer group in Spree Commerce](/docs/images/user/customers/customer-groups/5-customers-added.png)
+Whatever the group was giving them stops applying as soon as they are out of it, so a promotion that names the group no longer reaches them and a catalog assigned to it no longer decides what they see.
 
-That's all there is to it — your customer group is now ready to use in price lists, promotions, and more.
+## How to Delete a Group
 
-## Remove Customers from a Group
+1. Click the **⋮** button on the group's row and choose **Delete**.
+2. Read the confirmation, which names the group and states that **Customers in this group are not deleted**.
+3. Click **Delete**.
 
-To remove customers from a group, select the checkboxes next to the customers you want to remove, then click **Remove from Group** in the actions menu at the bottom of the screen.
+Deleting a group removes the label and its membership list, and leaves every customer who was in it untouched. Anything pointing at the group stops matching, so a promotion whose only rule named that group no longer reaches those customers, and a catalog that reached buyers through it reaches nobody. Check what referenced a group before removing it.
 
-## Next Steps
+## What a Group Changes
 
-- [<u>Price Lists</u>](https://spreecommerce.org/docs/user/pricing/price-lists) — create pricing rules that target specific customer groups
-- [<u>Set Up Wholesale Pricing</u>](https://spreecommerce.org/docs/user/how-to/wholesale-pricing) — step-by-step guide to building wholesale pricing tiers with customer groups
+Two things in the dashboard can be pointed at a group, and between them they cover what a group is for.
+
+### How to Give a Group a Discount
+
+![A promotion with a group rule added](/docs/images/user/customers/customer-groups/4-group-promotion.png)
+
+A promotion carrying a **Customer Group(s)** rule applies only to customers in the groups it names.
+
+1. Navigate to **Promotions** and start a new promotion.
+2. On the **Rules** card, click **Add rule**, choose **Customer Group(s)**, pick the group and save it.
+3. On the **Actions** card, click **Add action** and choose the discount itself, such as a whole-order adjustment of a flat percentage.
+4. Click **Create promotion**.
+
+A member who signs in sees the discount as a line in their cart. Customers outside the group, and guests, pay the full price. Product pages show the same price to everybody, members included, because a promotion applies to the cart and not to the product price. To show a group different prices on product pages, use a catalog. See [<u>Create a Promotion</u>](/user/promotions/create-a-promotion).
+
+### How to Give a Group Its Own Catalog
+
+![The Audience step of the new catalog wizard, with a customer group picked](/docs/images/user/customers/customer-groups/5-catalog-audience.png)
+
+A catalog decides what its audience can see and what they pay. A catalog is built in a short wizard that asks who it is for, what is in it, and how it is priced.
+
+1. Navigate to **Products → Catalogs** and click **Add catalog**.
+2. Under **Details**, name the catalog and say what the agreement is for. The description is internal and is never shown to shoppers. Click **Next**.
+3. Under **Audience**, click **Assign**, set **Audience type** to **Customer group**, pick the group and click **Add**. Click **Next**.
+4. Under **Products**, search for what the catalog covers and add the products one at a time. Click **Next**.
+5. Under **Pricing**, choose what the group pays: **Normal prices**, **Prices I enter for this catalog**, or **A percentage off base prices**. Click **Next**.
+6. Check the summary and click **Create catalog**.
+
+A new catalog is created inactive, so nothing changes for the group until it is activated from the catalog's own page. Activating needs an audience, so a catalog assigned to nobody cannot go live.
+
+<Warning>Adding products to a catalog narrows its audience to those products alone. A group whose catalog holds six products sees six products in the shop, not the whole range plus six. Leave the products step empty to change what the group pays without changing what they can see.</Warning>
+
+<Note>A company's catalog takes priority over a group's. Customer group catalogs reach only buyers whose company, and every company above it, has no catalog. To change what a company's buyers see, assign the catalog to the company or division instead.</Note>
+
+## Further Reading
+
+- [<u>Customers</u>](/user/customers/customers) - The list, its filters, and the bar for ticked customers
+- [<u>Customer Profiles</u>](/user/customers/customer-profile) - Where the **Customer groups** card lives
+- [<u>Companies</u>](/user/customers/companies) - Business accounts, and why their catalogs win over a group's
+- [<u>Create a Promotion</u>](/user/promotions/create-a-promotion) - Every part of the promotion form
+- [<u>Catalogs</u>](/user/catalogs/catalogs) - What a catalog holds and who it reaches

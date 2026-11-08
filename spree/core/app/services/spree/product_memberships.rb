@@ -7,9 +7,16 @@ module Spree
     private
 
     def add_memberships(groups, products)
-      rows = groups.pluck(:id).flat_map do |group_id|
-        position = membership_class.where(group_key => group_id).count
-        products.pluck(:id).map do |product_id|
+      group_ids = groups.pluck(:id)
+      product_ids = products.pluck(:id)
+      existing = membership_class.where(group_key => group_ids, product_id: product_ids).ids
+      # Every group's current size in one grouped count, rather than a probe
+      # per group for the position to append at.
+      sizes = membership_class.where(group_key => group_ids).group(group_key).count
+
+      rows = group_ids.flat_map do |group_id|
+        position = sizes.fetch(group_id, 0)
+        product_ids.map do |product_id|
           {
             group_key => group_id, product_id: product_id, position: (position += 1),
             created_at: Time.current, updated_at: Time.current
@@ -18,18 +25,30 @@ module Spree
       end
       membership_class.insert_all(rows)
 
-      refresh_after_membership_change(groups.pluck(:id), products)
+      created = membership_class.where(group_key => group_ids, product_id: product_ids).where.not(id: existing)
+
+      refresh_after_membership_change(group_ids, products)
+      publish_membership_events(created, 'created')
     end
 
     # Removes the products, then re-packs the remaining positions from 1.
     def remove_memberships(groups, products)
       group_ids = groups.pluck(:id)
+      product_ids = products.pluck(:id)
+      deleted = []
 
       ApplicationRecord.transaction do
-        membership_class.where(group_key => group_ids, product_id: products.pluck(:id)).delete_all
+        # Ordered so two callers queue for the same rows in the same sequence rather than deadlocking on each other.
+        deleted = membership_class.where(group_key => group_ids, product_id: product_ids).order(:id).lock.to_a
+
+        membership_class.where(group_key => group_ids, product_id: product_ids).delete_all
+
+        # What survived the delete, for every group in one read.
+        remaining = membership_class.where(group_key => group_ids).order(:position).pluck(group_key, :product_id).
+                    group_by(&:first).transform_values { |pairs| pairs.map(&:last) }
 
         rows = group_ids.flat_map do |group_id|
-          membership_class.where(group_key => group_id).order(:position).pluck(:product_id).map.with_index(1) do |product_id, position|
+          remaining.fetch(group_id, []).map.with_index(1) do |product_id, position|
             {
               group_key => group_id, product_id: product_id, position: position,
               created_at: Time.current, updated_at: Time.current
@@ -40,13 +59,24 @@ module Spree
       end
 
       refresh_after_membership_change(group_ids, products)
+      publish_membership_events(deleted, 'deleted')
+    end
+
+    def publish_membership_events(memberships, action)
+      memberships = memberships.to_a
+      return if memberships.empty?
+
+      ActiveRecord::Associations::Preloader.new(records: memberships, associations: { product: :store }).call
+
+      name = "#{membership_class.model_name.element}.#{action}"
+      memberships.each { |membership| membership.publish_event(name) }
     end
 
     # Bulk writes skip the join model's callbacks, so counters, caches and the
     # search index are refreshed here.
     def refresh_after_membership_change(group_ids, products)
       product_ids = products.pluck(:id)
-      product_ids.each { |id| Spree::Product.reset_counters(id, membership_class.model_name.element.pluralize.to_sym) }
+      Spree::Product.reset_counters_in_bulk(product_ids, membership_class.model_name.element.pluralize.to_sym)
       refresh_group_counters(group_ids)
 
       Spree::Product.where(id: product_ids).touch_all

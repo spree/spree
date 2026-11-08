@@ -21,6 +21,12 @@ module Spree
   #     end
   #   end
 class AgentTool
+    # The parameter every generic resource tool takes for a resource that
+    # lives under another record, such as an order's items.
+    PARENT_ID_DESCRIPTION = 'For a resource reached through another record (describe_resource names ' \
+                            'it as parent, e.g. an order for its items, discounts and fees): that ' \
+                            'record\'s id as shown in search results'.freeze
+
     # Declarations live in class attributes rather than plain class-level
     # instance variables so a subclass inherits them. Subclassing a tool to
     # tweak it is the documented extension path, and with bare ivars the
@@ -85,6 +91,26 @@ class AgentTool
         declared_mutating == true
       end
 
+      # Declares that this tool only adds — it creates a record or a file and
+      # never overwrites, removes or changes the state of one that exists.
+      # Every other mutating tool counts as destructive, so a tool that
+      # forgets to say is warned about more, never less.
+      #
+      # Unlike the declarations above, this one is not inherited: a subclass
+      # that overrides `call` may well change existing data, so it is
+      # destructive until it says otherwise itself.
+      #
+      # @return [void]
+      def additive!
+        @additive = true
+      end
+
+      # @return [Boolean] whether the tool may overwrite, remove or change
+      #   the state of existing data
+      def destructive?
+        mutating? && @additive != true
+      end
+
       # @param name [Symbol]
       # @param type [Symbol] JSON schema type
       # @param description [String]
@@ -105,6 +131,44 @@ class AgentTool
       def params
         declared_params
       end
+
+      # The declared params as JSON Schema, which is what an adapter hands a
+      # client. A tool built from an OpenAPI operation overrides this with the
+      # operation's own schema, nested properties included.
+      #
+      # @return [Hash]
+      def input_schema
+        properties = params.to_h do |name, options|
+          property = { 'type' => json_type(options[:type]) }
+          property['description'] = options[:description] if options[:description].present?
+          # An array must say what it holds: a client validating arguments
+          # against the schema refuses the call otherwise.
+          property['items'] = { 'type' => json_type(options[:items] || :string) } if property['type'] == 'array'
+
+          [name.to_s, property]
+        end
+
+        {
+          'type' => 'object',
+          'properties' => properties,
+          'required' => params.select { |_name, options| options[:required] }.keys.map(&:to_s)
+        }
+      end
+
+      private
+
+      # A tool declares Ruby-ish types; JSON Schema wants its own names, and
+      # anything unrecognised is a string, which every client can render.
+      def json_type(type)
+        case type&.to_sym
+        when :boolean then 'boolean'
+        when :integer then 'integer'
+        when :number, :float, :decimal then 'number'
+        when :object, :hash then 'object'
+        when :array then 'array'
+        else 'string'
+        end
+      end
     end
 
     # @return [Spree::AgentTools::Context] who is asking, and where
@@ -115,7 +179,7 @@ class AgentTool
       @context = context
     end
 
-    delegate :tool_name, :description, :permission, :mutating?, :params, to: :class
+    delegate :tool_name, :description, :permission, :mutating?, :destructive?, :params, to: :class
 
     # Runs the tool. Subclasses implement this with keyword arguments matching
     # their declared params.
@@ -166,6 +230,46 @@ class AgentTool
     end
 
     protected
+
+    # A resource that lives under a parent — a promotion's rules, an order's
+    # payments — has no path of its own to dispatch to, so every tool refuses
+    # it the same way: naming the parent and, where the parent carries the
+    # rows as an attribute, how to write and read them there. The old answer
+    # was the endpoint's 404 for a parent id nobody supplied.
+    #
+    # @param entry [Spree::AgentTools::ResourceMap::Entry]
+    # @param verb [String] 'searched', 'fetched', 'created'…
+    # @param action [Symbol] the operation whose path runs under the parent
+    # @return [Hash]
+    def nested_resource_error(entry, verb, action)
+      # A top-level path left unfilled is missing its own id, not a parent.
+      return { error: "Pass the id of the #{entry.key.singularize.tr('_', ' ')} to use." } unless entry.nested?(action)
+
+      parent = entry.parent_key(action)
+      parent_entry = Spree::AgentTools::ResourceMap.find(parent)
+      attribute = parent_entry&.nested_typed_families&.key(entry.model_class)
+
+      owner = parent.singularize.tr('_', ' ')
+      sentences = ["#{entry.key} belong to #{owner.match?(/\A[aeiou]/) ? 'an' : 'a'} #{owner} and cannot be #{verb} on their own."]
+      # Offered only where one parent id fills the path; a resource nested
+      # twice has no generic route.
+      reachable = entry.path_for(action, id: 'id', parent_id: 'parent').present?
+      sentences << "Pass the #{owner}'s id as parent_id to reach them under it." if reachable
+      # Each suggested call is one this caller may actually make; a hint
+      # that leads straight to a permission refusal is worse than none.
+      readable = parent_entry&.readable_by?(context)
+      writable = parent_entry&.write_permission.present? && context.permitted?(parent_entry.write_permission)
+      if attribute && writable
+        sentences << "Write them in the #{attribute} attribute of #{parent} — describe_resource #{parent} shows the shape and the accepted types."
+      end
+      if attribute && readable && parent_entry.expandable_associations.include?(attribute)
+        sentences << "Read them with get_resource on #{parent} and expand: [\"#{attribute}\"]."
+      elsif readable && !attribute
+        sentences << "Start from #{parent}: get_resource with expand lists what it carries (describe_resource #{parent} names the options)."
+      end
+
+      { error: sentences.join(' '), parent: parent }
+    end
 
     # Refuses unless this admin may take `action` on `record`.
     #

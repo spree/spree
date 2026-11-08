@@ -32,6 +32,7 @@ export function AppShell({
   uiLocales,
   onEditProfile,
   notifications,
+  sidebarWidget,
   children,
 }: {
   /** Prefix for the nav links. Defaults to the route's `storeId`. */
@@ -49,6 +50,8 @@ export function AppShell({
    * notifications bell. The seller panel passes none.
    */
   notifications?: ReactNode
+  /** A card pinned above the account menu, such as the store setup checklist. */
+  sidebarWidget?: ReactNode
   children: ReactNode
 }) {
   // The settings area brings a full-width nav of its own, and two stacked
@@ -90,6 +93,7 @@ export function AppShell({
         uiLocales={uiLocales}
         onEditProfile={onEditProfile}
         notifications={notifications}
+        widget={sidebarWidget}
       />
       {/* The sheet is exactly as tall as the viewport and scrolls internally,
           rather than growing with the page and letting the document scroll.

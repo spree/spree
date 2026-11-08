@@ -7,6 +7,36 @@ RSpec.describe Spree::Seeds::All do
     expect { subject }.not_to raise_error
   end
 
+  describe 'upgrade records' do
+    # A database seeded for the first time was created by today's schema, so
+    # no past release has data to convert.
+    it 'marks every release complete on a brand new database' do
+      allow(Spree::Store).to receive(:none?).and_return(true)
+
+      subject
+
+      expect(Spree::UpgradeRecord.pluck(:source).uniq).to eq(['install'])
+      expect(Spree::UpgradeRecord.pluck(:version)).to match_array(Spree::Upgrade.manifests.map { |manifest| manifest['to'] })
+    end
+
+    # Seeding is a common deploy step, and an upgraded store seeded before its
+    # upgrade steps ran still has every one of them to do.
+    it 'leaves an existing database to the upgrade walk' do
+      subject
+
+      expect(Spree::UpgradeRecord).not_to exist
+    end
+
+    it 'never rewrites a release the upgrade walk recorded' do
+      allow(Spree::Store).to receive(:none?).and_return(true)
+      walked = Spree::UpgradeRecord.stamp!(Spree::Upgrade.manifests.first['to'], source: 'walk')
+
+      subject
+
+      expect(walked.reload.source).to eq('walk')
+    end
+  end
+
   it 'seeds every store' do
     other_store = create(:store)
 

@@ -10,7 +10,7 @@ module Spree
       # See docs/plans/6.0-order-routing.md.
       class Rules < Base
         def for_allocation
-          locations = eligible_locations
+          locations = coordinator.candidate_stock_locations
           return [] if locations.empty?
 
           ordered = Spree::OrderRouting::Strategy::Reducer
@@ -18,9 +18,11 @@ module Spree
             .rank_all(locations)
           return [] if ordered.empty?
 
-          packages = build_packages(ordered)
-          packages = prioritize_packages(packages)
-          estimate_rates(packages)
+          # Packed in rank order through the Coordinator, so an order allocates
+          # under the same delivery profile and channel coverage as its cart,
+          # and the Prioritizer's first-package-wins-on-hand logic honors the
+          # routing decision between origins that can reach the destination.
+          coordinator.estimate_packages(coordinator.allocated_packages(ordered))
         end
 
         # Stock decrement / restock today happens via Spree::Fulfillment's state
@@ -39,47 +41,8 @@ module Spree
           order.channel.order_routing_rules.active.ordered
         end
 
-        def eligible_locations
-          order.store.stock_locations.active
-            .joins(:stock_levels)
-            .where(Spree::StockLevel.table_name => { variant_id: requested_variant_ids })
-            .distinct
-            .to_a
-        end
-
-        def requested_variant_ids
-          inventory_units.map(&:variant_id).uniq
-        end
-
-        def inventory_units
-          @inventory_units ||= Spree::Stock::InventoryUnitBuilder.new(order).units
-        end
-
-        # Pack each ranked location independently. Packages are emitted in
-        # rank order so the Prioritizer's first-package-wins-on-hand logic
-        # honors the routing decision.
-        def build_packages(locations)
-          locations.flat_map do |location|
-            Spree::Stock::Packer.new(location, inventory_units, Spree.stock_splitters, owner: order).packages
-          end
-        end
-
-        # Prioritizer's Adjuster distributes each inventory_unit across
-        # packages: the first package with on-hand stock fulfills the unit,
-        # and downstream packages have that unit removed. Packages whose
-        # items all get stripped are pruned. Rank only decides between origins
-        # that can reach the destination — the Prioritizer demotes the rest.
-        def prioritize_packages(packages)
-          Spree::Stock::Prioritizer.new(packages, estimator: estimator).prioritized_packages
-        end
-
-        def estimate_rates(packages)
-          packages.each { |pkg| pkg.delivery_rates = estimator.delivery_rates(pkg) }
-          packages
-        end
-
-        def estimator
-          @estimator ||= Spree::Stock::Estimator.new(order)
+        def coordinator
+          @coordinator ||= Spree::Stock::Coordinator.new(order)
         end
       end
     end

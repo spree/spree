@@ -1,5 +1,10 @@
 import type { Channel } from '@spree/admin-sdk'
-import { defineTable, formatPrice } from '@spree/dashboard-core'
+import {
+  ASSIGNABLE_PRODUCT_STATUSES,
+  defineTable,
+  formatPrice,
+  ProductStockSummary,
+} from '@spree/dashboard-core'
 import { StatusBadge, TagList, Thumbnail } from '@spree/dashboard-ui'
 import { PackageIcon } from '@spree/dashboard-ui/icons'
 import { Link } from '@tanstack/react-router'
@@ -45,11 +50,10 @@ defineTable('products', {
       default: true,
       filterType: 'enum',
       quickFilter: true,
-      filterOptions: [
-        { value: 'draft', label: i18n.t('admin.pages.products.status_options.draft') },
-        { value: 'active', label: i18n.t('admin.fields.active.label') },
-        { value: 'archived', label: i18n.t('admin.pages.products.status_options.archived') },
-      ],
+      filterOptions: ASSIGNABLE_PRODUCT_STATUSES.map((status) => ({
+        value: status,
+        label: i18n.t(`admin.pages.products.status_options.${status}`),
+      })),
       render: (product) => <StatusBadge status={product.status} />,
     },
     {
@@ -58,40 +62,7 @@ defineTable('products', {
       sortable: false,
       filterable: false,
       default: true,
-      render: (product) => {
-        const variantCount = product.variant_count
-
-        const inventoryStatus =
-          !product.in_stock && !product.backorderable ? (
-            <span className="text-sm text-destructive">
-              {i18n.t('admin.pages.products.inventory.out_of_stock')}
-            </span>
-          ) : product.backorderable && !product.in_stock ? (
-            <span className="text-sm text-muted-foreground">
-              {i18n.t('admin.pages.products.inventory.on_backorder')}
-            </span>
-          ) : (
-            <span className="text-sm text-muted-foreground">
-              {i18n.t('admin.pages.products.inventory.in_stock', { count: product.total_on_hand })}
-            </span>
-          )
-
-        return (
-          <span>
-            {inventoryStatus}
-            {variantCount > 1 ? (
-              <>
-                &nbsp; &#8211; &nbsp;
-                <span className="text-sm text-muted-foreground">
-                  {i18n.t('admin.pages.products.variants', { count: variantCount })}
-                </span>
-              </>
-            ) : (
-              ''
-            )}
-          </span>
-        )
-      },
+      render: (product) => <ProductStockSummary product={product} />,
     },
     {
       key: 'sku',

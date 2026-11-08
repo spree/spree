@@ -1,16 +1,19 @@
-// Inline custom-fields editor — generic-context shape, two providers, two
+// Inline custom-fields editor — generic-context shape, three providers,
 // predictable save modes (never on-blur). This is the single custom-fields
-// surface across the dashboard — products, categories, customers, orders.
+// surface across the dashboard.
 //
 // The card is purely presentational and reads everything from context. State
 // and persistence are dependency-injected by the provider above it:
 // - `FormBackedCustomFieldsProvider` keeps fields editable inline and writes
 //   into a parent page form's `custom_fields[]` (products, categories) — values
 //   persist only on that page's Save.
+// - `DraftCustomFieldsProvider` keeps fields editable inline and holds them in
+//   a `useCustomFieldsDraft` the host form saves from its own submit (settings
+//   sheets, promotions, store settings).
 // - `EditableApiCustomFieldsProvider` shows a read-only display with an Edit
-//   button (orders, customers) and batches changed fields to the
+//   button (orders, customers, sellers) and batches changed fields to the
 //   /custom_fields endpoints on the card's own Save.
-// Neither persists on blur; the provider advertises its behaviour via `mode`.
+// None persists on blur; the provider advertises its behaviour via `mode`.
 //
 // The empty state opens a sheet to create the first definition in place; on
 // success the sheet closes and the definitions query re-validates, so the card
@@ -19,7 +22,7 @@
 // Composition refs:
 // - state-context-interface: `{ state, actions, meta, mode }`
 // - state-decouple-implementation: card never touches the form or the SDK
-// - patterns-explicit-variants: two named providers + a `mode` discriminator
+// - patterns-explicit-variants: named providers + a `mode` discriminator
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { CustomField, CustomFieldDefinition, CustomFieldOwnerType } from '@spree/admin-sdk'
@@ -31,6 +34,7 @@ import {
   useCreateCustomFieldDefinition,
   useCustomFieldDefinitions,
   useCustomFields,
+  usePermissions,
   useUpdateCustomField,
 } from '@spree/dashboard-core'
 import {
@@ -39,6 +43,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
+  CollapsibleCard,
   Empty,
   EmptyContent,
   EmptyDescription,
@@ -68,7 +73,15 @@ import {
   TagIcon,
 } from '@spree/dashboard-ui/icons'
 import { Link, useParams } from '@tanstack/react-router'
-import { createContext, type ReactNode, useCallback, useContext, useMemo, useState } from 'react'
+import {
+  createContext,
+  type ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import {
@@ -110,6 +123,10 @@ interface CustomFieldsMeta {
    * visual marker and nothing else.
    */
   requiredDefinitionIds?: string[]
+  /** `false` hides the card: the endpoints need edit access even to read. */
+  canEdit?: boolean
+  /** The values did not load, so blank inputs would misstate what is saved. */
+  loadFailed?: boolean
 }
 
 /**
@@ -261,11 +278,241 @@ export function FormBackedCustomFieldsProvider<T extends CustomFieldsFormShape>(
 }
 
 // ---------------------------------------------------------------------------
-// Provider B: editable API-backed (display/edit mode).
-// Reads via `useCustomFields`. Default view is read-only; an explicit Edit
-// reveals inputs and a card-level Save batches all changed values to the API
-// (create or update per field, in parallel). No on-blur persistence — Save is
-// the only write. For pages with no page-wide form (orders, customers).
+// API-backed drafts. Holds edits until `save()` batches every changed value to
+// the /custom_fields endpoints (create or update per field, in parallel). Both
+// API-backed providers below are built on it; a host form whose own Save
+// should also persist custom fields (a settings sheet, a form page) calls
+// `save()` from its submit handler and reads `isDirty` to enable that button.
+// ---------------------------------------------------------------------------
+
+export interface CustomFieldsDraft {
+  ownerType: CustomFieldOwnerType
+  resourceType: string
+  definitions: CustomFieldDefinition[]
+  isLoading: boolean
+  canEdit: boolean
+  loadFailed: boolean
+  /** Persisted values with the unsaved edits applied, keyed by definition id. */
+  values: Record<string, unknown>
+  setValue: (definitionId: string, value: unknown) => void
+  isDirty: boolean
+  /** Drops the unsaved edits. */
+  reset: () => void
+  /**
+   * Persists the changed values. Resolves `true` when everything saved, and
+   * `false` after telling the user which fields did not — their edits are kept
+   * so a retry only re-sends the failures. `announce` confirms a successful
+   * save with a toast, for a host whose own record did not need saving (so its
+   * own success toast never fires).
+   */
+  save: (options?: { announce?: boolean }) => Promise<boolean>
+}
+
+/**
+ * @param ownerId empty while the owner has not been created yet; nothing loads
+ *   and `save()` is a no-op until it has an id.
+ */
+export function useCustomFieldsDraft(
+  ownerType: CustomFieldOwnerType,
+  ownerId: string,
+  resourceType: string = ownerType,
+): CustomFieldsDraft {
+  const { t } = useTranslation()
+  const { permissions } = usePermissions()
+  const canEdit = permissions.can('update', ownerType)
+  const { data: definitionsResponse, isLoading: defsLoading } =
+    useCustomFieldDefinitions(resourceType)
+  // Memoize against the fetched array's identity so consumers don't re-render
+  // (or re-run effects) on every render.
+  const definitions = useMemo(() => definitionsResponse?.data ?? [], [definitionsResponse?.data])
+  // No values to read without a field to hold them, nor without edit access.
+  const valuesOwnerId = canEdit && definitions.length > 0 ? ownerId : ''
+  const {
+    data: valuesResponse,
+    isLoading: valuesLoading,
+    isError: loadFailed,
+    refetch,
+  } = useCustomFields(ownerType, valuesOwnerId)
+  const create = useCreateCustomField(ownerType, ownerId)
+  const update = useUpdateCustomField(ownerType, ownerId)
+
+  const savedValues = useMemo(() => valuesResponse?.data ?? [], [valuesResponse?.data])
+
+  // definition id → persisted CustomField record (for update-by-id + baseline).
+  const savedByDefinitionId = useMemo(() => {
+    const out = new Map<string, CustomField>()
+    for (const cf of savedValues) out.set(cf.custom_field_definition_id, cf)
+    return out
+  }, [savedValues])
+
+  const [drafts, setDrafts] = useState<Record<string, unknown>>({})
+
+  // A different owner (a sheet reused for the next row) starts clean.
+  const [draftOwnerId, setDraftOwnerId] = useState(ownerId)
+  if (draftOwnerId !== ownerId) {
+    setDraftOwnerId(ownerId)
+    setDrafts({})
+  }
+
+  const values = useMemo(() => {
+    const out: Record<string, unknown> = {}
+    savedByDefinitionId.forEach((cf, defId) => {
+      out[defId] = cf.value
+    })
+    return { ...out, ...drafts }
+  }, [savedByDefinitionId, drafts])
+
+  // One entry per definition whose draft differs from the persisted value.
+  const changedDefinitions = useMemo(
+    () =>
+      definitions.filter(
+        (def) =>
+          def.id in drafts && !valuesEqual(drafts[def.id], savedByDefinitionId.get(def.id)?.value),
+      ),
+    [definitions, drafts, savedByDefinitionId],
+  )
+
+  const setValue = useCallback((definitionId: string, value: unknown) => {
+    setDrafts((prev) => ({ ...prev, [definitionId]: value }))
+  }, [])
+
+  const reset = useCallback(() => setDrafts({}), [])
+
+  const save = useCallback(
+    async ({ announce = false }: { announce?: boolean } = {}) => {
+      if (!ownerId || loadFailed || changedDefinitions.length === 0) {
+        setDrafts({})
+        return true
+      }
+
+      const tasks = changedDefinitions.map((def) => {
+        const draft = drafts[def.id]
+        const existing = savedByDefinitionId.get(def.id)
+        return existing
+          ? () => update.mutateAsync({ id: existing.id, value: draft })
+          : () => create.mutateAsync({ custom_field_definition_id: def.id, value: draft })
+      })
+
+      try {
+        // allSettled (not all): a mid-batch failure must not orphan the fields
+        // that already persisted. Refetch unconditionally so the baseline matches
+        // the server, then report partial failures by field name.
+        const results = await Promise.allSettled(tasks.map((task) => task()))
+        await refetch()
+
+        const failed = changedDefinitions.filter((_, i) => results[i].status === 'rejected')
+        if (failed.length === 0) {
+          setDrafts({})
+          if (announce) {
+            toastManager.add({
+              type: 'success',
+              title: t('admin.components.custom_fields.values_saved'),
+            })
+          }
+          return true
+        }
+
+        toastManager.add({
+          type: 'error',
+          title: t('admin.components.custom_fields.values_save_partial_failed', {
+            fields: failed.map((def) => def.label || def.key).join(', '),
+          }),
+        })
+        return false
+      } catch (err) {
+        // refetch() itself failed (network) — the saves may still have landed.
+        const message =
+          err instanceof Error
+            ? err.message
+            : t('admin.components.custom_fields.errors.failed_to_save')
+        toastManager.add({ type: 'error', title: message })
+        return false
+      }
+    },
+    [
+      ownerId,
+      loadFailed,
+      changedDefinitions,
+      drafts,
+      savedByDefinitionId,
+      create,
+      update,
+      refetch,
+      t,
+    ],
+  )
+
+  return useMemo(
+    () => ({
+      ownerType,
+      resourceType,
+      definitions,
+      isLoading: defsLoading || (!!valuesOwnerId && valuesLoading),
+      canEdit,
+      loadFailed,
+      values,
+      setValue,
+      isDirty: changedDefinitions.length > 0,
+      reset,
+      save,
+    }),
+    [
+      ownerType,
+      resourceType,
+      definitions,
+      defsLoading,
+      valuesOwnerId,
+      valuesLoading,
+      canEdit,
+      loadFailed,
+      values,
+      setValue,
+      changedDefinitions,
+      reset,
+      save,
+    ],
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Provider B: host-saved API drafts (mode `form`). Fields are always editable;
+// the host form's Save calls `draft.save()`. For settings sheets and form pages
+// whose owner has no `custom_fields` write of its own.
+// ---------------------------------------------------------------------------
+
+interface DraftProviderProps {
+  draft: CustomFieldsDraft
+  /** Plural, human-readable resource name for empty-state copy. */
+  resourceLabel?: string
+  children: ReactNode
+}
+
+export function DraftCustomFieldsProvider({ draft, resourceLabel, children }: DraftProviderProps) {
+  const ctx = useMemo<CustomFieldsContextValue>(
+    () => ({
+      state: { values: draft.values },
+      actions: { setValue: draft.setValue },
+      meta: {
+        definitions: draft.definitions,
+        isLoading: draft.isLoading,
+        resourceType: draft.resourceType,
+        resourceLabel,
+        canEdit: draft.canEdit,
+        loadFailed: draft.loadFailed,
+      },
+      mode: { kind: 'form' },
+    }),
+    [draft, resourceLabel],
+  )
+
+  return <CustomFieldsContext value={ctx}>{children}</CustomFieldsContext>
+}
+
+// ---------------------------------------------------------------------------
+// Provider C: editable API-backed (display/edit mode).
+// Default view is read-only; an explicit Edit reveals inputs and a card-level
+// Save batches all changed values. No on-blur persistence — Save is the only
+// write. For pages with no page-wide form (orders, customers).
 // ---------------------------------------------------------------------------
 
 interface EditableApiProviderProps {
@@ -284,163 +531,129 @@ export function EditableApiCustomFieldsProvider({
   resourceLabel,
   children,
 }: EditableApiProviderProps) {
-  const { t } = useTranslation()
-  const { data: definitionsResponse, isLoading: defsLoading } =
-    useCustomFieldDefinitions(resourceType)
-  const {
-    data: valuesResponse,
-    isLoading: valuesLoading,
-    refetch,
-  } = useCustomFields(ownerType, ownerId)
-  const create = useCreateCustomField(ownerType, ownerId)
-  const update = useUpdateCustomField(ownerType, ownerId)
-
-  // Memoize against the fetched array's identity so the seeding effect below
-  // doesn't re-run every render (→ setState loop → "Maximum update depth").
-  const definitions = useMemo(() => definitionsResponse?.data ?? [], [definitionsResponse?.data])
-  const savedValues = useMemo(() => valuesResponse?.data ?? [], [valuesResponse?.data])
-
-  // definition id → persisted CustomField record (for update-by-id + baseline).
-  const savedByDefinitionId = useMemo(() => {
-    const out = new Map<string, CustomField>()
-    for (const cf of savedValues) out.set(cf.custom_field_definition_id, cf)
-    return out
-  }, [savedValues])
-
-  // The display value for every definition is the persisted value (drafts only
-  // exist while editing). Keyed by definition id so the card reads uniformly.
-  const savedDraft = useMemo(() => {
-    const out: Record<string, unknown> = {}
-    savedByDefinitionId.forEach((cf, defId) => {
-      out[defId] = cf.value
-    })
-    return out
-  }, [savedByDefinitionId])
+  const draft = useCustomFieldsDraft(ownerType, ownerId, resourceType)
+  const { reset, save: saveDraft } = draft
 
   const [isEditing, setIsEditing] = useState(false)
   const [saving, setSaving] = useState(false)
-  // Drafts hold edits while in edit mode; null when not editing (display reads
-  // the persisted values directly, always fresh after a save's refetch).
-  const [drafts, setDrafts] = useState<Record<string, unknown> | null>(null)
 
-  const values = isEditing && drafts ? drafts : savedDraft
-
-  const setValue = useCallback((definitionId: string, value: unknown) => {
-    setDrafts((prev) => ({ ...(prev ?? {}), [definitionId]: value }))
-  }, [])
-
-  const startEdit = useCallback(() => {
-    setDrafts({ ...savedDraft })
-    setIsEditing(true)
-  }, [savedDraft])
+  const startEdit = useCallback(() => setIsEditing(true), [])
 
   const cancel = useCallback(() => {
-    setDrafts(null)
+    reset()
     setIsEditing(false)
-  }, [])
+  }, [reset])
 
   const save = useCallback(async () => {
-    const current = drafts ?? {}
-    // One task per definition whose draft differs from the persisted value,
-    // tagged with its definition so we can name failures back to the user.
-    const tasks: { def: CustomFieldDefinition; run: () => Promise<unknown> }[] = []
-    for (const def of definitions) {
-      const draft = current[def.id]
-      const existing = savedByDefinitionId.get(def.id)
-      if (valuesEqual(draft, existing?.value)) continue
-      tasks.push({
-        def,
-        run: existing
-          ? () => update.mutateAsync({ id: existing.id, value: draft })
-          : () => create.mutateAsync({ custom_field_definition_id: def.id, value: draft }),
-      })
-    }
-
-    if (tasks.length === 0) {
+    if (!draft.isDirty) {
       cancel()
       return
     }
 
     setSaving(true)
     try {
-      // allSettled (not all): a mid-batch failure must not orphan the fields
-      // that already persisted. Refetch unconditionally so the baseline matches
-      // the server, then report partial failures by field name.
-      const results = await Promise.allSettled(tasks.map((task) => task.run()))
-      await refetch()
-
-      const failed = tasks.filter((_, i) => results[i].status === 'rejected')
-      if (failed.length === 0) {
-        toastManager.add({
-          type: 'success',
-          title: t('admin.components.custom_fields.values_saved'),
-        })
-        setDrafts(null)
-        setIsEditing(false)
-        return
-      }
-
-      // Some saved, some didn't. Keep edit mode with drafts intact so the user
-      // can retry — the refetched baseline means the succeeded fields now equal
-      // their persisted value, so a retry only re-sends the failures.
-      toastManager.add({
-        type: 'error',
-        title: t('admin.components.custom_fields.values_save_partial_failed', {
-          fields: failed.map(({ def }) => def.label || def.key).join(', '),
-        }),
-      })
-    } catch (err) {
-      // refetch() itself failed (network) — the saves may still have landed.
-      const message =
-        err instanceof Error
-          ? err.message
-          : t('admin.components.custom_fields.errors.failed_to_save')
-      toastManager.add({ type: 'error', title: message })
+      // On a partial failure edit mode stays open with the drafts intact.
+      if (await saveDraft({ announce: true })) setIsEditing(false)
     } finally {
       setSaving(false)
     }
-  }, [drafts, definitions, savedByDefinitionId, create, update, refetch, cancel, t])
+  }, [draft.isDirty, cancel, saveDraft])
 
   const ctx = useMemo<CustomFieldsContextValue>(
     () => ({
-      state: { values },
-      actions: { setValue },
+      state: { values: draft.values },
+      actions: { setValue: draft.setValue },
       meta: {
-        definitions,
-        isLoading: defsLoading || valuesLoading,
+        definitions: draft.definitions,
+        isLoading: draft.isLoading,
         resourceType,
         resourceLabel,
+        canEdit: draft.canEdit,
+        loadFailed: draft.loadFailed,
       },
       mode: { kind: 'editable', isEditing, saving, startEdit, cancel, save },
     }),
-    [
-      values,
-      setValue,
-      definitions,
-      defsLoading,
-      valuesLoading,
-      resourceType,
-      resourceLabel,
-      isEditing,
-      saving,
-      startEdit,
-      cancel,
-      save,
-    ],
+    [draft, resourceType, resourceLabel, isEditing, saving, startEdit, cancel, save],
   )
 
   return <CustomFieldsContext value={ctx}>{children}</CustomFieldsContext>
+}
+
+/** The card on a detail page with no page-wide form: read-only until Edit, with its own Save. */
+export function ApiCustomFieldsCard({
+  ownerType,
+  ownerId,
+  hideWhenEmpty,
+  collapsible,
+}: {
+  ownerType: CustomFieldOwnerType
+  ownerId: string
+  hideWhenEmpty?: boolean
+  collapsible?: boolean
+}) {
+  return (
+    <EditableApiCustomFieldsProvider
+      ownerType={ownerType}
+      ownerId={ownerId}
+      resourceType={ownerType}
+    >
+      <CustomFieldsInlineCard hideWhenEmpty={hideWhenEmpty} collapsible={collapsible} />
+    </EditableApiCustomFieldsProvider>
+  )
+}
+
+/** The card inside a host form that saves `draft` from its own submit. */
+export function DraftCustomFieldsCard({
+  draft,
+  hideWhenEmpty,
+}: {
+  draft: CustomFieldsDraft
+  hideWhenEmpty?: boolean
+}) {
+  return (
+    <DraftCustomFieldsProvider draft={draft}>
+      <CustomFieldsInlineCard hideWhenEmpty={hideWhenEmpty} />
+    </DraftCustomFieldsProvider>
+  )
 }
 
 // ---------------------------------------------------------------------------
 // The card — implementation-agnostic. Reads context only.
 // ---------------------------------------------------------------------------
 
-export function CustomFieldsInlineCard() {
+interface CustomFieldsInlineCardProps {
+  /**
+   * Renders nothing until the store defines a field for this resource. For
+   * sheets and secondary surfaces, where an empty card is clutter; fields are
+   * defined in Settings, which offers every resource with an edit surface.
+   */
+  hideWhenEmpty?: boolean
+  /**
+   * Folds the card to its header, with a count of filled fields. For a detail
+   * page that edits them behind the card's own Edit button; a page whose form
+   * saves them keeps them in view.
+   */
+  collapsible?: boolean
+}
+
+export function CustomFieldsInlineCard({
+  hideWhenEmpty = false,
+  collapsible = false,
+}: CustomFieldsInlineCardProps) {
   const { t } = useTranslation()
   const [createOpen, setCreateOpen] = useState(false)
+  const [open, setOpen] = useState(false)
   const {
-    meta: { isLoading, definitions, resourceType, resourceLabel },
+    state: { values },
+    meta: {
+      isLoading,
+      definitions,
+      resourceType,
+      resourceLabel,
+      canEdit,
+      loadFailed,
+      requiredDefinitionIds,
+    },
     mode,
   } = useCustomFieldsContext()
 
@@ -449,40 +662,92 @@ export function CustomFieldsInlineCard() {
   const hasDefinitions = definitions.length > 0
   const openCreate = useCallback(() => setCreateOpen(true), [])
 
+  const requiredMissing = definitions.some(
+    (definition) =>
+      requiredDefinitionIds?.includes(definition.id) && isBlankValue(values[definition.id]),
+  )
+
+  // Opens once rather than tracking the flags, so the card does not fold away
+  // the moment the merchant fills the last required field in. A failed load
+  // opens it too: the error lives in the body, out of sight while folded.
+  useEffect(() => {
+    if (requiredMissing || loadFailed) setOpen(true)
+  }, [requiredMissing, loadFailed])
+
+  if (canEdit === false || (hideWhenEmpty && !hasDefinitions)) return null
+
+  const title = t('admin.components.custom_fields.section_title')
+  const icon = <SquareTextIcon className="size-4" />
+  const actions = !isLoading && !loadFailed && hasDefinitions && (
+    <EditableHeaderActions onStartEdit={() => setOpen(true)} />
+  )
+  const body = isLoading ? (
+    <LoadingRows />
+  ) : loadFailed ? (
+    <p className="text-sm text-destructive" role="alert">
+      {t('admin.components.custom_fields.errors.failed_to_load')}
+    </p>
+  ) : !hasDefinitions ? (
+    <CustomFieldsEmptyState onSetUp={openCreate} />
+  ) : editing ? (
+    <FieldsEditor onSetUp={openCreate} />
+  ) : (
+    <FieldsDisplay />
+  )
+  const createSheet = (
+    <CreateDefinitionSheet
+      open={createOpen}
+      onOpenChange={setCreateOpen}
+      resourceType={resourceType}
+      resourceLabel={resourceLabel}
+    />
+  )
+
+  if (collapsible) {
+    return (
+      <>
+        <CollapsibleCard
+          title={title}
+          icon={icon}
+          count={definitions.filter((definition) => !isBlankValue(values[definition.id])).length}
+          actions={actions}
+          open={open}
+          onOpenChange={setOpen}
+        >
+          {body}
+        </CollapsibleCard>
+        {createSheet}
+      </>
+    )
+  }
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between gap-3 space-y-0">
         <CardTitle>
-          <SquareTextIcon className="size-4" />
-          {t('admin.components.custom_fields.section_title')}
+          {icon}
+          {title}
         </CardTitle>
-        {!isLoading && hasDefinitions && <EditableHeaderActions />}
+        {actions}
       </CardHeader>
-      <CardContent>
-        {isLoading ? (
-          <LoadingRows />
-        ) : !hasDefinitions ? (
-          <CustomFieldsEmptyState onSetUp={openCreate} />
-        ) : editing ? (
-          <FieldsEditor onSetUp={openCreate} />
-        ) : (
-          <FieldsDisplay />
-        )}
-      </CardContent>
-
-      <CreateDefinitionSheet
-        open={createOpen}
-        onOpenChange={setCreateOpen}
-        resourceType={resourceType}
-        resourceLabel={resourceLabel}
-      />
+      <CardContent>{body}</CardContent>
+      {createSheet}
     </Card>
+  )
+}
+
+function isBlankValue(value: unknown) {
+  return (
+    value === null ||
+    value === undefined ||
+    (typeof value === 'string' && value.trim() === '') ||
+    (Array.isArray(value) && value.length === 0)
   )
 }
 
 // Edit / Cancel+Save buttons — only rendered in editable mode. Reads the mode
 // off context so the card body stays a thin selector.
-function EditableHeaderActions() {
+function EditableHeaderActions({ onStartEdit }: { onStartEdit: () => void }) {
   const { t } = useTranslation()
   const { mode } = useCustomFieldsContext()
   if (mode.kind !== 'editable') return null
@@ -493,7 +758,10 @@ function EditableHeaderActions() {
         variant="ghost"
         size="icon-sm"
         type="button"
-        onClick={mode.startEdit}
+        onClick={() => {
+          onStartEdit()
+          mode.startEdit()
+        }}
         aria-label={t('admin.actions.edit')}
       >
         <PencilIcon className="size-4" />
@@ -514,7 +782,7 @@ function EditableHeaderActions() {
       </Button>
       <Button type="button" size="sm" onClick={mode.save} disabled={mode.saving}>
         {mode.saving && <Loader2Icon className="size-4 animate-spin" />}
-        {t('admin.actions.save')}
+        <span>{t('admin.actions.save')}</span>
       </Button>
     </div>
   )
@@ -753,7 +1021,7 @@ function CreateDefinitionSheet({
             </Button>
             <Button type="submit" disabled={create.isPending}>
               {create.isPending && <Loader2Icon className="size-4 animate-spin" />}
-              {t('admin.custom_field_definitions.create_label')}
+              <span>{t('admin.custom_field_definitions.create_label')}</span>
             </Button>
           </SheetFooter>
         </form>

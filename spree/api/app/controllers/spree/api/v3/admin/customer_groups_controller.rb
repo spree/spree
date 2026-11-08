@@ -25,6 +25,10 @@ module Spree
             Spree.api.admin_customer_group_serializer
           end
 
+          def collection_includes
+            [:customer_group_users]
+          end
+
           def permitted_params
             params.permit(*permitted_attributes)
           end

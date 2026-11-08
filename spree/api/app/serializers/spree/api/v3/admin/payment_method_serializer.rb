@@ -25,6 +25,8 @@ module Spree
           attribute(:logo_url) { |payment_method| payment_method.class.logo_url }
           attribute(:docs_url) { |payment_method| payment_method.class.docs_url }
           attribute(:third_party) { |payment_method| payment_method.class.third_party? }
+
+          expandable_custom_fields admin: true
         end
       end
     end

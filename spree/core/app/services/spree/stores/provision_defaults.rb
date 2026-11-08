@@ -31,13 +31,17 @@ module Spree
         @currency = resolve_currency(currency, country)
         @locale = resolve_locale(locale, country)
 
-        ApplicationRecord.transaction do
-          update_default_market
-          provision_stock_location
-          provision_delivery_zones
-          provision_package_type
-          provision_pickup
-          restate_seeded_calculators
+        # Defaults are bookkeeping, not merchant actions — webhooks and
+        # subscribers should not hear about each zone and method created here.
+        Spree::Events.disable do
+          ApplicationRecord.transaction do
+            update_default_market
+            provision_stock_location
+            provision_delivery_zones
+            provision_package_type
+            provision_pickup
+            restate_seeded_calculators
+          end
         end
 
         store.reload

@@ -84,7 +84,7 @@ module Spree
               )
 
               if result.success?
-                render json: serialize_resource(@resource.reload)
+                render json: serialize_resource(reloaded_resource)
               else
                 render_service_error(@resource.errors.presence || result.error)
               end
@@ -115,7 +115,7 @@ module Spree
               next render_validation_error(invalid.errors) if invalid
 
               if @resource.update(addresses)
-                render json: serialize_resource(@resource.reload)
+                render json: serialize_resource(reloaded_resource)
               else
                 render_validation_error(@resource.errors)
               end
@@ -143,11 +143,19 @@ module Spree
             super.not_drafts
           end
 
+          # Both addresses are named because they are two associations on one
+          # table, so a row that reads them separately costs a lookup each.
           def collection_includes
-            [:line_items, :customer, :channel]
+            [:line_items, :customer, :channel, :bill_address, :ship_address]
           end
 
           private
+
+          # Read back as #show reads it, lazily preloading, so its
+          # fulfillments' rates and methods load once rather than per row.
+          def reloaded_resource
+            scope.preload_associations_lazily.find(@resource.id)
+          end
 
           # Either address, as a correction rather than a replacement: the
           # sent fields are laid over what the order already holds, so a

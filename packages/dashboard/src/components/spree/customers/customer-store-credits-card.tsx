@@ -1,5 +1,5 @@
 import type { Customer, StoreCredit } from '@spree/admin-sdk'
-import { Money } from '@spree/dashboard-core'
+import { Money, useMetadataSheet, ViewMetadataMenuItem } from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -31,6 +31,7 @@ export function CustomerStoreCreditsCard({ customer }: { customer: Customer }) {
   const { t } = useTranslation()
   const [addOpen, setAddOpen] = useState(false)
   const [editing, setEditing] = useState<StoreCredit | null>(null)
+  const metadataSheet = useMetadataSheet()
   const confirm = useConfirm()
   const credits = customer.store_credits ?? []
 
@@ -95,6 +96,10 @@ export function CustomerStoreCreditsCard({ customer }: { customer: Customer }) {
                             <PencilIcon className="size-4" />
                             {t('admin.actions.edit')}
                           </DropdownMenuItem>
+                          <ViewMetadataMenuItem
+                            metadata={sc.metadata}
+                            onClick={() => metadataSheet.show(sc.metadata)}
+                          />
                           <DropdownMenuItem
                             variant="destructive"
                             onClick={async () => {
@@ -135,6 +140,7 @@ export function CustomerStoreCreditsCard({ customer }: { customer: Customer }) {
           }}
         />
       )}
+      {metadataSheet.sheet}
     </>
   )
 }

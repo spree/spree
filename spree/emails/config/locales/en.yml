@@ -18,6 +18,17 @@ en:
         ignore_notice: If you did not request a copy of your data, please contact us.
         instructions: Your copy of the personal data we hold about you is ready. Use the button below to download it.
         subject: Your Data Is Ready to Download
+      data_request_confirmation_email:
+        access:
+          instructions: We received a request for a copy of the personal data we hold about you. Once you confirm it, we will email you a link to download the file.
+          subject: Confirm Your Data Request
+        action: Review and Confirm
+        erasure:
+          instructions: We received a request to permanently erase the personal data we hold about you, including the names and addresses on your past orders. This cannot be undone.
+          subject: Confirm Your Erasure Request
+        expiry_notice: This link expires on %{date}.
+        greeting: Hello,
+        ignore_notice: If you did not make this request, you can ignore this email and nothing will happen.
       password_reset_email:
         action: Reset Password
         expiry_notice: This password reset link will expire shortly. If you did not request this, no action is needed.

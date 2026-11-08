@@ -197,7 +197,7 @@ module Spree
     def webhook_url
       return nil unless store
 
-      "#{store.url_or_custom_domain}/api/v3/webhooks/payments/#{prefixed_id}"
+      "#{store.formatted_url_or_custom_domain}/api/v3/webhooks/payments/#{prefixed_id}"
     end
 
     class WebhookSignatureError < StandardError; end
@@ -307,6 +307,19 @@ module Spree
     # @param refund [Boolean] whether money already captured may be returned
     def cancel(_response, _payment = nil, refund: true)
       raise ::NotImplementedError, 'You must implement cancel method for this payment method.'
+    end
+
+    # Whether the payment can be voided in its current state. Gateways that
+    # cannot void a captured payment override this.
+    # @param _payment [Spree::Payment]
+    def can_void?(_payment)
+      true
+    end
+
+    # Whether the payment can be captured in its current state.
+    # @param _payment [Spree::Payment]
+    def can_capture?(_payment)
+      true
     end
 
     def store_credit?

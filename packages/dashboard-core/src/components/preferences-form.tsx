@@ -1,10 +1,5 @@
-import type { CurrencyCode } from '@spree/admin-sdk'
-import {
-  compareMoney,
-  isDecimalString,
-  type PreferencePropertySchema,
-  type PreferenceSchema,
-} from '@spree/admin-sdk'
+import type { PreferencePropertySchema, PreferenceSchema } from '@spree/admin-sdk'
+import { type CurrencyCode, compareMoney, currencyParts, isDecimalString } from '@spree/core'
 import {
   Button,
   Field,
@@ -29,7 +24,6 @@ import { PlusIcon, TrashIcon } from '@spree/dashboard-ui/icons'
 import { useId, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useMoneyLocale } from '../hooks/use-money-locale'
-import { currencyParts } from '../lib/currency-parts'
 import { CountryCombobox, CountryMultiCombobox } from './country-combobox'
 import { CurrencySelect } from './currency-select'
 import { StoreDatePicker } from './store-date-picker'

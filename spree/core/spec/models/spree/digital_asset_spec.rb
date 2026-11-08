@@ -107,7 +107,7 @@ describe Spree::DigitalAsset, type: :model do
       expect(digital_asset).to receive(:publish_event).with('digital.updated')
       expect(digital_asset).to receive(:publish_event).with('digital_asset.updated')
 
-      Timecop.travel(1.minute.from_now) { digital_asset.update_attribute(:updated_at, Time.current) }
+      travel(1.minute) { digital_asset.update_attribute(:updated_at, Time.current) }
     end
 
     it 'does not emit either name on a bare touch' do

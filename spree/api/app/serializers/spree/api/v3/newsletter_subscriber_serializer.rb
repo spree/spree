@@ -16,7 +16,13 @@ module Spree
           subscriber.verified_at&.iso8601
         end
 
-        prefixed_id_attributes :customer
+        # Shown to the account's owner only: for anyone else, posting an email
+        # must not tell them whether an account exists for it.
+        attribute :customer_id do |subscriber|
+          subscriber.customer&.prefixed_id if current_user && subscriber.customer_id == current_user.id
+        end
+
+        expandable_custom_fields
       end
     end
   end

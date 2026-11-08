@@ -340,6 +340,8 @@ Never store a rejection reason on the product itself. A seller can write their o
 
 An approval with no `reviewed_by_id` and `metadata.auto_approved` set means the store approves listings automatically — never a decision whose author was lost. Turn that on with the `auto_approve_seller_products` store preference.
 
+A product already on sale can come back to review when what it delivers changes: a seller adding or replacing a downloadable file reopens it, unless the store turns `review_seller_digital_asset_changes` off. The new submission carries `metadata.reason` (`digital_asset_changed`) and who made the change, so the queue says why the listing is back.
+
 ### Submitting, as a seller
 
 Status is not writable on the seller branch. A seller moves a product with an explicit action:

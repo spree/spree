@@ -123,7 +123,25 @@ module Spree
             [:price_adjustment_tiers]
           end
 
+          def serializer_params
+            return super unless action_name == 'index'
+
+            super.merge(page_counts)
+          end
+
           private
+
+          # One grouped count per figure for the whole page rather than two
+          # queries per list.
+          def page_counts
+            @page_counts ||= begin
+              price_list_ids = collection.map(&:id)
+              {
+                products_counts: Spree::PriceList.products_count_by_list(price_list_ids),
+                prices_counts: Spree::PriceList.prices_count_by_list(price_list_ids)
+              }
+            end
+          end
 
           # Loads the record without the action-derived authorization
           # `set_resource` runs (which would check `:activate` /

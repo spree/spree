@@ -1,0 +1,22 @@
+---
+subject: "{{ store.name }} {% if kind == 'erasure' %}{{ 'customer_mailer.data_request_confirmation_email.erasure.subject' | t }}{% else %}{{ 'customer_mailer.data_request_confirmation_email.access.subject' | t }}{% endif %}"
+---
+<mj-section>
+  <mj-column css-class="hero">
+    {% if kind == 'erasure' %}
+      <mj-text mj-class="heading">{{ 'customer_mailer.data_request_confirmation_email.erasure.subject' | t }}</mj-text>
+      <mj-text mj-class="greeting">{{ 'customer_mailer.data_request_confirmation_email.greeting' | t }}</mj-text>
+      <mj-text mj-class="lead">{{ 'customer_mailer.data_request_confirmation_email.erasure.instructions' | t }}</mj-text>
+    {% else %}
+      <mj-text mj-class="heading">{{ 'customer_mailer.data_request_confirmation_email.access.subject' | t }}</mj-text>
+      <mj-text mj-class="greeting">{{ 'customer_mailer.data_request_confirmation_email.greeting' | t }}</mj-text>
+      <mj-text mj-class="lead">{{ 'customer_mailer.data_request_confirmation_email.access.instructions' | t }}</mj-text>
+    {% endif %}
+    <mj-button href="{{ confirmation_url }}">{{ 'customer_mailer.data_request_confirmation_email.action' | t }}</mj-button>
+    {% if expires_at %}
+      {% assign expires_on = expires_at | date: 'long' %}
+      <mj-text mj-class="note">{{ 'customer_mailer.data_request_confirmation_email.expiry_notice' | t: date: expires_on }}</mj-text>
+    {% endif %}
+    <mj-text mj-class="note" padding="16px 0 0">{{ 'customer_mailer.data_request_confirmation_email.ignore_notice' | t }}</mj-text>
+  </mj-column>
+</mj-section>

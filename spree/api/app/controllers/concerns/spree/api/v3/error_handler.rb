@@ -16,6 +16,9 @@ module Spree
           # Distinct from authentication_failed: the person proved who they are to
           # the identity provider, but no account here is authorized for them.
           account_not_provisioned: 'account_not_provisioned',
+          # The person proved who they are, but the account has been switched
+          # off (Spree::AccountDeactivation).
+          account_deactivated: 'account_deactivated',
           invalid_oauth_state: 'invalid_oauth_state',
           current_password_invalid: 'current_password_invalid',
           password_reset_token_invalid: 'password_reset_token_invalid',

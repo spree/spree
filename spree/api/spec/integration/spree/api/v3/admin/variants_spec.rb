@@ -198,6 +198,7 @@ RSpec.describe 'Admin Variants API', type: :request, swagger_doc: 'api-reference
                 description: 'Bearer token for admin authentication'
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Number of records per page'
+      query_parameters_for Spree::Api::V3::Admin::VariantsController::SALES_CONTEXT
       filter_parameters_for
 
       response '200', 'variants found' do

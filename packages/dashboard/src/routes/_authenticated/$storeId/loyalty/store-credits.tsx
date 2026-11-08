@@ -1,5 +1,5 @@
 import type { StoreCredit, StoreCreditCurrencyTotal } from '@spree/admin-sdk'
-import { isZeroMoney } from '@spree/admin-sdk'
+import { isZeroMoney } from '@spree/core'
 import {
   Can,
   formatAmount,
@@ -37,9 +37,11 @@ import {
 import { PencilIcon, PlusIcon, TrashIcon } from '@spree/dashboard-ui/icons'
 import { useIsFetching } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { useRef, useState } from 'react'
+import { type ReactNode, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
+import { ActorLabel } from '../../../../components/spree/actor-label'
+import { ApiCustomFieldsCard } from '../../../../components/spree/custom-fields/custom-fields-inline'
 import { EditStoreCreditDialog } from '../../../../components/spree/store-credits/edit-store-credit-dialog'
 import { IssueStoreCreditDialog } from '../../../../components/spree/store-credits/issue-store-credit-dialog'
 import { useDeleteCustomerStoreCredit } from '../../../../hooks/use-customer-store-credits'
@@ -368,13 +370,15 @@ function StoreCreditSheet({
                 />
                 <DetailRow
                   label={t('admin.store_credits.columns.issued_by')}
-                  value={credit.created_by?.email ?? '—'}
+                  value={credit.created_by ? <ActorLabel actor={credit.created_by} /> : '—'}
                 />
                 <DetailRow
                   label={t('admin.fields.store_credit.memo.label')}
                   value={credit.memo ?? '—'}
                 />
               </dl>
+
+              <ApiCustomFieldsCard ownerType="store_credit" ownerId={credit.id} hideWhenEmpty />
 
               <div className="flex flex-col gap-2">
                 <h3 className="font-medium text-sm">{t('admin.store_credits.ledger.title')}</h3>
@@ -465,7 +469,7 @@ function DetailRow({
   emphasis = false,
 }: {
   label: string
-  value: string
+  value: ReactNode
   numeric?: boolean
   emphasis?: boolean
 }) {

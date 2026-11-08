@@ -20,7 +20,7 @@ RSpec.describe 'Admin Allowed Origins API', type: :request, swagger_doc: 'api-re
         the admin cookie session (see
         `docs/plans/5.5-admin-auth-cookie-refresh.md`).
       DESC
-      admin_scope :read, :settings
+      admin_scope :read, :api_keys
 
       admin_sdk_example 'allowed-origins/list'
 
@@ -67,7 +67,7 @@ RSpec.describe 'Admin Allowed Origins API', type: :request, swagger_doc: 'api-re
         `scheme://host[:port]` (no path, query, or fragment) and use `http` or
         `https`.
       DESC
-      admin_scope :write, :settings
+      admin_scope :write, :api_keys
 
       admin_sdk_example 'allowed-origins/create'
 
@@ -107,7 +107,7 @@ RSpec.describe 'Admin Allowed Origins API', type: :request, swagger_doc: 'api-re
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Returns a single allowed origin by prefixed ID.'
-      admin_scope :read, :settings
+      admin_scope :read, :api_keys
 
       admin_sdk_example 'allowed-origins/get'
 
@@ -145,7 +145,7 @@ RSpec.describe 'Admin Allowed Origins API', type: :request, swagger_doc: 'api-re
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Updates an existing allowed origin.'
-      admin_scope :write, :settings
+      admin_scope :write, :api_keys
 
       admin_sdk_example 'allowed-origins/update'
 
@@ -186,7 +186,7 @@ RSpec.describe 'Admin Allowed Origins API', type: :request, swagger_doc: 'api-re
         admin SPA running at that origin will no longer be able to call the
         admin API from a browser.
       DESC
-      admin_scope :write, :settings
+      admin_scope :write, :api_keys
 
       admin_sdk_example 'allowed-origins/delete'
 

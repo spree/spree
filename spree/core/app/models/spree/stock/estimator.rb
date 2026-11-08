@@ -162,6 +162,12 @@ module Spree
         methods = package.eligible_delivery_methods
         # Storeless orders exist only in specs; real orders always carry one.
         methods = methods.merge(order.store.delivery_methods) if order.store
+        # Read for every method below and when its rates are built. Through the
+        # preloader because an overridden package may hand back an Array.
+        methods = methods.to_a
+        ActiveRecord::Associations::Preloader.new(
+          records: methods, associations: %i[delivery_method_rules calculator services delivery_zone]
+        ).call
 
         # On a marketplace, a package's seller is its stock location's, and it
         # is quoted by that seller's own methods plus whatever the operator

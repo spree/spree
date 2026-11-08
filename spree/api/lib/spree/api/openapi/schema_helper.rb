@@ -329,6 +329,7 @@ module Spree
                 # team list does not publish about a colleague.
                 user: { '$ref' => '#/components/schemas/Account' },
                 sellers: { type: :array, items: { '$ref' => '#/components/schemas/SellerMeSummary' } },
+                store: { '$ref' => '#/components/schemas/Store' },
                 permissions: { type: :array, items: { '$ref' => '#/components/schemas/PermissionRule' } },
                 permission_keys: {
                   type: :array,
@@ -337,7 +338,7 @@ module Spree
                   example: %w[read_products write_products]
                 }
               },
-              required: %w[user sellers permissions permission_keys]
+              required: %w[user sellers store permissions permission_keys]
             },
             OnboardingProgress: {
               type: :object,
@@ -650,11 +651,11 @@ module Spree
         # Typelizer is normally disabled in test/production, but we need it
         # enabled to generate OpenAPI schemas from serializer type hints
         def with_typelizer_enabled
-          original = ENV['DISABLE_TYPELIZER']
-          ENV['DISABLE_TYPELIZER'] = 'false'
+          original = ENV['TYPELIZER']
+          ENV['TYPELIZER'] = 'true'
           yield
         ensure
-          ENV['DISABLE_TYPELIZER'] = original
+          ENV['TYPELIZER'] = original
         end
       end
     end

@@ -6,7 +6,7 @@ module Spree
       # stay behind the Admin API.
       class ShippingLabelEventSerializer < BaseSerializer
         typelize owner_id: :string,
-                 owner_type: [:string, enum: %w[fulfillment return]],
+                 owner_type: [:string, enum: %w[fulfillment return], enum_type_name: 'ShippingLabelOwnerType'],
                  status: [:string, enum: Spree::ShippingLabel.statuses, enum_type_name: 'ShippingLabelStatus'],
                  carrier: [:string, nullable: true],
                  service: [:string, nullable: true],

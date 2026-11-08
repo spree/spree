@@ -1,6 +1,6 @@
 {
   "name": "@spree/admin-sdk",
-  "version": "1.0.0-rc.4",
+  "version": "6.0.3",
   "description": "Official TypeScript SDK for Spree Commerce Admin API",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -46,7 +46,7 @@
   "scripts": {
     "generate:admin-client": "tsx scripts/generate-admin-client.ts",
     "generate:zod": "tsx ../sdk-core/scripts/generate-zod.ts",
-    "generate:filters": "tsx ../sdk-core/scripts/generate-filters.ts admin",
+    "generate:filters": "tsx --conditions=@spree/source ../sdk-core/scripts/generate-filters.ts admin",
     "generate:params": "tsx ../sdk-core/scripts/generate-params.ts admin",
     "build": "tsup",
     "dev": "tsup --watch",
@@ -82,15 +82,14 @@
   },
   "devDependencies": {
     "@spree/sdk-core": "workspace:*",
-    "@types/node": "^26.6.5",
-    "@vitest/coverage-v8": "^5.0.5",
-    "msw": "^3.0.3",
-    "tsup": "^9.0.0",
-    "tsx": "^4.0.0",
-    "typescript": "^7.0.2",
-    "vitest": "^5.0.5",
-    "yaml": "^2.8.4",
-    "zod": "^4.6.7"
+    "@types/node": "catalog:",
+    "msw": "catalog:",
+    "tsup": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:",
+    "yaml": "catalog:",
+    "zod": "catalog:"
   },
   "peerDependencies": {
     "typescript": ">=4.7.0",

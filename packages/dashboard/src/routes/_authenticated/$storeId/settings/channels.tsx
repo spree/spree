@@ -3,6 +3,9 @@ import type { Catalog, Channel, ChannelCreateParams } from '@spree/admin-sdk'
 import {
   adminClient,
   Can,
+  extensionFormValues,
+  extensionSubmitValues,
+  HostFormSlot,
   mapSpreeErrorsToForm,
   ResourceCombobox,
   ResourceTable,
@@ -159,7 +162,7 @@ function CreateChannelSheet({
   const form = useForm<ChannelFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(channelFormSchema) as any,
-    defaultValues: CHANNEL_DEFAULTS,
+    defaultValues: { ...CHANNEL_DEFAULTS, ...extensionFormValues('channel', null) },
   })
 
   // Auto-derive +code+ from +name+ while the user hasn't touched +code+ yet.
@@ -173,7 +176,10 @@ function CreateChannelSheet({
 
   async function onSubmit(values: ChannelFormValues) {
     try {
-      await createMutation.mutateAsync(channelValuesToParams(values) as ChannelCreateParams)
+      await createMutation.mutateAsync({
+        ...(channelValuesToParams(values) as ChannelCreateParams),
+        ...extensionSubmitValues('channel', form),
+      })
       form.reset(CHANNEL_DEFAULTS)
       onOpenChange(false)
     } catch (err) {
@@ -197,6 +203,11 @@ function CreateChannelSheet({
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
             <ChannelFormFields form={form} />
+            <HostFormSlot
+              form={form}
+              name="channel.form_fields"
+              context={{ channel: undefined, mode: 'new' }}
+            />
           </div>
           <SheetFooter>
             <Button
@@ -258,13 +269,17 @@ function EditChannelSheet({
         guest_checkout: channel.guest_checkout == null ? '' : String(channel.guest_checkout),
         default_catalog_id: channel.default_catalog_id ?? '',
         stock_location_ids: channel.stock_location_ids ?? [],
+        ...extensionFormValues('channel', channel),
       })
     }
   }, [channel, form])
 
   async function onSubmit(values: ChannelFormValues) {
     try {
-      await updateMutation.mutateAsync(channelValuesToParams(values))
+      await updateMutation.mutateAsync({
+        ...channelValuesToParams(values),
+        ...extensionSubmitValues('channel', form),
+      })
       form.reset(values)
       onOpenChange(false)
     } catch (err) {
@@ -285,6 +300,11 @@ function EditChannelSheet({
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
               <ChannelFormFields form={form} />
+              <HostFormSlot
+                form={form}
+                name="channel.form_fields"
+                context={{ channel, mode: 'edit' }}
+              />
               {effectiveStrategy === RULES_ORDER_ROUTING_STRATEGY && (
                 <OrderRoutingRulesSection channelId={id} />
               )}

@@ -1,6 +1,7 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
 import { CreditCardSchema } from './CreditCard';
+import { CustomFieldSchema } from './CustomField';
 import { PaymentMethodSchema } from './PaymentMethod';
 import { PaymentSourceSchema } from './PaymentSource';
 import { StoreCreditSchema } from './StoreCredit';
@@ -17,6 +18,7 @@ export const PaymentSchema = z.object({
   source_id: z.string().nullable(),
   source: z.union([CreditCardSchema, StoreCreditSchema, PaymentSourceSchema]).nullable(),
   payment_method: PaymentMethodSchema,
+  custom_fields: z.array(CustomFieldSchema).optional(),
 });
 
 export type Payment = z.infer<typeof PaymentSchema>;

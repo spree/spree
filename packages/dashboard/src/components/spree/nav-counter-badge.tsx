@@ -15,6 +15,7 @@ import { useDashboardCounters } from '../../hooks/use-dashboard-counters'
  * release. The count itself comes from the shared counters request.
  */
 export function navCounterBadge(...navKeys: string[]) {
+  // biome-ignore lint/correctness/noComponentHookFactories: called once per nav entry at registration, never during render, so the component identity is stable.
   return function NavCounterBadge() {
     const { data } = useDashboardCounters()
     const total = (data?.counters ?? [])

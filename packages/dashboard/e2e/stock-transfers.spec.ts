@@ -7,6 +7,8 @@ import {
   FIXTURE_TRANSFER_SOURCE,
   gotoIndex,
   login,
+  saveCustomFieldOnCard,
+  withCustomFieldDefinition,
 } from './helpers'
 
 const TRANSFERS_PATH = (storeId: string) => `/${storeId}/transfers`
@@ -89,6 +91,19 @@ test.describe('stock transfers', () => {
     await expect(page.getByText(/no deliveries yet/i)).toBeVisible()
   })
 
+  test('records a custom field on the transfer', async ({ page }) => {
+    const creds = await login(page)
+    await withCustomFieldDefinition(page, creds, 'stock_transfer', async (label) => {
+      const transfer = await createInTransitTransfer(page, creds.accessToken, {
+        sku: FIXTURE_TRANSFER_SKU,
+        quantity: 1,
+      })
+      await page.goto(`${TRANSFERS_PATH(creds.store_id)}/${transfer.id}`)
+      // A detail page with no form of its own: the card edits and saves itself.
+      await saveCustomFieldOnCard(page, label, 'Carrier TRK-42')
+    })
+  })
+
   test('sends a draft, then counts in a delivery with damage', async ({ page }) => {
     const creds = await login(page)
     const transfer = await createInTransitTransfer(page, creds.accessToken, {
@@ -155,6 +170,17 @@ test.describe('stock transfers', () => {
     await expect(page.getByText('2 accepted · 0 rejected')).toBeVisible()
     await expect(page.getByText('4 accepted · 0 rejected')).toBeVisible()
     await expect(page.getByText(/receive a delivery/i)).toHaveCount(0)
+  })
+
+  // Filled by the probes in src/testing/slot-probes.tsx.
+  test('renders the plugin slot at the end of the main column', async ({ page }) => {
+    const creds = await login(page)
+    const draft = await createDraftTransfer(page, creds.accessToken, 1)
+
+    await page.goto(`${TRANSFERS_PATH(creds.store_id)}/${draft.id}`)
+    await expect(page.getByText('Slot probe: stock_transfer.form_main')).toBeVisible({
+      timeout: 15_000,
+    })
   })
 
   test('a draft can be corrected, a shipped one cannot', async ({ page }) => {

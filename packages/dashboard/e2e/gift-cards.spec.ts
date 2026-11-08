@@ -1,5 +1,13 @@
 import { expect, type Page, test } from '@playwright/test'
-import { gotoIndex, login, openRowMenu, rowButton } from './helpers'
+import {
+  adminRequest,
+  gotoIndex,
+  login,
+  openRowMenu,
+  rowButton,
+  saveCustomFieldInSheet,
+  withCustomFieldDefinition,
+} from './helpers'
 
 const GIFT_CARDS_PATH = (storeId: string) => `/${storeId}/loyalty/gift-cards`
 const CTA = /new gift card/i
@@ -113,5 +121,18 @@ test.describe('gift cards', () => {
       timeout: 15_000,
     })
     await expect(page.getByRole('heading', { name: /new gift card/i })).toBeVisible()
+  })
+
+  test('saves a custom field with the gift card', async ({ page }) => {
+    const creds = await login(page)
+    await withCustomFieldDefinition(page, creds, 'gift_card', async (label) => {
+      const giftCard = await adminRequest<{ id: string }>(page, creds, 'post', '/gift_cards', {
+        amount: '25.00',
+        currency: 'USD',
+      })
+      const url = `${GIFT_CARDS_PATH(creds.store_id)}?edit=${giftCard.id}`
+      await page.goto(url)
+      await saveCustomFieldInSheet(page, url, label, 'Holiday batch')
+    })
   })
 })

@@ -165,11 +165,16 @@ function CategoryDetail({ categoryId, storeId }: { categoryId: string; storeId: 
                 }}
               />
             }
-            main={<CategoryMain form={form} category={category} />}
+            main={
+              <>
+                <CategoryMain form={form} category={category} />
+                <Slot name="category.form_main" context={{ category, mode: 'edit' }} />
+              </>
+            }
             sidebar={
               <>
                 <CategorySidebar form={form} category={category} />
-                <Slot name="category.form_sidebar" context={{ category }} />
+                <Slot name="category.form_sidebar" context={{ category, mode: 'edit' }} />
               </>
             }
           />

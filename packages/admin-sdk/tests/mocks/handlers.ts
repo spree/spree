@@ -39,6 +39,7 @@ const PARENT_PATHS = [
   'categories',
   'option_types',
   'sellers',
+  'stores',
 ] as const
 
 // Echo the matched route segment + parent ID into the response under `_route`

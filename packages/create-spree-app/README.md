@@ -2,6 +2,13 @@
 
 Scaffold a new [Spree Commerce](https://spreecommerce.org) project with a single command — a full Rails backend (the Spree API) running via Docker, an optional Next.js storefront, the Admin Dashboard and an optional marketplace seller panel, and the `spree` CLI for day-to-day work. Setup completes automatically: image pulled, database seeded, API keys configured.
 
+## Requirements
+
+- [Node.js](https://nodejs.org/) 20 or later, with npm 9 or later
+- [Docker](https://docs.docker.com/get-docker/) running
+
+`npm ERR! cb.apply is not a function` means your npm is too old for your Node.js version. Reinstall a current Node.js (it ships with a matching npm) and run the command again. See [Troubleshooting](https://spreecommerce.org/docs/developer/create-spree-app/quickstart#troubleshooting).
+
 ## Quick Start
 
 ```bash

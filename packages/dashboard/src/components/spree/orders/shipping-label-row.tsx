@@ -1,5 +1,12 @@
 import type { ShippingLabel } from '@spree/admin-sdk'
-import { downloadFromApi, getApiClient, Money, useAuth } from '@spree/dashboard-core'
+import {
+  downloadFromApi,
+  getApiClient,
+  Money,
+  useAuth,
+  useMetadataSheet,
+  ViewMetadataMenuItem,
+} from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -8,6 +15,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  hasMetadata,
   toastManager,
   useConfirm,
 } from '@spree/dashboard-ui'
@@ -37,6 +45,7 @@ export function ShippingLabelRow({
   const { t } = useTranslation()
   const confirm = useConfirm()
   const { token } = useAuth()
+  const metadataSheet = useMetadataSheet()
 
   // Mirrors Spree::ShippingLabel#refundable? — a label the carrier is still
   // deciding on stays askable, because re-filing is the only way to re-drive a
@@ -126,7 +135,7 @@ export function ShippingLabelRow({
           </Button>
         )}
 
-        {deletable && (
+        {(deletable || hasMetadata(label.metadata)) && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button type="button" variant="ghost" size="icon-xs">
@@ -135,27 +144,34 @@ export function ShippingLabelRow({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem
-                variant="destructive"
-                onClick={async () => {
-                  if (
-                    await confirm({
-                      message: t('admin.orders.detail.fulfillments.confirm_delete_label'),
-                      variant: 'destructive',
-                      confirmLabel: t('admin.actions.delete'),
-                    })
-                  ) {
-                    onDelete()
-                  }
-                }}
-              >
-                <TrashIcon className="size-4" />
-                {t('admin.orders.detail.fulfillments.delete_label')}
-              </DropdownMenuItem>
+              <ViewMetadataMenuItem
+                metadata={label.metadata}
+                onClick={() => metadataSheet.show(label.metadata)}
+              />
+              {deletable && (
+                <DropdownMenuItem
+                  variant="destructive"
+                  onClick={async () => {
+                    if (
+                      await confirm({
+                        message: t('admin.orders.detail.fulfillments.confirm_delete_label'),
+                        variant: 'destructive',
+                        confirmLabel: t('admin.actions.delete'),
+                      })
+                    ) {
+                      onDelete()
+                    }
+                  }}
+                >
+                  <TrashIcon className="size-4" />
+                  {t('admin.orders.detail.fulfillments.delete_label')}
+                </DropdownMenuItem>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         )}
       </div>
+      {metadataSheet.sheet}
     </CardContent>
   )
 }

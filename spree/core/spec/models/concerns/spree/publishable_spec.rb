@@ -333,6 +333,61 @@ RSpec.describe Spree::Publishable, events: true do
         expect(explicit_received).to be true
       end
     end
+
+    # A default record created in its parent's after_create commits with the
+    # parent, after the block that silenced it has ended.
+    context 'when the silenced write commits after the block ends' do
+      let!(:product) { create(:product) }
+
+      it 'does not publish for a record written only while events were off' do
+        received = false
+        Spree::Events.subscribe('product.updated', async: false) { received = true }
+        Spree::Events.activate!
+
+        ApplicationRecord.transaction do
+          Spree::Events.disable { product.update!(name: 'Renamed') }
+        end
+
+        expect(received).to be false
+      end
+
+      it 'publishes when the same transaction also wrote it with events on' do
+        received = false
+        Spree::Events.subscribe('product.updated', async: false) { received = true }
+        Spree::Events.activate!
+
+        ApplicationRecord.transaction do
+          Spree::Events.disable { product.update!(name: 'Renamed') }
+          product.update!(name: 'Renamed again')
+        end
+
+        expect(received).to be true
+      end
+
+      it 'does not publish a silenced destroy after an update made with events on' do
+        received = false
+        Spree::Events.subscribe('product.deleted', async: false) { received = true }
+        Spree::Events.activate!
+
+        ApplicationRecord.transaction do
+          product.update!(name: 'Renamed')
+          Spree::Events.disable { product.destroy! }
+        end
+
+        expect(received).to be false
+      end
+
+      it 'publishes a later write made with events on' do
+        received = false
+        Spree::Events.subscribe('product.updated', async: false) { received = true }
+        Spree::Events.activate!
+
+        Spree::Events.disable { product.update!(name: 'Renamed') }
+        product.update!(name: 'Renamed again')
+
+        expect(received).to be true
+      end
+    end
   end
 
   describe '.event_prefix' do
@@ -342,6 +397,32 @@ RSpec.describe Spree::Publishable, events: true do
 
     it 'derives from model name' do
       expect(Spree::OrderLineItem.event_prefix).to eq('order_line_item')
+    end
+  end
+
+  describe 'the context a payload is built in' do
+    let(:other_store) { create(:store) }
+    let(:product) { create(:product, store: other_store) }
+
+    before do
+      expect(other_store.id).not_to eq(Spree::Store.default.id)
+      Spree::Store.where(id: other_store.id).update_all(default_currency: 'EUR')
+      other_store.default_market&.update_columns(currency: 'EUR')
+      Spree::Current.reset
+      Spree::Current.store = nil
+    end
+
+    it 'resolves the serializer params from the store the event belongs to' do
+      params = product.send(:in_event_store) { product.send(:event_serializer_params) }
+
+      expect(params[:store].id).to eq(other_store.id)
+      expect(params[:currency]).to eq('EUR')
+    end
+
+    it 'leaves the ambient context untouched afterwards' do
+      product.send(:in_event_store) { nil }
+
+      expect(Spree::Current.store.id).to eq(Spree::Store.default.id)
     end
   end
 end

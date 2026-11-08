@@ -13,7 +13,9 @@ module Spree
       def ensure_default_channel
         return if default_channel
 
-        channels.create!(name: 'Online Store', code: Spree::Channel::DEFAULT_CODE)
+        Spree::Events.disable do
+          channels.create!(name: 'Online Store', code: Spree::Channel::DEFAULT_CODE)
+        end
       end
     end
   end

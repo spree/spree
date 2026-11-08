@@ -186,7 +186,7 @@ module Spree
             def delivery_method_for_create
               return if create_params[:delivery_method_id].blank?
 
-              Spree::DeliveryMethod.accessible_by(current_ability, :show).find_by_prefix_id!(create_params[:delivery_method_id])
+              current_store.delivery_methods.accessible_by(current_ability, :show).find_by_prefix_id!(create_params[:delivery_method_id])
             end
 
             def source_fulfillment_for_create

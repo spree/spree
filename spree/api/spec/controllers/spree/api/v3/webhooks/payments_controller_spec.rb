@@ -114,7 +114,7 @@ RSpec.describe Spree::Api::V3::Webhooks::PaymentsController, type: :controller d
       end
 
       it 'enqueues HandleWebhookJob with a delay' do
-        Timecop.freeze do
+        freeze_time do
           expect {
             post :create, params: { payment_method_id: payment_method.prefixed_id }
           }.to have_enqueued_job(Spree::Payments::HandleWebhookJob)

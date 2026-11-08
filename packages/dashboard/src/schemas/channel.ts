@@ -1,4 +1,5 @@
 import type { ChannelCreateParams, ChannelUpdateParams } from '@spree/admin-sdk'
+import { STOREFRONT_ACCESSES } from '@spree/core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import i18n from 'i18next'
 import { z } from 'zod/v4'
@@ -11,7 +12,7 @@ export const ORDER_ROUTING_STRATEGY_VALUES = ['', RULES_ORDER_ROUTING_STRATEGY] 
 export type OrderRoutingStrategyValue = (typeof ORDER_ROUTING_STRATEGY_VALUES)[number]
 
 // Empty string clears the channel-level override → falls back to store.
-export const STOREFRONT_ACCESS_VALUES = ['', 'public', 'prices_hidden', 'login_required'] as const
+export const STOREFRONT_ACCESS_VALUES = ['', ...STOREFRONT_ACCESSES] as const
 
 // Tri-state form representation of the channel's boolean guest_checkout
 // override: '' inherits the store value, 'true'/'false' set an explicit value.

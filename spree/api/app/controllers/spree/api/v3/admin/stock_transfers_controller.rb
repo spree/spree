@@ -202,9 +202,10 @@ module Spree
           end
 
           # The listing and the detail page both read a transfer's totals off
-          # its lines.
+          # its lines. Both warehouses come from one table, so their external
+          # references are loaded here rather than once per warehouse.
           def scope_includes
-            [line_includes]
+            [{ source_location: :external_references, destination_location: :external_references }, line_includes]
           end
         end
       end

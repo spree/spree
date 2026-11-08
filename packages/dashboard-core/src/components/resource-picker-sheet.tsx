@@ -300,7 +300,9 @@ export function ResourcePickerSheet<T extends PickerOption>({
                       onClick={selectAllMatching}
                     >
                       {selectingAll && <Loader2Icon className="size-3.5 animate-spin" />}
-                      {t('admin.resource_picker.select_all_matching', { count: matchCount })}
+                      <span>
+                        {t('admin.resource_picker.select_all_matching', { count: matchCount })}
+                      </span>
                     </Button>
                   ) : null}
                 </div>
@@ -354,7 +356,7 @@ export function ResourcePickerSheet<T extends PickerOption>({
                     onClick={() => fetchNextPage()}
                   >
                     {loadingMore && <Loader2Icon className="size-4 animate-spin" />}
-                    {t('admin.resource_picker.load_more')}
+                    <span>{t('admin.resource_picker.load_more')}</span>
                   </Button>
                 </div>
               )}
@@ -368,7 +370,9 @@ export function ResourcePickerSheet<T extends PickerOption>({
           </Button>
           <Button type="button" onClick={confirm} disabled={staged.size === 0 || submitting}>
             {submitting && <Loader2Icon className="size-4 animate-spin" />}
-            {confirmLabel ?? t('admin.resource_picker.add_count', { count: staged.size })}
+            <span>
+              {confirmLabel ?? t('admin.resource_picker.add_count', { count: staged.size })}
+            </span>
           </Button>
         </SheetFooter>
       </SheetContent>

@@ -1,0 +1,90 @@
+---
+title: "Connect Claude"
+description: "Learn how to connect Claude to your store so it can work in it on your behalf, in Spree Commerce."
+---
+
+Claude connects to your store as a custom connector. Once connected, it can answer questions about your orders, search your catalog and make changes, bounded by the permissions you approve.
+
+Asking Claude a question is usually quicker than finding a record on a screen. A question that would mean filtering a list, opening several records and adding the figures up comes back as one answer, and a job that takes a few steps in the dashboard can be asked for in a sentence. Finding which products are out of stock before you reorder, pulling last month's sales for one category, or cancelling an order and refunding the customer are each a single request.
+
+One registration in Spree covers claude.ai, Claude Desktop and Claude Code together, so there is nothing to repeat for each of them. How the connector is added on Claude's side depends on the plan: on a personal plan each person adds it to their own account, and on a Team or Enterprise plan an owner adds it once for the whole organization and everyone connects to that.
+
+This page covers claude.ai and Claude Desktop. Claude Code is a command-line tool and is covered in the developer documentation.
+
+## Before You Start
+
+Register Claude in your store first, which produces the two values its connector needs.
+
+![The Connect an agent panel, with Claude chosen](/docs/images/user/ai-agents/connect-claude/1-connect-agent.png)
+
+1. Navigate to **Settings → AI Agents** and click **Connect an agent**.
+2. Choose **Claude** and click **Continue**.
+3. Keep the panel open. It shows **Your store's MCP address** and a **Client ID**, each with a button that copies it.
+
+![The address and client ID Claude needs, each with a copy button](/docs/images/user/ai-agents/connect-claude/2-agent-credentials.png)
+
+See [<u>AI Agents</u>](/user/ai-agents/ai-agents) for what the registration does and who is allowed to make one.
+
+## How to Connect on a Free, Pro or Max Plan
+
+On a personal plan the connector belongs to your own Claude account.
+
+![Claude's custom connector dialog, with the name and the store's MCP address](/docs/images/user/ai-agents/connect-claude/3-claude-add-connector.png)
+
+1. In Claude, open **Connectors**, reached from either **Settings** or **Customize**, and choose to add a custom connector.
+2. Enter a name your team will recognize, such as your store's name, paste **Your store's MCP address**, and click **Continue**. Claude checks that it can reach the address before going on.
+3. On the next screen, leave **Authentication** set to **Sign in now** and **OAuth client** set to **Use your own OAuth client**. Claude works both out from your store, so they are normally chosen for you already.
+4. Paste the **Client ID** and continue.
+5. The connector is added at this point but not yet connected to anything. Click **Connect**.
+6. Claude opens your browser and asks you to confirm that you started this yourself. Continue, and your store's sign-in appears.
+
+![The Client ID pasted into Claude's OAuth settings](/docs/images/user/ai-agents/connect-claude/4-claude-client-id.png)
+
+<Note>**Register automatically** is offered as an OAuth client option but does not work here. Spree registers clients in advance rather than letting them register themselves, which is why there is a Client ID to paste.</Note>
+
+<Note>A free Claude account allows one custom connector, so a store connected there uses the single slot available.</Note>
+
+## How to Connect on a Team or Enterprise Plan
+
+On a Team or Enterprise plan the connector is added once for the organization, and each person then connects to it with their own store login. Adding it is done by an Owner or Primary Owner.
+
+**The owner adds the connector**
+
+1. Go to **claude.ai/admin-settings/connectors** and click **Add → Custom → Web**.
+2. Enter a name your team will recognize and paste **Your store's MCP address**. Click **Continue**.
+3. Under **Authentication**, choose **Sign in now**.
+4. Under **OAuth client**, choose **Use your own OAuth client** and paste the **Client ID**. Leave the client secret empty.
+5. Click **Add**.
+
+The connector now appears for everyone in the organization. Nobody has access to the store yet, because each person still has to connect for themselves.
+
+**Each person connects for themselves**
+
+1. In Claude, open **Customize → Connectors**, find the store's connector and click **Connect**.
+2. Sign in to your store and approve what the agent may do.
+
+## Approving What Claude May Do
+
+![The approval screen in the Spree dashboard, listing what Claude is asking for](/docs/images/user/ai-agents/connect-claude/5-approve.png)
+
+Signing in brings up an approval screen listing the permissions Claude has asked for. Tick the ones you want it to have and click **Allow access**.
+
+Claude asks for every permission your store offers, which is what the standard expects of a client that has not been told to ask for less. The approval screen is where the connection is narrowed, so approving a short list is normal rather than a sign that something is wrong.
+
+A connection never carries more than the person who made it. Anything your own role does not include is shown as withheld and cannot be approved, so two people connecting the same connector can end up with very different access. See [<u>AI Agents</u>](/user/ai-agents/ai-agents) for what is never offered to an agent at all.
+
+## How to Use It
+
+![A chat with the store's connector switched on](/docs/images/user/ai-agents/connect-claude/6-claude-in-chat.png)
+
+In a new chat, click **+ → Connectors** and switch the store on. Then ask it something straightforward to confirm the connection works, such as listing your last five orders.
+
+A job that changes data declares itself as a change, and Claude asks you to confirm before running one unless the connector has been set to allow that job automatically. Reading is always answered without a prompt.
+
+<Note>Claude is only shown the jobs it was approved for, so a connection approved for products alone offers a short list of product jobs rather than everything the store can do.</Note>
+
+## Further Reading
+
+- [<u>AI Agents</u>](/user/ai-agents/ai-agents) - Reviewing connections, permissions and revoking access
+- [<u>Connect ChatGPT</u>](/user/ai-agents/connect-chatgpt) - The same thing for ChatGPT
+- [<u>Roles</u>](/user/settings/roles) - The permissions a role carries, which bound what Claude can be given

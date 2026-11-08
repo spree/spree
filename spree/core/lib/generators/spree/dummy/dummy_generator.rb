@@ -40,7 +40,6 @@ module Spree
       args << '--skip-git'
       args << '--skip-keeps'
       args << '--skip-rc'
-      args << '--skip-spring'
       args << '--skip-test'
       args << '--skip-bootsnap'
       args << '--skip-docker'

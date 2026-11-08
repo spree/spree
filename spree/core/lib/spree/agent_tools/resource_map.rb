@@ -16,10 +16,36 @@ module Spree
       # than quietly leaking another store's records.
       UnscopedResourceError = Class.new(StandardError)
 
+      # The parent segment of a nested path: `/promotions/:promotion_id/promotion_rules`
+      # names `promotions`.
+      PARENT_SEGMENT = %r{/(?<parent>[a-z_]+)/:[a-z_]+_id(?:/|\z)}
+
       Entry = Struct.new(:key, :model_name, :permission, :serializer_name,
                          :dashboard_path, :scope_name, :write_permission,
                          :writable_attributes, :create_workflow_key, :update_workflow_key,
-                         :distinct, :api_paths, keyword_init: true) do
+                         :distinct, :api_paths, :access_permissions, keyword_init: true) do
+        # Whether this caller may read the resource.
+        #
+        # Imports and exports have no key of their own: each record is gated
+        # by the scope of the resource it carries. They list those keys in
+        # `access_permissions`, and holding any one of them is enough to
+        # reach the endpoint, which filters to the records that key covers.
+        #
+        # @param context [Spree::AgentTools::Context]
+        # @return [Boolean]
+        def readable_by?(context)
+          return context.permitted?(permission) if access_permissions.nil?
+
+          access_permissions.any? { |key| context.holds?(key) }
+        end
+
+        # Every key that can open this resource.
+        #
+        # @return [Array<String>]
+        def permission_keys
+          access_permissions || [permission]
+        end
+
         # The Admin API path for one of this resource's operations, which is
         # how a tool reaches it.
         #
@@ -29,9 +55,38 @@ module Spree
           Array(api_paths).to_h[action.to_sym]
         end
 
-        # @return [Boolean] whether a tool can dispatch to this resource
+        # Whether a tool can dispatch to this resource's collection on its own.
+        #
+        # A resource reached only under a parent is not: the tool has no
+        # parent id to put in the path, and dispatching the template as it
+        # stands answered "Promotion not found" for a search of promotion
+        # rules, which a model repeats as a fact about the store.
+        #
+        # @return [Boolean]
         def dispatchable?
-          api_path(:index).present?
+          api_path(:index).present? && !nested?(:index)
+        end
+
+        # Whether the path a tool would dispatch `action` to runs under a
+        # parent. Asked per action, because a resource can be listed at the
+        # top level and written under its parent (`/variants`,
+        # `/products/:product_id/variants`).
+        #
+        # @param action [Symbol]
+        # @return [Boolean]
+        def nested?(action = :index)
+          parent_key(action).present?
+        end
+
+        # The resource key of the parent `action`'s path runs under, read
+        # from the route rather than guessed from the model, so a renamed
+        # nested route (`/orders/:order_id/items`) still names `orders`. The
+        # innermost parent, for a path nested twice.
+        #
+        # @param action [Symbol]
+        # @return [String, nil]
+        def parent_key(action = :index)
+          api_path(action).to_s.scan(PARENT_SEGMENT).flatten.last
         end
 
         # Whether a search may add DISTINCT.
@@ -67,6 +122,42 @@ module Spree
           Array(writable_attributes).map(&:to_s).sort
         end
 
+        # The record a nested resource is reached through — `order_id` for an
+        # order's items, discounts and fees — or nil for a top-level one.
+        #
+        # @param action [Symbol]
+        # @return [String, nil]
+        def parent_param(action)
+          Array(api_path(action)&.scan(/:([a-z_]+)/)).flatten.reject { |name| name == 'id' }.first
+        end
+
+        # The operation's path with its segments filled, or nil when a nested
+        # resource was not given the record it lives under.
+        #
+        # Each value is percent-encoded so it stays one segment: a `?` or `/`
+        # in an id would otherwise send the call to a different route than
+        # the one the tool checked and the approver was shown. A path with a
+        # segment left unfilled — a resource nested two levels deep — is nil
+        # too, rather than dispatched with a placeholder in it.
+        #
+        # @param action [Symbol]
+        # @param id [String, nil]
+        # @param parent_id [String, nil]
+        # @return [String, nil]
+        def path_for(action, id: nil, parent_id: nil)
+          path = api_path(action)
+          return if path.blank?
+
+          path = path.sub(':id', ERB::Util.url_encode(id.to_s)) if id.present?
+          parent = parent_param(action)
+          if parent
+            return if parent_id.blank?
+
+            path = path.sub(":#{parent}", ERB::Util.url_encode(parent_id.to_s))
+          end
+          path unless path.match?(/:[a-z_]+/)
+        end
+
         # The associations the show operation will include when asked, read
         # from the serializer that renders it.
         #
@@ -92,12 +183,66 @@ module Spree
         end
 
         def expand_names_in(klass)
-          file = Object.const_source_location(klass.name)&.first
-          return [] if file.nil? || !File.exist?(file)
+          file = serializer_file(klass)
+          return [] if file.nil?
 
-          File.read(file).scan(/expand\?\('([a-z_]+)'\)/).flatten
+          # Comment lines are skipped: the base serializer explains `expand?`
+          # with an example, which put `variants` on every resource's list.
+          code = File.readlines(file).reject { |line| line.lstrip.start_with?('#') }.join
+          code.scan(/expand\?\('([a-z_]+)'\)/).flatten
         rescue StandardError
           []
+        end
+
+        # The file the autoloader maps the class to, under whichever engine
+        # holds it. `const_source_location` is the fallback: it names the file
+        # that first touched the constant, which for a serializer another one
+        # inherits from was the subclass's file.
+        def serializer_file(klass)
+          relative = "#{klass.name.underscore}.rb"
+          found = Rails.autoloaders.main.dirs.lazy.map { |dir| File.join(dir, relative) }.find { |path| File.exist?(path) }
+          found || Object.const_source_location(klass.name)&.first.then { |path| path if path && File.exist?(path) }
+        end
+
+        # The STI family this resource is, when its rows are selected by a
+        # `type` the model's own registry resolves — payment methods, seller
+        # requirements, promotion rules. Nil for an ordinary resource.
+        #
+        # @return [Class, nil]
+        def typed_family
+          typed_family_class(model_class)
+        end
+
+        # The STI family behind each list-valued attribute whose rows carry a
+        # `type` — a promotion's `rules` and `actions`, a price list's
+        # `rules`. The attribute is the short name the write accepts; the
+        # association behind it carries the model's prefix
+        # (`promotion_rules`), which is how the two are matched.
+        #
+        # @return [Hash{String => Class}] attribute => family class
+        def nested_typed_families
+          nested_collection_shapes.each_with_object({}) do |(name, fields), families|
+            next unless fields.any? { |field| field['name'] == 'type' }
+
+            family = typed_family_class(typed_association_for(name)&.klass)
+            families[name] = family if family
+          end
+        rescue StandardError
+          {}
+        end
+
+        def typed_association_for(name)
+          reflections = model_class.reflect_on_all_associations(:has_many)
+          reflections.find { |reflection| reflection.name.to_s == name } ||
+            reflections.find { |reflection| reflection.name.to_s.end_with?("_#{name}") }
+        end
+
+        def typed_family_class(klass)
+          return unless klass.respond_to?(:subclass_registry) && klass.subclass_registry
+
+          klass
+        rescue StandardError
+          nil
         end
 
         # The shape of each attribute that carries a list of records — a
@@ -258,10 +403,12 @@ module Spree
         # @param distinct [Boolean, nil] false where the controller disables
         #   DISTINCT on its own collection, which Postgres requires when the
         #   sort column is not in the select list
+        # @param access_permissions [Array<String>, nil] keys any one of which
+        #   opens the resource, in place of `permission`
         # @return [Entry]
         def register(key:, model_name:, permission:, serializer_name:, dashboard_path: nil, scope_name: nil,
                      write_permission: nil, writable_attributes: [], create_workflow_key: nil,
-                     update_workflow_key: nil, distinct: nil, api_paths: nil)
+                     update_workflow_key: nil, distinct: nil, api_paths: nil, access_permissions: nil)
           entry = Entry.new(key: key.to_s, model_name: model_name, permission: permission,
                             serializer_name: serializer_name, dashboard_path: dashboard_path,
                             scope_name: scope_name, write_permission: write_permission,
@@ -269,7 +416,8 @@ module Spree
                             create_workflow_key: create_workflow_key,
                             update_workflow_key: update_workflow_key,
                             distinct: distinct,
-                            api_paths: api_paths&.to_a)
+                            api_paths: api_paths&.to_a,
+                            access_permissions: access_permissions)
           entries[entry.key] = entry
         end
 
@@ -334,7 +482,7 @@ module Spree
         # @param context [Spree::AgentTools::Context]
         # @return [Array<Entry>]
         def available_for(context)
-          all.select { |entry| context.permitted?(entry.permission) }
+          all.select { |entry| entry.readable_by?(context) }
         end
 
         private

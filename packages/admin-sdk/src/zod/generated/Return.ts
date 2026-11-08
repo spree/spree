@@ -2,6 +2,7 @@
 import { z } from 'zod';
 import type Return from '../../types/generated/Return';
 import { ActorSchema } from './Actor';
+import { CustomFieldSchema } from './CustomField';
 import { DeliverySchema } from './Delivery';
 import { OrderSchema } from './Order';
 import { RefundSchema } from './Refund';
@@ -24,6 +25,7 @@ export const ReturnSchema = z.object({
   canceled_at: z.string().nullable(),
   reason: ReturnReasonSchema.optional(),
   return_line_items: z.array(ReturnLineItemSchema).optional(),
+  custom_fields: z.array(CustomFieldSchema).optional(),
   external_references: z.record(z.string(), z.string()),
   memo: z.string().nullable(),
   metadata: z.record(z.string(), z.unknown()),
@@ -55,6 +57,7 @@ export const ReturnSchema = z.object({
   canceled_at: z.ZodType<Return['canceled_at']>;
   reason: z.ZodOptional<z.ZodType<Exclude<Return['reason'], undefined>>>;
   return_line_items: z.ZodOptional<z.ZodType<Exclude<Return['return_line_items'], undefined>>>;
+  custom_fields: z.ZodOptional<z.ZodType<Exclude<Return['custom_fields'], undefined>>>;
   external_references: z.ZodType<Return['external_references']>;
   memo: z.ZodType<Return['memo']>;
   metadata: z.ZodType<Return['metadata']>;

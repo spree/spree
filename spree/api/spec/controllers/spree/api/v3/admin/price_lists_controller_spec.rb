@@ -107,6 +107,19 @@ RSpec.describe Spree::Api::V3::Admin::PriceListsController, type: :controller do
       expect(json_response['data'].pluck('name')).to eq(['Third list', 'Wholesale', 'Second list'])
       expect(json_response['data'].pluck('position')).to eq([1, 2, 3])
     end
+
+    it 'counts a product priced on several variants once' do
+      product = create(:product, store: store)
+      [product.default_variant, create(:variant, product: product)].each do |variant|
+        create(:price, variant: variant, price_list: price_list, currency: 'USD', amount: 10)
+      end
+
+      get :index, as: :json
+      expect(json_response['data'].first).to include('products_count' => 1, 'prices_count' => 2)
+
+      get :show, params: { id: price_list.prefixed_id }, as: :json
+      expect(json_response).to include('products_count' => 1, 'prices_count' => 2)
+    end
   end
 
   describe 'POST #create — one-shot creation' do
@@ -450,21 +463,20 @@ RSpec.describe Spree::Api::V3::Admin::PriceListsController, type: :controller do
       expect(cg_rule.preferred_customer_group_ids).to contain_exactly(customer_group.id.to_s)
     end
 
-    it 'silently drops a rule with an unknown type' do
+    it 'refuses a rule with an unknown type, naming the accepted ones, and keeps the list as it was' do
       patch :update,
             params: {
               id: price_list.prefixed_id,
               rules: [
                 { type: 'volume_rule', preferences: { min_quantity: 2 } },
-                { type: 'NotARealRule' }
+                { type: 'Spree::PriceRules::MarketRule' }
               ]
             },
             as: :json
 
-      expect(response).to have_http_status(:ok)
-      rules = price_list.reload.price_rules
-      expect(rules.length).to eq(1)
-      expect(rules.first).to be_a(Spree::PriceRules::VolumeRule)
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['details']['/rules/1/type'].first).to include('is not a price rule offered here', 'market_rule')
+      expect(price_list.reload.price_rules).to be_empty
     end
   end
 

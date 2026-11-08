@@ -77,6 +77,59 @@ test.describe('command palette', () => {
     await expect(page.getByRole('option', { name: /^new order$/i })).toBeVisible()
   })
 
+  // With no query the destinations are listed, so there is no empty-list hint.
+  test('opens on the list of destinations', async ({ page }) => {
+    const creds = await login(page)
+    await openPalette(page, creds.store_id)
+
+    const dialog = page.getByRole('dialog')
+    await expect(dialog.getByRole('option', { name: /^orders$/i })).toBeVisible({
+      timeout: 15_000,
+    })
+    await expect(dialog.getByText(/type to search/i)).toBeHidden()
+  })
+
+  // A query naming a destination outright puts that page first, highlighted,
+  // so Enter alone reaches it.
+  test('Enter opens the highlighted destination', async ({ page }) => {
+    const creds = await login(page)
+    const input = await openPalette(page, creds.store_id)
+
+    await input.fill('orders')
+    const orders = page.getByRole('option', { name: /^orders$/i })
+    await expect(orders).toHaveAttribute('data-highlighted', '', { timeout: 15_000 })
+
+    await input.press('Enter')
+
+    await expect(page).toHaveURL(new RegExp(`/${creds.store_id}/orders(?:[?#]|$)`))
+    await expect(page.getByRole('dialog')).toBeHidden()
+  })
+
+  test('arrow keys move the highlight without changing the query', async ({ page }) => {
+    const creds = await login(page)
+    const input = await openPalette(page, creds.store_id)
+
+    await input.fill('new')
+    const options = page.getByRole('dialog').getByRole('option')
+    await expect(options.first()).toHaveAttribute('data-highlighted', '', { timeout: 15_000 })
+
+    await input.press('ArrowDown')
+
+    await expect(options.nth(1)).toHaveAttribute('data-highlighted', '')
+    await expect(options.first()).not.toHaveAttribute('data-highlighted', '')
+    await expect(input).toHaveValue('new')
+  })
+
+  test('Escape closes the palette', async ({ page }) => {
+    const creds = await login(page)
+    const input = await openPalette(page, creds.store_id)
+
+    await input.fill('orders')
+    await input.press('Escape')
+
+    await expect(page.getByRole('dialog')).toBeHidden()
+  })
+
   test('reports when a query matches nothing', async ({ page }) => {
     const creds = await login(page)
     const input = await openPalette(page, creds.store_id)

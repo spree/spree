@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { SpreeError, type Store, type StoreUpdateParams } from '@spree/admin-sdk'
+import { EMAIL_FONTS } from '@spree/core'
 import {
   ImageUploadField,
   mapSpreeErrorsToForm,
@@ -46,7 +47,6 @@ import { useEmailTemplatePreview } from '../../../../../hooks/use-email-template
 import { useStoreSettings, useUpdateStoreSettings } from '../../../../../hooks/use-store-settings'
 import {
   EMAIL_BRANDING_COLORS,
-  EMAIL_FONTS,
   type StoreEmailsFormValues,
   storeEmailsFormSchema,
 } from '../../../../../schemas/store-emails'

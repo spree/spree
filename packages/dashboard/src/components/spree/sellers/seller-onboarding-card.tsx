@@ -1,5 +1,5 @@
 import type { Seller, SellerRequirementStatus } from '@spree/admin-sdk'
-import { progressPercentage } from '@spree/dashboard-core'
+import { progressPercentage, useMetadataSheet, ViewMetadataMenuItem } from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -12,6 +12,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  hasMetadata,
   Progress,
   StatusBadge as SharedStatusBadge,
   Sheet,
@@ -19,13 +20,11 @@ import {
   SheetDescription,
   SheetHeader,
   SheetTitle,
+  StepIcon,
   useConfirm,
 } from '@spree/dashboard-ui'
 import {
-  CheckCircle2Icon,
   ChevronDownIcon,
-  CircleIcon,
-  ClockIcon,
   DownloadIcon,
   EllipsisVerticalIcon,
   FileTextIcon,
@@ -123,6 +122,7 @@ function RequirementRow({
   const { t } = useTranslation()
   const confirm = useConfirm()
   const [policyOpen, setPolicyOpen] = useState(false)
+  const metadataSheet = useMetadataSheet()
   const acceptMutation = useAcceptSellerRequirementSubmission(sellerId)
   const rejectMutation = useRejectSellerRequirementSubmission(sellerId)
   const waiveMutation = useWaiveSellerRequirement(sellerId)
@@ -156,6 +156,8 @@ function RequirementRow({
   }
 
   const policy = requirement.published_policy
+  const canWaive = canEdit && requirement.status !== 'complete'
+  const submissionHasMetadata = hasMetadata(submission?.metadata)
 
   return (
     <li className="flex items-start justify-between gap-3 py-3 first:pt-0 last:pb-0">
@@ -224,21 +226,34 @@ function RequirementRow({
           </>
         )}
 
-        {canEdit && requirement.status !== 'complete' && (
+        {(canWaive || submissionHasMetadata) && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button size="icon-sm" variant="ghost" disabled={busy}>
+              <Button
+                size="icon-sm"
+                variant="ghost"
+                disabled={busy}
+                aria-label={t('admin.actions.actions_menu')}
+              >
                 <EllipsisVerticalIcon className="size-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={handleWaive}>
-                {t('admin.sellers.onboarding.actions.waive')}
-              </DropdownMenuItem>
+              <ViewMetadataMenuItem
+                metadata={submission?.metadata}
+                onClick={() => metadataSheet.show(submission?.metadata, requirement.name)}
+              />
+              {canWaive && (
+                <DropdownMenuItem onClick={handleWaive}>
+                  {t('admin.sellers.onboarding.actions.waive')}
+                </DropdownMenuItem>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         )}
       </div>
+
+      {metadataSheet.sheet}
 
       {/* Read-only: the operator approves or sends back a seller, they do not
           rewrite the seller's legal text. Rendered as sanitized markup, the
@@ -320,16 +335,12 @@ function StatusBadge({ status, waived }: { status: string; waived: boolean }) {
   )
 }
 
+// The same icons the seller sees on their own onboarding page.
 function StatusIcon({ status }: { status: string }) {
-  if (status === 'complete') {
-    return <CheckCircle2Icon className="mt-0.5 size-4 shrink-0 text-green-600" />
-  }
-
-  if (status === 'pending') {
-    return <ClockIcon className="mt-0.5 size-4 shrink-0 text-amber-600" />
-  }
+  if (status === 'complete') return <StepIcon status="done" className="mt-0.5" />
+  if (status === 'pending') return <StepIcon status="in_progress" className="mt-0.5" />
   if (status === 'rejected') {
     return <XCircleIcon className="mt-0.5 size-4 shrink-0 text-destructive" />
   }
-  return <CircleIcon className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+  return <StepIcon status="todo" className="mt-0.5" />
 }

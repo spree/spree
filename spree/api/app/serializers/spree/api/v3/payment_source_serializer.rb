@@ -5,6 +5,8 @@ module Spree
         typelize gateway_payment_profile_id: [:string, nullable: true]
 
         attributes :gateway_payment_profile_id
+
+        expandable_custom_fields
       end
     end
   end

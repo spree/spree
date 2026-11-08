@@ -1,6 +1,8 @@
 module Spree
   module Emails
     class PaymentSerializer < Spree::Api::V3::PaymentSerializer
+      _attributes.delete(:custom_fields)
+
       without_display_money
 
       typelize source: ['Record<string, unknown>', nullable: true]

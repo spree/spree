@@ -206,10 +206,7 @@ module Spree
       end
 
       def resolve_address_id(prefixed_id)
-        return unless cart.customer
-
-        decoded = Spree::Address.decode_prefixed_id(prefixed_id)
-        decoded ? cart.customer.addresses.find_by(id: decoded)&.id : nil
+        cart.selectable_address(prefixed_id)&.id
       end
 
       def assign_market
@@ -255,12 +252,13 @@ module Spree
 
       # Three-way dispatch on the cart→checkout transition:
       # entering checkout → Reserve, mid-checkout mutation → Extend, reverting to cart → Release.
+      # A new destination reserves again, because it can move the units to another origin.
       # A failed Reserve raises so the enclosing transaction rolls back and the
       # outer rescue surfaces the error to the API caller.
       def sync_stock_reservations(was_in_checkout:)
         if !cart.in_checkout?
           Spree::StockReservations::Release.call(cart: cart) if was_in_checkout
-        elsif was_in_checkout
+        elsif was_in_checkout && !@destination_changed && !@new_delivery_destination
           Spree::StockReservations::Extend.call(cart: cart)
         else
           result = Spree::StockReservations::Reserve.call(cart: cart)

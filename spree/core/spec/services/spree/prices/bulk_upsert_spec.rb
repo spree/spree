@@ -94,7 +94,7 @@ RSpec.describe Spree::Prices::BulkUpsert do
     end
 
     it 'touches the variant (and via touch: true, the product) after an upsert' do
-      Timecop.freeze(Time.current.change(usec: 0)) do
+      freeze_time do
         variant.update_columns(updated_at: 1.day.ago)
         product.update_columns(updated_at: 1.day.ago)
 

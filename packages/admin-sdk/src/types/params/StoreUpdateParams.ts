@@ -1,10 +1,22 @@
 // This file is auto-generated from the request schemas in docs/api-reference by `pnpm generate:params`. Do not edit directly.
 
+import type { LocaleCode } from '../generated'
+import type { TimeZone } from '../generated'
+import type { WeightUnit } from '../generated'
+
 export type StoreUpdateParams = {
   name?: string
-  admin_locale?: string
-  timezone?: string
-  weight_unit?: 'g' | 'kg' | 'lb' | 'oz'
+  /**
+   * The storefront's default page title, in the store's default language. Translate it through the
+   * translations endpoints.
+   */
+  seo_title?: string | null
+  /** The storefront's default meta description, in the store's default language. */
+  meta_description?: string | null
+  /** The language the dashboard opens in for every staff member; null lets each use their own. */
+  admin_locale?: LocaleCode | null
+  timezone?: TimeZone
+  weight_unit?: WeightUnit
   unit_system?: 'metric' | 'imperial'
   /**
    * The store-wide default for what anonymous visitors can see. Channels fall back to it when they
@@ -72,6 +84,19 @@ export type StoreUpdateParams = {
   auto_approve_sellers?: boolean
   /** Puts a seller product on sale the moment it is submitted, with no review. */
   auto_approve_seller_products?: boolean
+  /** Lets sellers attach downloadable files to their own products. */
+  seller_digital_assets_enabled?: boolean
+  /**
+   * The content types a seller's file may have, checked against the file's own signature where it
+   * has one. An entry names one type or, with `*` as the subtype, a whole family. The operator's
+   * own uploads are not restricted.
+   */
+  seller_digital_asset_content_types?: string[]
+  /**
+   * Sends a seller product already on sale back to review when the seller adds or replaces a file
+   * on it.
+   */
+  review_seller_digital_asset_changes?: boolean
   /** When false, transactional seller emails (approval, payouts and so on) are not sent. */
   send_seller_transactional_emails?: boolean
   /**

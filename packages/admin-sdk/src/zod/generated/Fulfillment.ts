@@ -1,6 +1,7 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
 import type Fulfillment from '../../types/generated/Fulfillment';
+import { CustomFieldSchema } from './CustomField';
 import { DeliverySchema } from './Delivery';
 import { DeliveryMethodSchema } from './DeliveryMethod';
 import { DeliveryRateSchema } from './DeliveryRate';
@@ -34,6 +35,7 @@ export const FulfillmentSchema = z.object({
   stock_location: StockLocationSchema.optional(),
   delivery_rates: z.array(DeliveryRateSchema).optional(),
   tax_lines: z.array(TaxLineSchema).optional(),
+  custom_fields: z.array(CustomFieldSchema).optional(),
   external_references: z.record(z.string(), z.string()),
   metadata: z.record(z.string(), z.unknown()),
   created_at: z.string(),
@@ -71,6 +73,7 @@ export const FulfillmentSchema = z.object({
   stock_location: z.ZodOptional<z.ZodType<Exclude<Fulfillment['stock_location'], undefined>>>;
   delivery_rates: z.ZodOptional<z.ZodType<Exclude<Fulfillment['delivery_rates'], undefined>>>;
   tax_lines: z.ZodOptional<z.ZodType<Exclude<Fulfillment['tax_lines'], undefined>>>;
+  custom_fields: z.ZodOptional<z.ZodType<Exclude<Fulfillment['custom_fields'], undefined>>>;
   external_references: z.ZodType<Fulfillment['external_references']>;
   metadata: z.ZodType<Fulfillment['metadata']>;
   created_at: z.ZodType<Fulfillment['created_at']>;

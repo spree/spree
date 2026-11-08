@@ -13,18 +13,18 @@ Gem::Specification.new do |s|
   s.metadata = {
     'bug_tracker_uri' => 'https://github.com/spree/spree/issues',
     'changelog_uri' => "https://github.com/spree/spree/releases/tag/v#{s.version}",
-    'documentation_uri' => 'https://docs.spreecommerce.org/',
+    'documentation_uri' => 'https://spreecommerce.org/docs/',
     'source_code_uri' => "https://github.com/spree/spree/tree/v#{s.version}",
   }
 
   s.required_ruby_version = '>= 3.2'
 
-  s.files         = Dir["{app,config,db,lib,vendor}/**/*", "Rakefile", "LICENSE", "README.md"].reject { |f| f.match(/^spec/) && !f.match(/^spec\/fixtures/) }
+  s.files         = Dir["{app,config,db,lib,vendor}/**/*", "openapi/*.yaml", "Rakefile", "LICENSE", "README.md"].reject { |f| f.match(/^spec/) && !f.match(/^spec\/fixtures/) }
   s.require_paths = ['lib']
 
   s.add_development_dependency 'rswag-specs'
 
-  s.add_dependency 'typelizer', '~> 0.11.0'
+  s.add_dependency 'typelizer', '~> 0.14.0'
 
   s.add_dependency 'spree_core', s.version
 end

@@ -7,8 +7,6 @@ module Spree
           %i[state_abbr country_iso].each { |key| _attributes.delete(key) }
 
           typelize customer_id: [:string, nullable: true],
-                   owner_id: [:string, nullable: true],
-                   owner_type: [:string, nullable: true],
                    latitude: [:number, nullable: true],
                    longitude: [:number, nullable: true],
                    metadata: 'Record<string, unknown>'
@@ -29,14 +27,9 @@ module Spree
 
           prefixed_id_attributes customer_id: :customer_owner
 
-          # Who the row belongs to — a customer's book, a company node's, or a
-          # seller's billing address. `customer_id` above stays as the
-          # customer-only shorthand the customers surface reads.
-          prefixed_id_attributes :owner
+          one :owner, resource: proc { Spree.api.admin_address_owner_serializer }
 
-          attribute :owner_type do |address|
-            Spree::Base.polymorphic_api_type(address.owner_type)
-          end
+          expandable_custom_fields admin: true
         end
       end
     end

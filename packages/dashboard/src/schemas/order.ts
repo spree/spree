@@ -1,10 +1,5 @@
-import {
-  isDecimalString,
-  type LineItem,
-  multiplyMoney,
-  type OrderUpdateParams,
-  sumMoney,
-} from '@spree/admin-sdk'
+import type { LineItem, OrderUpdateParams } from '@spree/admin-sdk'
+import { FEE_KINDS, isDecimalString, multiplyMoney, subsetOf, sumMoney } from '@spree/core'
 import { fulfilledQuantities, type GroupableFulfillment, i18n } from '@spree/dashboard-core'
 import { z } from 'zod/v4'
 
@@ -32,6 +27,11 @@ export const newOrderFormSchema = z.object({
   // Empty string = "use store default" (resolved server-side via
   // Order#ensure_channel_presence).
   channel_id: z.string(),
+  // Empty strings fall back to the store's default market, the market's
+  // currency and its default language. A market has exactly one currency.
+  market_id: z.string(),
+  currency: z.string(),
+  locale: z.string(),
 })
 
 export type NewOrderFormValues = z.infer<typeof newOrderFormSchema>
@@ -47,18 +47,23 @@ export const NEW_ORDER_DEFAULTS: NewOrderFormValues = {
   po_number: '',
   coupon_code: '',
   channel_id: '',
+  market_id: '',
+  currency: '',
+  locale: '',
 }
 
 /**
- * Fee kinds offered when adding a manual fee to an order. The backend accepts
- * any string, so this is the curated admin-facing set, not a DB constraint.
+ * Fee kinds offered when adding a manual fee to an order. `exchange` is left
+ * out: Spree writes it itself, so it is labelled on the order but never offered.
  */
-export const FEE_KINDS = ['surcharge', 'handling', 'gift_wrap', 'cod', 'payment', 'duty'] as const
-
-export type FeeKind = (typeof FEE_KINDS)[number]
-
-/** Kinds Spree writes itself — labelled on the order, never offered when adding a fee. */
-export const SYSTEM_FEE_KINDS = ['exchange'] as const
+export const MANUAL_FEE_KINDS = subsetOf(FEE_KINDS, [
+  'surcharge',
+  'handling',
+  'gift_wrap',
+  'cod',
+  'payment',
+  'duty',
+])
 
 /**
  * One row of the order edit table. Everything here is a primitive on purpose:
@@ -108,7 +113,11 @@ export const orderEditItemSchema = z
   .superRefine((item, ctx) => {
     // Neither case sends a price, so refusing the form over one would block a
     // legitimate removal.
-    if (!item.removed && !item.revert_price && !/^\d+(\.\d+)?$/.test(item.price)) {
+    if (
+      !item.removed &&
+      !item.revert_price &&
+      !(isDecimalString(item.price) && !item.price.startsWith('-'))
+    ) {
       ctx.addIssue({
         code: 'custom',
         path: ['price'],

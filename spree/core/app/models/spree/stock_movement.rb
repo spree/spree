@@ -58,6 +58,7 @@ module Spree
     validates :quantity, numericality: { greater_than: 0 }, allow_nil: true,
                          if: -> { allocated? || released? || shipped? }
     validates :reason, presence: true, if: :adjusted?
+    validates :reason, length: { maximum: 255 }, allow_blank: true
 
     scope :recent, -> { order(created_at: :desc) }
     KINDS.each do |movement_kind|

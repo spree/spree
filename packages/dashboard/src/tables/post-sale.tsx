@@ -1,4 +1,5 @@
 import type { Claim, Exchange, Return } from '@spree/admin-sdk'
+import { CLAIM_STATUSES, EXCHANGE_STATUSES, RETURN_STATUSES } from '@spree/core'
 import { defineTable, Money } from '@spree/dashboard-core'
 import { RelativeTime, StatusBadge } from '@spree/dashboard-ui'
 import { RepeatIcon, RotateCcwIcon, ShieldAlertIcon } from '@spree/dashboard-ui/icons'
@@ -28,7 +29,7 @@ function statusLabel(value: string): string {
   return translatedLabel('admin.post_sale.statuses', value)
 }
 
-function statusColumn(values: string[]) {
+function statusColumn(values: readonly string[]) {
   return {
     key: 'status',
     label: i18n.t('admin.fields.status.label'),
@@ -81,7 +82,7 @@ defineTable<Return>('returns', {
       default: true,
       render: (r) => numberCell(r),
     },
-    statusColumn(['requested', 'approved', 'received', 'refunded', 'canceled']),
+    statusColumn(RETURN_STATUSES),
     orderColumn<Return>(),
     {
       key: 'refund_total',
@@ -112,7 +113,7 @@ defineTable<Exchange>('exchanges', {
       default: true,
       render: (e) => numberCell(e),
     },
-    statusColumn(['requested', 'approved', 'received', 'fulfilled', 'canceled']),
+    statusColumn(EXCHANGE_STATUSES),
     orderColumn<Exchange>(),
     {
       key: 'price_difference',
@@ -143,7 +144,7 @@ defineTable<Claim>('claims', {
       default: true,
       render: (c) => numberCell(c),
     },
-    statusColumn(['open', 'approved', 'resolved', 'denied', 'canceled']),
+    statusColumn(CLAIM_STATUSES),
     orderColumn<Claim>(),
     createdColumn<Claim>(),
   ],

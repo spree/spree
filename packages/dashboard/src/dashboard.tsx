@@ -11,6 +11,7 @@ import './api-client-setup'
 import './i18n-setup'
 import './nav/default'
 import './nav/settings'
+import './nav/enterprise-previews'
 import './search/create-actions'
 import './search/default'
 

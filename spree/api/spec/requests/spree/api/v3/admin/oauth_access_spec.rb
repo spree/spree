@@ -244,7 +244,7 @@ RSpec.describe 'Admin API OAuth access', type: :request do
                      'X-Spree-Store-Id' => other.prefixed_id }
 
       expect(response).to have_http_status(:ok)
-      expect(assigns(:current_store) || controller.send(:current_store)).to eq(store)
+      expect(controller.send(:current_store)).to eq(store)
     end
   end
 end

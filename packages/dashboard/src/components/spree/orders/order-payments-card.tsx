@@ -1,5 +1,11 @@
 import type { Order, Payment } from '@spree/admin-sdk'
-import { adminClient, currencyParts, Money } from '@spree/dashboard-core'
+import {
+  adminClient,
+  currencyParts,
+  Money,
+  useMetadataSheet,
+  ViewMetadataMenuItem,
+} from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -188,15 +194,8 @@ export function PaymentsCard({ order }: { order: Order }) {
                       currency={order.currency}
                       // Capturing or voiding a grouped payment acts on every
                       // order in the checkout, so this page only links out.
-                      canCapture={
-                        !grouped && (payment.status === 'checkout' || payment.status === 'pending')
-                      }
-                      canVoid={
-                        !grouped &&
-                        (payment.status === 'checkout' ||
-                          payment.status === 'pending' ||
-                          payment.status === 'completed')
-                      }
+                      canCapture={!grouped && payment.can_capture}
+                      canVoid={!grouped && payment.can_void}
                       onCapture={async () => {
                         if (
                           await confirm({
@@ -249,6 +248,7 @@ function PaymentActionsMenu({
 }) {
   const { t } = useTranslation()
   const [detailsOpen, setDetailsOpen] = useState(false)
+  const metadataSheet = useMetadataSheet()
   const dashboardUrl = payment.gateway_dashboard_payment_url
 
   return (
@@ -275,6 +275,10 @@ function PaymentActionsMenu({
               </a>
             </DropdownMenuItem>
           )}
+          <ViewMetadataMenuItem
+            metadata={payment.metadata}
+            onClick={() => metadataSheet.show(payment.metadata, payment.number)}
+          />
           {canCapture && (
             <DropdownMenuItem onClick={onCapture}>
               <CreditCardIcon className="size-4" />
@@ -295,6 +299,7 @@ function PaymentActionsMenu({
         open={detailsOpen}
         onOpenChange={setDetailsOpen}
       />
+      {metadataSheet.sheet}
     </>
   )
 }

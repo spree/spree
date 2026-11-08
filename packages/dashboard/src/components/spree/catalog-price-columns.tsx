@@ -1,4 +1,5 @@
 import type { CatalogPrice } from '@spree/admin-sdk'
+import { CATALOG_PRICE_SOURCES, subsetOf } from '@spree/core'
 import { Money } from '@spree/dashboard-core'
 import type { ProductMembershipRow, SubRowLayout } from '@spree/dashboard-ui'
 import {
@@ -11,7 +12,7 @@ import {
 } from '@spree/dashboard-ui'
 import i18n from 'i18next'
 
-const AGREEMENT_SOURCES = ['explicit', 'automatic'] as const
+const AGREEMENT_SOURCES = subsetOf(CATALOG_PRICE_SOURCES, ['explicit', 'automatic'])
 
 /** Where the copy comes from: the catalog's strings, or a page's own. */
 const CATALOG_NAMESPACE = 'admin.catalogs.prices'
@@ -83,7 +84,7 @@ export function catalogPriceColumns({
  * catalog has every reason to assume it prices what it lists.
  */
 function PriceSourceBadge({ source, namespace }: { source: string; namespace: string }) {
-  const fromAgreement = (AGREEMENT_SOURCES as readonly string[]).includes(source)
+  const fromAgreement = AGREEMENT_SOURCES.includes(source)
   const help = text(namespace, `source_help.${source}`)
 
   return (

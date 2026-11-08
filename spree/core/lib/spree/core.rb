@@ -39,8 +39,6 @@ require 'ransack'
 require 'active_storage_validations'
 require 'wannabe_bool'
 require 'geocoder'
-
-require 'safely_block'
 require 'ar_lazy_preload'
 require 'sqids'
 
@@ -125,7 +123,6 @@ module Spree
       collections: :default,
       stock_location_stock_levels: :default,
       coupon_codes: :default,
-      themes: :default,
       addresses: :default,
       gift_cards: :default,
       webhooks: :default,
@@ -135,7 +132,8 @@ module Spree
       stock_reservations: :default,
       tax_identifiers: :default,
       data_requests: :default,
-      payouts: :default
+      payouts: :default,
+      maintenance_tasks: :default
     ).tap do |queues|
       # @deprecated The taxons queue was renamed to categories in 6.0; removed in 6.1.
       queues.define_singleton_method(:taxons) do
@@ -325,6 +323,22 @@ module Spree
   # @return [Array<Class>]
   singleton_class.delegate :tax_providers, :tax_providers=, to: :spree_config
 
+  # Extensions that copy their own cart data onto the order a cart becomes.
+  # Each entry is a class with a class-level +call(cart:, order:,
+  # line_item_map:)+ (a class, so it is re-resolved when code reloads in
+  # development; see {.refresh_provider_registries!}), where the map
+  # pairs each cart line item with its copy on the order. Both copies run them
+  # — checkout ({Spree::Carts::Complete}) and the draft-order copy
+  # ({Spree::Orders::CreateFromCart}) — inside their transaction, once the
+  # order's line items exist, so an entry that raises rolls the order back.
+  #
+  # Append, never assign, so an extension does not drop what another added:
+  #
+  #   Spree.cart_copiers << MyApp::CopyEngravings
+  #
+  # @return [Array<Class>]
+  singleton_class.delegate :cart_copiers, :cart_copiers=, to: :spree_config
+
   # Pricing engines a store can be pointed at. Connector gems append their own,
   # so a merchant picks from what is actually installed.
   #
@@ -402,7 +416,8 @@ module Spree
   def self.refresh_provider_registries!
     [Rails.application.config.spree.delivery_rate_providers,
      Rails.application.config.spree.fulfillment_providers,
-     Rails.application.config.spree.pickup_point_providers].compact.each do |registry|
+     Rails.application.config.spree.pickup_point_providers,
+     Rails.application.config.spree.cart_copiers].compact.each do |registry|
       registry.map! { |entry| entry.is_a?(Module) && entry.name ? entry.name.constantize : entry }
     end
   end
@@ -454,6 +469,19 @@ module Spree
     Spree::Deprecation.warn('Spree.metafields is deprecated and will be removed in Spree 6.1. Use Spree.custom_fields instead.') if defined?(Spree::Deprecation)
     custom_fields
   end
+
+  # Registered maintenance task class names — the tasks an operator can run
+  # from the dashboard, the Admin API or the CLI
+  # (docs/plans/6.0-maintenance-tasks.md). Extensions append their own from an
+  # initializer:
+  #
+  #   Spree.maintenance_tasks << 'SpreeReviews::MaintenanceTasks::RecountRatings'
+  #
+  # Class names rather than classes, so registration is safe at initializer
+  # time and survives code reloading in development.
+  #
+  # @return [Array<String, Class>]
+  singleton_class.delegate :maintenance_tasks, :maintenance_tasks=, to: :spree_config
 
   # Registry mapping a numbered resource to the generator that produces its
   # document numbers. With no entry, the store's `document_number_format`
@@ -592,7 +620,7 @@ module Spree
     def core_dependency?(name)
       return false unless defined?(Spree::Dependencies)
 
-      Spree::Dependencies.class::INJECTION_POINTS.include?(name) ||
+      Spree::Dependencies.injection_point?(name) ||
         Spree::Dependencies.class::LEGACY_WORKFLOW_KEYS.key?(name) ||
         Spree::Dependencies.class::LEGACY_SERVICE_KEYS.key?(name) ||
         Spree::Dependencies.class::RENAMED_SERVICE_KEYS.key?(name)
@@ -644,6 +672,7 @@ require 'spree/core/version'
 require 'spree/core/number_generator'
 require 'spree/number_generators/registry'
 require 'spree/migrations'
+require 'spree/upgrade'
 require 'spree/validators'
 require 'spree/core/engine'
 
@@ -651,6 +680,7 @@ require 'spree/i18n'
 require 'spree/iso_data'
 require 'spree/localized_number'
 require 'spree/measurement'
+require 'spree/time_zones'
 require 'spree/translations'
 require 'spree/money'
 require 'spree/service_module'

@@ -6,7 +6,7 @@ module Spree
         # has a middle: `shipped_at` is when the units left the source,
         # `received_at` when the destination finished counting them in.
         class StockTransferSerializer < V3::StockTransferSerializer
-          typelize status: :string,
+          typelize status: [:string, enum: Spree::StockTransfer.statuses, enum_type_name: 'StockTransferStatus'],
                    notes: 'string | null',
                    items_count: :number,
                    quantity_shipped_total: :number,

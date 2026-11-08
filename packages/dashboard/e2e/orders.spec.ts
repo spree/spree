@@ -3,9 +3,11 @@ import { fileURLToPath } from 'node:url'
 import { expect, type Page, test } from '@playwright/test'
 import {
   adminRequest,
+  createPlacedOrder,
   FIXTURE_BOGUS_GATEWAY,
   FIXTURE_BOGUS_ORDER_EMAIL,
   FIXTURE_BOGUS_TRANSACTION_ID,
+  FIXTURE_PROMO_CUSTOMER_EMAIL,
   FIXTURE_PROMO_PRODUCT,
   fillAddressForm,
   login,
@@ -98,6 +100,44 @@ test.describe('new order', () => {
     await expect(page).toHaveURL(new RegExp(`/${creds.store_id}/orders/or_[^/]+$`), {
       timeout: 15_000,
     })
+    // The main column's plugin slot, filled by src/testing/slot-probes.tsx.
+    await expect(page.getByText('Slot probe: order.form_main')).toBeVisible()
+  })
+
+  test('picking a market switches the currency and locale to that market', async ({ page }) => {
+    const creds = await login(page)
+    await page.goto(NEW_ORDER_PATH(creds.store_id))
+    await expect(page.getByRole('heading', { name: CTA })).toBeVisible({ timeout: 15_000 })
+
+    await page.locator('#order-market').click()
+    await page.getByRole('option', { name: 'Europe' }).click()
+
+    await expect(page.locator('#order-currency')).toContainText('EUR')
+    await expect(page.locator('#order-currency')).toBeDisabled()
+    await expect(page.locator('#order-locale')).toContainText('DE')
+  })
+
+  test('asks before a market change removes the picked items', async ({ page }) => {
+    const creds = await login(page)
+    await page.goto(NEW_ORDER_PATH(creds.store_id))
+    await expect(page.getByRole('heading', { name: CTA })).toBeVisible({ timeout: 15_000 })
+
+    await fillNewOrderForm(page, `e2e-context-${Date.now()}@example.com`)
+    const itemRow = page.getByRole('cell', { name: new RegExp(FIXTURE_PROMO_PRODUCT, 'i') })
+    await expect(itemRow).toBeVisible()
+
+    await page.locator('#order-market').click()
+    await page.getByRole('option', { name: 'Europe' }).click()
+    const dialog = page.getByRole('dialog')
+    await dialog.getByRole('button', { name: /cancel/i }).click()
+    await expect(itemRow).toBeVisible()
+    await expect(page.locator('#order-currency')).not.toContainText('EUR')
+
+    await page.locator('#order-market').click()
+    await page.getByRole('option', { name: 'Europe' }).click()
+    await dialog.getByRole('button', { name: /change and remove items/i }).click()
+    await expect(itemRow).toBeHidden()
+    await expect(page.locator('#order-currency')).toContainText('EUR')
   })
 
   // The motivating case for this form: a purchase order arrives by email and
@@ -133,6 +173,53 @@ test.describe('new order', () => {
       .filter({ has: page.locator('[data-slot="card-title"]', { hasText: /^Purchase order$/ }) })
     await expect(poCard.getByText(poNumber)).toBeVisible({ timeout: 15_000 })
     await expect(poCard.getByRole('button', { name: /test-image\.png/i })).toBeVisible()
+  })
+
+  // A division buys for itself but ships to the sites it inherits, so the
+  // picker offers its parent's address and the order keeps it.
+  test("ships an order for a division to its parent company's address", async ({ page }) => {
+    const creds = await login(page)
+    const stamp = Date.now()
+    const street = `${stamp} Harbor Road`
+    const parent = await adminRequest<{ id: string }>(page, creds, 'post', '/companies', {
+      name: `E2E Group ${stamp}`,
+    })
+    await adminRequest(page, creds, 'post', `/companies/${parent.id}/addresses`, {
+      label: 'Headquarters',
+      first_name: 'Dana',
+      last_name: 'Reyes',
+      address1: street,
+      city: 'Los Angeles',
+      postal_code: '90001',
+      country_code: 'US',
+      state_code: 'CA',
+    })
+    const divisionName = `E2E Group West ${stamp}`
+    await adminRequest(page, creds, 'post', '/companies', {
+      name: divisionName,
+      kind: 'division',
+      parent_id: parent.id,
+    })
+
+    await page.goto(NEW_ORDER_PATH(creds.store_id))
+    await expect(page.getByRole('heading', { name: CTA })).toBeVisible({ timeout: 15_000 })
+    await page.getByPlaceholder(/search companies/i).fill(divisionName)
+    await page
+      .getByRole('option', { name: new RegExp(divisionName) })
+      .first()
+      .click()
+    await fillNewOrderForm(page, `e2e-division-${stamp}@example.com`)
+
+    await page.getByRole('switch').click()
+    await page.locator('#order-shipping-address').click()
+    await page.getByRole('option', { name: new RegExp(street) }).click()
+    await expect(page.locator('#order-shipping-address')).toContainText(street)
+
+    await page.locator('button[type="submit"]').click()
+    await expect(page).toHaveURL(new RegExp(`/${creds.store_id}/orders/or_[^/]+$`), {
+      timeout: 15_000,
+    })
+    await expect(page.getByText(street)).toBeVisible({ timeout: 15_000 })
   })
 
   test('newly-created draft shows up in the drafts list', async ({ page }) => {
@@ -256,6 +343,50 @@ test.describe('order editing', () => {
     await expect(page.getByText(/^negotiated$/i)).toBeVisible()
     await expect(page.getByRole('button', { name: /reset .* to catalog price/i })).toBeVisible()
   })
+
+  // The save replaces the lines when it finishes, so a variant picked during
+  // it would be dropped without a word: Mod+S does nothing while the product
+  // picker is open.
+  test('does not save from the keyboard while the product picker is open', async ({ page }) => {
+    const creds = await login(page)
+    await page.goto(NEW_ORDER_PATH(creds.store_id))
+    await expect(page.getByRole('heading', { name: CTA })).toBeVisible({ timeout: 15_000 })
+
+    await fillNewOrderForm(page, `e2e-order-picker-${Date.now()}@example.com`)
+    await page.locator('button[type="submit"]').click()
+    await expect(page).toHaveURL(new RegExp(`/${creds.store_id}/orders/or_[^/]+$`), {
+      timeout: 15_000,
+    })
+
+    const editUrl = `${page.url()}/edit`
+    await page.goto(editUrl)
+    await expect(page.getByRole('heading', { name: /edit order/i })).toBeVisible({
+      timeout: 15_000,
+    })
+
+    // A dirty form is what the shortcut would otherwise save.
+    const quantity = page.locator('input[type="number"]').first()
+    await expect(quantity).toBeVisible({ timeout: 15_000 })
+    await quantity.fill('2')
+
+    await page.getByRole('button', { name: /^add product$/i }).click()
+    const picker = page.getByRole('dialog', { name: /add line item/i })
+    await expect(picker).toBeVisible()
+
+    const updates: string[] = []
+    page.on('request', (request) => {
+      if (request.method() === 'PATCH' && /\/orders\/or_[^/]+$/.test(request.url())) {
+        updates.push(request.url())
+      }
+    })
+    await page.keyboard.press('ControlOrMeta+s')
+
+    // Give a save that should not happen the time it would need to be sent.
+    await page.waitForTimeout(1_000)
+    expect(updates).toEqual([])
+    await expect(picker).toBeVisible()
+    await expect(page).toHaveURL(editUrl)
+  })
 })
 
 test.describe('order addresses', () => {
@@ -274,13 +405,7 @@ test.describe('order addresses', () => {
       timeout: 15_000,
     })
 
-    // Several cards on the order page carry an Actions menu, so reach the
-    // customer card's through the heading that names it.
-    const customerCard = page.locator('[data-slot="card"]').filter({
-      has: page.locator('[data-slot="card-title"]', { hasText: /^Customer$/ }),
-    })
-    await customerCard.getByRole('button', { name: /actions/i }).click()
-    await page.getByRole('menuitem', { name: /edit shipping address/i }).click()
+    await page.getByRole('button', { name: /edit shipping address/i }).click()
 
     // Named, because the country and state comboboxes inside the sheet are
     // themselves dialogs.
@@ -303,6 +428,98 @@ test.describe('order addresses', () => {
 
     await expect(dialog).toBeHidden({ timeout: 15_000 })
     await expect(page.getByText(street)).toBeVisible({ timeout: 15_000 })
+  })
+
+  test('uses the shipping address for billing', async ({ page }) => {
+    const creds = await login(page)
+    const street = `${Date.now()} Paryska Street`
+    const order = await adminRequest<{ id: string }>(page, creds, 'post', '/orders', {
+      email: `e2e-order-same-address-${Date.now()}@example.com`,
+      shipping_address: {
+        first_name: 'Ada',
+        last_name: 'Lovelace',
+        address1: street,
+        city: 'Los Angeles',
+        country_code: 'US',
+        state_code: 'CA',
+        postal_code: '90001',
+        phone: '5555555555',
+      },
+    })
+
+    await page.goto(`${ORDERS_PATH(creds.store_id)}/${order.id}`)
+    const sameAsShipping = page.getByRole('button', { name: /same as shipping address/i })
+    await expect(sameAsShipping).toBeVisible({ timeout: 15_000 })
+    await sameAsShipping.click()
+
+    await expect(sameAsShipping).toBeHidden({ timeout: 15_000 })
+    await expect(page.getByText(/^same as shipping address$/i)).toBeVisible()
+    await expect(page.getByText(street)).toHaveCount(1)
+  })
+})
+
+test.describe('order customer', () => {
+  test("changes a guest order's email", async ({ page }) => {
+    const creds = await login(page)
+    const order = await adminRequest<{ id: string }>(page, creds, 'post', '/orders', {
+      email: `e2e-guest-${Date.now()}@example.com`,
+    })
+    const newEmail = `e2e-guest-renamed-${Date.now()}@example.com`
+
+    await page.goto(`${ORDERS_PATH(creds.store_id)}/${order.id}`)
+    await page.getByRole('button', { name: /edit customer/i }).click()
+    const dialog = page.getByRole('dialog', { name: /edit customer/i })
+    await dialog.getByLabel(/email/i).fill(newEmail)
+    await dialog.getByRole('button', { name: /^save$/i }).click()
+
+    await expect(dialog).toBeHidden({ timeout: 15_000 })
+    await expect(page.getByText(newEmail)).toBeVisible({ timeout: 15_000 })
+  })
+
+  test('detaches the customer, leaving a guest order', async ({ page }) => {
+    const creds = await login(page)
+    const customers = await adminRequest<{ data: { id: string }[] }>(
+      page,
+      creds,
+      'get',
+      `/customers?q[email_eq]=${encodeURIComponent(FIXTURE_PROMO_CUSTOMER_EMAIL)}`,
+    )
+    const order = await adminRequest<{ id: string }>(page, creds, 'post', '/orders', {
+      customer_id: customers.data[0].id,
+    })
+
+    await page.goto(`${ORDERS_PATH(creds.store_id)}/${order.id}`)
+    const customerLink = page.getByRole('link', { name: 'Promo Customer', exact: true })
+    await expect(customerLink).toBeVisible({ timeout: 15_000 })
+
+    await page.getByRole('button', { name: /edit customer/i }).click()
+    const dialog = page.getByRole('dialog', { name: /edit customer/i })
+    await dialog.locator('[data-slot="combobox-clear"]').click()
+    await expect(dialog.getByLabel(/email/i)).toHaveValue(FIXTURE_PROMO_CUSTOMER_EMAIL)
+    await dialog.getByRole('button', { name: /^save$/i }).click()
+
+    await expect(dialog).toBeHidden({ timeout: 15_000 })
+    await expect(customerLink).toBeHidden({ timeout: 15_000 })
+    await expect(page.getByText(FIXTURE_PROMO_CUSTOMER_EMAIL)).toBeVisible()
+  })
+
+  test('asks before removing the customer from a placed order', async ({ page }) => {
+    const creds = await login(page)
+    const order = await createPlacedOrder(page, creds.accessToken, { quantity: 1, ship: false })
+
+    await page.goto(`${ORDERS_PATH(creds.store_id)}/${order.id}`)
+    const customerLink = page.getByRole('link', { name: 'Promo Customer', exact: true })
+    await expect(customerLink).toBeVisible({ timeout: 15_000 })
+
+    await page.getByRole('button', { name: /edit customer/i }).click()
+    const dialog = page.getByRole('dialog', { name: /edit customer/i })
+    await dialog.locator('[data-slot="combobox-clear"]').click()
+    await dialog.getByRole('button', { name: /^save$/i }).click()
+
+    await page.getByRole('button', { name: /^remove customer$/i }).click()
+
+    await expect(dialog).toBeHidden({ timeout: 15_000 })
+    await expect(customerLink).toBeHidden({ timeout: 15_000 })
   })
 })
 
@@ -402,5 +619,59 @@ test.describe('order payments', () => {
     await expect(dialog.getByText('Did not pass')).toHaveCount(2)
     await expect(dialog.getByText('CVV does not match')).toBeVisible()
     await expect(dialog.getByRole('row').filter({ hasText: '€10.00' })).toBeVisible()
+  })
+
+  test('offers Void on a payment the gateway can void', async ({ page }) => {
+    const creds = await login(page)
+    const orders = await adminRequest<{ data: { id: string }[] }>(
+      page,
+      { ...creds, store_id: creds.comma_store_id },
+      'get',
+      `/orders?q[email_eq]=${encodeURIComponent(FIXTURE_BOGUS_ORDER_EMAIL)}`,
+    )
+    await page.goto(`/${creds.comma_store_id}/orders/${orders.data[0].id}`)
+
+    await page
+      .locator('tr')
+      .filter({ hasText: FIXTURE_BOGUS_GATEWAY })
+      .getByRole('button', { name: /^actions$/i })
+      .click({ timeout: 15_000 })
+
+    await expect(page.getByRole('menuitem', { name: 'Void' })).toBeVisible()
+  })
+
+  test('hides Void when the gateway cannot void the payment', async ({ page }) => {
+    const creds = await login(page)
+    const orders = await adminRequest<{ data: { id: string }[] }>(
+      page,
+      { ...creds, store_id: creds.comma_store_id },
+      'get',
+      `/orders?q[email_eq]=${encodeURIComponent(FIXTURE_BOGUS_ORDER_EMAIL)}`,
+    )
+    const orderId = orders.data[0].id
+
+    // The fixture gateway can void, so the order payload reports a gateway
+    // that cannot (as Stripe does for a captured payment).
+    await page.route(`**/api/v3/admin/orders/${orderId}**`, async (route) => {
+      const url = new URL(route.request().url())
+      if (route.request().method() !== 'GET' || !url.pathname.endsWith(`/orders/${orderId}`)) {
+        return route.fallback()
+      }
+      const response = await route.fetch()
+      const order = await response.json()
+      order.payments = order.payments.map((payment: object) => ({ ...payment, can_void: false }))
+      await route.fulfill({ response, json: order })
+    })
+
+    await page.goto(`/${creds.comma_store_id}/orders/${orderId}`)
+
+    await page
+      .locator('tr')
+      .filter({ hasText: FIXTURE_BOGUS_GATEWAY })
+      .getByRole('button', { name: /^actions$/i })
+      .click({ timeout: 15_000 })
+
+    await expect(page.getByRole('menuitem', { name: 'View details' })).toBeVisible()
+    await expect(page.getByRole('menuitem', { name: 'Void' })).toHaveCount(0)
   })
 })

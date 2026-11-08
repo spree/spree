@@ -17,6 +17,13 @@ export const TEST_INTEGRATION_INITIALIZER = resolve(
   E2E_DIR,
   '../../../spree/api/spec/dummy/config/initializers/zz_dashboard_e2e_integration.rb',
 )
+// What the slot probes' fields write (src/testing/slot-probes.tsx), permitted
+// the way an extension permits its own attributes. Written and removed
+// alongside the files above.
+export const SLOT_PROBES_INITIALIZER = resolve(
+  E2E_DIR,
+  '../../../spree/api/spec/dummy/config/initializers/zz_dashboard_e2e_slot_probes.rb',
+)
 // The first-run setup suite runs its own Rails against its own database, so
 // its state files live apart from the main suite's.
 export const FIRST_RUN_CREDENTIALS_FILE = resolve(E2E_DIR, '.first-run.json')

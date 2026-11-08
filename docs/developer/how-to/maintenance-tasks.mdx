@@ -1,0 +1,104 @@
+---
+title: Maintenance Tasks
+description: How Spree runs the data steps of an upgrade — from the dashboard or the command line, with a progress bar and a record of who ran what.
+---
+
+## Overview
+
+An upgrade between Spree releases changes data as well as code: values move to new columns, records gain the store they belong to, old formats are converted. Each of those data steps runs as a **maintenance task**.
+
+A maintenance task gives an upgrade step what a bare rake task lacks. A step that walks rows runs in batches with a checkpoint that survives a deploy, any step can be cancelled, and every run is recorded: who started it, from where, what it reported and, if it stopped, why. A half-finished upgrade therefore tells you exactly which step stopped and what already ran.
+
+The steps of each upgrade are listed in its manifest, in the order they must run. See the [5.6 to 6.0 upgrade guide](/developer/upgrades/5.6-to-6.0) for what each one does.
+
+## Running the upgrade
+
+**From the command line**, the whole upgrade runs in order:
+
+<Tabs>
+  <Tab title="Spree CLI">
+    ```bash
+    spree upgrade
+    ```
+  </Tab>
+  <Tab title="Without CLI">
+    ```bash
+    bin/rails spree:install:migrations db:migrate
+    bin/rake spree:upgrade
+    ```
+  </Tab>
+</Tabs>
+
+The walk stops at the first step that fails or does not finish, and records nothing as complete until every step has succeeded. Re-running is safe: each step only changes data that still needs it.
+
+To re-run one step after fixing the data that stopped it, name the step:
+
+<Tabs>
+  <Tab title="Spree CLI">
+    ```bash
+    spree upgrade --step migrate_returns
+    ```
+  </Tab>
+  <Tab title="Without CLI">
+    ```bash
+    STEP=migrate_returns bin/rake spree:upgrade
+    ```
+  </Tab>
+</Tabs>
+
+A step that walks rows can preview what it would change, and a step that takes parameters reads them from `ARGS`:
+
+```bash
+DRY_RUN=1 bin/rake "spree:maintenance_tasks:perform[capture_methods]"
+ARGS='batch_size=200' bin/rake "spree:maintenance_tasks:perform[deliveries]"
+```
+
+**From the dashboard**, under Settings → Maintenance tasks, the Upgrade tab lists the steps the store still needs as a checklist, each with its notes and a Run button. This is how an operator without a shell runs an upgrade. The History tab lists every run, whether it started in the dashboard, through the Admin API or on the command line.
+
+## While a step is running
+
+The run page shows progress and what the step has reported so far. **Cancel** stops the run for good: a step that walks rows stops at its next batch, and a single-pass step stops once its pass ends. Work already committed stays committed — cancelling is not an undo.
+
+A step that fails or is cancelled is started again rather than resumed, and the new run starts from the beginning. Every step is written to be safe to repeat, so running it again leaves data that is already converted as it is. Only one run of a step can be in flight at a time, so a second start is refused.
+
+## Permissions
+
+An upgrade step converts the data of every store in the installation, not only the store you are working in, and its runs are recorded for the installation as a whole. The grant therefore sits with the other sensitive permissions:
+
+- `read_maintenance_tasks` — see the upgrade steps and run history.
+- `write_maintenance_tasks` — start and cancel runs.
+
+Only the admin role holds these by default. Error backtraces are shown only to callers who may act on a run, since they name internal paths.
+
+### Turning off the dashboard
+
+On a platform that serves many merchants from one installation, the people holding a store's admin role are not the ones who operate the installation. Set `SPREE_MAINTENANCE_TASKS_DASHBOARD_ENABLED=false` to take maintenance tasks out of the dashboard and the Admin API for everyone, API keys included. Upgrade steps then run only from the command line, as part of your deploy.
+
+```ruby server/config/initializers/spree.rb
+Spree::Config.maintenance_tasks_dashboard_enabled = false
+```
+
+The setting in an initializer takes precedence over the environment variable. See [Configuration](/developer/customization/configuration) for the other settings read from the environment.
+
+## What a store is shown
+
+A store installed fresh at this release has no historical data to convert, so its Upgrade tab says the store is up to date and that the steps of a later upgrade will appear there. For a store that was upgraded, the tab shows the release it is moving to, with the releases it has already crossed below as completed history that cannot be re-run from the dashboard. The tab starts at the 5.6 → 6.0 upgrade, the first whose runs are recorded; steps of earlier releases run only from the command line, which `spree upgrade` walks in full.
+
+Which those are comes from `Spree::UpgradeRecord`, a stamp written when an upgrade walk completes and when a store is first installed. Without a stamp — a store upgraded before this record existed — the tab assumes the release immediately below the installed one. A store that skipped releases runs the earlier steps from the command line.
+
+Stamp a boundary by hand when you know a store already ran those steps:
+
+```ruby
+Spree::UpgradeRecord.stamp!('5.6', source: 'manual')
+```
+
+## Adding an upgrade step
+
+A step is declared once, in the upgrade's `manifest.yml`, and names exactly one of:
+
+- **`task`** — a rake task, for a step that is a single pass of updates. It runs through a shared runner that records it like any other run.
+- **`task_class`** — a `Spree::MaintenanceTask` subclass, for a step that walks rows and benefits from progress, checkpoints and a dry run, or that takes parameters.
+
+A task class lists the records it walks and handles them one at a time, recording counts the run page shows. `Spree::MaintenanceTasks::Upgrade::CaptureMethods` is a worked example with a dry run.
+
+Its records must come in primary-key order, since the checkpoint is the last record handled, and they must include every record the conversion applies to, soft-deleted ones too. Each batch must be safe to run again: an interruption between applying a batch and recording its checkpoint repeats that batch. A task class named by a manifest is registered from it, so it needs no other wiring.

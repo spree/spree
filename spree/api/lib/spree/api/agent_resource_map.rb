@@ -71,15 +71,22 @@ module Spree
       # one, because the scope belongs to the resource being imported or
       # exported — creating a product import is a product write, and reading
       # its rows exposes the uploaded data. A single static key cannot say
-      # that, so these are registered read-only under the broadest key the
-      # controller can demand, and the write path stays with the endpoint.
+      # that, so these open to a caller holding the scope of any one type,
+      # in the kind the controller asks for: `read_` for an export, `write_`
+      # for an import. The endpoint then keeps to the types that key covers.
+      #
+      # Creating one stays with create_import and create_export; reading,
+      # listing and deleting go to the endpoint.
       DYNAMIC_SCOPE_RESOURCES = {
-        'imports' => { model_name: 'Spree::Import', permission: 'read_settings',
+        'imports' => { model_name: 'Spree::Import', access_kind: 'write',
                        serializer_name: 'Spree::Api::V3::Admin::ImportSerializer',
                        dashboard_path: '/settings/imports' },
-        'exports' => { model_name: 'Spree::Export', permission: 'read_settings',
+        'exports' => { model_name: 'Spree::Export', access_kind: 'read',
                        serializer_name: 'Spree::Api::V3::Admin::ExportSerializer' }
       }.freeze
+
+      # The operations the generic tools reach on those resources.
+      DYNAMIC_SCOPE_ACTIONS = %i[index show destroy].freeze
 
       class << self
         # Registers this walk as how the core map fills itself, and marks the
@@ -102,7 +109,11 @@ module Spree
           registered = resolve_collisions(controllers.filter_map { |controller| derive(controller) })
           registered.each { |entry| map.register(**entry) }
 
-          DYNAMIC_SCOPE_RESOURCES.each { |key, attributes| map.register(key: key, **attributes) }
+          DYNAMIC_SCOPE_RESOURCES.each do |key, attributes|
+            map.register(key: key, permission: nil, **attributes.except(:access_kind),
+                         api_paths: dynamic_scope_paths(attributes[:model_name]),
+                         access_permissions: type_permissions(attributes[:model_name], attributes[:access_kind]))
+          end
 
           registered.size + DYNAMIC_SCOPE_RESOURCES.size
         end
@@ -140,6 +151,15 @@ module Spree
           candidates.flat_map { |entry| Array(entry[:api_paths]).to_a }.
             group_by(&:first).
             transform_values { |pairs| pairs.map(&:last).min_by { |path| [path.count(':'), path.length] } }
+        end
+
+        # The controller served at the shallowest path, which is where a tool
+        # dispatches: for a record it is the show path, else the collection.
+        def shallowest_candidate(candidates)
+          candidates.min_by do |entry|
+            path = Array(entry[:api_paths]).to_h.values_at(:show, :index).compact.first.to_s
+            [path.empty? ? Float::INFINITY : path.count(':'), path.length]
+          end
         end
 
         def api_paths_for(controller)
@@ -190,7 +210,44 @@ module Spree
           }
         end
 
+        # The plural the resource is addressed by, taken from the model so two
+        # controllers serving the same model (a nested one and a top-level one)
+        # agree on it. The operation catalog keys its tools the same way.
+        #
+        # @param model [Class]
+        # @return [String]
+        def key_for(model)
+          model.model_name.element.pluralize
+        end
+
+        # The model a controller serves, or nil for one that serves none.
+        #
+        # @param controller [Class]
+        # @return [Class, nil]
+        def model_for(controller)
+          safely(controller.allocate, :model_class)
+        end
+
         private
+
+        # The read and delete paths of the controller serving an import or
+        # export. Without them the generic tools refused every one, though
+        # create_export tells the agent to read the export with get_resource.
+        def dynamic_scope_paths(model_name)
+          controller = controllers.find { |candidate| model_for(candidate)&.name == model_name }
+          return {} if controller.nil?
+
+          api_paths_for(controller).slice(*DYNAMIC_SCOPE_ACTIONS)
+        end
+
+        # The catalog keys that open an import or export of each registered
+        # type. A type with no scope of its own needs `read_all` or
+        # `write_all`, which no catalog key stands for, so it adds none.
+        def type_permissions(model_name, kind)
+          model_name.constantize.available_types.
+            filter_map { |type| type.required_scope.presence && "#{kind}_#{type.required_scope}" }.
+            uniq.select { |key| Spree.permissions.key?(key) }
+        end
 
         # What the controller does with its own collection. A controller that
         # disables DISTINCT has a reason — Postgres refuses it beside an
@@ -228,6 +285,11 @@ module Spree
             # withdrawn, and only when the controllers disagree about the
             # scope guarding it.
             narrowest.merge(
+              # The serializer of the controller the tools actually reach:
+              # the one whose path won below. `narrowest` is chosen on
+              # permission, which left `products` described by the catalog
+              # membership serializer and `expand: ["variants"]` refused.
+              serializer_name: shallowest_candidate(candidates)[:serializer_name],
               create_workflow_key: candidates.filter_map { |entry| entry[:create_workflow_key] }.first,
               update_workflow_key: candidates.filter_map { |entry| entry[:update_workflow_key] }.first,
               write_permission: contested ? nil : narrowest[:write_permission],
@@ -297,13 +359,6 @@ module Spree
           controller.include?(Spree::Api::V3::Admin::RoleGrantGuard)
         rescue StandardError
           false
-        end
-
-        # The plural the resource is addressed by, taken from the model so two
-        # controllers serving the same model (a nested one and a top-level one)
-        # agree on it.
-        def key_for(model)
-          model.model_name.element.pluralize
         end
 
         # `Spree::Base.for_store` falls back to the bare class for a model with

@@ -85,6 +85,7 @@ module Spree
               resource: proc { Spree.api.admin_tax_category_serializer },
               if: proc { expand?('tax_category') }
 
+          expandable_custom_fields admin: true
         end
       end
     end

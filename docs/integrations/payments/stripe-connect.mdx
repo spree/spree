@@ -81,7 +81,7 @@ export STRIPE_CONNECT_SIGNING_SECRET=whsec_...
 
 **On the schedule**, a sweep batches the seller's confirmed earnings into a payout and asks Stripe — acting as the connected account — to pay the seller's bank. The payout stays **pending** in Spree with Stripe's `po_…` id as its reference until `payout.paid` arrives, which completes it and debits the seller's balance. `payout.failed` marks it failed and releases the earnings for the next sweep.
 
-**On a refund**, Spree writes a reversal row against the seller so the books are right. The Stripe transfer itself is not reversed in open source, and a negative balance is not netted against future earnings — that money operation is Spree Enterprise.
+**On a refund**, Spree writes a reversal row against the seller and reverses their share of the Stripe transfer that paid them, so the money returns to your account. A seller who has already been paid out is left with a negative Stripe balance, which their next earnings make up before anything more is paid out to them. If the earning has not reached Stripe yet, the reversal waits and is retried once it has.
 
 Every Stripe call carries an idempotency key derived from the ledger row, so a retried request finds the movement it already made. When Stripe's answer is lost — a timeout, a 5xx — Spree parks the row as **unresolved** instead of retrying, because the key only protects a retry for as long as Stripe remembers it. Resolve those against the Stripe Dashboard: mark the payout complete with its reference if the money went, or fail it if it did not.
 

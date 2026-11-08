@@ -19,6 +19,7 @@ These are the emails your customers receive. Every one of their templates receiv
 | `spree/digital_asset_mailer/files_ready_email` | `order`, `downloads`, `resend` |
 | `spree/customer_mailer/password_reset_email` | `customer`, `reset_url` |
 | `spree/customer_mailer/data_export_email` | `download_url`, `expires_at` |
+| `spree/customer_mailer/data_request_confirmation_email` | `kind`, `confirmation_url`, `expires_at` |
 | `spree/newsletter_mailer/email_confirmation` | `confirmation_url` |
 | `spree/company_mailer/invitation_email` | `company`, `accept_url` |
 
@@ -31,9 +32,10 @@ These are the emails your customers receive. Every one of their templates receiv
 | `payment_url` | Where the customer pays for the order. |
 | `reset_url` | The password reset link, carrying its token. |
 | `accept_url` | The link that accepts the invitation, carrying its token. |
-| `confirmation_url` | The link that confirms the subscription, carrying its token. |
+| `confirmation_url` | The link that confirms the subscription or data request, carrying its token. |
+| `kind` | What a data request asks for: `access` (a copy of the data) or `erasure`. |
 | `download_url` | The signed link to the customer's data export. |
-| `expires_at` | When the data export link stops working. |
+| `expires_at` | When the data export or confirmation link stops working. |
 | `downloads` | Each file bought: `filename`, `url` (carrying its token) and `expires_at`. |
 
 ## Objects
@@ -47,7 +49,7 @@ Each object's fields, and the fields of the objects nested in it. Format an amou
 
 ### `order`
 
-- `order`: `id`, `market_id`, `withdrawal_period_ends_at`, `within_withdrawal_period`, `cart_id`, `channel_id`, `company_id`, `company_name`, `po_document_filename`, `po_document_byte_size`, `number`, `email`, `customer_note`, `po_number`, `currency`, `locale`, `total_quantity`, `coupon_code`, `fulfillment_status`, `payment_status`, `completed_at`, `item_total`, `discount_total`, `tax_total`, `included_tax_total`, `additional_tax_total`, `delivery_total`, `fee_total`, `gift_card_total`, `store_credit_total`, `total`, `amount_due`, `covered_by_store_credit`, `adjustment_total`, `customer_name`, `total_minus_store_credits`
+- `order`: `id`, `market_id`, `withdrawal_period_ends_at`, `within_withdrawal_period`, `shipping_eq_billing_address`, `cart_id`, `channel_id`, `company_id`, `company_name`, `po_document_filename`, `po_document_byte_size`, `number`, `email`, `customer_note`, `po_number`, `currency`, `locale`, `total_quantity`, `coupon_code`, `fulfillment_status`, `payment_status`, `completed_at`, `item_total`, `discount_total`, `tax_total`, `included_tax_total`, `additional_tax_total`, `delivery_total`, `fee_total`, `gift_card_total`, `store_credit_total`, `total`, `amount_due`, `covered_by_store_credit`, `adjustment_total`, `customer_name`, `total_minus_store_credits`
 - `order.discounts`: `id`, `promotion_id`, `name`, `description`, `code`, `amount`
 - `order.fees`: `id`, `label`, `kind`, `line_item_id`, `fulfillment_id`, `amount`
 - `order.items`: `id`, `variant_id`, `seller_id`, `preorder`, `preorder_ships_at`, `quantity`, `currency`, `name`, `slug`, `options_text`, `price`, `total`, `adjustment_total`, `additional_tax_total`, `included_tax_total`, `discount_total`, `pre_tax_amount`, `discounted_amount`, `compare_at_amount`, `url`, `image_url`, `sku`, `amount`

@@ -17,6 +17,26 @@ RSpec.describe Spree::Api::V3::Admin::AdminUsersController, type: :controller do
 
   before { request.headers.merge!(headers) }
 
+  describe 'GET #index' do
+    let(:headers) { bearer_headers }
+
+    before { create(:refresh_token, :for_admin, user: target, ip_address: '203.0.113.7') }
+
+    it 'sends when each member was last active' do
+      get :index, as: :json
+
+      row = response.parsed_body['data'].find { |user| user['id'] == target.prefixed_id }
+      expect(row['last_active_at']).to be_present
+    end
+
+    it 'never lists sessions, which carry IP addresses, nor inviters' do
+      get :index, params: { expand: 'sessions,sessions.user,inviter' }, as: :json
+
+      expect(response.body).not_to include('203.0.113.7')
+      expect(response.parsed_body['data']).to all(satisfy { |row| !row.key?('sessions') && !row.key?('inviter') })
+    end
+  end
+
   describe 'PATCH #update — role-grant privilege escalation' do
     context 'authenticated via a secret API key (no human identity)' do
       let(:caller_key) { create(:api_key, :secret, store: store, scopes: ['write_staff']) }

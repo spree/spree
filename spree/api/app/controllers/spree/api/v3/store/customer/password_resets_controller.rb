@@ -6,6 +6,8 @@ module Spree
       module Store
         module Customer
           class PasswordResetsController < Store::BaseController
+            include Spree::Api::V3::AllowedRedirectUrl
+
             allow_guest_storefront_access!
             rate_limit to: Spree::Api::Config[:rate_limit_password_reset],
                        within: Spree::Api::Config[:rate_limit_window].seconds,
@@ -33,26 +35,13 @@ module Spree
 
             # POST /api/v3/store/password_resets
             def create
-              redirect_url = params[:redirect_url]
-
-              # Validate redirect_url against allowed origins (secure by default).
-              # If no allowed origins are configured, redirect_url is silently ignored
-              # to prevent open redirect / token exfiltration attacks.
-              if redirect_url.present?
-                if current_store.allowed_origins.exists? && current_store.allowed_origin?(redirect_url)
-                  # redirect_url is valid — keep it
-                else
-                  redirect_url = nil
-                end
-              end
-
               user = Spree.customer_class.find_by(email: params[:email])
 
               if user
                 event_name = 'customer.password_reset_requested'
                 payload = user.event_payload_for(
                   event_name,
-                  reset_token: user.generate_token_for(:password_reset), store: current_store, redirect_url: redirect_url.presence
+                  reset_token: user.generate_token_for(:password_reset), store: current_store, redirect_url: validated_redirect_url
                 )
                 user.publish_event(event_name, payload)
               end

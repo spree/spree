@@ -2,8 +2,8 @@
 
 export type InvitationAcceptParams = {
   /**
-   * Required when the invitee has no account yet: it creates one. An existing account signs in
-   * without it.
+   * Creates the account when the invitee has none yet. An existing account confirms it is theirs
+   * with it, unless the request is already signed in as that account.
    */
   password?: string
   password_confirmation?: string

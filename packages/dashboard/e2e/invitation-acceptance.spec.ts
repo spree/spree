@@ -1,5 +1,11 @@
 import { expect, test } from '@playwright/test'
-import { invitationAcceptancePath, login } from './helpers'
+import {
+  adminApiSession,
+  adminRequest,
+  escapeRegex,
+  invitationAcceptancePath,
+  login,
+} from './helpers'
 
 test.describe('invitation lifecycle', () => {
   test('admin invites a teammate and the invitee signs up via the link', async ({
@@ -62,6 +68,97 @@ test.describe('invitation lifecycle', () => {
 
       await expect(inviteePage).not.toHaveURL(/\/login/, { timeout: 15_000 })
       await expect(inviteePage).not.toHaveURL(/\/accept-invitation/, { timeout: 15_000 })
+    } finally {
+      await inviteeContext.close()
+    }
+  })
+
+  test('someone signed in as another account is asked to sign out instead of being redirected', async ({
+    page,
+  }) => {
+    const session = await login(page)
+    const inviteeEmail = `e2e-invitee-${Date.now()}@example.com`
+    const roles = await adminRequest<{ data: { id: string }[] }>(page, session, 'get', '/roles')
+    const invitation = await adminRequest<{ id: string }>(page, session, 'post', '/invitations', {
+      email: inviteeEmail,
+      role_id: roles.data[0].id,
+    })
+    const acceptancePath = await invitationAcceptancePath(
+      page,
+      session,
+      `/api/v3/admin/invitations/${invitation.id}`,
+    )
+
+    await page.goto(acceptancePath)
+    await expect(
+      page.getByText(new RegExp(`signed in as ${escapeRegex(session.admin_email)}`, 'i')),
+    ).toBeVisible({
+      timeout: 15_000,
+    })
+    await expect(page).toHaveURL(/\/accept-invitation\//)
+
+    await page.getByRole('button', { name: /sign out/i }).click()
+    await expect(page.getByLabel(/email/i)).toHaveValue(inviteeEmail, { timeout: 15_000 })
+    await expect(page.getByRole('button', { name: /create account & accept/i })).toBeVisible()
+
+    await adminRequest(page, await adminApiSession(page), 'delete', `/invitations/${invitation.id}`)
+  })
+
+  test('someone signed in as the invited account accepts with one click', async ({
+    page,
+    browser,
+  }) => {
+    const session = await login(page)
+    const email = `e2e-returning-${Date.now()}@example.com`
+    const roles = await adminRequest<{ data: { id: string }[] }>(page, session, 'get', '/roles')
+    const invite = async () => {
+      const invitation = await adminRequest<{ id: string }>(page, session, 'post', '/invitations', {
+        email,
+        role_id: roles.data[0].id,
+      })
+      const path = await invitationAcceptancePath(
+        page,
+        session,
+        `/api/v3/admin/invitations/${invitation.id}`,
+      )
+      return { id: invitation.id, path }
+    }
+
+    const inviteeContext = await browser.newContext()
+    const inviteePage = await inviteeContext.newPage()
+    try {
+      // An account that left the store: it exists and is signed in, but holds
+      // no role here. Accepting through the API plants its session cookie.
+      const first = await invite()
+      const accepted = await inviteePage.request.post(
+        `/api/v3/admin/auth/invitations/${first.id}/accept`,
+        {
+          data: {
+            token: new URL(first.path, 'http://localhost').searchParams.get('token'),
+            password: 'e2e-password-123',
+            password_confirmation: 'e2e-password-123',
+          },
+        },
+      )
+      expect(accepted.ok(), await accepted.text()).toBeTruthy()
+      const { user } = (await accepted.json()) as { user: { id: string } }
+      await adminRequest(page, session, 'delete', `/admin_users/${user.id}`)
+
+      const second = await invite()
+      await inviteePage.goto(second.path)
+      await expect(
+        inviteePage.getByText(new RegExp(`signed in as ${escapeRegex(email)}`, 'i')),
+      ).toBeVisible({
+        timeout: 15_000,
+      })
+      await expect(inviteePage.getByLabel(/password/i)).toHaveCount(0)
+
+      await inviteePage.getByRole('button', { name: /^accept invitation$/i }).click()
+      await expect(inviteePage).toHaveURL(new RegExp(`/${session.store_id}`), { timeout: 15_000 })
+      // Permissions fetched before the role existed would leave the sidebar bare.
+      await expect(inviteePage.getByRole('link', { name: /^products$/i })).toBeVisible({
+        timeout: 15_000,
+      })
     } finally {
       await inviteeContext.close()
     }

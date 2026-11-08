@@ -110,6 +110,18 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
       expect(fulfillment.delivery_method).to eq(delivery_method)
     end
 
+    it 'refuses a delivery method from another store' do
+      delivery_method = create(:delivery_method, store: create(:store))
+
+      post :create, params: {
+        order_id: order.prefixed_id,
+        stock_location_id: shipment.stock_location.prefixed_id,
+        delivery_method_id: delivery_method.prefixed_id
+      }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+    end
+
     it "registers an already-shipped fulfillment with status: 'shipped' and an explicit cost" do
       post :create, params: {
         order_id: order.prefixed_id,

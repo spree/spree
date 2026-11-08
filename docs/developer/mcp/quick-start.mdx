@@ -43,9 +43,18 @@ Paste the URL into your MCP client. It sends you to your store, you sign in, and
 
 <Tabs>
   <Tab title="Claude Code">
+    In your Spree dashboard, go to **Settings → AI Agents**, click
+    **Connect an agent**, choose **Claude** and click **Continue**. The
+    **Claude Code** tab shows the command to run, with your client ID
+    already in it:
+
     ```bash
-    claude mcp add --transport http spree https://your-store.com/api/v3/admin/mcp
+    claude mcp add --transport http --client-id <client-id> --callback-port 3118 \
+      spree https://your-store.com/api/v3/admin/mcp
     ```
+
+    Keep `--callback-port 3118`. Claude Code calls back on `localhost`, and
+    your store only accepts the exact port that was registered.
   </Tab>
   <Tab title="Claude Desktop / claude.ai">
     **Settings → Connectors → Add custom connector**, then paste the URL.
@@ -142,7 +151,7 @@ Just ask it. It can list everything it reaches, and your assistant's own setting
 
 <CardGroup cols={2}>
   <Card title="Tool reference" icon="wrench" href="/developer/mcp/tools">
-    All 58 tools and the permission each needs.
+    The tools that ship with the server, and the permission each needs.
   </Card>
   <Card title="Permissions and consent" icon="shield-check" href="/developer/mcp/permissions">
     What you approve, and what is out of reach whatever you do.

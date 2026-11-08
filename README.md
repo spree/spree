@@ -10,6 +10,8 @@
 ·
 [Documentation](https://spreecommerce.org/docs/)
 ·
+[Free Sandbox](https://console.spree.sh)
+·
 [API](https://spreecommerce.org/docs/api-reference/)
 ·
 [Roadmap](https://github.com/spree/spree/milestones?direction=asc&sort=due_date&state=open)
@@ -67,6 +69,12 @@ The [Next.js storefront](https://github.com/spree/storefront) is one such surfac
 Run a SaaS platform where each tenant gets its own isolated store — catalog, orders, customers, payment methods and branding — with staff able to manage several tenants. Requires the [Enterprise Edition](https://spreecommerce.org/pricing).
 
 ## Getting Started
+
+### Try it in a sandbox
+
+The fastest way to see Spree is a [free sandbox](https://console.spree.sh): a hosted store with the admin dashboard and APIs, ready in your browser. Nothing to install — sign in, click **Create store**, and explore.
+
+### Install locally
 
 Copy and paste the following command to your terminal to set up Spree locally in 5 minutes:
 

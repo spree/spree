@@ -34,6 +34,7 @@ const TRANSLATIONS_ACCESSORS = {
   category: adminClient.categories.translations,
   collection: adminClient.collections.translations,
   option_type: adminClient.optionTypes.translations,
+  store: adminClient.store.translations,
 } as const
 
 export type TranslatableResourceType = keyof typeof TRANSLATIONS_ACCESSORS

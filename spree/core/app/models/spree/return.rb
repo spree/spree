@@ -165,7 +165,7 @@ module Spree
     # more than one step (part to store credit, part to the card), and store
     # credit is its own ledger rather than a Spree::Refund row.
     def refunded_total
-      refunds.sum(:amount) + store_credits.sum(:amount)
+      ledger_total(:refunds) + ledger_total(:store_credits)
     end
 
     def refundable_total
@@ -186,6 +186,13 @@ module Spree
 
     def taxed_lines
       return_line_items
+    end
+
+    private
+
+    def ledger_total(association_name)
+      rows = public_send(association_name)
+      read_association_in_memory?(association_name) ? rows.sum(0.to_d, &:amount) : rows.sum(:amount)
     end
   end
 end

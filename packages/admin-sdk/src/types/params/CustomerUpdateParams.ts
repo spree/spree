@@ -5,10 +5,6 @@ export type CustomerUpdateParams = {
   first_name?: string
   last_name?: string
   phone?: string
-  /** Optional: a customer created without one claims the account through a password reset. */
-  password?: string
-  /** Optional: a customer created without one claims the account through a password reset. */
-  password_confirmation?: string
   selected_locale?: string
   /** A `signed_id` from `files.upload()`. */
   avatar_signed_id?: string

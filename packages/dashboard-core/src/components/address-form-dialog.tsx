@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { CountryCode } from '@spree/admin-sdk'
+import { type CountryCode, isCountryCode } from '@spree/core'
 import {
   Button,
   Checkbox,
@@ -22,7 +22,7 @@ import { Controller, type DefaultValues, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { mapSpreeErrorsToForm } from '../lib/form-errors'
-import { countryCodeSchema, isCountryCode } from '../lib/iso-codes'
+import { countryCodeSchema } from '../lib/iso-codes'
 import { useOptionalStore } from '../providers/store-provider'
 import { CountryCombobox } from './country-combobox'
 import { StateCombobox, useCountryStates } from './country-state-fields'

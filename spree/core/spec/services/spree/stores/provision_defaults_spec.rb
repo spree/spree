@@ -296,6 +296,22 @@ RSpec.describe Spree::Stores::ProvisionDefaults do
     end
   end
 
+  describe 'events', :events do
+    it 'provisions without publishing events' do
+      store
+      published = []
+      allow(Spree::Events).to receive(:publish).and_wrap_original do |original, name, *rest|
+        published << name
+        original.call(name, *rest)
+      end
+
+      subject
+
+      expect(store.delivery_methods).to be_present
+      expect(published).to be_empty
+    end
+  end
+
   describe 'running twice' do
     it 'is idempotent' do
       subject

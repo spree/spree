@@ -17,6 +17,24 @@ module Spree
       end
     end
 
+    # Asks the person to confirm a data request raised from their account
+    # (`data_request.confirmation_requested`). The link goes to the validated
+    # redirect URL when the storefront supplied one, falling back to the store's
+    # storefront URL, with the confirmation token appended.
+    def data_request_confirmation_email(data_request, confirmation_token, redirect_url: nil)
+      @data_request = data_request
+      @current_store = data_request.store
+      @confirmation_url = append_token(redirect_url.presence || @current_store.storefront_url, confirmation_token)
+      @expires_at = data_request.requested_at + Spree::DataRequest::CONFIRMATION_WINDOW
+
+      with_store_locale(@current_store) do
+        mail_template(
+          { kind: data_request.kind, confirmation_url: @confirmation_url, expires_at: @expires_at.iso8601 },
+          to: data_request.email, store_url: @current_store.storefront_url
+        )
+      end
+    end
+
     # The finished subject access export (GDPR Art. 15). The link is signed
     # and expires with the request, so the file is reachable by the person who
     # asked for it and not by anyone who later reads the mailbox.

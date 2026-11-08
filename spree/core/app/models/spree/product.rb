@@ -80,8 +80,10 @@ module Spree
 
     has_many :product_option_types, -> { order(:position) }, dependent: :destroy, inverse_of: :product
     has_many :option_types, through: :product_option_types
-    has_many :product_categories, -> { order(created_at: :asc) }, class_name: 'Spree::ProductCategory', dependent: :delete_all, inverse_of: :product
-    has_many :categories, through: :product_categories, class_name: 'Spree::Category', source: :category, before_remove: :remove_category
+    has_many :product_categories, -> { order(created_at: :asc) }, class_name: 'Spree::ProductCategory',
+                                                                  dependent: :destroy, inverse_of: :product
+    has_many :categories, through: :product_categories, class_name: 'Spree::Category', source: :category,
+                          dependent: :destroy
     has_many :taxonomies, through: :categories, deprecated: true
 
     # @deprecated The classification_count column was renamed to categories_count in 6.0.
@@ -139,8 +141,8 @@ module Spree
       self.category_ids = ids
     end
 
-    has_many :product_collections, class_name: 'Spree::ProductCollection', dependent: :destroy_async, inverse_of: :product
-    has_many :collections, through: :product_collections
+    has_many :product_collections, class_name: 'Spree::ProductCollection', dependent: :destroy, inverse_of: :product
+    has_many :collections, through: :product_collections, dependent: :destroy
     has_many :catalog_products, class_name: 'Spree::CatalogProduct', dependent: :destroy_async, inverse_of: :product
     has_many :catalogs, through: :catalog_products
 
@@ -277,7 +279,9 @@ module Spree
     #   the search. Definitions are store-owned, so the caller says which store
     #   is searching; `Spree::Current.store` is the request's answer and a
     #   background caller (an export, say) passes its own.
-    scope :search, ->(query, store = Spree::Current.store) {
+    # @param audience [Symbol, nil] `:store` keeps a shopper's search off the
+    #   custom fields hidden from the storefront; `nil` is the back office
+    scope :search, ->(query, store = Spree::Current.store, audience: nil) {
       next none if query.blank?
 
       product_ids = Spree::Variant.search_by_product_name_or_sku(query).pluck(:product_id)
@@ -285,6 +289,7 @@ module Spree
       searchable_definitions = store.custom_field_definitions.
                                for_resource_type('Spree::Product').
                                searchable
+      searchable_definitions = searchable_definitions.storefront_visible if audience == :store
 
       # Only pay for the custom_field scan when some definition opts into search;
       # the leading-wildcard LIKE over spree_custom_fields can't use an index.
@@ -494,7 +499,9 @@ module Spree
     def purchasable?
       return @purchasable unless @purchasable.nil?
 
-      @purchasable = sellable_variants.any?(&:purchasable?)
+      variants_to_check = sellable_variants
+      Spree::Stock::Quantifier.preload(variants_to_check)
+      @purchasable = variants_to_check.any?(&:purchasable?)
     end
 
     def in_stock?
@@ -741,15 +748,25 @@ module Spree
       variants.active(current_currency).joins(:option_value_variants)
     end
 
+    # Units purchasable now across every variant: on hand, less what orders
+    # have taken and what checkouts are holding, at active locations, floored
+    # at zero per variant. Infinite when any variant does not track inventory.
     def total_on_hand
       @total_on_hand ||= if any_variants_not_track_inventory?
                            BigDecimal::INFINITY
+                         elsif variants.loaded?
+                           variants.sum(&:total_on_hand)
                          else
-                           if variants.loaded?
-                             variants.sum(&:total_on_hand)
-                           else
-                             stock_levels.loaded? ? stock_levels.sum(&:available_count) : stock_levels.sum('count_on_hand - allocated_count')
-                           end
+                           # The same figure in one query: the per-variant floor
+                           # needs the sums grouped before they are added up.
+                           # Unordered, since the variants' position order cannot
+                           # sit beside a GROUP BY on PostgreSQL. Holds count only
+                           # while the store reserves stock, as on each variant.
+                           levels = Spree::StockLevel.arel_table
+                           purchasable = levels[:count_on_hand] - levels[:allocated_count]
+                           purchasable -= levels[:reserved_count] if store_preference(:stock_reservations_enabled)
+                           stock_levels.with_active_stock_location.unscope(:order).group(:variant_id).
+                             sum(purchasable).values.sum { |count| [count, 0].max }
                          end
     end
 
@@ -1018,11 +1035,6 @@ module Spree
         errors.add(:base, :cannot_destroy_if_attached_to_line_items)
         throw(:abort)
       end
-    end
-
-    def remove_category(category)
-      removed_product_categories = product_categories.where(category: category)
-      removed_product_categories.each(&:remove_from_list)
     end
 
     def discontinue_on_must_be_later_than_make_active_at

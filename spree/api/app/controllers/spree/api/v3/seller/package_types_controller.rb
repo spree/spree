@@ -28,12 +28,12 @@ module Spree
             body.attribute :length, :number, nullable: true
             body.attribute :width, :number, nullable: true
             body.attribute :height, :number, nullable: true
-            body.attribute :dimensions_unit, :string, nullable: true, choices: Spree::Variant::DIMENSION_UNITS
+            body.attribute :dimensions_unit, :dimension_unit, nullable: true
             body.attribute :weight, :number,
               nullable: true,
               description: "The empty package's own weight, added to every quote."
             body.attribute :max_weight, :number, nullable: true
-            body.attribute :weight_unit, :string, nullable: true, choices: Spree::Variant::WEIGHT_UNITS
+            body.attribute :weight_unit, :weight_unit, nullable: true
             body.attribute :default, :boolean,
               description: "Makes this the box this seller's parcels are quoted with. One default per seller, so it never displaces the marketplace's."
             body.attribute :metadata, :hash, nullable: true

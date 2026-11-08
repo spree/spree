@@ -1,3 +1,4 @@
+import { CLAIM_RESOLUTIONS, type ClaimResolution, isPositiveMoney } from '@spree/core'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Button } from '../ui/button'
@@ -16,8 +17,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Switch } from '../ui/switch'
 import type { RefundMethod } from './return-dialogs'
 
-/** How a claim is settled. */
-export type ClaimResolution = 'refund' | 'replacement' | 'refund_and_replacement'
+export type { ClaimResolution }
 
 /** One claimed line, as the resolve form needs it. */
 export type ClaimLineForResolve = {
@@ -74,12 +74,10 @@ export function ClaimResolveDialog({
     .filter(([, on]) => on)
     .map(([id]) => id)
 
-  const resolutionOptions = (['refund', 'replacement', 'refund_and_replacement'] as const).map(
-    (value) => ({
-      value,
-      label: t(`admin.pages.orders.detail.claims.resolutions.${value}`),
-    }),
-  )
+  const resolutionOptions = CLAIM_RESOLUTIONS.map((value) => ({
+    value,
+    label: t(`admin.pages.orders.detail.claims.resolutions.${value}`),
+  }))
 
   const methodOptions = [
     {
@@ -92,11 +90,11 @@ export function ClaimResolveDialog({
     },
   ]
 
+  // A number input keeps `.5` as typed; the API reads only `0.5`.
+  const refundAmount = amount.startsWith('.') ? `0${amount}` : amount
   // Refunding nothing, or replacing nothing, is what the server rejects —
   // say so here instead of letting the request fail.
-  // The amount is the canonical decimal string a number input yields, so
-  // "above zero" is unsigned digits with a non-zero digit among them.
-  const positiveAmount = /^(\d+(\.\d+)?|\.\d+)$/.test(amount) && /[1-9]/.test(amount)
+  const positiveAmount = isPositiveMoney(refundAmount)
   const ready =
     (!refunding || positiveAmount) && (!sendingReplacement || chosenReplacements.length > 0)
 
@@ -211,7 +209,7 @@ export function ClaimResolveDialog({
               onSubmit({
                 resolution,
                 refundMethod,
-                amount: refunding ? amount : undefined,
+                amount: refunding ? refundAmount : undefined,
                 replacementLineItemIds: chosenReplacements,
               })
             }

@@ -36,7 +36,9 @@ module Spree
           def create
             user = Spree.admin_user_class.find_by(email: params[:email])
 
-            if user
+            # A deactivated account is treated as no account: no email is sent,
+            # and the response is the same 202.
+            if user && !account_deactivated?(user)
               event_name = 'admin_user.password_reset_requested'
               payload = user.event_payload_for(
                 event_name,
@@ -61,6 +63,10 @@ module Spree
                 status: :unprocessable_content
               )
             end
+
+            # A link sent before the account was switched off must not change
+            # its password or sign it in.
+            return render_account_deactivated if account_deactivated?(user)
 
             if user.update(password: params[:password], password_confirmation: params[:password_confirmation])
               user.publish_event('admin_user.password_reset')

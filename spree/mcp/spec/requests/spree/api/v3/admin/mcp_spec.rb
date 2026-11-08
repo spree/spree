@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'benchmark'
 
 # The endpoint, from the header down. A request spec rather than a controller
 # spec because the unit under test is the whole request: the credential, the
@@ -69,12 +68,39 @@ RSpec.describe 'Admin MCP endpoint', type: :request do
       expect(response).to have_http_status(:unauthorized)
     end
 
+    # Deactivation revokes the account's tokens; this is the check that
+    # still refuses one that survived, as on the rest of the Admin API.
+    context 'when the owner has been deactivated without the token being revoked' do
+      before do
+        token
+        admin.update_column(:deactivated_at, Time.current)
+      end
+
+      it 'refuses to list tools' do
+        post_with_token(token)
+
+        expect(response).to have_http_status(:unauthorized)
+      end
+
+      # Product status moves run in this process, not through the Admin API,
+      # so the endpoint's own check is the only thing between the token and
+      # the write.
+      it 'refuses an in-process write' do
+        product = create(:product, store: store, status: 'active')
+
+        post_with_token(token, 'tools/call', { name: 'products_archive', arguments: { 'product' => product.prefixed_id } })
+
+        expect(response).to have_http_status(:unauthorized)
+        expect(product.reload.status).to eq('active')
+      end
+    end
+
     # Parsing the bearer header must not backtrack: this header arrives
     # unauthenticated, so a pathological value is free to send.
     it 'parses a bearer header of many spaces without stalling' do
-      elapsed = Benchmark.realtime do
-        post_rpc('tools/list', headers: { 'Authorization' => "Bearer #{' ' * 50_000}x" })
-      end
+      started = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+      post_rpc('tools/list', headers: { 'Authorization' => "Bearer #{' ' * 50_000}x" })
+      elapsed = Process.clock_gettime(Process::CLOCK_MONOTONIC) - started
 
       expect(response).to have_http_status(:unauthorized)
       expect(elapsed).to be < 1.0
@@ -336,13 +362,70 @@ RSpec.describe 'Admin MCP endpoint', type: :request do
       expect(order.canceler).to eq(admin)
     end
 
-    it 'carries the workflow\'s own refusal back as a tool error' do
+    # Through 6.0.x a client that learned a 6.0.0 name keeps working, while
+    # a new listing shows only the current ones.
+    it 'still answers a 6.0.0 tool name it no longer lists' do
+      product = create(:product, store: store)
+      sku = "SKU-#{SecureRandom.hex(3)}"
+
+      listed = post_rpc('tools/list', headers: { 'Authorization' => "Bearer #{token}" }).
+               dig('result', 'tools').map { |tool| tool['name'] }
+      body = post_rpc('tools/call',
+                      { name: 'variants_create',
+                        arguments: { 'product' => product.prefixed_id, 'attributes' => { 'sku' => sku } } },
+                      headers: { 'Authorization' => "Bearer #{token}" })
+
+      expect(listed).not_to include('variants_create')
+      expect(body.dig('result', 'isError')).to be(false)
+      expect(Spree::Variant.where(sku: sku)).to exist
+    end
+
+    # The envelope is not an Admin API payload: `price` here names the file
+    # column prices come from, not an amount.
+    it 'maps an import column onto price' do
+      import = Spree::Imports::Products.new(store: store, user: admin)
+      import.attachment.attach(io: StringIO.new("Name,Price\nBobble hat,29.00\n"),
+                               filename: 'hats.csv', content_type: 'text/csv')
+      import.save!
+      Spree.import_start_mapping_workflow.call(import: import)
+
+      body = post_rpc('tools/call',
+                      { name: 'propose_import_mapping',
+                        arguments: { 'id' => import.prefixed_id, 'mapping' => { 'name' => 'Name', 'price' => 'Price' } } },
+                      headers: { 'Authorization' => "Bearer #{token}" })
+
+      expect(body['error']).to be_nil
+      expect(body.dig('result', 'isError')).to be(false)
+      expect(body.dig('result', 'structuredContent', 'mapped')).to include('price' => 'Price')
+      expect(import.mappings.find_by(schema_field: 'price').file_column).to eq('Price')
+    end
+
+    # The envelope is not checked, but a write a tool dispatches is: an
+    # amount still has to be canonical when it reaches the Admin API.
+    it 'still refuses a malformed price on a dispatched write' do
+      product = create(:product, store: store)
+      variant = product.default_variant
+      price_before = variant.amount_in(store.default_currency)
+
+      body = post_rpc('tools/call',
+                      { name: 'update_resource',
+                        arguments: { 'resource' => 'variants', 'id' => variant.prefixed_id,
+                                     'parent_id' => product.prefixed_id,
+                                     'attributes' => { 'price' => '1,599.99' } } },
+                      headers: { 'Authorization' => "Bearer #{token}" })
+
+      expect(body.dig('result', 'isError')).to be(true)
+      expect(body.dig('result', 'content', 0, 'text')).to include('decimal string')
+      expect(variant.reload.amount_in(store.default_currency)).to eq(price_before)
+    end
+
+    it 'carries the endpoint\'s own refusal back as a tool error' do
       body = post_rpc('tools/call',
                       { name: 'orders_cancel', arguments: { 'order' => 'order_nope' } },
                       headers: { 'Authorization' => "Bearer #{token}" })
 
       expect(body.dig('result', 'isError')).to be(true)
-      expect(body.dig('result', 'content').first['text']).to include('order')
+      expect(body.dig('result', 'content').first['text']).to include('Order not found')
     end
   end
 

@@ -13,6 +13,7 @@ export { DeliveryMethodRuleSchema, type DeliveryMethodRule } from './DeliveryMet
 export { DeliveryProfileSchema, type DeliveryProfile } from './DeliveryProfile';
 export { DeliveryRateSchema, type DeliveryRate } from './DeliveryRate';
 export { DeliveryZoneSchema, type DeliveryZone } from './DeliveryZone';
+export { DigitalAssetSchema, type DigitalAsset } from './DigitalAsset';
 export { ExchangeSchema, type Exchange } from './Exchange';
 export { ExchangeLineItemSchema, type ExchangeLineItem } from './ExchangeLineItem';
 export { ExportSchema, type Export } from './Export';
@@ -51,6 +52,7 @@ export { ShippingLabelSchema, type ShippingLabel } from './ShippingLabel';
 export { StateSchema, type State } from './State';
 export { StockLevelSchema, type StockLevel } from './StockLevel';
 export { StockLocationSchema, type StockLocation } from './StockLocation';
+export { StoreSchema, type Store } from './Store';
 export { TaxIdentifierSchema, type TaxIdentifier } from './TaxIdentifier';
 export { TeamMemberSchema, type TeamMember } from './TeamMember';
 export { TransferSchema, type Transfer } from './Transfer';
