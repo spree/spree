@@ -39,7 +39,24 @@ RSpec.describe SpreeStripe::PayoutProvider do
                          status: 'completed', metadata: { 'stripe_charge_id' => 'ch_1' })
       end
 
-      before { payment }
+      before do
+        payment
+        allow(Stripe::Charge).to receive(:retrieve).
+          and_return(Stripe::StripeObject.construct_from(id: 'ch_1', currency: 'usd'))
+      end
+
+      it 'falls back to the platform balance when the charge is in another currency' do
+        allow(Stripe::Charge).to receive(:retrieve).
+          and_return(Stripe::StripeObject.construct_from(id: 'ch_1', currency: 'gbp'))
+
+        expect(Stripe::Transfer).to receive(:create) do |payload, _options|
+          expect(payload).not_to have_key(:source_transaction)
+          expect(payload[:transfer_group]).to eq(order.number)
+          Stripe::StripeObject.construct_from(id: 'tr_1')
+        end
+
+        described_class.new.transfer!(seller_transfer)
+      end
 
       it 'draws on the charge and leaves its group alone' do
         expect(Stripe::Transfer).to receive(:create) do |payload, _options|

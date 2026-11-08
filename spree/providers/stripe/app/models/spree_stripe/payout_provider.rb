@@ -161,6 +161,7 @@ module SpreeStripe
       seller = seller_transfer.seller
       gateway = gateway_for(seller.store)
       source_charge = source_charge_for(seller_transfer, gateway)
+      source_charge = nil unless charge_currency_matches?(source_charge, seller_transfer, gateway)
 
       transfer = Stripe::Transfer.create(
         {
@@ -395,6 +396,21 @@ module SpreeStripe
     # payment intent rather than the charge it produced — sending that would
     # fail every card-funded transfer on an id Stripe cannot use. The charge
     # is recorded on the payment when its session completes.
+    #
+    # Stripe refuses a transfer drawn from a charge in another currency
+    # ("must be the same as the transfer currency"), and a sale can be priced
+    # in a currency the charge was not taken in. The row is then funded from
+    # the platform balance instead of failing on every retry.
+    def charge_currency_matches?(charge_id, seller_transfer, gateway)
+      return true if charge_id.blank?
+
+      charge = Stripe::Charge.retrieve(charge_id, gateway.api_options)
+      charge.currency.to_s.casecmp?(seller_transfer.currency.to_s)
+    rescue Stripe::InvalidRequestError
+      # A charge Stripe cannot find cannot fund anything either.
+      false
+    end
+
     def source_charge_for(seller_transfer, gateway)
       payment = seller_transfer.order.settlement_payments.valid.completed.
                 find { |candidate| candidate.payment_method_id == gateway.id }
