@@ -39,23 +39,39 @@ RSpec.describe SpreeStripe::PayoutProvider do
                          status: 'completed', metadata: { 'stripe_charge_id' => 'ch_1' })
       end
 
-      before do
-        payment
-        allow(Stripe::Charge).to receive(:retrieve).
-          and_return(Stripe::StripeObject.construct_from(id: 'ch_1', currency: 'usd'))
-      end
+      before { payment }
 
-      it 'falls back to the platform balance when the charge is in another currency' do
-        allow(Stripe::Charge).to receive(:retrieve).
-          and_return(Stripe::StripeObject.construct_from(id: 'ch_1', currency: 'gbp'))
+      # "The currency of source_transaction's balance transaction (usd) must be
+      # the same as the transfer currency (gbp)" refused the earning on every retry.
+      it 'falls back to the platform balance when Stripe refuses the charge\'s currency' do
+        refusal = Stripe::InvalidRequestError.new(
+          "The currency of source_transaction's balance transaction (usd) must be the same as the transfer currency (gbp)",
+          'source_transaction'
+        )
+        calls = []
+        allow(Stripe::Transfer).to receive(:create) do |payload, options|
+          calls << [payload, options]
+          raise refusal if calls.size == 1
 
-        expect(Stripe::Transfer).to receive(:create) do |payload, _options|
-          expect(payload).not_to have_key(:source_transaction)
-          expect(payload[:transfer_group]).to eq(order.number)
           Stripe::StripeObject.construct_from(id: 'tr_1')
         end
 
         described_class.new.transfer!(seller_transfer)
+
+        expect(seller_transfer.reload).to be_completed
+        retry_payload, retry_options = calls.last
+        expect(calls.size).to eq(2)
+        expect(retry_payload).not_to have_key(:source_transaction)
+        expect(retry_payload[:transfer_group]).to eq(order.number)
+        expect(retry_options[:idempotency_key]).not_to eq(calls.first.last[:idempotency_key])
+      end
+
+      it 'does not retry other refusals' do
+        allow(Stripe::Transfer).to receive(:create).
+          and_raise(Stripe::InvalidRequestError.new('No such destination', 'destination'))
+
+        expect { described_class.new.transfer!(seller_transfer) }.to raise_error(Stripe::InvalidRequestError)
+        expect(Stripe::Transfer).to have_received(:create).once
       end
 
       it 'draws on the charge and leaves its group alone' do

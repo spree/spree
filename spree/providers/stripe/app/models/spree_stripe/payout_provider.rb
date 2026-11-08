@@ -161,30 +161,18 @@ module SpreeStripe
       seller = seller_transfer.seller
       gateway = gateway_for(seller.store)
       source_charge = source_charge_for(seller_transfer, gateway)
-      source_charge = nil unless charge_currency_matches?(source_charge, seller_transfer, gateway)
 
-      transfer = Stripe::Transfer.create(
-        {
-          amount: minor_units(seller_transfer),
-          currency: seller_transfer.currency.downcase,
-          destination: seller.payout_account_reference(self.class),
-          # Funds the transfer from the customer's own charge, so it settles
-          # with that charge rather than out of the platform's balance.
-          source_transaction: source_charge,
-          # Stripe refuses a second group on a transfer drawn from a charge
-          # that already carries one, and the intent is grouped at checkout.
-          transfer_group: (transfer_group_for(seller_transfer) if source_charge.blank?),
-          metadata: {
-            spree_seller_transfer_id: seller_transfer.id,
-            spree_order_number: seller_transfer.order.number
-          },
-          # What the seller's own account received. An account settles in its
-          # own currency and Stripe converts on the way in, so the sale's
-          # figure is not the payable one.
-          expand: ['destination_payment.balance_transaction']
-        }.compact,
-        gateway.api_options.merge(idempotency_key: idempotency_key(seller_transfer))
-      )
+      transfer = begin
+        create_transfer(seller_transfer, gateway, source_charge)
+      rescue Stripe::InvalidRequestError => e
+        raise unless source_charge.present? && charge_currency_mismatch?(e)
+
+        # Stripe refuses a transfer drawn from a charge taken in another
+        # currency than the sale was priced in. Nothing was created, so the
+        # earning is funded from the platform balance instead of failing on
+        # every retry. A separate key keeps the two requests apart.
+        create_transfer(seller_transfer, gateway, nil, idempotency_suffix: 'platform-balance')
+      end
 
       seller_transfer.update!(
         { status: 'completed', reference: transfer.id }.merge(settlement_of(transfer))
@@ -389,6 +377,39 @@ module SpreeStripe
       seller_transfer.order.order_group&.number || seller_transfer.order.number
     end
 
+    def create_transfer(seller_transfer, gateway, source_charge, idempotency_suffix: nil)
+      key = [idempotency_key(seller_transfer), idempotency_suffix].compact.join('-')
+
+      Stripe::Transfer.create(
+        {
+          amount: minor_units(seller_transfer),
+          currency: seller_transfer.currency.downcase,
+          destination: seller_transfer.seller.payout_account_reference(self.class),
+          # Funds the transfer from the customer's own charge, so it settles
+          # with that charge rather than out of the platform's balance.
+          source_transaction: source_charge,
+          # Stripe refuses a second group on a transfer drawn from a charge
+          # that already carries one, and the intent is grouped at checkout.
+          transfer_group: (transfer_group_for(seller_transfer) if source_charge.blank?),
+          metadata: {
+            spree_seller_transfer_id: seller_transfer.id,
+            spree_order_number: seller_transfer.order.number
+          },
+          # What the seller's own account received. An account settles in its
+          # own currency and Stripe converts on the way in, so the sale's
+          # figure is not the payable one.
+          expand: ['destination_payment.balance_transaction']
+        }.compact,
+        gateway.api_options.merge(idempotency_key: key)
+      )
+    end
+
+    # "The currency of source_transaction's balance transaction (usd) must be
+    # the same as the transfer currency (gbp)"
+    def charge_currency_mismatch?(error)
+      error.message.to_s.match?(/source_transaction.*currency/i)
+    end
+
     # The charge that paid for this order, so Stripe can fund the transfer from
     # it. Nil when the order was not paid by card — a store-credit sale has no
     # charge to draw on, and Stripe then funds from the platform balance.
@@ -396,21 +417,6 @@ module SpreeStripe
     # payment intent rather than the charge it produced — sending that would
     # fail every card-funded transfer on an id Stripe cannot use. The charge
     # is recorded on the payment when its session completes.
-    #
-    # Stripe refuses a transfer drawn from a charge in another currency
-    # ("must be the same as the transfer currency"), and a sale can be priced
-    # in a currency the charge was not taken in. The row is then funded from
-    # the platform balance instead of failing on every retry.
-    def charge_currency_matches?(charge_id, seller_transfer, gateway)
-      return true if charge_id.blank?
-
-      charge = Stripe::Charge.retrieve(charge_id, gateway.api_options)
-      charge.currency.to_s.casecmp?(seller_transfer.currency.to_s)
-    rescue Stripe::InvalidRequestError
-      # A charge Stripe cannot find cannot fund anything either.
-      false
-    end
-
     def source_charge_for(seller_transfer, gateway)
       payment = seller_transfer.order.settlement_payments.valid.completed.
                 find { |candidate| candidate.payment_method_id == gateway.id }
