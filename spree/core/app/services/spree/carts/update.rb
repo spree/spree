@@ -3,6 +3,9 @@ module Spree
     class Update
       prepend Spree::ServiceModule::Base
 
+      # Applies the cart change and recalculates affected prices, delivery
+      # proposals and checkout holds. A service-owned savepoint keeps these
+      # writes atomic when the caller already holds the cart-lock transaction.
       def call(cart:, params:)
         @cart = cart
         @params = params.to_h.deep_symbolize_keys

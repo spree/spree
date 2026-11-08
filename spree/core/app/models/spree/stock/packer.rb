@@ -41,6 +41,11 @@ module Spree
         end
       end
 
+      # Builds this location's proposal, sharing each variant's stock across
+      # its lines. The owner's existing checkout holds stay available to it;
+      # competing holds still reduce the quantity this package may offer.
+      #
+      # @return [Spree::Stock::Package]
       def default_package
         package = build_package
 
