@@ -178,6 +178,29 @@ module Spree
         let(:other_order) { create(:order) }
         let(:other_line_item) { create(:line_item, order: other_order, variant: stock_level.variant) }
 
+        %i[cart order].each do |owner_kind|
+          it "counts opposite-owner holds when excluding a #{owner_kind}, with or without preloading" do
+            stub_store_preferences(stock_reservations_enabled: true)
+            stock_level.set_count_on_hand(10)
+            owner = create(owner_kind)
+            other_kind = owner_kind == :cart ? :order : :cart
+            competitor = create(other_kind)
+            same_kind = create(owner_kind)
+            [[owner, 2], [competitor, 3], [same_kind, 1]].each do |purchase, quantity|
+              attributes = purchase.is_a?(Spree::Cart) ? { cart: purchase, order: nil } : { order: purchase, cart: nil }
+              line = create(:line_item, **attributes, variant: stock_level.variant, quantity: quantity)
+              create(:stock_reservation, **attributes, line_item: line, stock_level: stock_level, quantity: quantity)
+            end
+
+            [Spree::StockLevel.find(stock_level.id), Spree::StockLevel.includes(:active_stock_reservations).find(stock_level.id)].each do |level|
+              quantifier = described_class.new(stock_level.variant, stock_location, stock_levels: [level], excluded_order: owner)
+
+              expect(quantifier.reserved_quantity).to eq(4)
+              expect(quantifier.total_on_hand).to eq(6)
+            end
+          end
+        end
+
         context 'when stock_reservations_enabled is true' do
           before { stub_store_preferences(stock_reservations_enabled: true) }
 

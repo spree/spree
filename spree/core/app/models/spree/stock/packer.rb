@@ -49,7 +49,8 @@ module Spree
         # The package's variants and their levels here, each in one query
         # rather than one per variant. Lowest id first, as StockLocation#stock_level reads.
         variants = variants_for(units_by_variant_id)
-        stock_levels = @stock_levels || stock_location.stock_levels.where(variant_id: units_by_variant_id.keys).order(:id).
+        stock_levels = @stock_levels || stock_location.stock_levels.where(variant_id: units_by_variant_id.keys).
+                       includes(:active_stock_reservations).order(:id).
                        group_by(&:variant_id).transform_values(&:first)
 
         units_by_variant_id.each do |variant_id, units|

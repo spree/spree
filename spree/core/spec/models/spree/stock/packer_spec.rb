@@ -25,6 +25,24 @@ module Spree
       context 'default_package' do
         let!(:inventory_units) { Array.new(2) { FulfillmentItem.new variant: create(:variant) } }
 
+        it 'preloads reservations when a custom routing packer has no level cache' do
+          stub_store_preferences(stock_reservations_enabled: true)
+          owner = create(:cart, store: stock_location.store)
+          inventory_units.each { |unit| stock_location.stock_level_or_create(unit.variant).set_count_on_hand(10) }
+          expect(Spree::StorePreferences.read(stock_location.store, :stock_reservations_enabled)).to be(true)
+          queries = 0
+          subscription = ActiveSupport::Notifications.subscribe('sql.active_record') do |*, payload|
+            queries += 1 if !payload[:cached] && payload[:name].to_s.include?('StockReservation')
+          end
+
+          package = Packer.new(stock_location, inventory_units, owner: owner).default_package
+
+          expect(package.quantity).to eq(2)
+          expect(queries).to be <= 1
+        ensure
+          ActiveSupport::Notifications.unsubscribe(subscription) if subscription
+        end
+
         it 'contains all the items' do
           inventory_units.each do |inventory_unit|
             stock_location.propagate_variant(inventory_unit.variant)
