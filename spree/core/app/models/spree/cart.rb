@@ -141,11 +141,13 @@ module Spree
 
     # Whether a live completion attempt holds this cart — its totals are fixed
     # and money may be moving, so mutations must wait until it finishes or the
-    # claim goes stale.
+    # claim goes stale. A retained order or group must resume completion:
+    # its payment and stock already belong to that result, not an editable cart.
     #
     # @return [Boolean]
     def completion_claimed?
-      completing_at.present? && completing_at > COMPLETING_CLAIM_TTL.ago
+      completing_at.present? &&
+        (completing_at > COMPLETING_CLAIM_TTL.ago || order.present? || order_group.present?)
     end
 
     # Recomputes and persists money totals (item, tax, promotion, delivery)

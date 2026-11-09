@@ -856,6 +856,35 @@ module Spree
     end
 
     describe 'crash-window replay' do
+      it 'returns the whole seller group when a retained draft divides during replay' do
+        cart = create(:cart_ready_to_complete, store: store, line_items_count: 2)
+        cart.line_items.zip(create_list(:seller, 2, :approved, store: store)).each do |line, seller|
+          line.variant.update!(seller: seller)
+          line.update_columns(seller_id: seller.id)
+        end
+        interrupted = Class.new(described_class) do
+          workflow_key 'carts.complete'
+
+          private
+
+          def finalize_completion
+            failure(cart, code: 'completion_failed')
+          end
+        end
+        expect(interrupted.call(cart: cart)).to be_failure
+        draft = Spree::Order.find_by!(cart_id: cart.id)
+        payment_ids = draft.payments.ids
+
+        result = described_class.call(cart: cart.reload)
+
+        expect(result).to be_success
+        expect(result.value).to be_a(Spree::OrderGroup)
+        expect(result.value.orders).to all(be_placed)
+        expect(result.value.orders.count).to eq(2)
+        expect(result.value.payments.ids).to match_array(payment_ids)
+        expect(described_class.call(cart: cart.reload).value.id).to eq(result.value.id)
+      end
+
       it 'heals a completion that died between the order commit and the cart stamp' do
         order = described_class.call(cart: ready_cart).value
         # Simulate the crash window: order placed, cart stamp lost

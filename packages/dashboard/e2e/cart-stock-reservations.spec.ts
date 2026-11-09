@@ -11,10 +11,15 @@ const railsEnv = {
   DATABASE_URL: `sqlite3:${resolve(API_GEM_DIR, 'spec/dummy/db/spree_test_e2e.sqlite3')}`,
 }
 
-// Complete through Store HTTP, then inspect the resulting seller orders in
-// the dashboard while retaining exact reservation and allocation assertions.
-for (const sellerCount of [1, 2]) {
-  test(`a cart completes its own reserved stock across ${sellerCount} seller partitions`, async ({
+// Complete and resume through Store HTTP, then inspect seller orders in the
+// dashboard and verify exact reservation and allocation counts.
+for (const [sellerCount, retained] of [
+  [1, false],
+  [2, false],
+  [1, true],
+  [2, true],
+] as const) {
+  test(`a cart ${retained ? 'resumes' : 'completes'} its own reserved stock across ${sellerCount} seller partitions`, async ({
     page,
     request,
   }) => {
@@ -61,14 +66,39 @@ for (const sellerCount of [1, 2]) {
         key = create(:api_key, :publishable, store: store)
         raise 'Cart has no selected delivery' unless cart.fulfillments.all?(&:selected_delivery_rate)
         raise 'Cart does not cover its own stock' unless lines.all?(&:sufficient_stock?)
+        draft = nil
+        if ${retained}
+          interrupted = Class.new(Spree::Carts::Complete) do
+            workflow_key 'carts.complete'
+            private
+            def finalize_completion
+              failure(cart, code: 'completion_failed')
+            end
+          end
+          raise 'Expected a retained paid draft' unless interrupted.call(cart: cart).failure?
+          draft = Spree::Order.find_by!(cart_id: cart.id)
+          raise 'Draft lost its holds' unless draft.stock_reservations.count == lines.length
+          cart.reload.update_column(:completing_at, 6.minutes.ago)
+        end
         puts({store: store.prefixed_id, cart: cart.prefixed_id, token: cart.token, key: key.plaintext_token, quantities: lines.map(&:quantity),
-              levels: levels.map(&:id), other_hold: hold.id, other_cart: other.id}.to_json)
+              levels: levels.map(&:id), other_hold: hold.id, other_cart: other.id, draft: draft&.prefixed_id}.to_json)
       `,
         railsEnv,
       ),
     )
     const rails = `http://localhost:${process.env.E2E_RAILS_PORT || '3010'}`
     const headers = { 'X-Spree-API-Key': fixture.key, 'X-Spree-Token': fixture.token }
+    if (retained) {
+      const changed = await request.patch(`${rails}/api/v3/store/carts/${fixture.cart}`, {
+        headers,
+        data: {
+          shipping_address: { city: 'Changed after payment' },
+          customer_note: 'Must stay fenced',
+        },
+      })
+      expect(changed.status()).toBe(409)
+      expect((await changed.json()).error.code).toBe('completion_in_progress')
+    }
     const completed = await request.post(`${rails}/api/v3/store/carts/${fixture.cart}/complete`, {
       headers,
       data: {},
@@ -76,6 +106,7 @@ for (const sellerCount of [1, 2]) {
     expect(completed.status()).toBe(200)
     const order = await completed.json()
     expect(order.id).toMatch(sellerCount === 1 ? /^or_/ : /^ogrp_/)
+    if (retained && sellerCount === 1) expect(order.id).toBe(fixture.draft)
     if (sellerCount === 2) expect(order.orders).toHaveLength(2)
     expect(order.completed_at).toBeTruthy()
     const repeated = await request.post(`${rails}/api/v3/store/carts/${fixture.cart}/complete`, {

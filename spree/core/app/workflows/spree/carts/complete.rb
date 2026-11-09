@@ -110,7 +110,7 @@ module Spree
         end
 
         finalize!(cart, result)
-        halt!(result)
+        halt!(order_group || result)
       end
 
       # The split already ran, so the money and the division are settled — what
