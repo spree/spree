@@ -721,6 +721,76 @@ module Spree
           expect(stock_level.reload.reserved_count).to eq(line_item.quantity)
           expect(stock_level.allocated_count).to eq(0)
         end
+
+        it 'restores the original cart line and held stock after payment fails' do
+          hold = ready_cart.stock_reservations.sole
+          allow(Spree::Payments::Process).to receive(:call).and_return(double(failure?: false))
+
+          result = described_class.call(cart: ready_cart)
+
+          expect(result).to be_failure
+          expect(result.error.value[:code]).to eq('payment_failed')
+          expect(Spree::Order.where(cart_id: ready_cart.id)).to be_empty
+          expect(hold.reload.cart_id).to eq(ready_cart.id)
+          expect(hold.order_id).to be_nil
+          expect(hold.line_item_id).to eq(line_item.id)
+          expect(stock_level.reload.reserved_count).to eq(line_item.quantity)
+          expect(stock_level.allocated_count).to eq(0)
+          expect(ready_cart.reload.completing_at).to be_nil
+          expect(ready_cart.completed_at).to be_nil
+        end
+      end
+
+      context 'when reserved lines belong to different sellers' do
+        let(:ready_cart) { create(:cart_ready_to_complete, store: store, line_items_count: 2) }
+
+        it 'keeps each sibling held until its own order is placed' do
+          stub_store_preferences(stock_reservations_enabled: true)
+          sellers = create_list(:seller, 2, :approved, store: store)
+          ready_cart.line_items.reload.zip(sellers).each do |line_item, seller|
+            line_item.variant.update!(seller: seller)
+            line_item.update_columns(seller_id: seller.id)
+            line_item.variant.stock_levels.each do |level|
+              level.update!(backorderable: false)
+              level.set_count_on_hand(0)
+            end
+            level = line_item.variant.stock_levels.first
+            level.set_count_on_hand(line_item.quantity)
+            create(:stock_reservation, cart: ready_cart, order: nil, line_item: line_item,
+                                       stock_level: level, quantity: line_item.quantity)
+          end
+          protected_siblings = []
+          observe_siblings = lambda do |group|
+            group.orders.where(status: 'draft').find_each do |sibling|
+              protected_siblings << sibling.id
+              expect(sibling.stock_reservations.pluck(:line_item_id)).to match_array(sibling.line_items.ids)
+              sibling.line_items.each do |line|
+                level = line.variant.stock_levels.first
+                expect(level.reload.reserved_count).to eq(line.quantity)
+                expect(level.allocated_count).to eq(0)
+                expect(level.purchasable_count).to eq(0)
+              end
+            end
+          end
+          completion = Class.new(Spree::Orders::Complete) do
+            workflow_key 'orders.complete'
+
+            define_method(:complete_sibling_orders) do
+              observe_siblings.call(order_group) if order_group
+              super()
+            end
+            private :complete_sibling_orders
+          end
+          allow(Spree).to receive(:order_complete_workflow).and_return(completion)
+
+          result = described_class.call(cart: ready_cart)
+
+          expect(result).to be_success
+          expect(result.value).to be_a(Spree::OrderGroup)
+          expect(result.value.orders).to all(be_placed)
+          expect(protected_siblings.size).to eq(1)
+          expect(ready_cart.reload.stock_reservations).to be_empty
+        end
       end
     end
 
