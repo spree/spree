@@ -553,7 +553,10 @@
       },
       "roles_enterprise_help": "Members you add here can buy for this company and manage its directory. Roles, approval workflows and spending limits come with Spree Enterprise.",
       "roles_enterprise_title": "Roles and approvals are an Enterprise feature",
-      "title": "Members"
+      "title": "Members",
+      "columns": {
+        "member": "Member"
+      }
     },
     "components": {
       "adjustment_action_editor": {
@@ -6050,7 +6053,11 @@
       },
       "title": "Exemption certificates",
       "verified_at": "Accepted on",
-      "verify_action": "Accept"
+      "verify_action": "Accept",
+      "columns": {
+        "certificate": "Certificate",
+        "document": "Document"
+      }
     },
     "tax_identifiers": {
       "add_cta": "Add registration",

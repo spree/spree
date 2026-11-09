@@ -553,7 +553,10 @@
       },
       "roles_enterprise_help": "Les membres ajoutés ici peuvent acheter pour cette entreprise et gérer son annuaire. Rôles, circuits de validation et plafonds de dépense arrivent avec Spree Enterprise.",
       "roles_enterprise_title": "Les rôles et validations sont une fonctionnalité Enterprise",
-      "title": "Membres"
+      "title": "Membres",
+      "columns": {
+        "member": "Membre"
+      }
     },
     "components": {
       "adjustment_action_editor": {
@@ -6051,7 +6054,11 @@
       },
       "title": "Attestations d'exonération",
       "verified_at": "Acceptée le",
-      "verify_action": "Accepter"
+      "verify_action": "Accepter",
+      "columns": {
+        "certificate": "Certificat",
+        "document": "Document"
+      }
     },
     "tax_identifiers": {
       "add_cta": "Ajouter un numéro",

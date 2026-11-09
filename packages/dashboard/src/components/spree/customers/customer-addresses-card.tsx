@@ -1,17 +1,23 @@
 import type { Address, Customer } from '@spree/admin-sdk'
 import { AddressFormDialog, type AddressParams, useCountries } from '@spree/dashboard-core'
 import {
-  AddressBookRow,
+  AddressBookTable,
+  AddressBookTableRow,
   Badge,
   Button,
   Card,
-  CardAction,
   CardContent,
-  CardHeader,
-  CardTitle,
+  Empty,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+  Section,
+  SectionActions,
+  SectionHeader,
+  SectionTitle,
   useConfirm,
 } from '@spree/dashboard-ui'
-import { PlusIcon } from '@spree/dashboard-ui/icons'
+import { MapPinIcon, PlusIcon } from '@spree/dashboard-ui/icons'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
@@ -46,50 +52,60 @@ export function CustomerAddressesCard({ customer }: { customer: Customer }) {
 
   return (
     <>
-      <Card>
-        <CardHeader>
-          <CardTitle>
+      <Section>
+        <SectionHeader>
+          <SectionTitle>
+            <MapPinIcon />
             {t('admin.pages.customers.detail.section_addresses')}
             {addresses.length > 0 && <Badge variant="outline">{addresses.length}</Badge>}
-          </CardTitle>
-          <CardAction>
+          </SectionTitle>
+          <SectionActions>
             <Button size="sm" variant="outline" onClick={() => setAddOpen(true)}>
               <PlusIcon className="size-4" />
               {t('admin.pages.customers.detail.add_address')}
             </Button>
-          </CardAction>
-        </CardHeader>
+          </SectionActions>
+        </SectionHeader>
         {addresses.length === 0 ? (
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
-              {t('admin.pages.customers.detail.addresses_empty')}
-            </p>
-          </CardContent>
+          <Card>
+            <CardContent>
+              <Empty className="p-4">
+                <EmptyHeader>
+                  <EmptyMedia variant="icon">
+                    <MapPinIcon />
+                  </EmptyMedia>
+                  <EmptyTitle>{t('admin.pages.customers.detail.addresses_empty')}</EmptyTitle>
+                </EmptyHeader>
+              </Empty>
+            </CardContent>
+          </Card>
         ) : (
-          <CardContent className="flex flex-col gap-3">
-            {addresses.map((addr) => (
-              <AddressBookRow
-                key={addr.id}
-                address={addr}
-                onEdit={() => setEditing(addr)}
-                onSetDefaultBilling={() => setDefault({ id: addr.id, kind: 'billing' })}
-                onSetDefaultShipping={() => setDefault({ id: addr.id, kind: 'shipping' })}
-                onRemove={async () => {
-                  if (
-                    await confirm({
-                      message: t('admin.customers.detail.address.delete_confirm_message'),
-                      variant: 'destructive',
-                      confirmLabel: t('admin.actions.delete'),
-                    })
-                  ) {
-                    deleteMutation.mutate(addr.id)
-                  }
-                }}
-              />
-            ))}
-          </CardContent>
+          <Card>
+            <AddressBookTable>
+              {addresses.map((addr) => (
+                <AddressBookTableRow
+                  key={addr.id}
+                  address={addr}
+                  onEdit={() => setEditing(addr)}
+                  onSetDefaultBilling={() => setDefault({ id: addr.id, kind: 'billing' })}
+                  onSetDefaultShipping={() => setDefault({ id: addr.id, kind: 'shipping' })}
+                  onRemove={async () => {
+                    if (
+                      await confirm({
+                        message: t('admin.customers.detail.address.delete_confirm_message'),
+                        variant: 'destructive',
+                        confirmLabel: t('admin.actions.delete'),
+                      })
+                    ) {
+                      deleteMutation.mutate(addr.id)
+                    }
+                  }}
+                />
+              ))}
+            </AddressBookTable>
+          </Card>
         )}
-      </Card>
+      </Section>
 
       {addOpen && (
         <CustomerAddressDialog

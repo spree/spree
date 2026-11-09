@@ -563,7 +563,10 @@
       },
       "roles_enterprise_help": "Dodani tu członkowie mogą kupować dla tej firmy i zarządzać jej katalogiem osób. Role, ścieżki akceptacji i limity wydatków są dostępne w Spree Enterprise.",
       "roles_enterprise_title": "Role i akceptacje to funkcja Enterprise",
-      "title": "Członkowie"
+      "title": "Członkowie",
+      "columns": {
+        "member": "Członek"
+      }
     },
     "components": {
       "adjustment_action_editor": {
@@ -6116,7 +6119,11 @@
       },
       "title": "Certyfikaty zwolnienia",
       "verified_at": "Zaakceptowano",
-      "verify_action": "Zaakceptuj"
+      "verify_action": "Zaakceptuj",
+      "columns": {
+        "certificate": "Certyfikat",
+        "document": "Dokument"
+      }
     },
     "tax_identifiers": {
       "add_cta": "Dodaj numer",

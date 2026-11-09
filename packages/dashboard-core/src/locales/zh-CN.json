@@ -102,7 +102,11 @@
       "default_shipping": "默认收货",
       "inherited_from": "继承自 {{name}}",
       "set_default_billing": "设为默认账单地址",
-      "set_default_shipping": "设为默认收货地址"
+      "set_default_shipping": "设为默认收货地址",
+      "columns": {
+        "address": "地址",
+        "defaults": "默认用于"
+      }
     },
     "auth": {
       "back_to_login": "返回登录",

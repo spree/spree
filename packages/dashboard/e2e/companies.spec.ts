@@ -8,6 +8,7 @@ import {
   openRowMenu,
   rowButton,
   saveCustomFieldOnCard,
+  section,
   withCustomFieldDefinition,
 } from './helpers'
 
@@ -15,6 +16,7 @@ const COMPANIES_PATH = (storeId: string) => `/${storeId}/companies`
 const CTA = /add company/i
 
 /** One of the detail page's cards, found by its title. */
+/** A titled section of record cards, found by its heading. */
 function card(page: Page, title: RegExp) {
   return page
     .locator('[data-slot="card"]')
@@ -35,7 +37,7 @@ async function createCompany(page: Page, storeId: string, name: string) {
 
 /** Adds an address to the open company's address book through its sheet. */
 async function addCompanyAddress(page: Page, label: string, address1: string) {
-  await card(page, /^address book/i)
+  await section(page, /^address book/i)
     .getByRole('button', { name: /add address/i })
     .click()
   await expect(page.getByRole('heading', { name: /^new address$/i })).toBeVisible()
@@ -77,7 +79,7 @@ test.describe('companies', () => {
     const name = `E2E Holdings ${Date.now()}`
     await createCompany(page, creds.store_id, name)
 
-    const subUnits = card(page, /sub-units/i)
+    const subUnits = section(page, /sub-units/i)
     await expect(subUnits.getByText(/no sub-units yet/i)).toBeVisible()
     await subUnits.getByRole('button', { name: /add sub-unit/i }).click()
     const dialog = page.getByRole('dialog')
@@ -99,13 +101,15 @@ test.describe('companies', () => {
     const creds = await login(page)
     await createCompany(page, creds.store_id, `E2E Buyers ${Date.now()}`)
 
-    const members = card(page, /^members/i)
+    const members = section(page, /^members/i)
     await members.getByRole('button', { name: /add member/i }).click()
     await page.locator('#member-email').fill(FIXTURE_PROMO_CUSTOMER_EMAIL)
     await page.getByRole('dialog').getByRole('button', { name: /^add$/i }).click()
 
-    const member = members.getByRole('link', { name: FIXTURE_PROMO_CUSTOMER_EMAIL })
+    // Named, with the email under it.
+    const member = members.getByRole('link', { name: FIXTURE_PROMO_CUSTOMER_FULL_NAME })
     await expect(member).toBeVisible({ timeout: 15_000 })
+    await expect(members.getByText(FIXTURE_PROMO_CUSTOMER_EMAIL)).toBeVisible()
 
     await members.getByRole('button', { name: /actions/i }).click()
     await page.getByRole('menuitem', { name: /remove member/i }).click()
@@ -123,7 +127,7 @@ test.describe('companies', () => {
     const creds = await login(page)
     await createCompany(page, creds.store_id, `E2E Picked Buyers ${Date.now()}`)
 
-    const members = card(page, /^members/i)
+    const members = section(page, /^members/i)
     await members.getByRole('button', { name: /add member/i }).click()
     await page.locator('#member-customer').click()
     await page
@@ -133,9 +137,11 @@ test.describe('companies', () => {
     await page.getByRole('option', { name: new RegExp(FIXTURE_PROMO_CUSTOMER_FULL_NAME) }).click()
     await page.getByRole('dialog').getByRole('button', { name: /^add$/i }).click()
 
-    await expect(members.getByRole('link', { name: FIXTURE_PROMO_CUSTOMER_EMAIL })).toBeVisible({
-      timeout: 15_000,
-    })
+    await expect(members.getByRole('link', { name: FIXTURE_PROMO_CUSTOMER_FULL_NAME })).toBeVisible(
+      {
+        timeout: 15_000,
+      },
+    )
   })
 
   test('invites an email with no account, then revokes the invitation', async ({ page }) => {
@@ -143,7 +149,7 @@ test.describe('companies', () => {
     await createCompany(page, creds.store_id, `E2E Invites ${Date.now()}`)
 
     const email = `e2e-company-buyer-${Date.now()}@example.com`
-    const members = card(page, /^members/i)
+    const members = section(page, /^members/i)
     await members.getByRole('button', { name: /add member/i }).click()
     await page.locator('#member-email').fill(email)
     await page.getByRole('dialog').getByRole('button', { name: /^add$/i }).click()
@@ -164,7 +170,7 @@ test.describe('companies', () => {
     const creds = await login(page)
     await createCompany(page, creds.store_id, `E2E Austin ${Date.now()}`)
 
-    const addressBook = card(page, /^address book/i)
+    const addressBook = section(page, /^address book/i)
     await addressBook.getByRole('button', { name: /add address/i }).click()
     await expect(page.getByRole('heading', { name: /^new address$/i })).toBeVisible()
     await fillAddressForm(page, {
@@ -187,7 +193,7 @@ test.describe('companies', () => {
     const creds = await login(page)
     await createCompany(page, creds.store_id, `E2E Depots ${Date.now()}`)
 
-    const addressBook = card(page, /^address book/i)
+    const addressBook = section(page, /^address book/i)
     await expect(addressBook.getByText(/no addresses yet/i)).toBeVisible()
     await addCompanyAddress(page, 'Main warehouse', '400 Dock Rd')
     await expect(addressBook.getByText('400 Dock Rd')).toBeVisible({ timeout: 15_000 })
@@ -205,8 +211,8 @@ test.describe('companies', () => {
     // A new address is saved as both defaults, so adding a second takes them
     // over and leaves the first to be promoted back.
     await addCompanyAddress(page, 'Dock 2', '500 Pier Ave')
-    const first = addressBook.locator('[data-slot="item"]').filter({ hasText: '400 Dock Rd' })
-    const second = addressBook.locator('[data-slot="item"]').filter({ hasText: '500 Pier Ave' })
+    const first = addressBook.getByRole('row').filter({ hasText: '400 Dock Rd' })
+    const second = addressBook.getByRole('row').filter({ hasText: '500 Pier Ave' })
     await expect(second.getByText(/^default shipping$/i)).toBeVisible({ timeout: 15_000 })
     await expect(first.getByText(/^default shipping$/i)).toHaveCount(0)
     await first.getByRole('button', { name: /open actions/i }).click()
@@ -232,11 +238,11 @@ test.describe('companies', () => {
     const name = `E2E Parent ${Date.now()}`
     await createCompany(page, creds.store_id, name)
     await addCompanyAddress(page, 'Headquarters', '1 Main St')
-    await expect(card(page, /^address book/i).getByText('1 Main St')).toBeVisible({
+    await expect(section(page, /^address book/i).getByText('1 Main St')).toBeVisible({
       timeout: 15_000,
     })
 
-    const subUnits = card(page, /sub-units/i)
+    const subUnits = section(page, /sub-units/i)
     await subUnits.getByRole('button', { name: /add sub-unit/i }).click()
     await page.getByRole('dialog').locator('#sub-unit-name').fill(`${name} West`)
     await page
@@ -248,7 +254,7 @@ test.describe('companies', () => {
       timeout: 15_000,
     })
 
-    const addressBook = card(page, /^address book/i)
+    const addressBook = section(page, /^address book/i)
     await expect(addressBook.getByText('1 Main St')).toBeVisible({ timeout: 15_000 })
     await expect(addressBook.getByText(`Inherited from ${name}`)).toBeVisible()
     await expect(addressBook.getByRole('button', { name: /open actions/i })).toHaveCount(0)
@@ -260,7 +266,7 @@ test.describe('companies', () => {
     const creds = await login(page)
     await createCompany(page, creds.store_id, `E2E Exempt ${Date.now()}`)
 
-    const certificates = card(page, /exemption certificates/i)
+    const certificates = section(page, /exemption certificates/i)
     await certificates.getByRole('button', { name: /add certificate/i }).click()
     const sheet = page.getByRole('dialog')
     await expect(sheet.getByText(/add exemption certificate/i)).toBeVisible()
@@ -322,7 +328,7 @@ test.describe('companies', () => {
     ).toBeVisible({ timeout: 15_000 })
 
     await createCompany(page, creds.store_id, `E2E Consulate ${suffix}`)
-    const certificates = card(page, /exemption certificates/i)
+    const certificates = section(page, /exemption certificates/i)
     await certificates.getByRole('button', { name: /add certificate/i }).click()
     const sheet = page.getByRole('dialog')
     const certificateNumber = `DIP-${suffix}`
@@ -347,11 +353,7 @@ test.describe('companies', () => {
     await expect(reasons.getByText(renamed)).toBeVisible({ timeout: 15_000 })
 
     await page.goto(companyUrl)
-    await expect(
-      card(page, /exemption certificates/i)
-        .getByText(renamed)
-        .first(),
-    ).toBeVisible({ timeout: 15_000 })
+    await expect(certificates.getByText(renamed).first()).toBeVisible({ timeout: 15_000 })
   })
 
   test('deletes a company from the list', async ({ page }) => {

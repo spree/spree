@@ -102,7 +102,11 @@
       "default_shipping": "Standard-Versand",
       "inherited_from": "Geerbt von {{name}}",
       "set_default_billing": "Als Standard-Rechnungsadresse festlegen",
-      "set_default_shipping": "Als Standard-Versandadresse festlegen"
+      "set_default_shipping": "Als Standard-Versandadresse festlegen",
+      "columns": {
+        "address": "Adresse",
+        "defaults": "Standard für"
+      }
     },
     "auth": {
       "back_to_login": "Zurück zur Anmeldung",

@@ -553,7 +553,10 @@
       },
       "roles_enterprise_help": "Các thành viên bạn thêm vào đây có thể mua cho công ty này và quản lý thư mục của công ty. Vai trò, quy trình phê duyệt và giới hạn chi tiêu đi kèm với Spree Enterprise.",
       "roles_enterprise_title": "Vai trò và phê duyệt là một tính năng của Doanh nghiệp",
-      "title": "Thành viên"
+      "title": "Thành viên",
+      "columns": {
+        "member": "Thành viên"
+      }
     },
     "components": {
       "adjustment_action_editor": {
@@ -6017,7 +6020,11 @@
       },
       "title": "Giấy chứng nhận miễn trừ",
       "verified_at": "Đã chấp nhận vào",
-      "verify_action": "Chấp nhận"
+      "verify_action": "Chấp nhận",
+      "columns": {
+        "certificate": "Chứng nhận",
+        "document": "Tài liệu"
+      }
     },
     "tax_identifiers": {
       "add_cta": "Thêm đăng ký",

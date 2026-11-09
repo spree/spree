@@ -109,6 +109,8 @@ function CustomerBody({ customer }: { customer: Customer }) {
             isLoading={isLoading}
           />
           <CustomerStoreCreditsCard customer={customer} />
+          <CustomerAddressesCard customer={customer} />
+          <CustomerTaxIdentifiersCard customer={customer} />
           <EditableApiCustomFieldsProvider
             ownerType="customer"
             ownerId={customer.id}
@@ -125,8 +127,6 @@ function CustomerBody({ customer }: { customer: Customer }) {
         <>
           <CustomerProfileCard customer={customer} />
           <CustomerGroupsCard customer={customer} />
-          <CustomerAddressesCard customer={customer} />
-          <CustomerTaxIdentifiersCard customer={customer} />
           <CustomerInternalNoteCard customer={customer} />
           <CustomerPrivacyCard customer={customer} />
           <Slot name="customer.form_sidebar" context={{ customer }} />

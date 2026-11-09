@@ -1,5 +1,6 @@
 import { PageHeader, useStockLocations } from '@spree/dashboard-core'
 import {
+  Badge,
   Button,
   Card,
   CardContent,
@@ -12,6 +13,10 @@ import {
   FieldLabel,
   Input,
   ResourceLayout,
+  Section,
+  SectionActions,
+  SectionHeader,
+  SectionTitle,
   Select,
   SelectContent,
   SelectItem,
@@ -19,7 +24,7 @@ import {
   SelectValue,
   Textarea,
 } from '@spree/dashboard-ui'
-import { PlusIcon } from '@spree/dashboard-ui/icons'
+import { PackageIcon, PlusIcon } from '@spree/dashboard-ui/icons'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { type VariantLine, VariantLineEditor } from './variant-line-editor'
@@ -174,23 +179,29 @@ export function StockTransferForm({
   )
 
   const itemsCard = (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>{t('admin.stock_transfers.items_title')}</CardTitle>
+    <Section>
+      <SectionHeader>
+        <SectionTitle>
+          <PackageIcon />
+          {t('admin.stock_transfers.items_title')}
+          {lines.length > 0 && <Badge variant="outline">{lines.length}</Badge>}
+        </SectionTitle>
         {lines.length > 0 && (
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            disabled={!sourceId}
-            onClick={() => setPickerOpen(true)}
-          >
-            <PlusIcon className="size-4" />
-            {t('admin.inventory_lines.add_label')}
-          </Button>
+          <SectionActions>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={!sourceId}
+              onClick={() => setPickerOpen(true)}
+            >
+              <PlusIcon className="size-4" />
+              {t('admin.inventory_lines.add_label')}
+            </Button>
+          </SectionActions>
         )}
-      </CardHeader>
-      <CardContent>
+      </SectionHeader>
+      <Card>
         {/* A draft may hold no lines at all and gain them as the merchant
               packs, so there is nothing to enforce here. The picker offers only
               what the source can send and stays shut until one is chosen. */}
@@ -203,8 +214,8 @@ export function StockTransferForm({
           pickerOpen={pickerOpen}
           onPickerOpenChange={setPickerOpen}
         />
-      </CardContent>
-    </Card>
+      </Card>
+    </Section>
   )
 
   return (

@@ -102,7 +102,11 @@
       "default_shipping": "Livraison par défaut",
       "inherited_from": "Héritée de {{name}}",
       "set_default_billing": "Définir comme adresse de facturation par défaut",
-      "set_default_shipping": "Définir comme adresse de livraison par défaut"
+      "set_default_shipping": "Définir comme adresse de livraison par défaut",
+      "columns": {
+        "address": "Adresse",
+        "defaults": "Par défaut pour"
+      }
     },
     "auth": {
       "back_to_login": "Retour à la connexion",

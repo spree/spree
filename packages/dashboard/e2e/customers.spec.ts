@@ -56,12 +56,13 @@ test.describe('customers', () => {
     await gotoIndex(page, CUSTOMERS_PATH(creds.store_id), CTA)
     await createCustomer(page, `e2e-no-orders-${Date.now()}@example.com`)
 
-    const ordersCard = page.locator('[data-slot="card"]').filter({
-      has: page.locator('[data-slot="card-title"]', { hasText: /Orders/ }),
-    })
-    await expect(ordersCard.getByText(/no orders yet/i)).toBeVisible({ timeout: 15_000 })
-    await expect(ordersCard.getByRole('row')).toHaveCount(0)
-    await expect(ordersCard.locator('[data-slot="card-title"]')).toHaveText('Orders')
+    const ordersSection = page
+      .locator('[data-slot="section"]')
+      .filter({ has: page.getByRole('heading', { name: /^orders/i }) })
+    await expect(ordersSection.getByText(/no orders yet/i)).toBeVisible({ timeout: 15_000 })
+    await expect(ordersSection.getByRole('row')).toHaveCount(0)
+    // No count beside the title when there is nothing to count.
+    await expect(ordersSection.getByRole('heading')).toHaveText('Orders')
   })
 
   // Filled by the probes in src/testing/slot-probes.tsx.

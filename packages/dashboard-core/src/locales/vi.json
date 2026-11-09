@@ -102,7 +102,11 @@
       "default_shipping": "Vận chuyển mặc định",
       "inherited_from": "Kế thừa từ {{name}}",
       "set_default_billing": "Đặt làm thanh toán mặc định",
-      "set_default_shipping": "Đặt làm vận chuyển mặc định"
+      "set_default_shipping": "Đặt làm vận chuyển mặc định",
+      "columns": {
+        "address": "Địa chỉ",
+        "defaults": "Mặc định cho"
+      }
     },
     "auth": {
       "back_to_login": "Quay lại để đăng nhập",

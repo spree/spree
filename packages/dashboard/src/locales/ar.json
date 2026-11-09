@@ -560,7 +560,10 @@
       },
       "roles_enterprise_help": "الأعضاء المضافون هنا يمكنهم الشراء لهذه الشركة وإدارة دليلها. الأدوار ومسارات الموافقة وحدود الإنفاق تأتي مع Spree Enterprise.",
       "roles_enterprise_title": "الأدوار والموافقات ميزة في نسخة Enterprise",
-      "title": "الأعضاء"
+      "title": "الأعضاء",
+      "columns": {
+        "member": "العضو"
+      }
     },
     "components": {
       "adjustment_action_editor": {
@@ -6091,7 +6094,11 @@
       },
       "title": "شهادات الإعفاء",
       "verified_at": "تاريخ القبول",
-      "verify_action": "قبول"
+      "verify_action": "قبول",
+      "columns": {
+        "certificate": "الشهادة",
+        "document": "المستند"
+      }
     },
     "tax_identifiers": {
       "add_cta": "إضافة رقم",

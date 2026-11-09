@@ -5261,7 +5261,11 @@
       },
       "title": "Certificados de exención",
       "verified_at": "Aceptado el",
-      "verify_action": "Aceptar"
+      "verify_action": "Aceptar",
+      "columns": {
+        "certificate": "Certificado",
+        "document": "Documento"
+      }
     },
     "api_keys": {
       "badge": {
@@ -6176,7 +6180,10 @@
       },
       "roles_enterprise_help": "Los integrantes que agregues acá pueden comprar para esta empresa y gestionar su directorio. Los roles, los flujos de aprobación y los límites de gasto vienen con Spree Enterprise.",
       "roles_enterprise_title": "Roles y aprobaciones son una función de Enterprise",
-      "title": "Integrantes"
+      "title": "Integrantes",
+      "columns": {
+        "member": "Miembro"
+      }
     },
     "policies": {
       "add_cta": "Agregar política",

@@ -65,8 +65,11 @@ function OrderDetailPage() {
         <>
           <FulfillmentsCard order={order} />
           <OrderDigitalLinksCard order={order} />
-          {/* What the order comes to, right under what it contains — not
-              after every adjustment card. */}
+          <PaymentsCard order={order} />
+          <TaxLinesCard order={order} />
+          <OrderDiscountsCard order={order} />
+          <FeesCard order={order} />
+          {/* The totals follow the payments and adjustments they add up. */}
           <OrderSummaryCard order={order} />
           {/* Nothing can come back from an order that has not been placed:
               all three read fulfilled units, and a draft has none, so they
@@ -78,10 +81,6 @@ function OrderDetailPage() {
               <OrderClaimsCard order={order} />
             </>
           )}
-          <PaymentsCard order={order} />
-          <TaxLinesCard order={order} />
-          <OrderDiscountsCard order={order} />
-          <FeesCard order={order} />
           <CommissionLinesCard order={order} />
           <SellerTransfersCard order={order} />
           <EditableApiCustomFieldsProvider

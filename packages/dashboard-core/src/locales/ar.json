@@ -102,7 +102,11 @@
       "default_shipping": "الشحن الافتراضي",
       "inherited_from": "موروث من {{name}}",
       "set_default_billing": "تعيين كعنوان فوترة افتراضي",
-      "set_default_shipping": "تعيين كعنوان شحن افتراضي"
+      "set_default_shipping": "تعيين كعنوان شحن افتراضي",
+      "columns": {
+        "address": "العنوان",
+        "defaults": "افتراضي لـ"
+      }
     },
     "auth": {
       "back_to_login": "العودة إلى تسجيل الدخول",

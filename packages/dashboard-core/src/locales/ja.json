@@ -102,7 +102,11 @@
       "default_shipping": "既定のお届け先",
       "inherited_from": "{{name}}から引き継ぎ",
       "set_default_billing": "既定の請求先にする",
-      "set_default_shipping": "既定のお届け先にする"
+      "set_default_shipping": "既定のお届け先にする",
+      "columns": {
+        "address": "住所",
+        "defaults": "既定の用途"
+      }
     },
     "auth": {
       "back_to_login": "ログインに戻る",

@@ -87,6 +87,7 @@ export function ProfilePage() {
         main={
           <>
             <BrandCard profile={profile} onEdit={() => setEditing(true)} />
+            <SellerTaxIdentifiersCard />
             <Slot name="seller.profile.form_main" context={{ profile }} />
           </>
         }
@@ -96,7 +97,6 @@ export function ProfilePage() {
             <AtAGlanceCard profile={profile} teamCount={team?.data?.length} />
             <ContactCard profile={profile} onEdit={() => setEditing(true)} />
             <SellerBusinessCard profile={profile} />
-            <SellerTaxIdentifiersCard />
             <SellerAddressCard profile={profile} />
             <SellerReturnsLocationCard />
             <SettlementCard profile={profile} />

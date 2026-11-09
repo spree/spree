@@ -553,7 +553,10 @@
       },
       "roles_enterprise_help": "ここで追加したメンバーは、この会社のために購入し、名簿を管理できます。役割・承認フロー・支出上限は Spree Enterprise で使えます。",
       "roles_enterprise_title": "役割と承認は Enterprise の機能です",
-      "title": "メンバー"
+      "title": "メンバー",
+      "columns": {
+        "member": "メンバー"
+      }
     },
     "components": {
       "adjustment_action_editor": {
@@ -6050,7 +6053,11 @@
       },
       "title": "免税証明書",
       "verified_at": "受理日",
-      "verify_action": "受理"
+      "verify_action": "受理",
+      "columns": {
+        "certificate": "証明書",
+        "document": "書類"
+      }
     },
     "tax_identifiers": {
       "add_cta": "登録番号を追加",

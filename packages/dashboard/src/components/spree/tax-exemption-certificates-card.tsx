@@ -16,29 +16,28 @@ import {
   Badge,
   Button,
   Card,
-  CardAction,
   CardContent,
-  CardHeader,
-  CardTitle,
   Combobox,
   ComboboxContent,
   ComboboxEmpty,
   ComboboxInput,
   ComboboxItem,
   ComboboxList,
+  Empty,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
   Field,
   FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
   Input,
-  Item,
-  ItemActions,
-  ItemContent,
-  ItemDescription,
-  ItemGroup,
-  ItemTitle,
   RowActions,
+  Section,
+  SectionActions,
+  SectionHeader,
+  SectionTitle,
   Sheet,
   SheetContent,
   SheetDescription,
@@ -46,6 +45,12 @@ import {
   SheetHeader,
   SheetTitle,
   StatusBadge,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
   useConfirm,
 } from '@spree/dashboard-ui'
 import {
@@ -54,6 +59,7 @@ import {
   DownloadIcon,
   PaperclipIcon,
   PlusIcon,
+  ShieldCheckIcon,
 } from '@spree/dashboard-ui/icons'
 import { parseISO } from 'date-fns'
 import { formatInTimeZone } from 'date-fns-tz'
@@ -152,169 +158,154 @@ export function TaxExemptionCertificatesCard({
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>
+    <Section>
+      <SectionHeader>
+        <SectionTitle>
+          <ShieldCheckIcon />
           {t('admin.tax_exemption_certificates.title')}
           {certificates.length > 0 && <Badge variant="outline">{certificates.length}</Badge>}
-        </CardTitle>
+        </SectionTitle>
         {canEdit && (
-          <CardAction>
+          <SectionActions>
             <Button size="sm" variant="outline" onClick={() => setAddOpen(true)}>
               <PlusIcon className="size-4" />
               {t('admin.tax_exemption_certificates.add_cta')}
             </Button>
-          </CardAction>
+          </SectionActions>
         )}
-      </CardHeader>
+      </SectionHeader>
 
-      {isLoading ? (
-        <CardContent>
-          <p className="text-muted-foreground text-sm">{t('admin.common.loading')}</p>
-        </CardContent>
-      ) : certificates.length === 0 ? (
-        <CardContent>
-          <p className="text-muted-foreground text-sm">
-            {t('admin.tax_exemption_certificates.empty')}
-          </p>
-        </CardContent>
-      ) : (
-        <CardContent>
-          <ItemGroup className="gap-3">
-            {certificates.map((certificate) => (
-              <Item key={certificate.id} role="listitem" variant="outline" className="items-start">
-                <ItemContent className="min-w-0">
-                  <ItemTitle className="flex-wrap">
-                    {certificate.certificate_number}
-                    <StatusBadge
-                      status={certificate.status}
-                      label={t(`admin.tax_exemption_certificates.status.${certificate.status}`, {
-                        defaultValue: certificate.status,
-                      })}
-                    />
-                    {certificate.lapsed && certificate.status !== 'expired' && (
+      <Card>
+        {isLoading || certificates.length === 0 ? (
+          <CardContent>
+            {isLoading ? (
+              <p className="text-muted-foreground text-sm">{t('admin.common.loading')}</p>
+            ) : (
+              <Empty className="p-4">
+                <EmptyHeader>
+                  <EmptyMedia variant="icon">
+                    <ShieldCheckIcon />
+                  </EmptyMedia>
+                  <EmptyTitle>{t('admin.tax_exemption_certificates.empty')}</EmptyTitle>
+                </EmptyHeader>
+              </Empty>
+            )}
+          </CardContent>
+        ) : (
+          <Table roundedTop scrollX>
+            <TableHeader>
+              <TableRow>
+                <TableHead>{t('admin.tax_exemption_certificates.columns.certificate')}</TableHead>
+                <TableHead>{t('admin.fields.expires_at.label')}</TableHead>
+                <TableHead>{t('admin.tax_exemption_certificates.columns.document')}</TableHead>
+                <TableHead className="w-10" />
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {certificates.map((certificate) => (
+                <TableRow key={certificate.id}>
+                  <TableCell>
+                    <div className="flex flex-wrap items-center gap-2 font-medium text-sm">
+                      {certificate.certificate_number}
                       <StatusBadge
-                        status="expired"
-                        label={t('admin.tax_exemption_certificates.lapsed')}
+                        status={certificate.status}
+                        label={t(`admin.tax_exemption_certificates.status.${certificate.status}`, {
+                          defaultValue: certificate.status,
+                        })}
                       />
-                    )}
-                  </ItemTitle>
-                  <ItemDescription className="text-xs">
-                    {certificate.tax_exemption_reason?.name ?? '—'}
-                    {' · '}
-                    <JurisdictionLabel
-                      countryCode={certificate.country_code}
-                      stateCode={certificate.state_code}
-                    />
-                  </ItemDescription>
-
-                  <dl className="mt-1 grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5 text-xs">
-                    {certificate.issuing_authority && (
-                      <>
-                        <dt className="text-muted-foreground">
-                          {t('admin.fields.issuing_authority.label')}
-                        </dt>
-                        <dd>{certificate.issuing_authority}</dd>
-                      </>
-                    )}
-                    {certificate.issued_at && (
-                      <>
-                        <dt className="text-muted-foreground">
-                          {t('admin.fields.issued_at.label')}
-                        </dt>
-                        <dd>
-                          <StoreDate iso={certificate.issued_at} />
-                        </dd>
-                      </>
-                    )}
-                    <dt className="text-muted-foreground">{t('admin.fields.expires_at.label')}</dt>
-                    <dd>
-                      {certificate.expires_at ? (
-                        <StoreDate iso={certificate.expires_at} />
-                      ) : (
-                        t('admin.tax_exemption_certificates.never_expires')
+                      {certificate.lapsed && certificate.status !== 'expired' && (
+                        <StatusBadge
+                          status="expired"
+                          label={t('admin.tax_exemption_certificates.lapsed')}
+                        />
                       )}
-                    </dd>
-                    {certificate.verified_at && (
-                      <>
-                        <dt className="text-muted-foreground">
-                          {t('admin.tax_exemption_certificates.verified_at')}
-                        </dt>
-                        <dd>
-                          <StoreDate iso={certificate.verified_at} />
-                        </dd>
-                      </>
+                    </div>
+                    <div className="text-muted-foreground text-xs">
+                      {certificate.tax_exemption_reason?.name ?? '—'}
+                      {' · '}
+                      <JurisdictionLabel
+                        countryCode={certificate.country_code}
+                        stateCode={certificate.state_code}
+                      />
+                      {certificate.issuing_authority && ` · ${certificate.issuing_authority}`}
+                    </div>
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap text-muted-foreground">
+                    {certificate.expires_at ? (
+                      <StoreDate iso={certificate.expires_at} />
+                    ) : (
+                      t('admin.tax_exemption_certificates.never_expires')
                     )}
-                  </dl>
-
-                  {certificate.document_filename ? (
-                    <Button
-                      type="button"
-                      variant="link"
-                      size="sm"
-                      className="h-auto justify-start p-0 text-xs"
-                      onClick={() => handleDownload(certificate)}
-                    >
-                      <PaperclipIcon className="size-3" />
-                      {certificate.document_filename}
-                      {certificate.document_byte_size ? (
-                        <span className="text-muted-foreground">
-                          ({formatFileSize(certificate.document_byte_size)})
-                        </span>
-                      ) : null}
-                    </Button>
-                  ) : (
-                    <span className="text-muted-foreground text-xs">
-                      {t('admin.tax_exemption_certificates.no_document')}
-                    </span>
-                  )}
-                </ItemContent>
-
-                <ItemActions>
-                  <RowActions
-                    actions={[
-                      {
-                        key: 'download',
-                        label: t('admin.tax_exemption_certificates.download_action'),
-                        icon: <DownloadIcon className="size-4" />,
-                        visible: !!certificate.document_url,
-                        onSelect: () => handleDownload(certificate),
-                      },
-                      {
-                        key: 'verify',
-                        label: t('admin.tax_exemption_certificates.verify_action'),
-                        icon: <BadgeCheckIcon className="size-4" />,
-                        visible: canEdit && certificate.status === 'pending',
-                        disabled: verifyMutation.isPending,
-                        onSelect: () =>
-                          verifyMutation.mutateAsync(certificate.id).catch(() => undefined),
-                      },
-                      {
-                        key: 'revoke',
-                        label: t('admin.tax_exemption_certificates.revoke_action'),
-                        icon: <BanIcon className="size-4" />,
-                        visible: canEdit && certificate.status !== 'revoked',
-                        disabled: revokeMutation.isPending,
-                        destructive: true,
-                        onSelect: () => handleRevoke(certificate),
-                      },
-                      {
-                        key: 'delete',
-                        visible: canEdit && !!certificate.can_be_deleted,
-                        destructive: true,
-                        onSelect: () => handleDelete(certificate),
-                      },
-                    ]}
-                  />
-                </ItemActions>
-              </Item>
-            ))}
-          </ItemGroup>
-        </CardContent>
-      )}
+                  </TableCell>
+                  <TableCell>
+                    {certificate.document_filename ? (
+                      <Button
+                        type="button"
+                        variant="link"
+                        size="sm"
+                        className="h-auto max-w-56 justify-start p-0 text-xs"
+                        onClick={() => handleDownload(certificate)}
+                      >
+                        <PaperclipIcon className="size-3" />
+                        <span className="truncate">{certificate.document_filename}</span>
+                        {certificate.document_byte_size ? (
+                          <span className="text-muted-foreground">
+                            ({formatFileSize(certificate.document_byte_size)})
+                          </span>
+                        ) : null}
+                      </Button>
+                    ) : (
+                      <span className="text-muted-foreground text-xs">
+                        {t('admin.tax_exemption_certificates.no_document')}
+                      </span>
+                    )}
+                  </TableCell>
+                  <TableCell className="w-10 text-right">
+                    <RowActions
+                      actions={[
+                        {
+                          key: 'download',
+                          label: t('admin.tax_exemption_certificates.download_action'),
+                          icon: <DownloadIcon className="size-4" />,
+                          visible: !!certificate.document_url,
+                          onSelect: () => handleDownload(certificate),
+                        },
+                        {
+                          key: 'verify',
+                          label: t('admin.tax_exemption_certificates.verify_action'),
+                          icon: <BadgeCheckIcon className="size-4" />,
+                          visible: canEdit && certificate.status === 'pending',
+                          disabled: verifyMutation.isPending,
+                          onSelect: () =>
+                            verifyMutation.mutateAsync(certificate.id).catch(() => undefined),
+                        },
+                        {
+                          key: 'revoke',
+                          label: t('admin.tax_exemption_certificates.revoke_action'),
+                          icon: <BanIcon className="size-4" />,
+                          visible: canEdit && certificate.status !== 'revoked',
+                          disabled: revokeMutation.isPending,
+                          destructive: true,
+                          onSelect: () => handleRevoke(certificate),
+                        },
+                        {
+                          key: 'delete',
+                          visible: canEdit && !!certificate.can_be_deleted,
+                          destructive: true,
+                          onSelect: () => handleDelete(certificate),
+                        },
+                      ]}
+                    />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
+      </Card>
 
       {addOpen && <CertificateSheet companyId={companyId} open onOpenChange={setAddOpen} />}
-    </Card>
+    </Section>
   )
 }
 

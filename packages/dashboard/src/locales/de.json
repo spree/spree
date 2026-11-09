@@ -553,7 +553,10 @@
       },
       "roles_enterprise_help": "Hier hinzugefügte Mitglieder können für dieses Unternehmen einkaufen und sein Verzeichnis verwalten. Rollen, Freigabe-Workflows und Ausgabenlimits gibt es mit Spree Enterprise.",
       "roles_enterprise_title": "Rollen und Freigaben sind ein Enterprise-Feature",
-      "title": "Mitglieder"
+      "title": "Mitglieder",
+      "columns": {
+        "member": "Mitglied"
+      }
     },
     "components": {
       "adjustment_action_editor": {
@@ -6050,7 +6053,11 @@
       },
       "title": "Freistellungsbescheinigungen",
       "verified_at": "Angenommen am",
-      "verify_action": "Annehmen"
+      "verify_action": "Annehmen",
+      "columns": {
+        "certificate": "Zertifikat",
+        "document": "Dokument"
+      }
     },
     "tax_identifiers": {
       "add_cta": "Nummer hinzufügen",

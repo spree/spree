@@ -102,7 +102,11 @@
       "default_shipping": "Default shipping",
       "inherited_from": "Inherited from {{name}}",
       "set_default_billing": "Set as default billing",
-      "set_default_shipping": "Set as default shipping"
+      "set_default_shipping": "Set as default shipping",
+      "columns": {
+        "address": "Address",
+        "defaults": "Default for"
+      }
     },
     "auth": {
       "back_to_login": "Back to sign in",

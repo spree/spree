@@ -1,20 +1,9 @@
 import type { Customer } from '@spree/admin-sdk'
+import { CustomerIdentity } from './customers/customer-identity'
 
-/** Whether a customer has a name to show in place of their email. */
-export function customerHasName(customer: Customer): boolean {
-  return !!(customer.first_name || customer.last_name)
-}
+export { customerHasName } from './customers/customer-identity'
 
-/** Dropdown row for a customer picker — the name, with the email under it. */
+/** Dropdown row for a customer picker: the shared identity, compact. */
 export function CustomerComboboxOption({ customer }: { customer: Customer }) {
-  if (!customerHasName(customer)) {
-    return <div className="font-medium">{customer.email ?? customer.id}</div>
-  }
-
-  return (
-    <div>
-      <div className="font-medium">{customer.full_name}</div>
-      {customer.email && <div className="text-muted-foreground text-xs">{customer.email}</div>}
-    </div>
-  )
+  return <CustomerIdentity customer={customer} size="sm" />
 }

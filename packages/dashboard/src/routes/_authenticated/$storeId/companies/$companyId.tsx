@@ -17,11 +17,11 @@ import {
   usePermissions,
 } from '@spree/dashboard-core'
 import {
-  AddressBookRow,
+  AddressBookTable,
+  AddressBookTableRow,
   Badge,
   Button,
   Card,
-  CardAction,
   CardContent,
   CardHeader,
   CardTitle,
@@ -36,6 +36,10 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  Empty,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
   ErrorState,
   Field,
   FieldContent,
@@ -46,15 +50,32 @@ import {
   Input,
   Pagination,
   ResourceLayout,
+  Section,
+  SectionActions,
+  SectionHeader,
+  SectionTitle,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
   Switch,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
   useConfirm,
 } from '@spree/dashboard-ui'
-import { EllipsisVerticalIcon, PlusIcon, TrashIcon } from '@spree/dashboard-ui/icons'
+import {
+  Building2Icon,
+  EllipsisVerticalIcon,
+  MapPinIcon,
+  PlusIcon,
+  TrashIcon,
+  UsersIcon,
+} from '@spree/dashboard-ui/icons'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
@@ -63,6 +84,7 @@ import { CompanyAddressSheet } from '../../../../components/spree/company-addres
 import { CompanyKindBadge } from '../../../../components/spree/company-kind-badge'
 import { ApiCustomFieldsCard } from '../../../../components/spree/custom-fields/custom-fields-inline'
 import { CustomerCombobox } from '../../../../components/spree/customers/customer-combobox'
+import { CustomerIdentity } from '../../../../components/spree/customers/customer-identity'
 import { EnterpriseUpsell } from '../../../../components/spree/enterprise-upsell'
 import { ResourceDetailSkeleton } from '../../../../components/spree/route-pending'
 import { TaxExemptionCertificatesCard } from '../../../../components/spree/tax-exemption-certificates-card'
@@ -165,6 +187,8 @@ function CompanyBody({ company }: { company: Company }) {
           <SubUnitsCard company={company} canEdit={canEdit} />
           <MembersCard company={company} canEdit={canEdit} />
           {!isDivision && <TaxExemptionCertificatesCard companyId={company.id} canEdit={canEdit} />}
+          <AddressBookCard company={company} canEdit={canEdit} />
+          {!isDivision && <CompanyTaxIdentifiersCard companyId={company.id} canEdit={canEdit} />}
           <ApiCustomFieldsCard ownerType="company" ownerId={company.id} collapsible />
           <RecordMetadataCard
             metadata={company.metadata}
@@ -178,12 +202,9 @@ function CompanyBody({ company }: { company: Company }) {
       sidebar={
         <>
           <CompanyProfileCard company={company} canEdit={canEdit} />
-          <AddressBookCard company={company} canEdit={canEdit} />
-          {isDivision ? (
-            <DivisionTaxPointerCard legalEntity={legalEntity} />
-          ) : (
-            <CompanyTaxIdentifiersCard companyId={company.id} canEdit={canEdit} />
-          )}
+          {/* A sub-unit holds no registrations of its own; this points to the
+              legal entity that does. */}
+          {isDivision && <DivisionTaxPointerCard legalEntity={legalEntity} />}
           <Slot name="company.form_sidebar" context={{ company, kind: company.kind, canEdit }} />
         </>
       }
@@ -374,56 +395,77 @@ function SubUnitsCard({ company, canEdit }: { company: Company; canEdit: boolean
   const meta = data?.meta
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>
+    <Section>
+      <SectionHeader>
+        <SectionTitle>
+          <Building2Icon />
           {t('admin.companies.sub_units.title')}
           {meta?.count ? <Badge variant="outline">{meta.count}</Badge> : null}
-        </CardTitle>
+        </SectionTitle>
         {canEdit && (
-          <CardAction>
+          <SectionActions>
             <Button size="sm" variant="outline" onClick={() => setAddOpen(true)}>
               <PlusIcon className="size-4" />
               {t('admin.companies.sub_units.add_cta')}
             </Button>
-          </CardAction>
+          </SectionActions>
         )}
-      </CardHeader>
+      </SectionHeader>
 
-      {isLoading ? (
-        <CardContent>
-          <p className="text-muted-foreground text-sm">{t('admin.common.loading')}</p>
-        </CardContent>
-      ) : children.length === 0 ? (
-        <CardContent>
-          <p className="text-muted-foreground text-sm">{t('admin.companies.sub_units.empty')}</p>
-        </CardContent>
-      ) : (
-        <CardContent className="p-0">
-          <div className="flex flex-col">
-            {children.map((child) => (
-              <Link
-                key={child.id}
-                to={'/$storeId/companies/$companyId' as string}
-                params={{ storeId, companyId: child.id }}
-                className="flex items-center justify-between gap-3 border-b px-6 py-3 no-underline last:border-b-0 hover:bg-accent/50"
-              >
-                <span className="flex min-w-0 items-center gap-2">
-                  <span className="truncate font-medium text-foreground text-sm">{child.name}</span>
-                  <CompanyKindBadge kind={child.kind} />
-                </span>
-                <span className="shrink-0 text-muted-foreground text-xs">
-                  {t('admin.companies.members_count', { count: child.members_count })}
-                </span>
-              </Link>
-            ))}
-          </div>
-          {meta && meta.pages > 1 && <Pagination meta={meta} onPageChange={setPage} />}
-        </CardContent>
-      )}
+      <Card>
+        {isLoading || children.length === 0 ? (
+          <CardContent>
+            {isLoading ? (
+              <p className="text-muted-foreground text-sm">{t('admin.common.loading')}</p>
+            ) : (
+              <Empty className="p-4">
+                <EmptyHeader>
+                  <EmptyMedia variant="icon">
+                    <Building2Icon />
+                  </EmptyMedia>
+                  <EmptyTitle>{t('admin.companies.sub_units.empty')}</EmptyTitle>
+                </EmptyHeader>
+              </Empty>
+            )}
+          </CardContent>
+        ) : (
+          <>
+            <Table roundedTop>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>{t('admin.fields.name.label')}</TableHead>
+                  <TableHead className="text-right">
+                    {t('admin.company_memberships.title')}
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {children.map((child) => (
+                  <TableRow key={child.id}>
+                    <TableCell>
+                      <Link
+                        to={'/$storeId/companies/$companyId' as string}
+                        params={{ storeId, companyId: child.id }}
+                        className="flex min-w-0 items-center gap-2 rounded-md text-foreground no-underline outline-none focus-visible:shadow-field-focus"
+                      >
+                        <span className="truncate font-medium text-sm">{child.name}</span>
+                        <CompanyKindBadge kind={child.kind} />
+                      </Link>
+                    </TableCell>
+                    <TableCell className="text-right text-muted-foreground tabular-nums">
+                      {child.members_count}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+            {meta && meta.pages > 1 && <Pagination inset meta={meta} onPageChange={setPage} />}
+          </>
+        )}
+      </Card>
 
       {addOpen && <AddSubUnitDialog parent={company} open onOpenChange={setAddOpen} />}
-    </Card>
+    </Section>
   )
 }
 
@@ -576,49 +618,61 @@ function AddressBookCard({ company, canEdit }: { company: Company; canEdit: bool
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>
+    <Section>
+      <SectionHeader>
+        <SectionTitle>
+          <MapPinIcon />
           {t('admin.company_addresses.title')}
           {meta?.count ? <Badge variant="outline">{meta.count}</Badge> : null}
-        </CardTitle>
+        </SectionTitle>
         {canEdit && (
-          <CardAction>
+          <SectionActions>
             <Button size="sm" variant="outline" onClick={() => setEditing('new')}>
               <PlusIcon className="size-4" />
               {t('admin.company_addresses.add_cta')}
             </Button>
-          </CardAction>
+          </SectionActions>
         )}
-      </CardHeader>
+      </SectionHeader>
 
-      {isLoading ? (
-        <CardContent>
-          <p className="text-muted-foreground text-sm">{t('admin.common.loading')}</p>
-        </CardContent>
-      ) : entries.length === 0 ? (
-        <CardContent>
-          <p className="text-muted-foreground text-sm">{t('admin.company_addresses.empty')}</p>
-        </CardContent>
-      ) : (
-        <CardContent className="flex flex-col gap-4">
-          {entries.map((entry) => (
-            <AddressBookRow
-              key={entry.id}
-              address={entry}
-              canEdit={canEdit}
-              inheritedFrom={
-                entry.owner && entry.owner.id !== company.id ? (entry.owner.name ?? '') : null
-              }
-              onEdit={() => setEditing(entry)}
-              onSetDefaultBilling={() => setDefault(entry.id, 'billing')}
-              onSetDefaultShipping={() => setDefault(entry.id, 'shipping')}
-              onRemove={() => handleRemove(entry)}
-            />
-          ))}
-          {meta && meta.pages > 1 && <Pagination meta={meta} onPageChange={setPage} />}
-        </CardContent>
-      )}
+      <Card>
+        {isLoading || entries.length === 0 ? (
+          <CardContent>
+            {isLoading ? (
+              <p className="text-muted-foreground text-sm">{t('admin.common.loading')}</p>
+            ) : (
+              <Empty className="p-4">
+                <EmptyHeader>
+                  <EmptyMedia variant="icon">
+                    <MapPinIcon />
+                  </EmptyMedia>
+                  <EmptyTitle>{t('admin.company_addresses.empty')}</EmptyTitle>
+                </EmptyHeader>
+              </Empty>
+            )}
+          </CardContent>
+        ) : (
+          <>
+            <AddressBookTable>
+              {entries.map((entry) => (
+                <AddressBookTableRow
+                  key={entry.id}
+                  address={entry}
+                  canEdit={canEdit}
+                  inheritedFrom={
+                    entry.owner && entry.owner.id !== company.id ? (entry.owner.name ?? '') : null
+                  }
+                  onEdit={() => setEditing(entry)}
+                  onSetDefaultBilling={() => setDefault(entry.id, 'billing')}
+                  onSetDefaultShipping={() => setDefault(entry.id, 'shipping')}
+                  onRemove={() => handleRemove(entry)}
+                />
+              ))}
+            </AddressBookTable>
+            {meta && meta.pages > 1 && <Pagination inset meta={meta} onPageChange={setPage} />}
+          </>
+        )}
+      </Card>
 
       {editing && (
         <CompanyAddressSheet
@@ -629,7 +683,7 @@ function AddressBookCard({ company, canEdit }: { company: Company; canEdit: bool
           onOpenChange={(open) => !open && setEditing(null)}
         />
       )}
-    </Card>
+    </Section>
   )
 }
 
@@ -659,90 +713,105 @@ function MembersCard({ company, canEdit }: { company: Company; canEdit: boolean 
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>
+    <Section>
+      <SectionHeader>
+        <SectionTitle>
+          <UsersIcon />
           {t('admin.company_memberships.title')}
           {meta?.count ? <Badge variant="outline">{meta.count}</Badge> : null}
-        </CardTitle>
+        </SectionTitle>
         {canEdit && (
-          <CardAction>
+          <SectionActions>
             <Button size="sm" variant="outline" onClick={() => setAddOpen(true)}>
               <PlusIcon className="size-4" />
               {t('admin.company_memberships.add_cta')}
             </Button>
-          </CardAction>
+          </SectionActions>
         )}
-      </CardHeader>
+      </SectionHeader>
 
-      {isLoading ? (
-        <CardContent>
-          <p className="text-muted-foreground text-sm">{t('admin.common.loading')}</p>
-        </CardContent>
-      ) : memberships.length === 0 ? (
-        <CardContent>
-          <p className="text-muted-foreground text-sm">{t('admin.company_memberships.empty')}</p>
-        </CardContent>
-      ) : (
-        <CardContent className="p-0">
-          <div className="flex flex-col">
-            {memberships.map((membership) => (
-              <div
-                key={membership.id}
-                className="flex items-center justify-between gap-3 border-b px-6 py-3 last:border-b-0"
-              >
-                <div className="flex min-w-0 flex-col">
-                  <Link
-                    to={'/$storeId/customers/$customerId' as string}
-                    params={{ storeId, customerId: membership.customer_id }}
-                    className="font-medium text-foreground text-sm no-underline hover:underline"
-                  >
-                    {membership.email ?? membership.customer_id}
-                  </Link>
-                  {/* Where the member's role renders once an extension owns
-                      one; OSS grants every member the same standing, so there
-                      is nothing to show without one. */}
-                  <Slot
-                    name="company_membership.row_meta"
-                    context={{ membership, companyId: company.id, canEdit }}
-                  />
-                </div>
-                {canEdit && (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon-xs">
-                        <EllipsisVerticalIcon className="size-4" />
-                        <span className="sr-only">{t('admin.actions.actions_menu')}</span>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      {/* Above the destructive item, so "change role" never
-                          sits next to "remove member". */}
-                      <Slot
-                        name="company_membership.row_actions"
-                        context={{ membership, companyId: company.id }}
+      {/* One card: the members as a table, then any pending invitations. */}
+      <Card>
+        {isLoading || memberships.length === 0 ? (
+          <CardContent>
+            {isLoading ? (
+              <p className="text-muted-foreground text-sm">{t('admin.common.loading')}</p>
+            ) : (
+              <Empty className="p-4">
+                <EmptyHeader>
+                  <EmptyMedia variant="icon">
+                    <UsersIcon />
+                  </EmptyMedia>
+                  <EmptyTitle>{t('admin.company_memberships.empty')}</EmptyTitle>
+                </EmptyHeader>
+              </Empty>
+            )}
+          </CardContent>
+        ) : (
+          <>
+            <Table roundedTop>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>{t('admin.company_memberships.columns.member')}</TableHead>
+                  {canEdit && <TableHead className="w-10" />}
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {memberships.map((membership) => (
+                  <TableRow key={membership.id}>
+                    <TableCell>
+                      <CustomerIdentity
+                        customer={membership.customer}
+                        email={membership.email}
+                        linkTo={{ storeId, customerId: membership.customer_id }}
                       />
-                      <DropdownMenuItem
-                        variant="destructive"
-                        onClick={() => handleRemove(membership)}
-                      >
-                        <TrashIcon className="size-4" />
-                        {t('admin.company_memberships.remove_action')}
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                )}
-              </div>
-            ))}
-          </div>
-          {meta && meta.pages > 1 && <Pagination meta={meta} onPageChange={setPage} />}
-        </CardContent>
-      )}
-
-      <PendingInvitations company={company} canEdit={canEdit} />
+                      {/* Where the member's role renders once an extension
+                          owns one; OSS grants every member the same standing,
+                          so there is nothing to show without one. */}
+                      <Slot
+                        name="company_membership.row_meta"
+                        context={{ membership, companyId: company.id, canEdit }}
+                      />
+                    </TableCell>
+                    {canEdit && (
+                      <TableCell className="w-10 text-right">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon-xs">
+                              <EllipsisVerticalIcon className="size-4" />
+                              <span className="sr-only">{t('admin.actions.actions_menu')}</span>
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            {/* Above the destructive item, so "change role"
+                                never sits next to "remove member". */}
+                            <Slot
+                              name="company_membership.row_actions"
+                              context={{ membership, companyId: company.id }}
+                            />
+                            <DropdownMenuItem
+                              variant="destructive"
+                              onClick={() => handleRemove(membership)}
+                            >
+                              <TrashIcon className="size-4" />
+                              {t('admin.company_memberships.remove_action')}
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    )}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+            {meta && meta.pages > 1 && <Pagination inset meta={meta} onPageChange={setPage} />}
+          </>
+        )}
+        <PendingInvitations company={company} canEdit={canEdit} />
+      </Card>
 
       {addOpen && <AddMemberDialog companyId={company.id} open onOpenChange={setAddOpen} />}
-    </Card>
+    </Section>
   )
 }
 
@@ -772,32 +841,38 @@ function PendingInvitations({ company, canEdit }: { company: Company; canEdit: b
   }
 
   return (
-    <CardContent className="border-t pt-4">
-      <p className="mb-2 font-medium text-muted-foreground text-xs uppercase">
+    <div className="border-border-subtle border-t">
+      <p className="px-3.5 pt-3 pb-1 font-medium text-muted-foreground text-xs">
         {t('admin.company_invitations.pending_title')}
       </p>
-      <div className="flex flex-col gap-2">
-        {pending.map((invitation) => (
-          <div key={invitation.id} className="flex items-center justify-between gap-3">
-            <span className="min-w-0 truncate text-foreground text-sm">{invitation.email}</span>
-            <span className="flex shrink-0 items-center gap-2">
-              <Badge variant="secondary">{t('admin.company_invitations.status.pending')}</Badge>
-              {canEdit && (
-                <Button
-                  variant="ghost"
-                  size="icon-xs"
-                  onClick={() => handleRevoke(invitation)}
-                  aria-label={t('admin.company_invitations.revoke_action')}
-                >
-                  <TrashIcon className="size-4" />
-                </Button>
-              )}
-            </span>
-          </div>
-        ))}
-      </div>
-      {meta && meta.pages > 1 && <Pagination meta={meta} onPageChange={setPage} />}
-    </CardContent>
+      <Table>
+        <TableBody>
+          {pending.map((invitation) => (
+            <TableRow key={invitation.id}>
+              <TableCell>
+                <CustomerIdentity email={invitation.email} />
+              </TableCell>
+              <TableCell className="w-px whitespace-nowrap text-right">
+                <span className="inline-flex items-center gap-2">
+                  <Badge variant="secondary">{t('admin.company_invitations.status.pending')}</Badge>
+                  {canEdit && (
+                    <Button
+                      variant="destructive-ghost"
+                      size="icon-xs"
+                      onClick={() => handleRevoke(invitation)}
+                      aria-label={t('admin.company_invitations.revoke_action')}
+                    >
+                      <TrashIcon className="size-4" />
+                    </Button>
+                  )}
+                </span>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+      {meta && meta.pages > 1 && <Pagination inset meta={meta} onPageChange={setPage} />}
+    </div>
   )
 }
 

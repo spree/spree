@@ -2096,7 +2096,11 @@
       "default_shipping": "Envío predeterminado",
       "inherited_from": "Heredada de {{name}}",
       "set_default_billing": "Establecer como facturación predeterminada",
-      "set_default_shipping": "Establecer como envío predeterminado"
+      "set_default_shipping": "Establecer como envío predeterminado",
+      "columns": {
+        "address": "Dirección",
+        "defaults": "Predeterminada para"
+      }
     },
     "row_actions": {
       "clone": "Duplicar",

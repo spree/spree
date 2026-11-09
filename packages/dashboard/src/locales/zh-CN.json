@@ -551,7 +551,10 @@
       },
       "roles_enterprise_help": "在此添加的成员可以为该公司采购并管理其目录。角色、审批流程和支出限额随 Spree Enterprise 提供。",
       "roles_enterprise_title": "角色与审批是 Enterprise 功能",
-      "title": "成员"
+      "title": "成员",
+      "columns": {
+        "member": "成员"
+      }
     },
     "components": {
       "adjustment_action_editor": {
@@ -6037,7 +6040,11 @@
       },
       "title": "免税证明",
       "verified_at": "接受日期",
-      "verify_action": "接受"
+      "verify_action": "接受",
+      "columns": {
+        "certificate": "证书",
+        "document": "文件"
+      }
     },
     "tax_identifiers": {
       "add_cta": "添加登记号",

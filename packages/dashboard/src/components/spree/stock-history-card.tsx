@@ -198,7 +198,7 @@ function StockHistoryTable({
           ))}
         </TableBody>
       </Table>
-      {paginated && data?.meta && <Pagination meta={data.meta} onPageChange={setPage} />}
+      {paginated && data?.meta && <Pagination inset meta={data.meta} onPageChange={setPage} />}
     </>
   )
 }

@@ -8,6 +8,7 @@ import {
   useStockLocations,
 } from '@spree/dashboard-core'
 import {
+  Badge,
   Button,
   Card,
   CardContent,
@@ -19,6 +20,10 @@ import {
   FieldLabel,
   Input,
   ResourceLayout,
+  Section,
+  SectionActions,
+  SectionHeader,
+  SectionTitle,
   Select,
   SelectContent,
   SelectItem,
@@ -26,7 +31,7 @@ import {
   SelectValue,
   Textarea,
 } from '@spree/dashboard-ui'
-import { PlusIcon } from '@spree/dashboard-ui/icons'
+import { PackageIcon, PlusIcon } from '@spree/dashboard-ui/icons'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { supplierAutocompleteProps } from '../../hooks/use-suppliers'
@@ -240,17 +245,23 @@ export function PurchaseOrderForm({
   )
 
   const itemsCard = (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>{t('admin.purchase_orders.items_title')}</CardTitle>
+    <Section>
+      <SectionHeader>
+        <SectionTitle>
+          <PackageIcon />
+          {t('admin.purchase_orders.items_title')}
+          {lines.length > 0 && <Badge variant="outline">{lines.length}</Badge>}
+        </SectionTitle>
         {lines.length > 0 && (
-          <Button type="button" variant="outline" size="sm" onClick={() => setPickerOpen(true)}>
-            <PlusIcon className="size-4" />
-            {t('admin.inventory_lines.add_label')}
-          </Button>
+          <SectionActions>
+            <Button type="button" variant="outline" size="sm" onClick={() => setPickerOpen(true)}>
+              <PlusIcon className="size-4" />
+              {t('admin.inventory_lines.add_label')}
+            </Button>
+          </SectionActions>
         )}
-      </CardHeader>
-      <CardContent>
+      </SectionHeader>
+      <Card>
         {/* No warehouse filter, unlike a transfer: buying stock in is how a
             merchant gets what they do not have. */}
         <VariantLineEditor
@@ -262,8 +273,8 @@ export function PurchaseOrderForm({
           pickerOpen={pickerOpen}
           onPickerOpenChange={setPickerOpen}
         />
-      </CardContent>
-    </Card>
+      </Card>
+    </Section>
   )
 
   return (
