@@ -7,9 +7,7 @@ test.use({ trace: 'off' })
 const railsEnv = {
   ...process.env,
   RAILS_ENV: 'test',
-  DATABASE_URL:
-    process.env.DATABASE_URL ||
-    `sqlite3:${resolve(API_GEM_DIR, 'spec/dummy/db/spree_test_e2e.sqlite3')}`,
+  DATABASE_URL: `sqlite3:${resolve(API_GEM_DIR, 'spec/dummy/db/spree_test_e2e.sqlite3')}`,
 }
 
 // Store checkout has no dashboard surface. Exercise its public HTTP contract
