@@ -248,7 +248,7 @@ function SortableRuleRow({
       className={cn(isDragging && 'relative z-10 opacity-80 shadow-lg')}
     >
       {canUpdate && (
-        <span className="w-6 touch-none">
+        <span className="w-8 shrink-0 touch-none">
           <DragHandle attributes={attributes} listeners={listeners} />
         </span>
       )}

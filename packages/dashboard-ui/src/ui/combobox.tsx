@@ -345,11 +345,9 @@ function ComboboxChip({
         // was shorter than the remove button inside it, and left the label with
         // no vertical breathing room at any screen size.
         //
-        // Fill matches the highlighted row in the list below (`bg-accent`): a
-        // chip and a selected option are the same thing at two moments, so they
-        // read as the same thing. `bg-muted` sat within 1.03:1 of the field it
-        // sits on, which left the chips barely visible.
-        'flex min-h-7 w-fit max-w-full items-center justify-center gap-1 rounded-sm bg-accent py-1 pl-2.5 pr-2 text-sm font-base text-foreground has-disabled:pointer-events-none has-disabled:cursor-not-allowed has-disabled:opacity-50 has-data-[slot=combobox-chip-remove]:pr-1',
+        // Outlined, so a chip keeps its edge while the field under it takes its
+        // hover fill; a fill alone matched that hover and the chip vanished.
+        'flex min-h-7 w-fit max-w-full items-center justify-center gap-1 rounded-sm bg-accent/50 border py-1 pl-2.5 pr-2 text-sm font-base text-foreground has-disabled:pointer-events-none has-disabled:cursor-not-allowed has-disabled:opacity-50 has-data-[slot=combobox-chip-remove]:pr-1',
         className,
       )}
       {...props}
@@ -358,7 +356,7 @@ function ComboboxChip({
       {showRemove && (
         <ComboboxPrimitive.ChipRemove
           render={<Button variant="ghost" size="icon-sm" />}
-          className="size-6 shrink-0 opacity-50 hover:opacity-100"
+          className="size-6 shrink-0 opacity-50 hover:bg-transparent hover:opacity-100"
           data-slot="combobox-chip-remove"
           // Names the chip it clears ("Remove Wholesale") rather than a bare
           // "Remove": several sit side by side, and a dialog's own submit

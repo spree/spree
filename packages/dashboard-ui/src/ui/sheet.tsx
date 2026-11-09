@@ -136,6 +136,14 @@ function SheetContent({
           'data-[side=top]:inset-x-0 data-[side=top]:top-0 data-[side=top]:h-auto data-[side=top]:border-b',
           'data-[starting-style]:opacity-0 data-[side=right]:data-[starting-style]:translate-x-10 data-[side=left]:data-[starting-style]:-translate-x-10 data-[side=bottom]:data-[starting-style]:translate-y-10 data-[side=top]:data-[starting-style]:-translate-y-10',
           'data-[ending-style]:opacity-0 data-[side=right]:data-[ending-style]:translate-x-10 data-[side=left]:data-[ending-style]:-translate-x-10 data-[side=bottom]:data-[ending-style]:translate-y-10 data-[side=top]:data-[ending-style]:-translate-y-10',
+          // A sheet opened from inside this one stacks on top, as toasts do:
+          // this one shrinks from its outer edge and slides out far enough to
+          // peek from behind, a step per open sheet above it, and dims.
+          'after:pointer-events-none after:absolute after:inset-0 after:z-20 after:rounded-[inherit] after:bg-black/0 after:transition-colors after:duration-250',
+          'data-[nested-dialog-open]:after:bg-black/5 dark:data-[nested-dialog-open]:after:bg-black/30',
+          'data-[side=right]:origin-left data-[side=left]:origin-right',
+          'data-[nested-dialog-open]:scale-[calc(1-0.05*var(--nested-dialogs))]',
+          'data-[side=right]:data-[nested-dialog-open]:translate-x-[calc(-20px*var(--nested-dialogs))] data-[side=left]:data-[nested-dialog-open]:translate-x-[calc(20px*var(--nested-dialogs))]',
           className,
         )}
         {...props}
