@@ -418,7 +418,7 @@ fr:
       not_found: Non trouvé(e)
       not_locked: n'est pas bloqué
       not_saved:
-        one: "%{resource} n'a pu etre sauvegardé à cause d' 1 erreur:"
+        one: "%{resource} n'a pu etre sauvegardé à cause de %{count} erreur:"
         other: "%{resource} n'a pu etre sauvegardé à cause de %{count} erreurs:"
   number:
     percentage:
