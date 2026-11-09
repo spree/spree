@@ -444,11 +444,8 @@
           "this_month": "Tháng này",
           "today": "Hôm nay"
         },
-        "date_range_end": "Kết thúc",
-        "date_range_start": "Bắt đầu",
         "descending": "Giảm dần",
         "filter_by": "Lọc theo…",
-        "filter_date_placeholder": "Chọn một ngày",
         "filter_select_placeholder": "Chọn…",
         "filter_text_placeholder": "Lọc…",
         "filter_to_placeholder": "Lọc để…",

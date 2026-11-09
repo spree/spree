@@ -443,11 +443,8 @@
           "this_month": "Ten miesiąc",
           "today": "Dzisiaj"
         },
-        "date_range_end": "Do",
-        "date_range_start": "Od",
         "descending": "Malejąco",
         "filter_by": "Filtruj według…",
-        "filter_date_placeholder": "Wybierz datę",
         "filter_select_placeholder": "Wybierz…",
         "filter_text_placeholder": "Filtruj…",
         "filter_to_placeholder": "Filtruj do…",

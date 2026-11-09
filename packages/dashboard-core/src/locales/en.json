@@ -444,11 +444,8 @@
           "this_month": "This month",
           "today": "Today"
         },
-        "date_range_end": "End",
-        "date_range_start": "Start",
         "descending": "Descending",
         "filter_by": "Filter by…",
-        "filter_date_placeholder": "Pick a date",
         "filter_select_placeholder": "Select…",
         "filter_text_placeholder": "Filter…",
         "filter_to_placeholder": "Filter to…",

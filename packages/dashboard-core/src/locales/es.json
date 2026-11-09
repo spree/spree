@@ -250,11 +250,8 @@
           "this_month": "Este mes",
           "today": "Hoy"
         },
-        "date_range_end": "Fin",
-        "date_range_start": "Inicio",
         "descending": "Descendente",
         "filter_by": "Filtrar por…",
-        "filter_date_placeholder": "Elegir una fecha",
         "filter_select_placeholder": "Seleccionar…",
         "filter_text_placeholder": "Filtrar…",
         "filter_to_placeholder": "Filtrar hasta…",

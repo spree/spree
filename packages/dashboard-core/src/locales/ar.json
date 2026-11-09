@@ -442,11 +442,8 @@
           "this_month": "هذا الشهر",
           "today": "اليوم"
         },
-        "date_range_end": "إلى",
-        "date_range_start": "من",
         "descending": "تنازلي",
         "filter_by": "تصفية حسب…",
-        "filter_date_placeholder": "اختر تاريخًا",
         "filter_select_placeholder": "اختر…",
         "filter_text_placeholder": "تصفية…",
         "filter_to_placeholder": "التصفية إلى…",

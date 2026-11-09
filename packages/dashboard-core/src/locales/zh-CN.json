@@ -442,11 +442,8 @@
           "this_month": "本月",
           "today": "今天"
         },
-        "date_range_end": "结束",
-        "date_range_start": "开始",
         "descending": "降序",
         "filter_by": "筛选依据…",
-        "filter_date_placeholder": "选择日期",
         "filter_select_placeholder": "选择…",
         "filter_text_placeholder": "筛选…",
         "filter_to_placeholder": "筛选至…",

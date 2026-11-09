@@ -30,9 +30,9 @@ import {
 import {
   ArrowUpDownIcon,
   CheckIcon,
-  ChevronDownIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  ChevronsUpDownIcon,
   Columns3Icon,
   ListFilter,
   XIcon,
@@ -44,12 +44,7 @@ import { useTranslation } from 'react-i18next'
 import { getApiClient } from '../api-client'
 import { useAuth } from '../hooks/use-auth'
 import { type TableDensity, useTableDensity } from '../hooks/use-table-density'
-import {
-  DATE_PRESET_KEYS,
-  type DatePresetKey,
-  matchDatePreset,
-  resolveDatePreset,
-} from '../lib/date-presets'
+import { DATE_PRESET_KEYS, matchDatePreset, resolveDatePreset } from '../lib/date-presets'
 import {
   type ColumnDef,
   type FilterRule,
@@ -60,7 +55,6 @@ import {
 import { useOptionalStore } from '../providers/store-provider'
 import { useTenantId } from '../providers/tenant-provider'
 import { LocaleLabel, useLocaleLabel } from './locale-select'
-import { StoreDatePicker } from './store-date-picker'
 
 interface TableToolbarProps {
   /** Displayable columns (for column selector and table headers) */
@@ -297,7 +291,7 @@ export function TableToolbar({
                 searchPlaceholder ?? t('admin.components.table_toolbar.search_placeholder')
               }
               clearLabel={t('admin.common.clear')}
-              className="hidden h-[2.125rem] w-[240px] bg-card text-sm lg:flex rounded-lg"
+              className="hidden h-[2.125rem] w-[240px] bg-card text-sm lg:flex"
             />
 
             {/* Icon only, like sort and columns: the quick controls beside it
@@ -330,10 +324,10 @@ export function TableToolbar({
                   </TooltipTrigger>
                   <TooltipContent>{t('admin.components.table_toolbar.add_filter')}</TooltipContent>
                 </Tooltip>
-                {/* `min(480px, …)` rather than a flat 480px: the panel is wider
-                  than a phone, so a fixed width runs its right edge and the
-                  Apply button off the screen. */}
-                <PopoverContent align="start" className="w-[min(480px,calc(100vw-1rem))] p-0">
+                {/* The panel sets its own width: `min(480px, …)` for its lists,
+                  so it never runs off a phone, and wider for a date field's
+                  calendar. */}
+                <PopoverContent align="start" className="w-auto max-w-[calc(100vw-1rem)] p-0">
                   <FilterPanel
                     key={panelRule?.id ?? ''}
                     initialRule={panelRule}
@@ -889,7 +883,7 @@ function QuickEnumFilter({
           ) : (
             <SelectedCount selected={selected.length} total={options.length} />
           )}
-          <ChevronDownIcon className="size-3.5 text-muted-foreground" />
+          <ChevronsUpDownIcon className="size-3.5 text-muted-foreground" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="min-w-56">
@@ -979,7 +973,7 @@ function QuickResourceFilter({
         <Button variant="outline" size="sm" className={quickFilterTriggerClass()}>
           <span className="text-muted-foreground">{column.label}</span>
           {summary}
-          <ChevronDownIcon className="size-3.5 text-muted-foreground" />
+          <ChevronsUpDownIcon className="size-3.5 text-muted-foreground" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="min-w-56">
@@ -1007,39 +1001,11 @@ function QuickDateFilter({
   onFiltersChange: (filters: FilterRule[]) => void
 }) {
   const { t, i18n } = useTranslation()
-  const store = useOptionalStore()
-  // A panel with no store context (a seller's) falls back to the viewer's zone
-  // rather than refusing to offer presets.
-  const timezone = store?.timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone ?? 'UTC'
-
+  const timezone = useFilterTimezone()
   const from = filters.find((f) => f.field === column.key && f.operator === 'gteq')
   const to = filters.find((f) => f.field === column.key && f.operator === 'lteq')
   const active = matchDatePreset({ from: from?.value ?? null, to: to?.value ?? null }, timezone)
   const [open, setOpen] = useState(false)
-
-  /** Replace this column's bounds. Either end may be null for an open range. */
-  const applyRange = useCallback(
-    (rangeFrom: string | null, rangeTo: string | null) => {
-      const others = filters.filter(
-        (f) => !(f.field === column.key && (f.operator === 'gteq' || f.operator === 'lteq')),
-      )
-      const next: FilterRule[] = [...others]
-      if (rangeFrom) {
-        next.push({
-          id: randomUUID(),
-          field: column.key,
-          operator: 'gteq',
-          value: rangeFrom,
-        })
-      }
-      if (rangeTo) {
-        next.push({ id: randomUUID(), field: column.key, operator: 'lteq', value: rangeTo })
-      }
-      onFiltersChange(next)
-      setOpen(false)
-    },
-    [filters, column.key, onFiltersChange],
-  )
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -1051,34 +1017,83 @@ function QuickDateFilter({
               ? formatDateBounds(from?.value ?? null, to?.value ?? null, i18n.language)
               : t(`admin.components.table_toolbar.date_presets.${active}`)}
           </span>
-          <ChevronDownIcon className="size-3.5 text-muted-foreground" />
+          <ChevronsUpDownIcon className="size-3.5 text-muted-foreground" />
         </Button>
       </PopoverTrigger>
       <PopoverContent align="start" className="w-auto max-w-[calc(100vw-1rem)] p-0">
-        <DateRangePanel
-          // Reseeds the calendar whenever the applied range changes, even if
-          // the popover reopens before its closing animation unmounts it.
-          key={`${from?.value}:${to?.value}`}
-          presets={DATE_PRESET_KEYS.map((key) => ({
-            key,
-            label: t(`admin.components.table_toolbar.date_presets.${key}`),
-          }))}
-          activePreset={active}
-          onPresetSelect={(preset) => {
-            const range = resolveDatePreset(preset, timezone)
-            applyRange(range.from, range.to)
+        <ColumnDateRange
+          field={column.key}
+          filters={filters}
+          onApply={(next) => {
+            onFiltersChange(next)
+            setOpen(false)
           }}
-          // A range restored from a URL may be open on one side; the calendar
-          // highlights the end it has.
-          initialRange={
-            from?.value || to?.value
-              ? { from: parseDay(from?.value ?? to?.value), to: parseDay(to?.value) }
-              : undefined
-          }
-          onApply={(range) => applyRange(formatDay(range.from), formatDay(range.to))}
         />
       </PopoverContent>
     </Popover>
+  )
+}
+
+/** A panel with no store context (a seller's) falls back to the viewer's zone
+ *  rather than refusing to offer presets. */
+function useFilterTimezone(): string {
+  const store = useOptionalStore()
+  return store?.timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone ?? 'UTC'
+}
+
+/**
+ * Presets and a range calendar for one date column, used by its quick filter
+ * and by the filter panel alike, so a range is picked the same way in both.
+ * `onApply` gets the whole filter list with this column's bounds replaced.
+ */
+function ColumnDateRange({
+  field,
+  filters,
+  onApply,
+}: {
+  field: string
+  filters: FilterRule[]
+  onApply: (filters: FilterRule[]) => void
+}) {
+  const { t } = useTranslation()
+  const timezone = useFilterTimezone()
+  const from = filters.find((f) => f.field === field && f.operator === 'gteq')
+  const to = filters.find((f) => f.field === field && f.operator === 'lteq')
+  const active = matchDatePreset({ from: from?.value ?? null, to: to?.value ?? null }, timezone)
+
+  /** Replace this column's bounds. Either end may be null for an open range. */
+  function applyRange(rangeFrom: string | null, rangeTo: string | null) {
+    const next = filters.filter(
+      (f) => !(f.field === field && (f.operator === 'gteq' || f.operator === 'lteq')),
+    )
+    if (rangeFrom) next.push({ id: randomUUID(), field, operator: 'gteq', value: rangeFrom })
+    if (rangeTo) next.push({ id: randomUUID(), field, operator: 'lteq', value: rangeTo })
+    onApply(next)
+  }
+
+  return (
+    <DateRangePanel
+      // Reseeds the calendar whenever the applied range changes, even if
+      // the popover reopens before its closing animation unmounts it.
+      key={`${from?.value}:${to?.value}`}
+      presets={DATE_PRESET_KEYS.map((key) => ({
+        key,
+        label: t(`admin.components.table_toolbar.date_presets.${key}`),
+      }))}
+      activePreset={active}
+      onPresetSelect={(preset) => {
+        const range = resolveDatePreset(preset, timezone)
+        applyRange(range.from, range.to)
+      }}
+      // A range restored from a URL may be open on one side; the calendar
+      // highlights the end it has.
+      initialRange={
+        from?.value || to?.value
+          ? { from: parseDay(from?.value ?? to?.value), to: parseDay(to?.value) }
+          : undefined
+      }
+      onApply={(range) => applyRange(formatDay(range.from), formatDay(range.to))}
+    />
   )
 }
 
@@ -1456,8 +1471,6 @@ function FilterPanel({
 }) {
   const { t } = useTranslation()
   const tenantId = useTenantId()
-  const store = useOptionalStore()
-  const timezone = store?.timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone ?? 'UTC'
   /**
    * What picking a field starts from: the rule already set on it, so reopening
    * a filter shows the values it is filtering by. Without this a list reads as
@@ -1492,10 +1505,6 @@ function FilterPanel({
   const [value, setValue] = useState(initial.value)
   const [editing, setEditing] = useState<string | null>(initial.editing)
   const [query, setQuery] = useState('')
-  // Set once the user picks "custom" from the date presets, revealing the two
-  // date fields. Kept separate from `value` so backing out of custom does not
-  // strand a half-entered range.
-  const [customRange, setCustomRange] = useState<{ from: string; to: string } | null>(null)
 
   const column = columns.find((c) => c.key === field)
   const type = column?.filterType ?? 'string'
@@ -1551,7 +1560,6 @@ function FilterPanel({
     setValue(seed.value)
     setEditing(seed.editing)
     setQuery('')
-    setCustomRange(null)
   }
 
   /** Back to the field list. Clears the half-built rule with it — the search
@@ -1563,7 +1571,6 @@ function FilterPanel({
     setValue('')
     setEditing(null)
     setQuery('')
-    setCustomRange(null)
   }
 
   /**
@@ -1583,23 +1590,6 @@ function FilterPanel({
       (f) => !(f.field === field && f.operator === nextOperator) && f.id !== editing,
     )
     onApply([...others, { id: randomUUID(), field, operator: nextOperator, value: nextValue }])
-  }
-
-  /** Replace this field's bounds with a preset's, and close. */
-  function commitDatePreset(preset: DatePresetKey) {
-    if (!field) return
-    const range = resolveDatePreset(preset, timezone)
-    const others = filters.filter(
-      (f) => !(f.field === field && (f.operator === 'gteq' || f.operator === 'lteq')),
-    )
-    const next = [...others]
-    if (range.from) {
-      next.push({ id: randomUUID(), field, operator: 'gteq', value: range.from })
-    }
-    if (range.to) {
-      next.push({ id: randomUUID(), field, operator: 'lteq', value: range.to })
-    }
-    onApply(next)
   }
 
   /**
@@ -1647,7 +1637,13 @@ function FilterPanel({
     // fill, the search field's own ground — paints over the rounded corner and
     // squares it off. Clipping here fixes both top corners once, rather than
     // asking each child to round the one it happens to touch.
-    <div className="flex flex-col overflow-hidden rounded-xl">
+    <div
+      className={cn(
+        'flex flex-col overflow-hidden rounded-xl',
+        // A date field widens to fit the presets beside a two-month calendar.
+        field && dated ? 'w-auto' : 'w-[min(480px,calc(100vw-1rem))]',
+      )}
+    >
       {/* Header. Before a field is chosen this is a label and a search box over
           the field list; after, the label becomes the way back to it. */}
       {/* The panel reads at the app's base size rather than the 13px the
@@ -1709,7 +1705,14 @@ function FilterPanel({
           the list from scrolling the page behind the panel; the themed
           scrollbar the popover supplies is what tells the reader there is more
           below, since the rows themselves end flush at the container's edge. */}
-      <div className="max-h-[320px] overflow-y-auto overscroll-contain p-1.5 text-base themed-scrollbar">
+      <div
+        className={cn(
+          'text-base',
+          // The calendar sizes itself; the lists scroll inside a capped body.
+          !(field && dated) &&
+            'max-h-[320px] overflow-y-auto overscroll-contain p-1.5 themed-scrollbar',
+        )}
+      >
         {/* Stage one: pick a subject. */}
         {!field &&
           visibleFields.map((col) => (
@@ -1789,103 +1792,9 @@ function FilterPanel({
           />
         )}
 
-        {/* Stage two, dates: the same relative presets the quick filter
-            offers, so a range means the same thing wherever it was set.
-            "Custom" swaps in two date fields rather than opening a third
-            popup on top of this one. */}
-        {field && dated && !customRange && (
-          <>
-            {DATE_PRESET_KEYS.map((preset) => (
-              <button
-                key={preset}
-                type="button"
-                data-slot="filter-panel-item"
-                className="flex w-full items-center rounded-lg px-2 py-1.5 text-left transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
-                onClick={() => commitDatePreset(preset)}
-              >
-                {t(`admin.components.table_toolbar.date_presets.${preset}`)}
-              </button>
-            ))}
-            <button
-              type="button"
-              data-slot="filter-panel-item"
-              className={cn(panelRowClass, 'justify-between')}
-              // Seeded with the bounds applied, so editing one end keeps the other.
-              onClick={() =>
-                setCustomRange({
-                  from:
-                    filters.find((f) => f.field === field && f.operator === 'gteq')?.value ?? '',
-                  to: filters.find((f) => f.field === field && f.operator === 'lteq')?.value ?? '',
-                })
-              }
-            >
-              {t('admin.components.table_toolbar.date_presets.custom')}
-              <ChevronRightIcon className="size-3.5 shrink-0 text-muted-foreground" />
-            </button>
-          </>
-        )}
-
-        {field && dated && customRange && (
-          <div data-slot="filter-panel-controls" className="flex flex-col gap-3 p-3">
-            <div className="flex flex-col gap-1">
-              <span className="text-xs text-muted-foreground">
-                {t('admin.components.table_toolbar.date_range_start')}
-              </span>
-              <StoreDatePicker
-                value={customRange.from || null}
-                onChange={(next) => setCustomRange({ ...customRange, from: next ?? '' })}
-                placeholder={t('admin.components.table_toolbar.filter_date_placeholder')}
-              />
-            </div>
-            <div className="flex flex-col gap-1">
-              <span className="text-xs text-muted-foreground">
-                {t('admin.components.table_toolbar.date_range_end')}
-              </span>
-              <StoreDatePicker
-                value={customRange.to || null}
-                onChange={(next) => setCustomRange({ ...customRange, to: next ?? '' })}
-                placeholder={t('admin.components.table_toolbar.filter_date_placeholder')}
-              />
-            </div>
-            <div className="flex justify-end gap-1.5">
-              <Button variant="ghost" size="sm" onClick={() => setCustomRange(null)}>
-                {t('admin.actions.back')}
-              </Button>
-              <Button
-                size="sm"
-                // Either bound alone is a valid filter — "everything since
-                // March" is a question people ask.
-                disabled={!customRange.from && !customRange.to}
-                onClick={() => {
-                  if (!field) return
-                  const others = filters.filter(
-                    (f) => !(f.field === field && (f.operator === 'gteq' || f.operator === 'lteq')),
-                  )
-                  const next = [...others]
-                  if (customRange.from) {
-                    next.push({
-                      id: randomUUID(),
-                      field,
-                      operator: 'gteq',
-                      value: customRange.from,
-                    })
-                  }
-                  if (customRange.to) {
-                    next.push({
-                      id: randomUUID(),
-                      field,
-                      operator: 'lteq',
-                      value: customRange.to,
-                    })
-                  }
-                  onApply(next)
-                }}
-              >
-                {t('admin.actions.apply')}
-              </Button>
-            </div>
-          </div>
-        )}
+        {/* Stage two, dates: the presets and range calendar the quick filter
+            uses, so a range is picked the same way wherever it is set. */}
+        {field && dated && <ColumnDateRange field={field} filters={filters} onApply={onApply} />}
 
         {/* Stage two, everything else: an operator and a value. The operator
             lives here rather than in the header because it only exists for
