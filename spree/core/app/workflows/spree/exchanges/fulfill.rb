@@ -87,6 +87,10 @@ module Spree
 
       def ensure_received
         failure(exchange, :not_received) unless exchange.received?
+        # Asked before settle_tax writes the rows, which run outside the
+        # transaction a refused replacement would roll back.
+        refusal = Spree::OrderChanges::Begin.refusal_for(exchange.order)
+        failure(exchange, refusal) if refusal
       end
 
       # Rewrites both halves' rows for the units that arrived, before any money
