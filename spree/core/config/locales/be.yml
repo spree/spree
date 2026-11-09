@@ -446,7 +446,7 @@ be:
       not_locked: не быў заблакаваны
       not_saved:
         many: "%{count} памылак перашкаджаюць захаванню %{resource}:"
-        one: 'Адна памылка перашкаджае захаванню %{resource}:'
+        one: "%{count} памылка перашкаджае захаванню %{resource}:"
         other: "%{count} памылкі перашкаджаюць захаванню %{resource}:"
   number:
     percentage:
