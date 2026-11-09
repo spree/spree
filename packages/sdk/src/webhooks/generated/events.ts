@@ -182,6 +182,7 @@ export interface WebhookEventMap {
   'order.delivered': Order
   'order.fulfilled': Order
   'order.paid': Order
+  'order.payment_requested': Order
   'order.placed': Order
   'order.resend_confirmation_email': Order
   'order.resend_digital_links_email': Order

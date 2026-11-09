@@ -68,8 +68,14 @@ Spree::Core::Engine.add_routes do
           end
         end
 
-        # Orders (single order lookup, guest-accessible via order token)
+        # Orders (single order lookup, guest-accessible via order token). A
+        # draft order the merchant raised is paid for here, as a cart is at
+        # checkout — see Store::Orders::PaymentSessionsController.
         resources :orders, only: [:show] do
+          post :complete, on: :member
+          resources :payment_sessions, only: [:create, :show, :update], controller: 'orders/payment_sessions' do
+            patch :complete, on: :member
+          end
           # Customer self-service returns — opening and viewing only; the
           # merchant approves, receives and refunds through the Admin API.
           resources :returns, only: [:index, :show, :create], controller: 'orders/returns' do
@@ -787,6 +793,9 @@ Spree::Core::Engine.add_routes do
             patch :complete
             patch :cancel
             patch :approve
+            # Opens a draft to its buyer for payment on the storefront.
+            patch :request_payment
+            patch :withdraw_payment_request
             post :resend_confirmation
             post :resend_digital_links
             # The buyer's purchase order, streamed through the API so it is

@@ -51,7 +51,7 @@ module Spree
     include Spree::NumberIdentifier
 
     publishes_lifecycle_events
-    publishes_events :approved, :canceled, :delivered, :fulfilled, :paid, :placed,
+    publishes_events :approved, :canceled, :delivered, :fulfilled, :paid, :payment_requested, :placed,
                      :resend_confirmation_email, :resend_digital_links_email
     publishes_event :completed, deprecated_alias_of: 'order.placed'
     publishes_event :shipped, deprecated_alias_of: 'order.fulfilled'
@@ -182,6 +182,13 @@ module Spree
     scope :for_seller, ->(seller) { where(seller_id: seller.respond_to?(:id) ? seller.id : seller) }
 
     scope :drafts,         -> { where(status: 'draft') }
+    # Drafts raised by staff or an extension for a buyer to pay — never the
+    # transient draft a checkout completes through, which carries its cart,
+    # nor one a division between sellers left behind, which its group places.
+    scope :standalone_drafts, -> { drafts.where(cart_id: nil, order_group_id: nil) }
+    # Standalone drafts the merchant asked the buyer to pay — the only drafts a
+    # storefront reaches.
+    scope :payable_drafts, -> { standalone_drafts.where.not(payment_requested_at: nil) }
     scope :not_drafts,     -> { where.not(status: 'draft') }
     scope :placed_orders,  -> { where(status: 'placed') }
     scope :canceled_orders, -> { where(status: 'canceled') }
@@ -434,6 +441,16 @@ module Spree
 
     def draft?
       status == 'draft'
+    end
+
+    # @see .standalone_drafts
+    def standalone_draft?
+      draft? && cart_id.nil? && order_group_id.nil?
+    end
+
+    # @see .payable_drafts
+    def payable_draft?
+      standalone_draft? && payment_requested_at.present?
     end
 
     def placed?

@@ -51,6 +51,7 @@ describe('orders', () => {
       ['complete', 'complete'],
       ['cancel', 'cancel'],
       ['approve', 'approve'],
+      ['requestPayment', 'request_payment'],
     ] as const)('PATCHes /orders/:id/%s', async (method, segment) => {
       let hit = false
       server.use(
