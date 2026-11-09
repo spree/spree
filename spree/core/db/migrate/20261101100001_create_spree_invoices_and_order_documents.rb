@@ -39,7 +39,7 @@ class CreateSpreeInvoicesAndOrderDocuments < ActiveRecord::Migration[8.1]
     # An issuer's own numbering is unique per kind: an invoice and a credit
     # note may share a number in systems that keep separate series.
     add_index :spree_invoices, [:issuer_type, :issuer_id, :kind, :number], unique: true,
-              name: 'idx_spree_invoices_on_issuer_kind_and_number'
+                                                                           name: 'idx_spree_invoices_on_issuer_kind_and_number'
     # The missing-invoice filter asks "has this order an invoice or receipt";
     # the accountants' list sorts a store's invoices by issue date.
     add_index :spree_invoices, [:order_id, :kind]
@@ -67,7 +67,7 @@ class CreateSpreeInvoicesAndOrderDocuments < ActiveRecord::Migration[8.1]
     # One open request per order, enforced where two clicks race.
     if connection.supports_partial_index?
       add_index :spree_invoice_requests, :order_id, unique: true, where: "status = 'open'",
-                name: 'idx_spree_invoice_requests_on_open_order'
+                                                    name: 'idx_spree_invoice_requests_on_open_order'
     end
 
     create_table :spree_order_documents do |t|

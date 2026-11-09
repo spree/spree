@@ -17,10 +17,12 @@ module Spree
             request_params :order_document do |body|
               body.attribute :label, :string, required: true, on: :create, example: 'Signed purchase order'
               body.attribute :customer_visible, :boolean,
-                description: "Whether the buyer sees it on their order. Off unless set; the buyer's own uploads are always visible to them."
+                             description: 'Whether the buyer sees it on their order. Off unless set; ' \
+                                          "the buyer's own uploads are always visible to them."
               # A file is the document; replacing it is uploading a new one.
-              body.attribute :file_signed_id, :string, required: true, only: :create,
-                description: "A `signed_id` from `files.upload()` with `visibility: 'private'`. PDF, image, office document or CSV."
+              body.attribute :file_signed_id, :string,
+                             required: true, only: :create,
+                             description: "A `signed_id` from `files.upload()` with `visibility: 'private'`. PDF, image, office document or CSV."
               body.attribute :metadata, :hash
             end
           end

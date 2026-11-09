@@ -34,7 +34,7 @@ RSpec.describe Spree::Api::V3::Store::Orders::InvoicesController, type: :control
       get :index, params: { order_id: guest_order.prefixed_id }, as: :json
 
       expect(response).to have_http_status(:ok)
-      expect(json_response['data'].map { |row| row['id'] }).to eq([guest_invoice.prefixed_id])
+      expect(json_response['data'].pluck('id')).to eq([guest_invoice.prefixed_id])
     end
   end
 end

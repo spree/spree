@@ -143,7 +143,7 @@ module Spree
     def commission_seller
       return if seller_payout.nil?
 
-      seller_payout.seller || (@commission_seller ||= Spree::Seller.with_deleted.find_by(id: seller_payout.seller_id))
+      seller_payout.seller || deleted_commission_seller
     end
 
     # The address the invoice is emailed to: the order's buyer, or for a
@@ -164,6 +164,12 @@ module Spree
     end
 
     private
+
+    def deleted_commission_seller
+      return @deleted_commission_seller if defined?(@deleted_commission_seller)
+
+      @deleted_commission_seller = Spree::Seller.with_deleted.find_by(id: seller_payout.seller_id)
+    end
 
     def belongs_to_one_parent
       return if order_id.present? ^ seller_payout_id.present?

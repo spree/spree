@@ -10,10 +10,12 @@ module Spree
 
             request_params 'CreateInvoiceRequestParams', action: :create do |body|
               body.attribute :company_name, :string, nullable: true, example: 'Acme GmbH'
-              body.attribute :tax_id, :string, nullable: true, example: 'DE123456789',
-                description: 'The VAT or tax number to print on the invoice.'
-              body.attribute :billing_address, :object, nullable: true,
-                description: "Where the invoice is addressed, when not the order's billing address." do |address|
+              body.attribute :tax_id, :string,
+                             nullable: true, example: 'DE123456789',
+                             description: 'The VAT or tax number to print on the invoice.'
+              body.attribute :billing_address, :object,
+                             nullable: true,
+                             description: "Where the invoice is addressed, when not the order's billing address." do |address|
                 address.include_attributes Spree::Api::V3::Store::AddressRequestSchema
               end
             end

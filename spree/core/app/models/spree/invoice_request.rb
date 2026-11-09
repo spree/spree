@@ -41,7 +41,7 @@ module Spree
     # The partial unique index is the guarantee; this gives the API a message
     # instead of a database error on the ordinary double click.
     def one_open_request_per_order
-      return unless order && self.class.open.where(order_id: order_id).exists?
+      return unless order && self.class.open.exists?(order_id: order_id)
 
       errors.add(:base, :invoice_request_already_open)
     end

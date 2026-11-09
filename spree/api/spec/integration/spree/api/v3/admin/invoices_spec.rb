@@ -34,7 +34,7 @@ RSpec.describe 'Admin Invoices API', type: :request, swagger_doc: 'api-reference
 
         run_test! do |response|
           data = JSON.parse(response.body)['data']
-          expect(data.map { |row| row['id'] }).to eq([invoice.prefixed_id])
+          expect(data.pluck('id')).to eq([invoice.prefixed_id])
           expect(data.first).to include('kind' => 'invoice', 'number' => 'FV/2026/11/1', 'issuer_type' => 'store', 'source' => 'uploaded')
         end
       end
@@ -129,7 +129,8 @@ RSpec.describe 'Admin Invoices API', type: :request, swagger_doc: 'api-reference
       tags 'Invoices'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description "Emails the invoice to the order's buyer, or a commission invoice to the seller, whatever the store's automatic invoice email setting says."
+      description "Emails the invoice to the order's buyer, or a commission invoice to the seller, " \
+                  "whatever the store's automatic invoice email setting says."
       admin_scope :write, :orders
       admin_sdk_example 'invoices/resend'
 

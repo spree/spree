@@ -20,7 +20,7 @@ RSpec.describe Spree::Exports::Invoices, type: :model do
     rows = export_rows
 
     expect(rows.headers).to eq(Spree::CSV::InvoicePresenter::HEADERS)
-    expect(rows.map { |row| row['Number'] }).to contain_exactly('FV/2026/11/42', 'CN/1')
+    expect(rows.pluck('Number')).to contain_exactly('FV/2026/11/42', 'CN/1')
     expect(rows.find { |row| row['Number'] == 'CN/1' }.to_h).to include(
       'Kind' => 'credit_note', 'Corrects' => 'FV/2026/11/42', 'Order Number' => order.number,
       # The formula guard every export shares quotes a leading minus.
@@ -38,7 +38,7 @@ RSpec.describe Spree::Exports::Invoices, type: :model do
   end
 
   it 'exports the filtered list' do
-    expect(export_rows(search_params: { kind_eq: 'invoice' }.to_json).map { |row| row['Number'] }).to eq(['FV/2026/11/42'])
+    expect(export_rows(search_params: { kind_eq: 'invoice' }.to_json).pluck('Number')).to eq(['FV/2026/11/42'])
   end
 
   it 'includes commission invoices only when its creator reads payouts, and says so' do
@@ -55,6 +55,6 @@ RSpec.describe Spree::Exports::Invoices, type: :model do
   it "never includes another store's invoices" do
     create(:invoice, order: create(:completed_order_with_totals, store: create(:store)), number: 'OTHER-1')
 
-    expect(export_rows.map { |row| row['Number'] }).not_to include('OTHER-1')
+    expect(export_rows.pluck('Number')).not_to include('OTHER-1')
   end
 end

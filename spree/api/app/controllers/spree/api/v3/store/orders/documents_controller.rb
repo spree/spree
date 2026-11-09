@@ -15,14 +15,16 @@ module Spree
               body.attribute :filename, :string, required: true
               body.attribute :content_type, :string, required: true
               body.attribute :byte_size, :integer, required: true
-              body.attribute :checksum, :string, required: true,
-                description: 'Base64-encoded MD5 digest of the file; the storage service checks the bytes against it.'
+              body.attribute :checksum, :string,
+                             required: true,
+                             description: 'Base64-encoded MD5 digest of the file; the storage service checks the bytes against it.'
             end
 
             request_params 'CreateOrderDocumentParams', action: :create do |body|
               body.attribute :label, :string, required: true, example: 'Purchase order 4471'
-              body.attribute :file_signed_id, :string, required: true,
-                description: 'A `signed_id` from `orders.documents.upload()`. PDF, image, office document or CSV.'
+              body.attribute :file_signed_id, :string,
+                             required: true,
+                             description: 'A `signed_id` from `orders.documents.upload()`. PDF, image, office document or CSV.'
             end
 
             # POST /api/v3/store/orders/:order_id/documents/upload

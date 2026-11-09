@@ -14,9 +14,7 @@ module Spree
           }
         end
 
-        def currency
-          record.currency
-        end
+        delegate :currency, to: :record
 
         protected
 

@@ -15,13 +15,13 @@ RSpec.describe Spree::Api::V3::Admin::InvoicesController, type: :controller do
     it 'lists the store\'s invoices and credit notes' do
       get :index, as: :json
 
-      expect(json_response['data'].map { |row| row['id'] }).to contain_exactly(invoice.prefixed_id, credit_note.prefixed_id)
+      expect(json_response['data'].pluck('id')).to contain_exactly(invoice.prefixed_id, credit_note.prefixed_id)
     end
 
     it 'filters by kind' do
       get :index, params: { q: { kind_eq: 'credit_note' } }, as: :json
 
-      expect(json_response['data'].map { |row| row['id'] }).to eq([credit_note.prefixed_id])
+      expect(json_response['data'].pluck('id')).to eq([credit_note.prefixed_id])
     end
 
     it 'does not leak another store' do
@@ -29,7 +29,7 @@ RSpec.describe Spree::Api::V3::Admin::InvoicesController, type: :controller do
 
       get :index, as: :json
 
-      expect(json_response['data'].map { |row| row['id'] }).not_to include(other.prefixed_id)
+      expect(json_response['data'].pluck('id')).not_to include(other.prefixed_id)
     end
 
     context 'with a key that may read orders but not payouts' do
@@ -43,7 +43,7 @@ RSpec.describe Spree::Api::V3::Admin::InvoicesController, type: :controller do
 
       it 'leaves commission invoices out of the list and refuses to open one' do
         get :index, as: :json
-        expect(json_response['data'].map { |row| row['id'] }).not_to include(commission.prefixed_id)
+        expect(json_response['data'].pluck('id')).not_to include(commission.prefixed_id)
 
         get :show, params: { id: commission.prefixed_id }, as: :json
         expect(response.status).to be_in([403, 404])

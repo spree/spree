@@ -26,7 +26,7 @@ RSpec.describe 'Order Invoices API', type: :request, swagger_doc: 'api-reference
 
       response '200', 'invoices listed' do
         let(:'x-spree-api-key') { api_key.token }
-        let(:'Authorization') { "Bearer #{jwt_token}" }
+        let(:Authorization) { "Bearer #{jwt_token}" }
 
         schema SwaggerSchemaHelpers.paginated('Invoice')
 
@@ -40,7 +40,7 @@ RSpec.describe 'Order Invoices API', type: :request, swagger_doc: 'api-reference
 
       response '404', "somebody else's order" do
         let(:'x-spree-api-key') { api_key.token }
-        let(:'Authorization') { "Bearer #{jwt_token}" }
+        let(:Authorization) { "Bearer #{jwt_token}" }
         let(:order_id) { create(:completed_order_with_totals, store: store).prefixed_id }
 
         run_test!
@@ -63,7 +63,7 @@ RSpec.describe 'Order Invoices API', type: :request, swagger_doc: 'api-reference
 
       response '200', 'the PDF' do
         let(:'x-spree-api-key') { api_key.token }
-        let(:'Authorization') { "Bearer #{jwt_token}" }
+        let(:Authorization) { "Bearer #{jwt_token}" }
         let(:id) { invoice.prefixed_id }
 
         run_test! { |response| expect(response.body).to start_with('%PDF') }
@@ -93,7 +93,7 @@ RSpec.describe 'Order Invoices API', type: :request, swagger_doc: 'api-reference
 
       response '201', 'request recorded' do
         let(:'x-spree-api-key') { api_key.token }
-        let(:'Authorization') { "Bearer #{jwt_token}" }
+        let(:Authorization) { "Bearer #{jwt_token}" }
         let(:requesting_order) { create(:completed_order_with_totals, store: store, customer: user).tap { |o| o.update_columns(status: 'placed') } }
         let(:order_id) { requesting_order.prefixed_id }
         let(:body) { { company_name: 'Acme GmbH', tax_id: 'DE123456789' } }
@@ -107,7 +107,7 @@ RSpec.describe 'Order Invoices API', type: :request, swagger_doc: 'api-reference
 
       response '422', 'the order already has an invoice' do
         let(:'x-spree-api-key') { api_key.token }
-        let(:'Authorization') { "Bearer #{jwt_token}" }
+        let(:Authorization) { "Bearer #{jwt_token}" }
         let(:body) { { company_name: 'Acme GmbH' } }
 
         before { order.update_columns(status: 'placed') }
@@ -134,14 +134,14 @@ RSpec.describe 'Order Invoices API', type: :request, swagger_doc: 'api-reference
 
       response '200', 'visible documents only' do
         let(:'x-spree-api-key') { api_key.token }
-        let(:'Authorization') { "Bearer #{jwt_token}" }
+        let(:Authorization) { "Bearer #{jwt_token}" }
         let!(:visible) { create(:order_document, order: order, customer_visible: true) }
         let!(:internal) { create(:order_document, order: order) }
 
         schema SwaggerSchemaHelpers.paginated('OrderDocument')
 
         run_test! do |response|
-          expect(JSON.parse(response.body)['data'].map { |row| row['id'] }).to eq([visible.prefixed_id])
+          expect(JSON.parse(response.body)['data'].pluck('id')).to eq([visible.prefixed_id])
         end
       end
     end
@@ -161,7 +161,7 @@ RSpec.describe 'Order Invoices API', type: :request, swagger_doc: 'api-reference
 
       response '201', 'document added' do
         let(:'x-spree-api-key') { api_key.token }
-        let(:'Authorization') { "Bearer #{jwt_token}" }
+        let(:Authorization) { "Bearer #{jwt_token}" }
         let(:blob) do
           ActiveStorage::Blob.create_and_upload!(io: StringIO.new("%PDF-1.4\n%%EOF\n"), filename: 'po.pdf',
                                                  content_type: 'application/pdf', service_name: Spree.private_storage_service_name)
@@ -198,7 +198,7 @@ RSpec.describe 'Order Invoices API', type: :request, swagger_doc: 'api-reference
 
       response '201', 'upload target created' do
         let(:'x-spree-api-key') { api_key.token }
-        let(:'Authorization') { "Bearer #{jwt_token}" }
+        let(:Authorization) { "Bearer #{jwt_token}" }
         let(:body) { { filename: 'po.pdf', content_type: 'application/pdf', byte_size: 48_210, checksum: Digest::MD5.base64digest('po') } }
 
         schema SwaggerSchemaHelpers.ref('FileUpload')
@@ -208,7 +208,7 @@ RSpec.describe 'Order Invoices API', type: :request, swagger_doc: 'api-reference
 
       response '422', 'a file type documents do not accept' do
         let(:'x-spree-api-key') { api_key.token }
-        let(:'Authorization') { "Bearer #{jwt_token}" }
+        let(:Authorization) { "Bearer #{jwt_token}" }
         let(:body) { { filename: 'run.sh', content_type: 'application/x-sh', byte_size: 100, checksum: Digest::MD5.base64digest('x') } }
 
         run_test!

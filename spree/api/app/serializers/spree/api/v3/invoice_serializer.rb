@@ -10,7 +10,9 @@ module Spree
                  issued_on: :string,
                  supplied_on: [:string, nullable: true],
                  currency: [:string, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'],
-                 issuer_type: [:string, enum: Spree::Invoice::ISSUER_TYPES.map { |type| Spree::Base.polymorphic_api_type(type) }, enum_type_name: 'InvoiceIssuerType'],
+                 issuer_type: [:string, enum: Spree::Invoice::ISSUER_TYPES.map do |type|
+                   Spree::Base.polymorphic_api_type(type)
+                 end, enum_type_name: 'InvoiceIssuerType'],
                  issuer_name: [:string, nullable: true],
                  original_invoice_id: [:string, nullable: true],
                  download_url: [:string, nullable: true]

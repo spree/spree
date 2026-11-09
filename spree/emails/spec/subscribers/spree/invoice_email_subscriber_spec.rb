@@ -11,7 +11,7 @@ describe Spree::InvoiceEmailSubscriber do
 
   it 'emails a new invoice to the buyer' do
     expect { subscriber.call(event(invoice, 'invoice.created')) }.to have_enqueued_job(ActionMailer::MailDeliveryJob).
-      with('Spree::InvoiceMailer', 'invoice_email', 'deliver_now', args: [invoice.id, false])
+      with('Spree::InvoiceMailer', 'invoice_email', 'deliver_now', args: [invoice.id, { resend: false }])
   end
 
   it "stays silent when the store's own system sends invoices" do
@@ -30,7 +30,7 @@ describe Spree::InvoiceEmailSubscriber do
     store.update!(preferred_send_invoice_email: false)
 
     expect { subscriber.call(event(invoice, 'invoice.delivery_requested')) }.to have_enqueued_job(ActionMailer::MailDeliveryJob).
-      with('Spree::InvoiceMailer', 'invoice_email', 'deliver_now', args: [invoice.id, true])
+      with('Spree::InvoiceMailer', 'invoice_email', 'deliver_now', args: [invoice.id, { resend: true }])
   end
 
   it "sends sellers their commission invoices even when the store's own system sends buyer invoices" do
@@ -46,6 +46,6 @@ describe Spree::InvoiceEmailSubscriber do
     commission = create(:invoice, :commission, seller_payout: create(:seller_payout, seller: seller, store: store))
 
     expect { subscriber.call(event(commission, 'invoice.created')) }.to have_enqueued_job(ActionMailer::MailDeliveryJob).
-      with('Spree::InvoiceMailer', 'commission_invoice_email', 'deliver_now', args: [commission.id, false])
+      with('Spree::InvoiceMailer', 'commission_invoice_email', 'deliver_now', args: [commission.id, { resend: false }])
   end
 end
