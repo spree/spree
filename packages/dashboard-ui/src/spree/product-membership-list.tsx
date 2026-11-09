@@ -15,16 +15,16 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { Fragment, type ReactNode, useEffect, useMemo, useState } from 'react'
+import { Fragment, type ReactElement, type ReactNode, useEffect, useMemo, useState } from 'react'
 import { cn } from '../lib/utils'
 import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
 import { Checkbox } from '../ui/checkbox'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/data-table'
 import { Pagination, type PaginationMeta } from '../ui/pagination'
-import { Thumbnail } from '../ui/thumbnail'
 import { DragHandle } from './drag-handle'
 import { Undo2Icon, XIcon } from './icons'
+import { ProductIdentity } from './product-identity'
 import { SearchInput } from './search-input'
 
 /** One product row in a membership list. */
@@ -92,8 +92,8 @@ export interface ProductMembershipListProps {
    * (page offset already applied). A rejected promise rolls the row back.
    */
   onReorder?: (id: string, position: number) => Promise<unknown> | undefined
-  /** Row title cell — pass a link to the product page; defaults to plain text. */
-  renderTitle?: (row: ProductMembershipRow) => ReactNode
+  /** The element a row's image and name render as — a link to the product page. */
+  rowLink?: (row: ProductMembershipRow) => ReactElement
   /**
    * Extra columns between the product name and the remove button, for a
    * parent whose membership carries data of its own — a catalog's quantity
@@ -143,7 +143,7 @@ export function ProductMembershipList({
   onRestore,
   reorderable = false,
   onReorder,
-  renderTitle,
+  rowLink,
   renderSubRows,
   extraColumns,
 }: ProductMembershipListProps) {
@@ -236,10 +236,22 @@ export function ProductMembershipList({
     return <p className="p-6 text-muted-foreground text-sm">{labels.empty}</p>
   }
 
+  // A single product column needs no heading; extra columns (prices) do.
+  const showHeader = !!extraColumns
+
   return (
     <>
-      <div className="border-border-subtle border-b p-3">
+      <div className="flex items-center gap-3 border-border-subtle border-b px-4 py-3">
+        {/* Select-all lives here when the table has no header row to hold it. */}
+        {curatable && !showHeader && visible.length > 0 && (
+          <Checkbox
+            checked={allSelected}
+            onCheckedChange={toggleAll}
+            aria-label={labels.selectAll}
+          />
+        )}
         <SearchInput
+          className="flex-1"
           value={query}
           onValueChange={setQuery}
           onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()}
@@ -252,28 +264,39 @@ export function ProductMembershipList({
       ) : (
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
           <Table>
-            <TableHeader>
-              <TableRow>
-                {curatable && (
-                  <TableHead className="w-10">
-                    <Checkbox
-                      checked={allSelected}
-                      onCheckedChange={toggleAll}
-                      aria-label={labels.selectAll}
-                    />
-                  </TableHead>
-                )}
-                {reorderable && <TableHead className="w-8" />}
-                {/* `w-full max-w-0`: table layout sizes a column to its
+            {/* Without a header row, the column widths it set live here. */}
+            {!showHeader && (
+              <colgroup>
+                {curatable && <col className="w-10" />}
+                {reorderable && <col className="w-8" />}
+                <col className="w-full" />
+                <col className="w-10" />
+              </colgroup>
+            )}
+            {showHeader && (
+              <TableHeader>
+                <TableRow>
+                  {curatable && (
+                    <TableHead className="w-10">
+                      <Checkbox
+                        checked={allSelected}
+                        onCheckedChange={toggleAll}
+                        aria-label={labels.selectAll}
+                      />
+                    </TableHead>
+                  )}
+                  {reorderable && <TableHead className="w-8" />}
+                  {/* `w-full max-w-0`: table layout sizes a column to its
                     content, so a long product or variant name would push the
                     columns beside it out of the card — which clips them
                     rather than scrolling. This makes the product column take
                     whatever is left instead, and its content truncate. */}
-                <TableHead className="w-full max-w-0">{labels.columnProduct}</TableHead>
-                {extraColumns?.headers}
-                <TableHead className="w-10" />
-              </TableRow>
-            </TableHeader>
+                  <TableHead className="w-full max-w-0">{labels.columnProduct}</TableHead>
+                  {extraColumns?.headers}
+                  <TableHead className="w-10" />
+                </TableRow>
+              </TableHeader>
+            )}
             <SortableContext items={ids} strategy={verticalListSortingStrategy}>
               {/* No border-t: TableHead draws the rule as an inset shadow,
                   and a border alongside it stacks into a 2px line. */}
@@ -292,7 +315,7 @@ export function ProductMembershipList({
                     onRemove={onRemove ? () => onRemove(row.id) : undefined}
                     onRestore={onRestore ? () => onRestore(row.id) : undefined}
                     labels={labels}
-                    renderTitle={renderTitle}
+                    rowLink={rowLink}
                     extraCells={extraColumns?.renderCells(row)}
                     subRows={renderSubRows?.(row, subRowLayout)}
                   />
@@ -302,8 +325,7 @@ export function ProductMembershipList({
           </Table>
         </DndContext>
       )}
-      {/* Pagination brings its own top border + padding. */}
-      {meta && onPageChange && <Pagination meta={meta} onPageChange={onPageChange} />}
+      {meta && onPageChange && <Pagination inset meta={meta} onPageChange={onPageChange} />}
     </>
   )
 }
@@ -318,7 +340,7 @@ function MembershipRow({
   onRemove,
   onRestore,
   labels,
-  renderTitle,
+  rowLink,
   extraCells,
   subRows,
 }: {
@@ -331,7 +353,7 @@ function MembershipRow({
   onRemove?: () => void
   onRestore?: () => void
   labels: ProductMembershipListLabels
-  renderTitle?: (row: ProductMembershipRow) => ReactNode
+  rowLink?: ProductMembershipListProps['rowLink']
   extraCells?: ReactNode
   subRows?: ReactNode
 }) {
@@ -374,13 +396,19 @@ function MembershipRow({
           </TableCell>
         )}
         <TableCell className="max-w-0">
-          <span className={cn('flex min-w-0 items-center gap-3', removed && 'line-through')}>
-            <Thumbnail src={row.thumbnailUrl} size="sm" />
-            {renderTitle ? renderTitle(row) : <span className="truncate text-sm">{row.name}</span>}
-            {added && labels.pendingAddedBadge && (
-              <Badge variant="secondary">{labels.pendingAddedBadge}</Badge>
-            )}
-          </span>
+          <ProductIdentity
+            name={row.name}
+            thumbnailUrl={row.thumbnailUrl}
+            size="sm"
+            struckThrough={removed}
+            render={rowLink?.(row)}
+            badges={
+              added &&
+              labels.pendingAddedBadge && (
+                <Badge variant="secondary">{labels.pendingAddedBadge}</Badge>
+              )
+            }
+          />
         </TableCell>
         {extraCells}
         <TableCell className="text-right">
@@ -400,7 +428,7 @@ function MembershipRow({
               : onRemove && (
                   <Button
                     type="button"
-                    variant="ghost"
+                    variant="destructive-ghost"
                     size="icon"
                     onClick={onRemove}
                     aria-label={labels.remove}

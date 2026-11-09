@@ -282,14 +282,8 @@ export function DeferredProductMembershipCard<TMember extends ProductMembershipM
             typeof extraColumns === 'function' ? extraColumns(serverProducts) : extraColumns
           }
           renderSubRows={renderSubRows?.(serverProducts)}
-          renderTitle={(row) => (
-            <Link
-              to="/$storeId/products/$productId"
-              params={{ storeId, productId: row.id }}
-              className="truncate text-sm hover:underline"
-            >
-              {row.name}
-            </Link>
+          rowLink={(row) => (
+            <Link to="/$storeId/products/$productId" params={{ storeId, productId: row.id }} />
           )}
           labels={{
             filterPlaceholder: tr('filter_placeholder'),

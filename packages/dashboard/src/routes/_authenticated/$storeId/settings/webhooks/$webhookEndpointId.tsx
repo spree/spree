@@ -12,7 +12,6 @@ import {
   type ResourceSearch,
   ResourceTable,
   resourceSearchSchema,
-  SettingsSection,
   Slot,
   Subject,
 } from '@spree/dashboard-core'
@@ -38,6 +37,7 @@ import {
   SheetHeader,
   SheetTitle,
   Skeleton,
+  StatItem,
   useFormSubmitShortcut,
   useRowClickBridge,
 } from '@spree/dashboard-ui'
@@ -248,13 +248,9 @@ function WebhookEndpointDetailBody({ endpoint }: { endpoint: WebhookEndpoint }) 
                   <PlayIcon className="size-4" />
                   {t('admin.pages.settings.webhooks.actions.send_test')}
                 </Button>
-                <Button
-                  variant="ghost"
-                  size="icon-sm"
-                  onClick={openEdit}
-                  aria-label={t('admin.actions.edit')}
-                >
+                <Button variant="outline" onClick={openEdit}>
                   <PencilIcon className="size-4" />
+                  {t('admin.actions.edit')}
                 </Button>
               </Can>
             }
@@ -342,8 +338,7 @@ function AutoDisabledAlert({
 }
 
 // ---------------------------------------------------------------------------
-// 4-tile health summary — Health badge / Deliveries / Successful / Failed.
-// Mirrors `spree/admin/app/views/spree/admin/webhook_endpoints/_summary.html.erb`.
+// Health summary — Health badge / Deliveries / Successful / Failed.
 // ---------------------------------------------------------------------------
 
 function HealthSummaryCard({ endpoint }: { endpoint: WebhookEndpoint }) {
@@ -382,34 +377,20 @@ function HealthSummaryCard({ endpoint }: { endpoint: WebhookEndpoint }) {
   const failed = endpoint.failed_delivery_count ?? 0
 
   return (
-    <Card>
-      <CardContent>
-        <div className="grid grid-cols-2 gap-6 sm:grid-cols-4">
-          <HealthStat label={t('admin.pages.settings.webhooks.health.label')}>
-            <Badge variant={variant}>{healthLabel}</Badge>
-          </HealthStat>
-          <HealthStat label={t('admin.pages.settings.webhooks.health.metric_total')}>
-            <span className="text-lg font-semibold">{total}</span>
-          </HealthStat>
-          <HealthStat label={t('admin.pages.settings.webhooks.health.metric_successful')}>
-            <span className="text-lg font-semibold">{successful}</span>
-          </HealthStat>
-          <HealthStat label={t('admin.pages.settings.webhooks.health.metric_failed')}>
-            <span className={cn('text-lg font-semibold', failed > 0 && 'text-destructive')}>
-              {failed}
-            </span>
-          </HealthStat>
-        </div>
-      </CardContent>
-    </Card>
-  )
-}
-
-function HealthStat({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div className="flex flex-col gap-1.5">
-      <span className="text-xs uppercase tracking-wide text-muted-foreground">{label}</span>
-      {children}
+    <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <StatItem
+        label={t('admin.pages.settings.webhooks.health.label')}
+        value={<Badge variant={variant}>{healthLabel}</Badge>}
+      />
+      <StatItem label={t('admin.pages.settings.webhooks.health.metric_total')} value={total} />
+      <StatItem
+        label={t('admin.pages.settings.webhooks.health.metric_successful')}
+        value={successful}
+      />
+      <StatItem
+        label={t('admin.pages.settings.webhooks.health.metric_failed')}
+        value={<span className={cn(failed > 0 && 'text-destructive')}>{failed}</span>}
+      />
     </div>
   )
 }
@@ -448,7 +429,7 @@ function DeliveriesCard({
 }
 
 // ---------------------------------------------------------------------------
-// Right-column "Details" card. Mirrors `_details.html.erb`.
+// Right-column "Details" card.
 // ---------------------------------------------------------------------------
 
 // Copyable URL rendered as the page subtitle — the destination URL is the
@@ -471,34 +452,39 @@ function DetailsCard({ endpoint }: { endpoint: WebhookEndpoint }) {
   const { t } = useTranslation()
 
   return (
-    <SettingsSection title={t('admin.pages.settings.webhooks.detail.details_title')}>
-      <CardContent className="flex flex-col divide-y divide-border p-0">
-        <DetailRow
-          label={t('admin.pages.settings.webhooks.detail.subscriptions')}
-          value={
-            endpoint.subscriptions && endpoint.subscriptions.length > 0 ? (
-              <div className="flex max-w-[16rem] flex-wrap justify-end gap-1">
-                {endpoint.subscriptions.map((s) => (
-                  <Badge key={s} variant="secondary" className="font-mono text-[10px]">
-                    {s}
-                  </Badge>
-                ))}
-              </div>
-            ) : (
-              <Badge variant="secondary">{t('admin.pages.settings.webhooks.events_all')}</Badge>
-            )
-          }
-        />
-        <DetailRow
-          label={t('admin.fields.created_at.label')}
-          value={<RelativeTime iso={endpoint.created_at} />}
-        />
-        <DetailRow
-          label={t('admin.fields.updated_at.label')}
-          value={<RelativeTime iso={endpoint.updated_at} />}
-        />
+    <Card>
+      <CardHeader>
+        <CardTitle>{t('admin.pages.settings.webhooks.detail.details_title')}</CardTitle>
+      </CardHeader>
+      <CardContent className="p-0">
+        <dl className="flex flex-col divide-y divide-border">
+          <DetailRow
+            label={t('admin.pages.settings.webhooks.detail.subscriptions')}
+            value={
+              endpoint.subscriptions && endpoint.subscriptions.length > 0 ? (
+                <div className="flex max-w-[16rem] flex-wrap justify-end gap-1">
+                  {endpoint.subscriptions.map((s) => (
+                    <Badge key={s} variant="secondary" className="font-mono text-[10px]">
+                      {s}
+                    </Badge>
+                  ))}
+                </div>
+              ) : (
+                <Badge variant="secondary">{t('admin.pages.settings.webhooks.events_all')}</Badge>
+              )
+            }
+          />
+          <DetailRow
+            label={t('admin.fields.created_at.label')}
+            value={<RelativeTime iso={endpoint.created_at} />}
+          />
+          <DetailRow
+            label={t('admin.fields.updated_at.label')}
+            value={<RelativeTime iso={endpoint.updated_at} />}
+          />
+        </dl>
       </CardContent>
-    </SettingsSection>
+    </Card>
   )
 }
 

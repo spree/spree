@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react'
-import { Item, ItemActions, ItemContent, ItemDescription, ItemTitle } from '../ui/item'
-import { Thumbnail } from '../ui/thumbnail'
-import { PackageIcon } from './icons'
+import { Item, ItemActions } from '../ui/item'
+import { ProductIdentity } from './product-identity'
 
 /**
  * One row of a fulfillment's item list, already joined to its line item by
@@ -31,15 +30,13 @@ export type FulfillmentItemRowData = {
  */
 function ItemRow({ row }: { row: FulfillmentItemRowData }) {
   return (
-    <Item className="flex-nowrap gap-3 rounded-none border-0 p-3">
-      <Thumbnail src={row.thumbnailUrl} fallback={<PackageIcon />} />
-
-      <ItemContent className="min-w-0 gap-0">
-        <ItemTitle className="block truncate">{row.name}</ItemTitle>
-        {row.optionsText && (
-          <ItemDescription className="line-clamp-1 text-xs">{row.optionsText}</ItemDescription>
-        )}
-      </ItemContent>
+    <Item className="flex-nowrap gap-3 rounded-none border-0 px-4 py-3">
+      <ProductIdentity
+        name={row.name}
+        subtitle={row.optionsText}
+        thumbnailUrl={row.thumbnailUrl}
+        className="flex-1"
+      />
 
       <ItemActions className="min-w-0 shrink flex-col items-end gap-0 text-right text-muted-foreground text-sm">
         {row.displayPrice ? (

@@ -18,12 +18,10 @@ import {
   FieldLabel,
   Input,
   Item,
-  ItemContent,
-  ItemTitle,
   Pagination,
+  ProductIdentity,
   SearchInput,
   Textarea,
-  Thumbnail,
   toastManager,
   Wizard,
 } from '@spree/dashboard-ui'
@@ -371,18 +369,14 @@ function ProductsStep({
                 size="xs"
                 className="flex-nowrap gap-3 rounded-none border-0 p-2"
               >
-                <Thumbnail
-                  src={product.thumbnail_url}
-                  alt={product.name ?? ''}
-                  className="size-8"
+                <ProductIdentity
+                  name={product.name}
+                  thumbnailUrl={product.thumbnail_url}
+                  size="sm"
+                  className="flex-1"
                 />
-                <ItemContent className="min-w-0">
-                  <ItemTitle className="block truncate text-sm font-normal">
-                    {product.name}
-                  </ItemTitle>
-                </ItemContent>
                 <Button
-                  variant="ghost"
+                  variant="destructive-ghost"
                   size="icon-xs"
                   type="button"
                   onClick={() => onChange(products.filter((row) => row.id !== product.id))}
@@ -425,16 +419,12 @@ function ProductsStep({
                 size="xs"
                 className="flex-nowrap gap-3 rounded-none border-0 p-2"
               >
-                <Thumbnail
-                  src={product.thumbnail_url}
-                  alt={product.name ?? ''}
-                  className="size-8"
+                <ProductIdentity
+                  name={product.name}
+                  thumbnailUrl={product.thumbnail_url}
+                  size="sm"
+                  className="flex-1"
                 />
-                <ItemContent className="min-w-0">
-                  <ItemTitle className="block truncate text-sm font-normal">
-                    {product.name}
-                  </ItemTitle>
-                </ItemContent>
                 {/* An added row stays visible and disabled rather than
                     disappearing: a list that reshuffles as you click it is
                     hard to work down. */}

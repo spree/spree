@@ -13,7 +13,7 @@ import {
 import { Link } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { useSellerBalances, useSettleSeller } from '../../../hooks/use-seller-ledger'
-import { ReadRow } from './seller-read-row'
+import { ReadRow } from '../read-row'
 
 /**
  * What this seller has earned and what they are still owed, per currency.

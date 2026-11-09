@@ -5,7 +5,7 @@ import {
   formatPrice,
   ProductStockSummary,
 } from '@spree/dashboard-core'
-import { StatusBadge, TagList, Thumbnail } from '@spree/dashboard-ui'
+import { ProductIdentity, StatusBadge, TagList } from '@spree/dashboard-ui'
 import { PackageIcon } from '@spree/dashboard-ui/icons'
 import { Link } from '@tanstack/react-router'
 import i18n from 'i18next'
@@ -30,16 +30,16 @@ defineTable('products', {
       sortable: true,
       default: true,
       render: (product) => (
-        <Link
-          to={'/$storeId/products/$productId' as string}
-          params={{ productId: product.id }}
-          className="flex items-center gap-3 no-underline"
-        >
-          <Thumbnail src={product.thumbnail_url} fallback={<PackageIcon />} />
-          <div className="min-w-0">
-            <div className="truncate font-medium text-foreground">{product.name}</div>
-          </div>
-        </Link>
+        <ProductIdentity
+          name={product.name}
+          thumbnailUrl={product.thumbnail_url}
+          render={
+            <Link
+              to={'/$storeId/products/$productId' as string}
+              params={{ productId: product.id }}
+            />
+          }
+        />
       ),
     },
     {

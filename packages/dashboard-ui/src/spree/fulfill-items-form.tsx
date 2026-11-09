@@ -8,8 +8,8 @@ import { Checkbox } from '../ui/checkbox'
 import { Field, FieldLabel } from '../ui/field'
 import { Input } from '../ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
-import { Thumbnail } from '../ui/thumbnail'
-import { PackageIcon, TriangleAlertIcon } from './icons'
+import { TriangleAlertIcon } from './icons'
+import { ProductIdentity } from './product-identity'
 
 /** A pickable row: what it looks like and how many units are on offer. */
 export type FulfillableRowData = {
@@ -74,14 +74,12 @@ function ItemQuantityRow({
         )}
       />
 
-      <Thumbnail src={row.thumbnailUrl} fallback={<PackageIcon />} />
-
-      <div className="min-w-0 flex-1">
-        <div className="truncate font-medium text-sm">{row.name}</div>
-        {row.optionsText && (
-          <div className="truncate text-muted-foreground text-xs">{row.optionsText}</div>
-        )}
-      </div>
+      <ProductIdentity
+        name={row.name}
+        subtitle={row.optionsText}
+        thumbnailUrl={row.thumbnailUrl}
+        className="flex-1"
+      />
 
       <Controller
         control={form.control}

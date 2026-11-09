@@ -221,20 +221,21 @@ function StockLevelRow({ item }: { item: StockLevel }) {
   return (
     <TableRow>
       <TableCell>
-        <div className="min-w-0">
-          {productId ? (
-            <Link
-              to="/$storeId/products/$productId"
-              params={{ storeId, productId }}
-              className="text-sm font-medium hover:underline"
-            >
-              {variantLabel}
-            </Link>
-          ) : (
-            <span className="text-sm font-medium">{variantLabel}</span>
-          )}
-          {sku && <div className="text-xs text-muted-foreground">SKU {sku}</div>}
-        </div>
+        {productId ? (
+          <Link
+            to="/$storeId/products/$productId"
+            params={{ storeId, productId }}
+            className="group block min-w-0 rounded-md outline-none focus-visible:shadow-field-focus"
+          >
+            <span className="font-medium text-sm group-hover:underline">{variantLabel}</span>
+            {sku && <span className="block text-muted-foreground text-xs">SKU {sku}</span>}
+          </Link>
+        ) : (
+          <div className="min-w-0">
+            <span className="font-medium text-sm">{variantLabel}</span>
+            {sku && <div className="text-muted-foreground text-xs">SKU {sku}</div>}
+          </div>
+        )}
       </TableCell>
       <TableCell className="text-right">
         <Input

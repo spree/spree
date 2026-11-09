@@ -2,7 +2,7 @@ import type { Seller } from '@spree/admin-sdk'
 import { Card, CardContent, CardHeader, CardTitle, RelativeTime } from '@spree/dashboard-ui'
 import { PackageIcon, UsersIcon } from '@spree/dashboard-ui/icons'
 import { useTranslation } from 'react-i18next'
-import { ReadRow } from './seller-read-row'
+import { ReadRow } from '../read-row'
 
 /** The counts an operator scans for before opening anything else. */
 export function SellerAtAGlanceCard({ seller }: { seller: Seller }) {

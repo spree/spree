@@ -62,6 +62,7 @@ export * from './spree/post-sale-fields'
 export * from './spree/quantity-tier-editor'
 export * from './spree/return-dialogs'
 export * from './spree/section'
+export * from './spree/stat-item'
 
 // JsonPreviewDrawer and JsonValueView are intentionally NOT re-exported from
 // this barrel: they pull in `@uiw/react-json-view` (~30KB gzip), and
@@ -75,6 +76,7 @@ export * from './spree/section'
 export * from './spree/external-link'
 export * from './spree/language-menu-items'
 export * from './spree/metadata/metadata-card'
+export * from './spree/product-identity'
 export * from './spree/product-membership-list'
 export * from './spree/products/status-card'
 export * from './spree/relative-time'

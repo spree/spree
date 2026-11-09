@@ -45,6 +45,7 @@ import { useTranslation } from 'react-i18next'
 import { CloseShortDialog } from '../../../../../components/spree/close-short-dialog'
 import { ApiCustomFieldsCard } from '../../../../../components/spree/custom-fields/custom-fields-inline'
 import { InventoryStatusBadge } from '../../../../../components/spree/inventory-status-badge'
+import { ReadRow } from '../../../../../components/spree/read-row'
 import { ReceiveDeliveryCard } from '../../../../../components/spree/receive-delivery-card'
 import { ResourceDetailSkeleton } from '../../../../../components/spree/route-pending'
 import { StockHistoryCard } from '../../../../../components/spree/stock-history-card'
@@ -170,20 +171,16 @@ function SummaryCard({ transfer }: { transfer: StockTransfer }) {
         <CardTitle>{t('admin.stock_transfers.details_title')}</CardTitle>
       </CardHeader>
       <CardContent>
-        {/* One label-over-value pair per row: the card sits in the narrow
-            sidebar column, where a side-by-side grid wraps every value. */}
-        <dl className="flex flex-col gap-3 text-sm">
-          <dt className="text-muted-foreground">{t('admin.stock_transfers.fields.source')}</dt>
-          <dd>
+        <div className="flex flex-col gap-3">
+          <ReadRow label={t('admin.stock_transfers.fields.source')}>
             <WarehouseLink
               storeId={storeId}
               id={transfer.source_location_id}
               name={transfer.source_location?.name ?? locationName(transfer.source_location_id)}
             />
-          </dd>
+          </ReadRow>
 
-          <dt className="text-muted-foreground">{t('admin.stock_transfers.fields.destination')}</dt>
-          <dd>
+          <ReadRow label={t('admin.stock_transfers.fields.destination')}>
             <WarehouseLink
               storeId={storeId}
               id={transfer.destination_location_id}
@@ -192,57 +189,50 @@ function SummaryCard({ transfer }: { transfer: StockTransfer }) {
                 locationName(transfer.destination_location_id)
               }
             />
-          </dd>
+          </ReadRow>
 
-          <dt className="text-muted-foreground">{t('admin.stock_transfers.fields.units')}</dt>
-          <dd className="tabular-nums">
-            {t('admin.stock_transfers.units_summary', {
-              received: transfer.quantity_received_total,
-              shipped: transfer.quantity_shipped_total,
-            })}
-          </dd>
+          <ReadRow label={t('admin.stock_transfers.fields.units')}>
+            <span className="tabular-nums">
+              {t('admin.stock_transfers.units_summary', {
+                received: transfer.quantity_received_total,
+                shipped: transfer.quantity_shipped_total,
+              })}
+            </span>
+          </ReadRow>
 
           {transfer.reference && (
-            <>
-              <dt className="text-muted-foreground">
-                {t('admin.stock_transfers.fields.reference')}
-              </dt>
-              <dd>{transfer.reference}</dd>
-            </>
+            <ReadRow label={t('admin.stock_transfers.fields.reference')}>
+              {transfer.reference}
+            </ReadRow>
           )}
 
           {transfer.notes && (
-            <>
-              <dt className="text-muted-foreground">{t('admin.stock_transfers.fields.notes')}</dt>
-              <dd className="whitespace-pre-line">{transfer.notes}</dd>
-            </>
+            <ReadRow label={t('admin.stock_transfers.fields.notes')} stacked>
+              {transfer.notes}
+            </ReadRow>
           )}
 
-          <dt className="text-muted-foreground">{t('admin.stock_transfers.fields.shipped_at')}</dt>
-          <dd>{transfer.shipped_at ? <RelativeTime iso={transfer.shipped_at} /> : '—'}</dd>
+          <ReadRow label={t('admin.stock_transfers.fields.shipped_at')}>
+            {transfer.shipped_at ? <RelativeTime iso={transfer.shipped_at} /> : '—'}
+          </ReadRow>
 
-          <dt className="text-muted-foreground">{t('admin.stock_transfers.fields.received_at')}</dt>
-          <dd>{transfer.received_at ? <RelativeTime iso={transfer.received_at} /> : '—'}</dd>
+          <ReadRow label={t('admin.stock_transfers.fields.received_at')}>
+            {transfer.received_at ? <RelativeTime iso={transfer.received_at} /> : '—'}
+          </ReadRow>
 
           {transfer.closed_short && (
             <>
-              <dt className="text-muted-foreground">
-                {t('admin.stock_transfers.fields.closed_short')}
-              </dt>
-              <dd>
+              <ReadRow label={t('admin.stock_transfers.fields.closed_short')}>
                 <RelativeTime iso={transfer.closed_short_at as string} />
-              </dd>
+              </ReadRow>
               {transfer.close_reason && (
-                <>
-                  <dt className="text-muted-foreground">
-                    {t('admin.stock_transfers.fields.close_reason')}
-                  </dt>
-                  <dd className="whitespace-pre-line">{transfer.close_reason}</dd>
-                </>
+                <ReadRow label={t('admin.stock_transfers.fields.close_reason')} stacked>
+                  {transfer.close_reason}
+                </ReadRow>
               )}
             </>
           )}
-        </dl>
+        </div>
       </CardContent>
     </Card>
   )

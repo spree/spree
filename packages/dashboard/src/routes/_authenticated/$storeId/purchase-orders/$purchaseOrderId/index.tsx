@@ -45,6 +45,7 @@ import { useTranslation } from 'react-i18next'
 import { CloseShortDialog } from '../../../../../components/spree/close-short-dialog'
 import { ApiCustomFieldsCard } from '../../../../../components/spree/custom-fields/custom-fields-inline'
 import { InventoryStatusBadge } from '../../../../../components/spree/inventory-status-badge'
+import { ReadRow } from '../../../../../components/spree/read-row'
 import { ReceiveDeliveryCard } from '../../../../../components/spree/receive-delivery-card'
 import { ResourceDetailSkeleton } from '../../../../../components/spree/route-pending'
 import { StockHistoryCard } from '../../../../../components/spree/stock-history-card'
@@ -127,16 +128,12 @@ function SummaryCard({ purchaseOrder }: { purchaseOrder: PurchaseOrder }) {
         <CardTitle>{t('admin.purchase_orders.details_title')}</CardTitle>
       </CardHeader>
       <CardContent>
-        {/* One label-over-value pair per row: the card sits in the narrow
-            sidebar column, where a side-by-side grid wraps every value. */}
-        <dl className="flex flex-col gap-3 text-sm">
-          <dt className="text-muted-foreground">{t('admin.purchase_orders.fields.supplier')}</dt>
-          <dd>
+        <div className="flex flex-col gap-3">
+          <ReadRow label={t('admin.purchase_orders.fields.supplier')}>
             {purchaseOrder.supplier_id ? (
               <Link
-                to="/$storeId/suppliers"
-                params={{ storeId }}
-                search={{ edit: purchaseOrder.supplier_id }}
+                to="/$storeId/suppliers/$supplierId"
+                params={{ storeId, supplierId: purchaseOrder.supplier_id }}
                 className="text-foreground hover:underline"
               >
                 {purchaseOrder.supplier?.name ?? purchaseOrder.supplier_id}
@@ -144,10 +141,9 @@ function SummaryCard({ purchaseOrder }: { purchaseOrder: PurchaseOrder }) {
             ) : (
               '—'
             )}
-          </dd>
+          </ReadRow>
 
-          <dt className="text-muted-foreground">{t('admin.purchase_orders.fields.destination')}</dt>
-          <dd>
+          <ReadRow label={t('admin.purchase_orders.fields.destination')}>
             {purchaseOrder.destination_location_id ? (
               <Link
                 to="/$storeId/settings/stock-locations"
@@ -160,78 +156,66 @@ function SummaryCard({ purchaseOrder }: { purchaseOrder: PurchaseOrder }) {
             ) : (
               '—'
             )}
-          </dd>
+          </ReadRow>
 
-          <dt className="text-muted-foreground">{t('admin.purchase_orders.fields.units')}</dt>
-          <dd className="tabular-nums">
-            {t('admin.purchase_orders.units_summary', {
-              received: purchaseOrder.quantity_received_total,
-              ordered: purchaseOrder.quantity_ordered_total,
-            })}
-          </dd>
+          <ReadRow label={t('admin.purchase_orders.fields.units')}>
+            <span className="tabular-nums">
+              {t('admin.purchase_orders.units_summary', {
+                received: purchaseOrder.quantity_received_total,
+                ordered: purchaseOrder.quantity_ordered_total,
+              })}
+            </span>
+          </ReadRow>
 
-          <dt className="text-muted-foreground">{t('admin.purchase_orders.fields.subtotal')}</dt>
-          <dd className="tabular-nums">
-            <Money amount={purchaseOrder.subtotal} currency={purchaseOrder.currency} />
-          </dd>
+          <ReadRow label={t('admin.purchase_orders.fields.subtotal')}>
+            <span className="tabular-nums">
+              <Money amount={purchaseOrder.subtotal} currency={purchaseOrder.currency} />
+            </span>
+          </ReadRow>
 
-          <dt className="text-muted-foreground">{t('admin.purchase_orders.fields.expected_at')}</dt>
-          <dd>{purchaseOrder.expected_at ?? '—'}</dd>
+          <ReadRow label={t('admin.purchase_orders.fields.expected_at')}>
+            {purchaseOrder.expected_at ?? '—'}
+          </ReadRow>
 
           {purchaseOrder.cancel_by && (
-            <>
-              <dt className="text-muted-foreground">
-                {t('admin.purchase_orders.fields.cancel_by')}
-              </dt>
-              <dd>{purchaseOrder.cancel_by}</dd>
-            </>
+            <ReadRow label={t('admin.purchase_orders.fields.cancel_by')}>
+              {purchaseOrder.cancel_by}
+            </ReadRow>
           )}
 
           {purchaseOrder.reference && (
-            <>
-              <dt className="text-muted-foreground">
-                {t('admin.purchase_orders.fields.reference')}
-              </dt>
-              <dd>{purchaseOrder.reference}</dd>
-            </>
+            <ReadRow label={t('admin.purchase_orders.fields.reference')}>
+              {purchaseOrder.reference}
+            </ReadRow>
           )}
 
           {purchaseOrder.notes && (
-            <>
-              <dt className="text-muted-foreground">{t('admin.purchase_orders.fields.notes')}</dt>
-              <dd className="whitespace-pre-line">{purchaseOrder.notes}</dd>
-            </>
+            <ReadRow label={t('admin.purchase_orders.fields.notes')} stacked>
+              {purchaseOrder.notes}
+            </ReadRow>
           )}
 
-          <dt className="text-muted-foreground">{t('admin.purchase_orders.fields.ordered_at')}</dt>
-          <dd>
+          <ReadRow label={t('admin.purchase_orders.fields.ordered_at')}>
             {purchaseOrder.ordered_at ? <RelativeTime iso={purchaseOrder.ordered_at} /> : '—'}
-          </dd>
+          </ReadRow>
 
-          <dt className="text-muted-foreground">{t('admin.purchase_orders.fields.received_at')}</dt>
-          <dd>
+          <ReadRow label={t('admin.purchase_orders.fields.received_at')}>
             {purchaseOrder.received_at ? <RelativeTime iso={purchaseOrder.received_at} /> : '—'}
-          </dd>
+          </ReadRow>
 
           {purchaseOrder.closed_short && (
             <>
-              <dt className="text-muted-foreground">
-                {t('admin.purchase_orders.fields.closed_short')}
-              </dt>
-              <dd>
+              <ReadRow label={t('admin.purchase_orders.fields.closed_short')}>
                 <RelativeTime iso={purchaseOrder.closed_short_at as string} />
-              </dd>
+              </ReadRow>
               {purchaseOrder.close_reason && (
-                <>
-                  <dt className="text-muted-foreground">
-                    {t('admin.purchase_orders.fields.close_reason')}
-                  </dt>
-                  <dd className="whitespace-pre-line">{purchaseOrder.close_reason}</dd>
-                </>
+                <ReadRow label={t('admin.purchase_orders.fields.close_reason')} stacked>
+                  {purchaseOrder.close_reason}
+                </ReadRow>
               )}
             </>
           )}
-        </dl>
+        </div>
       </CardContent>
     </Card>
   )
