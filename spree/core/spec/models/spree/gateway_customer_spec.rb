@@ -22,6 +22,12 @@ RSpec.describe Spree::GatewayCustomer, type: :model do
     it 'reads the profile id back decrypted' do
       expect(described_class.find(gateway_customer.id).profile_id).to eq('cus_plain')
     end
+
+    it 'reads profile ids stored before encryption was enabled' do
+      described_class.where(id: gateway_customer.id).update_all("profile_id = 'legacy-profile-id'")
+
+      expect(described_class.find(gateway_customer.id).profile_id).to eq('legacy-profile-id')
+    end
   end
 
   describe '.for_provider' do
