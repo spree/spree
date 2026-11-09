@@ -11,7 +11,7 @@ class AddMarketAvailabilityToSpreeProducts < ActiveRecord::Migration[8.1]
       t.timestamps
     end
 
-    add_index :spree_product_market_availabilities, [:product_id, :market_id], unique: true,
-              name: 'index_spree_product_market_availabilities_on_product_and_market'
+    add_index :spree_product_market_availabilities, [:product_id, :market_id],
+              unique: true, name: 'index_spree_product_market_availabilities_on_product_and_market'
   end
 end

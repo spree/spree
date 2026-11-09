@@ -316,7 +316,7 @@ RSpec.describe Spree::Checkout::Requirements do
     it 'reports it once at completion rather than also as not orderable' do
       cart.update_columns(market_id: europe.id)
 
-      codes = described_class.new(cart.reload).call(completion: true).map { |requirement| requirement[:code] }
+      codes = described_class.new(cart.reload).call(completion: true).pluck(:code)
 
       expect(codes.count('not_available_in_market')).to eq(1)
       expect(codes).not_to include('not_orderable')
@@ -326,7 +326,7 @@ RSpec.describe Spree::Checkout::Requirements do
       cart.update_columns(market_id: europe.id)
       excluded.update_column(:discontinue_on, 1.day.ago)
 
-      codes = described_class.new(cart.reload).call(completion: true).map { |requirement| requirement[:code] }
+      codes = described_class.new(cart.reload).call(completion: true).pluck(:code)
 
       expect(codes).to include('discontinued')
       expect(codes).not_to include('not_available_in_market')

@@ -84,7 +84,7 @@ RSpec.describe Spree::Products::Duplicator do
     expect(duplicate.value.reload.available_in_market?(market)).to be false
   end
 
-  it "copies a restriction whose market was deleted since" do
+  it 'copies a restriction whose market was deleted since' do
     market = create(:market, store: store)
     product.update!(market_availability: 'only', market_ids: [market.prefixed_id])
     market.destroy

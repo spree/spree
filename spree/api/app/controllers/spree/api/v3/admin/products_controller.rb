@@ -68,10 +68,14 @@ module Spree
                 nullable: true,
                 description: "Null means the store's download settings apply."
             end
-            body.attribute :market_availability, :string, choices: Spree::Product::MARKET_AVAILABILITY_MODES,
-              description: 'Which markets may see and buy the product: `all` (the default), `all_except` the markets in `market_ids`, or `only` those markets. A product a market excludes is hidden there everywhere, including its own URL.'
-            body.attribute :market_ids, :array, of: :id,
-              description: 'The markets `market_availability` names (`mkt_...`). Required unless the mode is `all`.'
+            body.attribute :market_availability, :string,
+                           choices: Spree::Product::MARKET_AVAILABILITY_MODES,
+                           description: 'Which markets may see and buy the product: `all` (the default), ' \
+                                        '`all_except` the markets in `market_ids`, or `only` those markets. ' \
+                                        'A product a market excludes is hidden there everywhere, including its own URL.'
+            body.attribute :market_ids, :array,
+                           of: :id,
+                           description: 'The markets `market_availability` names (`mkt_...`). Required unless the mode is `all`.'
             body.attribute :product_publications, :array, as: 'ProductPublicationParams' do |product_publication|
               product_publication.attribute :id, :id
               product_publication.attribute :channel_id, :id

@@ -18,7 +18,7 @@ module Spree
         # No +dependent:+, like publications: destroy soft-deletes the product,
         # and a restored product must come back with its restrictions rather
         # than visible in the markets it was kept out of.
-        has_many :market_availability_entries, class_name: 'Spree::ProductMarketAvailability', inverse_of: :product
+        has_many :market_availability_entries, class_name: 'Spree::ProductMarketAvailability', inverse_of: :product, dependent: nil
 
         validates :market_availability, inclusion: { in: MARKET_AVAILABILITY_MODES - ['all'] }, allow_nil: true
         validate :restricted_market_availability_names_a_market

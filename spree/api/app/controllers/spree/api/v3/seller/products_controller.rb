@@ -58,10 +58,14 @@ module Spree
               description: "The marketplace's product type this product is listed against, from the product types endpoint. Null detaches it. Saving with a type seeds its option types onto the product."
             body.attribute :delivery_profile_id, :id,
               description: "Which of the marketplace's delivery profiles the product ships under. A new product sent without one lands on the profile marked default."
-            body.attribute :market_availability, :string, choices: Spree::Product::MARKET_AVAILABILITY_MODES,
-              description: 'Which markets may see and buy the product: `all` (the default), `all_except` the markets in `market_ids`, or `only` those markets. A product a market excludes is hidden there everywhere, including its own URL.'
-            body.attribute :market_ids, :array, of: :id,
-              description: 'The markets `market_availability` names (`mkt_...`). Required unless the mode is `all`.'
+            body.attribute :market_availability, :string,
+                           choices: Spree::Product::MARKET_AVAILABILITY_MODES,
+                           description: 'Which markets may see and buy the product: `all` (the default), ' \
+                                        '`all_except` the markets in `market_ids`, or `only` those markets. ' \
+                                        'A product a market excludes is hidden there everywhere, including its own URL.'
+            body.attribute :market_ids, :array,
+                           of: :id,
+                           description: 'The markets `market_availability` names (`mkt_...`). Required unless the mode is `all`.'
             body.attribute :prices, :array, of: Spree::Api::V3::Seller::PriceRequestSchema,
               description: "Shorthand for a simple (no-options) product: per-currency prices that forward to the product's sole variant."
             # `external_url` stays out for the same reason it does on the

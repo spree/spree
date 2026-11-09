@@ -7,7 +7,11 @@ module SpreeMeilisearch
   class SearchProvider < Spree::SearchProvider::Base
     PREFIXED_ID_PATTERN = /\A[a-z]+_[A-Za-z0-9]+\z/
     ALLOWED_STATUSES = %w[active draft archived paused].freeze
-    BUILT_IN_FILTERABLE_ATTRIBUTES = %w[product_id status in_stock preorder store_ids channel_ids market_availability market_ids locale currency available_on discontinue_on price category_ids collection_ids grouping_id tags option_value_ids option_value_combination_ids].freeze
+    BUILT_IN_FILTERABLE_ATTRIBUTES = %w[
+      product_id status in_stock preorder store_ids channel_ids market_availability market_ids locale currency
+      available_on discontinue_on price category_ids collection_ids grouping_id tags option_value_ids
+      option_value_combination_ids
+    ].freeze
     CUSTOM_FIELD_RANGE_OPERATORS = { 'gt' => '>', 'gteq' => '>=', 'lt' => '<', 'lteq' => '<=' }.freeze
 
     def self.indexing_required?

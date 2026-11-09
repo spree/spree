@@ -4,8 +4,8 @@ module Spree
   # (docs/plans/6.1-product-market-availability.md). Markets keep no
   # dependent rows: a soft-deleted market's restrictions return with it.
   class ProductMarketAvailability < Spree.base_class
-    belongs_to :product, class_name: 'Spree::Product'
-    belongs_to :market, -> { with_deleted }, class_name: 'Spree::Market'
+    belongs_to :product, class_name: 'Spree::Product', inverse_of: :market_availability_entries
+    belongs_to :market, -> { with_deleted }, class_name: 'Spree::Market', inverse_of: false
 
     validates :market_id, uniqueness: { scope: [:product_id, *spree_base_uniqueness_scope] }
     validate :market_belongs_to_product_store

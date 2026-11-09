@@ -39,7 +39,7 @@ RSpec.describe 'Seller Markets API', type: :request, swagger_doc: 'api-reference
 
         run_test! do |response|
           data = JSON.parse(response.body)['data']
-          expect(data.map { |item| item['id'] }).to include(market.prefixed_id)
+          expect(data.pluck('id')).to include(market.prefixed_id)
         end
       end
     end
