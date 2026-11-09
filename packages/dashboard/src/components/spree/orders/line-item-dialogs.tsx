@@ -87,7 +87,7 @@ export function AddLineItemDialog({
                   autoFocus
                 />
                 {search.length >= 3 && variants.length > 0 && !selectedVariant && (
-                  <div className="mt-1 rounded-lg border border-border bg-popover text-popover-foreground shadow-xs max-h-[280px] overflow-y-auto">
+                  <div className="mt-1 rounded-xl border border-border bg-popover text-popover-foreground shadow-xs max-h-[280px] overflow-y-auto">
                     {variants.map((v) => (
                       <button
                         key={v.id}

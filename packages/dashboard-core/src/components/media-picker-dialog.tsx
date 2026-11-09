@@ -16,7 +16,7 @@ import {
   SearchInput,
 } from '@spree/dashboard-ui'
 import {
-  ChevronDownIcon,
+  ChevronsUpDownIcon,
   ImageIcon,
   LayoutGridIcon,
   ListIcon,
@@ -180,7 +180,7 @@ export function MediaViewMenu({
           ) : (
             <ListIcon className="size-4" />
           )}
-          <ChevronDownIcon className="size-3.5 text-muted-foreground" />
+          <ChevronsUpDownIcon className="size-3.5 text-muted-foreground" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="min-w-40">
@@ -849,7 +849,7 @@ export function MediaFilterChip({
         >
           <span className="text-muted-foreground">{label}</span>
           <span className="font-medium">{current?.label}</span>
-          <ChevronDownIcon className="size-3.5 text-muted-foreground" />
+          <ChevronsUpDownIcon className="size-3.5 text-muted-foreground" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start">

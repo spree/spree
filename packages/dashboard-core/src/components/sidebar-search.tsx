@@ -54,7 +54,7 @@ export function SidebarSearch() {
                     // as one column of equal targets rather than a search box that
                     // shrank. The glyph stays 16px, as `NavIcon` draws it.
                     'flex size-10 items-center justify-center rounded-lg text-muted-foreground outline-none transition-colors duration-100 ease-out hover:bg-sidebar-accent-hover hover:text-foreground focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)]'
-                  : 'flex w-full cursor-pointer items-center gap-2 rounded-lg border border-field-border bg-card py-1.5 ps-2.5 pe-2.5 text-muted-foreground text-sm outline-none transition-[color,border-color,box-shadow] duration-100 ease-out hover:text-foreground focus-visible:border-ring focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)]'
+                  : 'flex w-full cursor-pointer items-center gap-2 rounded-xl border border-field-border bg-card py-1.5 ps-2.5 pe-2.5 text-muted-foreground text-sm outline-none transition-[color,border-color,box-shadow] duration-100 ease-out hover:text-foreground focus-visible:border-ring focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)]'
               }
             >
               <SearchIcon className="size-4 shrink-0" />

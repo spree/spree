@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@spree/dashboard-ui'
-import { CheckIcon, ChevronDownIcon } from '@spree/dashboard-ui/icons'
+import { CheckIcon, ChevronsUpDownIcon } from '@spree/dashboard-ui/icons'
 import { Link, useParams } from '@tanstack/react-router'
 import { type ComponentProps, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -63,7 +63,7 @@ function CountTrigger({
       {...props}
     >
       {value}
-      <ChevronDownIcon className="size-3 text-muted-foreground" />
+      <ChevronsUpDownIcon className="size-3 text-muted-foreground" />
     </button>
   )
 }

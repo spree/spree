@@ -1,7 +1,7 @@
 import { Select as SelectPrimitive } from '@base-ui/react/select'
 import type * as React from 'react'
 import { cn } from '../lib/utils'
-import { CheckIcon, ChevronDownIcon } from '../spree/icons'
+import { CheckIcon, ChevronDownIcon, ChevronsUpDownIcon } from '../spree/icons'
 
 function Select({
   children,
@@ -66,14 +66,14 @@ function SelectTrigger({
         // A row mixing a select with a popover trigger (the dashboard's channel
         // picker beside its date range) then reads as one set of controls
         // rather than two. The default size is a form field and stays flat.
-        "group/select-trigger flex w-full min-h-8 cursor-pointer items-center justify-between gap-1.5 rounded-lg border border-field-border shadow-control bg-card py-1.5 pr-2 pl-2.5 text-base font-normal leading-normal text-foreground transition-[color,background-color,border-color,box-shadow] duration-100 ease-out outline-none select-none focus:border-blue-500 focus:shadow-field-focus disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground aria-invalid:border-destructive data-[placeholder]:text-muted-foreground data-[size=sm]:shadow-control data-[size=sm]:h-8 data-[size=sm]:min-h-8 data-[size=sm]:gap-2 data-[size=sm]:px-2 data-[size=sm]:py-1 data-[size=sm]:text-sm data-[size=sm]:[&_svg:not([class*='size-'])]:size-3.5 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-1.5 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "group/select-trigger flex w-full min-h-8 cursor-pointer items-center justify-between gap-1.5 rounded-xl border border-field-border shadow-control bg-card py-1.5 pr-2 pl-2.5 text-base font-normal leading-normal text-foreground transition-[color,background-color,border-color,box-shadow] duration-100 ease-out outline-none select-none not-disabled:hover:bg-field-hover focus:border-blue-500 focus:shadow-field-focus disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground aria-invalid:border-destructive data-[placeholder]:text-muted-foreground data-[size=sm]:shadow-control data-[size=sm]:h-8 data-[size=sm]:min-h-8 data-[size=sm]:gap-2 data-[size=sm]:px-2 data-[size=sm]:py-1 data-[size=sm]:text-sm data-[size=sm]:[&_svg:not([class*='size-'])]:size-3.5 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-1.5 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       {...props}
     >
       {children}
       <SelectPrimitive.Icon>
-        <ChevronDownIcon className="pointer-events-none size-4 text-muted-foreground group-data-[size=sm]/select-trigger:size-3.5" />
+        <ChevronsUpDownIcon className="pointer-events-none size-4 text-muted-foreground group-data-[size=sm]/select-trigger:size-3.5" />
       </SelectPrimitive.Icon>
     </SelectPrimitive.Trigger>
   )
@@ -105,7 +105,7 @@ function SelectContent({
           data-slot="select-content"
           data-align-trigger={position === 'item-aligned'}
           className={cn(
-            'relative z-[100] max-h-[var(--available-height)] min-w-[var(--anchor-width)] overflow-x-hidden overflow-y-auto rounded-lg bg-popover p-1 text-popover-foreground shadow-lg ring-1 ring-foreground/10 duration-100 data-[starting-style]:opacity-0 data-[starting-style]:scale-95 data-[ending-style]:opacity-0 data-[ending-style]:scale-95 transition-[opacity,transform]',
+            'relative z-[100] max-h-[var(--available-height)] min-w-[var(--anchor-width)] overflow-x-hidden overflow-y-auto rounded-xl bg-popover p-1 text-popover-foreground shadow-lg ring-1 ring-foreground/10 duration-100 data-[starting-style]:opacity-0 data-[starting-style]:scale-95 data-[ending-style]:opacity-0 data-[ending-style]:scale-95 transition-[opacity,transform]',
             position === 'popper' &&
               'data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1',
             className,

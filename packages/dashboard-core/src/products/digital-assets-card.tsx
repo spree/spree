@@ -31,7 +31,7 @@ import {
   useConfirm,
 } from '@spree/dashboard-ui'
 import {
-  ChevronDownIcon,
+  ChevronsUpDownIcon,
   DownloadIcon,
   FileDownIcon,
   FileIcon,
@@ -274,7 +274,7 @@ export function DigitalAssetsCard({
                     {uploading
                       ? t('admin.digital_assets.uploading_short')
                       : t('admin.digital_assets.add')}
-                    <ChevronDownIcon className="ml-2 size-4" />
+                    <ChevronsUpDownIcon className="ml-2 size-4" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">

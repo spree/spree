@@ -8,7 +8,7 @@ import {
   matchDateRangePreset,
   resolveDateRangePreset,
 } from '../lib/date-range-presets'
-import { CalendarIcon, ChevronDownIcon } from '../spree/icons'
+import { CalendarIcon, ChevronsUpDownIcon } from '../spree/icons'
 import { Button } from './button'
 import { DateRangePanel } from './date-range-panel'
 import { Popover, PopoverContent, PopoverTrigger } from './popover'
@@ -64,7 +64,7 @@ export function DateRangePicker({ value, onChange, timezone }: DateRangePickerPr
         <Button size="sm" variant="outline" className="h-8 gap-2 text-sm font-normal">
           <CalendarIcon className="size-3.5" />
           {triggerLabel}
-          <ChevronDownIcon className="size-3.5 text-muted-foreground" />
+          <ChevronsUpDownIcon className="size-3.5 text-muted-foreground" />
         </Button>
       </PopoverTrigger>
       <PopoverContent align="end" className="w-auto max-w-[calc(100vw-1rem)] p-0">

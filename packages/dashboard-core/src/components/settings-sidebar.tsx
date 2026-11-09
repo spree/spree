@@ -259,7 +259,7 @@ function SettingsNavSearch({
       // The main nav's search bar, as a real field: its corner, edge, fill,
       // icon inset and text size, and no shadow, so the two rails' search
       // boxes read as one. Phones keep the larger touch size.
-      className="h-8 rounded-lg shadow-none [&>[data-align=inline-start]]:pl-2.5 [&>input]:pl-2! [&>input]:text-sm in-data-[mobile=true]:h-11 in-data-[mobile=true]:[&>input]:text-base"
+      className="h-8 shadow-none [&>[data-align=inline-start]]:pl-2.5 [&>input]:pl-2! [&>input]:text-sm in-data-[mobile=true]:h-11 in-data-[mobile=true]:[&>input]:text-base"
     />
   )
 }

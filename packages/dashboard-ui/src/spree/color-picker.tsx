@@ -163,7 +163,7 @@ export function ColorPicker({
           role="dialog"
           aria-label={t('admin.a11y.pick_color')}
           className={cn(
-            'absolute top-full z-50 mt-2 min-w-min rounded-lg border border-border bg-popover p-3 text-popover-foreground shadow-md',
+            'absolute top-full z-50 mt-2 min-w-min rounded-xl border border-border bg-popover p-3 text-popover-foreground shadow-md',
             panelAlign === 'end' ? 'right-0' : 'left-0',
           )}
         >
