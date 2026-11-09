@@ -161,11 +161,12 @@ module SpreeStripe
       seller = seller_transfer.seller
       gateway = gateway_for(seller.store)
       source_charge = source_charge_for(seller_transfer, gateway)
+      amount, currency = transfer_figures(seller_transfer, gateway, source_charge)
 
       transfer = Stripe::Transfer.create(
         {
-          amount: minor_units(seller_transfer),
-          currency: seller_transfer.currency.downcase,
+          amount: amount,
+          currency: currency,
           destination: seller.payout_account_reference(self.class),
           # Funds the transfer from the customer's own charge, so it settles
           # with that charge rather than out of the platform's balance.
@@ -386,6 +387,35 @@ module SpreeStripe
     # settle — a split checkout's sellers share their group's number.
     def transfer_group_for(seller_transfer)
       seller_transfer.order.order_group&.number || seller_transfer.order.number
+    end
+
+    # The amount and currency to ask Stripe for.
+    #
+    # A charge is taken in the order's currency, but it lands on the platform
+    # in the platform's own settlement currency, and a transfer drawn from it
+    # (`source_transaction`) must be made in that currency: "The currency of
+    # source_transaction's balance transaction (usd) must be the same as the
+    # transfer currency (gbp)". So when the two differ the earning is expressed
+    # in the settlement currency at the rate Stripe itself applied to the
+    # charge — its share of the charge's balance transaction. Spree holds no
+    # exchange rates and invents none. The seller's row keeps the currency it
+    # was owed in; what their account received is recorded from the transfer.
+    #
+    # @return [Array(Integer, String)] minor units and lowercase currency code
+    def transfer_figures(seller_transfer, gateway, source_charge)
+      amount = minor_units(seller_transfer)
+      currency = seller_transfer.currency.downcase
+      return [amount, currency] if source_charge.blank?
+
+      charge = Stripe::Charge.retrieve({ id: source_charge, expand: ['balance_transaction'] }, gateway.api_options)
+      balance_transaction = charge.try(:balance_transaction)
+      settlement = balance_transaction.try(:currency).to_s.downcase
+      return [amount, currency] if settlement.blank? || settlement == currency
+      # Without the charge in the sale's currency there is nothing to take a
+      # share of; let Stripe answer as it would have.
+      return [amount, currency] unless charge.currency.to_s.downcase == currency && charge.amount.to_i.positive?
+
+      [(amount * balance_transaction.amount).fdiv(charge.amount).round, settlement]
     end
 
     # The charge that paid for this order, so Stripe can fund the transfer from

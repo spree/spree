@@ -39,7 +39,44 @@ RSpec.describe SpreeStripe::PayoutProvider do
                          status: 'completed', metadata: { 'stripe_charge_id' => 'ch_1' })
       end
 
-      before { payment }
+      before do
+        payment
+        allow(Stripe::Charge).to receive(:retrieve).and_return(charge)
+      end
+
+      let(:charge) do
+        Stripe::StripeObject.construct_from(
+          id: 'ch_1', amount: 10_000, currency: 'usd',
+          balance_transaction: { amount: 10_000, currency: 'usd' }
+        )
+      end
+
+      # The charge is taken in the order's currency but lands on the platform in
+      # its settlement currency, and Stripe only funds a transfer in that one:
+      # "The currency of source_transaction's balance transaction (usd) must be
+      # the same as the transfer currency (gbp)".
+      context 'when the charge settled in another currency than the sale' do
+        let(:order) { create(:order, store: store, seller: seller, total: 100, currency: 'GBP') }
+        let(:seller_transfer) { create(:seller_transfer, seller: seller, order: order, amount: 42.5, currency: 'GBP') }
+        let(:charge) do
+          Stripe::StripeObject.construct_from(
+            id: 'ch_1', amount: 10_000, currency: 'gbp',
+            balance_transaction: { amount: 12_700, currency: 'usd' }
+          )
+        end
+
+        it 'sends its share of what the charge settled for, in that currency' do
+          expect(Stripe::Transfer).to receive(:create) do |payload, _options|
+            expect(payload).to include(source_transaction: 'ch_1', currency: 'usd', amount: 5398)
+            Stripe::StripeObject.construct_from(id: 'tr_1')
+          end
+
+          described_class.new.transfer!(seller_transfer)
+
+          expect(seller_transfer.reload).to be_completed
+          expect(seller_transfer.currency).to eq('GBP')
+        end
+      end
 
       it 'draws on the charge and leaves its group alone' do
         expect(Stripe::Transfer).to receive(:create) do |payload, _options|
