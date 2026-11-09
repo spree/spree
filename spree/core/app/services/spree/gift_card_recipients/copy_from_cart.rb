@@ -10,12 +10,15 @@ module Spree
       #
       # @param line_item_map [Hash{Spree::LineItem => Spree::LineItem}] cart
       #   line → its copy on the order
-      def self.call(cart:, order:, line_item_map:)
+      def self.call(line_item_map:, **)
         recipients = Spree::GiftCardRecipient.where(line_item_id: line_item_map.keys.map(&:id)).index_by(&:line_item_id)
         return if recipients.empty?
 
         rows = line_item_map.filter_map do |cart_line_item, line_item|
-          recipients[cart_line_item.id]&.attributes&.slice(*Spree::GiftCardRecipient::ATTRIBUTES, 'store_id')&.merge('line_item_id' => line_item.id)
+          recipient = recipients[cart_line_item.id]
+          next unless recipient
+
+          recipient.attributes.slice(*Spree::GiftCardRecipient::ATTRIBUTES, 'store_id').merge('line_item_id' => line_item.id)
         end
         Spree::GiftCardRecipient.insert_all!(rows)
       end

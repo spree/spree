@@ -18,7 +18,9 @@ module Spree
                  price: 'Price',
                  original_price: ['Price', nullable: true],
                  tags: [:string, multi: true],
-                 gift_card: [:boolean, comment: 'True when the product is a gift card: each variant is a denomination, and buying one issues a card per unit when the order is paid.']
+                 gift_card: [:boolean,
+                             comment: 'True when the product is a gift card: each variant is a denomination, ' \
+                                      'and buying one issues a card per unit when the order is paid.']
 
         attributes :name, :slug, :gift_card,
                    :meta_title, :meta_description, :meta_keywords,

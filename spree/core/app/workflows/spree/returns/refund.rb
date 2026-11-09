@@ -149,7 +149,7 @@ module Spree
       # the units returned. A card the recipient has spent from is left alone
       # and the refund still goes through, as on Shopify.
       def cancel_returned_gift_cards
-        return_record.return_line_items.includes(line_item: { variant: :product }).each do |return_line_item|
+        return_record.return_line_items.includes(line_item: { variant: :product }).find_each do |return_line_item|
           line_item = return_line_item.line_item
           next unless line_item&.gift_card?
 

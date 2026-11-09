@@ -103,8 +103,8 @@ module Spree
             body.attribute :digital_asset_authorized_days, :integer,
               description: 'How many days a download link stays valid, unless the file sets its own.'
             body.attribute :gift_card_default_validity_days, :integer,
-              nullable: true,
-              description: 'How many days a gift card bought on the storefront stays spendable. Null means it never expires.'
+                           nullable: true,
+                           description: 'How many days a gift card bought on the storefront stays spendable. Null means it never expires.'
             body.attribute :mail_from_address, :string, description: 'Sender address of every transactional email.'
             body.attribute :customer_support_email, :string,
               nullable: true,

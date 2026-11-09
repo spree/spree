@@ -2,8 +2,10 @@ module Spree
   module Api
     module V3
       class LineItemSerializer < BaseSerializer
-        typelize variant_id: :string, quantity: :number, currency: [:string, { enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode' }], name: :string, slug: :string,
-                 options_text: :string, compare_at_amount: [:string, { nullable: true, comment: 'The compare-at price times quantity, or null when the variant has none.' }],
+        typelize variant_id: :string, quantity: :number,
+                 currency: [:string, { enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode' }],
+                 name: :string, slug: :string, options_text: :string,
+                 compare_at_amount: [:string, { nullable: true, comment: 'The compare-at price times quantity, or null when the variant has none.' }],
                  thumbnail_url: [:string, { nullable: true }], preorder: :boolean,
                  preorder_ships_at: [:string, { nullable: true }], seller_id: [:string, { nullable: true }],
                  gift_card: [:boolean, { comment: 'True when the line buys a gift card, issued when the order is paid.' }],
