@@ -16,8 +16,11 @@ module Spree
                 example: { gift_message: 'Happy Birthday!' },
                 description: 'Write-only key-value metadata.'
               body.attribute :options, :hash, description: 'Values for line item attributes an extension adds.'
-              body.attribute :recipient, :object, shape: Spree::Api::V3::Store::GiftCardRecipientRequestSchema,
-                description: 'Who a gift card is for; only accepted when the variant is a gift card. Without it the card is emailed to the order email. Adding the same denomination for a different recipient creates a separate line.'
+              body.attribute :recipient, :object,
+                             shape: Spree::Api::V3::Store::GiftCardRecipientRequestSchema,
+                             description: 'Who a gift card is for; only accepted when the variant is a gift card. ' \
+                                          'Without it the card is emailed to the order email. Adding the same ' \
+                                          'denomination for a different recipient creates a separate line.'
             end
 
             request_params 'UpdateLineItemParams', action: :update do |body|
@@ -25,8 +28,9 @@ module Spree
               body.attribute :metadata, :hash,
                 example: { engraving: 'J.D.' },
                 description: 'Write-only key-value metadata, merged with what the line item has.'
-              body.attribute :recipient, :object, shape: Spree::Api::V3::Store::GiftCardRecipientRequestSchema,
-                description: 'Replaces who a gift card line is for. Only accepted on a gift card line.'
+              body.attribute :recipient, :object,
+                             shape: Spree::Api::V3::Store::GiftCardRecipientRequestSchema,
+                             description: 'Replaces who a gift card line is for. Only accepted on a gift card line.'
             end
 
             # POST  /api/v3/store/carts/:cart_id/items

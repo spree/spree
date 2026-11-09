@@ -62,7 +62,7 @@ module Spree
         order.payments.completed.lock.load
         return unless paid_in_full?
 
-        gift_card_lines.includes(:gift_cards, :gift_card_recipient).each do |line_item|
+        gift_card_lines.includes(:gift_cards, :gift_card_recipient).find_each do |line_item|
           # A card staff gave away at no charge has no value to issue.
           next unless line_item.price.positive?
 
@@ -89,7 +89,8 @@ module Spree
         return if days.blank?
 
         zone = Time.find_zone(order.store.preferred_timezone) || Time.zone
-        send_on = line_item.gift_card_recipient&.send_at&.in_time_zone(zone)&.to_date
+        send_at = line_item.gift_card_recipient&.send_at
+        send_on = send_at&.in_time_zone(zone)&.to_date
         [zone.today, send_on].compact.max + days.days
       end
     end

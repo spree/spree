@@ -6,9 +6,13 @@ module Spree
       #   line is for: two recipients are two lines, and nil matches only a
       #   line without one. Left at :any, the first line holding the variant
       #   answers — what a removal or a by-variant quantity edit wants.
-      def execute(owner: nil, cart: nil, order: nil, variant:, options: {}, recipient: :any)
+      def execute(variant:, owner: nil, cart: nil, order: nil, options: {}, recipient: :any)
         owner ||= cart || order
-        candidates = owner.line_items.loaded? ? owner.line_items.select { |li| li.variant_id == variant.id } : owner.line_items.where(variant_id: variant.id).reorder(:id)
+        candidates = if owner.line_items.loaded?
+                       owner.line_items.select { |li| li.variant_id == variant.id }
+                     else
+                       owner.line_items.where(variant_id: variant.id).reorder(:id)
+                     end
         line_item = if variant.gift_card? && recipient != :any
                       candidates.detect { |li| same_recipient?(li, recipient) }
                     else

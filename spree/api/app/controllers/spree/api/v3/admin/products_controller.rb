@@ -31,7 +31,10 @@ module Spree
                            deprecated: 'Add a product or category rule whose `match_policy` is `none` to every ' \
                                        'promotion that should skip the product. Removed in 6.5.'
             body.attribute :gift_card, :boolean,
-              description: 'Sell this product as a gift card. Each variant is a denomination priced at its face value; a paid order issues one card per unit and emails it to the recipient. Turning it on stops inventory tracking, tax and promotions and moves the product to digital delivery. Not available to sellers.'
+                           description: 'Sell this product as a gift card. Each variant is a denomination priced at its face value; ' \
+                                        'a paid order issues one card per unit and emails it to the recipient. Turning it on stops ' \
+                                        'inventory tracking, tax and promotions and moves the product to digital delivery. ' \
+                                        'Not available to sellers.'
             body.attribute :tags, :array, of: :string, example: %w[eco sale]
             body.attribute :category_ids, :array, of: :id
             # Reachable with `write_products` rather than `write_collections`:

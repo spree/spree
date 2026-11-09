@@ -11,7 +11,7 @@ module Spree
           attribute :name, :string, example: 'Alex'
           attribute :message, :string, example: 'Happy birthday!', description: 'At most 500 characters.'
           attribute :send_at, :datetime,
-            description: 'When to email the gift card, at most 90 days ahead. Omit to send it as soon as the order is paid.'
+                    description: 'When to email the gift card, at most 90 days ahead. Omit to send it as soon as the order is paid.'
         end
       end
     end

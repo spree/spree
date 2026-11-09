@@ -54,7 +54,7 @@ RSpec.describe 'Cart Items API', type: :request, swagger_doc: 'api-reference/sto
         before { line_item.destroy! }
 
         let(:'x-spree-api-key') { api_key.token }
-        let(:'Authorization') { "Bearer #{jwt_token}" }
+        let(:Authorization) { "Bearer #{jwt_token}" }
         let(:body) do
           { variant_id: gift_card_variant.prefixed_id, quantity: 1,
             recipient: { email: 'friend@example.com', name: 'Alex', message: 'Happy birthday!' } }

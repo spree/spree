@@ -214,7 +214,9 @@ RSpec.describe Spree::Api::V3::Store::Carts::ItemsController, type: :controller 
 
     it 'gives a second recipient their own line' do
       post :create, params: { cart_id: order.prefixed_id, variant_id: gift_card_variant.prefixed_id, recipient: recipient }
-      post :create, params: { cart_id: order.prefixed_id, variant_id: gift_card_variant.prefixed_id, recipient: recipient.merge(email: 'sam@example.com') }
+      post :create, params: {
+        cart_id: order.prefixed_id, variant_id: gift_card_variant.prefixed_id, recipient: recipient.merge(email: 'sam@example.com')
+      }
 
       expect(json_response['items'].map { |item| item['recipient']['email'] }).to contain_exactly('friend@example.com', 'sam@example.com')
     end
