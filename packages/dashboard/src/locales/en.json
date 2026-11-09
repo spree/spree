@@ -3622,8 +3622,11 @@
             "low_stock_items": {
               "label": "Low stock",
               "description_zero": "Turned off. Set a low stock threshold in store settings to use this.",
-              "description_one": "1 unit or fewer left to sell at a location.",
-              "description_other": "{{count}} units or fewer left to sell at a location."
+              "description_one": "1 unit or fewer left to sell across all locations.",
+              "description_other": "{{count}} units or fewer left to sell across all locations.",
+              "hint_zero": "Off",
+              "hint_one": "≤ {{count}}",
+              "hint_other": "≤ {{count}}"
             },
             "open_claims": {
               "label": "Open claims",
@@ -3643,7 +3646,7 @@
             },
             "out_of_stock_items": {
               "label": "Out of stock",
-              "description": "Nothing left to sell at a location."
+              "description": "Nothing left to sell at any location."
             },
             "payments_to_collect": {
               "label": "Payments to collect",
@@ -5728,7 +5731,9 @@
         "has_reserved": "Reserved",
         "in_stock": "In stock",
         "low_stock": "Low stock",
-        "out_of_stock": "Out of stock"
+        "out_of_stock": "Out of stock",
+        "low_stock_overall": "Low stock (all locations)",
+        "out_of_stock_overall": "Out of stock (all locations)"
       },
       "incoming": {
         "open_aria": "Add incoming stock",

@@ -3622,8 +3622,11 @@
             "low_stock_items": {
               "label": "Ít hàng",
               "description_zero": "Đã tắt. Đặt ngưỡng tồn kho thấp trong cài đặt cửa hàng để sử dụng điều này.",
-              "description_one": "Còn lại 1 chiếc hoặc ít hơn để bán tại một địa điểm.",
-              "description_other": "{{count}} số lượng hoặc ít hơn còn lại để bán tại một địa điểm."
+              "description_one": "Còn lại 1 chiếc hoặc ít hơn để bán trên tất cả địa điểm.",
+              "description_other": "Còn lại {{count}} chiếc hoặc ít hơn để bán trên tất cả địa điểm.",
+              "hint_zero": "Tắt",
+              "hint_one": "≤ {{count}}",
+              "hint_other": "≤ {{count}}"
             },
             "open_claims": {
               "label": "Yêu cầu mở",
@@ -3643,7 +3646,7 @@
             },
             "out_of_stock_items": {
               "label": "Hết hàng",
-              "description": "Không còn gì để bán tại một địa điểm."
+              "description": "Không còn gì để bán tại bất kỳ địa điểm nào."
             },
             "payments_to_collect": {
               "label": "Các khoản thanh toán để thu thập",
@@ -5695,7 +5698,9 @@
         "has_reserved": "Đã đặt trước",
         "in_stock": "Còn hàng",
         "low_stock": "Ít hàng",
-        "out_of_stock": "Hết hàng"
+        "out_of_stock": "Hết hàng",
+        "low_stock_overall": "Ít hàng (tất cả địa điểm)",
+        "out_of_stock_overall": "Hết hàng (tất cả địa điểm)"
       },
       "incoming": {
         "open_aria": "Thêm hàng vào",

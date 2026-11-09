@@ -243,8 +243,11 @@
             "low_stock_items": {
               "label": "Stock bajo",
               "description_zero": "Desactivado. Definí un umbral de stock bajo en la configuración de la tienda para usarlo.",
-              "description_one": "Queda 1 unidad o menos por vender en una ubicación.",
-              "description_other": "Quedan {{count}} unidades o menos por vender en una ubicación."
+              "description_one": "Queda 1 unidad o menos por vender entre todas las ubicaciones.",
+              "description_other": "Quedan {{count}} unidades o menos por vender entre todas las ubicaciones.",
+              "hint_zero": "Desactivado",
+              "hint_one": "≤ {{count}}",
+              "hint_other": "≤ {{count}}"
             },
             "open_claims": {
               "label": "Reclamos abiertos",
@@ -264,7 +267,7 @@
             },
             "out_of_stock_items": {
               "label": "Sin stock",
-              "description": "No queda nada por vender en una ubicación."
+              "description": "No queda nada por vender en ninguna ubicación."
             },
             "payments_to_collect": {
               "label": "Pagos por cobrar",
@@ -4869,7 +4872,9 @@
         "has_reserved": "Reservado",
         "in_stock": "En stock",
         "low_stock": "Stock bajo",
-        "out_of_stock": "Sin stock"
+        "out_of_stock": "Sin stock",
+        "low_stock_overall": "Stock bajo (todas las ubicaciones)",
+        "out_of_stock_overall": "Sin stock (todas las ubicaciones)"
       },
       "incoming": {
         "open_aria": "Agregar stock entrante",

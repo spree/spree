@@ -3622,8 +3622,11 @@
             "low_stock_items": {
               "label": "Stock faible",
               "description_zero": "Désactivé. Définissez un seuil de stock faible dans les paramètres.",
-              "description_one": "1 unité ou moins encore vendable à un emplacement.",
-              "description_other": "{{count}} unités ou moins encore vendables à un emplacement."
+              "description_one": "1 unité ou moins encore vendable, tous emplacements confondus.",
+              "description_other": "{{count}} unités ou moins encore vendables, tous emplacements confondus.",
+              "hint_zero": "Désactivé",
+              "hint_one": "≤ {{count}}",
+              "hint_other": "≤ {{count}}"
             },
             "open_claims": {
               "label": "Réclamations ouvertes",
@@ -3643,7 +3646,7 @@
             },
             "out_of_stock_items": {
               "label": "En rupture de stock",
-              "description": "Plus rien à vendre à cet emplacement."
+              "description": "Plus rien à vendre, dans aucun emplacement."
             },
             "payments_to_collect": {
               "label": "Paiements à encaisser",
@@ -5729,7 +5732,9 @@
         "has_reserved": "Réservé",
         "in_stock": "En stock",
         "low_stock": "Stock faible",
-        "out_of_stock": "En rupture"
+        "out_of_stock": "En rupture",
+        "low_stock_overall": "Stock faible (tous les emplacements)",
+        "out_of_stock_overall": "En rupture (tous les emplacements)"
       },
       "incoming": {
         "open_aria": "Ajouter du stock en route",

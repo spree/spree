@@ -70,10 +70,39 @@ module Spree
     scope :with_incoming, -> { where(arel_table[:incoming_count].gt(0)) }
     scope :with_reserved, -> { where(arel_table[:reserved_count].gt(0)) }
 
+    # The same two questions asked of a variant rather than one shelf: every
+    # level of a variant whose stock, summed over all active locations, has run
+    # out or is running low. A variant with plenty in one warehouse is not out
+    # of stock because another location holds none of it. Untracked variants
+    # have no count to run out of, so they never match; a backorderable one
+    # still does, since selling on backorder is when restocking matters most.
+    scope :out_of_stock_overall, -> { where(variant_id: variant_ids_by_total_purchasable { |total| total.lteq(0) }) }
+    scope :low_stock_overall, lambda { |threshold = nil|
+      ceiling = threshold || Spree::Current.store&.preferred_low_stock_threshold || 0
+      where(variant_id: variant_ids_by_total_purchasable { |total| total.gt(0).and(total.lteq(ceiling)) })
+    }
+
     # What the Inventory page's stock-status filter can ask for. Each names a
     # scope above; `STOCK_STATUS_SCOPES` is the allowlist that keeps a request
     # from naming any other method.
-    STOCK_STATUS_SCOPES = %w[in_stock low_stock out_of_stock with_incoming with_reserved].freeze
+    STOCK_STATUS_SCOPES = %w[in_stock low_stock out_of_stock low_stock_overall out_of_stock_overall
+                             with_incoming with_reserved].freeze
+
+    # Ids of tracked variants whose purchasable units across
+    # every active location satisfy the condition the block builds. Unscoped,
+    # so the sum covers all locations even when the caller has narrowed the
+    # list to one.
+    #
+    # @yieldparam total [Arel::Nodes::Node] the summed purchasable units
+    # @return [ActiveRecord::Relation] a `variant_id` subquery
+    def self.variant_ids_by_total_purchasable
+      levels = unscoped.where(deleted_at: nil)
+      levels.joins(:stock_location).merge(Spree::StockLocation.active).
+        joins(:variant).where(spree_variants: { track_inventory: true, deleted_at: nil }).
+        group(:variant_id).
+        having(yield(Arel::Nodes::Sum.new([purchasable_arel]))).
+        select(:variant_id)
+    end
 
     # Rows in any of the named states — "out of stock, or with units on the
     # way" is one question a merchant asks, not two filters they combine.

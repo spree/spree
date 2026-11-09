@@ -3614,8 +3614,11 @@
             "low_stock_items": {
               "label": "低库存",
               "description_zero": "已关闭。请在店铺设置中设定低库存阈值。",
-              "description_one": "该地点仅剩 1 件或更少可售。",
-              "description_other": "该地点仅剩 {{count}} 件或更少可售。"
+              "description_one": "所有地点合计仅剩 1 件或更少可售。",
+              "description_other": "所有地点合计仅剩 {{count}} 件或更少可售。",
+              "hint_zero": "已关闭",
+              "hint_one": "≤ {{count}}",
+              "hint_other": "≤ {{count}}"
             },
             "open_claims": {
               "label": "未处理理赔",
@@ -3635,7 +3638,7 @@
             },
             "out_of_stock_items": {
               "label": "缺货",
-              "description": "此地点已无可售库存。"
+              "description": "所有地点均已无可售库存。"
             },
             "payments_to_collect": {
               "label": "待收款订单",
@@ -5716,7 +5719,9 @@
         "has_reserved": "有预留",
         "in_stock": "有货",
         "low_stock": "低库存",
-        "out_of_stock": "缺货"
+        "out_of_stock": "缺货",
+        "low_stock_overall": "低库存（所有地点）",
+        "out_of_stock_overall": "缺货（所有地点）"
       },
       "incoming": {
         "open_aria": "添加在途库存",

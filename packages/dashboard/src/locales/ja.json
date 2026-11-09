@@ -3622,8 +3622,11 @@
             "low_stock_items": {
               "label": "在庫わずか",
               "description_zero": "オフになっています。使うにはストアの設定で在庫わずかのしきい値を設定してください。",
-              "description_one": "ロケーションで販売できる残りが 1 点以下です。",
-              "description_other": "ロケーションで販売できる残りが {{count}} 点以下です。"
+              "description_one": "全ロケーション合計で販売できる残りが 1 点以下です。",
+              "description_other": "全ロケーション合計で販売できる残りが {{count}} 点以下です。",
+              "hint_zero": "オフ",
+              "hint_one": "≤ {{count}}",
+              "hint_other": "≤ {{count}}"
             },
             "open_claims": {
               "label": "未解決のクレーム",
@@ -3643,7 +3646,7 @@
             },
             "out_of_stock_items": {
               "label": "在庫切れ",
-              "description": "ロケーションで販売できるものが残っていません。"
+              "description": "どのロケーションにも販売できるものが残っていません。"
             },
             "payments_to_collect": {
               "label": "回収する支払い",
@@ -5728,7 +5731,9 @@
         "has_reserved": "引き当て済み",
         "in_stock": "在庫あり",
         "low_stock": "在庫わずか",
-        "out_of_stock": "在庫切れ"
+        "out_of_stock": "在庫切れ",
+        "low_stock_overall": "在庫わずか（全ロケーション）",
+        "out_of_stock_overall": "在庫切れ（全ロケーション）"
       },
       "incoming": {
         "open_aria": "入荷予定の在庫を追加",

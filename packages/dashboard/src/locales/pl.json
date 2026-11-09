@@ -3656,8 +3656,11 @@
             "low_stock_items": {
               "label": "Niski stan",
               "description_zero": "Wyłączone. Ustaw próg niskiego stanu w ustawieniach sklepu.",
-              "description_one": "Najwyżej 1 sztuka na sprzedaż w lokalizacji.",
-              "description_other": "Najwyżej {{count}} szt. na sprzedaż w lokalizacji."
+              "description_one": "Najwyżej 1 sztuka na sprzedaż we wszystkich lokalizacjach razem.",
+              "description_other": "Najwyżej {{count}} szt. na sprzedaż we wszystkich lokalizacjach razem.",
+              "hint_zero": "Wyłączone",
+              "hint_one": "≤ {{count}}",
+              "hint_other": "≤ {{count}}"
             },
             "open_claims": {
               "label": "Otwarte reklamacje",
@@ -3677,7 +3680,7 @@
             },
             "out_of_stock_items": {
               "label": "Brak w magazynie",
-              "description": "W tej lokalizacji nie ma już nic na sprzedaż."
+              "description": "W żadnej lokalizacji nie ma już nic na sprzedaż."
             },
             "payments_to_collect": {
               "label": "Płatności do pobrania",
@@ -5792,7 +5795,9 @@
         "has_reserved": "Wstrzymane",
         "in_stock": "Dostępne",
         "low_stock": "Niski stan",
-        "out_of_stock": "Niedostępne"
+        "out_of_stock": "Niedostępne",
+        "low_stock_overall": "Niski stan (wszystkie lokalizacje)",
+        "out_of_stock_overall": "Niedostępne (wszystkie lokalizacje)"
       },
       "incoming": {
         "open_aria": "Dodaj zapasy w drodze",

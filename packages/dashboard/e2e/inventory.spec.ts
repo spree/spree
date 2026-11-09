@@ -100,7 +100,14 @@ test.describe('inventory', () => {
     // Every state starts selected, so narrowing means unchecking the rest.
     const statusFilter = page.getByRole('button', { name: /stock status/i })
     await statusFilter.click()
-    for (const name of [/^in stock$/i, /^low stock$/i, /^out of stock$/i, /^incoming$/i]) {
+    for (const name of [
+      /^in stock$/i,
+      /^low stock$/i,
+      /^out of stock$/i,
+      /^low stock \(all locations\)$/i,
+      /^out of stock \(all locations\)$/i,
+      /^incoming$/i,
+    ]) {
       await page.getByRole('menuitemcheckbox', { name }).click()
     }
     await page.keyboard.press('Escape')

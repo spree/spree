@@ -3642,8 +3642,11 @@
             "low_stock_items": {
               "label": "مخزون منخفض",
               "description_zero": "مُعطَّل. حدِّد حدّ المخزون المنخفض في إعدادات المتجر.",
-              "description_one": "وحدة واحدة أو أقل متاحة للبيع في الموقع.",
-              "description_other": "{{count}} وحدة أو أقل متاحة للبيع في الموقع."
+              "description_one": "وحدة واحدة أو أقل متاحة للبيع في جميع المواقع مجتمعة.",
+              "description_other": "{{count}} وحدة أو أقل متاحة للبيع في جميع المواقع مجتمعة.",
+              "hint_zero": "متوقف",
+              "hint_one": "≤ {{count}}",
+              "hint_other": "≤ {{count}}"
             },
             "open_claims": {
               "label": "مطالبات مفتوحة",
@@ -3663,7 +3666,7 @@
             },
             "out_of_stock_items": {
               "label": "نفد المخزون",
-              "description": "لم يعد هناك ما يُباع في هذا الموقع."
+              "description": "لم يعد هناك ما يُباع في أي موقع."
             },
             "payments_to_collect": {
               "label": "مدفوعات مستحقة التحصيل",
@@ -5765,7 +5768,9 @@
         "has_reserved": "محجوز",
         "in_stock": "متوفر",
         "low_stock": "مخزون منخفض",
-        "out_of_stock": "غير متوفر"
+        "out_of_stock": "غير متوفر",
+        "low_stock_overall": "مخزون منخفض (كل المواقع)",
+        "out_of_stock_overall": "غير متوفر (كل المواقع)"
       },
       "incoming": {
         "open_aria": "إضافة مخزون وارد",

@@ -3622,8 +3622,11 @@
             "low_stock_items": {
               "label": "Niedriger Bestand",
               "description_zero": "Deaktiviert. Legen Sie in den Shop-Einstellungen eine Schwelle fest.",
-              "description_one": "Höchstens 1 Einheit an einem Standort verkäuflich.",
-              "description_other": "Höchstens {{count}} Einheiten an einem Standort verkäuflich."
+              "description_one": "Höchstens 1 Einheit an allen Standorten zusammen verkäuflich.",
+              "description_other": "Höchstens {{count}} Einheiten an allen Standorten zusammen verkäuflich.",
+              "hint_zero": "Aus",
+              "hint_one": "≤ {{count}}",
+              "hint_other": "≤ {{count}}"
             },
             "open_claims": {
               "label": "Offene Reklamationen",
@@ -3643,7 +3646,7 @@
             },
             "out_of_stock_items": {
               "label": "Nicht vorrätig",
-              "description": "An diesem Standort ist nichts mehr verkäuflich."
+              "description": "An keinem Standort ist noch etwas verkäuflich."
             },
             "payments_to_collect": {
               "label": "Ausstehende Zahlungen",
@@ -5728,7 +5731,9 @@
         "has_reserved": "Reserviert",
         "in_stock": "Auf Lager",
         "low_stock": "Niedriger Bestand",
-        "out_of_stock": "Nicht auf Lager"
+        "out_of_stock": "Nicht auf Lager",
+        "low_stock_overall": "Niedriger Bestand (alle Standorte)",
+        "out_of_stock_overall": "Nicht auf Lager (alle Standorte)"
       },
       "incoming": {
         "open_aria": "Eingehenden Bestand hinzufügen",
