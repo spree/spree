@@ -576,10 +576,12 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
     it 'compares dates as normalized ISO 8601 strings' do
       create(:custom_field_definition, :date_time_field, :sortable, namespace: 'custom', key: 'launch')
 
-      expect(provider.send(:build_filter_condition, 'cf_custom_launch_gteq', '2026-10-12T10:00:00+02:00')).to eq("cf_custom_launch >= '2026-10-12T08:00:00Z'")
+      expect(provider.send(:build_filter_condition, 'cf_custom_launch_gteq', '2026-10-12T10:00:00+02:00')).
+        to eq("cf_custom_launch >= '2026-10-12T08:00:00Z'")
       expect(provider.send(:build_filter_condition, 'cf_custom_launch_lt', 'soon')).to be_nil
       expect(provider.send(:build_filter_condition, 'cf_custom_launch_present', '1')).to eq('cf_custom_launch EXISTS')
-      expect(provider.send(:build_filter_condition, 'cf_custom_launch_eq', '2026-10-12')).to eq("cf_custom_launch >= '2026-10-12T00:00:00Z' AND cf_custom_launch < '2026-10-13T00:00:00Z'")
+      expect(provider.send(:build_filter_condition, 'cf_custom_launch_eq', '2026-10-12')).
+        to eq("cf_custom_launch >= '2026-10-12T00:00:00Z' AND cf_custom_launch < '2026-10-13T00:00:00Z'")
     end
 
     it 'builds IN conditions for choices' do

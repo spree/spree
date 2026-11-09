@@ -47,7 +47,7 @@ module Spree
 
       # @return [Array<String>] the values a `choice` field may store
       def choice_values
-        choices.map { |choice| choice['value'] }
+        choices.pluck('value')
       end
 
       private
@@ -103,7 +103,7 @@ module Spree
 
       def validate_bound_rules(rules)
         bounds = rules.slice(*BOUND_RULES)
-        invalid = bounds.select { |rule, bound| field_type_class.normalize_validation_bound(bound, store: store, rule: rule) != bound }
+        invalid = bounds.reject { |rule, bound| field_type_class.normalize_validation_bound(bound, store: store, rule: rule) == bound }
         invalid.each_key { |rule| add_validations_error(:validation_invalid_bound, rule: rule) }
         return if invalid.any? || bounds.size < 2
 
@@ -114,7 +114,9 @@ module Spree
       def validate_choices_rule(rules)
         choices = rules['choices']
         return add_validations_error(:validation_choices_required) if choices.blank?
-        return add_validations_error(:validation_choices_invalid) unless choices.is_a?(Array) && choices.all? { |choice| choice.is_a?(Hash) && choice['value'].present? }
+        return add_validations_error(:validation_choices_invalid) unless choices.is_a?(Array) && choices.all? do |choice|
+          choice.is_a?(Hash) && choice['value'].present?
+        end
 
         add_validations_error(:validation_choices_not_unique) if choice_values.uniq.size != choice_values.size
       end
@@ -148,8 +150,8 @@ module Spree
         end
       end
 
-      def add_validations_error(type, **options)
-        errors.add(:validations, type, **options, message: I18n.t("spree.errors.messages.custom_field_#{type}", **options))
+      def add_validations_error(type, **)
+        errors.add(:validations, type, **, message: I18n.t("spree.errors.messages.custom_field_#{type}", **))
       end
     end
   end

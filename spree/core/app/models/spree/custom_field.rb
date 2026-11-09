@@ -7,14 +7,14 @@ module Spree
     # registration API lands.
     TYPE_TOKENS = {
       'short_text' => 'Spree::CustomFields::ShortText',
-      'long_text'  => 'Spree::CustomFields::LongText',
-      'rich_text'  => 'Spree::CustomFields::RichText',
-      'number'     => 'Spree::CustomFields::Number',
-      'boolean'    => 'Spree::CustomFields::Boolean',
-      'json'       => 'Spree::CustomFields::Json',
-      'date'       => 'Spree::CustomFields::Date',
-      'date_time'  => 'Spree::CustomFields::DateTime',
-      'choice'     => 'Spree::CustomFields::Choice'
+      'long_text' => 'Spree::CustomFields::LongText',
+      'rich_text' => 'Spree::CustomFields::RichText',
+      'number' => 'Spree::CustomFields::Number',
+      'boolean' => 'Spree::CustomFields::Boolean',
+      'json' => 'Spree::CustomFields::Json',
+      'date' => 'Spree::CustomFields::Date',
+      'date_time' => 'Spree::CustomFields::DateTime',
+      'choice' => 'Spree::CustomFields::Choice'
     }.freeze
     TYPE_CLASS_TO_TOKEN = TYPE_TOKENS.invert.freeze
 
@@ -50,7 +50,7 @@ module Spree
     # @param store [Spree::Store, nil] the definition's store, for its time zone
     # @param rule [String, nil] `min` or `max`
     # @return [Object, nil] nil when the bound is not valid for this type
-    def self.normalize_validation_bound(_value, store: nil, rule: nil)
+    def self.normalize_validation_bound(_value, **)
       nil
     end
 

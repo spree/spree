@@ -15,7 +15,7 @@ module Spree
                when ::Time, ::DateTime then input
                when ::Date then zone.local(input.year, input.month, input.day)
                end
-        time&.to_time&.utc&.iso8601
+        time.to_time.utc.iso8601 if time
       rescue ArgumentError
         nil
       end

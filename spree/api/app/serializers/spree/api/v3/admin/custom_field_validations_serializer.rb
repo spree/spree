@@ -6,8 +6,10 @@ module Spree
           _attributes.delete(:id)
 
           typelize required: :boolean,
-                   min: ['number | string | null', comment: 'Characters for text fields, a value for number fields, an ISO 8601 date or date-time for date fields.'],
-                   max: ['number | string | null', comment: 'Characters for text fields, a value for number fields, an ISO 8601 date or date-time for date fields.'],
+                   min: ['number | string | null',
+                         comment: 'Characters for text fields, a value for number fields, an ISO 8601 date or date-time for date fields.'],
+                   max: ['number | string | null',
+                         comment: 'Characters for text fields, a value for number fields, an ISO 8601 date or date-time for date fields.'],
                    multiple: :boolean,
                    choices: [:CustomFieldChoice, multi: true]
 
