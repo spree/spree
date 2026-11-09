@@ -71,6 +71,29 @@ module Spree
       end
     end
 
+    context 'when the submitted email has surrounding whitespace and different casing' do
+      let(:user) { create(:user, email: 'Ada@Example.com') }
+      let(:email) { ' ada@example.com ' }
+
+      it 'links the signed-in customer and skips double opt-in' do
+        expect_any_instance_of(Spree::NewsletterSubscriber).not_to receive(:publish_event).with('newsletter_subscriber.subscription_requested', anything)
+
+        expect(service).to be_verified
+        expect(service.email).to eq('ada@example.com')
+        expect(service.customer).to eq(user)
+      end
+    end
+
+    context 'when a guest submits the address of a customer stored with mixed casing' do
+      let!(:customer) { create(:user, email: 'Ada@Example.com') }
+      let(:email) { ' Ada@Example.com ' }
+
+      it 'links the existing customer' do
+        expect(service.customer).to eq(customer)
+        expect(service.email).to eq('ada@example.com')
+      end
+    end
+
     context 'when logged in user inputs another email' do
       let(:user) { create(:user) }
       let(:email) { 'test@example.com' }

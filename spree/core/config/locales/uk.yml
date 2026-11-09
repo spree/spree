@@ -419,7 +419,7 @@ uk:
       not_saved:
         few: "%{count} помилки завадили збереженню цього %{resource}:"
         many: "%{count} помилок завадили збереженню цього %{resource}:"
-        one: '1 помилка завадила збереженню цього %{resource}:'
+        one: "%{count} помилка завадила збереженню цього %{resource}:"
         other: "%{count} помилки завадили збереженню цього %{resource}:"
   number:
     percentage:
