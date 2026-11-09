@@ -14,35 +14,44 @@ module Spree
             body.attribute :namespace, :string, description: 'Defaults to `custom`.'
             body.attribute :key, :string, required: true, on: :create
             body.attribute :label, :string, description: 'Human-readable name; defaults to the titleized `key`.'
-            body.attribute :field_type, :string,
-              required: true, on: :create, only: :create,
-              example: 'short_text',
-              description: 'Custom field type token (`short_text`, `long_text`, `rich_text`, `number`, `boolean`, `json`, `date`, `date_time`, `choice`). An extension type that has no token is named by its registered class instead. Fixed once the definition is created.'
-            body.attribute :resource_type, :string,
-              required: true, on: :create, only: :create,
-              example: 'product',
-              description: 'Shorthand of the resource the field attaches to, from the resource types endpoint. Fixed once the definition is created.'
-            body.attribute :storefront_visible, :boolean,
-              description: 'When false, the definition is admin-only and never exposed in the Store API. Defaults to false on create; an update without it keeps the stored value.'
-            body.attribute :searchable, :boolean,
-              description: 'Include values in storefront product text search. Supported for `short_text`, `long_text`, `number`, `date`, `date_time` and `choice` fields; other types are refused.'
-            body.attribute :sortable, :boolean,
-              description: 'Allow storefront product listings to sort by this field (`sort=cf_{namespace}_{key}`). Supported for `short_text`, `number`, `date`, `date_time` and single `choice` fields; other types are refused.'
-            body.attribute :validations, :object, nullable: true, as: 'CustomFieldValidationsParams',
-              description: 'Rules for the values. Each applies only to the field types it names; values are checked when written, so existing values stay readable after a rule changes. Replaces the stored rules; send null to remove every rule.' do |rules|
-              rules.attribute :required, :boolean,
-                description: 'The value cannot be blank. Marked and checked by the forms that edit the value; the API accepts a blank value.'
-              rules.attribute :min, :any,
-                description: 'Inclusive lower bound: a character count for `short_text` and `long_text`, a number for `number`, an ISO 8601 date or date-time for `date` and `date_time`.'
-              rules.attribute :max, :any,
-                description: 'Inclusive upper bound, in the same form as `min`.'
-              rules.attribute :choices, :array, as: 'CustomFieldChoiceParams',
-                description: 'For `choice` fields, required: the options in display order. Values must be unique.' do |choice|
+            body.attribute :field_type, :string, required: true, on: :create, only: :create, example: 'short_text', description: <<~TEXT.squish
+              Custom field type token (`short_text`, `long_text`, `rich_text`, `number`, `boolean`, `json`, `date`, `date_time`, `choice`).
+              An extension type that has no token is named by its registered class instead. Fixed once the definition is created.
+            TEXT
+            body.attribute :resource_type, :string, required: true, on: :create, only: :create, example: 'product', description: <<~TEXT.squish
+              Shorthand of the resource the field attaches to, from the resource types endpoint. Fixed once the definition is created.
+            TEXT
+            body.attribute :storefront_visible, :boolean, description: <<~TEXT.squish
+              When false, the definition is admin-only and never exposed in the Store API.
+              Defaults to false on create; an update without it keeps the stored value.
+            TEXT
+            body.attribute :searchable, :boolean, description: <<~TEXT.squish
+              Include values in storefront product text search.
+              Supported for `short_text`, `long_text`, `number`, `date`, `date_time` and `choice` fields; other types are refused.
+            TEXT
+            body.attribute :sortable, :boolean, description: <<~TEXT.squish
+              Allow storefront product listings to sort by this field (`sort=cf_{namespace}_{key}`).
+              Supported for `short_text`, `number`, `date`, `date_time` and single `choice` fields; other types are refused.
+            TEXT
+            body.attribute :validations, :object, nullable: true, as: 'CustomFieldValidationsParams', description: <<~TEXT.squish do |rules|
+              Rules for the values. Each applies only to the field types it names; values are checked when written,
+              so existing values stay readable after a rule changes. Replaces the stored rules; send null to remove every rule.
+            TEXT
+              rules.attribute :required, :boolean, description: <<~TEXT.squish
+                The value cannot be blank. Marked and checked by the forms that edit the value; the API accepts a blank value.
+              TEXT
+              rules.attribute :min, :any, description: <<~TEXT.squish
+                Inclusive lower bound: a character count for `short_text` and `long_text`, a number for `number`,
+                an ISO 8601 date or date-time for `date` and `date_time`.
+              TEXT
+              rules.attribute :max, :any, description: 'Inclusive upper bound, in the same form as `min`.'
+              rules.attribute :choices, :array, as: 'CustomFieldChoiceParams', description: <<~TEXT.squish do |choice|
+                For `choice` fields, required: the options in display order. Values must be unique.
+              TEXT
                 choice.attribute :value, :string, required: true, description: 'What is stored.'
                 choice.attribute :label, :string, description: 'What is shown; defaults to the value.'
               end
-              rules.attribute :multiple, :boolean,
-                description: 'For `choice` fields: several values may be chosen, and the value is a list.'
+              rules.attribute :multiple, :boolean, description: 'For `choice` fields: several values may be chosen, and the value is a list.'
             end
           end
 

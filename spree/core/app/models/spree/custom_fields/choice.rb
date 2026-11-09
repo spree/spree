@@ -74,7 +74,7 @@ module Spree
 
         offered = custom_field_definition.choice_values
         parts = value.split(',').map(&:strip)
-        self.value = !offered.include?(value) && (parts - offered).empty? ? parts : [value]
+        self.value = offered.exclude?(value) && (parts - offered).empty? ? parts : [value]
       end
 
       # A single choice is stored bare, so it sorts and compares by its value
@@ -92,7 +92,7 @@ module Spree
         offered = custom_field_definition.choice_values
         (chosen_values - offered).each do |choice|
           errors.add(:value, :choice_not_offered, value: choice,
-                     message: I18n.t('spree.errors.messages.custom_field_choice_not_offered', value: choice))
+                                                  message: I18n.t('spree.errors.messages.custom_field_choice_not_offered', value: choice))
         end
       end
     end

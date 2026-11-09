@@ -9,7 +9,7 @@ module Spree
           %w[min max]
         end
 
-        def normalize_validation_bound(value, store: nil, rule: nil)
+        def normalize_validation_bound(value, **)
           bound = Integer(value.to_s, 10, exception: false) unless [true, false].include?(value)
           bound if bound && bound >= 0
         end

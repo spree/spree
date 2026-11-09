@@ -143,11 +143,8 @@ module Spree
         operator = NUMERIC_OPERATORS[predicate]
         return nil unless operator
 
-        numeric = begin
-          BigDecimal(value.to_s)
-        rescue ArgumentError, TypeError
-          return nil
-        end
+        numeric = BigDecimal(value.to_s, exception: false)
+        return nil unless numeric
 
         custom_field_value_expression(column, 'number').public_send(operator, numeric)
       end

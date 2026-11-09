@@ -103,7 +103,7 @@ RSpec.describe 'Admin Custom Field Definitions API', type: :request, swagger_doc
           data = JSON.parse(response.body)
           expect(data['storefront_visible']).to eq(false)
           expect(data['validations']['required']).to eq(true)
-          expect(data['validations']['choices'].map { |choice| choice['value'] }).to eq(%w[a b])
+          expect(data['validations']['choices'].pluck('value')).to eq(%w[a b])
         end
       end
     end
