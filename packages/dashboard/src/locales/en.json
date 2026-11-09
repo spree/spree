@@ -411,11 +411,15 @@
         "add": "Add rule",
         "description": "Choose products by hand, or let rules keep the collection up to date.",
         "remove": "Remove rule",
-        "title": "Membership"
+        "title": "Membership",
+        "on_sale": "On sale",
+        "days": "days",
+        "days_label": "Published within",
+        "tags_placeholder": "Pick tags…"
       },
       "rules_match_policies": {
-        "all": "all conditions",
-        "any": "any condition"
+        "all": "All rules must match",
+        "any": "Any rule may match"
       },
       "search_placeholder": "Search collections…",
       "seo": {

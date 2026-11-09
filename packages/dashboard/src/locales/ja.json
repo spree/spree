@@ -411,11 +411,15 @@
         "add": "ルールを追加",
         "description": "商品を手で選ぶか、ルールでコレクションを自動的に最新にします。",
         "remove": "ルールを削除",
-        "title": "含める商品"
+        "title": "含める商品",
+        "on_sale": "セール中",
+        "days": "日",
+        "days_label": "公開からの日数",
+        "tags_placeholder": "タグを選択…"
       },
       "rules_match_policies": {
-        "all": "すべての条件",
-        "any": "いずれかの条件"
+        "all": "すべてのルールに一致",
+        "any": "いずれかのルールに一致"
       },
       "search_placeholder": "コレクションを検索…",
       "seo": {

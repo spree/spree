@@ -419,11 +419,15 @@
         "add": "Dodaj regułę",
         "description": "Wybierz produkty ręcznie albo pozwól regułom aktualizować kolekcję.",
         "remove": "Usuń regułę",
-        "title": "Przypisanie"
+        "title": "Przypisanie",
+        "on_sale": "W promocji",
+        "days": "dni",
+        "days_label": "Opublikowane w ciągu",
+        "tags_placeholder": "Wybierz tagi…"
       },
       "rules_match_policies": {
-        "all": "wszystkie warunki",
-        "any": "dowolny warunek"
+        "all": "Wszystkie reguły muszą pasować",
+        "any": "Wystarczy jedna reguła"
       },
       "search_placeholder": "Szukaj kolekcji…",
       "seo": {

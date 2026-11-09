@@ -411,11 +411,15 @@
         "add": "Regel hinzufügen",
         "description": "Produkte manuell auswählen oder die Kollektion per Regeln aktuell halten.",
         "remove": "Regel entfernen",
-        "title": "Zuordnung"
+        "title": "Zuordnung",
+        "on_sale": "Im Angebot",
+        "days": "Tage",
+        "days_label": "Veröffentlicht innerhalb von",
+        "tags_placeholder": "Tags auswählen…"
       },
       "rules_match_policies": {
-        "all": "alle Bedingungen",
-        "any": "eine Bedingung"
+        "all": "Alle Regeln müssen zutreffen",
+        "any": "Eine Regel genügt"
       },
       "search_placeholder": "Kollektionen suchen…",
       "seo": {

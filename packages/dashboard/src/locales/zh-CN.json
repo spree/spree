@@ -410,11 +410,15 @@
         "add": "添加规则",
         "description": "手动选择商品，或由规则自动维护系列。",
         "remove": "删除规则",
-        "title": "商品来源"
+        "title": "商品来源",
+        "on_sale": "促销中",
+        "days": "天",
+        "days_label": "发布天数",
+        "tags_placeholder": "选择标签…"
       },
       "rules_match_policies": {
-        "all": "全部条件",
-        "any": "任一条件"
+        "all": "须符合所有规则",
+        "any": "符合任一规则即可"
       },
       "search_placeholder": "搜索系列…",
       "seo": {

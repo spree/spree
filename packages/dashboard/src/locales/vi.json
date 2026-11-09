@@ -411,11 +411,15 @@
         "add": "Thêm quy tắc",
         "description": "Chọn sản phẩm theo cách thủ công hoặc để các quy tắc cập nhật bộ sưu tập.",
         "remove": "Xóa quy tắc",
-        "title": "Tư cách thành viên"
+        "title": "Tư cách thành viên",
+        "on_sale": "Đang giảm giá",
+        "days": "ngày",
+        "days_label": "Xuất bản trong vòng",
+        "tags_placeholder": "Chọn thẻ…"
       },
       "rules_match_policies": {
-        "all": "mọi điều kiện",
-        "any": "bất kỳ điều kiện nào"
+        "all": "Phải khớp tất cả quy tắc",
+        "any": "Khớp bất kỳ quy tắc nào"
       },
       "search_placeholder": "Tìm kiếm bộ sưu tập…",
       "seo": {

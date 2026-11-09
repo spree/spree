@@ -411,11 +411,15 @@
         "add": "Ajouter une règle",
         "description": "Choisissez les produits à la main ou laissez des règles tenir la collection à jour.",
         "remove": "Supprimer la règle",
-        "title": "Composition"
+        "title": "Composition",
+        "on_sale": "En promotion",
+        "days": "jours",
+        "days_label": "Publié depuis moins de",
+        "tags_placeholder": "Choisir des étiquettes…"
       },
       "rules_match_policies": {
-        "all": "toutes les conditions",
-        "any": "au moins une condition"
+        "all": "Toutes les règles doivent correspondre",
+        "any": "Une seule règle suffit"
       },
       "search_placeholder": "Rechercher des collections…",
       "seo": {

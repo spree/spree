@@ -4321,11 +4321,15 @@
         "add": "Agregar regla",
         "description": "Elegí productos a mano, o dejá que las reglas mantengan la colección al día.",
         "remove": "Quitar regla",
-        "title": "Integrantes"
+        "title": "Integrantes",
+        "on_sale": "En oferta",
+        "days": "días",
+        "days_label": "Publicado en los últimos",
+        "tags_placeholder": "Elige etiquetas…"
       },
       "rules_match_policies": {
-        "all": "todas las condiciones",
-        "any": "cualquier condición"
+        "all": "Deben cumplirse todas las reglas",
+        "any": "Basta con una regla"
       },
       "search_placeholder": "Buscar colecciones…",
       "seo": {

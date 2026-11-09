@@ -232,15 +232,28 @@ test.describe('collections management', () => {
     // Target the switch role specifically — Base UI also renders a hidden
     // checkbox input carrying the same accessible name.
     await page.getByRole('switch', { name: /set members automatically/i }).click()
-    await expect(page.locator('#collection-rule-value-0')).toBeVisible()
-    await page.locator('#collection-rule-value-0').fill('summer')
+    // Each rule kind brings its own value control: a switch for "On sale",
+    // a number of days for "Recently published", tags for a tag rule.
+    const ruleKind = page.getByRole('combobox', { name: /^rule$/i }).first()
+    await ruleKind.click()
+    await page.getByRole('option', { name: /on sale/i }).click()
+    await expect(page.getByRole('switch', { name: /^on sale$/i })).toBeChecked()
+    await ruleKind.click()
+    await page.getByRole('option', { name: /recently published/i }).click()
+    await expect(page.getByRole('spinbutton', { name: /published within/i })).toHaveValue('30')
+    await ruleKind.click()
+    await page.getByRole('option', { name: /^tag/i }).click()
+
+    const tags = page.getByPlaceholder(/pick tags/i)
+    await tags.fill('summer')
+    await tags.press('Enter')
 
     await page.getByRole('button', { name: /^save$/i }).click()
 
     // Create lands on the edit page, hydrated from the persisted row — so the
     // rule and the automatic flag both round-tripped through the API.
     await expect(page.getByRole('heading', { name, level: 1 })).toBeVisible({ timeout: 15_000 })
-    await expect(page.locator('#collection-rule-value-0')).toHaveValue('summer')
+    await expect(page.getByText('summer', { exact: true })).toBeVisible()
 
     // The products panel is read-only: it explains that the rules own the
     // membership and offers no way to curate by hand.
