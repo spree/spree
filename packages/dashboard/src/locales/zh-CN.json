@@ -3647,6 +3647,13 @@
               "label": "待收款订单",
               "description": "已下单但仍有款项未付。"
             }
+          },
+          "all_clear": "一切就绪。",
+          "groups": {
+            "orders": "订单",
+            "post_sale": "退货与索赔",
+            "inventory": "库存",
+            "other": "其他"
           }
         },
         "rankings": {

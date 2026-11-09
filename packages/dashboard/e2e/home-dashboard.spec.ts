@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { login } from './helpers'
+import { createPlacedOrder, login } from './helpers'
 
 const HOME_PATH = (storeId: string) => `/${storeId}`
 
@@ -77,6 +77,9 @@ test.describe('home dashboard', () => {
 
   test('renders the operations and rankings widgets', async ({ page }) => {
     const creds = await login(page)
+    // With every count at zero the card collapses to one "all caught up"
+    // line, so give it something to list.
+    await createPlacedOrder(page, creds.accessToken, { quantity: 1, ship: false })
     await page.goto(HOME_PATH(creds.store_id))
 
     await expect(page.getByRole('heading', { name: /^dashboard$/i })).toBeVisible({
@@ -109,14 +112,17 @@ test.describe('home dashboard', () => {
 
     await expect(page.getByRole('combobox').filter({ hasText: /wholesale/i })).toBeVisible()
     await expect(page.getByRole('button', { name: /total sales/i })).toBeVisible()
-    await expect(page.getByText(/orders to fulfill/i)).toBeVisible()
+    // The channel may have nothing to act on, which lists no rows.
+    await expect(page.getByText('Operations', { exact: true })).toBeVisible()
   })
 
   test('orders to fulfill links to the filtered orders list', async ({ page }) => {
     const creds = await login(page)
+    // A counter at zero is not a link, so make sure there is an order to fulfill.
+    await createPlacedOrder(page, creds.accessToken, { quantity: 1, ship: false })
     await page.goto(HOME_PATH(creds.store_id))
 
-    await page.getByText(/orders to fulfill/i).click()
+    await page.getByRole('link', { name: /orders to fulfill/i }).click()
 
     await expect(page).toHaveURL(/\/orders\?/, { timeout: 15_000 })
     await expect(page.getByText(/fulfillment/i).first()).toBeVisible()

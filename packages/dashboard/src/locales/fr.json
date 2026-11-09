@@ -3655,6 +3655,13 @@
               "label": "Paiements à encaisser",
               "description": "Commandes passées dont le paiement reste dû."
             }
+          },
+          "all_clear": "Tout est à jour.",
+          "groups": {
+            "orders": "Commandes",
+            "post_sale": "Retours et réclamations",
+            "inventory": "Stock",
+            "other": "Autres"
           }
         },
         "rankings": {

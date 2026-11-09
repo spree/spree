@@ -3655,6 +3655,13 @@
               "label": "Ausstehende Zahlungen",
               "description": "Aufgegebene Bestellungen, die noch nicht bezahlt sind."
             }
+          },
+          "all_clear": "Alles erledigt.",
+          "groups": {
+            "orders": "Bestellungen",
+            "post_sale": "Rücksendungen und Reklamationen",
+            "inventory": "Lagerbestand",
+            "other": "Sonstiges"
           }
         },
         "rankings": {

@@ -3655,6 +3655,13 @@
               "label": "Payments to collect",
               "description": "Placed orders still owed money."
             }
+          },
+          "all_clear": "You're all caught up.",
+          "groups": {
+            "orders": "Orders",
+            "post_sale": "Returns and claims",
+            "inventory": "Inventory",
+            "other": "Other"
           }
         },
         "rankings": {

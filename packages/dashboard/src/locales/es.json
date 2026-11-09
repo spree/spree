@@ -273,6 +273,13 @@
               "label": "Pagos por cobrar",
               "description": "Pedidos realizados que todavía deben dinero."
             }
+          },
+          "all_clear": "Todo al día.",
+          "groups": {
+            "orders": "Pedidos",
+            "post_sale": "Devoluciones y reclamaciones",
+            "inventory": "Inventario",
+            "other": "Otros"
           }
         },
         "rankings": {

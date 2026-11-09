@@ -3655,6 +3655,13 @@
               "label": "回収する支払い",
               "description": "受注したがまだ代金が残っている注文です。"
             }
+          },
+          "all_clear": "対応が必要な項目はありません。",
+          "groups": {
+            "orders": "注文",
+            "post_sale": "返品とクレーム",
+            "inventory": "在庫",
+            "other": "その他"
           }
         },
         "rankings": {

@@ -3689,6 +3689,13 @@
               "label": "Płatności do pobrania",
               "description": "Złożone zamówienia, za które wciąż brakuje zapłaty."
             }
+          },
+          "all_clear": "Wszystko załatwione.",
+          "groups": {
+            "orders": "Zamówienia",
+            "post_sale": "Zwroty i reklamacje",
+            "inventory": "Magazyn",
+            "other": "Inne"
           }
         },
         "rankings": {

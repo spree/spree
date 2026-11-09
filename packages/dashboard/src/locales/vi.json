@@ -3655,6 +3655,13 @@
               "label": "Các khoản thanh toán để thu thập",
               "description": "Đặt hàng vẫn còn nợ tiền."
             }
+          },
+          "all_clear": "Bạn đã xử lý hết.",
+          "groups": {
+            "orders": "Đơn hàng",
+            "post_sale": "Trả hàng và khiếu nại",
+            "inventory": "Tồn kho",
+            "other": "Khác"
           }
         },
         "rankings": {
