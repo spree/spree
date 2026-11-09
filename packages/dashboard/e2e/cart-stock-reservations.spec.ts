@@ -1,5 +1,6 @@
 import { resolve } from 'node:path'
 import { expect, test } from '@playwright/test'
+import { login, searchList } from './helpers'
 import { API_GEM_DIR, runRailsBootstrap } from './rails'
 
 test.use({ trace: 'off' })
@@ -10,10 +11,11 @@ const railsEnv = {
   DATABASE_URL: `sqlite3:${resolve(API_GEM_DIR, 'spec/dummy/db/spree_test_e2e.sqlite3')}`,
 }
 
-// Store checkout has no dashboard surface. Exercise its public HTTP contract
-// against the suite's isolated Rails database, without a browser session.
+// Complete through Store HTTP, then inspect the resulting seller orders in
+// the dashboard while retaining exact reservation and allocation assertions.
 for (const sellerCount of [1, 2]) {
   test(`a cart completes its own reserved stock across ${sellerCount} seller partitions`, async ({
+    page,
     request,
   }) => {
     test.setTimeout(120_000)
@@ -24,7 +26,9 @@ for (const sellerCount of [1, 2]) {
         require 'spree/testing_support/factories'
         Spree::Events.disable!
         include FactoryBot::Syntax::Methods
-        store = create(:store, name: 'Reserved checkout ${Date.now()}', preferred_stock_reservations_enabled: true)
+        store = create(:store, name: 'ZZ Reserved checkout ${Date.now()}', preferred_stock_reservations_enabled: true)
+        admin = Spree.admin_user_class.first!
+        store.add_user(admin, Spree::Role.default_admin_role(store))
         Spree::Current.store = store
         location = create(:stock_location, store: store)
         create(:delivery_method, store: store)
@@ -57,7 +61,7 @@ for (const sellerCount of [1, 2]) {
         key = create(:api_key, :publishable, store: store)
         raise 'Cart has no selected delivery' unless cart.fulfillments.all?(&:selected_delivery_rate)
         raise 'Cart does not cover its own stock' unless lines.all?(&:sufficient_stock?)
-        puts({cart: cart.prefixed_id, token: cart.token, key: key.plaintext_token, quantities: lines.map(&:quantity),
+        puts({store: store.prefixed_id, cart: cart.prefixed_id, token: cart.token, key: key.plaintext_token, quantities: lines.map(&:quantity),
               levels: levels.map(&:id), other_hold: hold.id, other_cart: other.id}.to_json)
       `,
         railsEnv,
@@ -101,5 +105,13 @@ for (const sellerCount of [1, 2]) {
       cart: fixture.other_cart,
       order: null,
     })
+
+    await login(page)
+    await page.goto(`/${fixture.store}/orders`)
+    await expect(page.getByRole('heading', { name: /^orders$/i })).toBeVisible()
+    for (const child of sellerCount === 1 ? [order] : order.orders) {
+      await searchList(page, /search by number/i, child.number)
+      await expect(page.getByRole('row').filter({ hasText: child.number })).toBeVisible()
+    }
   })
 }
