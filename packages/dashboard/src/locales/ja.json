@@ -2860,7 +2860,9 @@
     "markets": {
       "add_cta": "マーケットを追加",
       "columns": {
-        "default": "既定"
+        "default": "既定",
+        "locale": "言語",
+        "regions": "地域"
       },
       "create_description": "国をまとめて、独自の通貨と言語を持つ 1 つの価格地域にします。",
       "create_label": "マーケットを作成",
@@ -2880,7 +2882,9 @@
         "deleted": "マーケットを削除しました",
         "updated": "マーケットを更新しました"
       },
+      "regions_count_other": "{{count}} 地域",
       "search_placeholder": "名前で検索…",
+      "search_regions": "地域を検索",
       "tax_exclusive": "税抜き",
       "tax_inclusive": "税込み"
     },

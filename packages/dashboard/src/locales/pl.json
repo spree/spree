@@ -2878,7 +2878,9 @@
     "markets": {
       "add_cta": "Dodaj rynek",
       "columns": {
-        "default": "Domyślny"
+        "default": "Domyślny",
+        "locale": "Język",
+        "regions": "Regiony"
       },
       "create_description": "Pogrupuj kraje w jeden region cenowy z własną walutą i ustawieniami regionalnymi.",
       "create_label": "Utwórz rynek",
@@ -2898,7 +2900,12 @@
         "deleted": "Rynek usunięty",
         "updated": "Rynek zaktualizowany"
       },
+      "regions_count_few": "{{count}} regiony",
+      "regions_count_many": "{{count}} regionów",
+      "regions_count_one": "{{count}} region",
+      "regions_count_other": "{{count}} regionu",
       "search_placeholder": "Szukaj według nazwy…",
+      "search_regions": "Szukaj regionów",
       "tax_exclusive": "Bez podatku",
       "tax_inclusive": "Z podatkiem"
     },

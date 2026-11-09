@@ -2860,7 +2860,9 @@
     "markets": {
       "add_cta": "Ajouter un marché",
       "columns": {
-        "default": "Par défaut"
+        "default": "Par défaut",
+        "locale": "Langue",
+        "regions": "Régions"
       },
       "create_description": "Regroupez des pays dans une seule région tarifaire avec sa propre devise et ses propres langues.",
       "create_label": "Créer un marché",
@@ -2880,7 +2882,11 @@
         "deleted": "Marché supprimé",
         "updated": "Marché mis à jour"
       },
+      "regions_count_many": "{{count}} régions",
+      "regions_count_one": "{{count}} région",
+      "regions_count_other": "{{count}} régions",
       "search_placeholder": "Rechercher par nom…",
+      "search_regions": "Rechercher des régions",
       "tax_exclusive": "HT",
       "tax_inclusive": "TTC"
     },

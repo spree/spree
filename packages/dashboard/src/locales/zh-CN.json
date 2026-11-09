@@ -2855,7 +2855,9 @@
     "markets": {
       "add_cta": "添加市场",
       "columns": {
-        "default": "默认"
+        "default": "默认",
+        "locale": "语言区域",
+        "regions": "地区"
       },
       "create_description": "将多个国家/地区归入一个定价区域，使用其专属货币和区域设置。",
       "create_label": "创建市场",
@@ -2875,7 +2877,9 @@
         "deleted": "市场已删除",
         "updated": "市场已更新"
       },
+      "regions_count_other": "{{count}} 个地区",
       "search_placeholder": "按名称搜索…",
+      "search_regions": "搜索地区",
       "tax_exclusive": "不含税",
       "tax_inclusive": "含税"
     },

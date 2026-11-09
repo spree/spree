@@ -5982,7 +5982,9 @@
     "markets": {
       "add_cta": "Agregar mercado",
       "columns": {
-        "default": "Predeterminado"
+        "default": "Predeterminado",
+        "locale": "Idioma",
+        "regions": "Regiones"
       },
       "create_description": "Agrupá países en una única región de precios con su propia moneda e idiomas.",
       "create_label": "Crear mercado",
@@ -6002,7 +6004,11 @@
         "deleted": "Mercado eliminado",
         "updated": "Mercado actualizado"
       },
+      "regions_count_many": "{{count}} regiones",
+      "regions_count_one": "{{count}} región",
+      "regions_count_other": "{{count}} regiones",
       "search_placeholder": "Buscar por nombre…",
+      "search_regions": "Buscar regiones",
       "tax_exclusive": "Exclusivo",
       "tax_inclusive": "Incluido"
     },

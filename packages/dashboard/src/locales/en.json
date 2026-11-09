@@ -2860,7 +2860,9 @@
     "markets": {
       "add_cta": "Add market",
       "columns": {
-        "default": "Default"
+        "default": "Default",
+        "locale": "Locale",
+        "regions": "Regions"
       },
       "create_description": "Group countries into a single pricing region with its own currency and locales.",
       "create_label": "Create market",
@@ -2880,7 +2882,10 @@
         "deleted": "Market deleted",
         "updated": "Market updated"
       },
+      "regions_count_one": "{{count}} region",
+      "regions_count_other": "{{count}} regions",
       "search_placeholder": "Search by name…",
+      "search_regions": "Search regions",
       "tax_exclusive": "Exclusive",
       "tax_inclusive": "Inclusive"
     },

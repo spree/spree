@@ -2860,7 +2860,9 @@
     "markets": {
       "add_cta": "Markt hinzufügen",
       "columns": {
-        "default": "Standard"
+        "default": "Standard",
+        "locale": "Sprache",
+        "regions": "Regionen"
       },
       "create_description": "Fassen Sie Länder zu einer einzigen Preisregion mit eigener Währung und eigenen Sprachen zusammen.",
       "create_label": "Markt erstellen",
@@ -2880,7 +2882,10 @@
         "deleted": "Markt gelöscht",
         "updated": "Markt aktualisiert"
       },
+      "regions_count_one": "{{count}} Region",
+      "regions_count_other": "{{count}} Regionen",
       "search_placeholder": "Nach Name suchen…",
+      "search_regions": "Regionen suchen",
       "tax_exclusive": "Exklusive",
       "tax_inclusive": "Inklusive"
     },

@@ -2860,7 +2860,9 @@
     "markets": {
       "add_cta": "Thêm thị trường",
       "columns": {
-        "default": "Mặc định"
+        "default": "Mặc định",
+        "locale": "Ngôn ngữ",
+        "regions": "Khu vực"
       },
       "create_description": "Nhóm các quốc gia thành một khu vực định giá duy nhất với đơn vị tiền tệ và địa phương riêng.",
       "create_label": "Tạo thị trường",
@@ -2880,7 +2882,9 @@
         "deleted": "Thị trường đã bị xóa",
         "updated": "Cập nhật thị trường"
       },
+      "regions_count_other": "{{count}} khu vực",
       "search_placeholder": "Tìm kiếm theo tên…",
+      "search_regions": "Tìm khu vực",
       "tax_exclusive": "Độc quyền",
       "tax_inclusive": "Bao gồm"
     },

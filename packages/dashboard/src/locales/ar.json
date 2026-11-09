@@ -2797,7 +2797,9 @@
     "markets": {
       "add_cta": "إضافة سوق",
       "columns": {
-        "default": "افتراضي"
+        "default": "افتراضي",
+        "locale": "اللغة",
+        "regions": "المناطق"
       },
       "create_description": "اجمع الدول في منطقة تسعير واحدة بعملتها ولغاتها الخاصة.",
       "create_label": "إنشاء سوق",
@@ -2817,7 +2819,14 @@
         "deleted": "تم حذف السوق",
         "updated": "تم تحديث السوق"
       },
+      "regions_count_few": "{{count}} مناطق",
+      "regions_count_many": "{{count}} منطقة",
+      "regions_count_one": "منطقة واحدة",
+      "regions_count_other": "{{count}} منطقة",
+      "regions_count_two": "منطقتان",
+      "regions_count_zero": "{{count}} منطقة",
       "search_placeholder": "البحث بالاسم…",
+      "search_regions": "البحث في المناطق",
       "tax_exclusive": "غير شامل",
       "tax_inclusive": "شامل"
     },
