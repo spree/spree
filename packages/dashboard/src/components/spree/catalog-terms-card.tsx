@@ -358,10 +358,11 @@ export function catalogTermColumns({
               placeholder={entry?.mixed ? headers.mixed : catalogMinimum || headers.defaultHint}
               value={entry?.minimum_order_quantity ?? ''}
               onChange={(event) => set(row.id, 'minimum_order_quantity', event.target.value)}
-              // No spinner: it reserves room these narrow columns do not have,
+              // No stepper: it takes room these narrow columns do not have,
               // clipping the "Default" placeholder that says the product
               // inherits the catalog's own term.
-              className="h-8 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+              stepper={false}
+              className="h-8"
             />
             {minimumInvalid && <p className="mt-1 text-destructive text-xs">{headers.invalid}</p>}
           </TableCell>
@@ -376,7 +377,8 @@ export function catalogTermColumns({
               placeholder={entry?.mixed ? headers.mixed : catalogMultiple || headers.defaultHint}
               value={entry?.order_multiple ?? ''}
               onChange={(event) => set(row.id, 'order_multiple', event.target.value)}
-              className="h-8 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+              stepper={false}
+              className="h-8"
             />
             {multipleInvalid && <p className="mt-1 text-destructive text-xs">{headers.invalid}</p>}
           </TableCell>
