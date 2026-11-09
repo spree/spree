@@ -44,6 +44,24 @@ describe Spree::Cart, type: :model do
       expect(cart).not_to be_completion_claimed
     end
 
+    it 'does not extend an expired claim for an underpaid retained draft' do
+      cart.update_column(:completing_at, 6.minutes.ago)
+      draft = create(:order, store: store, cart: cart)
+      draft.update_column(:total, 10)
+      create(:payment, order: draft, amount: 4, status: 'completed')
+
+      expect(cart.reload).not_to be_completion_claimed
+    end
+
+    it 'keeps the claim while a retained draft has full payment coverage' do
+      cart.update_column(:completing_at, 6.minutes.ago)
+      draft = create(:order, store: store, cart: cart)
+      draft.update_column(:total, 10)
+      create(:payment, order: draft, amount: 10, status: 'pending')
+
+      expect(cart.reload).to be_completion_claimed
+    end
+
     %i[order order_group].each do |result_type|
       it "keeps a retained #{result_type} fenced after the claim expires" do
         cart.update_column(:completing_at, 6.minutes.ago)

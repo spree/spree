@@ -81,7 +81,7 @@ for (const [sellerCount, retained] of [
           cart.reload.update_column(:completing_at, 6.minutes.ago)
         end
         puts({store: store.prefixed_id, cart: cart.prefixed_id, token: cart.token, key: key.plaintext_token, quantities: lines.map(&:quantity),
-              levels: levels.map(&:id), other_hold: hold.id, other_cart: other.id, draft: draft&.prefixed_id}.to_json)
+              levels: levels.map(&:id), other_hold: hold.id, other_cart: other.id, draft: draft&.prefixed_id, draft_id: draft&.id}.to_json)
       `,
         railsEnv,
       ),
@@ -89,6 +89,29 @@ for (const [sellerCount, retained] of [
     const rails = `http://localhost:${process.env.E2E_RAILS_PORT || '3010'}`
     const headers = { 'X-Spree-API-Key': fixture.key, 'X-Spree-Token': fixture.token }
     if (retained) {
+      runRailsBootstrap(
+        `
+        draft = Spree::Order.find(${fixture.draft_id})
+        draft.payments.sole.update_columns(amount: draft.total / 2, status: 'completed')
+        draft.refresh_payment_total!
+        puts({updated: true}.to_json)
+      `,
+        railsEnv,
+      )
+      const noted = await request.patch(`${rails}/api/v3/store/carts/${fixture.cart}`, {
+        headers,
+        data: { customer_note: 'An underpaid draft keeps the existing timeout' },
+      })
+      expect(noted.status()).toBe(200)
+      runRailsBootstrap(
+        `
+        draft = Spree::Order.find(${fixture.draft_id})
+        draft.payments.sole.update_columns(amount: draft.total, status: 'pending')
+        draft.refresh_payment_total!
+        puts({updated: true}.to_json)
+      `,
+        railsEnv,
+      )
       const changed = await request.patch(`${rails}/api/v3/store/carts/${fixture.cart}`, {
         headers,
         data: {
