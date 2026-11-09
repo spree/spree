@@ -291,7 +291,9 @@ export function TableToolbar({
                 searchPlaceholder ?? t('admin.components.table_toolbar.search_placeholder')
               }
               clearLabel={t('admin.common.clear')}
-              className="hidden h-[2.125rem] w-[240px] bg-card text-sm lg:flex"
+              // Widens while in use (focused, or holding a term) so a longer
+              // query stays readable, and settles back once it is let go.
+              className="hidden h-[2.125rem] w-[240px] bg-card text-sm transition-[color,background-color,border-color,box-shadow,width] duration-200 ease-out focus-within:w-[320px] has-[input:not(:placeholder-shown)]:w-[320px] motion-reduce:transition-none lg:flex"
             />
 
             {/* Icon only, like sort and columns: the quick controls beside it

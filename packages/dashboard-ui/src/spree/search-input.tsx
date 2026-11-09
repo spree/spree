@@ -35,7 +35,9 @@ export function SearchInput({
   const inputRef = useRef<HTMLInputElement>(null)
 
   return (
-    <InputGroup className={className}>
+    // The outline button's edge rather than a form field's, so the search box
+    // reads as one of the toolbar's controls beside the buttons it sits with.
+    <InputGroup className={cn('border-border/80', className)}>
       <InputGroupAddon>
         <SearchIcon className="size-4" />
       </InputGroupAddon>
