@@ -55,7 +55,7 @@ export function CollectionMain({
   return (
     <>
       <Card>
-        <CardContent className="pt-6">
+        <CardContent>
           <FieldGroup>
             <Field>
               <FieldLabel htmlFor="collection-name">{t('admin.fields.name.label')}</FieldLabel>

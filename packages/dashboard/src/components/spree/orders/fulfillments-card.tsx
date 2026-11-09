@@ -564,7 +564,7 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
       {(fulfillment.delivery_method ||
         fulfillment.unpriced ||
         isPositiveMoney(fulfillment.cost)) && (
-        <CardContent className="flex items-center justify-between border-b border-border-subtle py-3 text-sm">
+        <CardContent className="flex items-center justify-between border-b border-border-subtle py-3.5 text-sm">
           <span className="text-muted-foreground">
             {/* The selected rate names the carrier service that actually
                 carries this parcel ("USPS GroundAdvantage"); the method is
@@ -624,7 +624,7 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
           />
 
           {shippable && (
-            <CardFooter className="justify-end gap-2 py-3">
+            <CardFooter className="justify-end gap-2 py-3.5">
               {canBuyLabel && (
                 <Button
                   type="button"
@@ -680,7 +680,7 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
           )}
 
           {deliverable && (
-            <CardFooter className="justify-end gap-2 py-3">
+            <CardFooter className="justify-end gap-2 py-3.5">
               <Button
                 type="button"
                 size="sm"

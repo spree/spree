@@ -86,8 +86,8 @@ function StockReceiptPanel({ receipt }: { receipt: StockReceipt }) {
   return (
     // Laid out like a fulfillment: what happened and to which document on
     // the left, when on the right, then the counts on their own row.
-    <Card variant="nested" className="px-0">
-      <CardHeader className="px-3.5!">
+    <Card>
+      <CardHeader>
         <CardTitle className="min-w-0 font-normal text-sm">
           <StatusBadge
             status="received"
@@ -107,7 +107,7 @@ function StockReceiptPanel({ receipt }: { receipt: StockReceipt }) {
         </CardAction>
       </CardHeader>
 
-      <CardContent className="flex items-center justify-between border-b border-border-subtle px-3.5! py-3! text-sm">
+      <CardContent className="flex items-center justify-between border-b border-border-subtle py-3.5 text-sm">
         <span className="text-muted-foreground">
           {t('admin.stock_receipts.summary', {
             accepted: receipt.quantity_accepted_total,

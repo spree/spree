@@ -119,7 +119,7 @@ export function OrderReturnsCard({ order }: { order: Order }) {
             </p>
           )}
           {returns.map((returnRecord) => (
-            <Card key={returnRecord.id} variant="nested">
+            <Card key={returnRecord.id}>
               <CardHeader>
                 <CardTitle className="text-sm font-medium">
                   <StatusBadge status={returnRecord.status} />
@@ -323,7 +323,7 @@ function ReturnLabel({
   if (!canBuy) return null
 
   return (
-    <CardContent className="flex items-center justify-between border-b border-border-subtle py-3 text-sm">
+    <CardContent className="flex items-center justify-between border-b border-border-subtle py-3.5 text-sm">
       <span className="text-muted-foreground">
         {t('admin.pages.orders.detail.returns.no_label')}
       </span>

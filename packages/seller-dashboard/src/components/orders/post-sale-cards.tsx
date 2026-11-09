@@ -82,7 +82,7 @@ export function ExchangesCard({ order }: { order: Order }) {
 
       <div className="flex flex-col gap-4">
         {exchanges.map((exchange) => (
-          <Card key={exchange.id} variant="nested">
+          <Card key={exchange.id}>
             <CardHeader>
               <CardTitle className="text-sm font-medium">{exchange.number}</CardTitle>
               <CardAction className="flex items-center gap-2">
@@ -226,7 +226,7 @@ export function ClaimsCard({ order }: { order: Order }) {
           <p className="text-muted-foreground text-sm">{t('orders.post_sale.claims.empty')}</p>
         ) : (
           claims.map((claim) => (
-            <Card key={claim.id} variant="nested">
+            <Card key={claim.id}>
               <CardHeader>
                 <CardTitle className="text-sm font-medium">{claim.number}</CardTitle>
                 <CardAction className="flex items-center gap-2">

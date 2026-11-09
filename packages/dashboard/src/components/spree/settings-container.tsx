@@ -9,5 +9,5 @@ import type { ReactNode } from 'react'
  * the area. Start a settings page at `<div className="flex flex-col gap-6">`.
  */
 export function SettingsContainer({ children }: { children: ReactNode }) {
-  return <div className="flex w-full flex-1 flex-col gap-4 p-4 lg:p-6">{children}</div>
+  return <div className="flex w-full flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">{children}</div>
 }

@@ -31,7 +31,7 @@ export function FulfillmentPanel({
   children: ReactNode
 }) {
   return (
-    <Card variant="nested">
+    <Card>
       <CardHeader>
         <CardTitle className="min-w-0 font-normal text-sm">
           <StatusBadge status={status} label={statusLabel} />

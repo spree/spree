@@ -132,7 +132,7 @@ export function OnboardingPage() {
         // `multiple` because these are independent — a seller does them in any
         // order — so opening one must not close the one they were reading.
         // Opens on the first outstanding line, which answers "what next".
-        <Card className="overflow-hidden py-0">
+        <Card className="overflow-hidden">
           <Accordion multiple defaultValue={openByDefault}>
             {requirements.map((requirement) => (
               <AccordionItem key={requirement.id} value={requirement.id}>

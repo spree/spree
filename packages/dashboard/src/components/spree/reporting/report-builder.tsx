@@ -25,6 +25,7 @@ import {
   FieldLegend,
   FieldSet,
   Input,
+  Item,
   Select,
   SelectContent,
   SelectItem,
@@ -323,10 +324,10 @@ export function ReportBuilder({ draft, onChange, schema }: ReportBuilderProps) {
           {draft.filters.map((filter, index) => {
             const definition = findDimension(schema, filter.dimension)
             return (
-              <Card
+              <Item
                 key={filter.dimension}
-                variant="nested"
-                className="flex flex-col gap-1.5 py-2.5"
+                variant="outline"
+                className="flex-col items-stretch gap-1.5"
               >
                 <div className="flex items-center justify-between gap-2">
                   <span className="text-sm font-medium">
@@ -335,7 +336,7 @@ export function ReportBuilder({ draft, onChange, schema }: ReportBuilderProps) {
                   {
                     <Button
                       type="button"
-                      variant="ghost"
+                      variant="destructive-ghost"
                       size="icon-sm"
                       aria-label={t('admin.reports.builder.remove_filter')}
                       onClick={() => removeFilter(index)}
@@ -349,7 +350,7 @@ export function ReportBuilder({ draft, onChange, schema }: ReportBuilderProps) {
                   values={filter.values}
                   onChange={(values) => setFilter(index, { ...filter, values })}
                 />
-              </Card>
+              </Item>
             )
           })}
           {filterableDimensions.length > 0 && (

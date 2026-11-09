@@ -192,7 +192,7 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
       }
     >
       {fulfillment.delivery_method_name && (
-        <CardContent className="flex items-center justify-between border-border-subtle border-b py-3 text-sm">
+        <CardContent className="flex items-center justify-between border-border-subtle border-b py-3.5 text-sm">
           <span className="text-muted-foreground">{fulfillment.delivery_method_name}</span>
         </CardContent>
       )}
@@ -222,7 +222,7 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
           <FulfillmentItemList rows={fulfillmentItemRows(fulfillment, order.items ?? [])} />
 
           {shippable && (
-            <CardFooter className="justify-end gap-2 py-3">
+            <CardFooter className="justify-end gap-2 py-3.5">
               <Button type="button" size="sm" onClick={() => setFulfilling(true)}>
                 <TruckIcon data-icon="inline-start" />
                 {t('orders.fulfill')}
@@ -231,7 +231,7 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
           )}
 
           {!shippable && deliveries.length === 0 && (
-            <CardFooter className="justify-end gap-2 py-3">
+            <CardFooter className="justify-end gap-2 py-3.5">
               <Button
                 type="button"
                 size="sm"

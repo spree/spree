@@ -59,7 +59,7 @@ export function SellerOnboardingCard({ seller, canEdit }: { seller: Seller; canE
   if (progress.total === 0) return null
 
   return (
-    <Card className="overflow-hidden py-0">
+    <Card className="overflow-hidden">
       {/* Open while there is something left to do; a finished checklist
           folds away so the page leads with what still needs the operator. */}
       <Collapsible defaultOpen={!seller.onboarding_complete}>

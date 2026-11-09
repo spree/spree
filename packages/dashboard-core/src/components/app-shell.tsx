@@ -139,7 +139,7 @@ export function AppShell({
         <div
           ref={scrollerRef}
           tabIndex={-1}
-          className="themed-scrollbar flex min-w-0 flex-1 flex-col overflow-y-auto me-[5px] outline-none"
+          className="themed-scrollbar flex min-w-0 flex-1 flex-col overflow-y-auto outline-none"
         >
           <MobileTopBar
             uiLocales={uiLocales}

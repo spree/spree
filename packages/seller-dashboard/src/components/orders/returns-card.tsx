@@ -95,7 +95,7 @@ export function ReturnsCard({ order }: { order: Order }) {
           <p className="text-muted-foreground text-sm">{t('orders.post_sale.returns.empty')}</p>
         ) : (
           returns.map((returnRecord) => (
-            <Card key={returnRecord.id} variant="nested">
+            <Card key={returnRecord.id}>
               <CardHeader>
                 <CardTitle className="text-sm font-medium">{returnRecord.number}</CardTitle>
                 <CardAction className="flex items-center gap-2">

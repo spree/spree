@@ -260,7 +260,7 @@ function OutstandingTotals({
     >
       {totals.map((total) => (
         <Card key={total.currency}>
-          <CardContent className="flex flex-col gap-1 p-4">
+          <CardContent className="flex flex-col gap-1">
             <div className="flex items-center justify-between">
               <span className="text-sm text-muted-foreground">
                 {t('admin.store_credits.totals.outstanding')}

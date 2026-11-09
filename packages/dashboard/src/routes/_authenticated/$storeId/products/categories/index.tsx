@@ -104,7 +104,7 @@ function CategoriesPage() {
           />
         </InputGroup>
 
-        <Card className="-mx-4 gap-0 overflow-x-clip rounded-none border-0 bg-transparent py-0 shadow-none sm:mx-0 sm:rounded-xl sm:border">
+        <Card className="-mx-4 gap-0 overflow-x-clip rounded-none border-0 bg-transparent shadow-none sm:mx-0 sm:rounded-xl sm:border">
           <CardContent className="p-0">
             {activeError ? (
               <p className="p-6 text-destructive" role="alert">

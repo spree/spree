@@ -22,7 +22,7 @@ export function ShippingDocuments({
   if (!documents?.length) return null
 
   return (
-    <CardContent className="flex flex-col gap-1.5 border-b border-border-subtle pt-3">
+    <CardContent className="flex flex-col gap-1.5 border-b border-border-subtle pt-3.5">
       <p className="text-sm font-medium">{t('admin.orders.detail.fulfillments.documents_title')}</p>
       {documents.map((document) => (
         <a

@@ -77,7 +77,7 @@ export function SettingsIndexPage({ tenantId }: { tenantId: string }) {
         groups.map(({ group, entries }) => (
           <section key={group.key} className="flex flex-col gap-3">
             <h2 className="font-semibold text-base">{resolveNavLabel(group, t)}</h2>
-            <Card className="gap-0 overflow-hidden p-0">
+            <Card className="gap-0 overflow-hidden">
               <ul>
                 {entries.map((entry, index) => (
                   <SettingsRow

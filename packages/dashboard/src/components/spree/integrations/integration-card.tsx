@@ -112,7 +112,7 @@ export function IntegrationCard({
 
   return (
     <Card>
-      <CardContent className="flex flex-1 flex-col gap-3 p-4">
+      <CardContent className="flex flex-1 flex-col gap-3">
         <div className="flex items-start gap-3">
           <IntegrationLogo name={name} logoUrl={logoUrl ?? null} />
           <div className="flex min-w-0 flex-1 flex-col gap-0.5">
@@ -142,7 +142,7 @@ export function IntegrationCard({
         {description && <p className="line-clamp-2 text-muted-foreground text-sm">{description}</p>}
         {tags && <div className="mt-auto flex flex-wrap gap-1.5">{tags}</div>}
       </CardContent>
-      <CardFooter className="justify-between gap-2 bg-muted/40 px-4 py-2">
+      <CardFooter className="justify-between gap-2 bg-muted/40 py-2">
         <SetupGuideLink url={docsUrl} />
         <Button
           size="sm"

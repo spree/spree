@@ -52,7 +52,7 @@ export function CategoryMain({
   return (
     <>
       <Card>
-        <CardContent className="pt-6">
+        <CardContent>
           <FieldGroup>
             <Field>
               <FieldLabel htmlFor="category-name">{t('admin.fields.name.label')}</FieldLabel>
