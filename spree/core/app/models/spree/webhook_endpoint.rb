@@ -11,7 +11,7 @@ module Spree
 
     include Spree::SingleStoreResource
 
-    encrypts :secret_key, deterministic: true, support_unencrypted_data: true if Rails.configuration.active_record.encryption.include?(:primary_key)
+    encrypts :secret_key, deterministic: true, support_unencrypted_data: true if ActiveRecord::Encryption.config.has_primary_key?
 
     has_many :webhook_deliveries, class_name: 'Spree::WebhookDelivery', dependent: :destroy_async
 

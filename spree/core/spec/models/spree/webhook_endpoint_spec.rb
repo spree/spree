@@ -193,6 +193,25 @@ describe Spree::WebhookEndpoint, type: :model do
     end
   end
 
+  describe 'secret key encryption' do
+    let(:endpoint) { create(:webhook_endpoint, store: store, secret_key: 'plain-secret-key') }
+
+    def stored_secret_key(record)
+      described_class.connection.select_value(
+        described_class.where(id: record.id).select(:secret_key).to_sql
+      )
+    end
+
+    it 'stores the secret key encrypted' do
+      expect(stored_secret_key(endpoint)).to be_present
+      expect(stored_secret_key(endpoint)).not_to include('plain-secret-key')
+    end
+
+    it 'reads the secret key back decrypted' do
+      expect(described_class.find(endpoint.id).secret_key).to eq('plain-secret-key')
+    end
+  end
+
   describe '#subscribed_to?' do
     context 'with empty subscriptions' do
       let(:endpoint) { build(:webhook_endpoint, subscriptions: []) }

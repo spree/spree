@@ -18,6 +18,6 @@ module Spree
       joins(:payment_method).where(Spree::PaymentMethod.table_name => { type: provider.to_s })
     }
 
-    encrypts :profile_id, deterministic: true, support_unencrypted_data: true if Rails.configuration.active_record.encryption.include?(:primary_key)
+    encrypts :profile_id, deterministic: true, support_unencrypted_data: true if ActiveRecord::Encryption.config.has_primary_key?
   end
 end
