@@ -31,7 +31,7 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
     it 'leaves the product out of the listing in an excluded market' do
       get :index, as: :json
 
-      ids = json_response['data'].map { |row| row['id'] }
+      ids = json_response['data'].pluck('id')
       expect(ids).to include(product2.prefixed_id)
       expect(ids).not_to include(product.prefixed_id)
     end

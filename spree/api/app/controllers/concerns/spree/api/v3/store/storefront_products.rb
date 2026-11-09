@@ -21,8 +21,8 @@ module Spree
               store: current_store,
               channel: current_channel,
               customer: current_user,
-              base: base.available(Time.current, Spree::Current.currency, include_preorderable: true)
-                        .available_in_market(Spree::Current.market)
+              base: base.available(Time.current, Spree::Current.currency, include_preorderable: true).
+                    available_in_market(Spree::Current.market)
             ).value
           end
 
