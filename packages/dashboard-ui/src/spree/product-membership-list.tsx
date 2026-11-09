@@ -21,9 +21,10 @@ import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
 import { Checkbox } from '../ui/checkbox'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/data-table'
+import { Empty, EmptyHeader, EmptyMedia, EmptyTitle } from '../ui/empty'
 import { Pagination, type PaginationMeta } from '../ui/pagination'
 import { DragHandle } from './drag-handle'
-import { Undo2Icon, XIcon } from './icons'
+import { PackageIcon, Undo2Icon, XIcon } from './icons'
 import { ProductIdentity } from './product-identity'
 import { SearchInput } from './search-input'
 
@@ -233,7 +234,16 @@ export function ProductMembershipList({
   }
 
   if (order.length === 0) {
-    return <p className="p-6 text-muted-foreground text-sm">{labels.empty}</p>
+    return (
+      <Empty>
+        <EmptyHeader>
+          <EmptyMedia variant="icon">
+            <PackageIcon />
+          </EmptyMedia>
+          <EmptyTitle>{labels.empty}</EmptyTitle>
+        </EmptyHeader>
+      </Empty>
+    )
   }
 
   // A single product column needs no heading; extra columns (prices) do.
