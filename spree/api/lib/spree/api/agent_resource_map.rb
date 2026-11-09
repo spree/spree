@@ -315,7 +315,7 @@ module Spree
 
         def top_level?(entry)
           path = Array(entry[:api_paths]).to_h[:index]
-          path.present? && !path.include?(':')
+          path.present? && path.exclude?(':')
         end
 
         # How much a scope covers, so the narrowest wins a collision. Measured

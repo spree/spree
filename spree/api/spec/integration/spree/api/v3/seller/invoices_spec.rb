@@ -36,7 +36,7 @@ RSpec.describe 'Seller Invoices API', type: :request, swagger_doc: 'api-referenc
                required: %w[data]
 
         run_test! do |response|
-          ids = JSON.parse(response.body)['data'].map { |row| row['id'] }
+          ids = JSON.parse(response.body)['data'].pluck('id')
           expect(ids).to contain_exactly(invoice.prefixed_id, commission_invoice.prefixed_id)
         end
       end

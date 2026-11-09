@@ -7,7 +7,7 @@ module Spree
 
     # @param invoice [Spree::Invoice, Integer]
     # @param resend [Boolean]
-    def invoice_email(invoice, resend = false)
+    def invoice_email(invoice, resend: false)
       load_invoice(invoice)
       @order = @invoice.order
 
@@ -29,7 +29,7 @@ module Spree
     #
     # @param invoice [Spree::Invoice, Integer]
     # @param resend [Boolean]
-    def commission_invoice_email(invoice, resend = false)
+    def commission_invoice_email(invoice, resend: false)
       load_invoice(invoice)
       @seller = @invoice.commission_seller
 

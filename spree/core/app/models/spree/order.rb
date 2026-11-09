@@ -263,11 +263,11 @@ module Spree
 
     # Invoices are records the law keeps for years, so an order holding one
     # cannot be destroyed (docs/plans/6.1-invoices-and-receipts.md).
-    has_many :invoices, -> { order(:issued_on, :id) }, class_name: 'Spree::Invoice',
-                                                        dependent: :restrict_with_error, inverse_of: :order
+    has_many :invoices, -> { order(:issued_on, :id) },
+             class_name: 'Spree::Invoice', dependent: :restrict_with_error, inverse_of: :order
     has_many :invoice_requests, class_name: 'Spree::InvoiceRequest', dependent: :destroy, inverse_of: :order
-    has_many :order_documents, -> { order(:created_at, :id) }, class_name: 'Spree::OrderDocument',
-                                                                dependent: :destroy, inverse_of: :order
+    has_many :order_documents, -> { order(:created_at, :id) },
+             class_name: 'Spree::OrderDocument', dependent: :destroy, inverse_of: :order
 
     # This order's share of the payments made against its group. Empty on an
     # ungrouped order, whose payments are its own (see #settlement_payments).

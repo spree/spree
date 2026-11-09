@@ -40,7 +40,8 @@ RSpec.describe 'Admin Seller Payout Invoices API', type: :request, swagger_doc: 
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description "The marketplace's invoice to the seller for the commission on this payout, issued in the operator's accounting system. The store is the issuer."
+      description "The marketplace's invoice to the seller for the commission on this payout, " \
+                  "issued in the operator's accounting system. The store is the issuer."
       admin_scope :write, :payouts
       admin_sdk_example 'seller-payout-invoices/create'
 

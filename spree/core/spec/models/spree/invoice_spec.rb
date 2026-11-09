@@ -116,7 +116,7 @@ RSpec.describe Spree::Invoice, type: :model do
       invoice.mark_sent!
       first_sent_at = invoice.reload.sent_at
 
-      travel 1.day { invoice.mark_sent! }
+      travel(1.day { invoice.mark_sent! })
 
       expect(invoice.reload.sent_at).to eq(first_sent_at)
     end
@@ -129,7 +129,7 @@ RSpec.describe Spree::Invoice, type: :model do
       stale_copy.mark_sent!
     end
 
-    it "still names a seller who has since left the marketplace" do
+    it 'still names a seller who has since left the marketplace' do
       seller = create(:seller, store: store, legal_name: 'Acme GmbH')
       order.update_columns(seller_id: seller.id)
       seller_invoice = create(:invoice, order: order.reload)

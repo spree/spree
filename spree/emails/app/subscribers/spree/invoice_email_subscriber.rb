@@ -44,9 +44,9 @@ module Spree
       return if invoice.recipient_email.blank?
 
       if invoice.order
-        InvoiceMailer.invoice_email(invoice.id, resend).deliver_later
+        InvoiceMailer.invoice_email(invoice.id, resend: resend).deliver_later
       else
-        InvoiceMailer.commission_invoice_email(invoice.id, resend).deliver_later
+        InvoiceMailer.commission_invoice_email(invoice.id, resend: resend).deliver_later
       end
     end
   end

@@ -13,21 +13,25 @@ module Spree
 
           included do
             request_params :invoice do |body|
-              body.attribute :kind, :string, required: true, choices: Spree::Invoice::KINDS,
-                description: 'A credit note corrects an earlier invoice or receipt and carries negative totals.'
-              body.attribute :number, :string, required: true, example: 'FV/2026/11/042',
-                description: "The number the issuing system gave it. Unique per issuer and kind; never Spree's order number."
+              body.attribute :kind, :string,
+                             required: true, choices: Spree::Invoice::KINDS,
+                             description: 'A credit note corrects an earlier invoice or receipt and carries negative totals.'
+              body.attribute :number, :string,
+                             required: true, example: 'FV/2026/11/042',
+                             description: "The number the issuing system gave it. Unique per issuer and kind; never Spree's order number."
               body.attribute :issued_on, :date, required: true
               body.attribute :supplied_on, :date, nullable: true, description: 'When the goods or service were supplied, if not the issue date.'
               body.attribute :currency, :currency, description: "Defaults to the order's or payout's currency."
               body.attribute :total, :decimal, required: true, description: 'Gross total. Zero or more, or zero or less for a credit note.'
               body.attribute :net_total, :decimal, nullable: true
               body.attribute :tax_total, :decimal, nullable: true
-              body.attribute :original_invoice_id, :id, nullable: true,
-                description: 'The invoice a credit note corrects, on the same order or payout.'
+              body.attribute :original_invoice_id, :id,
+                             nullable: true,
+                             description: 'The invoice a credit note corrects, on the same order or payout.'
               body.attribute :external_reference, :string, nullable: true, description: "The issuing system's own id."
-              body.attribute :file_signed_id, :string, required: true,
-                description: "A PDF's `signed_id` from `files.upload()` with `visibility: 'private'`."
+              body.attribute :file_signed_id, :string,
+                             required: true,
+                             description: "A PDF's `signed_id` from `files.upload()` with `visibility: 'private'`."
               body.attribute :metadata, :hash
             end
           end

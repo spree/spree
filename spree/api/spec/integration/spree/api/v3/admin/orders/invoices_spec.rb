@@ -36,7 +36,7 @@ RSpec.describe 'Admin Order Invoices API', type: :request, swagger_doc: 'api-ref
         schema SwaggerSchemaHelpers.paginated('Invoice')
 
         run_test! do |response|
-          expect(JSON.parse(response.body)['data'].map { |row| row['id'] }).to eq([invoice.prefixed_id])
+          expect(JSON.parse(response.body)['data'].pluck('id')).to eq([invoice.prefixed_id])
         end
       end
     end
