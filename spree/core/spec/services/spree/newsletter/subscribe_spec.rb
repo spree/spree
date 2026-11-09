@@ -84,6 +84,16 @@ module Spree
       end
     end
 
+    context 'when a guest submits the address of a customer stored with mixed casing' do
+      let!(:customer) { create(:user, email: 'Ada@Example.com') }
+      let(:email) { ' Ada@Example.com ' }
+
+      it 'links the existing customer' do
+        expect(service.customer).to eq(customer)
+        expect(service.email).to eq('ada@example.com')
+      end
+    end
+
     context 'when logged in user inputs another email' do
       let(:user) { create(:user) }
       let(:email) { 'test@example.com' }
