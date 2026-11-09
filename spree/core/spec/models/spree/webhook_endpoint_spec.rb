@@ -210,6 +210,12 @@ describe Spree::WebhookEndpoint, type: :model do
     it 'reads the secret key back decrypted' do
       expect(described_class.find(endpoint.id).secret_key).to eq('plain-secret-key')
     end
+
+    it 'reads secret keys stored before encryption was enabled' do
+      described_class.where(id: endpoint.id).update_all("secret_key = 'legacy-secret-key'")
+
+      expect(described_class.find(endpoint.id).secret_key).to eq('legacy-secret-key')
+    end
   end
 
   describe '#subscribed_to?' do
