@@ -12,10 +12,10 @@ import {
   usePermissions,
 } from '@spree/dashboard-core'
 import {
-  Badge,
   Button,
   Card,
   CardContent,
+  CurrencyLabel,
   cn,
   Item,
   ItemActions,
@@ -265,7 +265,7 @@ function OutstandingTotals({
               <span className="text-sm text-muted-foreground">
                 {t('admin.store_credits.totals.outstanding')}
               </span>
-              <Badge variant="outline">{total.currency}</Badge>
+              <CurrencyLabel code={total.currency} className="text-sm" />
             </div>
             <span className="font-semibold text-2xl tabular-nums">
               <Money amount={total.amount_remaining} currency={total.currency} />

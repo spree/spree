@@ -20,6 +20,7 @@ import {
   ComboboxSearch,
   ComboboxTriggerPlaceholder,
   CountryFlag,
+  CurrencyLabel,
   Input,
   Label,
   Select,
@@ -112,6 +113,7 @@ export function StoreSetupFields<Values extends StoreSetupValues>({
 
   const languageName = useDisplayName('language')
   const currencyLabel = useCurrencyLabel()
+  const currencyName = useDisplayName('currency')
   const countryCode = watch('country_code')
   const selectedCountry = useMemo(
     () => countries.find((country) => country.code === countryCode) ?? null,
@@ -285,7 +287,7 @@ export function StoreSetupFields<Values extends StoreSetupValues>({
                   aria-invalid={!!errors.currency || undefined}
                 >
                   {field.value ? (
-                    <span className="truncate">{currencyLabel(field.value)}</span>
+                    <CurrencyLabel code={field.value} name={currencyName(field.value)} />
                   ) : (
                     <ComboboxTriggerPlaceholder>
                       {t('admin.fields.setup.currency.placeholder')}
@@ -298,7 +300,7 @@ export function StoreSetupFields<Values extends StoreSetupValues>({
                   <ComboboxList>
                     {(code: string) => (
                       <ComboboxItem key={code} value={code}>
-                        {currencyLabel(code)}
+                        <CurrencyLabel code={code} name={currencyName(code)} />
                       </ComboboxItem>
                     )}
                   </ComboboxList>

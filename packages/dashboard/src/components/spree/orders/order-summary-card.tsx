@@ -4,6 +4,7 @@ import { isPositiveMoney, LocaleLabel, Money, useStore } from '@spree/dashboard-
 import {
   Card,
   CardContent,
+  CurrencyLabel,
   cn,
   Section,
   SectionHeader,
@@ -265,7 +266,10 @@ export function OrderSummaryCard({ order }: { order: Order }) {
             label={t('admin.pages.orders.detail.summary.locale')}
             value={order.locale ? <LocaleLabel code={order.locale} /> : '—'}
           />
-          <SummaryRow label={t('admin.fields.currency.label')} value={order.currency} />
+          <SummaryRow
+            label={t('admin.fields.currency.label')}
+            value={<CurrencyLabel code={order.currency} />}
+          />
         </CardContent>
       </Card>
     </Section>

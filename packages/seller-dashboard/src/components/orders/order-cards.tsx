@@ -14,6 +14,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
+  CurrencyLabel,
   cn,
   DropdownMenu,
   DropdownMenuContent,
@@ -125,7 +126,10 @@ export function OrderSummaryCard({ order }: { order: Order }) {
 
           <Separator />
 
-          <SummaryRow label={t('orders.summary.currency')} value={order.currency} />
+          <SummaryRow
+            label={t('orders.summary.currency')}
+            value={<CurrencyLabel code={order.currency} />}
+          />
 
           <Separator />
 

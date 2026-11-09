@@ -5,7 +5,7 @@ import {
   LocaleLabel,
   Money,
 } from '@spree/dashboard-core'
-import { RelativeTime, StatusBadge, TagList } from '@spree/dashboard-ui'
+import { CurrencyLabel, RelativeTime, StatusBadge, TagList } from '@spree/dashboard-ui'
 import { ShoppingCartIcon } from '@spree/dashboard-ui/icons'
 import { Link } from '@tanstack/react-router'
 import i18n from 'i18next'
@@ -172,7 +172,7 @@ defineTable('orders', {
       filterable: true,
       filterType: 'currency',
       default: false,
-      render: (order) => order.currency ?? '—',
+      render: (order) => (order.currency ? <CurrencyLabel code={order.currency} /> : '—'),
     },
     {
       key: 'market',

@@ -24,6 +24,7 @@ import {
   Alert,
   AlertDescription,
   Button,
+  CurrencyLabel,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -553,7 +554,7 @@ function FlatFeeAmountsField({ form }: { form: UseFormReturn<CommissionRateFormV
       <div className="flex flex-col gap-2 pt-1">
         {currencies.map((currency) => (
           <div key={currency} className="flex items-center gap-2">
-            <span className="w-12 shrink-0 text-sm text-muted-foreground">{currency}</span>
+            <CurrencyLabel code={currency} className="w-16 shrink-0 text-sm" />
             <Controller
               control={form.control}
               name="amounts"
@@ -604,7 +605,7 @@ function FlatFeeCapField({ form }: { form: UseFormReturn<CommissionRateFormValue
       <div className="flex flex-col gap-2 pt-1">
         {cappedCurrencies.map((currency) => (
           <div key={currency} className="flex items-center gap-2">
-            <span className="w-12 shrink-0 text-sm text-muted-foreground">{currency}</span>
+            <CurrencyLabel code={currency} className="w-16 shrink-0 text-sm" />
             <Controller
               control={form.control}
               name="bounds"
@@ -661,7 +662,7 @@ function PercentageBoundsField({ form }: { form: UseFormReturn<CommissionRateFor
       <div className="flex flex-col gap-2 pt-1">
         {currencies.map((currency) => (
           <div key={currency} className="flex items-center gap-2">
-            <span className="w-12 shrink-0 text-sm text-muted-foreground">{currency}</span>
+            <CurrencyLabel code={currency} className="w-16 shrink-0 text-sm" />
             <Controller
               control={form.control}
               name="bounds"

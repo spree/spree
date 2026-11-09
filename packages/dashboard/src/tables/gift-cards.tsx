@@ -1,7 +1,13 @@
 import type { GiftCard } from '@spree/admin-sdk'
 import { GIFT_CARD_STATUSES, subsetOf } from '@spree/core'
 import { defineTable, Money } from '@spree/dashboard-core'
-import { Badge, RelativeTime, ResourceNameCell, StatusBadge } from '@spree/dashboard-ui'
+import {
+  Badge,
+  CurrencyLabel,
+  RelativeTime,
+  ResourceNameCell,
+  StatusBadge,
+} from '@spree/dashboard-ui'
 import { GiftIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
 import { adminUserAutocompleteProps } from '../hooks/use-admin-users'
@@ -94,7 +100,7 @@ defineTable<GiftCard>('gift-cards', {
       filterable: true,
       filterType: 'currency',
       default: false,
-      render: (g) => g.currency,
+      render: (g) => <CurrencyLabel code={g.currency} />,
     },
     {
       key: 'gift_card_batch',

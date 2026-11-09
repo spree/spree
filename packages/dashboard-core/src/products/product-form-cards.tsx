@@ -41,6 +41,7 @@ import {
   ContextMenuItem,
   ContextMenuSeparator,
   ContextMenuTrigger,
+  CurrencyLabel,
   cn,
   DragHandle,
   Field,
@@ -241,13 +242,13 @@ export function PricesCard({
             value={currency}
             onValueChange={(next) => setCurrency(currencies.find((code) => code === next) ?? null)}
           >
-            <SelectTrigger size="sm" className="w-24">
-              <SelectValue />
+            <SelectTrigger size="sm" className="w-28">
+              <SelectValue>{(code: string) => <CurrencyLabel code={code} />}</SelectValue>
             </SelectTrigger>
             <SelectContent>
               {currencies.map((c) => (
                 <SelectItem key={c} value={c}>
-                  {c}
+                  <CurrencyLabel code={c} />
                 </SelectItem>
               ))}
             </SelectContent>
