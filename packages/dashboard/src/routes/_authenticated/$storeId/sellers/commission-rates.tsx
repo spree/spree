@@ -834,7 +834,7 @@ function CommissionRuleRow({
         </div>
         <Button
           type="button"
-          variant="ghost"
+          variant="destructive-ghost"
           size="icon-sm"
           onClick={onRemove}
           aria-label={t('admin.actions.delete')}

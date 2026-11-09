@@ -278,7 +278,7 @@ function SortableRuleRow({
         {canDestroy && (
           <Button
             type="button"
-            variant="ghost"
+            variant="destructive-ghost"
             size="icon-sm"
             aria-label={t('admin.actions.delete')}
             onClick={onDelete}

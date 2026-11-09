@@ -441,7 +441,7 @@ function PostalRulesSection({
             </Select>
             <Button
               type="button"
-              variant="ghost"
+              variant="destructive-ghost"
               size="icon-sm"
               onClick={() => remove(index)}
               aria-label={t('admin.delivery_zones.remove_postal_rule')}

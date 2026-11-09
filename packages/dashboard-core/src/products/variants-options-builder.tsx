@@ -162,7 +162,7 @@ export function VariantsOptionsBuilder({ selected, onChange, extraOptionTypes }:
                   </Button>
                   <Button
                     type="button"
-                    variant="ghost"
+                    variant="destructive-ghost"
                     size="icon-sm"
                     aria-label={t('admin.actions.remove')}
                     onClick={() => removeAt(i)}

@@ -665,7 +665,7 @@ function SortableCustomFieldRow({
         )}
       />
 
-      <Button type="button" variant="ghost" size="sm" onClick={onRemove}>
+      <Button type="button" variant="destructive-ghost" size="sm" onClick={onRemove}>
         <XIcon className="size-4" />
         <span className="sr-only">{t('admin.actions.remove')}</span>
       </Button>

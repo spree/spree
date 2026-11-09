@@ -290,7 +290,7 @@ export function BulkPriceTable({
                 return (
                   <Button
                     type="button"
-                    variant="ghost"
+                    variant="destructive-ghost"
                     aria-label={labels.tierRemove}
                     className="size-full min-h-9 rounded-none text-muted-foreground"
                     onClick={() => onTierRemove(r.id)}

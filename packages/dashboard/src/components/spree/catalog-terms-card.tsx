@@ -229,7 +229,7 @@ function OrderMinimums({
                   {canEdit && (
                     <Button
                       type="button"
-                      variant="ghost"
+                      variant="destructive-ghost"
                       size="icon"
                       aria-label={t('admin.actions.remove')}
                       onClick={() => update(rows.filter((_, i) => i !== index))}

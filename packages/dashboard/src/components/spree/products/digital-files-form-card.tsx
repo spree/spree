@@ -187,7 +187,7 @@ export function DigitalFilesFormCard({
                     <TableCell className="text-right">
                       <Button
                         type="button"
-                        variant="ghost"
+                        variant="destructive-ghost"
                         size="icon-xs"
                         aria-label={t('admin.actions.remove')}
                         onClick={() => handleRemove(index)}

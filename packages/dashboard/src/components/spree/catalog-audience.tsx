@@ -146,7 +146,7 @@ function AudienceList({
               </Button>
             ) : (
               <Button
-                variant="ghost"
+                variant="destructive-ghost"
                 size="icon-xs"
                 type="button"
                 onClick={() => onRemove(index)}

@@ -570,7 +570,7 @@ function NewOrderPage() {
                               <Button
                                 type="button"
                                 size="icon-xs"
-                                variant="ghost"
+                                variant="destructive-ghost"
                                 onClick={() => removeItem(variant.id)}
                               >
                                 <TrashIcon className="size-4" />

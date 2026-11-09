@@ -158,7 +158,7 @@ export function CreateLineItemsActionEditor({
                     <Button
                       type="button"
                       size="icon-xs"
-                      variant="ghost"
+                      variant="destructive-ghost"
                       onClick={() => removeVariant(row.variant_id)}
                     >
                       <TrashIcon className="size-4" />

@@ -568,7 +568,7 @@ function SortableVariantRow({
           {!isSimpleProduct && (
             <Button
               type="button"
-              variant="ghost"
+              variant="destructive-ghost"
               size="icon-sm"
               aria-label={t('admin.products.variants.remove_row_aria', { name: label })}
               onClick={onRemove}

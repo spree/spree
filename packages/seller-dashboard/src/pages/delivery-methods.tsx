@@ -602,7 +602,7 @@ function DeliveryMethodSheet({
                         <Button
                           type="button"
                           size="sm"
-                          variant="ghost"
+                          variant="destructive-ghost"
                           onClick={() => removeRule(index)}
                           aria-label={t('delivery_methods.conditions.remove')}
                         >
