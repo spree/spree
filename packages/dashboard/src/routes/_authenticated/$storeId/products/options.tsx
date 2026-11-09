@@ -573,7 +573,7 @@ function OptionValuesFieldArray({
             items={valuesArray.fields.map((f) => f._key)}
             strategy={verticalListSortingStrategy}
           >
-            <Table>
+            <Table roundedTop>
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-8" aria-label={t('admin.a11y.reorder')} />

@@ -339,7 +339,7 @@ export function DigitalAssetsCard({
           </button>
         ) : (
           <div className="overflow-hidden rounded-xl border border-border-subtle">
-            <Table>
+            <Table roundedTop>
               <TableHeader>
                 <TableRow>
                   <TableHead>{t('admin.digital_assets.columns.file')}</TableHead>

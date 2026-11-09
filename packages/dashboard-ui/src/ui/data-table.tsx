@@ -35,10 +35,12 @@ interface TableProps extends React.ComponentProps<'table'> {
    */
   roundedBottom?: boolean
   /**
-   * Rounds the header's outer corners, for a table that starts a card. The
-   * header's own square corners otherwise sit on top of the card's radius and
-   * clip it — the mirror of the `roundedBottom` case, and unset by default
-   * because a table usually has a card header or some content above it.
+   * Rounds the header's outer corners, for a table that starts a card or any
+   * other bordered box. The header's own square corners otherwise sit on top
+   * of the card's radius and clip it — the mirror of the `roundedBottom` case,
+   * and unset by default because a table usually has a card header or some
+   * content above it. It also drops the header's top rule, which would double
+   * the box's own edge.
    *
    * Applied from `sm` up, matching where a full-bleed table gains its frame:
    * below that the table spans the page gutter with square edges, and curved
@@ -177,7 +179,7 @@ function Table({
   // down to their order in the stylesheet — and the rounding did.
   const topRounded =
     roundedTop && !headerPinned
-      ? 'sm:[&_thead_tr:first-child_th:first-child]:rounded-tl-[calc(var(--radius-card)-1px)] sm:[&_thead_tr:first-child_th:last-child]:rounded-tr-[calc(var(--radius-card)-1px)] sm:[&_thead_tr:first-child_th:only-child]:rounded-t-[calc(var(--radius-card)-1px)]'
+      ? '[&_thead_th]:shadow-[inset_0_-1px_0_0_var(--border-subtle)] sm:[&_thead_tr:first-child_th:first-child]:rounded-tl-[calc(var(--radius-card)-1px)] sm:[&_thead_tr:first-child_th:last-child]:rounded-tr-[calc(var(--radius-card)-1px)] sm:[&_thead_tr:first-child_th:only-child]:rounded-t-[calc(var(--radius-card)-1px)]'
       : undefined
   // Both ends of the header band round, top and bottom, and the band drops
   // the rule under it: it floats over the rows rather than capping a frame.
@@ -463,17 +465,21 @@ function TableRow({ className, ...props }: React.ComponentProps<'tr'>) {
 }
 
 /**
- * The bottom rule is an inset shadow rather than `border-b` so it stays flush
- * with the bulk action bar, which overlays this row and draws the same shadow.
- * Don't add a border alongside it — a border sits outside the padding box and
- * the shadow inside, so the two stack into a 2px line.
+ * The rules above and below are inset shadows rather than borders so they stay
+ * flush with the bulk action bar, which overlays this row and draws the same
+ * shadow. Don't add a border alongside them — a border sits outside the padding
+ * box and the shadow inside, so the two stack into a 2px line.
+ *
+ * The top rule separates the band from whatever sits above it in the card. A
+ * table that starts its card drops it (`roundedTop`), as the card's own edge is
+ * already there, and so does the free-standing `band`.
  */
 function TableHead({ className, ...props }: React.ComponentProps<'th'>) {
   return (
     <th
       className={cn(
         'text-left text-sm font-normal text-muted-foreground bg-muted px-3 py-2.5 h-9 sm:p-2 whitespace-nowrap first:pl-4 last:pr-4',
-        'shadow-[inset_0_-1px_0_0_var(--border-subtle)]',
+        'shadow-[inset_0_1px_0_0_var(--border-subtle),inset_0_-1px_0_0_var(--border-subtle)]',
         className,
       )}
       {...props}

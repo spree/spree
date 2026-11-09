@@ -419,7 +419,7 @@ export function VariantsSection({ form, seedFromType = false, formKey = 'product
                 items={fields.map((f) => f._key)}
                 strategy={verticalListSortingStrategy}
               >
-                <Table>
+                <Table roundedTop>
                   <TableHeader>
                     <TableRow>
                       {!isSimpleProduct && (
