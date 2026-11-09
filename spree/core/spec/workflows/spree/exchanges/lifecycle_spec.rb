@@ -119,6 +119,18 @@ RSpec.describe 'Spree::Exchanges workflows' do
       expect(Spree::Exchanges::Fulfill.call(exchange: approved)).to be_failure
     end
 
+    # Settling tax writes outside the transaction a refused replacement rolls
+    # back, so the refusal has to come first.
+    it 'refuses before settling tax while another change to the order is open' do
+      Spree::OrderChanges::Begin.call(order: exchange.order)
+      expect_any_instance_of(Spree::Exchange).not_to receive(:settle_tax!)
+
+      result = Spree::Exchanges::Fulfill.call(exchange: exchange)
+
+      expect(result.error.value).to eq(:order_change_in_progress)
+      expect(exchange.reload).to be_received
+    end
+
     it 'creates a replacement fulfillment and marks it fulfilled' do
       exchange.exchange_line_items.each do |line|
         line.new_variant.stock_levels.first&.set_count_on_hand(10)

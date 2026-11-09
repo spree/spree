@@ -47,7 +47,7 @@ module Spree
                                         value_type: value_type, line_item: line_item)
                   next render_result_error(result) if result.failure?
 
-                  next render json: { data: serialize_collection(@parent.discounts.where.not(id: existing_ids)) }, status: :created
+                  next render json: { data: serialize_collection(@parent.discounts.manual.where.not(id: existing_ids)) }, status: :created
                 end
 
                 result = Spree.order_discount_create_service.call(
