@@ -86,9 +86,10 @@ export function CategoryMain({
         </CardContent>
       </Card>
 
+      <CategoryProductsCard categoryId={category?.id} />
+
       {category && (
         <>
-          <CategoryProductsCard categoryId={category.id} />
           <ResourceTranslationsCard resourceType="category" resourceId={category.id} />
           {/*
             Form-backed: custom field values ride along in the category form and
