@@ -35,12 +35,38 @@ import type { LucideIcon } from 'lucide-react'
 import { type ReactNode, useMemo, useState } from 'react'
 
 export function CommandPalette() {
+  const { t } = useTranslation()
   const { open, setOpen } = useCommandPalette()
-  // Skip the entire subtree (and its hooks) while the palette is closed —
-  // it's mounted at the layout root and otherwise re-renders on every nav.
-  if (!open) return null
 
-  return <CommandPaletteContent setOpen={setOpen} />
+  // The dialog itself stays mounted so it opens and closes with the same
+  // animation as every other dialog: one created already open has no starting
+  // state to animate from. Its contents, with their hooks and searches, are
+  // only rendered while it is open.
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogHeader className="sr-only">
+        <DialogTitle>{t('admin.components.command_palette.title')}</DialogTitle>
+        <DialogDescription>{t('admin.components.command_palette.description')}</DialogDescription>
+      </DialogHeader>
+      <DialogContent
+        // `-translate-x-1/2 translate-y-0`, not a bare `translate-y-0`: in
+        // Tailwind v4 these compile to the standalone `translate` property, so
+        // setting only the Y axis wipes the base dialog's horizontal centring
+        // and the panel drifts off both edges of a narrow screen.
+        // `min(42rem, calc(100%-2rem))` rather than a bare `sm:max-w-2xl`: the
+        // `sm` breakpoint is 640px, so the 42rem cap takes over well before the
+        // viewport can hold it and the panel overhangs both edges on a phone.
+        className="top-1/3 -translate-x-1/2 translate-y-0 overflow-hidden rounded-2xl p-0 sm:max-w-[min(42rem,calc(100%-2rem))]"
+        showCloseButton={false}
+        // Don't restore focus to the trigger after navigating — the trigger is
+        // gone (we navigated away) and focus would land on the first sidebar
+        // link, painting it with a misleading focus ring.
+        finalFocus={false}
+      >
+        <CommandPaletteContent setOpen={setOpen} />
+      </DialogContent>
+    </Dialog>
+  )
 }
 
 function CommandPaletteContent({ setOpen }: { setOpen: (open: boolean) => void }) {
@@ -145,121 +171,88 @@ function CommandPaletteContent({ setOpen }: { setOpen: (open: boolean) => void }
       </CommandGroup>
     ) : null
 
+  // The server filters resource results via Ransack; static commands are
+  // pre-filtered in JS. Either way, `Command` shouldn't filter again.
   return (
-    <Dialog
-      open
-      onOpenChange={(next) => {
-        if (!next) close()
-      }}
-    >
-      <DialogHeader className="sr-only">
-        <DialogTitle>{t('admin.components.command_palette.title')}</DialogTitle>
-        <DialogDescription>{t('admin.components.command_palette.description')}</DialogDescription>
-      </DialogHeader>
-      <DialogContent
-        // `-translate-x-1/2 translate-y-0`, not a bare `translate-y-0`: in
-        // Tailwind v4 these compile to the standalone `translate` property, so
-        // setting only the Y axis wipes the base dialog's horizontal centring
-        // and the panel drifts off both edges of a narrow screen.
-        // `min(42rem, calc(100%-2rem))` rather than a bare `sm:max-w-2xl`: the
-        // `sm` breakpoint is 640px, so the 42rem cap takes over well before the
-        // viewport can hold it and the panel overhangs both edges on a phone.
-        className="top-1/3 -translate-x-1/2 translate-y-0 overflow-hidden rounded-2xl p-0 sm:max-w-[min(42rem,calc(100%-2rem))]"
-        showCloseButton={false}
-        // Don't restore focus to the trigger after navigating — the trigger is
-        // gone (we navigated away) and focus would land on the first sidebar
-        // link, painting it with a misleading focus ring.
-        finalFocus={false}
-      >
-        {/* The server filters resource results via Ransack; static commands
-            are pre-filtered in JS. Either way, `Command` shouldn't filter again. */}
-        <Command shouldFilter={false}>
-          <CommandInput
-            value={input}
-            onValueChange={setInput}
-            placeholder={t('admin.components.command_palette.placeholder')}
-            loading={isLoading}
-          />
-          <CommandList>
-            <SearchStatus
-              isEnabled={isEnabled}
-              isLoading={isLoading}
-              // "No results" must account for goto/create/logout commands too,
-              // not just resource search — a query can match a nav command while
-              // the API search returns nothing.
-              hasResults={
-                hasResults || createMatches.length > 0 || gotoItems.length > 0 || showLogout
-              }
-              query={input}
-            />
+    <Command shouldFilter={false}>
+      <CommandInput
+        value={input}
+        onValueChange={setInput}
+        placeholder={t('admin.components.command_palette.placeholder')}
+        loading={isLoading}
+      />
+      <CommandList>
+        <SearchStatus
+          isEnabled={isEnabled}
+          isLoading={isLoading}
+          // "No results" must account for goto/create/logout commands too,
+          // not just resource search — a query can match a nav command while
+          // the API search returns nothing.
+          hasResults={hasResults || createMatches.length > 0 || gotoItems.length > 0 || showLogout}
+          query={input}
+        />
 
-            {/* Create actions lead: "add product" states an intent, so burying
-                it under products matching the word "add" would be wrong. */}
-            {createMatches.length > 0 && (
-              <CommandGroup heading={t('admin.components.command_palette.create.heading')}>
-                {createMatches.map(({ entry, noun }) => (
-                  <CommandItem
-                    key={`create-${entry.key}`}
-                    value={`create-${entry.key}`}
-                    onSelect={() => {
-                      close()
-                      const route = entry.getRoute(storeId)
-                      navigate({ to: route.to, search: route.search })
-                    }}
-                  >
-                    {entry.icon ? <entry.icon /> : <PlusIcon />}
-                    {t('admin.components.command_palette.create.label', { noun })}
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            )}
-
-            {createMatches.length > 0 && (hasResults || gotoItems.length > 0) && (
-              <CommandSeparator />
-            )}
-
-            {gotoLeads && gotoGroup}
-            {gotoLeads && gotoItems.length > 0 && hasResults && <CommandSeparator />}
-
-            {groups.map((group) => (
-              <ResourceGroup
-                key={group.entry.key}
-                group={group}
-                storeId={storeId}
-                onNavigate={(route) => {
+        {/* Create actions lead: "add product" states an intent, so burying
+            it under products matching the word "add" would be wrong. */}
+        {createMatches.length > 0 && (
+          <CommandGroup heading={t('admin.components.command_palette.create.heading')}>
+            {createMatches.map(({ entry, noun }) => (
+              <CommandItem
+                key={`create-${entry.key}`}
+                value={`create-${entry.key}`}
+                onSelect={() => {
                   close()
+                  const route = entry.getRoute(storeId)
                   navigate({ to: route.to, search: route.search })
                 }}
-              />
+              >
+                {entry.icon ? <entry.icon /> : <PlusIcon />}
+                {t('admin.components.command_palette.create.label', { noun })}
+              </CommandItem>
             ))}
+          </CommandGroup>
+        )}
 
-            {!gotoLeads && hasResults && (gotoItems.length > 0 || showLogout) && (
-              <CommandSeparator />
-            )}
+        {createMatches.length > 0 && (hasResults || gotoItems.length > 0) && <CommandSeparator />}
 
-            {!gotoLeads && gotoGroup}
+        {gotoLeads && gotoGroup}
+        {gotoLeads && gotoItems.length > 0 && hasResults && <CommandSeparator />}
 
-            {gotoItems.length > 0 && showLogout && <CommandSeparator />}
+        {groups.map((group) => (
+          <ResourceGroup
+            key={group.entry.key}
+            group={group}
+            storeId={storeId}
+            onNavigate={(route) => {
+              close()
+              navigate({ to: route.to, search: route.search })
+            }}
+          />
+        ))}
 
-            {showLogout && (
-              <CommandGroup heading={t('admin.nav.account')}>
-                <CommandItem
-                  value="action-logout"
-                  onSelect={() => {
-                    close()
-                    logout()
-                  }}
-                >
-                  <LogOutIcon />
-                  {t('admin.auth.logout')}
-                </CommandItem>
-              </CommandGroup>
-            )}
-          </CommandList>
-          <CommandFooter />
-        </Command>
-      </DialogContent>
-    </Dialog>
+        {!gotoLeads && hasResults && (gotoItems.length > 0 || showLogout) && <CommandSeparator />}
+
+        {!gotoLeads && gotoGroup}
+
+        {gotoItems.length > 0 && showLogout && <CommandSeparator />}
+
+        {showLogout && (
+          <CommandGroup heading={t('admin.nav.account')}>
+            <CommandItem
+              value="action-logout"
+              onSelect={() => {
+                close()
+                logout()
+              }}
+            >
+              <LogOutIcon />
+              {t('admin.auth.logout')}
+            </CommandItem>
+          </CommandGroup>
+        )}
+      </CommandList>
+      <CommandFooter />
+    </Command>
   )
 }
 
