@@ -578,6 +578,19 @@ describe Spree::Media, type: :model do
         expect { build(:media).set_custom_field(nil, 'x') }.to raise_error(ArgumentError)
       end
 
+      it 'does not replay an older queued value over a later write on a second save' do
+        asset = build(:media)
+        asset.external_url = 'https://example.com/old.png'
+
+        Spree::Media.transaction do
+          asset.save!
+          asset.external_url = 'https://example.com/new.png'
+          asset.save!
+        end
+
+        expect(asset.reload.external_url).to eq('https://example.com/new.png')
+      end
+
       it 'keeps queued writes when replay fails so the save can be retried' do
         asset = build(:media)
         asset.external_url = 'https://example.com/Example-Image-001.png'

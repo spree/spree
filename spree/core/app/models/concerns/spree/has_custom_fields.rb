@@ -87,8 +87,9 @@ module Spree
         assign_custom_field_attrs(attributes)
       end
 
-      after_save :apply_pending_custom_fields, if: -> { @pending_custom_field_attrs.present? }
+      after_save :apply_pending_custom_fields, if: -> { @pending_custom_field_attrs.present? && !@pending_custom_fields_replayed }
       after_commit :clear_pending_custom_fields, if: -> { !@pending_custom_field_attrs.nil? }
+      after_rollback :reset_pending_custom_fields_replay
 
       scope :with_custom_field_key, ->(key_with_namespace) {
         namespace, key = extract_namespace_and_key(key_with_namespace)
@@ -251,14 +252,24 @@ module Spree
       # Replays the queued writes after the owner is saved. The queue is kept
       # until the transaction commits (see {#clear_pending_custom_fields}), so a
       # rollback anywhere in the save leaves it intact for a retry of the same
-      # instance. Replay is an upsert, so re-running applied entries is safe.
+      # instance. It is replayed once per transaction: a later write to the
+      # now-saved record applies directly, and a second save must not put the
+      # older queued value back over it.
       def apply_pending_custom_fields
         apply_custom_field_attrs(@pending_custom_field_attrs)
+        @pending_custom_fields_replayed = true
       end
 
       # Drops the queued writes once the save that replayed them has committed.
       def clear_pending_custom_fields
         @pending_custom_field_attrs = nil
+        @pending_custom_fields_replayed = false
+      end
+
+      # A rollback undid the replayed rows, so the queue must be replayed again
+      # on the next save.
+      def reset_pending_custom_fields_replay
+        @pending_custom_fields_replayed = false
       end
 
       def apply_custom_field_attrs(attributes)
