@@ -310,7 +310,8 @@ export function ResourceTable<T extends Record<string, any>>({
   const sort = reorder ? positionField : (urlSort ?? defaultSort.field)
   const dir: 'asc' | 'desc' = reorder ? 'asc' : (urlDir ?? defaultSort.direction)
 
-  const [searchInput, setSearchInput] = useState(search ?? '')
+  const searchable = table.searchable !== false
+  const [searchInput, setSearchInput] = useState(searchable ? (search ?? '') : '')
   const deferredSearch = useDeferredValue(searchInput)
 
   // Registry columns + dynamic custom-field columns. Memoized so the toolbar's
@@ -595,6 +596,7 @@ export function ResourceTable<T extends Record<string, any>>({
         onVisibleColumnsChange={handleColumnsChange}
         search={searchInput}
         onSearchChange={handleSearchChange}
+        searchable={searchable}
         searchPlaceholder={table.searchPlaceholder ?? t('admin.common.search_placeholder')}
         sort={{ field: sort, direction: dir }}
         onSortChange={handleSortChange}
