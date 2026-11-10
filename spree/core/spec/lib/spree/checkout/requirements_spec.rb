@@ -240,7 +240,7 @@ RSpec.describe Spree::Checkout::Requirements do
     it 'sends a guest to the sign-in gate, not the register-a-business one' do
       guest_cart = create(:cart, store: store, customer: nil, channel: channel)
 
-      codes = described_class.new(guest_cart).call(completion: true).map { |requirement| requirement[:code] }
+      codes = described_class.new(guest_cart).call(completion: true).pluck(:code)
 
       expect(codes).to include('guest_checkout_not_allowed')
       expect(codes).not_to include('company_activation_required')
@@ -265,7 +265,7 @@ RSpec.describe Spree::Checkout::Requirements do
       create(:company_membership, company: create(:company, store: store), customer: customer)
       cart.reload
 
-      codes = subject.map { |requirement| requirement[:code] }
+      codes = subject.pluck(:code)
 
       expect(codes).to include('company_selection_required')
       expect(codes).not_to include('company_activation_required')

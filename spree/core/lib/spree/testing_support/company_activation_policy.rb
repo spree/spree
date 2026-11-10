@@ -31,7 +31,7 @@ module Spree
       def deactivating_policy_class(inactive_companies)
         Class.new(Spree::Companies::ActivationPolicy) do
           define_method(:active?) do |company|
-            !Spree::Company.subtree_of(inactive_companies).where(id: company.id).exists?
+            !Spree::Company.subtree_of(inactive_companies).exists?(id: company.id)
           end
         end
       end

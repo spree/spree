@@ -15,10 +15,13 @@ module Spree
             body.attribute :order_routing_strategy, :string,
               nullable: true,
               description: 'Order routing strategy shorthand (built-in: `rules`). Null inherits the store setting.'
-            body.attribute :storefront_access, :string,
+            body.attribute(
+              :storefront_access, :string,
               nullable: true,
               choices: Spree::Channel::Gating::STOREFRONT_ACCESS,
-              description: 'What visitors can see. Under company_required, signed-in buyers without an active company also get no prices or checkout. Null inherits the store setting.'
+              description: 'What visitors can see. Under company_required, signed-in buyers without an active company also get ' \
+                           'no prices or checkout. Null inherits the store setting.'
+            )
             body.attribute :guest_checkout, :boolean,
               nullable: true,
               description: 'Whether guests can check out without an account. Null inherits the store setting.'

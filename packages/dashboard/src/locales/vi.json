@@ -1342,6 +1342,7 @@
           "inherit": "Kế thừa từ cửa hàng",
           "label": "Quyền truy cập cửa hàng trực tuyến",
           "options": {
+            "company_required": "Chỉ thành viên công ty - giá và thanh toán chỉ dành cho thành viên của một công ty đang hoạt động",
             "login_required": "Yêu cầu đăng nhập - khách truy cập phải đăng nhập để duyệt",
             "prices_hidden": "Giá ẩn - khách truy cập phải đăng nhập để xem giá",
             "public": "Công khai - bất kỳ ai cũng có thể duyệt và xem giá"
@@ -2303,6 +2304,7 @@
           "help": "Mặc định trên toàn cửa hàng cho những gì khách truy cập ẩn danh có thể nhìn thấy. Các kênh có thể ghi đè điều này. Khi giá bị ẩn, khách phải đăng nhập để thanh toán.",
           "label": "Quyền truy cập cửa hàng trực tuyến",
           "options": {
+            "company_required": "Chỉ thành viên công ty - giá và thanh toán chỉ dành cho thành viên của một công ty đang hoạt động",
             "login_required": "Yêu cầu đăng nhập - khách truy cập phải đăng nhập để duyệt",
             "prices_hidden": "Giá ẩn - khách truy cập phải đăng nhập để xem giá",
             "public": "Công khai - bất kỳ ai cũng có thể duyệt và xem giá"

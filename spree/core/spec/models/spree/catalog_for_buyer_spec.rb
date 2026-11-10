@@ -141,5 +141,4 @@ RSpec.describe Spree::Catalog, '.for_buyer' do
       end
     end
   end
-
 end
