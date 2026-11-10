@@ -21,18 +21,23 @@ function Tabs({
 }
 
 /**
- * The track a set of tabs sits in, recessed so the selected tab reads as
- * raised. The raised pill is an indicator that slides between tabs; until it
- * has measured its tab, the selected tab draws the same pill itself.
+ * The track a set of tabs sits in, a glass capsule in the manner of a macOS
+ * segmented control. The selected pill is an indicator that slides between
+ * tabs; until it has measured its tab, the selected tab draws the same pill
+ * itself.
  */
-// The selected tab's surface: a flat white pill, set off from the track by
-// its fill and a faint hairline rather than a drop shadow.
-const TAB_RAISED =
-  'bg-nested-raised shadow-[0_0_0_0.5px_rgb(0_0_0/0.05),0_1px_1px_rgb(0_0_0/0.03)] dark:shadow-[0_0_0_0.5px_rgb(255_255_255/0.06)]'
+// The track: the recessed surface, edged by the faint divider rule. Flat — no
+// blur or sheen, which a control this small would only muddy.
+const TAB_TRACK = 'bg-track-recessed shadow-[inset_0_0_0_1px_var(--border-subtle)]'
 
-// Pills side by side; a vertical stack keeps rounded rectangles, which read
+// The selected tab's surface: a flat pill set off by its fill and a card's
+// edge, never a drop shadow. A card's white in the light; in the dark the
+// strong accent, the step a dark surface lifts to.
+const TAB_RAISED = 'bg-card shadow-[0_0_0_1px_var(--card-edge)] dark:bg-accent-strong'
+
+// Capsules side by side; a vertical stack keeps rounded rectangles, which read
 // better as a column.
-const TAB_SHAPE = 'rounded-lg group-data-[orientation=vertical]/tabs:rounded-lg'
+const TAB_SHAPE = 'rounded-full group-data-[orientation=vertical]/tabs:rounded-lg'
 
 function TabsList({
   className,
@@ -43,7 +48,8 @@ function TabsList({
     <TabsPrimitive.List
       data-slot="tabs-list"
       className={cn(
-        'group/tabs-list relative inline-flex w-fit items-center justify-center gap-1 rounded-xl bg-track-recessed p-1 text-muted-foreground shadow-[inset_0_0_0_0.5px_rgb(0_0_0/0.04)] group-data-[orientation=vertical]/tabs:rounded-xl',
+        'group/tabs-list relative inline-flex w-fit items-center justify-center gap-0.5 rounded-full p-0.5 text-muted-foreground group-data-[orientation=vertical]/tabs:rounded-xl',
+        TAB_TRACK,
         'group-data-[orientation=vertical]/tabs:h-auto group-data-[orientation=vertical]/tabs:w-full group-data-[orientation=vertical]/tabs:flex-col',
         className,
       )}
@@ -88,9 +94,9 @@ function TabsTrigger({
         // Unselected tabs recede so the selected one reads as chosen; hover
         // promotes to full foreground rather than only shifting the surface,
         // which is the part a colour-blind or low-vision reader can see.
-        // An unselected tab under the pointer fills one step under the track,
-        // as a sidebar item does.
-        'text-muted-foreground hover:text-foreground not-data-[active]:hover:bg-accent-strong',
+        // An unselected tab under the pointer takes a pill one step under the
+        // selected one, as a sidebar item does.
+        'text-muted-foreground hover:text-foreground not-data-[active]:hover:bg-accent-strong dark:not-data-[active]:hover:bg-accent',
         // The selected tab draws its own pill until the indicator has
         // measured it, so the selection never depends on that rendering;
         // then it turns clear and the sliding indicator shows through.
@@ -108,7 +114,7 @@ function TabsTrigger({
     >
       {children}
       {count !== undefined && (
-        <span className="rounded-lg bg-accent-strong-hover px-1.5 py-0.5 text-xs text-foreground tabular-nums">
+        <span className="rounded-full bg-accent-strong-hover px-1.5 py-0.5 text-xs text-foreground tabular-nums">
           {count}
         </span>
       )}

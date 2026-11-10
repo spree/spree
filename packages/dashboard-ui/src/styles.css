@@ -290,6 +290,15 @@
   --status-blue-bg: var(--color-sky-100);
   --status-blue-border: var(--color-sky-200);
   --status-blue-fg: var(--color-sky-700);
+
+  /* A quieter fill for a status surface larger than a badge — an alert, a
+     notice. A paragraph of tinted text over the badge's fill reads as a shout;
+     one step lighter holds the same hue at a volume a block of copy can
+     carry. Text stays on the badge's step. */
+  --status-green-surface: var(--color-green-50);
+  --status-amber-surface: var(--color-amber-50);
+  --status-red-surface: var(--color-red-50);
+  --status-blue-surface: var(--color-sky-50);
 }
 
 .dark {
@@ -437,6 +446,15 @@
   --status-blue-bg: var(--color-sky-900);
   --status-blue-border: var(--color-sky-900);
   --status-blue-fg: var(--color-sky-300);
+
+  /* The 900 step mixed into the card rather than laid over it at an opacity,
+     so the surface is one solid colour on any ground. At full strength a 900
+     block outweighs everything around it, and step-300 text gains contrast on
+     the darker fill. */
+  --status-green-surface: color-mix(in oklab, var(--color-green-900) 40%, var(--card));
+  --status-amber-surface: color-mix(in oklab, var(--color-amber-900) 40%, var(--card));
+  --status-red-surface: color-mix(in oklab, var(--color-red-900) 40%, var(--card));
+  --status-blue-surface: color-mix(in oklab, var(--color-sky-900) 40%, var(--card));
 }
 
 @theme inline {
@@ -587,18 +605,22 @@
   --color-success: var(--status-green-fg);
   --color-success-bg: var(--status-green-bg);
   --color-success-border: var(--status-green-border);
+  --color-success-surface: var(--status-green-surface);
 
   --color-warning: var(--status-amber-fg);
   --color-warning-bg: var(--status-amber-bg);
   --color-warning-border: var(--status-amber-border);
+  --color-warning-surface: var(--status-amber-surface);
 
   --color-danger: var(--status-red-fg);
   --color-danger-bg: var(--status-red-bg);
   --color-danger-border: var(--status-red-border);
+  --color-danger-surface: var(--status-red-surface);
 
   --color-info: var(--status-blue-fg);
   --color-info-bg: var(--status-blue-bg);
   --color-info-border: var(--status-blue-border);
+  --color-info-surface: var(--status-blue-surface);
 
   /* Re-point Tailwind's blue ramp at the brand accent. Interactive blue is
      used throughout the component layer for focus borders, checked states and
