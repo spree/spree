@@ -331,7 +331,7 @@ module Spree
     def storefront_unpriced_currencies
       return [] if store.nil? || store_preference(:show_products_without_price)
 
-      priced = prices.merge(Spree::Price.listing).distinct.pluck(:currency)
+      priced = prices.merge(Spree::Price.listing).reorder(nil).distinct.pluck(:currency)
       store.supported_currencies_list.map(&:iso_code) - priced
     end
 
