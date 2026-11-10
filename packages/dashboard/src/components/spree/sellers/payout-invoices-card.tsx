@@ -56,9 +56,9 @@ export function PayoutInvoicesCard({
       </CardHeader>
       <CardContent>
         {isLoading ? (
-          <p className="text-muted-foreground text-sm">{t('admin.common.loading')}</p>
+          <p className="text-muted-foreground text-base">{t('admin.common.loading')}</p>
         ) : invoices.length === 0 ? (
-          <p className="text-muted-foreground text-sm">{t('admin.payouts.invoices.empty')}</p>
+          <p className="text-muted-foreground text-base">{t('admin.payouts.invoices.empty')}</p>
         ) : (
           <ItemGroup className="gap-2">
             {invoices.map((invoice) => (
