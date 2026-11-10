@@ -40,7 +40,10 @@ module Spree
     end
 
     included do
-      has_many :custom_fields, -> { includes(:custom_field_definition) }, as: :resource, class_name: 'Spree::CustomField', dependent: :destroy
+      # The explicit inverse lets a custom field built on an unsaved owner find that owner when
+      # it is saved. Rails cannot infer it for a scoped association, so without it the row is
+      # inserted with a NULL resource_id unless the app happens to enable `has_many_inversing`.
+      has_many :custom_fields, -> { includes(:custom_field_definition) }, as: :resource, inverse_of: :resource, class_name: 'Spree::CustomField', dependent: :destroy
       has_many :storefront_custom_fields, -> { includes(:custom_field_definition).storefront_visible }, as: :resource, class_name: 'Spree::CustomField'
 
       # Deprecated 6.0 association names, removed in 6.1. `private_metafields`
@@ -88,7 +91,6 @@ module Spree
       end
 
       after_save :apply_pending_custom_fields, if: -> { @pending_custom_field_attrs.present? }
-      after_commit :clear_pending_custom_fields, if: -> { !@pending_custom_field_attrs.nil? }
 
       scope :with_custom_field_key, ->(key_with_namespace) {
         namespace, key = extract_namespace_and_key(key_with_namespace)
@@ -128,18 +130,7 @@ module Spree
       # @raise [ArgumentError] if `definition_or_key` doesn't resolve to a
       #   known definition.
       def set_custom_field(definition_or_key, value)
-        # A custom field row needs a persisted owner (resource_id NOT NULL), so
-        # on an unsaved record the write is queued and replayed after save.
-        if new_record?
-          # Replay skips blank references, so reject them now, as a saved record would.
-          raise ArgumentError, "Invalid definition_or_key: #{definition_or_key.inspect}" if definition_or_key.blank?
-
-          queue_pending_custom_field_attrs([{ custom_field_definition_id: definition_or_key, value: value }])
-          return nil
-        end
-
         definition_id = resolve_custom_field_definition_id(definition_or_key)
-        drop_superseded_pending_custom_fields(definition_id)
         custom_field = custom_fields.find_or_initialize_by(custom_field_definition_id: definition_id)
         if value_blank?(value)
           custom_field.destroy if custom_field.persisted?
@@ -236,48 +227,17 @@ module Spree
         if new_record?
           # Persisting custom_fields requires a persisted parent (resource_id NOT
           # NULL). Stash the attrs and replay them after the parent is saved.
-          attributes = attributes.values if attributes.is_a?(Hash)
-          queue_pending_custom_field_attrs(attributes)
+          @pending_custom_field_attrs = attributes
           return
         end
 
         apply_custom_field_attrs(attributes)
       end
 
-      # Appends writes to the queue replayed after the record is first saved.
-      def queue_pending_custom_field_attrs(attributes)
-        @pending_custom_field_attrs = Array(@pending_custom_field_attrs) + Array(attributes)
-      end
-
-      # Replays the queued writes after the owner is saved. The queue is kept
-      # until the transaction commits (see {#clear_pending_custom_fields}), so a
-      # rollback anywhere in the save leaves it intact for a retry of the same
-      # instance. Replay is an upsert, so running it again is safe.
       def apply_pending_custom_fields
-        @replaying_custom_fields = true
-        apply_custom_field_attrs(@pending_custom_field_attrs)
-      ensure
-        @replaying_custom_fields = false
-      end
-
-      # Drops the queued writes once the save that replayed them has committed.
-      def clear_pending_custom_fields
+        attrs = @pending_custom_field_attrs
         @pending_custom_field_attrs = nil
-      end
-
-      # A direct write to a saved record supersedes any older queued value for
-      # the same definition, so a later save must not replay that older value
-      # over it. Skipped during replay, which is itself made of such writes.
-      def drop_superseded_pending_custom_fields(definition_id)
-        return if @pending_custom_field_attrs.blank? || @replaying_custom_fields
-
-        @pending_custom_field_attrs = @pending_custom_field_attrs.reject do |raw|
-          attrs = (raw.respond_to?(:to_h) ? raw.to_h : raw).with_indifferent_access
-          ref = attrs[:custom_field_definition_id] || attrs[:metafield_definition_id]
-          ref.present? && resolve_custom_field_definition_id(ref) == definition_id
-        rescue ArgumentError
-          false # an unresolvable reference is kept so replay reports it
-        end
+        apply_custom_field_attrs(attrs)
       end
 
       def apply_custom_field_attrs(attributes)

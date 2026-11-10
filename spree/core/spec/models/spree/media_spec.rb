@@ -564,40 +564,20 @@ describe Spree::Media, type: :model do
         expect(asset.external_url).to eq('https://example.com/Example-Image-001.png')
       end
 
-      it 'defers the write until an unsaved media is saved' do
+      it 'sets the external URL on an unsaved media, which the job does before saving it' do
         asset = build(:media)
-
-        expect { asset.external_url = 'https://example.com/Example-Image-001.png' }.not_to change(Spree::CustomField, :count)
+        asset.external_url = 'https://example.com/Example-Image-001.png'
         asset.save!
 
         expect(asset.reload.external_url).to eq('https://example.com/Example-Image-001.png')
       end
 
-      it 'rejects a blank definition reference on an unsaved media like a saved one' do
-        expect { build(:media).set_custom_field('', 'x') }.to raise_error(ArgumentError)
-        expect { build(:media).set_custom_field(nil, 'x') }.to raise_error(ArgumentError)
-      end
+      # `has_many_inversing` is an app-level setting, so rely on the association itself rather
+      # than on it: a custom field built on an unsaved owner must know that owner.
+      it 'declares the inverse of custom_fields explicitly' do
+        reflection = described_class.reflect_on_association(:custom_fields)
 
-      it 'does not replay an older queued value over a later write on a second save' do
-        asset = build(:media)
-        asset.external_url = 'https://example.com/old.png'
-
-        Spree::Media.transaction do
-          asset.save!
-          asset.external_url = 'https://example.com/new.png'
-          asset.save!
-        end
-
-        expect(asset.reload.external_url).to eq('https://example.com/new.png')
-      end
-
-      it 'keeps queued writes when replay fails so the save can be retried' do
-        asset = build(:media)
-        asset.external_url = 'https://example.com/Example-Image-001.png'
-        asset.set_custom_field(999_999_999, 'x')
-
-        expect { asset.save! }.to raise_error(StandardError)
-        expect(asset.instance_variable_get(:@pending_custom_field_attrs).size).to eq(2)
+        expect(reflection.options[:inverse_of]).to eq(:resource)
       end
     end
   end
