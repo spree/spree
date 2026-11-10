@@ -44,10 +44,6 @@ export function CommandPalette() {
   // only rendered while it is open.
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogHeader className="sr-only">
-        <DialogTitle>{t('admin.components.command_palette.title')}</DialogTitle>
-        <DialogDescription>{t('admin.components.command_palette.description')}</DialogDescription>
-      </DialogHeader>
       <DialogContent
         // `-translate-x-1/2 translate-y-0`, not a bare `translate-y-0`: in
         // Tailwind v4 these compile to the standalone `translate` property, so
@@ -63,6 +59,12 @@ export function CommandPalette() {
         // link, painting it with a misleading focus ring.
         finalFocus={false}
       >
+        {/* Inside the popup: the dialog is named by a title within it, and a
+            header beside it would stay in the page while the palette is shut. */}
+        <DialogHeader className="sr-only">
+          <DialogTitle>{t('admin.components.command_palette.title')}</DialogTitle>
+          <DialogDescription>{t('admin.components.command_palette.description')}</DialogDescription>
+        </DialogHeader>
         <CommandPaletteContent setOpen={setOpen} />
       </DialogContent>
     </Dialog>
