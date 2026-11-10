@@ -108,7 +108,7 @@ export function OrderDocumentsCard({
       <CardContent className="flex flex-col gap-6">
         <section aria-labelledby={`order-invoices-${orderId}`} className="flex flex-col gap-3">
           <div className="flex items-center justify-between gap-2">
-            <h3 id={`order-invoices-${orderId}`} className="font-medium text-sm">
+            <h3 id={`order-invoices-${orderId}`} className="font-medium text-base">
               {t('admin.order_documents.invoices')}
               {invoices.length > 0 && (
                 <Badge variant="outline" className="ml-2">
@@ -138,7 +138,7 @@ export function OrderDocumentsCard({
           className="flex flex-col gap-3"
         >
           <div className="flex items-center justify-between gap-2">
-            <h3 id={`order-other-documents-${orderId}`} className="font-medium text-sm">
+            <h3 id={`order-other-documents-${orderId}`} className="font-medium text-base">
               {t('admin.order_documents.other_documents')}
             </h3>
             {canEdit && (
@@ -176,7 +176,7 @@ function OpenInvoiceRequest({ orderId }: { orderId: string }) {
   return (
     <div
       role="status"
-      className="flex items-start gap-2 rounded-md border border-dashed p-3 text-sm"
+      className="flex items-start gap-2 rounded-md border border-dashed p-3 text-base"
     >
       <InboxIcon className="mt-0.5 size-4 shrink-0" />
       <div className="flex flex-col gap-0.5">
@@ -208,10 +208,13 @@ function InvoiceList({
   const resend = useResendOrderInvoice()
   const remove = useDeleteOrderInvoice(orderId)
 
-  if (isLoading) return <p className="text-muted-foreground text-sm">{t('admin.common.loading')}</p>
+  if (isLoading)
+    return <p className="text-muted-foreground text-base">{t('admin.common.loading')}</p>
   if (isError && invoices.length === 0) return <LoadError />
   if (invoices.length === 0) {
-    return <p className="text-muted-foreground text-sm">{t('admin.order_documents.no_invoices')}</p>
+    return (
+      <p className="text-muted-foreground text-base">{t('admin.order_documents.no_invoices')}</p>
+    )
   }
 
   async function handleDelete(invoice: Invoice) {
@@ -290,7 +293,7 @@ function InvoiceList({
 function LoadError() {
   const { t } = useTranslation()
   return (
-    <p className="text-destructive text-sm" role="alert">
+    <p className="text-destructive text-base" role="alert">
       {t('admin.errors.failed_to_load')}
     </p>
   )
@@ -305,11 +308,12 @@ function DocumentList({ orderId, canEdit }: { orderId: string; canEdit: boolean 
   const remove = useDeleteOrderDocument(orderId)
   const documents = data?.data ?? []
 
-  if (isLoading) return <p className="text-muted-foreground text-sm">{t('admin.common.loading')}</p>
+  if (isLoading)
+    return <p className="text-muted-foreground text-base">{t('admin.common.loading')}</p>
   if (isError && documents.length === 0) return <LoadError />
   if (documents.length === 0) {
     return (
-      <p className="text-muted-foreground text-sm">{t('admin.order_documents.no_documents')}</p>
+      <p className="text-muted-foreground text-base">{t('admin.order_documents.no_documents')}</p>
     )
   }
 
@@ -534,7 +538,7 @@ export function InvoiceUploadSheet({
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
             <FieldGroup>
               {errors.root?.message && (
-                <p className="text-destructive text-sm" role="alert">
+                <p className="text-destructive text-base" role="alert">
                   {errors.root.message}
                 </p>
               )}
@@ -780,7 +784,7 @@ function DocumentUploadSheet({
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
             <FieldGroup>
               {errors.root?.message && (
-                <p className="text-destructive text-sm" role="alert">
+                <p className="text-destructive text-base" role="alert">
                   {errors.root.message}
                 </p>
               )}
