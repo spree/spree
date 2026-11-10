@@ -31,6 +31,7 @@ import type {
   ImportSort,
   Invitation,
   InvitationAcceptanceLink,
+  OptionType,
   Order,
   PackageType,
   Payout,
@@ -57,6 +58,8 @@ import type {
   DeliveryProfileSort,
   DigitalAssetFilters,
   DigitalAssetSort,
+  OptionTypeFilters,
+  OptionTypeSort,
   OrderFilters,
   OrderSort,
   PackageTypeFilters,
@@ -1084,6 +1087,32 @@ export class SellerClient {
 
     get: (id: string, options?: RequestOptions): Promise<Export> =>
       this.request<Export>('GET', `/exports/${id}`, options),
+  }
+
+  /**
+   * The option types (Size, Colour) and values a seller builds variants from.
+   * Read only — the marketplace defines the vocabulary, a seller picks from
+   * it. Pass `expand: ['option_values']` to get the values with each type.
+   */
+  readonly optionTypes = {
+    list: (
+      params?: ListParams<OptionTypeFilters, OptionTypeSort>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<OptionType>> =>
+      this.request<PaginatedResponse<OptionType>>('GET', '/option_types', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (
+      id: string,
+      params?: { expand?: string[] },
+      options?: RequestOptions,
+    ): Promise<OptionType> =>
+      this.request<OptionType>('GET', `/option_types/${id}`, {
+        ...options,
+        params: params?.expand?.length ? { expand: params.expand.join(',') } : undefined,
+      }),
   }
 
   /**

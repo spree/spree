@@ -123,6 +123,15 @@ export function createSellerApiClient({
       create: (params) => sellerClient().stockLocations.create(params),
       update: (id, params) => sellerClient().stockLocations.update(id, params),
     },
+    // The option types and values a seller builds variants from. Read only:
+    // there is no `create` or `update`, so the shared options builder offers
+    // just the marketplace's existing vocabulary, never a way to add to it.
+    optionTypes: {
+      list: (params) =>
+        sellerClient().optionTypes.list(
+          runtimeListParams({ ...params, expand: ['option_values'] }),
+        ),
+    },
     // The marketplace's vocabulary the product form picks from: types and
     // delivery profiles only. Categories, collections and tags are filing,
     // which is the operator's at review, so they are not registered and the
