@@ -3619,6 +3619,7 @@ paths:
                     type: check
                     session_required: false
                     source_required: false
+                    public_preferences: {}
                 adjustment_total: '0.00'
                 display_adjustment_total: "$0.00"
                 discounts: []
@@ -4629,6 +4630,7 @@ paths:
                     type: store_credit
                     session_required: false
                     source_required: true
+                    public_preferences: {}
                 adjustment_total: '0.00'
                 display_adjustment_total: "$0.00"
                 current_step: address
@@ -4869,6 +4871,7 @@ paths:
                     type: store_credit
                     session_required: false
                     source_required: true
+                    public_preferences: {}
                 adjustment_total: '0.00'
                 display_adjustment_total: "$0.00"
                 current_step: address
@@ -5625,6 +5628,8 @@ paths:
                   type: bogus
                   session_required: true
                   source_required: true
+                  public_preferences:
+                    dummy_key: PUBLICKEY123
               schema:
                 "$ref": "#/components/schemas/PaymentSession"
       requestBody:
@@ -5712,6 +5717,8 @@ paths:
                   type: bogus
                   session_required: true
                   source_required: true
+                  public_preferences:
+                    dummy_key: PUBLICKEY123
               schema:
                 "$ref": "#/components/schemas/PaymentSession"
         '404':
@@ -5780,6 +5787,8 @@ paths:
                   type: bogus
                   session_required: true
                   source_required: true
+                  public_preferences:
+                    dummy_key: PUBLICKEY123
               schema:
                 "$ref": "#/components/schemas/PaymentSession"
       requestBody:
@@ -5881,6 +5890,8 @@ paths:
                   type: bogus
                   session_required: true
                   source_required: true
+                  public_preferences:
+                    dummy_key: PUBLICKEY123
               schema:
                 "$ref": "#/components/schemas/PaymentSession"
         '404':
@@ -5976,6 +5987,7 @@ paths:
                   type: check
                   session_required: false
                   source_required: false
+                  public_preferences: {}
               schema:
                 "$ref": "#/components/schemas/Payment"
         '422':
@@ -6120,6 +6132,7 @@ paths:
                     type: store_credit
                     session_required: false
                     source_required: true
+                    public_preferences: {}
                 adjustment_total: '0.00'
                 display_adjustment_total: "$0.00"
                 current_step: address
@@ -9695,6 +9708,8 @@ paths:
                   type: bogus
                   session_required: true
                   source_required: true
+                  public_preferences:
+                    dummy_key: PUBLICKEY123
               schema:
                 "$ref": "#/components/schemas/PaymentSetupSession"
         '401':
@@ -9787,6 +9802,8 @@ paths:
                   type: bogus
                   session_required: true
                   source_required: true
+                  public_preferences:
+                    dummy_key: PUBLICKEY123
               schema:
                 "$ref": "#/components/schemas/PaymentSetupSession"
         '404':
@@ -9868,6 +9885,8 @@ paths:
                   type: bogus
                   session_required: true
                   source_required: true
+                  public_preferences:
+                    dummy_key: PUBLICKEY123
               schema:
                 "$ref": "#/components/schemas/PaymentSetupSession"
         '404':
@@ -20692,6 +20711,11 @@ components:
           type: boolean
         source_required:
           type: boolean
+        public_preferences:
+          type: object
+          description: Configuration the storefront needs to load this method, such
+            as a Stripe publishable key. Each provider decides which of its preferences
+            are public; most have none.
         custom_fields:
           type: array
           items:
@@ -20703,6 +20727,7 @@ components:
       - type
       - session_required
       - source_required
+      - public_preferences
       x-typelizer: true
     Payment:
       type: object

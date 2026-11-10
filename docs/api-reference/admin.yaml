@@ -103,7 +103,7 @@ paths:
                   status: active
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
-                  last_active_at: '2026-01-15T12:00:00Z'
+                  last_active_at:
                   avatar_url:
                   roles:
                   - id: role_UkLWZg9DAJ
@@ -343,7 +343,7 @@ paths:
                   status: active
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
-                  last_active_at: '2026-01-15T12:00:00Z'
+                  last_active_at:
                   avatar_url:
                   roles:
                   - id: role_UkLWZg9DAJ
@@ -781,7 +781,7 @@ paths:
                   status: active
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
-                  last_active_at: '2026-01-15T12:00:00Z'
+                  last_active_at:
                   avatar_url:
                   roles:
                   - id: role_UkLWZg9DAJ
@@ -895,7 +895,7 @@ paths:
                   status: active
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
-                  last_active_at: '2026-01-15T12:00:00Z'
+                  last_active_at:
                   avatar_url:
                   roles:
                   - id: role_UkLWZg9DAJ
@@ -22522,6 +22522,7 @@ paths:
                   type: check
                   session_required: false
                   source_required: false
+                  public_preferences: {}
                   metadata: {}
                   active: true
                   capture_method:
@@ -22534,6 +22535,7 @@ paths:
                   logo_url:
                   docs_url:
                   third_party: false
+                  rules: []
                 meta:
                   page: 1
                   limit: 25
@@ -22604,6 +22606,7 @@ paths:
                 type: check
                 session_required: false
                 source_required: false
+                public_preferences: {}
                 metadata: {}
                 active: true
                 capture_method: manual
@@ -22616,6 +22619,7 @@ paths:
                 logo_url:
                 docs_url:
                 third_party: false
+                rules: []
         '422':
           description: unknown payment method type
           content:
@@ -22641,7 +22645,7 @@ paths:
       - api_key: []
         bearer_auth: []
       description: |-
-        Returns every registered payment provider with the JSON Schema of its `preferences`. `installed` marks a provider the store already has, which a "Provider" picker leaves out.
+        Returns every registered payment provider with the JSON Schema of its `preferences`. `installed_count` is how many payment methods of that provider the store already has; a store may run several, one per provider account, each scoped with rules. `installed` is deprecated: use `installed_count`. Removed in 6.2.
 
         **Required scope:** `read_settings` (for API-key authentication).
       x-codeSamples:
@@ -22695,6 +22699,7 @@ paths:
                   logo_url:
                   docs_url:
                   third_party: true
+                  installed_count: 0
                   installed: false
                 - type: check
                   label: Check
@@ -22706,6 +22711,7 @@ paths:
                   logo_url:
                   docs_url:
                   third_party: false
+                  installed_count: 1
                   installed: true
                 - type: custom_payment_source_method
                   label: Custom Payment Source Method
@@ -22717,6 +22723,7 @@ paths:
                   logo_url:
                   docs_url:
                   third_party: false
+                  installed_count: 0
                   installed: false
                 - type: store_credit
                   label: Store Credit
@@ -22728,6 +22735,7 @@ paths:
                   logo_url:
                   docs_url:
                   third_party: false
+                  installed_count: 1
                   installed: true
               schema:
                 type: object
@@ -22839,6 +22847,7 @@ paths:
                 type: check
                 session_required: false
                 source_required: false
+                public_preferences: {}
                 metadata: {}
                 active: true
                 capture_method:
@@ -22851,6 +22860,7 @@ paths:
                 logo_url:
                 docs_url:
                 third_party: false
+                rules: []
     patch:
       summary: Update a payment method
       tags:
@@ -22909,6 +22919,7 @@ paths:
                 type: check
                 session_required: false
                 source_required: false
+                public_preferences: {}
                 metadata: {}
                 active: true
                 capture_method:
@@ -22921,12 +22932,469 @@ paths:
                 logo_url:
                 docs_url:
                 third_party: false
+                rules: []
       requestBody:
         content:
           application/json:
             schema:
               "$ref": "#/components/schemas/PaymentMethodUpdateParams"
         required: true
+  "/api/v3/admin/payment_methods/{payment_method_id}/rules":
+    get:
+      summary: List payment method rules
+      tags:
+      - Payment Methods
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns the conditions a payment method must meet to be offered at storefront checkout, such as a channel, a market or an order total range. Every active rule must pass; a method with no rules is offered everywhere. Payments taken in the dashboard ignore rules.
+
+        **Required scope:** `read_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: rules } = await client.paymentMethods.rules.list('pm_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /payment_methods/{payment_method_id}/rules
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: payment_method_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[created_at_eq]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: PaymentMethodRule
+        sortable:
+        - created_at
+        - id
+        - updated_at
+      responses:
+        '200':
+          description: rules found
+          content:
+            application/json:
+              example:
+                data:
+                - id: pmrule_UkLWZg9DAJ
+                  active: true
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  type: company_rule
+                  preferences:
+                    company_ids: []
+                    company_orders_only: true
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/PaymentMethodRule"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
+    post:
+      summary: Create a payment method rule
+      tags:
+      - Payment Methods
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Adds a condition to a payment method. `type` is a rule kind from the
+        payment method rule types endpoint, and `preferences` takes the values
+        its schema declares. Each kind can appear once per method. To run two
+        accounts of one provider, give each payment method a `market_rule`
+        with its own markets.
+
+
+        **Required scope:** `write_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Offer this method only on orders of 5,000.00 USD or more:
+          const rule = await client.paymentMethods.rules.create('pm_UkLWZg9DAJ', {
+            type: 'order_total_rule',
+            preferences: { min_totals: { USD: '5000.00' } },
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /payment_methods/{payment_method_id}/rules -d '{"type":"order_total_rule","preferences":{"min_totals":{"USD":"5000.00"}}}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: payment_method_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: rule created
+          content:
+            application/json:
+              example:
+                id: pmrule_UkLWZg9DAJ
+                active: true
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                type: order_total_rule
+                preferences:
+                  min_totals:
+                    USD: '5000.00'
+                  max_totals: {}
+              schema:
+                "$ref": "#/components/schemas/PaymentMethodRule"
+        '422':
+          description: unknown rule type
+          content:
+            application/json:
+              example:
+                error:
+                  code: unknown_payment_method_rule_type
+                  message: Unknown type
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/PaymentMethodRuleCreateParams"
+        required: true
+  "/api/v3/admin/payment_methods/{payment_method_id}/rules/{id}":
+    patch:
+      summary: Update a payment method rule
+      tags:
+      - Payment Methods
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Changes a rule's settings or turns it off. Its `type` is fixed once created.
+
+        **Required scope:** `write_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const rule = await client.paymentMethods.rules.update('pm_UkLWZg9DAJ', 'pmrule_gbHJdmfrXB', {
+            active: false,
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /payment_methods/{payment_method_id}/rules/{id} -d
+          '{"active":false}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: payment_method_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: rule updated
+          content:
+            application/json:
+              example:
+                id: pmrule_UkLWZg9DAJ
+                active: false
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                type: company_rule
+                preferences:
+                  company_ids: []
+                  company_orders_only: false
+              schema:
+                "$ref": "#/components/schemas/PaymentMethodRule"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/PaymentMethodRuleUpdateParams"
+        required: true
+    delete:
+      summary: Delete a payment method rule
+      tags:
+      - Payment Methods
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Removes a condition from a payment method.
+
+        **Required scope:** `write_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          await client.paymentMethods.rules.delete('pm_UkLWZg9DAJ', 'pmrule_gbHJdmfrXB')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /payment_methods/{payment_method_id}/rules/{id}
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: payment_method_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: rule deleted
+  "/api/v3/admin/payment_method_rules/types":
+    get:
+      summary: List available payment method rule types
+      tags:
+      - Payment Methods
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Enumerates the registered payment method rule kinds with their names, descriptions and preference schemas, for building an "Add condition" picker. Plugins extend the list by registering `Spree::PaymentMethodRule` subclasses in `Spree.payment_method_rules`.
+
+        **Required scope:** `read_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: ruleTypes } = await client.paymentMethods.ruleTypes()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /payment_method_rules/types
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: types found
+          content:
+            application/json:
+              example:
+                data:
+                - type: channel_rule
+                  label: Channel
+                  description: Offers the payment method only on the selected channels
+                  schema:
+                    type: object
+                    properties:
+                      channel_ids:
+                        type: array
+                        items:
+                          type: string
+                          format: prefixed-id
+                          pattern: "^ch_[A-Za-z0-9]+$"
+                          x-spree-prefix: ch
+                        default: []
+                    additionalProperties: false
+                - type: company_rule
+                  label: Company
+                  description: Offers the payment method only to orders placed for
+                    a company, or for the selected companies and their divisions
+                  schema:
+                    type: object
+                    properties:
+                      company_ids:
+                        type: array
+                        items:
+                          type: string
+                          format: prefixed-id
+                          pattern: "^comp_[A-Za-z0-9]+$"
+                          x-spree-prefix: comp
+                        default: []
+                      company_orders_only:
+                        type: boolean
+                        default: true
+                    additionalProperties: false
+                - type: customer_group_rule
+                  label: Customer group
+                  description: Offers the payment method only to customers in the
+                    selected groups
+                  schema:
+                    type: object
+                    properties:
+                      customer_group_ids:
+                        type: array
+                        items:
+                          type: string
+                          format: prefixed-id
+                          pattern: "^cg_[A-Za-z0-9]+$"
+                          x-spree-prefix: cg
+                        default: []
+                    additionalProperties: false
+                - type: market_rule
+                  label: Market
+                  description: Offers the payment method only in the selected markets
+                  schema:
+                    type: object
+                    properties:
+                      market_ids:
+                        type: array
+                        items:
+                          type: string
+                          format: prefixed-id
+                          pattern: "^mkt_[A-Za-z0-9]+$"
+                          x-spree-prefix: mkt
+                        default: []
+                    additionalProperties: false
+                - type: order_total_rule
+                  label: Order total
+                  description: Limits the payment method to orders within a total
+                    range, set per currency
+                  schema:
+                    type: object
+                    properties:
+                      min_totals:
+                        type: object
+                        propertyNames:
+                          type: string
+                          format: currency
+                          pattern: "^[A-Z]{3}$"
+                        additionalProperties:
+                          type: string
+                          format: money
+                          pattern: "^-?\\d+(\\.\\d+)?$"
+                        default: {}
+                      max_totals:
+                        type: object
+                        propertyNames:
+                          type: string
+                          format: currency
+                          pattern: "^[A-Z]{3}$"
+                        additionalProperties:
+                          type: string
+                          format: money
+                          pattern: "^-?\\d+(\\.\\d+)?$"
+                        default: {}
+                    additionalProperties: false
   "/api/v3/admin/orders/{order_id}/payments":
     get:
       summary: List payments
@@ -69476,6 +69944,31 @@ components:
       - updated_at
       - amount
       x-typelizer: true
+    PaymentMethodRule:
+      type: object
+      properties:
+        id:
+          type: string
+        active:
+          type: boolean
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        type:
+          type: string
+          description: 'Rule type. Built-in: channel_rule, market_rule, order_total_rule,
+            customer_group_rule, company_rule. Extensions may register more.'
+        preferences:
+          "$ref": "#/components/schemas/PaymentMethodRulePreferences"
+      required:
+      - id
+      - active
+      - created_at
+      - updated_at
+      - type
+      - preferences
+      x-typelizer: true
     PaymentMethod:
       type: object
       properties:
@@ -69495,6 +69988,11 @@ components:
           type: boolean
         source_required:
           type: boolean
+        public_preferences:
+          type: object
+          description: Configuration the storefront needs to load this method, such
+            as a Stripe publishable key. Each provider decides which of its preferences
+            are public; most have none.
         custom_fields:
           type: array
           items:
@@ -69534,6 +70032,10 @@ components:
           nullable: true
         third_party:
           type: boolean
+        rules:
+          type: array
+          items:
+            "$ref": "#/components/schemas/PaymentMethodRule"
       required:
       - id
       - name
@@ -69541,6 +70043,7 @@ components:
       - type
       - session_required
       - source_required
+      - public_preferences
       - metadata
       - active
       - capture_method
@@ -69553,6 +70056,7 @@ components:
       - logo_url
       - docs_url
       - third_party
+      - rules
       x-typelizer: true
     Payment:
       type: object
@@ -79383,6 +79887,101 @@ components:
         check: "#/components/schemas/PaymentMethodCheckPreferences"
         custom_payment_source_method: "#/components/schemas/PaymentMethodCustomPaymentSourceMethodPreferences"
         store_credit: "#/components/schemas/PaymentMethodStoreCreditPreferences"
+    PaymentMethodRuleChannelRulePreferences:
+      type: object
+      properties:
+        channel_ids:
+          type: array
+          items:
+            type: string
+            format: prefixed-id
+            pattern: "^ch_[A-Za-z0-9]+$"
+            x-spree-prefix: ch
+          default: []
+      additionalProperties: false
+    PaymentMethodRuleCompanyRulePreferences:
+      type: object
+      properties:
+        company_ids:
+          type: array
+          items:
+            type: string
+            format: prefixed-id
+            pattern: "^comp_[A-Za-z0-9]+$"
+            x-spree-prefix: comp
+          default: []
+        company_orders_only:
+          type: boolean
+          default: true
+      additionalProperties: false
+    PaymentMethodRuleCustomerGroupRulePreferences:
+      type: object
+      properties:
+        customer_group_ids:
+          type: array
+          items:
+            type: string
+            format: prefixed-id
+            pattern: "^cg_[A-Za-z0-9]+$"
+            x-spree-prefix: cg
+          default: []
+      additionalProperties: false
+    PaymentMethodRuleMarketRulePreferences:
+      type: object
+      properties:
+        market_ids:
+          type: array
+          items:
+            type: string
+            format: prefixed-id
+            pattern: "^mkt_[A-Za-z0-9]+$"
+            x-spree-prefix: mkt
+          default: []
+      additionalProperties: false
+    PaymentMethodRuleOrderTotalRulePreferences:
+      type: object
+      properties:
+        min_totals:
+          type: object
+          additionalProperties:
+            type: string
+            format: money
+            pattern: "^-?\\d+(\\.\\d+)?$"
+          default: {}
+          x-spree-property-names:
+            type: string
+            format: currency
+            pattern: "^[A-Z]{3}$"
+        max_totals:
+          type: object
+          additionalProperties:
+            type: string
+            format: money
+            pattern: "^-?\\d+(\\.\\d+)?$"
+          default: {}
+          x-spree-property-names:
+            type: string
+            format: currency
+            pattern: "^[A-Z]{3}$"
+      additionalProperties: false
+    PaymentMethodRulePreferences:
+      description: Settings of a payment method rule, shaped by its `type` (see `x-spree-preferences-by-type`).
+        A type an extension registers is a plain object, described by the `schema`
+        its `/types` entry carries.
+      anyOf:
+      - "$ref": "#/components/schemas/PaymentMethodRuleChannelRulePreferences"
+      - "$ref": "#/components/schemas/PaymentMethodRuleCompanyRulePreferences"
+      - "$ref": "#/components/schemas/PaymentMethodRuleCustomerGroupRulePreferences"
+      - "$ref": "#/components/schemas/PaymentMethodRuleMarketRulePreferences"
+      - "$ref": "#/components/schemas/PaymentMethodRuleOrderTotalRulePreferences"
+      - type: object
+        additionalProperties: true
+      x-spree-preferences-by-type:
+        channel_rule: "#/components/schemas/PaymentMethodRuleChannelRulePreferences"
+        company_rule: "#/components/schemas/PaymentMethodRuleCompanyRulePreferences"
+        customer_group_rule: "#/components/schemas/PaymentMethodRuleCustomerGroupRulePreferences"
+        market_rule: "#/components/schemas/PaymentMethodRuleMarketRulePreferences"
+        order_total_rule: "#/components/schemas/PaymentMethodRuleOrderTotalRulePreferences"
     PriceRuleChannelRulePreferences:
       type: object
       properties:
@@ -84512,9 +85111,52 @@ components:
           additionalProperties: true
           description: Values for the provider's preference schema, from the payment
             method types endpoint.
+        rules:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              type:
+                type: string
+                description: A rule kind from the payment method rule types endpoint.
+              active:
+                type: boolean
+              preferences:
+                type: object
+                additionalProperties: true
+          description: 'Conditions that decide whether the method is offered at storefront
+            checkout. Replaces the full set: omitted rules are removed.'
       required:
       - type
       - name
+    PaymentMethodRuleCreateParams:
+      type: object
+      properties:
+        type:
+          type: string
+          description: A rule kind from the payment method rule types endpoint.
+          example: channel_rule
+        active:
+          type: boolean
+          description: Defaults to true on create.
+        preferences:
+          type: object
+          additionalProperties: true
+          description: Values for the rule kind's preference schema.
+      required:
+      - type
+    PaymentMethodRuleUpdateParams:
+      type: object
+      properties:
+        active:
+          type: boolean
+          description: Defaults to true on create.
+        preferences:
+          type: object
+          additionalProperties: true
+          description: Values for the rule kind's preference schema.
     PaymentMethodUpdateParams:
       type: object
       properties:
@@ -84548,6 +85190,23 @@ components:
           additionalProperties: true
           description: Values for the provider's preference schema, from the payment
             method types endpoint.
+        rules:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              type:
+                type: string
+                description: A rule kind from the payment method rule types endpoint.
+              active:
+                type: boolean
+              preferences:
+                type: object
+                additionalProperties: true
+          description: 'Conditions that decide whether the method is offered at storefront
+            checkout. Replaces the full set: omitted rules are removed.'
     PolicyCreateParams:
       type: object
       properties:
@@ -88793,6 +89452,13 @@ components:
       associations: {}
       scopes:
         search: text
+    PaymentMethodRule:
+      attributes:
+        created_at: datetime
+        id: id
+        updated_at: datetime
+      associations: {}
+      scopes: {}
     Policy:
       attributes:
         created_at: datetime
