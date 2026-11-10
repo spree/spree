@@ -7,6 +7,7 @@ import {
   addOptionToVariants,
   card,
   createProduct,
+  fillGridCell,
   inventoryCard,
   pricesCard,
   seedOptionType,
@@ -24,18 +25,6 @@ async function createStockLocation(page: Page, storeId: string, name: string): P
   await expect(page.getByRole('heading', { name: /add stock location/i })).toBeHidden({
     timeout: 15_000,
   })
-}
-
-/**
- * DataGrid `<MoneyCell>` and `<NumberCell>` render `<input readonly>` until
- * the cell is in edit mode — `dblclick` triggers `setEditing(coords)` which
- * focuses the input and clears `readOnly`. After that, `fill()` works as
- * usual. Blur commits.
- */
-async function fillGridCell(cell: Locator, value: string): Promise<void> {
-  await cell.dblclick()
-  await cell.fill(value)
-  await cell.blur()
 }
 
 /**

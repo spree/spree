@@ -2259,7 +2259,7 @@
           "label": "重量单位"
         },
         "show_products_without_price": {
-          "help": "列出在顾客币种下没有价格的商品。",
+          "help": "关闭时，没有顾客币种价格的商品将在店面中隐藏。",
           "label": "显示无价格的商品"
         },
         "stock_reservations_enabled": {
@@ -4023,6 +4023,8 @@
           "manage_cta": "管理",
           "manage_description": "选择哪些销售渠道展示此产品。关闭某个渠道即可在所有位置下架。",
           "manage_title": "管理销售渠道",
+          "missing_price_description": "顾客只能看到有其币种价格的商品。请在“价格”中添加价格并保存，或在设置 → 店铺中开启“显示无价格的商品”。",
+          "missing_price_title": "对使用 {{currencies}} 付款的顾客隐藏",
           "no_channels": "暂无可用的销售渠道。请在 设置 → 销售渠道 中创建。",
           "status_hidden": "已隐藏",
           "status_live": "已上线",

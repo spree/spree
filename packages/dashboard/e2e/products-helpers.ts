@@ -185,6 +185,18 @@ export const customFieldsCard = (page: Page) => card(page, /^Custom fields$/)
 export const inventoryCard = (page: Page) => card(page, /^Inventory$/)
 export const pricesCard = (page: Page) => card(page, /^Prices$/)
 export const publishingCard = (page: Page) => card(page, /^Publishing$/)
+
+/**
+ * DataGrid `<MoneyCell>` and `<NumberCell>` render `<input readonly>` until
+ * the cell is in edit mode — `dblclick` triggers `setEditing(coords)` which
+ * focuses the input and clears `readOnly`. After that, `fill()` works as
+ * usual. Blur commits.
+ */
+export async function fillGridCell(cell: Locator, value: string): Promise<void> {
+  await cell.dblclick()
+  await cell.fill(value)
+  await cell.blur()
+}
 export const categorizationCard = (page: Page) => card(page, /^Categorization$/)
 
 function productCategoriesCombobox(page: Page) {

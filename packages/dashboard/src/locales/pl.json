@@ -2282,7 +2282,7 @@
           "label": "Jednostka wagi"
         },
         "show_products_without_price": {
-          "help": "Wyświetlaj produkty, które nie mają ceny w walucie klienta.",
+          "help": "Gdy wyłączone, produkty bez ceny w walucie klienta są ukryte w sklepie.",
           "label": "Pokazuj produkty bez ceny"
         },
         "stock_reservations_enabled": {
@@ -4082,6 +4082,8 @@
           "manage_cta": "Zarządzaj",
           "manage_description": "Wybierz, na których kanałach sprzedaży ten produkt ma być wystawiony. Wyłącz kanał, aby wycofać go ze sprzedaży wszędzie.",
           "manage_title": "Zarządzaj kanałami sprzedaży",
+          "missing_price_description": "Klienci widzą tylko produkty z ceną w swojej walucie. Dodaj ją w sekcji Ceny i zapisz lub włącz Pokazuj produkty bez ceny w Ustawienia → Sklep.",
+          "missing_price_title": "Ukryty dla klientów płacących w {{currencies}}",
           "no_channels": "Brak dostępnych kanałów sprzedaży. Utwórz jeden w Ustawienia → Kanały sprzedaży.",
           "status_hidden": "Ukryty",
           "status_live": "Aktywny",

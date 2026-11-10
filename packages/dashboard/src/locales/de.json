@@ -2264,7 +2264,7 @@
           "label": "Gewichtseinheit"
         },
         "show_products_without_price": {
-          "help": "Produkte listen, die in der Währung des Kunden keinen Preis haben.",
+          "help": "Wenn deaktiviert, werden Produkte ohne Preis in der Währung des Kunden im Shop ausgeblendet.",
           "label": "Produkte ohne Preis anzeigen"
         },
         "stock_reservations_enabled": {
@@ -4034,6 +4034,8 @@
           "manage_cta": "Verwalten",
           "manage_description": "Wählen Sie aus, welche Verkaufskanäle dieses Produkt listen. Deaktivieren Sie einen Kanal, um es überall auszulisten.",
           "manage_title": "Verkaufskanäle verwalten",
+          "missing_price_description": "Kunden sehen nur Produkte mit einem Preis in ihrer Währung. Füge unter Preise einen hinzu und speichere, oder aktiviere Produkte ohne Preis anzeigen unter Einstellungen → Shop.",
+          "missing_price_title": "Ausgeblendet für Kunden, die in {{currencies}} bezahlen",
           "no_channels": "Keine Verkaufskanäle verfügbar. Erstellen Sie einen unter Einstellungen → Verkaufskanäle.",
           "status_hidden": "Ausgeblendet",
           "status_live": "Live",
