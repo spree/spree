@@ -5101,6 +5101,12 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   resource_type: product
+                  validations:
+                    required: false
+                    min:
+                    max:
+                    multiple: false
+                    choices: []
                 - id: cfdef_gbHJdmfrXB
                   namespace: custom
                   key: order_notes
@@ -5113,6 +5119,12 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   resource_type: order
+                  validations:
+                    required: false
+                    min:
+                    max:
+                    multiple: false
+                    choices: []
                 meta:
                   page: 1
                   limit: 25
@@ -5167,22 +5179,32 @@ paths:
           type: string
       responses:
         '201':
-          description: definition created
+          description: choice definition created with validation rules
           content:
             application/json:
               example:
                 id: cfdef_EfhxLZ9ck8
-                namespace: specs
-                key: origin
-                label: Country of Origin
-                field_type: short_text
-                storefront_visible: true
+                namespace: warehouse
+                key: zone
+                label: Warehouse zone
+                field_type: choice
+                storefront_visible: false
                 searchable: false
                 sortable: false
-                filter_key: cf_specs_origin
+                filter_key: cf_warehouse_zone
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 resource_type: product
+                validations:
+                  required: true
+                  min:
+                  max:
+                  multiple: false
+                  choices:
+                  - value: a
+                    label: Zone A
+                  - value: b
+                    label: Zone B
       requestBody:
         content:
           application/json:
@@ -5261,6 +5283,12 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 resource_type: product
+                validations:
+                  required: false
+                  min:
+                  max:
+                  multiple: false
+                  choices: []
     patch:
       summary: Update a custom field definition
       tags:
@@ -5322,6 +5350,27 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 resource_type: product
+                validations:
+                  required: false
+                  min:
+                  max:
+                  multiple: false
+                  choices: []
+        '422':
+          description: field type cannot change
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: Field type cannot be changed once the custom field definition
+                    is created — create a new definition instead
+                  details:
+                    field_type:
+                    - code: cannot_change
+                      message: cannot be changed once the custom field definition
+                        is created — create a new definition instead
+                      specific: false
       requestBody:
         content:
           application/json:
@@ -63488,6 +63537,17 @@ components:
       - created_at
       - updated_at
       x-typelizer: true
+    CustomFieldChoice:
+      type: object
+      properties:
+        value:
+          type: string
+        label:
+          type: string
+      required:
+      - value
+      - label
+      x-typelizer: true
     CustomFieldDefinition:
       type: object
       properties:
@@ -63508,6 +63568,9 @@ components:
           - number
           - boolean
           - json
+          - date
+          - date_time
+          - choice
         storefront_visible:
           type: boolean
         searchable:
@@ -63525,6 +63588,8 @@ components:
           description: Shorthand of the resource the field attaches to, for example
             product, variant, order, customer or category. Discover the full list
             from the resource_types endpoint; extensions may register more.
+        validations:
+          "$ref": "#/components/schemas/CustomFieldValidations"
       required:
       - id
       - namespace
@@ -63538,6 +63603,7 @@ components:
       - created_at
       - updated_at
       - resource_type
+      - validations
       x-typelizer: true
     CustomField:
       type: object
@@ -63555,6 +63621,9 @@ components:
           - number
           - boolean
           - json
+          - date
+          - date_time
+          - choice
         key:
           type: string
         value: {}
@@ -63576,6 +63645,38 @@ components:
       - updated_at
       - storefront_visible
       - custom_field_definition_id
+      x-typelizer: true
+    CustomFieldValidations:
+      type: object
+      properties:
+        required:
+          type: boolean
+        min:
+          anyOf:
+          - type: number
+          - type: string
+          nullable: true
+          description: Characters for text fields, a value for number fields, an ISO
+            8601 date or date-time for date fields.
+        max:
+          anyOf:
+          - type: number
+          - type: string
+          nullable: true
+          description: Characters for text fields, a value for number fields, an ISO
+            8601 date or date-time for date fields.
+        multiple:
+          type: boolean
+        choices:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomFieldChoice"
+      required:
+      - required
+      - min
+      - max
+      - multiple
+      - choices
       x-typelizer: true
     CustomerGroup:
       type: object
@@ -70835,6 +70936,9 @@ components:
           - number
           - boolean
           - json
+          - date
+          - date_time
+          - choice
         required:
           type: boolean
         sort_order:
@@ -81814,6 +81918,17 @@ components:
         metadata:
           type: object
           additionalProperties: true
+    CustomFieldChoiceParams:
+      type: object
+      properties:
+        value:
+          type: string
+          description: What is stored.
+        label:
+          type: string
+          description: What is shown; defaults to the value.
+      required:
+      - value
     CustomFieldCreateParams:
       type: object
       properties:
@@ -81840,26 +81955,38 @@ components:
         field_type:
           type: string
           description: Custom field type token (`short_text`, `long_text`, `rich_text`,
-            `number`, …). An extension type that has no token is named by its registered
-            class instead.
+            `number`, `boolean`, `json`, `date`, `date_time`, `choice`). An extension
+            type that has no token is named by its registered class instead. Fixed
+            once the definition is created.
           example: short_text
         resource_type:
           type: string
           description: Shorthand of the resource the field attaches to, from the resource
-            types endpoint.
+            types endpoint. Fixed once the definition is created.
           example: product
         storefront_visible:
           type: boolean
           description: When false, the definition is admin-only and never exposed
-            in the Store API.
+            in the Store API. Defaults to false on create; an update without it keeps
+            the stored value.
         searchable:
           type: boolean
           description: Include values in storefront product text search. Supported
-            for `short_text`, `long_text` and `number` fields; other types are refused.
+            for `short_text`, `long_text`, `number`, `date`, `date_time` and `choice`
+            fields; other types are refused.
         sortable:
           type: boolean
           description: Allow storefront product listings to sort by this field (`sort=cf_{namespace}_{key}`).
-            Supported for `short_text` and `number` fields; other types are refused.
+            Supported for `short_text`, `number`, `date`, `date_time` and single `choice`
+            fields; other types are refused.
+        validations:
+          allOf:
+          - "$ref": "#/components/schemas/CustomFieldValidationsParams"
+          description: Rules for the values. Each applies only to the field types
+            it names; values are checked when written, so existing values stay readable
+            after a rule changes. Replaces the stored rules; send null to remove every
+            rule.
+          nullable: true
       required:
       - key
       - field_type
@@ -81875,29 +82002,29 @@ components:
         label:
           type: string
           description: Human-readable name; defaults to the titleized `key`.
-        field_type:
-          type: string
-          description: Custom field type token (`short_text`, `long_text`, `rich_text`,
-            `number`, …). An extension type that has no token is named by its registered
-            class instead.
-          example: short_text
-        resource_type:
-          type: string
-          description: Shorthand of the resource the field attaches to, from the resource
-            types endpoint.
-          example: product
         storefront_visible:
           type: boolean
           description: When false, the definition is admin-only and never exposed
-            in the Store API.
+            in the Store API. Defaults to false on create; an update without it keeps
+            the stored value.
         searchable:
           type: boolean
           description: Include values in storefront product text search. Supported
-            for `short_text`, `long_text` and `number` fields; other types are refused.
+            for `short_text`, `long_text`, `number`, `date`, `date_time` and `choice`
+            fields; other types are refused.
         sortable:
           type: boolean
           description: Allow storefront product listings to sort by this field (`sort=cf_{namespace}_{key}`).
-            Supported for `short_text` and `number` fields; other types are refused.
+            Supported for `short_text`, `number`, `date`, `date_time` and single `choice`
+            fields; other types are refused.
+        validations:
+          allOf:
+          - "$ref": "#/components/schemas/CustomFieldValidationsParams"
+          description: Rules for the values. Each applies only to the field types
+            it names; values are checked when written, so existing values stay readable
+            after a rule changes. Replaces the stored rules; send null to remove every
+            rule.
+          nullable: true
     CustomFieldUpdateParams:
       type: object
       properties:
@@ -81906,6 +82033,29 @@ components:
             for text, number and boolean fields; a list or a hash for JSON fields.'
       required:
       - value
+    CustomFieldValidationsParams:
+      type: object
+      properties:
+        required:
+          type: boolean
+          description: The value cannot be blank. Marked and checked by the forms
+            that edit the value; the API accepts a blank value.
+        min:
+          description: 'Inclusive lower bound: a character count for `short_text`
+            and `long_text`, a number for `number`, an ISO 8601 date or date-time
+            for `date` and `date_time`.'
+        max:
+          description: Inclusive upper bound, in the same form as `min`.
+        choices:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomFieldChoiceParams"
+          description: 'For `choice` fields, required: the options in display order.
+            Values must be unique.'
+        multiple:
+          type: boolean
+          description: 'For `choice` fields: several values may be chosen, and the
+            value is a list.'
     CustomFieldValueParams:
       type: object
       properties:
