@@ -336,6 +336,14 @@ RSpec.describe Spree::Api::V3::Seller::ProductsController, type: :controller do
         expect(variant.option_values).to contain_exactly(small)
       end
 
+      it 'ignores a blank option pair like the model does' do
+        patch :update,
+              params: { id: mine.prefixed_id, variants: [{ sku: 'LAMP-B', options: [{ name: '', value: '' }] }] },
+              as: :json
+
+        expect(response).to have_http_status(:ok)
+      end
+
       it 'does not create an option type' do
         expect do
           patch :update,

@@ -285,12 +285,24 @@ module Spree
           # existing types and values; one that does not exist is a 404, like
           # any other picker value a seller cannot use.
           def existing_options(options)
-            options.map do |option|
-              option_type = Spree::OptionType.for_store(current_store).find_by!(name: option[:name].to_s.parameterize)
-              option_value = option_type.option_values.find_by!(name: option[:value].to_s.parameterize)
+            vocabulary = option_vocabulary
+
+            options.filter_map do |option|
+              # Blank pairs are skipped by the model; they are not a lookup.
+              next if option[:name].blank? || option[:value].blank?
+
+              option_type = vocabulary[option[:name].to_s.parameterize] || raise(ActiveRecord::RecordNotFound)
+              option_value = option_type.option_values.find { |value| value.name == option[:value].to_s.parameterize } ||
+                             raise(ActiveRecord::RecordNotFound)
 
               option.merge(name: option_type.name, value: option_value.name)
             end
+          end
+
+          # The store's option types with their values, loaded once per request
+          # and keyed by name.
+          def option_vocabulary
+            @option_vocabulary ||= Spree::OptionType.for_store(current_store).includes(:option_values).index_by(&:name)
           end
 
           # Stock belongs to the warehouse it sits in, and a seller has their

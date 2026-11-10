@@ -25,7 +25,7 @@ module Spree
           end
 
           def scope
-            Spree::OptionType.for_store(current_store).includes(:option_values)
+            Spree::OptionType.for_store(current_store).includes(:option_values).reorder(:position)
           end
         end
       end
