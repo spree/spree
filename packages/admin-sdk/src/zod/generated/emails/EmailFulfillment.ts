@@ -24,7 +24,7 @@ export const EmailFulfillmentSchema = z.object({
   fulfillment_type: z.string(),
   fulfilled_at: z.string().nullable(),
   delivered_at: z.string().nullable(),
-  items: z.array(z.object({ item_id: z.string(), variant_id: z.string(), quantity: z.number(), returnable_quantity: z.number().optional(), non_returnable_reason: z.string().nullable().optional(), units: z.array(z.object({ fulfillment_item_id: z.string(), quantity: z.number(), returnable_quantity: z.number(), non_returnable_reason: z.string().nullable() })).optional() })),
+  items: z.array(z.object({ item_id: z.string(), variant_id: z.string(), quantity: z.number() })),
   deliveries: z.array(EmailDeliverySchema),
   delivery_method: EmailDeliveryMethodSchema,
   stock_location: EmailStockLocationSchema,

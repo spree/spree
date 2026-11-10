@@ -34,6 +34,7 @@ RSpec.describe 'Return and exchange event payloads' do
     params = { store: store, currency: order.currency, expand: %w[order] }
 
     expect(Spree::Api::V3::Seller::ReturnSerializer.new(return_record, params: params).to_h).not_to have_key('order')
-    expect(Spree::Api::V3::Seller::ExchangeSerializer.new(create(:exchange, order: order, store: store), params: params).to_h).not_to have_key('order')
+    expect(Spree::Api::V3::Seller::ExchangeSerializer.new(create(:exchange, order: order, store: store),
+                                                          params: params).to_h).not_to have_key('order')
   end
 end

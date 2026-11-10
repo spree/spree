@@ -31,8 +31,8 @@ module Spree
         attribute :cartons_per_pallet, :integer, nullable: true, description: 'How many cartons stack on one pallet.'
         attribute :track_inventory, :boolean
         attribute :returnable, :boolean,
-          nullable: true,
-          description: 'Whether customers may send this variant back through self-service returns. Null follows the product.'
+                  nullable: true,
+                  description: 'Whether customers may send this variant back through self-service returns. Null follows the product.'
         attribute :preorderable, :boolean,
           description: "Sell this variant before it's in stock. Adds the pre-order label and ships-by promise; the cap comes from `backorder_limit`, an incoming stock count, or backorder."
         attribute :preorder_ships_at, :datetime,

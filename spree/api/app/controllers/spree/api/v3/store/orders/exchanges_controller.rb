@@ -21,7 +21,7 @@ module Spree
               body.attribute :items, :array, required: true do |item|
                 item.attribute :fulfillment_item_id, :id, required: true, description: 'The shipped unit coming back.'
                 item.attribute :new_variant_id, :id, required: true,
-                  description: 'A purchasable variant of the same product as the unit coming back.'
+                                                     description: 'A purchasable variant of the same product as the unit coming back.'
                 item.attribute :quantity, :integer, required: true
               end
               body.attribute :reason_id, :id, description: "One of the store's return reasons."

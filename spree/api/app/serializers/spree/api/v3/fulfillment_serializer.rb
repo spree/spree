@@ -49,8 +49,8 @@ module Spree
         # staff — so nothing else asks for it.
         typelize({ item_id: :string, variant_id: :string, quantity: :number, returnable_quantity?: :number,
                    non_returnable_reason?: [:string, { nullable: true }],
-                   units?: [{ fulfillment_item_id: :string, quantity: :number, returnable_quantity: :number,
-                              non_returnable_reason: [:string, { nullable: true }] }, { multi: true }] }, multi: true)
+                   units?: [[{ fulfillment_item_id: :string, quantity: :number, returnable_quantity: :number,
+                               non_returnable_reason: [:string, { nullable: true }] }], { multi: true }] }, multi: true)
         attribute :items do |fulfillment|
           fulfillment.manifest.filter_map do |item|
             next unless item.line_item

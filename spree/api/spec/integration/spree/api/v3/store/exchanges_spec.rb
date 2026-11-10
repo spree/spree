@@ -26,13 +26,13 @@ RSpec.describe 'Order Exchanges API', type: :request, swagger_doc: 'api-referenc
 
       response '200', 'exchanges listed' do
         let(:'x-spree-api-key') { api_key.token }
-        let(:'Authorization') { "Bearer #{jwt_token}" }
+        let(:Authorization) { "Bearer #{jwt_token}" }
         let(:order_id) { order.prefixed_id }
 
         schema SwaggerSchemaHelpers.paginated('Exchange')
 
         run_test! do |response|
-          expect(JSON.parse(response.body)['data'].map { |row| row['id'] }).to eq([exchange.prefixed_id])
+          expect(JSON.parse(response.body)['data'].pluck('id')).to eq([exchange.prefixed_id])
         end
       end
     end
@@ -42,7 +42,9 @@ RSpec.describe 'Order Exchanges API', type: :request, swagger_doc: 'api-referenc
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Swaps shipped units of one of the customer\'s orders for another purchasable variant of the same product — a different size or colour. Approving, receiving and sending the replacement are the merchant\'s. Accessible via JWT or the order token header for guests.'
+      description 'Swaps shipped units of one of the customer\'s orders for another purchasable variant of the same product — ' \
+                  'a different size or colour. Approving, receiving and sending the replacement are the merchant\'s. ' \
+                  'Accessible via JWT or the order token header for guests.'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: false,
@@ -52,7 +54,7 @@ RSpec.describe 'Order Exchanges API', type: :request, swagger_doc: 'api-referenc
       request_body_for
 
       let(:'x-spree-api-key') { api_key.token }
-      let(:'Authorization') { "Bearer #{jwt_token}" }
+      let(:Authorization) { "Bearer #{jwt_token}" }
       let(:exchangeable_order) { create(:shipped_order, store: store, customer: user) }
       let(:unit) { exchangeable_order.fulfillment_items.first }
       let(:order_id) { exchangeable_order.prefixed_id }
@@ -93,7 +95,8 @@ RSpec.describe 'Order Exchanges API', type: :request, swagger_doc: 'api-referenc
       tags 'Orders'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Withdraws an exchange the customer opened, while the merchant has not acted on it yet (`cancelable` on the exchange). Accessible via JWT or the order token header for guests.'
+      description 'Withdraws an exchange the customer opened, while the merchant has not acted on it yet (`cancelable` on the exchange). ' \
+                  'Accessible via JWT or the order token header for guests.'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: false,
@@ -103,7 +106,7 @@ RSpec.describe 'Order Exchanges API', type: :request, swagger_doc: 'api-referenc
 
       response '200', 'exchange withdrawn' do
         let(:'x-spree-api-key') { api_key.token }
-        let(:'Authorization') { "Bearer #{jwt_token}" }
+        let(:Authorization) { "Bearer #{jwt_token}" }
         let(:order_id) { order.prefixed_id }
         let(:id) { exchange.prefixed_id }
 

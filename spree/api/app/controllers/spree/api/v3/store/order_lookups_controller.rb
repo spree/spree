@@ -22,7 +22,7 @@ module Spree
           request_params 'CreateOrderLookupParams', action: :create do |body|
             body.attribute :number, :string, required: true, example: 'R123456789', description: 'The order number.'
             body.attribute :email, :string, required: true, format: :email, example: 'customer@example.com',
-              description: 'The email the order was placed with.'
+                                            description: 'The email the order was placed with.'
           end
 
           # POST /api/v3/store/order_lookups

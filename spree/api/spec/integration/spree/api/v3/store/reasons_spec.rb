@@ -6,7 +6,8 @@ RSpec.describe 'Reasons API', type: :request, swagger_doc: 'api-reference/store.
   include_context 'API v3 Store'
 
   { return_reasons: [:return_reason, 'ReturnReason', 'Why goods come back, offered when opening a return or an exchange.'],
-    claim_reasons: [:claim_reason, 'ClaimReason', 'What went wrong with a delivery, offered when filing a claim.'] }.each do |path_name, (factory, schema_name, summary)|
+    claim_reasons: [:claim_reason, 'ClaimReason',
+                    'What went wrong with a delivery, offered when filing a claim.'] }.each do |path_name, (factory, schema_name, summary)|
     path "/api/v3/store/#{path_name}" do
       get "List #{path_name.to_s.tr('_', ' ')}" do
         tags 'Orders'
@@ -25,7 +26,7 @@ RSpec.describe 'Reasons API', type: :request, swagger_doc: 'api-reference/store.
           schema SwaggerSchemaHelpers.paginated(schema_name)
 
           run_test! do |response|
-            names = JSON.parse(response.body)['data'].map { |row| row['name'] }
+            names = JSON.parse(response.body)['data'].pluck('name')
             expect(names).to include('Wrong size')
             expect(names).not_to include('Retired reason', 'Another store')
           end

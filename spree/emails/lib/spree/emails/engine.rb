@@ -46,7 +46,7 @@ module Spree
 
       # Add email event subscribers
       config.after_initialize do
-        Spree.subscribers.concat [
+        Spree.subscribers.push(
           Spree::OrderEmailSubscriber,
           Spree::OrderGroupEmailSubscriber,
           Spree::FulfillmentEmailSubscriber,
@@ -59,7 +59,7 @@ module Spree
           Spree::CompanyEmailSubscriber,
           Spree::DigitalAssetEmailSubscriber,
           Spree::SellerEmailSubscriber
-        ]
+        )
       end
     end
   end

@@ -896,7 +896,7 @@ describe Spree::LineItem, type: :model do
     let(:product) { create(:product, store: store) }
     let(:cart) { create(:cart, store: store) }
 
-    it "follows the variant while the line is in a cart" do
+    it 'follows the variant while the line is in a cart' do
       line_item = create(:line_item, cart: cart, variant: product.default_variant, quantity: 1)
       expect(line_item.returnable).to be(true)
 

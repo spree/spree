@@ -82,7 +82,8 @@ RSpec.describe 'Order Returns API', type: :request, swagger_doc: 'api-reference/
       tags 'Orders'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Withdraws a return the customer opened, while the merchant has not acted on it yet (`cancelable` on the return). Accessible via JWT or the order token header for guests.'
+      description 'Withdraws a return the customer opened, while the merchant has not acted on it yet (`cancelable` on the return). ' \
+                  'Accessible via JWT or the order token header for guests.'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: false,
@@ -91,7 +92,7 @@ RSpec.describe 'Order Returns API', type: :request, swagger_doc: 'api-reference/
                 description: 'Order token for guest access'
 
       let(:'x-spree-api-key') { api_key.token }
-      let(:'Authorization') { "Bearer #{jwt_token}" }
+      let(:Authorization) { "Bearer #{jwt_token}" }
       let(:order_id) { order.prefixed_id }
 
       response '200', 'return withdrawn' do

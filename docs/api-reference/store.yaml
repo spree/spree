@@ -1108,6 +1108,7 @@ paths:
                   purchasable: true
                   preorder: false
                   in_stock: false
+                  returnable: true
                   backorderable: true
                   available: true
                   description: Accusantium ex dicta error nemo ipsa vel eaque porro.
@@ -1390,8 +1391,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 4319085
-                  slug: product-4319085
+                  name: Product 4409085
+                  slug: product-4409085
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1401,6 +1402,7 @@ paths:
                   purchasable: true
                   preorder: false
                   in_stock: false
+                  returnable: true
                   backorderable: true
                   available: true
                   description: A comfortable cotton t-shirt.
@@ -1422,8 +1424,8 @@ paths:
                   original_price:
                   seller_id:
                 - id: prod_gbHJdmfrXB
-                  name: Product 4328209
-                  slug: product-4328209
+                  name: Product 4418209
+                  slug: product-4418209
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1433,6 +1435,7 @@ paths:
                   purchasable: true
                   preorder: false
                   in_stock: false
+                  returnable: true
                   backorderable: true
                   available: true
                   description: Quasi nostrum error iste autem recusandae consequuntur
@@ -1552,8 +1555,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 4596885
-                slug: product-4596885
+                name: Product 4686885
+                slug: product-4686885
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -1563,6 +1566,7 @@ paths:
                 purchasable: true
                 preorder: false
                 in_stock: false
+                returnable: true
                 backorderable: true
                 available: true
                 description: A comfortable cotton t-shirt.
@@ -2508,6 +2512,7 @@ paths:
                     name: Product 354715
                     slug: product-354715
                     options_text: ''
+                    returnable: true
                     price: '10.00'
                     display_price: "$10.00"
                     total: '10.00'
@@ -2629,6 +2634,7 @@ paths:
                     name: Product 3552171
                     slug: product-3552171
                     options_text: ''
+                    returnable: true
                     price: '10.00'
                     display_price: "$10.00"
                     total: '10.00'
@@ -3161,6 +3167,7 @@ paths:
                   name: Product 3603263
                   slug: product-3603263
                   options_text: ''
+                  returnable: true
                   price: '10.00'
                   display_price: "$10.00"
                   total: '10.00'
@@ -3385,6 +3392,7 @@ paths:
                   name: Product 3628992
                   slug: product-3628992
                   options_text: ''
+                  returnable: true
                   price: '10.00'
                   display_price: "$10.00"
                   total: '10.00'
@@ -3634,6 +3642,7 @@ paths:
                   name: Product 3654794
                   slug: product-3654794
                   options_text: ''
+                  returnable: true
                   price: '10.00'
                   display_price: "$10.00"
                   total: '10.00'
@@ -3955,6 +3964,7 @@ paths:
                   name: Product 3982614
                   slug: product-3982614
                   options_text: ''
+                  returnable: true
                   price: '10.00'
                   display_price: "$10.00"
                   total: '10.00'
@@ -4150,6 +4160,7 @@ paths:
                   name: Product 3993461
                   slug: product-3993461
                   options_text: ''
+                  returnable: true
                   price: '10.00'
                   display_price: "$10.00"
                   total: '10.00'
@@ -4336,9 +4347,10 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 4018182
-                  slug: product-4018182
+                  name: Product 4088182
+                  slug: product-4088182
                   options_text: ''
+                  returnable: true
                   price: '10.00'
                   display_price: "$10.00"
                   total: '10.00'
@@ -4391,8 +4403,8 @@ paths:
                   deliveries: []
                   delivery_method:
                     id: dm_UkLWZg9DAJ
-                    name: UPS Ground 206
-                    code: UPS_GROUND_225
+                    name: UPS Ground 212
+                    code: UPS_GROUND_231
                     estimated_transit_business_days_min:
                     estimated_transit_business_days_max:
                     digital: false
@@ -4415,7 +4427,7 @@ paths:
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
                     delivery_method_id: dm_UkLWZg9DAJ
-                    name: UPS Ground 206
+                    name: UPS Ground 212
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -4434,8 +4446,8 @@ paths:
                     display_tax_total: "$0.00"
                     delivery_method:
                       id: dm_UkLWZg9DAJ
-                      name: UPS Ground 206
-                      code: UPS_GROUND_225
+                      name: UPS Ground 212
+                      code: UPS_GROUND_231
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -4448,7 +4460,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 531 Lovely Street
+                  address1: 551 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -4657,9 +4669,10 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 4035702
-                  slug: product-4035702
+                  name: Product 4105702
+                  slug: product-4105702
                   options_text: ''
+                  returnable: true
                   price: '10.00'
                   display_price: "$10.00"
                   total: '10.00'
@@ -4901,9 +4914,10 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 4079569
-                  slug: product-4079569
+                  name: Product 4149569
+                  slug: product-4149569
                   options_text: ''
+                  returnable: true
                   price: '10.00'
                   display_price: "$10.00"
                   total: '10.00'
@@ -5031,10 +5045,10 @@ paths:
                 total_quantity: 2
                 warnings:
                 - code: delivery_unavailable
-                  message: Product 41063 cannot be delivered to the selected address
+                  message: Product 41763 cannot be delivered to the selected address
                   line_item_id: li_UkLWZg9DAJ
                 - code: delivery_unavailable
-                  message: Product 411298 cannot be delivered to the selected address
+                  message: Product 418298 cannot be delivered to the selected address
                   line_item_id: li_gbHJdmfrXB
                 coupon_code:
                 item_total: '29.99'
@@ -5093,9 +5107,10 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 41063
-                  slug: product-41063
+                  name: Product 41763
+                  slug: product-41763
                   options_text: ''
+                  returnable: true
                   price: '10.00'
                   display_price: "$10.00"
                   total: '10.00'
@@ -5124,9 +5139,10 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 411298
-                  slug: product-411298
+                  name: Product 418298
+                  slug: product-418298
                   options_text: ''
+                  returnable: true
                   price: '19.99'
                   display_price: "$19.99"
                   total: '19.99'
@@ -5340,9 +5356,10 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 4179165
-                  slug: product-4179165
+                  name: Product 4249165
+                  slug: product-4249165
                   options_text: ''
+                  returnable: true
                   price: '10.00'
                   display_price: "$10.00"
                   total: '10.00'
@@ -5620,7 +5637,7 @@ paths:
                 cart_id: cart_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Credit Card 235
+                  name: Credit Card 251
                   description:
                   type: bogus
                   session_required: true
@@ -5707,7 +5724,7 @@ paths:
                 cart_id: cart_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Credit Card 236
+                  name: Credit Card 252
                   description:
                   type: bogus
                   session_required: true
@@ -5775,7 +5792,7 @@ paths:
                 cart_id: cart_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Credit Card 238
+                  name: Credit Card 254
                   description:
                   type: bogus
                   session_required: true
@@ -5876,7 +5893,7 @@ paths:
                 cart_id: cart_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Credit Card 239
+                  name: Credit Card 255
                   description:
                   type: bogus
                   session_required: true
@@ -6148,9 +6165,10 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 4829789
-                  slug: product-4829789
+                  name: Product 4939789
+                  slug: product-4939789
                   options_text: ''
+                  returnable: true
                   price: '10.00'
                   display_price: "$10.00"
                   total: '10.00'
@@ -6333,9 +6351,10 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 484179
-                  slug: product-484179
+                  name: Product 495179
+                  slug: product-495179
                   options_text: ''
+                  returnable: true
                   price: '10.00'
                   display_price: "$10.00"
                   total: '10.00'
@@ -6546,6 +6565,291 @@ paths:
             schema:
               "$ref": "#/components/schemas/CreateClaimParams"
         required: true
+  "/api/v3/store/orders/{order_id}/exchanges":
+    parameters:
+    - name: order_id
+      in: path
+      required: true
+      description: Order prefixed ID
+      schema:
+        type: string
+    get:
+      summary: List exchanges
+      tags:
+      - Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: The exchanges opened on one of the customer's orders, newest first.
+        Accessible via JWT or the order token header for guests.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: false
+        description: Bearer token for authenticated customers
+        schema:
+          type: string
+      - name: x-spree-token
+        in: header
+        required: false
+        description: Order token for guest access
+        schema:
+          type: string
+      - name: q[search]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Matches any of number (partial, case-insensitive).
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[number_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/store-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `number` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `status` | One of `requested`, `approved`, `received`, `fulfilled`, `canceled` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `number`, `status`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: Exchange
+        sortable:
+        - created_at
+        - id
+        - number
+        - status
+        - updated_at
+      responses:
+        '200':
+          description: exchanges listed
+          content:
+            application/json:
+              example:
+                data:
+                - id: exch_UkLWZg9DAJ
+                  number: EX1001
+                  status: requested
+                  cancelable: true
+                  order_id: or_UkLWZg9DAJ
+                  reason_id:
+                  price_difference: '9.99'
+                  display_price_difference: "$9.99"
+                  approved_at:
+                  received_at:
+                  fulfilled_at:
+                  canceled_at:
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Exchange"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
+    post:
+      summary: Open an exchange
+      tags:
+      - Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Swaps shipped units of one of the customer's orders for another
+        purchasable variant of the same product — a different size or colour. Approving,
+        receiving and sending the replacement are the merchant's. Accessible via JWT
+        or the order token header for guests.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: false
+        description: Bearer token for authenticated customers
+        schema:
+          type: string
+      - name: x-spree-token
+        in: header
+        required: false
+        description: Order token for guest access
+        schema:
+          type: string
+      responses:
+        '201':
+          description: exchange opened
+          content:
+            application/json:
+              example:
+                id: exch_gbHJdmfrXB
+                number: EX1002
+                status: requested
+                cancelable: true
+                order_id: or_gbHJdmfrXB
+                reason_id:
+                price_difference: '9.99'
+                display_price_difference: "$9.99"
+                approved_at:
+                received_at:
+                fulfilled_at:
+                canceled_at:
+              schema:
+                "$ref": "#/components/schemas/Exchange"
+        '422':
+          description: the replacement is not a variant of the same product
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: An exchange can only swap an item for another available
+                    variant of the same product
+                  details:
+                    base:
+                    - An exchange can only swap an item for another available variant
+                      of the same product
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/CreateExchangeParams"
+        required: true
+  "/api/v3/store/orders/{order_id}/exchanges/{id}/cancel":
+    parameters:
+    - name: order_id
+      in: path
+      required: true
+      description: Order prefixed ID
+      schema:
+        type: string
+    - name: id
+      in: path
+      required: true
+      description: Exchange prefixed ID
+      schema:
+        type: string
+    patch:
+      summary: Withdraw an exchange request
+      tags:
+      - Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Withdraws an exchange the customer opened, while the merchant has
+        not acted on it yet (`cancelable` on the exchange). Accessible via JWT or
+        the order token header for guests.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: false
+        description: Bearer token for authenticated customers
+        schema:
+          type: string
+      - name: x-spree-token
+        in: header
+        required: false
+        description: Order token for guest access
+        schema:
+          type: string
+      responses:
+        '200':
+          description: exchange withdrawn
+          content:
+            application/json:
+              example:
+                id: exch_UkLWZg9DAJ
+                number: EX1001
+                status: canceled
+                cancelable: false
+                order_id: or_UkLWZg9DAJ
+                reason_id:
+                price_difference: '9.99'
+                display_price_difference: "$9.99"
+                approved_at:
+                received_at:
+                fulfilled_at:
+                canceled_at: '2026-01-15T12:00:00Z'
+              schema:
+                "$ref": "#/components/schemas/Exchange"
+  "/api/v3/store/order_lookups":
+    post:
+      summary: Find an order
+      tags:
+      - Orders
+      security:
+      - api_key: []
+      description: '"Find my order" for a guest who lost the confirmation email. When
+        the order number and email match an order, a link to it is emailed to that
+        address. The answer is always 202, match or not, so it never reveals which
+        address placed an order.'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '202':
+          description: lookup accepted for a miss, without saying so
+          content:
+            application/json:
+              example:
+                message: If we found an order for these details, we have emailed a
+                  link to it.
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                - message
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/CreateOrderLookupParams"
+        required: true
   "/api/v3/store/orders/{id}":
     get:
       summary: Get an order
@@ -6633,6 +6937,11 @@ paths:
                 market_id: mkt_UkLWZg9DAJ
                 withdrawal_period_ends_at:
                 within_withdrawal_period: true
+                returns_eligibility:
+                  eligible: true
+                  errors: []
+                  return_window_ends_at: '2026-02-14T12:00:00Z'
+                  withdrawal_period_ends_at:
                 shipping_eq_billing_address: false
                 cart_id:
                 channel_id: ch_UkLWZg9DAJ
@@ -6694,9 +7003,10 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 421496
-                  slug: product-421496
+                  name: Product 430496
+                  slug: product-430496
                   options_text: ''
+                  returnable: true
                   price: '10.00'
                   display_price: "$10.00"
                   total: '10.00'
@@ -6746,6 +7056,13 @@ paths:
                   - item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
                     quantity: 1
+                    returnable_quantity: 0
+                    non_returnable_reason: not_shipped
+                    units:
+                    - fulfillment_item_id: fi_UkLWZg9DAJ
+                      quantity: 1
+                      returnable_quantity: 0
+                      non_returnable_reason: not_shipped
                   deliveries:
                   - id: dlv_UkLWZg9DAJ
                     tracking_number: U10000
@@ -6758,8 +7075,8 @@ paths:
                     delivered_at:
                   delivery_method:
                     id: dm_UkLWZg9DAJ
-                    name: UPS Ground 220
-                    code: UPS_GROUND_239
+                    name: UPS Ground 228
+                    code: UPS_GROUND_247
                     estimated_transit_business_days_min:
                     estimated_transit_business_days_max:
                     digital: false
@@ -6782,7 +7099,7 @@ paths:
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
                     delivery_method_id: dm_UkLWZg9DAJ
-                    name: UPS Ground 220
+                    name: UPS Ground 228
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -6801,8 +7118,8 @@ paths:
                     display_tax_total: "$0.00"
                     delivery_method:
                       id: dm_UkLWZg9DAJ
-                      name: UPS Ground 220
-                      code: UPS_GROUND_239
+                      name: UPS Ground 228
+                      code: UPS_GROUND_247
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -6814,7 +7131,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 587 Lovely Street
+                  address1: 611 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -6837,7 +7154,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 588 Lovely Street
+                  address1: 612 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -6880,6 +7197,100 @@ paths:
                   message: Order not found
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/store/return_reasons":
+    get:
+      summary: List return reasons
+      tags:
+      - Orders
+      security:
+      - api_key: []
+      description: Why goods come back, offered when opening a return or an exchange.
+        Active reasons only, by name; the merchant owns the list.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: reasons listed
+          content:
+            application/json:
+              example:
+                data:
+                - id: rar_UkLWZg9DAJ
+                  name: Wrong size
+                  active: true
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/ReturnReason"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
+  "/api/v3/store/claim_reasons":
+    get:
+      summary: List claim reasons
+      tags:
+      - Orders
+      security:
+      - api_key: []
+      description: What went wrong with a delivery, offered when filing a claim. Active
+        reasons only, by name; the merchant owns the list.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: reasons listed
+          content:
+            application/json:
+              example:
+                data:
+                - id: clr_UkLWZg9DAJ
+                  name: Wrong size
+                  active: true
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/ClaimReason"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
   "/api/v3/store/orders/{order_id}/returns":
     parameters:
     - name: order_id
@@ -6964,6 +7375,10 @@ paths:
                 - id: ret_UkLWZg9DAJ
                   number: RET1001
                   status: requested
+                  cancelable: true
+                  label_available: false
+                  tracking:
+                  tracking_url:
                   order_id: or_UkLWZg9DAJ
                   reason_id:
                   refund_total: '10.00'
@@ -7033,6 +7448,10 @@ paths:
                 id: ret_gbHJdmfrXB
                 number: RET1002
                 status: requested
+                cancelable: true
+                label_available: false
+                tracking:
+                tracking_url:
                 order_id: or_gbHJdmfrXB
                 reason_id: rar_UkLWZg9DAJ
                 refund_total: '10.00'
@@ -7051,6 +7470,88 @@ paths:
             schema:
               "$ref": "#/components/schemas/CreateReturnParams"
         required: true
+  "/api/v3/store/orders/{order_id}/returns/{id}/cancel":
+    parameters:
+    - name: order_id
+      in: path
+      required: true
+      description: Order prefixed ID
+      schema:
+        type: string
+    - name: id
+      in: path
+      required: true
+      description: Return prefixed ID
+      schema:
+        type: string
+    patch:
+      summary: Withdraw a return request
+      tags:
+      - Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Withdraws a return the customer opened, while the merchant has
+        not acted on it yet (`cancelable` on the return). Accessible via JWT or the
+        order token header for guests.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: false
+        description: Bearer token for authenticated customers
+        schema:
+          type: string
+      - name: x-spree-token
+        in: header
+        required: false
+        description: Order token for guest access
+        schema:
+          type: string
+      responses:
+        '200':
+          description: return withdrawn
+          content:
+            application/json:
+              example:
+                id: ret_UkLWZg9DAJ
+                number: RET1001
+                status: canceled
+                cancelable: false
+                label_available: false
+                tracking:
+                tracking_url:
+                order_id: or_UkLWZg9DAJ
+                reason_id:
+                refund_total: '10.00'
+                display_refund_total: "$10.00"
+                refund_tax_total: '0.00'
+                display_refund_tax_total: "$0.00"
+                approved_at:
+                received_at:
+                refunded_at:
+                canceled_at: '2026-01-15T12:00:00Z'
+              schema:
+                "$ref": "#/components/schemas/Return"
+        '422':
+          description: the merchant has already acted on it
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: This request can no longer be withdrawn, because the store
+                    has already acted on it
+                  details:
+                    base:
+                    - This request can no longer be withdrawn, because the store has
+                      already acted on it
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/store/customers/me/addresses":
     get:
       summary: List customer addresses
@@ -8077,6 +8578,7 @@ paths:
                     name: Product 3855270
                     slug: product-3855270
                     options_text: ''
+                    returnable: true
                     price: '10.00'
                     display_price: "$10.00"
                     total: '10.00'
@@ -8406,6 +8908,7 @@ paths:
                   name: Product 3875633
                   slug: product-3875633
                   options_text: ''
+                  returnable: true
                   price: '10.00'
                   display_price: "$10.00"
                   total: '10.00'
@@ -9690,7 +10193,7 @@ paths:
                 customer_id: cust_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Credit Card 241
+                  name: Credit Card 257
                   description:
                   type: bogus
                   session_required: true
@@ -9782,7 +10285,7 @@ paths:
                 customer_id: cust_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Credit Card 244
+                  name: Credit Card 260
                   description:
                   type: bogus
                   session_required: true
@@ -9863,7 +10366,7 @@ paths:
                 customer_id: cust_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ
-                  name: Credit Card 246
+                  name: Credit Card 262
                   description:
                   type: bogus
                   session_required: true
@@ -11298,7 +11801,7 @@ paths:
                 variant:
                   id: variant_gbHJdmfrXB
                   product_id: prod_gbHJdmfrXB
-                  sku: SKU-594
+                  sku: SKU-611
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -11308,6 +11811,7 @@ paths:
                   in_stock: false
                   backorderable: true
                   preorder: false
+                  returnable: true
                   weight: 0.0
                   height:
                   width:
@@ -11384,7 +11888,7 @@ paths:
                 variant:
                   id: variant_UkLWZg9DAJ
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-595
+                  sku: SKU-612
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -11394,6 +11898,7 @@ paths:
                   in_stock: false
                   backorderable: true
                   preorder: false
+                  returnable: true
                   weight: 0.0
                   height:
                   width:
@@ -12917,6 +13422,7 @@ paths:
                     name: Product 3845649
                     slug: product-3845649
                     options_text: ''
+                    returnable: true
                     price: '10.00'
                     display_price: "$10.00"
                     total: '10.00'
@@ -16947,6 +17453,8 @@ components:
           - type: string
           description: The values listed are the built-in ones; extensions may add
             more.
+        cancelable:
+          type: boolean
         order_id:
           type: string
           nullable: true
@@ -16976,6 +17484,8 @@ components:
           nullable: true
         reason:
           "$ref": "#/components/schemas/ReturnReason"
+        order:
+          "$ref": "#/components/schemas/Order"
         exchange_line_items:
           type: array
           items:
@@ -16984,6 +17494,7 @@ components:
       - id
       - number
       - status
+      - cancelable
       - order_id
       - reason_id
       - price_difference
@@ -18131,6 +18642,8 @@ components:
           type: string
         options_text:
           type: string
+        returnable:
+          type: boolean
         price:
           type: string
           nullable: true
@@ -18255,6 +18768,7 @@ components:
       - name
       - slug
       - options_text
+      - returnable
       - price
       - display_price
       - total
@@ -20003,6 +20517,27 @@ components:
       - shipping_address
       - orders
       x-typelizer: true
+    OrderLookupRequestedEvent:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        number:
+          type: string
+        order_token:
+          type: string
+        store_id:
+          type: string
+          nullable: true
+      required:
+      - id
+      - email
+      - number
+      - order_token
+      - store_id
+      x-typelizer: true
     Order:
       type: object
       properties:
@@ -20016,6 +20551,8 @@ components:
           nullable: true
         within_withdrawal_period:
           type: boolean
+        returns_eligibility:
+          type: object
         shipping_eq_billing_address:
           type: boolean
         cart_id:
@@ -21577,6 +22114,38 @@ components:
       - display_compare_at_amount
       - price_list_id
       x-typelizer: true
+    ProductCategory:
+      type: object
+      properties:
+        id:
+          type: string
+        product_id:
+          type: string
+          nullable: true
+        category_id:
+          type: string
+          nullable: true
+      required:
+      - id
+      - product_id
+      - category_id
+      x-typelizer: true
+    ProductCollection:
+      type: object
+      properties:
+        id:
+          type: string
+        product_id:
+          type: string
+          nullable: true
+        collection_id:
+          type: string
+          nullable: true
+      required:
+      - id
+      - product_id
+      - collection_id
+      x-typelizer: true
     ProductFilterAvailabilityOption:
       type: object
       properties:
@@ -21994,6 +22563,8 @@ components:
           type: boolean
         in_stock:
           type: boolean
+        returnable:
+          type: boolean
         backorderable:
           type: boolean
         available:
@@ -22072,6 +22643,7 @@ components:
       - purchasable
       - preorder
       - in_stock
+      - returnable
       - backorderable
       - available
       - description
@@ -22330,6 +22902,16 @@ components:
           - type: string
           description: The values listed are the built-in ones; extensions may add
             more.
+        cancelable:
+          type: boolean
+        label_available:
+          type: boolean
+        tracking:
+          type: string
+          nullable: true
+        tracking_url:
+          type: string
+          nullable: true
         order_id:
           type: string
           nullable: true
@@ -22368,6 +22950,8 @@ components:
           nullable: true
         reason:
           "$ref": "#/components/schemas/ReturnReason"
+        order:
+          "$ref": "#/components/schemas/Order"
         return_line_items:
           type: array
           items:
@@ -22380,6 +22964,10 @@ components:
       - id
       - number
       - status
+      - cancelable
+      - label_available
+      - tracking
+      - tracking_url
       - order_id
       - reason_id
       - refund_total
@@ -23350,6 +23938,8 @@ components:
           type: boolean
         preorder:
           type: boolean
+        returnable:
+          type: boolean
         weight:
           type: number
           nullable: true
@@ -23430,6 +24020,7 @@ components:
       - in_stock
       - backorderable
       - preorder
+      - returnable
       - weight
       - height
       - width
@@ -24574,6 +25165,34 @@ components:
           description: The storefront page the confirmation link opens, with the token
             appended. Ignored unless it matches one of the store's allowed origins.
           example: https://myshop.com/account/data-requests/confirm
+    CreateExchangeParams:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              fulfillment_item_id:
+                type: string
+                description: The shipped unit coming back.
+              new_variant_id:
+                type: string
+                description: A purchasable variant of the same product as the unit
+                  coming back.
+              quantity:
+                type: integer
+            required:
+            - fulfillment_item_id
+            - new_variant_id
+            - quantity
+        reason_id:
+          type: string
+          description: One of the store's return reasons.
+        memo:
+          type: string
+      required:
+      - items
     CreateNewsletterSubscriberParams:
       type: object
       properties:
@@ -24589,6 +25208,21 @@ components:
             origins.
           example: https://your-store.com/newsletter/confirm
       required:
+      - email
+    CreateOrderLookupParams:
+      type: object
+      properties:
+        number:
+          type: string
+          description: The order number.
+          example: R123456789
+        email:
+          type: string
+          format: email
+          description: The email the order was placed with.
+          example: customer@example.com
+      required:
+      - number
       - email
     CreatePaymentParams:
       type: object
@@ -25138,6 +25772,22 @@ components:
         updated_at: datetime
       associations: {}
       scopes: {}
+    Exchange:
+      attributes:
+        created_at: datetime
+        id: id
+        number: text
+        status:
+          enum:
+          - requested
+          - approved
+          - received
+          - fulfilled
+          - canceled
+        updated_at: datetime
+      associations: {}
+      scopes:
+        search: text
     GiftCard:
       attributes:
         code: text

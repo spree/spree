@@ -165,15 +165,19 @@ module Spree
                 item_id: { type: :string, description: 'Line item ID', example: 'li_abc123' },
                 variant_id: { type: :string, description: 'Variant ID', example: 'variant_abc123' },
                 quantity: { type: :integer, description: 'Quantity in this fulfillment', example: 2 },
-                returnable_quantity: { type: :integer, description: 'Units the customer can still return or exchange. Store order page only', example: 1 },
-                non_returnable_reason: { type: :string, nullable: true, description: 'Why nothing can come back, when returnable_quantity is 0. Store order page only', example: 'not_returnable' },
+                returnable_quantity: { type: :integer,
+                                       description: 'Units the customer can still return or exchange. Store order page only', example: 1 },
+                non_returnable_reason: { type: :string, nullable: true,
+                                         description: 'Why nothing can come back, when returnable_quantity is 0. Store order page only',
+                                         example: 'not_returnable' },
                 units: {
                   type: :array,
                   description: 'The shipped units a return or exchange is opened against. Store order page only',
                   items: {
                     type: :object,
                     properties: {
-                      fulfillment_item_id: { type: :string, description: 'Fulfillment item ID to open a return or exchange with', example: 'fi_abc123' },
+                      fulfillment_item_id: { type: :string,
+                                             description: 'Fulfillment item ID to open a return or exchange with', example: 'fi_abc123' },
                       quantity: { type: :integer, example: 1 },
                       returnable_quantity: { type: :integer, example: 1 },
                       non_returnable_reason: { type: :string, nullable: true, example: nil }

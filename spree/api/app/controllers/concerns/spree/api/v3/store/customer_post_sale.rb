@@ -54,7 +54,6 @@ module Spree
 
             current_store.public_send(association).active.find_by_prefix_id!(create_params[:reason_id])
           end
-
         end
       end
     end
