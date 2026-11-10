@@ -6,6 +6,7 @@
 // writes it next to the request, filter and response types.
 
 import type { ExtensionApi } from './extensions'
+import { type ParamsSchema, schemaType } from './params-types'
 
 const SDKS: Record<ExtensionApi, string> = {
   store: '@spree/sdk',
@@ -22,11 +23,15 @@ interface Schema {
 
 interface Operation {
   operationId?: string
+  /** The SDK method's name, apart from `operationId`, which also names the agent tool. */
+  'x-spree-sdk-method'?: string
+  /** The namespace the method goes in, instead of the path's resource. */
+  'x-spree-sdk-namespace'?: string
   summary?: string
   description?: string
   parameters?: { name: string; in: string }[]
   requestBody?: { required?: boolean; content?: Record<string, { schema?: Schema }> }
-  responses?: Record<string, { content?: Record<string, { schema?: Schema }> }>
+  responses?: Record<string, { content?: Record<string, { schema?: ParamsSchema }> }>
   'x-spree-filters'?: { table: string }
 }
 
@@ -55,12 +60,21 @@ interface Method {
   body?: { type: string; required: boolean }
   filters?: string
   response: string
+  /** A response declared inline: its type, written above the extensions. */
+  responseType?: { name: string; source: string; references: string[] }
   doc: string[]
 }
 
 const camel = (value: string) => value.replace(/[_-](\w)/g, (_, c: string) => c.toUpperCase())
 const pascal = (value: string) => camel(value).replace(/^\w/, (c) => c.toUpperCase())
 const refName = (schema?: Schema) => schema?.$ref?.split('/').pop()
+const IDENTIFIER = /^[A-Za-z_$][\w$]*$/
+// Words `export const <name>` cannot take.
+const RESERVED = new Set(
+  'arguments await break case catch class const continue debugger default delete do else enum eval export extends false finally for function if implements import in instanceof interface let new null package private protected public return static super switch this throw true try typeof var void while with yield'.split(
+    ' ',
+  ),
+)
 
 function singular(word: string): string {
   if (word.endsWith('ies')) return `${word.slice(0, -3)}y`
@@ -82,6 +96,7 @@ export function renderExtensionSource(
   const prefix = `/api/v3/${api}/`
   const filters = Boolean(spec.components?.['x-spree-filter-tables'])
   const resources = new Map<string, Method[]>()
+  const inlineNames = new Map<string, string>()
 
   for (const [path, item] of Object.entries(spec.paths ?? {})) {
     if (!path.startsWith(prefix)) continue
@@ -90,8 +105,15 @@ export function renderExtensionSource(
     for (const verb of VERBS) {
       const operation = item[verb]
       if (!operation) continue
+      // Camel-cased as read, so `quote_notes` and `quoteNotes` are one namespace.
+      const namespace = camel(operation['x-spree-sdk-namespace'] ?? resource)
+      if (!IDENTIFIER.test(namespace) || RESERVED.has(namespace)) {
+        throw new Error(
+          `${verb.toUpperCase()} ${path} would be the namespace ${namespace}, which is not an identifier; name one with x-spree-sdk-namespace (\`sdk_method namespace:\` in its rswag spec)`,
+        )
+      }
       const method = methodFor(
-        resource,
+        { resource, namespace },
         segments.slice(1),
         verb,
         operation,
@@ -99,15 +121,25 @@ export function renderExtensionSource(
         options.types,
         filters,
       )
-      const methods = resources.get(resource) ?? []
+      const methods = resources.get(namespace) ?? []
       const taken = methods.find(({ name }) => name === method.name)
       if (taken) {
         throw new Error(
-          `${verb.toUpperCase()} ${method.path} and ${taken.verb.toUpperCase()} ${taken.path} would both be ${camel(resource)}.${method.name}; give one an operationId`,
+          `${verb.toUpperCase()} ${method.path} and ${taken.verb.toUpperCase()} ${taken.path} would both be ${namespace}.${method.name}; name one with x-spree-sdk-method (\`sdk_method\` in its rswag spec)`,
         )
       }
+      const inline = method.responseType?.name
+      if (inline) {
+        const other = inlineNames.get(inline)
+        if (other || options.types.has(inline)) {
+          throw new Error(
+            `${verb.toUpperCase()} ${method.path} would declare the response type ${inline}, which ${other ? `${other} declares too` : 'the package already has'}; rename the method with x-spree-sdk-method`,
+          )
+        }
+        inlineNames.set(inline, `${verb.toUpperCase()} ${method.path}`)
+      }
       methods.push(method)
-      resources.set(resource, methods)
+      resources.set(namespace, methods)
     }
   }
   if (resources.size === 0) return undefined
@@ -120,7 +152,7 @@ export function renderExtensionSource(
 }
 
 function methodFor(
-  resource: string,
+  { resource, namespace }: { resource: string; namespace: string },
   tail: string[],
   verb: Verb,
   operation: Operation,
@@ -137,9 +169,8 @@ function methodFor(
     !member &&
     (Boolean(operation['x-spree-filters']) || queryNames.includes('page'))
 
-  const name = operation.operationId
-    ? camel(operation.operationId)
-    : defaultName(verb, statics, member, isList)
+  const given = operation['x-spree-sdk-method'] ?? operation.operationId
+  const name = given ? camel(given) : defaultName(verb, statics, member, isList)
 
   const bodySchema = operation.requestBody?.content?.['application/json']?.schema
   const bodyType = refName(bodySchema)
@@ -156,7 +187,13 @@ function methodFor(
     kind,
     body,
     filters: isList && filters ? operation['x-spree-filters']?.table : undefined,
-    response: responseType(resource, verb, operation, types),
+    ...responseType(
+      resource,
+      `${pascal(namespace)}${pascal(name)}Response`,
+      verb,
+      operation,
+      types,
+    ),
     // `*/` in a description would end the doc comment early.
     doc: [operation.summary, operation.description]
       .filter((text): text is string => Boolean(text))
@@ -195,18 +232,43 @@ function defaultName(verb: Verb, statics: string[], member: boolean, isList: boo
 
 function responseType(
   resource: string,
+  inlineName: string,
   verb: Verb,
   operation: Operation,
   types: Set<string>,
-): string {
-  const declared = ['200', '201']
-    .map((status) => refName(operation.responses?.[status]?.content?.['application/json']?.schema))
+): Pick<Method, 'response' | 'responseType'> {
+  const schema = ['200', '201']
+    .map((status) => operation.responses?.[status]?.content?.['application/json']?.schema)
     .find(Boolean)
-  if (declared && types.has(declared)) return declared
-  if (verb === 'delete' && !declared) return 'void'
+  const declared = refName(schema)
+  if (declared && types.has(declared)) return { response: declared }
+
+  // An inline schema (`{ data: [...] }`, not one of the package's records)
+  // is typed from the schema itself.
+  const inlineSchema =
+    schema?.type ||
+    schema?.properties ||
+    schema?.allOf ||
+    schema?.anyOf ||
+    schema?.oneOf ||
+    schema?.enum
+  if (schema && !schema.$ref && inlineSchema) {
+    const references = new Set<string>()
+    const source = schemaType(schema, (ref) => {
+      const name = refName({ $ref: ref }) ?? ''
+      if (!types.has(name)) return 'unknown'
+      references.add(name)
+      return name
+    })
+    return {
+      response: inlineName,
+      responseType: { name: inlineName, source, references: [...references] },
+    }
+  }
+  if (verb === 'delete' && !declared) return { response: 'void' }
 
   const byName = [pascal(singular(resource)), pascal(resource)].find((name) => types.has(name))
-  return byName ?? 'unknown'
+  return { response: byName ?? 'unknown' }
 }
 
 function render(
@@ -216,9 +278,14 @@ function render(
 ): string {
   const Api = pascal(api)
   const methods = resources.flatMap(([, list]) => list)
-  const responseTypes = new Set(
-    methods.map(({ response }) => response).filter((type) => type !== 'void' && type !== 'unknown'),
-  )
+  const inline = methods.flatMap(({ responseType }) => (responseType ? [responseType] : []))
+  const inlineNames = new Set(inline.map(({ name }) => name))
+  const responseTypes = new Set([
+    ...methods
+      .map(({ response }) => response)
+      .filter((type) => type !== 'void' && type !== 'unknown' && !inlineNames.has(type)),
+    ...inline.flatMap(({ references }) => references),
+  ])
   const bodyTypes = new Set(methods.flatMap(({ body }) => (body ? [body.type] : [])))
   const filterTables = new Set(methods.flatMap(({ filters }) => (filters ? [filters] : [])))
   const lists = methods.some(({ kind }) => kind === 'list')
@@ -226,7 +293,11 @@ function render(
   const sdkImports = [
     `define${Api}Extension`,
     'type Client',
-    ...(lists ? ['type ListParams', 'type PaginatedResponse'] : []),
+    ...(lists ? ['type ListParams'] : []),
+    // An inline response already describes the whole list, `meta` included.
+    ...(methods.some(({ kind, responseType }) => kind === 'list' && !responseType)
+      ? ['type PaginatedResponse']
+      : []),
     'type RequestOptions',
   ]
   const out = [options.header, '', `import { ${sdkImports.join(', ')} } from '${SDKS[api]}'`]
@@ -238,6 +309,8 @@ function render(
     out.push(`import type { ${[...bodyTypes].sort().join(', ')} } from './params'`)
   if (responseTypes.size)
     out.push(`import type { ${[...responseTypes].sort().join(', ')} } from './spree'`)
+
+  for (const { name, source } of inline) out.push('', `export type ${name} = ${source}`)
 
   const constants: string[] = []
   for (const [resource, list] of resources) {
@@ -285,7 +358,9 @@ function renderMethod(method: Method): string[] {
   args.push('options?: RequestOptions')
 
   const response =
-    method.kind === 'list' ? `PaginatedResponse<${method.response}>` : method.response
+    method.kind === 'list' && !method.responseType
+      ? `PaginatedResponse<${method.response}>`
+      : method.response
   const doc = method.doc.length
     ? ['  /**', ...method.doc.map((line) => `   * ${line}`.trimEnd()), '   */']
     : []

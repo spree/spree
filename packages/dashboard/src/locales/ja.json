@@ -2292,7 +2292,7 @@
           "label": "重量の単位"
         },
         "show_products_without_price": {
-          "help": "買い物客の通貨で価格がない商品も一覧に出します。",
+          "help": "オフの場合、購入者の通貨で価格がない商品はストアに表示されません。",
           "label": "価格のない商品を表示"
         },
         "stock_reservations_enabled": {
@@ -4082,6 +4082,8 @@
           "manage_cta": "管理",
           "manage_description": "この商品を掲載する販売チャネルを選んでください。チャネルをオフにすると、すべての場所で掲載をやめます。",
           "manage_title": "販売チャネルを管理",
+          "missing_price_description": "購入者には、その通貨の価格がある商品だけが表示されます。「価格」で価格を追加して保存するか、設定 → ストアで「価格のない商品を表示」をオンにしてください。",
+          "missing_price_title": "{{currencies}} で支払う購入者には非表示",
           "no_channels": "使える販売チャネルがありません。設定 → 販売チャネルで作成してください。",
           "status_hidden": "非表示",
           "status_live": "公開中",
@@ -4390,6 +4392,8 @@
             "payment_setup_session": "支払い設定のセッション",
             "price": "価格",
             "product": "商品",
+            "product_category": "商品カテゴリー",
+            "product_collection": "商品コレクション",
             "product_submission": "商品の申請",
             "promotion": "プロモーション",
             "purchase_order": "発注書",

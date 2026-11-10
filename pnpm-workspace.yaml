@@ -30,7 +30,7 @@ catalog:
   '@dnd-kit/utilities': 3.2.2
   '@fontsource-variable/geist': 5.3.0
   '@fontsource-variable/geist-mono': 5.3.0
-  '@hookform/resolvers': ^7.0.1
+  '@hookform/resolvers': ^7.0.2
   '@playwright/test': ^1.64.1
   '@tanstack/react-hotkeys': 0.22.0
   '@tanstack/react-query': ^5.105.3
@@ -61,7 +61,7 @@ catalog:
   'react-day-picker': 10.0.2
   'react-dom': ^19.3.1
   'react-hook-form': ^7.91.0
-  'react-i18next': ^17.1.11
+  'react-i18next': ^17.1.12
   'recharts': 3.10.1
   'shadcn': ^4.23.0
   'tailwind-merge': 3.7.0
@@ -160,16 +160,16 @@ overrides:
   # and schedulePositionCheck — exports 3.31 removed. Pin the family
   # together on the patched line (prototype pollution <3.30.4, Markdown
   # ReDoS <3.30.5).
-  '@tiptap/core': 3.32.0
-  '@tiptap/pm': 3.32.0
-  '@tiptap/react': 3.32.0
-  '@tiptap/starter-kit': 3.32.0
-  '@tiptap/extensions': 3.32.0
-  '@tiptap/extension-bubble-menu': 3.32.0
-  '@tiptap/extension-floating-menu': 3.32.0
-  '@tiptap/extension-image': 3.32.0
-  '@tiptap/extension-link': 3.32.0
-  '@tiptap/extension-placeholder': 3.32.0
+  '@tiptap/core': 3.32.2
+  '@tiptap/pm': 3.32.2
+  '@tiptap/react': 3.32.2
+  '@tiptap/starter-kit': 3.32.2
+  '@tiptap/extensions': 3.32.2
+  '@tiptap/extension-bubble-menu': 3.32.2
+  '@tiptap/extension-floating-menu': 3.32.2
+  '@tiptap/extension-image': 3.32.2
+  '@tiptap/extension-link': 3.32.2
+  '@tiptap/extension-placeholder': 3.32.2
   # @tiptap/pm 3.32 wants prosemirror-model ^1.25.12 and prosemirror-view
   # ^1.42.6, but schema-list/state still resolve an older line. Two copies
   # make wrapInList throw, so list toolbar buttons no-op.

@@ -9,22 +9,28 @@ module Spree
       # @param product [Spree::Product]
       # @return [Spree::ServiceModule::Base::Result]
       def call(product:)
-        return unless product.present?
+        return if product.blank?
 
         collections_to_remove = []
         collections_to_add = []
 
         # existing memberships that no longer match (tags/prices changed)
-        product.collections.automatic.includes(:rules).each do |collection|
+        product.collections.automatic.includes(:rules).find_each do |collection|
           collections_to_remove << collection unless collection.products_matching_rules.ids.include?(product.id)
         end
 
+        # Held before the delete: the rows are gone by the time their deleted
+        # events can be published.
+        removed_rows = []
+
         if collections_to_remove.any?
-          Spree::ProductCollection.where(collection: collections_to_remove, product: product).delete_all
+          scope = Spree::ProductCollection.where(collection: collections_to_remove, product: product)
+          removed_rows = scope.to_a
+          scope.delete_all
         end
 
         # automatic collections in the product's store that it now matches
-        Spree::Collection.automatic.where(store_id: product.store_id).includes(:rules, :products).each do |collection|
+        Spree::Collection.automatic.where(store_id: product.store_id).includes(:rules, :products).find_each do |collection|
           collections_to_add << collection if collection.products.exclude?(product) && collection.products_matching_rules.ids.include?(product.id)
         end
 
@@ -56,10 +62,20 @@ module Spree
           Spree::Product.reset_counters(product.id, :product_collections)
         end
 
+        publish_membership_events(product, removed_rows, collections_to_add)
+
         success(product)
       end
 
       private
+
+      def publish_membership_events(product, removed_rows, added_collections)
+        removed_rows.each { |row| row.publish_event('product_collection.deleted') }
+        return if added_collections.empty?
+
+        Spree::ProductCollection.where(collection_id: added_collections.map(&:id), product_id: product.id).
+          find_each { |row| row.publish_event('product_collection.created') }
+      end
 
       def product_collection_attributes(collection, product, position)
         {

@@ -63,6 +63,7 @@ interface TableToolbarProps {
   onVisibleColumnsChange: (columns: string[]) => void
   search: string
   onSearchChange: (value: string) => void
+  searchable?: boolean
   searchPlaceholder?: string
   sort: SortOption
   onSortChange: (sort: SortOption) => void
@@ -171,6 +172,7 @@ export function TableToolbar({
   onVisibleColumnsChange,
   search,
   onSearchChange,
+  searchable = true,
   searchPlaceholder,
   sort,
   onSortChange,
@@ -284,17 +286,19 @@ export function TableToolbar({
               already carries a search field — two search boxes stacked in one
               column is the more confusing cost. A term set on desktop still
               shows as a chip there, so it never filters a list invisibly. */}
-            <SearchInput
-              value={search}
-              onValueChange={onSearchChange}
-              placeholder={
-                searchPlaceholder ?? t('admin.components.table_toolbar.search_placeholder')
-              }
-              clearLabel={t('admin.common.clear')}
-              // Widens while in use (focused, or holding a term) so a longer
-              // query stays readable, and settles back once it is let go.
-              className="hidden h-[2.125rem] w-[240px] bg-card text-base transition-[color,background-color,border-color,box-shadow,width] duration-200 ease-out focus-within:w-[320px] has-[input:not(:placeholder-shown)]:w-[320px] motion-reduce:transition-none lg:flex"
-            />
+            {searchable && (
+              <SearchInput
+                value={search}
+                onValueChange={onSearchChange}
+                placeholder={
+                  searchPlaceholder ?? t('admin.components.table_toolbar.search_placeholder')
+                }
+                clearLabel={t('admin.common.clear')}
+                // Widens while in use (focused, or holding a term) so a longer
+                // query stays readable, and settles back once it is let go.
+                className="hidden h-[2.125rem] w-[240px] bg-card text-base transition-[color,background-color,border-color,box-shadow,width] duration-200 ease-out focus-within:w-[320px] has-[input:not(:placeholder-shown)]:w-[320px] motion-reduce:transition-none lg:flex"
+              />
+            )}
 
             {/* Icon only, like sort and columns: the quick controls beside it
               already carry the row's words, and the tooltip names it. */}

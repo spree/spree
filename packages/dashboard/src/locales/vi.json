@@ -2292,7 +2292,7 @@
           "label": "Đơn vị trọng lượng"
         },
         "show_products_without_price": {
-          "help": "Liệt kê các sản phẩm không có giá bằng đơn vị tiền tệ của người mua hàng.",
+          "help": "Khi tắt, sản phẩm không có giá bằng đơn vị tiền tệ của khách hàng sẽ bị ẩn khỏi cửa hàng.",
           "label": "Hiển thị sản phẩm không kèm giá"
         },
         "stock_reservations_enabled": {
@@ -4082,6 +4082,8 @@
           "manage_cta": "Quản lý",
           "manage_description": "Chọn kênh bán hàng liệt kê sản phẩm này. Tắt một kênh để hủy niêm yết kênh đó ở mọi nơi.",
           "manage_title": "Quản lý các kênh bán hàng",
+          "missing_price_description": "Khách hàng chỉ thấy sản phẩm có giá bằng đơn vị tiền tệ của họ. Thêm giá trong mục Giá cả rồi lưu, hoặc bật Hiển thị sản phẩm không kèm giá trong Cài đặt → Cửa hàng.",
+          "missing_price_title": "Ẩn với khách hàng thanh toán bằng {{currencies}}",
           "no_channels": "Không có kênh bán hàng nào. Tạo một kênh trong Cài đặt → Kênh bán hàng.",
           "status_hidden": "Ẩn giấu",
           "status_live": "Trực tiếp",
@@ -4390,6 +4392,8 @@
             "payment_setup_session": "Phiên thiết lập thanh toán",
             "price": "Giá",
             "product": "Sản phẩm",
+            "product_category": "Danh mục sản phẩm",
+            "product_collection": "Bộ sưu tập sản phẩm",
             "product_submission": "Gửi sản phẩm",
             "promotion": "Khuyến mãi",
             "purchase_order": "Đơn đặt hàng",

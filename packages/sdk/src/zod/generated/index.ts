@@ -64,6 +64,8 @@ export { PolicySchema, type Policy } from './Policy';
 export { PriceSchema, type Price } from './Price';
 export { PriceHistorySchema, type PriceHistory } from './PriceHistory';
 export { ProductSchema, type Product } from './Product';
+export { ProductCategorySchema, type ProductCategory } from './ProductCategory';
+export { ProductCollectionSchema, type ProductCollection } from './ProductCollection';
 export { ProductFilterAvailabilitySchema, type ProductFilterAvailability } from './ProductFilterAvailability';
 export { ProductFilterAvailabilityOptionSchema, type ProductFilterAvailabilityOption } from './ProductFilterAvailabilityOption';
 export { ProductFilterCategorySchema, type ProductFilterCategory } from './ProductFilterCategory';

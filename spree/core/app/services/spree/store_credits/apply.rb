@@ -57,8 +57,16 @@ module Spree
         apply_store_credits(remaining_total, except: payments.map(&:source_id)) if remaining_total.positive?
       end
 
+      # Allocates credit through an active payment method owned by the order store.
+      # No method is required when the outstanding amount is zero or negative.
+      #
+      # @param remaining_total [Numeric] maximum outstanding amount to allocate
+      # @param except [Array<Integer>] credit IDs already applied to this order
+      # @return [void]
       def apply_store_credits(remaining_total, except: [])
-        payment_method = Spree::PaymentMethod::StoreCredit.available.first
+        return unless remaining_total.positive?
+
+        payment_method = @order.store.payment_methods.store_credit.available.first
         raise 'Store credit payment method could not be found' unless payment_method
 
         spendable_store_credits.where.not(id: except).oldest_first.each do |credit|

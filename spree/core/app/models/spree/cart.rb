@@ -141,11 +141,16 @@ module Spree
 
     # Whether a live completion attempt holds this cart — its totals are fixed
     # and money may be moving, so mutations must wait until it finishes or the
-    # claim goes stale.
+    # claim goes stale. A payment-covered draft or a divided checkout resumes
+    # its existing result instead of editing the cart that supplied it.
     #
     # @return [Boolean]
     def completion_claimed?
-      completing_at.present? && completing_at > COMPLETING_CLAIM_TTL.ago
+      return false if completing_at.blank?
+      return true if completing_at > COMPLETING_CLAIM_TTL.ago || order_group.present?
+      return false if order.nil?
+
+      order.payments.valid.where(status: %w[pending processing completed]).sum(:amount) >= order.amount_due_at_checkout
     end
 
     # Recomputes and persists money totals (item, tax, promotion, delivery)

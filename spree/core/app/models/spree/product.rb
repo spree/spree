@@ -80,8 +80,10 @@ module Spree
 
     has_many :product_option_types, -> { order(:position) }, dependent: :destroy, inverse_of: :product
     has_many :option_types, through: :product_option_types
-    has_many :product_categories, -> { order(created_at: :asc) }, class_name: 'Spree::ProductCategory', dependent: :delete_all, inverse_of: :product
-    has_many :categories, through: :product_categories, class_name: 'Spree::Category', source: :category, before_remove: :remove_category
+    has_many :product_categories, -> { order(created_at: :asc) }, class_name: 'Spree::ProductCategory',
+                                                                  dependent: :destroy, inverse_of: :product
+    has_many :categories, through: :product_categories, class_name: 'Spree::Category', source: :category,
+                          dependent: :destroy
     has_many :taxonomies, through: :categories, deprecated: true
 
     # @deprecated The classification_count column was renamed to categories_count in 6.0.
@@ -139,8 +141,8 @@ module Spree
       self.category_ids = ids
     end
 
-    has_many :product_collections, class_name: 'Spree::ProductCollection', dependent: :destroy_async, inverse_of: :product
-    has_many :collections, through: :product_collections
+    has_many :product_collections, class_name: 'Spree::ProductCollection', dependent: :destroy, inverse_of: :product
+    has_many :collections, through: :product_collections, dependent: :destroy
     has_many :catalog_products, class_name: 'Spree::CatalogProduct', dependent: :destroy_async, inverse_of: :product
     has_many :catalogs, through: :catalog_products
 
@@ -1033,11 +1035,6 @@ module Spree
         errors.add(:base, :cannot_destroy_if_attached_to_line_items)
         throw(:abort)
       end
-    end
-
-    def remove_category(category)
-      removed_product_categories = product_categories.where(category: category)
-      removed_product_categories.each(&:remove_from_list)
     end
 
     def discontinue_on_must_be_later_than_make_active_at

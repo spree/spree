@@ -25,6 +25,53 @@ describe Spree::Cart, type: :model do
     end
   end
 
+  describe '#completion_claimed?' do
+    let(:cart) { create(:cart, store: store) }
+
+    it 'does not claim a cart that has not started completion' do
+      expect(cart).not_to be_completion_claimed
+    end
+
+    it 'blocks mutations while the completion claim is live' do
+      cart.update_column(:completing_at, Time.current)
+
+      expect(cart).to be_completion_claimed
+    end
+
+    it 'releases an expired claim when no completion result was retained' do
+      cart.update_column(:completing_at, 6.minutes.ago)
+
+      expect(cart).not_to be_completion_claimed
+    end
+
+    it 'does not extend an expired claim for an underpaid retained draft' do
+      cart.update_column(:completing_at, 6.minutes.ago)
+      draft = create(:order, store: store, cart: cart)
+      draft.update_column(:total, 10)
+      create(:payment, order: draft, amount: 4, status: 'completed')
+
+      expect(cart.reload).not_to be_completion_claimed
+    end
+
+    it 'keeps the claim while a retained draft has full payment coverage' do
+      cart.update_column(:completing_at, 6.minutes.ago)
+      draft = create(:order, store: store, cart: cart)
+      draft.update_column(:total, 10)
+      create(:payment, order: draft, amount: 10, status: 'pending')
+
+      expect(cart.reload).to be_completion_claimed
+    end
+
+    %i[order order_group].each do |result_type|
+      it "keeps a retained #{result_type} fenced after the claim expires" do
+        cart.update_column(:completing_at, 6.minutes.ago)
+        create(result_type, store: store, cart: cart)
+
+        expect(cart.reload).to be_completion_claimed
+      end
+    end
+  end
+
   describe '#checkout_steps' do
     let(:cart) { build(:cart, store: store) }
 

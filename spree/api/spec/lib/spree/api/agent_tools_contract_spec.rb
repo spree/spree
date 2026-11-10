@@ -53,7 +53,9 @@ RSpec.describe 'agent tool contract' do
     end
 
     it 'names a permission the catalog knows for every resource' do
-      unknown = Spree::AgentTools::ResourceMap.all.reject { |entry| Spree.permissions.key?(entry.permission) }
+      unknown = Spree::AgentTools::ResourceMap.all.reject do |entry|
+        entry.permission_keys.any? && entry.permission_keys.all? { |key| Spree.permissions.key?(key) }
+      end
 
       expect(unknown.map(&:key)).to be_empty
     end

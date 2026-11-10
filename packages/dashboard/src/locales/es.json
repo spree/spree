@@ -746,6 +746,8 @@
             "payment_setup_session": "Sesión de configuración de pago",
             "price": "Precio",
             "product": "Producto",
+            "product_category": "Categoría de producto",
+            "product_collection": "Colección de productos",
             "product_submission": "Envío de producto",
             "promotion": "Promoción",
             "purchase_order": "Orden de compra",
@@ -1206,6 +1208,8 @@
           "manage_cta": "Administrar",
           "manage_description": "Elegí qué canales de venta publican este producto. Desactivá un canal para despublicarlo en todos lados.",
           "manage_title": "Administrar canales de venta",
+          "missing_price_description": "Los compradores solo ven productos con precio en su moneda. Añade uno en Precios y guarda, o activa Mostrar productos sin precio en Configuración → Tienda.",
+          "missing_price_title": "Oculto para los compradores que pagan en {{currencies}}",
           "no_channels": "No hay canales de venta disponibles. Creá uno en Configuración → Canales de venta.",
           "status_hidden": "Oculto",
           "status_live": "Activo",
@@ -2314,7 +2318,7 @@
           "label": "Unidad de peso"
         },
         "show_products_without_price": {
-          "help": "Listar los productos sin precio en la moneda del comprador.",
+          "help": "Si está desactivado, los productos sin precio en la moneda del comprador se ocultan en la tienda.",
           "label": "Mostrar productos sin precio"
         },
         "stock_reservations_enabled": {

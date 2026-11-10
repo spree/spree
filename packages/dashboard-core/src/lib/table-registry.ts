@@ -178,6 +178,10 @@ export interface TableDef<T = any> {
   columns: ColumnDef<T>[]
   searchParam?: string
   searchPlaceholder?: string
+  /**
+   * Whether the toolbar offers a free-text search. On by default.
+   */
+  searchable?: boolean
   defaultSort?: SortOption
   emptyIcon?: ReactNode
   emptyMessage?: string

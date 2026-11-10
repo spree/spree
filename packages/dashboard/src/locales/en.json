@@ -2292,7 +2292,7 @@
           "label": "Weight unit"
         },
         "show_products_without_price": {
-          "help": "List products that have no price in the shopper’s currency.",
+          "help": "When off, products with no price in the shopper’s currency are hidden from the storefront.",
           "label": "Show products without a price"
         },
         "stock_reservations_enabled": {
@@ -4083,6 +4083,8 @@
           "manage_cta": "Manage",
           "manage_description": "Pick which sales channels list this product. Toggle a channel off to unlist it everywhere.",
           "manage_title": "Manage sales channels",
+          "missing_price_description": "Shoppers only see products with a price in their currency. Add one under Prices and save, or turn on Show products without a price in Settings → Store.",
+          "missing_price_title": "Hidden from shoppers paying in {{currencies}}",
           "no_channels": "No sales channels available. Create one in Settings → Sales channels.",
           "status_hidden": "Hidden",
           "status_live": "Live",
@@ -4391,6 +4393,8 @@
             "payment_setup_session": "Payment setup session",
             "price": "Price",
             "product": "Product",
+            "product_category": "Product category",
+            "product_collection": "Product collection",
             "product_submission": "Product submission",
             "promotion": "Promotion",
             "purchase_order": "Purchase order",

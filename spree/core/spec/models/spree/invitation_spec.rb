@@ -149,5 +149,26 @@ RSpec.describe Spree::Invitation, type: :model do
     it 'is nil when no account holds the address' do
       expect(build(:invitation, email: 'nobody@example.com').invitee_account).to be_nil
     end
+
+    # An app may encrypt the column, deterministically so it can still be
+    # looked up. SQL then only ever sees ciphertext.
+    context 'when the app encrypts email' do
+      let(:account_class) do
+        stub_const('EncryptedEmailAdmin', Class.new(Spree.admin_user_class) do
+          self.table_name = Spree.admin_user_class.table_name
+          encrypts :email, deterministic: true, downcase: true
+        end)
+      end
+      let!(:account) { account_class.find(create(:admin_user).id).tap { |user| user.update_columns(email: 'pat@example.com') } }
+
+      before { allow(Spree).to receive(:admin_user_class).and_return(account_class) }
+
+      it 'finds the account, whatever the case' do
+        stored = account_class.connection.select_value(account_class.unscoped.where(id: account.id).select(:email).to_sql)
+        expect(stored).not_to include('example.com')
+
+        expect(build(:invitation, email: 'Pat@Example.com').invitee_account).to eq(account)
+      end
+    end
   end
 end

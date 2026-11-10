@@ -2310,7 +2310,7 @@
           "label": "وحدة الوزن"
         },
         "show_products_without_price": {
-          "help": "عرض المنتجات التي لا سعر لها بعملة العميل.",
+          "help": "عند الإيقاف، تُخفى من المتجر المنتجات التي ليس لها سعر بعملة المتسوق.",
           "label": "إظهار المنتجات بدون سعر"
         },
         "stock_reservations_enabled": {
@@ -4119,6 +4119,8 @@
           "manage_cta": "يدير",
           "manage_description": "اختر قنوات المبيعات التي تدرج هذا المنتج. قم بإيقاف تشغيل القناة لإلغاء إدراجها في كل مكان.",
           "manage_title": "إدارة قنوات البيع",
+          "missing_price_description": "لا يرى المتسوقون إلا المنتجات التي لها سعر بعملتهم. أضف سعرًا ضمن الأسعار واحفظ، أو فعّل عرض المنتجات بدون سعر في الإعدادات ← المتجر.",
+          "missing_price_title": "مخفي عن المتسوقين الذين يدفعون بـ {{currencies}}",
           "no_channels": "لا توجد قنوات مبيعات متاحة. قم بإنشاء واحدة في الإعدادات → قنوات المبيعات.",
           "status_hidden": "مختفي",
           "status_live": "يعيش",
@@ -4427,6 +4429,8 @@
             "payment_setup_session": "Payment setup session",
             "price": "سعر",
             "product": "منتج",
+            "product_category": "فئة المنتج",
+            "product_collection": "مجموعة المنتجات",
             "product_submission": "تقديم منتج",
             "promotion": "ترقية",
             "purchase_order": "أمر شراء",
