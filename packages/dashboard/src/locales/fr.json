@@ -2264,7 +2264,7 @@
           "label": "Unité de poids"
         },
         "show_products_without_price": {
-          "help": "Lister les produits sans prix dans la devise du client.",
+          "help": "Désactivé, les produits sans prix dans la devise du client sont masqués sur la boutique.",
           "label": "Afficher les produits sans prix"
         },
         "stock_reservations_enabled": {
@@ -4035,7 +4035,11 @@
           "manage_cta": "Gérer",
           "manage_description": "Choisissez les canaux de vente sur lesquels ce produit est répertorié. Désactivez un canal pour le retirer partout.",
           "manage_title": "Gérer les canaux de vente",
+          "missing_currency_description": "Les clients ne voient que les produits ayant un prix dans leur devise. Ajoutez un prix dans chacune de ces devises dans Prix.",
+          "missing_currency_title": "Masqué pour les clients qui paient en {{currencies}}",
           "no_channels": "Aucun canal de vente disponible. Créez-en un dans Paramètres → Canaux de vente.",
+          "no_price_description": "Les clients ne voient que les produits ayant un prix dans leur devise. Ajoutez-en un dans Prix, ou activez Afficher les produits sans prix dans Paramètres → Boutique.",
+          "no_price_title": "Masqué sur la boutique : aucun prix",
           "status_hidden": "Masqué",
           "status_live": "En ligne",
           "status_not_available": "Indisponible",

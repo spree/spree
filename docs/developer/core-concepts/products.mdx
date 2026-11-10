@@ -1150,6 +1150,31 @@ curl 'https://api.mystore.com/api/v3/store/products' \
 
 For Admin API filtering across channels (back-office reports, admin UI lists), use Ransack instead: `q[channels_id_in][]=ch_xxx`. See [Sales Channels](/developer/core-concepts/channels) for the resolution rules.
 
+### Why a product is missing from the Store API
+
+The Store API returns an empty list, or `404` for a single product, rather than explaining why a product is hidden. A product is returned only when all of these hold:
+
+| Check | Condition |
+|---|---|
+| Status | `status` is `active`. |
+| Channel | The product has a publication on the channel the request resolves to. Call `GET /api/v3/store/channel` with the same headers to see which channel that is. |
+| Publication window | The publication's `published_at` is empty or in the past, and its `unpublished_at` is empty or in the future. A product scheduled for later is still returned if one of its variants takes pre-orders. |
+| Price | At least one variant has a base price, with an amount, in the request's currency. Prices from [price lists](/developer/core-concepts/pricing) don't count. The store's `show_products_without_price` setting turns this check off. |
+| Catalog | If the buyer's company, the customer's groups or the channel resolve to [catalogs](/developer/core-concepts/catalogs) that name specific products, the product is in one of them. |
+
+The request's currency comes from the `X-Spree-Currency` header, then the `currency` parameter, then the market's or the store's default currency. See [Localization](/api-reference/store-api/localization).
+
+The product's own `available_on` and `discontinue_on` play no part here: the Store API always resolves a channel, and the publication's dates replace them. Stock doesn't hide a product either. An out-of-stock product is still returned, with `in_stock: false`.
+
+To check each condition, read the product through the Admin API with a secret key. The response includes its `status`, its publications and its variants' prices. A price with a `price_list_id` comes from a price list, so it doesn't count:
+
+```bash
+curl 'https://api.mystore.com/api/v3/admin/products/prod_xxx?expand=product_publications,default_variant.prices,variants.prices' \
+  -H 'X-Spree-Api-Key: sk_xxx'
+```
+
+In the admin dashboard, the product's **Publishing** card warns when an active product has no price in one of the store's currencies.
+
 ### Auto-publish on the default channel
 
 When a product is created via the dashboard, it is auto-published on the store's default channel (the only channel where `default = true`). The Admin API does **not** auto-publish — supply `product_publications: [{ channel_id }]` on create or call `add_products` afterwards.

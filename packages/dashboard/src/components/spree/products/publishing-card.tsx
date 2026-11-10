@@ -2,6 +2,9 @@ import type { Channel } from '@spree/admin-sdk'
 import type { ProductFormValues } from '@spree/dashboard-core'
 import { formatStoreDateTime, StoreDatePicker, useStore } from '@spree/dashboard-core'
 import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
   Button,
   Card,
   CardContent,
@@ -23,7 +26,7 @@ import {
   SheetTitle,
   Skeleton,
 } from '@spree/dashboard-ui'
-import { GlobeIcon, PencilIcon, SettingsIcon } from '@spree/dashboard-ui/icons'
+import { GlobeIcon, PencilIcon, SettingsIcon, TriangleAlertIcon } from '@spree/dashboard-ui/icons'
 import { parseISO } from 'date-fns'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Controller, type UseFormReturn, useFieldArray } from 'react-hook-form'
@@ -47,6 +50,20 @@ function scheduleStatus(
   if (unpublishedAt && parseISO(unpublishedAt).getTime() <= now) return 'hidden'
   if (publishedAt && parseISO(publishedAt).getTime() > now) return 'scheduled'
   return 'live'
+}
+
+// The storefront lists only products with a base price in the shopper's
+// currency, unless the store shows unpriced products.
+function currenciesWithoutPrice(
+  variants: ProductFormValues['variants'],
+  currencies: string[],
+): string[] {
+  const priced = new Set<string>(
+    (variants ?? []).flatMap((v) =>
+      (v.prices ?? []).filter((p) => p.amount.trim() !== '').map((p) => p.currency),
+    ),
+  )
+  return currencies.filter((currency) => !priced.has(currency))
 }
 
 export function PublishingCard({
@@ -151,6 +168,7 @@ export function PublishingCard({
         </Button>
       </CardHeader>
       <CardContent className="flex flex-col gap-1">
+        {publicationsArray.fields.length > 0 && <MissingPriceAlert form={form} />}
         {publicationsArray.fields.length === 0 && (
           <p className="text-sm text-muted-foreground">
             {t('admin.pages.products.publishing.empty')}
@@ -182,6 +200,36 @@ export function PublishingCard({
         publicationsArray={publicationsArray}
       />
     </Card>
+  )
+}
+
+function MissingPriceAlert({ form }: { form: ProductForm }) {
+  const { t } = useTranslation()
+  const { store, currencies, defaultCurrency } = useStore()
+  const [productStatus, variants] = form.watch(['status', 'variants'])
+  if (productStatus !== 'active' || !store || store.show_products_without_price) return null
+
+  const storeCurrencies = currencies.length > 0 ? currencies : [defaultCurrency]
+  const missing = currenciesWithoutPrice(variants, storeCurrencies)
+  if (missing.length === 0) return null
+
+  const unpriced = missing.length === storeCurrencies.length
+  return (
+    <Alert variant="warning" className="mb-2">
+      <TriangleAlertIcon />
+      <AlertTitle>
+        {unpriced
+          ? t('admin.pages.products.publishing.no_price_title')
+          : t('admin.pages.products.publishing.missing_currency_title', {
+              currencies: missing.join(', '),
+            })}
+      </AlertTitle>
+      <AlertDescription>
+        {unpriced
+          ? t('admin.pages.products.publishing.no_price_description')
+          : t('admin.pages.products.publishing.missing_currency_description')}
+      </AlertDescription>
+    </Alert>
   )
 }
 

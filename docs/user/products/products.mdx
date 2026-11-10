@@ -5,7 +5,7 @@ description: "Learn how to review your catalog, control which products are on sa
 
 The Products page lists everything you sell, one row per product, with its status, its stock, its price and the seller who supplies it. Open any row to edit that product.
 
-Alongside orders, this is one of the screens your team will have open most often. It is where you cab check what's currently on sale, search for products that customers are asking about, and open product forms to update prices, descriptions, and images.
+Alongside orders, this is one of the screens your team will have open most often. It is where you can check what's currently on sale, search for products that customers are asking about, and open product forms to update prices, descriptions, and images.
 
 The list shows your catalog, but much of what makes up a product is set elsewhere. The sizes and colors a product comes in are set up under [<u>Options</u>](/user/products/options), its images and videos live in [<u>Media</u>](/user/products/media), and the groups customers browse by are [<u>Categories</u>](/user/products/categories) and [<u>Collections</u>](/user/products/collections). What this page adds is the view across all of them at once: narrowing the list to find what you need, and changing many products together rather than one at a time.
 
@@ -31,7 +31,7 @@ You can add or remove columns to suit what you are working on. Click the columns
 
 **Sort** orders the list by name, status, price, or either of those dates, ascending or descending.
 
-Type into the search box to find a product by name. The **Status** filter narrows the list to products of one status, so it finds your archived products as readily as your active ones. **Add filter** narrows the list by price, tags, seller, categories, sales channels, product type, and when a product was created or last updated.
+Type into the search box to find a product by name or SKU. The **Status** filter narrows the list to products of one status, so it finds your archived products as readily as your active ones. **Add filter** narrows the list by price, tags, seller, categories, sales channels, product type, and when a product was created or last updated.
 
 The menu at the end of each row holds three actions: **Edit** opens the product, **Duplicate** creates a copy of it, and **Delete** removes it.
 
@@ -54,6 +54,20 @@ A product's status is set in the **Status** box on its own page, followed by **S
 ![A product's page with its status set to Archived, and Publishing showing it hidden on both sales channels](/docs/images/user/products/products/3-product-status.png)
 
 <Note>Setting a product to **Active** does not by itself put it in front of customers. The product also has to be listed on a sales channel, which is what **Publishing** shows you.</Note>
+
+### Why a Product Isn't on Your Storefront
+
+A product appears on your storefront only when all of these are true:
+
+1. **Its status is Active.** Draft and archived products are hidden everywhere.
+2. **It is listed on the storefront's sales channel.** **Publishing** must show that channel, usually **Online Store**. A product listed only on another channel, such as a point-of-sale channel, does not appear.
+3. **Today is inside the channel's publishing dates.** A **Publishing from** date in the future means the product is scheduled. An **Unpublish on** date in the past means it has been taken down. The status beside the channel reads **Live** when both dates allow it.
+4. **It has a price in the shopper's currency.** A product with no price in that currency is hidden, unless **Show products without a price** is turned on in [<u>Store Details</u>](/user/settings/store-details). Only the prices in the product's **Prices** card count. A price that comes only from a [<u>price list</u>](/user/pricing/price-lists) does not.
+5. **It is in the shopper's catalog, if you use catalogs.** When a sales channel, customer group or company has a [<u>catalog</u>](/user/catalogs/catalogs) that names specific products, its shoppers see only those products.
+
+Stock does not hide a product. A product that is out of stock still appears on the storefront.
+
+**Publishing** warns you when an active product is missing a price. It shows **Hidden from the storefront: no price** when the product has no price at all. It names the currencies when only some are missing.
 
 To change the status of several products in one go, use **Set status…** from the bulk actions menu, described below.
 
