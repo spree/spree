@@ -269,7 +269,9 @@ function OrderEditItemRow({
             <Money amount={projectedTotal} currency={currency} />
           )
         ) : totalChanged ? (
-          <MoneyChange before={row.total} after={projectedTotal} currency={currency} />
+          <span className="font-medium">
+            <MoneyChange before={row.total} after={projectedTotal} currency={currency} />
+          </span>
         ) : (
           <Money amount={row.total} currency={currency} />
         )}
