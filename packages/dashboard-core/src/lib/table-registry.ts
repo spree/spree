@@ -262,18 +262,21 @@ export const tables = new Proxy({} as Record<string, TableMutator>, {
 })
 
 interface TableMutator {
-  addColumn<T = any>(column: ColumnDef<T>): void
+  /** `after` places the column right after that one, instead of last. */
+  addColumn<T = any>(column: ColumnDef<T>, options?: { after?: string }): void
   removeColumn(key: string): void
   updateColumn<T = any>(key: string, updates: Partial<ColumnDef<T>>): void
 }
 
-function applyAddColumn(table: TableDef, column: ColumnDef) {
+function applyAddColumn(table: TableDef, column: ColumnDef, after?: string) {
   if (table.columns.some((c) => c.key === column.key)) {
     throw new Error(
       `Column "${column.key}" already exists in table "${table.key}". Use updateColumn() instead.`,
     )
   }
-  table.columns.push(column)
+  const index = after ? table.columns.findIndex((c) => c.key === after) : -1
+  if (index === -1) table.columns.push(column)
+  else table.columns.splice(index + 1, 0, column)
 }
 
 function applyRemoveColumn(table: TableDef, key: string) {
@@ -288,10 +291,10 @@ function applyUpdateColumn(table: TableDef, key: string, updates: Partial<Column
 
 function createMutator(tableKey: string): TableMutator {
   return {
-    addColumn(column) {
+    addColumn(column, options) {
       const table = registry.get(tableKey)
-      if (table) applyAddColumn(table, column as ColumnDef)
-      else enqueue(tableKey, (t) => applyAddColumn(t, column as ColumnDef))
+      if (table) applyAddColumn(table, column as ColumnDef, options?.after)
+      else enqueue(tableKey, (t) => applyAddColumn(t, column as ColumnDef, options?.after))
     },
     removeColumn(key) {
       const table = registry.get(tableKey)

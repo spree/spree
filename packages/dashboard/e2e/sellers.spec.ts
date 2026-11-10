@@ -162,6 +162,35 @@ test.describe('sellers', () => {
     await expect(page.getByText('updated@example.com').first()).toBeVisible({ timeout: 15_000 })
   })
 
+  test("opens the seller's stock locations from their page", async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, SELLERS_PATH(creds.store_id), CTA)
+    await rowLink(page, FIXTURE_LEDGER_SELLER).click()
+
+    await page
+      .locator('[data-slot="card"]')
+      .filter({ hasText: /at a glance/i })
+      .getByRole('link', { name: /^view$/i })
+      .click()
+
+    await expect(page).toHaveURL(/settings\/stock-locations\?.*view=sellers/)
+    await expect(page.getByRole('tab', { name: /^sellers' locations$/i })).toHaveAttribute(
+      'aria-selected',
+      'true',
+      { timeout: 15_000 },
+    )
+    await expect(page.getByRole('button', { name: FIXTURE_LEDGER_RETURNS_LOCATION })).toBeVisible({
+      timeout: 15_000,
+    })
+    // Narrowed to this seller: every row names them.
+    for (const row of await page
+      .getByRole('row')
+      .filter({ has: page.locator('td') })
+      .all()) {
+      await expect(row).toContainText(FIXTURE_LEDGER_SELLER)
+    }
+  })
+
   test('opens the stock location a returns address comes from', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, SELLERS_PATH(creds.store_id), CTA)
