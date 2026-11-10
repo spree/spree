@@ -40,7 +40,10 @@ module Spree
     end
 
     included do
-      has_many :custom_fields, -> { includes(:custom_field_definition) }, as: :resource, class_name: 'Spree::CustomField', dependent: :destroy
+      # The explicit inverse lets a custom field built on an unsaved owner find that owner when
+      # it is saved. Rails cannot infer it for a scoped association, so without it the row is
+      # inserted with a NULL resource_id unless the app happens to enable `has_many_inversing`.
+      has_many :custom_fields, -> { includes(:custom_field_definition) }, as: :resource, inverse_of: :resource, class_name: 'Spree::CustomField', dependent: :destroy
       has_many :storefront_custom_fields, -> { includes(:custom_field_definition).storefront_visible }, as: :resource, class_name: 'Spree::CustomField'
 
       # Deprecated 6.0 association names, removed in 6.1. `private_metafields`
