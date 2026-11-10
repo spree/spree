@@ -8,8 +8,9 @@ import {
   matchDateRangePreset,
   resolveDateRangePreset,
 } from '../lib/date-range-presets'
+import { fieldTriggerClassName } from '../lib/field-trigger'
+import { cn } from '../lib/utils'
 import { CalendarIcon, ChevronsUpDownIcon } from '../spree/icons'
-import { Button } from './button'
 import { DateRangePanel } from './date-range-panel'
 import { Popover, PopoverContent, PopoverTrigger } from './popover'
 
@@ -61,11 +62,18 @@ export function DateRangePicker({ value, onChange, timezone }: DateRangePickerPr
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button size="sm" variant="outline" className="h-8 gap-2 text-sm font-normal">
-          <CalendarIcon className="size-3.5" />
-          {triggerLabel}
+        {/* Field-shaped like the select and combobox triggers it sits beside. */}
+        <button
+          type="button"
+          data-size="sm"
+          className={cn(fieldTriggerClassName, 'w-auto shrink-0 whitespace-nowrap')}
+        >
+          <span className="flex items-center gap-2">
+            <CalendarIcon className="size-3.5" />
+            {triggerLabel}
+          </span>
           <ChevronsUpDownIcon className="size-3.5 text-muted-foreground" />
-        </Button>
+        </button>
       </PopoverTrigger>
       <PopoverContent align="end" className="w-auto max-w-[calc(100vw-1rem)] p-0">
         <DateRangePanel

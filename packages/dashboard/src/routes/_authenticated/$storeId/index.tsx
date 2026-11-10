@@ -207,8 +207,7 @@ function DashboardPage() {
           <>
             {/* Scopes order-derived metrics to one channel; stock counts stay store-wide. */}
             {/* `sm` is the toolbar size the date picker's trigger also uses, so
-              the three controls on this row match in height, padding, text and
-              chevron rather than being aligned by hand. */}
+              the three field-shaped controls on this row match. */}
             <ChannelSelect
               allOption
               triggerSize="sm"
@@ -381,7 +380,7 @@ function OperationsCard({
   let body: ReactNode
   if (counters === undefined) {
     body = failed ? (
-      <p className="px-2 py-1.5 text-sm text-muted-foreground">
+      <p className="px-2 py-1.5 text-base text-muted-foreground">
         {t('admin.pages.home.operations.failed')}
       </p>
     ) : (
@@ -395,13 +394,13 @@ function OperationsCard({
     )
   } else if (counters.length === 0) {
     body = (
-      <p className="px-2 py-1.5 text-sm text-muted-foreground">
+      <p className="px-2 py-1.5 text-base text-muted-foreground">
         {t('admin.pages.home.operations.empty')}
       </p>
     )
   } else if (counters.every((counter) => counter.value === 0)) {
     body = (
-      <p className="flex items-center gap-2 px-2 py-1.5 text-sm text-muted-foreground">
+      <p className="flex items-center gap-2 px-2 py-1.5 text-base text-muted-foreground">
         <CircleCheckIcon className="size-4 text-success" />
         {t('admin.pages.home.operations.all_clear')}
       </p>
@@ -497,7 +496,7 @@ function CounterRow({
       </ItemContent>
       <ItemActions className="gap-2">
         {idle ? (
-          <span className="text-sm tabular-nums text-muted-foreground">0</span>
+          <span className="text-base tabular-nums text-muted-foreground">0</span>
         ) : (
           <Badge variant={tone ?? 'secondary'} className="tabular-nums">
             {counter.value.toLocaleString()}
@@ -692,12 +691,12 @@ function RankingsCard({
       >
         {rows === undefined ? (
           error ? (
-            <p className="px-4 pt-4 text-sm text-muted-foreground">{t('admin.errors.generic')}</p>
+            <p className="px-4 pt-4 text-base text-muted-foreground">{t('admin.errors.generic')}</p>
           ) : (
             <RankingRowsSkeleton />
           )
         ) : rows.length === 0 ? (
-          <p className="px-4 pt-4 text-sm text-muted-foreground">
+          <p className="px-4 pt-4 text-base text-muted-foreground">
             {t('admin.pages.home.rankings.empty')}
           </p>
         ) : (
@@ -710,14 +709,14 @@ function RankingsCard({
                 const body = (
                   <>
                     <div className="flex items-baseline justify-between gap-3">
-                      <span className="flex min-w-0 items-baseline gap-2 text-sm">
+                      <span className="flex min-w-0 items-baseline gap-2 text-base">
                         <span className="w-5 shrink-0 text-muted-foreground tabular-nums">
                           {index + 1}.
                         </span>
                         <DimensionLabel dimension={row.dimension} />
                       </span>
                       <span className="shrink-0 text-right">
-                        <span className="block text-sm font-medium tabular-nums">
+                        <span className="block text-base font-medium tabular-nums">
                           {row.display}
                         </span>
                         <span className="block text-xs text-muted-foreground">{row.meta}</span>

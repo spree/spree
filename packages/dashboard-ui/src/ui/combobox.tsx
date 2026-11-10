@@ -3,6 +3,7 @@
 import { Combobox as ComboboxPrimitive } from '@base-ui/react'
 import i18n from 'i18next'
 import * as React from 'react'
+import { fieldTriggerClassName } from '../lib/field-trigger'
 import { cn } from '../lib/utils'
 import { CheckIcon, ChevronsUpDownIcon, XIcon } from '../spree/icons'
 import { Button } from './button'
@@ -82,10 +83,7 @@ function ComboboxButtonTrigger({
     <ComboboxPrimitive.Trigger
       data-slot="combobox-button-trigger"
       data-size={size}
-      className={cn(
-        "group/combobox-trigger flex w-full min-h-8 cursor-pointer items-center justify-between gap-1.5 rounded-xl border border-field-border shadow-control bg-card py-1.5 pr-2 pl-2.5 text-base font-normal leading-normal text-foreground transition-[color,background-color,border-color,box-shadow] duration-100 ease-out outline-none select-none not-disabled:hover:bg-field-hover focus:border-blue-500 focus:shadow-field-focus disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground aria-invalid:border-destructive data-[size=sm]:shadow-control data-[size=sm]:h-8 data-[size=sm]:min-h-8 data-[size=sm]:gap-2 data-[size=sm]:px-2 data-[size=sm]:py-1 data-[size=sm]:text-sm [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
-        className,
-      )}
+      className={cn('group/combobox-trigger', fieldTriggerClassName, className)}
       {...props}
     >
       <span className="flex min-w-0 items-center gap-2 truncate">{children}</span>
@@ -289,7 +287,7 @@ function ComboboxEmpty({ className, ...props }: ComboboxPrimitive.Empty.Props) {
     <ComboboxPrimitive.Empty
       data-slot="combobox-empty"
       className={cn(
-        'hidden w-full justify-center py-2 text-center text-sm text-muted-foreground group-data-empty/combobox-content:flex',
+        'hidden w-full justify-center py-2 text-center text-base text-muted-foreground group-data-empty/combobox-content:flex',
         className,
       )}
       {...props}
@@ -347,7 +345,7 @@ function ComboboxChip({
         //
         // Outlined, so a chip keeps its edge while the field under it takes its
         // hover fill; a fill alone matched that hover and the chip vanished.
-        'flex min-h-7 w-fit max-w-full items-center justify-center gap-1 rounded-sm bg-accent/50 border py-1 pl-2.5 pr-2 text-sm font-base text-foreground has-disabled:pointer-events-none has-disabled:cursor-not-allowed has-disabled:opacity-50 has-data-[slot=combobox-chip-remove]:pr-1',
+        'flex min-h-7 w-fit max-w-full items-center justify-center gap-1 rounded-sm bg-accent/50 border py-1 pl-2.5 pr-2 text-base font-base text-foreground has-disabled:pointer-events-none has-disabled:cursor-not-allowed has-disabled:opacity-50 has-data-[slot=combobox-chip-remove]:pr-1',
         className,
       )}
       {...props}

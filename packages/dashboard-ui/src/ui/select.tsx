@@ -1,5 +1,6 @@
 import { Select as SelectPrimitive } from '@base-ui/react/select'
 import type * as React from 'react'
+import { fieldTriggerClassName } from '../lib/field-trigger'
 import { cn } from '../lib/utils'
 import { CheckIcon, ChevronDownIcon, ChevronsUpDownIcon } from '../spree/icons'
 
@@ -54,19 +55,9 @@ function SelectTrigger({
       data-slot="select-trigger"
       data-size={size}
       className={cn(
-        // `min-h-8` matches `<Input>`'s own minimum, so a select and a text
-        // field on the same row are the same height. It also stops the trigger
-        // collapsing to chevron-height when the SelectValue render-prop returns
-        // an empty string (value unset and the placeholder not surfaced through
-        // the render-prop); `data-[size=sm]` keeps its own floor for the same
-        // reason.
-        //
-        // `sm` is the toolbar size, matching `Button size="sm" variant="outline"`
-        // exactly — height, gap, padding, text, icon size and the resting lift.
-        // A row mixing a select with a popover trigger (the dashboard's channel
-        // picker beside its date range) then reads as one set of controls
-        // rather than two. The default size is a form field and stays flat.
-        "group/select-trigger flex w-full min-h-8 cursor-pointer items-center justify-between gap-1.5 rounded-xl border border-field-border shadow-control bg-card py-1.5 pr-2 pl-2.5 text-base font-normal leading-normal text-foreground transition-[color,background-color,border-color,box-shadow] duration-100 ease-out outline-none select-none not-disabled:hover:bg-field-hover focus:border-blue-500 focus:shadow-field-focus disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground aria-invalid:border-destructive data-[placeholder]:text-muted-foreground data-[size=sm]:shadow-control data-[size=sm]:h-8 data-[size=sm]:min-h-8 data-[size=sm]:gap-2 data-[size=sm]:px-2 data-[size=sm]:py-1 data-[size=sm]:text-sm data-[size=sm]:[&_svg:not([class*='size-'])]:size-3.5 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-1.5 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        'group/select-trigger',
+        fieldTriggerClassName,
+        "data-[placeholder]:text-muted-foreground data-[size=sm]:[&_svg:not([class*='size-'])]:size-3.5 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-1.5",
         className,
       )}
       {...props}
