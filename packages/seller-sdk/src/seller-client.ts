@@ -58,8 +58,6 @@ import type {
   DeliveryProfileSort,
   DigitalAssetFilters,
   DigitalAssetSort,
-  OptionTypeFilters,
-  OptionTypeSort,
   OrderFilters,
   OrderSort,
   PackageTypeFilters,
@@ -1095,10 +1093,7 @@ export class SellerClient {
    * it. Pass `expand: ['option_values']` to get the values with each type.
    */
   readonly optionTypes = {
-    list: (
-      params?: ListParams<OptionTypeFilters, OptionTypeSort>,
-      options?: RequestOptions,
-    ): Promise<PaginatedResponse<OptionType>> =>
+    list: (params?: ListParams, options?: RequestOptions): Promise<PaginatedResponse<OptionType>> =>
       this.request<PaginatedResponse<OptionType>>('GET', '/option_types', {
         ...options,
         params: params ? transformListParams(params) : undefined,

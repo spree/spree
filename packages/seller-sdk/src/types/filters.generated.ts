@@ -70,12 +70,6 @@ export type OrderCancellationReasonFields = Filter.BooleanFilters<'active'>
   & Filter.IdFilters<'id'>
   & Filter.TextFilters<'name'>
 
-export type OptionTypeFields = Filter.RangeFilters<'created_at' | 'updated_at'>
-  & Filter.IdFilters<'id'>
-  & Filter.TextFilters<'label' | 'name'>
-  & Filter.RangeFilters<'position', number>
-  & Filter.EnumFilters<'kind', 'dropdown' | 'color_swatch' | 'buttons'>
-
 export type PackageTypeFields = Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.BooleanFilters<'default'>
   & Filter.IdFilters<'id' | 'seller_id'>
@@ -496,30 +490,6 @@ export type ProductFilters = ProductFields
   & ProductFilterExtensions
 
 export type ProductSort = Filter.SortKey<'available_on' | 'created_at' | 'description' | 'discontinue_on' | 'id' | 'name' | 'price' | 'seller_id' | 'slug' | 'status' | 'updated_at' | (keyof ProductSortExtensions & string)>
-
-/**
- * Filters your app adds to OptionType lists. Generate them with `spree filters types`,
- * or declare them by hand in a file that has an `export`:
- *
- *     export {}
- *     declare module '@spree/seller-sdk' {
- *       interface OptionTypeFilterExtensions { erp_id_eq?: string }
- *     }
- */
-export interface OptionTypeFilterExtensions {}
-
-/** Sort fields your app adds to OptionType lists, as keys: `{ erp_id: true }`. */
-export interface OptionTypeSortExtensions {}
-
-export type OptionTypeFilters = OptionTypeFields
-  & {
-    search?: string
-    search_by_name?: string
-  }
-  & Filter.OrFilters
-  & OptionTypeFilterExtensions
-
-export type OptionTypeSort = Filter.SortKey<'created_at' | 'id' | 'kind' | 'label' | 'name' | 'position' | 'updated_at' | (keyof OptionTypeSortExtensions & string)>
 
 /**
  * Filters your app adds to ProductType lists. Generate them with `spree filters types`,
