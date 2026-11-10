@@ -9,7 +9,6 @@ import {
   usePermissions,
 } from '@spree/dashboard-core'
 import {
-  Badge,
   Button,
   DropdownMenuItem,
   ErrorState,
@@ -24,7 +23,6 @@ import { useTranslation } from 'react-i18next'
 import { ApiCustomFieldsCard } from '../../../../components/spree/custom-fields/custom-fields-inline'
 import { EnterprisePreviewNote } from '../../../../components/spree/enterprise-upsell'
 import { ResourceDetailSkeleton } from '../../../../components/spree/route-pending'
-import { SellerAddressCard } from '../../../../components/spree/sellers/seller-address-card'
 import { SellerAtAGlanceCard } from '../../../../components/spree/sellers/seller-at-a-glance-card'
 import { SellerBalanceCard } from '../../../../components/spree/sellers/seller-balance-card'
 import { SellerBrandCard } from '../../../../components/spree/sellers/seller-brand-card'
@@ -34,7 +32,6 @@ import { SellerEditSettlementSheet } from '../../../../components/spree/sellers/
 import { SellerInviteSheet } from '../../../../components/spree/sellers/seller-invite-sheet'
 import { SellerOnboardingCard } from '../../../../components/spree/sellers/seller-onboarding-card'
 import { SellerSettlementCard } from '../../../../components/spree/sellers/seller-settlement-card'
-import { SellerStatusCard } from '../../../../components/spree/sellers/seller-status-card'
 import { SellerTeamCard } from '../../../../components/spree/sellers/seller-team-card'
 import { useSellerOnboarding } from '../../../../hooks/use-seller-requirements'
 import {
@@ -101,7 +98,7 @@ function SellerBody({ seller }: { seller: Seller }) {
   const confirm = useConfirm()
   const deleteMutation = useDeleteSeller()
 
-  const [editingProfile, setEditingProfile] = useState(false)
+  const [editingProfile, setEditingProfile] = useState<'profile' | 'contact' | null>(null)
   const [editingSettlement, setEditingSettlement] = useState(false)
   const [inviting, setInviting] = useState(false)
 
@@ -258,19 +255,7 @@ function SellerBody({ seller }: { seller: Seller }) {
             title={seller.name}
             subtitle={seller.contact_email ?? undefined}
             backTo="sellers"
-            badges={
-              <>
-                <StatusBadge status={status} label={t(`admin.sellers.status.${status}`)} />
-                {seller.onboarding_progress.total > 0 && !seller.onboarding_complete && (
-                  <Badge variant="secondary">
-                    {t('admin.sellers.onboarding.progress', {
-                      done: seller.onboarding_progress.done,
-                      total: seller.onboarding_progress.total,
-                    })}
-                  </Badge>
-                )}
-              </>
-            }
+            badges={<StatusBadge status={status} label={t(`admin.sellers.status.${status}`)} />}
             actions={primaryAction}
             dropdownItems={dropdownItems}
             destructiveItems={destructiveItems}
@@ -290,7 +275,7 @@ function SellerBody({ seller }: { seller: Seller }) {
             <SellerBrandCard
               seller={seller}
               canEdit={canEdit}
-              onEdit={() => setEditingProfile(true)}
+              onEdit={() => setEditingProfile('profile')}
             />
             <SellerOnboardingCard seller={seller} canEdit={canEdit} />
             <SellerTeamCard seller={seller} onInvite={() => setInviting(true)} />
@@ -304,16 +289,13 @@ function SellerBody({ seller }: { seller: Seller }) {
         }
         sidebar={
           <>
-            <SellerStatusCard seller={seller} />
             <SellerAtAGlanceCard seller={seller} />
             <SellerBalanceCard seller={seller} />
             <SellerContactCard
               seller={seller}
               canEdit={canEdit}
-              onEdit={() => setEditingProfile(true)}
+              onEdit={() => setEditingProfile('contact')}
             />
-            <SellerAddressCard seller={seller} addressKey="billing_address" canEdit={canEdit} />
-            <SellerAddressCard seller={seller} addressKey="returns_address" canEdit={canEdit} />
             <SellerSettlementCard
               seller={seller}
               canEdit={canEdit}
@@ -327,8 +309,9 @@ function SellerBody({ seller }: { seller: Seller }) {
 
       <SellerEditProfileSheet
         seller={seller}
-        open={editingProfile}
-        onOpenChange={setEditingProfile}
+        part={editingProfile ?? 'profile'}
+        open={editingProfile !== null}
+        onOpenChange={(open) => !open && setEditingProfile(null)}
       />
       <SellerEditSettlementSheet
         seller={seller}

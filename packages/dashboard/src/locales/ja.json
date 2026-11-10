@@ -5407,8 +5407,6 @@
       "add_cta": "販売者を追加",
       "add_sheet_title": "新しい販売者",
       "address": {
-        "filled": "入力済み",
-        "not_filled": "未入力",
         "not_provided_by_seller": "販売者からまだ提出されていません"
       },
       "approve_override_confirm": {
@@ -5431,6 +5429,7 @@
         "billing_address": "請求先住所",
         "contact": "連絡先",
         "delete_label": "販売者を削除",
+        "edit_contact": "連絡先を編集",
         "edit_profile": "プロフィールを編集",
         "edit_profile_description": "販売者が自分の画面で管理しています。ここでの編集は販売者の代わりに反映されます。",
         "edit_settlement": "支払いと税を編集",
@@ -5438,8 +5437,7 @@
         "load_error": "この販売者を読み込めませんでした",
         "no_about": "この販売者はまだ説明を書いていません。",
         "returns_address": "返品先の住所",
-        "settlement": "支払いと税",
-        "status": "状態"
+        "settlement": "支払いと税"
       },
       "empty": "販売者はまだいません",
       "images": {

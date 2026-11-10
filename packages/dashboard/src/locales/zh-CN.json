@@ -5395,8 +5395,6 @@
       "add_cta": "添加卖家",
       "add_sheet_title": "新建卖家",
       "address": {
-        "filled": "已填写",
-        "not_filled": "未填写",
         "not_provided_by_seller": "卖家尚未提供"
       },
       "approve_override_confirm": {
@@ -5419,6 +5417,7 @@
         "billing_address": "账单地址",
         "contact": "联系方式",
         "delete_label": "删除卖家",
+        "edit_contact": "编辑联系方式",
         "edit_profile": "编辑资料",
         "edit_profile_description": "卖家在自己的面板中维护这些信息。在这里的修改代表卖家进行。",
         "edit_settlement": "编辑结算与税务",
@@ -5426,8 +5425,7 @@
         "load_error": "无法加载该卖家",
         "no_about": "该卖家尚未填写简介。",
         "returns_address": "退货地址",
-        "settlement": "结算与税务",
-        "status": "状态"
+        "settlement": "结算与税务"
       },
       "empty": "暂无卖家",
       "images": {

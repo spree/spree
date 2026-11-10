@@ -5408,8 +5408,6 @@
       "add_cta": "Verkäufer hinzufügen",
       "add_sheet_title": "Neuer Verkäufer",
       "address": {
-        "filled": "Ausgefüllt",
-        "not_filled": "Nicht ausgefüllt",
         "not_provided_by_seller": "Vom Verkäufer noch nicht angegeben"
       },
       "approve_override_confirm": {
@@ -5432,6 +5430,7 @@
         "billing_address": "Rechnungsadresse",
         "contact": "Kontakt",
         "delete_label": "Verkäufer löschen",
+        "edit_contact": "Kontakt bearbeiten",
         "edit_profile": "Profil bearbeiten",
         "edit_profile_description": "Der Verkäufer pflegt das in seinem eigenen Bereich. Änderungen hier erfolgen in seinem Namen.",
         "edit_settlement": "Auszahlungen und Steuern bearbeiten",
@@ -5439,8 +5438,7 @@
         "load_error": "Dieser Verkäufer konnte nicht geladen werden",
         "no_about": "Dieser Verkäufer hat noch keine Beschreibung verfasst.",
         "returns_address": "Retourenadresse",
-        "settlement": "Auszahlungen und Steuern",
-        "status": "Status"
+        "settlement": "Auszahlungen und Steuern"
       },
       "empty": "Noch keine Verkäufer",
       "images": {

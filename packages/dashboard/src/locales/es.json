@@ -3507,8 +3507,6 @@
       "add_cta": "Agregar vendedor",
       "add_sheet_title": "Nuevo vendedor",
       "address": {
-        "filled": "Completa",
-        "not_filled": "Incompleta",
         "not_provided_by_seller": "Todavía no la dio el vendedor"
       },
       "approve_override_confirm": {
@@ -3531,6 +3529,7 @@
         "billing_address": "Dirección de facturación",
         "contact": "Contacto",
         "delete_label": "Eliminar vendedor",
+        "edit_contact": "Editar contacto",
         "edit_profile": "Editar perfil",
         "edit_profile_description": "El vendedor lo mantiene desde su propio panel. Las ediciones acá se aplican en su nombre.",
         "edit_settlement": "Editar pagos e impuestos",
@@ -3538,8 +3537,7 @@
         "load_error": "No se pudo cargar este vendedor",
         "no_about": "Este vendedor todavía no escribió una descripción.",
         "returns_address": "Dirección de devoluciones",
-        "settlement": "Pagos e impuestos",
-        "status": "Estado"
+        "settlement": "Pagos e impuestos"
       },
       "empty": "Todavía no hay vendedores",
       "images": {

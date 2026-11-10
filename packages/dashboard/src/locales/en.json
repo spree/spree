@@ -5408,8 +5408,6 @@
       "add_cta": "Add seller",
       "add_sheet_title": "New seller",
       "address": {
-        "filled": "Filled",
-        "not_filled": "Not filled",
         "not_provided_by_seller": "Not yet provided by the seller"
       },
       "approve_override_confirm": {
@@ -5432,6 +5430,7 @@
         "billing_address": "Billing address",
         "contact": "Contact",
         "delete_label": "Delete seller",
+        "edit_contact": "Edit contact",
         "edit_profile": "Edit profile",
         "edit_profile_description": "The seller maintains this from their own panel. Edits here apply on their behalf.",
         "edit_settlement": "Edit payouts and tax",
@@ -5439,8 +5438,7 @@
         "load_error": "Could not load this seller",
         "no_about": "This seller has not written a description yet.",
         "returns_address": "Returns address",
-        "settlement": "Payouts and tax",
-        "status": "Status"
+        "settlement": "Payouts and tax"
       },
       "empty": "No sellers yet",
       "images": {

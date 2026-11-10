@@ -5474,8 +5474,6 @@
       "add_cta": "Dodaj sprzedawcę",
       "add_sheet_title": "Nowy sprzedawca",
       "address": {
-        "filled": "Uzupełniony",
-        "not_filled": "Nieuzupełniony",
         "not_provided_by_seller": "Sprzedawca jeszcze go nie podał"
       },
       "approve_override_confirm": {
@@ -5498,6 +5496,7 @@
         "billing_address": "Adres rozliczeniowy",
         "contact": "Kontakt",
         "delete_label": "Usuń sprzedawcę",
+        "edit_contact": "Edytuj kontakt",
         "edit_profile": "Edytuj profil",
         "edit_profile_description": "Sprzedawca prowadzi to w swoim panelu. Zmiany tutaj wprowadzasz w jego imieniu.",
         "edit_settlement": "Edytuj wypłaty i podatki",
@@ -5505,8 +5504,7 @@
         "load_error": "Nie udało się wczytać tego sprzedawcy",
         "no_about": "Ten sprzedawca nie napisał jeszcze opisu.",
         "returns_address": "Adres zwrotów",
-        "settlement": "Wypłaty i podatki",
-        "status": "Status"
+        "settlement": "Wypłaty i podatki"
       },
       "empty": "Nie ma jeszcze sprzedawców",
       "images": {

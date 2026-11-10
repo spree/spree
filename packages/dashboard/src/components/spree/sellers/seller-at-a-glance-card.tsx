@@ -4,7 +4,11 @@ import { PackageIcon, UsersIcon } from '@spree/dashboard-ui/icons'
 import { useTranslation } from 'react-i18next'
 import { ReadRow } from '../read-row'
 
-/** The counts an operator scans for before opening anything else. */
+/**
+ * Where the seller stands in plain words, and the counts an operator scans
+ * for before opening anything else. The status itself is the badge in the
+ * page header; this says what it means.
+ */
 export function SellerAtAGlanceCard({ seller }: { seller: Seller }) {
   const { t } = useTranslation()
 
@@ -14,6 +18,12 @@ export function SellerAtAGlanceCard({ seller }: { seller: Seller }) {
         <CardTitle>{t('admin.sellers.detail.at_a_glance')}</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
+        <p className="text-muted-foreground text-sm">
+          {t(`admin.sellers.status_help.${seller.status}`, {
+            defaultValue: t('admin.sellers.status_help.pending'),
+          })}
+          {seller.on_holiday && ` ${t('admin.sellers.on_holiday_notice')}`}
+        </p>
         <div className="flex items-center justify-between text-sm">
           <span className="flex items-center gap-2 text-muted-foreground">
             <PackageIcon className="size-4" />

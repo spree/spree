@@ -5410,8 +5410,6 @@
       "add_cta": "Ajouter un vendeur",
       "add_sheet_title": "Nouveau vendeur",
       "address": {
-        "filled": "Renseignée",
-        "not_filled": "Non renseignée",
         "not_provided_by_seller": "Pas encore fournie par le vendeur"
       },
       "approve_override_confirm": {
@@ -5434,6 +5432,7 @@
         "billing_address": "Adresse de facturation",
         "contact": "Contact",
         "delete_label": "Supprimer le vendeur",
+        "edit_contact": "Modifier le contact",
         "edit_profile": "Modifier le profil",
         "edit_profile_description": "Le vendeur gère ces informations depuis son propre espace. Les modifications faites ici le sont en son nom.",
         "edit_settlement": "Modifier les versements et les taxes",
@@ -5441,8 +5440,7 @@
         "load_error": "Impossible de charger ce vendeur",
         "no_about": "Ce vendeur n'a pas encore rédigé de description.",
         "returns_address": "Adresse de retour",
-        "settlement": "Versements et taxes",
-        "status": "Statut"
+        "settlement": "Versements et taxes"
       },
       "empty": "Aucun vendeur pour le moment",
       "images": {

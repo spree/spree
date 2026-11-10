@@ -117,6 +117,15 @@ RSpec.describe Spree::Api::V3::Admin::SellersController, type: :controller do
       expect(json_response['external_references']).to eq('stripe_connect' => 'acct_123')
     end
 
+    it 'names the stock location its returns address is read from' do
+      location = create(:stock_location, store: store, seller: seller, returns_enabled: true)
+
+      get :show, params: { id: seller.prefixed_id }, as: :json
+
+      expect(json_response['returns_location_id']).to eq(location.prefixed_id)
+      expect(json_response['returns_address']['address1']).to eq(location.address1)
+    end
+
     it "404s on another marketplace's seller" do
       other = create(:seller, store: create(:store))
 

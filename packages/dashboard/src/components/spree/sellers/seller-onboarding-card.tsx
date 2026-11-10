@@ -4,16 +4,17 @@ import {
   Badge,
   Button,
   Card,
-  CardTitle,
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
+  CardContent,
+  CardFooter,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
   hasMetadata,
   Progress,
+  Section,
+  SectionHeader,
+  SectionTitle,
   StatusBadge as SharedStatusBadge,
   Sheet,
   SheetContent,
@@ -24,10 +25,10 @@ import {
   useConfirm,
 } from '@spree/dashboard-ui'
 import {
-  ChevronDownIcon,
   DownloadIcon,
   EllipsisVerticalIcon,
   FileTextIcon,
+  ListChecksIcon,
   XCircleIcon,
 } from '@spree/dashboard-ui/icons'
 import { Link } from '@tanstack/react-router'
@@ -59,54 +60,55 @@ export function SellerOnboardingCard({ seller, canEdit }: { seller: Seller; canE
   if (progress.total === 0) return null
 
   return (
-    <Card className="overflow-hidden">
-      {/* Open while there is something left to do; a finished checklist
-          folds away so the page leads with what still needs the operator. */}
-      <Collapsible defaultOpen={!seller.onboarding_complete}>
-        <CollapsibleTrigger className="group flex w-full cursor-pointer items-center gap-3 p-4 text-left hover:bg-accent/50 border-border-subtle">
-          <CardTitle>{t('admin.sellers.onboarding.title')}</CardTitle>
+    <Section>
+      <SectionHeader>
+        <SectionTitle>
+          <ListChecksIcon />
+          {t('admin.sellers.onboarding.title')}
           {seller.onboarding_complete ? (
             <SharedStatusBadge status="complete" label={t('admin.sellers.onboarding.all_done')} />
           ) : (
-            <Badge variant="secondary">
+            <Badge variant="outline">
               {t('admin.sellers.onboarding.progress', {
                 done: progress.done,
                 total: progress.total,
               })}
             </Badge>
           )}
-          <ChevronDownIcon className="ml-auto size-4 shrink-0 text-muted-foreground transition-transform group-data-[panel-open]:rotate-180" />
-        </CollapsibleTrigger>
+        </SectionTitle>
+      </SectionHeader>
 
-        <CollapsibleContent>
-          <div className="flex flex-col gap-4 border-t border-border-subtle p-4">
-            <Progress value={progressPercentage(progress)} />
+      <Card>
+        <CardContent className="flex flex-col gap-4">
+          <Progress value={progressPercentage(progress)} />
 
-            {data ? (
-              <ul className="flex flex-col divide-y">
-                {data.requirements.map((requirement) => (
-                  <RequirementRow
-                    key={requirement.id}
-                    sellerId={seller.id}
-                    requirement={requirement}
-                    canEdit={canEdit}
-                  />
-                ))}
-              </ul>
-            ) : (
-              <p className="text-muted-foreground text-sm">{t('admin.common.loading')}</p>
-            )}
-          </div>
-          {canEdit && (
-            <div className="border-t px-4 pb-4 pt-3 text-sm">
+          {data ? (
+            <ul className="flex flex-col divide-y divide-border-subtle">
+              {data.requirements.map((requirement) => (
+                <RequirementRow
+                  key={requirement.id}
+                  sellerId={seller.id}
+                  requirement={requirement}
+                  canEdit={canEdit}
+                />
+              ))}
+            </ul>
+          ) : (
+            <p className="text-muted-foreground text-sm">{t('admin.common.loading')}</p>
+          )}
+        </CardContent>
+
+        {canEdit && (
+          <CardFooter>
+            <Button variant="ghost" size="sm" className="-ml-2" asChild>
               <Link to={'/$storeId/settings/seller-requirements' as string}>
                 {t('admin.sellers.onboarding.manage_requirements')}
               </Link>
-            </div>
-          )}
-        </CollapsibleContent>
-      </Collapsible>
-    </Card>
+            </Button>
+          </CardFooter>
+        )}
+      </Card>
+    </Section>
   )
 }
 
@@ -186,7 +188,7 @@ function RequirementRow({
           {requirement.published_policy && (
             <button
               type="button"
-              className="flex items-center gap-1 self-start text-primary text-xs hover:underline"
+              className="flex cursor-pointer items-center gap-1 self-start text-link text-xs hover:text-link-hover"
               onClick={() => setPolicyOpen(true)}
             >
               <FileTextIcon className="size-3" />
@@ -196,7 +198,7 @@ function RequirementRow({
           {submission?.file_url && (
             <a
               href={submission.file_url}
-              className="flex items-center gap-1 text-primary text-xs hover:underline"
+              className="flex items-center gap-1 text-link text-xs hover:text-link-hover"
             >
               <DownloadIcon className="size-3" />
               {submission.file_name ?? t('admin.sellers.onboarding.download')}

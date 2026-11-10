@@ -5374,8 +5374,6 @@
       "add_cta": "Thêm người bán",
       "add_sheet_title": "Người bán mới",
       "address": {
-        "filled": "Đầy",
-        "not_filled": "Không đầy",
         "not_provided_by_seller": "Người bán chưa cung cấp"
       },
       "approve_override_confirm": {
@@ -5398,6 +5396,7 @@
         "billing_address": "Địa chỉ thanh toán",
         "contact": "Liên hệ",
         "delete_label": "Xóa người bán",
+        "edit_contact": "Chỉnh sửa liên hệ",
         "edit_profile": "Chỉnh sửa hồ sơ",
         "edit_profile_description": "Người bán duy trì điều này từ bảng điều khiển riêng của họ. Các chỉnh sửa ở đây được áp dụng thay mặt họ.",
         "edit_settlement": "Chỉnh sửa khoản thanh toán và thuế",
@@ -5405,8 +5404,7 @@
         "load_error": "Không thể tải người bán này",
         "no_about": "Người bán này chưa viết mô tả.",
         "returns_address": "Trả về địa chỉ",
-        "settlement": "Các khoản thanh toán và thuế",
-        "status": "Trạng thái"
+        "settlement": "Các khoản thanh toán và thuế"
       },
       "empty": "Chưa có người bán",
       "images": {

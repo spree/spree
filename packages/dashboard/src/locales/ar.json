@@ -5449,8 +5449,6 @@
       "add_cta": "إضافة بائع",
       "add_sheet_title": "بائع جديد",
       "address": {
-        "filled": "مكتمل",
-        "not_filled": "غير مكتمل",
         "not_provided_by_seller": "لم يقدّمه البائع بعد"
       },
       "approve_override_confirm": {
@@ -5473,6 +5471,7 @@
         "billing_address": "عنوان الفوترة",
         "contact": "التواصل",
         "delete_label": "حذف البائع",
+        "edit_contact": "تعديل جهة الاتصال",
         "edit_profile": "تعديل الملف",
         "edit_profile_description": "يحرّر البائع هذه البيانات من لوحته الخاصة، وما تعدّله هنا يجري نيابةً عنه.",
         "edit_settlement": "تعديل الدفعات والضرائب",
@@ -5480,8 +5479,7 @@
         "load_error": "تعذّر تحميل هذا البائع",
         "no_about": "لم يكتب هذا البائع نبذة بعد.",
         "returns_address": "عنوان المرتجعات",
-        "settlement": "الدفعات والضرائب",
-        "status": "الحالة"
+        "settlement": "الدفعات والضرائب"
       },
       "empty": "لا يوجد بائعون بعد",
       "images": {
