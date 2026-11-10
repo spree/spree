@@ -563,7 +563,7 @@ test.describe('placed order editing', () => {
 
     await expect(page.getByText(/^balance change$/i)).toBeVisible({ timeout: 15_000 })
     await expect(page.getByTestId('order-balance-change')).toHaveText(/^\+/)
-    await expect(page.getByText(/the customer will owe more/i)).toBeVisible()
+    await expect(page.getByText(/the customer has a balance to pay/i)).toBeVisible()
 
     // The preview wrote nothing: leaving without saving keeps the saved line.
     await page.goto(orderUrl)
