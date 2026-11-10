@@ -1,5 +1,6 @@
 import { cva, type VariantProps } from 'class-variance-authority'
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { cn } from '../lib/utils'
 import { Label } from './label'
 import { Separator } from './separator'
@@ -89,7 +90,19 @@ function FieldContent({ className, ...props }: React.ComponentProps<'div'>) {
   )
 }
 
-function FieldLabel({ className, ...props }: React.ComponentProps<typeof Label>) {
+/**
+ * `optional` marks a field the form can be saved without. Forms mark the
+ * optional fields rather than the required ones: most fields are required,
+ * so the few that are not are the ones worth pointing out.
+ */
+function FieldLabel({
+  className,
+  optional = false,
+  children,
+  ...props
+}: React.ComponentProps<typeof Label> & { optional?: boolean }) {
+  const { t } = useTranslation()
+
   return (
     <Label
       data-slot="field-label"
@@ -113,7 +126,12 @@ function FieldLabel({ className, ...props }: React.ComponentProps<typeof Label>)
         className,
       )}
       {...props}
-    />
+    >
+      {children}
+      {optional && (
+        <span className="font-normal text-muted-foreground">{t('admin.common.optional')}</span>
+      )}
+    </Label>
   )
 }
 

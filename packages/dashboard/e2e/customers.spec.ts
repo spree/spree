@@ -121,6 +121,42 @@ test.describe('customers', () => {
     await expect(page.getByText('1 Main St')).toBeVisible({ timeout: 15_000 })
   })
 
+  test('marks the optional address fields and follows the country on postal code', async ({
+    page,
+  }) => {
+    const creds = await login(page)
+    await gotoIndex(page, CUSTOMERS_PATH(creds.store_id), CTA)
+    await createCustomer(page, `e2e-addr-optional-${Date.now()}@example.com`)
+
+    await page.getByRole('button', { name: /add address/i }).click()
+    await expect(page.getByRole('heading', { name: /^add address$/i })).toBeVisible()
+
+    const label = (id: string) => page.locator(`label[for="${id}"]`)
+    await expect(label('addr-a2')).toContainText('Optional')
+    await expect(label('addr-phone')).toContainText('Optional')
+    await expect(label('addr-a1')).not.toContainText('Optional')
+
+    // Missing fields report together, the country-dependent postal code included.
+    await fillAddressForm(page, { country: 'United States' })
+    await expect(label('addr-zip')).not.toContainText('Optional')
+    await page.getByRole('button', { name: /^save$/i }).click()
+    await expect(page.getByText(/postal code is required/i)).toBeVisible()
+    await expect(page.getByText(/city is required/i)).toBeVisible()
+
+    // A country without postal codes saves without one.
+    await fillAddressForm(page, {
+      firstName: 'Pat',
+      lastName: 'Smith',
+      address1: '5 Corniche St',
+      city: 'Doha',
+      country: 'Qatar',
+    })
+    await expect(label('addr-zip')).toContainText('Optional')
+    await page.getByRole('button', { name: /^save$/i }).click()
+
+    await expect(page.getByText('5 Corniche St')).toBeVisible({ timeout: 15_000 })
+  })
+
   test('issues store credit', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, CUSTOMERS_PATH(creds.store_id), CTA)
