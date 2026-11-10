@@ -563,6 +563,15 @@ describe Spree::Media, type: :model do
         asset.external_url = 'https://example.com/Example-Image-001.png'
         expect(asset.external_url).to eq('https://example.com/Example-Image-001.png')
       end
+
+      it 'defers the write until an unsaved media is saved' do
+        asset = build(:media)
+
+        expect { asset.external_url = 'https://example.com/Example-Image-001.png' }.not_to change(Spree::CustomField, :count)
+        asset.save!
+
+        expect(asset.reload.external_url).to eq('https://example.com/Example-Image-001.png')
+      end
     end
   end
 end

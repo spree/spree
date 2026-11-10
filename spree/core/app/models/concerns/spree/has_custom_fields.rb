@@ -127,6 +127,13 @@ module Spree
       # @raise [ArgumentError] if `definition_or_key` doesn't resolve to a
       #   known definition.
       def set_custom_field(definition_or_key, value)
+        # A custom field row needs a persisted owner (resource_id NOT NULL), so
+        # on an unsaved record the write is queued and replayed after save.
+        if new_record?
+          queue_pending_custom_field_attrs([{ custom_field_definition_id: definition_or_key, value: value }])
+          return nil
+        end
+
         definition_id = resolve_custom_field_definition_id(definition_or_key)
         custom_field = custom_fields.find_or_initialize_by(custom_field_definition_id: definition_id)
         if value_blank?(value)
@@ -224,11 +231,16 @@ module Spree
         if new_record?
           # Persisting custom_fields requires a persisted parent (resource_id NOT
           # NULL). Stash the attrs and replay them after the parent is saved.
-          @pending_custom_field_attrs = attributes
+          attributes = attributes.values if attributes.is_a?(Hash)
+          queue_pending_custom_field_attrs(attributes)
           return
         end
 
         apply_custom_field_attrs(attributes)
+      end
+
+      def queue_pending_custom_field_attrs(attributes)
+        @pending_custom_field_attrs = Array(@pending_custom_field_attrs) + Array(attributes)
       end
 
       def apply_pending_custom_fields
