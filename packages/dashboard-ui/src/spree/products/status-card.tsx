@@ -75,7 +75,7 @@ export function StatusCard<TFieldValues extends FieldValues>({
               </Select>
             )}
           />
-          {description && <p className="text-muted-foreground text-sm">{description}</p>}
+          {description && <p className="text-muted-foreground text-base">{description}</p>}
         </Field>
         {actions && <div className="flex flex-wrap gap-2">{actions}</div>}
       </CardContent>

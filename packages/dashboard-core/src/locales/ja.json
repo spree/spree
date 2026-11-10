@@ -102,7 +102,11 @@
       "default_shipping": "既定のお届け先",
       "inherited_from": "{{name}}から引き継ぎ",
       "set_default_billing": "既定の請求先にする",
-      "set_default_shipping": "既定のお届け先にする"
+      "set_default_shipping": "既定のお届け先にする",
+      "columns": {
+        "address": "住所",
+        "defaults": "既定の用途"
+      }
     },
     "auth": {
       "back_to_login": "ログインに戻る",
@@ -190,7 +194,8 @@
       "unsaved_changes": "保存していない変更があります。",
       "yes": "はい",
       "done": "完了",
-      "error": "問題が起きました。"
+      "error": "問題が起きました。",
+      "unsaved_label": "未保存の変更"
     },
     "components": {
       "address_block": {
@@ -439,11 +444,8 @@
           "this_month": "今月",
           "today": "今日"
         },
-        "date_range_end": "終了",
-        "date_range_start": "開始",
         "descending": "降順",
         "filter_by": "絞り込む項目…",
-        "filter_date_placeholder": "日付を選ぶ",
         "filter_select_placeholder": "選択…",
         "filter_text_placeholder": "絞り込み…",
         "filter_to_placeholder": "絞り込む…",
@@ -477,7 +479,10 @@
         "select_all": "すべて選択",
         "sort_by": "並べ替え",
         "sort_tooltip": "並べ替え",
-        "visible_columns": "表示する列"
+        "visible_columns": "表示する列",
+        "row_density": "行の密度",
+        "density_comfortable": "標準",
+        "density_compact": "コンパクト"
       },
       "tag_combobox": {
         "create_option": "「{{tag}}」を作成",
@@ -489,6 +494,11 @@
         "label": "テーマ",
         "light": "ライト",
         "system": "システム"
+      },
+      "timezone_combobox": {
+        "empty": "タイムゾーンが見つかりません",
+        "placeholder": "タイムゾーンを選ぶ",
+        "search_placeholder": "タイムゾーンを検索…"
       },
       "wizard": {
         "discard_cancel": "編集を続ける",
@@ -1077,15 +1087,35 @@
       "signed_in_as_invitee": "。{{email}}でログイン中です。"
     },
     "media_picker": {
+      "any": "すべて",
       "confirm": "選んだものを追加",
       "description": "ライブラリにあるファイルを選ぶか、新しくアップロードしてください。",
+      "drop_hint_images": "またはここに画像をドラッグ＆ドロップ",
+      "drop_hint_media": "またはここに画像や動画をドラッグ＆ドロップ",
       "empty": "ライブラリは空です。ファイルをアップロードして始めましょう。",
+      "filter_type": "種類",
+      "filter_usage": "使用状況",
       "no_results": "検索に一致するファイルはありません。",
       "search_placeholder": "名前で検索…",
       "selected_count_one": "{{count}} 件を選択中",
       "selected_count_other": "{{count}} 件を選択中",
+      "sort_date_added": "追加日",
+      "sort_file_name": "ファイル名",
+      "sort_file_size": "ファイルサイズ",
       "title": "メディアライブラリ",
-      "upload": "アップロード"
+      "type_image": "画像",
+      "type_video": "動画",
+      "upload": "アップロード",
+      "usage_unused": "未使用",
+      "usage_used": "使用中",
+      "view": "表示",
+      "view_grid": "グリッド表示",
+      "view_list": "リスト表示"
+    },
+    "media_editor": {
+      "information": "情報",
+      "details": "詳細",
+      "added": "{{date}} に追加"
     },
     "messages": {
       "address_removed": "住所を削除しました",
@@ -1578,12 +1608,18 @@
         "add_video_title": "動画のリンクを追加",
         "assigned_variants_help": "この画像が表すバリアントを選んでください。空欄ならすべてのバリアントに適用します。",
         "assigned_variants_label": "対象のバリアント",
-        "delete_confirm": "このメディアを削除しますか？元に戻すことはできません。",
+        "delete_confirm": "このメディアを削除しますか？商品の保存時に削除されます。",
+        "delete_selected_confirm_one": "選択したメディアを削除しますか？商品の保存時に削除されます。",
+        "delete_selected_confirm_other": "選択した {{count}} 件のメディアを削除しますか？商品の保存時に削除されます。",
         "drop_hint": "メディアをここにドラッグ＆ドロップするか、クリックして選んでください",
         "edit_title": "メディアを編集",
         "file_types_hint": "画像（PNG・JPG・WebP）と動画（MP4・WebM・MOV）",
         "focal_point_help": "画像をクリックして、切り抜いたときに残す部分を決めてください。",
         "focal_point_reset": "リセット",
+        "select_all": "すべてのメディアを選択",
+        "select_item": "{{name}} を選択",
+        "selected_count_one": "{{count}} 件選択中",
+        "selected_count_other": "{{count}} 件選択中",
         "unsupported_file_one": "{{count}} 個のファイルを追加できませんでした。使えるのは画像と動画だけです。",
         "unsupported_file_other": "{{count}} 個のファイルを追加できませんでした。使えるのは画像と動画だけです。",
         "upload_failed": "{{name}}をアップロードできませんでした: {{message}}",
@@ -1694,6 +1730,10 @@
           "failed_to_create_option_type": "オプションタイプを作成できませんでした",
           "failed_to_create_value": "値を作成できませんでした"
         },
+        "images_aria": "{{name}} の画像",
+        "images_description": "このバリエーションを表す商品画像を選択します。メディアカードの順に並び、最初に選択した画像がサムネイルになります。変更するにはメディアカードで画像をドラッグしてください。",
+        "images_title": "{{name}} の画像",
+        "images_unsaved": "このバリエーションに画像を追加するには商品を保存してください",
         "keep": "すべて残す",
         "option_type_label": "オプションタイプ",
         "option_type_placeholder": "オプションタイプを選ぶ",
@@ -1715,6 +1755,7 @@
           "carton_placeholder": "カートンなし",
           "pending_save": "ここでの変更は商品と一緒に保存されます。"
         },
+        "thumbnail_badge": "サムネイル",
         "title": "バリアント",
         "variant_label": "バリアント"
       }

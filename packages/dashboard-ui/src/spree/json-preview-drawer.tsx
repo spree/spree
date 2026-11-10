@@ -122,7 +122,7 @@ export function JsonPreviewDrawer({
         showCloseButton={false}
         className="w-full sm:max-w-2xl bg-zinc-950 text-zinc-100 border-zinc-800 overflow-hidden"
       >
-        <SheetHeader className="border-b border-zinc-800 bg-zinc-950 text-zinc-100 rounded-t-xl">
+        <SheetHeader className="border-b border-zinc-800 bg-zinc-950 text-zinc-100 rounded-t-2xl">
           <SheetTitle className="text-zinc-100 font-mono text-base">{resolvedTitle}</SheetTitle>
           {endpoint && (
             <SheetDescription className="text-zinc-400 font-mono text-xs">
@@ -193,7 +193,7 @@ export function JsonPreviewDrawer({
           </span>
         </div>
 
-        <div className="themed-scrollbar flex-1 overflow-auto p-4 font-mono text-sm">
+        <div className="themed-scrollbar flex-1 overflow-auto p-4 font-mono text-base">
           {isLoading ? (
             <p className="text-zinc-500">{t('admin.common.loading')}</p>
           ) : error ? (

@@ -173,7 +173,7 @@ export function ClaimResolveDialog({
 
           {sendingReplacement && (
             <div className="flex flex-col gap-2">
-              <span className="font-medium text-sm">
+              <span className="font-medium text-base">
                 {t('admin.pages.orders.detail.claims.replacement_items')}
               </span>
               {lines.map((line) => (

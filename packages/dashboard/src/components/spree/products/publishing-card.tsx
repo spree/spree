@@ -156,7 +156,7 @@ export function PublishingCard({
       <CardContent className="flex flex-col gap-1">
         {publicationsArray.fields.length > 0 && <MissingPriceAlert form={form} />}
         {publicationsArray.fields.length === 0 && (
-          <p className="text-sm text-muted-foreground">
+          <p className="text-base text-muted-foreground">
             {t('admin.pages.products.publishing.empty')}
           </p>
         )}
@@ -290,7 +290,7 @@ function PublicationRow({
     >
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
         <div className="flex items-center gap-2">
-          <span className="truncate text-sm font-medium">{channelName}</span>
+          <span className="truncate text-base font-medium">{channelName}</span>
           <span className="flex items-center gap-1 text-xs text-muted-foreground">
             <StatusDot status={status} />
             {t(`admin.pages.products.publishing.status_${status}`)}
@@ -319,9 +319,9 @@ function PublicationEditor({
   const unpublishedAtPath = `product_publications.${index}.unpublished_at` as const
 
   return (
-    <div className="flex flex-col gap-3 rounded-md border border-border bg-muted/20 px-3 py-3">
+    <Item variant="outline" className="flex-col items-stretch gap-3">
       <div className="flex items-center justify-between">
-        <span className="text-sm font-medium">{channelName}</span>
+        <span className="text-base font-medium">{channelName}</span>
         <Button type="button" variant="ghost" size="sm" className="h-7 text-xs" onClick={onDone}>
           {t('admin.actions.done')}
         </Button>
@@ -366,7 +366,7 @@ function PublicationEditor({
           {t('admin.fields.product_publication.unpublished_at.help')}
         </span>
       </Field>
-    </div>
+    </Item>
   )
 }
 
@@ -416,7 +416,7 @@ function ManageChannelsSheet({
             </>
           )}
           {!isLoading && channels.length === 0 && (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-base text-muted-foreground">
               {t('admin.pages.products.publishing.no_channels')}
             </p>
           )}

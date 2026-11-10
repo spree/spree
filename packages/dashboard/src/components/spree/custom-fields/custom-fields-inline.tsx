@@ -684,7 +684,7 @@ export function CustomFieldsInlineCard({
   const body = isLoading ? (
     <LoadingRows />
   ) : loadFailed ? (
-    <p className="text-sm text-destructive" role="alert">
+    <p className="text-base text-destructive" role="alert">
       {t('admin.components.custom_fields.errors.failed_to_load')}
     </p>
   ) : !hasDefinitions ? (
@@ -815,7 +815,7 @@ function CustomFieldsEmptyState({ onSetUp }: { onSetUp: () => void }) {
           <PlusIcon className="size-4" />
           {t('admin.components.custom_fields.set_up')}
         </Button>
-        <Button asChild type="button" variant="link" size="sm">
+        <Button asChild type="button" variant="ghost" size="sm">
           <Link to="/$storeId/settings/custom-field-definitions" params={{ storeId }}>
             {t('admin.components.custom_fields.manage_in_settings')}
           </Link>
@@ -866,7 +866,7 @@ function FieldsDisplay() {
     meta: { definitions },
   } = useCustomFieldsContext()
   return (
-    <dl className="grid grid-cols-[minmax(140px,1fr)_2fr] gap-x-4 gap-y-2 text-sm">
+    <dl className="grid grid-cols-[minmax(140px,1fr)_2fr] gap-x-4 gap-y-2 text-base">
       {definitions.map((def) => (
         <CustomFieldDisplayRow key={def.id} definition={def} value={values[def.id]} />
       ))}

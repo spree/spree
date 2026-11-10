@@ -4,15 +4,15 @@ import {
   AlertDescription,
   Button,
   Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
   ErrorState,
   FormActions,
   ResourceLayout,
+  Section,
+  SectionHeader,
+  SectionTitle,
   useFormSubmitShortcut,
 } from '@spree/dashboard-ui'
-import { InfoIcon, PlusIcon } from '@spree/dashboard-ui/icons'
+import { InfoIcon, PackageIcon, PlusIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -92,7 +92,7 @@ function OrderEditPage() {
     <>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         {form.formState.errors.root?.message && (
-          <p className="text-sm text-destructive" role="alert">
+          <p className="text-base text-destructive" role="alert">
             {form.formState.errors.root.message}
           </p>
         )}
@@ -119,11 +119,14 @@ function OrderEditPage() {
             />
           }
           main={
-            <Card>
-              <CardHeader>
-                <CardTitle>{t('admin.orders.edit.items_title')}</CardTitle>
-              </CardHeader>
-              <CardContent className="p-0">
+            <Section>
+              <SectionHeader>
+                <SectionTitle>
+                  <PackageIcon />
+                  {t('admin.orders.edit.items_title')}
+                </SectionTitle>
+              </SectionHeader>
+              <Card>
                 {/* Unit prices are negotiable pre-placement only: a placed
                     order's money edits stay fees and discounts. */}
                 <OrderEditItemsTable
@@ -133,8 +136,8 @@ function OrderEditPage() {
                   disabled={editor.isSaving}
                   currency={order.currency}
                 />
-              </CardContent>
-            </Card>
+              </Card>
+            </Section>
           }
           sidebar={<OrderTotalsCard order={editor.savedOrder ?? order} items={editor.items} />}
         />
@@ -142,7 +145,7 @@ function OrderEditPage() {
 
       {addingItem && (
         <AddLineItemDialog
-          orderId={orderId}
+          searchParams={{ order_id: orderId }}
           open={addingItem}
           onOpenChange={setAddingItem}
           onSelect={editor.stageVariant}

@@ -220,10 +220,10 @@ export type MarketFields = Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.CodeFilters<'currency', Filter.CurrencyCode>
   & Filter.CodeFilters<'default_locale', Filter.LocaleCode>
 
-export type MediaFields = Filter.TextFilters<'alt'>
+export type MediaFields = Filter.TextFilters<'alt' | 'filename'>
+  & Filter.RangeFilters<'byte_size' | 'position', number>
   & Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.IdFilters<'id'>
-  & Filter.RangeFilters<'position', number>
   & Filter.EnumFilters<'media_type', 'image' | 'video' | 'external_video'>
 
 export type OptionTypeFields = Filter.RangeFilters<'created_at' | 'updated_at'>
@@ -1534,7 +1534,7 @@ export type MediaFilters = MediaFields
   & Filter.OrFilters
   & MediaFilterExtensions
 
-export type MediaSort = Filter.SortKey<'alt' | 'created_at' | 'id' | 'media_type' | 'position' | 'updated_at' | (keyof MediaSortExtensions & string)>
+export type MediaSort = Filter.SortKey<'alt' | 'byte_size' | 'created_at' | 'filename' | 'id' | 'media_type' | 'position' | 'updated_at' | (keyof MediaSortExtensions & string)>
 
 /**
  * Filters your app adds to OptionType lists. Generate them with `spree filters types`,

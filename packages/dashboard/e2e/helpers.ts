@@ -169,6 +169,8 @@ export const FIXTURE_BULK_CHANNEL_NAME = 'E2E Bulk Channel'
  * screens have rows without a spec having to place and fulfil an order first.
  */
 export const FIXTURE_LEDGER_SELLER = 'E2E Ledger Seller'
+/** The ledger seller's returns location, whose address the seller page shows. */
+export const FIXTURE_LEDGER_RETURNS_LOCATION = 'E2E Ledger Returns'
 /** The settled payout the read-only specs assert against. */
 export const FIXTURE_LEDGER_PAYOUT_AMOUNT = '120.0'
 /**
@@ -857,4 +859,54 @@ export async function deleteSeededRecords(page: Page) {
     await adminRequest(page, session, 'delete', path).catch(() => undefined)
   }
   seededRecords = []
+}
+
+/** A titled `Section` on a detail page, found by its heading. */
+export function section(page: Page, title: RegExp) {
+  return page
+    .locator('[data-slot="section"]')
+    .filter({ has: page.getByRole('heading', { name: title }) })
+}
+
+/** Creates a tax rate in the Default category from the tax rates page. */
+export async function createTaxRate(
+  page: Page,
+  attrs: { name: string; ratePercent: string; country?: string },
+) {
+  await page.getByRole('button', { name: /add tax rate/i }).click()
+  await expect(page.getByRole('heading', { name: /new tax rate/i })).toBeVisible()
+
+  await page.locator('#name').fill(attrs.name)
+  await page.locator('#rate_percent').fill(attrs.ratePercent)
+  // The seeded store always carries a `Default` tax category.
+  await page.locator('#tax_category_id').click()
+  await page.getByRole('option', { name: /^default$/i }).click()
+
+  if (attrs.country) {
+    await page.getByRole('combobox', { name: /^country$/i }).click()
+    await page.getByPlaceholder(/^search countries/i).fill(attrs.country)
+    await page.getByRole('option', { name: attrs.country }).first().click()
+  }
+
+  await page.getByRole('button', { name: /create tax rate/i }).click()
+}
+
+/**
+ * Adds one unit of a product on the New order form, through the same "Add
+ * product" sheet the order edit screen uses.
+ */
+export async function addNewOrderItem(page: Page, productName: string) {
+  await page
+    .getByRole('button', { name: /^add product$/i })
+    .first()
+    .click()
+  const sheet = page.getByRole('dialog', { name: /add line item/i })
+  await expect(sheet).toBeVisible()
+  await sheet.getByPlaceholder(/product name or sku/i).fill(productName)
+  await sheet
+    .getByRole('button', { name: new RegExp(escapeRegex(productName), 'i') })
+    .first()
+    .click()
+  await sheet.getByRole('button', { name: /^add$/i }).click()
+  await expect(sheet).toBeHidden()
 }

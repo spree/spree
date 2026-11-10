@@ -267,7 +267,7 @@ export function ResourcePickerSheet<T extends PickerOption>({
               <Loader2Icon className="size-5 animate-spin" />
             </div>
           ) : results.length === 0 ? (
-            <p className="p-6 text-center text-muted-foreground text-sm">
+            <p className="p-6 text-center text-muted-foreground text-base">
               {t('admin.resource_picker.empty')}
             </p>
           ) : (
@@ -285,7 +285,7 @@ export function ResourcePickerSheet<T extends PickerOption>({
                       disabled={selectableOnPage.length === 0 || selectingAll}
                       className="pointer-events-none"
                     />
-                    <span className="truncate text-sm">
+                    <span className="truncate text-base">
                       {t('admin.resource_picker.select_page', { count: selectableOnPage.length })}
                     </span>
                   </button>

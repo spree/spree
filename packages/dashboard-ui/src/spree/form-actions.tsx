@@ -2,6 +2,7 @@ import { useHotkey } from '@tanstack/react-hotkeys'
 import { useEffect } from 'react'
 import { type FieldValues, type UseFormReturn, useFormState } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { StatusDot } from '../ui/badge'
 import { Button } from '../ui/button'
 import { Loader2Icon } from './icons'
 
@@ -78,14 +79,23 @@ export function FormDiscardButton<TFieldValues extends FieldValues>({
   if (!isDirty && !dirty) return null
 
   return (
-    <Button
-      type="button"
-      variant="outline"
-      disabled={isSubmitting}
-      onClick={onDiscard ?? (() => form.reset())}
-    >
-      {label ?? t('admin.actions.discard')}
-    </Button>
+    <>
+      {/* Says why Save just woke up, so a change made far down a long form is
+          not missed in the sticky header. Hidden on phones, where the header
+          has no room for it. */}
+      <span className="hidden items-center gap-1.5 text-base text-muted-foreground sm:inline-flex">
+        <StatusDot status="pending" />
+        {t('admin.common.unsaved_label')}
+      </span>
+      <Button
+        type="button"
+        variant="outline"
+        disabled={isSubmitting}
+        onClick={onDiscard ?? (() => form.reset())}
+      >
+        {label ?? t('admin.actions.discard')}
+      </Button>
+    </>
   )
 }
 

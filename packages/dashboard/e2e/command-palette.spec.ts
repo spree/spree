@@ -5,7 +5,7 @@ import { login } from './helpers'
 // store home rather than navigating somewhere specific first.
 async function openPalette(page: Page, storeId: string) {
   await page.goto(`/${storeId}`)
-  await page.getByRole('button', { name: /search anything/i }).click()
+  await page.getByRole('button', { name: /^search\b/i }).click()
   // Scoped to the dialog: the sidebar trigger and the palette's own input both
   // carry search text, so an unscoped lookup would match two elements.
   const input = page.getByRole('dialog').getByRole('combobox')
@@ -14,12 +14,30 @@ async function openPalette(page: Page, storeId: string) {
 }
 
 test.describe('command palette', () => {
+  test('a closed palette leaves nothing in the page and an open one is named', async ({ page }) => {
+    const creds = await login(page)
+    await page.goto(`/${creds.store_id}/settings/stock-locations`)
+    await expect(page.getByRole('button', { name: /^search\b/i })).toBeVisible({
+      timeout: 15_000,
+    })
+
+    // Its hidden title once sat beside the popup and stayed in the page while
+    // the palette was shut, scrolling the whole shell past the window.
+    await expect(page.getByText('Search and commands')).toHaveCount(0)
+    expect(
+      await page.evaluate(() => document.documentElement.scrollHeight <= window.innerHeight),
+    ).toBe(true)
+
+    await page.getByRole('button', { name: /^search\b/i }).click()
+    await expect(page.getByRole('dialog', { name: 'Search and commands' })).toBeVisible()
+  })
+
   test('opens with the keyboard shortcut', async ({ page }) => {
     const creds = await login(page)
     await page.goto(`/${creds.store_id}`)
     // The shortcut is bound after the shell mounts, so wait for the trigger to
     // appear — pressing earlier lands before the listener exists.
-    await expect(page.getByRole('button', { name: /search anything/i })).toBeVisible({
+    await expect(page.getByRole('button', { name: /^search\b/i })).toBeVisible({
       timeout: 15_000,
     })
 

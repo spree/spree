@@ -315,7 +315,7 @@ export function VariantEditSheet({ form, variantIndex, formKey, open, onOpenChan
 
           {cartonTypesSupported && (
             <FormSection title={t('admin.products.variants.sheet.packing')}>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-base text-muted-foreground">
                 {t('admin.products.variants.sheet.packing_help')}
               </p>
               {knownEmpty && (
@@ -447,7 +447,7 @@ export function VariantEditSheet({ form, variantIndex, formKey, open, onOpenChan
           )}
 
           <FormSection title={t('admin.products.variants.sheet.customs')}>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-base text-muted-foreground">
               {t('admin.products.variants.sheet.customs_help')}
             </p>
             <div className="grid grid-cols-2 gap-3">
@@ -503,7 +503,7 @@ export function VariantEditSheet({ form, variantIndex, formKey, open, onOpenChan
           </FormSection>
 
           <FormSection title={t('admin.products.variants.sheet.ordering')}>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-base text-muted-foreground">
               {t('admin.products.variants.sheet.ordering_help')}
             </p>
             <div className="grid grid-cols-2 gap-3">

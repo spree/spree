@@ -18,6 +18,7 @@ import {
   productToFormValues,
   Slot,
   useAssignableVariants,
+  useCommitRemovedProductMedia,
   VariantsCard,
   variantToWirePayload,
   withExtensionRowValues,
@@ -68,6 +69,7 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
   const productId = mode === 'edit' ? params.productId : undefined
   const navigate = useNavigate()
   const queryClient = useQueryClient()
+  const commitRemovedMedia = useCommitRemovedProductMedia(productId ?? '')
 
   const productKey = ['seller', sellerId, 'product', productId]
   const {
@@ -141,8 +143,9 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
         // means "leave it".
         product_type_id: values.product_type_id ?? null,
         delivery_profile_id: values.delivery_profile_id ?? undefined,
-        // Both lists are the whole intent: anything the seller removed is
-        // absent here, which is what tells the API to drop it.
+        // Variants are the whole intent: one the seller removed is absent
+        // here, which tells the API to drop it. Media is not — a file left out
+        // stays, and removed files go through the media DELETE after the save.
         // The video address and the focal point ride along because the
         // cards offer both — an allow-list that omitted them let a seller
         // set a crop or paste a video URL and watch it vanish on save.
@@ -195,6 +198,15 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
         values: withExtensionRowValues('seller.product', values, form.getValues()),
         extensionValues: extensionSubmitValues('seller.product', form),
       })
+      // Files the seller removed go only once the product itself saved.
+      if (productId && values.removed_media_ids?.length) {
+        const failed = await commitRemovedMedia(values.removed_media_ids)
+        if (failed > 0) toastManager.add({ type: 'error', title: t('common.error') })
+        // Committed: the next save must not try them again.
+        form.setValue('removed_media_ids', [], { shouldDirty: false })
+        // The product refetched on save may still list them; read it again.
+        await queryClient.invalidateQueries({ queryKey: productKey })
+      }
     } catch (err) {
       if (!mapSpreeErrorsToForm(err, form.setError)) {
         toastManager.add({
@@ -224,7 +236,7 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
         })}
       >
         {form.formState.errors.root?.message && (
-          <p className="text-destructive text-sm" role="alert">
+          <p className="text-destructive text-base" role="alert">
             {form.formState.errors.root.message}
           </p>
         )}
@@ -247,13 +259,13 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
           main={
             <>
               <GeneralCard form={form} />
-              <VariantsCard form={form} formKey="seller.product" />
               <MediaCard
                 productId={productId}
                 variants={assignableVariants}
                 form={form}
                 formKey="seller.product"
               />
+              <VariantsCard form={form} formKey="seller.product" />
               <PricesCard
                 form={form}
                 productName={product?.name ?? ''}

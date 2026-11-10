@@ -411,11 +411,15 @@
         "add": "Ajouter une règle",
         "description": "Choisissez les produits à la main ou laissez des règles tenir la collection à jour.",
         "remove": "Supprimer la règle",
-        "title": "Composition"
+        "title": "Composition",
+        "on_sale": "En promotion",
+        "days": "jours",
+        "days_label": "Publié depuis moins de",
+        "tags_placeholder": "Choisir des étiquettes…"
       },
       "rules_match_policies": {
-        "all": "toutes les conditions",
-        "any": "au moins une condition"
+        "all": "Toutes les règles doivent correspondre",
+        "any": "Une seule règle suffit"
       },
       "search_placeholder": "Rechercher des collections…",
       "seo": {
@@ -553,7 +557,10 @@
       },
       "roles_enterprise_help": "Les membres ajoutés ici peuvent acheter pour cette entreprise et gérer son annuaire. Rôles, circuits de validation et plafonds de dépense arrivent avec Spree Enterprise.",
       "roles_enterprise_title": "Les rôles et validations sont une fonctionnalité Enterprise",
-      "title": "Membres"
+      "title": "Membres",
+      "columns": {
+        "member": "Membre"
+      }
     },
     "components": {
       "adjustment_action_editor": {
@@ -625,14 +632,16 @@
         "delete_failed": "Échec de la suppression du groupe de clients",
         "deleted": "Groupe de clients supprimé",
         "update_failed": "Échec de la mise à jour du groupe de clients",
-        "updated": "Groupe de clients mis à jour"
+        "updated": "Groupe de clients mis à jour",
+        "load_failed": "Impossible de charger ce groupe de clients"
       }
     },
     "customers": {
       "autocomplete": {
         "empty": "Aucun client correspondant",
         "empty_for_company": "Aucun client ne peut acheter pour cette entreprise",
-        "placeholder": "Rechercher des clients…"
+        "placeholder": "Rechercher des clients…",
+        "add_new": "Ajouter un nouveau client"
       },
       "columns": {
         "companies": "Entreprises",
@@ -717,7 +726,26 @@
           "search_placeholder": "Rechercher par nom…",
           "title": "Groupes de clients"
         },
-        "view_members": "Voir les membres"
+        "view_members": "Voir les membres",
+        "detail": {
+          "details": "Détails",
+          "members": "Membres",
+          "customer": "Client",
+          "add_member": "Ajouter un client",
+          "add_member_title": "Ajouter un client à ce groupe",
+          "add_member_description": "Choisissez un client existant. Rien d'autre ne change ; il rejoint seulement ce groupe.",
+          "members_empty": "Aucun client dans ce groupe pour le moment",
+          "remove_member": "Retirer du groupe",
+          "remove_confirm": {
+            "title": "Retirer de ce groupe ?",
+            "message": "{{name}} reste client ; il quitte seulement ce groupe."
+          },
+          "messages": {
+            "member_added": "Client ajouté au groupe",
+            "member_removed": "Client retiré du groupe",
+            "member_change_failed": "Impossible de mettre à jour les membres du groupe"
+          }
+        }
       },
       "new_sheet_description": "Les clients créés ici n'ont aucun mot de passe défini. Ils recevront un lien magique lors de leur première connexion.",
       "privacy": {
@@ -1405,7 +1433,8 @@
       },
       "company_membership": {
         "email": {
-          "help": "Un client existant rejoint immédiatement ; les autres reçoivent une invitation par e-mail.",
+          "label": "Ou inviter par e-mail",
+          "help": "Une personne qui n'est pas encore cliente reçoit une invitation par e-mail.",
           "placeholder": "acheteur@exemple.fr"
         }
       },
@@ -2254,8 +2283,7 @@
           "label": "Envoyer les e-mails transactionnels aux clients"
         },
         "timezone": {
-          "label": "Fuseau horaire",
-          "placeholder": "Sélectionner un fuseau horaire"
+          "label": "Fuseau horaire"
         },
         "unit_system": {
           "label": "Système d'unités"
@@ -2717,7 +2745,7 @@
         "shipping": "Livraison",
         "tax": "Taxes"
       },
-      "manage_payment_methods": "Gérer les moyens de paiement",
+      "manage_payment_methods": "Gérer les paiements",
       "messages": {
         "connected": "Intégration connectée",
         "disconnected": "Intégration déconnectée",
@@ -2831,7 +2859,9 @@
     "markets": {
       "add_cta": "Ajouter un marché",
       "columns": {
-        "default": "Par défaut"
+        "default": "Par défaut",
+        "locale": "Langue",
+        "regions": "Régions"
       },
       "create_description": "Regroupez des pays dans une seule région tarifaire avec sa propre devise et ses propres langues.",
       "create_label": "Créer un marché",
@@ -2851,7 +2881,11 @@
         "deleted": "Marché supprimé",
         "updated": "Marché mis à jour"
       },
+      "regions_count_many": "{{count}} régions",
+      "regions_count_one": "{{count}} région",
+      "regions_count_other": "{{count}} régions",
       "search_placeholder": "Rechercher par nom…",
+      "search_regions": "Rechercher des régions",
       "tax_exclusive": "HT",
       "tax_inclusive": "TTC"
     },
@@ -3404,10 +3438,8 @@
       "item_count_one": "{{count}} article",
       "item_count_other": "{{count}} articles",
       "new": {
-        "add_variant": "Ajouter une variante",
         "creates_draft_note": "Crée une commande brouillon. Ajoutez des paiements et finalisez-la après la création.",
         "items_table": {
-          "qty": "Qté",
           "sku": "SKU",
           "variant": "Variante"
         },
@@ -3502,6 +3534,10 @@
         "new_cta": "Nouveau client"
       },
       "getting_started": {
+        "completed": {
+          "description": "Toutes les étapes de Premiers pas sont terminées.",
+          "title": "Votre boutique est configurée"
+        },
         "description": "Terminez ces étapes pour lancer votre boutique.",
         "progress": "{{done}} sur {{total}} terminées",
         "storefront_sheet": {
@@ -3539,6 +3575,7 @@
             "cta": "Enregistrer l'adresse",
             "description": "Votre adresse d'expédition et de retour. Les transporteurs l'utilisent pour calculer les frais de livraison, et c'est là que les retours clients sont envoyés.",
             "no_location": "Vous n'avez pas encore de lieu de stock — créez-en un dans les paramètres pour ajouter une adresse.",
+            "saved": "Adresse d’expédition enregistrée",
             "title": "Ajouter votre adresse d'expédition"
           },
           "setup_payment_method": {
@@ -3589,7 +3626,6 @@
           "previous": "Période précédente"
         },
         "growth": {
-          "new": "Nouveau",
           "vs_previous": "vs période précédente"
         },
         "operations": {
@@ -3601,8 +3637,11 @@
             "low_stock_items": {
               "label": "Stock faible",
               "description_zero": "Désactivé. Définissez un seuil de stock faible dans les paramètres.",
-              "description_one": "1 unité ou moins encore vendable à un emplacement.",
-              "description_other": "{{count}} unités ou moins encore vendables à un emplacement."
+              "description_one": "1 unité ou moins encore vendable, tous emplacements confondus.",
+              "description_other": "{{count}} unités ou moins encore vendables, tous emplacements confondus.",
+              "hint_zero": "Désactivé",
+              "hint_one": "≤ {{count}}",
+              "hint_other": "≤ {{count}}"
             },
             "open_claims": {
               "label": "Réclamations ouvertes",
@@ -3622,12 +3661,19 @@
             },
             "out_of_stock_items": {
               "label": "En rupture de stock",
-              "description": "Plus rien à vendre à cet emplacement."
+              "description": "Plus rien à vendre, dans aucun emplacement."
             },
             "payments_to_collect": {
               "label": "Paiements à encaisser",
               "description": "Commandes passées dont le paiement reste dû."
             }
+          },
+          "all_clear": "Tout est à jour.",
+          "groups": {
+            "orders": "Commandes",
+            "post_sale": "Retours et réclamations",
+            "inventory": "Stock",
+            "other": "Autres"
           }
         },
         "rankings": {
@@ -3658,7 +3704,8 @@
         },
         "currency": {
           "search": "Rechercher une devise"
-        }
+        },
+        "chart_sparse": "Pas encore assez de données pour afficher une tendance"
       },
       "orders": {
         "detail": {
@@ -3790,6 +3837,10 @@
           "company_addresses": "Adresses de l’entreprise",
           "company_help": "Rattacher cette commande à une entreprise. La liste des clients n'affiche alors que les personnes autorisées à acheter pour elle.",
           "customer_addresses": "Adresses du client",
+          "items_empty": {
+            "description": "Ajoutez les produits de cette commande.",
+            "title": "Aucun article pour l’instant"
+          },
           "reset_items": {
             "confirm": "Modifier et retirer les articles",
             "message_many": "Les {{count}} articles choisis ne sont peut-être pas vendus, ou à un autre prix, pour cet acheteur, ce marché ou ce canal. Ils seront retirés.",
@@ -3797,7 +3848,6 @@
             "message_other": "Les {{count}} articles choisis ne sont peut-être pas vendus, ou à un autre prix, pour cet acheteur, ce marché ou ce canal. Ils seront retirés.",
             "title": "Retirer les articles choisis ?"
           },
-          "search_variant": "Rechercher une variante…",
           "section_billing": "Facturation",
           "section_customer": "Client",
           "section_items": "Articles",
@@ -4233,14 +4283,11 @@
         },
         "store": {
           "subtitle": "Configuration générale et valeurs par défaut à l'échelle de la boutique.",
-          "tab_addresses": "Adresses",
           "tab_catalog": "Catalogue",
           "tab_general": "Général",
           "tab_inventory": "Stock",
           "tab_order_numbers": "Numéros de commande",
-          "tab_payments": "Paiements",
           "tab_standards": "Normes et formats",
-          "tab_storefront_access": "Accès à la vitrine",
           "title": "Paramètres de la boutique",
           "tab_downloads": "Téléchargements numériques",
           "downloads_help": "Durée de validité d'un lien de téléchargement et nombre d'utilisations possibles. Chaque fichier peut remplacer ces valeurs.",
@@ -4479,6 +4526,46 @@
             "description": "Enregistrez un client OAuth pour pouvoir le connecter à cette boutique."
           },
           "copy_client_id": "Copier l'identifiant client"
+        },
+        "payments": {
+          "title": "Paiements",
+          "description": "Les prestataires de paiement et méthodes manuelles proposés aux clients, et le moment où les paiements sont encaissés.",
+          "providers_title": "Prestataires de paiement",
+          "providers_empty": {
+            "title": "Aucun prestataire de paiement disponible",
+            "description": "Installez une extension de prestataire de paiement pour accepter les cartes et portefeuilles."
+          },
+          "manual_title": "Méthodes de paiement manuelles",
+          "add_manual": "Ajouter une méthode manuelle",
+          "manual_empty": {
+            "title": "Aucune méthode de paiement manuelle",
+            "description": "Encaissez des paiements hors de votre boutique, par chèque, virement ou paiement à la livraison."
+          },
+          "capture_title": "Encaissement des paiements",
+          "checkout_order": {
+            "cta": "Ordre au paiement",
+            "title": "Ordre au paiement",
+            "description": "Faites glisser pour définir l’ordre des méthodes de paiement au moment du paiement. Seules les méthodes actives affichées sur la boutique sont listées.",
+            "empty": {
+              "title": "Rien n’est proposé au paiement",
+              "description": "Activez une méthode de paiement et affichez-la sur la boutique pour la voir ici."
+            }
+          },
+          "test_gateway": "Passerelle de test"
+        },
+        "storefront": {
+          "title": "Boutique et paiement",
+          "description": "Où se trouve votre boutique, qui peut la parcourir et ce que le paiement demande aux clients.",
+          "storefront_title": "Boutique",
+          "checkout_title": "Paiement",
+          "addresses_title": "Adresses",
+          "url": {
+            "label": "URL de la boutique",
+            "not_connected": "Pas encore connectée",
+            "connect": "Connecter",
+            "change": "Modifier",
+            "help": "L’endroit où vos clients achètent. Spree y renvoie depuis les e-mails et le tableau de bord, et l’autorise à appeler la Store API."
+          }
         }
       },
       "staff": {
@@ -4563,10 +4650,6 @@
       }
     },
     "payment_methods": {
-      "add_cta": "Ajouter un moyen de paiement",
-      "columns": {
-        "storefront": "Boutique"
-      },
       "create_description": "Choisissez un fournisseur et configurez ses identifiants.",
       "create_label": "Créer un moyen de paiement",
       "delete_confirm": {
@@ -4574,22 +4657,19 @@
         "title": "Supprimer le moyen de paiement ?"
       },
       "edit_description": "Mettez à jour le nom, la visibilité ou le statut.",
-      "empty": "Aucun moyen de paiement configuré",
       "messages": {
         "created": "Moyen de paiement créé",
         "deleted": "Moyen de paiement supprimé",
         "updated": "Moyen de paiement mis à jour"
       },
       "provider_description": "Fournisseur : {{provider}}",
-      "search_placeholder": "Rechercher par nom…",
       "status": {
         "disabled": "Désactivé"
       },
       "storefront": {
         "admin_only": "Administration uniquement",
         "visible": "Visible"
-      },
-      "title": "Moyens de paiement"
+      }
     },
     "permissions": {
       "descriptions": {
@@ -5369,8 +5449,6 @@
       "add_cta": "Ajouter un vendeur",
       "add_sheet_title": "Nouveau vendeur",
       "address": {
-        "filled": "Renseignée",
-        "not_filled": "Non renseignée",
         "not_provided_by_seller": "Pas encore fournie par le vendeur"
       },
       "approve_override_confirm": {
@@ -5393,6 +5471,7 @@
         "billing_address": "Adresse de facturation",
         "contact": "Contact",
         "delete_label": "Supprimer le vendeur",
+        "edit_contact": "Modifier le contact",
         "edit_profile": "Modifier le profil",
         "edit_profile_description": "Le vendeur gère ces informations depuis son propre espace. Les modifications faites ici le sont en son nom.",
         "edit_settlement": "Modifier les versements et les taxes",
@@ -5400,8 +5479,7 @@
         "load_error": "Impossible de charger ce vendeur",
         "no_about": "Ce vendeur n'a pas encore rédigé de description.",
         "returns_address": "Adresse de retour",
-        "settlement": "Versements et taxes",
-        "status": "Statut"
+        "settlement": "Versements et taxes"
       },
       "empty": "Aucun vendeur pour le moment",
       "images": {
@@ -5564,7 +5642,7 @@
         "integrations": "Connecter des prestataires d'expédition, de taxe et autres",
         "maintenance_tasks": "Remplissages, réindexations et étapes de mise à niveau, avec le journal de chaque exécution",
         "markets": "Pays où vous vendez et leurs devises",
-        "payment_methods": "Passerelles de paiement et mode de capture",
+        "payment_methods": "Prestataires de paiement, méthodes manuelles et moment de l’encaissement",
         "policies": "Conditions, confidentialité, retours et livraison",
         "product_types": "Modèles qui préremplissent les nouveaux produits",
         "reasons": "Motifs proposés pour retours, remboursements et réclamations",
@@ -5572,14 +5650,15 @@
         "seller_requirements": "Liste à compléter par les vendeurs avant validation",
         "staff": "Personnes ayant accès à ce tableau de bord",
         "stock_locations": "Entrepôts et points de retrait qui détiennent du stock",
-        "store": "Nom de la boutique, fuseau horaire, unités et valeurs régionales",
+        "store": "Nom de la boutique, SEO, fuseau horaire, unités et numéros de commande",
         "webhooks": "Points de terminaison notifiés lors d'événements",
         "package_types": "Cartons, palettes et conteneurs",
         "suppliers": "À qui vous achetez votre stock, et comment les joindre",
         "marketplace": "Paiements, validation des vendeurs, e-mails vendeurs et taxe sur la commission",
         "taxes": "Catégories de taxe, taux et motifs d’exonération",
         "ai_agents": "Agents IA ayant accès à cette boutique",
-        "oauth_clients": "Enregistrer et configurer des clients OAuth"
+        "oauth_clients": "Enregistrer et configurer des clients OAuth",
+        "storefront": "URL de la boutique, qui peut la parcourir, paiement et champs d’adresse"
       },
       "groups": {
         "audit": "Audit",
@@ -5603,7 +5682,7 @@
         "integrations": "Intégrations",
         "maintenance_tasks": "Tâches de maintenance",
         "markets": "Marchés",
-        "payment_methods": "Modes de paiement",
+        "payment_methods": "Paiements",
         "policies": "Politiques",
         "product_types": "Types de produit",
         "profile": "Profil",
@@ -5621,7 +5700,8 @@
         "marketplace": "Paramètres",
         "taxes": "Taxes",
         "ai_agents": "Agents IA",
-        "oauth_clients": "Clients OAuth"
+        "oauth_clients": "Clients OAuth",
+        "storefront": "Boutique et paiement"
       },
       "breadcrumbs": {
         "marketplace": "Marketplace"
@@ -5711,7 +5791,9 @@
         "has_reserved": "Réservé",
         "in_stock": "En stock",
         "low_stock": "Stock faible",
-        "out_of_stock": "En rupture"
+        "out_of_stock": "En rupture",
+        "low_stock_overall": "Stock faible (tous les emplacements)",
+        "out_of_stock_overall": "En rupture (tous les emplacements)"
       },
       "incoming": {
         "open_aria": "Ajouter du stock en route",
@@ -5758,7 +5840,8 @@
       "badges": {
         "default": "Par défaut",
         "enabled": "Activé",
-        "inactive": "Inactif"
+        "inactive": "Inactif",
+        "seller_default": "Par défaut du vendeur"
       },
       "columns": {
         "default": "Par défaut",
@@ -5803,6 +5886,10 @@
         "unknown_product": "Produit inconnu",
         "variant_count_one": "{{count}} variante",
         "variant_count_other": "{{count}} variantes"
+      },
+      "views": {
+        "own": "Vos emplacements",
+        "sellers": "Emplacements des vendeurs"
       }
     },
     "stock_transfers": {
@@ -5934,8 +6021,7 @@
         "oz": "Once (oz)"
       },
       "seo": {
-        "title": "Référencement",
-        "description": "Le titre et la description par défaut de votre boutique. Traduisez-les pour chaque langue prise en charge par votre boutique."
+        "title": "Référencement"
       }
     },
     "table_descriptions": {
@@ -5962,7 +6048,6 @@
       "markets": "Les régions où vous vendez, chacune avec sa devise, ses taxes et sa livraison.",
       "orders": "Chaque commande passée sur votre boutique, et où elle en est.",
       "draft_orders": "Commandes que votre équipe prépare au nom d'un client, pas encore passées.",
-      "payment_methods": "Comment les clients peuvent payer, et les prestataires derrière chaque option.",
       "policies": "Vos conditions générales et politiques de confidentialité, de retour et de livraison, publiées sur la vitrine.",
       "products": "Tout ce que vous vendez, avec ses variantes, ses prix et son stock.",
       "promotions": "Remises et offres, et les règles qui décident quand elles s'appliquent.",
@@ -6028,7 +6113,11 @@
       },
       "title": "Attestations d'exonération",
       "verified_at": "Acceptée le",
-      "verify_action": "Accepter"
+      "verify_action": "Accepter",
+      "columns": {
+        "certificate": "Certificat",
+        "document": "Document"
+      }
     },
     "tax_identifiers": {
       "add_cta": "Ajouter un numéro",
@@ -6408,6 +6497,12 @@
       "delete_confirm": {
         "title": "Supprimer ce fournisseur ?",
         "message": "{{name}} sera retiré de votre liste de fournisseurs."
+      },
+      "detail": {
+        "details": "Détails",
+        "orders_empty": "Aucune commande d'achat auprès de ce fournisseur pour le moment",
+        "load_error": "Impossible de charger ce fournisseur",
+        "address": "Adresse"
       }
     },
     "stock_receipts": {

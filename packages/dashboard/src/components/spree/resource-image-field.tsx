@@ -2,7 +2,8 @@ import type { Media } from '@spree/admin-sdk'
 import {
   adminClient,
   ImageUploadField,
-  MediaPickerSheet,
+  MediaPickerDialog,
+  mediaPickerListParams,
   useFileUpload,
 } from '@spree/dashboard-core'
 import { Button } from '@spree/dashboard-ui'
@@ -114,16 +115,16 @@ export function ResourceImageField<Name extends string, T extends ImageFieldsFor
         {t('admin.media_library.choose_from_library')}
       </Button>
 
-      <MediaPickerSheet<Media>
+      <MediaPickerDialog<Media>
         open={picking}
         onOpenChange={setPicking}
         multiple={false}
         queryKey={`image-field-${kind}`}
-        search={(query) =>
+        search={(query, options) =>
           adminClient.media.list({
             limit: 48,
+            ...mediaPickerListParams(query, options),
             media_type_eq: 'image',
-            ...(query ? { filename_cont: query } : {}),
           })
         }
         onUpload={async (file) => {

@@ -160,4 +160,34 @@ test.describe('products list', () => {
     await sortList(page, /^price$/i, 'ascending')
     await expect(firstRow).toContainText(cheap.name, { timeout: 15_000 })
   })
+
+  test('switches every table to compact rows and remembers the choice', async ({ page }) => {
+    const creds = await login(page)
+    await page.goto(PRODUCTS_PATH(creds.store_id))
+
+    // A product's row, not the loading placeholder the table shows first.
+    const firstRow = page
+      .locator('tbody tr')
+      .filter({ has: page.locator('[data-slot="thumbnail"]') })
+      .first()
+    await expect(firstRow).toBeVisible({ timeout: 15_000 })
+    const comfortable = (await firstRow.boundingBox())?.height ?? 0
+
+    await page.getByRole('button', { name: /^columns$/i }).click()
+    await page.getByRole('menuitemradio', { name: /^compact$/i }).click()
+    await expect(page.getByRole('menuitemradio', { name: /^compact$/i })).toBeChecked()
+    await page.keyboard.press('Escape')
+
+    await expect
+      .poll(async () => (await firstRow.boundingBox())?.height ?? 0)
+      .toBeLessThan(comfortable)
+
+    // A per-browser preference: it survives a reload and reaches other lists.
+    await page.goto(`/${creds.store_id}/orders`)
+    await expect(page.locator('html')).toHaveAttribute('data-table-density', 'compact')
+
+    await page.getByRole('button', { name: /^columns$/i }).click()
+    await page.getByRole('menuitemradio', { name: /^comfortable$/i }).click()
+    await expect(page.locator('html')).not.toHaveAttribute('data-table-density', 'compact')
+  })
 })

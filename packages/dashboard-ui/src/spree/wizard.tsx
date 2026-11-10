@@ -84,7 +84,7 @@ export function WizardProgress({ steps, current, onStepSelect, className }: Wiza
               tabIndex={navigable ? undefined : -1}
               aria-current={state === 'current' ? 'step' : undefined}
               className={cn(
-                'min-w-0 pb-7 text-left text-sm leading-none',
+                'min-w-0 pb-7 text-left text-base leading-none',
                 navigable && 'cursor-pointer hover:text-foreground',
                 state === 'current' ? 'font-medium text-foreground' : 'text-muted-foreground',
                 last && 'pb-0',
@@ -195,7 +195,7 @@ export function Wizard({
             {subtitle ? (
               <>
                 <span aria-hidden className="h-4 w-px shrink-0 bg-border" />
-                <span className="truncate text-muted-foreground text-sm">{subtitle}</span>
+                <span className="truncate text-muted-foreground text-base">{subtitle}</span>
               </>
             ) : null}
           </div>

@@ -102,7 +102,11 @@
       "default_shipping": "الشحن الافتراضي",
       "inherited_from": "موروث من {{name}}",
       "set_default_billing": "تعيين كعنوان فوترة افتراضي",
-      "set_default_shipping": "تعيين كعنوان شحن افتراضي"
+      "set_default_shipping": "تعيين كعنوان شحن افتراضي",
+      "columns": {
+        "address": "العنوان",
+        "defaults": "افتراضي لـ"
+      }
     },
     "auth": {
       "back_to_login": "العودة إلى تسجيل الدخول",
@@ -190,7 +194,8 @@
       "unsaved_changes": "لديك تغييرات غير محفوظة.",
       "yes": "نعم",
       "done": "تم",
-      "error": "حدث خطأ ما."
+      "error": "حدث خطأ ما.",
+      "unsaved_label": "تغييرات غير محفوظة"
     },
     "components": {
       "address_block": {
@@ -437,11 +442,8 @@
           "this_month": "هذا الشهر",
           "today": "اليوم"
         },
-        "date_range_end": "إلى",
-        "date_range_start": "من",
         "descending": "تنازلي",
         "filter_by": "تصفية حسب…",
-        "filter_date_placeholder": "اختر تاريخًا",
         "filter_select_placeholder": "اختر…",
         "filter_text_placeholder": "تصفية…",
         "filter_to_placeholder": "التصفية إلى…",
@@ -475,7 +477,10 @@
         "select_all": "تحديد الكل",
         "sort_by": "ترتيب حسب",
         "sort_tooltip": "ترتيب",
-        "visible_columns": "الأعمدة المرئية"
+        "visible_columns": "الأعمدة المرئية",
+        "row_density": "كثافة الصفوف",
+        "density_comfortable": "مريحة",
+        "density_compact": "مضغوطة"
       },
       "tag_combobox": {
         "create_option": "إنشاء «{{tag}}»",
@@ -487,6 +492,11 @@
         "label": "المظهر",
         "light": "فاتح",
         "system": "النظام"
+      },
+      "timezone_combobox": {
+        "empty": "لم يتم العثور على مناطق زمنية",
+        "placeholder": "اختر منطقة زمنية",
+        "search_placeholder": "ابحث عن المناطق الزمنية…"
       },
       "wizard": {
         "discard_cancel": "متابعة التحرير",
@@ -1075,15 +1085,35 @@
       "signed_in_as_invitee": ". أنت مسجّل الدخول باسم {{email}}."
     },
     "media_picker": {
+      "any": "الكل",
       "confirm": "إضافة المحدد",
       "description": "اختر ملفات موجودة في مكتبتك، أو ارفع ملفات جديدة.",
+      "drop_hint_images": "أو اسحب الصور وأفلتها هنا",
+      "drop_hint_media": "أو اسحب الصور والفيديوهات وأفلتها هنا",
       "empty": "مكتبتك فارغة. ارفع ملفًا للبدء.",
+      "filter_type": "النوع",
+      "filter_usage": "الاستخدام",
       "no_results": "لا توجد ملفات تطابق بحثك.",
       "search_placeholder": "البحث بالاسم…",
       "selected_count_one": "تم تحديد {{count}}",
       "selected_count_other": "تم تحديد {{count}}",
+      "sort_date_added": "تاريخ الإضافة",
+      "sort_file_name": "اسم الملف",
+      "sort_file_size": "حجم الملف",
       "title": "مكتبة الوسائط",
-      "upload": "رفع"
+      "type_image": "الصور",
+      "type_video": "الفيديوهات",
+      "upload": "رفع",
+      "usage_unused": "غير مستخدم",
+      "usage_used": "مستخدم",
+      "view": "العرض",
+      "view_grid": "عرض شبكي",
+      "view_list": "عرض قائمة"
+    },
+    "media_editor": {
+      "information": "المعلومات",
+      "details": "التفاصيل",
+      "added": "أُضيف في {{date}}"
     },
     "messages": {
       "address_removed": "تمت إزالة العنوان",
@@ -1576,12 +1606,18 @@
         "add_video_title": "إضافة رابط فيديو",
         "assigned_variants_help": "اختر المتغيرات التي تمثلها هذه الصورة. اتركه فارغًا ليتم تطبيقه على كافة المتغيرات.",
         "assigned_variants_label": "المتغيرات المخصصة",
-        "delete_confirm": "هل تريد حذف هذه الوسائط؟ لا يمكن التراجع عن هذا.",
+        "delete_confirm": "إزالة هذه الوسائط؟ ستُحذف عند حفظ المنتج.",
+        "delete_selected_confirm_one": "إزالة الوسائط المحددة؟ ستُحذف عند حفظ المنتج.",
+        "delete_selected_confirm_other": "إزالة الوسائط المحددة ({{count}})؟ ستُحذف عند حفظ المنتج.",
         "drop_hint": "قم بسحب وإفلات الوسائط هنا، أو انقر للتصفح",
         "edit_title": "تحرير الوسائط",
         "file_types_hint": "صور (PNG، JPG، WebP) وفيديو (MP4، WebM، MOV)",
         "focal_point_help": "انقر على الصورة لتحديد الجزء الذي يبقى ظاهراً عند الاقتصاص.",
         "focal_point_reset": "إعادة تعيين",
+        "select_all": "تحديد كل الوسائط",
+        "select_item": "تحديد {{name}}",
+        "selected_count_one": "تم تحديد {{count}}",
+        "selected_count_other": "تم تحديد {{count}}",
         "unsupported_file": "لم تتم إضافة {{count}} ملف — الصور والفيديو فقط مدعومة.",
         "upload_failed": "فشل تحميل {{name}}: {{message}}",
         "upload_status_failed": "فشل",
@@ -1691,6 +1727,10 @@
           "failed_to_create_option_type": "فشل إنشاء نوع الخيار",
           "failed_to_create_value": "فشل إنشاء القيمة"
         },
+        "images_aria": "صور {{name}}",
+        "images_description": "حدد صور المنتج التي تعرض هذا المتغير. تظهر بترتيب بطاقة الوسائط، وتصبح أول صورة محددة صورته المصغرة — اسحب الصور في بطاقة الوسائط لتغييرها.",
+        "images_title": "صور {{name}}",
+        "images_unsaved": "احفظ المنتج لإضافة صور إلى هذا المتغير",
         "keep": "احتفظ بالكل",
         "option_type_label": "نوع الخيار",
         "option_type_placeholder": "اختر نوع الخيار",
@@ -1712,6 +1752,7 @@
           "carton_placeholder": "بدون كرتونة",
           "pending_save": "تُحفظ التغييرات هنا مع المنتج."
         },
+        "thumbnail_badge": "الصورة المصغرة",
         "title": "المتغيرات",
         "variant_label": "البديل"
       }

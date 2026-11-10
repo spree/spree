@@ -23,10 +23,10 @@ function NoStoreAccessMessage({ user, signOut }: NoStoreAccessSlotContext) {
     <>
       <div className="flex flex-col gap-2">
         <h1 className="text-2xl font-bold">{t('admin.auth.no_store_access.title')}</h1>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-base text-muted-foreground">
           {t('admin.auth.no_store_access.description')}
         </p>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-base text-muted-foreground">
           {t('admin.auth.no_store_access.signed_in_as', { email: user.email })}
         </p>
       </div>

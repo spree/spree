@@ -75,17 +75,22 @@ export function SettingsSidebar({
       aria-hidden={!open}
       data-state={open ? 'open' : 'closed'}
       className={cn(
-        // `bg-card`, the content sheet's own colour: this rail is a column OF
-        // the sheet rather than an extension of the nav rail beside it, so it
-        // reads as part of the page it is navigating rather than as a second
-        // band of chrome.
-        'z-30 hidden vh-full shrink-0 overflow-hidden bg-muted m-1.5 rounded-lg text-sidebar-foreground transition-[width,border-color] duration-200 ease-out lg:block',
-        open ? 'lg:w-(--spacing-sidebar-width)' : 'lg:w-0 border-e-0 border-transparent',
+        // Part of the chrome, beside the icon rail and outside the content
+        // sheet: it takes the sidebar's ground. The sheet's own edge divides
+        // it from the page; a hairline of the same weight divides it from the
+        // rail.
+        'z-30 hidden vh-full shrink-0 overflow-hidden text-sidebar-foreground transition-[width,border-color] duration-200 ease-out lg:block',
+        open
+          ? 'border-s border-sidebar-border lg:w-(--spacing-sidebar-width)'
+          : 'lg:w-0 border-s-0 border-transparent',
       )}
     >
       <div
         className={cn(
-          'flex h-full w-(--spacing-sidebar-width) flex-col transition-opacity duration-200',
+          // `pt-2` is the inset sidebar's own padding, which the icon rail and
+          // the sheet both sit inside, so the header lines up with the store
+          // switcher and the sheet's top bar.
+          'flex h-full w-(--spacing-sidebar-width) flex-col pt-2 transition-opacity duration-200',
           open ? 'opacity-100 delay-100' : 'pointer-events-none opacity-0',
         )}
       >
@@ -97,7 +102,7 @@ export function SettingsSidebar({
             fade below is a `mask-image` on the scrolling element, and a mask
             applies to sticky descendants too — a header inside it would
             dissolve along with the rows it is meant to stay above. */}
-        <SidebarHeader className="shrink-0 gap-2 pb-2">
+        <SidebarHeader className="shrink-0 gap-2 px-3 pb-2">
           {/* `h-rail-header-height` matches the store switcher opposite, so the
               two line up. */}
           <div className="flex h-rail-header-height items-center gap-1">
@@ -109,7 +114,7 @@ export function SettingsSidebar({
             >
               <ArrowLeftIcon className="size-4" />
             </Link>
-            <span className="truncate font-medium text-sm">{t('admin.settings_page.title')}</span>
+            <span className="truncate font-medium text-base">{t('admin.settings_page.title')}</span>
           </div>
 
           <SettingsNavSearch value={query} onValueChange={setQuery} tabIndex={open ? 0 : -1} />
@@ -124,7 +129,10 @@ export function SettingsSidebar({
             top until there is something scrolled past, clear again at the
             bottom once the end is reached. Falls back to a static fade on both
             edges where scroll-driven animations are unsupported. */}
-        <div className="quiet-scrollbar scroll-fade min-h-0 flex-1 overflow-y-auto">
+        {/* `px-1` on top of the groups' own 8px gives the rows the header's
+            12px gutter, the main nav's. Set here rather than on the groups,
+            which the phone sheet shares at its own spacing. */}
+        <div className="quiet-scrollbar scroll-fade min-h-0 flex-1 overflow-y-auto px-1">
           <SettingsNavBody
             tabIndex={open ? 0 : -1}
             tenantId={tenantId}
@@ -148,14 +156,16 @@ export function SettingsSidebar({
  * touch sizing the primary drawer uses.
  */
 /**
- * Tracks the `lg` breakpoint the settings sheet is bounded by. `useIsMobile`
+ * Whether the settings rail is on screen: the `lg` breakpoint the settings
+ * sheet is bounded by, and below which the settings index is the area's only
+ * navigation. `useIsMobile`
  * cannot stand in: it is fixed at 768px, and closing the sheet there would
  * strand it open across the 768-1024px band where it is still the only way to
  * navigate settings.
  */
 const SETTINGS_SHEET_BREAKPOINT = 1024
 
-function useIsSettingsSheetHidden() {
+export function useSettingsRailShown() {
   return useSyncExternalStore(
     (onChange) => {
       const query = window.matchMedia(`(min-width: ${SETTINGS_SHEET_BREAKPOINT}px)`)
@@ -184,7 +194,7 @@ export function SettingsNavSheet({
   // focus trap armed, with nothing on screen to close it. Widening past the
   // breakpoint while the sheet is open also reports the close, so the caller's
   // state does not stay stuck open behind a desktop layout.
-  const isDesktop = useIsSettingsSheetHidden()
+  const isDesktop = useSettingsRailShown()
 
   useEffect(() => {
     if (isDesktop && open) onOpenChange(false)
@@ -246,7 +256,10 @@ function SettingsNavSearch({
       aria-label={t('admin.settings_page.search_placeholder')}
       clearLabel={t('admin.common.clear')}
       tabIndex={tabIndex}
-      className="h-8 text-sm in-data-[mobile=true]:h-11 in-data-[mobile=true]:text-base"
+      // The main nav's search bar, as a real field: its corner, edge, fill,
+      // icon inset and text size, and no shadow, so the two rails' search
+      // boxes read as one. Phones keep the larger touch size.
+      className="h-8 shadow-none [&>[data-align=inline-start]]:pl-2.5 [&>input]:pl-2! [&>input]:text-base in-data-[mobile=true]:h-11 in-data-[mobile=true]:[&>input]:text-base"
     />
   )
 }
@@ -308,14 +321,18 @@ function SettingsNavBody({
       )}
 
       {visible.groups.length === 0 && (
-        <p className="px-4 py-2 text-sm text-sidebar-foreground/70">
+        <p className="px-4 py-2 text-base text-sidebar-foreground/70">
           {t('admin.settings_page.no_results', { query: query.trim() })}
         </p>
       )}
 
       {visible.groups.map(({ group, entries }) => (
-        <SidebarGroup key={group.key}>
-          <SidebarGroupLabel>{resolveNavLabel(group, t)}</SidebarGroupLabel>
+        // Labels sit a size and a shade under the links, with air above each
+        // group, so the list reads as sections rather than one long column.
+        <SidebarGroup key={group.key} className="not-first:pt-3">
+          <SidebarGroupLabel className="h-7 font-normal text-muted-foreground">
+            {resolveNavLabel(group, t)}
+          </SidebarGroupLabel>
           <SidebarMenu>
             {entries.map((entry) => (
               <SettingsItem
@@ -357,7 +374,7 @@ function SettingsItem({
           via `useSidebar()`, which would fire spuriously in this secondary nav. */}
       <SidebarMenuButton asChild isActive={isActive}>
         <Link to={url} tabIndex={tabIndex}>
-          <NavIcon icon={Icon} isActive={isActive} />
+          <NavIcon icon={Icon} isActive={isActive} muted />
           {/* `truncate` so a long translated label gives way to the badge
               rather than pushing it out of the sidebar. */}
           <span className="truncate">{label}</span>

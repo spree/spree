@@ -235,7 +235,7 @@ function DatePicker({
           <div
             role="dialog"
             aria-label={placeholder}
-            className="absolute top-full left-0 z-50 mt-2 w-auto rounded-lg border border-border bg-popover p-0 text-popover-foreground shadow-md"
+            className="absolute top-full left-0 z-50 mt-2 w-auto rounded-xl border border-border bg-popover p-0 text-popover-foreground shadow-md"
           >
             {panelChildren}
           </div>

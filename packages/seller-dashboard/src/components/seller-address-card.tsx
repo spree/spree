@@ -69,7 +69,7 @@ export function SellerAddressCard({
   const body = address ? (
     <AddressBlock address={address} />
   ) : (
-    <p className="text-muted-foreground text-sm">{t('profile.address_not_provided')}</p>
+    <p className="text-muted-foreground text-base">{t('profile.address_not_provided')}</p>
   )
 
   const editButton = (

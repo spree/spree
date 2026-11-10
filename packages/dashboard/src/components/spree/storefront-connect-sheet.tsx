@@ -5,6 +5,7 @@ import {
   CopyToClipboardButton,
   ExternalLink,
   Input,
+  Item,
   Label,
   Sheet,
   SheetContent,
@@ -170,7 +171,7 @@ export function StorefrontConnectSheet({
               <Skeleton className="h-9" />
             ) : keyError ? (
               <div className="flex items-center gap-3">
-                <p className="text-destructive text-sm">
+                <p className="text-destructive text-base">
                   {t('admin.pages.getting_started.storefront_sheet.key_error')}
                 </p>
                 <Button type="button" variant="outline" size="sm" onClick={() => refetchKey()}>
@@ -204,11 +205,11 @@ export function StorefrontConnectSheet({
             )}
           </div>
 
-          <div className="flex flex-col gap-2 rounded-lg border border-border-subtle p-4">
-            <p className="font-medium text-sm">
+          <Item variant="outline" className="flex-col items-stretch gap-2">
+            <p className="font-medium text-base">
               {t('admin.pages.getting_started.storefront_sheet.deploy_title')}
             </p>
-            <p className="text-muted-foreground text-sm">
+            <p className="text-muted-foreground text-base">
               {t('admin.pages.getting_started.storefront_sheet.deploy_copy')}
             </p>
             <div>
@@ -246,7 +247,7 @@ export function StorefrontConnectSheet({
                 {t('admin.pages.getting_started.storefront_sheet.local_installation_instructions')}
               </ExternalLink>
             </div>
-          </div>
+          </Item>
 
           <form
             className="flex flex-col gap-3"
@@ -268,7 +269,7 @@ export function StorefrontConnectSheet({
                 )}
                 spellCheck={false}
               />
-              <p className="text-muted-foreground text-sm">
+              <p className="text-muted-foreground text-base">
                 {t('admin.pages.getting_started.storefront_sheet.storefront_url_help')}
               </p>
             </div>

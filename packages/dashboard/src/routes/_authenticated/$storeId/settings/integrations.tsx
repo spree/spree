@@ -1,9 +1,4 @@
-import type {
-  Integration,
-  IntegrationTypeDefinition,
-  PaymentMethod,
-  PaymentMethodType,
-} from '@spree/admin-sdk'
+import type { Integration, IntegrationTypeDefinition } from '@spree/admin-sdk'
 import { PageHeader, Subject, typeDescription, usePermissions } from '@spree/dashboard-core'
 import {
   Badge,
@@ -27,18 +22,17 @@ import { IntegrationCard } from '../../../../components/spree/integrations/integ
 import {
   CreatePaymentMethodSheet,
   EditPaymentMethodSheet,
-  paymentProviderLabel,
 } from '../../../../components/spree/payment-method-editors/payment-method-sheets'
+import {
+  PaymentMethodCard,
+  PaymentProviderCard,
+} from '../../../../components/spree/payments/payment-cards'
 import {
   useIntegrations,
   useIntegrationTypes,
   useUpdateIntegration,
 } from '../../../../hooks/use-integrations'
-import {
-  usePaymentMethods,
-  usePaymentMethodTypes,
-  useUpdatePaymentMethod,
-} from '../../../../hooks/use-payment-methods'
+import { usePaymentMethods, usePaymentMethodTypes } from '../../../../hooks/use-payment-methods'
 import { filterPaymentMethodProviderTypes } from '../../../../schemas/payment-method'
 
 const PAYMENTS_GROUP = 'payments'
@@ -91,7 +85,7 @@ function IntegrationsPage() {
     [integrationsResponse],
   )
   // Only methods backed by an external provider belong with integrations;
-  // checks, store credit and the like stay on the Payment methods page.
+  // checks, store credit and the like are only on the Payments page.
   const paymentMethods = useMemo(
     () =>
       canReadPayments
@@ -206,6 +200,7 @@ function IntegrationsPage() {
             <PaymentMethodCard
               key={paymentMethod.id}
               paymentMethod={paymentMethod}
+              groupTag={<GroupTag>{groupLabel(t, PAYMENTS_GROUP)}</GroupTag>}
               onConfigure={() => updateSearch({ payment_method: paymentMethod.id })}
             />
           ))}
@@ -213,6 +208,7 @@ function IntegrationsPage() {
             <PaymentProviderCard
               key={type.type}
               type={type}
+              groupTag={<GroupTag>{groupLabel(t, PAYMENTS_GROUP)}</GroupTag>}
               onSetUp={() => updateSearch({ add_payment_method: type.type })}
             />
           ))}
@@ -277,7 +273,7 @@ function GallerySection({
   return (
     <section className="flex flex-col gap-3">
       <div className="flex items-center justify-between gap-3">
-        <h2 className="font-medium text-muted-foreground text-sm">{title}</h2>
+        <h2 className="font-medium text-muted-foreground text-base">{title}</h2>
         {action}
       </div>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">{children}</div>
@@ -349,91 +345,6 @@ function ServiceIntegrationCard({
             : t('admin.integrations.view_cta')
       }
       onAction={() => onConfigure()}
-    />
-  )
-}
-
-function paymentStatusLabels(t: (key: string) => string) {
-  return {
-    active: t('admin.integrations.status.active'),
-    inactive: t('admin.payment_methods.status.disabled'),
-    not_connected: t('admin.integrations.status.not_connected'),
-  }
-}
-
-function PaymentMethodCard({
-  paymentMethod,
-  onConfigure,
-}: {
-  paymentMethod: PaymentMethod
-  onConfigure: () => void
-}) {
-  const { t } = useTranslation()
-  const { permissions } = usePermissions()
-  const canWrite = permissions.can('update', Subject.PaymentMethod)
-  const updateMutation = useUpdatePaymentMethod(paymentMethod.id, { showValidationErrors: true })
-  const testMode = paymentMethod.preferences?.test_mode === true
-  const provider = paymentProviderLabel(paymentMethod.type)
-
-  return (
-    <IntegrationCard
-      name={paymentMethod.name}
-      logoUrl={paymentMethod.logo_url}
-      docsUrl={paymentMethod.docs_url}
-      status={paymentMethod.active ? 'active' : 'inactive'}
-      statusLabels={paymentStatusLabels(t)}
-      description={
-        paymentMethod.description !== paymentMethod.name
-          ? (paymentMethod.description ?? undefined)
-          : undefined
-      }
-      tags={
-        <>
-          <GroupTag>{groupLabel(t, PAYMENTS_GROUP)}</GroupTag>
-          {provider !== paymentMethod.name && <Badge variant="outline">{provider}</Badge>}
-          {testMode && <Badge variant="warning">{t('admin.integrations.test_mode')}</Badge>}
-          {!paymentMethod.storefront_visible && (
-            <Badge variant="outline">{t('admin.payment_methods.storefront.admin_only')}</Badge>
-          )}
-        </>
-      }
-      toggle={{
-        checked: paymentMethod.active,
-        disabled: !canWrite,
-        label: t('admin.integrations.toggle_label', { name: paymentMethod.name }),
-        onCheckedChange: (active) =>
-          updateMutation.mutateAsync({ active }).then((saved) => saved.active),
-      }}
-      actionLabel={t('admin.integrations.configure_cta')}
-      onAction={onConfigure}
-    />
-  )
-}
-
-function PaymentProviderCard({ type, onSetUp }: { type: PaymentMethodType; onSetUp: () => void }) {
-  const { t } = useTranslation()
-
-  return (
-    <IntegrationCard
-      name={type.label}
-      logoUrl={type.logo_url}
-      docsUrl={type.docs_url}
-      status="not_connected"
-      statusLabels={paymentStatusLabels(t)}
-      description={type.description ?? undefined}
-      tags={<GroupTag>{groupLabel(t, PAYMENTS_GROUP)}</GroupTag>}
-      // Nothing to activate until the provider is set up; the add sheet it
-      // opens starts with the method active.
-      toggle={{
-        checked: false,
-        label: t('admin.integrations.toggle_label', { name: type.label }),
-        onCheckedChange: (active) => {
-          if (active) onSetUp()
-          return undefined
-        },
-      }}
-      actionLabel={t('admin.integrations.connect_cta')}
-      onAction={onSetUp}
     />
   )
 }

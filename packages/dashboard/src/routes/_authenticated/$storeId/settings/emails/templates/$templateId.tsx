@@ -488,7 +488,7 @@ function EmailTemplateEditor({
                     <Textarea
                       id="email-template-subject"
                       rows={2}
-                      className="min-h-0 resize-y font-mono text-sm"
+                      className="min-h-0 resize-y font-mono text-base"
                       value={subject}
                       readOnly={!canEdit}
                       onChange={(event) => editSubject(event.target.value)}

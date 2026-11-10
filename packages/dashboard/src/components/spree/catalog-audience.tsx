@@ -25,6 +25,7 @@ import {
   FieldError,
   FieldGroup,
   FieldLabel,
+  Item,
   Select,
   SelectContent,
   SelectItem,
@@ -122,12 +123,12 @@ function AudienceList({
               <Link
                 to="/$storeId/companies/$companyId"
                 params={{ storeId, companyId: assignment.assignable_id }}
-                className="truncate text-sm hover:underline"
+                className="truncate text-base hover:underline"
               >
                 {assignment.assignable_name ?? assignment.assignable_id}
               </Link>
             ) : (
-              <span className="truncate text-foreground text-sm">
+              <span className="truncate text-foreground text-base">
                 {assignment.assignable_name ?? assignment.assignable_id}
               </span>
             )}
@@ -145,7 +146,7 @@ function AudienceList({
               </Button>
             ) : (
               <Button
-                variant="ghost"
+                variant="destructive-ghost"
                 size="icon-xs"
                 type="button"
                 onClick={() => onRemove(index)}
@@ -169,7 +170,7 @@ function AudiencePrecedenceNote({ assignments }: { assignments: AssignmentEntry[
   if (!hasGroup) return null
 
   return (
-    <p className="text-muted-foreground text-sm">
+    <p className="text-muted-foreground text-base">
       {t('admin.catalogs.assignments.customer_group_precedence')}
     </p>
   )
@@ -224,10 +225,10 @@ export function CatalogAudienceStep({
       )}
 
       {assigning && (
-        <div className="flex flex-col gap-4 rounded-md border p-4">
+        <Item variant="outline" className="flex-col items-stretch gap-4">
           <div>
-            <h3 className="font-medium text-sm">{t('admin.catalogs.assignments.add_title')}</h3>
-            <p className="text-muted-foreground text-sm">
+            <h3 className="font-medium text-base">{t('admin.catalogs.assignments.add_title')}</h3>
+            <p className="text-muted-foreground text-base">
               {t('admin.catalogs.assignments.dialog_description')}
             </p>
           </div>
@@ -239,7 +240,7 @@ export function CatalogAudienceStep({
               setAssigning(false)
             }}
           />
-        </div>
+        </Item>
       )}
     </div>
   )

@@ -87,6 +87,7 @@ export function ProfilePage() {
         main={
           <>
             <BrandCard profile={profile} onEdit={() => setEditing(true)} />
+            <SellerTaxIdentifiersCard />
             <Slot name="seller.profile.form_main" context={{ profile }} />
           </>
         }
@@ -96,7 +97,6 @@ export function ProfilePage() {
             <AtAGlanceCard profile={profile} teamCount={team?.data?.length} />
             <ContactCard profile={profile} onEdit={() => setEditing(true)} />
             <SellerBusinessCard profile={profile} />
-            <SellerTaxIdentifiersCard />
             <SellerAddressCard profile={profile} />
             <SellerReturnsLocationCard />
             <SettlementCard profile={profile} />
@@ -155,7 +155,7 @@ function BrandCard({ profile, onEdit }: { profile: Profile; onEdit: () => void }
         </div>
 
         {/* The name is already the page title; the handle is what it lacks. */}
-        <p className="text-muted-foreground text-sm">/{profile.slug}</p>
+        <p className="text-muted-foreground text-base">/{profile.slug}</p>
 
         {profile.about_html ? (
           // Server-sanitized on every write path (Spree::RichTextSanitizer),
@@ -166,7 +166,7 @@ function BrandCard({ profile, onEdit }: { profile: Profile; onEdit: () => void }
             dangerouslySetInnerHTML={{ __html: profile.about_html }}
           />
         ) : (
-          <p className="text-muted-foreground text-sm">{t('profile.no_about')}</p>
+          <p className="text-muted-foreground text-base">{t('profile.no_about')}</p>
         )}
       </CardContent>
     </Card>
@@ -186,13 +186,13 @@ function StandingCard({ profile }: { profile: Profile }) {
         </CardAction>
       </CardHeader>
       <CardContent className="flex flex-col gap-2">
-        <p className="text-muted-foreground text-sm">
+        <p className="text-muted-foreground text-base">
           {t(`profile.status_help.${profile.status}`, {
             defaultValue: t('profile.status_help.pending'),
           })}
         </p>
         {profile.on_holiday && (
-          <p className="text-muted-foreground text-sm">{t('profile.on_holiday_notice')}</p>
+          <p className="text-muted-foreground text-base">{t('profile.on_holiday_notice')}</p>
         )}
       </CardContent>
     </Card>
@@ -208,14 +208,14 @@ function AtAGlanceCard({ profile, teamCount }: { profile: Profile; teamCount?: n
         <CardTitle>{t('profile.at_a_glance')}</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
-        <div className="flex items-center justify-between text-sm">
+        <div className="flex items-center justify-between text-base">
           <span className="flex items-center gap-2 text-muted-foreground">
             <PackageIcon className="size-4" />
             {t('profile.products_count')}
           </span>
           <span>{profile.products_count}</span>
         </div>
-        <div className="flex items-center justify-between text-sm">
+        <div className="flex items-center justify-between text-base">
           <span className="flex items-center gap-2 text-muted-foreground">
             <UsersIcon className="size-4" />
             {t('profile.team_count')}

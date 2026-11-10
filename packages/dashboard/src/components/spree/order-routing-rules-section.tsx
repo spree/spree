@@ -32,10 +32,13 @@ import {
 } from '@spree/dashboard-core'
 import {
   Button,
+  cn,
   DragHandle,
   Item,
+  ItemActions,
   ItemContent,
   ItemDescription,
+  ItemFooter,
   ItemTitle,
   Switch,
   useConfirm,
@@ -131,7 +134,7 @@ export function OrderRoutingRulesSection({ channelId }: { channelId: string }) {
   return (
     <div className="flex flex-col gap-2 border-t pt-4">
       <div>
-        <span className="text-sm font-medium">
+        <span className="text-base font-medium">
           {t('admin.pages.channels.order_routing_rules.title')}
         </span>
         <p className="text-xs text-muted-foreground">
@@ -140,9 +143,9 @@ export function OrderRoutingRulesSection({ channelId }: { channelId: string }) {
       </div>
 
       {isLoading ? (
-        <p className="text-sm text-muted-foreground">{t('admin.common.loading')}</p>
+        <p className="text-base text-muted-foreground">{t('admin.common.loading')}</p>
       ) : rules.length === 0 ? (
-        <p className="text-sm text-muted-foreground">
+        <p className="text-base text-muted-foreground">
           {t('admin.pages.channels.order_routing_rules.empty')}
         </p>
       ) : (
@@ -236,22 +239,25 @@ function SortableRuleRow({
   const description = typeDescription('order_routing_rule', rule.type, definition?.description)
 
   return (
-    <li
+    <Item
+      variant="outline"
+      size="sm"
       ref={setNodeRef}
       style={style}
-      className={`rounded-md border bg-card ${isDragging ? 'relative z-10 opacity-80 shadow-lg' : ''}`}
+      render={<li />}
+      className={cn(isDragging && 'relative z-10 opacity-80 shadow-lg')}
     >
-      <div className="flex items-center gap-2 p-2">
-        {canUpdate && (
-          <span className="w-6 touch-none">
-            <DragHandle attributes={attributes} listeners={listeners} />
-          </span>
-        )}
-        <div className="min-w-0 flex-1">
-          <span className="block truncate text-sm" title={description || undefined}>
-            {label}
-          </span>
-        </div>
+      {canUpdate && (
+        <span className="w-8 shrink-0 touch-none">
+          <DragHandle attributes={attributes} listeners={listeners} />
+        </span>
+      )}
+      <ItemContent className="min-w-0">
+        <ItemTitle className="w-full truncate font-normal" title={description || undefined}>
+          {label}
+        </ItemTitle>
+      </ItemContent>
+      <ItemActions>
         {hasPreferences && canUpdate && (
           <Button
             type="button"
@@ -272,7 +278,7 @@ function SortableRuleRow({
         {canDestroy && (
           <Button
             type="button"
-            variant="ghost"
+            variant="destructive-ghost"
             size="icon-sm"
             aria-label={t('admin.actions.delete')}
             onClick={onDelete}
@@ -280,16 +286,18 @@ function SortableRuleRow({
             <Trash2Icon className="size-4 text-destructive" />
           </Button>
         )}
-      </div>
+      </ItemActions>
       {editing && hasPreferences && (
-        <RulePreferencesEditor
-          rule={rule}
-          schema={definition?.schema}
-          onSave={onSavePreferences}
-          onCancel={onToggleEdit}
-        />
+        <ItemFooter className="flex-col items-stretch">
+          <RulePreferencesEditor
+            rule={rule}
+            schema={definition?.schema}
+            onSave={onSavePreferences}
+            onCancel={onToggleEdit}
+          />
+        </ItemFooter>
       )}
-    </li>
+    </Item>
   )
 }
 
@@ -308,7 +316,7 @@ function RulePreferencesEditor({
   const [values, setValues] = useState<Record<string, unknown>>(rule.preferences ?? {})
 
   return (
-    <div className="flex flex-col gap-3 border-t p-3">
+    <div className="flex flex-col gap-3 border-t border-border-subtle pt-3">
       <PreferencesForm schema={schema} values={values} onChange={setValues} />
       <div className="flex justify-end gap-2">
         <Button type="button" variant="outline" size="sm" onClick={onCancel}>
@@ -336,7 +344,7 @@ function RuleTypePicker({
   const { t } = useTranslation()
 
   return (
-    <div className="flex flex-col gap-1 rounded-md border p-2">
+    <Item variant="outline" className="flex-col items-stretch gap-1">
       <span className="px-1 text-xs font-medium text-muted-foreground">
         {t('admin.pages.channels.order_routing_rules.picker_title')}
       </span>
@@ -360,6 +368,6 @@ function RuleTypePicker({
       <Button type="button" variant="outline" size="sm" className="self-start" onClick={onCancel}>
         {t('admin.actions.cancel')}
       </Button>
-    </div>
+    </Item>
   )
 }

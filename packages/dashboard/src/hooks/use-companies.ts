@@ -144,7 +144,13 @@ export function useDeleteCompanyAddress(companyId: string) {
 export function useCompanyMemberships(companyId: string | undefined, page = 1, limit = 25) {
   return useQuery({
     queryKey: useResourceKey('companies', companyId ?? 'noop', 'memberships', `${page}:${limit}`),
-    queryFn: () => adminClient.companies.memberships.list(companyId as string, { page, limit }),
+    // With the customer, so each member shows a name, not only an email.
+    queryFn: () =>
+      adminClient.companies.memberships.list(companyId as string, {
+        page,
+        limit,
+        expand: ['customer'],
+      }),
     enabled: !!companyId,
     placeholderData: (previous) => previous,
   })

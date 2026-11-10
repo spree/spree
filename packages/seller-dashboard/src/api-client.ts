@@ -146,6 +146,8 @@ export function createSellerApiClient({
       update: (id, params) => sellerClient().packageTypes.update(id, params),
       delete: (id) => sellerClient().packageTypes.delete(id),
     },
+    deleteProductMedia: (productId, mediaId) =>
+      sellerClient().products.media.delete(productId, mediaId),
     digitalAssets: {
       list: (productId, params) => sellerClient().products.digitalAssets.list(productId, params),
       // Sellers upload files only, so a file is the one thing a new asset must carry.

@@ -254,6 +254,15 @@ RSpec.describe Spree::Api::V3::Seller::OrdersController, type: :controller do
       expect(item).to include('discounted_amount' => '8.00')
     end
 
+    it 'names the product each line sold, so the panel can link to it' do
+      line_item = mine.line_items.first
+
+      get :show, params: { id: mine.prefixed_id }, as: :json
+
+      item = json_response['items'].find { |row| row['id'] == line_item.prefixed_id }
+      expect(item['product_id']).to eq(line_item.product.prefixed_id)
+    end
+
     it 'leaves the shares out unless asked' do
       get :show, params: { id: mine.prefixed_id }, as: :json
 

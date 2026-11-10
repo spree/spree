@@ -41,6 +41,13 @@ export const PAYMENT_METHOD_CREATE_DEFAULTS: PaymentMethodFormValues = {
 /** Wire `type` values that must not appear in the add-payment-method provider picker. */
 export const PAYMENT_METHOD_TYPES_HIDDEN_FROM_PICKER = ['custom_payment_source_method'] as const
 
+/** Providers that only simulate payments, for trying checkout without moving money. */
+const TEST_GATEWAY_TYPES: readonly string[] = ['bogus']
+
+export function isTestGateway(type: string) {
+  return TEST_GATEWAY_TYPES.includes(type)
+}
+
 /** The providers a merchant may add: not hidden, and not already installed on this store. */
 export function filterPaymentMethodProviderTypes<T extends { type: string; installed?: boolean }>(
   types: T[],

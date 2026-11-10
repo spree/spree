@@ -1,6 +1,8 @@
 import { expect, type Page, test } from '@playwright/test'
 import {
   escapeRegex,
+  FIXTURE_LEDGER_RETURNS_LOCATION,
+  FIXTURE_LEDGER_SELLER,
   gotoIndex,
   login,
   openRowMenu,
@@ -122,15 +124,90 @@ test.describe('sellers', () => {
       .first()
       .click()
     await expect(page.getByRole('heading', { name: /edit profile/i })).toBeVisible()
+    // The emails belong to the contact card's own sheet.
+    await expect(page.locator('#seller-contact-email')).toHaveCount(0)
 
-    await page.locator('#seller-contact-email').fill('updated@example.com')
+    const renamed = `${name} Renamed`
+    await page.locator('#seller-name').fill(renamed)
     await page.getByRole('button', { name: /^save$/i }).click()
 
     // Back to the read view, showing the new value.
     await expect(page.getByRole('heading', { name: /edit profile/i })).toHaveCount(0, {
       timeout: 15_000,
     })
+    await expect(page.getByRole('heading', { name: renamed }).first()).toBeVisible({
+      timeout: 15_000,
+    })
+  })
+
+  test('edits the contact details through their own sheet', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, SELLERS_PATH(creds.store_id), CTA)
+
+    await createSeller(page, `E2E Contact Seller ${Date.now()}`)
+
+    await cardEdit(page, /^contact$/i)
+      .first()
+      .click()
+    await expect(page.getByRole('heading', { name: /edit contact/i })).toBeVisible()
+    // Only the contact fields: the profile has its own sheet.
+    await expect(page.locator('#seller-name')).toHaveCount(0)
+
+    await page.locator('#seller-contact-email').fill('updated@example.com')
+    await page.getByRole('button', { name: /^save$/i }).click()
+
+    await expect(page.getByRole('heading', { name: /edit contact/i })).toHaveCount(0, {
+      timeout: 15_000,
+    })
     await expect(page.getByText('updated@example.com').first()).toBeVisible({ timeout: 15_000 })
+  })
+
+  test("opens the seller's stock locations from their page", async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, SELLERS_PATH(creds.store_id), CTA)
+    await rowLink(page, FIXTURE_LEDGER_SELLER).click()
+
+    await page
+      .locator('[data-slot="card"]')
+      .filter({ hasText: /at a glance/i })
+      .getByRole('link', { name: /^view$/i })
+      .click()
+
+    await expect(page).toHaveURL(/settings\/stock-locations\?.*view=sellers/)
+    await expect(page.getByRole('tab', { name: /^sellers' locations$/i })).toHaveAttribute(
+      'aria-selected',
+      'true',
+      { timeout: 15_000 },
+    )
+    await expect(page.getByRole('button', { name: FIXTURE_LEDGER_RETURNS_LOCATION })).toBeVisible({
+      timeout: 15_000,
+    })
+    // Narrowed to this seller: every row names them.
+    for (const row of await page
+      .getByRole('row')
+      .filter({ has: page.locator('td') })
+      .all()) {
+      await expect(row).toContainText(FIXTURE_LEDGER_SELLER)
+    }
+  })
+
+  test('opens the stock location a returns address comes from', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, SELLERS_PATH(creds.store_id), CTA)
+    await rowLink(page, FIXTURE_LEDGER_SELLER).click()
+
+    // The returns address is the location's own, so its edit opens that
+    // location rather than a dialog on the seller.
+    await expect(page.getByText('1 Returns Way')).toBeVisible({ timeout: 15_000 })
+    await page
+      .locator('[data-slot="card"]')
+      .filter({ has: page.getByText(/^contact$/i) })
+      .getByRole('link', { name: /^edit$/i })
+      .click()
+    await expect(page).toHaveURL(/\/settings\/stock-locations\?.*edit=/, { timeout: 15_000 })
+    await expect(
+      page.getByRole('dialog').getByRole('heading', { name: FIXTURE_LEDGER_RETURNS_LOCATION }),
+    ).toBeVisible({ timeout: 15_000 })
   })
 
   test('edits the payout settings through their own sheet', async ({ page }) => {
@@ -169,8 +246,7 @@ test.describe('sellers', () => {
     await page.getByRole('button', { name: /^save$/i }).click()
     await expect(page.getByText('40.0')).toBeVisible({ timeout: 15_000 })
 
-    await page
-      .getByRole('button', { name: /^edit$/i })
+    await cardEdit(page, /^contact$/i)
       .first()
       .click()
     await page.locator('#seller-billing-email').fill('billing@example.com')

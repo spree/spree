@@ -1,11 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { Customer, StoreCredit } from '@spree/admin-sdk'
+import type { StoreCredit } from '@spree/admin-sdk'
 import {
   CurrencySelect,
   currencyParts,
   mapSpreeErrorsToForm,
   normalizeMoneyInput,
-  ResourceCombobox,
   useMoneyLocale,
   useStore,
 } from '@spree/dashboard-core'
@@ -32,11 +31,11 @@ import { useEffect } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useCreateCustomerStoreCredit } from '../../../hooks/use-customer-store-credits'
-import { customerAutocompleteProps } from '../../../hooks/use-customers'
 import {
   type IssueStoreCreditFormValues,
   issueStoreCreditFormSchema,
 } from '../../../schemas/store-credit'
+import { CustomerCombobox } from '../customers/customer-combobox'
 
 /**
  * Issues a store credit. Opened from a customer profile it credits that
@@ -114,7 +113,7 @@ export function IssueStoreCreditDialog({
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <DialogBody>
             {errors.root?.message && (
-              <p className="text-sm text-destructive" role="alert">
+              <p className="text-base text-destructive" role="alert">
                 {errors.root.message}
               </p>
             )}
@@ -128,10 +127,10 @@ export function IssueStoreCreditDialog({
                     name="customer_id"
                     control={form.control}
                     render={({ field }) => (
-                      <ResourceCombobox<Customer>
-                        {...customerAutocompleteProps('store-credit-customer-picker')}
+                      <CustomerCombobox
+                        queryKey="store-credit-customer-picker"
                         id="sc-customer"
-                        value={field.value || undefined}
+                        value={field.value}
                         onChange={(id) => field.onChange(id ?? '')}
                       />
                     )}

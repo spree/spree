@@ -21,6 +21,7 @@ import {
   AlertDescription,
   DropdownMenuItem,
   formatCalculatorSummary,
+  Item,
   useConfirm,
 } from '@spree/dashboard-ui'
 import { CircleAlertIcon, PlusIcon, SparklesIcon, TrashIcon } from '@spree/dashboard-ui/icons'
@@ -277,7 +278,9 @@ export function PromotionForm({
       <ResourceLayout
         header={<PageHeader title={t('admin.common.loading')} backTo="promotions" />}
         main={
-          <div className="text-sm text-muted-foreground">{t('admin.pages.promotions.loading')}</div>
+          <div className="text-base text-muted-foreground">
+            {t('admin.pages.promotions.loading')}
+          </div>
         }
       />
     )
@@ -573,7 +576,7 @@ function ReadOnlyTriggerSummary({ promotion }: { promotion: Promotion }) {
   const [codesOpen, setCodesOpen] = useState(false)
 
   return (
-    <div className="space-y-2 text-sm">
+    <div className="space-y-2 text-base">
       {promotion.kind === 'automatic' ? (
         <Badge variant="outline">{t('admin.promotions.kinds.automatic')}</Badge>
       ) : promotion.multi_codes ? (
@@ -727,7 +730,7 @@ function RulesCard({
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <CardTitle>{t('admin.promotions.rules_card.title')}</CardTitle>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-base text-muted-foreground">
               {t('admin.promotions.rules_card.description')}{' '}
               {t(`admin.promotions.match_policies.${matchPolicy}_hint`)}
             </p>
@@ -763,7 +766,7 @@ function RulesCard({
       <CardContent>
         <div className="space-y-2">
           {rulesArray.fields.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-base text-muted-foreground">
               {t('admin.promotions.rules_card.empty')}
             </p>
           ) : (
@@ -866,19 +869,19 @@ function RuleRow({
   // valid sibling. The "edit" area is its own <button> spanning the
   // label/summary slot; trash is the second column.
   return (
-    <div className="flex w-full items-stretch rounded-md border bg-card hover:bg-accent/50">
+    <Item variant="outline" className="items-stretch gap-0 p-0 hover:bg-muted">
       <button
         type="button"
         onClick={onEdit}
-        className="min-w-0 flex-1 px-3 py-2 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-l-md"
+        className="min-w-0 flex-1 rounded-s-card px-3.5 py-3 text-left outline-none focus-visible:shadow-field-focus"
       >
-        <div className="text-sm font-medium">
+        <div className="text-base font-medium">
           {typeLabel('promotion_rule', draft.type, definition?.label)}
         </div>
         <RuleSummary draft={draft} />
       </button>
       <Can I="destroy" a={Subject.PromotionRule}>
-        <div className="flex items-center pr-1.5">
+        <div className="flex items-center pe-3">
           <Button type="button" size="icon-xs" variant="destructive-ghost" onClick={handleRemove}>
             <TrashIcon className="size-4" />
             {/* "Remove rule", not "Remove": the confirm dialog this opens has
@@ -888,7 +891,7 @@ function RuleRow({
           </Button>
         </div>
       </Can>
-    </div>
+    </Item>
   )
 }
 
@@ -1100,7 +1103,7 @@ function DefaultRuleEditor({ draft, onSave, onClose }: PromotionRuleEditorContex
       {hasPreferences ? (
         <PreferencesForm schema={ruleSchema} values={values} onChange={setValues} />
       ) : (
-        <p className="text-sm text-muted-foreground">
+        <p className="text-base text-muted-foreground">
           {t('admin.promotions.rule_edit.no_options')}
         </p>
       )}
@@ -1136,14 +1139,14 @@ function ActionsCard({
     <Card>
       <CardHeader>
         <CardTitle>{t('admin.actions.actions_menu')}</CardTitle>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-base text-muted-foreground">
           {t('admin.promotions.actions_card.description')}
         </p>
       </CardHeader>
       <CardContent>
         <div className="space-y-2">
           {actionsArray.fields.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-base text-muted-foreground">
               {t('admin.promotions.actions_card.empty')}
             </p>
           ) : (
@@ -1237,19 +1240,19 @@ function ActionRow({
   }
 
   return (
-    <div className="flex w-full items-stretch rounded-md border bg-card hover:bg-accent/50">
+    <Item variant="outline" className="items-stretch gap-0 p-0 hover:bg-muted">
       <button
         type="button"
         onClick={onEdit}
-        className="min-w-0 flex-1 px-3 py-2 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-l-md"
+        className="min-w-0 flex-1 rounded-s-card px-3.5 py-3 text-left outline-none focus-visible:shadow-field-focus"
       >
-        <div className="text-sm font-medium">
+        <div className="text-base font-medium">
           {typeLabel('promotion_action', draft.type, definition?.label)}
         </div>
         <ActionSummary draft={draft} />
       </button>
       <Can I="destroy" a={Subject.PromotionAction}>
-        <div className="flex items-center pr-1.5">
+        <div className="flex items-center pe-3">
           <Button type="button" size="icon-xs" variant="destructive-ghost" onClick={handleRemove}>
             <TrashIcon className="size-4" />
             {/* "Remove rule", not "Remove": the confirm dialog this opens has
@@ -1259,7 +1262,7 @@ function ActionRow({
           </Button>
         </div>
       </Can>
-    </div>
+    </Item>
   )
 }
 
@@ -1354,7 +1357,7 @@ function DefaultActionEditor({ draft, onSave, onClose }: PromotionActionEditorCo
       {hasPreferences ? (
         <PreferencesForm schema={schema} values={values} onChange={setValues} />
       ) : (
-        <p className="text-sm text-muted-foreground">
+        <p className="text-base text-muted-foreground">
           {t('admin.promotions.action_edit.no_options')}
         </p>
       )}
@@ -1399,7 +1402,7 @@ function CouponCodesSheet({
 
         <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
           {codes.length === 0 ? (
-            <p className="px-4 py-6 text-sm text-muted-foreground">
+            <p className="px-4 py-6 text-base text-muted-foreground">
               {t('admin.promotions.coupon_codes.empty')}
             </p>
           ) : (

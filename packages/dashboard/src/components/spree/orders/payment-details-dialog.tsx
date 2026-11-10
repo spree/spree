@@ -67,7 +67,7 @@ export function PaymentDetailsDialog({
           </DialogDescription>
         </DialogHeader>
         <DialogBody className="flex flex-col gap-6">
-          <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
+          <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-base">
             <dt className="text-muted-foreground">
               {t('admin.orders.detail.payments_table.method')}
             </dt>
@@ -103,11 +103,11 @@ export function PaymentDetailsDialog({
             )}
           </dl>
           <section className="flex flex-col gap-2">
-            <h3 className="font-medium text-sm">
+            <h3 className="font-medium text-base">
               {t('admin.orders.detail.payment_details.captures')}
             </h3>
             {captures.length === 0 ? (
-              <p className="text-muted-foreground text-sm">
+              <p className="text-muted-foreground text-base">
                 {t('admin.orders.detail.payment_details.captures_empty')}
               </p>
             ) : (

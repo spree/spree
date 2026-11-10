@@ -23,8 +23,8 @@ export function EmailTemplateVariablesCard({
         <dl className="grid gap-3 sm:grid-cols-2">
           {templateVariables(templateId).map((variable) => (
             <div key={variable.name} className="flex flex-col gap-1">
-              <dt className="font-mono text-sm">{`{{ ${variable.name} }}`}</dt>
-              <dd className="text-sm text-muted-foreground">{t(variable.descriptionKey)}</dd>
+              <dt className="font-mono text-base">{`{{ ${variable.name} }}`}</dt>
+              <dd className="text-base text-muted-foreground">{t(variable.descriptionKey)}</dd>
               {variable.fields && (
                 <dd className="flex flex-wrap gap-1">
                   {variable.fields.map((field) => {

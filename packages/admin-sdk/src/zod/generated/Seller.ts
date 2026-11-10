@@ -36,6 +36,7 @@ export const SellerSchema = z.object({
   registration_number: z.string().nullable(),
   billing_address: AddressSchema.optional(),
   returns_address: AddressSchema.optional(),
+  returns_location_id: z.string().nullable(),
 });
 
 export type Seller = z.infer<typeof SellerSchema>;

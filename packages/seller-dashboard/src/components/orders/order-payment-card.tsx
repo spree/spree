@@ -64,7 +64,7 @@ export function OrderPaymentCard({ order }: { order: Order }) {
       {splits.length > 0 && (
         <>
           <Separator />
-          <p className="px-6 pt-4 text-sm text-muted-foreground">
+          <p className="px-6 pt-4 text-base text-muted-foreground">
             {t('orders.payment.share_help')}
           </p>
           <Table>

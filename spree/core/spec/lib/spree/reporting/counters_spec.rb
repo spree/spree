@@ -15,7 +15,7 @@ RSpec.describe Spree::Reporting::Counters do
     )
     expect(results['out_of_stock_items'].link).to eq(
       'resource' => 'inventory',
-      'filters' => [{ 'field' => 'stock_status', 'operator' => 'in', 'value' => 'out_of_stock' }]
+      'filters' => [{ 'field' => 'stock_status', 'operator' => 'in', 'value' => 'out_of_stock_overall' }]
     )
     expect(results['orders_to_fulfill'].nav).to eq('orders')
     expect(results['orders_to_fulfill'].link).to eq(
@@ -137,21 +137,42 @@ RSpec.describe Spree::Reporting::Counters do
     it 'links each count to the Inventory page filtered to exactly those rows' do
       expect(evaluate['low_stock_items'].link).to eq(
         'resource' => 'inventory',
-        'filters' => [{ 'field' => 'stock_status', 'operator' => 'in', 'value' => 'low_stock' }]
+        'filters' => [{ 'field' => 'stock_status', 'operator' => 'in', 'value' => 'low_stock_overall' }]
       )
     end
 
-    # The filter the link carries and the counter must return the same rows.
+    # The filter the link carries must list exactly the variants counted.
     it 'agrees with the Inventory page filter it links to' do
       Spree::Current.store = store
       results = evaluate
 
-      expect(Spree::StockLevel.for_store(store).with_stock_status('low_stock').count).
+      expect(Spree::StockLevel.for_store(store).with_stock_status('low_stock_overall').distinct.count(:variant_id)).
         to eq(results['low_stock_items'].value)
-      expect(Spree::StockLevel.for_store(store).with_stock_status('out_of_stock').count).
+      expect(Spree::StockLevel.for_store(store).with_stock_status('out_of_stock_overall').distinct.count(:variant_id)).
         to eq(results['out_of_stock_items'].value)
     ensure
       Spree::Current.store = nil
+    end
+
+    context 'when a variant is stocked at another location' do
+      let(:second_location) { create(:stock_location) }
+
+      before do
+        second_location.stock_level_or_create(out_of_stock_product.default_variant).update_columns(count_on_hand: 40)
+        second_location.stock_level_or_create(low_stock_product.default_variant).update_columns(count_on_hand: 40)
+      end
+
+      it 'counts neither as out of stock nor as low, since it can still be sold' do
+        results = evaluate
+        expect(results['out_of_stock_items'].value).to eq(0)
+        expect(results['low_stock_items'].value).to eq(0)
+      end
+    end
+
+    it 'counts each variant once, however many locations hold none of it' do
+      create(:stock_location).stock_level_or_create(out_of_stock_product.default_variant)
+
+      expect(evaluate['out_of_stock_items'].value).to eq(1)
     end
   end
 end

@@ -24,12 +24,10 @@ import { Route as ExchangesRouteImport } from './routes/_authenticated/$storeId/
 import { Route as GettingStartedRouteImport } from './routes/_authenticated/$storeId/getting-started'
 import { Route as ReturnsRouteImport } from './routes/_authenticated/$storeId/returns'
 import { Route as SettingsRouteImport } from './routes/_authenticated/$storeId/settings'
-import { Route as SuppliersRouteImport } from './routes/_authenticated/$storeId/suppliers'
 import { Route as CompaniesIndexRouteImport } from './routes/_authenticated/$storeId/companies/index'
 import { Route as CompaniesCompanyIdRouteImport } from './routes/_authenticated/$storeId/companies/$companyId'
 import { Route as CustomersIndexRouteImport } from './routes/_authenticated/$storeId/customers/index'
 import { Route as CustomersCustomerIdRouteImport } from './routes/_authenticated/$storeId/customers/$customerId'
-import { Route as CustomersGroupsRouteImport } from './routes/_authenticated/$storeId/customers/groups'
 import { Route as InventoryIndexRouteImport } from './routes/_authenticated/$storeId/inventory/index'
 import { Route as LoyaltyGiftCardsRouteImport } from './routes/_authenticated/$storeId/loyalty/gift-cards'
 import { Route as LoyaltyStoreCreditsRouteImport } from './routes/_authenticated/$storeId/loyalty/store-credits'
@@ -79,9 +77,14 @@ import { Route as SettingsSellerRequirementsRouteImport } from './routes/_authen
 import { Route as SettingsStaffRouteImport } from './routes/_authenticated/$storeId/settings/staff'
 import { Route as SettingsStockLocationsRouteImport } from './routes/_authenticated/$storeId/settings/stock-locations'
 import { Route as SettingsStoreRouteImport } from './routes/_authenticated/$storeId/settings/store'
+import { Route as SettingsStorefrontRouteImport } from './routes/_authenticated/$storeId/settings/storefront'
 import { Route as SettingsTaxesRouteImport } from './routes/_authenticated/$storeId/settings/taxes'
+import { Route as SuppliersIndexRouteImport } from './routes/_authenticated/$storeId/suppliers/index'
+import { Route as SuppliersSupplierIdRouteImport } from './routes/_authenticated/$storeId/suppliers/$supplierId'
 import { Route as TransfersIndexRouteImport } from './routes/_authenticated/$storeId/transfers/index'
 import { Route as TransfersNewRouteImport } from './routes/_authenticated/$storeId/transfers/new'
+import { Route as CustomersGroupsIndexRouteImport } from './routes/_authenticated/$storeId/customers/groups/index'
+import { Route as CustomersGroupsGroupIdRouteImport } from './routes/_authenticated/$storeId/customers/groups/$groupId'
 import { Route as OrdersOrderIdIndexRouteImport } from './routes/_authenticated/$storeId/orders/$orderId/index'
 import { Route as OrdersOrderIdEditRouteImport } from './routes/_authenticated/$storeId/orders/$orderId/edit'
 import { Route as ProductsCatalogsIndexRouteImport } from './routes/_authenticated/$storeId/products/catalogs/index'
@@ -191,11 +194,6 @@ const SettingsRoute = SettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => authenticatedStoreIdRoute,
 } as any)
-const SuppliersRoute = SuppliersRouteImport.update({
-  id: '/suppliers',
-  path: '/suppliers',
-  getParentRoute: () => authenticatedStoreIdRoute,
-} as any)
 const CompaniesIndexRoute = CompaniesIndexRouteImport.update({
   id: '/companies/',
   path: '/companies/',
@@ -214,11 +212,6 @@ const CustomersIndexRoute = CustomersIndexRouteImport.update({
 const CustomersCustomerIdRoute = CustomersCustomerIdRouteImport.update({
   id: '/customers/$customerId',
   path: '/customers/$customerId',
-  getParentRoute: () => authenticatedStoreIdRoute,
-} as any)
-const CustomersGroupsRoute = CustomersGroupsRouteImport.update({
-  id: '/customers/groups',
-  path: '/customers/groups',
   getParentRoute: () => authenticatedStoreIdRoute,
 } as any)
 const InventoryIndexRoute = InventoryIndexRouteImport.update({
@@ -469,10 +462,25 @@ const SettingsStoreRoute = SettingsStoreRouteImport.update({
   path: '/store',
   getParentRoute: () => SettingsRoute,
 } as any)
+const SettingsStorefrontRoute = SettingsStorefrontRouteImport.update({
+  id: '/storefront',
+  path: '/storefront',
+  getParentRoute: () => SettingsRoute,
+} as any)
 const SettingsTaxesRoute = SettingsTaxesRouteImport.update({
   id: '/taxes',
   path: '/taxes',
   getParentRoute: () => SettingsRoute,
+} as any)
+const SuppliersIndexRoute = SuppliersIndexRouteImport.update({
+  id: '/suppliers/',
+  path: '/suppliers/',
+  getParentRoute: () => authenticatedStoreIdRoute,
+} as any)
+const SuppliersSupplierIdRoute = SuppliersSupplierIdRouteImport.update({
+  id: '/suppliers/$supplierId',
+  path: '/suppliers/$supplierId',
+  getParentRoute: () => authenticatedStoreIdRoute,
 } as any)
 const TransfersIndexRoute = TransfersIndexRouteImport.update({
   id: '/transfers/',
@@ -482,6 +490,16 @@ const TransfersIndexRoute = TransfersIndexRouteImport.update({
 const TransfersNewRoute = TransfersNewRouteImport.update({
   id: '/transfers/new',
   path: '/transfers/new',
+  getParentRoute: () => authenticatedStoreIdRoute,
+} as any)
+const CustomersGroupsIndexRoute = CustomersGroupsIndexRouteImport.update({
+  id: '/customers/groups/',
+  path: '/customers/groups/',
+  getParentRoute: () => authenticatedStoreIdRoute,
+} as any)
+const CustomersGroupsGroupIdRoute = CustomersGroupsGroupIdRouteImport.update({
+  id: '/customers/groups/$groupId',
+  path: '/customers/groups/$groupId',
   getParentRoute: () => authenticatedStoreIdRoute,
 } as any)
 const OrdersOrderIdIndexRoute = OrdersOrderIdIndexRouteImport.update({
@@ -680,11 +698,9 @@ export interface FileRoutesByFullPath {
   '/$storeId/getting-started': typeof GettingStartedRoute
   '/$storeId/returns': typeof ReturnsRoute
   '/$storeId/settings': typeof SettingsRouteWithChildren
-  '/$storeId/suppliers': typeof SuppliersRoute
   '/$storeId/': typeof IndexRoute
   '/$storeId/companies/$companyId': typeof CompaniesCompanyIdRoute
   '/$storeId/customers/$customerId': typeof CustomersCustomerIdRoute
-  '/$storeId/customers/groups': typeof CustomersGroupsRoute
   '/$storeId/loyalty/gift-cards': typeof LoyaltyGiftCardsRoute
   '/$storeId/loyalty/store-credits': typeof LoyaltyStoreCreditsRoute
   '/$storeId/oauth/authorize': typeof OauthAuthorizeRoute
@@ -726,7 +742,9 @@ export interface FileRoutesByFullPath {
   '/$storeId/settings/staff': typeof SettingsStaffRoute
   '/$storeId/settings/stock-locations': typeof SettingsStockLocationsRoute
   '/$storeId/settings/store': typeof SettingsStoreRoute
+  '/$storeId/settings/storefront': typeof SettingsStorefrontRoute
   '/$storeId/settings/taxes': typeof SettingsTaxesRouteWithChildren
+  '/$storeId/suppliers/$supplierId': typeof SuppliersSupplierIdRoute
   '/$storeId/transfers/new': typeof TransfersNewRoute
   '/$storeId/companies/': typeof CompaniesIndexRoute
   '/$storeId/customers/': typeof CustomersIndexRoute
@@ -738,7 +756,9 @@ export interface FileRoutesByFullPath {
   '/$storeId/reports/': typeof ReportsIndexRoute
   '/$storeId/sellers/': typeof SellersIndexRoute
   '/$storeId/settings/': typeof SettingsIndexRoute
+  '/$storeId/suppliers/': typeof SuppliersIndexRoute
   '/$storeId/transfers/': typeof TransfersIndexRoute
+  '/$storeId/customers/groups/$groupId': typeof CustomersGroupsGroupIdRoute
   '/$storeId/orders/$orderId/edit': typeof OrdersOrderIdEditRoute
   '/$storeId/products/catalogs/$catalogId': typeof ProductsCatalogsCatalogIdRoute
   '/$storeId/products/categories/$categoryId': typeof ProductsCategoriesCategoryIdRoute
@@ -753,6 +773,7 @@ export interface FileRoutesByFullPath {
   '/$storeId/settings/taxes/rates': typeof SettingsTaxesRatesRoute
   '/$storeId/settings/webhooks/$webhookEndpointId': typeof SettingsWebhooksWebhookEndpointIdRoute
   '/$storeId/transfers/$transferId/edit': typeof TransfersTransferIdEditRoute
+  '/$storeId/customers/groups/': typeof CustomersGroupsIndexRoute
   '/$storeId/orders/$orderId/': typeof OrdersOrderIdIndexRoute
   '/$storeId/products/catalogs/': typeof ProductsCatalogsIndexRoute
   '/$storeId/products/categories/': typeof ProductsCategoriesIndexRoute
@@ -785,11 +806,9 @@ export interface FileRoutesByTo {
   '/$storeId/exchanges': typeof ExchangesRoute
   '/$storeId/getting-started': typeof GettingStartedRoute
   '/$storeId/returns': typeof ReturnsRoute
-  '/$storeId/suppliers': typeof SuppliersRoute
   '/$storeId': typeof IndexRoute
   '/$storeId/companies/$companyId': typeof CompaniesCompanyIdRoute
   '/$storeId/customers/$customerId': typeof CustomersCustomerIdRoute
-  '/$storeId/customers/groups': typeof CustomersGroupsRoute
   '/$storeId/loyalty/gift-cards': typeof LoyaltyGiftCardsRoute
   '/$storeId/loyalty/store-credits': typeof LoyaltyStoreCreditsRoute
   '/$storeId/oauth/authorize': typeof OauthAuthorizeRoute
@@ -831,6 +850,8 @@ export interface FileRoutesByTo {
   '/$storeId/settings/staff': typeof SettingsStaffRoute
   '/$storeId/settings/stock-locations': typeof SettingsStockLocationsRoute
   '/$storeId/settings/store': typeof SettingsStoreRoute
+  '/$storeId/settings/storefront': typeof SettingsStorefrontRoute
+  '/$storeId/suppliers/$supplierId': typeof SuppliersSupplierIdRoute
   '/$storeId/transfers/new': typeof TransfersNewRoute
   '/$storeId/companies': typeof CompaniesIndexRoute
   '/$storeId/customers': typeof CustomersIndexRoute
@@ -842,7 +863,9 @@ export interface FileRoutesByTo {
   '/$storeId/reports': typeof ReportsIndexRoute
   '/$storeId/sellers': typeof SellersIndexRoute
   '/$storeId/settings': typeof SettingsIndexRoute
+  '/$storeId/suppliers': typeof SuppliersIndexRoute
   '/$storeId/transfers': typeof TransfersIndexRoute
+  '/$storeId/customers/groups/$groupId': typeof CustomersGroupsGroupIdRoute
   '/$storeId/orders/$orderId/edit': typeof OrdersOrderIdEditRoute
   '/$storeId/products/catalogs/$catalogId': typeof ProductsCatalogsCatalogIdRoute
   '/$storeId/products/categories/$categoryId': typeof ProductsCategoriesCategoryIdRoute
@@ -857,6 +880,7 @@ export interface FileRoutesByTo {
   '/$storeId/settings/taxes/rates': typeof SettingsTaxesRatesRoute
   '/$storeId/settings/webhooks/$webhookEndpointId': typeof SettingsWebhooksWebhookEndpointIdRoute
   '/$storeId/transfers/$transferId/edit': typeof TransfersTransferIdEditRoute
+  '/$storeId/customers/groups': typeof CustomersGroupsIndexRoute
   '/$storeId/orders/$orderId': typeof OrdersOrderIdIndexRoute
   '/$storeId/products/catalogs': typeof ProductsCatalogsIndexRoute
   '/$storeId/products/categories': typeof ProductsCategoriesIndexRoute
@@ -893,11 +917,9 @@ export interface FileRoutesById {
   '/_authenticated/$storeId/getting-started': typeof GettingStartedRoute
   '/_authenticated/$storeId/returns': typeof ReturnsRoute
   '/_authenticated/$storeId/settings': typeof SettingsRouteWithChildren
-  '/_authenticated/$storeId/suppliers': typeof SuppliersRoute
   '/_authenticated/$storeId/': typeof IndexRoute
   '/_authenticated/$storeId/companies/$companyId': typeof CompaniesCompanyIdRoute
   '/_authenticated/$storeId/customers/$customerId': typeof CustomersCustomerIdRoute
-  '/_authenticated/$storeId/customers/groups': typeof CustomersGroupsRoute
   '/_authenticated/$storeId/loyalty/gift-cards': typeof LoyaltyGiftCardsRoute
   '/_authenticated/$storeId/loyalty/store-credits': typeof LoyaltyStoreCreditsRoute
   '/_authenticated/$storeId/oauth/authorize': typeof OauthAuthorizeRoute
@@ -939,7 +961,9 @@ export interface FileRoutesById {
   '/_authenticated/$storeId/settings/staff': typeof SettingsStaffRoute
   '/_authenticated/$storeId/settings/stock-locations': typeof SettingsStockLocationsRoute
   '/_authenticated/$storeId/settings/store': typeof SettingsStoreRoute
+  '/_authenticated/$storeId/settings/storefront': typeof SettingsStorefrontRoute
   '/_authenticated/$storeId/settings/taxes': typeof SettingsTaxesRouteWithChildren
+  '/_authenticated/$storeId/suppliers/$supplierId': typeof SuppliersSupplierIdRoute
   '/_authenticated/$storeId/transfers/new': typeof TransfersNewRoute
   '/_authenticated/$storeId/companies/': typeof CompaniesIndexRoute
   '/_authenticated/$storeId/customers/': typeof CustomersIndexRoute
@@ -951,7 +975,9 @@ export interface FileRoutesById {
   '/_authenticated/$storeId/reports/': typeof ReportsIndexRoute
   '/_authenticated/$storeId/sellers/': typeof SellersIndexRoute
   '/_authenticated/$storeId/settings/': typeof SettingsIndexRoute
+  '/_authenticated/$storeId/suppliers/': typeof SuppliersIndexRoute
   '/_authenticated/$storeId/transfers/': typeof TransfersIndexRoute
+  '/_authenticated/$storeId/customers/groups/$groupId': typeof CustomersGroupsGroupIdRoute
   '/_authenticated/$storeId/orders/$orderId/edit': typeof OrdersOrderIdEditRoute
   '/_authenticated/$storeId/products/catalogs/$catalogId': typeof ProductsCatalogsCatalogIdRoute
   '/_authenticated/$storeId/products/categories/$categoryId': typeof ProductsCategoriesCategoryIdRoute
@@ -966,6 +992,7 @@ export interface FileRoutesById {
   '/_authenticated/$storeId/settings/taxes/rates': typeof SettingsTaxesRatesRoute
   '/_authenticated/$storeId/settings/webhooks/$webhookEndpointId': typeof SettingsWebhooksWebhookEndpointIdRoute
   '/_authenticated/$storeId/transfers/$transferId/edit': typeof TransfersTransferIdEditRoute
+  '/_authenticated/$storeId/customers/groups/': typeof CustomersGroupsIndexRoute
   '/_authenticated/$storeId/orders/$orderId/': typeof OrdersOrderIdIndexRoute
   '/_authenticated/$storeId/products/catalogs/': typeof ProductsCatalogsIndexRoute
   '/_authenticated/$storeId/products/categories/': typeof ProductsCategoriesIndexRoute
@@ -1002,11 +1029,9 @@ export interface FileRouteTypes {
     | '/$storeId/getting-started'
     | '/$storeId/returns'
     | '/$storeId/settings'
-    | '/$storeId/suppliers'
     | '/$storeId/'
     | '/$storeId/companies/$companyId'
     | '/$storeId/customers/$customerId'
-    | '/$storeId/customers/groups'
     | '/$storeId/loyalty/gift-cards'
     | '/$storeId/loyalty/store-credits'
     | '/$storeId/oauth/authorize'
@@ -1048,7 +1073,9 @@ export interface FileRouteTypes {
     | '/$storeId/settings/staff'
     | '/$storeId/settings/stock-locations'
     | '/$storeId/settings/store'
+    | '/$storeId/settings/storefront'
     | '/$storeId/settings/taxes'
+    | '/$storeId/suppliers/$supplierId'
     | '/$storeId/transfers/new'
     | '/$storeId/companies/'
     | '/$storeId/customers/'
@@ -1060,7 +1087,9 @@ export interface FileRouteTypes {
     | '/$storeId/reports/'
     | '/$storeId/sellers/'
     | '/$storeId/settings/'
+    | '/$storeId/suppliers/'
     | '/$storeId/transfers/'
+    | '/$storeId/customers/groups/$groupId'
     | '/$storeId/orders/$orderId/edit'
     | '/$storeId/products/catalogs/$catalogId'
     | '/$storeId/products/categories/$categoryId'
@@ -1075,6 +1104,7 @@ export interface FileRouteTypes {
     | '/$storeId/settings/taxes/rates'
     | '/$storeId/settings/webhooks/$webhookEndpointId'
     | '/$storeId/transfers/$transferId/edit'
+    | '/$storeId/customers/groups/'
     | '/$storeId/orders/$orderId/'
     | '/$storeId/products/catalogs/'
     | '/$storeId/products/categories/'
@@ -1107,11 +1137,9 @@ export interface FileRouteTypes {
     | '/$storeId/exchanges'
     | '/$storeId/getting-started'
     | '/$storeId/returns'
-    | '/$storeId/suppliers'
     | '/$storeId'
     | '/$storeId/companies/$companyId'
     | '/$storeId/customers/$customerId'
-    | '/$storeId/customers/groups'
     | '/$storeId/loyalty/gift-cards'
     | '/$storeId/loyalty/store-credits'
     | '/$storeId/oauth/authorize'
@@ -1153,6 +1181,8 @@ export interface FileRouteTypes {
     | '/$storeId/settings/staff'
     | '/$storeId/settings/stock-locations'
     | '/$storeId/settings/store'
+    | '/$storeId/settings/storefront'
+    | '/$storeId/suppliers/$supplierId'
     | '/$storeId/transfers/new'
     | '/$storeId/companies'
     | '/$storeId/customers'
@@ -1164,7 +1194,9 @@ export interface FileRouteTypes {
     | '/$storeId/reports'
     | '/$storeId/sellers'
     | '/$storeId/settings'
+    | '/$storeId/suppliers'
     | '/$storeId/transfers'
+    | '/$storeId/customers/groups/$groupId'
     | '/$storeId/orders/$orderId/edit'
     | '/$storeId/products/catalogs/$catalogId'
     | '/$storeId/products/categories/$categoryId'
@@ -1179,6 +1211,7 @@ export interface FileRouteTypes {
     | '/$storeId/settings/taxes/rates'
     | '/$storeId/settings/webhooks/$webhookEndpointId'
     | '/$storeId/transfers/$transferId/edit'
+    | '/$storeId/customers/groups'
     | '/$storeId/orders/$orderId'
     | '/$storeId/products/catalogs'
     | '/$storeId/products/categories'
@@ -1214,11 +1247,9 @@ export interface FileRouteTypes {
     | '/_authenticated/$storeId/getting-started'
     | '/_authenticated/$storeId/returns'
     | '/_authenticated/$storeId/settings'
-    | '/_authenticated/$storeId/suppliers'
     | '/_authenticated/$storeId/'
     | '/_authenticated/$storeId/companies/$companyId'
     | '/_authenticated/$storeId/customers/$customerId'
-    | '/_authenticated/$storeId/customers/groups'
     | '/_authenticated/$storeId/loyalty/gift-cards'
     | '/_authenticated/$storeId/loyalty/store-credits'
     | '/_authenticated/$storeId/oauth/authorize'
@@ -1260,7 +1291,9 @@ export interface FileRouteTypes {
     | '/_authenticated/$storeId/settings/staff'
     | '/_authenticated/$storeId/settings/stock-locations'
     | '/_authenticated/$storeId/settings/store'
+    | '/_authenticated/$storeId/settings/storefront'
     | '/_authenticated/$storeId/settings/taxes'
+    | '/_authenticated/$storeId/suppliers/$supplierId'
     | '/_authenticated/$storeId/transfers/new'
     | '/_authenticated/$storeId/companies/'
     | '/_authenticated/$storeId/customers/'
@@ -1272,7 +1305,9 @@ export interface FileRouteTypes {
     | '/_authenticated/$storeId/reports/'
     | '/_authenticated/$storeId/sellers/'
     | '/_authenticated/$storeId/settings/'
+    | '/_authenticated/$storeId/suppliers/'
     | '/_authenticated/$storeId/transfers/'
+    | '/_authenticated/$storeId/customers/groups/$groupId'
     | '/_authenticated/$storeId/orders/$orderId/edit'
     | '/_authenticated/$storeId/products/catalogs/$catalogId'
     | '/_authenticated/$storeId/products/categories/$categoryId'
@@ -1287,6 +1322,7 @@ export interface FileRouteTypes {
     | '/_authenticated/$storeId/settings/taxes/rates'
     | '/_authenticated/$storeId/settings/webhooks/$webhookEndpointId'
     | '/_authenticated/$storeId/transfers/$transferId/edit'
+    | '/_authenticated/$storeId/customers/groups/'
     | '/_authenticated/$storeId/orders/$orderId/'
     | '/_authenticated/$storeId/products/catalogs/'
     | '/_authenticated/$storeId/products/categories/'
@@ -1424,13 +1460,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof authenticatedStoreIdRoute
     }
-    '/_authenticated/$storeId/suppliers': {
-      id: '/_authenticated/$storeId/suppliers'
-      path: '/suppliers'
-      fullPath: '/$storeId/suppliers'
-      preLoaderRoute: typeof SuppliersRouteImport
-      parentRoute: typeof authenticatedStoreIdRoute
-    }
     '/_authenticated/$storeId/companies/': {
       id: '/_authenticated/$storeId/companies/'
       path: '/companies'
@@ -1457,13 +1486,6 @@ declare module '@tanstack/react-router' {
       path: '/customers/$customerId'
       fullPath: '/$storeId/customers/$customerId'
       preLoaderRoute: typeof CustomersCustomerIdRouteImport
-      parentRoute: typeof authenticatedStoreIdRoute
-    }
-    '/_authenticated/$storeId/customers/groups': {
-      id: '/_authenticated/$storeId/customers/groups'
-      path: '/customers/groups'
-      fullPath: '/$storeId/customers/groups'
-      preLoaderRoute: typeof CustomersGroupsRouteImport
       parentRoute: typeof authenticatedStoreIdRoute
     }
     '/_authenticated/$storeId/inventory/': {
@@ -1809,12 +1831,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsStoreRouteImport
       parentRoute: typeof SettingsRoute
     }
+    '/_authenticated/$storeId/settings/storefront': {
+      id: '/_authenticated/$storeId/settings/storefront'
+      path: '/storefront'
+      fullPath: '/$storeId/settings/storefront'
+      preLoaderRoute: typeof SettingsStorefrontRouteImport
+      parentRoute: typeof SettingsRoute
+    }
     '/_authenticated/$storeId/settings/taxes': {
       id: '/_authenticated/$storeId/settings/taxes'
       path: '/taxes'
       fullPath: '/$storeId/settings/taxes'
       preLoaderRoute: typeof SettingsTaxesRouteImport
       parentRoute: typeof SettingsRoute
+    }
+    '/_authenticated/$storeId/suppliers/': {
+      id: '/_authenticated/$storeId/suppliers/'
+      path: '/suppliers'
+      fullPath: '/$storeId/suppliers/'
+      preLoaderRoute: typeof SuppliersIndexRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
+    }
+    '/_authenticated/$storeId/suppliers/$supplierId': {
+      id: '/_authenticated/$storeId/suppliers/$supplierId'
+      path: '/suppliers/$supplierId'
+      fullPath: '/$storeId/suppliers/$supplierId'
+      preLoaderRoute: typeof SuppliersSupplierIdRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
     }
     '/_authenticated/$storeId/transfers/': {
       id: '/_authenticated/$storeId/transfers/'
@@ -1828,6 +1871,20 @@ declare module '@tanstack/react-router' {
       path: '/transfers/new'
       fullPath: '/$storeId/transfers/new'
       preLoaderRoute: typeof TransfersNewRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
+    }
+    '/_authenticated/$storeId/customers/groups/': {
+      id: '/_authenticated/$storeId/customers/groups/'
+      path: '/customers/groups'
+      fullPath: '/$storeId/customers/groups/'
+      preLoaderRoute: typeof CustomersGroupsIndexRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
+    }
+    '/_authenticated/$storeId/customers/groups/$groupId': {
+      id: '/_authenticated/$storeId/customers/groups/$groupId'
+      path: '/customers/groups/$groupId'
+      fullPath: '/$storeId/customers/groups/$groupId'
+      preLoaderRoute: typeof CustomersGroupsGroupIdRouteImport
       parentRoute: typeof authenticatedStoreIdRoute
     }
     '/_authenticated/$storeId/orders/$orderId/': {
@@ -2105,6 +2162,7 @@ interface SettingsRouteChildren {
   SettingsStaffRoute: typeof SettingsStaffRoute
   SettingsStockLocationsRoute: typeof SettingsStockLocationsRoute
   SettingsStoreRoute: typeof SettingsStoreRoute
+  SettingsStorefrontRoute: typeof SettingsStorefrontRoute
   SettingsTaxesRoute: typeof SettingsTaxesRouteWithChildren
   SettingsIndexRoute: typeof SettingsIndexRoute
   SettingsWebhooksWebhookEndpointIdRoute: typeof SettingsWebhooksWebhookEndpointIdRoute
@@ -2142,6 +2200,7 @@ const SettingsRouteChildren: SettingsRouteChildren = {
   SettingsStaffRoute: SettingsStaffRoute,
   SettingsStockLocationsRoute: SettingsStockLocationsRoute,
   SettingsStoreRoute: SettingsStoreRoute,
+  SettingsStorefrontRoute: SettingsStorefrontRoute,
   SettingsTaxesRoute: SettingsTaxesRouteWithChildren,
   SettingsIndexRoute: SettingsIndexRoute,
   SettingsWebhooksWebhookEndpointIdRoute:
@@ -2172,11 +2231,9 @@ interface authenticatedStoreIdRouteChildren {
   GettingStartedRoute: typeof GettingStartedRoute
   ReturnsRoute: typeof ReturnsRoute
   SettingsRoute: typeof SettingsRouteWithChildren
-  SuppliersRoute: typeof SuppliersRoute
   IndexRoute: typeof IndexRoute
   CompaniesCompanyIdRoute: typeof CompaniesCompanyIdRoute
   CustomersCustomerIdRoute: typeof CustomersCustomerIdRoute
-  CustomersGroupsRoute: typeof CustomersGroupsRoute
   LoyaltyGiftCardsRoute: typeof LoyaltyGiftCardsRoute
   LoyaltyStoreCreditsRoute: typeof LoyaltyStoreCreditsRoute
   OauthAuthorizeRoute: typeof OauthAuthorizeRoute
@@ -2196,6 +2253,7 @@ interface authenticatedStoreIdRouteChildren {
   SellersSellerIdRoute: typeof SellersSellerIdRoute
   SellersCommissionRatesRoute: typeof SellersCommissionRatesRoute
   SellersTransfersRoute: typeof SellersTransfersRoute
+  SuppliersSupplierIdRoute: typeof SuppliersSupplierIdRoute
   TransfersNewRoute: typeof TransfersNewRoute
   CompaniesIndexRoute: typeof CompaniesIndexRoute
   CustomersIndexRoute: typeof CustomersIndexRoute
@@ -2206,7 +2264,9 @@ interface authenticatedStoreIdRouteChildren {
   PurchaseOrdersIndexRoute: typeof PurchaseOrdersIndexRoute
   ReportsIndexRoute: typeof ReportsIndexRoute
   SellersIndexRoute: typeof SellersIndexRoute
+  SuppliersIndexRoute: typeof SuppliersIndexRoute
   TransfersIndexRoute: typeof TransfersIndexRoute
+  CustomersGroupsGroupIdRoute: typeof CustomersGroupsGroupIdRoute
   OrdersOrderIdEditRoute: typeof OrdersOrderIdEditRoute
   ProductsCatalogsCatalogIdRoute: typeof ProductsCatalogsCatalogIdRoute
   ProductsCategoriesCategoryIdRoute: typeof ProductsCategoriesCategoryIdRoute
@@ -2217,6 +2277,7 @@ interface authenticatedStoreIdRouteChildren {
   PurchaseOrdersPurchaseOrderIdEditRoute: typeof PurchaseOrdersPurchaseOrderIdEditRoute
   SellersPayoutsPayoutIdRoute: typeof SellersPayoutsPayoutIdRoute
   TransfersTransferIdEditRoute: typeof TransfersTransferIdEditRoute
+  CustomersGroupsIndexRoute: typeof CustomersGroupsIndexRoute
   OrdersOrderIdIndexRoute: typeof OrdersOrderIdIndexRoute
   ProductsCatalogsIndexRoute: typeof ProductsCatalogsIndexRoute
   ProductsCategoriesIndexRoute: typeof ProductsCategoriesIndexRoute
@@ -2235,11 +2296,9 @@ const authenticatedStoreIdRouteChildren: authenticatedStoreIdRouteChildren = {
   GettingStartedRoute: GettingStartedRoute,
   ReturnsRoute: ReturnsRoute,
   SettingsRoute: SettingsRouteWithChildren,
-  SuppliersRoute: SuppliersRoute,
   IndexRoute: IndexRoute,
   CompaniesCompanyIdRoute: CompaniesCompanyIdRoute,
   CustomersCustomerIdRoute: CustomersCustomerIdRoute,
-  CustomersGroupsRoute: CustomersGroupsRoute,
   LoyaltyGiftCardsRoute: LoyaltyGiftCardsRoute,
   LoyaltyStoreCreditsRoute: LoyaltyStoreCreditsRoute,
   OauthAuthorizeRoute: OauthAuthorizeRoute,
@@ -2259,6 +2318,7 @@ const authenticatedStoreIdRouteChildren: authenticatedStoreIdRouteChildren = {
   SellersSellerIdRoute: SellersSellerIdRoute,
   SellersCommissionRatesRoute: SellersCommissionRatesRoute,
   SellersTransfersRoute: SellersTransfersRoute,
+  SuppliersSupplierIdRoute: SuppliersSupplierIdRoute,
   TransfersNewRoute: TransfersNewRoute,
   CompaniesIndexRoute: CompaniesIndexRoute,
   CustomersIndexRoute: CustomersIndexRoute,
@@ -2269,7 +2329,9 @@ const authenticatedStoreIdRouteChildren: authenticatedStoreIdRouteChildren = {
   PurchaseOrdersIndexRoute: PurchaseOrdersIndexRoute,
   ReportsIndexRoute: ReportsIndexRoute,
   SellersIndexRoute: SellersIndexRoute,
+  SuppliersIndexRoute: SuppliersIndexRoute,
   TransfersIndexRoute: TransfersIndexRoute,
+  CustomersGroupsGroupIdRoute: CustomersGroupsGroupIdRoute,
   OrdersOrderIdEditRoute: OrdersOrderIdEditRoute,
   ProductsCatalogsCatalogIdRoute: ProductsCatalogsCatalogIdRoute,
   ProductsCategoriesCategoryIdRoute: ProductsCategoriesCategoryIdRoute,
@@ -2281,6 +2343,7 @@ const authenticatedStoreIdRouteChildren: authenticatedStoreIdRouteChildren = {
     PurchaseOrdersPurchaseOrderIdEditRoute,
   SellersPayoutsPayoutIdRoute: SellersPayoutsPayoutIdRoute,
   TransfersTransferIdEditRoute: TransfersTransferIdEditRoute,
+  CustomersGroupsIndexRoute: CustomersGroupsIndexRoute,
   OrdersOrderIdIndexRoute: OrdersOrderIdIndexRoute,
   ProductsCatalogsIndexRoute: ProductsCatalogsIndexRoute,
   ProductsCategoriesIndexRoute: ProductsCategoriesIndexRoute,

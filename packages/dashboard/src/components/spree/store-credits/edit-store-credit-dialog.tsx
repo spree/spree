@@ -103,7 +103,7 @@ export function EditStoreCreditDialog({
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <DialogBody>
             {errors.root?.message && (
-              <p className="text-sm text-destructive" role="alert">
+              <p className="text-base text-destructive" role="alert">
                 {errors.root.message}
               </p>
             )}

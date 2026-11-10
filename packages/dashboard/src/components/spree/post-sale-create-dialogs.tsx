@@ -21,6 +21,12 @@ import {
   Field,
   FieldLabel,
   Input,
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemFooter,
+  type PostSaleUnit,
+  PostSaleUnitLabel,
   type RefundMethod,
   Select,
   SelectContent,
@@ -38,13 +44,6 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ReasonField } from './reason-field'
 
-/** A fulfilled unit the customer could send back. */
-export type FulfilledUnit = {
-  id: string
-  label: string
-  quantity: number
-}
-
 /**
  * Every unit on the order, flattened out of its fulfillments. A return or
  * exchange is against a fulfillment item rather than a line item, but it does
@@ -55,12 +54,22 @@ export type FulfilledUnit = {
 /** `id` always comes back, so it need not be listed. */
 const VARIANT_PICKER_FIELDS = ['product_name', 'sku', 'options_text']
 
-export function fulfilledUnits(order: Order): FulfilledUnit[] {
+export function fulfilledUnits(order: Order): PostSaleUnit[] {
+  const lineItems = new Map((order.items ?? []).map((item) => [item.id, item]))
+
   return (order.fulfillments ?? []).flatMap((fulfillment) =>
     (fulfillment.fulfillment_items ?? []).map((item) => ({
       id: item.id,
       label: [item.name, item.options_text].filter(Boolean).join(' — ') || item.id,
       quantity: item.quantity,
+      product: {
+        name: item.name ?? item.id,
+        optionsText: item.options_text,
+        // The fulfillment item carries no image; its order line does.
+        thumbnailUrl: item.line_item_id
+          ? lineItems.get(item.line_item_id)?.thumbnail_url
+          : undefined,
+      },
     })),
   )
 }
@@ -177,12 +186,11 @@ export function CreateExchangeDialog({
         </DialogHeader>
         <DialogBody className="flex flex-col gap-4">
           {units.map((unit) => (
-            <div
-              key={unit.id}
-              className="flex flex-col gap-2 rounded-lg border border-border-subtle p-3"
-            >
-              <div className="flex items-center justify-between gap-4">
-                <span className="text-sm truncate">{unit.label}</span>
+            <Item variant="outline" key={unit.id}>
+              <ItemContent className="min-w-0">
+                <PostSaleUnitLabel unit={unit} />
+              </ItemContent>
+              <ItemActions>
                 <Input
                   type="number"
                   min={0}
@@ -196,48 +204,53 @@ export function CreateExchangeDialog({
                     })
                   }
                 />
-              </div>
+              </ItemActions>
               {(selection[unit.id] ?? 0) > 0 && (
-                <Field>
-                  <FieldLabel htmlFor={`replacement-${unit.id}`}>
-                    {t('admin.pages.orders.detail.exchanges.replacement_variant')}
-                  </FieldLabel>
-                  <ResourceCombobox<Variant>
-                    queryKey={`exchange-replacement-${unit.id}`}
-                    value={replacements[unit.id] ?? ''}
-                    onChange={(id) => setReplacements({ ...replacements, [unit.id]: id ?? '' })}
-                    // Only what the option renders. This trims the response;
-                    // the server still computes the rest.
-                    search={(query) =>
-                      adminClient.variants.list({
-                        search: query,
-                        limit: 8,
-                        fields: VARIANT_PICKER_FIELDS,
-                      })
-                    }
-                    hydrate={(ids) =>
-                      adminClient.variants.list({
-                        id_in: ids,
-                        limit: ids.length,
-                        fields: VARIANT_PICKER_FIELDS,
-                      })
-                    }
-                    getOptionLabel={(variant) => variant.product_name ?? variant.sku ?? variant.id}
-                    renderOption={(variant) => (
-                      <div className="flex flex-col">
-                        <span className="font-medium">
-                          {variant.product_name ?? variant.sku ?? variant.id}
-                        </span>
-                        <span className="text-xs text-muted-foreground">
-                          {variant.options_text && <span>{variant.options_text} · </span>}
-                          {t('admin.orders.detail.variant_search.sku_prefix')}: {variant.sku || '—'}
-                        </span>
-                      </div>
-                    )}
-                  />
-                </Field>
+                <ItemFooter className="flex-col items-stretch">
+                  <Field>
+                    <FieldLabel htmlFor={`replacement-${unit.id}`}>
+                      {t('admin.pages.orders.detail.exchanges.replacement_variant')}
+                    </FieldLabel>
+                    <ResourceCombobox<Variant>
+                      queryKey={`exchange-replacement-${unit.id}`}
+                      value={replacements[unit.id] ?? ''}
+                      onChange={(id) => setReplacements({ ...replacements, [unit.id]: id ?? '' })}
+                      // Only what the option renders. This trims the response;
+                      // the server still computes the rest.
+                      search={(query) =>
+                        adminClient.variants.list({
+                          search: query,
+                          limit: 8,
+                          fields: VARIANT_PICKER_FIELDS,
+                        })
+                      }
+                      hydrate={(ids) =>
+                        adminClient.variants.list({
+                          id_in: ids,
+                          limit: ids.length,
+                          fields: VARIANT_PICKER_FIELDS,
+                        })
+                      }
+                      getOptionLabel={(variant) =>
+                        variant.product_name ?? variant.sku ?? variant.id
+                      }
+                      renderOption={(variant) => (
+                        <div className="flex flex-col">
+                          <span className="font-medium">
+                            {variant.product_name ?? variant.sku ?? variant.id}
+                          </span>
+                          <span className="text-xs text-muted-foreground">
+                            {variant.options_text && <span>{variant.options_text} · </span>}
+                            {t('admin.orders.detail.variant_search.sku_prefix')}:{' '}
+                            {variant.sku || '—'}
+                          </span>
+                        </div>
+                      )}
+                    />
+                  </Field>
+                </ItemFooter>
               )}
-            </div>
+            </Item>
           ))}
           <ReasonField kind="return-reasons" value={reasonId} onChange={setReasonId} />
           <Field>
@@ -306,6 +319,11 @@ export function CreateClaimDialog({
         id: item.id,
         label: [item.name, item.options_text].filter(Boolean).join(' — ') || item.id,
         quantity: item.quantity,
+        product: {
+          name: item.name,
+          optionsText: item.options_text,
+          thumbnailUrl: item.thumbnail_url,
+        },
         paidFor: (quantity: number) => paidForUnits(item, quantity, order.currency),
       }))}
       currencySymbol={currencySymbol}

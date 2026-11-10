@@ -57,7 +57,7 @@ function ForgotPasswordPage() {
             <CardDescription>{t('admin.auth.forgot_password.sent_subtitle')}</CardDescription>
           </CardHeader>
           <CardContent className="text-center">
-            <Link to="/login" className="link text-sm">
+            <Link to="/login" className="link text-base">
               {t('admin.auth.back_to_login')}
             </Link>
           </CardContent>
@@ -70,11 +70,13 @@ function ForgotPasswordPage() {
     <AuthShell>
       <div className="flex flex-col gap-2">
         <h1 className="text-2xl font-bold">{t('admin.auth.forgot_password.title')}</h1>
-        <p className="text-sm text-muted-foreground">{t('admin.auth.forgot_password.subtitle')}</p>
+        <p className="text-base text-muted-foreground">
+          {t('admin.auth.forgot_password.subtitle')}
+        </p>
       </div>
       <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-6">
         {errors.root && (
-          <p className="text-center text-sm text-destructive">{errors.root.message}</p>
+          <p className="text-center text-base text-destructive">{errors.root.message}</p>
         )}
         <div className="grid gap-2">
           <Label htmlFor="email">{t('admin.fields.email.label')}</Label>
@@ -86,7 +88,7 @@ function ForgotPasswordPage() {
             aria-invalid={!!errors.email || undefined}
             {...form.register('email')}
           />
-          {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
+          {errors.email && <p className="text-base text-destructive">{errors.email.message}</p>}
         </div>
         <Button type="submit" className="w-full" disabled={isSubmitting}>
           {isSubmitting
@@ -94,7 +96,7 @@ function ForgotPasswordPage() {
             : t('admin.auth.forgot_password.submit')}
         </Button>
         <div className="text-center">
-          <Link to="/login" className="link text-sm">
+          <Link to="/login" className="link text-base">
             {t('admin.auth.back_to_login')}
           </Link>
         </div>

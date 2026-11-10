@@ -59,7 +59,7 @@ export function DiscountsCard({ order }: { order: Order }) {
           {/* Discount code — editable on drafts; frozen after completion */}
           <div className="flex items-center justify-between gap-2">
             <div className="flex flex-col">
-              <span className="text-sm font-medium">
+              <span className="text-base font-medium">
                 {t('admin.orders.detail.discount_section.label')}
               </span>
               {order.coupon_code ? (
@@ -105,7 +105,7 @@ export function DiscountsCard({ order }: { order: Order }) {
           {/* Gift card */}
           <div className="flex items-center justify-between gap-2">
             <div className="flex flex-col">
-              <span className="text-sm font-medium">
+              <span className="text-base font-medium">
                 {t('admin.orders.detail.gift_card_section.gift_card_label')}
               </span>
               {order.gift_card ? (
@@ -247,7 +247,7 @@ function CouponCodeDialog({
                 </Field>
               )}
               {mutation.isError && (
-                <p className="text-sm text-destructive">{(mutation.error as Error).message}</p>
+                <p className="text-base text-destructive">{(mutation.error as Error).message}</p>
               )}
             </FieldGroup>
           </DialogBody>

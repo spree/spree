@@ -5,23 +5,18 @@ import {
   ImageUploadField,
   mapSpreeErrorsToForm,
   PageHeader,
+  SettingsFieldGroup,
+  SettingsRow,
+  SettingsSection,
+  SettingsSwitchField,
   Subject,
   signedIdParam,
   usePermissions,
 } from '@spree/dashboard-core'
 import {
-  Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
   ColorPicker,
   ErrorState,
-  Field,
-  FieldDescription,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
   FormActions,
   Input,
   ResourceLayout,
@@ -31,11 +26,11 @@ import {
   SelectTrigger,
   SelectValue,
   Skeleton,
-  Switch,
   toastManager,
   useDebouncedValue,
   useFormSubmitShortcut,
 } from '@spree/dashboard-ui'
+import { MailIcon, PaletteIcon, SendIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute } from '@tanstack/react-router'
 import { useEffect } from 'react'
 import { Controller, useForm, useWatch } from 'react-hook-form'
@@ -177,105 +172,84 @@ function EmailSettingsForm({ store }: { store: Store }) {
             <EmailsTabs current="settings" />
 
             {errors.root?.message && (
-              <p className="text-sm text-destructive" role="alert">
+              <p className="text-base text-destructive" role="alert">
                 {errors.root.message}
               </p>
             )}
 
-            <Card>
-              <CardHeader>
-                <CardTitle>{t('admin.pages.settings.emails.section_delivery')}</CardTitle>
-              </CardHeader>
+            <SettingsSection
+              title={t('admin.pages.settings.emails.section_delivery')}
+              icon={<SendIcon />}
+            >
               <CardContent>
-                <Field>
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex flex-col">
-                      <FieldLabel htmlFor="store-send-consumer-emails" className="cursor-pointer">
-                        {t('admin.fields.store.send_consumer_transactional_emails.label')}
-                      </FieldLabel>
-                      <FieldDescription>
-                        {t('admin.fields.store.send_consumer_transactional_emails.help')}
-                      </FieldDescription>
-                    </div>
-                    <Controller
-                      name="send_consumer_transactional_emails"
-                      control={form.control}
-                      render={({ field }) => (
-                        <Switch
-                          id="store-send-consumer-emails"
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      )}
-                    />
-                  </div>
-                </Field>
+                <SettingsSwitchField
+                  id="store-send-consumer-emails"
+                  label={t('admin.fields.store.send_consumer_transactional_emails.label')}
+                  help={t('admin.fields.store.send_consumer_transactional_emails.help')}
+                  name="send_consumer_transactional_emails"
+                  control={form.control}
+                />
               </CardContent>
-            </Card>
+            </SettingsSection>
 
             {sendConsumerEmails && (
               <>
-                <Card>
-                  <CardHeader>
-                    <CardTitle>{t('admin.pages.settings.emails.section_addresses')}</CardTitle>
-                  </CardHeader>
+                <SettingsSection
+                  title={t('admin.pages.settings.emails.section_addresses')}
+                  icon={<MailIcon />}
+                >
                   <CardContent>
-                    <FieldGroup>
-                      <Field>
-                        <FieldLabel htmlFor="store-mail-from-address">
-                          {t('admin.fields.store.mail_from_address.label')}
-                        </FieldLabel>
+                    <SettingsFieldGroup>
+                      <SettingsRow
+                        label={t('admin.fields.store.mail_from_address.label')}
+                        htmlFor="store-mail-from-address"
+                        help={t('admin.fields.store.mail_from_address.help')}
+                        error={errors.mail_from_address}
+                      >
                         <Input
                           id="store-mail-from-address"
                           type="email"
+                          className="@md/field-group:w-72"
                           placeholder={t('admin.fields.store.mail_from_address.placeholder')}
                           aria-invalid={!!errors.mail_from_address || undefined}
                           {...form.register('mail_from_address')}
                         />
-                        <FieldDescription>
-                          {t('admin.fields.store.mail_from_address.help')}
-                        </FieldDescription>
-                        <FieldError errors={[errors.mail_from_address]} />
-                      </Field>
-
-                      <Field>
-                        <FieldLabel htmlFor="store-customer-support-email">
-                          {t('admin.fields.store.customer_support_email.label')}
-                        </FieldLabel>
+                      </SettingsRow>
+                      <SettingsRow
+                        label={t('admin.fields.store.customer_support_email.label')}
+                        htmlFor="store-customer-support-email"
+                        help={t('admin.fields.store.customer_support_email.help')}
+                        error={errors.customer_support_email}
+                      >
                         <Input
                           id="store-customer-support-email"
                           type="email"
+                          className="@md/field-group:w-72"
                           placeholder={t('admin.fields.store.customer_support_email.placeholder')}
                           aria-invalid={!!errors.customer_support_email || undefined}
                           {...form.register('customer_support_email')}
                         />
-                        <FieldDescription>
-                          {t('admin.fields.store.customer_support_email.help')}
-                        </FieldDescription>
-                        <FieldError errors={[errors.customer_support_email]} />
-                      </Field>
-
-                      <Field>
-                        <FieldLabel htmlFor="store-new-order-notifications-email">
-                          {t('admin.fields.store.new_order_notifications_email.label')}
-                        </FieldLabel>
+                      </SettingsRow>
+                      <SettingsRow
+                        label={t('admin.fields.store.new_order_notifications_email.label')}
+                        htmlFor="store-new-order-notifications-email"
+                        help={t('admin.fields.store.new_order_notifications_email.help')}
+                        error={errors.new_order_notifications_email}
+                      >
                         <Input
                           id="store-new-order-notifications-email"
                           type="email"
+                          className="@md/field-group:w-72"
                           placeholder={t(
                             'admin.fields.store.new_order_notifications_email.placeholder',
                           )}
                           aria-invalid={!!errors.new_order_notifications_email || undefined}
                           {...form.register('new_order_notifications_email')}
                         />
-                        <FieldDescription>
-                          {t('admin.fields.store.new_order_notifications_email.help')}
-                        </FieldDescription>
-                        <FieldError errors={[errors.new_order_notifications_email]} />
-                      </Field>
-                    </FieldGroup>
+                      </SettingsRow>
+                    </SettingsFieldGroup>
                   </CardContent>
-                </Card>
+                </SettingsSection>
 
                 <BrandingCard form={form} logoUrl={store.mailer_logo_url} />
               </>
@@ -335,27 +309,32 @@ function BrandingCard({
   }))
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('admin.pages.settings.emails.branding.title')}</CardTitle>
-        <CardDescription>{t('admin.pages.settings.emails.branding.description')}</CardDescription>
-      </CardHeader>
-      <CardContent className="grid gap-6 lg:grid-cols-2">
-        <FieldGroup>
+    <SettingsSection
+      title={t('admin.pages.settings.emails.branding.title')}
+      icon={<PaletteIcon />}
+      description={t('admin.pages.settings.emails.branding.description')}
+    >
+      <CardContent className="grid gap-6 lg:grid-cols-[2fr_3fr]">
+        <SettingsFieldGroup>
           <LogoField form={form} initialLogoUrl={logoUrl} />
+          {/* Rows even in this half-width column: the controls are short. */}
           {EMAIL_BRANDING_COLORS.map((color) => {
             const name = `email_${color}` as const
             return (
-              <Field key={color}>
-                <FieldLabel htmlFor={`store-email-${color}`}>
-                  {t(`admin.fields.store.${name}.label`)}
-                </FieldLabel>
+              <SettingsRow
+                key={color}
+                orientation="horizontal"
+                label={t(`admin.fields.store.${name}.label`)}
+                htmlFor={`store-email-${color}`}
+                error={errors[name]}
+              >
                 <Controller
                   name={name}
                   control={form.control}
                   render={({ field }) => (
                     <ColorPicker
                       id={`store-email-${color}`}
+                      className="w-40"
                       value={field.value}
                       onChange={(value) => field.onChange(value ?? '')}
                       placeholder={t('admin.pages.settings.emails.branding.default_color')}
@@ -363,14 +342,15 @@ function BrandingCard({
                     />
                   )}
                 />
-                <FieldError errors={[errors[name]]} />
-              </Field>
+              </SettingsRow>
             )
           })}
-          <Field>
-            <FieldLabel htmlFor="store-email-font">
-              {t('admin.fields.store.email_font.label')}
-            </FieldLabel>
+          <SettingsRow
+            orientation="horizontal"
+            label={t('admin.fields.store.email_font.label')}
+            htmlFor="store-email-font"
+            help={t('admin.fields.store.email_font.help')}
+          >
             <Controller
               name="email_font"
               control={form.control}
@@ -380,7 +360,7 @@ function BrandingCard({
                   value={field.value}
                   onValueChange={(value) => field.onChange(value)}
                 >
-                  <SelectTrigger id="store-email-font">
+                  <SelectTrigger id="store-email-font" className="w-40">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -393,12 +373,11 @@ function BrandingCard({
                 </Select>
               )}
             />
-            <FieldDescription>{t('admin.fields.store.email_font.help')}</FieldDescription>
-          </Field>
-        </FieldGroup>
+          </SettingsRow>
+        </SettingsFieldGroup>
         {permissions.can('update', Subject.EmailTemplate) && <BrandingPreview form={form} />}
       </CardContent>
-    </Card>
+    </SettingsSection>
   )
 }
 
@@ -445,7 +424,7 @@ function BrandingPreview({ form }: { form: ReturnType<typeof useForm<StoreEmails
 
   if (preview.error) {
     return (
-      <p className="text-sm text-muted-foreground">
+      <p className="text-base text-muted-foreground">
         {preview.error.message || t('admin.email_templates.preview.unavailable')}
       </p>
     )

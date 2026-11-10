@@ -1,0 +1,49 @@
+---
+title: "Storefront & Checkout"
+description: "Learn how to set your storefront URL, who can browse your store, how checkout works and what customers are asked for in their address in Spree Commerce."
+---
+
+These settings decide where customers shop and what stands between them and a finished order: whether they must sign in, whether they can buy as a guest, and what an address form asks for.
+
+To configure them, navigate to **Settings → Storefront & checkout**, under the **Store** group.
+
+## Storefront
+
+Where your storefront lives and who can see it before signing in. This is the difference between an open retail shop and a trade store where prices are only shown to approved customers.
+
+- **Storefront URL** - The address customers shop at. Emails and the dashboard link to it. Click **Connect**, or **Change** once one is set, to open the connect panel: it saves the URL and allows your storefront to call the Store API from that address.
+- **Storefront access** - The store-wide default for anonymous visitors:
+  - **Public** - Anyone can browse and see prices.
+  - **Prices hidden** - Visitors must sign in to see prices. Guests must sign in to check out.
+  - **Login required** - Visitors must sign in to browse at all.
+
+<Note>Storefront access and guest checkout are defaults that a sales channel can override. If you change one here and a storefront does not behave as expected, check that channel's own settings rather than changing this again.</Note>
+
+The two restricted options do different things, and the difference matters:
+
+- **Prices hidden** is how most wholesale and trade stores work. A visitor can browse the range and see what you sell, but not what it costs, until you have approved their account.
+- **Login required** goes further and closes the catalogue as well. A visitor sees nothing at all until they sign in, so choose it only when the range itself is confidential.
+
+## Checkout
+
+How checkout behaves for every order.
+
+- **Guest checkout** - Whether shoppers can check out without creating an account.
+- **Always show confirmation step** - Give shoppers a final review step before placing the order, even when no payment method requires one.
+
+## Addresses
+
+What customers are asked for when entering an address. Every extra field is one more thing between a shopper and a completed order, so only ask for what you will actually use.
+
+- **Company field** - Show a company field on address forms during checkout. Worth turning on if you sell to businesses.
+- **Require phone number** - Make a phone number mandatory on customer addresses. Some carriers need one for delivery.
+
+## Saving Changes
+
+Click **Save** at the top of the page. The button is greyed out until something has changed. The storefront URL is not part of this save: the connect panel saves it on its own.
+
+## Further Reading
+
+- [<u>Sales Channels</u>](/user/settings/sales-channels) - Overriding storefront access and guest checkout per channel
+- [<u>Store Details</u>](/user/settings/store-details) - Name, formats, order numbers and the other store-wide defaults
+- [<u>Payments</u>](/user/settings/payments) - The payment methods offered at checkout

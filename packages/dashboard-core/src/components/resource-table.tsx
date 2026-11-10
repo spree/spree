@@ -36,6 +36,9 @@ import {
   TableHeader,
   TableHeaderRow,
   TableRow,
+  Tabs,
+  TabsList,
+  TabsTrigger,
   Tooltip,
   TooltipContent,
   TooltipTrigger,
@@ -142,6 +145,8 @@ export const resourceSearchSchema = z.object({
       return val
     }, z.array(z.string()))
     .optional(),
+  /** The open tab of a table with `views`; absent means the first. */
+  view: z.string().optional(),
 })
 
 export type ResourceSearch = z.infer<typeof resourceSearchSchema>
@@ -164,6 +169,20 @@ export interface ResourceActionsContext {
   columns: ColumnDef[]
   /** Total record count for the active filter, or `undefined` while loading. */
   totalCount: number | undefined
+}
+
+/**
+ * One tab of a list split into parts that are never read together, such as
+ * the operator's own stock locations and their sellers'. Each tab is a fixed
+ * slice of the list, not a filter the merchant can clear.
+ */
+export interface TableView {
+  key: string
+  label: string
+  /** Request params sent while this tab is open, on top of `defaultParams`. */
+  params?: Record<string, unknown>
+  /** Columns this tab leaves out of the table, the column picker and the filters. */
+  hiddenColumns?: string[]
 }
 
 interface ResourceTableProps<T> {
@@ -203,6 +222,8 @@ interface ResourceTableProps<T> {
   docsPath?: string
   /** Default params always sent with every request (e.g., { complete: 1 } for orders) */
   defaultParams?: Record<string, unknown>
+  /** Splits the list into tabs; the first opens by default. */
+  views?: TableView[]
   /**
    * Actions to render in the toolbar (e.g., "Add Product" button). Either a
    * static node, or a function that receives the current table state — use
@@ -264,7 +285,8 @@ export function ResourceTable<T extends Record<string, any>>({
   hideHeader = false,
   description,
   docsPath,
-  defaultParams,
+  defaultParams: baseParams,
+  views,
   actions,
   reorder,
   bulkActions,
@@ -296,7 +318,14 @@ export function ResourceTable<T extends Record<string, any>>({
     search,
     filters,
     columns: urlColumns,
+    view: urlView,
   } = searchParams
+
+  const activeView = views?.find((v) => v.key === urlView) ?? views?.[0]
+  const defaultParams = useMemo(
+    () => (activeView?.params ? { ...baseParams, ...activeView.params } : baseParams),
+    [baseParams, activeView],
+  )
 
   // When the table is reorderable, sort is locked to the position field
   // ascending — anything else makes drag-and-drop meaningless. Otherwise
@@ -318,14 +347,19 @@ export function ResourceTable<T extends Record<string, any>>({
   // internal memos (FilterPanel `items` stability) keep stable deps.
   const extraColumns = customFieldColumns ?? metafieldColumns
   const allColumns = useMemo(
-    () => [...table.columns, ...(extraColumns ?? [])],
-    [table, extraColumns],
+    () =>
+      [...table.columns, ...(extraColumns ?? [])].filter(
+        (c) => !activeView?.hiddenColumns?.includes(c.key),
+      ),
+    [table, extraColumns, activeView],
   )
   const displayableColumns = useMemo(
     () => allColumns.filter((c) => c.displayable !== false),
     [allColumns],
   )
-  const defaultColumnKeys = getDefaultColumnKeys(table)
+  const defaultColumnKeys = getDefaultColumnKeys(table).filter(
+    (key) => !activeView?.hiddenColumns?.includes(key),
+  )
   const visibleColumnKeys = urlColumns ?? defaultColumnKeys
 
   const visibleColumns = useMemo(
@@ -376,7 +410,17 @@ export function ResourceTable<T extends Record<string, any>>({
   const { data, isLoading } = useQuery({
     queryKey: [
       ...queryKeyPrefix,
-      { page, limit, sort: sortString, search: deferredSearch, filters, expand: columnExpand },
+      // The fixed params are part of the key: a tab changing them would
+      // otherwise be answered from the previous tab's cache.
+      {
+        page,
+        limit,
+        sort: sortString,
+        search: deferredSearch,
+        filters,
+        expand: columnExpand,
+        params: defaultParams,
+      },
     ],
     queryFn: () => {
       const params: Record<string, unknown> = {
@@ -492,6 +536,16 @@ export function ResourceTable<T extends Record<string, any>>({
     })
   }
 
+  // A filter set on one tab can name a column the next one hides, so a tab
+  // starts unfiltered.
+  function handleViewChange(key: string) {
+    updateSearch({
+      view: key === views?.[0]?.key ? undefined : key,
+      filters: undefined,
+      page: 1,
+    })
+  }
+
   function handleColumnsChange(cols: string[]) {
     const isDefault =
       cols.length === defaultColumnKeys.length && cols.every((c) => defaultColumnKeys.includes(c))
@@ -590,6 +644,17 @@ export function ResourceTable<T extends Record<string, any>>({
       {pageOwnsHeader && resolvedActions && (
         <div className="flex flex-wrap items-center justify-end gap-2">{resolvedActions}</div>
       )}
+      {views && views.length > 1 && (
+        <Tabs value={activeView?.key} onValueChange={(v) => handleViewChange(v as string)}>
+          <TabsList>
+            {views.map((v) => (
+              <TabsTrigger key={v.key} value={v.key}>
+                {v.label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
+      )}
       <TableToolbar
         columns={displayableColumns}
         visibleColumns={visibleColumnKeys}
@@ -605,12 +670,13 @@ export function ResourceTable<T extends Record<string, any>>({
         allColumns={allColumns}
         hideSort={reorderActive}
       />
-      {/* `overflow-x-clip`, never `overflow-hidden`: the rows clip to the
-          rounded frame horizontally, but a `hidden` overflow on either axis
-          makes this a scroll container, and the pinned column row inside
-          would then stick to THIS box rather than to the page — which is to
-          say, scroll away with it. */}
-      <Card className="-mx-4 gap-0 overflow-x-clip rounded-none border-0 bg-transparent py-0 shadow-none sm:mx-0 sm:rounded-xl sm:border">
+      {/* Borderless: the list sits on the page with no card around it, its
+          header a rounded band and its rows divided by their own rules.
+          `overflow-x-clip`, never `overflow-hidden`: a `hidden` overflow on
+          either axis makes this a scroll container, and the pinned column row
+          inside would then stick to THIS box rather than to the page — which
+          is to say, scroll away with it. */}
+      <Card className="gap-0 overflow-x-clip rounded-none border-0 bg-transparent shadow-none">
         {reorderActive ? (
           <DndContext
             sensors={sensors}
@@ -621,7 +687,7 @@ export function ResourceTable<T extends Record<string, any>>({
               items={rows.map((r) => (r as any).id)}
               strategy={verticalListSortingStrategy}
             >
-              <Table stickyHeader roundedTop roundedBottom>
+              <Table stickyHeader band>
                 <TableHeader>
                   <TableHeaderRow>
                     <TableHead className="w-8" />
@@ -691,7 +757,8 @@ export function ResourceTable<T extends Record<string, any>>({
               // checkbox sitting beneath it — checking once, then never
               // unchecking.
               <div className="pointer-events-none sticky top-header-height z-30 h-0">
-                <div className="flex h-[2.1875rem] items-center ps-10 pe-4">
+                {/* The header band's height, so the actions centre on its checkbox. */}
+                <div className="flex h-10 items-center ps-10 pe-4">
                   <div className="pointer-events-auto min-w-0 flex-1">
                     <BulkActionBar
                       selectedIds={Array.from(selectedIds)}
@@ -741,7 +808,7 @@ export function ResourceTable<T extends Record<string, any>>({
                 </section>,
                 document.body,
               )}
-            <Table stickyHeader roundedTop roundedBottom>
+            <Table stickyHeader band>
               <TableHeader>
                 {/* Column headers stay mounted with rows selected, and the bulk
                     bar is laid over them. Swapping them for one `colSpan` cell
@@ -835,10 +902,8 @@ export function ResourceTable<T extends Record<string, any>>({
                         // the panel floats over its neighbours, and without this
                         // a merchant editing a figure has to count rows to see
                         // which record they are editing.
-                        className={cn(
-                          'has-data-[popup-open]:bg-accent-strong/40',
-                          isSelected && 'bg-accent-strong/75 hover:bg-accent-strong-hover',
-                        )}
+                        // The table's `band` style paints both from these.
+                        data-selected={isSelected || undefined}
                       >
                         {selectionEnabled && (
                           <TableCell className="w-8">

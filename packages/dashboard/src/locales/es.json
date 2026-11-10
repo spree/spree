@@ -145,6 +145,10 @@
         "new_cta": "Nuevo cliente"
       },
       "getting_started": {
+        "completed": {
+          "description": "Has completado todos los pasos de Primeros pasos.",
+          "title": "Tu tienda está configurada"
+        },
         "description": "Completá estos pasos para lanzar tu tienda.",
         "progress": "{{done}} de {{total}} completados",
         "storefront_sheet": {
@@ -182,6 +186,7 @@
             "cta": "Guardar dirección",
             "description": "Tu dirección de envío y devoluciones. Los transportistas la usan para calcular las tarifas de entrega, y es a donde se envían las devoluciones de los clientes.",
             "no_location": "Todavía no tenés ninguna ubicación de stock propia: creá una en Configuración para agregar una dirección.",
+            "saved": "Dirección de envío guardada",
             "title": "Agregá tu dirección de envío"
           },
           "setup_payment_method": {
@@ -232,7 +237,6 @@
           "previous": "Período anterior"
         },
         "growth": {
-          "new": "Nuevo",
           "vs_previous": "vs período anterior"
         },
         "operations": {
@@ -244,8 +248,11 @@
             "low_stock_items": {
               "label": "Stock bajo",
               "description_zero": "Desactivado. Definí un umbral de stock bajo en la configuración de la tienda para usarlo.",
-              "description_one": "Queda 1 unidad o menos por vender en una ubicación.",
-              "description_other": "Quedan {{count}} unidades o menos por vender en una ubicación."
+              "description_one": "Queda 1 unidad o menos por vender entre todas las ubicaciones.",
+              "description_other": "Quedan {{count}} unidades o menos por vender entre todas las ubicaciones.",
+              "hint_zero": "Desactivado",
+              "hint_one": "≤ {{count}}",
+              "hint_other": "≤ {{count}}"
             },
             "open_claims": {
               "label": "Reclamos abiertos",
@@ -265,12 +272,19 @@
             },
             "out_of_stock_items": {
               "label": "Sin stock",
-              "description": "No queda nada por vender en una ubicación."
+              "description": "No queda nada por vender en ninguna ubicación."
             },
             "payments_to_collect": {
               "label": "Pagos por cobrar",
               "description": "Pedidos realizados que todavía deben dinero."
             }
+          },
+          "all_clear": "Todo al día.",
+          "groups": {
+            "orders": "Pedidos",
+            "post_sale": "Devoluciones y reclamaciones",
+            "inventory": "Inventario",
+            "other": "Otros"
           }
         },
         "rankings": {
@@ -301,7 +315,8 @@
         },
         "currency": {
           "search": "Buscar monedas"
-        }
+        },
+        "chart_sparse": "Aún no hay datos suficientes para mostrar una tendencia"
       },
       "orders": {
         "detail": {
@@ -433,6 +448,10 @@
           "company_addresses": "Direcciones de la empresa",
           "company_help": "Vinculá este pedido a una empresa. La lista de clientes mostrará solo a quienes puedan comprar para ella.",
           "customer_addresses": "Direcciones del cliente",
+          "items_empty": {
+            "description": "Añade los productos de este pedido.",
+            "title": "Aún no hay artículos"
+          },
           "reset_items": {
             "confirm": "Cambiar y quitar artículos",
             "message_many": "Es posible que los {{count}} artículos elegidos no se vendan, o cuesten otra cosa, para este comprador, mercado o canal. Se quitarán.",
@@ -440,7 +459,6 @@
             "message_other": "Es posible que los {{count}} artículos elegidos no se vendan, o cuesten otra cosa, para este comprador, mercado o canal. Se quitarán.",
             "title": "¿Quitar los artículos elegidos?"
           },
-          "search_variant": "Buscar variante…",
           "section_billing": "Facturación",
           "section_customer": "Cliente",
           "section_items": "Artículos",
@@ -616,14 +634,11 @@
         },
         "store": {
           "subtitle": "Configuración general y valores predeterminados de toda la tienda.",
-          "tab_addresses": "Direcciones",
           "tab_catalog": "Catálogo",
           "tab_general": "General",
           "tab_inventory": "Inventario",
           "tab_order_numbers": "Numeración de pedidos",
-          "tab_payments": "Pagos",
           "tab_standards": "Estándares y formatos",
-          "tab_storefront_access": "Acceso del storefront",
           "title": "Configuración de la tienda",
           "tab_downloads": "Descargas digitales",
           "downloads_help": "Cuánto tiempo funciona un enlace de descarga y cuántas veces se puede usar. Los archivos individuales pueden reemplazar estos valores.",
@@ -862,6 +877,46 @@
             "description": "Registre un cliente OAuth para poder conectarlo a esta tienda."
           },
           "copy_client_id": "Copiar ID de cliente"
+        },
+        "payments": {
+          "title": "Pagos",
+          "description": "Los proveedores de pago y métodos manuales con los que pagan los clientes, y cuándo se cobran los pagos.",
+          "providers_title": "Proveedores de pago",
+          "providers_empty": {
+            "title": "No hay proveedores de pago disponibles",
+            "description": "Instala una extensión de proveedor de pago para aceptar tarjetas y billeteras."
+          },
+          "manual_title": "Métodos de pago manuales",
+          "add_manual": "Añadir método manual",
+          "manual_empty": {
+            "title": "No hay métodos de pago manuales",
+            "description": "Recibe pagos fuera de tu tienda, como cheques, transferencias bancarias o contra reembolso."
+          },
+          "capture_title": "Cobro de pagos",
+          "checkout_order": {
+            "cta": "Orden en el checkout",
+            "title": "Orden en el checkout",
+            "description": "Arrastra para fijar el orden en que los clientes ven los métodos de pago en el checkout. Solo se muestran los métodos activos visibles en la tienda.",
+            "empty": {
+              "title": "No se ofrece nada en el checkout",
+              "description": "Activa un método de pago y muéstralo en la tienda para que aparezca aquí."
+            }
+          },
+          "test_gateway": "Pasarela de prueba"
+        },
+        "storefront": {
+          "title": "Tienda y checkout",
+          "description": "Dónde está tu tienda, quién puede navegarla y qué pide el checkout a los clientes.",
+          "storefront_title": "Tienda",
+          "checkout_title": "Checkout",
+          "addresses_title": "Direcciones",
+          "url": {
+            "label": "URL de la tienda",
+            "not_connected": "Aún sin conectar",
+            "connect": "Conectar",
+            "change": "Cambiar",
+            "help": "Donde compran los clientes. Spree enlaza a ella desde los correos y el panel, y le permite llamar a la Store API."
+          }
         }
       },
       "staff": {
@@ -1404,7 +1459,8 @@
       },
       "company_membership": {
         "email": {
-          "help": "Un cliente existente se suma de inmediato; cualquier otro recibe una invitación por email.",
+          "label": "O invitar por correo electrónico",
+          "help": "Quien aún no sea cliente recibe una invitación por correo electrónico.",
           "placeholder": "comprador@example.com"
         }
       },
@@ -2253,8 +2309,7 @@
           "label": "Enviar emails transaccionales a los clientes"
         },
         "timezone": {
-          "label": "Zona horaria",
-          "placeholder": "Seleccionar una zona horaria"
+          "label": "Zona horaria"
         },
         "unit_system": {
           "label": "Sistema de unidades"
@@ -3087,10 +3142,8 @@
       "item_count_one": "{{count}} artículo",
       "item_count_other": "{{count}} artículos",
       "new": {
-        "add_variant": "Agregar una variante",
         "creates_draft_note": "Crea un pedido borrador. Agregá los pagos y completalo después de crearlo.",
         "items_table": {
-          "qty": "Cant.",
           "sku": "SKU",
           "variant": "Variante"
         },
@@ -3500,8 +3553,6 @@
       "add_cta": "Agregar vendedor",
       "add_sheet_title": "Nuevo vendedor",
       "address": {
-        "filled": "Completa",
-        "not_filled": "Incompleta",
         "not_provided_by_seller": "Todavía no la dio el vendedor"
       },
       "approve_override_confirm": {
@@ -3524,6 +3575,7 @@
         "billing_address": "Dirección de facturación",
         "contact": "Contacto",
         "delete_label": "Eliminar vendedor",
+        "edit_contact": "Editar contacto",
         "edit_profile": "Editar perfil",
         "edit_profile_description": "El vendedor lo mantiene desde su propio panel. Las ediciones acá se aplican en su nombre.",
         "edit_settlement": "Editar pagos e impuestos",
@@ -3531,8 +3583,7 @@
         "load_error": "No se pudo cargar este vendedor",
         "no_about": "Este vendedor todavía no escribió una descripción.",
         "returns_address": "Dirección de devoluciones",
-        "settlement": "Pagos e impuestos",
-        "status": "Estado"
+        "settlement": "Pagos e impuestos"
       },
       "empty": "Todavía no hay vendedores",
       "images": {
@@ -4089,7 +4140,8 @@
       "autocomplete": {
         "empty": "No hay clientes que coincidan",
         "empty_for_company": "Ningún cliente puede comprar para esta empresa",
-        "placeholder": "Buscar clientes…"
+        "placeholder": "Buscar clientes…",
+        "add_new": "Añadir nuevo cliente"
       },
       "columns": {
         "companies": "Empresas",
@@ -4174,7 +4226,26 @@
           "search_placeholder": "Buscar por nombre…",
           "title": "Grupos de Clientes"
         },
-        "view_members": "Ver integrantes"
+        "view_members": "Ver integrantes",
+        "detail": {
+          "details": "Detalles",
+          "members": "Miembros",
+          "customer": "Cliente",
+          "add_member": "Añadir cliente",
+          "add_member_title": "Añadir un cliente a este grupo",
+          "add_member_description": "Elige un cliente existente. No cambia nada más; solo se une a este grupo.",
+          "members_empty": "Todavía no hay clientes en este grupo",
+          "remove_member": "Quitar del grupo",
+          "remove_confirm": {
+            "title": "¿Quitar de este grupo?",
+            "message": "{{name}} sigue siendo cliente; solo sale de este grupo."
+          },
+          "messages": {
+            "member_added": "Cliente añadido al grupo",
+            "member_removed": "Cliente quitado del grupo",
+            "member_change_failed": "No se pudieron actualizar los miembros del grupo"
+          }
+        }
       },
       "new_sheet_description": "Los clientes creados acá no tienen contraseña. Recibirán un enlace mágico la primera vez que inicien sesión.",
       "privacy": {
@@ -4294,11 +4365,15 @@
         "add": "Agregar regla",
         "description": "Elegí productos a mano, o dejá que las reglas mantengan la colección al día.",
         "remove": "Quitar regla",
-        "title": "Integrantes"
+        "title": "Integrantes",
+        "on_sale": "En oferta",
+        "days": "días",
+        "days_label": "Publicado en los últimos",
+        "tags_placeholder": "Elige etiquetas…"
       },
       "rules_match_policies": {
-        "all": "todas las condiciones",
-        "any": "cualquier condición"
+        "all": "Deben cumplirse todas las reglas",
+        "any": "Basta con una regla"
       },
       "search_placeholder": "Buscar colecciones…",
       "seo": {
@@ -4420,7 +4495,7 @@
         "integrations": "Conectá proveedores de envío, impuestos y otros",
         "maintenance_tasks": "Rellenos, reindexaciones y pasos de actualización, con un registro de cada ejecución",
         "markets": "Los países a los que vendés y sus monedas",
-        "payment_methods": "Pasarelas de pago y cómo se capturan los pagos",
+        "payment_methods": "Proveedores de pago, métodos manuales y cuándo se cobran los pagos",
         "policies": "Documentos de términos, privacidad, devoluciones y envíos",
         "product_types": "Plantillas que precargan los productos nuevos",
         "reasons": "Motivos ofrecidos para devoluciones, reembolsos y reclamos",
@@ -4428,14 +4503,15 @@
         "seller_requirements": "Lista de control que completan los vendedores antes de la aprobación",
         "staff": "Personas con acceso a este dashboard",
         "stock_locations": "Depósitos y puntos de retiro que guardan stock",
-        "store": "Nombre de la tienda, zona horaria, unidades y predeterminados regionales",
+        "store": "Nombre de la tienda, SEO, zona horaria, unidades y números de pedido",
         "webhooks": "Endpoints notificados cuando ocurren eventos",
         "package_types": "Cajas, cajones, palets y contenedores",
         "suppliers": "A quién le comprás stock y cómo contactarlos",
         "marketplace": "Pagos a vendedores, aprobación de vendedores, correos a vendedores e impuesto sobre la comisión",
         "taxes": "Categorías fiscales, tipos impositivos y motivos de exención",
         "ai_agents": "Agentes de IA con acceso a esta tienda",
-        "oauth_clients": "Registrar y configurar clientes OAuth"
+        "oauth_clients": "Registrar y configurar clientes OAuth",
+        "storefront": "URL de la tienda, quién puede navegar, checkout y campos de dirección"
       },
       "groups": {
         "audit": "Auditoría",
@@ -4459,7 +4535,7 @@
         "integrations": "Integraciones",
         "maintenance_tasks": "Tareas de mantenimiento",
         "markets": "Mercados",
-        "payment_methods": "Métodos de pago",
+        "payment_methods": "Pagos",
         "policies": "Políticas",
         "product_types": "Tipos de producto",
         "profile": "Perfil",
@@ -4477,7 +4553,8 @@
         "marketplace": "Configuración",
         "taxes": "Impuestos",
         "ai_agents": "Agentes de IA",
-        "oauth_clients": "Clientes OAuth"
+        "oauth_clients": "Clientes OAuth",
+        "storefront": "Tienda y checkout"
       },
       "breadcrumbs": {
         "marketplace": "Marketplace"
@@ -4852,7 +4929,9 @@
         "has_reserved": "Reservado",
         "in_stock": "En stock",
         "low_stock": "Stock bajo",
-        "out_of_stock": "Sin stock"
+        "out_of_stock": "Sin stock",
+        "low_stock_overall": "Stock bajo (todas las ubicaciones)",
+        "out_of_stock_overall": "Sin stock (todas las ubicaciones)"
       },
       "incoming": {
         "open_aria": "Agregar stock entrante",
@@ -5121,7 +5200,8 @@
       "badges": {
         "default": "Predeterminada",
         "enabled": "Habilitada",
-        "inactive": "Inactiva"
+        "inactive": "Inactiva",
+        "seller_default": "Predeterminada del vendedor"
       },
       "columns": {
         "default": "Predeterminada",
@@ -5166,6 +5246,10 @@
         "unknown_product": "Producto desconocido",
         "variant_count_one": "{{count}} variante",
         "variant_count_other": "{{count}} variantes"
+      },
+      "views": {
+        "own": "Tus ubicaciones",
+        "sellers": "Ubicaciones de vendedores"
       }
     },
     "nav": {
@@ -5239,7 +5323,11 @@
       },
       "title": "Certificados de exención",
       "verified_at": "Aceptado el",
-      "verify_action": "Aceptar"
+      "verify_action": "Aceptar",
+      "columns": {
+        "certificate": "Certificado",
+        "document": "Documento"
+      }
     },
     "api_keys": {
       "badge": {
@@ -5363,7 +5451,7 @@
         "shipping": "Envío",
         "tax": "Impuestos"
       },
-      "manage_payment_methods": "Gestionar métodos de pago",
+      "manage_payment_methods": "Gestionar pagos",
       "messages": {
         "connected": "Integración conectada",
         "disconnected": "Integración desconectada",
@@ -5546,6 +5634,12 @@
       "delete_confirm": {
         "title": "¿Eliminar este proveedor?",
         "message": "{{name}} se eliminará de tu lista de proveedores."
+      },
+      "detail": {
+        "details": "Detalles",
+        "orders_empty": "Todavía no hay órdenes de compra de este proveedor",
+        "load_error": "No se pudo cargar este proveedor",
+        "address": "Dirección"
       }
     },
     "reasons": {
@@ -5768,7 +5862,6 @@
       "markets": "Las regiones a las que vendés, cada una con su moneda, impuestos y envíos.",
       "orders": "Cada pedido realizado en tu tienda y en qué punto está cada uno.",
       "draft_orders": "Pedidos que tu equipo arma en nombre de un cliente y que todavía no se realizaron.",
-      "payment_methods": "Cómo pueden pagar los clientes y los proveedores detrás de cada opción.",
       "policies": "Tus políticas de términos, privacidad, devoluciones y envíos, publicadas en el storefront.",
       "products": "Todo lo que vendés, con sus variantes, precios y stock.",
       "promotions": "Descuentos y ofertas, y las reglas que deciden cuándo aplican.",
@@ -5939,7 +6032,9 @@
     "markets": {
       "add_cta": "Agregar mercado",
       "columns": {
-        "default": "Predeterminado"
+        "default": "Predeterminado",
+        "locale": "Idioma",
+        "regions": "Regiones"
       },
       "create_description": "Agrupá países en una única región de precios con su propia moneda e idiomas.",
       "create_label": "Crear mercado",
@@ -5959,15 +6054,15 @@
         "deleted": "Mercado eliminado",
         "updated": "Mercado actualizado"
       },
+      "regions_count_many": "{{count}} regiones",
+      "regions_count_one": "{{count}} región",
+      "regions_count_other": "{{count}} regiones",
       "search_placeholder": "Buscar por nombre…",
+      "search_regions": "Buscar regiones",
       "tax_exclusive": "Exclusivo",
       "tax_inclusive": "Incluido"
     },
     "payment_methods": {
-      "add_cta": "Agregar método de pago",
-      "columns": {
-        "storefront": "Storefront"
-      },
       "create_description": "Elegí un proveedor y configurá sus credenciales.",
       "create_label": "Crear método de pago",
       "delete_confirm": {
@@ -5975,22 +6070,19 @@
         "title": "¿Eliminar método de pago?"
       },
       "edit_description": "Actualizá el nombre, la visibilidad o el estado.",
-      "empty": "No hay métodos de pago configurados",
       "messages": {
         "created": "Método de pago creado",
         "deleted": "Método de pago eliminado",
         "updated": "Método de pago actualizado"
       },
       "provider_description": "Proveedor: {{provider}}",
-      "search_placeholder": "Buscar por nombre…",
       "status": {
         "disabled": "Deshabilitado"
       },
       "storefront": {
         "admin_only": "Solo admin",
         "visible": "Visible"
-      },
-      "title": "Métodos de pago"
+      }
     },
     "setup": {
       "back_to_login": "Volver a iniciar sesión",
@@ -6148,7 +6240,10 @@
       },
       "roles_enterprise_help": "Los integrantes que agregues acá pueden comprar para esta empresa y gestionar su directorio. Los roles, los flujos de aprobación y los límites de gasto vienen con Spree Enterprise.",
       "roles_enterprise_title": "Roles y aprobaciones son una función de Enterprise",
-      "title": "Integrantes"
+      "title": "Integrantes",
+      "columns": {
+        "member": "Miembro"
+      }
     },
     "policies": {
       "add_cta": "Agregar política",
@@ -6246,7 +6341,8 @@
         "delete_failed": "No se pudo eliminar el grupo de clientes",
         "deleted": "Grupo de clientes eliminado",
         "update_failed": "No se pudo actualizar el grupo de clientes",
-        "updated": "Grupo de clientes actualizado"
+        "updated": "Grupo de clientes actualizado",
+        "load_failed": "No se pudo cargar este grupo de clientes"
       }
     },
     "store": {
@@ -6262,8 +6358,7 @@
         "oz": "Onza (oz)"
       },
       "seo": {
-        "title": "Ficha en buscadores",
-        "description": "El título y la descripción predeterminados de tu tienda. Tradúcelos a cada idioma que admite tu tienda."
+        "title": "Ficha en buscadores"
       }
     },
     "company_invitations": {

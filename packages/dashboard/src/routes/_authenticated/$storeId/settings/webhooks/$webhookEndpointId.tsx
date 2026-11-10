@@ -37,6 +37,7 @@ import {
   SheetHeader,
   SheetTitle,
   Skeleton,
+  StatItem,
   useFormSubmitShortcut,
   useRowClickBridge,
 } from '@spree/dashboard-ui'
@@ -247,13 +248,9 @@ function WebhookEndpointDetailBody({ endpoint }: { endpoint: WebhookEndpoint }) 
                   <PlayIcon className="size-4" />
                   {t('admin.pages.settings.webhooks.actions.send_test')}
                 </Button>
-                <Button
-                  variant="ghost"
-                  size="icon-sm"
-                  onClick={openEdit}
-                  aria-label={t('admin.actions.edit')}
-                >
+                <Button variant="outline" onClick={openEdit}>
                   <PencilIcon className="size-4" />
+                  {t('admin.actions.edit')}
                 </Button>
               </Can>
             }
@@ -341,8 +338,7 @@ function AutoDisabledAlert({
 }
 
 // ---------------------------------------------------------------------------
-// 4-tile health summary — Health badge / Deliveries / Successful / Failed.
-// Mirrors `spree/admin/app/views/spree/admin/webhook_endpoints/_summary.html.erb`.
+// Health summary — Health badge / Deliveries / Successful / Failed.
 // ---------------------------------------------------------------------------
 
 function HealthSummaryCard({ endpoint }: { endpoint: WebhookEndpoint }) {
@@ -381,34 +377,20 @@ function HealthSummaryCard({ endpoint }: { endpoint: WebhookEndpoint }) {
   const failed = endpoint.failed_delivery_count ?? 0
 
   return (
-    <Card>
-      <CardContent>
-        <div className="grid grid-cols-2 gap-6 sm:grid-cols-4">
-          <HealthStat label={t('admin.pages.settings.webhooks.health.label')}>
-            <Badge variant={variant}>{healthLabel}</Badge>
-          </HealthStat>
-          <HealthStat label={t('admin.pages.settings.webhooks.health.metric_total')}>
-            <span className="text-lg font-semibold">{total}</span>
-          </HealthStat>
-          <HealthStat label={t('admin.pages.settings.webhooks.health.metric_successful')}>
-            <span className="text-lg font-semibold">{successful}</span>
-          </HealthStat>
-          <HealthStat label={t('admin.pages.settings.webhooks.health.metric_failed')}>
-            <span className={cn('text-lg font-semibold', failed > 0 && 'text-destructive')}>
-              {failed}
-            </span>
-          </HealthStat>
-        </div>
-      </CardContent>
-    </Card>
-  )
-}
-
-function HealthStat({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div className="flex flex-col gap-1.5">
-      <span className="text-xs uppercase tracking-wide text-muted-foreground">{label}</span>
-      {children}
+    <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <StatItem
+        label={t('admin.pages.settings.webhooks.health.label')}
+        value={<Badge variant={variant}>{healthLabel}</Badge>}
+      />
+      <StatItem label={t('admin.pages.settings.webhooks.health.metric_total')} value={total} />
+      <StatItem
+        label={t('admin.pages.settings.webhooks.health.metric_successful')}
+        value={successful}
+      />
+      <StatItem
+        label={t('admin.pages.settings.webhooks.health.metric_failed')}
+        value={<span className={cn(failed > 0 && 'text-destructive')}>{failed}</span>}
+      />
     </div>
   )
 }
@@ -447,7 +429,7 @@ function DeliveriesCard({
 }
 
 // ---------------------------------------------------------------------------
-// Right-column "Details" card. Mirrors `_details.html.erb`.
+// Right-column "Details" card.
 // ---------------------------------------------------------------------------
 
 // Copyable URL rendered as the page subtitle — the destination URL is the
@@ -474,31 +456,33 @@ function DetailsCard({ endpoint }: { endpoint: WebhookEndpoint }) {
       <CardHeader>
         <CardTitle>{t('admin.pages.settings.webhooks.detail.details_title')}</CardTitle>
       </CardHeader>
-      <CardContent className="flex flex-col divide-y divide-border p-0">
-        <DetailRow
-          label={t('admin.pages.settings.webhooks.detail.subscriptions')}
-          value={
-            endpoint.subscriptions && endpoint.subscriptions.length > 0 ? (
-              <div className="flex max-w-[16rem] flex-wrap justify-end gap-1">
-                {endpoint.subscriptions.map((s) => (
-                  <Badge key={s} variant="secondary" className="font-mono text-[10px]">
-                    {s}
-                  </Badge>
-                ))}
-              </div>
-            ) : (
-              <Badge variant="secondary">{t('admin.pages.settings.webhooks.events_all')}</Badge>
-            )
-          }
-        />
-        <DetailRow
-          label={t('admin.fields.created_at.label')}
-          value={<RelativeTime iso={endpoint.created_at} />}
-        />
-        <DetailRow
-          label={t('admin.fields.updated_at.label')}
-          value={<RelativeTime iso={endpoint.updated_at} />}
-        />
+      <CardContent className="p-0">
+        <dl className="flex flex-col divide-y divide-border">
+          <DetailRow
+            label={t('admin.pages.settings.webhooks.detail.subscriptions')}
+            value={
+              endpoint.subscriptions && endpoint.subscriptions.length > 0 ? (
+                <div className="flex max-w-[16rem] flex-wrap justify-end gap-1">
+                  {endpoint.subscriptions.map((s) => (
+                    <Badge key={s} variant="secondary" className="font-mono text-[10px]">
+                      {s}
+                    </Badge>
+                  ))}
+                </div>
+              ) : (
+                <Badge variant="secondary">{t('admin.pages.settings.webhooks.events_all')}</Badge>
+              )
+            }
+          />
+          <DetailRow
+            label={t('admin.fields.created_at.label')}
+            value={<RelativeTime iso={endpoint.created_at} />}
+          />
+          <DetailRow
+            label={t('admin.fields.updated_at.label')}
+            value={<RelativeTime iso={endpoint.updated_at} />}
+          />
+        </dl>
       </CardContent>
     </Card>
   )
@@ -686,7 +670,7 @@ function DeliveryDetailSheet({
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between">
-                  <CardTitle className="text-sm">
+                  <CardTitle className="text-base">
                     {t('admin.pages.settings.webhooks.deliveries.detail.request_payload')}
                   </CardTitle>
                   <CopyToClipboardButton
@@ -706,7 +690,7 @@ function DeliveryDetailSheet({
               {delivery.response_body && (
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between">
-                    <CardTitle className="text-sm">
+                    <CardTitle className="text-base">
                       {t('admin.pages.settings.webhooks.deliveries.detail.response_body')}
                     </CardTitle>
                     <CopyToClipboardButton
@@ -764,8 +748,8 @@ function DeliveryDetailSheet({
 function DetailRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="flex flex-row items-start justify-between gap-4 px-4 py-3">
-      <dt className="text-sm text-muted-foreground">{label}</dt>
-      <dd className="max-w-full text-right text-sm">{value}</dd>
+      <dt className="text-base text-muted-foreground">{label}</dt>
+      <dd className="max-w-full text-right text-base">{value}</dd>
     </div>
   )
 }

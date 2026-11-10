@@ -411,11 +411,15 @@
         "add": "Thêm quy tắc",
         "description": "Chọn sản phẩm theo cách thủ công hoặc để các quy tắc cập nhật bộ sưu tập.",
         "remove": "Xóa quy tắc",
-        "title": "Tư cách thành viên"
+        "title": "Tư cách thành viên",
+        "on_sale": "Đang giảm giá",
+        "days": "ngày",
+        "days_label": "Xuất bản trong vòng",
+        "tags_placeholder": "Chọn thẻ…"
       },
       "rules_match_policies": {
-        "all": "mọi điều kiện",
-        "any": "bất kỳ điều kiện nào"
+        "all": "Phải khớp tất cả quy tắc",
+        "any": "Khớp bất kỳ quy tắc nào"
       },
       "search_placeholder": "Tìm kiếm bộ sưu tập…",
       "seo": {
@@ -553,7 +557,10 @@
       },
       "roles_enterprise_help": "Các thành viên bạn thêm vào đây có thể mua cho công ty này và quản lý thư mục của công ty. Vai trò, quy trình phê duyệt và giới hạn chi tiêu đi kèm với Spree Enterprise.",
       "roles_enterprise_title": "Vai trò và phê duyệt là một tính năng của Doanh nghiệp",
-      "title": "Thành viên"
+      "title": "Thành viên",
+      "columns": {
+        "member": "Thành viên"
+      }
     },
     "components": {
       "adjustment_action_editor": {
@@ -625,14 +632,16 @@
         "delete_failed": "Không xóa được nhóm khách hàng",
         "deleted": "Nhóm khách hàng đã bị xóa",
         "update_failed": "Không cập nhật được nhóm khách hàng",
-        "updated": "Nhóm khách hàng đã cập nhật"
+        "updated": "Nhóm khách hàng đã cập nhật",
+        "load_failed": "Không thể tải nhóm khách hàng này"
       }
     },
     "customers": {
       "autocomplete": {
         "empty": "Không có khách hàng nào phù hợp",
         "empty_for_company": "Không có khách hàng nào có thể mua cho công ty này",
-        "placeholder": "Tìm kiếm khách hàng…"
+        "placeholder": "Tìm kiếm khách hàng…",
+        "add_new": "Thêm khách hàng mới"
       },
       "columns": {
         "companies": "Công ty",
@@ -717,7 +726,26 @@
           "search_placeholder": "Tìm kiếm theo tên…",
           "title": "Nhóm khách hàng"
         },
-        "view_members": "Xem thành viên"
+        "view_members": "Xem thành viên",
+        "detail": {
+          "details": "Chi tiết",
+          "members": "Thành viên",
+          "customer": "Khách hàng",
+          "add_member": "Thêm khách hàng",
+          "add_member_title": "Thêm khách hàng vào nhóm này",
+          "add_member_description": "Chọn một khách hàng hiện có. Không có gì khác thay đổi; họ chỉ tham gia nhóm này.",
+          "members_empty": "Chưa có khách hàng nào trong nhóm này",
+          "remove_member": "Xóa khỏi nhóm",
+          "remove_confirm": {
+            "title": "Xóa khỏi nhóm này?",
+            "message": "{{name}} vẫn là khách hàng; chỉ rời khỏi nhóm này."
+          },
+          "messages": {
+            "member_added": "Đã thêm khách hàng vào nhóm",
+            "member_removed": "Đã xóa khách hàng khỏi nhóm",
+            "member_change_failed": "Không thể cập nhật thành viên của nhóm"
+          }
+        }
       },
       "new_sheet_description": "Khách hàng tạo ở đây chưa đặt mật khẩu. Họ sẽ nhận được một liên kết kỳ diệu trong lần đăng nhập đầu tiên.",
       "privacy": {
@@ -1405,7 +1433,8 @@
       },
       "company_membership": {
         "email": {
-          "help": "Một khách hàng hiện tại tham gia ngay lập tức; bất cứ ai khác nhận được lời mời qua email.",
+          "label": "Hoặc mời qua email",
+          "help": "Người chưa là khách hàng sẽ nhận được lời mời qua email.",
           "placeholder": "người mua@example.com"
         }
       },
@@ -2254,8 +2283,7 @@
           "label": "Gửi email giao dịch cho khách hàng"
         },
         "timezone": {
-          "label": "Múi giờ",
-          "placeholder": "Chọn múi giờ"
+          "label": "Múi giờ"
         },
         "unit_system": {
           "label": "Hệ thống đơn vị"
@@ -2717,7 +2745,7 @@
         "shipping": "Vận chuyển",
         "tax": "Thuế"
       },
-      "manage_payment_methods": "Quản lý phương thức thanh toán",
+      "manage_payment_methods": "Quản lý thanh toán",
       "messages": {
         "connected": "Integration connected",
         "disconnected": "Integration disconnected",
@@ -2831,7 +2859,9 @@
     "markets": {
       "add_cta": "Thêm thị trường",
       "columns": {
-        "default": "Mặc định"
+        "default": "Mặc định",
+        "locale": "Ngôn ngữ",
+        "regions": "Khu vực"
       },
       "create_description": "Nhóm các quốc gia thành một khu vực định giá duy nhất với đơn vị tiền tệ và địa phương riêng.",
       "create_label": "Tạo thị trường",
@@ -2851,7 +2881,9 @@
         "deleted": "Thị trường đã bị xóa",
         "updated": "Cập nhật thị trường"
       },
+      "regions_count_other": "{{count}} khu vực",
       "search_placeholder": "Tìm kiếm theo tên…",
+      "search_regions": "Tìm khu vực",
       "tax_exclusive": "Độc quyền",
       "tax_inclusive": "Bao gồm"
     },
@@ -3404,10 +3436,8 @@
       "item_count_one": "{{count}} mục",
       "item_count_other": "{{count}} mục",
       "new": {
-        "add_variant": "Thêm một biến thể",
         "creates_draft_note": "Tạo một đơn đặt hàng dự thảo. Thêm thanh toán và hoàn thành nó sau khi tạo.",
         "items_table": {
-          "qty": "Số lượng",
           "sku": "Mã hàng",
           "variant": "Biến thể"
         },
@@ -3502,6 +3532,10 @@
         "new_cta": "Khách hàng mới"
       },
       "getting_started": {
+        "completed": {
+          "description": "Bạn đã hoàn tất mọi bước Bắt đầu.",
+          "title": "Cửa hàng của bạn đã được thiết lập"
+        },
         "description": "Hãy hoàn tất các bước này để ra mắt cửa hàng của bạn.",
         "progress": "{{done}} trong số {{total}} đã hoàn thành",
         "storefront_sheet": {
@@ -3539,6 +3573,7 @@
             "cta": "Lưu địa chỉ",
             "description": "Địa chỉ giao hàng và trả lại của bạn. Các nhà vận chuyển sử dụng nó để tính toán tỷ lệ giao hàng và đó là nơi gửi hàng trả lại của khách hàng.",
             "no_location": "Bạn chưa có vị trí kho hàng của riêng mình — hãy tạo một vị trí trong Cài đặt để thêm địa chỉ.",
+            "saved": "Đã lưu địa chỉ giao hàng",
             "title": "Thêm địa chỉ giao hàng của bạn"
           },
           "setup_payment_method": {
@@ -3589,7 +3624,6 @@
           "previous": "Kỳ trước"
         },
         "growth": {
-          "new": "Mới",
           "vs_previous": "so với kỳ trước"
         },
         "operations": {
@@ -3601,8 +3635,11 @@
             "low_stock_items": {
               "label": "Ít hàng",
               "description_zero": "Đã tắt. Đặt ngưỡng tồn kho thấp trong cài đặt cửa hàng để sử dụng điều này.",
-              "description_one": "Còn lại 1 chiếc hoặc ít hơn để bán tại một địa điểm.",
-              "description_other": "{{count}} số lượng hoặc ít hơn còn lại để bán tại một địa điểm."
+              "description_one": "Còn lại 1 chiếc hoặc ít hơn để bán trên tất cả địa điểm.",
+              "description_other": "Còn lại {{count}} chiếc hoặc ít hơn để bán trên tất cả địa điểm.",
+              "hint_zero": "Tắt",
+              "hint_one": "≤ {{count}}",
+              "hint_other": "≤ {{count}}"
             },
             "open_claims": {
               "label": "Yêu cầu mở",
@@ -3622,12 +3659,19 @@
             },
             "out_of_stock_items": {
               "label": "Hết hàng",
-              "description": "Không còn gì để bán tại một địa điểm."
+              "description": "Không còn gì để bán tại bất kỳ địa điểm nào."
             },
             "payments_to_collect": {
               "label": "Các khoản thanh toán để thu thập",
               "description": "Đặt hàng vẫn còn nợ tiền."
             }
+          },
+          "all_clear": "Bạn đã xử lý hết.",
+          "groups": {
+            "orders": "Đơn hàng",
+            "post_sale": "Trả hàng và khiếu nại",
+            "inventory": "Tồn kho",
+            "other": "Khác"
           }
         },
         "rankings": {
@@ -3658,7 +3702,8 @@
         },
         "currency": {
           "search": "Tìm kiếm tiền tệ"
-        }
+        },
+        "chart_sparse": "Chưa đủ dữ liệu để hiển thị xu hướng"
       },
       "orders": {
         "detail": {
@@ -3790,13 +3835,16 @@
           "company_addresses": "Địa chỉ công ty",
           "company_help": "Đính kèm đơn đặt hàng này với một doanh nghiệp. Danh sách khách hàng sau đó chỉ hiển thị những người có thể mua nó.",
           "customer_addresses": "Địa chỉ khách hàng",
+          "items_empty": {
+            "description": "Thêm các sản phẩm cho đơn hàng này.",
+            "title": "Chưa có mặt hàng nào"
+          },
           "reset_items": {
             "confirm": "Thay đổi và xóa các mục",
             "message_one": "Mặt hàng {{count}} bạn đã chọn có thể không được bán hoặc có thể có giá khác đối với người mua, thị trường hoặc kênh này. Nó sẽ bị xóa.",
             "message_other": "Các mặt hàng {{count}} bạn đã chọn có thể không được bán hoặc có thể có giá khác đối với người mua, thị trường hoặc kênh này. Chúng sẽ bị loại bỏ.",
             "title": "Xóa các mục đã chọn?"
           },
-          "search_variant": "Tìm kiếm biến thể…",
           "section_billing": "Thanh toán",
           "section_customer": "Khách hàng",
           "section_items": "Mặt hàng",
@@ -4232,14 +4280,11 @@
         },
         "store": {
           "subtitle": "Cấu hình chung và mặc định trên toàn cửa hàng.",
-          "tab_addresses": "Địa chỉ",
           "tab_catalog": "Danh mục",
           "tab_general": "Chung",
           "tab_inventory": "Hàng tồn kho",
           "tab_order_numbers": "Số đơn hàng",
-          "tab_payments": "Thanh toán",
           "tab_standards": "Tiêu chuẩn và định dạng",
-          "tab_storefront_access": "Quyền truy cập cửa hàng trực tuyến",
           "title": "Cài đặt cửa hàng",
           "tab_downloads": "Tải xuống kỹ thuật số",
           "downloads_help": "Liên kết tải xuống hoạt động trong bao lâu và có thể sử dụng được bao nhiêu lần. Các tệp riêng lẻ có thể ghi đè những con số này.",
@@ -4478,6 +4523,46 @@
             "description": "Đăng ký ứng dụng khách OAuth để có thể kết nối với cửa hàng này."
           },
           "copy_client_id": "Sao chép ID khách hàng"
+        },
+        "payments": {
+          "title": "Thanh toán",
+          "description": "Các nhà cung cấp thanh toán và phương thức thủ công khách hàng có thể dùng, và thời điểm thu tiền.",
+          "providers_title": "Nhà cung cấp thanh toán",
+          "providers_empty": {
+            "title": "Không có nhà cung cấp thanh toán",
+            "description": "Cài đặt tiện ích nhà cung cấp thanh toán để nhận thẻ và ví điện tử."
+          },
+          "manual_title": "Phương thức thanh toán thủ công",
+          "add_manual": "Thêm phương thức thủ công",
+          "manual_empty": {
+            "title": "Chưa có phương thức thanh toán thủ công",
+            "description": "Nhận thanh toán ngoài cửa hàng, như séc, chuyển khoản ngân hàng hoặc thu tiền khi giao hàng."
+          },
+          "capture_title": "Thu tiền thanh toán",
+          "checkout_order": {
+            "cta": "Thứ tự khi thanh toán",
+            "title": "Thứ tự khi thanh toán",
+            "description": "Kéo để sắp xếp thứ tự phương thức thanh toán khách hàng thấy khi thanh toán. Chỉ liệt kê các phương thức đang hoạt động và hiển thị trên cửa hàng.",
+            "empty": {
+              "title": "Không có gì được cung cấp khi thanh toán",
+              "description": "Kích hoạt một phương thức thanh toán và hiển thị nó trên cửa hàng để thấy ở đây."
+            }
+          },
+          "test_gateway": "Cổng thử nghiệm"
+        },
+        "storefront": {
+          "title": "Cửa hàng & thanh toán",
+          "description": "Cửa hàng của bạn ở đâu, ai được xem và bước thanh toán hỏi khách những gì.",
+          "storefront_title": "Cửa hàng",
+          "checkout_title": "Thanh toán",
+          "addresses_title": "Địa chỉ",
+          "url": {
+            "label": "URL cửa hàng",
+            "not_connected": "Chưa kết nối",
+            "connect": "Kết nối",
+            "change": "Thay đổi",
+            "help": "Nơi khách hàng mua sắm. Spree liên kết đến đây từ email và bảng điều khiển, và cho phép nó gọi Store API."
+          }
         }
       },
       "staff": {
@@ -4545,10 +4630,6 @@
       }
     },
     "payment_methods": {
-      "add_cta": "Thêm phương thức thanh toán",
-      "columns": {
-        "storefront": "Cửa hàng trực tuyến"
-      },
       "create_description": "Chọn một nhà cung cấp và định cấu hình thông tin đăng nhập của nó.",
       "create_label": "Tạo phương thức thanh toán",
       "delete_confirm": {
@@ -4556,22 +4637,19 @@
         "title": "Xóa phương thức thanh toán?"
       },
       "edit_description": "Cập nhật tên, mức độ hiển thị hoặc trạng thái.",
-      "empty": "Không có phương thức thanh toán nào được định cấu hình",
       "messages": {
         "created": "Đã tạo phương thức thanh toán",
         "deleted": "Đã xóa phương thức thanh toán",
         "updated": "Đã cập nhật phương thức thanh toán"
       },
       "provider_description": "Nhà cung cấp: {{provider}}",
-      "search_placeholder": "Tìm kiếm theo tên…",
       "status": {
         "disabled": "Đã tắt"
       },
       "storefront": {
         "admin_only": "Chỉ quản trị viên",
         "visible": "Hiển thị"
-      },
-      "title": "Phương thức thanh toán"
+      }
     },
     "permissions": {
       "descriptions": {
@@ -5335,8 +5413,6 @@
       "add_cta": "Thêm người bán",
       "add_sheet_title": "Người bán mới",
       "address": {
-        "filled": "Đầy",
-        "not_filled": "Không đầy",
         "not_provided_by_seller": "Người bán chưa cung cấp"
       },
       "approve_override_confirm": {
@@ -5359,6 +5435,7 @@
         "billing_address": "Địa chỉ thanh toán",
         "contact": "Liên hệ",
         "delete_label": "Xóa người bán",
+        "edit_contact": "Chỉnh sửa liên hệ",
         "edit_profile": "Chỉnh sửa hồ sơ",
         "edit_profile_description": "Người bán duy trì điều này từ bảng điều khiển riêng của họ. Các chỉnh sửa ở đây được áp dụng thay mặt họ.",
         "edit_settlement": "Chỉnh sửa khoản thanh toán và thuế",
@@ -5366,8 +5443,7 @@
         "load_error": "Không thể tải người bán này",
         "no_about": "Người bán này chưa viết mô tả.",
         "returns_address": "Trả về địa chỉ",
-        "settlement": "Các khoản thanh toán và thuế",
-        "status": "Trạng thái"
+        "settlement": "Các khoản thanh toán và thuế"
       },
       "empty": "Chưa có người bán",
       "images": {
@@ -5530,7 +5606,7 @@
         "integrations": "Kết nối vận chuyển, thuế và các nhà cung cấp khác",
         "maintenance_tasks": "Chèn lấp, lập chỉ mục lại và các bước nâng cấp, với bản ghi mỗi lần chạy",
         "markets": "Các quốc gia bạn bán hàng và đơn vị tiền tệ của họ",
-        "payment_methods": "Cổng thanh toán và cách thu hồi thanh toán",
+        "payment_methods": "Nhà cung cấp thanh toán, phương thức thủ công và thời điểm thu tiền",
         "policies": "Điều khoản, quyền riêng tư, tài liệu trả lại và vận chuyển",
         "product_types": "Mẫu điền sẵn sản phẩm mới",
         "reasons": "Lý do đưa ra để trả lại, hoàn tiền và yêu cầu bồi thường",
@@ -5538,14 +5614,15 @@
         "seller_requirements": "Danh sách kiểm tra người bán hoàn thành trước khi phê duyệt",
         "staff": "Những người có quyền truy cập vào trang tổng quan này",
         "stock_locations": "Kho và điểm lấy hàng có chứa hàng",
-        "store": "Tên cửa hàng, múi giờ, đơn vị và mặc định khu vực",
+        "store": "Tên cửa hàng, SEO, múi giờ, đơn vị và số đơn hàng",
         "webhooks": "Điểm cuối được thông báo khi sự kiện xảy ra",
         "package_types": "Hộp, thùng carton, pallet và container",
         "suppliers": "Nhà cung cấp hàng hóa và thông tin liên hệ",
         "marketplace": "Các khoản thanh toán của người bán, sự chấp thuận của người bán, email của người bán và thuế hoa hồng",
         "taxes": "Các loại thuế, thuế suất và lý do miễn thuế",
         "ai_agents": "Đại lý AI có quyền truy cập vào cửa hàng này",
-        "oauth_clients": "Đăng ký và định cấu hình ứng dụng khách OAuth"
+        "oauth_clients": "Đăng ký và định cấu hình ứng dụng khách OAuth",
+        "storefront": "URL cửa hàng, ai được xem, thanh toán và trường địa chỉ"
       },
       "groups": {
         "audit": "Kiểm toán",
@@ -5569,7 +5646,7 @@
         "integrations": "Tích hợp",
         "maintenance_tasks": "Nhiệm vụ bảo trì",
         "markets": "Thị trường",
-        "payment_methods": "Phương thức thanh toán",
+        "payment_methods": "Thanh toán",
         "policies": "Chính sách",
         "product_types": "Các loại sản phẩm",
         "profile": "Hồ sơ",
@@ -5587,7 +5664,8 @@
         "marketplace": "Cài đặt",
         "taxes": "Thuế",
         "ai_agents": "Đại lý AI",
-        "oauth_clients": "Ứng dụng khách OAuth"
+        "oauth_clients": "Ứng dụng khách OAuth",
+        "storefront": "Cửa hàng & thanh toán"
       },
       "breadcrumbs": {
         "marketplace": "Sàn thương mại điện tử"
@@ -5677,7 +5755,9 @@
         "has_reserved": "Đã đặt trước",
         "in_stock": "Còn hàng",
         "low_stock": "Ít hàng",
-        "out_of_stock": "Hết hàng"
+        "out_of_stock": "Hết hàng",
+        "low_stock_overall": "Ít hàng (tất cả địa điểm)",
+        "out_of_stock_overall": "Hết hàng (tất cả địa điểm)"
       },
       "incoming": {
         "open_aria": "Thêm hàng vào",
@@ -5724,7 +5804,8 @@
       "badges": {
         "default": "Mặc định",
         "enabled": "Đã bật",
-        "inactive": "Không hoạt động"
+        "inactive": "Không hoạt động",
+        "seller_default": "Mặc định của người bán"
       },
       "columns": {
         "default": "Mặc định",
@@ -5769,6 +5850,10 @@
         "unknown_product": "Sản phẩm không xác định",
         "variant_count_one": "{{count}} biến thể",
         "variant_count_other": "{{count}} biến thể"
+      },
+      "views": {
+        "own": "Địa điểm của bạn",
+        "sellers": "Địa điểm của người bán"
       }
     },
     "stock_transfers": {
@@ -5900,8 +5985,7 @@
         "oz": "Ounce (oz)"
       },
       "seo": {
-        "title": "Danh sách công cụ tìm kiếm",
-        "description": "Tiêu đề và mô tả mặc định về cửa hàng trực tuyến của bạn. Dịch chúng cho từng ngôn ngữ mà cửa hàng của bạn hỗ trợ."
+        "title": "Danh sách công cụ tìm kiếm"
       }
     },
     "table_descriptions": {
@@ -5928,7 +6012,6 @@
       "markets": "Các khu vực bạn bán hàng, mỗi khu vực đều có thiết lập đơn vị tiền tệ, thuế và giao hàng riêng.",
       "orders": "Mọi đơn hàng được đặt tại cửa hàng của bạn và vị trí của mỗi đơn hàng.",
       "draft_orders": "Các đơn đặt hàng mà nhóm của bạn đang xây dựng thay mặt cho khách hàng, chưa được đặt.",
-      "payment_methods": "Cách khách hàng có thể thanh toán và các nhà cung cấp đằng sau mỗi lựa chọn.",
       "policies": "Các điều khoản, quyền riêng tư, chính sách trả lại và vận chuyển của bạn, được công bố trên cửa hàng trực tuyến.",
       "products": "Mọi thứ bạn bán, với các biến thể, giá cả và hàng tồn kho.",
       "promotions": "Giảm giá và ưu đãi cũng như các quy tắc quyết định thời điểm áp dụng.",
@@ -5994,7 +6077,11 @@
       },
       "title": "Giấy chứng nhận miễn trừ",
       "verified_at": "Đã chấp nhận vào",
-      "verify_action": "Chấp nhận"
+      "verify_action": "Chấp nhận",
+      "columns": {
+        "certificate": "Chứng nhận",
+        "document": "Tài liệu"
+      }
     },
     "tax_identifiers": {
       "add_cta": "Thêm đăng ký",
@@ -6374,6 +6461,12 @@
       "delete_confirm": {
         "title": "Xóa nhà cung cấp này?",
         "message": "{{name}} sẽ bị xóa khỏi danh sách nhà cung cấp của bạn."
+      },
+      "detail": {
+        "details": "Chi tiết",
+        "orders_empty": "Chưa có đơn mua hàng nào từ nhà cung cấp này",
+        "load_error": "Không thể tải nhà cung cấp này",
+        "address": "Địa chỉ"
       }
     },
     "stock_receipts": {

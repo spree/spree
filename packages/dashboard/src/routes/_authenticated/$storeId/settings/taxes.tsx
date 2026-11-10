@@ -2,6 +2,7 @@ import { PageHeader } from '@spree/dashboard-core'
 import { createFileRoute, Outlet } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { TaxProviderSummary } from '../../../../components/spree/taxes/market-tax-providers'
+import { TaxAddressSetting } from '../../../../components/spree/taxes/tax-address-setting'
 import { TaxesTabs } from '../../../../components/spree/taxes/taxes-tabs'
 
 export const Route = createFileRoute('/_authenticated/$storeId/settings/taxes')({
@@ -19,6 +20,7 @@ function TaxesLayout() {
         description={t('admin.taxes.description')}
       />
       <TaxProviderSummary />
+      <TaxAddressSetting />
       <TaxesTabs />
       <Outlet />
     </div>

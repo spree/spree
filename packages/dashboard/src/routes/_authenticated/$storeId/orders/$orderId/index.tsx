@@ -65,6 +65,12 @@ function OrderDetailPage() {
         <>
           <FulfillmentsCard order={order} />
           <OrderDigitalLinksCard order={order} />
+          <PaymentsCard order={order} />
+          <TaxLinesCard order={order} />
+          <OrderDiscountsCard order={order} />
+          <FeesCard order={order} />
+          {/* The totals follow the payments and adjustments they add up. */}
+          <OrderSummaryCard order={order} />
           {/* Nothing can come back from an order that has not been placed:
               all three read fulfilled units, and a draft has none, so they
               would only ever render an empty card with a disabled action. */}
@@ -75,13 +81,8 @@ function OrderDetailPage() {
               <OrderClaimsCard order={order} />
             </>
           )}
-          <PaymentsCard order={order} />
-          <TaxLinesCard order={order} />
-          <OrderDiscountsCard order={order} />
-          <FeesCard order={order} />
           <CommissionLinesCard order={order} />
           <SellerTransfersCard order={order} />
-          <OrderSummaryCard order={order} />
           <EditableApiCustomFieldsProvider
             ownerType="order"
             ownerId={order.id}

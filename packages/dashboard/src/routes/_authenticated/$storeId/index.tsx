@@ -3,12 +3,14 @@ import { SpreeError } from '@spree/admin-sdk'
 import {
   Can,
   CurrencySelect,
+  PageHeader,
   resolveDatePreset,
   Subject,
   usePermissions,
   useStore,
 } from '@spree/dashboard-core'
 import {
+  Badge,
   Button,
   Card,
   CardContent,
@@ -27,9 +29,9 @@ import {
   Item,
   ItemActions,
   ItemContent,
-  ItemDescription,
   ItemMedia,
   ItemTitle,
+  ProductIdentity,
   Progress,
   ScrollArea,
   Skeleton,
@@ -43,21 +45,26 @@ import {
   Tabs,
   TabsList,
   TabsTrigger,
-  Thumbnail,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
 } from '@spree/dashboard-ui'
 import {
+  ArrowLeftRightIcon,
   ChartColumnIcon,
   ChevronRightIcon,
+  CircleCheckIcon,
   CircleDotIcon,
   CreditCardIcon,
   PackageXIcon,
   RotateCcwIcon,
+  ShieldAlertIcon,
   TriangleAlertIcon,
   TruckIcon,
 } from '@spree/dashboard-ui/icons'
 import { createFileRoute, Link, type LinkProps } from '@tanstack/react-router'
 import { format, parse } from 'date-fns'
-import type { CSSProperties } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ALL_CHANNELS, ChannelSelect } from '../../../components/spree/channel-select'
@@ -159,10 +166,10 @@ function DashboardPage() {
     const forbidden = overviewError instanceof SpreeError && overviewError.status === 403
     return (
       <div className="flex flex-col gap-6">
-        <div>
-          <h1 className="text-2xl font-bold">{t('admin.pages.home.title')}</h1>
-          <p className="text-muted-foreground">{t('admin.pages.home.subtitle')}</p>
-        </div>
+        <PageHeader
+          title={t('admin.pages.home.title')}
+          description={t('admin.pages.home.subtitle')}
+        />
         <Card>
           <CardContent>
             <Empty>
@@ -191,37 +198,38 @@ function DashboardPage() {
   // "Last 30 days" even though the query had already moved.
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold">{t('admin.pages.home.title')}</h1>
-          <p className="text-muted-foreground">{t('admin.pages.home.subtitle')}</p>
-        </div>
-        <div className="flex items-center gap-2">
-          {/* Scopes order-derived metrics to one channel; stock counts stay store-wide. */}
-          {/* `sm` is the toolbar size the date picker's trigger also uses, so
-              the three controls on this row match in height, padding, text and
-              chevron rather than being aligned by hand. */}
-          <ChannelSelect
-            allOption
-            triggerSize="sm"
-            triggerClassName="min-w-40"
-            value={channelId}
-            onChange={setChannelId}
-          />
-          {/* Only worth a control when there is a choice to make — a
-              single-currency store gets no extra chrome. */}
-          {currencies.length > 1 && (
-            <CurrencySelect
-              id="home-currency"
+      {/* The shared page header, so the range and channel stay in reach
+          while the widgets scroll under it. */}
+      <PageHeader
+        title={t('admin.pages.home.title')}
+        description={t('admin.pages.home.subtitle')}
+        actions={
+          <>
+            {/* Scopes order-derived metrics to one channel; stock counts stay store-wide. */}
+            {/* `sm` is the toolbar size the date picker's trigger also uses, so
+              the three field-shaped controls on this row match. */}
+            <ChannelSelect
+              allOption
               triggerSize="sm"
-              value={currency}
-              onChange={setPickedCurrency}
-              searchPlaceholder={t('admin.pages.home.currency.search')}
+              triggerClassName="min-w-40"
+              value={channelId}
+              onChange={setChannelId}
             />
-          )}
-          <DateRangePicker value={dateRange} onChange={setDateRange} timezone={timezone} />
-        </div>
-      </div>
+            {/* Only worth a control when there is a choice to make — a
+              single-currency store gets no extra chrome. */}
+            {currencies.length > 1 && (
+              <CurrencySelect
+                id="home-currency"
+                triggerSize="sm"
+                value={currency}
+                onChange={setPickedCurrency}
+                searchPlaceholder={t('admin.pages.home.currency.search')}
+              />
+            )}
+            <DateRangePicker value={dateRange} onChange={setDateRange} timezone={timezone} />
+          </>
+        }
+      />
       {!overview ? (
         <DashboardWidgetsSkeleton />
       ) : (
@@ -251,8 +259,9 @@ function DashboardPage() {
   )
 }
 
-const OPERATIONS_ROW_CLASS =
-  'flex flex-nowrap items-center gap-3 rounded-none border-0 border-b border-border-subtle px-4 py-3 last:border-0'
+/** One line per counter, inset so the hover reads as a rounded row like the
+ *  list tables. */
+const OPERATIONS_ROW_CLASS = 'flex-nowrap gap-3 px-2 py-1.5'
 
 /** `orders_to_fulfill` reads as "Orders to fulfill" when nobody has translated
  *  it — better than a raw key for an extension's own counter. */
@@ -267,8 +276,43 @@ const COUNTER_ICONS: Record<string, typeof TruckIcon> = {
   orders_to_fulfill: TruckIcon,
   payments_to_collect: CreditCardIcon,
   open_returns: RotateCcwIcon,
+  open_exchanges: ArrowLeftRightIcon,
+  open_claims: ShieldAlertIcon,
   low_stock_items: TriangleAlertIcon,
   out_of_stock_items: PackageXIcon,
+}
+
+/** Stock that has run out costs sales now; running low is a warning. Every
+ *  other counter is a queue to work through and stays neutral. */
+const COUNTER_TONES: Record<string, 'destructive' | 'warning'> = {
+  out_of_stock_items: 'destructive',
+  low_stock_items: 'warning',
+}
+
+const TONE_ICON_CLASS = { destructive: 'text-danger', warning: 'text-warning' } as const
+
+type CounterGroup = 'orders' | 'post_sale' | 'inventory' | 'other'
+
+/** A counter's heading follows the list it opens, so an extension's counter
+ *  lands under the right one without the dashboard knowing its key. */
+const RESOURCE_GROUPS: Record<string, CounterGroup> = {
+  orders: 'orders',
+  returns: 'post_sale',
+  exchanges: 'post_sale',
+  claims: 'post_sale',
+  products: 'inventory',
+  inventory: 'inventory',
+}
+
+const GROUP_ORDER: CounterGroup[] = ['orders', 'post_sale', 'inventory', 'other']
+
+function groupCounters(counters: DashboardCounter[]) {
+  return GROUP_ORDER.map((group) => ({
+    group,
+    counters: counters.filter(
+      (counter) => (RESOURCE_GROUPS[counter.link?.resource ?? ''] ?? 'other') === group,
+    ),
+  })).filter(({ counters }) => counters.length > 0)
 }
 
 /** Lists a server-declared link can land on. A resource this dashboard has
@@ -333,44 +377,59 @@ function OperationsCard({
   const { storeId } = Route.useParams()
   const counters = data?.counters
 
+  let body: ReactNode
+  if (counters === undefined) {
+    body = failed ? (
+      <p className="px-2 py-1.5 text-base text-muted-foreground">
+        {t('admin.pages.home.operations.failed')}
+      </p>
+    ) : (
+      COUNTER_SKELETON_ROWS.map((key) => (
+        <div key={key} className="flex items-center gap-3 px-2 py-1.5">
+          <Skeleton className="size-7 rounded-md" />
+          <Skeleton className="h-4 flex-1" />
+          <Skeleton className="h-4 w-8" />
+        </div>
+      ))
+    )
+  } else if (counters.length === 0) {
+    body = (
+      <p className="px-2 py-1.5 text-base text-muted-foreground">
+        {t('admin.pages.home.operations.empty')}
+      </p>
+    )
+  } else if (counters.every((counter) => counter.value === 0)) {
+    body = (
+      <p className="flex items-center gap-2 px-2 py-1.5 text-base text-muted-foreground">
+        <CircleCheckIcon className="size-4 text-success" />
+        {t('admin.pages.home.operations.all_clear')}
+      </p>
+    )
+  } else {
+    body = groupCounters(counters).map(({ group, counters }) => (
+      <div key={group}>
+        <h3 className="px-2 pt-2 pb-1 text-xs font-medium text-muted-foreground">
+          {t(`admin.pages.home.operations.groups.${group}`)}
+        </h3>
+        {counters.map((counter) => (
+          <CounterRow
+            key={counter.key}
+            counter={counter}
+            link={counterLink(counter.link, channelId)}
+            storeId={storeId}
+          />
+        ))}
+      </div>
+    ))
+  }
+
   return (
     <Card className={className}>
       <CardHeader>
         <CardTitle>{t('admin.pages.home.operations.title')}</CardTitle>
         <CardDescription>{t('admin.pages.home.operations.subtitle')}</CardDescription>
       </CardHeader>
-      <CardContent className="p-0">
-        <div className="flex flex-col">
-          {counters === undefined ? (
-            failed ? (
-              <p className="px-4 py-3 text-sm text-muted-foreground">
-                {t('admin.pages.home.operations.failed')}
-              </p>
-            ) : (
-              COUNTER_SKELETON_ROWS.map((key) => (
-                <div key={key} className={OPERATIONS_ROW_CLASS}>
-                  <Skeleton className="size-8 rounded-md" />
-                  <Skeleton className="h-4 flex-1" />
-                  <Skeleton className="h-4 w-8" />
-                </div>
-              ))
-            )
-          ) : counters.length === 0 ? (
-            <p className="px-4 py-3 text-sm text-muted-foreground">
-              {t('admin.pages.home.operations.empty')}
-            </p>
-          ) : (
-            counters.map((counter) => (
-              <CounterRow
-                key={counter.key}
-                counter={counter}
-                link={counterLink(counter.link, channelId)}
-                storeId={storeId}
-              />
-            ))
-          )}
-        </div>
-      </CardContent>
+      <CardContent className="flex flex-col gap-1 px-2 pt-0 pb-2">{body}</CardContent>
     </Card>
   )
 }
@@ -384,59 +443,85 @@ function CounterRow({
   link: CounterLink | undefined
   storeId: string
 }) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { store } = useStore()
   const Icon = COUNTER_ICONS[counter.key] ?? CircleDotIcon
+  const idle = counter.value === 0
+  const tone = idle ? undefined : COUNTER_TONES[counter.key]
   // The server sends a key, never copy, so the interface language always wins.
   // A counter an extension registers without translations reads as its own
   // humanized key rather than a raw slug.
   const label = t(`admin.pages.home.operations.counters.${counter.key}.label`, {
     defaultValue: humanizeKey(counter.key),
   })
-  // The low stock sentence names the store's threshold, which the shell
-  // already holds — so the count stays a number on the wire and the sentence
-  // stays a translation.
+  // The low stock copy names the store's threshold, which the shell already
+  // holds — so the count stays a number on the wire and the words stay a
+  // translation.
+  const threshold = store?.low_stock_threshold ?? 0
   const description = t(`admin.pages.home.operations.counters.${counter.key}.description`, {
     defaultValue: '',
-    count: store?.low_stock_threshold ?? 0,
+    count: threshold,
   })
-  const content = (
-    <>
-      <ItemMedia variant="icon" className="size-8 rounded-md border">
-        <Icon className="text-muted-foreground" />
-      </ItemMedia>
-      <ItemContent className="min-w-0">
-        <ItemTitle className="font-normal">{label}</ItemTitle>
-        {description && (
-          <ItemDescription className="line-clamp-1 text-xs">{description}</ItemDescription>
-        )}
-      </ItemContent>
-      <ItemActions>
-        <span
+  // Only low stock has a hint; checking first keeps the others from logging a
+  // missing key.
+  const hintKey = `admin.pages.home.operations.counters.${counter.key}.hint`
+  const hint = i18n.exists(hintKey, { count: threshold }) ? t(hintKey, { count: threshold }) : ''
+  // An empty list is a dead end, so a counter at zero is not a link.
+  const target = idle ? undefined : link
+
+  const row = (
+    <Item
+      render={
+        target ? (
+          <Link to={target.to} params={{ storeId }} search={{ filters: target.filters }} />
+        ) : undefined
+      }
+      className={OPERATIONS_ROW_CLASS}
+    >
+      <ItemMedia variant="icon" className="size-7 rounded-md border">
+        <Icon
           className={cn(
-            'text-sm font-semibold tabular-nums',
-            counter.value === 0 && 'text-muted-foreground',
+            'text-muted-foreground',
+            idle && 'opacity-60',
+            tone && TONE_ICON_CLASS[tone],
           )}
-        >
-          {counter.value.toLocaleString()}
-        </span>
-        {link && <ChevronRightIcon className="size-4 text-muted-foreground" />}
+        />
+      </ItemMedia>
+      <ItemContent className="min-w-0 flex-row items-baseline gap-2">
+        <ItemTitle className={cn('font-normal', idle && 'text-muted-foreground')}>
+          {label}
+        </ItemTitle>
+        {hint && <span className="shrink-0 text-xs text-muted-foreground">{hint}</span>}
+        {description && <span className="sr-only">{description}</span>}
+      </ItemContent>
+      <ItemActions className="gap-2">
+        {idle ? (
+          <span className="text-base tabular-nums text-muted-foreground">0</span>
+        ) : (
+          <Badge variant={tone ?? 'secondary'} className="tabular-nums">
+            {counter.value.toLocaleString()}
+          </Badge>
+        )}
+        {/* Holds the chevron's place on rows without one, so the counts line up. */}
+        {target ? (
+          <ChevronRightIcon className="size-4 text-muted-foreground" />
+        ) : (
+          <span aria-hidden className="size-4" />
+        )}
       </ItemActions>
-    </>
+    </Item>
   )
 
-  if (link) {
-    return (
-      <Item
-        render={<Link to={link.to} params={{ storeId }} search={{ filters: link.filters }} />}
-        className={cn(OPERATIONS_ROW_CLASS, 'hover:bg-accent/50')}
-      >
-        {content}
-      </Item>
-    )
-  }
+  if (!description) return row
 
-  return <Item className={OPERATIONS_ROW_CLASS}>{content}</Item>
+  return (
+    <Tooltip>
+      <TooltipTrigger render={row} />
+      <TooltipContent side="right" className="max-w-xs">
+        {description}
+      </TooltipContent>
+    </Tooltip>
+  )
 }
 
 type RankingTab = 'customers' | 'categories' | 'companies' | 'sellers'
@@ -606,12 +691,12 @@ function RankingsCard({
       >
         {rows === undefined ? (
           error ? (
-            <p className="px-4 pt-4 text-sm text-muted-foreground">{t('admin.errors.generic')}</p>
+            <p className="px-4 pt-4 text-base text-muted-foreground">{t('admin.errors.generic')}</p>
           ) : (
             <RankingRowsSkeleton />
           )
         ) : rows.length === 0 ? (
-          <p className="px-4 pt-4 text-sm text-muted-foreground">
+          <p className="px-4 pt-4 text-base text-muted-foreground">
             {t('admin.pages.home.rankings.empty')}
           </p>
         ) : (
@@ -624,14 +709,14 @@ function RankingsCard({
                 const body = (
                   <>
                     <div className="flex items-baseline justify-between gap-3">
-                      <span className="flex min-w-0 items-baseline gap-2 text-sm">
+                      <span className="flex min-w-0 items-baseline gap-2 text-base">
                         <span className="w-5 shrink-0 text-muted-foreground tabular-nums">
                           {index + 1}.
                         </span>
                         <DimensionLabel dimension={row.dimension} />
                       </span>
                       <span className="shrink-0 text-right">
-                        <span className="block text-sm font-medium tabular-nums">
+                        <span className="block text-base font-medium tabular-nums">
                           {row.display}
                         </span>
                         <span className="block text-xs text-muted-foreground">{row.meta}</span>
@@ -761,21 +846,19 @@ function TopProducts({ scope }: { scope: Pick<ReportingQuery, 'time_range' | 'fi
               return (
                 <TableRow key={productId ?? product.label}>
                   <TableCell>
-                    {productId ? (
-                      <Link
-                        to="/$storeId/products/$productId"
-                        params={{ storeId, productId }}
-                        className="flex items-center gap-3 hover:underline"
-                      >
-                        <Thumbnail src={thumbnail} size="sm" />
-                        <span className="font-medium">{product.label}</span>
-                      </Link>
-                    ) : (
-                      <span className="flex items-center gap-3">
-                        <Thumbnail src={thumbnail} size="sm" />
-                        <span className="font-medium">{product.label}</span>
-                      </span>
-                    )}
+                    <ProductIdentity
+                      name={product.label}
+                      thumbnailUrl={thumbnail}
+                      size="sm"
+                      render={
+                        productId ? (
+                          <Link
+                            to="/$storeId/products/$productId"
+                            params={{ storeId, productId }}
+                          />
+                        ) : undefined
+                      }
+                    />
                   </TableCell>
                   <TableCell className="text-right text-muted-foreground">{price ?? '-'}</TableCell>
                   <TableCell className="text-right">{row.metrics.units_sold?.value ?? 0}</TableCell>

@@ -27,6 +27,7 @@ import {
   FIXTURE_INVENTORY_SKU,
   FIXTURE_LEDGER_OWED_AMOUNT,
   FIXTURE_LEDGER_PAYOUT_AMOUNT,
+  FIXTURE_LEDGER_RETURNS_LOCATION,
   FIXTURE_LEDGER_SELLER,
   FIXTURE_PANEL_SELLER,
   FIXTURE_PROMO_CUSTOMER_EMAIL,
@@ -155,6 +156,9 @@ const BOOTSTRAP_RUBY = [
   `ledger_seller.seller_payouts.where(amount: ${FIXTURE_LEDGER_OWED_AMOUNT}).first_or_create!(store: s, currency: s.default_currency, provider: Spree::PayoutProvider::System.provider_key, status: 'pending')`,
   `ledger_order = s.orders.where(seller: ledger_seller).first || Spree::Order.create!(store: s, seller: ledger_seller, currency: s.default_currency, email: 'e2e-ledger@example.com', status: 'placed', completed_at: Time.current)`,
   `ledger_seller.seller_transfers.first_or_create!(store: s, order: ledger_order, payout: ledger_payout, amount: ${FIXTURE_LEDGER_PAYOUT_AMOUNT}, currency: s.default_currency, kind: 'earning', provider: Spree::PayoutProvider::System.provider_key, status: 'completed')`,
+  // Where the ledger seller takes returns: a postable location, so the
+  // seller page shows a returns address and links to the location behind it.
+  `ledger_seller.stock_locations.where(name: '${FIXTURE_LEDGER_RETURNS_LOCATION}').first_or_create!(store: s, active: true, returns_enabled: true, address1: '1 Returns Way', city: 'Albany', zipcode: '12207', country_code: 'US', state_code: 'NY')`,
   // Seller panel accounts. One runs the ledger seller, whose sale and payouts
   // give the read-only panel screens something to show; the other runs a
   // seller of its own that the specs editing a profile, policy or team may

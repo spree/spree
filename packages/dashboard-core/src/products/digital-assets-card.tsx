@@ -31,7 +31,7 @@ import {
   useConfirm,
 } from '@spree/dashboard-ui'
 import {
-  ChevronDownIcon,
+  ChevronsUpDownIcon,
   DownloadIcon,
   FileDownIcon,
   FileIcon,
@@ -274,7 +274,7 @@ export function DigitalAssetsCard({
                     {uploading
                       ? t('admin.digital_assets.uploading_short')
                       : t('admin.digital_assets.add')}
-                    <ChevronDownIcon className="ml-2 size-4" />
+                    <ChevronsUpDownIcon className="ml-2 size-4" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
@@ -298,8 +298,8 @@ export function DigitalAssetsCard({
       </CardHeader>
 
       <CardContent className="flex flex-col gap-4">
-        <p className="text-muted-foreground text-sm">{t('admin.digital_assets.description')}</p>
-        {notice && canWrite && <p className="text-sm">{notice}</p>}
+        <p className="text-muted-foreground text-base">{t('admin.digital_assets.description')}</p>
+        {notice && canWrite && <p className="text-base">{notice}</p>}
 
         <input
           ref={fileInputRef}
@@ -320,7 +320,7 @@ export function DigitalAssetsCard({
         {isLoading ? (
           <Skeleton className="h-24 w-full" />
         ) : !hasAssets && !canWrite ? (
-          <p className="text-muted-foreground text-sm">{t('admin.digital_assets.empty')}</p>
+          <p className="text-muted-foreground text-base">{t('admin.digital_assets.empty')}</p>
         ) : !hasAssets ? (
           <button
             type="button"
@@ -331,7 +331,7 @@ export function DigitalAssetsCard({
             className="flex w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-border p-6 text-center transition-colors hover:border-foreground/30 disabled:pointer-events-none disabled:opacity-60"
           >
             <FileIcon className="size-8 text-muted-foreground" />
-            <p className="text-muted-foreground text-sm">
+            <p className="text-muted-foreground text-base">
               {uploading
                 ? t('admin.digital_assets.uploading_short')
                 : t('admin.digital_assets.drop_hint')}
@@ -339,7 +339,7 @@ export function DigitalAssetsCard({
           </button>
         ) : (
           <div className="overflow-hidden rounded-xl border border-border-subtle">
-            <Table>
+            <Table roundedTop>
               <TableHeader>
                 <TableRow>
                   <TableHead>{t('admin.digital_assets.columns.file')}</TableHead>

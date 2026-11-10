@@ -78,6 +78,11 @@ module Spree
               resource: proc { Spree.api.admin_address_serializer },
               if: proc { |seller| seller.returns_address.present? }
 
+          # The stock location the returns address is read from. The address
+          # is not the seller's own to write — it is edited on this location.
+          typelize returns_location_id: [:string, nullable: true]
+          prefixed_id_attributes :returns_location
+
           expandable_custom_fields admin: true
         end
       end

@@ -20,6 +20,9 @@ import {
   ErrorState,
   RelativeTime,
   ResourceLayout,
+  Section,
+  SectionHeader,
+  SectionTitle,
   Table,
   TableBody,
   TableCell,
@@ -30,6 +33,7 @@ import {
 } from '@spree/dashboard-ui'
 import {
   PackageCheckIcon,
+  PackageIcon,
   PencilIcon,
   Trash2Icon,
   Undo2Icon,
@@ -41,6 +45,7 @@ import { useTranslation } from 'react-i18next'
 import { CloseShortDialog } from '../../../../../components/spree/close-short-dialog'
 import { ApiCustomFieldsCard } from '../../../../../components/spree/custom-fields/custom-fields-inline'
 import { InventoryStatusBadge } from '../../../../../components/spree/inventory-status-badge'
+import { ReadRow } from '../../../../../components/spree/read-row'
 import { ReceiveDeliveryCard } from '../../../../../components/spree/receive-delivery-card'
 import { ResourceDetailSkeleton } from '../../../../../components/spree/route-pending'
 import { StockHistoryCard } from '../../../../../components/spree/stock-history-card'
@@ -166,20 +171,16 @@ function SummaryCard({ transfer }: { transfer: StockTransfer }) {
         <CardTitle>{t('admin.stock_transfers.details_title')}</CardTitle>
       </CardHeader>
       <CardContent>
-        {/* One label-over-value pair per row: the card sits in the narrow
-            sidebar column, where a side-by-side grid wraps every value. */}
-        <dl className="flex flex-col gap-3 text-sm">
-          <dt className="text-muted-foreground">{t('admin.stock_transfers.fields.source')}</dt>
-          <dd>
+        <div className="flex flex-col gap-3">
+          <ReadRow label={t('admin.stock_transfers.fields.source')}>
             <WarehouseLink
               storeId={storeId}
               id={transfer.source_location_id}
               name={transfer.source_location?.name ?? locationName(transfer.source_location_id)}
             />
-          </dd>
+          </ReadRow>
 
-          <dt className="text-muted-foreground">{t('admin.stock_transfers.fields.destination')}</dt>
-          <dd>
+          <ReadRow label={t('admin.stock_transfers.fields.destination')}>
             <WarehouseLink
               storeId={storeId}
               id={transfer.destination_location_id}
@@ -188,57 +189,50 @@ function SummaryCard({ transfer }: { transfer: StockTransfer }) {
                 locationName(transfer.destination_location_id)
               }
             />
-          </dd>
+          </ReadRow>
 
-          <dt className="text-muted-foreground">{t('admin.stock_transfers.fields.units')}</dt>
-          <dd className="tabular-nums">
-            {t('admin.stock_transfers.units_summary', {
-              received: transfer.quantity_received_total,
-              shipped: transfer.quantity_shipped_total,
-            })}
-          </dd>
+          <ReadRow label={t('admin.stock_transfers.fields.units')}>
+            <span className="tabular-nums">
+              {t('admin.stock_transfers.units_summary', {
+                received: transfer.quantity_received_total,
+                shipped: transfer.quantity_shipped_total,
+              })}
+            </span>
+          </ReadRow>
 
           {transfer.reference && (
-            <>
-              <dt className="text-muted-foreground">
-                {t('admin.stock_transfers.fields.reference')}
-              </dt>
-              <dd>{transfer.reference}</dd>
-            </>
+            <ReadRow label={t('admin.stock_transfers.fields.reference')}>
+              {transfer.reference}
+            </ReadRow>
           )}
 
           {transfer.notes && (
-            <>
-              <dt className="text-muted-foreground">{t('admin.stock_transfers.fields.notes')}</dt>
-              <dd className="whitespace-pre-line">{transfer.notes}</dd>
-            </>
+            <ReadRow label={t('admin.stock_transfers.fields.notes')} stacked>
+              {transfer.notes}
+            </ReadRow>
           )}
 
-          <dt className="text-muted-foreground">{t('admin.stock_transfers.fields.shipped_at')}</dt>
-          <dd>{transfer.shipped_at ? <RelativeTime iso={transfer.shipped_at} /> : '—'}</dd>
+          <ReadRow label={t('admin.stock_transfers.fields.shipped_at')}>
+            {transfer.shipped_at ? <RelativeTime iso={transfer.shipped_at} /> : '—'}
+          </ReadRow>
 
-          <dt className="text-muted-foreground">{t('admin.stock_transfers.fields.received_at')}</dt>
-          <dd>{transfer.received_at ? <RelativeTime iso={transfer.received_at} /> : '—'}</dd>
+          <ReadRow label={t('admin.stock_transfers.fields.received_at')}>
+            {transfer.received_at ? <RelativeTime iso={transfer.received_at} /> : '—'}
+          </ReadRow>
 
           {transfer.closed_short && (
             <>
-              <dt className="text-muted-foreground">
-                {t('admin.stock_transfers.fields.closed_short')}
-              </dt>
-              <dd>
+              <ReadRow label={t('admin.stock_transfers.fields.closed_short')}>
                 <RelativeTime iso={transfer.closed_short_at as string} />
-              </dd>
+              </ReadRow>
               {transfer.close_reason && (
-                <>
-                  <dt className="text-muted-foreground">
-                    {t('admin.stock_transfers.fields.close_reason')}
-                  </dt>
-                  <dd className="whitespace-pre-line">{transfer.close_reason}</dd>
-                </>
+                <ReadRow label={t('admin.stock_transfers.fields.close_reason')} stacked>
+                  {transfer.close_reason}
+                </ReadRow>
               )}
             </>
           )}
-        </dl>
+        </div>
       </CardContent>
     </Card>
   )
@@ -250,47 +244,54 @@ function PlannedItemsCard({ transfer }: { transfer: StockTransfer }) {
   const items = transfer.items ?? []
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('admin.stock_transfers.items_title')}</CardTitle>
-      </CardHeader>
-      <CardContent className="p-0">
-        {items.length === 0 ? (
-          <p className="p-3 text-muted-foreground text-sm">
-            {t('admin.stock_transfers.items_empty')}
-          </p>
-        ) : (
-          <Table scrollX roundedBottom>
-            <TableHeader>
-              <TableRow>
-                <TableHead>{t('admin.inventory_lines.columns.variant')}</TableHead>
-                {/* Nothing has shipped yet on a draft — this is what will. The
+    <Section>
+      <SectionHeader>
+        <SectionTitle>
+          <PackageIcon />
+          {t('admin.stock_transfers.items_title')}
+        </SectionTitle>
+      </SectionHeader>
+      <Card>
+        <CardContent className="p-0">
+          {items.length === 0 ? (
+            <p className="p-3 text-muted-foreground text-base">
+              {t('admin.stock_transfers.items_empty')}
+            </p>
+          ) : (
+            <Table scrollX roundedTop roundedBottom>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>{t('admin.inventory_lines.columns.variant')}</TableHead>
+                  {/* Nothing has shipped yet on a draft — this is what will. The
                     receive screen keeps `quantity_shipped`, where it is past
                     tense and sits opposite Received. */}
-                <TableHead className="text-right">
-                  {t('admin.stock_transfers.columns.quantity_to_ship')}
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {items.map((item) => (
-                <TableRow key={item.id}>
-                  <TableCell>
-                    <VariantLink
-                      productId={item.product_id}
-                      name={item.variant_name}
-                      sku={item.variant_sku}
-                      thumbnailUrl={item.thumbnail_url}
-                    />
-                  </TableCell>
-                  <TableCell className="text-right tabular-nums">{item.quantity_shipped}</TableCell>
+                  <TableHead className="text-right">
+                    {t('admin.stock_transfers.columns.quantity_to_ship')}
+                  </TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        )}
-      </CardContent>
-    </Card>
+              </TableHeader>
+              <TableBody>
+                {items.map((item) => (
+                  <TableRow key={item.id}>
+                    <TableCell>
+                      <VariantLink
+                        productId={item.product_id}
+                        name={item.variant_name}
+                        sku={item.variant_sku}
+                        thumbnailUrl={item.thumbnail_url}
+                      />
+                    </TableCell>
+                    <TableCell className="text-right tabular-nums">
+                      {item.quantity_shipped}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+        </CardContent>
+      </Card>
+    </Section>
   )
 }
 
@@ -346,54 +347,63 @@ function LinesCard({ transfer }: { transfer: StockTransfer }) {
   const anyOver = items.some((item) => item.quantity_over > 0)
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('admin.stock_transfers.items_title')}</CardTitle>
-      </CardHeader>
-      <CardContent className="p-0">
-        <Table scrollX roundedBottom>
-          <TableHeader>
-            <TableRow>
-              <TableHead>{t('admin.inventory_lines.columns.variant')}</TableHead>
-              <TableHead className="text-right">
-                {t('admin.stock_transfers.columns.quantity_shipped')}
-              </TableHead>
-              <TableHead className="text-right">
-                {t('admin.stock_transfers.columns.quantity_received')}
-              </TableHead>
-              <TableHead className="text-right">
-                {t('admin.stock_transfers.columns.quantity_rejected')}
-              </TableHead>
-              {anyOver && (
+    <Section>
+      <SectionHeader>
+        <SectionTitle>
+          <PackageIcon />
+          {t('admin.stock_transfers.items_title')}
+        </SectionTitle>
+      </SectionHeader>
+      <Card>
+        <CardContent className="p-0">
+          <Table scrollX roundedTop roundedBottom>
+            <TableHeader>
+              <TableRow>
+                <TableHead>{t('admin.inventory_lines.columns.variant')}</TableHead>
                 <TableHead className="text-right">
-                  {t('admin.stock_transfers.columns.quantity_over')}
+                  {t('admin.stock_transfers.columns.quantity_shipped')}
                 </TableHead>
-              )}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {items.map((item) => (
-              <TableRow key={item.id}>
-                <TableCell>
-                  <VariantLink
-                    productId={item.product_id}
-                    name={item.variant_name}
-                    sku={item.variant_sku}
-                    thumbnailUrl={item.thumbnail_url}
-                  />
-                </TableCell>
-                <TableCell className="text-right tabular-nums">{item.quantity_shipped}</TableCell>
-                <TableCell className="text-right tabular-nums">{item.quantity_received}</TableCell>
-                <TableCell className="text-right tabular-nums">{item.quantity_rejected}</TableCell>
+                <TableHead className="text-right">
+                  {t('admin.stock_transfers.columns.quantity_received')}
+                </TableHead>
+                <TableHead className="text-right">
+                  {t('admin.stock_transfers.columns.quantity_rejected')}
+                </TableHead>
                 {anyOver && (
-                  <TableCell className="text-right tabular-nums">{item.quantity_over}</TableCell>
+                  <TableHead className="text-right">
+                    {t('admin.stock_transfers.columns.quantity_over')}
+                  </TableHead>
                 )}
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </CardContent>
-    </Card>
+            </TableHeader>
+            <TableBody>
+              {items.map((item) => (
+                <TableRow key={item.id}>
+                  <TableCell>
+                    <VariantLink
+                      productId={item.product_id}
+                      name={item.variant_name}
+                      sku={item.variant_sku}
+                      thumbnailUrl={item.thumbnail_url}
+                    />
+                  </TableCell>
+                  <TableCell className="text-right tabular-nums">{item.quantity_shipped}</TableCell>
+                  <TableCell className="text-right tabular-nums">
+                    {item.quantity_received}
+                  </TableCell>
+                  <TableCell className="text-right tabular-nums">
+                    {item.quantity_rejected}
+                  </TableCell>
+                  {anyOver && (
+                    <TableCell className="text-right tabular-nums">{item.quantity_over}</TableCell>
+                  )}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+    </Section>
   )
 }
 

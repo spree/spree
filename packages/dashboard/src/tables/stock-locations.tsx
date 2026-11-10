@@ -1,6 +1,6 @@
 import type { StockLocation } from '@spree/admin-sdk'
 import { tables } from '@spree/dashboard-core'
-import { Badge } from '@spree/dashboard-ui'
+import { ActiveBadge, Badge } from '@spree/dashboard-ui'
 import i18n from 'i18next'
 import { sellerAutocompleteProps } from '../hooks/use-sellers'
 
@@ -17,16 +17,35 @@ import { sellerAutocompleteProps } from '../hooks/use-sellers'
  * registry exists for exactly this, and a fork would have to be kept in step
  * with the original by hand.
  */
-tables['stock-locations'].addColumn<StockLocation>({
-  key: 'seller_id',
-  label: i18n.t('admin.stock_locations.columns.seller'),
-  default: true,
-  filterable: true,
-  filterType: 'resource',
-  // `seller_id_in` — whitelisted on StockLocation alongside the `seller`
-  // association, so the filter narrows to one or more sellers.
-  ransackAttribute: 'seller_id',
-  filterResource: sellerAutocompleteProps('stock-location-seller-picker'),
-  render: (location) =>
-    location.seller_name ? <Badge variant="outline">{location.seller_name}</Badge> : '—',
+tables['stock-locations'].addColumn<StockLocation>(
+  {
+    key: 'seller_id',
+    label: i18n.t('admin.stock_locations.columns.seller'),
+    default: true,
+    filterable: true,
+    filterType: 'resource',
+    // `seller_id_in` — whitelisted on StockLocation alongside the `seller`
+    // association, so the filter narrows to one or more sellers.
+    ransackAttribute: 'seller_id',
+    filterResource: sellerAutocompleteProps('stock-location-seller-picker'),
+    render: (location) =>
+      location.seller_name ? <Badge variant="outline">{location.seller_name}</Badge> : '—',
+  },
+  { after: 'name' },
+)
+
+// A seller's default is the default inside their own panel, not one that
+// ships the operator's products, so it is named as such.
+tables['stock-locations'].updateColumn<StockLocation>('default', {
+  render: (location) => (
+    <ActiveBadge
+      active={location.default}
+      activeLabel={i18n.t(
+        location.seller_id
+          ? 'admin.stock_locations.badges.seller_default'
+          : 'admin.stock_locations.badges.default',
+      )}
+      dashWhenInactive
+    />
+  ),
 })

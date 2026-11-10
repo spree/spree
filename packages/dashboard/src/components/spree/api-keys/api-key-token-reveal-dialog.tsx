@@ -42,7 +42,7 @@ export function TokenRevealDialog({
           </Alert>
           {apiKey?.plaintext_token && (
             <div className="flex items-center gap-2 rounded-md border border-border bg-muted/40 p-3">
-              <code className="flex-1 truncate font-mono text-sm">{apiKey.plaintext_token}</code>
+              <code className="flex-1 truncate font-mono text-base">{apiKey.plaintext_token}</code>
               <Button
                 size="sm"
                 variant="outline"

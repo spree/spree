@@ -93,7 +93,10 @@ setApiClient({
     delete: (productId, id) => adminClient.products.digitalAssets.delete(productId, id),
     providers: (productId) => adminClient.products.digitalAssets.providers(productId),
   },
-  mediaLibrary: { list: (params) => adminClient.media.list(runtimeListParams(params)) },
+  mediaLibrary: {
+    list: (params) => adminClient.media.list(runtimeListParams(params)),
+    create: (params) => adminClient.media.create(params),
+  },
   tags: {
     list: (params) => adminClient.tags.list(params as { taggable_type: string; q?: string }),
   },

@@ -225,10 +225,10 @@ export function FileUploadField({
           }}
         >
           <UploadCloudIcon className="size-6 text-muted-foreground" />
-          <span className="text-muted-foreground text-sm">
+          <span className="text-muted-foreground text-base">
             {dropLabel ?? t('admin.components.file_upload.drop_label')}
           </span>
-          <span className="mt-1 inline-flex h-8 items-center rounded-md border border-border bg-background px-3 font-medium text-sm hover:bg-accent">
+          <span className="mt-1 inline-flex h-8 items-center rounded-md border border-border bg-background px-3 font-medium text-base hover:bg-accent">
             {browseLabel ?? t('admin.components.file_upload.browse')}
           </span>
           <input

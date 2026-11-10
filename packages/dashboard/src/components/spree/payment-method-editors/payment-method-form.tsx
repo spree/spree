@@ -7,6 +7,7 @@ import {
   FieldGroup,
   FieldLabel,
   Input,
+  Item,
   Select,
   SelectContent,
   SelectItem,
@@ -149,8 +150,8 @@ export function PaymentMethodForm({
 
       {providerType &&
       (customFormRegistered || Object.keys(preferenceSchema?.properties ?? {}).length > 0) ? (
-        <div className="rounded-md border bg-muted/30 p-3">
-          <h3 className="mb-2 text-sm font-medium">
+        <Item variant="outline" className="flex-col items-stretch gap-2">
+          <h3 className="text-base font-medium">
             {t('admin.fields.payment_method.provider_configuration')}
           </h3>
           {customFormRegistered ? (
@@ -166,7 +167,7 @@ export function PaymentMethodForm({
               redactPasswords={mode === 'edit'}
             />
           )}
-        </div>
+        </Item>
       ) : null}
 
       {providerType && <Slot name={paymentMethodActionsSlot(providerType)} context={slotContext} />}

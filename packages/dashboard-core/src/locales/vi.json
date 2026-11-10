@@ -102,7 +102,11 @@
       "default_shipping": "Vận chuyển mặc định",
       "inherited_from": "Kế thừa từ {{name}}",
       "set_default_billing": "Đặt làm thanh toán mặc định",
-      "set_default_shipping": "Đặt làm vận chuyển mặc định"
+      "set_default_shipping": "Đặt làm vận chuyển mặc định",
+      "columns": {
+        "address": "Địa chỉ",
+        "defaults": "Mặc định cho"
+      }
     },
     "auth": {
       "back_to_login": "Quay lại để đăng nhập",
@@ -190,7 +194,8 @@
       "unsaved_changes": "Bạn có những thay đổi chưa được lưu.",
       "yes": "Có",
       "done": "Xong",
-      "error": "Đã xảy ra lỗi."
+      "error": "Đã xảy ra lỗi.",
+      "unsaved_label": "Thay đổi chưa lưu"
     },
     "components": {
       "address_block": {
@@ -439,11 +444,8 @@
           "this_month": "Tháng này",
           "today": "Hôm nay"
         },
-        "date_range_end": "Kết thúc",
-        "date_range_start": "Bắt đầu",
         "descending": "Giảm dần",
         "filter_by": "Lọc theo…",
-        "filter_date_placeholder": "Chọn một ngày",
         "filter_select_placeholder": "Chọn…",
         "filter_text_placeholder": "Lọc…",
         "filter_to_placeholder": "Lọc để…",
@@ -477,7 +479,10 @@
         "select_all": "Chọn tất cả",
         "sort_by": "Sắp xếp theo",
         "sort_tooltip": "Sắp xếp",
-        "visible_columns": "Cột hiển thị"
+        "visible_columns": "Cột hiển thị",
+        "row_density": "Mật độ hàng",
+        "density_comfortable": "Thoải mái",
+        "density_compact": "Gọn"
       },
       "tag_combobox": {
         "create_option": "Tạo \"{{tag}}\"",
@@ -489,6 +494,11 @@
         "label": "Chủ đề",
         "light": "Ánh sáng",
         "system": "Hệ thống"
+      },
+      "timezone_combobox": {
+        "empty": "Không tìm thấy múi giờ",
+        "placeholder": "Chọn múi giờ",
+        "search_placeholder": "Tìm múi giờ…"
       },
       "wizard": {
         "discard_cancel": "Tiếp tục chỉnh sửa",
@@ -1077,15 +1087,35 @@
       "signed_in_as_invitee": ". Bạn đã đăng nhập với tên {{email}}."
     },
     "media_picker": {
+      "any": "Bất kỳ",
       "confirm": "Thêm đã chọn",
       "description": "Chọn các tệp đã có trong thư viện của bạn hoặc tải lên tệp mới.",
+      "drop_hint_images": "Hoặc kéo và thả hình ảnh vào đây",
+      "drop_hint_media": "Hoặc kéo và thả hình ảnh và video vào đây",
       "empty": "Thư viện của bạn trống. Tải lên một tập tin để bắt đầu.",
+      "filter_type": "Loại",
+      "filter_usage": "Sử dụng",
       "no_results": "Không có tập tin phù hợp với tìm kiếm của bạn.",
       "search_placeholder": "Tìm kiếm theo tên…",
       "selected_count_one": "{{count}} đã chọn",
       "selected_count_other": "{{count}} đã chọn",
+      "sort_date_added": "Ngày thêm",
+      "sort_file_name": "Tên tệp",
+      "sort_file_size": "Kích thước tệp",
       "title": "Thư viện phương tiện",
-      "upload": "Tải lên"
+      "type_image": "Hình ảnh",
+      "type_video": "Video",
+      "upload": "Tải lên",
+      "usage_unused": "Chưa dùng",
+      "usage_used": "Đang dùng",
+      "view": "Chế độ xem",
+      "view_grid": "Dạng lưới",
+      "view_list": "Dạng danh sách"
+    },
+    "media_editor": {
+      "information": "Thông tin",
+      "details": "Chi tiết",
+      "added": "Đã thêm {{date}}"
     },
     "messages": {
       "address_removed": "Đã xóa địa chỉ",
@@ -1578,12 +1608,18 @@
         "add_video_title": "Thêm liên kết video",
         "assigned_variants_help": "Chọn các biến thể mà hình ảnh này đại diện. Để trống để áp dụng cho tất cả các biến thể.",
         "assigned_variants_label": "Các biến thể được chỉ định",
-        "delete_confirm": "Xóa phương tiện này? Điều này không thể hoàn tác được.",
+        "delete_confirm": "Gỡ tệp này? Tệp sẽ bị xóa khi bạn lưu sản phẩm.",
+        "delete_selected_confirm_one": "Gỡ tệp đã chọn? Tệp sẽ bị xóa khi bạn lưu sản phẩm.",
+        "delete_selected_confirm_other": "Gỡ {{count}} tệp đã chọn? Các tệp sẽ bị xóa khi bạn lưu sản phẩm.",
         "drop_hint": "Kéo và thả phương tiện vào đây hoặc nhấp để duyệt",
         "edit_title": "Chỉnh sửa phương tiện",
         "file_types_hint": "Hình ảnh (PNG, JPG, WebP) và video (MP4, WebM, MOV)",
         "focal_point_help": "Nhấp vào hình ảnh để đặt nội dung vẫn ở trong khung khi bị cắt.",
         "focal_point_reset": "Đặt lại",
+        "select_all": "Chọn tất cả tệp",
+        "select_item": "Chọn {{name}}",
+        "selected_count_one": "Đã chọn {{count}}",
+        "selected_count_other": "Đã chọn {{count}}",
         "unsupported_file_one": "Tệp {{count}} chưa được thêm vào — chỉ hỗ trợ hình ảnh và video.",
         "unsupported_file_other": "Tệp {{count}} chưa được thêm vào — chỉ hỗ trợ hình ảnh và video.",
         "upload_failed": "Không tải lên được {{name}}: {{message}}",
@@ -1694,6 +1730,10 @@
           "failed_to_create_option_type": "Không tạo được loại tùy chọn",
           "failed_to_create_value": "Không thể tạo ra giá trị"
         },
+        "images_aria": "Hình ảnh cho {{name}}",
+        "images_description": "Chọn các hình ảnh sản phẩm thể hiện biến thể này. Chúng theo thứ tự của thẻ Media, và hình đầu tiên được chọn sẽ là ảnh thu nhỏ — kéo hình trong thẻ Media để thay đổi.",
+        "images_title": "Hình ảnh cho {{name}}",
+        "images_unsaved": "Lưu sản phẩm để thêm hình ảnh cho biến thể này",
         "keep": "Giữ tất cả",
         "option_type_label": "Loại tùy chọn",
         "option_type_placeholder": "Chọn một loại tùy chọn",
@@ -1715,6 +1755,7 @@
           "carton_placeholder": "Không có thùng carton",
           "pending_save": "Những thay đổi ở đây được lưu cùng với sản phẩm."
         },
+        "thumbnail_badge": "Ảnh thu nhỏ",
         "title": "Biến thể",
         "variant_label": "Biến thể"
       }

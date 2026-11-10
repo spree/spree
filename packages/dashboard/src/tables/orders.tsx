@@ -5,7 +5,7 @@ import {
   LocaleLabel,
   Money,
 } from '@spree/dashboard-core'
-import { RelativeTime, StatusBadge, TagList } from '@spree/dashboard-ui'
+import { CurrencyLabel, RelativeTime, StatusBadge, TagList } from '@spree/dashboard-ui'
 import { ShoppingCartIcon } from '@spree/dashboard-ui/icons'
 import { Link } from '@tanstack/react-router'
 import i18n from 'i18next'
@@ -58,7 +58,7 @@ defineTable('orders', {
       default: true,
       filterType: 'date',
       quickFilter: true,
-      className: 'text-sm text-muted-foreground whitespace-nowrap',
+      className: 'text-base text-muted-foreground whitespace-nowrap',
       render: (order) => <RelativeTime iso={order.completed_at} />,
     },
     {
@@ -75,7 +75,7 @@ defineTable('orders', {
       filterResource: customerAutocompleteProps('orders-table-customer-filter'),
       ransackAttribute: 'customer_id',
       default: true,
-      className: 'text-sm',
+      className: 'text-base',
       render: (order) => order.email ?? '—',
     },
     {
@@ -86,7 +86,7 @@ defineTable('orders', {
       filterResource: channelAutocompleteProps(),
       ransackAttribute: 'channel_id',
       default: true,
-      className: 'text-sm text-muted-foreground',
+      className: 'text-base text-muted-foreground',
       render: (order) => order.channel?.name ?? '—',
     },
     {
@@ -138,7 +138,7 @@ defineTable('orders', {
       label: i18n.t('admin.orders.columns.items'),
       sortable: true,
       default: true,
-      className: 'text-right tabular-nums text-sm text-muted-foreground',
+      className: 'text-right tabular-nums text-base text-muted-foreground',
       render: (order) => {
         const count = order.total_quantity ?? 0
         return i18n.t('admin.orders.item_count', { count })
@@ -162,7 +162,7 @@ defineTable('orders', {
       sortable: true,
       filterable: true,
       default: false,
-      className: 'text-sm text-muted-foreground',
+      className: 'text-base text-muted-foreground',
       render: (order) => order.po_number ?? '—',
     },
     {
@@ -172,7 +172,7 @@ defineTable('orders', {
       filterable: true,
       filterType: 'currency',
       default: false,
-      render: (order) => order.currency ?? '—',
+      render: (order) => (order.currency ? <CurrencyLabel code={order.currency} /> : '—'),
     },
     {
       key: 'market',
@@ -182,7 +182,7 @@ defineTable('orders', {
       filterResource: marketAutocompleteProps(),
       ransackAttribute: 'market_id',
       default: false,
-      className: 'text-sm text-muted-foreground',
+      className: 'text-base text-muted-foreground',
       render: (order) => order.market?.name ?? '—',
     },
     {
@@ -192,7 +192,7 @@ defineTable('orders', {
       filterable: true,
       filterType: 'locale',
       default: false,
-      className: 'text-sm text-muted-foreground',
+      className: 'text-base text-muted-foreground',
       render: (order) => (order.locale ? <LocaleLabel code={order.locale} /> : '—'),
     },
     // On a marketplace this list holds the operator's own orders and every
@@ -236,7 +236,7 @@ defineTable('orders', {
       // order, which builds the `eq` rule this actually needs.
       ransackAttribute: 'order_group_id',
       default: false,
-      className: 'text-sm text-muted-foreground',
+      className: 'text-base text-muted-foreground',
       render: (order) =>
         order.order_group_id ? (
           <Link

@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { SpreeError } from '@spree/admin-sdk'
 import {
+  adminClient,
   extensionFormValues,
   extensionSubmitValues,
   mapSpreeErrorsToForm,
@@ -20,6 +21,7 @@ import {
   CategoryMain,
   CategorySidebar,
 } from '../../../../../components/spree/categories/category-form'
+import { ProductMembershipStagingProvider } from '../../../../../components/spree/product-membership-staging'
 import { useCreateCategory } from '../../../../../hooks/use-categories'
 import {
   CATEGORY_DEFAULTS,
@@ -52,8 +54,16 @@ function NewCategoryPage() {
         // `values` strips keys the first-party schema doesn't know.
         ...extensionSubmitValues('category', form),
       })
+      // The products picked before the category existed. A failure here leaves
+      // the category created, so it still lands on the edit page to retry.
+      const productIds = values.staged_products.adds.map((product) => product.id)
+      if (productIds.length > 0) {
+        await adminClient.categories.products.create(created.id, productIds).catch(() => {
+          toastManager.add({ type: 'error', title: t('admin.errors.failed_to_update') })
+        })
+      }
       form.reset(values)
-      // Land on the edit page so images + products can be managed next.
+      // Land on the edit page so images can be managed next.
       // Replace history rather than pushing — otherwise back lands on the
       // (now-stale) new category form.
       await navigate({
@@ -72,34 +82,36 @@ function NewCategoryPage() {
 
   return (
     <FormProvider {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-        {form.formState.errors.root?.message && (
-          <p className="text-sm text-destructive" role="alert">
-            {form.formState.errors.root.message}
-          </p>
-        )}
-        <ResourceLayout
-          header={
-            <PageHeader
-              title={t('admin.categories.new_title')}
-              backTo="products/categories"
-              actions={<FormActions form={form} saveLabel={t('admin.actions.save')} />}
-            />
-          }
-          main={
-            <>
-              <CategoryMain form={form} />
-              <Slot name="category.form_main" context={{ category: undefined, mode: 'new' }} />
-            </>
-          }
-          sidebar={
-            <>
-              <CategorySidebar form={form} />
-              <Slot name="category.form_sidebar" context={{ category: undefined, mode: 'new' }} />
-            </>
-          }
-        />
-      </form>
+      <ProductMembershipStagingProvider form={form} name="staged_products">
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          {form.formState.errors.root?.message && (
+            <p className="text-base text-destructive" role="alert">
+              {form.formState.errors.root.message}
+            </p>
+          )}
+          <ResourceLayout
+            header={
+              <PageHeader
+                title={t('admin.categories.new_title')}
+                backTo="products/categories"
+                actions={<FormActions form={form} saveLabel={t('admin.actions.save')} />}
+              />
+            }
+            main={
+              <>
+                <CategoryMain form={form} />
+                <Slot name="category.form_main" context={{ category: undefined, mode: 'new' }} />
+              </>
+            }
+            sidebar={
+              <>
+                <CategorySidebar form={form} />
+                <Slot name="category.form_sidebar" context={{ category: undefined, mode: 'new' }} />
+              </>
+            }
+          />
+        </form>
+      </ProductMembershipStagingProvider>
     </FormProvider>
   )
 }

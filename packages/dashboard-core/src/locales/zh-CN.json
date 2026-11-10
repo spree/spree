@@ -102,7 +102,11 @@
       "default_shipping": "默认收货",
       "inherited_from": "继承自 {{name}}",
       "set_default_billing": "设为默认账单地址",
-      "set_default_shipping": "设为默认收货地址"
+      "set_default_shipping": "设为默认收货地址",
+      "columns": {
+        "address": "地址",
+        "defaults": "默认用于"
+      }
     },
     "auth": {
       "back_to_login": "返回登录",
@@ -190,7 +194,8 @@
       "unsaved_changes": "您有未保存的更改。",
       "yes": "是",
       "done": "完成",
-      "error": "出了点问题。"
+      "error": "出了点问题。",
+      "unsaved_label": "未保存的更改"
     },
     "components": {
       "address_block": {
@@ -437,11 +442,8 @@
           "this_month": "本月",
           "today": "今天"
         },
-        "date_range_end": "结束",
-        "date_range_start": "开始",
         "descending": "降序",
         "filter_by": "筛选依据…",
-        "filter_date_placeholder": "选择日期",
         "filter_select_placeholder": "选择…",
         "filter_text_placeholder": "筛选…",
         "filter_to_placeholder": "筛选至…",
@@ -475,7 +477,10 @@
         "select_all": "全选",
         "sort_by": "排序方式",
         "sort_tooltip": "排序",
-        "visible_columns": "可见列"
+        "visible_columns": "可见列",
+        "row_density": "行密度",
+        "density_comfortable": "宽松",
+        "density_compact": "紧凑"
       },
       "tag_combobox": {
         "create_option": "创建“{{tag}}”",
@@ -487,6 +492,11 @@
         "label": "主题",
         "light": "浅色",
         "system": "系统"
+      },
+      "timezone_combobox": {
+        "empty": "未找到时区",
+        "placeholder": "选择时区",
+        "search_placeholder": "搜索时区…"
       },
       "wizard": {
         "discard_cancel": "继续编辑",
@@ -1075,15 +1085,35 @@
       "signed_in_as_invitee": "。你当前以 {{email}} 登录。"
     },
     "media_picker": {
+      "any": "全部",
       "confirm": "添加所选",
       "description": "从媒体库中选择文件，或上传新文件。",
+      "drop_hint_images": "或将图片拖放到此处",
+      "drop_hint_media": "或将图片和视频拖放到此处",
       "empty": "媒体库为空。请上传文件以开始。",
+      "filter_type": "类型",
+      "filter_usage": "使用情况",
       "no_results": "没有文件符合您的搜索。",
       "search_placeholder": "按名称搜索…",
       "selected_count_one": "已选择 {{count}} 个",
       "selected_count_other": "已选择 {{count}} 个",
+      "sort_date_added": "添加日期",
+      "sort_file_name": "文件名",
+      "sort_file_size": "文件大小",
       "title": "媒体库",
-      "upload": "上传"
+      "type_image": "图片",
+      "type_video": "视频",
+      "upload": "上传",
+      "usage_unused": "未使用",
+      "usage_used": "使用中",
+      "view": "视图",
+      "view_grid": "网格视图",
+      "view_list": "列表视图"
+    },
+    "media_editor": {
+      "information": "信息",
+      "details": "详情",
+      "added": "添加于 {{date}}"
     },
     "messages": {
       "address_removed": "地址已移除",
@@ -1576,12 +1606,18 @@
         "add_video_title": "添加视频链接",
         "assigned_variants_help": "选择此图片所代表的变体。留空则应用于所有变体。",
         "assigned_variants_label": "关联的变体",
-        "delete_confirm": "删除此媒体？此操作无法撤销。",
+        "delete_confirm": "移除此媒体？保存商品时将被删除。",
+        "delete_selected_confirm_one": "移除所选媒体？保存商品时将被删除。",
+        "delete_selected_confirm_other": "移除所选的 {{count}} 个媒体？保存商品时将被删除。",
         "drop_hint": "将媒体拖放到此处，或点击浏览",
         "edit_title": "编辑媒体",
         "file_types_hint": "图片（PNG、JPG、WebP）和视频（MP4、WebM、MOV）",
         "focal_point_help": "点击图片，设置裁剪时需要保留的画面位置。",
         "focal_point_reset": "重置",
+        "select_all": "选择所有媒体",
+        "select_item": "选择 {{name}}",
+        "selected_count_one": "已选择 {{count}} 个",
+        "selected_count_other": "已选择 {{count}} 个",
         "unsupported_file": "有 {{count}} 个文件未添加 — 仅支持图片和视频。",
         "upload_failed": "上传 {{name}} 失败：{{message}}",
         "upload_status_failed": "失败",
@@ -1691,6 +1727,10 @@
           "failed_to_create_option_type": "创建选项类型失败",
           "failed_to_create_value": "创建值失败"
         },
+        "images_aria": "{{name}} 的图片",
+        "images_description": "勾选展示此变体的商品图片。图片按媒体卡片中的顺序排列，第一张勾选的图片将作为缩略图——在媒体卡片中拖动图片即可更改。",
+        "images_title": "{{name}} 的图片",
+        "images_unsaved": "保存商品后才能为此变体添加图片",
         "keep": "全部保留",
         "option_type_label": "选项类型",
         "option_type_placeholder": "请选择选项类型",
@@ -1712,6 +1752,7 @@
           "carton_placeholder": "未装箱",
           "pending_save": "此处的更改随商品一并保存。"
         },
+        "thumbnail_badge": "缩略图",
         "title": "变体",
         "variant_label": "变体"
       }

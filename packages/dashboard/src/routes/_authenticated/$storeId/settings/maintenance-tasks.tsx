@@ -57,8 +57,10 @@ function PageHeader() {
 
   return (
     <header className="flex flex-col gap-1">
-      <h1 className="font-semibold text-2xl">{t('admin.maintenance_tasks.title')}</h1>
-      <p className="text-muted-foreground text-sm">{t('admin.maintenance_tasks.description')}</p>
+      <h1 className="font-semibold text-lg leading-tight sm:text-xl">
+        {t('admin.maintenance_tasks.title')}
+      </h1>
+      <p className="text-muted-foreground text-base">{t('admin.maintenance_tasks.description')}</p>
     </header>
   )
 }

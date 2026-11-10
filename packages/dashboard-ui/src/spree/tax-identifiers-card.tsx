@@ -5,28 +5,24 @@ import {
   Badge,
   Button,
   Card,
-  CardAction,
   CardContent,
-  CardHeader,
-  CardTitle,
   Combobox,
   ComboboxContent,
   ComboboxEmpty,
   ComboboxInput,
   ComboboxItem,
   ComboboxList,
+  Empty,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
   Field,
   FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
   Input,
-  Item,
-  ItemActions,
-  ItemContent,
-  ItemDescription,
-  ItemGroup,
-  ItemTitle,
+  InputGroupAddon,
   RelativeTime,
   RowActions,
   Sheet,
@@ -38,7 +34,10 @@ import {
   StatusBadge,
   useConfirm,
 } from '../index'
-import { BadgeCheckIcon, PlusIcon } from './icons'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/data-table'
+import { CountryFlag } from './country-flag'
+import { BadgeCheckIcon, FileTextIcon, PlusIcon } from './icons'
+import { Section, SectionActions, SectionHeader, SectionTitle } from './section'
 
 /** One selectable registration kind. */
 interface KindOption {
@@ -78,6 +77,15 @@ const TAX_IDENTIFIER_DEFAULTS: TaxIdentifierFormValues = { kind: '', value: '' }
  * for it — so the merchant can type their own.
  */
 export const TAX_IDENTIFIER_KINDS = ['eu_vat', 'gb_vat', 'ch_vat', 'au_abn', 'us_ein'] as const
+
+/**
+ * The flag of the registry a kind belongs to: the region code that opens it
+ * (`eu_vat` → EU, `gb_vat` → GB), which also covers a plugin's kind named the
+ * same way (`nz_gst`). A kind with no such prefix gets no flag.
+ */
+export function taxIdentifierKindFlag(kind: string): string | null {
+  return /^([a-z]{2})_/.exec(kind)?.[1] ?? null
+}
 
 /**
  * Mutations differ by owner (a company's registrations hang off the company,
@@ -131,43 +139,64 @@ export function TaxIdentifiersCard({
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>
+    <Section>
+      <SectionHeader>
+        <SectionTitle>
+          <FileTextIcon />
           {t('admin.tax_identifiers.title')}
           {identifiers.length > 0 && <Badge variant="outline">{identifiers.length}</Badge>}
-        </CardTitle>
+        </SectionTitle>
         {canEdit && (
-          <CardAction>
+          <SectionActions>
             <Button size="sm" variant="outline" onClick={() => setAddOpen(true)}>
               <PlusIcon className="size-4" />
               {t('admin.tax_identifiers.add_cta')}
             </Button>
-          </CardAction>
+          </SectionActions>
         )}
-      </CardHeader>
+      </SectionHeader>
 
-      {isLoading ? (
-        <CardContent>
-          <p className="text-muted-foreground text-sm">{t('admin.common.loading')}</p>
-        </CardContent>
-      ) : identifiers.length === 0 ? (
-        <CardContent>
-          <p className="text-muted-foreground text-sm">{t('admin.tax_identifiers.empty')}</p>
-        </CardContent>
+      {isLoading || identifiers.length === 0 ? (
+        <Card>
+          <CardContent>
+            {isLoading ? (
+              <p className="text-muted-foreground text-base">{t('admin.common.loading')}</p>
+            ) : (
+              <Empty className="p-4">
+                <EmptyHeader>
+                  <EmptyMedia variant="icon">
+                    <FileTextIcon />
+                  </EmptyMedia>
+                  <EmptyTitle>{t('admin.tax_identifiers.empty')}</EmptyTitle>
+                </EmptyHeader>
+              </Empty>
+            )}
+          </CardContent>
+        </Card>
       ) : (
-        <CardContent>
-          <ItemGroup className="gap-3">
-            {identifiers.map((identifier) => (
-              <Item key={identifier.id} role="listitem" variant="outline" className="items-start">
-                <ItemContent className="min-w-0">
-                  <ItemTitle className="flex-wrap">
-                    {identifier.value}
-                    <Badge variant="outline">
+        <Card>
+          <Table roundedTop>
+            <TableHeader>
+              <TableRow>
+                <TableHead>{t('admin.fields.tax_identifier.value.label')}</TableHead>
+                <TableHead>{t('admin.fields.tax_identifier.kind.label')}</TableHead>
+                <TableHead>{t('admin.fields.status.label')}</TableHead>
+                {canEdit && <TableHead className="w-10" />}
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {identifiers.map((identifier) => (
+                <TableRow key={identifier.id}>
+                  <TableCell className="font-medium tabular-nums">{identifier.value}</TableCell>
+                  <TableCell>
+                    <span className="inline-flex items-center gap-2 whitespace-nowrap">
+                      <TaxIdentifierKindFlag kind={identifier.kind} />
                       {t(`admin.tax_identifiers.kinds.${identifier.kind}`, {
                         defaultValue: identifier.kind,
                       })}
-                    </Badge>
+                    </span>
+                  </TableCell>
+                  <TableCell>
                     {identifier.validation_status ? (
                       <StatusBadge
                         status={identifier.validation_status}
@@ -181,47 +210,47 @@ export function TaxIdentifiersCard({
                         {t('admin.tax_identifiers.validation_status.not_checked')}
                       </Badge>
                     )}
-                  </ItemTitle>
-                  {identifier.validated_at && (
-                    <ItemDescription className="text-xs">
-                      <RelativeTime
-                        iso={identifier.validated_at}
-                        prefix={t('admin.tax_identifiers.checked_prefix')}
+                    {identifier.validated_at && (
+                      <div className="text-muted-foreground text-xs">
+                        <RelativeTime
+                          iso={identifier.validated_at}
+                          prefix={t('admin.tax_identifiers.checked_prefix')}
+                        />
+                      </div>
+                    )}
+                    {!identifier.validatable && (
+                      <div className="text-muted-foreground text-xs">
+                        {t('admin.tax_identifiers.not_validatable')}
+                      </div>
+                    )}
+                  </TableCell>
+                  {canEdit && (
+                    <TableCell className="w-10 text-right">
+                      <RowActions
+                        actions={[
+                          {
+                            key: 'validate',
+                            label: t('admin.tax_identifiers.validate_action'),
+                            icon: <BadgeCheckIcon className="size-4" />,
+                            disabled: !identifier.validatable || mutations.isValidating,
+                            onSelect: () =>
+                              mutations.validate(identifier.id).catch(() => undefined),
+                          },
+                          { key: 'edit', onSelect: () => setEditing(identifier) },
+                          {
+                            key: 'delete',
+                            destructive: true,
+                            onSelect: () => handleDelete(identifier),
+                          },
+                        ]}
                       />
-                    </ItemDescription>
+                    </TableCell>
                   )}
-                  {!identifier.validatable && (
-                    <ItemDescription className="text-xs">
-                      {t('admin.tax_identifiers.not_validatable')}
-                    </ItemDescription>
-                  )}
-                </ItemContent>
-
-                {canEdit && (
-                  <ItemActions>
-                    <RowActions
-                      actions={[
-                        {
-                          key: 'validate',
-                          label: t('admin.tax_identifiers.validate_action'),
-                          icon: <BadgeCheckIcon className="size-4" />,
-                          disabled: !identifier.validatable || mutations.isValidating,
-                          onSelect: () => mutations.validate(identifier.id).catch(() => undefined),
-                        },
-                        { key: 'edit', onSelect: () => setEditing(identifier) },
-                        {
-                          key: 'delete',
-                          destructive: true,
-                          onSelect: () => handleDelete(identifier),
-                        },
-                      ]}
-                    />
-                  </ItemActions>
-                )}
-              </Item>
-            ))}
-          </ItemGroup>
-        </CardContent>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </Card>
       )}
 
       {addOpen && (
@@ -243,7 +272,7 @@ export function TaxIdentifiersCard({
           onSubmit={(params) => mutations.update(editing.id, params)}
         />
       )}
-    </Card>
+    </Section>
   )
 }
 
@@ -311,7 +340,7 @@ function TaxIdentifierSheet({
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
             <FieldGroup>
               {errors.root?.message && !rootIsRepeated && (
-                <p className="text-destructive text-sm" role="alert">
+                <p className="text-destructive text-base" role="alert">
                   {errors.root.message}
                 </p>
               )}
@@ -356,12 +385,19 @@ function TaxIdentifierSheet({
                         <ComboboxInput
                           id="tax-identifier-kind"
                           placeholder={t('admin.tax_identifiers.select_kind')}
-                        />
+                        >
+                          {field.value && taxIdentifierKindFlag(field.value) && (
+                            <InputGroupAddon align="inline-start">
+                              <TaxIdentifierKindFlag kind={field.value} />
+                            </InputGroupAddon>
+                          )}
+                        </ComboboxInput>
                         <ComboboxContent>
                           <ComboboxEmpty>{t('admin.common.no_results')}</ComboboxEmpty>
                           <ComboboxList>
                             {(option: KindOption) => (
                               <ComboboxItem key={option.value} value={option}>
+                                <TaxIdentifierKindFlag kind={option.value} />
                                 {option.label}
                               </ComboboxItem>
                             )}
@@ -408,4 +444,9 @@ function TaxIdentifierSheet({
       </SheetContent>
     </Sheet>
   )
+}
+
+function TaxIdentifierKindFlag({ kind }: { kind: string }) {
+  const iso = taxIdentifierKindFlag(kind)
+  return iso ? <CountryFlag iso={iso} /> : null
 }

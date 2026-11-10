@@ -1,5 +1,5 @@
 ---
-title: "Payment Methods"
+title: "Payments"
 description: "Learn how to set up the ways customers can pay in Spree Commerce, and control when their money is taken."
 ---
 
@@ -7,41 +7,45 @@ A payment method is a way for a customer to pay, and the provider that handles i
 
 A typical setup might pair a card gateway for everyday retail with one or two methods your team uses on back-office orders. A business customer placing a large order may need to pay on invoice rather than by card, and a shop with a counter may take payment in person. Each of those is its own payment method, and each can be shown to customers or kept for staff only.
 
-To manage payment methods, navigate to **Settings → Payment methods**, under the **Selling** group.
+To manage them, navigate to **Settings → Payments**, under the **Selling** group.
 
 <Note>Stripe is included with Spree out of the box, so you can take card payments by connecting an account rather than installing anything first.</Note>
 
-## Reviewing Your Payment Methods
+## Reviewing Your Payments
 
-![The Payment methods list, showing each method's provider, storefront visibility and status](/docs/images/user/settings/payments/1-payments-methods-overview.png)
+The page has three sections:
 
-Each row shows:
+- **Payment providers** - Outside providers that process cards and wallets, such as Stripe. Each has a card with its logo and status: **Active**, **Disabled** or **Not connected**. The switch on a card turns a connected provider on or off.
+- **Manual payment methods** - Methods your store handles itself, such as Check and Store Credit. Each row shows the method's name, its description, and badges for its status and for **Admin only** methods.
+- **Payment capture** - When customers are charged, for every method that doesn't set its own. See [When to Charge Customers](#when-to-charge-customers) below.
 
-- **Name** - What the method is called, with its customer-facing description beneath.
-- **Provider** - What handles the payment behind the scenes.
-- **Storefront** - **Visible** if customers can choose it, **Admin only** if it is reserved for staff.
-- **Status** - Whether the method is active or disabled.
+## Ordering Methods at Checkout
 
-The order of this list is the order customers see at checkout. Drag the handle on any row to move it, and put your most-used method at the top.
+Click **Checkout order** at the top of the page. A panel lists the methods customers can choose at checkout, which are the active ones visible on the storefront, in the order checkout shows them. Drag a method by its handle to move it, and put your most-used method at the top. Each move saves straight away.
+
+Providers and manual methods share one order, so a manual method can come before a provider.
 
 ## How to Add a Payment Method
 
-Click **Add payment method**. A panel opens, and the first thing to choose is the provider.
+To connect an outside provider, click **Connect** on its card under **Payment providers**. A panel opens with that provider already chosen.
+
+To add a method your store handles itself, click **Add manual method** under **Manual payment methods**, then choose its type.
 
 ![The Add payment method panel, with the provider dropdown and visibility settings](/docs/images/user/settings/payments/2-add-payment-method.png)
 
 ### Choosing a provider
 
-The **Provider** decides what actually processes the payment, and which settings appear afterwards. There are two kinds.
+The provider decides what actually processes the payment, and which settings appear afterwards. There are two kinds.
 
-**Third-party providers**, such as Stripe, connect to an outside payment processor. They need credentials from that provider, which you enter in the same panel while creating the method.
+**Payment providers**, such as Stripe, connect to an outside payment processor. They need credentials from that provider, which you enter in the same panel while creating the method.
 
-**Built-in methods** need no credentials because nothing is being processed elsewhere:
+**Manual payment methods** need no credentials because nothing is being processed elsewhere:
 
 - **Check** - Records that a customer will pay by cheque or bank transfer. The order is created and your team marks it paid when the money arrives.
 - **Store Credit** - Lets customers pay with credit already on their account.
 - **Custom Payment Source Method** - A generic method for payment arrangements handled outside Spree, such as an account customer paying on invoice.
-- **Bogus** - A test method that simulates payments without moving money. Use it to try a checkout end to end, and keep it **Admin only** so customers never see it.
+
+**Bogus** is a test provider that simulates payments without moving money. It appears under **Payment providers**. Use it to try a checkout end to end, and keep it **Admin only** so customers never see it.
 
 ### Provider configuration
 
@@ -51,7 +55,7 @@ Third-party providers need credentials before they will work. The fields differ 
 
 Enter the keys from your provider's own dashboard. Stored credentials are not shown back to you afterwards, and each has a **Replace** button for rotating a key later.
 
-Built-in methods have no configuration section, because nothing is being processed elsewhere.
+Manual methods have no configuration section, because nothing is being processed elsewhere.
 
 ### Naming and visibility
 
@@ -66,11 +70,11 @@ These settings decide how a method is displayed:
 
 ### When to charge customers
 
-This decides the moment a customer's money actually moves. Every method inherits the store default unless you override it here.
+This decides the moment a customer's money actually moves. Set the store default under **Payment capture** on the Payments page, and click **Save** to apply it. Every method follows that default unless you override it in its own panel.
 
 | Option | What happens |
 |---|---|
-| **Use the store setting** | Follows the store default, with the inherited value named in brackets. |
+| **Use the store setting** | Only on a single method. Follows the store default, with the inherited value named in brackets. |
 | **At checkout** | Takes the money as soon as the order is placed. |
 | **On dispatch** | Reserves the amount at checkout and takes it when the goods go out. |
 | **Manually** | Reserves the amount at checkout and lets staff take it later. |
@@ -89,7 +93,7 @@ Click **Create payment method** when you are done.
 
 ## How to Edit a Payment Method
 
-Open the row menu and choose **Edit** to update the name, description, visibility, status or credentials. The edit panel shows the provider in its subtitle rather than as a dropdown.
+Click **Configure** on a provider's card, or click a manual method's row, to update the name, description, visibility, status or credentials. The edit panel shows the provider in its subtitle rather than as a dropdown.
 
 The provider cannot be changed once a method exists. If you need a different provider, create a new method and disable the old one.
 
@@ -97,12 +101,12 @@ The provider cannot be changed once a method exists. If you need a different pro
 
 ## How to Delete a Payment Method
 
-Open the row menu and choose **Delete**. Spree confirms that the method will no longer be available at checkout.
+Open the method's panel and click **Delete**. Spree confirms that the method will no longer be available at checkout.
 
 <Note>Disabling a method is usually better than deleting it. Turning **Active** off withdraws it from checkout while keeping it attached to the orders that used it.</Note>
 
 ## Further Reading
 
-- [<u>Store Details</u>](/user/settings/store-details) - The store-wide default for when customers are charged
+- [<u>Taxes</u>](/user/settings/taxes) - Whether tax follows the shipping or the billing address
 - [<u>Processing Orders</u>](/user/orders/processing-orders) - Taking a payment that was reserved rather than captured
 - [<u>Issue Store Credits</u>](/user/loyalty/store-credits) - Adding credit that the Store Credit method can spend

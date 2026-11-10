@@ -146,7 +146,7 @@ function CalculatorPreferences({
 
   if (!Object.keys(calculator.schema?.properties ?? {}).length) {
     return (
-      <p className="text-sm text-muted-foreground">
+      <p className="text-base text-muted-foreground">
         {t('admin.components.adjustment_action_editor.no_extra_settings')}
       </p>
     )

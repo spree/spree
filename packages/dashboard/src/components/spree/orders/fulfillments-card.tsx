@@ -16,11 +16,8 @@ import {
   Badge,
   Button,
   Card,
-  CardAction,
   CardContent,
   CardFooter,
-  CardHeader,
-  CardTitle,
   Dialog,
   DialogBody,
   DialogContent,
@@ -45,6 +42,10 @@ import {
   type PostSaleUnit,
   QuantityPicker,
   RelativeTime,
+  Section,
+  SectionActions,
+  SectionHeader,
+  SectionTitle,
   Select,
   SelectContent,
   SelectItem,
@@ -70,6 +71,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useFulfillmentActions } from '../../../hooks/use-fulfillments'
 import { printPackingSlip } from '../../../lib/packing-slip'
+import { useProductLink } from '../variant-link'
 import { FulfillmentDeliveries } from './fulfillment-deliveries'
 import { FulfillmentDeliveryDialog } from './fulfillment-delivery-dialog'
 import { FulfillmentEditDialog } from './fulfillment-edit-dialog'
@@ -361,7 +363,7 @@ function CreateFulfillmentDialog({
         <DialogBody>
           <FieldGroup>
             {error && (
-              <p className="text-sm text-destructive" role="alert">
+              <p className="text-base text-destructive" role="alert">
                 {error}
               </p>
             )}
@@ -420,6 +422,7 @@ const CAN_EDIT = subsetOf(FULFILLMENT_STATUSES, ['unfulfilled'])
 const CAN_MARK_DELIVERED = subsetOf(FULFILLMENT_STATUSES, ['fulfilled'])
 
 function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Fulfillment }) {
+  const productLink = useProductLink()
   const { t } = useTranslation()
   const moneyLocale = useMoneyLocale()
   const confirm = useConfirm()
@@ -563,7 +566,7 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
       {(fulfillment.delivery_method ||
         fulfillment.unpriced ||
         isPositiveMoney(fulfillment.cost)) && (
-        <CardContent className="flex items-center justify-between border-b border-border-subtle py-3 text-sm">
+        <CardContent className="mx-4 px-0 flex items-center justify-between border-b border-border-subtle py-3.5 text-base">
           <span className="text-muted-foreground">
             {/* The selected rate names the carrier service that actually
                 carries this parcel ("USPS GroundAdvantage"); the method is
@@ -619,11 +622,12 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
       ) : (
         <>
           <FulfillmentItemList
+            productLink={productLink}
             rows={withPriceSource(fulfillmentItemRows(fulfillment, order.items ?? []), order)}
           />
 
           {shippable && (
-            <CardFooter className="justify-end gap-2 py-3">
+            <CardFooter className="justify-end gap-2 py-3.5">
               {canBuyLabel && (
                 <Button
                   type="button"
@@ -679,7 +683,7 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
           )}
 
           {deliverable && (
-            <CardFooter className="justify-end gap-2 py-3">
+            <CardFooter className="justify-end gap-2 py-3.5">
               <Button
                 type="button"
                 size="sm"
@@ -776,6 +780,7 @@ function UnfulfilledItems({
   order: Order
   canCreate: boolean
 }) {
+  const productLink = useProductLink()
   const { t } = useTranslation()
   const totalUnits = rows.reduce((sum, row) => sum + row.quantity, 0)
 
@@ -786,7 +791,7 @@ function UnfulfilledItems({
   return (
     <div className="flex flex-col gap-2 rounded-lg border border-border-subtle border-dashed p-4">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <span className="font-medium text-sm">
+        <span className="font-medium text-base">
           {t('admin.orders.detail.fulfillments.awaiting_fulfillment', { count: totalUnits })}
         </span>
         <span className="text-muted-foreground text-xs">
@@ -796,7 +801,7 @@ function UnfulfilledItems({
         </span>
       </div>
 
-      <FulfillmentItemList rows={withPriceSource(rows, order)} />
+      <FulfillmentItemList productLink={productLink} rows={withPriceSource(rows, order)} />
     </div>
   )
 }
@@ -830,14 +835,14 @@ export function FulfillmentsCard({ order }: { order: Order }) {
 
   return (
     <>
-      <Card variant="container">
-        <CardHeader>
-          <CardTitle>
+      <Section>
+        <SectionHeader>
+          <SectionTitle>
             <TruckIcon className="size-4" />
             {t('admin.pages.orders.detail.section_fulfillments')}
             {groupCount > 0 && <Badge variant="outline">{groupCount}</Badge>}
-          </CardTitle>
-          <CardAction className="flex items-center gap-2">
+          </SectionTitle>
+          <SectionActions className="flex items-center gap-2">
             {order.fulfillment_status && <StatusBadge status={order.fulfillment_status} />}
             {canCreate && (
               <Button size="sm" variant="outline" onClick={() => setCreateOpen(true)}>
@@ -845,25 +850,27 @@ export function FulfillmentsCard({ order }: { order: Order }) {
                 {t('admin.orders.detail.fulfillments.create_title')}
               </Button>
             )}
-          </CardAction>
-        </CardHeader>
+          </SectionActions>
+        </SectionHeader>
         {groupCount === 0 ? (
-          <CardContent>
-            <p className="text-center text-muted-foreground py-8">
-              {t('admin.orders.detail.fulfillments.empty')}
-            </p>
-          </CardContent>
+          <Card>
+            <CardContent>
+              <p className="text-center text-muted-foreground py-8">
+                {t('admin.orders.detail.fulfillments.empty')}
+              </p>
+            </CardContent>
+          </Card>
         ) : (
-          <CardContent className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4">
             {unfulfilled.length > 0 && (
               <UnfulfilledItems rows={unfulfilled} order={order} canCreate={canCreate} />
             )}
             {fulfillments.map((fulfillment) => (
               <FulfillmentRow key={fulfillment.id} order={order} fulfillment={fulfillment} />
             ))}
-          </CardContent>
+          </div>
         )}
-      </Card>
+      </Section>
 
       {createOpen && (
         <CreateFulfillmentDialog order={order} open={createOpen} onOpenChange={setCreateOpen} />

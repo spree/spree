@@ -10,7 +10,7 @@ import {
 } from '@spree/dashboard-ui'
 import { PencilIcon } from '@spree/dashboard-ui/icons'
 import { useTranslation } from 'react-i18next'
-import { ReadRow } from './seller-read-row'
+import { ReadRow } from '../read-row'
 
 /** Operator-only: how and when this seller gets paid, and who remits tax. */
 export function SellerSettlementCard({

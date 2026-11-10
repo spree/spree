@@ -110,7 +110,12 @@ export function VariantsOptionsBuilder({ selected, onChange, extraOptionTypes }:
             const isEditing = expandedIndex === i
             if (isEditing && optionType) {
               return (
-                <li key={ot.id} className="rounded-lg border border-border-subtle p-3">
+                <Item
+                  variant="outline"
+                  render={<li />}
+                  key={ot.id}
+                  className="flex-col items-stretch border-border-subtle"
+                >
                   <OptionPicker
                     optionType={optionType}
                     initialValues={ot.values}
@@ -130,7 +135,7 @@ export function VariantsOptionsBuilder({ selected, onChange, extraOptionTypes }:
                       })
                     }
                   />
-                </li>
+                </Item>
               )
             }
             return (
@@ -157,7 +162,7 @@ export function VariantsOptionsBuilder({ selected, onChange, extraOptionTypes }:
                   </Button>
                   <Button
                     type="button"
-                    variant="ghost"
+                    variant="destructive-ghost"
                     size="icon-sm"
                     aria-label={t('admin.actions.remove')}
                     onClick={() => removeAt(i)}
@@ -172,14 +177,14 @@ export function VariantsOptionsBuilder({ selected, onChange, extraOptionTypes }:
       )}
 
       {isAdding ? (
-        <div className="rounded-lg border border-border-subtle p-3">
+        <Item variant="outline" className="flex-col items-stretch border-border-subtle">
           <AddOptionForm
             availableTypes={availableTypes}
             allOptionTypes={allOptionTypes}
             onCancel={() => setIsAdding(false)}
             onSave={(payload) => upsertAt(null, payload)}
           />
-        </div>
+        </Item>
       ) : (
         <div>
           <Button type="button" variant="outline" size="sm" onClick={() => setIsAdding(true)}>
@@ -373,7 +378,7 @@ function OptionPicker({ optionType, initialValues, onSave, onCancel }: OptionPic
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between">
-        <div className="text-sm font-medium">{optionType.label}</div>
+        <div className="text-base font-medium">{optionType.label}</div>
       </div>
       <div className="flex flex-wrap gap-2">
         {available.map((v) => {
@@ -461,7 +466,7 @@ function CreateOptionTypeInline({
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="text-sm font-medium">
+      <div className="text-base font-medium">
         {t('admin.products.variants.create_option_type_title')}
       </div>
       <Field>
@@ -530,7 +535,7 @@ function CreateOptionValueInline({ onCancel, onCreate, isPending }: CreateOption
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="text-sm font-medium">{t('admin.products.variants.create_value_title')}</div>
+      <div className="text-base font-medium">{t('admin.products.variants.create_value_title')}</div>
       <Field>
         <FieldLabel htmlFor="new-option-value-label">
           {t('admin.fields.option_value.label.label')}

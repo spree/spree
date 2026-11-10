@@ -41,7 +41,7 @@ export function CollapsibleCard({
     <Card>
       <Collapsible open={isOpen} onOpenChange={setOpen}>
         <CardHeader
-          className={cn('flex flex-row items-center gap-2 py-1.5', !isOpen && 'border-b-0')}
+          className={cn('flex flex-row items-center gap-2 py-2.5', !isOpen && 'border-b-0')}
         >
           <CollapsibleTrigger className="group -mx-1 flex min-w-0 flex-1 cursor-pointer items-center gap-2 rounded-md px-1 py-1 text-left hover:bg-accent/50">
             <ChevronRightIcon className="size-4 shrink-0 text-muted-foreground transition-transform group-data-[panel-open]:rotate-90 motion-reduce:transition-none" />

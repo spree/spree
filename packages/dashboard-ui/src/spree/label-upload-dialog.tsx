@@ -90,7 +90,7 @@ export function LabelUploadDialog({
 
           <DialogBody className="flex flex-col gap-4">
             {errors.root?.message && (
-              <p className="text-destructive text-sm" role="alert">
+              <p className="text-destructive text-base" role="alert">
                 {errors.root.message}
               </p>
             )}

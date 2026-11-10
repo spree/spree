@@ -48,7 +48,7 @@ export function ApiKeyNameField({
 export function FormErrorBanner({ message }: { message?: string }) {
   if (!message) return null
   return (
-    <p className="text-sm text-destructive" role="alert">
+    <p className="text-base text-destructive" role="alert">
       {message}
     </p>
   )

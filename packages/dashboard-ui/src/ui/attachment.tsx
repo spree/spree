@@ -96,7 +96,7 @@ function AttachmentTitle({ className, ...props }: React.ComponentProps<'span'>) 
   return (
     <span
       data-slot="attachment-title"
-      className={cn('block max-w-full min-w-0 truncate font-medium text-sm', className)}
+      className={cn('block max-w-full min-w-0 truncate font-medium text-base', className)}
       {...props}
     />
   )

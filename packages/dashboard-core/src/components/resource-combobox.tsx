@@ -162,7 +162,7 @@ export function ResourceCombobox<T extends ComboboxOption>({
               // the dropdown unmounts, so a click never lands.
               <button
                 type="button"
-                className="flex w-full cursor-pointer items-center gap-2 border-t border-border px-2.5 py-2 text-left text-sm hover:bg-accent"
+                className="flex w-full cursor-pointer items-center gap-2 border-t border-border px-2.5 py-2 text-left text-base hover:bg-accent"
                 onMouseDown={(event) => {
                   event.preventDefault()
                   action.onSelect()

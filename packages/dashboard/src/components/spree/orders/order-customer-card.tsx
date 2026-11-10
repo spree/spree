@@ -16,7 +16,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useOrderMutation } from '../../../hooks/use-order'
 import { customerDisplayName, erasedFieldValue } from '../../../lib/erased-customer'
-import { OrderCustomerDialog } from './order-customer-dialog'
+import { OrderCustomerForm } from './order-customer-form'
 
 type AddressType = 'shipping_address' | 'billing_address'
 
@@ -51,8 +51,9 @@ export function CustomerCard({ order }: { order: Order }) {
     adminClient.orders.update(orderId, { use_shipping: true }),
   )
 
-  const editButton = (type: AddressType) => (
-    <CardAction>
+  const addressHeading = (type: AddressType, label: string) => (
+    <div className="flex items-center justify-between gap-2">
+      <h3 className="text-base font-medium">{label}</h3>
       <Button
         variant="ghost"
         size="icon-sm"
@@ -65,9 +66,11 @@ export function CustomerCard({ order }: { order: Order }) {
       >
         <PencilIcon className="size-4" />
       </Button>
-    </CardAction>
+    </div>
   )
 
+  // One card: the customer and both addresses read as one answer to "who is
+  // this for", and a missing address no longer costs a whole card.
   return (
     <>
       <Card>
@@ -77,77 +80,73 @@ export function CustomerCard({ order }: { order: Order }) {
             <Button
               variant="ghost"
               size="icon-sm"
-              onClick={() => setEditCustomer(true)}
+              onClick={() => setEditCustomer((editing) => !editing)}
               aria-label={t('admin.orders.detail.customer_edit.title')}
             >
               <PencilIcon className="size-4" />
             </Button>
           </CardAction>
         </CardHeader>
-        <CardContent className="flex flex-col gap-1 text-sm">
-          {customer ? (
-            <>
-              <Link
-                to={'/$storeId/customers/$customerId' as string}
-                params={{ storeId, customerId: customer.id }}
-                className="font-medium text-blue-600 no-underline hover:underline"
+        <CardContent className="flex flex-col divide-y text-base [&>section]:py-3 [&>section:first-child]:pt-0 [&>section:last-child]:pb-0">
+          <section className="flex flex-col gap-1">
+            {editCustomer ? (
+              <OrderCustomerForm order={order} onDone={() => setEditCustomer(false)} />
+            ) : customer ? (
+              <>
+                <Link
+                  to={'/$storeId/customers/$customerId' as string}
+                  params={{ storeId, customerId: customer.id }}
+                  className="font-medium text-blue-600 no-underline hover:underline"
+                >
+                  {customerDisplayName(customer, t('admin.customers.erased.name'))}
+                </Link>
+                <span className="text-muted-foreground">
+                  {erasedFieldValue(customer.email, customer.anonymized)}
+                </span>
+              </>
+            ) : order.email ? (
+              <span className="text-blue-600">{order.email}</span>
+            ) : (
+              <span className="text-muted-foreground">{t('admin.orders.detail.no_customer')}</span>
+            )}
+          </section>
+
+          <section className="flex flex-col gap-1">
+            {addressHeading(
+              'shipping_address',
+              t('admin.pages.orders.detail.section_shipping_address'),
+            )}
+            <AddressBlock address={shippingAddress} />
+          </section>
+
+          <section className="flex flex-col gap-1">
+            {addressHeading(
+              'billing_address',
+              t('admin.pages.orders.detail.section_billing_address'),
+            )}
+            <AddressBlock
+              address={billingSameAsShipping ? null : order.billing_address}
+              emptyText={
+                billingSameAsShipping
+                  ? t('admin.orders.detail.address_edit.billing_same_as_shipping')
+                  : undefined
+              }
+            />
+            {shippingAddress && !billingSameAsShipping && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="mt-2 self-start"
+                disabled={sameAsShippingMutation.isPending}
+                onClick={() => sameAsShippingMutation.mutate(undefined, { onError: showError })}
               >
-                {customerDisplayName(customer, t('admin.customers.erased.name'))}
-              </Link>
-              <span className="text-muted-foreground">
-                {erasedFieldValue(customer.email, customer.anonymized)}
-              </span>
-            </>
-          ) : order.email ? (
-            <span className="text-blue-600">{order.email}</span>
-          ) : (
-            <span className="text-muted-foreground">{t('admin.orders.detail.no_customer')}</span>
-          )}
+                <CopyIcon className="size-4" />
+                {t('admin.orders.detail.address_edit.billing_same_as_shipping')}
+              </Button>
+            )}
+          </section>
         </CardContent>
       </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('admin.pages.orders.detail.section_shipping_address')}</CardTitle>
-          {editButton('shipping_address')}
-        </CardHeader>
-        <CardContent>
-          <AddressBlock address={shippingAddress} />
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('admin.pages.orders.detail.section_billing_address')}</CardTitle>
-          {editButton('billing_address')}
-        </CardHeader>
-        <CardContent className="flex flex-col gap-3">
-          <AddressBlock
-            address={billingSameAsShipping ? null : order.billing_address}
-            emptyText={
-              billingSameAsShipping
-                ? t('admin.orders.detail.address_edit.billing_same_as_shipping')
-                : undefined
-            }
-          />
-          {shippingAddress && !billingSameAsShipping && (
-            <Button
-              variant="outline"
-              size="sm"
-              className="self-start"
-              disabled={sameAsShippingMutation.isPending}
-              onClick={() => sameAsShippingMutation.mutate(undefined, { onError: showError })}
-            >
-              <CopyIcon className="size-4" />
-              {t('admin.orders.detail.address_edit.billing_same_as_shipping')}
-            </Button>
-          )}
-        </CardContent>
-      </Card>
-
-      {editCustomer && (
-        <OrderCustomerDialog order={order} open={editCustomer} onOpenChange={setEditCustomer} />
-      )}
 
       {editAddress && (
         <AddressFormDialog

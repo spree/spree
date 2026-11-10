@@ -49,12 +49,12 @@ export function SectionHeading({
         <CardTitle className="min-w-0 truncate text-lg">{title}</CardTitle>
       )}
       {(description || docsPath) && (
-        <p className="text-muted-foreground text-sm">
+        <p className="text-muted-foreground text-base">
           {description}
           {docsPath && (
             <>
               {description ? ' ' : null}
-              <ExternalLink href={docsUrl(docsPath)} className="text-sm">
+              <ExternalLink href={docsUrl(docsPath)} className="text-base">
                 {t('admin.common.learn_more')}
               </ExternalLink>
             </>

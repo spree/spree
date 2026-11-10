@@ -63,7 +63,7 @@ export function DeliveryProfileGeneralCard({ profile }: { profile: DeliveryProfi
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         {errors.root?.message && (
-          <p className="text-sm text-destructive" role="alert">
+          <p className="text-base text-destructive" role="alert">
             {errors.root.message}
           </p>
         )}

@@ -11,6 +11,7 @@ import {
   getInitials,
   mapSpreeErrorsToForm,
   PageHeader,
+  SettingsSection,
   Subject,
   usePermissions,
 } from '@spree/dashboard-core'
@@ -20,10 +21,7 @@ import {
   AvatarImage,
   Badge,
   Button,
-  Card,
   CardContent,
-  CardHeader,
-  CardTitle,
   Checkbox,
   Dialog,
   DialogBody,
@@ -87,6 +85,8 @@ import {
   TabletIcon,
   TerminalIcon,
   UserMinusIcon,
+  UserPlusIcon,
+  UsersIcon,
   UsersRoundIcon,
 } from '@spree/dashboard-ui/icons'
 import { createFileRoute, Link } from '@tanstack/react-router'
@@ -161,10 +161,7 @@ function StaffSettingsPage() {
 function StaffCard({ staff, loading }: { staff: AdminUser[]; loading: boolean }) {
   const { t } = useTranslation()
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('admin.pages.staff.members_section')}</CardTitle>
-      </CardHeader>
+    <SettingsSection title={t('admin.pages.staff.members_section')} icon={<UsersIcon />}>
       <CardContent className="p-0">
         {loading ? (
           <div className="flex flex-col gap-3 p-4">
@@ -182,7 +179,7 @@ function StaffCard({ staff, loading }: { staff: AdminUser[]; loading: boolean })
             </EmptyHeader>
           </Empty>
         ) : (
-          <Table>
+          <Table roundedTop>
             <TableHeader>
               <TableRow>
                 <TableHead>{t('admin.pages.staff.table.member')}</TableHead>
@@ -200,7 +197,7 @@ function StaffCard({ staff, loading }: { staff: AdminUser[]; loading: boolean })
           </Table>
         )}
       </CardContent>
-    </Card>
+    </SettingsSection>
   )
 }
 
@@ -256,7 +253,7 @@ function StaffRow({ member }: { member: AdminUser }) {
         </TableCell>
         <TableCell>
           {member.roles.length === 0 ? (
-            <span className="text-sm text-muted-foreground">—</span>
+            <span className="text-base text-muted-foreground">—</span>
           ) : (
             <div className="flex flex-wrap gap-1">
               {member.roles.map((role) => (
@@ -270,7 +267,7 @@ function StaffRow({ member }: { member: AdminUser }) {
         <TableCell>
           <StaffStatusBadge status={member.status} />
         </TableCell>
-        <TableCell className="text-sm text-muted-foreground">
+        <TableCell className="text-base text-muted-foreground">
           <RelativeTime iso={member.last_active_at} />
         </TableCell>
         <TableCell className="text-right">
@@ -328,7 +325,7 @@ function StaffDetailsSheet({
         </SheetHeader>
         <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
           <StaffStatusBadge status={member.status} />
-          <dl className="flex flex-col gap-2 text-sm">
+          <dl className="flex flex-col gap-2 text-base">
             <DetailRow label={t('admin.pages.staff.details.joined')}>
               <RelativeTime iso={member.created_at} />
             </DetailRow>
@@ -339,9 +336,9 @@ function StaffDetailsSheet({
             )}
           </dl>
           <section className="flex flex-col gap-2">
-            <h3 className="font-medium text-sm">{t('admin.pages.staff.sessions.title')}</h3>
+            <h3 className="font-medium text-base">{t('admin.pages.staff.sessions.title')}</h3>
             {isError ? (
-              <p className="text-sm text-destructive" role="alert">
+              <p className="text-base text-destructive" role="alert">
                 {t('admin.pages.staff.details.load_failed')}
               </p>
             ) : isLoading ? (
@@ -353,7 +350,7 @@ function StaffDetailsSheet({
                 ))}
               </ItemGroup>
             ) : (
-              <p className="text-sm text-muted-foreground">
+              <p className="text-base text-muted-foreground">
                 {t('admin.pages.staff.sessions.empty')}
               </p>
             )}
@@ -429,17 +426,14 @@ function PendingInvitationsCard({
 }) {
   const { t } = useTranslation()
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('admin.pages.staff.invitations_section')}</CardTitle>
-      </CardHeader>
+    <SettingsSection title={t('admin.pages.staff.invitations_section')} icon={<UserPlusIcon />}>
       <CardContent className="p-0">
         {loading ? (
           <div className="p-4">
             <Skeleton className="h-10 w-full" />
           </div>
         ) : (
-          <Table>
+          <Table roundedTop>
             <TableHeader>
               <TableRow>
                 <TableHead>{t('admin.fields.email.label')}</TableHead>
@@ -456,7 +450,7 @@ function PendingInvitationsCard({
           </Table>
         )}
       </CardContent>
-    </Card>
+    </SettingsSection>
   )
 }
 
@@ -535,10 +529,10 @@ function InvitationRow({ invitation }: { invitation: Invitation }) {
             {invitation.role_name}
           </Badge>
         ) : (
-          <span className="text-sm text-muted-foreground">—</span>
+          <span className="text-base text-muted-foreground">—</span>
         )}
       </TableCell>
-      <TableCell className="text-sm text-muted-foreground">
+      <TableCell className="text-base text-muted-foreground">
         {invitation.expires_at ? (
           <span className="inline-flex items-center gap-1">
             <ClockIcon className="size-3.5" />
@@ -643,7 +637,7 @@ function InviteDialog({
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <DialogBody className="flex flex-col gap-4">
             {form.formState.errors.root?.message && (
-              <p className="text-sm text-destructive" role="alert">
+              <p className="text-base text-destructive" role="alert">
                 {form.formState.errors.root.message}
               </p>
             )}
@@ -805,7 +799,7 @@ function EditStaffSheet({
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
             {form.formState.errors.root?.message && (
-              <p className="text-sm text-destructive" role="alert">
+              <p className="text-base text-destructive" role="alert">
                 {form.formState.errors.root.message}
               </p>
             )}
@@ -890,11 +884,11 @@ function RoleCheckboxGroup({
   }
 
   if (roles.length === 0) {
-    return <p className="text-sm text-muted-foreground">{t('admin.staff.invite.no_roles')}</p>
+    return <p className="text-base text-muted-foreground">{t('admin.staff.invite.no_roles')}</p>
   }
 
   return (
-    <div className="flex flex-col gap-1.5 rounded-md border border-border p-3">
+    <Item variant="outline" className="flex-col items-stretch gap-1.5">
       {roles.map((role) => {
         const checked = value.includes(role.id)
         const id = `role-${role.id}`
@@ -902,13 +896,13 @@ function RoleCheckboxGroup({
           <label
             key={role.id}
             htmlFor={id}
-            className="flex cursor-pointer items-center gap-2 text-sm capitalize"
+            className="flex cursor-pointer items-center gap-2 text-base capitalize"
           >
             <Checkbox id={id} checked={checked} onCheckedChange={() => toggle(role.id)} />
             {role.name}
           </label>
         )
       })}
-    </div>
+    </Item>
   )
 }

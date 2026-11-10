@@ -30,7 +30,7 @@ defineTable<AllowedOrigin>('allowed-origins', {
       filterable: true,
       default: true,
       filterType: 'date',
-      className: 'text-sm text-muted-foreground whitespace-nowrap',
+      className: 'text-base text-muted-foreground whitespace-nowrap',
       render: (origin) => <RelativeTime iso={origin.created_at} />,
     },
   ],

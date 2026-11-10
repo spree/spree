@@ -1,5 +1,6 @@
 import { expect, type Page, test } from '@playwright/test'
 import {
+  addNewOrderItem,
   FIXTURE_PROMO_CUSTOMER_GROUP,
   FIXTURE_PROMO_PRODUCT,
   fillAddressForm,
@@ -43,11 +44,7 @@ test.describe('customers', () => {
     await page.goto(`/${creds.store_id}/orders/new`)
     await expect(page.getByRole('heading', { name: /new order/i })).toBeVisible({ timeout: 15_000 })
     await page.locator('#order-email').fill(`e2e-other-buyer-${Date.now()}@example.com`)
-    await page.getByPlaceholder(/search variant/i).fill(FIXTURE_PROMO_PRODUCT)
-    await page
-      .getByRole('option', { name: new RegExp(FIXTURE_PROMO_PRODUCT, 'i') })
-      .first()
-      .click()
+    await addNewOrderItem(page, FIXTURE_PROMO_PRODUCT)
     await page.locator('button[type="submit"]').click()
     await expect(page).toHaveURL(new RegExp(`/${creds.store_id}/orders/or_[^/]+$`), {
       timeout: 15_000,
@@ -56,12 +53,13 @@ test.describe('customers', () => {
     await gotoIndex(page, CUSTOMERS_PATH(creds.store_id), CTA)
     await createCustomer(page, `e2e-no-orders-${Date.now()}@example.com`)
 
-    const ordersCard = page.locator('[data-slot="card"]').filter({
-      has: page.locator('[data-slot="card-title"]', { hasText: /Orders/ }),
-    })
-    await expect(ordersCard.getByText(/no orders yet/i)).toBeVisible({ timeout: 15_000 })
-    await expect(ordersCard.getByRole('row')).toHaveCount(0)
-    await expect(ordersCard.locator('[data-slot="card-title"]')).toHaveText('Orders')
+    const ordersSection = page
+      .locator('[data-slot="section"]')
+      .filter({ has: page.getByRole('heading', { name: /^orders/i }) })
+    await expect(ordersSection.getByText(/no orders yet/i)).toBeVisible({ timeout: 15_000 })
+    await expect(ordersSection.getByRole('row')).toHaveCount(0)
+    // No count beside the title when there is nothing to count.
+    await expect(ordersSection.getByRole('heading')).toHaveText('Orders')
   })
 
   // Filled by the probes in src/testing/slot-probes.tsx.
@@ -118,6 +116,42 @@ test.describe('customers', () => {
     await page.getByRole('button', { name: /^save$/i }).click()
 
     await expect(page.getByText('1 Main St')).toBeVisible({ timeout: 15_000 })
+  })
+
+  test('marks the optional address fields and follows the country on postal code', async ({
+    page,
+  }) => {
+    const creds = await login(page)
+    await gotoIndex(page, CUSTOMERS_PATH(creds.store_id), CTA)
+    await createCustomer(page, `e2e-addr-optional-${Date.now()}@example.com`)
+
+    await page.getByRole('button', { name: /add address/i }).click()
+    await expect(page.getByRole('heading', { name: /^add address$/i })).toBeVisible()
+
+    const label = (id: string) => page.locator(`label[for="${id}"]`)
+    await expect(label('addr-a2')).toContainText('Optional')
+    await expect(label('addr-phone')).toContainText('Optional')
+    await expect(label('addr-a1')).not.toContainText('Optional')
+
+    // Missing fields report together, the country-dependent postal code included.
+    await fillAddressForm(page, { country: 'United States' })
+    await expect(label('addr-zip')).not.toContainText('Optional')
+    await page.getByRole('button', { name: /^save$/i }).click()
+    await expect(page.getByText(/postal code is required/i)).toBeVisible()
+    await expect(page.getByText(/city is required/i)).toBeVisible()
+
+    // A country without postal codes saves without one.
+    await fillAddressForm(page, {
+      firstName: 'Pat',
+      lastName: 'Smith',
+      address1: '5 Corniche St',
+      city: 'Doha',
+      country: 'Qatar',
+    })
+    await expect(label('addr-zip')).toContainText('Optional')
+    await page.getByRole('button', { name: /^save$/i }).click()
+
+    await expect(page.getByText('5 Corniche St')).toBeVisible({ timeout: 15_000 })
   })
 
   test('issues store credit', async ({ page }) => {

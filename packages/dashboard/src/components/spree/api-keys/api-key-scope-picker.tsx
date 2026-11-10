@@ -1,5 +1,5 @@
 import { usePermissions } from '@spree/dashboard-core'
-import { Checkbox, cn, Skeleton } from '@spree/dashboard-ui'
+import { Checkbox, cn, Item, Skeleton } from '@spree/dashboard-ui'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { usePermissionCatalog } from '../../../hooks/use-roles'
@@ -53,8 +53,11 @@ export function ScopePicker({
     <div className={cn('flex flex-col gap-3', disabled && 'opacity-70')}>
       {/* Quick access: write_all / read_all toggles. Selecting one blocks the
           per-resource grid because the catch-all already covers it. */}
-      <div className="flex flex-col gap-2 rounded-md border border-border bg-muted/30 p-3">
-        <label htmlFor="scope-write-all" className="flex cursor-pointer items-center gap-2 text-sm">
+      <Item variant="outline" className="flex-col items-stretch gap-2">
+        <label
+          htmlFor="scope-write-all"
+          className="flex cursor-pointer items-center gap-2 text-base"
+        >
           <Checkbox
             id="scope-write-all"
             checked={hasWriteAll}
@@ -66,7 +69,10 @@ export function ScopePicker({
             {t('admin.api_keys.scope_picker.full_access_hint')}
           </span>
         </label>
-        <label htmlFor="scope-read-all" className="flex cursor-pointer items-center gap-2 text-sm">
+        <label
+          htmlFor="scope-read-all"
+          className="flex cursor-pointer items-center gap-2 text-base"
+        >
           <Checkbox
             id="scope-read-all"
             checked={hasReadAll}
@@ -78,7 +84,7 @@ export function ScopePicker({
             {t('admin.api_keys.scope_picker.read_all_hint')}
           </span>
         </label>
-      </div>
+      </Item>
 
       <div
         className={cn(!disabled && (hasWriteAll || hasReadAll) && 'pointer-events-none opacity-50')}

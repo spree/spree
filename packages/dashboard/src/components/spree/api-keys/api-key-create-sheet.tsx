@@ -173,7 +173,9 @@ export function CreateApiKeyDialog({
                   )}
                 />
                 {form.formState.errors.scopes && (
-                  <p className="text-sm text-destructive">{form.formState.errors.scopes.message}</p>
+                  <p className="text-base text-destructive">
+                    {form.formState.errors.scopes.message}
+                  </p>
                 )}
               </Field>
             )}

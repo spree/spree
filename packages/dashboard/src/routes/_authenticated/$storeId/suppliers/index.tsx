@@ -9,19 +9,19 @@ import {
 } from '@spree/dashboard-core'
 import { Button, RowActions, useConfirm, useRowClickBridge } from '@spree/dashboard-ui'
 import { PencilIcon, PlusIcon } from '@spree/dashboard-ui/icons'
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, Navigate, useNavigate } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
-import { SupplierSheet } from '../../../components/spree/supplier-sheet'
-import { useDeleteSupplier } from '../../../hooks/use-suppliers'
-import '../../../tables/suppliers'
+import { SupplierSheet } from '../../../../components/spree/supplier-sheet'
+import { useDeleteSupplier } from '../../../../hooks/use-suppliers'
+import '../../../../tables/suppliers'
 
 const suppliersSearchSchema = resourceSearchSchema.extend({
   edit: z.string().optional(),
   new: z.coerce.boolean().optional(),
 })
 
-export const Route = createFileRoute('/_authenticated/$storeId/suppliers')({
+export const Route = createFileRoute('/_authenticated/$storeId/suppliers/')({
   validateSearch: suppliersSearchSchema,
   component: SuppliersPage,
 })
@@ -34,7 +34,7 @@ function SuppliersPage() {
   const deleteMutation = useDeleteSupplier()
   const { permissions } = usePermissions()
 
-  const editId = search.edit
+  const { storeId } = Route.useParams()
   const isCreating = !!search.new
 
   const closeSheet = () =>
@@ -48,10 +48,10 @@ function SuppliersPage() {
   const openCreate = () =>
     navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, new: true }) as never })
 
-  const openEdit = (id: string) =>
-    navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, edit: id }) as never })
+  const openSupplier = (id: string) =>
+    navigate({ to: '/$storeId/suppliers/$supplierId', params: { storeId, supplierId: id } })
 
-  useRowClickBridge('data-supplier-id', openEdit)
+  useRowClickBridge('data-supplier-id', openSupplier)
 
   async function handleDelete(supplier: Supplier) {
     const ok = await confirm({
@@ -62,6 +62,17 @@ function SuppliersPage() {
     })
     if (!ok) return
     await deleteMutation.mutateAsync(supplier.id).catch(() => undefined)
+  }
+
+  // A supplier used to open in a sheet at `?edit=`; old links land on its page.
+  if (search.edit) {
+    return (
+      <Navigate
+        to="/$storeId/suppliers/$supplierId"
+        params={{ storeId, supplierId: search.edit }}
+        replace
+      />
+    )
   }
 
   return (
@@ -78,7 +89,7 @@ function SuppliersPage() {
                 key: 'edit',
                 label: t('admin.actions.edit'),
                 icon: <PencilIcon className="size-4" />,
-                onSelect: () => openEdit(supplier.id),
+                onSelect: () => openSupplier(supplier.id),
               },
               {
                 key: 'delete',
@@ -104,8 +115,13 @@ function SuppliersPage() {
         }
       />
 
-      {isCreating && <SupplierSheet open onOpenChange={(open) => !open && closeSheet()} />}
-      {editId && <SupplierSheet id={editId} open onOpenChange={(open) => !open && closeSheet()} />}
+      {isCreating && (
+        <SupplierSheet
+          open
+          onOpenChange={(open) => !open && closeSheet()}
+          onCreated={(supplier) => openSupplier(supplier.id)}
+        />
+      )}
     </>
   )
 }

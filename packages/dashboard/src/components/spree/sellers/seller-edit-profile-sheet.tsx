@@ -30,13 +30,20 @@ import {
 } from '../../../schemas/seller'
 import { ResourceImageField } from '../resource-image-field'
 
-/** The profile the seller also maintains from their own panel. */
+/**
+ * The profile the seller also maintains from their own panel, edited a part
+ * at a time: `profile` is what shoppers see (images, name, slug, about) and
+ * `contact` is how the marketplace reaches the seller. Each part opens from
+ * its own card and saves only its own fields.
+ */
 export function SellerEditProfileSheet({
   seller,
+  part,
   open,
   onOpenChange,
 }: {
   seller: Seller
+  part: 'profile' | 'contact'
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
@@ -67,17 +74,20 @@ export function SellerEditProfileSheet({
 
   async function onSubmit(values: SellerFormValues) {
     try {
-      // Only this sheet's own fields — the settlement sheet owns the rest, and
-      // sending them here would post this form's untouched defaults over them.
+      // Only this part's own fields — the other part and the settlement sheet
+      // own the rest, and sending them here would post this form's untouched
+      // values over them.
       const params = sellerValuesToParams(values)
-      await updateMutation.mutateAsync({
-        ...sellerImageParams(values),
-        name: params.name,
-        slug: params.slug,
-        contact_email: params.contact_email,
-        billing_email: params.billing_email,
-        about: params.about,
-      })
+      await updateMutation.mutateAsync(
+        part === 'contact'
+          ? { contact_email: params.contact_email, billing_email: params.billing_email }
+          : {
+              ...sellerImageParams(values),
+              name: params.name,
+              slug: params.slug,
+              about: params.about,
+            },
+      )
       onOpenChange(false)
     } catch (err) {
       if (!mapSpreeErrorsToForm(err, form.setError)) throw err
@@ -90,7 +100,11 @@ export function SellerEditProfileSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>{t('admin.sellers.detail.edit_profile')}</SheetTitle>
+          <SheetTitle>
+            {part === 'contact'
+              ? t('admin.sellers.detail.edit_contact')
+              : t('admin.sellers.detail.edit_profile')}
+          </SheetTitle>
           <SheetDescription>{t('admin.sellers.detail.edit_profile_description')}</SheetDescription>
         </SheetHeader>
         <form
@@ -103,104 +117,114 @@ export function SellerEditProfileSheet({
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
             <FieldGroup>
               {errors.root?.message && (
-                <p className="text-destructive text-sm" role="alert">
+                <p className="text-destructive text-base" role="alert">
                   {errors.root.message}
                 </p>
               )}
-              <ResourceImageField
-                form={form}
-                kind="logo"
-                serverUrl={seller.logo_url}
-                square
-                translationNamespace="admin.sellers"
-                labelKey="logo_label"
-                helpKey="logo_help"
-              />
-              <ResourceImageField
-                form={form}
-                kind="square_logo"
-                serverUrl={seller.square_logo_url}
-                square
-                translationNamespace="admin.sellers"
-                labelKey="square_logo_label"
-                helpKey="square_logo_help"
-              />
-              <ResourceImageField
-                form={form}
-                kind="cover_photo"
-                serverUrl={seller.cover_photo_url}
-                translationNamespace="admin.sellers"
-                labelKey="cover_photo_label"
-                helpKey="cover_photo_help"
-              />
+              {part === 'profile' ? (
+                <>
+                  <ResourceImageField
+                    form={form}
+                    kind="logo"
+                    serverUrl={seller.logo_url}
+                    square
+                    translationNamespace="admin.sellers"
+                    labelKey="logo_label"
+                    helpKey="logo_help"
+                  />
+                  <ResourceImageField
+                    form={form}
+                    kind="square_logo"
+                    serverUrl={seller.square_logo_url}
+                    square
+                    translationNamespace="admin.sellers"
+                    labelKey="square_logo_label"
+                    helpKey="square_logo_help"
+                  />
+                  <ResourceImageField
+                    form={form}
+                    kind="cover_photo"
+                    serverUrl={seller.cover_photo_url}
+                    translationNamespace="admin.sellers"
+                    labelKey="cover_photo_label"
+                    helpKey="cover_photo_help"
+                  />
 
-              <Field>
-                <FieldLabel htmlFor="seller-name">{t('admin.fields.name.label')}</FieldLabel>
-                <Input
-                  id="seller-name"
-                  aria-invalid={!!errors.name || undefined}
-                  {...form.register('name')}
-                />
-                <FieldError errors={[errors.name]} />
-              </Field>
-
-              <Field>
-                <FieldLabel htmlFor="seller-slug">{t('admin.fields.slug.label')}</FieldLabel>
-                <Input
-                  id="seller-slug"
-                  aria-invalid={!!errors.slug || undefined}
-                  {...form.register('slug')}
-                />
-                <FieldDescription>{t('admin.fields.seller.slug.help')}</FieldDescription>
-                <FieldError errors={[errors.slug]} />
-              </Field>
-
-              <Field>
-                <FieldLabel htmlFor="seller-contact-email">
-                  {t('admin.fields.contact_email.label')}
-                </FieldLabel>
-                <Input
-                  id="seller-contact-email"
-                  type="email"
-                  aria-invalid={!!errors.contact_email || undefined}
-                  {...form.register('contact_email')}
-                />
-                <FieldDescription>{t('admin.fields.seller.contact_email.help')}</FieldDescription>
-                <FieldError errors={[errors.contact_email]} />
-              </Field>
-
-              <Field>
-                <FieldLabel htmlFor="seller-billing-email">
-                  {t('admin.fields.seller.billing_email.label')}
-                </FieldLabel>
-                <Input
-                  id="seller-billing-email"
-                  type="email"
-                  aria-invalid={!!errors.billing_email || undefined}
-                  {...form.register('billing_email')}
-                />
-                <FieldDescription>{t('admin.fields.seller.billing_email.help')}</FieldDescription>
-                <FieldError errors={[errors.billing_email]} />
-              </Field>
-
-              <Field>
-                <FieldLabel htmlFor="seller-about">
-                  {t('admin.fields.seller.about.label')}
-                </FieldLabel>
-                <Controller
-                  control={form.control}
-                  name="about"
-                  render={({ field }) => (
-                    <RichTextEditor
-                      id="seller-about"
-                      ariaLabel={t('admin.fields.seller.about.label')}
-                      value={field.value ?? ''}
-                      onChange={field.onChange}
+                  <Field>
+                    <FieldLabel htmlFor="seller-name">{t('admin.fields.name.label')}</FieldLabel>
+                    <Input
+                      id="seller-name"
+                      aria-invalid={!!errors.name || undefined}
+                      {...form.register('name')}
                     />
-                  )}
-                />
-                <FieldDescription>{t('admin.fields.seller.about.help')}</FieldDescription>
-              </Field>
+                    <FieldError errors={[errors.name]} />
+                  </Field>
+
+                  <Field>
+                    <FieldLabel htmlFor="seller-slug">{t('admin.fields.slug.label')}</FieldLabel>
+                    <Input
+                      id="seller-slug"
+                      aria-invalid={!!errors.slug || undefined}
+                      {...form.register('slug')}
+                    />
+                    <FieldDescription>{t('admin.fields.seller.slug.help')}</FieldDescription>
+                    <FieldError errors={[errors.slug]} />
+                  </Field>
+
+                  <Field>
+                    <FieldLabel htmlFor="seller-about">
+                      {t('admin.fields.seller.about.label')}
+                    </FieldLabel>
+                    <Controller
+                      control={form.control}
+                      name="about"
+                      render={({ field }) => (
+                        <RichTextEditor
+                          id="seller-about"
+                          ariaLabel={t('admin.fields.seller.about.label')}
+                          value={field.value ?? ''}
+                          onChange={field.onChange}
+                        />
+                      )}
+                    />
+                    <FieldDescription>{t('admin.fields.seller.about.help')}</FieldDescription>
+                  </Field>
+                </>
+              ) : (
+                <>
+                  <Field>
+                    <FieldLabel htmlFor="seller-contact-email">
+                      {t('admin.fields.contact_email.label')}
+                    </FieldLabel>
+                    <Input
+                      id="seller-contact-email"
+                      type="email"
+                      aria-invalid={!!errors.contact_email || undefined}
+                      {...form.register('contact_email')}
+                    />
+                    <FieldDescription>
+                      {t('admin.fields.seller.contact_email.help')}
+                    </FieldDescription>
+                    <FieldError errors={[errors.contact_email]} />
+                  </Field>
+
+                  <Field>
+                    <FieldLabel htmlFor="seller-billing-email">
+                      {t('admin.fields.seller.billing_email.label')}
+                    </FieldLabel>
+                    <Input
+                      id="seller-billing-email"
+                      type="email"
+                      aria-invalid={!!errors.billing_email || undefined}
+                      {...form.register('billing_email')}
+                    />
+                    <FieldDescription>
+                      {t('admin.fields.seller.billing_email.help')}
+                    </FieldDescription>
+                    <FieldError errors={[errors.billing_email]} />
+                  </Field>
+                </>
+              )}
             </FieldGroup>
           </div>
           <SheetFooter>

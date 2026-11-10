@@ -90,7 +90,7 @@ export function SellerReturnsLocationCard({ headless = false }: { headless?: boo
     hasAddress && location ? (
       <AddressBlock address={stockLocationToAddressBlock(location)} />
     ) : (
-      <p className={failed ? 'text-destructive text-sm' : 'text-muted-foreground text-sm'}>
+      <p className={failed ? 'text-destructive text-base' : 'text-muted-foreground text-base'}>
         {t(failed ? 'common.error' : 'profile.address_not_provided')}
       </p>
     )

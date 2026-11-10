@@ -4,8 +4,6 @@ import {
   Button,
   Card,
   CardContent,
-  CardHeader,
-  CardTitle,
   Dialog,
   DialogBody,
   DialogContent,
@@ -14,6 +12,9 @@ import {
   DialogTitle,
   Pagination,
   RelativeTime,
+  Section,
+  SectionHeader,
+  SectionTitle,
   StatusBadge,
   Table,
   TableBody,
@@ -51,14 +52,19 @@ export function StockHistoryCard({ title, ...scope }: StockHistoryScope & { titl
   const { t } = useTranslation()
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{title ?? t('admin.stock_history.title')}</CardTitle>
-      </CardHeader>
-      <CardContent className="p-0">
-        <StockHistoryTable {...scope} />
-      </CardContent>
-    </Card>
+    <Section>
+      <SectionHeader>
+        <SectionTitle>
+          <HistoryIcon />
+          {title ?? t('admin.stock_history.title')}
+        </SectionTitle>
+      </SectionHeader>
+      <Card>
+        <CardContent className="p-0">
+          <StockHistoryTable {...scope} startsCard />
+        </CardContent>
+      </Card>
+    </Section>
   )
 }
 
@@ -95,7 +101,11 @@ function StockHistoryTable({
   stockLocationId,
   stockTransferId,
   purchaseOrderId,
-}: StockHistoryScope) {
+  startsCard = false,
+}: StockHistoryScope & {
+  /** The table opens a card, so its header rounds into the card's corners. */
+  startsCard?: boolean
+}) {
   const { t } = useTranslation()
   const [page, setPage] = useState(1)
 
@@ -129,10 +139,10 @@ function StockHistoryTable({
   const paginated = (data?.meta?.pages ?? 1) > 1
 
   if (isLoading) {
-    return <p className="p-3 text-muted-foreground text-sm">{t('admin.common.loading')}</p>
+    return <p className="p-3 text-muted-foreground text-base">{t('admin.common.loading')}</p>
   }
   if (movements.length === 0) {
-    return <p className="p-3 text-muted-foreground text-sm">{t('admin.stock_history.empty')}</p>
+    return <p className="p-3 text-muted-foreground text-base">{t('admin.stock_history.empty')}</p>
   }
 
   return (
@@ -140,7 +150,7 @@ function StockHistoryTable({
       {/* The pagination bar brings its own top rule and padding, so it takes
           the bottom curve when it is there — and the last row takes it when
           the history fits on one page. */}
-      <Table scrollX roundedBottom={!paginated}>
+      <Table scrollX roundedTop={startsCard} roundedBottom={!paginated}>
         <TableHeader>
           <TableRow>
             <TableHead>{t('admin.stock_history.columns.date')}</TableHead>
@@ -154,7 +164,7 @@ function StockHistoryTable({
         <TableBody>
           {movements.map((movement) => (
             <TableRow key={movement.id}>
-              <TableCell className="whitespace-nowrap text-muted-foreground text-sm">
+              <TableCell className="whitespace-nowrap text-muted-foreground text-base">
                 <RelativeTime iso={movement.created_at} />
               </TableCell>
               <TableCell>
@@ -165,7 +175,7 @@ function StockHistoryTable({
                   )}
                 </div>
               </TableCell>
-              <TableCell className="whitespace-nowrap text-sm">
+              <TableCell className="whitespace-nowrap text-base">
                 {movement.stock_location_name ?? '—'}
               </TableCell>
               <TableCell className="font-medium tabular-nums">
@@ -181,14 +191,14 @@ function StockHistoryTable({
                   '—'
                 )}
               </TableCell>
-              <TableCell className="whitespace-nowrap text-sm">
+              <TableCell className="whitespace-nowrap text-base">
                 <MovementCause movement={movement} />
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
-      {paginated && data?.meta && <Pagination meta={data.meta} onPageChange={setPage} />}
+      {paginated && data?.meta && <Pagination inset meta={data.meta} onPageChange={setPage} />}
     </>
   )
 }

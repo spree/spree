@@ -10,10 +10,7 @@ import {
   Badge,
   Button,
   Card,
-  CardAction,
   CardContent,
-  CardHeader,
-  CardTitle,
   Dialog,
   DialogBody,
   DialogContent,
@@ -32,6 +29,10 @@ import {
   InputGroupAddon,
   InputGroupInput,
   InputGroupText,
+  Section,
+  SectionActions,
+  SectionHeader,
+  SectionTitle,
   Select,
   SelectContent,
   SelectItem,
@@ -95,15 +96,18 @@ export function PaymentsCard({ order }: { order: Order }) {
     adminClient.orders.payments.void(orderId, paymentId, {}),
   )
 
+  // Above the card rather than inside it, so the table starts the card.
+  const showSharedHelp = grouped && !awaitingGroup && !groupFailed && payments.length > 0
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>
+    <Section>
+      <SectionHeader>
+        <SectionTitle>
           <CreditCardIcon className="size-4" />
           {t('admin.pages.orders.detail.section_payments')}
           {payments.length > 0 && <Badge variant="outline">{payments.length}</Badge>}
-        </CardTitle>
-        <CardAction className="flex items-center gap-2">
+        </SectionTitle>
+        <SectionActions className="flex items-center gap-2">
           {order.payment_status && <StatusBadge status={order.payment_status} />}
           {/* Adding, capturing and voting a grouped payment acts on every
               order in the checkout, not just this one — so this order's page
@@ -114,35 +118,35 @@ export function PaymentsCard({ order }: { order: Order }) {
               {t('admin.actions.add')}
             </Button>
           )}
-        </CardAction>
-      </CardHeader>
-      {awaitingGroup ? (
-        <CardContent>
-          <Skeleton className="h-24 w-full" />
-        </CardContent>
-      ) : grouped && groupFailed ? (
-        // Distinct from the empty state below: a request that failed says
-        // nothing about whether this order was paid, and reading "no payments"
-        // off a network error is the misreading this branch exists to prevent.
-        <CardContent>
-          <p className="text-center text-destructive py-8">
-            {t('admin.orders.detail.payments_table.load_error')}
-          </p>
-        </CardContent>
-      ) : payments.length === 0 ? (
-        <CardContent>
-          <p className="text-center text-muted-foreground py-8">
-            {t('admin.pages.orders.detail.empty_payments')}
-          </p>
-        </CardContent>
-      ) : (
-        <>
-          {grouped && (
-            <p className="px-6 pb-2 text-sm text-muted-foreground">
-              {t('admin.orders.detail.payments_table.shared_help')}
+        </SectionActions>
+      </SectionHeader>
+      {showSharedHelp && (
+        <p className="text-muted-foreground text-base">
+          {t('admin.orders.detail.payments_table.shared_help')}
+        </p>
+      )}
+      <Card>
+        {awaitingGroup ? (
+          <CardContent>
+            <Skeleton className="h-24 w-full" />
+          </CardContent>
+        ) : grouped && groupFailed ? (
+          // Distinct from the empty state below: a request that failed says
+          // nothing about whether this order was paid, and reading "no payments"
+          // off a network error is the misreading this branch exists to prevent.
+          <CardContent>
+            <p className="text-center text-destructive py-8">
+              {t('admin.orders.detail.payments_table.load_error')}
             </p>
-          )}
-          <Table>
+          </CardContent>
+        ) : payments.length === 0 ? (
+          <CardContent>
+            <p className="text-center text-muted-foreground py-8">
+              {t('admin.pages.orders.detail.empty_payments')}
+            </p>
+          </CardContent>
+        ) : (
+          <Table roundedTop>
             <TableHeader>
               <TableRow>
                 <TableHead>{t('admin.orders.detail.payments_table.number')}</TableHead>
@@ -166,7 +170,17 @@ export function PaymentsCard({ order }: { order: Order }) {
                   </TableCell>
                   <TableCell>
                     <div className="flex flex-wrap items-center gap-1.5">
-                      <StatusBadge status={payment.status} />
+                      {/* A pending card payment that can be captured holds an
+                          authorization — the same thing the order's status
+                          calls it, so the two never disagree. */}
+                      {payment.status === 'pending' && payment.can_capture ? (
+                        <StatusBadge
+                          status="authorized"
+                          label={t('admin.orders.payment_statuses.authorized')}
+                        />
+                      ) : (
+                        <StatusBadge status={payment.status} />
+                      )}
                       {(payment.avs_risky || payment.cvv_risky) && (
                         <Badge variant="warning">
                           <ShieldAlertIcon />
@@ -224,10 +238,10 @@ export function PaymentsCard({ order }: { order: Order }) {
               ))}
             </TableBody>
           </Table>
-        </>
-      )}
+        )}
+      </Card>
       <AddPaymentDialog order={order} open={addOpen} onOpenChange={setAddOpen} />
-    </Card>
+    </Section>
   )
 }
 
@@ -442,11 +456,11 @@ function AddPaymentDialog({
                     {t('admin.orders.detail.payment_form.source_label')}
                   </FieldLabel>
                   {!customerId ? (
-                    <p className="text-sm text-destructive">
+                    <p className="text-base text-destructive">
                       {t('admin.orders.detail.payment_form.source_requires_customer')}
                     </p>
                   ) : savedCards.length === 0 ? (
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-base text-muted-foreground">
                       {t('admin.orders.detail.payment_form.no_saved_cards')}
                     </p>
                   ) : (
@@ -497,7 +511,7 @@ function AddPaymentDialog({
 
               {!isStoreCredit && (
                 <Field>
-                  <label className="flex items-center gap-2 text-sm" htmlFor="pay-capture">
+                  <label className="flex items-center gap-2 text-base" htmlFor="pay-capture">
                     <Switch id="pay-capture" checked={capture} onCheckedChange={setCapture} />
                     {t('admin.orders.detail.payment_form.capture_immediately')}
                   </label>

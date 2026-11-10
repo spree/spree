@@ -1,5 +1,5 @@
 import { expect, type Page, test } from '@playwright/test'
-import { createPlacedOrder, FIXTURE_PROMO_PRODUCT, login } from './helpers'
+import { addNewOrderItem, createPlacedOrder, FIXTURE_PROMO_PRODUCT, login } from './helpers'
 
 const NEW_ORDER_PATH = (storeId: string) => `/${storeId}/orders/new`
 
@@ -13,26 +13,22 @@ async function createDraftOrder(page: Page, storeId: string) {
   await expect(page.getByRole('heading', { name: /new order/i })).toBeVisible({ timeout: 15_000 })
 
   await page.locator('#order-email').fill(`e2e-fulfillment-${Date.now()}@example.com`)
-  await page.getByPlaceholder(/search variant/i).fill(FIXTURE_PROMO_PRODUCT)
-  await page
-    .getByRole('option', { name: new RegExp(FIXTURE_PROMO_PRODUCT, 'i') })
-    .first()
-    .click()
+  await addNewOrderItem(page, FIXTURE_PROMO_PRODUCT)
 
   await page.locator('button[type="submit"]').click()
   await expect(page).toHaveURL(new RegExp(`/${storeId}/orders/or_[^/]+$`), { timeout: 15_000 })
 }
 
 /**
- * The Fulfillments card. Filtering `div` by contained text would match every
- * ancestor too, so anchor on the card element itself.
+ * The Fulfillments section. Filtering `div` by contained text would match every
+ * ancestor too, so anchor on the section element itself.
  */
 function fulfillmentsCard(page: Page) {
-  // The title holds an icon and a count badge beside the word, so match the
-  // text loosely; anchoring on the card element keeps sibling cards out.
-  return page.locator('[data-slot="card"]').filter({
-    has: page.locator('[data-slot="card-title"]', { hasText: /fulfillments/i }),
-  })
+  // The heading holds an icon and a count badge beside the word, so match
+  // the text loosely; anchoring on the section keeps sibling ones out.
+  return page
+    .locator('[data-slot="section"]')
+    .filter({ has: page.getByRole('heading', { name: /fulfillments/i }) })
 }
 
 test.describe('order fulfillments', () => {

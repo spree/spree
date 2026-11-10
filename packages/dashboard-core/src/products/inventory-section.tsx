@@ -227,10 +227,10 @@ export function InventorySection({ form, stockLocationHref }: InventorySectionPr
     // Showing "no stock locations" while the query is still in flight is
     // misleading — the locations may exist but haven't loaded yet.
     if (stockLocationsLoading) {
-      return <p className="text-sm text-muted-foreground">{t('admin.common.loading')}</p>
+      return <p className="text-base text-muted-foreground">{t('admin.common.loading')}</p>
     }
     return (
-      <p className="text-sm text-muted-foreground">
+      <p className="text-base text-muted-foreground">
         {stockLocations.length === 0
           ? t('admin.products.inventory.empty_no_locations')
           : t('admin.products.inventory.empty_no_variants')}

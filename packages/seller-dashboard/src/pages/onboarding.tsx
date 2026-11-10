@@ -105,10 +105,10 @@ export function OnboardingPage() {
           <Progress value={progressPercentage(progress)} />
 
           {submitted ? (
-            <p className="text-muted-foreground text-sm">{t('onboarding.under_review')}</p>
+            <p className="text-muted-foreground text-base">{t('onboarding.under_review')}</p>
           ) : (
             <div className="flex items-center justify-between gap-4">
-              <p className="text-muted-foreground text-sm">
+              <p className="text-muted-foreground text-base">
                 {blocking.length === 0
                   ? t('onboarding.ready')
                   : t('onboarding.remaining', { count: blocking.length })}
@@ -132,7 +132,7 @@ export function OnboardingPage() {
         // `multiple` because these are independent — a seller does them in any
         // order — so opening one must not close the one they were reading.
         // Opens on the first outstanding line, which answers "what next".
-        <Card className="overflow-hidden py-0">
+        <Card className="overflow-hidden">
           <Accordion multiple defaultValue={openByDefault}>
             {requirements.map((requirement) => (
               <AccordionItem key={requirement.id} value={requirement.id}>
@@ -156,7 +156,7 @@ export function OnboardingPage() {
                 </AccordionTrigger>
                 <AccordionContent className="flex flex-col gap-3 ps-12">
                   {requirement.description && (
-                    <p className="text-muted-foreground text-sm">{requirement.description}</p>
+                    <p className="text-muted-foreground text-base">{requirement.description}</p>
                   )}
                   <RequirementAction requirement={requirement} />
                 </AccordionContent>
@@ -301,7 +301,7 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
     return (
       <>
         {rejection}
-        <p className="text-muted-foreground text-sm">{t('onboarding.awaiting_review')}</p>
+        <p className="text-muted-foreground text-base">{t('onboarding.awaiting_review')}</p>
       </>
     )
   }
@@ -430,11 +430,11 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
       {requirement.kind === 'payout_account' && (
         <div className="flex flex-col items-start gap-2">
           {requirement.blocker?.message && (
-            <p className="text-muted-foreground text-sm">{requirement.blocker.message}</p>
+            <p className="text-muted-foreground text-base">{requirement.blocker.message}</p>
           )}
 
           {requirement.blocker?.state === 'pending' ? (
-            <p className="text-muted-foreground text-sm">
+            <p className="text-muted-foreground text-base">
               {t('onboarding.awaiting_payout_provider')}
             </p>
           ) : (

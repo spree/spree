@@ -98,7 +98,51 @@ export interface SpreeDashboardPluginOptions {
  *     })
  */
 export function spreeDashboardPlugin(options: SpreeDashboardPluginOptions = {}): PluginOption[] {
-  return [dashboardProseMirrorDedupePlugin(), dashboardTailwindSourcePlugin(options), tailwindcss()]
+  return [
+    dashboardProseMirrorDedupePlugin(),
+    dashboardTailwindSourcePlugin(options),
+    tailwindcss(),
+    dashboardFontPreloadPlugin(),
+  ]
+}
+
+/** The Latin subset of the dashboard's sans font, which nearly every page renders. */
+const PRELOADED_FONT_FILE = 'inter-latin-opsz-normal.woff2'
+
+/**
+ * Preloads the Latin sans font in production builds. The font is otherwise
+ * discovered only after the CSS is downloaded and parsed, so the first paint
+ * falls back to the system font. Hosts that replace the font emit no such
+ * file and get no tag.
+ */
+function dashboardFontPreloadPlugin(): Plugin {
+  let base = '/'
+  return {
+    name: 'spree:dashboard-font-preload',
+    apply: 'build',
+    configResolved(config) {
+      base = config.base
+    },
+    transformIndexHtml(_html, ctx) {
+      const font = Object.values(ctx.bundle ?? {}).find(
+        (file) => file.type === 'asset' && file.names.includes(PRELOADED_FONT_FILE),
+      )
+      if (!font) return
+      return [
+        {
+          tag: 'link',
+          attrs: {
+            rel: 'preload',
+            href: `${base}${font.fileName}`,
+            as: 'font',
+            type: 'font/woff2',
+            crossorigin: '',
+          },
+          injectTo: 'head',
+        },
+      ]
+    },
+  }
 }
 
 /**

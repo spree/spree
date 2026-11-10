@@ -97,7 +97,7 @@ export function SellerBusinessCard({ profile }: { profile: Profile }) {
             </Button>
           </CardAction>
         </CardHeader>
-        <CardContent className="flex flex-col gap-2 text-sm">
+        <CardContent className="flex flex-col gap-2 text-base">
           {rows.map((row) => (
             <div key={row.label} className="flex justify-between gap-4">
               <span className="text-muted-foreground">{row.label}</span>
@@ -114,7 +114,7 @@ export function SellerBusinessCard({ profile }: { profile: Profile }) {
           </SheetHeader>
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
             {formError && (
-              <p role="alert" className="text-destructive text-sm">
+              <p role="alert" className="text-destructive text-base">
                 {formError}
               </p>
             )}

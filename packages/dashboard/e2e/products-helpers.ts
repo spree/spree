@@ -177,7 +177,7 @@ export async function clickMediaThumbnailAction(
   }
 
   await thumb.click({ button: 'right', force: true })
-  const item = media.page().getByRole('menuitem', { name: /^delete$/i })
+  const item = media.page().getByRole('menuitem', { name: /^remove$/i })
   await expect(item).toBeVisible()
   await item.click()
 }

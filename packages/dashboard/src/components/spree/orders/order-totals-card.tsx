@@ -8,9 +8,9 @@ import { type OrderEditItemValues, projectedSubtotal } from '../../../schemas/or
 
 function TotalRow({ label, value, bold }: { label: string; value: ReactNode; bold?: boolean }) {
   return (
-    <div className="flex items-center justify-between px-5 py-2.5">
-      <span className="text-sm">{label}</span>
-      <span className={cn('text-sm', bold && 'font-bold')}>{value}</span>
+    <div className="flex items-center justify-between px-4 py-2.5">
+      <span className="text-base">{label}</span>
+      <span className={cn('text-base', bold && 'font-bold')}>{value}</span>
     </div>
   )
 }
@@ -30,7 +30,7 @@ export function OrderTotalsCard({ order, items }: { order: Order; items: OrderEd
   const totalProjectable = subtotalChanged && compareMoney(order.total, order.item_total) === 0
 
   return (
-    <Card className="gap-0 py-0">
+    <Card className="gap-0">
       <CardHeader>
         <CardTitle>{t('admin.orders.edit.totals_title')}</CardTitle>
       </CardHeader>
@@ -107,7 +107,7 @@ export function OrderTotalsCard({ order, items }: { order: Order; items: OrderEd
 
       <Separator />
 
-      <CardContent className="px-5 py-4">
+      <CardContent className="px-4 py-4">
         <p className="text-xs text-muted-foreground">
           {!subtotalChanged
             ? t('admin.orders.edit.totals_hint')
