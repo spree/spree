@@ -3,7 +3,6 @@ import type { Customer } from '@spree/admin-sdk'
 import { adminClient, mapSpreeErrorsToForm, TagCombobox } from '@spree/dashboard-core'
 import {
   Button,
-  Checkbox,
   Field,
   FieldError,
   FieldGroup,
@@ -16,6 +15,7 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
+  Switch,
 } from '@spree/dashboard-ui'
 import { useMutation } from '@tanstack/react-query'
 import { Controller, useForm } from 'react-hook-form'
@@ -164,7 +164,7 @@ export function NewCustomerSheet({
                     name="accepts_email_marketing"
                     control={form.control}
                     render={({ field }) => (
-                      <Checkbox
+                      <Switch
                         id="accepts_email_marketing"
                         checked={!!field.value}
                         onCheckedChange={field.onChange}

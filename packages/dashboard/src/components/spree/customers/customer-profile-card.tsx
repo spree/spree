@@ -8,7 +8,6 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-  Checkbox,
   Field,
   FieldError,
   FieldGroup,
@@ -21,6 +20,7 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
+  Switch,
 } from '@spree/dashboard-ui'
 import { MailIcon, PencilIcon, PhoneIcon, StarIcon } from '@spree/dashboard-ui/icons'
 import { useState } from 'react'
@@ -214,7 +214,7 @@ function EditProfileSheet({
                     name="accepts_email_marketing"
                     control={form.control}
                     render={({ field }) => (
-                      <Checkbox
+                      <Switch
                         id="accepts_email_marketing"
                         checked={!!field.value}
                         onCheckedChange={field.onChange}
