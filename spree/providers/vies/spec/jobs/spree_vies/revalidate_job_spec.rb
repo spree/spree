@@ -20,7 +20,7 @@ RSpec.describe SpreeVies::RevalidateJob do
     due.each { |tax_identifier| tax_identifier.update_columns(validation_status: nil) } # never asked
     allow(SpreeVies).to receive(:revalidations_per_minute).and_return(2)
 
-    Timecop.freeze do
+    freeze_time do
       described_class.perform_now
 
       expect(Spree::TaxIdentifiers::ValidateJob).to have_been_enqueued.with(due[0].id).at(Time.current)
@@ -36,13 +36,13 @@ RSpec.describe SpreeVies::RevalidateJob do
     started_at = Time.current.change(usec: 0)
     checks_queued = -> { enqueued_jobs.count { |job| job[:job] == Spree::TaxIdentifiers::ValidateJob } }
 
-    Timecop.freeze(started_at) do
+    travel_to(started_at) do
       described_class.perform_later
       queue_adapter.with(stopping: -> { checks_queued.call == 2 }) { perform_enqueued_jobs(only: described_class) }
     end
     expect(checks_queued.call).to eq(2)
 
-    Timecop.freeze(started_at + 30.seconds) { perform_enqueued_jobs(only: described_class) }
+    travel_to(started_at + 30.seconds) { perform_enqueued_jobs(only: described_class) }
 
     expect(Spree::TaxIdentifiers::ValidateJob).to have_been_enqueued.with(due[2].id).at(started_at + 1.minute)
   end
@@ -54,12 +54,12 @@ RSpec.describe SpreeVies::RevalidateJob do
     started_at = Time.current.change(usec: 0)
     checks_queued = -> { enqueued_jobs.count { |job| job[:job] == Spree::TaxIdentifiers::ValidateJob } }
 
-    Timecop.freeze(started_at) do
+    travel_to(started_at) do
       described_class.perform_later
       queue_adapter.with(stopping: -> { checks_queued.call == 2 }) { perform_enqueued_jobs(only: described_class) }
     end
 
-    Timecop.freeze(started_at + 2.hours) { perform_enqueued_jobs(only: described_class) }
+    travel_to(started_at + 2.hours) { perform_enqueued_jobs(only: described_class) }
 
     expect(Spree::TaxIdentifiers::ValidateJob).to have_been_enqueued.with(due[2].id).at(started_at + 2.hours)
   end
@@ -73,14 +73,14 @@ RSpec.describe SpreeVies::RevalidateJob do
     started_at = Time.current.change(usec: 0)
     checks_queued = -> { enqueued_jobs.count { |job| job[:job] == Spree::TaxIdentifiers::ValidateJob } }
 
-    Timecop.freeze(started_at) do
+    travel_to(started_at) do
       described_class.perform_later
       queue_adapter.with(stopping: -> { checks_queued.call == 2 }) { perform_enqueued_jobs(only: described_class) }
     end
     interrupted = enqueued_jobs.find { |job| job[:job] == described_class }
     job_data = JSON.parse(JSON.generate(interrupted.reject { |key, _| key.is_a?(Symbol) }))
 
-    Timecop.freeze(started_at + 30.seconds) { ActiveJob::Base.execute(job_data) }
+    travel_to(started_at + 30.seconds) { ActiveJob::Base.execute(job_data) }
 
     expect(Spree::TaxIdentifiers::ValidateJob).to have_been_enqueued.with(due[0].id).exactly(:once)
     expect(Spree::TaxIdentifiers::ValidateJob).to have_been_enqueued.with(due[2].id).at(started_at + 1.minute)

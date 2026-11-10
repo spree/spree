@@ -88,7 +88,7 @@ RSpec.describe SpreeVies::Validator do
     it 'waits longer after each attempt' do
       tax_identifier.update_columns(validation_evidence: { 'attempts' => 2 })
 
-      Timecop.freeze do
+      freeze_time do
         expect { validate }.to have_enqueued_job(Spree::TaxIdentifiers::ValidateJob).at(20.minutes.from_now)
       end
     end
@@ -164,7 +164,7 @@ RSpec.describe SpreeVies::Validator do
     end
 
     it 'spreads the checks it holds back over the cool-off length after it ends' do
-      Timecop.freeze do
+      freeze_time do
         validate
         other = create(:tax_identifier, value: 'DE123456788')
         allow_any_instance_of(described_class).to receive(:rand).with(described_class::COOL_OFF.to_i).and_return(123)
