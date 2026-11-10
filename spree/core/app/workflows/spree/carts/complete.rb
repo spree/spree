@@ -110,7 +110,7 @@ module Spree
         end
 
         finalize!(cart, result)
-        halt!(result)
+        halt!(order_group || result)
       end
 
       # The split already ran, so the money and the division are settled — what
@@ -233,6 +233,7 @@ module Spree
         ApplicationRecord.transaction do
           order.payments.update_all(order_id: nil, cart_id: cart.id)
           order.payment_sessions.update_all(order_id: nil, cart_id: cart.id)
+          repoint_reservation_lines!(order, @copied_line_items.invert)
           order.stock_reservations.update_all(order_id: nil, cart_id: cart.id)
           Spree::CouponCode.where(order_id: order.id).update_all(order_id: nil, cart_id: cart.id)
           order.reload.destroy!
@@ -284,7 +285,11 @@ module Spree
           )
           order.save!
 
+          # Copied lines validate against the new order, so its own holds must already belong to it.
+          cart.stock_reservations.update_all(order_id: order.id, cart_id: nil)
           line_item_map = copy_line_items!(cart, order)
+          @copied_line_items = line_item_map
+          repoint_reservation_lines!(order, line_item_map)
           fulfillment_map = copy_fulfillments!(cart, order, line_item_map)
           fee_map = copy_typed_lines!(cart, order, line_item_map, fulfillment_map)
           copy_promotions!(cart, order)
@@ -310,6 +315,14 @@ module Spree
           )
         end
         order
+      end
+
+      # Seller splitting follows the copied line ids. Compensation applies the
+      # inverse map before deleting those copies, keeping the cart's holds alive.
+      def repoint_reservation_lines!(order, line_item_map)
+        line_item_map.each do |source, target|
+          order.stock_reservations.where(line_item_id: source.id).update_all(line_item_id: target.id)
+        end
       end
 
       # Freezes the buyer's tax registration onto the order, stamped with which
@@ -524,7 +537,6 @@ module Spree
       def repoint_money_records!(cart, order)
         cart.payments.update_all(order_id: order.id, cart_id: nil)
         cart.payment_sessions.update_all(order_id: order.id, cart_id: nil)
-        cart.stock_reservations.update_all(order_id: order.id, cart_id: nil)
         Spree::CouponCode.where(cart_id: cart.id).update_all(order_id: order.id, cart_id: nil)
         order.payments.reset
       end

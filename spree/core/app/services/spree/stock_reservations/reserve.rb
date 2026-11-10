@@ -139,16 +139,19 @@ module Spree
         )
       end
 
+      # Handoff to a draft clears the cart reference. A SQL inequality alone
+      # drops those holds instead of counting them against competing checkouts.
       def held_by_others(stock_level_ids, owner)
         return {} if stock_level_ids.empty?
 
         owner_column = owner.is_a?(Spree::Cart) ? :cart_id : :order_id
-        Spree::StockReservation
-          .active
-          .where(stock_level_id: stock_level_ids)
-          .where.not(owner_column => owner.id)
-          .group(:stock_level_id)
-          .sum(:quantity)
+        owner_reference = Spree::StockReservation.arel_table[owner_column]
+        Spree::StockReservation.
+          active.
+          where(stock_level_id: stock_level_ids).
+          where(owner_reference.eq(nil).or(owner_reference.not_eq(owner.id))).
+          group(:stock_level_id).
+          sum(:quantity)
       end
 
       # One SELECT for all (stock_level_id, line_item_id) pairs we need to
