@@ -495,6 +495,11 @@
         "light": "Ánh sáng",
         "system": "Hệ thống"
       },
+      "timezone_combobox": {
+        "empty": "Không tìm thấy múi giờ",
+        "placeholder": "Chọn múi giờ",
+        "search_placeholder": "Tìm múi giờ…"
+      },
       "wizard": {
         "discard_cancel": "Tiếp tục chỉnh sửa",
         "discard_confirm": "Loại bỏ",

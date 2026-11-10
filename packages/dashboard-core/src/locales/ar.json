@@ -493,6 +493,11 @@
         "light": "فاتح",
         "system": "النظام"
       },
+      "timezone_combobox": {
+        "empty": "لم يتم العثور على مناطق زمنية",
+        "placeholder": "اختر منطقة زمنية",
+        "search_placeholder": "ابحث عن المناطق الزمنية…"
+      },
       "wizard": {
         "discard_cancel": "متابعة التحرير",
         "discard_confirm": "تجاهل",

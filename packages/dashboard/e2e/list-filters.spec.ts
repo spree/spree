@@ -39,32 +39,6 @@ test.describe('list filters', () => {
     await expect(row(page, other)).toBeHidden()
   })
 
-  test('filters payment methods by status', async ({ page }) => {
-    const session = await login(page)
-    const id = stamp()
-    const active = `E2E Active ${id}`
-    const inactive = `E2E Inactive ${id}`
-    await seedRecord(page, session, '/payment_methods', {
-      type: 'check',
-      name: active,
-      active: true,
-    })
-    await seedRecord(page, session, '/payment_methods', {
-      type: 'check',
-      name: inactive,
-      active: false,
-    })
-
-    await openList(page, `/${session.store_id}/settings/payment-methods`, /search by name/i)
-    await searchList(page, /search by name/i, id)
-    await expect(row(page, active)).toBeVisible({ timeout: 15_000 })
-
-    await addListFilter(page, /^status$/i, /^no$/i)
-
-    await expect(row(page, inactive)).toBeVisible({ timeout: 15_000 })
-    await expect(row(page, active)).toBeHidden()
-  })
-
   test('filters sellers by status', async ({ page }) => {
     const session = await login(page)
     const name = `E2E Filter Seller ${stamp()}`

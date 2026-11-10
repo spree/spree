@@ -2283,8 +2283,7 @@
           "label": "Transaktionale E-Mails an Kunden senden"
         },
         "timezone": {
-          "label": "Zeitzone",
-          "placeholder": "Zeitzone auswählen"
+          "label": "Zeitzone"
         },
         "unit_system": {
           "label": "Einheitensystem"
@@ -2746,7 +2745,7 @@
         "shipping": "Versand",
         "tax": "Steuern"
       },
-      "manage_payment_methods": "Zahlungsmethoden verwalten",
+      "manage_payment_methods": "Zahlungen verwalten",
       "messages": {
         "connected": "Integration verbunden",
         "disconnected": "Integration getrennt",
@@ -4280,14 +4279,11 @@
         },
         "store": {
           "subtitle": "Allgemeine Konfiguration und shopweite Standardwerte.",
-          "tab_addresses": "Adressen",
           "tab_catalog": "Katalog",
           "tab_general": "Allgemein",
           "tab_inventory": "Lagerbestand",
           "tab_order_numbers": "Bestellnummern",
-          "tab_payments": "Zahlungen",
           "tab_standards": "Standards und Formate",
-          "tab_storefront_access": "Storefront-Zugriff",
           "title": "Shop-Einstellungen",
           "tab_downloads": "Digitale Downloads",
           "downloads_help": "Wie lange ein Download-Link gültig ist und wie oft er verwendet werden kann. Einzelne Dateien können diese Werte überschreiben.",
@@ -4524,6 +4520,46 @@
             "description": "Registrieren Sie einen OAuth-Client, damit er mit diesem Shop verbunden werden kann."
           },
           "copy_client_id": "Client-ID kopieren"
+        },
+        "payments": {
+          "title": "Zahlungen",
+          "description": "Die Zahlungsanbieter und manuellen Methoden, mit denen Kunden bezahlen, und wann Zahlungen eingezogen werden.",
+          "providers_title": "Zahlungsanbieter",
+          "providers_empty": {
+            "title": "Keine Zahlungsanbieter verfügbar",
+            "description": "Installieren Sie eine Erweiterung für einen Zahlungsanbieter, um Karten und Wallets zu akzeptieren."
+          },
+          "manual_title": "Manuelle Zahlungsmethoden",
+          "add_manual": "Manuelle Methode hinzufügen",
+          "manual_empty": {
+            "title": "Keine manuellen Zahlungsmethoden",
+            "description": "Nehmen Sie Zahlungen außerhalb Ihres Shops an, etwa per Scheck, Überweisung oder Nachnahme."
+          },
+          "capture_title": "Zahlungseinzug",
+          "checkout_order": {
+            "cta": "Reihenfolge an der Kasse",
+            "title": "Reihenfolge an der Kasse",
+            "description": "Ziehen Sie die Zahlungsmethoden in die Reihenfolge, in der Kunden sie an der Kasse sehen. Aufgeführt sind nur aktive Methoden, die im Shop angezeigt werden.",
+            "empty": {
+              "title": "An der Kasse wird nichts angeboten",
+              "description": "Aktivieren Sie eine Zahlungsmethode und zeigen Sie sie im Shop an, damit sie hier erscheint."
+            }
+          },
+          "test_gateway": "Test-Gateway"
+        },
+        "storefront": {
+          "title": "Shop & Kasse",
+          "description": "Wo Ihr Shop zu finden ist, wer darin stöbern darf und was die Kasse von Kunden abfragt.",
+          "storefront_title": "Shop",
+          "checkout_title": "Kasse",
+          "addresses_title": "Adressen",
+          "url": {
+            "label": "Shop-URL",
+            "not_connected": "Noch nicht verbunden",
+            "connect": "Verbinden",
+            "change": "Ändern",
+            "help": "Wo Kunden einkaufen. Spree verlinkt ihn aus E-Mails und dem Dashboard und erlaubt ihm Aufrufe der Store API."
+          }
         }
       },
       "staff": {
@@ -4608,10 +4644,6 @@
       }
     },
     "payment_methods": {
-      "add_cta": "Zahlungsmethode hinzufügen",
-      "columns": {
-        "storefront": "Onlineshop"
-      },
       "create_description": "Wählen Sie einen Anbieter und konfigurieren Sie dessen Zugangsdaten.",
       "create_label": "Zahlungsmethode erstellen",
       "delete_confirm": {
@@ -4619,22 +4651,19 @@
         "title": "Zahlungsmethode löschen?"
       },
       "edit_description": "Aktualisieren Sie Name, Sichtbarkeit oder Status.",
-      "empty": "Keine Zahlungsarten konfiguriert",
       "messages": {
         "created": "Zahlungsmethode erstellt",
         "deleted": "Zahlungsmethode gelöscht",
         "updated": "Zahlungsmethode aktualisiert"
       },
       "provider_description": "Anbieter: {{provider}}",
-      "search_placeholder": "Nach Name suchen…",
       "status": {
         "disabled": "Deaktiviert"
       },
       "storefront": {
         "admin_only": "Nur Administration",
         "visible": "Sichtbar"
-      },
-      "title": "Zahlungsarten"
+      }
     },
     "permissions": {
       "descriptions": {
@@ -5607,7 +5636,7 @@
         "integrations": "Versand-, Steuer- und andere Anbieter verbinden",
         "maintenance_tasks": "Nachbefüllungen, Neuindizierungen und Upgrade-Schritte samt Protokoll jedes Laufs",
         "markets": "Länder, in die Sie verkaufen, und ihre Währungen",
-        "payment_methods": "Zahlungsanbieter und wie Zahlungen eingezogen werden",
+        "payment_methods": "Zahlungsanbieter, manuelle Methoden und wann Zahlungen eingezogen werden",
         "policies": "AGB, Datenschutz, Rückgabe und Versand",
         "product_types": "Vorlagen, die neue Produkte vorbefüllen",
         "reasons": "Gründe für Retouren, Rückerstattungen und Reklamationen",
@@ -5615,14 +5644,15 @@
         "seller_requirements": "Checkliste, die Verkäufer vor der Freigabe erfüllen",
         "staff": "Personen mit Zugriff auf dieses Dashboard",
         "stock_locations": "Lager und Abholpunkte mit Beständen",
-        "store": "Shopname, Zeitzone, Einheiten und regionale Standards",
+        "store": "Shopname, SEO, Zeitzone, Einheiten und Bestellnummern",
         "webhooks": "Endpunkte, die bei Ereignissen benachrichtigt werden",
         "package_types": "Kartons, Paletten und Container",
         "suppliers": "Von wem Sie Ware einkaufen und wie Sie sie erreichen",
         "marketplace": "Auszahlungen, Verkäuferfreigabe, Verkäufer-E-Mails und Steuer auf Provision",
         "taxes": "Steuerkategorien, Steuersätze und Befreiungsgründe",
         "ai_agents": "KI-Agenten mit Zugriff auf diesen Shop",
-        "oauth_clients": "OAuth-Clients registrieren und konfigurieren"
+        "oauth_clients": "OAuth-Clients registrieren und konfigurieren",
+        "storefront": "Shop-URL, wer stöbern darf, Kasse und Adressfelder"
       },
       "groups": {
         "audit": "Audit",
@@ -5646,7 +5676,7 @@
         "integrations": "Integrationen",
         "maintenance_tasks": "Wartungsaufgaben",
         "markets": "Märkte",
-        "payment_methods": "Zahlungsmethoden",
+        "payment_methods": "Zahlungen",
         "policies": "Richtlinien",
         "product_types": "Produkttypen",
         "profile": "Profil",
@@ -5664,7 +5694,8 @@
         "marketplace": "Einstellungen",
         "taxes": "Steuern",
         "ai_agents": "KI-Agenten",
-        "oauth_clients": "OAuth-Clients"
+        "oauth_clients": "OAuth-Clients",
+        "storefront": "Shop & Kasse"
       },
       "breadcrumbs": {
         "marketplace": "Marktplatz"
@@ -5984,8 +6015,7 @@
         "oz": "Unze (oz)"
       },
       "seo": {
-        "title": "Suchmaschinen-Eintrag",
-        "description": "Standardtitel und -beschreibung Ihres Shops. Übersetzen Sie sie für jede Sprache, die Ihr Shop unterstützt."
+        "title": "Suchmaschinen-Eintrag"
       }
     },
     "table_descriptions": {
@@ -6012,7 +6042,6 @@
       "markets": "Die Regionen, in die Sie verkaufen, jeweils mit eigener Währung, Steuer und Lieferung.",
       "orders": "Jede Bestellung in Ihrem Shop und ihr aktueller Stand.",
       "draft_orders": "Bestellungen, die Ihr Team im Namen eines Kunden anlegt und die noch nicht aufgegeben sind.",
-      "payment_methods": "Wie Kunden bezahlen können und welche Anbieter dahinterstehen.",
       "policies": "Ihre AGB sowie Datenschutz-, Rückgabe- und Versandrichtlinien, veröffentlicht im Storefront.",
       "products": "Alles, was Sie verkaufen, mit Varianten, Preisen und Bestand.",
       "promotions": "Rabatte und Angebote und die Regeln, die entscheiden, wann sie gelten.",

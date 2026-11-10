@@ -634,14 +634,11 @@
         },
         "store": {
           "subtitle": "Configuración general y valores predeterminados de toda la tienda.",
-          "tab_addresses": "Direcciones",
           "tab_catalog": "Catálogo",
           "tab_general": "General",
           "tab_inventory": "Inventario",
           "tab_order_numbers": "Numeración de pedidos",
-          "tab_payments": "Pagos",
           "tab_standards": "Estándares y formatos",
-          "tab_storefront_access": "Acceso del storefront",
           "title": "Configuración de la tienda",
           "tab_downloads": "Descargas digitales",
           "downloads_help": "Cuánto tiempo funciona un enlace de descarga y cuántas veces se puede usar. Los archivos individuales pueden reemplazar estos valores.",
@@ -878,6 +875,46 @@
             "description": "Registre un cliente OAuth para poder conectarlo a esta tienda."
           },
           "copy_client_id": "Copiar ID de cliente"
+        },
+        "payments": {
+          "title": "Pagos",
+          "description": "Los proveedores de pago y métodos manuales con los que pagan los clientes, y cuándo se cobran los pagos.",
+          "providers_title": "Proveedores de pago",
+          "providers_empty": {
+            "title": "No hay proveedores de pago disponibles",
+            "description": "Instala una extensión de proveedor de pago para aceptar tarjetas y billeteras."
+          },
+          "manual_title": "Métodos de pago manuales",
+          "add_manual": "Añadir método manual",
+          "manual_empty": {
+            "title": "No hay métodos de pago manuales",
+            "description": "Recibe pagos fuera de tu tienda, como cheques, transferencias bancarias o contra reembolso."
+          },
+          "capture_title": "Cobro de pagos",
+          "checkout_order": {
+            "cta": "Orden en el checkout",
+            "title": "Orden en el checkout",
+            "description": "Arrastra para fijar el orden en que los clientes ven los métodos de pago en el checkout. Solo se muestran los métodos activos visibles en la tienda.",
+            "empty": {
+              "title": "No se ofrece nada en el checkout",
+              "description": "Activa un método de pago y muéstralo en la tienda para que aparezca aquí."
+            }
+          },
+          "test_gateway": "Pasarela de prueba"
+        },
+        "storefront": {
+          "title": "Tienda y checkout",
+          "description": "Dónde está tu tienda, quién puede navegarla y qué pide el checkout a los clientes.",
+          "storefront_title": "Tienda",
+          "checkout_title": "Checkout",
+          "addresses_title": "Direcciones",
+          "url": {
+            "label": "URL de la tienda",
+            "not_connected": "Aún sin conectar",
+            "connect": "Conectar",
+            "change": "Cambiar",
+            "help": "Donde compran los clientes. Spree enlaza a ella desde los correos y el panel, y le permite llamar a la Store API."
+          }
         }
       },
       "staff": {
@@ -2268,8 +2305,7 @@
           "label": "Enviar emails transaccionales a los clientes"
         },
         "timezone": {
-          "label": "Zona horaria",
-          "placeholder": "Seleccionar una zona horaria"
+          "label": "Zona horaria"
         },
         "unit_system": {
           "label": "Sistema de unidades"
@@ -4455,7 +4491,7 @@
         "integrations": "Conectá proveedores de envío, impuestos y otros",
         "maintenance_tasks": "Rellenos, reindexaciones y pasos de actualización, con un registro de cada ejecución",
         "markets": "Los países a los que vendés y sus monedas",
-        "payment_methods": "Pasarelas de pago y cómo se capturan los pagos",
+        "payment_methods": "Proveedores de pago, métodos manuales y cuándo se cobran los pagos",
         "policies": "Documentos de términos, privacidad, devoluciones y envíos",
         "product_types": "Plantillas que precargan los productos nuevos",
         "reasons": "Motivos ofrecidos para devoluciones, reembolsos y reclamos",
@@ -4463,14 +4499,15 @@
         "seller_requirements": "Lista de control que completan los vendedores antes de la aprobación",
         "staff": "Personas con acceso a este dashboard",
         "stock_locations": "Depósitos y puntos de retiro que guardan stock",
-        "store": "Nombre de la tienda, zona horaria, unidades y predeterminados regionales",
+        "store": "Nombre de la tienda, SEO, zona horaria, unidades y números de pedido",
         "webhooks": "Endpoints notificados cuando ocurren eventos",
         "package_types": "Cajas, cajones, palets y contenedores",
         "suppliers": "A quién le comprás stock y cómo contactarlos",
         "marketplace": "Pagos a vendedores, aprobación de vendedores, correos a vendedores e impuesto sobre la comisión",
         "taxes": "Categorías fiscales, tipos impositivos y motivos de exención",
         "ai_agents": "Agentes de IA con acceso a esta tienda",
-        "oauth_clients": "Registrar y configurar clientes OAuth"
+        "oauth_clients": "Registrar y configurar clientes OAuth",
+        "storefront": "URL de la tienda, quién puede navegar, checkout y campos de dirección"
       },
       "groups": {
         "audit": "Auditoría",
@@ -4494,7 +4531,7 @@
         "integrations": "Integraciones",
         "maintenance_tasks": "Tareas de mantenimiento",
         "markets": "Mercados",
-        "payment_methods": "Métodos de pago",
+        "payment_methods": "Pagos",
         "policies": "Políticas",
         "product_types": "Tipos de producto",
         "profile": "Perfil",
@@ -4512,7 +4549,8 @@
         "marketplace": "Configuración",
         "taxes": "Impuestos",
         "ai_agents": "Agentes de IA",
-        "oauth_clients": "Clientes OAuth"
+        "oauth_clients": "Clientes OAuth",
+        "storefront": "Tienda y checkout"
       },
       "breadcrumbs": {
         "marketplace": "Marketplace"
@@ -5409,7 +5447,7 @@
         "shipping": "Envío",
         "tax": "Impuestos"
       },
-      "manage_payment_methods": "Gestionar métodos de pago",
+      "manage_payment_methods": "Gestionar pagos",
       "messages": {
         "connected": "Integración conectada",
         "disconnected": "Integración desconectada",
@@ -5820,7 +5858,6 @@
       "markets": "Las regiones a las que vendés, cada una con su moneda, impuestos y envíos.",
       "orders": "Cada pedido realizado en tu tienda y en qué punto está cada uno.",
       "draft_orders": "Pedidos que tu equipo arma en nombre de un cliente y que todavía no se realizaron.",
-      "payment_methods": "Cómo pueden pagar los clientes y los proveedores detrás de cada opción.",
       "policies": "Tus políticas de términos, privacidad, devoluciones y envíos, publicadas en el storefront.",
       "products": "Todo lo que vendés, con sus variantes, precios y stock.",
       "promotions": "Descuentos y ofertas, y las reglas que deciden cuándo aplican.",
@@ -6022,10 +6059,6 @@
       "tax_inclusive": "Incluido"
     },
     "payment_methods": {
-      "add_cta": "Agregar método de pago",
-      "columns": {
-        "storefront": "Storefront"
-      },
       "create_description": "Elegí un proveedor y configurá sus credenciales.",
       "create_label": "Crear método de pago",
       "delete_confirm": {
@@ -6033,22 +6066,19 @@
         "title": "¿Eliminar método de pago?"
       },
       "edit_description": "Actualizá el nombre, la visibilidad o el estado.",
-      "empty": "No hay métodos de pago configurados",
       "messages": {
         "created": "Método de pago creado",
         "deleted": "Método de pago eliminado",
         "updated": "Método de pago actualizado"
       },
       "provider_description": "Proveedor: {{provider}}",
-      "search_placeholder": "Buscar por nombre…",
       "status": {
         "disabled": "Deshabilitado"
       },
       "storefront": {
         "admin_only": "Solo admin",
         "visible": "Visible"
-      },
-      "title": "Métodos de pago"
+      }
     },
     "setup": {
       "back_to_login": "Volver a iniciar sesión",
@@ -6324,8 +6354,7 @@
         "oz": "Onza (oz)"
       },
       "seo": {
-        "title": "Ficha en buscadores",
-        "description": "El título y la descripción predeterminados de tu tienda. Tradúcelos a cada idioma que admite tu tienda."
+        "title": "Ficha en buscadores"
       }
     },
     "company_invitations": {

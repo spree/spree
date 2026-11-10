@@ -80,7 +80,7 @@ export function SettingsIndexPage({ tenantId }: { tenantId: string }) {
             <Card className="gap-0 overflow-hidden">
               <ul>
                 {entries.map((entry, index) => (
-                  <SettingsRow
+                  <SettingsIndexRow
                     key={entry.key}
                     entry={entry}
                     tenantId={tenantId}
@@ -96,7 +96,7 @@ export function SettingsIndexPage({ tenantId }: { tenantId: string }) {
   )
 }
 
-function SettingsRow({
+function SettingsIndexRow({
   entry,
   tenantId,
   divided,

@@ -2278,8 +2278,7 @@
           "label": "向客户发送交易类邮件"
         },
         "timezone": {
-          "label": "时区",
-          "placeholder": "选择时区"
+          "label": "时区"
         },
         "unit_system": {
           "label": "单位制"
@@ -2741,7 +2740,7 @@
         "shipping": "配送",
         "tax": "税务"
       },
-      "manage_payment_methods": "管理支付方式",
+      "manage_payment_methods": "管理付款",
       "messages": {
         "connected": "集成已连接",
         "disconnected": "集成已断开",
@@ -4268,14 +4267,11 @@
         },
         "store": {
           "subtitle": "通用配置与店铺级默认设置。",
-          "tab_addresses": "地址",
           "tab_catalog": "商品目录",
           "tab_general": "通用",
           "tab_inventory": "库存",
           "tab_order_numbers": "订单编号",
-          "tab_payments": "支付",
           "tab_standards": "标准与格式",
-          "tab_storefront_access": "店铺访问权限",
           "title": "店铺设置",
           "tab_downloads": "数字下载",
           "downloads_help": "下载链接的有效期以及可使用的次数。单个文件可覆盖这些数值。",
@@ -4512,6 +4508,46 @@
             "description": "注册 OAuth 客户端后即可将其连接到此店铺。"
           },
           "copy_client_id": "复制客户端 ID"
+        },
+        "payments": {
+          "title": "付款",
+          "description": "客户可使用的支付服务商和手动付款方式，以及收款时间。",
+          "providers_title": "支付服务商",
+          "providers_empty": {
+            "title": "没有可用的支付服务商",
+            "description": "安装支付服务商扩展以接受银行卡和电子钱包。"
+          },
+          "manual_title": "手动付款方式",
+          "add_manual": "添加手动付款方式",
+          "manual_empty": {
+            "title": "没有手动付款方式",
+            "description": "在店铺之外收款，例如支票、银行转账或货到付款。"
+          },
+          "capture_title": "收款",
+          "checkout_order": {
+            "cta": "结账顺序",
+            "title": "结账顺序",
+            "description": "拖动以设置客户在结账时看到的付款方式顺序。仅列出在店面显示的已启用付款方式。",
+            "empty": {
+              "title": "结账时未提供任何付款方式",
+              "description": "启用一种付款方式并在店面显示，即可在此列出。"
+            }
+          },
+          "test_gateway": "测试网关"
+        },
+        "storefront": {
+          "title": "店面与结账",
+          "description": "店面所在位置、谁可以浏览，以及结账时向客户收集哪些信息。",
+          "storefront_title": "店面",
+          "checkout_title": "结账",
+          "addresses_title": "地址",
+          "url": {
+            "label": "店面网址",
+            "not_connected": "尚未连接",
+            "connect": "连接",
+            "change": "更改",
+            "help": "客户购物的地方。Spree 会在邮件和后台中链接到这里，并允许它调用 Store API。"
+          }
         }
       },
       "staff": {
@@ -4596,10 +4632,6 @@
       }
     },
     "payment_methods": {
-      "add_cta": "添加支付方式",
-      "columns": {
-        "storefront": "店面"
-      },
       "create_description": "选择服务商并配置其凭据。",
       "create_label": "创建支付方式",
       "delete_confirm": {
@@ -4607,22 +4639,19 @@
         "title": "删除支付方式？"
       },
       "edit_description": "更新名称、可见性或状态。",
-      "empty": "尚未配置支付方式",
       "messages": {
         "created": "支付方式已创建",
         "deleted": "支付方式已删除",
         "updated": "支付方式已更新"
       },
       "provider_description": "服务商：{{provider}}",
-      "search_placeholder": "按名称搜索…",
       "status": {
         "disabled": "已禁用"
       },
       "storefront": {
         "admin_only": "仅管理员",
         "visible": "可见"
-      },
-      "title": "支付方式"
+      }
     },
     "permissions": {
       "descriptions": {
@@ -5594,7 +5623,7 @@
         "integrations": "连接物流、税务及其他服务商",
         "maintenance_tasks": "回填、重建索引与升级步骤，并记录每次运行",
         "markets": "销售的国家/地区及其货币",
-        "payment_methods": "支付网关与收款方式",
+        "payment_methods": "支付服务商、手动付款方式以及收款时间",
         "policies": "条款、隐私、退货与配送文件",
         "product_types": "用于预填新商品的模板",
         "reasons": "退货、退款与索赔的可选原因",
@@ -5602,14 +5631,15 @@
         "seller_requirements": "卖家通过审核前需完成的清单",
         "staff": "可访问此后台的人员",
         "stock_locations": "存放库存的仓库与自提点",
-        "store": "店铺名称、时区、单位与区域默认值",
+        "store": "店铺名称、SEO、时区、单位和订单号",
         "webhooks": "事件发生时接收通知的端点",
         "package_types": "纸箱、外箱、托盘与集装箱",
         "suppliers": "你从谁那里采购库存，以及如何联系他们",
         "marketplace": "卖家付款、卖家审核、卖家邮件与佣金税",
         "taxes": "税务类别、税率和免税原因",
         "ai_agents": "有权访问此店铺的 AI 代理",
-        "oauth_clients": "注册并配置 OAuth 客户端"
+        "oauth_clients": "注册并配置 OAuth 客户端",
+        "storefront": "店面网址、谁可以浏览、结账和地址字段"
       },
       "groups": {
         "audit": "审计",
@@ -5633,7 +5663,7 @@
         "integrations": "集成",
         "maintenance_tasks": "维护任务",
         "markets": "市场",
-        "payment_methods": "支付方式",
+        "payment_methods": "付款",
         "policies": "政策",
         "product_types": "商品类型",
         "profile": "个人资料",
@@ -5651,7 +5681,8 @@
         "marketplace": "设置",
         "taxes": "税费",
         "ai_agents": "AI 代理",
-        "oauth_clients": "OAuth 客户端"
+        "oauth_clients": "OAuth 客户端",
+        "storefront": "店面与结账"
       },
       "breadcrumbs": {
         "marketplace": "平台"
@@ -5970,8 +6001,7 @@
         "oz": "盎司 (oz)"
       },
       "seo": {
-        "title": "搜索引擎展示",
-        "description": "店铺的默认标题和描述。请为店铺支持的每种语言进行翻译。"
+        "title": "搜索引擎展示"
       }
     },
     "table_descriptions": {
@@ -5998,7 +6028,6 @@
       "markets": "您销售的地区，各有自己的货币、税务和配送设置。",
       "orders": "店铺收到的每一笔订单及其当前状态。",
       "draft_orders": "团队代客户创建、尚未提交的订单。",
-      "payment_methods": "客户可用的支付方式，以及每个选项背后的服务商。",
       "policies": "发布在店面上的条款、隐私、退货和配送政策。",
       "products": "您销售的所有商品，包括其变体、价格和库存。",
       "promotions": "折扣与优惠，以及决定何时生效的规则。",

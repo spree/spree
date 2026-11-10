@@ -2283,8 +2283,7 @@
           "label": "Send transactional emails to customers"
         },
         "timezone": {
-          "label": "Timezone",
-          "placeholder": "Select a timezone"
+          "label": "Timezone"
         },
         "unit_system": {
           "label": "Unit system"
@@ -2746,7 +2745,7 @@
         "shipping": "Shipping",
         "tax": "Tax"
       },
-      "manage_payment_methods": "Manage payment methods",
+      "manage_payment_methods": "Manage payments",
       "messages": {
         "connected": "Integration connected",
         "disconnected": "Integration disconnected",
@@ -4280,14 +4279,11 @@
         },
         "store": {
           "subtitle": "General configuration and store-wide defaults.",
-          "tab_addresses": "Addresses",
           "tab_catalog": "Catalog",
           "tab_general": "General",
           "tab_inventory": "Inventory",
           "tab_order_numbers": "Order numbers",
-          "tab_payments": "Payments",
           "tab_standards": "Standards and formats",
-          "tab_storefront_access": "Storefront access",
           "title": "Store settings",
           "tab_downloads": "Digital downloads",
           "downloads_help": "How long a download link works and how many times it can be used. Individual files can override these numbers.",
@@ -4524,6 +4520,46 @@
             "description": "Register an OAuth client so it can be connected to this store."
           },
           "copy_client_id": "Copy client ID"
+        },
+        "payments": {
+          "title": "Payments",
+          "description": "The payment providers and manual methods customers can pay with, and when payments are taken.",
+          "providers_title": "Payment providers",
+          "providers_empty": {
+            "title": "No payment providers available",
+            "description": "Install a payment provider extension to accept cards and wallets."
+          },
+          "manual_title": "Manual payment methods",
+          "add_manual": "Add manual method",
+          "manual_empty": {
+            "title": "No manual payment methods",
+            "description": "Take payments outside your store, such as checks, bank transfers or cash on delivery."
+          },
+          "capture_title": "Payment capture",
+          "checkout_order": {
+            "cta": "Checkout order",
+            "title": "Checkout order",
+            "description": "Drag to set the order customers see payment methods in at checkout. Only active methods shown on the storefront are listed.",
+            "empty": {
+              "title": "Nothing offered at checkout",
+              "description": "Activate a payment method and show it on the storefront to list it here."
+            }
+          },
+          "test_gateway": "Test gateway"
+        },
+        "storefront": {
+          "title": "Storefront & checkout",
+          "description": "Where your storefront lives, who can browse it, and what checkout asks customers for.",
+          "storefront_title": "Storefront",
+          "checkout_title": "Checkout",
+          "addresses_title": "Addresses",
+          "url": {
+            "label": "Storefront URL",
+            "not_connected": "Not connected yet",
+            "connect": "Connect",
+            "change": "Change",
+            "help": "Where customers shop. Spree links to it from emails and the dashboard, and allows it to call the Store API."
+          }
         }
       },
       "staff": {
@@ -4608,10 +4644,6 @@
       }
     },
     "payment_methods": {
-      "add_cta": "Add payment method",
-      "columns": {
-        "storefront": "Storefront"
-      },
       "create_description": "Pick a provider and configure its credentials.",
       "create_label": "Create payment method",
       "delete_confirm": {
@@ -4619,22 +4651,19 @@
         "title": "Delete payment method?"
       },
       "edit_description": "Update name, visibility, or status.",
-      "empty": "No payment methods configured",
       "messages": {
         "created": "Payment method created",
         "deleted": "Payment method deleted",
         "updated": "Payment method updated"
       },
       "provider_description": "Provider: {{provider}}",
-      "search_placeholder": "Search by name…",
       "status": {
         "disabled": "Disabled"
       },
       "storefront": {
         "admin_only": "Admin only",
         "visible": "Visible"
-      },
-      "title": "Payment Methods"
+      }
     },
     "permissions": {
       "descriptions": {
@@ -5607,7 +5636,7 @@
         "integrations": "Connect shipping, tax and other providers",
         "maintenance_tasks": "Backfills, reindexes and upgrade steps, with a record of every run",
         "markets": "Countries you sell to and their currencies",
-        "payment_methods": "Payment gateways and how payments are captured",
+        "payment_methods": "Payment providers, manual methods and when payments are taken",
         "policies": "Terms, privacy, returns and shipping documents",
         "product_types": "Templates that pre-fill new products",
         "reasons": "Reasons offered for returns, refunds and claims",
@@ -5615,14 +5644,15 @@
         "seller_requirements": "Checklist sellers complete before approval",
         "staff": "People with access to this dashboard",
         "stock_locations": "Warehouses and pickup points that hold stock",
-        "store": "Store name, timezone, units and regional defaults",
+        "store": "Store name, SEO, timezone, units and order numbers",
         "webhooks": "Endpoints notified when events happen",
         "package_types": "Boxes, cartons, pallets and containers",
         "suppliers": "Who you buy stock from, and how to reach them",
         "marketplace": "Seller payouts, seller approval, seller emails and commission tax",
         "taxes": "Tax categories, rates and exemption reasons",
         "ai_agents": "AI agents with access to this store",
-        "oauth_clients": "Register and configure OAuth clients"
+        "oauth_clients": "Register and configure OAuth clients",
+        "storefront": "Storefront URL, who can browse, checkout and address fields"
       },
       "groups": {
         "audit": "Audit",
@@ -5646,7 +5676,7 @@
         "integrations": "Integrations",
         "maintenance_tasks": "Maintenance tasks",
         "markets": "Markets",
-        "payment_methods": "Payment methods",
+        "payment_methods": "Payments",
         "policies": "Policies",
         "product_types": "Product types",
         "profile": "Profile",
@@ -5664,7 +5694,8 @@
         "marketplace": "Settings",
         "taxes": "Taxes",
         "ai_agents": "AI Agents",
-        "oauth_clients": "OAuth clients"
+        "oauth_clients": "OAuth clients",
+        "storefront": "Storefront & checkout"
       },
       "breadcrumbs": {
         "marketplace": "Marketplace"
@@ -5984,8 +6015,7 @@
         "oz": "Ounce (oz)"
       },
       "seo": {
-        "title": "Search engine listing",
-        "description": "The default title and description of your storefront. Translate them for each language your store supports."
+        "title": "Search engine listing"
       }
     },
     "table_descriptions": {
@@ -6012,7 +6042,6 @@
       "markets": "The regions you sell to, each with its own currency, tax and delivery setup.",
       "orders": "Every order placed with your store, and where each one stands.",
       "draft_orders": "Orders your team is building on a customer's behalf, not yet placed.",
-      "payment_methods": "How customers can pay, and the providers behind each option.",
       "policies": "Your terms, privacy, returns and shipping policies, published on the storefront.",
       "products": "Everything you sell, with its variants, prices and stock.",
       "promotions": "Discounts and offers, and the rules that decide when they apply.",

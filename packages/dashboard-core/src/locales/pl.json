@@ -494,6 +494,11 @@
         "light": "Jasny",
         "system": "Systemowy"
       },
+      "timezone_combobox": {
+        "empty": "Nie znaleziono stref czasowych",
+        "placeholder": "Wybierz strefę czasową",
+        "search_placeholder": "Szukaj stref czasowych…"
+      },
       "wizard": {
         "discard_cancel": "Wróć do edycji",
         "discard_confirm": "Odrzuć",

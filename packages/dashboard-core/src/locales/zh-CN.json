@@ -493,6 +493,11 @@
         "light": "浅色",
         "system": "系统"
       },
+      "timezone_combobox": {
+        "empty": "未找到时区",
+        "placeholder": "选择时区",
+        "search_placeholder": "搜索时区…"
+      },
       "wizard": {
         "discard_cancel": "继续编辑",
         "discard_confirm": "放弃",

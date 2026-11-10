@@ -493,6 +493,11 @@
         "light": "Hell",
         "system": "System"
       },
+      "timezone_combobox": {
+        "empty": "Keine Zeitzonen gefunden",
+        "placeholder": "Zeitzone auswählen",
+        "search_placeholder": "Zeitzonen suchen…"
+      },
       "wizard": {
         "discard_cancel": "Weiter bearbeiten",
         "discard_confirm": "Verwerfen",

@@ -85,6 +85,8 @@ import {
   TabletIcon,
   TerminalIcon,
   UserMinusIcon,
+  UserPlusIcon,
+  UsersIcon,
   UsersRoundIcon,
 } from '@spree/dashboard-ui/icons'
 import { createFileRoute, Link } from '@tanstack/react-router'
@@ -159,7 +161,7 @@ function StaffSettingsPage() {
 function StaffCard({ staff, loading }: { staff: AdminUser[]; loading: boolean }) {
   const { t } = useTranslation()
   return (
-    <SettingsSection title={t('admin.pages.staff.members_section')}>
+    <SettingsSection title={t('admin.pages.staff.members_section')} icon={<UsersIcon />}>
       <CardContent className="p-0">
         {loading ? (
           <div className="flex flex-col gap-3 p-4">
@@ -424,7 +426,7 @@ function PendingInvitationsCard({
 }) {
   const { t } = useTranslation()
   return (
-    <SettingsSection title={t('admin.pages.staff.invitations_section')}>
+    <SettingsSection title={t('admin.pages.staff.invitations_section')} icon={<UserPlusIcon />}>
       <CardContent className="p-0">
         {loading ? (
           <div className="p-4">

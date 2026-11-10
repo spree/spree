@@ -1,13 +1,13 @@
 import {
   matchPluginRoute,
   outranksRouterMatch,
+  SettingsContainer,
   usePermissions,
   usePluginRoutes,
 } from '@spree/dashboard-core'
 import { ErrorState } from '@spree/dashboard-ui'
 import { CatchBoundary, type ErrorComponentProps, useRouterState } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
-import { SettingsContainer } from './settings-container'
 
 const CATCH_ALL_ROUTE_ID = '/_authenticated/$storeId/$'
 

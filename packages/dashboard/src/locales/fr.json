@@ -2283,8 +2283,7 @@
           "label": "Envoyer les e-mails transactionnels aux clients"
         },
         "timezone": {
-          "label": "Fuseau horaire",
-          "placeholder": "Sélectionner un fuseau horaire"
+          "label": "Fuseau horaire"
         },
         "unit_system": {
           "label": "Système d'unités"
@@ -2746,7 +2745,7 @@
         "shipping": "Livraison",
         "tax": "Taxes"
       },
-      "manage_payment_methods": "Gérer les moyens de paiement",
+      "manage_payment_methods": "Gérer les paiements",
       "messages": {
         "connected": "Intégration connectée",
         "disconnected": "Intégration déconnectée",
@@ -4282,14 +4281,11 @@
         },
         "store": {
           "subtitle": "Configuration générale et valeurs par défaut à l'échelle de la boutique.",
-          "tab_addresses": "Adresses",
           "tab_catalog": "Catalogue",
           "tab_general": "Général",
           "tab_inventory": "Stock",
           "tab_order_numbers": "Numéros de commande",
-          "tab_payments": "Paiements",
           "tab_standards": "Normes et formats",
-          "tab_storefront_access": "Accès à la vitrine",
           "title": "Paramètres de la boutique",
           "tab_downloads": "Téléchargements numériques",
           "downloads_help": "Durée de validité d'un lien de téléchargement et nombre d'utilisations possibles. Chaque fichier peut remplacer ces valeurs.",
@@ -4526,6 +4522,46 @@
             "description": "Enregistrez un client OAuth pour pouvoir le connecter à cette boutique."
           },
           "copy_client_id": "Copier l'identifiant client"
+        },
+        "payments": {
+          "title": "Paiements",
+          "description": "Les prestataires de paiement et méthodes manuelles proposés aux clients, et le moment où les paiements sont encaissés.",
+          "providers_title": "Prestataires de paiement",
+          "providers_empty": {
+            "title": "Aucun prestataire de paiement disponible",
+            "description": "Installez une extension de prestataire de paiement pour accepter les cartes et portefeuilles."
+          },
+          "manual_title": "Méthodes de paiement manuelles",
+          "add_manual": "Ajouter une méthode manuelle",
+          "manual_empty": {
+            "title": "Aucune méthode de paiement manuelle",
+            "description": "Encaissez des paiements hors de votre boutique, par chèque, virement ou paiement à la livraison."
+          },
+          "capture_title": "Encaissement des paiements",
+          "checkout_order": {
+            "cta": "Ordre au paiement",
+            "title": "Ordre au paiement",
+            "description": "Faites glisser pour définir l’ordre des méthodes de paiement au moment du paiement. Seules les méthodes actives affichées sur la boutique sont listées.",
+            "empty": {
+              "title": "Rien n’est proposé au paiement",
+              "description": "Activez une méthode de paiement et affichez-la sur la boutique pour la voir ici."
+            }
+          },
+          "test_gateway": "Passerelle de test"
+        },
+        "storefront": {
+          "title": "Boutique et paiement",
+          "description": "Où se trouve votre boutique, qui peut la parcourir et ce que le paiement demande aux clients.",
+          "storefront_title": "Boutique",
+          "checkout_title": "Paiement",
+          "addresses_title": "Adresses",
+          "url": {
+            "label": "URL de la boutique",
+            "not_connected": "Pas encore connectée",
+            "connect": "Connecter",
+            "change": "Modifier",
+            "help": "L’endroit où vos clients achètent. Spree y renvoie depuis les e-mails et le tableau de bord, et l’autorise à appeler la Store API."
+          }
         }
       },
       "staff": {
@@ -4610,10 +4646,6 @@
       }
     },
     "payment_methods": {
-      "add_cta": "Ajouter un moyen de paiement",
-      "columns": {
-        "storefront": "Boutique"
-      },
       "create_description": "Choisissez un fournisseur et configurez ses identifiants.",
       "create_label": "Créer un moyen de paiement",
       "delete_confirm": {
@@ -4621,22 +4653,19 @@
         "title": "Supprimer le moyen de paiement ?"
       },
       "edit_description": "Mettez à jour le nom, la visibilité ou le statut.",
-      "empty": "Aucun moyen de paiement configuré",
       "messages": {
         "created": "Moyen de paiement créé",
         "deleted": "Moyen de paiement supprimé",
         "updated": "Moyen de paiement mis à jour"
       },
       "provider_description": "Fournisseur : {{provider}}",
-      "search_placeholder": "Rechercher par nom…",
       "status": {
         "disabled": "Désactivé"
       },
       "storefront": {
         "admin_only": "Administration uniquement",
         "visible": "Visible"
-      },
-      "title": "Moyens de paiement"
+      }
     },
     "permissions": {
       "descriptions": {
@@ -5609,7 +5638,7 @@
         "integrations": "Connecter des prestataires d'expédition, de taxe et autres",
         "maintenance_tasks": "Remplissages, réindexations et étapes de mise à niveau, avec le journal de chaque exécution",
         "markets": "Pays où vous vendez et leurs devises",
-        "payment_methods": "Passerelles de paiement et mode de capture",
+        "payment_methods": "Prestataires de paiement, méthodes manuelles et moment de l’encaissement",
         "policies": "Conditions, confidentialité, retours et livraison",
         "product_types": "Modèles qui préremplissent les nouveaux produits",
         "reasons": "Motifs proposés pour retours, remboursements et réclamations",
@@ -5617,14 +5646,15 @@
         "seller_requirements": "Liste à compléter par les vendeurs avant validation",
         "staff": "Personnes ayant accès à ce tableau de bord",
         "stock_locations": "Entrepôts et points de retrait qui détiennent du stock",
-        "store": "Nom de la boutique, fuseau horaire, unités et valeurs régionales",
+        "store": "Nom de la boutique, SEO, fuseau horaire, unités et numéros de commande",
         "webhooks": "Points de terminaison notifiés lors d'événements",
         "package_types": "Cartons, palettes et conteneurs",
         "suppliers": "À qui vous achetez votre stock, et comment les joindre",
         "marketplace": "Paiements, validation des vendeurs, e-mails vendeurs et taxe sur la commission",
         "taxes": "Catégories de taxe, taux et motifs d’exonération",
         "ai_agents": "Agents IA ayant accès à cette boutique",
-        "oauth_clients": "Enregistrer et configurer des clients OAuth"
+        "oauth_clients": "Enregistrer et configurer des clients OAuth",
+        "storefront": "URL de la boutique, qui peut la parcourir, paiement et champs d’adresse"
       },
       "groups": {
         "audit": "Audit",
@@ -5648,7 +5678,7 @@
         "integrations": "Intégrations",
         "maintenance_tasks": "Tâches de maintenance",
         "markets": "Marchés",
-        "payment_methods": "Modes de paiement",
+        "payment_methods": "Paiements",
         "policies": "Politiques",
         "product_types": "Types de produit",
         "profile": "Profil",
@@ -5666,7 +5696,8 @@
         "marketplace": "Paramètres",
         "taxes": "Taxes",
         "ai_agents": "Agents IA",
-        "oauth_clients": "Clients OAuth"
+        "oauth_clients": "Clients OAuth",
+        "storefront": "Boutique et paiement"
       },
       "breadcrumbs": {
         "marketplace": "Marketplace"
@@ -5986,8 +6017,7 @@
         "oz": "Once (oz)"
       },
       "seo": {
-        "title": "Référencement",
-        "description": "Le titre et la description par défaut de votre boutique. Traduisez-les pour chaque langue prise en charge par votre boutique."
+        "title": "Référencement"
       }
     },
     "table_descriptions": {
@@ -6014,7 +6044,6 @@
       "markets": "Les régions où vous vendez, chacune avec sa devise, ses taxes et sa livraison.",
       "orders": "Chaque commande passée sur votre boutique, et où elle en est.",
       "draft_orders": "Commandes que votre équipe prépare au nom d'un client, pas encore passées.",
-      "payment_methods": "Comment les clients peuvent payer, et les prestataires derrière chaque option.",
       "policies": "Vos conditions générales et politiques de confidentialité, de retour et de livraison, publiées sur la vitrine.",
       "products": "Tout ce que vous vendez, avec ses variantes, ses prix et son stock.",
       "promotions": "Remises et offres, et les règles qui décident quand elles s'appliquent.",

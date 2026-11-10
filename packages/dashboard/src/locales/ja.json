@@ -2283,8 +2283,7 @@
           "label": "顧客に取引メールを送る"
         },
         "timezone": {
-          "label": "タイムゾーン",
-          "placeholder": "タイムゾーンを選ぶ"
+          "label": "タイムゾーン"
         },
         "unit_system": {
           "label": "単位系"
@@ -2746,7 +2745,7 @@
         "shipping": "配送",
         "tax": "税"
       },
-      "manage_payment_methods": "支払い方法を管理",
+      "manage_payment_methods": "決済を管理",
       "messages": {
         "connected": "連携を接続しました",
         "disconnected": "連携の接続を解除しました",
@@ -4279,14 +4278,11 @@
         },
         "store": {
           "subtitle": "全体の設定とストア全体の既定値です。",
-          "tab_addresses": "住所",
           "tab_catalog": "カタログ",
           "tab_general": "全般",
           "tab_inventory": "在庫",
           "tab_order_numbers": "注文番号",
-          "tab_payments": "支払い",
           "tab_standards": "規格と書式",
-          "tab_storefront_access": "ストアへのアクセス",
           "title": "ストアの設定",
           "tab_downloads": "デジタルダウンロード",
           "downloads_help": "ダウンロードのリンクが使える期間と回数です。ファイルごとに上書きできます。",
@@ -4523,6 +4519,46 @@
             "description": "このストアに接続できるように OAuth クライアントを登録します。"
           },
           "copy_client_id": "クライアント ID をコピー"
+        },
+        "payments": {
+          "title": "決済",
+          "description": "お客様が利用できる決済プロバイダーと手動の決済方法、および支払いを確定するタイミング。",
+          "providers_title": "決済プロバイダー",
+          "providers_empty": {
+            "title": "利用できる決済プロバイダーがありません",
+            "description": "カードやウォレットを受け付けるには、決済プロバイダーの拡張機能をインストールしてください。"
+          },
+          "manual_title": "手動の決済方法",
+          "add_manual": "手動の決済方法を追加",
+          "manual_empty": {
+            "title": "手動の決済方法はありません",
+            "description": "小切手、銀行振込、代金引換など、ストアの外で支払いを受け付けます。"
+          },
+          "capture_title": "支払いの確定",
+          "checkout_order": {
+            "cta": "チェックアウトでの表示順",
+            "title": "チェックアウトでの表示順",
+            "description": "ドラッグして、チェックアウトでお客様に表示される決済方法の順序を設定します。ストアフロントに表示される有効な決済方法のみが一覧表示されます。",
+            "empty": {
+              "title": "チェックアウトで提供されている決済方法はありません",
+              "description": "決済方法を有効にしてストアフロントに表示すると、ここに表示されます。"
+            }
+          },
+          "test_gateway": "テスト用ゲートウェイ"
+        },
+        "storefront": {
+          "title": "ストアフロントとチェックアウト",
+          "description": "ストアフロントの場所、閲覧できる人、チェックアウトでお客様に求める情報。",
+          "storefront_title": "ストアフロント",
+          "checkout_title": "チェックアウト",
+          "addresses_title": "住所",
+          "url": {
+            "label": "ストアフロントのURL",
+            "not_connected": "未接続",
+            "connect": "接続",
+            "change": "変更",
+            "help": "お客様が買い物をする場所です。Spree はメールやダッシュボードからここにリンクし、Store API の呼び出しを許可します。"
+          }
         }
       },
       "staff": {
@@ -4607,10 +4643,6 @@
       }
     },
     "payment_methods": {
-      "add_cta": "支払い方法を追加",
-      "columns": {
-        "storefront": "ストア"
-      },
       "create_description": "プロバイダーを選び、認証情報を設定します。",
       "create_label": "支払い方法を作成",
       "delete_confirm": {
@@ -4618,22 +4650,19 @@
         "title": "支払い方法を削除しますか？"
       },
       "edit_description": "名前・表示・状態を更新します。",
-      "empty": "支払い方法が設定されていません",
       "messages": {
         "created": "支払い方法を作成しました",
         "deleted": "支払い方法を削除しました",
         "updated": "支払い方法を更新しました"
       },
       "provider_description": "プロバイダー: {{provider}}",
-      "search_placeholder": "名前で検索…",
       "status": {
         "disabled": "無効"
       },
       "storefront": {
         "admin_only": "管理者のみ",
         "visible": "表示"
-      },
-      "title": "支払い方法"
+      }
     },
     "permissions": {
       "descriptions": {
@@ -5606,7 +5635,7 @@
         "integrations": "配送・税などのプロバイダーとの接続",
         "maintenance_tasks": "データの補完・インデックスの再構築・アップグレードの手順と、すべての実行記録",
         "markets": "販売先の国とその通貨",
-        "payment_methods": "決済ゲートウェイと支払いの確定方法",
+        "payment_methods": "決済プロバイダー、手動の決済方法、支払いを確定するタイミング",
         "policies": "利用規約・プライバシー・返品・配送の文書",
         "product_types": "新しい商品の初期値を入れるテンプレート",
         "reasons": "返品・返金・クレームで選べる理由",
@@ -5614,14 +5643,15 @@
         "seller_requirements": "販売者が承認前に終えるチェックリスト",
         "staff": "このダッシュボードにアクセスできる人",
         "stock_locations": "在庫を置く倉庫と受け取り場所",
-        "store": "ストア名・タイムゾーン・単位・地域の既定値",
+        "store": "ストア名、SEO、タイムゾーン、単位、注文番号",
         "webhooks": "イベントが起きたときに通知するエンドポイント",
         "package_types": "箱・カートン・パレット・コンテナ",
         "suppliers": "在庫の仕入れ先とその連絡先",
         "marketplace": "販売者への支払い・承認・メールと手数料の税",
         "taxes": "税区分・税率・免税の理由",
         "ai_agents": "このストアにアクセスできる AI エージェント",
-        "oauth_clients": "OAuth クライアントの登録と設定"
+        "oauth_clients": "OAuth クライアントの登録と設定",
+        "storefront": "ストアフロントのURL、閲覧できる人、チェックアウトと住所の項目"
       },
       "groups": {
         "audit": "監査",
@@ -5645,7 +5675,7 @@
         "integrations": "連携",
         "maintenance_tasks": "メンテナンスタスク",
         "markets": "マーケット",
-        "payment_methods": "支払い方法",
+        "payment_methods": "決済",
         "policies": "ポリシー",
         "product_types": "商品タイプ",
         "profile": "プロフィール",
@@ -5663,7 +5693,8 @@
         "marketplace": "設定",
         "taxes": "税",
         "ai_agents": "AI エージェント",
-        "oauth_clients": "OAuth クライアント"
+        "oauth_clients": "OAuth クライアント",
+        "storefront": "ストアフロントとチェックアウト"
       },
       "breadcrumbs": {
         "marketplace": "マーケットプレイス"
@@ -5983,8 +6014,7 @@
         "oz": "オンス（oz）"
       },
       "seo": {
-        "title": "検索エンジンでの表示",
-        "description": "ストアのデフォルトのタイトルと説明です。ストアが対応している言語ごとに翻訳してください。"
+        "title": "検索エンジンでの表示"
       }
     },
     "table_descriptions": {
@@ -6011,7 +6041,6 @@
       "markets": "販売する地域です。それぞれに通貨・税・配送の設定があります。",
       "orders": "ストアで受けたすべての注文と、それぞれの状況です。",
       "draft_orders": "チームが顧客の代わりに作っている、まだ確定していない注文です。",
-      "payment_methods": "顧客が支払う方法と、それぞれのプロバイダーです。",
       "policies": "ストアで公開する利用規約・プライバシー・返品・配送のポリシーです。",
       "products": "販売しているすべてのもの、そのバリアント・価格・在庫です。",
       "promotions": "割引と特典、それが適用される条件となるルールです。",

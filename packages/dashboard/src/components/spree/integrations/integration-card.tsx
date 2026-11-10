@@ -162,7 +162,7 @@ export function IntegrationCard({
 // Gem-declared logo (hosted URL or data URI); the Avatar compound shows the
 // initial-letter fallback until the image loads, covering unset and
 // unreachable URLs alike — same pattern as the store switcher.
-function IntegrationLogo({ name, logoUrl }: { name: string; logoUrl: string | null }) {
+export function IntegrationLogo({ name, logoUrl }: { name: string; logoUrl: string | null }) {
   return (
     // Brand logos are drawn for a light background, so the tile behind one
     // stays white in dark mode too; the letter fallback follows the theme.

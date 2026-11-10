@@ -2301,8 +2301,7 @@
           "label": "Wysyłaj wiadomości transakcyjne do klientów"
         },
         "timezone": {
-          "label": "Strefa czasowa",
-          "placeholder": "Wybierz strefę czasową"
+          "label": "Strefa czasowa"
         },
         "unit_system": {
           "label": "System jednostek"
@@ -2764,7 +2763,7 @@
         "shipping": "Dostawa",
         "tax": "Podatki"
       },
-      "manage_payment_methods": "Zarządzaj metodami płatności",
+      "manage_payment_methods": "Zarządzaj płatnościami",
       "messages": {
         "connected": "Integracja połączona",
         "disconnected": "Integracja rozłączona",
@@ -4330,14 +4329,11 @@
         },
         "store": {
           "subtitle": "Ogólna konfiguracja i domyślne ustawienia dla całego sklepu.",
-          "tab_addresses": "Adresy",
           "tab_catalog": "Katalog",
           "tab_general": "Ogólne",
           "tab_inventory": "Stan magazynowy",
           "tab_order_numbers": "Numery zamówień",
-          "tab_payments": "Płatności",
           "tab_standards": "Standardy i formaty",
-          "tab_storefront_access": "Dostęp do sklepu",
           "title": "Ustawienia sklepu",
           "tab_downloads": "Pobrania cyfrowe",
           "downloads_help": "Jak długo działa link do pobrania i ile razy można go użyć. Poszczególne pliki mogą nadpisać te wartości.",
@@ -4580,6 +4576,46 @@
             "description": "Zarejestruj klienta OAuth, aby można go było połączyć z tym sklepem."
           },
           "copy_client_id": "Kopiuj identyfikator klienta"
+        },
+        "payments": {
+          "title": "Płatności",
+          "description": "Dostawcy płatności i metody ręczne, którymi klienci mogą płacić, oraz moment pobierania płatności.",
+          "providers_title": "Dostawcy płatności",
+          "providers_empty": {
+            "title": "Brak dostępnych dostawców płatności",
+            "description": "Zainstaluj rozszerzenie dostawcy płatności, aby przyjmować karty i portfele."
+          },
+          "manual_title": "Ręczne metody płatności",
+          "add_manual": "Dodaj metodę ręczną",
+          "manual_empty": {
+            "title": "Brak ręcznych metod płatności",
+            "description": "Przyjmuj płatności poza sklepem, np. czekiem, przelewem lub za pobraniem."
+          },
+          "capture_title": "Pobieranie płatności",
+          "checkout_order": {
+            "cta": "Kolejność w kasie",
+            "title": "Kolejność w kasie",
+            "description": "Przeciągnij, aby ustawić kolejność metod płatności widoczną dla klientów w kasie. Wymienione są tylko aktywne metody widoczne w sklepie.",
+            "empty": {
+              "title": "W kasie nic nie jest oferowane",
+              "description": "Aktywuj metodę płatności i pokaż ją w sklepie, aby pojawiła się tutaj."
+            }
+          },
+          "test_gateway": "Bramka testowa"
+        },
+        "storefront": {
+          "title": "Sklep i kasa",
+          "description": "Gdzie działa Twój sklep, kto może go przeglądać i o co kasa pyta klientów.",
+          "storefront_title": "Sklep",
+          "checkout_title": "Kasa",
+          "addresses_title": "Adresy",
+          "url": {
+            "label": "Adres URL sklepu",
+            "not_connected": "Jeszcze niepołączony",
+            "connect": "Połącz",
+            "change": "Zmień",
+            "help": "Miejsce, w którym klienci robią zakupy. Spree linkuje do niego z e-maili i panelu oraz pozwala mu wywoływać Store API."
+          }
         }
       },
       "staff": {
@@ -4664,10 +4700,6 @@
       }
     },
     "payment_methods": {
-      "add_cta": "Dodaj metodę płatności",
-      "columns": {
-        "storefront": "Sklep"
-      },
       "create_description": "Wybierz dostawcę i skonfiguruj jego dane uwierzytelniające.",
       "create_label": "Utwórz metodę płatności",
       "delete_confirm": {
@@ -4675,22 +4707,19 @@
         "title": "Usunąć metodę płatności?"
       },
       "edit_description": "Zaktualizuj nazwę, widoczność lub status.",
-      "empty": "Nie skonfigurowano metod płatności",
       "messages": {
         "created": "Utworzono metodę płatności",
         "deleted": "Usunięto metodę płatności",
         "updated": "Zaktualizowano metodę płatności"
       },
       "provider_description": "Dostawca: {{provider}}",
-      "search_placeholder": "Szukaj według nazwy…",
       "status": {
         "disabled": "Wyłączona"
       },
       "storefront": {
         "admin_only": "Tylko panel administracyjny",
         "visible": "Widoczna"
-      },
-      "title": "Metody płatności"
+      }
     },
     "permissions": {
       "descriptions": {
@@ -5673,7 +5702,7 @@
         "integrations": "Podłącz dostawców wysyłki, podatków i innych usług",
         "maintenance_tasks": "Uzupełnienia, przebudowy indeksów i kroki aktualizacji wraz z zapisem każdego uruchomienia",
         "markets": "Kraje, do których sprzedajesz, i ich waluty",
-        "payment_methods": "Bramki płatnicze i sposób pobierania płatności",
+        "payment_methods": "Dostawcy płatności, metody ręczne i moment pobierania płatności",
         "policies": "Regulamin, prywatność, zwroty i wysyłka",
         "product_types": "Szablony wstępnie wypełniające nowe produkty",
         "reasons": "Powody zwrotów, refundacji i reklamacji",
@@ -5681,14 +5710,15 @@
         "seller_requirements": "Lista wymagań przed zatwierdzeniem sprzedawcy",
         "staff": "Osoby z dostępem do tego panelu",
         "stock_locations": "Magazyny i punkty odbioru przechowujące towar",
-        "store": "Nazwa sklepu, strefa czasowa, jednostki i ustawienia regionalne",
+        "store": "Nazwa sklepu, SEO, strefa czasowa, jednostki i numery zamówień",
         "webhooks": "Adresy powiadamiane o zdarzeniach",
         "package_types": "Kartony, palety i kontenery",
         "suppliers": "Od kogo kupujesz towar i jak się z nimi skontaktować",
         "marketplace": "Wypłaty, zatwierdzanie sprzedawców, e-maile do sprzedawców i podatek od prowizji",
         "taxes": "Kategorie podatkowe, stawki i powody zwolnień",
         "ai_agents": "Agenty AI z dostępem do tego sklepu",
-        "oauth_clients": "Rejestrowanie i konfiguracja klientów OAuth"
+        "oauth_clients": "Rejestrowanie i konfiguracja klientów OAuth",
+        "storefront": "Adres sklepu, kto może przeglądać, kasa i pola adresu"
       },
       "groups": {
         "audit": "Audyt",
@@ -5712,7 +5742,7 @@
         "integrations": "Integracje",
         "maintenance_tasks": "Zadania konserwacyjne",
         "markets": "Rynki",
-        "payment_methods": "Metody płatności",
+        "payment_methods": "Płatności",
         "policies": "Polityki",
         "product_types": "Typy produktów",
         "profile": "Profil",
@@ -5730,7 +5760,8 @@
         "marketplace": "Ustawienia",
         "taxes": "Podatki",
         "ai_agents": "Agenci AI",
-        "oauth_clients": "Klienci OAuth"
+        "oauth_clients": "Klienci OAuth",
+        "storefront": "Sklep i kasa"
       },
       "breadcrumbs": {
         "marketplace": "Marketplace"
@@ -6052,8 +6083,7 @@
         "oz": "Uncja (oz)"
       },
       "seo": {
-        "title": "Wynik w wyszukiwarce",
-        "description": "Domyślny tytuł i opis Twojego sklepu. Przetłumacz je na każdy język obsługiwany przez sklep."
+        "title": "Wynik w wyszukiwarce"
       }
     },
     "table_descriptions": {
@@ -6080,7 +6110,6 @@
       "markets": "Regiony, do których sprzedajesz, każdy z własną walutą, podatkami i dostawą.",
       "orders": "Każde zamówienie złożone w Twoim sklepie i jego aktualny stan.",
       "draft_orders": "Zamówienia, które Twój zespół tworzy w imieniu klienta, jeszcze niezłożone.",
-      "payment_methods": "Jak klienci mogą płacić i którzy dostawcy stoją za każdą opcją.",
       "policies": "Twój regulamin oraz polityki prywatności, zwrotów i wysyłki, publikowane w sklepie.",
       "products": "Wszystko, co sprzedajesz, wraz z wariantami, cenami i stanami magazynowymi.",
       "promotions": "Rabaty i oferty oraz reguły decydujące o tym, kiedy obowiązują.",

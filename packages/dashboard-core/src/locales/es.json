@@ -301,6 +301,11 @@
         "light": "Claro",
         "system": "Sistema"
       },
+      "timezone_combobox": {
+        "empty": "No se encontraron zonas horarias",
+        "placeholder": "Seleccionar una zona horaria",
+        "search_placeholder": "Buscar zonas horarias…"
+      },
       "wizard": {
         "discard_cancel": "Seguir editando",
         "discard_confirm": "Descartar",

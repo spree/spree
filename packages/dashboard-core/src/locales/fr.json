@@ -493,6 +493,11 @@
         "light": "Clair",
         "system": "Système"
       },
+      "timezone_combobox": {
+        "empty": "Aucun fuseau horaire trouvé",
+        "placeholder": "Sélectionner un fuseau horaire",
+        "search_placeholder": "Rechercher un fuseau horaire…"
+      },
       "wizard": {
         "discard_cancel": "Continuer",
         "discard_confirm": "Abandonner",

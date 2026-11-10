@@ -1388,6 +1388,7 @@
                         "icon": "store",
                         "pages": [
                           "user/settings/store-details",
+                          "user/settings/storefront",
                           "user/settings/emails",
                           "user/settings/policies",
                           "user/settings/sales-channels",
@@ -3032,6 +3033,7 @@
             "group": "Settings",
             "pages": [
               "user/settings/store-details",
+              "user/settings/storefront",
               "user/settings/sales-channels",
               "user/settings/users",
               "user/settings/emails",

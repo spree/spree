@@ -2283,8 +2283,7 @@
           "label": "Gửi email giao dịch cho khách hàng"
         },
         "timezone": {
-          "label": "Múi giờ",
-          "placeholder": "Chọn múi giờ"
+          "label": "Múi giờ"
         },
         "unit_system": {
           "label": "Hệ thống đơn vị"
@@ -2746,7 +2745,7 @@
         "shipping": "Vận chuyển",
         "tax": "Thuế"
       },
-      "manage_payment_methods": "Quản lý phương thức thanh toán",
+      "manage_payment_methods": "Quản lý thanh toán",
       "messages": {
         "connected": "Integration connected",
         "disconnected": "Integration disconnected",
@@ -4279,14 +4278,11 @@
         },
         "store": {
           "subtitle": "Cấu hình chung và mặc định trên toàn cửa hàng.",
-          "tab_addresses": "Địa chỉ",
           "tab_catalog": "Danh mục",
           "tab_general": "Chung",
           "tab_inventory": "Hàng tồn kho",
           "tab_order_numbers": "Số đơn hàng",
-          "tab_payments": "Thanh toán",
           "tab_standards": "Tiêu chuẩn và định dạng",
-          "tab_storefront_access": "Quyền truy cập cửa hàng trực tuyến",
           "title": "Cài đặt cửa hàng",
           "tab_downloads": "Tải xuống kỹ thuật số",
           "downloads_help": "Liên kết tải xuống hoạt động trong bao lâu và có thể sử dụng được bao nhiêu lần. Các tệp riêng lẻ có thể ghi đè những con số này.",
@@ -4523,6 +4519,46 @@
             "description": "Đăng ký ứng dụng khách OAuth để có thể kết nối với cửa hàng này."
           },
           "copy_client_id": "Sao chép ID khách hàng"
+        },
+        "payments": {
+          "title": "Thanh toán",
+          "description": "Các nhà cung cấp thanh toán và phương thức thủ công khách hàng có thể dùng, và thời điểm thu tiền.",
+          "providers_title": "Nhà cung cấp thanh toán",
+          "providers_empty": {
+            "title": "Không có nhà cung cấp thanh toán",
+            "description": "Cài đặt tiện ích nhà cung cấp thanh toán để nhận thẻ và ví điện tử."
+          },
+          "manual_title": "Phương thức thanh toán thủ công",
+          "add_manual": "Thêm phương thức thủ công",
+          "manual_empty": {
+            "title": "Chưa có phương thức thanh toán thủ công",
+            "description": "Nhận thanh toán ngoài cửa hàng, như séc, chuyển khoản ngân hàng hoặc thu tiền khi giao hàng."
+          },
+          "capture_title": "Thu tiền thanh toán",
+          "checkout_order": {
+            "cta": "Thứ tự khi thanh toán",
+            "title": "Thứ tự khi thanh toán",
+            "description": "Kéo để sắp xếp thứ tự phương thức thanh toán khách hàng thấy khi thanh toán. Chỉ liệt kê các phương thức đang hoạt động và hiển thị trên cửa hàng.",
+            "empty": {
+              "title": "Không có gì được cung cấp khi thanh toán",
+              "description": "Kích hoạt một phương thức thanh toán và hiển thị nó trên cửa hàng để thấy ở đây."
+            }
+          },
+          "test_gateway": "Cổng thử nghiệm"
+        },
+        "storefront": {
+          "title": "Cửa hàng & thanh toán",
+          "description": "Cửa hàng của bạn ở đâu, ai được xem và bước thanh toán hỏi khách những gì.",
+          "storefront_title": "Cửa hàng",
+          "checkout_title": "Thanh toán",
+          "addresses_title": "Địa chỉ",
+          "url": {
+            "label": "URL cửa hàng",
+            "not_connected": "Chưa kết nối",
+            "connect": "Kết nối",
+            "change": "Thay đổi",
+            "help": "Nơi khách hàng mua sắm. Spree liên kết đến đây từ email và bảng điều khiển, và cho phép nó gọi Store API."
+          }
         }
       },
       "staff": {
@@ -4590,10 +4626,6 @@
       }
     },
     "payment_methods": {
-      "add_cta": "Thêm phương thức thanh toán",
-      "columns": {
-        "storefront": "Cửa hàng trực tuyến"
-      },
       "create_description": "Chọn một nhà cung cấp và định cấu hình thông tin đăng nhập của nó.",
       "create_label": "Tạo phương thức thanh toán",
       "delete_confirm": {
@@ -4601,22 +4633,19 @@
         "title": "Xóa phương thức thanh toán?"
       },
       "edit_description": "Cập nhật tên, mức độ hiển thị hoặc trạng thái.",
-      "empty": "Không có phương thức thanh toán nào được định cấu hình",
       "messages": {
         "created": "Đã tạo phương thức thanh toán",
         "deleted": "Đã xóa phương thức thanh toán",
         "updated": "Đã cập nhật phương thức thanh toán"
       },
       "provider_description": "Nhà cung cấp: {{provider}}",
-      "search_placeholder": "Tìm kiếm theo tên…",
       "status": {
         "disabled": "Đã tắt"
       },
       "storefront": {
         "admin_only": "Chỉ quản trị viên",
         "visible": "Hiển thị"
-      },
-      "title": "Phương thức thanh toán"
+      }
     },
     "permissions": {
       "descriptions": {
@@ -5573,7 +5602,7 @@
         "integrations": "Kết nối vận chuyển, thuế và các nhà cung cấp khác",
         "maintenance_tasks": "Chèn lấp, lập chỉ mục lại và các bước nâng cấp, với bản ghi mỗi lần chạy",
         "markets": "Các quốc gia bạn bán hàng và đơn vị tiền tệ của họ",
-        "payment_methods": "Cổng thanh toán và cách thu hồi thanh toán",
+        "payment_methods": "Nhà cung cấp thanh toán, phương thức thủ công và thời điểm thu tiền",
         "policies": "Điều khoản, quyền riêng tư, tài liệu trả lại và vận chuyển",
         "product_types": "Mẫu điền sẵn sản phẩm mới",
         "reasons": "Lý do đưa ra để trả lại, hoàn tiền và yêu cầu bồi thường",
@@ -5581,14 +5610,15 @@
         "seller_requirements": "Danh sách kiểm tra người bán hoàn thành trước khi phê duyệt",
         "staff": "Những người có quyền truy cập vào trang tổng quan này",
         "stock_locations": "Kho và điểm lấy hàng có chứa hàng",
-        "store": "Tên cửa hàng, múi giờ, đơn vị và mặc định khu vực",
+        "store": "Tên cửa hàng, SEO, múi giờ, đơn vị và số đơn hàng",
         "webhooks": "Điểm cuối được thông báo khi sự kiện xảy ra",
         "package_types": "Hộp, thùng carton, pallet và container",
         "suppliers": "Nhà cung cấp hàng hóa và thông tin liên hệ",
         "marketplace": "Các khoản thanh toán của người bán, sự chấp thuận của người bán, email của người bán và thuế hoa hồng",
         "taxes": "Các loại thuế, thuế suất và lý do miễn thuế",
         "ai_agents": "Đại lý AI có quyền truy cập vào cửa hàng này",
-        "oauth_clients": "Đăng ký và định cấu hình ứng dụng khách OAuth"
+        "oauth_clients": "Đăng ký và định cấu hình ứng dụng khách OAuth",
+        "storefront": "URL cửa hàng, ai được xem, thanh toán và trường địa chỉ"
       },
       "groups": {
         "audit": "Kiểm toán",
@@ -5612,7 +5642,7 @@
         "integrations": "Tích hợp",
         "maintenance_tasks": "Nhiệm vụ bảo trì",
         "markets": "Thị trường",
-        "payment_methods": "Phương thức thanh toán",
+        "payment_methods": "Thanh toán",
         "policies": "Chính sách",
         "product_types": "Các loại sản phẩm",
         "profile": "Hồ sơ",
@@ -5630,7 +5660,8 @@
         "marketplace": "Cài đặt",
         "taxes": "Thuế",
         "ai_agents": "Đại lý AI",
-        "oauth_clients": "Ứng dụng khách OAuth"
+        "oauth_clients": "Ứng dụng khách OAuth",
+        "storefront": "Cửa hàng & thanh toán"
       },
       "breadcrumbs": {
         "marketplace": "Sàn thương mại điện tử"
@@ -5950,8 +5981,7 @@
         "oz": "Ounce (oz)"
       },
       "seo": {
-        "title": "Danh sách công cụ tìm kiếm",
-        "description": "Tiêu đề và mô tả mặc định về cửa hàng trực tuyến của bạn. Dịch chúng cho từng ngôn ngữ mà cửa hàng của bạn hỗ trợ."
+        "title": "Danh sách công cụ tìm kiếm"
       }
     },
     "table_descriptions": {
@@ -5978,7 +6008,6 @@
       "markets": "Các khu vực bạn bán hàng, mỗi khu vực đều có thiết lập đơn vị tiền tệ, thuế và giao hàng riêng.",
       "orders": "Mọi đơn hàng được đặt tại cửa hàng của bạn và vị trí của mỗi đơn hàng.",
       "draft_orders": "Các đơn đặt hàng mà nhóm của bạn đang xây dựng thay mặt cho khách hàng, chưa được đặt.",
-      "payment_methods": "Cách khách hàng có thể thanh toán và các nhà cung cấp đằng sau mỗi lựa chọn.",
       "policies": "Các điều khoản, quyền riêng tư, chính sách trả lại và vận chuyển của bạn, được công bố trên cửa hàng trực tuyến.",
       "products": "Mọi thứ bạn bán, với các biến thể, giá cả và hàng tồn kho.",
       "promotions": "Giảm giá và ưu đãi cũng như các quy tắc quyết định thời điểm áp dụng.",

@@ -495,6 +495,11 @@
         "light": "Light",
         "system": "System"
       },
+      "timezone_combobox": {
+        "empty": "No timezones found",
+        "placeholder": "Select a timezone",
+        "search_placeholder": "Search timezones…"
+      },
       "wizard": {
         "discard_cancel": "Keep editing",
         "discard_confirm": "Discard",

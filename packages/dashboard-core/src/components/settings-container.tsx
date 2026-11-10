@@ -10,10 +10,9 @@ import type { ReactNode } from 'react'
  */
 export function SettingsContainer({ children }: { children: ReactNode }) {
   return (
-    // Capped and centred, like the shell's `container` around every other
-    // page. Not `container` itself: its widths follow the window, while this
-    // area is the window less two rails, so it would never cap anything.
-    <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
+    // The same `container` as every other page, so settings content lines up
+    // with them.
+    <div className="container mx-auto flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       {children}
     </div>
   )
