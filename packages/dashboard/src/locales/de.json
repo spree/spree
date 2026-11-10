@@ -3438,10 +3438,8 @@
       "item_count_one": "{{count}} Artikel",
       "item_count_other": "{{count}} Artikel",
       "new": {
-        "add_variant": "Variante hinzufügen",
         "creates_draft_note": "Erstellt einen Auftragsentwurf. Fügen Sie nach der Erstellung Zahlungen hinzu und schließen Sie ihn ab.",
         "items_table": {
-          "qty": "Anz.",
           "sku": "SKU",
           "variant": "Variante"
         },
@@ -3536,6 +3534,10 @@
         "new_cta": "Neuer Kunde"
       },
       "getting_started": {
+        "completed": {
+          "description": "Alle Schritte unter „Erste Schritte“ sind erledigt.",
+          "title": "Dein Shop ist eingerichtet"
+        },
         "description": "Schließen Sie diese Schritte ab, um Ihren Shop zu starten.",
         "progress": "{{done}} von {{total}} erledigt",
         "storefront_sheet": {
@@ -3573,6 +3575,7 @@
             "cta": "Adresse speichern",
             "description": "Ihre Versand- und Rücksendeadresse. Zusteller berechnen damit die Versandkosten, und Kundenrücksendungen gehen an diese Adresse.",
             "no_location": "Sie haben noch kein eigenes Lager — legen Sie in den Einstellungen eines an, um eine Adresse zu hinterlegen.",
+            "saved": "Versandadresse gespeichert",
             "title": "Versandadresse hinzufügen"
           },
           "setup_payment_method": {
@@ -3834,13 +3837,16 @@
           "company_addresses": "Firmenadressen",
           "company_help": "Diese Bestellung einem Unternehmen zuordnen. Die Kundenliste zeigt dann nur Personen, die dafür einkaufen dürfen.",
           "customer_addresses": "Kundenadressen",
+          "items_empty": {
+            "description": "Füge die Produkte dieser Bestellung hinzu.",
+            "title": "Noch keine Artikel"
+          },
           "reset_items": {
             "confirm": "Ändern und Artikel entfernen",
             "message_one": "Der ausgewählte Artikel ({{count}}) ist für diesen Käufer, Markt oder Kanal eventuell nicht verfügbar oder kostet etwas anderes. Er wird entfernt.",
             "message_other": "Die {{count}} ausgewählten Artikel sind für diesen Käufer, Markt oder Kanal eventuell nicht verfügbar oder kosten etwas anderes. Sie werden entfernt.",
             "title": "Ausgewählte Artikel entfernen?"
           },
-          "search_variant": "Variante suchen…",
           "section_billing": "Rechnung",
           "section_customer": "Kunde",
           "section_items": "Artikel",
@@ -5797,7 +5803,8 @@
       "badges": {
         "default": "Standard",
         "enabled": "Aktiviert",
-        "inactive": "Inaktiv"
+        "inactive": "Inaktiv",
+        "seller_default": "Standard des Verkäufers"
       },
       "columns": {
         "default": "Standard",
@@ -5842,6 +5849,10 @@
         "unknown_product": "Unbekanntes Produkt",
         "variant_count_one": "{{count}} Variante",
         "variant_count_other": "{{count}} Varianten"
+      },
+      "views": {
+        "own": "Deine Standorte",
+        "sellers": "Standorte der Verkäufer"
       }
     },
     "stock_transfers": {

@@ -3438,10 +3438,8 @@
       "item_count_one": "{{count}} item",
       "item_count_other": "{{count}} items",
       "new": {
-        "add_variant": "Add a variant",
         "creates_draft_note": "Creates a draft order. Add payments and complete it after creation.",
         "items_table": {
-          "qty": "Qty",
           "sku": "SKU",
           "variant": "Variant"
         },
@@ -3536,6 +3534,10 @@
         "new_cta": "New Customer"
       },
       "getting_started": {
+        "completed": {
+          "description": "Every Getting Started step is done.",
+          "title": "Your store is set up"
+        },
         "description": "Finish these steps to launch your store.",
         "progress": "{{done}} of {{total}} completed",
         "storefront_sheet": {
@@ -3573,6 +3575,7 @@
             "cta": "Save address",
             "description": "Your shipping and returns address. Carriers use it to calculate delivery rates, and it is where customer returns are sent.",
             "no_location": "You have no stock location of your own yet — create one in Settings to add an address.",
+            "saved": "Shipping address saved",
             "title": "Add your shipping address"
           },
           "setup_payment_method": {
@@ -3834,13 +3837,16 @@
           "company_addresses": "Company addresses",
           "company_help": "Attach this order to a business. The customer list then shows only people who can buy for it.",
           "customer_addresses": "Customer addresses",
+          "items_empty": {
+            "description": "Add the products this order is for.",
+            "title": "No items yet"
+          },
           "reset_items": {
             "confirm": "Change and remove items",
             "message_one": "The {{count}} item you picked may not be sold, or may cost something else, for this buyer, market or channel. It will be removed.",
             "message_other": "The {{count}} items you picked may not be sold, or may cost something else, for this buyer, market or channel. They will be removed.",
             "title": "Remove the picked items?"
           },
-          "search_variant": "Search variant…",
           "section_billing": "Billing",
           "section_customer": "Customer",
           "section_items": "Items",
@@ -5797,7 +5803,8 @@
       "badges": {
         "default": "Default",
         "enabled": "Enabled",
-        "inactive": "Inactive"
+        "inactive": "Inactive",
+        "seller_default": "Seller default"
       },
       "columns": {
         "default": "Default",
@@ -5842,6 +5849,10 @@
         "unknown_product": "Unknown product",
         "variant_count_one": "{{count}} variant",
         "variant_count_other": "{{count}} variants"
+      },
+      "views": {
+        "own": "Your locations",
+        "sellers": "Sellers' locations"
       }
     },
     "stock_transfers": {

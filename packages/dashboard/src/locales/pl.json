@@ -3474,10 +3474,8 @@
       "item_count_one": "{{count}} pozycja",
       "item_count_other": "{{count}} pozycji",
       "new": {
-        "add_variant": "Dodaj wariant",
         "creates_draft_note": "Tworzy zamówienie robocze. Dodaj płatności i sfinalizuj je po utworzeniu.",
         "items_table": {
-          "qty": "Ilość",
           "sku": "SKU",
           "variant": "Wariant"
         },
@@ -3572,6 +3570,10 @@
         "new_cta": "Nowy klient"
       },
       "getting_started": {
+        "completed": {
+          "description": "Wszystkie kroki z sekcji Pierwsze kroki są ukończone.",
+          "title": "Twój sklep jest skonfigurowany"
+        },
         "description": "Ukończ te kroki, aby uruchomić swój sklep.",
         "progress": "{{done}} z {{total}} ukończone",
         "storefront_sheet": {
@@ -3609,6 +3611,7 @@
             "cta": "Zapisz adres",
             "description": "Twój adres wysyłki i zwrotów. Przewoźnicy używają go do obliczania kosztów dostawy, a klienci wysyłają tam zwroty.",
             "no_location": "Nie masz jeszcze własnej lokalizacji magazynowej — utwórz ją w ustawieniach, aby dodać adres.",
+            "saved": "Adres wysyłki zapisany",
             "title": "Dodaj adres wysyłki"
           },
           "setup_payment_method": {
@@ -3874,6 +3877,10 @@
           "company_addresses": "Adresy firmy",
           "company_help": "Przypisz to zamówienie do firmy. Lista klientów pokaże wtedy tylko osoby, które mogą dla niej kupować.",
           "customer_addresses": "Adresy klienta",
+          "items_empty": {
+            "description": "Dodaj produkty do tego zamówienia.",
+            "title": "Brak pozycji"
+          },
           "reset_items": {
             "confirm": "Zmień i usuń pozycje",
             "message_few": "{{count}} wybrane pozycje mogą nie być sprzedawane temu kupującemu, na tym rynku lub w tym kanale albo mieć inną cenę. Zostaną usunięte.",
@@ -3882,7 +3889,6 @@
             "message_other": "{{count}} wybranej pozycji może nie być sprzedawane temu kupującemu, na tym rynku lub w tym kanale albo mieć inną cenę. Zostaną usunięte.",
             "title": "Usunąć wybrane pozycje?"
           },
-          "search_variant": "Szukaj wariantu…",
           "section_billing": "Rozliczenie",
           "section_customer": "Klient",
           "section_items": "Pozycje",
@@ -5863,7 +5869,8 @@
       "badges": {
         "default": "Domyślna",
         "enabled": "Włączone",
-        "inactive": "Nieaktywna"
+        "inactive": "Nieaktywna",
+        "seller_default": "Domyślna sprzedawcy"
       },
       "columns": {
         "default": "Domyślna",
@@ -5908,6 +5915,10 @@
         "unknown_product": "Nieznany produkt",
         "variant_count_one": "{{count}} wariant",
         "variant_count_other": "{{count}} wariantów"
+      },
+      "views": {
+        "own": "Twoje lokalizacje",
+        "sellers": "Lokalizacje sprzedawców"
       }
     },
     "stock_transfers": {

@@ -867,3 +867,46 @@ export function section(page: Page, title: RegExp) {
     .locator('[data-slot="section"]')
     .filter({ has: page.getByRole('heading', { name: title }) })
 }
+
+/** Creates a tax rate in the Default category from the tax rates page. */
+export async function createTaxRate(
+  page: Page,
+  attrs: { name: string; ratePercent: string; country?: string },
+) {
+  await page.getByRole('button', { name: /add tax rate/i }).click()
+  await expect(page.getByRole('heading', { name: /new tax rate/i })).toBeVisible()
+
+  await page.locator('#name').fill(attrs.name)
+  await page.locator('#rate_percent').fill(attrs.ratePercent)
+  // The seeded store always carries a `Default` tax category.
+  await page.locator('#tax_category_id').click()
+  await page.getByRole('option', { name: /^default$/i }).click()
+
+  if (attrs.country) {
+    await page.getByRole('combobox', { name: /^country$/i }).click()
+    await page.getByPlaceholder(/^search countries/i).fill(attrs.country)
+    await page.getByRole('option', { name: attrs.country }).first().click()
+  }
+
+  await page.getByRole('button', { name: /create tax rate/i }).click()
+}
+
+/**
+ * Adds one unit of a product on the New order form, through the same "Add
+ * product" sheet the order edit screen uses.
+ */
+export async function addNewOrderItem(page: Page, productName: string) {
+  await page
+    .getByRole('button', { name: /^add product$/i })
+    .first()
+    .click()
+  const sheet = page.getByRole('dialog', { name: /add line item/i })
+  await expect(sheet).toBeVisible()
+  await sheet.getByPlaceholder(/product name or sku/i).fill(productName)
+  await sheet
+    .getByRole('button', { name: new RegExp(escapeRegex(productName), 'i') })
+    .first()
+    .click()
+  await sheet.getByRole('button', { name: /^add$/i }).click()
+  await expect(sheet).toBeHidden()
+}

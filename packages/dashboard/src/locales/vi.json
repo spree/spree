@@ -3437,10 +3437,8 @@
       "item_count_one": "{{count}} mục",
       "item_count_other": "{{count}} mục",
       "new": {
-        "add_variant": "Thêm một biến thể",
         "creates_draft_note": "Tạo một đơn đặt hàng dự thảo. Thêm thanh toán và hoàn thành nó sau khi tạo.",
         "items_table": {
-          "qty": "Số lượng",
           "sku": "Mã hàng",
           "variant": "Biến thể"
         },
@@ -3535,6 +3533,10 @@
         "new_cta": "Khách hàng mới"
       },
       "getting_started": {
+        "completed": {
+          "description": "Bạn đã hoàn tất mọi bước Bắt đầu.",
+          "title": "Cửa hàng của bạn đã được thiết lập"
+        },
         "description": "Hãy hoàn tất các bước này để ra mắt cửa hàng của bạn.",
         "progress": "{{done}} trong số {{total}} đã hoàn thành",
         "storefront_sheet": {
@@ -3572,6 +3574,7 @@
             "cta": "Lưu địa chỉ",
             "description": "Địa chỉ giao hàng và trả lại của bạn. Các nhà vận chuyển sử dụng nó để tính toán tỷ lệ giao hàng và đó là nơi gửi hàng trả lại của khách hàng.",
             "no_location": "Bạn chưa có vị trí kho hàng của riêng mình — hãy tạo một vị trí trong Cài đặt để thêm địa chỉ.",
+            "saved": "Đã lưu địa chỉ giao hàng",
             "title": "Thêm địa chỉ giao hàng của bạn"
           },
           "setup_payment_method": {
@@ -3833,13 +3836,16 @@
           "company_addresses": "Địa chỉ công ty",
           "company_help": "Đính kèm đơn đặt hàng này với một doanh nghiệp. Danh sách khách hàng sau đó chỉ hiển thị những người có thể mua nó.",
           "customer_addresses": "Địa chỉ khách hàng",
+          "items_empty": {
+            "description": "Thêm các sản phẩm cho đơn hàng này.",
+            "title": "Chưa có mặt hàng nào"
+          },
           "reset_items": {
             "confirm": "Thay đổi và xóa các mục",
             "message_one": "Mặt hàng {{count}} bạn đã chọn có thể không được bán hoặc có thể có giá khác đối với người mua, thị trường hoặc kênh này. Nó sẽ bị xóa.",
             "message_other": "Các mặt hàng {{count}} bạn đã chọn có thể không được bán hoặc có thể có giá khác đối với người mua, thị trường hoặc kênh này. Chúng sẽ bị loại bỏ.",
             "title": "Xóa các mục đã chọn?"
           },
-          "search_variant": "Tìm kiếm biến thể…",
           "section_billing": "Thanh toán",
           "section_customer": "Khách hàng",
           "section_items": "Mặt hàng",
@@ -5763,7 +5769,8 @@
       "badges": {
         "default": "Mặc định",
         "enabled": "Đã bật",
-        "inactive": "Không hoạt động"
+        "inactive": "Không hoạt động",
+        "seller_default": "Mặc định của người bán"
       },
       "columns": {
         "default": "Mặc định",
@@ -5808,6 +5815,10 @@
         "unknown_product": "Sản phẩm không xác định",
         "variant_count_one": "{{count}} biến thể",
         "variant_count_other": "{{count}} biến thể"
+      },
+      "views": {
+        "own": "Địa điểm của bạn",
+        "sellers": "Địa điểm của người bán"
       }
     },
     "stock_transfers": {

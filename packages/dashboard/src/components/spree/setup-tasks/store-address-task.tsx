@@ -38,7 +38,7 @@ export function StoreAddressTask({ task }: SetupTaskSlotContext) {
 
   return (
     <>
-      <p className="text-muted-foreground text-sm">
+      <p className="text-muted-foreground text-base">
         {t('admin.pages.getting_started.tasks.setup_address.description')}
       </p>
 
@@ -53,7 +53,7 @@ export function StoreAddressTask({ task }: SetupTaskSlotContext) {
           </Button>
         </>
       ) : (
-        <p className={failed ? 'text-destructive text-sm' : 'text-muted-foreground text-sm'}>
+        <p className={failed ? 'text-destructive text-base' : 'text-muted-foreground text-base'}>
           {t(
             failed
               ? 'admin.errors.failed_to_load'
@@ -123,7 +123,9 @@ export function StoreAddressDialog({
 }) {
   const { t } = useTranslation()
   const queryClient = useQueryClient()
-  const update = useUpdateStockLocationById()
+  const update = useUpdateStockLocationById({
+    successMessage: t('admin.pages.getting_started.tasks.setup_address.saved'),
+  })
 
   return (
     <AddressFormDialog

@@ -13,6 +13,7 @@ import { Notifications } from '../../components/spree/notifications'
 import { PluginRoutePage, usePluginRouteClaim } from '../../components/spree/plugin-route-page'
 import { ProfileDialog } from '../../components/spree/profile-dialog'
 import { useDashboardCounters } from '../../hooks/use-dashboard-counters'
+import { useSetupCompleteToast } from '../../hooks/use-setup-complete-toast'
 import { getAvailableUiLocales } from '../../i18n-setup'
 
 // Derived once from the shipped locale bundles — stable for the app lifetime.
@@ -56,6 +57,7 @@ function StoreShell({ storeId, inSettings }: { storeId: string; inSettings: bool
   // the request to a badge means no counts at all on every other page. One
   // query key, so the badges and the home screen's card share this one request.
   useDashboardCounters()
+  useSetupCompleteToast()
   // The profile is edited in a dialog rather than a page, so the shell owns its
   // open state — the trigger sits in the sidebar's account menu, which is
   // mounted here and stays put across route changes.

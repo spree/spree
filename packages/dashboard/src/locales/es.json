@@ -145,6 +145,10 @@
         "new_cta": "Nuevo cliente"
       },
       "getting_started": {
+        "completed": {
+          "description": "Has completado todos los pasos de Primeros pasos.",
+          "title": "Tu tienda está configurada"
+        },
         "description": "Completá estos pasos para lanzar tu tienda.",
         "progress": "{{done}} de {{total}} completados",
         "storefront_sheet": {
@@ -182,6 +186,7 @@
             "cta": "Guardar dirección",
             "description": "Tu dirección de envío y devoluciones. Los transportistas la usan para calcular las tarifas de entrega, y es a donde se envían las devoluciones de los clientes.",
             "no_location": "Todavía no tenés ninguna ubicación de stock propia: creá una en Configuración para agregar una dirección.",
+            "saved": "Dirección de envío guardada",
             "title": "Agregá tu dirección de envío"
           },
           "setup_payment_method": {
@@ -443,6 +448,10 @@
           "company_addresses": "Direcciones de la empresa",
           "company_help": "Vinculá este pedido a una empresa. La lista de clientes mostrará solo a quienes puedan comprar para ella.",
           "customer_addresses": "Direcciones del cliente",
+          "items_empty": {
+            "description": "Añade los productos de este pedido.",
+            "title": "Aún no hay artículos"
+          },
           "reset_items": {
             "confirm": "Cambiar y quitar artículos",
             "message_many": "Es posible que los {{count}} artículos elegidos no se vendan, o cuesten otra cosa, para este comprador, mercado o canal. Se quitarán.",
@@ -450,7 +459,6 @@
             "message_other": "Es posible que los {{count}} artículos elegidos no se vendan, o cuesten otra cosa, para este comprador, mercado o canal. Se quitarán.",
             "title": "¿Quitar los artículos elegidos?"
           },
-          "search_variant": "Buscar variante…",
           "section_billing": "Facturación",
           "section_customer": "Cliente",
           "section_items": "Artículos",
@@ -3094,10 +3102,8 @@
       "item_count_one": "{{count}} artículo",
       "item_count_other": "{{count}} artículos",
       "new": {
-        "add_variant": "Agregar una variante",
         "creates_draft_note": "Crea un pedido borrador. Agregá los pagos y completalo después de crearlo.",
         "items_table": {
-          "qty": "Cant.",
           "sku": "SKU",
           "variant": "Variante"
         },
@@ -5152,7 +5158,8 @@
       "badges": {
         "default": "Predeterminada",
         "enabled": "Habilitada",
-        "inactive": "Inactiva"
+        "inactive": "Inactiva",
+        "seller_default": "Predeterminada del vendedor"
       },
       "columns": {
         "default": "Predeterminada",
@@ -5197,6 +5204,10 @@
         "unknown_product": "Producto desconocido",
         "variant_count_one": "{{count}} variante",
         "variant_count_other": "{{count}} variantes"
+      },
+      "views": {
+        "own": "Tus ubicaciones",
+        "sellers": "Ubicaciones de vendedores"
       }
     },
     "nav": {

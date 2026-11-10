@@ -3429,10 +3429,8 @@
       "item_count_one": "{{count}} 件商品",
       "item_count_other": "{{count}} 件商品",
       "new": {
-        "add_variant": "添加变体",
         "creates_draft_note": "创建一个草稿订单。创建后可添加付款并完成订单。",
         "items_table": {
-          "qty": "数量",
           "sku": "SKU",
           "variant": "变体"
         },
@@ -3527,6 +3525,10 @@
         "new_cta": "新建客户"
       },
       "getting_started": {
+        "completed": {
+          "description": "所有快速入门步骤均已完成。",
+          "title": "您的店铺已设置完成"
+        },
         "description": "完成这些步骤即可上线您的店铺。",
         "progress": "已完成 {{done}}/{{total}}",
         "storefront_sheet": {
@@ -3564,6 +3566,7 @@
             "cta": "保存地址",
             "description": "您的发货和退货地址。承运商使用它计算配送费率，客户退货也将寄送至此。",
             "no_location": "您还没有自己的库存地点 — 请在设置中创建一个以添加地址。",
+            "saved": "已保存发货地址",
             "title": "添加您的发货地址"
           },
           "setup_payment_method": {
@@ -3823,12 +3826,15 @@
           "company_addresses": "公司地址",
           "company_help": "将此订单关联到某个公司。客户列表随后只显示可为其采购的人员。",
           "customer_addresses": "客户地址",
+          "items_empty": {
+            "description": "添加此订单的商品。",
+            "title": "暂无商品"
+          },
           "reset_items": {
             "confirm": "更改并移除商品",
             "message_other": "已选的 {{count}} 件商品可能不向此买家、市场或渠道销售，或价格不同。它们将被移除。",
             "title": "移除已选商品？"
           },
-          "search_variant": "搜索变体…",
           "section_billing": "账单",
           "section_customer": "客户",
           "section_items": "商品",
@@ -5784,7 +5790,8 @@
       "badges": {
         "default": "默认",
         "enabled": "已启用",
-        "inactive": "未激活"
+        "inactive": "未激活",
+        "seller_default": "卖家默认"
       },
       "columns": {
         "default": "默认",
@@ -5829,6 +5836,10 @@
         "unknown_product": "未知产品",
         "variant_count_one": "{{count}} 个变体",
         "variant_count_other": "{{count}} 个变体"
+      },
+      "views": {
+        "own": "您的库存地点",
+        "sellers": "卖家的库存地点"
       }
     },
     "stock_transfers": {

@@ -3437,10 +3437,8 @@
       "item_count_one": "{{count}} 点",
       "item_count_other": "{{count}} 点",
       "new": {
-        "add_variant": "バリアントを追加",
         "creates_draft_note": "下書きの注文を作成します。作成した後で支払いを追加し、完了してください。",
         "items_table": {
-          "qty": "数量",
           "sku": "SKU",
           "variant": "バリアント"
         },
@@ -3535,6 +3533,10 @@
         "new_cta": "新しい顧客"
       },
       "getting_started": {
+        "completed": {
+          "description": "はじめにのすべてのステップが完了しました。",
+          "title": "ストアの設定が完了しました"
+        },
         "description": "ストアを開くには、次の手順を終えてください。",
         "progress": "{{total}} 件中 {{done}} 件が完了",
         "storefront_sheet": {
@@ -3572,6 +3574,7 @@
             "cta": "住所を保存",
             "description": "配送と返品の住所です。運送会社が配送料の計算に使い、顧客の返品もここに届きます。",
             "no_location": "自社の在庫ロケーションがまだありません。住所を追加するには、設定で作成してください。",
+            "saved": "配送先住所を保存しました",
             "title": "配送元の住所を追加"
           },
           "setup_payment_method": {
@@ -3833,13 +3836,16 @@
           "company_addresses": "会社の住所",
           "company_help": "この注文を事業者に結び付けます。顧客の一覧には、その事業者のために購入できる人だけが表示されます。",
           "customer_addresses": "顧客の住所",
+          "items_empty": {
+            "description": "この注文の商品を追加してください。",
+            "title": "まだ商品がありません"
+          },
           "reset_items": {
             "confirm": "品目を変更・削除",
             "message_one": "選んだ {{count}} 点は、この買い手・マーケット・チャネルでは販売できないか、別の価格かもしれません。削除されます。",
             "message_other": "選んだ {{count}} 点は、この買い手・マーケット・チャネルでは販売できないか、別の価格かもしれません。削除されます。",
             "title": "選んだ品目を削除しますか？"
           },
-          "search_variant": "バリアントを検索…",
           "section_billing": "請求",
           "section_customer": "顧客",
           "section_items": "品目",
@@ -5796,7 +5802,8 @@
       "badges": {
         "default": "既定",
         "enabled": "有効",
-        "inactive": "無効"
+        "inactive": "無効",
+        "seller_default": "出品者のデフォルト"
       },
       "columns": {
         "default": "既定",
@@ -5841,6 +5848,10 @@
         "unknown_product": "不明な商品",
         "variant_count_one": "バリアント {{count}} 件",
         "variant_count_other": "バリアント {{count}} 件"
+      },
+      "views": {
+        "own": "自社のロケーション",
+        "sellers": "出品者のロケーション"
       }
     },
     "stock_transfers": {

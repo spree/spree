@@ -3439,10 +3439,8 @@
       "item_count_one": "{{count}} article",
       "item_count_other": "{{count}} articles",
       "new": {
-        "add_variant": "Ajouter une variante",
         "creates_draft_note": "Crée une commande brouillon. Ajoutez des paiements et finalisez-la après la création.",
         "items_table": {
-          "qty": "Qté",
           "sku": "SKU",
           "variant": "Variante"
         },
@@ -3537,6 +3535,10 @@
         "new_cta": "Nouveau client"
       },
       "getting_started": {
+        "completed": {
+          "description": "Toutes les étapes de Premiers pas sont terminées.",
+          "title": "Votre boutique est configurée"
+        },
         "description": "Terminez ces étapes pour lancer votre boutique.",
         "progress": "{{done}} sur {{total}} terminées",
         "storefront_sheet": {
@@ -3574,6 +3576,7 @@
             "cta": "Enregistrer l'adresse",
             "description": "Votre adresse d'expédition et de retour. Les transporteurs l'utilisent pour calculer les frais de livraison, et c'est là que les retours clients sont envoyés.",
             "no_location": "Vous n'avez pas encore de lieu de stock — créez-en un dans les paramètres pour ajouter une adresse.",
+            "saved": "Adresse d’expédition enregistrée",
             "title": "Ajouter votre adresse d'expédition"
           },
           "setup_payment_method": {
@@ -3835,6 +3838,10 @@
           "company_addresses": "Adresses de l’entreprise",
           "company_help": "Rattacher cette commande à une entreprise. La liste des clients n'affiche alors que les personnes autorisées à acheter pour elle.",
           "customer_addresses": "Adresses du client",
+          "items_empty": {
+            "description": "Ajoutez les produits de cette commande.",
+            "title": "Aucun article pour l’instant"
+          },
           "reset_items": {
             "confirm": "Modifier et retirer les articles",
             "message_many": "Les {{count}} articles choisis ne sont peut-être pas vendus, ou à un autre prix, pour cet acheteur, ce marché ou ce canal. Ils seront retirés.",
@@ -3842,7 +3849,6 @@
             "message_other": "Les {{count}} articles choisis ne sont peut-être pas vendus, ou à un autre prix, pour cet acheteur, ce marché ou ce canal. Ils seront retirés.",
             "title": "Retirer les articles choisis ?"
           },
-          "search_variant": "Rechercher une variante…",
           "section_billing": "Facturation",
           "section_customer": "Client",
           "section_items": "Articles",
@@ -5799,7 +5805,8 @@
       "badges": {
         "default": "Par défaut",
         "enabled": "Activé",
-        "inactive": "Inactif"
+        "inactive": "Inactif",
+        "seller_default": "Par défaut du vendeur"
       },
       "columns": {
         "default": "Par défaut",
@@ -5844,6 +5851,10 @@
         "unknown_product": "Produit inconnu",
         "variant_count_one": "{{count}} variante",
         "variant_count_other": "{{count}} variantes"
+      },
+      "views": {
+        "own": "Vos emplacements",
+        "sellers": "Emplacements des vendeurs"
       }
     },
     "stock_transfers": {
