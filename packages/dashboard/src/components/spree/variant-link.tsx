@@ -1,5 +1,9 @@
 import { useStore } from '@spree/dashboard-core'
-import { ProductIdentity, type ProductIdentityProps } from '@spree/dashboard-ui'
+import {
+  ProductIdentity,
+  type ProductIdentityProps,
+  type ProductLinkRender,
+} from '@spree/dashboard-ui'
 import { Link } from '@tanstack/react-router'
 
 /**
@@ -31,4 +35,10 @@ export function VariantLink({
       }
     />
   )
+}
+
+/** Links an item list's products to their pages in this panel. */
+export function useProductLink(): ProductLinkRender {
+  const { storeId } = useStore()
+  return (productId) => <Link to="/$storeId/products/$productId" params={{ storeId, productId }} />
 }

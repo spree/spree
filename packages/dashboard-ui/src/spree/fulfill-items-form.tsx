@@ -103,7 +103,7 @@ function ItemQuantityRow({
               }}
               onBlur={field.onBlur}
             />
-            <span className="w-16 whitespace-nowrap text-muted-foreground text-sm">
+            <span className="w-16 whitespace-nowrap text-muted-foreground text-base">
               {t('admin.orders.fulfill.of_units', { count: row.quantity })}
             </span>
           </div>
@@ -167,7 +167,7 @@ export function FulfillItemsForm({
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col">
       {errors.root?.message && (
-        <p className="px-4 pt-3 text-destructive text-sm" role="alert">
+        <p className="px-4 pt-3 text-destructive text-base" role="alert">
           {errors.root.message}
         </p>
       )}
@@ -192,7 +192,7 @@ export function FulfillItemsForm({
         </div>
       )}
 
-      <div className="grid grid-cols-1 gap-4 border-border-subtle border-t px-4 py-3 sm:grid-cols-2">
+      <div className="mx-4 grid grid-cols-1 gap-4 border-border-subtle border-t py-3 sm:grid-cols-2">
         <Field>
           <FieldLabel htmlFor={`${idPrefix}-tracking`}>
             {t('admin.orders.fulfill.tracking_label')}
@@ -239,7 +239,7 @@ export function FulfillItemsForm({
         render={({ field }) => (
           <label
             htmlFor={`${idPrefix}-notify`}
-            className="flex cursor-pointer items-center gap-2 px-4 py-3 text-sm"
+            className="flex cursor-pointer items-center gap-2 px-4 py-3 text-base"
           >
             <Checkbox
               id={`${idPrefix}-notify`}
@@ -260,8 +260,8 @@ export function FulfillItemsForm({
         </div>
       )}
 
-      <div className="flex items-center justify-end gap-2 border-border-subtle border-t px-4 py-3">
-        <span className="mr-auto text-muted-foreground text-sm">
+      <div className="mx-4 flex items-center justify-end gap-2 border-border-subtle border-t py-3">
+        <span className="mr-auto text-muted-foreground text-base">
           {t('admin.orders.fulfill.units_selected')}: {totalSelected} / {totalAvailable}
         </span>
         <Button type="button" size="sm" variant="outline" onClick={onCancel}>

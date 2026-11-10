@@ -360,7 +360,7 @@ export function TimeSeriesChart({
           tile — so below `sm` the strip scrolls sideways at a legible width
           instead. */}
       <CardHeader
-        className="grid h-auto auto-cols-[minmax(9rem,1fr)] grid-flow-col gap-0 overflow-x-auto border-b p-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="mx-0 grid h-auto auto-cols-[minmax(9rem,1fr)] grid-flow-col gap-0 overflow-x-auto border-b p-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         style={{
           // Applied at every width; below `sm` the auto-column minimum above
           // wins and the strip overflows into a scroll instead of squeezing.
@@ -389,7 +389,7 @@ export function TimeSeriesChart({
       </CardHeader>
       <CardContent className="relative px-2 pt-4 sm:px-6 sm:pt-6">
         {sparse && (
-          <p className="pointer-events-none absolute inset-x-0 top-1/3 z-10 mx-auto w-fit rounded-md border bg-card px-3 py-1.5 text-sm text-muted-foreground shadow-xs">
+          <p className="pointer-events-none absolute inset-x-0 top-1/3 z-10 mx-auto w-fit rounded-md border bg-card px-3 py-1.5 text-base text-muted-foreground shadow-xs">
             {t('admin.pages.home.chart_sparse')}
           </p>
         )}
@@ -550,7 +550,7 @@ function ResultTable({
 export function ReportSkeleton() {
   return (
     <Card>
-      <CardHeader className="grid h-auto grid-cols-2 gap-0 border-b p-0 sm:grid-cols-4">
+      <CardHeader className="mx-0 grid h-auto grid-cols-2 gap-0 border-b p-0 sm:grid-cols-4">
         {['a', 'b', 'c', 'd'].map((key) => (
           <div key={key} className="flex flex-col gap-2 px-6 py-4 sm:border-l sm:first:border-l-0">
             <Skeleton className="h-3 w-20" />

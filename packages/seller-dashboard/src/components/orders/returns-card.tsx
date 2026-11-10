@@ -3,6 +3,7 @@ import {
   currencyParts,
   formatMoney,
   isPositiveMoney,
+  postSaleItemRow,
   returnOwesNothing,
   returnRefundSummary,
   useMoneyLocale,
@@ -20,6 +21,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  FulfillmentItemList,
   ReturnReceiveDialog,
   ReturnRefundDialog,
   Section,
@@ -37,6 +39,7 @@ import { useTranslation } from 'react-i18next'
 import { useOrderReturns, useReturnActions } from '../../hooks/use-post-sale'
 import { lineLabel } from './line-label'
 import { CreateReturnDialog, fulfilledUnits } from './post-sale-create-dialogs'
+import { useProductLink } from './use-product-link'
 
 // Refunded and canceled returns are finished; offering a menu on them would
 // open onto nothing.
@@ -50,6 +53,7 @@ const ACTIONABLE = subsetOf(RETURN_STATUSES, ['requested', 'approved', 'received
  * refunding decides where the money goes.
  */
 export function ReturnsCard({ order }: { order: Order }) {
+  const productLink = useProductLink()
   const { t } = useTranslation()
   const confirm = useConfirm()
   const { data } = useOrderReturns(order.id)
@@ -92,12 +96,12 @@ export function ReturnsCard({ order }: { order: Order }) {
 
       <div className="flex flex-col gap-4">
         {returns.length === 0 ? (
-          <p className="text-muted-foreground text-sm">{t('orders.post_sale.returns.empty')}</p>
+          <p className="text-muted-foreground text-base">{t('orders.post_sale.returns.empty')}</p>
         ) : (
           returns.map((returnRecord) => (
             <Card key={returnRecord.id}>
               <CardHeader>
-                <CardTitle className="text-sm font-medium">{returnRecord.number}</CardTitle>
+                <CardTitle className="text-base font-medium">{returnRecord.number}</CardTitle>
                 <CardAction className="flex items-center gap-2">
                   <StatusBadge
                     status={returnRecord.status}
@@ -144,10 +148,14 @@ export function ReturnsCard({ order }: { order: Order }) {
                 </CardAction>
               </CardHeader>
 
+              <FulfillmentItemList
+                productLink={productLink}
+                rows={(returnRecord.return_line_items ?? []).map((line) => ({
+                  ...postSaleItemRow(line.id, line, order.items ?? []),
+                  badges: <ReturnLineBadges line={line} />,
+                }))}
+              />
               <CardContent className="flex flex-col gap-1.5">
-                {returnRecord.return_line_items?.map((line) => (
-                  <ReturnLineRow key={line.id} line={line} />
-                ))}
                 <RefundSummary returnRecord={returnRecord} currency={order.currency} />
               </CardContent>
             </Card>
@@ -181,7 +189,7 @@ function RefundSummary({ returnRecord, currency }: { returnRecord: Return; curre
   const summary = returnRefundSummary(returnRecord, currency, locale)
 
   return (
-    <p className="text-muted-foreground text-sm">
+    <p className="text-muted-foreground text-base">
       {summary.kind === 'owed' &&
         t('orders.post_sale.returns.refund_total', { amount: summary.amount })}
       {summary.kind === 'refunded' &&
@@ -192,28 +200,24 @@ function RefundSummary({ returnRecord, currency }: { returnRecord: Return; curre
   )
 }
 
-function ReturnLineRow({ line }: { line: ReturnLineItem }) {
+/** What arrived back against a line. */
+function ReturnLineBadges({ line }: { line: ReturnLineItem }) {
   const { t } = useTranslation()
-  const label = lineLabel(line.name, line.variant, line.variant_id)
 
   return (
-    <div className="flex items-center justify-between gap-3 text-sm">
-      <span className="truncate">{label}</span>
-      <span className="flex shrink-0 items-center gap-2 text-muted-foreground">
-        {line.received_quantity > 0 && line.received_quantity < line.quantity && (
-          <Badge variant="outline">
-            {t('orders.post_sale.returns.partially_received', {
-              received: line.received_quantity,
-              quantity: line.quantity,
-            })}
-          </Badge>
-        )}
-        {!line.resellable && (
-          <Badge variant="outline">{t('orders.post_sale.returns.not_resellable')}</Badge>
-        )}
-        × {line.quantity}
-      </span>
-    </div>
+    <>
+      {line.received_quantity > 0 && line.received_quantity < line.quantity && (
+        <Badge variant="outline">
+          {t('orders.post_sale.returns.partially_received', {
+            received: line.received_quantity,
+            quantity: line.quantity,
+          })}
+        </Badge>
+      )}
+      {!line.resellable && (
+        <Badge variant="outline">{t('orders.post_sale.returns.not_resellable')}</Badge>
+      )}
+    </>
   )
 }
 

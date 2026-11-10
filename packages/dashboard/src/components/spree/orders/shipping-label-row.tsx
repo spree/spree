@@ -80,7 +80,7 @@ export function ShippingLabelRow({
   }
 
   return (
-    <CardContent className="flex flex-wrap items-center justify-between gap-2 border-b border-border-subtle py-3.5 text-sm">
+    <CardContent className="mx-4 px-0 flex flex-wrap items-center justify-between gap-2 border-b border-border-subtle py-3.5 text-base">
       <div className="flex flex-wrap items-center gap-2">
         <ReceiptIcon className="size-4 text-muted-foreground" />
         <span className="text-muted-foreground">

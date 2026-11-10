@@ -12,11 +12,12 @@ import {
 import { Field, FieldLabel } from '../ui/field'
 import { Input } from '../ui/input'
 import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from '../ui/input-group'
-import { Item, ItemActions, ItemContent, ItemFooter, ItemTitle } from '../ui/item'
+import { Item, ItemActions, ItemContent, ItemFooter } from '../ui/item'
 import { Textarea } from '../ui/textarea'
 import {
   type PostSaleSelection,
   type PostSaleUnit,
+  PostSaleUnitLabel,
   QuantityPicker,
   selectedUnits,
 } from './post-sale-fields'
@@ -161,7 +162,7 @@ export function CreateClaimDialog({
               return (
                 <Item variant="outline" key={line.id}>
                   <ItemContent className="min-w-0">
-                    <ItemTitle className="w-full truncate font-normal">{line.label}</ItemTitle>
+                    <PostSaleUnitLabel unit={line} />
                   </ItemContent>
                   <ItemActions>
                     <Input

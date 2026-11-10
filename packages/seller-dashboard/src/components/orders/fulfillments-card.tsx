@@ -42,6 +42,7 @@ import { FulfillmentFulfillForm } from './fulfillment-fulfill-form'
 import { FulfillmentLabelUploadDialog } from './fulfillment-label-upload-dialog'
 import { FulfillmentSplitDialog } from './fulfillment-split-dialog'
 import { ShippingLabelRow } from './shipping-label-row'
+import { useProductLink } from './use-product-link'
 
 // A parcel that has not gone out is the only one still to ship or cancel.
 // Reading these off "not unfulfilled" once badged a canceled parcel as a
@@ -94,6 +95,7 @@ export function FulfillmentsCard({ order }: { order: Order }) {
 }
 
 function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Fulfillment }) {
+  const productLink = useProductLink()
   const orderId = order.id
   const { t } = useTranslation()
   const confirm = useConfirm()
@@ -192,7 +194,7 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
       }
     >
       {fulfillment.delivery_method_name && (
-        <CardContent className="flex items-center justify-between border-border-subtle border-b py-3.5 text-sm">
+        <CardContent className="mx-4 px-0 flex items-center justify-between border-border-subtle border-b py-3.5 text-base">
           <span className="text-muted-foreground">{fulfillment.delivery_method_name}</span>
         </CardContent>
       )}
@@ -219,7 +221,10 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
         />
       ) : (
         <>
-          <FulfillmentItemList rows={fulfillmentItemRows(fulfillment, order.items ?? [])} />
+          <FulfillmentItemList
+            productLink={productLink}
+            rows={fulfillmentItemRows(fulfillment, order.items ?? [])}
+          />
 
           {shippable && (
             <CardFooter className="justify-end gap-2 py-3.5">

@@ -50,7 +50,7 @@ export function FulfillmentDeliveries({
   }
 
   return (
-    <CardContent className="flex flex-col gap-2 border-border-subtle border-b py-3.5 text-sm">
+    <CardContent className="mx-4 px-0 flex flex-col gap-2 border-border-subtle border-b py-3.5 text-base">
       {deliveries.map((delivery) => (
         <div key={delivery.id} className="flex flex-wrap items-center justify-between gap-2">
           <div className="flex min-w-0 flex-wrap items-center gap-2">

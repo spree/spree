@@ -25,7 +25,8 @@ import {
   ItemActions,
   ItemContent,
   ItemFooter,
-  ItemTitle,
+  type PostSaleUnit,
+  PostSaleUnitLabel,
   type RefundMethod,
   Select,
   SelectContent,
@@ -43,13 +44,6 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ReasonField } from './reason-field'
 
-/** A fulfilled unit the customer could send back. */
-export type FulfilledUnit = {
-  id: string
-  label: string
-  quantity: number
-}
-
 /**
  * Every unit on the order, flattened out of its fulfillments. A return or
  * exchange is against a fulfillment item rather than a line item, but it does
@@ -60,12 +54,22 @@ export type FulfilledUnit = {
 /** `id` always comes back, so it need not be listed. */
 const VARIANT_PICKER_FIELDS = ['product_name', 'sku', 'options_text']
 
-export function fulfilledUnits(order: Order): FulfilledUnit[] {
+export function fulfilledUnits(order: Order): PostSaleUnit[] {
+  const lineItems = new Map((order.items ?? []).map((item) => [item.id, item]))
+
   return (order.fulfillments ?? []).flatMap((fulfillment) =>
     (fulfillment.fulfillment_items ?? []).map((item) => ({
       id: item.id,
       label: [item.name, item.options_text].filter(Boolean).join(' — ') || item.id,
       quantity: item.quantity,
+      product: {
+        name: item.name ?? item.id,
+        optionsText: item.options_text,
+        // The fulfillment item carries no image; its order line does.
+        thumbnailUrl: item.line_item_id
+          ? lineItems.get(item.line_item_id)?.thumbnail_url
+          : undefined,
+      },
     })),
   )
 }
@@ -184,7 +188,7 @@ export function CreateExchangeDialog({
           {units.map((unit) => (
             <Item variant="outline" key={unit.id}>
               <ItemContent className="min-w-0">
-                <ItemTitle className="w-full truncate font-normal">{unit.label}</ItemTitle>
+                <PostSaleUnitLabel unit={unit} />
               </ItemContent>
               <ItemActions>
                 <Input
@@ -315,6 +319,11 @@ export function CreateClaimDialog({
         id: item.id,
         label: [item.name, item.options_text].filter(Boolean).join(' — ') || item.id,
         quantity: item.quantity,
+        product: {
+          name: item.name,
+          optionsText: item.options_text,
+          thumbnailUrl: item.thumbnail_url,
+        },
         paidFor: (quantity: number) => paidForUnits(item, quantity, order.currency),
       }))}
       currencySymbol={currencySymbol}

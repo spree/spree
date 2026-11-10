@@ -116,7 +116,7 @@ export function IntegrationCard({
         <div className="flex items-start gap-3">
           <IntegrationLogo name={name} logoUrl={logoUrl ?? null} />
           <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-            <span className="truncate font-semibold text-sm">{name}</span>
+            <span className="truncate font-semibold text-base">{name}</span>
             <span className="flex items-center gap-1.5 text-muted-foreground text-xs">
               <span
                 aria-hidden
@@ -139,10 +139,12 @@ export function IntegrationCard({
             />
           )}
         </div>
-        {description && <p className="line-clamp-2 text-muted-foreground text-sm">{description}</p>}
+        {description && (
+          <p className="line-clamp-2 text-muted-foreground text-base">{description}</p>
+        )}
         {tags && <div className="mt-auto flex flex-wrap gap-1.5">{tags}</div>}
       </CardContent>
-      <CardFooter className="justify-between gap-2 bg-muted/40 py-2">
+      <CardFooter className="mx-0 justify-between gap-2 rounded-b-[calc(var(--radius-card)-1px)] bg-muted/40 px-4 py-2">
         <SetupGuideLink url={docsUrl} />
         <Button
           size="sm"

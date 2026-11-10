@@ -11,7 +11,7 @@ export interface ProductIdentityProps extends useRender.ComponentProps<'span'> {
   subtitle?: ReactNode
   thumbnailUrl?: string | null
   size?: 'sm' | 'md' | 'lg'
-  /** Badges and other markers shown after the name, outside the link's underline. */
+  /** Badges and other markers shown after the name. */
   badges?: ReactNode
   /** Strikes the name through, for a row that is about to be removed. */
   struckThrough?: boolean
@@ -54,11 +54,7 @@ export function ProductIdentity({
             <span className="flex min-w-0 flex-col">
               <span className="flex min-w-0 items-center gap-2">
                 <span
-                  className={cn(
-                    'truncate font-medium text-sm',
-                    interactive && 'group-hover:underline',
-                    struckThrough && 'line-through',
-                  )}
+                  className={cn('truncate font-medium text-base', struckThrough && 'line-through')}
                 >
                   {name ?? '—'}
                 </span>

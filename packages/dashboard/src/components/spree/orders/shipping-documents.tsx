@@ -22,15 +22,17 @@ export function ShippingDocuments({
   if (!documents?.length) return null
 
   return (
-    <CardContent className="flex flex-col gap-1.5 border-b border-border-subtle pt-3.5">
-      <p className="text-sm font-medium">{t('admin.orders.detail.fulfillments.documents_title')}</p>
+    <CardContent className="mx-4 px-0 flex flex-col gap-1.5 border-b border-border-subtle pt-3.5">
+      <p className="text-base font-medium">
+        {t('admin.orders.detail.fulfillments.documents_title')}
+      </p>
       {documents.map((document) => (
         <a
           key={document.url}
           href={document.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-2 text-sm text-primary hover:underline"
+          className="flex items-center gap-2 text-base text-primary hover:underline"
         >
           <FileTextIcon className="size-4 shrink-0" />
           {t(`admin.orders.detail.fulfillments.document_kinds.${document.kind}`, {

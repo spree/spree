@@ -37,7 +37,7 @@ export function FulfillmentDeliveries({
   if (deliveries.length === 0) return null
 
   return (
-    <CardContent className="space-y-2 border-b border-border-subtle py-3.5 text-sm">
+    <CardContent className="mx-4 px-0 space-y-2 border-b border-border-subtle py-3.5 text-base">
       {deliveries.map((delivery) => (
         <div key={delivery.id} className="flex flex-wrap items-center justify-between gap-2">
           <div className="flex min-w-0 flex-wrap items-center gap-2">

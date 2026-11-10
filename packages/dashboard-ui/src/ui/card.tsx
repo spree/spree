@@ -39,7 +39,7 @@ function CardHeader({ className, ...props }: React.ComponentProps<'div'>) {
     <div
       data-slot="card-header"
       className={cn(
-        'group/card-header @container/card-header grid auto-rows-min items-center gap-1 group-data-[size=sm]/card:px-3.5 has-data-[slot=card-action]:grid-cols-[1fr_auto] has-data-[slot=card-description]:grid-rows-[auto_auto] px-4 py-4 rounded-t-[calc(var(--radius-card)-1px)]',
+        'group/card-header @container/card-header grid auto-rows-min items-center gap-1 group-data-[size=sm]/card:px-3.5 has-data-[slot=card-action]:grid-cols-[1fr_auto] has-data-[slot=card-description]:grid-rows-[auto_auto] mx-4 pt-3 pb-2 rounded-t-[calc(var(--radius-card)-1px)]',
         className,
       )}
       {...props}
@@ -63,7 +63,7 @@ function CardDescription({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot="card-description"
-      className={cn('text-sm text-muted-foreground text-left', className)}
+      className={cn('text-base text-muted-foreground text-left', className)}
       {...props}
     />
   )
@@ -82,7 +82,9 @@ function CardFooter({ className, ...props }: React.ComponentProps<'div'>) {
     <div
       data-slot="card-footer"
       className={cn(
-        'flex items-center p-4 bg-transparent border-t border-border-subtle rounded-b-[calc(var(--radius-card)-1px)]',
+        // Side margin, not padding, so the top rule stops short of the card's
+        // edges and reads as a divider inside it.
+        'mx-4 flex items-center py-4 bg-transparent border-t border-border-subtle',
         className,
       )}
       {...props}

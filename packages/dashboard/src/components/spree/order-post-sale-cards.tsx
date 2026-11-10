@@ -1,9 +1,12 @@
 import type { Claim, Exchange, Order } from '@spree/admin-sdk'
 import { CLAIM_STATUSES, EXCHANGE_STATUSES, subsetOf } from '@spree/core'
 import {
+  formatMoney,
   isPositiveMoney,
   Money,
+  postSaleItemRow,
   useMetadataSheet,
+  useMoneyLocale,
   usePermissions,
   ViewMetadataMenuItem,
 } from '@spree/dashboard-core'
@@ -12,7 +15,6 @@ import {
   Button,
   Card,
   CardAction,
-  CardContent,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -21,6 +23,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  FulfillmentItemList,
   hasMetadata,
   Section,
   SectionActions,
@@ -56,6 +59,7 @@ import {
   fulfilledUnits,
   ResolveClaimDialog,
 } from './post-sale-create-dialogs'
+import { useProductLink } from './variant-link'
 
 // Statuses that still offer an action. A terminal record would otherwise
 // show a menu button that opens onto nothing.
@@ -65,6 +69,8 @@ const EXCHANGE_CANCELABLE = subsetOf(EXCHANGE_STATUSES, ['requested', 'approved'
 
 /** Exchanges on an order, with the actions available at each status. */
 export function OrderExchangesCard({ order }: { order: Order }) {
+  const productLink = useProductLink()
+  const locale = useMoneyLocale()
   const orderId = order.id
   const { t } = useTranslation()
   const confirm = useConfirm()
@@ -104,7 +110,7 @@ export function OrderExchangesCard({ order }: { order: Order }) {
         </SectionHeader>
         <div className="flex flex-col gap-4">
           {exchanges.length === 0 && (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-base text-muted-foreground">
               {canCreate
                 ? t('admin.pages.orders.detail.exchanges.empty')
                 : t('admin.pages.orders.detail.returns.empty_no_units')}
@@ -113,9 +119,9 @@ export function OrderExchangesCard({ order }: { order: Order }) {
           {exchanges.map((exchange: Exchange) => (
             <Card key={exchange.id}>
               <CardHeader>
-                <CardTitle className="text-sm font-medium">
+                <CardTitle className="text-base font-medium">
                   <StatusBadge status={exchange.status} />
-                  <span className="text-sm font-medium">{exchange.number}</span>
+                  <span className="text-base font-medium">{exchange.number}</span>
                 </CardTitle>
 
                 {(EXCHANGE_ACTIONABLE.includes(exchange.status) ||
@@ -205,20 +211,39 @@ export function OrderExchangesCard({ order }: { order: Order }) {
                 )}
               </CardHeader>
 
-              <CardContent className="flex flex-col gap-1.5">
-                {(exchange.exchange_line_items ?? []).map((line) => (
-                  <div key={line.id} className="flex items-center justify-between text-sm">
-                    <span className="truncate">
-                      {variantLabel(line.original_variant, line.original_variant_id)}
-                      {' → '}
-                      {variantLabel(line.new_variant, line.new_variant_id)}
-                    </span>
-                    <span className="text-muted-foreground">×{line.quantity}</span>
-                  </div>
-                ))}
-              </CardContent>
+              <FulfillmentItemList
+                productLink={productLink}
+                rows={(exchange.exchange_line_items ?? []).map((line) => {
+                  const row = postSaleItemRow(
+                    line.id,
+                    {
+                      line_item_id: line.line_item_id,
+                      variant_id: line.original_variant_id,
+                      variant: line.original_variant,
+                      quantity: line.quantity,
+                    },
+                    order.items ?? [],
+                  )
+                  return {
+                    ...row,
+                    replacement: {
+                      name: variantLabel(
+                        line.new_variant && { product_name: line.new_variant.product_name },
+                        line.new_variant_id,
+                      ),
+                      optionsText: line.new_variant?.options_text,
+                      thumbnailUrl: line.new_variant?.thumbnail_url,
+                      productId: line.new_variant?.product_id,
+                      displayPrice: formatMoney(line.new_variant_price, order.currency, locale, {
+                        unitPrice: true,
+                      }),
+                      label: t('admin.pages.orders.detail.exchanges.replacement_variant'),
+                    },
+                  }
+                })}
+              />
 
-              <CardFooter className="justify-between text-sm">
+              <CardFooter className="justify-between text-base">
                 <span className="text-muted-foreground">
                   {t('admin.pages.orders.detail.exchanges.price_difference')}
                 </span>
@@ -249,6 +274,7 @@ export function OrderExchangesCard({ order }: { order: Order }) {
 
 /** Claims on an order. Resolution is chosen at resolve time, not up front. */
 export function OrderClaimsCard({ order }: { order: Order }) {
+  const productLink = useProductLink()
   const orderId = order.id
   const { t } = useTranslation()
   const confirm = useConfirm()
@@ -289,16 +315,16 @@ export function OrderClaimsCard({ order }: { order: Order }) {
         </SectionHeader>
         <div className="flex flex-col gap-4">
           {claims.length === 0 && (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-base text-muted-foreground">
               {t('admin.pages.orders.detail.claims.empty')}
             </p>
           )}
           {claims.map((claim: Claim) => (
             <Card key={claim.id}>
               <CardHeader>
-                <CardTitle className="text-sm font-medium">
+                <CardTitle className="text-base font-medium">
                   <StatusBadge status={claim.status} />
-                  <span className="text-sm font-medium">{claim.number}</span>
+                  <span className="text-base font-medium">{claim.number}</span>
                 </CardTitle>
 
                 {(CLAIM_ACTIONABLE.includes(claim.status) || hasMetadata(claim.metadata)) && (
@@ -377,21 +403,18 @@ export function OrderClaimsCard({ order }: { order: Order }) {
                 )}
               </CardHeader>
 
-              <CardContent className="flex flex-col gap-1.5">
-                {(claim.claim_line_items ?? []).map((line) => (
-                  <div key={line.id} className="flex items-center justify-between text-sm">
-                    <span className="truncate">
-                      {line.variant?.product_name ?? line.variant_id}
-                      {line.description && (
-                        <span className="text-muted-foreground"> — {line.description}</span>
-                      )}
-                    </span>
-                    <span className="text-muted-foreground">×{line.quantity}</span>
-                  </div>
-                ))}
-              </CardContent>
+              <FulfillmentItemList
+                productLink={productLink}
+                rows={(claim.claim_line_items ?? []).map((line) => {
+                  const row = postSaleItemRow(line.id, line, order.items ?? [])
+                  return {
+                    ...row,
+                    optionsText: [row.optionsText, line.description].filter(Boolean).join(' — '),
+                  }
+                })}
+              />
 
-              <CardFooter className="justify-between text-sm">
+              <CardFooter className="justify-between text-base">
                 <span className="text-muted-foreground">
                   {t('admin.pages.orders.detail.returns.refund_total')}
                 </span>

@@ -71,6 +71,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useFulfillmentActions } from '../../../hooks/use-fulfillments'
 import { printPackingSlip } from '../../../lib/packing-slip'
+import { useProductLink } from '../variant-link'
 import { FulfillmentDeliveries } from './fulfillment-deliveries'
 import { FulfillmentDeliveryDialog } from './fulfillment-delivery-dialog'
 import { FulfillmentEditDialog } from './fulfillment-edit-dialog'
@@ -362,7 +363,7 @@ function CreateFulfillmentDialog({
         <DialogBody>
           <FieldGroup>
             {error && (
-              <p className="text-sm text-destructive" role="alert">
+              <p className="text-base text-destructive" role="alert">
                 {error}
               </p>
             )}
@@ -421,6 +422,7 @@ const CAN_EDIT = subsetOf(FULFILLMENT_STATUSES, ['unfulfilled'])
 const CAN_MARK_DELIVERED = subsetOf(FULFILLMENT_STATUSES, ['fulfilled'])
 
 function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Fulfillment }) {
+  const productLink = useProductLink()
   const { t } = useTranslation()
   const moneyLocale = useMoneyLocale()
   const confirm = useConfirm()
@@ -564,7 +566,7 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
       {(fulfillment.delivery_method ||
         fulfillment.unpriced ||
         isPositiveMoney(fulfillment.cost)) && (
-        <CardContent className="flex items-center justify-between border-b border-border-subtle py-3.5 text-sm">
+        <CardContent className="mx-4 px-0 flex items-center justify-between border-b border-border-subtle py-3.5 text-base">
           <span className="text-muted-foreground">
             {/* The selected rate names the carrier service that actually
                 carries this parcel ("USPS GroundAdvantage"); the method is
@@ -620,6 +622,7 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
       ) : (
         <>
           <FulfillmentItemList
+            productLink={productLink}
             rows={withPriceSource(fulfillmentItemRows(fulfillment, order.items ?? []), order)}
           />
 
@@ -777,6 +780,7 @@ function UnfulfilledItems({
   order: Order
   canCreate: boolean
 }) {
+  const productLink = useProductLink()
   const { t } = useTranslation()
   const totalUnits = rows.reduce((sum, row) => sum + row.quantity, 0)
 
@@ -787,7 +791,7 @@ function UnfulfilledItems({
   return (
     <div className="flex flex-col gap-2 rounded-lg border border-border-subtle border-dashed p-4">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <span className="font-medium text-sm">
+        <span className="font-medium text-base">
           {t('admin.orders.detail.fulfillments.awaiting_fulfillment', { count: totalUnits })}
         </span>
         <span className="text-muted-foreground text-xs">
@@ -797,7 +801,7 @@ function UnfulfilledItems({
         </span>
       </div>
 
-      <FulfillmentItemList rows={withPriceSource(rows, order)} />
+      <FulfillmentItemList productLink={productLink} rows={withPriceSource(rows, order)} />
     </div>
   )
 }

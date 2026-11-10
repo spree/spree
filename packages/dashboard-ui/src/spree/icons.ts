@@ -49,6 +49,7 @@ export {
   CommandIcon,
   CopyIcon,
   CornerDownLeftIcon,
+  CornerDownRightIcon,
   CreditCardIcon,
   DownloadIcon,
   EllipsisVerticalIcon,
