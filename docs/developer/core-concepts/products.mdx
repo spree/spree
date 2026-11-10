@@ -1164,16 +1164,18 @@ The Store API returns an empty list, or `404` for a single product, rather than 
 
 The request's currency comes from the `X-Spree-Currency` header, then the `currency` parameter, then the market's or the store's default currency. See [Localization](/api-reference/store-api/localization).
 
-The product's own `available_on` and `discontinue_on` play no part here: the Store API always resolves a channel, and the publication's dates replace them. Stock doesn't hide a product either. An out-of-stock product is still returned, with `in_stock: false`.
+The product's own `available_on` and `discontinue_on` play no part here: the Store API always resolves a channel, and the publication's dates replace them. Stock doesn't hide a product either, with the database or the Meilisearch search provider. An out-of-stock product is still returned, with `in_stock: false`.
 
-To check each condition, read the product through the Admin API with a secret key. The response includes its `status`, its publications and its variants' prices. A price with a `price_list_id` comes from a price list, so it doesn't count:
+With the [Meilisearch](/integrations/search/meilisearch) search provider, the product must also be in the search index. Results are narrowed to the conditions above as well, so the index can hide a product but never reveal one. [Reindex](/integrations/search/meilisearch#reindex-all-products) if a product meets every condition and is still missing.
+
+To check each condition, read the product through the Admin API with a secret key. `storefront_unpriced_currencies` lists the store currencies it has no base price in, applying the same rule as the Store API, and is empty when `show_products_without_price` is on:
 
 ```bash
-curl 'https://api.mystore.com/api/v3/admin/products/prod_xxx?expand=product_publications,default_variant.prices,variants.prices' \
+curl 'https://api.mystore.com/api/v3/admin/products/prod_xxx?expand=product_publications,storefront_unpriced_currencies' \
   -H 'X-Spree-Api-Key: sk_xxx'
 ```
 
-In the admin dashboard, the product's **Publishing** card warns when an active product has no price in one of the store's currencies.
+In the admin dashboard, the product's **Publishing** card warns when an active product has a currency in that list.
 
 ### Auto-publish on the default channel
 

@@ -67,6 +67,9 @@ module Spree
     scope :non_zero, -> { where.not(amount: [nil, 0]) }
     scope :discounted, -> { where('compare_at_amount > amount') }
     scope :base_prices, -> { where(price_list_id: nil) }
+    # Base prices with an amount: what puts a product on sale to everyone in a
+    # currency (docs/plans/6.0-volume-pricing.md).
+    scope :listing, -> { base_prices.where.not(amount: nil) }
     # A variant's rungs above its ordinary price on a list.
     scope :breaks, -> { where.not(min_quantity: 1) }
     scope :for_price_list, ->(price_list) { where(price_list_id: price_list) }

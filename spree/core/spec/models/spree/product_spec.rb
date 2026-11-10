@@ -2420,4 +2420,35 @@ describe Spree::Product, type: :model do
       expect(described_class.search('hong-ku', store)).to include(matching)
     end
   end
+
+  describe '#storefront_unpriced_currencies' do
+    let(:product) { create(:product, price: 10) }
+
+    before { store.update_columns(supported_currencies: 'USD,EUR,GBP') }
+
+    it 'lists the store currencies with no base price on any variant' do
+      create(:variant, product: product).set_price('EUR', 12)
+
+      expect(product.reload.storefront_unpriced_currencies).to eq(['GBP'])
+    end
+
+    it 'ignores price list prices and prices without an amount' do
+      price_list = create(:price_list, store: store)
+      create(:price, variant: product.default_variant, currency: 'EUR', amount: 9, price_list: price_list)
+      build(:price, variant: product.default_variant, currency: 'GBP', amount: nil).save!(validate: false)
+
+      expect(product.reload.storefront_unpriced_currencies).to contain_exactly('EUR', 'GBP')
+    end
+
+    it 'agrees with the storefront listing' do
+      expect(described_class.with_currency('USD')).to include(product)
+      expect(described_class.with_currency('GBP')).not_to include(product)
+    end
+
+    it 'is empty when the store shows products without a price' do
+      stub_store_preferences(show_products_without_price: true)
+
+      expect(product.reload.storefront_unpriced_currencies).to be_empty
+    end
+  end
 end

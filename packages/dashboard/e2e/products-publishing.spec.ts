@@ -1,6 +1,7 @@
 import { expect, type Page, test } from '@playwright/test'
 import { FIXTURE_BULK_CHANNEL_NAME, gotoIndex, login } from './helpers'
 import {
+  card,
   createProduct,
   fillGridCell,
   PRODUCTS_PATH,
@@ -200,20 +201,25 @@ test.describe('product publishing', () => {
     const edit = publishingCard(page)
     await expect(edit.getByText(/online store/i)).toBeVisible({ timeout: 15_000 })
 
-    // A draft is hidden anyway, so the price warning waits for Active.
-    await expect(edit.getByText(/no price/i)).not.toBeVisible()
-    const statusCard = page
-      .locator('[data-slot="card"]')
-      .filter({ has: page.locator('[data-slot="card-title"]', { hasText: /^Status$/ }) })
-    await statusCard.getByRole('combobox').click()
+    // A draft is hidden anyway, so the price warning waits for Active. Other
+    // specs can add currencies to the shared store, so assert on USD alone.
+    const usdWarning = edit.getByText(/hidden from shoppers paying in .*\bUSD\b/i)
+    await expect(usdWarning).not.toBeVisible()
+    await card(page, /^Status$/)
+      .getByRole('combobox')
+      .click()
     await page.getByRole('option', { name: /^active$/i }).click()
+    await expect(usdWarning).toBeVisible()
 
-    await expect(edit.getByText(/hidden from the storefront: no price/i)).toBeVisible()
-
+    // The warning reflects the saved product, which is what the storefront sees.
     await fillGridCell(
       pricesCard(page).getByRole('textbox', { name: /^price for default$/i }),
       '12.50',
     )
-    await expect(edit.getByText(/hidden from the storefront: no price/i)).not.toBeVisible()
+    await page.getByRole('button', { name: /save product/i }).click()
+    await expect(page.getByRole('button', { name: /save product/i })).toBeDisabled({
+      timeout: 30_000,
+    })
+    await expect(usdWarning).not.toBeVisible({ timeout: 15_000 })
   })
 })

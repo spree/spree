@@ -22,5 +22,15 @@ RSpec.describe Spree::Api::V3::Admin::ProductSerializer do
       expect(result['custom_fields'].length).to eq(2)
       expect(result['custom_fields']).to all(have_key('storefront_visible'))
     end
+
+    it 'includes the currencies the storefront hides the product in only when expanded' do
+      store.update_columns(supported_currencies: 'USD,EUR')
+      product.reload
+
+      expect(subject).not_to have_key('storefront_unpriced_currencies')
+
+      result = described_class.new(product, params: base_params.merge(expand: ['storefront_unpriced_currencies'])).to_h
+      expect(result['storefront_unpriced_currencies']).to eq(['EUR'])
+    end
   end
 end

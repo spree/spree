@@ -62,6 +62,7 @@ export const ProductSchema = z.object({
   seller_name: z.string().nullable(),
   product_type_id: z.string().nullable(),
   tax_category_id: z.string().nullable(),
+  storefront_unpriced_currencies: z.array(z.string()).optional(),
   total_on_hand: z.number().nullable(),
   digital_assets: z.array(DigitalAssetSchema).optional(),
   collections: z.array(CollectionSchema).optional(),
