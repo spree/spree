@@ -174,8 +174,10 @@ test.describe('collections management', () => {
 
     // Staged, not written: Discard rolls it back with the rest of the form.
     await expect(productRow.getByRole('button', { name: /restore/i })).toBeVisible()
+    await expect(page.getByText(/^unsaved changes$/i)).toBeVisible()
     await page.getByRole('button', { name: /^discard$/i }).click()
     await expect(productRow.getByRole('button', { name: /restore/i })).toHaveCount(0)
+    await expect(page.getByText(/^unsaved changes$/i)).toHaveCount(0)
     await expect(productRow).toBeVisible()
 
     // Staging it again and saving is what actually removes it.
@@ -303,6 +305,34 @@ test.describe('collections management', () => {
     } finally {
       await deleteCatalogPickerProducts(page, creds.store_id, creds.accessToken, productIds)
     }
+  })
+
+  test('gives each rule kind its own control', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, COLLECTIONS_PATH(creds.store_id), CTA)
+    const name = `E2E Rule Kinds ${Date.now()}`
+    await createCollection(page, name)
+
+    // A switch for "On sale", a number of days for "Recently published", tags for a tag rule.
+    await page.getByRole('button', { name: /add rule/i }).click()
+    const ruleKind = page.getByRole('combobox', { name: /^rule$/i }).first()
+    await ruleKind.click()
+    await page.getByRole('option', { name: /on sale/i }).click()
+    await expect(page.getByRole('switch', { name: /^on sale$/i })).toBeChecked()
+    await ruleKind.click()
+    await page.getByRole('option', { name: /recently published/i }).click()
+    await expect(page.getByRole('spinbutton', { name: /published within/i })).toHaveValue('30')
+    await ruleKind.click()
+    await page.getByRole('option', { name: /^tag/i }).click()
+
+    const tags = page.getByPlaceholder(/pick tags/i)
+    await tags.fill('summer')
+    await tags.press('Enter')
+    await page.getByRole('button', { name: /^save$/i }).click()
+    await expect(page.getByRole('button', { name: /^save$/i })).toBeDisabled({ timeout: 15_000 })
+
+    await page.reload()
+    await expect(page.getByText('summer', { exact: true })).toBeVisible({ timeout: 15_000 })
   })
 
   test('refuses a price rule without an amount', async ({ page }) => {
