@@ -2440,9 +2440,15 @@ describe Spree::Product, type: :model do
       expect(product.reload.storefront_unpriced_currencies).to contain_exactly('EUR', 'GBP')
     end
 
-    it 'agrees with the storefront listing' do
-      expect(described_class.with_currency('USD')).to include(product)
-      expect(described_class.with_currency('GBP')).not_to include(product)
+    it 'agrees with the storefront listing in every store currency' do
+      product.default_variant.set_price('EUR', 12)
+      unpriced = product.reload.storefront_unpriced_currencies
+
+      %w[USD EUR GBP].each do |currency|
+        listed = described_class.with_currency(currency).include?(product)
+        expect(listed).to eq(unpriced.exclude?(currency)), "disagrees in #{currency}"
+      end
+      expect(unpriced).to eq(['GBP'])
     end
 
     it 'is empty when the store shows products without a price' do

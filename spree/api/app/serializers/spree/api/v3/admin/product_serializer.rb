@@ -51,9 +51,6 @@ module Spree
 
           prefixed_id_attributes :product_type, :tax_category
 
-          # The store's currencies this product has no price in, so the
-          # storefront hides it from shoppers paying in them. Expanded rather
-          # than always sent — it is a per-product query.
           attribute :storefront_unpriced_currencies,
                     if: proc { expand?('storefront_unpriced_currencies') },
                     &:storefront_unpriced_currencies
