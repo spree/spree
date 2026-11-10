@@ -130,6 +130,9 @@ module Spree
         # A custom field row needs a persisted owner (resource_id NOT NULL), so
         # on an unsaved record the write is queued and replayed after save.
         if new_record?
+          # Replay skips blank references, so reject them now, as a saved record would.
+          raise ArgumentError, "Invalid definition_or_key: #{definition_or_key.inspect}" if definition_or_key.blank?
+
           queue_pending_custom_field_attrs([{ custom_field_definition_id: definition_or_key, value: value }])
           return nil
         end
@@ -239,14 +242,21 @@ module Spree
         apply_custom_field_attrs(attributes)
       end
 
+      # Appends writes to the queue replayed after the record is first saved.
       def queue_pending_custom_field_attrs(attributes)
         @pending_custom_field_attrs = Array(@pending_custom_field_attrs) + Array(attributes)
       end
 
+      # Replays the queued writes. If one fails the whole save rolls back, so the
+      # queue is restored for a retry of the same instance (replay is an upsert,
+      # so already-applied entries are safe to run again).
       def apply_pending_custom_fields
         attrs = @pending_custom_field_attrs
         @pending_custom_field_attrs = nil
         apply_custom_field_attrs(attrs)
+      rescue StandardError
+        @pending_custom_field_attrs = attrs
+        raise
       end
 
       def apply_custom_field_attrs(attributes)

@@ -572,6 +572,20 @@ describe Spree::Media, type: :model do
 
         expect(asset.reload.external_url).to eq('https://example.com/Example-Image-001.png')
       end
+
+      it 'rejects a blank definition reference on an unsaved media like a saved one' do
+        expect { build(:media).set_custom_field('', 'x') }.to raise_error(ArgumentError)
+        expect { build(:media).set_custom_field(nil, 'x') }.to raise_error(ArgumentError)
+      end
+
+      it 'keeps queued writes when replay fails so the save can be retried' do
+        asset = build(:media)
+        asset.external_url = 'https://example.com/Example-Image-001.png'
+        asset.set_custom_field(999_999_999, 'x')
+
+        expect { asset.save! }.to raise_error(StandardError)
+        expect(asset.instance_variable_get(:@pending_custom_field_attrs).size).to eq(2)
+      end
     end
   end
 end
