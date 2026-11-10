@@ -408,7 +408,6 @@ export interface ProductSortExtensions {}
 
 export type ProductFilters = ProductFields
   & Filter.Prefixed<'categories_', CategoryFields>
-  & Filter.Prefixed<'collections_', CollectionFields>
   & Filter.Prefixed<'tags_', TagFields>
   & {
     ascend_by_price?: boolean
