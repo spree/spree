@@ -3383,8 +3383,8 @@
           "removed": "Đang xóa"
         },
         "balance_change": "Thay đổi số dư",
-        "balance_owed_hint": "Khách hàng sẽ nợ thêm. Hãy thu số dư từ các khoản thanh toán của đơn hàng sau khi lưu.",
-        "balance_refund_hint": "Khách hàng sẽ được hoàn tiền. Hãy hoàn tiền từ các khoản thanh toán của đơn hàng sau khi lưu.",
+        "balance_owed_hint": "Sau khi lưu, khách hàng có một khoản cần thanh toán. Hãy thu từ các khoản thanh toán của đơn hàng.",
+        "balance_refund_hint": "Sau khi lưu, khách hàng cần được hoàn tiền. Hãy hoàn tiền từ các khoản thanh toán của đơn hàng.",
         "catalog_price_unknown": "giá danh mục",
         "columns": {
           "line_total": "Tổng số dòng",
@@ -4392,6 +4392,7 @@
             "media": "Phương tiện truyền thông",
             "newsletter_subscriber": "Người đăng ký nhận bản tin",
             "order": "Đặt hàng",
+            "order_change": "Thay đổi đơn hàng",
             "order_group": "Nhóm đặt hàng",
             "payment": "Thanh toán",
             "payment_session": "Phiên thanh toán",
@@ -4403,7 +4404,6 @@
             "product_submission": "Gửi sản phẩm",
             "promotion": "Khuyến mãi",
             "purchase_order": "Đơn đặt hàng",
-            "order_change": "Thay đổi đơn hàng",
             "refund": "Hoàn tiền",
             "return": "Trở lại",
             "saved_report": "Báo cáo đã lưu",

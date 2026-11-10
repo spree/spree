@@ -3384,8 +3384,8 @@
           "removed": "Wird entfernt"
         },
         "balance_change": "Saldoänderung",
-        "balance_owed_hint": "Der Kunde schuldet mehr. Ziehen Sie den Saldo nach dem Speichern über die Zahlungen der Bestellung ein.",
-        "balance_refund_hint": "Dem Kunden steht eine Rückerstattung zu. Erstatten Sie sie nach dem Speichern über die Zahlungen der Bestellung.",
+        "balance_owed_hint": "Nach dem Speichern hat der Kunde einen offenen Betrag. Ziehen Sie ihn über die Zahlungen der Bestellung ein.",
+        "balance_refund_hint": "Nach dem Speichern steht dem Kunden eine Rückerstattung zu. Erstatten Sie sie über die Zahlungen der Bestellung.",
         "catalog_price_unknown": "Katalogpreis",
         "columns": {
           "line_total": "Positionssumme",
@@ -4393,6 +4393,7 @@
             "media": "Medien",
             "newsletter_subscriber": "Newsletter-Abonnent",
             "order": "Bestellung",
+            "order_change": "Bestelländerung",
             "order_group": "Bestellgruppe",
             "payment": "Zahlung",
             "payment_session": "Zahlungssitzung",
@@ -4404,7 +4405,6 @@
             "product_submission": "Produkteinreichung",
             "promotion": "Aktion",
             "purchase_order": "Bestellung beim Lieferanten",
-            "order_change": "Bestelländerungen",
             "refund": "Erstattung",
             "return": "Rücksendung",
             "saved_report": "Gespeicherter Bericht",

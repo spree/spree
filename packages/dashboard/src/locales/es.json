@@ -740,6 +740,7 @@
             "media": "Medios",
             "newsletter_subscriber": "Suscriptor de newsletter",
             "order": "Pedido",
+            "order_change": "Cambio de pedido",
             "order_group": "Grupo de pedidos",
             "payment": "Pago",
             "payment_session": "Sesión de pago",
@@ -751,7 +752,6 @@
             "product_submission": "Envío de producto",
             "promotion": "Promoción",
             "purchase_order": "Orden de compra",
-            "order_change": "Cambios de pedidos",
             "refund": "Reembolso",
             "return": "Devolución",
             "saved_report": "Informe guardado",
@@ -3090,8 +3090,8 @@
           "removed": "Quitando"
         },
         "balance_change": "Cambio de saldo",
-        "balance_owed_hint": "El cliente deberá más. Cobra el saldo desde los pagos del pedido después de guardar.",
-        "balance_refund_hint": "Al cliente se le deberá un reembolso. Reembólsalo desde los pagos del pedido después de guardar.",
+        "balance_owed_hint": "Después de guardar, el cliente tiene un saldo pendiente. Cóbralo desde los pagos del pedido.",
+        "balance_refund_hint": "Después de guardar, al cliente se le debe un reembolso. Reembólsalo desde los pagos del pedido.",
         "catalog_price_unknown": "precio de catálogo",
         "columns": {
           "line_total": "Total de la línea",

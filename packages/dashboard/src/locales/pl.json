@@ -3416,8 +3416,8 @@
           "removed": "Do usunięcia"
         },
         "balance_change": "Zmiana salda",
-        "balance_owed_hint": "Klient będzie winien więcej. Po zapisaniu pobierz saldo w płatnościach zamówienia.",
-        "balance_refund_hint": "Klientowi będzie należał się zwrot. Po zapisaniu zwróć środki w płatnościach zamówienia.",
+        "balance_owed_hint": "Po zapisaniu klient ma saldo do zapłaty. Pobierz je w płatnościach zamówienia.",
+        "balance_refund_hint": "Po zapisaniu klientowi należy się zwrot. Zwróć środki w płatnościach zamówienia.",
         "catalog_price_unknown": "cena katalogowa",
         "columns": {
           "line_total": "Wartość pozycji",
@@ -4443,6 +4443,7 @@
             "media": "Multimedia",
             "newsletter_subscriber": "Subskrybent newslettera",
             "order": "Zamówienie",
+            "order_change": "Zmiana zamówienia",
             "order_group": "Grupa zamówień",
             "payment": "Płatność",
             "payment_session": "Sesja płatności",
@@ -4454,7 +4455,6 @@
             "product_submission": "Zgłoszenie produktu",
             "promotion": "Promocja",
             "purchase_order": "Zamówienie zakupu",
-            "order_change": "Zmiany zamówień",
             "refund": "Zwrot środków",
             "return": "Zwrot",
             "saved_report": "Zapisany raport",

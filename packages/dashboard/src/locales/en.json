@@ -3384,8 +3384,8 @@
           "removed": "Removing"
         },
         "balance_change": "Balance change",
-        "balance_owed_hint": "The customer will owe more. Collect the balance from the order's payments after saving.",
-        "balance_refund_hint": "The customer will be owed money back. Refund it from the order's payments after saving.",
+        "balance_owed_hint": "After saving, the customer has a balance to pay. Collect it from the order's payments.",
+        "balance_refund_hint": "After saving, the customer is owed money back. Refund it from the order's payments.",
         "catalog_price_unknown": "catalog price",
         "columns": {
           "line_total": "Line total",
@@ -4393,6 +4393,7 @@
             "media": "Media",
             "newsletter_subscriber": "Newsletter subscriber",
             "order": "Order",
+            "order_change": "Order change",
             "order_group": "Order group",
             "payment": "Payment",
             "payment_session": "Payment session",
@@ -4404,7 +4405,6 @@
             "product_submission": "Product submission",
             "promotion": "Promotion",
             "purchase_order": "Purchase order",
-            "order_change": "Order changes",
             "refund": "Refund",
             "return": "Return",
             "saved_report": "Saved report",

@@ -3385,8 +3385,8 @@
           "removed": "À retirer"
         },
         "balance_change": "Variation du solde",
-        "balance_owed_hint": "Le client devra davantage. Encaissez le solde depuis les paiements de la commande après l'enregistrement.",
-        "balance_refund_hint": "Le client devra être remboursé. Remboursez-le depuis les paiements de la commande après l'enregistrement.",
+        "balance_owed_hint": "Après l'enregistrement, le client a un solde à régler. Encaissez-le depuis les paiements de la commande.",
+        "balance_refund_hint": "Après l'enregistrement, le client doit être remboursé. Remboursez-le depuis les paiements de la commande.",
         "catalog_price_unknown": "prix catalogue",
         "columns": {
           "line_total": "Total de la ligne",
@@ -4395,6 +4395,7 @@
             "media": "Médias",
             "newsletter_subscriber": "Abonné à la newsletter",
             "order": "Commande",
+            "order_change": "Modification de commande",
             "order_group": "Groupe de commandes",
             "payment": "Paiement",
             "payment_session": "Session de paiement",
@@ -4406,7 +4407,6 @@
             "product_submission": "Soumission de produit",
             "promotion": "Promotion",
             "purchase_order": "Bon de commande",
-            "order_change": "Modifications de commandes",
             "refund": "Remboursement",
             "return": "Retour",
             "saved_report": "Rapport enregistré",

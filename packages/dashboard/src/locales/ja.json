@@ -3383,8 +3383,8 @@
           "removed": "削除します"
         },
         "balance_change": "残高の変動",
-        "balance_owed_hint": "お客様の支払額が増えます。保存後、注文の支払いから残高を回収してください。",
-        "balance_refund_hint": "お客様への返金が発生します。保存後、注文の支払いから返金してください。",
+        "balance_owed_hint": "保存後、お客様に未払いの残高があります。注文の支払いから回収してください。",
+        "balance_refund_hint": "保存後、お客様への返金が必要です。注文の支払いから返金してください。",
         "catalog_price_unknown": "カタログ価格",
         "columns": {
           "line_total": "明細の合計",
@@ -4392,6 +4392,7 @@
             "media": "メディア",
             "newsletter_subscriber": "ニュースレターの購読者",
             "order": "注文",
+            "order_change": "注文の変更",
             "order_group": "注文グループ",
             "payment": "支払い",
             "payment_session": "支払いセッション",
@@ -4403,7 +4404,6 @@
             "product_submission": "商品の申請",
             "promotion": "プロモーション",
             "purchase_order": "発注書",
-            "order_change": "注文の変更",
             "refund": "返金",
             "return": "返品",
             "saved_report": "保存したレポート",

@@ -3375,8 +3375,8 @@
           "removed": "待移除"
         },
         "balance_change": "余额变动",
-        "balance_owed_hint": "客户需额外付款。保存后请通过订单的付款收取余额。",
-        "balance_refund_hint": "客户应获得退款。保存后请通过订单的付款进行退款。",
+        "balance_owed_hint": "保存后，客户有待付余额。请通过订单的付款收取。",
+        "balance_refund_hint": "保存后，客户应获得退款。请通过订单的付款进行退款。",
         "catalog_price_unknown": "目录价格",
         "columns": {
           "line_total": "小计",
@@ -4381,6 +4381,7 @@
             "media": "媒体",
             "newsletter_subscriber": "邮件订阅者",
             "order": "订单",
+            "order_change": "订单变更",
             "order_group": "订单组",
             "payment": "支付",
             "payment_session": "支付会话",
@@ -4392,7 +4393,6 @@
             "product_submission": "商品提交",
             "promotion": "优惠",
             "purchase_order": "采购订单",
-            "order_change": "订单变更",
             "refund": "退款",
             "return": "退货",
             "saved_report": "已保存的报告",
