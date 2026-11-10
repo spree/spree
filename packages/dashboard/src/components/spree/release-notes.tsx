@@ -3,9 +3,9 @@ import { useMemo } from 'react'
 
 // Styles the HTML GitHub renders as the dashboard's own text.
 const PROSE = [
-  'min-w-0 break-words text-sm [&>:first-child]:mt-0',
+  'min-w-0 break-words text-base [&>:first-child]:mt-0',
   '[&_h3]:mt-6 [&_h3]:mb-2 [&_h3]:font-semibold [&_h3]:text-base',
-  '[&_h4]:mt-4 [&_h4]:mb-1 [&_h4]:font-semibold [&_h4]:text-sm',
+  '[&_h4]:mt-4 [&_h4]:mb-1 [&_h4]:font-semibold [&_h4]:text-base',
   '[&_p]:my-2 [&_p]:leading-relaxed [&_hr]:my-4',
   '[&_ul]:my-2 [&_ul]:list-disc [&_ul]:space-y-1 [&_ul]:ps-5',
   '[&_ol]:my-2 [&_ol]:list-decimal [&_ol]:space-y-1 [&_ol]:ps-5',

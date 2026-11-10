@@ -175,7 +175,7 @@ export function StoreSetupFields<Values extends StoreSetupValues>({
           {...register('store_name')}
         />
         {errors.store_name && (
-          <p className="text-sm text-destructive">{errors.store_name.message}</p>
+          <p className="text-base text-destructive">{errors.store_name.message}</p>
         )}
       </div>
       <div className="grid gap-2">
@@ -228,7 +228,7 @@ export function StoreSetupFields<Values extends StoreSetupValues>({
           )}
         />
         {errors.country_code ? (
-          <p className="text-sm text-destructive">{errors.country_code.message}</p>
+          <p className="text-base text-destructive">{errors.country_code.message}</p>
         ) : (
           <p className="text-xs text-muted-foreground">
             {t('admin.fields.setup.country_code.help')}
@@ -311,7 +311,7 @@ export function StoreSetupFields<Values extends StoreSetupValues>({
           {/* Error replaces the help rather than joining it, so the column
               keeps exactly the three rows the subgrid expects. */}
           {errors.currency ? (
-            <p className="text-sm text-destructive">{errors.currency.message}</p>
+            <p className="text-base text-destructive">{errors.currency.message}</p>
           ) : (
             <p className="text-xs text-muted-foreground">{t('admin.fields.setup.currency.help')}</p>
           )}

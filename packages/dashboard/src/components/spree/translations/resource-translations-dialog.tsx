@@ -247,13 +247,13 @@ export function ResourceTranslationsDialog({
         </DialogHeader>
         <DialogBody className="flex min-h-0 flex-1 flex-col overflow-auto p-0">
           {isError ? (
-            <p className="p-3 text-sm text-destructive" role="alert">
+            <p className="p-3 text-base text-destructive" role="alert">
               {t('admin.translations.load_error')}
             </p>
           ) : isLoading || !data ? (
             <Skeleton className="m-3 h-40" />
           ) : targetLocales.length === 0 ? (
-            <p className="p-3 text-sm text-muted-foreground">
+            <p className="p-3 text-base text-muted-foreground">
               {t('admin.translations.no_locales')}
             </p>
           ) : (
@@ -323,7 +323,7 @@ function TranslationGrid({
   )
 
   return (
-    <table className="w-full table-fixed border-collapse text-sm">
+    <table className="w-full table-fixed border-collapse text-base">
       <colgroup>
         <col className="w-56" />
         <col />

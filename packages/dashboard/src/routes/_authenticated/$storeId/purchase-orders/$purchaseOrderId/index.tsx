@@ -283,7 +283,7 @@ function ItemsCard({ purchaseOrder }: { purchaseOrder: PurchaseOrder }) {
       <Card>
         <CardContent className="flex flex-col p-0">
           {items.length === 0 ? (
-            <p className="p-3 text-muted-foreground text-sm">
+            <p className="p-3 text-muted-foreground text-base">
               {t('admin.purchase_orders.items_empty')}
             </p>
           ) : (

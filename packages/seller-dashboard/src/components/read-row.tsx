@@ -6,7 +6,7 @@ export function ReadRow({ label, children }: { label: string; children: ReactNod
   const { t } = useTranslation()
 
   return (
-    <div className="flex items-start justify-between gap-3 text-sm">
+    <div className="flex items-start justify-between gap-3 text-base">
       <span className="text-muted-foreground">{label}</span>
       <span className="text-right">
         {children ?? <span className="text-muted-foreground">{t('profile.not_provided')}</span>}

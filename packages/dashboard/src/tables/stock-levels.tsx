@@ -53,7 +53,7 @@ defineTable<StockLevel>('stock-levels', {
       key: 'sku',
       label: i18n.t('admin.stock_levels.columns.sku'),
       default: true,
-      className: 'text-sm text-muted-foreground',
+      className: 'text-base text-muted-foreground',
       render: (level) => level.variant_sku || i18n.t('admin.stock_levels.no_sku'),
     },
     {

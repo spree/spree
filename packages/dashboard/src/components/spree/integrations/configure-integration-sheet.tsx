@@ -105,7 +105,7 @@ export function ConfigureIntegrationSheet({
         <div className="flex min-h-0 flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
             {submitError && (
-              <p className="text-destructive text-sm" role="alert">
+              <p className="text-destructive text-base" role="alert">
                 {submitError}
               </p>
             )}
@@ -114,7 +114,7 @@ export function ConfigureIntegrationSheet({
 
             <div className="flex items-center justify-between gap-3">
               <div className="flex flex-col">
-                <span className="font-medium text-sm">
+                <span className="font-medium text-base">
                   {t('admin.integrations.active_toggle.label')}
                 </span>
                 <span className="text-muted-foreground text-xs">
@@ -184,7 +184,7 @@ function TestConnectionRow({
   return (
     <Item variant="outline" className="flex-col items-stretch gap-2">
       <div className="flex items-center justify-between gap-3">
-        <span className="font-medium text-sm">{t('admin.integrations.test.label')}</span>
+        <span className="font-medium text-base">{t('admin.integrations.test.label')}</span>
         <Button
           type="button"
           variant="outline"
@@ -197,9 +197,9 @@ function TestConnectionRow({
       </div>
       {result &&
         (result.connected ? (
-          <p className="text-sm text-success">{t('admin.integrations.test.success')}</p>
+          <p className="text-base text-success">{t('admin.integrations.test.success')}</p>
         ) : (
-          <p className="text-destructive text-sm" role="alert">
+          <p className="text-destructive text-base" role="alert">
             {result.error_message ?? t('admin.integrations.test.failure')}
           </p>
         ))}

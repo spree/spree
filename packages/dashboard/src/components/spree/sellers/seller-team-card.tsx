@@ -101,7 +101,7 @@ export function SellerTeamCard({ seller, onInvite }: { seller: Seller; onInvite:
         {loadingTeam || (members.length === 0 && pending.length === 0) ? (
           <CardContent>
             {loadingTeam ? (
-              <p className="text-muted-foreground text-sm">{t('admin.common.loading')}</p>
+              <p className="text-muted-foreground text-base">{t('admin.common.loading')}</p>
             ) : (
               <Empty className="p-4">
                 <EmptyHeader>

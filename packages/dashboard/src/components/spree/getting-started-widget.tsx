@@ -56,7 +56,7 @@ export function GettingStartedWidget() {
     <nav aria-label={title} className="mb-1">
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger
-          className="flex w-full items-center gap-2.5 rounded-lg border bg-card px-3 py-2 text-sm text-muted-foreground shadow-xs hover:text-foreground data-popup-open:text-foreground"
+          className="flex w-full items-center gap-2.5 rounded-lg border bg-card px-3 py-2 text-base text-muted-foreground shadow-xs hover:text-foreground data-popup-open:text-foreground"
           aria-label={`${title} ${done}/${tasks.length}`}
         >
           <StepProgressRing value={done} max={tasks.length} />
@@ -71,7 +71,7 @@ export function GettingStartedWidget() {
           align="end"
           sideOffset={8}
           aria-label={title}
-          className="w-72 p-0 text-sm"
+          className="w-72 p-0 text-base"
         >
           <p className="border-b px-3 py-2.5 font-medium">{title}</p>
           <ul className="py-1">

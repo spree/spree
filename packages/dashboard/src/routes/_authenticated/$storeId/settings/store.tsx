@@ -427,7 +427,7 @@ function StoreSettingsForm({ store }: { store: Store }) {
           main={
             <>
               {errors.root?.message && (
-                <p className="text-sm text-destructive" role="alert">
+                <p className="text-base text-destructive" role="alert">
                   {errors.root.message}
                 </p>
               )}
@@ -650,7 +650,7 @@ function StoreSettingsForm({ store }: { store: Store }) {
                     )}
                     <Field>
                       <FieldLabel>{t('admin.fields.store.order_number_preview.label')}</FieldLabel>
-                      <p className="font-mono text-sm">{orderNumberPreview}</p>
+                      <p className="font-mono text-base">{orderNumberPreview}</p>
                       <FieldDescription>
                         {t('admin.fields.store.order_number_preview.help')}
                       </FieldDescription>
@@ -826,7 +826,7 @@ function StoreSettingsForm({ store }: { store: Store }) {
               <SettingsSection title={t('admin.pages.settings.store.tab_downloads')}>
                 <CardContent>
                   <FieldGroup>
-                    <p className="text-muted-foreground text-sm">
+                    <p className="text-muted-foreground text-base">
                       {t('admin.pages.settings.store.downloads_help')}
                     </p>
                     <Field>

@@ -121,10 +121,10 @@ function ToastList() {
       <ToastContent>
         <ToastIcon type={toast.type} />
         <div className="flex min-w-0 flex-1 flex-col gap-1">
-          <ToastPrimitive.Title data-slot="toast-title" className="font-medium text-sm" />
+          <ToastPrimitive.Title data-slot="toast-title" className="font-medium text-base" />
           <ToastPrimitive.Description
             data-slot="toast-description"
-            className="text-muted-foreground text-sm"
+            className="text-muted-foreground text-base"
           />
         </div>
         <ToastPrimitive.Action

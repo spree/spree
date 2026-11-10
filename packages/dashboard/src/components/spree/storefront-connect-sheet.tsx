@@ -171,7 +171,7 @@ export function StorefrontConnectSheet({
               <Skeleton className="h-9" />
             ) : keyError ? (
               <div className="flex items-center gap-3">
-                <p className="text-destructive text-sm">
+                <p className="text-destructive text-base">
                   {t('admin.pages.getting_started.storefront_sheet.key_error')}
                 </p>
                 <Button type="button" variant="outline" size="sm" onClick={() => refetchKey()}>
@@ -206,10 +206,10 @@ export function StorefrontConnectSheet({
           </div>
 
           <Item variant="outline" className="flex-col items-stretch gap-2">
-            <p className="font-medium text-sm">
+            <p className="font-medium text-base">
               {t('admin.pages.getting_started.storefront_sheet.deploy_title')}
             </p>
-            <p className="text-muted-foreground text-sm">
+            <p className="text-muted-foreground text-base">
               {t('admin.pages.getting_started.storefront_sheet.deploy_copy')}
             </p>
             <div>
@@ -269,7 +269,7 @@ export function StorefrontConnectSheet({
                 )}
                 spellCheck={false}
               />
-              <p className="text-muted-foreground text-sm">
+              <p className="text-muted-foreground text-base">
                 {t('admin.pages.getting_started.storefront_sheet.storefront_url_help')}
               </p>
             </div>

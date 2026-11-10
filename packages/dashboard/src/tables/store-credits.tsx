@@ -150,7 +150,7 @@ defineTable<StoreCredit>('store-credits', {
       filterable: true,
       filterType: 'date',
       default: true,
-      className: 'text-sm text-muted-foreground whitespace-nowrap',
+      className: 'text-base text-muted-foreground whitespace-nowrap',
       render: (credit) => <RelativeTime iso={credit.created_at} />,
     },
   ],

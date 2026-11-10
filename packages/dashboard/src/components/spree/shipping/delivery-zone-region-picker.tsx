@@ -147,7 +147,7 @@ export function DeliveryZoneRegionPicker({
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <span className="font-medium text-sm">{t('admin.delivery_zones.regions_title')}</span>
+        <span className="font-medium text-base">{t('admin.delivery_zones.regions_title')}</span>
         <span className="text-muted-foreground text-xs">
           {t('admin.delivery_zones.selection_summary', {
             countries: selection.countries.size,
@@ -170,11 +170,11 @@ export function DeliveryZoneRegionPicker({
 
       <div className="max-h-72 overflow-y-auto rounded-md border">
         {isLoading && (
-          <p className="p-3 text-muted-foreground text-sm">{t('admin.common.loading')}</p>
+          <p className="p-3 text-muted-foreground text-base">{t('admin.common.loading')}</p>
         )}
 
         {!isLoading && visibleRows.length === 0 && (
-          <p className="p-3 text-muted-foreground text-sm">
+          <p className="p-3 text-muted-foreground text-base">
             {t('admin.delivery_zones.no_regions_found')}
           </p>
         )}
@@ -202,7 +202,7 @@ export function DeliveryZoneRegionPicker({
         ))}
       </div>
 
-      <Link to="/$storeId/settings/markets" params={{ storeId }} className="link text-sm">
+      <Link to="/$storeId/settings/markets" params={{ storeId }} className="link text-base">
         {t('admin.delivery_zones.add_countries_in_markets')}
       </Link>
 
@@ -210,7 +210,7 @@ export function DeliveryZoneRegionPicker({
         <button
           type="button"
           onClick={() => setPostalOpen((open) => !open)}
-          className="flex w-full items-center gap-2 p-3 text-left font-medium text-sm"
+          className="flex w-full items-center gap-2 p-3 text-left font-medium text-base"
           aria-expanded={postalOpen}
         >
           {postalOpen ? (
@@ -279,7 +279,7 @@ function CountryListRow({
           aria-label={row.name}
         />
         <span
-          className={`flex-1 text-sm ${row.claimed ? 'text-muted-foreground' : ''}`}
+          className={`flex-1 text-base ${row.claimed ? 'text-muted-foreground' : ''}`}
           data-testid="country-name"
         >
           {row.name}
@@ -328,10 +328,10 @@ function CountryListRow({
       {expanded && row.statesRequired && !row.claimed && (
         <div className="border-t bg-muted/30 pl-9">
           {isLoading && (
-            <p className="px-3 py-2 text-muted-foreground text-sm">{t('admin.common.loading')}</p>
+            <p className="px-3 py-2 text-muted-foreground text-base">{t('admin.common.loading')}</p>
           )}
           {!isLoading && states.length === 0 && (
-            <p className="px-3 py-2 text-muted-foreground text-sm">
+            <p className="px-3 py-2 text-muted-foreground text-base">
               {t('admin.delivery_zones.no_states')}
             </p>
           )}
@@ -351,7 +351,7 @@ function CountryListRow({
                   }
                   aria-label={state.name}
                 />
-                <span className={`flex-1 text-sm ${stateClaimed ? 'text-muted-foreground' : ''}`}>
+                <span className={`flex-1 text-base ${stateClaimed ? 'text-muted-foreground' : ''}`}>
                   {state.name}
                 </span>
                 {stateClaimed && (
@@ -406,7 +406,7 @@ function PostalRulesSection({
   return (
     <div className="flex flex-col gap-2 border-t p-3">
       {rules.length === 0 && (
-        <p className="text-muted-foreground text-sm">
+        <p className="text-muted-foreground text-base">
           {t('admin.delivery_zones.no_postal_rules_hint')}
         </p>
       )}

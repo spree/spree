@@ -52,7 +52,7 @@ export function CustomerOrdersCard({
               search={{
                 filters: [{ id: '1', field: 'customer_id', operator: 'eq', value: customer.id }],
               }}
-              className="text-sm text-primary hover:underline"
+              className="text-base text-primary hover:underline"
             >
               {t('admin.actions.view_all')} →
             </Link>
@@ -62,7 +62,7 @@ export function CustomerOrdersCard({
       <Card>
         {isLoading ? (
           <CardContent>
-            <p className="text-sm text-muted-foreground">{t('admin.common.loading')}</p>
+            <p className="text-base text-muted-foreground">{t('admin.common.loading')}</p>
           </CardContent>
         ) : orders.length === 0 ? (
           <CardContent>

@@ -257,7 +257,7 @@ function MembersSection({ group, canEdit }: { group: CustomerGroup; canEdit: boo
         {isLoading || members.length === 0 ? (
           <CardContent>
             {isLoading ? (
-              <p className="text-muted-foreground text-sm">{t('admin.common.loading')}</p>
+              <p className="text-muted-foreground text-base">{t('admin.common.loading')}</p>
             ) : (
               <Empty className="p-4">
                 <EmptyHeader>

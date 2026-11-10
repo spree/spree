@@ -50,7 +50,7 @@ export function CommissionLinesCard({ order }: { order: Order }) {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground">{t('admin.errors.failed_to_load')}</p>
+          <p className="text-base text-muted-foreground">{t('admin.errors.failed_to_load')}</p>
         </CardContent>
       </Card>
     )

@@ -121,7 +121,7 @@ export function PaymentsCard({ order }: { order: Order }) {
         </SectionActions>
       </SectionHeader>
       {showSharedHelp && (
-        <p className="text-muted-foreground text-sm">
+        <p className="text-muted-foreground text-base">
           {t('admin.orders.detail.payments_table.shared_help')}
         </p>
       )}
@@ -458,11 +458,11 @@ function AddPaymentDialog({
                     {t('admin.orders.detail.payment_form.source_label')}
                   </FieldLabel>
                   {!customerId ? (
-                    <p className="text-sm text-destructive">
+                    <p className="text-base text-destructive">
                       {t('admin.orders.detail.payment_form.source_requires_customer')}
                     </p>
                   ) : savedCards.length === 0 ? (
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-base text-muted-foreground">
                       {t('admin.orders.detail.payment_form.no_saved_cards')}
                     </p>
                   ) : (
@@ -513,7 +513,7 @@ function AddPaymentDialog({
 
               {!isStoreCredit && (
                 <Field>
-                  <label className="flex items-center gap-2 text-sm" htmlFor="pay-capture">
+                  <label className="flex items-center gap-2 text-base" htmlFor="pay-capture">
                     <Switch id="pay-capture" checked={capture} onCheckedChange={setCapture} />
                     {t('admin.orders.detail.payment_form.capture_immediately')}
                   </label>

@@ -75,13 +75,13 @@ function MarketRegions({ codes }: { codes: string[] }) {
         )}
         <ul className="max-h-72 overflow-y-auto p-1">
           {shown.map((c) => (
-            <li key={c.code} className="flex items-center gap-3 rounded-md px-2 py-1.5 text-sm">
+            <li key={c.code} className="flex items-center gap-3 rounded-md px-2 py-1.5 text-base">
               <CountryFlag iso={c.code} />
               {c.name}
             </li>
           ))}
           {shown.length === 0 && (
-            <li className="px-2 py-3 text-center text-sm text-muted-foreground">
+            <li className="px-2 py-3 text-center text-base text-muted-foreground">
               {i18n.t('admin.common.no_results')}
             </li>
           )}

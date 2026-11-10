@@ -66,7 +66,7 @@ export function DeliveryOriginGroupSection({
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2">
             <WarehouseIcon className="size-4 text-muted-foreground" />
-            <span className="font-medium text-sm">
+            <span className="font-medium text-base">
               {group.name || t('admin.delivery_profiles.all_locations')}
             </span>
           </div>

@@ -268,7 +268,7 @@ function GeneralCard({ form }: { form: UseFormReturn<DeliveryMethodFormValues> }
   return (
     <FormSection>
       {errors.root?.message && (
-        <p className="text-sm text-destructive" role="alert">
+        <p className="text-base text-destructive" role="alert">
           {errors.root.message}
         </p>
       )}
@@ -722,11 +722,11 @@ function CarrierServicesCard({ form }: { form: UseFormReturn<DeliveryMethodFormV
           if (value === 'all') form.setValue('services', [], { shouldDirty: true })
         }}
       >
-        <label htmlFor="services-all" className="flex items-center gap-2 text-sm">
+        <label htmlFor="services-all" className="flex items-center gap-2 text-base">
           <RadioGroupItem id="services-all" value="all" />
           {t('admin.delivery_methods.carrier_services.offer_all')}
         </label>
-        <label htmlFor="services-selected" className="flex items-center gap-2 text-sm">
+        <label htmlFor="services-selected" className="flex items-center gap-2 text-base">
           <RadioGroupItem id="services-selected" value="selected" />
           {t('admin.delivery_methods.carrier_services.choose_specific')}
         </label>
@@ -747,7 +747,7 @@ function CarrierServicesCard({ form }: { form: UseFormReturn<DeliveryMethodFormV
               const key = `${entry.carrier}/${entry.service}`
               return (
                 <div key={key} className="flex items-center justify-between gap-2 py-1">
-                  <label htmlFor={`service-${key}`} className="flex items-center gap-2 text-sm">
+                  <label htmlFor={`service-${key}`} className="flex items-center gap-2 text-base">
                     <Checkbox
                       id={`service-${key}`}
                       checked={checked}
@@ -1213,7 +1213,7 @@ function ConditionsCard({ form }: { form: UseFormReturn<DeliveryMethodFormValues
     >
       <div className="flex flex-col gap-3">
         {rulesArray.fields.length === 0 && (
-          <p className="text-muted-foreground text-sm">
+          <p className="text-muted-foreground text-base">
             {t('admin.delivery_methods.conditions.empty')}
           </p>
         )}
@@ -1262,7 +1262,7 @@ function ConditionRuleRow({
   return (
     <Item variant="outline" className="flex-col items-stretch gap-2">
       <div className="flex items-center justify-between">
-        <span className="text-sm">{label}</span>
+        <span className="text-base">{label}</span>
         <Button
           type="button"
           variant="destructive-ghost"

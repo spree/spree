@@ -378,7 +378,7 @@ function OptionPicker({ optionType, initialValues, onSave, onCancel }: OptionPic
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between">
-        <div className="text-sm font-medium">{optionType.label}</div>
+        <div className="text-base font-medium">{optionType.label}</div>
       </div>
       <div className="flex flex-wrap gap-2">
         {available.map((v) => {
@@ -466,7 +466,7 @@ function CreateOptionTypeInline({
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="text-sm font-medium">
+      <div className="text-base font-medium">
         {t('admin.products.variants.create_option_type_title')}
       </div>
       <Field>
@@ -535,7 +535,7 @@ function CreateOptionValueInline({ onCancel, onCreate, isPending }: CreateOption
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="text-sm font-medium">{t('admin.products.variants.create_value_title')}</div>
+      <div className="text-base font-medium">{t('admin.products.variants.create_value_title')}</div>
       <Field>
         <FieldLabel htmlFor="new-option-value-label">
           {t('admin.fields.option_value.label.label')}

@@ -23,14 +23,14 @@ export function ReadRow({
   )
   if (stacked) {
     return (
-      <div className="flex flex-col gap-1 text-sm">
+      <div className="flex flex-col gap-1 text-base">
         <span className="text-muted-foreground">{label}</span>
         <span className="whitespace-pre-line">{value}</span>
       </div>
     )
   }
   return (
-    <div className={cn('flex items-start justify-between gap-3 text-sm')}>
+    <div className={cn('flex items-start justify-between gap-3 text-base')}>
       <span className="shrink-0 text-muted-foreground">{label}</span>
       <span className="min-w-0 text-right">{value}</span>
     </div>

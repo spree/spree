@@ -24,7 +24,7 @@ function Input({
       data-slot="input"
       className={cn(
         FIELD_BOX,
-        'block w-full min-w-0 min-h-8 cursor-default focus:cursor-text py-1.5 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none px-2.5 text-base font-normal leading-normal text-foreground outline-none placeholder:text-muted-foreground not-disabled:not-read-only:not-focus:hover:bg-field-hover focus:border-blue-500 focus:shadow-field-focus disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground aria-invalid:border-destructive file:inline-flex file:h-6 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground',
+        'block w-full min-w-0 min-h-8 cursor-default focus:cursor-text py-1.5 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none px-2.5 text-base font-normal leading-normal text-foreground outline-none placeholder:text-muted-foreground not-disabled:not-read-only:not-focus:hover:bg-field-hover focus:border-blue-500 focus:shadow-field-focus disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground aria-invalid:border-destructive file:inline-flex file:h-6 file:border-0 file:bg-transparent file:text-base file:font-medium file:text-foreground',
         className,
       )}
       {...props}

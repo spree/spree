@@ -269,7 +269,7 @@ function CompanyProfileCard({ company, canEdit }: { company: Company; canEdit: b
       <CardContent>
         <FieldGroup>
           {errors.root?.message && (
-            <p className="text-destructive text-sm" role="alert">
+            <p className="text-destructive text-base" role="alert">
               {errors.root.message}
             </p>
           )}
@@ -338,7 +338,7 @@ function DivisionTaxPointerCard({ legalEntity }: { legalEntity?: { id: string; n
         <CardTitle>{t('admin.tax_identifiers.title')}</CardTitle>
       </CardHeader>
       <CardContent>
-        <p className="text-muted-foreground text-sm">
+        <p className="text-muted-foreground text-base">
           {t('admin.companies.detail.division_tax_pointer')}{' '}
           {legalEntity && (
             <Link
@@ -416,7 +416,7 @@ function SubUnitsCard({ company, canEdit }: { company: Company; canEdit: boolean
         {isLoading || children.length === 0 ? (
           <CardContent>
             {isLoading ? (
-              <p className="text-muted-foreground text-sm">{t('admin.common.loading')}</p>
+              <p className="text-muted-foreground text-base">{t('admin.common.loading')}</p>
             ) : (
               <Empty className="p-4">
                 <EmptyHeader>
@@ -448,7 +448,7 @@ function SubUnitsCard({ company, canEdit }: { company: Company; canEdit: boolean
                         params={{ storeId, companyId: child.id }}
                         className="flex min-w-0 items-center gap-2 rounded-md text-foreground no-underline outline-none focus-visible:shadow-field-focus"
                       >
-                        <span className="truncate font-medium text-sm">{child.name}</span>
+                        <span className="truncate font-medium text-base">{child.name}</span>
                         <CompanyKindBadge kind={child.kind} />
                       </Link>
                     </TableCell>
@@ -517,7 +517,7 @@ function AddSubUnitDialog({
         <DialogBody>
           <FieldGroup>
             {errors.root?.message && (
-              <p className="text-destructive text-sm" role="alert">
+              <p className="text-destructive text-base" role="alert">
                 {errors.root.message}
               </p>
             )}
@@ -639,7 +639,7 @@ function AddressBookCard({ company, canEdit }: { company: Company; canEdit: bool
         {isLoading || entries.length === 0 ? (
           <CardContent>
             {isLoading ? (
-              <p className="text-muted-foreground text-sm">{t('admin.common.loading')}</p>
+              <p className="text-muted-foreground text-base">{t('admin.common.loading')}</p>
             ) : (
               <Empty className="p-4">
                 <EmptyHeader>
@@ -735,7 +735,7 @@ function MembersCard({ company, canEdit }: { company: Company; canEdit: boolean 
         {isLoading || memberships.length === 0 ? (
           <CardContent>
             {isLoading ? (
-              <p className="text-muted-foreground text-sm">{t('admin.common.loading')}</p>
+              <p className="text-muted-foreground text-base">{t('admin.common.loading')}</p>
             ) : (
               <Empty className="p-4">
                 <EmptyHeader>

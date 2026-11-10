@@ -71,7 +71,7 @@ export function JsonValueView({
   return (
     <div
       className={cn(
-        'font-mono text-sm',
+        'font-mono text-base',
         // The vscode theme is dark — when the parent doesn't already paint a
         // dark background, paint one here so the syntax colors stay legible.
         !bare && 'bg-zinc-950 text-zinc-100 rounded-md p-3',

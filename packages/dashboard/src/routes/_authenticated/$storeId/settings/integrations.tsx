@@ -277,7 +277,7 @@ function GallerySection({
   return (
     <section className="flex flex-col gap-3">
       <div className="flex items-center justify-between gap-3">
-        <h2 className="font-medium text-muted-foreground text-sm">{title}</h2>
+        <h2 className="font-medium text-muted-foreground text-base">{title}</h2>
         {action}
       </div>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">{children}</div>

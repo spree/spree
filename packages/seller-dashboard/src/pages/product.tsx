@@ -236,7 +236,7 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
         })}
       >
         {form.formState.errors.root?.message && (
-          <p className="text-destructive text-sm" role="alert">
+          <p className="text-destructive text-base" role="alert">
             {form.formState.errors.root.message}
           </p>
         )}

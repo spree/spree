@@ -330,7 +330,7 @@ export function ReportBuilder({ draft, onChange, schema }: ReportBuilderProps) {
                 className="flex-col items-stretch gap-1.5"
               >
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-sm font-medium">
+                  <span className="text-base font-medium">
                     {definition?.label ?? filter.dimension}
                   </span>
                   {

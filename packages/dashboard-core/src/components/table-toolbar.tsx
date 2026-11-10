@@ -293,7 +293,7 @@ export function TableToolbar({
               clearLabel={t('admin.common.clear')}
               // Widens while in use (focused, or holding a term) so a longer
               // query stays readable, and settles back once it is let go.
-              className="hidden h-[2.125rem] w-[240px] bg-card text-sm transition-[color,background-color,border-color,box-shadow,width] duration-200 ease-out focus-within:w-[320px] has-[input:not(:placeholder-shown)]:w-[320px] motion-reduce:transition-none lg:flex"
+              className="hidden h-[2.125rem] w-[240px] bg-card text-base transition-[color,background-color,border-color,box-shadow,width] duration-200 ease-out focus-within:w-[320px] has-[input:not(:placeholder-shown)]:w-[320px] motion-reduce:transition-none lg:flex"
             />
 
             {/* Icon only, like sort and columns: the quick controls beside it
@@ -374,7 +374,7 @@ export function TableToolbar({
             {/* The search term as a chip, mobile only — the field it came from is
               hidden there, so this is the only way to see or clear it. */}
             {search && (
-              <span className="inline-flex h-11 shrink-0 items-center gap-1.5 rounded-md border border-border bg-card py-1 pr-1 pl-2.5 text-sm shadow-xs lg:hidden">
+              <span className="inline-flex h-11 shrink-0 items-center gap-1.5 rounded-md border border-border bg-card py-1 pr-1 pl-2.5 text-base shadow-xs lg:hidden">
                 <span className="text-muted-foreground">
                   {t('admin.components.table_toolbar.search_placeholder')}
                 </span>
@@ -552,7 +552,7 @@ function FilterChip({
     // `rounded-md` — rather than a `bg-muted` of its own. A filled chip beside
     // outlined controls reads as a different kind of object, when the only
     // real difference is that this one is set, which its value already says.
-    <span className="inline-flex h-11 shrink-0 items-center gap-0.5 rounded-md border border-border bg-card pr-1 text-sm shadow-xs lg:h-[2.125rem]">
+    <span className="inline-flex h-11 shrink-0 items-center gap-0.5 rounded-md border border-border bg-card pr-1 text-base shadow-xs lg:h-[2.125rem]">
       {onEdit ? (
         <button
           type="button"
@@ -1648,11 +1648,6 @@ function FilterPanel({
     >
       {/* Header. Before a field is chosen this is a label and a search box over
           the field list; after, the label becomes the way back to it. */}
-      {/* The panel reads at the app's base size rather than the 13px the
-          dropdowns beside it use: it is a surface to read a list in, not a
-          menu to flick through, and its rows carry field names an operator has
-          to recognise. Set here and on the body below, so a row only names a
-          size when it departs from it. */}
       <div className="flex items-stretch border-b text-base">
         {field ? (
           // The field name is the way back to the field list.

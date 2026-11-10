@@ -175,7 +175,7 @@ export function DigitalAssetEditSheet({
 
           <p className="text-muted-foreground text-xs">{t('admin.digital_assets.limits_help')}</p>
 
-          {error && <p className="text-destructive text-sm">{error}</p>}
+          {error && <p className="text-destructive text-base">{error}</p>}
         </div>
 
         <SheetFooter>

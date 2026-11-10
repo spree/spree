@@ -594,7 +594,7 @@ export function MediaCard({
             <>
               {/* The card keeps its name while the bar stands in for it. */}
               <CardTitle className="sr-only">{t('admin.pages.products.section_media')}</CardTitle>
-              <div className="flex items-center gap-2 font-medium text-sm">
+              <div className="flex items-center gap-2 font-medium text-base">
                 <Checkbox
                   checked={allSelected}
                   indeterminate={!allSelected}
@@ -691,7 +691,7 @@ export function MediaCard({
             onClick={() => fileInputRef.current?.click()}
           >
             <ImagePlusIcon className="size-8 text-muted-foreground" />
-            <p className="text-sm text-muted-foreground">{t('admin.products.media.drop_hint')}</p>
+            <p className="text-base text-muted-foreground">{t('admin.products.media.drop_hint')}</p>
             <p className="text-xs text-muted-foreground">
               {t('admin.products.media.file_types_hint')}
             </p>
@@ -1001,7 +1001,7 @@ export function SEOCard({ form, product }: FormCardProps & { product?: Product }
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         <Item variant="outline" className="flex-col items-stretch gap-1">
-          <p className="text-sm font-medium text-blue-700 truncate">{previewTitle}</p>
+          <p className="text-base font-medium text-blue-700 truncate">{previewTitle}</p>
           <p className="text-xs text-green-700 truncate">example.com/products/{previewSlug}</p>
           {metaDescription && (
             <p className="text-xs text-muted-foreground line-clamp-2">{metaDescription}</p>

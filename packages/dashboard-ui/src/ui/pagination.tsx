@@ -52,7 +52,7 @@ export function Pagination({
         inset ? 'border-border-subtle border-t px-4 py-2.5' : 'ps-2 py-2',
       )}
     >
-      <div className="whitespace-nowrap text-sm text-muted-foreground">
+      <div className="whitespace-nowrap text-base text-muted-foreground">
         {t('admin.components.pagination.range', {
           from: meta.from,
           to: meta.to,
@@ -62,7 +62,7 @@ export function Pagination({
       <div className="flex items-center gap-2 sm:gap-6">
         {showPageSize && (
           <div className="hidden items-center gap-2 sm:flex">
-            <span className="text-sm text-muted-foreground">
+            <span className="text-base text-muted-foreground">
               {t('admin.components.pagination.rows_per_page')}
             </span>
             <Select
@@ -84,7 +84,7 @@ export function Pagination({
         )}
         {showPageNav && (
           <>
-            <span className="hidden whitespace-nowrap text-sm text-muted-foreground sm:inline">
+            <span className="hidden whitespace-nowrap text-base text-muted-foreground sm:inline">
               {t('admin.common.page_of', { page: meta.page, total: meta.pages })}
             </span>
             <div className="flex items-center gap-1">

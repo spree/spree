@@ -40,7 +40,7 @@ export function SellerAddress({
   return (
     <div className="flex flex-col gap-1.5">
       <div className="flex min-h-7 items-center justify-between gap-2">
-        <h3 className="font-medium text-sm">{title}</h3>
+        <h3 className="font-medium text-base">{title}</h3>
         {canEdit && addressKey === 'billing_address' && (
           <Button
             variant="ghost"

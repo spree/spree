@@ -160,7 +160,7 @@ export function TaxIdentifiersCard({
         <Card>
           <CardContent>
             {isLoading ? (
-              <p className="text-muted-foreground text-sm">{t('admin.common.loading')}</p>
+              <p className="text-muted-foreground text-base">{t('admin.common.loading')}</p>
             ) : (
               <Empty className="p-4">
                 <EmptyHeader>
@@ -340,7 +340,7 @@ function TaxIdentifierSheet({
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
             <FieldGroup>
               {errors.root?.message && !rootIsRepeated && (
-                <p className="text-destructive text-sm" role="alert">
+                <p className="text-destructive text-base" role="alert">
                   {errors.root.message}
                 </p>
               )}

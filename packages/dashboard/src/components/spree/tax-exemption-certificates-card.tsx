@@ -179,7 +179,7 @@ export function TaxExemptionCertificatesCard({
         {isLoading || certificates.length === 0 ? (
           <CardContent>
             {isLoading ? (
-              <p className="text-muted-foreground text-sm">{t('admin.common.loading')}</p>
+              <p className="text-muted-foreground text-base">{t('admin.common.loading')}</p>
             ) : (
               <Empty className="p-4">
                 <EmptyHeader>
@@ -205,7 +205,7 @@ export function TaxExemptionCertificatesCard({
               {certificates.map((certificate) => (
                 <TableRow key={certificate.id}>
                   <TableCell>
-                    <div className="flex flex-wrap items-center gap-2 font-medium text-sm">
+                    <div className="flex flex-wrap items-center gap-2 font-medium text-base">
                       {certificate.certificate_number}
                       <StatusBadge
                         status={certificate.status}
@@ -372,7 +372,7 @@ function CertificateSheet({
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
             <FieldGroup>
               {errors.root?.message && (
-                <p className="text-destructive text-sm" role="alert">
+                <p className="text-destructive text-base" role="alert">
                   {errors.root.message}
                 </p>
               )}

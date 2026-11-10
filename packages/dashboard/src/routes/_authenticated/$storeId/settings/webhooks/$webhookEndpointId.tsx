@@ -670,7 +670,7 @@ function DeliveryDetailSheet({
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between">
-                  <CardTitle className="text-sm">
+                  <CardTitle className="text-base">
                     {t('admin.pages.settings.webhooks.deliveries.detail.request_payload')}
                   </CardTitle>
                   <CopyToClipboardButton
@@ -690,7 +690,7 @@ function DeliveryDetailSheet({
               {delivery.response_body && (
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between">
-                    <CardTitle className="text-sm">
+                    <CardTitle className="text-base">
                       {t('admin.pages.settings.webhooks.deliveries.detail.response_body')}
                     </CardTitle>
                     <CopyToClipboardButton
@@ -748,8 +748,8 @@ function DeliveryDetailSheet({
 function DetailRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="flex flex-row items-start justify-between gap-4 px-4 py-3">
-      <dt className="text-sm text-muted-foreground">{label}</dt>
-      <dd className="max-w-full text-right text-sm">{value}</dd>
+      <dt className="text-base text-muted-foreground">{label}</dt>
+      <dd className="max-w-full text-right text-base">{value}</dd>
     </div>
   )
 }

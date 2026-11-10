@@ -254,7 +254,7 @@ function CreateOptionTypeSheet({
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-6 overflow-y-auto p-4">
             {form.formState.errors.root?.message && (
-              <p className="text-sm text-destructive" role="alert">
+              <p className="text-base text-destructive" role="alert">
                 {form.formState.errors.root.message}
               </p>
             )}
@@ -382,12 +382,12 @@ function EditOptionTypeSheet({
           />
         )}
         {isLoading ? (
-          <div className="p-4 text-sm text-muted-foreground">{t('admin.common.loading')}</div>
+          <div className="p-4 text-base text-muted-foreground">{t('admin.common.loading')}</div>
         ) : (
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
             <div className="flex flex-1 flex-col gap-6 overflow-y-auto p-4">
               {form.formState.errors.root?.message && (
-                <p className="text-sm text-destructive" role="alert">
+                <p className="text-base text-destructive" role="alert">
                   {form.formState.errors.root.message}
                 </p>
               )}
@@ -555,7 +555,7 @@ function OptionValuesFieldArray({
     <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between">
         <div className="flex flex-col">
-          <h3 className="text-sm font-medium">
+          <h3 className="text-base font-medium">
             {t('admin.pages.products.options.values_section')}
           </h3>
           <p className="text-xs text-muted-foreground">{t('admin.products.options.values_help')}</p>
@@ -591,7 +591,7 @@ function OptionValuesFieldArray({
                   <TableRow>
                     <TableCell
                       colSpan={totalColCount}
-                      className="py-6 text-center text-sm text-muted-foreground"
+                      className="py-6 text-center text-base text-muted-foreground"
                     >
                       {t('admin.pages.products.options.values_empty')}
                     </TableCell>
@@ -622,7 +622,7 @@ function OptionValuesFieldArray({
                           image_cleared: false,
                         })
                       }
-                      className="flex w-full items-center justify-center gap-2 px-3 py-3 text-sm font-medium text-foreground transition-colors hover:bg-accent/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      className="flex w-full items-center justify-center gap-2 px-3 py-3 text-base font-medium text-foreground transition-colors hover:bg-accent/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                     >
                       <PlusIcon className="size-4" />
                       {t('admin.pages.products.options.add_value')}

@@ -262,10 +262,10 @@ function OutstandingTotals({
         <Card key={total.currency}>
           <CardContent className="flex flex-col gap-1">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">
+              <span className="text-base text-muted-foreground">
                 {t('admin.store_credits.totals.outstanding')}
               </span>
-              <CurrencyLabel code={total.currency} className="text-sm" />
+              <CurrencyLabel code={total.currency} className="text-base" />
             </div>
             <span className="font-semibold text-2xl tabular-nums">
               <Money amount={total.amount_remaining} currency={total.currency} />
@@ -338,7 +338,7 @@ function StoreCreditSheet({
             <Skeleton className="h-40 w-full" />
           ) : (
             <>
-              <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+              <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-base">
                 <DetailRow
                   label={t('admin.fields.store_credit.amount.label')}
                   value={formatAmount(credit.amount, credit.currency, moneyLocale)}
@@ -381,11 +381,11 @@ function StoreCreditSheet({
               <ApiCustomFieldsCard ownerType="store_credit" ownerId={credit.id} hideWhenEmpty />
 
               <div className="flex flex-col gap-2">
-                <h3 className="font-medium text-sm">{t('admin.store_credits.ledger.title')}</h3>
+                <h3 className="font-medium text-base">{t('admin.store_credits.ledger.title')}</h3>
                 {eventsError ? (
                   // Never "no movements" over an error — that would claim the
                   // balance never moved.
-                  <p className="text-destructive text-sm">
+                  <p className="text-destructive text-base">
                     {t('admin.store_credits.ledger.load_failed')}
                   </p>
                 ) : eventsLoading ? (
@@ -405,7 +405,7 @@ function StoreCreditSheet({
                             </ItemTitle>
                           </ItemContent>
                           <ItemActions className="items-baseline gap-3">
-                            <span className="text-sm tabular-nums">
+                            <span className="text-base tabular-nums">
                               <Money amount={event.amount} currency={credit.currency} />
                             </span>
                             <span className="whitespace-nowrap text-muted-foreground text-xs">
@@ -418,7 +418,7 @@ function StoreCreditSheet({
                     {events.meta && <Pagination meta={events.meta} onPageChange={setLedgerPage} />}
                   </>
                 ) : (
-                  <p className="text-muted-foreground text-sm">
+                  <p className="text-muted-foreground text-base">
                     {t('admin.store_credits.ledger.empty')}
                   </p>
                 )}

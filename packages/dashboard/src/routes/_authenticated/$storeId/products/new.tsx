@@ -205,7 +205,7 @@ function NewProductPage() {
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         {form.formState.errors.root?.message && (
-          <p className="text-sm text-destructive" role="alert">
+          <p className="text-base text-destructive" role="alert">
             {form.formState.errors.root.message}
           </p>
         )}

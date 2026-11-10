@@ -254,7 +254,7 @@ function PlannedItemsCard({ transfer }: { transfer: StockTransfer }) {
       <Card>
         <CardContent className="p-0">
           {items.length === 0 ? (
-            <p className="p-3 text-muted-foreground text-sm">
+            <p className="p-3 text-muted-foreground text-base">
               {t('admin.stock_transfers.items_empty')}
             </p>
           ) : (

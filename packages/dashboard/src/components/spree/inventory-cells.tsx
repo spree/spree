@@ -239,7 +239,7 @@ export function IncomingCell({ level }: { level: StockLevel }) {
             to="/$storeId/transfers/new"
             params={{ storeId }}
             search={seed}
-            className="rounded-md px-2 py-1 text-sm hover:bg-accent"
+            className="rounded-md px-2 py-1 text-base hover:bg-accent"
           >
             {t('admin.stock_levels.incoming.create_transfer')}
           </Link>
@@ -249,7 +249,7 @@ export function IncomingCell({ level }: { level: StockLevel }) {
             to="/$storeId/purchase-orders/new"
             params={{ storeId }}
             search={seed}
-            className="rounded-md px-2 py-1 text-sm hover:bg-accent"
+            className="rounded-md px-2 py-1 text-base hover:bg-accent"
           >
             {t('admin.stock_levels.incoming.create_purchase_order')}
           </Link>

@@ -64,7 +64,7 @@ export function SellerBrandCard({
 
         {/* The name already sits in the page header; repeating it here would
             just be the same words twice. The handle is what the header lacks. */}
-        <p className="text-muted-foreground text-sm">/{seller.slug}</p>
+        <p className="text-muted-foreground text-base">/{seller.slug}</p>
 
         {seller.about_html ? (
           // Server-sanitized on every write path (Spree::RichTextSanitizer),
@@ -75,7 +75,7 @@ export function SellerBrandCard({
             dangerouslySetInnerHTML={{ __html: seller.about_html }}
           />
         ) : (
-          <p className="text-muted-foreground text-sm">{t('admin.sellers.detail.no_about')}</p>
+          <p className="text-muted-foreground text-base">{t('admin.sellers.detail.no_about')}</p>
         )}
       </CardContent>
     </Card>

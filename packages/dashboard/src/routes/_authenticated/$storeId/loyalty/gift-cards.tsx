@@ -229,7 +229,7 @@ function CreateGiftCardSheet({
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
             {form.formState.errors.root?.message && (
-              <p className="text-sm text-destructive" role="alert">
+              <p className="text-base text-destructive" role="alert">
                 {form.formState.errors.root.message}
               </p>
             )}
@@ -342,16 +342,16 @@ function EditGiftCardSheet({
           </SheetDescription>
         </SheetHeader>
         {isLoading ? (
-          <div className="p-4 text-sm text-muted-foreground">{t('admin.common.loading')}</div>
+          <div className="p-4 text-base text-muted-foreground">{t('admin.common.loading')}</div>
         ) : !giftCard ? (
-          <div className="p-4 text-sm text-muted-foreground">
+          <div className="p-4 text-base text-muted-foreground">
             {t('admin.pages.promotions.gift_cards.not_found')}
           </div>
         ) : (
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
               {form.formState.errors.root?.message && (
-                <p className="text-sm text-destructive" role="alert">
+                <p className="text-base text-destructive" role="alert">
                   {form.formState.errors.root.message}
                 </p>
               )}
@@ -405,7 +405,7 @@ function CustomerPickerController({
       control={form.control}
       render={({ field }) =>
         readOnly ? (
-          <div className="text-sm text-muted-foreground">
+          <div className="text-base text-muted-foreground">
             {field.value || t('admin.pages.promotions.gift_cards.no_customer')}
           </div>
         ) : (

@@ -33,9 +33,9 @@ export function ProductBrandCard({ product }: ProductBrandCardProps) {
       </CardHeader>
       <CardContent>
         {brand ? (
-          <p className="text-sm">{brand.name}</p>
+          <p className="text-base">{brand.name}</p>
         ) : (
-          <p className="text-sm text-muted-foreground">
+          <p className="text-base text-muted-foreground">
             {t('admin.brands_plugin.product_card.empty')}
           </p>
         )}

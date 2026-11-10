@@ -29,7 +29,7 @@ function EditPurchaseOrderPage() {
     })
 
   if (isLoading || !purchaseOrder) {
-    return <div className="p-4 text-muted-foreground text-sm">{t('admin.common.loading')}</div>
+    return <div className="p-4 text-muted-foreground text-base">{t('admin.common.loading')}</div>
   }
 
   // The endpoint refuses the write once the order has gone to the supplier, so

@@ -100,7 +100,7 @@ export function SidebarUser({
         </Avatar>
         {!inBar && !isCollapsed && (
           <>
-            <span className="min-w-0 flex-1 truncate text-left font-medium text-sm text-foreground">
+            <span className="min-w-0 flex-1 truncate text-left font-medium text-base text-foreground">
               {user.full_name || user.email}
             </span>
             <MoreHorizontalIcon className="size-4 shrink-0 text-muted-foreground" />
@@ -129,7 +129,7 @@ export function SidebarUser({
               {initials}
             </AvatarFallback>
           </Avatar>
-          <div className="grid min-w-0 flex-1 text-sm leading-tight">
+          <div className="grid min-w-0 flex-1 text-base leading-tight">
             <span className="truncate font-medium text-foreground">
               {user.full_name || user.email}
             </span>

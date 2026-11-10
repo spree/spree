@@ -297,7 +297,7 @@ function ConnectInstructions({
         value={clientId}
         copyLabel={t('admin.mcp_connect.copy_client_id')}
       />
-      <ol className="flex list-decimal flex-col gap-2 pl-5 text-sm">
+      <ol className="flex list-decimal flex-col gap-2 pl-5 text-base">
         <li>{t('admin.mcp_connect.step_paste')}</li>
         <li>{t('admin.mcp_connect.step_sign_in')}</li>
         <li>{t('admin.mcp_connect.step_approve')}</li>
@@ -326,7 +326,7 @@ function ConnectInstructions({
               value={cli.command(endpoint, clientId)}
               copyLabel={t('admin.mcp_connect.copy_command')}
             />
-            <p className="text-muted-foreground text-sm">
+            <p className="text-muted-foreground text-base">
               {t('admin.mcp_connect.cli_then_sign_in')}
             </p>
           </TabsContent>
@@ -356,7 +356,7 @@ function CopyableValue({
 }) {
   return (
     <div className="flex flex-col gap-2">
-      <p className="font-medium text-sm">{label}</p>
+      <p className="font-medium text-base">{label}</p>
       {help ? <p className="text-muted-foreground text-xs">{help}</p> : null}
       <div className="flex items-center gap-2 rounded-md bg-muted px-3 py-2">
         <code className="flex-1 truncate font-mono text-xs">{value}</code>

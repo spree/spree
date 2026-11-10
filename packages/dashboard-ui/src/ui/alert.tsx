@@ -4,7 +4,7 @@ import * as React from 'react'
 import { cn } from '../lib/utils'
 
 const alertVariants = cva(
-  "group/alert relative grid w-full gap-0.5 rounded-card px-3.5 py-3 text-left text-sm has-data-[slot=alert-action]:relative has-data-[slot=alert-action]:pr-20 has-[>svg]:grid-cols-[auto_1fr] has-[>svg]:gap-x-2.5 *:[svg]:row-span-2 *:[svg]:translate-y-0.5 *:[svg]:text-current *:[svg:not([class*='size-'])]:size-4",
+  "group/alert relative grid w-full gap-0.5 rounded-card px-3.5 py-3 text-left text-base has-data-[slot=alert-action]:relative has-data-[slot=alert-action]:pr-20 has-[>svg]:grid-cols-[auto_1fr] has-[>svg]:gap-x-2.5 *:[svg]:row-span-2 *:[svg]:translate-y-0.5 *:[svg]:text-current *:[svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
@@ -61,7 +61,7 @@ function AlertDescription({ className, ...props }: React.ComponentProps<'div'>) 
     <div
       data-slot="alert-description"
       className={cn(
-        'text-sm text-balance text-muted-foreground md:text-pretty [&_a]:text-link [&_a]:transition-colors [&_a]:hover:text-link-hover [&_p:not(:last-child)]:mb-4',
+        'text-base text-balance text-muted-foreground md:text-pretty [&_a]:text-link [&_a]:transition-colors [&_a]:hover:text-link-hover [&_p:not(:last-child)]:mb-4',
         className,
       )}
       {...props}

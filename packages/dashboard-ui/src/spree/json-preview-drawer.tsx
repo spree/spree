@@ -193,7 +193,7 @@ export function JsonPreviewDrawer({
           </span>
         </div>
 
-        <div className="themed-scrollbar flex-1 overflow-auto p-4 font-mono text-sm">
+        <div className="themed-scrollbar flex-1 overflow-auto p-4 font-mono text-base">
           {isLoading ? (
             <p className="text-zinc-500">{t('admin.common.loading')}</p>
           ) : error ? (

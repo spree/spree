@@ -139,10 +139,10 @@ function StockHistoryTable({
   const paginated = (data?.meta?.pages ?? 1) > 1
 
   if (isLoading) {
-    return <p className="p-3 text-muted-foreground text-sm">{t('admin.common.loading')}</p>
+    return <p className="p-3 text-muted-foreground text-base">{t('admin.common.loading')}</p>
   }
   if (movements.length === 0) {
-    return <p className="p-3 text-muted-foreground text-sm">{t('admin.stock_history.empty')}</p>
+    return <p className="p-3 text-muted-foreground text-base">{t('admin.stock_history.empty')}</p>
   }
 
   return (
@@ -164,7 +164,7 @@ function StockHistoryTable({
         <TableBody>
           {movements.map((movement) => (
             <TableRow key={movement.id}>
-              <TableCell className="whitespace-nowrap text-muted-foreground text-sm">
+              <TableCell className="whitespace-nowrap text-muted-foreground text-base">
                 <RelativeTime iso={movement.created_at} />
               </TableCell>
               <TableCell>
@@ -175,7 +175,7 @@ function StockHistoryTable({
                   )}
                 </div>
               </TableCell>
-              <TableCell className="whitespace-nowrap text-sm">
+              <TableCell className="whitespace-nowrap text-base">
                 {movement.stock_location_name ?? '—'}
               </TableCell>
               <TableCell className="font-medium tabular-nums">
@@ -191,7 +191,7 @@ function StockHistoryTable({
                   '—'
                 )}
               </TableCell>
-              <TableCell className="whitespace-nowrap text-sm">
+              <TableCell className="whitespace-nowrap text-base">
                 <MovementCause movement={movement} />
               </TableCell>
             </TableRow>

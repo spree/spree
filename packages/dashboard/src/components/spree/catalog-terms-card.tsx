@@ -165,11 +165,11 @@ function OrderMinimums({
           button refuses to. */}
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <h3 className="flex items-center gap-1.5 font-medium text-sm">
+          <h3 className="flex items-center gap-1.5 font-medium text-base">
             {t('admin.catalogs.terms.minimums_title')}
             <TermHelp text={t('admin.catalogs.terms.help.order_minimum')} />
           </h3>
-          <p className="text-muted-foreground text-sm">
+          <p className="text-muted-foreground text-base">
             {t('admin.catalogs.terms.minimums_description')}
           </p>
         </div>
@@ -191,7 +191,9 @@ function OrderMinimums({
       </div>
 
       {rows.length === 0 ? (
-        <p className="text-muted-foreground text-sm">{t('admin.catalogs.terms.minimums_empty')}</p>
+        <p className="text-muted-foreground text-base">
+          {t('admin.catalogs.terms.minimums_empty')}
+        </p>
       ) : (
         <div className="flex flex-col gap-2">
           {rows.map((row, index) => {

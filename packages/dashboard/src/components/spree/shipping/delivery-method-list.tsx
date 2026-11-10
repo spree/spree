@@ -46,7 +46,7 @@ export function DeliveryMethodList({
 
   if (methods.length === 0) {
     return (
-      <p className="text-muted-foreground text-sm">
+      <p className="text-muted-foreground text-base">
         {t('admin.delivery_profiles.detail.no_methods')}
       </p>
     )
@@ -95,7 +95,7 @@ export function DeliveryMethodList({
             >
               <Icon className="size-4 shrink-0 text-muted-foreground" />
               <span className="flex flex-col">
-                <span className="text-sm">{method.name}</span>
+                <span className="text-base">{method.name}</span>
                 {ruleSummary && (
                   <span className="text-muted-foreground text-xs">{ruleSummary}</span>
                 )}
@@ -117,7 +117,7 @@ export function DeliveryMethodList({
               <Tooltip>
                 <TooltipTrigger
                   render={
-                    <span className="shrink-0 cursor-default text-sm underline decoration-dotted underline-offset-2">
+                    <span className="shrink-0 cursor-default text-base underline decoration-dotted underline-offset-2">
                       {price}
                     </span>
                   }
@@ -129,7 +129,7 @@ export function DeliveryMethodList({
                 </TooltipContent>
               </Tooltip>
             ) : (
-              <span className="shrink-0 text-sm tabular-nums">{price}</span>
+              <span className="shrink-0 text-base tabular-nums">{price}</span>
             )}
             <RowActions
               actions={[

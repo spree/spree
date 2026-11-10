@@ -213,7 +213,7 @@ export function catalogVariantRows<Row extends { id: string }>({
     if (variants.length === 0) return null
 
     return variants.map((price) => (
-      <tr key={price.id} className="border-b text-sm last:border-b-0">
+      <tr key={price.id} className="border-b text-base last:border-b-0">
         {/* One spanning cell rather than several empty ones: these are
             spacers to line the row up, not columns of their own. */}
         {leadingCells > 0 && <TableCell colSpan={leadingCells} />}

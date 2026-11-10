@@ -350,9 +350,9 @@ export function BulkPriceTable({
           nests two scrollbars over the same content. */}
       <div className="min-h-0 flex-1">
         {isLoading ? (
-          <p className="text-sm text-muted-foreground">{labels.loading}</p>
+          <p className="text-base text-muted-foreground">{labels.loading}</p>
         ) : isEmpty ? (
-          <p className="text-sm text-muted-foreground">
+          <p className="text-base text-muted-foreground">
             {hasSearch
               ? (labels.emptySearchMessage ?? labels.emptyMessage ?? '')
               : (labels.emptyMessage ?? '')}

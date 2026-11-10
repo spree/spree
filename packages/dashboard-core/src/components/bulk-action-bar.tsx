@@ -328,7 +328,7 @@ function BulkActionBarLayout({
         {/* No clear button: the bar sits beside the header's select-all
             checkbox, which already clears the selection. */}
         <div ref={leadingRef} className="flex items-center gap-0.5">
-          <span className="whitespace-nowrap px-1.5 text-sm">
+          <span className="whitespace-nowrap px-1.5 text-base">
             {t('admin.components.bulk_action_bar.selected', { count })}
           </span>
           <div className="mx-1 h-5 w-px bg-border" aria-hidden />

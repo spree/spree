@@ -220,7 +220,7 @@ function PurchaseOrdersSection({ supplier }: { supplier: Supplier }) {
         {isLoading || orders.length === 0 ? (
           <CardContent>
             {isLoading ? (
-              <p className="text-muted-foreground text-sm">{t('admin.common.loading')}</p>
+              <p className="text-muted-foreground text-base">{t('admin.common.loading')}</p>
             ) : (
               <Empty className="p-4">
                 <EmptyHeader>
@@ -269,7 +269,7 @@ function PurchaseOrdersSection({ supplier }: { supplier: Supplier }) {
                     <TableCell className="text-right tabular-nums">
                       <Money amount={order.subtotal} currency={order.currency} />
                     </TableCell>
-                    <TableCell className="whitespace-nowrap text-muted-foreground text-sm">
+                    <TableCell className="whitespace-nowrap text-muted-foreground text-base">
                       {order.expected_at ?? '—'}
                     </TableCell>
                   </TableRow>

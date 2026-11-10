@@ -46,7 +46,7 @@ export function TypePickerSheet({
         </SheetHeader>
         <div className="flex min-h-0 flex-1 flex-col overflow-y-auto p-4">
           {types.length === 0 ? (
-            <p className="text-sm text-muted-foreground">{emptyMessage}</p>
+            <p className="text-base text-muted-foreground">{emptyMessage}</p>
           ) : (
             <div className="flex flex-col gap-2">
               {types.map((type) => {

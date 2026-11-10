@@ -16,7 +16,7 @@ export function NameDescriptionFields({
   return (
     <FieldGroup>
       {errors.root?.message && (
-        <p className="text-sm text-destructive" role="alert">
+        <p className="text-base text-destructive" role="alert">
           {errors.root.message}
         </p>
       )}
@@ -29,7 +29,7 @@ export function NameDescriptionFields({
           aria-invalid={!!errors.name || undefined}
           {...form.register('name')}
         />
-        {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
+        {errors.name && <p className="text-base text-destructive">{errors.name.message}</p>}
       </Field>
 
       <Field>
@@ -42,7 +42,7 @@ export function NameDescriptionFields({
           {...form.register('description')}
         />
         {errors.description && (
-          <p className="text-sm text-destructive">{errors.description.message}</p>
+          <p className="text-base text-destructive">{errors.description.message}</p>
         )}
       </Field>
     </FieldGroup>

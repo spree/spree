@@ -478,7 +478,7 @@ function TableHead({ className, ...props }: React.ComponentProps<'th'>) {
   return (
     <th
       className={cn(
-        'text-left text-sm font-normal text-muted-foreground bg-muted px-3 py-2.5 h-9 sm:p-2 whitespace-nowrap first:pl-4 last:pr-4',
+        'text-left text-base font-normal text-muted-foreground bg-muted px-3 py-2.5 h-9 sm:p-2 whitespace-nowrap first:pl-4 last:pr-4',
         'shadow-[inset_0_1px_0_0_var(--border-subtle),inset_0_-1px_0_0_var(--border-subtle)]',
         className,
       )}
@@ -510,7 +510,7 @@ function TableCell({ className, ...props }: React.ComponentProps<'td'>) {
         // `h-16` on touch is a floor, not a fixed height: a table cell treats
         // `height` as a minimum, so a row with a thumbnail or a wrapped
         // second line still grows past it.
-        'h-16 py-3 px-3 sm:h-auto sm:py-3 sm:px-2 border-b border-border-subtle align-middle first:pl-4 last:pr-4',
+        'h-16 py-3 px-3 sm:h-auto sm:py-3 sm:px-2 border-b border-border-subtle align-middle text-base first:pl-4 last:pr-4',
         // Compact rows (the columns menu's density choice, set on <html>) fit
         // about half as many again on a laptop screen. Desktop only: on touch
         // the row stays a full-size target.

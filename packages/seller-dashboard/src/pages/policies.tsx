@@ -132,7 +132,7 @@ export function PoliciesPage({ search }: { search: ResourceSearch }) {
             <CardTitle>{t('policies.required.title')}</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col gap-3">
-            <p className="text-muted-foreground text-sm">{t('policies.required.description')}</p>
+            <p className="text-muted-foreground text-base">{t('policies.required.description')}</p>
             <ItemGroup className="gap-2">
               {outstanding.map((name) => (
                 <Item

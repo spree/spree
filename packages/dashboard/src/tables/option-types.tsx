@@ -53,7 +53,7 @@ defineTable<OptionType>('option-types', {
       render: (ot) => {
         const count = ot.option_values?.length ?? 0
         return (
-          <span className="text-sm text-muted-foreground">
+          <span className="text-base text-muted-foreground">
             {i18n.t('admin.option_types.value_count', { count })}
           </span>
         )

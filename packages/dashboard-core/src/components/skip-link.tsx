@@ -24,7 +24,7 @@ export function SkipLink({ targetId = 'main-content' }: { targetId?: string }) {
         'sr-only',
         'focus-visible:not-sr-only focus-visible:fixed focus-visible:top-3 focus-visible:left-3',
         'focus-visible:z-50 focus-visible:rounded-lg focus-visible:bg-card',
-        'focus-visible:px-4 focus-visible:py-2 focus-visible:text-sm focus-visible:font-medium',
+        'focus-visible:px-4 focus-visible:py-2 focus-visible:text-base focus-visible:font-medium',
         'focus-visible:text-foreground focus-visible:shadow-md',
         'focus-visible:border focus-visible:border-border-control',
         'focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50',

@@ -88,7 +88,7 @@ function StockReceiptPanel({ receipt }: { receipt: StockReceipt }) {
     // the left, when on the right, then the counts on their own row.
     <Card>
       <CardHeader>
-        <CardTitle className="min-w-0 font-normal text-sm">
+        <CardTitle className="min-w-0 font-normal text-base">
           <StatusBadge
             status="received"
             tone="success"
@@ -107,7 +107,7 @@ function StockReceiptPanel({ receipt }: { receipt: StockReceipt }) {
         </CardAction>
       </CardHeader>
 
-      <CardContent className="flex items-center justify-between border-b border-border-subtle py-3.5 text-sm">
+      <CardContent className="flex items-center justify-between border-b border-border-subtle py-3.5 text-base">
         <span className="text-muted-foreground">
           {t('admin.stock_receipts.summary', {
             accepted: receipt.quantity_accepted_total,

@@ -332,7 +332,7 @@ function MediaLibraryPage() {
               <Loader2Icon className="size-5 animate-spin" />
             </div>
           ) : files.length === 0 ? (
-            <p className="py-16 text-center text-muted-foreground text-sm">
+            <p className="py-16 text-center text-muted-foreground text-base">
               {deferredSearch.trim() || placement !== 'all' || mediaType !== 'all'
                 ? t('admin.media_library.no_results')
                 : t('admin.media_library.empty')}
@@ -624,7 +624,7 @@ function MediaDetailSheet({
       >
         <MediaEditorSection icon={<InfoIcon />} title={t('admin.media_editor.information')}>
           {form.formState.errors.root?.message && (
-            <p className="text-destructive text-sm" role="alert">
+            <p className="text-destructive text-base" role="alert">
               {form.formState.errors.root.message}
             </p>
           )}
@@ -641,7 +641,7 @@ function MediaDetailSheet({
 
           <Slot name="media.form_fields" context={{ media, canWrite }} />
 
-          <div className="flex flex-col gap-1 text-sm">
+          <div className="flex flex-col gap-1 text-base">
             <span className="font-medium">{t('admin.media_editor.details')}</span>
             {details && <span className="text-muted-foreground">{details}</span>}
             <span className="text-muted-foreground">
@@ -655,7 +655,7 @@ function MediaDetailSheet({
             </span>
           </div>
 
-          <div className="flex flex-col gap-1.5 text-sm">
+          <div className="flex flex-col gap-1.5 text-base">
             <span className="font-medium">{t('admin.media_library.usage.title')}</span>
             {usage.isLoading ? (
               <Loader2Icon className="size-4 animate-spin text-muted-foreground" />

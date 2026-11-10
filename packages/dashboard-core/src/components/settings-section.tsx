@@ -29,7 +29,7 @@ export function SettingsSection({
       <div className="flex items-end justify-between gap-4">
         <div className="flex min-w-0 flex-col gap-1">
           <h2 className="font-semibold text-base">{title}</h2>
-          {description && <p className="text-muted-foreground text-sm">{description}</p>}
+          {description && <p className="text-muted-foreground text-base">{description}</p>}
         </div>
         {action && <div className="shrink-0">{action}</div>}
       </div>

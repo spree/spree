@@ -174,7 +174,7 @@ function EmailSettingsForm({ store }: { store: Store }) {
             <EmailsTabs current="settings" />
 
             {errors.root?.message && (
-              <p className="text-sm text-destructive" role="alert">
+              <p className="text-base text-destructive" role="alert">
                 {errors.root.message}
               </p>
             )}
@@ -435,7 +435,7 @@ function BrandingPreview({ form }: { form: ReturnType<typeof useForm<StoreEmails
 
   if (preview.error) {
     return (
-      <p className="text-sm text-muted-foreground">
+      <p className="text-base text-muted-foreground">
         {preview.error.message || t('admin.email_templates.preview.unavailable')}
       </p>
     )

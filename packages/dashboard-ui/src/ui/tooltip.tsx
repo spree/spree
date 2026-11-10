@@ -87,7 +87,7 @@ function TooltipContent({
           className={cn(
             // `origin-(--transform-origin)` so it grows out of the element it
             // describes rather than its own centre.
-            'z-50 inline-flex w-fit max-w-[200px] items-center gap-1.5 rounded-xl border border-border bg-popover px-2 py-1 text-sm font-normal text-popover-foreground shadow-md origin-(--transform-origin) data-[starting-style]:opacity-0 data-[starting-style]:scale-95 data-[ending-style]:opacity-0 data-[ending-style]:scale-95 transition-[opacity,transform,translate,scale] duration-100 ease-out',
+            'z-50 inline-flex w-fit max-w-[200px] items-center gap-1.5 rounded-xl border border-border bg-popover px-2 py-1 text-base font-normal text-popover-foreground shadow-md origin-(--transform-origin) data-[starting-style]:opacity-0 data-[starting-style]:scale-95 data-[ending-style]:opacity-0 data-[ending-style]:scale-95 transition-[opacity,transform,translate,scale] duration-100 ease-out',
             className,
           )}
           {...props}

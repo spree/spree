@@ -79,7 +79,7 @@ export function EditableNoteCard({
             </div>
           </form>
         ) : (
-          (children ?? <p className="text-muted-foreground text-sm">{t('admin.common.none')}</p>)
+          (children ?? <p className="text-muted-foreground text-base">{t('admin.common.none')}</p>)
         )}
       </CardContent>
     </Card>
@@ -88,7 +88,7 @@ export function EditableNoteCard({
 
 /** A plain-text note as it reads when not being edited. */
 export function NoteText({ value }: { value: string }) {
-  return <p className="whitespace-pre-wrap text-muted-foreground text-sm">{value}</p>
+  return <p className="whitespace-pre-wrap text-muted-foreground text-base">{value}</p>
 }
 
 /** A rich-text note as it reads when not being edited. */

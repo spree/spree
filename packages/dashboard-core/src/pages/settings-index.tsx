@@ -70,7 +70,7 @@ export function SettingsIndexPage({ tenantId }: { tenantId: string }) {
       />
 
       {groups.length === 0 ? (
-        <p className="text-sm text-muted-foreground">
+        <p className="text-base text-muted-foreground">
           {t('admin.settings_page.no_results', { query: query.trim() })}
         </p>
       ) : (
@@ -130,12 +130,12 @@ function SettingsRow({
           )}
         >
           <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-            <span className="flex items-center gap-1.5 text-sm font-medium">
+            <span className="flex items-center gap-1.5 text-base font-medium">
               {label}
               {entry.badge && <entry.badge />}
             </span>
             {description && (
-              <span className="text-sm text-muted-foreground md:truncate">{description}</span>
+              <span className="text-base text-muted-foreground md:truncate">{description}</span>
             )}
           </span>
           <ChevronRightIcon className="size-4 shrink-0 text-muted-foreground rtl:rotate-180" />

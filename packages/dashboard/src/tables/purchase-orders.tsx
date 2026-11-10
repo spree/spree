@@ -101,7 +101,7 @@ defineTable<PurchaseOrder>('purchase-orders', {
       filterable: true,
       filterType: 'date',
       default: true,
-      className: 'text-sm text-muted-foreground whitespace-nowrap',
+      className: 'text-base text-muted-foreground whitespace-nowrap',
       render: (po) => po.expected_at ?? '—',
     },
     {
@@ -110,7 +110,7 @@ defineTable<PurchaseOrder>('purchase-orders', {
       sortable: true,
       filterable: true,
       filterType: 'date',
-      className: 'text-sm text-muted-foreground whitespace-nowrap',
+      className: 'text-base text-muted-foreground whitespace-nowrap',
       render: (po) => po.cancel_by ?? '—',
     },
     {
@@ -162,7 +162,7 @@ defineTable<PurchaseOrder>('purchase-orders', {
       sortable: true,
       filterable: true,
       filterType: 'date',
-      className: 'text-sm text-muted-foreground whitespace-nowrap',
+      className: 'text-base text-muted-foreground whitespace-nowrap',
       render: (po) => <RelativeTime iso={po.created_at} />,
     },
   ],

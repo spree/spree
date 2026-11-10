@@ -138,7 +138,7 @@ export function DigitalFilesFormCard({
       </CardHeader>
 
       <CardContent className="flex flex-col gap-4">
-        <p className="text-muted-foreground text-sm">{t('admin.digital_assets.description')}</p>
+        <p className="text-muted-foreground text-base">{t('admin.digital_assets.description')}</p>
 
         <input
           ref={fileInputRef}
@@ -157,7 +157,7 @@ export function DigitalFilesFormCard({
             className="flex w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-border p-6 text-center transition-colors hover:border-foreground/30"
           >
             <FileIcon className="size-8 text-muted-foreground" />
-            <p className="text-muted-foreground text-sm">{t('admin.digital_assets.drop_hint')}</p>
+            <p className="text-muted-foreground text-base">{t('admin.digital_assets.drop_hint')}</p>
           </button>
         ) : (
           <div className="overflow-hidden rounded-xl border border-border-subtle">

@@ -44,7 +44,7 @@ export function PersonIdentity({
           {initials(name, email)}
         </AvatarFallback>
       </Avatar>
-      <span className="flex min-w-0 flex-col text-sm">
+      <span className="flex min-w-0 flex-col text-base">
         <span className="truncate font-medium">{primary}</span>
         {name?.trim() && email && (
           <span className="truncate text-muted-foreground text-xs">{email}</span>

@@ -326,7 +326,7 @@ export function AddressFormDialog({
         >
           <div className="flex-1 overflow-y-auto p-4">
             {errors.root?.message && (
-              <p className="mb-4 text-sm text-destructive" role="alert">
+              <p className="mb-4 text-base text-destructive" role="alert">
                 {errors.root.message}
               </p>
             )}
@@ -501,7 +501,7 @@ export function AddressFormDialog({
                       render={({ field }) => (
                         <label
                           htmlFor="addr-default-billing"
-                          className="flex cursor-pointer items-center gap-2 text-sm"
+                          className="flex cursor-pointer items-center gap-2 text-base"
                         >
                           <Checkbox
                             id="addr-default-billing"
@@ -520,7 +520,7 @@ export function AddressFormDialog({
                       render={({ field }) => (
                         <label
                           htmlFor="addr-default-shipping"
-                          className="flex cursor-pointer items-center gap-2 text-sm"
+                          className="flex cursor-pointer items-center gap-2 text-base"
                         >
                           <Checkbox
                             id="addr-default-shipping"

@@ -193,7 +193,7 @@ function OrderEditItemRow({
                 </Button>
               )}
               {row.revert_price ? (
-                <span className="flex items-center gap-2 text-sm whitespace-nowrap">
+                <span className="flex items-center gap-2 text-base whitespace-nowrap">
                   <span className="text-muted-foreground line-through">{row.saved_price}</span>
                   <span className="font-medium">
                     {revertPreview === null

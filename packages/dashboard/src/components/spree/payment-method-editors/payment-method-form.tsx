@@ -151,7 +151,7 @@ export function PaymentMethodForm({
       {providerType &&
       (customFormRegistered || Object.keys(preferenceSchema?.properties ?? {}).length > 0) ? (
         <Item variant="outline" className="flex-col items-stretch gap-2">
-          <h3 className="text-sm font-medium">
+          <h3 className="text-base font-medium">
             {t('admin.fields.payment_method.provider_configuration')}
           </h3>
           {customFormRegistered ? (

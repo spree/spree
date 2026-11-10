@@ -93,9 +93,11 @@ export function PayoutPage() {
               <Skeleton className="h-16 w-full" />
             </div>
           ) : transfersFailed ? (
-            <p className="px-6 pb-6 text-sm text-destructive">{t('payouts.detail.covers_error')}</p>
+            <p className="px-6 pb-6 text-base text-destructive">
+              {t('payouts.detail.covers_error')}
+            </p>
           ) : rows.length === 0 ? (
-            <p className="px-6 pb-6 text-sm text-muted-foreground">
+            <p className="px-6 pb-6 text-base text-muted-foreground">
               {t('payouts.detail.covers_empty')}
             </p>
           ) : (

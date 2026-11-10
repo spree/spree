@@ -9,8 +9,8 @@ import { type OrderEditItemValues, projectedSubtotal } from '../../../schemas/or
 function TotalRow({ label, value, bold }: { label: string; value: ReactNode; bold?: boolean }) {
   return (
     <div className="flex items-center justify-between px-4 py-2.5">
-      <span className="text-sm">{label}</span>
-      <span className={cn('text-sm', bold && 'font-bold')}>{value}</span>
+      <span className="text-base">{label}</span>
+      <span className={cn('text-base', bold && 'font-bold')}>{value}</span>
     </div>
   )
 }

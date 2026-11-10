@@ -98,7 +98,7 @@ export function HomePage() {
           <CardTitle>{t('home.selling_title')}</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground text-sm">
+          <p className="text-muted-foreground text-base">
             {profile.sellable ? t('home.selling_yes') : t('home.selling_no')}
           </p>
         </CardContent>

@@ -237,7 +237,7 @@ export function PageHeader({
           {/* Smaller and clipped on a phone: sharing the row with the actions
               leaves a long product name too little width to wrap into
               anything readable. */}
-          <h1 className="min-w-0 truncate font-semibold text-lg leading-tight sm:text-xl sm:whitespace-normal">
+          <h1 className="min-w-0 truncate font-semibold text-lg sm:text-xl sm:whitespace-normal">
             {title}
           </h1>
           {/* Statuses and the timestamp share the second line: both answer
@@ -248,14 +248,14 @@ export function PageHeader({
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
               {badges}
               {subtitle && (
-                <span className="line-clamp-2 text-sm text-muted-foreground sm:line-clamp-none">
+                <span className="line-clamp-2 text-base text-muted-foreground sm:line-clamp-none">
                   {subtitle}
                 </span>
               )}
             </div>
           )}
           {(description || docsPath) && (
-            <p className="text-muted-foreground text-sm">
+            <p className="text-muted-foreground text-base">
               {description}
               {docsPath && (
                 <>

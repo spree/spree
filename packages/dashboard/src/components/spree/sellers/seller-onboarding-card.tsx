@@ -94,7 +94,7 @@ export function SellerOnboardingCard({ seller, canEdit }: { seller: Seller; canE
               ))}
             </ul>
           ) : (
-            <p className="text-muted-foreground text-sm">{t('admin.common.loading')}</p>
+            <p className="text-muted-foreground text-base">{t('admin.common.loading')}</p>
           )}
         </CardContent>
 
@@ -167,7 +167,7 @@ function RequirementRow({
         <StatusIcon status={requirement.status} />
         <div className="flex min-w-0 flex-col gap-0.5">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="font-medium text-sm">{requirement.name}</span>
+            <span className="font-medium text-base">{requirement.name}</span>
             {!requirement.required && (
               <Badge variant="outline">{t('admin.seller_requirements.required.no')}</Badge>
             )}
@@ -280,7 +280,7 @@ function RequirementRow({
                   dangerouslySetInnerHTML={{ __html: policy.body_html }}
                 />
               ) : (
-                <p className="text-muted-foreground text-sm">
+                <p className="text-muted-foreground text-base">
                   {t('admin.sellers.onboarding.policy_empty')}
                 </p>
               )}

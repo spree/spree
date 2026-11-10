@@ -53,7 +53,7 @@ export function CustomerCard({ order }: { order: Order }) {
 
   const addressHeading = (type: AddressType, label: string) => (
     <div className="flex items-center justify-between gap-2">
-      <h3 className="text-sm font-medium">{label}</h3>
+      <h3 className="text-base font-medium">{label}</h3>
       <Button
         variant="ghost"
         size="icon-sm"
@@ -87,7 +87,7 @@ export function CustomerCard({ order }: { order: Order }) {
             </Button>
           </CardAction>
         </CardHeader>
-        <CardContent className="flex flex-col divide-y text-sm [&>section]:py-3 [&>section:first-child]:pt-0 [&>section:last-child]:pb-0">
+        <CardContent className="flex flex-col divide-y text-base [&>section]:py-3 [&>section:first-child]:pt-0 [&>section:last-child]:pb-0">
           <section className="flex flex-col gap-1">
             {customer ? (
               <>

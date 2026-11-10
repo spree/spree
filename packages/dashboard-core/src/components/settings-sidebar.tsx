@@ -114,7 +114,7 @@ export function SettingsSidebar({
             >
               <ArrowLeftIcon className="size-4" />
             </Link>
-            <span className="truncate font-medium text-sm">{t('admin.settings_page.title')}</span>
+            <span className="truncate font-medium text-base">{t('admin.settings_page.title')}</span>
           </div>
 
           <SettingsNavSearch value={query} onValueChange={setQuery} tabIndex={open ? 0 : -1} />
@@ -259,7 +259,7 @@ function SettingsNavSearch({
       // The main nav's search bar, as a real field: its corner, edge, fill,
       // icon inset and text size, and no shadow, so the two rails' search
       // boxes read as one. Phones keep the larger touch size.
-      className="h-8 shadow-none [&>[data-align=inline-start]]:pl-2.5 [&>input]:pl-2! [&>input]:text-sm in-data-[mobile=true]:h-11 in-data-[mobile=true]:[&>input]:text-base"
+      className="h-8 shadow-none [&>[data-align=inline-start]]:pl-2.5 [&>input]:pl-2! [&>input]:text-base in-data-[mobile=true]:h-11 in-data-[mobile=true]:[&>input]:text-base"
     />
   )
 }
@@ -321,7 +321,7 @@ function SettingsNavBody({
       )}
 
       {visible.groups.length === 0 && (
-        <p className="px-4 py-2 text-sm text-sidebar-foreground/70">
+        <p className="px-4 py-2 text-base text-sidebar-foreground/70">
           {t('admin.settings_page.no_results', { query: query.trim() })}
         </p>
       )}

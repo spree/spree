@@ -33,7 +33,7 @@ export function FulfillmentPanel({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="min-w-0 font-normal text-sm">
+        <CardTitle className="min-w-0 font-normal text-base">
           <StatusBadge status={status} label={statusLabel} />
           {location && (
             <div className="flex min-w-0 items-center gap-1.5 text-muted-foreground text-xs">

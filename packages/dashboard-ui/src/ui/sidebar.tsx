@@ -548,7 +548,7 @@ function SidebarGroupContent({ className, ...props }: React.ComponentProps<'div'
     <div
       data-slot="sidebar-group-content"
       data-sidebar="group-content"
-      className={cn('w-full text-sm', className)}
+      className={cn('w-full text-base', className)}
       {...props}
     />
   )
@@ -601,7 +601,7 @@ const sidebarMenuButtonVariants = cva(
         // desktop rail keeps its compact pointer-sized rows.
         default:
           'h-8 text-base in-data-[mobile=true]:h-12 in-data-[mobile=true]:px-2 in-data-[mobile=true]:[&_svg]:size-5',
-        sm: 'h-7 text-xs in-data-[mobile=true]:h-11 in-data-[mobile=true]:text-sm',
+        sm: 'h-7 text-xs in-data-[mobile=true]:h-11 in-data-[mobile=true]:text-base',
         lg: 'h-12 text-base group-data-[collapsible=icon]:p-0!',
       },
     },

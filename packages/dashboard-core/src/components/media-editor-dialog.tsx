@@ -74,7 +74,7 @@ export function MediaEditorDialog({
         <div className="relative flex min-h-[50vh] flex-1 items-center justify-center bg-[radial-gradient(circle,oklch(1_0_0/0.07)_1px,transparent_1px)] bg-size-[20px_20px] p-6 pb-20 md:min-h-0 md:p-10 md:pb-20">
           {preview}
           {hint && (
-            <div className="absolute bottom-5 left-1/2 flex max-w-[calc(100%-2rem)] -translate-x-1/2 items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-sm shadow-lg">
+            <div className="absolute bottom-5 left-1/2 flex max-w-[calc(100%-2rem)] -translate-x-1/2 items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-base shadow-lg">
               {hint}
             </div>
           )}
@@ -121,7 +121,7 @@ export function MediaEditorSection({
 }) {
   return (
     <section className={cn('flex flex-col gap-4 rounded-xl bg-card p-4', className)}>
-      <h3 className="flex items-center gap-2 font-medium text-sm [&_svg]:size-4 [&_svg]:text-muted-foreground">
+      <h3 className="flex items-center gap-2 font-medium text-base [&_svg]:size-4 [&_svg]:text-muted-foreground">
         {icon}
         {title}
       </h3>

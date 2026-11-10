@@ -76,7 +76,7 @@ export function DateRangePanel<K extends string>({
               aria-pressed={active}
               onClick={() => onPresetSelect(preset.key)}
               className={cn(
-                'flex items-center justify-between gap-2 whitespace-nowrap rounded-lg px-3 py-2.5 text-left text-sm md:px-2.5 md:py-1.5 transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50',
+                'flex items-center justify-between gap-2 whitespace-nowrap rounded-lg px-3 py-2.5 text-left text-base md:px-2.5 md:py-1.5 transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50',
                 active ? 'bg-accent font-medium text-foreground' : 'text-muted-foreground',
               )}
             >

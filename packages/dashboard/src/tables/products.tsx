@@ -72,7 +72,7 @@ defineTable('products', {
       // better — it searches every variant's, where this filtered only the
       // default variant's.
       default: false,
-      className: 'text-sm text-muted-foreground',
+      className: 'text-base text-muted-foreground',
       render: (product) => product.sku ?? '—',
     },
     {

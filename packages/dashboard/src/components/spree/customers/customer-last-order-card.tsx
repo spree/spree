@@ -44,7 +44,7 @@ export function CustomerLastOrderCard({ order }: { order: Order }) {
           </div>
         </div>
         {order.items?.slice(0, 5).map((item) => (
-          <div key={item.id} className="border-t flex items-center gap-3 px-6 py-3 text-sm">
+          <div key={item.id} className="border-t flex items-center gap-3 px-6 py-3 text-base">
             <ProductIdentity
               name={item.name}
               subtitle={item.options_text}

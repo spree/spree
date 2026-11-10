@@ -251,7 +251,7 @@ function StaffRow({ member }: { member: AdminUser }) {
         </TableCell>
         <TableCell>
           {member.roles.length === 0 ? (
-            <span className="text-sm text-muted-foreground">—</span>
+            <span className="text-base text-muted-foreground">—</span>
           ) : (
             <div className="flex flex-wrap gap-1">
               {member.roles.map((role) => (
@@ -265,7 +265,7 @@ function StaffRow({ member }: { member: AdminUser }) {
         <TableCell>
           <StaffStatusBadge status={member.status} />
         </TableCell>
-        <TableCell className="text-sm text-muted-foreground">
+        <TableCell className="text-base text-muted-foreground">
           <RelativeTime iso={member.last_active_at} />
         </TableCell>
         <TableCell className="text-right">
@@ -323,7 +323,7 @@ function StaffDetailsSheet({
         </SheetHeader>
         <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
           <StaffStatusBadge status={member.status} />
-          <dl className="flex flex-col gap-2 text-sm">
+          <dl className="flex flex-col gap-2 text-base">
             <DetailRow label={t('admin.pages.staff.details.joined')}>
               <RelativeTime iso={member.created_at} />
             </DetailRow>
@@ -334,9 +334,9 @@ function StaffDetailsSheet({
             )}
           </dl>
           <section className="flex flex-col gap-2">
-            <h3 className="font-medium text-sm">{t('admin.pages.staff.sessions.title')}</h3>
+            <h3 className="font-medium text-base">{t('admin.pages.staff.sessions.title')}</h3>
             {isError ? (
-              <p className="text-sm text-destructive" role="alert">
+              <p className="text-base text-destructive" role="alert">
                 {t('admin.pages.staff.details.load_failed')}
               </p>
             ) : isLoading ? (
@@ -348,7 +348,7 @@ function StaffDetailsSheet({
                 ))}
               </ItemGroup>
             ) : (
-              <p className="text-sm text-muted-foreground">
+              <p className="text-base text-muted-foreground">
                 {t('admin.pages.staff.sessions.empty')}
               </p>
             )}
@@ -527,10 +527,10 @@ function InvitationRow({ invitation }: { invitation: Invitation }) {
             {invitation.role_name}
           </Badge>
         ) : (
-          <span className="text-sm text-muted-foreground">—</span>
+          <span className="text-base text-muted-foreground">—</span>
         )}
       </TableCell>
-      <TableCell className="text-sm text-muted-foreground">
+      <TableCell className="text-base text-muted-foreground">
         {invitation.expires_at ? (
           <span className="inline-flex items-center gap-1">
             <ClockIcon className="size-3.5" />
@@ -635,7 +635,7 @@ function InviteDialog({
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <DialogBody className="flex flex-col gap-4">
             {form.formState.errors.root?.message && (
-              <p className="text-sm text-destructive" role="alert">
+              <p className="text-base text-destructive" role="alert">
                 {form.formState.errors.root.message}
               </p>
             )}
@@ -797,7 +797,7 @@ function EditStaffSheet({
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
             {form.formState.errors.root?.message && (
-              <p className="text-sm text-destructive" role="alert">
+              <p className="text-base text-destructive" role="alert">
                 {form.formState.errors.root.message}
               </p>
             )}
@@ -882,7 +882,7 @@ function RoleCheckboxGroup({
   }
 
   if (roles.length === 0) {
-    return <p className="text-sm text-muted-foreground">{t('admin.staff.invite.no_roles')}</p>
+    return <p className="text-base text-muted-foreground">{t('admin.staff.invite.no_roles')}</p>
   }
 
   return (
@@ -894,7 +894,7 @@ function RoleCheckboxGroup({
           <label
             key={role.id}
             htmlFor={id}
-            className="flex cursor-pointer items-center gap-2 text-sm capitalize"
+            className="flex cursor-pointer items-center gap-2 text-base capitalize"
           >
             <Checkbox id={id} checked={checked} onCheckedChange={() => toggle(role.id)} />
             {role.name}

@@ -43,13 +43,13 @@ export function EmailTemplateHistorySheet({
         <div className="flex flex-col gap-3 overflow-y-auto px-4 pb-4">
           {isLoading && <Skeleton className="h-24 w-full" />}
           {!isLoading && !revisions?.length && (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-base text-muted-foreground">
               {t('admin.email_templates.history.empty')}
             </p>
           )}
           {revisions?.map((revision, index) => (
             <Item variant="outline" key={revision.id} className="flex-col items-stretch gap-2">
-              <div className="flex items-center justify-between gap-2 text-sm">
+              <div className="flex items-center justify-between gap-2 text-base">
                 <div className="flex flex-col">
                   <span className="font-medium">
                     {index === 0
@@ -79,7 +79,7 @@ export function EmailTemplateHistorySheet({
                   </Button>
                 )}
               </div>
-              {revision.subject && <p className="truncate text-sm">{revision.subject}</p>}
+              {revision.subject && <p className="truncate text-base">{revision.subject}</p>}
               <pre className="max-h-40 overflow-auto rounded bg-muted p-2 font-mono text-xs">
                 {revision.body}
               </pre>

@@ -172,7 +172,7 @@ export function TaxLinesCard({ order }: { order: Order }) {
       <Card>
         {taxGroups.length === 0 ? (
           <CardContent>
-            <p className="text-sm text-muted-foreground">{emptyMessage}</p>
+            <p className="text-base text-muted-foreground">{emptyMessage}</p>
           </CardContent>
         ) : (
           <Table roundedTop>
@@ -263,7 +263,7 @@ export function OrderDiscountsCard({ order }: { order: Order }) {
       <Card>
         {discountRows.length === 0 ? (
           <CardContent>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-base text-muted-foreground">
               {t('admin.orders.detail.adjustment_lines.discounts_empty')}
             </p>
           </CardContent>
@@ -359,7 +359,7 @@ export function FeesCard({ order }: { order: Order }) {
       <Card>
         {feeRows.length === 0 ? (
           <CardContent>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-base text-muted-foreground">
               {t('admin.orders.detail.adjustment_lines.fees_empty')}
             </p>
           </CardContent>
@@ -563,7 +563,7 @@ function AddDiscountDialog({
                 </Select>
               </Field>
               {previewAmount !== null && (
-                <p className="text-sm text-muted-foreground">
+                <p className="text-base text-muted-foreground">
                   {t('admin.orders.detail.adjustment_lines.percent_preview', {
                     amount: formatMoney(previewAmount, order.currency, i18n.language),
                   })}

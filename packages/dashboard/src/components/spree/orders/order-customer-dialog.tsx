@@ -87,7 +87,7 @@ export function OrderCustomerDialog({
           <DialogBody>
             <FieldGroup>
               {form.formState.errors.root?.message && (
-                <p className="text-sm text-destructive">{form.formState.errors.root.message}</p>
+                <p className="text-base text-destructive">{form.formState.errors.root.message}</p>
               )}
               <Field>
                 <FieldLabel htmlFor="order-customer-picker">

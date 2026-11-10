@@ -365,7 +365,7 @@ function InvitationRow({ invitation }: { invitation: Invitation }) {
           <span className="font-medium">{invitation.email}</span>
         </div>
       </TableCell>
-      <TableCell className="text-muted-foreground text-sm">
+      <TableCell className="text-muted-foreground text-base">
         {invitation.expires_at ? (
           <span className="inline-flex items-center gap-1">
             <ClockIcon className="size-3.5" />

@@ -91,7 +91,7 @@ export function OauthApplicationSheet({
         <form className="flex min-h-0 flex-1 flex-col" onSubmit={form.handleSubmit(onSubmit)}>
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
             {form.formState.errors.root && (
-              <p className="text-destructive text-sm">{form.formState.errors.root.message}</p>
+              <p className="text-destructive text-base">{form.formState.errors.root.message}</p>
             )}
 
             <Field>

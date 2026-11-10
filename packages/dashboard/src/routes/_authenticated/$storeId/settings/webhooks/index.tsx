@@ -333,7 +333,7 @@ function SecretRevealDialog({
           </Alert>
           {endpoint?.secret_key && (
             <div className="flex items-center gap-2 rounded-md border border-border bg-muted/40 p-3">
-              <code className="flex-1 truncate font-mono text-sm">{endpoint.secret_key}</code>
+              <code className="flex-1 truncate font-mono text-base">{endpoint.secret_key}</code>
               <Button size="sm" variant="outline" onClick={() => copy(endpoint.secret_key ?? '')}>
                 {copied ? <CheckIcon /> : <CopyIcon />}
                 {copied ? t('admin.actions.copied') : t('admin.actions.copy')}

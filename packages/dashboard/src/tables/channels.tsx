@@ -33,7 +33,7 @@ defineTable<Channel>('channels', {
       label: i18n.t('admin.fields.channel.code.label'),
       sortable: true,
       default: true,
-      className: 'text-sm text-muted-foreground',
+      className: 'text-base text-muted-foreground',
       render: (channel) => channel.code,
     },
     {

@@ -99,7 +99,7 @@ export function SellerBalanceCard({ seller }: { seller: Seller }) {
           </div>
         ))}
 
-        <div className="flex gap-4 border-t pt-3 text-sm">
+        <div className="flex gap-4 border-t pt-3 text-base">
           <Link
             to={'/$storeId/sellers/transfers' as string}
             search={sellerFilter(seller.id, 'seller-transfers')}

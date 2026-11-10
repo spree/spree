@@ -54,7 +54,10 @@ export function ScopePicker({
       {/* Quick access: write_all / read_all toggles. Selecting one blocks the
           per-resource grid because the catch-all already covers it. */}
       <Item variant="outline" className="flex-col items-stretch gap-2">
-        <label htmlFor="scope-write-all" className="flex cursor-pointer items-center gap-2 text-sm">
+        <label
+          htmlFor="scope-write-all"
+          className="flex cursor-pointer items-center gap-2 text-base"
+        >
           <Checkbox
             id="scope-write-all"
             checked={hasWriteAll}
@@ -66,7 +69,10 @@ export function ScopePicker({
             {t('admin.api_keys.scope_picker.full_access_hint')}
           </span>
         </label>
-        <label htmlFor="scope-read-all" className="flex cursor-pointer items-center gap-2 text-sm">
+        <label
+          htmlFor="scope-read-all"
+          className="flex cursor-pointer items-center gap-2 text-base"
+        >
           <Checkbox
             id="scope-read-all"
             checked={hasReadAll}

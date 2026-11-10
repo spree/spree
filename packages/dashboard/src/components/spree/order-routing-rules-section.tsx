@@ -134,7 +134,7 @@ export function OrderRoutingRulesSection({ channelId }: { channelId: string }) {
   return (
     <div className="flex flex-col gap-2 border-t pt-4">
       <div>
-        <span className="text-sm font-medium">
+        <span className="text-base font-medium">
           {t('admin.pages.channels.order_routing_rules.title')}
         </span>
         <p className="text-xs text-muted-foreground">
@@ -143,9 +143,9 @@ export function OrderRoutingRulesSection({ channelId }: { channelId: string }) {
       </div>
 
       {isLoading ? (
-        <p className="text-sm text-muted-foreground">{t('admin.common.loading')}</p>
+        <p className="text-base text-muted-foreground">{t('admin.common.loading')}</p>
       ) : rules.length === 0 ? (
-        <p className="text-sm text-muted-foreground">
+        <p className="text-base text-muted-foreground">
           {t('admin.pages.channels.order_routing_rules.empty')}
         </p>
       ) : (

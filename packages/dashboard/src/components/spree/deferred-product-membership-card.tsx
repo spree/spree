@@ -230,7 +230,7 @@ export function DeferredProductMembershipCard<TMember extends ProductMembershipM
           <CardTitle>
             {tr('title')}
             {count > 0 && (
-              <span className="ml-2 font-normal text-muted-foreground text-sm">{count}</span>
+              <span className="ml-2 font-normal text-muted-foreground text-base">{count}</span>
             )}
           </CardTitle>
           {/* A read-only list explains itself first: it cannot be curated, so

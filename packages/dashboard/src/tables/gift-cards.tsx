@@ -151,7 +151,7 @@ defineTable<GiftCard>('gift-cards', {
       filterable: true,
       filterType: 'date',
       default: true,
-      className: 'text-sm text-muted-foreground whitespace-nowrap',
+      className: 'text-base text-muted-foreground whitespace-nowrap',
       render: (g) => (g.expires_at ? <RelativeTime iso={g.expires_at} /> : '—'),
     },
   ],

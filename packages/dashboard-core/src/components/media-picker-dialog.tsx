@@ -506,7 +506,7 @@ export function MediaPickerDialog<T extends MediaPickerOption>({
                 )}
                 <span>{t('admin.media_picker.upload')}</span>
               </Button>
-              <p className="text-muted-foreground text-sm">
+              <p className="text-muted-foreground text-base">
                 {offersVideo
                   ? t('admin.media_picker.drop_hint_media')
                   : t('admin.media_picker.drop_hint_images')}
@@ -519,7 +519,7 @@ export function MediaPickerDialog<T extends MediaPickerOption>({
               <Loader2Icon className="size-5 animate-spin" />
             </div>
           ) : results.length === 0 ? (
-            <p className="p-6 text-center text-muted-foreground text-sm">
+            <p className="p-6 text-center text-muted-foreground text-base">
               {filtered ? t('admin.media_picker.no_results') : t('admin.media_picker.empty')}
             </p>
           ) : view === 'grid' ? (
@@ -556,7 +556,7 @@ export function MediaPickerDialog<T extends MediaPickerOption>({
 
         {multiple && (
           <DialogFooter className="items-center sm:justify-between">
-            <span className="text-muted-foreground text-sm">
+            <span className="text-muted-foreground text-base">
               {t('admin.media_picker.selected_count', { count: staged.size })}
             </span>
             <div className="flex gap-2">
@@ -642,7 +642,7 @@ export function MediaTileBody({
         )}
       </span>
       <span className="flex min-w-0 flex-col">
-        <span className="truncate text-sm">{media.alt || media.filename}</span>
+        <span className="truncate text-base">{media.alt || media.filename}</span>
         <span className="text-muted-foreground text-xs">{mediaFileTypeLabel(media)}</span>
       </span>
     </>
@@ -727,7 +727,7 @@ export function MediaRowBody({
       {leading}
       <Thumbnail media={media} className="size-10 shrink-0 rounded-md border border-card-edge" />
       <span className="min-w-0 flex-1">
-        <span className="flex items-center gap-2 text-sm">
+        <span className="flex items-center gap-2 text-base">
           <span className="truncate">{media.alt || media.filename}</span>
           {badge && (
             <span className="shrink-0 rounded-md bg-accent px-1.5 py-0.5 font-medium text-xs">

@@ -78,7 +78,7 @@ defineTable<StockTransfer>('stock-transfers', {
       label: i18n.t('admin.stock_transfers.columns.shipped'),
       sortable: true,
       default: true,
-      className: 'text-sm text-muted-foreground whitespace-nowrap',
+      className: 'text-base text-muted-foreground whitespace-nowrap',
       render: (st) => (st.shipped_at ? <RelativeTime iso={st.shipped_at} /> : '—'),
     },
     {
@@ -87,7 +87,7 @@ defineTable<StockTransfer>('stock-transfers', {
       sortable: true,
       filterable: true,
       filterType: 'date',
-      className: 'text-sm text-muted-foreground whitespace-nowrap',
+      className: 'text-base text-muted-foreground whitespace-nowrap',
       render: (st) => <RelativeTime iso={st.created_at} />,
     },
   ],

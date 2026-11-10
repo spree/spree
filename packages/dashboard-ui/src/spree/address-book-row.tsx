@@ -136,7 +136,7 @@ export function AddressBookTableRow({
   return (
     <TableRow>
       <TableCell>
-        {address.label && <div className="font-medium text-sm">{address.label}</div>}
+        {address.label && <div className="font-medium text-base">{address.label}</div>}
         <AddressBlock address={address} />
       </TableCell>
       <TableCell>

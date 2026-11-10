@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-baseline justify-between gap-4 text-sm">
+    <div className="flex items-baseline justify-between gap-4 text-base">
       <span className="text-muted-foreground">{label}</span>
       <span className="font-medium tabular-nums">{value}</span>
     </div>
@@ -68,7 +68,7 @@ export function OrderLogisticsCard({ order }: { order: Order }) {
             {/* Said plainly rather than left to be inferred from the figures:
                 an incomplete rollup understates every one of them. */}
             {freight.complete === false && (
-              <p className="text-sm text-muted-foreground">
+              <p className="text-base text-muted-foreground">
                 {t('admin.orders.detail.logistics.incomplete')}
               </p>
             )}

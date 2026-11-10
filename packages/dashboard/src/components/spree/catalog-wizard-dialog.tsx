@@ -215,7 +215,9 @@ function CatalogWizard({
       <div className="flex items-start justify-between gap-4">
         <div>
           <h2 className="font-medium text-lg">{t(`admin.catalogs.wizard.steps.${step}`)}</h2>
-          <p className="text-muted-foreground text-sm">{t(`admin.catalogs.wizard.help.${step}`)}</p>
+          <p className="text-muted-foreground text-base">
+            {t(`admin.catalogs.wizard.help.${step}`)}
+          </p>
         </div>
         {step === 'audience' && audienceCount > 0 && (
           <Button size="sm" variant="outline" type="button" onClick={() => setAssigning(true)}>
@@ -344,7 +346,7 @@ function ProductsStep({
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
       <section className="flex min-w-0 flex-col gap-2">
-        <h3 className="font-medium text-sm">
+        <h3 className="font-medium text-base">
           {t('admin.catalogs.wizard.products.chosen_title')}
           <span className="ml-2 font-normal text-muted-foreground">{products.length}</span>
         </h3>
@@ -391,7 +393,7 @@ function ProductsStep({
       </section>
 
       <section className="flex min-w-0 flex-col gap-2">
-        <h3 className="font-medium text-sm">{t('admin.catalogs.wizard.products.all_title')}</h3>
+        <h3 className="font-medium text-base">{t('admin.catalogs.wizard.products.all_title')}</h3>
 
         <SearchInput
           value={search}
@@ -401,12 +403,12 @@ function ProductsStep({
 
         <div className="flex max-h-96 flex-col divide-y overflow-y-auto rounded-md border">
           {isLoading && (
-            <p className="p-4 text-center text-muted-foreground text-sm">
+            <p className="p-4 text-center text-muted-foreground text-base">
               {t('admin.common.loading')}
             </p>
           )}
           {!isLoading && (data?.data.length ?? 0) === 0 && (
-            <p className="p-4 text-center text-muted-foreground text-sm">
+            <p className="p-4 text-center text-muted-foreground text-base">
               {t('admin.common.no_results')}
             </p>
           )}
@@ -461,7 +463,7 @@ function ReviewStep({
   const audiences = values.assignments.filter((entry) => !entry.removed)
 
   return (
-    <dl className="grid grid-cols-[10rem_1fr] gap-y-3 text-sm">
+    <dl className="grid grid-cols-[10rem_1fr] gap-y-3 text-base">
       <dt className="text-muted-foreground">{t('admin.fields.name.label')}</dt>
       <dd>{values.name}</dd>
 

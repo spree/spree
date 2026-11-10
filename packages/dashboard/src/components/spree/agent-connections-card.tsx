@@ -141,7 +141,7 @@ function ConnectionRow({ application, connection, canRevoke }: ConnectionRowProp
       <TableCell>
         <ScopeList scopes={connection.scopes} previewCount={2} />
       </TableCell>
-      <TableCell className="text-muted-foreground text-sm">
+      <TableCell className="text-muted-foreground text-base">
         <RelativeTime iso={connection.created_at} />
       </TableCell>
       <TableCell className="text-right">

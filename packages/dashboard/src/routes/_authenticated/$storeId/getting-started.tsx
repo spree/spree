@@ -117,7 +117,7 @@ function GettingStartedPage() {
                     fallback={
                       <>
                         {description && (
-                          <p className="text-muted-foreground text-sm">{description}</p>
+                          <p className="text-muted-foreground text-base">{description}</p>
                         )}
                         {link && cta && (
                           <Button asChild variant={task.done ? 'outline' : 'default'}>

@@ -465,7 +465,7 @@
      hiding the space in command-line flags. */
   --font-mono--font-feature-settings: "liga" 0, "calt" 0;
 
-  /* Inter at 13-14px reads thin under grayscale antialiasing, so every step
+  /* Inter at 13px reads thin under grayscale antialiasing, so every step
      sits 50 heavier than the CSS keyword it replaces. */
   --font-weight-normal: 450;
   --font-weight-medium: 550;
@@ -473,15 +473,28 @@
   /* Bold keeps a visible step above semibold, now that semibold is 650. */
   --font-weight-bold: 750;
 
-  /* Typography scale — matches Spree admin (smaller than Tailwind defaults) */
+  /* Typography scale — matches Spree admin (smaller than Tailwind defaults).
+     Each size carries its own line height on a 4px grid; left to Tailwind's,
+     they kept ratios tuned for its larger sizes and text of one size landed
+     on five different line heights. */
   --text-xs: 0.75rem;
+  --text-xs--line-height: 1rem;
+  /* 13px is the one text size; `text-base` is what components use, and
+     `text-sm` is kept equal so older or plugin markup lands on it too. */
   --text-sm: 0.8125rem;
-  --text-base: 0.875rem;
+  --text-sm--line-height: 1.25rem;
+  --text-base: 0.8125rem;
+  --text-base--line-height: 1.25rem;
   --text-lg: 1rem;
+  --text-lg--line-height: 1.5rem;
   --text-xl: 1.25rem;
+  --text-xl--line-height: 1.75rem;
   --text-2xl: 1.5rem;
+  --text-2xl--line-height: 2rem;
   --text-3xl: 1.75rem;
+  --text-3xl--line-height: 2.25rem;
   --text-4xl: 2rem;
+  --text-4xl--line-height: 2.5rem;
 
   /* The resting lift on a control that sits ON a surface — a field, a button,
      a card. Measured off a reference: the ground under a field's bottom edge
@@ -842,7 +855,7 @@
    *
    * `pointer: coarse` rather than a width breakpoint: this is about the input
    * method, and a small window on a laptop should keep the compact type. */
-  /* Nav rows and menu labels read small on a phone at the desktop 14px.
+  /* Nav rows and menu labels read small on a phone at the desktop 13px.
    * 16px is the size the platform uses for a primary list row. Sizing is left
    * to the components themselves — buttons carry their own touch targets. */
   @media (pointer: coarse) {
@@ -936,9 +949,11 @@
     max-width: 100vw;
   }
 
+  /* 13px, the one text size: components use `text-base` too, so text that
+     sets no size of its own lands on the same size as everything around it.
+     `text-xs` (12px) is the only smaller step, for captions and badges. */
   body {
     @apply bg-background text-foreground text-base;
-    line-height: 1.5;
   }
 
   /* Headings — semibold (600) like Rails admin */
@@ -948,7 +963,7 @@
   h4,
   h5,
   h6 {
-    @apply font-semibold leading-tight;
+    @apply font-semibold;
   }
 
   h1 {

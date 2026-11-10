@@ -190,7 +190,7 @@ function CategorySEOCard({ form }: { form: UseFormReturn<CategoryFormValues> }) 
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         <Item variant="outline" className="flex-col items-stretch gap-1">
-          <p className="truncate text-sm font-medium text-blue-700">{previewTitle}</p>
+          <p className="truncate text-base font-medium text-blue-700">{previewTitle}</p>
           <p className="truncate text-xs text-green-700">example.com/t/{previewSlug}</p>
           {metaDescription && (
             <p className="line-clamp-2 text-xs text-muted-foreground">{metaDescription}</p>

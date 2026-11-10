@@ -571,7 +571,7 @@ function DeliveryMethodSheet({
                 <CardTitle>{t('delivery_methods.sections.conditions')}</CardTitle>
               </CardHeader>
               <CardContent className="flex flex-col gap-4">
-                <p className="text-muted-foreground text-sm">
+                <p className="text-muted-foreground text-base">
                   {t('delivery_methods.conditions.description')}
                 </p>
 

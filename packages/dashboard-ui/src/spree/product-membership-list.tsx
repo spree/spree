@@ -230,7 +230,7 @@ export function ProductMembershipList({
   }
 
   if (loading) {
-    return <p className="p-6 text-muted-foreground text-sm">{labels.loading}</p>
+    return <p className="p-6 text-muted-foreground text-base">{labels.loading}</p>
   }
 
   if (order.length === 0) {
@@ -270,7 +270,7 @@ export function ProductMembershipList({
         />
       </div>
       {visible.length === 0 ? (
-        <p className="p-6 text-muted-foreground text-sm">{labels.noMatches}</p>
+        <p className="p-6 text-muted-foreground text-base">{labels.noMatches}</p>
       ) : (
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
           <Table>

@@ -190,7 +190,7 @@ function SetupForm({
     <>
       <div className="flex flex-col gap-2">
         <h1 className="text-2xl font-bold">{t('admin.setup.title')}</h1>
-        <p className="text-sm text-muted-foreground">{t('admin.setup.subtitle')}</p>
+        <p className="text-base text-muted-foreground">{t('admin.setup.subtitle')}</p>
       </div>
       {/* Chrome ignores `autocomplete="off"` on a field it has decided is part
           of an address form — which is what it made of the country box, and it
@@ -198,7 +198,7 @@ function SetupForm({
           honoured. Nothing is lost here: this screen creates an account that
           does not exist yet, so there is nothing useful to autofill. */}
       <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-6" autoComplete="off">
-        {errors.root && <p className="text-sm text-destructive">{errors.root.message}</p>}
+        {errors.root && <p className="text-base text-destructive">{errors.root.message}</p>}
         {/* Setup cannot be completed without this list, so a failed request
             needs saying out loud and a way back — otherwise the country box
             is simply empty and the merchant is stuck with no explanation. */}
@@ -233,7 +233,7 @@ function SetupForm({
               {...form.register('first_name')}
             />
             {errors.first_name && (
-              <p className="text-sm text-destructive">{errors.first_name.message}</p>
+              <p className="text-base text-destructive">{errors.first_name.message}</p>
             )}
           </div>
           <div className="grid gap-2">
@@ -244,7 +244,7 @@ function SetupForm({
               {...form.register('last_name')}
             />
             {errors.last_name && (
-              <p className="text-sm text-destructive">{errors.last_name.message}</p>
+              <p className="text-base text-destructive">{errors.last_name.message}</p>
             )}
           </div>
         </div>
@@ -256,7 +256,7 @@ function SetupForm({
             aria-invalid={!!errors.email || undefined}
             {...form.register('email')}
           />
-          {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
+          {errors.email && <p className="text-base text-destructive">{errors.email.message}</p>}
         </div>
         <div className="grid gap-2">
           <Label htmlFor="password">{t('admin.fields.password.label')}</Label>
@@ -266,7 +266,9 @@ function SetupForm({
             aria-invalid={!!errors.password || undefined}
             {...form.register('password')}
           />
-          {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
+          {errors.password && (
+            <p className="text-base text-destructive">{errors.password.message}</p>
+          )}
         </div>
         <div className="grid gap-2">
           <Label htmlFor="password_confirmation">
@@ -279,7 +281,7 @@ function SetupForm({
             {...form.register('password_confirmation')}
           />
           {errors.password_confirmation && (
-            <p className="text-sm text-destructive">{errors.password_confirmation.message}</p>
+            <p className="text-base text-destructive">{errors.password_confirmation.message}</p>
           )}
         </div>
         {/* Sample data needs an admin to own its imports, so this is the
@@ -292,7 +294,7 @@ function SetupForm({
             <div className="grid gap-1">
               <label
                 htmlFor="sample_data"
-                className="flex cursor-pointer items-center gap-2 text-sm font-medium"
+                className="flex cursor-pointer items-center gap-2 text-base font-medium"
               >
                 <Checkbox
                   id="sample_data"
@@ -329,7 +331,7 @@ function SetupUnavailable({
   return (
     <div className="flex flex-col gap-2">
       <h1 className="text-2xl font-bold">{title}</h1>
-      <p className="text-sm text-muted-foreground">{message}</p>
+      <p className="text-base text-muted-foreground">{message}</p>
       {onRetry && (
         <div>
           <Button type="button" variant="outline" size="sm" onClick={onRetry}>
@@ -337,7 +339,7 @@ function SetupUnavailable({
           </Button>
         </div>
       )}
-      <p className="text-sm text-muted-foreground">
+      <p className="text-base text-muted-foreground">
         <Link to="/login" className="link">
           {t('admin.setup.back_to_login')}
         </Link>

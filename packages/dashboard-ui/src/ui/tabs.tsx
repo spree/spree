@@ -87,7 +87,7 @@ function TabsTrigger({
       className={cn(
         // min-h-7 + py-1 keeps the hit area past the 24px WCAG target size at
         // every text size; the old h-[calc(100%-1px)] left it to the parent.
-        'relative z-10 inline-flex min-h-7 flex-1 cursor-pointer items-center justify-center gap-1.5 px-3 py-1 text-sm font-medium whitespace-nowrap',
+        'relative z-10 inline-flex min-h-7 flex-1 cursor-pointer items-center justify-center gap-1.5 px-3 py-1 text-base font-medium whitespace-nowrap',
         'transition-[color,background-color,box-shadow] duration-150 ease-out outline-none motion-reduce:transition-none',
         TAB_SHAPE,
         'group-data-[orientation=vertical]/tabs:w-full group-data-[orientation=vertical]/tabs:justify-start',

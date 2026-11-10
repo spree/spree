@@ -30,7 +30,7 @@ export function DeliveryPickupCard({ methods }: { methods: DeliveryMethod[] }) {
           <DeliveryMethodList methods={methods} icon={StoreIcon} />
         ) : (
           <div className="flex flex-col items-start gap-2">
-            <p className="text-muted-foreground text-sm">
+            <p className="text-muted-foreground text-base">
               {t('admin.delivery_profiles.detail.pickup_empty')}
             </p>
             <Can I="create" a={Subject.DeliveryMethod}>
@@ -67,7 +67,7 @@ function PickupLocationsBlock() {
 
   return (
     <div className="flex flex-col gap-2 border-t pt-4">
-      <span className="font-medium text-sm">
+      <span className="font-medium text-base">
         {t('admin.delivery_profiles.detail.collect_from')}
       </span>
       <span className="text-muted-foreground text-xs">
@@ -75,9 +75,9 @@ function PickupLocationsBlock() {
       </span>
 
       {isLoading ? (
-        <p className="text-muted-foreground text-sm">{t('admin.common.loading')}</p>
+        <p className="text-muted-foreground text-base">{t('admin.common.loading')}</p>
       ) : locations.length === 0 ? (
-        <p className="text-muted-foreground text-sm">
+        <p className="text-muted-foreground text-base">
           {t('admin.delivery_profiles.detail.no_stock_locations')}
         </p>
       ) : (
@@ -86,7 +86,7 @@ function PickupLocationsBlock() {
             <label
               key={location.id}
               htmlFor={`pickup-location-${location.id}`}
-              className="flex items-center gap-2 text-sm"
+              className="flex items-center gap-2 text-base"
             >
               <Checkbox
                 id={`pickup-location-${location.id}`}

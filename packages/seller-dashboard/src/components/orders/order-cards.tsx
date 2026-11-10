@@ -46,9 +46,9 @@ function SummaryRow({
 }) {
   return (
     <div className="flex items-center justify-between py-3 first:pt-0 last:pb-0">
-      <span className="text-sm">{label}</span>
+      <span className="text-base">{label}</span>
       <span
-        className={cn('text-sm tabular-nums', bold && 'font-bold', danger && 'text-destructive')}
+        className={cn('text-base tabular-nums', bold && 'font-bold', danger && 'text-destructive')}
       >
         {value}
       </span>
