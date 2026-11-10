@@ -66,6 +66,7 @@ interface TableToolbarProps {
   onVisibleColumnsChange: (columns: string[]) => void
   search: string
   onSearchChange: (value: string) => void
+  searchable?: boolean
   searchPlaceholder?: string
   sort: SortOption
   onSortChange: (sort: SortOption) => void
@@ -174,6 +175,7 @@ export function TableToolbar({
   onVisibleColumnsChange,
   search,
   onSearchChange,
+  searchable = true,
   searchPlaceholder,
   sort,
   onSortChange,
@@ -287,15 +289,17 @@ export function TableToolbar({
               already carries a search field — two search boxes stacked in one
               column is the more confusing cost. A term set on desktop still
               shows as a chip there, so it never filters a list invisibly. */}
-            <SearchInput
-              value={search}
-              onValueChange={onSearchChange}
-              placeholder={
-                searchPlaceholder ?? t('admin.components.table_toolbar.search_placeholder')
-              }
-              clearLabel={t('admin.common.clear')}
-              className="hidden h-[2.125rem] w-[240px] bg-card text-sm lg:flex"
-            />
+            {searchable && (
+              <SearchInput
+                value={search}
+                onValueChange={onSearchChange}
+                placeholder={
+                  searchPlaceholder ?? t('admin.components.table_toolbar.search_placeholder')
+                }
+                clearLabel={t('admin.common.clear')}
+                className="hidden h-[2.125rem] w-[240px] bg-card text-sm lg:flex"
+              />
+            )}
 
             {/* Icon only, like sort and columns: the quick controls beside it
               already carry the row's words, and the tooltip names it. */}
