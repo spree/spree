@@ -2,6 +2,7 @@ import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { expect, type Page, test } from '@playwright/test'
 import {
+  addNewOrderItem,
   adminRequest,
   createPlacedOrder,
   FIXTURE_BOGUS_GATEWAY,
@@ -98,16 +99,33 @@ async function fillNewOrderForm(page: Page, email: string) {
   // service needs (no addresses required for a draft).
   await page.locator('#order-email').fill(email)
 
-  // Variant typeahead is a combobox: results are `role="option"`, so they are
-  // reachable by keyboard as well as click.
-  await page.getByPlaceholder(/search variant/i).fill(FIXTURE_PROMO_PRODUCT)
-  await page
-    .getByRole('option', { name: new RegExp(FIXTURE_PROMO_PRODUCT, 'i') })
-    .first()
-    .click()
+  await addNewOrderItem(page, FIXTURE_PROMO_PRODUCT)
 }
 
 test.describe('new order', () => {
+  test('lists items like the edit screen, from an empty state', async ({ page }) => {
+    const creds = await login(page)
+    await page.goto(NEW_ORDER_PATH(creds.store_id))
+    await expect(page.getByRole('heading', { name: CTA })).toBeVisible({ timeout: 15_000 })
+
+    await expect(page.getByText(/^no items yet$/i)).toBeVisible()
+
+    await addNewOrderItem(page, FIXTURE_PROMO_PRODUCT)
+
+    const quantity = page.getByRole('spinbutton', {
+      name: new RegExp(`^quantity of ${FIXTURE_PROMO_PRODUCT}`, 'i'),
+    })
+    await expect(quantity).toHaveValue('1')
+    // Picking the same product again adds to its row rather than a second one.
+    await addNewOrderItem(page, FIXTURE_PROMO_PRODUCT)
+    await expect(quantity).toHaveValue('2')
+
+    await page
+      .getByRole('button', { name: new RegExp(`^remove ${FIXTURE_PROMO_PRODUCT}`, 'i') })
+      .click()
+    await expect(page.getByText(/^no items yet$/i)).toBeVisible()
+  })
+
   test('creates a draft order with email + variant and lands on the detail page', async ({
     page,
   }) => {
@@ -148,7 +166,8 @@ test.describe('new order', () => {
     await expect(page.getByRole('heading', { name: CTA })).toBeVisible({ timeout: 15_000 })
 
     await fillNewOrderForm(page, `e2e-context-${Date.now()}@example.com`)
-    const itemRow = page.getByRole('cell', { name: new RegExp(FIXTURE_PROMO_PRODUCT, 'i') })
+    // Anchored: the quantity and remove cells name the product too.
+    const itemRow = page.getByRole('cell', { name: new RegExp(`^${FIXTURE_PROMO_PRODUCT}`, 'i') })
     await expect(itemRow).toBeVisible()
 
     await page.locator('#order-market').click()

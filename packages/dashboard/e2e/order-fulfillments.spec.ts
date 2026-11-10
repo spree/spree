@@ -1,5 +1,5 @@
 import { expect, type Page, test } from '@playwright/test'
-import { createPlacedOrder, FIXTURE_PROMO_PRODUCT, login } from './helpers'
+import { addNewOrderItem, createPlacedOrder, FIXTURE_PROMO_PRODUCT, login } from './helpers'
 
 const NEW_ORDER_PATH = (storeId: string) => `/${storeId}/orders/new`
 
@@ -13,11 +13,7 @@ async function createDraftOrder(page: Page, storeId: string) {
   await expect(page.getByRole('heading', { name: /new order/i })).toBeVisible({ timeout: 15_000 })
 
   await page.locator('#order-email').fill(`e2e-fulfillment-${Date.now()}@example.com`)
-  await page.getByPlaceholder(/search variant/i).fill(FIXTURE_PROMO_PRODUCT)
-  await page
-    .getByRole('option', { name: new RegExp(FIXTURE_PROMO_PRODUCT, 'i') })
-    .first()
-    .click()
+  await addNewOrderItem(page, FIXTURE_PROMO_PRODUCT)
 
   await page.locator('button[type="submit"]').click()
   await expect(page).toHaveURL(new RegExp(`/${storeId}/orders/or_[^/]+$`), { timeout: 15_000 })

@@ -92,7 +92,7 @@ function OrderEditPage() {
     <>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         {form.formState.errors.root?.message && (
-          <p className="text-sm text-destructive" role="alert">
+          <p className="text-base text-destructive" role="alert">
             {form.formState.errors.root.message}
           </p>
         )}
@@ -145,7 +145,7 @@ function OrderEditPage() {
 
       {addingItem && (
         <AddLineItemDialog
-          orderId={orderId}
+          searchParams={{ order_id: orderId }}
           open={addingItem}
           onOpenChange={setAddingItem}
           onSelect={editor.stageVariant}
