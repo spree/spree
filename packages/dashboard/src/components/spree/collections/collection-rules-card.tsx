@@ -3,6 +3,7 @@ import { COLLECTION_RULE_MATCH_POLICIES, MATCH_POLICIES } from '@spree/core'
 import {
   CurrencySelect,
   ResourceCombobox,
+  TagCombobox,
   typeLabel,
   useStore,
   useTenantId,
@@ -28,6 +29,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Switch,
 } from '@spree/dashboard-ui'
 import { PlusIcon, Trash2Icon } from '@spree/dashboard-ui/icons'
 import { useQuery } from '@tanstack/react-query'
@@ -61,6 +63,15 @@ const RECORD_PICKERS = {
   product_type: productTypeAutocompleteProps,
   seller: sellerAutocompleteProps,
 } as const
+
+/**
+ * Where a new rule of these kinds starts. The server ignores an "On sale"
+ * rule's value but requires one; "Recently published" counts days back.
+ */
+const RULE_SEED_VALUES: Record<string, string> = { sale: 'true', available_on: '30' }
+
+/** Kinds whose control replaces the condition: a switch, or a number of days only "is equal to" reads. */
+const NO_CONDITION_TYPES = new Set(['sale', 'available_on'])
 
 /** Product custom fields marked for collection rules; the value input follows the field's type. */
 const customFieldDefinitionPicker = customFieldDefinitionAutocompleteProps('product', {
@@ -98,7 +109,7 @@ export function CollectionRulesCard({ form }: { form: UseFormReturn<CollectionFo
       ...blankCollectionRule(),
       type,
       match_policy: policies[0] ?? 'is_equal_to',
-      value: type === 'sale' ? 'true' : '',
+      value: RULE_SEED_VALUES[type] ?? '',
     }
   }
   const rulesMatchPolicyOptions = MATCH_POLICIES.map((value) => ({
@@ -115,9 +126,6 @@ export function CollectionRulesCard({ form }: { form: UseFormReturn<CollectionFo
       <CardContent className="flex flex-col gap-6">
         {rules.fields.length > 1 && (
           <Field>
-            <FieldLabel htmlFor="collection-rules-match-policy">
-              {t('admin.collections.fields.rules_match_policy.label')}
-            </FieldLabel>
             <Controller
               control={form.control}
               name="rules_match_policy"
@@ -127,7 +135,12 @@ export function CollectionRulesCard({ form }: { form: UseFormReturn<CollectionFo
                   value={field.value}
                   onValueChange={field.onChange}
                 >
-                  <SelectTrigger id="collection-rules-match-policy">
+                  <SelectTrigger
+                    id="collection-rules-match-policy"
+                    data-size="sm"
+                    className="w-auto self-start"
+                    aria-label={t('admin.collections.fields.rules_match_policy.label')}
+                  >
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -144,32 +157,36 @@ export function CollectionRulesCard({ form }: { form: UseFormReturn<CollectionFo
           </Field>
         )}
 
-        <div className="flex flex-col gap-3">
-          {rules.fields.map((ruleField, index) => (
-            <RuleRow
-              key={ruleField._key}
-              form={form}
-              index={index}
-              ruleTypes={ruleTypes}
-              typeOptions={typeOptions}
-              onTypeChange={(type) =>
-                rules.update(index, { ...ruleFor(type), id: form.getValues(`rules.${index}.id`) })
-              }
-              onRemove={() => rules.remove(index)}
-            />
-          ))}
+        {rules.fields.length > 0 && (
+          // Plain rows with a rule between them: the card already frames
+          // the rules, so each needs no box of its own.
+          <div className="flex flex-col divide-y divide-border">
+            {rules.fields.map((ruleField, index) => (
+              <RuleRow
+                key={ruleField._key}
+                form={form}
+                index={index}
+                ruleTypes={ruleTypes}
+                typeOptions={typeOptions}
+                onTypeChange={(type) =>
+                  rules.update(index, { ...ruleFor(type), id: form.getValues(`rules.${index}.id`) })
+                }
+                onRemove={() => rules.remove(index)}
+              />
+            ))}
+          </div>
+        )}
 
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="self-start"
-            onClick={() => rules.append(ruleFor(typeOptions[0]?.value ?? 'tag'))}
-          >
-            <PlusIcon className="size-4" />
-            {t('admin.collections.rules.add')}
-          </Button>
-        </div>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className="self-start"
+          onClick={() => rules.append(ruleFor(typeOptions[0]?.value ?? 'tag'))}
+        >
+          <PlusIcon className="size-4" />
+          {t('admin.collections.rules.add')}
+        </Button>
       </CardContent>
     </Card>
   )
@@ -207,7 +224,7 @@ function RuleRow({
   }))
 
   return (
-    <div className="flex flex-col gap-3 rounded-lg border border-border-subtle p-3">
+    <div className="flex flex-col gap-3 py-3 first:pt-0 last:pb-0">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
         <Field className="flex-1">
           <FieldLabel className="sr-only">
@@ -239,31 +256,39 @@ function RuleRow({
           />
         </Field>
 
-        <Field className="flex-1">
-          <FieldLabel className="sr-only">
-            {t('admin.collections.fields.rule_match_policy.label')}
-          </FieldLabel>
-          <Controller
-            control={form.control}
-            name={`rules.${index}.match_policy`}
-            render={({ field }) => (
-              <Select items={matchPolicyOptions} value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger aria-label={t('admin.collections.fields.rule_match_policy.label')}>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {matchPolicyOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-          />
-        </Field>
+        {type === 'sale' && <OnSaleField form={form} index={index} />}
 
-        {/* A sale rule's value is always `true`, so it gets no input. */}
+        {!NO_CONDITION_TYPES.has(type) && (
+          <Field className="flex-1">
+            <FieldLabel className="sr-only">
+              {t('admin.collections.fields.rule_match_policy.label')}
+            </FieldLabel>
+            <Controller
+              control={form.control}
+              name={`rules.${index}.match_policy`}
+              render={({ field }) => (
+                <Select
+                  items={matchPolicyOptions}
+                  value={field.value}
+                  onValueChange={field.onChange}
+                >
+                  <SelectTrigger aria-label={t('admin.collections.fields.rule_match_policy.label')}>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {matchPolicyOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+          </Field>
+        )}
+
+        {/* The switch is the whole of an "On sale" rule; its value is always `true`. */}
         {ruleType?.value_required !== false && type !== 'sale' && (
           <div className="flex-1">
             <RuleValueField form={form} index={index} type={type} />
@@ -272,7 +297,7 @@ function RuleRow({
 
         <Button
           type="button"
-          variant="ghost"
+          variant="destructive-ghost"
           size="icon"
           aria-label={t('admin.collections.rules.remove')}
           onClick={onRemove}
@@ -289,6 +314,45 @@ function RuleRow({
       />
     </div>
   )
+}
+
+/** On sale or not, as the rule's condition. */
+function OnSaleField({
+  form,
+  index,
+}: {
+  form: UseFormReturn<CollectionFormValues>
+  index: number
+}) {
+  const { t } = useTranslation()
+  const switchId = `collection-rule-on-sale-${index}`
+
+  return (
+    <Field orientation="horizontal" className="flex-[2] sm:min-h-9 sm:items-center">
+      <Controller
+        control={form.control}
+        name={`rules.${index}.match_policy`}
+        render={({ field }) => (
+          <Switch
+            id={switchId}
+            checked={field.value !== 'is_not_equal_to'}
+            onCheckedChange={(checked) =>
+              field.onChange(checked ? 'is_equal_to' : 'is_not_equal_to')
+            }
+          />
+        )}
+      />
+      <FieldLabel htmlFor={switchId}>{t('admin.collections.rules.on_sale')}</FieldLabel>
+    </Field>
+  )
+}
+
+/** Splits a tag rule's value — tags joined by commas — into the tag list. */
+function splitTags(value: string | undefined): string[] {
+  return (value ?? '')
+    .split(',')
+    .map((tag) => tag.trim())
+    .filter(Boolean)
 }
 
 /** The value input, shaped by the rule type. */
@@ -356,6 +420,49 @@ function RuleValueField({
             <InputGroupText>{currency}</InputGroupText>
           </InputGroupAddon>
         </InputGroup>
+        <FieldError errors={[error]} />
+      </Field>
+    )
+  }
+
+  if (type === 'available_on') {
+    return (
+      <Field>
+        <InputGroup>
+          <InputGroupInput
+            id={inputId}
+            type="number"
+            min={1}
+            step={1}
+            aria-label={t('admin.collections.rules.days_label')}
+            aria-invalid={!!error || undefined}
+            {...form.register(`rules.${index}.value`)}
+          />
+          <InputGroupAddon align="inline-end">
+            <InputGroupText>{t('admin.collections.rules.days')}</InputGroupText>
+          </InputGroupAddon>
+        </InputGroup>
+        <FieldError errors={[error]} />
+      </Field>
+    )
+  }
+
+  if (type === 'tag') {
+    return (
+      <Field>
+        {label}
+        <Controller
+          control={form.control}
+          name={`rules.${index}.value`}
+          render={({ field }) => (
+            <TagCombobox
+              taggableType="product"
+              value={splitTags(field.value)}
+              onChange={(tags) => field.onChange(tags.join(', '))}
+              placeholder={t('admin.collections.rules.tags_placeholder')}
+            />
+          )}
+        />
         <FieldError errors={[error]} />
       </Field>
     )
