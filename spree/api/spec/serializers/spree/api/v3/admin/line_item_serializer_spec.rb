@@ -32,6 +32,10 @@ RSpec.describe Spree::Api::V3::Admin::LineItemSerializer do
     expect(subject).to have_key('total')
   end
 
+  it "names the line's product, so an order page can link to it" do
+    expect(subject['product_id']).to eq(line_item.product.prefixed_id)
+  end
+
   # Feeds the order editor's negotiated-price comparison: what the catalog
   # charges, so a manual line can be shown against the price it replaced.
   describe 'catalog_price' do
