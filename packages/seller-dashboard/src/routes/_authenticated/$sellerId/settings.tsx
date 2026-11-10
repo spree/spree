@@ -11,7 +11,7 @@ export const Route = createFileRoute('/_authenticated/$sellerId/settings')({
  */
 function SettingsLayout() {
   return (
-    <div className="flex w-full flex-1 flex-col gap-6 p-4 lg:p-6">
+    <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 p-4 lg:p-6">
       <Outlet />
     </div>
   )
