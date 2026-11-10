@@ -348,7 +348,7 @@ function ProductForm({ product }: { product: Product }) {
                   <ProductReviewActions productId={productId} status={formStatus ?? ''} />
                 }
               />
-              <PublishingCard form={form} product={product} />
+              <PublishingCard form={form} />
               <CategorizationCard form={form} />
               <TaxCard form={form} />
               <SEOCard form={form} product={product} />

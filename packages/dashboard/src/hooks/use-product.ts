@@ -37,8 +37,6 @@ export function useProduct(id: string) {
           'seller',
           // Who decided this listing's fate and what they told the seller.
           'submission',
-          // Which shoppers the storefront hides it from for want of a price.
-          'storefront_unpriced_currencies',
         ],
       }),
     enabled: !!id,

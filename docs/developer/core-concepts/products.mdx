@@ -1168,14 +1168,14 @@ The product's own `available_on` and `discontinue_on` play no part here: the Sto
 
 With the [Meilisearch](/integrations/search/meilisearch) search provider, the product must also be in the search index. Results are narrowed to the conditions above as well, so the index can hide a product but never reveal one. [Reindex](/integrations/search/meilisearch#reindex-all-products) if a product meets every condition and is still missing.
 
-To check each condition, read the product through the Admin API with a secret key. `storefront_unpriced_currencies` lists the store currencies it has no base price in, applying the same rule as the Store API, and is empty when `show_products_without_price` is on:
+To check each condition, read the product through the Admin API with a secret key. The response includes its `status`, its publications and its variants' prices. A price with a `price_list_id` comes from a price list, so it doesn't count:
 
 ```bash
-curl 'https://api.mystore.com/api/v3/admin/products/prod_xxx?expand=product_publications,storefront_unpriced_currencies' \
+curl 'https://api.mystore.com/api/v3/admin/products/prod_xxx?expand=product_publications,default_variant.prices,variants.prices' \
   -H 'X-Spree-Api-Key: sk_xxx'
 ```
 
-In the admin dashboard, the product's **Publishing** card warns when an active product has a currency in that list.
+In the admin dashboard, the product's **Publishing** card warns when an active product has no price in one of the store's currencies.
 
 ### Auto-publish on the default channel
 

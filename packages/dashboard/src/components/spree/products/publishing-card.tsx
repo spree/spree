@@ -1,4 +1,4 @@
-import type { Channel, Product } from '@spree/admin-sdk'
+import type { Channel } from '@spree/admin-sdk'
 import type { ProductFormValues } from '@spree/dashboard-core'
 import { formatStoreDateTime, StoreDatePicker, useStore } from '@spree/dashboard-core'
 import {
@@ -54,12 +54,9 @@ function scheduleStatus(
 
 export function PublishingCard({
   form,
-  product,
   seedDefaultChannel = false,
 }: {
   form: ProductForm
-  /** The saved product, on the edit page; it carries the storefront's price check. */
-  product?: Product
   /**
    * On the New Product page, seed the store's default channel into the
    * publications array once channels resolve, so the merchant doesn't have
@@ -157,9 +154,7 @@ export function PublishingCard({
         </Button>
       </CardHeader>
       <CardContent className="flex flex-col gap-1">
-        {publicationsArray.fields.length > 0 && (
-          <MissingPriceAlert form={form} currencies={product?.storefront_unpriced_currencies} />
-        )}
+        {publicationsArray.fields.length > 0 && <MissingPriceAlert form={form} />}
         {publicationsArray.fields.length === 0 && (
           <p className="text-sm text-muted-foreground">
             {t('admin.pages.products.publishing.empty')}
@@ -194,23 +189,36 @@ export function PublishingCard({
   )
 }
 
-function MissingPriceAlert({
-  form,
-  currencies,
-}: {
-  form: ProductForm
-  currencies: string[] | undefined
-}) {
+// The storefront lists a product only in currencies it has a base price in,
+// unless the store shows unpriced products (Spree::ProductScopes.with_currency).
+// The form holds base prices only, so price-list prices never count here.
+function unpricedCurrencies(variants: ProductFormValues['variants'], currencies: string[]) {
+  const priced = new Set<string>(
+    (variants ?? []).flatMap((v) =>
+      (v.prices ?? []).filter((p) => p.amount.trim() !== '').map((p) => p.currency),
+    ),
+  )
+  return currencies.filter((currency) => !priced.has(currency))
+}
+
+function MissingPriceAlert({ form }: { form: ProductForm }) {
   const { t, i18n } = useTranslation()
-  const productStatus = useWatch({ control: form.control, name: 'status' })
-  if (productStatus !== 'active' || !currencies?.length) return null
+  const { store } = useStore()
+  const [productStatus, variants] = useWatch({
+    control: form.control,
+    name: ['status', 'variants'],
+  })
+  if (productStatus !== 'active' || !store || store.show_products_without_price) return null
+
+  const missing = unpricedCurrencies(variants, store.supported_currencies)
+  if (missing.length === 0) return null
 
   return (
     <Alert variant="warning" className="mb-2">
       <TriangleAlertIcon />
       <AlertTitle>
         {t('admin.pages.products.publishing.missing_price_title', {
-          currencies: new Intl.ListFormat(i18n.language).format(currencies),
+          currencies: new Intl.ListFormat(i18n.language).format(missing),
         })}
       </AlertTitle>
       <AlertDescription>

@@ -324,17 +324,6 @@ module Spree
 
     alias options product_option_types
 
-    # The store's currencies this product has no listing price in. The
-    # storefront hides it from shoppers paying in them, unless the store shows
-    # unpriced products ({ProductScopes.with_currency}).
-    # @return [Array<String>] ISO codes
-    def storefront_unpriced_currencies
-      return [] if store.nil? || store_preference(:show_products_without_price)
-
-      priced = prices.merge(Spree::Price.listing).reorder(nil).distinct.pluck(:currency)
-      store.supported_currencies_list.map(&:iso_code) - priced
-    end
-
     # Maps tags array to tag_list for API convenience.
     # @param tags [Array<String>]
     def tags=(tags)

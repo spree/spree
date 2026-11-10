@@ -211,15 +211,10 @@ test.describe('product publishing', () => {
     await page.getByRole('option', { name: /^active$/i }).click()
     await expect(usdWarning).toBeVisible()
 
-    // The warning reflects the saved product, which is what the storefront sees.
     await fillGridCell(
       pricesCard(page).getByRole('textbox', { name: /^price for default$/i }),
       '12.50',
     )
-    await page.getByRole('button', { name: /save product/i }).click()
-    await expect(page.getByRole('button', { name: /save product/i })).toBeDisabled({
-      timeout: 30_000,
-    })
-    await expect(usdWarning).not.toBeVisible({ timeout: 15_000 })
+    await expect(usdWarning).not.toBeVisible()
   })
 })

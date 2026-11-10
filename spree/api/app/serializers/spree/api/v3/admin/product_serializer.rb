@@ -21,8 +21,7 @@ module Spree
                    price: ['Price', nullable: true],
                    deleted_at: [:string, nullable: true],
                    metadata: 'Record<string, unknown>',
-                   submission: ['ProductSubmission', nullable: true],
-                   storefront_unpriced_currencies: [:string, multi: true, optional: true]
+                   submission: ['ProductSubmission', nullable: true]
 
           attributes :status,
                      :metadata, deleted_at: :iso8601,
@@ -50,10 +49,6 @@ module Spree
               if: proc { expand?('seller') }
 
           prefixed_id_attributes :product_type, :tax_category
-
-          attribute :storefront_unpriced_currencies,
-                    if: proc { expand?('storefront_unpriced_currencies') },
-                    &:storefront_unpriced_currencies
 
           # Null when any variant is not tracked: its stock is unlimited, which
           # is not a number to send.
