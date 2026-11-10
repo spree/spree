@@ -512,11 +512,11 @@ test.describe('order customer', () => {
 
     await page.goto(`${ORDERS_PATH(creds.store_id)}/${order.id}`)
     await page.getByRole('button', { name: /edit customer/i }).click()
-    const dialog = page.getByRole('dialog', { name: /edit customer/i })
-    await dialog.getByLabel(/email/i).fill(newEmail)
-    await dialog.getByRole('button', { name: /^save$/i }).click()
+    const editor = page.getByRole('form', { name: /edit customer/i })
+    await editor.getByLabel(/email/i).fill(newEmail)
+    await editor.getByRole('button', { name: /^save$/i }).click()
 
-    await expect(dialog).toBeHidden({ timeout: 15_000 })
+    await expect(editor).toBeHidden({ timeout: 15_000 })
     await expect(page.getByText(newEmail)).toBeVisible({ timeout: 15_000 })
   })
 
@@ -530,8 +530,8 @@ test.describe('order customer', () => {
 
     await page.goto(`${ORDERS_PATH(creds.store_id)}/${order.id}`)
     await page.getByRole('button', { name: /edit customer/i }).click()
-    const dialog = page.getByRole('dialog', { name: /edit customer/i })
-    const picker = dialog.locator('#order-customer-picker')
+    const editor = page.getByRole('form', { name: /edit customer/i })
+    const picker = editor.locator('#order-customer-picker')
 
     // Existing customers read by name, with the email under it.
     await picker.fill('Promo')
@@ -549,8 +549,8 @@ test.describe('order customer', () => {
     await expect(sheet).toBeHidden({ timeout: 15_000 })
     await expect(picker).toHaveValue(`Ada Picker ${stamp}`)
 
-    await dialog.getByRole('button', { name: /^save$/i }).click()
-    await expect(dialog).toBeHidden({ timeout: 15_000 })
+    await editor.getByRole('button', { name: /^save$/i }).click()
+    await expect(editor).toBeHidden({ timeout: 15_000 })
     await expect(page.getByRole('link', { name: `Ada Picker ${stamp}`, exact: true })).toBeVisible({
       timeout: 15_000,
     })
@@ -573,12 +573,12 @@ test.describe('order customer', () => {
     await expect(customerLink).toBeVisible({ timeout: 15_000 })
 
     await page.getByRole('button', { name: /edit customer/i }).click()
-    const dialog = page.getByRole('dialog', { name: /edit customer/i })
-    await dialog.locator('[data-slot="combobox-clear"]').click()
-    await expect(dialog.getByLabel(/email/i)).toHaveValue(FIXTURE_PROMO_CUSTOMER_EMAIL)
-    await dialog.getByRole('button', { name: /^save$/i }).click()
+    const editor = page.getByRole('form', { name: /edit customer/i })
+    await editor.locator('[data-slot="combobox-clear"]').click()
+    await expect(editor.getByLabel(/email/i)).toHaveValue(FIXTURE_PROMO_CUSTOMER_EMAIL)
+    await editor.getByRole('button', { name: /^save$/i }).click()
 
-    await expect(dialog).toBeHidden({ timeout: 15_000 })
+    await expect(editor).toBeHidden({ timeout: 15_000 })
     await expect(customerLink).toBeHidden({ timeout: 15_000 })
     await expect(page.getByText(FIXTURE_PROMO_CUSTOMER_EMAIL)).toBeVisible()
   })
@@ -592,13 +592,13 @@ test.describe('order customer', () => {
     await expect(customerLink).toBeVisible({ timeout: 15_000 })
 
     await page.getByRole('button', { name: /edit customer/i }).click()
-    const dialog = page.getByRole('dialog', { name: /edit customer/i })
-    await dialog.locator('[data-slot="combobox-clear"]').click()
-    await dialog.getByRole('button', { name: /^save$/i }).click()
+    const editor = page.getByRole('form', { name: /edit customer/i })
+    await editor.locator('[data-slot="combobox-clear"]').click()
+    await editor.getByRole('button', { name: /^save$/i }).click()
 
     await page.getByRole('button', { name: /^remove customer$/i }).click()
 
-    await expect(dialog).toBeHidden({ timeout: 15_000 })
+    await expect(editor).toBeHidden({ timeout: 15_000 })
     await expect(customerLink).toBeHidden({ timeout: 15_000 })
   })
 })

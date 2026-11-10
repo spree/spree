@@ -16,7 +16,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useOrderMutation } from '../../../hooks/use-order'
 import { customerDisplayName, erasedFieldValue } from '../../../lib/erased-customer'
-import { OrderCustomerDialog } from './order-customer-dialog'
+import { OrderCustomerForm } from './order-customer-form'
 
 type AddressType = 'shipping_address' | 'billing_address'
 
@@ -80,7 +80,7 @@ export function CustomerCard({ order }: { order: Order }) {
             <Button
               variant="ghost"
               size="icon-sm"
-              onClick={() => setEditCustomer(true)}
+              onClick={() => setEditCustomer((editing) => !editing)}
               aria-label={t('admin.orders.detail.customer_edit.title')}
             >
               <PencilIcon className="size-4" />
@@ -89,7 +89,9 @@ export function CustomerCard({ order }: { order: Order }) {
         </CardHeader>
         <CardContent className="flex flex-col divide-y text-base [&>section]:py-3 [&>section:first-child]:pt-0 [&>section:last-child]:pb-0">
           <section className="flex flex-col gap-1">
-            {customer ? (
+            {editCustomer ? (
+              <OrderCustomerForm order={order} onDone={() => setEditCustomer(false)} />
+            ) : customer ? (
               <>
                 <Link
                   to={'/$storeId/customers/$customerId' as string}
@@ -145,10 +147,6 @@ export function CustomerCard({ order }: { order: Order }) {
           </section>
         </CardContent>
       </Card>
-
-      {editCustomer && (
-        <OrderCustomerDialog order={order} open={editCustomer} onOpenChange={setEditCustomer} />
-      )}
 
       {editAddress && (
         <AddressFormDialog
