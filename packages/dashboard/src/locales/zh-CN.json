@@ -4522,6 +4522,7 @@
             "description": "安装支付服务商扩展以接受银行卡和电子钱包。"
           },
           "manual_title": "手动付款方式",
+          "add_account": "添加账户",
           "add_manual": "添加手动付款方式",
           "manual_empty": {
             "title": "没有手动付款方式",

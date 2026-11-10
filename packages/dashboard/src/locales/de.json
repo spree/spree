@@ -4534,6 +4534,7 @@
             "description": "Installieren Sie eine Erweiterung für einen Zahlungsanbieter, um Karten und Wallets zu akzeptieren."
           },
           "manual_title": "Manuelle Zahlungsmethoden",
+          "add_account": "Konto hinzufügen",
           "add_manual": "Manuelle Methode hinzufügen",
           "manual_empty": {
             "title": "Keine manuellen Zahlungsmethoden",

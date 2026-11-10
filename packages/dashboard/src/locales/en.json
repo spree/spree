@@ -4534,6 +4534,7 @@
             "description": "Install a payment provider extension to accept cards and wallets."
           },
           "manual_title": "Manual payment methods",
+          "add_account": "Add account",
           "add_manual": "Add manual method",
           "manual_empty": {
             "title": "No manual payment methods",

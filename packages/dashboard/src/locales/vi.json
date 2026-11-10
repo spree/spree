@@ -4533,6 +4533,7 @@
             "description": "Cài đặt tiện ích nhà cung cấp thanh toán để nhận thẻ và ví điện tử."
           },
           "manual_title": "Phương thức thanh toán thủ công",
+          "add_account": "Thêm tài khoản",
           "add_manual": "Thêm phương thức thủ công",
           "manual_empty": {
             "title": "Chưa có phương thức thanh toán thủ công",

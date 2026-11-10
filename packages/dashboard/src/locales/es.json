@@ -887,6 +887,7 @@
             "description": "Instala una extensión de proveedor de pago para aceptar tarjetas y billeteras."
           },
           "manual_title": "Métodos de pago manuales",
+          "add_account": "Añadir cuenta",
           "add_manual": "Añadir método manual",
           "manual_empty": {
             "title": "No hay métodos de pago manuales",

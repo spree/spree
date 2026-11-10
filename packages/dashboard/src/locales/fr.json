@@ -4536,6 +4536,7 @@
             "description": "Installez une extension de prestataire de paiement pour accepter les cartes et portefeuilles."
           },
           "manual_title": "Méthodes de paiement manuelles",
+          "add_account": "Ajouter un compte",
           "add_manual": "Ajouter une méthode manuelle",
           "manual_empty": {
             "title": "Aucune méthode de paiement manuelle",

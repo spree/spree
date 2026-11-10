@@ -4590,6 +4590,7 @@
             "description": "Zainstaluj rozszerzenie dostawcy płatności, aby przyjmować karty i portfele."
           },
           "manual_title": "Ręczne metody płatności",
+          "add_account": "Dodaj konto",
           "add_manual": "Dodaj metodę ręczną",
           "manual_empty": {
             "title": "Brak ręcznych metod płatności",
