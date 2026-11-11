@@ -55,6 +55,11 @@ module Spree
           # so the minimum-products requirement asks the same question free.
           attributes :products_count
 
+          # What is live and what waits on the operator's review, read in the
+          # same query as the total above.
+          typelize(Spree::Product::ALL_STATUSES.to_h { |status| [status.to_sym, :number] })
+          attribute :products_count_by_status, &:products_count_by_status
+
           attributes :users_count
 
           # How far through the marketplace's checklist this seller is — what

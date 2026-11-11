@@ -50,6 +50,25 @@ RSpec.describe Spree::Api::V3::Admin::SellersController, type: :controller do
       expect(team_counts).to eq(0)
     end
 
+    it 'counts each seller products by status in one query' do
+      create(:product, store: store, seller: seller, status: 'proposed')
+      other = create(:seller, store: store)
+      create(:product, store: store, seller: other, status: 'active')
+
+      product_counts = 0
+      subscriber = ActiveSupport::Notifications.subscribe('sql.active_record') do |*, payload|
+        product_counts += 1 if payload[:sql].match?(/SELECT COUNT.*spree_products/i)
+      end
+
+      get :index, as: :json
+
+      ActiveSupport::Notifications.unsubscribe(subscriber)
+      rows = json_response['data'].index_by { |row| row['id'] }
+      expect(rows[seller.prefixed_id]['products_count_by_status']).to include('proposed' => 1, 'active' => 0)
+      expect(rows[other.prefixed_id]['products_count_by_status']).to include('proposed' => 0, 'active' => 1)
+      expect(product_counts).to eq(1)
+    end
+
     it 'says whether a seller can be bought from right now' do
       seller.update!(status: 'approved', holiday_mode_until: 2.weeks.from_now)
 
@@ -223,6 +242,21 @@ RSpec.describe Spree::Api::V3::Admin::SellersController, type: :controller do
       expect(response).to have_http_status(:ok)
       expect(seller.reload.billing_address.address1).to eq('1 Seller Way')
       expect(json_response['billing_address']['city']).to eq('London')
+    end
+
+    it "writes the returns address onto the seller's returns location" do
+      location = create(:stock_location, store: store, seller: seller, returns_enabled: true)
+
+      patch :update, params: {
+        id: seller.prefixed_id,
+        returns_address: { company: 'Sparks Returns', address1: '1 Returns Way', city: 'Leeds',
+                           postal_code: 'LS1 1AA', country_code: 'GB' }
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      location.reload
+      expect([location.address1, location.zipcode]).to eq(['1 Returns Way', 'LS1 1AA'])
+      expect(json_response['returns_address']['city']).to eq('Leeds')
     end
 
     # The dashboard uploads the file, then sends the resulting signed id.

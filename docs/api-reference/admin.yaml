@@ -85945,6 +85945,13 @@ components:
           description: 'The seller''s own billing address, written inline. There is
             no `billing_address_id`: an address belongs to whoever it was created
             for, so it is never referenced by id.'
+        returns_address:
+          allOf:
+          - "$ref": "#/components/schemas/SellerAddressParams"
+          description: 'Where customers send returns, written inline. It is the address
+            of the seller''s returns stock location, so it updates that location,
+            or creates one for a seller who has none. Names and `label` are ignored:
+            a location has none.'
         custom_fields:
           type: array
           items:
@@ -86188,6 +86195,13 @@ components:
           description: 'The seller''s own billing address, written inline. There is
             no `billing_address_id`: an address belongs to whoever it was created
             for, so it is never referenced by id.'
+        returns_address:
+          allOf:
+          - "$ref": "#/components/schemas/SellerAddressParams"
+          description: 'Where customers send returns, written inline. It is the address
+            of the seller''s returns stock location, so it updates that location,
+            or creates one for a seller who has none. Names and `label` are ignored:
+            a location has none.'
         custom_fields:
           type: array
           items:

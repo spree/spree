@@ -19,6 +19,10 @@ module Spree
           before_action :set_resource, only: [:show, :update, :destroy, :invite, :approve, :suspend, :reject,
                                               :onboarding, :reopen_onboarding]
 
+          RETURNS_ADDRESS_DESCRIPTION = "Where customers send returns, written inline. It is the address of the seller's " \
+                                        'returns stock location, so it updates that location, or creates one for a seller ' \
+                                        'who has none. Names and `label` are ignored: a location has none.'.freeze
+
           # Enumerated rather than borrowing the legacy global list, which
           # permits :id, :user_id and :deleted_at — the first of which would
           # reintroduce the address-by-id hole below.
@@ -63,6 +67,11 @@ module Spree
               as: 'SellerAddressParams',
               description: "The seller's own billing address, written inline. There is no `billing_address_id`: an address belongs to whoever it was created for, so it is never referenced by id." do |billing_address|
               billing_address.include_attributes Spree::Api::V3::AddressRequestSchema
+            end
+            body.attribute :returns_address, :object,
+                           as: 'SellerAddressParams',
+                           description: RETURNS_ADDRESS_DESCRIPTION do |returns_address|
+              returns_address.include_attributes Spree::Api::V3::AddressRequestSchema
             end
             body.attribute :custom_fields, :array, of: Spree::Api::V3::CustomFieldValueRequestSchema,
               description: 'Custom field values, each validated against its definition.'
