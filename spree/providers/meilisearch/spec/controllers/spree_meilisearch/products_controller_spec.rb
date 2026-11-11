@@ -48,7 +48,7 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
       get :index, params: { q: { search: 'shirt' } }
 
       expect(response).to have_http_status(:ok)
-      expect(mock_index).to have_received(:search).with('shirt', hash_including(:page, :hitsPerPage))
+      expect(mock_index).to have_received(:search).with('shirt', hash_including(:page, :hits_per_page))
 
       ids = json_response['data'].map { |p| p['id'] }
       expect(ids).to include(product.prefixed_id)

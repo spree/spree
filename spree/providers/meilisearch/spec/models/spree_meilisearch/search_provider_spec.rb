@@ -40,7 +40,7 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
     end
 
     it 'queries Meilisearch with the search term' do
-      expect(mock_index).to receive(:search).with('shirt', hash_including(:page, :hitsPerPage))
+      expect(mock_index).to receive(:search).with('shirt', hash_including(:page, :hits_per_page))
       provider.search_and_filter(scope: store.products, query: 'shirt')
     end
 
@@ -152,10 +152,8 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
     end
 
     context 'with pagination' do
-      it 'passes page and hitsPerPage (exhaustive mode so distinct counts are exact)' do
-        expect(mock_index).to receive(:search).with(anything, hash_including(
-          page: 2, hitsPerPage: 25
-        )).and_return(ms_response)
+      it 'passes page and hits_per_page (exhaustive mode so distinct counts are exact)' do
+        expect(mock_index).to receive(:search).with(anything, hash_including(page: 2, hits_per_page: 25)).and_return(ms_response)
 
         provider.search_and_filter(scope: store.products, page: 2, limit: 25)
       end

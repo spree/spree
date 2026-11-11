@@ -210,7 +210,7 @@ module SpreeMeilisearch
         facets: return_facets ? facet_attributes : nil,
         sort: build_sort(sort),
         page: page,
-        hitsPerPage: limit
+        hits_per_page: limit
       }.compact
 
       Rails.logger.debug { "[Meilisearch] index=#{index_name} query=#{query.inspect} #{search_params.compact.inspect}" }
@@ -218,11 +218,14 @@ module SpreeMeilisearch
       settings_refreshed = false
       begin
         if return_facets && grouped_options.any?
-          queries = [{ indexUid: index_name, q: query.to_s, **search_params }]
+          queries = [{ index_uid: index_name, q: query.to_s, **search_params }]
           option_type_ids_ordered = grouped_options.keys
           option_type_ids_ordered.each do |option_type_id|
             without_this = build_grouped_option_conditions(grouped_options.except(option_type_id))
-            queries << { indexUid: index_name, q: query.to_s, filter: base_conditions + without_this, facets: ['option_value_ids'], page: 1, hitsPerPage: 0 }
+            queries << {
+              index_uid: index_name, q: query.to_s, filter: base_conditions + without_this,
+              facets: ['option_value_ids'], page: 1, hits_per_page: 0
+            }
           end
 
           results = client.multi_search(queries)
