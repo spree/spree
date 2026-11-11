@@ -20,6 +20,113 @@ module Spree
       end
     end
 
+    context 'when completion has claimed the cart' do
+      # In checkout (it has an email), so an unfenced add would reach Reserve.
+      let(:cart) { create(:cart_with_line_items, email: 'buyer@example.com') }
+      let!(:line_item) { cart.line_items.first }
+
+      shared_examples 'refusing the direct mutation' do
+        it 'rejects with completion_in_progress before reserving stock' do
+          expect { execute }.not_to change(Spree::StockReservation, :count)
+
+          expect(execute).to be_failure
+          expect(execute.error.value[:code]).to eq('completion_in_progress')
+          expect(execute.error.value[:message]).to eq(I18n.t('spree.cart_completion_in_progress'))
+        end
+
+        it 'leaves the claimed purchase unchanged' do
+          expect { execute }.not_to(change { [cart.reload.line_items.pluck(:id, :quantity), cart.total] })
+        end
+      end
+
+      context 'while the claim is live' do
+        before { cart.update_column(:completing_at, Time.current) }
+
+        include_examples 'refusing the direct mutation'
+      end
+
+      context 'after the claim expires behind a payment-covered retained draft' do
+        let!(:draft) { create(:order, store: cart.store, cart: cart) }
+
+        before do
+          cart.update_column(:completing_at, 6.minutes.ago)
+          draft.update_column(:total, 10)
+          create(:payment, order: draft, amount: 10, status: 'pending')
+        end
+
+        include_examples 'refusing the direct mutation'
+
+        it 'keeps the retained draft and its payment untouched' do
+          expect { execute }.not_to(change { [draft.reload.payments.pluck(:id, :amount, :status), draft.line_items.count] })
+        end
+      end
+
+      context 'after the claim expires with nothing retained' do
+        before { cart.update_column(:completing_at, 6.minutes.ago) }
+
+        it 'adds the item' do
+          expect { execute }.to change { cart.reload.line_items.count }.by(1)
+          expect(execute).to be_success
+        end
+      end
+
+      context 'when completion claims the cart after the first check' do
+        let(:stale_cart) { Spree::Cart.find(cart.id) }
+        let(:execute) { subject.call(cart: stale_cart, variant: variant, quantity: qty) }
+
+        before do
+          stale_cart
+          # Stands in for Complete claiming the row while the external
+          # pricing and availability steps were running.
+          allow_any_instance_of(described_class).to receive(:resolve_price).and_wrap_original do |original, *args|
+            Spree::Cart.where(id: cart.id).update_all(completing_at: Time.current)
+            original.call(*args)
+          end
+        end
+
+        it 'refuses under the row lock without adding the item' do
+          expect { execute }.not_to(change { cart.reload.line_items.count })
+          expect(execute.error.value[:code]).to eq('completion_in_progress')
+        end
+      end
+
+      context 'when completion finishes the cart while pricing runs' do
+        let(:stale_cart) { Spree::Cart.find(cart.id) }
+        let(:execute) { subject.call(cart: stale_cart, variant: variant, quantity: qty) }
+
+        before do
+          stale_cart
+          # Finalize stamps completed_at and clears the claim in one write.
+          allow_any_instance_of(described_class).to receive(:resolve_price).and_wrap_original do |original, *args|
+            Spree::Cart.where(id: cart.id).update_all(completed_at: Time.current, completing_at: nil)
+            original.call(*args)
+          end
+        end
+
+        it 'refuses the completed cart and leaves its lines and total unchanged' do
+          expect { execute }.not_to(change { [Spree::LineItem.where(cart_id: cart.id).pluck(:id, :quantity), Spree::Cart.find(cart.id).total] })
+          expect(execute.error.value[:code]).to eq('completion_in_progress')
+        end
+      end
+
+      context 'when the caller holds a cart loaded before the claim' do
+        let(:stale_cart) { Spree::Cart.find(cart.id) }
+        let(:execute) { subject.call(cart: stale_cart, variant: variant, quantity: qty) }
+
+        before do
+          stale_cart
+          cart.update_column(:completing_at, Time.current)
+        end
+
+        it 'refuses before the availability check can answer instead' do
+          expect_any_instance_of(described_class).not_to receive(:check_availability)
+
+          expect(execute).to be_failure
+          expect(execute.error.value[:code]).to eq('completion_in_progress')
+        end
+      end
+    end
+
     context 'with same line item' do
       let!(:line_item) { create(:line_item, cart: cart, order: nil, variant: variant) }
 
