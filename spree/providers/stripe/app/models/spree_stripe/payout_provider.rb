@@ -162,6 +162,14 @@ module SpreeStripe
       gateway = gateway_for(seller.store)
       source_charge = source_charge_for(seller_transfer, gateway)
       amount, currency = transfer_figures(seller_transfer, gateway, source_charge)
+      # A share of the settled charge can round to nothing — a sub-cent earning
+      # converted into a currency worth more per minor unit. Stripe refuses a
+      # zero amount, so the row is closed as settled for nothing rather than
+      # sent to be refused on every retry.
+      if amount.zero?
+        seller_transfer.update!(status: 'completed', settled_amount: 0, settled_currency: currency.upcase)
+        return seller_transfer
+      end
 
       transfer = Stripe::Transfer.create(
         {
@@ -290,6 +298,11 @@ module SpreeStripe
       return complete_without_sending(seller_transfer) if earning.failed?
       return seller_transfer unless earning.completed?
 
+      # Settled for nothing (see #transfer!), so there is nothing to take back.
+      if earning.reference.blank? && earning.settled_amount.to_d.zero?
+        return complete_taking_nothing(seller_transfer, earning)
+      end
+
       # Confirmed without a transfer to point at — settled by hand, say. Only
       # a person can say where that money is.
       if earning.reference.blank?
@@ -297,24 +310,34 @@ module SpreeStripe
       end
 
       api_options = gateway_for(seller_transfer.seller.store).api_options
-      reversal = made_reversal(earning, seller_transfer, api_options) || Stripe::Transfer.create_reversal(
-        earning.reference,
-        {
-          # In the transfer's own currency, which is not the sale's when the
-          # earning was drawn from a charge that settled in another one.
-          amount: reversal_amount(earning, seller_transfer, api_options),
-          metadata: {
-            spree_seller_transfer_id: seller_transfer.id,
-            spree_order_number: seller_transfer.order.number
-          }
-        },
-        api_options.merge(idempotency_key: idempotency_key(seller_transfer))
-      )
+      reversal = made_reversal(earning, seller_transfer, api_options)
+      taken = seller_transfer.amount.abs
+
+      unless reversal
+        # In the transfer's own currency, which is not the sale's when the
+        # earning was drawn from a charge that settled in another one.
+        amount, taken = reversal_figures(earning, seller_transfer, api_options)
+        return complete_taking_nothing(seller_transfer, earning) if amount.zero?
+
+        reversal = Stripe::Transfer.create_reversal(
+          earning.reference,
+          {
+            amount: amount,
+            metadata: {
+              spree_seller_transfer_id: seller_transfer.id,
+              spree_order_number: seller_transfer.order.number
+            }
+          },
+          api_options.merge(idempotency_key: idempotency_key(seller_transfer))
+        )
+      end
 
       # The earning may have been sent after this row was written, and only
-      # then learned the currency it settled in.
+      # then learned the currency it settled in. The settlement records the
+      # share Stripe actually took back, which is less than the row's when the
+      # transfer had less left to give.
       seller_transfer.update!(
-        { status: 'completed', reference: reversal.id }.merge(earning.reversal_settlement(seller_transfer.amount.abs))
+        { status: 'completed', reference: reversal.id }.merge(earning.reversal_settlement(taken))
       )
       seller_transfer
     rescue *AMBIGUOUS_ERRORS => e
@@ -343,6 +366,13 @@ module SpreeStripe
 
     def complete_without_sending(seller_transfer)
       seller_transfer.update!(status: 'completed')
+      seller_transfer
+    end
+
+    # A reversal with nothing left to take: closed without asking Stripe, which
+    # refuses a zero amount, and recorded as taking nothing from the seller.
+    def complete_taking_nothing(seller_transfer, earning)
+      seller_transfer.update!({ status: 'completed' }.merge(earning.reversal_settlement(0)))
       seller_transfer
     end
 
@@ -428,17 +458,22 @@ module SpreeStripe
     # taken of what the transfer actually moved instead, and never more than
     # the transfer still has to give back.
     #
-    # @return [Integer] minor units in the transfer's currency
-    def reversal_amount(earning, seller_transfer, api_options)
+    # @return [Array(Integer, BigDecimal)] minor units to send, in the
+    #   transfer's currency, and the part of the sale-currency row that is
+    def reversal_figures(earning, seller_transfer, api_options)
       amount = minor_units(seller_transfer)
+      part = seller_transfer.amount.abs
       transfer = Stripe::Transfer.retrieve(earning.reference, api_options)
-      return amount if transfer.currency.to_s.downcase == seller_transfer.currency.to_s.downcase
+      return [amount, part] if transfer.currency.to_s.downcase == seller_transfer.currency.to_s.downcase
 
       earned = minor_units(earning)
-      return amount unless earned.positive?
+      return [amount, part] unless earned.positive?
 
-      remaining = transfer.amount.to_i - transfer.amount_reversed.to_i
-      [prorate(amount, transfer.amount, earned), remaining].min
+      share = prorate(amount, transfer.amount, earned)
+      sent = share.clamp(0, [transfer.amount.to_i - transfer.amount_reversed.to_i, 0].max)
+      return [0, 0.to_d] if sent.zero?
+
+      [sent, part * sent / share]
     rescue Stripe::StripeError => e
       # A look-up moves no money, so it is a refusal the retry job can repeat.
       raise Spree::Core::GatewayError, e.message

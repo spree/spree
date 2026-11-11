@@ -78,6 +78,29 @@ RSpec.describe SpreeStripe::PayoutProvider do
         end
       end
 
+      # One minor unit of the sale that is worth less than one of the
+      # settlement currency (a yen sale settled in dollars, say) rounds to
+      # nothing, which Stripe refuses. The figures here only need that ratio.
+      context 'when its share of the settled charge rounds to nothing' do
+        let(:order) { create(:order, store: store, seller: seller, total: 100, currency: 'GBP') }
+        let(:seller_transfer) { create(:seller_transfer, seller: seller, order: order, amount: 0.01, currency: 'GBP') }
+        let(:charge) do
+          Stripe::StripeObject.construct_from(
+            id: 'ch_1', amount: 10_000, currency: 'gbp',
+            balance_transaction: { amount: 5_000, currency: 'usd' }
+          )
+        end
+
+        it 'settles the earning for nothing without asking Stripe' do
+          described_class.new.transfer!(seller_transfer)
+
+          expect(Stripe::Transfer).not_to have_received(:create)
+          expect(seller_transfer.reload).to be_completed
+          expect(seller_transfer.settled_amount).to eq(0)
+          expect(seller_transfer.settled_currency).to eq('USD')
+        end
+      end
+
       # Nothing has been sent when the look-up fails, so the earning must stay
       # with the retry job rather than be parked as an outcome nobody knows.
       it 'leaves a failed charge look-up to be retried' do
@@ -301,6 +324,38 @@ RSpec.describe SpreeStripe::PayoutProvider do
           expect(Stripe::Transfer).to have_received(:create_reversal).
             with('tr_1', hash_including(amount: 597), anything)
         end
+
+        # 597 of the 1301 the full share would have been, so 4.70 of the 10.25.
+        it 'records only what was actually taken back' do
+          described_class.new.reverse!(reversal)
+
+          expect(reversal.reload.settled_amount).to eq(-4.70)
+          expect(reversal.settled_currency).to eq('GBP')
+        end
+      end
+
+      context 'when the transfer has nothing left to give back' do
+        let(:transfer) do
+          Stripe::StripeObject.construct_from(id: 'tr_1', amount: 5397, amount_reversed: 5397, currency: 'usd')
+        end
+
+        it 'closes the reversal without asking Stripe for nothing' do
+          described_class.new.reverse!(reversal)
+
+          expect(Stripe::Transfer).not_to have_received(:create_reversal)
+          expect(reversal.reload).to be_completed
+          expect(reversal.settled_amount).to eq(0)
+        end
+      end
+
+      it 'takes nothing back from an earning that settled for nothing' do
+        earning.update!(reference: nil, settled_amount: 0, settled_currency: 'USD')
+
+        described_class.new.reverse!(reversal)
+
+        expect(Stripe::Transfer).not_to have_received(:create_reversal)
+        expect(reversal.reload).to be_completed
+        expect(reversal.settled_amount).to eq(0)
       end
 
       it 'leaves a failed transfer look-up to be retried' do
