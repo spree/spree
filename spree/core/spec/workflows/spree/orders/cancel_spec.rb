@@ -121,6 +121,25 @@ module Spree
       it_behaves_like 'tries to cancel'
     end
 
+    describe 'gift cards the order bought' do
+      let(:line_item) { create(:line_item, order: order, product: create(:gift_card_product, store: order.store), quantity: 2) }
+      let!(:unused) { create(:gift_card, line_item: line_item, store: order.store) }
+      let!(:spent) { create(:gift_card, line_item: line_item, store: order.store, amount: 50, amount_used: 10, status: 'partially_redeemed') }
+
+      it 'cancels the unused ones and leaves a spent one alone when the money goes back' do
+        allow_any_instance_of(described_class).to receive(:settle_payments)
+        expect(subject.call(order: order, canceler: user, refund_payments: true)).to be_success
+
+        expect(unused.reload).to be_canceled
+        expect(spent.reload.status).to eq('partially_redeemed')
+      end
+
+      it 'leaves the buyer their cards when the store keeps the money' do
+        expect(result).to be_success
+        expect(unused.reload).not_to be_canceled
+      end
+    end
+
     describe 'tax lifecycle' do
       it 'reverses the filed tax document so the sale leaves the liability' do
         provider = instance_double(Spree::TaxProvider::Internal, void: nil, estimate: nil)

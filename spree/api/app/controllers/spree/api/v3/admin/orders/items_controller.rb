@@ -56,12 +56,12 @@ module Spree
             # DELETE /api/v3/admin/orders/:order_id/items/:id
             def destroy
               with_order_lock do
-                Spree.order_remove_line_item_service.call(
+                result = Spree.order_remove_line_item_service.call(
                   order: @parent,
                   line_item: @resource
                 )
 
-                head :no_content
+                result.success? ? head(:no_content) : render_result_error(result)
               end
             end
 

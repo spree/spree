@@ -47,6 +47,56 @@ describe Spree::Product, type: :model do
     end
   end
 
+  describe 'gift card' do
+    it 'switches off everything that does not apply to prepaid money' do
+      product = create(:product, store: store, promotionable: true, track_inventory: true)
+      product.update!(gift_card: true)
+
+      expect(product.promotionable).to be(false)
+      expect(product.delivery_profile).to be_a(Spree::DeliveryProfiles::Digital)
+      expect(product.variants.reload.map(&:track_inventory)).to all(be(false))
+    end
+
+    it 'creates the digital delivery when the store has none' do
+      Spree::DeliveryProfiles::Digital.where(store: store).destroy_all
+
+      product = create(:product, store: store, gift_card: true)
+
+      expect(product.delivery_profile).to be_a(Spree::DeliveryProfiles::Digital)
+      expect(store.delivery_methods.where(fulfillment_provider: 'Spree::FulfillmentProvider::Digital')).to exist
+    end
+
+    it 'never tracks the stock of a denomination added later' do
+      product = create(:gift_card_product, store: store)
+      variant = create(:variant, product: product, track_inventory: true)
+
+      expect(variant.reload.track_inventory).to be(false)
+    end
+
+    it 'cannot be switched once the product has been ordered' do
+      product = create(:product, store: store)
+      create(:line_item, product: product)
+
+      expect(product.update(gift_card: true)).to be(false)
+      expect(product.errors.details[:gift_card]).to include(error: :already_sold)
+    end
+
+    it 'cannot carry a listing that belongs to a seller' do
+      product = create(:gift_card_product, store: store)
+      variant = build(:variant, product: product, seller: create(:seller, store: store))
+
+      expect(variant).not_to be_valid
+      expect(variant.errors.details[:seller]).to include(error: :gift_card_not_allowed)
+    end
+
+    it 'cannot belong to a seller' do
+      product = build(:product, store: store, gift_card: true, seller: create(:seller, store: store))
+
+      expect(product).not_to be_valid
+      expect(product.errors.details[:gift_card]).to include(error: :seller_not_allowed)
+    end
+  end
+
   context 'product instance' do
     let(:product) { create(:product) }
     let(:variant) { create(:variant, product: product) }

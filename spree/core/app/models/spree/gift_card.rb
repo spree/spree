@@ -12,6 +12,7 @@ module Spree
 
     publishes_lifecycle_events
     publishes_events :canceled, :partially_redeemed, :redeemed
+    publishes_event :issued, serializer: 'Spree::Api::V3::GiftCardIssuedEventSerializer'
 
     #
     # Status
@@ -43,6 +44,10 @@ module Spree
     include Spree::DeprecatedCustomerAlias
     belongs_to :created_by, class_name: Spree.admin_user_class.to_s, optional: true
     belongs_to :batch, class_name: 'Spree::GiftCardBatch', optional: true, foreign_key: :gift_card_batch_id
+    # The line a shopper bought this card on; nil for a card an admin issued.
+    belongs_to :line_item, class_name: 'Spree::LineItem', optional: true, inverse_of: :gift_cards
+    # The order that bought the card — not one of +orders+, which spent it.
+    has_one :issuing_order, through: :line_item, source: :order, class_name: 'Spree::Order'
 
     has_many :store_credits, class_name: 'Spree::StoreCredit', as: :originator
     has_many :orders, inverse_of: :gift_card, class_name: 'Spree::Order'
@@ -65,7 +70,7 @@ module Spree
     # Ransack
     #
     ransack_alias :state, :status # @deprecated filter alias — removed in 6.1
-    self.whitelisted_ransackable_attributes = %w[code customer_id status state gift_card_batch_id created_by_id currency expires_at]
+    self.whitelisted_ransackable_attributes = %w[code customer_id status state gift_card_batch_id created_by_id currency expires_at line_item_id]
     search_by :code
     # `users` is the pre-6.0 name for `customers` — removed in 6.1.
     self.whitelisted_ransackable_associations = %w[customers users orders batch]

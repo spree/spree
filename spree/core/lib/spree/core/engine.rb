@@ -239,6 +239,7 @@ module Spree
         # Engines a market can select. Concatenated, not assigned: provider gems
         # and host apps append theirs from initializer files, which run first.
         Rails.application.config.spree.tax_providers.concat [Spree::TaxProvider::Internal]
+        Rails.application.config.spree.cart_copiers.push(Spree::GiftCardRecipients::CopyFromCart)
 
         # Pricing and inventory sources. Internal is Spree's own catalog and
         # stock records; connector gems append theirs so a merchant picks from
@@ -558,9 +559,10 @@ module Spree
         # Other engines add their subscribers in their own after_initialize blocks
         # Note: Spree::EventLogSubscriber is attached in to_prepare (below) so it
         # survives Zeitwerk code reloads in development.
-        Spree.subscribers.concat [
+        Spree.subscribers.push(
           Spree::OrderPlacedSubscriber,
           Spree::OrderCommissionSubscriber,
+          Spree::GiftCardIssuanceSubscriber,
           Spree::OrderStatusSubscriber,
           Spree::PaymentSplitSubscriber,
           Spree::SellerTransferSubscriber,
@@ -573,7 +575,7 @@ module Spree
           Spree::SellerUserEmailSubscriber,
           Spree::ProductMetricsSubscriber,
           Spree::TaxIdentifierValidationSubscriber
-        ]
+        )
 
         # Pre-load authentication strategy classes to avoid reflection at request time
         Rails.application.config.spree.store_authentication_strategies = Spree::Authentication::StrategyRegistry.new(

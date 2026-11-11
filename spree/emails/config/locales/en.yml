@@ -50,6 +50,16 @@ en:
         instructions: Your order %{number} has been fulfilled
         subject: Fulfillment Notification
         track_information: 'Tracking Information: %{tracking}'
+    gift_card_mailer:
+      issued_email:
+        action: Start shopping
+        code_label: 'Your gift card code:'
+        expires_on: Valid until %{date}
+        greeting: Hi %{name},
+        heading: You've received a %{amount} gift card
+        how_to_redeem: Enter the code at checkout to pay with your gift card. Keep it private, as anyone with the code can spend it.
+        instructions: "%{sender} sent you a gift card for %{store}."
+        subject: You've received a gift card from %{store}
     newsletter_mailer:
       email_confirmation:
         dear_customer: Hey,

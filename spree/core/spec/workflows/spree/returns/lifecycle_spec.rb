@@ -269,6 +269,19 @@ RSpec.describe 'Spree::Returns workflows' do
         expect(credit.refunded_order).to eq(return_record.order)
       end
 
+      it 'cancels the unused gift cards a refunded line issued, and leaves a spent one alone' do
+        line = return_record.return_line_items.first
+        line_item = line.line_item
+        line_item.product.update_column(:gift_card, true)
+        unused = create_list(:gift_card, 2, line_item: line_item, store: store)
+        spent = create(:gift_card, line_item: line_item, store: store, amount: 50, amount_used: 5, status: 'partially_redeemed')
+
+        expect(Spree::Returns::Refund.call(return_record: return_record, refund_method: 'store_credit')).to be_success
+
+        expect(unused.map(&:reload).count(&:canceled?)).to eq(line.credited_quantity)
+        expect(spent.reload.status).to eq('partially_redeemed')
+      end
+
       it 'credits only the lines that actually arrived' do
         # Two of three announced units came back, so the third must not be
         # credited — the same rule resolve_amount applies to the money.

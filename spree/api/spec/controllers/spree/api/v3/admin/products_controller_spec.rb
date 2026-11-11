@@ -888,6 +888,24 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       expect(product.reload.name).to eq('Updated Name')
     end
 
+    it 'turns a product into a gift card' do
+      patch :update, params: { id: product.prefixed_id, gift_card: true }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['gift_card']).to be(true)
+      expect(product.reload.gift_card).to be(true)
+      expect(product.promotionable).to be(false)
+    end
+
+    it "refuses to make a seller's product a gift card" do
+      seller_product = create(:product, store: store, seller: create(:seller, store: store))
+
+      patch :update, params: { id: seller_product.prefixed_id, gift_card: true }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(seller_product.reload.gift_card).to be(false)
+    end
+
     # A store whose language writes a comma decimal (nl, de, fr) must still
     # read the dashboard's canonical "49.50" as forty-nine fifty, and saving an
     # untouched price must not grow it by a power of ten.

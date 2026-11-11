@@ -865,6 +865,11 @@
         "discontinue_on": {
           "label": "Discontinue on"
         },
+        "gift_card": {
+          "label": "Gift card",
+          "switch": "This product is a gift card",
+          "help": "Each variant is a denomination priced at its face value. A paid order emails one card per unit to the recipient. Stock, tax, promotions and shipping don't apply."
+        },
         "make_active_at": {
           "label": "Make active at"
         },
@@ -982,6 +987,11 @@
         },
         "digital_asset_authorized_days": {
           "label": "Days available"
+        },
+        "gift_card_default_validity_days": {
+          "label": "Gift card validity (days)",
+          "placeholder": "Never expires",
+          "help": "How long a gift card bought on the storefront stays spendable. Leave empty so cards never expire."
         }
       }
     },

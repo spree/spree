@@ -274,6 +274,17 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
       end
     end
 
+    context 'with a gift card validity' do
+      let(:params) { { gift_card_default_validity_days: 365 } }
+
+      it 'saves it and reads it back' do
+        subject
+        expect(response).to have_http_status(:ok)
+        expect(json_response['gift_card_default_validity_days']).to eq(365)
+        expect(store.reload.preferred_gift_card_default_validity_days).to eq(365)
+      end
+    end
+
     context 'with invalid params' do
       let(:params) { { name: '' } }
 

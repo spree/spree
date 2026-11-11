@@ -26,20 +26,23 @@ RSpec.describe 'personal data coverage' do
   ].freeze
 
   # Tables whose personal data the anonymizer handles, each with why.
-  COVERED_TABLES = {
-    'spree_customers' => 'the account itself — anonymize_account',
-    'spree_addresses' => 'address book and order snapshots — anonymize_address_book / anonymize_order_addresses',
-    'spree_orders' => 'anonymize_purchases',
-    'spree_order_groups' => 'anonymize_purchases',
-    'spree_credit_cards' => 'anonymize_payment_sources',
-    'spree_gateway_customers' => 'anonymize_payment_sources — profiles released at the gateway',
-    'spree_user_identities' => 'anonymize_identities',
-    'spree_refresh_tokens' => 'anonymize_sessions',
-    'spree_consent_records' => 'anonymize_consent_records',
-    'spree_newsletter_subscribers' => 'remove_newsletter_subscriptions',
-    'spree_data_requests' => 'anonymize_data_requests — the record survives, the address on it does not',
-    'spree_carts' => 'anonymize_purchases — carts are their own table since the Cart/Order split'
-  }.freeze
+  let(:covered_tables) do
+    {
+      'spree_customers' => 'the account itself — anonymize_account',
+      'spree_addresses' => 'address book and order snapshots — anonymize_address_book / anonymize_order_addresses',
+      'spree_orders' => 'anonymize_purchases',
+      'spree_order_groups' => 'anonymize_purchases',
+      'spree_credit_cards' => 'anonymize_payment_sources',
+      'spree_gateway_customers' => 'anonymize_payment_sources — profiles released at the gateway',
+      'spree_user_identities' => 'anonymize_identities',
+      'spree_refresh_tokens' => 'anonymize_sessions',
+      'spree_consent_records' => 'anonymize_consent_records',
+      'spree_newsletter_subscribers' => 'remove_newsletter_subscriptions',
+      'spree_data_requests' => 'anonymize_data_requests — the record survives, the address on it does not',
+      'spree_carts' => 'anonymize_purchases — carts are their own table since the Cart/Order split',
+      'spree_gift_card_recipients' => 'anonymize_purchases — the people a buyer named on gift card lines'
+    }
+  end
 
   # Tables holding personal data that is deliberately NOT erased by a customer
   # erasure request, each with the reason it survives.
@@ -60,7 +63,7 @@ RSpec.describe 'personal data coverage' do
 
   it 'handles every table that stores personal data' do
     uncovered = ActiveRecord::Base.connection.tables.filter_map do |table|
-      next if COVERED_TABLES.key?(table) || EXEMPT_TABLES.key?(table)
+      next if covered_tables.key?(table) || EXEMPT_TABLES.key?(table)
       next unless table.start_with?('spree_')
 
       columns = ActiveRecord::Base.connection.columns(table).map(&:name)
@@ -75,7 +78,7 @@ RSpec.describe 'personal data coverage' do
         #{uncovered.join("\n  ")}
 
       Extend Spree::Customers::Anonymize to cover them, then add them to
-      COVERED_TABLES. If the data is deliberately retained through an erasure
+      covered_tables. If the data is deliberately retained through an erasure
       request, add the table to EXEMPT_TABLES with the reason.
     MESSAGE
   end
@@ -88,39 +91,42 @@ RSpec.describe 'personal data coverage' do
   # falls behind — repeatedly, and each time it looked like a different bug.
   #
   # Every covered table maps to the export section that answers for it.
-  EXPORT_SECTIONS = {
-    'spree_customers' => %i[account marketing_consent custom_fields],
-    'spree_addresses' => %i[addresses orders draft_orders carts order_groups],
-    'spree_orders' => %i[orders draft_orders],
-    'spree_order_groups' => %i[order_groups],
-    'spree_carts' => %i[carts],
-    'spree_credit_cards' => %i[payment_sources],
-    'spree_gateway_customers' => %i[payment_sources],
-    'spree_user_identities' => %i[connected_logins],
-    'spree_consent_records' => %i[consent_records],
-    'spree_newsletter_subscribers' => %i[marketing_consent],
-    'spree_data_requests' => %i[],
-    'spree_refresh_tokens' => %i[]
-  }.freeze
+  let(:export_sections) do
+    {
+      'spree_customers' => %i[account marketing_consent custom_fields],
+      'spree_addresses' => %i[addresses orders draft_orders carts order_groups],
+      'spree_orders' => %i[orders draft_orders],
+      'spree_order_groups' => %i[order_groups],
+      'spree_carts' => %i[carts],
+      'spree_credit_cards' => %i[payment_sources],
+      'spree_gateway_customers' => %i[payment_sources],
+      'spree_user_identities' => %i[connected_logins],
+      'spree_consent_records' => %i[consent_records],
+      'spree_newsletter_subscribers' => %i[marketing_consent],
+      'spree_data_requests' => %i[],
+      'spree_refresh_tokens' => %i[],
+      'spree_gift_card_recipients' => %i[orders draft_orders carts]
+    }
+  end
 
   it 'discloses every table that erasure scrubs' do
     payload = Spree.customer_data_export_service.new(
       customer: create(:customer), store: @default_store
     ).call
 
-    missing = COVERED_TABLES.keys.reject do |table|
-      sections = EXPORT_SECTIONS[table]
+    missing = covered_tables.keys.reject do |table|
+      sections = export_sections[table]
       sections.nil? || sections.empty? || sections.all? { |section| payload.key?(section) }
     end
 
-    undeclared = COVERED_TABLES.keys - EXPORT_SECTIONS.keys
+    undeclared = covered_tables.keys - export_sections.keys
 
     expect(undeclared).to be_empty, <<~MESSAGE
       These tables are erased but no export section is declared for them:
 
         #{undeclared.join("\n  ")}
 
-      Add them to EXPORT_SECTIONS. A table with nothing to disclose (a
+      Add them to export_sections. A table with nothing to disclose (a
       credential, an operational record) maps to an empty list, with the
       reason in a comment.
     MESSAGE
@@ -208,7 +214,7 @@ RSpec.describe 'personal data coverage' do
 
   it 'names a real table in every entry, so the lists cannot rot' do
     tables = ActiveRecord::Base.connection.tables
-    declared = COVERED_TABLES.keys + EXEMPT_TABLES.keys
+    declared = covered_tables.keys + EXEMPT_TABLES.keys
 
     expect(declared - tables).to be_empty
   end

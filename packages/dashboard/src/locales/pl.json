@@ -3392,6 +3392,16 @@
           "customer_help": "Usuń klienta, aby zamówienie stało się zamówieniem gościa.",
           "confirm_detach": "To zamówienie zniknie z historii zamówień i konta klienta. Usunąć klienta?",
           "detach": "Usuń klienta"
+        },
+        "issued_gift_cards": {
+          "title": "Wystawione karty podarunkowe",
+          "never_expires": "Nigdy",
+          "columns": {
+            "code": "Kod",
+            "amount": "Kwota",
+            "expires": "Wygasa",
+            "recipient": "Odbiorca"
+          }
         }
       },
       "edit": {
@@ -4340,7 +4350,8 @@
           "tab_downloads": "Pobrania cyfrowe",
           "downloads_help": "Jak długo działa link do pobrania i ile razy można go użyć. Poszczególne pliki mogą nadpisać te wartości.",
           "default_package_description": "Karton, w którym zwykle wysyłasz. Dostawcy stawek przewoźników dodają jego wagę do każdej paczki i używają wymiarów do wyceny wagi wymiarowej.",
-          "tab_default_package": "Domyślna paczka"
+          "tab_default_package": "Domyślna paczka",
+          "tab_gift_cards": "Karty podarunkowe"
         },
         "tax_categories": {
           "add_sheet_title": "Dodaj kategorię podatkową",

@@ -1,0 +1,56 @@
+---
+title: "Selling Gift Cards"
+description: "Learn how to sell gift cards as products, choose their amounts, and follow the cards your orders issue in Spree Commerce."
+---
+
+A gift card product lets shoppers buy a gift card in your shop, for themselves or for someone else. Each amount you offer is a variant of the product, and the variant's price is what the card is worth. When an order is paid, your store creates one gift card for every unit bought and emails the code to the person it is for.
+
+Cards bought this way work exactly like the cards you issue by hand. They appear in **Loyalty → Gift Cards**, and anyone with the code can spend them at checkout. See [<u>Gift Cards</u>](/user/loyalty/gift-cards).
+
+## How to Create a Gift Card Product
+
+1. Create a product in **Products** as you would any other, for example "Gift Card".
+2. On the product page, turn on **This product is a gift card** in the **Gift card** card.
+3. Add an option such as "Amount" with one value per amount you want to offer, for example $25, $50 and $100.
+4. Give each variant the price of the amount it stands for. A variant priced at $50.00 issues a card worth $50.00.
+5. Click **Save product**.
+
+When the switch is on, the **Inventory** and **Tax** cards and the **Shipping profile** field disappear, because they do not apply to a gift card:
+
+| What changes | Why |
+|---|---|
+| **No stock is tracked** | A gift card is money, not goods, so it never sells out. |
+| **No tax is charged** | Selling a gift card is a prepayment. Tax is charged on what the card later buys. |
+| **No promotions apply** | Discounts never reduce the price of a gift card and the card does not count toward a promotion's minimum spend. |
+| **Delivered by email** | The product moves to digital delivery, so checkout never asks for a shipping address for it. |
+| **No price lists apply** | The card always sells at its face value. |
+
+A gift card cannot be paid for with another gift card or with store credit. Checkout refuses either one, so a shopper pays for a gift card with card or another payment method.
+
+On a marketplace only your own store can sell gift cards. A seller's product cannot be made a gift card.
+
+## Who Receives the Card
+
+At checkout the shopper can name a recipient for each gift card: an email address, a name, a short message and, if they want, a date to send it on. A send date can be up to 90 days ahead. Without a date the card is emailed as soon as the order is paid.
+
+If the shopper names no one, the card is emailed to the order's own email address, so they can pass it on themselves.
+
+A shopper who buys the same amount for two different people gets two lines in their cart, one for each recipient.
+
+## When Cards Are Issued
+
+Cards are created when the order is paid in full, not when it is placed. An order placed with a payment that has not been taken yet, such as a bank transfer, issues its cards once that payment is marked as received. Your store never hands out a code for money it has not received.
+
+The gift card email contains the full code. The shopper's own order confirmation never shows it.
+
+To set how long bought cards stay valid, go to **Settings → Store** and fill in **Gift card validity (days)** in the **Gift cards** card. Leave it empty and cards never expire. Check the rules in your market before setting a limit, as some countries do not allow gift cards to expire.
+
+## Following the Cards an Order Issued
+
+Open the order in **Orders**. The **Issued gift cards** card lists every card the order created, with its amount, who it was sent to, when it expires and its status. The codes are partly hidden. Click a code to open the card in **Loyalty → Gift Cards**.
+
+## Cancellations and Refunds
+
+Canceling an order with a refund cancels the gift cards it issued, as long as nobody has spent from them. Canceling without a refund leaves the buyer their cards, since they have paid for them. Refunding a return that holds a gift card line does the same for the units returned.
+
+A card that has already been partly or fully spent is left as it is, and the refund still goes through. Before refunding an order for a spent card, check the card's balance in **Loyalty → Gift Cards** and decide what the customer is owed.

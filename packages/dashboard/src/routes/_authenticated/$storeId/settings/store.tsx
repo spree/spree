@@ -49,6 +49,7 @@ import {
 import {
   BoxesIcon,
   DownloadIcon,
+  GiftIcon,
   HashIcon,
   LanguagesIcon,
   PackageIcon,
@@ -119,6 +120,7 @@ function storeToFormValues(store: Store): StoreSettingsFormValues {
     digital_asset_authorized_clicks: store.digital_asset_authorized_clicks ?? 5,
     limit_digital_download_days: store.limit_digital_download_days ?? true,
     digital_asset_authorized_days: store.digital_asset_authorized_days ?? 7,
+    gift_card_default_validity_days: store.gift_card_default_validity_days ?? null,
   }
 }
 
@@ -242,6 +244,7 @@ function StoreSettingsForm({ store }: { store: Store }) {
           digital_asset_authorized_clicks: values.digital_asset_authorized_clicks,
           limit_digital_download_days: values.limit_digital_download_days,
           digital_asset_authorized_days: values.digital_asset_authorized_days,
+          gift_card_default_validity_days: values.gift_card_default_validity_days,
           ...extensionValues,
         })
         // Reset FIRST so the form is no longer dirty — otherwise the language
@@ -747,6 +750,42 @@ function StoreSettingsForm({ store }: { store: Store }) {
                         />
                       </SettingsRow>
                     )}
+                  </SettingsFieldGroup>
+                </CardContent>
+              </SettingsSection>
+              <SettingsSection
+                title={t('admin.pages.settings.store.tab_gift_cards')}
+                icon={<GiftIcon />}
+              >
+                <CardContent>
+                  <SettingsFieldGroup>
+                    <SettingsRow
+                      label={t('admin.fields.store.gift_card_default_validity_days.label')}
+                      htmlFor="store-gift-card-validity"
+                      help={t('admin.fields.store.gift_card_default_validity_days.help')}
+                      error={form.formState.errors.gift_card_default_validity_days}
+                    >
+                      {/* Empty is stored as null — never expires — so a cleared
+                          field reads as saved rather than as a pending edit. */}
+                      <Controller
+                        name="gift_card_default_validity_days"
+                        control={form.control}
+                        render={({ field }) => (
+                          <Input
+                            id="store-gift-card-validity"
+                            type="number"
+                            min={1}
+                            className="@md/field-group:w-40"
+                            placeholder={t(
+                              'admin.fields.store.gift_card_default_validity_days.placeholder',
+                            )}
+                            value={field.value ?? ''}
+                            onChange={(event) => field.onChange(event.target.value || null)}
+                            onBlur={field.onBlur}
+                          />
+                        )}
+                      />
+                    </SettingsRow>
                   </SettingsFieldGroup>
                 </CardContent>
               </SettingsSection>

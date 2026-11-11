@@ -360,6 +360,37 @@ module Spree
       end
     end
 
+    describe 'naming the line' do
+      let(:gift_card_variant) { create(:gift_card_product, store: store).default_variant }
+      let!(:for_alex) { create(:line_item, cart: cart, order: nil, variant: gift_card_variant) }
+      let!(:for_sam) { create(:line_item, cart: cart, order: nil, variant: gift_card_variant) }
+
+      before do
+        for_alex.assign_gift_card_recipient(email: 'alex@example.com')
+        for_sam.assign_gift_card_recipient(email: 'sam@example.com')
+      end
+
+      it 'changes that line, not the first one holding the variant' do
+        result = described_class.call(cart: cart, items: [{ variant_id: gift_card_variant.prefixed_id, line_item_id: for_sam.id, quantity: 3 }])
+
+        expect(result).to be_success
+        expect(for_sam.reload.quantity).to eq(3)
+        expect(for_alex.reload.quantity).to eq(1)
+      end
+
+      it 'still finds a line by its variant alone, as a removal for a discontinued product does' do
+        described_class.call(cart: cart, items: [{ variant_id: gift_card_variant.prefixed_id, quantity: 0 }])
+
+        expect(cart.reload.line_items.size).to eq(1)
+      end
+
+      it 'removes that line' do
+        described_class.call(cart: cart, items: [{ variant_id: gift_card_variant.prefixed_id, line_item_id: for_sam.id, quantity: 0 }])
+
+        expect(cart.reload.line_items).to contain_exactly(for_alex)
+      end
+    end
+
     # The reason this is a batch workflow rather than a loop over AddItem:
     # the money math runs once no matter how many items arrive.
     it 'recalculates the cart once for the whole batch' do

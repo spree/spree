@@ -35,6 +35,10 @@ module Spree
 
           protected
 
+          def collection_includes
+            [line_item: :order]
+          end
+
           def model_class
             Spree::GiftCard
           end

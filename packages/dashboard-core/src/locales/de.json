@@ -863,6 +863,11 @@
         "discontinue_on": {
           "label": "Einstellen am"
         },
+        "gift_card": {
+          "label": "Geschenkkarte",
+          "switch": "Dieses Produkt ist eine Geschenkkarte",
+          "help": "Jede Variante ist ein Nennwert, dessen Preis dem Kartenwert entspricht. Eine bezahlte Bestellung sendet pro Einheit eine Karte per E-Mail an den Empfänger. Bestand, Steuern, Aktionen und Versand gelten nicht."
+        },
         "make_active_at": {
           "label": "Aktiv schalten am"
         },
@@ -980,6 +985,11 @@
         },
         "digital_asset_authorized_days": {
           "label": "Verfügbare Tage"
+        },
+        "gift_card_default_validity_days": {
+          "label": "Gültigkeit von Geschenkkarten (Tage)",
+          "placeholder": "Läuft nie ab",
+          "help": "Wie lange eine im Shop gekaufte Geschenkkarte einlösbar bleibt. Leer lassen, damit Karten nie ablaufen."
         }
       }
     },

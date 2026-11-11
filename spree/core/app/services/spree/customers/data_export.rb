@@ -129,7 +129,7 @@ module Spree
         exported = []
 
         owned_purchases(Spree::Order).complete.with_attached_po_document.
-          includes(:bill_address, :ship_address, line_items: { variant: :product }).find_each do |order|
+          includes(:bill_address, :ship_address, line_items: [:gift_card_recipient, { variant: :product }]).find_each do |order|
           exported << {
             number: order.number,
             email: order.email,
@@ -154,8 +154,9 @@ module Spree
                 quantity: line_item.quantity,
                 price: line_item.price&.to_s,
                 total: line_item.total&.to_s,
-                currency: line_item.currency
-              }
+                currency: line_item.currency,
+                gift_card_recipient: gift_card_recipient_hash(line_item.gift_card_recipient)
+              }.compact
             end
           }
         end
@@ -203,7 +204,7 @@ module Spree
       def unplaced_purchases(relation)
         exported = []
 
-        relation.includes(:bill_address, :ship_address, line_items: { variant: :product }).
+        relation.includes(:bill_address, :ship_address, line_items: [:gift_card_recipient, { variant: :product }]).
           find_each do |purchase|
           extra = block_given? ? yield(purchase) : {}
 
@@ -218,12 +219,20 @@ module Spree
             shipping_address: address_hash(purchase.ship_address),
             created_at: purchase.created_at&.iso8601,
             line_items: purchase.line_items.map do |line_item|
-              { name: line_item.name, sku: line_item.sku, quantity: line_item.quantity }
+              { name: line_item.name, sku: line_item.sku, quantity: line_item.quantity,
+                gift_card_recipient: gift_card_recipient_hash(line_item.gift_card_recipient) }.compact
             end
           }.merge(extra)
         end
 
         exported
+      end
+
+      # Who the person named as a gift card's recipient — data they wrote.
+      def gift_card_recipient_hash(recipient)
+        return if recipient.nil?
+
+        { email: recipient.email, name: recipient.name, message: recipient.message, send_at: recipient.send_at&.iso8601 }
       end
 
       # Card numbers were never stored, so this is the metadata that was: the

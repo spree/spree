@@ -123,6 +123,11 @@ export type StoreUpdateParams = {
   limit_digital_download_days?: boolean
   /** How many days a download link stays valid, unless the file sets its own. */
   digital_asset_authorized_days?: number
+  /**
+   * How many days a gift card bought on the storefront stays spendable. Null means it never
+   * expires.
+   */
+  gift_card_default_validity_days?: number | null
   /** Sender address of every transactional email. */
   mail_from_address?: string
   /** Customer-facing reply-to address shown in the storefront and email footers. */

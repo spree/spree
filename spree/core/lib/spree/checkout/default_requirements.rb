@@ -41,6 +41,7 @@ module Spree
           r << req('delivery', 'delivery_method', I18n.t('spree.checkout_requirements.delivery_method_required')) if delivery_step_required? && !delivery_method_selected?
           r.concat(undeliverable_errors)
           r << req('payment', 'payment', I18n.t('spree.checkout_requirements.payment_required')) if payment_required? && !payment_satisfied?
+          r << gift_card_paid_with_balance_requirement if gift_card_paid_with_balance?
           r << req('address', 'po_number', I18n.t('spree.checkout_requirements.po_number_required')) if po_number_missing?
           r << order_minimum_requirement if below_order_minimum?
         end
@@ -76,6 +77,17 @@ module Spree
         line_items.reject { |line_item| orderable_ids.include?(line_item.variant_id) }.map do |line_item|
           req('cart', 'line_items', I18n.t('spree.cart_line_item.not_orderable', li_name: line_item.name), code: 'not_orderable')
         end
+      end
+
+      # The apply paths refuse a balance on a cart that buys a gift card, but
+      # a gift card product added after the balance was applied gets past
+      # them, so completion checks again.
+      def gift_card_paid_with_balance?
+        @cart.buys_gift_card? && (@cart.gift_card_id.present? || @cart.using_store_credit?)
+      end
+
+      def gift_card_paid_with_balance_requirement
+        req('payment', 'payment', I18n.t('spree.checkout_requirements.gift_card_paid_with_balance'), code: 'gift_card_paid_with_balance')
       end
 
       # Advisory rather than completion-only: a buyer has to be able to build

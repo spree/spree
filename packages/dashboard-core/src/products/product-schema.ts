@@ -198,6 +198,9 @@ export const productFormSchema = z.object({
   // Tax
   tax_category_id: z.string().nullable().optional(),
 
+  // Sold as a gift card — operator-only; the seller panel never sends it.
+  gift_card: z.boolean().optional(),
+
   // Product type — a creation-time template for the product's associations
   product_type_id: z.string().nullable().optional(),
 
@@ -256,6 +259,7 @@ export function newProductFormDefaults(): ProductFormValues {
     collection_ids: [],
     tags: [],
     tax_category_id: null,
+    gift_card: false,
     product_type_id: null,
     delivery_profile_id: null,
     meta_title: '',

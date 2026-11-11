@@ -14,12 +14,15 @@ module Spree
       # @param price [BigDecimal, String, nil] negotiated unit price — stamps the
       #   line +price_source: 'manual'+ so repricing leaves it alone. Admin
       #   surface only (draft orders); refused once the order is placed.
-      def perform(variant:, cart: nil, order: nil, quantity: nil, metadata: {}, options: {}, price: nil)
+      # @param recipient [Hash, nil] who a gift card line is for (email, name,
+      #   message, send_at). Refused for any other variant; without one the
+      #   cards go to the order's email.
+      def perform(variant:, cart: nil, order: nil, quantity: nil, metadata: {}, options: {}, price: nil, recipient: nil)
         if order
           Spree::Deprecation.warn('Calling Spree::Carts::AddItem with order: is deprecated and will be removed in Spree 6.1. Pass cart: instead.')
           cart ||= order
         end
-        super(cart: cart, variant: variant, quantity: quantity, metadata: metadata, options: options, price: price)
+        super(cart: cart, variant: variant, quantity: quantity, metadata: metadata, options: options, price: price, recipient: recipient)
 
         # First, before anything is priced or reserved: a cart whose
         # completion is in flight (or retained behind a payment-covered draft
@@ -30,6 +33,7 @@ module Spree
         step :guard_completion_claim
 
         step :parse_manual_price unless price.nil?
+        step :validate_recipient unless recipient.nil?
 
         # Core behaviour rather than a hook: an agreement's quantity terms are
         # part of what the merchant sold, not an extension's opinion. Before
@@ -126,6 +130,26 @@ module Spree
         failure(cart, errors)
       end
 
+      # Checked before anything is written: a caller holding its own
+      # transaction (the API's order lock) would otherwise keep the line a
+      # refused recipient was meant for.
+      def validate_recipient
+        unless variant.gift_card?
+          errors.add(:base, :recipient_not_allowed, message: I18n.t('spree.cart_line_item.recipient_not_allowed'))
+          failure(cart, errors)
+        end
+
+        record = Spree::GiftCardRecipient.new(
+          Spree::GiftCardRecipient.permitted(recipient).merge('store' => cart.store, 'line_item' => Spree::LineItem.new(variant: variant))
+        )
+        failure(record) unless record.valid?
+      end
+
+      def save_recipient
+        record = @line_item.assign_gift_card_recipient(recipient)
+        failure(record) if record.errors.any?
+      end
+
       # Checked against the quantity the line will END UP at, not the
       # increment: adding 24 to an existing 24 is an order of 48, which a
       # 48/24 rule allows even though neither 24 does on its own.
@@ -187,6 +211,8 @@ module Spree
         apply_resolved_price
         apply_manual_price
         failure(@line_item) unless @line_item.save
+
+        step :save_recipient if @line_item_created && !recipient.nil?
 
         @line_item.reload
 
@@ -270,8 +296,11 @@ module Spree
       def existing_line_item
         return @existing_line_item if defined?(@existing_line_item)
 
-        @existing_line_item = Spree.line_item_by_variant_finder.new.
-          execute(cart: cart, variant: variant, options: options || {})
+        finder_arguments = { cart: cart, variant: variant, options: options || {} }
+        # Only for gift cards, so a host's own finder that predates the
+        # keyword keeps working for everything else.
+        finder_arguments[:recipient] = recipient if variant.gift_card?
+        @existing_line_item = Spree.line_item_by_variant_finder.new.execute(**finder_arguments)
       end
 
       def handle_stock_reservations

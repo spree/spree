@@ -114,6 +114,30 @@ describe Spree::Adjusters::Promotion, type: :model do
     end
   end
 
+  describe 'a line no promotion may touch' do
+    let!(:gift_card_line) { create(:line_item, order: order, product: create(:gift_card_product, store: store), price: 50) }
+
+    it 'takes no line discount' do
+      line_promo(5).activate(order: order)
+
+      expect(order.discounts.reload.map(&:line_item_id)).not_to include(gift_card_line.id)
+      expect(order.discounts.size).to eq(2)
+    end
+
+    it 'takes no share of an order discount' do
+      promo = create(:promotion_with_order_adjustment, weighted_order_adjustment_amount: 10, code: nil, kind: :automatic, store: store)
+      promo.activate(order: order)
+
+      rows = order.discounts.reload
+      expect(rows.map(&:line_item_id)).not_to include(gift_card_line.id)
+      expect(rows.sum(&:amount)).to eq(-10)
+    end
+
+    it 'does not count toward what a percentage takes off' do
+      expect(order.reload.amount).to eq(order.line_items.reject(&:gift_card?).sum(&:amount))
+    end
+  end
+
   describe 'free shipping' do
     let(:order) { create(:order_with_line_items, line_items_count: 1) }
 

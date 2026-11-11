@@ -48,6 +48,7 @@ module Spree
         end
 
         external_step :refund_tax unless @amount_to_refund.zero?
+        step :cancel_returned_gift_cards
         run_hooks :after_refund
         return_record.publish_event('return.refunded')
         success(return_record.reload)
@@ -142,6 +143,20 @@ module Spree
         )
 
         failure(return_record, :no_refundable_payments) if @refunds.empty?
+      end
+
+      # A refunded gift card line takes its unused cards back with it, up to
+      # the units returned. A card the recipient has spent from is left alone
+      # and the refund still goes through, as on Shopify.
+      def cancel_returned_gift_cards
+        return_record.return_line_items.includes(line_item: { variant: :product }).find_each do |return_line_item|
+          line_item = return_line_item.line_item
+          next unless line_item&.gift_card?
+
+          line_item.gift_cards.where(status: 'active', amount_used: 0).limit(return_line_item.credited_quantity).each do |gift_card|
+            Spree.gift_card_cancel_workflow.call(gift_card: gift_card)
+          end
+        end
       end
 
       def mark_refunded

@@ -40,6 +40,8 @@ export { FreightSummarySchema, type FreightSummary } from './FreightSummary';
 export { FulfillmentSchema, type Fulfillment } from './Fulfillment';
 export { GiftCardSchema, type GiftCard } from './GiftCard';
 export { GiftCardBatchSchema, type GiftCardBatch } from './GiftCardBatch';
+export { GiftCardIssuedEventSchema, type GiftCardIssuedEvent } from './GiftCardIssuedEvent';
+export { GiftCardRecipientSchema, type GiftCardRecipient } from './GiftCardRecipient';
 export { ImportSchema, type Import } from './Import';
 export { ImportRowSchema, type ImportRow } from './ImportRow';
 export { InvitationSchema, type Invitation } from './Invitation';

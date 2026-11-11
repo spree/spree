@@ -58,6 +58,10 @@ module Spree
           run_hooks :after_cancel
         end
 
+        # Before the gateway calls, so a failed refund cannot leave a canceled
+        # order whose cards are still spendable.
+        step :cancel_issued_gift_cards if refund_payments
+
         external_step :notify_fulfillment_providers
         external_step :settle_payments
         external_step :void_tax
@@ -70,6 +74,16 @@ module Spree
       end
 
       private
+
+      # A cancellation that hands the money back takes the cards the order
+      # bought with it, unless the recipient has already spent from one: that
+      # card is left alone, as on Shopify, and the merchant decides what is
+      # owed. One that keeps the money leaves the buyer their cards.
+      def cancel_issued_gift_cards
+        Spree::GiftCard.where(line_item_id: order.line_items.select(:id), status: 'active').each do |gift_card|
+          Spree.gift_card_cancel_workflow.call(gift_card: gift_card)
+        end
+      end
 
       def ensure_cancellable
         return if order.allow_cancel?

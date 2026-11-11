@@ -41,15 +41,7 @@ module Spree
         # the payment.completed event that has not been dispatched yet when
         # this after_commit runs. Reading it here (cached or reloaded) sees
         # the pre-settlement figure and the order is never declared paid.
-        order.publish_event('order.paid') if order_settled_in_full?
-      end
-
-      # @return [Boolean]
-      def order_settled_in_full?
-        return false unless order.total.to_d.positive?
-
-        settled = order.payments.completed.includes(:refunds).sum { |payment| payment.amount - payment.refunds.sum(:amount) }
-        settled >= order.total.to_d
+        order.publish_event('order.paid') if order.settled_in_full?
       end
 
       # Declares each child of a split checkout paid once its own shares cover

@@ -1,5 +1,6 @@
 # A rule to apply to an order greater than (or greater than or equal to)
-# a specific amount. Free gifts do not count toward it.
+# a specific amount. Free gifts and non-promotionable lines (gift cards)
+# do not count toward it.
 module Spree
   class Promotion
     module Rules
@@ -13,7 +14,8 @@ module Spree
         OPERATORS_MAX = ['lt', 'lte']
 
         def eligible?(order, options = {})
-          item_total = order.item_total - order.gift_amount(promotion: promotion, own_gift_only: options.fetch(:own_gift_only, false))
+          item_total = order.item_total - order.non_promotionable_amount -
+                       order.gift_amount(promotion: promotion, own_gift_only: options.fetch(:own_gift_only, false))
 
           lower_limit_condition = item_total.send(preferred_operator_min == 'gte' ? :>= : :>, BigDecimal(preferred_amount_min.to_s))
 

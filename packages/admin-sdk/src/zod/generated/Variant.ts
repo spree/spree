@@ -12,6 +12,7 @@ import { StockLevelSchema } from './StockLevel';
 export const VariantSchema = z.object({
   id: z.string(),
   product_id: z.string(),
+  gift_card: z.boolean(),
   sku: z.string().nullable(),
   options_text: z.string(),
   track_inventory: z.boolean(),
@@ -70,6 +71,7 @@ export const VariantSchema = z.object({
 }) as unknown as z.ZodObject<{
   id: z.ZodType<Variant['id']>;
   product_id: z.ZodType<Variant['product_id']>;
+  gift_card: z.ZodType<Variant['gift_card']>;
   sku: z.ZodType<Variant['sku']>;
   options_text: z.ZodType<Variant['options_text']>;
   track_inventory: z.ZodType<Variant['track_inventory']>;

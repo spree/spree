@@ -184,7 +184,7 @@ export type FulfillmentFields = Filter.RangeFilters<'created_at' | 'updated_at'>
 
 export type GiftCardFields = Filter.TextFilters<'code'>
   & Filter.RangeFilters<'created_at' | 'expires_at' | 'updated_at'>
-  & Filter.IdFilters<'created_by_id' | 'customer_id' | 'gift_card_batch_id' | 'id'>
+  & Filter.IdFilters<'created_by_id' | 'customer_id' | 'gift_card_batch_id' | 'id' | 'line_item_id'>
   & Filter.CodeFilters<'currency', Filter.CurrencyCode>
   & Filter.EnumFilters<'state', 'active' | 'partially_redeemed' | 'redeemed' | 'canceled'>
   & Filter.EnumFilters<'status', 'active' | 'partially_redeemed' | 'redeemed' | 'canceled'>
@@ -1359,7 +1359,7 @@ export type GiftCardFilters = GiftCardFields
   & Filter.OrFilters
   & GiftCardFilterExtensions
 
-export type GiftCardSort = Filter.SortKey<'code' | 'created_at' | 'created_by_id' | 'currency' | 'customer_id' | 'expires_at' | 'gift_card_batch_id' | 'id' | 'state' | 'status' | 'updated_at' | (keyof GiftCardSortExtensions & string)>
+export type GiftCardSort = Filter.SortKey<'code' | 'created_at' | 'created_by_id' | 'currency' | 'customer_id' | 'expires_at' | 'gift_card_batch_id' | 'id' | 'line_item_id' | 'state' | 'status' | 'updated_at' | (keyof GiftCardSortExtensions & string)>
 
 /**
  * Filters your app adds to GiftCardBatch lists. Generate them with `spree filters types`,

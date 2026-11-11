@@ -149,6 +149,7 @@ export function productToFormValues(
       [],
     tags: product.tags ?? [],
     tax_category_id: product.tax_category_id ?? null,
+    gift_card: product.gift_card ?? false,
     product_type_id: product.product_type_id ?? null,
     delivery_profile_id: product.delivery_profile_id ?? null,
     meta_title: product.meta_title ?? '',

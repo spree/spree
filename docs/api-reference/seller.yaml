@@ -14658,6 +14658,7 @@ paths:
                 - id: prod_UkLWZg9DAJ
                   name: Product 3203250
                   slug: product-3203250
+                  gift_card: false
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -14774,6 +14775,7 @@ paths:
                 id: prod_gbHJdmfrXB
                 name: Hand-thrown mug
                 slug: hand-thrown-mug
+                gift_card: false
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -14874,6 +14876,7 @@ paths:
                 id: prod_UkLWZg9DAJ
                 name: Product 3236710
                 slug: product-3236710
+                gift_card: false
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -14965,6 +14968,7 @@ paths:
                 id: prod_UkLWZg9DAJ
                 name: Hand-thrown mug, large
                 slug: product-3268212
+                gift_card: false
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -15090,6 +15094,7 @@ paths:
                 id: prod_gbHJdmfrXB
                 name: Product 3297816
                 slug: product-3297816
+                gift_card: false
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -15202,6 +15207,7 @@ paths:
                 id: prod_UkLWZg9DAJ
                 name: Product 331209
                 slug: product-331209
+                gift_card: false
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -15293,6 +15299,7 @@ paths:
                 id: prod_UkLWZg9DAJ
                 name: Product 3329405
                 slug: product-3329405
+                gift_card: false
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -28352,6 +28359,10 @@ components:
           type: string
         slug:
           type: string
+        gift_card:
+          type: boolean
+          description: 'True when the product is a gift card: each variant is a denomination,
+            and buying one issues a card per unit when the order is paid.'
         meta_title:
           type: string
           nullable: true
@@ -28475,6 +28486,7 @@ components:
       - id
       - name
       - slug
+      - gift_card
       - meta_title
       - meta_description
       - meta_keywords
@@ -30638,6 +30650,10 @@ components:
           type: string
         product_id:
           type: string
+        gift_card:
+          type: boolean
+          description: True when the variant is a gift card denomination; its price
+            is the card's face value.
         sku:
           type: string
           nullable: true
@@ -31199,6 +31215,7 @@ components:
       required:
       - id
       - product_id
+      - gift_card
       - sku
       - options_text
       - track_inventory

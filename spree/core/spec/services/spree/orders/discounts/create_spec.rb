@@ -20,6 +20,15 @@ module Spree
           end.to change { order.reload.total }.by(-3).and change { order.adjustment_total }.by(-3)
         end
 
+        it 'refuses a gift card line, whose cards are issued at face value' do
+          line_item.variant.product.update_column(:gift_card, true)
+
+          result = described_class.call(order: order, label: 'Appeasement', value: 3, line_item: line_item.reload)
+
+          expect(result).to be_failure
+          expect(line_item.discounts.reload).to be_empty
+        end
+
         it 'computes a percent discount from the line item amount' do
           result = described_class.call(order: order, label: 'Ten off', value: 10, value_type: 'percent', line_item: line_item)
 
@@ -55,6 +64,15 @@ module Spree
             expect(result.value.map(&:line_item)).to match_array(order.line_items)
             expect(result.value.sum(&:amount)).to eq(-10)
           end.to change { order.reload.total }.by(-10)
+        end
+
+        it 'gives a gift card line no share' do
+          line_item.variant.product.update_column(:gift_card, true)
+
+          result = described_class.call(order: order, label: 'Order-wide', value: 10)
+
+          expect(result.value.map(&:line_item)).to eq([order.line_items.second])
+          expect(result.value.sum(&:amount)).to eq(-10)
         end
 
         it 'caps the distributed amount at the sum of the discountable bases' do
