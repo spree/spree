@@ -950,16 +950,23 @@ describe('spree upgrade', () => {
       installSpreeSkills()
       routeExeca({
         failOn: 'skills add',
-        failStderr: 'Failed to fetch spree/agent-skills: ECONNRESET\n',
+        failStderr: [
+          ...Array.from({ length: 20 }, (_, index) => `progress line ${index}`),
+          '\u001b[31mFailed to fetch spree/agent-skills: ECONNRESET\u001b[39m',
+          '',
+        ].join('\n'),
       })
 
       await runUpgrade()
 
       const warning = vi.mocked(prompts.log.warn).mock.calls.at(-1)?.[0]
       expect(warning).toContain('The Spree agent skills were not updated')
-      expect(warning).toContain("pnpm dlx skills add spree/agent-skills --skill '*' --yes")
+      expect(warning).toContain('pnpm dlx skills add spree/agent-skills --skill "*" --yes')
       expect(warning).toContain('Failed to fetch spree/agent-skills: ECONNRESET')
       expect(warning).not.toContain('Command failed')
+      expect(warning).not.toContain('\u001b[31m')
+      expect(warning).not.toContain('progress line 10')
+      expect(warning).toContain('progress line 19')
       expect(commands.at(-1)).toBe('docker compose restart web')
     })
   })

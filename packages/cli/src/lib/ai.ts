@@ -1,6 +1,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { execa } from 'execa'
+import pc from 'picocolors'
 import { isNotFound } from '../config.js'
 
 export const DOCS_MCP_URL = 'https://spreecommerce.org/docs/mcp'
@@ -146,17 +147,23 @@ export function dlxCommand(packageManager: string): string[] {
 }
 
 /** The `skills` CLI arguments that install every Spree agent skill. */
-export const INSTALL_SKILLS_ARGS = ['add', AGENT_SKILLS_REPO, '--skill', '*', '--yes']
+export const INSTALL_SKILLS_ARGS: readonly string[] = Object.freeze([
+  'add',
+  AGENT_SKILLS_REPO,
+  '--skill',
+  '*',
+  '--yes',
+])
 
 /** The full command that runs the `skills` CLI with the given arguments. */
-export function skillsCommand(packageManager: string, args: string[]): string[] {
+function skillsCommand(packageManager: string, args: readonly string[]): string[] {
   return [...dlxCommand(packageManager), 'skills', ...args]
 }
 
 async function runSkills(
   projectDir: string,
   packageManager: string,
-  args: string[],
+  args: readonly string[],
 ): Promise<void> {
   const [command, ...rest] = skillsCommand(packageManager, args)
   // Output is captured, not shown, so a failure can report the CLI's reason.
@@ -189,29 +196,33 @@ function normalizeSource(source: string): string {
 }
 
 /**
- * The Spree agent skills a project has installed, read from the
- * `skills-lock.json` the `skills` CLI writes: the skills whose source is
+ * Whether the project has Spree agent skills installed, read from the
+ * `skills-lock.json` the `skills` CLI writes: a skill whose source is
  * `spree/agent-skills`. Skills from other sources are the developer's own.
  *
  * @param projectDir the project root
- * @return the skill names, [] when there are none or the lockfile is unreadable
+ * @return false when there are none or the lockfile is unreadable
  */
-export function installedSpreeSkills(projectDir: string): string[] {
+export function hasSpreeAgentSkills(projectDir: string): boolean {
   try {
     const lock = JSON.parse(fs.readFileSync(path.join(projectDir, 'skills-lock.json'), 'utf-8'))
-    if (!isObject(lock) || !isObject(lock.skills)) return []
-    return Object.entries(lock.skills)
-      .filter(
-        ([, entry]) =>
-          isObject(entry) &&
-          typeof entry.source === 'string' &&
-          normalizeSource(entry.source) === AGENT_SKILLS_REPO,
-      )
-      .map(([name]) => name)
+    if (!isObject(lock) || !isObject(lock.skills)) return false
+    return Object.values(lock.skills).some(
+      (entry) =>
+        isObject(entry) &&
+        typeof entry.source === 'string' &&
+        normalizeSource(entry.source) === AGENT_SKILLS_REPO,
+    )
   } catch {
-    return []
+    return false
   }
 }
+
+// Enough of the CLI's stderr to name the cause without flooding the terminal.
+const FAILURE_REASON_LINES = 10
+
+// The SGR escape sequences that colour terminal output.
+const ANSI_COLOR = new RegExp(`${String.fromCharCode(27)}\\[[0-9;]*m`, 'g')
 
 /**
  * The warning for a failed `skills` run: the command to run by hand, then the
@@ -222,17 +233,26 @@ export function installedSpreeSkills(projectDir: string): string[] {
 export function skillsFailureMessage(
   what: string,
   packageManager: string,
-  args: string[],
+  args: readonly string[],
   error: unknown,
 ): string {
+  // Double quotes keep `*` from being globbed in POSIX shells, PowerShell and cmd.
   const command = skillsCommand(packageManager, args)
-    .map((arg) => (arg === '*' ? `'*'` : arg))
+    .map((arg) => (arg === '*' ? '"*"' : arg))
     .join(' ')
   const stderr = (error as { stderr?: unknown } | undefined)?.stderr
-  const reason =
-    (typeof stderr === 'string' && stderr.trim()) ||
-    (error instanceof Error ? error.message : String(error))
-  return `The Spree agent skills were not ${what}. Run ${command} to try again.\n${reason}`
+  const stderrTail =
+    typeof stderr === 'string'
+      ? stderr
+          .replace(ANSI_COLOR, '')
+          .split('\n')
+          .map((line) => line.trimEnd())
+          .filter(Boolean)
+          .slice(-FAILURE_REASON_LINES)
+          .join('\n')
+      : ''
+  const reason = stderrTail || (error instanceof Error ? error.message : String(error))
+  return `The Spree agent skills were not ${what}. Run ${pc.bold(command)} to try again.\n${reason}`
 }
 
 // These files hold the developer's own content, so a failed write must leave

@@ -22,9 +22,9 @@ import {
   restartAppServices,
 } from '../docker.js'
 import {
+  hasSpreeAgentSkills,
   INSTALL_SKILLS_ARGS,
   installAgentSkills,
-  installedSpreeSkills,
   skillsFailureMessage,
 } from '../lib/ai.js'
 import { RELEASE_LINE, type ReleaseLine, releaseLineFor } from '../lib/release-line.js'
@@ -560,7 +560,7 @@ async function updateSpreePackages(
 // asked. A failed download only warns, since the server and packages are
 // already done.
 async function updateSpreeAgentSkills(projectDir: string, flags: UpgradeFlags): Promise<void> {
-  if (installedSpreeSkills(projectDir).length === 0) return
+  if (!hasSpreeAgentSkills(projectDir)) return
   if (!(await confirmStep('Update the Spree agent skills to the latest version?', flags))) {
     p.log.info('Skipping the agent skills.')
     return
