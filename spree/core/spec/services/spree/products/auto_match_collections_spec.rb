@@ -43,6 +43,17 @@ module Spree
       expect(collection.reload.products).not_to include(product)
     end
 
+    it 'removes a rule row left behind by an exclusion made meanwhile' do
+      product = create(:product, tags: [ActsAsTaggableOn::Tag.create(name: 'sale')])
+      create(:product_collection, :rule, collection: collection, product: product)
+      Spree::CollectionExclusion.insert_all([{ collection_id: collection.id, product_id: product.id,
+                                               created_at: Time.current, updated_at: Time.current }])
+
+      described_class.call(product: product)
+
+      expect(collection.reload.products).not_to include(product)
+    end
+
     it 'adds a matched product as a rule row at the end' do
       first = create(:product)
       create(:product_collection, collection: collection, product: first, position: 1)
