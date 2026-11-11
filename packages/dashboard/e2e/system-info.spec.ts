@@ -9,13 +9,17 @@ test.describe('system info', () => {
 
     await expect(page.getByRole('heading', { name: 'System info' })).toBeVisible()
     // The dashboard's own packages sit next to Spree's gems; the browser and
-    // recent errors only go into the copied report.
-    await expect(page.locator('[data-slot="card-title"]')).toHaveText([
+    // recent errors only go into the copied report. Changed settings follow
+    // only when the seeded store differs from the defaults.
+    const titles = page.locator('[data-slot="card-title"]')
+    await expect(titles.nth(3)).toBeVisible()
+    expect((await titles.allTextContents()).slice(0, 4)).toEqual([
       'Spree',
       'Dashboard',
       'Runtime',
       'Infrastructure',
     ])
+    await expect(titles.filter({ hasText: /^(Client|Recent errors)$/ })).toHaveCount(0)
     await expect(page.getByText('@spree/dashboard-core', { exact: true })).toBeVisible()
     // Reached through the dashboard packages, not listed by the app itself.
     await expect(page.getByText('@spree/core', { exact: true })).toBeVisible()
