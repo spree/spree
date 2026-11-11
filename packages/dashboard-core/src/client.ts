@@ -1,4 +1,5 @@
 import { createAdminClient } from '@spree/admin-sdk'
+import { recordRequest } from './lib/developer-inspector'
 
 // `VITE_SPREE_API_URL` controls whether the SDK builds relative or absolute URLs.
 // Three deployment topologies, one code path:
@@ -22,4 +23,5 @@ const baseUrl = import.meta.env.VITE_SPREE_API_URL || ''
 export const adminClient = createAdminClient({
   baseUrl,
   // No initial token — auth-provider bootstraps via /auth/refresh on mount.
+  onRequestComplete: recordRequest,
 })

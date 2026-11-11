@@ -1,5 +1,4 @@
 import {
-  adminClient,
   formatStoreDateTime,
   Money,
   PageHeader,
@@ -103,12 +102,8 @@ function PayoutDetailPage() {
                 </Button>
               ) : null
             }
-            resource={{ id: payout.id }}
-            jsonPreview={{
-              title: `Payout ${payout.id}`,
-              fetch: () => adminClient.sellerPayouts.get(payout.id),
-              endpoint: `/api/v3/admin/seller_payouts/${payout.id}`,
-            }}
+            resource={payout}
+            endpoint={`/api/v3/admin/seller_payouts/${payout.id}`}
           />
         }
         main={

@@ -65,7 +65,6 @@ import {
 } from '../../../../../schemas/webhook-endpoint'
 import '../../../../../tables/webhook-deliveries'
 import { toastManager } from '@spree/dashboard-ui'
-import { spreeJsonLinkResolver } from '../../../../../lib/json-link-resolver'
 
 // `<JsonValueView>` pulls in `@uiw/react-json-view` (~30 KB gzip). Lazy-loading
 // it keeps the route's entry chunk small — the renderer only matters when an
@@ -225,13 +224,8 @@ function WebhookEndpointDetailBody({ endpoint }: { endpoint: WebhookEndpoint }) 
             title={endpoint.name || endpoint.url}
             subtitle={endpoint.name ? <CopyableUrl url={endpoint.url} /> : undefined}
             backTo="settings/webhooks"
-            resource={{ id: endpoint.id }}
-            jsonPreview={{
-              title: `Webhook ${endpoint.url}`,
-              fetch: () => adminClient.webhookEndpoints.get(endpoint.id),
-              endpoint: `/api/v3/admin/webhook_endpoints/${endpoint.id}`,
-              resolveLink: spreeJsonLinkResolver(storeId),
-            }}
+            resource={endpoint}
+            endpoint={`/api/v3/admin/webhook_endpoints/${endpoint.id}`}
             onDelete={handleDelete}
             deleteConfirmTitle={t('admin.pages.settings.webhooks.delete_confirm.title')}
             deleteConfirmMessage={t('admin.pages.settings.webhooks.delete_confirm.message', {

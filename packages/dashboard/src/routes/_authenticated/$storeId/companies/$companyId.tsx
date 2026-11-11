@@ -8,7 +8,6 @@ import type {
 } from '@spree/admin-sdk'
 import { COMPANY_KINDS } from '@spree/core'
 import {
-  adminClient,
   mapSpreeErrorsToForm,
   PageHeader,
   RecordMetadataCard,
@@ -109,7 +108,6 @@ import {
   useUpdateCompanyTaxIdentifier,
   useValidateCompanyTaxIdentifier,
 } from '../../../../hooks/use-companies'
-import { spreeJsonLinkResolver } from '../../../../lib/json-link-resolver'
 import {
   COMPANY_CHILD_DEFAULTS,
   COMPANY_DEFAULTS,
@@ -171,13 +169,8 @@ function CompanyBody({ company }: { company: Company }) {
           subtitle={<AncestorBreadcrumb company={company} />}
           badges={<CompanyKindBadge kind={company.kind} />}
           backTo="companies"
-          resource={{ id: company.id }}
-          jsonPreview={{
-            title: `Company ${company.name}`,
-            fetch: () => adminClient.companies.get(company.id),
-            endpoint: `/api/v3/admin/companies/${company.id}`,
-            resolveLink: spreeJsonLinkResolver(storeId),
-          }}
+          resource={company}
+          endpoint={`/api/v3/admin/companies/${company.id}`}
           onDelete={permissions.can('destroy', Subject.Company) ? handleDelete : undefined}
           deleteLabel={t('admin.companies.detail.delete_label')}
         />

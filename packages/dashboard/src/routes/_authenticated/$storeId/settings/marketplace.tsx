@@ -193,6 +193,8 @@ function MarketplaceSettingsPage({ store }: { store: Store }) {
           header={
             <PageHeader
               docsPath="sellers/payouts"
+              resource={store}
+              endpoint="/api/v3/admin/store"
               title={t('admin.pages.settings.marketplace.title')}
               description={t('admin.pages.settings.marketplace.subtitle')}
               actions={<FormActions form={form} />}

@@ -664,6 +664,7 @@ import type {
   DeliveryProfile,
   DeliveryRateProviderOption,
   DeliveryZone,
+  Diagnostics,
   DigitalAsset,
   DigitalLink,
   Discount,
@@ -1178,6 +1179,21 @@ export class AdminClient {
      */
     get: (options?: RequestOptions): Promise<UpdateStatus> =>
       this.request<UpdateStatus>('GET', '/updates', options),
+  }
+
+  readonly diagnostics = {
+    /**
+     * An anonymised report on this installation to attach to a bug report,
+     * with `markdown` ready to paste into a GitHub issue. Needs a client
+     * created with `jwtToken` for an admin who can manage the store; a secret
+     * key gets a 404. `packages` lists the caller's own `@spree/*` packages
+     * as `name@version`, reported in a Dashboard section.
+     */
+    get: (params?: { packages?: string[] }, options?: RequestOptions): Promise<Diagnostics> =>
+      this.request<Diagnostics>('GET', '/diagnostics', {
+        ...options,
+        params: { packages: params?.packages?.join(',') },
+      }),
   }
 
   // ============================================

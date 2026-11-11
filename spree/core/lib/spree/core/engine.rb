@@ -606,6 +606,16 @@ module Spree
         Rails.autoloaders.main.do_not_eager_load(*DEPRECATED_ALIAS_FILES.map { |path| root.join(path) })
       end
 
+      # Hands reported errors to the diagnostics error log, resolving the
+      # class per call so a development reload picks up the new one.
+      module DiagnosticsErrorSubscriber
+        def self.report(...) = Spree::Diagnostics::ErrorLog.new.report(...)
+      end
+
+      initializer 'spree.diagnostics.error_log' do
+        Rails.error.subscribe(DiagnosticsErrorSubscriber)
+      end
+
       # filter sensitive information during logging
       initializer 'spree.params.filter' do |app|
         app.config.filter_parameters += [

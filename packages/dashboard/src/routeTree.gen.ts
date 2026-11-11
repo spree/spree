@@ -78,6 +78,7 @@ import { Route as SettingsStaffRouteImport } from './routes/_authenticated/$stor
 import { Route as SettingsStockLocationsRouteImport } from './routes/_authenticated/$storeId/settings/stock-locations'
 import { Route as SettingsStoreRouteImport } from './routes/_authenticated/$storeId/settings/store'
 import { Route as SettingsStorefrontRouteImport } from './routes/_authenticated/$storeId/settings/storefront'
+import { Route as SettingsSystemInfoRouteImport } from './routes/_authenticated/$storeId/settings/system-info'
 import { Route as SettingsTaxesRouteImport } from './routes/_authenticated/$storeId/settings/taxes'
 import { Route as SuppliersIndexRouteImport } from './routes/_authenticated/$storeId/suppliers/index'
 import { Route as SuppliersSupplierIdRouteImport } from './routes/_authenticated/$storeId/suppliers/$supplierId'
@@ -467,6 +468,11 @@ const SettingsStorefrontRoute = SettingsStorefrontRouteImport.update({
   path: '/storefront',
   getParentRoute: () => SettingsRoute,
 } as any)
+const SettingsSystemInfoRoute = SettingsSystemInfoRouteImport.update({
+  id: '/system-info',
+  path: '/system-info',
+  getParentRoute: () => SettingsRoute,
+} as any)
 const SettingsTaxesRoute = SettingsTaxesRouteImport.update({
   id: '/taxes',
   path: '/taxes',
@@ -743,6 +749,7 @@ export interface FileRoutesByFullPath {
   '/$storeId/settings/stock-locations': typeof SettingsStockLocationsRoute
   '/$storeId/settings/store': typeof SettingsStoreRoute
   '/$storeId/settings/storefront': typeof SettingsStorefrontRoute
+  '/$storeId/settings/system-info': typeof SettingsSystemInfoRoute
   '/$storeId/settings/taxes': typeof SettingsTaxesRouteWithChildren
   '/$storeId/suppliers/$supplierId': typeof SuppliersSupplierIdRoute
   '/$storeId/transfers/new': typeof TransfersNewRoute
@@ -851,6 +858,7 @@ export interface FileRoutesByTo {
   '/$storeId/settings/stock-locations': typeof SettingsStockLocationsRoute
   '/$storeId/settings/store': typeof SettingsStoreRoute
   '/$storeId/settings/storefront': typeof SettingsStorefrontRoute
+  '/$storeId/settings/system-info': typeof SettingsSystemInfoRoute
   '/$storeId/suppliers/$supplierId': typeof SuppliersSupplierIdRoute
   '/$storeId/transfers/new': typeof TransfersNewRoute
   '/$storeId/companies': typeof CompaniesIndexRoute
@@ -962,6 +970,7 @@ export interface FileRoutesById {
   '/_authenticated/$storeId/settings/stock-locations': typeof SettingsStockLocationsRoute
   '/_authenticated/$storeId/settings/store': typeof SettingsStoreRoute
   '/_authenticated/$storeId/settings/storefront': typeof SettingsStorefrontRoute
+  '/_authenticated/$storeId/settings/system-info': typeof SettingsSystemInfoRoute
   '/_authenticated/$storeId/settings/taxes': typeof SettingsTaxesRouteWithChildren
   '/_authenticated/$storeId/suppliers/$supplierId': typeof SuppliersSupplierIdRoute
   '/_authenticated/$storeId/transfers/new': typeof TransfersNewRoute
@@ -1074,6 +1083,7 @@ export interface FileRouteTypes {
     | '/$storeId/settings/stock-locations'
     | '/$storeId/settings/store'
     | '/$storeId/settings/storefront'
+    | '/$storeId/settings/system-info'
     | '/$storeId/settings/taxes'
     | '/$storeId/suppliers/$supplierId'
     | '/$storeId/transfers/new'
@@ -1182,6 +1192,7 @@ export interface FileRouteTypes {
     | '/$storeId/settings/stock-locations'
     | '/$storeId/settings/store'
     | '/$storeId/settings/storefront'
+    | '/$storeId/settings/system-info'
     | '/$storeId/suppliers/$supplierId'
     | '/$storeId/transfers/new'
     | '/$storeId/companies'
@@ -1292,6 +1303,7 @@ export interface FileRouteTypes {
     | '/_authenticated/$storeId/settings/stock-locations'
     | '/_authenticated/$storeId/settings/store'
     | '/_authenticated/$storeId/settings/storefront'
+    | '/_authenticated/$storeId/settings/system-info'
     | '/_authenticated/$storeId/settings/taxes'
     | '/_authenticated/$storeId/suppliers/$supplierId'
     | '/_authenticated/$storeId/transfers/new'
@@ -1838,6 +1850,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsStorefrontRouteImport
       parentRoute: typeof SettingsRoute
     }
+    '/_authenticated/$storeId/settings/system-info': {
+      id: '/_authenticated/$storeId/settings/system-info'
+      path: '/system-info'
+      fullPath: '/$storeId/settings/system-info'
+      preLoaderRoute: typeof SettingsSystemInfoRouteImport
+      parentRoute: typeof SettingsRoute
+    }
     '/_authenticated/$storeId/settings/taxes': {
       id: '/_authenticated/$storeId/settings/taxes'
       path: '/taxes'
@@ -2163,6 +2182,7 @@ interface SettingsRouteChildren {
   SettingsStockLocationsRoute: typeof SettingsStockLocationsRoute
   SettingsStoreRoute: typeof SettingsStoreRoute
   SettingsStorefrontRoute: typeof SettingsStorefrontRoute
+  SettingsSystemInfoRoute: typeof SettingsSystemInfoRoute
   SettingsTaxesRoute: typeof SettingsTaxesRouteWithChildren
   SettingsIndexRoute: typeof SettingsIndexRoute
   SettingsWebhooksWebhookEndpointIdRoute: typeof SettingsWebhooksWebhookEndpointIdRoute
@@ -2201,6 +2221,7 @@ const SettingsRouteChildren: SettingsRouteChildren = {
   SettingsStockLocationsRoute: SettingsStockLocationsRoute,
   SettingsStoreRoute: SettingsStoreRoute,
   SettingsStorefrontRoute: SettingsStorefrontRoute,
+  SettingsSystemInfoRoute: SettingsSystemInfoRoute,
   SettingsTaxesRoute: SettingsTaxesRouteWithChildren,
   SettingsIndexRoute: SettingsIndexRoute,
   SettingsWebhooksWebhookEndpointIdRoute:

@@ -1,7 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { type Product, SpreeError } from '@spree/admin-sdk'
 import {
-  adminClient,
   CategorizationCard,
   DigitalAssetsCard,
   extensionFormValues,
@@ -53,7 +52,6 @@ import { StockHistoryDialog } from '../../../../components/spree/stock-history-c
 import { ResourceTranslationsCard } from '../../../../components/spree/translations/resource-translations-card'
 import { useDeleteProduct, useProduct, useUpdateProduct } from '../../../../hooks/use-product'
 import { useProductMedia } from '../../../../hooks/use-product-media'
-import { spreeJsonLinkResolver } from '../../../../lib/json-link-resolver'
 
 // Purchasable attributes (sku, barcode, prices, weight, dimensions, stock,
 // track_inventory) live on variants in API v3. The product form no longer
@@ -306,16 +304,11 @@ function ProductForm({ product }: { product: Product }) {
               backTo="products"
               badges={<StatusBadge status={product.status} />}
               actions={<FormActions form={form} saveLabel={t('admin.products.save_label')} />}
-              resource={{ id: product.id }}
+              resource={product}
               onDelete={handleDelete}
               deleteConfirmMessage={t('admin.products.delete_confirm')}
               deleteLabel={t('admin.products.delete_label')}
-              jsonPreview={{
-                title: `Product ${product.name}`,
-                fetch: () => adminClient.products.get(productId),
-                endpoint: `/api/v3/admin/products/${productId}`,
-                resolveLink: spreeJsonLinkResolver(storeId),
-              }}
+              endpoint={`/api/v3/admin/products/${productId}`}
             />
           }
           main={

@@ -2190,7 +2190,7 @@ paths:
           content:
             application/json:
               example:
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--22ede2e3d9cdad77551bf7a67e01face0a96aedc
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--5cf7f6bc12adaf5ef31072ed4b5eb4c1732ca992
                 filename: purchase-order.pdf
                 content_type: application/pdf
                 byte_size: 48210
@@ -2198,7 +2198,7 @@ paths:
                 expires_at: '2026-01-16T12:00:00.000Z'
                 upload:
                   method: PUT
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiIwc3NuNW5kM3RneWtwcWJndXdybGprZjNwbjc4IiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjQ4MjEwLCJjaGVja3N1bSI6IjVXMjhrY2ZxcDlLMGY1djRZN2VyUkE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--a14c3a39c55e67d9104f389ddda9d8126fb71040
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiIwc3NuNW5kM3RneWtwcWJndXdybGprZjNwbjc4IiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjQ4MjEwLCJjaGVja3N1bSI6IjVXMjhrY2ZxcDlLMGY1djRZN2VyUkE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--62ceed9df34cc66975b6deda8eadd3a0f1e12f04
                   headers:
                     Content-Type: application/pdf
               schema:
@@ -11812,7 +11812,7 @@ paths:
                   slug: privacy-policy
                   body: ''
                   body_html: ''
-                  updated_at: '2026-11-10T13:27:20.350Z'
+                  updated_at: '2026-11-11T12:45:25.480Z'
                 - id: pol_OIJLhNcSbf
                   name: Privacy Policy
                   slug: privacy-policy-f4e5666d-52c2-4d89-aec5-cc55d69c7174
@@ -11830,19 +11830,19 @@ paths:
                   slug: returns-policy
                   body: ''
                   body_html: ''
-                  updated_at: '2026-11-10T13:27:20.359Z'
+                  updated_at: '2026-11-11T12:45:25.483Z'
                 - id: pol_VqXmZF31wY
                   name: Shipping Policy
                   slug: shipping-policy
                   body: ''
                   body_html: ''
-                  updated_at: '2026-11-10T13:27:20.367Z'
+                  updated_at: '2026-11-11T12:45:25.486Z'
                 - id: pol_UkLWZg9DAJ
                   name: Terms of Service
                   slug: terms-of-service
                   body: ''
                   body_html: ''
-                  updated_at: '2026-11-10T13:27:20.335Z'
+                  updated_at: '2026-11-11T12:45:25.475Z'
                 meta:
                   page: 1
                   limit: 25
@@ -21539,6 +21539,38 @@ components:
       - display_amount
       - display_compare_at_amount
       - price_list_id
+      x-typelizer: true
+    ProductCategory:
+      type: object
+      properties:
+        id:
+          type: string
+        product_id:
+          type: string
+          nullable: true
+        category_id:
+          type: string
+          nullable: true
+      required:
+      - id
+      - product_id
+      - category_id
+      x-typelizer: true
+    ProductCollection:
+      type: object
+      properties:
+        id:
+          type: string
+        product_id:
+          type: string
+          nullable: true
+        collection_id:
+          type: string
+          nullable: true
+      required:
+      - id
+      - product_id
+      - collection_id
       x-typelizer: true
     ProductFilterAvailabilityOption:
       type: object

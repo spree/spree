@@ -5672,7 +5672,8 @@
         "taxes": "税区分・税率・免税の理由",
         "ai_agents": "このストアにアクセスできる AI エージェント",
         "oauth_clients": "OAuth クライアントの登録と設定",
-        "storefront": "ストアフロントのURL、閲覧できる人、チェックアウトと住所の項目"
+        "storefront": "ストアフロントのURL、閲覧できる人、チェックアウトと住所の項目",
+        "system_info": "バグ報告に添付するバージョンと設定"
       },
       "groups": {
         "audit": "監査",
@@ -5715,7 +5716,8 @@
         "taxes": "税",
         "ai_agents": "AI エージェント",
         "oauth_clients": "OAuth クライアント",
-        "storefront": "ストアフロントとチェックアウト"
+        "storefront": "ストアフロントとチェックアウト",
+        "system_info": "システム情報"
       },
       "breadcrumbs": {
         "marketplace": "マーケットプレイス"
@@ -6905,6 +6907,41 @@
       "run_label": "これを実行",
       "copy_command": "コマンドをコピー",
       "cli_then_sign_in": "ブラウザが開くので、サインインしてエージェントにできることを承認してください。"
+    },
+    "system_info": {
+      "title": "システム情報",
+      "unavailable": "システム情報を表示するには、ストアを管理する権限が必要です。",
+      "load_failed": "レポートを読み込めませんでした。",
+      "copy": "Markdown としてコピー",
+      "copied": "コピーしました",
+      "report_issue": "GitHub で問題を報告"
+    },
+    "feedback": {
+      "title": "フィードバックを送信",
+      "description": "GitHub の Spree チームに届きます。そこで投稿するまで何も送信されません。",
+      "kinds": {
+        "bug": "バグを報告",
+        "idea": "アイデアを提案",
+        "other": "その他"
+      },
+      "message": {
+        "bug": "何が起きましたか？",
+        "idea": "Spree に何をしてほしいですか？",
+        "other": "フィードバック"
+      },
+      "placeholder": {
+        "bug": "何をしようとして、何がうまくいかなかったのか",
+        "idea": "どんな課題が解決しますか？",
+        "other": "Spree チームに伝えたいこと"
+      },
+      "failed_requests": "最近失敗したリクエストを含める ({{count}})",
+      "failed_requests_hint": "メソッド、パス、ステータス、エラーコード、リクエスト ID のみ。リクエストやレスポンスの本文は含みません。",
+      "system_info_included": "匿名化されたシステム情報が含まれます。",
+      "system_info_unavailable": "システム情報は含まれません。ストアの管理権限が必要です。",
+      "review_system_info": "システム情報を確認",
+      "open_issue": "GitHub で Issue を開く",
+      "open_discussion": "GitHub でディスカッションを開く",
+      "copied_to_paste": "リンクには長すぎるためコピーしました。GitHub に貼り付けてください。"
     }
   }
 }

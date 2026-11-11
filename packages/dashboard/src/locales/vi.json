@@ -5639,7 +5639,8 @@
         "taxes": "Các loại thuế, thuế suất và lý do miễn thuế",
         "ai_agents": "Đại lý AI có quyền truy cập vào cửa hàng này",
         "oauth_clients": "Đăng ký và định cấu hình ứng dụng khách OAuth",
-        "storefront": "URL cửa hàng, ai được xem, thanh toán và trường địa chỉ"
+        "storefront": "URL cửa hàng, ai được xem, thanh toán và trường địa chỉ",
+        "system_info": "Phiên bản và cấu hình để đính kèm vào báo cáo lỗi"
       },
       "groups": {
         "audit": "Kiểm toán",
@@ -5682,7 +5683,8 @@
         "taxes": "Thuế",
         "ai_agents": "Đại lý AI",
         "oauth_clients": "Ứng dụng khách OAuth",
-        "storefront": "Cửa hàng & thanh toán"
+        "storefront": "Cửa hàng & thanh toán",
+        "system_info": "Thông tin hệ thống"
       },
       "breadcrumbs": {
         "marketplace": "Sàn thương mại điện tử"
@@ -6872,6 +6874,41 @@
       "run_label": "Chạy cái này",
       "copy_command": "Sao chép lệnh",
       "cli_then_sign_in": "Nó sẽ mở trình duyệt của bạn để đăng nhập và phê duyệt những gì đại lý có thể làm."
+    },
+    "system_info": {
+      "title": "Thông tin hệ thống",
+      "unavailable": "Bạn cần quyền quản lý cửa hàng để xem thông tin hệ thống.",
+      "load_failed": "Không thể tải báo cáo.",
+      "copy": "Sao chép dạng Markdown",
+      "copied": "Đã sao chép",
+      "report_issue": "Báo cáo sự cố trên GitHub"
+    },
+    "feedback": {
+      "title": "Gửi phản hồi",
+      "description": "Gửi đến nhóm Spree trên GitHub. Không có gì được gửi cho đến khi bạn đăng ở đó.",
+      "kinds": {
+        "bug": "Báo lỗi",
+        "idea": "Đề xuất ý tưởng",
+        "other": "Khác"
+      },
+      "message": {
+        "bug": "Đã xảy ra chuyện gì?",
+        "idea": "Bạn muốn Spree làm được gì?",
+        "other": "Phản hồi của bạn"
+      },
+      "placeholder": {
+        "bug": "Bạn đang cố làm gì, và điều gì đã sai?",
+        "idea": "Nó sẽ giải quyết vấn đề gì cho bạn?",
+        "other": "Bất cứ điều gì bạn muốn nhóm Spree biết"
+      },
+      "failed_requests": "Kèm các yêu cầu thất bại gần đây ({{count}})",
+      "failed_requests_hint": "Chỉ phương thức, đường dẫn, trạng thái, mã lỗi và ID yêu cầu. Không bao giờ kèm nội dung yêu cầu hoặc phản hồi.",
+      "system_info_included": "Đã kèm thông tin hệ thống ẩn danh.",
+      "system_info_unavailable": "Không kèm thông tin hệ thống: cần quyền quản lý cửa hàng.",
+      "review_system_info": "Xem thông tin hệ thống",
+      "open_issue": "Mở issue trên GitHub",
+      "open_discussion": "Mở thảo luận trên GitHub",
+      "copied_to_paste": "Quá dài cho một liên kết nên đã được sao chép. Hãy dán vào GitHub."
     }
   }
 }

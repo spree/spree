@@ -2594,7 +2594,8 @@
                 "pages": [
                   "developer/contributing/quickstart",
                   "developer/contributing/developing-spree",
-                  "developer/contributing/creating-an-extension"
+                  "developer/contributing/creating-an-extension",
+                  "developer/contributing/reporting-issues"
                 ]
               },
               {

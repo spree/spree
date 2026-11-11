@@ -5660,7 +5660,8 @@
         "taxes": "税务类别、税率和免税原因",
         "ai_agents": "有权访问此店铺的 AI 代理",
         "oauth_clients": "注册并配置 OAuth 客户端",
-        "storefront": "店面网址、谁可以浏览、结账和地址字段"
+        "storefront": "店面网址、谁可以浏览、结账和地址字段",
+        "system_info": "附加到错误报告中的版本和配置"
       },
       "groups": {
         "audit": "审计",
@@ -5703,7 +5704,8 @@
         "taxes": "税费",
         "ai_agents": "AI 代理",
         "oauth_clients": "OAuth 客户端",
-        "storefront": "店面与结账"
+        "storefront": "店面与结账",
+        "system_info": "系统信息"
       },
       "breadcrumbs": {
         "marketplace": "平台"
@@ -6891,6 +6893,41 @@
       "run_label": "运行此命令",
       "copy_command": "复制命令",
       "cli_then_sign_in": "它会打开浏览器，让您登录并批准代理可以执行的操作。"
+    },
+    "system_info": {
+      "title": "系统信息",
+      "unavailable": "你需要管理店铺的权限才能查看系统信息。",
+      "load_failed": "无法加载报告。",
+      "copy": "复制为 Markdown",
+      "copied": "已复制",
+      "report_issue": "在 GitHub 上报告问题"
+    },
+    "feedback": {
+      "title": "发送反馈",
+      "description": "发送给 GitHub 上的 Spree 团队。在你于 GitHub 发布之前不会发送任何内容。",
+      "kinds": {
+        "bug": "报告错误",
+        "idea": "提出建议",
+        "other": "其他"
+      },
+      "message": {
+        "bug": "发生了什么？",
+        "idea": "你希望 Spree 能做什么？",
+        "other": "你的反馈"
+      },
+      "placeholder": {
+        "bug": "你想做什么，出了什么问题？",
+        "idea": "它能为你解决什么问题？",
+        "other": "任何你想让 Spree 团队知道的事"
+      },
+      "failed_requests": "包含最近失败的请求（{{count}}）",
+      "failed_requests_hint": "仅包含方法、路径、状态、错误代码和请求 ID，绝不包含请求或响应内容。",
+      "system_info_included": "已包含匿名系统信息。",
+      "system_info_unavailable": "未包含系统信息：需要管理店铺的权限。",
+      "review_system_info": "查看系统信息",
+      "open_issue": "在 GitHub 上创建 issue",
+      "open_discussion": "在 GitHub 上发起讨论",
+      "copied_to_paste": "内容太长无法放入链接，已复制。请粘贴到 GitHub。"
     }
   }
 }

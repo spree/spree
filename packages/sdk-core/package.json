@@ -27,6 +27,7 @@
     "build": "tsup",
     "dev": "tsup --watch",
     "typecheck": "tsc --noEmit",
+    "test": "vitest run",
     "lint": "biome check src",
     "lint:fix": "biome check --fix src",
     "format": "biome format --write src",
@@ -38,7 +39,8 @@
     "spark-md5": "^3.0.2",
     "tsup": "catalog:",
     "typescript": "catalog:",
-    "yaml": "catalog:"
+    "yaml": "catalog:",
+    "vitest": "catalog:"
   },
   "engines": {
     "node": ">=18.0.0"

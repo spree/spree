@@ -16,6 +16,7 @@ Rails 8.1 engines, everything namespaced under `Spree::`. Follow Rails conventio
 - YARD comments (`@param`, `@return`) on classes and non-obvious public methods only; never on private helpers.
 - Descriptive variable names, no abbreviations.
 - Jobs that iterate over records use `ActiveJob::Continuable`.
+- Report errors with `Rails.error.report(error, source: 'spree.<area>')`, not `Rails.logger.error`, so they reach the diagnostics error log (`docs/plans/6.0-diagnostics-and-issue-reporting.md`).
 
 ## Models
 

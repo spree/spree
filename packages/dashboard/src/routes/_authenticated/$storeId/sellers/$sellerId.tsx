@@ -1,7 +1,6 @@
 import type { Seller } from '@spree/admin-sdk'
 import { SELLER_STATUSES, subsetOf } from '@spree/core'
 import {
-  adminClient,
   PageHeader,
   RecordMetadataCard,
   Slot,
@@ -45,7 +44,6 @@ import {
   useSeller,
   useSuspendSeller,
 } from '../../../../hooks/use-sellers'
-import { spreeJsonLinkResolver } from '../../../../lib/json-link-resolver'
 
 // Mirrors the workflow guards, so the operator is never offered a move the
 // server would refuse.
@@ -270,13 +268,8 @@ function SellerBody({ seller }: { seller: Seller }) {
               actions={primaryAction}
               dropdownItems={dropdownItems}
               destructiveItems={destructiveItems}
-              resource={{ id: seller.id }}
-              jsonPreview={{
-                title: `Seller ${seller.name}`,
-                fetch: () => adminClient.sellers.get(seller.id),
-                endpoint: `/api/v3/admin/sellers/${seller.id}`,
-                resolveLink: spreeJsonLinkResolver(storeId),
-              }}
+              resource={seller}
+              endpoint={`/api/v3/admin/sellers/${seller.id}`}
               onDelete={permissions.can('destroy', Subject.Seller) ? handleDelete : undefined}
               deleteLabel={t('admin.sellers.detail.delete_label')}
             />

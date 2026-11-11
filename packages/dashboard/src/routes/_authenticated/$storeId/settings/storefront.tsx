@@ -117,6 +117,8 @@ function StorefrontSettingsForm({ store }: { store: Store }) {
           header={
             <PageHeader
               docsPath="settings/storefront"
+              resource={store}
+              endpoint="/api/v3/admin/store"
               title={t('admin.pages.settings.storefront.title')}
               description={t('admin.pages.settings.storefront.description')}
               actions={<FormActions form={form} onDiscard={() => form.reset()} />}

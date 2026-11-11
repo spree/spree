@@ -6740,3 +6740,14 @@ which loads them on demand.
 **Consequences:** Store API reads of collections must go through `Store::CollectionsController#scope`, and once publishing ships, anything that creates collections must use the workflow or write publications itself, or the collection is invisible. A merchant stages a collection with a future `published_at`.
 
 **Plan:** `6.1-collections-merchandising.md`.
+
+
+## 2026-11-11 — One anonymised diagnostics report for bug reports
+
+**Context:** Bug reports from self-hosted installations arrive without the Spree version, gems, stack, store setup or providers, so maintainers can't reproduce them. `bug_report.md` asked for a Gist of the Gemfile.lock, which almost nobody provides.
+
+**Decision:** `Spree::Diagnostics` in `spree_core` builds one report from allowlisted fields. It is available through `bin/rails spree:info`, `GET /api/v3/admin/diagnostics` (JWT, `manage` on the store, as `/updates`), Dashboard → Settings → System info and `spree info` (local only). Stores, channels and markets appear as prefixed IDs, never names. Recent errors come from a `Rails.error` subscriber into a `Rails.cache` ring buffer, as class and Spree code location only, never the message. The stack fields move out of `Spree::UpdateCheck` so the heartbeat and the report share them. Every dashboard detail page gets "View as JSON" from `PageHeader`, and a browser-only developer inspector lists recent API requests by request ID. All of it ships in 6.0.4.
+
+**Consequences:** Errors must be reported through `Rails.error.report` with a `spree.*` source to show up in reports. Changed settings are reported only when they are booleans, numbers or fixed-choice strings; free-form strings never are. Gems are named only when they are Spree's own or come from rubygems.org, and the diagnostics endpoint's `errors[].error_class` is a deliberate exception to the no-class-names-on-the-wire rule. Secret API keys still never see the running version. Because this is a patch release, the work adds no migrations and changes no existing response or signature.
+
+**Plan:** `6.0-diagnostics-and-issue-reporting.md`.
