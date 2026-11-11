@@ -136,7 +136,10 @@ const transactionsRuby = (ledgerSellerSlug: string) =>
     `ledger_seller.seller_transfers.first_or_create!(store: s, order: ledger_order, payout: ledger_payout, amount: ${FIXTURE_LEDGER_PAYOUT_AMOUNT}, currency: s.default_currency, kind: 'earning', provider: Spree::PayoutProvider::System.provider_key, status: 'completed')`,
     // Where the ledger seller takes returns: a postable location, so the
     // seller page shows a returns address and links to the location behind it.
-    `ledger_seller.stock_locations.where(name: '${FIXTURE_LEDGER_RETURNS_LOCATION}').first_or_create!(store: s, active: true, returns_enabled: true, address1: '1 Returns Way', city: 'Albany', zipcode: '12207', country_code: 'US', state_code: 'NY')`,
+    // The location the API created with the seller has no address, so it stops
+    // taking returns.
+    `returns_location = ledger_seller.stock_locations.where(name: '${FIXTURE_LEDGER_RETURNS_LOCATION}').first_or_create!(store: s, active: true, returns_enabled: true, address1: '1 Returns Way', city: 'Albany', zipcode: '12207', country_code: 'US', state_code: 'NY')`,
+    'ledger_seller.stock_locations.where.not(id: returns_location.id).update_all(returns_enabled: false)',
     // Seller panel accounts. One runs the ledger seller, whose sale and payouts
     // give the read-only panel screens something to show; the other runs a
     // seller of its own that the specs editing a profile, policy or team may
