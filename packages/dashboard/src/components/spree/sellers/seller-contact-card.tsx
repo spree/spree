@@ -1,4 +1,5 @@
 import type { Seller } from '@spree/admin-sdk'
+import { Subject, usePermissions } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -27,6 +28,7 @@ import { SellerInlineForm } from './seller-inline-form'
  */
 export function SellerContactCard({ seller, canEdit }: { seller: Seller; canEdit: boolean }) {
   const { t } = useTranslation()
+  const { permissions } = usePermissions()
   const [editing, setEditing] = useState(false)
 
   return (
@@ -117,7 +119,13 @@ export function SellerContactCard({ seller, canEdit }: { seller: Seller; canEdit
           <SellerAddress seller={seller} addressKey="billing_address" canEdit={canEdit} />
         </div>
         <div className="border-border-subtle border-t pt-4">
-          <SellerAddress seller={seller} addressKey="returns_address" canEdit={canEdit} />
+          {/* The returns address is a stock location's, so it needs the right
+              to edit locations as well as sellers. */}
+          <SellerAddress
+            seller={seller}
+            addressKey="returns_address"
+            canEdit={canEdit && permissions.can('update', Subject.StockLocation)}
+          />
         </div>
       </CardContent>
     </Card>

@@ -126,7 +126,7 @@ module Spree
                  Spree::StockLocation.new(active: true, returns_enabled: true, propagate_all_variants: false)
       # A state belongs to its country, so a new country drops the old state
       # unless one comes with it.
-      if attributes.key?('country_code') && attributes['country_code'] != location.country_code
+      if attributes.key?('country_code') && attributes['country_code'].to_s.upcase != location.country_code.to_s.upcase
         attributes = { 'state_code' => nil, 'state_name' => nil }.merge(attributes)
       end
       location.assign_attributes(attributes)
@@ -564,7 +564,12 @@ module Spree
       location = @pending_returns_location
       @pending_returns_location = nil
       location.seller_id = id
-      location.save! if location.new_record? || location.changed?
+      return unless location.new_record? || location.changed?
+
+      location.save!
+      # A new location is not in a list loaded before it existed, and the
+      # returns location is read from that list once the memo clears.
+      stock_locations.reset
     end
 
     # The same choice as the query in {#returns_location}, made over the

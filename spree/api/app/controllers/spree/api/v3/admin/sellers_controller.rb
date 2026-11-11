@@ -18,6 +18,7 @@ module Spree
 
           before_action :set_resource, only: [:show, :update, :destroy, :invite, :approve, :suspend, :reject,
                                               :onboarding, :reopen_onboarding]
+          before_action :authorize_returns_address!, only: [:create, :update]
 
           RETURNS_ADDRESS_DESCRIPTION = "Where customers send returns, written inline. It is the address of the seller's " \
                                         'returns stock location, so it updates that location, or creates one for a seller ' \
@@ -243,6 +244,16 @@ module Spree
             return nil if params[:role_id].blank?
 
             @resource.roles.find_by_prefix_id!(params[:role_id])
+          end
+
+          # The returns address is a stock location's, and writing a location
+          # needs `write_settings` (see StockLocationsController), which the
+          # `sellers` scope does not grant.
+          def authorize_returns_address!
+            return unless params.key?(:returns_address)
+            return if holds_permission?('write_settings')
+
+            render_missing_permission('write_settings')
           end
         end
       end

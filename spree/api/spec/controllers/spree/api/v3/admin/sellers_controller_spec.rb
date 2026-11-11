@@ -259,6 +259,38 @@ RSpec.describe Spree::Api::V3::Admin::SellersController, type: :controller do
       expect(json_response['returns_address']['city']).to eq('Leeds')
     end
 
+    it 'answers with the returns location it created for a seller who had none' do
+      patch :update, params: {
+        id: seller.prefixed_id,
+        returns_address: { address1: '1 Returns Way', city: 'Leeds', postal_code: 'LS1 1AA', country_code: 'GB' }
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['returns_location_id']).to eq(seller.reload.returns_location.prefixed_id)
+      expect(json_response['returns_address']['address1']).to eq('1 Returns Way')
+    end
+
+    # A returns address is a stock location's, which `sellers` does not cover.
+    context 'with a key that may manage sellers but not stock locations' do
+      let(:secret_api_key) { create(:api_key, :secret, store: store, scopes: %w[write_sellers]) }
+      let(:headers) { api_key_headers }
+
+      it 'refuses the returns address' do
+        patch :update, params: { id: seller.prefixed_id, returns_address: { address1: '1 Returns Way' } }, as: :json
+
+        expect(response).to have_http_status(:forbidden)
+        expect(json_response['error']['details']['required_permission']).to eq('write_settings')
+        expect(seller.stock_locations).to be_empty
+      end
+
+      it 'still edits the rest of the seller' do
+        patch :update, params: { id: seller.prefixed_id, contact_email: 'new@sparks.example' }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(seller.reload.contact_email).to eq('new@sparks.example')
+      end
+    end
+
     # The dashboard uploads the file, then sends the resulting signed id.
     it 'attaches branding from a signed id' do
       blob = ActiveStorage::Blob.create_and_upload!(

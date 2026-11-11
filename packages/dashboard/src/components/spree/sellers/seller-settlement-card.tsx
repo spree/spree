@@ -1,6 +1,6 @@
 import type { Seller } from '@spree/admin-sdk'
 import { PAYOUT_SCHEDULE_INTERVALS, TAX_REMITTANCES } from '@spree/core'
-import { currencyParts, useStore } from '@spree/dashboard-core'
+import { currencyParts, formatAmount, useMoneyLocale, useStore } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -38,6 +38,7 @@ import { SellerInlineForm } from './seller-inline-form'
 export function SellerSettlementCard({ seller, canEdit }: { seller: Seller; canEdit: boolean }) {
   const { t } = useTranslation()
   const { defaultCurrency } = useStore()
+  const moneyLocale = useMoneyLocale()
   const [editing, setEditing] = useState(false)
 
   return (
@@ -81,7 +82,9 @@ export function SellerSettlementCard({ seller, canEdit }: { seller: Seller; canE
                 : t('admin.sellers.payout_interval.inherit')}
             </ReadRow>
             <ReadRow label={t('admin.fields.seller.minimum_payout_amount.label')}>
-              {seller.minimum_payout_amount}
+              {seller.minimum_payout_amount
+                ? formatAmount(seller.minimum_payout_amount, defaultCurrency, moneyLocale)
+                : null}
             </ReadRow>
           </>
         )}

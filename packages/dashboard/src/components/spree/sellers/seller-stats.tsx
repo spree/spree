@@ -38,19 +38,23 @@ export function SellerStats({ seller }: { seller: Seller }) {
         label={t('admin.sellers.stats.commission')}
         enabled={permissions.can('read', Subject.CommissionLine)}
       />
-      <StatItem label={t('admin.nav.orders')} value={orders.data ?? '—'} />
-      <StatItem
-        label={t('admin.sellers.orders.to_fulfill')}
-        value={
-          <StatLink
-            to="/$storeId/orders"
-            params={{ storeId }}
-            search={sellerOrdersSearch(seller.id, true)}
-          >
-            {toFulfill.data ?? '—'}
-          </StatLink>
-        }
-      />
+      {canReadOrders && (
+        <>
+          <StatItem label={t('admin.nav.orders')} value={orders.data ?? '—'} />
+          <StatItem
+            label={t('admin.sellers.orders.to_fulfill')}
+            value={
+              <StatLink
+                to="/$storeId/orders"
+                params={{ storeId }}
+                search={sellerOrdersSearch(seller.id, true)}
+              >
+                {toFulfill.data ?? '—'}
+              </StatLink>
+            }
+          />
+        </>
+      )}
       <StatItem
         label={t('admin.pages.products.status_options.proposed')}
         value={

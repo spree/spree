@@ -264,6 +264,15 @@ describe Spree::Seller do
         expect(seller.stock_locations.count).to eq(1)
       end
 
+      it 'keeps the state when the same country comes in another case' do
+        location = create(:stock_location, store: store, seller: seller, returns_enabled: true,
+                                           country_code: 'US', state_code: 'NY')
+
+        seller.update!(returns_address: { country_code: 'us', address1: '2 Returns Way' })
+
+        expect(location.reload).to have_attributes(country_code: 'US', state_code: 'NY')
+      end
+
       # Until the seller has an id, the location's name would be checked
       # against the operator's own locations.
       it "creates one named like an operator's own location" do

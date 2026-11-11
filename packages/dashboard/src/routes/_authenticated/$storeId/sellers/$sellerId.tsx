@@ -286,8 +286,8 @@ function SellerBody({ seller }: { seller: Seller }) {
         main={
           <>
             <SellerBrandCard seller={seller} canEdit={canEdit} />
-            <SellerProductsSection seller={seller} />
-            <SellerOrdersSection seller={seller} />
+            {permissions.can('read', Subject.Product) && <SellerProductsSection seller={seller} />}
+            {permissions.can('read', Subject.Order) && <SellerOrdersSection seller={seller} />}
             <SellerTeamCard seller={seller} onInvite={() => setInviting(true)} />
             <SellerStockLocationsCard seller={seller} />
             <ApiCustomFieldsCard ownerType="seller" ownerId={seller.id} collapsible />

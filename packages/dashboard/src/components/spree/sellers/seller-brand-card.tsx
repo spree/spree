@@ -38,6 +38,9 @@ export function SellerBrandCard({ seller, canEdit }: { seller: Seller; canEdit: 
         variant="ghost"
         size="icon-sm"
         className={className}
+        // One part at a time: opening another would drop this one's
+        // unsaved changes without asking.
+        disabled={editing !== null}
         onClick={() => setEditing(part)}
         aria-label={label}
         aria-expanded={editing === part}
