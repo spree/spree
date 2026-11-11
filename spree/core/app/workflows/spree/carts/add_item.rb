@@ -67,22 +67,41 @@ module Spree
       private
 
       # Draft orders (the admin path) carry no completion claim — only a cart
-      # does. The error matches the Store API's lock fence so a caller can
-      # treat both entry points alike.
+      # does. Read from a fresh copy of the row, not the caller's instance:
+      # that one may predate the claim, and may carry in-memory changes the
+      # workflow must keep. The error matches the Store API's lock fence so a
+      # caller can treat both entry points alike.
       def guard_completion_claim
-        return unless cart.is_a?(Spree::Cart) && cart.completion_claimed?
+        return unless guarded_cart?
+        return unless completion_holds?(Spree::Cart.find(cart.id))
 
-        failure(cart, code: 'completion_in_progress', message: I18n.t('spree.cart_completion_in_progress'))
+        reject_claimed_cart
       end
 
-      # Reads a locked, fresh copy of the row rather than the caller's
-      # instance: that one may predate the claim, and may carry in-memory
-      # changes (pricing warnings) that +lock!+ would refuse to discard. A
-      # no-op wait on the Store API path, which already holds this lock.
+      # Again under the row lock: the external steps can take a while, and a
+      # completion may have claimed — or finished — the cart since the first
+      # check. A no-op wait on the Store API path, which already holds this
+      # lock. +lock.find+ rather than +lock!+, which refuses to discard the
+      # caller's in-memory changes (pricing warnings).
       def guard_completion_claim_in_lock
-        return unless cart.is_a?(Spree::Cart)
-        return unless Spree::Cart.lock.find(cart.id).completion_claimed?
+        return unless guarded_cart?
+        return unless completion_holds?(Spree::Cart.lock.find(cart.id))
 
+        reject_claimed_cart
+      end
+
+      def guarded_cart?
+        cart.is_a?(Spree::Cart) && cart.persisted?
+      end
+
+      # Finalize clears the claim as it stamps +completed_at+, so a finished
+      # cart answers false to +completion_claimed?+ and has to be refused on
+      # its own.
+      def completion_holds?(fresh_cart)
+        fresh_cart.completed_at.present? || fresh_cart.completion_claimed?
+      end
+
+      def reject_claimed_cart
         failure(cart, code: 'completion_in_progress', message: I18n.t('spree.cart_completion_in_progress'))
       end
 

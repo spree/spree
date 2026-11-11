@@ -89,6 +89,42 @@ module Spree
           expect(execute.error.value[:code]).to eq('completion_in_progress')
         end
       end
+
+      context 'when completion finishes the cart while pricing runs' do
+        let(:stale_cart) { Spree::Cart.find(cart.id) }
+        let(:execute) { subject.call(cart: stale_cart, variant: variant, quantity: qty) }
+
+        before do
+          stale_cart
+          # Finalize stamps completed_at and clears the claim in one write.
+          allow_any_instance_of(described_class).to receive(:resolve_price).and_wrap_original do |original, *args|
+            Spree::Cart.where(id: cart.id).update_all(completed_at: Time.current, completing_at: nil)
+            original.call(*args)
+          end
+        end
+
+        it 'refuses the completed cart and leaves its lines and total unchanged' do
+          expect { execute }.not_to(change { [Spree::LineItem.where(cart_id: cart.id).pluck(:id, :quantity), Spree::Cart.find(cart.id).total] })
+          expect(execute.error.value[:code]).to eq('completion_in_progress')
+        end
+      end
+
+      context 'when the caller holds a cart loaded before the claim' do
+        let(:stale_cart) { Spree::Cart.find(cart.id) }
+        let(:execute) { subject.call(cart: stale_cart, variant: variant, quantity: qty) }
+
+        before do
+          stale_cart
+          cart.update_column(:completing_at, Time.current)
+        end
+
+        it 'refuses before the availability check can answer instead' do
+          expect_any_instance_of(described_class).not_to receive(:check_availability)
+
+          expect(execute).to be_failure
+          expect(execute.error.value[:code]).to eq('completion_in_progress')
+        end
+      end
     end
 
     context 'with same line item' do
