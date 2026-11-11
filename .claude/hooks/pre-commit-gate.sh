@@ -242,7 +242,10 @@ while IFS= read -r segment; do
   if [ -n "$head_owner" ]; then
     remote_url=$(git -C "$review_dir" remote get-url "$push_remote" 2>/dev/null)
     remote_owner=""
-    [[ "$remote_url" =~ github\.com[:/]+([^/]+)/ ]] && remote_owner="${BASH_REMATCH[1]}"
+    # https://github.com/OWNER/…, git@github.com:OWNER/… or, over the HTTPS
+    # port, ssh://git@ssh.github.com:443/OWNER/…
+    github_owner='github\.com(:[0-9]+)?[:/]+([^/]+)/'
+    [[ "$remote_url" =~ $github_owner ]] && remote_owner="${BASH_REMATCH[2]}"
     if [ -z "$remote_owner" ] || [ "$(tr '[:upper:]' '[:lower:]' <<<"$remote_owner")" != "$(tr '[:upper:]' '[:lower:]' <<<"$head_owner")" ]; then
       echo "Blocked: $seg" >&2
       echo "--head $HEAD_FLAG opens $head_owner's branch, but $head_branch pushes to ${remote_owner:-an unknown owner}. Drop the owner or push to that repository." >&2
