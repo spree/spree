@@ -90,6 +90,12 @@ RSpec.describe Spree::Diagnostics do
     expect(report.to_markdown).not_to include('Recent errors')
   end
 
+  it 'keeps a value inside its table cell' do
+    report = described_class.report(store: store, extra_sections: [{ title: 'CLI', rows: { 'Shell' => "a\\|b\r\nc" } }])
+
+    expect(report.to_markdown).to include('| Shell | a\\\\\\|b c |')
+  end
+
   it 'renders Markdown that folds into a details block' do
     expect(report.to_markdown).to start_with('<details>').and end_with('</details>')
     expect(report.to_markdown).to include("**Runtime**\n\n| | |\n| --- | --- |\n| Ruby | #{RUBY_VERSION}")

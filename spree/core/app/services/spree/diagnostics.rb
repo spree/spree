@@ -85,7 +85,7 @@ module Spree
       end
 
       def escape(value)
-        value.to_s.gsub('|', '\|').gsub("\n", ' ')
+        value.to_s.gsub(/[\\|]/) { |char| "\\#{char}" }.gsub(/[\r\n]+/, ' ')
       end
     end
 
