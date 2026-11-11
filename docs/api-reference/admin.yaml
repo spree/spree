@@ -9559,11 +9559,6 @@ paths:
           const { sent_to } = await client.emailTemplates.sendTest('spree.order_mailer.confirm_email', {
             body: '<mj-section><mj-column><mj-text>Thanks, {{ order.customer_name }}!</mj-text></mj-column></mj-section>',
           })
-      - lang: bash
-        label: Spree CLI
-        source: spree api post /email_templates/{email_template_id}/test_email -d
-          '{"body":"<mj-section><mj-column><mj-text>Thanks, {{ order.customer_name
-          }}!</mj-text></mj-column></mj-section>"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -32082,9 +32077,6 @@ paths:
           // Needs a client created with `jwtToken`: a secret key is refused.
           const report = await client.diagnostics.get()
           console.log(report.markdown)
-      - lang: bash
-        label: Spree CLI
-        source: spree api get /diagnostics
       parameters:
       - name: Authorization
         in: header
@@ -34041,9 +34033,6 @@ paths:
           if (status.update_available) {
             console.log(`Spree ${status.latest_version} is available: ${status.latest_release_url}`)
           }
-      - lang: bash
-        label: Spree CLI
-        source: spree api get /updates
       parameters:
       - name: Authorization
         in: header

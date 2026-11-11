@@ -10,8 +10,9 @@ module Spree
     # host application become +app/[redacted]+ and frames from private gems
     # +gem/[redacted]+, so the merchant's own code is not shared either.
     #
-    # Entries live in Rails.cache, so a cache clear or a restart empties the
-    # log, and with a per-process memory store each process keeps its own.
+    # Entries live in Rails.cache, so a cache clear empties the log. With a
+    # per-process memory store a restart does too, and each process keeps its
+    # own.
     class ErrorLog
       CACHE_KEY = 'spree/diagnostics/errors'.freeze
       LIMIT = 50

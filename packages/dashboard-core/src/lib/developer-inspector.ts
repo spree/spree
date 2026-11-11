@@ -66,6 +66,17 @@ export function redactPath(path: string): string {
   return path.replace(TOKEN_IN_PATH, `$1${FILTERED}`)
 }
 
+function redactUrl(url: string): string {
+  const path = redactPath(url)
+  const start = path.indexOf('?')
+  if (start === -1) return path
+  const params = new URLSearchParams(path.slice(start + 1))
+  const sensitive = [...new Set(params.keys())].filter((key) => SENSITIVE_FIELD.test(key))
+  if (sensitive.length === 0) return path
+  for (const key of sensitive) params.set(key, FILTERED)
+  return `${path.slice(0, start)}?${params}`
+}
+
 export function redactHeaders(headers: Record<string, string>): Record<string, string> {
   return Object.fromEntries(
     Object.entries(headers).map(([name, value]) => [
@@ -103,9 +114,9 @@ export function recordRequest(event: RequestCompleteEvent): void {
   const entry: DeveloperInspectorEntry = {
     id: nextId++,
     method: event.method,
-    path: redactPath(event.path),
-    query: event.query,
-    url: redactPath(event.url),
+    path: redactUrl(event.path),
+    query: redactBody(event.query) as RequestCompleteEvent['query'],
+    url: redactUrl(event.url),
     status: event.status,
     durationMs: Math.round(event.durationMs),
     requestId: event.requestId,

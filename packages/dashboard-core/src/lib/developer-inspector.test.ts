@@ -70,6 +70,19 @@ describe('recordRequest', () => {
     expect(JSON.stringify(reset)).not.toContain('reset-token-123')
   })
 
+  it('masks secret query parameters in the query and the URL', () => {
+    recordRequest(
+      event({
+        query: { page: 2, token: 'tok_1' },
+        url: 'http://localhost/api/v3/admin/products?page=2&token=tok_1',
+      }),
+    )
+
+    const [entry] = getDeveloperInspectorEntries()
+    expect(entry.query).toEqual({ page: 2, token: '[FILTERED]' })
+    expect(entry.url).toBe('http://localhost/api/v3/admin/products?page=2&token=%5BFILTERED%5D')
+  })
+
   it('keeps the API error code of a failed request', () => {
     recordRequest(
       event({

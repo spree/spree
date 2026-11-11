@@ -14,8 +14,9 @@ test.describe('send feedback', () => {
     const creds = await login(page)
 
     // A product that doesn't exist: the dashboard's request for it fails.
+    const failed = page.waitForResponse((response) => response.url().includes('prod_missing00'))
     await page.goto(`/${creds.store_id}/products/prod_missing00`)
-    await page.waitForResponse((response) => response.url().includes('prod_missing00'))
+    await failed
 
     await page.getByRole('button', { name: /user menu/i }).click()
     await page.getByRole('menuitem', { name: 'Send feedback' }).click()

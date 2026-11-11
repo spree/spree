@@ -19,7 +19,7 @@ The **diagnostics report** collects it for you. Attach it to every [bug report](
 | Changed settings | Flags and numbers changed from their defaults |
 | Dashboard | The dashboard's `@spree/*` packages and your browser, when the report comes from the dashboard |
 | CLI | Node, package manager, Docker and the project's `@spree/*` packages, when the report comes from `spree info` |
-| Recent errors | Spree errors since the last restart: the error class, where it was raised, how often, and the request ID. Dashboard only |
+| Recent errors | Spree errors recently recorded in the Rails cache: the error class, where it was raised, how often, and the request ID. Dashboard only |
 
 The report is built to be pasted into a public issue:
 
@@ -28,7 +28,7 @@ The report is built to be pasted into a public issue:
 - Errors show the class and the Spree code location only, never the message. Your own application's code appears as `app/[redacted]`, and gems that don't come from rubygems.org or the Spree team as `gem/[redacted]`. Use the request ID to find the full message in your logs.
 - Gems are listed by name only when they are Spree's own or installed from rubygems.org; other gems built on Spree are only counted.
 
-Recent errors are Spree errors your server answered with a 5xx or reported itself; refused requests, such as an invalid address, are left out. They are kept in the Rails cache, so clearing the cache or restarting the server empties the list. `spree info` and `bin/rails spree:info` leave them out: they run in a process of their own, which usually can't see the server's list.
+Recent errors are Spree errors your server answered with a 5xx or reported itself; refused requests, such as an invalid address, are left out. They are kept in the Rails cache, so clearing the cache empties the list. Restarting the server empties it only when the cache lives in the server's memory. `spree info` and `bin/rails spree:info` leave them out: they run in a process of their own, which usually can't see the server's list.
 
 ## Get the report
 

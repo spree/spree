@@ -6908,7 +6908,8 @@
       "review_system_info": "Xem thông tin hệ thống",
       "open_issue": "Mở issue trên GitHub",
       "open_discussion": "Mở thảo luận trên GitHub",
-      "copied_to_paste": "Quá dài cho một liên kết nên đã được sao chép. Hãy dán vào GitHub."
+      "copied_to_paste": "Quá dài cho một liên kết nên đã được sao chép. Hãy dán vào GitHub.",
+      "copy_failed": "Quá dài cho một liên kết và không thể sao chép. Hãy rút ngắn tin nhắn hoặc sao chép báo cáo từ Cài đặt → Thông tin hệ thống."
     }
   }
 }

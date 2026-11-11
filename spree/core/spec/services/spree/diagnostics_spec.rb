@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 RSpec.describe Spree::Diagnostics do
-  let(:store) { @default_store }
+  let(:store) { create(:store) }
   let!(:market) { create(:market, store: store, name: 'Secret Market Name', currency: 'EUR', countries: [create(:country, iso: 'DE')]) }
 
   before do

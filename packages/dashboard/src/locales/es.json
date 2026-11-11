@@ -6944,7 +6944,8 @@
       "review_system_info": "Revisar la información del sistema",
       "open_issue": "Abrir incidencia en GitHub",
       "open_discussion": "Abrir debate en GitHub",
-      "copied_to_paste": "Demasiado largo para un enlace, así que se ha copiado. Pégalo en GitHub."
+      "copied_to_paste": "Demasiado largo para un enlace, así que se ha copiado. Pégalo en GitHub.",
+      "copy_failed": "Demasiado largo para un enlace y no se ha podido copiar. Acorta el mensaje o copia el informe desde Ajustes → Información del sistema."
     }
   }
 }

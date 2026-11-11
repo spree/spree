@@ -41,7 +41,7 @@ export function failedRequestLines(entries: DeveloperInspectorEntry[]): string {
     .map((entry) =>
       [
         entry.method,
-        entry.path,
+        entry.path.split('?')[0],
         entry.status ?? 'network error',
         entry.errorCode,
         entry.requestId && `request_id=${entry.requestId}`,

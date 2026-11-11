@@ -29,6 +29,14 @@ describe('failedRequestLines', () => {
     )
     expect(lines).not.toContain('jane')
   })
+
+  it('drops a query string written into the path', () => {
+    const lines = failedRequestLines([
+      { ...failed, path: '/api/v3/admin/customers?q=jane@example.com' },
+    ])
+
+    expect(lines).toBe('POST /api/v3/admin/customers 500 internal_server_error request_id=req-1')
+  })
 })
 
 describe('feedbackLink', () => {

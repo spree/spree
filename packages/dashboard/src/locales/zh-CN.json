@@ -6927,7 +6927,8 @@
       "review_system_info": "查看系统信息",
       "open_issue": "在 GitHub 上创建 issue",
       "open_discussion": "在 GitHub 上发起讨论",
-      "copied_to_paste": "内容太长无法放入链接，已复制。请粘贴到 GitHub。"
+      "copied_to_paste": "内容太长无法放入链接，已复制。请粘贴到 GitHub。",
+      "copy_failed": "内容太长无法放入链接，且复制失败。请缩短消息，或在 设置 → 系统信息 中复制报告。"
     }
   }
 }

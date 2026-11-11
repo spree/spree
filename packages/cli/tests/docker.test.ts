@@ -307,6 +307,7 @@ describe('dockerComposeCapture', () => {
 
   it('falls back to a one-off `run --rm -T` container when the service is down', async () => {
     routeExeca(false, 'output')
+    const stderr = vi.spyOn(process.stderr, 'write').mockReturnValue(true)
 
     await expect(dockerComposeCapture(['bin/rails', 'db:seed'], '/proj')).resolves.toBe('output')
     expect(mockExeca).toHaveBeenCalledWith(
@@ -314,7 +315,10 @@ describe('dockerComposeCapture', () => {
       ['compose', 'run', '--rm', '-T', 'web', 'bin/rails', 'db:seed'],
       { cwd: '/proj' },
     )
-    expect(logInfoMock).toHaveBeenCalled()
+    // On stderr, so the captured stdout stays parseable.
+    expect(stderr).toHaveBeenCalledWith(expect.stringContaining('one-off container'))
+    expect(logInfoMock).not.toHaveBeenCalled()
+    stderr.mockRestore()
   })
 
   it('threads -e KEY=VALUE pairs before the service', async () => {

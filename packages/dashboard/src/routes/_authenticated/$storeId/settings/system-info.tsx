@@ -34,7 +34,7 @@ function SystemInfoRoute() {
     <div className="flex flex-col gap-6">
       <PageHeader
         title={t('admin.system_info.title')}
-        actions={report && <ReportActions report={report} />}
+        actions={allowed && report && <ReportActions report={report} />}
       />
       {!allowed ? (
         <Empty>{t('admin.system_info.unavailable')}</Empty>

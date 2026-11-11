@@ -6942,7 +6942,8 @@
       "review_system_info": "Systeminformationen ansehen",
       "open_issue": "Issue auf GitHub öffnen",
       "open_discussion": "Diskussion auf GitHub öffnen",
-      "copied_to_paste": "Zu lang für einen Link, daher kopiert. Füge es auf GitHub ein."
+      "copied_to_paste": "Zu lang für einen Link, daher kopiert. Füge es auf GitHub ein.",
+      "copy_failed": "Zu lang für einen Link, und das Kopieren ist fehlgeschlagen. Kürze die Nachricht oder kopiere den Bericht unter Einstellungen → Systeminfo."
     }
   }
 }

@@ -99,9 +99,12 @@ function FeedbackForm({
     const copying = link.paste ? copy(link.paste) : null
     window.open(link.url, '_blank', 'noopener')
     onClose()
-    if (copying && (await copying)) {
-      toastManager.add({ type: 'info', title: t('admin.feedback.copied_to_paste') })
-    }
+    if (!copying) return
+    toastManager.add(
+      (await copying)
+        ? { type: 'info', title: t('admin.feedback.copied_to_paste') }
+        : { type: 'error', title: t('admin.feedback.copy_failed') },
+    )
   }
 
   return (

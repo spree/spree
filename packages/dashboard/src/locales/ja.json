@@ -6941,7 +6941,8 @@
       "review_system_info": "システム情報を確認",
       "open_issue": "GitHub で Issue を開く",
       "open_discussion": "GitHub でディスカッションを開く",
-      "copied_to_paste": "リンクには長すぎるためコピーしました。GitHub に貼り付けてください。"
+      "copied_to_paste": "リンクには長すぎるためコピーしました。GitHub に貼り付けてください。",
+      "copy_failed": "リンクには長すぎ、コピーにも失敗しました。メッセージを短くするか、設定 → システム情報 からレポートをコピーしてください。"
     }
   }
 }

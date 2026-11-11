@@ -6944,7 +6944,8 @@
       "review_system_info": "Voir les informations système",
       "open_issue": "Ouvrir un ticket sur GitHub",
       "open_discussion": "Ouvrir une discussion sur GitHub",
-      "copied_to_paste": "Trop long pour un lien, le texte a donc été copié. Collez-le sur GitHub."
+      "copied_to_paste": "Trop long pour un lien, le texte a donc été copié. Collez-le sur GitHub.",
+      "copy_failed": "Trop long pour un lien, et la copie a échoué. Raccourcissez le message ou copiez le rapport depuis Paramètres → Informations système."
     }
   }
 }

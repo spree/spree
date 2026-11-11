@@ -318,6 +318,7 @@ export interface DockerComposeExecOrRunOptions {
 async function resolveComposeMode(
   projectDir: string,
   options: DockerComposeExecOrRunOptions = {},
+  notify: (message: string) => void = p.log.info,
 ): Promise<'exec' | 'run'> {
   const { service = 'web', edgeHint } = options
 
@@ -333,7 +334,7 @@ async function resolveComposeMode(
     process.exit(1)
   }
 
-  p.log.info(
+  notify(
     `${service} container is not running — using a one-off container (\`docker compose run\`) instead.`,
   )
   return 'run'
@@ -368,7 +369,10 @@ export async function dockerComposeCapture(
   options: DockerComposeExecOrRunOptions = {},
 ): Promise<string> {
   const { service = 'web', env } = options
-  const mode = await resolveComposeMode(projectDir, options)
+  // The notice goes to stderr so the captured stdout stays parseable.
+  const mode = await resolveComposeMode(projectDir, options, (message) =>
+    process.stderr.write(`${message}\n`),
+  )
 
   const args = ['compose', mode]
   if (mode === 'run') args.push('--rm')

@@ -7012,7 +7012,8 @@
       "review_system_info": "Zobacz informacje o systemie",
       "open_issue": "Otwórz zgłoszenie na GitHubie",
       "open_discussion": "Otwórz dyskusję na GitHubie",
-      "copied_to_paste": "Za długie na link, więc zostało skopiowane. Wklej to na GitHubie."
+      "copied_to_paste": "Za długie na link, więc zostało skopiowane. Wklej to na GitHubie.",
+      "copy_failed": "Za długie na link, a kopiowanie się nie powiodło. Skróć wiadomość albo skopiuj raport z Ustawienia → Informacje o systemie."
     }
   }
 }

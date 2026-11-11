@@ -6942,7 +6942,8 @@
       "review_system_info": "Review system info",
       "open_issue": "Open issue on GitHub",
       "open_discussion": "Open discussion on GitHub",
-      "copied_to_paste": "Too long for a link, so it was copied. Paste it on GitHub."
+      "copied_to_paste": "Too long for a link, so it was copied. Paste it on GitHub.",
+      "copy_failed": "Too long for a link, and copying it failed. Shorten the message, or copy the report from Settings → System info."
     }
   }
 }
