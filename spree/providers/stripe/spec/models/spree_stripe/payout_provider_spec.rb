@@ -83,7 +83,7 @@ RSpec.describe SpreeStripe::PayoutProvider do
       # nothing, which Stripe refuses. The figures here only need that ratio.
       context 'when its share of the settled charge rounds to nothing' do
         let(:order) { create(:order, store: store, seller: seller, total: 100, currency: 'GBP') }
-        let(:seller_transfer) { create(:seller_transfer, seller: seller, order: order, amount: 0.01, currency: 'GBP') }
+        let(:seller_transfer) { create(:seller_transfer, seller: seller, order: order, amount: BigDecimal('0.01'), currency: 'GBP') }
         let(:charge) do
           Stripe::StripeObject.construct_from(
             id: 'ch_1', amount: 10_000, currency: 'gbp',
@@ -98,6 +98,45 @@ RSpec.describe SpreeStripe::PayoutProvider do
           expect(seller_transfer.reload).to be_completed
           expect(seller_transfer.settled_amount).to eq(0)
           expect(seller_transfer.settled_currency).to eq('USD')
+        end
+      end
+
+      # Stripe settles what was captured, so a partly captured charge is shared
+      # out by its captured amount, not the amount first authorised.
+      context 'when the charge was only partly captured' do
+        let(:order) { create(:order, store: store, seller: seller, total: 100, currency: 'GBP') }
+        let(:seller_transfer) { create(:seller_transfer, seller: seller, order: order, amount: 20, currency: 'GBP') }
+        let(:charge) do
+          Stripe::StripeObject.construct_from(
+            id: 'ch_1', amount: 10_000, amount_captured: 5_000, currency: 'gbp',
+            balance_transaction: { amount: 6_350, currency: 'usd' }
+          )
+        end
+
+        it 'takes its share of what was captured' do
+          described_class.new.transfer!(seller_transfer)
+
+          expect(Stripe::Transfer).to have_received(:create).
+            with(hash_including(currency: 'usd', amount: 2540), anything)
+        end
+      end
+
+      # Stripe moves three-decimal currencies only in steps of 0.010.
+      context 'when the charge settled in a three-decimal currency' do
+        let(:order) { create(:order, store: store, seller: seller, total: 100, currency: 'GBP') }
+        let(:seller_transfer) { create(:seller_transfer, seller: seller, order: order, amount: 42.5, currency: 'GBP') }
+        let(:charge) do
+          Stripe::StripeObject.construct_from(
+            id: 'ch_1', amount: 10_000, currency: 'gbp',
+            balance_transaction: { amount: 38_777, currency: 'kwd' }
+          )
+        end
+
+        it 'rounds its share down to an amount Stripe takes' do
+          described_class.new.transfer!(seller_transfer)
+
+          expect(Stripe::Transfer).to have_received(:create).
+            with(hash_including(currency: 'kwd', amount: 16_480), anything)
         end
       end
 
@@ -329,7 +368,7 @@ RSpec.describe SpreeStripe::PayoutProvider do
         it 'records only what was actually taken back' do
           described_class.new.reverse!(reversal)
 
-          expect(reversal.reload.settled_amount).to eq(-4.70)
+          expect(reversal.reload.settled_amount).to eq(BigDecimal('-4.70'))
           expect(reversal.settled_currency).to eq('GBP')
         end
       end
@@ -345,6 +384,22 @@ RSpec.describe SpreeStripe::PayoutProvider do
           expect(Stripe::Transfer).not_to have_received(:create_reversal)
           expect(reversal.reload).to be_completed
           expect(reversal.settled_amount).to eq(0)
+        end
+      end
+
+      # An earlier attempt made a capped reversal but never recorded it.
+      context 'when an earlier attempt already made a capped reversal' do
+        let(:reversals_made) do
+          [{ id: 'trr_made', object: 'transfer_reversal', amount: 597, currency: 'usd',
+             metadata: { spree_seller_transfer_id: reversal.id.to_s } }]
+        end
+
+        it 'records what that reversal actually took back' do
+          described_class.new.reverse!(reversal)
+
+          expect(Stripe::Transfer).not_to have_received(:create_reversal)
+          expect(reversal.reload.reference).to eq('trr_made')
+          expect(reversal.settled_amount).to eq(BigDecimal('-4.70'))
         end
       end
 

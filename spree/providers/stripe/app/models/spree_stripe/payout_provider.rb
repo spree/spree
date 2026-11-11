@@ -312,6 +312,9 @@ module SpreeStripe
       api_options = gateway_for(seller_transfer.seller.store).api_options
       reversal = made_reversal(earning, seller_transfer, api_options)
       taken = seller_transfer.amount.abs
+      # An earlier attempt made it but never recorded it, and it may have been
+      # capped below the row's share — so record what it actually took.
+      taken = taken_by(reversal, earning, seller_transfer, api_options) if reversal
 
       unless reversal
         # In the transfer's own currency, which is not the sale's when the
@@ -443,11 +446,15 @@ module SpreeStripe
       balance_transaction = charge.try(:balance_transaction)
       settlement = balance_transaction.try(:currency).to_s.downcase
       return [amount, currency] if settlement.blank? || settlement == currency
+      # The balance transaction is what was captured, which for a partly
+      # captured charge is less than the amount authorised.
+      captured = charge.try(:amount_captured).to_i.positive? ? charge.amount_captured.to_i : charge.amount.to_i
       # Without the charge in the sale's currency there is nothing to take a
       # share of; let Stripe answer as it would have.
-      return [amount, currency] unless charge.currency.to_s.downcase == currency && charge.amount.to_i.positive?
+      return [amount, currency] unless charge.currency.to_s.downcase == currency && captured.positive?
 
-      [prorate(amount, balance_transaction.amount, charge.amount), settlement]
+      share = prorate(amount, balance_transaction.amount, captured)
+      [SpreeStripe::Units.floor_to_step(share, settlement, payout: true), settlement]
     end
 
     # What a reversal asks Stripe to take back. Stripe reads a reversal's
@@ -470,12 +477,37 @@ module SpreeStripe
       return [amount, part] unless earned.positive?
 
       share = prorate(amount, transfer.amount, earned)
-      sent = share.clamp(0, [transfer.amount.to_i - transfer.amount_reversed.to_i, 0].max)
+      left = [transfer.amount.to_i - transfer.amount_reversed.to_i, 0].max
+      sent = SpreeStripe::Units.floor_to_step(share.clamp(0, left), transfer.currency, payout: true)
       return [0, 0.to_d] if sent.zero?
 
       [sent, part * sent / share]
     rescue Stripe::StripeError => e
       # A look-up moves no money, so it is a refusal the retry job can repeat.
+      raise Spree::Core::GatewayError, e.message
+    end
+
+    # The part of the sale-currency row a reversal Stripe already made stands
+    # for: its own amount when it is in the sale's currency, otherwise its share
+    # of the transfer it came from. Never more than the row.
+    #
+    # @return [BigDecimal]
+    def taken_by(reversal, earning, seller_transfer, api_options)
+      part = seller_transfer.amount.abs
+      sent = reversal.try(:amount)
+      return part if sent.nil?
+
+      currency = reversal.try(:currency).to_s
+      taken = if currency.blank? || currency.casecmp?(seller_transfer.currency.to_s)
+                SpreeStripe::Units.from_stripe(sent, seller_transfer.currency)
+              else
+                transfer = Stripe::Transfer.retrieve(earning.reference, api_options)
+                return part unless transfer.amount.to_i.positive?
+
+                earning.amount.abs * sent.to_d / transfer.amount.to_d
+              end
+      [taken, part].min
+    rescue Stripe::StripeError => e
       raise Spree::Core::GatewayError, e.message
     end
 

@@ -27,4 +27,13 @@ RSpec.describe SpreeStripe::Units do
   it 'takes a Spree::Money' do
     expect(described_class.to_stripe(Spree::Money.new(BigDecimal('1000'), currency: 'JPY'), 'JPY')).to eq(1000)
   end
+
+  it 'rounds a computed amount down to the step Stripe moves the currency in' do
+    expect(described_class.floor_to_step(16_480, 'KWD')).to eq(16_480)
+    expect(described_class.floor_to_step(16_487, 'KWD')).to eq(16_480)
+    expect(described_class.floor_to_step(150_050, 'HUF', payout: true)).to eq(150_000)
+    expect(described_class.floor_to_step(150_050, 'HUF')).to eq(150_050)
+    expect(described_class.floor_to_step(1_250, 'ISK')).to eq(1_200)
+    expect(described_class.floor_to_step(5_397, 'USD')).to eq(5_397)
+  end
 end
