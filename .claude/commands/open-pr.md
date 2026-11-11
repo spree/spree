@@ -34,11 +34,12 @@ Any later commit makes this stale; go back to step 1 before opening the PR.
 
 ## 4. Open the pull request
 
-Push the branch, then open the PR with
-`gh pr create --repo spree/spree --base main --head <branch>`, run as its own
-command. `--head` tells the hook which worktree's review to check, so this
-works even when the session started in another checkout. Follow AGENTS.md "Git" for the
-title and body. When a Linear issue exists, end the title with its id in
+Push the branch in one command, then open the PR in another with
+`gh pr create --repo spree/spree --base main --head <branch>`. `--head` tells
+the hook which worktree's review to check, so this works even when the session
+started in another checkout. Keep `--head` before a multi-line `--body`, or
+pass the body with `--body-file`. Follow AGENTS.md "Git" for the title and
+body. When a Linear issue exists, end the title with its id in
 parentheses and add `Linear: V-1234` on its own line in the body.
 
 ## 5. Monitor it

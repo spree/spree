@@ -111,17 +111,39 @@ match_segment() {
 # /security-review and then records the reviewed HEAD in the git dir. Block
 # `gh pr create` until that marker matches the HEAD of the branch it opens, and
 # that HEAD is the one pushed, so a commit made after the reviews sends the
-# branch back through them. The check
-# runs before the command does, so an earlier step in the same command that
-# changes directory or may move HEAD is blocked rather than parsed.
+# branch back through them. The check runs before the command does, so an
+# earlier step in the same command that changes directory, moves HEAD or
+# pushes is blocked rather than parsed.
 pr_dir="${hook_cwd:-${CLAUDE_PROJECT_DIR:-.}}"
 gh_pr_create='^gh([[:space:]]+-[^[:space:]]+([[:space:]]+[^-[:space:]][^[:space:]]*)?)*[[:space:]]+pr[[:space:]]+create([[:space:]);}]|$)'
-gh_head_flag='(^|[[:space:]])(--head|-H)(=|[[:space:]]+)([^[:space:])]+)'
+
+# Sets HEAD_FLAG to the last `--head`/`-H` value in a command line, reading
+# quoted arguments as one word so a title or body that mentions `--head` is
+# never taken for the flag. Returns 1 when a quote is left open: the argument
+# continues on a later line the gate cannot see.
+HEAD_FLAG=""
+read_head_flag() {
+  local s="$1" tok want=0
+  local word="^(\"[^\"]*\"|'[^']*'|[^[:space:]\"']+)+"
+  HEAD_FLAG=""
+  while s="${s#"${s%%[![:space:]]*}"}"; [ -n "$s" ]; do
+    [[ "$s" =~ $word ]] || return 1
+    tok="${BASH_REMATCH[0]}"
+    s="${s:${#tok}}"
+    tok="${tok//[\"\']/}"
+    if [ $want -eq 1 ]; then HEAD_FLAG="$tok"; want=0; continue; fi
+    case "$tok" in
+      --head|-H) want=1 ;;
+      --head=*) HEAD_FLAG="${tok#--head=}" ;;
+    esac
+  done
+}
+
 chained=0
 while IFS= read -r segment; do
   seg="${segment#"${segment%%[![:space:]({]*}"}"
   if match_segment "$seg" || [ -n "$GIT_SUB" ]; then
-    case "$GIT_SUB" in push|status|log|diff|show|rev-parse|remote|branch) ;; *) chained=1 ;; esac
+    case "$GIT_SUB" in status|log|diff|show|rev-parse|remote|branch) ;; *) chained=1 ;; esac
     continue
   fi
   if [[ "$LAUNCHED" =~ ^(cd|pushd|popd)([[:space:]]|$) ]]; then chained=1; continue; fi
@@ -134,10 +156,16 @@ while IFS= read -r segment; do
   # `--head <branch>` names what the pull request opens, so the gate checks the
   # worktree that has that branch checked out — a session started in another
   # checkout can still open it. Without `--head`, gh opens the current branch.
+  # A multi-line argument hides whatever follows it, so a `--head` placed after
+  # one cannot be read and the gate would check the wrong branch.
+  if ! read_head_flag "$LAUNCHED" && [[ "${cmd#*"$seg"}" =~ (^|[[:space:]])(--head|-H)(=|[[:space:]]) ]]; then
+    echo "Blocked: $seg" >&2
+    echo "Put --head before any multi-line argument (or pass the body with --body-file) so the gate can read which branch this opens." >&2
+    exit 2
+  fi
   review_dir="$pr_dir"
-  if [[ "$LAUNCHED" =~ $gh_head_flag ]]; then
-    head_branch="${BASH_REMATCH[4]//[\"\']/}"
-    head_branch="${head_branch##*:}"
+  if [ -n "$HEAD_FLAG" ]; then
+    head_branch="${HEAD_FLAG##*:}"
     review_dir=$(git -C "$pr_dir" worktree list --porcelain 2>/dev/null | awk -v ref="refs/heads/$head_branch" '
       /^worktree / { path = substr($0, 10) }
       $0 == "branch " ref { print path; exit }')
@@ -158,9 +186,13 @@ while IFS= read -r segment; do
     exit 2
   fi
 
-  # The pull request opens what was pushed, not the local HEAD, so the pushed
-  # commit must be the reviewed one too.
-  pushed=$(git -C "$review_dir" rev-parse --verify --quiet "$head_branch@{push}" 2>/dev/null)
+  # The pull request opens the remote branch of the same name, not the local
+  # HEAD, so that must be the reviewed commit too. Read the remote-tracking ref
+  # rather than `@{push}`: worktrees track origin/main, which `@{push}` either
+  # cannot resolve or resolves to main.
+  push_remote=$(git -C "$review_dir" config "branch.$head_branch.pushRemote" \
+    || git -C "$review_dir" config remote.pushDefault || echo origin)
+  pushed=$(git -C "$review_dir" rev-parse --verify --quiet "refs/remotes/$push_remote/$head_branch" 2>/dev/null)
   if [ "$pushed" != "$head" ]; then
     echo "Blocked: $seg" >&2
     echo "Push the reviewed commit ($head) to $head_branch before opening the pull request." >&2
