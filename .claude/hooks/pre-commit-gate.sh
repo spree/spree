@@ -197,13 +197,17 @@ while IFS= read -r segment; do
         exit 2
       fi ;;
   esac
-  if [[ "$seg" == *\\ ]]; then
+  # A backslash escapes a space (`Fix\ --head=x` is one argument) or continues
+  # the line, and the gate reads neither the way the shell does.
+  if [[ "$LAUNCHED" == *\\* ]]; then
     echo "Blocked: $seg" >&2
-    echo "Keep gh pr create on one line so the gate can read which branch this opens." >&2
+    echo "Keep gh pr create on one line without backslashes: quote arguments, or pass the body with --body-file." >&2
     exit 2
   fi
   review_dir="$pr_dir"
+  head_owner=""
   if [ -n "$HEAD_FLAG" ]; then
+    [[ "$HEAD_FLAG" == *:* ]] && head_owner="${HEAD_FLAG%%:*}"
     head_branch="${HEAD_FLAG##*:}"
     review_dir=$(git -C "$pr_dir" worktree list --porcelain 2>/dev/null | awk -v ref="refs/heads/$head_branch" '
       /^worktree / { path = substr($0, 10) }
@@ -229,8 +233,22 @@ while IFS= read -r segment; do
   # HEAD, so that must be the reviewed commit too. Read the remote-tracking ref
   # rather than `@{push}`: worktrees track origin/main, which `@{push}` either
   # cannot resolve or resolves to main.
+  # Git's own order for where a branch pushes.
   push_remote=$(git -C "$review_dir" config "branch.$head_branch.pushRemote" \
-    || git -C "$review_dir" config remote.pushDefault || echo origin)
+    || git -C "$review_dir" config remote.pushDefault \
+    || git -C "$review_dir" config "branch.$head_branch.remote" || echo origin)
+  # `--head owner:branch` opens that owner's branch, so the push remote must be
+  # the owner's repository, or the review checked someone else's branch.
+  if [ -n "$head_owner" ]; then
+    remote_url=$(git -C "$review_dir" remote get-url "$push_remote" 2>/dev/null)
+    remote_owner=""
+    [[ "$remote_url" =~ github\.com[:/]+([^/]+)/ ]] && remote_owner="${BASH_REMATCH[1]}"
+    if [ -z "$remote_owner" ] || [ "$(tr '[:upper:]' '[:lower:]' <<<"$remote_owner")" != "$(tr '[:upper:]' '[:lower:]' <<<"$head_owner")" ]; then
+      echo "Blocked: $seg" >&2
+      echo "--head $HEAD_FLAG opens $head_owner's branch, but $head_branch pushes to ${remote_owner:-an unknown owner}. Drop the owner or push to that repository." >&2
+      exit 2
+    fi
+  fi
   pushed=$(git -C "$review_dir" rev-parse --verify --quiet "refs/remotes/$push_remote/$head_branch" 2>/dev/null)
   if [ "$pushed" != "$head" ]; then
     echo "Blocked: $seg" >&2
