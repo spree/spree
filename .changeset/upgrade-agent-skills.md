@@ -2,4 +2,4 @@
 "@spree/cli": minor
 ---
 
-`spree upgrade` now offers to update the Spree agent skills. When the project has them in `.agents/skills/`, it asks, then installs the latest skills from the main branch of `spree/agent-skills` right after the `@spree/*` packages. A failed download only warns, and `--yes` accepts the update.
+`spree upgrade` now offers to update the Spree agent skills. When `skills-lock.json` lists skills from `spree/agent-skills`, it asks, then updates those skills from the main branch right after the `@spree/*` packages, for the agents they were installed for. A failed download only warns, now with the `skills` CLI's own reason, and `--yes` accepts the update.

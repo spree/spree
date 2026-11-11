@@ -145,6 +145,34 @@ export function dlxCommand(packageManager: string): string[] {
   return ['npx', '--yes']
 }
 
+/** The `skills` CLI arguments that install every Spree agent skill. */
+export const INSTALL_SKILLS_ARGS = ['add', AGENT_SKILLS_REPO, '--skill', '*', '--yes']
+
+/**
+ * The `skills` CLI arguments that update the named skills to the newest
+ * version on the main branch of their repository, for the agents they are
+ * already installed for. Skills the developer removed stay removed.
+ */
+export function updateSkillsArgs(skills: string[]): string[] {
+  return ['update', '--project', '--yes', ...skills]
+}
+
+/** The full command that runs the `skills` CLI with the given arguments. */
+export function skillsCommand(packageManager: string, args: string[]): string[] {
+  return [...dlxCommand(packageManager), 'skills', ...args]
+}
+
+async function runSkills(
+  projectDir: string,
+  packageManager: string,
+  args: string[],
+): Promise<void> {
+  const [command, ...rest] = skillsCommand(packageManager, args)
+  // Output is captured, not shown, so a failure can report the CLI's reason.
+  // A stalled download must fail rather than hang the command.
+  await execa(command, rest, { cwd: projectDir, stdin: 'ignore', timeout: 120_000 })
+}
+
 /**
  * Install every Spree agent skill for each coding agent the `skills` CLI
  * detects, without prompting.
@@ -156,13 +184,78 @@ export async function installAgentSkills(
   projectDir: string,
   packageManager: string,
 ): Promise<void> {
-  const [command, ...runnerArgs] = dlxCommand(packageManager)
-  await execa(
-    command,
-    [...runnerArgs, 'skills', 'add', AGENT_SKILLS_REPO, '--skill', '*', '--yes'],
-    // A stalled download must fail rather than hang the command.
-    { cwd: projectDir, stdio: 'ignore', timeout: 120_000 },
-  )
+  await runSkills(projectDir, packageManager, INSTALL_SKILLS_ARGS)
+}
+
+/**
+ * Update the given Spree agent skills from the main branch of
+ * `spree/agent-skills`, without prompting.
+ *
+ * @param projectDir the project root
+ * @param packageManager the project's package manager, which runs the `skills` CLI
+ * @param skills the installed Spree skills, from {@link installedSpreeSkills}
+ */
+export async function updateAgentSkills(
+  projectDir: string,
+  packageManager: string,
+  skills: string[],
+): Promise<void> {
+  await runSkills(projectDir, packageManager, updateSkillsArgs(skills))
+}
+
+function normalizeSource(source: string): string {
+  return source
+    .trim()
+    .toLowerCase()
+    .replace(/^https?:\/\/github\.com\//, '')
+    .replace(/(\.git)?\/?$/, '')
+}
+
+/**
+ * The Spree agent skills a project has installed, read from the
+ * `skills-lock.json` the `skills` CLI writes: the skills whose source is
+ * `spree/agent-skills`. Skills from other sources are the developer's own.
+ *
+ * @param projectDir the project root
+ * @return the skill names, [] when there are none or the lockfile is unreadable
+ */
+export function installedSpreeSkills(projectDir: string): string[] {
+  try {
+    const lock = JSON.parse(fs.readFileSync(path.join(projectDir, 'skills-lock.json'), 'utf-8'))
+    if (!isObject(lock) || !isObject(lock.skills)) return []
+    return Object.entries(lock.skills)
+      .filter(
+        ([, entry]) =>
+          isObject(entry) &&
+          typeof entry.source === 'string' &&
+          normalizeSource(entry.source) === AGENT_SKILLS_REPO,
+      )
+      .map(([name]) => name)
+  } catch {
+    return []
+  }
+}
+
+/**
+ * The warning for a failed `skills` run: the command to run by hand, then the
+ * CLI's own reason (its stderr) rather than execa's generic summary.
+ *
+ * @param what what did not happen, e.g. `installed`
+ */
+export function skillsFailureMessage(
+  what: string,
+  packageManager: string,
+  args: string[],
+  error: unknown,
+): string {
+  const command = skillsCommand(packageManager, args)
+    .map((arg) => (arg === '*' ? `'*'` : arg))
+    .join(' ')
+  const stderr = (error as { stderr?: unknown } | undefined)?.stderr
+  const reason =
+    (typeof stderr === 'string' && stderr.trim()) ||
+    (error instanceof Error ? error.message : String(error))
+  return `The Spree agent skills were not ${what}. Run ${command} to try again.\n${reason}`
 }
 
 // These files hold the developer's own content, so a failed write must leave

@@ -29,15 +29,18 @@ vi.mock('../src/context', async (importOriginal) => ({
   detectProject: () => ({ mode: 'docker', projectDir, port: 3000 }),
 }))
 
+const packageManager = vi.hoisted(() => ({ name: 'pnpm' }))
+
 vi.mock('../src/commands/add', () => ({
   APP_DIRS: ['dashboard'],
-  detectPackageManager: () => 'pnpm',
+  detectPackageManager: () => packageManager.name,
   generateRouteTree: vi.fn(),
 }))
 
 vi.mock('@clack/prompts', () => ({
   log: { step: vi.fn(), info: vi.fn(), warn: vi.fn() },
   note: vi.fn(),
+  spinner: () => ({ start: vi.fn(), stop: vi.fn() }),
   confirm: vi.fn(),
   isCancel: () => false,
   cancel: vi.fn(),
@@ -510,9 +513,11 @@ describe('spree upgrade', () => {
   // `spreeVersion` is what the server's bundle reports for spree_core.
   function routeExeca({
     failOn,
+    failStderr,
     spreeVersion = '6.0.0.rc7',
   }: {
     failOn?: string
+    failStderr?: string
     spreeVersion?: string | null
   } = {}): void {
     mockExeca.mockImplementation((async (cmd: string, args: string[]) => {
@@ -526,7 +531,9 @@ describe('spree upgrade', () => {
       if (args.includes('config')) return { stdout: 'web\n' }
       const command = `${cmd} ${args.join(' ')}`
       commands.push(command)
-      if (failOn && command.includes(failOn)) throw new Error(`${failOn} failed`)
+      if (failOn && command.includes(failOn)) {
+        throw Object.assign(new Error(`${failOn} failed`), { stderr: failStderr })
+      }
       return { stdout: '' }
     }) as never)
   }
@@ -837,70 +844,127 @@ describe('spree upgrade', () => {
   })
 
   describe('agent skills', () => {
-    function installSkills(): void {
-      fs.mkdirSync(path.join(projectDir, '.agents', 'skills', 'spree-api'), { recursive: true })
+    const update = 'pnpm dlx skills update --project --yes spree-api-v3 spree-checkout'
+
+    function writeSkillsLock(skills: Record<string, string>): void {
+      fs.writeFileSync(
+        path.join(projectDir, 'skills-lock.json'),
+        JSON.stringify({
+          version: 2,
+          skills: Object.fromEntries(
+            Object.entries(skills).map(([name, source]) => [
+              name,
+              { source, sourceType: 'github', skillPath: `skills/${name}/SKILL.md` },
+            ]),
+          ),
+        }),
+      )
     }
 
-    it('updates installed skills from the main branch after the packages, before migrations', async () => {
+    function installSpreeSkills(): void {
+      writeSkillsLock({
+        'spree-api-v3': 'spree/agent-skills',
+        'release-notes': 'acme/skills',
+        'spree-checkout': 'https://github.com/spree/agent-skills.git',
+      })
+    }
+
+    async function runInteractively(confirm: (message: string) => boolean): Promise<void> {
+      vi.mocked(p.confirm).mockClear()
+      vi.mocked(p.confirm).mockImplementation((async ({ message }: { message: string }) =>
+        confirm(message)) as never)
+      const program = new Command()
+      registerUpgradeCommand(program)
+      await program.parseAsync(['upgrade'], { from: 'user' })
+    }
+
+    afterEach(() => {
+      packageManager.name = 'pnpm'
+    })
+
+    it('updates only the installed Spree skills, after the packages and before migrations', async () => {
       writeProject({ ejected: true })
-      installSkills()
+      installSpreeSkills()
 
       await runUpgrade()
 
-      const skills = 'pnpm dlx skills add spree/agent-skills --skill * --yes'
-      expect(commands).toContain(skills)
-      expect(commands.indexOf(skills)).toBeGreaterThan(
+      expect(commands).toContain(update)
+      expect(commands.indexOf(update)).toBeGreaterThan(
         commands.indexOf('pnpm update @spree/dashboard'),
       )
-      expect(commands.indexOf(skills)).toBeLessThan(
+      expect(commands.indexOf(update)).toBeLessThan(
         commands.indexOf('docker compose exec web bin/rails spree:install:migrations db:migrate'),
+      )
+      expect(commands.some((command) => command.includes('skills add'))).toBe(false)
+    })
+
+    it('runs the skills CLI with npx in npm and Yarn projects', async () => {
+      writeProject({ ejected: true })
+      installSpreeSkills()
+      packageManager.name = 'yarn'
+
+      await runUpgrade()
+
+      expect(commands).toContain(
+        'npx --yes skills update --project --yes spree-api-v3 spree-checkout',
       )
     })
 
     it('asks before updating the skills, and skips them when declined', async () => {
       writeProject({ ejected: false })
-      installSkills()
-      vi.mocked(p.confirm).mockClear()
-      vi.mocked(p.confirm).mockImplementation(
-        (async ({ message }: { message: string }) => !message.includes('agent skills')) as never,
-      )
+      installSpreeSkills()
 
-      const program = new Command()
-      registerUpgradeCommand(program)
-      await program.parseAsync(['upgrade'], { from: 'user' })
+      await runInteractively((message) => !message.includes('agent skills'))
 
       expect(vi.mocked(p.confirm)).toHaveBeenCalledWith(
         expect.objectContaining({ message: expect.stringContaining('agent skills') }),
       )
-      expect(commands.some((command) => command.includes('skills add'))).toBe(false)
+      expect(commands.some((command) => command.includes('skills'))).toBe(false)
       expect(commands).toContain('docker compose exec web bin/rails spree:upgrade')
     })
 
-    it('neither asks nor installs when the project has no skills', async () => {
+    it.each([
+      ['has no skills lockfile', () => {}],
+      [
+        'has only skills from other sources',
+        () => writeSkillsLock({ 'release-notes': 'acme/skills' }),
+      ],
+      [
+        'has an unreadable skills lockfile',
+        () => fs.writeFileSync(path.join(projectDir, 'skills-lock.json'), '{ not json'),
+      ],
+    ])('neither asks nor updates when the project %s', async (_case, setup) => {
       writeProject({ ejected: true })
-      vi.mocked(p.confirm).mockClear()
-      vi.mocked(p.confirm).mockResolvedValue(true as never)
+      fs.mkdirSync(path.join(projectDir, '.agents', 'skills', 'release-notes'), {
+        recursive: true,
+      })
+      setup()
 
-      const program = new Command()
-      registerUpgradeCommand(program)
-      await program.parseAsync(['upgrade'], { from: 'user' })
+      await runInteractively(() => true)
 
       expect(vi.mocked(p.confirm)).not.toHaveBeenCalledWith(
         expect.objectContaining({ message: expect.stringContaining('agent skills') }),
       )
-      expect(commands.some((command) => command.includes('skills add'))).toBe(false)
+      expect(commands.some((command) => command.includes('skills'))).toBe(false)
     })
 
-    it('warns and carries on when the skills download fails', async () => {
+    it("warns with the skills CLI's reason and carries on when the update fails", async () => {
       writeProject({ ejected: true })
-      installSkills()
-      routeExeca({ failOn: 'skills add' })
+      installSpreeSkills()
+      routeExeca({
+        failOn: 'skills update',
+        failStderr: 'Failed to fetch spree/agent-skills: ECONNRESET\n',
+      })
 
       await runUpgrade()
 
-      expect(vi.mocked(prompts.log.warn)).toHaveBeenCalledWith(
-        expect.stringContaining('The Spree agent skills were not updated'),
+      const warning = vi.mocked(prompts.log.warn).mock.calls.at(-1)?.[0]
+      expect(warning).toContain('The Spree agent skills were not updated')
+      expect(warning).toContain(
+        'pnpm dlx skills update --project --yes spree-api-v3 spree-checkout',
       )
+      expect(warning).toContain('Failed to fetch spree/agent-skills: ECONNRESET')
+      expect(warning).not.toContain('Command failed')
       expect(commands.at(-1)).toBe('docker compose restart web')
     })
   })

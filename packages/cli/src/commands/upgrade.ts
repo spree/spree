@@ -21,7 +21,12 @@ import {
   primeBundleVolume,
   restartAppServices,
 } from '../docker.js'
-import { AGENT_SKILLS_REPO, dlxCommand, installAgentSkills } from '../lib/ai.js'
+import {
+  installedSpreeSkills,
+  skillsFailureMessage,
+  updateAgentSkills,
+  updateSkillsArgs,
+} from '../lib/ai.js'
 import { RELEASE_LINE, type ReleaseLine, releaseLineFor } from '../lib/release-line.js'
 import { APP_DIRS, detectPackageManager, generateRouteTree } from './add.js'
 
@@ -93,7 +98,7 @@ async function upgrade(flags: UpgradeFlags): Promise<void> {
     const gemsUpdated = await runBundleUpdate(ctx.projectDir, flags)
     line = await serverReleaseLine(ctx.projectDir, { fromNewImage: false })
     await updateSpreePackages(ctx.projectDir, flags, line)
-    await updateAgentSkills(ctx.projectDir, flags)
+    await updateSpreeAgentSkills(ctx.projectDir, flags)
     await runMigrate(ctx.projectDir, flags)
     await runRakeUpgrade(ctx.projectDir, flags)
     // Puma loaded the old gems at boot; the rake steps ran in fresh processes.
@@ -106,7 +111,7 @@ async function upgrade(flags: UpgradeFlags): Promise<void> {
     const imagePulled = await pullImage(ctx.projectDir, flags)
     line = await serverReleaseLine(ctx.projectDir, { fromNewImage: imagePulled })
     await updateSpreePackages(ctx.projectDir, flags, line)
-    await updateAgentSkills(ctx.projectDir, flags)
+    await updateSpreeAgentSkills(ctx.projectDir, flags)
     if (imagePulled) await recreateContainers(ctx.projectDir)
     await runRakeUpgrade(ctx.projectDir, flags)
   }
@@ -548,36 +553,28 @@ async function updateSpreePackages(
   }
 }
 
-/**
- * Whether the project has the Spree agent skills installed — `spree add ai`
- * and create-spree-app put them in `.agents/skills/`.
- */
-export function hasAgentSkills(projectDir: string): boolean {
-  try {
-    return fs.readdirSync(path.join(projectDir, '.agents', 'skills')).length > 0
-  } catch {
-    return false
-  }
-}
-
 // The skills are not versioned with Spree: every run pulls the main branch of
-// spree/agent-skills. Projects that never installed them are not asked, and a
-// failed download only warns, since the server and packages are already done.
-async function updateAgentSkills(projectDir: string, flags: UpgradeFlags): Promise<void> {
-  if (!hasAgentSkills(projectDir)) return
+// spree/agent-skills. Only the Spree skills in skills-lock.json are updated,
+// for the agents they were installed for, so projects that never installed
+// them are not asked. A failed download only warns, since the server and
+// packages are already done.
+async function updateSpreeAgentSkills(projectDir: string, flags: UpgradeFlags): Promise<void> {
+  const skills = installedSpreeSkills(projectDir)
+  if (skills.length === 0) return
   if (!(await confirmStep('Update the Spree agent skills to the latest version?', flags))) {
     p.log.info('Skipping the agent skills.')
     return
   }
 
   const packageManager = detectPackageManager(projectDir, projectDir)
-  p.log.step(pc.bold('Updating the Spree agent skills'))
+  const s = p.spinner()
+  s.start('Updating the Spree agent skills...')
   try {
-    await installAgentSkills(projectDir, packageManager)
+    await updateAgentSkills(projectDir, packageManager, skills)
+    s.stop('Spree agent skills updated.')
   } catch (err) {
-    p.log.warn(
-      `The Spree agent skills were not updated. Update them later with ${pc.bold(`${dlxCommand(packageManager).join(' ')} skills add ${AGENT_SKILLS_REPO} --skill '*' --yes`)}.\n${err instanceof Error ? err.message : String(err)}`,
-    )
+    s.stop(pc.yellow('Spree agent skills were not updated.'))
+    p.log.warn(skillsFailureMessage('updated', packageManager, updateSkillsArgs(skills), err))
   }
 }
 
