@@ -844,7 +844,7 @@ describe('spree upgrade', () => {
   })
 
   describe('agent skills', () => {
-    const update = 'pnpm dlx skills update --project --yes spree-api-v3 spree-checkout'
+    const update = 'pnpm dlx skills add spree/agent-skills --skill * --yes'
 
     function writeSkillsLock(skills: Record<string, string>): void {
       fs.writeFileSync(
@@ -882,7 +882,7 @@ describe('spree upgrade', () => {
       packageManager.name = 'pnpm'
     })
 
-    it('updates only the installed Spree skills, after the packages and before migrations', async () => {
+    it('installs every Spree skill from the main branch, after the packages and before migrations', async () => {
       writeProject({ ejected: true })
       installSpreeSkills()
 
@@ -895,7 +895,6 @@ describe('spree upgrade', () => {
       expect(commands.indexOf(update)).toBeLessThan(
         commands.indexOf('docker compose exec web bin/rails spree:install:migrations db:migrate'),
       )
-      expect(commands.some((command) => command.includes('skills add'))).toBe(false)
     })
 
     it('runs the skills CLI with npx in npm and Yarn projects', async () => {
@@ -905,9 +904,7 @@ describe('spree upgrade', () => {
 
       await runUpgrade()
 
-      expect(commands).toContain(
-        'npx --yes skills update --project --yes spree-api-v3 spree-checkout',
-      )
+      expect(commands).toContain('npx --yes skills add spree/agent-skills --skill * --yes')
     })
 
     it('asks before updating the skills, and skips them when declined', async () => {
@@ -952,7 +949,7 @@ describe('spree upgrade', () => {
       writeProject({ ejected: true })
       installSpreeSkills()
       routeExeca({
-        failOn: 'skills update',
+        failOn: 'skills add',
         failStderr: 'Failed to fetch spree/agent-skills: ECONNRESET\n',
       })
 
@@ -960,9 +957,7 @@ describe('spree upgrade', () => {
 
       const warning = vi.mocked(prompts.log.warn).mock.calls.at(-1)?.[0]
       expect(warning).toContain('The Spree agent skills were not updated')
-      expect(warning).toContain(
-        'pnpm dlx skills update --project --yes spree-api-v3 spree-checkout',
-      )
+      expect(warning).toContain("pnpm dlx skills add spree/agent-skills --skill '*' --yes")
       expect(warning).toContain('Failed to fetch spree/agent-skills: ECONNRESET')
       expect(warning).not.toContain('Command failed')
       expect(commands.at(-1)).toBe('docker compose restart web')

@@ -22,10 +22,10 @@ import {
   restartAppServices,
 } from '../docker.js'
 import {
+  INSTALL_SKILLS_ARGS,
+  installAgentSkills,
   installedSpreeSkills,
   skillsFailureMessage,
-  updateAgentSkills,
-  updateSkillsArgs,
 } from '../lib/ai.js'
 import { RELEASE_LINE, type ReleaseLine, releaseLineFor } from '../lib/release-line.js'
 import { APP_DIRS, detectPackageManager, generateRouteTree } from './add.js'
@@ -553,14 +553,14 @@ async function updateSpreePackages(
   }
 }
 
-// The skills are not versioned with Spree: every run pulls the main branch of
-// spree/agent-skills. Only the Spree skills in skills-lock.json are updated,
-// for the agents they were installed for, so projects that never installed
-// them are not asked. A failed download only warns, since the server and
-// packages are already done.
+// The skills are not versioned with Spree: every run installs every skill from
+// the main branch of spree/agent-skills, so installed skills move to the newest
+// version and skills published since are added (skills the developer removed
+// come back too). Projects whose skills-lock.json lists no Spree skills are not
+// asked. A failed download only warns, since the server and packages are
+// already done.
 async function updateSpreeAgentSkills(projectDir: string, flags: UpgradeFlags): Promise<void> {
-  const skills = installedSpreeSkills(projectDir)
-  if (skills.length === 0) return
+  if (installedSpreeSkills(projectDir).length === 0) return
   if (!(await confirmStep('Update the Spree agent skills to the latest version?', flags))) {
     p.log.info('Skipping the agent skills.')
     return
@@ -570,11 +570,11 @@ async function updateSpreeAgentSkills(projectDir: string, flags: UpgradeFlags): 
   const s = p.spinner()
   s.start('Updating the Spree agent skills...')
   try {
-    await updateAgentSkills(projectDir, packageManager, skills)
+    await installAgentSkills(projectDir, packageManager)
     s.stop('Spree agent skills updated.')
   } catch (err) {
     s.stop(pc.yellow('Spree agent skills were not updated.'))
-    p.log.warn(skillsFailureMessage('updated', packageManager, updateSkillsArgs(skills), err))
+    p.log.warn(skillsFailureMessage('updated', packageManager, INSTALL_SKILLS_ARGS, err))
   }
 }
 

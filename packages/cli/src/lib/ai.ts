@@ -148,15 +148,6 @@ export function dlxCommand(packageManager: string): string[] {
 /** The `skills` CLI arguments that install every Spree agent skill. */
 export const INSTALL_SKILLS_ARGS = ['add', AGENT_SKILLS_REPO, '--skill', '*', '--yes']
 
-/**
- * The `skills` CLI arguments that update the named skills to the newest
- * version on the main branch of their repository, for the agents they are
- * already installed for. Skills the developer removed stay removed.
- */
-export function updateSkillsArgs(skills: string[]): string[] {
-  return ['update', '--project', '--yes', ...skills]
-}
-
 /** The full command that runs the `skills` CLI with the given arguments. */
 export function skillsCommand(packageManager: string, args: string[]): string[] {
   return [...dlxCommand(packageManager), 'skills', ...args]
@@ -175,7 +166,9 @@ async function runSkills(
 
 /**
  * Install every Spree agent skill for each coding agent the `skills` CLI
- * detects, without prompting.
+ * detects, without prompting. Run again, it moves the installed skills to the
+ * newest version on the main branch of `spree/agent-skills` and adds the ones
+ * published since.
  *
  * @param projectDir the project root
  * @param packageManager the project's package manager, which runs the `skills` CLI
@@ -185,22 +178,6 @@ export async function installAgentSkills(
   packageManager: string,
 ): Promise<void> {
   await runSkills(projectDir, packageManager, INSTALL_SKILLS_ARGS)
-}
-
-/**
- * Update the given Spree agent skills from the main branch of
- * `spree/agent-skills`, without prompting.
- *
- * @param projectDir the project root
- * @param packageManager the project's package manager, which runs the `skills` CLI
- * @param skills the installed Spree skills, from {@link installedSpreeSkills}
- */
-export async function updateAgentSkills(
-  projectDir: string,
-  packageManager: string,
-  skills: string[],
-): Promise<void> {
-  await runSkills(projectDir, packageManager, updateSkillsArgs(skills))
 }
 
 function normalizeSource(source: string): string {
