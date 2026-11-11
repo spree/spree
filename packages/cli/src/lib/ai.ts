@@ -1,6 +1,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { execa } from 'execa'
+import pc from 'picocolors'
 import { isNotFound } from '../config.js'
 
 export const DOCS_MCP_URL = 'https://spreecommerce.org/docs/mcp'
@@ -145,9 +146,68 @@ export function dlxCommand(packageManager: string): string[] {
   return ['npx', '--yes']
 }
 
+/** The `skills` CLI arguments that install every Spree agent skill. */
+export const INSTALL_SKILLS_ARGS: readonly string[] = Object.freeze([
+  'add',
+  AGENT_SKILLS_REPO,
+  '--skill',
+  '*',
+  '--yes',
+])
+
+/** The full command that runs the `skills` CLI with the given arguments. */
+function skillsCommand(packageManager: string, args: readonly string[]): string[] {
+  return [...dlxCommand(packageManager), 'skills', ...args]
+}
+
+// The failures in the `--json` output of `skills add`: one entry per skill,
+// plus one for a failure that stopped the whole run, such as a failed clone.
+function failedSkills(stdout: unknown): string[] {
+  if (typeof stdout !== 'string') return []
+  try {
+    const results: unknown = JSON.parse(stdout)
+    if (!Array.isArray(results)) return []
+    return results
+      .filter((result) => isObject(result) && result.status === 'failed')
+      .map((result) =>
+        [result.name, result.error].filter((part) => typeof part === 'string').join(': '),
+      )
+      .map((reason) => reason || 'unknown failure')
+  } catch {
+    return []
+  }
+}
+
+// `--json` reports each skill's result, so a skill that failed to install is
+// caught even when the run exits with code 0. A stalled download must fail
+// rather than hang the command.
+async function runSkills(
+  projectDir: string,
+  packageManager: string,
+  args: readonly string[],
+): Promise<void> {
+  const [command, ...rest] = skillsCommand(packageManager, args)
+  let stdout: unknown
+  try {
+    ;({ stdout } = await execa(command, [...rest, '--json'], {
+      cwd: projectDir,
+      stdin: 'ignore',
+      timeout: 120_000,
+    }))
+  } catch (error) {
+    const failures = failedSkills((error as { stdout?: unknown }).stdout)
+    if (failures.length > 0) throw new Error(failures.join('\n'), { cause: error })
+    throw error
+  }
+  const failures = failedSkills(stdout)
+  if (failures.length > 0) throw new Error(failures.join('\n'))
+}
+
 /**
  * Install every Spree agent skill for each coding agent the `skills` CLI
- * detects, without prompting.
+ * detects, without prompting. Run again, it moves the installed skills to the
+ * newest version on the main branch of `spree/agent-skills` and adds the ones
+ * published since.
  *
  * @param projectDir the project root
  * @param packageManager the project's package manager, which runs the `skills` CLI
@@ -156,13 +216,70 @@ export async function installAgentSkills(
   projectDir: string,
   packageManager: string,
 ): Promise<void> {
-  const [command, ...runnerArgs] = dlxCommand(packageManager)
-  await execa(
-    command,
-    [...runnerArgs, 'skills', 'add', AGENT_SKILLS_REPO, '--skill', '*', '--yes'],
-    // A stalled download must fail rather than hang the command.
-    { cwd: projectDir, stdio: 'ignore', timeout: 120_000 },
-  )
+  await runSkills(projectDir, packageManager, INSTALL_SKILLS_ARGS)
+}
+
+function normalizeSource(source: string): string {
+  return source
+    .trim()
+    .toLowerCase()
+    .replace(/^https?:\/\/github\.com\//, '')
+    .replace(/(\.git)?\/?$/, '')
+}
+
+/**
+ * Whether the project has Spree agent skills installed, read from the
+ * `skills-lock.json` the `skills` CLI writes: a skill whose source is
+ * `spree/agent-skills`. Skills from other sources are the developer's own.
+ *
+ * @param projectDir the project root
+ * @return false when there are none or the lockfile is unreadable
+ */
+export function hasSpreeAgentSkills(projectDir: string): boolean {
+  try {
+    const lock = JSON.parse(fs.readFileSync(path.join(projectDir, 'skills-lock.json'), 'utf-8'))
+    if (!isObject(lock) || !isObject(lock.skills)) return false
+    return Object.values(lock.skills).some(
+      (entry) =>
+        isObject(entry) &&
+        typeof entry.source === 'string' &&
+        normalizeSource(entry.source) === AGENT_SKILLS_REPO,
+    )
+  } catch {
+    return false
+  }
+}
+
+// Enough of the reason to name the cause without flooding the terminal.
+const FAILURE_REASON_LINES = 10
+
+// The SGR escape sequences that colour terminal output.
+const ANSI_COLOR = new RegExp(`${String.fromCharCode(27)}\\[[0-9;]*m`, 'g')
+
+/**
+ * The warning for a failed `skills` run: the command to run by hand, then the
+ * last lines of the reason, without colour codes.
+ *
+ * @param what what did not happen, e.g. `installed`
+ */
+export function skillsFailureMessage(
+  what: string,
+  packageManager: string,
+  args: readonly string[],
+  error: unknown,
+): string {
+  // Double quotes keep `*` from being globbed in POSIX shells, PowerShell and cmd.
+  const command = skillsCommand(packageManager, args)
+    .map((arg) => (arg === '*' ? '"*"' : arg))
+    .join(' ')
+  const reason = (error instanceof Error ? error.message : String(error))
+    .replace(ANSI_COLOR, '')
+    .split('\n')
+    .map((line) => line.trimEnd())
+    .filter(Boolean)
+    .slice(-FAILURE_REASON_LINES)
+    .join('\n')
+  return `The Spree agent skills were not ${what}. Run ${pc.bold(command)} to try again.\n${reason}`
 }
 
 // These files hold the developer's own content, so a failed write must leave

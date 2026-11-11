@@ -29,15 +29,18 @@ vi.mock('../src/context', async (importOriginal) => ({
   detectProject: () => ({ mode: 'docker', projectDir, port: 3000 }),
 }))
 
+const packageManager = vi.hoisted(() => ({ name: 'pnpm' }))
+
 vi.mock('../src/commands/add', () => ({
   APP_DIRS: ['dashboard'],
-  detectPackageManager: () => 'pnpm',
+  detectPackageManager: () => packageManager.name,
   generateRouteTree: vi.fn(),
 }))
 
 vi.mock('@clack/prompts', () => ({
   log: { step: vi.fn(), info: vi.fn(), warn: vi.fn() },
   note: vi.fn(),
+  spinner: () => ({ start: vi.fn(), stop: vi.fn() }),
   confirm: vi.fn(),
   isCancel: () => false,
   cancel: vi.fn(),
@@ -510,9 +513,13 @@ describe('spree upgrade', () => {
   // `spreeVersion` is what the server's bundle reports for spree_core.
   function routeExeca({
     failOn,
+    failWith,
+    skillsStdout = '[]',
     spreeVersion = '6.0.0.rc7',
   }: {
     failOn?: string
+    failWith?: { message?: string; stdout?: string }
+    skillsStdout?: string
     spreeVersion?: string | null
   } = {}): void {
     mockExeca.mockImplementation((async (cmd: string, args: string[]) => {
@@ -526,8 +533,12 @@ describe('spree upgrade', () => {
       if (args.includes('config')) return { stdout: 'web\n' }
       const command = `${cmd} ${args.join(' ')}`
       commands.push(command)
-      if (failOn && command.includes(failOn)) throw new Error(`${failOn} failed`)
-      return { stdout: '' }
+      if (failOn && command.includes(failOn)) {
+        throw Object.assign(new Error(failWith?.message ?? `${failOn} failed`), {
+          stdout: failWith?.stdout,
+        })
+      }
+      return { stdout: args.includes('skills') ? skillsStdout : '' }
     }) as never)
   }
 
@@ -833,6 +844,177 @@ describe('spree upgrade', () => {
       const message = vi.mocked(p.cancel).mock.calls.at(-1)?.[0]
       expect(message).toMatch(/no such service: web/)
       expect(message).not.toMatch(/Command failed/)
+    })
+  })
+
+  describe('agent skills', () => {
+    const update = 'pnpm dlx skills add spree/agent-skills --skill * --yes --json'
+
+    function writeSkillsLock(skills: Record<string, string>): void {
+      fs.writeFileSync(
+        path.join(projectDir, 'skills-lock.json'),
+        JSON.stringify({
+          version: 2,
+          skills: Object.fromEntries(
+            Object.entries(skills).map(([name, source]) => [
+              name,
+              { source, sourceType: 'github', skillPath: `skills/${name}/SKILL.md` },
+            ]),
+          ),
+        }),
+      )
+    }
+
+    function installSpreeSkills(): void {
+      writeSkillsLock({
+        'spree-api-v3': 'spree/agent-skills',
+        'release-notes': 'acme/skills',
+        'spree-checkout': 'https://github.com/spree/agent-skills.git',
+      })
+    }
+
+    async function runInteractively(confirm: (message: string) => boolean): Promise<void> {
+      vi.mocked(p.confirm).mockClear()
+      vi.mocked(p.confirm).mockImplementation((async ({ message }: { message: string }) =>
+        confirm(message)) as never)
+      const program = new Command()
+      registerUpgradeCommand(program)
+      await program.parseAsync(['upgrade'], { from: 'user' })
+    }
+
+    afterEach(() => {
+      packageManager.name = 'pnpm'
+    })
+
+    it('installs every Spree skill from the main branch, after the packages and before migrations', async () => {
+      writeProject({ ejected: true })
+      installSpreeSkills()
+
+      await runUpgrade()
+
+      expect(commands).toContain(update)
+      expect(commands.indexOf(update)).toBeGreaterThan(
+        commands.indexOf('pnpm update @spree/dashboard'),
+      )
+      expect(commands.indexOf(update)).toBeLessThan(
+        commands.indexOf('docker compose exec web bin/rails spree:install:migrations db:migrate'),
+      )
+    })
+
+    it('runs the skills CLI with npx in npm and Yarn projects', async () => {
+      writeProject({ ejected: true })
+      installSpreeSkills()
+      packageManager.name = 'yarn'
+
+      await runUpgrade()
+
+      expect(commands).toContain('npx --yes skills add spree/agent-skills --skill * --yes --json')
+    })
+
+    it('asks before updating the skills, and skips them when declined', async () => {
+      writeProject({ ejected: false })
+      installSpreeSkills()
+
+      await runInteractively((message) => !message.includes('agent skills'))
+
+      expect(vi.mocked(p.confirm)).toHaveBeenCalledWith(
+        expect.objectContaining({ message: expect.stringContaining('agent skills') }),
+      )
+      expect(commands.some((command) => command.includes('skills'))).toBe(false)
+      expect(commands).toContain('docker compose exec web bin/rails spree:upgrade')
+    })
+
+    it.each([
+      ['has no skills lockfile', () => {}],
+      [
+        'has only skills from other sources',
+        () => writeSkillsLock({ 'release-notes': 'acme/skills' }),
+      ],
+      [
+        'has an unreadable skills lockfile',
+        () => fs.writeFileSync(path.join(projectDir, 'skills-lock.json'), '{ not json'),
+      ],
+    ])('neither asks nor updates when the project %s', async (_case, setup) => {
+      writeProject({ ejected: true })
+      fs.mkdirSync(path.join(projectDir, '.agents', 'skills', 'release-notes'), {
+        recursive: true,
+      })
+      setup()
+
+      await runInteractively(() => true)
+
+      expect(vi.mocked(p.confirm)).not.toHaveBeenCalledWith(
+        expect.objectContaining({ message: expect.stringContaining('agent skills') }),
+      )
+      expect(commands.some((command) => command.includes('skills'))).toBe(false)
+    })
+
+    function lastWarning(): string | undefined {
+      return vi.mocked(prompts.log.warn).mock.calls.at(-1)?.[0]
+    }
+
+    it("warns with the skills CLI's reason and carries on when the update fails", async () => {
+      writeProject({ ejected: true })
+      installSpreeSkills()
+      routeExeca({
+        failOn: 'skills add',
+        failWith: {
+          message: 'Command failed with exit code 1: pnpm dlx skills add',
+          stdout: JSON.stringify([
+            { status: 'failed', error: 'Failed to clone repository\nAuthentication failed' },
+          ]),
+        },
+      })
+
+      await runUpgrade()
+
+      const warning = lastWarning()
+      expect(warning).toContain('The Spree agent skills were not updated')
+      expect(warning).toContain('pnpm dlx skills add spree/agent-skills --skill "*" --yes')
+      expect(warning).not.toContain('--json')
+      expect(warning).toContain('Failed to clone repository\nAuthentication failed')
+      expect(warning).not.toContain('Command failed')
+      expect(commands.at(-1)).toBe('docker compose restart web')
+    })
+
+    it('warns when a skill failed to install although the run exited with code 0', async () => {
+      writeProject({ ejected: true })
+      installSpreeSkills()
+      routeExeca({
+        skillsStdout: JSON.stringify([
+          { name: 'spree-api-v3', status: 'installed' },
+          { name: 'spree-checkout', status: 'failed', error: 'EACCES: permission denied' },
+        ]),
+      })
+
+      await runUpgrade()
+
+      const warning = lastWarning()
+      expect(warning).toContain('The Spree agent skills were not updated')
+      expect(warning).toContain('spree-checkout: EACCES: permission denied')
+      expect(warning).not.toContain('spree-api-v3')
+    })
+
+    it('shows only the last lines of a failure without colour codes', async () => {
+      writeProject({ ejected: true })
+      installSpreeSkills()
+      routeExeca({
+        failOn: 'skills add',
+        failWith: {
+          message: [
+            ...Array.from({ length: 20 }, (_, index) => `progress line ${index}`),
+            '\u001b[31mCommand timed out after 120000 milliseconds\u001b[39m',
+          ].join('\n'),
+        },
+      })
+
+      await runUpgrade()
+
+      const warning = lastWarning()
+      expect(warning).toContain('Command timed out after 120000 milliseconds')
+      expect(warning).not.toContain('\u001b[31m')
+      expect(warning).not.toContain('progress line 10')
+      expect(warning).toContain('progress line 19')
     })
   })
 

@@ -9,11 +9,11 @@ import { isNotFound } from '../config.js'
 import { DASHBOARD_PORT, SELLER_DASHBOARD_PORT } from '../constants.js'
 import { detectProject } from '../context.js'
 import {
-  AGENT_SKILLS_REPO,
   addDocsMcpServer,
   addDocsSectionToAgentInstructions,
-  dlxCommand,
+  INSTALL_SKILLS_ARGS,
   installAgentSkills,
+  skillsFailureMessage,
 } from '../lib/ai.js'
 import {
   EXTENSIONS,
@@ -249,9 +249,7 @@ export async function addAi(ctx: ProjectContext, opts: AddAiOptions): Promise<bo
     } catch (err) {
       ready = false
       s.stop(pc.yellow('Spree agent skills were not installed.'))
-      p.log.warn(
-        `Install them later with ${pc.bold(`${dlxCommand(packageManager).join(' ')} skills add ${AGENT_SKILLS_REPO}`)}.\n${err instanceof Error ? err.message : String(err)}`,
-      )
+      p.log.warn(skillsFailureMessage('installed', packageManager, INSTALL_SKILLS_ARGS, err))
     }
   }
 
