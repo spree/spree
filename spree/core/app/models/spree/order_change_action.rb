@@ -22,11 +22,7 @@ module Spree
     STOCK_KINDS = %w[receive_item add_fulfillment].freeze
     # Manual discount rows; promotion rows belong to recalculation.
     DISCOUNT_KINDS = %w[add_discount update_discount remove_discount].freeze
-    CORE_KINDS = (ITEM_KINDS + STOCK_KINDS + DISCOUNT_KINDS).freeze
-
-    # Configuration, not a frozen constant: Spree::OrderChange.register_action_kind
-    # appends here alongside registering the applier.
-    class_attribute :kinds, default: CORE_KINDS.dup
+    KINDS = (ITEM_KINDS + STOCK_KINDS + DISCOUNT_KINDS).freeze
 
     belongs_to :order_change, class_name: 'Spree::OrderChange', inverse_of: :actions
 
@@ -36,7 +32,7 @@ module Spree
     belongs_to :discount, class_name: 'Spree::Discount', optional: true
     belongs_to :delivery_method, class_name: 'Spree::DeliveryMethod', optional: true
 
-    validates :kind, inclusion: { in: ->(record) { record.class.kinds } }
+    validates :kind, inclusion: { in: KINDS }
     validates :quantity, numericality: { only_integer: true, greater_than: 0 }, allow_nil: true
     validates :variant, presence: true, if: -> { kind.in?(%w[add_item receive_item add_fulfillment]) }
     validates :line_item, presence: true, if: -> { kind.in?(%w[update_item remove_item add_fulfillment]) }
