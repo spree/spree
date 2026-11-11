@@ -5431,21 +5431,26 @@
         "title": "Xóa người bán?"
       },
       "detail": {
-        "at_a_glance": "Trong nháy mắt",
         "billing_address": "Địa chỉ thanh toán",
         "contact": "Liên hệ",
         "delete_label": "Xóa người bán",
         "edit_contact": "Chỉnh sửa liên hệ",
+        "edit_cover": "Sửa ảnh bìa",
+        "edit_logo": "Sửa logo",
         "edit_profile": "Chỉnh sửa hồ sơ",
-        "edit_profile_description": "Người bán duy trì điều này từ bảng điều khiển riêng của họ. Các chỉnh sửa ở đây được áp dụng thay mặt họ.",
         "edit_settlement": "Chỉnh sửa khoản thanh toán và thuế",
-        "edit_settlement_description": "Chỉ bạn mới có thể xem hoặc thay đổi những điều này. Người bán không bao giờ chỉnh sửa chúng.",
+        "joined": "Tham gia",
         "load_error": "Không thể tải người bán này",
         "no_about": "Người bán này chưa viết mô tả.",
         "returns_address": "Trả về địa chỉ",
         "settlement": "Các khoản thanh toán và thuế"
       },
       "empty": "Chưa có người bán",
+      "holiday": {
+        "end": "Kết thúc chế độ nghỉ",
+        "off": "Tắt. Người bán vẫn nhận đơn hàng như bình thường.",
+        "title": "Chế độ nghỉ"
+      },
       "images": {
         "cover_photo_help": "Một biểu ngữ rộng trên đầu hồ sơ người bán.",
         "cover_photo_label": "Ảnh bìa",
@@ -5496,6 +5501,7 @@
         },
         "review_note": "Ghi chú của bạn: {{note}}",
         "seller_note": "Người bán: {{note}}",
+        "show_steps": "Hiện các bước",
         "status": {
           "complete": "Xong",
           "incomplete": "Đang chờ xử lý",
@@ -5511,6 +5517,9 @@
         "waived": "Miễn trừ"
       },
       "onboarding_column": "Giới thiệu",
+      "orders": {
+        "to_fulfill": "Cần xử lý"
+      },
       "payout_interval": {
         "biweekly": "Hai tuần một lần",
         "daily": "Hàng ngày",
@@ -5529,6 +5538,10 @@
         "title": "Gửi lại để giới thiệu?"
       },
       "search_placeholder": "Tìm kiếm người bán",
+      "stats": {
+        "commission": "Hoa hồng (30 ngày)",
+        "net_sales": "Doanh thu thuần (30 ngày)"
+      },
       "status": {
         "approved": "Đã được phê duyệt",
         "canceled": "Đã hủy",

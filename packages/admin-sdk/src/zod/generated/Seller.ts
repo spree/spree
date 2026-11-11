@@ -29,6 +29,7 @@ export const SellerSchema = z.object({
   on_holiday: z.boolean(),
   sellable: z.boolean(),
   products_count: z.number(),
+  products_count_by_status: z.object({ draft: z.number(), active: z.number(), archived: z.number(), proposed: z.number(), rejected: z.number() }),
   users_count: z.number(),
   onboarding_progress: z.object({ done: z.number(), total: z.number() }),
   onboarding_complete: z.boolean(),

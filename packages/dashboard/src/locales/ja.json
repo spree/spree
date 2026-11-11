@@ -5464,21 +5464,26 @@
         "title": "販売者を削除しますか？"
       },
       "detail": {
-        "at_a_glance": "概要",
         "billing_address": "請求先住所",
         "contact": "連絡先",
         "delete_label": "販売者を削除",
         "edit_contact": "連絡先を編集",
+        "edit_cover": "カバー写真を編集",
+        "edit_logo": "ロゴを編集",
         "edit_profile": "プロフィールを編集",
-        "edit_profile_description": "販売者が自分の画面で管理しています。ここでの編集は販売者の代わりに反映されます。",
         "edit_settlement": "支払いと税を編集",
-        "edit_settlement_description": "あなただけが見たり変えたりできます。販売者は編集できません。",
+        "joined": "参加",
         "load_error": "この販売者を読み込めませんでした",
         "no_about": "この販売者はまだ説明を書いていません。",
         "returns_address": "返品先の住所",
         "settlement": "支払いと税"
       },
       "empty": "販売者はまだいません",
+      "holiday": {
+        "end": "休暇モードを終了",
+        "off": "オフ。販売者は通常どおり注文を受け付けています。",
+        "title": "休暇モード"
+      },
       "images": {
         "cover_photo_help": "販売者のプロフィールの上部に表示する横長のバナーです。",
         "cover_photo_label": "カバー写真",
@@ -5529,6 +5534,7 @@
         },
         "review_note": "あなたのメモ: {{note}}",
         "seller_note": "販売者: {{note}}",
+        "show_steps": "手順を表示",
         "status": {
           "complete": "完了",
           "incomplete": "保留中",
@@ -5544,6 +5550,9 @@
         "waived": "免除済み"
       },
       "onboarding_column": "登録手続き",
+      "orders": {
+        "to_fulfill": "未発送"
+      },
       "payout_interval": {
         "biweekly": "2 週間ごと",
         "daily": "毎日",
@@ -5562,6 +5571,10 @@
         "title": "登録手続きに差し戻しますか？"
       },
       "search_placeholder": "販売者を検索",
+      "stats": {
+        "commission": "手数料（30日間）",
+        "net_sales": "純売上（30日間）"
+      },
       "status": {
         "approved": "承認済み",
         "canceled": "キャンセル済み",

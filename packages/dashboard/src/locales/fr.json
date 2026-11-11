@@ -5467,21 +5467,26 @@
         "title": "Supprimer le vendeur ?"
       },
       "detail": {
-        "at_a_glance": "En un coup d'œil",
         "billing_address": "Adresse de facturation",
         "contact": "Contact",
         "delete_label": "Supprimer le vendeur",
         "edit_contact": "Modifier le contact",
+        "edit_cover": "Modifier la photo de couverture",
+        "edit_logo": "Modifier le logo",
         "edit_profile": "Modifier le profil",
-        "edit_profile_description": "Le vendeur gère ces informations depuis son propre espace. Les modifications faites ici le sont en son nom.",
         "edit_settlement": "Modifier les versements et les taxes",
-        "edit_settlement_description": "Vous seul pouvez voir et modifier ces réglages. Le vendeur ne les modifie jamais.",
+        "joined": "Inscrit",
         "load_error": "Impossible de charger ce vendeur",
         "no_about": "Ce vendeur n'a pas encore rédigé de description.",
         "returns_address": "Adresse de retour",
         "settlement": "Versements et taxes"
       },
       "empty": "Aucun vendeur pour le moment",
+      "holiday": {
+        "end": "Terminer le mode vacances",
+        "off": "Désactivé. Le vendeur accepte les commandes normalement.",
+        "title": "Mode vacances"
+      },
       "images": {
         "cover_photo_help": "Une bannière large en haut du profil du vendeur.",
         "cover_photo_label": "Photo de couverture",
@@ -5532,6 +5537,7 @@
         },
         "review_note": "Votre note : {{note}}",
         "seller_note": "Vendeur : {{note}}",
+        "show_steps": "Afficher les étapes",
         "status": {
           "complete": "Fait",
           "incomplete": "En attente",
@@ -5547,6 +5553,9 @@
         "waived": "Levée"
       },
       "onboarding_column": "Configuration",
+      "orders": {
+        "to_fulfill": "À expédier"
+      },
       "payout_interval": {
         "biweekly": "Toutes les deux semaines",
         "daily": "Chaque jour",
@@ -5565,6 +5574,10 @@
         "title": "Renvoyer à la configuration ?"
       },
       "search_placeholder": "Rechercher des vendeurs",
+      "stats": {
+        "commission": "Commission (30 jours)",
+        "net_sales": "Ventes nettes (30 jours)"
+      },
       "status": {
         "approved": "Approuvé",
         "canceled": "Annulé",

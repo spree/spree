@@ -5465,21 +5465,26 @@
         "title": "Delete seller?"
       },
       "detail": {
-        "at_a_glance": "At a glance",
         "billing_address": "Billing address",
         "contact": "Contact",
         "delete_label": "Delete seller",
         "edit_contact": "Edit contact",
+        "edit_cover": "Edit cover photo",
+        "edit_logo": "Edit logo",
         "edit_profile": "Edit profile",
-        "edit_profile_description": "The seller maintains this from their own panel. Edits here apply on their behalf.",
         "edit_settlement": "Edit payouts and tax",
-        "edit_settlement_description": "Only you can see or change these. The seller never edits them.",
+        "joined": "Joined",
         "load_error": "Could not load this seller",
         "no_about": "This seller has not written a description yet.",
         "returns_address": "Returns address",
         "settlement": "Payouts and tax"
       },
       "empty": "No sellers yet",
+      "holiday": {
+        "end": "End holiday mode",
+        "off": "Off. The seller is taking orders as usual.",
+        "title": "Holiday mode"
+      },
       "images": {
         "cover_photo_help": "A wide banner across the top of the seller profile.",
         "cover_photo_label": "Cover photo",
@@ -5530,6 +5535,7 @@
         },
         "review_note": "Your note: {{note}}",
         "seller_note": "Seller: {{note}}",
+        "show_steps": "Show steps",
         "status": {
           "complete": "Done",
           "incomplete": "Pending",
@@ -5545,6 +5551,9 @@
         "waived": "Waived"
       },
       "onboarding_column": "Onboarding",
+      "orders": {
+        "to_fulfill": "To fulfill"
+      },
       "payout_interval": {
         "biweekly": "Every two weeks",
         "daily": "Daily",
@@ -5563,6 +5572,10 @@
         "title": "Send back to onboarding?"
       },
       "search_placeholder": "Search sellers",
+      "stats": {
+        "commission": "Commission (30 days)",
+        "net_sales": "Net sales (30 days)"
+      },
       "status": {
         "approved": "Approved",
         "canceled": "Canceled",

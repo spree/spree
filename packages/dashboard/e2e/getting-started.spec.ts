@@ -41,6 +41,9 @@ async function saveStoreAddress(page: Page) {
     await page.getByPlaceholder(/^search states/i).fill('California')
     await page.getByRole('option', { name: 'California' }).first().click()
   }
+  // Another spec may have filled the address in already, and Save waits for a
+  // change, so this always makes one.
+  await sheet.locator('#addr-a2').fill(`Suite ${Date.now()}`)
   await sheet.getByRole('button', { name: /^save$/i }).click()
 }
 

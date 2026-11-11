@@ -1,6 +1,6 @@
-import type { SellerCreateParams } from '@spree/admin-sdk'
+import type { Seller, SellerCreateParams } from '@spree/admin-sdk'
 import { PAYOUT_SCHEDULE_INTERVALS, TAX_REMITTANCES } from '@spree/core'
-import { blankToNull, signedIdParam } from '@spree/dashboard-core'
+import { blankToNull } from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
 
@@ -52,6 +52,27 @@ export const SELLER_DEFAULTS: SellerFormValues = {
   cover_photo_cleared: false,
 }
 
+/**
+ * The form seeded from a saved seller. Images start as the empty triple: the
+ * saved ones are shown through the field's `serverUrl`, and the triple only
+ * carries what the operator changes this time.
+ */
+export function sellerFormValues(seller: Seller): SellerFormValues {
+  return {
+    ...SELLER_DEFAULTS,
+    name: seller.name,
+    slug: seller.slug,
+    contact_email: seller.contact_email ?? '',
+    billing_email: seller.billing_email ?? '',
+    about: seller.about_html ?? '',
+    tax_remittance: (seller.tax_remittance ?? 'seller') as SellerFormValues['tax_remittance'],
+    payouts_schedule_interval: (seller.payouts_schedule_interval ??
+      '') as SellerFormValues['payouts_schedule_interval'],
+    minimum_payout_amount: seller.minimum_payout_amount ?? '',
+    holiday_mode_until: seller.holiday_mode_until ?? '',
+  }
+}
+
 export function sellerValuesToParams(values: SellerFormValues): SellerCreateParams {
   return {
     name: values.name,
@@ -65,17 +86,6 @@ export function sellerValuesToParams(values: SellerFormValues): SellerCreatePara
       | null,
     minimum_payout_amount: blankToNull(values.minimum_payout_amount),
     holiday_mode_until: blankToNull(values.holiday_mode_until),
-  }
-}
-
-/** The image params only, for the sheet that owns the branding. */
-export function sellerImageParams(
-  values: SellerFormValues,
-): Pick<SellerCreateParams, 'logo_signed_id' | 'square_logo_signed_id' | 'cover_photo_signed_id'> {
-  return {
-    ...signedIdParam('logo', values.logo_signed_id, values.logo_cleared),
-    ...signedIdParam('square_logo', values.square_logo_signed_id, values.square_logo_cleared),
-    ...signedIdParam('cover_photo', values.cover_photo_signed_id, values.cover_photo_cleared),
   }
 }
 
