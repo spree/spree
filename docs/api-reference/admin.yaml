@@ -55069,6 +55069,12 @@ paths:
                   on_holiday: false
                   sellable: false
                   products_count: 0
+                  products_count_by_status:
+                    draft: 0
+                    active: 0
+                    archived: 0
+                    proposed: 0
+                    rejected: 0
                   users_count: 0
                   onboarding_progress:
                     done: 0
@@ -55187,6 +55193,12 @@ paths:
                 on_holiday: false
                 sellable: false
                 products_count: 0
+                products_count_by_status:
+                  draft: 0
+                  active: 0
+                  archived: 0
+                  proposed: 0
+                  rejected: 0
                 users_count: 0
                 onboarding_progress:
                   done: 0
@@ -55297,6 +55309,12 @@ paths:
                 on_holiday: false
                 sellable: false
                 products_count: 0
+                products_count_by_status:
+                  draft: 0
+                  active: 0
+                  archived: 0
+                  proposed: 0
+                  rejected: 0
                 users_count: 0
                 onboarding_progress:
                   done: 0
@@ -55393,6 +55411,12 @@ paths:
                 on_holiday: false
                 sellable: false
                 products_count: 0
+                products_count_by_status:
+                  draft: 0
+                  active: 0
+                  archived: 0
+                  proposed: 0
+                  rejected: 0
                 users_count: 0
                 onboarding_progress:
                   done: 0
@@ -55585,6 +55609,12 @@ paths:
                 on_holiday: false
                 sellable: false
                 products_count: 0
+                products_count_by_status:
+                  draft: 0
+                  active: 0
+                  archived: 0
+                  proposed: 0
+                  rejected: 0
                 users_count: 0
                 onboarding_progress:
                   done: 0
@@ -55864,6 +55894,12 @@ paths:
                 on_holiday: false
                 sellable: true
                 products_count: 0
+                products_count_by_status:
+                  draft: 0
+                  active: 0
+                  archived: 0
+                  proposed: 0
+                  rejected: 0
                 users_count: 0
                 onboarding_progress:
                   done: 0
@@ -55974,6 +56010,12 @@ paths:
                 on_holiday: false
                 sellable: false
                 products_count: 0
+                products_count_by_status:
+                  draft: 0
+                  active: 0
+                  archived: 0
+                  proposed: 0
+                  rejected: 0
                 users_count: 0
                 onboarding_progress:
                   done: 0
@@ -56089,6 +56131,12 @@ paths:
                 on_holiday: false
                 sellable: false
                 products_count: 0
+                products_count_by_status:
+                  draft: 0
+                  active: 0
+                  archived: 0
+                  proposed: 0
+                  rejected: 0
                 users_count: 0
                 onboarding_progress:
                   done: 0
@@ -56187,6 +56235,12 @@ paths:
                 on_holiday: false
                 sellable: false
                 products_count: 0
+                products_count_by_status:
+                  draft: 0
+                  active: 0
+                  archived: 0
+                  proposed: 0
+                  rejected: 0
                 users_count: 0
                 onboarding_progress:
                   done: 0
