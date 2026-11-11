@@ -453,10 +453,16 @@ module SpreeStripe
       # share of; let Stripe answer as it would have.
       return [amount, currency] unless charge.currency.to_s.downcase == currency && captured.positive?
 
-      # Never more than the charge settled for — an earning larger than what
-      # was captured would otherwise ask for a transfer Stripe refuses on
-      # every retry.
-      share = [prorate(amount, balance_transaction.amount, captured), balance_transaction.amount.to_i].min
+      share = prorate(amount, balance_transaction.amount, captured)
+      # An earning larger than what was captured cannot be funded from this
+      # charge. Sending what it holds would complete the row and silently
+      # short the seller, so it is refused: nothing moves, the earning stays
+      # owed and visible, and the reason names what a person has to resolve.
+      if share > balance_transaction.amount.to_i
+        raise Spree::Core::GatewayError,
+              "Seller earning exceeds what charge #{source_charge} settled for; capture the rest or settle it by hand"
+      end
+
       [SpreeStripe::Units.floor_to_step(share, settlement, payout: true), settlement]
     end
 

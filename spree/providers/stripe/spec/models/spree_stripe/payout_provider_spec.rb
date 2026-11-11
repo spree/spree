@@ -121,8 +121,8 @@ RSpec.describe SpreeStripe::PayoutProvider do
         end
       end
 
-      # An earning larger than what was captured cannot draw more than the
-      # charge settled for.
+      # An earning larger than what was captured cannot be funded from the
+      # charge; sending part of it would complete the row and short the seller.
       context 'when the earning exceeds what was captured' do
         let(:order) { create(:order, store: store, seller: seller, total: 100, currency: 'GBP') }
         let(:seller_transfer) { create(:seller_transfer, seller: seller, order: order, amount: 20, currency: 'GBP') }
@@ -133,11 +133,13 @@ RSpec.describe SpreeStripe::PayoutProvider do
           )
         end
 
-        it 'asks for no more than the charge settled for' do
-          described_class.new.transfer!(seller_transfer)
-
-          expect(Stripe::Transfer).to have_received(:create).
-            with(hash_including(currency: 'usd', amount: 1_270), anything)
+        it 'refuses rather than paying part of the earning' do
+          expect { described_class.new.transfer!(seller_transfer) }.to raise_error(Spree::Core::GatewayError) do |error|
+            expect(error).not_to be_a(Spree::Core::AmbiguousGatewayError)
+            expect(error.message).to include('exceeds what charge ch_1 settled for')
+          end
+          expect(Stripe::Transfer).not_to have_received(:create)
+          expect(seller_transfer.reload).not_to be_completed
         end
       end
 
