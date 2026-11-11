@@ -22,8 +22,7 @@ RSpec.describe Spree::SampleData::LoadJob, type: :job do
   it 'retries while the store is not provisioned yet' do
     allow(loader).to receive(:call).and_raise(Spree::SampleData::StoreNotProvisioned)
 
-    expect { described_class.perform_now(create(:store).id) }
-      .to have_enqueued_job(described_class)
+    expect { described_class.perform_now(create(:store).id) }.to have_enqueued_job(described_class)
   end
 
   it 'skips a store that no longer exists' do

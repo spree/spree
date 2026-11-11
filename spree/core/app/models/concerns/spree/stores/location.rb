@@ -50,7 +50,7 @@ module Spree
       #
       # @return [Boolean]
       def provisioned?
-        stock_locations.first_party.where(default: true).exists?
+        stock_locations.first_party.exists?(default: true)
       end
 
       private

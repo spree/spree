@@ -84,20 +84,78 @@ products:
   # in any order without poisoning siblings. All start active so the status
   # spec sees a clean transition; M and N are pre-listed on the bulk channel
   # so the remove flow has something to undo.
-  - { slug: e2e-bulk-product-a, name: E2E Bulk Product A, status: active, sku: E2E-BULK-A, prices: { USD: 9.99 } }
-  - { slug: e2e-bulk-product-b, name: E2E Bulk Product B, status: active, sku: E2E-BULK-B, prices: { USD: 9.99 } }
-  - { slug: e2e-bulk-product-c, name: E2E Bulk Product C, status: active, sku: E2E-BULK-C, prices: { USD: 9.99 } }
-  - { slug: e2e-bulk-product-d, name: E2E Bulk Product D, status: active, sku: E2E-BULK-D, prices: { USD: 9.99 } }
-  - { slug: e2e-bulk-product-e, name: E2E Bulk Product E, status: active, sku: E2E-BULK-E, prices: { USD: 9.99 } }
-  - { slug: e2e-bulk-product-f, name: E2E Bulk Product F, status: active, sku: E2E-BULK-F, prices: { USD: 9.99 } }
-  - { slug: e2e-bulk-product-g, name: E2E Bulk Product G, status: active, sku: E2E-BULK-G, prices: { USD: 9.99 } }
-  - { slug: e2e-bulk-product-h, name: E2E Bulk Product H, status: active, sku: E2E-BULK-H, prices: { USD: 9.99 } }
-  - { slug: e2e-bulk-product-i, name: E2E Bulk Product I, status: active, sku: E2E-BULK-I, prices: { USD: 9.99 } }
-  - { slug: e2e-bulk-product-j, name: E2E Bulk Product J, status: active, sku: E2E-BULK-J, prices: { USD: 9.99 } }
-  - { slug: e2e-bulk-product-k, name: E2E Bulk Product K, status: active, sku: E2E-BULK-K, prices: { USD: 9.99 } }
-  - { slug: e2e-bulk-product-l, name: E2E Bulk Product L, status: active, sku: E2E-BULK-L, prices: { USD: 9.99 } }
-  - { slug: e2e-bulk-product-m, name: E2E Bulk Product M, status: active, sku: E2E-BULK-M, prices: { USD: 9.99 }, channels: [e2e-bulk] }
-  - { slug: e2e-bulk-product-n, name: E2E Bulk Product N, status: active, sku: E2E-BULK-N, prices: { USD: 9.99 }, channels: [e2e-bulk] }
+  - slug: e2e-bulk-product-a
+    name: E2E Bulk Product A
+    status: active
+    sku: E2E-BULK-A
+    prices: { USD: 9.99 }
+  - slug: e2e-bulk-product-b
+    name: E2E Bulk Product B
+    status: active
+    sku: E2E-BULK-B
+    prices: { USD: 9.99 }
+  - slug: e2e-bulk-product-c
+    name: E2E Bulk Product C
+    status: active
+    sku: E2E-BULK-C
+    prices: { USD: 9.99 }
+  - slug: e2e-bulk-product-d
+    name: E2E Bulk Product D
+    status: active
+    sku: E2E-BULK-D
+    prices: { USD: 9.99 }
+  - slug: e2e-bulk-product-e
+    name: E2E Bulk Product E
+    status: active
+    sku: E2E-BULK-E
+    prices: { USD: 9.99 }
+  - slug: e2e-bulk-product-f
+    name: E2E Bulk Product F
+    status: active
+    sku: E2E-BULK-F
+    prices: { USD: 9.99 }
+  - slug: e2e-bulk-product-g
+    name: E2E Bulk Product G
+    status: active
+    sku: E2E-BULK-G
+    prices: { USD: 9.99 }
+  - slug: e2e-bulk-product-h
+    name: E2E Bulk Product H
+    status: active
+    sku: E2E-BULK-H
+    prices: { USD: 9.99 }
+  - slug: e2e-bulk-product-i
+    name: E2E Bulk Product I
+    status: active
+    sku: E2E-BULK-I
+    prices: { USD: 9.99 }
+  - slug: e2e-bulk-product-j
+    name: E2E Bulk Product J
+    status: active
+    sku: E2E-BULK-J
+    prices: { USD: 9.99 }
+  - slug: e2e-bulk-product-k
+    name: E2E Bulk Product K
+    status: active
+    sku: E2E-BULK-K
+    prices: { USD: 9.99 }
+  - slug: e2e-bulk-product-l
+    name: E2E Bulk Product L
+    status: active
+    sku: E2E-BULK-L
+    prices: { USD: 9.99 }
+  - slug: e2e-bulk-product-m
+    name: E2E Bulk Product M
+    status: active
+    sku: E2E-BULK-M
+    prices: { USD: 9.99 }
+    channels: [e2e-bulk]
+  - slug: e2e-bulk-product-n
+    name: E2E Bulk Product N
+    status: active
+    sku: E2E-BULK-N
+    prices: { USD: 9.99 }
+    channels: [e2e-bulk]
 
   # Inventory operations: a stocked product to send between the warehouses.
   - slug: e2e-transfer-product

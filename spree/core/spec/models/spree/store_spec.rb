@@ -1499,8 +1499,8 @@ describe Spree::Store, type: :model, without_global_store: true do
     it 'adds the presets to a store that has none, and leaves one that has any alone' do
       store.saved_reports.delete_all
 
-      expect { store.create_built_in_reports }.to change { store.saved_reports.seeded.count }
-        .from(0).to(described_class::REPORTS.size)
+      expect { store.create_built_in_reports }.to change { store.saved_reports.seeded.count }.
+        from(0).to(described_class::REPORTS.size)
 
       store.saved_reports.seeded.first.destroy!
       expect { store.create_built_in_reports }.not_to change { store.saved_reports.count }
