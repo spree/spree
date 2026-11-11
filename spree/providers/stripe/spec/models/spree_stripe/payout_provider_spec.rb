@@ -136,8 +136,29 @@ RSpec.describe SpreeStripe::PayoutProvider do
         it 'refuses rather than paying part of the earning' do
           expect { described_class.new.transfer!(seller_transfer) }.to raise_error(Spree::Core::GatewayError) do |error|
             expect(error).not_to be_a(Spree::Core::AmbiguousGatewayError)
-            expect(error.message).to include('exceeds what charge ch_1 settled for')
+            expect(error.message).to include('exceeds what charge ch_1 captured')
           end
+          expect(Stripe::Transfer).not_to have_received(:create)
+          expect(seller_transfer.reload).not_to be_completed
+        end
+      end
+
+      # One minor unit over what was captured, at a rate that would round the
+      # excess away once converted.
+      context 'when the earning exceeds what was captured by the smallest unit' do
+        let(:order) { create(:order, store: store, seller: seller, total: 100, currency: 'GBP') }
+        let(:seller_transfer) do
+          create(:seller_transfer, seller: seller, order: order, amount: BigDecimal('100.01'), currency: 'GBP')
+        end
+        let(:charge) do
+          Stripe::StripeObject.construct_from(
+            id: 'ch_1', amount: 10_000, amount_captured: 10_000, currency: 'gbp',
+            balance_transaction: { amount: 9_000, currency: 'usd' }
+          )
+        end
+
+        it 'still refuses' do
+          expect { described_class.new.transfer!(seller_transfer) }.to raise_error(Spree::Core::GatewayError)
           expect(Stripe::Transfer).not_to have_received(:create)
           expect(seller_transfer.reload).not_to be_completed
         end
