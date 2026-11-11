@@ -109,17 +109,67 @@ match_segment() {
 
 # Pull requests open through /open-pr, which runs /code-review and
 # /security-review and then records the reviewed HEAD in the git dir. Block
-# `gh pr create` until that marker matches HEAD in the session's directory, so
-# a commit made after the reviews sends the branch back through them. The check
-# runs before the command does, so an earlier step in the same command that
-# changes directory or may move HEAD is blocked rather than parsed.
+# `gh pr create` until that marker matches the HEAD of the branch it opens, and
+# that HEAD is the one pushed, so a commit made after the reviews sends the
+# branch back through them. The check runs before the command does, so an
+# earlier step in the same command that changes directory, moves HEAD or
+# pushes is blocked rather than parsed.
 pr_dir="${hook_cwd:-${CLAUDE_PROJECT_DIR:-.}}"
 gh_pr_create='^gh([[:space:]]+-[^[:space:]]+([[:space:]]+[^-[:space:]][^[:space:]]*)?)*[[:space:]]+pr[[:space:]]+create([[:space:]);}]|$)'
+
+# Sets HEAD_FLAG to the last `--head`/`-H` value in a command line, reading it
+# the way gh's option parser does: quoted arguments are one word, a flag's
+# value is never read as a flag, and short flags may be clustered (`-fH x`) or
+# attached (`-Hx`, `-H=x`). Returns 1 when a quote is left open (the argument
+# continues on a later line the gate cannot see) and 2 for a flag it does not
+# know, since an unknown flag may take a value that hides a `--head`.
+HEAD_FLAG=""
+read_head_flag() {
+  local s="$1" tok next="" rest char
+  local word="^(\"[^\"]*\"|'[^']*'|[^[:space:]\"']+)+"
+  local value_longs=" --assignee --base --body --body-file --label --milestone --project --reviewer --repo --title --template --recover "
+  local switch_longs=" --draft --fill --fill-first --fill-verbose --web --editor --dry-run --no-maintainer-edit --help "
+  HEAD_FLAG=""
+  while s="${s#"${s%%[![:space:]]*}"}"; [ -n "$s" ]; do
+    [[ "$s" =~ $word ]] || return 1
+    tok="${BASH_REMATCH[0]}"
+    s="${s:${#tok}}"
+    tok="${tok//[\"\']/}"
+    case "$next" in
+      head) HEAD_FLAG="$tok"; next=""; continue ;;
+      skip) next=""; continue ;;
+    esac
+    case "$tok" in
+      --) return 0 ;;
+      --head) next=head ;;
+      --head=*) HEAD_FLAG="${tok#--head=}" ;;
+      --*=*) [[ "$value_longs" == *" ${tok%%=*} "* ]] || return 2 ;;
+      --*)
+        if [[ "$value_longs" == *" $tok "* ]]; then next=skip
+        elif [[ "$switch_longs" != *" $tok "* ]]; then return 2
+        fi ;;
+      -?*)
+        rest="${tok#-}"
+        while [ -n "$rest" ]; do
+          char="${rest:0:1}"; rest="${rest:1}"
+          case "$char" in
+            [dfweh]) continue ;;
+            H) rest="${rest#=}"; if [ -n "$rest" ]; then HEAD_FLAG="$rest"; else next=head; fi; break ;;
+            [aBbFlmprRtT]) [ -n "$rest" ] || next=skip; break ;;
+            *) return 2 ;;
+          esac
+        done ;;
+    esac
+  done
+}
+
+# A `--head` in any of gh's spellings, for text the gate could not parse.
+gh_head_later='(^|[[:space:]])(--head|-[[:alpha:]]*H)'
 chained=0
 while IFS= read -r segment; do
   seg="${segment#"${segment%%[![:space:]({]*}"}"
   if match_segment "$seg" || [ -n "$GIT_SUB" ]; then
-    case "$GIT_SUB" in push|status|log|diff|show|rev-parse|remote|branch) ;; *) chained=1 ;; esac
+    case "$GIT_SUB" in status|log|diff|show|rev-parse|remote|branch) ;; *) chained=1 ;; esac
     continue
   fi
   if [[ "$LAUNCHED" =~ ^(cd|pushd|popd)([[:space:]]|$) ]]; then chained=1; continue; fi
@@ -129,11 +179,83 @@ while IFS= read -r segment; do
     echo "Run gh pr create as its own command: an earlier cd or git step in the same command changes what it would open." >&2
     exit 2
   fi
-  head=$(git -C "$pr_dir" rev-parse HEAD 2>/dev/null)
-  marker="$(git -C "$pr_dir" rev-parse --absolute-git-dir 2>/dev/null)/claude-reviewed"
+  # `--head <branch>` names what the pull request opens, so the gate checks the
+  # worktree that has that branch checked out — a session started in another
+  # checkout can still open it. Without `--head`, gh opens the current branch.
+  # A multi-line argument hides whatever follows it, so a `--head` placed after
+  # one cannot be read and the gate would check the wrong branch.
+  read_head_flag "${LAUNCHED#*create}"
+  case $? in
+    2)
+      echo "Blocked: $seg" >&2
+      echo "The gate does not know one of these gh pr create flags, so it cannot tell which branch this opens. Use the long flag names --head, --title, --body-file." >&2
+      exit 2 ;;
+    1)
+      if [[ "${cmd#*"$seg"}" =~ $gh_head_later ]]; then
+        echo "Blocked: $seg" >&2
+        echo "Put --head before any multi-line argument (or pass the body with --body-file) so the gate can read which branch this opens." >&2
+        exit 2
+      fi ;;
+  esac
+  # A backslash escapes a space (`Fix\ --head=x` is one argument) or continues
+  # the line, and the gate reads neither the way the shell does.
+  if [[ "$LAUNCHED" == *\\* ]]; then
+    echo "Blocked: $seg" >&2
+    echo "Keep gh pr create on one line without backslashes: quote arguments, or pass the body with --body-file." >&2
+    exit 2
+  fi
+  review_dir="$pr_dir"
+  head_owner=""
+  if [ -n "$HEAD_FLAG" ]; then
+    [[ "$HEAD_FLAG" == *:* ]] && head_owner="${HEAD_FLAG%%:*}"
+    head_branch="${HEAD_FLAG##*:}"
+    review_dir=$(git -C "$pr_dir" worktree list --porcelain 2>/dev/null | awk -v ref="refs/heads/$head_branch" '
+      /^worktree / { path = substr($0, 10) }
+      $0 == "branch " ref { print path; exit }')
+    if [ -z "$review_dir" ]; then
+      echo "Blocked: $seg" >&2
+      echo "No worktree has $head_branch checked out, so the gate cannot tell whether it was reviewed. Run /open-pr from that branch." >&2
+      exit 2
+    fi
+  else
+    head_branch=$(git -C "$pr_dir" symbolic-ref --quiet --short HEAD 2>/dev/null)
+  fi
+
+  head=$(git -C "$review_dir" rev-parse HEAD 2>/dev/null)
+  marker="$(git -C "$review_dir" rev-parse --absolute-git-dir 2>/dev/null)/claude-reviewed"
   if [ -z "$head" ] || [ "$(cat "$marker" 2>/dev/null)" != "$head" ]; then
     echo "Blocked: $seg" >&2
     echo "Open pull requests with /open-pr: /code-review and /security-review have not run on this HEAD. See AGENTS.md, Git." >&2
+    exit 2
+  fi
+
+  # The pull request opens the remote branch of the same name, not the local
+  # HEAD, so that must be the reviewed commit too. Read the remote-tracking ref
+  # rather than `@{push}`: worktrees track origin/main, which `@{push}` either
+  # cannot resolve or resolves to main.
+  # Git's own order for where a branch pushes.
+  push_remote=$(git -C "$review_dir" config "branch.$head_branch.pushRemote" \
+    || git -C "$review_dir" config remote.pushDefault \
+    || git -C "$review_dir" config "branch.$head_branch.remote" || echo origin)
+  # `--head owner:branch` opens that owner's branch, so the push remote must be
+  # the owner's repository, or the review checked someone else's branch.
+  if [ -n "$head_owner" ]; then
+    remote_url=$(git -C "$review_dir" remote get-url "$push_remote" 2>/dev/null)
+    remote_owner=""
+    # https://github.com/OWNER/…, git@github.com:OWNER/… or, over the HTTPS
+    # port, ssh://git@ssh.github.com:443/OWNER/…
+    github_owner='github\.com(:[0-9]+)?[:/]+([^/]+)/'
+    [[ "$remote_url" =~ $github_owner ]] && remote_owner="${BASH_REMATCH[2]}"
+    if [ -z "$remote_owner" ] || [ "$(tr '[:upper:]' '[:lower:]' <<<"$remote_owner")" != "$(tr '[:upper:]' '[:lower:]' <<<"$head_owner")" ]; then
+      echo "Blocked: $seg" >&2
+      echo "--head $HEAD_FLAG opens $head_owner's branch, but $head_branch pushes to ${remote_owner:-an unknown owner}. Drop the owner or push to that repository." >&2
+      exit 2
+    fi
+  fi
+  pushed=$(git -C "$review_dir" rev-parse --verify --quiet "refs/remotes/$push_remote/$head_branch" 2>/dev/null)
+  if [ "$pushed" != "$head" ]; then
+    echo "Blocked: $seg" >&2
+    echo "Push the reviewed commit ($head) to $head_branch before opening the pull request." >&2
     exit 2
   fi
 done < <(echo "$cmd" | tr ';&|' '\n')
