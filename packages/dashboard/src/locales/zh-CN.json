@@ -5452,21 +5452,26 @@
         "title": "删除卖家？"
       },
       "detail": {
-        "at_a_glance": "概览",
         "billing_address": "账单地址",
         "contact": "联系方式",
         "delete_label": "删除卖家",
         "edit_contact": "编辑联系方式",
+        "edit_cover": "编辑封面照片",
+        "edit_logo": "编辑徽标",
         "edit_profile": "编辑资料",
-        "edit_profile_description": "卖家在自己的面板中维护这些信息。在这里的修改代表卖家进行。",
         "edit_settlement": "编辑结算与税务",
-        "edit_settlement_description": "只有你能查看和修改这些设置，卖家无法编辑。",
+        "joined": "加入于",
         "load_error": "无法加载该卖家",
         "no_about": "该卖家尚未填写简介。",
         "returns_address": "退货地址",
         "settlement": "结算与税务"
       },
       "empty": "暂无卖家",
+      "holiday": {
+        "end": "结束休假模式",
+        "off": "已关闭。卖家正常接单。",
+        "title": "休假模式"
+      },
       "images": {
         "cover_photo_help": "卖家资料页顶部的宽幅横幅。",
         "cover_photo_label": "封面图",
@@ -5517,6 +5522,7 @@
         },
         "review_note": "你的备注：{{note}}",
         "seller_note": "卖家：{{note}}",
+        "show_steps": "显示步骤",
         "status": {
           "complete": "已完成",
           "incomplete": "待办",
@@ -5532,6 +5538,9 @@
         "waived": "已豁免"
       },
       "onboarding_column": "入驻",
+      "orders": {
+        "to_fulfill": "待履约"
+      },
       "payout_interval": {
         "biweekly": "每两周",
         "daily": "每天",
@@ -5550,6 +5559,10 @@
         "title": "退回入驻流程？"
       },
       "search_placeholder": "搜索卖家",
+      "stats": {
+        "commission": "佣金（30 天）",
+        "net_sales": "净销售额（30 天）"
+      },
       "status": {
         "approved": "已批准",
         "canceled": "已取消",

@@ -5465,21 +5465,26 @@
         "title": "Verkäufer löschen?"
       },
       "detail": {
-        "at_a_glance": "Auf einen Blick",
         "billing_address": "Rechnungsadresse",
         "contact": "Kontakt",
         "delete_label": "Verkäufer löschen",
         "edit_contact": "Kontakt bearbeiten",
+        "edit_cover": "Titelbild bearbeiten",
+        "edit_logo": "Logo bearbeiten",
         "edit_profile": "Profil bearbeiten",
-        "edit_profile_description": "Der Verkäufer pflegt das in seinem eigenen Bereich. Änderungen hier erfolgen in seinem Namen.",
         "edit_settlement": "Auszahlungen und Steuern bearbeiten",
-        "edit_settlement_description": "Nur Sie sehen und ändern diese Angaben. Der Verkäufer bearbeitet sie nie.",
+        "joined": "Beigetreten",
         "load_error": "Dieser Verkäufer konnte nicht geladen werden",
         "no_about": "Dieser Verkäufer hat noch keine Beschreibung verfasst.",
         "returns_address": "Retourenadresse",
         "settlement": "Auszahlungen und Steuern"
       },
       "empty": "Noch keine Verkäufer",
+      "holiday": {
+        "end": "Urlaubsmodus beenden",
+        "off": "Aus. Der Verkäufer nimmt wie gewohnt Bestellungen an.",
+        "title": "Urlaubsmodus"
+      },
       "images": {
         "cover_photo_help": "Ein breites Banner oben auf dem Verkäuferprofil.",
         "cover_photo_label": "Titelbild",
@@ -5530,6 +5535,7 @@
         },
         "review_note": "Ihre Notiz: {{note}}",
         "seller_note": "Verkäufer: {{note}}",
+        "show_steps": "Schritte anzeigen",
         "status": {
           "complete": "Erledigt",
           "incomplete": "Ausstehend",
@@ -5545,6 +5551,9 @@
         "waived": "Erlassen"
       },
       "onboarding_column": "Einrichtung",
+      "orders": {
+        "to_fulfill": "Zu erfüllen"
+      },
       "payout_interval": {
         "biweekly": "Alle zwei Wochen",
         "daily": "Täglich",
@@ -5563,6 +5572,10 @@
         "title": "Zurück zur Einrichtung schicken?"
       },
       "search_placeholder": "Verkäufer suchen",
+      "stats": {
+        "commission": "Provision (30 Tage)",
+        "net_sales": "Nettoumsatz (30 Tage)"
+      },
       "status": {
         "approved": "Freigegeben",
         "canceled": "Abgebrochen",

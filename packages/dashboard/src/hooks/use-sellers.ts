@@ -67,7 +67,8 @@ export function useCreateSeller() {
 export function useUpdateSeller(id: string) {
   return useResourceMutation<Seller, Error, SellerUpdateParams>({
     mutationFn: (params) => adminClient.sellers.update(id, params),
-    invalidate: [['sellers'], ['sellers', id]],
+    // A returns address is written onto the seller's stock location.
+    invalidate: [['sellers'], ['sellers', id], ['stock-locations']],
     successMessage: i18n.t('admin.sellers.messages.updated'),
     errorMessage: i18n.t('admin.sellers.messages.update_failed'),
   })
@@ -146,6 +147,33 @@ export function useRejectSeller(id: string) {
     invalidate: [['sellers'], ['sellers', id]],
     successMessage: i18n.t('admin.sellers.messages.rejected'),
     errorMessage: i18n.t('admin.sellers.messages.reject_failed'),
+  })
+}
+
+/** One page of the stock locations a seller ships from. */
+export function useSellerStockLocations(sellerId: string, page: number) {
+  return useQuery({
+    queryKey: useResourceKey('stock-locations', 'seller', sellerId, page),
+    queryFn: () =>
+      adminClient.stockLocations.list({ seller_id_eq: sellerId, page, limit: 10, sort: 'name' }),
+  })
+}
+
+/**
+ * How many placed orders the seller has, all or only those still to ship —
+ * the home page's "To fulfill" filter, so the two counts agree.
+ */
+export function useSellerOrdersCount(sellerId: string, toFulfill: boolean) {
+  return useQuery({
+    queryKey: useResourceKey('orders', 'seller', sellerId, 'count', toFulfill),
+    queryFn: () =>
+      adminClient.orders.list({
+        seller_id_eq: sellerId,
+        complete: true,
+        ...(toFulfill ? { fulfillment_status_eq: 'unfulfilled' } : {}),
+        limit: 1,
+      }),
+    select: (result) => result.meta.count,
   })
 }
 

@@ -5531,21 +5531,26 @@
         "title": "Usunąć sprzedawcę?"
       },
       "detail": {
-        "at_a_glance": "W skrócie",
         "billing_address": "Adres rozliczeniowy",
         "contact": "Kontakt",
         "delete_label": "Usuń sprzedawcę",
         "edit_contact": "Edytuj kontakt",
+        "edit_cover": "Edytuj zdjęcie w tle",
+        "edit_logo": "Edytuj logo",
         "edit_profile": "Edytuj profil",
-        "edit_profile_description": "Sprzedawca prowadzi to w swoim panelu. Zmiany tutaj wprowadzasz w jego imieniu.",
         "edit_settlement": "Edytuj wypłaty i podatki",
-        "edit_settlement_description": "Tylko Ty widzisz i zmieniasz te ustawienia. Sprzedawca ich nie edytuje.",
+        "joined": "Dołączył",
         "load_error": "Nie udało się wczytać tego sprzedawcy",
         "no_about": "Ten sprzedawca nie napisał jeszcze opisu.",
         "returns_address": "Adres zwrotów",
         "settlement": "Wypłaty i podatki"
       },
       "empty": "Nie ma jeszcze sprzedawców",
+      "holiday": {
+        "end": "Zakończ tryb urlopowy",
+        "off": "Wyłączony. Sprzedawca przyjmuje zamówienia jak zwykle.",
+        "title": "Tryb urlopowy"
+      },
       "images": {
         "cover_photo_help": "Szeroki baner u góry profilu sprzedawcy.",
         "cover_photo_label": "Zdjęcie w tle",
@@ -5596,6 +5601,7 @@
         },
         "review_note": "Twoja notatka: {{note}}",
         "seller_note": "Sprzedawca: {{note}}",
+        "show_steps": "Pokaż kroki",
         "status": {
           "complete": "Gotowe",
           "incomplete": "Oczekuje",
@@ -5611,6 +5617,9 @@
         "waived": "Odstąpiono"
       },
       "onboarding_column": "Wdrożenie",
+      "orders": {
+        "to_fulfill": "Do realizacji"
+      },
       "payout_interval": {
         "biweekly": "Co dwa tygodnie",
         "daily": "Codziennie",
@@ -5629,6 +5638,10 @@
         "title": "Odesłać do uzupełnienia?"
       },
       "search_placeholder": "Szukaj sprzedawców",
+      "stats": {
+        "commission": "Prowizja (30 dni)",
+        "net_sales": "Sprzedaż netto (30 dni)"
+      },
       "status": {
         "approved": "Zaakceptowany",
         "canceled": "Anulowany",

@@ -169,6 +169,8 @@ export const FIXTURE_BULK_CHANNEL_NAME = 'E2E Bulk Channel'
  * screens have rows without a spec having to place and fulfil an order first.
  */
 export const FIXTURE_LEDGER_SELLER = 'E2E Ledger Seller'
+/** A product the ledger seller submitted, waiting on the operator's review. */
+export const FIXTURE_LEDGER_PRODUCT_IN_REVIEW = 'E2E Ledger Product In Review'
 /** The ledger seller's returns location, whose address the seller page shows. */
 export const FIXTURE_LEDGER_RETURNS_LOCATION = 'E2E Ledger Returns'
 /** The settled payout the read-only specs assert against. */

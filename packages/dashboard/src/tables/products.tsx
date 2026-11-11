@@ -1,10 +1,6 @@
 import type { Channel } from '@spree/admin-sdk'
-import {
-  ASSIGNABLE_PRODUCT_STATUSES,
-  defineTable,
-  formatPrice,
-  ProductStockSummary,
-} from '@spree/dashboard-core'
+import { PRODUCT_STATUSES } from '@spree/core'
+import { defineTable, formatPrice, ProductStockSummary } from '@spree/dashboard-core'
 import { ProductIdentity, StatusBadge, TagList } from '@spree/dashboard-ui'
 import { PackageIcon } from '@spree/dashboard-ui/icons'
 import { Link } from '@tanstack/react-router'
@@ -50,11 +46,21 @@ defineTable('products', {
       default: true,
       filterType: 'enum',
       quickFilter: true,
-      filterOptions: ASSIGNABLE_PRODUCT_STATUSES.map((status) => ({
+      // Every status, review ones included: an operator filters to what is in
+      // review even though only the bulk action is limited to the three it
+      // may set.
+      filterOptions: PRODUCT_STATUSES.map((status) => ({
         value: status,
         label: i18n.t(`admin.pages.products.status_options.${status}`),
       })),
-      render: (product) => <StatusBadge status={product.status} />,
+      render: (product) => (
+        <StatusBadge
+          status={product.status}
+          label={i18n.t(`admin.pages.products.status_options.${product.status}`, {
+            defaultValue: product.status,
+          })}
+        />
+      ),
     },
     {
       key: 'inventory',

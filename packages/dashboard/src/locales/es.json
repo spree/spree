@@ -3571,21 +3571,26 @@
         "title": "¿Eliminar vendedor?"
       },
       "detail": {
-        "at_a_glance": "De un vistazo",
         "billing_address": "Dirección de facturación",
         "contact": "Contacto",
         "delete_label": "Eliminar vendedor",
         "edit_contact": "Editar contacto",
+        "edit_cover": "Editar foto de portada",
+        "edit_logo": "Editar logotipo",
         "edit_profile": "Editar perfil",
-        "edit_profile_description": "El vendedor lo mantiene desde su propio panel. Las ediciones acá se aplican en su nombre.",
         "edit_settlement": "Editar pagos e impuestos",
-        "edit_settlement_description": "Solo vos podés verlos o cambiarlos. El vendedor nunca los edita.",
+        "joined": "Se unió",
         "load_error": "No se pudo cargar este vendedor",
         "no_about": "Este vendedor todavía no escribió una descripción.",
         "returns_address": "Dirección de devoluciones",
         "settlement": "Pagos e impuestos"
       },
       "empty": "Todavía no hay vendedores",
+      "holiday": {
+        "end": "Finalizar modo vacaciones",
+        "off": "Desactivado. El vendedor acepta pedidos con normalidad.",
+        "title": "Modo vacaciones"
+      },
       "images": {
         "cover_photo_help": "Un banner ancho en la parte superior del perfil del vendedor.",
         "cover_photo_label": "Foto de portada",
@@ -3636,6 +3641,7 @@
         },
         "review_note": "Tu nota: {{note}}",
         "seller_note": "Vendedor: {{note}}",
+        "show_steps": "Mostrar pasos",
         "status": {
           "complete": "Listo",
           "incomplete": "Pendiente",
@@ -3651,6 +3657,9 @@
         "waived": "Eximida"
       },
       "onboarding_column": "Onboarding",
+      "orders": {
+        "to_fulfill": "Por preparar"
+      },
       "payout_interval": {
         "biweekly": "Cada quince días",
         "daily": "Diario",
@@ -3669,6 +3678,10 @@
         "title": "¿Volver a enviar a onboarding?"
       },
       "search_placeholder": "Buscar vendedores",
+      "stats": {
+        "commission": "Comisión (30 días)",
+        "net_sales": "Ventas netas (30 días)"
+      },
       "status": {
         "approved": "Aprobado",
         "canceled": "Cancelado",

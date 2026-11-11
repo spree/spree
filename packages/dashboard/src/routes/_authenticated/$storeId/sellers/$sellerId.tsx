@@ -12,6 +12,7 @@ import {
   Button,
   DropdownMenuItem,
   ErrorState,
+  RelativeTime,
   ResourceLayout,
   StatusBadge,
   useConfirm,
@@ -23,15 +24,17 @@ import { useTranslation } from 'react-i18next'
 import { ApiCustomFieldsCard } from '../../../../components/spree/custom-fields/custom-fields-inline'
 import { EnterprisePreviewNote } from '../../../../components/spree/enterprise-upsell'
 import { ResourceDetailSkeleton } from '../../../../components/spree/route-pending'
-import { SellerAtAGlanceCard } from '../../../../components/spree/sellers/seller-at-a-glance-card'
 import { SellerBalanceCard } from '../../../../components/spree/sellers/seller-balance-card'
 import { SellerBrandCard } from '../../../../components/spree/sellers/seller-brand-card'
 import { SellerContactCard } from '../../../../components/spree/sellers/seller-contact-card'
-import { SellerEditProfileSheet } from '../../../../components/spree/sellers/seller-edit-profile-sheet'
-import { SellerEditSettlementSheet } from '../../../../components/spree/sellers/seller-edit-settlement-sheet'
+import { SellerHolidayCard } from '../../../../components/spree/sellers/seller-holiday-card'
 import { SellerInviteSheet } from '../../../../components/spree/sellers/seller-invite-sheet'
 import { SellerOnboardingCard } from '../../../../components/spree/sellers/seller-onboarding-card'
+import { SellerOrdersSection } from '../../../../components/spree/sellers/seller-orders-section'
+import { SellerProductsSection } from '../../../../components/spree/sellers/seller-products-section'
 import { SellerSettlementCard } from '../../../../components/spree/sellers/seller-settlement-card'
+import { SellerStats } from '../../../../components/spree/sellers/seller-stats'
+import { SellerStockLocationsCard } from '../../../../components/spree/sellers/seller-stock-locations-card'
 import { SellerTeamCard } from '../../../../components/spree/sellers/seller-team-card'
 import { useSellerOnboarding } from '../../../../hooks/use-seller-requirements'
 import {
@@ -86,9 +89,9 @@ function SellerDetailPage() {
 
 /**
  * A seller's page is something you read first. The lifecycle sits in the
- * header, the profile below it, and every editable section opens its own
- * sheet — so arriving here shows you who the seller is rather than dropping
- * you into a form.
+ * header, the profile below it, and every section has its own pencil that
+ * edits it in place — so arriving here shows you who the seller is rather
+ * than dropping you into a form.
  */
 function SellerBody({ seller }: { seller: Seller }) {
   const { t } = useTranslation()
@@ -98,8 +101,6 @@ function SellerBody({ seller }: { seller: Seller }) {
   const confirm = useConfirm()
   const deleteMutation = useDeleteSeller()
 
-  const [editingProfile, setEditingProfile] = useState<'profile' | 'contact' | null>(null)
-  const [editingSettlement, setEditingSettlement] = useState(false)
   const [inviting, setInviting] = useState(false)
 
   const approveMutation = useApproveSeller(seller.id)
@@ -251,34 +252,44 @@ function SellerBody({ seller }: { seller: Seller }) {
     <>
       <ResourceLayout
         header={
-          <PageHeader
-            title={seller.name}
-            subtitle={seller.contact_email ?? undefined}
-            backTo="sellers"
-            badges={<StatusBadge status={status} label={t(`admin.sellers.status.${status}`)} />}
-            actions={primaryAction}
-            dropdownItems={dropdownItems}
-            destructiveItems={destructiveItems}
-            resource={{ id: seller.id }}
-            jsonPreview={{
-              title: `Seller ${seller.name}`,
-              fetch: () => adminClient.sellers.get(seller.id),
-              endpoint: `/api/v3/admin/sellers/${seller.id}`,
-              resolveLink: spreeJsonLinkResolver(storeId),
-            }}
-            onDelete={permissions.can('destroy', Subject.Seller) ? handleDelete : undefined}
-            deleteLabel={t('admin.sellers.detail.delete_label')}
-          />
+          <>
+            <PageHeader
+              title={seller.name}
+              subtitle={
+                <>
+                  {t(`admin.sellers.status_help.${status}`, {
+                    defaultValue: t('admin.sellers.status_help.pending'),
+                  })}{' '}
+                  <span className="whitespace-nowrap">
+                    · {t('admin.sellers.detail.joined')} <RelativeTime iso={seller.created_at} />
+                  </span>
+                </>
+              }
+              backTo="sellers"
+              badges={<StatusBadge status={status} label={t(`admin.sellers.status.${status}`)} />}
+              actions={primaryAction}
+              dropdownItems={dropdownItems}
+              destructiveItems={destructiveItems}
+              resource={{ id: seller.id }}
+              jsonPreview={{
+                title: `Seller ${seller.name}`,
+                fetch: () => adminClient.sellers.get(seller.id),
+                endpoint: `/api/v3/admin/sellers/${seller.id}`,
+                resolveLink: spreeJsonLinkResolver(storeId),
+              }}
+              onDelete={permissions.can('destroy', Subject.Seller) ? handleDelete : undefined}
+              deleteLabel={t('admin.sellers.detail.delete_label')}
+            />
+            <SellerStats seller={seller} />
+          </>
         }
         main={
           <>
-            <SellerBrandCard
-              seller={seller}
-              canEdit={canEdit}
-              onEdit={() => setEditingProfile('profile')}
-            />
-            <SellerOnboardingCard seller={seller} canEdit={canEdit} />
+            <SellerBrandCard seller={seller} canEdit={canEdit} />
+            <SellerProductsSection seller={seller} />
+            <SellerOrdersSection seller={seller} />
             <SellerTeamCard seller={seller} onInvite={() => setInviting(true)} />
+            <SellerStockLocationsCard seller={seller} />
             <ApiCustomFieldsCard ownerType="seller" ownerId={seller.id} collapsible />
             <RecordMetadataCard
               metadata={seller.metadata}
@@ -289,35 +300,17 @@ function SellerBody({ seller }: { seller: Seller }) {
         }
         sidebar={
           <>
-            <SellerAtAGlanceCard seller={seller} />
+            <SellerOnboardingCard seller={seller} canEdit={canEdit} />
             <SellerBalanceCard seller={seller} />
-            <SellerContactCard
-              seller={seller}
-              canEdit={canEdit}
-              onEdit={() => setEditingProfile('contact')}
-            />
-            <SellerSettlementCard
-              seller={seller}
-              canEdit={canEdit}
-              onEdit={() => setEditingSettlement(true)}
-            />
+            <SellerHolidayCard seller={seller} canEdit={canEdit} />
+            <SellerContactCard seller={seller} canEdit={canEdit} />
+            <SellerSettlementCard seller={seller} canEdit={canEdit} />
             <EnterprisePreviewNote previewKey="sellers.shopify" />
             <Slot name="seller.form_sidebar" context={{ seller, canEdit }} />
           </>
         }
       />
 
-      <SellerEditProfileSheet
-        seller={seller}
-        part={editingProfile ?? 'profile'}
-        open={editingProfile !== null}
-        onOpenChange={(open) => !open && setEditingProfile(null)}
-      />
-      <SellerEditSettlementSheet
-        seller={seller}
-        open={editingSettlement}
-        onOpenChange={setEditingSettlement}
-      />
       {inviting && (
         <SellerInviteSheet seller={seller} addToTeam={!canInvite} open onOpenChange={setInviting} />
       )}

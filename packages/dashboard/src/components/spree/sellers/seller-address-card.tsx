@@ -1,8 +1,7 @@
 import type { Seller } from '@spree/admin-sdk'
-import { AddressFormDialog, useStore } from '@spree/dashboard-core'
+import { AddressFormDialog } from '@spree/dashboard-core'
 import { AddressBlock, Button } from '@spree/dashboard-ui'
 import { PencilIcon } from '@spree/dashboard-ui/icons'
-import { Link } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useUpdateSeller } from '../../../hooks/use-sellers'
@@ -14,11 +13,9 @@ type AddressKey = 'billing_address' | 'returns_address'
  * customer returns go. A returns address is what a shopper is told to post
  * to, and a billing address is what a commission invoice is addressed to.
  *
- * Rendered inside the contact card, under the seller's emails. The billing
- * address is edited here. The returns address is read from the seller's
- * returns stock location, so its pencil opens that location's own sheet — a
- * dialog here would PATCH a key the API does not permit, close, and quietly
- * save nothing.
+ * Rendered inside the contact card, under the seller's emails, and both are
+ * edited here. The returns address is the seller's returns stock location's
+ * own; the API writes it onto that location, or makes one if there is none.
  */
 export function SellerAddress({
   seller,
@@ -34,14 +31,12 @@ export function SellerAddress({
   const updateMutation = useUpdateSeller(seller.id)
   const address = seller[addressKey]
   const title = t(`admin.sellers.detail.${addressKey}`)
-  const { storeId } = useStore()
-  const returnsLocationId = addressKey === 'returns_address' ? seller.returns_location_id : null
 
   return (
     <div className="flex flex-col gap-1.5">
       <div className="flex min-h-7 items-center justify-between gap-2">
         <h3 className="font-medium text-base">{title}</h3>
-        {canEdit && addressKey === 'billing_address' && (
+        {canEdit && (
           <Button
             variant="ghost"
             size="icon-sm"
@@ -49,17 +44,6 @@ export function SellerAddress({
             aria-label={t('admin.actions.edit')}
           >
             <PencilIcon className="size-4" />
-          </Button>
-        )}
-        {canEdit && returnsLocationId && (
-          <Button variant="ghost" size="icon-sm" aria-label={t('admin.actions.edit')} asChild>
-            <Link
-              to="/$storeId/settings/stock-locations"
-              params={{ storeId }}
-              search={{ edit: returnsLocationId }}
-            >
-              <PencilIcon className="size-4" />
-            </Link>
           </Button>
         )}
       </div>
@@ -73,7 +57,8 @@ export function SellerAddress({
           title={title}
           address={address}
           open
-          // A seller is invoiced as a company, matching what the API requires.
+          // Both are addressed to the business: a seller is invoiced as a
+          // company, and returns are posted to one.
           business
           onOpenChange={setEditing}
           // Only the address being edited is sent: the other one is untouched,

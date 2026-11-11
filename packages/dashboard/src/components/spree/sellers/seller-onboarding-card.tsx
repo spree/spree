@@ -4,17 +4,19 @@ import {
   Badge,
   Button,
   Card,
+  CardAction,
   CardContent,
-  CardFooter,
+  CardHeader,
+  CardTitle,
+  Collapsible,
+  CollapsibleContent,
+  cn,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
   hasMetadata,
   Progress,
-  Section,
-  SectionHeader,
-  SectionTitle,
   StatusBadge as SharedStatusBadge,
   Sheet,
   SheetContent,
@@ -22,13 +24,18 @@ import {
   SheetHeader,
   SheetTitle,
   StepIcon,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
   useConfirm,
 } from '@spree/dashboard-ui'
 import {
+  ChevronRightIcon,
   DownloadIcon,
   EllipsisVerticalIcon,
   FileTextIcon,
-  ListChecksIcon,
+  InfoIcon,
+  SettingsIcon,
   XCircleIcon,
 } from '@spree/dashboard-ui/icons'
 import { Link } from '@tanstack/react-router'
@@ -55,15 +62,17 @@ export function SellerOnboardingCard({ seller, canEdit }: { seller: Seller; canE
   const { t } = useTranslation()
   const { data } = useSellerOnboarding(seller.id)
   const progress = seller.onboarding_progress
+  // A finished checklist folds to its header: it would otherwise sit at the
+  // top of the sidebar for the life of the seller.
+  const [expanded, setExpanded] = useState(!seller.onboarding_complete)
 
   // A marketplace that asks for nothing has no checklist worth a card.
   if (progress.total === 0) return null
 
   return (
-    <Section>
-      <SectionHeader>
-        <SectionTitle>
-          <ListChecksIcon />
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
           {t('admin.sellers.onboarding.title')}
           {seller.onboarding_complete ? (
             <SharedStatusBadge status="complete" label={t('admin.sellers.onboarding.all_done')} />
@@ -75,40 +84,63 @@ export function SellerOnboardingCard({ seller, canEdit }: { seller: Seller; canE
               })}
             </Badge>
           )}
-        </SectionTitle>
-      </SectionHeader>
-
-      <Card>
-        <CardContent className="flex flex-col gap-4">
-          <Progress value={progressPercentage(progress)} />
-
-          {data ? (
-            <ul className="flex flex-col divide-y divide-border-subtle">
-              {data.requirements.map((requirement) => (
-                <RequirementRow
-                  key={requirement.id}
-                  sellerId={seller.id}
-                  requirement={requirement}
-                  canEdit={canEdit}
-                />
-              ))}
-            </ul>
-          ) : (
-            <p className="text-muted-foreground text-base">{t('admin.common.loading')}</p>
-          )}
-        </CardContent>
-
-        {canEdit && (
-          <CardFooter>
-            <Button variant="ghost" size="sm" className="-ml-2" asChild>
-              <Link to={'/$storeId/settings/seller-requirements' as string}>
-                {t('admin.sellers.onboarding.manage_requirements')}
+        </CardTitle>
+        <CardAction className="flex gap-1">
+          {canEdit && (
+            <Button variant="ghost" size="icon-sm" asChild>
+              <Link
+                to={'/$storeId/settings/seller-requirements' as string}
+                aria-label={t('admin.sellers.onboarding.manage_requirements')}
+              >
+                <SettingsIcon className="size-4" />
               </Link>
             </Button>
-          </CardFooter>
-        )}
-      </Card>
-    </Section>
+          )}
+          {seller.onboarding_complete && (
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={() => setExpanded(!expanded)}
+              aria-expanded={expanded}
+              aria-label={t('admin.sellers.onboarding.show_steps')}
+            >
+              <ChevronRightIcon
+                className={cn(
+                  'size-4 transition-transform duration-200 ease-out motion-reduce:transition-none',
+                  expanded && 'rotate-90',
+                )}
+              />
+            </Button>
+          )}
+        </CardAction>
+      </CardHeader>
+
+      {/* The progress stays when folded; only the steps slide away. */}
+      <CardContent className="flex flex-col">
+        <Progress value={progressPercentage(progress)} />
+
+        <Collapsible open={expanded}>
+          <CollapsibleContent>
+            <div className="mt-4 border-border-subtle border-t pt-4">
+              {data ? (
+                <ul className="flex flex-col divide-y divide-border-subtle">
+                  {data.requirements.map((requirement) => (
+                    <RequirementRow
+                      key={requirement.id}
+                      sellerId={seller.id}
+                      requirement={requirement}
+                      canEdit={canEdit}
+                    />
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-muted-foreground text-base">{t('admin.common.loading')}</p>
+              )}
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
+      </CardContent>
+    </Card>
   )
 }
 
@@ -162,77 +194,22 @@ function RequirementRow({
   const submissionHasMetadata = hasMetadata(submission?.metadata)
 
   return (
-    <li className="flex items-start justify-between gap-3 py-3 first:pt-0 last:pb-0">
-      <div className="flex min-w-0 items-start gap-2">
-        <StatusIcon status={requirement.status} />
-        <div className="flex min-w-0 flex-col gap-0.5">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="font-medium text-base">{requirement.name}</span>
-            {!requirement.required && (
-              <Badge variant="outline">{t('admin.seller_requirements.required.no')}</Badge>
-            )}
-          </div>
-          {requirement.description && (
-            <span className="text-muted-foreground text-xs">{requirement.description}</span>
+    <li className="flex flex-col gap-1 py-3 first:pt-0 last:pb-0">
+      <div className="flex items-start gap-2">
+        <StatusIcon status={requirement.status} waived={submission?.status === 'waived'} />
+        <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-2 gap-y-1">
+          <span className="font-medium text-base">{requirement.name}</span>
+          {!requirement.required && (
+            <Badge variant="outline">{t('admin.seller_requirements.required.no')}</Badge>
           )}
-          {submission?.note && (
-            <span className="text-muted-foreground text-xs">
-              {t('admin.sellers.onboarding.seller_note', { note: submission.note })}
-            </span>
-          )}
-          {submission?.review_note && (
-            <span className="text-muted-foreground text-xs">
-              {t('admin.sellers.onboarding.review_note', { note: submission.review_note })}
-            </span>
-          )}
-          {requirement.published_policy && (
-            <button
-              type="button"
-              className="flex cursor-pointer items-center gap-1 self-start text-link text-xs hover:text-link-hover"
-              onClick={() => setPolicyOpen(true)}
-            >
-              <FileTextIcon className="size-3" />
-              {t('admin.sellers.onboarding.view_policy')}
-            </button>
-          )}
-          {submission?.file_url && (
-            <a
-              href={submission.file_url}
-              className="flex items-center gap-1 text-link text-xs hover:text-link-hover"
-            >
-              <DownloadIcon className="size-3" />
-              {submission.file_name ?? t('admin.sellers.onboarding.download')}
-            </a>
-          )}
+          {requirement.description && <DescriptionHint text={requirement.description} />}
         </div>
-      </div>
-
-      <div className="flex shrink-0 items-center gap-2">
-        <StatusBadge status={requirement.status} waived={submission?.status === 'waived'} />
-
-        {canEdit && submission?.status === 'pending' && (
-          <>
-            <Button
-              size="sm"
-              variant="outline"
-              disabled={busy}
-              onClick={() =>
-                acceptMutation.mutateAsync({ id: submission.id }).catch(() => undefined)
-              }
-            >
-              {t('admin.sellers.onboarding.actions.accept')}
-            </Button>
-            <Button size="sm" variant="ghost" disabled={busy} onClick={handleReject}>
-              {t('admin.sellers.onboarding.actions.reject')}
-            </Button>
-          </>
-        )}
 
         {(canWaive || submissionHasMetadata) && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
-                size="icon-sm"
+                size="icon-xs"
                 variant="ghost"
                 disabled={busy}
                 aria-label={t('admin.actions.actions_menu')}
@@ -252,6 +229,59 @@ function RequirementRow({
               )}
             </DropdownMenuContent>
           </DropdownMenu>
+        )}
+      </div>
+
+      {/* What the operator decides on stays in view; only the requirement's
+          own description, which they wrote, moves into the hint above. */}
+      <div className="flex flex-col gap-1 pl-6 empty:hidden">
+        {submission?.note && (
+          <span className="text-muted-foreground text-xs">
+            {t('admin.sellers.onboarding.seller_note', { note: submission.note })}
+          </span>
+        )}
+        {submission?.review_note && (
+          <span className="text-muted-foreground text-xs">
+            {t('admin.sellers.onboarding.review_note', { note: submission.review_note })}
+          </span>
+        )}
+        {requirement.published_policy && (
+          <button
+            type="button"
+            className="flex cursor-pointer items-center gap-1 self-start text-link text-xs hover:text-link-hover"
+            onClick={() => setPolicyOpen(true)}
+          >
+            <FileTextIcon className="size-3" />
+            {t('admin.sellers.onboarding.view_policy')}
+          </button>
+        )}
+        {submission?.file_url && (
+          <a
+            href={submission.file_url}
+            className="flex min-w-0 items-center gap-1 self-start text-link text-xs hover:text-link-hover"
+          >
+            <DownloadIcon className="size-3 shrink-0" />
+            <span className="truncate">
+              {submission.file_name ?? t('admin.sellers.onboarding.download')}
+            </span>
+          </a>
+        )}
+        {canEdit && submission?.status === 'pending' && (
+          <div className="flex gap-2 pt-1">
+            <Button
+              size="xs"
+              variant="outline"
+              disabled={busy}
+              onClick={() =>
+                acceptMutation.mutateAsync({ id: submission.id }).catch(() => undefined)
+              }
+            >
+              {t('admin.sellers.onboarding.actions.accept')}
+            </Button>
+            <Button size="xs" variant="ghost" disabled={busy} onClick={handleReject}>
+              {t('admin.sellers.onboarding.actions.reject')}
+            </Button>
+          </div>
         )}
       </div>
 
@@ -293,56 +323,60 @@ function RequirementRow({
 }
 
 /**
- * The legacy checklist showed Done / Pending; the four statuses here add
- * the two cases an operator has to act on differently — something waiting
- * on them, and something they sent back.
- *
- * A waiver is read from the status like everything else, and only changes
- * the wording — it is done, by the operator's decision rather than the
- * seller's doing. Deciding "waived" ahead of the status is what previously
- * let this badge disagree with the tick beside it.
+ * The step's state as an icon, named for screen readers and on hover. Four
+ * states: done (or waived by the operator), waiting on the operator, sent
+ * back, and not started. The icons are the ones the seller sees on their own
+ * onboarding page.
  */
-function StatusBadge({ status, waived }: { status: string; waived: boolean }) {
+function StatusIcon({ status, waived }: { status: string; waived: boolean }) {
   const { t } = useTranslation()
+  const label =
+    status === 'complete' && waived
+      ? t('admin.sellers.onboarding.waived')
+      : t(`admin.sellers.onboarding.status.${status}`, {
+          defaultValue: t('admin.sellers.onboarding.status.incomplete'),
+        })
 
-  // Only the wording is local — the colour comes from the shared status map,
-  // so this checklist agrees with every other surface showing the same states.
-  if (status === 'complete') {
-    return (
-      <SharedStatusBadge
-        status="complete"
-        label={
-          waived
-            ? t('admin.sellers.onboarding.waived')
-            : t('admin.sellers.onboarding.status.complete')
-        }
-      />
+  const icon =
+    status === 'complete' ? (
+      <StepIcon status="done" />
+    ) : status === 'pending' ? (
+      <StepIcon status="in_progress" />
+    ) : status === 'rejected' ? (
+      <XCircleIcon className="size-4 shrink-0 text-destructive" />
+    ) : (
+      <StepIcon status="todo" />
     )
-  }
-  if (status === 'pending') {
-    return (
-      <SharedStatusBadge status="pending" label={t('admin.sellers.onboarding.status.pending')} />
-    )
-  }
-  if (status === 'rejected') {
-    return (
-      <SharedStatusBadge status="rejected" label={t('admin.sellers.onboarding.status.rejected')} />
-    )
-  }
+
   return (
-    <SharedStatusBadge
-      status="incomplete"
-      label={t('admin.sellers.onboarding.status.incomplete')}
-    />
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span role="img" aria-label={label} className="mt-0.5 flex shrink-0">
+          {icon}
+        </span>
+      </TooltipTrigger>
+      <TooltipContent>{label}</TooltipContent>
+    </Tooltip>
   )
 }
 
-// The same icons the seller sees on their own onboarding page.
-function StatusIcon({ status }: { status: string }) {
-  if (status === 'complete') return <StepIcon status="done" className="mt-0.5" />
-  if (status === 'pending') return <StepIcon status="in_progress" className="mt-0.5" />
-  if (status === 'rejected') {
-    return <XCircleIcon className="mt-0.5 size-4 shrink-0 text-destructive" />
-  }
-  return <StepIcon status="todo" className="mt-0.5" />
+/**
+ * The requirement's description, which the operator wrote in settings, as a
+ * hint: focusable so keyboard users open it the same way pointer users do.
+ */
+function DescriptionHint({ text }: { text: string }) {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <button
+          type="button"
+          className="cursor-help rounded-sm text-muted-foreground focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
+          aria-label={text}
+        >
+          <InfoIcon className="size-3.5" />
+        </button>
+      </TooltipTrigger>
+      <TooltipContent className="max-w-xs">{text}</TooltipContent>
+    </Tooltip>
+  )
 }

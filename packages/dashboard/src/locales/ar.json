@@ -5506,21 +5506,26 @@
         "title": "حذف البائع؟"
       },
       "detail": {
-        "at_a_glance": "لمحة سريعة",
         "billing_address": "عنوان الفوترة",
         "contact": "التواصل",
         "delete_label": "حذف البائع",
         "edit_contact": "تعديل جهة الاتصال",
+        "edit_cover": "تعديل صورة الغلاف",
+        "edit_logo": "تعديل الشعار",
         "edit_profile": "تعديل الملف",
-        "edit_profile_description": "يحرّر البائع هذه البيانات من لوحته الخاصة، وما تعدّله هنا يجري نيابةً عنه.",
         "edit_settlement": "تعديل الدفعات والضرائب",
-        "edit_settlement_description": "أنت وحدك من يرى هذه الإعدادات ويغيّرها، ولا يحرّرها البائع.",
+        "joined": "انضم",
         "load_error": "تعذّر تحميل هذا البائع",
         "no_about": "لم يكتب هذا البائع نبذة بعد.",
         "returns_address": "عنوان المرتجعات",
         "settlement": "الدفعات والضرائب"
       },
       "empty": "لا يوجد بائعون بعد",
+      "holiday": {
+        "end": "إنهاء وضع العطلة",
+        "off": "متوقف. يستقبل البائع الطلبات كالمعتاد.",
+        "title": "وضع العطلة"
+      },
       "images": {
         "cover_photo_help": "لافتة عريضة أعلى ملف البائع.",
         "cover_photo_label": "صورة الغلاف",
@@ -5571,6 +5576,7 @@
         },
         "review_note": "ملاحظتك: {{note}}",
         "seller_note": "البائع: {{note}}",
+        "show_steps": "عرض الخطوات",
         "status": {
           "complete": "تم",
           "incomplete": "معلّق",
@@ -5586,6 +5592,9 @@
         "waived": "مُعفى"
       },
       "onboarding_column": "الإعداد",
+      "orders": {
+        "to_fulfill": "بانتظار التنفيذ"
+      },
       "payout_interval": {
         "biweekly": "كل أسبوعين",
         "daily": "يومياً",
@@ -5604,6 +5613,10 @@
         "title": "إعادته إلى الإعداد؟"
       },
       "search_placeholder": "ابحث عن بائعين",
+      "stats": {
+        "commission": "العمولة (30 يومًا)",
+        "net_sales": "صافي المبيعات (30 يومًا)"
+      },
       "status": {
         "approved": "معتمد",
         "canceled": "ملغى",
