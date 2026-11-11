@@ -32,7 +32,9 @@ module Spree
           image_url_for(variant.primary_media)
         end
 
-        attribute :purchasable, &:purchasable?
+        attribute :purchasable do |variant|
+          variant.purchasable_in?(current_currency, quote: price_for(variant))
+        end
 
         attribute :in_stock, &:in_stock?
 
