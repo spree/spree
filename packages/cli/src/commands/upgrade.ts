@@ -21,6 +21,7 @@ import {
   primeBundleVolume,
   restartAppServices,
 } from '../docker.js'
+import { AGENT_SKILLS_REPO, dlxCommand, installAgentSkills } from '../lib/ai.js'
 import { RELEASE_LINE, type ReleaseLine, releaseLineFor } from '../lib/release-line.js'
 import { APP_DIRS, detectPackageManager, generateRouteTree } from './add.js'
 
@@ -37,14 +38,18 @@ interface UpgradeFlags {
 // bumps the Spree gems and migrates itself. The @spree/* packages of the root
 // and the admin apps are bumped right after the server, before migrations and
 // the spree:upgrade rake backfills, so a failing backfill can't leave the
-// dashboards on the old release. Flags map to env vars on the rake task:
+// dashboards on the old release. The agent skills, when the project has them,
+// are refreshed from the main branch of spree/agent-skills right after the
+// packages, for the same reason. Flags map to env vars on the rake task:
 // --plan → DRY_RUN, --step → STEP, --to → TO. --plan and --step run the rake
 // task alone.
 export function registerUpgradeCommand(program: Command): void {
   withUpgradeOptions(
     program
       .command('upgrade')
-      .description('Upgrade Spree: the server, @spree/* packages, migrations and data backfills'),
+      .description(
+        'Upgrade Spree: the server, @spree/* packages, agent skills, migrations and data backfills',
+      ),
   ).action(upgrade)
 
   // `update` predates the merge and only pulled the image. Kept one release
@@ -88,6 +93,7 @@ async function upgrade(flags: UpgradeFlags): Promise<void> {
     const gemsUpdated = await runBundleUpdate(ctx.projectDir, flags)
     line = await serverReleaseLine(ctx.projectDir, { fromNewImage: false })
     await updateSpreePackages(ctx.projectDir, flags, line)
+    await updateAgentSkills(ctx.projectDir, flags)
     await runMigrate(ctx.projectDir, flags)
     await runRakeUpgrade(ctx.projectDir, flags)
     // Puma loaded the old gems at boot; the rake steps ran in fresh processes.
@@ -100,6 +106,7 @@ async function upgrade(flags: UpgradeFlags): Promise<void> {
     const imagePulled = await pullImage(ctx.projectDir, flags)
     line = await serverReleaseLine(ctx.projectDir, { fromNewImage: imagePulled })
     await updateSpreePackages(ctx.projectDir, flags, line)
+    await updateAgentSkills(ctx.projectDir, flags)
     if (imagePulled) await recreateContainers(ctx.projectDir)
     await runRakeUpgrade(ctx.projectDir, flags)
   }
@@ -538,6 +545,39 @@ async function updateSpreePackages(
     // An updated dashboard can ship new routes; regenerate now so the next
     // dev start doesn't rewrite the file and reload the open page.
     if (target.relative !== '.') await generateRouteTree(target.dir)
+  }
+}
+
+/**
+ * Whether the project has the Spree agent skills installed — `spree add ai`
+ * and create-spree-app put them in `.agents/skills/`.
+ */
+export function hasAgentSkills(projectDir: string): boolean {
+  try {
+    return fs.readdirSync(path.join(projectDir, '.agents', 'skills')).length > 0
+  } catch {
+    return false
+  }
+}
+
+// The skills are not versioned with Spree: every run pulls the main branch of
+// spree/agent-skills. Projects that never installed them are not asked, and a
+// failed download only warns, since the server and packages are already done.
+async function updateAgentSkills(projectDir: string, flags: UpgradeFlags): Promise<void> {
+  if (!hasAgentSkills(projectDir)) return
+  if (!(await confirmStep('Update the Spree agent skills to the latest version?', flags))) {
+    p.log.info('Skipping the agent skills.')
+    return
+  }
+
+  const packageManager = detectPackageManager(projectDir, projectDir)
+  p.log.step(pc.bold('Updating the Spree agent skills'))
+  try {
+    await installAgentSkills(projectDir, packageManager)
+  } catch (err) {
+    p.log.warn(
+      `The Spree agent skills were not updated. Update them later with ${pc.bold(`${dlxCommand(packageManager).join(' ')} skills add ${AGENT_SKILLS_REPO} --skill '*' --yes`)}.\n${err instanceof Error ? err.message : String(err)}`,
+    )
   }
 }
 

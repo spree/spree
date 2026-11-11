@@ -836,6 +836,75 @@ describe('spree upgrade', () => {
     })
   })
 
+  describe('agent skills', () => {
+    function installSkills(): void {
+      fs.mkdirSync(path.join(projectDir, '.agents', 'skills', 'spree-api'), { recursive: true })
+    }
+
+    it('updates installed skills from the main branch after the packages, before migrations', async () => {
+      writeProject({ ejected: true })
+      installSkills()
+
+      await runUpgrade()
+
+      const skills = 'pnpm dlx skills add spree/agent-skills --skill * --yes'
+      expect(commands).toContain(skills)
+      expect(commands.indexOf(skills)).toBeGreaterThan(
+        commands.indexOf('pnpm update @spree/dashboard'),
+      )
+      expect(commands.indexOf(skills)).toBeLessThan(
+        commands.indexOf('docker compose exec web bin/rails spree:install:migrations db:migrate'),
+      )
+    })
+
+    it('asks before updating the skills, and skips them when declined', async () => {
+      writeProject({ ejected: false })
+      installSkills()
+      vi.mocked(p.confirm).mockClear()
+      vi.mocked(p.confirm).mockImplementation(
+        (async ({ message }: { message: string }) => !message.includes('agent skills')) as never,
+      )
+
+      const program = new Command()
+      registerUpgradeCommand(program)
+      await program.parseAsync(['upgrade'], { from: 'user' })
+
+      expect(vi.mocked(p.confirm)).toHaveBeenCalledWith(
+        expect.objectContaining({ message: expect.stringContaining('agent skills') }),
+      )
+      expect(commands.some((command) => command.includes('skills add'))).toBe(false)
+      expect(commands).toContain('docker compose exec web bin/rails spree:upgrade')
+    })
+
+    it('neither asks nor installs when the project has no skills', async () => {
+      writeProject({ ejected: true })
+      vi.mocked(p.confirm).mockClear()
+      vi.mocked(p.confirm).mockResolvedValue(true as never)
+
+      const program = new Command()
+      registerUpgradeCommand(program)
+      await program.parseAsync(['upgrade'], { from: 'user' })
+
+      expect(vi.mocked(p.confirm)).not.toHaveBeenCalledWith(
+        expect.objectContaining({ message: expect.stringContaining('agent skills') }),
+      )
+      expect(commands.some((command) => command.includes('skills add'))).toBe(false)
+    })
+
+    it('warns and carries on when the skills download fails', async () => {
+      writeProject({ ejected: true })
+      installSkills()
+      routeExeca({ failOn: 'skills add' })
+
+      await runUpgrade()
+
+      expect(vi.mocked(prompts.log.warn)).toHaveBeenCalledWith(
+        expect.stringContaining('The Spree agent skills were not updated'),
+      )
+      expect(commands.at(-1)).toBe('docker compose restart web')
+    })
+  })
+
   it('skips only the upgrade tasks when the operator declines them', async () => {
     writeProject({ ejected: true })
     vi.mocked(p.confirm).mockImplementation(

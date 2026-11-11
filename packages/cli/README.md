@@ -17,7 +17,7 @@ Run from your Spree project directory:
 |---------|-------------|
 | `spree dev` | Run the app in the foreground — streams logs, Ctrl+C stops it. First run completes setup automatically; co-runs the Admin Dashboard dev server when `apps/dashboard` exists and opens the dashboard in the browser once it is ready (`--no-open` skips it) |
 | `spree stop` | Stop backend services |
-| `spree upgrade` | Upgrade Spree — the server, `@spree/*` packages, migrations and data backfills |
+| `spree upgrade` | Upgrade Spree — the server, `@spree/*` packages, agent skills, migrations and data backfills |
 | `spree eject` | Switch from the prebuilt image to building from `backend/` |
 | `spree add dashboard` | Add the Admin Dashboard to an existing project, to customize it |
 | `spree add seller-dashboard` | Add the marketplace seller panel to an existing project |
