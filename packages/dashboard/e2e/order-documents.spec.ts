@@ -148,7 +148,6 @@ test.describe('order documents', () => {
     await uploadInvoice(page, { number: `FV/${Date.now()}`, total: order.total })
     await expect(documentsCard(page).getByRole('listitem')).toHaveCount(1, { timeout: 15_000 })
 
-    await page.goBack()
     await page.goto(`/${session.store_id}/orders`)
     await addListFilter(page, /^missing invoice$/i, /missing an invoice/i)
     await page
