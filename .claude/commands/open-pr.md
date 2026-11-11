@@ -5,7 +5,7 @@ description: Review, security-review, open and monitor a pull request for the cu
 Take the current branch from finished work to an open, monitored pull request
 on `spree/spree`. Run the steps in order and skip none because the change looks
 small. A pre-tool hook blocks `gh pr create` until steps 1–3 have run on the
-current `HEAD`.
+branch's `HEAD` and that commit is pushed.
 
 Never run this on `main`: branch first (`feat/`, `fix/` or `chore/`). Commit any
 uncommitted work before step 1 so the reviews see it.
@@ -35,7 +35,9 @@ Any later commit makes this stale; go back to step 1 before opening the PR.
 ## 4. Open the pull request
 
 Push the branch, then open the PR with
-`gh pr create --repo spree/spree --base main`. Follow AGENTS.md "Git" for the
+`gh pr create --repo spree/spree --base main --head <branch>`, run as its own
+command. `--head` tells the hook which worktree's review to check, so this
+works even when the session started in another checkout. Follow AGENTS.md "Git" for the
 title and body. When a Linear issue exists, end the title with its id in
 parentheses and add `Linear: V-1234` on its own line in the body.
 

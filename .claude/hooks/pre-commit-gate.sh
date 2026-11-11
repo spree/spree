@@ -109,12 +109,14 @@ match_segment() {
 
 # Pull requests open through /open-pr, which runs /code-review and
 # /security-review and then records the reviewed HEAD in the git dir. Block
-# `gh pr create` until that marker matches HEAD in the session's directory, so
-# a commit made after the reviews sends the branch back through them. The check
+# `gh pr create` until that marker matches the HEAD of the branch it opens, and
+# that HEAD is the one pushed, so a commit made after the reviews sends the
+# branch back through them. The check
 # runs before the command does, so an earlier step in the same command that
 # changes directory or may move HEAD is blocked rather than parsed.
 pr_dir="${hook_cwd:-${CLAUDE_PROJECT_DIR:-.}}"
 gh_pr_create='^gh([[:space:]]+-[^[:space:]]+([[:space:]]+[^-[:space:]][^[:space:]]*)?)*[[:space:]]+pr[[:space:]]+create([[:space:]);}]|$)'
+gh_head_flag='(^|[[:space:]])(--head|-H)(=|[[:space:]]+)([^[:space:])]+)'
 chained=0
 while IFS= read -r segment; do
   seg="${segment#"${segment%%[![:space:]({]*}"}"
@@ -129,11 +131,39 @@ while IFS= read -r segment; do
     echo "Run gh pr create as its own command: an earlier cd or git step in the same command changes what it would open." >&2
     exit 2
   fi
-  head=$(git -C "$pr_dir" rev-parse HEAD 2>/dev/null)
-  marker="$(git -C "$pr_dir" rev-parse --absolute-git-dir 2>/dev/null)/claude-reviewed"
+  # `--head <branch>` names what the pull request opens, so the gate checks the
+  # worktree that has that branch checked out — a session started in another
+  # checkout can still open it. Without `--head`, gh opens the current branch.
+  review_dir="$pr_dir"
+  if [[ "$LAUNCHED" =~ $gh_head_flag ]]; then
+    head_branch="${BASH_REMATCH[4]//[\"\']/}"
+    head_branch="${head_branch##*:}"
+    review_dir=$(git -C "$pr_dir" worktree list --porcelain 2>/dev/null | awk -v ref="refs/heads/$head_branch" '
+      /^worktree / { path = substr($0, 10) }
+      $0 == "branch " ref { print path; exit }')
+    if [ -z "$review_dir" ]; then
+      echo "Blocked: $seg" >&2
+      echo "No worktree has $head_branch checked out, so the gate cannot tell whether it was reviewed. Run /open-pr from that branch." >&2
+      exit 2
+    fi
+  else
+    head_branch=$(git -C "$pr_dir" symbolic-ref --quiet --short HEAD 2>/dev/null)
+  fi
+
+  head=$(git -C "$review_dir" rev-parse HEAD 2>/dev/null)
+  marker="$(git -C "$review_dir" rev-parse --absolute-git-dir 2>/dev/null)/claude-reviewed"
   if [ -z "$head" ] || [ "$(cat "$marker" 2>/dev/null)" != "$head" ]; then
     echo "Blocked: $seg" >&2
     echo "Open pull requests with /open-pr: /code-review and /security-review have not run on this HEAD. See AGENTS.md, Git." >&2
+    exit 2
+  fi
+
+  # The pull request opens what was pushed, not the local HEAD, so the pushed
+  # commit must be the reviewed one too.
+  pushed=$(git -C "$review_dir" rev-parse --verify --quiet "$head_branch@{push}" 2>/dev/null)
+  if [ "$pushed" != "$head" ]; then
+    echo "Blocked: $seg" >&2
+    echo "Push the reviewed commit ($head) to $head_branch before opening the pull request." >&2
     exit 2
   fi
 done < <(echo "$cmd" | tr ';&|' '\n')
