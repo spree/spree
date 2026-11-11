@@ -37,32 +37,6 @@ module Spree
 
     self.whitelisted_ransackable_attributes = %w[status created_at confirmed_at]
 
-    # Applier classes for kinds an extension registered, by kind. Core kinds
-    # are applied by Spree::OrderChanges::ApplyActions itself.
-    class_attribute :action_appliers, default: {}, instance_writer: false
-
-    # Adds an action kind and the class that applies it at confirm (and,
-    # rolled back, at preview). The applier is called as
-    # `applier.new.call(order_change:, action:)` inside the confirm
-    # transaction; it writes through ordinary models and raises to abort.
-    #
-    # Register from a to_prepare block: a code reload resets the registry
-    # along with these models, and to_prepare runs again after each one.
-    #
-    #   Rails.application.config.to_prepare do
-    #     Spree::OrderChange.register_action_kind('gift_wrap', 'MyApp::ApplyGiftWrap')
-    #   end
-    #
-    # @param kind [String, Symbol]
-    # @param applier [String, Class] held by name and constantized at apply time
-    def self.register_action_kind(kind, applier)
-      kind = kind.to_s
-      raise ArgumentError, "#{kind} is applied by Spree itself and cannot be registered" if Spree::OrderChangeAction::CORE_KINDS.include?(kind)
-
-      Spree::OrderChangeAction.kinds += [kind] unless Spree::OrderChangeAction.kinds.include?(kind)
-      self.action_appliers = action_appliers.merge(kind => applier.to_s)
-    end
-
     # @return [Boolean] whether actions can still be added or the set applied
     def open?
       OPEN_STATUSES.include?(status)

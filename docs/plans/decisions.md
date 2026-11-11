@@ -1,3 +1,13 @@
+## 2026-11-11: Order change action kinds are a fixed list
+
+**Context:** The order change substrate shipped `Spree::OrderChange.register_action_kind`, which let an extension add an action kind and name a class to apply it at confirm. Nothing in Spree or a known extension registered one, the registry was reset by a code reload unless it was registered from `to_prepare`, and applying it needed a Brakeman ignore for constantizing the class name.
+
+**Decision:** Remove the seam. `Spree::OrderChangeAction::KINDS` is a frozen list of the kinds `ApplyActions` applies itself. Extensions still refuse or inspect actions through the order change hooks.
+
+**Consequences:** A kind an extension needs is added to core with its applier. A registration seam comes back only when a real consumer asks for one, so no unused extension point becomes a contract to keep.
+
+**Plan amended:** `6.1-order-change-substrate.md` (OrderChangeAction, Extension surface).
+
 ## 2026-11-04: Manual discounts on a placed order are order change actions
 
 **Context:** The order change substrate covered item edits, restocks and replacement shipments, but a manual discount on a placed order was still written straight through `orders/:id/discounts`, so it was neither previewed, nor held behind the one-open-change rule, nor recorded. Medusa, Shopify and Vendure all treat a discount as part of an order edit.

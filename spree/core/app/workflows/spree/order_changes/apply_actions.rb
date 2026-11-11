@@ -4,7 +4,7 @@ module Spree
     # runs for real and Preview runs inside a transaction it rolls back. Opens
     # no transaction: both callers hold one around it.
     #
-    # Core kinds apply grouped by kind, item edits first, so a batch of item
+    # Actions apply grouped by kind, item edits first, so a batch of item
     # edits goes through Spree::Orders::UpsertItems once — one validate pass,
     # one stock check — exactly as an order update does. Appliers never derive
     # a unit price: a negotiated line keeps its price through any edit.
@@ -26,7 +26,6 @@ module Spree
         step :apply_discount_actions
         step :apply_receive_actions
         step :apply_fulfillment_actions
-        step :apply_registered_actions
         order.recalculate_totals! if order_change.moves_money?
 
         success(@fulfillments)
@@ -142,13 +141,6 @@ module Spree
         end
 
         @fulfillments = build_replacements(order_change.post_sale_record, items)
-      end
-
-      def apply_registered_actions
-        order_change.actions.each do |action|
-          applier = Spree::OrderChange.action_appliers[action.kind]
-          applier.constantize.new.call(order_change: order_change, action: action) if applier
-        end
       end
     end
   end

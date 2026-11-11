@@ -68736,8 +68736,7 @@ components:
             - update_discount
             - remove_discount
           - type: string
-          description: What the action does to the order. Extensions may register
-            further kinds.
+          description: What the action does to the order.
         quantity:
           type: number
           nullable: true

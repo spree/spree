@@ -268,25 +268,6 @@ RSpec.describe 'Spree::OrderChanges workflows' do
 
       expect(result.error.value).to eq(:order_change_not_requested)
     end
-
-    it 'runs the applier an extension registered for its own kind' do
-      applied = []
-      applier = Class.new do
-        define_method(:call) { |order_change:, action:| applied << [order_change, action.kind] }
-      end
-      stub_const('GiftWrapApplier', applier)
-      original_kinds = Spree::OrderChangeAction.kinds
-      original_appliers = Spree::OrderChange.action_appliers
-      Spree::OrderChange.register_action_kind('gift_wrap', 'GiftWrapApplier')
-
-      change = requested_change(kind: 'gift_wrap', line_item: line_item)
-      Spree::OrderChanges::Confirm.call(order_change: change)
-
-      expect(applied).to eq([[change, 'gift_wrap']])
-    ensure
-      Spree::OrderChangeAction.kinds = original_kinds
-      Spree::OrderChange.action_appliers = original_appliers
-    end
   end
 
   describe Spree::OrderChanges::Cancel do

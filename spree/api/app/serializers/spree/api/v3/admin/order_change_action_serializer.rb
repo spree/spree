@@ -3,8 +3,8 @@ module Spree
     module V3
       module Admin
         class OrderChangeActionSerializer < V3::BaseSerializer
-          typelize kind: [:string, enum: Spree::OrderChangeAction.kinds, enum_type_name: 'OrderChangeActionKind',
-                                   comment: 'What the action does to the order. Extensions may register further kinds.'],
+          typelize kind: [:string, enum: Spree::OrderChangeAction::KINDS, enum_type_name: 'OrderChangeActionKind',
+                                   comment: 'What the action does to the order.'],
                    line_item_id: [:string, nullable: true],
                    variant_id: [:string, nullable: true],
                    fulfillment_id: [:string, nullable: true],
