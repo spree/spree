@@ -154,8 +154,14 @@ module Spree
       total item_total total_quantity considered_risky channel_id currency coupon_code customer_id seller_id
       order_group_id po_number market_id locale
     ]
-    self.whitelisted_ransackable_scopes = %w[complete incomplete refunded partially_refunded search]
-    self.ransackable_scope_types = %w[complete incomplete refunded partially_refunded].index_with('boolean')
+    self.whitelisted_ransackable_scopes = %w[complete incomplete refunded partially_refunded missing_invoice search]
+    self.ransackable_scope_types = %w[complete incomplete refunded partially_refunded missing_invoice].index_with('boolean')
+
+    # Two-state scope: see Spree::Base.ransack_flag for why the cast is done
+    # inside the scope.
+    def self.ransackable_scopes_skip_sanitize_args
+      %i[missing_invoice]
+    end
     # A seller never sees the buyer's email, and a company member filtering the
     # company's orders must not learn a colleague's; the risk flag and coupon
     # are back-office data. `search` matches on the email too.
@@ -255,6 +261,14 @@ module Spree
     # ledger the order merely hosts. See docs/plans/6.0-multi-vendor-marketplace.md.
     has_many :commission_lines, class_name: 'Spree::CommissionLine', dependent: :destroy, inverse_of: :order
 
+    # Invoices are records the law keeps for years, so an order holding one
+    # cannot be destroyed (docs/plans/6.1-invoices-and-receipts.md).
+    has_many :invoices, -> { order(:issued_on, :id) },
+             class_name: 'Spree::Invoice', dependent: :restrict_with_error, inverse_of: :order
+    has_many :invoice_requests, class_name: 'Spree::InvoiceRequest', dependent: :destroy, inverse_of: :order
+    has_many :order_documents, -> { order(:created_at, :id) },
+             class_name: 'Spree::OrderDocument', dependent: :destroy, inverse_of: :order
+
     # This order's share of the payments made against its group. Empty on an
     # ungrouped order, whose payments are its own (see #settlement_payments).
     has_many :payment_splits, class_name: 'Spree::PaymentSplit', dependent: :destroy, inverse_of: :order
@@ -330,6 +344,17 @@ module Spree
     scope :shipped, -> { where(fulfillment_status: %w[fulfilled delivered shipped]) }
     scope :refunded, -> { where(payment_status: 'refunded') }
     scope :partially_refunded, -> { where(payment_status: 'partially_refunded') }
+    # Placed and paid, with no invoice or receipt yet: what an operator chases
+    # sellers for. Derived rather than stored, so an upload clears it.
+    # As a filter it has two sides: `false` lists the orders that have one.
+    scope :missing_invoice, lambda { |*values|
+      invoiced = Spree::Invoice.sale_documents.where(Spree::Invoice.arel_table[:order_id].eq(arel_table[:id])).arel.exists
+      case Spree::Base.ransack_flag(*values)
+      when true then where(status: 'placed', payment_status: %w[paid partially_refunded overcharged]).where(invoiced.not)
+      when false then where(invoiced)
+      else all
+      end
+    }
     scope :with_deleted_bill_address, -> { joins(:bill_address).where.not(Address.table_name => { deleted_at: nil }) }
     scope :with_deleted_ship_address, -> { joins(:ship_address).where.not(Address.table_name => { deleted_at: nil }) }
 

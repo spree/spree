@@ -1,9 +1,10 @@
 import type { Seller } from '@spree/admin-sdk'
 import { useStore } from '@spree/dashboard-core'
 import { Card, CardContent, CardHeader, CardTitle, RelativeTime } from '@spree/dashboard-ui'
-import { PackageIcon, UsersIcon, WarehouseIcon } from '@spree/dashboard-ui/icons'
+import { PackageIcon, ReceiptTextIcon, UsersIcon, WarehouseIcon } from '@spree/dashboard-ui/icons'
 import { Link } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
+import { useSellerMissingInvoicesCount } from '../../../hooks/use-invoices'
 import { ReadRow } from '../read-row'
 
 /**
@@ -14,6 +15,7 @@ import { ReadRow } from '../read-row'
 export function SellerAtAGlanceCard({ seller }: { seller: Seller }) {
   const { t } = useTranslation()
   const { storeId } = useStore()
+  const { data: missingInvoices } = useSellerMissingInvoicesCount(seller.id)
 
   return (
     <Card>
@@ -61,6 +63,13 @@ export function SellerAtAGlanceCard({ seller }: { seller: Seller }) {
           >
             {t('admin.actions.view')}
           </Link>
+        </div>
+        <div className="flex items-center justify-between text-base">
+          <span className="flex items-center gap-2 text-muted-foreground">
+            <ReceiptTextIcon className="size-4" />
+            {t('admin.sellers.missing_invoices')}
+          </span>
+          <span data-testid="seller-missing-invoices">{missingInvoices ?? '—'}</span>
         </div>
         <ReadRow label={t('admin.fields.created_at.label')}>
           <RelativeTime iso={seller.created_at} />

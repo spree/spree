@@ -360,7 +360,8 @@
     "profile": "Profil",
     "settings": "Ustawienia",
     "sign_out": "Wyloguj się",
-    "team": "Zespół"
+    "team": "Zespół",
+    "invoices": "Faktury"
   },
   "onboarding": {
     "accept_terms": "Zaakceptuj regulamin",
@@ -410,7 +411,8 @@
       "payment": "Płatność",
       "placed": "Złożono",
       "quantity": "Ilość",
-      "total": "Razem"
+      "total": "Razem",
+      "missing_invoice": "Brak faktury"
     },
     "customer": {
       "title": "Klient"
@@ -569,7 +571,11 @@
       "total": "Razem"
     },
     "title": "Zamówienia",
-    "tracking_label": "Numer śledzenia"
+    "tracking_label": "Numer śledzenia",
+    "filters": {
+      "missing_invoice": "Bez faktury",
+      "has_invoice": "Z fakturą"
+    }
   },
   "payouts": {
     "columns": {
@@ -854,5 +860,19 @@
       "member": "Członek zespołu"
     },
     "title": "Twój zespół"
+  },
+  "invoices": {
+    "title": "Faktury",
+    "subtitle": "Faktury wystawione w Twoim imieniu i faktury prowizyjne marketplace'u dla Ciebie.",
+    "search_placeholder": "Szukaj po numerze",
+    "empty": "Brak faktur. Prześlij je z poziomu zamówienia.",
+    "commission": "Prowizja marketplace'u",
+    "columns": {
+      "number": "Numer",
+      "kind": "Rodzaj",
+      "issuer": "Wystawca",
+      "total": "Kwota",
+      "issued_on": "Data wystawienia"
+    }
   }
 }

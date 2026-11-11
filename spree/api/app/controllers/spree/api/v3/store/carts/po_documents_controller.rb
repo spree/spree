@@ -47,12 +47,9 @@ module Spree
             # Bytes in the request itself are not accepted here: a publishable
             # key is public.
             def create
-              file_upload = Spree::FileUpload.new(
-                store: current_store,
-                visibility: 'private',
-                max_byte_size: Spree::Purchase::PurchaseOrder::MAX_PO_DOCUMENT_SIZE,
-                allowed_content_types: Spree::Purchase::PurchaseOrder::PO_DOCUMENT_CONTENT_TYPES,
-                **params.permit(*declared_permitted_attributes).to_h.symbolize_keys
+              file_upload = Spree::FileUpload.for_private_document(
+                Spree::Cart, :po_document,
+                store: current_store, **params.permit(*declared_permitted_attributes).to_h.symbolize_keys
               )
 
               return render_po_document_invalid unless file_upload.save

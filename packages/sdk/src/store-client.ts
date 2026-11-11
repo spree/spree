@@ -1,11 +1,13 @@
 import type {
+  FileUploadCreateParams,
   ListParams,
   ListResponse,
   PaginatedResponse,
   RequestFn,
   RequestOptions,
+  UploadFileOptions,
 } from '@spree/sdk-core'
-import { getParams, transformListParams } from '@spree/sdk-core'
+import { getParams, transformListParams, uploadFile } from '@spree/sdk-core'
 import type {
   AcceptCompanyInvitationParams,
   AddCompanyMemberParams,
@@ -36,7 +38,9 @@ import type {
   CreateCartParams,
   CreateClaimParams,
   CreateDataRequestParams,
+  CreateInvoiceRequestParams,
   CreateNewsletterSubscriberParams,
+  CreateOrderDocumentParams,
   CreatePaymentParams,
   CreatePaymentSessionParams,
   CreatePaymentSetupSessionParams,
@@ -51,13 +55,17 @@ import type {
   DigitalLink,
   DigitalLinkFilters,
   DigitalLinkSort,
+  FileUpload,
   GiftCard,
+  Invoice,
+  InvoiceRequest,
   Locale,
   LoginCredentials,
   LogoutParams,
   Market,
   NewsletterSubscriber,
   Order,
+  OrderDocument,
   OrderGroup,
   OrderListParams,
   Payment,
@@ -101,6 +109,10 @@ import type {
   CreditCardSort,
   GiftCardFilters,
   GiftCardSort,
+  InvoiceFilters,
+  InvoiceSort,
+  OrderDocumentFilters,
+  OrderDocumentSort,
   OrderFilters,
   OrderSort,
   SellerFilters,
@@ -908,6 +920,93 @@ export class StoreClient {
        */
       labelPath: (orderId: string, id: string): string =>
         `/api/v3/store/orders/${orderId}/returns/${id}/label`,
+    },
+
+    /**
+     * The order's invoices, receipts and credit notes. Download each from its
+     * `download_url` with the customer's credentials: files are streamed
+     * through the API, never served from storage.
+     */
+    invoices: {
+      list: (
+        orderId: string,
+        params?: ListParams<InvoiceFilters, InvoiceSort>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<Invoice>> =>
+        this.request<PaginatedResponse<Invoice>>('GET', `/orders/${orderId}/invoices`, {
+          ...options,
+          params: params ? transformListParams({ ...params }) : undefined,
+        }),
+    },
+
+    /**
+     * Asking for an invoice on an order bought as a private buyer. Accepted
+     * within the store's request window while the order has no invoice.
+     */
+    invoiceRequests: {
+      list: (
+        orderId: string,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<InvoiceRequest>> =>
+        this.request<PaginatedResponse<InvoiceRequest>>(
+          'GET',
+          `/orders/${orderId}/invoice_requests`,
+          options,
+        ),
+
+      create: (
+        orderId: string,
+        params: CreateInvoiceRequestParams,
+        options?: RequestOptions,
+      ): Promise<InvoiceRequest> =>
+        this.request<InvoiceRequest>('POST', `/orders/${orderId}/invoice_requests`, {
+          ...options,
+          body: params,
+        }),
+    },
+
+    /**
+     * Documents on the order: those the merchant made visible, and the
+     * customer's own. Add one by uploading the file with `upload`, then
+     * passing its `signed_id` to `create`.
+     */
+    documents: {
+      list: (
+        orderId: string,
+        params?: ListParams<OrderDocumentFilters, OrderDocumentSort>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<OrderDocument>> =>
+        this.request<PaginatedResponse<OrderDocument>>('GET', `/orders/${orderId}/documents`, {
+          ...options,
+          params: params ? transformListParams({ ...params }) : undefined,
+        }),
+
+      /** Stores the file privately and answers with the `signed_id` to send to `create`. */
+      upload: (
+        orderId: string,
+        file: Blob,
+        uploadOptions?: Omit<UploadFileOptions, 'visibility' | 'method'>,
+        options?: RequestOptions,
+      ): Promise<FileUpload> =>
+        uploadFile<FileUpload>(
+          (body) =>
+            this.request<FileUpload>('POST', `/orders/${orderId}/documents/upload`, {
+              ...options,
+              body: body as FileUploadCreateParams,
+            }),
+          file,
+          { ...uploadOptions, visibility: 'private' },
+        ),
+
+      create: (
+        orderId: string,
+        params: CreateOrderDocumentParams,
+        options?: RequestOptions,
+      ): Promise<OrderDocument> =>
+        this.request<OrderDocument>('POST', `/orders/${orderId}/documents`, {
+          ...options,
+          body: params,
+        }),
     },
 
     /**

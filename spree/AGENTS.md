@@ -100,6 +100,14 @@ Admin serializers extend Store serializers; every serializer an Admin one refere
 - Leaving an action out takes `agent_tool false, reason: '…'` in its rswag spec. Irreversible, platform-wide or wizard-only steps qualify; "not done yet" doesn't. A custom GET is a tool only with `agent_tool true`. `spree/api/spec/lib/spree/api/agent_tools_contract_spec.rb` fails on an admin action with no operation, an opt-out with no reason, or two actions deriving one tool name; give one an `operationId`.
 - An operation's summary and description are how an agent learns the feature: say what it does and when to use it. Update `docs/developer/mcp/tools.mdx` with the new tool.
 
+## Invoices and receipts
+
+See `docs/plans/6.1-invoices-and-receipts.md`.
+
+- Every invoice, receipt and credit note is a `Spree::Invoice`, uploaded or generated — never an `OrderDocument` row or a loose attachment. Anonymization and seller deletion leave invoices untouched.
+- Invoices are never edited: corrections are credit notes, and an upload may be deleted only until it is sent.
+- An order, payment or other `HasNumber` value is never an invoice number. Numbering series, snapshots and PDF generation are Enterprise (`ee/docs/plans/invoice-generation.md`); core's model works without them.
+
 ## Emails (Liquid + MJML)
 
 See `docs/plans/6.0-liquid-mjml-emails.md` and `docs/developer/customization/emails.mdx`.

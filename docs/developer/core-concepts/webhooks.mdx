@@ -401,6 +401,7 @@ Common webhook events include:
 |-------|-------------|
 | `order.placed` | A customer completed checkout |
 | `order.paid` | The order is fully paid |
+| `order.invoice_requested` | The buyer asked for an invoice on the order |
 | `order.canceled` | The order was canceled |
 | `order.fulfilled` | Everything on the order has shipped |
 | `fulfillment.fulfilled` | One parcel went out |
@@ -409,6 +410,7 @@ Common webhook events include:
 | `product.out_of_stock` / `product.back_in_stock` | Availability flipped |
 | `user.created` | A new customer registered |
 | `return.received` | A return arrived |
+| `invoice.created` | An invoice, receipt or credit note was added to an order |
 
 ## Testing Webhooks
 

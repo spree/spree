@@ -335,6 +335,37 @@ RSpec.describe Spree::Customers::Anonymize do
     end
   end
 
+  describe 'invoice paperwork on their orders' do
+    let!(:order) { create(:completed_order_with_totals, customer: customer, store: store, email: 'buyer@example.com') }
+    let!(:invoice) { create(:invoice, order: order) }
+    let!(:request) { create(:invoice_request, order: order, status: 'fulfilled', invoice: invoice) }
+    let!(:buyer_document) { create(:order_document, order: order, uploaded_by: customer, uploaded_by_customer: true, customer_visible: true) }
+    let!(:staff_document) { create(:order_document, order: order) }
+
+    it 'keeps the invoice, which the law requires the merchant to hold' do
+      result
+
+      expect(invoice.reload.file).to be_attached
+      expect(invoice.number).to be_present
+    end
+
+    it 'clears the company and tax number the buyer asked for' do
+      result
+
+      expect(request.reload).to have_attributes(company_name: nil, tax_id: nil)
+    end
+
+    it "removes the buyer's own uploads and keeps the merchant's" do
+      blob_id = buyer_document.file.blob.id
+
+      perform_enqueued_jobs { result }
+
+      expect(Spree::OrderDocument.exists?(buyer_document.id)).to be(false)
+      expect(ActiveStorage::Blob.exists?(blob_id)).to be(false)
+      expect(Spree::OrderDocument.exists?(staff_document.id)).to be(true)
+    end
+  end
+
   describe 'a place on a company roster' do
     let!(:membership) { create(:company_membership, customer: customer) }
 

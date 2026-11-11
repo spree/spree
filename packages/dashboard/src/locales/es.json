@@ -643,7 +643,8 @@
           "tab_downloads": "Descargas digitales",
           "downloads_help": "Cuánto tiempo funciona un enlace de descarga y cuántas veces se puede usar. Los archivos individuales pueden reemplazar estos valores.",
           "default_package_description": "La caja en la que sueles enviar. Los proveedores de tarifas de transporte suman su peso a cada paquete y usan sus dimensiones para el precio por peso dimensional.",
-          "tab_default_package": "Paquete predeterminado"
+          "tab_default_package": "Paquete predeterminado",
+          "tab_invoices": "Facturas"
         },
         "tax_categories": {
           "add_sheet_title": "Agregar categoría de impuestos",
@@ -735,11 +736,13 @@
             "import": "Importación",
             "import_row": "Fila de importación",
             "invitation": "Invitación",
+            "invoice": "Factura",
             "line_item": "Línea de pedido",
             "maintenance_task_run": "Ejecución de tarea de mantenimiento",
             "media": "Medios",
             "newsletter_subscriber": "Suscriptor de newsletter",
             "order": "Pedido",
+            "order_document": "Documento del pedido",
             "order_group": "Grupo de pedidos",
             "payment": "Pago",
             "payment_session": "Sesión de pago",
@@ -2462,6 +2465,15 @@
         "meta_description": {
           "label": "Meta descripción",
           "help": "Un breve resumen que los buscadores muestran bajo el título."
+        },
+        "send_invoice_email": {
+          "help": "Envía el PDF al cliente cuando se añade una factura. Desactívalo si tu software de facturación ya envía las facturas.",
+          "label": "Enviar las nuevas facturas a los clientes"
+        },
+        "invoice_request_window_days": {
+          "help": "Cuántos días después del pago puede un cliente solicitar una factura. 0 desactiva las solicitudes.",
+          "label": "Solicitudes de factura",
+          "suffix": "días"
         }
       },
       "store_credit": {
@@ -2722,7 +2734,8 @@
         "payment": "Pago",
         "po_number": "Número de OC",
         "sku": "SKU",
-        "tags": "Etiquetas"
+        "tags": "Etiquetas",
+        "missing_invoice": "Sin factura"
       },
       "detail": {
         "add_line_item": {
@@ -3172,6 +3185,10 @@
       "table": {
         "empty": "No se encontraron pedidos",
         "search_placeholder": "Buscá por número, OC, cliente…"
+      },
+      "filters": {
+        "missing_invoice": "Sin factura",
+        "has_invoice": "Con factura"
       }
     },
     "products": {
@@ -3719,7 +3736,8 @@
         },
         "title": "Equipo"
       },
-      "team_column": "Equipo"
+      "team_column": "Equipo",
+      "missing_invoices": "Pedidos sin factura"
     },
     "promotions": {
       "action_edit": {
@@ -4903,7 +4921,11 @@
         "title": "¿Liquidar a este vendedor ahora?",
         "message": "Barre todo lo que se le debe a {{name}} en un pago por moneda. No envía el dinero: marcá el pago como pagado cuando salga la transferencia."
       },
-      "settle_failed": "No se pudo liquidar a este vendedor."
+      "settle_failed": "No se pudo liquidar a este vendedor.",
+      "invoices": {
+        "title": "Facturas de comisión",
+        "empty": "Aún no hay facturas de comisión para este pago."
+      }
     },
     "stock_levels": {
       "column_hints": {
@@ -5285,7 +5307,8 @@
       "suppliers": "Proveedores",
       "loyalty": "Fidelización",
       "store_credits": "Créditos de tienda",
-      "commission_rates": "Tasas de comisión"
+      "commission_rates": "Tasas de comisión",
+      "invoices": "Facturas"
     },
     "tax_exemption_certificates": {
       "add_cta": "Agregar certificado",
@@ -5873,7 +5896,8 @@
       "webhook_endpoints": "Dónde se notifica a tus otros sistemas cuando pasa algo en la tienda.",
       "returns": "Mercadería que vuelve, desde la solicitud hasta el reembolso.",
       "exchanges": "Compras cambiadas por un talle, color o producto distinto.",
-      "claims": "Entregas que salieron mal: artículos dañados, faltantes o equivocados, y cómo se resolvió cada una."
+      "claims": "Entregas que salieron mal: artículos dañados, faltantes o equivocados, y cómo se resolvió cada una.",
+      "invoices": "Todas las facturas, recibos y notas de crédito de la tienda, de pedidos y pagos a vendedores."
     },
     "gift_cards": {
       "batch_autocomplete": {
@@ -6891,6 +6915,16 @@
       "run_label": "Ejecute esto",
       "copy_command": "Copiar comando",
       "cli_then_sign_in": "Se abrirá el navegador para iniciar sesión y aprobar lo que el agente puede hacer."
+    },
+    "invoices": {
+      "search_placeholder": "Buscar por número",
+      "empty": "Aún no hay facturas. Súbelas desde cada pedido o pago a vendedor.",
+      "number": "Número",
+      "kind": "Tipo",
+      "issuer": "Emitida por",
+      "total": "Total",
+      "issued_on": "Fecha de emisión",
+      "sent_at": "Enviada"
     }
   }
 }

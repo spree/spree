@@ -108,7 +108,7 @@ paths:
                   selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 6
+                  name: Seller 8
                   status: approved
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
@@ -171,7 +171,7 @@ paths:
                   selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 8
+                  name: Seller 10
                   status: approved
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
@@ -293,7 +293,7 @@ paths:
                 invitee_exists: false
                 seller:
                   id: sel_UkLWZg9DAJ
-                  name: Seller 77
+                  name: Seller 79
               schema:
                 "$ref": "#/components/schemas/Invitation"
         '404':
@@ -371,7 +371,7 @@ paths:
                   selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 79
+                  name: Seller 81
                   status: approved
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
@@ -493,7 +493,7 @@ paths:
                   selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 117
+                  name: Seller 147
                   status: approved
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
@@ -566,8 +566,8 @@ paths:
                   selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 89
-                  slug: seller-89
+                  name: Seller 109
+                  slug: seller-109
                   status: approved
                 store:
                   id: store_UkLWZg9DAJ
@@ -867,8 +867,8 @@ paths:
                   selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 91
-                  slug: seller-91
+                  name: Seller 111
+                  slug: seller-111
                   status: approved
                 store:
                   id: store_UkLWZg9DAJ
@@ -12390,7 +12390,7 @@ paths:
                 data:
                 - id: dm_UkLWZg9DAJ
                   name: My courier
-                  code: UPS_GROUND_129
+                  code: UPS_GROUND_149
                   estimated_transit_business_days_min:
                   estimated_transit_business_days_max:
                   digital: false
@@ -12413,7 +12413,7 @@ paths:
                       currency: USD
                 - id: dm_gbHJdmfrXB
                   name: Marketplace post
-                  code: UPS_GROUND_130
+                  code: UPS_GROUND_150
                   estimated_transit_business_days_min:
                   estimated_transit_business_days_max:
                   digital: false
@@ -12582,7 +12582,7 @@ paths:
               example:
                 id: dm_UkLWZg9DAJ
                 name: My courier
-                code: UPS_GROUND_135
+                code: UPS_GROUND_155
                 estimated_transit_business_days_min:
                 estimated_transit_business_days_max:
                 digital: false
@@ -12639,7 +12639,7 @@ paths:
               example:
                 id: dm_UkLWZg9DAJ
                 name: My express courier
-                code: UPS_GROUND_137
+                code: UPS_GROUND_157
                 estimated_transit_business_days_min:
                 estimated_transit_business_days_max:
                 digital: false
@@ -14132,7 +14132,7 @@ paths:
                   updated_at: '2026-01-15T12:00:00.000Z'
                   provider_type:
                   provider_name: File
-                  download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiI1Z28wOGZsYWtwNXYyeG4yMGlueHZvbWwyZmRzIiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cInRoaW5raW5nLWNhdC5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jyd0aGlua2luZy1jYXQuanBnIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--dfa61b3de1d7498ffe55a6fddbc96ae0b6e80ca6/thinking-cat.jpg
+                  download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiI1Z28wOGZsYWtwNXYyeG4yMGlueHZvbWwyZmRzIiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cInRoaW5raW5nLWNhdC5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jyd0aGlua2luZy1jYXQuanBnIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--4a9cb16139433808de8fa8228298d267e219dfc9/thinking-cat.jpg
                   effective_authorized_clicks: 5
                   effective_authorized_days: 7
                 meta:
@@ -14220,7 +14220,7 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 provider_type:
                 provider_name: File
-                download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJmZ201b2ZidHBzbWhpYnB1cXY1YndjcHZvbXR4IiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cIm1hbnVhbC5wZGZcIjsgZmlsZW5hbWUqPVVURi04JydtYW51YWwucGRmIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--3fc7ae502b4c568f8f8d49dbc6fa4038770b2792/manual.pdf
+                download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJmZ201b2ZidHBzbWhpYnB1cXY1YndjcHZvbXR4IiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cIm1hbnVhbC5wZGZcIjsgZmlsZW5hbWUqPVVURi04JydtYW51YWwucGRmIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--60292101bf44bf2f9fbc9f765fd6c66fdfcaab83/manual.pdf
                 effective_authorized_clicks: 5
                 effective_authorized_days: 30
               schema:
@@ -14300,7 +14300,7 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 provider_type:
                 provider_name: File
-                download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiIydGZoM2pnZnBnMGwwemF4NjU2OW0xd3Jud2lhIiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cInRoaW5raW5nLWNhdC5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jyd0aGlua2luZy1jYXQuanBnIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--35f1f4197f018e103aad2b11dcc6a3739000e655/thinking-cat.jpg
+                download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiIydGZoM2pnZnBnMGwwemF4NjU2OW0xd3Jud2lhIiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cInRoaW5raW5nLWNhdC5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jyd0aGlua2luZy1jYXQuanBnIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--8f81afb1d33b8bb7034f81aa66649e4ff5466b53/thinking-cat.jpg
                 effective_authorized_clicks: 5
                 effective_authorized_days: 7
               schema:
@@ -14356,7 +14356,7 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 provider_type:
                 provider_name: File
-                download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJmbHRwbWl6azhucWZlb2JjY2EyNzM2N2EzdDV1IiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cInRoaW5raW5nLWNhdC5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jyd0aGlua2luZy1jYXQuanBnIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--c951b25342b7ec9c8dc5ff5868be008da1349948/thinking-cat.jpg
+                download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJmbHRwbWl6azhucWZlb2JjY2EyNzM2N2EzdDV1IiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cInRoaW5raW5nLWNhdC5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jyd0aGlua2luZy1jYXQuanBnIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--1f241b6b302c7c6bea0d68dbe624cffa00167889/thinking-cat.jpg
                 effective_authorized_clicks: 10
                 effective_authorized_days: 7
               schema:
@@ -14656,8 +14656,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 3203250
-                  slug: product-3203250
+                  name: Product 3683250
+                  slug: product-3683250
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -14872,8 +14872,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 3236710
-                slug: product-3236710
+                name: Product 3716710
+                slug: product-3716710
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -14964,7 +14964,7 @@ paths:
               example:
                 id: prod_UkLWZg9DAJ
                 name: Hand-thrown mug, large
-                slug: product-3268212
+                slug: product-3748212
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -15088,8 +15088,8 @@ paths:
             application/json:
               example:
                 id: prod_gbHJdmfrXB
-                name: Product 3297816
-                slug: product-3297816
+                name: Product 3777816
+                slug: product-3777816
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -15200,8 +15200,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 331209
-                slug: product-331209
+                name: Product 379209
+                slug: product-379209
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -15291,8 +15291,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 3329405
-                slug: product-3329405
+                name: Product 3809405
+                slug: product-3809405
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -15511,8 +15511,8 @@ paths:
             application/json:
               example:
                 id: sel_UkLWZg9DAJ
-                name: Seller 155
-                slug: seller-155
+                name: Seller 185
+                slug: seller-185
                 about: ''
                 about_html: ''
                 logo_url:
@@ -15602,7 +15602,7 @@ paths:
               example:
                 id: sel_UkLWZg9DAJ
                 name: Acme Supplies
-                slug: seller-157
+                slug: seller-187
                 about: ''
                 about_html: ''
                 logo_url:
@@ -16080,7 +16080,7 @@ paths:
                   inviter_email: jayna_leuschke@hirtheschinner.info
                   seller:
                     id: sel_UkLWZg9DAJ
-                    name: Seller 81
+                    name: Seller 83
               schema:
                 type: object
                 properties:
@@ -16189,7 +16189,7 @@ paths:
                 inviter_email: carmelia_hodkiewicz@donnelly.us
                 seller:
                   id: sel_UkLWZg9DAJ
-                  name: Seller 83
+                  name: Seller 85
               schema:
                 "$ref": "#/components/schemas/Invitation"
         '404':
@@ -16355,7 +16355,7 @@ paths:
                 inviter_email: hal_kiehn@herman.biz
                 seller:
                   id: sel_UkLWZg9DAJ
-                  name: Seller 187
+                  name: Seller 217
               schema:
                 "$ref": "#/components/schemas/Invitation"
         '422':
@@ -16493,7 +16493,7 @@ paths:
           content:
             application/json:
               example:
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--22ede2e3d9cdad77551bf7a67e01face0a96aedc
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--d0deb518a5a56333de39a72e64167bb30988c6db
                 filename: registration.pdf
                 content_type: application/pdf
                 byte_size: 51234
@@ -16501,7 +16501,7 @@ paths:
                 expires_at: '2026-01-16T12:00:00.000Z'
                 upload:
                   method: PUT
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiI4NDFrenlvbTQ5cnRhcDk0cmZxbGV6dnM1cGJsIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--ef8f3640c3920e91b561dd50063ad9eba0171431
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiI4NDFrenlvbTQ5cnRhcDk0cmZxbGV6dnM1cGJsIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--81bb615e4655954d4d946dfb06a83687ccf4d239
                   headers:
                     Content-Type: application/pdf
               schema:
@@ -17956,7 +17956,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 140
+                  delivery_method_name: UPS Ground 160
                   stock_location_name: Vernie Lehner
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -17964,13 +17964,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 2779315
-                    sku: SKU-365
+                    name: Product 2979315
+                    sku: SKU-385
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 140
+                    name: UPS Ground 160
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -18079,7 +18079,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 fulfillment_type: shipping
-                delivery_method_name: UPS Ground 141
+                delivery_method_name: UPS Ground 161
                 stock_location_name: Mirta Herman
                 stock_location_id: sloc_UkLWZg9DAJ
                 fulfillment_items:
@@ -18087,13 +18087,13 @@ paths:
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
-                  name: Product 278961
-                  sku: SKU-366
+                  name: Product 298961
+                  sku: SKU-386
                   options_text: ''
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 delivery_rates:
                 - id: dr_gbHJdmfrXB
-                  name: UPS Ground 141
+                  name: UPS Ground 161
                   selected: true
                   cost: '10.00'
                   total: '10.00'
@@ -18177,7 +18177,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 fulfillment_type: shipping
-                delivery_method_name: UPS Ground 142
+                delivery_method_name: UPS Ground 162
                 stock_location_name: Melony Block
                 stock_location_id: sloc_UkLWZg9DAJ
                 fulfillment_items:
@@ -18185,13 +18185,13 @@ paths:
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
-                  name: Product 2792065
-                  sku: SKU-367
+                  name: Product 2992065
+                  sku: SKU-387
                   options_text: ''
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 delivery_rates:
                 - id: dr_gbHJdmfrXB
-                  name: UPS Ground 142
+                  name: UPS Ground 162
                   selected: true
                   cost: '10.00'
                   total: '10.00'
@@ -18263,7 +18263,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 fulfillment_type: shipping
-                delivery_method_name: UPS Ground 143
+                delivery_method_name: UPS Ground 163
                 stock_location_name: Eugena Schultz
                 stock_location_id: sloc_UkLWZg9DAJ
                 fulfillment_items:
@@ -18271,13 +18271,13 @@ paths:
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
-                  name: Product 2803170
-                  sku: SKU-368
+                  name: Product 3003170
+                  sku: SKU-388
                   options_text: ''
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 delivery_rates:
                 - id: dr_gbHJdmfrXB
-                  name: UPS Ground 143
+                  name: UPS Ground 163
                   selected: true
                   cost: '10.00'
                   total: '10.00'
@@ -18363,7 +18363,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 fulfillment_type: shipping
-                delivery_method_name: UPS Ground 144
+                delivery_method_name: UPS Ground 164
                 stock_location_name: Karyn Moore
                 stock_location_id: sloc_UkLWZg9DAJ
                 fulfillment_items:
@@ -18371,13 +18371,13 @@ paths:
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
-                  name: Product 2817276
-                  sku: SKU-369
+                  name: Product 3017276
+                  sku: SKU-389
                   options_text: ''
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 delivery_rates:
                 - id: dr_gbHJdmfrXB
-                  name: UPS Ground 144
+                  name: UPS Ground 164
                   selected: true
                   cost: '10.00'
                   total: '10.00'
@@ -18466,7 +18466,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 145
+                  delivery_method_name: UPS Ground 165
                   stock_location_name: Fred Hand
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -18474,13 +18474,13 @@ paths:
                     quantity: 1
                     line_item_id: li_gbHJdmfrXB
                     variant_id: variant_gbHJdmfrXB
-                    name: Product 2831765
-                    sku: SKU-371
+                    name: Product 3031765
+                    sku: SKU-391
                     options_text: ''
                   selected_delivery_rate_id: dr_EfhxLZ9ck8
                   delivery_rates:
                   - id: dr_EfhxLZ9ck8
-                    name: UPS Ground 145
+                    name: UPS Ground 165
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -18512,7 +18512,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 145
+                  delivery_method_name: UPS Ground 165
                   stock_location_name: Fred Hand
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -18520,13 +18520,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 2823520
-                    sku: SKU-370
+                    name: Product 3023520
+                    sku: SKU-390
                     options_text: ''
                   selected_delivery_rate_id: dr_VqXmZF31wY
                   delivery_rates:
                   - id: dr_VqXmZF31wY
-                    name: UPS Ground 145
+                    name: UPS Ground 165
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -21081,6 +21081,719 @@ paths:
               schema:
                 type: string
                 format: binary
+  "/api/v3/seller/invoices":
+    get:
+      summary: List invoices
+      tags:
+      - Invoices
+      security:
+      - bearer_auth: []
+      description: Invoices on this seller's orders, issued in the seller's name,
+        and the commission invoices the marketplace issued them.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const { data: invoices } = await client.invoices.list()
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[number_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `currency` | One of the `CurrencyCode` codes | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `issued_on` | Date | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `issuer_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `issuer_type` | Type | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `kind` | One of `invoice`, `receipt`, `credit_note` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `number` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `order_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `seller_payout_id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `sent_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `source` | One of `uploaded`, `generated` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `supplied_on` | Date | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `total` | Amount | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `currency`, `id`, `issued_on`, `issuer_id`, `issuer_type`, `kind`, `number`, `order_id`, `seller_payout_id`, `sent_at`, `source`, `supplied_on`, `total`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: Invoice
+        sortable:
+        - created_at
+        - currency
+        - id
+        - issued_on
+        - issuer_id
+        - issuer_type
+        - kind
+        - number
+        - order_id
+        - seller_payout_id
+        - sent_at
+        - source
+        - supplied_on
+        - total
+        - updated_at
+      responses:
+        '200':
+          description: invoices listed
+          content:
+            application/json:
+              example:
+                data:
+                - id: invc_UkLWZg9DAJ
+                  kind: invoice
+                  number: INV-2026-0006
+                  currency: USD
+                  issued_on: '2026-01-15'
+                  supplied_on:
+                  total: '100.00'
+                  net_total: '81.30'
+                  tax_total: '18.70'
+                  original_invoice_id:
+                  issuer_type: seller
+                  issuer_name: Seller 91
+                  file_filename: INV-2026-0006.pdf
+                  file_byte_size: 24
+                  file_content_type: application/pdf
+                  download_url: "/api/v3/seller/invoices/invc_UkLWZg9DAJ/download"
+                  source: uploaded
+                  external_reference:
+                  metadata: {}
+                  sent_at:
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  order_id: or_UkLWZg9DAJ
+                  seller_payout_id:
+                  issuer_id: sel_UkLWZg9DAJ
+                  order_number: R1001
+                  can_be_deleted: true
+                  can_be_resent: true
+                - id: invc_gbHJdmfrXB
+                  kind: invoice
+                  number: INV-2026-0007
+                  currency: USD
+                  issued_on: '2026-01-15'
+                  supplied_on:
+                  total: '100.00'
+                  net_total: '81.30'
+                  tax_total: '18.70'
+                  original_invoice_id:
+                  issuer_type: store
+                  issuer_name: Spree Test Store
+                  file_filename: INV-2026-0007.pdf
+                  file_byte_size: 24
+                  file_content_type: application/pdf
+                  download_url: "/api/v3/seller/invoices/invc_gbHJdmfrXB/download"
+                  source: uploaded
+                  external_reference:
+                  metadata: {}
+                  sent_at:
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  order_id:
+                  seller_payout_id: vpo_UkLWZg9DAJ
+                  issuer_id: store_UkLWZg9DAJ
+                  order_number:
+                  can_be_deleted: false
+                  can_be_resent: false
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 2
+                  pages: 1
+                  from: 1
+                  to: 2
+                  in: 2
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Invoice"
+                required:
+                - data
+  "/api/v3/seller/invoices/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Get an invoice
+      tags:
+      - Invoices
+      security:
+      - bearer_auth: []
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const invoice = await client.invoices.get('invc_UkLWZg9DAJ')
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: invoice found
+          content:
+            application/json:
+              example:
+                id: invc_UkLWZg9DAJ
+                kind: invoice
+                number: INV-2026-0009
+                currency: USD
+                issued_on: '2026-01-15'
+                supplied_on:
+                total: '100.00'
+                net_total: '81.30'
+                tax_total: '18.70'
+                original_invoice_id:
+                issuer_type: seller
+                issuer_name: Seller 93
+                file_filename: INV-2026-0009.pdf
+                file_byte_size: 24
+                file_content_type: application/pdf
+                download_url: "/api/v3/seller/invoices/invc_UkLWZg9DAJ/download"
+                source: uploaded
+                external_reference:
+                metadata: {}
+                sent_at:
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                order_id: or_UkLWZg9DAJ
+                seller_payout_id:
+                issuer_id: sel_UkLWZg9DAJ
+                order_number: R1001
+                can_be_deleted: true
+                can_be_resent: true
+              schema:
+                "$ref": "#/components/schemas/Invoice"
+        '404':
+          description: another seller's invoice
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Invoice not found
+    delete:
+      summary: Delete an invoice
+      tags:
+      - Invoices
+      security:
+      - bearer_auth: []
+      description: Only an unsent upload on one of the seller's own orders. Commission
+        invoices are the marketplace's.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          await client.invoices.delete('invc_UkLWZg9DAJ')
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: invoice deleted
+        '404':
+          description: an invoice the store issued on the seller's order
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Invoice not found
+  "/api/v3/seller/invoices/{id}/download":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Download an invoice
+      tags:
+      - Invoices
+      security:
+      - bearer_auth: []
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          // The PDF is served through the API, so fetch it with the seller's
+          // credentials, then drive the browser download from a Blob.
+          const invoice = await client.invoices.get('invc_UkLWZg9DAJ')
+
+          if (invoice.download_url) {
+            const response = await fetch(`https://your-store.com${invoice.download_url}`, {
+              headers: { Authorization: 'Bearer eyJhbGciOi...', 'X-Spree-Seller-Id': 'sel_UkLWZg9DAJ' },
+            })
+            if (!response.ok) throw new Error(`Download failed: ${response.status}`)
+
+            const url = URL.createObjectURL(await response.blob())
+            const link = Object.assign(document.createElement('a'), {
+              href: url,
+              download: invoice.file_filename ?? invoice.number,
+            })
+            link.click()
+            URL.revokeObjectURL(url)
+          }
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: the store's invoice on the seller's own order
+        '404':
+          description: another seller's invoice
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Invoice not found
+  "/api/v3/seller/orders/{order_id}/documents/{id}":
+    parameters:
+    - name: order_id
+      in: path
+      required: true
+      schema:
+        type: string
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    patch:
+      summary: Update an order document
+      tags:
+      - Order Documents
+      security:
+      - bearer_auth: []
+      description: Renames a document the seller's own team uploaded, or changes whether
+        the buyer sees it.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const document = await client.orders.documents.update('or_UkLWZg9DAJ', 'odoc_UkLWZg9DAJ', {
+            customer_visible: true,
+          })
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: the seller's own document
+          content:
+            application/json:
+              example:
+                id: odoc_gbHJdmfrXB
+                label: Renamed
+                uploaded_by_customer: false
+                file_filename: po.pdf
+                file_byte_size: 20
+                file_content_type: application/pdf
+                download_url: "/api/v3/seller/orders/or_UkLWZg9DAJ/documents/odoc_gbHJdmfrXB/download"
+                customer_visible: true
+                metadata: {}
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                order_id: or_UkLWZg9DAJ
+              schema:
+                "$ref": "#/components/schemas/OrderDocument"
+        '404':
+          description: the operator's document
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Order document not found
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/OrderDocumentUpdateParams"
+        required: true
+    delete:
+      summary: Delete an order document
+      tags:
+      - Order Documents
+      security:
+      - bearer_auth: []
+      description: 'Only a document the seller''s own team uploaded: the operator''s
+        and the buyer''s paperwork stay.'
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          await client.orders.documents.delete('or_UkLWZg9DAJ', 'odoc_UkLWZg9DAJ')
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: the seller's own document
+        '404':
+          description: the operator's document
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Order document not found
+  "/api/v3/seller/orders/{order_id}/documents":
+    parameters:
+    - name: order_id
+      in: path
+      required: true
+      schema:
+        type: string
+    get:
+      summary: List an order's documents
+      tags:
+      - Order Documents
+      security:
+      - bearer_auth: []
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const { data: documents } = await client.orders.documents.list('or_UkLWZg9DAJ')
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[label_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `customer_visible` | True or false | `eq` `not_eq` `in` `not_in` `true` `false` `null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `label` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `customer_visible`, `id`, `label`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: OrderDocument
+        sortable:
+        - created_at
+        - customer_visible
+        - id
+        - label
+        - updated_at
+      responses:
+        '200':
+          description: documents listed
+          content:
+            application/json:
+              example:
+                data:
+                - id: odoc_UkLWZg9DAJ
+                  label: Signed purchase order
+                  uploaded_by_customer: false
+                  file_filename: po.pdf
+                  file_byte_size: 20
+                  file_content_type: application/pdf
+                  download_url: "/api/v3/seller/orders/or_UkLWZg9DAJ/documents/odoc_UkLWZg9DAJ/download"
+                  customer_visible: false
+                  metadata: {}
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  order_id: or_UkLWZg9DAJ
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/OrderDocument"
+                required:
+                - data
+    post:
+      summary: Upload an order document
+      tags:
+      - Order Documents
+      security:
+      - bearer_auth: []
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          declare const file: Blob
+
+          const upload = await client.files.upload(file, { visibility: 'private' })
+          const document = await client.orders.documents.create('or_UkLWZg9DAJ', {
+            label: 'CMR consignment note',
+            file_signed_id: upload.signed_id,
+          })
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: document uploaded
+          content:
+            application/json:
+              example:
+                id: odoc_gbHJdmfrXB
+                label: CMR consignment note
+                uploaded_by_customer: false
+                file_filename: cmr.pdf
+                file_byte_size: 15
+                file_content_type: application/pdf
+                download_url: "/api/v3/seller/orders/or_UkLWZg9DAJ/documents/odoc_gbHJdmfrXB/download"
+                customer_visible: false
+                metadata: {}
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                order_id: or_UkLWZg9DAJ
+              schema:
+                "$ref": "#/components/schemas/OrderDocument"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/OrderDocumentCreateParams"
+        required: true
+  "/api/v3/seller/orders/{order_id}/invoices":
+    parameters:
+    - name: order_id
+      in: path
+      required: true
+      schema:
+        type: string
+    post:
+      summary: Upload an invoice
+      tags:
+      - Invoices
+      security:
+      - bearer_auth: []
+      description: |
+        Records an invoice, receipt or credit note the seller issued in their own invoicing software. The
+        seller is the issuer. An invoice of kind `invoice` fulfils the buyer's open invoice request.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          declare const file: Blob
+
+          const upload = await client.files.upload(file, { visibility: 'private' })
+          const invoice = await client.orders.invoices.create('or_UkLWZg9DAJ', {
+            kind: 'invoice',
+            number: 'S-17',
+            issued_on: '2026-11-01',
+            total: '123.00',
+            file_signed_id: upload.signed_id,
+          })
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: invoice uploaded
+          content:
+            application/json:
+              example:
+                id: invc_UkLWZg9DAJ
+                kind: invoice
+                number: S-17
+                currency: USD
+                issued_on: '2026-11-01'
+                supplied_on:
+                total: '110.00'
+                net_total:
+                tax_total:
+                original_invoice_id:
+                issuer_type: seller
+                issuer_name: Seller 124
+                file_filename: fv.pdf
+                file_byte_size: 15
+                file_content_type: application/pdf
+                download_url: "/api/v3/seller/invoices/invc_UkLWZg9DAJ/download"
+                source: uploaded
+                external_reference:
+                metadata: {}
+                sent_at:
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                order_id: or_UkLWZg9DAJ
+                seller_payout_id:
+                issuer_id: sel_UkLWZg9DAJ
+                order_number: R1001
+                can_be_deleted: true
+                can_be_resent: true
+              schema:
+                "$ref": "#/components/schemas/Invoice"
+        '422':
+          description: an order the marketplace invoices
+          content:
+            application/json:
+              example:
+                error:
+                  code: processing_error
+                  message: The marketplace invoices this order, so its invoices are
+                    uploaded by the marketplace.
+        '404':
+          description: another seller's order
+          content:
+            application/json:
+              example:
+                error:
+                  code: order_not_found
+                  message: Order not found
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/InvoiceCreateParams"
+        required: true
   "/api/v3/seller/orders":
     get:
       summary: List orders
@@ -21133,6 +21846,12 @@ paths:
         schema:
           type: boolean
         description: Set to `true` to apply `incomplete`.
+      - name: q[missing_invoice]
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: Set to `true` to apply `missing_invoice`.
       - name: q[partially_refunded]
         in: query
         required: false
@@ -21266,7 +21985,7 @@ paths:
                   cancel_note:
                   items:
                   - id: li_UkLWZg9DAJ
-                    name: Product 29595
+                    name: Product 34395
                     options_text: ''
                     quantity: 1
                     currency: USD
@@ -21276,7 +21995,7 @@ paths:
                     total: '10.00'
                     variant_id: variant_UkLWZg9DAJ
                     product_id: prod_UkLWZg9DAJ
-                    sku: SKU-383
+                    sku: SKU-431
                     thumbnail_url:
                   fulfillments:
                   - id: ful_UkLWZg9DAJ
@@ -21289,7 +22008,7 @@ paths:
                     created_at: '2026-01-15T12:00:00.000Z'
                     updated_at: '2026-01-15T12:00:00.000Z'
                     fulfillment_type: shipping
-                    delivery_method_name: UPS Ground 157
+                    delivery_method_name: UPS Ground 205
                     stock_location_name: Roseline Roberts
                     stock_location_id: sloc_UkLWZg9DAJ
                     fulfillment_items:
@@ -21297,13 +22016,13 @@ paths:
                       quantity: 1
                       line_item_id: li_UkLWZg9DAJ
                       variant_id: variant_UkLWZg9DAJ
-                      name: Product 29595
-                      sku: SKU-383
+                      name: Product 34395
+                      sku: SKU-431
                       options_text: ''
                     selected_delivery_rate_id: dr_gbHJdmfrXB
                     delivery_rates:
                     - id: dr_gbHJdmfrXB
-                      name: UPS Ground 157
+                      name: UPS Ground 205
                       selected: true
                       cost: '10.00'
                       total: '10.00'
@@ -21331,7 +22050,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 304 Lovely Street
+                    address1: 400 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -21351,7 +22070,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 303 Lovely Street
+                    address1: 399 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -21463,7 +22182,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 2969755
+                  name: Product 3449755
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -21473,7 +22192,7 @@ paths:
                   total: '10.00'
                   variant_id: variant_UkLWZg9DAJ
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-384
+                  sku: SKU-432
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -21486,7 +22205,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 158
+                  delivery_method_name: UPS Ground 206
                   stock_location_name: Woodrow Hand
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -21494,13 +22213,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 2969755
-                    sku: SKU-384
+                    name: Product 3449755
+                    sku: SKU-432
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 158
+                    name: UPS Ground 206
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -21528,7 +22247,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 306 Lovely Street
+                  address1: 402 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -21548,7 +22267,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 305 Lovely Street
+                  address1: 401 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -21660,7 +22379,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 2996554
+                  name: Product 3476554
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -21670,7 +22389,7 @@ paths:
                   total: '10.00'
                   variant_id: variant_UkLWZg9DAJ
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-387
+                  sku: SKU-435
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -21683,7 +22402,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 161
+                  delivery_method_name: UPS Ground 209
                   stock_location_name: Savanna Hills
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -21691,13 +22410,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 2996554
-                    sku: SKU-387
+                    name: Product 3476554
+                    sku: SKU-435
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 161
+                    name: UPS Ground 209
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -21725,7 +22444,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 312 Lovely Street
+                  address1: 408 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -21745,7 +22464,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 311 Lovely Street
+                  address1: 407 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -21847,7 +22566,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 3005038
+                  name: Product 3485038
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -21857,7 +22576,7 @@ paths:
                   total: '10.00'
                   variant_id: variant_UkLWZg9DAJ
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-388
+                  sku: SKU-436
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -21870,7 +22589,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 162
+                  delivery_method_name: UPS Ground 210
                   stock_location_name: Rudy Mosciski
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -21878,13 +22597,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 3005038
-                    sku: SKU-388
+                    name: Product 3485038
+                    sku: SKU-436
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 162
+                    name: UPS Ground 210
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -21932,7 +22651,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 313 Lovely Street
+                  address1: 409 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -22041,7 +22760,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 3023962
+                  name: Product 3503962
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -22051,7 +22770,7 @@ paths:
                   total: '10.00'
                   variant_id: variant_UkLWZg9DAJ
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-390
+                  sku: SKU-438
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -22064,7 +22783,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 164
+                  delivery_method_name: UPS Ground 212
                   stock_location_name: Kecia Pollich
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -22072,13 +22791,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 3023962
-                    sku: SKU-390
+                    name: Product 3503962
+                    sku: SKU-438
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 164
+                    name: UPS Ground 212
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -22106,7 +22825,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 318 Lovely Street
+                  address1: 414 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -22126,7 +22845,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 317 Lovely Street
+                  address1: 413 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -22212,7 +22931,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 3035749
+                  name: Product 3515749
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -22222,7 +22941,7 @@ paths:
                   total: '10.00'
                   variant_id: variant_UkLWZg9DAJ
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-391
+                  sku: SKU-439
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -22235,7 +22954,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 165
+                  delivery_method_name: UPS Ground 213
                   stock_location_name: Ophelia Hartmann
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -22243,13 +22962,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 3035749
-                    sku: SKU-391
+                    name: Product 3515749
+                    sku: SKU-439
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 165
+                    name: UPS Ground 213
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -22277,7 +22996,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 320 Lovely Street
+                  address1: 416 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -22297,7 +23016,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 319 Lovely Street
+                  address1: 415 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -23219,7 +23938,7 @@ paths:
               example:
                 error:
                   code: processing_error
-                  message: Only 1 of Product 3397120 can be returned
+                  message: Only 1 of Product 3877120 can be returned
       requestBody:
         content:
           application/json:
@@ -26742,6 +27461,340 @@ components:
       - inviter_email
       - seller
       x-typelizer: true
+    InvoiceRequest:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          anyOf:
+          - type: string
+            enum:
+            - open
+            - fulfilled
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
+        company_name:
+          type: string
+          nullable: true
+        tax_id:
+          type: string
+          nullable: true
+        order_id:
+          type: string
+        invoice_id:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        billing_address:
+          allOf:
+          - "$ref": "#/components/schemas/Address"
+          nullable: true
+      required:
+      - id
+      - status
+      - company_name
+      - tax_id
+      - order_id
+      - invoice_id
+      - created_at
+      - billing_address
+      x-typelizer: true
+    Invoice:
+      type: object
+      properties:
+        id:
+          type: string
+        kind:
+          type: string
+          enum:
+          - invoice
+          - receipt
+          - credit_note
+        number:
+          type: string
+        currency:
+          type: string
+          enum:
+          - AED
+          - AFN
+          - ALL
+          - AMD
+          - ANG
+          - AOA
+          - ARS
+          - AUD
+          - AWG
+          - AZN
+          - BAM
+          - BBD
+          - BDT
+          - BGN
+          - BHD
+          - BIF
+          - BMD
+          - BND
+          - BOB
+          - BRL
+          - BSD
+          - BTN
+          - BWP
+          - BYN
+          - BYR
+          - BZD
+          - CAD
+          - CDF
+          - CHF
+          - CLF
+          - CLP
+          - CNY
+          - COP
+          - CRC
+          - CUC
+          - CUP
+          - CVE
+          - CZK
+          - DJF
+          - DKK
+          - DOP
+          - DZD
+          - EEK
+          - EGP
+          - ERN
+          - ETB
+          - EUR
+          - FJD
+          - FKP
+          - GBP
+          - GEL
+          - GHS
+          - GIP
+          - GMD
+          - GNF
+          - GTQ
+          - GYD
+          - HKD
+          - HNL
+          - HRK
+          - HTG
+          - HUF
+          - IDR
+          - ILS
+          - INR
+          - IQD
+          - IRR
+          - ISK
+          - JMD
+          - JOD
+          - JPY
+          - KES
+          - KGS
+          - KHR
+          - KMF
+          - KPW
+          - KRW
+          - KWD
+          - KYD
+          - KZT
+          - LAK
+          - LBP
+          - LKR
+          - LRD
+          - LSL
+          - LTL
+          - LVL
+          - LYD
+          - MAD
+          - MDL
+          - MGA
+          - MKD
+          - MMK
+          - MNT
+          - MOP
+          - MRO
+          - MRU
+          - MTL
+          - MUR
+          - MVR
+          - MWK
+          - MXN
+          - MYR
+          - MZN
+          - NAD
+          - NGN
+          - NIO
+          - NOK
+          - NPR
+          - NZD
+          - OMR
+          - PAB
+          - PEN
+          - PGK
+          - PHP
+          - PKR
+          - PLN
+          - PYG
+          - QAR
+          - RON
+          - RSD
+          - RUB
+          - RWF
+          - SAR
+          - SBD
+          - SCR
+          - SDG
+          - SEK
+          - SGD
+          - SHP
+          - SKK
+          - SLE
+          - SLL
+          - SOS
+          - SRD
+          - SSP
+          - STD
+          - STN
+          - SVC
+          - SYP
+          - SZL
+          - THB
+          - TJS
+          - TMM
+          - TMT
+          - TND
+          - TOP
+          - TRY
+          - TTD
+          - TWD
+          - TZS
+          - UAH
+          - UGX
+          - USD
+          - UYI
+          - UYU
+          - UYW
+          - UZS
+          - VED
+          - VEF
+          - VES
+          - VND
+          - VUV
+          - WST
+          - XAF
+          - XCD
+          - XCG
+          - XOF
+          - XPF
+          - YER
+          - ZAR
+          - ZMK
+          - ZMW
+          - ZWD
+          - ZWG
+          - ZWL
+          - ZWN
+          - ZWR
+        issued_on:
+          type: string
+        supplied_on:
+          type: string
+          nullable: true
+        total:
+          type: string
+        net_total:
+          type: string
+          nullable: true
+        tax_total:
+          type: string
+          nullable: true
+        original_invoice_id:
+          type: string
+          nullable: true
+        issuer_type:
+          type: string
+          enum:
+          - store
+          - seller
+        issuer_name:
+          type: string
+          nullable: true
+        file_filename:
+          type: string
+          nullable: true
+        file_byte_size:
+          type: number
+          nullable: true
+        file_content_type:
+          type: string
+          nullable: true
+        download_url:
+          type: string
+          nullable: true
+        source:
+          type: string
+          enum:
+          - uploaded
+          - generated
+        external_reference:
+          type: string
+          nullable: true
+        metadata:
+          type: object
+          nullable: true
+        sent_at:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        order_id:
+          type: string
+          nullable: true
+        seller_payout_id:
+          type: string
+          nullable: true
+        issuer_id:
+          type: string
+        order_number:
+          type: string
+          nullable: true
+        can_be_deleted:
+          type: boolean
+        can_be_resent:
+          type: boolean
+      required:
+      - id
+      - kind
+      - number
+      - currency
+      - issued_on
+      - supplied_on
+      - total
+      - net_total
+      - tax_total
+      - original_invoice_id
+      - issuer_type
+      - issuer_name
+      - file_filename
+      - file_byte_size
+      - file_content_type
+      - download_url
+      - source
+      - external_reference
+      - metadata
+      - sent_at
+      - created_at
+      - updated_at
+      - order_id
+      - seller_payout_id
+      - issuer_id
+      - order_number
+      - can_be_deleted
+      - can_be_resent
+      x-typelizer: true
     Media:
       type: object
       properties:
@@ -26838,6 +27891,52 @@ components:
       - og_image_url
       - created_at
       - updated_at
+      x-typelizer: true
+    OrderDocument:
+      type: object
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+        uploaded_by_customer:
+          type: boolean
+        file_filename:
+          type: string
+          nullable: true
+        file_byte_size:
+          type: number
+          nullable: true
+        file_content_type:
+          type: string
+          nullable: true
+        download_url:
+          type: string
+          nullable: true
+        customer_visible:
+          type: boolean
+        metadata:
+          type: object
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        order_id:
+          type: string
+      required:
+      - id
+      - label
+      - uploaded_by_customer
+      - file_filename
+      - file_byte_size
+      - file_content_type
+      - download_url
+      - customer_visible
+      - metadata
+      - created_at
+      - updated_at
+      - order_id
       x-typelizer: true
     OrderLineItem:
       type: object
@@ -28640,7 +29739,6 @@ components:
             - Asia/Magadan
             - Asia/Muscat
             - Asia/Novosibirsk
-            - Asia/Rangoon
             - Asia/Riyadh
             - Asia/Seoul
             - Asia/Shanghai
@@ -28655,6 +29753,7 @@ components:
             - Asia/Urumqi
             - Asia/Vladivostok
             - Asia/Yakutsk
+            - Asia/Yangon
             - Asia/Yekaterinburg
             - Asia/Yerevan
             - Atlantic/Azores
@@ -28682,7 +29781,7 @@ components:
             - Europe/Helsinki
             - Europe/Istanbul
             - Europe/Kaliningrad
-            - Europe/Kiev
+            - Europe/Kyiv
             - Europe/Lisbon
             - Europe/Ljubljana
             - Europe/London
@@ -32466,6 +33565,70 @@ components:
         last_name:
           type: string
           description: Used only when the invitation creates a new account.
+    InvoiceCreateParams:
+      type: object
+      properties:
+        kind:
+          type: string
+          enum:
+          - invoice
+          - receipt
+          - credit_note
+          description: A credit note corrects an earlier invoice or receipt and carries
+            negative totals.
+        number:
+          type: string
+          description: The number the issuing system gave it. Unique per issuer and
+            kind; never Spree's order number.
+          example: FV/2026/11/042
+        issued_on:
+          type: string
+          format: date
+        supplied_on:
+          type: string
+          format: date
+          description: When the goods or service were supplied, if not the issue date.
+          nullable: true
+        currency:
+          allOf:
+          - "$ref": "#/components/schemas/CurrencyCode"
+          description: Defaults to the order's or payout's currency.
+        total:
+          type: string
+          format: decimal
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          description: Gross total. Zero or more, or zero or less for a credit note.
+        net_total:
+          type: string
+          format: decimal
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          nullable: true
+        tax_total:
+          type: string
+          format: decimal
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          nullable: true
+        original_invoice_id:
+          type: string
+          description: The invoice a credit note corrects, on the same order or payout.
+          nullable: true
+        external_reference:
+          type: string
+          description: The issuing system's own id.
+          nullable: true
+        file_signed_id:
+          type: string
+          description: 'A PDF''s `signed_id` from `files.upload()` with `visibility:
+            ''private''`.'
+        metadata:
+          type: object
+          additionalProperties: true
+      required:
+      - kind
+      - number
+      - issued_on
+      - total
+      - file_signed_id
     LoginParams:
       type: object
       properties:
@@ -32567,6 +33730,39 @@ components:
         notify_customer:
           type: boolean
           description: Email the customer about the cancellation.
+    OrderDocumentCreateParams:
+      type: object
+      properties:
+        label:
+          type: string
+          example: Signed purchase order
+        customer_visible:
+          type: boolean
+          description: Whether the buyer sees it on their order. Off unless set; the
+            buyer's own uploads are always visible to them.
+        file_signed_id:
+          type: string
+          description: 'A `signed_id` from `files.upload()` with `visibility: ''private''`.
+            PDF, image, office document or CSV.'
+        metadata:
+          type: object
+          additionalProperties: true
+      required:
+      - label
+      - file_signed_id
+    OrderDocumentUpdateParams:
+      type: object
+      properties:
+        label:
+          type: string
+          example: Signed purchase order
+        customer_visible:
+          type: boolean
+          description: Whether the buyer sees it on their order. Off unless set; the
+            buyer's own uploads are always visible to them.
+        metadata:
+          type: object
+          additionalProperties: true
     OrderNotesParams:
       type: object
       properties:
@@ -33706,6 +34902,33 @@ components:
         updated_at: datetime
       associations: {}
       scopes: {}
+    Invoice:
+      attributes:
+        created_at: datetime
+        currency:
+          code: CurrencyCode
+        id: id
+        issued_on: date
+        issuer_id: id
+        issuer_type: type
+        kind:
+          enum:
+          - invoice
+          - receipt
+          - credit_note
+        number: text
+        order_id: id
+        seller_payout_id: id
+        sent_at: datetime
+        source:
+          enum:
+          - uploaded
+          - generated
+        supplied_on: date
+        total: decimal
+        updated_at: datetime
+      associations: {}
+      scopes: {}
     Order:
       attributes:
         channel_id: id
@@ -33786,6 +35009,7 @@ components:
       scopes:
         complete: boolean
         incomplete: boolean
+        missing_invoice: boolean
         partially_refunded: boolean
         refunded: boolean
     OrderCancellationReason:
@@ -33794,6 +35018,15 @@ components:
         created_at: datetime
         id: id
         name: text
+        updated_at: datetime
+      associations: {}
+      scopes: {}
+    OrderDocument:
+      attributes:
+        created_at: datetime
+        customer_visible: boolean
+        id: id
+        label: text
         updated_at: datetime
       associations: {}
       scopes: {}

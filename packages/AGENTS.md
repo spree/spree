@@ -28,6 +28,7 @@ pnpm workspace + Turbo, Biome for lint and format (`pnpm lint`, `pnpm lint:fix`,
 - **Inputs:** dates use `<StoreDatePicker>` (store time zone; pass `inline` inside a Sheet), never `<input type="date">`. Currencies use `CurrencySelect`, countries `CountryCombobox`. Amounts and percentages are `type="number"` inside an `<InputGroup>` showing the currency or `%`. Show and read money in the admin's own format with `useMoneyLocale()`; never `parseFloat` or `Number()` a money string.
 - **Base UI quirks:** `<SelectValue>` renders the raw value, so pass `items` to `<Select>` or a render function to `<SelectValue>`. `<Popover>` can fail to open inside a `<Sheet>`; render the panel inline instead (see `dashboard-ui/src/spree/color-picker.tsx`).
 - Shell components shared with the seller panel must not require providers the seller panel doesn't mount (it has no `StoreProvider`).
+- The order page's Documents card shows invoices (`Spree::Invoice`, never editable) above other order documents in one card, shared by both panels through `dashboard-core` (`docs/plans/6.1-invoices-and-receipts.md`, Decision 7).
 
 ## Bundle size (`docs/plans/6.1-dashboard-code-splitting.md`)
 

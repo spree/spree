@@ -360,7 +360,8 @@
     "delivery_methods": "Delivery methods",
     "package_types": "Package types",
     "earnings": "Earnings",
-    "payouts": "Payouts"
+    "payouts": "Payouts",
+    "invoices": "Invoices"
   },
   "onboarding": {
     "accept_terms": "Accept the terms",
@@ -408,7 +409,8 @@
       "payment": "Payment",
       "placed": "Placed",
       "quantity": "Quantity",
-      "total": "Total"
+      "total": "Total",
+      "missing_invoice": "Missing invoice"
     },
     "customer": {
       "title": "Customer"
@@ -567,7 +569,11 @@
       "total": "Total"
     },
     "title": "Orders",
-    "tracking_label": "Tracking number"
+    "tracking_label": "Tracking number",
+    "filters": {
+      "missing_invoice": "Missing an invoice",
+      "has_invoice": "Has an invoice"
+    }
   },
   "payouts": {
     "columns": {
@@ -848,5 +854,19 @@
       "member": "Member"
     },
     "title": "Your team"
+  },
+  "invoices": {
+    "title": "Invoices",
+    "subtitle": "Invoices issued in your name, and the marketplace's commission invoices to you.",
+    "search_placeholder": "Search by number",
+    "empty": "No invoices yet. Upload them from each order.",
+    "commission": "Marketplace commission",
+    "columns": {
+      "number": "Number",
+      "kind": "Type",
+      "issuer": "Issued by",
+      "total": "Total",
+      "issued_on": "Issue date"
+    }
   }
 }

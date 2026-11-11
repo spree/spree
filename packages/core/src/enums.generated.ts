@@ -208,6 +208,22 @@ export type ImportStatus = (typeof IMPORT_STATUSES)[number] | (string & {})
 export const INVITATION_STATUSES = ['pending', 'accepted'] as const
 export type InvitationStatus = (typeof INVITATION_STATUSES)[number] | (string & {})
 
+/** Every value of `InvoiceIssuerType`. */
+export const INVOICE_ISSUER_TYPES = ['store', 'seller'] as const
+export type InvoiceIssuerType = (typeof INVOICE_ISSUER_TYPES)[number]
+
+/** Every value of `InvoiceKind`. */
+export const INVOICE_KINDS = ['invoice', 'receipt', 'credit_note'] as const
+export type InvoiceKind = (typeof INVOICE_KINDS)[number]
+
+/** The built-in values of `InvoiceRequestStatus`. Extensions may add more. */
+export const INVOICE_REQUEST_STATUSES = ['open', 'fulfilled'] as const
+export type InvoiceRequestStatus = (typeof INVOICE_REQUEST_STATUSES)[number] | (string & {})
+
+/** Every value of `InvoiceSource`. */
+export const INVOICE_SOURCES = ['uploaded', 'generated'] as const
+export type InvoiceSource = (typeof INVOICE_SOURCES)[number]
+
 /** The built-in values of `MaintenanceTaskRunStatus`. Extensions may add more. */
 export const MAINTENANCE_TASK_RUN_STATUSES = [
   'enqueued',
@@ -691,6 +707,7 @@ export type BuiltInStatus =
   | (typeof IMPORT_ROW_STATUSES)[number]
   | (typeof IMPORT_STATUSES)[number]
   | (typeof INVITATION_STATUSES)[number]
+  | (typeof INVOICE_REQUEST_STATUSES)[number]
   | (typeof MAINTENANCE_TASK_RUN_STATUSES)[number]
   | (typeof ORDER_FULFILLMENT_STATUSES)[number]
   | (typeof ORDER_PAYMENT_STATUSES)[number]

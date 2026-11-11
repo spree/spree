@@ -2436,6 +2436,15 @@
         "meta_description": {
           "label": "Meta description",
           "help": "A short summary search engines show under the title."
+        },
+        "send_invoice_email": {
+          "help": "Sends the customer the PDF when an invoice is added. Turn it off if your invoicing software already emails invoices.",
+          "label": "Email new invoices to customers"
+        },
+        "invoice_request_window_days": {
+          "help": "How many days after paying a customer can ask for an invoice. 0 turns requests off.",
+          "label": "Invoice requests",
+          "suffix": "days"
         }
       },
       "store_credit": {
@@ -2978,7 +2987,8 @@
       "suppliers": "Suppliers",
       "loyalty": "Loyalty",
       "store_credits": "Store Credits",
-      "commission_rates": "Commission rates"
+      "commission_rates": "Commission rates",
+      "invoices": "Invoices"
     },
     "option_types": {
       "columns": {
@@ -3017,7 +3027,8 @@
         "payment": "Payment",
         "po_number": "PO number",
         "sku": "SKU",
-        "tags": "Tags"
+        "tags": "Tags",
+        "missing_invoice": "Missing invoice"
       },
       "detail": {
         "add_line_item": {
@@ -3467,6 +3478,10 @@
       "table": {
         "empty": "No orders found",
         "search_placeholder": "Search by number, PO, customer…"
+      },
+      "filters": {
+        "missing_invoice": "Missing an invoice",
+        "has_invoice": "Has an invoice"
       }
     },
     "pages": {
@@ -4290,7 +4305,8 @@
           "tab_downloads": "Digital downloads",
           "downloads_help": "How long a download link works and how many times it can be used. Individual files can override these numbers.",
           "default_package_description": "The box you usually ship in. Carrier rate providers add its weight to every package and use its dimensions for dimensional-weight pricing.",
-          "tab_default_package": "Default package"
+          "tab_default_package": "Default package",
+          "tab_invoices": "Invoices"
         },
         "tax_categories": {
           "add_sheet_title": "Add tax category",
@@ -4382,11 +4398,13 @@
             "import": "Import",
             "import_row": "Import row",
             "invitation": "Invitation",
+            "invoice": "Invoice",
             "line_item": "Line item",
             "maintenance_task_run": "Maintenance task run",
             "media": "Media",
             "newsletter_subscriber": "Newsletter subscriber",
             "order": "Order",
+            "order_document": "Order document",
             "order_group": "Order group",
             "payment": "Payment",
             "payment_session": "Payment session",
@@ -5613,7 +5631,8 @@
         },
         "title": "Team"
       },
-      "team_column": "Team"
+      "team_column": "Team",
+      "missing_invoices": "Orders missing an invoice"
     },
     "settings": {
       "webhooks": {
@@ -6057,7 +6076,8 @@
       "webhook_endpoints": "Where your other systems are notified when something happens in the store.",
       "returns": "Goods coming back, from request to refund.",
       "exchanges": "Purchases swapped for a different size, colour or product.",
-      "claims": "Deliveries that went wrong — damaged, missing or wrong items — and how each was resolved."
+      "claims": "Deliveries that went wrong — damaged, missing or wrong items — and how each was resolved.",
+      "invoices": "Every invoice, receipt and credit note in the store, across orders and seller payouts."
     },
     "tax_categories": {
       "add_cta": "Add tax category",
@@ -6299,7 +6319,11 @@
         "title": "Settle this seller now?",
         "message": "Sweeps everything {{name}} is owed into a payout per currency. It does not send the money — mark the payout paid once the transfer goes out."
       },
-      "settle_failed": "Could not settle this seller."
+      "settle_failed": "Could not settle this seller.",
+      "invoices": {
+        "title": "Commission invoices",
+        "empty": "No commission invoices for this payout yet."
+      }
     },
     "inventory_lines": {
       "add_label": "Add a product",
@@ -6889,6 +6913,16 @@
       "run_label": "Run this",
       "copy_command": "Copy command",
       "cli_then_sign_in": "It will open your browser to sign in and approve what the agent may do."
+    },
+    "invoices": {
+      "search_placeholder": "Search by number",
+      "empty": "No invoices yet. Upload them from each order or seller payout.",
+      "number": "Number",
+      "kind": "Type",
+      "issuer": "Issued by",
+      "total": "Total",
+      "issued_on": "Issue date",
+      "sent_at": "Sent"
     }
   }
 }

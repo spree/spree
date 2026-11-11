@@ -2431,6 +2431,15 @@
         "meta_description": {
           "label": "元描述",
           "help": "搜索引擎在标题下方显示的简短摘要。"
+        },
+        "send_invoice_email": {
+          "help": "添加发票后向客户发送 PDF。如果开票软件已发送发票，请关闭。",
+          "label": "向客户发送新发票"
+        },
+        "invoice_request_window_days": {
+          "help": "客户付款后可申请发票的天数。0 表示关闭申请。",
+          "label": "发票申请",
+          "suffix": "天"
         }
       },
       "store_credit": {
@@ -2970,7 +2979,8 @@
       "suppliers": "供应商",
       "loyalty": "会员权益",
       "store_credits": "店铺信用",
-      "commission_rates": "佣金费率"
+      "commission_rates": "佣金费率",
+      "invoices": "发票"
     },
     "option_types": {
       "columns": {
@@ -3009,7 +3019,8 @@
         "payment": "付款",
         "po_number": "采购订单号",
         "sku": "SKU",
-        "tags": "标签"
+        "tags": "标签",
+        "missing_invoice": "缺少发票"
       },
       "detail": {
         "add_line_item": {
@@ -3458,6 +3469,10 @@
       "table": {
         "empty": "未找到订单",
         "search_placeholder": "按订单号、采购订单号或客户搜索…"
+      },
+      "filters": {
+        "missing_invoice": "缺少发票",
+        "has_invoice": "已有发票"
       }
     },
     "pages": {
@@ -4278,7 +4293,8 @@
           "tab_downloads": "数字下载",
           "downloads_help": "下载链接的有效期以及可使用的次数。单个文件可覆盖这些数值。",
           "default_package_description": "常用的发货纸箱。承运商费率提供方会将其重量加到每个包裹上,并使用其尺寸计算体积重量。",
-          "tab_default_package": "默认包裹"
+          "tab_default_package": "默认包裹",
+          "tab_invoices": "发票"
         },
         "tax_categories": {
           "add_sheet_title": "添加税收类别",
@@ -4370,11 +4386,13 @@
             "import": "导入",
             "import_row": "导入行",
             "invitation": "邀请",
+            "invoice": "发票",
             "line_item": "订单项",
             "maintenance_task_run": "维护任务运行",
             "media": "媒体",
             "newsletter_subscriber": "邮件订阅者",
             "order": "订单",
+            "order_document": "订单文件",
             "order_group": "订单组",
             "payment": "支付",
             "payment_session": "支付会话",
@@ -5600,7 +5618,8 @@
         },
         "title": "团队"
       },
-      "team_column": "团队"
+      "team_column": "团队",
+      "missing_invoices": "缺少发票的订单"
     },
     "settings": {
       "webhooks": {
@@ -6043,7 +6062,8 @@
       "webhook_endpoints": "店铺发生事件时通知您其他系统的地址。",
       "returns": "退回的商品，从申请到退款。",
       "exchanges": "换成其他尺码、颜色或商品的购买。",
-      "claims": "出问题的配送——损坏、缺失或错发的商品——以及各自的处理结果。"
+      "claims": "出问题的配送——损坏、缺失或错发的商品——以及各自的处理结果。",
+      "invoices": "商店中所有订单和卖家结算的发票、收据和红字发票。"
     },
     "tax_categories": {
       "add_cta": "添加税务类别",
@@ -6284,7 +6304,11 @@
         "title": "现在结算此卖家？",
         "message": "将 {{name}} 应得的款项按币种汇总为一笔打款。此操作不会转账——转账完成后请将打款标记为已支付。"
       },
-      "settle_failed": "无法结算此卖家。"
+      "settle_failed": "无法结算此卖家。",
+      "invoices": {
+        "title": "佣金发票",
+        "empty": "此结算暂无佣金发票。"
+      }
     },
     "inventory_lines": {
       "add_label": "添加商品",
@@ -6874,6 +6898,16 @@
       "run_label": "运行此命令",
       "copy_command": "复制命令",
       "cli_then_sign_in": "它会打开浏览器，让您登录并批准代理可以执行的操作。"
+    },
+    "invoices": {
+      "search_placeholder": "按编号搜索",
+      "empty": "暂无发票。请在各订单或结算中上传。",
+      "number": "编号",
+      "kind": "类型",
+      "issuer": "开票方",
+      "total": "总额",
+      "issued_on": "开票日期",
+      "sent_at": "已发送"
     }
   }
 }

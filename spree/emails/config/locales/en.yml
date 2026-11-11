@@ -50,6 +50,21 @@ en:
         instructions: Your order %{number} has been fulfilled
         subject: Fulfillment Notification
         track_information: 'Tracking Information: %{tracking}'
+    invoice_mailer:
+      commission_invoice_email:
+        heading: Your commission invoice
+        message: Attached is invoice %{number} from %{store_name} for the commission on your latest payout.
+        subject: Commission invoice %{number}
+      invoice_email:
+        dear_customer: Dear %{name},
+        heading: Your document is attached
+        instructions: Attached is %{number} for your order %{order}.
+        issued_by: Issued by %{issuer}
+        kinds:
+          credit_note: Credit note
+          invoice: Invoice
+          receipt: Receipt
+        total: 'Total: %{total}'
     newsletter_mailer:
       email_confirmation:
         dear_customer: Hey,

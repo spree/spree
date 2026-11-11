@@ -43,6 +43,8 @@ export { GiftCardBatchSchema, type GiftCardBatch } from './GiftCardBatch';
 export { ImportSchema, type Import } from './Import';
 export { ImportRowSchema, type ImportRow } from './ImportRow';
 export { InvitationSchema, type Invitation } from './Invitation';
+export { InvoiceSchema, type Invoice } from './Invoice';
+export { InvoiceRequestSchema, type InvoiceRequest } from './InvoiceRequest';
 export { LineItemSchema, type LineItem } from './LineItem';
 export { LocaleSchema, type Locale } from './Locale';
 export { MarketSchema, type Market } from './Market';
@@ -53,6 +55,7 @@ export { NewsletterSubscriberRequestEventSchema, type NewsletterSubscriberReques
 export { OptionTypeSchema, type OptionType } from './OptionType';
 export { OptionValueSchema, type OptionValue } from './OptionValue';
 export { OrderSchema, type Order } from './Order';
+export { OrderDocumentSchema, type OrderDocument } from './OrderDocument';
 export { OrderGroupSchema, type OrderGroup } from './OrderGroup';
 export { PasswordResetRequestedEventSchema, type PasswordResetRequestedEvent } from './PasswordResetRequestedEvent';
 export { PaymentSchema, type Payment } from './Payment';

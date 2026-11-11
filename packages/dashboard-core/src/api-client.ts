@@ -17,6 +17,10 @@ import type { PackageTypeKind, PickupStockPolicy } from '@spree/core'
 
 import type {
   DigitalAssetProvider,
+  Invoice,
+  InvoiceKind,
+  InvoiceRequest,
+  OrderDocument,
   PaginationMeta,
   PermissionRule,
   UploadFileOptions,
@@ -59,6 +63,52 @@ export interface PanelPermissions {
    */
   rules: PermissionRule[]
   keys: string[]
+}
+
+/**
+ * The order's invoices, invoice requests and other documents, as both panels
+ * read and write them (docs/plans/6.1-invoices-and-receipts.md). The admin
+ * registers the Admin API, the seller panel the Seller API; the shapes match.
+ */
+export interface PanelOrderPaperwork {
+  invoices: {
+    list(orderId: string): Promise<{ data: Invoice[] }>
+    create(orderId: string, params: PanelInvoiceCreateParams): Promise<Invoice>
+    delete(id: string): Promise<void>
+    resend(id: string): Promise<Invoice>
+  }
+  invoiceRequests: {
+    list(orderId: string): Promise<{ data: InvoiceRequest[] }>
+  }
+  documents: {
+    list(orderId: string): Promise<{ data: OrderDocument[] }>
+    create(orderId: string, params: PanelOrderDocumentCreateParams): Promise<OrderDocument>
+    update(
+      orderId: string,
+      id: string,
+      params: { label?: string; customer_visible?: boolean },
+    ): Promise<OrderDocument>
+    delete(orderId: string, id: string): Promise<void>
+  }
+}
+
+export interface PanelInvoiceCreateParams {
+  kind: InvoiceKind
+  number: string
+  issued_on: string
+  supplied_on?: string | null
+  total: string
+  net_total?: string | null
+  tax_total?: string | null
+  original_invoice_id?: string | null
+  external_reference?: string | null
+  file_signed_id: string
+}
+
+export interface PanelOrderDocumentCreateParams {
+  label: string
+  customer_visible?: boolean
+  file_signed_id: string
 }
 
 /** What every panel's client can do, whichever API it talks to. */
@@ -136,6 +186,7 @@ export interface PanelApiClient {
    * host that does not exist and push a runtime guard onto every caller.
    */
   updateAccount(params: PanelAccountParams): Promise<{ user: PanelAccountUser }>
+  orderPaperwork?: PanelOrderPaperwork
   stockLocations?: {
     list(params?: Record<string, unknown>): Promise<{ data: PanelStockLocation[]; meta?: unknown }>
     get(id: string): Promise<PanelStockLocation>

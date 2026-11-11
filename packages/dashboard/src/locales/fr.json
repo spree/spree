@@ -2436,6 +2436,15 @@
         "meta_description": {
           "label": "Méta-description",
           "help": "Un court résumé que les moteurs de recherche affichent sous le titre."
+        },
+        "send_invoice_email": {
+          "help": "Envoie le PDF au client lorsqu'une facture est ajoutée. Désactivez-le si votre logiciel de facturation envoie déjà les factures.",
+          "label": "Envoyer les nouvelles factures aux clients"
+        },
+        "invoice_request_window_days": {
+          "help": "Pendant combien de jours après le paiement un client peut demander une facture. 0 désactive les demandes.",
+          "label": "Demandes de facture",
+          "suffix": "jours"
         }
       },
       "store_credit": {
@@ -2979,7 +2988,8 @@
       "suppliers": "Fournisseurs",
       "loyalty": "Fidélité",
       "store_credits": "Avoirs",
-      "commission_rates": "Taux de commission"
+      "commission_rates": "Taux de commission",
+      "invoices": "Factures"
     },
     "option_types": {
       "columns": {
@@ -3018,7 +3028,8 @@
         "payment": "Paiement",
         "po_number": "N° de bon de commande",
         "sku": "SKU",
-        "tags": "Étiquettes"
+        "tags": "Étiquettes",
+        "missing_invoice": "Facture manquante"
       },
       "detail": {
         "add_line_item": {
@@ -3468,6 +3479,10 @@
       "table": {
         "empty": "Aucune commande trouvée",
         "search_placeholder": "Rechercher par numéro, bon de commande ou client…"
+      },
+      "filters": {
+        "missing_invoice": "Sans facture",
+        "has_invoice": "Avec facture"
       }
     },
     "pages": {
@@ -4292,7 +4307,8 @@
           "tab_downloads": "Téléchargements numériques",
           "downloads_help": "Durée de validité d'un lien de téléchargement et nombre d'utilisations possibles. Chaque fichier peut remplacer ces valeurs.",
           "default_package_description": "Le carton habituel d'expédition. Les transporteurs ajoutent son poids à chaque colis et utilisent ses dimensions pour le poids volumétrique.",
-          "tab_default_package": "Colis par défaut"
+          "tab_default_package": "Colis par défaut",
+          "tab_invoices": "Factures"
         },
         "tax_categories": {
           "add_sheet_title": "Ajouter une catégorie de taxe",
@@ -4384,11 +4400,13 @@
             "import": "Import",
             "import_row": "Ligne d'import",
             "invitation": "Invitation",
+            "invoice": "Facture",
             "line_item": "Ligne d'article",
             "maintenance_task_run": "Exécution de tâche de maintenance",
             "media": "Médias",
             "newsletter_subscriber": "Abonné à la newsletter",
             "order": "Commande",
+            "order_document": "Document de commande",
             "order_group": "Groupe de commandes",
             "payment": "Paiement",
             "payment_session": "Session de paiement",
@@ -5615,7 +5633,8 @@
         },
         "title": "Équipe"
       },
-      "team_column": "Équipe"
+      "team_column": "Équipe",
+      "missing_invoices": "Commandes sans facture"
     },
     "settings": {
       "webhooks": {
@@ -6059,7 +6078,8 @@
       "webhook_endpoints": "Où vos autres systèmes sont notifiés quand quelque chose se produit dans la boutique.",
       "returns": "Marchandises qui reviennent, de la demande au remboursement.",
       "exchanges": "Achats échangés contre une autre taille, une autre couleur ou un autre produit.",
-      "claims": "Livraisons qui ont mal tourné — articles endommagés, manquants ou erronés — et comment chacune a été résolue."
+      "claims": "Livraisons qui ont mal tourné — articles endommagés, manquants ou erronés — et comment chacune a été résolue.",
+      "invoices": "Toutes les factures, reçus et avoirs de la boutique, pour les commandes et les versements aux vendeurs."
     },
     "tax_categories": {
       "add_cta": "Ajouter une catégorie de taxe",
@@ -6301,7 +6321,11 @@
         "title": "Régler ce vendeur maintenant ?",
         "message": "Regroupe tout ce qui est dû à {{name}} en un versement par devise. Aucun argent n'est envoyé — marquez le versement comme payé une fois le virement effectué."
       },
-      "settle_failed": "Impossible de régler ce vendeur."
+      "settle_failed": "Impossible de régler ce vendeur.",
+      "invoices": {
+        "title": "Factures de commission",
+        "empty": "Aucune facture de commission pour ce versement."
+      }
     },
     "inventory_lines": {
       "add_label": "Ajouter un produit",
@@ -6891,6 +6915,16 @@
       "run_label": "Exécutez ceci",
       "copy_command": "Copier la commande",
       "cli_then_sign_in": "Votre navigateur s'ouvrira pour vous connecter et approuver ce que l'agent peut faire."
+    },
+    "invoices": {
+      "search_placeholder": "Rechercher par numéro",
+      "empty": "Aucune facture pour le moment. Téléversez-les depuis chaque commande ou versement.",
+      "number": "Numéro",
+      "kind": "Type",
+      "issuer": "Émise par",
+      "total": "Total",
+      "issued_on": "Date d'émission",
+      "sent_at": "Envoyée"
     }
   }
 }

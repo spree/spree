@@ -38,6 +38,8 @@ module Spree
     # sweep instead of erasing what the seller earned.
     has_many :transfers, class_name: 'Spree::SellerTransfer', foreign_key: :payout_id,
                          inverse_of: :payout, dependent: :nullify
+    # Commission invoices the marketplace issued the seller for this payout.
+    has_many :invoices, class_name: 'Spree::Invoice', inverse_of: :seller_payout, dependent: :restrict_with_error
 
     #
     # Validations
