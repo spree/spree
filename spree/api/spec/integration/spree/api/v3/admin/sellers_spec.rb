@@ -270,6 +270,7 @@ RSpec.describe 'Admin Sellers API', type: :request, swagger_doc: 'api-reference/
 
     post 'Invite someone to a seller team' do
       tags 'Sellers'
+      operationId 'sellers_invite_team_member'
       admin_sdk_example 'sellers/invitations-create'
       consumes 'application/json'
       produces 'application/json'

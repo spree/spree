@@ -20,12 +20,11 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-  toastManager,
   useConfirm,
-  useCopyToClipboard,
 } from '@spree/dashboard-ui'
 import { UserPlusIcon, UsersIcon } from '@spree/dashboard-ui/icons'
 import { useTranslation } from 'react-i18next'
+import { useCopyInvitationLink } from '../../../hooks/use-copy-invitation-link'
 import {
   useRemoveSellerTeamMember,
   useResendSellerInvitation,
@@ -55,7 +54,7 @@ export function SellerTeamCard({ seller, onInvite }: { seller: Seller; onInvite:
   const revokeInvitation = useRevokeSellerInvitation(seller.id)
   const resendInvitation = useResendSellerInvitation(seller.id)
   const acceptanceLink = useSellerInvitationAcceptanceLink(seller.id)
-  const { copy } = useCopyToClipboard()
+  const copyInvitationLink = useCopyInvitationLink(acceptanceLink.mutateAsync)
 
   const canManage = permissions.can('update', Subject.Seller)
   const members = team?.data ?? []
@@ -70,26 +69,6 @@ export function SellerTeamCard({ seller, onInvite }: { seller: Seller; onInvite:
     })
     if (!ok) return
     await removeMember.mutateAsync(id).catch(() => undefined)
-  }
-
-  async function handleCopyLink(id: string) {
-    try {
-      const { acceptance_url } = await acceptanceLink.mutateAsync(id)
-      // Path-only when no app origin is configured; resolve against this one.
-      const url = acceptance_url.startsWith('/')
-        ? `${window.location.origin}${acceptance_url}`
-        : acceptance_url
-      if (!(await copy(url))) {
-        toastManager.add({ type: 'error', title: t('admin.staff.errors.failed_to_copy_link') })
-        return
-      }
-      toastManager.add({ type: 'success', title: t('admin.staff.actions.invitation_link_copied') })
-    } catch (err) {
-      toastManager.add({
-        type: 'error',
-        title: err instanceof Error ? err.message : t('admin.staff.errors.failed_to_copy_link'),
-      })
-    }
   }
 
   async function handleRevoke(id: string, label: string) {
@@ -207,7 +186,7 @@ export function SellerTeamCard({ seller, onInvite }: { seller: Seller; onInvite:
                                 key: 'copy-link',
                                 label: t('admin.staff.actions.copy_invitation_link'),
                                 disabled: acceptanceLink.isPending,
-                                onSelect: () => handleCopyLink(invitation.id),
+                                onSelect: () => copyInvitationLink(invitation.id),
                               },
                               {
                                 key: 'revoke',

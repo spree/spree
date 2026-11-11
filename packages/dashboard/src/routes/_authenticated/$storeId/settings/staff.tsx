@@ -69,7 +69,6 @@ import {
   TableRow,
   toastManager,
   useConfirm,
-  useCopyToClipboard,
 } from '@spree/dashboard-ui'
 import {
   BanIcon,
@@ -95,6 +94,7 @@ import { type ComponentType, type ReactNode, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
+import { useCopyInvitationLink } from '../../../../hooks/use-copy-invitation-link'
 import {
   useCreateInvitation,
   useDeleteInvitation,
@@ -461,27 +461,7 @@ function InvitationRow({ invitation }: { invitation: Invitation }) {
   const confirm = useConfirm()
   const acceptanceLink = useInvitationAcceptanceLink()
   const { permissions } = usePermissions()
-  const { copy } = useCopyToClipboard()
-
-  async function handleCopyLink() {
-    try {
-      const { acceptance_url } = await acceptanceLink.mutateAsync(invitation.id)
-      // Path-only when no dashboard origin is configured; resolve against the SPA's origin.
-      const url = acceptance_url.startsWith('/')
-        ? `${window.location.origin}${acceptance_url}`
-        : acceptance_url
-      if (!(await copy(url))) {
-        toastManager.add({ type: 'error', title: t('admin.staff.errors.failed_to_copy_link') })
-        return
-      }
-      toastManager.add({ type: 'success', title: t('admin.staff.actions.invitation_link_copied') })
-    } catch (err) {
-      toastManager.add({
-        type: 'error',
-        title: err instanceof Error ? err.message : t('admin.staff.errors.failed_to_copy_link'),
-      })
-    }
-  }
+  const copyInvitationLink = useCopyInvitationLink(acceptanceLink.mutateAsync)
 
   async function handleResend() {
     try {
@@ -558,7 +538,7 @@ function InvitationRow({ invitation }: { invitation: Invitation }) {
               icon: <LinkIcon className="size-4" />,
               visible: permissions.can('update', Subject.Invitation),
               disabled: acceptanceLink.isPending,
-              onSelect: handleCopyLink,
+              onSelect: () => copyInvitationLink(invitation.id),
             },
             {
               key: 'revoke',

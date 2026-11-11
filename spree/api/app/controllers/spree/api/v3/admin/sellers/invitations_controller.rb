@@ -18,12 +18,14 @@ module Spree
             scoped_resource :sellers
 
             before_action :set_seller
-            before_action :authorize_seller_update, only: [:create]
+            # Every write hands out or withdraws a way onto the team, so it
+            # needs the same right as changing the seller.
+            before_action :authorize_seller_update, only: [:create, :destroy, :resend]
+            before_action :set_invitation, only: [:destroy, :resend]
 
             request_params 'SellerInvitationCreateParams', action: :create do |body|
               body.attribute :email, :string, required: true, example: 'teammate@example.com'
             end
-            before_action :set_invitation, only: [:destroy, :resend]
 
             # Pending only: an accepted invitation is a team member, which the
             # team endpoint lists.
@@ -33,7 +35,17 @@ module Spree
               render json: { data: invitations.map { |invitation| serialize(invitation) } }
             end
 
+            # A seller the marketplace turned away has no team to join, the
+            # same line the seller's own `invite` action draws.
             def create
+              if @seller.rejected?
+                return render_error(
+                  code: ErrorHandler::ERROR_CODES[:processing_error],
+                  message: I18n.t('spree.invitation_seller_rejected'),
+                  status: :unprocessable_content
+                )
+              end
+
               invitation = @seller.invitations.new(
                 email: params[:email],
                 role: @seller.default_user_role,

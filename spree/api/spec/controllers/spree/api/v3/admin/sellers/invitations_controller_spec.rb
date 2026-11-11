@@ -52,6 +52,15 @@ RSpec.describe Spree::Api::V3::Admin::Sellers::InvitationsController, type: :con
       expect(seller.reload).to be_approved
     end
 
+    it 'refuses a seller that was rejected' do
+      seller.update!(status: 'rejected')
+
+      post :create, params: { seller_id: seller.prefixed_id, email: 'teammate@example.com' }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(seller.invitations).to be_empty
+    end
+
     it 'refuses an address that is not an email' do
       post :create, params: { seller_id: seller.prefixed_id, email: 'nope' }, as: :json
 

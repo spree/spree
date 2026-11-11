@@ -55613,6 +55613,7 @@ paths:
       summary: Invite someone to a seller team
       tags:
       - Sellers
+      operationId: sellers_invite_team_member
       x-codeSamples:
       - lang: javascript
         label: Spree Admin SDK

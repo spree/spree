@@ -1021,6 +1021,7 @@ en:
         subject: Invitation to join %{resource_name}
     invitation_not_acceptable: Invitation not found, expired, or already accepted.
     invitation_role_resource_mismatch: must belong to the same store or seller as the invitation
+    invitation_seller_rejected: This seller was rejected, so nobody can join its team.
     iso: ISO Alpha-2
     item: Item
     items_cannot_be_shipped: We are unable to calculate shipping rates for the selected items.
