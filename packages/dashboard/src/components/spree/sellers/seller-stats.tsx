@@ -55,18 +55,20 @@ export function SellerStats({ seller }: { seller: Seller }) {
           />
         </>
       )}
-      <StatItem
-        label={t('admin.pages.products.status_options.proposed')}
-        value={
-          <StatLink
-            to="/$storeId/products"
-            params={{ storeId }}
-            search={sellerProductsSearch(seller.id, 'proposed')}
-          >
-            {inReview}
-          </StatLink>
-        }
-      />
+      {permissions.can('read', Subject.Product) && (
+        <StatItem
+          label={t('admin.pages.products.status_options.proposed')}
+          value={
+            <StatLink
+              to="/$storeId/products"
+              params={{ storeId }}
+              search={sellerProductsSearch(seller.id, 'proposed')}
+            >
+              {inReview}
+            </StatLink>
+          }
+        />
+      )}
     </div>
   )
 }
