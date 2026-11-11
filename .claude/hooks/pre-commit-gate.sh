@@ -117,28 +117,54 @@ match_segment() {
 pr_dir="${hook_cwd:-${CLAUDE_PROJECT_DIR:-.}}"
 gh_pr_create='^gh([[:space:]]+-[^[:space:]]+([[:space:]]+[^-[:space:]][^[:space:]]*)?)*[[:space:]]+pr[[:space:]]+create([[:space:]);}]|$)'
 
-# Sets HEAD_FLAG to the last `--head`/`-H` value in a command line, reading
-# quoted arguments as one word so a title or body that mentions `--head` is
-# never taken for the flag. Returns 1 when a quote is left open: the argument
-# continues on a later line the gate cannot see.
+# Sets HEAD_FLAG to the last `--head`/`-H` value in a command line, reading it
+# the way gh's option parser does: quoted arguments are one word, a flag's
+# value is never read as a flag, and short flags may be clustered (`-fH x`) or
+# attached (`-Hx`, `-H=x`). Returns 1 when a quote is left open (the argument
+# continues on a later line the gate cannot see) and 2 for a flag it does not
+# know, since an unknown flag may take a value that hides a `--head`.
 HEAD_FLAG=""
 read_head_flag() {
-  local s="$1" tok want=0
+  local s="$1" tok next="" rest char
   local word="^(\"[^\"]*\"|'[^']*'|[^[:space:]\"']+)+"
+  local value_longs=" --assignee --base --body --body-file --label --milestone --project --reviewer --repo --title --template --recover "
+  local switch_longs=" --draft --fill --fill-first --fill-verbose --web --editor --dry-run --no-maintainer-edit --help "
   HEAD_FLAG=""
   while s="${s#"${s%%[![:space:]]*}"}"; [ -n "$s" ]; do
     [[ "$s" =~ $word ]] || return 1
     tok="${BASH_REMATCH[0]}"
     s="${s:${#tok}}"
     tok="${tok//[\"\']/}"
-    if [ $want -eq 1 ]; then HEAD_FLAG="$tok"; want=0; continue; fi
+    case "$next" in
+      head) HEAD_FLAG="$tok"; next=""; continue ;;
+      skip) next=""; continue ;;
+    esac
     case "$tok" in
-      --head|-H) want=1 ;;
+      --) return 0 ;;
+      --head) next=head ;;
       --head=*) HEAD_FLAG="${tok#--head=}" ;;
+      --*=*) [[ "$value_longs" == *" ${tok%%=*} "* ]] || return 2 ;;
+      --*)
+        if [[ "$value_longs" == *" $tok "* ]]; then next=skip
+        elif [[ "$switch_longs" != *" $tok "* ]]; then return 2
+        fi ;;
+      -?*)
+        rest="${tok#-}"
+        while [ -n "$rest" ]; do
+          char="${rest:0:1}"; rest="${rest:1}"
+          case "$char" in
+            [dfweh]) continue ;;
+            H) rest="${rest#=}"; if [ -n "$rest" ]; then HEAD_FLAG="$rest"; else next=head; fi; break ;;
+            [aBbFlmprRtT]) [ -n "$rest" ] || next=skip; break ;;
+            *) return 2 ;;
+          esac
+        done ;;
     esac
   done
 }
 
+# A `--head` in any of gh's spellings, for text the gate could not parse.
+gh_head_later='(^|[[:space:]])(--head|-[[:alpha:]]*H)'
 chained=0
 while IFS= read -r segment; do
   seg="${segment#"${segment%%[![:space:]({]*}"}"
@@ -158,9 +184,22 @@ while IFS= read -r segment; do
   # checkout can still open it. Without `--head`, gh opens the current branch.
   # A multi-line argument hides whatever follows it, so a `--head` placed after
   # one cannot be read and the gate would check the wrong branch.
-  if ! read_head_flag "$LAUNCHED" && [[ "${cmd#*"$seg"}" =~ (^|[[:space:]])(--head|-H)(=|[[:space:]]) ]]; then
+  read_head_flag "${LAUNCHED#*create}"
+  case $? in
+    2)
+      echo "Blocked: $seg" >&2
+      echo "The gate does not know one of these gh pr create flags, so it cannot tell which branch this opens. Use the long flag names --head, --title, --body-file." >&2
+      exit 2 ;;
+    1)
+      if [[ "${cmd#*"$seg"}" =~ $gh_head_later ]]; then
+        echo "Blocked: $seg" >&2
+        echo "Put --head before any multi-line argument (or pass the body with --body-file) so the gate can read which branch this opens." >&2
+        exit 2
+      fi ;;
+  esac
+  if [[ "$seg" == *\\ ]]; then
     echo "Blocked: $seg" >&2
-    echo "Put --head before any multi-line argument (or pass the body with --body-file) so the gate can read which branch this opens." >&2
+    echo "Keep gh pr create on one line so the gate can read which branch this opens." >&2
     exit 2
   fi
   review_dir="$pr_dir"
