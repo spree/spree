@@ -453,7 +453,10 @@ module SpreeStripe
       # share of; let Stripe answer as it would have.
       return [amount, currency] unless charge.currency.to_s.downcase == currency && captured.positive?
 
-      share = prorate(amount, balance_transaction.amount, captured)
+      # Never more than the charge settled for — an earning larger than what
+      # was captured would otherwise ask for a transfer Stripe refuses on
+      # every retry.
+      share = [prorate(amount, balance_transaction.amount, captured), balance_transaction.amount.to_i].min
       [SpreeStripe::Units.floor_to_step(share, settlement, payout: true), settlement]
     end
 

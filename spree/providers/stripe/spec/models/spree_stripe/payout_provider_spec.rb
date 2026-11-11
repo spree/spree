@@ -121,6 +121,26 @@ RSpec.describe SpreeStripe::PayoutProvider do
         end
       end
 
+      # An earning larger than what was captured cannot draw more than the
+      # charge settled for.
+      context 'when the earning exceeds what was captured' do
+        let(:order) { create(:order, store: store, seller: seller, total: 100, currency: 'GBP') }
+        let(:seller_transfer) { create(:seller_transfer, seller: seller, order: order, amount: 20, currency: 'GBP') }
+        let(:charge) do
+          Stripe::StripeObject.construct_from(
+            id: 'ch_1', amount: 10_000, amount_captured: 1_000, currency: 'gbp',
+            balance_transaction: { amount: 1_270, currency: 'usd' }
+          )
+        end
+
+        it 'asks for no more than the charge settled for' do
+          described_class.new.transfer!(seller_transfer)
+
+          expect(Stripe::Transfer).to have_received(:create).
+            with(hash_including(currency: 'usd', amount: 1_270), anything)
+        end
+      end
+
       # Stripe moves three-decimal currencies only in steps of 0.010.
       context 'when the charge settled in a three-decimal currency' do
         let(:order) { create(:order, store: store, seller: seller, total: 100, currency: 'GBP') }
