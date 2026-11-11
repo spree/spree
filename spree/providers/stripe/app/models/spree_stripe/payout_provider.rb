@@ -300,7 +300,9 @@ module SpreeStripe
       reversal = made_reversal(earning, seller_transfer, api_options) || Stripe::Transfer.create_reversal(
         earning.reference,
         {
-          amount: minor_units(seller_transfer),
+          # In the transfer's own currency, which is not the sale's when the
+          # earning was drawn from a charge that settled in another one.
+          amount: reversal_amount(earning, seller_transfer, api_options),
           metadata: {
             spree_seller_transfer_id: seller_transfer.id,
             spree_order_number: seller_transfer.order.number
@@ -407,7 +409,7 @@ module SpreeStripe
       currency = seller_transfer.currency.downcase
       return [amount, currency] if source_charge.blank?
 
-      charge = Stripe::Charge.retrieve({ id: source_charge, expand: ['balance_transaction'] }, gateway.api_options)
+      charge = retrieve_charge(source_charge, gateway.api_options)
       balance_transaction = charge.try(:balance_transaction)
       settlement = balance_transaction.try(:currency).to_s.downcase
       return [amount, currency] if settlement.blank? || settlement == currency
@@ -415,7 +417,51 @@ module SpreeStripe
       # share of; let Stripe answer as it would have.
       return [amount, currency] unless charge.currency.to_s.downcase == currency && charge.amount.to_i.positive?
 
-      [(amount * balance_transaction.amount).fdiv(charge.amount).round, settlement]
+      [prorate(amount, balance_transaction.amount, charge.amount), settlement]
+    end
+
+    # What a reversal asks Stripe to take back. Stripe reads a reversal's
+    # amount in the currency of the transfer it reverses, and a transfer drawn
+    # from a charge that settled in another currency was made in that one
+    # (see #transfer_figures) — so the sale's figure would claw back too little,
+    # or more than the transfer holds. The reversal's share of the earning is
+    # taken of what the transfer actually moved instead, and never more than
+    # the transfer still has to give back.
+    #
+    # @return [Integer] minor units in the transfer's currency
+    def reversal_amount(earning, seller_transfer, api_options)
+      amount = minor_units(seller_transfer)
+      transfer = Stripe::Transfer.retrieve(earning.reference, api_options)
+      return amount if transfer.currency.to_s.downcase == seller_transfer.currency.to_s.downcase
+
+      earned = minor_units(earning)
+      return amount unless earned.positive?
+
+      remaining = transfer.amount.to_i - transfer.amount_reversed.to_i
+      [prorate(amount, transfer.amount, earned), remaining].min
+    rescue Stripe::StripeError => e
+      # A look-up moves no money, so it is a refusal the retry job can repeat.
+      raise Spree::Core::GatewayError, e.message
+    end
+
+    # The charge with the balance transaction that says what it settled for.
+    #
+    # A failed look-up moved no money, so it is a refusal the retry job can
+    # repeat. Left to the rescue in #transfer!, a timeout here would be taken
+    # for an ambiguous transfer and park the earning where no retry reaches it.
+    def retrieve_charge(charge_id, api_options)
+      Stripe::Charge.retrieve({ id: charge_id, expand: ['balance_transaction'] }, api_options)
+    rescue Stripe::StripeError => e
+      raise Spree::Core::GatewayError, e.message
+    end
+
+    # `part` of `whole` minor units, as a share of `of`, in exact decimal
+    # arithmetic. Rounded down so the shares drawn from one charge or one
+    # transfer never add up to more than it holds.
+    #
+    # @return [Integer]
+    def prorate(part, whole, of)
+      (part.to_d * whole.to_d / of.to_d).round(0, BigDecimal::ROUND_DOWN).to_i
     end
 
     # The charge that paid for this order, so Stripe can fund the transfer from

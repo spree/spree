@@ -67,7 +67,7 @@ RSpec.describe SpreeStripe::PayoutProvider do
 
         it 'sends its share of what the charge settled for, in that currency' do
           expect(Stripe::Transfer).to receive(:create) do |payload, _options|
-            expect(payload).to include(source_transaction: 'ch_1', currency: 'usd', amount: 5398)
+            expect(payload).to include(source_transaction: 'ch_1', currency: 'usd', amount: 5397)
             Stripe::StripeObject.construct_from(id: 'tr_1')
           end
 
@@ -76,6 +76,17 @@ RSpec.describe SpreeStripe::PayoutProvider do
           expect(seller_transfer.reload).to be_completed
           expect(seller_transfer.currency).to eq('GBP')
         end
+      end
+
+      # Nothing has been sent when the look-up fails, so the earning must stay
+      # with the retry job rather than be parked as an outcome nobody knows.
+      it 'leaves a failed charge look-up to be retried' do
+        allow(Stripe::Charge).to receive(:retrieve).and_raise(Stripe::APIConnectionError, 'timed out')
+
+        expect { described_class.new.transfer!(seller_transfer) }.to raise_error(Spree::Core::GatewayError) do |error|
+          expect(error).not_to be_a(Spree::Core::AmbiguousGatewayError)
+        end
+        expect(Stripe::Transfer).not_to have_received(:create)
       end
 
       it 'draws on the charge and leaves its group alone' do
@@ -232,9 +243,13 @@ RSpec.describe SpreeStripe::PayoutProvider do
     end
 
     let(:reversals_made) { [] }
+    let(:transfer) do
+      Stripe::StripeObject.construct_from(id: 'tr_1', amount: 4250, amount_reversed: 0, currency: 'usd')
+    end
 
     before do
       allow(Stripe::Transfer).to receive(:create_reversal).and_return(Stripe::StripeObject.construct_from(id: 'trr_1'))
+      allow(Stripe::Transfer).to receive(:retrieve).with('tr_1', anything).and_return(transfer)
       allow(Stripe::Transfer).to receive(:list_reversals) do
         Stripe::ListObject.construct_from(object: 'list', data: reversals_made, has_more: false)
       end
@@ -249,6 +264,53 @@ RSpec.describe SpreeStripe::PayoutProvider do
 
       expect(reversal.reload).to be_completed
       expect(reversal.reference).to eq('trr_1')
+    end
+
+    # The earning was drawn from a charge that settled in another currency, so
+    # its transfer moved that currency, and Stripe reads a reversal's amount
+    # in the transfer's own currency.
+    context 'when the earning was sent in the charge\'s settlement currency' do
+      let(:order) { create(:order, store: store, seller: seller, total: 100, currency: 'GBP') }
+      let(:earning) do
+        create(:seller_transfer, :completed, seller: seller, order: order, amount: 42.5, currency: 'GBP',
+                                             reference: 'tr_1')
+      end
+      let(:reversal) do
+        create(:seller_transfer, :reversal, seller: seller, order: order, reversed_from: earning,
+                                            amount: -10.25, currency: 'GBP')
+      end
+      let(:transfer) do
+        Stripe::StripeObject.construct_from(id: 'tr_1', amount: 5397, amount_reversed: 0, currency: 'usd')
+      end
+
+      it 'takes back the same share of what the transfer moved' do
+        described_class.new.reverse!(reversal)
+
+        expect(Stripe::Transfer).to have_received(:create_reversal).with('tr_1', hash_including(amount: 1301), anything)
+        expect(reversal.reload).to be_completed
+      end
+
+      context 'when earlier reversals have taken most of it back' do
+        let(:transfer) do
+          Stripe::StripeObject.construct_from(id: 'tr_1', amount: 5397, amount_reversed: 4800, currency: 'usd')
+        end
+
+        it 'never asks for more than the transfer has left to give back' do
+          described_class.new.reverse!(reversal)
+
+          expect(Stripe::Transfer).to have_received(:create_reversal).
+            with('tr_1', hash_including(amount: 597), anything)
+        end
+      end
+
+      it 'leaves a failed transfer look-up to be retried' do
+        allow(Stripe::Transfer).to receive(:retrieve).and_raise(Stripe::APIConnectionError, 'timed out')
+
+        expect { described_class.new.reverse!(reversal) }.to raise_error(Spree::Core::GatewayError) do |error|
+          expect(error).not_to be_a(Spree::Core::AmbiguousGatewayError)
+        end
+        expect(Stripe::Transfer).not_to have_received(:create_reversal)
+      end
     end
 
     # Until the earning is sent there is no transfer to take from, so the
