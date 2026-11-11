@@ -1,5 +1,5 @@
 ---
-"@spree/admin-sdk": minor
+"@spree/admin-sdk": patch
 "@spree/dashboard": patch
 ---
 
