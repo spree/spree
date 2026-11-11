@@ -18,24 +18,34 @@ import {
 } from '@spree/dashboard-ui'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { useInviteSeller } from '../../../hooks/use-sellers'
+import { useCreateSellerInvitation, useInviteSeller } from '../../../hooks/use-sellers'
 import { type SellerInviteValues, sellerInviteSchema } from '../../../schemas/seller'
 
+/**
+ * Invites someone onto the seller's team. Before the seller is opened, that is
+ * the lifecycle step that moves it to `invited`; once it is past that (say,
+ * approved) the invitation only adds a member and the status stays put.
+ */
 export function SellerInviteSheet({
   seller,
+  addToTeam,
   open,
   onOpenChange,
 }: {
   seller: Seller
+  addToTeam: boolean
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
   const { t } = useTranslation()
-  const inviteMutation = useInviteSeller(seller.id)
+  const inviteSeller = useInviteSeller(seller.id)
+  const inviteTeammate = useCreateSellerInvitation(seller.id)
+  const inviteMutation = addToTeam ? inviteTeammate : inviteSeller
+  const copy = addToTeam ? 'admin.sellers.team.invite_sheet' : 'admin.sellers.invite_sheet'
   const form = useForm<SellerInviteValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(sellerInviteSchema) as any,
-    defaultValues: { email: seller.contact_email ?? '' },
+    defaultValues: { email: addToTeam ? '' : (seller.contact_email ?? '') },
   })
 
   async function onSubmit(values: SellerInviteValues) {
@@ -53,8 +63,8 @@ export function SellerInviteSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>{t('admin.sellers.invite_sheet.title')}</SheetTitle>
-          <SheetDescription>{t('admin.sellers.invite_sheet.description')}</SheetDescription>
+          <SheetTitle>{t(`${copy}.title`)}</SheetTitle>
+          <SheetDescription>{t(`${copy}.description`)}</SheetDescription>
         </SheetHeader>
         <form
           onSubmit={(event) => {

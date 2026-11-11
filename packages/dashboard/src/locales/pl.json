@@ -5660,6 +5660,10 @@
       "team": {
         "empty": "Nikt jeszcze nie prowadzi tego sprzedawcy.",
         "invite": "Zaproś",
+        "invite_sheet": {
+          "title": "Zaproś członka zespołu",
+          "description": "Dołączy do zespołu tego sprzedawcy po przyjęciu zaproszenia. Status sprzedawcy się nie zmienia."
+        },
         "invited": "Zaproszony",
         "messages": {
           "invitation_resent": "Zaproszenie wysłane ponownie",

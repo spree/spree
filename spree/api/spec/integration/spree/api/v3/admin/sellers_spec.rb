@@ -265,6 +265,53 @@ RSpec.describe 'Admin Sellers API', type: :request, swagger_doc: 'api-reference/
     end
   end
 
+  path '/api/v3/admin/sellers/{seller_id}/invitations' do
+    parameter name: :seller_id, in: :path, type: :string, required: true, description: 'Seller prefixed ID'
+
+    post 'Invite someone to a seller team' do
+      tags 'Sellers'
+      admin_sdk_example 'sellers/invitations-create'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        Invites someone to join the seller's team with the seller's own admin
+        role. They become a member when they accept. Unlike the seller's
+        `invite` action, this leaves the seller's status unchanged, so use it to
+        add people to a seller that is already approved.
+      DESC
+      admin_scope :write, :sellers
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      request_body_for
+
+      let(:seller) { create(:seller, :approved, store: store) }
+      let(:seller_id) { seller.prefixed_id }
+
+      response '201', 'invitation sent' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:body) { { email: 'teammate@example.com' } }
+
+        schema '$ref' => '#/components/schemas/Invitation'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['email']).to eq('teammate@example.com')
+          expect(seller.reload).to be_approved
+        end
+      end
+
+      response '422', 'invalid email' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:body) { { email: 'nope' } }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
+      end
+    end
+  end
+
   path '/api/v3/admin/sellers/{seller_id}/invitations/{id}/resend' do
     parameter name: :seller_id, in: :path, type: :string, required: true, description: 'Seller prefixed ID'
     parameter name: :id, in: :path, type: :string, required: true, description: 'Invitation prefixed ID'

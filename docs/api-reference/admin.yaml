@@ -55601,6 +55601,101 @@ paths:
             schema:
               "$ref": "#/components/schemas/SellerInviteParams"
         required: true
+  "/api/v3/admin/sellers/{seller_id}/invitations":
+    parameters:
+    - name: seller_id
+      in: path
+      required: true
+      description: Seller prefixed ID
+      schema:
+        type: string
+    post:
+      summary: Invite someone to a seller team
+      tags:
+      - Sellers
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Adds someone to the seller's team without changing the seller's status.
+          const invitation = await client.sellers.invitations.create('sel_UkLWZg9DAJ', {
+            email: 'teammate@northwind.example',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /sellers/{seller_id}/invitations -d '{"email":"teammate@northwind.example"}'
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Invites someone to join the seller's team with the seller's own admin
+        role. They become a member when they accept. Unlike the seller's
+        `invite` action, this leaves the seller's status unchanged, so use it to
+        add people to a seller that is already approved.
+
+
+        **Required scope:** `write_sellers` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: invitation sent
+          content:
+            application/json:
+              example:
+                id: inv_UkLWZg9DAJ
+                email: teammate@example.com
+                status: pending
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                expires_at: '2026-01-29T12:00:00.000Z'
+                role_id: role_gbHJdmfrXB
+                role_name: admin
+                inviter_email: marta@nikolaus.com
+                invitee_exists: false
+                store:
+                  id: store_UkLWZg9DAJ
+                  name: Spree Test Store
+              schema:
+                "$ref": "#/components/schemas/Invitation"
+        '422':
+          description: invalid email
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: Email is invalid
+                  details:
+                    email:
+                    - value: nope
+                      code: invalid
+                      message: is invalid
+                      specific: false
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/SellerInvitationCreateParams"
+        required: true
   "/api/v3/admin/sellers/{seller_id}/invitations/{id}/resend":
     parameters:
     - name: seller_id
@@ -85856,6 +85951,14 @@ components:
           description: Custom field values, each validated against its definition.
       required:
       - name
+    SellerInvitationCreateParams:
+      type: object
+      properties:
+        email:
+          type: string
+          example: teammate@example.com
+      required:
+      - email
     SellerInviteParams:
       type: object
       properties:

@@ -5,6 +5,7 @@ import type {
   SellerApproveParams,
   SellerCreateParams,
   SellerFilters,
+  SellerInvitationCreateParams,
   SellerInviteParams,
   SellerRejectParams,
   SellerReopenOnboardingParams,
@@ -18,7 +19,7 @@ import {
   useResourceKeyBuilder,
   useResourceMutation,
 } from '@spree/dashboard-core'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import i18n from 'i18next'
 
 export function useSellers(params?: ListParams<SellerFilters, SellerSort>) {
@@ -171,6 +172,23 @@ export function useSellerInvitations(sellerId: string) {
   return useQuery({
     queryKey: useResourceKey('sellers', sellerId, 'invitations'),
     queryFn: () => adminClient.sellers.invitations.list(sellerId),
+  })
+}
+
+/** Adds someone to the seller's team; unlike `useInviteSeller`, the status stays put. */
+export function useCreateSellerInvitation(sellerId: string) {
+  return useResourceMutation<Invitation, Error, SellerInvitationCreateParams>({
+    mutationFn: (params) => adminClient.sellers.invitations.create(sellerId, params),
+    invalidate: [['sellers', sellerId, 'invitations']],
+    successMessage: i18n.t('admin.sellers.messages.invited'),
+    errorMessage: i18n.t('admin.sellers.messages.invite_failed'),
+  })
+}
+
+/** Fetches an invitation's acceptance link on demand, so listings never carry the token. */
+export function useSellerInvitationAcceptanceLink(sellerId: string) {
+  return useMutation({
+    mutationFn: (id: string) => adminClient.sellers.invitations.acceptanceLink(sellerId, id),
   })
 }
 

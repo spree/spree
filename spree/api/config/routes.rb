@@ -610,7 +610,7 @@ Spree::Core::Engine.add_routes do
           # The operator is the only one who can repair a seller whose team
           # has locked itself out, which the seller's own panel cannot do.
           resources :team, only: [:index, :destroy], controller: 'sellers/team'
-          resources :invitations, only: [:index, :destroy], controller: 'sellers/invitations' do
+          resources :invitations, only: [:index, :create, :destroy], controller: 'sellers/invitations' do
             patch :resend, on: :member
             resource :acceptance_link, only: [:show], controller: 'sellers/invitations/acceptance_links'
           end

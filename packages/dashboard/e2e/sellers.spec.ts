@@ -112,6 +112,32 @@ test.describe('sellers', () => {
     await expect(page.getByRole('button', { name: /send again/i })).toBeVisible()
   })
 
+  test('adds a team member to an approved seller and copies their link', async ({ page }) => {
+    await page.context().grantPermissions(['clipboard-read', 'clipboard-write'])
+    const creds = await login(page)
+    await gotoIndex(page, SELLERS_PATH(creds.store_id), CTA)
+    await rowLink(page, FIXTURE_LEDGER_SELLER).click()
+    await expect(page.getByRole('heading', { name: FIXTURE_LEDGER_SELLER })).toBeVisible()
+
+    // An approved seller is past the lifecycle invite, so the team card's is the only one.
+    await page.getByRole('button', { name: /^invite$/i }).click()
+    await expect(page.getByRole('heading', { name: /invite team member/i })).toBeVisible()
+
+    const email = `teammate-${Date.now()}@example.com`
+    await page.locator('#invite-email').fill(email)
+    await page.getByRole('button', { name: /send invitation/i }).click()
+
+    await expect(page.getByText(email)).toBeVisible({ timeout: 15_000 })
+    await expect(page.getByText(/^approved$/i).first()).toBeVisible()
+
+    await openRowMenu(page, email)
+    await page.getByRole('menuitem', { name: /copy invitation link/i }).click()
+    await expect(page.getByText(/invitation link copied/i)).toBeVisible()
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toMatch(
+      /\/accept-invitation\//,
+    )
+  })
+
   test('edits the profile through its sheet', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, SELLERS_PATH(creds.store_id), CTA)

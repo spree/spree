@@ -10,13 +10,19 @@ module Spree
           # endpoint, and rooted the same way — at the seller's invitations, so
           # an id from another seller reads as missing rather than as denied.
           #
-          # Creating one is the `invite` action on the seller itself; what is
-          # here is the bookkeeping the operator needs when an offer went to
-          # the wrong address or never arrived.
+          # Creating one here adds someone to the team and leaves the seller's
+          # status alone, so it works for a seller already trading. The
+          # `invite` action on the seller is the lifecycle step that opens a
+          # pending seller for its first owner.
           class InvitationsController < Admin::BaseController
             scoped_resource :sellers
 
             before_action :set_seller
+            before_action :authorize_seller_update, only: [:create]
+
+            request_params 'SellerInvitationCreateParams', action: :create do |body|
+              body.attribute :email, :string, required: true, example: 'teammate@example.com'
+            end
             before_action :set_invitation, only: [:destroy, :resend]
 
             # Pending only: an accepted invitation is a team member, which the
@@ -25,6 +31,20 @@ module Spree
               invitations = @seller.invitations.pending.order(created_at: :desc)
 
               render json: { data: invitations.map { |invitation| serialize(invitation) } }
+            end
+
+            def create
+              invitation = @seller.invitations.new(
+                email: params[:email],
+                role: @seller.default_user_role,
+                inviter: try_spree_current_user
+              )
+
+              if invitation.save
+                render json: serialize(invitation), status: :created
+              else
+                render_validation_error(invitation.errors)
+              end
             end
 
             def destroy
@@ -58,6 +78,10 @@ module Spree
             def set_seller
               @seller = current_store.sellers.find_by_prefix_id!(params[:seller_id])
               authorize! :show, @seller
+            end
+
+            def authorize_seller_update
+              authorize! :update, @seller
             end
 
             def set_invitation
