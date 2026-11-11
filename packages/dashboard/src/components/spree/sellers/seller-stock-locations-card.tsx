@@ -1,5 +1,5 @@
 import type { Seller } from '@spree/admin-sdk'
-import { EditStockLocationSheet } from '@spree/dashboard-core'
+import { EditStockLocationSheet, useResourceKey } from '@spree/dashboard-core'
 import {
   Badge,
   Card,
@@ -20,6 +20,7 @@ import {
   TableRow,
 } from '@spree/dashboard-ui'
 import { WarehouseIcon } from '@spree/dashboard-ui/icons'
+import { useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSellerStockLocations } from '../../../hooks/use-sellers'
@@ -35,6 +36,8 @@ export function SellerStockLocationsCard({ seller }: { seller: Seller }) {
   const [page, setPage] = useState(1)
   const [editing, setEditing] = useState<string | null>(null)
   const { data, isLoading } = useSellerStockLocations(seller.id, page)
+  const queryClient = useQueryClient()
+  const sellerKey = useResourceKey('sellers', seller.id)
 
   const locations = data?.data ?? []
   const count = data?.meta.count ?? 0
@@ -119,7 +122,12 @@ export function SellerStockLocationsCard({ seller }: { seller: Seller }) {
         <EditStockLocationSheet
           id={editing}
           open
-          onOpenChange={(open) => !open && setEditing(null)}
+          onOpenChange={(open) => {
+            if (open) return
+            setEditing(null)
+            // The seller's returns address is read off its locations.
+            queryClient.invalidateQueries({ queryKey: sellerKey })
+          }}
           stockLevelsPanel={StockLevelsPanel}
           activityPanel={StockHistoryPanel}
         />

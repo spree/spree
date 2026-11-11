@@ -470,12 +470,17 @@ module Spree
     def products_count_by_status
       return @products_count_by_status if @products_count_by_status
 
-      siblings = lazy_preload_context&.records&.grep(self.class).presence || [self]
-      counts = Spree::Product.where(seller_id: siblings.map(&:id)).group(:seller_id, :status).count
       blank = Spree::Product::ALL_STATUSES.index_with(0)
+      # An unsaved seller has no id, and `seller_id IS NULL` would count the
+      # operator's own catalog.
+      return blank if new_record?
+
+      siblings = (lazy_preload_context&.records&.grep(self.class).presence || [self]).select(&:persisted?)
+      counts = Spree::Product.where(seller_id: siblings.map(&:id)).group(:seller_id, :status).count
+      by_seller = counts.group_by { |(seller_id, _status), _count| seller_id }
       siblings.each do |seller|
         seller.preloaded_products_count_by_status = blank.merge(
-          counts.filter_map { |(seller_id, status), count| [status, count] if seller_id == seller.id }.to_h
+          by_seller.fetch(seller.id, []).to_h { |(_seller_id, status), count| [status, count] }
         )
       end
       @products_count_by_status
@@ -543,6 +548,11 @@ module Spree
       location.store ||= store
       location.name ||= name
       return if location.valid?
+
+      # Before the seller has an id, uniqueness compares against the
+      # operator's own locations; the save after the seller re-checks it.
+      location.errors.delete(:name, :taken) if new_record?
+      return if location.errors.empty?
 
       location.errors.each do |error|
         field = error.attribute == :zipcode ? :postal_code : error.attribute

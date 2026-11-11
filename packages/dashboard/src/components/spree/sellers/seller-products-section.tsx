@@ -12,6 +12,9 @@ import { useTranslation } from 'react-i18next'
 import '../../../tables/products'
 import { ProductReviewActions } from '../products/product-review-actions'
 
+// The page is the seller.
+const HIDDEN_COLUMNS = ['seller']
+
 /** The products list, narrowed to this seller and, optionally, one status. */
 export function sellerProductsSearch(sellerId: string, status?: string) {
   return {
@@ -50,7 +53,7 @@ export function SellerProductsSection({ seller }: { seller: Seller }) {
         hideHeader
         framed
         defaultParams={{ seller_id_eq: seller.id }}
-        hiddenColumns={['seller']}
+        hiddenColumns={HIDDEN_COLUMNS}
         rowActions={
           canReview
             ? (product) =>

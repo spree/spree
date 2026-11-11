@@ -48,10 +48,25 @@ export function SellerInlineForm({
   const confirm = useConfirm()
   const updateMutation = useUpdateSeller(seller.id)
 
+  const defaultValues = sellerFormValues(seller)
   const form = useForm<SellerFormValues>({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    resolver: zodResolver(sellerFormSchema) as any,
-    defaultValues: sellerFormValues(seller),
+    // Every part shares one schema, but only what the operator changed here
+    // may block Save: an untouched value came from the server, which already
+    // accepted it, and its field may not even be on screen.
+    resolver: async (values, context, options) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const result = await (zodResolver(sellerFormSchema) as any)(values, context, options)
+      const errors = Object.fromEntries(
+        Object.entries(result.errors).filter(
+          ([field]) =>
+            values[field as keyof SellerFormValues] !==
+            defaultValues[field as keyof SellerFormValues],
+        ),
+      )
+      if (Object.keys(errors).length > 0) return { values: {}, errors }
+      return Object.keys(result.errors).length > 0 ? { values, errors: {} } : result
+    },
+    defaultValues,
   })
 
   async function onSubmit(values: SellerFormValues) {

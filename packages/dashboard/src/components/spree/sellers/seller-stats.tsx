@@ -19,8 +19,9 @@ export function SellerStats({ seller }: { seller: Seller }) {
   const { t } = useTranslation()
   const { storeId } = useStore()
   const { permissions } = usePermissions()
-  const orders = useSellerOrdersCount(seller.id, false)
-  const toFulfill = useSellerOrdersCount(seller.id, true)
+  const canReadOrders = permissions.can('read', Subject.Order)
+  const orders = useSellerOrdersCount(seller.id, false, canReadOrders)
+  const toFulfill = useSellerOrdersCount(seller.id, true, canReadOrders)
   const inReview = seller.products_count_by_status.proposed
 
   return (
@@ -29,7 +30,7 @@ export function SellerStats({ seller }: { seller: Seller }) {
         sellerId={seller.id}
         metric="net_sales"
         label={t('admin.sellers.stats.net_sales')}
-        enabled={permissions.can('read', Subject.Order)}
+        enabled={canReadOrders}
       />
       <SalesStat
         sellerId={seller.id}

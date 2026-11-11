@@ -157,8 +157,10 @@ export type ResourceSearch = z.infer<typeof resourceSearchSchema>
  */
 export function useEmbeddedTableSearch(initial: Partial<ResourceSearch> = {}) {
   const [search, setSearch] = useState<Record<string, unknown>>(initial)
+  // Parsed once per change: the table memoizes on the parsed arrays.
+  const searchParams = useMemo(() => resourceSearchSchema.parse(search), [search])
   return {
-    searchParams: resourceSearchSchema.parse(search),
+    searchParams,
     onSearchChange: (updates: Record<string, unknown>) =>
       setSearch((previous) => ({ ...previous, ...updates })),
   }

@@ -163,8 +163,9 @@ export function useSellerStockLocations(sellerId: string, page: number) {
  * How many placed orders the seller has, all or only those still to ship —
  * the home page's "To fulfill" filter, so the two counts agree.
  */
-export function useSellerOrdersCount(sellerId: string, toFulfill: boolean) {
+export function useSellerOrdersCount(sellerId: string, toFulfill: boolean, enabled = true) {
   return useQuery({
+    enabled,
     queryKey: useResourceKey('orders', 'seller', sellerId, 'count', toFulfill),
     queryFn: () =>
       adminClient.orders.list({

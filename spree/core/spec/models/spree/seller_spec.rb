@@ -139,6 +139,12 @@ describe Spree::Seller do
       )
       expect(seller.products_count).to eq(3)
     end
+
+    it "counts none for an unsaved seller, not the operator's own" do
+      create(:product, store: store, status: 'active')
+
+      expect(build(:seller, store: store).products_count).to eq(0)
+    end
   end
 
   describe 'translations' do
@@ -256,6 +262,18 @@ describe Spree::Seller do
         expect(location).to have_attributes(name: seller.name, store: store, returns_enabled: true,
                                             address1: '1 Returns Way')
         expect(seller.stock_locations.count).to eq(1)
+      end
+
+      # Until the seller has an id, the location's name would be checked
+      # against the operator's own locations.
+      it "creates one named like an operator's own location" do
+        create(:stock_location, store: store, name: 'Sparks Audio')
+
+        seller = build(:seller, store: store, name: 'Sparks Audio')
+        seller.returns_address = returns_address
+
+        expect(seller.save).to be(true)
+        expect(seller.reload.returns_location.name).to eq('Sparks Audio')
       end
 
       # An inactive location is never the returns location, so a new one is

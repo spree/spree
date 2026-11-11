@@ -64,7 +64,8 @@ export function SellerOnboardingCard({ seller, canEdit }: { seller: Seller; canE
   const progress = seller.onboarding_progress
   // A finished checklist folds to its header: it would otherwise sit at the
   // top of the sidebar for the life of the seller.
-  const [expanded, setExpanded] = useState(!seller.onboarding_complete)
+  const [expandedByOperator, setExpanded] = useState(false)
+  const expanded = expandedByOperator || !seller.onboarding_complete
 
   // A marketplace that asks for nothing has no checklist worth a card.
   if (progress.total === 0) return null
