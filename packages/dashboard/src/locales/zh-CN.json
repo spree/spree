@@ -5581,6 +5581,10 @@
       "team": {
         "empty": "尚无人管理该卖家。",
         "invite": "邀请",
+        "invite_sheet": {
+          "title": "邀请团队成员",
+          "description": "对方接受后即加入该卖家的团队。卖家状态不会改变。"
+        },
         "invited": "已邀请",
         "messages": {
           "invitation_resent": "已再次发送邀请",

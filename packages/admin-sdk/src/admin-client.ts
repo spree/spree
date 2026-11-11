@@ -576,6 +576,7 @@ import type {
   SavedReportUpdateParams,
   SellerApproveParams,
   SellerCreateParams,
+  SellerInvitationCreateParams,
   SellerInviteParams,
   SellerOnboarding,
   SellerPayoutCompleteParams,
@@ -3414,6 +3415,17 @@ export class AdminClient {
     invitations: {
       list: (sellerId: string, options?: RequestOptions): Promise<{ data: Invitation[] }> =>
         this.request<{ data: Invitation[] }>('GET', `/sellers/${sellerId}/invitations`, options),
+
+      /** Invites someone to the seller's team without changing the seller's status. */
+      create: (
+        sellerId: string,
+        params: SellerInvitationCreateParams,
+        options?: RequestOptions,
+      ): Promise<Invitation> =>
+        this.request<Invitation>('POST', `/sellers/${sellerId}/invitations`, {
+          ...options,
+          body: params,
+        }),
 
       /** Withdraws an offer. */
       delete: (sellerId: string, id: string, options?: RequestOptions): Promise<void> =>

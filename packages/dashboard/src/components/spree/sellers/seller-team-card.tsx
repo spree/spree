@@ -24,10 +24,12 @@ import {
 } from '@spree/dashboard-ui'
 import { UserPlusIcon, UsersIcon } from '@spree/dashboard-ui/icons'
 import { useTranslation } from 'react-i18next'
+import { useCopyInvitationLink } from '../../../hooks/use-copy-invitation-link'
 import {
   useRemoveSellerTeamMember,
   useResendSellerInvitation,
   useRevokeSellerInvitation,
+  useSellerInvitationAcceptanceLink,
   useSellerInvitations,
   useSellerTeam,
 } from '../../../hooks/use-sellers'
@@ -51,6 +53,8 @@ export function SellerTeamCard({ seller, onInvite }: { seller: Seller; onInvite:
   const removeMember = useRemoveSellerTeamMember(seller.id)
   const revokeInvitation = useRevokeSellerInvitation(seller.id)
   const resendInvitation = useResendSellerInvitation(seller.id)
+  const acceptanceLink = useSellerInvitationAcceptanceLink(seller.id)
+  const copyInvitationLink = useCopyInvitationLink(acceptanceLink.mutateAsync)
 
   const canManage = permissions.can('update', Subject.Seller)
   const members = team?.data ?? []
@@ -177,6 +181,12 @@ export function SellerTeamCard({ seller, onInvite }: { seller: Seller; onInvite:
                                   resendInvitation
                                     .mutateAsync(invitation.id)
                                     .catch(() => undefined),
+                              },
+                              {
+                                key: 'copy-link',
+                                label: t('admin.staff.actions.copy_invitation_link'),
+                                disabled: acceptanceLink.isPending,
+                                onSelect: () => copyInvitationLink(invitation.id),
                               },
                               {
                                 key: 'revoke',

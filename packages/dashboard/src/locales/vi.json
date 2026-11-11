@@ -5560,6 +5560,10 @@
       "team": {
         "empty": "Chưa có ai điều hành người bán này.",
         "invite": "Mời",
+        "invite_sheet": {
+          "title": "Mời thành viên nhóm",
+          "description": "Họ tham gia nhóm của người bán này khi chấp nhận. Trạng thái của người bán không thay đổi."
+        },
         "invited": "Đã mời",
         "messages": {
           "invitation_resent": "Đã gửi lại lời mời",

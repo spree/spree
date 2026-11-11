@@ -5593,6 +5593,10 @@
       "team": {
         "empty": "この販売者を運営している人はまだいません。",
         "invite": "招待",
+        "invite_sheet": {
+          "title": "チームメンバーを招待",
+          "description": "承諾すると、この販売者のチームに参加します。販売者のステータスは変わりません。"
+        },
         "invited": "招待済み",
         "messages": {
           "invitation_resent": "招待をもう一度送りました",

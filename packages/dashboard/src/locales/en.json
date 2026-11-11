@@ -5594,6 +5594,10 @@
       "team": {
         "empty": "Nobody runs this seller yet.",
         "invite": "Invite",
+        "invite_sheet": {
+          "title": "Invite team member",
+          "description": "They join this seller's team when they accept. The seller's status does not change."
+        },
         "invited": "Invited",
         "messages": {
           "invitation_resent": "Invitation sent again",

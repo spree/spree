@@ -3700,6 +3700,10 @@
       "team": {
         "empty": "Todavía nadie administra este vendedor.",
         "invite": "Invitar",
+        "invite_sheet": {
+          "title": "Invitar a un miembro del equipo",
+          "description": "Se une al equipo de este vendedor cuando acepta. El estado del vendedor no cambia."
+        },
         "invited": "Invitado",
         "messages": {
           "invitation_resent": "Invitación enviada de nuevo",

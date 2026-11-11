@@ -5596,6 +5596,10 @@
       "team": {
         "empty": "Personne ne gère encore ce vendeur.",
         "invite": "Inviter",
+        "invite_sheet": {
+          "title": "Inviter un membre de l'équipe",
+          "description": "La personne rejoint l'équipe de ce vendeur lorsqu'elle accepte. Le statut du vendeur ne change pas."
+        },
         "invited": "Invité",
         "messages": {
           "invitation_resent": "Invitation renvoyée",

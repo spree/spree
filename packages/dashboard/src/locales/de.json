@@ -5594,6 +5594,10 @@
       "team": {
         "empty": "Diesen Verkäufer betreibt noch niemand.",
         "invite": "Einladen",
+        "invite_sheet": {
+          "title": "Teammitglied einladen",
+          "description": "Die Person tritt dem Team dieses Verkäufers bei, sobald sie annimmt. Der Status des Verkäufers ändert sich nicht."
+        },
         "invited": "Eingeladen",
         "messages": {
           "invitation_resent": "Einladung erneut gesendet",

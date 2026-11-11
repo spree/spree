@@ -318,7 +318,9 @@ function SellerBody({ seller }: { seller: Seller }) {
         open={editingSettlement}
         onOpenChange={setEditingSettlement}
       />
-      {inviting && <SellerInviteSheet seller={seller} open onOpenChange={setInviting} />}
+      {inviting && (
+        <SellerInviteSheet seller={seller} addToTeam={!canInvite} open onOpenChange={setInviting} />
+      )}
     </>
   )
 }
