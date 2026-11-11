@@ -35,8 +35,8 @@ RSpec.describe Spree::SampleData::Loader, type: :service, without_global_store: 
   end
 
   it 'refuses a store that never got its defaults' do
-    expect { described_class.call(store: Spree::Store.default) }
-      .to raise_error(Spree::SampleData::StoreNotProvisioned, /spree config provision/)
+    expect { described_class.call(store: Spree::Store.default) }.
+      to raise_error(Spree::SampleData::StoreNotProvisioned, /spree config provision/)
   end
 
   it 'creates products' do

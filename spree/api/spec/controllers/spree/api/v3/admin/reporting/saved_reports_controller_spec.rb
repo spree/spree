@@ -18,7 +18,7 @@ RSpec.describe Spree::Api::V3::Admin::Reporting::SavedReportsController, type: :
 
       expect(response).to have_http_status(:ok)
       # Every store also carries its built-in reports.
-      names = json_response['data'].map { |r| r['name'] }
+      names = json_response['data'].pluck('name')
       expect(names).to include('Channel mix')
       expect(names).not_to include('Elsewhere')
       expect(json_response['data'].first['id']).to start_with('sq_')
