@@ -40,7 +40,7 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
     end
 
     it 'queries Meilisearch with the search term' do
-      expect(mock_index).to receive(:search).with('shirt', hash_including(:page, :hitsPerPage))
+      expect(mock_index).to receive(:search).with('shirt', hash_including(:page, :hits_per_page))
       provider.search_and_filter(scope: store.products, query: 'shirt')
     end
 
@@ -152,10 +152,8 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
     end
 
     context 'with pagination' do
-      it 'passes page and hitsPerPage (exhaustive mode so distinct counts are exact)' do
-        expect(mock_index).to receive(:search).with(anything, hash_including(
-          page: 2, hitsPerPage: 25
-        )).and_return(ms_response)
+      it 'passes page and hits_per_page (exhaustive mode so distinct counts are exact)' do
+        expect(mock_index).to receive(:search).with(anything, hash_including(page: 2, hits_per_page: 25)).and_return(ms_response)
 
         provider.search_and_filter(scope: store.products, page: 2, limit: 25)
       end
@@ -388,6 +386,18 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
         red_option = color_filter[:options].find { |o| o[:name] == 'red' }
 
         expect(red_option[:image_url]).to be_nil
+      end
+
+      it 'sends a multi-search with a facet-only query per selected option type' do
+        expect(mock_client).to receive(:multi_search) do |queries|
+          expect(queries.size).to eq(2)
+          expect(queries).to all(include(:index_uid))
+          expect(queries.last).to include(hits_per_page: 0, facets: ['option_value_ids'])
+          { 'results' => [ms_response, ms_response] }
+        end
+
+        result = provider.filters(scope: store.products, filters: { 'with_option_value_ids' => [red_value.prefixed_id] })
+        expect(result.filters.find { |f| f[:name] == 'color' }).to be_present
       end
     end
 
