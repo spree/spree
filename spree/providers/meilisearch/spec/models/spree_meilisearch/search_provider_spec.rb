@@ -387,6 +387,18 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
 
         expect(red_option[:image_url]).to be_nil
       end
+
+      it 'sends a multi-search with a facet-only query per selected option type' do
+        expect(mock_client).to receive(:multi_search) do |queries|
+          expect(queries.size).to eq(2)
+          expect(queries).to all(include(:index_uid))
+          expect(queries.last).to include(hits_per_page: 0, facets: ['option_value_ids'])
+          { 'results' => [ms_response, ms_response] }
+        end
+
+        result = provider.filters(scope: store.products, filters: { 'with_option_value_ids' => [red_value.prefixed_id] })
+        expect(result.filters.find { |f| f[:name] == 'color' }).to be_present
+      end
     end
 
     context 'when Meilisearch API fails' do
