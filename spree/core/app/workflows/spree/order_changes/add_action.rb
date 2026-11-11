@@ -12,7 +12,7 @@ module Spree
       attr_reader :action
 
       # @param order_change [Spree::OrderChange] must be pending
-      # @param kind [String] one of Spree::OrderChangeAction.kinds
+      # @param kind [String] one of Spree::OrderChangeAction::KINDS
       # @param line_item [Spree::LineItem, nil]
       # @param variant [Spree::Variant, nil]
       # @param quantity [Integer, nil]
