@@ -513,11 +513,13 @@ describe('spree upgrade', () => {
   // `spreeVersion` is what the server's bundle reports for spree_core.
   function routeExeca({
     failOn,
-    failStderr,
+    failWith,
+    skillsStdout = '[]',
     spreeVersion = '6.0.0.rc7',
   }: {
     failOn?: string
-    failStderr?: string
+    failWith?: { message?: string; stdout?: string }
+    skillsStdout?: string
     spreeVersion?: string | null
   } = {}): void {
     mockExeca.mockImplementation((async (cmd: string, args: string[]) => {
@@ -532,9 +534,11 @@ describe('spree upgrade', () => {
       const command = `${cmd} ${args.join(' ')}`
       commands.push(command)
       if (failOn && command.includes(failOn)) {
-        throw Object.assign(new Error(`${failOn} failed`), { stderr: failStderr })
+        throw Object.assign(new Error(failWith?.message ?? `${failOn} failed`), {
+          stdout: failWith?.stdout,
+        })
       }
-      return { stdout: '' }
+      return { stdout: args.includes('skills') ? skillsStdout : '' }
     }) as never)
   }
 
@@ -844,7 +848,7 @@ describe('spree upgrade', () => {
   })
 
   describe('agent skills', () => {
-    const update = 'pnpm dlx skills add spree/agent-skills --skill * --yes'
+    const update = 'pnpm dlx skills add spree/agent-skills --skill * --yes --json'
 
     function writeSkillsLock(skills: Record<string, string>): void {
       fs.writeFileSync(
@@ -904,7 +908,7 @@ describe('spree upgrade', () => {
 
       await runUpgrade()
 
-      expect(commands).toContain('npx --yes skills add spree/agent-skills --skill * --yes')
+      expect(commands).toContain('npx --yes skills add spree/agent-skills --skill * --yes --json')
     })
 
     it('asks before updating the skills, and skips them when declined', async () => {
@@ -945,29 +949,72 @@ describe('spree upgrade', () => {
       expect(commands.some((command) => command.includes('skills'))).toBe(false)
     })
 
+    function lastWarning(): string | undefined {
+      return vi.mocked(prompts.log.warn).mock.calls.at(-1)?.[0]
+    }
+
     it("warns with the skills CLI's reason and carries on when the update fails", async () => {
       writeProject({ ejected: true })
       installSpreeSkills()
       routeExeca({
         failOn: 'skills add',
-        failStderr: [
-          ...Array.from({ length: 20 }, (_, index) => `progress line ${index}`),
-          '\u001b[31mFailed to fetch spree/agent-skills: ECONNRESET\u001b[39m',
-          '',
-        ].join('\n'),
+        failWith: {
+          message: 'Command failed with exit code 1: pnpm dlx skills add',
+          stdout: JSON.stringify([
+            { status: 'failed', error: 'Failed to clone repository\nAuthentication failed' },
+          ]),
+        },
       })
 
       await runUpgrade()
 
-      const warning = vi.mocked(prompts.log.warn).mock.calls.at(-1)?.[0]
+      const warning = lastWarning()
       expect(warning).toContain('The Spree agent skills were not updated')
       expect(warning).toContain('pnpm dlx skills add spree/agent-skills --skill "*" --yes')
-      expect(warning).toContain('Failed to fetch spree/agent-skills: ECONNRESET')
+      expect(warning).not.toContain('--json')
+      expect(warning).toContain('Failed to clone repository\nAuthentication failed')
       expect(warning).not.toContain('Command failed')
+      expect(commands.at(-1)).toBe('docker compose restart web')
+    })
+
+    it('warns when a skill failed to install although the run exited with code 0', async () => {
+      writeProject({ ejected: true })
+      installSpreeSkills()
+      routeExeca({
+        skillsStdout: JSON.stringify([
+          { name: 'spree-api-v3', status: 'installed' },
+          { name: 'spree-checkout', status: 'failed', error: 'EACCES: permission denied' },
+        ]),
+      })
+
+      await runUpgrade()
+
+      const warning = lastWarning()
+      expect(warning).toContain('The Spree agent skills were not updated')
+      expect(warning).toContain('spree-checkout: EACCES: permission denied')
+      expect(warning).not.toContain('spree-api-v3')
+    })
+
+    it('shows only the last lines of a failure without colour codes', async () => {
+      writeProject({ ejected: true })
+      installSpreeSkills()
+      routeExeca({
+        failOn: 'skills add',
+        failWith: {
+          message: [
+            ...Array.from({ length: 20 }, (_, index) => `progress line ${index}`),
+            '\u001b[31mCommand timed out after 120000 milliseconds\u001b[39m',
+          ].join('\n'),
+        },
+      })
+
+      await runUpgrade()
+
+      const warning = lastWarning()
+      expect(warning).toContain('Command timed out after 120000 milliseconds')
       expect(warning).not.toContain('\u001b[31m')
       expect(warning).not.toContain('progress line 10')
       expect(warning).toContain('progress line 19')
-      expect(commands.at(-1)).toBe('docker compose restart web')
     })
   })
 

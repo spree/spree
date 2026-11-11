@@ -110,7 +110,7 @@ describe('addAi', () => {
 
     expect(vi.mocked(execa)).toHaveBeenCalledWith(
       'npx',
-      ['--yes', 'skills', 'add', 'spree/agent-skills', '--skill', '*', '--yes'],
+      ['--yes', 'skills', 'add', 'spree/agent-skills', '--skill', '*', '--yes', '--json'],
       expect.anything(),
     )
   })
@@ -197,10 +197,18 @@ describe('addAi', () => {
 
     expect(vi.mocked(execa)).toHaveBeenCalledWith(
       'pnpm',
-      ['dlx', 'skills', 'add', 'spree/agent-skills', '--skill', '*', '--yes'],
+      ['dlx', 'skills', 'add', 'spree/agent-skills', '--skill', '*', '--yes', '--json'],
       expect.objectContaining({ cwd: projectDir }),
     )
     expect(fs.existsSync(path.join(projectDir, '.mcp.json'))).toBe(false)
+  })
+
+  it('reports skills that failed to install although the run exited with code 0', async () => {
+    vi.mocked(execa).mockResolvedValueOnce({
+      stdout: JSON.stringify([{ name: 'spree-api-v3', status: 'failed', error: 'EACCES' }]),
+    } as never)
+
+    expect(await addAi(ctx(), { skills: true, mcp: false, quiet: true })).toBe(false)
   })
 
   it('reports a failed skills install without undoing the docs server', async () => {

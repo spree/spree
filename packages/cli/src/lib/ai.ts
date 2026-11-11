@@ -160,15 +160,47 @@ function skillsCommand(packageManager: string, args: readonly string[]): string[
   return [...dlxCommand(packageManager), 'skills', ...args]
 }
 
+// The failures in the `--json` output of `skills add`: one entry per skill,
+// plus one for a failure that stopped the whole run, such as a failed clone.
+function failedSkills(stdout: unknown): string[] {
+  if (typeof stdout !== 'string') return []
+  try {
+    const results: unknown = JSON.parse(stdout)
+    if (!Array.isArray(results)) return []
+    return results
+      .filter((result) => isObject(result) && result.status === 'failed')
+      .map((result) =>
+        [result.name, result.error].filter((part) => typeof part === 'string').join(': '),
+      )
+      .map((reason) => reason || 'unknown failure')
+  } catch {
+    return []
+  }
+}
+
+// `--json` reports each skill's result, so a skill that failed to install is
+// caught even when the run exits with code 0. A stalled download must fail
+// rather than hang the command.
 async function runSkills(
   projectDir: string,
   packageManager: string,
   args: readonly string[],
 ): Promise<void> {
   const [command, ...rest] = skillsCommand(packageManager, args)
-  // Output is captured, not shown, so a failure can report the CLI's reason.
-  // A stalled download must fail rather than hang the command.
-  await execa(command, rest, { cwd: projectDir, stdin: 'ignore', timeout: 120_000 })
+  let stdout: unknown
+  try {
+    ;({ stdout } = await execa(command, [...rest, '--json'], {
+      cwd: projectDir,
+      stdin: 'ignore',
+      timeout: 120_000,
+    }))
+  } catch (error) {
+    const failures = failedSkills((error as { stdout?: unknown }).stdout)
+    if (failures.length > 0) throw new Error(failures.join('\n'), { cause: error })
+    throw error
+  }
+  const failures = failedSkills(stdout)
+  if (failures.length > 0) throw new Error(failures.join('\n'))
 }
 
 /**
@@ -218,7 +250,7 @@ export function hasSpreeAgentSkills(projectDir: string): boolean {
   }
 }
 
-// Enough of the CLI's stderr to name the cause without flooding the terminal.
+// Enough of the reason to name the cause without flooding the terminal.
 const FAILURE_REASON_LINES = 10
 
 // The SGR escape sequences that colour terminal output.
@@ -226,7 +258,7 @@ const ANSI_COLOR = new RegExp(`${String.fromCharCode(27)}\\[[0-9;]*m`, 'g')
 
 /**
  * The warning for a failed `skills` run: the command to run by hand, then the
- * CLI's own reason (its stderr) rather than execa's generic summary.
+ * last lines of the reason, without colour codes.
  *
  * @param what what did not happen, e.g. `installed`
  */
@@ -240,18 +272,13 @@ export function skillsFailureMessage(
   const command = skillsCommand(packageManager, args)
     .map((arg) => (arg === '*' ? '"*"' : arg))
     .join(' ')
-  const stderr = (error as { stderr?: unknown } | undefined)?.stderr
-  const stderrTail =
-    typeof stderr === 'string'
-      ? stderr
-          .replace(ANSI_COLOR, '')
-          .split('\n')
-          .map((line) => line.trimEnd())
-          .filter(Boolean)
-          .slice(-FAILURE_REASON_LINES)
-          .join('\n')
-      : ''
-  const reason = stderrTail || (error instanceof Error ? error.message : String(error))
+  const reason = (error instanceof Error ? error.message : String(error))
+    .replace(ANSI_COLOR, '')
+    .split('\n')
+    .map((line) => line.trimEnd())
+    .filter(Boolean)
+    .slice(-FAILURE_REASON_LINES)
+    .join('\n')
   return `The Spree agent skills were not ${what}. Run ${pc.bold(command)} to try again.\n${reason}`
 }
 
