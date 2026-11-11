@@ -149,6 +149,14 @@ module SpreeMeilisearch
       ensure_index_settings!
     end
 
+    # The index is the storefront's: shoppers search it and the back office
+    # never does, so its vocabulary is the storefront schema whatever audience
+    # this provider was built for. A back-office reindex must not teach the
+    # shared index about admin-only fields.
+    def custom_field_schema
+      @custom_field_schema ||= storefront_custom_field_schema
+    end
+
     private
 
     # Normalize incoming filters to a plain, string-keyed Hash.
@@ -283,14 +291,6 @@ module SpreeMeilisearch
 
     def index_name
       "#{store.code}_products"
-    end
-
-    # The index is the storefront's: shoppers search it and the back office
-    # never does, so its vocabulary is the storefront schema whatever audience
-    # this provider was built for. A back-office reindex must not teach the
-    # shared index about admin-only fields.
-    def custom_field_schema
-      @custom_field_schema ||= storefront_custom_field_schema
     end
 
     def storefront_custom_field_schema
