@@ -16,6 +16,7 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
+  useConfirm,
 } from '@spree/dashboard-ui'
 import { useEffect, useRef } from 'react'
 import { Controller, type DefaultValues, useForm } from 'react-hook-form'
@@ -237,7 +238,25 @@ export function AddressFormDialog({
         withCountryRules(business ? businessSchema : personalSchema, countryRules.current),
       )(values, context, options),
   })
-  const { errors } = form.formState
+  const { errors, isDirty } = form.formState
+  const confirm = useConfirm()
+  // Saving a filled-in address waits for a change. A blank one stays
+  // saveable, so pressing Save shows what is still missing.
+  const saveNeedsChange = Boolean(address?.address1)
+
+  // Closing with an edit asks first, whichever way the sheet is closed.
+  async function requestClose() {
+    if (isDirty && !isPending) {
+      const ok = await confirm({
+        title: t('admin.actions.discard_changes'),
+        message: t('admin.common.unsaved_changes'),
+        variant: 'destructive',
+        confirmLabel: t('admin.actions.discard'),
+      })
+      if (!ok) return
+    }
+    onOpenChange(false)
+  }
 
   const countryCode = form.watch('country_code')
   const { states, statesRequired, postalCodeRequired } = useCountryStates(countryCode)
@@ -311,7 +330,7 @@ export function AddressFormDialog({
   }
 
   return (
-    <Sheet open={open} onOpenChange={(o) => onOpenChange(o as boolean)}>
+    <Sheet open={open} onOpenChange={(o) => (o ? onOpenChange(true) : requestClose())}>
       <SheetContent side="right">
         <SheetHeader>
           <SheetTitle>{resolvedTitle}</SheetTitle>
@@ -537,10 +556,10 @@ export function AddressFormDialog({
             </FieldGroup>
           </div>
           <SheetFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <Button type="button" variant="outline" onClick={requestClose}>
               {t('admin.actions.cancel')}
             </Button>
-            <Button type="submit" disabled={isPending}>
+            <Button type="submit" disabled={isPending || (saveNeedsChange && !isDirty)}>
               {isPending ? t('admin.actions.saving') : t('admin.actions.save')}
             </Button>
           </SheetFooter>

@@ -277,16 +277,20 @@ function CreateStockLocationSheet({
 // Edit Sheet
 // ============================================================================
 
-function EditStockLocationSheet({
+/**
+ * One location's editor. Exported so a record page that lists locations (a
+ * seller's) opens it in place rather than sending the operator to settings.
+ */
+export function EditStockLocationSheet({
   id,
-  formKey,
+  formKey = 'stock_location',
   open,
   onOpenChange,
   stockLevelsPanel: StockLevelsPanel,
   activityPanel: ActivityPanel,
 }: {
   id: string
-  formKey: string
+  formKey?: string
   open: boolean
   onOpenChange: (open: boolean) => void
   stockLevelsPanel?: ComponentType<{ stockLocationId: string }>

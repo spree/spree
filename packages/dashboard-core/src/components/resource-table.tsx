@@ -151,6 +151,19 @@ export const resourceSearchSchema = z.object({
 
 export type ResourceSearch = z.infer<typeof resourceSearchSchema>
 
+/**
+ * State for a `ResourceTable` held in the component rather than the URL, so
+ * several tables can sit on one page. Spread the result onto the table.
+ */
+export function useEmbeddedTableSearch(initial: Partial<ResourceSearch> = {}) {
+  const [search, setSearch] = useState<Record<string, unknown>>(initial)
+  return {
+    searchParams: resourceSearchSchema.parse(search),
+    onSearchChange: (updates: Record<string, unknown>) =>
+      setSearch((previous) => ({ ...previous, ...updates })),
+  }
+}
+
 // ============================================================================
 // Props
 // ============================================================================
@@ -203,6 +216,12 @@ interface ResourceTableProps<T> {
   queryFn: (params: never) => Promise<{ data: T[]; meta: PaginationMeta }>
   /** Current search params from the route */
   searchParams: ResourceSearch
+  /**
+   * Takes the table's state changes instead of the URL — for a table embedded
+   * in a record page beside others, which would otherwise share one `page`
+   * and `filters`. Pair with `useEmbeddedTableSearch`.
+   */
+  onSearchChange?: (updates: Record<string, unknown>) => void
   /** Title displayed in the toolbar header. Overrides the table definition's title. */
   title?: string
   /**
@@ -224,6 +243,17 @@ interface ResourceTableProps<T> {
   defaultParams?: Record<string, unknown>
   /** Splits the list into tabs; the first opens by default. */
   views?: TableView[]
+  /**
+   * Columns left out entirely — not shown, not offered as filters — such as
+   * the seller on a seller's own page. Adds to the open view's.
+   */
+  hiddenColumns?: string[]
+  /**
+   * Draws the table as a card — border, corners and lift — holding its
+   * toolbar and pagination, with a plain, unpinned header row: for a table
+   * embedded among a record page's cards.
+   */
+  framed?: boolean
   /**
    * Actions to render in the toolbar (e.g., "Add Product" button). Either a
    * static node, or a function that receives the current table state — use
@@ -281,12 +311,15 @@ export function ResourceTable<T extends Record<string, any>>({
   queryKey,
   queryFn,
   searchParams,
+  onSearchChange,
   title,
   hideHeader = false,
   description,
   docsPath,
   defaultParams: baseParams,
   views,
+  hiddenColumns: tableHiddenColumns,
+  framed = false,
   actions,
   reorder,
   bulkActions,
@@ -322,6 +355,10 @@ export function ResourceTable<T extends Record<string, any>>({
   } = searchParams
 
   const activeView = views?.find((v) => v.key === urlView) ?? views?.[0]
+  const hiddenColumns = useMemo(
+    () => [...(tableHiddenColumns ?? []), ...(activeView?.hiddenColumns ?? [])],
+    [tableHiddenColumns, activeView],
+  )
   const defaultParams = useMemo(
     () => (activeView?.params ? { ...baseParams, ...activeView.params } : baseParams),
     [baseParams, activeView],
@@ -347,18 +384,15 @@ export function ResourceTable<T extends Record<string, any>>({
   // internal memos (FilterPanel `items` stability) keep stable deps.
   const extraColumns = customFieldColumns ?? metafieldColumns
   const allColumns = useMemo(
-    () =>
-      [...table.columns, ...(extraColumns ?? [])].filter(
-        (c) => !activeView?.hiddenColumns?.includes(c.key),
-      ),
-    [table, extraColumns, activeView],
+    () => [...table.columns, ...(extraColumns ?? [])].filter((c) => !hiddenColumns.includes(c.key)),
+    [table, extraColumns, hiddenColumns],
   )
   const displayableColumns = useMemo(
     () => allColumns.filter((c) => c.displayable !== false),
     [allColumns],
   )
   const defaultColumnKeys = getDefaultColumnKeys(table).filter(
-    (key) => !activeView?.hiddenColumns?.includes(key),
+    (key) => !hiddenColumns.includes(key),
   )
   const visibleColumnKeys = urlColumns ?? defaultColumnKeys
 
@@ -515,6 +549,10 @@ export function ResourceTable<T extends Record<string, any>>({
 
   // Navigation helpers
   function updateSearch(updates: Record<string, unknown>) {
+    if (onSearchChange) {
+      onSearchChange(updates)
+      return
+    }
     navigate({
       search: (prev: Record<string, unknown>) => ({ ...prev, ...updates }) as never,
     })
@@ -598,6 +636,31 @@ export function ResourceTable<T extends Record<string, any>>({
         })
       : actions
 
+  const toolbar = (
+    <TableToolbar
+      columns={displayableColumns}
+      visibleColumns={visibleColumnKeys}
+      onVisibleColumnsChange={handleColumnsChange}
+      search={searchInput}
+      onSearchChange={handleSearchChange}
+      searchable={searchable}
+      searchPlaceholder={table.searchPlaceholder ?? t('admin.common.search_placeholder')}
+      sort={{ field: sort, direction: dir }}
+      onSortChange={handleSortChange}
+      filters={filters as FilterRule[]}
+      onFiltersChange={handleFiltersChange}
+      allColumns={allColumns}
+      hideSort={reorderActive}
+    />
+  )
+  const pagination = meta && (
+    <Pagination
+      meta={meta}
+      onPageChange={(p) => updateSearch({ page: p })}
+      onPageSizeChange={(size) => updateSearch({ limit: size, page: 1 })}
+    />
+  )
+
   return (
     // Below `sm` the table spans the full width: the page gutter plus the
     // card's own border spends ~34px of a 390px screen on chrome, and a table
@@ -655,28 +718,20 @@ export function ResourceTable<T extends Record<string, any>>({
           </TabsList>
         </Tabs>
       )}
-      <TableToolbar
-        columns={displayableColumns}
-        visibleColumns={visibleColumnKeys}
-        onVisibleColumnsChange={handleColumnsChange}
-        search={searchInput}
-        onSearchChange={handleSearchChange}
-        searchable={searchable}
-        searchPlaceholder={table.searchPlaceholder ?? t('admin.common.search_placeholder')}
-        sort={{ field: sort, direction: dir }}
-        onSortChange={handleSortChange}
-        filters={filters as FilterRule[]}
-        onFiltersChange={handleFiltersChange}
-        allColumns={allColumns}
-        hideSort={reorderActive}
-      />
+      {!framed && toolbar}
       {/* Borderless: the list sits on the page with no card around it, its
           header a rounded band and its rows divided by their own rules.
           `overflow-x-clip`, never `overflow-hidden`: a `hidden` overflow on
           either axis makes this a scroll container, and the pinned column row
           inside would then stick to THIS box rather than to the page — which
           is to say, scroll away with it. */}
-      <Card className="gap-0 overflow-x-clip rounded-none border-0 bg-transparent shadow-none">
+      <Card
+        className={cn(
+          'gap-0 overflow-x-clip',
+          !framed && 'rounded-none border-0 bg-transparent shadow-none',
+        )}
+      >
+        {framed && <div className="p-3">{toolbar}</div>}
         {reorderActive ? (
           <DndContext
             sensors={sensors}
@@ -687,7 +742,7 @@ export function ResourceTable<T extends Record<string, any>>({
               items={rows.map((r) => (r as any).id)}
               strategy={verticalListSortingStrategy}
             >
-              <Table stickyHeader band>
+              <Table stickyHeader={!framed} band={!framed}>
                 <TableHeader>
                   <TableHeaderRow>
                     <TableHead className="w-8" />
@@ -808,7 +863,7 @@ export function ResourceTable<T extends Record<string, any>>({
                 </section>,
                 document.body,
               )}
-            <Table stickyHeader band>
+            <Table stickyHeader={!framed} band={!framed}>
               <TableHeader>
                 {/* Column headers stay mounted with rows selected, and the bulk
                     bar is laid over them. Swapping them for one `colSpan` cell
@@ -930,14 +985,11 @@ export function ResourceTable<T extends Record<string, any>>({
             </Table>
           </>
         )}
+        {/* Nothing to page through in an empty table. No rule of its own: the
+            last row's border already divides the two. */}
+        {framed && !!meta?.count && <div className="px-3 py-2">{pagination}</div>}
       </Card>
-      {meta && (
-        <Pagination
-          meta={meta}
-          onPageChange={(p) => updateSearch({ page: p })}
-          onPageSizeChange={(size) => updateSearch({ limit: size, page: 1 })}
-        />
-      )}
+      {!framed && pagination}
       {/* Clears the fixed bottom bar so it can't cover the pagination or the
           last row while a selection is active. Carries the same safe-area
           inset the bar pads itself by, or the home indicator's worth of bar

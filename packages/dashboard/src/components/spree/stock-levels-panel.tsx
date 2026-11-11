@@ -4,6 +4,7 @@ import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
+  cn,
   Input,
   Switch,
   Table,
@@ -13,7 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from '@spree/dashboard-ui'
-import { ChevronDownIcon, ChevronRightIcon } from '@spree/dashboard-ui/icons'
+import { ChevronRightIcon } from '@spree/dashboard-ui/icons'
 import { Link, useParams } from '@tanstack/react-router'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -154,11 +155,12 @@ function ProductGroup({ group, defaultOpen }: { group: StockLevelGroup; defaultO
   return (
     <Collapsible open={open} onOpenChange={setOpen}>
       <CollapsibleTrigger className="flex w-full items-center gap-2 px-4 py-2 text-left hover:bg-accent">
-        {open ? (
-          <ChevronDownIcon className="size-4 text-muted-foreground" />
-        ) : (
-          <ChevronRightIcon className="size-4 text-muted-foreground" />
-        )}
+        <ChevronRightIcon
+          className={cn(
+            'size-4 shrink-0 text-muted-foreground transition-transform duration-200 ease-out motion-reduce:transition-none',
+            open && 'rotate-90',
+          )}
+        />
         <div className="min-w-0 flex-1">
           <div className="truncate text-base font-medium">{group.productName}</div>
           <div className="truncate text-xs text-muted-foreground">
