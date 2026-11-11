@@ -88,7 +88,7 @@ def show_success_message
   say
   say 'Useful commands:', :yellow
   say '  bin/rails console                # Rails console'
-  say "  bin/rails spree:load_sample_data # Load sample data (after setup)"
+  say '  bin/rails spree:load_sample_data # Load sample data (after setup)'
   say
 end
 

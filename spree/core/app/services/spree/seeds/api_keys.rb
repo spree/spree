@@ -10,7 +10,7 @@ module Spree
       private
 
       def seed(store)
-        return if store.api_keys.active.publishable.where(channel_id: nil).exists?
+        return if store.api_keys.active.publishable.exists?(channel_id: nil)
 
         store.api_keys.create!(name: 'Default', key_type: 'publishable')
       end
