@@ -21,6 +21,14 @@ module Spree
         end
         super(cart: cart, variant: variant, quantity: quantity, metadata: metadata, options: options, price: price)
 
+        # First, before anything is priced or reserved: a cart whose
+        # completion is in flight (or retained behind a payment-covered draft
+        # or a divided checkout) must not change under the purchase it
+        # supplied. The Store API fences this under its cart lock; a direct
+        # call to this workflow has to answer the same way rather than fall
+        # through to Reserve and report a misleading stock shortage.
+        step :guard_completion_claim
+
         step :parse_manual_price unless price.nil?
 
         # Core behaviour rather than a hook: an agreement's quantity terms are
@@ -43,6 +51,10 @@ module Spree
         external_step :resolve_price if price.nil?
 
         ApplicationRecord.transaction do
+          # Again under the row lock: the external steps above can take a
+          # while, and a completion may have claimed the cart since the
+          # first check read it.
+          step :guard_completion_claim_in_lock
           step :add_to_line_item
           step :handle_stock_reservations if cart.in_checkout?
           step :recalculate, with: -> { Spree.cart_recalculate_workflow }
@@ -53,6 +65,26 @@ module Spree
       end
 
       private
+
+      # Draft orders (the admin path) carry no completion claim — only a cart
+      # does. The error matches the Store API's lock fence so a caller can
+      # treat both entry points alike.
+      def guard_completion_claim
+        return unless cart.is_a?(Spree::Cart) && cart.completion_claimed?
+
+        failure(cart, code: 'completion_in_progress', message: I18n.t('spree.cart_completion_in_progress'))
+      end
+
+      # Reads a locked, fresh copy of the row rather than the caller's
+      # instance: that one may predate the claim, and may carry in-memory
+      # changes (pricing warnings) that +lock!+ would refuse to discard. A
+      # no-op wait on the Store API path, which already holds this lock.
+      def guard_completion_claim_in_lock
+        return unless cart.is_a?(Spree::Cart)
+        return unless Spree::Cart.lock.find(cart.id).completion_claimed?
+
+        failure(cart, code: 'completion_in_progress', message: I18n.t('spree.cart_completion_in_progress'))
+      end
 
       # finite? is not redundant: BigDecimal parses "NaN" and "Infinity" and
       # neither is negative. reject! rather than failure(cart, message), which
