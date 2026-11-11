@@ -54,6 +54,22 @@ describe('recordRequest', () => {
     })
   })
 
+  it('masks a password reset token carried in the path', () => {
+    recordRequest(
+      event({
+        method: 'PATCH',
+        path: '/api/v3/admin/auth/password_resets/reset-token-123',
+        url: 'http://localhost/api/v3/admin/auth/password_resets/reset-token-123',
+        status: 422,
+      }),
+    )
+
+    const [reset] = getDeveloperInspectorEntries()
+    expect(reset.path).toBe('/api/v3/admin/auth/password_resets/[FILTERED]')
+    expect(reset.url).toBe('http://localhost/api/v3/admin/auth/password_resets/[FILTERED]')
+    expect(JSON.stringify(reset)).not.toContain('reset-token-123')
+  })
+
   it('keeps the API error code of a failed request', () => {
     recordRequest(
       event({

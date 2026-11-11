@@ -58,6 +58,14 @@ export function redactBody(value: unknown): unknown {
   return value
 }
 
+// A password reset carries its token in the path, so a failed attempt would
+// otherwise show it in the drawer and in a bug report's failed requests.
+const TOKEN_IN_PATH = /(\/auth\/password_resets\/)[^/?#]+/
+
+export function redactPath(path: string): string {
+  return path.replace(TOKEN_IN_PATH, `$1${FILTERED}`)
+}
+
 export function redactHeaders(headers: Record<string, string>): Record<string, string> {
   return Object.fromEntries(
     Object.entries(headers).map(([name, value]) => [
@@ -95,9 +103,9 @@ export function recordRequest(event: RequestCompleteEvent): void {
   const entry: DeveloperInspectorEntry = {
     id: nextId++,
     method: event.method,
-    path: event.path,
+    path: redactPath(event.path),
     query: event.query,
-    url: event.url,
+    url: redactPath(event.url),
     status: event.status,
     durationMs: Math.round(event.durationMs),
     requestId: event.requestId,
