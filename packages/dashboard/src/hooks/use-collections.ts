@@ -24,14 +24,17 @@ export function useCollections() {
 /**
  * The collection form's resolver. Which rule types take no value is a fact
  * of the types endpoint, read at validation time so a resolver created before
- * the types load still sees them.
+ * the types load still sees them. Until they load no rule needs a value, so a
+ * saved In Stock rule never blocks Save; the API still validates.
  */
 export function useCollectionFormResolver(): Resolver<CollectionFormValues> {
   const { data } = useCollectionRuleTypes()
-  const valuelessTypes = useRef<string[]>([])
-  valuelessTypes.current = (data?.data ?? [])
-    .filter((ruleType) => (ruleType as { value_required?: boolean }).value_required === false)
-    .map((ruleType) => ruleType.type)
+  const valuelessTypes = useRef<string[] | null>(null)
+  valuelessTypes.current = data
+    ? data.data
+        .filter((ruleType) => (ruleType as { value_required?: boolean }).value_required === false)
+        .map((ruleType) => ruleType.type)
+    : null
 
   return useCallback<Resolver<CollectionFormValues>>(
     (values, context, options) =>

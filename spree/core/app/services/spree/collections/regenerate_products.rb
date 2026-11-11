@@ -52,7 +52,8 @@ module Spree
                   order(:id).lock.to_a
         Spree::ProductCollection.where(id: removed.map(&:id)).delete_all
         now = Time.current
-        remaining = memberships.order(:position).pluck(:collection_id, :product_id, :source)
+        # Locked so a row deleted meanwhile is not re-inserted by the upsert.
+        remaining = memberships.order(:id).lock.pluck(:position, :collection_id, :product_id, :source).sort_by(&:first).map { |row| row.drop(1) }
         return removed if remaining.empty?
 
         rows = remaining.map.with_index(1) do |(collection_id, product_id, source), position|
