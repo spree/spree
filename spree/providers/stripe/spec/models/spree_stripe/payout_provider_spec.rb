@@ -403,6 +403,42 @@ RSpec.describe SpreeStripe::PayoutProvider do
         end
       end
 
+      # Rounding the request down to whole cents must not leave the ledger
+      # recording the unrounded part, nor a different figure on retry.
+      context 'when the request rounds down' do
+        let(:earning) do
+          create(:seller_transfer, :completed, seller: seller, order: order, amount: 1, currency: 'GBP',
+                                               reference: 'tr_1')
+        end
+        let(:reversal) do
+          create(:seller_transfer, :reversal, seller: seller, order: order, reversed_from: earning,
+                                              amount: BigDecimal('-0.51'), currency: 'GBP')
+        end
+        let(:transfer) do
+          Stripe::StripeObject.construct_from(id: 'tr_1', amount: 127, amount_reversed: 0, currency: 'usd')
+        end
+
+        it 'records the share of the transfer actually sent' do
+          described_class.new.reverse!(reversal)
+
+          expect(Stripe::Transfer).to have_received(:create_reversal).with('tr_1', hash_including(amount: 64), anything)
+          expect(reversal.reload.settled_amount).to eq(BigDecimal('-0.50'))
+        end
+
+        context 'when a retry finds the reversal already made' do
+          let(:reversals_made) do
+            [{ id: 'trr_made', object: 'transfer_reversal', amount: 64, currency: 'usd',
+               metadata: { spree_seller_transfer_id: reversal.id.to_s } }]
+          end
+
+          it 'records the same figure' do
+            described_class.new.reverse!(reversal)
+
+            expect(reversal.reload.settled_amount).to eq(BigDecimal('-0.50'))
+          end
+        end
+      end
+
       it 'takes nothing back from an earning that settled for nothing' do
         earning.update!(reference: nil, settled_amount: 0, settled_currency: 'USD')
 

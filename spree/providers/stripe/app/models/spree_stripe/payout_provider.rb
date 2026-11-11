@@ -481,7 +481,7 @@ module SpreeStripe
       sent = SpreeStripe::Units.floor_to_step(share.clamp(0, left), transfer.currency, payout: true)
       return [0, 0.to_d] if sent.zero?
 
-      [sent, part * sent / share]
+      [sent, transfer_share(earning, sent, transfer, part)]
     rescue Stripe::StripeError => e
       # A look-up moves no money, so it is a refusal the retry job can repeat.
       raise Spree::Core::GatewayError, e.message
@@ -502,13 +502,23 @@ module SpreeStripe
                 SpreeStripe::Units.from_stripe(sent, seller_transfer.currency)
               else
                 transfer = Stripe::Transfer.retrieve(earning.reference, api_options)
-                return part unless transfer.amount.to_i.positive?
-
-                earning.amount.abs * sent.to_d / transfer.amount.to_d
+                return transfer_share(earning, sent, transfer, part)
               end
       [taken, part].min
     rescue Stripe::StripeError => e
       raise Spree::Core::GatewayError, e.message
+    end
+
+    # The part of the sale-currency earning that `sent` minor units of its
+    # transfer stand for, never more than the reversal row. Used both when a
+    # reversal is made and when a retry finds one already made, so the same
+    # Stripe reversal is always recorded as the same figure.
+    #
+    # @return [BigDecimal]
+    def transfer_share(earning, sent, transfer, part)
+      return part unless transfer.amount.to_i.positive?
+
+      [earning.amount.abs * sent.to_d / transfer.amount.to_d, part].min
     end
 
     # The charge with the balance transaction that says what it settled for.
