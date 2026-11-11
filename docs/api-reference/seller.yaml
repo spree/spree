@@ -293,7 +293,7 @@ paths:
                 invitee_exists: false
                 seller:
                   id: sel_UkLWZg9DAJ
-                  name: Seller 72
+                  name: Seller 77
               schema:
                 "$ref": "#/components/schemas/Invitation"
         '404':
@@ -16080,7 +16080,7 @@ paths:
                   inviter_email: jayna_leuschke@hirtheschinner.info
                   seller:
                     id: sel_UkLWZg9DAJ
-                    name: Seller 76
+                    name: Seller 81
               schema:
                 type: object
                 properties:
@@ -16189,7 +16189,7 @@ paths:
                 inviter_email: carmelia_hodkiewicz@donnelly.us
                 seller:
                   id: sel_UkLWZg9DAJ
-                  name: Seller 78
+                  name: Seller 83
               schema:
                 "$ref": "#/components/schemas/Invitation"
         '404':
@@ -19003,10 +19003,10 @@ paths:
                   carrier: ups
                   carrier_name: UPS
                   service: Ground
-                  tracking_number: 1Z879E930346830007
+                  tracking_number: 1Z879E930346830009
                   currency: USD
                   format: pdf
-                  external_id: shp_4
+                  external_id: shp_5
                   metadata: {}
                   refunded_at:
                   created_at: '2026-01-15T12:00:00.000Z'
@@ -19171,7 +19171,7 @@ paths:
                 carrier: ups
                 carrier_name: UPS
                 service: Ground
-                tracking_number: 1Z879E930346830008
+                tracking_number: 1Z879E930346830010
                 currency: USD
                 format: pdf
                 external_id:
