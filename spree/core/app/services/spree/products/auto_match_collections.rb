@@ -22,9 +22,10 @@ module Spree
 
         collections.each do |collection|
           membership = memberships[collection.id]
-          next if membership&.source == 'manual' || excluded_ids.include?(collection.id)
+          next if membership&.source == 'manual'
 
-          matches = collection.products_matching_rules(product_ids: [product.id]).exists?
+          # A rule row can land just after an exclusion commits; the exclusion wins.
+          matches = excluded_ids.exclude?(collection.id) && collection.products_matching_rules(product_ids: [product.id]).exists?
           to_remove << collection if membership && !matches
           to_add << collection if membership.nil? && matches
         end

@@ -73,12 +73,14 @@ const collectionRuleFields = z.object({
 
 /**
  * @param valuelessTypes rule types the types endpoint lists with
- *   `value_required: false` (in stock), which take no value
+ *   `value_required: false` (in stock), which take no value; null while
+ *   the types load, when no rule needs one
  */
-function collectionRuleSchema(valuelessTypes: readonly string[]) {
+function collectionRuleSchema(valuelessTypes: readonly string[] | null) {
   return collectionRuleFields.superRefine((rule, ctx) => {
-    if (valuelessTypes.includes(rule.type)) return
+    if (valuelessTypes?.includes(rule.type)) return
     if (rule.value.trim() === '') {
+      if (valuelessTypes === null) return
       ctx.addIssue({
         code: 'custom',
         path: ['value'],
@@ -100,7 +102,7 @@ export type CollectionRuleFormValues = z.infer<typeof collectionRuleFields>
  * The collection form schema. Which rule types take no value comes from the
  * types endpoint, so the caller passes it in (see `useCollectionFormResolver`).
  */
-export const collectionFormSchema = (valuelessTypes: readonly string[] = []) =>
+export const collectionFormSchema = (valuelessTypes: readonly string[] | null = []) =>
   z.object({
     /**
      * Staged product membership, applied on Save through the nested products

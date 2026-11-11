@@ -105,6 +105,11 @@ describe Spree::Price, type: :model do
               expect_any_instance_of(Spree::Product).to receive(:auto_match_collections).with(rule_types: [Spree::CollectionRules::Price])
               price.reload.update(amount: 15)
             end
+
+            it 're-matches price rules when only the currency changes' do
+              expect_any_instance_of(Spree::Product).to receive(:auto_match_collections).with(rule_types: [Spree::CollectionRules::Price])
+              price.reload.update(currency: 'EUR')
+            end
           end
         end
       end
