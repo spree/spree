@@ -46,10 +46,15 @@ module Spree
     # `applier.new.call(order_change:, action:)` inside the confirm
     # transaction; it writes through ordinary models and raises to abort.
     #
-    #   Spree::OrderChange.register_action_kind('gift_wrap', 'MyApp::ApplyGiftWrap')
+    # Register from a to_prepare block: a code reload resets the registry
+    # along with these models, and to_prepare runs again after each one.
+    #
+    #   Rails.application.config.to_prepare do
+    #     Spree::OrderChange.register_action_kind('gift_wrap', 'MyApp::ApplyGiftWrap')
+    #   end
     #
     # @param kind [String, Symbol]
-    # @param applier [String, Class] held by name, so a code reload is picked up
+    # @param applier [String, Class] held by name and constantized at apply time
     def self.register_action_kind(kind, applier)
       kind = kind.to_s
       raise ArgumentError, "#{kind} is applied by Spree itself and cannot be registered" if Spree::OrderChangeAction::CORE_KINDS.include?(kind)
