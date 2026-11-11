@@ -677,6 +677,37 @@ export function VariantEditSheet({ form, variantIndex, formKey, open, onOpenChan
             </Field>
           </FormSection>
 
+          <FormSection title={t('admin.fields.returns.label')}>
+            <Field>
+              <FieldLabel htmlFor={`variant-${variantIndex}-returnable`}>
+                {t('admin.fields.returnable.label')}
+              </FieldLabel>
+              <Controller
+                name={`variants.${variantIndex}.returnable`}
+                control={form.control}
+                render={({ field }) => (
+                  <Select
+                    value={field.value == null ? 'inherit' : String(field.value)}
+                    onValueChange={(v) => field.onChange(v === 'inherit' ? null : v === 'true')}
+                  >
+                    <SelectTrigger id={`variant-${variantIndex}-returnable`} className="w-full">
+                      <SelectValue>
+                        {(v) => t(`admin.products.variants.sheet.returnable.${v ?? 'inherit'}`)}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {['inherit', 'true', 'false'].map((option) => (
+                        <SelectItem key={option} value={option}>
+                          {t(`admin.products.variants.sheet.returnable.${option}`)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            </Field>
+          </FormSection>
+
           {hasTaxCategories && (
             <FormSection title={t('admin.fields.tax.label')}>
               <Field>

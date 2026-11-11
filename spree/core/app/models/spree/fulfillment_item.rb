@@ -42,6 +42,18 @@ module Spree
     include Spree::HasStatus
     has_status :on_hand, :backordered, :shipped, :returned, default: :on_hand
 
+    # Whether the customer bought this unit as returnable: its line's answer,
+    # frozen when the order was placed. An exchange's replacement rides on the
+    # original line but is another variant, so its own variant decides.
+    #
+    # @return [Boolean]
+    def returnable?
+      return false if line_item.nil?
+      return variant.returnable? if variant_id != line_item.variant_id
+
+      line_item.returnable?
+    end
+
     # Marks the item dispatched. Normally only stock in hand can leave, but a
     # forced dispatch ships a backordered item too: departure is a physical
     # fact, and a parcel the merchant has already handed over is recorded

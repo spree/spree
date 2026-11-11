@@ -13,9 +13,29 @@ module Spree
                  approved_at: [:string, nullable: true],
                  received_at: [:string, nullable: true],
                  refunded_at: [:string, nullable: true],
-                 canceled_at: [:string, nullable: true]
+                 canceled_at: [:string, nullable: true],
+                 cancelable: :boolean, label_available: :boolean,
+                 tracking: [:string, nullable: true], tracking_url: [:string, nullable: true]
 
         attributes :number, :status
+
+        # Whether the customer may still withdraw the request: only before the
+        # merchant has acted on it.
+        attribute :cancelable, &:requested?
+
+        # Whether a prepaid label is waiting to be downloaded from the label
+        # endpoint. The label row stays off the wire — its cost and provider
+        # ids are merchant data.
+        attribute :label_available, &:label_available?
+
+        # Where the parcel coming back is, as the carrier last reported it.
+        attribute :tracking do |return_record|
+          return_record.latest_delivery&.tracking_number
+        end
+
+        attribute :tracking_url do |return_record|
+          return_record.latest_delivery&.resolved_tracking_url
+        end
 
         prefixed_id_attributes :order, :reason
 
@@ -40,6 +60,10 @@ module Spree
         end
 
         one :reason, resource: proc { Spree.api.return_reason_serializer }, if: proc { expand?('reason') }
+
+        # The order it belongs to — always present on webhook payloads, so a
+        # storefront sending its own emails can address the customer.
+        one :order, resource: proc { Spree.api.order_serializer }, if: proc { expand?('order') }
 
         many :return_line_items,
              resource: proc { Spree.api.return_line_item_serializer },

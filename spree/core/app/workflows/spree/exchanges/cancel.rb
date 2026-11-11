@@ -9,8 +9,10 @@ module Spree
       hooks :validate, :after_cancel
 
       # @param exchange [Spree::Exchange]
+      # @param only_from [Array<String>, nil] narrows the statuses it may be
+      #   cancelled from; the customer passes only `requested`
       # @param reason [String, nil]
-      def perform(exchange:, reason: nil)
+      def perform(exchange:, reason: nil, only_from: nil)
         super
         cancel
       end

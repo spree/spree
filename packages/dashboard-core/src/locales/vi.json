@@ -983,6 +983,13 @@
         "digital_asset_authorized_days": {
           "label": "Số ngày có sẵn"
         }
+      },
+      "returns": {
+        "label": "Trả hàng"
+      },
+      "returnable": {
+        "label": "Khách hàng có thể trả lại sản phẩm này",
+        "help": "Chỉ tắt khi pháp luật cho phép, chẳng hạn với hàng cá nhân hóa hoặc hàng nhanh hỏng. Tại EU, chỉ ghi là hàng thanh lý không đổi trả thì không làm mất quyền rút lại, và sản phẩm vệ sinh niêm phong chỉ được miễn khi đã bóc niêm phong. Đơn hàng giữ nguyên cài đặt tại thời điểm đặt."
       }
     },
     "image_upload": {
@@ -1753,7 +1760,12 @@
           "packing_help": "Làm thế nào sản phẩm này rời khỏi kho với số lượng lớn. Báo giá cước vận chuyển được xây dựng từ những con số này.",
           "no_carton_types": "Thêm loại thùng carton trong <settingsLink>Cài đặt → Loại gói</settingsLink> để ghi lại cách đóng gói sản phẩm này.",
           "carton_placeholder": "Không có thùng carton",
-          "pending_save": "Những thay đổi ở đây được lưu cùng với sản phẩm."
+          "pending_save": "Những thay đổi ở đây được lưu cùng với sản phẩm.",
+          "returnable": {
+            "inherit": "Giống sản phẩm",
+            "true": "Có thể trả lại",
+            "false": "Không thể trả lại"
+          }
         },
         "thumbnail_badge": "Ảnh thu nhỏ",
         "title": "Biến thể",

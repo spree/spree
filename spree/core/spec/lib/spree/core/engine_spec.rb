@@ -22,11 +22,16 @@ RSpec.describe Spree::Core::Engine do
       expect(boot_order.index { |i| i.name == initializer.name }).to be < application_initializers
     end
 
-    it 'registers the validator on the returns and exchanges create hooks, without duplicating it when run again' do
+    it 'registers the validators on the returns and exchanges create hooks, without duplicating them when run again' do
       2.times { initializer.run(Rails.application) }
 
-      expect(Spree.hooks.for('returns.create.validate').map(&:class)).to eq([Spree::Returns::EligibilityValidator])
-      expect(Spree.hooks.for('exchanges.create.validate').map(&:class)).to eq([Spree::Returns::EligibilityValidator])
+      validators = [
+        Spree::Returns::EligibilityValidator,
+        Spree::Returns::DigitalContentValidator,
+        Spree::Returns::ReturnableValidator
+      ]
+      expect(Spree.hooks.for('returns.create.validate').map(&:class)).to match_array(validators)
+      expect(Spree.hooks.for('exchanges.create.validate').map(&:class)).to match_array(validators)
     end
   end
 

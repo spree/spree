@@ -2,11 +2,12 @@
 
 module Spree
   class OrderEmailSubscriber < Spree::Subscriber
-    subscribes_to 'order.placed', 'order.canceled', 'order.resend_confirmation_email'
+    subscribes_to 'order.placed', 'order.canceled', 'order.resend_confirmation_email', 'order.lookup_requested'
 
     on 'order.placed', :send_confirmation_email
     on 'order.canceled', :send_cancel_email
     on 'order.resend_confirmation_email', :resend_confirmation_email
+    on 'order.lookup_requested', :send_lookup_email
 
     private
 
@@ -52,6 +53,15 @@ module Spree
       return unless store.prefers_send_consumer_transactional_emails?
 
       OrderMailer.cancel_email(order.id).deliver_later
+    end
+
+    # "Find my order": the link goes to the address the order was placed with.
+    def send_lookup_email(event)
+      order = find_order(event)
+      return unless order
+      return unless order.store.prefers_send_consumer_transactional_emails?
+
+      OrderMailer.lookup_email(order.id).deliver_later
     end
 
     def send_store_owner_notification(order)

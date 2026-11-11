@@ -14667,6 +14667,7 @@ paths:
                   purchasable: true
                   preorder: false
                   in_stock: false
+                  returnable: true
                   backorderable: true
                   available: true
                   description: Maiores ut qui dolores ab autem. Architecto quos sequi
@@ -14783,6 +14784,7 @@ paths:
                 purchasable: false
                 preorder: false
                 in_stock: false
+                returnable: true
                 backorderable: false
                 available: false
                 description:
@@ -14883,6 +14885,7 @@ paths:
                 purchasable: true
                 preorder: false
                 in_stock: false
+                returnable: true
                 backorderable: true
                 available: true
                 description: Aliquid voluptate laudantium necessitatibus quidem eaque.
@@ -14974,6 +14977,7 @@ paths:
                 purchasable: true
                 preorder: false
                 in_stock: false
+                returnable: true
                 backorderable: true
                 available: true
                 description: Vel minima recusandae iure deserunt non. Corrupti soluta
@@ -15099,6 +15103,7 @@ paths:
                 purchasable: true
                 preorder: false
                 in_stock: false
+                returnable: true
                 backorderable: true
                 available: false
                 description: Enim soluta recusandae id ea incidunt. Sed enim odit
@@ -15211,6 +15216,7 @@ paths:
                 purchasable: true
                 preorder: false
                 in_stock: false
+                returnable: true
                 backorderable: true
                 available: false
                 description: Pariatur quod numquam similique dicta excepturi inventore.
@@ -15302,6 +15308,7 @@ paths:
                 purchasable: true
                 preorder: false
                 in_stock: false
+                returnable: true
                 backorderable: true
                 available: false
                 description: Incidunt mollitia fugiat doloremque amet suscipit. Voluptatem
@@ -21270,6 +21277,7 @@ paths:
                     options_text: ''
                     quantity: 1
                     currency: USD
+                    returnable: true
                     price: '10.00'
                     discounted_amount: '10.00'
                     additional_tax_total: '0.00'
@@ -21467,6 +21475,7 @@ paths:
                   options_text: ''
                   quantity: 1
                   currency: USD
+                  returnable: true
                   price: '10.00'
                   discounted_amount: '10.00'
                   additional_tax_total: '0.00'
@@ -21664,6 +21673,7 @@ paths:
                   options_text: ''
                   quantity: 1
                   currency: USD
+                  returnable: true
                   price: '10.00'
                   discounted_amount: '10.00'
                   additional_tax_total: '0.00'
@@ -21851,6 +21861,7 @@ paths:
                   options_text: ''
                   quantity: 1
                   currency: USD
+                  returnable: true
                   price: '10.00'
                   discounted_amount: '10.00'
                   additional_tax_total: '0.00'
@@ -22045,6 +22056,7 @@ paths:
                   options_text: ''
                   quantity: 1
                   currency: USD
+                  returnable: true
                   price: '10.00'
                   discounted_amount: '10.00'
                   additional_tax_total: '0.00'
@@ -22216,6 +22228,7 @@ paths:
                   options_text: ''
                   quantity: 1
                   currency: USD
+                  returnable: true
                   price: '10.00'
                   discounted_amount: '10.00'
                   additional_tax_total: '0.00'
@@ -23123,6 +23136,9 @@ paths:
                 - id: ret_UkLWZg9DAJ
                   number: RET1001
                   status: requested
+                  label_available: false
+                  tracking:
+                  tracking_url:
                   order_id: or_UkLWZg9DAJ
                   reason_id:
                   refund_total: '10.00'
@@ -23198,6 +23214,9 @@ paths:
                 id: ret_UkLWZg9DAJ
                 number: RET1001
                 status: requested
+                label_available: false
+                tracking:
+                tracking_url:
                 order_id: or_UkLWZg9DAJ
                 reason_id:
                 refund_total: '10.00'
@@ -23276,6 +23295,9 @@ paths:
                 id: ret_UkLWZg9DAJ
                 number: RET1001
                 status: requested
+                label_available: false
+                tracking:
+                tracking_url:
                 order_id: or_UkLWZg9DAJ
                 reason_id:
                 refund_total: '10.00'
@@ -23337,6 +23359,9 @@ paths:
                 id: ret_UkLWZg9DAJ
                 number: RET1001
                 status: approved
+                label_available: false
+                tracking:
+                tracking_url:
                 order_id: or_UkLWZg9DAJ
                 reason_id:
                 refund_total: '10.00'
@@ -23403,6 +23428,9 @@ paths:
                 id: ret_UkLWZg9DAJ
                 number: RET1001
                 status: received
+                label_available: false
+                tracking:
+                tracking_url:
                 order_id: or_UkLWZg9DAJ
                 reason_id:
                 refund_total: '10.00'
@@ -23477,6 +23505,9 @@ paths:
                 id: ret_UkLWZg9DAJ
                 number: RET1001
                 status: refunded
+                label_available: false
+                tracking:
+                tracking_url:
                 order_id: or_UkLWZg9DAJ
                 reason_id:
                 refund_total: '10.00'
@@ -23553,6 +23584,9 @@ paths:
                 id: ret_UkLWZg9DAJ
                 number: RET1001
                 status: canceled
+                label_available: false
+                tracking:
+                tracking_url:
                 order_id: or_UkLWZg9DAJ
                 reason_id:
                 refund_total: '10.00'
@@ -24423,6 +24457,43 @@ components:
           type: integer
           description: Quantity in this fulfillment
           example: 2
+        returnable_quantity:
+          type: integer
+          description: Units the customer can still return or exchange. Store order
+            page only
+          example: 1
+        non_returnable_reason:
+          type: string
+          nullable: true
+          description: Why nothing can come back, when returnable_quantity is 0. Store
+            order page only
+          example: not_returnable
+        units:
+          type: array
+          description: The shipped units a return or exchange is opened against. Store
+            order page only
+          items:
+            type: object
+            properties:
+              fulfillment_item_id:
+                type: string
+                description: Fulfillment item ID to open a return or exchange with
+                example: fi_abc123
+              quantity:
+                type: integer
+                example: 1
+              returnable_quantity:
+                type: integer
+                example: 1
+              non_returnable_reason:
+                type: string
+                nullable: true
+                example:
+            required:
+            - fulfillment_item_id
+            - quantity
+            - returnable_quantity
+            - non_returnable_reason
       required:
       - item_id
       - variant_id
@@ -27032,6 +27103,8 @@ components:
           - ZWL
           - ZWN
           - ZWR
+        returnable:
+          type: boolean
         price:
           type: string
           nullable: true
@@ -27062,6 +27135,7 @@ components:
       - options_text
       - quantity
       - currency
+      - returnable
       - price
       - discounted_amount
       - additional_tax_total
@@ -28375,6 +28449,8 @@ components:
           type: boolean
         in_stock:
           type: boolean
+        returnable:
+          type: boolean
         backorderable:
           type: boolean
         available:
@@ -28484,6 +28560,7 @@ components:
       - purchasable
       - preorder
       - in_stock
+      - returnable
       - backorderable
       - available
       - description
@@ -28640,7 +28717,6 @@ components:
             - Asia/Magadan
             - Asia/Muscat
             - Asia/Novosibirsk
-            - Asia/Rangoon
             - Asia/Riyadh
             - Asia/Seoul
             - Asia/Shanghai
@@ -28655,6 +28731,7 @@ components:
             - Asia/Urumqi
             - Asia/Vladivostok
             - Asia/Yakutsk
+            - Asia/Yangon
             - Asia/Yekaterinburg
             - Asia/Yerevan
             - Atlantic/Azores
@@ -28682,7 +28759,7 @@ components:
             - Europe/Helsinki
             - Europe/Istanbul
             - Europe/Kaliningrad
-            - Europe/Kiev
+            - Europe/Kyiv
             - Europe/Lisbon
             - Europe/Ljubljana
             - Europe/London
@@ -29421,6 +29498,14 @@ components:
           - type: string
           description: The values listed are the built-in ones; extensions may add
             more.
+        label_available:
+          type: boolean
+        tracking:
+          type: string
+          nullable: true
+        tracking_url:
+          type: string
+          nullable: true
         order_id:
           type: string
           nullable: true
@@ -29467,6 +29552,9 @@ components:
       - id
       - number
       - status
+      - label_available
+      - tracking
+      - tracking_url
       - order_id
       - reason_id
       - refund_total
@@ -30661,6 +30749,9 @@ components:
           type: boolean
         preorder:
           type: boolean
+        returnable:
+          type: boolean
+          nullable: true
         weight:
           type: number
           nullable: true
@@ -31209,6 +31300,7 @@ components:
       - in_stock
       - backorderable
       - preorder
+      - returnable
       - weight
       - height
       - width
@@ -32792,6 +32884,11 @@ components:
         metadata:
           type: object
           additionalProperties: true
+        returnable:
+          type: boolean
+          description: Whether customers may send this product back through self-service
+            returns. False for final sale, or goods exempt from the EU right of withdrawal.
+            Variants may override it.
         product_type_id:
           type: string
           description: The marketplace's product type this product is listed against,
@@ -32865,6 +32962,11 @@ components:
         metadata:
           type: object
           additionalProperties: true
+        returnable:
+          type: boolean
+          description: Whether customers may send this product back through self-service
+            returns. False for final sale, or goods exempt from the EU right of withdrawal.
+            Variants may override it.
         product_type_id:
           type: string
           description: The marketplace's product type this product is listed against,
@@ -33507,6 +33609,11 @@ components:
           nullable: true
         track_inventory:
           type: boolean
+        returnable:
+          type: boolean
+          description: Whether customers may send this variant back through self-service
+            returns. Null follows the product.
+          nullable: true
         preorderable:
           type: boolean
           description: Sell this variant before it's in stock. Adds the pre-order

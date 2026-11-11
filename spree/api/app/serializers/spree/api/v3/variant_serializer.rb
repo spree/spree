@@ -8,6 +8,7 @@ module Spree
                  options_text: :string, track_inventory: :boolean, media_count: :number,
                  thumbnail_url: [:string, nullable: true],
                  purchasable: :boolean, in_stock: :boolean, backorderable: :boolean, preorder: :boolean,
+                 returnable: :boolean,
                  preorder_ships_at: [:string, nullable: true],
                  weight: [:number, nullable: true], height: [:number, nullable: true], width: [:number, nullable: true], depth: [:number, nullable: true],
                  weight_unit: [:string, enum: Spree::Variant::WEIGHT_UNITS, enum_type_name: 'WeightUnit'], dimensions_unit: [:string, enum: Spree::Variant::DIMENSION_UNITS, enum_type_name: 'DimensionUnit'],
@@ -39,6 +40,10 @@ module Spree
         attribute :backorderable, &:backorderable?
 
         attribute :preorder, &:preorder?
+
+        # Whether this variant may come back through self-service returns,
+        # resolved through the product when the variant does not say.
+        attribute :returnable, &:returnable?
 
         attribute :weight do |variant|
           variant.weight&.to_f

@@ -1,0 +1,12 @@
+---
+subject: "{{ 'order_mailer.lookup_email.subject' | t: number: order.number }}"
+---
+<mj-section>
+  <mj-column css-class="hero">
+    <mj-text mj-class="heading">{{ 'order_mailer.lookup_email.subject' | t: number: order.number }}</mj-text>
+    <mj-text mj-class="greeting">{{ 'order_mailer.confirm_email.dear_customer' | t: name: order.customer_name }}</mj-text>
+    <mj-text mj-class="lead">{{ 'order_mailer.lookup_email.message' | t: store_name: store.name }}</mj-text>
+    <mj-button href="{{ order_url }}">{{ 'order_mailer.lookup_email.view_order' | t }}</mj-button>
+    <mj-text mj-class="note">{{ 'order_mailer.lookup_email.not_you' | t }}</mj-text>
+  </mj-column>
+</mj-section>

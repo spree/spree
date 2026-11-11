@@ -984,6 +984,13 @@
         "digital_asset_authorized_days": {
           "label": "Dostępne dni"
         }
+      },
+      "returns": {
+        "label": "Zwroty"
+      },
+      "returnable": {
+        "label": "Klienci mogą zwrócić ten produkt",
+        "help": "Wyłącz tylko tam, gdzie pozwala na to prawo, np. dla produktów personalizowanych lub szybko psujących się. W UE samo oznaczenie wyprzedaży bez zwrotu nie odbiera prawa odstąpienia od umowy, a zapieczętowane produkty higieniczne są wyłączone dopiero po otwarciu opakowania. Zamówienia zachowują ustawienie z chwili złożenia."
       }
     },
     "image_upload": {
@@ -1776,7 +1783,12 @@
           "packing_help": "Jak ten produkt opuszcza magazyn hurtowo. Na tych liczbach opierają się wyceny frachtu.",
           "no_carton_types": "Dodaj typ kartonu w sekcji <settingsLink>Ustawienia → Typy opakowań</settingsLink>, aby zapisać sposób pakowania tego produktu.",
           "carton_placeholder": "Brak kartonu",
-          "pending_save": "Zmiany zapisują się razem z produktem."
+          "pending_save": "Zmiany zapisują się razem z produktem.",
+          "returnable": {
+            "inherit": "Tak jak produkt",
+            "true": "Podlega zwrotowi",
+            "false": "Nie podlega zwrotowi"
+          }
         },
         "thumbnail_badge": "Miniatura",
         "title": "Warianty",

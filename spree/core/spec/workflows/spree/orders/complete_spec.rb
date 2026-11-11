@@ -10,6 +10,19 @@ module Spree
     # Regression: the rollup writes its vocabulary (none/authorized/...) via
     # update_columns, so the model's validation must accept it — otherwise the
     # first derived value poisons the order and completion 422s forever.
+    # A draft line follows the catalogue only when saved; placing the order
+    # catches up one untouched since its product turned final sale.
+    it 'freezes the current returnable answer onto the lines it places' do
+      draft = create(:order_with_line_items, store: store)
+      draft.update_columns(status: 'draft', completed_at: nil)
+      line_item = draft.line_items.first
+      line_item.variant.product.update_columns(returnable: false)
+
+      described_class.call(order: draft.reload, payment_pending: true)
+
+      expect(line_item.reload.returnable).to be(false)
+    end
+
     it 'completes an order whose rollup already wrote a derived payment status' do
       draft = create(:order_ready_to_ship, store: store)
       draft.update_columns(status: 'draft', completed_at: nil, payment_status: 'authorized')

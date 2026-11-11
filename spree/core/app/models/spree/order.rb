@@ -55,6 +55,10 @@ module Spree
                      :resend_confirmation_email, :resend_digital_links_email
     publishes_event :completed, deprecated_alias_of: 'order.placed'
     publishes_event :shipped, deprecated_alias_of: 'order.fulfilled'
+    # A guest asked for a link to this order ("find my order"). Carries the
+    # order token, a live credential, so it reaches only endpoints that name it.
+    publishes_event :lookup_requested,
+                    serializer: 'Spree::Api::V3::OrderLookupRequestedEventSerializer', credential: 'write_orders'
     include Spree::HasCustomFields
     include Spree::Metadata
     include Spree::HasExternalReferences
@@ -476,6 +480,36 @@ module Spree
       return false if payment_state.in?(%w[void failed]) || refunds.empty?
 
       refunds_total < total_minus_store_credits - additional_tax_total.abs
+    end
+
+    # The store's own return window for this order in days — merchant policy,
+    # counted from completion, set per market because consumer law is
+    # regional. Nil means no limit.
+    #
+    # @return [Integer, nil]
+    def return_window_days
+      (market || Spree::Market.new).preferred_return_window_days
+    end
+
+    # When the store's return window closes for customers. Staff may still
+    # open a return afterwards; see Spree::Returns::EligibilityValidator.
+    #
+    # @return [ActiveSupport::TimeWithZone, nil] nil when the order is not
+    #   complete or the window has no limit
+    def return_window_ends_at
+      days = return_window_days
+      return nil if completed_at.nil? || days.nil?
+
+      completed_at + days.days
+    end
+
+    # What a customer would be told if they asked to return something now.
+    # Memoized per instance: the order and each of its fulfillments read it
+    # during one serialization.
+    #
+    # @return [Spree::Returns::Eligibility]
+    def returns_eligibility
+      @returns_eligibility ||= Spree::Returns::Eligibility.new(self)
     end
 
     # When the buyer's statutory right of withdrawal expires — the EU

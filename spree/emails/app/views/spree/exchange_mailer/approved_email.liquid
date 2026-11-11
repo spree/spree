@@ -1,0 +1,22 @@
+---
+subject: "{{ store.name }} {{ 'exchange_mailer.approved_email.subject' | t: number: exchange.number }}"
+---
+{%- assign items_heading = 'exchange_mailer.requested_email.going_back' | t -%}
+<mj-section>
+  <mj-column css-class="hero">
+    <mj-text mj-class="heading">{{ 'exchange_mailer.approved_email.heading' | t }}</mj-text>
+    <mj-text mj-class="greeting">{{ 'return_mailer.refunded_email.dear_customer' | t: name: order.customer_name }}</mj-text>
+    <mj-text mj-class="lead">{{ 'exchange_mailer.approved_email.message' | t: number: exchange.number }}</mj-text>
+    <mj-button href="{{ order_url }}">{{ 'return_mailer.requested_email.view_request' | t }}</mj-button>
+  </mj-column>
+</mj-section>
+{%- if exchange.stock_location -%}
+<mj-section padding="48px 0 0">
+  <mj-column>
+    <mj-text mj-class="section-heading" padding="0 0 16px">{{ 'return_mailer.approved_email.send_to' | t }}</mj-text>
+    <mj-text mj-class="body" padding="0">{{ exchange.stock_location.name }}<br />{{ exchange.stock_location.address1 }}<br />{{ exchange.stock_location.zipcode }} {{ exchange.stock_location.city }}<br />{{ exchange.stock_location.country_name }}</mj-text>
+    <mj-text mj-class="note" padding="16px 0 0">{{ 'return_mailer.approved_email.deadline' | t }}</mj-text>
+  </mj-column>
+</mj-section>
+{%- endif -%}
+{% render 'spree/shared/order_summary', heading: items_heading, purchase: order, items: exchange.items, totals: false %}

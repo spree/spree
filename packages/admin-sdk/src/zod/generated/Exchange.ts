@@ -20,6 +20,7 @@ export const ExchangeSchema = z.object({
   fulfilled_at: z.string().nullable(),
   canceled_at: z.string().nullable(),
   reason: ReturnReasonSchema.optional(),
+  get order() { return OrderSchema.optional(); },
   exchange_line_items: z.array(ExchangeLineItemSchema).optional(),
   memo: z.string().nullable(),
   metadata: z.record(z.string(), z.unknown()),
@@ -29,7 +30,6 @@ export const ExchangeSchema = z.object({
   created_by_id: z.string().nullable(),
   created_by_type: z.string().nullable(),
   created_by: ActorSchema.optional(),
-  get order() { return OrderSchema.optional(); },
   stock_location: StockLocationSchema.optional(),
   get refunds() { return z.array(RefundSchema).optional(); },
 }) as unknown as z.ZodObject<{
@@ -44,6 +44,7 @@ export const ExchangeSchema = z.object({
   fulfilled_at: z.ZodType<Exchange['fulfilled_at']>;
   canceled_at: z.ZodType<Exchange['canceled_at']>;
   reason: z.ZodOptional<z.ZodType<Exclude<Exchange['reason'], undefined>>>;
+  order: z.ZodOptional<z.ZodType<Exclude<Exchange['order'], undefined>>>;
   exchange_line_items: z.ZodOptional<z.ZodType<Exclude<Exchange['exchange_line_items'], undefined>>>;
   memo: z.ZodType<Exchange['memo']>;
   metadata: z.ZodType<Exchange['metadata']>;
@@ -53,7 +54,6 @@ export const ExchangeSchema = z.object({
   created_by_id: z.ZodType<Exchange['created_by_id']>;
   created_by_type: z.ZodType<Exchange['created_by_type']>;
   created_by: z.ZodOptional<z.ZodType<Exclude<Exchange['created_by'], undefined>>>;
-  order: z.ZodOptional<z.ZodType<Exclude<Exchange['order'], undefined>>>;
   stock_location: z.ZodOptional<z.ZodType<Exclude<Exchange['stock_location'], undefined>>>;
   refunds: z.ZodOptional<z.ZodType<Exclude<Exchange['refunds'], undefined>>>;
 }>;

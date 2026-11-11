@@ -46,4 +46,48 @@ describe Spree::ReturnMailer, type: :mailer do
       expect(message.text_part.body.to_s).to include('PO-4471')
     end
   end
+
+  describe '#requested_email' do
+    let(:return_record) { create(:return, order: order, store: store, memo: 'Too small') }
+
+    subject(:message) { described_class.requested_email(return_record) }
+
+    it 'acknowledges the request, with the items and the customer note' do
+      body = email_body(message)
+
+      expect(message.to).to eq([order.email])
+      expect(message.subject).to include(return_record.number)
+      expect(body).to include(return_record.return_line_items.first.variant.product.name)
+      expect(body).to include('Too small')
+    end
+
+    # A guest opens the order from the email with its token; a customer from
+    # their account.
+    it 'links a guest to the order page with its token' do
+      expect(email_body(message)).to include("/orders/#{order.prefixed_id}?token=#{order.token}")
+    end
+
+    it 'links a customer to their account' do
+      order.update_columns(customer_id: create(:user).id)
+
+      expect(email_body(described_class.requested_email(return_record.reload))).to include("/account/orders/#{order.prefixed_id}")
+    end
+
+    it 'sends nothing once the request was withdrawn' do
+      return_record.update_columns(status: 'canceled')
+
+      expect(message.message).to be_a(ActionMailer::Base::NullMail)
+    end
+  end
+
+  describe '#approved_email' do
+    let(:return_record) { create(:return, order: order, store: store, status: 'approved', approved_at: Time.current) }
+
+    it 'says where to send the items' do
+      body = email_body(described_class.approved_email(return_record))
+
+      expect(body).to include(return_record.stock_location.name)
+      expect(body).to include('within 14 days')
+    end
+  end
 end

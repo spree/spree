@@ -50,6 +50,7 @@ module Spree
     before_validation :copy_price
     before_validation :copy_tax_category
     before_validation :copy_seller
+    before_validation :copy_returnable
 
     validate :exactly_one_owner
 
@@ -201,6 +202,16 @@ module Spree
       return if order&.placed?
 
       self.seller_id = variant.resolved_seller_id
+    end
+
+    # Frozen once the order is placed: the terms the customer bought under are
+    # the ones a return is judged by, so marking a product final sale later
+    # cannot take back a right already sold.
+    def copy_returnable
+      return if variant.blank?
+      return if persisted? && order && !order.draft?
+
+      self.returnable = variant.returnable?
     end
 
     extend DisplayMoney
@@ -404,6 +415,18 @@ module Spree
     # @return [void]
     def recalculate_price
       reprice(persist: true)
+    end
+
+    # Whether this line may come back through self-service returns: on a
+    # placed order, the answer frozen when it was placed; on a cart or a draft,
+    # the variant's current one, so a shopper is never told a line is returnable after the
+    # merchant marked it final sale.
+    #
+    # @return [Boolean]
+    def returnable_now?
+      return returnable if order.present? && !order.draft?
+
+      variant.present? ? variant.returnable? : returnable
     end
 
     private

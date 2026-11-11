@@ -24,7 +24,12 @@ module Spree
           'spree/order_mailer/payment_link_email' => 'Spree::Emails::Samples::PaymentLink',
           'spree/order_group_mailer/confirm_email' => 'Spree::Emails::Samples::OrderGroup',
           'spree/fulfillment_mailer/fulfilled_email' => 'Spree::Emails::Samples::Fulfillment',
+          'spree/order_mailer/lookup_email' => 'Spree::Emails::Samples::OrderLookup',
+          'spree/return_mailer/requested_email' => 'Spree::Emails::Samples::Return',
+          'spree/return_mailer/approved_email' => 'Spree::Emails::Samples::Return',
           'spree/return_mailer/refunded_email' => 'Spree::Emails::Samples::Return',
+          'spree/exchange_mailer/requested_email' => 'Spree::Emails::Samples::Exchange',
+          'spree/exchange_mailer/approved_email' => 'Spree::Emails::Samples::Exchange',
           'spree/digital_asset_mailer/files_ready_email' => 'Spree::Emails::Samples::Downloads',
           'spree/customer_mailer/password_reset_email' => 'Spree::Emails::Samples::PasswordReset',
           'spree/customer_mailer/data_export_email' => 'Spree::Emails::Samples::DataExport',
@@ -41,11 +46,12 @@ module Spree
 
       # Add email event subscribers
       config.after_initialize do
-        Spree.subscribers.concat [
+        Spree.subscribers.push(
           Spree::OrderEmailSubscriber,
           Spree::OrderGroupEmailSubscriber,
           Spree::FulfillmentEmailSubscriber,
           Spree::ReturnEmailSubscriber,
+          Spree::ExchangeEmailSubscriber,
           Spree::NewsletterSubscriberEmailSubscriber,
           Spree::CustomerEmailSubscriber,
           Spree::DataRequestEmailSubscriber,
@@ -53,7 +59,7 @@ module Spree
           Spree::CompanyEmailSubscriber,
           Spree::DigitalAssetEmailSubscriber,
           Spree::SellerEmailSubscriber
-        ]
+        )
       end
     end
   end

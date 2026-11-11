@@ -28,6 +28,9 @@ module Spree
               nullable: true,
               description: 'The delivery profile deciding how this product ships (`fp_...`); null falls back to the store default.'
             body.attribute :promotionable, :boolean
+            body.attribute :returnable, :boolean,
+                           description: 'Whether customers may send this product back through self-service returns. ' \
+                                        'False for final sale, or goods exempt from the EU right of withdrawal. Variants may override it.'
             body.attribute :tags, :array, of: :string, example: %w[eco sale]
             body.attribute :category_ids, :array, of: :id
             # Reachable with `write_products` rather than `write_collections`:

@@ -890,4 +890,47 @@ describe Spree::LineItem, type: :model do
 
     it_behaves_like 'files external references under its store'
   end
+
+  describe 'returnable' do
+    let(:store) { @default_store }
+    let(:product) { create(:product, store: store) }
+    let(:cart) { create(:cart, store: store) }
+
+    it 'follows the variant while the line is in a cart' do
+      line_item = create(:line_item, cart: cart, variant: product.default_variant, quantity: 1)
+      expect(line_item.returnable).to be(true)
+
+      product.update!(returnable: false)
+      line_item.reload.update!(quantity: 2)
+
+      expect(line_item.reload.returnable).to be(false)
+    end
+
+    it 'reads the variant for a line added to a placed order' do
+      order = create(:completed_order_with_totals, store: store)
+      product.update!(returnable: false)
+
+      line_item = create(:line_item, order: order, variant: Spree::Variant.find(product.default_variant.id), quantity: 1)
+
+      expect(line_item.reload.returnable).to be(false)
+    end
+
+    it "reports the variant's current answer on a cart line that was not re-saved" do
+      line_item = create(:line_item, cart: cart, variant: product.default_variant, quantity: 1)
+      product.update!(returnable: false)
+
+      expect(Spree::LineItem.find(line_item.id).returnable_now?).to be(false)
+    end
+
+    # The terms a customer bought under are the ones a return is judged by.
+    it 'is frozen once the order is placed' do
+      order = create(:completed_order_with_totals, store: store)
+      line_item = order.line_items.first
+
+      line_item.variant.product.update!(returnable: false)
+      line_item.reload.update!(quantity: 3)
+
+      expect(line_item.reload.returnable).to be(true)
+    end
+  end
 end

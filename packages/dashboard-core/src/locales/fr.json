@@ -981,6 +981,13 @@
         "digital_asset_authorized_days": {
           "label": "Jours de disponibilité"
         }
+      },
+      "returns": {
+        "label": "Retours"
+      },
+      "returnable": {
+        "label": "Les clients peuvent retourner cet article",
+        "help": "Désactivez uniquement lorsque la loi le permet, par exemple pour les articles personnalisés ou les biens qui se détériorent rapidement. Dans l'UE, la mention « vendu sans retour » ne supprime pas à elle seule le droit de rétractation, et les produits d'hygiène scellés ne sont exclus qu'une fois descellés. Les commandes conservent le réglage en vigueur lors de leur passation."
       }
     },
     "image_upload": {
@@ -1751,7 +1758,12 @@
           "packing_help": "Comment ce produit quitte l’entrepôt en gros. Les devis de fret reposent sur ces chiffres.",
           "no_carton_types": "Ajoutez un type de carton dans <settingsLink>Paramètres → Types d'emballage</settingsLink> pour enregistrer la façon dont ce produit est emballé.",
           "carton_placeholder": "Aucun carton",
-          "pending_save": "Les modifications sont enregistrées avec le produit."
+          "pending_save": "Les modifications sont enregistrées avec le produit.",
+          "returnable": {
+            "inherit": "Comme le produit",
+            "true": "Retournable",
+            "false": "Non retournable"
+          }
         },
         "thumbnail_badge": "Vignette",
         "title": "Variantes",

@@ -18,6 +18,12 @@ RSpec.describe Spree::Api::V3::VariantSerializer do
       expect(subject).to have_key('price')
     end
 
+    it 'resolves returnable through the product' do
+      product.update!(returnable: false)
+
+      expect(described_class.new(variant.reload, params: base_params).to_h['returnable']).to be(false)
+    end
+
     it 'does not include admin-only attributes' do
       expect(subject.keys).not_to include('cost_price', 'cost_currency', 'total_on_hand', 'deleted_at', 'barcode')
     end
@@ -66,6 +72,14 @@ RSpec.describe Spree::Api::V3::Admin::VariantSerializer do
     it 'includes prices array when included' do
       result = described_class.new(variant, params: base_params.merge(expand: ['prices'])).to_h
       expect(result['prices']).to be_an(Array)
+    end
+  end
+
+  describe 'admin serializer' do
+    it "shows the variant's own returnable, nil when it follows the product" do
+      result = Spree::Api::V3::Admin::VariantSerializer.new(variant, params: base_params).to_h
+
+      expect(result).to include('returnable' => nil)
     end
   end
 end

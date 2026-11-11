@@ -1,6 +1,7 @@
 import type {
   Company,
   EmailCustomer,
+  EmailExchange,
   EmailFulfillment,
   EmailOrder,
   EmailOrderGroup,
@@ -9,6 +10,7 @@ import type {
 } from '@spree/admin-sdk'
 import {
   EmailCustomerSchema,
+  EmailExchangeSchema,
   EmailFulfillmentSchema,
   EmailOrderGroupSchema,
   EmailOrderSchema,
@@ -74,6 +76,36 @@ const order = variable('order', ORDER_FIELDS, EmailOrderSchema, [
   'total',
 ] satisfies FieldsOf<EmailOrder>)
 const resend = variable('resend')
+const orderUrl = variable('order_url')
+const policyUrl = variable('policy_url')
+
+const returnRequest = variable(
+  'return',
+  [
+    'number',
+    'items',
+    'memo',
+    'reason_name',
+    'stock_location',
+    'label_available',
+    'refund_total',
+  ] as const satisfies FieldsOf<EmailReturn>,
+  EmailReturnSchema,
+  ['refund_total'] satisfies FieldsOf<EmailReturn>,
+)
+
+const exchange = variable(
+  'exchange',
+  [
+    'number',
+    'items',
+    'replacements',
+    'memo',
+    'reason_name',
+    'stock_location',
+  ] as const satisfies FieldsOf<EmailExchange>,
+  EmailExchangeSchema,
+)
 
 const STORE_FIELDS = [
   'name',
@@ -95,6 +127,7 @@ export const EMAIL_TEMPLATE_VARIABLES: Record<string, EmailTemplateVariable[]> =
   'spree.order_mailer.confirm_email': [order, resend],
   'spree.order_mailer.cancel_email': [order, resend],
   'spree.order_mailer.payment_link_email': [order, variable('payment_url')],
+  'spree.order_mailer.lookup_email': [order, orderUrl],
   'spree.order_group_mailer.confirm_email': [
     variable(
       'order_group',
@@ -144,6 +177,10 @@ export const EMAIL_TEMPLATE_VARIABLES: Record<string, EmailTemplateVariable[]> =
     ),
     resend,
   ],
+  'spree.return_mailer.requested_email': [order, returnRequest, orderUrl, policyUrl],
+  'spree.return_mailer.approved_email': [order, returnRequest, orderUrl, policyUrl],
+  'spree.exchange_mailer.requested_email': [order, exchange, orderUrl, policyUrl],
+  'spree.exchange_mailer.approved_email': [order, exchange, orderUrl, policyUrl],
   'spree.digital_asset_mailer.files_ready_email': [order, variable('downloads'), resend],
   'spree.customer_mailer.password_reset_email': [
     variable(

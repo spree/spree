@@ -91,7 +91,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
 
       expect(response).to have_http_status(:created)
       expect(json_response['items']).to contain_exactly(
-        'item_id' => line_item.prefixed_id, 'variant_id' => line_item.variant.prefixed_id, 'quantity' => 1
+        hash_including('item_id' => line_item.prefixed_id, 'variant_id' => line_item.variant.prefixed_id, 'quantity' => 1)
       )
       expect(other_order.reload.shipments.count).to eq(2)
     end

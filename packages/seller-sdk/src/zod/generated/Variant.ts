@@ -21,6 +21,7 @@ export const VariantSchema = z.object({
   in_stock: z.boolean(),
   backorderable: z.boolean(),
   preorder: z.boolean(),
+  returnable: z.boolean().nullable(),
   weight: z.number().nullable(),
   height: z.number().nullable(),
   width: z.number().nullable(),

@@ -27,8 +27,11 @@ module Spree
     #
     # `token` is the guest cart credential (`X-Spree-Token`), which a placed
     # order inherits; with it anyone can read and change the cart.
+    # `order_token` is the same credential as `order.lookup_requested` carries
+    # it, so a guest's order link never sits readable in the delivery log.
     SENSITIVE_PAYLOAD_KEYS = %w[
       token
+      order_token
       reset_token
       unsubscribe_token
       verification_token

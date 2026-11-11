@@ -43,6 +43,8 @@ end
 - Options and configuration are [model preferences](../docs/developer/customization/model-preferences.mdx).
 - Workflows and services write behaviour inline as named steps; they don't delegate to model business methods.
 
+- Return eligibility is a `returns.create.validate` / `exchanges.create.validate` handler, never a column or a model check: core's window, `returnable` flag and digital-content rules are handlers a store can unregister. Post-sale code reads `line_item.returnable`, frozen at completion, not the variant (`docs/plans/6.1-returns-portal.md`).
+
 ## Migrations
 
 - New migrations target `ActiveRecord::Migration[8.1]`; existing ones keep `[7.2]`. **Never edit a migration that has shipped.**

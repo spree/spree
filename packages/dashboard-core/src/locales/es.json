@@ -1004,6 +1004,13 @@
         "digital_asset_authorized_days": {
           "label": "Días disponibles"
         }
+      },
+      "returns": {
+        "label": "Devoluciones"
+      },
+      "returnable": {
+        "label": "Los clientes pueden devolver este artículo",
+        "help": "Desactívalo solo donde la ley lo permita, por ejemplo para artículos personalizados o productos que se deterioran rápidamente. En la UE, la etiqueta de venta final por sí sola no elimina el derecho de desistimiento, y los productos de higiene precintados solo quedan excluidos una vez desprecintados. Los pedidos conservan el ajuste con el que se realizaron."
       }
     },
     "products": {
@@ -1184,7 +1191,12 @@
           "packing_help": "Cómo sale este producto del depósito a granel. Las cotizaciones de flete se calculan con estos números.",
           "no_carton_types": "Agregá un tipo de caja en <settingsLink>Configuración → Tipos de paquete</settingsLink> para registrar cómo se acondiciona este producto.",
           "carton_placeholder": "Sin caja",
-          "pending_save": "Los cambios acá se guardan con el producto."
+          "pending_save": "Los cambios acá se guardan con el producto.",
+          "returnable": {
+            "inherit": "Igual que el producto",
+            "true": "Se puede devolver",
+            "false": "No se puede devolver"
+          }
         },
         "thumbnail_badge": "Miniatura",
         "title": "Variantes",

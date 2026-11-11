@@ -13,9 +13,14 @@ These are the emails your customers receive. Every one of their templates receiv
 | `spree/order_mailer/confirm_email` | `order`, `resend` |
 | `spree/order_mailer/cancel_email` | `order`, `resend` |
 | `spree/order_mailer/payment_link_email` | `order`, `payment_url` |
+| `spree/order_mailer/lookup_email` | `order`, `order_url` |
 | `spree/order_group_mailer/confirm_email` | `order_group`, `resend` |
 | `spree/fulfillment_mailer/fulfilled_email` | `fulfillment`, `order`, `resend` |
-| `spree/return_mailer/refunded_email` | `return`, `order`, `resend` |
+| `spree/return_mailer/requested_email` | `return`, `order`, `order_url`, `policy_url` |
+| `spree/return_mailer/approved_email` | `return`, `order`, `order_url`, `policy_url` |
+| `spree/return_mailer/refunded_email` | `return`, `order`, `order_url`, `policy_url`, `resend` |
+| `spree/exchange_mailer/requested_email` | `exchange`, `order`, `order_url`, `policy_url` |
+| `spree/exchange_mailer/approved_email` | `exchange`, `order`, `order_url`, `policy_url` |
 | `spree/digital_asset_mailer/files_ready_email` | `order`, `downloads`, `resend` |
 | `spree/customer_mailer/password_reset_email` | `customer`, `reset_url` |
 | `spree/customer_mailer/data_export_email` | `download_url`, `expires_at` |
@@ -30,6 +35,8 @@ These are the emails your customers receive. Every one of their templates receiv
 | `resend` | True when staff re-sent the email. |
 | `locale` | The language the email renders in, e.g. `en`. |
 | `payment_url` | Where the customer pays for the order. |
+| `order_url` | The order page: the account's order page for a customer, or a guest link carrying the order token. |
+| `policy_url` | The store's return policy page. |
 | `reset_url` | The password reset link, carrying its token. |
 | `accept_url` | The link that accepts the invitation, carrying its token. |
 | `confirmation_url` | The link that confirms the subscription or data request, carrying its token. |
@@ -101,9 +108,18 @@ Each object's fields, and the fields of the objects nested in it. Format an amou
 
 ### `return`
 
-- `return`: `id`, `number`, `status`, `order_id`, `reason_id`, `refund_total`, `approved_at`, `received_at`, `refunded_at`, `canceled_at`, `refunded_total`
+- `return`: `id`, `number`, `status`, `cancelable`, `label_available`, `tracking`, `tracking_url`, `order_id`, `reason_id`, `reason_name`, `memo`, `refund_total`, `refund_tax_total`, `refunded_total`, `approved_at`, `received_at`, `refunded_at`, `canceled_at`
+- `return.items` (what is coming back, at the quantities named): `id`, `url`, `image_url`, `name`, `quantity`, `sku`, `options_text`, `price`, `amount`
+- `return.stock_location` (where to send it): `id`, `name`, `address1`, `city`, `zipcode`, `country_code`, `country_name`, `state_code`, `state_text`
 - `return.returned_items`: `id`, `variant_id`, `seller_id`, `preorder`, `preorder_ships_at`, `quantity`, `currency`, `name`, `slug`, `options_text`, `price`, `total`, `adjustment_total`, `additional_tax_total`, `included_tax_total`, `discount_total`, `pre_tax_amount`, `discounted_amount`, `compare_at_amount`, `url`, `image_url`, `sku`, `amount`
 - `return.returned_items.option_values`: `id`, `option_type_id`, `name`, `label`, `position`, `color_code`, `option_type_name`, `option_type_label`, `image_url`
+
+### `exchange`
+
+- `exchange`: `id`, `number`, `status`, `cancelable`, `order_id`, `reason_id`, `reason_name`, `memo`, `price_difference`, `approved_at`, `received_at`, `fulfilled_at`, `canceled_at`
+- `exchange.items` (what is going back): `id`, `url`, `image_url`, `name`, `quantity`, `sku`, `options_text`, `price`, `amount`
+- `exchange.replacements` (what comes out instead): `id`, `name`, `options_text`, `quantity`
+- `exchange.stock_location`: `id`, `name`, `address1`, `city`, `zipcode`, `country_code`, `country_name`, `state_code`, `state_text`
 
 ### `customer`
 

@@ -83,6 +83,8 @@ export const variantFormSchema = z.object({
   preorder_ships_at: z.string().nullable().optional(),
   backorder_limit: z.coerce.number().int().nonnegative().nullable().optional(),
   tax_category_id: z.string().nullable().optional(),
+  // Null follows the product.
+  returnable: z.boolean().nullable().optional(),
   prices: z.array(variantPriceFormSchema).optional(),
   stock_levels: z.array(stockLevelFormSchema).optional(),
 })
@@ -197,6 +199,9 @@ export const productFormSchema = z.object({
 
   // Tax
   tax_category_id: z.string().nullable().optional(),
+
+  // Whether customers may send the product back through self-service returns.
+  returnable: z.boolean().optional(),
 
   // Product type — a creation-time template for the product's associations
   product_type_id: z.string().nullable().optional(),
@@ -324,6 +329,7 @@ export function isPlaceholderDefaultVariant(v: VariantFormValues): boolean {
     v.preorderable !== true &&
     v.preorder_ships_at == null &&
     v.backorder_limit == null &&
+    v.returnable == null &&
     // `track_inventory` defaults to `true` in `newProductFormDefaults`. Only
     // count an explicit `false` (merchant toggled it off) as non-default.
     v.track_inventory !== false

@@ -9,6 +9,9 @@ module Spree
 
           without_formatted_money
 
+          # Whether the customer may still withdraw it; staff may cancel more.
+          _attributes.delete(:cancelable)
+
           typelize memo: [:string, nullable: true],
                    metadata: 'Record<string, unknown>',
                    stock_location_id: [:string, nullable: true],

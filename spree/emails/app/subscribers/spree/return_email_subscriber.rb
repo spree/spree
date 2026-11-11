@@ -2,24 +2,29 @@
 
 module Spree
   class ReturnEmailSubscriber < Spree::Subscriber
-    subscribes_to 'return.refunded'
+    include Spree::Emails::PostSaleDelivery
 
-    def handle(event)
-      return_record = find_return(event)
-      return unless return_record
+    subscribes_to 'return.requested', 'return.approved', 'return.refunded'
 
-      store = return_record.store
-      return unless store.prefers_send_consumer_transactional_emails?
-      # A return owed nothing closes without a refund, so there is none to announce.
-      return if return_record.refunded_total.zero?
-
-      ReturnMailer.refunded_email(return_record.id).deliver_later
-    end
+    on 'return.requested', :send_requested_email
+    on 'return.approved', :send_approved_email
+    on 'return.refunded', :send_refunded_email
 
     private
 
-    def find_return(event)
-      Spree::Return.find_by_prefix_id(event.payload['id'])
+    def send_requested_email(event)
+      deliver(Spree::Return, event) { |return_record| ReturnMailer.requested_email(return_record.id) }
+    end
+
+    def send_approved_email(event)
+      deliver(Spree::Return, event) { |return_record| ReturnMailer.approved_email(return_record.id) }
+    end
+
+    def send_refunded_email(event)
+      deliver(Spree::Return, event) do |return_record|
+        # A return owed nothing closes without a refund, so there is none to announce.
+        ReturnMailer.refunded_email(return_record.id) unless return_record.refunded_total.zero?
+      end
     end
   end
 end

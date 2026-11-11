@@ -10,6 +10,8 @@ module Spree
           {
             return: data(record, Spree::Emails::ReturnSerializer),
             order: data(record.order, Spree::Emails::OrderSerializer),
+            order_url: placeholder_url('account/orders/order'),
+            policy_url: placeholder_url('policies/return-policy'),
             resend: false
           }
         end
