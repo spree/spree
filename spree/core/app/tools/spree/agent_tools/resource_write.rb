@@ -68,13 +68,28 @@ module Spree
       def body_for(entry, attributes)
         body = (attributes || {}).to_h.deep_transform_keys(&:to_s)
         accepted = entry.writable_attribute_names
-        return [body, nil] if accepted.blank?
+        # With no list there is nothing to check against, and forwarding the
+        # body unchecked is how a dropped attribute was reported as changed.
+        if accepted.blank?
+          return [nil, { error: "#{entry.key} has no documented attributes to write — " \
+                                'call describe_resource to see what can be changed.' }]
+        end
 
         unknown = body.keys - accepted
         return [body, nil] if unknown.empty?
 
-        [nil, { error: "#{entry.key} does not accept #{unknown.to_sentence}.",
+        [nil, { error: "#{entry.key} does not accept #{unknown.to_sentence}.#{hint_for(unknown, accepted)}",
                 accepted_attributes: accepted }]
+      end
+
+      # A singular sent where the endpoint takes a list — `price` for a
+      # variant's `prices` — is the usual slip, so the refusal names the list.
+      def hint_for(unknown, accepted)
+        lists = unknown.filter_map { |name| [name, name.pluralize] if accepted.include?(name.pluralize) }
+        return if lists.empty?
+
+        " Send #{lists.map { |name, list| "#{list} instead of #{name}" }.to_sentence} — " \
+          'call describe_resource for the shape of one row.'
       end
 
       # The path for this write, or the refusal saying which record a nested

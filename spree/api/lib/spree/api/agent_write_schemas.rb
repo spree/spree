@@ -21,16 +21,23 @@ module Spree
       class << self
         # The writable properties for one resource.
         #
+        # A resource written under a parent — a product's variants at
+        # `/products/{product_id}/variants` — is found by its own route, since
+        # the key alone only matches a top-level collection. Without it the
+        # tools had no list to check against, so an attribute the endpoint
+        # drops was forwarded and reported as changed.
+        #
         # @param key [String] the resource key, e.g. "markets"
+        # @param api_paths [Hash{Symbol => String}] action => route template
         # @return [Hash] JSON Schema properties, empty when the resource has no
         #   documented write
-        def for(key)
-          schemas[key.to_s] || {}
+        def for(key, api_paths: nil)
+          schemas[key.to_s] || for_paths(api_paths) || {}
         end
 
         # @return [Array<String>] the attribute names a write may set
-        def attribute_names(key)
-          self.for(key).keys
+        def attribute_names(key, api_paths: nil)
+          self.for(key, api_paths: api_paths).keys
         end
 
         # Core's generated document, which the merged one starts from.
@@ -52,12 +59,29 @@ module Spree
         # @return [void]
         def reset!
           @schemas = nil
+          @path_schemas = nil
         end
 
         private
 
         def schemas
           @schemas ||= load_schemas
+        end
+
+        def path_schemas
+          @path_schemas ||= Array(document['paths']).to_h.each_with_object({}) do |(path, operations), result|
+            properties = write_properties(operations)
+            result[path] = properties if properties.present?
+          end
+        end
+
+        # The create route's body, else the update route's, with the route's
+        # `:param` segments written the way the document writes them.
+        def for_paths(api_paths)
+          paths = Array(api_paths).to_h
+          paths.values_at(:create, :update).compact.lazy.filter_map do |path|
+            path_schemas[path.gsub(/:([a-z_]+)/, '{\\1}')]
+          end.first
         end
 
         def load_schemas

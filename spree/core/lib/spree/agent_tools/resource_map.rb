@@ -257,7 +257,7 @@ module Spree
         def nested_collection_shapes
           return {} unless defined?(Spree::Api::AgentWriteSchemas)
 
-          Spree::Api::AgentWriteSchemas.for(key).each_with_object({}) do |(name, schema), shapes|
+          Spree::Api::AgentWriteSchemas.for(key, api_paths: api_paths).each_with_object({}) do |(name, schema), shapes|
             next unless schema.is_a?(Hash) && schema['type'] == 'array'
 
             # A row's shape is published as a component too, so the array

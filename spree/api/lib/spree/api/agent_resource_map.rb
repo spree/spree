@@ -193,7 +193,8 @@ module Spree
 
           create_workflow = workflow_key(instance, :create_workflow)
           update_workflow = workflow_key(instance, :update_workflow)
-          writable = AgentWriteSchemas.attribute_names(key)
+          api_paths = api_paths_for(controller)
+          writable = AgentWriteSchemas.attribute_names(key, api_paths: api_paths)
 
           {
             key: key,
@@ -201,7 +202,7 @@ module Spree
             permission: "read_#{scope}",
             serializer_name: serializer.name,
             dashboard_path: DASHBOARD_PATHS[key],
-            api_paths: api_paths_for(controller),
+            api_paths: api_paths,
             write_permission: write_permission_for(model, scope, create_workflow, update_workflow, writable, controller),
             writable_attributes: writable,
             create_workflow_key: create_workflow,
@@ -278,6 +279,10 @@ module Spree
 
             narrowest = candidates.min_by { |entry| [scope_breadth(entry[:permission]), entry[:permission]] }
             contested = candidates.map { |entry| entry[:permission] }.uniq.size > 1
+            # Under one scope, the controller that documents a body is the one
+            # that writes — a product's variants, beside the read-only
+            # top-level variant listing.
+            writer = candidates.find { |entry| entry[:writable_attributes].present? } || narrowest
 
             # A workflow declaration is not in dispute — whichever controller
             # declares one, that is how the resource is written, and the
@@ -292,8 +297,8 @@ module Spree
               serializer_name: shallowest_candidate(candidates)[:serializer_name],
               create_workflow_key: candidates.filter_map { |entry| entry[:create_workflow_key] }.first,
               update_workflow_key: candidates.filter_map { |entry| entry[:update_workflow_key] }.first,
-              write_permission: contested ? nil : narrowest[:write_permission],
-              writable_attributes: contested ? [] : narrowest[:writable_attributes],
+              write_permission: contested ? nil : writer[:write_permission],
+              writable_attributes: contested ? [] : writer[:writable_attributes],
               # One controller refusing DISTINCT is enough: its sort would
               # make Postgres reject the query, and whichever controller
               # happened to sort first is not an answer.

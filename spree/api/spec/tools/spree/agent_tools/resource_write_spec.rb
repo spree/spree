@@ -196,6 +196,41 @@ RSpec.describe 'agent generic record writes' do
     end
   end
 
+  # A variant is written under its product, so its attribute list lives on
+  # the nested route. Without it `price` was forwarded unchecked, dropped by
+  # the endpoint, and reported back as changed.
+  describe 'a variant written under its product' do
+    let(:product) { create(:product, store: store, price: 15) }
+    let(:variant) { create(:variant, product: product, price: 15) }
+
+    def update(attributes)
+      tool('update_resource').call(resource: 'variants', id: variant.prefixed_id,
+                                   parent_id: product.prefixed_id, attributes: attributes)
+    end
+
+    it 'refuses a singular price and names prices instead' do
+      result = update('price' => '1599.99')
+
+      expect(result[:error]).to include('price', 'prices')
+      expect(result[:accepted_attributes]).to include('prices')
+      expect(variant.reload.price_in('USD').amount).to eq(15)
+    end
+
+    it 'changes the price through prices' do
+      result = update('prices' => [{ 'currency' => 'USD', 'amount' => '1599.99' }])
+
+      expect(result[:error]).to be_nil
+      expect(variant.reload.price_in('USD').amount).to eq(BigDecimal('1599.99'))
+    end
+
+    it 'lists prices among its writable attributes' do
+      described = tool('describe_resource').call(resource: 'variants')[:resources].first
+
+      expect(described[:writable_attributes]).to include('prices')
+      expect(described[:writable_attributes]).not_to include('price')
+    end
+  end
+
   describe 'what a read-only key is offered' do
     let(:api_key) { create(:api_key, :secret, store: store, scopes: ['read_all']) }
 

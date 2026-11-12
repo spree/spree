@@ -129,7 +129,7 @@ RSpec.describe 'agent tool contract' do
     # sole defence — a new service-written controller is refused by default.
     it 'writes only what the Admin API documents a write body for' do
       undocumented = Spree::AgentTools::ResourceMap.all.select(&:generic_writes?).reject do |entry|
-        Spree::Api::AgentWriteSchemas.attribute_names(entry.key).any?
+        Spree::Api::AgentWriteSchemas.attribute_names(entry.key, api_paths: entry.api_paths).any?
       end
 
       expect(undocumented.map(&:key)).to be_empty
@@ -154,7 +154,7 @@ RSpec.describe 'agent tool contract' do
       # What is left should be writable exactly when the document says so, so
       # the map's model-derived key and the document's URL segment agree.
       mismatched = (Spree::AgentTools::ResourceMap.all - deliberate).reject do |entry|
-        entry.generic_writes? == Spree::Api::AgentWriteSchemas.attribute_names(entry.key).any?
+        entry.generic_writes? == Spree::Api::AgentWriteSchemas.attribute_names(entry.key, api_paths: entry.api_paths).any?
       end
 
       expect(mismatched.map(&:key)).to be_empty, <<~MESSAGE
