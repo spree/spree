@@ -239,7 +239,6 @@ module Spree
           column = model.columns_hash[attribute]
           return COLUMN_KINDS.fetch(column.type, :unclassified) if column
           return 'text' if translated_attribute?(attribute)
-          return nil if model.default_ransackable_attributes.include?(attribute)
 
           :unclassified
         end

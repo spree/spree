@@ -43,6 +43,13 @@ RSpec.describe Spree::AgentTools::ResourceMap do
         it 'exposes filterable fields' do
           expect(entry.filterable_fields).to be_present
         end
+
+        it 'lists only filters the database can run' do
+          entry.filterable_fields.each do |field|
+            filtering = -> { entry.scope_for(context).ransack("#{field}_null" => false).result.load }
+            expect(filtering).not_to raise_error, "#{entry.key} lists `#{field}`, which fails to filter"
+          end
+        end
       end
     end
   end
