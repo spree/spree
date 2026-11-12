@@ -13,7 +13,7 @@ RSpec.describe Spree::RemovedApis do
 
     expect(message).to include('Spree 6.0 removed Spree::Order#next.')
     expect(message).to include('carts_complete_workflow')
-    expect(message).to include(described_class::UPGRADE_GUIDE_URL)
+    expect(message).to include(described_class::UPGRADE_GUIDES.fetch('6.0'))
   end
 
   it 'names the replacement for a removed class method' do
@@ -26,6 +26,24 @@ RSpec.describe Spree::RemovedApis do
 
   it 'names the replacement for a removed constant' do
     expect(hint_for { Spree::ReturnAuthorization }).to include('Spree 6.0 removed Spree::ReturnAuthorization.')
+  end
+
+  it 'names the replacement for a receiverless call, as in a decorator' do
+    order = Spree::Order.new
+
+    expect(hint_for { order.instance_eval { adjustments } }).to include('Spree 6.0 removed Spree::Order#adjustments.')
+  end
+
+  it 'does not mistake a missing nested constant for a removed top-level one' do
+    stub_const('Spree::Reporting::Example', Module.new)
+
+    message = hint_for { Spree::Reporting::Example::Report }
+
+    expect(message).not_to include('Spree 6.0 removed')
+  end
+
+  it 'has an upgrade guide for every release' do
+    expect(described_class::REMOVED.keys - described_class::UPGRADE_GUIDES.keys).to be_empty
   end
 
   it 'matches subclasses of the class a method was removed from' do
@@ -49,7 +67,7 @@ RSpec.describe Spree::RemovedApis do
   end
 
   it 'never hints at a name that still exists' do
-    still_defined = described_class::REPLACEMENTS.keys.select do |key|
+    still_defined = described_class::REMOVED.values.flat_map(&:keys).select do |key|
       if (match = key.match(/\A(?<owner>[\w:]+)#(?<name>.+)\z/))
         owner = match[:owner].constantize
         owner.method_defined?(match[:name]) || owner.private_method_defined?(match[:name]) ||

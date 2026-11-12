@@ -3,24 +3,33 @@ module Spree
   #
   # Spree is old enough that coding agents, older tutorials and extensions
   # still reach for 4.x and 5.x APIs: the checkout state machine,
-  # adjustments, the master variant, return authorizations. Without help,
+  # adjustments, single-currency prices, return authorizations. Without help,
   # those calls fail with a bare NoMethodError or NameError, and the reader
   # has to work out what replaced them. This module adds one paragraph to
   # those errors naming what to use instead.
   #
-  # The hint is added to Exception#detailed_message, the text Ruby, IRB,
-  # RSpec and the Rails error page print. The error keeps its class, its
-  # #message and its #respond_to? answers, so rescues and duck typing behave
-  # exactly as they did. Removed names are never defined, so nothing that
-  # still exists can be shadowed.
+  # The hint is added to Exception#detailed_message, the text Ruby, IRB and
+  # RSpec print for an error. (The Rails log and error page print #message,
+  # so they don't show it.) The error keeps its class, its #message and its
+  # #respond_to? answers, so rescues and duck typing behave exactly as they
+  # did. Removed names are never defined, so nothing that still exists can be
+  # shadowed.
   #
   # Keys: 'Spree::Order#next' is an instance method, 'Spree::Order.checkout_flow'
   # a class method (also matched when called on a relation), 'Spree::Adjustment'
   # a constant. A key matches subclasses too.
   #
-  # When you remove a public Ruby API, add it here (see spree/AGENTS.md).
+  # When you remove a public Ruby API, add it under the release that removed
+  # it (see spree/AGENTS.md).
   module RemovedApis
-    UPGRADE_GUIDE_URL = 'https://spreecommerce.org/docs/developer/upgrades/5.6-to-6.0'.freeze
+    UPGRADE_GUIDES = {
+      '6.0' => 'https://spreecommerce.org/docs/developer/upgrades/5.6-to-6.0'
+    }.freeze
+
+    # @return [Hash{String => String}] each name in +entries+, prefixed with each owner
+    def self.expand(owners, separator, entries)
+      owners.product(entries.to_a).to_h { |owner, (name, hint)| ["#{owner}#{separator}#{name}", hint] }
+    end
 
     CHECKOUT = 'Checkout has no state machine. Write cart fields in any order (Spree::Carts::Update, ' \
                'or the Store API cart endpoints), read cart.current_checkout_step and the cart ' \
@@ -32,7 +41,6 @@ module Spree
     ADJUSTMENTS = 'Adjustments are typed rows: tax_lines, discounts and fees.'.freeze
     RETURNS = 'Returns, exchanges and claims are their own records on the order: returns, exchanges, claims.'.freeze
     STATE_CHANGES = 'Status history is no longer stored. Subscribe to events instead (Spree::Subscriber).'.freeze
-    PRICE_IN = 'Prices are per currency: price_in(currency).amount or amount_in(currency).'.freeze
     PRIMARY_MEDIA = 'Use primary_media.'.freeze
     SEARCH = 'Use search, or q[search] in the Admin API.'.freeze
 
@@ -47,11 +55,6 @@ module Spree
       'contents' => 'Change cart items with Spree.cart_add_item_workflow or Spree::Dependencies.cart_upsert_items_workflow.',
       'adjustments' => ADJUSTMENTS,
       'all_adjustments' => ADJUSTMENTS,
-      'line_item_adjustments' => 'Use line_item_tax_lines and line_item_discounts.',
-      'shipment_adjustments' => 'Use fulfillment_tax_lines and fulfillment_discounts.',
-      'return_authorizations' => RETURNS,
-      'customer_returns' => RETURNS,
-      'reimbursements' => RETURNS,
       'state_changes' => STATE_CHANGES
     }.freeze
 
@@ -67,13 +70,11 @@ module Spree
     }.freeze
 
     VARIANT_AND_PRODUCT = {
-      'price' => PRICE_IN,
-      'price=' => 'Use set_price(currency, amount).',
+      'price' => 'Prices are per currency: price_in(currency).amount or amount_in(currency).',
       'default_price' => 'Use price_in(currency).',
       'currency' => 'Pass the currency you mean to price_in(currency).',
       'display_price' => 'Use price_in(currency).display_amount.',
       'display_amount' => 'Use price_in(currency).display_amount.',
-      'compare_at_price=' => 'Use set_price(currency, amount, compare_at_amount).',
       'display_compare_at_price' => 'Use price_in(currency).display_compare_at_amount.',
       'price_including_vat_for' => 'Use price_in(currency).amount: prices are charged as entered.',
       'has_default_price?' => 'Use prices.base_prices.exists?(currency: currency).',
@@ -81,68 +82,77 @@ module Spree
       'primary_image' => PRIMARY_MEDIA
     }.freeze
 
-    REPLACEMENTS = {
-      # Checkout, orders and carts
-      **ORDER_AND_CART.flat_map { |name, hint| [["Spree::Order##{name}", hint], ["Spree::Cart##{name}", hint]] }.to_h,
-      **ORDER_AND_CART_CLASS.flat_map { |name, hint| [["Spree::Order.#{name}", hint], ["Spree::Cart.#{name}", hint]] }.to_h,
-      'Spree::Order::Checkout' => CHECKOUT_CUSTOMIZATION,
-      'Spree::OrderContents' => 'Change cart items with Spree.cart_add_item_workflow or Spree::Dependencies.cart_upsert_items_workflow.',
-      'Spree::Adjustment' => 'Adjustments are typed rows: Spree::TaxLine, Spree::Discount and Spree::Fee.',
-      'Spree::LineItem#adjustments' => ADJUSTMENTS,
-      'Spree::Fulfillment#adjustments' => ADJUSTMENTS,
-      'Spree::StateChange' => STATE_CHANGES,
-      'Spree::LogEntry' => STATE_CHANGES,
-      'Spree::Payment#state_changes' => STATE_CHANGES,
-      'Spree::Payment#log_entries' => STATE_CHANGES,
-      'Spree::Fulfillment#state_changes' => STATE_CHANGES,
+    REPORTS = 'Use reporting queries for aggregates, or a Spree::Export subclass for CSV rows.'.freeze
 
-      # Returns
-      'Spree::ReturnAuthorization' => 'Use Spree::Return, or Spree::Exchange when different items go out.',
-      'Spree::CustomerReturn' => 'Use Spree::Return: receiving is a status on the same record.',
-      'Spree::Reimbursement' => 'Refund a return with the Spree::Returns::Refund workflow.',
-      'Spree::ReimbursementType' => 'Refund a return with the Spree::Returns::Refund workflow.',
-      'Spree::ReturnItem' => 'Use Spree::ReturnLineItem, Spree::ExchangeLineItem or Spree::ClaimLineItem.',
+    # Removed APIs by the release that removed them.
+    REMOVED = {
+      '6.0' => {
+        # Checkout, orders and carts
+        **expand(%w[Spree::Order Spree::Cart], '#', ORDER_AND_CART),
+        **expand(%w[Spree::Order Spree::Cart], '.', ORDER_AND_CART_CLASS),
+        'Spree::Order#line_item_adjustments' => 'Use line_item_tax_lines and line_item_discounts.',
+        'Spree::Order#shipment_adjustments' => 'Use fulfillment_tax_lines and fulfillment_discounts.',
+        **expand(%w[Spree::Order], '#', %w[return_authorizations customer_returns reimbursements].index_with(RETURNS)),
+        'Spree::Order::Checkout' => CHECKOUT_CUSTOMIZATION,
+        'Spree::OrderContents' => 'Change cart items with Spree.cart_add_item_workflow or Spree::Dependencies.cart_upsert_items_workflow.',
+        'Spree::Adjustment' => 'Adjustments are typed rows: Spree::TaxLine, Spree::Discount and Spree::Fee.',
+        'Spree::LineItem#adjustments' => ADJUSTMENTS,
+        'Spree::Fulfillment#adjustments' => ADJUSTMENTS,
+        'Spree::StateChange' => STATE_CHANGES,
+        'Spree::LogEntry' => STATE_CHANGES,
+        'Spree::Payment#state_changes' => STATE_CHANGES,
+        'Spree::Payment#log_entries' => STATE_CHANGES,
+        'Spree::Fulfillment#state_changes' => STATE_CHANGES,
 
-      # Catalog and prices
-      **VARIANT_AND_PRODUCT.flat_map { |name, hint| [["Spree::Variant##{name}", hint], ["Spree::Product##{name}", hint]] }.to_h,
-      'Spree::Product#featured_image' => PRIMARY_MEDIA,
-      'Spree::DefaultPrice' => 'Use variant.price_in(currency) and variant.set_price(currency, amount).',
-      'Spree::VatPriceCalculation' => 'Use price_in(currency).amount: prices include tax per market.',
-      'Spree::Product.with_option' => 'Use with_option_value.',
-      'Spree::Product.in_name' => SEARCH,
-      'Spree::Product.in_name_or_keywords' => SEARCH,
-      'Spree::Product.in_name_or_description' => SEARCH,
-      'Spree::Product.with_ids' => 'Use where(id: ids).',
-      'Spree::Product.add_search_scope' => 'Declare a plain scope :name, -> { ... }.',
-      'Spree::Product.multi_search' => SEARCH,
-      'Spree::Variant.multi_search' => SEARCH,
-      'Spree::OptionType#color?' => 'Use color_swatch?.',
-      'Spree::Category#set_store' => 'Use ensure_store.',
-      'Spree::Category.for_taxonomy' => 'Use for_store.',
+        # Returns
+        'Spree::ReturnAuthorization' => 'Use Spree::Return, or Spree::Exchange when different items go out.',
+        'Spree::CustomerReturn' => 'Use Spree::Return: receiving is a status on the same record.',
+        'Spree::Reimbursement' => 'Refund a return with the Spree::Returns::Refund workflow.',
+        'Spree::ReimbursementType' => 'Refund a return with the Spree::Returns::Refund workflow.',
+        'Spree::ReturnItem' => 'Use Spree::ReturnLineItem, Spree::ExchangeLineItem or Spree::ClaimLineItem.',
 
-      # Stores, addresses, users and permissions
-      'Spree::Store#admin_users' => 'Use users.',
-      'Spree::Store#supported_shipping_zones' => 'Use countries_with_shipping_coverage.',
-      'Spree::Address#user_default_billing?' => 'Use is_default_billing?.',
-      'Spree::Address#user_default_shipping?' => 'Use is_default_shipping?.',
-      'Spree.searcher_class' => 'Use Spree.search_provider.',
-      'Spree::PermittedAttributes' => 'Add writable API attributes with Spree::Product.additional_permitted_attributes += [...] ' \
-                                      '(any model; always +=).',
-      'Spree::Preference' => 'Preferences live on each model in a JSON preferences column.',
-      'Spree::User' => 'Use Spree.customer_class for customers and Spree.admin_user_class for staff.',
+        # Catalog and prices
+        **expand(%w[Spree::Variant Spree::Product], '#', VARIANT_AND_PRODUCT),
+        'Spree::Variant#price=' => 'Use set_price(currency, amount).',
+        'Spree::Variant#compare_at_price=' => 'Use set_price(currency, amount, compare_at_amount).',
+        'Spree::Product#price=' => 'Set prices on a variant: default_variant.set_price(currency, amount).',
+        'Spree::Product#compare_at_price=' => 'Set prices on a variant: default_variant.set_price(currency, amount, compare_at_amount).',
+        'Spree::Product#featured_image' => PRIMARY_MEDIA,
+        'Spree::DefaultPrice' => 'Use variant.price_in(currency) and variant.set_price(currency, amount).',
+        'Spree::VatPriceCalculation' => 'Use price_in(currency).amount: prices include tax per market.',
+        'Spree::Product.with_option' => 'Use with_option_value.',
+        **expand(%w[Spree::Product], '.', %w[in_name in_name_or_keywords in_name_or_description].index_with(SEARCH)),
+        'Spree::Product.with_ids' => 'Use where(id: ids).',
+        'Spree::Product.add_search_scope' => 'Declare a plain scope :name, -> { ... }.',
+        **expand(%w[Spree::Product Spree::Variant], '.', { 'multi_search' => SEARCH }),
+        'Spree::OptionType#color?' => 'Use color_swatch?.',
+        'Spree::Category#set_store' => 'Use ensure_store.',
+        'Spree::Category.for_taxonomy' => 'Use for_store.',
 
-      # Services and screens that are gone
-      'Spree::PromotionHandler::Page' => 'Apply the promotion with a coupon code, or make it automatic.',
-      'Spree::Carts::Empty' => 'Remove items through the Store API cart items endpoints, or delete the cart with Spree.cart_destroy_service.',
-      'Spree::Payments::Create' => 'Use the Store API payments endpoint, Spree::StoreCredits::Apply or Spree.gift_card_apply_workflow.',
-      'Spree::Report' => 'Use reporting queries for aggregates, or a Spree::Export subclass for CSV rows.',
-      'Spree::ReportLineItem' => 'Use reporting queries for aggregates, or a Spree::Export subclass for CSV rows.',
-      'Spree::ImageMethods' => 'Use Active Storage variants with cdn_image_url.',
-      'Spree::Frontend' => 'The Rails storefront is gone. Build the storefront on the Store API (/api/v3/store), ' \
-                           'for example with the Next.js storefront and @spree/sdk.',
-      'Spree::Backend' => 'The Rails admin is gone. The back office is the React Admin Dashboard on the Admin API (/api/v3/admin); ' \
-                          'extend it with dashboard plugins.',
-      'Spree::Api::V2' => 'API v2 is gone. Use the Store API (/api/v3/store) or the Admin API (/api/v3/admin).'
+        # Stores, addresses, users and permissions
+        'Spree::Store#admin_users' => 'Use users.',
+        'Spree::Store#supported_shipping_zones' => 'Use countries_with_shipping_coverage.',
+        'Spree::Address#user_default_billing?' => 'Use is_default_billing?.',
+        'Spree::Address#user_default_shipping?' => 'Use is_default_shipping?.',
+        'Spree.searcher_class' => 'Use Spree.search_provider.',
+        'Spree::PermittedAttributes' => 'Add writable API attributes with Spree::Product.additional_permitted_attributes += [...] ' \
+                                        '(any model; always +=).',
+        'Spree::Preference' => 'Preferences live on each model in a JSON preferences column.',
+        'Spree::User' => 'Use Spree.customer_class for customers and Spree.admin_user_class for staff.',
+
+        # Services and screens that are gone
+        'Spree::PromotionHandler::Page' => 'Apply the promotion with a coupon code, or make it automatic.',
+        'Spree::Carts::Empty' => 'Remove items through the Store API cart items endpoints, or delete the cart with Spree.cart_destroy_service.',
+        'Spree::Payments::Create' => 'Use the Store API payments endpoint, Spree::StoreCredits::Apply or Spree.gift_card_apply_workflow.',
+        'Spree::Report' => REPORTS,
+        'Spree::ReportLineItem' => REPORTS,
+        'Spree::ImageMethods' => 'Use Active Storage variants with cdn_image_url.',
+        'Spree::Frontend' => 'The Rails storefront is gone. Build the storefront on the Store API (/api/v3/store), ' \
+                             'for example with the Next.js storefront and @spree/sdk.',
+        'Spree::Backend' => 'The Rails admin is gone. The back office is the React Admin Dashboard on the Admin API (/api/v3/admin); ' \
+                            'extend it with dashboard plugins.',
+        'Spree::Api::V2' => 'API v2 is gone. Use the Store API (/api/v3/store) or the Admin API (/api/v3/admin).'
+      }.freeze
     }.freeze
 
     module_function
@@ -150,19 +160,26 @@ module Spree
     # @param error [NameError]
     # @return [String, nil] the hint for a removed Spree API, or nil
     def hint_for(error)
-      key, replacement = lookup(error)
+      key = lookup(error)
       return unless key
 
-      "Spree 6.0 removed #{key}. #{replacement}\nUpgrade guide: #{UPGRADE_GUIDE_URL}"
+      version, entries = REMOVED.find { |_release, removed| removed.key?(key) }
+      "Spree #{version} removed #{key}. #{entries[key]}\nUpgrade guide: #{UPGRADE_GUIDES.fetch(version)}"
     rescue StandardError
       nil
     end
 
+    def known?(key)
+      REMOVED.each_value.any? { |entries| entries.key?(key) }
+    end
+
+    # A receiverless call (`state` inside an Order decorator) raises a plain
+    # NameError, so only a capitalized name is treated as a constant.
     def lookup(error)
       name = error.name.to_s
       receiver = error.receiver
 
-      if error.is_a?(NoMethodError)
+      if error.is_a?(NoMethodError) || !name.match?(/\A[A-Z]/)
         method_lookup(receiver, name)
       elsif receiver.is_a?(Module)
         constant_lookup(receiver, name)
@@ -182,18 +199,20 @@ module Spree
     def ancestor_lookup(klass, suffix)
       klass.ancestors.each do |ancestor|
         key = "#{ancestor.name}#{suffix}"
-        return [key, REPLACEMENTS[key]] if REPLACEMENTS.key?(key)
+        return key if known?(key)
       end
       nil
     end
 
-    # A lexical lookup inside Spree code reports its own namespace as the
-    # receiver, so 'Spree::Order::ReturnAuthorization' also tries 'Spree::ReturnAuthorization'.
+    # Code written directly inside the Spree namespace (`module Spree; module
+    # OrderDecorator`) reports its own module as the receiver of a missing
+    # constant, so 'Spree::OrderDecorator::Adjustment' also tries 'Spree::Adjustment'.
+    # Deeper namespaces don't, so a missing Spree::Reporting::Report is not
+    # mistaken for the removed Spree::Report.
     def constant_lookup(receiver, name)
       candidates = receiver == Object ? [name] : ["#{receiver.name}::#{name}"]
-      candidates << "Spree::#{name}" if receiver.name.to_s.start_with?('Spree::')
-      key = candidates.find { |candidate| REPLACEMENTS.key?(candidate) }
-      [key, REPLACEMENTS[key]] if key
+      candidates << "Spree::#{name}" if receiver.name.to_s.match?(/\ASpree::\w+\z/)
+      candidates.find { |candidate| known?(candidate) }
     end
 
     # Prepended to NameError (and so NoMethodError).
