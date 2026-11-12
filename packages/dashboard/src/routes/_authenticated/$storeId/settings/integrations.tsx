@@ -14,6 +14,7 @@ import {
 } from '@spree/dashboard-ui'
 import { PlugIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import type { TFunction } from 'i18next'
 import { type ReactNode, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
@@ -53,7 +54,7 @@ export const Route = createFileRoute('/_authenticated/$storeId/settings/integrat
   component: IntegrationsPage,
 })
 
-function groupLabel(t: (key: string, options?: Record<string, unknown>) => string, group: string) {
+function groupLabel(t: TFunction, group: string) {
   // Groups arrive as open strings from gems, so unknown ones fall back to a
   // capitalized version of the token.
   return t(`admin.integrations.groups.${group}`, {
