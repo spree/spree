@@ -62,6 +62,41 @@ describe.each(APPS)('addApp — $dir', (app) => {
     fs.rmSync(templateDir, { recursive: true, force: true })
   })
 
+  it.each([
+    'https://github.com/spree/dashboard-starter.git',
+    'git@github.com:spree/dashboard-starter.git',
+  ])('clones the git URL %s', async (url) => {
+    vi.mocked(execa).mockImplementationOnce((async (_cmd: string, args: string[]) => {
+      fs.mkdirSync(args[args.length - 1], { recursive: true })
+      return {}
+    }) as never)
+
+    await addApp(ctx(), app, { template: url, install: false })
+
+    expect(execa).toHaveBeenCalledWith('git', [
+      'clone',
+      '--depth',
+      '1',
+      '--',
+      url,
+      expect.any(String),
+    ])
+  })
+
+  it.each(['ext::sh -c touch% /tmp/pwned', 'fd::17', '--upload-pack=touch /tmp/pwned'])(
+    'refuses %s without running git',
+    async (url) => {
+      vi.spyOn(process, 'exit').mockImplementation((code?: number | string | null) => {
+        throw new Error(`process.exit(${code})`)
+      })
+
+      await expect(addApp(ctx(), app, { template: url, install: false })).rejects.toThrow(
+        'process.exit(1)',
+      )
+      expect(execa).not.toHaveBeenCalledWith('git', expect.anything())
+    },
+  )
+
   it('copies the template into the app directory and writes .env.local with the project port', async () => {
     await addApp(ctx(), app, { template: templateDir, install: false })
 

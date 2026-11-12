@@ -402,6 +402,8 @@ function restoreGitignore(dir: string): void {
   if (fs.existsSync(template)) fs.renameSync(template, path.join(dir, '.gitignore'))
 }
 
+const GIT_URL = /^(?:(?:https|ssh|git):\/\/[^\s]+|[\w.-]+@[\w.-]+:[^\s:][^\s]*)$/
+
 /** Git-clone a URL template, or copy a local directory (used in tests/CI). */
 async function fetchTemplate(template: string, dst: string): Promise<void> {
   if (fs.existsSync(template) && fs.statSync(template).isDirectory()) {
@@ -415,6 +417,13 @@ async function fetchTemplate(template: string, dst: string): Promise<void> {
     return
   }
 
+  // Only plain network URLs: git's other transports (`ext::`, `fd::`) can
+  // run commands.
+  if (!GIT_URL.test(template)) {
+    throw new Error(
+      `Not a template: ${template}. Pass a local directory, or an https://, ssh://, git:// or user@host:path git URL.`,
+    )
+  }
   await execa('git', ['clone', '--depth', '1', '--', template, dst])
   fs.rmSync(path.join(dst, '.git'), { recursive: true, force: true })
 }
