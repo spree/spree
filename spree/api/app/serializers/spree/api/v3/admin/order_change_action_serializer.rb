@@ -19,12 +19,7 @@ module Spree
 
           attributes :kind, :quantity, :label, :value_type, :metadata, created_at: :iso8601, updated_at: :iso8601
 
-          attribute :value do |record|
-            next if record.value.nil?
-            next Spree::Money::Rounding.format_decimal(record.value) if record.value_type == 'percent'
-
-            Spree::Money::Rounding.format(record.value, record.order_change.order.currency)
-          end
+          attribute :value, &:formatted_value
 
           attribute :amount do |record|
             Spree::Money::Rounding.format(record.amount, record.order_change.order.currency) unless record.amount.nil?

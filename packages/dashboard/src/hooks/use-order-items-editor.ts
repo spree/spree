@@ -152,8 +152,8 @@ export function useOrderItemsEditor(order: Order | undefined) {
     } catch (err) {
       if (!stillShown()) return false
       if (mapSpreeErrorsToForm(err, form.setError)) return false
-      // The server's reason — an addition out of stock, another change to
-      // the order still open — is what tells the merchant what to do next.
+      // The server's own refusals land on the form above; what reaches here
+      // (a network failure, say) still says what went wrong.
       toastManager.add({
         type: 'error',
         title: t('admin.errors.failed_to_save'),

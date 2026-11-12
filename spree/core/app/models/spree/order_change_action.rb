@@ -47,6 +47,17 @@ module Spree
     validate :discount_is_manual_on_order
     validate :stock_kind_has_post_sale_record
 
+    # What `add_discount` takes off, as a string: money in the order's
+    # currency for a flat discount, a plain rate for a percentage.
+    #
+    # @return [String, nil]
+    def formatted_value
+      return if value.nil?
+      return Spree::Money::Rounding.format_decimal(value) if value_type == 'percent'
+
+      Spree::Money::Rounding.format(value, order_change.order.currency)
+    end
+
     private
 
     # A line item from another order would let one set edit someone else's.

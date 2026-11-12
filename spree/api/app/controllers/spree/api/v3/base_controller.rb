@@ -85,8 +85,9 @@ module Spree
         # Renders a failed service/workflow Result: validation errors become a
         # 422 field-error payload, anything else a plain service error. Shared
         # by both APIs — Store endpoints surface workflow failures (a rejected
-        # return, a vetoed cart add) the same way Admin ones do.
-        def render_result_error(result)
+        # return, a vetoed cart add) the same way Admin ones do. +code+ names
+        # the service error.
+        def render_result_error(result, code: ERROR_CODES[:processing_error])
           error = result.error
           errors = error.respond_to?(:value) ? error.value : error
 
@@ -96,7 +97,7 @@ module Spree
             # The unwrapped value, so a workflow's rejection symbol reaches
             # the branch that translates it rather than the one that prints
             # the wrapper.
-            render_service_error(errors)
+            render_service_error(errors, code: code)
           end
         end
 
