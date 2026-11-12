@@ -221,7 +221,7 @@ export function OrderTotalsCard({
           className={cn('text-xs text-muted-foreground', previewError && 'text-destructive')}
           role={previewError ? 'alert' : undefined}
         >
-          {t(hintKey, hintValues)}
+          {t(hintKey, hintValues ?? {})}
         </p>
       </CardContent>
     </Card>
