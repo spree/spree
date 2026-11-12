@@ -48,6 +48,15 @@ type, and list each item for the user before bumping:
   removed props, renamed fields, anything a plugin or SDK user could call.
 - **Generated artifacts left behind**: a serializer change without its
   `docs/api-reference/*.yaml` regeneration, SDK types out of date.
+- **Removed Ruby APIs**: every public class, method or scope deleted since the
+  tag, including deprecation shims this release drops (the ones marked
+  "Removed in <version>"), needs an entry under the release's version in
+  `Spree::RemovedApis::REMOVED` with what replaced it, an `UPGRADE_GUIDES`
+  link for that version, and a regenerated
+  `docs/developer/upgrades/removed-apis.mdx` (`UPDATE_DOCS=1 pnpm test:rspec
+  core spec/lib/spree/removed_apis_spec.rb`). Search the diff for deleted
+  `def`, `scope` and class files, and for `Removed in <version>` in comments
+  and deprecation messages.
 - **Open pull requests by the user** that are green and could ride along.
 
 A patch release carries only patch changesets for the packages in the
