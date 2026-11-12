@@ -9,7 +9,7 @@ import { registerRailsCommand } from '../src/commands/rails'
 import { registerRakeCommand } from '../src/commands/rake'
 import { registerRoutesCommand } from '../src/commands/routes'
 import { runsFromSource } from '../src/context'
-import { dockerComposeExecOrRun } from '../src/docker'
+import { dockerComposeExecOrRun, dockerComposeStream } from '../src/docker'
 
 vi.mock('../src/context', async (importOriginal) => ({
   ...(await importOriginal<typeof import('../src/context')>()),
@@ -32,6 +32,7 @@ vi.mock('../src/commands/add', () => ({
 
 vi.mock('../src/docker', () => ({
   dockerComposeExecOrRun: vi.fn().mockResolvedValue(undefined),
+  dockerComposeStream: vi.fn().mockResolvedValue(undefined),
 }))
 
 async function run(argv: string[]): Promise<void> {
@@ -140,11 +141,13 @@ describe('spree generate', () => {
     [['generate', 'spree:install'], ['spree:install']],
     [['generate', 'spree_stripe:install'], ['spree_stripe:install']],
   ])('spree %j runs without a notice', async (argv, generatorArgs) => {
+    vi.spyOn(console, 'log').mockImplementation(() => {})
     await run(argv)
 
-    expect(dockerComposeExecOrRun).toHaveBeenCalledWith(
+    expect(dockerComposeStream).toHaveBeenCalledWith(
       ['bin/rails', 'generate', ...generatorArgs],
       '/proj',
+      { onOutput: expect.any(Function) },
     )
     expect(stderr).not.toHaveBeenCalled()
     expect(ejectProject).not.toHaveBeenCalled()
@@ -213,6 +216,7 @@ describe('spree generate on a project on the prebuilt image', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     vi.mocked(runsFromSource).mockReturnValue(false)
+    vi.spyOn(console, 'log').mockImplementation(() => {})
     vi.spyOn(process, 'exit').mockImplementation((code?: number | string | null) => {
       throw new Error(`process.exit(${code})`)
     })
@@ -245,9 +249,10 @@ describe('spree generate on a project on the prebuilt image', () => {
     await run(['generate', 'model_decorator', 'Product'])
 
     expect(ejectProject).toHaveBeenCalledWith('/proj')
-    expect(dockerComposeExecOrRun).toHaveBeenCalledWith(
+    expect(dockerComposeStream).toHaveBeenCalledWith(
       ['bin/rails', 'generate', 'spree:model_decorator', 'Product'],
       '/proj',
+      { onOutput: expect.any(Function) },
     )
   })
 
@@ -258,9 +263,10 @@ describe('spree generate on a project on the prebuilt image', () => {
 
     expect(p.confirm).not.toHaveBeenCalled()
     expect(ejectProject).toHaveBeenCalledWith('/proj')
-    expect(dockerComposeExecOrRun).toHaveBeenCalledWith(
+    expect(dockerComposeStream).toHaveBeenCalledWith(
       ['bin/rails', 'generate', 'migration', 'AddX', '--force'],
       '/proj',
+      { onOutput: expect.any(Function) },
     )
   })
 
@@ -283,5 +289,6 @@ describe('spree generate on a project on the prebuilt image', () => {
     await expect(run(['generate', 'model_decorator', 'Product'])).rejects.toThrow('process.exit(0)')
     expect(ejectProject).not.toHaveBeenCalled()
     expect(dockerComposeExecOrRun).not.toHaveBeenCalled()
+    expect(dockerComposeStream).not.toHaveBeenCalled()
   })
 })
