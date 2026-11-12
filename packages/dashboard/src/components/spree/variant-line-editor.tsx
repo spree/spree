@@ -240,10 +240,13 @@ export function VariantLineEditor({
                       <InputGroupAddon>
                         <InputGroupText>{currency ?? ''}</InputGroupText>
                       </InputGroupAddon>
+                      {/* Text, not a number input: browsers disagree on what a
+                          comma means there, and Safari in English reads
+                          "3,80" as 380. The form reads it in the admin's own
+                          format instead. */}
                       <InputGroupInput
-                        type="number"
-                        min={0}
-                        step="any"
+                        type="text"
+                        inputMode="decimal"
                         value={unitCost ?? ''}
                         onChange={(event) => update(variant.id, { unitCost: event.target.value })}
                         className="text-right tabular-nums"
