@@ -80653,8 +80653,9 @@ components:
           description: 'The price list this catalog prices through, written inline:
             an object creates the owned list or updates it. Null deletes the list
             (a soft delete). Omit the key, or send `{}`, to leave the pricing alone.
-            A catalog with an empty assortment prices without hiding anything; curate
-            or import products to make it restrictive.'
+            An existing price list cannot be attached by id: the list is written here
+            and owned by this catalog. A catalog with an empty assortment prices without
+            hiding anything; curate or import products to make it restrictive.'
           nullable: true
       required:
       - name
@@ -80783,8 +80784,9 @@ components:
           description: 'The price list this catalog prices through, written inline:
             an object creates the owned list or updates it. Null deletes the list
             (a soft delete). Omit the key, or send `{}`, to leave the pricing alone.
-            A catalog with an empty assortment prices without hiding anything; curate
-            or import products to make it restrictive.'
+            An existing price list cannot be attached by id: the list is written here
+            and owned by this catalog. A catalog with an empty assortment prices without
+            hiding anything; curate or import products to make it restrictive.'
           nullable: true
     CategoryCreateParams:
       type: object

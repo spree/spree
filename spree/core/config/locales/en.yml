@@ -707,6 +707,7 @@ en:
       tax_unavailable: Tax could not be calculated. Please try again.
     catalogs:
       no_price_list_to_import: This catalog has no price list to import products from.
+      price_list_must_be_inline: A catalog cannot use an existing price list. Send the price list's settings as an object to create the catalog's own list.
       product_not_in_store: One of those products belongs to another store.
     categories: Categories
     category: Category

@@ -180,6 +180,35 @@ RSpec.describe Spree::Api::V3::Admin::CatalogsController, type: :controller do
 
       expect(json_response['price_list']['price_adjustment_percentage']).to eq('-10')
     end
+
+    context 'with an existing price list given by id' do
+      let!(:existing_list) { create(:price_list, store: store, name: 'Trade') }
+
+      it 'refuses to create the catalog rather than dropping the list' do
+        expect do
+          post :create, params: { name: 'Trade', price_list: existing_list.prefixed_id }, as: :json
+        end.not_to change(Spree::Catalog, :count)
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('validation_error')
+        expect(json_response['error']['details']['price_list']).to be_present
+        expect(existing_list.reload.catalog_id).to be_nil
+      end
+
+      it 'refuses the update and leaves the catalog unpriced' do
+        patch :update, params: { id: catalog.prefixed_id, price_list: existing_list.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(catalog.reload.price_list).to be_nil
+      end
+
+      it 'refuses a price_list_id' do
+        patch :update, params: { id: catalog.prefixed_id, price_list_id: existing_list.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(existing_list.reload.catalog_id).to be_nil
+      end
+    end
   end
 
   describe 'GET #index' do
