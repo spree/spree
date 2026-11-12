@@ -190,12 +190,9 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
   const [file, setFile] = useState<FileUploadValue>(EMPTY_FILE_UPLOAD_VALUE)
   const [fields, setFields] = useState<Record<string, string>>({})
 
-  // The billing address edits it, and a complete-profile line reads it to
-  // pick which settings page to link to. The returns address does not: it
+  // Only the billing address edits it. The returns address does not: it
   // lives on a stock location, which its own card fetches.
-  const { data: profile } = useProfile({
-    enabled: requirement.kind === 'billing_address' || requirement.kind === 'complete_profile',
-  })
+  const { data: profile } = useProfile({ enabled: requirement.kind === 'billing_address' })
 
   const invalidate = () =>
     queryClient.invalidateQueries({ queryKey: ['seller', sellerId, 'onboarding'] })
@@ -304,16 +301,10 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
     )
   }
 
-  // The contact email is edited on General, everything else on Profile. A
-  // marketplace only asks for the email when it opts in, so the step points
-  // to General only once the public fields are filled and the email is the
-  // one thing left that it could be waiting for.
+  // The contact email is edited on General, everything else on Profile; the
+  // server says when the email is the only thing a profile still lacks.
   const route =
-    requirement.kind === 'complete_profile' &&
-    profile &&
-    !profile.contact_email &&
-    profile.about &&
-    profile.logo_url
+    requirement.blocker?.state === 'contact_email_missing'
       ? '/$sellerId/settings/general'
       : panelRoute(requirement.kind)
   return (

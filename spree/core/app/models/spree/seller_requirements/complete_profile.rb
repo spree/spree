@@ -18,13 +18,15 @@ module Spree
 
       # The checklist line only says "complete your profile", so the seller
       # is told which ticked fields are still empty — the contact email in
-      # particular lives on a different settings page than the rest.
+      # particular lives on a different settings page than the rest, so when
+      # it is the only gap the state says so and a panel can link there.
       def blocker(seller)
         missing = missing_fields(seller)
         return nil if missing.empty? || latest_submission(seller)&.waived?
 
         fields = missing.map { |field| I18n.t("spree.seller_requirement_types.complete_profile.fields.#{field}") }
-        { state: 'incomplete', message: I18n.t('spree.seller_requirement_types.complete_profile.missing', fields: fields.to_sentence) }
+        state = missing == [:contact_email] ? 'contact_email_missing' : 'incomplete'
+        { state: state, message: I18n.t('spree.seller_requirement_types.complete_profile.missing', fields: fields.to_sentence) }
       end
 
       private

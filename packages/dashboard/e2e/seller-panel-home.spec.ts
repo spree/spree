@@ -4,6 +4,8 @@ import {
   FIXTURE_SELLER_PASSWORD,
   FIXTURE_SELLER_USER_EMAIL,
   FIXTURE_SELLER_WRITER_EMAIL,
+  login,
+  rowButton,
   SELLER_PANEL,
   sellerLogin,
 } from './helpers'
@@ -138,5 +140,79 @@ test.describe('seller panel — setup', () => {
     await page.locator('#seller-about').pressSequentially('Hand-thrown ceramics.')
     await save.click()
     await expect(page.getByText(/profile saved/i).first()).toBeVisible({ timeout: 15_000 })
+  })
+
+  // The contact email is opt-in, and it is edited on General rather than on
+  // Profile, so a step waiting only for it links there.
+  test('complete profile links to General when the contact email is all that is left', async ({
+    page,
+    browser,
+  }) => {
+    const creds = await login(page)
+    const sheet = page.getByRole('dialog')
+    const requireEmail = sheet.getByRole('switch', { name: /require contact email/i })
+    async function setRequireEmail(on: boolean) {
+      await page.goto(`/${creds.store_id}/settings/seller-requirements`)
+      await rowButton(page, 'Complete profile').click()
+      await expect(sheet).toBeVisible({ timeout: 15_000 })
+      if ((await requireEmail.getAttribute('aria-checked')) !== String(on))
+        await requireEmail.click()
+      await sheet.getByRole('button', { name: /^save$/i }).click()
+      await expect(sheet).toHaveCount(0, { timeout: 15_000 })
+    }
+    await setRequireEmail(true)
+
+    const context = await browser.newContext()
+    const seller = await context.newPage()
+    try {
+      const home = await sellerLogin(seller, FIXTURE_SELLER_WRITER_EMAIL)
+      const save = seller.getByRole('button', { name: /^save$/i }).first()
+
+      // Everything public filled in, so the email is the only gap.
+      await seller.goto(`${home}/settings/profile`)
+      await seller.locator('#seller-about').click()
+      await seller.keyboard.press('ControlOrMeta+A')
+      await seller.locator('#seller-about').pressSequentially('Hand-thrown ceramics.')
+      await seller
+        .locator('input[type=file]')
+        .first()
+        .setInputFiles({
+          name: 'logo.png',
+          mimeType: 'image/png',
+          buffer: Buffer.from(
+            'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==',
+            'base64',
+          ),
+        })
+      await expect(save).toBeEnabled({ timeout: 15_000 })
+      await save.click()
+      await expect(seller.getByText(/profile saved/i)).toBeVisible({ timeout: 15_000 })
+
+      await seller.goto(`${home}/settings/general`)
+      await seller.locator('#seller-contact-email').fill('')
+      if (await save.isEnabled()) {
+        await save.click()
+        await expect(seller.getByText(/profile saved/i).first()).toBeVisible({ timeout: 15_000 })
+      }
+
+      await seller.goto(`${home}/onboarding`)
+      const step = seller.getByRole('button', { name: /complete profile/i })
+      await expect(step).toBeVisible({ timeout: 15_000 })
+      if ((await step.getAttribute('aria-expanded')) !== 'true') await step.click()
+      await expect(seller.getByText(/^still missing: a contact email\.$/i)).toBeVisible()
+      await seller
+        .getByRole('link', { name: /^go there$/i })
+        .first()
+        .click()
+      await expect(seller).toHaveURL(/\/settings\/general$/, { timeout: 15_000 })
+
+      // The panel seller is shared across this shard, so put the email back.
+      await seller.locator('#seller-contact-email').fill('panel-seller@example.com')
+      await save.click()
+      await expect(seller.getByText(/profile saved/i).first()).toBeVisible({ timeout: 15_000 })
+    } finally {
+      await context.close()
+      await setRequireEmail(false)
+    }
   })
 })

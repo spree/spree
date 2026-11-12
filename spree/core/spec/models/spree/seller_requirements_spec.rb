@@ -127,8 +127,7 @@ RSpec.describe 'seller requirement kinds', type: :model do
     let(:requirement) { create(:complete_profile_requirement, store: store) }
 
     it 'asks for the fields the operator ticked' do
-      requirement.update!(preferred_require_about: true, preferred_require_logo: false,
-                          preferred_require_contact_email: false)
+      requirement.update!(preferred_require_about: true, preferred_require_logo: false)
 
       expect(requirement.satisfied?(seller)).to be false
 
@@ -164,7 +163,13 @@ RSpec.describe 'seller requirement kinds', type: :model do
         state: 'incomplete', message: 'Still missing: a description and a contact email.'
       )
 
-      seller.update!(about: 'We sell things.', contact_email: 'hello@example.com')
+      seller.update!(about: 'We sell things.')
+
+      # The email is edited on a different page than the rest of the profile,
+      # so the panel needs to know when it is the only gap left.
+      expect(requirement.blocker(seller)[:state]).to eq('contact_email_missing')
+
+      seller.update!(contact_email: 'hello@example.com')
 
       expect(requirement.blocker(seller)).to be_nil
     end
