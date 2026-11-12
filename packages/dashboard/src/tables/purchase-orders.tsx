@@ -108,6 +108,7 @@ defineTable<PurchaseOrder>('purchase-orders', {
       key: 'cancel_by',
       label: i18n.t('admin.purchase_orders.columns.cancel_by'),
       sortable: true,
+      default: false,
       filterable: true,
       filterType: 'date',
       className: 'text-base text-muted-foreground whitespace-nowrap',
@@ -121,6 +122,7 @@ defineTable<PurchaseOrder>('purchase-orders', {
       ransackAttribute: 'overdue',
       ransackScope: true,
       sortable: false,
+      default: false,
       filterable: true,
       filterType: 'boolean',
       booleanLabels: {
@@ -141,6 +143,7 @@ defineTable<PurchaseOrder>('purchase-orders', {
       ransackAttribute: 'past_cancel_by',
       ransackScope: true,
       sortable: false,
+      default: false,
       filterable: true,
       filterType: 'boolean',
       booleanLabels: {
@@ -160,6 +163,7 @@ defineTable<PurchaseOrder>('purchase-orders', {
       key: 'created_at',
       label: i18n.t('admin.fields.created_at.label'),
       sortable: true,
+      default: false,
       filterable: true,
       filterType: 'date',
       className: 'text-base text-muted-foreground whitespace-nowrap',
