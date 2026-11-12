@@ -74,6 +74,24 @@ RSpec.describe 'Spree::Sellers workflows' do
     it 'refuses one that has not been invited yet' do
       expect(described_class.call(seller: seller)).to be_failure
     end
+
+    it 'admits one that has not been invited yet when the operator overrides' do
+      expect(described_class.call(seller: seller, override_requirements: true)).to be_success
+      expect(seller.reload).to be_approved
+    end
+
+    it 'admits one whose invitation is still open when the operator overrides' do
+      seller.update!(status: 'invited')
+
+      expect(described_class.call(seller: seller, override_requirements: true)).to be_success
+      expect(seller.reload).to be_approved
+    end
+
+    it 'still refuses a canceled seller, override or not' do
+      seller.update!(status: 'canceled')
+
+      expect(described_class.call(seller: seller, override_requirements: true)).to be_failure
+    end
   end
 
   describe Spree::Sellers::Suspend do
