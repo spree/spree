@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { invitationAcceptancePath, login, SELLER_PANEL } from './helpers'
+import { invitationAcceptancePath, login, SELLER_PANEL, sendSellerInvitation } from './helpers'
 
 /**
  * Creates a seller, invites someone, and accepts on the panel — returning the
@@ -26,22 +26,8 @@ async function signInAsNewSeller(
     .click()
   await page.locator('#invite-email').fill(`e2e-catalog-${suffix}@example.com`)
 
-  const [listResponse] = await Promise.all([
-    page.waitForResponse(
-      (res) =>
-        /\/api\/v3\/admin\/sellers\/[^/]+\/invitations$/.test(res.url()) &&
-        res.request().method() === 'GET' &&
-        res.status() === 200,
-      { timeout: 20_000 },
-    ),
-    page.getByRole('button', { name: /send invitation/i }).click(),
-  ])
-  const { data } = (await listResponse.json()) as { data: Array<{ id: string }> }
-  const acceptancePath = await invitationAcceptancePath(
-    page,
-    creds,
-    `${new URL(listResponse.url()).pathname}/${data[0].id}`,
-  )
+  const invitationPath = await sendSellerInvitation(page)
+  const acceptancePath = await invitationAcceptancePath(page, creds, invitationPath)
 
   const context = await browser.newContext()
   const sellerPage = await context.newPage()

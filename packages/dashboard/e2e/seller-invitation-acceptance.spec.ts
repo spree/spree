@@ -10,6 +10,7 @@ import {
   SELLER_PANEL,
   seedRecord,
   sellerLogin,
+  sendSellerInvitation,
 } from './helpers'
 
 // The seller panel is its own app on its own origin (see playwright.config.ts),
@@ -130,26 +131,12 @@ test.describe('seller invitation lifecycle', () => {
     // than shown, so no DOM signal carries it. The new invitation's id comes
     // off the team card's own refetch; its link is then fetched with the
     // login's access token.
-    const [listResponse] = await Promise.all([
-      page.waitForResponse(
-        (res) =>
-          /\/api\/v3\/admin\/sellers\/[^/]+\/invitations$/.test(res.url()) &&
-          res.request().method() === 'GET' &&
-          res.status() === 200,
-        { timeout: 20_000 },
-      ),
-      page.getByRole('button', { name: /send invitation/i }).click(),
-    ])
+    const invitationPath = await sendSellerInvitation(page)
 
     // The invitation appears on the seller's team card once it is sent.
     await expect(page.getByText(inviteeEmail)).toBeVisible({ timeout: 15_000 })
 
-    const { data } = (await listResponse.json()) as { data: Array<{ id: string }> }
-    const acceptancePath = await invitationAcceptancePath(
-      page,
-      creds,
-      `${new URL(listResponse.url()).pathname}/${data[0].id}`,
-    )
+    const acceptancePath = await invitationAcceptancePath(page, creds, invitationPath)
     expect(acceptancePath).toMatch(/\/accept-invitation\//)
 
     // A fresh context so the operator's refresh cookie never reaches the panel.

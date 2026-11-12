@@ -634,6 +634,28 @@ export async function invitationAcceptancePath(
 }
 
 /**
+ * Clicks Send invitation in the seller's invite dialog and returns the API path
+ * of the invitation it created. The page's own first read of the invitation
+ * list can still be in flight when Send is clicked, and it comes back empty, so
+ * this waits for the list that holds the invitation just sent.
+ */
+export async function sendSellerInvitation(page: Page): Promise<string> {
+  const [listResponse] = await Promise.all([
+    page.waitForResponse(
+      async (res) =>
+        /\/api\/v3\/admin\/sellers\/[^/]+\/invitations$/.test(res.url()) &&
+        res.request().method() === 'GET' &&
+        res.status() === 200 &&
+        ((await res.json()) as { data: unknown[] }).data.length > 0,
+      { timeout: 20_000 },
+    ),
+    page.getByRole('button', { name: /send invitation/i }).click(),
+  ])
+  const { data } = (await listResponse.json()) as { data: Array<{ id: string }> }
+  return `${new URL(listResponse.url()).pathname}/${data[0].id}`
+}
+
+/**
  * A placed, paid and shipped order for the fixture customer, built through the
  * API — returns and claims can only be raised against goods that left. Paid
  * with store credit, because that is the payment method every seeded store
