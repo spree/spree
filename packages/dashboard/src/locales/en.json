@@ -5673,7 +5673,8 @@
         "taxes": "Tax categories, rates and exemption reasons",
         "ai_agents": "AI agents with access to this store",
         "oauth_clients": "Register and configure OAuth clients",
-        "storefront": "Storefront URL, who can browse, checkout and address fields"
+        "storefront": "Storefront URL, who can browse, checkout and address fields",
+        "system_info": "Versions and setup to attach to a bug report"
       },
       "groups": {
         "audit": "Audit",
@@ -5716,7 +5717,8 @@
         "taxes": "Taxes",
         "ai_agents": "AI Agents",
         "oauth_clients": "OAuth clients",
-        "storefront": "Storefront & checkout"
+        "storefront": "Storefront & checkout",
+        "system_info": "System info"
       },
       "breadcrumbs": {
         "marketplace": "Marketplace"
@@ -6906,6 +6908,42 @@
       "run_label": "Run this",
       "copy_command": "Copy command",
       "cli_then_sign_in": "It will open your browser to sign in and approve what the agent may do."
+    },
+    "system_info": {
+      "title": "System info",
+      "unavailable": "You need permission to manage the store to see system info.",
+      "load_failed": "The report could not be loaded.",
+      "copy": "Copy as Markdown",
+      "copied": "Copied",
+      "report_issue": "Report an issue on GitHub"
+    },
+    "feedback": {
+      "title": "Send feedback",
+      "description": "Goes to the Spree team on GitHub. Nothing is sent until you post it there.",
+      "kinds": {
+        "bug": "Report a bug",
+        "idea": "Suggest an idea",
+        "other": "Something else"
+      },
+      "message": {
+        "bug": "What happened?",
+        "idea": "What would you like Spree to do?",
+        "other": "Your feedback"
+      },
+      "placeholder": {
+        "bug": "What were you trying to do, and what went wrong?",
+        "idea": "What problem would it solve for you?",
+        "other": "Anything you'd like the Spree team to know"
+      },
+      "failed_requests": "Include recent failed requests ({{count}})",
+      "failed_requests_hint": "Method, path, status, error code and request ID only. Never the request or response bodies.",
+      "system_info_included": "Anonymised system info is included.",
+      "system_info_unavailable": "System info isn't included: it needs permission to manage the store.",
+      "review_system_info": "Review system info",
+      "open_issue": "Open issue on GitHub",
+      "open_discussion": "Open discussion on GitHub",
+      "copied_to_paste": "Too long for a link, so it was copied. Paste it on GitHub.",
+      "copy_failed": "Too long for a link, and copying it failed. Shorten the message, or copy the report from Settings → System info."
     }
   }
 }

@@ -5673,7 +5673,8 @@
         "taxes": "Steuerkategorien, Steuersätze und Befreiungsgründe",
         "ai_agents": "KI-Agenten mit Zugriff auf diesen Shop",
         "oauth_clients": "OAuth-Clients registrieren und konfigurieren",
-        "storefront": "Shop-URL, wer stöbern darf, Kasse und Adressfelder"
+        "storefront": "Shop-URL, wer stöbern darf, Kasse und Adressfelder",
+        "system_info": "Versionen und Einrichtung für einen Fehlerbericht"
       },
       "groups": {
         "audit": "Audit",
@@ -5716,7 +5717,8 @@
         "taxes": "Steuern",
         "ai_agents": "KI-Agenten",
         "oauth_clients": "OAuth-Clients",
-        "storefront": "Shop & Kasse"
+        "storefront": "Shop & Kasse",
+        "system_info": "Systeminformationen"
       },
       "breadcrumbs": {
         "marketplace": "Marktplatz"
@@ -6906,6 +6908,42 @@
       "run_label": "Diesen Befehl ausführen",
       "copy_command": "Befehl kopieren",
       "cli_then_sign_in": "Es öffnet den Browser zum Anmelden und Genehmigen dessen, was der Agent tun darf."
+    },
+    "system_info": {
+      "title": "Systeminformationen",
+      "unavailable": "Du benötigst die Berechtigung, den Shop zu verwalten, um Systeminformationen zu sehen.",
+      "load_failed": "Der Bericht konnte nicht geladen werden.",
+      "copy": "Als Markdown kopieren",
+      "copied": "Kopiert",
+      "report_issue": "Problem auf GitHub melden"
+    },
+    "feedback": {
+      "title": "Feedback senden",
+      "description": "Geht an das Spree-Team auf GitHub. Es wird nichts gesendet, bis du es dort veröffentlichst.",
+      "kinds": {
+        "bug": "Fehler melden",
+        "idea": "Idee vorschlagen",
+        "other": "Etwas anderes"
+      },
+      "message": {
+        "bug": "Was ist passiert?",
+        "idea": "Was soll Spree können?",
+        "other": "Dein Feedback"
+      },
+      "placeholder": {
+        "bug": "Was wolltest du tun, und was ist schiefgelaufen?",
+        "idea": "Welches Problem würde es für dich lösen?",
+        "other": "Alles, was das Spree-Team wissen sollte"
+      },
+      "failed_requests": "Letzte fehlgeschlagene Anfragen einschließen ({{count}})",
+      "failed_requests_hint": "Nur Methode, Pfad, Status, Fehlercode und Request-ID. Niemals Anfrage- oder Antwortinhalte.",
+      "system_info_included": "Anonymisierte Systeminformationen sind enthalten.",
+      "system_info_unavailable": "Systeminformationen sind nicht enthalten: Dafür ist die Berechtigung zum Verwalten des Shops nötig.",
+      "review_system_info": "Systeminformationen ansehen",
+      "open_issue": "Issue auf GitHub öffnen",
+      "open_discussion": "Diskussion auf GitHub öffnen",
+      "copied_to_paste": "Zu lang für einen Link, daher kopiert. Füge es auf GitHub ein.",
+      "copy_failed": "Zu lang für einen Link, und das Kopieren ist fehlgeschlagen. Kürze die Nachricht oder kopiere den Bericht unter Einstellungen → Systeminfo."
     }
   }
 }

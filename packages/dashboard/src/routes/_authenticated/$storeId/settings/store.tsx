@@ -353,6 +353,8 @@ function StoreSettingsForm({ store }: { store: Store }) {
           header={
             <PageHeader
               docsPath="settings/store-details"
+              resource={store}
+              endpoint="/api/v3/admin/store"
               title={t('admin.pages.settings.store.title')}
               description={t('admin.pages.settings.store.subtitle')}
               actions={

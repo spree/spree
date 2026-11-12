@@ -61,7 +61,6 @@ import {
   useMarkStockTransferReady,
   useStockTransfer,
 } from '../../../../../hooks/use-stock-transfers'
-import { spreeJsonLinkResolver } from '../../../../../lib/json-link-resolver'
 import { isClosed, isInFlight } from '../../../../../schemas/inventory-operations'
 
 export const Route = createFileRoute('/_authenticated/$storeId/transfers/$transferId/')({
@@ -576,7 +575,6 @@ function TransferHeader({ transfer }: { transfer: StockTransfer }) {
           title: transfer.number,
           fetch: () => adminClient.stockTransfers.get(transfer.id, { expand: ['items'] }),
           endpoint: `/api/v3/admin/stock_transfers/${transfer.id}`,
-          resolveLink: spreeJsonLinkResolver(storeId),
         }}
       />
     </>

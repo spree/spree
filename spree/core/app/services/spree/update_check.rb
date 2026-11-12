@@ -21,17 +21,6 @@ module Spree
     # The read timeout applies to each read, not the whole response, so a
     # slowly trickling answer needs an overall deadline as well.
     TOTAL_TIMEOUT = 2
-    # Order-of-magnitude buckets: enough to tell a hobby install from a large
-    # merchant, never an exact figure.
-    BUCKETS = {
-      0..0 => '0',
-      1..9 => '1-9',
-      10..99 => '10-99',
-      100..999 => '100-999',
-      1_000..9_999 => '1k-9k',
-      10_000..99_999 => '10k-99k'
-    }.freeze
-    LARGEST_BUCKET = '100k+'.freeze
 
     class << self
       # Always false in the test environment and on CI servers (which set
@@ -77,13 +66,13 @@ module Spree
           install_id: Spree.install_id,
           ruby: RUBY_VERSION,
           rails: Rails.version,
-          database: ActiveRecord::Base.connection_db_config.adapter,
-          gems: Gem.loaded_specs.keys.grep(/\Aspree_/).sort.join(','),
-          dashboard: dashboard_served?,
-          stores: bucket(Spree::Store.count),
-          products: bucket(Spree::Product.count),
-          orders: bucket(Spree::Order.complete.count),
-          sellers: seller_bucket
+          database: Diagnostics::Stack.database,
+          gems: Diagnostics::Stack.spree_gems.keys.join(','),
+          dashboard: Diagnostics::Stack.dashboard_served?,
+          stores: Diagnostics::Stack.bucket(Spree::Store.count),
+          products: Diagnostics::Stack.bucket(Spree::Product.count),
+          orders: Diagnostics::Stack.bucket(Spree::Order.complete.count),
+          sellers: Diagnostics::Stack.seller_bucket
         }.compact
       end
 
@@ -140,19 +129,6 @@ module Spree
         Time.iso8601(value.to_s)
       rescue ArgumentError
         nil
-      end
-
-      def bucket(count)
-        BUCKETS.find { |range, _| range.cover?(count) }&.last || LARGEST_BUCKET
-      end
-
-      def seller_bucket
-        count = Spree::Seller.count
-        bucket(count) if count.positive?
-      end
-
-      def dashboard_served?
-        (defined?(Spree::Dashboard) && Spree::Dashboard.dist_path.present?) || Spree::Config.dashboard_url.present?
       end
 
       def env_flag?(name)

@@ -37,7 +37,6 @@
     },
     "account": {
       "community": "Społeczność",
-      "contact_support": "Skontaktuj się z pomocą",
       "documentation": "Dokumentacja",
       "edit_profile": "Edytuj profil",
       "language": {
@@ -45,8 +44,8 @@
         "update_failed": "Nie udało się zapisać preferencji języka. Spróbuj ponownie."
       },
       "log_out": "Wyloguj się",
-      "preferences": "Preferencje",
-      "view_store": "Zobacz sklep"
+      "report_issue": "Zgłoś problem",
+      "send_feedback": "Wyślij opinię"
     },
     "actions": {
       "actions_menu": "Akcje",
@@ -348,7 +347,8 @@
       "json_preview_drawer": {
         "collapse_depth": "Głębokość zwijania",
         "copied": "Skopiowano",
-        "copy_all": "Kopiuj wszystko",
+        "copy_curl": "Kopiuj jako curl",
+        "copy_json": "Kopiuj JSON",
         "depth": "Głębokość {{level}}",
         "failed_to_load": "Nie udało się załadować: {{message}}",
         "open_raw": "Otwórz surową odpowiedź",
@@ -514,6 +514,40 @@
         "variants_many": "{{count}} wariantów",
         "variants_one": "{{count}} wariant",
         "variants_other": "{{count}} wariantów"
+      },
+      "developer_inspector": {
+        "title": "Narzędzia deweloperskie",
+        "description": "Żądania do Admin API z tej karty, przechowywane tylko w pamięci. Tokeny i hasła są ukryte.",
+        "system_info": "Informacje o systemie",
+        "clear": "Wyczyść",
+        "tabs": {
+          "requests": "Żądania",
+          "errors": "Błędy"
+        },
+        "empty_requests": "Brak żądań. Korzystaj z panelu, a pojawią się tutaj.",
+        "empty_errors": "Brak nieudanych żądań.",
+        "select_request": "Wybierz żądanie, aby zobaczyć szczegóły.",
+        "network_error": "Błąd sieci",
+        "status": "Status",
+        "duration": "Czas trwania",
+        "duration_ms": "{{value}} ms",
+        "request_id": "ID żądania",
+        "error_code": "Kod błędu",
+        "query": "Parametry zapytania",
+        "request_body": "Treść żądania",
+        "response_body": "Treść odpowiedzi",
+        "no_body": "Brak treści",
+        "copy_curl": "Kopiuj jako curl",
+        "copy_sdk": "Kopiuj jako wywołanie SDK",
+        "copy_response": "Kopiuj odpowiedź",
+        "copy_request_id": "Kopiuj ID żądania",
+        "copied": "Skopiowano",
+        "menu_open": "Narzędzia deweloperskie"
+      },
+      "server_error": {
+        "title": "Na serwerze wystąpił błąd",
+        "request_id": "Żądanie {{id}}",
+        "report": "Zgłoś"
       }
     },
     "currency_amounts": {

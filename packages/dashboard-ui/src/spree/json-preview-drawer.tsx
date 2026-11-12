@@ -19,6 +19,7 @@ import {
   ExternalLinkIcon,
   Loader2Icon,
   RotateCcwIcon,
+  TerminalIcon,
   XIcon,
 } from './icons'
 import { type JsonValueLinkResolver, JsonValueView } from './json-value-view'
@@ -51,6 +52,12 @@ export interface JsonPreviewDrawerProps {
    * convention.
    */
   resolveLink?: JsonValueLinkResolver
+  /**
+   * A ready-made shell command that repeats the request. When given, the
+   * toolbar offers "Copy as curl". Build it with a placeholder in place of
+   * any credential — the drawer copies it verbatim.
+   */
+  curl?: string
 }
 
 export function JsonPreviewDrawer({
@@ -60,6 +67,7 @@ export function JsonPreviewDrawer({
   fetch,
   endpoint,
   resolveLink,
+  curl,
 }: JsonPreviewDrawerProps) {
   const { t } = useTranslation()
   const resolvedTitle = title ?? t('admin.components.json_preview_drawer.title')
@@ -111,7 +119,8 @@ export function JsonPreviewDrawer({
   }
 
   const [collapsed, setCollapsed] = useState<boolean | number>(2)
-  const { copied: copiedAll, copy } = useCopyToClipboard()
+  const { copied: copiedJson, copy: copyJson } = useCopyToClipboard()
+  const { copied: copiedCurl, copy: copyCurl } = useCopyToClipboard()
 
   const formatted = useMemo(() => (data ? JSON.stringify(data, null, 2) : ''), [data])
 
@@ -159,12 +168,28 @@ export function JsonPreviewDrawer({
           <DepthControl value={collapsed} onChange={setCollapsed} />
 
           <span className="ml-auto inline-flex items-center gap-1">
-            <ToolbarButton size="xs" onClick={() => formatted && copy(formatted)} disabled={!data}>
-              {copiedAll ? <CheckIcon className="size-3.5" /> : <CopyIcon className="size-3.5" />}
-              {copiedAll
+            <ToolbarButton
+              size="xs"
+              onClick={() => formatted && copyJson(formatted)}
+              disabled={!data}
+            >
+              {copiedJson ? <CheckIcon className="size-3.5" /> : <CopyIcon className="size-3.5" />}
+              {copiedJson
                 ? t('admin.components.json_preview_drawer.copied')
-                : t('admin.components.json_preview_drawer.copy_all')}
+                : t('admin.components.json_preview_drawer.copy_json')}
             </ToolbarButton>
+            {curl && (
+              <ToolbarButton size="xs" onClick={() => copyCurl(curl)}>
+                {copiedCurl ? (
+                  <CheckIcon className="size-3.5" />
+                ) : (
+                  <TerminalIcon className="size-3.5" />
+                )}
+                {copiedCurl
+                  ? t('admin.components.json_preview_drawer.copied')
+                  : t('admin.components.json_preview_drawer.copy_curl')}
+              </ToolbarButton>
+            )}
             <ToolbarButton
               size="icon-xs"
               onClick={() => refetch()}

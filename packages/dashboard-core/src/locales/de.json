@@ -37,7 +37,6 @@
     },
     "account": {
       "community": "Community",
-      "contact_support": "Support kontaktieren",
       "documentation": "Dokumentation",
       "edit_profile": "Profil bearbeiten",
       "language": {
@@ -45,8 +44,8 @@
         "update_failed": "Spracheinstellung konnte nicht gespeichert werden. Bitte versuchen Sie es erneut."
       },
       "log_out": "Abmelden",
-      "preferences": "Einstellungen",
-      "view_store": "Shop ansehen"
+      "report_issue": "Problem melden",
+      "send_feedback": "Feedback senden"
     },
     "actions": {
       "actions_menu": "Aktionen",
@@ -347,7 +346,8 @@
       "json_preview_drawer": {
         "collapse_depth": "Einklapptiefe",
         "copied": "Kopiert",
-        "copy_all": "Alles kopieren",
+        "copy_curl": "Als curl kopieren",
+        "copy_json": "JSON kopieren",
         "depth": "Tiefe {{level}}",
         "failed_to_load": "Laden fehlgeschlagen: {{message}}",
         "open_raw": "Rohantwort öffnen",
@@ -511,6 +511,40 @@
         "in_stock_short": "Auf Lager",
         "variants_one": "{{count}} Variante",
         "variants_other": "{{count}} Varianten"
+      },
+      "developer_inspector": {
+        "title": "Entwicklertools",
+        "description": "Admin-API-Anfragen aus diesem Tab, nur im Arbeitsspeicher gehalten. Tokens und Passwörter werden ausgeblendet.",
+        "system_info": "Systeminfo",
+        "clear": "Leeren",
+        "tabs": {
+          "requests": "Anfragen",
+          "errors": "Fehler"
+        },
+        "empty_requests": "Noch keine Anfragen. Nutzen Sie das Dashboard, dann erscheinen sie hier.",
+        "empty_errors": "Keine fehlgeschlagenen Anfragen.",
+        "select_request": "Wählen Sie eine Anfrage aus, um Details zu sehen.",
+        "network_error": "Netzwerkfehler",
+        "status": "Status",
+        "duration": "Dauer",
+        "duration_ms": "{{value}} ms",
+        "request_id": "Anfrage-ID",
+        "error_code": "Fehlercode",
+        "query": "Query-Parameter",
+        "request_body": "Request-Body",
+        "response_body": "Response-Body",
+        "no_body": "Kein Body",
+        "copy_curl": "Als curl kopieren",
+        "copy_sdk": "Als SDK-Aufruf kopieren",
+        "copy_response": "Antwort kopieren",
+        "copy_request_id": "Anfrage-ID kopieren",
+        "copied": "Kopiert",
+        "menu_open": "Entwicklertools"
+      },
+      "server_error": {
+        "title": "Auf dem Server ist ein Fehler aufgetreten",
+        "request_id": "Anfrage {{id}}",
+        "report": "Melden"
       }
     },
     "currency_amounts": {

@@ -1,0 +1,103 @@
+---
+title: Reporting issues
+description: Attach an anonymised diagnostics report to a bug report so the Spree team can reproduce it — from the dashboard, the CLI or a rake task.
+---
+
+## Overview
+
+A self-hosted Spree installation can differ from ours in almost every way: Spree and Ruby versions, database, infrastructure, installed extensions and settings. A bug report without that context is usually impossible to reproduce.
+
+The **diagnostics report** collects it for you. Attach it to every [bug report](https://github.com/spree/spree/issues/new?template=bug_report.yml) — the issue form has a field for it.
+
+## What the report contains
+
+| Section | What it shows |
+|---|---|
+| Spree | Spree version, Spree gems and extensions with their versions |
+| Runtime | Ruby, Rails, environment, operating system, web server |
+| Infrastructure | Database and its version, queue adapter, cache store, file storage service |
+| Changed settings | Flags and numbers changed from their defaults |
+| Dashboard | The dashboard's `@spree/*` packages and your browser, when the report comes from the dashboard |
+| CLI | Node, package manager, Docker and the project's `@spree/*` packages, when the report comes from `spree info` |
+| Recent errors | Spree errors recently recorded in the Rails cache: the error class, where it was raised, how often, and the request ID. Dashboard only |
+
+The report is built to be pasted into a public issue:
+
+- It never contains names, emails, URLs, credentials or customer data.
+- Only flags, numbers and fixed-choice settings are reported. Free-text settings never are, whatever they hold.
+- Errors show the class and the Spree code location only, never the message. Your own application's code appears as `app/[redacted]`, and gems that don't come from rubygems.org or the Spree team as `gem/[redacted]`. Use the request ID to find the full message in your logs.
+- Gems are listed by name only when they are Spree's own or installed from rubygems.org; other gems built on Spree are only counted.
+
+Recent errors are Spree errors your server answered with a 5xx or reported itself; refused requests, such as an invalid address, are left out. They are kept in the Rails cache, so clearing the cache empties the list. Restarting the server empties it only when the cache lives in the server's memory. `spree info` leaves them out: it runs in a process of its own, which usually can't see the server's list.
+
+## Get the report
+
+### From the dashboard
+
+Choose **Send feedback** in the account menu, then **Report a bug**. The dashboard also offers this when the server answers with an error: choose **Report** on the error message. You can also open it from the developer tools drawer (<kbd>Ctrl</kbd>/<kbd>⌘</kbd> <kbd>Shift</kbd> <kbd>D</kbd>).
+
+Describe what happened and choose **Open issue on GitHub**. The new issue is filled in with:
+
+- your description;
+- the dashboard's recent failed requests in this tab: method, path, status, error code and request ID, never the request or response bodies. Untick them if they aren't related;
+- the diagnostics report, if you have permission to manage the store.
+
+Nothing is sent until you submit the issue on GitHub. If everything is too long for a link, the diagnostics report is copied to your clipboard instead; paste it into the **Diagnostics report** field.
+
+**Suggest an idea** and **Something else** in the same dialog open a new [GitHub discussion](https://github.com/orgs/spree/discussions) instead, with only your message and the Spree version.
+
+To see the main versions on their own, open **Settings → System info**: Spree and its gems, the dashboard's `@spree/*` packages, runtime and infrastructure. **Copy as Markdown** copies the full report, including recent errors and your browser, ready to paste anywhere.
+
+The same report is available to signed-in admins through the Admin API:
+
+<Tabs>
+  <Tab title="SDK">
+    ```typescript
+    const report = await client.diagnostics.get()
+    console.log(report.markdown)
+    ```
+  </Tab>
+  <Tab title="cURL">
+    ```bash
+    curl https://your-store.com/api/v3/admin/diagnostics \
+      -H "Authorization: Bearer $SPREE_ADMIN_TOKEN"
+    ```
+  </Tab>
+</Tabs>
+
+A secret API key gets a 404: the report reveals the running Spree version, so only staff who can manage the store can read it.
+
+### From the command line
+
+```bash
+spree info
+```
+
+`spree info` adds the CLI's own details: Node, package manager, operating system, Docker and your `@spree/*` package versions. Add `--issue` to open a pre-filled GitHub issue, or `--json` for machine-readable output.
+
+## Add a section from an extension
+
+An extension can add its own section, for settings that would help diagnose a problem with it. Every row ends up in a public issue, so add only deliberately chosen facts — never names, URLs, emails or credentials.
+
+```ruby app/services/my_gem/diagnostics_section.rb
+module MyGem
+  class DiagnosticsSection < Spree::Diagnostics::Section
+    def title = 'My gem'
+
+    def rows
+      {
+        'Mode' => -> { MyGem.config.mode },
+        'Webhooks configured' => -> { MyGem.config.webhook_secret.present? }
+      }
+    end
+  end
+end
+```
+
+Register it by name, so it is loaded when the report is built:
+
+```ruby config/initializers/spree.rb
+Spree.diagnostics_sections << 'MyGem::DiagnosticsSection'
+```
+
+Each row is read on its own; a row that raises shows `unavailable` rather than failing the report. Report errors from your extension with `Rails.error.report(error, source: 'spree.my_gem')` so they appear under Recent errors.

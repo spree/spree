@@ -96,6 +96,8 @@ function ReportDetail({
             title={report.name}
             subtitle={report.description ?? undefined}
             backTo="reports"
+            resource={report}
+            endpoint={`/api/v3/admin/reporting/saved_reports/${report.id}`}
             badges={
               report.seeded && <Badge variant="secondary">{t('admin.reports.kind.built_in')}</Badge>
             }

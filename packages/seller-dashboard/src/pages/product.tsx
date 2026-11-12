@@ -245,6 +245,8 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
             <PageHeader
               title={product?.name ?? t('products.new_title')}
               backTo="products"
+              resource={product}
+              endpoint={product ? `/api/v3/seller/products/${product.id}` : undefined}
               badges={
                 product?.status ? (
                   <StatusBadge

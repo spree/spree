@@ -202,6 +202,22 @@ RSpec.describe 'Admin API OAuth access', type: :request do
       expect(response).to have_http_status(:ok)
     end
 
+    # Both skip the scope gate and then asked whether the user can manage the
+    # store, which is true of the admin behind any grant. No scope stands for
+    # the running version and stack, so no grant gets them.
+    it 'refuses the diagnostics report and the update check to any grant' do
+      settings = token_for('read_settings write_settings', resource: '/api/v3/admin')
+
+      [read_only, settings].each do |grant|
+        %w[diagnostics updates].each do |endpoint|
+          get_with(grant, "/api/v3/admin/#{endpoint}")
+
+          expect(response).to have_http_status(:forbidden)
+          expect(response.body).not_to include(Spree.version)
+        end
+      end
+    end
+
     # /me is what a client reads to decide what to attempt, so reporting the
     # approver's whole role both oversells the grant and discloses the role.
     it 'reports what the credential holds rather than what its owner does' do

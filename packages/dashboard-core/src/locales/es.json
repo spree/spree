@@ -155,7 +155,8 @@
       "json_preview_drawer": {
         "collapse_depth": "Profundidad de contracción",
         "copied": "Copiado",
-        "copy_all": "Copiar todo",
+        "copy_curl": "Copiar como curl",
+        "copy_json": "Copiar JSON",
         "depth": "Nivel {{level}}",
         "failed_to_load": "No se pudo cargar: {{message}}",
         "open_raw": "Abrir respuesta cruda",
@@ -319,6 +320,40 @@
         "in_stock_short": "Con stock",
         "variants_one": "{{count}} variante",
         "variants_other": "{{count}} variantes"
+      },
+      "developer_inspector": {
+        "title": "Herramientas para desarrolladores",
+        "description": "Solicitudes a la Admin API desde esta pestaña, guardadas solo en memoria. Los tokens y las contraseñas están ocultos.",
+        "system_info": "Información del sistema",
+        "clear": "Limpiar",
+        "tabs": {
+          "requests": "Solicitudes",
+          "errors": "Errores"
+        },
+        "empty_requests": "Aún no hay solicitudes. Usa el panel y aparecerán aquí.",
+        "empty_errors": "No hay solicitudes fallidas.",
+        "select_request": "Selecciona una solicitud para ver sus detalles.",
+        "network_error": "Error de red",
+        "status": "Estado",
+        "duration": "Duración",
+        "duration_ms": "{{value}} ms",
+        "request_id": "ID de solicitud",
+        "error_code": "Código de error",
+        "query": "Parámetros de consulta",
+        "request_body": "Cuerpo de la solicitud",
+        "response_body": "Cuerpo de la respuesta",
+        "no_body": "Sin cuerpo",
+        "copy_curl": "Copiar como curl",
+        "copy_sdk": "Copiar como llamada del SDK",
+        "copy_response": "Copiar respuesta",
+        "copy_request_id": "Copiar ID de solicitud",
+        "copied": "Copiado",
+        "menu_open": "Herramientas para desarrolladores"
+      },
+      "server_error": {
+        "title": "Algo ha fallado en el servidor",
+        "request_id": "Solicitud {{id}}",
+        "report": "Informar"
       }
     },
     "currency_amounts": {
@@ -2025,7 +2060,6 @@
     },
     "account": {
       "community": "Comunidad",
-      "contact_support": "Contactar soporte",
       "documentation": "Documentación",
       "edit_profile": "Editar perfil",
       "language": {
@@ -2033,8 +2067,8 @@
         "update_failed": "No se pudo guardar tu preferencia de idioma. Volvé a intentar."
       },
       "log_out": "Cerrar sesión",
-      "preferences": "Preferencias",
-      "view_store": "Ver tienda"
+      "report_issue": "Informar de un problema",
+      "send_feedback": "Enviar comentarios"
     },
     "media_picker": {
       "any": "Cualquiera",

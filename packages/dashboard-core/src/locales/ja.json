@@ -37,7 +37,6 @@
     },
     "account": {
       "community": "コミュニティ",
-      "contact_support": "サポートに問い合わせる",
       "documentation": "ドキュメント",
       "edit_profile": "プロフィールを編集",
       "language": {
@@ -45,8 +44,8 @@
         "update_failed": "言語の設定を保存できませんでした。もう一度お試しください。"
       },
       "log_out": "ログアウト",
-      "preferences": "設定",
-      "view_store": "ストアを見る"
+      "report_issue": "問題を報告",
+      "send_feedback": "フィードバックを送信"
     },
     "actions": {
       "actions_menu": "操作",
@@ -349,7 +348,8 @@
       "json_preview_drawer": {
         "collapse_depth": "折りたたむ深さ",
         "copied": "コピーしました",
-        "copy_all": "すべてコピー",
+        "copy_curl": "curl としてコピー",
+        "copy_json": "JSON をコピー",
         "depth": "深さ {{level}}",
         "failed_to_load": "読み込めませんでした: {{message}}",
         "open_raw": "生のレスポンスを開く",
@@ -513,6 +513,40 @@
         "in_stock_short": "在庫あり",
         "variants_one": "バリアント {{count}} 件",
         "variants_other": "バリアント {{count}} 件"
+      },
+      "developer_inspector": {
+        "title": "開発者ツール",
+        "description": "このタブからの Admin API リクエスト（メモリ内のみに保持）。トークンとパスワードは非表示です。",
+        "system_info": "システム情報",
+        "clear": "クリア",
+        "tabs": {
+          "requests": "リクエスト",
+          "errors": "エラー"
+        },
+        "empty_requests": "リクエストはまだありません。ダッシュボードを操作するとここに表示されます。",
+        "empty_errors": "失敗したリクエストはありません。",
+        "select_request": "リクエストを選択すると詳細が表示されます。",
+        "network_error": "ネットワークエラー",
+        "status": "ステータス",
+        "duration": "所要時間",
+        "duration_ms": "{{value}} ms",
+        "request_id": "リクエスト ID",
+        "error_code": "エラーコード",
+        "query": "クエリパラメータ",
+        "request_body": "リクエストボディ",
+        "response_body": "レスポンスボディ",
+        "no_body": "ボディなし",
+        "copy_curl": "curl としてコピー",
+        "copy_sdk": "SDK 呼び出しとしてコピー",
+        "copy_response": "レスポンスをコピー",
+        "copy_request_id": "リクエスト ID をコピー",
+        "copied": "コピーしました",
+        "menu_open": "開発者ツール"
+      },
+      "server_error": {
+        "title": "サーバーでエラーが発生しました",
+        "request_id": "リクエスト {{id}}",
+        "report": "報告"
       }
     },
     "currency_amounts": {

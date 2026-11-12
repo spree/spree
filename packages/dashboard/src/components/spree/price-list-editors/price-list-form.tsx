@@ -39,7 +39,6 @@ import {
   useForm,
 } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { spreeJsonLinkResolver } from '../../../lib/json-link-resolver'
 import { BulkPriceEditorDialog } from '../bulk-price-editor/bulk-price-editor-dialog'
 import { catalogPriceColumns, catalogVariantRows } from '../catalog-price-columns'
 import { DeferredProductMembershipCard } from '../deferred-product-membership-card'
@@ -260,7 +259,6 @@ export function PriceListForm({
                         title: `Price list ${priceList.name}`,
                         fetch: () => adminClient.priceLists.get(priceList.id),
                         endpoint: `/api/v3/admin/price_lists/${priceList.id}`,
-                        resolveLink: spreeJsonLinkResolver(storeId),
                       }
                     : undefined
                 }

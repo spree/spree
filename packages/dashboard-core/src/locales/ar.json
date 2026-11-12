@@ -37,7 +37,6 @@
     },
     "account": {
       "community": "المجتمع",
-      "contact_support": "الاتصال بالدعم",
       "documentation": "التوثيق",
       "edit_profile": "تعديل الملف الشخصي",
       "language": {
@@ -45,8 +44,8 @@
         "update_failed": "تعذّر حفظ تفضيل اللغة. يرجى المحاولة مجددًا."
       },
       "log_out": "تسجيل الخروج",
-      "preferences": "التفضيلات",
-      "view_store": "عرض المتجر"
+      "report_issue": "الإبلاغ عن مشكلة",
+      "send_feedback": "إرسال ملاحظات"
     },
     "actions": {
       "actions_menu": "الإجراءات",
@@ -347,7 +346,8 @@
       "json_preview_drawer": {
         "collapse_depth": "عمق الطي",
         "copied": "تم النسخ",
-        "copy_all": "نسخ الكل",
+        "copy_curl": "نسخ كـ curl",
+        "copy_json": "نسخ JSON",
         "depth": "العمق {{level}}",
         "failed_to_load": "فشل التحميل: {{message}}",
         "open_raw": "فتح الاستجابة الخام",
@@ -511,6 +511,40 @@
         "in_stock_short": "في المخزون",
         "variants_one": "{{count}} البديل",
         "variants_other": "{{count}} متغيرات"
+      },
+      "developer_inspector": {
+        "title": "أدوات المطوّر",
+        "description": "طلبات Admin API من علامة التبويب هذه، محفوظة في الذاكرة فقط. الرموز وكلمات المرور مخفية.",
+        "system_info": "معلومات النظام",
+        "clear": "مسح",
+        "tabs": {
+          "requests": "الطلبات",
+          "errors": "الأخطاء"
+        },
+        "empty_requests": "لا توجد طلبات بعد. استخدم لوحة التحكم وستظهر هنا.",
+        "empty_errors": "لا توجد طلبات فاشلة.",
+        "select_request": "اختر طلبًا لعرض تفاصيله.",
+        "network_error": "خطأ في الشبكة",
+        "status": "الحالة",
+        "duration": "المدة",
+        "duration_ms": "{{value}} مللي ثانية",
+        "request_id": "معرّف الطلب",
+        "error_code": "رمز الخطأ",
+        "query": "معلمات الاستعلام",
+        "request_body": "نص الطلب",
+        "response_body": "نص الاستجابة",
+        "no_body": "لا يوجد نص",
+        "copy_curl": "نسخ كأمر curl",
+        "copy_sdk": "نسخ كاستدعاء SDK",
+        "copy_response": "نسخ الاستجابة",
+        "copy_request_id": "نسخ معرّف الطلب",
+        "copied": "تم النسخ",
+        "menu_open": "أدوات المطوّر"
+      },
+      "server_error": {
+        "title": "حدث خطأ في الخادم",
+        "request_id": "الطلب {{id}}",
+        "report": "إبلاغ"
       }
     },
     "currency_amounts": {

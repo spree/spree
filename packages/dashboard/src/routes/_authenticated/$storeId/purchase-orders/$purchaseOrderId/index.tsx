@@ -60,7 +60,6 @@ import {
   useMarkPurchaseOrderOrdered,
   usePurchaseOrder,
 } from '../../../../../hooks/use-purchase-orders'
-import { spreeJsonLinkResolver } from '../../../../../lib/json-link-resolver'
 import { isClosed } from '../../../../../schemas/inventory-operations'
 
 export const Route = createFileRoute('/_authenticated/$storeId/purchase-orders/$purchaseOrderId/')({
@@ -520,7 +519,6 @@ function PurchaseOrderHeader({ purchaseOrder }: { purchaseOrder: PurchaseOrder }
           title: purchaseOrder.number,
           fetch: () => adminClient.purchaseOrders.get(purchaseOrder.id, { expand: ['items'] }),
           endpoint: `/api/v3/admin/purchase_orders/${purchaseOrder.id}`,
-          resolveLink: spreeJsonLinkResolver(storeId),
         }}
       />
     </>

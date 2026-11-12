@@ -1,7 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { Customer, CustomerGroup } from '@spree/admin-sdk'
 import {
-  adminClient,
   extensionFormValues,
   extensionSubmitValues,
   HostFormSlot,
@@ -116,12 +115,8 @@ function CustomerGroupBody({ group }: { group: CustomerGroup }) {
         <PageHeader
           title={group.name}
           backTo="customers/groups"
-          resource={{ id: group.id }}
-          jsonPreview={{
-            title: `Customer group ${group.name}`,
-            fetch: () => adminClient.customerGroups.get(group.id),
-            endpoint: `/api/v3/admin/customer_groups/${group.id}`,
-          }}
+          resource={group}
+          endpoint={`/api/v3/admin/customer_groups/${group.id}`}
           onDelete={permissions.can('destroy', Subject.CustomerGroup) ? handleDelete : undefined}
           deleteConfirmTitle={t('admin.customers.groups.delete_confirm.title')}
           deleteConfirmMessage={t('admin.customers.groups.delete_confirm.message', {

@@ -1,6 +1,5 @@
 import type { Supplier } from '@spree/admin-sdk'
 import {
-  adminClient,
   Money,
   PageHeader,
   RecordMetadataCard,
@@ -89,12 +88,8 @@ function SupplierBody({ supplier }: { supplier: Supplier }) {
         <PageHeader
           title={supplier.name}
           backTo="suppliers"
-          resource={{ id: supplier.id }}
-          jsonPreview={{
-            title: `Supplier ${supplier.name}`,
-            fetch: () => adminClient.suppliers.get(supplier.id),
-            endpoint: `/api/v3/admin/suppliers/${supplier.id}`,
-          }}
+          resource={supplier}
+          endpoint={`/api/v3/admin/suppliers/${supplier.id}`}
           // A supplier with a purchasing history is kept, so the orders naming
           // it keep meaning something (the model's `restrict_with_error`).
           onDelete={

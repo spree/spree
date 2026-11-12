@@ -15,6 +15,7 @@ import { registerEncryptionCommand } from './commands/encryption.js'
 import { registerExecCommand } from './commands/exec.js'
 import { registerFiltersCommand } from './commands/filters.js'
 import { registerGenerateCommand } from './commands/generate.js'
+import { registerInfoCommand } from './commands/info.js'
 import { registerInitCommand } from './commands/init.js'
 import { registerLogsCommand } from './commands/logs.js'
 import { registerMigrateCommand } from './commands/migrate.js'
@@ -70,6 +71,7 @@ registerDevCommand(program)
 registerStopCommand(program)
 registerRestartCommand(program)
 registerLogsCommand(program)
+registerInfoCommand(program)
 registerEjectCommand(program)
 registerBuildCommand(program)
 

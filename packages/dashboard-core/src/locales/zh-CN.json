@@ -37,7 +37,6 @@
     },
     "account": {
       "community": "社区",
-      "contact_support": "联系支持",
       "documentation": "文档",
       "edit_profile": "编辑个人资料",
       "language": {
@@ -45,8 +44,8 @@
         "update_failed": "无法保存您的语言偏好。请重试。"
       },
       "log_out": "退出登录",
-      "preferences": "偏好设置",
-      "view_store": "查看店铺"
+      "report_issue": "报告问题",
+      "send_feedback": "发送反馈"
     },
     "actions": {
       "actions_menu": "操作",
@@ -347,7 +346,8 @@
       "json_preview_drawer": {
         "collapse_depth": "折叠层级",
         "copied": "已复制",
-        "copy_all": "全部复制",
+        "copy_curl": "复制为 curl",
+        "copy_json": "复制 JSON",
         "depth": "层级 {{level}}",
         "failed_to_load": "加载失败：{{message}}",
         "open_raw": "打开原始响应",
@@ -511,6 +511,40 @@
         "in_stock_short": "有库存",
         "variants_one": "{{count}} 个变体",
         "variants_other": "{{count}} 个变体"
+      },
+      "developer_inspector": {
+        "title": "开发者工具",
+        "description": "来自此标签页的 Admin API 请求，仅保存在内存中。令牌和密码已隐藏。",
+        "system_info": "系统信息",
+        "clear": "清除",
+        "tabs": {
+          "requests": "请求",
+          "errors": "错误"
+        },
+        "empty_requests": "暂无请求。使用后台后，请求会显示在这里。",
+        "empty_errors": "没有失败的请求。",
+        "select_request": "选择一个请求以查看详情。",
+        "network_error": "网络错误",
+        "status": "状态",
+        "duration": "耗时",
+        "duration_ms": "{{value}} 毫秒",
+        "request_id": "请求 ID",
+        "error_code": "错误代码",
+        "query": "查询参数",
+        "request_body": "请求体",
+        "response_body": "响应体",
+        "no_body": "无内容",
+        "copy_curl": "复制为 curl",
+        "copy_sdk": "复制为 SDK 调用",
+        "copy_response": "复制响应",
+        "copy_request_id": "复制请求 ID",
+        "copied": "已复制",
+        "menu_open": "开发者工具"
+      },
+      "server_error": {
+        "title": "服务器出现错误",
+        "request_id": "请求 {{id}}",
+        "report": "报告"
       }
     },
     "currency_amounts": {

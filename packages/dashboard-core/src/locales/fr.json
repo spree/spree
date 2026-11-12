@@ -37,7 +37,6 @@
     },
     "account": {
       "community": "Communauté",
-      "contact_support": "Contacter le support",
       "documentation": "Documentation",
       "edit_profile": "Modifier le profil",
       "language": {
@@ -45,8 +44,8 @@
         "update_failed": "Impossible d’enregistrer votre préférence de langue. Veuillez réessayer."
       },
       "log_out": "Se déconnecter",
-      "preferences": "Préférences",
-      "view_store": "Voir la boutique"
+      "report_issue": "Signaler un problème",
+      "send_feedback": "Envoyer un avis"
     },
     "actions": {
       "actions_menu": "Actions",
@@ -347,7 +346,8 @@
       "json_preview_drawer": {
         "collapse_depth": "Profondeur de réduction",
         "copied": "Copié",
-        "copy_all": "Tout copier",
+        "copy_curl": "Copier en curl",
+        "copy_json": "Copier le JSON",
         "depth": "Profondeur {{level}}",
         "failed_to_load": "Échec du chargement : {{message}}",
         "open_raw": "Ouvrir la réponse brute",
@@ -511,6 +511,40 @@
         "in_stock_short": "En stock",
         "variants_one": "{{count}} variante",
         "variants_other": "{{count}} variantes"
+      },
+      "developer_inspector": {
+        "title": "Outils de développement",
+        "description": "Requêtes à l’Admin API depuis cet onglet, conservées en mémoire uniquement. Les jetons et mots de passe sont masqués.",
+        "system_info": "Informations système",
+        "clear": "Effacer",
+        "tabs": {
+          "requests": "Requêtes",
+          "errors": "Erreurs"
+        },
+        "empty_requests": "Aucune requête pour l’instant. Utilisez le tableau de bord et elles apparaîtront ici.",
+        "empty_errors": "Aucune requête en échec.",
+        "select_request": "Sélectionnez une requête pour voir ses détails.",
+        "network_error": "Erreur réseau",
+        "status": "Statut",
+        "duration": "Durée",
+        "duration_ms": "{{value}} ms",
+        "request_id": "ID de requête",
+        "error_code": "Code d’erreur",
+        "query": "Paramètres de requête",
+        "request_body": "Corps de la requête",
+        "response_body": "Corps de la réponse",
+        "no_body": "Aucun corps",
+        "copy_curl": "Copier en curl",
+        "copy_sdk": "Copier en appel SDK",
+        "copy_response": "Copier la réponse",
+        "copy_request_id": "Copier l’ID de requête",
+        "copied": "Copié",
+        "menu_open": "Outils de développement"
+      },
+      "server_error": {
+        "title": "Une erreur s'est produite sur le serveur",
+        "request_id": "Requête {{id}}",
+        "report": "Signaler"
       }
     },
     "currency_amounts": {
