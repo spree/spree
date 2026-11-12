@@ -86,9 +86,6 @@ export function StockTransferForm({
   const [lines, setLines] = useState<VariantLine[]>(initial.lines)
   const [pickerOpen, setPickerOpen] = useState(false)
 
-  // Stock cannot move to where it already is.
-  const destinationItems = locationItems.filter((item) => item.value !== sourceId)
-
   const sameLocation = !!sourceId && sourceId === destinationId
   // Lines were picked for the shelf they are leaving, so the source is fixed
   // once there are any: changing it would silently keep SKUs the new source
@@ -122,11 +119,15 @@ export function StockTransferForm({
                 <SelectValue placeholder={t('admin.stock_transfers.fields.source_placeholder')} />
               </SelectTrigger>
               <SelectContent>
-                {locations.map((location) => (
-                  <SelectItem key={location.id} value={location.id}>
-                    {location.name}
-                  </SelectItem>
-                ))}
+                {/* Stock cannot move to where it already is, whichever side
+                    was chosen first: To arrives set from an Inventory row. */}
+                {locations
+                  .filter((location) => location.id !== destinationId)
+                  .map((location) => (
+                    <SelectItem key={location.id} value={location.id}>
+                      {location.name}
+                    </SelectItem>
+                  ))}
               </SelectContent>
             </Select>
             {sourceLocked && (
@@ -138,7 +139,9 @@ export function StockTransferForm({
             <FieldLabel htmlFor="destination">
               {t('admin.stock_transfers.fields.destination')}
             </FieldLabel>
-            <Select items={destinationItems} value={destinationId} onValueChange={setDestinationId}>
+            {/* Every location in `items`, so the chosen one is named even
+                while the list below leaves it out. */}
+            <Select items={locationItems} value={destinationId} onValueChange={setDestinationId}>
               <SelectTrigger id="destination">
                 <SelectValue
                   placeholder={t('admin.stock_transfers.fields.destination_placeholder')}
