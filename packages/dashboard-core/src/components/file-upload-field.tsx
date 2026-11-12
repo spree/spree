@@ -212,6 +212,9 @@ export function FileUploadField({
       type="file"
       accept={accept}
       className="sr-only"
+      // With a file attached, Replace is the keyboard's way in; the bare
+      // input would be a second, unlabelled tab stop.
+      tabIndex={attached ? -1 : undefined}
       disabled={disabled || !!pending}
       onChange={(e) => {
         const picked = e.target.files?.[0]

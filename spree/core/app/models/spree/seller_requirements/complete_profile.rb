@@ -21,7 +21,7 @@ module Spree
       # particular lives on a different settings page than the rest.
       def blocker(seller)
         missing = missing_fields(seller)
-        return nil if missing.empty?
+        return nil if missing.empty? || latest_submission(seller)&.waived?
 
         fields = missing.map { |field| I18n.t("spree.seller_requirement_types.complete_profile.fields.#{field}") }
         { state: 'incomplete', message: I18n.t('spree.seller_requirement_types.complete_profile.missing', fields: fields.to_sentence) }

@@ -5,12 +5,13 @@ import { useParams } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { sellerClient } from '../api-client'
 
-export function useProfile() {
+export function useProfile({ enabled = true }: { enabled?: boolean } = {}) {
   const { sellerId } = useParams({ from: '/_authenticated/$sellerId' })
 
   return useQuery({
     queryKey: ['seller', sellerId, 'profile'],
     queryFn: () => sellerClient().profile.get(),
+    enabled,
   })
 }
 

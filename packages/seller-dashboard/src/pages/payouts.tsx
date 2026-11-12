@@ -1,4 +1,10 @@
-import { PageHeader, type ResourceSearch, ResourceTable } from '@spree/dashboard-core'
+import {
+  formatAmount,
+  PageHeader,
+  type ResourceSearch,
+  ResourceTable,
+  useMoneyLocale,
+} from '@spree/dashboard-core'
 import { useRowClickBridge } from '@spree/dashboard-ui'
 import type { Payout } from '@spree/seller-sdk'
 import { useNavigate, useParams } from '@tanstack/react-router'
@@ -13,6 +19,7 @@ export function PayoutsPage({ search }: { search: ResourceSearch }) {
   const { sellerId } = useParams({ from: '/_authenticated/$sellerId' })
   const navigate = useNavigate()
   const { data: profile } = useProfile()
+  const moneyLocale = useMoneyLocale()
 
   useRowClickBridge('data-payout-id', (payoutId: string) =>
     navigate({ to: '/$sellerId/payouts/$payoutId', params: { sellerId, payoutId } }),
@@ -28,7 +35,7 @@ export function PayoutsPage({ search }: { search: ResourceSearch }) {
           profile &&
           [
             `${t('profile.payout_schedule')}: ${profile.payouts_schedule_interval ?? '—'}`,
-            `${t('profile.minimum_payout')}: ${profile.minimum_payout_amount ?? '—'}`,
+            `${t('profile.minimum_payout')}: ${formatAmount(profile.minimum_payout_amount, profile.default_currency, moneyLocale)}`,
             t('profile.operator_managed'),
           ].join(' · ')
         }

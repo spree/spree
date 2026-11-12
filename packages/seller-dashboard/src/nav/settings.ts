@@ -122,9 +122,6 @@ settingsNav.add({
   action: 'update',
 })
 
-// How the marketplace reaches this seller, the business behind them, their
-// addresses and holiday mode — everything about the seller that buyers never
-// see. The public face stays on the profile page.
 // What buyers see of the seller: name, description and images. After General,
 // which is what a seller opens settings for most.
 settingsNav.add({
@@ -140,6 +137,9 @@ settingsNav.add({
   action: 'update',
 })
 
+// How the marketplace reaches this seller, the business behind them, their
+// addresses and holiday mode — everything about the seller that buyers never
+// see. The public face stays on the profile page.
 settingsNav.add({
   key: 'settings.general',
   label: i18n.t('nav.general'),

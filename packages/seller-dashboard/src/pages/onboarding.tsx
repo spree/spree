@@ -43,6 +43,7 @@ import { sellerClient } from '../api-client'
 import { CenteredMessage } from '../components/centered-message'
 import { SellerAddressCard } from '../components/seller-address-card'
 import { SellerReturnsLocationCard } from '../components/seller-returns-location-card'
+import { useProfile } from '../hooks/use-profile'
 
 /**
  * What the marketplace asks of this seller before admitting them.
@@ -189,14 +190,11 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
   const [file, setFile] = useState<FileUploadValue>(EMPTY_FILE_UPLOAD_VALUE)
   const [fields, setFields] = useState<Record<string, string>>({})
 
-  // Only the billing address needs it, and it is already loaded by the
-  // profile page and the sidebar switcher — this reads the same cache entry.
-  // The returns address does not: it lives on a stock location, which its own
-  // card fetches.
-  const { data: profile } = useQuery({
-    queryKey: ['seller', sellerId, 'profile'],
-    queryFn: () => sellerClient().profile.get(),
-    enabled: requirement.kind === 'billing_address',
+  // The billing address edits it, and a complete-profile line reads it to
+  // pick which settings page to link to. The returns address does not: it
+  // lives on a stock location, which its own card fetches.
+  const { data: profile } = useProfile({
+    enabled: requirement.kind === 'billing_address' || requirement.kind === 'complete_profile',
   })
 
   const invalidate = () =>

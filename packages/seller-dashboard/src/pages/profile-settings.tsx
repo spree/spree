@@ -4,7 +4,6 @@ import {
   mapSpreeErrorsToForm,
   PageHeader,
   ResourceImageField,
-  type SellerFormValues,
   SettingsSection,
   Slot,
   sellerFormSchema,
@@ -28,6 +27,7 @@ import { ImageIcon, StoreIcon } from '@spree/dashboard-ui/icons'
 import type { Profile } from '@spree/seller-sdk'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import type { z } from 'zod/v4'
 import { CenteredMessage } from '../components/centered-message'
 import { useProfile, useUpdateProfile } from '../hooks/use-profile'
 
@@ -46,17 +46,35 @@ export function ProfileSettingsPage() {
   return <ProfileForm profile={profile} />
 }
 
+// Only what this page shows. The operator's schema also checks fields edited
+// elsewhere (the emails), and an error on a field that is not on the page
+// would block Save with nothing to see.
+const profileFormSchema = sellerFormSchema.pick({
+  name: true,
+  about: true,
+  logo_signed_id: true,
+  logo_preview_url: true,
+  logo_cleared: true,
+  square_logo_signed_id: true,
+  square_logo_preview_url: true,
+  square_logo_cleared: true,
+  cover_photo_signed_id: true,
+  cover_photo_preview_url: true,
+  cover_photo_cleared: true,
+})
+
+type ProfileFormValues = z.infer<typeof profileFormSchema>
+
 function ProfileForm({ profile }: { profile: Profile }) {
   const { t } = useTranslation()
   const update = useUpdateProfile()
 
-  const form = useForm<SellerFormValues>({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    resolver: zodResolver(sellerFormSchema) as any,
+  const form = useForm<ProfileFormValues>({
+    resolver: zodResolver(profileFormSchema),
     defaultValues: sellerFormValues(profile),
   })
 
-  async function onSubmit(values: SellerFormValues) {
+  async function onSubmit(values: ProfileFormValues) {
     try {
       const updated = await update.mutateAsync({
         name: values.name,

@@ -127,5 +127,10 @@ test.describe('seller panel — setup', () => {
       .first()
       .click()
     await expect(page).toHaveURL(/\/settings\/general$/, { timeout: 15_000 })
+
+    // The panel seller is shared across this shard, so put the email back.
+    await page.locator('#seller-contact-email').fill('panel-seller@example.com')
+    await save.click()
+    await expect(page.getByText(/profile saved/i).first()).toBeVisible({ timeout: 15_000 })
   })
 })
