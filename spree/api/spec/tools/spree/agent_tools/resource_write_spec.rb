@@ -196,6 +196,93 @@ RSpec.describe 'agent generic record writes' do
     end
   end
 
+  # Each of these answered ok while the endpoint dropped what it was sent:
+  # the attribute check read only top-level create bodies, so a resource
+  # written under a parent, or one whose update takes less than its create,
+  # was not checked at all.
+  describe 'a write the endpoint would drop' do
+    it 'refuses an attribute only a create takes' do
+      exchange = create(:exchange, order: create(:shipped_order, store: store))
+
+      result = tool('update_resource').call(resource: 'exchanges', id: exchange.prefixed_id,
+                                            parent_id: exchange.order.prefixed_id,
+                                            attributes: { 'items' => [{ 'quantity' => 2 }] })
+
+      expect(result[:error]).to include('items')
+      expect(result[:accepted_attributes]).to include('memo')
+      expect(exchange.exchange_line_items.reload.map(&:quantity)).to all(eq(1))
+    end
+
+    it 'checks the fields inside a list\'s rows' do
+      product = create(:product, store: store)
+
+      result = tool('update_resource').call(resource: 'products', id: product.prefixed_id,
+                                            attributes: { 'custom_fields' => [{ 'field_id' => 'x', 'value' => 1 }] })
+
+      expect(result[:error]).to include('field_id')
+      expect(result[:accepted_attributes]['custom_fields']).to include('custom_field_definition_id', 'id', 'value')
+    end
+
+    it 'changes a custom field value named by its own id' do
+      product = create(:product, store: store)
+      definition = create(:custom_field_definition, :number_field, store: store, resource_type: 'Spree::Product')
+      field = product.set_custom_field(definition, 120)
+
+      result = tool('update_resource').call(resource: 'products', id: product.prefixed_id,
+                                            attributes: { 'custom_fields' => [{ 'id' => field.prefixed_id, 'value' => 128 }] })
+
+      expect(result[:error]).to be_nil
+      expect(field.reload.value.to_i).to eq(128)
+    end
+
+    it 'refuses a custom field row that names no field' do
+      product = create(:product, store: store)
+
+      result = tool('update_resource').call(resource: 'products', id: product.prefixed_id,
+                                            attributes: { 'custom_fields' => [{ 'value' => 128 }] })
+
+      expect(result[:error]).to be_present
+    end
+
+    it 'moves a company\'s default billing address under the name the read shows' do
+      company = create(:company, store: store)
+      warehouse = create(:company_address, owner: company)
+      office = create(:company_address, owner: company)
+      company.update!(default_bill_address: warehouse)
+
+      result = tool('update_resource').call(resource: 'addresses', id: office.prefixed_id, parent_id: company.prefixed_id,
+                                            attributes: { 'is_default_billing' => true })
+
+      expect(result[:error]).to be_nil
+      expect(company.reload.default_bill_address_id).to eq(office.id)
+    end
+
+    it 'refuses a name media does not have' do
+      media = create(:media, viewable: create(:product, store: store))
+
+      result = tool('update_resource').call(resource: 'media', id: media.prefixed_id, attributes: { 'name' => 'blue-mug-front' })
+
+      expect(result[:error]).to be_present
+      expect(media.reload.attachment.filename.to_s).not_to eq('blue-mug-front')
+    end
+
+    it 'names the field a certificate\'s document is sent under' do
+      company = create(:company, store: store)
+
+      result = tool('create_resource').call(resource: 'tax_exemption_certificates', parent_id: company.prefixed_id,
+                                            attributes: { 'certificate_number' => 'EX-1', 'document' => 'signed-id' })
+
+      expect(result[:error]).to include('document')
+      expect(result[:accepted_attributes]).to include('document_signed_id')
+    end
+
+    it 'describes what each nested resource accepts' do
+      described = tool('describe_resource').call(resource: 'tax_exemption_certificates')[:resources].first
+
+      expect(described[:writable_attributes]).to include('document_signed_id')
+    end
+  end
+
   describe 'what a read-only key is offered' do
     let(:api_key) { create(:api_key, :secret, store: store, scopes: ['read_all']) }
 

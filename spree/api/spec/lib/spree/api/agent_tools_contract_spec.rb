@@ -33,6 +33,11 @@ RSpec.describe 'agent tool contract' do
     by_key.select { |_key, scopes| scopes.uniq.size > 1 }.keys
   end
 
+  # Whether the operations a generic write dispatches to document a body.
+  def documents_write_body?(entry)
+    %i[create update].any? { |action| Spree::Api::AgentWriteSchemas.for_operation(entry.api_path(action), action).any? }
+  end
+
   # Every admin action is a tool built from its OpenAPI operation; this is
   # the contract an extension includes for its own engine too.
   describe 'the action tools' do
@@ -129,17 +134,18 @@ RSpec.describe 'agent tool contract' do
     # sole defence — a new service-written controller is refused by default.
     it 'writes only what the Admin API documents a write body for' do
       undocumented = Spree::AgentTools::ResourceMap.all.select(&:generic_writes?).reject do |entry|
-        Spree::Api::AgentWriteSchemas.attribute_names(entry.key).any?
+        documents_write_body?(entry)
       end
 
       expect(undocumented.map(&:key)).to be_empty
     end
 
-    # The map keys resources by model name; the OpenAPI document keys them by
-    # URL segment. Where the two disagree a resource silently loses its
-    # writes, so a resource whose controller writes directly and documents a
-    # body must resolve in both.
-    it 'keys a writable resource the same way the OpenAPI document does' do
+    # The map reads each write's body off the route it dispatches to. Where
+    # the route and the document disagree — a renamed segment, a parameter
+    # named differently — a resource silently loses its writes, so a
+    # resource whose controller writes directly and documents a body must
+    # resolve in both.
+    it 'finds the documented body of every writable resource' do
       # Everything deliberately read-only, for a reason recorded elsewhere:
       # written through a workflow it declares, gated per request (imports
       # and exports), handing out authority, or contested between two
@@ -154,11 +160,11 @@ RSpec.describe 'agent tool contract' do
       # What is left should be writable exactly when the document says so, so
       # the map's model-derived key and the document's URL segment agree.
       mismatched = (Spree::AgentTools::ResourceMap.all - deliberate).reject do |entry|
-        entry.generic_writes? == Spree::Api::AgentWriteSchemas.attribute_names(entry.key).any?
+        entry.generic_writes? == documents_write_body?(entry)
       end
 
       expect(mismatched.map(&:key)).to be_empty, <<~MESSAGE
-        These resources are keyed one way in the map and another in
+        These resources are routed one way and documented another in
         docs/api-reference/admin.yaml, so their writes are silently lost:
 
           #{mismatched.map(&:key).join("\n  ")}

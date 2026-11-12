@@ -19,9 +19,14 @@ module Spree
           params.permit(*declared_permitted_attributes)
         end
 
+        # Taken under the name an address read shows (`is_default_billing`),
+        # and under the deprecated `default_billing` until 6.1.
+        #
         # @return [Hash] default keywords for Spree::Addresses::Create / Update
         def default_flags
-          { default_billing: flag_param(:default_billing), default_shipping: flag_param(:default_shipping) }
+          %i[default_billing default_shipping].index_with do |name|
+            flag_param(params.key?(:"is_#{name}") ? :"is_#{name}" : name)
+          end
         end
 
         # Each flag has three meanings and they are all different: true claims

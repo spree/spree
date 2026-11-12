@@ -180,7 +180,7 @@ await adminClient.companies.addresses.create('comp_xxx', {
   city: 'Rotterdam',
   country_code: 'NL',
   postal_code: '3011',
-  default_shipping: true,
+  is_default_shipping: true,
 })
 ```
 
@@ -196,7 +196,7 @@ curl -X POST 'https://api.mystore.com/api/v3/admin/companies/comp_xxx/addresses'
         "city": "Rotterdam",
         "country_code": "NL",
         "postal_code": "3011",
-        "default_shipping": true
+        "is_default_shipping": true
       }'
 ```
 

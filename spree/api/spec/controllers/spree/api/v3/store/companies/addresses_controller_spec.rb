@@ -33,7 +33,7 @@ RSpec.describe Spree::Api::V3::Store::Companies::AddressesController, type: :con
     it 'creates an owned address for the node' do
       post :create, params: {
         company_id: company.prefixed_id,
-        label: 'Plant 2 dock', default_shipping: true,
+        label: 'Plant 2 dock', is_default_shipping: true,
         first_name: 'Ops', last_name: 'Team', address1: '1 Dock Rd',
         city: 'Springfield', postal_code: '62704', country_code: 'US', state_code: 'IL'
       }, as: :json
@@ -86,7 +86,7 @@ RSpec.describe Spree::Api::V3::Store::Companies::AddressesController, type: :con
     end
 
     it 'refuses to move an ancestor default through the division' do
-      patch :update, params: { company_id: division.prefixed_id, id: inherited.prefixed_id, default_billing: true },
+      patch :update, params: { company_id: division.prefixed_id, id: inherited.prefixed_id, is_default_billing: true },
                      as: :json
 
       expect(response).to have_http_status(:not_found)
@@ -101,7 +101,7 @@ RSpec.describe Spree::Api::V3::Store::Companies::AddressesController, type: :con
     it 'clears the billing default it holds' do
       company.update!(default_bill_address: entry)
 
-      patch :update, params: { company_id: company.prefixed_id, id: entry.prefixed_id, default_billing: false },
+      patch :update, params: { company_id: company.prefixed_id, id: entry.prefixed_id, is_default_billing: false },
                      as: :json
 
       expect(response).to have_http_status(:ok)

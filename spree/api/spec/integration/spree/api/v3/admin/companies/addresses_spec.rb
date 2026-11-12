@@ -43,7 +43,8 @@ RSpec.describe 'Admin Company Addresses API', type: :request, swagger_doc: 'api-
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Adds an address to the business. Pass `default_billing: true` or `default_shipping: true` to make it the default of that kind.'
+      description 'Adds an address to the business. Pass `is_default_billing: true` or `is_default_shipping: true` ' \
+                  'to make it the default of that kind.'
       admin_scope :write, :customers
 
       admin_sdk_example 'companies/addresses/create'
@@ -60,7 +61,7 @@ RSpec.describe 'Admin Company Addresses API', type: :request, swagger_doc: 'api-
             company: 'Acme Wholesale', label: 'Warehouse',
             address1: '350 Fifth Avenue', city: 'New York', postal_code: '10118',
             country_code: address.country.iso, state_code: address.state.abbr, phone: '+12125551234',
-            default_shipping: true
+            is_default_shipping: true
           }
         end
 
@@ -84,7 +85,8 @@ RSpec.describe 'Admin Company Addresses API', type: :request, swagger_doc: 'api-
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Changes an address of the business. Pass `default_billing` or `default_shipping` to move that default to it, or `false` to give it up.'
+      description 'Changes an address of the business. Pass `is_default_billing` or `is_default_shipping` ' \
+                  'to move that default to it, or `false` to give it up.'
       admin_scope :write, :customers
 
       admin_sdk_example 'companies/addresses/update'
@@ -97,7 +99,7 @@ RSpec.describe 'Admin Company Addresses API', type: :request, swagger_doc: 'api-
 
       response '200', 'address updated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:body) { { label: 'Northern Warehouse', default_billing: true } }
+        let(:body) { { label: 'Northern Warehouse', is_default_billing: true } }
 
         schema '$ref' => '#/components/schemas/Address'
 

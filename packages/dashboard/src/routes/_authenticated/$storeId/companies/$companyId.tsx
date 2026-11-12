@@ -597,7 +597,7 @@ function AddressBookCard({ company, canEdit }: { company: Company; canEdit: bool
   function setDefault(id: string, kind: 'billing' | 'shipping') {
     return updateMutation.mutate({
       id,
-      params: { [kind === 'billing' ? 'default_billing' : 'default_shipping']: true },
+      params: { [kind === 'billing' ? 'is_default_billing' : 'is_default_shipping']: true },
     })
   }
 

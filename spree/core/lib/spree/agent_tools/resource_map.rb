@@ -117,9 +117,32 @@ module Spree
         # The attributes the Admin API would accept on a write, so the generic
         # tools offer exactly the same surface as the endpoint.
         #
+        # Registered per action where create and update differ — an exchange
+        # takes its items when opened and never after.
+        #
+        # @param action [Symbol, nil] :create or :update; nil for either
         # @return [Array<String>]
-        def writable_attribute_names
-          Array(writable_attributes).map(&:to_s).sort
+        def writable_attribute_names(action = nil)
+          names = if writable_attributes.is_a?(Hash)
+                    action ? writable_attributes[action.to_sym] : writable_attributes.values.flatten
+                  else
+                    writable_attributes
+                  end
+
+          Array(names).map(&:to_s).uniq.sort
+        end
+
+        # The documented body of the operation a write dispatches to, or of
+        # both when no action is named (the create's description wins).
+        #
+        # @param action [Symbol, nil]
+        # @return [Hash] JSON Schema properties
+        def write_schema(action = nil)
+          return {} unless defined?(Spree::Api::AgentWriteSchemas)
+
+          (action ? [action.to_sym] : %i[update create]).reduce({}) do |schema, each|
+            schema.merge(Spree::Api::AgentWriteSchemas.for_operation(api_path(each), each))
+          end
         end
 
         # The record a nested resource is reached through — `order_id` for an
@@ -253,11 +276,10 @@ module Spree
         # and, where the parent reconciles its list, leaves behind whatever
         # the first write created.
         #
-        # @return [Hash{String => Array<String>}] attribute => the keys of one row
-        def nested_collection_shapes
-          return {} unless defined?(Spree::Api::AgentWriteSchemas)
-
-          Spree::Api::AgentWriteSchemas.for(key).each_with_object({}) do |(name, schema), shapes|
+        # @param action [Symbol, nil] the write the rows are for; nil for either
+        # @return [Hash{String => Array<Hash>}] attribute => the fields of one row
+        def nested_collection_shapes(action = nil)
+          write_schema(action).each_with_object({}) do |(name, schema), shapes|
             next unless schema.is_a?(Hash) && schema['type'] == 'array'
 
             # A row's shape is published as a component too, so the array
@@ -396,7 +418,8 @@ module Spree
         # @param scope_name [Symbol, nil] narrows the model to a slice of itself
         # @param write_permission [String, nil] the `write_*` key, absent when
         #   the controller offers no writes
-        # @param writable_attributes [Array<Symbol>] what a write may set
+        # @param writable_attributes [Array<Symbol>, Hash{Symbol => Array<Symbol>}]
+        #   what a write may set, or what each of create and update may set
         # @param create_workflow_key [String, nil] set when the controller
         #   declares a create workflow, which the generic write defers to
         # @param update_workflow_key [String, nil] likewise for updates

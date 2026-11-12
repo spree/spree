@@ -62,16 +62,7 @@ export function CompanyAddressSheet({
       companyReadOnly
       showLabel
       showDefaultFlags
-      onSave={async (values) => {
-        // The dialog speaks the customer address book's names for these; the
-        // company endpoints take them without the prefix.
-        const { is_default_billing, is_default_shipping, ...address } = values
-        const params = {
-          ...address,
-          default_billing: is_default_billing,
-          default_shipping: is_default_shipping,
-        }
-
+      onSave={async (params) => {
         if (entry) {
           await updateMutation.mutateAsync({ id: entry.id, params })
         } else {

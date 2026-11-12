@@ -245,8 +245,16 @@ module Spree
         attributes.each_with_index do |raw, index|
           attrs = raw.respond_to?(:to_h) ? raw.to_h : raw
           attrs = attrs.with_indifferent_access
-          definition_id = attrs[:custom_field_definition_id] || attrs[:metafield_definition_id]
-          next if definition_id.blank?
+          definition_id = attrs[:custom_field_definition_id] || attrs[:metafield_definition_id] ||
+                          definition_id_of_custom_field(attrs[:id])
+
+          # A row that names no field was skipped, and the write answered as
+          # if it had saved the value.
+          if definition_id.blank?
+            message = attrs[:id].present? ? "Unknown custom field id: #{attrs[:id].inspect}" : "can't be blank"
+            errors.add("custom_fields[#{index}].custom_field_definition_id", message)
+            raise ActiveRecord::RecordInvalid, self
+          end
 
           begin
             set_custom_field(definition_id, attrs[:value])
@@ -258,6 +266,18 @@ module Spree
             raise ActiveRecord::RecordInvalid, self
           end
         end
+      end
+
+      # The definition behind one of this record's own values, so a row
+      # naming the value it changes (`{ id: 'cf_…', value: 128 }`) — the id a
+      # read shows — updates it. Another record's value reads as unknown.
+      #
+      # @param id [String, Integer, nil] a prefixed or raw custom field id
+      # @return [Integer, String, nil]
+      def definition_id_of_custom_field(id)
+        return if id.blank? || new_record?
+
+        custom_fields.find_by_param(id.to_s)&.custom_field_definition_id
       end
 
       # Resolve any of the supported reference shapes to a raw definition id.

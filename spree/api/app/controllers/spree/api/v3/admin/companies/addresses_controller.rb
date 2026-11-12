@@ -11,12 +11,14 @@ module Spree
             request_params :company_address do |body|
               body.include_attributes Spree::Api::V3::AddressRequestSchema
               body.require_attributes :first_name, :last_name, :address1, :city, :country_code, on: :create
-              body.attribute :default_billing, :boolean,
+              body.attribute :is_default_billing, :boolean,
                 permit: false,
                 description: 'True makes this the default address of that kind, false gives the slot up, and leaving it out keeps the current default.'
-              body.attribute :default_shipping, :boolean,
+              body.attribute :is_default_shipping, :boolean,
                 permit: false,
                 description: 'True makes this the default address of that kind, false gives the slot up, and leaving it out keeps the current default.'
+              body.attribute :default_billing, :boolean, permit: false, deprecated: 'Use `is_default_billing`. Removed in 6.1.'
+              body.attribute :default_shipping, :boolean, permit: false, deprecated: 'Use `is_default_shipping`. Removed in 6.1.'
             end
 
             before_action :authorize_parent_access!

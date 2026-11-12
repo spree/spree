@@ -54,7 +54,7 @@ RSpec.describe Spree::Api::V3::Admin::Companies::AddressesController, type: :con
       post :create, params: {
         company_id: company.prefixed_id,
         label: 'Plant 2 dock',
-        default_shipping: true,
+        is_default_shipping: true,
         first_name: 'Ops', last_name: 'Team', address1: '1 Dock Rd',
         city: 'Springfield', postal_code: '62704', country_code: 'US', state_code: 'IL'
       }, as: :json
@@ -74,7 +74,7 @@ RSpec.describe Spree::Api::V3::Admin::Companies::AddressesController, type: :con
 
       post :create, params: {
         company_id: company.prefixed_id,
-        default_shipping: true,
+        is_default_shipping: true,
         first_name: 'A', last_name: 'B', address1: '2 Way', city: 'Metropolis',
         postal_code: '10001', country_code: 'US', state_code: 'NY'
       }, as: :json
@@ -100,8 +100,9 @@ RSpec.describe Spree::Api::V3::Admin::Companies::AddressesController, type: :con
   describe 'PATCH #update' do
     let!(:entry) { create(:company_address, owner: company, label: 'HQ') }
 
+    # Written under the name the address read shows.
     it 'promotes an entry to the node default' do
-      patch :update, params: { company_id: company.prefixed_id, id: entry.prefixed_id, default_billing: true },
+      patch :update, params: { company_id: company.prefixed_id, id: entry.prefixed_id, is_default_billing: true },
                      as: :json
 
       expect(response).to have_http_status(:ok)
@@ -113,11 +114,19 @@ RSpec.describe Spree::Api::V3::Admin::Companies::AddressesController, type: :con
     it 'clears the default it holds' do
       company.update!(default_bill_address: entry)
 
-      patch :update, params: { company_id: company.prefixed_id, id: entry.prefixed_id, default_billing: false },
+      patch :update, params: { company_id: company.prefixed_id, id: entry.prefixed_id, is_default_billing: false },
                      as: :json
 
       expect(response).to have_http_status(:ok)
       expect(company.reload.default_bill_address_id).to be_nil
+    end
+
+    it 'still takes the deprecated default_billing name' do
+      patch :update, params: { company_id: company.prefixed_id, id: entry.prefixed_id, default_billing: true },
+                     as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(company.reload.default_bill_address_id).to eq(entry.id)
     end
   end
 end

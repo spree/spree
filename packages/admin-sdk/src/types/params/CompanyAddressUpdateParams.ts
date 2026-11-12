@@ -22,10 +22,14 @@ export type CompanyAddressUpdateParams = {
    * True makes this the default address of that kind, false gives the slot up, and leaving it out
    * keeps the current default.
    */
-  default_billing?: boolean
+  is_default_billing?: boolean
   /**
    * True makes this the default address of that kind, false gives the slot up, and leaving it out
    * keeps the current default.
    */
+  is_default_shipping?: boolean
+  /** @deprecated Use `is_default_billing`. Removed in 6.1. */
+  default_billing?: boolean
+  /** @deprecated Use `is_default_shipping`. Removed in 6.1. */
   default_shipping?: boolean
 }

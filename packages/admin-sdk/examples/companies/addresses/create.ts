@@ -17,7 +17,7 @@ const address = await client.companies.addresses.create('comp_UkLWZg9DAJ', {
   country_code: 'US',
   state_code: 'NY',
   phone: '+12125551234',
-  default_shipping: true,
+  is_default_shipping: true,
 })
 
 // endregion:example

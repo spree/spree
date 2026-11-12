@@ -8,7 +8,7 @@ const client = createAdminClient({
 // region:example
 const address = await client.companies.addresses.update('comp_UkLWZg9DAJ', 'addr_k5nR8xLqPz', {
   label: 'Northern Warehouse',
-  default_billing: true,
+  is_default_billing: true,
 })
 
 // endregion:example

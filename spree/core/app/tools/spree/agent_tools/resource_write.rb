@@ -57,24 +57,50 @@ module Spree
       #
       # An attribute the controller does not permit is dropped silently and
       # the response is a 200, so a model would report a change that never
-      # happened. Named back instead, the way an unknown filter is.
+      # happened. Named back instead, the way an unknown filter is — and so
+      # is a field inside a list's rows, and a write whose operation
+      # documents no body at all, which is not "anything goes" but "nothing
+      # here can be checked".
       #
-      # The list comes from the generated OpenAPI body, which is the contract
-      # clients already read — so an attribute the endpoint accepts and the
-      # document omits is a documentation bug, fixed in the integration spec
-      # that generates it, not worked around here.
+      # The list comes from the generated OpenAPI body of the exact operation
+      # dispatched to, which is the contract clients already read — so an
+      # attribute the endpoint accepts and the document omits is a
+      # documentation bug, fixed in the integration spec that generates it,
+      # not worked around here.
       #
       # @return [Array(Hash, nil), Array(nil, Hash)]
-      def body_for(entry, attributes)
+      def body_for(entry, action, attributes)
         body = (attributes || {}).to_h.deep_transform_keys(&:to_s)
-        accepted = entry.writable_attribute_names
-        return [body, nil] if accepted.blank?
+        accepted = entry.writable_attribute_names(action)
+        return [nil, { error: not_writable(entry, action) }] if accepted.empty?
 
         unknown = body.keys - accepted
-        return [body, nil] if unknown.empty?
+        if unknown.any?
+          return [nil, { error: "#{entry.key} does not accept #{unknown.to_sentence}.",
+                         accepted_attributes: accepted }]
+        end
 
-        [nil, { error: "#{entry.key} does not accept #{unknown.to_sentence}.",
-                accepted_attributes: accepted }]
+        row_refusal = unknown_row_fields(entry, action, body)
+        row_refusal ? [nil, row_refusal] : [body, nil]
+      end
+
+      # The first list whose rows carry a field the row does not take.
+      #
+      # @return [Hash, nil]
+      def unknown_row_fields(entry, action, body)
+        entry.nested_collection_shapes(action).each do |name, fields|
+          known = fields.map { |field| field['name'] }
+          rows = body[name]
+          next unless rows.is_a?(Array)
+
+          unknown = rows.grep(Hash).flat_map(&:keys).uniq - known
+          next if unknown.empty?
+
+          return { error: "#{entry.key} #{name} rows do not accept #{unknown.to_sentence}.",
+                   accepted_attributes: { name => known } }
+        end
+
+        nil
       end
 
       # The path for this write, or the refusal saying which record a nested
