@@ -164,9 +164,11 @@ test.describe('seller panel — setup', () => {
 
     const context = await browser.newContext()
     const seller = await context.newPage()
+    const save = seller.getByRole('button', { name: /^save$/i }).first()
+    let home = ''
+    let originalEmail = ''
     try {
-      const home = await sellerLogin(seller, FIXTURE_SELLER_WRITER_EMAIL)
-      const save = seller.getByRole('button', { name: /^save$/i }).first()
+      home = await sellerLogin(seller, FIXTURE_SELLER_WRITER_EMAIL)
 
       // Everything public filled in, so the email is the only gap.
       await seller.goto(`${home}/settings/profile`)
@@ -189,7 +191,10 @@ test.describe('seller panel — setup', () => {
       await expect(seller.getByText(/profile saved/i)).toBeVisible({ timeout: 15_000 })
 
       await seller.goto(`${home}/settings/general`)
-      await seller.locator('#seller-contact-email').fill('')
+      const email = seller.locator('#seller-contact-email')
+      await expect(email).toBeVisible({ timeout: 15_000 })
+      originalEmail = await email.inputValue()
+      await email.fill('')
       if (await save.isEnabled()) {
         await save.click()
         await expect(seller.getByText(/profile saved/i).first()).toBeVisible({ timeout: 15_000 })
@@ -205,14 +210,24 @@ test.describe('seller panel — setup', () => {
         .first()
         .click()
       await expect(seller).toHaveURL(/\/settings\/general$/, { timeout: 15_000 })
-
-      // The panel seller is shared across this shard, so put the email back.
-      await seller.locator('#seller-contact-email').fill('panel-seller@example.com')
-      await save.click()
-      await expect(seller.getByText(/profile saved/i).first()).toBeVisible({ timeout: 15_000 })
     } finally {
-      await context.close()
-      await setRequireEmail(false)
+      // The panel seller is shared across this shard, so put back the email it
+      // had and switch the requirement off, whether or not the checks passed.
+      try {
+        if (originalEmail) {
+          await seller.goto(`${home}/settings/general`)
+          await seller.locator('#seller-contact-email').fill(originalEmail)
+          if (await save.isEnabled()) {
+            await save.click()
+            await expect(seller.getByText(/profile saved/i).first()).toBeVisible({
+              timeout: 15_000,
+            })
+          }
+        }
+      } finally {
+        await context.close()
+        await setRequireEmail(false)
+      }
     }
   })
 })
