@@ -11,6 +11,22 @@ module Spree
       }.to change { order.reload.line_items.count }.by(-1)
     end
 
+    it 'recalculates the order totals from the lines that are left' do
+      order = create(:order, store: @default_store)
+      kept = create(:line_item, order: order, quantity: 2, price: 24.50)
+      removed = create(:line_item, order: order, quantity: 1, price: 18.00)
+      Spree::Orders::Recalculate.call(order: order)
+      expect(order.reload.item_total).to eq(67.0)
+
+      described_class.call(order: order, line_item: removed)
+
+      order.reload
+      expect(order.line_items).to contain_exactly(kept)
+      expect(order.item_total).to eq(49.0)
+      expect(order.total).to eq(49.0)
+      expect(order.total_quantity).to eq(2)
+    end
+
     # Draft-order edits apply whole or fail; only carts get the cart
     # workflow's warn-and-skip contract, so this must not route there.
     it 'uses the order workflow, not the cart one' do

@@ -125,6 +125,19 @@ RSpec.describe 'agent generic record writes' do
       expect(line_item.reload.quantity).to eq(4)
     end
 
+    it 'removes a line and leaves the order totals matching the lines that are left' do
+      kept = create(:line_item, order: order, quantity: 2, price: 24.50)
+      Spree::Orders::Recalculate.call(order: order)
+
+      result = tool('delete_resource').call(resource: items_key, id: line_item.prefixed_id, parent_id: order.prefixed_id)
+
+      expect(result[:error]).to be_nil
+      order.reload
+      expect(order.line_items).to contain_exactly(kept)
+      expect(order.item_total).to eq(49.0)
+      expect(order.total_quantity).to eq(2)
+    end
+
     it 'lists the lines of one order' do
       result = tool('search_resources').call(resource: items_key, parent_id: order.prefixed_id)
 
