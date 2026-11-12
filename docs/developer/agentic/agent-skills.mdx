@@ -21,10 +21,10 @@ Projects created with [create-spree-app](/developer/create-spree-app/quickstart)
 npx spree add ai
 ```
 
-This also connects your agent to the [docs MCP server](/developer/agentic/docs-mcp); pass `--no-mcp` to install only the skills. In any other project, use the skills CLI directly:
+This installs the skills release written for your Spree version (the repository tags one release per Spree version the skills changed for, such as `v6.0.1`), records it in `skills-lock.json`, and `spree upgrade` moves it along with the server. It also connects your agent to the [docs MCP server](/developer/agentic/docs-mcp); pass `--no-mcp` to install only the skills. In any other project, use the skills CLI directly, pinned to the release for your Spree version:
 
 ```bash
-npx skills add spree/agent-skills
+npx skills add spree/agent-skills#v6.0.1
 ```
 
 The [skills CLI](https://github.com/vercel-labs/skills) auto-detects which agent tools you have configured and copies the skill files into each tool's native location.

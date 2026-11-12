@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { SPREE_PACKAGES_RANGE } from '../src/constants'
 import { agentsMdContent, claudeMdContent } from '../src/templates/agents-md'
 import { dependabotContent } from '../src/templates/dependabot'
 import { envContent, storefrontEnvContent } from '../src/templates/env'
@@ -88,9 +89,17 @@ describe('rootPackageJsonContent', () => {
       delete process.env.SPREE_CLI_VERSION
     }
     const pkg = JSON.parse(rootPackageJsonContent('my-store'))
-    // The floor must admit every CLI capability the scaffold calls — the
-    // seller-dashboard component landed in 3.0.
-    expect(pkg.dependencies['@spree/cli']).toBe('^3.4.0')
+    // The floor must admit every CLI capability the scaffold calls — agent
+    // skills matched to the Spree version landed in 3.8.
+    expect(pkg.dependencies['@spree/cli']).toBe('^3.8.0')
+  })
+
+  // Agents read the local docs as the truth for this project, so they must
+  // describe the Spree the server runs, not whatever npm published last.
+  it('declares @spree/docs on the Spree major, like the dashboard packages', () => {
+    const pkg = JSON.parse(rootPackageJsonContent('my-store'))
+    expect(pkg.dependencies['@spree/docs']).toBe(SPREE_PACKAGES_RANGE)
+    expect(SPREE_PACKAGES_RANGE).toMatch(/^\^\d+\.0\.0-0$/)
   })
 
   it('includes convenience scripts using spree cli', () => {
@@ -251,6 +260,25 @@ describe('agentsMdContent', () => {
     const content = agentsMdContent(true, true, 'pnpm', false)
     expect(content).toContain('apps/dashboard/AGENTS.md')
     expect(content).not.toContain('apps/seller-dashboard')
+  })
+  // The CLI warns on these, so agents following the file would hit warnings.
+  it('recommends no deprecated CLI commands', () => {
+    const content = agentsMdContent(true, true, 'pnpm')
+    for (const command of ['rspec', 'routes', 'rails', 'rake', 'bundle']) {
+      expect(content).not.toContain(`pnpm spree ${command}`)
+    }
+    expect(content).toContain('pnpm spree test [path]')
+    expect(content).toContain('pnpm spree task <task>')
+    expect(content).toContain('pnpm spree exec bin/rails <args>')
+    expect(content).toContain('pnpm spree api endpoints')
+  })
+
+  it('points agents at the version-matched local docs and skills', () => {
+    const content = agentsMdContent(true, true, 'pnpm')
+    expect(content).toContain('node_modules/@spree/docs/dist/')
+    expect(content).toContain('for the Spree version this project runs')
+    expect(content).not.toMatch(/if `@spree\/docs` is installed/i)
+    expect(content).toContain('`skills-lock.json` records; `pnpm spree upgrade` moves them')
   })
 })
 

@@ -11,8 +11,9 @@ import { detectProject } from '../context.js'
 import {
   addDocsMcpServer,
   addDocsSectionToAgentInstructions,
-  INSTALL_SKILLS_ARGS,
   installAgentSkills,
+  installSkillsArgs,
+  resolveAgentSkillsRef,
   skillsFailureMessage,
 } from '../lib/ai.js'
 import {
@@ -23,6 +24,7 @@ import {
   resolveExtension,
 } from '../lib/extensions.js'
 import { confirmOrExit } from '../lib/prompt.js'
+import { RELEASE_LINE } from '../lib/release-line.js'
 import type { ProjectContext } from '../types.js'
 import { type AddExtensionOptions, addExtension } from './add-extension.js'
 
@@ -240,17 +242,20 @@ export async function addAi(ctx: ProjectContext, opts: AddAiOptions): Promise<bo
     }
   }
 
+  // The release of the skills written for the Spree version this CLI was
+  // built with, which `spree upgrade` later moves along with the server.
   if (opts.skills) {
     const packageManager = detectPackageManager(ctx.projectDir, ctx.projectDir)
     const s = p.spinner()
     s.start('Installing Spree agent skills...')
+    const ref = await resolveAgentSkillsRef(RELEASE_LINE.version)
     try {
-      await installAgentSkills(ctx.projectDir, packageManager)
-      s.stop('Spree agent skills installed.')
+      await installAgentSkills(ctx.projectDir, packageManager, ref)
+      s.stop(`Spree agent skills ${ref ?? 'from the main branch'} installed.`)
     } catch (err) {
       ready = false
       s.stop(pc.yellow('Spree agent skills were not installed.'))
-      p.log.warn(skillsFailureMessage('installed', packageManager, INSTALL_SKILLS_ARGS, err))
+      p.log.warn(skillsFailureMessage('installed', packageManager, installSkillsArgs(ref), err))
     }
   }
 

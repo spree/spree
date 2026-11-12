@@ -3,10 +3,12 @@ import path from 'node:path'
 import { execa } from 'execa'
 import pc from 'picocolors'
 import { isNotFound } from '../config.js'
+import { isOlderVersion } from './release-line.js'
 
 export const DOCS_MCP_URL = 'https://spreecommerce.org/docs/mcp'
 export const DOCS_MCP_SERVER_NAME = 'spree-docs'
 export const AGENT_SKILLS_REPO = 'spree/agent-skills'
+const AGENT_SKILLS_GIT_URL = `https://github.com/${AGENT_SKILLS_REPO}.git`
 
 /**
  * Project-level MCP files of each coding agent that reads one. Claude Code and
@@ -146,14 +148,59 @@ export function dlxCommand(packageManager: string): string[] {
   return ['npx', '--yes']
 }
 
-/** The `skills` CLI arguments that install every Spree agent skill. */
-export const INSTALL_SKILLS_ARGS: readonly string[] = Object.freeze([
-  'add',
-  AGENT_SKILLS_REPO,
-  '--skill',
-  '*',
-  '--yes',
-])
+/**
+ * The `skills` CLI arguments that install every Spree agent skill, from the
+ * given release tag of `spree/agent-skills`, or from its main branch without one.
+ */
+export function installSkillsArgs(ref?: string): string[] {
+  const source = ref ? `${AGENT_SKILLS_REPO}#${ref}` : AGENT_SKILLS_REPO
+  return ['add', source, '--skill', '*', '--yes']
+}
+
+const RELEASE_TAG = /^v(\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?)$/
+
+/**
+ * The release of the Spree agent skills written for a Spree version: the
+ * newest `v<version>` tag on the same minor line that is not newer than it.
+ * The skills are tagged only when they change, so `v6.0.1` serves Spree 6.0.4
+ * until a later 6.0 tag exists.
+ *
+ * @param spreeVersion the Spree version in npm spelling, e.g. `6.0.4`
+ * @param tags the tags of `spree/agent-skills`
+ * @return the tag, or undefined when no release covers that line yet
+ */
+export function agentSkillsRefFor(spreeVersion: string, tags: string[]): string | undefined {
+  const line = spreeVersion.split('.').slice(0, 2).join('.')
+  let newest: string | undefined
+  for (const tag of tags) {
+    const version = tag.match(RELEASE_TAG)?.[1]
+    if (!version || version.split('.').slice(0, 2).join('.') !== line) continue
+    if (isOlderVersion(spreeVersion, version)) continue
+    if (newest === undefined || isOlderVersion(newest, version)) newest = version
+  }
+  return newest && `v${newest}`
+}
+
+/**
+ * The release tag of the Spree agent skills for a Spree version, read from
+ * GitHub. Undefined when no release covers it or the tags cannot be listed,
+ * and the skills then come from the main branch.
+ */
+export async function resolveAgentSkillsRef(spreeVersion: string): Promise<string | undefined> {
+  try {
+    const { stdout } = await execa('git', ['ls-remote', '--tags', '--refs', AGENT_SKILLS_GIT_URL], {
+      stdin: 'ignore',
+      timeout: 30_000,
+    })
+    const tags = String(stdout ?? '')
+      .split('\n')
+      .map((line) => line.split('refs/tags/')[1]?.trim())
+      .filter((tag): tag is string => Boolean(tag))
+    return agentSkillsRefFor(spreeVersion, tags)
+  } catch {
+    return undefined
+  }
+}
 
 /** The full command that runs the `skills` CLI with the given arguments. */
 function skillsCommand(packageManager: string, args: readonly string[]): string[] {
@@ -205,18 +252,21 @@ async function runSkills(
 
 /**
  * Install every Spree agent skill for each coding agent the `skills` CLI
- * detects, without prompting. Run again, it moves the installed skills to the
- * newest version on the main branch of `spree/agent-skills` and adds the ones
- * published since.
+ * detects, without prompting. The skills-lock.json the `skills` CLI writes
+ * records the release each skill came from, so `spree upgrade` can move them
+ * with the server. Run again, it replaces the installed skills with that
+ * release's and adds the ones it has that are missing.
  *
  * @param projectDir the project root
  * @param packageManager the project's package manager, which runs the `skills` CLI
+ * @param ref the release tag from `resolveAgentSkillsRef`; the main branch without one
  */
 export async function installAgentSkills(
   projectDir: string,
   packageManager: string,
+  ref?: string,
 ): Promise<void> {
-  await runSkills(projectDir, packageManager, INSTALL_SKILLS_ARGS)
+  await runSkills(projectDir, packageManager, installSkillsArgs(ref))
 }
 
 function normalizeSource(source: string): string {

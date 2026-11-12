@@ -1,4 +1,4 @@
-import { PNPM_VERSION } from '../constants.js'
+import { PNPM_VERSION, SPREE_PACKAGES_RANGE } from '../constants.js'
 import type { PackageManager } from '../types.js'
 
 /**
@@ -32,16 +32,18 @@ export function rootPackageJsonContent(name: string, pm: PackageManager = 'pnpm'
     },
     dependencies: {
       // The floor matches the CLI behavior this scaffold relies on (the
-      // --quiet delegation, dev co-run, first-run setup, and `spree add
-      // seller-dashboard`) — an older resolve rejects the flags and silently
+      // --quiet delegation, dev co-run, first-run setup, `spree add
+      // seller-dashboard`, and agent skills matched to the Spree version) — an older resolve rejects the flags and silently
       // drops an admin app. Bump it in lockstep with any new CLI capability
       // the scaffold calls, or the scaffold asks for something the pinned CLI
       // has never heard of.
       // SPREE_CLI_VERSION overrides the spec for testing unreleased CLIs —
       // a range, or a `file:`/`link:` path to a packed tarball / checkout
       // (mirrors the starter Dockerfile's ARG of the same name).
-      '@spree/cli': process.env.SPREE_CLI_VERSION ?? '^3.4.0',
-      '@spree/docs': 'latest',
+      '@spree/cli': process.env.SPREE_CLI_VERSION ?? '^3.8.0',
+      // The docs carry the Spree version, so agents read the docs for the
+      // Spree the server runs; `spree upgrade` moves them with it.
+      '@spree/docs': SPREE_PACKAGES_RANGE,
     },
   }
 
