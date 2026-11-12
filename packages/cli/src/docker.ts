@@ -292,11 +292,12 @@ export async function dockerComposeRun(
 // carries compose's output on the thrown error.
 export async function prepareDatabase(
   projectDir: string,
-  options?: { stdio?: 'inherit' | 'pipe' | 'ignore' },
+  options?: { stdio?: 'inherit' | 'pipe' | 'ignore'; composeFile?: string },
 ): Promise<void> {
   const stdio = options?.stdio ?? 'pipe'
-  await dockerCompose(['up', '-d', '--wait', 'postgres'], projectDir, { stdio })
-  await dockerCompose(['run', '--rm', '--build', 'web', ...PREPARE_DATABASE], projectDir, {
+  const file = options?.composeFile ? ['-f', options.composeFile] : []
+  await dockerCompose([...file, 'up', '-d', '--wait', 'postgres'], projectDir, { stdio })
+  await dockerCompose([...file, 'run', '--rm', '--build', 'web', ...PREPARE_DATABASE], projectDir, {
     stdio,
   })
 }

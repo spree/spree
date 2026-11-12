@@ -122,12 +122,37 @@ describe('spree eject', () => {
 
     await runEject()
 
-    expect(prepareDatabase).toHaveBeenCalledWith(projectDir, { stdio: 'inherit' })
-    expect(dockerCompose).toHaveBeenCalledWith(['up', '-d'], projectDir, { stdio: 'inherit' })
+    expect(prepareDatabase).toHaveBeenCalledWith(projectDir, {
+      stdio: 'inherit',
+      composeFile: 'docker-compose.dev.yml',
+    })
+    expect(dockerCompose).toHaveBeenCalledWith(
+      ['-f', 'docker-compose.dev.yml', 'up', '-d'],
+      projectDir,
+      { stdio: 'inherit' },
+    )
     // Puma exits when spree_development is missing, so the database must
     // exist before `up -d` starts it.
     expect((prepareDatabase as Mock).mock.invocationCallOrder[0]).toBeLessThan(
       (dockerCompose as Mock).mock.invocationCallOrder[0],
     )
+  })
+
+  // docker-compose.yml is what marks a project ejected, so an eject that
+  // stops part-way must leave it alone for the next command to eject again.
+  it.each([
+    [
+      'preparing the database',
+      () => vi.mocked(prepareDatabase).mockRejectedValueOnce(new Error('boom')),
+    ],
+    ['starting the stack', () => vi.mocked(dockerCompose).mockRejectedValueOnce(new Error('boom'))],
+  ])('keeps the prebuilt compose when %s fails', async (_step, fail) => {
+    projectDir = makeProject(COMPOSE_DEV_FIXED)
+    fail()
+
+    await expect(runEject()).rejects.toThrow('boom')
+
+    const active = fs.readFileSync(path.join(projectDir, 'docker-compose.yml'), 'utf-8')
+    expect(active).toBe('services: {} # prebuilt-image compose\n')
   })
 })
