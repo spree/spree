@@ -49,17 +49,25 @@ module Spree
       Spree.hooks.clear!
     end
 
-    it 'keeps the line when a handler rejects the removal after it is applied' do
-      Spree.hooks.register('orders.upsert_items.after_items_upserted') { |flow| flow.reject!('locked') }
+    describe 'a handler rejecting the removal after it is applied' do
+      before { Spree.hooks.register('orders.upsert_items.after_items_upserted') { |flow| flow.reject!('locked') } }
+      after { Spree.hooks.clear! }
 
-      result = nil
-      expect {
-        result = described_class.call(order: order, line_item: line_item)
-      }.not_to change { order.reload.line_items.count }
+      it 'keeps the line' do
+        result = nil
+        expect {
+          result = described_class.call(order: order, line_item: line_item)
+        }.not_to change { order.reload.line_items.count }
 
-      expect(result).to be_failure
-    ensure
-      Spree.hooks.clear!
+        expect(result).to be_failure
+      end
+
+      # The API calls this under the order's row lock, an open transaction.
+      it 'keeps the line inside a caller transaction' do
+        expect {
+          order.with_lock { described_class.call(order: order, line_item: line_item) }
+        }.not_to change { order.reload.line_items.count }
+      end
     end
   end
 end
