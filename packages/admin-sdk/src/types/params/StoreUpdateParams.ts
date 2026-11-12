@@ -19,10 +19,11 @@ export type StoreUpdateParams = {
   weight_unit?: WeightUnit
   unit_system?: 'metric' | 'imperial'
   /**
-   * The store-wide default for what anonymous visitors can see. Channels fall back to it when they
+   * The store-wide default for what visitors can see. Under company_required, signed-in buyers
+   * without an active company also get no prices or checkout. Channels fall back to it when they
    * don't set their own.
    */
-  storefront_access?: 'public' | 'prices_hidden' | 'login_required'
+  storefront_access?: 'public' | 'prices_hidden' | 'login_required' | 'company_required'
   /**
    * The storefront's public URL, the base for links in customer emails. Saving it also completes
    * the storefront setup task.

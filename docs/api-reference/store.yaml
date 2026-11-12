@@ -1097,6 +1097,7 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
+                  pricing_access:
                   name: Product 3836979
                   slug: product-3836979
                   meta_title:
@@ -1390,6 +1391,7 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
+                  pricing_access:
                   name: Product 4319085
                   slug: product-4319085
                   meta_title:
@@ -1422,6 +1424,7 @@ paths:
                   original_price:
                   seller_id:
                 - id: prod_gbHJdmfrXB
+                  pricing_access:
                   name: Product 4328209
                   slug: product-4328209
                   meta_title:
@@ -1552,6 +1555,7 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
+                pricing_access:
                 name: Product 4596885
                 slug: product-4596885
                 meta_title:
@@ -2190,7 +2194,7 @@ paths:
           content:
             application/json:
               example:
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--22ede2e3d9cdad77551bf7a67e01face0a96aedc
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--a555c7b0b87e56073061823916df7bdd827d931d
                 filename: purchase-order.pdf
                 content_type: application/pdf
                 byte_size: 48210
@@ -2198,7 +2202,7 @@ paths:
                 expires_at: '2026-01-16T12:00:00.000Z'
                 upload:
                   method: PUT
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiIwc3NuNW5kM3RneWtwcWJndXdybGprZjNwbjc4IiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjQ4MjEwLCJjaGVja3N1bSI6IjVXMjhrY2ZxcDlLMGY1djRZN2VyUkE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--a14c3a39c55e67d9104f389ddda9d8126fb71040
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiIwc3NuNW5kM3RneWtwcWJndXdybGprZjNwbjc4IiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjQ4MjEwLCJjaGVja3N1bSI6IjVXMjhrY2ZxcDlLMGY1djRZN2VyUkE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--a1cd2d86668ed0f8ee036f069cc17e73e6083909
                   headers:
                     Content-Type: application/pdf
               schema:
@@ -2435,6 +2439,7 @@ paths:
                   po_number_required: false
                   po_document_filename:
                   po_document_byte_size:
+                  pricing_access:
                   number: cart_UkLWZg9DAJ
                   token: ckMf2iQ6r5adLceTPfKVH9BP
                   email:
@@ -2503,6 +2508,7 @@ paths:
                     seller_id:
                     preorder: false
                     preorder_ships_at:
+                    pricing_access:
                     quantity: 1
                     currency: USD
                     name: Product 354715
@@ -2556,6 +2562,7 @@ paths:
                   po_number_required: false
                   po_document_filename:
                   po_document_byte_size:
+                  pricing_access:
                   number: cart_gbHJdmfrXB
                   token: pvLw1ZWLLQNxh1uvSPUCdSmt
                   email:
@@ -2624,6 +2631,7 @@ paths:
                     seller_id:
                     preorder: false
                     preorder_ships_at:
+                    pricing_access:
                     quantity: 1
                     currency: USD
                     name: Product 3552171
@@ -2748,6 +2756,7 @@ paths:
                 po_number_required: false
                 po_document_filename:
                 po_document_byte_size:
+                pricing_access:
                 number: cart_UkLWZg9DAJ
                 token: jBrNbC8FSNyavqebdqu7e3uL
                 email:
@@ -2905,6 +2914,7 @@ paths:
                 po_number_required: false
                 po_document_filename:
                 po_document_byte_size:
+                pricing_access:
                 number: cart_UkLWZg9DAJ
                 token: HnnryvFFwjfx9P6ykByF4Gg2
                 email:
@@ -3092,6 +3102,7 @@ paths:
                 po_number_required: false
                 po_document_filename:
                 po_document_byte_size:
+                pricing_access:
                 number: cart_UkLWZg9DAJ
                 token: PMVmxRAiLqMivU5QgJqfpQMD
                 email:
@@ -3156,6 +3167,7 @@ paths:
                   seller_id:
                   preorder: false
                   preorder_ships_at:
+                  pricing_access:
                   quantity: 1
                   currency: USD
                   name: Product 3603263
@@ -3319,6 +3331,7 @@ paths:
                 po_number_required: false
                 po_document_filename:
                 po_document_byte_size:
+                pricing_access:
                 number: cart_UkLWZg9DAJ
                 token: rrGvkDXx3KcQVwLVk8XiVCVk
                 email: steve@tromp.com
@@ -3380,6 +3393,7 @@ paths:
                   seller_id:
                   preorder: false
                   preorder_ships_at:
+                  pricing_access:
                   quantity: 1
                   currency: USD
                   name: Product 3628992
@@ -3559,6 +3573,7 @@ paths:
                 company_name:
                 po_document_filename:
                 po_document_byte_size:
+                pricing_access:
                 number: R1001
                 email: marvel@bruen.com
                 customer_note:
@@ -3629,6 +3644,7 @@ paths:
                   seller_id:
                   preorder: false
                   preorder_ships_at:
+                  pricing_access:
                   quantity: 1
                   currency: USD
                   name: Product 3654794
@@ -3884,6 +3900,7 @@ paths:
                 po_number_required: false
                 po_document_filename:
                 po_document_byte_size:
+                pricing_access:
                 number: cart_UkLWZg9DAJ
                 token: x1oKZCt9usDGTWQZZQiL1XQ1
                 email:
@@ -3950,6 +3967,7 @@ paths:
                   seller_id:
                   preorder: false
                   preorder_ships_at:
+                  pricing_access:
                   quantity: 1
                   currency: USD
                   name: Product 3982614
@@ -4081,6 +4099,7 @@ paths:
                 po_number_required: false
                 po_document_filename:
                 po_document_byte_size:
+                pricing_access:
                 number: cart_UkLWZg9DAJ
                 token: gvr8TwNVJpxWf27uUHDj5Lj4
                 email:
@@ -4145,6 +4164,7 @@ paths:
                   seller_id:
                   preorder: false
                   preorder_ships_at:
+                  pricing_access:
                   quantity: 1
                   currency: USD
                   name: Product 3993461
@@ -4276,6 +4296,7 @@ paths:
                 po_number_required: false
                 po_document_filename:
                 po_document_byte_size:
+                pricing_access:
                 number: cart_UkLWZg9DAJ
                 token: KLLfFWg9T6dGonBb65hHjaZr
                 email: donya@jacobsonkunze.biz
@@ -4334,6 +4355,7 @@ paths:
                   seller_id:
                   preorder: false
                   preorder_ships_at:
+                  pricing_access:
                   quantity: 1
                   currency: USD
                   name: Product 4018182
@@ -4570,6 +4592,7 @@ paths:
                 po_number_required: false
                 po_document_filename:
                 po_document_byte_size:
+                pricing_access:
                 number: cart_UkLWZg9DAJ
                 token: nZjAPYSKrNaHf2ZVT6eZfNJV
                 email:
@@ -4655,6 +4678,7 @@ paths:
                   seller_id:
                   preorder: false
                   preorder_ships_at:
+                  pricing_access:
                   quantity: 1
                   currency: USD
                   name: Product 4035702
@@ -4810,6 +4834,7 @@ paths:
                 po_number_required: false
                 po_document_filename:
                 po_document_byte_size:
+                pricing_access:
                 number: cart_UkLWZg9DAJ
                 token: Wgq8NrLX3TUQLroJRYWFdQd5
                 email:
@@ -4899,6 +4924,7 @@ paths:
                   seller_id:
                   preorder: false
                   preorder_ships_at:
+                  pricing_access:
                   quantity: 1
                   currency: USD
                   name: Product 4079569
@@ -5021,6 +5047,7 @@ paths:
                 po_number_required: false
                 po_document_filename:
                 po_document_byte_size:
+                pricing_access:
                 number: cart_UkLWZg9DAJ
                 token: d12LXVnL3KtzGjXePqRawnPc
                 email:
@@ -5091,6 +5118,7 @@ paths:
                   seller_id:
                   preorder: false
                   preorder_ships_at:
+                  pricing_access:
                   quantity: 1
                   currency: USD
                   name: Product 41063
@@ -5122,6 +5150,7 @@ paths:
                   seller_id:
                   preorder: false
                   preorder_ships_at:
+                  pricing_access:
                   quantity: 1
                   currency: USD
                   name: Product 411298
@@ -5270,6 +5299,7 @@ paths:
                 po_number_required: false
                 po_document_filename:
                 po_document_byte_size:
+                pricing_access:
                 number: cart_UkLWZg9DAJ
                 token: Yq5XuZqq7KS7y7n2dMsChnZM
                 email:
@@ -5338,6 +5368,7 @@ paths:
                   seller_id:
                   preorder: false
                   preorder_ships_at:
+                  pricing_access:
                   quantity: 1
                   currency: USD
                   name: Product 4179165
@@ -5454,6 +5485,7 @@ paths:
                 po_number_required: false
                 po_document_filename:
                 po_document_byte_size:
+                pricing_access:
                 number: cart_UkLWZg9DAJ
                 token: arTvbVzmU1krWKLbRnWDZ3cL
                 email:
@@ -6061,6 +6093,7 @@ paths:
                 po_number_required: false
                 po_document_filename:
                 po_document_byte_size:
+                pricing_access:
                 number: cart_UkLWZg9DAJ
                 token: acfBZtWemHae74Y3g18LQg1f
                 email:
@@ -6146,6 +6179,7 @@ paths:
                   seller_id:
                   preorder: false
                   preorder_ships_at:
+                  pricing_access:
                   quantity: 1
                   currency: USD
                   name: Product 4829789
@@ -6267,6 +6301,7 @@ paths:
                 po_number_required: false
                 po_document_filename:
                 po_document_byte_size:
+                pricing_access:
                 number: cart_UkLWZg9DAJ
                 token: BHWevnp2PQxC1jSWU3ZFLejT
                 email:
@@ -6331,6 +6366,7 @@ paths:
                   seller_id:
                   preorder: false
                   preorder_ships_at:
+                  pricing_access:
                   quantity: 1
                   currency: USD
                   name: Product 484179
@@ -6640,6 +6676,7 @@ paths:
                 company_name:
                 po_document_filename:
                 po_document_byte_size:
+                pricing_access:
                 number: R1001
                 email: guest@example.com
                 customer_note:
@@ -6692,6 +6729,7 @@ paths:
                   seller_id:
                   preorder: false
                   preorder_ships_at:
+                  pricing_access:
                   quantity: 1
                   currency: USD
                   name: Product 421496
@@ -8027,6 +8065,7 @@ paths:
                   company_name:
                   po_document_filename:
                   po_document_byte_size:
+                  pricing_access:
                   number: R1001
                   email: idella.ratke@runolfsdottir.us
                   customer_note:
@@ -8072,6 +8111,7 @@ paths:
                     seller_id:
                     preorder: false
                     preorder_ships_at:
+                    pricing_access:
                     quantity: 1
                     currency: USD
                     name: Product 3855270
@@ -8356,6 +8396,7 @@ paths:
                 company_name:
                 po_document_filename:
                 po_document_byte_size:
+                pricing_access:
                 number: R1001
                 email: whitney_homenick@leschwhite.co.uk
                 customer_note:
@@ -8401,6 +8442,7 @@ paths:
                   seller_id:
                   preorder: false
                   preorder_ships_at:
+                  pricing_access:
                   quantity: 1
                   currency: USD
                   name: Product 3875633
@@ -11298,6 +11340,7 @@ paths:
                 variant:
                   id: variant_gbHJdmfrXB
                   product_id: prod_gbHJdmfrXB
+                  pricing_access:
                   sku: SKU-594
                   options_text: ''
                   track_inventory: true
@@ -11384,6 +11427,7 @@ paths:
                 variant:
                   id: variant_UkLWZg9DAJ
                   product_id: prod_UkLWZg9DAJ
+                  pricing_access:
                   sku: SKU-595
                   options_text: ''
                   track_inventory: true
@@ -11812,7 +11856,7 @@ paths:
                   slug: privacy-policy
                   body: ''
                   body_html: ''
-                  updated_at: '2026-11-10T13:27:20.350Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
                 - id: pol_OIJLhNcSbf
                   name: Privacy Policy
                   slug: privacy-policy-f4e5666d-52c2-4d89-aec5-cc55d69c7174
@@ -11830,19 +11874,19 @@ paths:
                   slug: returns-policy
                   body: ''
                   body_html: ''
-                  updated_at: '2026-11-10T13:27:20.359Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
                 - id: pol_VqXmZF31wY
                   name: Shipping Policy
                   slug: shipping-policy
                   body: ''
                   body_html: ''
-                  updated_at: '2026-11-10T13:27:20.367Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
                 - id: pol_UkLWZg9DAJ
                   name: Terms of Service
                   slug: terms-of-service
                   body: ''
                   body_html: ''
-                  updated_at: '2026-11-10T13:27:20.335Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
                 meta:
                   page: 1
                   limit: 25
@@ -12867,6 +12911,7 @@ paths:
                   company_name: Acme Industrial
                   po_document_filename:
                   po_document_byte_size:
+                  pricing_access:
                   number: R1001
                   email: chanell_langosh@schamberger.info
                   customer_note:
@@ -12912,6 +12957,7 @@ paths:
                     seller_id:
                     preorder: false
                     preorder_ships_at:
+                    pricing_access:
                     quantity: 1
                     currency: USD
                     name: Product 3845649
@@ -14440,6 +14486,16 @@ components:
         po_document_byte_size:
           type: number
           nullable: true
+        pricing_access:
+          anyOf:
+          - type: string
+            enum:
+            - login_required
+            - company_required
+          - type: string
+            nullable: true
+          description: The values listed are the built-in ones; extensions may add
+            more.
         number:
           type: string
           deprecated: true
@@ -17905,6 +17961,16 @@ components:
         preorder_ships_at:
           type: string
           nullable: true
+        pricing_access:
+          anyOf:
+          - type: string
+            enum:
+            - login_required
+            - company_required
+          - type: string
+            nullable: true
+          description: The values listed are the built-in ones; extensions may add
+            more.
         quantity:
           type: number
         currency:
@@ -19999,6 +20065,16 @@ components:
         po_document_byte_size:
           type: number
           nullable: true
+        pricing_access:
+          anyOf:
+          - type: string
+            enum:
+            - login_required
+            - company_required
+          - type: string
+            nullable: true
+          description: The values listed are the built-in ones; extensions may add
+            more.
         number:
           type: string
         email:
@@ -21540,6 +21616,38 @@ components:
       - display_compare_at_amount
       - price_list_id
       x-typelizer: true
+    ProductCategory:
+      type: object
+      properties:
+        id:
+          type: string
+        product_id:
+          type: string
+          nullable: true
+        category_id:
+          type: string
+          nullable: true
+      required:
+      - id
+      - product_id
+      - category_id
+      x-typelizer: true
+    ProductCollection:
+      type: object
+      properties:
+        id:
+          type: string
+        product_id:
+          type: string
+          nullable: true
+        collection_id:
+          type: string
+          nullable: true
+      required:
+      - id
+      - product_id
+      - collection_id
+      x-typelizer: true
     ProductFilterAvailabilityOption:
       type: object
       properties:
@@ -21930,6 +22038,16 @@ components:
       properties:
         id:
           type: string
+        pricing_access:
+          anyOf:
+          - type: string
+            enum:
+            - login_required
+            - company_required
+          - type: string
+            nullable: true
+          description: The values listed are the built-in ones; extensions may add
+            more.
         name:
           type: string
         slug:
@@ -23290,6 +23408,16 @@ components:
           type: string
         product_id:
           type: string
+        pricing_access:
+          anyOf:
+          - type: string
+            enum:
+            - login_required
+            - company_required
+          - type: string
+            nullable: true
+          description: The values listed are the built-in ones; extensions may add
+            more.
         sku:
           type: string
           nullable: true

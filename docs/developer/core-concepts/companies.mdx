@@ -343,6 +343,26 @@ The same storefront endpoints — the company directory, address book, member ma
 
 Payment terms and net invoicing, quotes, and a packaged buyer portal are on the Enterprise roadmap — [talk to the team](https://spreecommerce.org/enterprise/) if those matter to your timeline.
 
+## Active companies
+
+Whether a company may act commercially — see its catalogs, be priced by its agreements, be bought for — is answered by a single swappable policy. Out of the box every company is active:
+
+```ruby
+# The default — every company is active
+Spree::Dependencies.company_activation_policy_class = 'Spree::Companies::ActivationPolicy'
+```
+
+Every place a company's commercial standing matters consults it — catalog visibility, price resolution, tax exemptions, naming a company on a cart, and checkout on a `company_required` channel. A host app replaces the policy to hold companies back until they are vetted; nothing else changes. Two things the policy never touches:
+
+- **Self-service standing.** Members of an inactive company keep their company pages, address book, members and invitations — the workspace exists while they wait.
+- **A placed order.** Its company, tax registration and exemptions are history, and deactivating the business later must not restate them.
+
+Pair companies with the [`company_required` storefront posture](/developer/core-concepts/channels#storefront-access-gating) for a trade store: anyone browses the range, prices come back `null` with a `pricing_access` reason code telling the storefront which prompt to render, and checkout refuses completion until the cart resolves to an active company. In open source, companies are created by staff, and buyers join them through [invitations](#adding-people) — so only businesses you have set up see prices.
+
+<Card title="Business registration requires a Spree Enterprise licence" icon="lock" href="https://spreecommerce.org/enterprise/">
+  Letting businesses apply from the storefront — with verification requirements per country or region, a review queue, requests for more information and approval — is part of Spree Enterprise. It works through the same activation policy and storefront posture.
+</Card>
+
 ## Managing companies as staff
 
 <CodeGroup>

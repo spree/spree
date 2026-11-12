@@ -331,6 +331,10 @@ export type PickupStockPolicy = (typeof PICKUP_STOCK_POLICIES)[number]
 export const PRICE_LIST_STATUSES = ['draft', 'active', 'inactive', 'scheduled'] as const
 export type PriceListStatus = (typeof PRICE_LIST_STATUSES)[number] | (string & {})
 
+/** The built-in values of `PricingAccess`. Extensions may add more. */
+export const PRICING_ACCESSES = ['login_required', 'company_required'] as const
+export type PricingAccess = (typeof PRICING_ACCESSES)[number] | (string & {})
+
 /** The built-in values of `ProductStatus`. Extensions may add more. */
 export const PRODUCT_STATUSES = ['draft', 'active', 'archived', 'proposed', 'rejected'] as const
 export type ProductStatus = (typeof PRODUCT_STATUSES)[number] | (string & {})
@@ -484,7 +488,12 @@ export const STOCK_TRANSFER_STATUSES = [
 export type StockTransferStatus = (typeof STOCK_TRANSFER_STATUSES)[number] | (string & {})
 
 /** Every value of `StorefrontAccess`. */
-export const STOREFRONT_ACCESSES = ['public', 'prices_hidden', 'login_required'] as const
+export const STOREFRONT_ACCESSES = [
+  'public',
+  'prices_hidden',
+  'login_required',
+  'company_required',
+] as const
 export type StorefrontAccess = (typeof STOREFRONT_ACCESSES)[number]
 
 /** The built-in values of `TaxExemptionCertificateStatus`. Extensions may add more. */

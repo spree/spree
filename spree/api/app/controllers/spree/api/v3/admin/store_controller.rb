@@ -18,9 +18,12 @@ module Spree
             body.attribute :timezone, :time_zone, example: 'Europe/Berlin'
             body.attribute :weight_unit, :weight_unit
             body.attribute :unit_system, :string, choices: Spree::Store::UNIT_SYSTEMS
-            body.attribute :storefront_access, :string,
+            body.attribute(
+              :storefront_access, :string,
               choices: Spree::Channel::Gating::STOREFRONT_ACCESS,
-              description: "The store-wide default for what anonymous visitors can see. Channels fall back to it when they don't set their own."
+              description: 'The store-wide default for what visitors can see. Under company_required, signed-in buyers without an ' \
+                           "active company also get no prices or checkout. Channels fall back to it when they don't set their own."
+            )
             body.attribute :storefront_url, :string,
               nullable: true,
               description: "The storefront's public URL, the base for links in customer emails. Saving it also completes the storefront setup task."

@@ -143,6 +143,30 @@ test.describe('settings / channels', () => {
     await expect(guestCheckout).toContainText(/^inherit from store$/i)
   })
 
+  // Prices and checkout only for members of an active company — the trade
+  // store posture company self-registration feeds.
+  test('limits a channel to company members', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, CHANNELS_PATH(creds.store_id), ADD_CTA)
+
+    const name = `E2E Channel Members ${Date.now()}`
+    await createChannel(page, { name })
+    await expect(rowButton(page, name)).toBeVisible({ timeout: 15_000 })
+
+    const access = page.locator('#storefront_access')
+
+    await rowButton(page, name).click()
+    await expect(access).toContainText(/^inherit from store$/i, { timeout: 15_000 })
+    await access.click()
+    await page.getByRole('option', { name: /^company members only/i }).click()
+    await page.getByRole('button', { name: /^save$/i }).click()
+
+    await expect(page.getByRole('heading', { name })).toHaveCount(0, { timeout: 15_000 })
+    await rowButton(page, name).click()
+    await expect(page.getByRole('heading', { name })).toBeVisible({ timeout: 15_000 })
+    await expect(access).toContainText(/^company members only/i)
+  })
+
   test('names the default catalog picker for assistive technology', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, CHANNELS_PATH(creds.store_id), ADD_CTA)
