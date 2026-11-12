@@ -73,6 +73,9 @@ export function useFulfillmentActions(orderId: string) {
     orderId,
     ({ fulfillmentId, ...params }: { fulfillmentId: string } & FulfillmentSplitParams) =>
       adminClient.orders.fulfillments.split(orderId, fulfillmentId, params),
+    // The split dialog checks quantities itself but has no place for what
+    // the server refuses.
+    { toastValidationErrors: true },
   )
 
   // Accepts a bare id (ship everything) or an id plus the quantities to ship,

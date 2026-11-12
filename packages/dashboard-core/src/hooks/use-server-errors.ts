@@ -1,6 +1,8 @@
+import { toastManager } from '@spree/dashboard-ui'
 import { useCallback, useState } from 'react'
 import type { FieldValues, UseFormSetError } from 'react-hook-form'
 import { mapSpreeErrorsToForm } from '../lib/form-errors'
+import { i18n } from '../lib/i18n'
 
 /** Server messages by field name, plus `root` for the failure summary. */
 export type ServerErrors = Partial<Record<string, string>>
@@ -17,6 +19,20 @@ export function readServerErrors(error: unknown): ServerErrors | null {
   }) as UseFormSetError<FieldValues>
 
   return mapSpreeErrorsToForm(error, setError) ? errors : null
+}
+
+/**
+ * Toasts a failed write in the words a form would show it, for a dialog with
+ * no inline place for the message. A plain `useMutation` with no `onError` is
+ * otherwise silent: the dialog just stays open.
+ *
+ * @param error what the mutation rejected with
+ */
+export function toastMutationError(error: unknown): void {
+  const title =
+    readServerErrors(error)?.root ??
+    (error instanceof Error && error.message ? error.message : i18n.t('admin.errors.generic'))
+  toastManager.add({ type: 'error', title })
 }
 
 /**

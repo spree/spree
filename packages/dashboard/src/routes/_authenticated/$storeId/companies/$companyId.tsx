@@ -14,6 +14,7 @@ import {
   Slot,
   Subject,
   usePermissions,
+  useServerErrors,
 } from '@spree/dashboard-core'
 import {
   AddressBookTable,
@@ -887,6 +888,17 @@ function AddMemberDialog({
   // Enterprise role picker); merged into the create payload untouched, so core
   // never needs to know which fields that plugin owns.
   const [extraParams, setExtraParams] = useState<Record<string, unknown>>({})
+  const serverErrors = useServerErrors()
+  const { errors } = serverErrors
+  const customerError = errors.customer_id ?? errors.customer
+  const emailError = errors.email ?? errors.customer_email
+  // A role field from the plugin, or a refusal of the whole record.
+  const summary = serverErrors.offscreenSummary([
+    'customer_id',
+    'customer',
+    'email',
+    'customer_email',
+  ])
 
   async function handleSubmit() {
     if (!customer && !email) return
@@ -896,7 +908,7 @@ function AddMemberDialog({
         ...(customer ? { customer_id: customer.id } : { customer_email: email }),
       })
       .then(() => onOpenChange(false))
-      .catch(() => undefined)
+      .catch(serverErrors.capture)
   }
 
   return (
@@ -908,6 +920,11 @@ function AddMemberDialog({
         </DialogHeader>
         <DialogBody>
           <FieldGroup>
+            {summary && (
+              <p className="text-base text-destructive" role="alert">
+                {summary}
+              </p>
+            )}
             <Field>
               <FieldLabel htmlFor="member-customer">
                 {t('admin.fields.customer_id.label')}
@@ -920,8 +937,10 @@ function AddMemberDialog({
                 onChange={(_id, record) => {
                   setCustomer(record)
                   if (record) setEmail('')
+                  serverErrors.reset()
                 }}
               />
+              {customerError && <FieldError>{customerError}</FieldError>}
             </Field>
             <Field>
               <FieldLabel htmlFor="member-email">
@@ -935,8 +954,11 @@ function AddMemberDialog({
                 onChange={(event) => {
                   setEmail(event.target.value)
                   if (event.target.value) setCustomer(null)
+                  serverErrors.reset()
                 }}
+                aria-invalid={!!emailError || undefined}
               />
+              {emailError && <FieldError>{emailError}</FieldError>}
               <FieldDescription>{t('admin.fields.company_membership.email.help')}</FieldDescription>
             </Field>
 
