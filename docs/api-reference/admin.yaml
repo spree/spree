@@ -54766,7 +54766,7 @@ paths:
                         default: false
                       require_contact_email:
                         type: boolean
-                        default: true
+                        default: false
                     additionalProperties: false
                 - type: billing_address
                   name: Billing address
@@ -79761,7 +79761,7 @@ components:
           default: false
         require_contact_email:
           type: boolean
-          default: true
+          default: false
       additionalProperties: false
     SellerRequirementDeliveryMethodPreferences:
       type: object

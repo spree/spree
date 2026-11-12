@@ -127,12 +127,20 @@ RSpec.describe 'seller requirement kinds', type: :model do
     let(:requirement) { create(:complete_profile_requirement, store: store) }
 
     it 'asks for the fields the operator ticked' do
-      requirement.update!(preferred_require_about: true, preferred_require_logo: false,
-                          preferred_require_contact_email: false)
+      requirement.update!(preferred_require_about: true, preferred_require_logo: false)
 
       expect(requirement.satisfied?(seller)).to be false
 
       seller.update!(about: 'We sell things.')
+
+      expect(requirement.satisfied?(seller)).to be true
+    end
+
+    # The contact email is how the marketplace reaches the seller, not part of
+    # the public profile, so it is only asked for when the operator opts in.
+    it 'does not ask for a contact email by default' do
+      seller.update!(about: 'We sell things.', contact_email: nil)
+      seller.logo.attach(io: StringIO.new('logo'), filename: 'logo.png', content_type: 'image/png')
 
       expect(requirement.satisfied?(seller)).to be true
     end
@@ -155,7 +163,13 @@ RSpec.describe 'seller requirement kinds', type: :model do
         state: 'incomplete', message: 'Still missing: a description and a contact email.'
       )
 
-      seller.update!(about: 'We sell things.', contact_email: 'hello@example.com')
+      seller.update!(about: 'We sell things.')
+
+      # The email is edited on a different page than the rest of the profile,
+      # so the panel needs to know when it is the only gap left.
+      expect(requirement.blocker(seller)[:state]).to eq('contact_email_missing')
+
+      seller.update!(contact_email: 'hello@example.com')
 
       expect(requirement.blocker(seller)).to be_nil
     end

@@ -213,7 +213,7 @@ curl -X POST 'https://api.mystore.com/api/v3/admin/seller_requirements' \
 
 </CodeGroup>
 
-Each kind takes its own configuration through `preferences`. `accept_terms` carries `terms_body`, `terms_url` and `terms_effective_from` — setting that date is how you ask everyone again after rewriting the terms, since anyone who accepted before it falls back to unmet. `minimum_products` carries `minimum_count`. `complete_profile` carries `require_about`, `require_logo`, `require_cover_photo` and `require_contact_email`.
+Each kind takes its own configuration through `preferences`. `accept_terms` carries `terms_body`, `terms_url` and `terms_effective_from` — setting that date is how you ask everyone again after rewriting the terms, since anyone who accepted before it falls back to unmet. `minimum_products` carries `minimum_count`. `complete_profile` carries `require_about` and `require_logo` (both on by default), and `require_cover_photo` and `require_contact_email` (both off by default).
 
 Two flags govern every row regardless of kind. `required: false` makes a line advisory — it appears on the seller's checklist but does not gate approval. `active: false` retires it without deleting the submissions that answered it. Position is the order sellers work through, and the list is drag-ordered in the dashboard.
 
