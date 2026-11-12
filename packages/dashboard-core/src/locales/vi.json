@@ -868,6 +868,23 @@
         "make_active_at": {
           "label": "Hãy hoạt động tại"
         },
+        "market_availability": {
+          "help": {
+            "all": "Khách hàng ở mọi thị trường đều có thể xem và mua sản phẩm này.",
+            "all_except": "Ẩn với khách hàng ở các thị trường dưới đây ở mọi nơi, kể cả trang riêng của sản phẩm.",
+            "only": "Chỉ khách hàng ở các thị trường dưới đây mới có thể xem và mua sản phẩm này."
+          },
+          "label": "Bán tại",
+          "options": {
+            "all": "Tất cả thị trường",
+            "all_except": "Tất cả thị trường trừ…",
+            "only": "Chỉ tại…"
+          }
+        },
+        "market_ids": {
+          "label": "Thị trường",
+          "placeholder": "Chọn thị trường"
+        },
         "name": {
           "label": "Tên",
           "placeholder": "Tên sản phẩm"
@@ -1267,6 +1284,9 @@
           "in_stock_short": "Còn hàng",
           "on_backorder": "Đang đặt hàng trước",
           "out_of_stock": "Hết hàng"
+        },
+        "market_availability": {
+          "title": "Thị trường"
         },
         "media_empty": "Chưa có phương tiện truyền thông nào.",
         "media_upload": "Tải lên phương tiện",

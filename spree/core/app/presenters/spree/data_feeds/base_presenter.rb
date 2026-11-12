@@ -15,8 +15,10 @@ module Spree
 
       private
 
+      # Feeds are quoted in the store's currency, so they speak for its
+      # default market and leave out what that market may not buy.
       def products
-        store.products.active
+        store.products.active.available_in_market(store.default_market)
       end
     end
   end

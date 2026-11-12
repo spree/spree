@@ -110,6 +110,14 @@ module Spree
         store || Spree::Current.store || Spree::Store.default
       end
 
+      # Prefixed or raw ids of +klass+ records, kept to the assignable store's.
+      def assignable_ids(klass, ids)
+        decoded_ids = Array(ids).filter_map do |id|
+          id.to_s.include?('_') ? klass.decode_prefixed_id(id) : id
+        end
+        klass.for_store(assignable_store).where(id: decoded_ids).ids
+      end
+
       def pending_publications?
         @pending_publications_params.present?
       end

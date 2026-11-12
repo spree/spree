@@ -493,7 +493,7 @@ paths:
                   selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 117
+                  name: Seller 118
                   status: approved
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
@@ -566,8 +566,8 @@ paths:
                   selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 89
-                  slug: seller-89
+                  name: Seller 90
+                  slug: seller-90
                   status: approved
                 store:
                   id: store_UkLWZg9DAJ
@@ -867,8 +867,8 @@ paths:
                   selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 91
-                  slug: seller-91
+                  name: Seller 92
+                  slug: seller-92
                   status: approved
                 store:
                   id: store_UkLWZg9DAJ
@@ -14132,7 +14132,7 @@ paths:
                   updated_at: '2026-01-15T12:00:00.000Z'
                   provider_type:
                   provider_name: File
-                  download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiI1Z28wOGZsYWtwNXYyeG4yMGlueHZvbWwyZmRzIiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cInRoaW5raW5nLWNhdC5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jyd0aGlua2luZy1jYXQuanBnIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--dfa61b3de1d7498ffe55a6fddbc96ae0b6e80ca6/thinking-cat.jpg
+                  download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiI1Z28wOGZsYWtwNXYyeG4yMGlueHZvbWwyZmRzIiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cInRoaW5raW5nLWNhdC5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jyd0aGlua2luZy1jYXQuanBnIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--cf141a589135f7796a94444ec29f912498e70674/thinking-cat.jpg
                   effective_authorized_clicks: 5
                   effective_authorized_days: 7
                 meta:
@@ -14220,7 +14220,7 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 provider_type:
                 provider_name: File
-                download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJmZ201b2ZidHBzbWhpYnB1cXY1YndjcHZvbXR4IiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cIm1hbnVhbC5wZGZcIjsgZmlsZW5hbWUqPVVURi04JydtYW51YWwucGRmIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--3fc7ae502b4c568f8f8d49dbc6fa4038770b2792/manual.pdf
+                download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJmZ201b2ZidHBzbWhpYnB1cXY1YndjcHZvbXR4IiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cIm1hbnVhbC5wZGZcIjsgZmlsZW5hbWUqPVVURi04JydtYW51YWwucGRmIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--314232a32d62420ae82505ce199a692e9aef7da5/manual.pdf
                 effective_authorized_clicks: 5
                 effective_authorized_days: 30
               schema:
@@ -14300,7 +14300,7 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 provider_type:
                 provider_name: File
-                download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiIydGZoM2pnZnBnMGwwemF4NjU2OW0xd3Jud2lhIiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cInRoaW5raW5nLWNhdC5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jyd0aGlua2luZy1jYXQuanBnIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--35f1f4197f018e103aad2b11dcc6a3739000e655/thinking-cat.jpg
+                download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiIydGZoM2pnZnBnMGwwemF4NjU2OW0xd3Jud2lhIiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cInRoaW5raW5nLWNhdC5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jyd0aGlua2luZy1jYXQuanBnIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--6d54a99dc5f5ea180cb58f88582a26da328c3748/thinking-cat.jpg
                 effective_authorized_clicks: 5
                 effective_authorized_days: 7
               schema:
@@ -14356,7 +14356,7 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 provider_type:
                 provider_name: File
-                download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJmbHRwbWl6azhucWZlb2JjY2EyNzM2N2EzdDV1IiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cInRoaW5raW5nLWNhdC5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jyd0aGlua2luZy1jYXQuanBnIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--c951b25342b7ec9c8dc5ff5868be008da1349948/thinking-cat.jpg
+                download_url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJmbHRwbWl6azhucWZlb2JjY2EyNzM2N2EzdDV1IiwiZGlzcG9zaXRpb24iOiJhdHRhY2htZW50OyBmaWxlbmFtZT1cInRoaW5raW5nLWNhdC5qcGdcIjsgZmlsZW5hbWUqPVVURi04Jyd0aGlua2luZy1jYXQuanBnIiwiY29udGVudF90eXBlIjoiaW1hZ2UvanBlZyIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl9rZXkifX0=--72c7b0b84331b3a6e42aaeb242a39a0971a4aa96/thinking-cat.jpg
                 effective_authorized_clicks: 10
                 effective_authorized_days: 7
               schema:
@@ -14705,6 +14705,8 @@ paths:
                   product_type_id:
                   delivery_profile_id: fp_UkLWZg9DAJ
                   total_on_hand: 0
+                  market_availability: all
+                  market_ids: []
                 meta:
                   page: 1
                   limit: 25
@@ -14806,6 +14808,8 @@ paths:
                 product_type_id:
                 delivery_profile_id: fp_UkLWZg9DAJ
                 total_on_hand: 0
+                market_availability: all
+                market_ids: []
               schema:
                 "$ref": "#/components/schemas/Product"
         '422':
@@ -14916,6 +14920,8 @@ paths:
                 product_type_id:
                 delivery_profile_id: fp_UkLWZg9DAJ
                 total_on_hand: 0
+                market_availability: all
+                market_ids: []
               schema:
                 "$ref": "#/components/schemas/Product"
         '404':
@@ -15003,6 +15009,8 @@ paths:
                 product_type_id:
                 delivery_profile_id: fp_UkLWZg9DAJ
                 total_on_hand: 0
+                market_availability: all
+                market_ids: []
               schema:
                 "$ref": "#/components/schemas/Product"
       requestBody:
@@ -15144,6 +15152,8 @@ paths:
                 product_type_id:
                 delivery_profile_id: fp_UkLWZg9DAJ
                 total_on_hand: 0
+                market_availability: all
+                market_ids: []
               schema:
                 "$ref": "#/components/schemas/Product"
         '422':
@@ -15247,6 +15257,8 @@ paths:
                 product_type_id:
                 delivery_profile_id: fp_UkLWZg9DAJ
                 total_on_hand: 0
+                market_availability: all
+                market_ids: []
               schema:
                 "$ref": "#/components/schemas/Product"
   "/api/v3/seller/products/{id}/archive":
@@ -15333,6 +15345,8 @@ paths:
                 product_type_id:
                 delivery_profile_id: fp_UkLWZg9DAJ
                 total_on_hand: 0
+                market_availability: all
+                market_ids: []
               schema:
                 "$ref": "#/components/schemas/Product"
   "/api/v3/seller/products/bulk_submit":
@@ -15511,8 +15525,8 @@ paths:
             application/json:
               example:
                 id: sel_UkLWZg9DAJ
-                name: Seller 155
-                slug: seller-155
+                name: Seller 156
+                slug: seller-156
                 about: ''
                 about_html: ''
                 logo_url:
@@ -15602,7 +15616,7 @@ paths:
               example:
                 id: sel_UkLWZg9DAJ
                 name: Acme Supplies
-                slug: seller-157
+                slug: seller-158
                 about: ''
                 about_html: ''
                 logo_url:
@@ -16355,7 +16369,7 @@ paths:
                 inviter_email: hal_kiehn@herman.biz
                 seller:
                   id: sel_UkLWZg9DAJ
-                  name: Seller 187
+                  name: Seller 188
               schema:
                 "$ref": "#/components/schemas/Invitation"
         '422':
@@ -16493,7 +16507,7 @@ paths:
           content:
             application/json:
               example:
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--22ede2e3d9cdad77551bf7a67e01face0a96aedc
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--a7e4038f04123ea057f4d82ac6d3c2eab58a5489
                 filename: registration.pdf
                 content_type: application/pdf
                 byte_size: 51234
@@ -16501,7 +16515,7 @@ paths:
                 expires_at: '2026-01-16T12:00:00.000Z'
                 upload:
                   method: PUT
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiI4NDFrenlvbTQ5cnRhcDk0cmZxbGV6dnM1cGJsIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--ef8f3640c3920e91b561dd50063ad9eba0171431
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiI4NDFrenlvbTQ5cnRhcDk0cmZxbGV6dnM1cGJsIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--e03b34fccf1e2a630e755448aff4c4ead1c7e0e9
                   headers:
                     Content-Type: application/pdf
               schema:
@@ -21081,6 +21095,104 @@ paths:
               schema:
                 type: string
                 format: binary
+  "/api/v3/seller/markets":
+    get:
+      summary: List markets
+      tags:
+      - Markets
+      security:
+      - bearer_auth: []
+      description: |
+        The marketplace's markets, for choosing where a product may be sold.
+
+        Read only: which markets exist is the marketplace's decision. Send the
+        chosen ids as `market_ids` on the product, with `market_availability`
+        set to `all_except` or `only`.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const { data: markets } = await client.markets.list()
+
+          await client.products.update('prod_86Rf07xd4z', {
+            market_availability: 'all_except',
+            market_ids: [markets[0].id],
+          })
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: Page number
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        required: false
+        description: Records per page (max 100)
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: markets listed
+          content:
+            application/json:
+              example:
+                data:
+                - id: mkt_UkLWZg9DAJ
+                  name: United States
+                  currency: USD
+                  default_locale: en
+                  tax_inclusive: false
+                  default: true
+                  country_codes:
+                  - US
+                  supported_locales:
+                  - en
+                - id: mkt_gbHJdmfrXB
+                  name: Europe
+                  currency: USD
+                  default_locale: en
+                  tax_inclusive: false
+                  default: false
+                  country_codes:
+                  - ES
+                  supported_locales:
+                  - en
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 2
+                  pages: 1
+                  from: 1
+                  to: 2
+                  in: 2
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Market"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
   "/api/v3/seller/orders":
     get:
       summary: List orders
@@ -21289,7 +21401,7 @@ paths:
                     created_at: '2026-01-15T12:00:00.000Z'
                     updated_at: '2026-01-15T12:00:00.000Z'
                     fulfillment_type: shipping
-                    delivery_method_name: UPS Ground 157
+                    delivery_method_name: UPS Ground 158
                     stock_location_name: Roseline Roberts
                     stock_location_id: sloc_UkLWZg9DAJ
                     fulfillment_items:
@@ -21303,7 +21415,7 @@ paths:
                     selected_delivery_rate_id: dr_gbHJdmfrXB
                     delivery_rates:
                     - id: dr_gbHJdmfrXB
-                      name: UPS Ground 157
+                      name: UPS Ground 158
                       selected: true
                       cost: '10.00'
                       total: '10.00'
@@ -21486,7 +21598,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 158
+                  delivery_method_name: UPS Ground 159
                   stock_location_name: Woodrow Hand
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -21500,7 +21612,7 @@ paths:
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 158
+                    name: UPS Ground 159
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -21683,7 +21795,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 161
+                  delivery_method_name: UPS Ground 162
                   stock_location_name: Savanna Hills
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -21697,7 +21809,7 @@ paths:
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 161
+                    name: UPS Ground 162
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -21870,7 +21982,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 162
+                  delivery_method_name: UPS Ground 163
                   stock_location_name: Rudy Mosciski
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -21884,7 +21996,7 @@ paths:
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 162
+                    name: UPS Ground 163
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -22064,7 +22176,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 164
+                  delivery_method_name: UPS Ground 165
                   stock_location_name: Kecia Pollich
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -22078,7 +22190,7 @@ paths:
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 164
+                    name: UPS Ground 165
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -22235,7 +22347,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground 165
+                  delivery_method_name: UPS Ground 166
                   stock_location_name: Ophelia Hartmann
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -22249,7 +22361,7 @@ paths:
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground 165
+                    name: UPS Ground 166
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -26742,6 +26854,869 @@ components:
       - inviter_email
       - seller
       x-typelizer: true
+    Market:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        currency:
+          type: string
+          enum:
+          - AED
+          - AFN
+          - ALL
+          - AMD
+          - ANG
+          - AOA
+          - ARS
+          - AUD
+          - AWG
+          - AZN
+          - BAM
+          - BBD
+          - BDT
+          - BGN
+          - BHD
+          - BIF
+          - BMD
+          - BND
+          - BOB
+          - BRL
+          - BSD
+          - BTN
+          - BWP
+          - BYN
+          - BYR
+          - BZD
+          - CAD
+          - CDF
+          - CHF
+          - CLF
+          - CLP
+          - CNY
+          - COP
+          - CRC
+          - CUC
+          - CUP
+          - CVE
+          - CZK
+          - DJF
+          - DKK
+          - DOP
+          - DZD
+          - EEK
+          - EGP
+          - ERN
+          - ETB
+          - EUR
+          - FJD
+          - FKP
+          - GBP
+          - GEL
+          - GHS
+          - GIP
+          - GMD
+          - GNF
+          - GTQ
+          - GYD
+          - HKD
+          - HNL
+          - HRK
+          - HTG
+          - HUF
+          - IDR
+          - ILS
+          - INR
+          - IQD
+          - IRR
+          - ISK
+          - JMD
+          - JOD
+          - JPY
+          - KES
+          - KGS
+          - KHR
+          - KMF
+          - KPW
+          - KRW
+          - KWD
+          - KYD
+          - KZT
+          - LAK
+          - LBP
+          - LKR
+          - LRD
+          - LSL
+          - LTL
+          - LVL
+          - LYD
+          - MAD
+          - MDL
+          - MGA
+          - MKD
+          - MMK
+          - MNT
+          - MOP
+          - MRO
+          - MRU
+          - MTL
+          - MUR
+          - MVR
+          - MWK
+          - MXN
+          - MYR
+          - MZN
+          - NAD
+          - NGN
+          - NIO
+          - NOK
+          - NPR
+          - NZD
+          - OMR
+          - PAB
+          - PEN
+          - PGK
+          - PHP
+          - PKR
+          - PLN
+          - PYG
+          - QAR
+          - RON
+          - RSD
+          - RUB
+          - RWF
+          - SAR
+          - SBD
+          - SCR
+          - SDG
+          - SEK
+          - SGD
+          - SHP
+          - SKK
+          - SLE
+          - SLL
+          - SOS
+          - SRD
+          - SSP
+          - STD
+          - STN
+          - SVC
+          - SYP
+          - SZL
+          - THB
+          - TJS
+          - TMM
+          - TMT
+          - TND
+          - TOP
+          - TRY
+          - TTD
+          - TWD
+          - TZS
+          - UAH
+          - UGX
+          - USD
+          - UYI
+          - UYU
+          - UYW
+          - UZS
+          - VED
+          - VEF
+          - VES
+          - VND
+          - VUV
+          - WST
+          - XAF
+          - XCD
+          - XCG
+          - XOF
+          - XPF
+          - YER
+          - ZAR
+          - ZMK
+          - ZMW
+          - ZWD
+          - ZWG
+          - ZWL
+          - ZWN
+          - ZWR
+        default_locale:
+          type: string
+          enum:
+          - aa
+          - ab
+          - ae
+          - af
+          - ak
+          - am
+          - an
+          - ar
+          - as
+          - av
+          - ay
+          - az
+          - ba
+          - be
+          - bg
+          - bh
+          - bi
+          - bm
+          - bn
+          - bo
+          - br
+          - bs
+          - ca
+          - ce
+          - ch
+          - co
+          - cr
+          - cs
+          - cu
+          - cv
+          - cy
+          - da
+          - de
+          - de-AT
+          - de-CH
+          - dv
+          - dz
+          - ee
+          - el
+          - en
+          - en-AU
+          - en-CA
+          - en-GB
+          - en-IN
+          - en-NZ
+          - en-US
+          - eo
+          - es
+          - es-419
+          - es-CL
+          - es-EC
+          - es-MX
+          - et
+          - eu
+          - fa
+          - ff
+          - fi
+          - fj
+          - fo
+          - fr
+          - fr-CA
+          - fy
+          - ga
+          - gd
+          - gl
+          - gn
+          - gu
+          - gv
+          - ha
+          - he
+          - hi
+          - ho
+          - hr
+          - ht
+          - hu
+          - hy
+          - hz
+          - ia
+          - id
+          - ie
+          - ig
+          - ii
+          - ik
+          - io
+          - is
+          - it
+          - iu
+          - ja
+          - jv
+          - ka
+          - kg
+          - ki
+          - kj
+          - kk
+          - kl
+          - km
+          - kn
+          - ko
+          - kr
+          - ks
+          - ku
+          - kv
+          - kw
+          - ky
+          - la
+          - lb
+          - lg
+          - li
+          - ln
+          - lo
+          - lt
+          - lu
+          - lv
+          - mg
+          - mh
+          - mi
+          - mk
+          - ml
+          - mn
+          - mr
+          - ms
+          - mt
+          - my
+          - na
+          - nb
+          - nd
+          - ne
+          - ng
+          - nl
+          - nn
+          - 'no'
+          - nr
+          - nv
+          - ny
+          - oc
+          - oj
+          - om
+          - or
+          - os
+          - pa
+          - pi
+          - pl
+          - ps
+          - pt
+          - pt-BR
+          - pt-PT
+          - qu
+          - rm
+          - rn
+          - ro
+          - ru
+          - rw
+          - sa
+          - sc
+          - sd
+          - se
+          - sg
+          - si
+          - sk
+          - sl
+          - sl-SI
+          - sm
+          - sn
+          - so
+          - sq
+          - sr
+          - ss
+          - st
+          - su
+          - sv
+          - sw
+          - ta
+          - te
+          - tg
+          - th
+          - ti
+          - tk
+          - tl
+          - tn
+          - to
+          - tr
+          - ts
+          - tt
+          - tw
+          - ty
+          - ug
+          - uk
+          - ur
+          - uz
+          - ve
+          - vi
+          - vo
+          - wa
+          - wo
+          - xh
+          - yi
+          - yo
+          - za
+          - zh-CN
+          - zh-HK
+          - zh-TW
+          - zu
+        tax_inclusive:
+          type: boolean
+        default:
+          type: boolean
+        country_codes:
+          type: array
+          items:
+            type: string
+            enum:
+            - AD
+            - AE
+            - AF
+            - AG
+            - AI
+            - AL
+            - AM
+            - AO
+            - AR
+            - AS
+            - AT
+            - AU
+            - AW
+            - AZ
+            - BA
+            - BB
+            - BD
+            - BE
+            - BF
+            - BG
+            - BH
+            - BI
+            - BJ
+            - BL
+            - BM
+            - BN
+            - BO
+            - BQ
+            - BR
+            - BS
+            - BT
+            - BW
+            - BY
+            - BZ
+            - CA
+            - CC
+            - CD
+            - CF
+            - CG
+            - CH
+            - CI
+            - CK
+            - CL
+            - CM
+            - CN
+            - CO
+            - CR
+            - CU
+            - CV
+            - CW
+            - CX
+            - CY
+            - CZ
+            - DE
+            - DJ
+            - DK
+            - DM
+            - DO
+            - DZ
+            - EC
+            - EE
+            - EG
+            - ER
+            - ES
+            - ET
+            - FI
+            - FJ
+            - FK
+            - FM
+            - FO
+            - FR
+            - GA
+            - GB
+            - GD
+            - GE
+            - GF
+            - GG
+            - GH
+            - GI
+            - GL
+            - GM
+            - GN
+            - GP
+            - GQ
+            - GR
+            - GT
+            - GU
+            - GW
+            - GY
+            - HK
+            - HN
+            - HR
+            - HT
+            - HU
+            - ID
+            - IE
+            - IL
+            - IM
+            - IN
+            - IQ
+            - IR
+            - IS
+            - IT
+            - JE
+            - JM
+            - JO
+            - JP
+            - KE
+            - KG
+            - KH
+            - KI
+            - KM
+            - KN
+            - KP
+            - KR
+            - KW
+            - KY
+            - KZ
+            - LA
+            - LB
+            - LC
+            - LI
+            - LK
+            - LR
+            - LS
+            - LT
+            - LU
+            - LV
+            - LY
+            - MA
+            - MC
+            - MD
+            - ME
+            - MF
+            - MG
+            - MH
+            - MK
+            - ML
+            - MM
+            - MN
+            - MO
+            - MP
+            - MQ
+            - MR
+            - MS
+            - MT
+            - MU
+            - MV
+            - MW
+            - MX
+            - MY
+            - MZ
+            - NA
+            - NC
+            - NE
+            - NF
+            - NG
+            - NI
+            - NL
+            - 'NO'
+            - NP
+            - NR
+            - NU
+            - NZ
+            - OM
+            - PA
+            - PE
+            - PF
+            - PG
+            - PH
+            - PK
+            - PL
+            - PM
+            - PN
+            - PR
+            - PS
+            - PT
+            - PW
+            - PY
+            - QA
+            - RE
+            - RO
+            - RS
+            - RU
+            - RW
+            - SA
+            - SB
+            - SC
+            - SD
+            - SE
+            - SG
+            - SH
+            - SI
+            - SJ
+            - SK
+            - SL
+            - SM
+            - SN
+            - SO
+            - SR
+            - SS
+            - ST
+            - SV
+            - SX
+            - SY
+            - SZ
+            - TC
+            - TD
+            - TG
+            - TH
+            - TJ
+            - TK
+            - TL
+            - TM
+            - TN
+            - TO
+            - TR
+            - TT
+            - TV
+            - TW
+            - TZ
+            - UA
+            - UG
+            - US
+            - UY
+            - UZ
+            - VA
+            - VC
+            - VE
+            - VG
+            - VI
+            - VN
+            - VU
+            - WF
+            - WS
+            - YE
+            - YT
+            - ZA
+            - ZM
+            - ZW
+        supported_locales:
+          type: array
+          items:
+            type: string
+            enum:
+            - aa
+            - ab
+            - ae
+            - af
+            - ak
+            - am
+            - an
+            - ar
+            - as
+            - av
+            - ay
+            - az
+            - ba
+            - be
+            - bg
+            - bh
+            - bi
+            - bm
+            - bn
+            - bo
+            - br
+            - bs
+            - ca
+            - ce
+            - ch
+            - co
+            - cr
+            - cs
+            - cu
+            - cv
+            - cy
+            - da
+            - de
+            - de-AT
+            - de-CH
+            - dv
+            - dz
+            - ee
+            - el
+            - en
+            - en-AU
+            - en-CA
+            - en-GB
+            - en-IN
+            - en-NZ
+            - en-US
+            - eo
+            - es
+            - es-419
+            - es-CL
+            - es-EC
+            - es-MX
+            - et
+            - eu
+            - fa
+            - ff
+            - fi
+            - fj
+            - fo
+            - fr
+            - fr-CA
+            - fy
+            - ga
+            - gd
+            - gl
+            - gn
+            - gu
+            - gv
+            - ha
+            - he
+            - hi
+            - ho
+            - hr
+            - ht
+            - hu
+            - hy
+            - hz
+            - ia
+            - id
+            - ie
+            - ig
+            - ii
+            - ik
+            - io
+            - is
+            - it
+            - iu
+            - ja
+            - jv
+            - ka
+            - kg
+            - ki
+            - kj
+            - kk
+            - kl
+            - km
+            - kn
+            - ko
+            - kr
+            - ks
+            - ku
+            - kv
+            - kw
+            - ky
+            - la
+            - lb
+            - lg
+            - li
+            - ln
+            - lo
+            - lt
+            - lu
+            - lv
+            - mg
+            - mh
+            - mi
+            - mk
+            - ml
+            - mn
+            - mr
+            - ms
+            - mt
+            - my
+            - na
+            - nb
+            - nd
+            - ne
+            - ng
+            - nl
+            - nn
+            - 'no'
+            - nr
+            - nv
+            - ny
+            - oc
+            - oj
+            - om
+            - or
+            - os
+            - pa
+            - pi
+            - pl
+            - ps
+            - pt
+            - pt-BR
+            - pt-PT
+            - qu
+            - rm
+            - rn
+            - ro
+            - ru
+            - rw
+            - sa
+            - sc
+            - sd
+            - se
+            - sg
+            - si
+            - sk
+            - sl
+            - sl-SI
+            - sm
+            - sn
+            - so
+            - sq
+            - sr
+            - ss
+            - st
+            - su
+            - sv
+            - sw
+            - ta
+            - te
+            - tg
+            - th
+            - ti
+            - tk
+            - tl
+            - tn
+            - to
+            - tr
+            - ts
+            - tt
+            - tw
+            - ty
+            - ug
+            - uk
+            - ur
+            - uz
+            - ve
+            - vi
+            - vo
+            - wa
+            - wo
+            - xh
+            - yi
+            - yo
+            - za
+            - zh-CN
+            - zh-HK
+            - zh-TW
+            - zu
+        countries:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Country"
+      required:
+      - id
+      - name
+      - currency
+      - default_locale
+      - tax_inclusive
+      - default
+      - country_codes
+      - supported_locales
+      x-typelizer: true
     Media:
       type: object
       properties:
@@ -28467,6 +29442,16 @@ components:
         total_on_hand:
           type: number
           nullable: true
+        market_availability:
+          type: string
+          enum:
+          - all
+          - all_except
+          - only
+        market_ids:
+          type: array
+          items:
+            type: string
         submission:
           allOf:
           - "$ref": "#/components/schemas/ProductSubmission"
@@ -28502,6 +29487,8 @@ components:
       - product_type_id
       - delivery_profile_id
       - total_on_hand
+      - market_availability
+      - market_ids
       x-typelizer: true
     ProductSubmission:
       type: object
@@ -28640,7 +29627,6 @@ components:
             - Asia/Magadan
             - Asia/Muscat
             - Asia/Novosibirsk
-            - Asia/Rangoon
             - Asia/Riyadh
             - Asia/Seoul
             - Asia/Shanghai
@@ -28655,6 +29641,7 @@ components:
             - Asia/Urumqi
             - Asia/Vladivostok
             - Asia/Yakutsk
+            - Asia/Yangon
             - Asia/Yekaterinburg
             - Asia/Yerevan
             - Atlantic/Azores
@@ -28682,7 +29669,7 @@ components:
             - Europe/Helsinki
             - Europe/Istanbul
             - Europe/Kaliningrad
-            - Europe/Kiev
+            - Europe/Kyiv
             - Europe/Lisbon
             - Europe/Ljubljana
             - Europe/London
@@ -32802,6 +33789,21 @@ components:
           type: string
           description: Which of the marketplace's delivery profiles the product ships
             under. A new product sent without one lands on the profile marked default.
+        market_availability:
+          type: string
+          enum:
+          - all
+          - all_except
+          - only
+          description: 'Which markets may see and buy the product: `all` (the default),
+            `all_except` the markets in `market_ids`, or `only` those markets. A product
+            a market excludes is hidden there everywhere, including its own URL.'
+        market_ids:
+          type: array
+          items:
+            type: string
+          description: The markets `market_availability` names (`mkt_...`). Required
+            unless the mode is `all`.
         prices:
           type: array
           items:
@@ -32875,6 +33877,21 @@ components:
           type: string
           description: Which of the marketplace's delivery profiles the product ships
             under. A new product sent without one lands on the profile marked default.
+        market_availability:
+          type: string
+          enum:
+          - all
+          - all_except
+          - only
+          description: 'Which markets may see and buy the product: `all` (the default),
+            `all_except` the markets in `market_ids`, or `only` those markets. A product
+            a market excludes is hidden there everywhere, including its own URL.'
+        market_ids:
+          type: array
+          items:
+            type: string
+          description: The markets `market_availability` names (`mkt_...`). Required
+            unless the mode is `all`.
         prices:
           type: array
           items:

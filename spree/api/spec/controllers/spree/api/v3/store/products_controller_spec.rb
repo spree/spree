@@ -19,6 +19,37 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
     I18n.locale = store.default_locale
   end
 
+  describe 'market availability' do
+    let!(:germany) { create(:country, iso: 'DE', name: 'Germany') }
+    let!(:europe) { create(:market, store: store, name: 'Europe', currency: 'USD', countries: [germany]) }
+
+    before do
+      product.update!(market_availability: 'all_except', market_ids: [europe.prefixed_id])
+      request.headers['x-spree-country'] = 'DE'
+    end
+
+    it 'leaves the product out of the listing in an excluded market' do
+      get :index, as: :json
+
+      ids = json_response['data'].pluck('id')
+      expect(ids).to include(product2.prefixed_id)
+      expect(ids).not_to include(product.prefixed_id)
+    end
+
+    it 'is not found by its own URL there' do
+      get :show, params: { id: product.slug }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it 'is shown in a market that does not exclude it' do
+      request.headers['x-spree-country'] = nil
+      get :show, params: { id: product.slug }, as: :json
+
+      expect(response).to have_http_status(:ok)
+    end
+  end
+
   describe 'seller' do
     let!(:seller) { create(:seller, store: store, name: 'Sparks Audio', status: 'approved') }
     let!(:seller_product) { create(:product, store: store, seller: seller, status: 'active') }

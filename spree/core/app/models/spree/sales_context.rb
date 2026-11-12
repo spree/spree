@@ -73,15 +73,15 @@ module Spree
         end
     end
 
-    # Variants the buyer may order on the channel: published there and inside
-    # their catalogs.
+    # Variants the buyer may order on the channel: published there, sold in
+    # the market and inside their catalogs.
     #
     # @return [ActiveRecord::Relation<Spree::Variant>]
     def orderable_variants
       @orderable_variants ||= Spree::Variant.for_products(
         Spree.products_for_context_service.call(
           store: store, channel: channel, customer: customer, company: company,
-          base: store.products.not_discontinued_on(channel)
+          base: store.products.not_discontinued_on(channel).available_in_market(market)
         ).value
       )
     end

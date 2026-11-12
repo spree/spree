@@ -7,7 +7,11 @@ module SpreeMeilisearch
   class SearchProvider < Spree::SearchProvider::Base
     PREFIXED_ID_PATTERN = /\A[a-z]+_[A-Za-z0-9]+\z/
     ALLOWED_STATUSES = %w[active draft archived paused].freeze
-    BUILT_IN_FILTERABLE_ATTRIBUTES = %w[product_id status in_stock preorder store_ids channel_ids locale currency available_on discontinue_on price category_ids collection_ids grouping_id tags option_value_ids option_value_combination_ids].freeze
+    BUILT_IN_FILTERABLE_ATTRIBUTES = %w[
+      product_id status in_stock preorder store_ids channel_ids market_availability market_ids locale currency
+      available_on discontinue_on price category_ids collection_ids grouping_id tags option_value_ids
+      option_value_combination_ids
+    ].freeze
     CUSTOM_FIELD_RANGE_OPERATORS = { 'gt' => '>', 'gteq' => '>=', 'lt' => '<', 'lteq' => '<=' }.freeze
 
     def self.indexing_required?
@@ -359,6 +363,7 @@ module SpreeMeilisearch
       conditions = []
       conditions << "store_ids = '#{store.id}'"
       conditions << "channel_ids = '#{Spree::Current.channel.id}'" if Spree::Current.channel
+      conditions << market_availability_condition(Spree::Current.market) if Spree::Current.market
       conditions << "status = 'active'"
       conditions << "locale = '#{locale.to_s.gsub(/[^a-zA-Z_-]/, '')}'"
       conditions << "currency = '#{currency.to_s.gsub(/[^A-Z]/, '')}'"
@@ -374,6 +379,15 @@ module SpreeMeilisearch
       conditions << "(available_on NOT EXISTS OR available_on IS NULL OR available_on <= '#{now.iso8601}' OR preorder = true)"
       conditions << "(discontinue_on = 0 OR discontinue_on > #{now.to_i})"
       conditions
+    end
+
+    # Mirrors +Product.available_in_market+. Documents indexed before the
+    # attribute existed carry no mode and read as available everywhere.
+    def market_availability_condition(market)
+      market_id = market.id.to_i
+      "(market_availability NOT EXISTS OR market_availability = 'all' OR " \
+        "(market_availability = 'all_except' AND NOT market_ids = '#{market_id}') OR " \
+        "(market_availability = 'only' AND market_ids = '#{market_id}'))"
     end
 
     # User-facing filters — override to add custom filter pre/post processing.

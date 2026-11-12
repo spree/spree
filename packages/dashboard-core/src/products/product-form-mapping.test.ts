@@ -2,12 +2,13 @@ import { describe, expect, it } from 'vitest'
 import {
   omitUnchangedListFields,
   prepareVariantsTaxForProductSave,
+  productToFormValues,
   variantHasTaxCategoryOverride,
   variantToFormValues,
   variantToWirePayload,
 } from './product-form-mapping'
 import type { ProductFormValues, VariantFormValues } from './product-schema'
-import type { PanelVariant } from './product-types'
+import type { PanelProduct, PanelVariant } from './product-types'
 
 // variantToFormValues reads a handful of fields; cast a minimal fixture rather
 // than fabricating the whole serialized variant it ignores.
@@ -168,5 +169,26 @@ describe('omitUnchangedListFields', () => {
     const dirtyFields: Partial<Record<keyof ProductFormValues, boolean>> = { name: true }
 
     expect(omitUnchangedListFields(payload, dirtyFields)).toEqual({ name: 'Linen shirt' })
+  })
+})
+
+describe('productToFormValues market availability', () => {
+  const product = (fields: Partial<PanelProduct>) =>
+    ({ id: 'prod_1', name: 'Kettle', ...fields }) as unknown as PanelProduct
+
+  it('reads a product with no restriction as sold in every market', () => {
+    const values = productToFormValues(product({}))
+
+    expect(values.market_availability).toBe('all')
+    expect(values.market_ids).toEqual([])
+  })
+
+  it('reads back the mode and the markets it names', () => {
+    const values = productToFormValues(
+      product({ market_availability: 'all_except', market_ids: ['mkt_1'] }),
+    )
+
+    expect(values.market_availability).toBe('all_except')
+    expect(values.market_ids).toEqual(['mkt_1'])
   })
 })

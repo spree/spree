@@ -63,6 +63,21 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
         provider.search_and_filter(scope: store.products)
       end
 
+      # The same rule as Product.available_in_market, so the index counts and
+      # pages what the database would return.
+      it 'keeps to what the current market may buy' do
+        market = create(:market, store: store)
+        allow(Spree::Current).to receive(:market).and_return(market)
+
+        expect(mock_index).to receive(:search).with('', satisfy { |p|
+          p[:filter].include?("(market_availability NOT EXISTS OR market_availability = 'all' OR " \
+                              "(market_availability = 'all_except' AND NOT market_ids = '#{market.id}') OR " \
+                              "(market_availability = 'only' AND market_ids = '#{market.id}'))")
+        }).and_return(ms_response)
+
+        provider.search_and_filter(scope: store.products)
+      end
+
       it 'returns the products and total' do
         result = provider.search_and_filter(scope: store.products)
 

@@ -285,15 +285,15 @@ module Spree
     end
 
     # The variants this cart's buyer may order: the channel's live
-    # publications, narrowed to the catalogs the cart's company, customer
-    # group or channel resolve to. Status, stock and currency are left to the
-    # add and checkout checks, which explain a refusal rather than reading as
-    # not found.
+    # publications the cart's market may buy, narrowed to the catalogs the
+    # cart's company, customer group or channel resolve to. Status, stock and
+    # currency are left to the add and checkout checks, which explain a
+    # refusal rather than reading as not found.
     #
     # @return [ActiveRecord::Relation<Spree::Variant>]
     def orderable_variants
       Spree::SalesContext.new(
-        store: store, channel: channel, customer: customer, company: resolved_company, resolve_company: false
+        store: store, channel: channel, market: market, customer: customer, company: resolved_company, resolve_company: false
       ).orderable_variants
     end
 

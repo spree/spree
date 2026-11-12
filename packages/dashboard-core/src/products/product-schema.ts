@@ -1,4 +1,10 @@
-import { MEDIA_TYPES, type MediaType, PRODUCT_STATUSES, subsetOf } from '@spree/core'
+import {
+  MEDIA_TYPES,
+  type MediaType,
+  PRODUCT_MARKET_AVAILABILITIES,
+  PRODUCT_STATUSES,
+  subsetOf,
+} from '@spree/core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import i18n from 'i18next'
 import { z } from 'zod/v4'
@@ -238,6 +244,9 @@ export const productFormSchema = z.object({
   digital_assets: z.array(digitalFileFormSchema).optional(),
 
   product_publications: z.array(productPublicationFormSchema).optional(),
+
+  market_availability: z.enum(PRODUCT_MARKET_AVAILABILITIES).optional(),
+  market_ids: z.array(z.string()).optional(),
 })
 
 export type ProductFormValues = z.infer<typeof productFormSchema>
@@ -284,6 +293,8 @@ export function newProductFormDefaults(): ProductFormValues {
     removed_media_ids: [],
     digital_assets: [],
     product_publications: [],
+    market_availability: 'all',
+    market_ids: [],
   }
 }
 
