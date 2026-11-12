@@ -172,21 +172,35 @@ For `order.placed`, this means:
 
 So when a side effect must happen for every placed order — sending it to an ERP or a warehouse, for example — don't rely on the event alone:
 
-1. **Make the handler safe to run twice.** Key the work on the order's ID and check whether you already did it. Retries and repeated deliveries then do no harm.
+1. **Make the handler safe to run twice.** Key the work on the order's ID. Checking whether you already did it and then doing it is not enough on its own: a webhook and a reconciliation run can both pass the check at the same time, and a crash after the write repeats it on retry. Pass the order's ID as an idempotency key to the external system, or claim the order atomically (for example, an insert guarded by a unique constraint) before writing.
 2. **Reconcile from orders.** On a schedule, list the orders placed since your last check and handle any you haven't seen. The event gives you speed; the reconciliation makes sure nothing is lost.
 
 <Tabs>
   <Tab title="Admin SDK">
     ```typescript
-    const { data: orders } = await adminClient.orders.list({
-      completed_at_gteq: lastCheckedAt, // e.g. '2026-11-12T09:00:00Z'
-      sort: 'completed_at',
-      limit: 100,
-    })
+    // Capture the next checkpoint before reading, not after.
+    const runStartedAt = new Date()
+    const since = new Date(lastCheckedAt.getTime() - 5 * 60 * 1000) // overlap the previous run
 
-    for (const order of orders) {
-      if (!(await alreadySynced(order.id))) await syncToErp(order)
+    let page: number | null = 1
+    while (page) {
+      const { data: orders, meta } = await adminClient.orders.list({
+        completed_at_gteq: since.toISOString(),
+        sort: 'completed_at',
+        limit: 100,
+        page,
+      })
+
+      for (const order of orders) {
+        // Idempotent on order.id: the ERP rejects a second sales order with the same key.
+        await syncToErp(order, { idempotencyKey: order.id })
+      }
+
+      page = meta.next
     }
+
+    // Only after every page succeeded.
+    await saveCheckpoint(runStartedAt)
     ```
   </Tab>
   <Tab title="cURL">
@@ -195,12 +209,13 @@ So when a side effect must happen for every placed order — sending it to an ER
       -H 'X-Spree-API-Key: sk_xxx' \
       -d 'q[completed_at_gteq]=2026-11-12T09:00:00Z' \
       -d 'sort=completed_at' \
-      -d 'limit=100'
+      -d 'limit=100' \
+      -d 'page=1' # repeat with meta.next until it is null
     ```
   </Tab>
 </Tabs>
 
-Page through the results until there are none left, and move `lastCheckedAt` back by a few minutes each run, so an order placed while the previous run was reading isn't skipped.
+Take the next checkpoint from the moment the run started, before reading, and save it only after every page succeeded. Start each run a few minutes before the saved checkpoint: an order's `completed_at` is set before its transaction commits, so an order can become visible after a run that started later has already read past it. The overlap is safe as long as no order takes longer than that to commit; the idempotent handler makes the overlap harmless.
 
 ## Guidance
 

@@ -78,7 +78,7 @@ if (event.name === 'order.placed') {
 }
 ```
 
-In another language, compute the HMAC-SHA256 of `{timestamp}.{body}` with the endpoint's secret key, using the `X-Spree-Webhook-Timestamp` header and the raw request body, and compare it with the `X-Spree-Webhook-Signature` header.
+In another language, check that the `X-Spree-Webhook-Timestamp` header is a Unix time within 300 seconds of now, then compute the HMAC-SHA256 of `{timestamp}.{body}` with the endpoint's secret key over the raw request body, and compare it with the `X-Spree-Webhook-Signature` header in constant time. Reject the request if either check fails. The SDK does both.
 
 Things to know:
 
@@ -90,7 +90,7 @@ See [Webhooks](/developer/core-concepts/webhooks) for the payload format, the he
 
 ## The Admin API
 
-The Admin API is the back office as a REST API: products, orders, customers, stock, fulfillments, settings and more. It is described by an [OpenAPI specification](/api-reference/admin), so you can generate a client for any language from it.
+The Admin API is the back office as a REST API: products, orders, customers, stock, fulfillments, settings and more. It is described by an [OpenAPI specification](https://spreecommerce.org/docs/api-reference/admin.yaml), so you can generate a client for any language from it.
 
 Integrations authenticate with a **secret API key**. Each key carries **scopes** — `read_orders`, `write_fulfillments`, `read_all` and so on — and can only reach what its scopes allow. Give each integration its own key with the fewest scopes it needs.
 
