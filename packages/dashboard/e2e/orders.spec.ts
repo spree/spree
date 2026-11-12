@@ -5,6 +5,8 @@ import {
   addNewOrderItem,
   adminRequest,
   createPlacedOrder,
+  deleteSeededRecords,
+  type E2ELoginSession,
   FIXTURE_BOGUS_GATEWAY,
   FIXTURE_BOGUS_ORDER_EMAIL,
   FIXTURE_BOGUS_TRANSACTION_ID,
@@ -12,6 +14,8 @@ import {
   FIXTURE_PROMO_PRODUCT,
   fillAddressForm,
   login,
+  section,
+  seedRecord,
 } from './helpers'
 
 // A PNG is in the PO document allowlist, so the shared fixture works and no
@@ -430,6 +434,103 @@ test.describe('order editing', () => {
     expect(updates).toEqual([])
     await expect(picker).toBeVisible()
     await expect(page).toHaveURL(editUrl)
+  })
+})
+
+// A draft order of 2 × 24.50 and 1 × 18.00 (67.00), on products of its own
+// so the names are unique in the order view.
+async function seedTwoLineDraftOrder(page: Page, session: E2ELoginSession) {
+  const locations = await adminRequest<{ data: { id: string }[] }>(
+    page,
+    session,
+    'get',
+    '/stock_locations',
+  )
+  const stamp = Date.now()
+  const lines = [
+    { name: `Kept line ${stamp}`, sku: `E2E-KEPT-${stamp}`, amount: '24.50', quantity: 2 },
+    { name: `Removed line ${stamp}`, sku: `E2E-REMOVED-${stamp}`, amount: '18.00', quantity: 1 },
+  ]
+
+  const items = []
+  for (const line of lines) {
+    await seedRecord(page, session, '/products', {
+      name: line.name,
+      status: 'active',
+      prices: [{ amount: line.amount, currency: 'USD' }],
+      variants: [
+        {
+          options: [],
+          sku: line.sku,
+          track_inventory: true,
+          stock_levels: [{ stock_location_id: locations.data[0].id, count_on_hand: 10 }],
+        },
+      ],
+    })
+    const variants = await adminRequest<{ data: { id: string }[] }>(
+      page,
+      session,
+      'get',
+      `/variants?q[sku_eq]=${line.sku}`,
+    )
+    items.push({ variant_id: variants.data[0].id, quantity: line.quantity })
+  }
+
+  const order = await adminRequest<{ id: string }>(page, session, 'post', '/orders', {
+    email: `e2e-remove-line-${stamp}@example.com`,
+    items,
+  })
+  return { orderId: order.id, kept: lines[0].name, removed: lines[1].name }
+}
+
+// The order the merchant opens must add up to the lines that are left.
+async function expectOnlyKeptLine(page: Page, kept: string, removed: string) {
+  await expect(page.getByText(kept)).toBeVisible({ timeout: 15_000 })
+  await expect(page.getByText(removed)).toHaveCount(0)
+
+  const summary = section(page, /^summary$/i)
+  await expect(summary.getByText(/^subtotal$/i).locator('..')).toContainText('$49.00')
+  await expect(summary.getByText(/^total$/i).locator('..')).toContainText('$49.00')
+}
+
+test.describe('removing a draft order line', () => {
+  test.afterEach(async ({ page }) => deleteSeededRecords(page))
+
+  test('from the edit screen leaves the totals of the lines that are left', async ({ page }) => {
+    const session = await login(page)
+    const { orderId, kept, removed } = await seedTwoLineDraftOrder(page, session)
+
+    const orderUrl = `/${session.store_id}/orders/${orderId}`
+    await page.goto(`${orderUrl}/edit`)
+    await expect(page.getByRole('heading', { name: /edit order/i })).toBeVisible({
+      timeout: 15_000,
+    })
+
+    await page.getByRole('button', { name: `Remove ${removed}` }).click()
+    await page.getByRole('button', { name: /^save$/i }).click()
+    await expect(page).toHaveURL(new RegExp(`${orderUrl}$`), { timeout: 15_000 })
+
+    await expectOnlyKeptLine(page, kept, removed)
+  })
+
+  // Connected agents and API clients remove a line on its own, through the
+  // item endpoint the dashboard does not use.
+  test('through the Admin API leaves the totals of the lines that are left', async ({ page }) => {
+    const session = await login(page)
+    const { orderId, kept, removed } = await seedTwoLineDraftOrder(page, session)
+
+    const items = await adminRequest<{ data: { id: string; name: string }[] }>(
+      page,
+      session,
+      'get',
+      `/orders/${orderId}/items`,
+    )
+    const line = items.data.find((item) => item.name === removed)
+    expect(line, 'the 18.00 line').toBeTruthy()
+    await adminRequest(page, session, 'delete', `/orders/${orderId}/items/${line?.id}`)
+
+    await page.goto(`/${session.store_id}/orders/${orderId}`)
+    await expectOnlyKeptLine(page, kept, removed)
   })
 })
 
