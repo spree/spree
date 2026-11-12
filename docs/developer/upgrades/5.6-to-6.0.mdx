@@ -770,7 +770,7 @@ STEP=register_paypal_webhooks bundle exec rake spree:upgrade
 | The integration row, its private key and its list id | Kept. If you upgraded to 6.0 before adding the gem, the private key is still in the plain `preferences` column. It works, and `spree upgrade --step preferences_json`, then `--step encrypt_secret_preferences`, move and encrypt it |
 | Profiles' external id is the customer's database id | Turn on **Match profiles by database ID** to keep matching them. With it off, profiles carry the customer's Spree id (`cus_…`) |
 | Orders and sign-ups synced even with the integration switched off | Only an active integration syncs. Check it is on |
-| Public API key in the integration form | Set `KLAVIYO_COMPANY_ID` in the storefront instead |
+| Public API key in the integration form | Load Klaviyo's script with it from a Google Tag Manager tag. See the [Klaviyo guide](/integrations/marketing/klaviyo#storefront-tracking) |
 | Private key scopes: Events, Lists, Profiles, Subscriptions | Add **Data Privacy (write)**. Without it, deleting an erased customer's profile fails with 403 and is only reported to your error tracker |
 | Spree sent the newsletter confirmation | Klaviyo sends it on a double opt-in list. On a single opt-in list nobody does |
 | Metric names | Re-point flows, segments and templates, using the table below. A refund flow moves to Return Refunded |

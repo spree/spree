@@ -9,7 +9,7 @@ Klaviyo is a marketing automation platform for email and SMS. Connecting your st
 Two parts work together:
 
 - **Spree's server** sends what only it knows: profiles, newsletter sign-ups and removals, purchases, cancellations, shipments and refunds.
-- **Your storefront** loads Klaviyo's script, which sends browsing events and Started Checkout, and tells Klaviyo who is shopping.
+- **Your storefront** sends browsing events and Started Checkout, and tells Klaviyo who is shopping, through Klaviyo's script, which you load from Google Tag Manager once the shopper consents.
 
 <Info>
   You need an existing Klaviyo account to connect this integration.
@@ -145,13 +145,19 @@ See the [upgrade guide](/developer/upgrades/5.6-to-6.0#klaviyo) for everything e
 
 ## Storefront tracking
 
-The Next.js storefront loads Klaviyo's script when `KLAVIYO_COMPANY_ID` is set. Use your account's six-character public API key, shown under **Settings → Account → API keys** in Klaviyo:
+The Next.js storefront sends Klaviyo's onsite events through Klaviyo's script, which you load from Google Tag Manager so that the shopper's cookie consent decides whether it runs. Set `GTM_ID` in the storefront to your container's id, then in Tag Manager:
 
-```bash .env
-KLAVIYO_COMPANY_ID=AbC123
-```
+1. Add a **Custom HTML** tag with Klaviyo's script, using your account's six-character public API key, shown under **Settings → Account → API keys** in Klaviyo:
 
-The storefront reads it on the server, so changing it needs no rebuild. Leave it empty to turn Klaviyo off. With the script loaded, the storefront sends:
+   ```html
+   <script async src="https://static.klaviyo.com/onsite/js/AbC123/klaviyo.js?company_id=AbC123"></script>
+   ```
+
+2. Fire it on every page, but only once the shopper has accepted marketing cookies: use your consent platform's trigger, or the tag's **Consent Settings**.
+3. Do not add the Viewed Product tag from [Klaviyo's Tag Manager guide](https://help.klaviyo.com/hc/en-us/articles/360015392131). The storefront sends that event, so a second tag would record every view twice.
+4. Publish the container.
+
+With the script loaded, the storefront sends:
 
 - **Viewed Product** on a product page, and **Added to Cart** when the shopper adds it.
 - **Started Checkout** when checkout opens for a shopper who already gave their email, otherwise once they enter it. Its `CheckoutURL` opens the storefront's cart page.
@@ -165,7 +171,7 @@ The reference storefront has no newsletter sign-up form. If yours adds one, call
 window.klaviyo?.identify({ email })
 ```
 
-Ad blockers and declined cookie consent stop Klaviyo's script, and with it some browsing events and abandoned-checkout emails. Asking for cookie consent before loading the script is the storefront's job, as it is for Google Tag Manager. A custom storefront sends these events itself.
+Until the tag has loaded, the storefront sends nothing to Klaviyo and keeps nothing to send later, so a shopper who has not consented is not tracked, and what they did before accepting is not recorded. Ad blockers stop the script as well, and with it some browsing events and abandoned-checkout emails. A custom storefront sends these events itself.
 
 ## Erasing a customer
 
