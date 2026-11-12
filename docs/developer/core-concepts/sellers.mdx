@@ -347,6 +347,8 @@ A refund never edits an earning. `refund.created` writes a second row of kind `r
 
 A reversal takes back only the seller's share of what was refunded. When a return or claim refunds goods and their tax, the goods come back less the commission charged on them; the tax comes back from the seller only if the seller collected it, and stays with the marketplace when the marketplace remits it.
 
+Whether money actually comes back is the provider's part. The built-in provider records the reversal and moves nothing; [Stripe Connect](/integrations/payments/stripe-connect) reverses the seller's share of the transfer that paid them. A reversal the provider refuses stays pending and is retried, after its earning when that has not been sent yet.
+
 ### Payouts — what was sent
 
 On schedule, a seller's confirmed, unsettled earnings are batched into one `Spree::SellerPayout` per currency and handed to the provider. A payout names exactly which transfers it settled, which is what a seller needs to reconcile a deposit.
@@ -463,7 +465,7 @@ A connected provider confirms settlements through `POST /api/v3/webhooks/payouts
 See [Stripe Connect for marketplaces](/integrations/payments/stripe-connect) for the shipped provider.
 
 <Note>
-Refund clawbacks and netting across settlements, reconciliation, KYC operations and seller tax reporting (DAC7) are Spree Enterprise.
+Reconciliation against provider statements, KYC operations and seller tax reporting (DAC7) are Spree Enterprise.
 </Note>
 
 ## The seller panel

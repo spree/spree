@@ -54,6 +54,23 @@ RSpec.describe SpreeMeilisearch::ProductPresenter do
       end
     end
 
+    context 'with custom fields' do
+      let(:visible) { create(:custom_field_definition, :short_text_field, :searchable, namespace: 'custom', key: 'label') }
+      let(:hidden) { create(:custom_field_definition, :number_field, :admin_only, :sortable, namespace: 'internal', key: 'margin') }
+
+      before do
+        product.set_custom_field(visible, 'wool')
+        product.set_custom_field(hidden, '40')
+      end
+
+      it 'indexes storefront-visible values and leaves admin-only ones out' do
+        doc = documents.first
+
+        expect(doc['cf_custom_label']).to eq('wool')
+        expect(doc).not_to have_key('cf_internal_margin')
+      end
+    end
+
     context 'with categories' do
       let(:root_category) { create(:category, store: store, name: 'Apparel') }
       let(:category) { create(:category, store: store, parent: root_category) }
@@ -271,7 +288,7 @@ RSpec.describe SpreeMeilisearch::ProductPresenter do
       it 'uses the same cf_* attributes on every market/locale document' do
         create(:market, store: store, name: 'US', currency: 'USD', default_locale: 'en')
         create(:market, store: store, name: 'EU', currency: 'EUR', default_locale: 'de')
-        create(:price, variant: product.master, amount: 9.99, currency: 'EUR')
+        create(:price, variant: product.default_variant, amount: 9.99, currency: 'EUR')
 
         docs = described_class.new(product.reload, store.reload).call
         expect(docs.size).to be > 1

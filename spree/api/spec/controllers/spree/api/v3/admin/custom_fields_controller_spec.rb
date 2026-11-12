@@ -207,25 +207,6 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldsController, type: :controller 
     end
   end
 
-  # The parent comes from the route: a `store_id` in the query string must not
-  # switch it to a store, which has no store scope to narrow it.
-  describe 'a parent named outside the route' do
-    let(:category) { create(:category) }
-    let(:category_definition) { create(:custom_field_definition, :short_text_field, resource_type: 'Spree::Category') }
-
-    it 'keeps the routed parent' do
-      post :create,
-           params: {
-             category_id: category.prefixed_id, store_id: create(:store).prefixed_id,
-             custom_field_definition_id: category_definition.prefixed_id, value: 'summer'
-           },
-           as: :json
-
-      expect(response).to have_http_status(:created)
-      expect(category.custom_fields.pluck(:value)).to eq(['summer'])
-    end
-  end
-
   describe 'API key scope enforcement' do
     let(:api_key) { create(:api_key, :secret, store: store, scopes: [granted_scope]) }
     let(:api_key_headers) { { 'x-spree-api-key' => api_key.plaintext_token } }
@@ -304,6 +285,28 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldsController, type: :controller 
                variant_id: variant.prefixed_id,
                custom_field_definition_id: variant_definition.prefixed_id,
                value: 'ribbed'
+             },
+             as: :json
+
+        expect(response).to have_http_status(:created)
+      end
+    end
+
+    context 'with a payment method parent' do
+      # Shares the scope of the payment methods controller rather than an
+      # ungrantable `payment_methods` one.
+      let(:granted_scope) { 'write_settings' }
+      let(:payment_method) { create(:check_payment_method) }
+      let(:payment_method_definition) do
+        create(:custom_field_definition, :short_text_field, resource_type: 'Spree::PaymentMethod')
+      end
+
+      it 'gates by the settings scope' do
+        post :create,
+             params: {
+               payment_method_id: payment_method.prefixed_id,
+               custom_field_definition_id: payment_method_definition.prefixed_id,
+               value: 'NET30'
              },
              as: :json
 

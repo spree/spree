@@ -11,6 +11,8 @@ module Spree
     # Providers are stateless and constructed without arguments, so anything
     # request-specific arrives as an argument rather than through the instance.
     class Base
+      extend Spree::ApiTyped
+
       # Domains this provider cannot handle, so a merchant is warned when
       # pairing it with a market instead of silently under-collecting. Declared
       # on the class because core reads it while presenting the choice, before
@@ -39,6 +41,16 @@ module Spree
         name.demodulize.titleize
       end
 
+      # The exemption reason codes this engine understands, `{ code => label }`,
+      # offered to a merchant adding a {Spree::TaxExemptionReason}. Nil for an
+      # engine that does not read the code, Spree's own included: any code a
+      # merchant chooses is then as good as another.
+      #
+      # @return [Hash{String => String}, nil]
+      def self.exemption_reason_codes
+        nil
+      end
+
       # The declared limits with the strings a merchant can act on. A capability
       # with no translation degrades to its humanized key rather than a missing
       # translation, so an extension that declares one without shipping strings
@@ -63,10 +75,11 @@ module Spree
       # @return [Hash]
       def self.to_api_hash(store)
         {
-          id: name,
+          id: api_type,
           name: display_name,
           available: available_for_store?(store),
           unsupported_capabilities: unsupported_capability_details,
+          exemption_reason_codes: exemption_reason_codes&.map { |code, label| { value: code.to_s, label: label.to_s } },
           default: name == Spree.default_tax_provider.to_s
         }
       end
@@ -83,10 +96,18 @@ module Spree
       # @param tax_identifier [Spree::TaxIdentifier, nil] resolved buyer
       #   registration, nil for a consumer sale
       # @param exemptions [Array] exemption evidence to apply
+      # @param tax_inclusive [Boolean, nil] whether the owner's prices already
+      #   include tax, which its market decides (Spree::Market#tax_inclusive);
+      #   nil = ask the owner (+owner.tax_inclusive?+)
       # @param context [Hash] untyped provider extras from set_tax_line_context
-      # @return [void] the written rows are the output; raise when the
-      #   calculation cannot be completed
-      def estimate(owner, items = nil, tax_date: nil, tax_identifier: nil, exemptions: [], context: {})
+      # @return [void] the written rows are the output
+      # @raise [Spree::Tax::ProviderUnavailable] when the engine could not
+      #   answer — refused, timed out, unreachable. Raise this (or a subclass,
+      #   as a provider's own request error may) rather than a bare error: core
+      #   turns it into a refusal the customer can retry, where anything else
+      #   reaches them as a broken checkout. A provider a merchant switched off
+      #   is not this — it has no opinion and writes no rows.
+      def estimate(owner, items = nil, tax_date: nil, tax_identifier: nil, exemptions: [], tax_inclusive: nil, context: {})
         raise NotImplementedError, "Please implement 'estimate' in your tax provider: #{self.class.name}"
       end
 
@@ -169,9 +190,10 @@ module Spree
       # @param tax_date [Time, nil] date whose rates apply; nil = now
       # @param tax_identifier [Spree::TaxIdentifier, nil] the order's frozen registration
       # @param exemptions [Array] exemption evidence to apply
+      # @param tax_inclusive [Boolean, nil] as for +estimate+
       # @return [void]
       # @raise [Spree::Tax::ProviderError] when the tax could not be worked out
-      def estimate_replacement(order, items, tax_date: nil, tax_identifier: nil, exemptions: [])
+      def estimate_replacement(order, items, tax_date: nil, tax_identifier: nil, exemptions: [], tax_inclusive: nil)
         raise NotImplementedError, "Please implement 'estimate_replacement' in your tax provider: #{self.class.name}"
       end
 

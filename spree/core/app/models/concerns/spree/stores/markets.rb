@@ -7,6 +7,9 @@ module Spree
         has_many :markets, class_name: 'Spree::Market', dependent: :destroy
         has_one :default_market, -> { default }, class_name: 'Spree::Market'
 
+        normalizes :default_locale, with: ->(value) { value.to_s.strip.presence }
+        validates_with Spree::LocaleCodesValidator, attributes: %i[default_locale supported_locales]
+
         after_create :ensure_default_market
         after_update :sync_default_market_settings
       end
@@ -145,7 +148,7 @@ module Spree
           markets.create!(
             name: country.name,
             currency: read_attribute(:default_currency) || iso_country&.currency_code || 'USD',
-            default_locale: read_attribute(:default_locale) || iso_country&.languages_official&.first || 'en',
+            default_locale: read_attribute(:default_locale) || Spree::Locales.listed(iso_country&.languages_official&.first) || 'en',
             supported_locales: read_attribute(:supported_locales),
             default: true,
             bootstrap_default: true,
@@ -190,7 +193,7 @@ module Spree
       end
 
       def legacy_supported_locales_list
-        (read_attribute(:supported_locales).to_s.split(',') << default_locale).compact.uniq.sort
+        (read_attribute(:supported_locales).to_s.split(',').map(&:strip) << default_locale).compact_blank.uniq.sort
       end
     end
   end

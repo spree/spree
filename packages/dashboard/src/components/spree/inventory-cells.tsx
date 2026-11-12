@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@spree/dashboard-ui'
-import { CheckIcon, ChevronDownIcon } from '@spree/dashboard-ui/icons'
+import { CheckIcon, ChevronsUpDownIcon } from '@spree/dashboard-ui/icons'
 import { Link, useParams } from '@tanstack/react-router'
 import { type ComponentProps, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -63,7 +63,7 @@ function CountTrigger({
       {...props}
     >
       {value}
-      <ChevronDownIcon className="size-3 text-muted-foreground" />
+      <ChevronsUpDownIcon className="size-3 text-muted-foreground" />
     </button>
   )
 }
@@ -239,7 +239,7 @@ export function IncomingCell({ level }: { level: StockLevel }) {
             to="/$storeId/transfers/new"
             params={{ storeId }}
             search={seed}
-            className="rounded-md px-2 py-1 text-sm hover:bg-accent"
+            className="rounded-md px-2 py-1 text-base hover:bg-accent"
           >
             {t('admin.stock_levels.incoming.create_transfer')}
           </Link>
@@ -249,7 +249,7 @@ export function IncomingCell({ level }: { level: StockLevel }) {
             to="/$storeId/purchase-orders/new"
             params={{ storeId }}
             search={seed}
-            className="rounded-md px-2 py-1 text-sm hover:bg-accent"
+            className="rounded-md px-2 py-1 text-base hover:bg-accent"
           >
             {t('admin.stock_levels.incoming.create_purchase_order')}
           </Link>

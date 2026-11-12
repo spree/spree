@@ -23,6 +23,7 @@ RSpec.describe 'Admin Exports API', type: :request, swagger_doc: 'api-reference/
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
+      filter_parameters_for
 
       response '200', 'exports found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -55,48 +56,7 @@ RSpec.describe 'Admin Exports API', type: :request, swagger_doc: 'api-reference/
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        required: %w[type],
-        properties: {
-          type: {
-            type: :string,
-            enum: %w[
-              products
-              orders
-              customers
-              product_translations
-              gift_cards
-              coupon_codes
-              newsletter_subscribers
-              price_list_prices
-              purchase_orders
-            ],
-            example: 'products'
-          },
-          record_selection: {
-            type: :string,
-            enum: %w[filtered all],
-            description: 'Set to "all" to ignore search_params and export everything in scope.',
-            example: 'filtered'
-          },
-          search_params: {
-            type: :object,
-            description: 'Ransack query hash. Same predicates accepted by the list endpoint. ' \
-                         'A `price_list_prices` export requires `price_list_id_eq` naming a price list of the ' \
-                         'current store, and refuses `record_selection: "all"`.',
-            example: { name_cont: 'shirt' },
-            additionalProperties: true
-          },
-          results_url: {
-            type: :string,
-            description: 'Absolute URL of your admin exports view; the export-done email uses it as the ' \
-                         "download button target. Only honored when it matches one of the store's " \
-                         'configured allowed origins.',
-            example: 'https://admin.example.com/store_abc/exports'
-          }
-        }
-      }
+      request_body_for
 
       response '201', 'export queued' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

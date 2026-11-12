@@ -30,6 +30,34 @@ RSpec.describe Spree::Api::V3::Admin::ExportsController, type: :controller do
       expect(ids).to contain_exactly(product_export.prefixed_id)
     end
 
+    context 'filtering by type' do
+      let!(:orders_export) { create(:export, type: 'Spree::Exports::Orders', store: store, user: admin_user) }
+
+      it 'takes the same shorthand the response carries' do
+        get :index, params: { q: { type_eq: 'orders' } }, as: :json
+
+        expect(json_response['data'].map { |e| e['id'] }).to contain_exactly(orders_export.prefixed_id)
+      end
+
+      it 'takes a list of shorthands' do
+        get :index, params: { q: { type_in: %w[orders products] } }, as: :json
+
+        expect(json_response['data'].map { |e| e['id'] }).to contain_exactly(orders_export.prefixed_id, product_export.prefixed_id)
+      end
+
+      it 'takes the indexed list form' do
+        get :index, params: { q: { type_in: { '0' => 'orders' } } }
+
+        expect(json_response['data'].map { |e| e['id'] }).to contain_exactly(orders_export.prefixed_id)
+      end
+
+      it 'takes a shorthand inside a filter group' do
+        get :index, params: { q: { g: { '0' => { type_eq: 'orders' } } } }
+
+        expect(json_response['data'].map { |e| e['id'] }).to contain_exactly(orders_export.prefixed_id)
+      end
+    end
+
     it 'serializes status fields' do
       subject
       row = json_response['data'].find { |e| e['id'] == product_export.prefixed_id }

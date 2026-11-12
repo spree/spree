@@ -1,12 +1,21 @@
-import type { TaxRate, TaxRateParams } from '@spree/admin-sdk'
+import type { TaxRate, TaxRateCreateParams, TaxRateUpdateParams } from '@spree/admin-sdk'
 import {
   adminClient,
+  STORE_QUERY_RESOURCE,
   useResourceKey,
   useResourceKeyBuilder,
   useResourceMutation,
 } from '@spree/dashboard-core'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import i18n from 'i18next'
+
+export function useTaxRates({ page = 1, limit = 100 }: { page?: number; limit?: number } = {}) {
+  return useQuery({
+    queryKey: useResourceKey('tax-rates', { page, limit }),
+    queryFn: () => adminClient.taxRates.list({ page, limit, sort: 'name' }),
+    staleTime: 1000 * 60 * 5,
+  })
+}
 
 export function useTaxRate(id: string | undefined) {
   return useQuery({
@@ -17,16 +26,17 @@ export function useTaxRate(id: string | undefined) {
 }
 
 export function useCreateTaxRate() {
-  return useResourceMutation<TaxRate, Error, TaxRateParams>({
+  return useResourceMutation<TaxRate, Error, TaxRateCreateParams>({
     mutationFn: (params) => adminClient.taxRates.create(params),
-    invalidate: [['tax-rates']],
+    // STORE_QUERY_RESOURCE refreshes the setup-task state (Getting Started + nav badge).
+    invalidate: [['tax-rates'], [STORE_QUERY_RESOURCE]],
     successMessage: i18n.t('admin.tax_rates.messages.created'),
     errorMessage: i18n.t('admin.errors.failed_to_create'),
   })
 }
 
 export function useUpdateTaxRate(id: string) {
-  return useResourceMutation<TaxRate, Error, TaxRateParams>({
+  return useResourceMutation<TaxRate, Error, TaxRateUpdateParams>({
     mutationFn: (params) => adminClient.taxRates.update(id, params),
     invalidate: [['tax-rates'], ['tax-rates', id]],
     successMessage: i18n.t('admin.tax_rates.messages.updated'),
@@ -40,7 +50,7 @@ export function useDeleteTaxRate() {
 
   return useResourceMutation<void, Error, string>({
     mutationFn: (id) => adminClient.taxRates.delete(id),
-    invalidate: [['tax-rates']],
+    invalidate: [['tax-rates'], [STORE_QUERY_RESOURCE]],
     successMessage: i18n.t('admin.tax_rates.messages.deleted'),
     errorMessage: i18n.t('admin.errors.failed_to_delete'),
     onSuccess: (_data, id) => {

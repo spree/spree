@@ -29,9 +29,18 @@ module Spree
         return success([]) if company.nil? || address.nil?
 
         success(
-          company.tax_exemption_certificates.active.for_address(address).map do |certificate|
+          company.tax_exemption_certificates.active.for_address(address).includes(:tax_exemption_reason).filter_map do |certificate|
+            reason = certificate.tax_exemption_reason
+            # A certificate recorded before reasons existed keeps its old code
+            # until `spree:upgrade:tax_exemption_reasons` links it. One with
+            # neither (its reason row removed outside the app) is skipped
+            # rather than failing tax for every order of the company.
+            reason_code = reason&.code || certificate.reason_code
+            next if reason_code.blank?
+
             Spree::TaxExemption.new(
-              reason_code: certificate.reason_code,
+              reason_code: reason_code,
+              reason_name: reason&.name,
               certificate_number: certificate.certificate_number,
               country_code: certificate.country_code,
               state_code: certificate.state_code

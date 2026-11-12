@@ -1,11 +1,14 @@
 import { expect, test } from '@playwright/test'
 import {
+  adminRequest,
   createInTransitTransfer,
+  deleteSeededRecords,
   FIXTURE_INVENTORY_RESERVED,
   FIXTURE_INVENTORY_SKU,
   FIXTURE_TRANSFER_DESTINATION,
   FIXTURE_TRANSFER_SOURCE,
   login,
+  seedRecord,
 } from './helpers'
 
 const INVENTORY_PATH = (storeId: string) => `/${storeId}/inventory`
@@ -17,6 +20,10 @@ const INVENTORY_PATH = (storeId: string) => `/${storeId}/inventory`
  * merchant can see: a checkout holding units, and a transfer on its way.
  */
 test.describe('inventory', () => {
+  test.afterEach(async ({ page }) => {
+    await deleteSeededRecords(page)
+  })
+
   test('shows what is held and what is on its way, per location', async ({ page }) => {
     const creds = await login(page)
     const shipped = 7
@@ -100,12 +107,20 @@ test.describe('inventory', () => {
     // Every state starts selected, so narrowing means unchecking the rest.
     const statusFilter = page.getByRole('button', { name: /stock status/i })
     await statusFilter.click()
-    for (const name of [/^in stock$/i, /^low stock$/i, /^out of stock$/i, /^incoming$/i]) {
+    for (const name of [
+      /^in stock$/i,
+      /^low stock$/i,
+      /^out of stock$/i,
+      /^low stock \(all locations\)$/i,
+      /^out of stock \(all locations\)$/i,
+      /^incoming$/i,
+    ]) {
       await page.getByRole('menuitemcheckbox', { name }).click()
     }
     await page.keyboard.press('Escape')
 
-    await expect(statusFilter).toContainText('1/5')
+    // A single state left is named rather than counted.
+    await expect(statusFilter).toContainText(/reserved/i)
     await expect(destinationRow).toBeVisible({ timeout: 15_000 })
 
     // The location filter lists every warehouse rather than asking the
@@ -212,5 +227,56 @@ test.describe('inventory', () => {
     await page.getByLabel(/^amount$/i).fill(String(before))
     await page.getByRole('button', { name: /^apply$/i }).click()
     await expect(onHand).toHaveText(String(before), { timeout: 15_000 })
+  })
+
+  // Agents and warehouse feeds write stock in bulk. A reason sent with a row
+  // labels its movement; without one the history only says "Inventory feed".
+  test('keeps the reason a bulk stock change was sent with', async ({ page }) => {
+    const session = await login(page)
+    const locations = await adminRequest<{ data: { id: string }[] }>(
+      page,
+      session,
+      'get',
+      '/stock_locations',
+    )
+    const location = locations.data[0].id
+    const sku = `E2E-REASON-${Date.now()}`
+    await seedRecord(page, session, '/products', {
+      name: `Reasoned ${sku}`,
+      status: 'active',
+      prices: [{ amount: '39.00', currency: 'USD' }],
+      variants: [
+        {
+          options: [],
+          sku,
+          track_inventory: true,
+          stock_levels: [{ stock_location_id: location, count_on_hand: 25 }],
+        },
+      ],
+    })
+    const variants = await adminRequest<{ data: { id: string }[] }>(
+      page,
+      session,
+      'get',
+      `/variants?q[sku_eq]=${sku}`,
+    )
+    const variant = variants.data[0].id
+
+    for (const [adjustment, reason] of [
+      [10, 'received'],
+      [-1, 'damaged'],
+    ] as const) {
+      await adminRequest(page, session, 'post', '/stock_levels/bulk_upsert', {
+        stock_levels: [{ variant_id: variant, stock_location_id: location, adjustment, reason }],
+      })
+    }
+
+    await page.goto(`/${session.store_id}/settings/stock-locations?edit=${location}`)
+    const movements = page.getByRole('row').filter({ hasText: sku })
+    const change = (quantity: string) =>
+      movements.filter({ has: page.getByRole('cell', { name: quantity, exact: true }) })
+    await expect(change('+10').getByText(/^received$/i)).toBeVisible({ timeout: 15_000 })
+    await expect(change('-1').getByText(/^damaged$/i)).toBeVisible()
+    await expect(movements.getByText(/inventory feed/i)).toHaveCount(0)
   })
 })

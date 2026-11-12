@@ -13,18 +13,6 @@ describe Spree::OrderPromotion, type: :model do
     order.discounts.promotion.update_all(amount: -5.0)
   end
 
-  context '#name' do
-    it 'returns the same value as Promotion name' do
-      expect(subject.name).to eq(promotion.name)
-    end
-  end
-
-  context '#description' do
-    it 'returns the same value as Promotion description' do
-      expect(subject.description).to eq(promotion.description)
-    end
-  end
-
   context '#amount' do
     it 'equals sum of adjustments created by promotion' do
       expect(subject.amount).to eq(-5.0)

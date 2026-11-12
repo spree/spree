@@ -17,14 +17,22 @@ import {
   FieldGroup,
   FieldLabel,
   Input,
+  Item,
   Pagination,
+  ProductIdentity,
   SearchInput,
   Textarea,
-  Thumbnail,
   toastManager,
   Wizard,
 } from '@spree/dashboard-ui'
-import { CheckIcon, InfoIcon, PackageIcon, PlusIcon, XIcon } from '@spree/dashboard-ui/icons'
+import {
+  CheckIcon,
+  CircleAlertIcon,
+  InfoIcon,
+  PackageIcon,
+  PlusIcon,
+  XIcon,
+} from '@spree/dashboard-ui/icons'
 import { useDeferredValue, useEffect, useMemo, useState } from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -207,7 +215,9 @@ function CatalogWizard({
       <div className="flex items-start justify-between gap-4">
         <div>
           <h2 className="font-medium text-lg">{t(`admin.catalogs.wizard.steps.${step}`)}</h2>
-          <p className="text-muted-foreground text-sm">{t(`admin.catalogs.wizard.help.${step}`)}</p>
+          <p className="text-muted-foreground text-base">
+            {t(`admin.catalogs.wizard.help.${step}`)}
+          </p>
         </div>
         {step === 'audience' && audienceCount > 0 && (
           <Button size="sm" variant="outline" type="button" onClick={() => setAssigning(true)}>
@@ -218,9 +228,10 @@ function CatalogWizard({
       </div>
 
       {form.formState.errors.root?.message && (
-        <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive" role="alert">
-          {form.formState.errors.root.message}
-        </p>
+        <Alert variant="destructive">
+          <CircleAlertIcon />
+          <AlertDescription>{form.formState.errors.root.message}</AlertDescription>
+        </Alert>
       )}
 
       {step === 'details' && <DetailsStep form={form} />}
@@ -228,9 +239,12 @@ function CatalogWizard({
         <>
           <CatalogAudienceStep form={form} assigning={assigning} onAssigningChange={setAssigning} />
           {audienceCount === 0 && (
-            <p className="rounded-md bg-muted px-3 py-2 text-muted-foreground text-sm">
-              {t('admin.catalogs.wizard.audience_none_warning')}
-            </p>
+            <Alert variant="info">
+              <InfoIcon />
+              <AlertDescription>
+                {t('admin.catalogs.wizard.audience_none_warning')}
+              </AlertDescription>
+            </Alert>
           )}
         </>
       )}
@@ -238,9 +252,12 @@ function CatalogWizard({
         <>
           <ProductsStep products={products} onChange={setProducts} />
           {products.length === 0 && (
-            <p className="rounded-md bg-muted px-3 py-2 text-muted-foreground text-sm">
-              {t('admin.catalogs.wizard.products_none_warning')}
-            </p>
+            <Alert variant="info">
+              <InfoIcon />
+              <AlertDescription>
+                {t('admin.catalogs.wizard.products_none_warning')}
+              </AlertDescription>
+            </Alert>
           )}
         </>
       )}
@@ -329,7 +346,7 @@ function ProductsStep({
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
       <section className="flex min-w-0 flex-col gap-2">
-        <h3 className="font-medium text-sm">
+        <h3 className="font-medium text-base">
           {t('admin.catalogs.wizard.products.chosen_title')}
           <span className="ml-2 font-normal text-muted-foreground">{products.length}</span>
         </h3>
@@ -349,15 +366,19 @@ function ProductsStep({
         ) : (
           <div className="flex max-h-96 flex-col divide-y overflow-y-auto rounded-md border">
             {products.map((product) => (
-              <div key={product.id} className="flex items-center gap-3 p-2">
-                <Thumbnail
-                  src={product.thumbnail_url}
-                  alt={product.name ?? ''}
-                  className="size-8"
+              <Item
+                key={product.id}
+                size="xs"
+                className="flex-nowrap gap-3 rounded-none border-0 p-2"
+              >
+                <ProductIdentity
+                  name={product.name}
+                  thumbnailUrl={product.thumbnail_url}
+                  size="sm"
+                  className="flex-1"
                 />
-                <span className="min-w-0 flex-1 truncate text-sm">{product.name}</span>
                 <Button
-                  variant="ghost"
+                  variant="destructive-ghost"
                   size="icon-xs"
                   type="button"
                   onClick={() => onChange(products.filter((row) => row.id !== product.id))}
@@ -365,14 +386,14 @@ function ProductsStep({
                 >
                   <XIcon className="size-4" />
                 </Button>
-              </div>
+              </Item>
             ))}
           </div>
         )}
       </section>
 
       <section className="flex min-w-0 flex-col gap-2">
-        <h3 className="font-medium text-sm">{t('admin.catalogs.wizard.products.all_title')}</h3>
+        <h3 className="font-medium text-base">{t('admin.catalogs.wizard.products.all_title')}</h3>
 
         <SearchInput
           value={search}
@@ -382,12 +403,12 @@ function ProductsStep({
 
         <div className="flex max-h-96 flex-col divide-y overflow-y-auto rounded-md border">
           {isLoading && (
-            <p className="p-4 text-center text-muted-foreground text-sm">
+            <p className="p-4 text-center text-muted-foreground text-base">
               {t('admin.common.loading')}
             </p>
           )}
           {!isLoading && (data?.data.length ?? 0) === 0 && (
-            <p className="p-4 text-center text-muted-foreground text-sm">
+            <p className="p-4 text-center text-muted-foreground text-base">
               {t('admin.common.no_results')}
             </p>
           )}
@@ -395,13 +416,17 @@ function ProductsStep({
             const added = chosen.has(product.id)
 
             return (
-              <div key={product.id} className="flex items-center gap-3 p-2">
-                <Thumbnail
-                  src={product.thumbnail_url}
-                  alt={product.name ?? ''}
-                  className="size-8"
+              <Item
+                key={product.id}
+                size="xs"
+                className="flex-nowrap gap-3 rounded-none border-0 p-2"
+              >
+                <ProductIdentity
+                  name={product.name}
+                  thumbnailUrl={product.thumbnail_url}
+                  size="sm"
+                  className="flex-1"
                 />
-                <span className="min-w-0 flex-1 truncate text-sm">{product.name}</span>
                 {/* An added row stays visible and disabled rather than
                     disappearing: a list that reshuffles as you click it is
                     hard to work down. */}
@@ -415,7 +440,7 @@ function ProductsStep({
                 >
                   {added ? <CheckIcon className="size-4" /> : <PlusIcon className="size-4" />}
                 </Button>
-              </div>
+              </Item>
             )
           })}
         </div>
@@ -438,7 +463,7 @@ function ReviewStep({
   const audiences = values.assignments.filter((entry) => !entry.removed)
 
   return (
-    <dl className="grid grid-cols-[10rem_1fr] gap-y-3 text-sm">
+    <dl className="grid grid-cols-[10rem_1fr] gap-y-3 text-base">
       <dt className="text-muted-foreground">{t('admin.fields.name.label')}</dt>
       <dd>{values.name}</dd>
 

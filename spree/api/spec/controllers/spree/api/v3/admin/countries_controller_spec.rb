@@ -24,17 +24,15 @@ RSpec.describe Spree::Api::V3::Admin::CountriesController, type: :controller do
       expect(json_response['meta']['count']).to eq(total_countries)
     end
 
-    it 'returns countries ordered by name' do
+    it 'returns countries ordered by ISO code' do
       subject
-      names = json_response['data'].map { |c| c['name'] }
-      expect(names).to eq(names.sort)
+      codes = json_response['data'].map { |c| c['iso'] }
+      expect(codes).to eq(codes.sort)
     end
 
-    it 'includes iso and name fields' do
+    it 'includes the iso field' do
       subject
-      country = json_response['data'].first
-      expect(country['iso']).to be_present
-      expect(country['name']).to be_present
+      expect(json_response['data'].first['iso']).to be_present
     end
 
     context 'with expand=states' do
@@ -74,7 +72,6 @@ RSpec.describe Spree::Api::V3::Admin::CountriesController, type: :controller do
       subject
       expect(response).to have_http_status(:ok)
       expect(json_response['iso']).to eq(country.iso)
-      expect(json_response['name']).to eq(country.name)
     end
 
     it 'accepts lowercase ISO code' do

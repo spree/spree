@@ -56,14 +56,7 @@ RSpec.describe 'Admin Me API', type: :request, swagger_doc: 'api-reference/admin
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          selected_locale: { type: :string, example: 'de' },
-          first_name: { type: :string, example: 'Ada' },
-          last_name: { type: :string, example: 'Lovelace' }
-        }
-      }
+      request_body_for
 
       response '200', 'profile updated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

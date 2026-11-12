@@ -1,8 +1,18 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { AuthProvider } from '@spree/admin-sdk'
 import { SpreeError } from '@spree/admin-sdk'
-import { adminClient, useAuth } from '@spree/dashboard-core'
-import { Button, Input, Label, Skeleton } from '@spree/dashboard-ui'
+import { adminClient, Slot, useAuth } from '@spree/dashboard-core'
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+  Button,
+  Input,
+  Item,
+  Label,
+  Skeleton,
+} from '@spree/dashboard-ui'
+import { CircleAlertIcon } from '@spree/dashboard-ui/icons'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, Navigate } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
@@ -37,7 +47,7 @@ function LoginPage() {
     <AuthShell>
       <div className="flex flex-col gap-2">
         <h1 className="text-2xl font-bold">{t('admin.auth.login.title')}</h1>
-        <p className="text-sm text-muted-foreground">{t('admin.auth.login.subtitle')}</p>
+        <p className="text-base text-muted-foreground">{t('admin.auth.login.subtitle')}</p>
       </div>
 
       {callbackError && <CallbackError code={callbackError} />}
@@ -50,6 +60,8 @@ function LoginPage() {
         isLoading={isLoadingProviders}
         failed={providersFailed}
       />
+
+      <Slot name="login.after" />
     </AuthShell>
   )
 }
@@ -75,13 +87,13 @@ function SetupRequiredNotice() {
   if (!status.data?.setup_required) return null
 
   return (
-    <div className="grid gap-2 rounded-md border p-4">
-      <p className="font-medium text-sm">{t('admin.setup.required_notice_title')}</p>
-      <p className="text-sm text-muted-foreground">{t('admin.setup.required_notice_message')}</p>
-      <Link to="/setup" className="link text-sm">
+    <Item variant="outline" className="flex-col items-stretch gap-2">
+      <p className="font-medium text-base">{t('admin.setup.required_notice_title')}</p>
+      <p className="text-base text-muted-foreground">{t('admin.setup.required_notice_message')}</p>
+      <Link to="/setup" className="link text-base">
         {t('admin.setup.required_notice_link')}
       </Link>
-    </div>
+    </Item>
   )
 }
 
@@ -145,7 +157,7 @@ function PasswordLoginForm() {
   return (
     <form onSubmit={form.handleSubmit(onSubmit)}>
       <div className="grid gap-6">
-        {errors.root && <p className="text-sm text-destructive">{errors.root.message}</p>}
+        {errors.root && <p className="text-base text-destructive">{errors.root.message}</p>}
         <div className="grid gap-2">
           <Label htmlFor="email">{t('admin.fields.email.label')}</Label>
           <Input
@@ -156,7 +168,7 @@ function PasswordLoginForm() {
             autoFocus={true}
             {...form.register('email')}
           />
-          {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
+          {errors.email && <p className="text-base text-destructive">{errors.email.message}</p>}
         </div>
         {/* Password, submit and the recovery link share one grid so the link can
             sit on the label's row visually while coming last in source order.
@@ -176,7 +188,7 @@ function PasswordLoginForm() {
             {...form.register('password')}
           />
           {errors.password && (
-            <p className="col-span-2 text-sm text-destructive">{errors.password.message}</p>
+            <p className="col-span-2 text-base text-destructive">{errors.password.message}</p>
           )}
           {/* Auto-placed rather than pinned to a row: naming a row would reserve
               it even when no error renders, leaving a gap above the button. */}
@@ -185,7 +197,7 @@ function PasswordLoginForm() {
           </Button>
           <Link
             to="/forgot-password"
-            className="link col-start-2 row-start-1 justify-self-end self-center text-sm"
+            className="link col-start-2 row-start-1 justify-self-end self-center text-base"
           >
             {t('admin.auth.forgot_password.link')}
           </Link>
@@ -218,7 +230,7 @@ function Divider() {
   const { t } = useTranslation()
 
   return (
-    <div className="relative text-center text-sm">
+    <div className="relative text-center text-base">
       <span className="absolute inset-0 top-1/2 border-t" aria-hidden="true" />
       <span className="relative bg-muted px-2 text-muted-foreground">
         {t('admin.auth.login.divider')}
@@ -231,17 +243,16 @@ function ProvidersUnavailable() {
   const { t } = useTranslation()
 
   return (
-    <div className="grid gap-2 rounded-md border border-destructive/50 p-4">
-      <p className="font-medium text-sm">{t('admin.auth.login.providers_error_title')}</p>
-      <p className="text-sm text-muted-foreground">
-        {t('admin.auth.login.providers_error_message')}
-      </p>
-    </div>
+    <Alert variant="destructive">
+      <CircleAlertIcon />
+      <AlertTitle>{t('admin.auth.login.providers_error_title')}</AlertTitle>
+      <AlertDescription>{t('admin.auth.login.providers_error_message')}</AlertDescription>
+    </Alert>
   )
 }
 
 function CallbackError({ code }: { code: string }) {
   const { t } = useTranslation()
 
-  return <p className="text-sm text-destructive">{t(authCallbackErrorKey(code))}</p>
+  return <p className="text-base text-destructive">{t(authCallbackErrorKey(code))}</p>
 }

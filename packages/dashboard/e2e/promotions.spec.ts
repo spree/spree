@@ -1,5 +1,7 @@
 import { expect, type Page, test } from '@playwright/test'
 import {
+  adminRequest,
+  FIXTURE_BULK_CHANNEL_NAME,
   FIXTURE_PROMO_COUNTRY,
   FIXTURE_PROMO_CUSTOMER_FIRST_NAME,
   FIXTURE_PROMO_CUSTOMER_FULL_NAME,
@@ -9,6 +11,8 @@ import {
   gotoIndex,
   login,
   rowButton,
+  saveCustomFieldWithPage,
+  withCustomFieldDefinition,
 } from './helpers'
 
 async function startNewPromotion(page: Page, storeId: string, name: string) {
@@ -241,6 +245,38 @@ test.describe('promotions', () => {
     await submitCreate(page, name)
   })
 
+  // Both rules keep prefixed ids in their preferences; reloading proves they
+  // were saved and read back as the records they name.
+  test('creates a promotion with Channel and Market rules', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, PROMOTIONS_PATH(creds.store_id), CTA)
+
+    const name = `E2E Channel Market Promo ${Date.now()}`
+    await startNewPromotion(page, creds.store_id, name)
+
+    await pickRule(page, /^channel\(s\)/i)
+    await expect(page.getByRole('heading', { name: /^channel\(s\)$/i })).toBeVisible({
+      timeout: 5_000,
+    })
+    await pickAutocompleteOption(page, /search sales channels/i, FIXTURE_BULK_CHANNEL_NAME)
+    await saveEditor(page)
+
+    await pickRule(page, /^market\(s\)/i)
+    await expect(page.getByRole('heading', { name: /^market\(s\)$/i })).toBeVisible({
+      timeout: 5_000,
+    })
+    await pickAutocompleteOption(page, /search markets/i, 'Europe')
+    await saveEditor(page)
+
+    await submitCreate(page, name)
+
+    await page.reload()
+    await expect(page.getByText(FIXTURE_BULK_CHANNEL_NAME).first()).toBeVisible({
+      timeout: 15_000,
+    })
+    await expect(page.getByText('Europe', { exact: true }).first()).toBeVisible()
+  })
+
   test('creates a promotion with a Product rule', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, PROMOTIONS_PATH(creds.store_id), CTA)
@@ -412,6 +448,104 @@ test.describe('promotions', () => {
     await submitCreate(page, name)
   })
 
+  // Money goes to the API as an exact decimal string; each value must read
+  // back as typed after the promotion is saved and reloaded.
+  test('keeps item total comparisons and exact amounts after reload', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, PROMOTIONS_PATH(creds.store_id), CTA)
+
+    const name = `E2E Money Promo ${Date.now()}`
+    await startNewPromotion(page, creds.store_id, name)
+
+    await pickRule(page, /^item total\b/i)
+    const ruleDialog = page.getByRole('dialog')
+    await ruleDialog.locator('#preference-amount_min').fill('50.25')
+    await ruleDialog.locator('#preference-amount_max').fill('250.75')
+
+    const minimumComparison = ruleDialog.locator('#preference-operator_min')
+    await minimumComparison.click()
+    await page
+      .getByRole('option', { name: /greater than or equal to \(includes the minimum\)/i })
+      .click()
+    await expect(minimumComparison).toContainText(/greater than or equal to/i)
+
+    const maximumComparison = ruleDialog.locator('#preference-operator_max')
+    await maximumComparison.click()
+    await page
+      .getByRole('option', { name: /less than or equal to \(includes the maximum\)/i })
+      .click()
+    await expect(maximumComparison).toContainText(/less than or equal to/i)
+
+    await expect(ruleDialog.getByText(/^minimum comparison$/i)).toBeVisible()
+    await expect(ruleDialog.getByText(/^maximum comparison$/i)).toBeVisible()
+    await expect(
+      ruleDialog.getByText(/for free shipping on item totals of 150 or more/i),
+    ).toBeVisible()
+    await saveEditor(page)
+
+    await pickAction(page, /^create whole-order adjustment\b/i)
+    const calculatorSelect = page.locator('#calculator-type')
+    await expect(calculatorSelect).toBeEnabled({ timeout: 10_000 })
+    await calculatorSelect.click()
+    await page.getByRole('option', { name: /^flat rate$/i }).click()
+    await page.getByRole('dialog').locator('#preference-amount').fill('12.50')
+    await saveEditor(page)
+
+    await submitCreate(page, name)
+    await page.reload()
+    await expect(page.getByRole('heading', { name })).toBeVisible({ timeout: 15_000 })
+
+    await openAdjustmentAction(page, /flat rate/i)
+    // A money preference is written to its calculator's currency, so the
+    // amount keeps its cents.
+    await expect(page.getByRole('dialog').locator('#preference-amount')).toHaveValue('12.50')
+    await cancelEditor(page)
+
+    await page
+      .locator('div.items-stretch')
+      .filter({ hasText: /^item total/i })
+      .first()
+      .getByRole('button')
+      .first()
+      .click()
+    const savedRuleDialog = page.getByRole('dialog')
+    await expect(savedRuleDialog.locator('#preference-amount_min')).toHaveValue('50.25', {
+      timeout: 5_000,
+    })
+    await expect(savedRuleDialog.locator('#preference-amount_max')).toHaveValue('250.75')
+    await expect(savedRuleDialog.locator('#preference-operator_min')).toContainText(
+      /greater than or equal to/i,
+    )
+    await expect(savedRuleDialog.locator('#preference-operator_max')).toContainText(
+      /less than or equal to/i,
+    )
+    await expect(savedRuleDialog.getByText(/^minimum comparison$/i)).toBeVisible()
+    await expect(savedRuleDialog.getByText(/^maximum comparison$/i)).toBeVisible()
+  })
+
+  test('keeps a flat percent discount exactly', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, PROMOTIONS_PATH(creds.store_id), CTA)
+
+    const name = `E2E Percent Promo ${Date.now()}`
+    await startNewPromotion(page, creds.store_id, name)
+
+    await pickAction(page, /^create whole-order adjustment\b/i)
+    const calculatorSelect = page.locator('#calculator-type')
+    await expect(calculatorSelect).toBeEnabled({ timeout: 10_000 })
+    await calculatorSelect.click()
+    await page.getByRole('option', { name: /^flat percent$/i }).click()
+    await page.getByRole('dialog').locator('#preference-flat_percent').fill('7.5')
+    await saveEditor(page)
+
+    await submitCreate(page, name)
+    await page.reload()
+    await expect(page.getByRole('heading', { name })).toBeVisible({ timeout: 15_000 })
+
+    await openAdjustmentAction(page, /flat percent/i)
+    await expect(page.getByRole('dialog').locator('#preference-flat_percent')).toHaveValue('7.5')
+  })
+
   test('saves the tiers of a tiered calculator, lowest threshold first', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, PROMOTIONS_PATH(creds.store_id), CTA)
@@ -549,5 +683,17 @@ test.describe('promotions', () => {
       timeout: 15_000,
     })
     await expect(rowButton(page, name)).toHaveCount(0, { timeout: 15_000 })
+  })
+
+  test('saves a promotion custom field with the page Save', async ({ page }) => {
+    const creds = await login(page)
+    await withCustomFieldDefinition(page, creds, 'promotion', async (label) => {
+      const promotion = await adminRequest<{ id: string }>(page, creds, 'post', '/promotions', {
+        name: `E2E Custom Field Promo ${Date.now()}`,
+        kind: 'automatic',
+      })
+      await page.goto(`${PROMOTIONS_PATH(creds.store_id)}/${promotion.id}`)
+      await saveCustomFieldWithPage(page, label, 'Spring campaign')
+    })
   })
 })

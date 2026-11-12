@@ -5,24 +5,26 @@ module Spree
         # Admin API Variant Serializer
         # Full variant data including admin-only fields
         class VariantSerializer < V3::VariantSerializer
+          without_formatted_money
+
           include Concerns::ExternalReferencesAttribute
 
 
           typelize product_name: :string,
                    position: :number, tax_category_id: [:string, nullable: true],
-                   cost_price: [:string, nullable: true], cost_currency: [:string, nullable: true],
+                   cost_price: [:string, nullable: true], cost_currency: [:string, nullable: true, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'],
                    barcode: [:string, nullable: true],
                    available_stock: [:number, nullable: true],
                    reserved_quantity: :number, total_on_hand: [:number, nullable: true],
                    preorderable: :boolean, preorder_ships_at: [:string, nullable: true],
                    backorder_limit: [:number, nullable: true],
                    hs_code: [:string, nullable: true],
-                   country_of_origin: [:string, nullable: true],
+                   country_of_origin: [:string, nullable: true, enum: Spree::IsoData.country_codes, enum_type_name: 'CountryCode'],
                    customs_description: [:string, nullable: true],
                    deleted_at: [:string, nullable: true],
                    delivery_profile_id: [:string, nullable: true],
                    minimum_order_quantity: ['number | null'], order_multiple: ['number | null'],
-                   purchase_unit: [:string, nullable: true, enum: Spree::Variant::PURCHASE_UNITS],
+                   purchase_unit: [:string, nullable: true, enum: Spree::Variant::PURCHASE_UNITS, enum_type_name: 'PurchaseUnit'],
                    carton_package_type_id: [:string, nullable: true],
                    carton_weight: [:string, nullable: true],
                    cartons_per_pallet: ['number | null'],
@@ -32,13 +34,15 @@ module Spree
           # The last three override the store serializer's buyer-resolved
           # values with the variant's OWN: a merchant edits what is stored on
           # the row, not what some catalog resolves to for a buyer they are not.
-          attributes :metadata, :position, :cost_price, :cost_currency,
+          attributes :metadata, :position, :cost_currency,
                      :barcode, :backorder_limit,
                      :hs_code, :country_of_origin, :customs_description,
                      :minimum_order_quantity, :order_multiple, :purchase_unit,
                      :carton_weight, :cartons_per_pallet,
                      preorder_ships_at: :iso8601, deleted_at: :iso8601,
                      created_at: :iso8601, updated_at: :iso8601
+
+          money_attributes :cost_price, currency: :cost_currency, unit_price: true
 
           attribute :preorderable, &:preorderable?
 
@@ -108,9 +112,7 @@ module Spree
                resource: proc { Spree.api.admin_price_serializer },
                if: proc { expand?('prices') }
 
-          many :custom_fields,
-               resource: proc { Spree.api.admin_custom_field_serializer },
-               if: proc { expand?('custom_fields') }
+          expandable_custom_fields admin: true
 
           many :stock_levels,
                resource: proc { Spree.api.admin_stock_level_serializer },

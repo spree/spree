@@ -11,6 +11,14 @@ module Spree
           class SavedReportsController < ResourceController
             scoped_resource :reports
 
+            request_params :saved_report do |body|
+              body.attribute :name, :string, required: true, on: :create
+              body.attribute :description, :string, nullable: true
+              body.attribute :query, :hash,
+                required: true, on: :create,
+                description: 'A reporting query, validated against the reporting registry on save.'
+            end
+
             protected
 
             def model_class
@@ -31,7 +39,7 @@ module Spree
             # nested hashes — they would be decoded to integers on save and
             # never resolve again. Extension attributes are splatted in.
             def permitted_params
-              params.permit(:name, :description, *model_additional_permitted_attributes, query: {})
+              params.permit(*permitted_attributes)
             end
 
             def build_resource

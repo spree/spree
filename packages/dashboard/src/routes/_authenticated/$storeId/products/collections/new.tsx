@@ -5,6 +5,7 @@ import {
   extensionSubmitValues,
   mapSpreeErrorsToForm,
   PageHeader,
+  Slot,
 } from '@spree/dashboard-core'
 import {
   FormActions,
@@ -73,7 +74,7 @@ function NewCollectionPage() {
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         {form.formState.errors.root?.message && (
-          <p className="text-sm text-destructive" role="alert">
+          <p className="text-base text-destructive" role="alert">
             {form.formState.errors.root.message}
           </p>
         )}
@@ -85,8 +86,21 @@ function NewCollectionPage() {
               actions={<FormActions form={form} saveLabel={t('admin.actions.save')} />}
             />
           }
-          main={<CollectionMain form={form} />}
-          sidebar={<CollectionSidebar form={form} />}
+          main={
+            <>
+              <CollectionMain form={form} />
+              <Slot name="collection.form_main" context={{ collection: undefined, mode: 'new' }} />
+            </>
+          }
+          sidebar={
+            <>
+              <CollectionSidebar form={form} />
+              <Slot
+                name="collection.form_sidebar"
+                context={{ collection: undefined, mode: 'new' }}
+              />
+            </>
+          }
         />
       </form>
     </FormProvider>

@@ -16,14 +16,20 @@ import {
 import { CSS } from '@dnd-kit/utilities'
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { OptionType, OptionTypeCreateParams } from '@spree/admin-sdk'
+import { OPTION_TYPE_KINDS } from '@spree/core'
 import {
   adminClient,
   Can,
+  extensionFormValues,
+  extensionSubmitValues,
+  HostFormSlot,
   mapSpreeErrorsToForm,
+  RecordMetadataSection,
   ResourceTable,
   resourceSearchSchema,
+  runtimeListParams,
   Subject,
-  useDirectUpload,
+  useFileUpload,
   usePermissions,
 } from '@spree/dashboard-core'
 import {
@@ -93,7 +99,6 @@ import {
 } from '../../../../hooks/use-option-types'
 import {
   OPTION_TYPE_DEFAULTS,
-  OPTION_TYPE_KINDS,
   type OptionTypeFormValues,
   type OptionValueFormValue,
   optionTypeFormSchema,
@@ -101,6 +106,10 @@ import {
   valueToParam,
 } from '../../../../schemas/option-type'
 import '../../../../tables/option-types'
+import {
+  DraftCustomFieldsCard,
+  useCustomFieldsDraft,
+} from '../../../../components/spree/custom-fields/custom-fields-inline'
 
 const optionTypesSearchSchema = resourceSearchSchema.extend({
   edit: z.string().optional(),
@@ -156,7 +165,9 @@ function OptionTypesPage() {
       <ResourceTable<OptionType>
         tableKey="option-types"
         queryKey="option-types"
-        queryFn={(params) => adminClient.optionTypes.list({ ...params, expand: ['option_values'] })}
+        queryFn={(params: Record<string, unknown>) =>
+          adminClient.optionTypes.list(runtimeListParams({ ...params, expand: ['option_values'] }))
+        }
         searchParams={search}
         rowActions={(optionType) => (
           <RowActions
@@ -210,13 +221,14 @@ function CreateOptionTypeSheet({
   const form = useForm<OptionTypeFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(optionTypeFormSchema) as any,
-    defaultValues: OPTION_TYPE_DEFAULTS,
+    defaultValues: { ...OPTION_TYPE_DEFAULTS, ...extensionFormValues('option_type', null) },
   })
 
   async function onSubmit(values: OptionTypeFormValues) {
     try {
       await createMutation.mutateAsync({
         ...values,
+        ...extensionSubmitValues('option_type', form),
         option_values: values.option_values.map(valueToParam),
       } as OptionTypeCreateParams)
       form.reset(OPTION_TYPE_DEFAULTS)
@@ -242,11 +254,16 @@ function CreateOptionTypeSheet({
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-6 overflow-y-auto p-4">
             {form.formState.errors.root?.message && (
-              <p className="text-sm text-destructive" role="alert">
+              <p className="text-base text-destructive" role="alert">
                 {form.formState.errors.root.message}
               </p>
             )}
             <OptionTypeFormFields form={form} />
+            <HostFormSlot
+              form={form}
+              name="option_type.form_fields"
+              context={{ optionType: undefined, mode: 'new' }}
+            />
             <OptionValuesFieldArray form={form} />
           </div>
           <SheetFooter>
@@ -286,6 +303,7 @@ function EditOptionTypeSheet({
   const { t } = useTranslation()
   const { data: optionType, isLoading } = useOptionType(id)
   const updateMutation = useUpdateOptionType(id)
+  const customFields = useCustomFieldsDraft('option_type', id)
 
   const form = useForm<OptionTypeFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -299,16 +317,25 @@ function EditOptionTypeSheet({
         ...optionType,
         kind: optionType.kind as OptionTypeFormValues['kind'],
         option_values: (optionType.option_values ?? []).map(optionValueToFormRow),
+        ...extensionFormValues('option_type', optionType),
       })
     }
   }, [optionType, form])
 
   async function onSubmit(values: OptionTypeFormValues) {
     try {
-      await updateMutation.mutateAsync({
-        ...values,
-        option_values: values.option_values.map(valueToParam),
-      })
+      // The record saves first and is marked clean, so a retry after a failed
+      // custom field save sends only the custom fields.
+      const savesRecord = form.formState.isDirty
+      if (savesRecord) {
+        await updateMutation.mutateAsync({
+          ...values,
+          ...extensionSubmitValues('option_type', form),
+          option_values: values.option_values.map(valueToParam),
+        })
+        form.reset(values)
+      }
+      if (!(await customFields.save({ announce: !savesRecord }))) return
       // The sheet closes here; the `useOptionType` cache invalidation done by
       // the mutation hook re-hydrates the form via `useEffect` the next time
       // the sheet opens. Don't reset from the update response — the v3
@@ -355,17 +382,24 @@ function EditOptionTypeSheet({
           />
         )}
         {isLoading ? (
-          <div className="p-4 text-sm text-muted-foreground">{t('admin.common.loading')}</div>
+          <div className="p-4 text-base text-muted-foreground">{t('admin.common.loading')}</div>
         ) : (
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
             <div className="flex flex-1 flex-col gap-6 overflow-y-auto p-4">
               {form.formState.errors.root?.message && (
-                <p className="text-sm text-destructive" role="alert">
+                <p className="text-base text-destructive" role="alert">
                   {form.formState.errors.root.message}
                 </p>
               )}
               <OptionTypeFormFields form={form} />
+              <HostFormSlot
+                form={form}
+                name="option_type.form_fields"
+                context={{ optionType, mode: 'edit' }}
+              />
               <OptionValuesFieldArray form={form} />
+              <DraftCustomFieldsCard draft={customFields} hideWhenEmpty />
+              <RecordMetadataSection metadata={optionType?.metadata} />
             </div>
             <SheetFooter>
               <Button
@@ -378,7 +412,9 @@ function EditOptionTypeSheet({
               </Button>
               <Button
                 type="submit"
-                disabled={form.formState.isSubmitting || !form.formState.isDirty}
+                disabled={
+                  form.formState.isSubmitting || (!form.formState.isDirty && !customFields.isDirty)
+                }
               >
                 {form.formState.isSubmitting ? t('admin.actions.saving') : t('admin.actions.save')}
               </Button>
@@ -519,7 +555,7 @@ function OptionValuesFieldArray({
     <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between">
         <div className="flex flex-col">
-          <h3 className="text-sm font-medium">
+          <h3 className="text-base font-medium">
             {t('admin.pages.products.options.values_section')}
           </h3>
           <p className="text-xs text-muted-foreground">{t('admin.products.options.values_help')}</p>
@@ -537,7 +573,7 @@ function OptionValuesFieldArray({
             items={valuesArray.fields.map((f) => f._key)}
             strategy={verticalListSortingStrategy}
           >
-            <Table>
+            <Table roundedTop>
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-8" aria-label={t('admin.a11y.reorder')} />
@@ -555,7 +591,7 @@ function OptionValuesFieldArray({
                   <TableRow>
                     <TableCell
                       colSpan={totalColCount}
-                      className="py-6 text-center text-sm text-muted-foreground"
+                      className="py-6 text-center text-base text-muted-foreground"
                     >
                       {t('admin.pages.products.options.values_empty')}
                     </TableCell>
@@ -586,7 +622,7 @@ function OptionValuesFieldArray({
                           image_cleared: false,
                         })
                       }
-                      className="flex w-full items-center justify-center gap-2 px-3 py-3 text-sm font-medium text-foreground transition-colors hover:bg-accent/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      className="flex w-full items-center justify-center gap-2 px-3 py-3 text-base font-medium text-foreground transition-colors hover:bg-accent/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                     >
                       <PlusIcon className="size-4" />
                       {t('admin.pages.products.options.add_value')}
@@ -722,7 +758,7 @@ function OptionValueImageField({
   const { t } = useTranslation()
   const fileInputId = useId()
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const directUpload = useDirectUpload()
+  const fileUpload = useFileUpload()
   const [localPreview, setLocalPreview] = useState<string | null>(null)
   const [uploading, setUploading] = useState(false)
   const [zoomOpen, setZoomOpen] = useState(false)
@@ -747,7 +783,7 @@ function OptionValueImageField({
     if (!file) return
     setUploading(true)
     try {
-      const result = await directUpload.mutateAsync(file)
+      const result = await fileUpload.mutateAsync(file)
       if (localPreview) URL.revokeObjectURL(localPreview)
       setLocalPreview(result.previewUrl)
       form.setValue(`option_values.${index}.image_signed_id`, result.signedId, {

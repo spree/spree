@@ -1,7 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@import "shadcn/tailwind.css";
-@import "@fontsource-variable/geist";
+@import "./shadcn.css";
+@import "@fontsource-variable/inter/opsz.css";
 @import "@fontsource-variable/geist-mono";
 
 /* Tailwind v4 only scans the consuming project's own source by default.
@@ -31,38 +31,24 @@
 
 /* Brand palette.
  *
- * The two themes take different neutral families, for the reason each one's
- * large areas need.
+ * Both themes use Tailwind's `neutral` ramp: a true zero-chroma grey, so the
+ * blue accent stays the only thing in the palette that reads as colour, and
+ * as interaction.
  *
- * Light mode is Tailwind's `stone` ramp — the same lightness ladder as
- * `neutral`, carrying a trace of warm chroma (0.001–0.013) rather than none.
- * Far too little to read as a colour: it stops large white and grey areas
- * looking blue-cold, and leaves the blue accent still the only thing in the
- * palette that reads as interaction.
- *
- * Dark mode is a true zero-chroma grey (Geist's own neutral, and shadcn's
- * default). The warm tint that flatters a white sheet works against a
- * near-black one: at these lightnesses the same chroma stops reading as
- * warmth and starts reading as a brown cast over the whole screen. Keep dark
- * neutrals at chroma 0 — the hue channel there is noise, not decoration.
- *
- * In both themes the lightness decisions below are load-bearing for contrast,
- * and none of them move. Light mode's values are stone's chroma and hue
- * interpolated onto those lightnesses rather than snapped to the nearest ramp
- * step; dark mode's are the same lightnesses with the chroma dropped.
+ * The lightness decisions below are load-bearing for contrast, and none of
+ * them move. Where a ramp step could not meet a contrast requirement, the
+ * value sits between two steps at chroma 0 rather than snapping to one.
  *
  * Primary CTAs stay near-black rather than adopting the site's blue button:
  * in a dense admin UI the blue has to stay meaningful as a selection and
  * focus signal, which it stops being once every page renders a saturated
  * blue button. */
 :root {
-  /* Light-mode neutrals are Tailwind's **stone** scale — a warm grey. Every
-     neutral here is either an exact stone step (labelled with it) or, where a
-     step could not meet a contrast requirement, a value on stone's own hue so
-     it belongs to the same family. Never mix another warm-neutral ramp (zinc,
-     slate, neutral) into THIS block: two families read as a colour cast on
-     whichever surface is the odd one out. Dark mode deliberately uses a
-     different family — see the note on `.dark`.
+  /* Light-mode neutrals are Tailwind's **neutral** scale. Every neutral here
+     is either an exact step (labelled with it) or, where a step could not
+     meet a contrast requirement, a chroma-0 value between two steps. Never
+     mix a tinted ramp (stone, zinc, slate) in: two families read as a colour
+     cast on whichever surface is the odd one out.
 
      Tokens that must equal another token point at it with var() rather than
      repeating its value, so the two cannot drift. */
@@ -74,28 +60,28 @@
   --link: oklch(0.5106 0.1868 257.7);
   --link-hover: oklch(0.44 0.16 257.7);
 
-  --background: oklch(98.5% 0.001 106.423); /* stone-50 — chrome one step below white */
-  --foreground: oklch(14.7% 0.004 49.25); /* stone-950 */
+  --background: oklch(98.5% 0 0); /* neutral-50 — chrome one step below white */
+  --foreground: oklch(14.5% 0 0); /* neutral-950 */
   --card: oklch(1 0 0); /* #ffffff — cards and inputs read as raised */
   --card-foreground: var(--foreground);
   --popover: var(--card);
   --popover-foreground: var(--foreground);
-  --primary: var(--foreground); /* stone-950 — near-black primary CTAs */
+  --primary: var(--foreground); /* neutral-950 — near-black primary CTAs */
   --primary-foreground: var(--card);
   /* Filled surfaces (table headers, badges, secondary buttons) read as a
      whisper against the white card rather than a distinct band. */
-  --secondary: oklch(97% 0.001 106.424); /* stone-100 */
+  --secondary: oklch(97% 0 0); /* neutral-100 */
   --secondary-foreground: var(--foreground);
   --muted: var(--background);
-  /* Between stone-500 and -600, on stone's hue. Clears 4.5:1 against every
-     surface this text lands on — white card 5.19:1, page 4.97:1, secondary and
-     accent 4.75:1 — where the stone-500 step itself measures 4.41:1 on
-     secondary and fails. Dark mode takes stone-400 for the same reason. */
-  --muted-foreground: oklch(0.535 0.0127 58.071);
-  /* Hover/highlight for menu items and table rows, and the same stone-100 as
+  /* Between neutral-500 and -600. Clears 4.5:1 against every
+     surface this text lands on, the selected one included: white card 5.65:1,
+     sidebar 5.18:1, --accent-strong 4.83:1 (a lighter step measured 4.42:1
+     there and failed). */
+  --muted-foreground: oklch(0.515 0 0);
+  /* Hover/highlight for menu items and table rows, and the same neutral-100 as
      --secondary: a hover and a filled surface are the same weight of "one step
      off the card", so they are one value rather than two that drift apart.
-     stone-200 was tried and reads as a pressed state on a white surface.
+     neutral-200 was tried and reads as a pressed state on a white surface.
 
      It is also the lightest step that keeps --muted-foreground legible on it:
      the previous bespoke grey measured 4.47:1, just under the 4.5 this file
@@ -109,38 +95,39 @@
      --accent cannot do this job. It is the hover/fill surface, so it has to
      stay light enough for --muted-foreground to clear 4.5:1 on it — which
      leaves it at 1.04:1 against the page, invisible as a selection. Two
-     different jobs, two tokens. Nothing but near-black text lands on this
-     one, so it is free to be darker.
+     different jobs, two tokens. Muted text and links land on it too (counts
+     and hints in a selected row), so --muted-foreground and --link are set
+     to clear 4.5:1 here; keep that in mind before darkening it.
 
-     Interpolated on stone's hue rather than snapped to a step (like
-     --accent-hover and --border-control): stone-200 read heavier than a
-     selection needs to, and stone-100 is --accent itself, which would collapse
+     Between two steps rather than snapped to one (like
+     --accent-hover): neutral-200 read heavier than a
+     selection needs to, and neutral-100 is --accent itself, which would collapse
      the two tokens into one and leave a hovered item darker than a selected
      one. This sits between them. */
-  --accent-strong: oklch(94.7% 0.002 56);
+  --accent-strong: oklch(94.7% 0 0);
   /* Hover, between --accent and --accent-strong so a nav item has somewhere to
      go on hover *and* somewhere further to go when it is the active one.
-     Interpolated on stone's hue rather than snapped — deliberate, like
-     --border-control.
+     Between two steps rather than snapped — deliberate, like
+     --accent-strong.
 
      --accent is too light to be a hover here: on the sidebar's ground (the
      page colour, not a card) it measures 1.04:1, which is invisible. */
-  --accent-hover: oklch(95.9% 0.002 56);
+  --accent-hover: oklch(95.9% 0 0);
   /* The active item hovered. It darkens rather than lightening: a selected
      row that goes paler under the pointer reads as being deselected. Stays one
      step under --accent-strong, or the two land on the same value and a
      selected item stops responding to the pointer. */
-  --accent-strong-hover: oklch(92.3% 0.003 48.717); /* stone-200 */
+  --accent-strong-hover: oklch(92.2% 0 0); /* neutral-200 */
   --destructive: oklch(0.58 0.22 27); /* red-600 */
   --destructive-foreground: var(--card);
   /* The full-strength rule colour. Nothing styles with it directly — the two
      tokens below are both a share of it, so neither compounds the other's
      reduction.
 
-     stone-200. This is the floor for a hairline: anything lighter stops
+     neutral-200. This is the floor for a hairline: anything lighter stops
      holding a container's edge on a white sheet, and the row rules of a long
      table start to disappear before the frame around them does. */
-  --border-base: oklch(92.3% 0.003 48.717); /* stone-200 */
+  --border-base: oklch(92.2% 0 0); /* neutral-200 */
   /* A structural edge — the content sheet, a dialog, a dropdown, a popover, a
      table's frame. These are surfaces that float above the page or divide it,
      and their edge is what says where one ends and the next begins, so it
@@ -154,6 +141,10 @@
      suggest where the region ends. Used by `CardContent`'s frame; a dialog or
      the sheet itself must keep --border, or the shell loses its outline. */
   --border-card: color-mix(in srgb, var(--border-base) 70%, transparent);
+  /* A card's surface: its faint border, and a wide, soft lift under it, so it
+     reads as resting on the page rather than only ruled onto it. */
+  --card-edge: var(--border-card);
+  --card-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.03), 0 4px 16px 0 rgb(0 0 0 / 0.03);
   /* Dividers *inside* a container — card header/footer splits, dialog and
      sheet separators, table row rules.
 
@@ -167,9 +158,7 @@
   --border-subtle: color-mix(in srgb, var(--border-base) 50%, transparent);
   /* A mark that has to hold its own against the surface with nothing else
      drawing it — the bar of a scrollbar, the focus ring the skip link draws.
-     WCAG 1.4.11 asks 3:1 of exactly that case: 3.25:1 on the white card,
-     3.11:1 on the page ground, the lightest step that clears the minimum on
-     both.
+     The standard border at 80%, so it follows --border in both themes.
 
      No form control uses this. Fields, selects and comboboxes take `--border`
      with `--shadow-control`; checkboxes and radios, too small to carry that
@@ -179,7 +168,34 @@
      `--muted`, so any resting tint either collides with that meaning or (as
      happened) lands darker than it and inverts the signal outright. On this
      palette the enabled state has to stay on the card colour. */
-  --border-control: oklch(86.9% 0.005 56.366);
+  --border-control: color-mix(in srgb, var(--border) 80%, transparent);
+  /* A field's resting lift (`shadow-control`), and its edge: a neutral-300
+     hairline and a soft two-step shadow below it, which together read as a
+     box set into the page, its lower edge a touch darker than the rest. The
+     dark theme overrides the edge (see there). */
+  --field-shadow: 0 1px 2px -1px rgb(0 0 0 / 0.01), 0 3px 4px -1.5px rgb(0 0 0 / 0.03);
+  /* Solid rather than a black veil, so the edge keeps one weight over the
+     neutral-100 hover instead of darkening. */
+  --field-border: oklch(87% 0 0); /* neutral-300 */
+  /* A field under the pointer: the outline button's hover, so every control
+     answers the pointer the same way. A disabled field is never tinted on
+     hover, so the two never meet. */
+  --field-hover: var(--accent);
+  /* A switch's track when off: a grey dark enough for the white knob to
+     stand clear of it. */
+  --switch-off: oklch(87% 0 0); /* neutral-300 */
+  /* A number field's step buttons, at rest, under the pointer and pressed.
+     Rest is one step past the field's own hover fill so the buttons hold
+     their shape when the field is hovered. */
+  --stepper: oklch(92.2% 0 0); /* neutral-200 */
+  --stepper-hover: oklch(87% 0 0); /* neutral-300 */
+  --stepper-active: oklch(70.8% 0 0); /* neutral-400 */
+  /* A focused field: the blue edge (set on the field's border), a faint halo,
+     a soft glow spreading below and a faint one inside, over the field's
+     resting shadow. */
+  --field-focus-shadow:
+    0 0 0 3px rgb(53 115 246 / 0.06), 0 4px 20px 2px rgb(53 115 246 / 0.06),
+    inset 0 0 8px 1px rgb(53 115 246 / 0.05), var(--field-shadow);
   /* A card that *holds* other records — an order's fulfillments, its returns,
      its claims — rather than holding content directly.
 
@@ -204,7 +220,7 @@
   /* The recessed well a raised thing sits in — a tab strip's track, a
      segmented control. Paired with --nested-raised: the track always sits one
      step under it, which is why the two themes name different tokens rather
-     than sharing one. Light steps down from white to stone-100. */
+     than sharing one. Light steps down from white to neutral-100. */
   --track-recessed: var(--accent);
   --input: color-mix(in srgb, var(--border-base) 80%, transparent);
   --ring: var(--brand-blue);
@@ -220,13 +236,18 @@
      makes the sheet's rounded edge and shadow read at all: when the two were
      the same colour the inset was invisible. Everything else still points at
      the page token it matches, so the rest cannot drift. */
-  --sidebar: oklch(97% 0.001 106.424); /* stone-100 */
-  --sidebar-foreground: oklch(26.8% 0.007 34.298);
+  --sidebar: oklch(97% 0 0); /* neutral-100 */
+  --sidebar-foreground: oklch(26.9% 0 0); /* neutral-800 */
   --sidebar-primary: var(--primary);
   --sidebar-primary-foreground: var(--primary-foreground);
-  --sidebar-accent: oklch(92.3% 0.003 48.717);
+  --sidebar-accent: oklch(92.2% 0 0);
   --sidebar-accent-foreground: var(--accent-foreground);;
   --sidebar-accent-hover: var(--accent-strong);
+  /* The current page in the sidebar: one step stronger than --accent-strong,
+     which selected rows and tabs share, so where you are reads at a glance.
+     Its own pair so those keep theirs (muted text is tuned to --accent-strong). */
+  --sidebar-active: oklch(92.2% 0 0); /* neutral-200 */
+  --sidebar-active-hover: oklch(90% 0 0);
   /* Matches the rule the top bar draws, so every edge framing the shell —
      the sidebar's, the top bar's, the settings header's — is one weight. */
   --sidebar-border: color-mix(in srgb, var(--border) 75%, transparent);
@@ -269,32 +290,37 @@
   --status-blue-bg: var(--color-sky-100);
   --status-blue-border: var(--color-sky-200);
   --status-blue-fg: var(--color-sky-700);
+
+  /* A quieter fill for a status surface larger than a badge — an alert, a
+     notice. A paragraph of tinted text over the badge's fill reads as a shout;
+     one step lighter holds the same hue at a volume a block of copy can
+     carry. Text stays on the badge's step. */
+  --status-green-surface: var(--color-green-50);
+  --status-amber-surface: var(--color-amber-50);
+  --status-red-surface: var(--color-red-50);
+  --status-blue-surface: var(--color-sky-50);
 }
 
 .dark {
-  /* Vercel-style "true black" base, with surfaces stepping up in lightness.
+  /* A near-black base, with surfaces stepping up in lightness.
    *
-   * Every neutral below is zero-chroma — a true grey, not light mode's warm
-   * stone. See the palette note at the top of this file for why the two
-   * themes split. The lightness ladder is unchanged from the warm version;
-   * only the tint was removed.
+   * Every neutral below is zero-chroma, like light mode's. See the palette
+   * note at the top of this file.
    *
-   * Dark surfaces step in roughly 4-5 points of OKLCH lightness, not the 1-2
-   * light mode uses. Near-black compresses perceived difference, so a step
-   * that reads clearly on white disappears down here: an earlier version of
-   * this ramp had sidebar, muted, background and card inside a 3.5-point band
-   * and the whole middle of the screen read as one flat surface, which in turn
-   * made the one boundary that was visible — the sidebar's — look like the
-   * sheet had been lit. Reference dark dashboards space adjacent surfaces
-   * 5-6 points apart for the same reason.
+   * A near-black ground (#0a0a0a) with surfaces stepping about 2-3 points of
+   * OKLCH lightness, as in the near-black dashboards this follows. A grey
+   * ground lifted to 22 read as washed out next to them. Cards share the
+   * sheet's colour and are told apart by their faint border; the sheet sits
+   * one step above the sidebar.
    *
-   * The ladder, ground upward: sidebar 14 / muted + background 17 / card 21.6
-   * / secondary + nested-raised 25 / accent 29.5 / accent-hover 33 /
-   * accent-strong 38. --card is the anchor, since the inset sheet is the
-   * surface a merchant actually reads; keep the gaps if you move anything. */
-  --background: oklch(17% 0 0);
+   * The ladder, ground upward: sidebar + muted + background 14.5 / card 16.5
+   * / secondary + nested-raised 20 / accent 22.5 / accent-hover 25 /
+   * accent-strong 29. --card is the anchor, since the inset sheet is the
+   * surface a merchant actually reads. Muted text and links have to clear
+   * 4.5:1 on --accent-strong, the lightest surface they sit on. */
+  --background: oklch(14.5% 0 0);
   --foreground: oklch(95% 0 0);
-  --card: oklch(21.6% 0 0);
+  --card: oklch(16.5% 0 0);
   --card-foreground: var(--foreground);
   --popover: var(--card);
   --popover-foreground: var(--foreground);
@@ -307,36 +333,54 @@
      at or under the card's lightness erases them — while too big a step reads
      as a bright band across a full-width table header. Dark mode raises where
      light mode lowers, since a surface reads as raised by getting lighter. */
-  --secondary: oklch(25% 0 0);
+  --secondary: oklch(20% 0 0);
   --secondary-foreground: var(--foreground);
-  --muted: oklch(17% 0 0);
-  /* At stone-400's lightness. The old value failed 4.5:1 on --accent
-     (4.20:1); this clears every dark ground, the accent included. */
-  --muted-foreground: oklch(70.9% 0 0);
-  --accent: oklch(29.5% 0 0);
+  --muted: oklch(14.5% 0 0);
+  /* Light enough to clear 4.5:1 on every dark ground, the selected
+     --accent-strong included (about 5.7:1). Lower than white-ish greys so
+     secondary text stays secondary on the near-black ground. */
+  --muted-foreground: oklch(72% 0 0);
+  --accent: oklch(22.5% 0 0);
   --accent-foreground: var(--foreground);
-  --accent-strong: oklch(38% 0 0);
-  --accent-hover: oklch(33% 0 0);
-  --accent-strong-hover: oklch(44.4% 0 0);
+  --accent-strong: oklch(29% 0 0);
+  --accent-hover: oklch(25% 0 0);
+  --accent-strong-hover: oklch(34% 0 0);
   --destructive: oklch(0.704 0.191 22.216);
   /* A white veil over whatever surface it crosses, so one value works on the
      page ground and the raised sheet alike. Both shares below are half of it,
      as in light mode, so a container's edge and the rules inside it are one
      hairline weight. */
-  --border-base: oklch(1 0 0 / 16%);
+  --border-base: oklch(1 0 0 / 10%);
   --border: var(--border-base);
-  --border-card: color-mix(in srgb, var(--border-base) 70%, transparent);
+  /* Full strength here, where light mode takes 70%: cards and the sheet they
+     sit on share --card, so in the dark the edge is the only thing that tells
+     one card from the next. The base veil is kept faint (about 1.25:1 on the
+     card) so that edge outlines a card without drawing a box around it. */
+  --border-card: var(--border-base);
+  /* A black shadow does nothing on a near-black ground; the border is what
+     tells one card from the next here. */
+  --card-edge: var(--border-card);
+  --card-shadow: none;
   --border-subtle: color-mix(in srgb, var(--border-base) 50%, transparent);
-  /* Light mode darkens the control edge away from the card; dark mode lightens
-     it. Not the light value inverted — measured on this theme's own surfaces:
-     3.22:1 on the card, 3.34:1 on the page ground. */
-  --border-control: oklch(52% 0 0);
+  --border-control: color-mix(in srgb, var(--border) 80%, transparent);
+  /* On a dark card a field's edge does the work a shadow does in light mode:
+     a black lift barely shows here, and a firmer one read as a smudge. So the
+     field border is a step stronger than a card's (16% white against 10%). */
+  --field-border: oklch(1 0 0 / 16%);
+  --field-hover: var(--accent);
+  --switch-off: oklch(1 0 0 / 24%);
+  --stepper: oklch(26.9% 0 0); /* neutral-800 */
+  --stepper-hover: oklch(37.1% 0 0); /* neutral-700 */
+  --stepper-active: oklch(43.9% 0 0); /* neutral-600 */
+  /* Light mode's glows vanish on a near-black ground, so the halo and the
+     glow below are firmer here. */
+  --field-focus-shadow: 0 0 0 3px rgb(53 115 246 / 0.2), 0 4px 20px 2px rgb(53 115 246 / 0.12);
   /* Same arrangement as light — container at the page colour, records raised
-     above it. 1.20:1 between them here. Records take `--nested-raised` rather
+     above it, a 5.5-point step. Records take `--nested-raised` rather
      than `--card`: the card token is a step above the page, which is where the
      container would sit if it had a fill of its own. */
   --card-container: var(--background);
-  --nested-raised: oklch(25% 0 0);
+  --nested-raised: oklch(20% 0 0);
   /* Not --accent here: dark mode's accent is lighter than every raised
      surface, so a shared token would put the selected tab below its own
      track. --muted is the step under --nested-raised. */
@@ -347,8 +391,8 @@
      in dark mode drew a grey halo and lost the one signal that says "this is
      where typing goes". */
   --ring: oklch(0.68 0.19 258);
-  --link: oklch(0.7 0.16 258);
-  --link-hover: oklch(0.78 0.14 258);
+  --link: oklch(0.76 0.14 258);
+  --link-hover: oklch(0.83 0.12 258);
   --chart-1: oklch(0.809 0.105 251.813);
   --chart-2: oklch(0.623 0.214 259.815);
   --chart-3: oklch(0.546 0.245 262.881);
@@ -360,21 +404,17 @@
 
      Measured against --card, not --background: the shell renders the sidebar's
      `inset` variant, so the sheet beside it is the card surface and that
-     pairing is what a merchant actually sees.
-
-     The sheet looking "too bright" was never this token being too dark — it
-     was the four surfaces above it sitting within half a point of each other,
-     so the sidebar edge was the only visible boundary on the screen and it
-     carried the whole contrast budget alone. Widening those steps (see the
-     ramp note on --background) fixes it; this stays low so the ground still
-     recedes. */
-  --sidebar: oklch(14% 0 0);
+     pairing is what a merchant actually sees. Two points under it: on a
+     near-black ground a wider step makes the sheet read as grey. */
+  --sidebar: oklch(14.5% 0 0);
   --sidebar-foreground: var(--foreground);
   --sidebar-primary: var(--primary);
   --sidebar-primary-foreground: var(--primary-foreground);
   --sidebar-accent: var(--accent);
   --sidebar-accent-foreground: var(--accent-foreground);
   --sidebar-accent-hover: var(--accent-hover);
+  --sidebar-active: oklch(25% 0 0);
+  --sidebar-active-hover: oklch(28% 0 0);
   /* Matches the rule the top bar draws, so every edge framing the shell —
      the sidebar's, the top bar's, the settings header's — is one weight. */
   --sidebar-border: color-mix(in srgb, var(--border) 75%, transparent);
@@ -406,21 +446,55 @@
   --status-blue-bg: var(--color-sky-900);
   --status-blue-border: var(--color-sky-900);
   --status-blue-fg: var(--color-sky-300);
+
+  /* The 900 step mixed into the card rather than laid over it at an opacity,
+     so the surface is one solid colour on any ground. At full strength a 900
+     block outweighs everything around it, and step-300 text gains contrast on
+     the darker fill. */
+  --status-green-surface: color-mix(in oklab, var(--color-green-900) 40%, var(--card));
+  --status-amber-surface: color-mix(in oklab, var(--color-amber-900) 40%, var(--card));
+  --status-red-surface: color-mix(in oklab, var(--color-red-900) 40%, var(--card));
+  --status-blue-surface: color-mix(in oklab, var(--color-sky-900) 40%, var(--card));
 }
 
 @theme inline {
-  --font-sans: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-sans--font-feature-settings: "cv11", "ss01";
   --font-mono: "Geist Mono Variable", ui-monospace, monospace;
+  /* Geist Mono's ligatures merge a space and a following `--` into one glyph,
+     hiding the space in command-line flags. */
+  --font-mono--font-feature-settings: "liga" 0, "calt" 0;
 
-  /* Typography scale — matches Spree admin (smaller than Tailwind defaults) */
+  /* Inter at 13px reads thin under grayscale antialiasing, so every step
+     sits 50 heavier than the CSS keyword it replaces. */
+  --font-weight-normal: 450;
+  --font-weight-medium: 550;
+  --font-weight-semibold: 650;
+  /* Bold keeps a visible step above semibold, now that semibold is 650. */
+  --font-weight-bold: 750;
+
+  /* Typography scale — matches Spree admin (smaller than Tailwind defaults).
+     Each size carries its own line height on a 4px grid; left to Tailwind's,
+     they kept ratios tuned for its larger sizes and text of one size landed
+     on five different line heights. */
   --text-xs: 0.75rem;
+  --text-xs--line-height: 1rem;
+  /* 13px is the one text size; `text-base` is what components use, and
+     `text-sm` is kept equal so older or plugin markup lands on it too. */
   --text-sm: 0.8125rem;
-  --text-base: 0.875rem;
+  --text-sm--line-height: 1.25rem;
+  --text-base: 0.8125rem;
+  --text-base--line-height: 1.25rem;
   --text-lg: 1rem;
+  --text-lg--line-height: 1.5rem;
   --text-xl: 1.25rem;
+  --text-xl--line-height: 1.75rem;
   --text-2xl: 1.5rem;
+  --text-2xl--line-height: 2rem;
   --text-3xl: 1.75rem;
+  --text-3xl--line-height: 2.25rem;
   --text-4xl: 2rem;
+  --text-4xl--line-height: 2.5rem;
 
   /* The resting lift on a control that sits ON a surface — a field, a button,
      a card. Measured off a reference: the ground under a field's bottom edge
@@ -430,7 +504,10 @@
   /* A form field's resting lift. Heavier than --shadow-xs and weighted to the
      bottom edge only, so the field reads as a slightly raised well without a
      tinted fill — the fill stays on the card colour (see --border-control). */
-  --shadow-control: 0 0.5px 1px 0 rgb(0 0 0 / 0.05);
+  --shadow-control: var(--field-shadow);
+  /* Not `--shadow-card`: `--color-card` makes `shadow-card` a shadow colour. */
+  --shadow-card-lift: var(--card-shadow);
+  --shadow-field-focus: var(--field-focus-shadow);
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-nav: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.04) 0px 0px 0px 1px, rgba(0, 0, 0, 0.04) 0px 1px 2px -1px, rgba(0, 0, 0, 0.02) 0px 2px 4px 0px;
 
@@ -444,14 +521,15 @@
   /* Radius scale, remapped one step rounder than Tailwind's defaults.
      Corner radius is most of what reads as "soft", and remapping the scale
      reaches every `rounded-lg`/`rounded-xl` already written in the components
-     — including the `calc(var(--radius-2xl) - 1px)` a card header derives its
+     — including the `calc(var(--radius-card) - 1px)` a card header derives its
      own corner from, which would drift out of alignment if the components
      were each edited by hand instead. */
   --radius-sm: 0.4rem;
   --radius-md: 0.5rem;
   --radius-lg: 0.625rem;
-  --radius-xl: 0.875rem;
-  --radius-2xl: 1.125rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1.25rem; /* 20px: the shell sheet, dialogs, sheets and toasts */
+  --radius-card: 1rem; /* 16px: cards; what a card's inside edge derives from */
 
   /* Sidebar + header tokens */
   --spacing-sidebar-width: 240px;
@@ -497,8 +575,17 @@
   --color-input: var(--input);
   --color-border: var(--border);
   --color-border-card: var(--border-card);
+  --color-card-edge: var(--card-edge);
   --color-border-subtle: var(--border-subtle);
   --color-border-control: var(--border-control);
+  --color-field-border: var(--field-border);
+  --color-field-hover: var(--field-hover);
+  --color-switch-off: var(--switch-off);
+  --color-stepper: var(--stepper);
+  --color-stepper-hover: var(--stepper-hover);
+  --color-stepper-active: var(--stepper-active);
+  --color-sidebar-active: var(--sidebar-active);
+  --color-sidebar-active-hover: var(--sidebar-active-hover);
   --color-card-container: var(--card-container);
   --color-nested-raised: var(--nested-raised);
   --color-track-recessed: var(--track-recessed);
@@ -531,18 +618,22 @@
   --color-success: var(--status-green-fg);
   --color-success-bg: var(--status-green-bg);
   --color-success-border: var(--status-green-border);
+  --color-success-surface: var(--status-green-surface);
 
   --color-warning: var(--status-amber-fg);
   --color-warning-bg: var(--status-amber-bg);
   --color-warning-border: var(--status-amber-border);
+  --color-warning-surface: var(--status-amber-surface);
 
   --color-danger: var(--status-red-fg);
   --color-danger-bg: var(--status-red-bg);
   --color-danger-border: var(--status-red-border);
+  --color-danger-surface: var(--status-red-surface);
 
   --color-info: var(--status-blue-fg);
   --color-info-bg: var(--status-blue-bg);
   --color-info-border: var(--status-blue-border);
+  --color-info-surface: var(--status-blue-surface);
 
   /* Re-point Tailwind's blue ramp at the brand accent. Interactive blue is
      used throughout the component layer for focus borders, checked states and
@@ -698,12 +789,12 @@
 
 @layer base {
   :root {
-    --scrollbar-thumb: oklch(86.9% 0.005 56.366); /* stone-300 */
-    --scrollbar-thumb-hover: oklch(70.9% 0.01 56.259); /* stone-400 */
+    --scrollbar-thumb: oklch(87% 0 0); /* neutral-300 */
+    --scrollbar-thumb-hover: oklch(70.8% 0 0); /* neutral-400 */
   }
   .dark {
-    --scrollbar-thumb: oklch(37.4% 0.01 67.558); /* stone-700 */
-    --scrollbar-thumb-hover: oklch(44.4% 0.011 73.639); /* stone-600 */
+    --scrollbar-thumb: oklch(37.1% 0 0); /* neutral-700 */
+    --scrollbar-thumb-hover: oklch(43.9% 0 0); /* neutral-600 */
   }
 
   /* Themed scrollbar inside floating surfaces only — page scrollbar stays
@@ -764,7 +855,7 @@
    *
    * `pointer: coarse` rather than a width breakpoint: this is about the input
    * method, and a small window on a laptop should keep the compact type. */
-  /* Nav rows and menu labels read small on a phone at the desktop 14px.
+  /* Nav rows and menu labels read small on a phone at the desktop 13px.
    * 16px is the size the platform uses for a primary list row. Sizing is left
    * to the components themselves — buttons carry their own touch targets. */
   @media (pointer: coarse) {
@@ -842,8 +933,7 @@
   }
 
   html {
-    @apply font-sans antialiased;
-    text-rendering: optimizeLegibility;
+    @apply font-sans font-normal antialiased;
     /* No `overflow-y: scroll` here. It used to reserve the scrollbar gutter so
      * the page would not jump sideways between a short route and a tall one,
      * back when the document was what scrolled. The inset shell ended that:
@@ -859,9 +949,11 @@
     max-width: 100vw;
   }
 
+  /* 13px, the one text size: components use `text-base` too, so text that
+     sets no size of its own lands on the same size as everything around it.
+     `text-xs` (12px) is the only smaller step, for captions and badges. */
   body {
     @apply bg-background text-foreground text-base;
-    line-height: 1.5;
   }
 
   /* Headings — semibold (600) like Rails admin */
@@ -871,7 +963,7 @@
   h4,
   h5,
   h6 {
-    @apply font-semibold leading-tight;
+    @apply font-semibold;
   }
 
   h1 {
@@ -895,6 +987,20 @@
 }
 
 @layer components {
+  /* A table that opens its card (the `Card > CardContent p-0 > Table` pattern)
+     rounds its header's top corners to the inside of the card's 1px border.
+     The header cells carry their own fill, so without this their square
+     corners stick out past the card's curve. Tables that manage their own
+     corners (`roundedTop`) set the same radius, so the two never disagree. */
+  [data-slot='card'] > [data-slot='card-content']:first-child > :first-child thead > tr:first-child {
+    & > th:first-child {
+      border-top-left-radius: calc(var(--radius-card) - 1px);
+    }
+    & > th:last-child {
+      border-top-right-radius: calc(var(--radius-card) - 1px);
+    }
+  }
+
   /* Checkerboard for the color picker's "no color selected" swatch.
      Two-tone diagonal pattern using `--border` + `--background` so it's
      visible in both light and dark themes. */

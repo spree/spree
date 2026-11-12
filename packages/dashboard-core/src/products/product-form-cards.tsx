@@ -13,14 +13,17 @@ import {
   useSortable,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
+import { type CurrencyCode, randomUUID } from '@spree/core'
 import type { MediaType, ProductFormValues } from '@spree/dashboard-core'
 import {
   getApiClient,
-  MediaPickerSheet,
+  MediaPickerDialog,
+  mediaPickerListParams,
   parseVideoUrl,
   ResourceMultiAutocomplete,
+  Slot,
   TagCombobox,
-  useDirectUpload,
+  useFileUpload,
   useOptionalStore,
 } from '@spree/dashboard-core'
 import {
@@ -32,16 +35,20 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
+  Checkbox,
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuSeparator,
   ContextMenuTrigger,
+  CurrencyLabel,
+  cn,
   DragHandle,
   Field,
   FieldError,
   FieldLabel,
   Input,
+  Item,
   RichTextEditor,
   Select,
   SelectContent,
@@ -85,7 +92,11 @@ import { InventorySection } from './inventory-section'
 import { MediaEditSheet } from './media-edit-sheet'
 import { ProductBulkPriceEditor } from './product-bulk-price-editor'
 import { variantHasTaxCategoryOverride } from './product-form-mapping'
-import type { VariantFormValues } from './product-schema'
+import {
+  ASSIGNABLE_PRODUCT_STATUSES,
+  type MediaFormValues,
+  type VariantFormValues,
+} from './product-schema'
 import type {
   PanelMedia as Media,
   PanelProduct as Product,
@@ -96,7 +107,6 @@ import {
   collectionAutocompleteProps,
   useFormCategories as useCategories,
   useFormCollections as useCollections,
-  useFormDeleteProductMedia as useDeleteProductMedia,
   useFormDeliveryProfiles as useDeliveryProfiles,
   useFormOptionTypesByIds as useOptionTypesByIds,
   useFormProductType as useProductType,
@@ -174,8 +184,12 @@ export function GeneralCard({
 // Variants (just a passthrough so the page composition reads top-down)
 // ---------------------------------------------------------------------------
 
-export function VariantsCard({ form, seedFromType }: FormCardProps & { seedFromType?: boolean }) {
-  return <VariantsSection form={form} seedFromType={seedFromType} />
+export function VariantsCard({
+  form,
+  seedFromType,
+  formKey = 'product',
+}: FormCardProps & { seedFromType?: boolean; formKey?: string }) {
+  return <VariantsSection form={form} seedFromType={seedFromType} formKey={formKey} />
 }
 
 // ---------------------------------------------------------------------------
@@ -198,8 +212,8 @@ export function PricesCard({
    * StoreProvider; a seller's tenant is a seller and the store is derived
    * server-side, so it passes the currencies its profile reports.
    */
-  currencies?: string[]
-  defaultCurrency?: string
+  currencies?: CurrencyCode[]
+  defaultCurrency?: CurrencyCode
 }) {
   const { t } = useTranslation()
   const store = useOptionalStore()
@@ -208,7 +222,7 @@ export function PricesCard({
   // Not `useState(defaultCurrency)` alone: the store (or the seller's profile)
   // arrives after the first render, so a state seeded from the fallback would
   // stick and price everything in the wrong currency.
-  const [selectedCurrency, setCurrency] = useState<string | null>(null)
+  const [selectedCurrency, setCurrency] = useState<CurrencyCode | null>(null)
   const currency = selectedCurrency ?? defaultCurrency
 
   // Until the real default arrives there is no currency to price in, and an
@@ -224,14 +238,17 @@ export function PricesCard({
           {t('admin.common.prices')}
         </CardTitle>
         {currencies.length > 1 && (
-          <Select value={currency} onValueChange={setCurrency}>
-            <SelectTrigger size="sm" className="w-24">
-              <SelectValue />
+          <Select
+            value={currency}
+            onValueChange={(next) => setCurrency(currencies.find((code) => code === next) ?? null)}
+          >
+            <SelectTrigger size="sm" className="w-28">
+              <SelectValue>{(code: string) => <CurrencyLabel code={code} />}</SelectValue>
             </SelectTrigger>
             <SelectContent>
               {currencies.map((c) => (
                 <SelectItem key={c} value={c}>
-                  {c}
+                  <CurrencyLabel code={c} />
                 </SelectItem>
               ))}
             </SelectContent>
@@ -255,6 +272,13 @@ export function PricesCard({
 // Media — edit-only. On create, render a "save first" empty state so the
 // merchant sees where uploads will go but can't trigger them.
 // ---------------------------------------------------------------------------
+
+/**
+ * A media entry appended to the gallery without an upload: a `signed_id` from
+ * a finished upload, a library `source_media_id`, or an external video link.
+ * `previewUrl` is what the tile shows until the product is saved.
+ */
+export type NewMediaEntry = Omit<MediaFormValues, 'position' | 'uploadId'>
 
 interface PendingUpload {
   id: string
@@ -285,8 +309,11 @@ export function MediaCard({
   productId,
   variants,
   form,
+  formKey = 'product',
 }: {
   productId?: string
+  /** The product form's key — names the media slots and the rows' extension fields. */
+  formKey?: string
   // The MediaEditSheet's "assign to variant" pill row needs the list of
   // server-persisted variants — only those have an id that can ride the
   // PATCH's media[].variant_ids. Form-state variants without a server id
@@ -296,13 +323,15 @@ export function MediaCard({
   form: UseFormReturn<ProductFormValues, any, any>
 }) {
   const { t } = useTranslation()
-  const directUpload = useDirectUpload()
-  const deleteMedia = useDeleteProductMedia(productId ?? '')
+  const fileUpload = useFileUpload()
   const confirm = useConfirm()
   const [pending, setPending] = useState<PendingUpload[]>([])
   const [editingIndex, setEditingIndex] = useState<number | null>(null)
   const [addingVideo, setAddingVideo] = useState(false)
   const [pickingFromLibrary, setPickingFromLibrary] = useState(false)
+  // Tiles picked for a bulk action, by their stable sortable id so a reorder
+  // keeps the selection on the same files.
+  const [selected, setSelected] = useState<Set<string>>(new Set())
   const mediaLibrary = getApiClient().mediaLibrary
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -345,11 +374,11 @@ export function MediaCard({
     async (files: FileList | File[]) => {
       const fileArray = Array.from(files)
       for (const file of fileArray) {
-        const uploadId = crypto.randomUUID()
+        const uploadId = randomUUID()
         const preview = URL.createObjectURL(file)
         setPending((prev) => [...prev, { id: uploadId, file, preview, progress: 'uploading' }])
         try {
-          const result = await directUpload.mutateAsync(file)
+          const result = await fileUpload.mutateAsync(file)
           const current = form.getValues('media') ?? []
           form.setValue(
             'media',
@@ -358,6 +387,7 @@ export function MediaCard({
               {
                 signed_id: result.signedId,
                 alt: file.name,
+                filename: file.name,
                 position: current.length + 1,
                 media_type: file.type.startsWith('video/')
                   ? ('video' as const)
@@ -384,7 +414,7 @@ export function MediaCard({
         }
       }
     },
-    [directUpload, form, t],
+    [fileUpload, form, t],
   )
 
   const handleDrop = useCallback(
@@ -409,46 +439,20 @@ export function MediaCard({
 
   // An external video has no file to upload — it goes straight into form state
   // with its link, and the provider's own still stands in as the preview.
-  const handleAddVideo = useCallback(
-    (url: string) => {
+  // Appends entries that need no upload of their own — a video link, a
+  // library pick, or whatever a `<formKey>.media.actions` widget hands over —
+  // positioned after the existing ones. They save with the product.
+  const appendMedia = useCallback(
+    (entries: NewMediaEntry[]) => {
       const current = form.getValues('media') ?? []
       form.setValue(
         'media',
         [
           ...current,
-          {
-            media_type: 'external_video' as const,
-            external_video_url: url,
-            position: current.length + 1,
-            previewUrl: parseVideoUrl(url)?.thumbnailUrl ?? undefined,
-            uploadId: crypto.randomUUID(),
-          },
-        ],
-        { shouldDirty: true },
-      )
-    },
-    [form],
-  )
-
-  // Files picked from the library become ordinary form entries carrying the
-  // source's id. The product save places them, sharing the file rather than
-  // uploading a second copy.
-  const handleAddFromLibrary = useCallback(
-    (picked: Media[]) => {
-      const current = form.getValues('media') ?? []
-      form.setValue(
-        'media',
-        [
-          ...current,
-          ...picked.map((media, index) => ({
-            source_media_id: media.id,
-            alt: media.alt ?? undefined,
-            media_type: (media.media_type ?? 'image') as MediaType,
+          ...entries.map((entry, index) => ({
+            ...entry,
             position: current.length + index + 1,
-            previewUrl: media.small_url ?? media.original_url ?? undefined,
-            videoUrl: media.video_url ?? null,
-            posterUrl: media.poster_url ?? null,
-            uploadId: crypto.randomUUID(),
+            uploadId: randomUUID(),
           })),
         ],
         { shouldDirty: true },
@@ -457,49 +461,86 @@ export function MediaCard({
     [form],
   )
 
-  const handleDelete = useCallback(
-    async (index: number) => {
-      const current = form.getValues('media') ?? []
-      const entry = current[index]
-      if (!entry) return
-      const confirmed = await confirm({
-        message: t('admin.products.media.delete_confirm'),
-        variant: 'destructive',
-        confirmLabel: t('admin.actions.delete'),
-      })
-      if (!confirmed) return
+  const handleAddVideo = useCallback(
+    (url: string) =>
+      appendMedia([
+        {
+          media_type: 'external_video',
+          external_video_url: url,
+          previewUrl: parseVideoUrl(url)?.thumbnailUrl ?? undefined,
+        },
+      ]),
+    [appendMedia],
+  )
 
-      // Persisted entries call the dedicated DELETE endpoint first so we
-      // don't drop the form-state entry until the server actually removed it.
-      // Pre-save entries (signed_id only, no id) just disappear from form.
-      if (entry.id && productId) {
-        try {
-          await deleteMedia.mutateAsync(entry.id)
-        } catch {
-          toastManager.add({ type: 'error', title: t('admin.errors.failed_to_delete') })
-          return
-        }
+  // Files picked from the library become ordinary form entries carrying the
+  // source's id. The product save places them, sharing the file rather than
+  // uploading a second copy.
+  const handleAddFromLibrary = useCallback(
+    (picked: Media[]) =>
+      appendMedia(
+        picked.map((media) => ({
+          source_media_id: media.id,
+          alt: media.alt ?? undefined,
+          filename: media.filename ?? null,
+          media_type: (media.media_type ?? 'image') as MediaType,
+          previewUrl: media.small_url ?? media.original_url ?? undefined,
+          videoUrl: media.video_url ?? null,
+          posterUrl: media.poster_url ?? null,
+        })),
+      ),
+    [appendMedia],
+  )
+
+  /**
+   * Takes the rows at `indices` out of the form. Saved rows are only marked
+   * for removal — the product save deletes them — so a removal is an unsaved
+   * change like any other, undone by Discard. Pre-save uploads just leave.
+   */
+  const removeEntries = useCallback(
+    (indices: number[]) => {
+      const current = form.getValues('media') ?? []
+      const removed = new Set(indices.filter((index) => current[index]))
+      if (removed.size === 0) return
+
+      // A pre-save upload's preview is a Blob URL that Discard can never bring
+      // back (it was never in the saved state), so release it now.
+      for (const index of removed) {
+        const entry = current[index]
+        if (!entry.id && entry.previewUrl?.startsWith('blob:'))
+          URL.revokeObjectURL(entry.previewUrl)
       }
 
-      // Release the Blob URL we created at upload time so the browser can
-      // reclaim its backing memory. Server-served previewUrls aren't blob:
-      // URLs and don't need revocation.
-      if (entry.previewUrl?.startsWith('blob:')) URL.revokeObjectURL(entry.previewUrl)
+      const removedIds = [...removed].flatMap((index) => current[index].id ?? [])
+      if (removedIds.length > 0) {
+        const marked = form.getValues('removed_media_ids') ?? []
+        form.setValue('removed_media_ids', [...marked, ...removedIds], { shouldDirty: true })
+      }
 
-      const next = current.filter((_, i) => i !== index).map((m, i) => ({ ...m, position: i + 1 }))
+      const next = current
+        .filter((_, i) => !removed.has(i))
+        .map((m, i) => ({ ...m, position: i + 1 }))
       form.setValue('media', next, { shouldDirty: true })
 
       // Close or shift the edit sheet so it can't reference a stale index.
-      // If the deleted row was being edited, close. If the deleted row was
-      // BEFORE the open one, shift down by one.
-      setEditingIndex((current) => {
-        if (current == null) return current
-        if (current === index) return null
-        if (current > index) return current - 1
-        return current
+      setEditingIndex((open) => {
+        if (open == null || removed.has(open)) return null
+        return open - [...removed].filter((i) => i < open).length
       })
     },
-    [form, productId, deleteMedia, confirm, t],
+    [form],
+  )
+
+  const handleDelete = useCallback(
+    async (index: number) => {
+      const confirmed = await confirm({
+        message: t('admin.products.media.delete_confirm'),
+        variant: 'destructive',
+        confirmLabel: t('admin.actions.remove'),
+      })
+      if (confirmed) removeEntries([index])
+    },
+    [confirm, removeEntries, t],
   )
 
   // Revoke any remaining blob: previewUrls when the card unmounts (the
@@ -517,14 +558,74 @@ export function MediaCard({
 
   const editingEntry = editingIndex !== null ? items[editingIndex] : null
 
+  // Read against the current rows, so a file removed elsewhere drops out.
+  const selectedIndices = sortableIds.flatMap((id, i) => (selected.has(id) ? [i] : []))
+  const selecting = selectedIndices.length > 0
+  const allSelected = selecting && selectedIndices.length === items.length
+
+  function toggleSelected(id: string) {
+    setSelected((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
+
+  async function handleBulkDelete() {
+    const count = selectedIndices.length
+    const confirmed = await confirm({
+      message: t('admin.products.media.delete_selected_confirm', { count }),
+      variant: 'destructive',
+      confirmLabel: t('admin.actions.remove'),
+    })
+    if (!confirmed) return
+    removeEntries(selectedIndices)
+    setSelected(new Set())
+  }
+
   return (
     <>
       <Card className="scroll-mt-[calc(var(--spacing-header-height)+1.5rem)]">
-        <CardHeader>
-          <CardTitle>
-            <ImageIcon className="size-4" />
-            {t('admin.pages.products.section_media')}
-          </CardTitle>
+        {/* While selecting, the bar's checkbox, count and action sit on one
+            centred line at the title row's height. */}
+        <CardHeader className={selecting ? 'items-center' : undefined}>
+          {selecting ? (
+            <>
+              {/* The card keeps its name while the bar stands in for it. */}
+              <CardTitle className="sr-only">{t('admin.pages.products.section_media')}</CardTitle>
+              <div className="flex items-center gap-2 font-medium text-base">
+                <Checkbox
+                  checked={allSelected}
+                  indeterminate={!allSelected}
+                  onCheckedChange={() =>
+                    setSelected(allSelected ? new Set() : new Set(sortableIds))
+                  }
+                  aria-label={t('admin.products.media.select_all')}
+                />
+                {t('admin.products.media.selected_count', { count: selectedIndices.length })}
+              </div>
+              <CardAction className="flex">
+                <Button
+                  type="button"
+                  variant="destructive-ghost"
+                  size="sm"
+                  // A 28px button in a row sized for the title would push the
+                  // header taller than its resting height.
+                  className="-my-[3.5px]"
+                  onClick={handleBulkDelete}
+                >
+                  <TrashIcon className="size-4" />
+                  {t('admin.actions.remove')}
+                </Button>
+              </CardAction>
+            </>
+          ) : (
+            <CardTitle>
+              <ImageIcon className="size-4" />
+              {t('admin.pages.products.section_media')}
+            </CardTitle>
+          )}
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
           {(items.length > 0 || pending.length > 0) && (
@@ -539,14 +640,17 @@ export function MediaCard({
                       downloadUrl={media.downloadUrl}
                       alt={media.alt ?? ''}
                       mediaType={media.media_type ?? 'image'}
-                      onEdit={() => setEditingIndex(index)}
+                      selected={selected.has(sortableIds[index])}
+                      selecting={selecting}
+                      onToggleSelect={() => toggleSelected(sortableIds[index])}
                       onDelete={() => handleDelete(index)}
+                      onEdit={() => setEditingIndex(index)}
                     />
                   ))}
                   {pending.map((upload) => (
                     <div
                       key={upload.id}
-                      className="relative aspect-square overflow-hidden rounded-lg border border-border bg-muted"
+                      className="relative aspect-square overflow-hidden rounded-xl border border-border bg-muted"
                     >
                       {upload.file.type.startsWith('video/') ? (
                         <video
@@ -587,7 +691,7 @@ export function MediaCard({
             onClick={() => fileInputRef.current?.click()}
           >
             <ImagePlusIcon className="size-8 text-muted-foreground" />
-            <p className="text-sm text-muted-foreground">{t('admin.products.media.drop_hint')}</p>
+            <p className="text-base text-muted-foreground">{t('admin.products.media.drop_hint')}</p>
             <p className="text-xs text-muted-foreground">
               {t('admin.products.media.file_types_hint')}
             </p>
@@ -616,22 +720,44 @@ export function MediaCard({
               <FilmIcon />
               {t('admin.products.media.add_video')}
             </Button>
+
+            <Slot
+              name={`${formKey}.media.actions`}
+              context={{ productId, addMedia: appendMedia }}
+            />
           </div>
         </CardContent>
       </Card>
       <AddVideoDialog open={addingVideo} onOpenChange={setAddingVideo} onAdd={handleAddVideo} />
-      {/* Not merely closed — the sheet reads the store context on mount, and
+      {/* Not merely closed — the dialog reads the store context on mount, and
           a panel without one has no library to pick from anyway. */}
       {mediaLibrary && (
-        <MediaPickerSheet<Media>
+        <MediaPickerDialog<Media>
           open={pickingFromLibrary}
           onOpenChange={setPickingFromLibrary}
           queryKey="product-media-library"
-          search={async (query) =>
+          // Products take video too, which offers the picker's Type filter.
+          accept="image/png,image/jpeg,image/webp,image/gif,video/mp4,video/webm,video/quicktime"
+          search={async (query, options) =>
             (await mediaLibrary?.list({
               limit: 48,
-              ...(query ? { filename_cont: query } : {}),
+              ...mediaPickerListParams(query, options),
             })) ?? { data: [] }
+          }
+          // Uploads land in the library and arrive picked, ready to add.
+          onUpload={
+            mediaLibrary.create
+              ? async (file) => {
+                  const upload = await fileUpload.mutateAsync(file)
+                  return (await mediaLibrary.create?.({
+                    signed_id: upload.signedId,
+                    alt: file.name,
+                    // A video row validates its file as video; unset, it
+                    // defaults to image and the upload is refused.
+                    media_type: file.type.startsWith('video/') ? 'video' : 'image',
+                  })) as Media
+                }
+              : undefined
           }
           onConfirm={handleAddFromLibrary}
         />
@@ -645,6 +771,8 @@ export function MediaCard({
           onOpenChange={(open) => {
             if (!open) setEditingIndex(null)
           }}
+          formKey={formKey}
+          productId={productId}
         />
       )}
     </>
@@ -657,8 +785,11 @@ function SortableMediaThumbnail({
   alt,
   mediaType,
   downloadUrl,
-  onEdit,
+  selected,
+  selecting,
+  onToggleSelect,
   onDelete,
+  onEdit,
 }: {
   sortableId: string
   previewUrl: string | null
@@ -666,8 +797,12 @@ function SortableMediaThumbnail({
   mediaType: MediaType
   /** Absent until the row is saved — a pre-save upload has no server URL. */
   downloadUrl?: string | null
-  onEdit: () => void
+  selected: boolean
+  /** Any tile is selected: clicks select rather than edit, and boxes show. */
+  selecting: boolean
+  onToggleSelect: () => void
   onDelete: () => void
+  onEdit: () => void
 }) {
   const { t } = useTranslation()
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
@@ -692,16 +827,21 @@ function SortableMediaThumbnail({
             data-slot="media-thumbnail"
             role="button"
             tabIndex={0}
-            onClick={onEdit}
+            aria-pressed={selecting ? selected : undefined}
+            // While any tile is selected a click adds to the selection, as in
+            // a file browser; otherwise it opens the edit sheet.
+            onClick={selecting ? onToggleSelect : onEdit}
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault()
-                onEdit()
+                if (selecting) onToggleSelect()
+                else onEdit()
               }
             }}
-            className={`group relative aspect-square cursor-pointer bg-muted overflow-hidden rounded-md border border-border transition-colors hover:border-muted-foreground focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2 ${
-              isDragging ? 'opacity-40 ring-2 ring-primary/40' : ''
-            }`}
+            className={cn(
+              'group relative aspect-square cursor-pointer overflow-hidden rounded-xl border border-border-control bg-card outline-none transition-shadow focus-visible:shadow-field-focus',
+              isDragging && 'opacity-40 ring-2 ring-primary/40',
+            )}
           />
         }
       >
@@ -713,14 +853,14 @@ function SortableMediaThumbnail({
             muted
             playsInline
             preload="metadata"
-            className="pointer-events-none size-full object-cover"
+            className="pointer-events-none size-full object-contain"
           />
         ) : previewUrl ? (
           <img
             src={previewUrl}
             alt={alt}
             draggable={false}
-            className="pointer-events-none size-full object-cover"
+            className="pointer-events-none size-full object-contain"
           />
         ) : (
           <div className="flex size-full items-center justify-center text-muted-foreground">
@@ -732,8 +872,33 @@ function SortableMediaThumbnail({
           </div>
         )}
 
+        {/* Hover darkens the tile so its checkbox and grip stand out; a picked
+            tile is washed out instead, so the picked files read at a glance
+            without a ring around each one. */}
+        <span
+          aria-hidden
+          className={cn(
+            'pointer-events-none absolute inset-0 transition-colors',
+            selected ? 'bg-card/50' : 'bg-black/0 group-hover:bg-black/50',
+          )}
+        />
+
+        <Checkbox
+          checked={selected}
+          onCheckedChange={onToggleSelect}
+          // Keep the click on the box from also opening the sheet.
+          onClick={(e) => e.stopPropagation()}
+          aria-label={t('admin.products.media.select_item', { name: alt })}
+          className={cn(
+            'absolute top-2 left-2 z-10 bg-card transition-opacity',
+            !selecting &&
+              !selected &&
+              'opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 focus-visible:opacity-100',
+          )}
+        />
+
         {mediaType !== 'image' && (
-          <span className="pointer-events-none absolute left-1.5 top-1.5 z-10 flex size-6 items-center justify-center rounded-full bg-black/60 text-white">
+          <span className="pointer-events-none absolute bottom-2 left-2 z-10 flex size-6 items-center justify-center rounded-full bg-black/60 text-white">
             <PlayIcon className="size-3 fill-current" />
           </span>
         )}
@@ -771,7 +936,7 @@ function SortableMediaThumbnail({
         <ContextMenuSeparator />
         <ContextMenuItem variant="destructive" onClick={onDelete}>
           <TrashIcon />
-          {t('admin.actions.delete')}
+          {t('admin.actions.remove')}
         </ContextMenuItem>
       </ContextMenuContent>
     </ContextMenu>
@@ -835,13 +1000,13 @@ export function SEOCard({ form, product }: FormCardProps & { product?: Product }
         </CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        <div className="rounded-lg border border-border p-4 space-y-1">
-          <p className="text-sm font-medium text-blue-700 truncate">{previewTitle}</p>
+        <Item variant="outline" className="flex-col items-stretch gap-1">
+          <p className="text-base font-medium text-blue-700 truncate">{previewTitle}</p>
           <p className="text-xs text-green-700 truncate">example.com/products/{previewSlug}</p>
           {metaDescription && (
             <p className="text-xs text-muted-foreground line-clamp-2">{metaDescription}</p>
           )}
-        </div>
+        </Item>
 
         <Field>
           <FieldLabel htmlFor="product-slug">{t('admin.fields.slug.label')}</FieldLabel>
@@ -885,8 +1050,6 @@ export function SEOCard({ form, product }: FormCardProps & { product?: Product }
 // Status
 // ---------------------------------------------------------------------------
 
-const ASSIGNABLE_STATUSES = ['draft', 'active', 'archived']
-
 export function StatusCard({
   form,
   reviewActions,
@@ -911,9 +1074,11 @@ export function StatusCard({
   // made, so the operator can move the product on from here like any other —
   // overriding their own refusal is not a review action, and leaving the
   // picker disabled there was a dead end with no way out.
-  const inReview = Boolean(status) && !ASSIGNABLE_STATUSES.includes(status as string)
+  const inReview = Boolean(status) && !ASSIGNABLE_PRODUCT_STATUSES.includes(status as string)
   const awaitingDecision = status === 'proposed'
-  const values = inReview ? [status as string, ...ASSIGNABLE_STATUSES] : ASSIGNABLE_STATUSES
+  const values = inReview
+    ? [status as string, ...ASSIGNABLE_PRODUCT_STATUSES]
+    : ASSIGNABLE_PRODUCT_STATUSES
 
   return (
     <SharedStatusCard<ProductFormValues>
@@ -1157,7 +1322,7 @@ export function CategorizationCard({ form }: FormCardProps) {
               control={form.control}
               render={({ field }) => (
                 <TagCombobox
-                  taggableType="Spree::Product"
+                  taggableType="product"
                   value={field.value ?? []}
                   onChange={field.onChange}
                 />
@@ -1244,12 +1409,12 @@ export function TaxCard({ form }: FormCardProps) {
         )}
 
         {overrides.length > 0 && (
-          <div className="rounded-md border bg-muted/30 p-3 text-sm">
+          <Item variant="outline" className="flex-col items-stretch gap-1">
             <p className="font-medium">{t('admin.products.tax.variant_overrides_heading')}</p>
-            <p className="text-muted-foreground mt-1">
+            <p className="text-muted-foreground">
               {t('admin.products.tax.variant_overrides_description')}
             </p>
-            <ul className="mt-3 space-y-2">
+            <ul className="mt-2 space-y-2">
               {overrides.map(({ variant, index }) => {
                 const categoryName =
                   taxCategories.find((c) => c.id === variant.tax_category_id)?.name ??
@@ -1275,7 +1440,7 @@ export function TaxCard({ form }: FormCardProps) {
                 )
               })}
             </ul>
-          </div>
+          </Item>
         )}
       </CardContent>
     </Card>

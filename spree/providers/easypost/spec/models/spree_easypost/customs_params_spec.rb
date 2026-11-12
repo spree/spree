@@ -56,12 +56,16 @@ RSpec.describe 'SpreeEasyPost customs params' do
     end
 
     it 'certifies the declaration once a signer is named' do
-      integration = SpreeEasyPost::Integration.new(store: store, preferences: { customs_signer: 'Jane Doe' })
+      integration = SpreeEasyPost::Integration.new(
+        store: store,
+        preferences: { customs_signer: 'Jane Doe', customs_contents_type: 'gift' }
+      )
 
       params = SpreeEasyPost.customs_info_params(package, origin, foreign_destination, integration)
 
       expect(params[:customs_certify]).to be true
       expect(params[:customs_signer]).to eq('Jane Doe')
+      expect(params[:contents_type]).to eq('gift')
     end
 
     it 'carries the variant classification when the merchant recorded it' do
@@ -82,18 +86,6 @@ RSpec.describe 'SpreeEasyPost customs params' do
       expect(item).not_to have_key(:hs_tariff_number)
       expect(item).not_to have_key(:origin_country)
       expect(item[:description]).to eq(variant.name)
-    end
-
-    it 'takes the signer and contents type from the integration when configured' do
-      integration = SpreeEasyPost::Integration.new(
-        store: store,
-        preferences: { customs_signer: 'Jane Doe', customs_contents_type: 'gift' }
-      )
-
-      params = SpreeEasyPost.customs_info_params(package, origin, foreign_destination, integration)
-
-      expect(params[:customs_signer]).to eq('Jane Doe')
-      expect(params[:contents_type]).to eq('gift')
     end
 
     it 'defaults the incoterm to DAP so the recipient is billed for duties' do

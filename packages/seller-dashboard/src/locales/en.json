@@ -1,17 +1,4 @@
 {
-  "accept_invitation": {
-    "failed": "That invitation could not be accepted. It may have expired, or the password was wrong.",
-    "first_name": "First name",
-    "invalid_link": "This link is missing its token. Open the link from your invitation email.",
-    "last_name": "Last name",
-    "not_found": "This invitation is no longer valid. Ask whoever invited you to send a new one.",
-    "password": "Password",
-    "password_confirmation": "Confirm password",
-    "submit": "Accept invitation",
-    "submitting": "Accepting…",
-    "subtitle": "You were invited as {{email}}. Set a password to finish.",
-    "title": "Join the team"
-  },
   "account": {
     "avatar": "Photo",
     "avatar_help": "Shown next to your name across the panel. Square images look best.",
@@ -470,6 +457,7 @@
       "packing_slip_title": "Packing slip — order {{number}}",
       "print_label": "Print label",
       "print_packing_slip": "Print packing slip",
+      "quoted_after_review": "Quoted after review",
       "ship_to": "Ship to",
       "ships_from_label": "Ships from",
       "split": "Split",
@@ -667,7 +655,8 @@
     "columns": {
       "name": "Product",
       "price": "Price",
-      "status": "Status"
+      "status": "Status",
+      "inventory": "Inventory"
     },
     "custom_fields": "Product details",
     "details": "Details",
@@ -737,7 +726,8 @@
     "variant_remove_confirm_description": "It comes off the product when you save.",
     "variant_remove_confirm_title": "Remove this variant?",
     "variants": "Variants",
-    "variants_empty": "This product is sold as one item, at the price above. Add a variant to sell it in options such as size or colour."
+    "variants_empty": "This product is sold as one item, at the price above. Add a variant to sell it in options such as size or colour.",
+    "digital_files_review_notice": "Adding or replacing a file sends this product back to review, and it is off sale until the marketplace approves it again."
   },
   "profile": {
     "about": "About",

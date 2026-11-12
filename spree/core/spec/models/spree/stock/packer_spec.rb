@@ -46,6 +46,20 @@ module Spree
           expect(package.backordered.size).to eq 1
         end
 
+        context 'two lines of one variant' do
+          let(:variant) { create(:variant) }
+          let(:inventory_units) { Array.new(2) { FulfillmentItem.new(variant: variant, quantity: 3) } }
+
+          it 'splits the shelf between them rather than offering it to each in full' do
+            stock_location.stock_level_or_create(variant).update!(count_on_hand: 4, backorderable: false)
+
+            package = subject.default_package
+
+            expect(package.on_hand.map(&:quantity)).to eq [3, 1]
+            expect(package.backordered).to be_empty
+          end
+        end
+
         context "location doesn't have order items in stock" do
           let(:stock_location) { create(:stock_location, propagate_all_variants: false) }
           let(:inventory_units) { [FulfillmentItem.new(variant: create(:variant))] }

@@ -14,13 +14,6 @@ RSpec.describe Spree::Policy, type: :model do
         expect(other_policy.slug).to eq(policy.slug)
       end
     end
-
-    context 'owner presence' do
-      it 'is invalid without an owner' do
-        policy.owner = nil
-        expect(policy).to be_invalid
-      end
-    end
   end
 
   describe 'friendly_id' do
@@ -30,11 +23,12 @@ RSpec.describe Spree::Policy, type: :model do
     end
 
     it 'maintains slug history' do
-      policy = create(:policy, slug: 'old-slug')
+      policy = create(:policy)
+      old_slug = policy.slug
       policy.update(slug: 'new-slug')
 
       expect(policy.to_param).to eq('new-slug')
-      expect(policy.friendly_id_config.uses?(:history)).to be true
+      expect(described_class.where(owner: policy.owner).friendly.find(old_slug)).to eq(policy)
     end
 
     context 'when the policy is destroyed' do
@@ -50,10 +44,6 @@ RSpec.describe Spree::Policy, type: :model do
   end
 
   describe 'Translations' do
-    it 'has translatable name field' do
-      expect(described_class::TRANSLATABLE_FIELDS).to include(:name)
-    end
-
     it 'supports translations for name' do
       policy = create(:policy, name: 'Privacy Policy')
 

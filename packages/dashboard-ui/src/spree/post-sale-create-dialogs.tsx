@@ -12,10 +12,12 @@ import {
 import { Field, FieldLabel } from '../ui/field'
 import { Input } from '../ui/input'
 import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from '../ui/input-group'
+import { Item, ItemActions, ItemContent, ItemFooter } from '../ui/item'
 import { Textarea } from '../ui/textarea'
 import {
   type PostSaleSelection,
   type PostSaleUnit,
+  PostSaleUnitLabel,
   QuantityPicker,
   selectedUnits,
 } from './post-sale-fields'
@@ -100,18 +102,11 @@ export function CreateReturnDialog({
 
 /** A line the claim can name, with what the customer paid for it. */
 export type ClaimableLine = PostSaleUnit & {
-  /** The whole line after discounts, used to default the refund to what was actually paid. */
-  discountedAmount?: string | null
-  /** Tax charged on top of the line's price, which a claim refunds with it. */
-  additionalTaxTotal?: string | null
-}
-
-/** What the customer paid for `quantity` units of the line, or blank when that is unknown. */
-function paidForUnits(line: ClaimableLine, quantity: number): string {
-  const paid = Number(line.discountedAmount) + Number(line.additionalTaxTotal ?? 0)
-  if (quantity <= 0 || line.discountedAmount == null || !Number.isFinite(paid)) return ''
-
-  return ((paid * quantity) / line.quantity).toFixed(2)
+  /**
+   * What the customer paid, tax included, for that many units of the line, as
+   * a decimal string — the default refund. Blank when it is unknown.
+   */
+  paidFor?: (quantity: number) => string
 }
 
 /**
@@ -165,12 +160,11 @@ export function CreateClaimDialog({
               const chosenQuantity = selection[line.id] ?? 0
 
               return (
-                <div
-                  key={line.id}
-                  className="flex flex-col gap-2 rounded-lg border border-border-subtle p-3"
-                >
-                  <div className="flex items-center justify-between gap-4">
-                    <span className="min-w-0 truncate text-sm">{line.label}</span>
+                <Item variant="outline" key={line.id}>
+                  <ItemContent className="min-w-0">
+                    <PostSaleUnitLabel unit={line} />
+                  </ItemContent>
+                  <ItemActions>
                     <Input
                       type="number"
                       min={0}
@@ -189,40 +183,42 @@ export function CreateClaimDialog({
                         if (!typedAmounts[line.id]) {
                           setAmounts((current) => ({
                             ...current,
-                            [line.id]: paidForUnits(line, quantity),
+                            [line.id]: quantity > 0 ? (line.paidFor?.(quantity) ?? '') : '',
                           }))
                         }
                       }}
                     />
-                  </div>
+                  </ItemActions>
                   {chosenQuantity > 0 && (
-                    <Field>
-                      <FieldLabel htmlFor={`claim-amount-${line.id}`}>
-                        {t('admin.pages.orders.detail.claims.refund_amount')}
-                      </FieldLabel>
-                      <InputGroup>
-                        <InputGroupAddon>
-                          <InputGroupText>{currencySymbol}</InputGroupText>
-                        </InputGroupAddon>
-                        <InputGroupInput
-                          id={`claim-amount-${line.id}`}
-                          type="number"
-                          step="0.01"
-                          min="0"
-                          value={amounts[line.id] ?? ''}
-                          onChange={(event) => {
-                            setAmounts({ ...amounts, [line.id]: event.target.value })
-                            // Clearing the field hands it back to the quantity.
-                            setTypedAmounts({
-                              ...typedAmounts,
-                              [line.id]: event.target.value !== '',
-                            })
-                          }}
-                        />
-                      </InputGroup>
-                    </Field>
+                    <ItemFooter className="flex-col items-stretch">
+                      <Field>
+                        <FieldLabel htmlFor={`claim-amount-${line.id}`}>
+                          {t('admin.pages.orders.detail.claims.refund_amount')}
+                        </FieldLabel>
+                        <InputGroup>
+                          <InputGroupAddon>
+                            <InputGroupText>{currencySymbol}</InputGroupText>
+                          </InputGroupAddon>
+                          <InputGroupInput
+                            id={`claim-amount-${line.id}`}
+                            type="number"
+                            step="any"
+                            min="0"
+                            value={amounts[line.id] ?? ''}
+                            onChange={(event) => {
+                              setAmounts({ ...amounts, [line.id]: event.target.value })
+                              // Clearing the field hands it back to the quantity.
+                              setTypedAmounts({
+                                ...typedAmounts,
+                                [line.id]: event.target.value !== '',
+                              })
+                            }}
+                          />
+                        </InputGroup>
+                      </Field>
+                    </ItemFooter>
                   )}
-                </div>
+                </Item>
               )
             })}
           </div>

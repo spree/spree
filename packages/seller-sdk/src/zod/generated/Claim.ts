@@ -1,6 +1,7 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
 import { ClaimLineItemSchema } from './ClaimLineItem';
+import { CustomFieldSchema } from './CustomField';
 import { ReasonSchema } from './Reason';
 
 export const ClaimSchema = z.object({
@@ -11,13 +12,13 @@ export const ClaimSchema = z.object({
   order_id: z.string().nullable(),
   reason_id: z.string().nullable(),
   refund_total: z.string(),
-  display_refund_total: z.string(),
   approved_at: z.string().nullable(),
   resolved_at: z.string().nullable(),
   denied_at: z.string().nullable(),
   canceled_at: z.string().nullable(),
   reason: ReasonSchema.optional(),
   claim_line_items: z.array(ClaimLineItemSchema).optional(),
+  custom_fields: z.array(CustomFieldSchema).optional(),
   memo: z.string().nullable(),
 });
 

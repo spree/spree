@@ -1,5 +1,10 @@
 import type { CatalogProductTerm } from '@spree/admin-sdk'
-import { CurrencySelect, normalizeQuantityRule, useStore } from '@spree/dashboard-core'
+import {
+  CurrencySelect,
+  isPositiveMoney,
+  normalizeQuantityRule,
+  useStore,
+} from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -143,7 +148,7 @@ function OrderMinimums({
   canEdit: boolean
 }) {
   const { t } = useTranslation()
-  const { store } = useStore()
+  const { currencies } = useStore()
   const rows: OrderMinimumEntry[] = form.watch('order_minimums') ?? []
 
   function update(next: OrderMinimumEntry[]) {
@@ -151,10 +156,7 @@ function OrderMinimums({
   }
 
   const usedCurrencies = rows.map((row) => row.currency)
-  const nextCurrency =
-    [store?.default_currency, ...(store?.supported_currencies ?? [])]
-      .filter((code): code is string => !!code)
-      .find((code) => !usedCurrencies.includes(code)) ?? ''
+  const nextCurrency = currencies.find((code) => !usedCurrencies.includes(code))
 
   return (
     <section className="flex flex-col gap-3">
@@ -163,11 +165,11 @@ function OrderMinimums({
           button refuses to. */}
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <h3 className="flex items-center gap-1.5 font-medium text-sm">
+          <h3 className="flex items-center gap-1.5 font-medium text-base">
             {t('admin.catalogs.terms.minimums_title')}
             <TermHelp text={t('admin.catalogs.terms.help.order_minimum')} />
           </h3>
-          <p className="text-muted-foreground text-sm">
+          <p className="text-muted-foreground text-base">
             {t('admin.catalogs.terms.minimums_description')}
           </p>
         </div>
@@ -178,7 +180,9 @@ function OrderMinimums({
             size="sm"
             className="shrink-0"
             disabled={!nextCurrency}
-            onClick={() => update([...rows, { currency: nextCurrency, amount: '' }])}
+            onClick={() =>
+              nextCurrency && update([...rows, { currency: nextCurrency, amount: '' }])
+            }
           >
             <PlusIcon className="size-4" />
             {t('admin.actions.add')}
@@ -187,12 +191,14 @@ function OrderMinimums({
       </div>
 
       {rows.length === 0 ? (
-        <p className="text-muted-foreground text-sm">{t('admin.catalogs.terms.minimums_empty')}</p>
+        <p className="text-muted-foreground text-base">
+          {t('admin.catalogs.terms.minimums_empty')}
+        </p>
       ) : (
         <div className="flex flex-col gap-2">
           {rows.map((row, index) => {
             const duplicate = usedCurrencies.indexOf(row.currency) !== index
-            const amountValid = !row.amount.trim() || Number(row.amount) > 0
+            const amountValid = !row.amount.trim() || isPositiveMoney(row.amount.trim())
 
             return (
               <div key={row.currency} className="flex flex-col gap-1">
@@ -208,7 +214,7 @@ function OrderMinimums({
                   <Input
                     type="number"
                     min="0"
-                    step="0.01"
+                    step="any"
                     disabled={!canEdit}
                     aria-invalid={!amountValid || duplicate}
                     aria-label={t('admin.catalogs.terms.minimum_amount_label')}
@@ -225,7 +231,7 @@ function OrderMinimums({
                   {canEdit && (
                     <Button
                       type="button"
-                      variant="ghost"
+                      variant="destructive-ghost"
                       size="icon"
                       aria-label={t('admin.actions.remove')}
                       onClick={() => update(rows.filter((_, i) => i !== index))}
@@ -354,10 +360,11 @@ export function catalogTermColumns({
               placeholder={entry?.mixed ? headers.mixed : catalogMinimum || headers.defaultHint}
               value={entry?.minimum_order_quantity ?? ''}
               onChange={(event) => set(row.id, 'minimum_order_quantity', event.target.value)}
-              // No spinner: it reserves room these narrow columns do not have,
+              // No stepper: it takes room these narrow columns do not have,
               // clipping the "Default" placeholder that says the product
               // inherits the catalog's own term.
-              className="h-8 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+              stepper={false}
+              className="h-8"
             />
             {minimumInvalid && <p className="mt-1 text-destructive text-xs">{headers.invalid}</p>}
           </TableCell>
@@ -372,7 +379,8 @@ export function catalogTermColumns({
               placeholder={entry?.mixed ? headers.mixed : catalogMultiple || headers.defaultHint}
               value={entry?.order_multiple ?? ''}
               onChange={(event) => set(row.id, 'order_multiple', event.target.value)}
-              className="h-8 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+              stepper={false}
+              className="h-8"
             />
             {multipleInvalid && <p className="mt-1 text-destructive text-xs">{headers.invalid}</p>}
           </TableCell>

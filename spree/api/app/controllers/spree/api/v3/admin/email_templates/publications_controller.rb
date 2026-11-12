@@ -6,6 +6,13 @@ module Spree
           class PublicationsController < Admin::BaseController
             include Spree::Api::V3::Admin::EmailTemplateLookup
 
+            request_params 'EmailTemplateVersionParams' do |body|
+              body.include_attributes Spree::Api::V3::Admin::EmailTemplateLanguageRequestSchema
+              body.attribute :lock_version, :integer,
+                permit: false,
+                description: "The draft's `lock_version` as reviewed. A draft saved since is refused with 409."
+            end
+
             before_action :authorize_sample_data!
 
             # POST /api/v3/admin/email_templates/:email_template_id/publication

@@ -1,9 +1,12 @@
 module Spree
   module Variants
-    # Creates a variant on a product. The single gate for variant creation —
-    # the standalone variants endpoint and the nested payload on a product
-    # write both run through it, so a :validate handler sees every variant a
-    # catalog gains.
+    # Adds one variant to a product that already exists. A product being
+    # created carries its variants in the same write instead, which is one
+    # request and reconciles the list rather than adding to it.
+    #
+    # The single gate for variant creation — the standalone variants endpoint
+    # and the nested payload on a product write both run through it, so a
+    # :validate handler sees every variant a catalog gains.
     #
     # The product is a parameter rather than something read off the payload
     # because everything nested needs it: an option value attaches an option

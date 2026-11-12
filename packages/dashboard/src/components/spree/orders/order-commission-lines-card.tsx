@@ -1,4 +1,5 @@
 import type { CommissionLine, Order } from '@spree/admin-sdk'
+import { Money } from '@spree/dashboard-core'
 import {
   Card,
   CardContent,
@@ -12,11 +13,12 @@ import {
   TableRow,
 } from '@spree/dashboard-ui'
 import { PercentIcon } from '@spree/dashboard-ui/icons'
+import type { TFunction } from 'i18next'
 import { useTranslation } from 'react-i18next'
 import { useOrderCommissionLines } from '../../../hooks/use-order'
 import { commissionRateLabel } from '../../../lib/commission-line-rate-label'
 
-function commissionSubjectLabel(line: CommissionLine, order: Order, t: (key: string) => string) {
+function commissionSubjectLabel(line: CommissionLine, order: Order, t: TFunction) {
   if (line.line_item_id) {
     const item = order.items?.find((row) => row.id === line.line_item_id)
     return item?.name ?? t('admin.orders.detail.commission_lines.line_item_fallback')
@@ -49,7 +51,7 @@ export function CommissionLinesCard({ order }: { order: Order }) {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground">{t('admin.errors.failed_to_load')}</p>
+          <p className="text-base text-muted-foreground">{t('admin.errors.failed_to_load')}</p>
         </CardContent>
       </Card>
     )
@@ -88,9 +90,15 @@ export function CommissionLinesCard({ order }: { order: Order }) {
               <TableCell className="text-muted-foreground">
                 {commissionRateLabel(line, order, t)}
               </TableCell>
-              <TableCell className="text-right tabular-nums">{line.display_amount}</TableCell>
-              <TableCell className="text-right tabular-nums">{line.display_tax_amount}</TableCell>
-              <TableCell className="text-right tabular-nums">{line.display_total}</TableCell>
+              <TableCell className="text-right tabular-nums">
+                <Money amount={line.amount} currency={line.currency} />
+              </TableCell>
+              <TableCell className="text-right tabular-nums">
+                <Money amount={line.tax_amount} currency={line.currency} />
+              </TableCell>
+              <TableCell className="text-right tabular-nums">
+                <Money amount={line.total} currency={line.currency} />
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

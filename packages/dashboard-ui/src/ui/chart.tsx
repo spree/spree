@@ -69,7 +69,7 @@ export function ChartTooltipContent({
   const formattedLabel = labelFormatter ? labelFormatter(label ?? '') : label
 
   return (
-    <div className={cn('rounded-lg border bg-background px-3 py-2 text-sm shadow-md', className)}>
+    <div className={cn('rounded-lg border bg-background px-3 py-2 text-base shadow-md', className)}>
       <div className="mb-1 font-medium">{formattedLabel}</div>
       <div className="flex flex-col gap-0.5">
         {payload.map((item, i) => {

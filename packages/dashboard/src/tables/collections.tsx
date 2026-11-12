@@ -9,7 +9,7 @@ defineTable<Collection>('collections', {
   title: i18n.t('admin.collections.title'),
   description: i18n.t('admin.table_descriptions.collections'),
   docsPath: 'products/collections',
-  searchParam: 'name_cont',
+  searchParam: 'search',
   searchPlaceholder: i18n.t('admin.collections.search_placeholder'),
   defaultSort: { field: 'position', direction: 'asc' },
   emptyIcon: <LayersIcon className="size-8 text-muted-foreground" />,

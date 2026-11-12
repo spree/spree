@@ -28,9 +28,12 @@ RSpec.describe 'Seller Policies API', type: :request, swagger_doc: 'api-referenc
         marketplace's onboarding checklist.
       DESC
 
+      seller_sdk_example 'policies/list'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Records per page (max 100)'
+      filter_parameters_for
 
       response '200', 'policies listed' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
@@ -63,16 +66,10 @@ RSpec.describe 'Seller Policies API', type: :request, swagger_doc: 'api-referenc
         the onboarding check matches on it.
       DESC
 
+      seller_sdk_example 'policies/create'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string, example: 'Shipping Policy' },
-          slug: { type: :string, example: 'shipping-policy' },
-          body: { type: :string, example: '<p>Orders leave the workshop within two working days.</p>' }
-        },
-        required: %w[name]
-      }
+      request_body_for
 
       response '201', 'policy created' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
@@ -100,6 +97,8 @@ RSpec.describe 'Seller Policies API', type: :request, swagger_doc: 'api-referenc
       produces 'application/json'
       security [bearer_auth: []]
       description 'Returns one of this seller\'s policies, by prefixed ID or slug.'
+
+      seller_sdk_example 'policies/get'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 
@@ -133,15 +132,10 @@ RSpec.describe 'Seller Policies API', type: :request, swagger_doc: 'api-referenc
       security [bearer_auth: []]
       description 'Rewrites one of this seller\'s policies.'
 
+      seller_sdk_example 'policies/update'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string },
-          slug: { type: :string },
-          body: { type: :string }
-        }
-      }
+      request_body_for
 
       response '200', 'policy updated' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
@@ -161,6 +155,8 @@ RSpec.describe 'Seller Policies API', type: :request, swagger_doc: 'api-referenc
       tags 'Policies'
       security [bearer_auth: []]
       description 'Withdraws one of this seller\'s policies.'
+
+      seller_sdk_example 'policies/delete'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 

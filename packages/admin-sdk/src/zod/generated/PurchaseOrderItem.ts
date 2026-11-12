@@ -13,8 +13,6 @@ export const PurchaseOrderItemSchema = z.object({
   updated_at: z.string(),
   unit_cost: z.string(),
   total_cost: z.string(),
-  display_unit_cost: z.string(),
-  display_total_cost: z.string(),
   purchase_order_id: z.string().nullable(),
   variant_id: z.string().nullable(),
   product_id: z.string().nullable(),

@@ -123,12 +123,22 @@ module Spree
 
         return values unless klass
 
+        # A model with a lookup of its own (Order) resolves each id through it.
+        unless klass.method(:find_by_param).owner == Spree::PrefixedId::ClassMethods
+          return values.map { |v| Spree::PrefixedId.prefixed_id?(v) ? klass.find_by_param!(v).id : v }
+        end
+
+        # One lookup for the whole list rather than one per id.
+        decoded = values.select { |v| Spree::PrefixedId.prefixed_id?(v) }.index_with { |v| klass.decode_own_prefixed_id(v) }
+        existing_ids = decoded.empty? ? [] : klass.where(id: decoded.values.compact).pluck(:id)
+
         values.map do |v|
-          if Spree::PrefixedId.prefixed_id?(v)
-            klass.find_by_param!(v).id
-          else
-            v
-          end
+          next v unless decoded.key?(v)
+
+          id = decoded[v]
+          raise ActiveRecord::RecordNotFound.new("Couldn't find #{klass.name} with param=#{v}", klass.name) unless id && existing_ids.include?(id)
+
+          id
         end
       end
 

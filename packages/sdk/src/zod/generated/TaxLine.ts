@@ -6,7 +6,7 @@ export const TaxLineSchema = z.object({
   label: z.string(),
   included: z.boolean(),
   credit: z.boolean(),
-  rate: z.string(),
+  rate: z.string().nullable(),
   tax_rate_id: z.string().nullable(),
   line_item_id: z.string().nullable(),
   fulfillment_id: z.string().nullable(),

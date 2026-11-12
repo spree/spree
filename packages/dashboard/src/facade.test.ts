@@ -1,5 +1,6 @@
 import path from 'node:path'
-import ts from 'typescript'
+// TypeScript 7 ships no compiler API; its version 6 twin provides the same one.
+import ts from '@typescript/typescript6'
 import { describe, expect, it } from 'vitest'
 
 // `@spree/dashboard` re-exports the framework and the design system so an

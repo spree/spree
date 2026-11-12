@@ -22,6 +22,8 @@ module Spree
     # delivery-rate providers are; anything request-specific arrives as an
     # argument.
     class Base
+      extend Spree::ApiTyped
+
       # The name a merchant sees when choosing how sellers are paid.
       #
       # @return [String]
@@ -57,7 +59,7 @@ module Spree
       # @return [Hash]
       def self.to_api_hash(store)
         {
-          id: name,
+          id: api_type,
           name: display_name,
           available: available_for_store?(store),
           requires_payout_account: requires_payout_account?,

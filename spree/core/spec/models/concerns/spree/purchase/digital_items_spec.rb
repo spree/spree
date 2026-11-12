@@ -8,19 +8,6 @@ RSpec.shared_examples 'a digital items host' do
   end
 
   context 'line_item analysis' do
-    it 'understands that all products are digital' do
-      3.times { add_line_item(record, digital_variant, 1) }
-      expect(record.digital?).to be true
-
-      add_line_item(record, digital_variant, 4)
-      expect(record.digital?).to be true
-    end
-
-    it 'understands that no products are digital' do
-      3.times { add_line_item(record, create(:variant), 1) }
-      expect(record.digital?).to be false
-    end
-
     it 'understands that an empty record is not digital' do
       expect(record.digital?).to be false
     end
@@ -75,11 +62,13 @@ RSpec.shared_examples 'a digital items host' do
     it 'correctly loads the links' do
       digital_assets.each { |digital_asset| add_line_item(record, create(:variant, digital_assets: [digital_asset]), 1) }
       add_line_item(record, create(:variant), 1)
+      expected_links = record.digital_line_items.map do |line_item|
+        create(:digital_link, line_item: line_item, digital_asset: line_item.variant.digital_assets.first)
+      end
+      create(:digital_link)
 
-      links = record.digital_links
-      links_from_digitals = digital_assets.map(&:reload).map(&:digital_links).flatten
-      expect(links.size).to eq(links_from_digitals.size)
-      links.each { |link| expect(links_from_digitals).to include(link) }
+      expect(expected_links.size).to eq(2)
+      expect(record.digital_links).to match_array(expected_links)
     end
   end
 

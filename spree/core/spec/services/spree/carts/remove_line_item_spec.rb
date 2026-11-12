@@ -10,7 +10,15 @@ module Spree
     let(:execute) { subject.call cart: cart, line_item: line_item }
     let(:value) { execute.value }
 
-    before { cart.recalculate_totals! }
+    before do
+      allow(Spree::Deprecation).to receive(:warn)
+      cart.recalculate_totals!
+    end
+
+    it 'warns that it is deprecated' do
+      execute
+      expect(Spree::Deprecation).to have_received(:warn).with(/Spree::Carts::RemoveLineItem is deprecated/)
+    end
 
     context 'remove line item' do
       context 'with any quantity' do
@@ -86,7 +94,7 @@ module Spree
           )
           original_expiry = Spree::StockReservation.find_by(line_item_id: other_line_item.id).expires_at
 
-          Timecop.freeze(2.minutes.from_now) do
+          travel_to(2.minutes.from_now) do
             subject.call(cart: cart, line_item: line_item)
           end
 

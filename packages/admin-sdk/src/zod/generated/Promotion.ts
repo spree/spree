@@ -1,5 +1,7 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import { PromotionActionSchema } from './PromotionAction';
+import { PromotionRuleSchema } from './PromotionRule';
 
 export const PromotionSchema = z.object({
   id: z.string(),
@@ -21,6 +23,8 @@ export const PromotionSchema = z.object({
   updated_at: z.string(),
   action_ids: z.array(z.string()),
   rule_ids: z.array(z.string()),
+  rules: z.array(PromotionRuleSchema).optional(),
+  actions: z.array(PromotionActionSchema).optional(),
 });
 
 export type Promotion = z.infer<typeof PromotionSchema>;

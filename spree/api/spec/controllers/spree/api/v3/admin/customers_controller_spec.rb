@@ -94,7 +94,7 @@ RSpec.describe Spree::Api::V3::Admin::CustomersController, type: :controller do
       let(:headers) { { 'x-spree-api-key' => customers_key.plaintext_token } }
 
       it 'drops expansions into orders and store credits' do
-        create(:completed_order_with_totals, store: store, user: customer)
+        create(:completed_order_with_totals, store: store, customer: customer)
 
         get :show, params: { id: customer.prefixed_id, expand: 'orders.payments,store_credits' }, as: :json
 
@@ -105,7 +105,7 @@ RSpec.describe Spree::Api::V3::Admin::CustomersController, type: :controller do
     end
 
     it 'expands orders for a caller who can read them' do
-      create(:completed_order_with_totals, store: store, user: customer)
+      create(:completed_order_with_totals, store: store, customer: customer)
 
       get :show, params: { id: customer.prefixed_id, expand: 'orders' }, as: :json
 
@@ -225,6 +225,19 @@ RSpec.describe Spree::Api::V3::Admin::CustomersController, type: :controller do
         expect(response).to have_http_status(:ok)
         expect(customer.reload.first_name).to eq('Updated')
         expect(customer.password_digest).to eq(original_digest)
+      end
+    end
+
+    # Staff never set an existing customer's password: that would let them
+    # sign in to the storefront as the customer.
+    context 'with a password' do
+      it 'ignores it' do
+        original_digest = customer.password_digest
+
+        patch :update, params: { id: customer.prefixed_id, password: 'staff-chosen', password_confirmation: 'staff-chosen' }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(customer.reload.password_digest).to eq(original_digest)
       end
     end
   end

@@ -5,7 +5,6 @@ require 'spec_helper'
 describe Spree::WebhookDelivery, type: :model do
   let(:store) { @default_store }
   let(:webhook_endpoint) { create(:webhook_endpoint, store: store) }
-  let(:webhook_delivery) { build(:webhook_delivery, webhook_endpoint: webhook_endpoint) }
 
   describe 'scopes' do
     let!(:pending_delivery) { create(:webhook_delivery, :pending, webhook_endpoint: webhook_endpoint) }

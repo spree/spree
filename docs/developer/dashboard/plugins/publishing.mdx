@@ -18,8 +18,8 @@ Your plugin imports React, the dashboard, Tailwind, i18next, etc., but **you don
     "@spree/dashboard-core": "^1.0.0-beta.3",
     "@spree/dashboard-ui": "^1.0.0-beta.3",
     "@spree/admin-sdk": "^1.0.0-beta.2",
-    "i18next": "^26",
-    "react-i18next": "^17",
+    "i18next": "^26 || ^27",
+    "react-i18next": "^17 || ^18",
     "@tanstack/react-query": "^5",
     "@tanstack/react-router": "^1",
     "lucide-react": "^1"
@@ -27,7 +27,7 @@ Your plugin imports React, the dashboard, Tailwind, i18next, etc., but **you don
 }
 ```
 
-Use ranges, not exact versions — pin too tightly and consumers can't upgrade the dashboard without you cutting a release. One pre-release caveat: a range like `^1.0.0-beta.3` accepts later `1.0.0` betas and every stable `1.x` release, but not betas of other versions — so keep your `@spree/dashboard-*` peers in step with the dashboard until 1.0 ships. `spree plugin new` scaffolds ranges starting at the admin SDK and dashboard versions released alongside your `@spree/cli`.
+Use ranges, not exact versions — pin too tightly and consumers can't upgrade the dashboard without you cutting a release. The dashboard packages carry the Spree version, so `^6.0.0` accepts every Spree 6.x release. `spree plugin new` scaffolds ranges starting at the admin SDK and dashboard versions released alongside your `@spree/cli`.
 
 `dependencies` is for things your plugin *uses* that the host *doesn't* — small utilities (e.g., `clsx`, `date-fns` if you need a specific version, your own helper packages). When in doubt, peer-dep it. The trade-off is "user has to install one more thing" vs. "user has two copies of React" — always pay the first cost.
 
@@ -95,7 +95,7 @@ Declare your package as a dashboard plugin in its own `package.json`:
 }
 ```
 
-`routes` (optional) points at your TanStack file-routes directory; the host build compiles it into its typed route tree — see the [routes guide](/developer/dashboard/customization/routes).
+`routes` (optional) points at your TanStack file-routes directory; the host build compiles it into its typed route tree — see the [routes guide](/developer/dashboard/customization/routes). `authenticatedRoutes` and `publicRoutes` (optional) do the same for [pages outside a store](/developer/dashboard/customization/routes#pages-outside-a-store).
 
 This marker is what powers **auto-discovery**: when a host calls `spreeDashboardPlugin()` without an explicit `plugins` array (the default), the Vite plugin walks the host's `package.json` deps + devDeps, reads each one's manifest, and picks up anything with `spree.dashboard.plugin: true`. The host doesn't have to know your plugin's name — `pnpm add @your-scope/your-plugin` is the entire installation step.
 

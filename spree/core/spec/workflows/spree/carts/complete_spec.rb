@@ -191,6 +191,61 @@ module Spree
         expect(provider).to have_received(:commit).with(order)
       end
 
+      # An engine that cannot answer must not read to a customer as a broken
+      # checkout: before this, the exception escaped as a 500 and a storefront
+      # could not tell an outage from a platform bug.
+      it 'refuses the sale when the tax engine cannot be reached' do
+        # Built before the stub: creating a line item estimates tax, so a
+        # provider that raises would take the factory down instead of the sale.
+        cart = ready_cart
+        provider = instance_double(Spree::TaxProvider::Internal, commit: nil)
+        allow(provider).to receive(:estimate).
+          and_raise(Spree::Tax::ProviderUnavailable.new('could not be reached', provider_key: 'probe'))
+        allow_any_instance_of(Spree::Cart).to receive(:tax_provider).and_return(provider)
+
+        result = described_class.call(cart: cart)
+
+        expect(result).to be_failure
+        expect(result.error.value[:code]).to eq('tax_provider_unavailable')
+        # The endpoint and the transport stay out of the response.
+        expect(result.error.value[:message]).not_to include('could not be reached')
+        expect(cart.reload).not_to be_completed
+      end
+
+      # The other half of the split: the engine answered and said no, so there
+      # is nothing to retry and its own message is what the customer needs.
+      it 'passes on what the engine said when it refuses the calculation' do
+        cart = ready_cart
+        provider = instance_double(Spree::TaxProvider::Internal, commit: nil)
+        allow(provider).to receive(:estimate).and_raise(
+          Spree::Tax::CalculationRefused.new('Zip is not valid for the state.', provider_key: 'probe')
+        )
+        allow_any_instance_of(Spree::Cart).to receive(:tax_provider).and_return(provider)
+
+        result = described_class.call(cart: cart)
+
+        expect(result).to be_failure
+        expect(result.error.value[:code]).to eq('tax_calculation_refused')
+        expect(result.error.value[:message]).to eq('Zip is not valid for the state.')
+      end
+
+      # The opposite call: the sale has happened and been paid for, so refusing
+      # it now would deny a customer an order they were charged for. Filing is
+      # idempotent, so the document can follow later.
+      it 'still places the order when filing the sale fails' do
+        cart = ready_cart
+        provider = instance_double(Spree::TaxProvider::Internal, estimate: nil)
+        allow(provider).to receive(:commit).
+          and_raise(Spree::Tax::ProviderUnavailable.new('could not be reached'))
+        allow_any_instance_of(Spree::Order).to receive(:tax_provider).and_return(provider)
+        allow_any_instance_of(Spree::Cart).to receive(:tax_provider).and_return(provider)
+
+        result = described_class.call(cart: cart)
+
+        expect(result).to be_success
+        expect(result.value).to be_completed
+      end
+
       it 'does not re-estimate while copying the cart onto the order' do
         provider = instance_double(Spree::TaxProvider::Internal, estimate: nil, commit: nil)
         allow_any_instance_of(Spree::Order).to receive(:tax_provider).and_return(provider)
@@ -211,7 +266,7 @@ module Spree
         let(:tax_category) { create(:tax_category) }
         let!(:rate) do
           create(:tax_rate, store: store, country_code: ready_cart.tax_country&.iso, amount: 0.1,
-                            included_in_price: false, tax_category: tax_category)
+                            tax_category: tax_category)
         end
 
         before do
@@ -267,7 +322,7 @@ module Spree
           before do
             default_category = create(:tax_category, store: store, is_default: true)
             create(:tax_rate, store: store, country_code: ready_cart.tax_country&.iso, amount: 0.2,
-                              included_in_price: false, tax_category: default_category)
+                              tax_category: default_category)
             create(:fee, order: nil, cart: ready_cart, amount: 9, kind: 'payment', label: 'Card surcharge')
             ready_cart.reload.recalculate_totals!
             ready_cart.payments.first.update!(amount: ready_cart.reload.total)
@@ -350,6 +405,108 @@ module Spree
 
         expect(result).to be_success
         expect(result.value.tax_identifier.value).to eq('GB123456789')
+      end
+
+      # The evidence has to survive the certificate it came from: it lapses on
+      # its own date, so re-resolving at refund time would file a credit for an
+      # exempt sale as a consumer refund.
+      it 'freezes the exemptions the sale was priced with onto the order' do
+        claim = Spree::TaxExemption.new(reason_code: 'RESALE', reason_name: 'Resale', certificate_number: 'CERT-9',
+                                        country_code: 'US', state_code: 'CA')
+        allow(Spree.tax_resolve_exemptions_service).to receive(:new).
+          and_return(instance_double(Spree::Tax::ResolveExemptions,
+                                     call: Spree::ServiceModule::Result.new(true, [claim], nil)))
+
+        order = described_class.call(cart: ready_cart).value
+
+        expect(order.applied_tax_exemptions).to eq(
+          [{ 'reason_code' => 'RESALE', 'reason_name' => 'Resale', 'certificate_number' => 'CERT-9',
+             'country_code' => 'US', 'state_code' => 'CA', 'item_overrides' => [] }]
+        )
+      end
+
+      # A draft leaves before FINALIZE, where the document is filed.
+      it 'files a draft order with the tax engine' do
+        draft = create(:order_ready_to_ship, store: store)
+        draft.update_columns(status: 'draft', completed_at: nil)
+        provider = instance_double(Spree::TaxProvider::Internal, commit: nil, estimate: nil)
+        allow_any_instance_of(Spree::Order).to receive(:tax_provider).and_return(provider)
+
+        expect(described_class.call(cart: draft)).to be_success
+        expect(provider).to have_received(:commit).with(draft)
+      end
+
+      it 'files each order of a draft divided between sellers' do
+        draft = create(:order_ready_to_ship, store: store, line_items_count: 2)
+        draft.update_columns(status: 'draft', completed_at: nil, payment_status: nil)
+        draft.line_items.reload.zip(create_list(:seller, 2, :approved, store: store)).each do |line_item, seller|
+          line_item.variant.update!(seller: seller)
+          line_item.update_columns(seller_id: seller.id)
+        end
+        draft.reload.recalculate_totals!
+        draft.payments.destroy_all
+        create(:payment, order: draft, status: 'completed', amount: draft.reload.total)
+        filed = []
+        provider = instance_double(Spree::TaxProvider::Internal, estimate: nil)
+        allow(provider).to receive(:commit) { |placed| filed << placed }
+        allow_any_instance_of(Spree::Order).to receive(:tax_provider).and_return(provider)
+
+        result = described_class.call(cart: draft.reload)
+
+        expect(result.value).to be_a(Spree::OrderGroup)
+        expect(filed).to match_array(result.value.orders.to_a)
+      end
+
+      # An empty list, not nil: the reader has to tell "found no claim" apart
+      # from an order placed before the column existed.
+      it 'freezes an empty list when the sale claimed no exemption' do
+        order = described_class.call(cart: ready_cart).value
+
+        expect(order.applied_tax_exemptions).to eq([])
+      end
+
+      # Completion mints new prefixed ids, and an override that matches nothing
+      # widens its claim instead of narrowing it — exempting every line.
+      it 'renames a per-item carve-out onto the line the order now owns' do
+        cart_line_item = ready_cart.line_items.first
+        claim = Spree::TaxExemption.new(
+          reason_code: 'resale',
+          item_overrides: [Spree::TaxExemption::ItemOverride.new(item_id: cart_line_item.prefixed_id,
+                                                                 exempt: false)]
+        )
+        allow(Spree.tax_resolve_exemptions_service).to receive(:new).
+          and_return(instance_double(Spree::Tax::ResolveExemptions,
+                                     call: Spree::ServiceModule::Result.new(true, [claim], nil)))
+
+        order = described_class.call(cart: ready_cart).value
+        order_line_item = order.line_items.first
+        frozen = order.usable_exemptions.sole
+
+        expect(order.applied_tax_exemptions.sole['item_overrides'].sole['item_id']).
+          to eq(order_line_item.prefixed_id)
+        expect(order_line_item.prefixed_id).not_to eq(cart_line_item.prefixed_id)
+        expect(frozen.covers_item?(order_line_item)).to be(false)
+      end
+
+      # It narrowed nothing while the cart was priced either, so the order is
+      # taxed the same way — and reported, since nobody can act on it.
+      it 'reports a carve-out naming something the sale never had' do
+        claim = Spree::TaxExemption.new(
+          reason_code: 'resale',
+          item_overrides: [Spree::TaxExemption::ItemOverride.new(item_id: 'li_notinthissale',
+                                                                 exempt: false)]
+        )
+        allow(Spree.tax_resolve_exemptions_service).to receive(:new).
+          and_return(instance_double(Spree::Tax::ResolveExemptions,
+                                     call: Spree::ServiceModule::Result.new(true, [claim], nil)))
+        allow(Rails.error).to receive(:report)
+
+        order = described_class.call(cart: ready_cart).value
+
+        expect(order.applied_tax_exemptions.sole['item_overrides'].sole['item_id']).
+          to eq('li_notinthissale')
+        expect(Rails.error).to have_received(:report).
+          with(instance_of(Spree::Tax::UnusableExemptionError), hash_including(handled: true))
       end
 
       it 'records a checkout override as such' do
@@ -461,6 +618,36 @@ module Spree
       end
     end
 
+    describe 'cart copiers' do
+      let(:received) { [] }
+      let(:copier) { ->(**args) { received << args } }
+
+      before { allow(Spree).to receive(:cart_copiers).and_return([copier]) }
+
+      it 'hands each copier the cart, the order and every cart line paired with its copy' do
+        order = described_class.call(cart: ready_cart).value
+
+        expect(received.size).to eq(1)
+        expect(received.first[:cart]).to eq(ready_cart)
+        expect(received.first[:order]).to eq(order)
+
+        line_item_map = received.first[:line_item_map]
+        expect(line_item_map.keys).to match_array(ready_cart.line_items.to_a)
+        expect(line_item_map.values.map(&:id)).to match_array(order.line_items.ids)
+      end
+
+      # The copy runs in the same transaction as the order, so a copier that
+      # cannot finish leaves the cart as it was rather than an order missing
+      # what the extension kept against it.
+      it 'rolls the completion back when a copier raises' do
+        allow(Spree).to receive(:cart_copiers).and_return([->(**) { raise ActiveRecord::RecordInvalid, Spree::Order.new }])
+
+        expect { described_class.call(cart: ready_cart) }.to raise_error(ActiveRecord::RecordInvalid)
+        expect(Spree::Order.where(cart_id: ready_cart.id)).to be_empty
+        expect(ready_cart.reload.completing_at).to be_nil
+      end
+    end
+
     describe 'guest checkout policy' do
       it 'fails when the channel forbids guest checkout and the cart has no customer' do
         allow_any_instance_of(Spree::Cart).to receive(:guest_checkout_disallowed?).and_return(true)
@@ -478,6 +665,132 @@ module Spree
         Spree::StockReservation.create!(cart: ready_cart, order: nil, line_item: line_item, stock_level: stock_level, quantity: 1, expires_at: 1.hour.from_now)
 
         expect { described_class.call(cart: ready_cart) }.to change { Spree::StockReservation.count }.by(-1)
+      end
+
+      context 'when the cart holds all remaining stock' do
+        let(:line_item) { ready_cart.line_items.first }
+        let(:stock_level) { line_item.variant.stock_levels.first }
+
+        before do
+          stub_store_preferences(stock_reservations_enabled: true)
+          line_item.variant.stock_levels.each do |level|
+            level.update!(backorderable: false)
+            level.set_count_on_hand(0)
+          end
+          stock_level.set_count_on_hand(line_item.quantity)
+          create(:stock_reservation, cart: ready_cart, order: nil, line_item: line_item,
+                                     stock_level: stock_level, quantity: line_item.quantity)
+        end
+
+        it 'places the reserved units without treating its own hold as unavailable stock' do
+          expect(stock_level.reload.purchasable_count).to eq(0)
+
+          result = described_class.call(cart: ready_cart)
+
+          expect(result).to be_success
+          expect(result.value).to be_placed
+          expect(stock_level.reload.allocated_count).to eq(line_item.quantity)
+          expect(stock_level.reserved_count).to eq(0)
+        end
+
+        it 'keeps another checkout\'s hold while placing its own units' do
+          stock_level.set_count_on_hand(line_item.quantity + 1)
+          other_cart = create(:cart, store: store)
+          other_line = create(:line_item, cart: other_cart, order: nil, variant: line_item.variant)
+          other_hold = create(:stock_reservation, cart: other_cart, order: nil, line_item: other_line,
+                                                  stock_level: stock_level, quantity: 1)
+
+          result = described_class.call(cart: ready_cart)
+
+          expect(result).to be_success
+          expect(other_hold.reload.cart_id).to eq(other_cart.id)
+          expect(other_hold.order_id).to be_nil
+          expect(stock_level.reload.reserved_count).to eq(1)
+          expect(stock_level.allocated_count).to eq(line_item.quantity)
+        end
+
+        it 'returns the hold to the cart when a later copier fails' do
+          hold = ready_cart.stock_reservations.sole
+          allow(Spree).to receive(:cart_copiers).and_return([->(**) { raise 'cart copier failed' }])
+
+          expect { described_class.call(cart: ready_cart) }.to raise_error(RuntimeError, 'cart copier failed')
+
+          expect(Spree::Order.where(cart_id: ready_cart.id)).to be_empty
+          expect(hold.reload.cart_id).to eq(ready_cart.id)
+          expect(hold.order_id).to be_nil
+          expect(stock_level.reload.reserved_count).to eq(line_item.quantity)
+          expect(stock_level.allocated_count).to eq(0)
+        end
+
+        it 'restores the original cart line and held stock after payment fails' do
+          hold = ready_cart.stock_reservations.sole
+          allow(Spree::Payments::Process).to receive(:call).and_return(double(failure?: false))
+
+          result = described_class.call(cart: ready_cart)
+
+          expect(result).to be_failure
+          expect(result.error.value[:code]).to eq('payment_failed')
+          expect(Spree::Order.where(cart_id: ready_cart.id)).to be_empty
+          expect(hold.reload.cart_id).to eq(ready_cart.id)
+          expect(hold.order_id).to be_nil
+          expect(hold.line_item_id).to eq(line_item.id)
+          expect(stock_level.reload.reserved_count).to eq(line_item.quantity)
+          expect(stock_level.allocated_count).to eq(0)
+          expect(ready_cart.reload.completing_at).to be_nil
+          expect(ready_cart.completed_at).to be_nil
+        end
+      end
+
+      context 'when reserved lines belong to different sellers' do
+        let(:ready_cart) { create(:cart_ready_to_complete, store: store, line_items_count: 2) }
+
+        it 'keeps each sibling held until its own order is placed' do
+          stub_store_preferences(stock_reservations_enabled: true)
+          sellers = create_list(:seller, 2, :approved, store: store)
+          ready_cart.line_items.reload.zip(sellers).each do |line_item, seller|
+            line_item.variant.update!(seller: seller)
+            line_item.update_columns(seller_id: seller.id)
+            line_item.variant.stock_levels.each do |level|
+              level.update!(backorderable: false)
+              level.set_count_on_hand(0)
+            end
+            level = line_item.variant.stock_levels.first
+            level.set_count_on_hand(line_item.quantity)
+            create(:stock_reservation, cart: ready_cart, order: nil, line_item: line_item,
+                                       stock_level: level, quantity: line_item.quantity)
+          end
+          protected_siblings = []
+          observe_siblings = lambda do |group|
+            group.orders.where(status: 'draft').find_each do |sibling|
+              protected_siblings << sibling.id
+              expect(sibling.stock_reservations.pluck(:line_item_id)).to match_array(sibling.line_items.ids)
+              sibling.line_items.each do |line|
+                level = line.variant.stock_levels.first
+                expect(level.reload.reserved_count).to eq(line.quantity)
+                expect(level.allocated_count).to eq(0)
+                expect(level.purchasable_count).to eq(0)
+              end
+            end
+          end
+          completion = Class.new(Spree::Orders::Complete) do
+            workflow_key 'orders.complete'
+
+            define_method(:complete_sibling_orders) do
+              observe_siblings.call(order_group) if order_group
+              super()
+            end
+            private :complete_sibling_orders
+          end
+          allow(Spree).to receive(:order_complete_workflow).and_return(completion)
+
+          result = described_class.call(cart: ready_cart)
+
+          expect(result).to be_success
+          expect(result.value).to be_a(Spree::OrderGroup)
+          expect(result.value.orders).to all(be_placed)
+          expect(protected_siblings.size).to eq(1)
+          expect(ready_cart.reload.stock_reservations).to be_empty
+        end
       end
     end
 
@@ -543,6 +856,35 @@ module Spree
     end
 
     describe 'crash-window replay' do
+      it 'returns the whole seller group when a retained draft divides during replay' do
+        cart = create(:cart_ready_to_complete, store: store, line_items_count: 2)
+        cart.line_items.zip(create_list(:seller, 2, :approved, store: store)).each do |line, seller|
+          line.variant.update!(seller: seller)
+          line.update_columns(seller_id: seller.id)
+        end
+        interrupted = Class.new(described_class) do
+          workflow_key 'carts.complete'
+
+          private
+
+          def finalize_completion
+            failure(cart, code: 'completion_failed')
+          end
+        end
+        expect(interrupted.call(cart: cart)).to be_failure
+        draft = Spree::Order.find_by!(cart_id: cart.id)
+        payment_ids = draft.payments.ids
+
+        result = described_class.call(cart: cart.reload)
+
+        expect(result).to be_success
+        expect(result.value).to be_a(Spree::OrderGroup)
+        expect(result.value.orders).to all(be_placed)
+        expect(result.value.orders.count).to eq(2)
+        expect(result.value.payments.ids).to match_array(payment_ids)
+        expect(described_class.call(cart: cart.reload).value.id).to eq(result.value.id)
+      end
+
       it 'heals a completion that died between the order commit and the cart stamp' do
         order = described_class.call(cart: ready_cart).value
         # Simulate the crash window: order placed, cart stamp lost

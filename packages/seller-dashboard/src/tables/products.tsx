@@ -1,15 +1,13 @@
-import { defineTable } from '@spree/dashboard-core'
-import { ResourceNameCell, StatusBadge, Thumbnail } from '@spree/dashboard-ui'
+import { PRODUCT_STATUSES } from '@spree/core'
+import { defineTable, formatPrice, ProductStockSummary } from '@spree/dashboard-core'
+import { ProductIdentity, StatusBadge } from '@spree/dashboard-ui'
 import { PackageIcon } from '@spree/dashboard-ui/icons'
 import type { Product } from '@spree/seller-sdk'
 import i18n from 'i18next'
 
-/** Mirrors the operator dashboard's product statuses. */
-const PRODUCT_STATUSES = ['active', 'draft', 'proposed', 'rejected', 'archived'] as const
-
 defineTable<Product>('seller-products', {
   title: i18n.t('products.title'),
-  searchParam: 'name_cont',
+  searchParam: 'search',
   searchPlaceholder: i18n.t('products.search_placeholder'),
   defaultSort: { field: 'created_at', direction: 'desc' },
   emptyIcon: <PackageIcon className="size-8 text-muted-foreground" />,
@@ -21,10 +19,11 @@ defineTable<Product>('seller-products', {
       sortable: true,
       default: true,
       render: (product) => (
-        <div className="flex items-center gap-3">
-          <Thumbnail src={product.thumbnail_url} alt={product.name} />
-          <ResourceNameCell id={product.id} dataAttr="data-product-id" name={product.name} />
-        </div>
+        <ProductIdentity
+          name={product.name}
+          thumbnailUrl={product.thumbnail_url}
+          render={<button type="button" data-product-id={product.id} />}
+        />
       ),
     },
     {
@@ -47,10 +46,16 @@ defineTable<Product>('seller-products', {
       ),
     },
     {
+      key: 'inventory',
+      label: i18n.t('products.columns.inventory'),
+      default: true,
+      render: (product) => <ProductStockSummary product={product} />,
+    },
+    {
       key: 'price',
       label: i18n.t('products.columns.price'),
       default: true,
-      render: (product) => product.price?.display_amount ?? '—',
+      render: (product) => formatPrice(product.price ?? null),
     },
   ],
 })

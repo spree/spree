@@ -30,13 +30,7 @@ RSpec.describe 'Cart Discount Codes API', type: :request, swagger_doc: 'api-refe
       parameter name: :cart_id, in: :path, type: :string, required: true, description: 'Cart prefixed ID (e.g., cart_abc123)'
       parameter name: 'Idempotency-Key', in: :header, type: :string, required: false,
                 description: 'Unique key for request idempotency.'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          code: { type: :string, example: 'SAVE10', description: 'Promotion discount code to apply' }
-        },
-        required: %w[code]
-      }
+      request_body_for
 
       response '201', 'discount code applied' do
         let!(:promotion) { create(:promotion_with_item_adjustment, code: 'SAVE10') }
@@ -81,7 +75,7 @@ RSpec.describe 'Cart Discount Codes API', type: :request, swagger_doc: 'api-refe
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data['coupon_code']).to eq('big50')
-          expect(data['discount_total']).to eq('0.0')
+          expect(data['discount_total']).to eq('0.00')
           warning = data['warnings'].sole
           expect(warning['code']).to eq('coupon_code_not_eligible')
           expect(warning['message']).to be_present

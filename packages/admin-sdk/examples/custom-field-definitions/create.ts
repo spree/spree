@@ -11,7 +11,7 @@ const definition = await client.customFieldDefinitions.create({
   key: 'origin',
   label: 'Country of Origin',
   field_type: 'short_text',
-  resource_type: 'Spree::Product',
+  resource_type: 'product',
   storefront_visible: true,
 })
 

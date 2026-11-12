@@ -1,8 +1,11 @@
 # frozen_string_literal: true
 
 require 'json'
+require 'spree/api/testing_support/openapi'
 
 module CodeSamplesHelper
+  include Spree::Api::TestingSupport::AdminScope
+
   SDK_CLIENT_INIT = <<~JS.strip
     import { createClient } from '@spree/sdk'
 
@@ -31,8 +34,39 @@ module CodeSamplesHelper
     })
   JS
 
+  # Seller API callers: a guest (sign-in, password reset, invitations), a
+  # signed-in person who has not picked a seller yet (`/me`), and a session
+  # acting for one seller (everything else).
+  SELLER_SDK_CLIENT_INITS = {
+    guest: <<~JS.strip,
+      import { createSellerClient } from '@spree/seller-sdk'
+
+      const client = createSellerClient({
+        baseUrl: 'https://your-store.com',
+      })
+    JS
+    user: <<~JS.strip,
+      import { createSellerClient } from '@spree/seller-sdk'
+
+      const client = createSellerClient({
+        baseUrl: 'https://your-store.com',
+        jwtToken: 'eyJhbGciOi...',
+      })
+    JS
+    seller: <<~JS.strip
+      import { createSellerClient } from '@spree/seller-sdk'
+
+      const client = createSellerClient({
+        baseUrl: 'https://your-store.com',
+        jwtToken: 'eyJhbGciOi...',
+        sellerId: 'sel_UkLWZg9DAJ',
+      })
+    JS
+  }.freeze
+
   SDK_EXAMPLES_ROOT = File.expand_path('../../../../packages/sdk/examples', __dir__)
   ADMIN_SDK_EXAMPLES_ROOT = File.expand_path('../../../../packages/admin-sdk/examples', __dir__)
+  SELLER_SDK_EXAMPLES_ROOT = File.expand_path('../../../../packages/seller-sdk/examples', __dir__)
 
   # Match `// region:example` / `// endregion:example` markers and extract
   # the body between them. The markers can have arbitrary indentation.
@@ -85,7 +119,26 @@ module CodeSamplesHelper
         source: "#{signed_in ? ADMIN_SDK_JWT_CLIENT_INIT : ADMIN_SDK_CLIENT_INIT}\n\n#{source}\n"
       }
     )
-    admin_cli_example(sdk_body_json(source), sdk_call_has_args(source))
+    # `spree api` signs in with a secret key, which these endpoints refuse.
+    admin_cli_example(sdk_body_json(source), sdk_call_has_args(source)) unless signed_in
+  end
+
+  # Mirrors `sdk_example` for the Seller SDK — examples live under
+  # `packages/seller-sdk/examples/`.
+  #
+  # @param name [String] the example's path under `examples/`, without `.ts`
+  # @param as [Symbol] the client the sample starts from: `:seller`, `:user`
+  #   or `:guest` (see SELLER_SDK_CLIENT_INITS)
+  # @return [Array<Hash>] the operation's code samples
+  def seller_sdk_example(name, as: :seller)
+    source = EXAMPLE_CACHE[[:seller, name]] ||= load_example_body(SELLER_SDK_EXAMPLES_ROOT, name, 'Seller SDK')
+    code_samples(
+      {
+        lang: 'javascript',
+        label: 'Spree Seller SDK',
+        source: "#{SELLER_SDK_CLIENT_INITS.fetch(as)}\n\n#{source}\n"
+      }
+    )
   end
 
   # Emits a `spree api` CLI code sample for the current operation, derived from
@@ -355,23 +408,6 @@ module CodeSamplesHelper
     body.rstrip.strip_heredoc.strip
   end
 
-  # Appends a `**Required scope:**` line to the operation description.
-  # Use in admin integration specs to surface scope requirements in the
-  # rendered Mintlify docs without inventing a custom OpenAPI extension.
-  #
-  #   admin_scope :read, :orders
-  #   admin_scope :write, :customers
-  def admin_scope(action, resource)
-    admin_scope_note("`#{action}_#{resource}`")
-  end
-
-  # Free-form variant for endpoints whose required scope is resolved at
-  # request time (e.g. exports — gated by the exported resource's scope).
-  def admin_scope_note(text)
-    line = "**Required scope:** #{text} (for API-key authentication)."
-    existing = metadata[:operation][:description].to_s
-    metadata[:operation][:description] = existing.empty? ? line : "#{existing}\n\n#{line}"
-  end
 end
 
 RSpec.configure do |config|

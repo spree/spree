@@ -56,4 +56,60 @@ test.describe('seller requirements', () => {
       .click()
     await expect(rowButton(page, name)).toHaveCount(0, { timeout: 15_000 })
   })
+
+  // Settings of a kind are typed: a whole number, a URL and a date each save
+  // and come back as themselves. Both requirements are part of every
+  // marketplace's starting checklist, so each is put back afterwards.
+  test('saves the settings of a kind and reads them back', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, REQUIREMENTS_PATH(creds.store_id), CTA)
+    const sheet = page.getByRole('dialog')
+    const save = sheet.getByRole('button', { name: /^save$/i })
+
+    async function open(name: string) {
+      await expect(sheet).toHaveCount(0, { timeout: 15_000 })
+      await rowButton(page, name).click()
+      await expect(sheet).toBeVisible({ timeout: 15_000 })
+    }
+
+    await open('Minimum products')
+    const count = page.locator('#preference-minimum_count')
+    await expect(count).not.toHaveValue('', { timeout: 15_000 })
+    const originalCount = await count.inputValue()
+    await count.fill('3')
+    await save.click()
+    await open('Minimum products')
+    await expect(count).toHaveValue('3')
+    await count.fill(originalCount)
+    await save.click()
+
+    await open('Accept terms')
+    const url = page.locator('#preference-terms_url')
+    const effectiveFrom = page.locator('#preference-terms_effective_from')
+    await url.fill('https://example.com/e2e-terms')
+    // A date in the past, so sellers who already accepted still count as met.
+    await effectiveFrom.click()
+    await sheet.getByRole('button', { name: /previous month/i }).click()
+    await sheet.getByRole('gridcell', { name: '15' }).click()
+    await save.click()
+
+    await open('Accept terms')
+    await expect(url).toHaveValue('https://example.com/e2e-terms')
+    await expect(effectiveFrom).toContainText('15')
+
+    await url.fill('')
+    await effectiveFrom.getByRole('button', { name: /clear date/i }).click()
+    await save.click()
+    await open('Accept terms')
+    await expect(url).toHaveValue('')
+    await expect(effectiveFrom).toHaveAttribute('data-empty', 'true')
+    await sheet.getByRole('button', { name: /^cancel$/i }).click()
+
+    // And it was stored, not only shown.
+    await page.reload()
+    await open('Accept terms')
+    await expect(url).toHaveValue('')
+    await expect(effectiveFrom).toHaveAttribute('data-empty', 'true')
+    await sheet.getByRole('button', { name: /^cancel$/i }).click()
+  })
 })

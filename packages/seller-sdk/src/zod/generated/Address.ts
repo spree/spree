@@ -1,5 +1,6 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import { CustomFieldSchema } from './CustomField';
 
 export const AddressSchema = z.object({
   id: z.string(),
@@ -20,9 +21,8 @@ export const AddressSchema = z.object({
   quick_checkout: z.boolean(),
   is_default_billing: z.boolean(),
   is_default_shipping: z.boolean(),
-  state_abbr: z.string().nullable(),
-  country_iso: z.string(),
   state_name: z.string().nullable(),
+  custom_fields: z.array(CustomFieldSchema).optional(),
 });
 
 export type Address = z.infer<typeof AddressSchema>;

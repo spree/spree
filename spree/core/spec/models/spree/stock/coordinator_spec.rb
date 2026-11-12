@@ -129,6 +129,18 @@ module Spree
           expect(packages.map { |package| package.stock_location.name }).to eq [eu_warehouse.name]
           expect(packages.first.delivery_rates.map(&:name)).to include('EU Standard')
         end
+
+        it 'backorders from the origin that serves the destination rather than ship nothing from stock on hand' do
+          order.variants.each do |variant|
+            eu_warehouse.stock_level_or_create(variant).update!(count_on_hand: 0, backorderable: true)
+          end
+
+          packages = subject.packages
+
+          expect(packages.map { |package| package.stock_location.name }).to eq [eu_warehouse.name]
+          expect(packages.first.quantity(:backordered)).to eq order.line_items.sum(&:quantity)
+          expect(packages.first.delivery_rates.map(&:name)).to include('EU Standard')
+        end
       end
 
       describe 'channel-scoped allocation' do
@@ -150,20 +162,25 @@ module Spree
         end
       end
 
-      describe '#shipments' do
+      describe '#fulfillments' do
         let(:packages) { [build(:stock_package_fulfilled), build(:stock_package_fulfilled)] }
 
         before { allow(subject).to receive(:packages).and_return(packages) }
 
-        it 'turns packages into shipments' do
-          shipments = subject.shipments
-          expect(shipments.count).to eq packages.count
-          expect(shipments).to all(be_a(Fulfillment))
+        it 'turns packages into fulfillments' do
+          fulfillments = subject.fulfillments
+          expect(fulfillments.count).to eq packages.count
+          expect(fulfillments).to all(be_a(Fulfillment))
         end
 
-        it "puts the order's ship address on the shipments" do
-          shipments = subject.shipments
-          shipments.each { |shipment| expect(shipment.address).to eq order.ship_address }
+        it "puts the order's ship address on the fulfillments" do
+          fulfillments = subject.fulfillments
+          fulfillments.each { |fulfillment| expect(fulfillment.address).to eq order.ship_address }
+        end
+
+        it 'is still returned by the deprecated #shipments' do
+          expect(Spree::Deprecation).to receive(:warn).with(/Coordinator#shipments is deprecated/)
+          expect(subject.shipments.count).to eq packages.count
         end
       end
 
@@ -180,6 +197,18 @@ module Spree
 
         it 'builds a package for every stock location' do
           expect(subject.build_packages.count).to eq(StockLocation.count)
+        end
+
+        it 'allocates every line when two lines share a variant' do
+          product.stock_levels.each { |stock_level| stock_level.update!(count_on_hand: 10) }
+          second = create(:line_item, order: order, variant: product.default_variant, quantity: 3)
+
+          allocated = Hash.new(0)
+          described_class.new(order.reload).packages.flat_map(&:contents).each do |item|
+            allocated[item.inventory_unit.line_item_id] += item.quantity
+          end
+
+          expect(allocated).to eq(order.line_items.first.id => 2, second.id => 3)
         end
 
         context 'missing stock items in stock location' do

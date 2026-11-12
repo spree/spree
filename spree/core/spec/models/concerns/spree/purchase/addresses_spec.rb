@@ -160,6 +160,20 @@ RSpec.shared_examples 'an addresses host' do
         expect(record.ship_address_id).to eq(company_address.id)
       end
 
+      it 'accepts an address from the company book for billing too' do
+        record.company = company
+        record.bill_address_id = company_address.id
+
+        expect(record.bill_address_id).to eq(company_address.id)
+      end
+
+      it 'refuses another company\'s book for billing' do
+        record.company = company
+        record.bill_address_id = create(:company_address, owner: create(:company, store: store)).id
+
+        expect(record.bill_address_id).to be_nil
+      end
+
       # The same self-and-ancestors chain the node's default address is
       # prefilled from: a division may ship to the headquarters it inherits.
       it 'accepts an address from an ancestor of the purchase node' do
@@ -170,12 +184,13 @@ RSpec.shared_examples 'an addresses host' do
         expect(record.ship_address_id).to eq(company_address.id)
       end
 
-      # Sole standing resolves the node without an explicit choice, so the
-      # book is selectable for a one-membership buyer who never picked.
-      it 'accepts the book of the sole standing company without an explicit choice' do
+      # The storefront names the company; a sole membership is not taken as
+      # a choice the buyer never made.
+      it 'refuses the company book until the purchase names the company' do
         record.ship_address_id = company_address.id
 
-        expect(record.ship_address_id).to eq(company_address.id)
+        expect(record.ship_address_id).to be_nil
+        expect(record.selectable_addresses).not_to include(company_address)
       end
 
       it 'refuses a company book to a buyer with no standing anywhere' do
@@ -200,6 +215,110 @@ RSpec.shared_examples 'an addresses host' do
         record.ship_address_id = create(:company_address, owner: division).id
 
         expect(record.ship_address_id).to be_nil
+      end
+    end
+  end
+
+  describe '#selectable_address' do
+    let(:own_address) { create(:address, customer: user) }
+
+    it 'accepts a prefixed id as well as a raw one' do
+      expect(record.selectable_address(own_address.prefixed_id)).to eq(own_address)
+      expect(record.selectable_address(own_address.id)).to eq(own_address)
+    end
+
+    it 'answers nil for a blank id' do
+      expect(record.selectable_address(nil)).to be_nil
+      expect(record.selectable_address('')).to be_nil
+    end
+
+    it 'answers nil for another customer\'s address' do
+      expect(record.selectable_address(create(:address, customer: create(:user)).id)).to be_nil
+    end
+
+    context 'when the entry has been retired' do
+      it 'answers nil for a retired entry of the buyer\'s own book' do
+        own_address.update_column(:deleted_at, Time.current)
+
+        expect(record.selectable_address(own_address.id)).to be_nil
+        expect(record.selectable_address(own_address.prefixed_id)).to be_nil
+      end
+
+      it 'answers nil for a retired company site' do
+        company = create(:company, store: store)
+        create(:company_membership, company: company, customer: user)
+        site = create(:company_address, owner: company)
+        record.company = company
+        site.update_column(:deleted_at, Time.current)
+
+        expect(record.selectable_address(site.id)).to be_nil
+        expect(record.selectable_address(site.prefixed_id)).to be_nil
+      end
+
+      it 'refuses a retired company site on the writers too' do
+        company = create(:company, store: store)
+        create(:company_membership, company: company, customer: user)
+        site = create(:company_address, owner: company)
+        record.company = company
+        site.update_column(:deleted_at, Time.current)
+
+        record.ship_address_id = site.id
+        record.bill_address_id = site.id
+
+        expect(record.ship_address_id).to be_nil
+        expect(record.bill_address_id).to be_nil
+        expect(record.selectable_addresses).not_to include(site)
+      end
+    end
+  end
+
+  describe '#selectable_addresses' do
+    let!(:own_address) { create(:address, customer: user) }
+    let!(:foreign_address) { create(:address, customer: create(:user)) }
+
+    it 'lists the buyer\'s own book and nobody else\'s' do
+      expect(record.selectable_addresses).to include(own_address)
+      expect(record.selectable_addresses).not_to include(foreign_address)
+    end
+
+    it 'is empty for a guest' do
+      expect(guest_record.selectable_addresses).to be_empty
+    end
+
+    it 'omits an address in a country the purchase\'s market does not sell to' do
+      germany = Spree::Country.by_iso('DE')
+      record.market = create(:market, store: store, countries: [germany])
+      german_address = create(:address, customer: user, country: germany)
+
+      expect(record.selectable_addresses).to include(german_address)
+      expect(record.selectable_addresses).not_to include(own_address)
+    end
+
+    context 'when the purchase is for a company' do
+      let(:company) { create(:company, store: store) }
+      let(:division) { create(:company, store: store, kind: 'division', parent: company) }
+      let!(:headquarters_address) { create(:company_address, owner: company) }
+      let!(:division_address) { create(:company_address, owner: division) }
+
+      before do
+        create(:company_membership, company: company, customer: user)
+        record.company = division
+      end
+
+      it 'adds the node\'s own sites and the ones it inherits' do
+        expect(record.selectable_addresses).to include(own_address, headquarters_address, division_address)
+      end
+
+      it 'omits a company the purchase is not for' do
+        other_address = create(:company_address, owner: create(:company, store: store))
+
+        expect(record.selectable_addresses).not_to include(other_address)
+      end
+
+      it 'omits a retired site' do
+        headquarters_address.update_column(:deleted_at, Time.current)
+
+        expect(record.selectable_addresses).not_to include(headquarters_address)
       end
     end
   end
@@ -354,6 +473,42 @@ RSpec.shared_examples 'an addresses host' do
       expect(record.bill_address.first_name).to eq 'New name'
     end
   end
+
+  describe 'destroying the purchase' do
+    let(:company) { create(:company, store: store) }
+    let(:company_address) { create(:company_address, owner: company) }
+    let(:own_address) { create(:address, customer: user) }
+
+    before { create(:company_membership, company: company, customer: user) }
+
+    it 'keeps a company site the purchase was shipping to' do
+      record.update!(company: company)
+      record.ship_address_id = company_address.id
+      record.save!
+
+      record.destroy
+
+      expect(company_address.reload.deleted_at).to be_nil
+    end
+
+    it "keeps an entry from the buyer's own book" do
+      record.bill_address_id = own_address.id
+      record.save!
+
+      record.destroy
+
+      expect(own_address.reload.deleted_at).to be_nil
+    end
+
+    it 'destroys the ownerless row it keeps for itself' do
+      snapshot = Spree::Address.create!(address_attributes)
+      record.update!(ship_address: snapshot)
+
+      record.destroy
+
+      expect(Spree::Address.where(id: snapshot.id)).to be_empty
+    end
+  end
 end
 
 RSpec.describe Spree::Purchase::Addresses do
@@ -365,6 +520,31 @@ RSpec.describe Spree::Purchase::Addresses do
     let(:guest_record) { create(:cart, store: store, customer: nil) }
 
     it_behaves_like 'an addresses host'
+
+    describe 'after the buyer loses standing over the cart\'s company' do
+      let(:company) { create(:company, store: store) }
+      let!(:membership) { create(:company_membership, company: company, customer: user) }
+      let!(:company_address) { create(:company_address, owner: company) }
+
+      before do
+        record.update!(company: company)
+        membership.destroy!
+      end
+
+      it 'refuses an entry from the company book' do
+        expect(record.selectable_address(company_address.id)).to be_nil
+      end
+
+      it 'drops the company book from the listing' do
+        expect(record.selectable_addresses).not_to include(company_address)
+      end
+
+      it 'still offers the buyer their own book' do
+        own = create(:address, customer: user)
+
+        expect(record.selectable_addresses).to include(own)
+      end
+    end
 
     # Carts expose only use_shipping through the API — the ship→bill clone
     # is the one wired as a callback.
@@ -385,10 +565,30 @@ RSpec.describe Spree::Purchase::Addresses do
 
     it_behaves_like 'an addresses host'
 
+    # An order's authority is the staff credential that created it, or the
+    # cart that was validated at completion — never a membership that can be
+    # revoked out from under it, so a past sale stays readable.
+    describe 'after the buyer loses standing over the order\'s company' do
+      let(:company) { create(:company, store: store) }
+      let!(:membership) { create(:company_membership, company: company, customer: user) }
+      let!(:company_address) { create(:company_address, owner: company) }
+
+      before do
+        record.update!(company: company)
+        membership.destroy!
+      end
+
+      it 'keeps the company book reachable' do
+        expect(record.selectable_address(company_address.id)).to eq(company_address)
+        expect(record.selectable_addresses).to include(company_address)
+      end
+    end
+
     describe 'use_billing clone callback (deprecated bridge, removed in 6.1)' do
       let(:order) { build(:order) }
 
       before do
+        allow(Spree::Deprecation).to receive(:warn)
         order.bill_address = create(:address)
         order.ship_address = nil
       end
@@ -410,6 +610,7 @@ RSpec.describe Spree::Purchase::Addresses do
         it 'does not clone the bill address to the shipping' do
           order.valid?
           expect(order.ship_address).to be_nil
+          expect(Spree::Deprecation).to have_received(:warn).with(/use_billing is deprecated/)
         end
       end
 

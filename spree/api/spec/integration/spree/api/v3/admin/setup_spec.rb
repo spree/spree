@@ -13,6 +13,8 @@ RSpec.describe 'Admin Setup API', type: :request, swagger_doc: 'api-reference/ad
         login page uses it to offer the setup screen.
       DESC
 
+      admin_sdk_example 'auth/setup-status'
+
       response '200', 'setup status' do
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -33,42 +35,9 @@ RSpec.describe 'Admin Setup API', type: :request, swagger_doc: 'api-reference/ad
         user exists — the flow is closed permanently after setup.
       DESC
 
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        required: %w[setup_token email password country_code],
-        properties: {
-          setup_token: { type: :string, description: 'One-time token from the install output.' },
-          email: { type: :string, format: 'email', example: 'owner@example.com' },
-          password: { type: :string, example: 'Secret123!' },
-          password_confirmation: { type: :string, example: 'Secret123!' },
-          first_name: { type: :string, example: 'Olivia' },
-          last_name: { type: :string, example: 'Owner' },
-          store_name: { type: :string, example: 'My Store' },
-          country_code: {
-            type: :string,
-            description: 'ISO 3166-1 alpha-2 country the store sells from. Determines the ' \
-                         'default market, the warehouse, the delivery zones and the currency.',
-            example: 'US'
-          },
-          locale: {
-            type: :string,
-            description: "Storefront locale. Defaults to the country's own language.",
-            example: 'en'
-          },
-          currency: {
-            type: :string,
-            description: "ISO 4217 currency. Defaults to the country's own currency — " \
-                         'pass one only when the store prices in something else.',
-            example: 'USD'
-          },
-          sample_data: {
-            type: :boolean,
-            description: 'Load the demo catalog, customers and orders in the background ' \
-                         'once the admin account exists.',
-            example: false
-          }
-        }
-      }
+      admin_sdk_example 'auth/complete-setup'
+
+      request_body_for
 
       response '200', 'setup completed' do
         let(:body) do
@@ -117,6 +86,8 @@ RSpec.describe 'Admin Setup API', type: :request, swagger_doc: 'api-reference/ad
         screen runs before any credential exists. Returns 404 once any admin
         user exists.
       DESC
+
+      admin_sdk_example 'auth/setup-countries'
 
       response '200', 'countries' do
         run_test! do |response|

@@ -22,6 +22,7 @@ RSpec.describe Spree::Api::V3::Admin::PromotionActionSerializer do
         { key: :webhook_url, type: :string, default: nil }
       ]
       allow(action.class).to receive(:preference_schema).and_return(stubbed_schema)
+      allow(action.class).to receive(:preference_definitions).and_return(action.class.preference_definitions.merge(api_secret: { type: :password }, webhook_url: { type: :string }))
       action
     end
 
@@ -57,6 +58,7 @@ RSpec.describe Spree::Api::V3::Admin::PromotionActionSerializer do
         { key: :amount, type: :decimal, default: 0 }
       ]
       allow(action.calculator.class).to receive(:preference_schema).and_return(stubbed_schema)
+      allow(action.calculator.class).to receive(:preference_definitions).and_return(action.calculator.class.preference_definitions.merge(api_secret: { type: :password }))
     end
 
     # The `calculator` attribute is a plain Ruby Hash returned from an

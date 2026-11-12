@@ -42,7 +42,8 @@ module Spree
       # twice. Two freight consignments are still one load to the forwarder,
       # so they are merged rather than listed.
       def build_freight_summary
-        summaries = fulfillments.valid.filter_map { |fulfillment| fulfillment.selected_delivery_rate&.freight_summary }
+        shipping = read_association_in_memory?(:fulfillments) ? fulfillments.reject(&:canceled?) : fulfillments.valid
+        summaries = shipping.filter_map { |fulfillment| fulfillment.selected_delivery_rate&.freight_summary }
         return if summaries.empty?
 
         Spree::FreightSummary.merge(summaries)

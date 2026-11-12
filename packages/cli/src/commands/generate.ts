@@ -1,4 +1,5 @@
 import type { Command } from 'commander'
+import { runGeneratorCommand } from '../backend.js'
 import { detectProject } from '../context.js'
 import { dockerComposeExecOrRun } from '../docker.js'
 
@@ -29,7 +30,10 @@ export function registerGenerateCommand(program: Command): void {
     .description(
       'Run a generator (Spree generators auto-prefixed; Rails built-ins forwarded as-is)',
     )
-    .argument('<name>', 'generator name (`model`, `model_decorator`, `migration`, …)')
+    .argument(
+      '<name>',
+      'generator name (`api_resource`, `model`, `model_decorator`, `migration`, …)',
+    )
     .argument('[args...]', 'arguments to pass to the generator')
     .allowUnknownOption(true)
     .passThroughOptions(true)
@@ -37,6 +41,7 @@ export function registerGenerateCommand(program: Command): void {
       const ctx = detectProject()
       const generator =
         name.includes(':') || RAILS_BUILTIN_GENERATORS.has(name) ? name : `spree:${name}`
-      await dockerComposeExecOrRun(['bin/rails', 'g', generator, ...args], ctx.projectDir)
+
+      await dockerComposeExecOrRun(runGeneratorCommand(generator, args), ctx.projectDir)
     })
 }

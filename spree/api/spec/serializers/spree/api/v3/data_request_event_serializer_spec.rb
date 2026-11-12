@@ -40,4 +40,17 @@ RSpec.describe Spree::Api::V3::DataRequestEventSerializer do
   it 'is what the model publishes, not the store serializer' do
     expect(data_request.event_serializer_class).to eq(described_class)
   end
+
+  # What a storefront that sends its own emails needs to ask for confirmation,
+  # and still nothing that opens the export.
+  it 'gives the confirmation request the token and the page the link opens' do
+    payload = data_request.event_payload_for(
+      'data_request.confirmation_requested',
+      confirmation_token: 'live-token', redirect_url: 'https://shop.example.com/confirm'
+    )
+
+    expect(payload).to include('confirmation_token' => 'live-token', 'redirect_url' => 'https://shop.example.com/confirm',
+                               'email' => data_request.email, 'store_id' => store.prefixed_id)
+    expect(payload.to_s).not_to include(data_request.reload.download_token)
+  end
 end

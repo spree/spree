@@ -340,6 +340,8 @@ Never store a rejection reason on the product itself. A seller can write their o
 
 An approval with no `reviewed_by_id` and `metadata.auto_approved` set means the store approves listings automatically — never a decision whose author was lost. Turn that on with the `auto_approve_seller_products` store preference.
 
+A product already on sale can come back to review when what it delivers changes: a seller adding or replacing a downloadable file reopens it, unless the store turns `review_seller_digital_asset_changes` off. The new submission carries `metadata.reason` (`digital_asset_changed`) and who made the change, so the queue says why the listing is back.
+
 ### Submitting, as a seller
 
 Status is not writable on the seller branch. A seller moves a product with an explicit action:
@@ -846,14 +848,10 @@ You attach assets to a variant from the product's **Digital files** card in the 
 <CodeGroup>
 
 ```typescript Admin SDK
-// 1. Ask for a private-storage upload slot, then PUT the file to the returned URL.
-const { direct_upload, signed_id } = await adminClient.directUploads.create({
-  private: true, // digital files are only ever served through a signed link
-  blob: { filename: 'guide.pdf', byte_size: file.size, checksum, content_type: 'application/pdf' },
-})
-await fetch(direct_upload.url, { method: 'PUT', headers: direct_upload.headers, body: file })
+// 1. Upload the file to private storage — digital files are only ever served through a signed link.
+const { signed_id } = await adminClient.files.upload(file, { visibility: 'private' })
 
-// 2. Attach the uploaded blob to the product's default variant.
+// 2. Attach it to the product's default variant.
 await adminClient.products.digitalAssets.create('prod_86Rf07xd4z', {
   signed_id,
   authorized_clicks: 5, // optional — omit to inherit the store default
@@ -871,7 +869,7 @@ curl -X POST 'https://api.mystore.com/api/v3/admin/products/prod_86Rf07xd4z/digi
 </CodeGroup>
 
 <Warning>
-Digital files must be uploaded to **private storage**. The Admin API refuses a blob that landed on the public service — attaching never moves a file between services, so a public upload would stay publicly readable while looking attached. Request the direct upload with `private: true`.
+Digital files must be uploaded to **private storage**. The Admin API refuses a blob that landed on the public service — attaching never moves a file between services, so a public upload would stay publicly readable while looking attached. Upload it with `visibility: 'private'` (see [Uploads](/api-reference/admin-api/uploads)).
 </Warning>
 
 Replacing an asset's file keeps every download link that was already issued working: links resolve through the asset, not the underlying blob, so a merchant can swap a corrected file mid‑sale without breaking anyone's access.
@@ -1151,6 +1149,33 @@ curl 'https://api.mystore.com/api/v3/store/products' \
 </CodeGroup>
 
 For Admin API filtering across channels (back-office reports, admin UI lists), use Ransack instead: `q[channels_id_in][]=ch_xxx`. See [Sales Channels](/developer/core-concepts/channels) for the resolution rules.
+
+### Why a product is missing from the Store API
+
+The Store API returns an empty list, or `404` for a single product, rather than explaining why a product is hidden. A product is returned only when all of these hold:
+
+| Check | Condition |
+|---|---|
+| Status | `status` is `active`. |
+| Channel | The product has a publication on the channel the request resolves to. Call `GET /api/v3/store/channel` with the same headers to see which channel that is. |
+| Publication window | The publication's `published_at` is empty or in the past, and its `unpublished_at` is empty or in the future. A product scheduled for later is still returned if one of its variants takes pre-orders. |
+| Price | At least one variant has a base price, with an amount, in the request's currency. Prices from [price lists](/developer/core-concepts/pricing) don't count. The store's `show_products_without_price` setting turns this check off. |
+| Catalog | If the buyer's company, the customer's groups or the channel resolve to [catalogs](/developer/core-concepts/catalogs) that name specific products, the product is in one of them. |
+
+The request's currency comes from the `X-Spree-Currency` header, then the `currency` parameter, then the market's or the store's default currency. See [Localization](/api-reference/store-api/localization).
+
+The product's own `available_on` and `discontinue_on` play no part here: the Store API always resolves a channel, and the publication's dates replace them. Stock doesn't hide a product either, with the database or the Meilisearch search provider. An out-of-stock product is still returned, with `in_stock: false`.
+
+With the [Meilisearch](/integrations/search/meilisearch) search provider, the product must also be in the search index. Results are narrowed to the conditions above as well, so the index can hide a product but never reveal one. [Reindex](/integrations/search/meilisearch#reindex-all-products) if a product meets every condition and is still missing.
+
+To check each condition, read the product through the Admin API with a secret key. The response includes its `status`, its publications and its variants' prices. A price with a `price_list_id` comes from a price list, so it doesn't count:
+
+```bash
+curl 'https://api.mystore.com/api/v3/admin/products/prod_xxx?expand=product_publications,default_variant.prices,variants.prices' \
+  -H 'X-Spree-Api-Key: sk_xxx'
+```
+
+In the admin dashboard, the product's **Publishing** card warns when an active product has no price in one of the store's currencies.
 
 ### Auto-publish on the default channel
 

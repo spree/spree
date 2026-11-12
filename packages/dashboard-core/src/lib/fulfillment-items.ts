@@ -1,3 +1,7 @@
+import { ORDER_FULFILLMENT_STATUSES, subsetOf } from '@spree/core'
+import i18n from 'i18next'
+import { formatMoney } from './formatters'
+
 /**
  * Which line items sit in which fulfillment, and which units nobody has
  * claimed yet. The order payload describes the two halves separately —
@@ -14,8 +18,9 @@ export interface GroupableLineItem {
   options_text?: string | null
   quantity: number
   thumbnail_url?: string | null
-  display_price?: string | null
-  display_total?: string | null
+  price?: string | null
+  currency?: string | null
+  product_id?: string | null
 }
 
 /** The fulfillment-item fields the grouping reads. */
@@ -49,6 +54,8 @@ export interface FulfillmentItemRow {
   optionsText: string | null
   thumbnailUrl: string | null
   displayPrice: string | null
+  /** The product to link the row to, when the line still names one. */
+  productId: string | null
   quantity: number
 }
 
@@ -82,6 +89,16 @@ function claimedQuantities(fulfillments: GroupableFulfillment[]): Map<string, nu
  * out", so the pages gating order editing share this list.
  */
 export const GONE_STATUSES = ['fulfilled', 'delivered']
+
+/** The order-level fulfillment statuses the order lists filter on. */
+export const FILTERABLE_ORDER_FULFILLMENT_STATUSES = subsetOf(ORDER_FULFILLMENT_STATUSES, [
+  'backorder',
+  'canceled',
+  'partial',
+  'unfulfilled',
+  'fulfilled',
+  'delivered',
+])
 
 export function fulfilledQuantities(fulfillments: GroupableFulfillment[]): Map<string, number> {
   const fulfilled = new Map<string, number>()
@@ -130,7 +147,11 @@ function buildRow(
     name: copy?.name ?? fallback?.name ?? '',
     optionsText: copy?.options_text ?? fallback?.options_text ?? null,
     thumbnailUrl: copy?.thumbnail_url ?? null,
-    displayPrice: copy?.display_price ?? null,
+    productId: copy?.product_id ?? null,
+    displayPrice:
+      copy?.price && copy.currency
+        ? formatMoney(copy.price, copy.currency, i18n.language || 'en', { unitPrice: true })
+        : null,
     quantity,
   }
 }
@@ -167,6 +188,55 @@ export function fulfillmentItemRows(
   }
 
   return [...rows.values()]
+}
+
+/** A return, claim or exchange line, as the item row reads it. */
+export interface PostSaleLine {
+  line_item_id?: string | null
+  variant_id?: string | null
+  /** The line's own copy of the product name, where the panel's API sends one. */
+  name?: string | null
+  variant?: {
+    product_name?: string | null
+    options_text?: string | null
+    thumbnail_url?: string | null
+    sku?: string | null
+    product_id?: string | null
+  } | null
+  quantity: number
+}
+
+/**
+ * A return, claim or exchange line as the same row a fulfillment shows: the
+ * order line it came from gives the name, image and price; the variant it
+ * names fills in when the order line is gone.
+ */
+export function postSaleItemRow(
+  key: string,
+  line: PostSaleLine,
+  lineItems: GroupableLineItem[],
+): FulfillmentItemRow {
+  const lineItem = line.line_item_id
+    ? lineItems.find((item) => item.id === line.line_item_id)
+    : undefined
+  const variant = line.variant
+  const row = buildRow(
+    key,
+    lineItem,
+    {
+      variant_id: line.variant_id,
+      name: line.name ?? variant?.product_name ?? null,
+      options_text: variant?.options_text ?? null,
+    },
+    line.quantity,
+  )
+
+  return {
+    ...row,
+    name: row.name || variant?.sku || line.variant_id || '',
+    thumbnailUrl: row.thumbnailUrl ?? variant?.thumbnail_url ?? null,
+    productId: row.productId ?? variant?.product_id ?? null,
+  }
 }
 
 /**

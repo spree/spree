@@ -8,6 +8,9 @@ export const InvitationSchema = z.object({
   expires_at: z.string().nullable(),
   accepted_at: z.string().nullable(),
   status: z.string(),
+  inviter_email: z.string(),
+  invitee_exists: z.boolean().optional(),
+  seller: z.object({ id: z.string(), name: z.string() }),
 });
 
 export type Invitation = z.infer<typeof InvitationSchema>;

@@ -11,6 +11,28 @@ module Spree
     describe '#call' do
       subject { described_class.call(cart: cart, params: params) }
 
+      # Swallowing this used to save the address and show a total with no tax,
+      # so the customer only met the problem when they tried to pay — and met it
+      # as an exception. A destination whose tax nobody could compute is not a
+      # destination worth keeping.
+      it 'refuses an address change when the tax engine cannot be reached' do
+        address = create(:address, state_code: 'NY', country_code: 'US', zipcode: '10001')
+        cart_under_test = cart
+        provider = instance_double(Spree::TaxProvider::Internal)
+        allow(provider).to receive(:estimate).
+          and_raise(Spree::Tax::ProviderUnavailable.new('could not be reached'))
+        allow_any_instance_of(Spree::Cart).to receive(:tax_provider).and_return(provider)
+
+        result = described_class.call(cart: cart_under_test,
+                                      params: { shipping_address_id: address.prefixed_id })
+
+        expect(result).to be_failure
+        expect(result.error.to_s).to include('Tax could not be calculated')
+        # The API answers this code with 503, the status a client retries.
+        expect(result.error.code).to eq('tax_provider_unavailable')
+        expect(cart_under_test.reload.ship_address_id).not_to eq(address.id)
+      end
+
       describe 'updating email' do
         let(:params) { { email: 'new@example.com' } }
 
@@ -446,6 +468,45 @@ module Spree
 
               expect(subject).to be_success
               expect(cart.reload.ship_address_id).to eq(existing_address.id)
+            end
+          end
+
+          context 'with an address from the company book' do
+            let(:company) { create(:company, store: store) }
+            let(:division) { create(:company, store: store, kind: 'division', parent: company) }
+            let(:company_address) { create(:company_address, owner: company) }
+
+            before { create(:company_membership, company: company, customer: user) }
+
+            it 'accepts a site of the company the cart is for' do
+              result = described_class.call(
+                cart: cart,
+                params: { company_id: company.prefixed_id, shipping_address_id: company_address.prefixed_id }
+              )
+
+              expect(result).to be_success
+              expect(cart.reload.ship_address_id).to eq(company_address.id)
+            end
+
+            it 'accepts a site the purchase node inherits from its parent' do
+              create(:company_membership, company: division, customer: user)
+
+              result = described_class.call(
+                cart: cart,
+                params: { company_id: division.prefixed_id, shipping_address_id: company_address.prefixed_id }
+              )
+
+              expect(result).to be_success
+              expect(cart.reload.ship_address_id).to eq(company_address.id)
+            end
+
+            it 'refuses the book of a company the buyer has no standing over' do
+              outsider_address = create(:company_address, owner: create(:company, store: store))
+
+              result = described_class.call(cart: cart, params: { shipping_address_id: outsider_address.prefixed_id })
+
+              expect(result).to be_success
+              expect(cart.reload.ship_address_id).to be_nil
             end
           end
         end
@@ -894,11 +955,19 @@ module Spree
           it 'extends existing reservations' do
             original_expiry = Spree::StockReservation.where(cart_id: cart.id).maximum(:expires_at)
 
-            Timecop.freeze(2.minutes.from_now) do
+            travel_to(2.minutes.from_now) do
               described_class.call(cart: cart, params: params)
             end
 
             expect(Spree::StockReservation.where(cart_id: cart.id).maximum(:expires_at)).to be > original_expiry
+          end
+
+          it 'reserves again when the destination changes, since the units may ship from elsewhere' do
+            cart.line_items.first.variant.stock_levels.first.update!(backorderable: true)
+
+            described_class.call(cart: cart, params: { shipping_address: address_params.merge(city: 'Brooklyn', postal_code: '11201') })
+
+            expect(Spree::StockReservation.where(cart_id: cart.id)).to be_empty
           end
         end
 
@@ -1008,7 +1077,7 @@ module Spree
       end
     end
 
-    # An abandoned direct upload leaves the blob row behind without its bytes,
+    # An abandoned presigned upload leaves the blob row behind without its bytes,
     # and the buyer's client may still send back the signed id it was handed.
     describe 'a purchase order document whose upload never completed' do
       let(:orphan_blob) do
@@ -1019,7 +1088,7 @@ module Spree
       end
 
       it 'reports a readable message instead of an exception class name' do
-        result = described_class.call(cart: cart, params: { po_document: orphan_blob.signed_id })
+        result = described_class.call(cart: cart, params: { po_document_signed_id: orphan_blob.signed_id })
 
         expect(result).to be_failure
         expect(result.error.to_s).to include(I18n.t('spree.po_document_upload_incomplete'))

@@ -32,7 +32,7 @@ function ReportPage() {
     return (
       <ResourceLayout
         header={<PageHeader title={t('admin.common.loading')} backTo="reports" />}
-        main={<div className="text-sm text-muted-foreground">{t('admin.common.loading')}</div>}
+        main={<div className="text-base text-muted-foreground">{t('admin.common.loading')}</div>}
       />
     )
   }
@@ -96,6 +96,8 @@ function ReportDetail({
             title={report.name}
             subtitle={report.description ?? undefined}
             backTo="reports"
+            resource={report}
+            endpoint={`/api/v3/admin/reporting/saved_reports/${report.id}`}
             badges={
               report.seeded && <Badge variant="secondary">{t('admin.reports.kind.built_in')}</Badge>
             }
@@ -158,7 +160,7 @@ function ReportDetail({
         main={
           <div className="flex flex-col gap-4">
             {report.seeded && (
-              <p className="text-sm text-muted-foreground">{t('admin.reports.seeded_hint')}</p>
+              <p className="text-base text-muted-foreground">{t('admin.reports.seeded_hint')}</p>
             )}
             <ReportWorkspace
               draft={draft}

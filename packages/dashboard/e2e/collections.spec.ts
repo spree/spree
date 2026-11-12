@@ -36,6 +36,23 @@ test.describe('collections management', () => {
     await expect(rowButton(page, name)).toBeVisible({ timeout: 15_000 })
   })
 
+  // Filled by the probes in src/testing/slot-probes.tsx.
+  test('renders the plugin slots on the create and edit pages', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, COLLECTIONS_PATH(creds.store_id), CTA)
+
+    await page.getByRole('button', { name: CTA }).click()
+    await expect(page.getByText('Slot probe: collection.form_main (new)')).toBeVisible()
+    await expect(page.getByText('Slot probe: collection.form_sidebar (new)')).toBeVisible()
+
+    await page.locator('#collection-name').fill(`E2E Slots ${Date.now()}`)
+    await page.getByRole('button', { name: /^save$/i }).click()
+    await expect(page.getByText('Slot probe: collection.form_main (edit)')).toBeVisible({
+      timeout: 15_000,
+    })
+    await expect(page.getByText('Slot probe: collection.form_sidebar (edit)')).toBeVisible()
+  })
+
   test('edits the name and default sorting', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, COLLECTIONS_PATH(creds.store_id), CTA)
@@ -149,8 +166,10 @@ test.describe('collections management', () => {
 
     // Staged, not written: Discard rolls it back with the rest of the form.
     await expect(productRow.getByRole('button', { name: /restore/i })).toBeVisible()
+    await expect(page.getByText(/^unsaved changes$/i)).toBeVisible()
     await page.getByRole('button', { name: /^discard$/i }).click()
     await expect(productRow.getByRole('button', { name: /restore/i })).toHaveCount(0)
+    await expect(page.getByText(/^unsaved changes$/i)).toHaveCount(0)
     await expect(productRow).toBeVisible()
 
     // Staging it again and saving is what actually removes it.
@@ -213,15 +232,28 @@ test.describe('collections management', () => {
     // Target the switch role specifically — Base UI also renders a hidden
     // checkbox input carrying the same accessible name.
     await page.getByRole('switch', { name: /set members automatically/i }).click()
-    await expect(page.locator('#collection-rule-value-0')).toBeVisible()
-    await page.locator('#collection-rule-value-0').fill('summer')
+    // Each rule kind brings its own value control: a switch for "On sale",
+    // a number of days for "Recently published", tags for a tag rule.
+    const ruleKind = page.getByRole('combobox', { name: /^rule$/i }).first()
+    await ruleKind.click()
+    await page.getByRole('option', { name: /on sale/i }).click()
+    await expect(page.getByRole('switch', { name: /^on sale$/i })).toBeChecked()
+    await ruleKind.click()
+    await page.getByRole('option', { name: /recently published/i }).click()
+    await expect(page.getByRole('spinbutton', { name: /published within/i })).toHaveValue('30')
+    await ruleKind.click()
+    await page.getByRole('option', { name: /^tag/i }).click()
+
+    const tags = page.getByPlaceholder(/pick tags/i)
+    await tags.fill('summer')
+    await tags.press('Enter')
 
     await page.getByRole('button', { name: /^save$/i }).click()
 
     // Create lands on the edit page, hydrated from the persisted row — so the
     // rule and the automatic flag both round-tripped through the API.
     await expect(page.getByRole('heading', { name, level: 1 })).toBeVisible({ timeout: 15_000 })
-    await expect(page.locator('#collection-rule-value-0')).toHaveValue('summer')
+    await expect(page.getByText('summer', { exact: true })).toBeVisible()
 
     // The products panel is read-only: it explains that the rules own the
     // membership and offers no way to curate by hand.

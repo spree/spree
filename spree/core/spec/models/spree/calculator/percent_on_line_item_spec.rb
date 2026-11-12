@@ -7,8 +7,6 @@ describe Spree::Calculator::PercentOnLineItem, type: :model do
   before { allow(calculator).to receive_messages preferred_percent: 10 }
 
   describe '#compute' do
-    it { expect(calculator.preferred_apply_only_on_full_priced_items).to be false }
-
     shared_examples 'computing amount correctly' do
       it 'rounds result correctly' do
         allow(line_item).to receive_messages amount: 31.08

@@ -13,11 +13,10 @@ module Spree
         #
         # The body picks the subclass against the registry (returns 422 with
         # the configured error code on miss), strips `type`/`preferences`
-        # from the permitted attrs, builds/assigns the rest, and routes
-        # preference values through the typed `preferred_<name>=` setters
-        # so booleans/decimals/etc. get coerced. Unknown preference keys
-        # are silently dropped — the schema endpoint is the source of truth
-        # for what's settable.
+        # from the permitted attrs, builds/assigns the rest, and writes the
+        # preferences after checking them against the subclass's schema —
+        # an unknown key or a value of the wrong type is a 422
+        # `invalid_preferences`.
         module SubclassedResource
           extend ActiveSupport::Concern
 
@@ -45,9 +44,9 @@ module Spree
             attrs, preferences, calculator = extract_subclass_params(permitted)
 
             @resource = build_subclassed_resource(klass, attrs)
+            authorize_resource!(@resource, :create)
             apply_preferences(@resource, preferences) if preferences.present?
             apply_calculator(@resource, calculator) if calculator.present?
-            authorize_resource!(@resource, :create)
 
             if @resource.save
               render json: serialize_resource(@resource), status: :created
@@ -63,11 +62,13 @@ module Spree
             permitted = permitted_params_for(@resource.class)
             attrs, preferences, calculator = extract_subclass_params(permitted)
 
-            @resource.assign_attributes(attrs)
-            apply_preferences(@resource, preferences) if preferences.present?
-            apply_calculator(@resource, calculator) if calculator.present?
+            saved = save_atomically do
+              @resource.assign_attributes(attrs)
+              apply_preferences(@resource, preferences) if preferences.present?
+              apply_calculator(@resource, calculator) if calculator.present?
+            end
 
-            if @resource.save
+            if saved
               render json: serialize_resource(@resource)
             else
               render_validation_error(@resource.errors)
@@ -109,25 +110,10 @@ module Spree
             )
           end
 
+          # Validated against the subclass's schema before anything is written
+          # (see `Spree::Preferences::Preferable#assign_preferences`).
           def apply_preferences(resource, preferences)
-            password_keys = resource.password_preference_keys
-
-            preferences.each do |key, value|
-              pref_name = key.to_sym
-              next unless resource.has_preference?(pref_name)
-              # Internal preferences are Spree's to write — a secret a
-              # provider issued, an id it gave back. They are absent from the
-              # schema, so no form offers them; ignoring them here is what
-              # stops a client writing one anyway and breaking the signature
-              # check that depends on it.
-              next if resource.preference_internal(pref_name)
-              # Round-trip guard: clients fetching a record see masked
-              # `:password` values. Submitting the mask back unchanged
-              # must NOT overwrite the real secret with `••••cret`.
-              next if password_keys.include?(pref_name) && Spree::Preferences::Masking.masked?(value)
-
-              resource.set_preference(pref_name, value)
-            end
+            resource.assign_preferences(preferences)
           end
 
           # Pulls `preferences` and `calculator` out of the permitted

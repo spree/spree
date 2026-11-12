@@ -4,16 +4,6 @@ describe Spree::AdminUserMethods do
   let(:admin_user) { create(:admin_user) }
   let(:current_store) { @default_store }
 
-  describe 'prefixed_id' do
-    it 'generates a prefixed_id starting with adm_' do
-      expect(admin_user.prefixed_id).to start_with('adm_')
-    end
-
-    it 'uses prefixed_id as to_param' do
-      expect(admin_user.to_param).to eq(admin_user.prefixed_id)
-    end
-  end
-
   describe 'normalizations' do
     it 'normalizes email' do
       admin_user.update(email: '  ADMIN@EXAMPLE.COM  ')
@@ -67,44 +57,9 @@ describe Spree::AdminUserMethods do
     end
   end
 
-  describe 'selected_locale' do
-    # The admin-UI display language is a client concern (the React dashboard
-    # ships its own locale bundles); the backend just stores the preference and
-    # does NOT validate it against Spree.available_locales (Rails/Spree
-    # locales), which is an unrelated list. Each consumer applies it against its
-    # own supported set.
-    it 'stores any locale code, including ones the Rails backend has no translations for' do
-      admin_user.update(selected_locale: 'pl')
-      expect(admin_user.reload.selected_locale).to eq('pl')
-    end
-
-    it 'accepts a blank value' do
-      admin_user.update!(selected_locale: 'pl')
-      admin_user.update!(selected_locale: nil)
-      expect(admin_user.reload.selected_locale).to be_nil
-    end
-  end
-
-  describe 'ransackable attributes' do
-    it 'allows searching by id' do
-      expect(Spree.admin_user_class.ransackable_attributes).to include('id')
-    end
-
-    it 'allows searching by email' do
-      expect(Spree.admin_user_class.ransackable_attributes).to include('email')
-    end
-
-    it 'allows searching by first_name' do
-      expect(Spree.admin_user_class.ransackable_attributes).to include('first_name')
-    end
-
-    it 'allows searching by last_name' do
-      expect(Spree.admin_user_class.ransackable_attributes).to include('last_name')
-    end
-  end
-
-  describe 'ransackable associations' do
-    it 'allows searching by spree_roles' do
+  describe 'ransackable attributes and associations' do
+    it 'allows searching by id, email, names and roles' do
+      expect(Spree.admin_user_class.ransackable_attributes).to include('id', 'email', 'first_name', 'last_name')
       expect(Spree.admin_user_class.ransackable_associations).to include('spree_roles')
     end
   end
@@ -179,45 +134,6 @@ describe Spree::AdminUserMethods do
           expect { admin_user.destroy }.to change(Spree::Export, :count).by(-1)
         end
       end
-    end
-  end
-
-  describe 'class configuration' do
-    it 'uses a different class than Spree.customer_class' do
-      expect(Spree.admin_user_class).to eq(Spree::AdminUser)
-      expect(Spree.customer_class).to eq(Spree::Customer)
-      expect(Spree.admin_user_class).not_to eq(Spree.customer_class)
-    end
-
-    it 'does not include CustomerMethods' do
-      expect(Spree::AdminUser.included_modules).not_to include(Spree::CustomerMethods)
-    end
-
-    it 'includes AdminUserMethods' do
-      expect(Spree::AdminUser.included_modules).to include(Spree::AdminUserMethods)
-    end
-  end
-
-  describe 'avatar attachment' do
-    it 'can attach an avatar' do
-      admin_user.avatar.attach(
-        io: File.open(Spree::Core::Engine.root.join('spec', 'fixtures', 'thinking-cat.jpg')),
-        filename: 'avatar.jpg',
-        content_type: 'image/jpeg'
-      )
-      expect(admin_user.avatar).to be_attached
-    end
-  end
-
-  describe 'roles integration' do
-    it 'can have roles assigned' do
-      role = create(:role, name: 'custom_role')
-      admin_user.add_role('custom_role', current_store)
-      expect(admin_user.has_spree_role?('custom_role', current_store)).to be(true)
-    end
-
-    it 'can check admin status' do
-      expect(admin_user.spree_admin?(current_store)).to be(true)
     end
   end
 end

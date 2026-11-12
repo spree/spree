@@ -1,9 +1,11 @@
 import type { Store } from '@spree/admin-sdk'
+import { useStore } from '@spree/dashboard-core'
 import {
   Button,
   CopyToClipboardButton,
   ExternalLink,
   Input,
+  Item,
   Label,
   Sheet,
   SheetContent,
@@ -14,6 +16,7 @@ import {
   toastManager,
 } from '@spree/dashboard-ui'
 import { EyeIcon, EyeOffIcon } from '@spree/dashboard-ui/icons'
+import { useRouter } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useStorefrontPublishableKey } from '../../hooks/use-api-keys'
@@ -25,8 +28,13 @@ const STOREFRONT_DOCS_URL = 'https://spreecommerce.org/docs/developer/storefront
 
 // Mirrors Spree::Admin::StorefrontHelper#vercel_deploy_url: clone the official
 // Next.js storefront with the store's credentials prefilled, and come back to
-// the Getting Started page after a successful deploy.
-function vercelDeployUrl(store: Store, token: string, envDescription: string): string {
+// `returnUrl` after a successful deploy.
+function vercelDeployUrl(
+  store: Store,
+  token: string,
+  envDescription: string,
+  returnUrl: string,
+): string {
   const params = new URLSearchParams({
     'repository-url': STOREFRONT_REPOSITORY_URL,
     'project-name': `${store.code}-storefront`,
@@ -38,7 +46,7 @@ function vercelDeployUrl(store: Store, token: string, envDescription: string): s
     }),
     envDescription,
     envLink: `${STOREFRONT_REPOSITORY_URL}#readme`,
-    'redirect-url': window.location.origin + window.location.pathname,
+    'redirect-url': returnUrl,
   })
   return `https://vercel.com/new/clone?${params.toString()}`
 }
@@ -82,7 +90,18 @@ export function StorefrontConnectSheet({
   initialUrl,
 }: StorefrontConnectSheetProps) {
   const { t } = useTranslation()
-  const [url, setUrl] = useState(() => initialUrl ?? store.preferred_storefront_url ?? '')
+  const { storeId } = useStore()
+  const router = useRouter()
+  const [url, setUrl] = useState(() => initialUrl ?? store.storefront_url ?? '')
+  // The sheet also opens from the sidebar checklist on any page, but only the
+  // Getting Started page picks up Vercel's callback and reopens it.
+  const returnUrl =
+    window.location.origin +
+    router.buildLocation({
+      to: '/$storeId/getting-started',
+      params: { storeId },
+      search: { task: 'setup_storefront' },
+    }).publicHref
   const [showKey, setShowKey] = useState(false)
 
   const {
@@ -152,7 +171,7 @@ export function StorefrontConnectSheet({
               <Skeleton className="h-9" />
             ) : keyError ? (
               <div className="flex items-center gap-3">
-                <p className="text-destructive text-sm">
+                <p className="text-destructive text-base">
                   {t('admin.pages.getting_started.storefront_sheet.key_error')}
                 </p>
                 <Button type="button" variant="outline" size="sm" onClick={() => refetchKey()}>
@@ -186,11 +205,11 @@ export function StorefrontConnectSheet({
             )}
           </div>
 
-          <div className="flex flex-col gap-2 rounded-lg border border-border-subtle p-4">
-            <p className="font-medium text-sm">
+          <Item variant="outline" className="flex-col items-stretch gap-2">
+            <p className="font-medium text-base">
               {t('admin.pages.getting_started.storefront_sheet.deploy_title')}
             </p>
-            <p className="text-muted-foreground text-sm">
+            <p className="text-muted-foreground text-base">
               {t('admin.pages.getting_started.storefront_sheet.deploy_copy')}
             </p>
             <div>
@@ -208,6 +227,7 @@ export function StorefrontConnectSheet({
                           store,
                           token,
                           t('admin.pages.getting_started.storefront_sheet.env_description'),
+                          returnUrl,
                         )
                       : undefined
                   }
@@ -227,7 +247,7 @@ export function StorefrontConnectSheet({
                 {t('admin.pages.getting_started.storefront_sheet.local_installation_instructions')}
               </ExternalLink>
             </div>
-          </div>
+          </Item>
 
           <form
             className="flex flex-col gap-3"
@@ -249,7 +269,7 @@ export function StorefrontConnectSheet({
                 )}
                 spellCheck={false}
               />
-              <p className="text-muted-foreground text-sm">
+              <p className="text-muted-foreground text-base">
                 {t('admin.pages.getting_started.storefront_sheet.storefront_url_help')}
               </p>
             </div>

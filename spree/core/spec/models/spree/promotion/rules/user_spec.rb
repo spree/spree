@@ -31,11 +31,6 @@ describe Spree::Promotion::Rules::User, type: :model do
         expect(rule).not_to be_eligible(order)
       end
     end
-
-    # Regression test for #3885
-    it 'can assign to user_ids' do
-      expect { rule.user_ids = "#{random_user.id}, #{user_placing_order.id}" }.not_to raise_error
-    end
   end
 
   describe '#add_users' do

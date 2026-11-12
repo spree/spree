@@ -22,7 +22,7 @@ async function seedProductWithPlainDescriptionTranslation(
   }
   const created = await page.request.post('/api/v3/admin/products', {
     headers,
-    data: { name, status: 'active', price: 9.99 },
+    data: { name, status: 'active', price: '9.99' },
   })
   if (!created.ok()) {
     throw new Error(`Failed to seed product: ${created.status()} ${await created.text()}`)
@@ -168,7 +168,13 @@ test.describe('product translations', () => {
     await coverageSearch(page).fill(name)
     const row = page.getByRole('row', { name: new RegExp(name) })
     await expect(row).toBeVisible({ timeout: 15_000 })
-    await expect(row.getByText('—')).toBeVisible()
+    // Other specs may add languages to the shared store, so read the German
+    // column rather than the whole row.
+    const headers = page.getByRole('table').filter({ has: row }).getByRole('columnheader')
+    const germanColumn = (await headers.allInnerTexts()).findIndex((text) => text.trim() === 'de')
+    expect(germanColumn).toBeGreaterThan(-1)
+    const germanCell = row.getByRole('cell').nth(germanColumn)
+    await expect(germanCell.getByText('—')).toBeVisible()
 
     await row.getByRole('button', { name }).click()
     const dialog = page.getByRole('dialog')
@@ -179,7 +185,7 @@ test.describe('product translations', () => {
     await expect(page.getByText(/translations saved/i)).toBeVisible({ timeout: 15_000 })
     await dialog.getByRole('button', { name: /^close$/i }).click()
 
-    await expect(row.getByText('—')).toBeHidden({ timeout: 15_000 })
-    await expect(row.getByText(/\d+\/\d+/)).toBeVisible()
+    await expect(germanCell.getByText('—')).toBeHidden({ timeout: 15_000 })
+    await expect(germanCell.getByText(/\d+\/\d+/)).toBeVisible()
   })
 })

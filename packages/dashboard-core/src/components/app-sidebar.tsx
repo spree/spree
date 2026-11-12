@@ -12,6 +12,7 @@ import {
 } from '@spree/dashboard-ui'
 import { PackageIcon } from '@spree/dashboard-ui/icons'
 import { useParams } from '@tanstack/react-router'
+import type { TFunction } from 'i18next'
 import type { ComponentProps, ReactNode } from 'react'
 import { useAuth } from '../hooks/use-auth'
 import { primarySidebarSide, useTranslation } from '../lib/i18n'
@@ -28,7 +29,7 @@ import { StoreSwitcher } from './store-switcher'
  * `labelKey` is resolved here rather than at registration so labels follow a
  * language change — a literal `label` is frozen at import time.
  */
-function entryToNavItem(entry: NavEntry, tenantId: string, t: (key: string) => string): NavItem {
+function entryToNavItem(entry: NavEntry, tenantId: string, t: TFunction): NavItem {
   const pathFor = (path: string) => (path === '/' ? `/${tenantId}` : `/${tenantId}${path}`)
   return {
     title: resolveNavLabel(entry, t),
@@ -129,6 +130,8 @@ export function AppSidebar({
   header,
   uiLocales,
   onEditProfile,
+  notifications,
+  widget,
   ...props
 }: ComponentProps<typeof Sidebar> & {
   /**
@@ -142,11 +145,15 @@ export function AppSidebar({
   uiLocales?: ReadonlyArray<{ code: string; name: string }>
   /** Opens the app's edit-profile dialog from the account menu. */
   onEditProfile?: () => void
+  /** Shown beside the account menu, such as a notifications bell. */
+  notifications?: ReactNode
+  /** A card pinned above the account menu. */
+  widget?: ReactNode
 }) {
   const { i18n } = useTranslation()
   const { storeId } = useParams({ strict: false }) as { storeId?: string }
   const { navItems, bottomItems, isLoading } = useNavItems(tenantId ?? storeId ?? 'default')
-  const { isMobile } = useSidebar()
+  const { isMobile, state } = useSidebar()
 
   return (
     <Sidebar collapsible="icon" variant="inset" side={primarySidebarSide(i18n.language)} {...props}>
@@ -172,7 +179,7 @@ export function AppSidebar({
             shell's shape steady and say the difference honestly.
 
             Keyed on `isLoading` alone, not on an empty list: entries without a
-            `subject` (Home, Getting Started) skip the permission filter, so the
+            `subject` (Home) skip the permission filter, so the
             list is never actually empty and a length check would never fire. */}
         {isLoading ? (
           <NavSkeleton />
@@ -183,6 +190,8 @@ export function AppSidebar({
                 alone below a screen of empty space, so on a phone it follows
                 the list. */}
             {isMobile && <NavBottom items={bottomItems} className="mb-2" />}
+            {/* The footer is hidden on a phone, so the widget follows the list. */}
+            {isMobile && widget && <div className="px-2 pb-2">{widget}</div>}
           </>
         )}
       </SidebarContent>
@@ -190,7 +199,21 @@ export function AppSidebar({
           list fades out above it rather than scrolling it away. */}
       {!isLoading && !isMobile && <NavBottom items={bottomItems} className="py-2" />}
       <SidebarFooter className="hidden md:flex">
-        <SidebarUser uiLocales={uiLocales} onEditProfile={onEditProfile} />
+        {widget}
+        {/* In icon mode the rail is too narrow for a row, so the control
+            stacks above the avatar. */}
+        <div
+          className={
+            state === 'collapsed'
+              ? 'flex flex-col-reverse items-center gap-1'
+              : 'flex items-center gap-1'
+          }
+        >
+          <div className="min-w-0 flex-1">
+            <SidebarUser uiLocales={uiLocales} onEditProfile={onEditProfile} />
+          </div>
+          {notifications}
+        </div>
       </SidebarFooter>
     </Sidebar>
   )

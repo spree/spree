@@ -30,6 +30,12 @@ RSpec.describe Spree::Api::V3::Store::CountriesController, type: :controller do
       expect(response.headers['X-Request-Id']).to eq('test-request-id-123')
     end
 
+    it 'lets cross-origin scripts read the request ID' do
+      get :index
+
+      expect(response.headers['Access-Control-Expose-Headers']).to eq('X-Request-Id')
+    end
+
     it 'removes X-Powered-By header' do
       get :index
 

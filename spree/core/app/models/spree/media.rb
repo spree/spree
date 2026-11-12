@@ -31,15 +31,6 @@ module Spree
     EXTERNAL_URL_CUSTOM_FIELD_KEY = 'external.url'
     MEDIA_TYPES = %w[image video external_video].freeze
 
-    # Domain attributes a client may write, shared by every write path — the
-    # media endpoints and the inline `media:` list on a product. Each path adds
-    # its own transport keys (an upload's signed id, a row id) on top. Adding a
-    # field here reaches both, so it can't be dropped on the one a client uses.
-    WRITABLE_ATTRIBUTES = %i[
-      alt position media_type external_video_url poster_signed_id
-      focal_point_x focal_point_y
-    ].freeze
-
     after_initialize { self.media_type ||= 'image' }
 
     belongs_to :viewable, polymorphic: true, touch: true, optional: true
@@ -91,8 +82,33 @@ module Spree
       )
     }
 
-    self.whitelisted_ransackable_attributes = %w[alt media_type created_at updated_at]
+    self.whitelisted_ransackable_attributes = %w[alt media_type created_at updated_at filename byte_size]
+
+    # The attached file's name and size, so a library can be listed by them.
+    # They live on the blob, not the asset row, hence a subquery per row.
+    ransacker :filename do |parent|
+      attached_blob_column(parent, :filename)
+    end
+
+    ransacker :byte_size, type: :integer do |parent|
+      attached_blob_column(parent, :byte_size)
+    end
+
+    def self.attached_blob_column(parent, column)
+      blobs = ActiveStorage::Blob.arel_table
+      attachments = ActiveStorage::Attachment.arel_table
+      Arel::Nodes::Grouping.new(
+        blobs.project(blobs[column]).
+          join(attachments).on(attachments[:blob_id].eq(blobs[:id])).
+          where(attachments[:record_type].eq(polymorphic_name)).
+          where(attachments[:record_id].eq(parent.table[:id])).
+          where(attachments[:name].eq('attachment')).
+          take(1)
+      )
+    end
+    private_class_method :attached_blob_column
     self.whitelisted_ransackable_scopes = %w[attached unattached filename_cont]
+    self.ransackable_scope_types = { 'attached' => 'boolean', 'unattached' => 'boolean' }
 
     delegate :key, :attached?, :variant, :variable?, :blob, :filename, :variation, to: :attachment
 

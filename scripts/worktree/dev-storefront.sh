@@ -3,7 +3,7 @@
 # worktree's Rails and this worktree's @spree/sdk build.
 # URL: https://store.<branch>.spree.localhost
 #
-# The storefront is a separate repo (spree/storefront, branch 6-0-dev) cloned
+# The storefront is a separate repo (spree/storefront, branch main) cloned
 # into storefront/ by setup.sh. It has its own pnpm project — deliberately not a
 # member of this workspace, whose single lockfile and global overrides would
 # have to cover Next 16 and the dashboard's Vite tree at once.
@@ -17,12 +17,11 @@ if [ ! -d storefront ]; then
   exit 1
 fi
 
-# A clone made before 6-0-dev was pushed sits on the storefront's default
-# branch, which targets the released Store API — the opposite of what this
-# worktree is for. Say so rather than let 6.0 changes look broken.
+# An older clone may still sit on the retired 6-0-dev branch, which no longer
+# follows the Store API. Say so rather than let current changes look broken.
 storefront_head=$(git -C storefront rev-parse --abbrev-ref HEAD)
 if [ "$storefront_head" != "$STOREFRONT_BRANCH" ]; then
-  echo "  ! storefront/ is on '$storefront_head', not '$STOREFRONT_BRANCH' — it targets the released Store API." >&2
+  echo "  ! storefront/ is on '$storefront_head', not '$STOREFRONT_BRANCH'." >&2
   echo "    git -C storefront fetch origin && git -C storefront checkout $STOREFRONT_BRANCH" >&2
 fi
 

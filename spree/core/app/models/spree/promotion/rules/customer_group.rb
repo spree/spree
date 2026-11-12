@@ -9,11 +9,8 @@ module Spree
         # Scoped to the promotion's own store: groups are store-owned, so an
         # id from elsewhere must raise rather than link a promotion to an
         # audience its store cannot see.
-        preference :customer_group_ids, :array, default: [],
-                   parse_on_set: normalize_id_preference(
-                     klass: Spree::CustomerGroup,
-                     scope: ->(rule) { rule.promotion.store.customer_groups }
-                   )
+        preference :customer_group_ids, :array, of: :id, model: 'Spree::CustomerGroup', default: [],
+                   scope: ->(rule) { rule.promotion.store.customer_groups }
 
         def customer_groups
           return Spree::CustomerGroup.none if preferred_customer_group_ids.blank?

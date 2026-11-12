@@ -12,6 +12,15 @@ class Spree::CustomerPreview < ActionMailer::Preview
     )
   end
 
+  def data_request_confirmation_email
+    data_request = Spree::DataRequest.new(
+      store: Spree::PreviewData.store(locale), kind: Spree::DataRequest::ERASURE,
+      email: Spree::PreviewData.customer.email, requested_at: Time.current
+    )
+
+    Spree::CustomerMailer.data_request_confirmation_email(data_request, 'preview-token')
+  end
+
   def data_export_email
     Spree::CustomerMailer.data_export_email(Spree::DataRequest.access.with_status(:completed).last)
   end

@@ -106,7 +106,7 @@ export function QuantityTierEditor({
                 )}
                 <InputGroupInput
                   type="number"
-                  step="0.01"
+                  step="any"
                   value={row.value}
                   disabled={disabled}
                   aria-label={labels.value}
@@ -123,7 +123,7 @@ export function QuantityTierEditor({
               ) : (
                 <Button
                   type="button"
-                  variant="ghost"
+                  variant="destructive-ghost"
                   size="icon"
                   className="size-8 shrink-0"
                   disabled={disabled}

@@ -109,7 +109,7 @@ export async function addOptionToVariants(
  * Title matches are exact to avoid catching "Categorization" when the caller
  * asked for "Categories" or similar prefix collisions.
  */
-function card(page: Page, title: RegExp): Locator {
+export function card(page: Page, title: RegExp): Locator {
   return page
     .locator('[data-slot="card"]')
     .filter({ has: page.locator('[data-slot="card-title"]', { hasText: title }) })
@@ -177,7 +177,7 @@ export async function clickMediaThumbnailAction(
   }
 
   await thumb.click({ button: 'right', force: true })
-  const item = media.page().getByRole('menuitem', { name: /^delete$/i })
+  const item = media.page().getByRole('menuitem', { name: /^remove$/i })
   await expect(item).toBeVisible()
   await item.click()
 }
@@ -185,6 +185,18 @@ export const customFieldsCard = (page: Page) => card(page, /^Custom fields$/)
 export const inventoryCard = (page: Page) => card(page, /^Inventory$/)
 export const pricesCard = (page: Page) => card(page, /^Prices$/)
 export const publishingCard = (page: Page) => card(page, /^Publishing$/)
+
+/**
+ * DataGrid `<MoneyCell>` and `<NumberCell>` render `<input readonly>` until
+ * the cell is in edit mode — `dblclick` triggers `setEditing(coords)` which
+ * focuses the input and clears `readOnly`. After that, `fill()` works as
+ * usual. Blur commits.
+ */
+export async function fillGridCell(cell: Locator, value: string): Promise<void> {
+  await cell.dblclick()
+  await cell.fill(value)
+  await cell.blur()
+}
 export const categorizationCard = (page: Page) => card(page, /^Categorization$/)
 
 function productCategoriesCombobox(page: Page) {

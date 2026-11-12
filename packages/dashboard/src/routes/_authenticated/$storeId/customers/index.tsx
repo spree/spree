@@ -1,11 +1,9 @@
-import { zodResolver } from '@hookform/resolvers/zod'
 import type { Customer } from '@spree/admin-sdk'
 import type { BulkAction, BulkActionFormProps } from '@spree/dashboard-core'
 import {
   adminClient,
   ExportButton,
   ImportButton,
-  mapSpreeErrorsToForm,
   ResourceMultiAutocomplete,
   ResourceTable,
   resourceSearchSchema,
@@ -13,31 +11,13 @@ import {
   TagCombobox,
   useStore,
 } from '@spree/dashboard-core'
-import {
-  BulkDialog,
-  Button,
-  Checkbox,
-  Field,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-  Input,
-  RichTextEditor,
-  RowActions,
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-} from '@spree/dashboard-ui'
+import { BulkDialog, Button, Field, FieldLabel, RowActions } from '@spree/dashboard-ui'
 import { PlusIcon, TagsIcon, UserMinusIcon, UserPlusIcon } from '@spree/dashboard-ui/icons'
-import { useMutation } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
-import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
+import { NewCustomerSheet } from '../../../../components/spree/customers/new-customer-sheet'
 import { ImportWizardDialog } from '../../../../components/spree/imports/import-wizard-dialog'
 import {
   importWizardSearchSchema,
@@ -53,11 +33,6 @@ import {
   useBulkRemoveCustomersFromGroups,
   useBulkRemoveCustomerTags,
 } from '../../../../hooks/use-customers'
-import {
-  NEW_CUSTOMER_DEFAULTS,
-  type NewCustomerFormValues,
-  newCustomerFormSchema,
-} from '../../../../schemas/customer'
 import '../../../../tables/customers'
 
 // Adds `?new=1` on top of the standard table search schema so the create sheet
@@ -225,7 +200,21 @@ function CustomersPage() {
           </>
         )}
       />
-      {isCreating && <NewCustomerSheet open onOpenChange={(o) => !o && closeSheet()} />}
+      {isCreating && (
+        <NewCustomerSheet
+          open
+          onOpenChange={(o) => !o && closeSheet()}
+          // Land on the new customer's page rather than the index — the next
+          // step is almost always an address or a note.
+          onCreated={(customer) =>
+            navigate({
+              to: '/$storeId/customers/$customerId',
+              params: { storeId, customerId: customer.id },
+              replace: true,
+            })
+          }
+        />
+      )}
       <ImportWizardDialog importId={wizard.importId} onClose={wizard.close} />
     </>
   )
@@ -335,193 +324,8 @@ function TagPickerDialog({
     >
       <Field>
         <FieldLabel>{t('admin.fields.customer.tags.label')}</FieldLabel>
-        <TagCombobox taggableType={Subject.Customer} value={tags} onChange={setTags} />
+        <TagCombobox taggableType="customer" value={tags} onChange={setTags} />
       </Field>
     </BulkDialog>
-  )
-}
-
-// ============================================================================
-// Create Sheet
-// ============================================================================
-
-function NewCustomerSheet({
-  open,
-  onOpenChange,
-}: {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-}) {
-  const { t } = useTranslation()
-  const { storeId } = Route.useParams()
-  const navigate = useNavigate()
-
-  const form = useForm<NewCustomerFormValues>({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    resolver: zodResolver(newCustomerFormSchema) as any,
-    defaultValues: NEW_CUSTOMER_DEFAULTS,
-  })
-
-  const createMutation = useMutation({
-    mutationFn: (params: Parameters<typeof adminClient.customers.create>[0]) =>
-      adminClient.customers.create(params),
-    onSuccess: (customer) => {
-      // Land on the new customer's detail page rather than leaving the user on
-      // the index — they almost always want to add an address or note next.
-      navigate({
-        to: '/$storeId/customers/$customerId',
-        params: { storeId, customerId: customer.id },
-        replace: true,
-      })
-    },
-  })
-
-  async function onSubmit(values: NewCustomerFormValues) {
-    const payload: Parameters<typeof adminClient.customers.create>[0] = {
-      email: values.email.trim(),
-      accepts_email_marketing: values.accepts_email_marketing,
-    }
-    if (values.first_name.trim()) payload.first_name = values.first_name.trim()
-    if (values.last_name.trim()) payload.last_name = values.last_name.trim()
-    if (values.phone.trim()) payload.phone = values.phone.trim()
-    // The editor emits an empty paragraph once it has been focused and cleared,
-    // which is not a note.
-    const internalNote = values.internal_note.trim()
-    if (internalNote && internalNote !== '<p></p>') payload.internal_note = internalNote
-    if (values.tags.length) payload.tags = values.tags
-
-    try {
-      await createMutation.mutateAsync(payload)
-    } catch (err) {
-      if (!mapSpreeErrorsToForm(err, form.setError)) throw err
-    }
-  }
-
-  return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent>
-        <SheetHeader>
-          <SheetTitle>{t('admin.pages.customers.new_cta')}</SheetTitle>
-          <SheetDescription>{t('admin.customers.new_sheet_description')}</SheetDescription>
-        </SheetHeader>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
-          <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
-            {form.formState.errors.root?.message && (
-              <p className="text-sm text-destructive" role="alert">
-                {form.formState.errors.root.message}
-              </p>
-            )}
-            <FieldGroup>
-              <Field>
-                <FieldLabel htmlFor="email">{t('admin.fields.email.label')}</FieldLabel>
-                <Input
-                  id="email"
-                  type="email"
-                  autoFocus
-                  aria-invalid={!!form.formState.errors.email || undefined}
-                  {...form.register('email')}
-                />
-                <FieldError errors={[form.formState.errors.email]} />
-              </Field>
-              <div className="grid grid-cols-2 gap-3">
-                <Field>
-                  <FieldLabel htmlFor="first_name">{t('admin.fields.first_name.label')}</FieldLabel>
-                  <Input
-                    id="first_name"
-                    aria-invalid={!!form.formState.errors.first_name || undefined}
-                    {...form.register('first_name')}
-                  />
-                  <FieldError errors={[form.formState.errors.first_name]} />
-                </Field>
-                <Field>
-                  <FieldLabel htmlFor="last_name">{t('admin.fields.last_name.label')}</FieldLabel>
-                  <Input
-                    id="last_name"
-                    aria-invalid={!!form.formState.errors.last_name || undefined}
-                    {...form.register('last_name')}
-                  />
-                  <FieldError errors={[form.formState.errors.last_name]} />
-                </Field>
-              </div>
-              <Field>
-                <FieldLabel htmlFor="phone">{t('admin.fields.phone.label')}</FieldLabel>
-                <Input
-                  id="phone"
-                  aria-invalid={!!form.formState.errors.phone || undefined}
-                  {...form.register('phone')}
-                />
-                <FieldError errors={[form.formState.errors.phone]} />
-              </Field>
-              <Field>
-                <FieldLabel>{t('admin.fields.customer.tags.label')}</FieldLabel>
-                <Controller
-                  name="tags"
-                  control={form.control}
-                  render={({ field }) => (
-                    <TagCombobox
-                      taggableType={Subject.Customer}
-                      value={field.value}
-                      onChange={field.onChange}
-                    />
-                  )}
-                />
-              </Field>
-              <Field>
-                <div className="flex items-start justify-between gap-4">
-                  <FieldLabel htmlFor="accepts_email_marketing" className="cursor-pointer">
-                    {t('admin.fields.customer.accepts_email_marketing.label')}
-                  </FieldLabel>
-                  <Controller
-                    name="accepts_email_marketing"
-                    control={form.control}
-                    render={({ field }) => (
-                      <Checkbox
-                        id="accepts_email_marketing"
-                        checked={!!field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    )}
-                  />
-                </div>
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="internal_note">
-                  {t('admin.fields.customer.internal_note.label')}
-                </FieldLabel>
-                <Controller
-                  control={form.control}
-                  name="internal_note"
-                  render={({ field }) => (
-                    <RichTextEditor
-                      id="internal_note"
-                      ariaLabel={t('admin.fields.customer.internal_note.label')}
-                      placeholder={t('admin.fields.customer.internal_note.placeholder')}
-                      value={field.value}
-                      onChange={field.onChange}
-                    />
-                  )}
-                />
-                <FieldError errors={[form.formState.errors.internal_note]} />
-              </Field>
-            </FieldGroup>
-          </div>
-          <SheetFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-              disabled={createMutation.isPending}
-            >
-              {t('admin.actions.cancel')}
-            </Button>
-            <Button type="submit" disabled={createMutation.isPending}>
-              {createMutation.isPending
-                ? t('admin.actions.creating')
-                : t('admin.pages.customers.create_label')}
-            </Button>
-          </SheetFooter>
-        </form>
-      </SheetContent>
-    </Sheet>
   )
 }

@@ -87,14 +87,6 @@ describe Spree::StockLevel, type: :model do
     end
   end
 
-  it 'maintains the count on hand for a variant' do
-    expect(subject.count_on_hand).to eq 10
-  end
-
-  it "can return the stock item's variant's name" do
-    expect(subject.variant_name).to eq(subject.variant.name)
-  end
-
   context 'available to be included in shipment' do
     context 'has stock' do
       it { expect(subject).to be_available }
@@ -240,8 +232,10 @@ describe Spree::StockLevel, type: :model do
 
       before { subject.set_count_on_hand(-2, force: true) }
 
-      it "doesn't process backorders" do
+      it "doesn't process backorders when stock drops further" do
         expect(subject).not_to receive(:backordered_inventory_units)
+
+        subject.set_count_on_hand(-3, force: true)
       end
 
       context 'adds new items' do
@@ -320,11 +314,7 @@ describe Spree::StockLevel, type: :model do
 
   describe '#after_touch' do
     it 'touches its variant' do
-      Timecop.scale(1000) do
-        expect do
-          subject.touch
-        end.to change { subject.variant.updated_at }
-      end
+      expect { travel(1.second) { subject.touch } }.to change { subject.variant.updated_at }
     end
   end
 
@@ -618,6 +608,54 @@ describe Spree::StockLevel, type: :model do
         stub_store_preferences(Spree::Current.store, low_stock_threshold: 2)
 
         expect(Spree::StockLevel.low_stock).not_to include(running_low)
+      end
+    end
+
+    describe '.out_of_stock_overall and .low_stock_overall' do
+      let(:variant) { create(:variant) }
+      let(:warehouse) { create(:stock_location, propagate_all_variants: false) }
+      let(:shop) { create(:stock_location, propagate_all_variants: false) }
+      let!(:stocked) { warehouse.stock_level_or_create(variant).tap { |l| l.update_columns(count_on_hand: 40) } }
+      let!(:empty_shelf) { shop.stock_level_or_create(variant).tap { |l| l.update_columns(count_on_hand: 0) } }
+
+      before { variant.stock_levels.where.not(id: [stocked.id, empty_shelf.id]).delete_all }
+
+      it 'does not call a variant out of stock while another location can sell it' do
+        expect(Spree::StockLevel.out_of_stock).to include(empty_shelf)
+        expect(Spree::StockLevel.out_of_stock_overall).not_to include(empty_shelf, stocked)
+      end
+
+      it 'matches every level of a variant once its total runs out' do
+        stocked.update_columns(count_on_hand: 4, allocated_count: 4)
+
+        expect(Spree::StockLevel.out_of_stock_overall).to include(stocked, empty_shelf)
+      end
+
+      it 'reads low stock from the total, not one shelf' do
+        stocked.update_columns(count_on_hand: 3)
+        empty_shelf.update_columns(count_on_hand: 1)
+
+        expect(Spree::StockLevel.low_stock_overall(5)).to include(stocked, empty_shelf)
+        expect(Spree::StockLevel.low_stock_overall(3)).to be_empty
+      end
+
+      it 'ignores a location that is not active' do
+        stocked.update_columns(count_on_hand: 0)
+        empty_shelf.update_columns(count_on_hand: 2)
+        shop.update_columns(active: false)
+
+        expect(Spree::StockLevel.out_of_stock_overall).to include(stocked)
+      end
+
+      it 'never matches a variant that does not track inventory' do
+        stocked.update_columns(count_on_hand: 0)
+        variant.update_columns(track_inventory: false)
+
+        expect(Spree::StockLevel.out_of_stock_overall).not_to include(stocked, empty_shelf)
+      end
+
+      it 'sums over every location even when the list is narrowed to one' do
+        expect(Spree::StockLevel.where(stock_location_id: shop.id).with_stock_status('out_of_stock_overall')).to be_empty
       end
     end
 

@@ -4,6 +4,8 @@ module Spree
 
     belongs_to :payment, class_name: 'Spree::Payment'
 
+    delegate :currency, to: :payment
+
     def display_amount
       Spree::Money.new(amount, currency: payment.currency)
     end

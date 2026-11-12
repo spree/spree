@@ -13,7 +13,6 @@ module Spree
           typelize type: [:string, comment: 'Rule type. Built-in: seller_rule, category_rule, product_rule, item_total_rule. Extensions may register more.'],
                    commission_rate_id: :string,
                    preferences: 'Record<string, unknown>',
-                   preference_schema: 'Array<{ key: string; type: string; default: unknown }>',
                    product_ids: 'Array<string> | null',
                    seller_ids: 'Array<string> | null',
                    category_ids: 'Array<string> | null'
@@ -27,7 +26,6 @@ module Spree
           prefixed_id_attributes :commission_rate
 
           attribute :preferences, &:serialized_preferences
-          attribute :preference_schema, &:serialized_preference_schema
 
           # Reference lists are returned as prefixed IDs to match the rest of
           # the API. Product ids are read through a join table; seller and

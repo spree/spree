@@ -14,6 +14,15 @@ module Spree
           # grantable separately from store configuration (6.0-admin-rbac.md).
           scoped_resource :staff
 
+          request_params :admin_user do |body|
+            body.attribute :first_name, :string
+            body.attribute :last_name, :string
+            # Applied through `apply_role_ids`, scoped to the current store.
+            body.attribute :role_ids, :array, of: :id,
+              permit: false,
+              description: "Role IDs of the current store the user should hold. Replaces the user's roles on this store; an empty list removes them all."
+          end
+
           # DELETE /api/v3/admin/admin_users/:id
           # Removes role assignments for the current store rather than deleting
           # the account globally. The user keeps access to any other stores.
@@ -63,6 +72,16 @@ module Spree
             [{ spree_roles: :resource, avatar_attachment: :blob }]
           end
 
+          # Sessions carry IP addresses and the inviter costs a query per row,
+          # so both are shown one person at a time.
+          ONE_AT_A_TIME_EXPANDS = %w[sessions inviter].freeze
+
+          def expand_list
+            return super unless action_name == 'index'
+
+            super.reject { |path| ONE_AT_A_TIME_EXPANDS.include?(path.split('.').first) }
+          end
+
           # Restrict to users with a role assignment on the current store.
           # `accessible_by` enforces CanCanCan on top. Deduplication happens via
           # an ID subquery rather than `SELECT DISTINCT *` — the users table is
@@ -79,7 +98,7 @@ module Spree
           private
 
           def identity_params
-            params.permit(:first_name, :last_name)
+            params.permit(*declared_permitted_attributes)
           end
 
           def role_ids_param

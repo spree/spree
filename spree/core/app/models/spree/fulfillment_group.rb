@@ -72,12 +72,17 @@ module Spree
       fulfillments.sum { |fulfillment| fulfillment.discounted_cost.to_d }
     end
 
+    # @return [String] the currency the parcel was quoted in
+    def currency
+      primary.currency
+    end
+
     # @return [String, Spree::Money] the forwarder's placeholder while a
     #   freight rate is unpriced, money otherwise
     def display_cost(**options)
       return primary.display_cost(**options) if unpriced?
 
-      Spree::Money.new(cost, { currency: primary.currency }.merge(options))
+      Spree::Money.new(cost, { currency: currency }.merge(options))
     end
 
     # @return [Boolean]

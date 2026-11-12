@@ -16,6 +16,26 @@ module Spree
           # readable ones instead of gating on a single scope.
           skip_scope_check! only: :index
 
+          request_params :export do |body|
+            body.attribute :type, :string,
+              required: true, on: :create,
+              example: 'products',
+              description: 'Which dataset to export, as its shorthand: `products`, `orders`, `customers`, `product_translations`, `gift_cards`, `coupon_codes`, `newsletter_subscribers`, `price_list_prices`, `purchase_orders`, or a type an extension registers.'
+            body.attribute :record_selection, :string,
+              choices: %w[filtered all],
+              example: 'filtered',
+              description: '`filtered` (the default) keeps `search_params`; `all` ignores them and exports every record in scope.'
+            body.attribute :results_url, :string,
+              example: 'https://admin.example.com/store_abc/exports',
+              description: "Absolute URL of your admin exports view; the export-done email uses it as the download button target. Only honored when it matches one of the store's allowed origins."
+            # Read from the raw params: a Ransack hash nests groupings, which
+            # `permit(search_params: {})` rejects.
+            body.attribute :search_params, :hash,
+              permit: false,
+              example: { name_cont: 'shirt' },
+              description: 'A Ransack query, with the predicates the list endpoint accepts. A `price_list_prices` export requires `price_list_id_eq` naming a price list of the current store, and refuses `record_selection: "all"`.'
+          end
+
           # We stream the CSV inline rather than redirecting to ActiveStorage's
           # signed-URL endpoint because the SPA's Vite proxy only forwards
           # `/api/*`. A cross-origin redirect to `/rails/active_storage/...`
@@ -55,10 +75,16 @@ module Spree
             [:user, { attachment_attachment: :blob }]
           end
 
+          # Narrowed to the kinds this caller may read.
+          #
+          # Filtered for every principal that carries a ceiling, not only a
+          # secret key: an OAuth token resolves as a staff user with no key,
+          # so testing for one let an agent list every export in the store —
+          # including that customer and gift-card exports exist — whatever the
+          # merchant consented to. A staff member on a narrow role was
+          # unfiltered for the same reason.
           def scope
             collection = super
-            return collection unless scope_limited_principal?
-
             collection.where(type: readable_export_types)
           end
 
@@ -92,13 +118,10 @@ module Spree
             klass.new(attrs)
           end
 
-          # `search_params` carries an arbitrary Ransack hash with nested
-          # groupings (`{ g: [{ name_cont: 'foo' }] }`). Rails' `permit(k: {})`
-          # rejects nested hashes, so we extract via `to_unsafe_h`. `:format`
-          # is intentionally dropped — only CSV is supported and Rails' request
-          # format would otherwise overwrite the model's enum.
+          # `:format` is intentionally dropped — only CSV is supported and Rails'
+          # request format would otherwise overwrite the model's enum.
           def permitted_params
-            attrs = params.permit(*model_additional_permitted_attributes, :type, :record_selection, :results_url)
+            attrs = params.permit(*permitted_attributes)
             raw = params[:search_params]
             attrs[:search_params] = raw.respond_to?(:to_unsafe_h) ? raw.to_unsafe_h : raw if raw.present?
             attrs
@@ -127,10 +150,16 @@ module Spree
             action_name == 'create' ? resolve_export_type(params[:type]) : find_resource.class
           end
 
+          # `read_all` is not a catalog key, so it is asked of a secret key
+          # directly; every shipped export declares a required scope, and an
+          # extension type that declares none is readable only by a key that
+          # holds everything.
           def readable_export_types
             Spree::Export.available_types.select do |type|
               required = type.required_scope
-              required ? current_api_key.has_scope?("read_#{required}") : current_api_key.has_scope?('read_all')
+              next current_api_key&.has_scope?('read_all') if required.blank?
+
+              holds_permission?("read_#{required}")
             end.map(&:to_s)
           end
         end

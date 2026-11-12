@@ -9,7 +9,15 @@ import type {
   Promotion,
   Seller,
 } from '@spree/admin-sdk'
-import { adminClient, defineSearchEntry, Subject, searchRegistry } from '@spree/dashboard-core'
+import {
+  adminClient,
+  defineSearchEntry,
+  formatAmount,
+  productInStock,
+  Subject,
+  searchRegistry,
+  useMoneyLocale,
+} from '@spree/dashboard-core'
 import { StatusBadge, Thumbnail } from '@spree/dashboard-ui'
 import {
   Building2Icon,
@@ -160,9 +168,7 @@ searchRegistry.add(
         .list({ name_cont: search, limit, sort: 'name' })
         .then((r) => r.data),
     getKey: (g) => g.id,
-    // Groups have no detail page — they are edited in a sheet on the groups
-    // page, which `?edit=` opens directly.
-    getRoute: (g, storeId) => ({ to: `/${storeId}/customers/groups`, search: { edit: g.id } }),
+    getRoute: (g, storeId) => ({ to: `/${storeId}/customers/groups/${g.id}` }),
     renderRow: (g) => (
       <>
         <Thumbnail size="xs" fallback={<UsersRoundIcon />} />
@@ -239,12 +245,13 @@ searchRegistry.add(
  *  variants apart. Renders nothing when neither is known. */
 function ProductMeta({ product }: { product: Product }) {
   const { t } = useTranslation()
-  const stock = product.in_stock
-    ? t('admin.pages.products.inventory.in_stock_short')
+  const moneyLocale = useMoneyLocale()
+  const stock = productInStock(product)
+    ? t('admin.components.product_stock.in_stock_short')
     : product.backorderable
-      ? t('admin.pages.products.inventory.on_backorder')
-      : t('admin.pages.products.inventory.out_of_stock')
-  const price = product.price?.display_amount
+      ? t('admin.components.product_stock.on_backorder')
+      : t('admin.components.product_stock.out_of_stock')
+  const price = formatAmount(product.price?.amount, product.price?.currency, moneyLocale, '')
 
   return (
     <span className="truncate text-muted-foreground text-xs">

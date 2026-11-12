@@ -106,6 +106,16 @@ describe Spree::OrderGroupMailer, type: :mailer do
         expect(quoted).to eq(group.delivery_total)
         expect(message.text_part.body.to_s).to include(group.display_delivery_total.to_s)
       end
+
+      # A freight parcel awaiting its forwarder's quote costs zero for now;
+      # calling that free is what the email must never do.
+      it 'says a parcel awaiting a quote is quoted after review' do
+        group.orders.first.fulfillments.first.selected_delivery_rate.update_columns(unpriced: true)
+
+        parts_of(described_class.confirm_email(group.reload)).each do |body|
+          expect(body).to include('Quoted after review')
+        end
+      end
     end
 
     # SplitBySeller apportions an order-level fee into one row per child, all

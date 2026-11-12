@@ -3,6 +3,7 @@ import {
   adminClient,
   Can,
   GONE_STATUSES,
+  Money,
   PageHeader,
   Subject,
   useResourceMutation,
@@ -17,6 +18,7 @@ import {
   useConfirm,
 } from '@spree/dashboard-ui'
 import {
+  BanknoteIcon,
   CheckCircleIcon,
   ExternalLinkIcon,
   MailIcon,
@@ -29,7 +31,6 @@ import { Link, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { orderQueryKey, useDeleteOrder } from '../../../hooks/use-order'
-import { spreeJsonLinkResolver } from '../../../lib/json-link-resolver'
 import { orderGroupSearch } from '../../../lib/order-group-search'
 import { OrderCancelDialog } from './order-cancel-dialog'
 
@@ -83,6 +84,18 @@ export function OrderHeader({ order }: { order: Order }) {
     invalidate: [orderQueryKey(orderId)],
     successMessage: t('admin.orders.detail.messages.approved'),
     errorMessage: t('admin.orders.detail.errors.approve_failed'),
+  })
+  // The next step on most placed orders: taking money already authorized.
+  // Grouped payments act on every order in the checkout, so they stay on the
+  // payments card's own link-out.
+  const capturable = order.order_group_id
+    ? []
+    : (order.payments ?? []).filter((payment) => payment.can_capture)
+  const captureMutation = useResourceMutation({
+    mutationFn: (paymentId: string) => adminClient.orders.payments.capture(orderId, paymentId, {}),
+    invalidate: [orderQueryKey(orderId)],
+    successMessage: t('admin.orders.detail.messages.captured'),
+    showValidationErrors: true,
   })
   const resendMutation = useResourceMutation({
     mutationFn: () => adminClient.orders.resendConfirmation(orderId, {}),
@@ -206,6 +219,26 @@ export function OrderHeader({ order }: { order: Order }) {
               </Button>
             )}
 
+            {capturable.length === 1 && (
+              <Button
+                onClick={async () => {
+                  if (
+                    await confirm({
+                      message: t('admin.orders.detail.confirm.capture_message'),
+                      confirmLabel: t('admin.pages.orders.detail.actions.capture'),
+                    })
+                  ) {
+                    captureMutation.mutate(capturable[0].id)
+                  }
+                }}
+                disabled={captureMutation.isPending}
+              >
+                <BanknoteIcon />
+                {t('admin.pages.orders.detail.actions.capture')}{' '}
+                <Money amount={capturable[0].amount} currency={order.currency} />
+              </Button>
+            )}
+
             {order.status === 'draft' && (
               <Button
                 onClick={async () => {
@@ -233,7 +266,6 @@ export function OrderHeader({ order }: { order: Order }) {
           title: `Order ${order.number}`,
           fetch: () => adminClient.orders.get(orderId),
           endpoint: `/api/v3/admin/orders/${orderId}`,
-          resolveLink: spreeJsonLinkResolver(storeId),
         }}
       />
     </>

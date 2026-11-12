@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { type ApiKey, type ApiKeyCreateParams, SpreeError } from '@spree/admin-sdk'
+import { API_KEY_TYPES } from '@spree/core'
 import { mapSpreeErrorsToForm } from '@spree/dashboard-core'
 import {
   Button,
@@ -35,7 +36,7 @@ const buildCreateSchema = (t: TFunction) =>
   z
     .object({
       name: z.string().min(1, t('admin.fields.api_key.name.required')),
-      key_type: z.enum(['publishable', 'secret']),
+      key_type: z.enum(API_KEY_TYPES),
       scopes: z.array(z.string()),
       channel_id: z.string(),
     })
@@ -172,7 +173,9 @@ export function CreateApiKeyDialog({
                   )}
                 />
                 {form.formState.errors.scopes && (
-                  <p className="text-sm text-destructive">{form.formState.errors.scopes.message}</p>
+                  <p className="text-base text-destructive">
+                    {form.formState.errors.scopes.message}
+                  </p>
                 )}
               </Field>
             )}

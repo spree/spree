@@ -10,8 +10,7 @@ export const DeliveryRateSchema = z.object({
   carrier: z.string().nullable(),
   service_level: z.string().nullable(),
   estimated_delivery_date: z.string().nullable(),
-  display_cost: z.string(),
-  display_total: z.string(),
+  unpriced: z.boolean(),
 });
 
 export type DeliveryRate = z.infer<typeof DeliveryRateSchema>;

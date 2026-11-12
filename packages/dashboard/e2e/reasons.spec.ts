@@ -3,7 +3,7 @@ import { login, openRowMenu } from './helpers'
 
 const REASONS_PATH = (storeId: string) => `/${storeId}/settings/reasons`
 
-/** One of the four reason lists on the page, found by its card title. */
+/** One of the reason lists on the page, found by its card title. */
 function reasonCard(page: Page, title: RegExp) {
   return page
     .locator('[data-slot="card"]')

@@ -9,6 +9,7 @@ export const RefundSchema = z.object({
   refund_reason_id: z.string().nullable(),
   originator_id: z.string().nullable(),
   originator_type: z.string().nullable(),
+  reimbursement_id: z.string().nullable(),
 });
 
 export type Refund = z.infer<typeof RefundSchema>;

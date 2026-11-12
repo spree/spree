@@ -17,7 +17,9 @@ module Spree
     #
     # Validations
     #
-    validates_uniqueness_of :gateway_payment_profile_id, scope: :type
+    # A gateway profile id is only unique within the gateway account that issued it, so the same
+    # buyer needs a separate source under each payment method they pay through.
+    validates_uniqueness_of :gateway_payment_profile_id, scope: %i[type payment_method_id]
 
     #
     # Delegations

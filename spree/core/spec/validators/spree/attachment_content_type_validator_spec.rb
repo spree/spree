@@ -140,6 +140,38 @@ RSpec.describe Spree::AttachmentContentTypeValidator do
 
       expect(record.errors[:document]).to be_empty
     end
+
+    context 'against the purchase order allowlist' do
+      let(:model_class) do
+        Class.new(Spree::Cart) do
+          def self.name = 'Spree::Cart'
+
+          has_one_attached :document
+          validates_with Spree::AttachmentContentTypeValidator,
+                         attributes: [:document],
+                         in: Spree::Purchase::PurchaseOrder::PO_DOCUMENT_CONTENT_TYPES
+        end
+      end
+
+      it 'accepts a PDF' do
+        attach(pdf_bytes, filename: 'po.pdf', content_type: 'application/pdf').validate
+
+        expect(record.errors[:document]).to be_empty
+      end
+
+      it 'accepts a spreadsheet' do
+        attach(docx_bytes, filename: 'po.xlsx',
+                           content_type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet').validate
+
+        expect(record.errors[:document]).to be_empty
+      end
+
+      it 'accepts a CSV file' do
+        attach("po_number,sku,quantity\r\nPO-1,A1,3\r\n", filename: 'po.csv', content_type: 'text/csv').validate
+
+        expect(record.errors[:document]).to be_empty
+      end
+    end
   end
 
   describe 'when the allowlist is empty' do

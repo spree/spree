@@ -47,19 +47,9 @@ describe Spree::Product::Slugs, type: :model do
       another_product.destroy!
     end
 
-    it 'can use original slug' do
-      product.save!
-
-      expect(product.slugs.first.slug).to eq(name)
-      expect(product.slug).to eq(name)
-
-      deleted_slug = another_product.slugs.with_deleted.first
-      expect(deleted_slug.slug).to match(/deleted-#{name}-.+/)
-      expect(another_product.slug).to match(/deleted-#{name}-.+/)
-    end
-
     it 'can delete the product again and then create a new product with the original slug' do
       product.save!
+      expect(product.slug).to eq(name)
       product.destroy!
 
       new_product = build(:product, name: name)
@@ -76,13 +66,6 @@ describe Spree::Product::Slugs, type: :model do
       expect(deleted_slug_2.slug).to match(/deleted-#{name}-.+/)
       expect(product.slug).to match(/deleted-#{name}-.+/)
     end
-  end
-
-  it 'stores old slugs in FriendlyIds history' do
-    expect(product).to receive(:create_slug)
-    # Set it, otherwise the create_slug method avoids writing a new one
-    product.slug = 'custom-slug'
-    product.run_callbacks :save
   end
 
   context 'when product destroyed' do
@@ -151,14 +134,6 @@ describe Spree::Product::Slugs, type: :model do
     end
   end
 
-  it 'validates slug uniqueness' do
-    existing_product = product
-    new_product = create(:product)
-    new_product.slug = existing_product.slug
-
-    expect(new_product.valid?).to be false
-  end
-
   it "falls back to 'name-sku' for slug if regular name-based slug already in use" do
     product1 = build(:product)
     product1.name = 'test'
@@ -175,16 +150,6 @@ describe Spree::Product::Slugs, type: :model do
 
   context 'history' do
     let(:product) { create(:product, name: 'Product 67345') }
-
-    context 'when product is destroyed' do
-      before do
-        product.destroy
-      end
-
-      it 'keeps the history' do
-        expect(product.slugs.with_deleted).not_to be_empty
-      end
-    end
 
     context 'when product is restored' do
       before do

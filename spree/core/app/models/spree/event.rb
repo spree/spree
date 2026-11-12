@@ -86,14 +86,29 @@ module Spree
     # @return [Boolean]
     def self.matches?(event_name, pattern)
       return true if pattern == '*'
+      return event_name == pattern unless pattern.include?('*')
 
-      if pattern.include?('*')
-        regex = Regexp.new("^#{Regexp.escape(pattern).gsub('\*', '.*')}$")
-        event_name.match?(regex)
-      else
-        event_name == pattern
+      wildcard_match?(event_name, pattern)
+    end
+
+    # `*` stands for any run of characters, as in a shell glob. The comparison
+    # is plain string searching so a pattern taken from a merchant never
+    # reaches the regexp engine, which has had memory bugs in pattern parsing.
+    def self.wildcard_match?(event_name, pattern)
+      head, *middle, tail = pattern.split('*', -1)
+      return false unless event_name.start_with?(head) && event_name.end_with?(tail)
+      return false if event_name.length < head.length + tail.length
+
+      position = head.length
+      limit = event_name.length - tail.length
+      middle.all? do |segment|
+        found = event_name.index(segment, position)
+        next false if found.nil? || found + segment.length > limit
+
+        position = found + segment.length
       end
     end
+    private_class_method :wildcard_match?
 
     alias_method :to_h, :attributes
 

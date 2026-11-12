@@ -106,6 +106,12 @@ describe 'preferences stored as JSON' do
       expect(conversion.preference_tables).not_to include(table_name)
     end
 
+    it 'skips an anonymous model, which has no table to name' do
+      Class.new(Spree.base_class)
+
+      expect(conversion.preference_tables).to include('spree_payment_methods')
+    end
+
     it 'stops on a row it cannot read, naming the table and row' do
       id = insert_row("--- !ruby/hash-with-ivars:ActionController::Parameters\nelements: {}\n")
 

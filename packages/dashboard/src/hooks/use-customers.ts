@@ -1,4 +1,9 @@
-import type { Customer, TaxIdentifier, TaxIdentifierParams } from '@spree/admin-sdk'
+import type {
+  Customer,
+  TaxIdentifier,
+  TaxIdentifierCreateParams,
+  TaxIdentifierUpdateParams,
+} from '@spree/admin-sdk'
 import {
   adminClient,
   i18n,
@@ -7,6 +12,7 @@ import {
   useResourceMutation,
 } from '@spree/dashboard-core'
 import { useQuery } from '@tanstack/react-query'
+import { customerHasName } from '../components/spree/customer-combobox-option'
 
 /**
  * Shared config for any `<ResourceCombobox>` / `<ResourceMultiAutocomplete>`
@@ -28,7 +34,12 @@ export function customerAutocompleteProps(queryKey: string, companyId?: string |
   return {
     queryKey: companyId ? `${queryKey}:${companyId}` : queryKey,
     search: (q: string) =>
-      adminClient.customers.list({ search: q, limit: 100, fields: ['email'], ...scope }),
+      adminClient.customers.list({
+        search: q,
+        limit: 100,
+        fields: ['email', 'first_name', 'last_name', 'full_name'],
+        ...scope,
+      }),
     // Deliberately unscoped, where `search` is not: this resolves ids the form
     // already holds into labels, and offers nothing selectable. Narrowing it to
     // the company would make a selection taken before the company changed
@@ -36,7 +47,8 @@ export function customerAutocompleteProps(queryKey: string, companyId?: string |
     // gain — the scope that matters is on `search`, which decides what can be
     // picked.
     hydrate: (ids: string[]) => adminClient.customers.list({ id_in: ids, limit: ids.length }),
-    getOptionLabel: (c: Customer) => c.email ?? c.id,
+    // The name when there is one, as a merchant knows their customers by it.
+    getOptionLabel: (c: Customer) => (customerHasName(c) ? c.full_name : (c.email ?? c.id)),
     placeholder: i18n.t('admin.customers.autocomplete.placeholder'),
     emptyText: companyId
       ? i18n.t('admin.customers.autocomplete.empty_for_company')
@@ -121,6 +133,15 @@ export function useCustomerOrders(customerId: string, params: { limit: number; s
 type AddressCreateParams = Parameters<typeof adminClient.customers.addresses.create>[1]
 type AddressUpdateParams = Parameters<typeof adminClient.customers.addresses.update>[2]
 
+/** The customer's own book, for a picker that offers it. */
+export function useCustomerAddresses(customerId: string | undefined, limit = 50) {
+  return useQuery({
+    queryKey: useResourceKey('customers', customerId ?? 'noop', 'addresses', `${limit}`),
+    queryFn: () => adminClient.customers.addresses.list(customerId as string, { limit }),
+    enabled: !!customerId,
+  })
+}
+
 export function useCreateCustomerAddress(customerId: string) {
   return useResourceMutation({
     mutationFn: (params: AddressCreateParams) =>
@@ -201,7 +222,7 @@ export function useCustomerTaxIdentifiers(customerId: string | undefined) {
 }
 
 export function useCreateCustomerTaxIdentifier(customerId: string) {
-  return useResourceMutation<TaxIdentifier, Error, TaxIdentifierParams>({
+  return useResourceMutation<TaxIdentifier, Error, TaxIdentifierCreateParams>({
     mutationFn: (params) => adminClient.customers.taxIdentifiers.create(customerId, params),
     invalidate: [['customers', customerId, 'tax-identifiers']],
     successMessage: i18n.t('admin.tax_identifiers.messages.created'),
@@ -211,7 +232,11 @@ export function useCreateCustomerTaxIdentifier(customerId: string) {
 
 /** The id travels with the variables so one hook serves every row. */
 export function useUpdateCustomerTaxIdentifier(customerId: string) {
-  return useResourceMutation<TaxIdentifier, Error, { id: string; params: TaxIdentifierParams }>({
+  return useResourceMutation<
+    TaxIdentifier,
+    Error,
+    { id: string; params: TaxIdentifierUpdateParams }
+  >({
     mutationFn: ({ id, params }) =>
       adminClient.customers.taxIdentifiers.update(customerId, id, params),
     invalidate: [['customers', customerId, 'tax-identifiers']],

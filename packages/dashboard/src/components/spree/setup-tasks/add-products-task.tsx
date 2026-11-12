@@ -14,7 +14,7 @@ export function AddProductsTask({ task, storeId }: SetupTaskSlotContext) {
 
   return (
     <>
-      <p className="text-muted-foreground text-sm">
+      <p className="text-muted-foreground text-base">
         {t('admin.pages.getting_started.tasks.add_products.description')}
       </p>
       <div className="flex flex-wrap items-center gap-2">

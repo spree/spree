@@ -22,6 +22,13 @@ module Spree
       it 'rounds result correctly' do
         expect(subject.compute(package)).to eq(4.04)
       end
+
+      # A cart's package has no order; the currency comes from its owner.
+      it "rounds to the owner's currency" do
+        allow(package).to receive(:owner).and_return(build(:cart, currency: 'JPY'))
+
+        expect(subject.compute(package)).to eq(BigDecimal('4'))
+      end
     end
   end
 end

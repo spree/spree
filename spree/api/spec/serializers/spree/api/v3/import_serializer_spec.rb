@@ -11,7 +11,7 @@ RSpec.describe Spree::Api::V3::ImportSerializer do
 
   it 'includes all expected attributes' do
     expect(subject.keys).to match_array(%w[
-      id number type status store_id seller_id owner_type owner_id user_id rows_count
+      id number type status store_id seller_id user_id rows_count
       created_at updated_at
     ])
   end
@@ -21,23 +21,12 @@ RSpec.describe Spree::Api::V3::ImportSerializer do
     expect(subject['seller_id']).to be_nil
   end
 
-  # `owner` shipped in 5.6 and is emitted from the new pair until 6.1, so the
-  # two must agree.
-  context 'the deprecated owner pair' do
-    it 'names the store for an operator\'s import' do
-      expect(subject['owner_type']).to eq('store')
-      expect(subject['owner_id']).to eq(import.store.prefixed_id)
-    end
+  context 'when a seller ran it' do
+    let(:seller) { create(:seller, store: store) }
+    let(:import) { create(:import, store: store, seller: seller) }
 
-    context 'when a seller ran it' do
-      let(:seller) { create(:seller, store: store) }
-      let(:import) { create(:import, store: store, seller: seller) }
-
-      it 'names the seller' do
-        expect(subject['seller_id']).to eq(seller.prefixed_id)
-        expect(subject['owner_type']).to eq('seller')
-        expect(subject['owner_id']).to eq(seller.prefixed_id)
-      end
+    it 'returns the seller' do
+      expect(subject['seller_id']).to eq(seller.prefixed_id)
     end
   end
 

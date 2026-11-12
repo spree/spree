@@ -34,6 +34,7 @@ export {
   createSellerApiClient,
   rememberedSeller,
   rememberSeller,
+  sellerClient,
   setActiveSeller,
 } from './api-client'
 export { CenteredMessage } from './components/centered-message'

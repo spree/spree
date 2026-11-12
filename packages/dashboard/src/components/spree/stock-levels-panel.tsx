@@ -4,6 +4,7 @@ import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
+  cn,
   Input,
   Switch,
   Table,
@@ -13,7 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from '@spree/dashboard-ui'
-import { ChevronDownIcon, ChevronRightIcon } from '@spree/dashboard-ui/icons'
+import { ChevronRightIcon } from '@spree/dashboard-ui/icons'
 import { Link, useParams } from '@tanstack/react-router'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -54,7 +55,7 @@ export function StockLevelsPanel({ stockLocationId }: { stockLocationId: string 
     <div className="rounded-md border">
       <div className="flex items-center justify-between gap-2 border-b px-4 py-3">
         <div>
-          <h3 className="text-sm font-medium">{t('admin.stock_locations.stock_levels.title')}</h3>
+          <h3 className="text-base font-medium">{t('admin.stock_locations.stock_levels.title')}</h3>
           <p className="text-xs text-muted-foreground">
             {t('admin.stock_locations.stock_levels.help')}
           </p>
@@ -70,9 +71,9 @@ export function StockLevelsPanel({ stockLocationId }: { stockLocationId: string 
         />
       </div>
       {isFetching && items.length === 0 ? (
-        <div className="px-4 py-6 text-sm text-muted-foreground">{t('admin.common.loading')}</div>
+        <div className="px-4 py-6 text-base text-muted-foreground">{t('admin.common.loading')}</div>
       ) : items.length === 0 ? (
-        <div className="px-4 py-6 text-sm text-muted-foreground">
+        <div className="px-4 py-6 text-base text-muted-foreground">
           {search
             ? t('admin.stock_locations.stock_levels.empty_search')
             : t('admin.stock_locations.stock_levels.empty')}
@@ -154,13 +155,14 @@ function ProductGroup({ group, defaultOpen }: { group: StockLevelGroup; defaultO
   return (
     <Collapsible open={open} onOpenChange={setOpen}>
       <CollapsibleTrigger className="flex w-full items-center gap-2 px-4 py-2 text-left hover:bg-accent">
-        {open ? (
-          <ChevronDownIcon className="size-4 text-muted-foreground" />
-        ) : (
-          <ChevronRightIcon className="size-4 text-muted-foreground" />
-        )}
+        <ChevronRightIcon
+          className={cn(
+            'size-4 shrink-0 text-muted-foreground transition-transform duration-200 ease-out motion-reduce:transition-none',
+            open && 'rotate-90',
+          )}
+        />
         <div className="min-w-0 flex-1">
-          <div className="truncate text-sm font-medium">{group.productName}</div>
+          <div className="truncate text-base font-medium">{group.productName}</div>
           <div className="truncate text-xs text-muted-foreground">
             {t('admin.stock_locations.stock_levels.variant_count', { count: group.items.length })}
             {group.hasLowStock && ` · ${t('admin.stock_locations.stock_levels.low_stock_marker')}`}
@@ -221,20 +223,21 @@ function StockLevelRow({ item }: { item: StockLevel }) {
   return (
     <TableRow>
       <TableCell>
-        <div className="min-w-0">
-          {productId ? (
-            <Link
-              to="/$storeId/products/$productId"
-              params={{ storeId, productId }}
-              className="text-sm font-medium hover:underline"
-            >
-              {variantLabel}
-            </Link>
-          ) : (
-            <span className="text-sm font-medium">{variantLabel}</span>
-          )}
-          {sku && <div className="text-xs text-muted-foreground">SKU {sku}</div>}
-        </div>
+        {productId ? (
+          <Link
+            to="/$storeId/products/$productId"
+            params={{ storeId, productId }}
+            className="group block min-w-0 rounded-md outline-none focus-visible:shadow-field-focus"
+          >
+            <span className="font-medium text-base group-hover:underline">{variantLabel}</span>
+            {sku && <span className="block text-muted-foreground text-xs">SKU {sku}</span>}
+          </Link>
+        ) : (
+          <div className="min-w-0">
+            <span className="font-medium text-base">{variantLabel}</span>
+            {sku && <div className="text-muted-foreground text-xs">SKU {sku}</div>}
+          </div>
+        )}
       </TableCell>
       <TableCell className="text-right">
         <Input

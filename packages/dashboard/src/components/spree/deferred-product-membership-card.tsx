@@ -83,7 +83,8 @@ export function DeferredProductMembershipCard<TMember extends ProductMembershipM
   renderSubRows,
   headerActions,
 }: {
-  parentId: string
+  /** Unset while the parent is being created: picks stage until it is saved. */
+  parentId?: string
   storeId: string
   /** False for a viewer without update permission on the parent. */
   canEdit?: boolean
@@ -145,7 +146,7 @@ export function DeferredProductMembershipCard<TMember extends ProductMembershipM
       const ids: string[] = []
       let memberPage = 1
       while (true) {
-        const response = await listMembersPage(parentId, memberPage)
+        const response = await listMembersPage(parentId as string, memberPage)
         ids.push(...response.data.map((product) => product.id))
         const pages = response.meta?.pages ?? memberPage
         if (!response.meta?.next || memberPage >= pages) break
@@ -153,7 +154,7 @@ export function DeferredProductMembershipCard<TMember extends ProductMembershipM
       }
       return ids
     },
-    enabled: pickerOpen && !!listMembersPage,
+    enabled: pickerOpen && !!listMembersPage && !!parentId,
     staleTime: 30_000,
   })
 
@@ -229,7 +230,7 @@ export function DeferredProductMembershipCard<TMember extends ProductMembershipM
           <CardTitle>
             {tr('title')}
             {count > 0 && (
-              <span className="ml-2 font-normal text-muted-foreground text-sm">{count}</span>
+              <span className="ml-2 font-normal text-muted-foreground text-base">{count}</span>
             )}
           </CardTitle>
           {/* A read-only list explains itself first: it cannot be curated, so
@@ -282,14 +283,8 @@ export function DeferredProductMembershipCard<TMember extends ProductMembershipM
             typeof extraColumns === 'function' ? extraColumns(serverProducts) : extraColumns
           }
           renderSubRows={renderSubRows?.(serverProducts)}
-          renderTitle={(row) => (
-            <Link
-              to="/$storeId/products/$productId"
-              params={{ storeId, productId: row.id }}
-              className="truncate text-sm hover:underline"
-            >
-              {row.name}
-            </Link>
+          rowLink={(row) => (
+            <Link to="/$storeId/products/$productId" params={{ storeId, productId: row.id }} />
           )}
           labels={{
             filterPlaceholder: tr('filter_placeholder'),
@@ -312,7 +307,7 @@ export function DeferredProductMembershipCard<TMember extends ProductMembershipM
         <ResourcePickerSheet<Product>
           open={pickerOpen}
           onOpenChange={setPickerOpen}
-          queryKey={`${translationNamespace}-${parentId}-products-picker`}
+          queryKey={`${translationNamespace}-${parentId ?? 'new'}-products-picker`}
           // Pending removals are excluded: the picker locks its `selectedIds`
           // as "already in, not re-addable", so leaving them in would grey out
           // a product the merchant just removed and leave the row's restore

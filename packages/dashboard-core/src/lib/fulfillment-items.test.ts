@@ -4,6 +4,7 @@ import {
   fulfillmentItemRows,
   type GroupableFulfillment,
   type GroupableLineItem,
+  postSaleItemRow,
   unfulfilledItemRows,
 } from './fulfillment-items'
 
@@ -14,7 +15,9 @@ function lineItem(overrides: Partial<GroupableLineItem> = {}): GroupableLineItem
     options_text: 'Blue / M',
     quantity: 2,
     thumbnail_url: 'https://example.test/shirt.jpg',
-    display_price: '$10.00',
+    price: '10.00',
+    currency: 'USD',
+    product_id: 'prod_1',
     ...overrides,
   }
 }
@@ -44,6 +47,7 @@ describe('fulfillmentItemRows', () => {
         optionsText: 'Blue / M',
         thumbnailUrl: 'https://example.test/shirt.jpg',
         displayPrice: '$10.00',
+        productId: 'prod_1',
         quantity: 1,
       },
     ])
@@ -106,6 +110,7 @@ describe('fulfillmentItemRows', () => {
         optionsText: 'White',
         thumbnailUrl: null,
         displayPrice: null,
+        productId: null,
         quantity: 1,
       },
     ])
@@ -238,5 +243,52 @@ describe('fulfilledQuantities', () => {
     ])
 
     expect(quantities.size).toBe(0)
+  })
+})
+
+describe('postSaleItemRow', () => {
+  it('takes the name, image, price and product from the order line it came from', () => {
+    const row = postSaleItemRow(
+      'rli_1',
+      { line_item_id: 'li_1', variant_id: 'variant_1', quantity: 1 },
+      [lineItem({ variant_id: 'variant_1' })],
+    )
+
+    expect(row).toMatchObject({
+      key: 'rli_1',
+      name: 'Shirt',
+      optionsText: 'Blue / M',
+      thumbnailUrl: 'https://example.test/shirt.jpg',
+      displayPrice: '$10.00',
+      productId: 'prod_1',
+      quantity: 1,
+    })
+  })
+
+  it('falls back to the variant it names when the order line is gone', () => {
+    const row = postSaleItemRow(
+      'rli_1',
+      {
+        line_item_id: 'li_gone',
+        variant_id: 'variant_1',
+        variant: {
+          product_name: 'Mug',
+          options_text: 'Red',
+          thumbnail_url: 'https://example.test/mug.jpg',
+          product_id: 'prod_2',
+        },
+        quantity: 2,
+      },
+      [lineItem()],
+    )
+
+    expect(row).toMatchObject({
+      name: 'Mug',
+      optionsText: 'Red',
+      thumbnailUrl: 'https://example.test/mug.jpg',
+      displayPrice: null,
+      productId: 'prod_2',
+      quantity: 2,
+    })
   })
 })

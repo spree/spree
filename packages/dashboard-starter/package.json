@@ -20,20 +20,23 @@
     "@spree/dashboard": "workspace:^",
     "@spree/dashboard-core": "workspace:^",
     "@spree/dashboard-ui": "workspace:^",
-    "@tanstack/react-query": "^5.100.9",
-    "@tanstack/react-router": "^1.169.2",
-    "react": "^19.2.6",
-    "react-dom": "^19.2.6"
+    "@tanstack/react-query": "catalog:",
+    "@tanstack/react-router": "catalog:",
+    "i18next": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-hook-form": "catalog:",
+    "react-i18next": "catalog:"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.4.14",
-    "@playwright/test": "^1.59.1",
+    "@biomejs/biome": "catalog:",
+    "@playwright/test": "catalog:",
     "@spree/dashboard-plugin-example": "workspace:^",
-    "@types/react": "^19.2.14",
-    "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^6.0.1",
-    "typescript": "~6.0.3",
-    "vite": "^8.0.16",
-    "vitest": "^4.1.5"
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vitest": "catalog:"
   }
 }

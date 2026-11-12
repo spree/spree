@@ -61,10 +61,7 @@ module Spree
           private
 
           def create_params
-            @create_params ||= params.permit(
-              :memo, :reason_id, :stock_location_id,
-              items: [:fulfillment_item_id, :new_variant_id, :quantity]
-            )
+            @create_params ||= params.permit(*declared_permitted_attributes)
           end
 
           # The units going back are resolved through the order; what comes

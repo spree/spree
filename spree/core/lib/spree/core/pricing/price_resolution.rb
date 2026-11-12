@@ -103,10 +103,10 @@ module Spree
       def stamp(price)
         return if price.blank?
 
-        # The context always knows the variant, and the tax-inclusive
-        # restatement reads it — a provider that builds a Price without one
-        # would otherwise fail deep in that call with an obscure NoMethodError
-        # rather than anywhere near the provider that omitted it.
+        # The context always knows the variant, and everything downstream
+        # reads it — a provider that builds a Price without one would otherwise
+        # fail far from the provider that omitted it, with an obscure
+        # NoMethodError.
         price.variant ||= context.variant
         price.readonly!
         price.price_source = provider.class.key

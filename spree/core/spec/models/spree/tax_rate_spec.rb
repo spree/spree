@@ -22,16 +22,10 @@ describe Spree::TaxRate, type: :model do
 
     it 'reads a jurisdiction off an address, or takes the pair directly' do
       rate = create(:tax_rate, country_code: germany&.iso, tax_category: tax_category)
-
-      expect(described_class.for_address(german_address)).to eq([rate])
-      expect(described_class.for_jurisdiction(germany.iso)).to eq([rate])
-    end
-
-    it 'matches a rate for the address country' do
-      rate = create(:tax_rate, country_code: germany&.iso, tax_category: tax_category)
       create(:tax_rate, country_code: france&.iso, tax_category: tax_category)
 
       expect(described_class.for_address(german_address)).to eq([rate])
+      expect(described_class.for_jurisdiction(germany.iso)).to eq([rate])
     end
 
     it 'matches every rate configured for that country' do
@@ -90,8 +84,9 @@ describe Spree::TaxRate, type: :model do
   end
 
   describe 'estimating through the tax provider' do
-    # The EU one-stop-shop case: a catalogue priced gross in the store's own
-    # country, restated for a customer taxed somewhere else.
+    # The EU one-stop-shop case: a catalogue priced gross for a market of
+    # several countries. Every customer pays the price as entered, with their
+    # own country's tax inside it.
     context 'for MOSS taxation in Europe' do
       let(:germany) { create(:country, iso: 'DE', name: 'Germany') }
       let(:france) { create(:country, iso: 'FR', name: 'France') }
@@ -102,30 +97,30 @@ describe Spree::TaxRate, type: :model do
 
       let!(:german_vat) do
         create(:tax_rate, name: 'German VAT', amount: 0.19, tax_category: moss_category,
-                          country_code: germany&.iso, included_in_price: true)
+                          country_code: germany&.iso)
       end
       let!(:french_vat) do
         create(:tax_rate, name: 'French VAT', amount: 0.25, tax_category: moss_category,
-                          country_code: france&.iso, included_in_price: true)
+                          country_code: france&.iso)
       end
       # Physical goods are taxed where they ship from, so both EU countries
       # carry the same rate — one row each, a zone spanning both being gone.
       let!(:german_goods_vat) do
         create(:tax_rate, name: 'EU VAT (DE)', amount: 0.19, tax_category: normal_category,
-                          country_code: germany&.iso, included_in_price: true)
+                          country_code: germany&.iso)
       end
       let!(:french_goods_vat) do
         create(:tax_rate, name: 'EU VAT (FR)', amount: 0.19, tax_category: normal_category,
-                          country_code: france&.iso, included_in_price: true)
+                          country_code: france&.iso)
       end
 
       let(:download) { create(:product, tax_category: moss_category, price: 100) }
       let(:tshirt) { create(:product, tax_category: normal_category, price: 100) }
       let(:order) { create(:order, ship_address: nil, bill_address: nil) }
 
-      # Prices are quoted including German VAT — the market being browsed is
-      # Germany, which is where the store's own country comes from.
-      before { @default_store.default_market.update!(countries: [germany]) }
+      # Before an address the market's first country is the tax country, which
+      # is Germany here.
+      before { @default_store.default_market.update!(countries: [germany], tax_inclusive: true) }
 
       ZIPCODES = { 'DE' => '10115', 'FR' => '75001', 'IN' => '110001' }.freeze
 
@@ -157,19 +152,19 @@ describe Spree::TaxRate, type: :model do
           expect(order.included_tax_total).to eq(15.97)
         end
 
-        it 'to france costs more including tax' do
+        it 'to france costs 100 euros with French tax inside it' do
           ship_to(france)
           order.recalculate_totals!
-          expect(order.display_total).to eq(Spree::Money.new(105.04))
-          expect(order.included_tax_total).to eq(21.01)
+          expect(order.display_total).to eq(Spree::Money.new(100))
+          expect(order.included_tax_total).to eq(20)
           expect(order.additional_tax_total).to eq(0)
         end
 
-        it 'to somewhere else costs the net amount' do
+        it 'to somewhere untaxed costs 100 euros with no tax' do
           ship_to(india)
           order.recalculate_totals!
           expect(order.included_tax_total).to eq(0)
-          expect(order.display_total).to eq(Spree::Money.new(84.03))
+          expect(order.display_total).to eq(Spree::Money.new(100))
         end
       end
 
@@ -191,11 +186,11 @@ describe Spree::TaxRate, type: :model do
           expect(order.additional_tax_total).to eq(0)
         end
 
-        it 'to somewhere else costs the net amount' do
+        it 'to somewhere untaxed costs 100 euros with no tax' do
           ship_to(india)
           order.recalculate_totals!
           expect(order.included_tax_total).to eq(0)
-          expect(order.display_total).to eq(Spree::Money.new(84.03))
+          expect(order.display_total).to eq(Spree::Money.new(100))
         end
       end
     end
@@ -229,121 +224,89 @@ describe Spree::TaxRate, type: :model do
     end
   end
 
-  describe '.included_tax_amount_for' do
-    subject(:included_tax_amount) { Spree::TaxRate.included_tax_amount_for(price_options) }
-
-    let!(:order) { create :order_with_line_items }
-    let(:line_item) { order.line_items.first }
-    let(:country) { order.tax_address.country }
-
-    let!(:included_tax_rate) do
-      create(:tax_rate, included_in_price: true, tax_category: line_item.tax_category,
-                        country_code: country&.iso, amount: 0.4)
-    end
-    let!(:other_included_tax_rate) do
-      create(:tax_rate, included_in_price: true, tax_category: line_item.tax_category,
-                        country_code: country&.iso, amount: 0.05)
-    end
-    # Additional tax is added to the price rather than sitting inside it.
-    let!(:additional_tax_rate) do
-      create(:tax_rate, included_in_price: false, tax_category: line_item.tax_category,
-                        country_code: country&.iso, amount: 0.2)
-    end
-    let!(:included_tax_rate_from_somewhere_else) do
-      create(:tax_rate, included_in_price: true, tax_category: line_item.tax_category,
-                        country_code: create(:country, iso: 'JP', name: 'Japan')&.iso, amount: 0.1)
-    end
-
-    let(:price_options) { { country: country, tax_category: line_item.tax_category } }
-
-    it 'sums only the included rates of that jurisdiction' do
-      expect(included_tax_amount).to eq(0.45)
-    end
-
-    it 'accepts an address instead of a country' do
-      expect(described_class.included_tax_amount_for(address: order.tax_address,
-                                                    tax_category: line_item.tax_category)).to eq(0.45)
-    end
-
-    it 'is zero without a jurisdiction' do
-      expect(described_class.included_tax_amount_for(tax_category: line_item.tax_category)).to eq(0)
-    end
-
-    it 'is zero without a tax category' do
-      expect(described_class.included_tax_amount_for(country: country)).to eq(0)
-    end
-  end
-
   describe '#adjustment_label' do
     it 'returns the name and amount for the tax rate' do
       tax_rate = Spree::TaxRate.new(name: 'Sales Tax', amount: 0.1)
       expect(tax_rate.adjustment_label).to eq('Sales Tax 10%')
     end
-  end
 
-  describe '#amount_for_label' do
-    it 'returns an empty string when the amount is 0' do
-      tax_rate = Spree::TaxRate.new(amount: 0)
-      expect(tax_rate.send(:amount_for_label)).to eq('')
+    it 'leaves the percentage out when the amount is 0' do
+      tax_rate = Spree::TaxRate.new(name: 'Sales Tax', amount: 0)
+      expect(tax_rate.adjustment_label).to eq('Sales Tax')
     end
 
-    it 'returns a string with the percentage when the amount is not 0' do
-      tax_rate = Spree::TaxRate.new(amount: 0.1)
-      expect(tax_rate.send(:amount_for_label)).to eq(' 10%')
+    it 'says so when the tax is inside the price' do
+      tax_rate = Spree::TaxRate.new(name: 'VAT', amount: 0.2)
+      expect(tax_rate.adjustment_label(included: true)).to eq('VAT 20% (Included in Price)')
     end
   end
 
   describe 'percentage conversion' do
-    describe '#amount_percentage' do
+    it 'still answers the deprecated #amount_percentage, with a warning' do
+      expect(Spree::Deprecation).to receive(:warn).with(/amount_percentage is deprecated/)
+      expect(build(:tax_rate, amount: 0.0825).amount_percentage).to eq(BigDecimal('8.25'))
+    end
+
+    describe '#rate_percent' do
       it 'converts decimal amount to percentage' do
         tax_rate = build(:tax_rate, amount: 0.0825)
-        expect(tax_rate.amount_percentage).to eq(8.25)
+        expect(tax_rate.rate_percent).to eq(8.25)
       end
 
       it 'returns nil when amount is nil' do
         tax_rate = build(:tax_rate, amount: nil)
-        expect(tax_rate.amount_percentage).to be_nil
+        expect(tax_rate.rate_percent).to be_nil
       end
 
       it 'handles zero amount' do
         tax_rate = build(:tax_rate, amount: 0.0)
-        expect(tax_rate.amount_percentage).to eq(0.0)
+        expect(tax_rate.rate_percent).to eq(0.0)
       end
 
-      it 'rounds to 2 decimal places' do
+      it 'keeps every decimal the rate has' do
         tax_rate = build(:tax_rate, amount: 0.12345)
-        expect(tax_rate.amount_percentage).to eq(12.35)
+        expect(tax_rate.rate_percent).to eq(BigDecimal('12.345'))
       end
     end
 
-    describe '#amount_percentage=' do
+    describe '#rate_percent=' do
+      # The column keeps five decimals of the fraction; a sixth would be
+      # rounded away and charge a rate nobody entered.
+      it 'refuses a percentage more precise than the column keeps' do
+        tax_rate = build(:tax_rate)
+        tax_rate.rate_percent = '7.1255'
+
+        expect(tax_rate).not_to be_valid
+        expect(tax_rate.errors.details[:amount]).to include(error: :too_many_decimals, count: 5)
+      end
+
       it 'converts percentage to decimal amount' do
         tax_rate = build(:tax_rate)
-        tax_rate.amount_percentage = 8.25
+        tax_rate.rate_percent = 8.25
         expect(tax_rate.amount).to eq(0.0825)
       end
 
       it 'sets amount to nil when percentage is nil' do
         tax_rate = build(:tax_rate)
-        tax_rate.amount_percentage = nil
+        tax_rate.rate_percent = nil
         expect(tax_rate.amount).to be_nil
       end
 
       it 'sets amount to nil when percentage is empty string' do
         tax_rate = build(:tax_rate)
-        tax_rate.amount_percentage = ''
+        tax_rate.rate_percent = ''
         expect(tax_rate.amount).to be_nil
       end
 
       it 'handles zero percentage' do
         tax_rate = build(:tax_rate)
-        tax_rate.amount_percentage = 0
+        tax_rate.rate_percent = 0
         expect(tax_rate.amount).to eq(0.0)
       end
 
       it 'handles string percentage values' do
         tax_rate = build(:tax_rate)
-        tax_rate.amount_percentage = '5.5'
+        tax_rate.rate_percent = '5.5'
         expect(tax_rate.amount).to eq(0.055)
       end
     end

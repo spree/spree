@@ -58,6 +58,8 @@ RSpec.describe Spree::Api::V3::Store::Companies::AddressesController, type: :con
       expect(response).to have_http_status(:ok)
       expect(json_response['data'].map { |row| row['id'] }).
         to contain_exactly(own.prefixed_id, inherited.prefixed_id)
+      expect(json_response['data'].to_h { |row| [row['id'], row.dig('owner', 'id')] }).
+        to eq(own.prefixed_id => division.prefixed_id, inherited.prefixed_id => company.prefixed_id)
     end
   end
   # Reading what you inherit is not the same as editing it. A division member

@@ -14,7 +14,7 @@ module Spree
           def index
             render json: {
               data: current_store.supported_locales.map do |locale|
-                Spree.api.locale_serializer.new(locale).to_h
+                Spree.api.admin_locale_serializer.new(locale).to_h
               end
             }
           end

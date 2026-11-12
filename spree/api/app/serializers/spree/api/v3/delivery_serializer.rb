@@ -10,7 +10,7 @@ module Spree
                  carrier: [:string, nullable: true],
                  carrier_name: [:string, nullable: true],
                  service: [:string, nullable: true],
-                 status: [:string, enum: Spree::Delivery::STATUSES],
+                 status: [:string, enum: Spree::Delivery::STATUSES, enum_type_name: 'DeliveryStatus'],
                  estimated_delivery_at: [:string, nullable: true],
                  delivered_at: [:string, nullable: true]
 

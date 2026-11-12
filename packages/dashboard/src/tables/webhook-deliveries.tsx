@@ -17,7 +17,7 @@ defineTable<WebhookDelivery>('webhook-deliveries', {
   docsPath: 'settings/webhooks',
   description: i18n.t('admin.table_descriptions.webhook_deliveries'),
   title: i18n.t('admin.pages.settings.webhooks.deliveries_sheet_title'),
-  searchParam: 'event_name_cont',
+  searchParam: 'search',
   searchPlaceholder: i18n.t('admin.pages.settings.webhooks.deliveries.search_placeholder'),
   // `created_at` (not `delivered_at`) so freshly-queued rows whose
   // `delivered_at` is still null sort to the top. Matches the model's

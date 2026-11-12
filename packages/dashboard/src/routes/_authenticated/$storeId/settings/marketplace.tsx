@@ -1,19 +1,27 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { SpreeError, type Store } from '@spree/admin-sdk'
-import { currencyParts, mapSpreeErrorsToForm, PageHeader } from '@spree/dashboard-core'
+import { PAYOUT_SCHEDULE_INTERVALS } from '@spree/core'
+import {
+  currencyParts,
+  fractionToPercent,
+  mapSpreeErrorsToForm,
+  PageHeader,
+  percentToFraction,
+  SettingsFieldGroup,
+  SettingsRow,
+  SettingsSection,
+  SettingsSelectField,
+  SettingsSwitchField,
+  useStore,
+} from '@spree/dashboard-core'
 import {
   Alert,
   AlertDescription,
-  Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
   ErrorState,
   Field,
   FieldDescription,
   FieldError,
-  FieldGroup,
   FieldLabel,
   FormActions,
   InputGroup,
@@ -27,33 +35,30 @@ import {
   SelectTrigger,
   SelectValue,
   Skeleton,
-  Switch,
   toastManager,
   useFormSubmitShortcut,
 } from '@spree/dashboard-ui'
-import { InfoIcon } from '@spree/dashboard-ui/icons'
+import {
+  BanknoteIcon,
+  ClipboardCheckIcon,
+  FileTextIcon,
+  InfoIcon,
+  MessageCircleIcon,
+  PercentIcon,
+} from '@spree/dashboard-ui/icons'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useMemo } from 'react'
-import {
-  type Control,
-  Controller,
-  type FieldPath,
-  type FieldValues,
-  FormProvider,
-  useForm,
-} from 'react-hook-form'
+import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { ContentTypeCombobox } from '../../../../components/spree/content-type-combobox'
 import {
   usePayoutProviders,
   useStoreSettings,
   useUpdateStoreSettings,
 } from '../../../../hooks/use-store-settings'
 import {
-  fractionToPercentage,
   type MarketplaceSettingsFormValues,
   marketplaceSettingsFormSchema,
-  PAYOUT_SCHEDULE_INTERVALS,
-  percentageToFraction,
 } from '../../../../schemas/marketplace'
 
 export const Route = createFileRoute('/_authenticated/$storeId/settings/marketplace')({
@@ -82,26 +87,27 @@ function MarketplaceSettingsPage({ store }: { store: Store }) {
   const { storeId } = Route.useParams()
   const updateMutation = useUpdateStoreSettings()
   const { data: payoutProviders } = usePayoutProviders()
-  const { symbol: currencySymbol } = currencyParts(store.default_currency, i18n.language)
+  const { defaultCurrency } = useStore()
+  const { symbol: currencySymbol } = currencyParts(defaultCurrency, i18n.language)
 
   const form = useForm<MarketplaceSettingsFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(marketplaceSettingsFormSchema) as any,
     defaultValues: {
-      preferred_payout_provider: store.preferred_payout_provider ?? '',
-      preferred_default_payouts_schedule_interval:
-        (store.preferred_default_payouts_schedule_interval as (typeof PAYOUT_SCHEDULE_INTERVALS)[number]) ??
+      payout_provider: store.payout_provider ?? '',
+      default_payouts_schedule_interval:
+        (store.default_payouts_schedule_interval as (typeof PAYOUT_SCHEDULE_INTERVALS)[number]) ??
         'monthly',
-      preferred_default_minimum_payout_amount: Number(
-        store.preferred_default_minimum_payout_amount ?? 0,
-      ),
-      preferred_auto_approve_sellers: store.preferred_auto_approve_sellers ?? false,
-      preferred_auto_approve_seller_products: store.preferred_auto_approve_seller_products ?? false,
-      preferred_send_seller_transactional_emails:
-        store.preferred_send_seller_transactional_emails ?? true,
-      commission_tax_rate_percentage: fractionToPercentage(
-        store.preferred_default_commission_tax_rate,
-      ),
+      // `String` only until the regenerated Store type reads these as the decimal strings the API sends.
+      default_minimum_payout_amount: String(store.default_minimum_payout_amount ?? '0'),
+      auto_approve_sellers: store.auto_approve_sellers ?? false,
+      auto_approve_seller_products: store.auto_approve_seller_products ?? false,
+      seller_digital_assets_enabled: store.seller_digital_assets_enabled ?? false,
+      seller_digital_asset_content_types: store.seller_digital_asset_content_types ?? [],
+      review_seller_digital_asset_changes: store.review_seller_digital_asset_changes ?? true,
+      send_seller_transactional_emails: store.send_seller_transactional_emails ?? true,
+      commission_tax_rate_percentage:
+        fractionToPercent(String(store.default_commission_tax_rate ?? '')) || '0',
     },
   })
 
@@ -149,17 +155,16 @@ function MarketplaceSettingsPage({ store }: { store: Store }) {
   const onSubmit = async (values: MarketplaceSettingsFormValues) => {
     try {
       await updateMutation.mutateAsync({
-        preferred_payout_provider: values.preferred_payout_provider,
-        preferred_default_payouts_schedule_interval:
-          values.preferred_default_payouts_schedule_interval,
-        preferred_default_minimum_payout_amount: values.preferred_default_minimum_payout_amount,
-        preferred_auto_approve_sellers: values.preferred_auto_approve_sellers,
-        preferred_auto_approve_seller_products: values.preferred_auto_approve_seller_products,
-        preferred_send_seller_transactional_emails:
-          values.preferred_send_seller_transactional_emails,
-        preferred_default_commission_tax_rate: percentageToFraction(
-          values.commission_tax_rate_percentage,
-        ),
+        payout_provider: values.payout_provider,
+        default_payouts_schedule_interval: values.default_payouts_schedule_interval,
+        default_minimum_payout_amount: values.default_minimum_payout_amount,
+        auto_approve_sellers: values.auto_approve_sellers,
+        auto_approve_seller_products: values.auto_approve_seller_products,
+        seller_digital_assets_enabled: values.seller_digital_assets_enabled,
+        seller_digital_asset_content_types: values.seller_digital_asset_content_types,
+        review_seller_digital_asset_changes: values.review_seller_digital_asset_changes,
+        send_seller_transactional_emails: values.send_seller_transactional_emails,
+        default_commission_tax_rate: percentToFraction(values.commission_tax_rate_percentage),
       })
       form.reset(values)
       toastManager.add({ type: 'success', title: t('admin.messages.store_settings_updated') })
@@ -175,8 +180,11 @@ function MarketplaceSettingsPage({ store }: { store: Store }) {
   // A provider that moves money asks sellers to onboard with it first, which
   // is worth saying before the choice rather than after.
   const selectedProvider = payoutProviders?.data?.find(
-    (provider) => provider.id === form.watch('preferred_payout_provider'),
+    (provider) => provider.id === form.watch('payout_provider'),
   )
+  // The type list and the review rule only mean something once sellers may
+  // upload at all; shown before that they read as settings with no effect.
+  const sellerFilesEnabled = form.watch('seller_digital_assets_enabled')
 
   return (
     <FormProvider {...form}>
@@ -185,6 +193,8 @@ function MarketplaceSettingsPage({ store }: { store: Store }) {
           header={
             <PageHeader
               docsPath="sellers/payouts"
+              resource={store}
+              endpoint="/api/v3/admin/store"
               title={t('admin.pages.settings.marketplace.title')}
               description={t('admin.pages.settings.marketplace.subtitle')}
               actions={<FormActions form={form} />}
@@ -193,7 +203,7 @@ function MarketplaceSettingsPage({ store }: { store: Store }) {
           main={
             <>
               {errors.root?.message && (
-                <p className="text-sm text-destructive" role="alert">
+                <p className="text-base text-destructive" role="alert">
                   {errors.root.message}
                 </p>
               )}
@@ -201,50 +211,55 @@ function MarketplaceSettingsPage({ store }: { store: Store }) {
               {/* Money first: paying sellers is what an operator configures on
                   day one, and the rest of the page is how they join and what
                   they hear from you. */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t('admin.pages.settings.marketplace.payouts_title')}</CardTitle>
-                  <CardDescription>
-                    {t('admin.pages.settings.marketplace.payouts_description')}
-                  </CardDescription>
-                </CardHeader>
+              <SettingsSection
+                title={t('admin.pages.settings.marketplace.payouts_title')}
+                icon={<BanknoteIcon />}
+                description={t('admin.pages.settings.marketplace.payouts_description')}
+              >
                 <CardContent>
-                  <FieldGroup>
+                  <SettingsFieldGroup>
                     <Controller
                       control={form.control}
-                      name="preferred_payout_provider"
+                      name="payout_provider"
                       render={({ field }) => (
-                        <Field>
-                          <FieldLabel htmlFor="payout-provider">
-                            {t('admin.fields.store.payouts.provider.label')}
-                          </FieldLabel>
-                          <Select
-                            items={providerOptions}
-                            value={field.value}
-                            onValueChange={(value) => field.onChange(value as string)}
+                        // The connect hints sit under the row, inside its divider.
+                        <div className="flex flex-col gap-3">
+                          <SettingsRow
+                            label={t('admin.fields.store.payouts.provider.label')}
+                            htmlFor="payout-provider"
+                            help={
+                              selectedProvider?.requires_payout_account
+                                ? t('admin.fields.store.payouts.provider.requires_account')
+                                : t('admin.fields.store.payouts.provider.help')
+                            }
+                            error={errors.payout_provider}
                           >
-                            <SelectTrigger id="payout-provider">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {providerOptions.map((option) => (
-                                <SelectItem
-                                  key={option.value}
-                                  value={option.value}
-                                  disabled={option.disabled}
-                                >
-                                  {option.label}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <FieldDescription>
-                            {selectedProvider?.requires_payout_account
-                              ? t('admin.fields.store.payouts.provider.requires_account')
-                              : t('admin.fields.store.payouts.provider.help')}
-                          </FieldDescription>
+                            <Select
+                              items={providerOptions}
+                              value={field.value}
+                              onValueChange={(value) => field.onChange(value as string)}
+                            >
+                              <SelectTrigger
+                                id="payout-provider"
+                                className="@md/field-group:w-auto @md/field-group:min-w-40"
+                              >
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {providerOptions.map((option) => (
+                                  <SelectItem
+                                    key={option.value}
+                                    value={option.value}
+                                    disabled={option.disabled}
+                                  >
+                                    {option.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </SettingsRow>
                           {unavailableProviders.map((provider) => (
-                            <Alert key={provider.id} variant="info" className="mt-1">
+                            <Alert key={provider.id} variant="info">
                               <InfoIcon />
                               <AlertDescription>
                                 {t('admin.fields.store.payouts.provider_connect_hint', {
@@ -256,50 +271,26 @@ function MarketplaceSettingsPage({ store }: { store: Store }) {
                               </AlertDescription>
                             </Alert>
                           ))}
-                          <FieldError errors={[errors.preferred_payout_provider]} />
-                        </Field>
+                        </div>
                       )}
                     />
 
-                    <Controller
+                    <SettingsSelectField
+                      id="payout-schedule"
+                      label={t('admin.fields.store.payouts.schedule.label')}
+                      help={t('admin.fields.store.payouts.schedule.help')}
+                      name="default_payouts_schedule_interval"
                       control={form.control}
-                      name="preferred_default_payouts_schedule_interval"
-                      render={({ field }) => (
-                        <Field>
-                          <FieldLabel htmlFor="payout-schedule">
-                            {t('admin.fields.store.payouts.schedule.label')}
-                          </FieldLabel>
-                          <Select
-                            items={scheduleOptions}
-                            value={field.value}
-                            onValueChange={(value) => field.onChange(value as string)}
-                          >
-                            <SelectTrigger id="payout-schedule">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {scheduleOptions.map((option) => (
-                                <SelectItem key={option.value} value={option.value}>
-                                  {option.label}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <FieldDescription>
-                            {t('admin.fields.store.payouts.schedule.help')}
-                          </FieldDescription>
-                          <FieldError
-                            errors={[errors.preferred_default_payouts_schedule_interval]}
-                          />
-                        </Field>
-                      )}
+                      options={scheduleOptions}
                     />
 
-                    <Field>
-                      <FieldLabel htmlFor="payout-minimum">
-                        {t('admin.fields.store.payouts.minimum.label')}
-                      </FieldLabel>
-                      <InputGroup>
+                    <SettingsRow
+                      label={t('admin.fields.store.payouts.minimum.label')}
+                      htmlFor="payout-minimum"
+                      help={t('admin.fields.store.payouts.minimum.help')}
+                      error={errors.default_minimum_payout_amount}
+                    >
+                      <InputGroup className="@md/field-group:w-40">
                         <InputGroupAddon align="inline-start">
                           <InputGroupText>{currencySymbol}</InputGroupText>
                         </InputGroupAddon>
@@ -307,86 +298,128 @@ function MarketplaceSettingsPage({ store }: { store: Store }) {
                           id="payout-minimum"
                           type="number"
                           min={0}
-                          step="0.01"
+                          step="any"
                           inputMode="decimal"
-                          aria-invalid={
-                            !!errors.preferred_default_minimum_payout_amount || undefined
-                          }
-                          {...form.register('preferred_default_minimum_payout_amount')}
+                          aria-invalid={!!errors.default_minimum_payout_amount || undefined}
+                          {...form.register('default_minimum_payout_amount')}
                         />
                       </InputGroup>
-                      <FieldDescription>
-                        {t('admin.fields.store.payouts.minimum.help')}
-                      </FieldDescription>
-                      <FieldError errors={[errors.preferred_default_minimum_payout_amount]} />
-                    </Field>
-                  </FieldGroup>
+                    </SettingsRow>
+                  </SettingsFieldGroup>
                 </CardContent>
-              </Card>
+              </SettingsSection>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t('admin.pages.settings.marketplace.admission_title')}</CardTitle>
-                  <CardDescription>
-                    {t('admin.pages.settings.marketplace.admission_description')}
-                  </CardDescription>
-                </CardHeader>
+              <SettingsSection
+                title={t('admin.pages.settings.marketplace.admission_title')}
+                icon={<ClipboardCheckIcon />}
+                description={t('admin.pages.settings.marketplace.admission_description')}
+              >
                 <CardContent>
-                  <FieldGroup>
-                    <SwitchField
+                  <SettingsFieldGroup>
+                    <SettingsSwitchField
                       id="marketplace-auto-approve-sellers"
                       label={t('admin.fields.store.auto_approve_sellers.label')}
                       help={t('admin.fields.store.auto_approve_sellers.help')}
-                      name="preferred_auto_approve_sellers"
+                      name="auto_approve_sellers"
                       control={form.control}
                     />
-                    <SwitchField
+                    <SettingsSwitchField
                       id="marketplace-auto-approve-seller-products"
                       label={t('admin.fields.store.auto_approve_seller_products.label')}
                       help={t('admin.fields.store.auto_approve_seller_products.help')}
-                      name="preferred_auto_approve_seller_products"
+                      name="auto_approve_seller_products"
                       control={form.control}
                     />
-                  </FieldGroup>
+                  </SettingsFieldGroup>
                 </CardContent>
-              </Card>
+              </SettingsSection>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t('admin.pages.settings.marketplace.communication_title')}</CardTitle>
-                </CardHeader>
+              <SettingsSection
+                title={t('admin.pages.settings.marketplace.seller_files_title')}
+                icon={<FileTextIcon />}
+                description={t('admin.pages.settings.marketplace.seller_files_description')}
+              >
                 <CardContent>
-                  <FieldGroup>
-                    <SwitchField
+                  <SettingsFieldGroup>
+                    <SettingsSwitchField
+                      id="marketplace-seller-digital-assets"
+                      label={t('admin.fields.store.seller_digital_assets_enabled.label')}
+                      help={t('admin.fields.store.seller_digital_assets_enabled.help')}
+                      name="seller_digital_assets_enabled"
+                      control={form.control}
+                    />
+                    {sellerFilesEnabled && (
+                      <>
+                        <Controller
+                          control={form.control}
+                          name="seller_digital_asset_content_types"
+                          render={({ field, fieldState }) => (
+                            <Field>
+                              <FieldLabel htmlFor="marketplace-seller-content-types">
+                                {t('admin.fields.store.seller_digital_asset_content_types.label')}
+                              </FieldLabel>
+                              <ContentTypeCombobox
+                                id="marketplace-seller-content-types"
+                                value={field.value}
+                                onChange={field.onChange}
+                                invalid={fieldState.invalid}
+                              />
+                              <FieldDescription>
+                                {t('admin.fields.store.seller_digital_asset_content_types.help')}
+                              </FieldDescription>
+                              <FieldError errors={[fieldState.error]} />
+                            </Field>
+                          )}
+                        />
+                        <SettingsSwitchField
+                          id="marketplace-review-seller-file-changes"
+                          label={t('admin.fields.store.review_seller_digital_asset_changes.label')}
+                          help={t('admin.fields.store.review_seller_digital_asset_changes.help')}
+                          name="review_seller_digital_asset_changes"
+                          control={form.control}
+                        />
+                      </>
+                    )}
+                  </SettingsFieldGroup>
+                </CardContent>
+              </SettingsSection>
+
+              <SettingsSection
+                title={t('admin.pages.settings.marketplace.communication_title')}
+                icon={<MessageCircleIcon />}
+              >
+                <CardContent>
+                  <SettingsFieldGroup>
+                    <SettingsSwitchField
                       id="marketplace-send-seller-emails"
                       label={t('admin.fields.store.send_seller_transactional_emails.label')}
                       help={t('admin.fields.store.send_seller_transactional_emails.help')}
-                      name="preferred_send_seller_transactional_emails"
+                      name="send_seller_transactional_emails"
                       control={form.control}
                     />
-                  </FieldGroup>
+                  </SettingsFieldGroup>
                 </CardContent>
-              </Card>
+              </SettingsSection>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>
-                    {t('admin.pages.settings.marketplace.commission_tax_title')}
-                  </CardTitle>
-                </CardHeader>
+              <SettingsSection
+                title={t('admin.pages.settings.marketplace.commission_tax_title')}
+                icon={<PercentIcon />}
+              >
                 <CardContent>
-                  <FieldGroup>
-                    <Field>
-                      <FieldLabel htmlFor="marketplace-commission-tax-rate">
-                        {t('admin.fields.store.default_commission_tax_rate.label')}
-                      </FieldLabel>
-                      <InputGroup>
+                  <SettingsFieldGroup>
+                    <SettingsRow
+                      label={t('admin.fields.store.default_commission_tax_rate.label')}
+                      htmlFor="marketplace-commission-tax-rate"
+                      help={t('admin.fields.store.default_commission_tax_rate.help')}
+                      error={errors.commission_tax_rate_percentage}
+                    >
+                      <InputGroup className="@md/field-group:w-40">
                         <InputGroupInput
                           id="marketplace-commission-tax-rate"
                           type="number"
                           min={0}
                           max={100}
-                          step="0.01"
+                          step="any"
                           aria-invalid={!!errors.commission_tax_rate_percentage || undefined}
                           {...form.register('commission_tax_rate_percentage')}
                         />
@@ -396,54 +429,14 @@ function MarketplaceSettingsPage({ store }: { store: Store }) {
                           </InputGroupText>
                         </InputGroupAddon>
                       </InputGroup>
-                      <FieldDescription>
-                        {t('admin.fields.store.default_commission_tax_rate.help')}
-                      </FieldDescription>
-                      <FieldError errors={[errors.commission_tax_rate_percentage]} />
-                    </Field>
-                  </FieldGroup>
+                    </SettingsRow>
+                  </SettingsFieldGroup>
                 </CardContent>
-              </Card>
+              </SettingsSection>
             </>
           }
         />
       </form>
     </FormProvider>
-  )
-}
-
-interface SwitchFieldProps<TValues extends FieldValues> {
-  id: string
-  label: string
-  help?: string
-  name: FieldPath<TValues>
-  control: Control<TValues>
-}
-
-function SwitchField<TValues extends FieldValues>({
-  id,
-  label,
-  help,
-  name,
-  control,
-}: SwitchFieldProps<TValues>) {
-  return (
-    <Field>
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex flex-col">
-          <FieldLabel htmlFor={id} className="cursor-pointer">
-            {label}
-          </FieldLabel>
-          {help && <span className="text-xs text-muted-foreground">{help}</span>}
-        </div>
-        <Controller
-          name={name}
-          control={control}
-          render={({ field }) => (
-            <Switch id={id} checked={!!field.value} onCheckedChange={field.onChange} />
-          )}
-        />
-      </div>
-    </Field>
   )
 }

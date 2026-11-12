@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import { type CountryCode, isCountryCode } from '@spree/core'
 import {
   Button,
   Checkbox,
@@ -15,12 +16,14 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
+  useConfirm,
 } from '@spree/dashboard-ui'
 import { useEffect, useRef } from 'react'
-import { Controller, useForm } from 'react-hook-form'
+import { Controller, type DefaultValues, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { mapSpreeErrorsToForm } from '../lib/form-errors'
+import { countryCodeSchema } from '../lib/iso-codes'
 import { useOptionalStore } from '../providers/store-provider'
 import { CountryCombobox } from './country-combobox'
 import { StateCombobox, useCountryStates } from './country-state-fields'
@@ -33,7 +36,7 @@ export interface AddressParams {
   address2: string
   city: string
   postal_code: string
-  country_code: string
+  country_code: CountryCode
   state_code: string
   phone: string
   label?: string
@@ -51,14 +54,8 @@ const addressFormFields = {
     .string()
     .trim()
     .min(1, { error: requiredMessage('city') }),
-  postal_code: z
-    .string()
-    .trim()
-    .min(1, { error: requiredMessage('address.postal_code') }),
-  country_code: z
-    .string()
-    .trim()
-    .min(1, { error: requiredMessage('country_code') }),
+  postal_code: z.string(),
+  country_code: countryCodeSchema,
   state_code: z.string(),
   phone: z.string(),
   label: z.string(),
@@ -100,6 +97,33 @@ const businessSchema = z.object({
 
 type AddressFormValues = z.infer<typeof personalSchema>
 
+/**
+ * The fields whose requirement depends on the chosen country. Checked in the
+ * schema rather than on submit, so they report alongside every other missing
+ * field instead of on a second attempt.
+ */
+function withCountryRules(
+  schema: typeof personalSchema | typeof businessSchema,
+  rules: { statesRequired: boolean; postalCodeRequired: boolean },
+) {
+  return schema.superRefine((values, ctx) => {
+    if (rules.statesRequired && !values.state_code.trim()) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['state_code'],
+        message: requiredMessage('state_code')(),
+      })
+    }
+    if (rules.postalCodeRequired && !values.postal_code.trim()) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['postal_code'],
+        message: requiredMessage('address.postal_code')(),
+      })
+    }
+  })
+}
+
 /** Address rows validate on `state`; every address form binds `state_code`. */
 const ADDRESS_SERVER_FIELD_ALIASES = { state: 'state_code' } as const satisfies Partial<
   Record<string, keyof AddressFormValues>
@@ -139,14 +163,15 @@ export interface EditableAddress {
 export function resolveAddressCountryCode(
   address: EditableAddress | null | undefined,
   storeDefaultCountryCode?: string | null,
-): string {
-  return address?.country_code || storeDefaultCountryCode || ''
+): CountryCode | undefined {
+  const countryCode = address?.country_code || storeDefaultCountryCode
+  return isCountryCode(countryCode) ? countryCode : undefined
 }
 
 function buildDefaults(
   address: EditableAddress | null | undefined,
   storeDefaultCountryCode?: string | null,
-): AddressFormValues {
+): DefaultValues<AddressFormValues> {
   return {
     first_name: address?.first_name ?? '',
     last_name: address?.last_name ?? '',
@@ -200,15 +225,43 @@ export function AddressFormDialog({
   const resolvedTitle = title ?? t('admin.components.address_form_dialog.edit_title')
   // Optional: the seller panel has no store context, so a new address there
   // stays country-empty rather than refusing to render.
-  const storeDefaultCountryCode = useOptionalStore()?.defaultCountry
+  const storeContext = useOptionalStore()
+  const storeDefaultCountryCode = storeContext?.defaultCountry
+  // Left unmarked rather than marked optional when the store asks for a
+  // phone: a stock location never requires one, so "required" would be wrong
+  // there.
+  const phoneOptional = !storeContext?.store?.address_requires_phone
   const form = useForm<AddressFormValues>({
     defaultValues: buildDefaults(address, storeDefaultCountryCode),
-    resolver: zodResolver(business ? businessSchema : personalSchema),
+    resolver: (values, context, options) =>
+      zodResolver(
+        withCountryRules(business ? businessSchema : personalSchema, countryRules.current),
+      )(values, context, options),
   })
-  const { errors } = form.formState
+  const { errors, isDirty } = form.formState
+  const confirm = useConfirm()
+  // Saving a filled-in address waits for a change. A blank one stays
+  // saveable, so pressing Save shows what is still missing.
+  const saveNeedsChange = Boolean(address?.address1)
+
+  // Closing with an edit asks first, whichever way the sheet is closed.
+  async function requestClose() {
+    if (isDirty && !isPending) {
+      const ok = await confirm({
+        title: t('admin.actions.discard_changes'),
+        message: t('admin.common.unsaved_changes'),
+        variant: 'destructive',
+        confirmLabel: t('admin.actions.discard'),
+      })
+      if (!ok) return
+    }
+    onOpenChange(false)
+  }
 
   const countryCode = form.watch('country_code')
-  const { states, statesRequired } = useCountryStates(countryCode)
+  const { states, statesRequired, postalCodeRequired } = useCountryStates(countryCode)
+  const countryRules = useRef({ statesRequired, postalCodeRequired })
+  countryRules.current = { statesRequired, postalCodeRequired }
 
   // The parent keys the dialog on the address id so a fresh instance mounts
   // for each open, but `address` can also stream in async (loaded after the
@@ -228,7 +281,7 @@ export function AddressFormDialog({
   // picked a different country is not overwritten.
   useEffect(() => {
     if (address?.country_code) return
-    if (!storeDefaultCountryCode) return
+    if (!isCountryCode(storeDefaultCountryCode)) return
     if (form.getValues('country_code')) return
     form.setValue('country_code', storeDefaultCountryCode)
   }, [address?.country_code, storeDefaultCountryCode, form])
@@ -239,14 +292,6 @@ export function AddressFormDialog({
   const useStateCombobox = states.length > 0
 
   async function onSubmit(values: AddressFormValues) {
-    if (statesRequired && !values.state_code.trim()) {
-      form.setError('state_code', {
-        type: 'manual',
-        message: requiredMessage('state_code')(),
-      })
-      return
-    }
-
     try {
       await onSave({
         first_name: values.first_name,
@@ -285,7 +330,7 @@ export function AddressFormDialog({
   }
 
   return (
-    <Sheet open={open} onOpenChange={(o) => onOpenChange(o as boolean)}>
+    <Sheet open={open} onOpenChange={(o) => (o ? onOpenChange(true) : requestClose())}>
       <SheetContent side="right">
         <SheetHeader>
           <SheetTitle>{resolvedTitle}</SheetTitle>
@@ -300,14 +345,14 @@ export function AddressFormDialog({
         >
           <div className="flex-1 overflow-y-auto p-4">
             {errors.root?.message && (
-              <p className="mb-4 text-sm text-destructive" role="alert">
+              <p className="mb-4 text-base text-destructive" role="alert">
                 {errors.root.message}
               </p>
             )}
             <FieldGroup>
               {showLabel && (
                 <Field>
-                  <FieldLabel htmlFor="addr-label">
+                  <FieldLabel htmlFor="addr-label" optional>
                     {t('admin.fields.address.label.label')}
                   </FieldLabel>
                   <Input
@@ -366,7 +411,7 @@ export function AddressFormDialog({
                 <FieldError errors={[errors.address1]} />
               </Field>
               <Field>
-                <FieldLabel htmlFor="addr-a2">
+                <FieldLabel htmlFor="addr-a2" optional>
                   {t('admin.fields.address.address2.label')}
                 </FieldLabel>
                 <Input
@@ -410,7 +455,7 @@ export function AddressFormDialog({
                 </Field>
                 {useStateCombobox ? (
                   <Field>
-                    <FieldLabel htmlFor="addr-state">
+                    <FieldLabel htmlFor="addr-state" optional={!statesRequired}>
                       {t('admin.fields.state_code.label')}
                     </FieldLabel>
                     <Controller
@@ -432,7 +477,7 @@ export function AddressFormDialog({
                   </Field>
                 ) : (
                   <Field>
-                    <FieldLabel htmlFor="addr-state-abbr">
+                    <FieldLabel htmlFor="addr-state-abbr" optional={!statesRequired}>
                       {t('admin.fields.state_code.label')}
                     </FieldLabel>
                     <Input
@@ -445,7 +490,7 @@ export function AddressFormDialog({
                 )}
               </div>
               <Field>
-                <FieldLabel htmlFor="addr-zip">
+                <FieldLabel htmlFor="addr-zip" optional={!postalCodeRequired}>
                   {t('admin.fields.address.postal_code.label')}
                 </FieldLabel>
                 <Input
@@ -456,7 +501,9 @@ export function AddressFormDialog({
                 <FieldError errors={[errors.postal_code]} />
               </Field>
               <Field>
-                <FieldLabel htmlFor="addr-phone">{t('admin.fields.phone.label')}</FieldLabel>
+                <FieldLabel htmlFor="addr-phone" optional={phoneOptional}>
+                  {t('admin.fields.phone.label')}
+                </FieldLabel>
                 <Input
                   id="addr-phone"
                   aria-invalid={!!errors.phone || undefined}
@@ -473,7 +520,7 @@ export function AddressFormDialog({
                       render={({ field }) => (
                         <label
                           htmlFor="addr-default-billing"
-                          className="flex cursor-pointer items-center gap-2 text-sm"
+                          className="flex cursor-pointer items-center gap-2 text-base"
                         >
                           <Checkbox
                             id="addr-default-billing"
@@ -492,7 +539,7 @@ export function AddressFormDialog({
                       render={({ field }) => (
                         <label
                           htmlFor="addr-default-shipping"
-                          className="flex cursor-pointer items-center gap-2 text-sm"
+                          className="flex cursor-pointer items-center gap-2 text-base"
                         >
                           <Checkbox
                             id="addr-default-shipping"
@@ -509,10 +556,10 @@ export function AddressFormDialog({
             </FieldGroup>
           </div>
           <SheetFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <Button type="button" variant="outline" onClick={requestClose}>
               {t('admin.actions.cancel')}
             </Button>
-            <Button type="submit" disabled={isPending}>
+            <Button type="submit" disabled={isPending || (saveNeedsChange && !isDirty)}>
               {isPending ? t('admin.actions.saving') : t('admin.actions.save')}
             </Button>
           </SheetFooter>

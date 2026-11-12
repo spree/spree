@@ -4,10 +4,6 @@ describe Spree::ProductType, type: :model do
   it_behaves_like 'metadata'
 
   describe 'delivery profile template' do
-    it 'is optional — a type without one leaves products on the store default' do
-      expect(build(:product_type).delivery_profile).to be_nil
-    end
-
     it 'stamps its profile onto products at creation' do
       profile = create(:delivery_profile)
       product_type = create(:product_type, delivery_profile: profile)

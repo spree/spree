@@ -1,10 +1,20 @@
 import type { Claim, Exchange, Order } from '@spree/admin-sdk'
+import { CLAIM_STATUSES, EXCHANGE_STATUSES, subsetOf } from '@spree/core'
+import {
+  formatMoney,
+  isPositiveMoney,
+  Money,
+  postSaleItemRow,
+  useMetadataSheet,
+  useMoneyLocale,
+  usePermissions,
+  ViewMetadataMenuItem,
+} from '@spree/dashboard-core'
 import {
   Badge,
   Button,
   Card,
   CardAction,
-  CardContent,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -13,6 +23,12 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  FulfillmentItemList,
+  hasMetadata,
+  Section,
+  SectionActions,
+  SectionHeader,
+  SectionTitle,
   StatusBadge,
   useConfirm,
 } from '@spree/dashboard-ui'
@@ -43,34 +59,43 @@ import {
   fulfilledUnits,
   ResolveClaimDialog,
 } from './post-sale-create-dialogs'
+import { useProductLink } from './variant-link'
 
 // Statuses that still offer an action. A terminal record would otherwise
 // show a menu button that opens onto nothing.
-const EXCHANGE_ACTIONABLE = ['requested', 'approved', 'received']
-const CLAIM_ACTIONABLE = ['open', 'approved']
+const EXCHANGE_ACTIONABLE = subsetOf(EXCHANGE_STATUSES, ['requested', 'approved', 'received'])
+const CLAIM_ACTIONABLE = subsetOf(CLAIM_STATUSES, ['open', 'approved'])
+const EXCHANGE_CANCELABLE = subsetOf(EXCHANGE_STATUSES, ['requested', 'approved'])
 
 /** Exchanges on an order, with the actions available at each status. */
 export function OrderExchangesCard({ order }: { order: Order }) {
+  const productLink = useProductLink()
+  const locale = useMoneyLocale()
   const orderId = order.id
   const { t } = useTranslation()
   const confirm = useConfirm()
   const { data } = useOrderExchanges(orderId)
   const { create, approve, receive, fulfill, cancel } = useExchangeActions(orderId)
+  // Fulfilling settles money on what came back, so the API wants the refunds
+  // permission for it; without it the action is not offered.
+  const { permissionKeys } = usePermissions()
+  const canRefund = permissionKeys.includes('write_refunds')
   const [creating, setCreating] = useState(false)
+  const metadataSheet = useMetadataSheet()
 
   const exchanges = data?.data ?? []
   const canCreate = fulfilledUnits(order).length > 0
 
   return (
     <>
-      <Card variant="container">
-        <CardHeader>
-          <CardTitle>
+      <Section>
+        <SectionHeader>
+          <SectionTitle>
             <RepeatIcon className="size-4" />
             {t('admin.pages.orders.detail.section_exchanges')}
             {exchanges.length > 0 && <Badge variant="outline">{exchanges.length}</Badge>}
-          </CardTitle>
-          <CardAction>
+          </SectionTitle>
+          <SectionActions>
             <Button
               variant="outline"
               size="sm"
@@ -81,25 +106,26 @@ export function OrderExchangesCard({ order }: { order: Order }) {
               <PlusIcon className="size-4" />
               {t('admin.pages.orders.detail.exchanges.actions.create')}
             </Button>
-          </CardAction>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-4">
+          </SectionActions>
+        </SectionHeader>
+        <div className="flex flex-col gap-4">
           {exchanges.length === 0 && (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-base text-muted-foreground">
               {canCreate
                 ? t('admin.pages.orders.detail.exchanges.empty')
                 : t('admin.pages.orders.detail.returns.empty_no_units')}
             </p>
           )}
           {exchanges.map((exchange: Exchange) => (
-            <Card key={exchange.id} variant="nested">
+            <Card key={exchange.id}>
               <CardHeader>
-                <CardTitle className="text-sm font-medium">
+                <CardTitle className="text-base font-medium">
                   <StatusBadge status={exchange.status} />
-                  <span className="text-sm font-medium">{exchange.number}</span>
+                  <span className="text-base font-medium">{exchange.number}</span>
                 </CardTitle>
 
-                {EXCHANGE_ACTIONABLE.includes(exchange.status) && (
+                {(EXCHANGE_ACTIONABLE.includes(exchange.status) ||
+                  hasMetadata(exchange.metadata)) && (
                   <CardAction>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -123,13 +149,13 @@ export function OrderExchangesCard({ order }: { order: Order }) {
                             {t('admin.pages.orders.detail.returns.actions.receive')}
                           </DropdownMenuItem>
                         )}
-                        {exchange.status === 'received' && (
+                        {exchange.status === 'received' && canRefund && (
                           <DropdownMenuItem
                             onClick={async () => {
                               // A dearer replacement leaves the customer owing
                               // the difference, which fulfilling puts on the order.
                               if (
-                                Number(exchange.price_difference) > 0 &&
+                                isPositiveMoney(exchange.price_difference) &&
                                 !(await confirm({
                                   message: t(
                                     'admin.pages.orders.detail.exchanges.confirm.balance_due',
@@ -148,7 +174,11 @@ export function OrderExchangesCard({ order }: { order: Order }) {
                             {t('admin.pages.orders.detail.exchanges.actions.fulfill')}
                           </DropdownMenuItem>
                         )}
-                        {['requested', 'approved'].includes(exchange.status) && (
+                        <ViewMetadataMenuItem
+                          metadata={exchange.metadata}
+                          onClick={() => metadataSheet.show(exchange.metadata, exchange.number)}
+                        />
+                        {EXCHANGE_CANCELABLE.includes(exchange.status) && (
                           <>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem
@@ -181,29 +211,50 @@ export function OrderExchangesCard({ order }: { order: Order }) {
                 )}
               </CardHeader>
 
-              <CardContent className="flex flex-col gap-1.5">
-                {(exchange.exchange_line_items ?? []).map((line) => (
-                  <div key={line.id} className="flex items-center justify-between text-sm">
-                    <span className="truncate">
-                      {variantLabel(line.original_variant, line.original_variant_id)}
-                      {' → '}
-                      {variantLabel(line.new_variant, line.new_variant_id)}
-                    </span>
-                    <span className="text-muted-foreground">×{line.quantity}</span>
-                  </div>
-                ))}
-              </CardContent>
+              <FulfillmentItemList
+                productLink={productLink}
+                rows={(exchange.exchange_line_items ?? []).map((line) => {
+                  const row = postSaleItemRow(
+                    line.id,
+                    {
+                      line_item_id: line.line_item_id,
+                      variant_id: line.original_variant_id,
+                      variant: line.original_variant,
+                      quantity: line.quantity,
+                    },
+                    order.items ?? [],
+                  )
+                  return {
+                    ...row,
+                    replacement: {
+                      name: variantLabel(
+                        line.new_variant && { product_name: line.new_variant.product_name },
+                        line.new_variant_id,
+                      ),
+                      optionsText: line.new_variant?.options_text,
+                      thumbnailUrl: line.new_variant?.thumbnail_url,
+                      productId: line.new_variant?.product_id,
+                      displayPrice: formatMoney(line.new_variant_price, order.currency, locale, {
+                        unitPrice: true,
+                      }),
+                      label: t('admin.pages.orders.detail.exchanges.replacement_variant'),
+                    },
+                  }
+                })}
+              />
 
-              <CardFooter className="justify-between text-sm">
+              <CardFooter className="justify-between text-base">
                 <span className="text-muted-foreground">
                   {t('admin.pages.orders.detail.exchanges.price_difference')}
                 </span>
-                <span className="font-medium">{exchange.display_price_difference}</span>
+                <span className="font-medium">
+                  <Money amount={exchange.price_difference} currency={order.currency} />
+                </span>
               </CardFooter>
             </Card>
           ))}
-        </CardContent>
-      </Card>
+        </div>
+      </Section>
 
       {creating && (
         <CreateExchangeDialog
@@ -215,19 +266,27 @@ export function OrderExchangesCard({ order }: { order: Order }) {
           }}
         />
       )}
+
+      {metadataSheet.sheet}
     </>
   )
 }
 
 /** Claims on an order. Resolution is chosen at resolve time, not up front. */
 export function OrderClaimsCard({ order }: { order: Order }) {
+  const productLink = useProductLink()
   const orderId = order.id
   const { t } = useTranslation()
   const confirm = useConfirm()
   const { data } = useOrderClaims(orderId)
   const { create, approve, resolve, deny, cancel } = useClaimActions(orderId)
+  // A resolution may pay the customer back, which takes the refunds
+  // permission; resolving is left to staff who hold it.
+  const { permissionKeys } = usePermissions()
+  const canRefund = permissionKeys.includes('write_refunds')
   const [creatingClaim, setCreatingClaim] = useState(false)
   const [resolving, setResolving] = useState<Claim | null>(null)
+  const metadataSheet = useMetadataSheet()
 
   const claims = data?.data ?? []
   // A claim is about ordered items, so it never depends on anything shipping.
@@ -235,14 +294,14 @@ export function OrderClaimsCard({ order }: { order: Order }) {
 
   return (
     <>
-      <Card variant="container">
-        <CardHeader>
-          <CardTitle>
+      <Section>
+        <SectionHeader>
+          <SectionTitle>
             <ShieldAlertIcon className="size-4" />
             {t('admin.pages.orders.detail.section_claims')}
             {claims.length > 0 && <Badge variant="outline">{claims.length}</Badge>}
-          </CardTitle>
-          <CardAction>
+          </SectionTitle>
+          <SectionActions>
             <Button
               variant="outline"
               size="sm"
@@ -252,23 +311,23 @@ export function OrderClaimsCard({ order }: { order: Order }) {
               <PlusIcon className="size-4" />
               {t('admin.pages.orders.detail.claims.actions.create')}
             </Button>
-          </CardAction>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-4">
+          </SectionActions>
+        </SectionHeader>
+        <div className="flex flex-col gap-4">
           {claims.length === 0 && (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-base text-muted-foreground">
               {t('admin.pages.orders.detail.claims.empty')}
             </p>
           )}
           {claims.map((claim: Claim) => (
-            <Card key={claim.id} variant="nested">
+            <Card key={claim.id}>
               <CardHeader>
-                <CardTitle className="text-sm font-medium">
+                <CardTitle className="text-base font-medium">
                   <StatusBadge status={claim.status} />
-                  <span className="text-sm font-medium">{claim.number}</span>
+                  <span className="text-base font-medium">{claim.number}</span>
                 </CardTitle>
 
-                {CLAIM_ACTIONABLE.includes(claim.status) && (
+                {(CLAIM_ACTIONABLE.includes(claim.status) || hasMetadata(claim.metadata)) && (
                   <CardAction>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -284,13 +343,17 @@ export function OrderClaimsCard({ order }: { order: Order }) {
                             {t('admin.pages.orders.detail.returns.actions.approve')}
                           </DropdownMenuItem>
                         )}
-                        {claim.status === 'approved' && (
+                        {claim.status === 'approved' && canRefund && (
                           <DropdownMenuItem onClick={() => setResolving(claim)}>
                             <BanknoteIcon className="size-4" />
                             {t('admin.pages.orders.detail.claims.actions.resolve')}
                           </DropdownMenuItem>
                         )}
-                        {['open', 'approved'].includes(claim.status) && <DropdownMenuSeparator />}
+                        <ViewMetadataMenuItem
+                          metadata={claim.metadata}
+                          onClick={() => metadataSheet.show(claim.metadata, claim.number)}
+                        />
+                        {CLAIM_ACTIONABLE.includes(claim.status) && <DropdownMenuSeparator />}
                         {claim.status === 'open' && (
                           <DropdownMenuItem
                             variant="destructive"
@@ -310,7 +373,7 @@ export function OrderClaimsCard({ order }: { order: Order }) {
                             {t('admin.pages.orders.detail.claims.actions.deny')}
                           </DropdownMenuItem>
                         )}
-                        {['open', 'approved'].includes(claim.status) && (
+                        {CLAIM_ACTIONABLE.includes(claim.status) && (
                           <DropdownMenuItem
                             variant="destructive"
                             onClick={async () => {
@@ -340,30 +403,29 @@ export function OrderClaimsCard({ order }: { order: Order }) {
                 )}
               </CardHeader>
 
-              <CardContent className="flex flex-col gap-1.5">
-                {(claim.claim_line_items ?? []).map((line) => (
-                  <div key={line.id} className="flex items-center justify-between text-sm">
-                    <span className="truncate">
-                      {line.variant?.product_name ?? line.variant_id}
-                      {line.description && (
-                        <span className="text-muted-foreground"> — {line.description}</span>
-                      )}
-                    </span>
-                    <span className="text-muted-foreground">×{line.quantity}</span>
-                  </div>
-                ))}
-              </CardContent>
+              <FulfillmentItemList
+                productLink={productLink}
+                rows={(claim.claim_line_items ?? []).map((line) => {
+                  const row = postSaleItemRow(line.id, line, order.items ?? [])
+                  return {
+                    ...row,
+                    optionsText: [row.optionsText, line.description].filter(Boolean).join(' — '),
+                  }
+                })}
+              />
 
-              <CardFooter className="justify-between text-sm">
+              <CardFooter className="justify-between text-base">
                 <span className="text-muted-foreground">
                   {t('admin.pages.orders.detail.returns.refund_total')}
                 </span>
-                <span className="font-medium">{claim.display_refund_total}</span>
+                <span className="font-medium">
+                  <Money amount={claim.refund_total} currency={order.currency} />
+                </span>
               </CardFooter>
             </Card>
           ))}
-        </CardContent>
-      </Card>
+        </div>
+      </Section>
 
       {resolving && (
         <ResolveClaimDialog
@@ -392,6 +454,8 @@ export function OrderClaimsCard({ order }: { order: Order }) {
           }}
         />
       )}
+
+      {metadataSheet.sheet}
     </>
   )
 }

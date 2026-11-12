@@ -45,6 +45,75 @@ RSpec.describe Spree::DataRequests::Create do
     end
   end
 
+  # The request reaches guest orders placed at the account's address, so
+  # nothing happens until the address confirms it.
+  describe 'a request the customer raised themselves' do
+    subject(:result) do
+      described_class.call(store: store, customer: customer, kind: Spree::DataRequest::ACCESS,
+                           confirm_by_email: true, redirect_url: 'https://shop.example.com/confirm')
+    end
+
+    it 'waits for confirmation instead of queueing the work' do
+      expect { result }.not_to have_enqueued_job(Spree::DataRequests::ProcessJob)
+      expect(result.value).to be_awaiting_confirmation
+    end
+
+    it 'asks the address to confirm it' do
+      expect_any_instance_of(Spree::DataRequest).to receive(:publish_event).
+        with('data_request.confirmation_requested', anything)
+
+      result
+    end
+
+    it 'asks again rather than opening a second request while one waits' do
+      first = result.value
+
+      expect_any_instance_of(Spree::DataRequest).to receive(:publish_event).
+        with('data_request.confirmation_requested', anything)
+
+      again = described_class.call(store: store, customer: customer, kind: Spree::DataRequest::ACCESS,
+                                   confirm_by_email: true)
+
+      expect(again.value).to eq(first)
+    end
+
+    it 'lapses a request left unconfirmed past the window and opens a new one' do
+      first = result.value
+      first.update_columns(requested_at: (Spree::DataRequest::CONFIRMATION_WINDOW + 1.minute).ago)
+
+      again = described_class.call(store: store, customer: customer, kind: Spree::DataRequest::ACCESS,
+                                   confirm_by_email: true)
+
+      expect(first.reload).to be_lapsed
+      expect(again.value).not_to eq(first)
+      expect(again.value).to be_awaiting_confirmation
+    end
+
+    # Staff have checked who they are dealing with, so their request proceeds
+    # on its own row and does not wait on the customer's unconfirmed one.
+    it 'does not hold up a request staff raise while it waits' do
+      waiting = result.value
+
+      staff_request = described_class.call(store: store, customer: customer, kind: Spree::DataRequest::ACCESS,
+                                           requested_by: create(:admin_user))
+
+      expect(staff_request.value).not_to eq(waiting)
+      expect(staff_request.value).to be_pending
+      expect(waiting.reload).to be_lapsed
+    end
+
+    it 'emails the current address once the account has moved to another' do
+      waiting = result.value
+      customer.update_columns(email: 'corrected@example.com')
+
+      again = described_class.call(store: store, customer: customer, kind: Spree::DataRequest::ACCESS,
+                                   confirm_by_email: true)
+
+      expect(waiting.reload).to be_lapsed
+      expect(again.value.email).to eq('corrected@example.com')
+    end
+  end
+
   describe 'a customer whose data has already been erased' do
     before { Spree::Customers::Anonymize.call(customer: customer, store: store) }
 

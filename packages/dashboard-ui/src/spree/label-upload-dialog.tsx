@@ -90,7 +90,7 @@ export function LabelUploadDialog({
 
           <DialogBody className="flex flex-col gap-4">
             {errors.root?.message && (
-              <p className="text-destructive text-sm" role="alert">
+              <p className="text-destructive text-base" role="alert">
                 {errors.root.message}
               </p>
             )}
@@ -127,7 +127,7 @@ export function LabelUploadDialog({
                   <InputGroupInput
                     id="label-cost"
                     type="number"
-                    step="0.01"
+                    step="any"
                     min="0"
                     {...form.register('cost')}
                   />

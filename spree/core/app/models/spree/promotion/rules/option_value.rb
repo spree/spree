@@ -3,13 +3,12 @@ module Spree
     module Rules
       class OptionValue < Spree::PromotionRule
         MATCH_POLICIES = %w(any)
-        preference :match_policy, :string, default: MATCH_POLICIES.first
+        preference :match_policy, :string, default: MATCH_POLICIES.first, choices: MATCH_POLICIES
         # Stored as raw Spree::OptionValue ids. Accepts prefixed IDs (`optval_…`)
         # from API callers and decodes them on write so eligibility checks compare
         # against stable option-value rows, not join-table ids that shift when
         # variants are reconfigured.
-        preference :eligible_values, :array, default: [],
-                   parse_on_set: normalize_id_preference(klass: Spree::OptionValue)
+        preference :eligible_values, :array, of: :id, model: 'Spree::OptionValue', default: []
 
         # @param promotable [Object]
         # @return [Boolean]

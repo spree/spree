@@ -61,16 +61,17 @@ describe Spree::Adjusters::Promotion, type: :model do
 
   it 'clamps so a line never goes below zero' do
     promo = create(:promotion, kind: :automatic, code: nil, store: store)
-    action = Spree::Promotion::Actions::CreateItemAdjustments.create!(
+    Spree::Promotion::Actions::CreateItemAdjustments.create!(
       promotion: promo,
       calculator: Spree::Calculator::FlatRate.new(preferred_amount: 999)
     )
     promo.activate(order: order)
 
-    order.discounts.reload.each do |row|
+    rows = order.discounts.reload
+    expect(rows.size).to eq(2)
+    rows.each do |row|
       expect(row.amount).to eq(-row.line_item.amount)
     end
-    expect(action.reload).to be_present
   end
 
   describe 'order-level distribution' do
@@ -84,6 +85,25 @@ describe Spree::Adjusters::Promotion, type: :model do
       expect(rows.size).to eq(3)
       expect(rows.sum(&:amount)).to eq(-10)
       expect(rows.map(&:line_item_id)).to match_array(order.line_items.ids)
+    end
+
+    it 'splits a remainder to the cent and sums exactly to the promotion amount' do
+      promo = create(:promotion_with_order_adjustment, weighted_order_adjustment_amount: 10, code: nil, kind: :automatic, store: store)
+      promo.activate(order: order)
+
+      amounts = order.discounts.reload.map(&:amount)
+      expect(amounts).to match_array([BigDecimal('-3.34'), BigDecimal('-3.33'), BigDecimal('-3.33')])
+      expect(amounts.sum).to eq(BigDecimal('-10'))
+    end
+
+    it 'splits a yen promotion in whole yen' do
+      order.update_columns(currency: 'JPY')
+      promo = create(:promotion_with_order_adjustment, weighted_order_adjustment_amount: 10, code: nil, kind: :automatic, store: store)
+      promo.promotion_actions.first.calculator.update!(preferred_currency: 'JPY')
+      promo.activate(order: order)
+
+      amounts = order.discounts.reload.map(&:amount)
+      expect(amounts).to match_array([BigDecimal('-4'), BigDecimal('-3'), BigDecimal('-3')])
     end
 
     it 'never distributes more than the remaining line bases' do

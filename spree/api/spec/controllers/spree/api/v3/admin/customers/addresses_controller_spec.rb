@@ -42,11 +42,11 @@ RSpec.describe Spree::Api::V3::Admin::Customers::AddressesController, type: :con
     let(:create_params) do
       {
         customer_id: customer.prefixed_id,
-        firstname: 'Jane',
-        lastname: 'Doe',
+        first_name: 'Jane',
+        last_name: 'Doe',
         address1: '123 Main St',
         city: 'Brooklyn',
-        zipcode: '11201',
+        postal_code: '11201',
         country_code: country.iso,
         state_code: state.abbr,
         phone: '+15551234567'
@@ -58,6 +58,13 @@ RSpec.describe Spree::Api::V3::Admin::Customers::AddressesController, type: :con
 
       expect(response).to have_http_status(:created)
       expect(json_response['address1']).to eq('123 Main St')
+    end
+
+    it 'ignores the legacy firstname and lastname spellings' do
+      post :create, params: create_params.except(:first_name, :last_name).merge(firstname: 'Jane', lastname: 'Doe'), as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['details']).to include('first_name')
     end
 
     context 'with is_default_billing flag' do
@@ -110,11 +117,11 @@ RSpec.describe Spree::Api::V3::Admin::Customers::AddressesController, type: :con
         patch :update, params: {
           customer_id: customer.prefixed_id,
           id: address.prefixed_id,
-          firstname: address.firstname,
-          lastname: address.lastname,
+          first_name: address.first_name,
+          last_name: address.last_name,
           address1: address.address1,
           city: 'NewCity',
-          zipcode: address.zipcode,
+          postal_code: address.postal_code,
           phone: address.phone,
           country_code: address.country_code,
           state_code: address.state_code

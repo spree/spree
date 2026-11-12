@@ -175,7 +175,7 @@ function MemberRow({ member, lastOne }: { member: TeamMember; lastOne: boolean }
   const confirm = useConfirm()
 
   const remove = useMutation({
-    mutationFn: (id: string) => sellerClient().team.remove(id),
+    mutationFn: (id: string) => sellerClient().team.delete(id),
     onSuccess: () => {
       toastManager.add({ type: 'success', title: t('team.messages.removed') })
       void queryClient.invalidateQueries({ queryKey: ['seller', sellerId, 'team'] })
@@ -302,7 +302,7 @@ function InvitationRow({ invitation }: { invitation: Invitation }) {
   })
 
   const revoke = useMutation({
-    mutationFn: (id: string) => sellerClient().invitations.revoke(id),
+    mutationFn: (id: string) => sellerClient().invitations.delete(id),
     onSuccess: () => {
       toastManager.add({ type: 'success', title: t('team.messages.revoked') })
       void invalidate()
@@ -365,7 +365,7 @@ function InvitationRow({ invitation }: { invitation: Invitation }) {
           <span className="font-medium">{invitation.email}</span>
         </div>
       </TableCell>
-      <TableCell className="text-muted-foreground text-sm">
+      <TableCell className="text-muted-foreground text-base">
         {invitation.expires_at ? (
           <span className="inline-flex items-center gap-1">
             <ClockIcon className="size-3.5" />

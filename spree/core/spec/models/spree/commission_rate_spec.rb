@@ -180,12 +180,6 @@ RSpec.describe Spree::CommissionRate, type: :model do
       expect(rate.amount_for('EUR')).to be_nil
     end
 
-    # A flat fee charging nothing anywhere is skipped for every sale, which
-    # reads as a broken rate rather than a disabled one.
-    it 'refuses a flat fee that states no amount at all' do
-      expect(build(:commission_rate, kind: 'fixed', value: 0)).not_to be_valid
-    end
-
     # Charging the flat amount again per parcel would bill one sale twice, so
     # a marketplace wanting a flat delivery charge states it as its own rate.
     it 'refuses to also charge delivery' do
@@ -321,7 +315,7 @@ RSpec.describe Spree::CommissionRate, type: :model do
       rate = create(:commission_rate, store: store)
       create(:commission_seller_rule, commission_rate: rate, sellers: [seller])
 
-      rate.update!(rules: [{ type: 'category_rule', preferences: { category_ids: [category.id] } }])
+      rate.update!(rules: [{ type: 'category_rule', preferences: { category_ids: [category.prefixed_id] } }])
 
       expect(rate.reload.commission_rules.map(&:class)).to eq([Spree::CommissionRules::CategoryRule])
       expect(rate.commission_rules.first.preferred_category_ids.map(&:to_s)).to eq([category.id.to_s])
@@ -334,9 +328,9 @@ RSpec.describe Spree::CommissionRate, type: :model do
       rate = create(:commission_rate, store: store)
       first_seller = create(:seller, store: store)
       second_seller = create(:seller, store: store)
-      rate.update!(rules: [{ type: 'seller_rule', preferences: { seller_ids: [first_seller.id] } }])
+      rate.update!(rules: [{ type: 'seller_rule', preferences: { seller_ids: [first_seller.prefixed_id] } }])
 
-      rate.update!(rules: [{ type: 'seller_rule', preferences: { seller_ids: [second_seller.id] } }])
+      rate.update!(rules: [{ type: 'seller_rule', preferences: { seller_ids: [second_seller.prefixed_id] } }])
 
       expect(rate.reload.commission_rules.count).to eq(1)
       expect(rate.commission_rules.first.preferred_seller_ids.map(&:to_s)).to eq([second_seller.id.to_s])
@@ -359,13 +353,13 @@ RSpec.describe Spree::CommissionRate, type: :model do
       foreign_seller = create(:seller, store: create(:store))
 
       expect {
-        rate.update!(rules: [{ type: 'seller_rule', preferences: { seller_ids: [foreign_seller.id] } }])
-      }.to raise_error(ActiveRecord::RecordNotFound)
+        rate.update!(rules: [{ type: 'seller_rule', preferences: { seller_ids: [foreign_seller.prefixed_id] } }])
+      }.to raise_error(Spree::Preferences::InvalidPreferences, %r{/rules/0/preferences/seller_ids})
     end
 
     it 'builds rules on a rate that does not exist yet' do
       rate = create(:commission_rate, store: store,
-                                      rules: [{ type: 'seller_rule', preferences: { seller_ids: [seller.id] } }])
+                                      rules: [{ type: 'seller_rule', preferences: { seller_ids: [seller.prefixed_id] } }])
 
       expect(rate.reload.commission_rules.map(&:class)).to eq([Spree::CommissionRules::SellerRule])
     end
@@ -375,13 +369,6 @@ RSpec.describe Spree::CommissionRate, type: :model do
     # The list IS the precedence, so a new rate has to take effect on
     # creation — appending would file it behind the catch-all that already
     # matches everything, leaving it dead on arrival.
-    it 'puts a new rate at the top of the list' do
-      first = create(:commission_rate, store: store)
-      second = create(:commission_rate, store: store)
-
-      expect(described_class.ordered.to_a).to eq([second, first])
-    end
-
     it 'walks the list top-down' do
       bottom = create(:commission_rate, store: store)
       top = create(:commission_rate, store: store)

@@ -8,7 +8,7 @@ defineTable<Supplier>('suppliers', {
   docsPath: 'inventory/suppliers',
   title: i18n.t('admin.suppliers.title'),
   description: i18n.t('admin.table_descriptions.suppliers'),
-  searchParam: 'name_or_contact_name_or_email_cont',
+  searchParam: 'search',
   searchPlaceholder: i18n.t('admin.suppliers.table.search_placeholder'),
   defaultSort: { field: 'name', direction: 'asc' },
   emptyIcon: <Building2Icon className="size-8 text-muted-foreground" />,

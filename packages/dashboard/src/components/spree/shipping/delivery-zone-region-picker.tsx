@@ -1,9 +1,11 @@
 import type { DeliveryZone } from '@spree/admin-sdk'
-import { useStore } from '@spree/dashboard-core'
+import { type CountryCode, randomUUID } from '@spree/core'
+import { useCountryDisplayName, useSortByCountryName, useStore } from '@spree/dashboard-core'
 import {
   Button,
   Checkbox,
   Input,
+  Item,
   Select,
   SelectContent,
   SelectItem,
@@ -20,7 +22,7 @@ import {
 import { Link } from '@tanstack/react-router'
 import { useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useCountryNames, useCountryStates, useMarketCountries } from '../../../hooks/use-geography'
+import { useCountryStates, useMarketCountries } from '../../../hooks/use-geography'
 import type { DeliveryZoneMemberValues } from '../../../schemas/delivery-zone'
 import {
   type CountryRow,
@@ -49,7 +51,8 @@ export function DeliveryZoneRegionPicker({
   const { t } = useTranslation()
   const { storeId } = useStore()
   const { countries: marketCountries, isLoading } = useMarketCountries()
-  const countryNames = useCountryNames()
+  const countryName = useCountryDisplayName()
+  const sortByName = useSortByCountryName()
   const [search, setSearch] = useState('')
   const [expanded, setExpanded] = useState<string[]>([])
   const [postalOpen, setPostalOpen] = useState(false)
@@ -58,12 +61,12 @@ export function DeliveryZoneRegionPicker({
   const claimed = useMemo(() => claimedByOtherZones(siblingZones), [siblingZones])
 
   const rows = useMemo<CountryRow[]>(() => {
-    const byIso = new Map<string, CountryRow>()
+    const byIso = new Map<CountryCode, CountryRow>()
 
     for (const country of marketCountries) {
       byIso.set(country.iso, {
         iso: country.iso,
-        name: country.name,
+        name: countryName(country),
         statesRequired: country.states_required,
         offMarket: false,
         claimed: claimed.countries.has(country.iso),
@@ -76,15 +79,15 @@ export function DeliveryZoneRegionPicker({
       if (byIso.has(iso)) continue
       byIso.set(iso, {
         iso,
-        name: countryNames.get(iso) ?? iso,
+        name: countryName({ iso }),
         statesRequired: selection.states.has(iso),
         offMarket: true,
         claimed: false,
       })
     }
 
-    return [...byIso.values()].sort((left, right) => left.name.localeCompare(right.name))
-  }, [marketCountries, countryNames, claimed, selection])
+    return sortByName([...byIso.values()], (row) => row.iso)
+  }, [marketCountries, countryName, sortByName, claimed, selection])
 
   const visibleRows = useMemo(() => {
     const term = search.trim().toLowerCase()
@@ -98,7 +101,7 @@ export function DeliveryZoneRegionPicker({
     onChange(writeSelection({ ...selection, ...next }))
   }
 
-  function toggleCountry(iso: string, checked: boolean) {
+  function toggleCountry(iso: CountryCode, checked: boolean) {
     if (checked) {
       apply(supersedeCountry(selection, iso))
       return
@@ -114,7 +117,7 @@ export function DeliveryZoneRegionPicker({
    * of a wholly-selected country: that country member has to become an
    * explicit member per remaining state before one can be dropped.
    */
-  function toggleState(iso: string, abbr: string, checked: boolean, allAbbrs: string[]) {
+  function toggleState(iso: CountryCode, abbr: string, checked: boolean, allAbbrs: string[]) {
     const countries = new Set(selection.countries)
     const states = new Map(selection.states)
     const wholeCountry = countries.has(iso)
@@ -144,7 +147,7 @@ export function DeliveryZoneRegionPicker({
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <span className="font-medium text-sm">{t('admin.delivery_zones.regions_title')}</span>
+        <span className="font-medium text-base">{t('admin.delivery_zones.regions_title')}</span>
         <span className="text-muted-foreground text-xs">
           {t('admin.delivery_zones.selection_summary', {
             countries: selection.countries.size,
@@ -167,11 +170,11 @@ export function DeliveryZoneRegionPicker({
 
       <div className="max-h-72 overflow-y-auto rounded-md border">
         {isLoading && (
-          <p className="p-3 text-muted-foreground text-sm">{t('admin.common.loading')}</p>
+          <p className="p-3 text-muted-foreground text-base">{t('admin.common.loading')}</p>
         )}
 
         {!isLoading && visibleRows.length === 0 && (
-          <p className="p-3 text-muted-foreground text-sm">
+          <p className="p-3 text-muted-foreground text-base">
             {t('admin.delivery_zones.no_regions_found')}
           </p>
         )}
@@ -199,7 +202,7 @@ export function DeliveryZoneRegionPicker({
         ))}
       </div>
 
-      <Link to="/$storeId/settings/markets" params={{ storeId }} className="link text-sm">
+      <Link to="/$storeId/settings/markets" params={{ storeId }} className="link text-base">
         {t('admin.delivery_zones.add_countries_in_markets')}
       </Link>
 
@@ -207,7 +210,7 @@ export function DeliveryZoneRegionPicker({
         <button
           type="button"
           onClick={() => setPostalOpen((open) => !open)}
-          className="flex w-full items-center gap-2 p-3 text-left font-medium text-sm"
+          className="flex w-full items-center gap-2 p-3 text-left font-medium text-base"
           aria-expanded={postalOpen}
         >
           {postalOpen ? (
@@ -276,7 +279,7 @@ function CountryListRow({
           aria-label={row.name}
         />
         <span
-          className={`flex-1 text-sm ${row.claimed ? 'text-muted-foreground' : ''}`}
+          className={`flex-1 text-base ${row.claimed ? 'text-muted-foreground' : ''}`}
           data-testid="country-name"
         >
           {row.name}
@@ -325,10 +328,10 @@ function CountryListRow({
       {expanded && row.statesRequired && !row.claimed && (
         <div className="border-t bg-muted/30 pl-9">
           {isLoading && (
-            <p className="px-3 py-2 text-muted-foreground text-sm">{t('admin.common.loading')}</p>
+            <p className="px-3 py-2 text-muted-foreground text-base">{t('admin.common.loading')}</p>
           )}
           {!isLoading && states.length === 0 && (
-            <p className="px-3 py-2 text-muted-foreground text-sm">
+            <p className="px-3 py-2 text-muted-foreground text-base">
               {t('admin.delivery_zones.no_states')}
             </p>
           )}
@@ -348,7 +351,7 @@ function CountryListRow({
                   }
                   aria-label={state.name}
                 />
-                <span className={`flex-1 text-sm ${stateClaimed ? 'text-muted-foreground' : ''}`}>
+                <span className={`flex-1 text-base ${stateClaimed ? 'text-muted-foreground' : ''}`}>
                   {state.name}
                 </span>
                 {stateClaimed && (
@@ -384,7 +387,7 @@ function PostalRulesSection({
   // must not gain one, so React keys are minted here and kept out of the value.
   const keys = useRef<string[]>([])
   while (keys.current.length < rules.length) {
-    keys.current = [...keys.current, `postal-rule-${crypto.randomUUID()}`]
+    keys.current = [...keys.current, `postal-rule-${randomUUID()}`]
   }
 
   const countryOptions = countries
@@ -403,18 +406,22 @@ function PostalRulesSection({
   return (
     <div className="flex flex-col gap-2 border-t p-3">
       {rules.length === 0 && (
-        <p className="text-muted-foreground text-sm">
+        <p className="text-muted-foreground text-base">
           {t('admin.delivery_zones.no_postal_rules_hint')}
         </p>
       )}
 
       {rules.map((rule, index) => (
-        <div key={keys.current[index]} className="flex flex-col gap-2 rounded-md border p-2">
+        <Item variant="outline" key={keys.current[index]} className="flex-col items-stretch gap-2">
           <div className="flex items-center gap-2">
             <Select
               items={countryOptions}
               value={rule.country_code ?? ''}
-              onValueChange={(next) => update(index, { country_code: next as string })}
+              onValueChange={(next) =>
+                update(index, {
+                  country_code: countryOptions.find((option) => option.value === next)?.value,
+                })
+              }
             >
               <SelectTrigger className="flex-1">
                 <SelectValue>
@@ -434,7 +441,7 @@ function PostalRulesSection({
             </Select>
             <Button
               type="button"
-              variant="ghost"
+              variant="destructive-ghost"
               size="icon-sm"
               onClick={() => remove(index)}
               aria-label={t('admin.delivery_zones.remove_postal_rule')}
@@ -463,7 +470,7 @@ function PostalRulesSection({
               aria-label={t('admin.delivery_zones.to_placeholder')}
             />
           </div>
-        </div>
+        </Item>
       ))}
 
       <div>

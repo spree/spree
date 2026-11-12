@@ -12,6 +12,10 @@ import 'virtual:spree-dashboard-plugins'
 import './styles.css'
 import { routeTree } from './routeTree.gen'
 
+// The end-to-end suite fills the extension slots with probes. The flag is
+// unset in every other build, so the branch and its chunk are dropped.
+if (import.meta.env.VITE_E2E_SLOT_PROBES === '1') await import('./testing/slot-probes')
+
 // basepath mirrors Vite's `base` so sub-path mounts (/dashboard on the
 // single-node topology) route correctly; '/' in dev and root deploys.
 const router = createDashboardRouter(routeTree, { basepath: import.meta.env.BASE_URL })

@@ -14,6 +14,8 @@ export interface RouteSource {
 interface DeclaredRoute {
   /** The composed path from the file's `createFileRoute('…')` literal. */
   routePath: string
+  /** The URL the route serves — `routePath` without pathless layout segments. */
+  urlPath: string
   file: string
   source: string
 }
@@ -31,6 +33,10 @@ const ROUTE_FILE_EXT = new Set(['.tsx', '.ts', '.jsx', '.js'])
  * generator's file-path-only error, which plugin authors must map back to
  * packages by hand.
  *
+ * Routes are compared by the URL they serve, so a public `/account` and a
+ * signed-in `/_authenticated/account` collide even though their literals
+ * differ.
+ *
  * Only flags cross-source collisions (two different packages claiming the
  * same path). Duplicates *within* one source are the generator's to report —
  * they're an authoring bug in a single package, and the file-level message is
@@ -44,13 +50,15 @@ export function assertNoRouteCollisions(sources: RouteSource[]): void {
   for (const source of sources) {
     const seenInSource = new Set<string>()
     for (const { routePath, file } of readDeclaredRoutes(source.routesDir)) {
+      const urlPath = toUrlPath(routePath)
+      if (urlPath === null) continue
       // Collapse within-source duplicates to a single entry so we only report
       // cross-source conflicts here.
-      if (seenInSource.has(routePath)) continue
-      seenInSource.add(routePath)
-      const list = byPath.get(routePath) ?? []
-      list.push({ routePath, file, source: source.label })
-      byPath.set(routePath, list)
+      if (seenInSource.has(urlPath)) continue
+      seenInSource.add(urlPath)
+      const list = byPath.get(urlPath) ?? []
+      list.push({ routePath, urlPath, file, source: source.label })
+      byPath.set(urlPath, list)
     }
   }
 
@@ -59,9 +67,8 @@ export function assertNoRouteCollisions(sources: RouteSource[]): void {
 
   const details = conflicts
     .map((list) => {
-      const path = list[0].routePath
-      const sources = list.map((r) => `  - ${r.source} (${r.file})`).join('\n')
-      return `Route "${path}" is declared by more than one package:\n${sources}`
+      const sources = list.map((r) => `  - ${r.source}: "${r.routePath}" (${r.file})`).join('\n')
+      return `Route "${list[0].urlPath}" is declared by more than one package:\n${sources}`
     })
     .join('\n\n')
 
@@ -70,6 +77,19 @@ export function assertNoRouteCollisions(sources: RouteSource[]): void {
       'Two packages cannot own the same route path. Rename one route, or ' +
       "remove the plugin that shouldn't own it.",
   )
+}
+
+/**
+ * Drop pathless layout segments (`_authenticated`), which group routes
+ * without adding to the URL, and the trailing slash that marks an index
+ * route: `/account/` and `/account` serve the same URL. A pathless layout
+ * itself serves no URL, so it returns `null`.
+ */
+function toUrlPath(routePath: string): string | null {
+  const segments = routePath.split('/')
+  if (segments[segments.length - 1].startsWith('_')) return null
+  const urlPath = segments.filter((segment) => !segment.startsWith('_')).join('/')
+  return urlPath.replace(/\/$/, '') || '/'
 }
 
 /** Extract the `createFileRoute` literal from every route file under `dir`. */

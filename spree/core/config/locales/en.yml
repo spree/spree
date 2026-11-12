@@ -251,6 +251,7 @@ en:
         must_belong_to_same_store: must belong to the same store
         not_registered: is not a registered provider
         spree_content_type_not_allowed: is not a file type we accept
+        too_many_decimals: has more than %{count} decimal places
       models:
         spree/allowed_origin:
           attributes:
@@ -381,6 +382,7 @@ en:
             base:
               duplicate_quantity: each quantity break must have its own quantity
               invalid_quantity: each quantity break must start at a whole number of units
+              malformed_price: a price must be a number like 16.50
               negative_price: a price cannot be below zero
               nothing_to_apply_to: has no rules, no catalog and no products, so it would apply to nothing. Add one before activating.
               price_rises_with_quantity: a quantity break cannot cost more than the price a buyer pays below it
@@ -427,6 +429,12 @@ en:
           attributes:
             company:
               must_be_legal_entity: must be a legal entity, not a division
+            tax_exemption_reason:
+              not_offered: is not a tax exemption reason this store offers
+        spree/tax_exemption_reason:
+          attributes:
+            base:
+              in_use: is recorded on tax exemption certificates and cannot be deleted
         spree/tax_identifier:
           attributes:
             company:
@@ -455,6 +463,9 @@ en:
               required_for_carton_purchase_unit: is required when the purchase unit is cartons
         spree/webhook_endpoint:
           attributes:
+            subscriptions:
+              invalid_pattern: 'must hold event names or patterns such as order.* or *.created (rejected: %{entries})'
+              too_many: can hold at most %{count} entries
             url:
               internal_address_not_allowed: must not point to an internal or private network address
               invalid_url: must be a valid http or https URL
@@ -611,8 +622,10 @@ en:
     messages:
       already_confirmed: was already confirmed
       forbidden_reporting_member: references data you are not allowed to read
+      fragment_present: cannot contain a fragment
       invalid_document_number_affix: 'can only contain uppercase letters, digits, dashes and #'
       invalid_system_key: can only contain lowercase letters, digits and underscores
+      invalid_uri: must be a valid URL
       locked_after_first_number: cannot change once numbering has started
       not_a_number: is not a number
       not_found: not found
@@ -620,7 +633,10 @@ en:
       not_saved:
         one: '1 error prohibited this %{resource} from being saved:'
         other: "%{count} errors prohibited this %{resource} from being saved:"
+      relative_uri: must be an absolute URL
+      secured_uri: must start with https, because authorization codes are delivered to it
       seeded_report_read_only: is a built-in report and cannot be changed — save a copy instead
+      unspecified_scheme: must include a scheme, such as https
   number:
     currency:
       format:
@@ -672,6 +688,8 @@ en:
     canceler: Canceler
     cannot_be_destroyed: Order cannot be destroyed.
     capture: Capture
+    capture_amount_not_positive: The capture amount must be greater than zero.
+    capture_exceeds_payment_amount: The capture amount cannot exceed the payment amount.
     cart: Cart
     cart_already_updated: The cart has already been updated.
     cart_completion_in_progress: The cart is being completed. Please retry in a moment.
@@ -686,6 +704,7 @@ en:
       pricing_unavailable: Prices could not be confirmed. Please try again.
       quantity_must_be_positive: Quantity must be at least 1. Use DELETE to remove the item.
       quantity_rule_violated: "%{li_name} cannot be ordered in that quantity. Try %{quantities}."
+      tax_unavailable: Tax could not be calculated. Please try again.
     catalogs:
       no_price_list_to_import: This catalog has no price list to import products from.
       product_not_in_store: One of those products belongs to another store.
@@ -751,6 +770,7 @@ en:
     created_at: Created at
     credit_card: Credit Card
     currency: Currency
+    currency_does_not_match_market: must be %{currency}, the currency of the chosen market
     currency_not_supported_by_store: is not supported by this store
     custom_field_definitions: Custom Field Definitions
     custom_fields: Custom Fields
@@ -759,7 +779,9 @@ en:
       anonymize_failed: The erasure could not be completed and nothing was changed
     customers: Customers
     data_request_errors:
+      address_changed: The account's email address changed after this request was made
       already_anonymized: This customer's personal data has already been erased
+      confirmation_invalid: This confirmation link has expired or is no longer valid
       download_unavailable: This download link has expired or is no longer valid
       not_pending: This request has already been processed
     default: Default
@@ -800,6 +822,11 @@ en:
       digital_delivery: Digital Delivery
     digital_assets: Digital assets
     digital_assets_attachment_must_be_private: Upload the file to private storage before attaching it
+    digital_assets_content_type_list_invalid: 'Not a content type: %{types}. Use the type/subtype form, such as application/pdf'
+    digital_assets_content_type_not_accepted: "%{content_type} files are not accepted on this marketplace"
+    digital_assets_provider_takes_no_file: This file is delivered by the marketplace's own system, so a replacement file cannot be uploaded
+    digital_assets_sellers_disabled: This marketplace does not let sellers add or change digital files
+    digital_assets_upload_not_found: The uploaded file could not be found. Upload it again
     discontinued: Discontinued
     discontinued_variants_present: Some line items in this order have products that are no longer available.
     display_delivery_range: Delivery in %{delivery_range} business days
@@ -873,6 +900,8 @@ en:
         invalid_status: Invalid status
         invalid_storefront_access: is not a valid storefront access level
         items_not_a_list: items must be a list of objects
+        missing_row_type: 'is required (expected one of: %{types})'
+        money_preference_too_many_decimals: has more than %{count} decimal places for %{currency}
         must_be_greater_than_min_amount: must be greater than or equal to the minimum
         no_pickup_point_provider: this delivery method has no pickup point provider configured
         not_cancellable: cannot be canceled once its goods have been dispatched
@@ -881,6 +910,7 @@ en:
         oidc_missing_code: The identity provider did not return an authorization code.
         oidc_requires_redirect: This provider requires signing in through its own login page.
         pickup_point_not_found: pickup point could not be found with this provider
+        product_in_review: A product awaiting review is approved or rejected, not moved to another status
         product_not_in_store: must all belong to this store
         profile_does_not_accept_provider: "%{provider} deliveries cannot join the %{profile} profile"
         promotion_discount_not_editable: promotion discounts are managed by recalculation and cannot be edited
@@ -894,7 +924,9 @@ en:
         stock_level_immutable: cannot be changed after the hold is taken — release the hold and take it again
         store_association_can_not_be_changed: The store association can not be changed
         store_is_already_set: Store is already set
+        unknown_calculator_type: "%{type} is not a calculator offered here"
         unknown_custom_field_type: 'is not a known custom field type (expected one of: %{types})'
+        unknown_row_type: "%{type} is not a %{family} offered here (expected one of: %{types})"
         unknown_scopes: 'contains unknown scopes: %{scopes}'
         unregistered_actor: is not a registered actor class
         variant_product_mismatch: must belong to the same product as the variant
@@ -956,6 +988,7 @@ en:
     image: Image
     import: Import
     import_has_no_failed_rows: This import has no failed rows to retry.
+    import_invalid_number: "%{column} must be a number like 16.50, got %{value}."
     import_mailer:
       greeting: Hi %{user_name},
       import_done:
@@ -988,6 +1021,7 @@ en:
         subject: Invitation to join %{resource_name}
     invitation_not_acceptable: Invitation not found, expired, or already accepted.
     invitation_role_resource_mismatch: must belong to the same store or seller as the invitation
+    invitation_seller_rejected: This seller was rejected, so nobody can join its team.
     iso: ISO Alpha-2
     item: Item
     items_cannot_be_shipped: We are unable to calculate shipping rates for the selected items.
@@ -999,7 +1033,10 @@ en:
     line_items: Line items
     link: Link
     locale: Locale
+    locale_not_supported_by_market: is not offered by the chosen market
     locale_not_supported_by_store: is not supported by this store
+    locales_not_listed: 'includes locales Spree does not support: %{codes}'
+    maintenance_tasks_turned_off: Maintenance tasks are turned off for this installation. Run upgrade steps from the command line with `spree upgrade` (or `bin/rake spree:upgrade`).
     manual: Manual
     market: Market
     me_no_current_user: No admin user authenticated this request
@@ -1138,8 +1175,7 @@ en:
     phone: Phone
     pickup:
       store_pickup: Store Pickup
-    po_document_invalid: A purchase order document must be a PDF, image or Word file of %{size} or less.
-    po_document_invalid_signed_id: The purchase order document reference is not valid.
+    po_document_invalid: A purchase order document must be a PDF, image, Word document, spreadsheet or CSV file of %{size} or less.
     po_document_missing: This order has no attached purchase order document.
     po_document_too_large: is larger than %{size}.
     po_document_upload_incomplete: The purchase order document was not uploaded completely. Please try attaching it again.
@@ -1672,6 +1708,7 @@ en:
       errors:
         already_purchased: This parcel already has an active shipping label
         file_fetch_failed: The label file could not be fetched from the carrier (HTTP %{status})
+        file_renamed: Send the uploaded label's signed id as file_signed_id
         file_required: An uploaded label needs a file
         no_file_url: The carrier did not provide a file for this label
         not_refund_requested: Only a label awaiting the carrier's refund decision can be confirmed refunded
@@ -1779,6 +1816,8 @@ en:
       gb_vat: UK VAT
       us_ein: US EIN
     tax_provider_unavailable: The tax service could not work out the tax to give back. Try again in a few minutes.
+    tax_providers:
+      internal: Spree tax rates
     terms_of_service: Terms of Service
     there_are_no_items_for_this_order: There are no items for this order
     tiered_flat_rate: Tiered Flat Rate
@@ -1791,6 +1830,8 @@ en:
     type: Type
     unable_to_connect_to_gateway: Unable to connect to gateway.
     updated_at: Updated at
+    upload_reference_invalid: A signed reference in this request is invalid or has expired. For a file, upload it again.
+    upload_wrong_visibility: must be uploaded with %{visibility} visibility
     url: URL
     user: User
     validation:

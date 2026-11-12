@@ -2,7 +2,8 @@ module Spree
   module Newsletter
     class Subscribe
       def initialize(email:, current_user: nil, current_store: nil, redirect_url: nil)
-        @email = email
+        @submitted_email = email.to_s.strip
+        @email = @submitted_email.downcase
         @current_user = current_user
         @current_store = current_store || Spree::Store.current
         @redirect_url = redirect_url
@@ -20,7 +21,7 @@ module Spree
 
           Spree::Newsletter::LinkUser.new(subscriber: subscriber, user: known_user).call
 
-          if subscriber.email == current_user&.email
+          if current_user && subscriber.email.to_s.casecmp?(current_user.email.to_s)
             # User's email is already verified by login — skip the double opt-in.
             Spree::Newsletter::Verify.new(subscriber: subscriber).call
           end
@@ -32,7 +33,7 @@ module Spree
 
       private
 
-      attr_reader :email, :current_user, :current_store, :redirect_url
+      attr_reader :email, :submitted_email, :current_user, :current_store, :redirect_url
 
       def publish_subscription_requested
         event_name = 'newsletter_subscriber.subscription_requested'
@@ -54,8 +55,19 @@ module Spree
         @existed_subscription ||= Spree::NewsletterSubscriber.verified.find_by(email: email, store: current_store)
       end
 
+      # The account the subscription belongs to: the signed-in customer only
+      # when the address is theirs. Linking it to whoever is signed in would
+      # hand them another person's subscription — and with it the right to
+      # cancel it.
       def known_user
-        @known_user ||= current_user || Spree.customer_class.find_by(email: email)
+        @known_user ||= if current_user&.email.to_s.casecmp?(email.to_s)
+                          current_user
+                        else
+                          # Customer emails are not downcased on save, so try the
+                          # address as submitted before the normalized form.
+                          Spree.customer_class.find_by(email: submitted_email) ||
+                            Spree.customer_class.find_by(email: email)
+                        end
       end
     end
   end

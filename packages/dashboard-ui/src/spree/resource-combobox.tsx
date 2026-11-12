@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { type ReactNode, useState } from 'react'
 import {
   Combobox,
   ComboboxContent,
@@ -84,14 +84,30 @@ export function ResourceCombobox<T extends ComboboxOption>({
   disabled,
   id,
 }: ResourceComboboxProps<T>) {
-  const selected = items.find((r) => r.id === value) ?? null
+  // The picked record is remembered so it stays selected while `items` is
+  // between fetches. Without it, the selection drops out of the list for a
+  // moment, Base UI reads that as the value being cleared, empties the input,
+  // and the field flickers between labels until the queries settle.
+  const [picked, setPicked] = useState<T | null>(null)
+  const selected =
+    items.find((r) => r.id === value) ?? (picked && picked.id === value ? picked : null)
 
   return (
     <Combobox
       items={items}
       value={selected}
-      onValueChange={(record: T | null) => onChange(record?.id, record)}
-      onInputValueChange={onInputChange}
+      // Compared by id: a refetch hands back equal records as new objects.
+      isItemEqualToValue={(item: T, current: T) => item.id === current.id}
+      onValueChange={(record: T | null) => {
+        setPicked(record)
+        onChange(record?.id, record)
+      }}
+      // Picking an option writes its label into the input. That is not a
+      // search, so the query goes back to the empty list instead of searching
+      // for the full label of what was just chosen.
+      onInputValueChange={(next, details) =>
+        onInputChange?.(details.reason === 'item-press' ? '' : next)
+      }
       itemToStringLabel={(record: T | null) => (record ? getOptionLabel(record) : '')}
       itemToStringValue={(record: T | null) => record?.id ?? ''}
       // Filtering is server-side: the caller's `onInputChange` already narrows

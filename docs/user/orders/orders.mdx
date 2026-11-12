@@ -1,0 +1,156 @@
+---
+title: "Orders"
+description: "Learn how to find an order, read its status and export your orders in Spree Commerce."
+---
+
+Every sale your store makes becomes an order, holding what the customer bought, what they have paid, what has left your warehouse and anything your team needs to remember about it.
+
+The Orders list is where you find them. Each row carries the order's number, who placed it, and the payment and fulfillment statuses, so the list functions as the day's work queue: what still needs sending, and who still owes you money. Filters narrow it to either question, and an export takes the whole list out as a spreadsheet.
+
+Opening an order is where the work happens, from taking a payment to sending the goods or calling the sale off. That is covered in [<u>Processing Orders</u>](/user/orders/processing-orders).
+
+Orders your team builds on a customer's behalf start life somewhere else, on the **Draft Orders** list. See [<u>Draft Orders</u>](/user/orders/draft-orders).
+
+To manage orders, navigate to **Orders** in the admin dashboard.
+
+## Reviewing Orders
+
+![The Orders list with its search box, filters and status badges](/docs/images/user/orders/orders/1-orders-overview.png)
+
+The newest orders sit at the top, and the number beside **Orders** in the sidebar counts them.
+
+| Column | What it means |
+|---|---|
+| **Number** | The order's reference. Click it to open the order. |
+| **Date** | How long ago the order was placed, with the exact time on hover. |
+| **Customer** | Who placed the order. |
+| **Sales channel** | Where the order came from. |
+| **Payment** | How far the order has been paid. See the statuses below. |
+| **Fulfillment** | How far the order has been sent. See the statuses below. |
+| **Items** | How many items the customer bought. |
+| **Total** | What the order came to. |
+| **Seller** | Which seller the order belongs to on a marketplace. Orders you sell yourself show a dash. |
+
+**Columns** adds further columns, among them **PO number** for the buyer's own reference, **Currency**, **Tags**, and when the order was created or last updated. **Sort** orders the list by any of those columns.
+
+### Finding an Order
+
+The search box matches an order's number, the buyer's purchase order number, the customer's email address, and the first or last name on the order.
+
+Search does not look at what was bought, so to find every order holding a particular product, use the **SKU** filter under **Add filter** instead.
+
+Three filters sit beside the search box:
+
+| Filter | What it narrows by |
+|---|---|
+| **Date** | When the order was placed: today, the last 7 or 30 days, this month, last month, or a range you choose. |
+| **Payment** | How far the order has been paid. |
+| **Fulfillment** | How far the order has been sent. |
+
+**Add filter** offers more: the customer, sales channel, total, PO number, currency, seller, tags, a name on the order, a SKU, and the created or updated date.
+
+Every filter you add is kept in the page address, so a filtered list, such as everything that's unfulfilled, can be bookmarked and returned to.
+
+## Payment and Fulfillment Statuses
+
+Both statuses are worked out from the order itself, rather than set by hand.
+
+An order's **Payment** status reflects what has been captured against its total:
+
+| Status | What it means |
+|---|---|
+| **Unpaid** | Nothing has been authorized or captured yet. |
+| **Authorized** | A payment is approved but not yet captured, so the money is reserved rather than taken. |
+| **Partially paid** | Some of the total has been captured, and the rest is still owed. |
+| **Paid** | The total has been captured in full. |
+| **Partially refunded** | Some of what was captured has been refunded. |
+| **Refunded** | Everything captured has been refunded. |
+| **Overcharged** | More has been captured than the order's total. |
+| **Voided** | The order was canceled and its captured payment released. |
+
+An order's **Fulfillment** status reflects its parcels:
+
+| Status | What it means |
+|---|---|
+| **Unfulfilled** | Nothing has been sent yet. |
+| **Partial** | Some parcels have gone and others have not. |
+| **Fulfilled** | Every parcel has been marked as sent. |
+| **Delivered** | Every parcel has arrived. |
+| **Backorder** | The order is waiting on stock that is not yet on hand. |
+| **Canceled** | The order was called off, and the stock held for it is free to sell again. |
+
+## How to Export Orders
+
+An export gives you your orders as a CSV file, for your accountant, a report or another system.
+
+1. Narrow the list first if you only want a partial export.
+2. Click **Export**.
+3. Choose **Current filter** to export what the list is showing, or **All records** to ignore the filter.
+4. Click **Export**. The file downloads, and you receive an email as well.
+
+<Note>The file holds **one row per product on an order**, so an order with two different products takes two rows, and the order's totals are repeated on each.</Note>
+
+## Order Pages
+
+![An order that has been paid and sent, showing its fulfillment, payments and summary](/docs/images/user/orders/orders/2-order-page.png)
+
+Clicking an order's number opens it. The heading carries the order number and its payment and fulfillment badges, the left of the page follows the life of the order card by card, and the right holds the customer, the addresses, and your team's own notes and tags.
+
+Some cards are a record of what has happened and look after themselves. The rest are yours to change, and how to change each one is covered in [<u>Processing Orders</u>](/user/orders/processing-orders).
+
+| Card | What it holds | |
+|---|---|---|
+| **Fulfillments** | One box per parcel, with its status, the stock location it ships from, the delivery method, and each item and quantity. | Editable |
+| **Payments** | Every payment on the order, with its number, method, state and amount. | Editable |
+| **Returns**, **Exchanges**, **Claims** | Anything coming back, or gone wrong, after the sale. Each card starts and tracks its own process. | Editable |
+| **Taxes** | What tax was charged, worked out from the order's address and the rates that matched it. | Read-only |
+| **Discounts** and **Fees** | What was taken off or added to the price, and why. | Editable |
+| **Summary** | The order's own record, and its money row by row. See [The Order Summary](#the-order-summary) below. | Read-only |
+| **Customer**, **Shipping address**, **Billing address** | Who the order is for and where it is going. | Editable |
+| **Discounts & Credit** | The discount code the customer used, which is a record, and any gift card on the order, which can be applied afterwards. | Editable |
+| **Purchase order** | The buyer's own reference, which they use to match your order to their paperwork. | Editable |
+| **Special instructions** | What the customer asked for at checkout, such as where to leave a parcel. | Editable |
+| **Internal note** | What your team should know about this order. Staff only. | Editable |
+| **Tags** | Short labels for finding a group of orders again with the **Tags** filter. | Editable |
+| **Custom fields** | The extra order fields your store has defined. See [<u>Custom Fields</u>](/user/settings/custom-fields). | Editable |
+| **Metadata** | Structured data that apps and integrations write to the order. | Read-only |
+
+A marketplace order carries two more, **Commission** and **Seller transfers**, both records of what each seller is owed.
+
+## The Order Summary
+
+The **Summary** card is where an order's money is added up, alongside the record of where the order came from. Nothing in it is edited directly: every figure follows from the order itself.
+
+| Row | What it means |
+|---|---|
+| **Created by** | Who placed the order: the customer, or the staff member who built it as a draft. |
+| **Created at** | When the order was started. |
+| **Completed at** | When it was placed. A draft has no completed date until you complete it. |
+| **Sales channel** | Which channel the order is attributed to. |
+| **Market** | The market the customer bought in, which decides the currency and the tax treatment. |
+| **Locale** | The language the order was placed in, and the language its emails are sent in. |
+| **Currency** | The currency the order is priced and paid in. |
+| **Subtotal** | The products alone, before delivery, tax or anything else. |
+| **Shipping** | What the customer pays for delivery. |
+| **Promotions** | What a promotion or coupon took off. |
+| **Adjustments** | Everything added to or taken off the order beyond products and delivery, including tax, discounts and fees. |
+| **Tax (additional)** | Tax charged on top of your prices, as opposed to tax already included in them. |
+| **Total** | What the order comes to. |
+| **Payment total** | How much has actually been captured. |
+| **Outstanding balance** | What is still owed. |
+
+Rows appear only when they apply, so an order with free delivery, no promotion and no tax shows a shorter Summary than one with all three.
+
+<Note>**Adjustments** is a running total of the same money the rows above it break down, so on an order with tax and no discount or fee it shows the same figure as **Tax (additional)**. Nothing is charged twice, and the **Total** is right.</Note>
+
+<Note>**Payment total** and **Outstanding balance** count only money that has been captured, so a card that is authorized but not yet captured still reads as owed. See [<u>Processing Orders</u>](/user/orders/processing-orders).</Note>
+
+A canceled order gains **Canceled at** and the staff member who canceled it, with the reason and note if they were given. A marketplace order gains **Marketplace fee** and **Total marketplace fee**, which are what the marketplace keeps rather than what the seller is paid.
+
+## Further Reading
+
+- [<u>Processing Orders</u>](/user/orders/processing-orders) - Everything you do on an order's own page
+- [<u>Draft Orders</u>](/user/orders/draft-orders) - Orders your team builds for a customer
+- [<u>Returns</u>](/user/orders/returns) - Goods a customer sends back
+- [<u>Exchanges</u>](/user/orders/exchanges) - Swapping one item for another
+- [<u>Claims</u>](/user/orders/claims) - Goods that arrived damaged or never arrived

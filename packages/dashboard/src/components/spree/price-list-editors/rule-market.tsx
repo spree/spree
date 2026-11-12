@@ -8,16 +8,16 @@ import { EditorShell } from '../promotion-editors/editor-shell'
 import type { PriceRuleEditorContext } from './types'
 
 /**
- * Multi-select market picker for the Market price rule. Seeds from
- * `draft.markets` (the serializer embed) because `preferences.market_ids`
- * holds raw integer IDs server-side while the embed exposes the prefixed
- * `mkt_…` form the picker round-trips.
+ * Multi-select market picker for the Market price rule. Reads and writes
+ * the prefixed ids in `preferences.market_ids`.
  */
 export function MarketRuleEditor({ draft, onSave, onClose }: PriceRuleEditorContext) {
   const { t } = useTranslation()
   const { markets } = useAllMarkets()
 
-  const [marketIds, setMarketIds] = useState<string[]>(() => (draft.markets ?? []).map((m) => m.id))
+  const [marketIds, setMarketIds] = useState<string[]>(
+    () => (draft.preferences?.market_ids ?? []) as string[],
+  )
 
   const selectedMarkets = useMemo<Market[]>(
     () =>

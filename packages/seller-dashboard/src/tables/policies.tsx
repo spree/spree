@@ -6,7 +6,7 @@ import i18n from 'i18next'
 
 defineTable<Policy>('seller-policies', {
   title: i18n.t('policies.title'),
-  searchParam: 'name_cont',
+  searchParam: 'search',
   searchPlaceholder: i18n.t('policies.search_placeholder'),
   defaultSort: { field: 'name', direction: 'asc' },
   emptyIcon: <ScrollTextIcon className="size-8 text-muted-foreground" />,

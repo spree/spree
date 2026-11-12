@@ -3,11 +3,15 @@ module Spree
     module V3
       module Admin
         class StoreCreditSerializer < V3::StoreCreditSerializer
+          without_formatted_money
+
           typelize customer_id: [:string, nullable: true],
                    created_by_id: [:string, nullable: true],
+                   created_by_type: [:string, nullable: true, enum: Spree::Actor::BUILT_IN_KINDS, enum_type_name: 'ActorKind'],
                    memo: [:string, nullable: true],
-                   amount_authorized: :string,
-                   display_amount_authorized: :string,
+                   amount: [:string, nullable: false], amount_used: [:string, nullable: false],
+                   amount_remaining: [:string, nullable: false],
+                   amount_authorized: [:string, nullable: false],
                    outstanding: :boolean,
                    originator_type: [:string, nullable: true],
                    originator_id: [:string, nullable: true],
@@ -16,13 +20,16 @@ module Spree
           attributes :memo, :metadata,
                      created_at: :iso8601, updated_at: :iso8601
 
-          attributes amount_authorized: :string
+          money_attributes :amount_authorized
           # Answers the same question as the `outstanding` filter, so the row
           # and the filter cannot disagree.
           attribute :outstanding, &:outstanding?
 
-          attributes display_amount_authorized: :string
-          prefixed_id_attributes :customer, :created_by
+          # money_attributes types its fields nullable for gated guests; the
+          # Admin API never gates prices.
+          typelize amount_authorized: [:string, nullable: false]
+          prefixed_id_attributes :customer
+          actor_attributes :created_by
 
           # Why the credit exists: the return, exchange, claim or gift card
           # that issued it, or null when an admin issued it by hand. The type
@@ -46,9 +53,7 @@ module Spree
               resource: proc { Spree.api.admin_customer_serializer },
               if: proc { expand?('customer') }
 
-          one :created_by,
-              resource: proc { Spree.api.admin_admin_user_serializer },
-              if: proc { expand?('created_by') }
+          expandable_custom_fields admin: true
         end
       end
     end

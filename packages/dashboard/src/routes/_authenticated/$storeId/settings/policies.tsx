@@ -3,6 +3,9 @@ import type { Policy, PolicyCreateParams } from '@spree/admin-sdk'
 import {
   adminClient,
   Can,
+  extensionFormValues,
+  extensionSubmitValues,
+  HostFormSlot,
   mapSpreeErrorsToForm,
   ResourceTable,
   resourceSearchSchema,
@@ -148,12 +151,15 @@ function CreatePolicySheet({
   const form = useForm<PolicyFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(policyFormSchema) as any,
-    defaultValues: POLICY_DEFAULTS,
+    defaultValues: { ...POLICY_DEFAULTS, ...extensionFormValues('policy', null) },
   })
 
   async function onSubmit(values: PolicyFormValues) {
     try {
-      await createMutation.mutateAsync(policyValuesToParams(values) as PolicyCreateParams)
+      await createMutation.mutateAsync({
+        ...(policyValuesToParams(values) as PolicyCreateParams),
+        ...extensionSubmitValues('policy', form),
+      })
       form.reset(POLICY_DEFAULTS)
       onOpenChange(false)
     } catch (err) {
@@ -177,6 +183,11 @@ function CreatePolicySheet({
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
             <PolicyFormFields form={form} />
+            <HostFormSlot
+              form={form}
+              name="policy.form_fields"
+              context={{ policy: undefined, mode: 'new' }}
+            />
           </div>
           <SheetFooter>
             <Button
@@ -219,12 +230,17 @@ function EditPolicySheet({
   })
 
   useEffect(() => {
-    if (policy) form.reset(policyToFormValues(policy))
+    if (policy) {
+      form.reset({ ...policyToFormValues(policy), ...extensionFormValues('policy', policy) })
+    }
   }, [policy, form])
 
   async function onSubmit(values: PolicyFormValues) {
     try {
-      await updateMutation.mutateAsync(policyValuesToParams(values))
+      await updateMutation.mutateAsync({
+        ...policyValuesToParams(values),
+        ...extensionSubmitValues('policy', form),
+      })
       form.reset(values)
       onOpenChange(false)
     } catch (err) {
@@ -242,11 +258,16 @@ function EditPolicySheet({
           <SheetDescription>{t('admin.policies.edit_description')}</SheetDescription>
         </SheetHeader>
         {isLoading ? (
-          <div className="p-4 text-sm text-muted-foreground">{t('admin.common.loading')}</div>
+          <div className="p-4 text-base text-muted-foreground">{t('admin.common.loading')}</div>
         ) : (
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
               <PolicyFormFields form={form} />
+              <HostFormSlot
+                form={form}
+                name="policy.form_fields"
+                context={{ policy, mode: 'edit' }}
+              />
             </div>
             <SheetFooter>
               <Button
@@ -278,7 +299,7 @@ function PolicyFormFields({ form }: { form: UseFormReturn<PolicyFormValues> }) {
   return (
     <FieldGroup>
       {errors.root?.message && (
-        <p className="text-sm text-destructive" role="alert">
+        <p className="text-base text-destructive" role="alert">
           {errors.root.message}
         </p>
       )}

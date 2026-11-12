@@ -1,4 +1,10 @@
-import { downloadFromApi, getApiClient, useAuth } from '@spree/dashboard-core'
+import {
+  downloadFromApi,
+  formatMoney,
+  getApiClient,
+  useAuth,
+  useMoneyLocale,
+} from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -19,6 +25,7 @@ import {
 import type { ShippingLabel } from '@spree/seller-sdk'
 import { useTranslation } from 'react-i18next'
 import { useFulfillmentActions } from '../../hooks/use-fulfillments'
+import { useOrder } from '../../hooks/use-order'
 
 /**
  * The label bound to a parcel: what it cost and how to print it.
@@ -41,6 +48,11 @@ export function ShippingLabelRow({
   const { token } = useAuth()
   const confirm = useConfirm()
   const { deleteLabel } = useFulfillmentActions(orderId)
+  const locale = useMoneyLocale()
+  const { data: order } = useOrder(orderId)
+  // A label with no currency of its own was bought in the order's.
+  const labelCurrency = label.currency ?? order?.currency
+  const cost = labelCurrency ? formatMoney(label.cost, labelCurrency, locale) : ''
 
   const deletable = label.source === 'uploaded'
 
@@ -76,16 +88,16 @@ export function ShippingLabelRow({
   }
 
   return (
-    <CardContent className="flex flex-wrap items-center justify-between gap-2 border-border-subtle border-b py-3 text-sm">
+    <CardContent className="mx-4 px-0 flex flex-wrap items-center justify-between gap-2 border-border-subtle border-b py-3.5 text-base">
       <div className="flex flex-wrap items-center gap-2">
         <ReceiptTextIcon className="size-4 text-muted-foreground" />
         <span className="text-muted-foreground">{t('orders.fulfillments.label_title')}</span>
         {label.source === 'uploaded' && (
           <Badge variant="secondary">{t('orders.fulfillments.label_uploaded')}</Badge>
         )}
-        {label.display_cost && (
+        {cost && (
           <span className="text-muted-foreground">
-            {t('orders.fulfillments.label_cost', { amount: label.display_cost })}
+            {t('orders.fulfillments.label_cost', { amount: cost })}
           </span>
         )}
       </div>

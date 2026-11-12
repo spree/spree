@@ -19,6 +19,9 @@ import type { ProductType } from '@spree/admin-sdk'
 import {
   adminClient,
   Can,
+  extensionFormValues,
+  extensionSubmitValues,
+  HostFormSlot,
   mapSpreeErrorsToForm,
   ResourceMultiAutocomplete,
   ResourceTable,
@@ -37,6 +40,7 @@ import {
   FieldGroup,
   FieldLabel,
   Input,
+  Item,
   RowActions,
   Select,
   SelectContent,
@@ -69,6 +73,10 @@ import {
   useUpdateProductType,
 } from '../../../../hooks/use-product-types'
 import '../../../../tables/product-types'
+import {
+  DraftCustomFieldsCard,
+  useCustomFieldsDraft,
+} from '../../../../components/spree/custom-fields/custom-fields-inline'
 
 const productTypeFormSchema = z.object({
   name: z.string().min(1),
@@ -205,12 +213,15 @@ function CreateProductTypeSheet({
   const form = useForm<ProductTypeFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(productTypeFormSchema) as any,
-    defaultValues: PRODUCT_TYPE_DEFAULTS,
+    defaultValues: { ...PRODUCT_TYPE_DEFAULTS, ...extensionFormValues('product_type', null) },
   })
 
   async function onSubmit(values: ProductTypeFormValues) {
     try {
-      await createMutation.mutateAsync(withSortOrder(values))
+      await createMutation.mutateAsync({
+        ...withSortOrder(values),
+        ...extensionSubmitValues('product_type', form),
+      })
       form.reset(PRODUCT_TYPE_DEFAULTS)
       onOpenChange(false)
     } catch (err) {
@@ -234,6 +245,11 @@ function CreateProductTypeSheet({
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
             <ProductTypeFormFields form={form} />
+            <HostFormSlot
+              form={form}
+              name="product_type.form_fields"
+              context={{ productType: undefined, mode: 'new' }}
+            />
           </div>
           <SheetFooter>
             <Button
@@ -268,6 +284,7 @@ function EditProductTypeSheet({
   const { t } = useTranslation()
   const { data: productType, isLoading } = useProductType(id)
   const updateMutation = useUpdateProductType(id)
+  const customFields = useCustomFieldsDraft('product_type', id)
 
   const form = useForm<ProductTypeFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -288,14 +305,24 @@ function EditProductTypeSheet({
             required: definition.required,
           }),
         ),
+        ...extensionFormValues('product_type', productType),
       })
     }
   }, [productType, form])
 
   async function onSubmit(values: ProductTypeFormValues) {
     try {
-      await updateMutation.mutateAsync(withSortOrder(values))
-      form.reset(values)
+      // The record saves first and is marked clean, so a retry after a failed
+      // custom field save sends only the custom fields.
+      const savesRecord = form.formState.isDirty
+      if (savesRecord) {
+        await updateMutation.mutateAsync({
+          ...withSortOrder(values),
+          ...extensionSubmitValues('product_type', form),
+        })
+        form.reset(values)
+      }
+      if (!(await customFields.save({ announce: !savesRecord }))) return
       onOpenChange(false)
     } catch (err) {
       if (!mapSpreeErrorsToForm(err, form.setError)) throw err
@@ -310,12 +337,18 @@ function EditProductTypeSheet({
           <SheetDescription>{t('admin.product_types.edit_description')}</SheetDescription>
         </SheetHeader>
         {isLoading ? (
-          <div className="p-4 text-sm text-muted-foreground">{t('admin.common.loading')}</div>
+          <div className="p-4 text-base text-muted-foreground">{t('admin.common.loading')}</div>
         ) : (
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
               <ProductTypeFormFields form={form} />
+              <HostFormSlot
+                form={form}
+                name="product_type.form_fields"
+                context={{ productType, mode: 'edit' }}
+              />
               <ApplyToProductsSection id={id} productType={productType} />
+              <DraftCustomFieldsCard draft={customFields} hideWhenEmpty />
             </div>
             <SheetFooter>
               <Button
@@ -328,7 +361,9 @@ function EditProductTypeSheet({
               </Button>
               <Button
                 type="submit"
-                disabled={form.formState.isSubmitting || !form.formState.isDirty}
+                disabled={
+                  form.formState.isSubmitting || (!form.formState.isDirty && !customFields.isDirty)
+                }
               >
                 {form.formState.isSubmitting ? t('admin.actions.saving') : t('admin.actions.save')}
               </Button>
@@ -369,7 +404,9 @@ function ApplyToProductsSection({
 
   return (
     <div className="flex flex-col gap-2 rounded-md border border-dashed p-3">
-      <span className="font-medium text-sm">{t('admin.product_types.affects_new_only.title')}</span>
+      <span className="font-medium text-base">
+        {t('admin.product_types.affects_new_only.title')}
+      </span>
       <span className="text-muted-foreground text-xs">
         {t('admin.product_types.affects_new_only.description')}
       </span>
@@ -402,7 +439,7 @@ function ProductTypeFormFields({ form }: { form: UseFormReturn<ProductTypeFormVa
   return (
     <FieldGroup>
       {errors.root?.message && (
-        <p className="text-sm text-destructive" role="alert">
+        <p className="text-base text-destructive" role="alert">
           {errors.root.message}
         </p>
       )}
@@ -491,7 +528,7 @@ function ProductTypeFormFields({ form }: { form: UseFormReturn<ProductTypeFormVa
  */
 function CustomFieldDefinitionsEditor({ form }: { form: UseFormReturn<ProductTypeFormValues> }) {
   const { t } = useTranslation()
-  const { data: definitions } = useCustomFieldDefinitions('Spree::Product')
+  const { data: definitions } = useCustomFieldDefinitions('product')
   const fieldArray = useFieldArray({ control: form.control, name: 'custom_field_definitions' })
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -539,7 +576,7 @@ function CustomFieldDefinitionsEditor({ form }: { form: UseFormReturn<ProductTyp
             items={fieldArray.fields.map((row) => row.id)}
             strategy={verticalListSortingStrategy}
           >
-            <div className="flex flex-col gap-1 rounded-md border p-2">
+            <Item variant="outline" className="flex-col items-stretch gap-1">
               {fieldArray.fields.map((row, index) => (
                 <SortableCustomFieldRow
                   key={row.id}
@@ -550,7 +587,7 @@ function CustomFieldDefinitionsEditor({ form }: { form: UseFormReturn<ProductTyp
                   onRemove={() => fieldArray.remove(index)}
                 />
               ))}
-            </div>
+            </Item>
           </SortableContext>
         </DndContext>
       )}
@@ -602,7 +639,7 @@ function SortableCustomFieldRow({
       ref={setNodeRef}
       style={style}
       className={cn(
-        'flex items-center gap-2 rounded-md px-1 py-1.5 text-sm',
+        'flex items-center gap-2 rounded-md px-1 py-1.5 text-base',
         isDragging && 'relative z-10 bg-card opacity-80 shadow-lg',
       )}
     >
@@ -630,7 +667,7 @@ function SortableCustomFieldRow({
         )}
       />
 
-      <Button type="button" variant="ghost" size="sm" onClick={onRemove}>
+      <Button type="button" variant="destructive-ghost" size="sm" onClick={onRemove}>
         <XIcon className="size-4" />
         <span className="sr-only">{t('admin.actions.remove')}</span>
       </Button>

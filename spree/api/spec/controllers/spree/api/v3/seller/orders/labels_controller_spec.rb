@@ -32,7 +32,7 @@ RSpec.describe Spree::Api::V3::Seller::Orders::LabelsController, type: :controll
   it 'records a label the seller bought elsewhere' do
     post :create, params: {
       order_id: order.prefixed_id, fulfillment_id: fulfillment.prefixed_id,
-      file: signed_file, tracking_number: 'SELLER-LBL-1', cost: '4.20', currency: 'USD'
+      file_signed_id: signed_file, tracking_number: 'SELLER-LBL-1', cost: '4.20', currency: 'USD'
     }, as: :json
 
     expect(response).to have_http_status(:created)

@@ -37,6 +37,8 @@ Most records announce their own lifecycle:
 
 Those exist for orders, carts, products, variants, customers, payments, fulfillments, returns, media, price changes and more.
 
+Adding a product to a category or collection, or taking it out, publishes `product_category.created` / `.deleted` and `product_collection.created` / `.deleted`.
+
 On top of that, meaningful business moments get their own events:
 
 | Event | Meaning |

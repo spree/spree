@@ -389,23 +389,6 @@ RSpec.describe 'OrderRouting strategy parity', type: :model do
       end
     end
 
-    context 'stock reservations globally disabled' do
-      before { stub_store_preferences(stock_reservations_enabled: false) }
-
-      let(:order) do
-        o = create(:order, store: store, ship_address: create(:ship_address))
-        create(:line_item, order: o, variant: variant_a, quantity: 1)
-        o.reload
-      end
-
-      before { nyc.stock_level_or_create(variant_a).update!(count_on_hand: 5) }
-
-      it 'allocates unaffected by reservation feature flag' do
-        packages = strategy.for_allocation
-        expect(total_on_hand(packages)).to eq(1)
-      end
-    end
-
     # ---------------------------------------------------------------
     # Splitter chain: fulfillment-type split runs per-location
     # ---------------------------------------------------------------
@@ -627,7 +610,7 @@ RSpec.describe 'OrderRouting strategy parity', type: :model do
         # No inventory units → no requested_variant_ids → no eligible
         # locations → empty package list. Same for both pipelines.
         packages = strategy.for_allocation
-        expect(packages).to eq([]).or be_empty
+        expect(packages).to be_empty
         expect(total_on_hand(packages)).to eq(0)
         expect(total_backordered(packages)).to eq(0)
       end

@@ -199,3 +199,13 @@ export function usePromotionRuleTypes() {
     staleTime: Infinity,
   })
 }
+
+/** The calculators a calculator-backed action may use, each with its preference schema. */
+export function usePromotionActionCalculators(actionType: string | undefined) {
+  return useQuery({
+    queryKey: ['promotion-action-calculators', actionType],
+    queryFn: () => adminClient.promotionActions.calculators(actionType as string),
+    enabled: !!actionType,
+    staleTime: Infinity,
+  })
+}

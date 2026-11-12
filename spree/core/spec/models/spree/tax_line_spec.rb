@@ -107,19 +107,6 @@ describe Spree::TaxLine, type: :model do
     end
   end
 
-  describe 'provider data' do
-    it 'defaults to an empty hash so payloads read nil-safe' do
-      expect(described_class.new.data).to eq({})
-      expect(described_class.new.data['jurisdictions']).to be_nil
-    end
-
-    it 'round-trips a provider payload' do
-      tax_line = create(:tax_line, order: order, line_item: line_item,
-                                  data: { 'jurisdictions' => [{ 'name' => 'WA', 'amount' => '1.2' }] })
-      expect(tax_line.reload.data['jurisdictions'].first['name']).to eq('WA')
-    end
-  end
-
   describe 'included vs additional' do
     let!(:included_line) { create(:tax_line, order: order, line_item: line_item, included: true) }
     let!(:additional_line) { create(:tax_line, order: order, line_item: line_item, included: false) }

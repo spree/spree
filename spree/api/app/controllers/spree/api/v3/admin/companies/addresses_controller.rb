@@ -8,6 +8,17 @@ module Spree
           class AddressesController < BaseController
             include Spree::Api::V3::CompanyAddressWrites
 
+            request_params :company_address do |body|
+              body.include_attributes Spree::Api::V3::AddressRequestSchema
+              body.require_attributes :first_name, :last_name, :address1, :city, :country_code, on: :create
+              body.attribute :default_billing, :boolean,
+                permit: false,
+                description: 'True makes this the default address of that kind, false gives the slot up, and leaving it out keeps the current default.'
+              body.attribute :default_shipping, :boolean,
+                permit: false,
+                description: 'True makes this the default address of that kind, false gives the slot up, and leaving it out keeps the current default.'
+            end
+
             before_action :authorize_parent_access!
 
             # POST /api/v3/admin/companies/:company_id/addresses
@@ -50,8 +61,14 @@ module Spree
               Spree.api.admin_address_serializer
             end
 
+            def collection_includes
+              [:owner]
+            end
+
+            # The listing includes what the node inherits: a division's orders may ship to its headquarters' sites,
+            # so staff placing one must be able to see them — while writes stay with the node that owns the row.
             def scope
-              @parent.addresses
+              action_name == 'index' ? @parent.address_book : @parent.addresses
             end
           end
         end

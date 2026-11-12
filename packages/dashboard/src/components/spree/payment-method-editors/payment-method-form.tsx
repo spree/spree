@@ -1,4 +1,5 @@
-import type { PaymentMethod, PreferenceField } from '@spree/admin-sdk'
+import type { PaymentMethod, PreferenceSchema } from '@spree/admin-sdk'
+import { CAPTURE_METHODS } from '@spree/core'
 import { PreferencesForm, Slot, useSlotEntries } from '@spree/dashboard-core'
 import {
   Field,
@@ -6,6 +7,7 @@ import {
   FieldGroup,
   FieldLabel,
   Input,
+  Item,
   Select,
   SelectContent,
   SelectItem,
@@ -17,7 +19,6 @@ import {
 } from '@spree/dashboard-ui'
 import { Controller, type UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { CAPTURE_METHODS } from '../../../schemas/store'
 import {
   type PaymentMethodEditorContext,
   type PaymentMethodFormMode,
@@ -30,7 +31,7 @@ import {
 interface ProviderOption {
   type: string
   label: string
-  preference_schema: PreferenceField[]
+  schema: PreferenceSchema
 }
 
 interface PaymentMethodFormProps {
@@ -44,7 +45,7 @@ interface PaymentMethodFormProps {
    * `providerTypes` against the selected `type` (the parent does this so
    * it can also seed `preferences` with defaults on type change).
    */
-  preferenceSchema: PreferenceField[]
+  preferenceSchema: PreferenceSchema | undefined
   /** Current provider's STI shorthand — drives slot lookups. */
   providerType: string
   /** Loaded server record in edit mode; null while creating. */
@@ -147,9 +148,10 @@ export function PaymentMethodForm({
 
       {providerType && <Slot name={paymentMethodGuideSlot(providerType)} context={slotContext} />}
 
-      {providerType && (customFormRegistered || preferenceSchema.length > 0) ? (
-        <div className="rounded-md border bg-muted/30 p-3">
-          <h3 className="mb-2 text-sm font-medium">
+      {providerType &&
+      (customFormRegistered || Object.keys(preferenceSchema?.properties ?? {}).length > 0) ? (
+        <Item variant="outline" className="flex-col items-stretch gap-2">
+          <h3 className="text-base font-medium">
             {t('admin.fields.payment_method.provider_configuration')}
           </h3>
           {customFormRegistered ? (
@@ -165,7 +167,7 @@ export function PaymentMethodForm({
               redactPasswords={mode === 'edit'}
             />
           )}
-        </div>
+        </Item>
       ) : null}
 
       {providerType && <Slot name={paymentMethodActionsSlot(providerType)} context={slotContext} />}

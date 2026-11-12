@@ -32,8 +32,11 @@ module Spree
           # shipped still hold live credentials in the column. Null when the
           # caller cannot read the record the event is about.
           attribute :payload do |delivery|
+            # Fails closed: a reader that passes no gate gets nothing. The
+            # payload keeps the record body by design, so a caller holding
+            # `read_webhooks` alone must not see customer or payment data.
             visible = params[:payload_visible]
-            next nil if visible && !visible.call(delivery)
+            next nil unless visible&.call(delivery)
 
             Spree::WebhookPayloadRedaction.split(delivery.payload).first
           end

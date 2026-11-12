@@ -75,6 +75,9 @@ module Spree
 
               @resource = existing
               authorize_resource!(@resource, :update)
+              # This runs before a nested controller's own parent check, and
+              # rendering here ends the request before it would run.
+              authorize_parent!(@parent) if @parent.present?
               normalize_upsert_params!
               update
             end

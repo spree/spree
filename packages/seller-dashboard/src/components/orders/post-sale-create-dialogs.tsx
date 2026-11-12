@@ -1,4 +1,4 @@
-import { currencyParts } from '@spree/dashboard-core'
+import { currencyParts, paidForUnits } from '@spree/dashboard-core'
 import {
   Field,
   FieldLabel,
@@ -22,11 +22,21 @@ import { unitLabel } from './line-label'
 
 /** Units that actually went out, which is all that can come back. */
 export function fulfilledUnits(order: Order) {
+  const lineItems = new Map((order.items ?? []).map((item) => [item.id, item]))
+
   return (order.fulfillments ?? []).flatMap((fulfillment) =>
     (fulfillment.fulfillment_items ?? []).map((item) => ({
       id: item.id,
       label: unitLabel(item),
       quantity: item.quantity,
+      product: {
+        name: item.name ?? item.id,
+        optionsText: item.options_text,
+        // The fulfillment item carries no image; its order line does.
+        thumbnailUrl: item.line_item_id
+          ? lineItems.get(item.line_item_id)?.thumbnail_url
+          : undefined,
+      },
     })),
   )
 }
@@ -137,8 +147,12 @@ export function CreateClaimDialog({
         id: item.id,
         label: unitLabel(item),
         quantity: item.quantity,
-        discountedAmount: item.discounted_amount,
-        additionalTaxTotal: item.additional_tax_total,
+        product: {
+          name: item.name,
+          optionsText: item.options_text,
+          thumbnailUrl: item.thumbnail_url,
+        },
+        paidFor: (quantity: number) => paidForUnits(item, quantity, order.currency),
       }))}
       currencySymbol={currencySymbol}
       reasonField={<ClaimReasonField value={reasonId} onChange={setReasonId} />}

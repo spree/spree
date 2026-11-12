@@ -25,6 +25,15 @@ module Spree
       end
     end
 
+    # Installing writes the file name back from the class name, which drops
+    # the underscore before a number.
+    it 'recognizes a migration whose installed name lost an underscore before a number' do
+      expect(Dir).to receive(:entries).with(engine_dir).and_return(['.', '20261009000001_change_columns_to_decimal_19_4.rb'])
+      expect(Dir).to receive(:entries).with(app_dir).and_return(['.', '20261009065323_change_columns_to_decimal194.spree.rb'])
+
+      expect(subject.check).to be_nil
+    end
+
     context 'no missing migrations' do
       it 'says nothing' do
         expect(Dir).to receive(:entries).with(engine_dir).and_return engine_migrations

@@ -1,14 +1,18 @@
 ---
 title: "Installing Spree"
 sidebarTitle: Installation
-description: "Install Spree Commerce locally, run your first store, and deploy it to production with the official starter template."
+description: "Try Spree in a free hosted sandbox, or install it locally, run your first store, and deploy it to production with the official starter template."
 ---
+
+<Tip>
+  **Just want to try Spree?** [Launch a free sandbox](https://console.spree.sh) — a hosted Spree store with the admin dashboard and APIs, ready in your browser. Nothing to install. See [Trying Spree in a sandbox](#trying-spree-in-a-sandbox).
+</Tip>
 
 ## Using `create-spree-app`
 
   The quickest way to get started. Scaffolds a full Spree project with React admin dashboard and Next.js Storefront (optional).
 
-  **Requirements:** [Node.js](https://nodejs.org/) 24+ and [Docker](https://docs.docker.com/get-docker/) running.
+  **Requirements:** [Node.js](https://nodejs.org/) 24+ with npm 9+, and [Docker](https://docs.docker.com/get-docker/) running. Seeing an npm error before setup starts? See [Troubleshooting](/developer/create-spree-app/quickstart#troubleshooting).
 
   ```bash
   npx create-spree-app@latest my-store
@@ -21,6 +25,16 @@ description: "Install Spree Commerce locally, run your first store, and deploy i
   <Frame caption="Setting up your first store">
     <video autoPlay muted loop playsInline controls className="block w-auto max-w-full h-auto rounded-xl" src="/videos/store-setup.mp4"></video>
   </Frame>
+
+## Trying Spree in a sandbox
+
+A [Spree sandbox](https://console.spree.sh) is a free, hosted Spree store at its own `*.spree.sh` address. Use it to explore the admin dashboard, try the APIs, or point a storefront at it — without installing Node.js, Docker or Ruby.
+
+1. Sign in at [console.spree.sh](https://console.spree.sh) and click **Create store**.
+2. Click **Open** to go to its admin dashboard and manage products, orders and settings.
+3. To call the Admin API, create a secret key under **Settings → API Keys** and use it with the [Spree CLI](/developer/cli/admin-api#use-with-a-sandbox) or the [Admin SDK](/developer/sdk/admin/quickstart).
+
+When you're ready to customize Spree's code, install it locally with `create-spree-app`.
 
 ## Project structure and overview
 
@@ -38,7 +52,7 @@ my-store/
 ├── docker-compose.yml      # The local stack
 ├── package.json            # Scripts and the pinned @spree/cli
 ├── AGENTS.md               # Instructions for coding agents
-├── CLAUDE.md               # Project layout and conventions
+├── CLAUDE.md               # Imports AGENTS.md for Claude Code
 └── README.md               # How to run everything
 ```
 
@@ -71,7 +85,7 @@ See the [Spree CLI guide](/developer/cli/quickstart) for all commands and the [A
 In a hurry? Jump straight to the [tutorial](/developer/tutorial/introduction) to build a feature end to end, the [Next.js Storefront](/developer/storefront/nextjs/quickstart) to put a storefront in front of it, or the [API reference](/api-reference/admin-api/introduction) to see what you can do with the Admin API.
 
 <Tip>
-  Using an AI coding agent? Run `npx skills add spree/agent-skills` in your new project — it teaches your agent the customization patterns before you write a line of code. See [Agentic Development](/developer/agentic/overview).
+  Using an AI coding agent? `create-spree-app` installs the [Spree agent skills](/developer/agentic/agent-skills) and connects your agent to the [docs MCP server](/developer/agentic/docs-mcp) unless you said no — if you skipped them, run `npx spree add ai` in your project. Your agent then knows the customization patterns before you write a line of code. See [Agentic Development](/developer/agentic/overview).
 </Tip>
 
 ---

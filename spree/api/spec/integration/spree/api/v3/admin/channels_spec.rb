@@ -21,6 +21,7 @@ RSpec.describe 'Admin Channels API', type: :request, swagger_doc: 'api-reference
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false
       parameter name: :limit, in: :query, type: :integer, required: false
+      filter_parameters_for
 
       response '200', 'channels found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -49,22 +50,7 @@ RSpec.describe 'Admin Channels API', type: :request, swagger_doc: 'api-reference
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        required: %w[name],
-        properties: {
-          name: { type: :string, example: 'Point of Sale' },
-          code: { type: :string, example: 'pos', description: 'Slug — auto-derived from `name` when blank.' },
-          active: { type: :boolean, default: true },
-          default: { type: :boolean, default: false },
-          preferred_order_routing_strategy: { type: :string, nullable: true,
-                                              description: 'Routing strategy class name. `null` inherits the store setting.' },
-          preferred_storefront_access: { type: :string, nullable: true, enum: %w[public prices_hidden login_required],
-                                         description: 'Anonymous-visitor access posture. `null` inherits the store setting.' },
-          preferred_guest_checkout: { type: :boolean, nullable: true,
-                                      description: 'Whether guests can check out without an account. `null` inherits the store setting.' }
-        }
-      }
+      request_body_for
 
       response '201', 'channel created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -112,27 +98,13 @@ RSpec.describe 'Admin Channels API', type: :request, swagger_doc: 'api-reference
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string },
-          code: { type: :string },
-          active: { type: :boolean },
-          default: { type: :boolean },
-          preferred_order_routing_strategy: { type: :string, nullable: true,
-                                              description: 'Routing strategy class name. `null` inherits the store setting.' },
-          preferred_storefront_access: { type: :string, nullable: true, enum: %w[public prices_hidden login_required],
-                                         description: 'Anonymous-visitor access posture. `null` inherits the store setting.' },
-          preferred_guest_checkout: { type: :boolean, nullable: true,
-                                      description: 'Whether guests can check out without an account. `null` inherits the store setting.' }
-        }
-      }
+      request_body_for
 
       response '200', 'channel updated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:id) { channel.prefixed_id }
         let(:body) do
-          { name: 'Wholesale (Updated)', preferred_storefront_access: 'login_required', preferred_guest_checkout: false }
+          { name: 'Wholesale (Updated)', storefront_access: 'login_required', guest_checkout: false }
         end
 
         run_test! do |response|
@@ -182,17 +154,7 @@ RSpec.describe 'Admin Channels API', type: :request, swagger_doc: 'api-reference
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        required: %w[product_ids],
-        properties: {
-          product_ids: { type: :array, items: { type: :string } },
-          published_at: { type: :string, format: 'date-time', nullable: true,
-                          description: 'When the publications go live. `null` means immediately.' },
-          unpublished_at: { type: :string, format: 'date-time', nullable: true,
-                            description: 'When the publications come down. `null` means never.' }
-        }
-      }
+      request_body_for
 
       response '200', 'products published' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -225,13 +187,7 @@ RSpec.describe 'Admin Channels API', type: :request, swagger_doc: 'api-reference
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        required: %w[product_ids],
-        properties: {
-          product_ids: { type: :array, items: { type: :string } }
-        }
-      }
+      request_body_for
 
       response '200', 'products unpublished' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

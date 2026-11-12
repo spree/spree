@@ -1,21 +1,18 @@
 import type { ChannelCreateParams, ChannelUpdateParams } from '@spree/admin-sdk'
+import { STOREFRONT_ACCESSES } from '@spree/core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import i18n from 'i18next'
 import { z } from 'zod/v4'
 
 // Empty string clears the channel-level override → falls back to store.
-export const RULES_ORDER_ROUTING_STRATEGY = 'Spree::OrderRouting::Strategy::Rules'
+export const RULES_ORDER_ROUTING_STRATEGY = 'rules'
 
-export const ORDER_ROUTING_STRATEGY_VALUES = [
-  '',
-  RULES_ORDER_ROUTING_STRATEGY,
-  'Spree::OrderRouting::Strategy::Legacy',
-] as const
+export const ORDER_ROUTING_STRATEGY_VALUES = ['', RULES_ORDER_ROUTING_STRATEGY] as const
 
 export type OrderRoutingStrategyValue = (typeof ORDER_ROUTING_STRATEGY_VALUES)[number]
 
 // Empty string clears the channel-level override → falls back to store.
-export const STOREFRONT_ACCESS_VALUES = ['', 'public', 'prices_hidden', 'login_required'] as const
+export const STOREFRONT_ACCESS_VALUES = ['', ...STOREFRONT_ACCESSES] as const
 
 // Tri-state form representation of the channel's boolean guest_checkout
 // override: '' inherits the store value, 'true'/'false' set an explicit value.
@@ -31,9 +28,9 @@ export const channelFormSchema = z.object({
     .optional(),
   active: z.boolean(),
   default: z.boolean(),
-  preferred_order_routing_strategy: z.string(),
-  preferred_storefront_access: z.string(),
-  preferred_guest_checkout: z.string(),
+  order_routing_strategy: z.string(),
+  storefront_access: z.enum(STOREFRONT_ACCESS_VALUES),
+  guest_checkout: z.string(),
   // Empty means shoppers outside any assigned catalog see every product
   // published on the channel.
   default_catalog_id: z.string(),
@@ -49,9 +46,9 @@ export const CHANNEL_DEFAULTS: ChannelFormValues = {
   code: '',
   active: true,
   default: false,
-  preferred_order_routing_strategy: '',
-  preferred_storefront_access: '',
-  preferred_guest_checkout: '',
+  order_routing_strategy: '',
+  storefront_access: '',
+  guest_checkout: '',
   default_catalog_id: '',
   stock_location_ids: [],
 }
@@ -69,11 +66,10 @@ export function channelValuesToParams(
     ...(v.code ? { code: v.code } : {}),
     active: v.active,
     default: v.default,
-    preferred_order_routing_strategy: v.preferred_order_routing_strategy || null,
-    preferred_storefront_access: v.preferred_storefront_access || null,
+    order_routing_strategy: v.order_routing_strategy || null,
+    storefront_access: v.storefront_access || null,
     // '' → inherit (null); otherwise an explicit boolean.
-    preferred_guest_checkout:
-      v.preferred_guest_checkout === '' ? null : v.preferred_guest_checkout === 'true',
+    guest_checkout: v.guest_checkout === '' ? null : v.guest_checkout === 'true',
     // '' → no default catalog: shoppers outside any assigned catalog see
     // every product published on the channel.
     default_catalog_id: v.default_catalog_id || null,

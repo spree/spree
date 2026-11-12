@@ -98,7 +98,7 @@ if tax_rate
     ).first_or_create! do |tax_line|
       tax_line.amount = 0
       tax_line.rate = tax_rate.amount
-      tax_line.included = tax_rate.included_in_price
+      tax_line.included = order.tax_inclusive?
       tax_line.provider_id = 'internal'
     end
   end

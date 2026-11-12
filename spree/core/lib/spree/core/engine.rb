@@ -10,6 +10,7 @@ module Spree
                                :dependencies,
                                :payment_methods,
                                :adjusters,
+                               :cart_copiers,
                                :media_viewable_types,
                                :default_tax_provider,
                                :tax_providers,
@@ -19,6 +20,7 @@ module Spree
                                :payout_providers,
                                :password_validator,
                                :fulfillment_providers,
+                               :pickup_point_providers,
                                :tracking_carriers,
                                :stock_splitters,
                                :commission_rules,
@@ -42,7 +44,10 @@ module Spree
                                :actor_classes,
                                :custom_fields,
                                :reporting,
+                               :admin_agent_tools,
+                               :store_agent_tools,
                                :integrations,
+                               :maintenance_tasks,
                                :number_generators,
                                :subscribers,
                                :store_authentication_strategies,
@@ -74,7 +79,8 @@ module Spree
         # Core's defaults are concatenated in after_initialize below.
         %i[subscribers actor_classes commission_rules delivery_method_rules seller_requirements
            delivery_rate_providers tax_providers pricing_providers inventory_providers
-           payout_providers digital_asset_providers delivery_profile_types].each do |registry|
+           payout_providers digital_asset_providers delivery_profile_types pickup_point_providers
+           maintenance_tasks cart_copiers].each do |registry|
           app.config.spree[registry] = []
         end
         app.config.spree.line_item_comparison_hooks = Set.new
@@ -156,6 +162,20 @@ module Spree
         app.config.spree.reporting = Spree::Reporting::Registry.new
         Spree::Reporting::DefaultVocabulary.install(app.config.spree.reporting)
       end
+
+      # Seed the agent-tool registry before app initializers so applications
+      # and extensions can register their own tools and expose their own
+      # workflows in config/initializers (see docs/plans/6.0-mcp-server.md).
+      # One registry per surface, the way the authentication strategies are
+      # split: a storefront agent and a back-office agent share the tool
+      # machinery but never the catalog, and a staff tool reaching a customer
+      # would be offering the back office to the public.
+      initializer 'spree.register.agent_tools', before: :load_config_initializers do |app|
+        app.config.spree.admin_agent_tools = Spree::AgentTools::Registry.new(audience: :admin)
+        app.config.spree.store_agent_tools = Spree::AgentTools::Registry.new(audience: :store)
+        Spree::AgentTools::DefaultCatalog.install(app.config.spree.admin_agent_tools)
+      end
+
 
       # Country and subdivision names are translated by the countries gem, which
       # only loads the locales it is told about. This runs after initialization
@@ -489,6 +509,7 @@ module Spree
           Spree::Address,
           Spree::Claim,
           Spree::Collection,
+          Spree::Company,
           Spree::CreditCard,
           Spree::Exchange,
           Spree::GiftCard,
@@ -504,6 +525,7 @@ module Spree
           Spree::Product,
           Spree::ProductType,
           Spree::Promotion,
+          Spree::PurchaseOrder,
           Spree::Refund,
           Spree::Return,
           Spree::Fulfillment,
@@ -520,6 +542,13 @@ module Spree
         ]
 
         Rails.application.config.spree.integrations = []
+
+        # Upgrade steps backed by a task class are registered from the manifests
+        # that name them, so adding a step never means editing a second list.
+        Rails.application.config.spree.maintenance_tasks.concat [
+          'Spree::MaintenanceTasks::UpgradeStep',
+          *Spree::Upgrade.steps.filter_map { |step| step['task_class'] }
+        ]
 
         Rails.application.config.spree.validators.addresses = [
           Spree::Addresses::PhoneValidator
@@ -558,6 +587,35 @@ module Spree
         )
       end
 
+      # Deprecated constant aliases warn when their file loads. Leaving them
+      # out of eager loading keeps every boot quiet; they still load, and
+      # warn, the first time something references the old name.
+      DEPRECATED_ALIAS_FILES = %w[
+        app/models/concerns/spree/user_methods.rb
+        app/models/spree/asset.rb
+        app/models/spree/classification.rb
+        app/models/spree/promotion/rules/taxon.rb
+        app/models/spree/promotion_rule_taxon.rb
+        app/models/spree/return_authorization_reason.rb
+        app/models/spree/taxon.rb
+        app/services/spree/checkout/add_store_credit.rb
+        app/services/spree/checkout/remove_store_credit.rb
+      ].freeze
+
+      initializer 'spree.deprecated_aliases.skip_eager_load' do
+        Rails.autoloaders.main.do_not_eager_load(*DEPRECATED_ALIAS_FILES.map { |path| root.join(path) })
+      end
+
+      # Hands reported errors to the diagnostics error log, resolving the
+      # class per call so a development reload picks up the new one.
+      module DiagnosticsErrorSubscriber
+        def self.report(...) = Spree::Diagnostics::ErrorLog.new.report(...)
+      end
+
+      initializer 'spree.diagnostics.error_log' do
+        Rails.error.subscribe(DiagnosticsErrorSubscriber)
+      end
+
       # filter sensitive information during logging
       initializer 'spree.params.filter' do |app|
         app.config.filter_parameters += [
@@ -567,8 +625,22 @@ module Spree
           :verification_value,
           :client_id,
           :client_secret,
-          :refresh_token
+          :refresh_token,
+          # The OAuth token exchange posts these. The code is single-use and
+          # spent the moment it is logged, but the verifier beside it is what
+          # PKCE relies on — logging both hands anyone who can read the log
+          # everything they need to race the exchange.
+          :code,
+          :code_verifier,
+          :code_challenge
         ]
+      end
+
+      # Records which store owns every uploaded file, and reports attaching a
+      # file to another store's record (docs/plans/6.0-uploads-and-file-ownership.md).
+      initializer 'spree.active_storage.store_ownership' do
+        ActiveSupport.on_load(:active_storage_blob) { include Spree::Uploads::BlobStoreOwnership }
+        ActiveSupport.on_load(:active_storage_attachment) { include Spree::Uploads::AttachmentStoreCheck }
       end
 
       initializer 'spree.core.checking_migrations' do |app|
@@ -583,6 +655,13 @@ module Spree
       initializer 'spree.events.schedule_activation', after: :load_config_initializers do |app|
         app.config.after_initialize do
           Spree::Events.activate!
+        end
+      end
+
+      # The same contexts, for the concerns extensions add to core models.
+      initializer 'spree.model_extensions.schedule_apply', after: :load_config_initializers do |app|
+        app.config.after_initialize do
+          Spree.model_extensions.apply
         end
       end
 
@@ -602,6 +681,10 @@ module Spree
 
         ActsAsTaggableOn::Tag.include(Spree::RansackableAttributes)
         ActsAsTaggableOn::Tag.whitelisted_ransackable_attributes = %w[id name]
+
+        # Reloading makes new model classes, which have none of the
+        # extensions' concerns yet.
+        Spree.model_extensions.apply
 
         # Reset and re-activate event subscribers on code reload
         # activate! will register all subscribers from Spree.subscribers

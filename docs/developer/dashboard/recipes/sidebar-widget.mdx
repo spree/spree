@@ -42,7 +42,7 @@ interface Props {
 export function LoyaltyStatusCard({ customer }: Props) {
   const { storeId } = useStore()
   const { permissions } = usePermissions()
-  const canRead = permissions.can('read', 'MyApp::LoyaltyRecord')
+  const canRead = permissions.can('read', 'loyalty_record')
   const { data, isLoading } = useQuery({
     queryKey: ['loyalty', storeId, customer.id],
     queryFn: () =>

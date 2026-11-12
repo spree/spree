@@ -3,7 +3,17 @@ module Spree
     module V3
       module Admin
         class AllowedOriginsController < ResourceController
-          scoped_resource :settings
+          # A credential, not a setting: an allowed origin can read every
+          # admin's session through the cookie-authenticated refresh endpoint,
+          # so the list is managed under the same scope as API keys.
+          scoped_resource :api_keys
+
+          request_params :allowed_origin do |body|
+            body.attribute :origin, :string,
+              required: true, on: :create,
+              example: 'https://admin.example.com',
+              description: 'Origin to allow in admin CORS preflight checks: a bare `scheme://host[:port]` (no path, query or fragment) using `http` or `https`.'
+          end
 
           protected
 
@@ -16,7 +26,7 @@ module Spree
           end
 
           def permitted_params
-            params.permit(*model_additional_permitted_attributes, :origin)
+            params.permit(*permitted_attributes)
           end
         end
       end

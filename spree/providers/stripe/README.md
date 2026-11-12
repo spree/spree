@@ -11,14 +11,15 @@ through setup sessions.
 
 ## Installation
 
-Add the gem to your `Gemfile`:
+New Spree projects include it already. To add it to an older project:
 
-```ruby
-gem 'spree_stripe'
+```bash
+spree add stripe
 ```
 
-Then run `bundle install`. The gateway registers itself — there is nothing to
-generate and no migrations to run.
+Without the Spree CLI, add `gem 'spree_stripe'` to the `Gemfile` with the same
+version requirement as your `spree` gem and run `bundle install`. The gateway
+registers itself — there is nothing to generate and no migrations to run.
 
 ## Configuration
 

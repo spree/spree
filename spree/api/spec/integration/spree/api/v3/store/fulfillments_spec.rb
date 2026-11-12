@@ -33,13 +33,7 @@ RSpec.describe 'Cart Fulfillments API', type: :request, swagger_doc: 'api-refere
       parameter name: :cart_id, in: :path, type: :string, required: true, description: 'Cart prefixed ID'
       parameter name: :id, in: :path, type: :string, required: true, description: 'Fulfillment ID'
       parameter name: 'x-spree-token', in: :header, type: :string, required: false, description: 'Order token for guest access'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          selected_delivery_rate_id: { type: :string, example: 'dr_abc123', description: 'Delivery rate ID to select' }
-        },
-        required: %w[selected_delivery_rate_id]
-      }
+      request_body_for
 
       response '200', 'delivery rate selected, returns updated cart' do
         let(:delivery_rate) { fulfillment.delivery_rates.first }

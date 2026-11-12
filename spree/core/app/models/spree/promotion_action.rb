@@ -2,6 +2,10 @@
 # PromotionActions perform the necessary tasks when a promotion is activated by an event and determined to be eligible.
 module Spree
   class PromotionAction < Spree.base_class
+    include Spree::TypeLabels
+
+    self.type_labels_scope = 'spree.promotion_action_types'
+
     has_prefix_id :pact
 
     registers_subclasses_via { Spree.promotions.actions }
@@ -73,17 +77,6 @@ module Spree
         []
       end
     end
-
-    def self.human_name
-      I18n.t("spree.promotion_action_types.#{api_type}.name", default: api_type.titleize)
-    end
-
-    def self.human_description
-      I18n.t("spree.promotion_action_types.#{api_type}.description", default: '')
-    end
-
-    def human_name = self.class.human_name
-    def human_description = self.class.human_description
 
     # Returns the key of the promotion action
     #

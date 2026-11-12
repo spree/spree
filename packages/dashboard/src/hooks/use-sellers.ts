@@ -4,9 +4,12 @@ import type {
   Seller,
   SellerApproveParams,
   SellerCreateParams,
+  SellerFilters,
+  SellerInvitationCreateParams,
   SellerInviteParams,
   SellerRejectParams,
   SellerReopenOnboardingParams,
+  SellerSort,
   SellerSuspendParams,
   SellerUpdateParams,
 } from '@spree/admin-sdk'
@@ -16,10 +19,10 @@ import {
   useResourceKeyBuilder,
   useResourceMutation,
 } from '@spree/dashboard-core'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import i18n from 'i18next'
 
-export function useSellers(params?: ListParams & Record<string, unknown>) {
+export function useSellers(params?: ListParams<SellerFilters, SellerSort>) {
   return useQuery({
     queryKey: useResourceKey('sellers', params ? JSON.stringify(params) : 'all'),
     queryFn: () => adminClient.sellers.list(params),
@@ -35,7 +38,7 @@ export function sellerAutocompleteProps(queryKey: string) {
   return {
     queryKey,
     search: (q: string) =>
-      adminClient.sellers.list({ name_cont: q, limit: 100, sort: 'name', fields: ['name'] }),
+      adminClient.sellers.list({ search: q, limit: 100, sort: 'name', fields: ['name'] }),
     hydrate: (ids: string[]) => adminClient.sellers.list({ id_in: ids, limit: ids.length }),
     getOptionLabel: (seller: Seller) => seller.name ?? seller.id,
     placeholder: i18n.t('admin.sellers.autocomplete.placeholder'),
@@ -64,7 +67,8 @@ export function useCreateSeller() {
 export function useUpdateSeller(id: string) {
   return useResourceMutation<Seller, Error, SellerUpdateParams>({
     mutationFn: (params) => adminClient.sellers.update(id, params),
-    invalidate: [['sellers'], ['sellers', id]],
+    // A returns address is written onto the seller's stock location.
+    invalidate: [['sellers'], ['sellers', id], ['stock-locations']],
     successMessage: i18n.t('admin.sellers.messages.updated'),
     errorMessage: i18n.t('admin.sellers.messages.update_failed'),
   })
@@ -146,6 +150,34 @@ export function useRejectSeller(id: string) {
   })
 }
 
+/** One page of the stock locations a seller ships from. */
+export function useSellerStockLocations(sellerId: string, page: number) {
+  return useQuery({
+    queryKey: useResourceKey('stock-locations', 'seller', sellerId, page),
+    queryFn: () =>
+      adminClient.stockLocations.list({ seller_id_eq: sellerId, page, limit: 10, sort: 'name' }),
+  })
+}
+
+/**
+ * How many placed orders the seller has, all or only those still to ship —
+ * the home page's "To fulfill" filter, so the two counts agree.
+ */
+export function useSellerOrdersCount(sellerId: string, toFulfill: boolean, enabled = true) {
+  return useQuery({
+    enabled,
+    queryKey: useResourceKey('orders', 'seller', sellerId, 'count', toFulfill),
+    queryFn: () =>
+      adminClient.orders.list({
+        seller_id_eq: sellerId,
+        complete: true,
+        ...(toFulfill ? { fulfillment_status_eq: 'unfulfilled' } : {}),
+        limit: 1,
+      }),
+    select: (result) => result.meta.count,
+  })
+}
+
 export function useSellerTeam(sellerId: string) {
   return useQuery({
     queryKey: useResourceKey('sellers', sellerId, 'team'),
@@ -155,7 +187,7 @@ export function useSellerTeam(sellerId: string) {
 
 export function useRemoveSellerTeamMember(sellerId: string) {
   return useResourceMutation<void, Error, string>({
-    mutationFn: (id) => adminClient.sellers.team.remove(sellerId, id),
+    mutationFn: (id) => adminClient.sellers.team.delete(sellerId, id),
     invalidate: [
       ['sellers', sellerId, 'team'],
       ['sellers', sellerId],
@@ -172,9 +204,26 @@ export function useSellerInvitations(sellerId: string) {
   })
 }
 
+/** Adds someone to the seller's team; unlike `useInviteSeller`, the status stays put. */
+export function useCreateSellerInvitation(sellerId: string) {
+  return useResourceMutation<Invitation, Error, SellerInvitationCreateParams>({
+    mutationFn: (params) => adminClient.sellers.invitations.create(sellerId, params),
+    invalidate: [['sellers', sellerId, 'invitations']],
+    successMessage: i18n.t('admin.sellers.messages.invited'),
+    errorMessage: i18n.t('admin.sellers.messages.invite_failed'),
+  })
+}
+
+/** Fetches an invitation's acceptance link on demand, so listings never carry the token. */
+export function useSellerInvitationAcceptanceLink(sellerId: string) {
+  return useMutation({
+    mutationFn: (id: string) => adminClient.sellers.invitations.acceptanceLink(sellerId, id),
+  })
+}
+
 export function useRevokeSellerInvitation(sellerId: string) {
   return useResourceMutation<void, Error, string>({
-    mutationFn: (id) => adminClient.sellers.invitations.remove(sellerId, id),
+    mutationFn: (id) => adminClient.sellers.invitations.delete(sellerId, id),
     invalidate: [['sellers', sellerId, 'invitations']],
     successMessage: i18n.t('admin.sellers.team.messages.invitation_revoked'),
     errorMessage: i18n.t('admin.errors.failed_to_delete'),

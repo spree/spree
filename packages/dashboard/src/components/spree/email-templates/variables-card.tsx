@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@spree/dashboard-ui'
 import { useTranslation } from 'react-i18next'
-import { templateVariables } from '../../../lib/email-template-variables'
+import { insertionFor, templateVariables } from '../../../lib/email-template-variables'
 
 /** The variables a template receives, with the fields worth pointing out. */
 export function EmailTemplateVariablesCard({
@@ -23,8 +23,8 @@ export function EmailTemplateVariablesCard({
         <dl className="grid gap-3 sm:grid-cols-2">
           {templateVariables(templateId).map((variable) => (
             <div key={variable.name} className="flex flex-col gap-1">
-              <dt className="font-mono text-sm">{`{{ ${variable.name} }}`}</dt>
-              <dd className="text-sm text-muted-foreground">{t(variable.descriptionKey)}</dd>
+              <dt className="font-mono text-base">{`{{ ${variable.name} }}`}</dt>
+              <dd className="text-base text-muted-foreground">{t(variable.descriptionKey)}</dd>
               {variable.fields && (
                 <dd className="flex flex-wrap gap-1">
                   {variable.fields.map((field) => {
@@ -34,7 +34,7 @@ export function EmailTemplateVariablesCard({
                         key={field}
                         type="button"
                         aria-label={t('admin.email_templates.variables.insert', { variable: path })}
-                        onClick={() => onInsert(`{{ ${path} }}`)}
+                        onClick={() => onInsert(insertionFor(variable, field))}
                         className="rounded bg-muted px-1.5 py-0.5 font-mono text-xs hover:bg-accent-strong focus-visible:outline-2 focus-visible:outline-ring"
                       >
                         {path}

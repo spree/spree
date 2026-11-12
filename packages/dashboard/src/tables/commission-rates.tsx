@@ -9,7 +9,7 @@ defineTable<CommissionRate>('commission-rates', {
   title: i18n.t('admin.settings_nav.items.commission_rates'),
   docsPath: 'sellers/commission-rates',
   description: i18n.t('admin.table_descriptions.commission_rates'),
-  searchParam: 'name_cont',
+  searchParam: 'search',
   searchPlaceholder: i18n.t('admin.commission_rates.search_placeholder'),
   // The list IS the resolution order, walked top-down, so the table has to
   // show it in that order and nothing else. Sorting by another column would

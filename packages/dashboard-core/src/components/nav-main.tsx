@@ -39,12 +39,23 @@ export type NavItem = {
   }[]
 }
 
-export function NavIcon({ icon: Icon, isActive }: { icon: NavItem['icon']; isActive?: boolean }) {
+export function NavIcon({
+  icon: Icon,
+  isActive,
+  muted,
+}: {
+  icon: NavItem['icon']
+  isActive?: boolean
+  /** Rest the icon at muted text colour, so only the current page's icon is lit. */
+  muted?: boolean
+}) {
   return (
     <span
       className={
         'inline-flex shrink-0 items-center justify-center rounded-lg p-[0.2rem] transition-colors duration-100 ' +
-        (isActive ? 'text-foreground' : 'group-hover/menu-button:text-foreground')
+        (isActive
+          ? 'text-foreground'
+          : `group-hover/menu-button:text-foreground${muted ? ' text-muted-foreground' : ''}`)
       }
     >
       <Icon size={16} strokeWidth={2} />
@@ -183,6 +194,11 @@ function CollapsedDropdown({
           <DropdownMenuItem key={subItem.title} asChild>
             <Link to={subItem.url} className="no-underline">
               {subItem.title}
+              {subItem.badge && (
+                <span className="ms-auto shrink-0 ps-3">
+                  <subItem.badge />
+                </span>
+              )}
             </Link>
           </DropdownMenuItem>
         ))}
@@ -261,9 +277,9 @@ function NavItemContent({
               <SidebarMenuSubItem key={subItem.title}>
                 <SidebarMenuSubButton asChild isActive={subActive}>
                   <Link to={subItem.url}>
-                    <span>{subItem.title}</span>
+                    <span className="truncate">{subItem.title}</span>
                     {subItem.badge && (
-                      <span className="ml-auto">
+                      <span className="ml-auto shrink-0">
                         <subItem.badge />
                       </span>
                     )}

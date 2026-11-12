@@ -1,0 +1,142 @@
+---
+title: "Draft Orders"
+description: "Learn how to build an order for a customer and place it on their behalf in Spree Commerce."
+---
+
+A draft order is an order your team builds for a customer rather than one the customer places themselves. It holds everything a normal order does, and becomes one the moment you complete it.
+
+Drafts exist for the sales that do not come through the storefront: an order phoned in, emailed over, agreed with a buyer at a trade show, or quoted to a business that wants a price before committing. You enter what they want, set the address and delivery, take or record the payment, and place the order for them.
+
+A draft is internal until you complete it. The customer cannot see it, and the first they hear of it is the order confirmation sent when it is placed. Nothing is reserved while it is a draft either: stock is allocated at completion, so a draft left open does not hold goods back from anyone else.
+
+To manage draft orders, navigate to **Orders → Draft Orders** in the admin dashboard.
+
+## Reviewing Draft Orders
+
+![The Draft Orders list](/docs/images/user/orders/draft-orders/1-draft-orders-overview.png)
+
+The list carries the same columns as the orders list: the order's number, date, customer, sales channel, payment and fulfillment badges, items, total and seller. It has the same search and filters too.
+
+Drafts live only on this list. They appear on the main Orders list once they are completed.
+
+## How to Create a Draft Order
+
+![The New Order form with a customer and two products](/docs/images/user/orders/draft-orders/2-new-order-form.png)
+
+Click **New Order**. The form sets up who the order is for and what is on it.
+
+| Field | What it does |
+|---|---|
+| **Company (optional)** | Attaches the order to a business, after which the customer list offers only people who can buy for it. See [<u>Companies</u>](/user/customers/companies). |
+| **Select customer** | Finds an existing customer by name or email. |
+| **Or use a guest email** | An email address to use instead of a customer account. It disappears once you pick a customer. |
+| **Use customer's default billing & shipping addresses** | Appears once a customer is picked, and is on by default. |
+| **Add a variant** | Finds products to put on the order. Each one becomes a row with its SKU and a quantity. |
+| **PO number** | The buyer's own reference for the order. |
+| **Purchase order document** | The buyer's own paperwork, as a PDF, image or Word file. |
+| **Customer note** and **Internal note** | Two notes. The customer sees the first, your team sees both. |
+| **Sales channel** | Which channel to attribute the order to. Defaults to the store's online channel. |
+| **Coupon code** | A discount code to apply. |
+
+1. Click **New Order**.
+2. Pick the **customer**, or enter a guest email.
+3. Under **Add a variant**, find each product and set its quantity.
+4. Fill in whatever else applies.
+5. Click **New Order**.
+
+The draft opens under its own order number, with the items listed and the whole total showing as the **Outstanding balance**.
+
+<Note>Prices, addresses and delivery are not on this form. They are set on the draft itself, once it exists.</Note>
+
+## How to Prepare a Draft for Completion
+
+![A draft order, with its items, payments and summary](/docs/images/user/orders/draft-orders/3-draft-order-page.png)
+
+A new draft needs an address, a delivery method and a payment before it is ready to place.
+
+### Setting the Addresses
+
+A draft created for a customer with no saved address shows **Not provided** for both addresses, and no fulfillment at all until a shipping address exists.
+
+Open the menu on the **Customer** card and choose **Edit Shipping Address** or **Edit Billing Address**, fill in the fields, and save.
+
+![The Customer card with its menu open, offering Edit Shipping Address and Edit Billing Address](/docs/images/user/orders/draft-orders/4-edit-addresses.png)
+
+### Choosing Where It Ships From and How
+
+Once there is a shipping address, a fulfillment appears on the **Fulfillments** card, carrying a stock location and a delivery method.
+
+To change either, open the fulfillment's **Actions** menu and choose **Edit**. **Ships from** lists your stock locations, marking any that cannot cover the order as out of stock, and **Delivery method** lists the methods that reach the address, with their prices.
+
+<Warning>Changing a line on the order clears the delivery method you chose. If you edit the items after setting delivery, check the fulfillment again before completing.</Warning>
+
+### Adding and Removing Products
+
+![The draft order editor, with an editable unit price on each line](/docs/images/user/orders/draft-orders/5-edit-order.png)
+
+**Edit order** at the top of the draft opens the line editor, with a row per product.
+
+- **Add product** puts another item on the order.
+- **Remove** takes a line off.
+- **Quantity** changes how many of a line the buyer is taking.
+
+**Save** stays disabled until you change something, and the totals are recalculated once you save rather than as you type.
+
+### Setting Unit Prices
+
+A draft is the only place a line's price can be changed. On a placed order the prices are fixed, so this is where a figure agreed with a business buyer goes onto the order.
+
+1. Type the agreed figure into the line's **Unit price**. The original price stays on the line, crossed out, so you can see what you have changed before committing to it.
+2. Click **Save**.
+
+The line then carries a **Negotiated** label and a refresh icon. The label marks the price as one you set rather than the catalog's, and the refresh icon puts the line back to the catalog price. Press the back button if you reset a line you meant to keep.
+
+<Note>Changing a line's quantity does not clear a price you have set. The refresh icon is the only thing that puts a line back to the catalog price.</Note>
+
+<Note>The **Negotiated** label and the refresh icon exist only inside the editor. Once you leave it, nothing on the order marks a price as agreed rather than published, so record the reason in the internal note if a colleague will need to know.</Note>
+
+### Adding a Payment
+
+On the **Payments** card, click **Add**. The form asks how the customer is paying and how much.
+
+![The Add payment form, with its method, source, amount and capture switch](/docs/images/user/orders/draft-orders/6-add-payment.png)
+
+| Field | What it does |
+|---|---|
+| **Payment method** | How the customer is paying, chosen from your store's payment methods. |
+| **Source** | Which card or account the money comes from, where the method has one saved against the customer. |
+| **Amount** | How much this payment covers. It is filled in with the order's balance. |
+| **Capture immediately** | Takes the money now rather than recording the payment and taking it later. |
+
+Fill in the form and click **Add**.
+
+<Note>Adding a payment is not the same as taking the money. Whether it is captured depends on **Capture immediately** here, and on the payment method's own capture setting. See [<u>Processing Orders</u>](/user/orders/processing-orders).</Note>
+
+### Adding a Discount or a Fee
+
+**Add discount** on the **Discounts** card creates a manual discount, as an amount or a percentage, applied to the whole order or to one line. **Add fee** on the **Fees** card adds a surcharge, handling, gift wrap, duty or similar charge the same way.
+
+A gift card can be applied from the **Discounts & Credit** card on the right. See [<u>Gift Cards</u>](/user/loyalty/gift-cards).
+
+## How to Complete a Draft Order
+
+Click **Complete Order** at the top of the draft and confirm. This is the step that turns a draft into a real order.
+
+Stock is allocated against it, the customer receives their order confirmation, and the **Returns**, **Exchanges** and **Claims** cards appear. From then on it behaves like any other order, and is fulfilled, paid, edited and canceled from its own page. See [<u>Processing Orders</u>](/user/orders/processing-orders).
+
+<Warning>Completing an order is not the same as capturing its payment. Whether the money is taken at completion depends on the payment method's capture setting, and on whether **Capture immediately** was switched on when the payment was added. Check the **Payment total** and **Outstanding balance** afterwards, and capture from the **Payments** card if anything is still owed.</Warning>
+
+<Warning>Check the shipping address and the fulfillment before completing. A draft completed without a shipping address is placed with no delivery and nothing to fulfill against, and no delivery is charged for it.</Warning>
+
+## How to Delete a Draft Order
+
+Open **More actions** at the top of the draft and choose **Delete**.
+
+Deleting is only available while the order is a draft. Once it is completed, the way to stop it is to cancel it, which is covered in [<u>Processing Orders</u>](/user/orders/processing-orders).
+
+## Further Reading
+
+- [<u>Orders</u>](/user/orders/orders) - The list of placed orders and their statuses
+- [<u>Processing Orders</u>](/user/orders/processing-orders) - Fulfilling, paying and editing an order once it is placed
+- [<u>Companies</u>](/user/customers/companies) - The businesses an order can be attached to
+- [<u>Gift Cards</u>](/user/loyalty/gift-cards) - The cards a customer can pay an order with

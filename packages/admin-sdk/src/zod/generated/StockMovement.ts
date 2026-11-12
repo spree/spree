@@ -27,7 +27,6 @@ export const StockMovementSchema = z.object({
   stock_transfer_number: z.string().nullable(),
   purchase_order_number: z.string().nullable(),
   unit_cost: z.string().nullable(),
-  display_unit_cost: z.string().nullable(),
 });
 
 export type StockMovement = z.infer<typeof StockMovementSchema>;

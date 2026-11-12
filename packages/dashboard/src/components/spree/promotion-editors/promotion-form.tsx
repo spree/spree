@@ -3,14 +3,28 @@ import type {
   Customer,
   Promotion,
   PromotionAction,
-  PromotionActionDraft,
+  PromotionActionDraftParams,
   PromotionRule,
-  PromotionRuleDraft,
+  PromotionRuleDraftParams,
   ResourceTypeDefinition,
 } from '@spree/admin-sdk'
-import { Can, PageHeader, PreferencesForm, StoreDatePicker } from '@spree/dashboard-core'
-import { DropdownMenuItem, formatCalculatorSummary, useConfirm } from '@spree/dashboard-ui'
-import { PlusIcon, SparklesIcon, TrashIcon } from '@spree/dashboard-ui/icons'
+import { MATCH_POLICIES, type MatchPolicy } from '@spree/core'
+import {
+  Can,
+  PageHeader,
+  PreferencesForm,
+  RecordMetadataCard,
+  StoreDatePicker,
+} from '@spree/dashboard-core'
+import {
+  Alert,
+  AlertDescription,
+  DropdownMenuItem,
+  formatCalculatorSummary,
+  Item,
+  useConfirm,
+} from '@spree/dashboard-ui'
+import { CircleAlertIcon, PlusIcon, SparklesIcon, TrashIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
 import { useEffect, useState } from 'react'
 import {
@@ -21,7 +35,7 @@ import {
   useForm,
 } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { spreeJsonLinkResolver } from '../../../lib/json-link-resolver'
+import { TypePickerSheet } from '../type-picker-sheet'
 import { EditorShell } from './editor-shell'
 import './register'
 import {
@@ -32,8 +46,8 @@ import {
   mapSpreeErrorsToForm,
   Slot,
   Subject,
-  typeDescription,
   typeLabel,
+  useCountryDisplayName,
   usePermissions,
   useStore,
 } from '@spree/dashboard-core'
@@ -70,23 +84,24 @@ import {
   TableHeader,
   TableRow,
   Textarea,
+  toastManager,
 } from '@spree/dashboard-ui'
 import { optionValueLabel } from '../../../hooks/use-option-types'
 import {
+  usePromotionActionCalculators,
   usePromotionActionTypes,
   usePromotionCouponCodes,
   usePromotionRuleTypes,
 } from '../../../hooks/use-promotions'
 
 import {
-  MATCH_POLICIES,
-  type MatchPolicy,
   PROMOTION_DEFAULTS,
   PROMOTION_KINDS,
   type PromotionFormValues,
   type PromotionKind,
   promotionFormSchema,
 } from '../../../schemas/promotion'
+import { DraftCustomFieldsCard, useCustomFieldsDraft } from '../custom-fields/custom-fields-inline'
 import {
   actionDraftFromAction,
   actionDraftFromType,
@@ -125,8 +140,8 @@ export interface PromotionFormPayload {
   expires_at: string | null
   usage_limit: number | null
   match_policy: MatchPolicy
-  rules: PromotionRuleDraft[]
-  actions: PromotionActionDraft[]
+  rules: PromotionRuleDraftParams[]
+  actions: PromotionActionDraftParams[]
   /** Only sent in create mode — server rejects these on update. */
   kind?: PromotionKind
   code?: string | null
@@ -175,7 +190,6 @@ export function PromotionForm({
   deletePending = false,
 }: PromotionFormProps) {
   const { t } = useTranslation()
-  const { storeId } = useStore()
   const { permissions } = usePermissions()
   // `Can` is a component, and the header takes a callback rather than markup —
   // so the same permission is checked as a predicate here.
@@ -185,6 +199,12 @@ export function PromotionForm({
     resolver: zodResolver(promotionFormSchema) as any,
     defaultValues: { ...PROMOTION_DEFAULTS, ...extensionFormValues('promotion', null) },
   })
+
+  // Edit only: a promotion being created has no id to hang values on yet.
+  const customFields = useCustomFieldsDraft(
+    'promotion',
+    mode === 'edit' ? (promotion?.id ?? '') : '',
+  )
 
   const rulesArray = useFieldArray({ control: form.control, name: 'rules', keyName: '_key' })
   const actionsArray = useFieldArray({ control: form.control, name: 'actions', keyName: '_key' })
@@ -231,7 +251,20 @@ export function PromotionForm({
       Object.assign(payload, couponFieldsForKind(values))
     }
     try {
-      await onSubmit(payload)
+      // The promotion saves first and is marked clean, so a retry after a
+      // failed custom field save sends only the custom fields — the rule and
+      // action sets would otherwise be submitted again. A failed save keeps
+      // its edits and names the fields itself.
+      const savesRecord = mode === 'create' || form.formState.isDirty
+      if (savesRecord) {
+        await onSubmit(payload)
+        if (mode === 'edit') form.reset(form.getValues())
+      }
+      const savesCustomFields = customFields.isDirty
+      // The promotion's own save toasts; a custom-field-only save has to say so.
+      if ((await customFields.save()) && savesCustomFields && !savesRecord) {
+        toastManager.add({ type: 'success', title: t('admin.messages.promotion_saved') })
+      }
     } catch (err) {
       if (!mapSpreeErrorsToForm(err, form.setError)) throw err
     }
@@ -243,7 +276,9 @@ export function PromotionForm({
       <ResourceLayout
         header={<PageHeader title={t('admin.common.loading')} backTo="promotions" />}
         main={
-          <div className="text-sm text-muted-foreground">{t('admin.pages.promotions.loading')}</div>
+          <div className="text-base text-muted-foreground">
+            {t('admin.pages.promotions.loading')}
+          </div>
         }
       />
     )
@@ -284,7 +319,6 @@ export function PromotionForm({
                       title: `Promotion ${promotion.name}`,
                       fetch: () => adminClient.promotions.get(promotion.id),
                       endpoint: `/api/v3/admin/promotions/${promotion.id}`,
-                      resolveLink: spreeJsonLinkResolver(storeId),
                     }
                   : undefined
               }
@@ -293,7 +327,8 @@ export function PromotionForm({
                   <Button
                     type="submit"
                     disabled={
-                      form.formState.isSubmitting || (mode === 'edit' && !form.formState.isDirty)
+                      form.formState.isSubmitting ||
+                      (mode === 'edit' && !form.formState.isDirty && !customFields.isDirty)
                     }
                   >
                     {form.formState.isSubmitting
@@ -311,12 +346,10 @@ export function PromotionForm({
           main={
             <>
               {form.formState.errors.root?.message && (
-                <p
-                  className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive"
-                  role="alert"
-                >
-                  {form.formState.errors.root.message}
-                </p>
+                <Alert variant="destructive">
+                  <CircleAlertIcon />
+                  <AlertDescription>{form.formState.errors.root.message}</AlertDescription>
+                </Alert>
               )}
               <RulesCard
                 form={form}
@@ -324,6 +357,8 @@ export function PromotionForm({
                 matchPolicy={form.watch('match_policy')}
               />
               <ActionsCard form={form} actionsArray={actionsArray} />
+              {mode === 'edit' && <DraftCustomFieldsCard draft={customFields} />}
+              {promotion && <RecordMetadataCard metadata={promotion.metadata} />}
             </>
           }
           sidebar={
@@ -538,7 +573,7 @@ function ReadOnlyTriggerSummary({ promotion }: { promotion: Promotion }) {
   const [codesOpen, setCodesOpen] = useState(false)
 
   return (
-    <div className="space-y-2 text-sm">
+    <div className="space-y-2 text-base">
       {promotion.kind === 'automatic' ? (
         <Badge variant="outline">{t('admin.promotions.kinds.automatic')}</Badge>
       ) : promotion.multi_codes ? (
@@ -692,7 +727,7 @@ function RulesCard({
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <CardTitle>{t('admin.promotions.rules_card.title')}</CardTitle>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-base text-muted-foreground">
               {t('admin.promotions.rules_card.description')}{' '}
               {t(`admin.promotions.match_policies.${matchPolicy}_hint`)}
             </p>
@@ -728,7 +763,7 @@ function RulesCard({
       <CardContent>
         <div className="space-y-2">
           {rulesArray.fields.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-base text-muted-foreground">
               {t('admin.promotions.rules_card.empty')}
             </p>
           ) : (
@@ -753,10 +788,17 @@ function RulesCard({
         </div>
 
         {pickerOpen && (
-          <RulePickerSheet
+          <TypePickerSheet
+            family="promotion_rule"
+            title={t('admin.promotions.rule_picker.title')}
+            description={t('admin.promotions.rule_picker.description')}
+            emptyMessage={t(
+              types.length === 0
+                ? 'admin.promotions.rule_types_empty'
+                : 'admin.promotions.rule_types_all_used',
+            )}
             // One rule type per promotion (backend uniqueness on `type`).
             types={types.filter((tt) => !watchedRules.some((r) => r.type === tt.type))}
-            registeredCount={types.length}
             open
             onOpenChange={(o) => !o && setPickerOpen(false)}
             onPicked={(type) => {
@@ -824,19 +866,19 @@ function RuleRow({
   // valid sibling. The "edit" area is its own <button> spanning the
   // label/summary slot; trash is the second column.
   return (
-    <div className="flex w-full items-stretch rounded-md border bg-card hover:bg-accent/50">
+    <Item variant="outline" className="items-stretch gap-0 p-0 hover:bg-muted">
       <button
         type="button"
         onClick={onEdit}
-        className="min-w-0 flex-1 px-3 py-2 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-l-md"
+        className="min-w-0 flex-1 rounded-s-card px-3.5 py-3 text-left outline-none focus-visible:shadow-field-focus"
       >
-        <div className="text-sm font-medium">
+        <div className="text-base font-medium">
           {typeLabel('promotion_rule', draft.type, definition?.label)}
         </div>
         <RuleSummary draft={draft} />
       </button>
       <Can I="destroy" a={Subject.PromotionRule}>
-        <div className="flex items-center pr-1.5">
+        <div className="flex items-center pe-3">
           <Button type="button" size="icon-xs" variant="destructive-ghost" onClick={handleRemove}>
             <TrashIcon className="size-4" />
             {/* "Remove rule", not "Remove": the confirm dialog this opens has
@@ -846,18 +888,19 @@ function RuleRow({
           </Button>
         </div>
       </Can>
-    </div>
+    </Item>
   )
 }
 
 function RuleSummary({ draft }: { draft: PromotionRuleFormDraft }) {
   const { t } = useTranslation()
+  const countryName = useCountryDisplayName()
   const parts: string[] = []
   const products = nameList(draft.products)
   const categories = nameList(draft.categories)
   const customers = nameList(draft.customers, customerLabel)
   const groups = nameList(draft.customer_groups)
-  const countries = nameList(draft.countries)
+  const countries = nameList(draft.countries, countryName)
   const channels = nameList(draft.channels)
   const markets = nameList(draft.markets)
   const optionValues = nameList(draft.option_values, optionValueLabel)
@@ -888,9 +931,8 @@ function RuleSummary({ draft }: { draft: PromotionRuleFormDraft }) {
 
   // Fallback for preference-only rules (Currency, ItemTotal, FirstOrder,
   // OneUsePerUser, UserLoggedIn, OptionValue, …) — these don't carry
-  // embedded records, just a `preferences` hash. Walk the rule's
-  // preference schema and format each value so drafts that haven't been
-  // saved yet still get a useful row preview.
+  // embedded records, just a `preferences` hash. Format each value so
+  // drafts that haven't been saved yet still get a useful row preview.
   const prefSummary = formatPreferencesSummary(draft)
   if (prefSummary) parts.push(prefSummary)
 
@@ -912,15 +954,13 @@ const RULE_PREFS_SHOWN_ELSEWHERE = new Set([
 function formatPreferencesSummary(draft: PromotionRuleFormDraft): string | null {
   const prefs = draft.preferences
   if (!prefs) return null
-  const schema = draft.preference_schema ?? []
 
   const pairs: string[] = []
-  for (const field of schema) {
-    if (RULE_PREFS_SHOWN_ELSEWHERE.has(field.key)) continue
-    const value = prefs[field.key]
+  for (const [key, value] of Object.entries(prefs)) {
+    if (RULE_PREFS_SHOWN_ELSEWHERE.has(key)) continue
     if (value === null || value === undefined || value === '') continue
     if (Array.isArray(value) && value.length === 0) continue
-    pairs.push(`${humanize(field.key)}: ${formatPreferenceValue(value)}`)
+    pairs.push(`${humanize(key)}: ${formatPreferenceValue(value)}`)
   }
   return pairs.length > 0 ? pairs.join(', ') : null
 }
@@ -969,66 +1009,6 @@ function customerLabel(c: Customer): string {
   return c.full_name || c.email || ''
 }
 
-function RulePickerSheet({
-  types,
-  registeredCount,
-  open,
-  onOpenChange,
-  onPicked,
-}: {
-  /** Types still selectable — already-added types are filtered out upstream. */
-  types: ResourceTypeDefinition[]
-  /** Total registered types regardless of selection. */
-  registeredCount: number
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  onPicked: (type: ResourceTypeDefinition) => void
-}) {
-  const { t } = useTranslation()
-  const emptyKey =
-    registeredCount === 0
-      ? 'admin.promotions.rule_types_empty'
-      : 'admin.promotions.rule_types_all_used'
-  return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent>
-        <SheetHeader>
-          <SheetTitle>{t('admin.promotions.rule_picker.title')}</SheetTitle>
-          <SheetDescription>{t('admin.promotions.rule_picker.description')}</SheetDescription>
-        </SheetHeader>
-        <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-4">
-          {types.length === 0 ? (
-            <p className="text-sm text-muted-foreground">{t(emptyKey)}</p>
-          ) : (
-            types.map((tt) => (
-              <button
-                key={tt.type}
-                type="button"
-                onClick={() => onPicked(tt)}
-                className="flex flex-col items-start rounded-md border p-3 text-left transition-colors hover:bg-accent/50"
-              >
-                <span className="text-sm font-medium">
-                  {typeLabel('promotion_rule', tt.type, tt.label)}
-                </span>
-                {tt.description && (
-                  <span className="text-xs text-muted-foreground">
-                    {typeDescription('promotion_rule', tt.type, tt.description)}
-                  </span>
-                )}
-              </button>
-            ))
-          )}
-        </div>
-        <SheetFooter>
-          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-            {t('admin.actions.cancel')}
-          </Button>
-        </SheetFooter>
-      </SheetContent>
-    </Sheet>
-  )
-}
-
 function RuleEditSheet({
   draft,
   types,
@@ -1072,8 +1052,38 @@ function RuleEditSheet({
 
 function DefaultRuleEditor({ draft, onSave, onClose }: PromotionRuleEditorContext) {
   const { t } = useTranslation()
-  const [values, setValues] = useState<Record<string, unknown>>(draft.preferences ?? {})
-  const hasPreferences = !!draft.preference_schema?.length
+  const [values, setValues] = useState<Record<string, unknown>>(() => {
+    const preferences = draft.preferences ?? {}
+    if (draft.type !== 'item_total') return preferences
+
+    return {
+      ...preferences,
+      operator_min: preferences.operator_min === 'gte' ? 'gte' : 'gt',
+      operator_max: preferences.operator_max === 'lte' ? 'lte' : 'lt',
+    }
+  })
+  const { data: typesData } = usePromotionRuleTypes()
+  const schema = typesData?.data.find((type) => type.type === draft.type)?.schema
+  const ruleSchema =
+    draft.type === 'item_total' && schema
+      ? {
+          ...schema,
+          properties: {
+            ...schema.properties,
+            operator_min: {
+              ...(schema.properties.operator_min ?? { type: 'string' }),
+              default: 'gt',
+              enum: ['gt', 'gte'],
+            },
+            operator_max: {
+              ...(schema.properties.operator_max ?? { type: 'string' }),
+              default: 'lt',
+              enum: ['lt', 'lte'],
+            },
+          },
+        }
+      : schema
+  const hasPreferences = Object.keys(ruleSchema?.properties ?? {}).length > 0
 
   function handleSave() {
     onSave({ ...draft, preferences: values })
@@ -1088,9 +1098,9 @@ function DefaultRuleEditor({ draft, onSave, onClose }: PromotionRuleEditorContex
       saveLabel={hasPreferences ? undefined : t('admin.actions.add')}
     >
       {hasPreferences ? (
-        <PreferencesForm schema={draft.preference_schema} values={values} onChange={setValues} />
+        <PreferencesForm schema={ruleSchema} values={values} onChange={setValues} />
       ) : (
-        <p className="text-sm text-muted-foreground">
+        <p className="text-base text-muted-foreground">
           {t('admin.promotions.rule_edit.no_options')}
         </p>
       )}
@@ -1126,14 +1136,14 @@ function ActionsCard({
     <Card>
       <CardHeader>
         <CardTitle>{t('admin.actions.actions_menu')}</CardTitle>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-base text-muted-foreground">
           {t('admin.promotions.actions_card.description')}
         </p>
       </CardHeader>
       <CardContent>
         <div className="space-y-2">
           {actionsArray.fields.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-base text-muted-foreground">
               {t('admin.promotions.actions_card.empty')}
             </p>
           ) : (
@@ -1158,7 +1168,10 @@ function ActionsCard({
         </div>
 
         {pickerOpen && (
-          <ActionPickerSheet
+          <TypePickerSheet
+            family="promotion_action"
+            title={t('admin.promotions.action_picker.title')}
+            description={t('admin.promotions.action_picker.description')}
             types={types}
             open
             onOpenChange={(o) => !o && setPickerOpen(false)}
@@ -1224,19 +1237,19 @@ function ActionRow({
   }
 
   return (
-    <div className="flex w-full items-stretch rounded-md border bg-card hover:bg-accent/50">
+    <Item variant="outline" className="items-stretch gap-0 p-0 hover:bg-muted">
       <button
         type="button"
         onClick={onEdit}
-        className="min-w-0 flex-1 px-3 py-2 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-l-md"
+        className="min-w-0 flex-1 rounded-s-card px-3.5 py-3 text-left outline-none focus-visible:shadow-field-focus"
       >
-        <div className="text-sm font-medium">
+        <div className="text-base font-medium">
           {typeLabel('promotion_action', draft.type, definition?.label)}
         </div>
         <ActionSummary draft={draft} />
       </button>
       <Can I="destroy" a={Subject.PromotionAction}>
-        <div className="flex items-center pr-1.5">
+        <div className="flex items-center pe-3">
           <Button type="button" size="icon-xs" variant="destructive-ghost" onClick={handleRemove}>
             <TrashIcon className="size-4" />
             {/* "Remove rule", not "Remove": the confirm dialog this opens has
@@ -1246,20 +1259,26 @@ function ActionRow({
           </Button>
         </div>
       </Can>
-    </div>
+    </Item>
   )
 }
 
 function ActionSummary({ draft }: { draft: PromotionActionFormDraft }) {
   const { t } = useTranslation()
   const parts: string[] = []
-  // dashboard-ui is headless, so the localized calculator name is resolved
-  // here and handed to the formatter rather than looked up inside it.
+  const { data: calculatorsData } = usePromotionActionCalculators(
+    draft.calculator ? draft.type : undefined,
+  )
+  // dashboard-ui is headless, so the localized calculator name and the
+  // calculator's schema are resolved here and handed to the formatter.
+  const calculatorType = draft.calculator?.type
   const calc = formatCalculatorSummary(
-    draft.calculator?.type
+    calculatorType
       ? {
           ...draft.calculator,
-          label: typeLabel('calculator', draft.calculator.type, draft.calculator.label),
+          label: typeLabel('calculator', calculatorType, draft.calculator?.label),
+          schema: calculatorsData?.data.find((calculator) => calculator.type === calculatorType)
+            ?.schema,
         }
       : draft.calculator,
   )
@@ -1270,54 +1289,6 @@ function ActionSummary({ draft }: { draft: PromotionActionFormDraft }) {
     )
   if (parts.length === 0) return null
   return <div className="truncate text-xs text-muted-foreground">{parts.join(' · ')}</div>
-}
-
-function ActionPickerSheet({
-  types,
-  open,
-  onOpenChange,
-  onPicked,
-}: {
-  types: ResourceTypeDefinition[]
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  onPicked: (type: ResourceTypeDefinition) => void
-}) {
-  const { t } = useTranslation()
-  return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent>
-        <SheetHeader>
-          <SheetTitle>{t('admin.promotions.action_picker.title')}</SheetTitle>
-          <SheetDescription>{t('admin.promotions.action_picker.description')}</SheetDescription>
-        </SheetHeader>
-        <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-4">
-          {types.map((type) => (
-            <button
-              key={type.type}
-              type="button"
-              onClick={() => onPicked(type)}
-              className="flex flex-col items-start rounded-md border p-3 text-left transition-colors hover:bg-accent/50"
-            >
-              <span className="text-sm font-medium">
-                {typeLabel('promotion_action', type.type, type.label)}
-              </span>
-              {type.description && (
-                <span className="text-xs text-muted-foreground">
-                  {typeDescription('promotion_action', type.type, type.description)}
-                </span>
-              )}
-            </button>
-          ))}
-        </div>
-        <SheetFooter>
-          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-            {t('admin.actions.cancel')}
-          </Button>
-        </SheetFooter>
-      </SheetContent>
-    </Sheet>
-  )
 }
 
 function ActionEditSheet({
@@ -1364,7 +1335,9 @@ function ActionEditSheet({
 function DefaultActionEditor({ draft, onSave, onClose }: PromotionActionEditorContext) {
   const { t } = useTranslation()
   const [values, setValues] = useState<Record<string, unknown>>(draft.preferences ?? {})
-  const hasPreferences = !!draft.preference_schema?.length
+  const { data: typesData } = usePromotionActionTypes()
+  const schema = typesData?.data.find((type) => type.type === draft.type)?.schema
+  const hasPreferences = Object.keys(schema?.properties ?? {}).length > 0
 
   function handleSave() {
     onSave({ ...draft, preferences: values })
@@ -1379,9 +1352,9 @@ function DefaultActionEditor({ draft, onSave, onClose }: PromotionActionEditorCo
       saveLabel={hasPreferences ? undefined : t('admin.actions.add')}
     >
       {hasPreferences ? (
-        <PreferencesForm schema={draft.preference_schema} values={values} onChange={setValues} />
+        <PreferencesForm schema={schema} values={values} onChange={setValues} />
       ) : (
-        <p className="text-sm text-muted-foreground">
+        <p className="text-base text-muted-foreground">
           {t('admin.promotions.action_edit.no_options')}
         </p>
       )}
@@ -1426,7 +1399,7 @@ function CouponCodesSheet({
 
         <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
           {codes.length === 0 ? (
-            <p className="px-4 py-6 text-sm text-muted-foreground">
+            <p className="px-4 py-6 text-base text-muted-foreground">
               {t('admin.promotions.coupon_codes.empty')}
             </p>
           ) : (

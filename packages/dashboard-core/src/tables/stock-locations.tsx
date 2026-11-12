@@ -1,14 +1,27 @@
+import { intlDisplayName, STOCK_LOCATION_KINDS } from '@spree/core'
 import { ActiveBadge, ResourceNameCell } from '@spree/dashboard-ui'
 import { WarehouseIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
 import type { PanelStockLocation } from '../api-client'
 import { defineTable } from '../lib/table-registry'
 
+/**
+ * Where a location is, on one line: street, city, state and country. Sits
+ * under the name rather than in a column of its own, since it is what tells
+ * two warehouses of a similar name apart.
+ */
+function addressLine(sl: PanelStockLocation): string {
+  const country = sl.country_code
+    ? (intlDisplayName('region', i18n.language, sl.country_code) ?? sl.country_code)
+    : null
+  return [sl.address1, sl.city, sl.state_text || sl.state_code, country].filter(Boolean).join(', ')
+}
+
 defineTable<PanelStockLocation>('stock-locations', {
   docsPath: 'settings/locations',
   description: i18n.t('admin.stock_locations.description'),
   title: i18n.t('admin.settings_nav.items.stock_locations'),
-  searchParam: 'name_cont',
+  searchParam: 'search',
   searchPlaceholder: i18n.t('admin.stock_locations.search_placeholder'),
   defaultSort: { field: 'name', direction: 'asc' },
   emptyIcon: <WarehouseIcon className="size-8 text-muted-foreground" />,
@@ -16,7 +29,7 @@ defineTable<PanelStockLocation>('stock-locations', {
   columns: [
     {
       key: 'name',
-      label: i18n.t('admin.fields.name.label'),
+      label: i18n.t('admin.stock_locations.columns.location'),
       sortable: true,
       default: true,
       render: (sl) => (
@@ -24,7 +37,7 @@ defineTable<PanelStockLocation>('stock-locations', {
           id={sl.id}
           dataAttr="data-stock-location-id"
           name={sl.name}
-          secondary={sl.admin_name}
+          secondary={[sl.admin_name, addressLine(sl)].filter(Boolean).join(' · ')}
         />
       ),
     },
@@ -35,30 +48,15 @@ defineTable<PanelStockLocation>('stock-locations', {
       filterable: true,
       default: true,
       filterType: 'enum',
-      filterOptions: [
-        { value: 'warehouse', label: i18n.t('admin.stock_locations.kinds.warehouse') },
-        { value: 'store', label: i18n.t('admin.stock_locations.kinds.store') },
-        {
-          value: 'fulfillment_center',
-          label: i18n.t('admin.stock_locations.kinds.fulfillment_center'),
-        },
-      ],
+      filterOptions: STOCK_LOCATION_KINDS.map((kind) => ({
+        value: kind,
+        label: i18n.t(`admin.stock_locations.kinds.${kind}`),
+      })),
       quickFilter: true,
       render: (sl) => {
         const key = `admin.stock_locations.kinds.${sl.kind}`
         const label = i18n.exists(key) ? i18n.t(key) : sl.kind.replace('_', ' ')
         return <span className="capitalize">{label}</span>
-      },
-    },
-    {
-      key: 'city',
-      label: i18n.t('admin.stock_locations.columns.location'),
-      default: true,
-      render: (sl) => {
-        const parts = [sl.city, sl.state_text || sl.state_code, sl.country_code]
-          .filter(Boolean)
-          .join(', ')
-        return parts || '—'
       },
     },
     {

@@ -1,4 +1,5 @@
-import { formatFileSize, type ProductFormValues, useDirectUpload } from '@spree/dashboard-core'
+import { randomUUID } from '@spree/core'
+import { formatFileSize, type ProductFormValues, useFileUpload } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -43,7 +44,7 @@ export function DigitalFilesFormCard({
   const confirm = useConfirm()
   // Files are only ever served through an authorized, signed link, so they go
   // to private storage — never the public bucket.
-  const directUpload = useDirectUpload({ private: true })
+  const fileUpload = useFileUpload({ visibility: 'private' })
   const [pending, setPending] = useState<PendingUpload[]>([])
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -53,10 +54,10 @@ export function DigitalFilesFormCard({
     async (files: FileList | File[]) => {
       const fileArray = Array.from(files)
       for (const file of fileArray) {
-        const uploadId = crypto.randomUUID()
+        const uploadId = randomUUID()
         setPending((prev) => [...prev, { id: uploadId, name: file.name }])
         try {
-          const { signedId } = await directUpload.mutateAsync(file)
+          const { signedId } = await fileUpload.mutateAsync(file)
           const current = form.getValues('digital_assets') ?? []
           form.setValue(
             'digital_assets',
@@ -77,7 +78,7 @@ export function DigitalFilesFormCard({
         }
       }
     },
-    [directUpload, form, t],
+    [fileUpload, form, t],
   )
 
   function handleFileInput(event: React.ChangeEvent<HTMLInputElement>) {
@@ -137,7 +138,7 @@ export function DigitalFilesFormCard({
       </CardHeader>
 
       <CardContent className="flex flex-col gap-4">
-        <p className="text-muted-foreground text-sm">{t('admin.digital_assets.description')}</p>
+        <p className="text-muted-foreground text-base">{t('admin.digital_assets.description')}</p>
 
         <input
           ref={fileInputRef}
@@ -156,11 +157,11 @@ export function DigitalFilesFormCard({
             className="flex w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-border p-6 text-center transition-colors hover:border-foreground/30"
           >
             <FileIcon className="size-8 text-muted-foreground" />
-            <p className="text-muted-foreground text-sm">{t('admin.digital_assets.drop_hint')}</p>
+            <p className="text-muted-foreground text-base">{t('admin.digital_assets.drop_hint')}</p>
           </button>
         ) : (
           <div className="overflow-hidden rounded-xl border border-border-subtle">
-            <Table>
+            <Table roundedTop>
               <TableHeader>
                 <TableRow>
                   <TableHead>{t('admin.digital_assets.columns.file')}</TableHead>
@@ -186,7 +187,7 @@ export function DigitalFilesFormCard({
                     <TableCell className="text-right">
                       <Button
                         type="button"
-                        variant="ghost"
+                        variant="destructive-ghost"
                         size="icon-xs"
                         aria-label={t('admin.actions.remove')}
                         onClick={() => handleRemove(index)}

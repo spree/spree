@@ -45,8 +45,4 @@ describe Spree::Promotion::Actions::CreateAdjustment, type: :model do
       expect(huge.compute_amount(order)).to eq(-action.order_total(order))
     end
   end
-
-  it 'has order discount scope' do
-    expect(action.discount_scope).to eq(:order)
-  end
 end

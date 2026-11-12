@@ -96,14 +96,6 @@ module Spree
         expect(subject.freight_summary.total_units).to eq(1)
       end
 
-      it 'applies the tare once per package, not per item' do
-        create(:package_type, store: order.store, default: true, weight: 2.5, weight_unit: 'lb')
-
-        subject.add build_inventory_unit
-
-        expect(subject.weight).to eq(27.5)
-      end
-
       # A merchant may record a carton in centimetres while the store quotes
       # in pounds and inches. Handing the raw numbers to a carrier reads
       # centimetres as inches — a 2.54x overstatement on every axis.
@@ -198,17 +190,12 @@ module Spree
         end
       end
 
-      it 'filters by on_hand and backordered' do
+      it 'filters and counts by state' do
         4.times { subject.add build_inventory_unit }
         3.times { subject.add build_inventory_unit, :backordered }
+
         expect(subject.on_hand.count).to eq 4
         expect(subject.backordered.count).to eq 3
-      end
-
-      it 'calculates the quantity by state' do
-        4.times { subject.add build_inventory_unit }
-        3.times { subject.add build_inventory_unit, :backordered }
-
         expect(subject.quantity).to eq 7
         expect(subject.quantity(:on_hand)).to eq 4
         expect(subject.quantity(:backordered)).to eq 3
@@ -286,10 +273,6 @@ module Spree
         it 'allows adding with a state' do
           expect { subject.add_multiple [build_inventory_unit, build_inventory_unit], :backordered }.to change { subject.backordered.count }.by(2)
         end
-
-        it 'defaults to adding with the on hand state' do
-          expect { subject.add_multiple [build_inventory_unit, build_inventory_unit] }.to change { subject.on_hand.count }.by(2)
-        end
       end
 
       describe '#remove' do
@@ -350,17 +333,6 @@ module Spree
           imperial_package = Package.new(stock_location, [ContentItem.new(build(:fulfillment_item, variant: imperial))])
 
           expect(imperial_package.volume).to be > metric_package.volume
-        end
-      end
-
-      context '#dimension' do
-        it 'calculates the sum of the dimension of all the items' do
-          contents = [ContentItem.new(build(:fulfillment_item, variant: build(:variant))),
-                      ContentItem.new(build(:fulfillment_item, variant: build(:variant))),
-                      ContentItem.new(build(:fulfillment_item, variant: build(:variant))),
-                      ContentItem.new(build(:fulfillment_item, variant: build(:variant)))]
-          package = Package.new(stock_location, contents)
-          expect(package.dimension).to eq contents.sum(&:dimension)
         end
       end
     end

@@ -4,23 +4,26 @@ import { cn } from '../lib/utils'
 import { Slot } from './slot'
 
 const buttonVariants = cva(
-  "group/button inline-flex shrink-0 items-center justify-center gap-2 rounded-lg border border-transparent text-sm font-medium whitespace-nowrap cursor-pointer select-none no-underline transition-[color,background-color,border-color,box-shadow,transform,translate,scale] duration-100 ease-out outline-none active:scale-[0.98] motion-reduce:active:scale-100 focus-visible:border-blue-500 focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)] disabled:pointer-events-none disabled:opacity-70 disabled:cursor-not-allowed aria-invalid:border-destructive [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "group/button inline-flex shrink-0 items-center justify-center gap-2 rounded-xl border border-transparent text-base font-medium whitespace-nowrap cursor-pointer select-none no-underline transition-[color,background-color,border-color,box-shadow,transform,translate,scale] duration-100 ease-out outline-none active:scale-[0.98] motion-reduce:active:scale-100 focus-visible:border-blue-500 focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)] disabled:pointer-events-none disabled:opacity-70 disabled:cursor-not-allowed aria-invalid:border-destructive [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
-        // `shadow-xs` like the outline and destructive variants: the primary
-        // action is the one thing on a page that should sit slightly above it,
-        // and it was the only variant with no lift at all.
-        default: 'bg-primary text-primary-foreground shadow-xs hover:bg-primary/85',
+        // Buttons with chrome (primary, outline, destructive) take the field's
+        // `shadow-control`, so a button and the field beside it share one lift.
+        // Disabled drops the fill rather than fading it: a faded black (or, in
+        // dark mode, white) pill still reads as the page's live primary action.
+        default:
+          'bg-primary text-primary-foreground shadow-control hover:bg-primary/85 disabled:border-border disabled:bg-muted disabled:text-muted-foreground disabled:opacity-100 disabled:shadow-none',
         outline:
-          'border-border/80 bg-card shadow-xs text-foreground hover:bg-accent hover:text-foreground aria-expanded:bg-accent',
+          'border-border/80 bg-card shadow-control text-foreground hover:bg-accent hover:text-foreground aria-expanded:bg-accent',
         // `group-hover/row:` — inside a hovered table row the row already wears
         // --accent, so repeating it here leaves the button at 1.03:1 against its
         // own background: invisible exactly when the pointer is on it. On a
         // hovered row it steps to --accent-strong instead.
         ghost:
           'hover:bg-accent hover:text-accent-foreground aria-expanded:bg-accent group-hover/row:hover:bg-accent-strong',
-        destructive: 'text-destructive bg-card border-border shadow-xs hover:bg-destructive/10',
+        destructive:
+          'text-destructive bg-card border-border shadow-control hover:bg-destructive/10',
         // Ghost's chrome (none until hover) with destructive's colour. The
         // inline remove buttons that sit inside a row or field want no box of
         // their own, but still need the red tint on hover rather than ghost's
@@ -30,12 +33,12 @@ const buttonVariants = cva(
       },
       size: {
         default: 'h-9 px-3 py-1.5',
-        xs: "h-6 gap-1 rounded-md px-2 text-xs [&_svg:not([class*='size-'])]:size-3",
-        sm: "h-7 gap-1 rounded-md px-2 py-1 text-sm [&_svg:not([class*='size-'])]:size-3.5",
+        xs: "h-6 gap-1 rounded-lg px-2 text-xs [&_svg:not([class*='size-'])]:size-3",
+        sm: "h-7 gap-1 rounded-lg px-2 py-1 text-base [&_svg:not([class*='size-'])]:size-3.5",
         lg: 'h-10 px-3 py-2 text-base',
         icon: 'size-9',
-        'icon-xs': "size-6 rounded-md [&_svg:not([class*='size-'])]:size-3",
-        'icon-sm': 'size-7 rounded-md',
+        'icon-xs': "size-6 rounded-lg [&_svg:not([class*='size-'])]:size-3",
+        'icon-sm': 'size-7 rounded-lg',
         'icon-lg': 'size-10',
       },
     },

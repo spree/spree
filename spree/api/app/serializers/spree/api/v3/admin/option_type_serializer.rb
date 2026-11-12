@@ -13,6 +13,8 @@ module Spree
           many :option_values,
                resource: proc { Spree.api.admin_option_value_serializer },
                if: proc { expand?('option_values') }
+
+          expandable_custom_fields admin: true
         end
       end
     end

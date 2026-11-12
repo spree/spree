@@ -22,14 +22,10 @@ defineTable<CustomFieldDefinition>('custom-field-definitions', {
   emptyMessage: t('admin.custom_field_definitions.empty'),
   columns: [
     {
-      key: 'name',
+      key: 'label',
       label: t('admin.fields.custom_field_definition.label.label'),
       sortable: true,
       default: true,
-      // Not filterable: `name` is not a ransackable attribute on this model,
-      // so the predicate was rejected server-side. The label it renders is
-      // already matched by the search box.
-      ransackAttribute: 'name',
       render: (def) => (
         <ResourceNameCell
           id={def.id}

@@ -45,115 +45,6 @@ RSpec.describe Spree::Payment::GatewayOptions, type: :model do
     double Spree::Address, gateway_hash: { ship: :address }
   end
 
-  describe '#order' do
-    subject { options.order }
-
-    it { is_expected.to eq order }
-  end
-
-  describe '#payment' do
-    subject { options.payment }
-
-    it { is_expected.to eq payment }
-  end
-
-  describe '#payment_id' do
-    subject { options.payment_id }
-
-    it { is_expected.to eq 'P1566' }
-  end
-
-  describe '#payment_prefixed_id' do
-    subject { options.payment_prefixed_id }
-
-    # The stable lookup handle: the derived number cannot be queried (NULL
-    # column on 6.0 rows) and shifts when a sibling is destroyed.
-    it { is_expected.to eq 'py_k5nR8xLq' }
-  end
-
-  describe '#email' do
-    subject { options.email }
-
-    it { is_expected.to eq 'test@email.com' }
-  end
-
-  describe '#customer' do
-    subject { options.customer }
-
-    it { is_expected.to eq 'test@email.com' }
-  end
-
-  describe '#customer_id' do
-    subject { options.customer_id }
-
-    it { is_expected.to eq 144 }
-  end
-
-  describe '#ip' do
-    subject { options.ip }
-
-    it { is_expected.to eq '0.0.0.0' }
-  end
-
-  describe '#order_id' do
-    subject { options.order_id }
-
-    # The payment number already names its order, so this is no longer the
-    # order number and the payment number concatenated.
-    it { is_expected.to eq 'P1566' }
-  end
-
-  describe '#idempotency_key' do
-    subject { options.idempotency_key }
-
-    # The prefixed ID, not the number — a derived number can shift if an
-    # earlier sibling payment is destroyed, and a shifted key could collide
-    # with one already used at the gateway.
-    it { is_expected.to eq 'spree-py_k5nR8xLq' }
-  end
-
-  describe '#shipping' do
-    subject { options.shipping }
-
-    it { is_expected.to eq 1244 }
-  end
-
-  describe '#tax' do
-    subject { options.tax }
-
-    it { is_expected.to eq 153 }
-  end
-
-  describe '#subtotal' do
-    subject { options.subtotal }
-
-    it { is_expected.to eq 1511 }
-  end
-
-  describe '#discount' do
-    subject { options.discount }
-
-    it { is_expected.to eq 257 }
-  end
-
-  describe '#currency' do
-    subject { options.currency }
-
-    it { is_expected.to eq 'EUR' }
-  end
-
-  describe '#billing_address' do
-    subject { options.billing_address }
-
-    it { is_expected.to eq(bill: :address) }
-  end
-
-  describe '#shipping_address' do
-    subject { options.shipping_address }
-
-    it { is_expected.to eq(ship: :address) }
-  end
-
   describe '#to_hash' do
     subject { options.to_hash }
 
@@ -163,9 +54,16 @@ RSpec.describe Spree::Payment::GatewayOptions, type: :model do
         customer: 'test@email.com',
         customer_id: 144,
         ip: '0.0.0.0',
+        # The payment number already names its order, so this is no longer the
+        # order number and the payment number concatenated.
         order_id: 'P1566',
         payment_id: 'P1566',
+        # The stable lookup handle: the derived number cannot be queried (NULL
+        # column on 6.0 rows) and shifts when a sibling is destroyed.
         payment_prefixed_id: 'py_k5nR8xLq',
+        # The prefixed ID, not the number — a derived number can shift if an
+        # earlier sibling payment is destroyed, and a shifted key could collide
+        # with one already used at the gateway.
         idempotency_key: 'spree-py_k5nR8xLq',
         shipping: '1244'.to_d,
         tax: '153'.to_d,

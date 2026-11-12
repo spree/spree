@@ -10,6 +10,8 @@ module Spree
     # integrations) and +find_nearby+ gains +zipcode:+/+query:+ params.
     # Build third-party providers against 6.1, not this shape.
     class Base
+      extend Spree::ApiTyped
+
       # @return [Array<Spree::PickupPointOption>]
       def find_nearby(latitude:, longitude:, limit: 20)
         raise NotImplementedError, "Please implement 'find_nearby' in your pickup point provider: #{self.class.name}"

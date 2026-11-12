@@ -16,26 +16,28 @@ import {
   Badge,
   Button,
   Card,
-  CardAction,
   CardContent,
-  CardHeader,
-  CardTitle,
   Combobox,
   ComboboxContent,
   ComboboxEmpty,
   ComboboxInput,
   ComboboxItem,
   ComboboxList,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
+  Empty,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
   Field,
   FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
   Input,
+  RowActions,
+  Section,
+  SectionActions,
+  SectionHeader,
+  SectionTitle,
   Sheet,
   SheetContent,
   SheetDescription,
@@ -43,20 +45,25 @@ import {
   SheetHeader,
   SheetTitle,
   StatusBadge,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
   useConfirm,
 } from '@spree/dashboard-ui'
 import {
   BadgeCheckIcon,
   BanIcon,
   DownloadIcon,
-  EllipsisVerticalIcon,
   PaperclipIcon,
   PlusIcon,
-  TrashIcon,
+  ShieldCheckIcon,
 } from '@spree/dashboard-ui/icons'
 import { parseISO } from 'date-fns'
 import { formatInTimeZone } from 'date-fns-tz'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import {
@@ -66,9 +73,9 @@ import {
   useTaxExemptionCertificates,
   useVerifyTaxExemptionCertificate,
 } from '../../hooks/use-companies'
+import { useTaxExemptionReasons } from '../../hooks/use-reasons'
 import {
   TAX_EXEMPTION_CERTIFICATE_DEFAULTS,
-  TAX_EXEMPTION_REASON_CODES,
   type TaxExemptionCertificateFormValues,
   taxExemptionCertificateFormSchema,
   taxExemptionCertificateValuesToParams,
@@ -151,179 +158,154 @@ export function TaxExemptionCertificatesCard({
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>
+    <Section>
+      <SectionHeader>
+        <SectionTitle>
+          <ShieldCheckIcon />
           {t('admin.tax_exemption_certificates.title')}
           {certificates.length > 0 && <Badge variant="outline">{certificates.length}</Badge>}
-        </CardTitle>
+        </SectionTitle>
         {canEdit && (
-          <CardAction>
+          <SectionActions>
             <Button size="sm" variant="outline" onClick={() => setAddOpen(true)}>
               <PlusIcon className="size-4" />
               {t('admin.tax_exemption_certificates.add_cta')}
             </Button>
-          </CardAction>
+          </SectionActions>
         )}
-      </CardHeader>
+      </SectionHeader>
 
-      {isLoading ? (
-        <CardContent>
-          <p className="text-muted-foreground text-sm">{t('admin.common.loading')}</p>
-        </CardContent>
-      ) : certificates.length === 0 ? (
-        <CardContent>
-          <p className="text-muted-foreground text-sm">
-            {t('admin.tax_exemption_certificates.empty')}
-          </p>
-        </CardContent>
-      ) : (
-        <CardContent className="flex flex-col gap-3">
-          {certificates.map((certificate) => (
-            <div
-              key={certificate.id}
-              className="flex items-start justify-between gap-3 rounded-md border p-3"
-            >
-              <div className="flex min-w-0 flex-col gap-1">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="font-medium text-sm">{certificate.certificate_number}</span>
-                  <StatusBadge
-                    status={certificate.status}
-                    label={t(`admin.tax_exemption_certificates.status.${certificate.status}`, {
-                      defaultValue: certificate.status,
-                    })}
-                  />
-                  {certificate.lapsed && certificate.status !== 'expired' && (
-                    <StatusBadge
-                      status="expired"
-                      label={t('admin.tax_exemption_certificates.lapsed')}
-                    />
-                  )}
-                </div>
-                <span className="text-muted-foreground text-xs">
-                  {t(`admin.tax_exemption_certificates.reason_codes.${certificate.reason_code}`, {
-                    defaultValue: certificate.reason_code,
-                  })}
-                  {' · '}
-                  <JurisdictionLabel
-                    countryCode={certificate.country_code}
-                    stateCode={certificate.state_code}
-                  />
-                </span>
-
-                <dl className="mt-1 grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5 text-xs">
-                  {certificate.issuing_authority && (
-                    <>
-                      <dt className="text-muted-foreground">
-                        {t('admin.fields.issuing_authority.label')}
-                      </dt>
-                      <dd>{certificate.issuing_authority}</dd>
-                    </>
-                  )}
-                  {certificate.issued_at && (
-                    <>
-                      <dt className="text-muted-foreground">{t('admin.fields.issued_at.label')}</dt>
-                      <dd>
-                        <StoreDate iso={certificate.issued_at} />
-                      </dd>
-                    </>
-                  )}
-                  <dt className="text-muted-foreground">{t('admin.fields.expires_at.label')}</dt>
-                  <dd>
+      <Card>
+        {isLoading || certificates.length === 0 ? (
+          <CardContent>
+            {isLoading ? (
+              <p className="text-muted-foreground text-base">{t('admin.common.loading')}</p>
+            ) : (
+              <Empty className="p-4">
+                <EmptyHeader>
+                  <EmptyMedia variant="icon">
+                    <ShieldCheckIcon />
+                  </EmptyMedia>
+                  <EmptyTitle>{t('admin.tax_exemption_certificates.empty')}</EmptyTitle>
+                </EmptyHeader>
+              </Empty>
+            )}
+          </CardContent>
+        ) : (
+          <Table roundedTop scrollX>
+            <TableHeader>
+              <TableRow>
+                <TableHead>{t('admin.tax_exemption_certificates.columns.certificate')}</TableHead>
+                <TableHead>{t('admin.fields.expires_at.label')}</TableHead>
+                <TableHead>{t('admin.tax_exemption_certificates.columns.document')}</TableHead>
+                <TableHead className="w-10" />
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {certificates.map((certificate) => (
+                <TableRow key={certificate.id}>
+                  <TableCell>
+                    <div className="flex flex-wrap items-center gap-2 font-medium text-base">
+                      {certificate.certificate_number}
+                      <StatusBadge
+                        status={certificate.status}
+                        label={t(`admin.tax_exemption_certificates.status.${certificate.status}`, {
+                          defaultValue: certificate.status,
+                        })}
+                      />
+                      {certificate.lapsed && certificate.status !== 'expired' && (
+                        <StatusBadge
+                          status="expired"
+                          label={t('admin.tax_exemption_certificates.lapsed')}
+                        />
+                      )}
+                    </div>
+                    <div className="text-muted-foreground text-xs">
+                      {certificate.tax_exemption_reason?.name ?? '—'}
+                      {' · '}
+                      <JurisdictionLabel
+                        countryCode={certificate.country_code}
+                        stateCode={certificate.state_code}
+                      />
+                      {certificate.issuing_authority && ` · ${certificate.issuing_authority}`}
+                    </div>
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap text-muted-foreground">
                     {certificate.expires_at ? (
                       <StoreDate iso={certificate.expires_at} />
                     ) : (
                       t('admin.tax_exemption_certificates.never_expires')
                     )}
-                  </dd>
-                  {certificate.verified_at && (
-                    <>
-                      <dt className="text-muted-foreground">
-                        {t('admin.tax_exemption_certificates.verified_at')}
-                      </dt>
-                      <dd>
-                        <StoreDate iso={certificate.verified_at} />
-                      </dd>
-                    </>
-                  )}
-                </dl>
-
-                {certificate.document_filename ? (
-                  <Button
-                    type="button"
-                    variant="link"
-                    size="sm"
-                    className="h-auto justify-start p-0 text-xs"
-                    onClick={() => handleDownload(certificate)}
-                  >
-                    <PaperclipIcon className="size-3" />
-                    {certificate.document_filename}
-                    {certificate.document_byte_size ? (
-                      <span className="text-muted-foreground">
-                        ({formatFileSize(certificate.document_byte_size)})
+                  </TableCell>
+                  <TableCell>
+                    {certificate.document_filename ? (
+                      <Button
+                        type="button"
+                        variant="link"
+                        size="sm"
+                        className="h-auto max-w-56 justify-start p-0 text-xs"
+                        onClick={() => handleDownload(certificate)}
+                      >
+                        <PaperclipIcon className="size-3" />
+                        <span className="truncate">{certificate.document_filename}</span>
+                        {certificate.document_byte_size ? (
+                          <span className="text-muted-foreground">
+                            ({formatFileSize(certificate.document_byte_size)})
+                          </span>
+                        ) : null}
+                      </Button>
+                    ) : (
+                      <span className="text-muted-foreground text-xs">
+                        {t('admin.tax_exemption_certificates.no_document')}
                       </span>
-                    ) : null}
-                  </Button>
-                ) : (
-                  <span className="text-muted-foreground text-xs">
-                    {t('admin.tax_exemption_certificates.no_document')}
-                  </span>
-                )}
-              </div>
-
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon-xs">
-                    <EllipsisVerticalIcon className="size-4" />
-                    <span className="sr-only">{t('admin.actions.actions_menu')}</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  {certificate.document_url && (
-                    <DropdownMenuItem onClick={() => handleDownload(certificate)}>
-                      <DownloadIcon className="size-4" />
-                      {t('admin.tax_exemption_certificates.download_action')}
-                    </DropdownMenuItem>
-                  )}
-                  {canEdit && certificate.status === 'pending' && (
-                    <DropdownMenuItem
-                      disabled={verifyMutation.isPending}
-                      onClick={() =>
-                        verifyMutation.mutateAsync(certificate.id).catch(() => undefined)
-                      }
-                    >
-                      <BadgeCheckIcon className="size-4" />
-                      {t('admin.tax_exemption_certificates.verify_action')}
-                    </DropdownMenuItem>
-                  )}
-                  {canEdit && certificate.status !== 'revoked' && (
-                    <DropdownMenuItem
-                      variant="destructive"
-                      disabled={revokeMutation.isPending}
-                      onClick={() => handleRevoke(certificate)}
-                    >
-                      <BanIcon className="size-4" />
-                      {t('admin.tax_exemption_certificates.revoke_action')}
-                    </DropdownMenuItem>
-                  )}
-                  {canEdit && certificate.can_be_deleted && (
-                    <DropdownMenuItem
-                      variant="destructive"
-                      onClick={() => handleDelete(certificate)}
-                    >
-                      <TrashIcon className="size-4" />
-                      {t('admin.actions.delete')}
-                    </DropdownMenuItem>
-                  )}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          ))}
-        </CardContent>
-      )}
+                    )}
+                  </TableCell>
+                  <TableCell className="w-10 text-right">
+                    <RowActions
+                      actions={[
+                        {
+                          key: 'download',
+                          label: t('admin.tax_exemption_certificates.download_action'),
+                          icon: <DownloadIcon className="size-4" />,
+                          visible: !!certificate.document_url,
+                          onSelect: () => handleDownload(certificate),
+                        },
+                        {
+                          key: 'verify',
+                          label: t('admin.tax_exemption_certificates.verify_action'),
+                          icon: <BadgeCheckIcon className="size-4" />,
+                          visible: canEdit && certificate.status === 'pending',
+                          disabled: verifyMutation.isPending,
+                          onSelect: () =>
+                            verifyMutation.mutateAsync(certificate.id).catch(() => undefined),
+                        },
+                        {
+                          key: 'revoke',
+                          label: t('admin.tax_exemption_certificates.revoke_action'),
+                          icon: <BanIcon className="size-4" />,
+                          visible: canEdit && certificate.status !== 'revoked',
+                          disabled: revokeMutation.isPending,
+                          destructive: true,
+                          onSelect: () => handleRevoke(certificate),
+                        },
+                        {
+                          key: 'delete',
+                          visible: canEdit && !!certificate.can_be_deleted,
+                          destructive: true,
+                          onSelect: () => handleDelete(certificate),
+                        },
+                      ]}
+                    />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
+      </Card>
 
       {addOpen && <CertificateSheet companyId={companyId} open onOpenChange={setAddOpen} />}
-    </Card>
+    </Section>
   )
 }
 
@@ -338,6 +320,15 @@ function CertificateSheet({
 }) {
   const { t } = useTranslation()
   const createMutation = useCreateTaxExemptionCertificate(companyId)
+  const reasons = useTaxExemptionReasons()
+  // Only the reasons the store still offers; the server refuses any other.
+  const reasonOptions: ReasonOption[] = useMemo(
+    () =>
+      reasons
+        .filter((reason) => reason.active)
+        .map((reason) => ({ value: reason.id, label: reason.name })),
+    [reasons],
+  )
   const form = useForm<TaxExemptionCertificateFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(taxExemptionCertificateFormSchema) as any,
@@ -381,7 +372,7 @@ function CertificateSheet({
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
             <FieldGroup>
               {errors.root?.message && (
-                <p className="text-destructive text-sm" role="alert">
+                <p className="text-destructive text-base" role="alert">
                   {errors.root.message}
                 </p>
               )}
@@ -400,17 +391,13 @@ function CertificateSheet({
               </Field>
 
               <Field>
-                <FieldLabel htmlFor="reason_code">{t('admin.fields.reason_code.label')}</FieldLabel>
+                <FieldLabel htmlFor="tax_exemption_reason_id">
+                  {t('admin.fields.tax_exemption_reason_id.label')}
+                </FieldLabel>
                 <Controller
-                  name="reason_code"
+                  name="tax_exemption_reason_id"
                   control={form.control}
                   render={({ field }) => {
-                    const reasonOptions = TAX_EXEMPTION_REASON_CODES.map((code) => ({
-                      value: code,
-                      label: t(`admin.tax_exemption_certificates.reason_codes.${code}`, {
-                        defaultValue: code,
-                      }),
-                    }))
                     const selected = reasonOptions.find((o) => o.value === field.value) ?? null
                     return (
                       <Combobox
@@ -423,11 +410,15 @@ function CertificateSheet({
                         itemToStringValue={(option: ReasonOption | null) => option?.value ?? ''}
                       >
                         <ComboboxInput
-                          id="reason_code"
+                          id="tax_exemption_reason_id"
                           placeholder={t('admin.tax_exemption_certificates.select_reason')}
                         />
                         <ComboboxContent>
-                          <ComboboxEmpty>{t('admin.common.no_results')}</ComboboxEmpty>
+                          <ComboboxEmpty>
+                            {reasonOptions.length
+                              ? t('admin.common.no_results')
+                              : t('admin.tax_exemption_certificates.no_reasons')}
+                          </ComboboxEmpty>
                           <ComboboxList>
                             {(option: ReasonOption) => (
                               <ComboboxItem key={option.value} value={option}>
@@ -440,8 +431,10 @@ function CertificateSheet({
                     )
                   }}
                 />
-                <FieldDescription>{t('admin.fields.reason_code.help')}</FieldDescription>
-                <FieldError errors={[errors.reason_code]} />
+                <FieldDescription>
+                  {t('admin.fields.tax_exemption_reason_id.help')}
+                </FieldDescription>
+                <FieldError errors={[errors.tax_exemption_reason_id]} />
               </Field>
 
               <Field>
@@ -533,6 +526,7 @@ function CertificateSheet({
                       }}
                       onChange={(next) => field.onChange(next.signedId)}
                       accept="application/pdf,image/png,image/jpeg"
+                      private
                     />
                   )}
                 />

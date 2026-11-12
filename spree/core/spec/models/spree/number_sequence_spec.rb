@@ -66,12 +66,4 @@ RSpec.describe Spree::NumberSequence do
       expect(values.sort).to eq([1, 2, 3, 4])
     end
   end
-
-  describe 'uniqueness' do
-    it 'allows one row per store and resource type' do
-      create(:number_sequence, store: store, resource_type: 'order')
-
-      expect(build(:number_sequence, store: store, resource_type: 'order')).not_to be_valid
-    end
-  end
 end

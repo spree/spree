@@ -6,13 +6,53 @@ module Spree
           # Claims on a completed order.
           class ClaimsController < BaseController
             include Spree::Api::V3::Orders::ClaimActions
+            include Spree::Api::V3::Admin::RefundAuthorization
 
             # Claims are a subject of the `orders` catalog resource, so
             # `read_orders`/`write_orders` gate these endpoints. `:claims`
             # would name a key no catalog knows.
             scoped_resource :orders
 
+            request_params :claim do |body|
+              body.attribute :items, :array,
+                required: true, on: :create,
+                only: :create,
+                description: 'Affected items, and how each should be made right.' do |item|
+                item.attribute :line_item_id, :id, required: true
+                item.attribute :quantity, :integer, required: true
+                item.attribute :description, :string
+                item.attribute :send_replacement, :boolean
+                item.attribute :replacement_variant_id, :id, description: 'Defaults to the variant that was bought.'
+                item.attribute :refund_amount, :decimal
+              end
+              body.attribute :reason_id, :id, description: "One of the store's claim reasons."
+              body.attribute :memo, :string
+              body.attribute :metadata, :hash, only: :update
+            end
+
+            request_params 'ClaimResolveParams', action: :resolve do |body|
+              body.attribute :resolution, :string,
+                required: true,
+                choices: Spree::Claim::RESOLUTIONS,
+                description: 'Money back, a replacement shipment, or both.'
+              body.attribute :refund_method, :string,
+                choices: Spree::RefundMethods::METHODS,
+                description: 'Defaults to `store_credit`.'
+              body.attribute :amount, :decimal, description: 'Defaults to the claim total.'
+              body.attribute :replacement_line_item_ids, :array, of: :id,
+                description: 'Which claim lines to send a replacement for. Omit to keep what the claim was opened with.'
+            end
+
+            request_params 'ClaimDenyParams', action: :deny do |body|
+              body.attribute :reason, :string, description: 'Recorded on the claim for the customer.'
+            end
+
+            request_params 'ClaimCancelParams', action: :cancel do |body|
+              body.attribute :reason, :string, description: 'A note on why the claim was canceled.'
+            end
+
             before_action :set_resource, only: [:show, :update, :approve, :resolve, :deny, :cancel]
+            before_action :require_refund_permission!, only: :resolve, if: -> { params[:resolution].to_s.include?('refund') }
 
             # PATCH /api/v3/admin/orders/:order_id/claims/:id
             #
@@ -36,7 +76,7 @@ module Spree
             end
 
             def permitted_params
-              params.permit(:memo, :reason_id, metadata: {})
+              params.permit(*permitted_attributes)
             end
 
             private

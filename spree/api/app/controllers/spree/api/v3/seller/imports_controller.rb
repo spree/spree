@@ -32,10 +32,32 @@ module Spree
 
           scoped_resource :products
 
+          request_params 'ImportCreateParams' do |body|
+            body.attribute :type, :string, required: true, choices: %w[products]
+            body.attribute :attachment_signed_id, :string,
+              required: true,
+              description: "The `signed_id` of the uploaded CSV, from `POST /files` with `visibility: 'private'`."
+            body.attribute :delimiter, :string, description: 'CSV column separator. Defaults to a comma.'
+            body.attribute :results_url, :string,
+              description: "Absolute URL of the panel's imports view; the import-done email links back to it. Honored only when it matches one of the store's allowed origins."
+          end
+
+          request_params 'ImportCompleteMappingParams', action: :complete_mapping do |body|
+            body.attribute :mappings, :array,
+              permit: false,
+              description: 'Column assignments to apply before processing starts.' do |mapping|
+              mapping.attribute :schema_field, :string, required: true, description: 'Canonical schema field name.'
+              mapping.attribute :file_column, :string,
+                required: true,
+                nullable: true,
+                description: 'CSV header to read the field from; `null` unmaps the field.'
+            end
+          end
+
           # POST /api/v3/seller/imports
           #
-          # `attachment` is an ActiveStorage signed blob id from
-          # POST /api/v3/seller/direct_uploads. On success the import is
+          # `attachment_signed_id` is a signed id from
+          # POST /api/v3/seller/files. On success the import is
           # already in `mapping`, carrying the auto-assigned columns.
           def create
             @resource = build_resource
@@ -59,12 +81,6 @@ module Spree
             else
               render_errors(@resource.errors)
             end
-          rescue ActiveSupport::MessageVerifier::InvalidSignature
-            render_error(
-              code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:validation_error],
-              message: 'Invalid attachment signed id',
-              status: :unprocessable_content
-            )
           end
 
           # PATCH /api/v3/seller/imports/:id/complete_mapping
@@ -248,7 +264,7 @@ module Spree
           end
 
           def permitted_params
-            params.permit(*model_additional_permitted_attributes, :type, :attachment, :preferred_delimiter, :results_url)
+            params.permit(*permitted_attributes)
           end
 
           # The registered Import subclass matching `name`, or nil.

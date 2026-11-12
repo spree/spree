@@ -1,15 +1,15 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { Customer, GiftCard } from '@spree/admin-sdk'
+import type { GiftCard } from '@spree/admin-sdk'
 import {
   Can,
   CurrencySelect,
   currencyParts,
   mapSpreeErrorsToForm,
-  ResourceCombobox,
   ResourceTable,
   resourceSearchSchema,
   StoreDatePicker,
   Subject,
+  useMoneyLocale,
   usePermissions,
   useStore,
 } from '@spree/dashboard-core'
@@ -24,6 +24,7 @@ import {
   InputGroupAddon,
   InputGroupInput,
   InputGroupText,
+  Item,
   RowActions,
   Sheet,
   SheetContent,
@@ -36,12 +37,11 @@ import {
 } from '@spree/dashboard-ui'
 import { PlusIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import i18n from 'i18next'
 import { useEffect, useRef } from 'react'
 import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
-import { customerAutocompleteProps } from '../../../../hooks/use-customers'
+import { CustomerCombobox } from '../../../../components/spree/customers/customer-combobox'
 import {
   listGiftCards,
   useCreateGiftCard,
@@ -61,6 +61,11 @@ import {
   giftCardSingleValuesToParams,
 } from '../../../../schemas/gift-card'
 import '../../../../tables/gift-cards'
+import { Money } from '@spree/dashboard-core'
+import {
+  DraftCustomFieldsCard,
+  useCustomFieldsDraft,
+} from '../../../../components/spree/custom-fields/custom-fields-inline'
 
 const giftCardsSearchSchema = resourceSearchSchema.extend({
   edit: z.string().optional(),
@@ -179,9 +184,8 @@ function CreateGiftCardSheet({
     resolver: zodResolver(giftCardCreateFormSchema) as any,
     defaultValues: {
       code: '',
-      // Empty so the input shows its placeholder; the form's `amount` is
-      // a STRING — the backend's `Spree::LocalizedNumber.parse` handles
-      // locale-aware decoding so the SPA never coerces here.
+      // Empty so the input shows its placeholder; the form's `amount` is a
+      // STRING, never coerced to a number.
       amount: '',
       currency: defaultCurrency,
       expires_at: '',
@@ -225,7 +229,7 @@ function CreateGiftCardSheet({
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
             {form.formState.errors.root?.message && (
-              <p className="text-sm text-destructive" role="alert">
+              <p className="text-base text-destructive" role="alert">
                 {form.formState.errors.root.message}
               </p>
             )}
@@ -270,6 +274,7 @@ function EditGiftCardSheet({
   const { t } = useTranslation()
   const { data: giftCard, isLoading } = useGiftCard(id, ['customer', 'created_by', 'orders'])
   const updateMutation = useUpdateGiftCard(id)
+  const customFields = useCustomFieldsDraft('gift_card', id)
 
   const form = useForm<GiftCardEditFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -278,7 +283,6 @@ function EditGiftCardSheet({
       code: '',
       // `amount` is a STRING — hydrated from the API's canonical decimal.
       amount: '',
-      currency: '',
       expires_at: '',
       customer_id: '',
     },
@@ -294,10 +298,8 @@ function EditGiftCardSheet({
       prevGiftCardIdRef.current = giftCard.id
       form.reset({
         code: giftCard.code,
-        // Keep amount as the canonical decimal string the API returns.
-        // The merchant's edits flow straight through to the backend; only
-        // `Spree::LocalizedNumber.parse` knows how to interpret locale-
-        // specific input.
+        // Keep amount as the canonical decimal string the API returns; the
+        // number input hands edits back canonical too.
         amount: giftCard.amount != null ? String(giftCard.amount) : '',
         currency: giftCard.currency,
         expires_at: giftCard.expires_at ?? '',
@@ -308,8 +310,15 @@ function EditGiftCardSheet({
 
   async function onSubmit(values: GiftCardEditFormValues) {
     try {
-      await updateMutation.mutateAsync(giftCardEditValuesToParams(values))
-      form.reset(values)
+      // A read-only card can still have its custom fields changed. The card
+      // saves first and is marked clean, so a retry after a failed custom field
+      // save sends only the custom fields.
+      const savesRecord = editable && form.formState.isDirty
+      if (savesRecord) {
+        await updateMutation.mutateAsync(giftCardEditValuesToParams(values))
+        form.reset(values)
+      }
+      if (!(await customFields.save({ announce: !savesRecord }))) return
       onOpenChange(false)
     } catch (err) {
       if (!mapSpreeErrorsToForm(err, form.setError)) throw err
@@ -333,21 +342,22 @@ function EditGiftCardSheet({
           </SheetDescription>
         </SheetHeader>
         {isLoading ? (
-          <div className="p-4 text-sm text-muted-foreground">{t('admin.common.loading')}</div>
+          <div className="p-4 text-base text-muted-foreground">{t('admin.common.loading')}</div>
         ) : !giftCard ? (
-          <div className="p-4 text-sm text-muted-foreground">
+          <div className="p-4 text-base text-muted-foreground">
             {t('admin.pages.promotions.gift_cards.not_found')}
           </div>
         ) : (
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
               {form.formState.errors.root?.message && (
-                <p className="text-sm text-destructive" role="alert">
+                <p className="text-base text-destructive" role="alert">
                   {form.formState.errors.root.message}
                 </p>
               )}
               <EditGiftCardFormFields form={form} readOnly={!editable} />
               <GiftCardUsageSummary giftCard={giftCard} />
+              <DraftCustomFieldsCard draft={customFields} hideWhenEmpty />
             </div>
             <SheetFooter>
               <Button
@@ -360,7 +370,10 @@ function EditGiftCardSheet({
               </Button>
               <Button
                 type="submit"
-                disabled={!editable || form.formState.isSubmitting || !form.formState.isDirty}
+                disabled={
+                  form.formState.isSubmitting ||
+                  !((editable && form.formState.isDirty) || customFields.isDirty)
+                }
               >
                 {form.formState.isSubmitting ? t('admin.actions.saving') : t('admin.actions.save')}
               </Button>
@@ -392,22 +405,14 @@ function CustomerPickerController({
       control={form.control}
       render={({ field }) =>
         readOnly ? (
-          <div className="text-sm text-muted-foreground">
+          <div className="text-base text-muted-foreground">
             {field.value || t('admin.pages.promotions.gift_cards.no_customer')}
           </div>
         ) : (
-          <ResourceCombobox<Customer>
-            {...customerAutocompleteProps('customer-picker')}
-            value={field.value || undefined}
+          <CustomerCombobox
+            queryKey="gift-card-customer-picker"
+            value={field.value}
             onChange={(id) => field.onChange(id ?? '')}
-            renderOption={(c) => (
-              <div>
-                <div className="font-medium">{c.email}</div>
-                {(c.first_name || c.last_name) && (
-                  <div className="text-xs text-muted-foreground">{c.full_name}</div>
-                )}
-              </div>
-            )}
           />
         )
       }
@@ -427,9 +432,10 @@ function AmountCurrencyRow<T extends GiftCardCreateFormValues | GiftCardEditForm
 }) {
   const { t } = useTranslation()
   const errors = form.formState.errors as Record<string, { message?: string } | undefined>
+  const moneyLocale = useMoneyLocale()
   const { symbol: currencySymbol } = currencyParts(
     (form.watch('currency' as never) as unknown as string) || 'USD',
-    i18n.language,
+    moneyLocale,
   )
   return (
     <div className="grid grid-cols-2 gap-3">
@@ -442,7 +448,7 @@ function AmountCurrencyRow<T extends GiftCardCreateFormValues | GiftCardEditForm
           <InputGroupInput
             id="amount"
             type="number"
-            step="0.01"
+            step="any"
             min={0}
             disabled={readOnly}
             aria-invalid={!!errors.amount || undefined}
@@ -602,18 +608,20 @@ function EditGiftCardFormFields({
 function GiftCardUsageSummary({ giftCard }: { giftCard: GiftCard }) {
   const { t } = useTranslation()
   return (
-    <div className="rounded-md border bg-muted/30 p-3 text-sm">
-      <div className="mb-2 font-medium">{t('admin.pages.promotions.gift_cards.usage.title')}</div>
+    <Item variant="muted" className="flex-col items-stretch gap-2">
+      <div className="font-medium">{t('admin.pages.promotions.gift_cards.usage.title')}</div>
       <div className="grid grid-cols-2 gap-1 text-muted-foreground">
         <span>{t('admin.fields.amount.label')}</span>
-        <span className="text-right text-foreground tabular-nums">{giftCard.display_amount}</span>
+        <span className="text-right text-foreground tabular-nums">
+          <Money amount={giftCard.amount} currency={giftCard.currency} />
+        </span>
         <span>{t('admin.pages.promotions.gift_cards.usage.used')}</span>
         <span className="text-right text-foreground tabular-nums">
-          {giftCard.display_amount_used}
+          <Money amount={giftCard.amount_used} currency={giftCard.currency} />
         </span>
         <span>{t('admin.pages.promotions.gift_cards.usage.remaining')}</span>
         <span className="text-right text-foreground tabular-nums">
-          {giftCard.display_amount_remaining}
+          <Money amount={giftCard.amount_remaining} currency={giftCard.currency} />
         </span>
         {giftCard.created_by && (
           <>
@@ -622,6 +630,6 @@ function GiftCardUsageSummary({ giftCard }: { giftCard: GiftCard }) {
           </>
         )}
       </div>
-    </div>
+    </Item>
   )
 }

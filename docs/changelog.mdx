@@ -15,6 +15,69 @@ Keep up with the latest features and improvements in Spree Commerce!
 
 </div>
 
+<Update label="Spree 6.0" description="October 27, 2026" tags={["Release"]}>
+  Spree 6.0 is now stable. It brings together everything in this changelog since August: a new React dashboard, a seller panel for marketplaces, B2B wholesale, built-in AI agent access, and emails that merchants edit themselves.
+
+  - **One version for everything.** The Ruby gems and the TypeScript packages that talk to the Spree API now share one version number: `@spree/sdk@6.0.0` is the client for Spree 6.0.0.
+  - **Stable APIs.** The Store, Admin and Seller APIs are now stable. A field that is renamed or retired keeps working, marked as deprecated, until the next minor release.
+  - **New projects start on 6.0.** `npx create-spree-app@latest` sets up a Spree 6.0 server, dashboard, seller panel and storefront.
+
+  Existing Spree 5.x stores should upgrade to 5.6 first, then follow the upgrade guide.
+
+  **Learn more:** [Quick start](/developer/getting-started/quickstart) · [Upgrade guide](/developer/upgrades/5.6-to-6.0) · [React Dashboard](/developer/dashboard/overview)
+</Update>
+
+<Update label="Sellers can sell digital products" description="October 24, 2026" tags={["Marketplace", "Catalog", "Seller Panel"]}>
+  Sellers on a marketplace can now manage the downloadable files their digital products deliver, such as e-books, design files or software. Until now only the marketplace operator could attach them.
+
+  - **Same card as the dashboard.** The seller panel's product page shows the **Digital files** card, where sellers upload, replace and delete files and set download limits for each one.
+  - **The marketplace decides.** Under **Settings → Marketplace → Seller files** you choose whether sellers may upload files at all (off by default) and which file types they may use. Each file is checked by its contents, not its name, and the default list leaves out programs and scripts.
+  - **Changes go back to review.** Adding or replacing a file on a product already on sale sends it back for approval, so buyers only download what you have checked. You can turn this off.
+  - **Safe by default.** Sellers can only reach files on their own products, and a read-only seller role can see files but not change them.
+
+  Developers get the same operations through the Seller API and SDK, and can plug in their own malware scanner to check each upload before it is accepted.
+
+  **Learn more:** [Sell digital products on a marketplace](/developer/how-to/sell-digital-products#on-a-marketplace) · [Marketplace settings user guide](/user/settings/marketplace)
+</Update>
+
+<Update label="MCP server for AI agents" description="October 18, 2026" tags={["AI", "Dashboard"]}>
+  Spree now ships with a built-in MCP server, so AI agents such as Claude or Cursor can manage your store in plain language. Ask an agent for last month's sales in Germany, update a product, cancel an order, mark a shipment as delivered or launch a new market — without opening the admin.
+
+  - **Built in, no extra cost.** Connect an agent with your store's URL and your admin login.
+  - **Role-based permissions.** You approve which parts of the store an agent can access, and it can never do more than your own staff role allows.
+  - **Sensitive data stays protected.** Agents cannot see gift card or discount codes, manage API keys or staff accounts, or delete customer data.
+  - **Full control and audit trail.** **Settings → AI Agents** lists every connected agent and who approved it, and access can be revoked at any time.
+
+  Developers can add custom tools for workflows specific to their business.
+
+  **Learn more:** [MCP server](/developer/mcp/overview) · [Quick start](/developer/mcp/quick-start) · [Permissions](/developer/mcp/permissions)
+</Update>
+
+<Update label="Multi-currency pricing improvements" description="October 9, 2026" tags={["Pricing", "Payments", "Dashboard"]}>
+  Prices, order totals, taxes and refunds are now accurate in every currency and every admin language, from the product page to checkout, payment and reporting.
+
+  - **Correct prices in every locale.** Stores using a comma as the decimal separator, such as Dutch, German or French, could see a price of €49,50 saved as €4950. Prices, cost prices, weights and dimensions are now saved exactly as entered.
+  - **Local number formats in the admin.** Merchants enter and see amounts in the number format of their own admin language, whatever currency they sell in.
+  - **Proper support for every currency.** Zero-decimal currencies such as the Japanese yen, three-decimal currencies such as the Kuwaiti dinar, and high-value orders in currencies such as the Vietnamese dong are all handled correctly.
+  - **Payment gateway amounts match.** Captures and refunds now match your payment provider exactly.
+  - **Sub-cent unit prices for B2B.** Wholesale catalogs can price high-volume items below one cent per unit.
+
+  If you edited prices in a store with a comma-decimal locale before this update, review them. Developers maintaining integrations should read the upgrade guide.
+
+  **Learn more:** [Upgrade guide](/developer/upgrades/5.6-to-6.0#money)
+</Update>
+
+<Update label="Typed settings in the Admin API" description="October 9, 2026" tags={["Developers", "API"]}>
+  Every configurable part of Spree — promotion rules and actions, calculators, payment methods, integrations, and price, delivery, commission and order routing rules — now publishes exactly what its settings look like, and the API checks every change against it.
+
+  - Each type's `/types` entry carries a JSON Schema of its settings, so a dashboard, an integration or an AI agent can build a form or a payload for any type, including ones your extensions add.
+  - The TypeScript SDKs type the settings of every type Spree ships, narrowed by `type`.
+  - A setting with an unknown name, a wrong type or another store's record is refused with a message naming the exact value, instead of being silently dropped.
+  - Store, channel and import settings are read and written under plain names (`guest_checkout` instead of `preferred_guest_checkout`).
+
+  This is a breaking change for Admin and Seller API clients. **Learn more:** [Upgrade guide](/developer/upgrades/5.6-to-6.0#preferences-are-typed-in-the-api) · [Model preferences](/developer/customization/model-preferences#preferences-in-the-api)
+</Update>
+
 <Update label="Email template editor" description="October 6, 2026" tags={["Emails", "Dashboard"]}>
   Merchants can now change what their customer emails say and how they look, right in the dashboard, without asking a developer. Order confirmations, shipping notifications, refunds, password resets, the layout around every email and the shared blocks such as item rows are all editable under **Settings → Emails → Templates**.
 

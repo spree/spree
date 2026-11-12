@@ -24,11 +24,11 @@ RSpec.describe Spree::Api::V3::GiftCardSerializer do
     expect(subject['code']).to eq(gift_card.code.upcase)
   end
 
-  it 'returns correct amounts as floats' do
-    expect(subject['amount']).to eq(100.0)
-    expect(subject['amount_used']).to eq(25.0)
-    expect(subject['amount_authorized']).to eq(0.0)
-    expect(subject['amount_remaining']).to eq(75.0)
+  it 'returns amounts as decimal strings' do
+    expect(subject['amount']).to eq('100.00')
+    expect(subject['amount_used']).to eq('25.00')
+    expect(subject['amount_authorized']).to eq('0.00')
+    expect(subject['amount_remaining']).to eq('75.00')
   end
 
   it 'returns display amounts as strings' do
@@ -86,7 +86,7 @@ RSpec.describe Spree::Api::V3::GiftCardSerializer do
     end
 
     it 'returns zero remaining amount' do
-      expect(subject['amount_remaining']).to eq(0.0)
+      expect(subject['amount_remaining']).to eq('0.00')
     end
   end
 
@@ -98,7 +98,7 @@ RSpec.describe Spree::Api::V3::GiftCardSerializer do
     end
 
     it 'returns correct remaining amount' do
-      expect(subject['amount_remaining']).to eq(60.0)
+      expect(subject['amount_remaining']).to eq('60.00')
     end
   end
 end

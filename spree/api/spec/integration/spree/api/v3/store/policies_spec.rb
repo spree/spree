@@ -23,6 +23,7 @@ RSpec.describe 'Policies API', type: :request, swagger_doc: 'api-reference/store
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :fields, in: :query, type: :string, required: false,
                 description: 'Comma-separated list of fields to include (e.g., name,slug). id is always included.'
+      filter_parameters_for
 
       response '200', 'policies listed' do
         let(:'x-spree-api-key') { api_key.token }

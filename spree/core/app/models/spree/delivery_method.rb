@@ -80,6 +80,12 @@ module Spree
     after_save :apply_pending_services, if: :pending_services?
     attribute :fulfillment_provider, :string, default: 'Spree::FulfillmentProvider::Manual'
 
+    # The API names providers by their shorthand (`manual`, `easy_post`); the
+    # columns keep the class name.
+    normalizes :fulfillment_provider, with: ->(value) { Spree::ApiTyped.class_name_for(Spree.fulfillment_providers, value) }
+    normalizes :rate_provider, with: ->(value) { Spree::ApiTyped.class_name_for(Spree.delivery_rate_providers, value) }
+    normalizes :pickup_point_provider, with: ->(value) { Spree::ApiTyped.class_name_for(Spree.pickup_point_providers, value) }
+
     # Methods whose fulfillment provider satisfies the predicate — behavior
     # queries route through provider classes, never string vocabularies.
     scope :with_provider, ->(predicate) {
@@ -116,6 +122,7 @@ module Spree
     # needed. `seller_id` is what the operator's list filters by to see one
     # seller's methods, or (blank) the marketplace's own.
     self.whitelisted_ransackable_attributes = %w[storefront_visible available_to_sellers seller_id]
+    search_by :name
     self.whitelisted_ransackable_associations = %w[seller]
 
     validates :name, presence: true
@@ -138,6 +145,16 @@ module Spree
     # not save a provider whose integration isn't connected — that breaks
     # quoting at checkout, not at save time where the admin can see it.
     validate :rate_provider_must_be_available, if: :rate_provider_changed?
+    # Every provider column is constantized and instantiated at checkout or
+    # ship time, so only a registered class may be stored.
+    validates :fulfillment_provider,
+              inclusion: { in: -> (_record) { Spree.fulfillment_providers.map(&:to_s) } },
+              allow_blank: true,
+              if: :fulfillment_provider_changed?
+    validates :pickup_point_provider,
+              inclusion: { in: -> (_record) { Spree.pickup_point_providers.map(&:to_s) } },
+              allow_blank: true,
+              if: :pickup_point_provider_changed?
     # Providers declare the fulfillment types they handle; a mismatch would
     # only surface at checkout (no rates) or at ship time (no dispatch),
     # so reject it where the admin can still see why.
@@ -211,7 +228,11 @@ module Spree
     end
 
     def ensure_calculator
-      self.calculator ||= Spree::Calculator::Shipping::FlatRate.new(preferred_amount: 0)
+      self.calculator ||= default_calculator
+    end
+
+    def default_calculator
+      Spree::Calculator::Shipping::FlatRate.new(preferred_amount: 0)
     end
 
     def assign_default_delivery_profile
@@ -263,7 +284,7 @@ module Spree
     #
     # @return [Class]
     def provider_class
-      (fulfillment_provider.presence || DEFAULT_FULFILLMENT_PROVIDER).safe_constantize ||
+      Spree::ApiTyped.registered_class(Spree.fulfillment_providers, fulfillment_provider.presence || DEFAULT_FULFILLMENT_PROVIDER) ||
         DEFAULT_FULFILLMENT_PROVIDER.constantize
     end
 
@@ -286,7 +307,8 @@ module Spree
     #
     # @return [Class]
     def rate_provider_class
-      (rate_provider.presence || DEFAULT_RATE_PROVIDER).safe_constantize || DEFAULT_RATE_PROVIDER.constantize
+      Spree::ApiTyped.registered_class(Spree.delivery_rate_providers, rate_provider.presence || DEFAULT_RATE_PROVIDER) ||
+        DEFAULT_RATE_PROVIDER.constantize
     end
 
 
@@ -363,7 +385,7 @@ module Spree
     #
     # @return [Spree::PickupPointProvider::Base, nil]
     def pickup_point_provider_instance
-      @pickup_point_provider_instance ||= pickup_point_provider.presence&.constantize&.new
+      @pickup_point_provider_instance ||= Spree::ApiTyped.registered_class(Spree.pickup_point_providers, pickup_point_provider)&.new
     end
 
     def self.calculators
@@ -429,15 +451,18 @@ module Spree
         calculator.description + ': ' +
 
         if calculator.is_a?(Spree::Calculator::Shipping::FlatRate)
-          if calculator.preferred_amount == 0
+          amount = calculator.amount_for(calculator.preferred_currency)
+          if amount.nil?
+            ''
+          elsif amount.zero?
             I18n.t('spree.free')
           else
-            Spree::Money.new(calculator.preferred_amount, { currency: calculator.preferred_currency }).to_s
+            Spree::Money.new(amount, { currency: calculator.preferred_currency }).to_s
           end
         elsif calculator.is_a?(Spree::Calculator::Shipping::FlexiRate)
           Spree::Money.new(calculator.preferred_first_item, { currency: calculator.preferred_currency }).to_s
         elsif calculator.is_a?(Spree::Calculator::Shipping::FlatPercentItemTotal)
-          ActionController::Base.helpers.number_to_percentage(calculator.preferred_flat_percent, precision: 2)
+          ActiveSupport::NumberHelper.number_to_percentage(calculator.preferred_flat_percent, precision: 2)
         else
           ''
         end
@@ -475,14 +500,21 @@ module Spree
       reconcile_services(pending)
     end
 
+    # Matched against the method's rows loaded once, rather than a lookup per
+    # row. A row created here joins that list, so a later row naming the
+    # same (carrier, service) updates it as a lookup would.
     def reconcile_services(rows)
+      existing = services.reload.to_a
       kept_ids = rows.filter_map do |row|
-        record =
-          if row[:id].present?
-            id = Spree::PrefixedId.prefixed_id?(row[:id]) ? Spree::PrefixedId.decode_prefixed_id(row[:id]) : row[:id]
-            services.find_by(id: id)
-          end
-        record ||= services.find_or_initialize_by(carrier: row[:carrier], service: row[:service])
+        if row[:id].present?
+          id = Spree::PrefixedId.prefixed_id?(row[:id]) ? Spree::PrefixedId.decode_prefixed_id(row[:id]) : row[:id]
+          record = existing.find { |service| service.id.to_s == id.to_s }
+        end
+        record ||= existing.find { |service| service.carrier == row[:carrier] && service.service == row[:service] }
+        unless record
+          record = services.build(carrier: row[:carrier], service: row[:service])
+          existing << record
+        end
         record.assign_attributes(row.slice(:carrier, :service, :label, :markup_flat, :markup_percent, :position).to_h)
         record.save!
         record.id

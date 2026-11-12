@@ -7,11 +7,9 @@ module Spree
       class ClaimSerializer < BaseSerializer
         typelize number: :string,
                  status: [:string, enum: Spree::Claim.statuses, enum_type_name: 'ClaimStatus'],
-                 resolution: [:string, nullable: true],
+                 resolution: [:string, nullable: true, enum: Spree::Claim::RESOLUTIONS, enum_type_name: 'ClaimResolution'],
                  order_id: [:string, nullable: true],
                  reason_id: [:string, nullable: true],
-                 refund_total: :string,
-                 display_refund_total: :string,
                  approved_at: [:string, nullable: true],
                  resolved_at: [:string, nullable: true],
                  denied_at: [:string, nullable: true],
@@ -21,7 +19,8 @@ module Spree
 
         prefixed_id_attributes :order, :reason
 
-        attributes refund_total: :string, display_refund_total: :string
+        money_attributes :refund_total, :display_refund_total
+
         attribute :approved_at do |claim|
           claim.approved_at&.iso8601
         end
@@ -43,6 +42,8 @@ module Spree
         many :claim_line_items,
              resource: proc { Spree.api.claim_line_item_serializer },
              if: proc { expand?('claim_line_items') }
+
+        expandable_custom_fields
       end
     end
   end

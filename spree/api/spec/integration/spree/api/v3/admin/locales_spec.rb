@@ -17,6 +17,8 @@ RSpec.describe 'Admin Locales API', type: :request, swagger_doc: 'api-reference/
       description "Returns the locales a merchant can translate content into for the current store, with the default and right-to-left flags."
       admin_scope :read, :settings
 
+      admin_sdk_example 'locales/list'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
 

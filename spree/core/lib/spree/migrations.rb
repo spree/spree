@@ -29,8 +29,11 @@ module Spree
 
           name
         end.compact
+        installed = engine_in_app.map(&:camelize).to_set
 
-        missing_migrations = engine_migrations.sort - engine_in_app.sort
+        # Compared by class name: installing a migration writes its file name
+        # back from the class, so `decimal_19_4` is installed as `decimal194`.
+        missing_migrations = engine_migrations.sort.reject { |name| installed.include?(name.camelize) }
         unless missing_migrations.empty?
           puts "[#{engine_name.capitalize} WARNING] Missing migrations."
           missing_migrations.each do |migration|

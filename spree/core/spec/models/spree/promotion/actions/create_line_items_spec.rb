@@ -185,18 +185,10 @@ describe Spree::Promotion::Actions::CreateLineItems, type: :model do
       end
     end
 
-    it "discounts the shopper's own copy instead of adding a second one" do
-      Spree.cart_add_item_workflow.call(cart: cart, variant: gift, quantity: 1)
-
-      expect(promotion.activate(order: cart)).to be(true)
-      expect(gift_line_item.quantity).to eq(1)
-      expect(gift_line_item.discounts.sum(&:amount)).to eq(-15)
-    end
-
     it 'leaves units beyond the gifted quantity paid for' do
       Spree.cart_add_item_workflow.call(cart: cart, variant: gift, quantity: 3)
 
-      promotion.activate(order: cart)
+      expect(promotion.activate(order: cart)).to be(true)
 
       expect(gift_line_item.quantity).to eq(3)
       expect(gift_line_item.discounts.sum(&:amount)).to eq(-15)

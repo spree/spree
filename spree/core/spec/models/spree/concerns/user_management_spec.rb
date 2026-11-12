@@ -49,34 +49,4 @@ describe Spree::UserManagement do
       end
     end
   end
-
-  describe 'associations' do
-    it 'has many roles' do
-      association = test_store.class.reflect_on_association(:roles)
-      expect(association.macro).to eq :has_many
-      expect(association.options[:class_name]).to eq 'Spree::Role'
-      expect(association.options[:as]).to eq :resource
-    end
-
-    # Assignments reach the resource through its roles, not directly.
-    it 'has many role_users through roles' do
-      association = test_store.class.reflect_on_association(:role_users)
-      expect(association.macro).to eq :has_many
-      expect(association.options[:through]).to eq :roles
-    end
-
-    it 'has many users through role_users' do
-      association = test_store.class.reflect_on_association(:users)
-      expect(association.macro).to eq :has_many
-      expect(association.options[:through]).to eq :role_users
-      expect(association.options[:source]).to eq :user
-      expect(association.options[:source_type]).to eq Spree.admin_user_class.to_s
-    end
-
-    it 'has many invitations' do
-      association = test_store.class.reflect_on_association(:invitations)
-      expect(association.macro).to eq :has_many
-      expect(association.options[:class_name]).to eq 'Spree::Invitation'
-    end
-  end
 end

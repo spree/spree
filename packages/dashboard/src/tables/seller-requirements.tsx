@@ -9,7 +9,7 @@ defineTable<SellerRequirement>('seller-requirements', {
   docsPath: 'sellers/onboarding',
   description: i18n.t('admin.table_descriptions.seller_requirements'),
   title: i18n.t('admin.seller_requirements.title'),
-  searchParam: 'name_cont',
+  searchParam: 'search',
   searchPlaceholder: i18n.t('admin.seller_requirements.search_placeholder'),
   defaultSort: { field: 'position', direction: 'asc' },
   emptyIcon: <ClipboardCheckIcon className="size-8 text-muted-foreground" />,

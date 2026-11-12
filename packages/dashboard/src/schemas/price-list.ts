@@ -1,17 +1,20 @@
 import type {
-  PreferenceField,
+  PreferenceSchema,
   PriceListCreateParams,
   PriceListUpdateParams,
   PriceRule,
 } from '@spree/admin-sdk'
-import { blankToNull, defaultPreferences } from '@spree/dashboard-core'
+import { isDecimalString, isZeroMoney, MATCH_POLICIES } from '@spree/core'
+import {
+  blankToNull,
+  defaultPreferences,
+  isPositiveMoney,
+  shiftDecimalPoint,
+} from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import i18n from 'i18next'
 import { z } from 'zod/v4'
 import type { ProductMembershipStagingValue } from '../components/spree/product-membership-staging'
-
-export const MATCH_POLICIES = ['all', 'any'] as const
-export type MatchPolicy = (typeof MATCH_POLICIES)[number]
 
 /**
  * How a list produces prices. `fixed` prices only what it holds explicit
@@ -38,11 +41,11 @@ export const MAXIMUM_QUANTITY_TIERS = 10
 export type AdjustmentDirection = (typeof ADJUSTMENT_DIRECTIONS)[number]
 
 /**
- * Form-state row for a price rule. Carries `preference_schema` for the
- * editor alongside the payload fields the API consumes (`type`,
- * `preferences`, optional `id`). The rule's name and description are
- * resolved from `type` at render time, so no copy is stored here. Closely
- * mirrors `PromotionRuleFormDraft` so the editor patterns are 1:1.
+ * Form-state row for a price rule: the payload fields the API consumes
+ * (`type`, `preferences`, optional `id`). The rule's name, description and
+ * preference schema are resolved from `type` at render time, so no copy is
+ * stored here. Closely mirrors `PromotionRuleFormDraft` so the editor
+ * patterns are 1:1.
  */
 export interface PriceRuleFormDraft {
   /** Stable client-side id used as a React key while the row has no server id. */
@@ -51,7 +54,6 @@ export interface PriceRuleFormDraft {
   id?: string
   /** Wire shorthand — `volume_rule`, `market_rule`, etc. */
   type: string
-  preference_schema: PreferenceField[]
   preferences: Record<string, unknown>
   /**
    * Display-only embeds the per-rule editors set when the user picks
@@ -88,7 +90,6 @@ const priceRuleDraftSchema: z.ZodType<PriceRuleFormDraft> = z.object({
   _localId: z.string(),
   id: z.string().optional(),
   type: z.string().min(1),
-  preference_schema: z.array(z.any()).default([]),
   preferences: z.record(z.string(), z.unknown()).default({}),
   customers: z.array(z.any()).optional(),
   customer_groups: z.array(z.any()).optional(),
@@ -133,10 +134,10 @@ export const priceListFormSchema = z
  * now: a percentage adjustment is valid only on a list a catalog owns, so
  * the standalone editor no longer offers it.
  */
-export function parsePercentage(value: string | undefined): number | null {
-  if (!value?.trim()) return null
-  const parsed = Number(value)
-  return Number.isFinite(parsed) && parsed > 0 ? parsed : null
+export function parsePercentage(value: string | undefined): string | null {
+  const trimmed = value?.trim()
+  // Rewritten without trailing zeros, so "5.0" and "5" are one percentage.
+  return isPositiveMoney(trimmed) ? shiftDecimalPoint(trimmed as string, 0) : null
 }
 
 /**
@@ -183,18 +184,18 @@ export function adjustmentFormValues(percentage: string | null | undefined): {
   adjustment_direction: AdjustmentDirection
   adjustment_magnitude: string
 } {
-  const parsed = percentage == null || percentage === '' ? null : Number(percentage)
   // Zero is no adjustment, and the form's own rules require a magnitude
   // above zero for automatic mode — loading it as automatic would leave the
   // page unsaveable until the user noticed the error.
-  if (parsed === null || !Number.isFinite(parsed) || parsed === 0) {
+  if (!isDecimalString(percentage) || isZeroMoney(percentage)) {
     return { pricing_mode: 'fixed', adjustment_direction: 'decrease', adjustment_magnitude: '' }
   }
 
+  const negative = percentage.startsWith('-')
   return {
     pricing_mode: 'automatic',
-    adjustment_direction: parsed < 0 ? 'decrease' : 'increase',
-    adjustment_magnitude: String(Math.abs(parsed)),
+    adjustment_direction: negative ? 'decrease' : 'increase',
+    adjustment_magnitude: shiftDecimalPoint(negative ? percentage.slice(1) : percentage, 0),
   }
 }
 
@@ -210,7 +211,6 @@ export function ruleDraftFromRule(rule: PriceRule): PriceRuleFormDraft {
     _localId: rule.id,
     id: rule.id,
     type: rule.type,
-    preference_schema: rule.preference_schema,
     preferences: rule.preferences,
     customers: rule.customers ?? undefined,
     customer_groups: rule.customer_groups ?? undefined,
@@ -222,13 +222,12 @@ export function ruleDraftFromRule(rule: PriceRule): PriceRuleFormDraft {
 /** Materializes a fresh draft from a registry type definition. */
 export function ruleDraftFromType(type: {
   type: string
-  preference_schema: PreferenceField[]
+  schema: PreferenceSchema
 }): PriceRuleFormDraft {
   return {
     _localId: newLocalId(),
     type: type.type,
-    preference_schema: type.preference_schema,
-    preferences: defaultPreferences(type.preference_schema),
+    preferences: defaultPreferences(type.schema),
   }
 }
 

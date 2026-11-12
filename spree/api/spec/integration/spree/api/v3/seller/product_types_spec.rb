@@ -27,9 +27,12 @@ RSpec.describe 'Seller Product Types API', type: :request, swagger_doc: 'api-ref
         on the product.
       DESC
 
+      seller_sdk_example 'product-types/list'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Records per page (max 100)'
+      filter_parameters_for
 
       response '200', 'product types listed' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
@@ -55,6 +58,8 @@ RSpec.describe 'Seller Product Types API', type: :request, swagger_doc: 'api-ref
       tags 'Product Types'
       produces 'application/json'
       security [bearer_auth: []]
+
+      seller_sdk_example 'product-types/get'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true, description: 'Product type ID'

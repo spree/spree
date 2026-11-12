@@ -14,8 +14,8 @@ module Spree
     # This rule is the reason commission rules became classes. It could not
     # exist while a rule was only able to name a record.
     class ItemTotalRule < Spree::CommissionRule
-      preference :min_amount, :decimal, nullable: true
-      preference :max_amount, :decimal, nullable: true
+      preference :min_amount, :money, nullable: true
+      preference :max_amount, :money, nullable: true
 
       def applicable?(context)
         # Weighed exactly as the fee will weigh it, per this rate's own base.

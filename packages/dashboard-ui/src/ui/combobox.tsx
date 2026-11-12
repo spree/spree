@@ -3,12 +3,39 @@
 import { Combobox as ComboboxPrimitive } from '@base-ui/react'
 import i18n from 'i18next'
 import * as React from 'react'
+import { fieldTriggerClassName } from '../lib/field-trigger'
 import { cn } from '../lib/utils'
-import { CheckIcon, ChevronDownIcon, XIcon } from '../spree/icons'
+import { CheckIcon, ChevronsUpDownIcon, XIcon } from '../spree/icons'
 import { Button } from './button'
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from './input-group'
 
-const Combobox = ComboboxPrimitive.Root
+/**
+ * Base UI empties a multi-select when Escape is pressed with its popup closed,
+ * and picking a searched result closes the popup, so the Escape meant to
+ * dismiss the search silently wiped every chip. Chips are removed only through
+ * their own remove button or Backspace, and the Escape passes on to whatever
+ * encloses the picker, such as a sheet, as it does for an empty one.
+ */
+function Combobox<Value, Multiple extends boolean | undefined = false, Item = Value>(
+  props: ComboboxPrimitive.Root.Props<Value, Multiple, Item>,
+) {
+  const { multiple, onValueChange } = props
+  if (!multiple) return <ComboboxPrimitive.Root {...props} />
+
+  return (
+    <ComboboxPrimitive.Root
+      {...props}
+      onValueChange={(value, eventDetails) => {
+        if (eventDetails.reason === 'escape-key') {
+          eventDetails.cancel()
+          eventDetails.allowPropagation()
+          return
+        }
+        onValueChange?.(value, eventDetails)
+      }}
+    />
+  )
+}
 
 function ComboboxValue({ ...props }: ComboboxPrimitive.Value.Props) {
   return <ComboboxPrimitive.Value data-slot="combobox-value" {...props} />
@@ -22,7 +49,7 @@ function ComboboxTrigger({ className, children, ...props }: ComboboxPrimitive.Tr
       {...props}
     >
       {children}
-      <ChevronDownIcon className="pointer-events-none size-4 text-muted-foreground" />
+      <ChevronsUpDownIcon className="pointer-events-none size-4 text-muted-foreground" />
     </ComboboxPrimitive.Trigger>
   )
 }
@@ -56,14 +83,11 @@ function ComboboxButtonTrigger({
     <ComboboxPrimitive.Trigger
       data-slot="combobox-button-trigger"
       data-size={size}
-      className={cn(
-        "group/combobox-trigger flex w-full min-h-8 cursor-pointer items-center justify-between gap-1.5 rounded-md border border-border shadow-control bg-card py-1.5 pr-2 pl-2.5 text-base font-normal leading-normal text-foreground transition-[color,background-color,border-color,box-shadow] duration-100 ease-out outline-none select-none focus:border-blue-500 focus:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)] disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground aria-invalid:border-destructive data-[size=sm]:shadow-control data-[size=sm]:h-8 data-[size=sm]:min-h-8 data-[size=sm]:gap-2 data-[size=sm]:px-2 data-[size=sm]:py-1 data-[size=sm]:text-sm [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
-        className,
-      )}
+      className={cn('group/combobox-trigger', fieldTriggerClassName, className)}
       {...props}
     >
       <span className="flex min-w-0 items-center gap-2 truncate">{children}</span>
-      <ChevronDownIcon className="pointer-events-none size-4 shrink-0 text-muted-foreground group-data-[size=sm]/combobox-trigger:size-3.5" />
+      <ChevronsUpDownIcon className="pointer-events-none size-4 shrink-0 text-muted-foreground group-data-[size=sm]/combobox-trigger:size-3.5" />
     </ComboboxPrimitive.Trigger>
   )
 }
@@ -192,7 +216,7 @@ function ComboboxContent({
             // picker: the list re-renders as the user filters, and options
             // arriving mid-transition sit at `opacity-0` long enough to be
             // unclickable. The keyframes make the panel opaque immediately.
-            'group/combobox-content relative max-h-(--available-height) w-(--anchor-width) max-w-(--available-width) min-w-[calc(var(--anchor-width)+--spacing(7))] origin-(--transform-origin) overflow-hidden rounded-lg bg-popover text-popover-foreground shadow-md ring-1 ring-foreground/10 duration-100 data-[chips=true]:min-w-(--anchor-width) data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 *:data-[slot=input-group]:m-1 *:data-[slot=input-group]:mb-0 *:data-[slot=input-group]:h-8 *:data-[slot=input-group]:border-input/30 *:data-[slot=input-group]:bg-input/30 *:data-[slot=input-group]:shadow-none data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95',
+            'group/combobox-content relative max-h-(--available-height) w-(--anchor-width) max-w-(--available-width) min-w-[calc(var(--anchor-width)+--spacing(7))] origin-(--transform-origin) overflow-hidden rounded-xl bg-popover text-popover-foreground shadow-md ring-1 ring-foreground/10 duration-100 data-[chips=true]:min-w-(--anchor-width) data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 *:data-[slot=input-group]:m-1 *:data-[slot=input-group]:mb-0 *:data-[slot=input-group]:h-8 *:data-[slot=input-group]:border-input/30 *:data-[slot=input-group]:bg-input/30 *:data-[slot=input-group]:shadow-none data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95',
             className,
           )}
           {...props}
@@ -263,7 +287,7 @@ function ComboboxEmpty({ className, ...props }: ComboboxPrimitive.Empty.Props) {
     <ComboboxPrimitive.Empty
       data-slot="combobox-empty"
       className={cn(
-        'hidden w-full justify-center py-2 text-center text-sm text-muted-foreground group-data-empty/combobox-content:flex',
+        'hidden w-full justify-center py-2 text-center text-base text-muted-foreground group-data-empty/combobox-content:flex',
         className,
       )}
       {...props}
@@ -295,7 +319,7 @@ function ComboboxChips({
         // resize lets the positioner follow the anchor smoothly; making it
         // instant jumps the open popup out from under the pointer, so the next
         // option click lands on nothing.
-        'flex flex-wrap items-center gap-1.5 rounded-md border border-border shadow-control bg-card text-foreground px-2.5 py-1.5 text-base transition-all duration-100 ease-out focus-within:border-blue-500 focus-within:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)] has-aria-invalid:border-destructive has-data-[slot=combobox-chip]:p-1.5',
+        'flex flex-wrap items-center gap-1.5 rounded-xl border border-field-border shadow-control bg-card text-foreground px-2.5 py-1.5 text-base transition-all duration-100 ease-out not-focus-within:hover:bg-field-hover focus-within:border-blue-500 focus-within:shadow-field-focus has-aria-invalid:border-destructive has-data-[slot=combobox-chip]:p-1.5',
         className,
       )}
       {...props}
@@ -319,11 +343,9 @@ function ComboboxChip({
         // was shorter than the remove button inside it, and left the label with
         // no vertical breathing room at any screen size.
         //
-        // Fill matches the highlighted row in the list below (`bg-accent`): a
-        // chip and a selected option are the same thing at two moments, so they
-        // read as the same thing. `bg-muted` sat within 1.03:1 of the field it
-        // sits on, which left the chips barely visible.
-        'flex min-h-7 w-fit max-w-full items-center justify-center gap-1 rounded-sm bg-accent py-1 pl-2.5 pr-2 text-sm font-base text-foreground has-disabled:pointer-events-none has-disabled:cursor-not-allowed has-disabled:opacity-50 has-data-[slot=combobox-chip-remove]:pr-1',
+        // Outlined, so a chip keeps its edge while the field under it takes its
+        // hover fill; a fill alone matched that hover and the chip vanished.
+        'flex min-h-7 w-fit max-w-full items-center justify-center gap-1 rounded-sm bg-accent/50 border py-1 pl-2.5 pr-2 text-base font-base text-foreground has-disabled:pointer-events-none has-disabled:cursor-not-allowed has-disabled:opacity-50 has-data-[slot=combobox-chip-remove]:pr-1',
         className,
       )}
       {...props}
@@ -332,7 +354,7 @@ function ComboboxChip({
       {showRemove && (
         <ComboboxPrimitive.ChipRemove
           render={<Button variant="ghost" size="icon-sm" />}
-          className="size-6 shrink-0 opacity-50 hover:opacity-100"
+          className="size-6 shrink-0 opacity-50 hover:bg-transparent hover:opacity-100"
           data-slot="combobox-chip-remove"
           // Names the chip it clears ("Remove Wholesale") rather than a bare
           // "Remove": several sit side by side, and a dialog's own submit

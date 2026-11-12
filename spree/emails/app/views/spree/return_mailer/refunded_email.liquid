@@ -12,7 +12,8 @@ subject: "{% if resend %}[{{ 'resend' | t }}] {% endif %}{{ store.name }} {{ 're
 <mj-section padding="48px 0 0">
   <mj-column>
     <mj-text mj-class="section-heading" padding="0 0 16px">{{ 'return_mailer.refunded_email.refund_summary' | t }}</mj-text>
-    <mj-text mj-class="body" padding="0" font-weight="500" color="{{ store.branding.heading_color }}">{{ 'return_mailer.refunded_email.total_refunded' | t: total: return.display_refunded_total }}</mj-text>
+    {%- assign refunded_total = return.refunded_total | money -%}
+    <mj-text mj-class="body" padding="0" font-weight="500" color="{{ store.branding.heading_color }}">{{ 'return_mailer.refunded_email.total_refunded' | t: total: refunded_total }}</mj-text>
   </mj-column>
 </mj-section>
 {% render 'spree/shared/order_summary', heading: heading, purchase: order, items: return.returned_items, totals: false %}

@@ -1,16 +1,6 @@
 import type { Seller } from '@spree/admin-sdk'
 import { AddressFormDialog } from '@spree/dashboard-core'
-import {
-  AddressBlock,
-  Badge,
-  Button,
-  Card,
-  CardAction,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  StatusBadge,
-} from '@spree/dashboard-ui'
+import { AddressBlock, Button } from '@spree/dashboard-ui'
 import { PencilIcon } from '@spree/dashboard-ui/icons'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -23,12 +13,11 @@ type AddressKey = 'billing_address' | 'returns_address'
  * customer returns go. A returns address is what a shopper is told to post
  * to, and a billing address is what a commission invoice is addressed to.
  *
- * Only the billing address is editable here. A seller's returns address is
- * derived from their default stock location, so it is written through that
- * location in the seller panel — an edit dialog on this card would PATCH a
- * key the API does not permit, close, and quietly save nothing.
+ * Rendered inside the contact card, under the seller's emails, and both are
+ * edited here. The returns address is the seller's returns stock location's
+ * own; the API writes it onto that location, or makes one if there is none.
  */
-export function SellerAddressCard({
+export function SellerAddress({
   seller,
   addressKey,
   canEdit,
@@ -42,51 +31,34 @@ export function SellerAddressCard({
   const updateMutation = useUpdateSeller(seller.id)
   const address = seller[addressKey]
   const title = t(`admin.sellers.detail.${addressKey}`)
-  const editable = canEdit && addressKey === 'billing_address'
 
   return (
-    <>
-      <Card>
-        <CardHeader>
-          <CardTitle>
-            {title}
-            {address ? (
-              <StatusBadge status="complete" label={t('admin.sellers.address.filled')} />
-            ) : (
-              <Badge variant="outline">{t('admin.sellers.address.not_filled')}</Badge>
-            )}
-          </CardTitle>
-          {editable && (
-            <CardAction>
-              <Button
-                variant="ghost"
-                size="icon-sm"
-                onClick={() => setEditing(true)}
-                aria-label={t('admin.actions.edit')}
-              >
-                <PencilIcon className="size-4" />
-              </Button>
-            </CardAction>
-          )}
-        </CardHeader>
-        <CardContent className="flex flex-col gap-3">
-          {address ? (
-            // No title: the card header already names it.
-            <AddressBlock address={address} />
-          ) : (
-            <p className="py-4 text-center text-muted-foreground text-sm">
-              {t('admin.sellers.address.not_provided_by_seller')}
-            </p>
-          )}
-        </CardContent>
-      </Card>
+    <div className="flex flex-col gap-1.5">
+      <div className="flex min-h-7 items-center justify-between gap-2">
+        <h3 className="font-medium text-base">{title}</h3>
+        {canEdit && (
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={() => setEditing(true)}
+            aria-label={t('admin.actions.edit')}
+          >
+            <PencilIcon className="size-4" />
+          </Button>
+        )}
+      </div>
+      <AddressBlock
+        address={address}
+        emptyText={t('admin.sellers.address.not_provided_by_seller')}
+      />
 
       {editing && (
         <AddressFormDialog
           title={title}
           address={address}
           open
-          // A seller is invoiced as a company, matching what the API requires.
+          // Both are addressed to the business: a seller is invoiced as a
+          // company, and returns are posted to one.
           business
           onOpenChange={setEditing}
           // Only the address being edited is sent: the other one is untouched,
@@ -98,6 +70,6 @@ export function SellerAddressCard({
           isPending={updateMutation.isPending}
         />
       )}
-    </>
+    </div>
   )
 }

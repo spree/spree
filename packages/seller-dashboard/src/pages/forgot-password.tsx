@@ -47,10 +47,10 @@ export function ForgotPasswordPage() {
       <div className="flex min-h-screen items-center justify-center p-6">
         <div className="w-full max-w-sm">
           <h1 className="font-medium text-xl">{t('forgot_password.sent_title')}</h1>
-          <p className="mt-1 mb-6 text-muted-foreground text-sm">
+          <p className="mt-1 mb-6 text-muted-foreground text-base">
             {t('forgot_password.sent_subtitle')}
           </p>
-          <Link to="/login" className="text-sm underline underline-offset-4">
+          <Link to="/login" className="text-base underline underline-offset-4">
             {t('forgot_password.back_to_login')}
           </Link>
         </div>
@@ -62,12 +62,12 @@ export function ForgotPasswordPage() {
     <div className="flex min-h-screen items-center justify-center p-6">
       <div className="w-full max-w-sm">
         <h1 className="font-medium text-xl">{t('forgot_password.title')}</h1>
-        <p className="mt-1 mb-6 text-muted-foreground text-sm">{t('forgot_password.subtitle')}</p>
+        <p className="mt-1 mb-6 text-muted-foreground text-base">{t('forgot_password.subtitle')}</p>
 
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <FieldGroup>
             {error && (
-              <p className="text-destructive text-sm" role="alert">
+              <p className="text-destructive text-base" role="alert">
                 {error}
               </p>
             )}
@@ -89,7 +89,7 @@ export function ForgotPasswordPage() {
               {isSubmitting ? t('forgot_password.submitting') : t('forgot_password.submit')}
             </Button>
 
-            <Link to="/login" className="text-sm underline underline-offset-4">
+            <Link to="/login" className="text-base underline underline-offset-4">
               {t('forgot_password.back_to_login')}
             </Link>
           </FieldGroup>

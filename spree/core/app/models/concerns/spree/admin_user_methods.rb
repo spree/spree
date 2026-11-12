@@ -2,8 +2,11 @@ module Spree
   module AdminUserMethods
     extend ActiveSupport::Concern
 
+    STATUSES = %w[active locked deactivated].freeze
+
     include Spree::Actor
     include Spree::PrefixedId
+    include Spree::SignedIdAttachments
     include Spree::UserRoles
     include Spree::RansackableAttributes
 
@@ -42,6 +45,8 @@ module Spree
 
       # Associations
       has_many :identities, class_name: 'Spree::UserIdentity', as: :user, dependent: :destroy
+      # Signed-in sessions, on the admin and the seller API alike.
+      has_many :refresh_tokens, class_name: 'Spree::RefreshToken', as: :user, dependent: :delete_all
       # The order operations became polymorphic in 6.0, so these read through
       # the association rather than a bare foreign key: matching on the id
       # alone would hand this user the rows an API key with the same numeric
@@ -66,6 +71,7 @@ module Spree
 
       # Attachments
       has_one_attached :avatar, service: Spree.public_storage_service_name
+      signed_id_attachments :avatar
 
       validates :avatar, content_type: Rails.application.config.active_storage.web_image_content_types
 
@@ -80,6 +86,25 @@ module Spree
 
     def can_be_deleted?
       Spree::Store.current.users.where.not(id: id).exists?
+    end
+
+    # Whether the account can sign in. Duck-typed: a custom admin user class
+    # may lack deactivation or lockout.
+    # @return [String] +active+, +locked+ or +deactivated+
+    def status
+      if try(:deactivated?)
+        'deactivated'
+      elsif try(:locked?)
+        'locked'
+      else
+        'active'
+      end
+    end
+
+    # Sessions that can still be refreshed, most recently used first.
+    # @return [ActiveRecord::Relation<Spree::RefreshToken>]
+    def active_sessions
+      refresh_tokens.active.order(created_at: :desc)
     end
 
     # Returns the full name of the user

@@ -97,10 +97,6 @@ describe Spree::Country, type: :model do
   end
 
   describe '#default?' do
-    before do
-      allow_any_instance_of(Spree::Store).to receive(:default).and_return(store)
-    end
-
     context 'no arguments' do
       it 'returns true for store default country' do
         expect(america.default?).to eq(true)

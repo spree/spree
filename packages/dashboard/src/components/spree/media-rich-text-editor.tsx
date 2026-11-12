@@ -1,5 +1,10 @@
 import type { Media } from '@spree/admin-sdk'
-import { adminClient, MediaPickerSheet, useDirectUpload } from '@spree/dashboard-core'
+import {
+  adminClient,
+  MediaPickerDialog,
+  mediaPickerListParams,
+  useFileUpload,
+} from '@spree/dashboard-core'
 import { RichTextEditor, type RichTextEditorProps } from '@spree/dashboard-ui'
 import { useCallback, useRef, useState } from 'react'
 import { useCreateMediaLibraryFile } from '../../hooks/use-media-library'
@@ -16,7 +21,7 @@ import { useCreateMediaLibraryFile } from '../../hooks/use-media-library'
  */
 export function MediaRichTextEditor(props: Omit<RichTextEditorProps, 'onRequestImage'>) {
   const [picking, setPicking] = useState(false)
-  const directUpload = useDirectUpload()
+  const fileUpload = useFileUpload()
   const createFile = useCreateMediaLibraryFile()
 
   // The editor asks for an image and waits; the sheet answers later, once the
@@ -55,20 +60,20 @@ export function MediaRichTextEditor(props: Omit<RichTextEditorProps, 'onRequestI
     <>
       <RichTextEditor {...props} onRequestImage={requestImage} />
 
-      <MediaPickerSheet<Media>
+      <MediaPickerDialog<Media>
         open={picking}
         onOpenChange={handleOpenChange}
         multiple={false}
         queryKey="rich-text-image"
-        search={(query) =>
+        search={(query, options) =>
           adminClient.media.list({
             limit: 48,
+            ...mediaPickerListParams(query, options),
             media_type_eq: 'image',
-            ...(query ? { filename_cont: query } : {}),
           })
         }
         onUpload={async (file) => {
-          const upload = await directUpload.mutateAsync(file)
+          const upload = await fileUpload.mutateAsync(file)
           return createFile.mutateAsync({ signed_id: upload.signedId, alt: file.name })
         }}
         onConfirm={(picked) => {

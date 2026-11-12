@@ -12,7 +12,7 @@ describe 'editable email samples' do
   end
 
   it 'registers every customer email, the layout and the shared partials' do
-    expect(Spree.editable_email_templates.emails.size).to eq(11)
+    expect(Spree.editable_email_templates.emails.size).to eq(12)
     expect(Spree.editable_email_templates['layouts/spree/base_mailer']).to be_present
     expect(Spree.editable_email_templates['spree/order_mailer/store_owner_notification_email']).to be_nil
   end
@@ -26,6 +26,26 @@ describe 'editable email samples' do
       expect(rendered.html).not_to include('{{', '<mj-'), email.key
       expect(preview.variables.to_json).not_to match(/token=(?!preview)/), email.key
     end
+  end
+
+  # Templates format amounts with the `money` filter, in the email's language.
+  it 'sends amounts without formatted money copies, nested records included' do
+    labels = Spree::Api::V3::BaseSerializer::FORMATTED_LABELS.map(&:to_s)
+    formatted_keys = lambda do |node|
+      case node
+      when Hash then node.flat_map { |key, value| (key.to_s.start_with?('display_') && labels.exclude?(key.to_s) ? [key] : []) + formatted_keys.call(value) }
+      when Array then node.flat_map(&formatted_keys)
+      else []
+      end
+    end
+
+    found = Spree.editable_email_templates.emails.to_h do |email|
+      preview = Spree::EmailTemplates::Preview.new(store: store, key: email.key)
+      preview.call
+      [email.key, formatted_keys.call(preview.variables.as_json).uniq]
+    end
+
+    expect(found.reject { |_, keys| keys.empty? }).to eq({})
   end
 
   it 'previews with a record the merchant picks, only from the store' do

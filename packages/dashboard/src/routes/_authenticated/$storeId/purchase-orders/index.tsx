@@ -6,6 +6,7 @@ import {
   ImportButton,
   ResourceTable,
   resourceSearchSchema,
+  runtimeListParams,
   Subject,
   usePermissions,
 } from '@spree/dashboard-core'
@@ -69,7 +70,9 @@ function PurchaseOrdersPage() {
       <ResourceTable<PurchaseOrder>
         tableKey="purchase-orders"
         queryKey="purchase-orders"
-        queryFn={(params) => adminClient.purchaseOrders.list({ ...params, expand: ['supplier'] })}
+        queryFn={(params: Record<string, unknown>) =>
+          adminClient.purchaseOrders.list(runtimeListParams({ ...params, expand: ['supplier'] }))
+        }
         searchParams={search}
         rowActions={(purchaseOrder) => (
           <RowActions

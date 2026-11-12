@@ -20,6 +20,38 @@ module Spree
 
           scoped_resource :seller_profile
 
+          # Enumerated rather than borrowing the legacy global list, which
+          # permits :id, :user_id and :deleted_at.
+          request_params 'ProfileUpdateParams' do |body|
+            body.attribute :name, :string, example: 'Acme Supplies'
+            body.attribute :contact_email, :string, nullable: true, format: :email
+            body.attribute :billing_email, :string, nullable: true, format: :email
+            body.attribute :about, :string,
+              nullable: true,
+              description: "Sanitized HTML: the seller's public description."
+            body.attribute :legal_name, :string,
+              nullable: true,
+              description: 'The business a commission invoice is made out to.'
+            body.attribute :registration_number, :string, nullable: true
+            body.attribute :logo_signed_id, :string,
+              nullable: true,
+              description: 'A `signed_id` from `POST /files`; `null` removes the image.'
+            body.attribute :square_logo_signed_id, :string,
+              nullable: true,
+              description: 'A `signed_id` from `POST /files`; `null` removes the image.'
+            body.attribute :cover_photo_signed_id, :string,
+              nullable: true,
+              description: 'A `signed_id` from `POST /files`; `null` removes the image.'
+            body.attribute :billing_address, :object, as: 'SellerAddressParams' do |billing_address|
+              billing_address.include_attributes Spree::Api::V3::AddressRequestSchema
+            end
+            body.attribute :custom_fields, :array, of: Spree::Api::V3::CustomFieldValueRequestSchema,
+              description: "Answers to the custom fields this marketplace's onboarding asks for. A field nothing asked for is ignored rather than written."
+            body.attribute :accept_terms, :boolean,
+              permit: false,
+              description: "Stamps the moment the seller accepted the marketplace's terms. One-way: sending `false` does not unmake the stamp."
+          end
+
           def show
             render json: serialize_seller
           end
@@ -54,8 +86,6 @@ module Spree
             %w[show]
           end
 
-          # Enumerated rather than borrowing the legacy global list, which
-          # permits :id, :user_id and :deleted_at.
           # Accepting the marketplace's terms is a profile write, not an endpoint
           # of its own: `accept_terms: true` stamps the time, which is what the
           # AcceptTerms requirement reads.
@@ -104,14 +134,7 @@ module Spree
           end
 
           def permitted_params
-            normalize_params(
-              params.permit(:name, :contact_email, :billing_email, :about,
-                            :legal_name, :registration_number,
-                            :logo, :square_logo, :cover_photo,
-                            billing_address: Spree::Api::V3::AddressParams::ADDRESS_KEYS,
-                            custom_fields: [:id, :custom_field_definition_id, :value,
-                                            { value: [] }, { value: {} }])
-            )
+            normalize_params(params.permit(*declared_permitted_attributes))
           end
 
           private

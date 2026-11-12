@@ -21,30 +21,11 @@ RSpec.describe 'Admin Translations Batch API', type: :request, swagger_doc: 'api
       description 'Atomically upserts translations across many records of (possibly) different translatable resource types in one request — e.g. an option type and all its option values in one save. A flat list of independent registry writes; all entries succeed or none do.'
       admin_scope_note('`write_<resource>` for every resource type in the batch (for API-key authentication)')
 
+      admin_sdk_example 'translations/batch'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        required: %w[translations],
-        properties: {
-          translations: {
-            type: :array,
-            items: {
-              type: :object,
-              required: %w[resource_type resource_id values],
-              properties: {
-                resource_type: { type: :string, description: 'Translatable resource type token, e.g. `option_type`' },
-                resource_id: { type: :string, description: 'Prefixed id of the record' },
-                values: {
-                  type: :object,
-                  description: 'Map of locale code to { field: value }',
-                  additionalProperties: { type: :object, additionalProperties: true }
-                }
-              }
-            }
-          }
-        }
-      }
+      request_body_for
 
       response '200', 'translations upserted' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

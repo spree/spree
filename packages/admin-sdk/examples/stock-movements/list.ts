@@ -7,7 +7,7 @@ const client = createAdminClient({
 
 // region:example
 const { data: stockMovements } = await client.stockMovements.list({
-  q: { kind_eq: 'allocated' },
+  kind_eq: 'allocated',
 })
 
 // endregion:example

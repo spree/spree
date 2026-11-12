@@ -7,12 +7,15 @@ import {
   extensionSubmitValues,
   mapSpreeErrorsToForm,
   PageHeader,
+  RecordMetadataCard,
   Slot,
   Subject,
   usePermissions,
 } from '@spree/dashboard-core'
 import {
   ActiveBadge,
+  Alert,
+  AlertDescription,
   Button,
   Card,
   CardContent,
@@ -30,7 +33,7 @@ import {
   Textarea,
   useConfirm,
 } from '@spree/dashboard-ui'
-import { PauseIcon, PlayIcon, TableIcon } from '@spree/dashboard-ui/icons'
+import { CircleAlertIcon, PauseIcon, PlayIcon, TableIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 import { FormProvider, type UseFormReturn, useForm } from 'react-hook-form'
@@ -68,7 +71,6 @@ import {
   useDeleteCatalog,
   useSaveCatalog,
 } from '../../../../../hooks/use-catalogs'
-import { spreeJsonLinkResolver } from '../../../../../lib/json-link-resolver'
 import type { AssignmentEntry } from '../../../../../schemas/catalog'
 import {
   CATALOG_DEFAULTS,
@@ -274,7 +276,6 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
                       expand: ['assignments', 'price_list', 'price_list.price_rules'],
                     }),
                   endpoint: `/api/v3/admin/catalogs/${catalog.id}`,
-                  resolveLink: spreeJsonLinkResolver(storeId),
                 }}
                 onDelete={permissions.can('destroy', Subject.Catalog) ? handleDelete : undefined}
                 deleteLabel={t('admin.catalogs.detail.delete_label')}
@@ -321,12 +322,10 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
             main={
               <>
                 {form.formState.errors.root?.message && (
-                  <p
-                    className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive"
-                    role="alert"
-                  >
-                    {form.formState.errors.root.message}
-                  </p>
+                  <Alert variant="destructive">
+                    <CircleAlertIcon />
+                    <AlertDescription>{form.formState.errors.root.message}</AlertDescription>
+                  </Alert>
                 )}
                 <DeferredProductMembershipCard
                   parentId={catalog.id}
@@ -393,6 +392,7 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
                     )
                   }
                 />
+                <RecordMetadataCard metadata={catalog.metadata} />
               </>
             }
             sidebar={

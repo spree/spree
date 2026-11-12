@@ -5,6 +5,7 @@ import type {
   Company,
   CompanyInvitation,
   Customer,
+  DataRequestConfirmationRequestedEvent,
   DataRequestEvent,
   Delivery,
   DigitalAsset,
@@ -29,6 +30,8 @@ import type {
   PaymentSetupSession,
   Price,
   Product,
+  ProductCategory,
+  ProductCollection,
   ProductSubmission,
   Promotion,
   PurchaseOrderEvent,
@@ -91,6 +94,8 @@ export interface WebhookEventMap {
   /** Carries a live credential: delivered only to endpoints that name this event. */
   'customer.password_reset_requested': PasswordResetRequestedEvent
   'data_request.completed': DataRequestEvent
+  /** Carries a live credential: delivered only to endpoints that name this event. */
+  'data_request.confirmation_requested': DataRequestConfirmationRequestedEvent
   'data_request.created': DataRequestEvent
   'data_request.deleted': DataRequestEvent
   'data_request.updated': DataRequestEvent
@@ -151,6 +156,14 @@ export interface WebhookEventMap {
   'line_item.created': LineItem
   'line_item.deleted': LineItem
   'line_item.updated': LineItem
+  'maintenance_task_run.cancelled': WebhookRecordReference
+  'maintenance_task_run.created': WebhookRecordReference
+  'maintenance_task_run.deleted': WebhookRecordReference
+  'maintenance_task_run.errored': WebhookRecordReference
+  'maintenance_task_run.interrupted': WebhookRecordReference
+  'maintenance_task_run.started': WebhookRecordReference
+  'maintenance_task_run.succeeded': WebhookRecordReference
+  'maintenance_task_run.updated': WebhookRecordReference
   'media.created': MediaEvent
   'media.deleted': MediaEvent
   'media.updated': MediaEvent
@@ -172,6 +185,7 @@ export interface WebhookEventMap {
   'order.placed': Order
   'order.resend_confirmation_email': Order
   'order.resend_digital_links_email': Order
+  /** @deprecated Use `order.fulfilled` instead. */
   'order.shipped': Order
   'order.updated': Order
   'order_group.completed': OrderGroup
@@ -217,6 +231,10 @@ export interface WebhookEventMap {
   'product.proposed': Product
   'product.rejected': Product
   'product.updated': Product
+  'product_category.created': ProductCategory
+  'product_category.deleted': ProductCategory
+  'product_collection.created': ProductCollection
+  'product_collection.deleted': ProductCollection
   'product_submission.created': ProductSubmission
   'product_submission.deleted': ProductSubmission
   'product_submission.updated': ProductSubmission

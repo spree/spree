@@ -26,6 +26,7 @@ import {
   settingsNav,
   // route registry
   pluginRoutes,
+  getPluginRoutes,
   matchPluginRoute,
   usePluginRoutes,
   // slot registry
@@ -90,7 +91,7 @@ import {
   useGlobalSearch,    // global search query state
   useCountries,
   useCustomFields,
-  useDirectUpload,    // ActiveStorage direct uploads
+  useFileUpload,      // uploads a file through POST /files, resolves to its signed_id
   useExport,          // CSV export job lifecycle
   useResourceKey,     // store-scoped query key — use it for every custom query
   useResourceMutation, // useMutation wrapper with 422 handling
@@ -105,6 +106,7 @@ import {
 import {
   filtersToRansack,     // converts table filter state → Ransack params
   mapSpreeErrorsToForm, // 422 response → form.setError
+  signedIdParam,        // image/document field → `<name>_signed_id` (set, `null` to remove, or omitted)
   // formatters
   formatPrice,          // Price object → display string
   formatStoreDateTime,  // ISO string → wall-clock in the store's timezone
@@ -239,6 +241,27 @@ import { loginFormSchema, resetPasswordFormSchema } from '@spree/dashboard/schem
 ```
 
 Their translations ship with `@spree/dashboard-core`, so they render translated as soon as its i18n instance is loaded.
+
+A plugin page that works on an order in its own layout — a quote over a draft order, say — reuses the order page's building blocks from one subpath:
+
+```ts
+import {
+  useOrder,               // the order with the expands the order page loads
+  useOrderItemsEditor,    // staged line editing: form, picker hand-off, one-transaction save
+  OrderEditItemsTable,    // quantities, removals and, on drafts, negotiated unit prices
+  AddLineItemDialog,      // the variant picker
+  OrderTotalsCard,        // totals that preview the staged edits
+  CustomerCard,
+  OrderLogisticsCard,
+  OrderPurchaseOrderCard,
+  companyAutocompleteProps,  // the new-order page's pickers: companies, then
+  customerAutocompleteProps, // the customers who can buy for the chosen one
+} from '@spree/dashboard/orders'
+```
+
+The same entry also exports the order page's other sidebar cards (`DiscountsCard`, `OrderSummaryCard`, `TagsCard`, `SpecialInstructionsCard`, `InternalNoteCard`), `CompanyComboboxOption` for rendering the company picker's options, and `useOrderMutation` for a save that refreshes the order.
+
+`useOrderItemsEditor(order)` returns the `form` and `fields` the table renders, `items` for the totals card, `stageVariant` for the picker's `onSelect`, and `save(values)` / `discard()`. Nothing reaches the server until `save`, which resolves `true` once the lines are saved and re-baselines the form on the saved order. Once the order has loaded, render `OrderTotalsCard` against `savedOrder` (`{savedOrder && <OrderTotalsCard order={savedOrder} items={items} />}`) — it follows the save even before your `order` refreshes — and lock the editing controls while `isSaving` (`<OrderEditItemsTable disabled={isSaving} />`, and the button that opens the picker): the save replaces the form when it finishes. Their copy lives in `@spree/dashboard`'s locales, which the dashboard loads, so they render translated on any page the dashboard routes to.
 
 A few names exist in both re-exported packages — the design system ships a presentational component and the framework wraps it with data (`ResourceCombobox`, `StatusCard`, `Slot`, `DateRange`, `ResourceMultiAutocomplete`). The facade gives you the framework's version, which is the one an application wants. Reach past it when you want the presentational half:
 

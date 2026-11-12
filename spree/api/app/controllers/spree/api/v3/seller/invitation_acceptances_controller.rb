@@ -22,12 +22,20 @@ module Spree
                      only: [:lookup, :accept],
                      with: -> { render_rate_limited(limit: Spree::Api::Config[:rate_limit_login]) }
 
+          request_params 'InvitationAcceptParams', action: :accept do |body|
+            body.attribute :password, :string,
+              description: 'Sets the password of a new account, or confirms the password of an existing one, unless the request is already signed in as that account.'
+            body.attribute :password_confirmation, :string
+            body.attribute :first_name, :string, description: 'Used only when the invitation creates a new account.'
+            body.attribute :last_name, :string, description: 'Used only when the invitation creates a new account.'
+          end
+
           # GET /api/v3/seller/auth/invitations/:id/lookup?token=:token
           def lookup
             return unless load_invitation
 
             render json: Spree.api.seller_invitation_serializer.new(
-              @invitation, params: { store: @invitation.store }
+              @invitation, params: { store: @invitation.store, acceptance: true }
             ).serializable_hash
           end
 
@@ -38,6 +46,8 @@ module Spree
 
             user = resolve_or_create_invitee(@invitation)
             return if performed?
+            # Checked before accepting: a deactivated account gains no role.
+            return render_account_deactivated if account_deactivated?(user)
 
             @invitation.invitee = user
             result = Spree.invitation_accept_workflow.call(invitation: @invitation)
@@ -87,10 +97,14 @@ module Spree
           # implicit: we look the user up by `invitation.email`, never by a
           # client-supplied email. The token is the credential.
           def resolve_or_create_invitee(invitation)
-            existing = Spree.admin_user_class.find_by(email: invitation.email)
-            return authenticate_existing(existing) if existing
+            existing = invitation.invitee_account
+            return create_new_invitee(invitation) unless existing
 
-            create_new_invitee(invitation)
+            # Someone already signed in as the invitee has proven who they are.
+            authenticate_user
+            return existing if current_user == existing
+
+            authenticate_existing(existing)
           end
 
           def authenticate_existing(user)
@@ -121,7 +135,7 @@ module Spree
           end
 
           def signup_params(invitation)
-            params.permit(:password, :password_confirmation, :first_name, :last_name).
+            params.permit(*declared_permitted_attributes).
               merge(email: invitation.email)
           end
 
@@ -139,6 +153,12 @@ module Spree
 
           def serialized_sellers(user)
             user.sellers.map { |seller| { id: seller.prefixed_id, name: seller.name, status: seller.status } }
+          end
+
+          # The plain v3 base expects a storefront token; the session this
+          # page may carry is a seller panel one.
+          def expected_audience
+            Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_SELLER
           end
 
           def request_env_for_token

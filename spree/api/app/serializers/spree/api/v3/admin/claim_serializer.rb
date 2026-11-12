@@ -5,6 +5,11 @@ module Spree
     module V3
       module Admin
         class ClaimSerializer < V3::ClaimSerializer
+          without_formatted_money
+
+          # No guest price gating here, so the inherited money fields are always present.
+          typelize refund_total: [:string, nullable: false]
+
           typelize memo: [:string, nullable: true],
                    metadata: 'Record<string, unknown>',
                    created_by_id: [:string, nullable: true],
@@ -21,6 +26,8 @@ module Spree
           one :reason, resource: proc { Spree.api.admin_claim_reason_serializer }, if: proc { expand?('reason') }
           one :order, resource: proc { Spree.api.admin_order_serializer }, if: proc { expand?('order') }
           many :refunds, resource: proc { Spree.api.admin_refund_serializer }, if: proc { expand?('refunds') }
+
+          expandable_custom_fields admin: true
         end
       end
     end

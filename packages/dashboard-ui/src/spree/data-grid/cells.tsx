@@ -544,7 +544,7 @@ export function SelectCell<V extends string>({
         className={cn(
           // Strip the Select's standard chrome so the cell reads as a flat
           // grid slot. The cell's own ring/bg comes from below.
-          'h-9 min-h-0 w-full cursor-cell rounded-none border-0 bg-transparent px-3 text-sm shadow-none ring-inset transition-colors focus:border-0 focus:shadow-none',
+          'h-9 min-h-0 w-full cursor-cell rounded-none border-0 bg-transparent px-3 text-base shadow-none ring-inset transition-colors focus:border-0 focus:shadow-none',
           isSelected && 'bg-blue-500/10',
           isFocused && 'ring-2 ring-blue-500',
         )}
@@ -579,5 +579,5 @@ interface ReadOnlyCellProps {
 /** Plain non-editable cell — first column of a row (e.g. label / link).
  *  Not registered with the grid, so Tab/arrows skip it. */
 export function ReadOnlyCell({ children, className }: ReadOnlyCellProps) {
-  return <div className={cn('flex h-9 items-center px-3 text-sm', className)}>{children}</div>
+  return <div className={cn('flex h-9 items-center px-3 text-base', className)}>{children}</div>
 }

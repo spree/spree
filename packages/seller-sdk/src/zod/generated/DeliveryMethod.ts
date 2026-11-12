@@ -1,5 +1,6 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import { CustomFieldSchema } from './CustomField';
 import { DeliveryMethodRuleSchema } from './DeliveryMethodRule';
 
 export const DeliveryMethodSchema = z.object({
@@ -11,6 +12,7 @@ export const DeliveryMethodSchema = z.object({
   digital: z.boolean(),
   pickup: z.boolean(),
   pickup_point: z.boolean(),
+  custom_fields: z.array(CustomFieldSchema).optional(),
   admin_name: z.string().nullable(),
   storefront_visible: z.boolean(),
   tracking_url: z.string().nullable(),
@@ -20,8 +22,7 @@ export const DeliveryMethodSchema = z.object({
   editable: z.boolean(),
   delivery_profile_id: z.string().nullable(),
   delivery_zone_id: z.string().nullable(),
-  calculator_type: z.string().nullable(),
-  calculator_preferences: z.record(z.string(), z.unknown()).nullable(),
+  calculator: z.any().nullable(),
 });
 
 export type DeliveryMethod = z.infer<typeof DeliveryMethodSchema>;

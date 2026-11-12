@@ -1,5 +1,5 @@
 import { expect, type Page, test } from '@playwright/test'
-import { FIXTURE_PROMO_PRODUCT, login } from './helpers'
+import { addNewOrderItem, createPlacedOrder, FIXTURE_PROMO_PRODUCT, login } from './helpers'
 
 const NEW_ORDER_PATH = (storeId: string) => `/${storeId}/orders/new`
 
@@ -13,26 +13,22 @@ async function createDraftOrder(page: Page, storeId: string) {
   await expect(page.getByRole('heading', { name: /new order/i })).toBeVisible({ timeout: 15_000 })
 
   await page.locator('#order-email').fill(`e2e-fulfillment-${Date.now()}@example.com`)
-  await page.getByPlaceholder(/search variant/i).fill(FIXTURE_PROMO_PRODUCT)
-  await page
-    .getByRole('option', { name: new RegExp(FIXTURE_PROMO_PRODUCT, 'i') })
-    .first()
-    .click()
+  await addNewOrderItem(page, FIXTURE_PROMO_PRODUCT)
 
   await page.locator('button[type="submit"]').click()
   await expect(page).toHaveURL(new RegExp(`/${storeId}/orders/or_[^/]+$`), { timeout: 15_000 })
 }
 
 /**
- * The Fulfillments card. Filtering `div` by contained text would match every
- * ancestor too, so anchor on the card element itself.
+ * The Fulfillments section. Filtering `div` by contained text would match every
+ * ancestor too, so anchor on the section element itself.
  */
 function fulfillmentsCard(page: Page) {
-  // The title holds an icon and a count badge beside the word, so match the
-  // text loosely; anchoring on the card element keeps sibling cards out.
-  return page.locator('[data-slot="card"]').filter({
-    has: page.locator('[data-slot="card-title"]', { hasText: /fulfillments/i }),
-  })
+  // The heading holds an icon and a count badge beside the word, so match
+  // the text loosely; anchoring on the section keeps sibling ones out.
+  return page
+    .locator('[data-slot="section"]')
+    .filter({ has: page.getByRole('heading', { name: /fulfillments/i }) })
 }
 
 test.describe('order fulfillments', () => {
@@ -85,5 +81,37 @@ test.describe('order fulfillments', () => {
     await expect(card.getByRole('button', { name: /add tracking/i })).toHaveCount(0)
     await expect(card.getByRole('button', { name: /buy label/i })).toHaveCount(0)
     await expect(card.getByRole('button', { name: /print label/i })).toHaveCount(0)
+  })
+
+  // A label bought elsewhere goes to private storage, under the
+  // `file_signed_id` name the label endpoint now requires.
+  test('uploads a label bought elsewhere onto a placed order', async ({ page }) => {
+    const creds = await login(page)
+    const order = await createPlacedOrder(page, creds.accessToken, { ship: false })
+    await page.goto(`/${creds.store_id}/orders/${order.id}`)
+
+    const card = fulfillmentsCard(page)
+    await card
+      .getByRole('button', { name: /^actions$/i })
+      .first()
+      .click({ timeout: 15_000 })
+    await page.getByRole('menuitem', { name: /^upload label$/i }).click()
+
+    const dialog = page.getByRole('dialog')
+    await dialog.locator('input[type="file"]').setInputFiles({
+      name: 'label.pdf',
+      mimeType: 'application/pdf',
+      buffer: Buffer.from('%PDF-1.4\n%%EOF\n'),
+    })
+    await dialog.locator('#label-tracking-number').fill(`1Z${Date.now()}`)
+
+    // Saving is disabled until the upload resolves.
+    const submit = dialog.getByRole('button', { name: /^upload label$/i })
+    await expect(submit).toBeEnabled({ timeout: 30_000 })
+    await submit.click()
+
+    await expect(dialog).toBeHidden({ timeout: 15_000 })
+    await expect(card.getByText(/^uploaded$/i)).toBeVisible({ timeout: 15_000 })
+    await expect(card.getByRole('button', { name: /print label/i })).toBeVisible()
   })
 })

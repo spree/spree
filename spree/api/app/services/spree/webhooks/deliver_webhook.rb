@@ -90,10 +90,14 @@ module Spree
         http_options = { open_timeout: TIMEOUT, read_timeout: TIMEOUT, verify_mode: ssl_verify_mode }
 
         # SSRF protection is disabled in development so webhooks can reach
-        # localhost / host.docker.internal (the storefront running on the host).
-        if Rails.env.development?
+        # localhost / host.docker.internal (the storefront running on the host),
+        # and for hosts the operator explicitly trusts
+        # (Spree::Api::Config.webhooks_allowed_internal_hosts).
+        if Rails.env.development? || Spree::WebhookEndpoint.allowed_internal_host?(@delivery.url)
           uri = URI.parse(@delivery.url)
-          http = Net::HTTP.new(uri.host, uri.port)
+          # No proxy, as SsrfFilter: an egress proxy from the environment would
+          # carry this in-cluster (or localhost) request out of the network.
+          http = Net::HTTP.new(uri.hostname, uri.port, nil)
           http.use_ssl = uri.scheme == 'https'
           http_options.each { |k, v| http.send(:"#{k}=", v) }
 

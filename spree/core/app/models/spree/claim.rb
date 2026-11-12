@@ -44,6 +44,7 @@ module Spree
     delegate :currency, to: :order
 
     self.whitelisted_ransackable_attributes = %w[number status created_at]
+    search_by :number
     self.whitelisted_ransackable_associations = %w[order reason]
 
     def refund_total

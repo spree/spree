@@ -1,0 +1,181 @@
+---
+title: "MCP Server Custom Tools"
+sidebarTitle: Custom tools
+description: "Your admin endpoints become MCP tools on their own. Add a tool by hand only for something that is not an endpoint."
+---
+
+The catalog is a registry in `spree_core`, so an extension or a host application adds to it without depending on the MCP gem. Anything in it is offered to the admin MCP server and to any other adapter reading the same registry.
+
+## Your admin endpoints are already tools
+
+Every documented Admin API action is an agent tool: cancel, approve, send, capture, anything that is not a plain create, update or destroy (those go through `create_resource`, `update_resource` and `delete_resource`). The exceptions are an action its spec opts out, a custom read its spec does not opt in, and the actions of a controller whose records carry credentials (API keys, webhooks, gift cards). Nothing registers a tool. Each is built from the endpoint's OpenAPI operation:
+
+| Tool | Comes from |
+| --- | --- |
+| Name | The resource and the action: `PATCH /quotes/:id/send` is `quotes_send`. An `operationId` overrides it, and also makes a create that is really an action, such as receiving stock against a transfer, a tool of its own. |
+| Description | The operation's summary, then the first paragraph of its description. |
+| Arguments | The path segments (`id`, and a parent such as `order_id`) beside the request body, under the names the endpoint documents. |
+| Permission | The controller's `scoped_resource` write scope. |
+
+So adding an endpoint and documenting it is the whole change. A call runs through the endpoint, with its authentication, scope check, record-level permissions and workflow, so an agent gets exactly what an API client gets. Write the summary and description for someone choosing the operation: they are what the model reads.
+
+Core reads its own `admin.yaml`. Your application, and each extension, generates the same document from its own rswag specs at `openapi/admin.yaml`, and Spree merges every one into the document the tools read. Spree's own API reference and SDKs are built from core's document only; an app or extension that publishes docs or a typed client builds them from its own file.
+
+### Documenting your application's endpoints
+
+A new project from `create-spree-app` is set up already: `server/spec/swagger_helper.rb` and the contract spec come with it. In an older project, the generator adds them:
+
+```bash
+spree generate spree_dev_tools:openapi
+```
+
+It writes the swagger helper and the contract spec below. It also writes a skipped skeleton rswag spec for every admin action your controllers serve that is not documented yet, so what is left is each operation's description and the records its response is tested against. Run it again after adding endpoints; it only writes what is missing.
+
+Write each spec the way the example below does, then generate the document and commit it:
+
+```bash
+spree task openapi:generate
+```
+
+### Documenting your extension's endpoints
+
+An extension runs the same generator and task from its own directory, against its dummy app:
+
+```bash
+bundle exec rails g spree_dev_tools:openapi
+bundle exec rake spree:openapi:generate
+```
+
+The task comes with `spree/testing_support/extension_rake`, which your Rakefile already requires. A gemspec that ships `git ls-files` includes the committed `openapi/admin.yaml` already. One that lists its files needs `openapi/*.yaml` added:
+
+```ruby my_extension.gemspec
+s.files = Dir['{app,config,db,lib}/**/*', 'openapi/*.yaml', 'LICENSE', 'README.md']
+```
+
+An extension with Store API endpoints documents them too, in `openapi/store.yaml`: pass `store_title:` to `Spree::Api::TestingSupport::Openapi.configure` in its `spec/swagger_helper.rb`, and name the document in those specs with `openapi_spec: 'openapi/store.yaml'`. A package that ships a client for the extension generates its client and types from these documents with [`spree sdk generate`](/developer/cli/quickstart#spree-sdk-generate).
+
+### Writing the specs
+
+Document each admin endpoint the way core does:
+
+```ruby spec/integration/admin/supplier_syncs_spec.rb
+require 'swagger_helper'
+
+RSpec.describe 'Supplier syncs', type: :request, swagger_doc: 'openapi/admin.yaml' do
+  path '/api/v3/admin/suppliers/{id}/sync' do
+    parameter name: :id, in: :path, type: :string, required: true, description: 'Supplier ID'
+
+    post 'Sync a supplier' do
+      tags 'Suppliers'
+      admin_operation :write, :purchasing, description: <<~DESC
+        Pulls the supplier's current catalogue and stock. Use it before raising a
+        purchase order, so the order uses today's prices.
+      DESC
+      request_body_for
+
+      response '200', 'synced' do
+        # ...
+        run_test!
+      end
+    end
+  end
+end
+```
+
+`admin_operation` sets what every admin operation repeats: the content types, the API key and bearer token headers, the scope note in the description, and a signed-in admin and secret key to call it with. A response block overrides either credential with its own `let`.
+
+`request_body_for` documents the body from the controller's `request_params` declaration, so the tool's arguments, the API reference and the SDK types all come from the one declaration that also permits the request.
+
+### Keeping an action out
+
+An action that should not be offered to agents says so in its spec, with the reason. Irreversible erasure, platform jobs and wizard steps qualify; "not done yet" does not.
+
+```ruby
+post 'Erase a supplier' do
+  agent_tool false, reason: 'Irreversible, and the supplier contract requires a person to confirm.'
+end
+```
+
+A read is not a tool unless its spec opts it in, because most custom reads are type lists, which `describe_resource` already covers, or file downloads:
+
+```ruby
+get 'List supplier statuses' do
+  agent_tool true
+end
+```
+
+### The contract spec
+
+`spec/agent_tools_spec.rb`, which the generator writes, fails when a new admin action lands undocumented, an opt-out lands without its reason, or two actions claim one tool name. Keep it in your suite.
+
+## Something that is not an endpoint
+
+A lookup against another system, a report of your own: subclass `Spree::AgentTool` and register the class by name.
+
+```ruby app/tools/my_shop/agent_tools/supplier_stock.rb
+module MyShop
+  module AgentTools
+    # Asks the supplier's API what they hold, so a merchant can ask before
+    # committing to a purchase order.
+    class SupplierStock < Spree::AgentTool
+      tool_name 'supplier_stock'
+      description 'Current stock at a supplier, by SKU.'
+      permission 'read_purchasing'
+
+      param :sku, description: 'The SKU to look up', required: true
+
+      def call(sku:)
+        stock = MyShop::SupplierApi.stock_for(sku, store: context.store)
+        return { error: "No supplier carries #{sku}." } if stock.nil?
+
+        { summary: "#{sku}: #{stock} available", sku: sku, available: stock }
+      end
+    end
+  end
+end
+```
+
+```ruby server/config/initializers/spree.rb
+Spree.admin_agent_tools << 'MyShop::AgentTools::SupplierStock'
+```
+
+Four things worth knowing when you write one:
+
+- **Registration is by name, not by class**, so your edits to a description or a parameter take effect on the next request rather than needing a restart.
+- **`context` is who is asking**: `context.store` is always the caller's store, and `context.principal` is the admin or the API key — pass it to anything that records who acted.
+- **A refusal is `{ error: '…' }`**, not an exception. The model reads that text and corrects itself, so write it as an instruction rather than a stack trace.
+- **Keep the result small.** It lands in the model's context. Return a `summary` line plus the few fields that answer the question, and let the caller ask for more.
+
+A tool is offered only to a credential holding its `permission`, so a key that cannot read purchasing never learns `supplier_stock` exists.
+
+<Note>
+  `Spree.admin_agent_tools.expose_workflows` is deprecated and has no effect: an exposed workflow behind a documented endpoint is already that endpoint's tool, and one whose endpoint is not in any OpenAPI document is not offered. It is removed in 7.0. Tool names and parameters from 6.0.0 that changed keep answering through 6.0.x, and a call that uses one says what to send instead.
+</Note>
+
+## Which registry
+
+There is one registry per surface, named the way the authentication strategies are:
+
+```ruby
+Spree.admin_agent_tools   # the back office
+Spree.store_agent_tools   # the storefront (no catalog yet)
+```
+
+A tool declares the surface it belongs to, defaulting to `:admin`, so registering one in the wrong place raises rather than being discovered when a storefront visitor is offered the back office:
+
+```ruby
+class SupplierStock < Spree::AgentTool
+  audience :admin   # the default; state it when a tool is storefront-facing
+end
+```
+
+## See also
+
+<CardGroup cols={2}>
+  <Card title="Tool reference" icon="wrench" href="/developer/mcp/tools">
+    The tools that ship, and the shape yours should follow.
+  </Card>
+  <Card title="Admin API" icon="code" href="/api-reference/admin">
+    The operations the action tools are built from.
+  </Card>
+</CardGroup>

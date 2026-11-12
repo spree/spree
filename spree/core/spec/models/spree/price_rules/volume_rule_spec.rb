@@ -11,18 +11,6 @@ describe Spree::PriceRules::VolumeRule, type: :model do
       rule.save!
       expect(rule.reload.preferred_max_quantity).to be_nil
     end
-
-    it 'preserves non-zero max_quantity' do
-      rule.preferred_max_quantity = 50
-      rule.save!
-      expect(rule.reload.preferred_max_quantity).to eq(50)
-    end
-
-    it 'preserves nil max_quantity' do
-      rule.preferred_max_quantity = nil
-      rule.save!
-      expect(rule.reload.preferred_max_quantity).to be_nil
-    end
   end
 
   describe '#applicable?' do
@@ -53,12 +41,6 @@ describe Spree::PriceRules::VolumeRule, type: :model do
     it 'returns false when quantity is nil' do
       context = Spree::Pricing::Context.new(variant: variant, currency: 'USD', quantity: nil)
       expect(rule.applicable?(context)).to be false
-    end
-  end
-  describe '#geographic?' do
-    it 'is false' do
-      # Narrowed by quantity, not by a country — its prices still restate.
-      expect(described_class.new.geographic?).to be(false)
     end
   end
 end

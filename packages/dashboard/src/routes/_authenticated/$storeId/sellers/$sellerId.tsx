@@ -1,10 +1,17 @@
 import type { Seller } from '@spree/admin-sdk'
-import { adminClient, PageHeader, Slot, Subject, usePermissions } from '@spree/dashboard-core'
+import { SELLER_STATUSES, subsetOf } from '@spree/core'
 import {
-  Badge,
+  PageHeader,
+  RecordMetadataCard,
+  Slot,
+  Subject,
+  usePermissions,
+} from '@spree/dashboard-core'
+import {
   Button,
   DropdownMenuItem,
   ErrorState,
+  RelativeTime,
   ResourceLayout,
   StatusBadge,
   useConfirm,
@@ -13,18 +20,20 @@ import { BanIcon, MailIcon, PauseIcon, UndoIcon } from '@spree/dashboard-ui/icon
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { ApiCustomFieldsCard } from '../../../../components/spree/custom-fields/custom-fields-inline'
+import { EnterprisePreviewNote } from '../../../../components/spree/enterprise-upsell'
 import { ResourceDetailSkeleton } from '../../../../components/spree/route-pending'
-import { SellerAddressCard } from '../../../../components/spree/sellers/seller-address-card'
-import { SellerAtAGlanceCard } from '../../../../components/spree/sellers/seller-at-a-glance-card'
 import { SellerBalanceCard } from '../../../../components/spree/sellers/seller-balance-card'
 import { SellerBrandCard } from '../../../../components/spree/sellers/seller-brand-card'
 import { SellerContactCard } from '../../../../components/spree/sellers/seller-contact-card'
-import { SellerEditProfileSheet } from '../../../../components/spree/sellers/seller-edit-profile-sheet'
-import { SellerEditSettlementSheet } from '../../../../components/spree/sellers/seller-edit-settlement-sheet'
+import { SellerHolidayCard } from '../../../../components/spree/sellers/seller-holiday-card'
 import { SellerInviteSheet } from '../../../../components/spree/sellers/seller-invite-sheet'
 import { SellerOnboardingCard } from '../../../../components/spree/sellers/seller-onboarding-card'
+import { SellerOrdersSection } from '../../../../components/spree/sellers/seller-orders-section'
+import { SellerProductsSection } from '../../../../components/spree/sellers/seller-products-section'
 import { SellerSettlementCard } from '../../../../components/spree/sellers/seller-settlement-card'
-import { SellerStatusCard } from '../../../../components/spree/sellers/seller-status-card'
+import { SellerStats } from '../../../../components/spree/sellers/seller-stats'
+import { SellerStockLocationsCard } from '../../../../components/spree/sellers/seller-stock-locations-card'
 import { SellerTeamCard } from '../../../../components/spree/sellers/seller-team-card'
 import { useSellerOnboarding } from '../../../../hooks/use-seller-requirements'
 import {
@@ -35,7 +44,23 @@ import {
   useSeller,
   useSuspendSeller,
 } from '../../../../hooks/use-sellers'
-import { spreeJsonLinkResolver } from '../../../../lib/json-link-resolver'
+
+// Mirrors the workflow guards, so the operator is never offered a move the
+// server would refuse.
+const INVITABLE = subsetOf(SELLER_STATUSES, ['pending', 'invited', 'canceled'])
+const APPROVABLE = subsetOf(SELLER_STATUSES, [
+  'onboarding',
+  'ready_for_review',
+  'suspended',
+  'rejected',
+])
+const SUSPENDABLE = subsetOf(SELLER_STATUSES, ['approved', 'onboarding', 'ready_for_review'])
+const REJECTABLE = subsetOf(SELLER_STATUSES, [
+  'pending',
+  'invited',
+  'onboarding',
+  'ready_for_review',
+])
 
 export const Route = createFileRoute('/_authenticated/$storeId/sellers/$sellerId')({
   component: SellerDetailPage,
@@ -62,9 +87,9 @@ function SellerDetailPage() {
 
 /**
  * A seller's page is something you read first. The lifecycle sits in the
- * header, the profile below it, and every editable section opens its own
- * sheet — so arriving here shows you who the seller is rather than dropping
- * you into a form.
+ * header, the profile below it, and every section has its own pencil that
+ * edits it in place — so arriving here shows you who the seller is rather
+ * than dropping you into a form.
  */
 function SellerBody({ seller }: { seller: Seller }) {
   const { t } = useTranslation()
@@ -74,8 +99,6 @@ function SellerBody({ seller }: { seller: Seller }) {
   const confirm = useConfirm()
   const deleteMutation = useDeleteSeller()
 
-  const [editingProfile, setEditingProfile] = useState(false)
-  const [editingSettlement, setEditingSettlement] = useState(false)
   const [inviting, setInviting] = useState(false)
 
   const approveMutation = useApproveSeller(seller.id)
@@ -89,12 +112,10 @@ function SellerBody({ seller }: { seller: Seller }) {
   const canEdit = permissions.can('update', Subject.Seller)
   const status = seller.status
 
-  // Mirrors the workflow guards, so the operator is never offered a move the
-  // server would refuse.
-  const canInvite = ['pending', 'invited', 'canceled'].includes(status)
-  const canApprove = ['onboarding', 'ready_for_review', 'suspended', 'rejected'].includes(status)
-  const canSuspend = ['approved', 'onboarding', 'ready_for_review'].includes(status)
-  const canReject = ['pending', 'invited', 'onboarding', 'ready_for_review'].includes(status)
+  const canInvite = INVITABLE.includes(status)
+  const canApprove = APPROVABLE.includes(status)
+  const canSuspend = SUSPENDABLE.includes(status)
+  const canReject = REJECTABLE.includes(status)
 
   const busy =
     approveMutation.isPending || suspendMutation.isPending || rejectMutation.isPending || !canEdit
@@ -229,82 +250,63 @@ function SellerBody({ seller }: { seller: Seller }) {
     <>
       <ResourceLayout
         header={
-          <PageHeader
-            title={seller.name}
-            subtitle={seller.contact_email ?? undefined}
-            backTo="sellers"
-            badges={
-              <>
-                <StatusBadge status={status} label={t(`admin.sellers.status.${status}`)} />
-                {seller.onboarding_progress.total > 0 && !seller.onboarding_complete && (
-                  <Badge variant="secondary">
-                    {t('admin.sellers.onboarding.progress', {
-                      done: seller.onboarding_progress.done,
-                      total: seller.onboarding_progress.total,
-                    })}
-                  </Badge>
-                )}
-              </>
-            }
-            actions={primaryAction}
-            dropdownItems={dropdownItems}
-            destructiveItems={destructiveItems}
-            resource={{ id: seller.id }}
-            jsonPreview={{
-              title: `Seller ${seller.name}`,
-              fetch: () => adminClient.sellers.get(seller.id),
-              endpoint: `/api/v3/admin/sellers/${seller.id}`,
-              resolveLink: spreeJsonLinkResolver(storeId),
-            }}
-            onDelete={permissions.can('destroy', Subject.Seller) ? handleDelete : undefined}
-            deleteLabel={t('admin.sellers.detail.delete_label')}
-          />
+          <>
+            <PageHeader
+              title={seller.name}
+              subtitle={
+                <>
+                  {t(`admin.sellers.status_help.${status}`, {
+                    defaultValue: t('admin.sellers.status_help.pending'),
+                  })}{' '}
+                  <span className="whitespace-nowrap">
+                    · {t('admin.sellers.detail.joined')} <RelativeTime iso={seller.created_at} />
+                  </span>
+                </>
+              }
+              backTo="sellers"
+              badges={<StatusBadge status={status} label={t(`admin.sellers.status.${status}`)} />}
+              actions={primaryAction}
+              dropdownItems={dropdownItems}
+              destructiveItems={destructiveItems}
+              resource={seller}
+              endpoint={`/api/v3/admin/sellers/${seller.id}`}
+              onDelete={permissions.can('destroy', Subject.Seller) ? handleDelete : undefined}
+              deleteLabel={t('admin.sellers.detail.delete_label')}
+            />
+            <SellerStats seller={seller} />
+          </>
         }
         main={
           <>
-            <SellerBrandCard
-              seller={seller}
-              canEdit={canEdit}
-              onEdit={() => setEditingProfile(true)}
-            />
-            <SellerOnboardingCard seller={seller} canEdit={canEdit} />
+            <SellerBrandCard seller={seller} canEdit={canEdit} />
+            {permissions.can('read', Subject.Product) && <SellerProductsSection seller={seller} />}
+            {permissions.can('read', Subject.Order) && <SellerOrdersSection seller={seller} />}
             <SellerTeamCard seller={seller} onInvite={() => setInviting(true)} />
+            <SellerStockLocationsCard seller={seller} />
+            <ApiCustomFieldsCard ownerType="seller" ownerId={seller.id} collapsible />
+            <RecordMetadataCard
+              metadata={seller.metadata}
+              externalReferences={seller.external_references}
+            />
             <Slot name="seller.form_main" context={{ seller, canEdit }} />
           </>
         }
         sidebar={
           <>
-            <SellerStatusCard seller={seller} />
-            <SellerAtAGlanceCard seller={seller} />
+            <SellerOnboardingCard seller={seller} canEdit={canEdit} />
             <SellerBalanceCard seller={seller} />
-            <SellerContactCard
-              seller={seller}
-              canEdit={canEdit}
-              onEdit={() => setEditingProfile(true)}
-            />
-            <SellerAddressCard seller={seller} addressKey="billing_address" canEdit={canEdit} />
-            <SellerAddressCard seller={seller} addressKey="returns_address" canEdit={canEdit} />
-            <SellerSettlementCard
-              seller={seller}
-              canEdit={canEdit}
-              onEdit={() => setEditingSettlement(true)}
-            />
+            <SellerHolidayCard seller={seller} canEdit={canEdit} />
+            <SellerContactCard seller={seller} canEdit={canEdit} />
+            <SellerSettlementCard seller={seller} canEdit={canEdit} />
+            <EnterprisePreviewNote previewKey="sellers.shopify" />
             <Slot name="seller.form_sidebar" context={{ seller, canEdit }} />
           </>
         }
       />
 
-      <SellerEditProfileSheet
-        seller={seller}
-        open={editingProfile}
-        onOpenChange={setEditingProfile}
-      />
-      <SellerEditSettlementSheet
-        seller={seller}
-        open={editingSettlement}
-        onOpenChange={setEditingSettlement}
-      />
-      {inviting && <SellerInviteSheet seller={seller} open onOpenChange={setInviting} />}
+      {inviting && (
+        <SellerInviteSheet seller={seller} addToTeam={!canInvite} open onOpenChange={setInviting} />
+      )}
     </>
   )
 }

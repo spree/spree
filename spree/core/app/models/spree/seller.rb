@@ -22,7 +22,7 @@ module Spree
     # #payout_account_reference.
     include Spree::HasExternalReferences
 
-    MEMOIZED_METHODS = %w[onboarding_requirements onboarding_progress products_count returns_location].freeze
+    MEMOIZED_METHODS = %w[onboarding_requirements onboarding_progress products_count_by_status returns_location].freeze
 
     publishes_lifecycle_events
     publishes_events :approved, :invited, :onboarding_reopened, :onboarding_started, :rejected,
@@ -40,6 +40,12 @@ module Spree
     include Spree::HasStatus
     has_status :pending, :invited, :canceled, :onboarding, :ready_for_review,
                :approved, :rejected, :suspended, default: :pending
+
+    # The storefront lists approved sellers only, and a seller's contact
+    # address is back-office data.
+    self.whitelisted_ransackable_attributes = %w[status contact_email]
+    search_by :name
+    self.private_ransackable_attributes = { store: %w[status contact_email], seller: %w[status contact_email] }
 
     # Who remits consumer tax on this seller's sales. `seller` means they are
     # merchant of record; `platform` is the marketplace-facilitator case, and
@@ -99,6 +105,36 @@ module Spree
       super
       billing_address&.owner = self
     end
+
+    # The address fields a stock location keeps on itself, as the API names
+    # them. A location is a place rather than a person, so it has no name or
+    # label of its own.
+    RETURNS_ADDRESS_FIELDS = %w[company address1 address2 city postal_code country_code state_code state_name
+                                phone].freeze
+
+    # The API writes the returns address inline, like the billing address. It
+    # is the returns location's own address, so it lands on that location — a
+    # new one for a seller who has none — and a received return still restocks
+    # somewhere the catalog knows. Saved with the seller, in its transaction.
+    def returns_address=(attributes)
+      attributes = attributes.to_h.stringify_keys.slice(*RETURNS_ADDRESS_FIELDS)
+      attributes['zipcode'] = attributes.delete('postal_code') if attributes.key?('postal_code')
+
+      # Not built through the association: that would validate and save it a
+      # second time, under a generic "stock locations is invalid".
+      location = returns_location ||
+                 Spree::StockLocation.new(active: true, returns_enabled: true, propagate_all_variants: false)
+      # A state belongs to its country, so a new country drops the old state
+      # unless one comes with it.
+      if attributes.key?('country_code') && attributes['country_code'].to_s.upcase != location.country_code.to_s.upcase
+        attributes = { 'state_code' => nil, 'state_name' => nil }.merge(attributes)
+      end
+      location.assign_attributes(attributes)
+      @returns_location = @pending_returns_location = location
+    end
+
+    validate :validate_returns_location, if: -> { @pending_returns_location }
+    after_save :save_returns_location, if: -> { @pending_returns_location }
 
     # Where this seller keeps stock, and so where their returns land. Released
     # rather than destroyed for the same reason products are: the operator
@@ -196,6 +232,7 @@ module Spree
     has_one_attached :logo, service: Spree.public_storage_service_name
     has_one_attached :square_logo, service: Spree.public_storage_service_name
     has_one_attached :cover_photo, service: Spree.public_storage_service_name
+    signed_id_attachments :logo, :square_logo, :cover_photo
 
     #
     # Validations
@@ -303,10 +340,7 @@ module Spree
     #
     # @return [Array<Spree::SellerBalance>]
     def balances
-      pairs = seller_transfers.where.not(status: 'failed').
-              distinct.pluck(:currency, :settled_currency)
-
-      pairs.sort.map { |currency, settlement| Spree::SellerBalance.for(self, currency, settlement) }
+      Spree::SellerBalance.all_for(self)
     end
 
     # The seller's account with whichever provider pays them — a Stripe Connect
@@ -340,7 +374,7 @@ module Spree
     # A seller keeps no clock of their own: a date means whatever the
     # marketplace says it means, so their panel reads timestamps in the
     # store's zone rather than in whichever one their browser sits in.
-    delegate :preferred_timezone, to: :store, allow_nil: true
+    delegate :preferred_timezone, :timezone, to: :store, allow_nil: true
 
     # Sellers holding an account with one provider, for the reverse lookup a
     # provider webhook does — it knows the account, not the seller.
@@ -392,6 +426,10 @@ module Spree
     # returns; falls back to any active one, since a seller with none marked
     # still has to receive what customers send back.
     def returns_location
+      if stock_locations.loaded? || lazy_preload_context
+        return @returns_location ||= returns_location_from_loaded
+      end
+
       @returns_location ||= stock_locations.active.returns_enabled.order_default.first ||
                             stock_locations.active.order_default.first
     end
@@ -410,9 +448,42 @@ module Spree
       location.address
     end
 
+    # A team is small, so on a list its members are loaded for every seller
+    # at once rather than counted one seller at a time.
+    #
+    # @return [Integer] how many people are on this seller's team
+    def users_count
+      users.loaded? || lazy_preload_context ? users.to_a.size : users.count
+    end
+
     # @return [Integer] how many products this seller lists
     def products_count
-      @products_count ||= products.count
+      products_count_by_status.values.sum
+    end
+
+    # How many of this seller's products sit in each status, every status
+    # present: what the operator reads off a seller to see what is live and
+    # what is waiting on them. On a list, one grouped query serves every
+    # seller on the page.
+    #
+    # @return [Hash{String => Integer}]
+    def products_count_by_status
+      return @products_count_by_status if @products_count_by_status
+
+      blank = Spree::Product::ALL_STATUSES.index_with(0)
+      # An unsaved seller has no id, and `seller_id IS NULL` would count the
+      # operator's own catalog.
+      return blank if new_record?
+
+      siblings = (lazy_preload_context&.records&.grep(self.class).presence || [self]).select(&:persisted?)
+      counts = Spree::Product.where(seller_id: siblings.map(&:id)).group(:seller_id, :status).count
+      by_seller = counts.group_by { |(seller_id, _status), _count| seller_id }
+      siblings.each do |seller|
+        seller.preloaded_products_count_by_status = blank.merge(
+          by_seller.fetch(seller.id, []).to_h { |(_seller_id, status), count| [status, count] }
+        )
+      end
+      @products_count_by_status
     end
 
     # Where this seller stands against the marketplace's checklist
@@ -458,7 +529,56 @@ module Spree
       onboarding_requirements.none?(&:blocking?)
     end
 
+    protected
+
+    def preloaded_products_count_by_status=(counts)
+      @products_count_by_status = counts
+    end
+
     private
+
+    # Reported under the names the client sent, so a 422 lands on the field.
+    def validate_returns_location
+      location = @pending_returns_location
+      # Filled in here rather than in the writer: on create, the name and the
+      # store may be assigned after the address. The id rather than the
+      # record, which would add the location to `stock_locations` and have it
+      # validated a second time.
+      location.seller_id = id
+      location.store ||= store
+      location.name ||= name
+      return if location.valid?
+
+      # Before the seller has an id, uniqueness compares against the
+      # operator's own locations; the save after the seller re-checks it.
+      location.errors.delete(:name, :taken) if new_record?
+      return if location.errors.empty?
+
+      location.errors.each do |error|
+        field = error.attribute == :zipcode ? :postal_code : error.attribute
+        errors.import(error, attribute: :"returns_address.#{field}")
+      end
+    end
+
+    def save_returns_location
+      location = @pending_returns_location
+      @pending_returns_location = nil
+      location.seller_id = id
+      return unless location.new_record? || location.changed?
+
+      location.save!
+      # A new location is not in a list loaded before it existed, and the
+      # returns location is read from that list once the memo clears.
+      stock_locations.reset
+    end
+
+    # The same choice as the query in {#returns_location}, made over the
+    # preloaded locations.
+    def returns_location_from_loaded
+      active_locations = stock_locations.select(&:active?).sort_by { |location| [location.default? ? 0 : 1, location.name.to_s] }
+
+      active_locations.find(&:returns_enabled?) || active_locations.first
+    end
 
 
     def normalize_slug

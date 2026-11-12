@@ -1,5 +1,86 @@
 {
   "admin": {
+    "maintenance_tasks": {
+      "actions": {
+        "cancel_run": "Cancelar ejecución"
+      },
+      "cancel_confirm": {
+        "message": "La tarea se detiene en su próximo punto de control. El trabajo ya hecho se conserva: cancelar no lo deshace.",
+        "title": "¿Cancelar esta ejecución?"
+      },
+      "description": "Ejecuta los pasos de datos de una actualización de Spree y sigue su progreso. Cada ejecución queda registrada.",
+      "dry_run_badge": "Vista previa",
+      "history": {
+        "empty_title": "Todavía no hay ejecuciones",
+        "search_placeholder": "Buscar por nombre de tarea…",
+        "table": {
+          "initiated_by": "Iniciada por",
+          "processed": "Procesados",
+          "status": "Estado",
+          "task": "Tarea"
+        },
+        "title": "Historial de ejecuciones"
+      },
+      "initiated_via": {
+        "api": "Iniciada a través de la API",
+        "cli": "Iniciada desde la línea de comandos",
+        "dashboard": "Iniciada desde el panel"
+      },
+      "messages": {
+        "canceled": "Cancelando la ejecución",
+        "start_failed": "No se pudo iniciar la tarea",
+        "started": "Tarea iniciada"
+      },
+      "run": {
+        "arguments": "Argumentos",
+        "duration": "Duración",
+        "ended": "Finalizada",
+        "error": "Error",
+        "initiated_by": "Iniciada por",
+        "loading": "Cargando ejecución…",
+        "processed_count": "{{count}} procesados",
+        "progress_label": "Progreso",
+        "results": "Resultados",
+        "seconds": "{{count}} s",
+        "show_backtrace": "Mostrar detalle técnico",
+        "started": "Iniciada"
+      },
+      "status": {
+        "cancelled": "Cancelada",
+        "cancelling": "Cancelando…",
+        "enqueued": "En cola",
+        "errored": "Fallida",
+        "interrupted": "Reanudando…",
+        "running": "En ejecución",
+        "succeeded": "Completada"
+      },
+      "tabs": {
+        "history": "Historial",
+        "upgrade": "Actualización"
+      },
+      "title": "Tareas de mantenimiento",
+      "unavailable": "Las tareas de mantenimiento no están disponibles para ti. En algunas instalaciones están desactivadas, y quien opera la instalación ejecuta los pasos de actualización desde la línea de comandos.",
+      "upgrade": {
+        "already_completed": "Completada",
+        "boundary": "Spree {{from}} → {{to}}",
+        "confirm": {
+          "message": "Los pasos tienen un orden: ejecuta primero los anteriores. Esto escribe en tus datos y no se puede deshacer.",
+          "title": "¿Ejecutar «{{name}}»?"
+        },
+        "description": "Pasos de datos que necesita esta versión, en el orden en que deben ejecutarse.",
+        "hide_steps": "Ocultar pasos",
+        "history_description": "Ya completado en esta tienda.",
+        "progress": "{{done}} de {{total}} hechos",
+        "read_guide": "Leer la guía de actualización",
+        "run_again": "Ejecutar de nuevo",
+        "run_next": "Ejecutar el siguiente paso",
+        "run_step": "Ejecutar",
+        "show_steps": "Mostrar pasos",
+        "title": "Actualizar a Spree {{version}}",
+        "up_to_date_description": "Cuando actualices Spree a una nueva versión, aquí aparecerán los pasos de datos que necesita esa versión, listos para ejecutarse en orden.",
+        "up_to_date_title": "Tu tienda está al día"
+      }
+    },
     "pages": {
       "channels": {
         "add_cta": "Nuevo canal de venta",
@@ -64,6 +145,10 @@
         "new_cta": "Nuevo cliente"
       },
       "getting_started": {
+        "completed": {
+          "description": "Has completado todos los pasos de Primeros pasos.",
+          "title": "Tu tienda está configurada"
+        },
         "description": "Completá estos pasos para lanzar tu tienda.",
         "progress": "{{done}} de {{total}} completados",
         "storefront_sheet": {
@@ -101,6 +186,7 @@
             "cta": "Guardar dirección",
             "description": "Tu dirección de envío y devoluciones. Los transportistas la usan para calcular las tarifas de entrega, y es a donde se envían las devoluciones de los clientes.",
             "no_location": "Todavía no tenés ninguna ubicación de stock propia: creá una en Configuración para agregar una dirección.",
+            "saved": "Dirección de envío guardada",
             "title": "Agregá tu dirección de envío"
           },
           "setup_payment_method": {
@@ -151,7 +237,6 @@
           "previous": "Período anterior"
         },
         "growth": {
-          "new": "Nuevo",
           "vs_previous": "vs período anterior"
         },
         "operations": {
@@ -163,8 +248,11 @@
             "low_stock_items": {
               "label": "Stock bajo",
               "description_zero": "Desactivado. Definí un umbral de stock bajo en la configuración de la tienda para usarlo.",
-              "description_one": "Queda 1 unidad o menos por vender en una ubicación.",
-              "description_other": "Quedan {{count}} unidades o menos por vender en una ubicación."
+              "description_one": "Queda 1 unidad o menos por vender entre todas las ubicaciones.",
+              "description_other": "Quedan {{count}} unidades o menos por vender entre todas las ubicaciones.",
+              "hint_zero": "Desactivado",
+              "hint_one": "≤ {{count}}",
+              "hint_other": "≤ {{count}}"
             },
             "open_claims": {
               "label": "Reclamos abiertos",
@@ -184,12 +272,19 @@
             },
             "out_of_stock_items": {
               "label": "Sin stock",
-              "description": "No queda nada por vender en una ubicación."
+              "description": "No queda nada por vender en ninguna ubicación."
             },
             "payments_to_collect": {
               "label": "Pagos por cobrar",
               "description": "Pedidos realizados que todavía deben dinero."
             }
+          },
+          "all_clear": "Todo al día.",
+          "groups": {
+            "orders": "Pedidos",
+            "post_sale": "Devoluciones y reclamaciones",
+            "inventory": "Inventario",
+            "other": "Otros"
           }
         },
         "rankings": {
@@ -220,7 +315,8 @@
         },
         "currency": {
           "search": "Buscar monedas"
-        }
+        },
+        "chart_sparse": "Aún no hay datos suficientes para mostrar una tendencia"
       },
       "orders": {
         "detail": {
@@ -348,15 +444,32 @@
         "drafts_title": "Pedidos en borrador",
         "new": {
           "add_line_item": "Agregar línea de pedido",
+          "address_help": "Deja una dirección sin elegir para introducirla en el pedido más adelante. Un pedido de empresa puede usar las sedes de esa empresa y las que hereda.",
+          "company_addresses": "Direcciones de la empresa",
           "company_help": "Vinculá este pedido a una empresa. La lista de clientes mostrará solo a quienes puedan comprar para ella.",
-          "search_variant": "Buscar variante…",
+          "customer_addresses": "Direcciones del cliente",
+          "items_empty": {
+            "description": "Añade los productos de este pedido.",
+            "title": "Aún no hay artículos"
+          },
+          "reset_items": {
+            "confirm": "Cambiar y quitar artículos",
+            "message_many": "Es posible que los {{count}} artículos elegidos no se vendan, o cuesten otra cosa, para este comprador, mercado o canal. Se quitarán.",
+            "message_one": "Es posible que el {{count}} artículo elegido no se venda, o cueste otra cosa, para este comprador, mercado o canal. Se quitará.",
+            "message_other": "Es posible que los {{count}} artículos elegidos no se vendan, o cuesten otra cosa, para este comprador, mercado o canal. Se quitarán.",
+            "title": "¿Quitar los artículos elegidos?"
+          },
           "section_billing": "Facturación",
           "section_customer": "Cliente",
           "section_items": "Artículos",
+          "section_market": "Mercado y canal",
+          "section_market_help": "Lo que se puede vender, y a qué precio, depende del comprador, el mercado y el canal.",
           "section_notes": "Notas",
           "section_summary": "Resumen",
+          "select_billing_address": "Dirección de facturación",
           "select_company": "Empresa (opcional)",
           "select_customer": "Seleccionar cliente",
+          "select_shipping_address": "Dirección de envío",
           "title": "Nuevo pedido"
         }
       },
@@ -467,7 +580,6 @@
           "logo_dimensions_help": "Recomendado: 204×104 píxeles.",
           "section_addresses": "Direcciones de email",
           "section_delivery": "Entrega",
-          "section_logo": "Logo",
           "subtitle": "Direcciones de remitente, notificaciones y el logo incorporado en los emails transaccionales.",
           "title": "Configuración de email",
           "branding": {
@@ -522,14 +634,11 @@
         },
         "store": {
           "subtitle": "Configuración general y valores predeterminados de toda la tienda.",
-          "tab_addresses": "Direcciones",
           "tab_catalog": "Catálogo",
           "tab_general": "General",
           "tab_inventory": "Inventario",
           "tab_order_numbers": "Numeración de pedidos",
-          "tab_payments": "Pagos",
           "tab_standards": "Estándares y formatos",
-          "tab_storefront_access": "Acceso del storefront",
           "title": "Configuración de la tienda",
           "tab_downloads": "Descargas digitales",
           "downloads_help": "Cuánto tiempo funciona un enlace de descarga y cuántas veces se puede usar. Los archivos individuales pueden reemplazar estos valores.",
@@ -627,6 +736,7 @@
             "import_row": "Fila de importación",
             "invitation": "Invitación",
             "line_item": "Línea de pedido",
+            "maintenance_task_run": "Ejecución de tarea de mantenimiento",
             "media": "Medios",
             "newsletter_subscriber": "Suscriptor de newsletter",
             "order": "Pedido",
@@ -636,6 +746,8 @@
             "payment_setup_session": "Sesión de configuración de pago",
             "price": "Precio",
             "product": "Producto",
+            "product_category": "Categoría de producto",
+            "product_collection": "Colección de productos",
             "product_submission": "Envío de producto",
             "promotion": "Promoción",
             "purchase_order": "Orden de compra",
@@ -718,8 +830,93 @@
           "payouts_description": "Cómo y cuándo paga este marketplace a sus vendedores. Un vendedor puede tener su propia frecuencia y su propio mínimo.",
           "admission_title": "Aprobación de vendedores",
           "admission_description": "Activar cualquiera de estas opciones elimina una decisión humana. Está bien en un marketplace solo por invitación; es arriesgado en uno abierto a cualquiera.",
+          "seller_files_title": "Archivos de vendedores",
+          "seller_files_description": "Si los vendedores pueden adjuntar archivos descargables a sus productos, de qué tipos, y si cambiar un archivo en un producto aprobado requiere otra revisión.",
           "communication_title": "Comunicación",
           "commission_tax_title": "Impuesto sobre la comisión"
+        },
+        "ai_agents": {
+          "title": "Agentes de IA",
+          "subtitle": "Agentes de IA conectados a tu tienda. Conecta Claude, ChatGPT y otros para gestionar tu tienda",
+          "empty": "Aún no se ha conectado ningún agente.",
+          "revoke": "Revocar acceso",
+          "table": {
+            "access": "Acceso",
+            "status": "Estado"
+          },
+          "revoke_confirm": {
+            "title": "¿Revocar el acceso?",
+            "message": "{{who}} perderá el acceso a {{name}} de inmediato. El resto sigue conectado."
+          },
+          "manage_connections": "Gestionar conexiones",
+          "connections": {
+            "person": "Persona",
+            "empty": "Nadie está conectado mediante este agente.",
+            "unknown_person": "Desconocido",
+            "count_one": "{{count}} persona conectada",
+            "count_other": "{{count}} personas conectadas",
+            "connected": "Conectado"
+          }
+        },
+        "oauth_clients": {
+          "title": "Clientes OAuth",
+          "subtitle": "Los clientes OAuth registrados para esta tienda",
+          "empty": "Aún no hay clientes registrados.",
+          "register": "Registrar un cliente",
+          "table": {
+            "client_id": "ID de cliente",
+            "created": "Registrado"
+          },
+          "delete_confirm": {
+            "title": "¿Eliminar este cliente?",
+            "message": "{{name}} dejará de funcionar de inmediato y se eliminará su registro."
+          },
+          "form": {
+            "create_title": "Registrar un cliente",
+            "edit_title": "Editar cliente",
+            "description": "Registre un cliente OAuth para poder conectarlo a esta tienda."
+          },
+          "copy_client_id": "Copiar ID de cliente"
+        },
+        "payments": {
+          "title": "Pagos",
+          "description": "Los proveedores de pago y métodos manuales con los que pagan los clientes, y cuándo se cobran los pagos.",
+          "providers_title": "Proveedores de pago",
+          "providers_empty": {
+            "title": "No hay proveedores de pago disponibles",
+            "description": "Instala una extensión de proveedor de pago para aceptar tarjetas y billeteras."
+          },
+          "manual_title": "Métodos de pago manuales",
+          "add_manual": "Añadir método manual",
+          "manual_empty": {
+            "title": "No hay métodos de pago manuales",
+            "description": "Recibe pagos fuera de tu tienda, como cheques, transferencias bancarias o contra reembolso."
+          },
+          "capture_title": "Cobro de pagos",
+          "checkout_order": {
+            "cta": "Orden en el checkout",
+            "title": "Orden en el checkout",
+            "description": "Arrastra para fijar el orden en que los clientes ven los métodos de pago en el checkout. Solo se muestran los métodos activos visibles en la tienda.",
+            "empty": {
+              "title": "No se ofrece nada en el checkout",
+              "description": "Activa un método de pago y muéstralo en la tienda para que aparezca aquí."
+            }
+          },
+          "test_gateway": "Pasarela de prueba"
+        },
+        "storefront": {
+          "title": "Tienda y checkout",
+          "description": "Dónde está tu tienda, quién puede navegarla y qué pide el checkout a los clientes.",
+          "storefront_title": "Tienda",
+          "checkout_title": "Checkout",
+          "addresses_title": "Direcciones",
+          "url": {
+            "label": "URL de la tienda",
+            "not_connected": "Aún sin conectar",
+            "connect": "Conectar",
+            "change": "Cambiar",
+            "help": "Donde compran los clientes. Spree enlaza a ella desde los correos y el panel, y le permite llamar a la Store API."
+          }
         }
       },
       "staff": {
@@ -748,9 +945,26 @@
         "table": {
           "member": "Miembro",
           "role": "Rol",
-          "roles": "Roles"
+          "roles": "Roles",
+          "status": "Estado",
+          "last_active": "Última actividad"
         },
-        "title": "Staff"
+        "title": "Staff",
+        "status": {
+          "active": "Activo",
+          "locked": "Bloqueado",
+          "deactivated": "Desactivado"
+        },
+        "details": {
+          "joined": "Se unió",
+          "invited_by": "Invitado por",
+          "load_failed": "No se pudieron cargar estos detalles. Cierra el panel e inténtalo de nuevo."
+        },
+        "sessions": {
+          "title": "Sesiones",
+          "empty": "No hay sesiones activas.",
+          "unknown_device": "Dispositivo desconocido"
+        }
       },
       "translations": {
         "complete": "Traducido por completo",
@@ -834,12 +1048,6 @@
           "bulk_prices": {
             "no_variants": "Agregá al menos una variante para empezar a editar precios."
           }
-        },
-        "inventory": {
-          "in_stock": "{{count}} en stock",
-          "in_stock_short": "Con stock",
-          "on_backorder": "En contrarreserva",
-          "out_of_stock": "Sin stock"
         },
         "media_empty": "Todavía no hay multimedia.",
         "media_upload": "Subir multimedia",
@@ -1000,6 +1208,8 @@
           "manage_cta": "Administrar",
           "manage_description": "Elegí qué canales de venta publican este producto. Desactivá un canal para despublicarlo en todos lados.",
           "manage_title": "Administrar canales de venta",
+          "missing_price_description": "Los compradores solo ven productos con precio en su moneda. Añade uno en Precios y guarda, o activa Mostrar productos sin precio en Configuración → Tienda.",
+          "missing_price_title": "Oculto para los compradores que pagan en {{currencies}}",
           "no_channels": "No hay canales de venta disponibles. Creá uno en Configuración → Canales de venta.",
           "status_hidden": "Oculto",
           "status_live": "Activo",
@@ -1033,9 +1243,21 @@
           "section_to": "Hasta",
           "sheet_title": "Nueva transferencia de inventario"
         },
-        "variants_empty": "Todavía no hay variantes.",
-        "variants_one": "{{count}} variante",
-        "variants_other": "{{count}} variantes"
+        "variants_empty": "Todavía no hay variantes."
+      },
+      "oauth": {
+        "authorize": {
+          "title": "Autorizar aplicación",
+          "subtitle": "Revise lo que pide esta aplicación antes de permitirla.",
+          "intro": "{{client}} quiere acceder a esta tienda en su nombre. Solo podrá hacer lo que usted permita a continuación, y nunca más de lo que permitan sus propios permisos.",
+          "permissions_heading": "Permisos",
+          "revoke_hint": "Puede revocarlo en cualquier momento en Configuración → Aplicaciones conectadas.",
+          "approve": "Permitir acceso",
+          "deny": "Cancelar",
+          "invalid_request": "Esta solicitud de autorización no es válida. Vuelva a empezar desde la aplicación que le envió aquí.",
+          "decision_failed": "No se pudo registrar la decisión. Inténtelo de nuevo.",
+          "withheld": "No se ofrece porque su propio rol no incluye: {{permissions}}"
+        }
       }
     },
     "fields": {
@@ -1138,8 +1360,7 @@
           "inherit": "Heredar de la tienda",
           "label": "Estrategia de ruteo de pedidos",
           "options": {
-            "Spree::OrderRouting::Strategy::Legacy": "Legacy",
-            "Spree::OrderRouting::Strategy::Rules": "Reglas (ordenadas)"
+            "rules": "Reglas (ordenadas)"
           }
         },
         "storefront_access": {
@@ -1238,7 +1459,8 @@
       },
       "company_membership": {
         "email": {
-          "help": "Un cliente existente se suma de inmediato; cualquier otro recibe una invitación por email.",
+          "label": "O invitar por correo electrónico",
+          "help": "Quien aún no sea cliente recibe una invitación por correo electrónico.",
           "placeholder": "comprador@example.com"
         }
       },
@@ -1274,14 +1496,29 @@
         "resource_type": {
           "label": "Se aplica a",
           "options": {
-            "Spree::OptionType": "Tipos de opción",
-            "Spree::Order": "Pedidos",
-            "Spree::Product": "Productos",
-            "Spree::Taxon": "Categorías",
-            "Spree::Customer": "Clientes",
-            "Spree::Variant": "Variantes"
+            "option_type": "Tipos de opción",
+            "order": "Pedidos",
+            "product": "Productos",
+            "category": "Categorías",
+            "customer": "Clientes",
+            "variant": "Variantes",
+            "seller": "Vendedores",
+            "collection": "Colecciones",
+            "promotion": "Promociones",
+            "gift_card": "Tarjetas de regalo",
+            "store_credit": "Créditos de tienda",
+            "stock_transfer": "Transferencias",
+            "purchase_order": "Órdenes de compra",
+            "company": "Empresas",
+            "payment_method": "Métodos de pago",
+            "delivery_method": "Métodos de entrega",
+            "tax_rate": "Tasas de impuestos",
+            "product_type": "Tipos de producto",
+            "media": "Medios",
+            "store": "Tienda"
           },
-          "read_only_help": "El propietario no se puede cambiar una vez que existen valores para este campo."
+          "read_only_help": "El propietario no se puede cambiar una vez que existen valores para este campo.",
+          "api_only_group": "Solo a través de la API"
         },
         "searchable": {
           "help": "Incluir los valores en la búsqueda de texto de productos del storefront (solo texto corto, texto largo y número). Después de activarlo con Meilisearch, ejecutá rake spree:search:reindex para actualizar los productos existentes.",
@@ -1431,14 +1668,6 @@
           "label": "Cantidad"
         }
       },
-      "invitation_acceptance": {
-        "password": {
-          "label": "Contraseña"
-        },
-        "password_confirmation": {
-          "label": "Confirmar contraseña"
-        }
-      },
       "issued_at": {
         "label": "Emitido el"
       },
@@ -1470,8 +1699,8 @@
           "label": "Idiomas admitidos"
         },
         "tax_inclusive": {
-          "help": "Mostrar los precios con impuestos incluidos. Común en mercados de la UE.",
-          "label": "Precios con impuestos incluidos"
+          "help": "Activado: los clientes pagan el precio que introduces, con los impuestos incluidos. Desactivado: los impuestos se añaden al finalizar la compra.",
+          "label": "Los precios incluyen impuestos"
         },
         "tax_provider": {
           "help": "Qué motor calcula los impuestos de los pedidos de este mercado.",
@@ -1542,6 +1771,10 @@
           "label": "Código de cupón",
           "placeholder": "Opcional"
         },
+        "currency": {
+          "help": "La define el mercado.",
+          "label": "Moneda"
+        },
         "customer_note": {
           "label": "Nota del cliente (visible para el cliente)"
         },
@@ -1551,6 +1784,14 @@
         },
         "internal_note": {
           "label": "Nota interna (solo staff)"
+        },
+        "locale": {
+          "label": "Idioma",
+          "help": "Se usa en los correos y documentos que recibe el cliente."
+        },
+        "market": {
+          "label": "Mercado",
+          "help": "Define los precios e impuestos del pedido, y qué moneda e idiomas puede usar."
         },
         "order_group": {
           "label": "Compra",
@@ -1834,10 +2075,6 @@
           "placeholder": "Ilimitado"
         }
       },
-      "reason_code": {
-        "help": "Se vuelve el código de uso de entidad del motor de impuestos.",
-        "label": "Motivo"
-      },
       "role": {
         "description": {
           "label": "Descripción",
@@ -2063,26 +2300,25 @@
           "invalid": "Usá solo letras mayúsculas, dígitos, guiones y #.",
           "label": "Sufijo"
         },
-        "preferred_admin_locale": {
+        "admin_locale": {
           "label": "Idioma del admin",
           "placeholder": "Usar el idioma predeterminado"
         },
-        "preferred_send_consumer_transactional_emails": {
+        "send_consumer_transactional_emails": {
           "help": "Desactivado, no se envían emails de confirmación de pedido, envío ni reembolso.",
           "label": "Enviar emails transaccionales a los clientes"
         },
-        "preferred_timezone": {
-          "label": "Zona horaria",
-          "placeholder": "Seleccionar una zona horaria"
+        "timezone": {
+          "label": "Zona horaria"
         },
-        "preferred_unit_system": {
+        "unit_system": {
           "label": "Sistema de unidades"
         },
-        "preferred_weight_unit": {
+        "weight_unit": {
           "label": "Unidad de peso"
         },
         "show_products_without_price": {
-          "help": "Listar los productos sin precio en la moneda del comprador.",
+          "help": "Si está desactivado, los productos sin precio en la moneda del comprador se ocultan en la tienda.",
           "label": "Mostrar productos sin precio"
         },
         "stock_reservations_enabled": {
@@ -2146,24 +2382,18 @@
           "help": "Desactivado, los compradores pueden descargar las veces que quieran.",
           "label": "Limitar cantidad de descargas"
         },
-        "digital_asset_authorized_clicks": {
-          "label": "Descargas permitidas"
-        },
         "limit_digital_download_days": {
           "help": "Desactivado, los enlaces de descarga nunca vencen.",
           "label": "Limitar período de descarga"
         },
-        "digital_asset_authorized_days": {
-          "label": "Días disponibles"
-        },
-        "preferred_default_package_dimensions": {
+        "default_package_dimensions": {
           "height": "Alto",
           "help": "La caja en la que sueles enviar, usada por los proveedores de tarifas de transporte para el precio por peso dimensional: pulgadas en imperial, centímetros en métrico. Se necesitan los tres para que surta efecto.",
           "label": "Dimensiones del paquete predeterminado",
           "length": "Largo",
           "width": "Ancho"
         },
-        "preferred_default_package_weight": {
+        "default_package_weight": {
           "help": "Peso del empaque (caja y relleno) sumado al contenido de cada paquete al calcular las tarifas de entrega. Poniendo 0 lo deshabilitás.",
           "label": "Peso del paquete predeterminado"
         },
@@ -2175,6 +2405,28 @@
           "label": "Publicar productos de vendedores automáticamente",
           "help": "El producto de un vendedor sale a la venta en cuanto lo envía, sin que nadie lo revise."
         },
+        "seller_digital_assets_enabled": {
+          "label": "Permitir a los vendedores subir archivos digitales",
+          "help": "Los vendedores adjuntan archivos descargables a sus propios productos y fijan límites de descarga. Desactivado, solo usted puede añadir archivos, y los vendedores ven los que usted añadió."
+        },
+        "seller_digital_asset_content_types": {
+          "label": "Tipos de archivo aceptados para vendedores",
+          "help": "Elija los formatos que los vendedores pueden subir, o escriba un tipo de contenido como application/pdf y pulse Intro. También se acepta una familia completa como audio/*. Se comprueba con la firma propia del archivo cuando la tiene, no con su nombre. Sus propias subidas no están restringidas.",
+          "placeholder": "Buscar formatos o escribir un tipo de contenido…",
+          "invalid": "Cada entrada debe ser un tipo de contenido como application/pdf.",
+          "empty_hint": "Ningún formato coincide. Escriba un tipo de contenido como application/pdf y pulse Intro para añadirlo.",
+          "add_option": "Añadir {{type}}",
+          "families": {
+            "audio": "Cualquier archivo de audio · audio/*",
+            "video": "Cualquier archivo de vídeo · video/*",
+            "image": "Cualquier archivo de imagen · image/*",
+            "text": "Cualquier archivo de texto · text/*"
+          }
+        },
+        "review_seller_digital_asset_changes": {
+          "label": "Revisar cambios de archivos en productos ya en venta",
+          "help": "Cuando un vendedor añade o reemplaza un archivo en un producto aprobado, este vuelve a revisión y deja de venderse hasta que lo apruebe de nuevo. No hace nada cuando los productos de vendedores se publican automáticamente."
+        },
         "send_seller_transactional_emails": {
           "label": "Enviar correos a los vendedores",
           "help": "Envía a los vendedores correos sobre aprobación, productos y pagos. Desactivalo si les escribís vos mismo a tus vendedores. Los correos a clientes no cambian."
@@ -2184,24 +2436,32 @@
           "help": "Se aplica a tu comisión cuando ni la tarifa de comisión ni tu proveedor de impuestos indican una propia. Déjalo en 0 si tu comisión no lleva impuesto.",
           "suffix": "%"
         },
-        "preferred_email_accent_color": {
+        "email_accent_color": {
           "label": "Color de acento"
         },
-        "preferred_email_background_color": {
+        "email_background_color": {
           "label": "Color de fondo"
         },
-        "preferred_email_card_color": {
+        "email_card_color": {
           "label": "Color de la tarjeta"
         },
-        "preferred_email_text_color": {
+        "email_text_color": {
           "label": "Color del texto"
         },
-        "preferred_email_heading_color": {
+        "email_heading_color": {
           "label": "Color de los títulos"
         },
-        "preferred_email_font": {
+        "email_font": {
           "label": "Fuente",
           "help": "Las aplicaciones de correo que no puedan cargarla usarán una fuente similar."
+        },
+        "seo_title": {
+          "label": "Título SEO",
+          "help": "El título que muestran los buscadores y las pestañas del navegador para la página de inicio de tu tienda."
+        },
+        "meta_description": {
+          "label": "Meta descripción",
+          "help": "Un breve resumen que los buscadores muestran bajo el título."
         }
       },
       "store_credit": {
@@ -2265,11 +2525,6 @@
         },
         "country_code": {
           "help": "Dejalo vacío para cobrar impuestos en todos los países."
-        },
-        "included_in_price": {
-          "help": "Los precios ya incluyen este impuesto, así que se descuenta en lugar de sumarse.",
-          "label": "Incluido en el precio",
-          "short": "Incluido"
         },
         "jurisdiction": {
           "label": "Aplica a"
@@ -2386,7 +2641,9 @@
         },
         "subscriptions": {
           "help": "Elegí qué eventos deben disparar un webhook. No elijas nada para recibir todos los eventos.",
-          "label": "Eventos"
+          "invalid": "Usá nombres de eventos o patrones con * en lugar de un segmento, como order.* o *.created.",
+          "label": "Eventos",
+          "too_many": "Admite como máximo {{count}} eventos."
         },
         "url": {
           "label": "URL de destino",
@@ -2439,6 +2696,20 @@
           "label": "Caja predeterminada",
           "help": "El empaque sobre el que se calculan tus cotizaciones de paquetería. Solo una predeterminada a la vez."
         }
+      },
+      "tax_exemption_reason_id": {
+        "help": "Gestiona los motivos que se ofrecen aquí en Configuración → Impuestos → Motivos de exención.",
+        "label": "Motivo"
+      },
+      "oauth_application": {
+        "name": {
+          "label": "Nombre",
+          "placeholder": "Cursor"
+        },
+        "redirect_uri": {
+          "label": "URL de retorno",
+          "help": "De la documentación del propio cliente. Los códigos de autorización se entregan aquí, así que debe ser la dirección que el cliente publica."
+        }
       }
     },
     "orders": {
@@ -2459,7 +2730,8 @@
         },
         "address_edit": {
           "billing_title": "Editar dirección de facturación",
-          "shipping_title": "Editar dirección de envío"
+          "shipping_title": "Editar dirección de envío",
+          "billing_same_as_shipping": "Igual que la dirección de envío"
         },
         "adjustment_lines": {
           "add_discount": "Agregar descuento",
@@ -2658,6 +2930,7 @@
           "packing_slip_total": "Total",
           "print_label": "Imprimir etiqueta",
           "print_packing_slip": "Imprimir nota de despacho",
+          "quoted_after_review": "Precio tras revisión",
           "rates_pending_origin": "Guardá el nuevo origen para ver los métodos de entrega que ofrece.",
           "refund_label": "Reembolsar etiqueta",
           "retry_refund_label": "Reintentar reembolso",
@@ -2724,12 +2997,15 @@
           "state": "Estado",
           "this_order": "Este pedido",
           "shared_help": "Pagado una vez por un carrito que abarca varios vendedores. Este pedido tiene una parte de él.",
-          "load_error": "No se pudieron cargar los pagos de este pedido."
+          "load_error": "No se pudieron cargar los pagos de este pedido.",
+          "view_at_gateway": "Ver en {{gateway}}",
+          "view_details": "Ver detalles",
+          "failed_card_checks": "Verificaciones de tarjeta fallidas"
         },
         "priced_by": "Precio según {{name}}",
         "purchase_order": {
           "document": "Documento de orden de compra",
-          "document_help": "PDF, imagen o archivo de Word, hasta 10 MB.",
+          "document_help": "PDF, imagen, documento de Word, hoja de cálculo o archivo CSV, hasta 10 MB.",
           "download_failed": "No se pudo descargar la orden de compra",
           "save_failed": "No se pudo guardar la orden de compra",
           "title": "Orden de compra"
@@ -2774,6 +3050,28 @@
           "cbm": "{{value}} CBM",
           "kg": "{{value}} kg",
           "incomplete": "Algunos artículos no están medidos, así que estas cifras son un piso más que un total."
+        },
+        "payment_details": {
+          "title": "Pago {{number}}",
+          "description": "Lo que informó el emisor de la tarjeta y cada captura del importe.",
+          "transaction_id": "ID de transacción",
+          "address_check": "Verificación de dirección",
+          "security_code_check": "Verificación del código de seguridad",
+          "code": "Código {{code}}",
+          "check": {
+            "passed": "Superada",
+            "failed": "No superada",
+            "not_checked": "No verificada"
+          },
+          "captures": "Capturas",
+          "captures_empty": "Aún no se ha capturado nada.",
+          "captured_at": "Capturado"
+        },
+        "customer_edit": {
+          "title": "Editar cliente",
+          "customer_help": "Quita el cliente para convertir este pedido en un pedido de invitado.",
+          "confirm_detach": "Este pedido dejará de aparecer en el historial de pedidos y la cuenta del cliente. ¿Quitar el cliente?",
+          "detach": "Quitar cliente"
         }
       },
       "edit": {
@@ -2804,6 +3102,7 @@
         "empty": "Este pedido no tiene artículos.",
         "fully_fulfilled": "Este pedido está completamente cumplido y ya no se puede editar.",
         "items_title": "Artículos",
+        "saved_not_reloaded": "Guardado, pero no se pudo volver a cargar el pedido. Actualiza la página para ver los totales más recientes.",
         "subtitle": "Pedido {{number}}",
         "title": "Editar pedido",
         "totals_hint": "El servidor recalcula los totales después de guardar.",
@@ -2848,13 +3147,12 @@
       "item_count_one": "{{count}} artículo",
       "item_count_other": "{{count}} artículos",
       "new": {
-        "add_variant": "Agregar una variante",
         "creates_draft_note": "Crea un pedido borrador. Agregá los pagos y completalo después de crearlo.",
         "items_table": {
-          "qty": "Cant.",
           "sku": "SKU",
           "variant": "Variante"
         },
+        "use_company_default_addresses": "Usar las direcciones de facturación y envío predeterminadas guardadas por {{company}}",
         "use_default_addresses": "Usar las direcciones de facturación y envío predeterminadas del cliente"
       },
       "payment_statuses": {
@@ -3260,8 +3558,6 @@
       "add_cta": "Agregar vendedor",
       "add_sheet_title": "Nuevo vendedor",
       "address": {
-        "filled": "Completa",
-        "not_filled": "Incompleta",
         "not_provided_by_seller": "Todavía no la dio el vendedor"
       },
       "approve_override_confirm": {
@@ -3280,21 +3576,26 @@
         "title": "¿Eliminar vendedor?"
       },
       "detail": {
-        "at_a_glance": "De un vistazo",
         "billing_address": "Dirección de facturación",
         "contact": "Contacto",
         "delete_label": "Eliminar vendedor",
+        "edit_contact": "Editar contacto",
+        "edit_cover": "Editar foto de portada",
+        "edit_logo": "Editar logotipo",
         "edit_profile": "Editar perfil",
-        "edit_profile_description": "El vendedor lo mantiene desde su propio panel. Las ediciones acá se aplican en su nombre.",
         "edit_settlement": "Editar pagos e impuestos",
-        "edit_settlement_description": "Solo vos podés verlos o cambiarlos. El vendedor nunca los edita.",
+        "joined": "Se unió",
         "load_error": "No se pudo cargar este vendedor",
         "no_about": "Este vendedor todavía no escribió una descripción.",
         "returns_address": "Dirección de devoluciones",
-        "settlement": "Pagos e impuestos",
-        "status": "Estado"
+        "settlement": "Pagos e impuestos"
       },
       "empty": "Todavía no hay vendedores",
+      "holiday": {
+        "end": "Finalizar modo vacaciones",
+        "off": "Desactivado. El vendedor acepta pedidos con normalidad.",
+        "title": "Modo vacaciones"
+      },
       "images": {
         "cover_photo_help": "Un banner ancho en la parte superior del perfil del vendedor.",
         "cover_photo_label": "Foto de portada",
@@ -3345,6 +3646,7 @@
         },
         "review_note": "Tu nota: {{note}}",
         "seller_note": "Vendedor: {{note}}",
+        "show_steps": "Mostrar pasos",
         "status": {
           "complete": "Listo",
           "incomplete": "Pendiente",
@@ -3360,6 +3662,9 @@
         "waived": "Eximida"
       },
       "onboarding_column": "Onboarding",
+      "orders": {
+        "to_fulfill": "Por preparar"
+      },
       "payout_interval": {
         "biweekly": "Cada quince días",
         "daily": "Diario",
@@ -3378,6 +3683,10 @@
         "title": "¿Volver a enviar a onboarding?"
       },
       "search_placeholder": "Buscar vendedores",
+      "stats": {
+        "commission": "Comisión (30 días)",
+        "net_sales": "Ventas netas (30 días)"
+      },
       "status": {
         "approved": "Aprobado",
         "canceled": "Cancelado",
@@ -3409,6 +3718,10 @@
       "team": {
         "empty": "Todavía nadie administra este vendedor.",
         "invite": "Invitar",
+        "invite_sheet": {
+          "title": "Invitar a un miembro del equipo",
+          "description": "Se une al equipo de este vendedor cuando acepta. El estado del vendedor no cambia."
+        },
         "invited": "Invitado",
         "messages": {
           "invitation_resent": "Invitación enviada de nuevo",
@@ -3849,7 +4162,8 @@
       "autocomplete": {
         "empty": "No hay clientes que coincidan",
         "empty_for_company": "Ningún cliente puede comprar para esta empresa",
-        "placeholder": "Buscar clientes…"
+        "placeholder": "Buscar clientes…",
+        "add_new": "Añadir nuevo cliente"
       },
       "columns": {
         "companies": "Empresas",
@@ -3934,7 +4248,26 @@
           "search_placeholder": "Buscar por nombre…",
           "title": "Grupos de Clientes"
         },
-        "view_members": "Ver integrantes"
+        "view_members": "Ver integrantes",
+        "detail": {
+          "details": "Detalles",
+          "members": "Miembros",
+          "customer": "Cliente",
+          "add_member": "Añadir cliente",
+          "add_member_title": "Añadir un cliente a este grupo",
+          "add_member_description": "Elige un cliente existente. No cambia nada más; solo se une a este grupo.",
+          "members_empty": "Todavía no hay clientes en este grupo",
+          "remove_member": "Quitar del grupo",
+          "remove_confirm": {
+            "title": "¿Quitar de este grupo?",
+            "message": "{{name}} sigue siendo cliente; solo sale de este grupo."
+          },
+          "messages": {
+            "member_added": "Cliente añadido al grupo",
+            "member_removed": "Cliente quitado del grupo",
+            "member_change_failed": "No se pudieron actualizar los miembros del grupo"
+          }
+        }
       },
       "new_sheet_description": "Los clientes creados acá no tienen contraseña. Recibirán un enlace mágico la primera vez que inicien sesión.",
       "privacy": {
@@ -4054,11 +4387,15 @@
         "add": "Agregar regla",
         "description": "Elegí productos a mano, o dejá que las reglas mantengan la colección al día.",
         "remove": "Quitar regla",
-        "title": "Integrantes"
+        "title": "Integrantes",
+        "on_sale": "En oferta",
+        "days": "días",
+        "days_label": "Publicado en los últimos",
+        "tags_placeholder": "Elige etiquetas…"
       },
       "rules_match_policies": {
-        "all": "todas las condiciones",
-        "any": "cualquier condición"
+        "all": "Deben cumplirse todas las reglas",
+        "any": "Basta con una regla"
       },
       "search_placeholder": "Buscar colecciones…",
       "seo": {
@@ -4110,7 +4447,8 @@
         "staff": "Miembros del equipo, invitaciones, roles y sus permisos",
         "stock": "Niveles de stock, ubicaciones, movimientos y transferencias",
         "store_credits": "Saldos de crédito de tienda de los clientes",
-        "webhooks": "Endpoints y entregas de webhooks"
+        "webhooks": "Endpoints y entregas de webhooks",
+        "oauth_applications": "Clientes OAuth registrados en esta tienda"
       },
       "grid": {
         "read_aria": "Ver {{resource}}",
@@ -4162,7 +4500,8 @@
         "staff": "Staff y roles",
         "stock": "Stock",
         "store_credits": "Créditos de tienda",
-        "webhooks": "Webhooks"
+        "webhooks": "Webhooks",
+        "oauth_applications": "Aplicaciones OAuth"
       }
     },
     "settings_nav": {
@@ -4176,8 +4515,9 @@
         "emails": "Direcciones de remitente y configuración de emails transaccionales",
         "imports": "Historial de importaciones CSV y sus resultados",
         "integrations": "Conectá proveedores de envío, impuestos y otros",
+        "maintenance_tasks": "Rellenos, reindexaciones y pasos de actualización, con un registro de cada ejecución",
         "markets": "Los países a los que vendés y sus monedas",
-        "payment_methods": "Pasarelas de pago y cómo se capturan los pagos",
+        "payment_methods": "Proveedores de pago, métodos manuales y cuándo se cobran los pagos",
         "policies": "Documentos de términos, privacidad, devoluciones y envíos",
         "product_types": "Plantillas que precargan los productos nuevos",
         "reasons": "Motivos ofrecidos para devoluciones, reembolsos y reclamos",
@@ -4185,13 +4525,16 @@
         "seller_requirements": "Lista de control que completan los vendedores antes de la aprobación",
         "staff": "Personas con acceso a este dashboard",
         "stock_locations": "Depósitos y puntos de retiro que guardan stock",
-        "store": "Nombre de la tienda, zona horaria, unidades y predeterminados regionales",
-        "tax_categories": "Clases de impuestos asignadas a los productos",
-        "tax_rates": "Tasas aplicadas por mercado y región",
+        "store": "Nombre de la tienda, SEO, zona horaria, unidades y números de pedido",
         "webhooks": "Endpoints notificados cuando ocurren eventos",
         "package_types": "Cajas, cajones, palets y contenedores",
         "suppliers": "A quién le comprás stock y cómo contactarlos",
-        "marketplace": "Pagos a vendedores, aprobación de vendedores, correos a vendedores e impuesto sobre la comisión"
+        "marketplace": "Pagos a vendedores, aprobación de vendedores, correos a vendedores e impuesto sobre la comisión",
+        "taxes": "Categorías fiscales, tipos impositivos y motivos de exención",
+        "ai_agents": "Agentes de IA con acceso a esta tienda",
+        "oauth_clients": "Registrar y configurar clientes OAuth",
+        "storefront": "URL de la tienda, quién puede navegar, checkout y campos de dirección",
+        "system_info": "Versiones y configuración para adjuntar a un informe de error"
       },
       "groups": {
         "audit": "Auditoría",
@@ -4213,8 +4556,9 @@
         "emails": "Emails",
         "imports": "Importaciones",
         "integrations": "Integraciones",
+        "maintenance_tasks": "Tareas de mantenimiento",
         "markets": "Mercados",
-        "payment_methods": "Métodos de pago",
+        "payment_methods": "Pagos",
         "policies": "Políticas",
         "product_types": "Tipos de producto",
         "profile": "Perfil",
@@ -4229,7 +4573,12 @@
         "webhooks": "Webhooks",
         "package_types": "Tipos de empaque",
         "suppliers": "Proveedores",
-        "marketplace": "Configuración"
+        "marketplace": "Configuración",
+        "taxes": "Impuestos",
+        "ai_agents": "Agentes de IA",
+        "oauth_clients": "Clientes OAuth",
+        "storefront": "Tienda y checkout",
+        "system_info": "Información del sistema"
       },
       "breadcrumbs": {
         "marketplace": "Marketplace"
@@ -4372,7 +4721,23 @@
       "terms_url": "URL de las condiciones",
       "terms_url_description": "Copia publicada opcional de las mismas condiciones, que se abre en una pestaña nueva.",
       "webhook_secret": "Secreto de firma del webhook",
-      "webhook_secret_description": "El secreto que configuraste en el webhook de EasyPost. Sin él se rechazan las actualizaciones del transportista."
+      "webhook_secret_description": "El secreto que configuraste en el webhook de EasyPost. Sin él se rechazan las actualizaciones del transportista.",
+      "operator_max": "Comparación del importe máximo",
+      "operator_max_description": "Elige si un pedido que alcanza exactamente el importe máximo cumple la condición.",
+      "operator_max_options": {
+        "lt": "Menor que (excluye el máximo)",
+        "lte": "Menor o igual que (incluye el máximo)"
+      },
+      "operator_min": "Comparación del importe mínimo",
+      "operator_min_description": "Ejemplo: para envío gratis desde 150, indica 150 como importe mínimo de productos y elige “Mayor o igual que”.",
+      "operator_min_options": {
+        "gt": "Mayor que (excluye el mínimo)",
+        "gte": "Mayor o igual que (incluye el mínimo)"
+      },
+      "amount_min": "Importe mínimo de productos",
+      "amount_min_description": "El importe de los productos del pedido debe alcanzar esta cantidad para cumplir la condición.",
+      "amount_max": "Importe máximo de productos",
+      "amount_max_description": "Límite superior opcional. Déjalo en blanco para no establecer un máximo."
     },
     "categories": {
       "add_cta": "Nueva categoría",
@@ -4588,7 +4953,9 @@
         "has_reserved": "Reservado",
         "in_stock": "En stock",
         "low_stock": "Stock bajo",
-        "out_of_stock": "Sin stock"
+        "out_of_stock": "Sin stock",
+        "low_stock_overall": "Stock bajo (todas las ubicaciones)",
+        "out_of_stock_overall": "Sin stock (todas las ubicaciones)"
       },
       "incoming": {
         "open_aria": "Agregar stock entrante",
@@ -4675,10 +5042,6 @@
         "updated": "Método de entrega actualizado"
       },
       "no_zone_restriction": "Sin restricción",
-      "pricing": {
-        "amount_in_currency": "Monto en {{currency}}",
-        "currency_amounts_help": "A las monedas dejadas en blanco no se les ofrece este método de entrega."
-      },
       "provider_needs_connection": "Conectá {{name}} para usarlo",
       "provider_unavailable": "{{name}} (no disponible)",
       "rule_summary": {
@@ -4861,7 +5224,8 @@
       "badges": {
         "default": "Predeterminada",
         "enabled": "Habilitada",
-        "inactive": "Inactiva"
+        "inactive": "Inactiva",
+        "seller_default": "Predeterminada del vendedor"
       },
       "columns": {
         "default": "Predeterminada",
@@ -4906,6 +5270,10 @@
         "unknown_product": "Producto desconocido",
         "variant_count_one": "{{count}} variante",
         "variant_count_other": "{{count}} variantes"
+      },
+      "views": {
+        "own": "Tus ubicaciones",
+        "sellers": "Ubicaciones de vendedores"
       }
     },
     "nav": {
@@ -4964,14 +5332,7 @@
       },
       "never_expires": "No vence",
       "no_document": "Sin documento adjunto",
-      "reason_codes": {
-        "agricultural": "Agrícola",
-        "charitable": "Benéfico",
-        "educational": "Educativo",
-        "government": "Gubernamental",
-        "manufacturing": "Manufactura",
-        "resale": "Reventa"
-      },
+      "no_reasons": "Aún no hay motivos de exención. Añádelos en Configuración → Impuestos → Motivos de exención.",
       "revoke_action": "Revocar",
       "revoke_confirm": {
         "message": "El certificado {{number}} deja de aplicar a pedidos nuevos. Queda archivado como registro.",
@@ -4986,7 +5347,11 @@
       },
       "title": "Certificados de exención",
       "verified_at": "Aceptado el",
-      "verify_action": "Aceptar"
+      "verify_action": "Aceptar",
+      "columns": {
+        "certificate": "Certificado",
+        "document": "Documento"
+      }
     },
     "api_keys": {
       "badge": {
@@ -5110,7 +5475,7 @@
         "shipping": "Envío",
         "tax": "Impuestos"
       },
-      "manage_payment_methods": "Gestionar métodos de pago",
+      "manage_payment_methods": "Gestionar pagos",
       "messages": {
         "connected": "Integración conectada",
         "disconnected": "Integración desconectada",
@@ -5293,6 +5658,12 @@
       "delete_confirm": {
         "title": "¿Eliminar este proveedor?",
         "message": "{{name}} se eliminará de tu lista de proveedores."
+      },
+      "detail": {
+        "details": "Detalles",
+        "orders_empty": "Todavía no hay órdenes de compra de este proveedor",
+        "load_error": "No se pudo cargar este proveedor",
+        "address": "Dirección"
       }
     },
     "reasons": {
@@ -5303,12 +5674,15 @@
         "help": "Qué salió mal con una entrega: artículo dañado, faltante o equivocado.",
         "title": "Motivos de reclamo"
       },
+      "code_engine_help": "Tu motor de impuestos decide la exención por este código, así que elige el que define para este motivo.",
+      "code_help": "Un identificador corto que registran los certificados. Único en tu tienda.",
+      "code_placeholder": "p. ej. RESALE",
       "create_description": "Los motivos aparecen en un desplegable cuando el staff abre una devolución, un reclamo o un reembolso.",
       "delete_confirm": {
         "message": "{{name}} ya no se ofrecerá. Los registros que ya lo usan lo conservan.",
         "title": "¿Eliminar motivo?"
       },
-      "description": "Los vocabularios de los que elige tu equipo al manejar devoluciones, reclamos, reembolsos y cancelaciones.",
+      "description": "Las listas que usa tu equipo al gestionar devoluciones, reclamaciones, reembolsos y cancelaciones.",
       "edit_sheet_title": "Editar motivo",
       "empty": "Todavía no hay motivos",
       "in_use": "En uso",
@@ -5331,6 +5705,12 @@
       "return": {
         "help": "Por qué un cliente devuelve algo. Lo comparten devoluciones y cambios.",
         "title": "Motivos de devolución"
+      },
+      "tax_exemption": {
+        "create_description": "Tu equipo elige un motivo al registrar el certificado de exención de una empresa.",
+        "help": "Por qué una empresa compra sin impuestos. Se registra en sus certificados de exención; el código es lo que recibe tu motor de impuestos.",
+        "name_placeholder": "p. ej. Reventa",
+        "title": "Motivos de exención de impuestos"
       },
       "title": "Devoluciones y motivos"
     },
@@ -5413,35 +5793,6 @@
       },
       "load_failed": "No se pudieron cargar las entregas."
     },
-    "digital_assets": {
-      "add": "Agregar",
-      "all_variants": "Todas las variantes",
-      "columns": {
-        "file": "Archivo",
-        "variant": "Variante",
-        "size": "Tamaño",
-        "downloads": "Descargas",
-        "days": "Días"
-      },
-      "delete_description": "«{{name}}» ya no será descargable por nadie que lo haya comprado. Se aplica de inmediato.",
-      "delete_title": "¿Eliminar este archivo?",
-      "description": "Archivos que los compradores pueden descargar después de comprar. Adjuntalos a un producto digital, o a uno físico para entregar un manual o una garantía junto con la mercadería.",
-      "download": "Descargar",
-      "drop_hint": "Arrastrá y soltá los archivos acá, o hacé clic para explorar",
-      "empty": "Todavía no hay archivos",
-      "limit_invalid": "Los límites deben ser números enteros de 1 o más, o estar en blanco.",
-      "limits_help": "Dejá los límites de descarga y de días en blanco para usar la config de la tienda.",
-      "source": {
-        "upload": "Subir un archivo"
-      },
-      "store_default": "{{count}} (predeterminado de la tienda)",
-      "title": "Archivos digitales",
-      "untitled": "Archivo sin título",
-      "upload": "Agregar archivo",
-      "upload_failed": "No se pudo subir {{name}}: {{message}}",
-      "uploading": "Subiendo {{name}}…",
-      "uploading_short": "Subiendo…"
-    },
     "package_types": {
       "table_title": "Tipos de empaque",
       "search_placeholder": "Buscar empaques",
@@ -5498,7 +5849,8 @@
         "empty_description": "Seguí detalles estructurados como material, calce o instrucciones de cuidado.",
         "empty_title": "Todavía no hay campos personalizados",
         "errors": {
-          "failed_to_save": "No se pudo guardar el campo personalizado"
+          "failed_to_save": "No se pudo guardar el campo personalizado",
+          "failed_to_load": "No se pudieron cargar los campos personalizados. Recarga la página para intentarlo de nuevo."
         },
         "manage_in_settings": "Gestionar en configuración",
         "new_definition_description": "Definí un campo personalizado para guardar información tipada y estructurada en tus {{resource}}.",
@@ -5534,7 +5886,6 @@
       "markets": "Las regiones a las que vendés, cada una con su moneda, impuestos y envíos.",
       "orders": "Cada pedido realizado en tu tienda y en qué punto está cada uno.",
       "draft_orders": "Pedidos que tu equipo arma en nombre de un cliente y que todavía no se realizaron.",
-      "payment_methods": "Cómo pueden pagar los clientes y los proveedores detrás de cada opción.",
       "policies": "Tus políticas de términos, privacidad, devoluciones y envíos, publicadas en el storefront.",
       "products": "Todo lo que vendés, con sus variantes, precios y stock.",
       "promotions": "Descuentos y ofertas, y las reglas que deciden cuándo aplican.",
@@ -5542,7 +5893,6 @@
       "sellers": "Los vendedores terceros que operan en tu marketplace y en qué punto está cada uno.",
       "store_credits": "Saldos que los clientes pueden gastar al finalizar la compra y cómo se emitió cada uno.",
       "tax_categories": "Agrupaciones que deciden qué tasa impositiva recibe un producto.",
-      "tax_rates": "El impuesto cobrado por categoría y región.",
       "webhook_deliveries": "Cada evento enviado a este endpoint y si se recibió.",
       "webhook_endpoints": "Dónde se notifica a tus otros sistemas cuando pasa algo en la tienda.",
       "returns": "Mercadería que vuelve, desde la solicitud hasta el reembolso.",
@@ -5572,6 +5922,7 @@
         "updated": "Tarjeta de regalo actualizada"
       },
       "statuses": {
+        "active": "Activa",
         "canceled": "Cancelada",
         "expired": "Vencida",
         "partially_redeemed": "Canjeada parcialmente",
@@ -5702,29 +6053,12 @@
       },
       "table_title": "Definiciones de campos personalizados"
     },
-    "invitation": {
-      "accepting": "Aceptando…",
-      "could_not_accept": "No se pudo aceptar la invitación",
-      "create_and_accept": "Crear cuenta y aceptar",
-      "create_to_accept": ". Creá tu cuenta para aceptar.",
-      "generic_error_message": "Algo salió mal. Intentá de nuevo.",
-      "generic_error_title": "No se pudo cargar la invitación",
-      "invited_as_role": " como {{role}}",
-      "invited_by": "{{email}} te invitó",
-      "invited_generic": "Fuiste invitado",
-      "join_store": "Sumarte a {{store}}",
-      "loading": "Cargando invitación…",
-      "missing_token_message": "Este enlace parece incompleto. Pedile a quien te invitó que lo vuelva a enviar.",
-      "missing_token_title": "Falta el token de invitación",
-      "not_found_message": "Esta invitación venció, fue revocada o ya fue aceptada. Pedile al que invita que envíe una nueva.",
-      "not_found_title": "Invitación no encontrada",
-      "sign_in_and_accept": "Iniciar sesión y aceptar",
-      "sign_in_to_accept": ". Iniciá sesión para aceptar."
-    },
     "markets": {
       "add_cta": "Agregar mercado",
       "columns": {
-        "default": "Predeterminado"
+        "default": "Predeterminado",
+        "locale": "Idioma",
+        "regions": "Regiones"
       },
       "create_description": "Agrupá países en una única región de precios con su propia moneda e idiomas.",
       "create_label": "Crear mercado",
@@ -5744,15 +6078,15 @@
         "deleted": "Mercado eliminado",
         "updated": "Mercado actualizado"
       },
+      "regions_count_many": "{{count}} regiones",
+      "regions_count_one": "{{count}} región",
+      "regions_count_other": "{{count}} regiones",
       "search_placeholder": "Buscar por nombre…",
+      "search_regions": "Buscar regiones",
       "tax_exclusive": "Exclusivo",
       "tax_inclusive": "Incluido"
     },
     "payment_methods": {
-      "add_cta": "Agregar método de pago",
-      "columns": {
-        "storefront": "Storefront"
-      },
       "create_description": "Elegí un proveedor y configurá sus credenciales.",
       "create_label": "Crear método de pago",
       "delete_confirm": {
@@ -5760,22 +6094,19 @@
         "title": "¿Eliminar método de pago?"
       },
       "edit_description": "Actualizá el nombre, la visibilidad o el estado.",
-      "empty": "No hay métodos de pago configurados",
       "messages": {
         "created": "Método de pago creado",
         "deleted": "Método de pago eliminado",
         "updated": "Método de pago actualizado"
       },
       "provider_description": "Proveedor: {{provider}}",
-      "search_placeholder": "Buscar por nombre…",
       "status": {
         "disabled": "Deshabilitado"
       },
       "storefront": {
         "admin_only": "Solo admin",
         "visible": "Visible"
-      },
-      "title": "Métodos de pago"
+      }
     },
     "setup": {
       "back_to_login": "Volver a iniciar sesión",
@@ -5818,7 +6149,6 @@
         "deleted": "Tasa de impuesto eliminada",
         "updated": "Tasa de impuesto actualizada"
       },
-      "search_placeholder": "Buscar tasas de impuesto",
       "select_category": "Seleccionar una categoría"
     },
     "translations": {
@@ -5934,7 +6264,10 @@
       },
       "roles_enterprise_help": "Los integrantes que agregues acá pueden comprar para esta empresa y gestionar su directorio. Los roles, los flujos de aprobación y los límites de gasto vienen con Spree Enterprise.",
       "roles_enterprise_title": "Roles y aprobaciones son una función de Enterprise",
-      "title": "Integrantes"
+      "title": "Integrantes",
+      "columns": {
+        "member": "Miembro"
+      }
     },
     "policies": {
       "add_cta": "Agregar política",
@@ -6006,8 +6339,7 @@
         "created": "Categoría de impuestos creada",
         "deleted": "Categoría de impuestos eliminada",
         "updated": "Categoría de impuestos actualizada"
-      },
-      "search_placeholder": "Buscar por nombre…"
+      }
     },
     "inventory_lines": {
       "add_label": "Agregar un producto",
@@ -6033,7 +6365,8 @@
         "delete_failed": "No se pudo eliminar el grupo de clientes",
         "deleted": "Grupo de clientes eliminado",
         "update_failed": "No se pudo actualizar el grupo de clientes",
-        "updated": "Grupo de clientes actualizado"
+        "updated": "Grupo de clientes actualizado",
+        "load_failed": "No se pudo cargar este grupo de clientes"
       }
     },
     "store": {
@@ -6047,6 +6380,9 @@
         "kg": "Kilogramo (kg)",
         "lb": "Libra (lb)",
         "oz": "Onza (oz)"
+      },
+      "seo": {
+        "title": "Ficha en buscadores"
       }
     },
     "company_invitations": {
@@ -6110,7 +6446,247 @@
       }
     },
     "enterprise": {
-      "learn_more": "Conocé Spree Enterprise"
+      "available_in": "Disponible en Spree Enterprise",
+      "badge": "Enterprise",
+      "cta": "Obtener Spree Enterprise",
+      "footer": "Spree Enterprise suma esto al Spree de código abierto que ya usás. Tus datos, tu tienda online y tus integraciones quedan como están.",
+      "how_it_works": "Cómo funciona",
+      "learn_more": "Conocé Spree Enterprise",
+      "previews": {
+        "audit_log": {
+          "benefits": {
+            "changes": {
+              "description": "Cada entrada muestra el valor anterior y el nuevo, para que veas exactamente qué cambió.",
+              "title": "Antes y después"
+            },
+            "coverage": {
+              "description": "Productos, variantes, precios, stock, categorías, promociones, pagos, envíos, créditos de tienda, tasas de impuestos y configuración de la tienda.",
+              "title": "Todo lo importante"
+            },
+            "search": {
+              "description": "Filtrá por persona, tipo de registro o fecha, y abrí el registro que cambió.",
+              "title": "Fácil de buscar"
+            }
+          },
+          "intro": "Cuando varias personas gestionan una tienda, necesitás saber quién cambió un precio, un nivel de stock o un ajuste. Spree Enterprise registra cada cambio importante con la persona que lo hizo, la hora y los valores antes y después.",
+          "nav": "Auditoría",
+          "steps": {
+            "change": {
+              "description": "Alguien de tu equipo edita un registro.",
+              "title": "Cambio"
+            },
+            "record": {
+              "description": "Spree guarda quién hizo el cambio, cuándo y qué cambió.",
+              "title": "Registro"
+            },
+            "review": {
+              "description": "Encontrá el cambio en el registro de auditoría cuando lo necesites.",
+              "title": "Revisión"
+            }
+          },
+          "subtitle": "Mirá quién cambió qué en tu tienda, y cuándo.",
+          "title": "Registro de auditoría"
+        },
+        "category_mapper": {
+          "benefits": {
+            "current": {
+              "description": "Los productos se añaden a las categorías correctas al importarse, cuando el vendedor los cambia y cuando cambias una asignación.",
+              "title": "Siempre al día"
+            },
+            "kept": {
+              "description": "Las categorías que añades o quitas a mano se quedan como las dejaste. El mapeador solo quita lo que añadió.",
+              "title": "Tus cambios se mantienen"
+            },
+            "once": {
+              "description": "Asigna una categoría del vendedor a una de las tuyas y todos sus productos la siguen. Asigna la misma categoría para muchos vendedores a la vez.",
+              "title": "Asigna una vez"
+            }
+          },
+          "intro": "Cada vendedor organiza sus productos a su manera. Asigna una vez las categorías de cada vendedor a las categorías de tu marketplace, y sus productos se añadirán a tus categorías al importarse y cada vez que cambien.",
+          "nav": "Mapeador de categorías",
+          "steps": {
+            "add": {
+              "description": "Los productos se añaden a tus categorías automáticamente.",
+              "title": "Añadir"
+            },
+            "import": {
+              "description": "Los productos del vendedor llegan con sus propias categorías.",
+              "title": "Importar"
+            },
+            "map": {
+              "description": "Asignas cada categoría del vendedor a una de tus categorías.",
+              "title": "Asignar"
+            },
+            "review": {
+              "description": "Los productos llegan a tu revisión ya en sus categorías.",
+              "title": "Revisar"
+            }
+          },
+          "subtitle": "Coloca automáticamente los productos de cada vendedor en tus categorías.",
+          "title": "Mapeador de categorías"
+        },
+        "company_onboarding": {
+          "benefits": {
+            "agreement": {
+              "description": "Al aprobar una empresa, recibe su catálogo y sus precios. Podés suspender una cuenta más adelante y restablecerla.",
+              "title": "Aprobar con condiciones"
+            },
+            "checklist": {
+              "description": "Pedí un número fiscal, documentos o confirmaciones, y revisá cada respuesta.",
+              "title": "Tu propia lista de verificación"
+            },
+            "dialogue": {
+              "description": "Devolvé una solicitud con una nota en lugar de rechazarla. La empresa responde desde tu tienda online.",
+              "title": "Pedir más información"
+            }
+          },
+          "intro": "Cuando una empresa se registra en tu tienda online, Spree Enterprise deja su cuenta pendiente de revisión. La empresa puede recorrer tu catálogo sin ver precios mientras tu equipo revisa sus datos, pide lo que falta y la aprueba.",
+          "nav": "Onboarding",
+          "steps": {
+            "approve": {
+              "description": "La empresa ve sus precios y puede hacer pedidos.",
+              "title": "Aprobación"
+            },
+            "register": {
+              "description": "Una empresa se registra en tu tienda online.",
+              "title": "Registro"
+            },
+            "review": {
+              "description": "Tu equipo revisa la solicitud o pide más información.",
+              "title": "Revisión"
+            },
+            "verify": {
+              "description": "Completa tu lista de verificación mientras los precios siguen ocultos.",
+              "title": "Verificación"
+            }
+          },
+          "subtitle": "Revisá los registros de empresas antes de que puedan comprar.",
+          "title": "Onboarding de empresas"
+        },
+        "lots": {
+          "benefits": {
+            "allocation": {
+              "description": "Enviá automáticamente el lote más antiguo o el que vence primero, o dejá que elija tu depósito. Un envío puede tomar de varios lotes.",
+              "title": "Primero el lote correcto"
+            },
+            "recall": {
+              "description": "Encontrá cada pedido y cliente al que fue un lote, y mirá qué lotes vencen pronto.",
+              "title": "Retiros rápidos"
+            },
+            "stock": {
+              "description": "Cantidades, fechas de vencimiento y de fabricación, y números de lote del proveedor para cada lote en cada ubicación.",
+              "title": "Stock por lote"
+            }
+          },
+          "intro": "Quienes venden alimentos, cosméticos, productos de salud y otros bienes regulados necesitan saber qué lote fue a dónde. Spree Enterprise lleva el stock por lote, con cantidades y fechas de vencimiento, y elige el lote correcto para cada envío.",
+          "nav": "Lotes",
+          "steps": {
+            "allocate": {
+              "description": "Spree elige los lotes de cada envío según tu regla.",
+              "title": "Asignar"
+            },
+            "receive": {
+              "description": "Registrá los lotes cuando llega una orden de compra o una transferencia.",
+              "title": "Recibir"
+            },
+            "ship": {
+              "description": "Cada envío registra qué lotes contenía.",
+              "title": "Enviar"
+            },
+            "trace": {
+              "description": "Buscá un lote para encontrar sus pedidos y clientes.",
+              "title": "Rastrear"
+            }
+          },
+          "subtitle": "Controlá el stock por lote, enviá primero el lote correcto y rastreá cada pedido al que fue un lote.",
+          "title": "Lotes y fechas de vencimiento"
+        },
+        "quotes": {
+          "benefits": {
+            "convert": {
+              "description": "Cuando el comprador acepta, la cotización se convierte en un pedido con sus condiciones de pago y su número de orden de compra.",
+              "title": "Directo a un pedido"
+            },
+            "negotiate": {
+              "description": "Cambiá precios unitarios, cantidades, envío y cargos en una sola cotización, sin tocar la lista de precios del comprador.",
+              "title": "Precios para una operación"
+            },
+            "validity": {
+              "description": "Cada cotización tiene fecha de vencimiento. Los compradores pueden pedir cambios y vos enviás una cotización revisada.",
+              "title": "Vigencia clara"
+            }
+          },
+          "intro": "Los compradores empresariales suelen necesitar un precio antes de comprometerse. Con las cotizaciones, el comprador pide una desde su carrito, tu equipo le pone precio y el comprador la acepta en línea. La cotización aceptada se convierte en un pedido normal con los precios acordados.",
+          "nav": "Cotizaciones",
+          "note": {
+            "description": "Con Spree Enterprise, los compradores pueden revisar un borrador, pedir cambios y aceptarlo en línea antes de que venza.",
+            "title": "Enviar este borrador como cotización"
+          },
+          "steps": {
+            "accept": {
+              "description": "El comprador acepta y la cotización se convierte en pedido.",
+              "title": "Aceptar"
+            },
+            "price": {
+              "description": "Tu equipo ajusta precios, cantidades y envío.",
+              "title": "Cotizar"
+            },
+            "request": {
+              "description": "El comprador pide una cotización desde su carrito.",
+              "title": "Solicitar"
+            },
+            "send": {
+              "description": "El comprador recibe un enlace a la cotización y su fecha de vencimiento.",
+              "title": "Enviar"
+            }
+          },
+          "subtitle": "Negociá precios con compradores empresariales y convertí las cotizaciones aceptadas en pedidos.",
+          "title": "Cotizaciones"
+        },
+        "shopify": {
+          "benefits": {
+            "catalog": {
+              "description": "Productos, variantes, imágenes, traducciones, precios y stock vienen de la tienda del vendedor. Los productos nuevos pasan por tu revisión habitual.",
+              "title": "Catálogo sincronizado"
+            },
+            "control": {
+              "description": "Un campo que tu equipo edita en Spree deja de sincronizarse hasta que decidas reanudarlo. Un pedido que no se puede enviar queda marcado para vos.",
+              "title": "Vos tenés el control"
+            },
+            "orders": {
+              "description": "Los pedidos del marketplace se crean en el Shopify del vendedor, ya pagados. Envíos, seguimiento, cancelaciones y reembolsos vuelven automáticamente.",
+              "title": "Pedidos en un solo lugar"
+            }
+          },
+          "intro": "Muchos vendedores ya venden en Shopify. Conectá su tienda a tu marketplace y su catálogo y stock se mantienen sincronizados solos. Tus pedidos aparecen en su Shopify, así preparan todo en un solo lugar.",
+          "nav": "Shopify",
+          "note": {
+            "description": "Con Spree Enterprise, los productos, el stock y los pedidos de este vendedor se mantienen sincronizados con su propia tienda Shopify.",
+            "title": "Conectar la tienda Shopify de este vendedor"
+          },
+          "steps": {
+            "connect": {
+              "description": "Configurás una conexión para el vendedor.",
+              "title": "Conectar"
+            },
+            "install": {
+              "description": "El vendedor instala la app en su tienda Shopify.",
+              "title": "Instalar"
+            },
+            "sell": {
+              "description": "Los pedidos van a su tienda y los envíos vuelven.",
+              "title": "Vender"
+            },
+            "sync": {
+              "description": "Su catálogo, ubicaciones y stock llegan a tu marketplace.",
+              "title": "Sincronizar"
+            }
+          },
+          "subtitle": "Permití que los vendedores sigan gestionando su negocio desde su propia tienda Shopify.",
+          "title": "Shopify para vendedores"
+        }
+      },
+      "see_how_it_works": "Ver cómo funciona"
     },
     "jurisdiction": {
       "everywhere": "En todos lados"
@@ -6148,6 +6724,7 @@
         "digital_asset_mailer_files_ready_email": "Descargas listas",
         "customer_mailer_password_reset_email": "Restablecer contraseña",
         "customer_mailer_data_export_email": "Exportación de datos personales lista",
+        "customer_mailer_data_request_confirmation_email": "Confirmación de solicitud de datos",
         "newsletter_mailer_email_confirmation": "Confirmación del boletín",
         "company_mailer_invitation_email": "Invitación de empresa",
         "spree_base_mailer": "Diseño del correo",
@@ -6251,7 +6828,8 @@
         "reset_url": "El enlace para elegir una nueva contraseña.",
         "download_url": "El enlace para descargar la exportación.",
         "expires_at": "Cuándo deja de funcionar el enlace.",
-        "confirmation_url": "El enlace que confirma la suscripción.",
+        "confirmation_url": "El enlace que confirma la suscripción o la solicitud de datos.",
+        "kind": "Si la solicitud de datos pide una copia (access) o la eliminación (erasure).",
         "company": "La empresa a la que se invita al cliente.",
         "accept_url": "El enlace que acepta la invitación.",
         "store": "Tu tienda: nombre, enlaces, logotipo y marca.",
@@ -6274,6 +6852,105 @@
       "every_language": {
         "notice": "Los clientes de todos los idiomas reciben esta versión hasta que publiques una para {{language}}."
       }
+    },
+    "updates": {
+      "available": "Spree {{version}} está disponible",
+      "running": "Estás usando Spree {{version}}."
+    },
+    "notifications": {
+      "title": "Notificaciones",
+      "open": "Notificaciones",
+      "open_unread": "Notificaciones, 1 sin leer",
+      "empty": "Estás al día.",
+      "view_on_github": "Ver en GitHub",
+      "release_notes_unavailable": "No se pudieron cargar las notas de la versión. Léelas en GitHub."
+    },
+    "taxes": {
+      "title": "Impuestos",
+      "description": "Cómo se gravan tus productos, qué tipos aplica Spree y por qué las empresas pueden comprar sin impuestos.",
+      "providers_title": "Cálculo de impuestos",
+      "provider_markets": "{{provider}} en {{markets}}",
+      "manage_markets": "Gestionar mercados",
+      "tabs": {
+        "categories": "Categorías",
+        "rates": "Tipos",
+        "exemption_reasons": "Motivos de exención"
+      },
+      "rates_unused_in": "Estos tipos no se usan en {{markets}}, donde un servicio externo calcula el impuesto.",
+      "rates_unused_everywhere": "Ninguno de tus mercados usa estos tipos: en {{markets}} un servicio externo calcula el impuesto.",
+      "rates_help": "El impuesto cobrado por categoría y región. Solo lo usan los mercados con los tipos de Spree: un servicio conectado como Avalara calcula el impuesto por su cuenta e ignora estos tipos."
+    },
+    "mcp_connect": {
+      "open_cta": "Conectar un agente",
+      "title": "Conectar un agente",
+      "subtitle": "Elija el asistente al que quiere dar acceso a esta tienda.",
+      "step_paste": "Pegue esta dirección en el conector o la configuración MCP de su cliente.",
+      "step_sign_in": "Le enviará aquí para iniciar sesión.",
+      "step_approve": "Apruebe lo que puede hacer el agente. Puede retirarlo en cualquier momento en esta página.",
+      "client_id_label": "ID de cliente",
+      "client_id_help": "Algunos clientes lo piden antes de empezar.",
+      "ready_title": "{{client}} está listo para conectarse",
+      "ready_subtitle": "Pegue esto en el cliente y luego apruebe lo que puede hacer.",
+      "endpoint_label": "La dirección MCP de su tienda",
+      "copy_endpoint": "Copiar dirección",
+      "copy_client_id": "Copiar ID de cliente",
+      "other_title": "Otra cosa",
+      "bounded_note": "Un agente nunca obtiene más de lo que usted tiene, y solo lo que usted aprueba.",
+      "clients": {
+        "claude": "claude.ai, Claude Desktop y Claude Code",
+        "chatgpt": "ChatGPT y Codex"
+      },
+      "surfaces": {
+        "claude": {
+          "app": "Claude.ai y Desktop",
+          "cli": "Claude Code"
+        },
+        "chatgpt": {
+          "app": "ChatGPT",
+          "cli": "Codex"
+        }
+      },
+      "other_help": "Cualquier otro cliente que hable MCP",
+      "continue": "Continuar",
+      "run_label": "Ejecute esto",
+      "copy_command": "Copiar comando",
+      "cli_then_sign_in": "Se abrirá el navegador para iniciar sesión y aprobar lo que el agente puede hacer."
+    },
+    "system_info": {
+      "title": "Información del sistema",
+      "unavailable": "Necesitas permiso para gestionar la tienda para ver la información del sistema.",
+      "load_failed": "No se pudo cargar el informe.",
+      "copy": "Copiar como Markdown",
+      "copied": "Copiado",
+      "report_issue": "Informar de un problema en GitHub"
+    },
+    "feedback": {
+      "title": "Enviar comentarios",
+      "description": "Llega al equipo de Spree en GitHub. No se envía nada hasta que lo publiques allí.",
+      "kinds": {
+        "bug": "Informar de un error",
+        "idea": "Sugerir una idea",
+        "other": "Otra cosa"
+      },
+      "message": {
+        "bug": "¿Qué ha pasado?",
+        "idea": "¿Qué te gustaría que hiciera Spree?",
+        "other": "Tus comentarios"
+      },
+      "placeholder": {
+        "bug": "¿Qué intentabas hacer y qué salió mal?",
+        "idea": "¿Qué problema te resolvería?",
+        "other": "Cualquier cosa que quieras que sepa el equipo de Spree"
+      },
+      "failed_requests": "Incluir las últimas solicitudes fallidas ({{count}})",
+      "failed_requests_hint": "Solo método, ruta, estado, código de error e ID de solicitud. Nunca el contenido de la solicitud ni de la respuesta.",
+      "system_info_included": "Se incluye la información del sistema anonimizada.",
+      "system_info_unavailable": "No se incluye la información del sistema: requiere permiso para gestionar la tienda.",
+      "review_system_info": "Revisar la información del sistema",
+      "open_issue": "Abrir incidencia en GitHub",
+      "open_discussion": "Abrir debate en GitHub",
+      "copied_to_paste": "Demasiado largo para un enlace, así que se ha copiado. Pégalo en GitHub.",
+      "copy_failed": "Demasiado largo para un enlace y no se ha podido copiar. Acorta el mensaje o copia el informe desde Ajustes → Información del sistema."
     }
   }
 }

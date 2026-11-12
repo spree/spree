@@ -13,6 +13,24 @@ module Spree
         class GiftCardsController < ResourceController
           scoped_resource :gift_cards
 
+          request_params :gift_card do |body|
+            body.attribute :amount, :decimal,
+              required: true, on: :create,
+              example: '25.00',
+              description: 'Greater than zero.'
+            body.attribute :currency, :currency,
+              example: 'USD',
+              description: 'ISO 4217 currency code. Defaults to the store currency.'
+            body.attribute :code, :string, example: 'WELCOME50', description: 'Generated when omitted.'
+            body.attribute :expires_at, :date, nullable: true, example: '2030-12-31'
+            # Resolved through the caller's ability by `resolve_customer`.
+            body.attribute :customer_id, :id,
+              nullable: true,
+              permit: false,
+              example: 'cus_UkLWZg9DAJ',
+              description: 'The customer the card belongs to. Needs the `read_customers` permission; null detaches it.'
+          end
+
           before_action :resolve_customer, only: [:create, :update]
 
           protected
@@ -26,7 +44,7 @@ module Spree
           end
 
           def permitted_params
-            params.permit(*model_additional_permitted_attributes, :code, :amount, :expires_at, :currency).tap do |attributes|
+            params.permit(*permitted_attributes).tap do |attributes|
               attributes[:customer] = @customer if params.key?(:customer_id)
             end
           end
@@ -41,14 +59,7 @@ module Spree
             return unless params.key?(:customer_id)
             return @customer = nil if params[:customer_id].blank?
 
-            unless holds_permission?('read_customers')
-              return render_error(
-                code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:access_denied],
-                message: 'Missing permission: read_customers',
-                status: :forbidden,
-                details: { required_permission: 'read_customers' }
-              )
-            end
+            return render_missing_permission('read_customers') unless holds_permission?('read_customers')
 
             @customer = Spree.customer_class.
                         accessible_by(current_ability, :show).

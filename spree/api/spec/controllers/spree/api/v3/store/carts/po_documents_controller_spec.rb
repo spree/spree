@@ -27,11 +27,13 @@ RSpec.describe Spree::Api::V3::Store::Carts::PoDocumentsController, type: :contr
     end
 
     it 'returns an upload target and a signed id' do
-      post :create, params: { cart_id: order.prefixed_id, blob: blob_params }
+      post :create, params: { cart_id: order.prefixed_id, **blob_params }
 
       expect(response).to have_http_status(:created)
       expect(json_response['signed_id']).to be_present
-      expect(json_response['direct_upload']['url']).to be_present
+      expect(json_response['upload']['url']).to be_present
+      expect(json_response['visibility']).to eq('private')
+      expect(ActiveStorage::Blob.find_signed!(json_response['signed_id']).store_id).to eq(store.id)
     end
 
     # A guest cart is self-service, so this endpoint is reachable anonymously.
@@ -45,7 +47,7 @@ RSpec.describe Spree::Api::V3::Store::Carts::PoDocumentsController, type: :contr
       expect {
         post :create, params: {
           cart_id: order.prefixed_id,
-          blob: blob_params.merge(byte_size: Spree::Purchase::PurchaseOrder::MAX_PO_DOCUMENT_SIZE + 1)
+          **blob_params.merge(byte_size: Spree::Purchase::PurchaseOrder::MAX_PO_DOCUMENT_SIZE + 1)
         }
       }.not_to change(ActiveStorage::Blob, :count)
 
@@ -56,7 +58,7 @@ RSpec.describe Spree::Api::V3::Store::Carts::PoDocumentsController, type: :contr
       expect {
         post :create, params: {
           cart_id: order.prefixed_id,
-          blob: blob_params.merge(content_type: 'application/x-sh')
+          **blob_params.merge(content_type: 'application/x-sh')
         }
       }.not_to change(ActiveStorage::Blob, :count)
 
@@ -65,7 +67,7 @@ RSpec.describe Spree::Api::V3::Store::Carts::PoDocumentsController, type: :contr
 
     it 'refuses a byte_size that is not a positive number' do
       expect {
-        post :create, params: { cart_id: order.prefixed_id, blob: blob_params.merge(byte_size: 0) }
+        post :create, params: { cart_id: order.prefixed_id, **blob_params.merge(byte_size: 0) }
       }.not_to change(ActiveStorage::Blob, :count)
 
       expect(response).to have_http_status(:unprocessable_content)
@@ -74,7 +76,7 @@ RSpec.describe Spree::Api::V3::Store::Carts::PoDocumentsController, type: :contr
     # A purchase order carries the buyer's prices and terms, and attaching a
     # signed id never moves a blob between services.
     it 'mints the blob on private storage' do
-      post :create, params: { cart_id: order.prefixed_id, blob: blob_params }
+      post :create, params: { cart_id: order.prefixed_id, **blob_params }
 
       blob = ActiveStorage::Blob.find_signed!(json_response['signed_id'])
       expect(blob.service_name).to eq(Spree.private_storage_service_name.to_s)
@@ -125,7 +127,7 @@ RSpec.describe Spree::Api::V3::Store::Carts::PoDocumentsController, type: :contr
 
     it 'refuses to presign against it' do
       post :create, params: { cart_id: other_cart.prefixed_id,
-                              blob: { filename: 'po.pdf', byte_size: 1, checksum: 'x', content_type: 'application/pdf' } }
+                              filename: 'po.pdf', byte_size: 1, checksum: 'x', content_type: 'application/pdf' }
 
       expect(response).not_to have_http_status(:created)
     end

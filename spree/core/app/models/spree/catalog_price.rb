@@ -80,13 +80,6 @@ module Spree
       break_count.to_i.positive?
     end
 
-    # The amount as the wire carries it — see CatalogPriceTier#display_value.
-    #
-    # @return [String]
-    def display_value
-      amount.to_s
-    end
-
     # @return [Spree::Money]
     def money
       Spree::Money.new(amount, currency: currency)

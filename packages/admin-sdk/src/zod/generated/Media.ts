@@ -1,5 +1,6 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import { CustomFieldSchema } from './CustomField';
 
 export const MediaSchema = z.object({
   id: z.string(),
@@ -8,9 +9,9 @@ export const MediaSchema = z.object({
   position: z.number(),
   alt: z.string().nullable(),
   media_type: z.string(),
+  external_video_url: z.string().nullable(),
   focal_point_x: z.number().nullable(),
   focal_point_y: z.number().nullable(),
-  external_video_url: z.string().nullable(),
   video_provider: z.string().nullable(),
   video_embed_url: z.string().nullable(),
   video_url: z.string().nullable(),
@@ -22,6 +23,7 @@ export const MediaSchema = z.object({
   large_url: z.string().nullable(),
   xlarge_url: z.string().nullable(),
   og_image_url: z.string().nullable(),
+  custom_fields: z.array(CustomFieldSchema).optional(),
   external_references: z.record(z.string(), z.string()),
   created_at: z.string(),
   updated_at: z.string(),

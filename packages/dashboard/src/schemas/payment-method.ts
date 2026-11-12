@@ -1,7 +1,7 @@
 import type { PaymentMethodCreateParams, PaymentMethodUpdateParams } from '@spree/admin-sdk'
+import { CAPTURE_METHODS } from '@spree/core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
-import { CAPTURE_METHODS } from './store'
 
 // Empty means "inherit from the store" — the API models that as null, so the
 // form's empty option maps back to null on submit.
@@ -41,9 +41,19 @@ export const PAYMENT_METHOD_CREATE_DEFAULTS: PaymentMethodFormValues = {
 /** Wire `type` values that must not appear in the add-payment-method provider picker. */
 export const PAYMENT_METHOD_TYPES_HIDDEN_FROM_PICKER = ['custom_payment_source_method'] as const
 
-export function filterPaymentMethodProviderTypes<T extends { type: string }>(types: T[]): T[] {
+/** Providers that only simulate payments, for trying checkout without moving money. */
+const TEST_GATEWAY_TYPES: readonly string[] = ['bogus']
+
+export function isTestGateway(type: string) {
+  return TEST_GATEWAY_TYPES.includes(type)
+}
+
+/** The providers a merchant may add: not hidden, and not already installed on this store. */
+export function filterPaymentMethodProviderTypes<T extends { type: string; installed?: boolean }>(
+  types: T[],
+): T[] {
   const hidden = new Set<string>(PAYMENT_METHOD_TYPES_HIDDEN_FROM_PICKER)
-  return types.filter((entry) => !hidden.has(entry.type))
+  return types.filter((entry) => !hidden.has(entry.type) && !entry.installed)
 }
 
 export function paymentMethodValuesToCreateParams(

@@ -1,7 +1,8 @@
 import {
-  adminClient,
   formatStoreDateTime,
+  Money,
   PageHeader,
+  RecordMetadataCard,
   Slot,
   Subject,
   usePermissions,
@@ -28,12 +29,14 @@ import { HandCoinsIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { ReadRow } from '../../../../../components/spree/read-row'
 import { ResourceDetailSkeleton } from '../../../../../components/spree/route-pending'
 import { PayoutCompleteDialog } from '../../../../../components/spree/sellers/payout-complete-dialog'
-import { ReadRow } from '../../../../../components/spree/sellers/seller-read-row'
-import { usePayout, useSellerTransfers } from '../../../../../hooks/use-seller-ledger'
-
-const OWED = ['pending', 'processing', 'unresolved']
+import {
+  OWED_PAYOUT_STATUSES,
+  usePayout,
+  useSellerTransfers,
+} from '../../../../../hooks/use-seller-ledger'
 
 export const Route = createFileRoute('/_authenticated/$storeId/sellers/payouts/$payoutId')({
   component: PayoutDetailPage,
@@ -74,14 +77,14 @@ function PayoutDetailPage() {
 
   const rows = transfers?.data ?? []
   const canComplete =
-    permissions.can('update', Subject.SellerPayout) && OWED.includes(payout.status)
+    permissions.can('update', Subject.SellerPayout) && OWED_PAYOUT_STATUSES.includes(payout.status)
 
   return (
     <>
       <ResourceLayout
         header={
           <PageHeader
-            title={payout.display_amount}
+            title={<Money amount={payout.amount} currency={payout.currency} />}
             subtitle={payout.seller_name ?? undefined}
             backTo="sellers/payouts"
             badges={
@@ -99,12 +102,8 @@ function PayoutDetailPage() {
                 </Button>
               ) : null
             }
-            resource={{ id: payout.id }}
-            jsonPreview={{
-              title: `Payout ${payout.id}`,
-              fetch: () => adminClient.sellerPayouts.get(payout.id),
-              endpoint: `/api/v3/admin/seller_payouts/${payout.id}`,
-            }}
+            resource={payout}
+            endpoint={`/api/v3/admin/seller_payouts/${payout.id}`}
           />
         }
         main={
@@ -126,11 +125,11 @@ function PayoutDetailPage() {
                   <Skeleton className="h-16 w-full" />
                 </div>
               ) : transfersFailed ? (
-                <p className="px-6 pb-6 text-sm text-destructive">
+                <p className="px-6 pb-6 text-base text-destructive">
                   {t('admin.payouts.detail.covers_error')}
                 </p>
               ) : rows.length === 0 ? (
-                <p className="px-6 pb-6 text-sm text-muted-foreground">
+                <p className="px-6 pb-6 text-base text-muted-foreground">
                   {t('admin.payouts.detail.covers_empty')}
                 </p>
               ) : (
@@ -166,7 +165,7 @@ function PayoutDetailPage() {
                           })}
                         </TableCell>
                         <TableCell className="text-right tabular-nums">
-                          {transfer.display_amount}
+                          <Money amount={transfer.amount} currency={transfer.currency} />
                         </TableCell>
                       </TableRow>
                     ))}
@@ -177,6 +176,7 @@ function PayoutDetailPage() {
                 <Pagination meta={transfers.meta} onPageChange={setPage} />
               )}
             </Card>
+            <RecordMetadataCard metadata={payout.metadata} />
             <Slot name="seller_payout.form_main" context={{ payout }} />
           </>
         }
@@ -187,7 +187,9 @@ function PayoutDetailPage() {
                 <CardTitle>{t('admin.payouts.detail.settlement')}</CardTitle>
               </CardHeader>
               <div className="flex flex-col gap-3 px-6 pb-6">
-                <ReadRow label={t('admin.fields.amount.label')}>{payout.display_amount}</ReadRow>
+                <ReadRow label={t('admin.fields.amount.label')}>
+                  <Money amount={payout.amount} currency={payout.currency} />
+                </ReadRow>
                 <ReadRow label={t('admin.payouts.columns.reference')}>{payout.reference}</ReadRow>
                 <ReadRow label={t('admin.payouts.columns.provider')}>{payout.provider}</ReadRow>
                 <ReadRow label={t('admin.payouts.detail.period')}>

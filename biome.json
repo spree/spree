@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.4.13/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.6.6/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -8,7 +8,7 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
+      "preset": "recommended",
       "correctness": {
         "noUnusedImports": "warn",
         "noUnusedVariables": "warn"
@@ -35,6 +35,12 @@
   },
   "css": {
     "linter": { "enabled": false },
+    "formatter": { "enabled": false }
+  },
+  "yaml": {
+    "formatter": { "quoteStyle": "single" }
+  },
+  "markdown": {
     "formatter": { "enabled": false }
   },
   "assist": {

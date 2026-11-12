@@ -18,6 +18,10 @@ module Spree
             # the buyer never named and could not predict.
             before_action :require_kind!, only: %i[show update destroy]
 
+            request_params('TaxIdentifierParams', action: :update) do |body|
+              body.include_attributes Spree::Api::V3::TaxIdentifierRequestSchema
+            end
+
             # GET /api/v3/store/customers/me/tax_identifiers
             #
             # Everything the buyer could choose between at checkout. Small and
@@ -65,7 +69,7 @@ module Spree
             end
 
             def permitted_params
-              params.permit(:kind, :value)
+              params.permit(*declared_permitted_attributes)
             end
 
             private

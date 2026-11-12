@@ -91,5 +91,28 @@ describe('products', () => {
       expect(result.default_sort).toBe('default')
       expect(result.total_count).toBe(1)
     })
+
+    it('sends the category at the top level and the filters inside q', async () => {
+      let capturedUrl = ''
+      const { createClient } = await import('../src')
+      const customClient = createClient({
+        baseUrl: 'https://demo.spreecommerce.org',
+        publishableKey: 'test-key',
+        fetch: async (url, init) => {
+          capturedUrl = decodeURIComponent(url.toString())
+          return globalThis.fetch(url, init)
+        },
+      })
+
+      await customClient.products.filters({
+        category_id: 'ctg_1',
+        q: { price_gte: '10.00', with_option_value_ids: ['optval_1'] },
+      })
+
+      expect(capturedUrl).toContain('category_id=ctg_1')
+      expect(capturedUrl).toContain('q[price_gte]=10.00')
+      expect(capturedUrl).toContain('q[with_option_value_ids][]=optval_1')
+      expect(capturedUrl).not.toContain('[object Object]')
+    })
   })
 })

@@ -10,6 +10,8 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
+  Alert,
+  AlertDescription,
   Badge,
   Button,
   Card,
@@ -22,14 +24,13 @@ import {
   Progress,
   ScrollArea,
   StatusBadge as SharedStatusBadge,
+  StepIcon,
   Textarea,
   toastManager,
 } from '@spree/dashboard-ui'
 import {
-  CheckCircle2Icon,
   ChevronRightIcon,
-  CircleIcon,
-  ClockIcon,
+  CircleAlertIcon,
   ExternalLinkIcon,
   XCircleIcon,
 } from '@spree/dashboard-ui/icons'
@@ -104,10 +105,10 @@ export function OnboardingPage() {
           <Progress value={progressPercentage(progress)} />
 
           {submitted ? (
-            <p className="text-muted-foreground text-sm">{t('onboarding.under_review')}</p>
+            <p className="text-muted-foreground text-base">{t('onboarding.under_review')}</p>
           ) : (
             <div className="flex items-center justify-between gap-4">
-              <p className="text-muted-foreground text-sm">
+              <p className="text-muted-foreground text-base">
                 {blocking.length === 0
                   ? t('onboarding.ready')
                   : t('onboarding.remaining', { count: blocking.length })}
@@ -131,7 +132,7 @@ export function OnboardingPage() {
         // `multiple` because these are independent — a seller does them in any
         // order — so opening one must not close the one they were reading.
         // Opens on the first outstanding line, which answers "what next".
-        <Card className="overflow-hidden py-0">
+        <Card className="overflow-hidden">
           <Accordion multiple defaultValue={openByDefault}>
             {requirements.map((requirement) => (
               <AccordionItem key={requirement.id} value={requirement.id}>
@@ -155,7 +156,7 @@ export function OnboardingPage() {
                 </AccordionTrigger>
                 <AccordionContent className="flex flex-col gap-3 ps-12">
                   {requirement.description && (
-                    <p className="text-muted-foreground text-sm">{requirement.description}</p>
+                    <p className="text-muted-foreground text-base">{requirement.description}</p>
                   )}
                   <RequirementAction requirement={requirement} />
                 </AccordionContent>
@@ -244,7 +245,7 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
     mutationFn: () =>
       sellerClient().requirementSubmissions.create(requirement.id, {
         note: note || undefined,
-        file: file.signedId || undefined,
+        file_signed_id: file.signedId || undefined,
       }),
     onSuccess: () => {
       setNote('')
@@ -284,9 +285,10 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
 
   // A rejection the seller cannot read is a rejection they cannot act on.
   const rejection = submission?.status === 'rejected' && submission.review_note && (
-    <p className="rounded-md bg-destructive/10 p-3 text-destructive text-sm">
-      {submission.review_note}
-    </p>
+    <Alert variant="destructive">
+      <CircleAlertIcon />
+      <AlertDescription>{submission.review_note}</AlertDescription>
+    </Alert>
   )
 
   // Nothing to do on a finished line. The header already carries the tick and
@@ -299,7 +301,7 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
     return (
       <>
         {rejection}
-        <p className="text-muted-foreground text-sm">{t('onboarding.awaiting_review')}</p>
+        <p className="text-muted-foreground text-base">{t('onboarding.awaiting_review')}</p>
       </>
     )
   }
@@ -349,6 +351,7 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
               value={file}
               onChange={setFile}
               accept={requirement.accepted_content_types?.join(',')}
+              private
               label={t('onboarding.document_label')}
               help={t('onboarding.document_help')}
             />
@@ -427,11 +430,11 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
       {requirement.kind === 'payout_account' && (
         <div className="flex flex-col items-start gap-2">
           {requirement.blocker?.message && (
-            <p className="text-muted-foreground text-sm">{requirement.blocker.message}</p>
+            <p className="text-muted-foreground text-base">{requirement.blocker.message}</p>
           )}
 
           {requirement.blocker?.state === 'pending' ? (
-            <p className="text-muted-foreground text-sm">
+            <p className="text-muted-foreground text-base">
               {t('onboarding.awaiting_payout_provider')}
             </p>
           ) : (
@@ -512,17 +515,14 @@ function panelRoute(kind: string): string | undefined {
   }
 }
 
+// The operator's setup checklist icons, plus a submission sent back.
 function StatusIcon({ status }: { status: string }) {
-  if (status === 'complete') {
-    return <CheckCircle2Icon className="size-5 shrink-0 text-success" />
-  }
-  if (status === 'pending') {
-    return <ClockIcon className="size-5 shrink-0 text-warning" />
-  }
+  if (status === 'complete') return <StepIcon status="done" className="size-5" />
+  if (status === 'pending') return <StepIcon status="in_progress" className="size-5" />
   if (status === 'rejected') {
     return <XCircleIcon className="size-5 shrink-0 text-destructive" />
   }
-  return <CircleIcon className="size-5 shrink-0 text-muted-foreground" />
+  return <StepIcon status="todo" className="size-5" />
 }
 
 function StatusBadge({ status }: { status: string }) {

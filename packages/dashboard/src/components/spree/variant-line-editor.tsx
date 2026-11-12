@@ -2,6 +2,7 @@ import type { Variant } from '@spree/admin-sdk'
 import { adminClient, formatPrice, ResourcePickerSheet } from '@spree/dashboard-core'
 import {
   Button,
+  CardContent,
   Empty,
   EmptyContent,
   EmptyDescription,
@@ -46,6 +47,10 @@ export interface VariantLine {
   unitCost?: string
 }
 
+export interface CostedVariantLine extends VariantLine {
+  unitCost: string
+}
+
 /**
  * Folds a whole picked batch into the existing lines, in one pass.
  *
@@ -68,7 +73,7 @@ export function addVariantsToLines(
   for (const variant of variants) {
     const index = indexByVariantId.get(variant.id)
     if (index === undefined) {
-      next.push({ variant, quantity: 1, unitCost: withCost ? '0.00' : undefined })
+      next.push({ variant, quantity: 1, unitCost: withCost ? '' : undefined })
       indexByVariantId.set(variant.id, next.length - 1)
     } else {
       next[index] = { ...next[index], quantity: next[index].quantity + 1 }
@@ -130,8 +135,10 @@ export function VariantLineEditor({
     onChange(lines.filter((line) => line.variant.id !== variantId))
   }
 
+  // Rendered straight inside the caller's Card: the table runs edge to edge
+  // like every other nested list, and only the empty state takes padding.
   return (
-    <div className="flex flex-col gap-4">
+    <>
       {/* A sheet rather than a one-at-a-time combobox: a delivery is picked in
           one pass, and the same picker the catalogue screens use already does
           searching, paging and select-all. */}
@@ -161,106 +168,106 @@ export function VariantLineEditor({
       />
 
       {lines.length === 0 ? (
-        <Empty className="border-0">
-          <EmptyHeader>
-            <EmptyMedia variant="icon">
-              <PackageIcon />
-            </EmptyMedia>
-            <EmptyTitle>{t('admin.inventory_lines.empty_title')}</EmptyTitle>
-            <EmptyDescription>
-              {locked
-                ? t('admin.inventory_lines.pick_source_first')
-                : t('admin.inventory_lines.empty_description')}
-            </EmptyDescription>
-          </EmptyHeader>
-          <EmptyContent>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              disabled={locked}
-              onClick={() => onPickerOpenChange(true)}
-            >
-              <PlusIcon className="size-4" />
-              {t('admin.inventory_lines.add_label')}
-            </Button>
-          </EmptyContent>
-        </Empty>
+        <CardContent>
+          <Empty className="border-0 p-4">
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <PackageIcon />
+              </EmptyMedia>
+              <EmptyTitle>{t('admin.inventory_lines.empty_title')}</EmptyTitle>
+              <EmptyDescription>
+                {locked
+                  ? t('admin.inventory_lines.pick_source_first')
+                  : t('admin.inventory_lines.empty_description')}
+              </EmptyDescription>
+            </EmptyHeader>
+            <EmptyContent>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={locked}
+                onClick={() => onPickerOpenChange(true)}
+              >
+                <PlusIcon className="size-4" />
+                {t('admin.inventory_lines.add_label')}
+              </Button>
+            </EmptyContent>
+          </Empty>
+        </CardContent>
       ) : (
-        <div className="overflow-x-auto rounded-md border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>{t('admin.inventory_lines.columns.variant')}</TableHead>
-                <TableHead className="text-right">{quantityLabel}</TableHead>
-                {withCost && (
-                  <TableHead className="text-right">
-                    {t('admin.inventory_lines.columns.unit_cost')}
-                  </TableHead>
-                )}
-                <TableHead className="w-10" />
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {lines.map(({ variant, quantity, unitCost }) => (
-                <TableRow key={variant.id}>
-                  <TableCell>
-                    {/* No product link: this form has unsaved work in it, and
+        <Table roundedTop scrollX>
+          <TableHeader>
+            <TableRow>
+              <TableHead>{t('admin.inventory_lines.columns.variant')}</TableHead>
+              <TableHead className="text-right">{quantityLabel}</TableHead>
+              {withCost && (
+                <TableHead className="text-right">
+                  {t('admin.inventory_lines.columns.unit_cost')}
+                </TableHead>
+              )}
+              <TableHead className="w-10" />
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {lines.map(({ variant, quantity, unitCost }) => (
+              <TableRow key={variant.id}>
+                <TableCell>
+                  {/* No product link: this form has unsaved work in it, and
                         the row reads the same as the ones on the saved
                         document. */}
-                    <VariantLink
-                      name={variant.product_name ?? variant.sku ?? variant.id}
-                      sku={variant.sku}
-                      thumbnailUrl={variant.thumbnail_url}
-                    />
-                  </TableCell>
+                  <VariantLink
+                    name={variant.product_name ?? variant.sku ?? variant.id}
+                    sku={variant.sku}
+                    thumbnailUrl={variant.thumbnail_url}
+                  />
+                </TableCell>
+                <TableCell className="text-right">
+                  <Input
+                    type="number"
+                    min={1}
+                    value={quantity}
+                    onChange={(event) =>
+                      update(variant.id, { quantity: Number(event.target.value) })
+                    }
+                    className="ml-auto w-20 text-right tabular-nums"
+                    aria-label={quantityLabel}
+                  />
+                </TableCell>
+                {withCost && (
                   <TableCell className="text-right">
-                    <Input
-                      type="number"
-                      min={1}
-                      value={quantity}
-                      onChange={(event) =>
-                        update(variant.id, { quantity: Number(event.target.value) })
-                      }
-                      className="ml-auto w-20 text-right tabular-nums"
-                      aria-label={quantityLabel}
-                    />
+                    <InputGroup className="ml-auto w-36">
+                      <InputGroupAddon>
+                        <InputGroupText>{currency ?? ''}</InputGroupText>
+                      </InputGroupAddon>
+                      <InputGroupInput
+                        type="number"
+                        min={0}
+                        step="any"
+                        value={unitCost ?? ''}
+                        onChange={(event) => update(variant.id, { unitCost: event.target.value })}
+                        className="text-right tabular-nums"
+                        aria-label={t('admin.inventory_lines.columns.unit_cost')}
+                      />
+                    </InputGroup>
                   </TableCell>
-                  {withCost && (
-                    <TableCell className="text-right">
-                      <InputGroup className="ml-auto w-36">
-                        <InputGroupAddon>
-                          <InputGroupText>{currency ?? ''}</InputGroupText>
-                        </InputGroupAddon>
-                        <InputGroupInput
-                          type="number"
-                          min={0}
-                          step="0.01"
-                          value={unitCost ?? ''}
-                          onChange={(event) => update(variant.id, { unitCost: event.target.value })}
-                          className="text-right tabular-nums"
-                          aria-label={t('admin.inventory_lines.columns.unit_cost')}
-                        />
-                      </InputGroup>
-                    </TableCell>
-                  )}
-                  <TableCell className="text-right">
-                    <Button
-                      type="button"
-                      size="icon-xs"
-                      variant="ghost"
-                      onClick={() => remove(variant.id)}
-                    >
-                      <TrashIcon className="size-4" />
-                      <span className="sr-only">{t('admin.actions.remove')}</span>
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
+                )}
+                <TableCell className="text-right">
+                  <Button
+                    type="button"
+                    size="icon-xs"
+                    variant="destructive-ghost"
+                    onClick={() => remove(variant.id)}
+                  >
+                    <TrashIcon className="size-4" />
+                    <span className="sr-only">{t('admin.actions.remove')}</span>
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       )}
-    </div>
+    </>
   )
 }

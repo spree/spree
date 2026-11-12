@@ -3,7 +3,7 @@
 # (`pnpm server:setup` / `pnpm server:dev`). The Docker twin of the worktree
 # flow's `pnpm wt:storefront`.
 #
-# The storefront is a separate repo (spree/storefront, branch 6-0-dev) cloned
+# The storefront is a separate repo (spree/storefront, branch main) cloned
 # into storefront/ on first run. Unlike server/, the clone keeps its .git —
 # commit and push storefront work from inside it. It is deliberately not a
 # member of this pnpm workspace (one lockfile cannot serve Next and the
@@ -18,7 +18,7 @@ cd "$ROOT"
 DEV_COMPOSE="server/docker-compose.dev.yml"
 EDGE_OVERLAY="scripts/docker-compose.edge.yml"
 STOREFRONT_REPO="https://github.com/spree/storefront.git"
-STOREFRONT_BRANCH="6-0-dev"
+STOREFRONT_BRANCH="main"
 STOREFRONT_PORT="${STOREFRONT_PORT:-3001}"
 API_URL="http://localhost:3000"
 
@@ -35,11 +35,11 @@ if [ ! -d storefront ]; then
   git clone --branch "$STOREFRONT_BRANCH" "$STOREFRONT_REPO" storefront
 fi
 
-# A clone on the storefront's default branch targets the released Store API —
-# the opposite of what this monorepo backend serves.
+# An older clone may still sit on the retired 6-0-dev branch, which no longer
+# follows the Store API.
 storefront_head="$(git -C storefront rev-parse --abbrev-ref HEAD)"
 if [ "$storefront_head" != "$STOREFRONT_BRANCH" ]; then
-  echo "  ! storefront/ is on '$storefront_head', not '$STOREFRONT_BRANCH' — it targets the released Store API." >&2
+  echo "  ! storefront/ is on '$storefront_head', not '$STOREFRONT_BRANCH'." >&2
   echo "    git -C storefront fetch origin && git -C storefront checkout $STOREFRONT_BRANCH" >&2
 fi
 

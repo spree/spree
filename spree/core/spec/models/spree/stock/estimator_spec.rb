@@ -171,10 +171,6 @@ module Spree
           it_behaves_like 'shipping rate matches'
         end
 
-        context "when the current matches the order's currency" do
-          it_behaves_like 'shipping rate matches'
-        end
-
         context "if the currency is different than the order's currency" do
           let(:currency) { 'GBP' }
 
@@ -210,7 +206,7 @@ module Spree
 
             allow(subject).to receive(:delivery_methods).and_return(shipping_methods)
 
-            subject.delivery_rates(package)
+            expect(subject.delivery_rates(package).map { |rate| [rate.cost, rate.selected] }).to eq [[1.00, true]]
           end
         end
 
@@ -242,7 +238,7 @@ module Spree
               sm.tax_category_id = tax_rate.tax_category_id
               sm.save
             end
-            package.shipping_methods.map(&:reload)
+            package.eligible_delivery_methods.map(&:reload)
           end
 
           it 'links the shipping rate and the tax rate' do
@@ -251,72 +247,26 @@ module Spree
           end
         end
 
-        context 'VAT price calculation' do
+        # The cost is charged as quoted wherever the parcel goes; whether its
+        # tax sits inside it is the market's choice (DeliveryRate#tax_amount).
+        context 'when the order ships to another country that charges VAT' do
           let(:tax_category) { create :tax_category }
           let!(:shipping_method) { create(:delivery_method, tax_category: tax_category) }
-
-          # Shipping is priced including the home country's VAT.
-          let(:home_country) { order.tax_address.country }
-          let!(:default_vat) do
+          let(:other_country) { create(:country, iso: 'FR', name: 'France') }
+          let!(:other_vat) do
             create :tax_rate,
-                   included_in_price: true,
-                   country_code: home_country&.iso,
-                   amount: 0.2,
+                   country_code: other_country&.iso,
+                   amount: 0.3,
                    tax_category: shipping_method.tax_category
           end
 
-          before { @default_store.default_market.update!(countries: [home_country]) }
-
-          context 'when the order has no address to tax against' do
-            before { allow(order).to receive(:tax_address).and_return nil }
-
-            it_behaves_like 'shipping rate matches'
+          before do
+            allow(order).to receive(:tax_address).
+              and_return(create(:address, country: other_country, state: nil,
+                                          state_name: 'Paris', zipcode: '75001'))
           end
 
-          context 'when the order ships within the home country' do
-            it_behaves_like 'shipping rate matches'
-          end
-
-          context 'when the order ships to a country with no VAT' do
-            let(:country_without_vat) { create(:country, iso: 'IN', name: 'India') }
-
-            before do
-              allow(order).to receive(:tax_address).
-                and_return(create(:address, country: country_without_vat, state: nil,
-                                            state_name: 'Delhi', zipcode: '110001'))
-            end
-
-            it 'deducts the home VAT from the cost' do
-              delivery_rates = subject.delivery_rates(package)
-              # deduct default vat: 4.00 / 1.2 = 3.33 (rounded)
-              expect(delivery_rates.first.cost).to eq(3.33)
-            end
-          end
-
-          context 'when the order ships to another country that charges VAT' do
-            let(:other_country) { create(:country, iso: 'FR', name: 'France') }
-            let!(:other_vat) do
-              create :tax_rate,
-                     included_in_price: true,
-                     country_code: other_country&.iso,
-                     amount: 0.3,
-                     tax_category: shipping_method.tax_category
-            end
-
-            before do
-              allow(order).to receive(:tax_address).
-                and_return(create(:address, country: other_country, state: nil,
-                                            state_name: 'Paris', zipcode: '75001'))
-            end
-
-            it 'deducts the home vat and applies the foreign vat to calculate the price' do
-              delivery_rates = subject.delivery_rates(package)
-              #
-              # deduct default vat: 4.00 / 1.2 = 3.33 (rounded)
-              # apply foreign vat: 3.33 * 1.3 = 4.33 (rounded)
-              expect(delivery_rates.first.cost).to eq(4.33)
-            end
-          end
+          it_behaves_like 'shipping rate matches'
         end
       end
 
@@ -328,7 +278,7 @@ module Spree
           retail = create(:channel, store: @default_store, name: "Retail #{SecureRandom.hex(3)}")
 
           wholesale_rate = create(:delivery_method, store: @default_store, name: 'Wholesale Rate')
-          wholesale_rate.rules = [{ type: 'channel_rule', preferences: { channel_ids: [wholesale.id] } }]
+          wholesale_rate.rules = [{ type: 'channel_rule', preferences: { channel_ids: [wholesale.prefixed_id] } }]
           wholesale_rate.save!
 
           wholesale_order = create(:order_with_line_items, store: @default_store, channel: wholesale)

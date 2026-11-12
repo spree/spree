@@ -29,10 +29,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
                 description: 'Comma-separated associations to expand (e.g., variants, media, option_types, categories). Use dot notation for nested expand (max 4 levels).'
       parameter name: :fields, in: :query, type: :string, required: false,
                 description: 'Comma-separated list of fields to include (e.g., name,slug,price,status). id is always included.'
-      parameter name: :'q[name_cont]', in: :query, type: :string, required: false,
-                description: 'Filter by name (contains)'
-      parameter name: :'q[status_eq]', in: :query, type: :string, required: false,
-                description: 'Filter by status'
+      filter_parameters_for
 
       response '200', 'products found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -74,80 +71,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string, example: 'Premium T-Shirt' },
-          description: { type: :string },
-          slug: { type: :string },
-          status: { type: :string, enum: %w[draft active archived] },
-          tax_category_id: { type: :string, description: 'Tax category ID' },
-          category_ids: { type: :array, items: { type: :string }, description: 'Array of category IDs' },
-          tags: { type: :array, items: { type: :string }, example: %w[eco sale] },
-          prices: {
-            type: :array,
-            description: 'Shorthand for a simple (no-options) product: per-currency prices that forward to the product\'s sole variant. For products with options, set prices per variant under `variants:` instead.',
-            items: {
-              type: :object,
-              required: %w[currency amount],
-              properties: {
-                currency: { type: :string, example: 'USD' },
-                amount: { type: :string, example: '29.99' },
-                compare_at_amount: { type: :string, nullable: true, example: '39.99' }
-              }
-            }
-          },
-          variants: {
-            type: :array,
-            description: 'Array of variant payloads. Variants can declare multiple option pairs via `options:` and per-currency prices via `prices:`. Stock counts go in `stock_levels:` (per stock location).',
-            items: {
-              type: :object,
-              properties: {
-                sku: { type: :string },
-                options: {
-                  type: :array,
-                  description: 'One pair per option type the variant participates in (e.g. size + color). Option types and values are auto-created if missing.',
-                  items: {
-                    type: :object,
-                    required: %w[name value],
-                    properties: {
-                      name: { type: :string, example: 'size' },
-                      value: { type: :string, example: 'Small' }
-                    }
-                  }
-                },
-                prices: {
-                  type: :array,
-                  description: 'Per-currency prices. Upserted by currency.',
-                  items: {
-                    type: :object,
-                    required: %w[currency amount],
-                    properties: {
-                      currency: { type: :string, example: 'USD' },
-                      amount: { type: :string, example: '29.99' },
-                      compare_at_amount: { type: :string, nullable: true, example: '39.99' }
-                    }
-                  }
-                },
-                stock_levels: {
-                  type: :array,
-                  description: 'Per-stock-location inventory. Upserted by stock_location_id.',
-                  items: {
-                    type: :object,
-                    required: %w[stock_location_id count_on_hand],
-                    properties: {
-                      stock_location_id: { type: :string, description: 'Stock location ID (e.g. sloc_xxx)' },
-                      count_on_hand: { type: :integer, example: 50 },
-                      backorderable: { type: :boolean }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        required: %w[name]
-      }
+      request_body_for
 
       response '201', 'product created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -227,79 +151,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
       parameter name: :id, in: :path, type: :string, required: true, description: 'Product ID'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string, example: 'Premium T-Shirt' },
-          description: { type: :string },
-          slug: { type: :string },
-          status: { type: :string, enum: %w[draft active archived] },
-          tax_category_id: { type: :string, description: 'Tax category ID' },
-          category_ids: { type: :array, items: { type: :string }, description: 'Array of category IDs' },
-          tags: { type: :array, items: { type: :string }, example: %w[eco sale] },
-          prices: {
-            type: :array,
-            description: 'Shorthand for a simple (no-options) product: per-currency prices that forward to the product\'s sole variant. For products with options, set prices per variant under `variants:` instead.',
-            items: {
-              type: :object,
-              required: %w[currency amount],
-              properties: {
-                currency: { type: :string, example: 'USD' },
-                amount: { type: :string, example: '29.99' },
-                compare_at_amount: { type: :string, nullable: true, example: '39.99' }
-              }
-            }
-          },
-          variants: {
-            type: :array,
-            description: 'Array of variant payloads. Variants can declare multiple option pairs via `options:` and per-currency prices via `prices:`. Stock counts go in `stock_levels:` (per stock location).',
-            items: {
-              type: :object,
-              properties: {
-                sku: { type: :string },
-                options: {
-                  type: :array,
-                  description: 'One pair per option type the variant participates in (e.g. size + color). Option types and values are auto-created if missing.',
-                  items: {
-                    type: :object,
-                    required: %w[name value],
-                    properties: {
-                      name: { type: :string, example: 'size' },
-                      value: { type: :string, example: 'Small' }
-                    }
-                  }
-                },
-                prices: {
-                  type: :array,
-                  description: 'Per-currency prices. Upserted by currency.',
-                  items: {
-                    type: :object,
-                    required: %w[currency amount],
-                    properties: {
-                      currency: { type: :string, example: 'USD' },
-                      amount: { type: :string, example: '29.99' },
-                      compare_at_amount: { type: :string, nullable: true, example: '39.99' }
-                    }
-                  }
-                },
-                stock_levels: {
-                  type: :array,
-                  description: 'Per-stock-location inventory. Upserted by stock_location_id.',
-                  items: {
-                    type: :object,
-                    required: %w[stock_location_id count_on_hand],
-                    properties: {
-                      stock_location_id: { type: :string, description: 'Stock location ID (e.g. sloc_xxx)' },
-                      count_on_hand: { type: :integer, example: 50 },
-                      backorderable: { type: :boolean }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+      request_body_for
 
       response '200', 'product updated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -373,9 +225,46 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
     end
   end
 
+  path '/api/v3/admin/products/{id}/clone' do
+    parameter name: :id, in: :path, type: :string, required: true, description: 'Product ID'
+
+    post 'Clone a product' do
+      tags 'Products'
+      admin_sdk_example 'products/clone'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        Creates a draft copy of a product, named "COPY OF …", with its variants,
+        prices, stock locations, images, categories, channels and tags; stock on
+        hand starts at zero. Use it to start a similar product from an existing
+        one instead of building it from scratch.
+      DESC
+      admin_scope :write, :products
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+
+      response '201', 'product cloned' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:id) { product.prefixed_id }
+
+        schema '$ref' => '#/components/schemas/Product'
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['id']).not_to eq(product.prefixed_id)
+          expect(data['name']).to eq("COPY OF #{product.name}")
+          expect(data['status']).to eq('draft')
+        end
+      end
+    end
+  end
+
   path '/api/v3/admin/products/bulk_status_update' do
     post 'Bulk-update product status' do
       tags 'Products'
+      agent_tool false, reason: 'Writes the status column for many products at once, skipping the status workflows ' \
+                                'and their events; products_activate, products_archive and products_draft run them.'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -389,14 +278,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        required: %w[ids status],
-        properties: {
-          ids: { type: :array, items: { type: :string }, example: ['prod_UkLWZg9DAJ'] },
-          status: { type: :string, enum: %w[draft active archived], example: 'archived' }
-        }
-      }
+      request_body_for
 
       response '200', 'products updated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -453,14 +335,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        required: %w[ids category_ids],
-        properties: {
-          ids: { type: :array, items: { type: :string } },
-          category_ids: { type: :array, items: { type: :string } }
-        }
-      }
+      request_body_for
 
       response '200', 'products added to categories' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -494,14 +369,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        required: %w[ids category_ids],
-        properties: {
-          ids: { type: :array, items: { type: :string } },
-          category_ids: { type: :array, items: { type: :string } }
-        }
-      }
+      request_body_for
 
       response '200', 'products removed from categories' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -531,16 +399,11 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
       DESC
       admin_scope :write, :products
 
+      admin_sdk_example 'products/bulk-add-to-collections'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        required: %w[ids collection_ids],
-        properties: {
-          ids: { type: :array, items: { type: :string } },
-          collection_ids: { type: :array, items: { type: :string } }
-        }
-      }
+      request_body_for
 
       response '200', 'products added to collections' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -570,16 +433,11 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
       description 'Detaches each product in `ids` from every collection in `collection_ids`.'
       admin_scope :write, :products
 
+      admin_sdk_example 'products/bulk-remove-from-collections'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        required: %w[ids collection_ids],
-        properties: {
-          ids: { type: :array, items: { type: :string } },
-          collection_ids: { type: :array, items: { type: :string } }
-        }
-      }
+      request_body_for
 
       response '200', 'products removed from collections' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -614,14 +472,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        required: %w[ids channel_ids],
-        properties: {
-          ids: { type: :array, items: { type: :string } },
-          channel_ids: { type: :array, items: { type: :string } }
-        }
-      }
+      request_body_for
 
       response '200', 'products published on channels' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -655,14 +506,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        required: %w[ids channel_ids],
-        properties: {
-          ids: { type: :array, items: { type: :string } },
-          channel_ids: { type: :array, items: { type: :string } }
-        }
-      }
+      request_body_for
 
       response '200', 'products unpublished from channels' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -699,14 +543,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        required: %w[ids tags],
-        properties: {
-          ids: { type: :array, items: { type: :string } },
-          tags: { type: :array, items: { type: :string }, example: %w[summer sale] }
-        }
-      }
+      request_body_for
 
       response '200', 'tags added' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -739,14 +576,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        required: %w[ids tags],
-        properties: {
-          ids: { type: :array, items: { type: :string } },
-          tags: { type: :array, items: { type: :string } }
-        }
-      }
+      request_body_for
 
       response '200', 'tags removed' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -766,6 +596,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
   path '/api/v3/admin/products/bulk_destroy' do
     delete 'Bulk-delete products' do
       tags 'Products'
+      agent_tool false, reason: 'Deletes many products in one call behind a single confirmation; delete_resource removes them one at a time.'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -776,13 +607,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        required: %w[ids],
-        properties: {
-          ids: { type: :array, items: { type: :string } }
-        }
-      }
+      request_body_for
 
       response '200', 'products deleted' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -796,6 +621,194 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
           data = JSON.parse(response.body)
           expect(data).to eq('product_count' => 1)
           expect(product.reload.deleted_at).not_to be_nil
+        end
+      end
+    end
+  end
+
+  path '/api/v3/admin/products/{id}/approve' do
+    parameter name: :id, in: :path, type: :string, required: true, description: 'Product ID'
+
+    patch 'Approve a submitted product' do
+      tags 'Products'
+      admin_sdk_example 'products/approve'
+      admin_operation :write, :products, description: <<~DESC
+        Puts a product a seller submitted for review on sale, and closes the
+        submission. Only a product awaiting review can be approved.
+      DESC
+
+      response '200', 'product approved' do
+        let(:submitted) { create(:product, store: store, status: 'proposed') }
+        let(:id) { submitted.prefixed_id }
+
+        schema '$ref' => '#/components/schemas/Product'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['status']).to eq('active')
+        end
+      end
+
+      response '422', 'the product is not awaiting review' do
+        let(:id) { product.prefixed_id }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
+      end
+    end
+  end
+
+  path '/api/v3/admin/products/{id}/reject' do
+    parameter name: :id, in: :path, type: :string, required: true, description: 'Product ID'
+
+    patch 'Reject a submitted product' do
+      tags 'Products'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        Turns down a product a seller submitted for review. The `reason` is
+        sent back to the seller, who can fix the product and submit it again.
+      DESC
+      admin_scope :write, :products
+
+      admin_sdk_example 'products/reject'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      request_body_for
+
+      response '200', 'product rejected' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:submitted) { create(:product, store: store, status: 'proposed') }
+        let(:id) { submitted.prefixed_id }
+        let(:body) { { reason: 'Photos are too dark' } }
+
+        schema '$ref' => '#/components/schemas/Product'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['status']).to eq('rejected')
+          expect(submitted.reload.rejection_reason).to eq('Photos are too dark')
+        end
+      end
+    end
+  end
+
+  path '/api/v3/admin/products/{id}/activate' do
+    parameter name: :id, in: :path, type: :string, required: true, description: 'Product ID'
+
+    patch 'Activate a product' do
+      tags 'Products'
+      admin_sdk_example 'products/activate'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        Puts one product on sale. Runs the activation workflow, so its hooks and the `product.activated` event fire, which `bulk_status_update` does not. A product awaiting review is refused: approve or reject it instead.
+      DESC
+      admin_scope :write, :products
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+
+      response '200', 'product active' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:id) { create(:product, store: store, status: 'draft').prefixed_id }
+
+        schema '$ref' => '#/components/schemas/Product'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['status']).to eq('active')
+        end
+      end
+
+      response '422', 'the product is awaiting review' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:id) { create(:product, store: store, status: 'proposed').prefixed_id }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body).dig('error', 'code')).to eq('product_in_review')
+        end
+      end
+    end
+  end
+
+  path '/api/v3/admin/products/{id}/archive' do
+    parameter name: :id, in: :path, type: :string, required: true, description: 'Product ID'
+
+    patch 'Archive a product' do
+      tags 'Products'
+      admin_sdk_example 'products/archive'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        Takes one product off sale and archives it; activating it puts it back on sale. Runs the archive workflow, so its hooks and its event fire. A product awaiting review is refused: approve or reject it instead.
+      DESC
+      admin_scope :write, :products
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+
+      response '200', 'product archived' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:id) { create(:product, store: store, status: 'active').prefixed_id }
+
+        schema '$ref' => '#/components/schemas/Product'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['status']).to eq('archived')
+        end
+      end
+
+      response '422', 'the product is awaiting review' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:id) { create(:product, store: store, status: 'proposed').prefixed_id }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body).dig('error', 'code')).to eq('product_in_review')
+        end
+      end
+    end
+  end
+
+  path '/api/v3/admin/products/{id}/draft' do
+    parameter name: :id, in: :path, type: :string, required: true, description: 'Product ID'
+
+    patch 'Move a product back to draft' do
+      tags 'Products'
+      admin_sdk_example 'products/draft'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        Takes one product off sale, back to a draft. Runs the draft workflow, so its hooks and its event fire. A product awaiting review is refused: approve or reject it instead.
+      DESC
+      admin_scope :write, :products
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+
+      response '200', 'product draft' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:id) { create(:product, store: store, status: 'active').prefixed_id }
+
+        schema '$ref' => '#/components/schemas/Product'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['status']).to eq('draft')
+        end
+      end
+
+      response '422', 'the product is awaiting review' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:id) { create(:product, store: store, status: 'proposed').prefixed_id }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body).dig('error', 'code')).to eq('product_in_review')
         end
       end
     end

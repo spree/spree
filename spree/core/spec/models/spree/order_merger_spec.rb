@@ -9,6 +9,13 @@ module Spree
     let(:user) { create(:user) }
     let(:subject) { Spree::OrderMerger.new(order_1) }
 
+    before { allow(Spree::Deprecation).to receive(:warn) }
+
+    it 'warns that it is deprecated' do
+      subject
+      expect(Spree::Deprecation).to have_received(:warn).with(/Spree::OrderMerger is deprecated/)
+    end
+
     it 'destroys the other order' do
       subject.merge!(order_2)
       expect { order_2.reload }.to raise_error(ActiveRecord::RecordNotFound)
@@ -41,8 +48,8 @@ module Spree
 
     context 'merging together two orders with line items for the same variant' do
       before do
-        Spree::Carts::AddItem.call order: order_1, variant: variant, quantity: 1
-        Spree::Carts::AddItem.call order: order_2, variant: variant, quantity: 1
+        Spree::Orders::AddItem.call(order: order_1, variant: variant, quantity: 1)
+        Spree::Orders::AddItem.call(order: order_2, variant: variant, quantity: 1)
       end
 
       specify do
@@ -87,8 +94,8 @@ module Spree
         before do
           allow(order_1).to receive(:foos_match).and_return(false)
 
-          Spree::Carts::AddItem.call order: order_1, variant: variant, quantity: 1, options: {foos: {}}
-          Spree::Carts::AddItem.call order: order_2, variant: variant, quantity: 1, options: {foos: {}}
+          Spree::Orders::AddItem.call(order: order_1, variant: variant, quantity: 1, options: {foos: {}})
+          Spree::Orders::AddItem.call(order: order_2, variant: variant, quantity: 1, options: {foos: {}})
         end
 
         specify do
@@ -110,8 +117,8 @@ module Spree
       let(:variant_2) { create(:variant) }
 
       before do
-        Spree::Carts::AddItem.call order: order_1, variant: variant, quantity: 1
-        Spree::Carts::AddItem.call order: order_2, variant: variant_2, quantity: 1
+        Spree::Orders::AddItem.call(order: order_1, variant: variant, quantity: 1)
+        Spree::Orders::AddItem.call(order: order_2, variant: variant_2, quantity: 1)
       end
 
       specify do
@@ -119,7 +126,7 @@ module Spree
         expect(order_1.line_items.length).to eq(2)
         expect(order_1.line_items.count).to eq(2)
 
-        expect(order_1.item_count).to eq 2
+        expect(order_1.total_quantity).to eq 2
         expect(order_1.item_total).to eq order_1.line_items.map(&:amount).sum
 
         # No guarantee on ordering of line items, so we do this:
@@ -132,8 +139,8 @@ module Spree
       let(:variant_2) { create(:variant) }
 
       before do
-        Spree::Carts::AddItem.call order: order_1, variant: variant, quantity: 1
-        Spree::Carts::AddItem.call order: order_2, variant: variant_2, quantity: 1
+        Spree::Orders::AddItem.call(order: order_1, variant: variant, quantity: 1)
+        Spree::Orders::AddItem.call(order: order_2, variant: variant_2, quantity: 1)
       end
 
       it 'creates errors with invalid line items' do

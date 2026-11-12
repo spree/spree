@@ -71,16 +71,7 @@ RSpec.describe 'Admin Store API', type: :request, swagger_doc: 'api-reference/ad
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string, example: 'My Store' },
-          preferred_admin_locale: { type: :string, example: 'en' },
-          preferred_timezone: { type: :string, example: 'UTC' },
-          preferred_weight_unit: { type: :string, example: 'kg' },
-          preferred_unit_system: { type: :string, example: 'metric' }
-        }
-      }
+      request_body_for
 
       response '200', 'store updated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

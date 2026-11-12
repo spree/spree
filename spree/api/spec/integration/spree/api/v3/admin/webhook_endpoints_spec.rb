@@ -36,10 +36,7 @@ RSpec.describe 'Admin Webhook Endpoints API', type: :request, swagger_doc: 'api-
                 description: 'Bearer token for admin authentication'
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Number of records per page'
-      parameter name: :'q[name_cont]', in: :query, type: :string, required: false,
-                description: 'Filter by name (contains)'
-      parameter name: :'q[url_cont]', in: :query, type: :string, required: false,
-                description: 'Filter by URL (contains)'
+      filter_parameters_for
       parameter name: :sort, in: :query, type: :string, required: false,
                 description: 'Sort by field. Prefix with `-` for descending (e.g., `-created_at`).'
       parameter name: :fields, in: :query, type: :string, required: false,
@@ -90,20 +87,7 @@ RSpec.describe 'Admin Webhook Endpoints API', type: :request, swagger_doc: 'api-
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        required: %w[url],
-        properties: {
-          name: { type: :string, example: 'Order pipeline' },
-          url: { type: :string, example: 'https://example.com/webhooks/orders' },
-          active: { type: :boolean, example: true },
-          subscriptions: {
-            type: :array,
-            items: { type: :string },
-            example: %w[order.placed order.canceled]
-          }
-        }
-      }
+      request_body_for
 
       response '201', 'webhook endpoint created — secret_key returned once' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -197,15 +181,7 @@ RSpec.describe 'Admin Webhook Endpoints API', type: :request, swagger_doc: 'api-
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string },
-          url: { type: :string },
-          active: { type: :boolean },
-          subscriptions: { type: :array, items: { type: :string } }
-        }
-      }
+      request_body_for
 
       response '200', 'webhook endpoint updated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -339,12 +315,7 @@ RSpec.describe 'Admin Webhook Endpoints API', type: :request, swagger_doc: 'api-
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          reason: { type: :string, example: 'Investigating elevated 5xx rate' }
-        }
-      }
+      request_body_for
 
       response '200', 'webhook endpoint disabled' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

@@ -197,7 +197,7 @@ function CreateProfileDialog({ onClose }: { onClose: () => void }) {
           <DialogBody>
             <FieldGroup>
               {errors.root?.message && (
-                <p className="text-sm text-destructive" role="alert">
+                <p className="text-base text-destructive" role="alert">
                   {errors.root.message}
                 </p>
               )}
@@ -249,14 +249,14 @@ function CreateProfileDialog({ onClose }: { onClose: () => void }) {
                     <RadioGroup value={field.value} onValueChange={field.onChange}>
                       <label
                         htmlFor="create-profile-origins-all"
-                        className="flex items-center gap-2 text-sm"
+                        className="flex items-center gap-2 text-base"
                       >
                         <RadioGroupItem id="create-profile-origins-all" value="all" />
                         {t('admin.delivery_profiles.all_locations')}
                       </label>
                       <label
                         htmlFor="create-profile-origins-selected"
-                        className="flex items-center gap-2 text-sm"
+                        className="flex items-center gap-2 text-base"
                       >
                         <RadioGroupItem id="create-profile-origins-selected" value="selected" />
                         {t('admin.delivery_profiles.selected_locations')}
@@ -275,7 +275,7 @@ function CreateProfileDialog({ onClose }: { onClose: () => void }) {
                           <label
                             key={location.id}
                             htmlFor={`create-profile-location-${location.id}`}
-                            className="flex items-center gap-2 text-sm"
+                            className="flex items-center gap-2 text-base"
                           >
                             <Checkbox
                               id={`create-profile-location-${location.id}`}

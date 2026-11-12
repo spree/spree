@@ -196,6 +196,26 @@ RSpec.describe Spree::Stores::ProvisionDefaults do
       end
     end
 
+    context 'when the given locale is not one Spree lists' do
+      let(:locale) { 'de-LU' }
+
+      it 'uses its listed language, since a market accepts nothing else' do
+        subject
+
+        expect(store.reload.default_market.default_locale).to eq('de')
+      end
+    end
+
+    context 'when the given locale is one Spree cannot place' do
+      let(:locale) { 'xx' }
+
+      it "uses the country's own language" do
+        subject
+
+        expect(store.reload.default_market.default_locale).to eq('de')
+      end
+    end
+
     # Shipping from one country and pricing in another currency is ordinary —
     # a Polish merchant selling to the eurozone, say.
     context 'when a currency is given explicitly' do
@@ -215,19 +235,16 @@ RSpec.describe Spree::Stores::ProvisionDefaults do
       end
     end
 
-    # The setup screen only ever offers languages Spree translates, so a
-    # derived default must land in the same set — otherwise an API client
-    # omitting `locale` gets a storefront language with no strings behind it.
-    context "when the country's own language has no translations" do
+    # A store's locale is a content locale, so Spree's own translation files
+    # do not limit it: the storefront and dashboard carry their own.
+    context "when Spree ships no translations for the country's language" do
       let(:locale) { nil }
       let(:country) { Spree::Country.by_iso('AL') } # Albania → Albanian
 
-      before { allow(Spree).to receive(:available_locales).and_return(%i[en de fr]) }
-
-      it 'falls back to English rather than the untranslated language' do
+      it 'still uses that language' do
         subject
 
-        expect(store.reload.default_market.default_locale).to eq('en')
+        expect(store.reload.default_market.default_locale).to eq('sq')
       end
 
       it 'still honors a locale the caller asked for outright' do
@@ -276,6 +293,22 @@ RSpec.describe Spree::Stores::ProvisionDefaults do
       subject
 
       expect(priced.reload.calculator.preferred_currency).to eq('USD')
+    end
+  end
+
+  describe 'events', :events do
+    it 'provisions without publishing events' do
+      store
+      published = []
+      allow(Spree::Events).to receive(:publish).and_wrap_original do |original, name, *rest|
+        published << name
+        original.call(name, *rest)
+      end
+
+      subject
+
+      expect(store.delivery_methods).to be_present
+      expect(published).to be_empty
     end
   end
 

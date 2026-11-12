@@ -1,10 +1,17 @@
-import { defineTable, Subject } from '@spree/dashboard-core'
-import { RelativeTime, StatusBadge, TagList } from '@spree/dashboard-ui'
+import { ORDER_PAYMENT_STATUSES } from '@spree/core'
+import {
+  defineTable,
+  FILTERABLE_ORDER_FULFILLMENT_STATUSES,
+  LocaleLabel,
+  Money,
+} from '@spree/dashboard-core'
+import { CurrencyLabel, RelativeTime, StatusBadge, TagList } from '@spree/dashboard-ui'
 import { ShoppingCartIcon } from '@spree/dashboard-ui/icons'
 import { Link } from '@tanstack/react-router'
 import i18n from 'i18next'
 import { channelAutocompleteProps } from '../hooks/use-channels'
 import { customerAutocompleteProps } from '../hooks/use-customers'
+import { marketAutocompleteProps } from '../hooks/use-markets'
 import { sellerAutocompleteProps } from '../hooks/use-sellers'
 import { orderGroupSearch } from '../lib/order-group-search'
 
@@ -51,7 +58,7 @@ defineTable('orders', {
       default: true,
       filterType: 'date',
       quickFilter: true,
-      className: 'text-sm text-muted-foreground whitespace-nowrap',
+      className: 'text-base text-muted-foreground whitespace-nowrap',
       render: (order) => <RelativeTime iso={order.completed_at} />,
     },
     {
@@ -68,19 +75,18 @@ defineTable('orders', {
       filterResource: customerAutocompleteProps('orders-table-customer-filter'),
       ransackAttribute: 'customer_id',
       default: true,
-      className: 'text-sm',
+      className: 'text-base',
       render: (order) => order.email ?? '—',
     },
     {
       key: 'channel',
       label: i18n.t('admin.fields.order.channel.label'),
-      sortable: true,
       filterable: true,
       filterType: 'resource',
-      filterResource: channelAutocompleteProps('orders-table-channel-filter'),
+      filterResource: channelAutocompleteProps(),
       ransackAttribute: 'channel_id',
       default: true,
-      className: 'text-sm text-muted-foreground',
+      className: 'text-base text-muted-foreground',
       render: (order) => order.channel?.name ?? '—',
     },
     {
@@ -90,19 +96,10 @@ defineTable('orders', {
       filterable: true,
       default: true,
       filterType: 'enum',
-      filterOptions: [
-        { value: 'none', label: i18n.t('admin.orders.payment_statuses.none') },
-        { value: 'authorized', label: i18n.t('admin.orders.payment_statuses.authorized') },
-        { value: 'partially_paid', label: i18n.t('admin.orders.payment_statuses.partially_paid') },
-        { value: 'paid', label: i18n.t('admin.orders.payment_statuses.paid') },
-        {
-          value: 'partially_refunded',
-          label: i18n.t('admin.orders.payment_statuses.partially_refunded'),
-        },
-        { value: 'refunded', label: i18n.t('admin.orders.payment_statuses.refunded') },
-        { value: 'overcharged', label: i18n.t('admin.orders.payment_statuses.overcharged') },
-        { value: 'voided', label: i18n.t('admin.orders.payment_statuses.voided') },
-      ],
+      filterOptions: ORDER_PAYMENT_STATUSES.map((status) => ({
+        value: status,
+        label: i18n.t(`admin.orders.payment_statuses.${status}`),
+      })),
       quickFilter: true,
       render: (order) =>
         order.payment_status ? (
@@ -121,14 +118,10 @@ defineTable('orders', {
       filterable: true,
       default: true,
       filterType: 'enum',
-      filterOptions: [
-        { value: 'backorder', label: i18n.t('admin.orders.fulfillment_statuses.backorder') },
-        { value: 'canceled', label: i18n.t('admin.orders.fulfillment_statuses.canceled') },
-        { value: 'partial', label: i18n.t('admin.orders.fulfillment_statuses.partial') },
-        { value: 'unfulfilled', label: i18n.t('admin.orders.fulfillment_statuses.unfulfilled') },
-        { value: 'fulfilled', label: i18n.t('admin.orders.fulfillment_statuses.fulfilled') },
-        { value: 'delivered', label: i18n.t('admin.orders.fulfillment_statuses.delivered') },
-      ],
+      filterOptions: FILTERABLE_ORDER_FULFILLMENT_STATUSES.map((status) => ({
+        value: status,
+        label: i18n.t(`admin.orders.fulfillment_statuses.${status}`),
+      })),
       quickFilter: true,
       render: (order) =>
         order.fulfillment_status ? (
@@ -145,7 +138,7 @@ defineTable('orders', {
       label: i18n.t('admin.orders.columns.items'),
       sortable: true,
       default: true,
-      className: 'text-right tabular-nums text-sm text-muted-foreground',
+      className: 'text-right tabular-nums text-base text-muted-foreground',
       render: (order) => {
         const count = order.total_quantity ?? 0
         return i18n.t('admin.orders.item_count', { count })
@@ -159,7 +152,7 @@ defineTable('orders', {
       default: true,
       filterType: 'number',
       className: 'text-right tabular-nums whitespace-nowrap font-medium',
-      render: (order) => order.display_total ?? '—',
+      render: (order) => <Money amount={order.total} currency={order.currency} />,
     },
     // Off by default — most stores never see one — but a B2B merchant turns it
     // on and reconciles against the buyer's own reference.
@@ -169,7 +162,7 @@ defineTable('orders', {
       sortable: true,
       filterable: true,
       default: false,
-      className: 'text-sm text-muted-foreground',
+      className: 'text-base text-muted-foreground',
       render: (order) => order.po_number ?? '—',
     },
     {
@@ -179,7 +172,28 @@ defineTable('orders', {
       filterable: true,
       filterType: 'currency',
       default: false,
-      render: (order) => order.currency ?? '—',
+      render: (order) => (order.currency ? <CurrencyLabel code={order.currency} /> : '—'),
+    },
+    {
+      key: 'market',
+      label: i18n.t('admin.fields.order.market.label'),
+      filterable: true,
+      filterType: 'resource',
+      filterResource: marketAutocompleteProps(),
+      ransackAttribute: 'market_id',
+      default: false,
+      className: 'text-base text-muted-foreground',
+      render: (order) => order.market?.name ?? '—',
+    },
+    {
+      key: 'locale',
+      label: i18n.t('admin.fields.order.locale.label'),
+      sortable: true,
+      filterable: true,
+      filterType: 'locale',
+      default: false,
+      className: 'text-base text-muted-foreground',
+      render: (order) => (order.locale ? <LocaleLabel code={order.locale} /> : '—'),
     },
     // On a marketplace this list holds the operator's own orders and every
     // seller's together, so a row has to say which it is — shown by default
@@ -222,7 +236,7 @@ defineTable('orders', {
       // order, which builds the `eq` rule this actually needs.
       ransackAttribute: 'order_group_id',
       default: false,
-      className: 'text-sm text-muted-foreground',
+      className: 'text-base text-muted-foreground',
       render: (order) =>
         order.order_group_id ? (
           <Link
@@ -247,7 +261,7 @@ defineTable('orders', {
       sortable: false,
       filterable: true,
       filterType: 'tags',
-      taggableType: Subject.Order,
+      taggableType: 'order',
       default: false,
       render: (order) => <TagList tags={order.tags} />,
     },
@@ -257,7 +271,7 @@ defineTable('orders', {
       label: i18n.t('admin.fields.first_name.label'),
       filterable: true,
       displayable: false,
-      ransackAttribute: 'bill_address_first_name_i',
+      ransackAttribute: 'bill_address_first_name',
     },
     {
       key: 'last_name',

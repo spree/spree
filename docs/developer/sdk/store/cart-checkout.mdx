@@ -170,7 +170,7 @@ const options = { spreeToken: cart.token };
 await client.carts.storeCredits.apply(cartId, undefined, options);
 
 // Apply specific amount of store credit
-await client.carts.storeCredits.apply(cartId, 25.00, options);
+await client.carts.storeCredits.apply(cartId, '25.00', options);
 
 // Remove store credit from order
 await client.carts.storeCredits.remove(cartId, options);
@@ -188,7 +188,7 @@ The cart and order responses break the amount the customer pays into these total
 - `fee_total` — every [fee](#fees-and-duties) on the cart, duties included
 - `tax_total` — tax on items, delivery and taxable fees
 - `total` — what the order costs: items, delivery, fees and tax, less discounts
-- `store_credit_total` / `gift_card_total` — store credit or gift card value applied against the total
+- `store_credit_total` / `gift_card_total` — store credit and gift card value applied against the total, each counted once (a gift card is not part of `store_credit_total`)
 - `amount_due` — what is left to pay after store credit and gift cards
 - `covered_by_store_credit` — boolean, whether the order is fully covered by store credit
 - `gift_card` — associated gift card (if applicable)

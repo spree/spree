@@ -70,9 +70,9 @@ RSpec.describe 'Pricing providers' do
       expect { price.save }.to raise_error(ActiveRecord::ReadOnlyRecord)
     end
 
-    # The contract does not require a provider to set the variant, and the
-    # tax-inclusive restatement reads it — without this the price fails deep
-    # inside that call with an obscure NoMethodError.
+    # The contract does not require a provider to set the variant, and
+    # everything downstream reads it — without this the price fails far from
+    # the provider with an obscure NoMethodError.
     it 'fills in the variant when a provider builds a price without one' do
       bare = Class.new(Spree::PricingProvider::Base) do
         def self.key = 'bare'

@@ -101,7 +101,7 @@ module SpreeMeilisearch
     def reindex(scope = nil)
       full_reindex = scope.nil?
       scope ||= store.products
-      @custom_field_schema = Spree::SearchProvider::CustomFieldSchema.new(store)
+      @custom_field_schema = storefront_custom_field_schema
       ensure_index_settings!
 
       # On a full reindex, clear first so stale docs (e.g. membership docs for
@@ -147,6 +147,14 @@ module SpreeMeilisearch
       return if @index_settings_configured
 
       ensure_index_settings!
+    end
+
+    # The index is the storefront's: shoppers search it and the back office
+    # never does, so its vocabulary is the storefront schema whatever audience
+    # this provider was built for. A back-office reindex must not teach the
+    # shared index about admin-only fields.
+    def custom_field_schema
+      @custom_field_schema ||= storefront_custom_field_schema
     end
 
     private
@@ -202,7 +210,7 @@ module SpreeMeilisearch
         facets: return_facets ? facet_attributes : nil,
         sort: build_sort(sort),
         page: page,
-        hitsPerPage: limit
+        hits_per_page: limit
       }.compact
 
       Rails.logger.debug { "[Meilisearch] index=#{index_name} query=#{query.inspect} #{search_params.compact.inspect}" }
@@ -210,11 +218,14 @@ module SpreeMeilisearch
       settings_refreshed = false
       begin
         if return_facets && grouped_options.any?
-          queries = [{ indexUid: index_name, q: query.to_s, **search_params }]
+          queries = [{ index_uid: index_name, q: query.to_s, **search_params }]
           option_type_ids_ordered = grouped_options.keys
           option_type_ids_ordered.each do |option_type_id|
             without_this = build_grouped_option_conditions(grouped_options.except(option_type_id))
-            queries << { indexUid: index_name, q: query.to_s, filter: base_conditions + without_this, facets: ['option_value_ids'], page: 1, hitsPerPage: 0 }
+            queries << {
+              index_uid: index_name, q: query.to_s, filter: base_conditions + without_this,
+              facets: ['option_value_ids'], page: 1, hits_per_page: 0
+            }
           end
 
           results = client.multi_search(queries)
@@ -283,6 +294,10 @@ module SpreeMeilisearch
 
     def index_name
       "#{store.code}_products"
+    end
+
+    def storefront_custom_field_schema
+      Spree::SearchProvider::CustomFieldSchema.new(store, audience: :store)
     end
 
     def searchable_attributes
@@ -386,9 +401,11 @@ module SpreeMeilisearch
     def build_filter_condition(key, value)
       case key
       when 'price_gte'
-        "price >= #{value.to_f}"
+        price_bound = price_filter_value(value)
+        "price >= #{price_bound}" if price_bound
       when 'price_lte'
-        "price <= #{value.to_f}"
+        price_bound = price_filter_value(value)
+        "price <= #{price_bound}" if price_bound
       when 'in_stock'
         'in_stock = true' if value.to_s != '0'
       when 'out_of_stock'
@@ -436,6 +453,16 @@ module SpreeMeilisearch
         formatted = format_custom_field_filter_value(value, numeric)
         formatted && "#{attribute} #{CUSTOM_FIELD_RANGE_OPERATORS[parsed[:predicate]]} #{formatted}"
       end
+    end
+
+    # The bound as a plain decimal, or nil for anything else, so a malformed
+    # or enormous price never reaches the filter expression.
+    def price_filter_value(value)
+      return if value.to_s.length > 32
+
+      Spree::Money::Rounding.format_decimal(Spree::Money::Rounding.parse_decimal(value.to_s))
+    rescue Spree::Money::InvalidFormat
+      nil
     end
 
     def format_custom_field_filter_value(value, numeric)

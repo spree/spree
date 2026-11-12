@@ -98,17 +98,17 @@ module Spree
           index.zero? ? product.meta_keywords : nil,
           index.zero? ? product.tag_list.to_s : nil,
           index.zero? ? product.label_list.to_s : nil,
-          variant.amount_in(currency).to_f,
-          variant.compare_at_amount_in(currency).to_f,
+          unit_price(variant.amount_in(currency) || 0),
+          unit_price(variant.compare_at_amount_in(currency) || 0),
           currency,
-          variant.width,
-          variant.height,
-          variant.depth,
+          decimal(variant.width),
+          decimal(variant.height),
+          decimal(variant.depth),
           # The stored columns, not the resolved readers: importing this file
           # into a store on another unit system must not silently write this
           # store's units onto every variant.
           variant[:dimensions_unit],
-          variant.weight,
+          decimal(variant.weight),
           variant[:weight_unit],
           publication_available_on&.strftime('%Y-%m-%d %H:%M:%S'),
           (variant.discontinue_on || publication_discontinue_on)&.strftime('%Y-%m-%d %H:%M:%S'),
@@ -151,6 +151,15 @@ module Spree
 
       private
 
+      def unit_price(amount)
+        Spree::Money::Rounding.format(amount, currency, unit_price: true)
+      end
+
+      # "1.5", never Ruby's "0.15e1", which the import refuses.
+      def decimal(value)
+        Spree::Money::Rounding.format_decimal(value)
+      end
+
       # Default-channel publication for the export's store. 5.5 transitional:
       # fall back to the legacy Product columns when the publication dates are
       # NULL (pre-backfill). 6.0 drops the Product-column fallback.
@@ -175,8 +184,8 @@ module Spree
         csv = Array.new(CSV_HEADERS.size)
         csv[CSV_HEADERS.index('sku')] = variant.sku
         csv[CSV_HEADERS.index('slug')] = product.slug
-        csv[CSV_HEADERS.index('price')] = variant.amount_in(currency)&.to_f
-        csv[CSV_HEADERS.index('compare_at_price')] = variant.compare_at_amount_in(currency)&.to_f
+        csv[CSV_HEADERS.index('price')] = unit_price(variant.amount_in(currency))
+        csv[CSV_HEADERS.index('compare_at_price')] = unit_price(variant.compare_at_amount_in(currency))
         csv[CSV_HEADERS.index('currency')] = currency
         csv
       end

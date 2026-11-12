@@ -88,7 +88,7 @@ export function TagsCard({ order }: { order: Order }) {
       <CardContent>
         {editing ? (
           <div className="flex flex-col gap-3">
-            <TagCombobox taggableType="Spree::Order" value={tags} onChange={setTags} />
+            <TagCombobox taggableType="order" value={tags} onChange={setTags} />
             <div className="flex justify-end gap-2">
               <Button type="button" variant="outline" size="sm" onClick={() => setEditing(false)}>
                 {t('admin.actions.cancel')}
@@ -110,7 +110,7 @@ export function TagsCard({ order }: { order: Order }) {
             ))}
           </div>
         ) : (
-          <p className="text-sm text-muted-foreground">{t('admin.common.none')}</p>
+          <p className="text-base text-muted-foreground">{t('admin.common.none')}</p>
         )}
       </CardContent>
     </Card>

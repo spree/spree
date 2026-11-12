@@ -7,7 +7,7 @@ const client = createAdminClient({
 
 // region:example
 const { data: products } = await client.products.list({
-  name_cont: 'shirt',
+  search: 'shirt',
   status_eq: 'active',
   sort: '-created_at',
   limit: 25,

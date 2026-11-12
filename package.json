@@ -3,10 +3,15 @@
   "private": true,
   "scripts": {
     "preinstall": "npx only-allow pnpm",
+    "postinstall": "test -n \"$CI\" || turbo build --filter=@spree/cli... --output-logs=errors-only || echo \"Warning: building @spree/cli failed; the spree command will not work until it builds.\"",
     "dev": "turbo dev",
     "build": "turbo build",
     "test": "turbo test",
+    "generate:types": "cd spree/api && bundle exec rake typelizer:generate",
     "generate:zod": "pnpm --recursive --filter \"./packages/*\" run generate:zod",
+    "generate:filters": "pnpm --recursive --filter \"./packages/*\" run generate:filters",
+    "generate:params": "pnpm --recursive --filter \"./packages/*\" run generate:params",
+    "generate:code-lists": "pnpm --filter @spree/core run generate:code-lists",
     "lint": "turbo lint",
     "lint:fix": "turbo lint:fix",
     "format": "turbo format",
@@ -23,7 +28,7 @@
     "server:teardown": "bash scripts/server-teardown.sh",
     "server:console": "cd server && spree console",
     "server:logs": "cd server && spree logs",
-    "server:seed": "cd server && spree rails db:seed",
+    "server:seed": "cd server && spree seed",
     "server:load_sample_data": "cd server && spree task load_sample_data",
     "dashboard:dev": "turbo build --filter='@spree/dashboard-starter^...' && pnpm --dir packages/dashboard-starter dev --port 5173 --strictPort",
     "seller:dev": "turbo build --filter='@spree/seller-dashboard-starter^...' && pnpm --dir packages/seller-dashboard-starter dev --port 5174 --strictPort",
@@ -40,20 +45,21 @@
     "test:slots": "scripts/test/with-slot --status",
     "docs:dev": "cd docs && mint dev --port 3333",
     "changeset": "changeset",
-    "version:preview": "changeset version --ignore @spree/sdk"
+    "version:packages": "node scripts/version-packages.mjs",
+    "version:tools": "node scripts/version-packages.mjs --tools"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.4.14",
-    "turbo": "^2.9.14",
-    "@changesets/cli": "^2.31.0",
-    "@changesets/changelog-github": "^0.7.0"
+    "@biomejs/biome": "catalog:",
+    "@changesets/changelog-github": "catalog:",
+    "@changesets/cli": "catalog:",
+    "@spree/cli": "workspace:*",
+    "@typescript/typescript6": "catalog:",
+    "semver": "^7.8.5",
+    "turbo": "^2.11.9",
+    "yaml": "catalog:"
   },
   "packageManager": "pnpm@11.1.1",
   "engines": {
     "node": ">=22"
-  },
-  "dependencies": {
-    "@base-ui/react": "1.8.0",
-    "@spree/cli": "workspace:*"
   }
 }

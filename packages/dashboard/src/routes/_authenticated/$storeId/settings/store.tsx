@@ -1,22 +1,32 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { SpreeError, type Store, type StoreDataSourceProvider } from '@spree/admin-sdk'
 import {
+  DOCUMENT_NUMBER_FORMATS,
+  type LocaleCode,
+  PROVIDER_FAILURE_POLICIES,
+  UNIT_SYSTEM_WEIGHT_UNITS,
+  UNIT_SYSTEMS,
+  type UnitSystem,
+} from '@spree/core'
+import {
   extensionFormValues,
   extensionSubmitValues,
   mapSpreeErrorsToForm,
   PageHeader,
   reconcileStoreDefaultLocale,
+  SettingsFieldGroup,
+  SettingsRow,
+  SettingsSection,
+  SettingsSelectField,
+  SettingsSwitchField,
   Slot,
+  TimezoneCombobox,
   useAuth,
   useStore,
   useSwitchAdminLocale,
 } from '@spree/dashboard-core'
 import {
-  Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
   ErrorState,
   ExternalLink,
   Field,
@@ -31,28 +41,31 @@ import {
   InputGroupInput,
   InputGroupText,
   ResourceLayout,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
   Skeleton,
-  Switch,
+  Textarea,
   toastManager,
   useFormSubmitShortcut,
 } from '@spree/dashboard-ui'
-import { createFileRoute } from '@tanstack/react-router'
-import { useCallback, useEffect, useMemo } from 'react'
 import {
-  type Control,
-  Controller,
-  type FieldPath,
-  type FieldValues,
-  FormProvider,
-  useForm,
-} from 'react-hook-form'
+  BoxesIcon,
+  DownloadIcon,
+  HashIcon,
+  LanguagesIcon,
+  PackageIcon,
+  SearchIcon,
+  StoreIcon,
+  TagsIcon,
+  WarehouseIcon,
+} from '@spree/dashboard-ui/icons'
+import { createFileRoute } from '@tanstack/react-router'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
+import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { ChoiceCardPicker } from '../../../../components/spree/choice-card-picker'
+import {
+  DraftCustomFieldsCard,
+  useCustomFieldsDraft,
+} from '../../../../components/spree/custom-fields/custom-fields-inline'
+import { ResourceTranslationsCard } from '../../../../components/spree/translations/resource-translations-card'
 import {
   useStoreDataSources,
   useStoreSettings,
@@ -60,86 +73,52 @@ import {
 } from '../../../../hooks/use-store-settings'
 import { getAvailableUiLocales } from '../../../../i18n-setup'
 import {
-  CAPTURE_METHODS,
-  DOCUMENT_NUMBER_FORMATS,
   INTERNAL_PROVIDER_KEY,
-  PROVIDER_FAILURE_POLICIES,
-  STOREFRONT_ACCESS_LEVELS,
   type StoreSettingsFormValues,
   storeSettingsFormSchema,
-  UNIT_SYSTEMS,
-  WEIGHT_UNITS,
 } from '../../../../schemas/store'
 
 export const Route = createFileRoute('/_authenticated/$storeId/settings/store')({
   component: StoreSettingsPage,
 })
 
+const SEO_TRANSLATABLE_FIELDS = ['seo_title', 'meta_description'] as const
+
 const PRICING_PROVIDER_DOCS_URL = 'https://spreecommerce.org/docs/developer/providers/pim'
 const INVENTORY_PROVIDER_DOCS_URL = 'https://spreecommerce.org/docs/developer/providers/erp'
-
-const TIMEZONES: string[] = (() => {
-  try {
-    return Intl.supportedValuesOf('timeZone')
-  } catch {
-    // Fallback for older browsers — a small representative set.
-    return [
-      'UTC',
-      'America/New_York',
-      'America/Chicago',
-      'America/Denver',
-      'America/Los_Angeles',
-      'Europe/London',
-      'Europe/Paris',
-      'Europe/Berlin',
-      'Asia/Tokyo',
-      'Australia/Sydney',
-    ]
-  }
-})()
 
 function storeToFormValues(store: Store): StoreSettingsFormValues {
   return {
     name: store.name,
-    preferred_admin_locale: store.preferred_admin_locale ?? '',
-    preferred_timezone: store.preferred_timezone,
-    preferred_unit_system: (store.preferred_unit_system as 'metric' | 'imperial') ?? 'metric',
-    preferred_weight_unit: store.preferred_weight_unit,
-    preferred_storefront_access:
-      (store.preferred_storefront_access as (typeof STOREFRONT_ACCESS_LEVELS)[number]) ?? 'public',
-    preferred_guest_checkout: store.preferred_guest_checkout ?? true,
-    preferred_always_include_confirm_step: store.preferred_always_include_confirm_step ?? false,
-    preferred_company_field_enabled: store.preferred_company_field_enabled ?? false,
-    preferred_address_requires_phone: store.preferred_address_requires_phone ?? false,
-    preferred_capture_method:
-      (store.preferred_capture_method as (typeof CAPTURE_METHODS)[number]) ?? 'checkout',
-    preferred_pricing_provider: store.preferred_pricing_provider || INTERNAL_PROVIDER_KEY,
-    preferred_inventory_provider: store.preferred_inventory_provider || INTERNAL_PROVIDER_KEY,
-    preferred_pricing_provider_failure_policy:
-      (store.preferred_pricing_provider_failure_policy as (typeof PROVIDER_FAILURE_POLICIES)[number]) ??
+    seo_title: store.seo_title ?? '',
+    meta_description: store.meta_description ?? '',
+    admin_locale: store.admin_locale ?? '',
+    timezone: store.timezone,
+    unit_system: (store.unit_system as UnitSystem) ?? 'metric',
+    weight_unit: store.weight_unit,
+    pricing_provider: store.pricing_provider || INTERNAL_PROVIDER_KEY,
+    inventory_provider: store.inventory_provider || INTERNAL_PROVIDER_KEY,
+    pricing_provider_failure_policy:
+      (store.pricing_provider_failure_policy as (typeof PROVIDER_FAILURE_POLICIES)[number]) ??
       'strict',
-    preferred_inventory_provider_failure_policy:
-      (store.preferred_inventory_provider_failure_policy as (typeof PROVIDER_FAILURE_POLICIES)[number]) ??
+    inventory_provider_failure_policy:
+      (store.inventory_provider_failure_policy as (typeof PROVIDER_FAILURE_POLICIES)[number]) ??
       'fallback',
-    preferred_tax_using_ship_address: store.preferred_tax_using_ship_address ?? true,
-    preferred_track_inventory_levels: store.preferred_track_inventory_levels ?? true,
-    preferred_stock_reservations_enabled: store.preferred_stock_reservations_enabled ?? true,
-    preferred_low_stock_threshold: store.preferred_low_stock_threshold ?? 5,
-    preferred_track_price_history: store.preferred_track_price_history ?? true,
-    preferred_show_products_without_price: store.preferred_show_products_without_price ?? false,
-    preferred_disable_sku_validation: store.preferred_disable_sku_validation ?? false,
-    preferred_document_number_format:
-      (store.preferred_document_number_format as (typeof DOCUMENT_NUMBER_FORMATS)[number]) ??
-      'sequential',
-    preferred_order_number_prefix: store.preferred_order_number_prefix ?? 'R',
-    preferred_order_number_suffix: store.preferred_order_number_suffix ?? '',
-    preferred_order_number_sequence_start: Number(
-      store.preferred_order_number_sequence_start ?? 1001,
-    ),
-    preferred_limit_digital_download_count: store.preferred_limit_digital_download_count ?? true,
-    preferred_digital_asset_authorized_clicks: store.preferred_digital_asset_authorized_clicks ?? 5,
-    preferred_limit_digital_download_days: store.preferred_limit_digital_download_days ?? true,
-    preferred_digital_asset_authorized_days: store.preferred_digital_asset_authorized_days ?? 7,
+    track_inventory_levels: store.track_inventory_levels ?? true,
+    stock_reservations_enabled: store.stock_reservations_enabled ?? true,
+    low_stock_threshold: store.low_stock_threshold ?? 5,
+    track_price_history: store.track_price_history ?? true,
+    show_products_without_price: store.show_products_without_price ?? false,
+    disable_sku_validation: store.disable_sku_validation ?? false,
+    document_number_format:
+      (store.document_number_format as (typeof DOCUMENT_NUMBER_FORMATS)[number]) ?? 'sequential',
+    order_number_prefix: store.order_number_prefix ?? 'R',
+    order_number_suffix: store.order_number_suffix ?? '',
+    order_number_sequence_start: Number(store.order_number_sequence_start ?? 1001),
+    limit_digital_download_count: store.limit_digital_download_count ?? true,
+    digital_asset_authorized_clicks: store.digital_asset_authorized_clicks ?? 5,
+    limit_digital_download_days: store.limit_digital_download_days ?? true,
+    digital_asset_authorized_days: store.digital_asset_authorized_days ?? 7,
   }
 }
 
@@ -180,12 +159,19 @@ function StoreSettingsForm({ store }: { store: Store }) {
   const updateMutation = useUpdateStoreSettings()
   const switchAdminLocale = useSwitchAdminLocale()
   const { data: dataSources } = useStoreDataSources()
+  const customFields = useCustomFieldsDraft('store', store.id)
 
   const form = useForm<StoreSettingsFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(storeSettingsFormSchema) as any,
     defaultValues: { ...storeToFormValues(store), ...extensionFormValues('store', store) },
   })
+  // Read during render: React Hook Form only tracks `isDirty` once something
+  // has read it, and the header's Save button reads its own copy.
+  const storeDirty = form.formState.isDirty
+  // A language change saved with the store but held back by a failed custom
+  // field save. The retry no longer sees it against the refreshed store.
+  const pendingLocaleSwitch = useRef(false)
 
   // Shows the merchant the shape their next order number will take. The
   // sequential preview uses the configured starting value, which is only
@@ -196,26 +182,25 @@ function StoreSettingsForm({ store }: { store: Store }) {
   const sequenceStarted = store.order_number_sequence_started ?? false
   // The failure-policy selects only render for a provider that can fail —
   // Spree's own records cannot, so 'internal' has no policy to choose.
-  const externalPricingSelected = form.watch('preferred_pricing_provider') !== INTERNAL_PROVIDER_KEY
-  const externalInventorySelected =
-    form.watch('preferred_inventory_provider') !== INTERNAL_PROVIDER_KEY
+  const externalPricingSelected = form.watch('pricing_provider') !== INTERNAL_PROVIDER_KEY
+  const externalInventorySelected = form.watch('inventory_provider') !== INTERNAL_PROVIDER_KEY
 
-  const numberFormat = form.watch('preferred_document_number_format')
-  const numberPrefix = form.watch('preferred_order_number_prefix')
-  const numberSuffix = form.watch('preferred_order_number_suffix')
-  const numberStart = form.watch('preferred_order_number_sequence_start')
+  const numberFormat = form.watch('document_number_format')
+  const numberPrefix = form.watch('order_number_prefix')
+  const numberSuffix = form.watch('order_number_suffix')
+  const numberStart = form.watch('order_number_sequence_start')
   const orderNumberPreview = `${numberPrefix ?? ''}${
     numberFormat === 'random' ? '482910375' : (numberStart ?? 1001)
   }${numberSuffix ?? ''}`
 
   // When unit_system flips, reset weight_unit to the first valid option for
   // that system so the form never holds an inconsistent pair.
-  const unitSystem = form.watch('preferred_unit_system')
+  const unitSystem = form.watch('unit_system')
   useEffect(() => {
-    const validUnits = WEIGHT_UNITS[unitSystem] ?? []
-    const current = form.getValues('preferred_weight_unit')
+    const validUnits = UNIT_SYSTEM_WEIGHT_UNITS[unitSystem] ?? []
+    const current = form.getValues('weight_unit')
     if (current && !validUnits.includes(current)) {
-      form.setValue('preferred_weight_unit', validUnits[0] ?? '', { shouldDirty: true })
+      form.setValue('weight_unit', validUnits[0] ?? '', { shouldDirty: true })
     }
   }, [unitSystem, form])
 
@@ -224,51 +209,52 @@ function StoreSettingsForm({ store }: { store: Store }) {
     // store's currently-persisted value, not RHF's `dirtyFields` (which a Base UI
     // Select via Controller doesn't reliably populate). Saving unrelated fields
     // (name, timezone, units) must not touch the admin's UI language.
-    const code = values.preferred_admin_locale
-    const localeChanged = (code ?? '') !== (store.preferred_admin_locale ?? '')
+    const code = values.admin_locale
+    const localeChanged = (code ?? '') !== (store.admin_locale ?? '') || pendingLocaleSwitch.current
     // Extension fields come from live form state — the Zod parse behind
     // `values` strips keys the first-party schema doesn't know.
     const extensionValues = extensionSubmitValues('store', form)
     try {
-      await updateMutation.mutateAsync({
-        name: values.name,
-        preferred_admin_locale: values.preferred_admin_locale || undefined,
-        preferred_timezone: values.preferred_timezone,
-        preferred_unit_system: values.preferred_unit_system,
-        preferred_weight_unit: values.preferred_weight_unit,
-        preferred_storefront_access: values.preferred_storefront_access,
-        preferred_guest_checkout: values.preferred_guest_checkout,
-        preferred_always_include_confirm_step: values.preferred_always_include_confirm_step,
-        preferred_company_field_enabled: values.preferred_company_field_enabled,
-        preferred_address_requires_phone: values.preferred_address_requires_phone,
-        preferred_capture_method: values.preferred_capture_method,
-        preferred_pricing_provider: values.preferred_pricing_provider,
-        preferred_inventory_provider: values.preferred_inventory_provider,
-        preferred_pricing_provider_failure_policy: values.preferred_pricing_provider_failure_policy,
-        preferred_inventory_provider_failure_policy:
-          values.preferred_inventory_provider_failure_policy,
-        preferred_tax_using_ship_address: values.preferred_tax_using_ship_address,
-        preferred_track_inventory_levels: values.preferred_track_inventory_levels,
-        preferred_stock_reservations_enabled: values.preferred_stock_reservations_enabled,
-        preferred_low_stock_threshold: values.preferred_low_stock_threshold,
-        preferred_track_price_history: values.preferred_track_price_history,
-        preferred_show_products_without_price: values.preferred_show_products_without_price,
-        preferred_disable_sku_validation: values.preferred_disable_sku_validation,
-        preferred_document_number_format: values.preferred_document_number_format,
-        preferred_order_number_prefix: values.preferred_order_number_prefix,
-        preferred_order_number_suffix: values.preferred_order_number_suffix,
-        preferred_order_number_sequence_start: values.preferred_order_number_sequence_start,
-        preferred_limit_digital_download_count: values.preferred_limit_digital_download_count,
-        preferred_digital_asset_authorized_clicks: values.preferred_digital_asset_authorized_clicks,
-        preferred_limit_digital_download_days: values.preferred_limit_digital_download_days,
-        preferred_digital_asset_authorized_days: values.preferred_digital_asset_authorized_days,
-        ...extensionValues,
-      })
+      if (storeDirty) {
+        await updateMutation.mutateAsync({
+          name: values.name,
+          seo_title: values.seo_title || null,
+          meta_description: values.meta_description || null,
+          admin_locale: (values.admin_locale || null) as LocaleCode | null,
+          timezone: values.timezone,
+          unit_system: values.unit_system,
+          weight_unit: values.weight_unit,
+          pricing_provider: values.pricing_provider,
+          inventory_provider: values.inventory_provider,
+          pricing_provider_failure_policy: values.pricing_provider_failure_policy,
+          inventory_provider_failure_policy: values.inventory_provider_failure_policy,
+          track_inventory_levels: values.track_inventory_levels,
+          stock_reservations_enabled: values.stock_reservations_enabled,
+          low_stock_threshold: values.low_stock_threshold,
+          track_price_history: values.track_price_history,
+          show_products_without_price: values.show_products_without_price,
+          disable_sku_validation: values.disable_sku_validation,
+          document_number_format: values.document_number_format,
+          order_number_prefix: values.order_number_prefix,
+          order_number_suffix: values.order_number_suffix,
+          order_number_sequence_start: values.order_number_sequence_start,
+          limit_digital_download_count: values.limit_digital_download_count,
+          digital_asset_authorized_clicks: values.digital_asset_authorized_clicks,
+          limit_digital_download_days: values.limit_digital_download_days,
+          digital_asset_authorized_days: values.digital_asset_authorized_days,
+          ...extensionValues,
+        })
+        // Reset FIRST so the form is no longer dirty — otherwise the language
+        // switch below reloads the page while the `beforeunload` dirty-guard is
+        // still armed, triggering the browser's "unsaved changes" prompt. It
+        // also means a retry after a failed custom field save sends only those.
+        form.reset({ ...values, ...extensionValues })
+        pendingLocaleSwitch.current = localeChanged
+      }
+      // Before the language switch, which may reload the page.
+      if (!(await customFields.save())) return
+      pendingLocaleSwitch.current = false
       toastManager.add({ type: 'success', title: t('admin.messages.store_settings_updated') })
-      // Reset FIRST so the form is no longer dirty — otherwise the language
-      // switch below reloads the page while the `beforeunload` dirty-guard is
-      // still armed, triggering the browser's "unsaved changes" prompt.
-      form.reset({ ...values, ...extensionValues })
       // When the admin language was actually changed:
       //  - a concrete value → adopt it as this admin's own UI language and switch
       //    the dashboard into it immediately (same as the profile / top-bar);
@@ -297,30 +283,19 @@ function StoreSettingsForm({ store }: { store: Store }) {
     }
   }
 
-  useFormSubmitShortcut(form, onSubmit)
+  useFormSubmitShortcut(form, onSubmit, { dirty: customFields.isDirty })
 
-  // Compute the dynamic timezone option list once. `Intl.supportedValuesOf`
-  // can be expensive on some browsers; memo keeps re-renders cheap.
-  const timezoneOptions = useMemo(() => TIMEZONES.map((tz) => ({ value: tz, label: tz })), [])
   const unitSystemOptions = useMemo(
     () => UNIT_SYSTEMS.map((value) => ({ value, label: t(`admin.store.unit_systems.${value}`) })),
     [t],
   )
   const weightOptions = useMemo(
     () =>
-      (WEIGHT_UNITS[unitSystem] ?? WEIGHT_UNITS.metric).map((value) => ({
+      (UNIT_SYSTEM_WEIGHT_UNITS[unitSystem] ?? UNIT_SYSTEM_WEIGHT_UNITS.metric).map((value) => ({
         value,
         label: t(`admin.store.weight_units.${value}`),
       })),
     [t, unitSystem],
-  )
-  const storefrontAccessOptions = useMemo(
-    () =>
-      STOREFRONT_ACCESS_LEVELS.map((value) => ({
-        value,
-        label: t(`admin.fields.store.storefront_access.options.${value}`),
-      })),
-    [t],
   )
   const documentNumberFormatOptions = useMemo(
     () =>
@@ -356,23 +331,14 @@ function StoreSettingsForm({ store }: { store: Store }) {
       })),
     [t],
   )
-  const captureMethodOptions = useMemo(
-    () =>
-      CAPTURE_METHODS.map((value) => ({
-        value,
-        label: t(`admin.fields.store.capture_method.options.${value}.label`),
-        description: t(`admin.fields.store.capture_method.options.${value}.description`),
-      })),
-    [t],
-  )
   // Admin-UI language options come from the dashboard's own shipped locale
   // bundles (getAvailableUiLocales) — the SAME canonical source the profile
   // picker and top-bar switcher use, so the lists never desync. The leading
-  // empty option clears the store-wide override (preferred_admin_locale is
+  // empty option clears the store-wide override (admin_locale is
   // nullable → "no override, fall back to the app default").
   const adminLocaleOptions = useMemo(
     () => [
-      { value: '', label: t('admin.fields.store.preferred_admin_locale.placeholder') },
+      { value: '', label: t('admin.fields.store.admin_locale.placeholder') },
       ...getAvailableUiLocales().map((l) => ({ value: l.code, label: l.name })),
     ],
     [t],
@@ -387,22 +353,33 @@ function StoreSettingsForm({ store }: { store: Store }) {
           header={
             <PageHeader
               docsPath="settings/store-details"
+              resource={store}
+              endpoint="/api/v3/admin/store"
               title={t('admin.pages.settings.store.title')}
               description={t('admin.pages.settings.store.subtitle')}
-              actions={<FormActions form={form} />}
+              actions={
+                <FormActions
+                  form={form}
+                  dirty={customFields.isDirty}
+                  onDiscard={() => {
+                    form.reset()
+                    customFields.reset()
+                  }}
+                />
+              }
             />
           }
           main={
             <>
               {errors.root?.message && (
-                <p className="text-sm text-destructive" role="alert">
+                <p className="text-base text-destructive" role="alert">
                   {errors.root.message}
                 </p>
               )}
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t('admin.pages.settings.store.tab_general')}</CardTitle>
-                </CardHeader>
+              <SettingsSection
+                title={t('admin.pages.settings.store.tab_general')}
+                icon={<StoreIcon />}
+              >
                 <CardContent>
                   <FieldGroup>
                     <Field>
@@ -418,249 +395,199 @@ function StoreSettingsForm({ store }: { store: Store }) {
                     </Field>
                   </FieldGroup>
                 </CardContent>
-              </Card>
+              </SettingsSection>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t('admin.pages.settings.store.tab_standards')}</CardTitle>
-                </CardHeader>
+              <SettingsSection title={t('admin.store.seo.title')} icon={<SearchIcon />}>
                 <CardContent>
                   <FieldGroup>
-                    <SelectField
+                    <Field>
+                      <FieldLabel htmlFor="store-seo-title">
+                        {t('admin.fields.store.seo_title.label')}
+                      </FieldLabel>
+                      <Input
+                        id="store-seo-title"
+                        aria-invalid={!!errors.seo_title || undefined}
+                        {...form.register('seo_title')}
+                      />
+                      <FieldDescription>{t('admin.fields.store.seo_title.help')}</FieldDescription>
+                      <FieldError errors={[errors.seo_title]} />
+                    </Field>
+                    <Field>
+                      <FieldLabel htmlFor="store-meta-description">
+                        {t('admin.fields.store.meta_description.label')}
+                      </FieldLabel>
+                      <Textarea
+                        id="store-meta-description"
+                        rows={3}
+                        aria-invalid={!!errors.meta_description || undefined}
+                        {...form.register('meta_description')}
+                      />
+                      <FieldDescription>
+                        {t('admin.fields.store.meta_description.help')}
+                      </FieldDescription>
+                      <FieldError errors={[errors.meta_description]} />
+                    </Field>
+                  </FieldGroup>
+                </CardContent>
+              </SettingsSection>
+
+              <SettingsSection
+                title={t('admin.pages.settings.store.tab_standards')}
+                icon={<LanguagesIcon />}
+              >
+                <CardContent>
+                  <SettingsFieldGroup>
+                    <SettingsSelectField
                       id="store-admin-locale"
-                      label={t('admin.fields.store.preferred_admin_locale.label')}
-                      placeholder={t('admin.fields.store.preferred_admin_locale.placeholder')}
-                      name="preferred_admin_locale"
+                      label={t('admin.fields.store.admin_locale.label')}
+                      placeholder={t('admin.fields.store.admin_locale.placeholder')}
+                      name="admin_locale"
                       control={form.control}
                       options={adminLocaleOptions}
                     />
-                    <SelectField
-                      id="store-timezone"
-                      label={t('admin.fields.store.preferred_timezone.label')}
-                      placeholder={t('admin.fields.store.preferred_timezone.placeholder')}
-                      name="preferred_timezone"
+                    <Controller
+                      name="timezone"
                       control={form.control}
-                      options={timezoneOptions}
+                      render={({ field, fieldState }) => (
+                        <SettingsRow
+                          label={t('admin.fields.store.timezone.label')}
+                          htmlFor="store-timezone"
+                          error={fieldState.error}
+                        >
+                          <div className="w-full @md/field-group:w-64">
+                            <TimezoneCombobox
+                              id="store-timezone"
+                              value={field.value}
+                              onValueChange={field.onChange}
+                              onBlur={field.onBlur}
+                              invalid={!!fieldState.error}
+                            />
+                          </div>
+                        </SettingsRow>
+                      )}
                     />
-                    <SelectField
+                    <SettingsSelectField
                       id="store-unit-system"
-                      label={t('admin.fields.store.preferred_unit_system.label')}
-                      name="preferred_unit_system"
+                      label={t('admin.fields.store.unit_system.label')}
+                      name="unit_system"
                       control={form.control}
                       options={unitSystemOptions}
                     />
-                    <SelectField
+                    <SettingsSelectField
                       id="store-weight-unit"
-                      label={t('admin.fields.store.preferred_weight_unit.label')}
-                      name="preferred_weight_unit"
+                      label={t('admin.fields.store.weight_unit.label')}
+                      name="weight_unit"
                       control={form.control}
                       options={weightOptions}
                     />
-                  </FieldGroup>
+                  </SettingsFieldGroup>
                 </CardContent>
-              </Card>
+              </SettingsSection>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t('admin.pages.settings.store.tab_storefront_access')}</CardTitle>
-                </CardHeader>
+              <SettingsSection
+                title={t('admin.pages.settings.store.tab_order_numbers')}
+                icon={<HashIcon />}
+              >
                 <CardContent>
-                  <FieldGroup>
-                    <SelectField
-                      id="store-storefront-access"
-                      label={t('admin.fields.store.storefront_access.label')}
-                      name="preferred_storefront_access"
-                      control={form.control}
-                      options={storefrontAccessOptions}
-                      help={t('admin.fields.store.storefront_access.help')}
-                    />
-                    <Field>
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex flex-col">
-                          <FieldLabel htmlFor="store-guest-checkout" className="cursor-pointer">
-                            {t('admin.fields.store.guest_checkout.label')}
-                          </FieldLabel>
-                          <span className="text-xs text-muted-foreground">
-                            {t('admin.fields.store.guest_checkout.help')}
-                          </span>
-                        </div>
-                        <Controller
-                          name="preferred_guest_checkout"
-                          control={form.control}
-                          render={({ field }) => (
-                            <Switch
-                              id="store-guest-checkout"
-                              checked={!!field.value}
-                              onCheckedChange={field.onChange}
-                            />
-                          )}
-                        />
-                      </div>
-                    </Field>
-                    <SwitchField
-                      id="store-always-include-confirm-step"
-                      label={t('admin.fields.store.always_include_confirm_step.label')}
-                      help={t('admin.fields.store.always_include_confirm_step.help')}
-                      name="preferred_always_include_confirm_step"
-                      control={form.control}
-                    />
-                  </FieldGroup>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t('admin.pages.settings.store.tab_addresses')}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <FieldGroup>
-                    <SwitchField
-                      id="store-company-field-enabled"
-                      label={t('admin.fields.store.company_field_enabled.label')}
-                      help={t('admin.fields.store.company_field_enabled.help')}
-                      name="preferred_company_field_enabled"
-                      control={form.control}
-                    />
-                    <SwitchField
-                      id="store-address-requires-phone"
-                      label={t('admin.fields.store.address_requires_phone.label')}
-                      help={t('admin.fields.store.address_requires_phone.help')}
-                      name="preferred_address_requires_phone"
-                      control={form.control}
-                    />
-                  </FieldGroup>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t('admin.pages.settings.store.tab_order_numbers')}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <FieldGroup>
-                    <SelectField
+                  <SettingsFieldGroup>
+                    <SettingsSelectField
                       id="store-document-number-format"
                       label={t('admin.fields.store.document_number_format.label')}
-                      name="preferred_document_number_format"
+                      name="document_number_format"
                       control={form.control}
                       options={documentNumberFormatOptions}
                       help={t('admin.fields.store.document_number_format.help')}
                     />
-                    <div className="grid gap-4 sm:grid-cols-2">
-                      <Field>
-                        <FieldLabel htmlFor="store-order-number-prefix">
-                          {t('admin.fields.store.order_number_prefix.label')}
-                        </FieldLabel>
-                        <Input
-                          id="store-order-number-prefix"
-                          aria-invalid={!!errors.preferred_order_number_prefix || undefined}
-                          {...form.register('preferred_order_number_prefix')}
-                        />
-                        <FieldError errors={[errors.preferred_order_number_prefix]} />
-                      </Field>
-                      <Field>
-                        <FieldLabel htmlFor="store-order-number-suffix">
-                          {t('admin.fields.store.order_number_suffix.label')}
-                        </FieldLabel>
-                        <Input
-                          id="store-order-number-suffix"
-                          aria-invalid={!!errors.preferred_order_number_suffix || undefined}
-                          {...form.register('preferred_order_number_suffix')}
-                        />
-                        <FieldError errors={[errors.preferred_order_number_suffix]} />
-                      </Field>
-                    </div>
+                    <SettingsRow
+                      label={t('admin.fields.store.order_number_prefix.label')}
+                      htmlFor="store-order-number-prefix"
+                      error={errors.order_number_prefix}
+                    >
+                      <Input
+                        id="store-order-number-prefix"
+                        className="@md/field-group:w-40"
+                        aria-invalid={!!errors.order_number_prefix || undefined}
+                        {...form.register('order_number_prefix')}
+                      />
+                    </SettingsRow>
+                    <SettingsRow
+                      label={t('admin.fields.store.order_number_suffix.label')}
+                      htmlFor="store-order-number-suffix"
+                      error={errors.order_number_suffix}
+                    >
+                      <Input
+                        id="store-order-number-suffix"
+                        className="@md/field-group:w-40"
+                        aria-invalid={!!errors.order_number_suffix || undefined}
+                        {...form.register('order_number_suffix')}
+                      />
+                    </SettingsRow>
                     {numberFormat === 'sequential' && (
-                      <Field>
-                        <FieldLabel htmlFor="store-order-number-sequence-start">
-                          {t('admin.fields.store.order_number_sequence_start.label')}
-                        </FieldLabel>
+                      <SettingsRow
+                        label={t('admin.fields.store.order_number_sequence_start.label')}
+                        htmlFor="store-order-number-sequence-start"
+                        help={
+                          sequenceStarted
+                            ? t('admin.fields.store.order_number_sequence_start.locked')
+                            : t('admin.fields.store.order_number_sequence_start.help')
+                        }
+                        error={errors.order_number_sequence_start}
+                      >
                         <Input
                           id="store-order-number-sequence-start"
                           type="number"
                           min={1}
+                          className="@md/field-group:w-40"
                           disabled={sequenceStarted}
-                          aria-invalid={!!errors.preferred_order_number_sequence_start || undefined}
-                          {...form.register('preferred_order_number_sequence_start')}
+                          aria-invalid={!!errors.order_number_sequence_start || undefined}
+                          {...form.register('order_number_sequence_start')}
                         />
-                        <FieldDescription>
-                          {sequenceStarted
-                            ? t('admin.fields.store.order_number_sequence_start.locked')
-                            : t('admin.fields.store.order_number_sequence_start.help')}
-                        </FieldDescription>
-                        <FieldError errors={[errors.preferred_order_number_sequence_start]} />
-                      </Field>
+                      </SettingsRow>
                     )}
-                    <Field>
-                      <FieldLabel>{t('admin.fields.store.order_number_preview.label')}</FieldLabel>
-                      <p className="font-mono text-sm">{orderNumberPreview}</p>
-                      <FieldDescription>
-                        {t('admin.fields.store.order_number_preview.help')}
-                      </FieldDescription>
-                    </Field>
-                  </FieldGroup>
+                    <SettingsRow
+                      label={t('admin.fields.store.order_number_preview.label')}
+                      help={t('admin.fields.store.order_number_preview.help')}
+                    >
+                      <span className="font-mono text-base">{orderNumberPreview}</span>
+                    </SettingsRow>
+                  </SettingsFieldGroup>
                 </CardContent>
-              </Card>
+              </SettingsSection>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t('admin.pages.settings.store.tab_payments')}</CardTitle>
-                </CardHeader>
+              <SettingsSection
+                title={t('admin.pages.settings.store.tab_inventory')}
+                icon={<WarehouseIcon />}
+              >
                 <CardContent>
-                  <FieldGroup>
-                    <Controller
-                      control={form.control}
-                      name="preferred_capture_method"
-                      render={({ field }) => (
-                        <ChoiceCardPicker
-                          label={t('admin.fields.store.capture_method.label')}
-                          help={t('admin.fields.store.capture_method.help')}
-                          options={captureMethodOptions}
-                          value={field.value}
-                          onChange={field.onChange}
-                        />
-                      )}
-                    />
-                    <SwitchField
-                      id="store-tax-using-ship-address"
-                      label={t('admin.fields.store.tax_using_ship_address.label')}
-                      help={t('admin.fields.store.tax_using_ship_address.help')}
-                      name="preferred_tax_using_ship_address"
-                      control={form.control}
-                    />
-                  </FieldGroup>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t('admin.pages.settings.store.tab_inventory')}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <FieldGroup>
-                    <SwitchField
+                  <SettingsFieldGroup>
+                    <SettingsSwitchField
                       id="store-track-inventory-levels"
                       label={t('admin.fields.store.track_inventory_levels.label')}
                       help={t('admin.fields.store.track_inventory_levels.help')}
-                      name="preferred_track_inventory_levels"
+                      name="track_inventory_levels"
                       control={form.control}
                     />
-                    <SwitchField
+                    <SettingsSwitchField
                       id="store-stock-reservations-enabled"
                       label={t('admin.fields.store.stock_reservations_enabled.label')}
                       help={t('admin.fields.store.stock_reservations_enabled.help')}
-                      name="preferred_stock_reservations_enabled"
+                      name="stock_reservations_enabled"
                       control={form.control}
                     />
-                    <Field>
-                      <FieldLabel htmlFor="store-low-stock-threshold">
-                        {t('admin.fields.store.low_stock_threshold.label')}
-                      </FieldLabel>
-                      <InputGroup>
+                    <SettingsRow
+                      label={t('admin.fields.store.low_stock_threshold.label')}
+                      htmlFor="store-low-stock-threshold"
+                      help={t('admin.fields.store.low_stock_threshold.help')}
+                      error={errors.low_stock_threshold}
+                    >
+                      <InputGroup className="@md/field-group:w-40">
                         <InputGroupInput
                           id="store-low-stock-threshold"
                           type="number"
                           min={0}
                           step={1}
-                          aria-invalid={!!errors.preferred_low_stock_threshold || undefined}
-                          {...form.register('preferred_low_stock_threshold')}
+                          aria-invalid={!!errors.low_stock_threshold || undefined}
+                          {...form.register('low_stock_threshold')}
                         />
                         <InputGroupAddon align="inline-end">
                           <InputGroupText>
@@ -668,28 +595,22 @@ function StoreSettingsForm({ store }: { store: Store }) {
                           </InputGroupText>
                         </InputGroupAddon>
                       </InputGroup>
-                      <FieldDescription>
-                        {t('admin.fields.store.low_stock_threshold.help')}
-                      </FieldDescription>
-                      <FieldError errors={[errors.preferred_low_stock_threshold]} />
-                    </Field>
-                  </FieldGroup>
+                    </SettingsRow>
+                  </SettingsFieldGroup>
                 </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t('admin.fields.store.data_sources.pricing.title')}</CardTitle>
-                  <CardDescription>
-                    {t('admin.fields.store.data_sources.pricing.description')}
-                  </CardDescription>
-                </CardHeader>
+              </SettingsSection>
+              <SettingsSection
+                title={t('admin.fields.store.data_sources.pricing.title')}
+                icon={<TagsIcon />}
+                description={t('admin.fields.store.data_sources.pricing.description')}
+              >
                 <CardContent>
-                  <FieldGroup>
-                    <SelectField
+                  <SettingsFieldGroup>
+                    <SettingsSelectField
                       id="store-pricing-provider"
                       label={t('admin.fields.store.data_sources.pricing_provider.label')}
                       help={t('admin.fields.store.data_sources.pricing_provider.help')}
-                      name="preferred_pricing_provider"
+                      name="pricing_provider"
                       control={form.control}
                       options={providerOptions(dataSources?.pricing_providers)}
                     />
@@ -697,271 +618,151 @@ function StoreSettingsForm({ store }: { store: Store }) {
                         no failure to have a policy about until an external
                         provider is selected. */}
                     {externalPricingSelected && (
-                      <SelectField
+                      <SettingsSelectField
                         id="store-pricing-failure-policy"
                         label={t('admin.fields.store.data_sources.pricing_failure_policy.label')}
                         help={t('admin.fields.store.data_sources.pricing_failure_policy.help')}
-                        name="preferred_pricing_provider_failure_policy"
+                        name="pricing_provider_failure_policy"
                         control={form.control}
                         options={failurePolicyOptions}
                       />
                     )}
-                  </FieldGroup>
+                  </SettingsFieldGroup>
                   <div className="mt-6 border-t pt-4">
                     <ExternalLink href={PRICING_PROVIDER_DOCS_URL}>
                       {t('admin.fields.store.data_sources.pricing_provider.docs_link')}
                     </ExternalLink>
                   </div>
                 </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t('admin.fields.store.data_sources.inventory.title')}</CardTitle>
-                  <CardDescription>
-                    {t('admin.fields.store.data_sources.inventory.description')}
-                  </CardDescription>
-                </CardHeader>
+              </SettingsSection>
+              <SettingsSection
+                title={t('admin.fields.store.data_sources.inventory.title')}
+                icon={<BoxesIcon />}
+                description={t('admin.fields.store.data_sources.inventory.description')}
+              >
                 <CardContent>
-                  <FieldGroup>
-                    <SelectField
+                  <SettingsFieldGroup>
+                    <SettingsSelectField
                       id="store-inventory-provider"
                       label={t('admin.fields.store.data_sources.inventory_provider.label')}
                       help={t('admin.fields.store.data_sources.inventory_provider.help')}
-                      name="preferred_inventory_provider"
+                      name="inventory_provider"
                       control={form.control}
                       options={providerOptions(dataSources?.inventory_providers)}
                     />
                     {externalInventorySelected && (
-                      <SelectField
+                      <SettingsSelectField
                         id="store-inventory-failure-policy"
                         label={t('admin.fields.store.data_sources.inventory_failure_policy.label')}
                         help={t('admin.fields.store.data_sources.inventory_failure_policy.help')}
-                        name="preferred_inventory_provider_failure_policy"
+                        name="inventory_provider_failure_policy"
                         control={form.control}
                         options={failurePolicyOptions}
                       />
                     )}
-                  </FieldGroup>
+                  </SettingsFieldGroup>
                   <div className="mt-6 border-t pt-4">
                     <ExternalLink href={INVENTORY_PROVIDER_DOCS_URL}>
                       {t('admin.fields.store.data_sources.inventory_provider.docs_link')}
                     </ExternalLink>
                   </div>
                 </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t('admin.pages.settings.store.tab_catalog')}</CardTitle>
-                </CardHeader>
+              </SettingsSection>
+              <SettingsSection
+                title={t('admin.pages.settings.store.tab_catalog')}
+                icon={<PackageIcon />}
+              >
                 <CardContent>
-                  <FieldGroup>
-                    <SwitchField
+                  <SettingsFieldGroup>
+                    <SettingsSwitchField
                       id="store-show-products-without-price"
                       label={t('admin.fields.store.show_products_without_price.label')}
                       help={t('admin.fields.store.show_products_without_price.help')}
-                      name="preferred_show_products_without_price"
+                      name="show_products_without_price"
                       control={form.control}
                     />
-                    <SwitchField
+                    <SettingsSwitchField
                       id="store-track-price-history"
                       label={t('admin.fields.store.track_price_history.label')}
                       help={t('admin.fields.store.track_price_history.help')}
-                      name="preferred_track_price_history"
+                      name="track_price_history"
                       control={form.control}
                     />
-                    <SwitchField
+                    <SettingsSwitchField
                       id="store-disable-sku-validation"
                       label={t('admin.fields.store.disable_sku_validation.label')}
                       help={t('admin.fields.store.disable_sku_validation.help')}
-                      name="preferred_disable_sku_validation"
+                      name="disable_sku_validation"
                       control={form.control}
                     />
-                  </FieldGroup>
+                  </SettingsFieldGroup>
                 </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t('admin.pages.settings.store.tab_downloads')}</CardTitle>
-                </CardHeader>
+              </SettingsSection>
+              <SettingsSection
+                title={t('admin.pages.settings.store.tab_downloads')}
+                icon={<DownloadIcon />}
+                description={t('admin.pages.settings.store.downloads_help')}
+              >
                 <CardContent>
-                  <FieldGroup>
-                    <p className="text-muted-foreground text-sm">
-                      {t('admin.pages.settings.store.downloads_help')}
-                    </p>
-                    <Field>
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex flex-col">
-                          <FieldLabel
-                            htmlFor="store-limit-download-count"
-                            className="cursor-pointer"
-                          >
-                            {t('admin.fields.store.limit_digital_download_count.label')}
-                          </FieldLabel>
-                          <span className="text-muted-foreground text-xs">
-                            {t('admin.fields.store.limit_digital_download_count.help')}
-                          </span>
-                        </div>
-                        <Controller
-                          name="preferred_limit_digital_download_count"
-                          control={form.control}
-                          render={({ field }) => (
-                            <Switch
-                              id="store-limit-download-count"
-                              checked={!!field.value}
-                              onCheckedChange={field.onChange}
-                            />
-                          )}
-                        />
-                      </div>
-                    </Field>
-                    {form.watch('preferred_limit_digital_download_count') && (
-                      <Field>
-                        <FieldLabel htmlFor="store-authorized-clicks">
-                          {t('admin.fields.store.digital_asset_authorized_clicks.label')}
-                        </FieldLabel>
+                  <SettingsFieldGroup>
+                    <SettingsSwitchField
+                      id="store-limit-download-count"
+                      label={t('admin.fields.store.limit_digital_download_count.label')}
+                      help={t('admin.fields.store.limit_digital_download_count.help')}
+                      name="limit_digital_download_count"
+                      control={form.control}
+                    />
+                    {form.watch('limit_digital_download_count') && (
+                      <SettingsRow
+                        label={t('admin.fields.store.digital_asset_authorized_clicks.label')}
+                        htmlFor="store-authorized-clicks"
+                        error={form.formState.errors.digital_asset_authorized_clicks}
+                      >
                         <Input
                           id="store-authorized-clicks"
                           type="number"
                           min={1}
-                          {...form.register('preferred_digital_asset_authorized_clicks')}
+                          className="@md/field-group:w-40"
+                          {...form.register('digital_asset_authorized_clicks')}
                         />
-                        <FieldError
-                          errors={[form.formState.errors.preferred_digital_asset_authorized_clicks]}
-                        />
-                      </Field>
+                      </SettingsRow>
                     )}
-                    <Field>
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex flex-col">
-                          <FieldLabel
-                            htmlFor="store-limit-download-days"
-                            className="cursor-pointer"
-                          >
-                            {t('admin.fields.store.limit_digital_download_days.label')}
-                          </FieldLabel>
-                          <span className="text-muted-foreground text-xs">
-                            {t('admin.fields.store.limit_digital_download_days.help')}
-                          </span>
-                        </div>
-                        <Controller
-                          name="preferred_limit_digital_download_days"
-                          control={form.control}
-                          render={({ field }) => (
-                            <Switch
-                              id="store-limit-download-days"
-                              checked={!!field.value}
-                              onCheckedChange={field.onChange}
-                            />
-                          )}
-                        />
-                      </div>
-                    </Field>
-                    {form.watch('preferred_limit_digital_download_days') && (
-                      <Field>
-                        <FieldLabel htmlFor="store-authorized-days">
-                          {t('admin.fields.store.digital_asset_authorized_days.label')}
-                        </FieldLabel>
+                    <SettingsSwitchField
+                      id="store-limit-download-days"
+                      label={t('admin.fields.store.limit_digital_download_days.label')}
+                      help={t('admin.fields.store.limit_digital_download_days.help')}
+                      name="limit_digital_download_days"
+                      control={form.control}
+                    />
+                    {form.watch('limit_digital_download_days') && (
+                      <SettingsRow
+                        label={t('admin.fields.store.digital_asset_authorized_days.label')}
+                        htmlFor="store-authorized-days"
+                        error={form.formState.errors.digital_asset_authorized_days}
+                      >
                         <Input
                           id="store-authorized-days"
                           type="number"
                           min={1}
-                          {...form.register('preferred_digital_asset_authorized_days')}
+                          className="@md/field-group:w-40"
+                          {...form.register('digital_asset_authorized_days')}
                         />
-                        <FieldError
-                          errors={[form.formState.errors.preferred_digital_asset_authorized_days]}
-                        />
-                      </Field>
+                      </SettingsRow>
                     )}
-                  </FieldGroup>
+                  </SettingsFieldGroup>
                 </CardContent>
-              </Card>
+              </SettingsSection>
+              <ResourceTranslationsCard
+                resourceType="store"
+                resourceId={store.id}
+                fields={SEO_TRANSLATABLE_FIELDS}
+              />
+              <DraftCustomFieldsCard draft={customFields} />
               <Slot name="store.form_main" context={{ store }} />
             </>
           }
         />
       </form>
     </FormProvider>
-  )
-}
-
-interface SelectFieldProps<TValues extends FieldValues> {
-  id: string
-  label: string
-  placeholder?: string
-  help?: string
-  name: FieldPath<TValues>
-  control: Control<TValues>
-  options: ReadonlyArray<{ value: string; label: string }>
-}
-
-function SelectField<TValues extends FieldValues>({
-  id,
-  label,
-  placeholder,
-  help,
-  name,
-  control,
-  options,
-}: SelectFieldProps<TValues>) {
-  return (
-    <Controller
-      name={name}
-      control={control}
-      render={({ field, fieldState }) => (
-        <Field>
-          <FieldLabel htmlFor={id}>{label}</FieldLabel>
-          <Select items={options as never} value={field.value} onValueChange={field.onChange}>
-            <SelectTrigger id={id} aria-invalid={!!fieldState.error || undefined}>
-              <SelectValue placeholder={placeholder} />
-            </SelectTrigger>
-            <SelectContent>
-              {options.map((o) => (
-                <SelectItem key={o.value} value={o.value}>
-                  {o.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {help && <span className="text-xs text-muted-foreground">{help}</span>}
-          <FieldError errors={[fieldState.error]} />
-        </Field>
-      )}
-    />
-  )
-}
-
-interface SwitchFieldProps<TValues extends FieldValues> {
-  id: string
-  label: string
-  help?: string
-  name: FieldPath<TValues>
-  control: Control<TValues>
-}
-
-function SwitchField<TValues extends FieldValues>({
-  id,
-  label,
-  help,
-  name,
-  control,
-}: SwitchFieldProps<TValues>) {
-  return (
-    <Field>
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex flex-col">
-          <FieldLabel htmlFor={id} className="cursor-pointer">
-            {label}
-          </FieldLabel>
-          {help && <span className="text-xs text-muted-foreground">{help}</span>}
-        </div>
-        <Controller
-          name={name}
-          control={control}
-          render={({ field }) => (
-            <Switch id={id} checked={!!field.value} onCheckedChange={field.onChange} />
-          )}
-        />
-      </div>
-    </Field>
   )
 }

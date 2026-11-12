@@ -40,7 +40,7 @@ module Spree
           end
 
           it 'sets the stock location data necessary for the inserted stock levels' do
-            Timecop.freeze(time_current) do
+            travel_to(time_current) do
               result
               expect(created_stock_level_attrs).to(
                 eq([
@@ -55,7 +55,7 @@ module Spree
           end
 
           it 'invalidates the Variant cache' do
-            Timecop.freeze(1.hour.from_now) do
+            travel_to(1.hour.from_now) do
               expect { result }.to change { unrelated_variant.reload.updated_at }
             end
           end
@@ -83,7 +83,7 @@ module Spree
 
           result
 
-          expect(stock_location.stock_levels.pluck(:variant_id)).to match_array(own.product.variants_including_master.ids)
+          expect(stock_location.stock_levels.pluck(:variant_id)).to match_array(own.product.variants.ids)
         end
       end
 

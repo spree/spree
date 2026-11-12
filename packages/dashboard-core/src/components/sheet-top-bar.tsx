@@ -21,23 +21,22 @@ export function SheetTopBar({
 }: {
   tenantId?: string
   /**
-   * Hides the rail trigger. Inside settings the rail is collapsed by the app
-   * rather than by the merchant, and the settings rail beside it carries its
-   * own way out — so a control offering to re-expand a rail the area will just
-   * re-collapse would not do what it says. The trail still shows.
+   * Hides the bar. Inside settings the settings nav marks where you are and
+   * every record page carries its own back button, so a trail would only
+   * repeat them. The rail trigger goes too: the rail is collapsed by the app
+   * there, and a control offering to re-expand a rail the area will just
+   * re-collapse would not do what it says.
    */
   inSettings?: boolean
 }) {
   const { isMobile, state } = useSidebar()
   const collapsed = state === 'collapsed' && !isMobile
 
-  if (!collapsed) return null
+  if (!collapsed || inSettings) return null
 
   return (
     <div className="hidden min-h-8 items-center gap-2 px-4 pt-3 md:flex">
-      {!inSettings && (
-        <SidebarTrigger className="-ms-1 shrink-0 text-muted-foreground hover:bg-accent hover:text-foreground" />
-      )}
+      <SidebarTrigger className="-ms-1 shrink-0 text-muted-foreground hover:bg-accent hover:text-foreground" />
       <TopBarBreadcrumbs tenantId={tenantId} />
     </div>
   )

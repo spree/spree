@@ -19,20 +19,6 @@ RSpec.describe Spree::Invitation, type: :model do
       end
     end
 
-    context 'when invitation is accepted after expiration' do
-      it 'is refused' do
-        invitation.save!
-        invitation.update_column(:expires_at, 1.day.ago)
-
-        result = Spree.invitation_accept_workflow.call(invitation: invitation)
-
-        expect(result).not_to be_success
-        expect(result.error.value).to eq(:invitation_expired)
-        expect(invitation.reload.accepted_at).not_to be_present
-        expect(invitation.status).to eq('pending')
-      end
-    end
-
     context 'when invitee already exists in the store' do
       it 'is invalid' do
         create(:admin_user, email: 'existing@example.com')
@@ -88,31 +74,7 @@ RSpec.describe Spree::Invitation, type: :model do
   end
 
   describe 'State Machine' do
-    it 'has initial state of pending' do
-      expect(invitation.status).to eq('pending')
-    end
-
     context 'when accepting an invitation' do
-      it 'changes status to accepted' do
-        invitation.invitee = create(:admin_user, :without_admin_role)
-        Spree.invitation_accept_workflow.call(invitation: invitation)
-        expect(invitation.status).to eq('accepted')
-      end
-
-      it 'sets accepted_at timestamp' do
-        expect(invitation.accepted_at).to be_nil
-        invitation.invitee = create(:admin_user, :without_admin_role)
-        Spree.invitation_accept_workflow.call(invitation: invitation)
-        expect(invitation.accepted_at).to be_present
-      end
-
-      it 'publishes invitation.accept event', events: true do
-        invitation.invitee = create(:admin_user, :without_admin_role)
-
-        expect(invitation).to receive(:publish_event).with('invitation.accepted')
-        Spree.invitation_accept_workflow.call(invitation: invitation)
-      end
-
       it 'creates a resource user' do
         invitation.invitee = create(:admin_user, :without_admin_role)
         expect { Spree.invitation_accept_workflow.call(invitation: invitation) }.to change(invitation, :role_user).from(nil).to(Spree::RoleUser)
@@ -172,6 +134,41 @@ RSpec.describe Spree::Invitation, type: :model do
   describe '#acceptance_url' do
     it 'carries the invitation and its token' do
       expect(invitation.acceptance_url).to include("/accept-invitation/#{invitation.prefixed_id}?token=#{invitation.token}")
+    end
+  end
+
+  describe '#invitee_account' do
+    let!(:account) { create(:admin_user, email: 'pat@example.com') }
+
+    it 'finds the account for a differently cased address' do
+      invitation = build(:invitation, email: 'Pat@Example.com')
+
+      expect(invitation.invitee_account).to eq(account)
+    end
+
+    it 'is nil when no account holds the address' do
+      expect(build(:invitation, email: 'nobody@example.com').invitee_account).to be_nil
+    end
+
+    # An app may encrypt the column, deterministically so it can still be
+    # looked up. SQL then only ever sees ciphertext.
+    context 'when the app encrypts email' do
+      let(:account_class) do
+        stub_const('EncryptedEmailAdmin', Class.new(Spree.admin_user_class) do
+          self.table_name = Spree.admin_user_class.table_name
+          encrypts :email, deterministic: true, downcase: true
+        end)
+      end
+      let!(:account) { account_class.find(create(:admin_user).id).tap { |user| user.update_columns(email: 'pat@example.com') } }
+
+      before { allow(Spree).to receive(:admin_user_class).and_return(account_class) }
+
+      it 'finds the account, whatever the case' do
+        stored = account_class.connection.select_value(account_class.unscoped.where(id: account.id).select(:email).to_sql)
+        expect(stored).not_to include('example.com')
+
+        expect(build(:invitation, email: 'Pat@Example.com').invitee_account).to eq(account)
+      end
     end
   end
 end

@@ -15,8 +15,13 @@ require 'alba'
 require 'acts-as-taggable-on'
 require 'awesome_nested_set'
 require 'cancan'
+# The OAuth models include Doorkeeper's mixins, so the gem has to be loaded
+# before they are autoloaded — core owns the tables, api owns the server
+# configuration.
+require 'doorkeeper'
 require 'countries/global'
 require 'friendly_id'
+require 'json_schemer'
 require 'jwt'
 require 'liquid'
 require 'spree/core/emails/escaped_output'
@@ -34,8 +39,6 @@ require 'ransack'
 require 'active_storage_validations'
 require 'wannabe_bool'
 require 'geocoder'
-
-require 'safely_block'
 require 'ar_lazy_preload'
 require 'sqids'
 
@@ -120,7 +123,6 @@ module Spree
       collections: :default,
       stock_location_stock_levels: :default,
       coupon_codes: :default,
-      themes: :default,
       addresses: :default,
       gift_cards: :default,
       webhooks: :default,
@@ -130,7 +132,8 @@ module Spree
       stock_reservations: :default,
       tax_identifiers: :default,
       data_requests: :default,
-      payouts: :default
+      payouts: :default,
+      maintenance_tasks: :default
     ).tap do |queues|
       # @deprecated The taxons queue was renamed to categories in 6.0; removed in 6.1.
       queues.define_singleton_method(:taxons) do
@@ -165,6 +168,17 @@ module Spree
 
   def self.search_provider=(value)
     @@search_provider = value.to_s
+  end
+
+  # Sections of the diagnostics report (see Spree::Diagnostics), as class
+  # names so an initializer can add one before its class is autoloaded.
+  #
+  #   Spree.diagnostics_sections << 'MyGem::DiagnosticsSection'
+  #
+  # @return [Array<String>]
+  def self.diagnostics_sections
+    @@diagnostics_sections ||= %w[Platform Runtime Infrastructure Preferences].
+                               map { |name| "Spree::Diagnostics::Sections::#{name}" }
   end
 
   # Tax ID validators, keyed by registration kind.
@@ -251,7 +265,7 @@ module Spree
   # Example:
   #
   #   Spree.dependencies do |dependency|
-  #     dependency.cart_add_item_service = MyCustomAddToCart
+  #     dependency.cart_add_item_workflow = MyCustomAddToCart
   #   end
   #
   # This method is defined within the core gem on purpose.
@@ -320,6 +334,22 @@ module Spree
   # @return [Array<Class>]
   singleton_class.delegate :tax_providers, :tax_providers=, to: :spree_config
 
+  # Extensions that copy their own cart data onto the order a cart becomes.
+  # Each entry is a class with a class-level +call(cart:, order:,
+  # line_item_map:)+ (a class, so it is re-resolved when code reloads in
+  # development; see {.refresh_provider_registries!}), where the map
+  # pairs each cart line item with its copy on the order. Both copies run them
+  # — checkout ({Spree::Carts::Complete}) and the draft-order copy
+  # ({Spree::Orders::CreateFromCart}) — inside their transaction, once the
+  # order's line items exist, so an entry that raises rolls the order back.
+  #
+  # Append, never assign, so an extension does not drop what another added:
+  #
+  #   Spree.cart_copiers << MyApp::CopyEngravings
+  #
+  # @return [Array<Class>]
+  singleton_class.delegate :cart_copiers, :cart_copiers=, to: :spree_config
+
   # Pricing engines a store can be pointed at. Connector gems append their own,
   # so a merchant picks from what is actually installed.
   #
@@ -357,7 +387,6 @@ module Spree
   # @return [Class]
   singleton_class.delegate :password_validator, :password_validator=, to: :spree_config
 
-
   # Commission rule kinds selectable on a commission rate.
   #
   # @return [Array<Class>]
@@ -373,6 +402,12 @@ module Spree
   #
   # @return [Array<Class>]
   singleton_class.delegate :delivery_rate_providers, :delivery_rate_providers=, to: :spree_config
+
+  # Third-party pickup point networks selectable on a pickup-point delivery
+  # method. Empty in core; carrier gems append theirs.
+  #
+  # @return [Array<Class>]
+  singleton_class.delegate :pickup_point_providers, :pickup_point_providers=, to: :spree_config
 
   # Re-resolves every provider registry entry by name, in place.
   #
@@ -391,7 +426,9 @@ module Spree
   # @return [void]
   def self.refresh_provider_registries!
     [Rails.application.config.spree.delivery_rate_providers,
-     Rails.application.config.spree.fulfillment_providers].compact.each do |registry|
+     Rails.application.config.spree.fulfillment_providers,
+     Rails.application.config.spree.pickup_point_providers,
+     Rails.application.config.spree.cart_copiers].compact.each do |registry|
       registry.map! { |entry| entry.is_a?(Module) && entry.name ? entry.name.constantize : entry }
     end
   end
@@ -443,6 +480,19 @@ module Spree
     Spree::Deprecation.warn('Spree.metafields is deprecated and will be removed in Spree 6.1. Use Spree.custom_fields instead.') if defined?(Spree::Deprecation)
     custom_fields
   end
+
+  # Registered maintenance task class names — the tasks an operator can run
+  # from the dashboard, the Admin API or the CLI
+  # (docs/plans/6.0-maintenance-tasks.md). Extensions append their own from an
+  # initializer:
+  #
+  #   Spree.maintenance_tasks << 'SpreeReviews::MaintenanceTasks::RecountRatings'
+  #
+  # Class names rather than classes, so registration is safe at initializer
+  # time and survives code reloading in development.
+  #
+  # @return [Array<String, Class>]
+  singleton_class.delegate :maintenance_tasks, :maintenance_tasks=, to: :spree_config
 
   # Registry mapping a numbered resource to the generator that produces its
   # document numbers. With no entry, the store's `document_number_format`
@@ -504,6 +554,15 @@ module Spree
   # @return [Spree::Reporting::Registry]
   singleton_class.delegate :reporting, :reporting=, to: :spree_config
 
+  # The agent-tool registry — what an MCP client or the dashboard assistant
+  # may do on a merchant's behalf. A contract like +Spree.integrations+ and
+  # +Spree.reporting+: an extension registers a tool without depending on
+  # either adapter. See docs/plans/6.0-mcp-server.md.
+  #
+  # @return [Spree::AgentTools::Registry]
+  singleton_class.delegate :admin_agent_tools, :admin_agent_tools=, to: :spree_config
+  singleton_class.delegate :store_agent_tools, :store_agent_tools=, to: :spree_config
+
   # The permission catalog — the grant vocabulary shared by staff roles and
   # secret API key scopes. Roles themselves are data (Spree::Role#permissions);
   # code only registers the vocabulary.
@@ -531,14 +590,24 @@ module Spree
     @ransack ||= RansackConfiguration.new
   end
 
+  # Concerns extensions add to core models, instead of decorating them.
+  #
+  # @example
+  #   Spree.model_extensions.add('Spree::Product', 'MyExtension::ProductWarranty')
+  #
+  # @return [Spree::ModelExtensions]
+  def self.model_extensions
+    @model_extensions ||= ModelExtensions.new
+  end
+
   class << self
     # Dynamic methods for core dependencies
     #
     # @example Getting a dependency (returns resolved class)
-    #   Spree.cart_add_item_service.call(order: order, variant: variant)
+    #   Spree.cart_add_item_workflow.call(cart: cart, variant: variant)
     #
     # @example Setting a dependency
-    #   Spree.cart_add_item_service = MyApp::CartAddItem
+    #   Spree.cart_add_item_workflow = MyApp::CartAddItem
     def method_missing(method_name, *args, &block)
       base_name = method_name.to_s.chomp('=').to_sym
 
@@ -562,7 +631,7 @@ module Spree
     def core_dependency?(name)
       return false unless defined?(Spree::Dependencies)
 
-      Spree::Dependencies.class::INJECTION_POINTS.include?(name) ||
+      Spree::Dependencies.injection_point?(name) ||
         Spree::Dependencies.class::LEGACY_WORKFLOW_KEYS.key?(name) ||
         Spree::Dependencies.class::LEGACY_SERVICE_KEYS.key?(name) ||
         Spree::Dependencies.class::RENAMED_SERVICE_KEYS.key?(name)
@@ -614,6 +683,7 @@ require 'spree/core/version'
 require 'spree/core/number_generator'
 require 'spree/number_generators/registry'
 require 'spree/migrations'
+require 'spree/upgrade'
 require 'spree/validators'
 require 'spree/core/engine'
 
@@ -621,13 +691,17 @@ require 'spree/i18n'
 require 'spree/iso_data'
 require 'spree/localized_number'
 require 'spree/measurement'
+require 'spree/time_zones'
 require 'spree/translations'
 require 'spree/money'
 require 'spree/service_module'
 require 'spree/workflow'
 require 'spree/reporting'
+require 'spree/agent_tool'
+require 'spree/agent_tools'
 require 'spree/events'
 require 'spree/store_scope_guard'
+require 'spree/uploads'
 
 # Not autoloaded from app/: the registry keeps registered steps in
 # class-level state, which a reload would discard.
@@ -642,11 +716,13 @@ require 'spree/core/controller_helpers/store'
 
 require 'spree/core/preferences/runtime_configuration'
 require 'spree/core/preferences/masking'
+require 'spree/core/preferences/invalid_preferences'
 require 'spree/core/preferences/json_conversion'
 
 require 'spree/core/permission_configuration'
+require 'spree/core/model_extensions'
 require 'spree/core/ransack_configuration'
 require 'spree/core/pricing/context'
 require 'spree/core/pricing/price_resolution'
-require 'spree/core/pricing/resolver'
 require 'spree/core/tax/provider_error'
+require 'spree/core/pricing/resolver'

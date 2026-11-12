@@ -15,6 +15,32 @@ module Spree
 
           included do
             before_action :authorize_parent_access!
+
+            # Read from the raw params by `create_workflow_arguments`, with
+            # every line resolved through the document.
+            request_params :stock_receipt do |body|
+              body.attribute :reference, :string,
+                nullable: true,
+                example: 'DN-4471',
+                description: "The supplier's delivery note, or the carrier's reference."
+              body.attribute :received_at, :datetime,
+                nullable: true,
+                description: 'When the goods were counted in. Defaults to now.'
+              body.attribute :notes, :string, nullable: true
+              body.attribute :items, :array,
+                permit: false,
+                as: 'StockReceiptItemParams',
+                description: 'Omit to book in everything still outstanding, intact. Naming lines, even none, records exactly what the dock counted: `quantity_accepted` reaches the shelf; `quantity_rejected` is refused, recorded with a `rejection_reason` and never stocked.' do |item|
+                item.attribute :id, :id, required: true, description: 'The purchase order or transfer line.'
+                item.attribute :quantity_accepted, :integer, example: 58
+                item.attribute :quantity_rejected, :integer, example: 2
+                item.attribute :rejection_reason, :string,
+                  nullable: true,
+                  choices: Spree::StockReceiptItem::REJECTION_REASONS,
+                  example: 'damaged'
+                item.attribute :notes, :string, nullable: true
+              end
+            end
           end
 
           protected
@@ -37,10 +63,6 @@ module Spree
 
           def collection_includes
             [items: :line]
-          end
-
-          def resource_permitted_attributes
-            [:received_at, :reference, :notes]
           end
 
           def create_workflow_arguments

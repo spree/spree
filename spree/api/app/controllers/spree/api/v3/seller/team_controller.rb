@@ -16,6 +16,10 @@ module Spree
 
           before_action :set_member, only: [:destroy]
 
+          request_params :team_member do |body|
+            body.attribute :email, :string, required: true, example: 'colleague@acme.test'
+          end
+
           def index
             render json: { data: members.map { |member| serialize_member(member) } }
           end
@@ -82,7 +86,7 @@ module Spree
           private
 
           def members
-            @members ||= current_seller.users.to_a
+            @members ||= current_seller.users.with_attached_avatar.to_a
           end
 
           def set_member

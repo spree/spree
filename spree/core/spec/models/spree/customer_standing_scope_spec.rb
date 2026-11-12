@@ -49,6 +49,8 @@ RSpec.describe 'Spree.customer_class.with_standing_for_company' do
 
     expect(matches).to include(division_buyer, group_buyer, globex_buyer)
     expect(matches).not_to include(outsider)
+    # Ransack passes each value of a list filter as its own argument.
+    expect(Spree.customer_class.with_standing_for_company(child.prefixed_id, other_root.prefixed_id)).to match_array(matches)
   end
 
   it 'returns nothing for a blank or unknown company' do

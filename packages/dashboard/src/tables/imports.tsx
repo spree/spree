@@ -1,4 +1,5 @@
 import type { Import } from '@spree/admin-sdk'
+import { IMPORT_STATUSES } from '@spree/core'
 import { defineTable } from '@spree/dashboard-core'
 import { RelativeTime, ResourceNameCell, StatusBadge } from '@spree/dashboard-ui'
 import { UploadIcon } from '@spree/dashboard-ui/icons'
@@ -9,7 +10,7 @@ defineTable<Import>('imports', {
   title: i18n.t('admin.pages.settings.imports.title'),
   docsPath: 'manage-products/import-products',
   description: i18n.t('admin.table_descriptions.imports'),
-  searchParam: 'number_cont',
+  searchParam: 'search',
   searchPlaceholder: i18n.t('admin.pages.settings.imports.search_placeholder'),
   defaultSort: { field: 'created_at', direction: 'desc' },
   emptyIcon: <UploadIcon className="size-8 text-muted-foreground" />,
@@ -34,6 +35,11 @@ defineTable<Import>('imports', {
       label: i18n.t('admin.pages.settings.imports.table.status'),
       sortable: true,
       filterable: true,
+      filterType: 'enum',
+      filterOptions: IMPORT_STATUSES.map((status) => ({
+        value: status,
+        label: i18n.t(`admin.imports.status.${status}`),
+      })),
       default: true,
       render: (imp) => (
         <StatusBadge status={imp.status} label={i18n.t(`admin.imports.status.${imp.status}`)} />

@@ -97,7 +97,7 @@ RSpec.describe Spree::ShippingLabel, type: :model do
     end
 
     it 'is the one behind the integration that sold the label' do
-      allow(Spree).to receive(:fulfillment_providers).and_return([selling_provider])
+      allow(Spree).to receive(:fulfillment_providers).and_return(Spree.fulfillment_providers + [selling_provider])
       # Stood in rather than created: the only concrete integration in the
       # suite belongs to a provider gem core does not load.
       integration = instance_double(Spree::Integration, type: 'Spree::Integration')

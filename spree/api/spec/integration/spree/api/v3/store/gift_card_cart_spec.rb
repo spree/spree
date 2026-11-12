@@ -31,13 +31,7 @@ RSpec.describe 'Cart Gift Card API', type: :request, swagger_doc: 'api-reference
       parameter name: :cart_id, in: :path, type: :string, required: true, description: 'Cart prefixed ID (e.g., cart_abc123)'
       parameter name: 'Idempotency-Key', in: :header, type: :string, required: false,
                 description: 'Unique key for request idempotency.'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          code: { type: :string, example: 'GC-ABCD-1234', description: 'Gift card code to apply' }
-        },
-        required: %w[code]
-      }
+      request_body_for
 
       response '201', 'gift card applied' do
         let!(:gift_card) { create(:gift_card, store: store, amount: 50, code: 'giftcode1') }

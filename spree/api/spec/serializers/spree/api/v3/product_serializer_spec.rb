@@ -85,7 +85,10 @@ RSpec.describe Spree::Api::V3::ProductSerializer do
     # +Product.available_on+ column. 6.0 drops the column fallback.
     describe 'available_on' do
       let(:channel) { store.default_channel }
-      let(:publication) { product.product_publications.find_by(channel: channel) }
+      # Read through the association the serializer itself uses, so a write
+      # here is visible to it: `update_columns` writes straight to the row,
+      # which a separately fetched copy would not carry back.
+      let(:publication) { product.product_publications.find { |pub| pub.channel_id == channel.id } }
 
       before { Spree::Current.channel = channel }
       after  { Spree::Current.channel = nil }

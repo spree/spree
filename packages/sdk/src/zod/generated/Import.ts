@@ -11,8 +11,6 @@ export const ImportSchema = z.object({
   status: z.string(),
   store_id: z.string().nullable(),
   seller_id: z.string().nullable(),
-  owner_type: z.string().nullable(),
-  owner_id: z.string().nullable(),
   user_id: z.string().nullable(),
 });
 

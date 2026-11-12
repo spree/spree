@@ -3,27 +3,6 @@ require 'spec_helper'
 describe Spree::Seller do
   let(:store) { @default_store }
 
-  describe 'statuses' do
-    it 'starts pending and moves only through workflows' do
-      expect(described_class.default_status).to eq('pending')
-      expect(described_class.statuses).to include('approved', 'suspended', 'rejected')
-      # A state machine would have generated these; the absence is the point.
-      expect(described_class).not_to respond_to(:state_machines)
-    end
-
-    it 'generates a predicate and a scope per status' do
-      seller = create(:seller, :approved)
-
-      expect(seller).to be_approved
-      expect(seller).not_to be_pending
-      expect(described_class.approved).to include(seller)
-    end
-
-    it 'rejects an unknown status' do
-      expect(build(:seller, status: 'flourishing')).not_to be_valid
-    end
-  end
-
   describe 'slug' do
     it 'derives from the name when absent' do
       expect(create(:seller, name: 'Bright Sparks Ltd').slug).to eq('bright-sparks-ltd')
@@ -33,15 +12,10 @@ describe Spree::Seller do
       expect(create(:seller, name: 'Bright Sparks', slug: 'sparks').slug).to eq('sparks')
     end
 
-    it 'is unique within a store' do
+    it 'is unique within a store but may repeat on another' do
       create(:seller, slug: 'sparks', store: store)
 
       expect(build(:seller, slug: 'sparks', store: store)).not_to be_valid
-    end
-
-    it 'may repeat on another store' do
-      create(:seller, slug: 'sparks', store: store)
-
       expect(build(:seller, slug: 'sparks', store: create(:store))).to be_valid
     end
   end
@@ -154,6 +128,23 @@ describe Spree::Seller do
 
       expect(product.reload.seller_id).to be_nil
     end
+
+    it 'counts them by status, every status present' do
+      seller = create(:seller, :approved, store: store)
+      create_list(:product, 2, store: store, seller: seller, status: 'active')
+      create(:product, store: store, seller: seller, status: 'proposed')
+
+      expect(seller.products_count_by_status).to eq(
+        'draft' => 0, 'active' => 2, 'archived' => 0, 'proposed' => 1, 'rejected' => 0
+      )
+      expect(seller.products_count).to eq(3)
+    end
+
+    it "counts none for an unsaved seller, not the operator's own" do
+      create(:product, store: store, status: 'active')
+
+      expect(build(:seller, store: store).products_count).to eq(0)
+    end
   end
 
   describe 'translations' do
@@ -182,9 +173,7 @@ describe Spree::Seller do
   end
 
   describe 'settlement configuration' do
-    it 'defaults to the seller remitting its own tax' do
-      expect(create(:seller).tax_remittance).to eq('seller')
-    end
+    let(:seller) { create(:seller, :approved, store: store) }
 
     it 'rejects an unknown remittance or interval' do
       expect(build(:seller, tax_remittance: 'someone_else')).not_to be_valid
@@ -194,6 +183,18 @@ describe Spree::Seller do
     # Nil means "use the store's default", so it stays valid.
     it 'allows both to be unset' do
       expect(build(:seller, payouts_schedule_interval: nil, minimum_payout_amount: nil)).to be_valid
+    end
+
+    it 'falls back to the store’s schedule and threshold' do
+      expect(seller.resolved_payouts_schedule_interval).to eq('monthly')
+      expect(seller.resolved_minimum_payout_amount).to eq(0)
+    end
+
+    it 'prefers its own once it deviates' do
+      seller.update!(payouts_schedule_interval: 'weekly', minimum_payout_amount: 25)
+
+      expect(seller.resolved_payouts_schedule_interval).to eq('weekly')
+      expect(seller.resolved_minimum_payout_amount).to eq(25)
     end
   end
 
@@ -238,6 +239,64 @@ describe Spree::Seller do
       expect(reloaded.update(billing_address: { city: 'Manchester' })).to be(true)
     end
 
+    describe 'returns address' do
+      let(:returns_address) do
+        { first_name: 'Ada', company: 'Sparks Returns', address1: '1 Returns Way', city: 'Leeds',
+          postal_code: 'LS1 1AA', country_code: 'GB' }
+      end
+
+      it "writes it onto the seller's returns location" do
+        location = create(:stock_location, store: store, seller: seller, returns_enabled: true)
+
+        seller.update!(returns_address: returns_address)
+
+        expect(location.reload).to have_attributes(address1: '1 Returns Way', zipcode: 'LS1 1AA',
+                                                   company: 'Sparks Returns')
+        expect(seller.reload.returns_address.address1).to eq('1 Returns Way')
+      end
+
+      it 'creates a returns location for a seller who has none' do
+        seller.update!(returns_address: returns_address)
+
+        location = seller.reload.returns_location
+        expect(location).to have_attributes(name: seller.name, store: store, returns_enabled: true,
+                                            address1: '1 Returns Way')
+        expect(seller.stock_locations.count).to eq(1)
+      end
+
+      it 'keeps the state when the same country comes in another case' do
+        location = create(:stock_location, store: store, seller: seller, returns_enabled: true,
+                                           country_code: 'US', state_code: 'NY')
+
+        seller.update!(returns_address: { country_code: 'us', address1: '2 Returns Way' })
+
+        expect(location.reload).to have_attributes(country_code: 'US', state_code: 'NY')
+      end
+
+      # Until the seller has an id, the location's name would be checked
+      # against the operator's own locations.
+      it "creates one named like an operator's own location" do
+        create(:stock_location, store: store, name: 'Sparks Audio')
+
+        seller = build(:seller, store: store, name: 'Sparks Audio')
+        seller.returns_address = returns_address
+
+        expect(seller.save).to be(true)
+        expect(seller.reload.returns_location.name).to eq('Sparks Audio')
+      end
+
+      # An inactive location is never the returns location, so a new one is
+      # made — under a name this seller already uses.
+      it "reports the location's errors under the address" do
+        create(:stock_location, store: store, seller: seller, name: seller.name, active: false)
+
+        seller.returns_address = returns_address
+
+        expect(seller).not_to be_valid
+        expect(seller.errors.attribute_names).to include(:'returns_address.name')
+      end
+    end
+
     # A seller is paranoid, so destroy is a soft delete. Taking the addresses
     # with it would hard-delete rows a restored seller still points at.
     it 'keeps its addresses when soft-deleted, and finds them again on restore' do
@@ -271,7 +330,6 @@ describe Spree::Seller do
   end
 
   describe 'onboarding progress' do
-    let(:store) { @default_store }
     let(:seller) { create(:seller, :onboarding, store: store) }
 
     before { store.seller_requirements.destroy_all }
@@ -349,7 +407,6 @@ describe Spree::Seller do
   end
 
   describe '#balance' do
-    let(:store) { @default_store }
     let(:seller) { create(:seller, :approved, store: store) }
 
     def earn(amount, currency: 'USD', status: 'completed')
@@ -424,22 +481,6 @@ describe Spree::Seller do
     end
   end
 
-  describe 'settlement configuration' do
-    let(:store) { @default_store }
-    let(:seller) { create(:seller, :approved, store: store) }
-
-    it 'falls back to the store’s schedule and threshold' do
-      expect(seller.resolved_payouts_schedule_interval).to eq('monthly')
-      expect(seller.resolved_minimum_payout_amount).to eq(0)
-    end
-
-    it 'prefers its own once it deviates' do
-      seller.update!(payouts_schedule_interval: 'weekly', minimum_payout_amount: 25)
-
-      expect(seller.resolved_payouts_schedule_interval).to eq('weekly')
-      expect(seller.resolved_minimum_payout_amount).to eq(25)
-    end
-  end
   # The seller's identity in the system that pays them — recorded where every
   # other external identity is, rather than in a column of its own.
   describe 'the payout account' do

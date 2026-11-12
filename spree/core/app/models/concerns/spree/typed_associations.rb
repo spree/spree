@@ -37,36 +37,55 @@ module Spree
       reconcile_typed_association(association, pending)
     end
 
-    # Flushes a pending payload from `@pending_<assoc>` (typically from
-    # an `after_save` hook) and clears the ivar.
+    # Flushes the pending payloads from `@pending_<assoc>` (typically from
+    # an `after_save` hook) and clears them.
     #
+    # Every association is written before any buffer is cleared: a refused
+    # row rolls the whole save back, and a retried save must carry every
+    # payload again rather than persist the owner with the rows that
+    # happened to come first.
+    #
+    # @param associations [Array<Symbol>]
+    # @return [void]
+    def flush_pending_typed_associations(*associations)
+      pending = associations.to_h { |association| [association, instance_variable_get(:"@pending_#{association}")] }.compact
+      pending.each { |association, rows| reconcile_typed_association(association, rows) }
+      pending.each_key { |association| instance_variable_set(:"@pending_#{association}", nil) }
+    end
+
     # @param association [Symbol]
     # @return [void]
     def flush_pending_typed_association(association)
-      ivar = :"@pending_#{association}"
-      pending = instance_variable_get(ivar)
-      return unless pending
-
-      instance_variable_set(ivar, nil)
-      reconcile_typed_association(association, pending)
+      flush_pending_typed_associations(association)
     end
 
+    # All or nothing: on a saved parent the rows are written as they are
+    # assigned, so a refusal on the second row used to leave the first one
+    # behind — a list the caller never asked for, answered with a 422.
     def reconcile_typed_association(association, rows)
       collection = public_send(association)
-      kept_ids = rows.filter_map { |row| save_typed_association_row(collection, row) }
-      if kept_ids.any? || rows.empty?
-        collection.where.not(id: kept_ids).destroy_all
-        # `where.not(...).destroy_all` deletes the dropped rows from the DB but
-        # leaves them in the already-loaded association target. Reset so a
-        # same-request read (e.g. the serializer rendering `rule_ids`) reflects
-        # the removal instead of echoing ghosts.
+      begin
+        self.class.transaction do
+          kept_ids = rows.each_with_index.map { |row, index| save_typed_association_row(collection, row, "/#{association.to_s.split('_').last}/#{index}") }
+          collection.where.not(id: kept_ids).destroy_all
+          # `where.not(...).destroy_all` deletes the dropped rows from the DB but
+          # leaves them in the already-loaded association target. Reset so a
+          # same-request read (e.g. the serializer rendering `rule_ids`) reflects
+          # the removal instead of echoing ghosts.
+          collection.reset
+        end
+      rescue StandardError
+        # The rows built before the refusal are still in the loaded target, and
+        # the owner's next save would write them; the rollback only undid the
+        # database.
         collection.reset
+        raise
       end
     end
 
-    def save_typed_association_row(collection, row)
-      record = find_or_build_typed_association_row(collection, row)
-      return nil unless record
+    # @param pointer [String] where the row sits in the request, e.g. `/rules/1`
+    def save_typed_association_row(collection, row, pointer)
+      record = find_or_build_typed_association_row(collection, row, pointer)
 
       preferences = row[:preferences]
       calculator = row[:calculator]
@@ -78,12 +97,10 @@ module Spree
       deferred_ids, scalar_attrs = attrs.partition { |k, _| record.new_record? && k.to_s.end_with?('_ids') }
       record.assign_attributes(scalar_attrs.to_h) if scalar_attrs.any?
 
-      preferences&.each do |key, value|
-        next unless record.has_preference?(key.to_sym)
-
-        record.set_preference(key.to_sym, decode_preference_value(key, value))
+      record.assign_preferences(preferences, pointer: "#{pointer}/preferences") if preferences
+      if calculator.present? && record.respond_to?(:assign_calculator_attributes)
+        record.assign_calculator_attributes(calculator, pointer: "#{pointer}/calculator")
       end
-      record.assign_calculator_attributes(calculator) if calculator.present? && record.respond_to?(:assign_calculator_attributes)
 
       # Always save — `record.changed?` doesn't reflect preferences
       # (serialized hash) or calculator association changes.
@@ -101,26 +118,19 @@ module Spree
       raise
     end
 
-    # Decode `*_ids` array preferences (`customer_group_ids`, `user_ids`,
-    # …) from prefixed strings to raw PKs. Plain-scalar / non-id
-    # preferences pass through unchanged.
-    def decode_preference_value(key, value)
-      return value unless key.to_s.end_with?('_ids') && value.is_a?(Array)
-
-      value.map do |v|
-        Spree::PrefixedId.prefixed_id?(v) ? Spree::PrefixedId.decode_prefixed_id(v) : v
-      end
-    end
-
-    def find_or_build_typed_association_row(collection, row)
+    def find_or_build_typed_association_row(collection, row, pointer)
       if row[:id].present?
         id = Spree::PrefixedId.prefixed_id?(row[:id]) ? Spree::PrefixedId.decode_prefixed_id(row[:id]) : row[:id]
         existing = collection.find { |r| r.id == id } || collection.find_by(id: id)
         return existing if existing
       end
 
-      klass = collection.proxy_association.klass.find_by_api_type(row[:type])
-      return nil unless klass
+      family = collection.proxy_association.klass
+      klass = family.find_by_api_type(row[:type])
+      # Refused, not skipped: a dropped row answered the request with a 200
+      # and a promotion that discounted nothing. Naming the accepted types is
+      # what lets an API client or an agent correct itself.
+      raise unknown_row_type_error(family, row[:type], pointer) unless klass
 
       # `build(type:) + becomes(klass)` would leave a stale STI-parent stub
       # in the collection target alongside the becomes'd copy; autosave then
@@ -128,6 +138,17 @@ module Spree
       record = klass.new
       collection.proxy_association.add_to_target(record)
       record
+    end
+
+    def unknown_row_type_error(family, type, pointer)
+      types = family.api_types.sort.join(', ')
+      message = if type.blank?
+                  I18n.t('spree.errors.messages.missing_row_type', types: types)
+                else
+                  I18n.t('spree.errors.messages.unknown_row_type', type: type, family: family.model_name.human.downcase, types: types)
+                end
+
+      Spree::Preferences::InvalidPreferences.new([{ pointer: '/type', message: message }], prefix: pointer)
     end
   end
 end

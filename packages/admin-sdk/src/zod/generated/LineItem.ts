@@ -1,5 +1,6 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import { CustomFieldSchema } from './CustomField';
 import { DigitalLinkSchema } from './DigitalLink';
 import { OptionValueSchema } from './OptionValue';
 import { SellerSchema } from './Seller';
@@ -19,28 +20,21 @@ export const LineItemSchema = z.object({
   slug: z.string(),
   options_text: z.string(),
   price: z.string(),
-  display_price: z.string(),
   total: z.string(),
-  display_total: z.string(),
   adjustment_total: z.string(),
-  display_adjustment_total: z.string(),
   additional_tax_total: z.string(),
-  display_additional_tax_total: z.string(),
   included_tax_total: z.string(),
-  display_included_tax_total: z.string(),
   discount_total: z.string(),
-  display_discount_total: z.string(),
   pre_tax_amount: z.string(),
-  display_pre_tax_amount: z.string(),
   discounted_amount: z.string(),
-  display_discounted_amount: z.string(),
-  display_compare_at_amount: z.string().nullable(),
   compare_at_amount: z.string().nullable(),
   thumbnail_url: z.string().nullable(),
   seller: SellerSchema.optional(),
   get option_values() { return z.array(OptionValueSchema); },
   digital_links: z.array(DigitalLinkSchema),
   tax_lines: z.array(TaxLineSchema).optional(),
+  custom_fields: z.array(CustomFieldSchema).optional(),
+  external_references: z.record(z.string(), z.string()),
   metadata: z.record(z.string(), z.unknown()),
   price_source: z.string().nullable(),
   created_at: z.string(),
@@ -52,6 +46,7 @@ export const LineItemSchema = z.object({
   catalog_name: z.string().nullable(),
   cost_price: z.string().nullable(),
   tax_category_id: z.string().nullable(),
+  product_id: z.string().nullable(),
   get variant() { return VariantSchema.optional(); },
   tax_category: TaxCategorySchema.optional(),
 });

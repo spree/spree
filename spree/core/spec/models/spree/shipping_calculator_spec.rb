@@ -41,10 +41,6 @@ module Spree
       end.to raise_error(NotImplementedError)
     end
 
-    it 'checks availability for a package' do
-      expect(subject.available?(package)).to be true
-    end
-
     it 'calculates totals for content_items' do
       expect(subject.send(:total, package.contents)).to eq 40.00
     end

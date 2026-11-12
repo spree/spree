@@ -1,5 +1,17 @@
 import type { Order, Return, ReturnLineItem } from '@spree/admin-sdk'
-import { currencyParts, useStore } from '@spree/dashboard-core'
+import { RETURN_STATUSES, subsetOf } from '@spree/core'
+import {
+  currencyParts,
+  formatAmount,
+  isPositiveMoney,
+  postSaleItemRow,
+  returnOwesNothing,
+  returnRefundSummary,
+  useMetadataSheet,
+  useMoneyLocale,
+  usePermissions,
+  ViewMetadataMenuItem,
+} from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -14,11 +26,15 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  FulfillmentItemList,
+  hasMetadata,
   type RefundMethod,
   ReturnReceiveDialog,
   ReturnRefundDialog,
-  returnOwesNothing,
-  returnRefundSummary,
+  Section,
+  SectionActions,
+  SectionHeader,
+  SectionTitle,
   StatusBadge,
   useConfirm,
 } from '@spree/dashboard-ui'
@@ -33,7 +49,6 @@ import {
   TagIcon,
   XCircleIcon,
 } from '@spree/dashboard-ui/icons'
-import i18n from 'i18next'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useOrderReturns, useReturnActions } from '../../hooks/use-returns'
@@ -41,10 +56,14 @@ import { variantLabel } from '../../lib/variant-label'
 import { ShippingDocuments } from './orders/shipping-documents'
 import { ShippingLabelRow } from './orders/shipping-label-row'
 import { CreateReturnDialog, fulfilledUnits } from './post-sale-create-dialogs'
+import { useProductLink } from './variant-link'
 
 // Statuses that still offer an action; refunded and canceled are done and
 // would render a menu button that opens onto nothing.
-const RETURN_ACTIONABLE = ['requested', 'approved', 'received']
+const RETURN_ACTIONABLE = subsetOf(RETURN_STATUSES, ['requested', 'approved', 'received'])
+// Once goods have arrived the return can only be refunded.
+const RETURN_CANCELABLE = subsetOf(RETURN_STATUSES, ['requested', 'approved'])
+const RETURN_RECEIVED = subsetOf(RETURN_STATUSES, ['received', 'refunded'])
 
 /**
  * Returns on an order. Each status change is a distinct action rather than an
@@ -53,30 +72,36 @@ const RETURN_ACTIONABLE = ['requested', 'approved', 'received']
  * goes.
  */
 export function OrderReturnsCard({ order }: { order: Order }) {
+  const productLink = useProductLink()
   const orderId = order.id
   const { t } = useTranslation()
   const confirm = useConfirm()
   const { data } = useOrderReturns(orderId)
   const { create, approve, receive, refund, cancel, buyLabel, refundLabel, deleteLabel } =
     useReturnActions(orderId)
+  // Paying the customer back is the refunds permission's, not the orders
+  // one's: the API refuses a refund without it, so the action is not offered.
+  const { permissionKeys } = usePermissions()
+  const canRefund = permissionKeys.includes('write_refunds')
 
   const [creating, setCreating] = useState(false)
   const [receiving, setReceiving] = useState<Return | null>(null)
   const [refunding, setRefunding] = useState<Return | null>(null)
+  const metadataSheet = useMetadataSheet()
 
   const returns = data?.data ?? []
   const canCreate = fulfilledUnits(order).length > 0
 
   return (
     <>
-      <Card variant="container">
-        <CardHeader>
-          <CardTitle>
+      <Section>
+        <SectionHeader>
+          <SectionTitle>
             <RotateCcwIcon className="size-4" />
             {t('admin.pages.orders.detail.section_returns')}
             {returns.length > 0 && <Badge variant="outline">{returns.length}</Badge>}
-          </CardTitle>
-          <CardAction>
+          </SectionTitle>
+          <SectionActions>
             <Button
               variant="outline"
               size="sm"
@@ -87,25 +112,26 @@ export function OrderReturnsCard({ order }: { order: Order }) {
               <PlusIcon className="size-4" />
               {t('admin.pages.orders.detail.returns.actions.create')}
             </Button>
-          </CardAction>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-4">
+          </SectionActions>
+        </SectionHeader>
+        <div className="flex flex-col gap-4">
           {returns.length === 0 && (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-base text-muted-foreground">
               {canCreate
                 ? t('admin.pages.orders.detail.returns.empty')
                 : t('admin.pages.orders.detail.returns.empty_no_units')}
             </p>
           )}
           {returns.map((returnRecord) => (
-            <Card key={returnRecord.id} variant="nested">
+            <Card key={returnRecord.id}>
               <CardHeader>
-                <CardTitle className="text-sm font-medium">
+                <CardTitle className="text-base font-medium">
                   <StatusBadge status={returnRecord.status} />
-                  <span className="text-sm font-medium">{returnRecord.number}</span>
+                  <span className="text-base font-medium">{returnRecord.number}</span>
                 </CardTitle>
 
-                {RETURN_ACTIONABLE.includes(returnRecord.status) && (
+                {(RETURN_ACTIONABLE.includes(returnRecord.status) ||
+                  hasMetadata(returnRecord.metadata)) && (
                   <CardAction>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -127,7 +153,7 @@ export function OrderReturnsCard({ order }: { order: Order }) {
                             {t('admin.pages.orders.detail.returns.actions.receive')}
                           </DropdownMenuItem>
                         )}
-                        {returnRecord.status === 'received' && (
+                        {returnRecord.status === 'received' && canRefund && (
                           <DropdownMenuItem onClick={() => setRefunding(returnRecord)}>
                             {returnOwesNothing(returnRecord.refundable_total) ? (
                               <>
@@ -142,7 +168,18 @@ export function OrderReturnsCard({ order }: { order: Order }) {
                             )}
                           </DropdownMenuItem>
                         )}
-                        {['requested', 'approved'].includes(returnRecord.status) && (
+                        <ViewMetadataMenuItem
+                          metadata={returnRecord.metadata}
+                          externalReferences={returnRecord.external_references}
+                          onClick={() =>
+                            metadataSheet.show(
+                              returnRecord.metadata,
+                              returnRecord.number,
+                              returnRecord.external_references,
+                            )
+                          }
+                        />
+                        {RETURN_CANCELABLE.includes(returnRecord.status) && (
                           <>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem
@@ -184,24 +221,26 @@ export function OrderReturnsCard({ order }: { order: Order }) {
                 isRefunding={refundLabel.isPending}
               />
 
-              <CardContent className="flex flex-col gap-1.5">
-                {(returnRecord.return_line_items ?? []).map((line) => (
-                  <ReturnLineRow key={line.id} line={line} status={returnRecord.status} />
-                ))}
-                {returnRecord.stock_location?.name && (
-                  <p className="text-sm text-muted-foreground">
-                    {t('admin.pages.orders.detail.returns.returning_to', {
-                      name: returnRecord.stock_location.name,
-                    })}
-                  </p>
-                )}
-              </CardContent>
+              <FulfillmentItemList
+                productLink={productLink}
+                rows={(returnRecord.return_line_items ?? []).map((line) => ({
+                  ...postSaleItemRow(line.id, line, order.items ?? []),
+                  badges: <ReturnLineBadges line={line} status={returnRecord.status} />,
+                }))}
+              />
+              {returnRecord.stock_location?.name && (
+                <CardContent className="py-3 text-muted-foreground">
+                  {t('admin.pages.orders.detail.returns.returning_to', {
+                    name: returnRecord.stock_location.name,
+                  })}
+                </CardContent>
+              )}
 
-              <RefundSummaryFooter returnRecord={returnRecord} />
+              <RefundSummaryFooter returnRecord={returnRecord} currency={order.currency} />
             </Card>
           ))}
-        </CardContent>
-      </Card>
+        </div>
+      </Section>
 
       {creating && (
         <CreateReturnDialog
@@ -228,6 +267,7 @@ export function OrderReturnsCard({ order }: { order: Order }) {
       {refunding && (
         <RefundDialog
           returnRecord={refunding}
+          currency={order.currency}
           onClose={() => setRefunding(null)}
           onSubmit={(params) => {
             refund.mutate({ returnId: refunding.id, ...params })
@@ -235,12 +275,14 @@ export function OrderReturnsCard({ order }: { order: Order }) {
           }}
         />
       )}
+
+      {metadataSheet.sheet}
     </>
   )
 }
 
 /** A return is only worth a label while the goods are still coming back. */
-const RETURN_LABEL_STATUSES = ['requested', 'approved']
+const RETURN_LABEL_STATUSES = subsetOf(RETURN_STATUSES, ['requested', 'approved'])
 
 /**
  * The prepaid label for the parcel coming back, and the button to buy one.
@@ -287,7 +329,7 @@ function ReturnLabel({
   if (!canBuy) return null
 
   return (
-    <CardContent className="flex items-center justify-between border-b border-border-subtle py-3 text-sm">
+    <CardContent className="mx-4 px-0 flex items-center justify-between border-b border-border-subtle py-3.5 text-base">
       <span className="text-muted-foreground">
         {t('admin.pages.orders.detail.returns.no_label')}
       </span>
@@ -316,12 +358,19 @@ function ReturnLabel({
   )
 }
 
-function RefundSummaryFooter({ returnRecord }: { returnRecord: Return }) {
+function RefundSummaryFooter({
+  returnRecord,
+  currency,
+}: {
+  returnRecord: Return
+  currency: string
+}) {
   const { t } = useTranslation()
-  const summary = returnRefundSummary(returnRecord)
+  const moneyLocale = useMoneyLocale()
+  const summary = returnRefundSummary(returnRecord, currency, moneyLocale)
 
   return (
-    <CardFooter className="justify-between text-sm">
+    <CardFooter className="justify-between text-base">
       <span className="text-muted-foreground">
         {summary.kind === 'owed'
           ? t('admin.pages.orders.detail.returns.refund_total')
@@ -339,28 +388,25 @@ function RefundSummaryFooter({ returnRecord }: { returnRecord: Return }) {
   )
 }
 
-function ReturnLineRow({ line, status }: { line: ReturnLineItem; status: string }) {
+/** What arrived back against a line, once the return has been received. */
+function ReturnLineBadges({ line, status }: { line: ReturnLineItem; status: string }) {
   const { t } = useTranslation()
-  const received = ['received', 'refunded'].includes(status)
+  if (!RETURN_RECEIVED.includes(status)) return null
 
   return (
-    <div className="flex items-center justify-between text-sm">
-      <span className="truncate">{variantLabel(line.variant, line.variant_id)}</span>
-      <span className="flex items-center gap-2 text-muted-foreground">
-        {received && line.received_quantity !== line.quantity && (
-          <Badge variant="outline">
-            {t('admin.pages.orders.detail.returns.received_of', {
-              received: line.received_quantity,
-              requested: line.quantity,
-            })}
-          </Badge>
-        )}
-        {received && !line.resellable && (
-          <Badge variant="outline">{t('admin.pages.orders.detail.returns.not_resellable')}</Badge>
-        )}
-        <span>×{line.quantity}</span>
-      </span>
-    </div>
+    <>
+      {line.received_quantity !== line.quantity && (
+        <Badge variant="outline">
+          {t('admin.pages.orders.detail.returns.received_of', {
+            received: line.received_quantity,
+            requested: line.quantity,
+          })}
+        </Badge>
+      )}
+      {!line.resellable && (
+        <Badge variant="outline">{t('admin.pages.orders.detail.returns.not_resellable')}</Badge>
+      )}
+    </>
   )
 }
 
@@ -395,22 +441,25 @@ function ReceiveDialog({
 
 function RefundDialog({
   returnRecord,
+  currency,
   onClose,
   onSubmit,
 }: {
   returnRecord: Return
+  currency: string
   onClose: () => void
   onSubmit: (params: { refundMethod: RefundMethod; amount?: string }) => void
 }) {
-  const { defaultCurrency } = useStore()
-  const { symbol: currencySymbol } = currencyParts(defaultCurrency, i18n.language)
+  const moneyLocale = useMoneyLocale()
+  const { symbol: currencySymbol } = currencyParts(currency, moneyLocale)
 
   return (
     <ReturnRefundDialog
       refundableTotal={returnRecord.refundable_total}
+      owesNothing={returnOwesNothing(returnRecord.refundable_total)}
       refundTaxTotal={
-        Number(returnRecord.refund_tax_total) > 0
-          ? returnRecord.display_refund_tax_total
+        isPositiveMoney(returnRecord.refund_tax_total)
+          ? formatAmount(returnRecord.refund_tax_total, currency, moneyLocale)
           : undefined
       }
       currencySymbol={currencySymbol}

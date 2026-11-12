@@ -11,7 +11,7 @@ module Spree
     belongs_to :purchase_order, class_name: 'Spree::PurchaseOrder', inverse_of: :items, touch: true
 
     validates :quantity_ordered, numericality: { greater_than: 0, only_integer: true }
-    validates :unit_cost, numericality: { greater_than_or_equal_to: 0 }
+    validates :unit_cost, presence: true, numericality: { greater_than_or_equal_to: 0, allow_nil: true }
     validates :variant_id, uniqueness: { scope: :purchase_order_id }
 
     delegate :currency, to: :purchase_order, allow_nil: true

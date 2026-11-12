@@ -25,7 +25,10 @@ RSpec.describe 'Seller Tax Identifiers API', type: :request, swagger_doc: 'api-r
         alternatives. One per kind.
       DESC
 
+      seller_sdk_example 'tax-identifiers/list'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+      filter_parameters_for
 
       response '200', 'registrations returned' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
@@ -54,15 +57,10 @@ RSpec.describe 'Seller Tax Identifiers API', type: :request, swagger_doc: 'api-r
         than stored, so a typo cannot reach an invoice.
       DESC
 
+      seller_sdk_example 'tax-identifiers/create'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          kind: { type: :string, example: 'eu_vat' },
-          value: { type: :string, example: 'DE100000008' }
-        },
-        required: %w[kind value]
-      }
+      request_body_for
 
       response '201', 'registration recorded' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
@@ -95,14 +93,10 @@ RSpec.describe 'Seller Tax Identifiers API', type: :request, swagger_doc: 'api-r
         about the old one.
       DESC
 
+      seller_sdk_example 'tax-identifiers/update'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          kind: { type: :string, example: 'eu_vat' },
-          value: { type: :string, example: 'DE100000016' }
-        }
-      }
+      request_body_for
 
       response '200', 'registration corrected' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
@@ -117,6 +111,8 @@ RSpec.describe 'Seller Tax Identifiers API', type: :request, swagger_doc: 'api-r
     delete 'Remove a tax registration' do
       tags 'Tax Identifiers'
       security [bearer_auth: []]
+
+      seller_sdk_example 'tax-identifiers/delete'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 
@@ -144,6 +140,8 @@ RSpec.describe 'Seller Tax Identifiers API', type: :request, swagger_doc: 'api-r
         registry, so a stock install answers 422 here rather than queueing a
         check nobody can answer.
       DESC
+
+      seller_sdk_example 'tax-identifiers/validate'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 

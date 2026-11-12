@@ -6,6 +6,9 @@ module Spree
     derives_number infix: 'P'
     include Spree::HasCustomFields
     include Spree::Metadata
+    include Spree::CanonicalDecimals
+
+    canonical_decimals :amount
     if defined?(Spree::Security::Payments)
       include Spree::Security::Payments
     end
@@ -23,6 +26,11 @@ module Spree
     INVALID_STATUSES    = %w(failed invalid void).freeze
     INVALID_STATES      = INVALID_STATUSES
     deprecate_constant :INVALID_STATES
+
+    # Statuses a payment can be voided / captured from, before the payment
+    # method is consulted. Extend them to support gateways with other flows.
+    VOIDABLE_STATUSES   = %w[pending processing completed checkout].freeze
+    CAPTURABLE_STATUSES = %w[checkout pending].freeze
 
     with_options inverse_of: :payments do
       belongs_to :order, class_name: 'Spree::Order', touch: true, optional: true
@@ -216,8 +224,18 @@ module Spree
       status.in?(%w[checkout processing])
     end
 
+    # Whether the payment is in a status that can be voided and its payment
+    # method agrees. A gateway that cannot void a capture returns false from
+    # +can_void?(payment)+ for completed payments.
     def can_void?
-      status.in?(%w[pending processing completed checkout])
+      status.in?(VOIDABLE_STATUSES) &&
+        (!payment_method.respond_to?(:can_void?) || payment_method.can_void?(self))
+    end
+
+    # Whether the payment can be captured from the back office.
+    def can_capture?
+      status.in?(CAPTURABLE_STATUSES) &&
+        (!payment_method.respond_to?(:can_capture?) || payment_method.can_capture?(self))
     end
 
     # @deprecated read +status+ — removed in 6.1
@@ -253,16 +271,6 @@ module Spree
       else
         amount_from_order
       end
-    end
-
-    def amount=(amount)
-      self[:amount] =
-        case amount
-        when String
-          separator = I18n.t('number.currency.format.separator')
-          number    = amount.delete("^0-9-#{separator}\.").tr(separator, '.')
-          number.to_d if number.present?
-        end || amount
     end
 
     # Resizes a store credit payment that has not been taken yet. Completion
@@ -333,16 +341,28 @@ module Spree
       true
     end
 
+    # Matches +Payment.risky+: any result other than a match counts, whatever
+    # message the gateway sent with it.
     def is_cvv_risky?
       return false if cvv_response_code == 'M'
       return false if cvv_response_code.nil?
-      return false if cvv_response_message.present?
 
       true
     end
 
+    # The payment's page in the provider's dashboard. Only https links are
+    # returned, since staff open it from the admin and a gateway may build it
+    # from values the provider sent back.
+    #
+    # @return [String, nil]
     def gateway_dashboard_payment_url
-      payment_method.try(:gateway_dashboard_payment_url, self)
+      url = payment_method.try(:gateway_dashboard_payment_url, self)
+      return if url.blank?
+
+      uri = URI.parse(url)
+      url if uri.is_a?(URI::HTTPS) && uri.host.present?
+    rescue URI::InvalidURIError
+      nil
     end
 
     def captured_amount

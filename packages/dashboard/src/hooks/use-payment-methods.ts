@@ -12,18 +12,16 @@ import {
 } from '@spree/dashboard-core'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import i18n from 'i18next'
-import { filterPaymentMethodProviderTypes } from '../schemas/payment-method'
 
 export function usePaymentMethodTypes({ enabled = true }: { enabled?: boolean } = {}) {
-  // Store-scoped because the server filters out providers already installed
-  // on the current store. Matches the +['payment-methods', 'types']+ shape
+  // Every provider, with `installed` set for those this store already has:
+  // pickers filter (see `filterPaymentMethodProviderTypes`), while an edit form
+  // reads an installed provider's schema from the same list. Store-scoped
+  // because `installed` is. Matches the +['payment-methods', 'types']+ shape
   // that +useResourceMutation+ expands to +['payment-methods', storeId, 'types']+.
   return useQuery({
     queryKey: useResourceKey('payment-methods', 'types'),
-    queryFn: async () => {
-      const response = await adminClient.paymentMethods.types()
-      return { ...response, data: filterPaymentMethodProviderTypes(response.data) }
-    },
+    queryFn: () => adminClient.paymentMethods.types(),
     staleTime: Infinity,
     enabled,
   })

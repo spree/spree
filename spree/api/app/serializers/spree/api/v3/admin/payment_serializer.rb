@@ -3,21 +3,35 @@ module Spree
     module V3
       module Admin
         class PaymentSerializer < V3::PaymentSerializer
+          without_formatted_money
+
           # The Admin API has no guest gating — money fields inherited from the
           # store serializer are always present, so override their nullability.
-          typelize amount: [:string, nullable: false], display_amount: [:string, nullable: false]
+          typelize amount: [:string, nullable: false]
 
           typelize metadata: 'Record<string, unknown>',
-                   captured_amount: :string,
                    order_id: [:string, nullable: true],
                    avs_response: [:string, nullable: true],
                    cvv_response_code: [:string, nullable: true],
-                   cvv_response_message: [:string, nullable: true]
+                   cvv_response_message: [:string, nullable: true],
+                   gateway_dashboard_payment_url: [:string, nullable: true],
+                   avs_risky: [:boolean, comment: 'Whether the card issuer reported that the billing address did not match.'],
+                   cvv_risky: [:boolean, comment: 'Whether the card issuer reported that the security code did not match.'],
+                   can_void: [:boolean, comment: 'Whether the payment can be voided now, as decided by its payment method.'],
+                   can_capture: [:boolean, comment: 'Whether the payment can be captured now, as decided by its payment method.']
 
           attributes :metadata, :avs_response, :cvv_response_code, :cvv_response_message,
+                     :gateway_dashboard_payment_url,
                      created_at: :iso8601, updated_at: :iso8601
 
-          attributes captured_amount: :string
+          attribute(:avs_risky, &:is_avs_risky?)
+          attribute(:cvv_risky, &:is_cvv_risky?)
+          attribute(:can_void, &:can_void?)
+          attribute(:can_capture, &:can_capture?)
+
+          money_attributes :captured_amount
+          typelize captured_amount: [:string, nullable: false]
+
           prefixed_id_attributes :order
 
           # Override inherited associations to use admin serializers
@@ -35,8 +49,12 @@ module Spree
                            Spree.api.admin_payment_source_serializer
                          end
 
-            serializer.new(payment.source).to_h
+            serializer.new(payment.source, params: nested_params('source')).to_h
           end
+
+          many :capture_events,
+               resource: proc { Spree.api.admin_payment_capture_event_serializer },
+               if: proc { expand?('capture_events') }
 
           one :order,
               resource: proc { Spree.api.admin_order_serializer },
@@ -51,6 +69,8 @@ module Spree
           many :payment_splits,
                resource: proc { Spree.api.admin_payment_split_serializer },
                if: proc { expand?('payment_splits') }
+
+          expandable_custom_fields admin: true
         end
       end
     end

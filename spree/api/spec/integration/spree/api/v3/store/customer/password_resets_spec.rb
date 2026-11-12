@@ -18,14 +18,7 @@ RSpec.describe 'Password Resets API', type: :request, swagger_doc: 'api-referenc
       sdk_example 'customer-password-resets/create'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          email: { type: :string, format: 'email', example: 'customer@example.com', description: 'Email address of the account to reset' },
-          redirect_url: { type: :string, format: 'uri', example: 'https://myshop.com/reset-password', description: 'URL to redirect the user to after clicking the reset link. Validated against the store\'s allowed origins.' }
-        },
-        required: %w[email]
-      }
+      request_body_for
 
       response '202', 'password reset requested' do
         let(:'x-spree-api-key') { api_key.token }
@@ -81,14 +74,7 @@ RSpec.describe 'Password Resets API', type: :request, swagger_doc: 'api-referenc
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :token, in: :path, type: :string, required: true,
                 description: 'Password reset token from the email'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          password: { type: :string, minLength: 6, example: 'newsecurepassword' },
-          password_confirmation: { type: :string, example: 'newsecurepassword' }
-        },
-        required: %w[password password_confirmation]
-      }
+      request_body_for
 
       response '200', 'password reset successful' do
         let(:'x-spree-api-key') { api_key.token }

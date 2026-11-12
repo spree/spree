@@ -40,8 +40,8 @@ Services follow a consistent interface pattern and are located in `app/services/
 
 ```ruby
 # Add item to cart
-Spree.cart_add_item_service.call(
-  order: order,
+Spree.cart_add_item_workflow.call(
+  cart: cart,
   variant: variant,
   quantity: 1
 )
@@ -76,7 +76,7 @@ Swap out default implementations with custom services:
 
 ```ruby
 # config/initializers/spree.rb
-Spree::Dependencies.cart_add_item_service = 'MyCustom::CartAddItem'
+Spree::Dependencies.cart_add_item_workflow = 'MyCustom::CartAddItem'
 ```
 
 ## Configuration
@@ -110,6 +110,6 @@ bundle exec rspec
 
 ## Documentation
 
-- [Official Documentation](https://docs.spreecommerce.org)
+- [Official Documentation](https://spreecommerce.org/docs)
 - [API Reference](https://api.spreecommerce.org)
-- [Guides](https://docs.spreecommerce.org/developer)
+- [Guides](https://spreecommerce.org/docs/developer)

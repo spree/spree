@@ -33,10 +33,16 @@ describe 'spree:upgrade:migrate_users_to_customers' do
       t.datetime :locked_at
       t.timestamps
     end
+
+    # A pre-6.0 admin table keeps its Devise digest next to password_digest.
+    ActiveRecord::Base.connection.add_column :spree_admin_users, :encrypted_password, :string
+    Spree.admin_user_class.reset_column_information
   end
 
   after(:all) do
     ActiveRecord::Base.connection.drop_table :spree_legacy_source_users, if_exists: true
+    ActiveRecord::Base.connection.remove_column :spree_admin_users, :encrypted_password
+    Spree.admin_user_class.reset_column_information
   end
 
   before do
@@ -187,14 +193,31 @@ describe 'spree:upgrade:migrate_users_to_customers' do
   describe 'guards' do
     it 'aborts when a Devise pepper is configured' do
       stub_const('Devise', Class.new { def self.pepper; 'peppered'; end })
+      legacy_users.create!(id: 900_001, email: 'alice@example.com', encrypted_password: 'alice_digest')
 
       expect { subject.invoke }.to raise_error(SystemExit)
     end
 
-    it 'aborts when Devise is absent and no-pepper is unconfirmed' do
-      ENV.delete('CONFIRM_NO_PEPPER')
+    context 'when Devise is absent and no-pepper is unconfirmed' do
+      before { ENV.delete('CONFIRM_NO_PEPPER') }
 
-      expect { subject.invoke }.to raise_error(SystemExit)
+      it 'aborts when there are customers to copy' do
+        legacy_users.create!(id: 900_001, email: 'alice@example.com', encrypted_password: 'alice_digest')
+
+        expect { subject.invoke }.to raise_error(SystemExit)
+        expect(Spree.customer_class.exists?(900_001)).to be(false)
+      end
+
+      it 'aborts when there are admin digests to backfill' do
+        create(:admin_user).update_columns(encrypted_password: 'legacy_admin_digest', password_digest: nil)
+
+        expect { subject.invoke }.to raise_error(SystemExit)
+      end
+
+      it 'succeeds without copying anything when there is nothing to copy' do
+        expect { subject.invoke }.not_to raise_error
+        expect(Spree.customer_class.count).to eq(0)
+      end
     end
 
     it 'no-ops when the source table is absent' do

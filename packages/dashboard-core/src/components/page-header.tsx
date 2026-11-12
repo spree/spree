@@ -21,7 +21,10 @@ import {
 import type { JsonPreviewDrawerProps } from '@spree/dashboard-ui/spree/json-preview-drawer'
 import { lazy, type ReactNode, Suspense, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { getApiClient, hasApiClient } from '../api-client'
+import { buildCurlCommand } from '../lib/curl'
 import { docsUrl } from '../lib/docs'
+import { useJsonLinkResolver } from '../providers/json-link-resolver-provider'
 import { useRegisterPageHeader, useStickyHeaderOffset } from '../providers/sticky-header-provider'
 import { Slot } from './slot'
 
@@ -130,8 +133,15 @@ interface PageHeaderProps {
   /** Heading for the delete prompt. Defaults to none, as the message carries it. */
   deleteConfirmTitle?: string
   /**
-   * When supplied, the more-actions dropdown gains a "View as JSON" item that
-   * opens a developer-style drawer with the resource payload.
+   * The record's Admin API path, e.g. `/api/v3/admin/products/prod_xyz`.
+   * Together with `resource` it adds "View as JSON", showing `resource` as
+   * loaded — no second request.
+   */
+  endpoint?: string
+  /**
+   * A custom "View as JSON" drawer, for a page whose payload differs from
+   * `resource` (Orders load a richer shape than the header shows). Wins over
+   * `endpoint`.
    */
   jsonPreview?: PageHeaderJsonPreview
 }
@@ -162,13 +172,13 @@ export function PageHeader({
   deleteLabel,
   deleteConfirmMessage,
   deleteConfirmTitle,
+  endpoint,
   jsonPreview,
 }: PageHeaderProps) {
   const { t } = useTranslation()
   const slotCtx = { ...slotContext, resource }
-  const showDropdown = Boolean(
-    resource || onDelete || dropdownItems || destructiveItems || jsonPreview,
-  )
+  const json = useJsonPreview({ title, resource, endpoint, jsonPreview })
+  const showDropdown = Boolean(resource || onDelete || dropdownItems || destructiveItems || json)
   const [jsonOpen, setJsonOpen] = useState(false)
   // Latches true on first open so the drawer (and its lazy JsonView chunk)
   // doesn't mount until the user actually invokes it, but stays mounted
@@ -199,7 +209,7 @@ export function PageHeader({
     // `bg-card` masks the content scrolling behind it — the same surface as
     // the content sheet this sits in, so the pinned band is invisible at rest
     // rather than a stripe of the page ground across the top of a white sheet;
-    // `-mx-4 px-4 lg:-mx-6 lg:px-6` and `-mt-4 lg:-mt-6 pt-4 lg:pt-6` undo
+    // `-mx-4 px-4` and `-mt-4 pt-4` undo
     // and re-apply the parent padding so the sticky band runs edge-to-edge.
     //
     // The `::after` pseudo-element is the bottom hairline — it fades in
@@ -218,7 +228,7 @@ export function PageHeader({
         // Opaque for the same reason as the top bar: this band pins over the
         // page's own scrolling content, so a translucent fill lets that content
         // ghost through it.
-        '-mx-4 -mt-4 flex flex-row items-start gap-2 bg-card p-4 sm:gap-3 lg:-mx-6 lg:-mt-6 lg:px-6 lg:pt-6',
+        '-mx-4 -mt-4 flex flex-row items-start gap-2 bg-card p-4 sm:gap-3',
         sticky && 'sticky top-0 z-20',
         'transition-[box-shadow] duration-200 ease-out motion-reduce:transition-none',
         'after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-border after:opacity-0 after:transition-opacity after:duration-200 after:[mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]',
@@ -237,7 +247,7 @@ export function PageHeader({
           {/* Smaller and clipped on a phone: sharing the row with the actions
               leaves a long product name too little width to wrap into
               anything readable. */}
-          <h1 className="min-w-0 truncate font-semibold text-xl leading-tight sm:text-2xl sm:whitespace-normal">
+          <h1 className="min-w-0 truncate font-semibold text-lg sm:text-xl sm:whitespace-normal">
             {title}
           </h1>
           {/* Statuses and the timestamp share the second line: both answer
@@ -248,14 +258,14 @@ export function PageHeader({
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
               {badges}
               {subtitle && (
-                <span className="line-clamp-2 text-sm text-muted-foreground sm:line-clamp-none">
+                <span className="line-clamp-2 text-base text-muted-foreground sm:line-clamp-none">
                   {subtitle}
                 </span>
               )}
             </div>
           )}
           {(description || docsPath) && (
-            <p className="text-muted-foreground text-sm">
+            <p className="text-muted-foreground text-base">
               {description}
               {docsPath && (
                 <>
@@ -285,17 +295,51 @@ export function PageHeader({
             deleteLabel={deleteLabel ?? t('admin.actions.delete')}
             deleteConfirmMessage={deleteConfirmMessage}
             deleteConfirmTitle={deleteConfirmTitle}
-            onOpenJson={jsonPreview ? openJson : undefined}
+            onOpenJson={json ? openJson : undefined}
           />
         )}
       </div>
 
-      {jsonPreview && jsonEverOpened && (
+      {json && jsonEverOpened && (
         <Suspense fallback={null}>
-          <JsonPreviewDrawer open={jsonOpen} onOpenChange={setJsonOpen} {...jsonPreview} />
+          <JsonPreviewDrawer
+            open={jsonOpen}
+            onOpenChange={setJsonOpen}
+            {...json}
+            curl={json.endpoint ? curlFor(json.endpoint) : undefined}
+          />
         </Suspense>
       )}
     </header>
+  )
+}
+
+function useJsonPreview({
+  title,
+  resource,
+  endpoint,
+  jsonPreview,
+}: Pick<PageHeaderProps, 'title' | 'resource' | 'endpoint' | 'jsonPreview'>) {
+  const contextResolveLink = useJsonLinkResolver()
+  const preview: PageHeaderJsonPreview | undefined =
+    jsonPreview ??
+    (resource && endpoint
+      ? {
+          title: typeof title === 'string' ? title : undefined,
+          fetch: () => Promise.resolve(resource),
+          endpoint,
+        }
+      : undefined)
+  if (!preview) return undefined
+
+  return { ...preview, resolveLink: preview.resolveLink ?? contextResolveLink }
+}
+
+// Built only once the drawer opens, not on every header render.
+function curlFor(endpoint: string) {
+  return buildCurlCommand(
+    endpoint,
+    hasApiClient() ? (getApiClient().downloadHeaders?.() ?? {}) : {},
   )
 }
 

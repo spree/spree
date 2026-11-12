@@ -25,7 +25,7 @@ describe Spree::Order do
     end
   end
 
-  context 'when an order has an taxed shipment with tax included_in_price and apply free_shipping_promotion' do
+  context 'when an order has a taxed shipment and applies a free shipping promotion' do
     let!(:order) { create(:order) }
     let!(:line_item) { create(:line_item) }
 
@@ -36,7 +36,6 @@ describe Spree::Order do
     let!(:tax_rate) {
       create(:tax_rate,
         amount: 0.2,
-        included_in_price: true,
         tax_category: tax_category,
         country_code: country&.iso
       )

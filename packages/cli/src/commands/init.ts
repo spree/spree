@@ -1,10 +1,12 @@
 import fs from 'node:fs'
 import { platform } from 'node:os'
 import path from 'node:path'
+import { setTimeout as sleep } from 'node:timers/promises'
 import * as p from '@clack/prompts'
 import type { Command } from 'commander'
-import { execa, execaCommand } from 'execa'
+import { execa } from 'execa'
 import pc from 'picocolors'
+import { SEED_TASK, spreeTask } from '../backend.js'
 import { mintProjectCredentials, writeAdminEmail, writeProjectSetupMarker } from '../config.js'
 import { DASHBOARD_PORT, STOREFRONT_PORT } from '../constants.js'
 import { detectProject, isEjectedProject, readSampleDataFromEnv } from '../context.js'
@@ -15,10 +17,10 @@ import {
   warnDashboardNotRunnable,
 } from '../dashboard-server.js'
 import {
+  captureTask,
   dockerCompose,
   prepareDatabase,
   primeBundleVolume,
-  rakeTask,
   streamLogs,
 } from '../docker.js'
 import { detectPackageManager, ensureDashboardDevEnv } from './add.js'
@@ -104,9 +106,9 @@ export async function runFirstRunSetup(flags: {
   s.start('Seeding database...')
   // Omitted entirely when unresolved — the seed treats blank values as "no
   // admin" and prints a setup link instead, which we surface on the card
-  // below (rakeTask captures stdout rather than streaming it).
-  const seedOutput = await rakeTask(
-    'db:seed',
+  // below (captureTask captures stdout rather than streaming it).
+  const seedOutput = await captureTask(
+    SEED_TASK,
     ctx.projectDir,
     adminEmail && adminPassword
       ? { ADMIN_EMAIL: adminEmail, ADMIN_PASSWORD: adminPassword }
@@ -142,7 +144,7 @@ export async function runFirstRunSetup(flags: {
   const sampleDataLoaded = sampleData && Boolean(adminEmail && adminPassword)
   if (sampleDataLoaded) {
     s.start('Loading sample data...')
-    await rakeTask('spree:load_sample_data', ctx.projectDir)
+    await captureTask(spreeTask('load_sample_data'), ctx.projectDir)
     s.stop('Sample data loaded.')
   } else if (sampleData) {
     p.log.info(
@@ -151,7 +153,7 @@ export async function runFirstRunSetup(flags: {
   }
 
   s.start('Indexing products for search...')
-  await rakeTask('spree:search:reindex', ctx.projectDir)
+  await captureTask(spreeTask('search:reindex'), ctx.projectDir)
   s.stop('Search index ready.')
 
   writeProjectSetupMarker(ctx.projectDir)
@@ -184,7 +186,7 @@ export async function runFirstRunSetup(flags: {
           `  ${pc.cyan(
             setupToken
               ? `${setupBase}/setup?token=${setupToken}`
-              : 'run `spree run bin/rails spree:setup:token` for the setup link',
+              : 'run `spree task setup:token` for the setup link',
           )}`,
         ]
 
@@ -256,7 +258,9 @@ export async function runFirstRunSetup(flags: {
       // With the dashboard, wait for Vite to report ready (it auto-bumps the
       // port when 5173 is taken) so the browser opens the real URL. Without
       // one, open the built-in dashboard the summary names.
-      const dashboardUrl = dashboard ? await dashboard.url : setupBase
+      const dashboardUrl = dashboard
+        ? ((await dashboard.url) ?? `http://localhost:${DASHBOARD_PORT}`)
+        : setupBase
       // No admin was seeded, so the dashboard would only show a login form
       // nobody can pass — open first-run setup instead and land the operator
       // on the account form directly.
@@ -296,29 +300,30 @@ async function installAppDeps(projectDir: string, app: string): Promise<void> {
   }
 }
 
-async function waitForHealthy(port: number): Promise<void> {
+export async function waitForHealthy(port: number, signal?: AbortSignal): Promise<void> {
   const url = `http://localhost:${port}/up`
   const start = Date.now()
 
   while (Date.now() - start < HEALTH_CHECK_TIMEOUT_MS) {
+    signal?.throwIfAborted()
     try {
-      const res = await fetch(url)
+      const res = await fetch(url, { signal })
       if (res.ok) return
     } catch {
       // not ready yet
     }
-    await new Promise((resolve) => setTimeout(resolve, HEALTH_CHECK_INTERVAL_MS))
+    await sleep(HEALTH_CHECK_INTERVAL_MS, undefined, { signal })
   }
 
   throw new Error(`Spree did not become healthy within ${HEALTH_CHECK_TIMEOUT_MS / 1000}s`)
 }
 
 async function fetchApiKey(projectDir: string): Promise<string> {
-  const stdout = await rakeTask('spree:cli:ensure_api_key', projectDir)
+  const stdout = await captureTask(spreeTask('cli:ensure_api_key'), projectDir)
 
   const match = stdout.match(/pk_[A-Za-z0-9_-]+/)
   if (!match) {
-    throw new Error(`Could not extract API key from Rails output: ${stdout}`)
+    throw new Error(`Could not extract API key from the backend output: ${stdout}`)
   }
   return match[0]
 }
@@ -394,12 +399,20 @@ function resolveAdminCredentials(flags: { adminEmail?: string; adminPassword?: s
   return { adminEmail, adminPassword }
 }
 
-async function openBrowser(url: string): Promise<void> {
+export async function openBrowser(url: string): Promise<void> {
   const os = platform()
-  const cmd = os === 'darwin' ? 'open' : os === 'win32' ? 'start' : 'xdg-open'
+  // `start` is built into cmd.exe rather than a program of its own; its first
+  // quoted argument is a window title. An empty argument reaches cmd.exe as
+  // `""`, which is that empty title.
+  const [cmd, args] =
+    os === 'darwin'
+      ? ['open', [url]]
+      : os === 'win32'
+        ? ['cmd', ['/c', 'start', '', url]]
+        : ['xdg-open', [url]]
 
   try {
-    await execaCommand(`${cmd} ${url}`, { stdio: 'ignore' })
+    await execa(cmd, args, { stdio: 'ignore' })
   } catch {
     // best-effort
   }

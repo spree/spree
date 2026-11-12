@@ -33,7 +33,7 @@ export function SendInvoiceButton({ resource }: Props) {
   })
 
   // Only show to users who can act, and only on completed orders.
-  if (!permissions.can('update', 'Spree::Order')) return null
+  if (!permissions.can('update', 'order')) return null
   if (resource.status !== 'placed') return null
 
   return (
@@ -95,7 +95,7 @@ export function SyncToErpItem({ resource }: Props) {
     successMessage: 'Synced',
   })
 
-  if (!permissions.can('manage', 'Spree::Order')) return null
+  if (!permissions.can('manage', 'order')) return null
 
   return (
     <DropdownMenuItem

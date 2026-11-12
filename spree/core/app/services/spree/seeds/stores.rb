@@ -14,7 +14,7 @@ module Spree
           s.customer_support_email       = 'support@example.com'
           s.default_currency             = 'USD'
           s.default_country_code          = 'US'
-          s.default_locale               = I18n.locale
+          s.default_locale               = Spree::Locales.listed(I18n.locale) || 'en'
         end.save!
       end
     end

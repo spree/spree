@@ -15,12 +15,12 @@ describe Spree::Calculator::PriceSack, type: :model do
 
   # Regression test for #714 and #739
   it 'computes with an order object' do
-    calculator.compute(order)
+    expect(calculator.compute(order)).to eq(calculator.preferred_normal_amount)
   end
 
   # Regression test for #1156
   it 'computes with a shipment object' do
-    calculator.compute(shipment)
+    expect(calculator.compute(shipment)).to eq(calculator.preferred_discount_amount)
   end
 
   # Regression test for #2055

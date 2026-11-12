@@ -27,8 +27,7 @@ export function useCategorySearch(query: string) {
   const trimmed = query.trim()
   return useQuery({
     queryKey: useResourceKey('categories', 'search', trimmed),
-    queryFn: () =>
-      adminClient.categories.list({ name_cont: trimmed, limit: 50, sort: 'pretty_name' }),
+    queryFn: () => adminClient.categories.list({ search: trimmed, limit: 50, sort: 'pretty_name' }),
     enabled: trimmed.length > 0,
     staleTime: 1000 * 60,
   })
@@ -176,7 +175,7 @@ export function categoryAutocompleteProps(queryKey: string) {
     queryKey,
     search: (q: string) =>
       adminClient.categories.list({
-        pretty_name_cont: q,
+        search: q,
         limit: 100,
         sort: 'pretty_name',
         fields: ['pretty_name', 'name'],

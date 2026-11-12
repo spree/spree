@@ -20,7 +20,7 @@ interface UseTaxCategoriesParams {
 export function useTaxCategories({ page = 1, limit = 100 }: UseTaxCategoriesParams = {}) {
   return useQuery({
     queryKey: useResourceKey('tax-categories', { page, limit }),
-    queryFn: () => adminClient.taxCategories.list({ page, limit }),
+    queryFn: () => adminClient.taxCategories.list({ page, limit, sort: 'name' }),
     staleTime: 1000 * 60 * 5,
   })
 }

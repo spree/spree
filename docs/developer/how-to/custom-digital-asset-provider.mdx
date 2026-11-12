@@ -97,7 +97,7 @@ end
 Once registered, the provider appears as a source on the product's **Digital files** card: the **Add** button becomes a menu offering **Upload a file** alongside each registered provider. Picking your provider creates an asset with its `provider_type` set and no file attached.
 
 <Note>
-Registration is what makes a `provider_type` valid. An asset validates that its `provider_type` names a registered provider, so an unregistered or misspelled class name is rejected with a 422 rather than failing at download time. A blank `provider_type` is always the built-in `File` provider.
+Registration is what makes a `provider_type` valid. The Admin API names a provider by its shorthand — the class name's last segment, underscored, so `license_key` for the provider above and `file` for the built-in one — and an asset validates that its `provider_type` names a registered provider, so an unregistered or misspelled value is rejected with a 422 rather than failing at download time. A blank `provider_type` is always the built-in `File` provider.
 </Note>
 
 ## The download contract

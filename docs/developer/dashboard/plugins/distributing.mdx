@@ -10,17 +10,31 @@ This page is the *consumer's* perspective on installing your plugin. Cover it in
 
 A consumer installing your plugin needs to:
 
-1. **Install the npm package** — `pnpm add @your-scope/your-plugin`, then restart the dev server
-2. **Apply any backend changes** — usually adding a Rails gem, running migrations
+1. **Install the npm package** into their dashboard app, then restart the dev server
+2. **Apply any backend changes** — usually adding a Rails gem and running migrations
 
-```bash
-pnpm add @your-scope/your-plugin
+The Spree CLI does both in one command:
 
-# Rails side, if your plugin has a backend
-bundle add your_plugin
-bin/rails generate your_plugin:install
-bin/rails db:migrate
-```
+<Tabs>
+  <Tab title="Spree CLI">
+    ```bash
+    spree add --gem your_plugin --npm @your-scope/your-plugin
+    ```
+  </Tab>
+  <Tab title="Without CLI">
+    ```bash
+    # in apps/dashboard
+    pnpm add @your-scope/your-plugin
+
+    # in server/, if your plugin has a backend
+    bundle add your_plugin
+    bin/rails generate your_plugin:install
+    bin/rails db:migrate
+    ```
+  </Tab>
+</Tabs>
+
+Leave out `--gem` for a dashboard-only plugin, or `--npm` for a backend-only one. The CLI asks the consumer to confirm, because your plugin is not in the official [extension list](/developer/cli/quickstart#extensions). It runs your install generator only if you ship one.
 
 **No host-code edit.** As long as your plugin's `package.json` declares the `spree.dashboard.plugin` marker (the CLI scaffold does this for you — see [Publishing](/developer/dashboard/plugins/publishing#tell-the-vite-plugin-where-to-find-you)), `spreeDashboardPlugin()` walks the host's dependencies at build time and finds it automatically. Discovery feeds two things:
 

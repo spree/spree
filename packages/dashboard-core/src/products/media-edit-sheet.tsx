@@ -1,23 +1,20 @@
 import type { ProductFormValues } from '@spree/dashboard-core'
-import { ImageUploadField, parseVideoUrl, useTranslation } from '@spree/dashboard-core'
 import {
-  Button,
-  Field,
-  FieldError,
-  FieldLabel,
-  Input,
-  MediaPreview,
-  Sheet,
-  SheetContent,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-} from '@spree/dashboard-ui'
-import { CheckIcon } from '@spree/dashboard-ui/icons'
-import i18n from 'i18next'
+  extensionFieldNames,
+  ImageUploadField,
+  MediaEditorDialog,
+  MediaEditorSection,
+  parseVideoUrl,
+  Slot,
+  useTranslation,
+} from '@spree/dashboard-core'
+import { Button, Field, FieldError, FieldLabel, Input, MediaPreview } from '@spree/dashboard-ui'
+import { CheckIcon, InfoIcon, LayersIcon } from '@spree/dashboard-ui/icons'
 import { useCallback, useEffect, useRef } from 'react'
 import type { UseFormReturn } from 'react-hook-form'
+import { variantLabel } from './assignable-variants'
 import type { PanelVariant as Variant } from './product-types'
+import { useSheetSaveHandlers } from './sheet-save-handlers'
 
 // The fields this sheet edits. Snapshot, cancel-restore and the type all derive
 // from this one list, so a new editable field can't reach the form and then be
@@ -39,13 +36,25 @@ interface Props {
   variants: Variant[]
   open: boolean
   onOpenChange: (open: boolean) => void
+  /** The product form's key — names the slot and the row's extension fields. */
+  formKey: string
+  productId?: string
 }
 
-// Form-backed media editor. The sheet edits `form.media[index]` directly —
+// Form-backed media editor, full screen. It edits `form.media[index]` directly —
 // changes ride the parent product PATCH/POST, no per-asset API calls.
-// Cancel restores a snapshot taken on open; Done closes (parent form Save
-// commits). Same model as the per-variant Sheet.
-export function MediaEditSheet({ form, mediaIndex, variants, open, onOpenChange }: Props) {
+// Cancel restores a snapshot taken on open; Done runs the slot widgets' own
+// saves, then closes (parent form Save commits). Same model as the per-variant
+// Sheet.
+export function MediaEditSheet({
+  form,
+  mediaIndex,
+  variants,
+  open,
+  onOpenChange,
+  formKey,
+  productId,
+}: Props) {
   const { t } = useTranslation()
 
   // Snapshot on open so Cancel can restore. Re-snapshot if mediaIndex changes
@@ -58,7 +67,11 @@ export function MediaEditSheet({ form, mediaIndex, variants, open, onOpenChange 
   // freshly-uploaded row that has no id yet we fall back to the current
   // index — uploads don't surface a drag handle so the race is impossible.
   type MediaRow = NonNullable<ProductFormValues['media']>[number]
-  type Snapshot = Pick<MediaRow, (typeof EDITED_FIELDS)[number]> & { key: string | null }
+  type Snapshot = Pick<MediaRow, (typeof EDITED_FIELDS)[number]> & {
+    key: string | null
+    // Fields a `<formKey>.media.form_fields` widget edits, restored the same way.
+    extensions: Record<string, unknown>
+  }
   const snapshotRef = useRef<Snapshot | null>(null)
   const rowKey = useCallback(
     (m: MediaRow): string | null => m.id ?? m.signed_id ?? m.uploadId ?? null,
@@ -84,8 +97,18 @@ export function MediaEditSheet({ form, mediaIndex, variants, open, onOpenChange 
       // Copy the array — the snapshot must not alias the row's own value.
       variant_ids: [...(row.variant_ids ?? [])],
       key: rowKey(row),
+      extensions: structuredClone(
+        Object.fromEntries(
+          extensionFieldNames(`${formKey}.media`).map((name) => [
+            name,
+            (row as Record<string, unknown>)[name],
+          ]),
+        ),
+      ),
     }
-  }, [open, mediaIndex, form, rowKey])
+  }, [open, mediaIndex, form, rowKey, formKey])
+
+  const { onSave, saveAll, saving } = useSheetSaveHandlers()
 
   const entry = form.watch(`media.${mediaIndex}`)
   if (!entry) return null
@@ -180,6 +203,8 @@ export function MediaEditSheet({ form, mediaIndex, variants, open, onOpenChange 
   }
 
   const handleCancel = () => {
+    // A save already sent can't be called back, so the sheet stays until it settles.
+    if (saving) return
     const snap = snapshotRef.current
     if (snap) {
       // Resolve the row by stable key — the media array may have reordered
@@ -203,134 +228,160 @@ export function MediaEditSheet({ form, mediaIndex, variants, open, onOpenChange 
           shouldTouch: false,
         })
       }
+      for (const [name, value] of Object.entries(snap.extensions)) {
+        // Extension names are outside the typed row.
+        form.setValue(`media.${targetIndex}.${name}` as any, value, {
+          shouldDirty: false,
+          shouldTouch: false,
+        })
+      }
     }
     onOpenChange(false)
   }
 
   return (
-    <Sheet open={open} onOpenChange={(o) => (o ? onOpenChange(o) : handleCancel())}>
-      <SheetContent side="right" showCloseButton={false} className="flex flex-col">
-        <SheetHeader>
-          <SheetTitle>{t('admin.products.media.edit_title')}</SheetTitle>
-        </SheetHeader>
-
-        <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-5">
-          <MediaPreview
-            mediaType={entry.media_type}
-            previewUrl={previewUrl}
-            videoUrl={videoUrl}
-            embedUrl={parsedVideo?.embedUrl}
-            alt={alt}
-            focalPoint={focalPoint}
-            onFocalPointClick={handleFocalPointClick}
-          />
-
-          {isImage && previewUrl && (
-            <div className="flex items-center justify-between gap-2 -mt-3">
-              <p className="text-xs text-muted-foreground">
-                {t('admin.products.media.focal_point_help')}
-              </p>
-              {focalPoint && (
-                <Button type="button" variant="ghost" size="sm" onClick={clearFocalPoint}>
-                  {t('admin.products.media.focal_point_reset')}
-                </Button>
-              )}
-            </div>
-          )}
-
-          {isExternalVideo && (
-            <Field>
-              <FieldLabel htmlFor="media-video-url">
-                {t('admin.fields.media.external_video_url.label')}
-              </FieldLabel>
-              <Input
-                id="media-video-url"
-                value={externalVideoUrl}
-                aria-invalid={videoUrlInvalid || undefined}
-                onChange={(e) => setExternalVideoUrl(e.target.value)}
-                placeholder={t('admin.fields.media.external_video_url.placeholder')}
-              />
-              {videoUrlInvalid && (
-                <FieldError>{t('admin.products.media.video_url_invalid')}</FieldError>
-              )}
-            </Field>
-          )}
-
-          <Field>
-            <FieldLabel htmlFor="media-alt">{t('admin.fields.media.alt.label')}</FieldLabel>
-            <Input
-              id="media-alt"
-              value={alt}
-              onChange={(e) => setAlt(e.target.value)}
-              placeholder={t('admin.fields.media.alt.placeholder')}
-            />
-          </Field>
-
-          {isVideo && (
-            <Field>
-              <FieldLabel>{t('admin.fields.media.poster.label')}</FieldLabel>
-              <ImageUploadField
-                value={posterValue}
-                onChange={setPoster}
-                help={t('admin.fields.media.poster.help')}
-              />
-            </Field>
-          )}
-
-          {variants.length > 0 && (
-            <Field>
-              <FieldLabel>{t('admin.products.media.assigned_variants_label')}</FieldLabel>
-              <p className="text-xs text-muted-foreground">
-                {t('admin.products.media.assigned_variants_help')}
-              </p>
-              <div className="flex flex-wrap gap-2 pt-2">
-                {variants.map((v) => {
-                  const id = v.id
-                  if (!id) return null
-                  const selected = selectedVariantIds.has(id)
-                  const label = variantLabel(v)
-                  return (
-                    <button
-                      key={id}
-                      type="button"
-                      onClick={() => toggleVariant(id)}
-                      aria-pressed={selected}
-                      className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
-                        selected
-                          ? 'border-primary bg-primary text-primary-foreground'
-                          : 'border-border bg-background text-muted-foreground hover:border-muted-foreground hover:text-foreground'
-                      }`}
-                    >
-                      {selected && <CheckIcon className="size-3" />}
-                      {label}
-                    </button>
-                  )
-                })}
-              </div>
-            </Field>
-          )}
-        </div>
-
-        <SheetFooter>
-          <Button type="button" variant="outline" onClick={handleCancel}>
+    <MediaEditorDialog
+      open={open}
+      onOpenChange={(o) => (o ? onOpenChange(o) : handleCancel())}
+      title={t('admin.products.media.edit_title')}
+      actions={
+        <>
+          <Button type="button" variant="outline" disabled={saving} onClick={handleCancel}>
             {t('admin.actions.cancel')}
           </Button>
-          <Button type="button" onClick={() => onOpenChange(false)}>
+          <Button
+            type="button"
+            disabled={saving}
+            onClick={async () => {
+              if (await saveAll()) onOpenChange(false)
+            }}
+          >
             {t('admin.actions.done')}
           </Button>
-        </SheetFooter>
-      </SheetContent>
-    </Sheet>
-  )
-}
+        </>
+      }
+      preview={
+        <MediaPreview
+          fit="stage"
+          mediaType={entry.media_type}
+          previewUrl={previewUrl}
+          videoUrl={videoUrl}
+          embedUrl={parsedVideo?.embedUrl}
+          alt={alt}
+          focalPoint={focalPoint}
+          onFocalPointClick={handleFocalPointClick}
+        />
+      }
+      hint={
+        isImage && previewUrl ? (
+          <>
+            <span
+              aria-hidden
+              className={`size-3 shrink-0 rounded-full border-2 border-white ${focalPoint ? 'bg-blue-500' : ''}`}
+            />
+            <span>{t('admin.products.media.focal_point_help')}</span>
+            {focalPoint && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="xs"
+                className="-me-1.5"
+                onClick={clearFocalPoint}
+              >
+                {t('admin.products.media.focal_point_reset')}
+              </Button>
+            )}
+          </>
+        ) : undefined
+      }
+    >
+      <MediaEditorSection icon={<InfoIcon />} title={t('admin.media_editor.information')}>
+        {isExternalVideo && (
+          <Field>
+            <FieldLabel htmlFor="media-video-url">
+              {t('admin.fields.media.external_video_url.label')}
+            </FieldLabel>
+            <Input
+              id="media-video-url"
+              value={externalVideoUrl}
+              aria-invalid={videoUrlInvalid || undefined}
+              onChange={(e) => setExternalVideoUrl(e.target.value)}
+              placeholder={t('admin.fields.media.external_video_url.placeholder')}
+            />
+            {videoUrlInvalid && (
+              <FieldError>{t('admin.products.media.video_url_invalid')}</FieldError>
+            )}
+          </Field>
+        )}
 
-function variantLabel(v: Variant): string {
-  const named = v as { options_text?: string; name?: string; sku?: string | null }
-  return (
-    named.options_text ||
-    named.name ||
-    named.sku ||
-    v.id ||
-    i18n.t('admin.products.variants.variant_label')
+        <Field>
+          <FieldLabel htmlFor="media-alt">{t('admin.fields.media.alt.label')}</FieldLabel>
+          <Input
+            id="media-alt"
+            value={alt}
+            onChange={(e) => setAlt(e.target.value)}
+            placeholder={t('admin.fields.media.alt.placeholder')}
+          />
+        </Field>
+
+        {isVideo && (
+          <Field>
+            <FieldLabel>{t('admin.fields.media.poster.label')}</FieldLabel>
+            <ImageUploadField
+              value={posterValue}
+              onChange={setPoster}
+              help={t('admin.fields.media.poster.help')}
+            />
+          </Field>
+        )}
+
+        {/* Plugin fields join the file's own, as on the media library's editor. */}
+        <Slot
+          name={`${formKey}.media.form_fields`}
+          context={{
+            productId,
+            media: entry,
+            mediaIndex,
+            fieldPrefix: `media.${mediaIndex}`,
+            onSave,
+          }}
+        />
+      </MediaEditorSection>
+
+      {variants.length > 0 && (
+        <MediaEditorSection
+          icon={<LayersIcon />}
+          title={t('admin.products.media.assigned_variants_label')}
+        >
+          <p className="-mt-2 text-muted-foreground text-xs">
+            {t('admin.products.media.assigned_variants_help')}
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {variants.map((v) => {
+              const id = v.id
+              if (!id) return null
+              const selected = selectedVariantIds.has(id)
+              const label = variantLabel(v)
+              return (
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() => toggleVariant(id)}
+                  aria-pressed={selected}
+                  className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+                    selected
+                      ? 'border-primary bg-primary text-primary-foreground'
+                      : 'border-border bg-background text-muted-foreground hover:border-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  {selected && <CheckIcon className="size-3" />}
+                  {label}
+                </button>
+              )
+            })}
+          </div>
+        </MediaEditorSection>
+      )}
+    </MediaEditorDialog>
   )
 }

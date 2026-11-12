@@ -29,7 +29,10 @@ RSpec.describe 'Seller Fulfillments API', type: :request, swagger_doc: 'api-refe
         whatever ids are sent.
       DESC
 
+      seller_sdk_example 'order-fulfillments/list'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+      filter_parameters_for
 
       response '200', 'fulfillments listed' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
@@ -70,27 +73,10 @@ RSpec.describe 'Seller Fulfillments API', type: :request, swagger_doc: 'api-refe
         remainder splits onto a new one. Omit it to ship the lot.
       DESC
 
+      seller_sdk_example 'order-fulfillments/fulfill'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, required: false, schema: {
-        type: :object,
-        properties: {
-          tracking: { type: :string, description: 'Carrier tracking number' },
-          tracking_carrier: { type: :string, description: 'Carrier name' },
-          notify_customer: { type: :boolean, description: 'Send the dispatch email (default true)' },
-          items: {
-            type: :array,
-            description: 'Ship only these lines; the rest split onto a new fulfillment',
-            items: {
-              type: :object,
-              properties: {
-                item_id: { type: :string, description: 'Prefixed line item ID' },
-                quantity: { type: :integer }
-              },
-              required: %w[item_id quantity]
-            }
-          }
-        }
-      }
+      request_body_for(required: false)
 
       response '200', 'parcel shipped' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
@@ -113,27 +99,45 @@ RSpec.describe 'Seller Fulfillments API', type: :request, swagger_doc: 'api-refe
     parameter name: :order_id, in: :path, type: :string
     parameter name: :id, in: :path, type: :string
 
+    get 'Show a fulfillment' do
+      tags 'Fulfillments'
+      produces 'application/json'
+      security [bearer_auth: []]
+      description "One of this seller's parcels: what it holds, where it ships from and how it is tracked."
+
+      seller_sdk_example 'order-fulfillments/get'
+
+      parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+
+      response '200', 'fulfillment found' do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+        let(:order_id) { order.prefixed_id }
+        let(:id) { fulfillment.prefixed_id }
+
+        schema '$ref' => '#/components/schemas/Fulfillment'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['id']).to eq(fulfillment.prefixed_id)
+        end
+      end
+    end
+
     patch 'Update tracking' do
       tags 'Fulfillments'
       consumes 'application/json'
       produces 'application/json'
       security [bearer_auth: []]
       description <<~DESC
-        Adds or corrects the tracking number and its carrier.
-
-        Deliberately narrow: where a parcel ships from and which service
-        carries it are the marketplace's arrangements, so they are not
-        editable here.
+        Adds or corrects the tracking number and its carrier. Can also move the
+        parcel to another of the seller's own stock locations, which quotes its
+        rates again from there, or pick a different one of its quoted rates.
       DESC
 
+      seller_sdk_example 'order-fulfillments/update'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          tracking: { type: :string, nullable: true },
-          tracking_carrier: { type: :string, nullable: true }
-        }
-      }
+      request_body_for
 
       response '200', 'tracking recorded' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
@@ -164,6 +168,8 @@ RSpec.describe 'Seller Fulfillments API', type: :request, swagger_doc: 'api-refe
         on the shelf and the carrier is stood down.
       DESC
 
+      seller_sdk_example 'order-fulfillments/cancel'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 
       response '200', 'parcel canceled' do
@@ -181,6 +187,355 @@ RSpec.describe 'Seller Fulfillments API', type: :request, swagger_doc: 'api-refe
     end
   end
 
+  path '/api/v3/seller/orders/{order_id}/fulfillments/{id}/split' do
+    parameter name: :order_id, in: :path, type: :string
+    parameter name: :id, in: :path, type: :string
+
+    patch 'Split a parcel' do
+      tags 'Fulfillments'
+      consumes 'application/json'
+      produces 'application/json'
+      security [bearer_auth: []]
+      description <<~DESC
+        Moves part of what this parcel holds onto a new one, for goods leaving
+        separately. Answers with every fulfillment on the order, since
+        splitting rewrites more than one.
+      DESC
+
+      seller_sdk_example 'order-fulfillments/split'
+
+      parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+      request_body_for
+
+      response '200', 'parcel split' do
+        let!(:order) { create(:order_ready_to_ship, store: store, seller: seller, line_items_count: 2) }
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+        let(:order_id) { order.prefixed_id }
+        let(:id) { fulfillment.prefixed_id }
+        let(:body) { { variant_id: fulfillment.fulfillment_items.first.variant.prefixed_id, quantity: 1 } }
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['data'].size).to eq(2)
+        end
+      end
+    end
+  end
+
+  path '/api/v3/seller/orders/{order_id}/fulfillments/{fulfillment_id}/deliveries' do
+    parameter name: :order_id, in: :path, type: :string, description: 'Prefixed order ID'
+    parameter name: :fulfillment_id, in: :path, type: :string, description: 'Prefixed fulfillment ID'
+
+    get 'List deliveries' do
+      tags 'Fulfillments'
+      produces 'application/json'
+      security [bearer_auth: []]
+      description "The consignments of one of this seller's parcels, one per tracking number, with each carrier status."
+
+      seller_sdk_example 'order-deliveries/list'
+
+      parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+      parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
+      parameter name: :limit, in: :query, type: :integer, required: false, description: 'Records per page (max 100)'
+      filter_parameters_for
+
+      response '200', 'deliveries listed' do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+        let(:order_id) { order.prefixed_id }
+        let(:fulfillment_id) { fulfillment.prefixed_id }
+
+        schema SwaggerSchemaHelpers.paginated('Delivery')
+
+        run_test! do |response|
+          data = JSON.parse(response.body)['data']
+          expect(data.map { |item| item['id'] }).to match_array(fulfillment.deliveries.map(&:prefixed_id))
+          expect(data).not_to be_empty
+        end
+      end
+    end
+
+    post 'Add a delivery' do
+      tags 'Fulfillments'
+      consumes 'application/json'
+      produces 'application/json'
+      security [bearer_auth: []]
+      description 'Adds a tracked consignment to the parcel: a second box, or a freight number covering several pallets.'
+
+      seller_sdk_example 'order-deliveries/create'
+
+      parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+      request_body_for
+
+      response '201', 'delivery added' do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+        let(:order_id) { order.prefixed_id }
+        let(:fulfillment_id) { fulfillment.prefixed_id }
+        let(:body) { { tracking_number: '1Z879E930346834440', carrier: 'ups' } }
+
+        schema '$ref' => '#/components/schemas/Delivery'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['tracking_number']).to eq('1Z879E930346834440')
+        end
+      end
+    end
+  end
+
+  path '/api/v3/seller/orders/{order_id}/fulfillments/{fulfillment_id}/deliveries/{id}' do
+    parameter name: :order_id, in: :path, type: :string, description: 'Prefixed order ID'
+    parameter name: :fulfillment_id, in: :path, type: :string, description: 'Prefixed fulfillment ID'
+    parameter name: :id, in: :path, type: :string, description: 'Prefixed delivery ID'
+
+    get 'Show a delivery' do
+      tags 'Fulfillments'
+      produces 'application/json'
+      security [bearer_auth: []]
+      description "One consignment of one of this seller's parcels, with its tracking number and carrier status."
+
+      seller_sdk_example 'order-deliveries/get'
+
+      parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+
+      response '200', 'delivery found' do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+        let(:order_id) { order.prefixed_id }
+        let(:fulfillment_id) { fulfillment.prefixed_id }
+        let(:id) { fulfillment.deliveries.first.prefixed_id }
+
+        schema '$ref' => '#/components/schemas/Delivery'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['id']).to eq(fulfillment.deliveries.first.prefixed_id)
+        end
+      end
+    end
+
+    patch 'Correct a delivery' do
+      tags 'Fulfillments'
+      consumes 'application/json'
+      produces 'application/json'
+      security [bearer_auth: []]
+      description 'Corrects the tracking number, carrier or link. A corrected number starts the carrier journey over.'
+
+      seller_sdk_example 'order-deliveries/update'
+
+      parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+      request_body_for
+
+      response '200', 'delivery updated' do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+        let(:order_id) { order.prefixed_id }
+        let(:fulfillment_id) { fulfillment.prefixed_id }
+        let(:id) { fulfillment.deliveries.first.prefixed_id }
+        let(:body) { { tracking_number: 'CORRECTED-1' } }
+
+        schema '$ref' => '#/components/schemas/Delivery'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['tracking_number']).to eq('CORRECTED-1')
+        end
+      end
+    end
+
+    delete 'Delete a delivery' do
+      tags 'Fulfillments'
+      produces 'application/json'
+      security [bearer_auth: []]
+      description 'Removes a consignment entered by mistake. One that a label created is refused — delete the label instead.'
+
+      seller_sdk_example 'order-deliveries/delete'
+
+      parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+
+      response '204', 'delivery deleted' do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+        let(:order_id) { order.prefixed_id }
+        let(:fulfillment_id) { fulfillment.prefixed_id }
+        let!(:delivery) { fulfillment.deliveries.first }
+        let(:id) { delivery.prefixed_id }
+
+        run_test! do
+          expect(Spree::Delivery.exists?(delivery.id)).to be(false)
+        end
+      end
+    end
+  end
+
+  path '/api/v3/seller/orders/{order_id}/fulfillments/{fulfillment_id}/labels' do
+    parameter name: :order_id, in: :path, type: :string, description: 'Prefixed order ID'
+    parameter name: :fulfillment_id, in: :path, type: :string, description: 'Prefixed fulfillment ID'
+
+    get 'List shipping labels' do
+      tags 'Fulfillments'
+      produces 'application/json'
+      security [bearer_auth: []]
+      description "Every label bought or uploaded for one of this seller's parcels, refunded ones included."
+
+      seller_sdk_example 'order-labels/list'
+
+      parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+      parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
+      parameter name: :limit, in: :query, type: :integer, required: false, description: 'Records per page (max 100)'
+      filter_parameters_for
+
+      response '200', 'labels listed' do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+        let(:order_id) { order.prefixed_id }
+        let(:fulfillment_id) { fulfillment.prefixed_id }
+        let!(:shipping_label) { create(:shipping_label, owner: fulfillment, store: store) }
+
+        schema SwaggerSchemaHelpers.paginated('ShippingLabel')
+
+        run_test! do |response|
+          data = JSON.parse(response.body)['data']
+          expect(data.map { |item| item['id'] }).to eq([shipping_label.prefixed_id])
+        end
+      end
+    end
+
+    post 'Upload a shipping label' do
+      tags 'Fulfillments'
+      consumes 'application/json'
+      produces 'application/json'
+      security [bearer_auth: []]
+      description <<~DESC
+        Records a label the seller bought elsewhere. Upload the file with
+        `POST /files` first and send its `signed_id` as `file_signed_id`.
+        Buying a label needs the marketplace's carrier account, so a request
+        without a file is refused.
+      DESC
+
+      seller_sdk_example 'order-labels/upload'
+
+      parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+      request_body_for
+
+      response '201', 'label recorded' do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+        let(:order_id) { order.prefixed_id }
+        let(:fulfillment_id) { fulfillment.prefixed_id }
+        let(:signed_file) do
+          ActiveStorage::Blob.create_and_upload!(
+            io: StringIO.new("%PDF-1.4\n%label\n"), filename: 'label.pdf', content_type: 'application/pdf',
+            service_name: Spree.private_storage_service_name
+          ).signed_id
+        end
+        let(:body) { { file_signed_id: signed_file, tracking_number: 'SELLER-LBL-1', cost: '4.20', currency: 'USD' } }
+
+        before { fulfillment.deliveries.destroy_all }
+
+        schema '$ref' => '#/components/schemas/ShippingLabel'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['source']).to eq('uploaded')
+        end
+      end
+    end
+  end
+
+  path '/api/v3/seller/orders/{order_id}/fulfillments/{fulfillment_id}/labels/{id}' do
+    parameter name: :order_id, in: :path, type: :string, description: 'Prefixed order ID'
+    parameter name: :fulfillment_id, in: :path, type: :string, description: 'Prefixed fulfillment ID'
+    parameter name: :id, in: :path, type: :string, description: 'Prefixed shipping label ID'
+
+    get 'Show a shipping label' do
+      tags 'Fulfillments'
+      produces 'application/json'
+      security [bearer_auth: []]
+      description "One label on one of this seller's parcels, with the link to print it."
+
+      seller_sdk_example 'order-labels/get'
+
+      parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+
+      response '200', 'label found' do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+        let(:order_id) { order.prefixed_id }
+        let(:fulfillment_id) { fulfillment.prefixed_id }
+        let(:shipping_label) { create(:shipping_label, :uploaded, :with_file, owner: fulfillment, store: store) }
+        let(:id) { shipping_label.prefixed_id }
+
+        schema '$ref' => '#/components/schemas/ShippingLabel'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['id']).to eq(shipping_label.prefixed_id)
+        end
+      end
+    end
+
+    delete 'Delete an uploaded label' do
+      tags 'Fulfillments'
+      produces 'application/json'
+      security [bearer_auth: []]
+      description <<~DESC
+        Removes a label uploaded by mistake, so the right one can be uploaded
+        in its place. A label the marketplace bought has postage to refund, so
+        only the operator can remove it.
+      DESC
+
+      seller_sdk_example 'order-labels/delete'
+
+      parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+
+      response '204', 'label deleted' do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+        let(:order_id) { order.prefixed_id }
+        let(:fulfillment_id) { fulfillment.prefixed_id }
+        let(:shipping_label) { create(:shipping_label, :uploaded, :with_file, owner: fulfillment, store: store) }
+        let(:id) { shipping_label.prefixed_id }
+
+        run_test! do
+          expect(Spree::ShippingLabel.exists?(shipping_label.id)).to be(false)
+        end
+      end
+    end
+  end
+
+  path '/api/v3/seller/orders/{order_id}/fulfillments/{fulfillment_id}/labels/{id}/download' do
+    parameter name: :order_id, in: :path, type: :string, description: 'Prefixed order ID'
+    parameter name: :fulfillment_id, in: :path, type: :string, description: 'Prefixed fulfillment ID'
+    parameter name: :id, in: :path, type: :string, description: 'Prefixed shipping label ID'
+
+    get 'Download a shipping label' do
+      tags 'Fulfillments'
+      produces 'application/pdf', 'image/png', 'application/octet-stream'
+      security [bearer_auth: []]
+      description <<~DESC
+        Streams the label file for printing.
+
+        Served through the API rather than from a storage URL, so the seller's
+        own session authorizes every download.
+      DESC
+
+      seller_sdk_example 'order-labels/download'
+
+      parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+
+      response '200', 'label file streamed' do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+        let(:order_id) { order.prefixed_id }
+        let(:fulfillment_id) { fulfillment.prefixed_id }
+        let(:id) { create(:shipping_label, :uploaded, :with_file, owner: fulfillment, store: store).prefixed_id }
+
+        schema type: :string, format: :binary
+
+        run_test! do |response|
+          expect(response.body).to start_with('%PDF')
+        end
+      end
+    end
+  end
+
   path '/api/v3/seller/tracking_carriers' do
     get 'List tracking carriers' do
       tags 'Fulfillments'
@@ -190,6 +545,8 @@ RSpec.describe 'Seller Fulfillments API', type: :request, swagger_doc: 'api-refe
         The carriers a tracking number can be pinned to, from the registry —
         so a carrier an extension adds appears without a client change.
       DESC
+
+      seller_sdk_example 'tracking-carriers/list'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 

@@ -1,6 +1,7 @@
 import type { Channel } from '@spree/admin-sdk'
-import { defineTable, formatPrice, Subject } from '@spree/dashboard-core'
-import { StatusBadge, TagList, Thumbnail } from '@spree/dashboard-ui'
+import { PRODUCT_STATUSES } from '@spree/core'
+import { defineTable, formatPrice, ProductStockSummary } from '@spree/dashboard-core'
+import { ProductIdentity, StatusBadge, TagList } from '@spree/dashboard-ui'
 import { PackageIcon } from '@spree/dashboard-ui/icons'
 import { Link } from '@tanstack/react-router'
 import i18n from 'i18next'
@@ -25,16 +26,16 @@ defineTable('products', {
       sortable: true,
       default: true,
       render: (product) => (
-        <Link
-          to={'/$storeId/products/$productId' as string}
-          params={{ productId: product.id }}
-          className="flex items-center gap-3 no-underline"
-        >
-          <Thumbnail src={product.thumbnail_url} fallback={<PackageIcon />} />
-          <div className="min-w-0">
-            <div className="truncate font-medium text-foreground">{product.name}</div>
-          </div>
-        </Link>
+        <ProductIdentity
+          name={product.name}
+          thumbnailUrl={product.thumbnail_url}
+          render={
+            <Link
+              to={'/$storeId/products/$productId' as string}
+              params={{ productId: product.id }}
+            />
+          }
+        />
       ),
     },
     {
@@ -45,12 +46,21 @@ defineTable('products', {
       default: true,
       filterType: 'enum',
       quickFilter: true,
-      filterOptions: [
-        { value: 'draft', label: i18n.t('admin.pages.products.status_options.draft') },
-        { value: 'active', label: i18n.t('admin.fields.active.label') },
-        { value: 'archived', label: i18n.t('admin.pages.products.status_options.archived') },
-      ],
-      render: (product) => <StatusBadge status={product.status} />,
+      // Every status, review ones included: an operator filters to what is in
+      // review even though only the bulk action is limited to the three it
+      // may set.
+      filterOptions: PRODUCT_STATUSES.map((status) => ({
+        value: status,
+        label: i18n.t(`admin.pages.products.status_options.${status}`),
+      })),
+      render: (product) => (
+        <StatusBadge
+          status={product.status}
+          label={i18n.t(`admin.pages.products.status_options.${product.status}`, {
+            defaultValue: product.status,
+          })}
+        />
+      ),
     },
     {
       key: 'inventory',
@@ -58,40 +68,7 @@ defineTable('products', {
       sortable: false,
       filterable: false,
       default: true,
-      render: (product) => {
-        const variantCount = product.variant_count
-
-        const inventoryStatus =
-          !product.in_stock && !product.backorderable ? (
-            <span className="text-sm text-destructive">
-              {i18n.t('admin.pages.products.inventory.out_of_stock')}
-            </span>
-          ) : product.backorderable && !product.in_stock ? (
-            <span className="text-sm text-muted-foreground">
-              {i18n.t('admin.pages.products.inventory.on_backorder')}
-            </span>
-          ) : (
-            <span className="text-sm text-muted-foreground">
-              {i18n.t('admin.pages.products.inventory.in_stock', { count: product.total_on_hand })}
-            </span>
-          )
-
-        return (
-          <span>
-            {inventoryStatus}
-            {variantCount > 1 ? (
-              <>
-                &nbsp; &#8211; &nbsp;
-                <span className="text-sm text-muted-foreground">
-                  {i18n.t('admin.pages.products.variants', { count: variantCount })}
-                </span>
-              </>
-            ) : (
-              ''
-            )}
-          </span>
-        )
-      },
+      render: (product) => <ProductStockSummary product={product} />,
     },
     {
       key: 'sku',
@@ -101,7 +78,7 @@ defineTable('products', {
       // better — it searches every variant's, where this filtered only the
       // default variant's.
       default: false,
-      className: 'text-sm text-muted-foreground',
+      className: 'text-base text-muted-foreground',
       render: (product) => product.sku ?? '—',
     },
     {
@@ -111,7 +88,6 @@ defineTable('products', {
       filterable: true,
       default: true,
       filterType: 'number',
-      ransackAttribute: 'master_price',
       className: 'text-right tabular-nums whitespace-nowrap',
       render: (product) => formatPrice(product.price),
     },
@@ -121,7 +97,7 @@ defineTable('products', {
       sortable: false,
       filterable: true,
       filterType: 'tags',
-      taggableType: Subject.Product,
+      taggableType: 'product',
       default: false,
       render: (product) => <TagList tags={product.tags} />,
     },
@@ -133,8 +109,8 @@ defineTable('products', {
     // separate scope. Restoring this needs `filtersToRansack` to learn how to
     // emit a bare scope key, which is a change to the filter contract rather
     // than a column flag.
-    // Filter-only — Ransack joins through `products.taxons`, so the predicate
-    // emitted is `taxons_id_in`. We don't render a categories cell on the
+    // Filter-only — Ransack joins through `products.categories`, so the
+    // predicate emitted is `categories_id_in`. We don't render a categories cell on the
     // index to avoid expanding categories on every list refetch; users can
     // see attached categories on the product edit page.
     // On a marketplace this list holds the operator's own products and every
@@ -169,7 +145,7 @@ defineTable('products', {
       filterable: true,
       filterType: 'resource',
       filterResource: categoryAutocompleteProps('products-table-category-filter'),
-      ransackAttribute: 'taxons_id',
+      ransackAttribute: 'categories_id',
       displayable: false,
       default: false,
     },
@@ -179,7 +155,7 @@ defineTable('products', {
       sortable: false,
       filterable: true,
       filterType: 'resource',
-      filterResource: channelAutocompleteProps('products-table-channel-filter'),
+      filterResource: channelAutocompleteProps(),
       ransackAttribute: 'channels_id',
       default: false,
       render: (product) => product.channels?.map((c: Channel) => c.name).join(', ') ?? '—',

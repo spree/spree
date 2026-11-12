@@ -1,5 +1,5 @@
 import type { Category } from '@spree/admin-sdk'
-import { ResourceCombobox } from '@spree/dashboard-core'
+import { RecordMetadataCard, ResourceCombobox } from '@spree/dashboard-core'
 import {
   Card,
   CardContent,
@@ -10,7 +10,7 @@ import {
   FieldGroup,
   FieldLabel,
   Input,
-  MetadataCard,
+  Item,
   Textarea,
 } from '@spree/dashboard-ui'
 import type { UseFormReturn } from 'react-hook-form'
@@ -52,7 +52,7 @@ export function CategoryMain({
   return (
     <>
       <Card>
-        <CardContent className="pt-6">
+        <CardContent>
           <FieldGroup>
             <Field>
               <FieldLabel htmlFor="category-name">{t('admin.fields.name.label')}</FieldLabel>
@@ -86,23 +86,21 @@ export function CategoryMain({
         </CardContent>
       </Card>
 
+      <CategoryProductsCard categoryId={category?.id} />
+
       {category && (
         <>
-          <CategoryProductsCard categoryId={category.id} />
+          <ResourceTranslationsCard resourceType="category" resourceId={category.id} />
           {/*
             Form-backed: custom field values ride along in the category form and
-            persist on the page's Save. Definitions are scoped to Spree::Taxon
-            (the category route maps to the Taxon class server-side).
+            persist on the page's Save.
           */}
-          <FormBackedCustomFieldsProvider form={form} resourceType="Spree::Taxon">
+          <FormBackedCustomFieldsProvider form={form} resourceType="category">
             <CustomFieldsInlineCard />
           </FormBackedCustomFieldsProvider>
-          <ResourceTranslationsCard resourceType="category" resourceId={category.id} />
-          <MetadataCard
+          <RecordMetadataCard
             metadata={category.metadata}
-            title={t('admin.components.metadata_card.title')}
-            emptyTitle={t('admin.components.metadata_card.empty_title')}
-            emptyDescription={t('admin.components.metadata_card.empty_description')}
+            externalReferences={category.external_references}
           />
         </>
       )}
@@ -191,13 +189,13 @@ function CategorySEOCard({ form }: { form: UseFormReturn<CategoryFormValues> }) 
         <CardTitle>{t('admin.categories.seo.title')}</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        <div className="space-y-1 rounded-lg border border-border p-4">
-          <p className="truncate text-sm font-medium text-blue-700">{previewTitle}</p>
+        <Item variant="outline" className="flex-col items-stretch gap-1">
+          <p className="truncate text-base font-medium text-blue-700">{previewTitle}</p>
           <p className="truncate text-xs text-green-700">example.com/t/{previewSlug}</p>
           {metaDescription && (
             <p className="line-clamp-2 text-xs text-muted-foreground">{metaDescription}</p>
           )}
-        </div>
+        </Item>
 
         <Field>
           <FieldLabel htmlFor="category-permalink">{t('admin.fields.slug.label')}</FieldLabel>

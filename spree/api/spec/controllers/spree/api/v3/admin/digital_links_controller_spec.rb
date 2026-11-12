@@ -10,6 +10,10 @@ RSpec.describe Spree::Api::V3::Admin::DigitalLinksController, type: :controller 
   let(:line_item) { order.line_items.first }
   let(:digital_asset) { create(:digital_asset, variant: line_item.variant) }
   let!(:digital_link) { create(:digital_link, digital_asset: digital_asset, line_item: line_item) }
+  let(:other_store_link) do
+    other_item = create(:order_with_line_items, store: create(:store)).line_items.first
+    create(:digital_link, digital_asset: create(:digital_asset, variant: other_item.variant), line_item: other_item)
+  end
 
   before { request.headers.merge!(headers) }
 
@@ -22,14 +26,27 @@ RSpec.describe Spree::Api::V3::Admin::DigitalLinksController, type: :controller 
     end
 
     it 'excludes links from another store' do
-      other_order = create(:order_with_line_items, store: create(:store))
-      other_item = other_order.line_items.first
-      other_link = create(:digital_link, digital_asset: create(:digital_asset, variant: other_item.variant),
-                                         line_item: other_item)
+      other_store_link
 
       get :index
 
-      expect(json_response['data'].map { |l| l['id'] }).not_to include(other_link.prefixed_id)
+      expect(json_response['data'].map { |l| l['id'] }).not_to include(other_store_link.prefixed_id)
+    end
+  end
+
+  describe 'GET #show' do
+    it 'returns the link' do
+      get :show, params: { id: digital_link.prefixed_id }
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['id']).to eq(digital_link.prefixed_id)
+      expect(json_response['access_counter']).to eq(0)
+    end
+
+    it 'does not return a link from another store' do
+      get :show, params: { id: other_store_link.prefixed_id }
+
+      expect(response).to have_http_status(:not_found)
     end
   end
 
@@ -55,12 +72,7 @@ RSpec.describe Spree::Api::V3::Admin::DigitalLinksController, type: :controller 
     end
 
     it 'does not reset a link from another store' do
-      other_order = create(:order_with_line_items, store: create(:store))
-      other_item = other_order.line_items.first
-      other_link = create(:digital_link, digital_asset: create(:digital_asset, variant: other_item.variant),
-                                         line_item: other_item)
-
-      patch :reset, params: { id: other_link.prefixed_id }
+      patch :reset, params: { id: other_store_link.prefixed_id }
 
       expect(response).to have_http_status(:not_found)
     end
@@ -69,6 +81,24 @@ RSpec.describe Spree::Api::V3::Admin::DigitalLinksController, type: :controller 
   # Reset is a write: the catalog grants :manage for write_orders, so no
   # per-action mapping is needed — but the deny path is worth pinning.
   describe 'scope enforcement' do
+    it 'denies show to a key without an orders scope' do
+      products_key = create(:api_key, :secret, store: store, scopes: ['read_products'])
+      request.headers['x-spree-api-key'] = products_key.plaintext_token
+
+      get :show, params: { id: digital_link.prefixed_id }
+
+      expect(response.status).to be_in([401, 403])
+    end
+
+    it 'allows show with a read-only key' do
+      read_key = create(:api_key, :secret, store: store, scopes: ['read_orders'])
+      request.headers['x-spree-api-key'] = read_key.plaintext_token
+
+      get :show, params: { id: digital_link.prefixed_id }
+
+      expect(response).to have_http_status(:ok)
+    end
+
     it 'denies reset to a read-only key' do
       read_key = create(:api_key, :secret, store: store, scopes: ['read_orders'])
       request.headers['x-spree-api-key'] = read_key.plaintext_token

@@ -10,11 +10,11 @@ module Spree
                  purchasable: :boolean, in_stock: :boolean, backorderable: :boolean, preorder: :boolean,
                  preorder_ships_at: [:string, nullable: true],
                  weight: [:number, nullable: true], height: [:number, nullable: true], width: [:number, nullable: true], depth: [:number, nullable: true],
-                 weight_unit: [:string, enum: Spree::Variant::WEIGHT_UNITS], dimensions_unit: [:string, enum: Spree::Variant::DIMENSION_UNITS],
+                 weight_unit: [:string, enum: Spree::Variant::WEIGHT_UNITS, enum_type_name: 'WeightUnit'], dimensions_unit: [:string, enum: Spree::Variant::DIMENSION_UNITS, enum_type_name: 'DimensionUnit'],
                  price: 'Price',
                  original_price: ['Price', nullable: true],
                  minimum_order_quantity: :number, order_multiple: :number,
-                 purchase_unit: [:string, enum: Spree::Variant::PURCHASE_UNITS], units_per_carton: ['number | null'],
+                 purchase_unit: [:string, enum: Spree::Variant::PURCHASE_UNITS, enum_type_name: 'PurchaseUnit'], units_per_carton: ['number | null'],
                  seller_id: [:string, nullable: true]
 
         prefixed_id_attributes :product
@@ -88,7 +88,7 @@ module Spree
         # Price object - calculated price with price list resolution
         attribute :price do |variant|
           price = price_for(variant)
-          Spree.api.price_serializer.new(price, params: params).to_h if price.present?
+          price_serializer.new(price, params: params).to_h if price.present?
         end
 
         # Original price - base price without price list resolution (for showing strikethrough)
@@ -98,7 +98,7 @@ module Spree
           base = price_in(variant)
 
           if calculated.present? && base.present? && calculated.id != base.id
-            Spree.api.price_serializer.new(base, params: params).to_h
+            price_serializer.new(base, params: params).to_h
           end
         end
 
@@ -127,17 +127,14 @@ module Spree
 
         many :option_values, resource: proc { Spree.api.option_value_serializer }
 
-        many :storefront_custom_fields,
-             key: :custom_fields,
-             resource: proc { Spree.api.custom_field_serializer },
-             if: proc { expand?('custom_fields') }
+        expandable_custom_fields
 
         typelize prior_price: ['PriceHistory', nullable: true]
 
         attribute :prior_price,
                   if: proc { expand?('prior_price') } do |variant|
           record = price_in(variant)&.prior_price
-          Spree.api.price_history_serializer.new(record, params: params).to_h if record
+          price_history_serializer.new(record, params: params).to_h if record
         end
       end
     end

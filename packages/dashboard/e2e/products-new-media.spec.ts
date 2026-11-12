@@ -65,10 +65,10 @@ test.describe('new product — media', () => {
 
     // Hover the thumb to reveal the delete button and click it.
     await clickMediaThumbnailAction(media, 'delete')
-    // Confirm the deletion in the dialog (handleDelete uses useConfirm now).
+    // Confirm the removal in the dialog.
     await page
       .getByRole('dialog')
-      .getByRole('button', { name: /^delete$/i })
+      .getByRole('button', { name: /^remove$/i })
       .click()
 
     // Thumbnail gone.

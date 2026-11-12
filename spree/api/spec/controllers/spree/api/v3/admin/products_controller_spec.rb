@@ -41,6 +41,50 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
     end
   end
 
+  describe 'stock total' do
+    let(:location) { Spree::StockLocation.find_by(store: store) || create(:stock_location, store: store) }
+
+    before { request.headers.merge!(headers) }
+
+    def stocked_product(name, *counts)
+      create(:product, store: store, name: name).tap do |stocked|
+        create(:variant, product: stocked) while stocked.reload.variants.size < counts.size
+        stocked.variants.each { |variant| variant.stock_levels.update_all(count_on_hand: 0) }
+        stocked.variants.zip(counts).each do |variant, count|
+          location.stock_level_or_create(variant).update!(count_on_hand: count)
+        end
+      end
+    end
+
+    def row_for(name)
+      json_response['data'].find { |row| row['name'] == name }
+    end
+
+    it 'sums what every variant has on hand' do
+      stocked_product('Two Variants', 3, 4)
+
+      get :index, as: :json
+
+      expect(row_for('Two Variants')['total_on_hand']).to eq(7)
+    end
+
+    # Untracked stock is unlimited, which is not a number to send.
+    it 'is null when a variant does not track inventory' do
+      untracked = stocked_product('Untracked', 3, 4)
+      untracked.variants.last.update!(track_inventory: false)
+
+      get :index, as: :json
+
+      expect(row_for('Untracked')['total_on_hand']).to be_nil
+    end
+
+    it_behaves_like 'a list without N+1 queries' do
+      subject { get :index, as: :json }
+
+      let!(:records) { %w[First Second Third].map { |name| stocked_product(name, 1, 2) } }
+    end
+  end
+
   describe 'GET #index' do
     subject { get :index, params: {}, as: :json }
 
@@ -271,6 +315,23 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         expect(names).to eq(names.sort.reverse)
       end
 
+      context 'by name in a non-default locale' do
+        let!(:translated_product) { create(:product, name: 'Zulu Product') }
+
+        before do
+          create(:product_translation, translated_model: translated_product, locale: 'de', name: 'Aal')
+          allow(controller).to receive(:current_locale).and_return('de')
+        end
+
+        it 'sorts filtered products by the translation, falling back to the base name' do
+          ids = [product, second_product, translated_product].map(&:prefixed_id)
+          get :index, params: { sort: 'name', q: { id_in: ids } }, as: :json
+
+          expect(response).to have_http_status(:ok)
+          expect(json_response['data'].pluck('id')).to eq([translated_product, second_product, product].map(&:prefixed_id))
+        end
+      end
+
       context 'by price' do
         let!(:cheap_product) do
           create(:product, name: 'Cheap').tap do |p|
@@ -366,7 +427,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
 
     it 'creates a minimal product' do
       expect {
-        post :create, params: { name: 'Simple Product', price: 19.99 }, as: :json
+        post :create, params: { name: 'Simple Product', price: '19.99' }, as: :json
       }.to change(Spree::Product, :count).by(1)
 
       expect(response).to have_http_status(:created)
@@ -389,7 +450,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
             {
               sku: 'PREM-TEE-S',
               options: [{ name: 'size', value: 'Small' }],
-              cost_price: 8.50,
+              cost_price: '8.50',
               weight: 0.2,
               width: 30,
               height: 40,
@@ -398,9 +459,9 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
               dimensions_unit: 'cm',
               track_inventory: true,
               prices: [
-                { currency: 'USD', amount: 29.99, compare_at_amount: 39.99 },
-                { currency: 'EUR', amount: 27.99 },
-                { currency: 'GBP', amount: 24.99 }
+                { currency: 'USD', amount: '29.99', compare_at_amount: '39.99' },
+                { currency: 'EUR', amount: '27.99' },
+                { currency: 'GBP', amount: '24.99' }
               ]
             },
             {
@@ -409,9 +470,9 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
               weight: 0.22,
               track_inventory: true,
               prices: [
-                { currency: 'USD', amount: 29.99 },
-                { currency: 'EUR', amount: 27.99 },
-                { currency: 'GBP', amount: 24.99 }
+                { currency: 'USD', amount: '29.99' },
+                { currency: 'EUR', amount: '27.99' },
+                { currency: 'GBP', amount: '24.99' }
               ]
             },
             {
@@ -420,9 +481,9 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
               weight: 0.25,
               track_inventory: true,
               prices: [
-                { currency: 'USD', amount: 31.99 },
-                { currency: 'EUR', amount: 29.99 },
-                { currency: 'GBP', amount: 26.99 }
+                { currency: 'USD', amount: '31.99' },
+                { currency: 'EUR', amount: '29.99' },
+                { currency: 'GBP', amount: '26.99' }
               ]
             }
           ]
@@ -447,7 +508,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         expect(created.meta_title).to eq('Premium T-Shirt')
         expect(created.tax_category).to eq(tax_category)
         expect(created.tag_list).to match_array(['premium', 'cotton', 'summer'])
-        expect(created.taxons).to match_array([category1, category2])
+        expect(created.categories).to match_array([category1, category2])
 
         # Cost price now lives on the variant, not delegated from the product.
         small_variant = created.variants.find_by(sku: 'PREM-TEE-S')
@@ -713,8 +774,8 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         post :create, params: {
           name: 'Simple Product',
           prices: [
-            { currency: 'USD', amount: 12.50 },
-            { currency: 'EUR', amount: 11.00, compare_at_amount: 13.99 }
+            { currency: 'USD', amount: '12.50' },
+            { currency: 'EUR', amount: '11.00', compare_at_amount: '13.99' }
           ]
         }, as: :json
 
@@ -730,10 +791,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       # The Admin API contract is canonical decimal strings (`"29.99"`, period
       # decimal). Clients (the dashboard) normalize localized input
       # client-side before sending — the API is not asked to parse comma-vs-
-      # period. See docs/plans/5.5-client-side-money-normalization.md. (The
-      # models still tolerate localized input for the legacy Rails admin, but
-      # that is not part of the Admin API contract and is covered by the
-      # `Spree::LocalizedNumber` unit specs.)
+      # period. See docs/plans/5.5-client-side-money-normalization.md.
       it 'accepts amounts as canonical decimal strings (symmetric with reads)' do
         post :create, params: {
           name: 'String Price Product',
@@ -830,6 +888,48 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       expect(product.reload.name).to eq('Updated Name')
     end
 
+    # A store whose language writes a comma decimal (nl, de, fr) must still
+    # read the dashboard's canonical "49.50" as forty-nine fifty, and saving an
+    # untouched price must not grow it by a power of ten.
+    context 'when the request resolves a comma-decimal locale' do
+      let(:variant) { product.default_variant }
+
+      before { allow(controller).to receive(:current_locale).and_return('nl') }
+
+      def save_price(amount)
+        patch :update, params: {
+          id: product.prefixed_id,
+          variants: [{ id: variant.prefixed_id, prices: [{ currency: 'USD', amount: amount }] }]
+        }, as: :json
+        expect(response).to have_http_status(:ok), response.body
+        variant.prices.base_prices.find_by(currency: 'USD').amount
+      end
+
+      it 'stores a canonical amount as written' do
+        expect(save_price('49.50')).to eq(BigDecimal('49.50'))
+      end
+
+      it 'refuses an amount it would otherwise misread' do
+        patch :update, params: {
+          id: product.prefixed_id,
+          variants: [{ id: variant.prefixed_id, prices: [{ currency: 'USD', amount: '1,599.99' }] }]
+        }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('invalid_money_format')
+        expect(json_response['error']['details']).to have_key('amount')
+      end
+
+      it 'keeps a price stable across repeated saves of what the API returned' do
+        save_price('99')
+        returned = json_response['variants']&.first&.dig('prices')&.first&.dig('amount') ||
+                   variant.prices.base_prices.find_by(currency: 'USD').amount.to_s
+
+        expect(save_price(returned)).to eq(BigDecimal('99'))
+        expect(save_price(variant.prices.base_prices.find_by(currency: 'USD').amount.to_s)).to eq(BigDecimal('99'))
+      end
+    end
+
     it 'assigns a product type by prefixed id and returns it' do
       product_type = create(:product_type, store: store)
 
@@ -838,6 +938,15 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       expect(response).to have_http_status(:ok)
       expect(json_response['product_type_id']).to eq(product_type.prefixed_id)
       expect(product.reload.product_type).to eq(product_type)
+    end
+
+    it 'refuses a product type from another store' do
+      product_type = create(:product_type, store: create(:store))
+
+      patch :update, params: { id: product.prefixed_id, product_type_id: product_type.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+      expect(product.reload.product_type).to be_nil
     end
 
     it 'clears the product type with null' do
@@ -878,9 +987,9 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
               country_of_origin: 'bd',
               customs_description: 'Cotton t-shirt',
               prices: [
-                { currency: 'USD', amount: 34.99, compare_at_amount: 49.99 },
-                { currency: 'EUR', amount: 31.99 },
-                { currency: 'GBP', amount: 28.99 }
+                { currency: 'USD', amount: '34.99', compare_at_amount: '49.99' },
+                { currency: 'EUR', amount: '31.99' },
+                { currency: 'GBP', amount: '28.99' }
               ]
             },
             {
@@ -889,9 +998,9 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
               weight: 0.4,
               track_inventory: true,
               prices: [
-                { currency: 'USD', amount: 36.99 },
-                { currency: 'EUR', amount: 33.99 },
-                { currency: 'GBP', amount: 30.99 }
+                { currency: 'USD', amount: '36.99' },
+                { currency: 'EUR', amount: '33.99' },
+                { currency: 'GBP', amount: '30.99' }
               ]
             }
           ]
@@ -910,7 +1019,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         expect(updated.meta_title).to eq('Updated Premium Shirt | Shop')
         expect(updated.tax_category).to eq(tax_category)
         expect(updated.tag_list).to match_array(['updated', 'premium', 'new-arrival'])
-        expect(updated.taxons).to match_array([category1, category2])
+        expect(updated.categories).to match_array([category1, category2])
 
         # Variants created
         small = updated.variants.find_by(sku: 'UPD-SHIRT-S')
@@ -1121,7 +1230,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       end
 
       it 'persists the published_at window submitted with the channel' do
-        Timecop.freeze do
+        freeze_time do
           future = 2.days.from_now.change(usec: 0)
 
           patch :update, params: {
@@ -1472,6 +1581,40 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
 
       expect(response).to have_http_status(:unprocessable_content)
       expect(draft.reload).to be_draft
+    end
+  end
+
+  # One product's status, moved through its workflow so its event fires.
+  describe 'moving one product\'s status' do
+    before { request.headers.merge!(headers) }
+
+    it 'activates a draft and publishes the event' do
+      draft = create(:product, store: store, status: 'draft')
+      expect_any_instance_of(Spree::Product).to receive(:publish_event).with('product.activated')
+
+      patch :activate, params: { id: draft.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(draft.reload).to be_active
+    end
+
+    # A retried request must not tell every webhook subscriber twice.
+    it 'answers a product already in that status without publishing again' do
+      active = create(:product, store: store, status: 'active')
+      expect_any_instance_of(Spree::Product).not_to receive(:publish_event)
+
+      patch :activate, params: { id: active.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    it 'refuses a product awaiting review' do
+      submitted = create(:product, store: store, status: 'proposed')
+
+      patch :archive, params: { id: submitted.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(submitted.reload.status).to eq('proposed')
     end
   end
 
@@ -1848,8 +1991,8 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       }, as: :json
 
       positions = [
-        product.reload.classifications.find_by(category: category).position,
-        second_product.reload.classifications.find_by(category: category).position
+        product.reload.product_categories.find_by(category: category).position,
+        second_product.reload.product_categories.find_by(category: category).position
       ]
       expect(positions).to contain_exactly(1, 2)
     end
@@ -1858,7 +2001,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       product_old_updated_at = product.reload.updated_at
       second_product_old_updated_at = second_product.reload.updated_at
 
-      Timecop.travel(1.second) do
+      travel(1.second) do
         post :bulk_add_to_categories, params: {
           ids: [product.prefixed_id, second_product.prefixed_id],
           category_ids: [category.prefixed_id]
@@ -1872,7 +2015,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
     it 'touches the category' do
       category_old_updated_at = category.reload.updated_at
 
-      Timecop.travel(1.second) do
+      travel(1.second) do
         post :bulk_add_to_categories, params: {
           ids: [product.prefixed_id],
           category_ids: [category.prefixed_id]
@@ -1923,7 +2066,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       product_old_updated_at = product.reload.updated_at
       second_product_old_updated_at = second_product.reload.updated_at
 
-      Timecop.travel(1.second) do
+      travel(1.second) do
         post :bulk_remove_from_categories, params: {
           ids: [product.prefixed_id, second_product.prefixed_id],
           category_ids: [category.prefixed_id]
@@ -1938,7 +2081,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       category_old_updated_at = category.reload.updated_at
       other_category_old_updated_at = other_category.reload.updated_at
 
-      Timecop.travel(1.second) do
+      travel(1.second) do
         post :bulk_remove_from_categories, params: {
           ids: [product.prefixed_id],
           category_ids: [category.prefixed_id, other_category.prefixed_id]
@@ -1963,8 +2106,8 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       }, as: :json
 
       positions = [
-        survivor.reload.classifications.find_by(category: category)&.position,
-        latecomer.reload.classifications.find_by(category: category)&.position
+        survivor.reload.product_categories.find_by(category: category)&.position,
+        latecomer.reload.product_categories.find_by(category: category)&.position
       ].compact.sort
 
       expect(positions).to eq([1, 2])
@@ -2365,9 +2508,9 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
     before { request.headers.merge!(headers) }
 
     around do |example|
-      original = Spree::Product.additional_permitted_attributes
+      originals = [Spree::Product, Spree::Media, Spree::Variant].index_with(&:additional_permitted_attributes)
       example.run
-      Spree::Product.additional_permitted_attributes = original
+      originals.each { |model, attributes| model.additional_permitted_attributes = attributes }
     end
 
     it 'permits an attribute the model declares' do
@@ -2381,6 +2524,24 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       end
 
       patch :update, params: { id: product.prefixed_id, brand_id: 'acme' }, as: :json
+    end
+
+    it 'permits attributes extensions declare on media and variants inside the nested lists' do
+      Spree::Media.additional_permitted_attributes += [:credit]
+      Spree::Variant.additional_permitted_attributes += [:brand_code]
+
+      expect_any_instance_of(described_class).to receive(:permitted_params).at_least(:once).and_wrap_original do |original|
+        result = original.call
+        expect(result[:media].first.keys).to include('credit')
+        expect(result[:variants].first.keys).to include('brand_code')
+        result.except('media', 'variants')
+      end
+
+      patch :update, params: {
+        id: product.prefixed_id,
+        media: [{ alt: 'Front', credit: 'Jane' }],
+        variants: [{ sku: 'EXT-1', brand_code: 'ACME' }]
+      }, as: :json
     end
 
     it 'drops an attribute nobody declared' do

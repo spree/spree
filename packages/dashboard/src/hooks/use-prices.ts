@@ -1,4 +1,4 @@
-import type { PriceBulkUpsertRow } from '@spree/admin-sdk'
+import type { PriceBulkUpsertParams } from '@spree/admin-sdk'
 import { adminClient, useResourceMutation } from '@spree/dashboard-core'
 
 /**
@@ -22,7 +22,7 @@ import { adminClient, useResourceMutation } from '@spree/dashboard-core'
  *   reset the page's form under a merchant's unsaved edits.
  */
 export function useBulkUpsertPrices(priceListId?: string | null) {
-  return useResourceMutation<{ price_count: number }, Error, { prices: PriceBulkUpsertRow[] }>({
+  return useResourceMutation<{ price_count: number }, Error, PriceBulkUpsertParams>({
     mutationFn: (params) => adminClient.prices.bulkUpsert(params),
     invalidate: [
       ['prices'],

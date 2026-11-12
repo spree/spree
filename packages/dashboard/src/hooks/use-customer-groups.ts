@@ -29,7 +29,7 @@ export function customerGroupAutocompleteProps(queryKey: string) {
   return {
     queryKey,
     search: (q: string) =>
-      adminClient.customerGroups.list({ name_cont: q, limit: 100, sort: 'name', fields: ['name'] }),
+      adminClient.customerGroups.list({ search: q, limit: 100, sort: 'name', fields: ['name'] }),
     hydrate: (ids: string[]) => adminClient.customerGroups.list({ id_in: ids, limit: ids.length }),
     getOptionLabel: (g: CustomerGroup) => g.name ?? g.id,
     placeholder: i18n.t('admin.customer_groups.autocomplete.placeholder'),
@@ -76,5 +76,41 @@ export function useDeleteCustomerGroup() {
     onSuccess: (_data, id) => {
       queryClient.removeQueries({ queryKey: buildKey('customer-groups', id) })
     },
+  })
+}
+
+/** The customers in a group, a page at a time. */
+export function useCustomerGroupMembers(groupId: string | undefined, page = 1, limit = 25) {
+  return useQuery({
+    queryKey: useResourceKey('customer-groups', groupId ?? 'noop', 'members', `${page}:${limit}`),
+    queryFn: () =>
+      adminClient.customers.list({ customer_groups_id_in: [groupId as string], page, limit }),
+    enabled: !!groupId,
+    placeholderData: (previous) => previous,
+  })
+}
+
+/** Adds one customer to the group, through the bulk endpoint the list uses. */
+export function useAddCustomerGroupMember(groupId: string) {
+  return useResourceMutation({
+    mutationFn: (customerId: string) =>
+      adminClient.customers.bulkAddToGroups({ ids: [customerId], customer_group_ids: [groupId] }),
+    invalidate: [['customer-groups'], ['customers']],
+    successMessage: i18n.t('admin.customers.groups.detail.messages.member_added'),
+    errorMessage: i18n.t('admin.customers.groups.detail.messages.member_change_failed'),
+  })
+}
+
+/** Takes one customer out of the group; they stay a customer. */
+export function useRemoveCustomerGroupMember(groupId: string) {
+  return useResourceMutation({
+    mutationFn: (customerId: string) =>
+      adminClient.customers.bulkRemoveFromGroups({
+        ids: [customerId],
+        customer_group_ids: [groupId],
+      }),
+    invalidate: [['customer-groups'], ['customers']],
+    successMessage: i18n.t('admin.customers.groups.detail.messages.member_removed'),
+    errorMessage: i18n.t('admin.customers.groups.detail.messages.member_change_failed'),
   })
 }

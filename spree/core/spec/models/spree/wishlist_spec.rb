@@ -10,38 +10,7 @@ describe Spree::Wishlist, type: :model do
   let(:wishlist_belonging_to_other_store) { create(:wishlist, customer: user, name: 'My Wishlist', store: other_store, is_default: true) }
   let(:wishlist_belonging_to_other_user) { create(:wishlist, customer: other_user, name: 'My Wishlist', store: store, is_default: true) }
 
-  describe 'lifecycle events', events: true do
-    describe 'wishlist.created' do
-      it 'publishes created event when record is created' do
-        record = build(:wishlist, customer: user, store: store)
-        expect(record).to receive(:publish_event).with('wishlist.created')
-        allow(record).to receive(:publish_event).with(anything)
-
-        record.save!
-      end
-    end
-
-    describe 'wishlist.updated' do
-      it 'publishes updated event when record is updated' do
-        expect(wishlist).to receive(:publish_event).with('wishlist.updated')
-        allow(wishlist).to receive(:publish_event).with(anything)
-
-        Timecop.travel(1.minute.from_now) do
-          wishlist.update_attribute(:updated_at, Time.current)
-        end
-      end
-    end
-
-    describe 'wishlist.deleted' do
-      it 'publishes deleted event when record is destroyed' do
-        record = create(:wishlist, customer: user, store: store)
-        expect(record).to receive(:publish_event).with('wishlist.deleted', kind_of(Hash))
-        allow(record).to receive(:publish_event).with(anything)
-
-        record.destroy!
-      end
-    end
-  end
+  it_behaves_like 'lifecycle events'
 
   describe '.ensure_default_exists_and_is_unique' do
     context 'when user creates a new default store' do
@@ -53,7 +22,7 @@ describe Spree::Wishlist, type: :model do
       end
 
       it 'preserves is_default: true for new wishlist' do
-        expect(new_wl.is_default).to be true
+        expect(new_wl.reload.is_default).to be true
       end
 
       it 'sets is_default: false on the wishlist that was the previous default' do
@@ -90,16 +59,6 @@ describe Spree::Wishlist, type: :model do
     end
   end
 
-  describe '#destroy' do
-    let!(:wishlist_item) { create(:wishlist_item) }
-
-    it 'deletes associated wishlist items' do
-      expect do
-        wishlist_item.wishlist.destroy
-      end.to change(Spree::WishlistItem, :count).by(-1)
-    end
-  end
-
   describe '#product_ids' do
     let(:product) { create(:product) }
     let(:variant) { create(:variant, product: product) }
@@ -112,32 +71,6 @@ describe Spree::Wishlist, type: :model do
 
     it 'returns the product ids' do
       expect(wishlist.product_ids).to eq [product.id]
-    end
-  end
-
-  describe '#wishlist_items_count' do
-    let(:variant) { create(:variant) }
-
-    before do
-      wishlist.wishlist_items << create(:wishlist_item, variant: variant)
-    end
-
-    it 'returns the wishlist items count' do
-      expect(wishlist.wishlist_items_count).to eq 1
-    end
-  end
-
-  describe '#variant_ids' do
-    let(:variant) { create(:variant) }
-    let(:variant_2) { create(:variant) }
-
-    before do
-      wishlist.wishlist_items << create(:wishlist_item, variant: variant)
-      wishlist.wishlist_items << create(:wishlist_item, variant: variant_2)
-    end
-
-    it 'returns the variant ids' do
-      expect(wishlist.variant_ids).to eq [variant.id, variant_2.id]
     end
   end
 

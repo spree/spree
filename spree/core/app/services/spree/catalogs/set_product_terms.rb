@@ -50,7 +50,8 @@ module Spree
       def apply(catalog, product, values)
         minimum = normalize(values[:minimum_order_quantity])
         multiple = normalize(values[:order_multiple])
-        variant_ids = product.variants.ids
+        variants = product.variants.to_a
+        variant_ids = variants.map(&:id)
 
         # Both blank is a deletion: the product falls back to the catalog's
         # own default, which is what an empty pair means on the row.
@@ -59,8 +60,12 @@ module Spree
           return nil
         end
 
-        variant_ids.each do |variant_id|
-          rule = catalog.quantity_rules.find_or_initialize_by(variant_id: variant_id)
+        existing_rules = catalog.quantity_rules.where(variant_id: variant_ids).index_by(&:variant_id)
+
+        variants.each do |variant|
+          rule = existing_rules[variant.id] || catalog.quantity_rules.build
+          # The loaded variant, so the store check reads its product in memory.
+          rule.variant = variant
           rule.assign_attributes(minimum_order_quantity: minimum, order_multiple: multiple)
           return rule unless rule.save
         end

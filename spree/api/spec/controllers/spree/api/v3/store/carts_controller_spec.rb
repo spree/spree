@@ -597,8 +597,9 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
         expect(response).to have_http_status(:ok)
         expect(json_response['fulfillments']).to be_empty
         expect(json_response['warnings'].map { |warning| warning['code'] }).to include('delivery_unavailable')
+        # The field keeps its 5.6 name until 6.1, so 5.6 storefronts still match it.
         expect(json_response['requirements']).to include(
-          a_hash_including('step' => 'delivery', 'field' => 'delivery_method')
+          a_hash_including('step' => 'delivery', 'field' => 'shipping_method', 'code' => 'delivery_method_required')
         )
       end
 
@@ -655,6 +656,39 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
       request.headers['Authorization'] = "Bearer #{jwt_token}"
     end
 
+    # The token proves the caller holds the cart, not the account whose
+    # address book a typed address lands in.
+    context 'with only the guest token on a customer-owned cart' do
+      before do
+        request.headers['Authorization'] = nil
+        request.headers['X-Spree-Token'] = order.token
+      end
+
+      it 'refuses to write an address' do
+        expect do
+          patch :update, params: {
+            id: order.prefixed_id,
+            shipping_address: { first_name: 'Mallory', last_name: 'Doe', address1: '1 Evil St', city: 'New York',
+                                zipcode: '10001', phone: '555', country_code: 'US', state_code: 'NY' }
+          }, as: :json
+        end.not_to change(user.addresses, :count)
+
+        expect(response).to have_http_status(:forbidden)
+      end
+
+      it 'refuses to pick an address from the book' do
+        patch :update, params: { id: order.prefixed_id, shipping_address_id: user.addresses.first.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:forbidden)
+      end
+
+      it 'still updates the cart itself' do
+        patch :update, params: { id: order.prefixed_id, po_number: 'PO-4471' }, as: :json
+
+        expect(response).to have_http_status(:ok)
+      end
+    end
+
     it 'updates the cart through the configured carts update service' do
       custom_service = Class.new(Spree::Carts::Update)
       allow(Spree).to receive(:carts_update_service).and_return(custom_service)
@@ -665,6 +699,38 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
       expect(response).to have_http_status(:ok)
     end
 
+    # The update rolls the address back itself, so the outage never reaches
+    # the API's own tax handler; the endpoint still has to answer as it would.
+    context 'when the tax engine fails on the new address' do
+      let(:address) { create(:address, customer: user, country: country, state: us_state) }
+
+      def fail_tax_with(error)
+        provider = instance_double(Spree::TaxProvider::Internal)
+        allow(provider).to receive(:estimate).and_raise(error)
+        allow_any_instance_of(Spree::Cart).to receive(:tax_provider).and_return(provider)
+      end
+
+      it 'answers an outage with 503 so the client retries' do
+        fail_tax_with(Spree::Tax::ProviderUnavailable.new('Failed to open TCP connection'))
+
+        patch :update, params: { id: order.prefixed_id, shipping_address_id: address.prefixed_id }
+
+        expect(response).to have_http_status(:service_unavailable)
+        expect(json_response['error']['code']).to eq('tax_provider_unavailable')
+        expect(json_response['error']['message']).not_to include('TCP')
+      end
+
+      it 'answers a refusal with 422 and what the engine said' do
+        fail_tax_with(Spree::Tax::CalculationRefused.new('Zip is not valid for the state'))
+
+        patch :update, params: { id: order.prefixed_id, shipping_address_id: address.prefixed_id }
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('tax_calculation_refused')
+        expect(json_response['error']['message']).to eq('Zip is not valid for the state')
+      end
+    end
+
     it 'accepts shipping_address_id to use an existing address' do
       order.update!(email: 'customer@example.com')
       existing_address = user.addresses.first || create(:address, customer: user, country: country, state: us_state)
@@ -673,6 +739,20 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
 
       expect(response).to have_http_status(:ok)
       expect(order.reload.ship_address_id).to eq(existing_address.id)
+    end
+
+    it 'accepts shipping_address_id from the company the cart is for' do
+      company = create(:company, store: store)
+      create(:company_membership, company: company, customer: user)
+      site = create(:company_address, owner: company, first_name: 'Dana', last_name: 'Reyes',
+                                      country: country, state: us_state)
+
+      patch :update, params: {
+        id: order.prefixed_id, company_id: company.prefixed_id, shipping_address_id: site.prefixed_id
+      }
+
+      expect(response).to have_http_status(:ok)
+      expect(order.reload.ship_address_id).to eq(site.id)
     end
 
     context 'the buyer purchase order' do
@@ -710,7 +790,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
           service_name: Spree.private_storage_service_name
         )
 
-        patch :update, params: { id: order.prefixed_id, po_document: blob.signed_id }
+        patch :update, params: { id: order.prefixed_id, po_document_signed_id: blob.signed_id }
 
         expect(response).to have_http_status(:ok)
         expect(order.reload.po_document).to be_attached
@@ -719,7 +799,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
 
       # A tampered id must not surface as a 500.
       it 'refuses a tampered signed id' do
-        patch :update, params: { id: order.prefixed_id, po_document: 'not-a-signed-id' }
+        patch :update, params: { id: order.prefixed_id, po_document_signed_id: 'not-a-signed-id' }
 
         expect(response).to have_http_status(:unprocessable_content)
         expect(order.reload.po_document).not_to be_attached
@@ -816,7 +896,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
         expect(json_response['fulfillments']).to be_empty
         expect(json_response['warnings'].map { |warning| warning['code'] }).to include('delivery_unavailable')
         expect(json_response['requirements']).to include(
-          a_hash_including('step' => 'delivery', 'field' => 'delivery_method')
+          a_hash_including('step' => 'delivery', 'code' => 'delivery_method_required')
         )
       end
     end
@@ -923,7 +1003,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
         patch :update, params: { id: order.prefixed_id, email: 'customer@example.com', shipping_address: address_params }
         original_expiry = Spree::StockReservation.for_order(order).maximum(:expires_at)
 
-        Timecop.freeze(2.minutes.from_now) do
+        travel_to(2.minutes.from_now) do
           patch :update, params: { id: order.prefixed_id, customer_note: 'please ring bell' }
         end
 
@@ -1087,6 +1167,43 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
         expect(response).to have_http_status(:no_content)
       end
 
+      it 'rejects deletion while completion holds a live claim' do
+        cart.update_column(:completing_at, Time.current)
+
+        expect { delete :destroy, params: { id: cart.prefixed_id } }.not_to change(Spree::Cart, :count)
+
+        expect(response).to have_http_status(:conflict)
+        expect(json_response['error']['code']).to eq('completion_in_progress')
+        expect(cart.reload.completion_claimed?).to be(true)
+      end
+
+      it 'checks a claim acquired after deletion starts but before the cart lock' do
+        cart_id = cart.id
+        claim_acquired = false
+        allow_any_instance_of(Spree::Cart).to receive(:with_lock).and_wrap_original do |original, *args, &block|
+          if original.receiver.id == cart_id && !claim_acquired
+            Spree::Cart.find(cart_id).update_column(:completing_at, Time.current)
+            claim_acquired = true
+          end
+          original.call(*args, &block)
+        end
+
+        expect { delete :destroy, params: { id: cart.prefixed_id } }.not_to change(Spree::Cart, :count)
+
+        expect(claim_acquired).to be(true)
+        expect(response).to have_http_status(:conflict)
+        expect(json_response['error']['code']).to eq('completion_in_progress')
+        expect(cart.reload.completion_claimed?).to be(true)
+      end
+
+      it 'allows deletion after a completion claim expires' do
+        cart.update_column(:completing_at, 1.hour.ago)
+
+        expect { delete :destroy, params: { id: cart.prefixed_id } }.to change(Spree::Cart, :count).by(-1)
+
+        expect(response).to have_http_status(:no_content)
+      end
+
       it 'removes any stock reservations belonging to the cart' do
         line_item = cart.line_items.first
         line_item.variant.stock_levels.first.update!(backorderable: false)
@@ -1162,6 +1279,38 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
 
       expect { post :complete, params: { id: order.prefixed_id } }
         .to change { Spree::StockReservation.for_order(order).count }.from(1).to(0)
+    end
+
+    # The workflow refuses the sale itself rather than letting the tax error
+    # escape, so the endpoint maps its codes to the statuses the API's own tax
+    # handler uses.
+    context 'when the tax engine fails at completion' do
+      let(:cart) { create(:cart_with_line_items, customer: user, store: store) }
+
+      def complete_fails_with(code, message)
+        error = Spree::ServiceModule::ResultError.new({ code: code, message: message })
+        allow(Spree::Carts::Complete).to receive(:call).and_return(Spree::ServiceModule::Result.new(false, cart, error))
+      end
+
+      it 'answers an outage with 503 so the client retries' do
+        complete_fails_with('tax_provider_unavailable', 'Tax could not be calculated right now.')
+
+        post :complete, params: { id: cart.prefixed_id }
+
+        expect(response).to have_http_status(:service_unavailable)
+        expect(json_response['error']['code']).to eq('tax_provider_unavailable')
+        expect(json_response['error']['message']).to eq('Tax could not be calculated right now.')
+      end
+
+      it 'answers a refusal with 422 and what the engine said' do
+        complete_fails_with('tax_calculation_refused', 'Zip is not valid for the state.')
+
+        post :complete, params: { id: cart.prefixed_id }
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('tax_calculation_refused')
+        expect(json_response['error']['message']).to eq('Zip is not valid for the state.')
+      end
     end
 
     context 'when order cannot be completed' do

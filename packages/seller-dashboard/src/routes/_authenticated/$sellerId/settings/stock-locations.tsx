@@ -18,5 +18,5 @@ export const Route = createFileRoute('/_authenticated/$sellerId/settings/stock-l
 function StockLocationsRoute() {
   const search = Route.useSearch() as z.infer<typeof stockLocationsSearchSchema>
 
-  return <StockLocationsPage search={search} />
+  return <StockLocationsPage search={search} formKey="seller.stock_location" />
 }

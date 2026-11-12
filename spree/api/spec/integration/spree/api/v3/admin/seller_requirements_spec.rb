@@ -32,6 +32,7 @@ RSpec.describe 'Admin Seller Requirements API', type: :request, swagger_doc: 'ap
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false
       parameter name: :limit, in: :query, type: :integer, required: false
+      filter_parameters_for
 
       response '200', 'seller requirements found' do
         let!(:requirement) { create(:accept_terms_requirement, store: store) }
@@ -71,26 +72,7 @@ RSpec.describe 'Admin Seller Requirements API', type: :request, swagger_doc: 'ap
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        required: %w[type],
-        properties: {
-          type: { type: :string, example: 'document',
-                  description: 'The kind, from `GET /seller_requirements/types`.' },
-          name: { type: :string, example: 'Business registration',
-                  description: 'What the seller sees. Required for kinds that can be added more than ' \
-                               'once, since the wording is the only thing telling them apart. Left ' \
-                               'blank on the others, the kind names itself.' },
-          description: { type: :string, example: 'A copy of your certificate of incorporation.',
-                         description: 'Instructions shown to the seller.' },
-          required: { type: :boolean, example: true,
-                      description: 'Whether this blocks approval. Off means recommended.' },
-          active: { type: :boolean, example: true },
-          position: { type: :integer, example: 1, description: 'Place in the checklist.' },
-          preferences: { type: :object, example: { accepted_content_types: ['application/pdf'] },
-                         description: 'Configuration for this kind, per its `preference_schema`.' }
-        }
-      }
+      request_body_for
 
       response '201', 'seller requirement created' do
         let(:body) { { type: 'document', name: 'Business registration', required: true } }
@@ -152,7 +134,7 @@ RSpec.describe 'Admin Seller Requirements API', type: :request, swagger_doc: 'ap
                                   description: 'Whether the operator may add one now. The uniqueness ' \
                                                'rule is the server\'s, so clients filter on this rather ' \
                                                'than deriving it.' },
-                       preference_schema: { type: :array, items: { type: :object } }
+                       schema: { type: :object, description: 'JSON Schema of the type\'s `preferences`' }
                      }
                    }
                  }
@@ -184,17 +166,7 @@ RSpec.describe 'Admin Seller Requirements API', type: :request, swagger_doc: 'ap
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string, example: 'Proof of business registration' },
-          description: { type: :string, example: 'A copy of your certificate of incorporation.' },
-          required: { type: :boolean, example: false },
-          active: { type: :boolean, example: true },
-          position: { type: :integer, example: 2 },
-          preferences: { type: :object, example: { minimum_count: 3 } }
-        }
-      }
+      request_body_for
 
       response '200', 'seller requirement updated' do
         let(:requirement) { create(:minimum_products_requirement, store: store) }

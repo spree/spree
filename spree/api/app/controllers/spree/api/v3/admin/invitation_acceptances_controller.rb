@@ -10,6 +10,14 @@ module Spree
           skip_scope_check!
           skip_before_action :authenticate_admin!, only: [:lookup, :accept]
 
+          request_params 'InvitationAcceptParams', action: :accept do |body|
+            body.attribute :password, :string,
+              description: 'Creates the account when the invitee has none yet. An existing account confirms it is theirs with it, unless the request is already signed in as that account.'
+            body.attribute :password_confirmation, :string
+            body.attribute :first_name, :string
+            body.attribute :last_name, :string
+          end
+
           rate_limit to: Spree::Api::Config[:rate_limit_login],
                      within: Spree::Api::Config[:rate_limit_window].seconds,
                      store: Rails.cache,
@@ -24,12 +32,13 @@ module Spree
           end
 
           # POST /api/v3/admin/auth/invitations/:id/accept?token=:token
-          # Body: { password?, password_confirmation?, first_name?, last_name? }
           def accept
             return unless load_invitation
 
             user = resolve_or_create_invitee(@invitation)
             return if performed?
+            # Checked before accepting: a deactivated account gains no role.
+            return render_account_deactivated if account_deactivated?(user)
 
             @invitation.invitee = user
             result = Spree.invitation_accept_workflow.call(invitation: @invitation)
@@ -65,10 +74,14 @@ module Spree
           # implicit: we look the user up by `invitation.email`, never by a
           # client-supplied email. The token is the credential.
           def resolve_or_create_invitee(invitation)
-            existing = Spree.admin_user_class.find_by(email: invitation.email)
-            return authenticate_existing(existing) if existing
+            existing = invitation.invitee_account
+            return create_new_invitee(invitation) unless existing
 
-            create_new_invitee(invitation)
+            # Someone already signed in as the invitee has proven who they are.
+            authenticate_user
+            return existing if current_user == existing
+
+            authenticate_existing(existing)
           end
 
           def authenticate_existing(user)
@@ -99,7 +112,7 @@ module Spree
           end
 
           def signup_params(invitation)
-            params.permit(:password, :password_confirmation, :first_name, :last_name).
+            params.permit(*declared_permitted_attributes).
               merge(email: invitation.email)
           end
 

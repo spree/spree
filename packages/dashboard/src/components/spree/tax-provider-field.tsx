@@ -16,15 +16,6 @@ import { Controller, type UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useTaxProviders } from '../../hooks/use-tax-rates'
 
-/** One entry from `GET /tax_providers` — classes registered in code, not rows. */
-interface TaxProviderOption {
-  id: string
-  name: string
-  available: boolean
-  default: boolean
-  unsupported_capabilities?: Array<{ key: string; label: string; description?: string }>
-}
-
 /** Any form whose values carry a `tax_provider` string. */
 interface TaxProviderFormShape {
   tax_provider?: string
@@ -43,7 +34,7 @@ export function TaxProviderField<T extends TaxProviderFormShape>({
 }) {
   const { t } = useTranslation()
   const { data } = useTaxProviders()
-  const providers = (data?.data ?? []) as unknown as TaxProviderOption[]
+  const providers = data?.data ?? []
 
   const defaultProvider = providers.find((provider) => provider.default)
   const defaultLabel = defaultProvider

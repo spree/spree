@@ -80,7 +80,7 @@ RSpec.describe 'seller onboarding lifecycle' do
                                        role: seller.default_user_role)
 
       invitation.update!(invitee: invitee)
-      invitation.accept!
+      expect(Spree.invitation_accept_workflow.call(invitation: invitation)).to be_success
 
       expect(seller.reload).to be_onboarding
     end

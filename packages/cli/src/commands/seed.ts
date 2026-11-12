@@ -1,7 +1,8 @@
 import * as p from '@clack/prompts'
 import type { Command } from 'commander'
+import { SEED_TASK } from '../backend.js'
 import { detectProject } from '../context.js'
-import { rakeTask } from '../docker.js'
+import { captureTask } from '../docker.js'
 
 export function registerSeedCommand(program: Command): void {
   program
@@ -12,7 +13,7 @@ export function registerSeedCommand(program: Command): void {
 
       const s = p.spinner()
       s.start('Seeding database...')
-      await rakeTask('db:seed', ctx.projectDir)
+      await captureTask(SEED_TASK, ctx.projectDir)
       s.stop('Database seeded.')
     })
 }

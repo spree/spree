@@ -358,3 +358,28 @@ describe('stockMovements', () => {
     })
   })
 })
+
+describe('stockReservations', () => {
+  describe('list', () => {
+    it('GETs /stock_reservations with Ransack-wrapped filters', async () => {
+      let url: URL | null = null
+      server.use(
+        http.get(`${API_PREFIX}/stock_reservations`, ({ request }) => {
+          url = new URL(request.url)
+          return HttpResponse.json(
+            paginated([{ id: 'res_abc123', quantity: 2, stock_level_id: 'sl_abc123' }]),
+          )
+        }),
+      )
+
+      const res = await createTestClient().stockReservations.list({
+        expires_at_lt: '2026-05-01T00:00:00Z',
+        sort: 'expires_at',
+      })
+
+      expect(res.data[0]?.id).toBe('res_abc123')
+      expect(url!.searchParams.get('q[expires_at_lt]')).toBe('2026-05-01T00:00:00Z')
+      expect(url!.searchParams.get('sort')).toBe('expires_at')
+    })
+  })
+})

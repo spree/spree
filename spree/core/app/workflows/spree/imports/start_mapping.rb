@@ -33,8 +33,10 @@ module Spree
       # TODO: seed from the previous import of the same type, so a merchant
       # doesn't map the same columns twice.
       def build_mappings
+        existing = import.mappings.index_by(&:schema_field)
+
         import.schema_fields.each do |schema_field|
-          mapping = import.mappings.find_or_create_by!(schema_field: schema_field[:name])
+          mapping = existing[schema_field[:name]] || import.mappings.build(schema_field: schema_field[:name])
           mapping.try_to_auto_assign_file_column(import.csv_headers)
           mapping.save!
         end

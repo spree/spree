@@ -2,9 +2,10 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import * as p from '@clack/prompts'
-import type { Command } from 'commander'
-import { execaCommand } from 'execa'
+import { type Command, Option } from 'commander'
+import { execa } from 'execa'
 import pc from 'picocolors'
+import { warnDeprecated } from '../deprecation.js'
 import { PLUGIN_PEER_RANGES } from '../lib/plugin-peer-ranges.js'
 import { render, type TemplateVars } from '../lib/template.js'
 
@@ -12,10 +13,12 @@ const TEMPLATE_RELATIVE_PATH = '../../templates/plugin'
 
 interface PluginNewFlags {
   dashboard: boolean
+  backend: boolean
   engine: boolean
   install: boolean
   force: boolean
   yes: boolean
+  backendName?: string
   rubyName?: string
   moduleName?: string
   npmScope?: string
@@ -29,18 +32,19 @@ const LICENSES = ['MIT', 'Apache-2.0', 'BSD-3-Clause'] as const
 export function registerPluginCommand(program: Command): void {
   const plugin = program
     .command('plugin')
-    .description('Scaffold and manage Spree plugins (dashboard + Rails engine)')
+    .description('Scaffold and manage Spree plugins (dashboard + backend)')
 
   plugin
     .command('new')
     .description(
-      'Scaffold a new Spree plugin monorepo (dashboard plugin half today; Rails engine coming soon)',
+      'Scaffold a new Spree plugin monorepo (dashboard plugin half today; backend half coming soon)',
     )
     .argument('[name]', 'Plugin name (e.g. brands). If omitted, you will be prompted.')
-    .option('--ruby-name <name>', 'Ruby gem name (default: spree_<name>)')
+    .option('--backend-name <name>', 'Backend package name (default: spree_<name>)')
+    .addOption(new Option('--ruby-name <name>').hideHelp())
     .option(
       '--module-name <name>',
-      'Ruby module / TS namespace (default: PascalCase of the gem name)',
+      'Backend module / TS namespace (default: PascalCase of the backend package name)',
     )
     .option('--npm-scope <scope>', 'npm scope, e.g. @acme (default: unscoped)')
     .option('--author <name>', 'Author name (default: git config user.name)')
@@ -53,13 +57,23 @@ export function registerPluginCommand(program: Command): void {
     )
     .option('--no-dashboard', 'Skip the dashboard plugin half')
     .option(
-      '--no-engine',
-      'Skip the Rails engine half (currently always skipped — engine support coming soon)',
+      '--no-backend',
+      'Skip the backend half (currently always skipped — backend support coming soon)',
     )
+    .addOption(new Option('--no-engine').hideHelp())
     .option('--no-install', 'Skip running pnpm install')
     .option('--force', 'Overwrite a non-empty destination directory')
     .action(async (nameArg: string | undefined, flags: PluginNewFlags) => {
       p.intro(pc.bgCyan(pc.black(' Spree Plugin Scaffolder ')))
+
+      if (flags.rubyName) {
+        warnDeprecated('--ruby-name', '--backend-name')
+        flags.backendName ??= flags.rubyName
+      }
+      if (flags.engine === false) {
+        warnDeprecated('--no-engine', '--no-backend')
+        flags.backend = false
+      }
 
       const answers = await collectAnswers(nameArg, flags)
       if (p.isCancel(answers)) {
@@ -125,7 +139,7 @@ interface Answers {
 async function collectAnswers(
   nameArg: string | undefined,
   flags: PluginNewFlags,
-): Promise<Answers | symbol> {
+): Promise<Answers | typeof p.CANCEL_SYMBOL> {
   const validateName = (value: string | undefined): string | undefined => {
     if (!value) return 'Required'
     if (!/^[a-z][a-z0-9-]*$/.test(value)) {
@@ -154,14 +168,14 @@ async function collectAnswers(
       placeholder: 'brands',
       validate: validateName,
     }))
-  if (p.isCancel(name)) return name as symbol
+  if (p.isCancel(name)) return name
 
   // Every prompt below can be pre-answered by a flag; --yes accepts the
   // default for whatever the flags leave unanswered.
   const rubyDefault = `spree_${(name as string).replace(/-/g, '_')}`
   const rubyName = await resolveField({
-    flag: '--ruby-name',
-    flagValue: flags.rubyName,
+    flag: '--backend-name',
+    flagValue: flags.backendName,
     fallback: rubyDefault,
     yes: flags.yes,
     validate: (value) =>
@@ -170,7 +184,7 @@ async function collectAnswers(
         : 'Use lowercase letters, digits, and underscores (e.g. "spree_brands")',
     prompt: () =>
       p.text({
-        message: 'Ruby gem name',
+        message: 'Backend package name (Ruby gem)',
         placeholder: rubyDefault,
         initialValue: rubyDefault,
         validate: (value) =>
@@ -179,7 +193,7 @@ async function collectAnswers(
             : 'Use lowercase letters, digits, and underscores (e.g. "spree_brands")',
       }),
   })
-  if (p.isCancel(rubyName)) return rubyName as symbol
+  if (p.isCancel(rubyName)) return rubyName
 
   const moduleDefault = pascalCase(rubyName as string)
   const moduleName = await resolveField({
@@ -200,7 +214,7 @@ async function collectAnswers(
             : 'PascalCase (e.g. "SpreeBrands")',
       }),
   })
-  if (p.isCancel(moduleName)) return moduleName as symbol
+  if (p.isCancel(moduleName)) return moduleName
 
   const validateScope = (value: string | undefined): string | undefined =>
     !value || /^@[a-z0-9][a-z0-9-]*$/.test(value)
@@ -220,7 +234,7 @@ async function collectAnswers(
         validate: validateScope,
       }),
   })
-  if (p.isCancel(npmScope)) return npmScope as symbol
+  if (p.isCancel(npmScope)) return npmScope
 
   // Author identity defaults to the local git config — the same values a
   // `git commit` in this shell would stamp.
@@ -239,7 +253,7 @@ async function collectAnswers(
         validate: (value) => (value ? undefined : 'Required'),
       }),
   })
-  if (p.isCancel(authorName)) return authorName as symbol
+  if (p.isCancel(authorName)) return authorName
 
   const validateEmail = (value: string | undefined): string | undefined =>
     value && /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(value) ? undefined : 'Enter a valid email'
@@ -258,7 +272,7 @@ async function collectAnswers(
         validate: validateEmail,
       }),
   })
-  if (p.isCancel(authorEmail)) return authorEmail as symbol
+  if (p.isCancel(authorEmail)) return authorEmail
 
   const validateLicense = (value: string | undefined): string | undefined =>
     value && (LICENSES as readonly string[]).includes(value)
@@ -277,26 +291,26 @@ async function collectAnswers(
         initialValue: 'MIT',
       }),
   })
-  if (p.isCancel(license)) return license as symbol
+  if (p.isCancel(license)) return license
 
   // The `--no-dashboard` flag pre-answers this; --yes accepts the default.
   const includeDashboard =
     flags.dashboard === false
       ? false
       : flags.yes || (await promptConfirm('Include dashboard plugin?', true))
-  if (p.isCancel(includeDashboard)) return includeDashboard as symbol
+  if (p.isCancel(includeDashboard)) return includeDashboard
 
   // The engine half is not yet generated by the CLI — the Rails templates
   // land in a follow-up PR. For now, we always answer false and note it.
   // Once the engine templates exist, restore the prompt:
   //
-  //   const includeEngine = flags.engine === false
+  //   const includeEngine = flags.backend === false
   //     ? false
   //     : await promptConfirm('Include Rails engine (API endpoints)?', true)
   const includeEngine = false
-  if (flags.engine !== false) {
+  if (flags.backend !== false) {
     p.log.warn(
-      'Rails engine generation is coming in a future release. For now, scaffold the dashboard half here and use `spree-extension create` for the Ruby side.',
+      'Backend generation is coming in a future release. For now, scaffold the dashboard half here and use `spree-extension create` for the backend side.',
     )
   }
 
@@ -371,7 +385,7 @@ async function resolveField(spec: FieldSpec): Promise<string | symbol> {
 /** Read a git config value, returning undefined when unset or git is absent. */
 async function gitConfigValue(key: string): Promise<string | undefined> {
   try {
-    const { stdout } = await execaCommand(`git config --get ${key}`)
+    const { stdout } = await execa('git', ['config', '--get', key])
     const value = stdout.trim()
     return value || undefined
   } catch {
@@ -422,7 +436,7 @@ async function runInstall(dst: string, answers: Answers): Promise<void> {
   if (answers.includeDashboard) {
     s.start('Running pnpm install...')
     try {
-      await execaCommand('pnpm install', { cwd: dst, stdio: 'pipe' })
+      await execa('pnpm', ['install'], { cwd: dst, stdio: 'pipe' })
       s.stop('pnpm install complete.')
     } catch (err) {
       s.stop(pc.yellow('pnpm install failed — run it manually.'))
@@ -432,7 +446,7 @@ async function runInstall(dst: string, answers: Answers): Promise<void> {
   if (answers.includeEngine) {
     s.start('Running bundle install in engine/...')
     try {
-      await execaCommand('bundle install', { cwd: path.join(dst, 'engine'), stdio: 'pipe' })
+      await execa('bundle', ['install'], { cwd: path.join(dst, 'engine'), stdio: 'pipe' })
       s.stop('bundle install complete.')
     } catch (err) {
       s.stop(pc.yellow('bundle install failed — run it manually.'))
@@ -472,6 +486,15 @@ function printNextSteps(answers: Answers, dst: string, installed: boolean): void
     lines.push(
       `  See ${pc.cyan('https://spreecommerce.org/docs/developer/contributing/creating-an-extension')}`,
     )
+  }
+  const installArgs = [
+    ...(answers.includeEngine ? ['--gem', answers.rubyName] : []),
+    ...(answers.includeDashboard ? ['--npm', buildVars(answers).npm_dashboard_package] : []),
+  ]
+  if (installArgs.length > 0) {
+    lines.push('')
+    lines.push(pc.bold('Installing it in a Spree project, once published'))
+    lines.push(`  ${pc.cyan(['spree add', ...installArgs].join(' '))}`)
   }
   lines.push('')
   p.note(lines.join('\n'), 'Your plugin is scaffolded.')

@@ -71,7 +71,7 @@ export function JsonValueView({
   return (
     <div
       className={cn(
-        'font-mono text-sm',
+        'font-mono text-base',
         // The vscode theme is dark — when the parent doesn't already paint a
         // dark background, paint one here so the syntax colors stay legible.
         !bare && 'bg-zinc-950 text-zinc-100 rounded-md p-3',
@@ -87,9 +87,19 @@ export function JsonValueView({
         enableClipboard
         shortenTextAfterLength={60}
         components={{
-          value: ({ value: v, type, ...rest }) => (
-            <ValueRenderer value={v} type={type} resolveLink={resolveLink} {...rest} />
-          ),
+          // The viewer's own props, which React would warn about on a <span>.
+          value: ({
+            value: v,
+            type,
+            parentValue: _parentValue,
+            data: _data,
+            visible: _visible,
+            quotes: _quotes,
+            namespace: _namespace,
+            setValue: _setValue,
+            keyName: _keyName,
+            ...rest
+          }) => <ValueRenderer value={v} type={type} resolveLink={resolveLink} {...rest} />,
         }}
       />
     </div>

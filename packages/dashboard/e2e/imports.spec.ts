@@ -83,6 +83,45 @@ test.describe('csv import', () => {
     await expect(page.getByText(goodName)).toBeVisible({ timeout: 15_000 })
   })
 
+  // The column separator travels as the import's `delimiter` setting; a
+  // semicolon file only maps and imports if the server read it back.
+  test('imports a semicolon-separated file', async ({ page }) => {
+    test.setTimeout(180_000)
+
+    const creds = await login(page)
+    const suffix = Date.now()
+    const name = `E2E Semicolon Product ${suffix}`
+
+    await openImportSheet(page, creds.store_id)
+    const sheet = page.getByRole('dialog')
+    await sheet
+      .locator('[data-slot="field"]')
+      .filter({ hasText: /^column separator/i })
+      .getByRole('combobox')
+      .click()
+    await page.getByRole('option', { name: /^semicolon/i }).click()
+    await sheet
+      .locator('input[type="file"]')
+      .setInputFiles(
+        csvFile([
+          'slug;sku;name;price',
+          `e2e-semicolon-${suffix};E2E-SEMI-${suffix};${name};12.00`,
+        ]),
+      )
+    await page.getByRole('button', { name: /^continue$/i }).click()
+
+    // Split on the semicolon, every column is its own field with its own
+    // sample — read as commas, the whole line would be a single column.
+    await expect(page.getByText('Map columns')).toBeVisible({ timeout: 15_000 })
+    await expect(page.getByText(`E2E-SEMI-${suffix}`, { exact: true })).toBeVisible()
+
+    await page.getByRole('button', { name: /start import/i }).click()
+    await expect(page.getByText(/import completed/i)).toBeVisible({ timeout: 120_000 })
+
+    await page.getByRole('button', { name: /view products/i }).click()
+    await expect(page.getByText(name)).toBeVisible({ timeout: 15_000 })
+  })
+
   test('blocks starting until required fields are mapped', async ({ page }) => {
     const creds = await login(page)
     const suffix = Date.now()

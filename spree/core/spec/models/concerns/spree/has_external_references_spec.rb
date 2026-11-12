@@ -84,6 +84,15 @@ RSpec.describe Spree::HasExternalReferences do
       expect(store.products.with_external_id('erp', 'MAT-100')).to be_empty
       expect(other_store.products.with_external_id('erp', 'MAT-100').take).to eq(other_product)
     end
+
+    it 'leaves the found record with every key when references are preloaded' do
+      product.set_external_id('erp', 'MAT-100')
+      product.set_external_id('pim', 'SKU-1')
+
+      found = Spree::Product.includes(:external_references).with_external_id('erp', 'MAT-100').take
+
+      expect(found.external_references.map(&:system)).to contain_exactly('erp', 'pim')
+    end
   end
 
   describe '#assign_external_references' do

@@ -73,11 +73,11 @@ RSpec.describe 'Meilisearch Integration', type: :controller, if: ENV['MEILISEARC
   let!(:draft_product) { create(:product, name: 'Draft Hat', status: 'draft') }
 
   let!(:future_product) do
-    create(:product, name: 'Future Coat', status: 'active', store: store, available_on: 2.weeks.from_now, price: 99.99)
+    create(:product, name: 'Future Coat', status: 'active', store: store, published_at: 2.weeks.from_now, price: 99.99)
   end
 
   let!(:discontinued_product) do
-    create(:product, name: 'Old Jacket', status: 'active', store: store, discontinue_on: 2.days.ago, price: 49.99)
+    create(:product, name: 'Old Jacket', status: 'active', store: store, unpublished_at: 2.days.ago, price: 49.99)
   end
 
   before do

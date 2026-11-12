@@ -2,6 +2,12 @@ require 'rails/engine'
 
 require_relative 'dependencies'
 require_relative 'configuration'
+require_relative 'admin_document'
+require_relative 'agent_write_schemas'
+require_relative 'agent_resource_map'
+require_relative 'agent_membership_map'
+require_relative 'agent_operations'
+require_relative 'oauth'
 
 module Spree
   module Api
@@ -9,14 +15,67 @@ module Spree
       isolate_namespace Spree
       engine_name 'spree_api'
 
+      # Typelizer 0.13+ ties two things to TYPELIZER: recording the serializers'
+      # `typelize` declarations, and generating types on a development server's
+      # first request. The rswag specs build the OpenAPI schemas from those
+      # declarations, so tests record them; an app's server must never generate,
+      # or it would write Spree's SDK types into the installed gem.
+      # `rake typelizer:generate` sets TYPELIZER=true itself. Set before
+      # Typelizer reads it when configuring its DSL.
+      initializer 'spree.api.typelizer', before: 'typelizer.configure_dsl' do
+        ENV['TYPELIZER'] ||= Rails.env.test? ? 'true' : 'false'
+      end
+
       initializer 'spree.api.environment', before: :load_config_initializers do |_app|
         Spree::Api::Config = Spree::Api::Configuration.new
         Spree::Api::Dependencies = Spree::Api::ApiDependencies.new
       end
 
+      # Applied from the engine so an installation gets a correct, locked-down
+      # authorization server by adding the gem.
+      #
+      # Before host initializers, not after: `Doorkeeper.configure` replaces
+      # the whole configuration, so running later would silently discard a
+      # host's own `config/initializers/doorkeeper.rb`. This way the host's
+      # file wins, which is what "configure it yourself" has to mean.
+      initializer 'spree.api.oauth', before: :load_config_initializers do |_app|
+        Spree::Api::Oauth.configure!
+
+        # The Admin API as a whole, for an app that works across it rather
+        # than through one endpoint. A token naming this audience is accepted
+        # on every admin controller; one naming a narrower resource — the MCP
+        # endpoint, say — is not, so a token taken from an MCP client cannot
+        # be replayed against the rest of the API.
+        Spree::Api::Oauth.register_resource(:admin, '/api/v3/admin')
+      end
+
+      # Extensions register their permission scopes from config initializers,
+      # which run after the configuration above — so the grantable list is
+      # re-read once they have.
+      config.after_initialize do
+        Spree::Api::Oauth.refresh_scopes!
+      end
+
       initializer 'spree.api.request_size_limit' do |app|
         require_relative 'middleware/request_size_limit'
         app.middleware.insert_before Rack::Runtime, Spree::Api::Middleware::RequestSizeLimit
+      end
+
+      # Outside ShowExceptions, so an unknown API path's 404 carries it too.
+      initializer 'spree.api.no_index' do |app|
+        require_relative 'middleware/no_index'
+        app.middleware.insert_before Rack::Runtime, Spree::Api::Middleware::NoIndex
+      end
+
+      # The resources agents may read and write are derived from the admin
+      # controllers themselves (see Spree::Api::AgentResourceMap). Marked
+      # stale on every reload rather than rebuilt: deriving it eager-loads the
+      # application, and doing that on each file save would turn Spree's
+      # development reload from lazy into fully eager for everyone, whether or
+      # not they run an agent client. The first caller pays instead.
+      config.to_prepare do
+        Spree::Api::AgentResourceMap.stale!
+        Spree::Api::AgentOperations.stale!
       end
 
       # Add API event subscribers

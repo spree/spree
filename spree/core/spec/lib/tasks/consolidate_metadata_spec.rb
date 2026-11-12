@@ -15,6 +15,11 @@ describe 'metadata consolidation' do
   # merge and the safety-net rake task are exercised against a synthetic table
   # still carrying the pre-6.0 pair — the state an out-of-band install is in.
   before do
+    # The registry the real migration left behind names tables as they were
+    # then — `spree_assets`, since renamed — and reading a column of a table
+    # that no longer exists raises on PostgreSQL. Each example starts from no
+    # registry, so only the fixture's own consolidation is ever on record.
+    connection.drop_table :spree_consolidated_metadata_tables, if_exists: true
     connection.drop_table table_name, if_exists: true
     connection.create_table table_name do |t|
       if t.respond_to?(:jsonb)

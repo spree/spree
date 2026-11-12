@@ -50,6 +50,7 @@ module Spree
       country_code state_code created_at updated_at
       seller_id
     ]
+    search_by :name
     self.whitelisted_ransackable_associations = %w[seller]
 
     scope :active, -> { where(active: true) }
@@ -181,8 +182,10 @@ module Spree
     #
     # @param fulfillment [Spree::Fulfillment]
     # @return [Spree::StockMovement]
-    def allocate(variant, quantity, fulfillment)
-      move(variant, quantity, kind: 'allocated', cause: fulfillment)
+    # @param stock_level [Spree::StockLevel, nil] the variant's level here, when
+    #   the caller loaded it already
+    def allocate(variant, quantity, fulfillment, stock_level: nil)
+      move(variant, quantity, kind: 'allocated', cause: fulfillment, stock_level: stock_level)
     end
 
     # Withdraws a promise — a canceled, relocated or shrunk fulfillment.
@@ -198,21 +201,26 @@ module Spree
     # a negative quantity writes stock off.
     #
     # @param reason [String] audit text, required
+    # @param stock_level [Spree::StockLevel, nil] the variant's level here, when
+    #   the caller holds it already (locked, say), so the movement updates that
+    #   instance rather than one looked up again
     # @return [Spree::StockMovement]
-    def adjust(variant, quantity, reason:)
-      move(variant, quantity, kind: 'adjusted', reason: reason)
+    def adjust(variant, quantity, reason:, stock_level: nil)
+      move(variant, quantity, kind: 'adjusted', reason: reason, stock_level: stock_level)
     end
 
-    def move(variant, quantity, kind:, cause: nil, reason: nil, force: false, unit_cost: nil)
-      stock_level = stock_level_or_create(variant)
+    def move(variant, quantity, kind:, cause: nil, reason: nil, force: false, unit_cost: nil, stock_level: nil)
+      stock_level ||= stock_level_or_create(variant)
       attributes = { quantity: quantity, kind: kind, reason: reason, unit_cost: unit_cost,
                      **cause_attributes(cause) }
 
       stock_level.stock_movements.create!(attributes) { |movement| movement.force = force }
     end
 
-    def fill_status(variant, quantity)
-      if item = stock_level_or_create(variant)
+    # @param stock_level [Spree::StockLevel, nil] the variant's level here, when
+    #   the caller loaded it already
+    def fill_status(variant, quantity, stock_level: nil)
+      if item = stock_level || stock_level_or_create(variant)
         if item.available_count >= quantity
           on_hand = quantity
           backordered = 0

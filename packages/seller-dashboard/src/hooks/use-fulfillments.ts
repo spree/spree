@@ -1,3 +1,4 @@
+import type { CurrencyCode } from '@spree/core'
 import { useResourceKeyBuilder } from '@spree/dashboard-core'
 import { toastManager } from '@spree/dashboard-ui'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
@@ -11,28 +12,8 @@ import { sellerClient } from '../api-client'
  * variant and a quantity.
  */
 export function useFulfillmentActions(orderId: string) {
-  const queryClient = useQueryClient()
-  const buildKey = useResourceKeyBuilder()
-
-  function useFulfillmentMutation<TParams>(mutationFn: (params: TParams) => Promise<unknown>) {
-    return useMutation({
-      mutationFn,
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: buildKey('seller-order', orderId) })
-        queryClient.invalidateQueries({ queryKey: buildKey('seller-orders') })
-      },
-      onError: (error) => {
-        // A rejected workflow — a parcel that cannot ship, a split that would
-        // empty its source — otherwise looks like a dead button.
-        toastManager.add({
-          type: 'error',
-          title: error instanceof Error ? error.message : String(error),
-        })
-      },
-    })
-  }
-
   const fulfill = useFulfillmentMutation(
+    orderId,
     ({
       fulfillmentId,
       ...params
@@ -46,6 +27,7 @@ export function useFulfillmentActions(orderId: string) {
   )
 
   const update = useFulfillmentMutation(
+    orderId,
     ({
       fulfillmentId,
       ...params
@@ -58,11 +40,12 @@ export function useFulfillmentActions(orderId: string) {
     }) => sellerClient().orders.fulfillments.update(orderId, fulfillmentId, params),
   )
 
-  const cancel = useFulfillmentMutation((fulfillmentId: string) =>
+  const cancel = useFulfillmentMutation(orderId, (fulfillmentId: string) =>
     sellerClient().orders.fulfillments.cancel(orderId, fulfillmentId),
   )
 
   const split = useFulfillmentMutation(
+    orderId,
     ({
       fulfillmentId,
       ...params
@@ -78,6 +61,7 @@ export function useFulfillmentActions(orderId: string) {
   // boxes or a pallet under a freight PRO number are the same shape, and each
   // carries its own tracking number and carrier status.
   const createDelivery = useFulfillmentMutation(
+    orderId,
     ({
       fulfillmentId,
       ...params
@@ -91,6 +75,7 @@ export function useFulfillmentActions(orderId: string) {
   )
 
   const updateDelivery = useFulfillmentMutation(
+    orderId,
     ({
       fulfillmentId,
       deliveryId,
@@ -112,6 +97,7 @@ export function useFulfillmentActions(orderId: string) {
   )
 
   const deleteDelivery = useFulfillmentMutation(
+    orderId,
     ({ fulfillmentId, deliveryId }: { fulfillmentId: string; deliveryId: string }) =>
       sellerClient().orders.fulfillments.deliveries.delete(orderId, fulfillmentId, deliveryId),
   )
@@ -120,23 +106,25 @@ export function useFulfillmentActions(orderId: string) {
   // refunding run through the operator's carrier account, so neither is
   // offered — the endpoint refuses both.
   const uploadLabel = useFulfillmentMutation(
+    orderId,
     ({
       fulfillmentId,
       ...params
     }: {
       fulfillmentId: string
-      file: string
+      file_signed_id: string
       // Required: a label with no tracking number is refused server-side,
       // since nothing could then follow the parcel it prints.
       tracking_number: string
       carrier?: string
       service?: string
       cost?: string
-      currency?: string
+      currency?: CurrencyCode
     }) => sellerClient().orders.fulfillments.labels.create(orderId, fulfillmentId, params),
   )
 
   const deleteLabel = useFulfillmentMutation(
+    orderId,
     ({ fulfillmentId, labelId }: { fulfillmentId: string; labelId: string }) =>
       sellerClient().orders.fulfillments.labels.delete(orderId, fulfillmentId, labelId),
   )
@@ -152,4 +140,28 @@ export function useFulfillmentActions(orderId: string) {
     uploadLabel,
     deleteLabel,
   }
+}
+
+function useFulfillmentMutation<TParams>(
+  orderId: string,
+  mutationFn: (params: TParams) => Promise<unknown>,
+) {
+  const queryClient = useQueryClient()
+  const buildKey = useResourceKeyBuilder()
+
+  return useMutation({
+    mutationFn,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: buildKey('seller-order', orderId) })
+      queryClient.invalidateQueries({ queryKey: buildKey('seller-orders') })
+    },
+    onError: (error) => {
+      // A rejected workflow — a parcel that cannot ship, a split that would
+      // empty its source — otherwise looks like a dead button.
+      toastManager.add({
+        type: 'error',
+        title: error instanceof Error ? error.message : String(error),
+      })
+    },
+  })
 }

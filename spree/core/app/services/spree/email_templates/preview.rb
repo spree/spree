@@ -23,8 +23,11 @@ module Spree
       # @param email_key [String, nil] for the layout or a partial, the email to show it in
       # @param strict [Boolean] whether an unknown variable raises
       # @param branding [Hash] unsaved branding values (see Spree::Emails::Branding)
+      # @param mailer_logo_signed_id [String, nil] the signed id of an unsaved, uploaded email logo
+      # @param mailer_logo_cleared [Boolean] whether the email logo is previewed as removed
       def initialize(store:, key:, locale: Spree::EmailTemplate::ANY_LOCALE, subject: nil, body: nil,
-                     record_id: nil, email_key: nil, strict: false, branding: {})
+                     record_id: nil, email_key: nil, strict: false, branding: {}, mailer_logo_signed_id: nil,
+                     mailer_logo_cleared: false)
         @store = store
         @key = key
         @locale = locale.presence || Spree::EmailTemplate::ANY_LOCALE
@@ -34,16 +37,20 @@ module Spree
         @email_key = email_key
         @strict = strict
         @branding = branding
+        @mailer_logo_signed_id = mailer_logo_signed_id
+        @mailer_logo_cleared = mailer_logo_cleared
       end
 
       # @return [Spree::Emails::RenderedEmail]
       # @raise [Spree::EmailTemplates::NoSampleRecord] when the store has no record to build the sample from
+      # @raise [ActiveRecord::RecordInvalid] when the unsaved logo is one saving the store would refuse
+      # @raise [ActiveSupport::MessageVerifier::InvalidSignature] when the unsaved logo's signed id is not valid
       def call
         sample = email.sample_class.new(store: @store, record_id: @record_id)
 
         in_locale do
-          renderer = Spree::Emails::Renderer.new(resolver: resolver, store: @store, currency: sample.currency, strict: @strict,
-                                                 branding: @branding)
+          renderer = Spree::Emails::Renderer.new(resolver: resolver, store: email_store, currency: sample.currency,
+                                                 strict: @strict, branding: @branding)
           sample_variables = sample.variables
           @variables = renderer.variables(sample_variables)
           @rendered = renderer.render(resolver.find(email.key), sample_variables)
@@ -64,6 +71,20 @@ module Spree
 
       def definition
         Spree.editable_email_templates[@key] || raise(ArgumentError, "#{@key} is not an editable email template")
+      end
+
+      # The store as the email shows it. An unsaved logo upload or removal is
+      # applied to a copy that is never saved, and checked as saving the store
+      # checks it, so the preview never shows a logo the Save button refuses.
+      def email_store
+        return @store if @mailer_logo_signed_id.nil? && !@mailer_logo_cleared
+
+        @email_store ||= @store.class.find(@store.id).tap do |store|
+          store.mailer_logo = @mailer_logo_cleared ? nil : @mailer_logo_signed_id
+          store.validate
+          (store.errors.attribute_names - [:mailer_logo]).each { |attribute| store.errors.delete(attribute) }
+          raise ActiveRecord::RecordInvalid, store if store.errors.any?
+        end
       end
 
       def resolver

@@ -116,6 +116,19 @@ module Spree
       publish_event('invitation.resent')
     end
 
+    # The staff account holding the invited address, if one exists. Matched
+    # the way the account's email uniqueness is, case-insensitively, so an
+    # address typed in another case still finds the one account it can belong
+    # to. Resolved by record rather than by comparing strings in Ruby, whose
+    # case folding is wider than the database's. Failing that, an exact match
+    # through the model, so an app that encrypts email still finds the account.
+    def invitee_account
+      return if email.blank?
+
+      Spree.admin_user_class.where('LOWER(email) = LOWER(?)', email).first ||
+        Spree.admin_user_class.find_by(email: email)
+    end
+
     private
 
     def publish_invitation_created_event
@@ -161,7 +174,7 @@ module Spree
       return if resource.blank?
 
       # Check role_users directly for better performance and to avoid potential source_type issues
-      user_to_check = invitee || Spree.admin_user_class.find_by(email: email)
+      user_to_check = invitee || invitee_account
       return if user_to_check.blank?
 
       if resource.role_users.exists?(user: user_to_check)
@@ -172,7 +185,7 @@ module Spree
     def set_invitee_from_email
       return if invitee.present?
 
-      self.invitee = Spree.admin_user_class.find_by(email: email)
+      self.invitee = invitee_account
     end
   end
 end

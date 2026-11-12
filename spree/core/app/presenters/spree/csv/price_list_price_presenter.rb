@@ -26,15 +26,10 @@ module Spree
 
       private
 
-      # The currency's own precision, a dot for the decimal mark and nothing
-      # else — "18.00", never "$18.00", "18.0" or "18,00". Fixed rather than
-      # localized because the file is read back by the import under the
-      # store's locale, not the exporting admin's, and a comma written here
-      # would re-import as a hundred times the price.
+      # A plain decimal ("18.00", never "$18.00" or "18,00"): the import reads
+      # the file back and accepts nothing else.
       def amount_string(amount)
-        return nil if amount.nil?
-
-        format("%.#{Spree::Money::Rounding.precision(price.currency)}f", amount)
+        Spree::Money::Rounding.format(amount, price.currency, unit_price: true)
       end
     end
   end

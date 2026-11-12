@@ -58,14 +58,6 @@ export interface TranslationBatchEntry {
   values: TranslationsUpsertParams
 }
 
-/** A supported locale as returned by `GET /admin/locales`. */
-export interface Locale {
-  code: string
-  name: string
-  default: boolean
-  rtl: boolean
-}
-
 /** A translatable resource entry from `GET /admin/translatable_resources`. */
 export interface TranslatableResource {
   resource_type: string

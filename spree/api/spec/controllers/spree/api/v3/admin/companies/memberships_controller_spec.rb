@@ -22,6 +22,18 @@ RSpec.describe Spree::Api::V3::Admin::Companies::MembershipsController, type: :c
       expect(row['company_id']).to eq(company.prefixed_id)
     end
 
+    it 'includes the customer when expanded' do
+      customer = create(:customer, first_name: 'Ada', last_name: 'Lovelace')
+      create(:company_membership, company: company, customer: customer)
+
+      get :index, params: { company_id: company.prefixed_id, expand: 'customer' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['data'].first['customer']).to include(
+        'id' => customer.prefixed_id, 'full_name' => 'Ada Lovelace'
+      )
+    end
+
     it '404s under another store company' do
       get :index, params: { company_id: create(:company, store: create(:store)).prefixed_id }, as: :json
 
@@ -48,6 +60,25 @@ RSpec.describe Spree::Api::V3::Admin::Companies::MembershipsController, type: :c
         post :create, params: { company_id: company.prefixed_id, customer_email: 'buyer@example.com' }, as: :json
 
         expect(response).to have_http_status(:unprocessable_content)
+      end
+    end
+
+    context 'when given an existing customer by id' do
+      let!(:customer) { create(:customer) }
+
+      it 'creates the membership immediately' do
+        post :create, params: { company_id: company.prefixed_id, customer_id: customer.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:created)
+        expect(json_response['id']).to start_with('cmem_')
+        expect(company.memberships.sole.customer).to eq(customer)
+      end
+
+      it '404s for an unknown customer' do
+        post :create, params: { company_id: company.prefixed_id, customer_id: 'cus_unknown' }, as: :json
+
+        expect(response).to have_http_status(:not_found)
+        expect(company.memberships).to be_empty
       end
     end
 

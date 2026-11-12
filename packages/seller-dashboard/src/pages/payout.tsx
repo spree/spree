@@ -1,4 +1,11 @@
-import { formatStoreDateTime, PageHeader, Slot } from '@spree/dashboard-core'
+import {
+  formatMoney,
+  formatStoreDateTime,
+  Money,
+  PageHeader,
+  Slot,
+  useMoneyLocale,
+} from '@spree/dashboard-core'
 import {
   Card,
   CardHeader,
@@ -32,6 +39,7 @@ import { useStoreTimezone } from '../hooks/use-store-timezone'
  */
 export function PayoutPage() {
   const { t } = useTranslation()
+  const locale = useMoneyLocale()
   const { sellerId, payoutId } = useParams({ from: '/_authenticated/$sellerId/payouts/$payoutId' })
 
   const timezone = useStoreTimezone()
@@ -54,7 +62,7 @@ export function PayoutPage() {
     <ResourceLayout
       header={
         <PageHeader
-          title={payout.display_amount}
+          title={formatMoney(payout.amount, payout.currency, locale)}
           subtitle={formatStoreDateTime(payout.created_at, timezone)}
           backTo="payouts"
           badges={
@@ -63,7 +71,8 @@ export function PayoutPage() {
               label={t(`earnings.statuses.${payout.status}`, { defaultValue: payout.status })}
             />
           }
-          resource={{ id: payout.id }}
+          resource={payout}
+          endpoint={`/api/v3/seller/payouts/${payout.id}`}
         />
       }
       main={
@@ -85,9 +94,11 @@ export function PayoutPage() {
               <Skeleton className="h-16 w-full" />
             </div>
           ) : transfersFailed ? (
-            <p className="px-6 pb-6 text-sm text-destructive">{t('payouts.detail.covers_error')}</p>
+            <p className="px-6 pb-6 text-base text-destructive">
+              {t('payouts.detail.covers_error')}
+            </p>
           ) : rows.length === 0 ? (
-            <p className="px-6 pb-6 text-sm text-muted-foreground">
+            <p className="px-6 pb-6 text-base text-muted-foreground">
               {t('payouts.detail.covers_empty')}
             </p>
           ) : (
@@ -121,7 +132,7 @@ export function PayoutPage() {
                       {t(`earnings.kinds.${transfer.kind}`, { defaultValue: transfer.kind })}
                     </TableCell>
                     <TableCell className="text-right tabular-nums">
-                      {transfer.display_amount}
+                      <Money amount={transfer.amount} currency={transfer.currency} />
                     </TableCell>
                   </TableRow>
                 ))}
@@ -140,7 +151,9 @@ export function PayoutPage() {
               <CardTitle>{t('payouts.detail.settlement')}</CardTitle>
             </CardHeader>
             <div className="flex flex-col gap-3 px-6 pb-6">
-              <ReadRow label={t('payouts.columns.amount')}>{payout.display_amount}</ReadRow>
+              <ReadRow label={t('payouts.columns.amount')}>
+                <Money amount={payout.amount} currency={payout.currency} />
+              </ReadRow>
               <ReadRow label={t('payouts.columns.reference')}>{payout.reference}</ReadRow>
               <ReadRow label={t('payouts.detail.period')}>
                 {payout.period_start && payout.period_end

@@ -8,7 +8,6 @@ export const DeliveryMethodRuleSchema = z.object({
   updated_at: z.string(),
   type: z.string(),
   preferences: z.record(z.string(), z.unknown()),
-  preference_schema: z.array(z.object({ key: z.string(), type: z.string(), default: z.unknown(), choices: z.array(z.string()).optional() })),
   product_ids: z.array(z.string()),
 });
 

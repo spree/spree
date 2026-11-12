@@ -1,5 +1,5 @@
 import crypto from 'node:crypto'
-import { execa, execaCommand } from 'execa'
+import { execa } from 'execa'
 import type { PackageManager } from './types.js'
 
 /**
@@ -30,7 +30,7 @@ async function isPnpmAvailable(): Promise<boolean> {
 
 export async function isDockerRunning(): Promise<boolean> {
   try {
-    await execaCommand('docker info', { stdio: 'ignore' })
+    await execa('docker', ['info'], { stdio: 'ignore' })
     return true
   } catch {
     return false
@@ -95,13 +95,6 @@ export function runCommand(pm: PackageManager): string {
   if (pm === 'npm') return 'npx'
   if (pm === 'yarn') return 'yarn'
   return 'pnpm'
-}
-
-/** Runner for a one-off remote package (e.g. `npx skills`, `pnpm dlx skills`). */
-export function dlxCommand(pm: PackageManager): string {
-  if (pm === 'npm') return 'npx'
-  if (pm === 'yarn') return 'yarn dlx'
-  return 'pnpm dlx'
 }
 
 /** Global-install command for a package (e.g. `npm install -g`, `pnpm add -g`). */

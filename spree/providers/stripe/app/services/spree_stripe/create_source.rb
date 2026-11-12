@@ -50,7 +50,8 @@ module SpreeStripe
 
     def find_or_create_credit_card
       if customer
-        exact_source = customer.credit_cards.find_by(gateway_payment_profile_id: stripe_payment_method_id)
+        exact_source = customer.credit_cards.where(payment_method: gateway).
+                       find_by(gateway_payment_profile_id: stripe_payment_method_id)
         return exact_source if exact_source
 
         matching_source = match_credit_card_by_fingerprint

@@ -9,13 +9,6 @@ RSpec.describe Spree::DeliveryRateProvider::Base do
       expect { described_class.new(delivery_method).estimate(nil) }.to raise_error(NotImplementedError)
     end
 
-    it 'no-ops the optional lifecycle hooks' do
-      provider = described_class.new(delivery_method)
-
-      expect { provider.book(nil) }.not_to raise_error
-      expect { provider.release(nil) }.not_to raise_error
-    end
-
     it 'needs no integration by default' do
       expect(described_class.integration_class).to be_nil
       expect(described_class.available_for_store?(store)).to be(true)

@@ -7,11 +7,6 @@ module Spree
         typelize quantity: :number,
                  received_quantity: :number,
                  resellable: :boolean,
-                 original_price: :string,
-                 new_variant_price: :string,
-                 price_difference: :string,
-                 original_tax_total: :string,
-                 new_tax_total: :string,
                  original_variant_id: [:string, nullable: true],
                  new_variant_id: [:string, nullable: true],
                  line_item_id: [:string, nullable: true],
@@ -21,10 +16,9 @@ module Spree
 
         # What the customer paid for the units coming back, after discounts
         # and with their tax.
-        attributes original_price: :string
+        money_attributes :original_price
         # The replacement at the same discount, with its own tax.
-        attributes new_variant_price: :string, price_difference: :string, original_tax_total: :string,
-                   new_tax_total: :string
+        money_attributes :new_variant_price, :price_difference, :original_tax_total, :new_tax_total
         prefixed_id_attributes :original_variant, :new_variant, :line_item, :fulfillment_item
 
         one :original_variant, resource: proc { Spree.api.variant_serializer }, if: proc { expand?('original_variant') }

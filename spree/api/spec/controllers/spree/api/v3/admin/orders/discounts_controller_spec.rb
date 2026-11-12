@@ -34,21 +34,29 @@ RSpec.describe Spree::Api::V3::Admin::Orders::DiscountsController, type: :contro
         order_id: order.prefixed_id,
         line_item_id: line_item.prefixed_id,
         label: 'Appeasement',
-        value: 3,
+        value: '3.00',
         value_type: 'flat'
       }, as: :json
 
       expect(response).to have_http_status(:created)
       expect(json_response['data'].length).to eq(1)
-      expect(json_response['data'].first['amount']).to eq('-3.0')
+      expect(json_response['data'].first['amount']).to eq('-3.00')
       expect(order.reload.total).to eq(original_total - 3)
+    end
+
+    it 'takes the value only as `value`, not the retired `amount` spelling' do
+      expect do
+        post :create, params: { order_id: order.prefixed_id, label: 'Appeasement', amount: '3.00' }, as: :json
+      end.not_to(change { order.discounts.count })
+
+      expect(response).to have_http_status(:unprocessable_content)
     end
 
     it 'distributes an order-level discount across line items' do
       post :create, params: {
         order_id: order.prefixed_id,
         label: 'Order apology',
-        value: 4,
+        value: '4.00',
         value_type: 'flat'
       }, as: :json
 
@@ -62,7 +70,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::DiscountsController, type: :contro
         order_id: order.prefixed_id,
         line_item_id: line_item.prefixed_id,
         label: 'Percent off',
-        value: 50,
+        value: '50',
         value_type: 'percent'
       }, as: :json
 

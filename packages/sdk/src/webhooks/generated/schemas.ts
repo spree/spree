@@ -6,6 +6,7 @@ import {
   CompanySchema,
   CompanyInvitationSchema,
   CustomerSchema,
+  DataRequestConfirmationRequestedEventSchema,
   DataRequestEventSchema,
   DeliverySchema,
   DigitalAssetSchema,
@@ -30,6 +31,8 @@ import {
   PaymentSetupSessionSchema,
   PriceSchema,
   ProductSchema,
+  ProductCategorySchema,
+  ProductCollectionSchema,
   ProductSubmissionSchema,
   PromotionSchema,
   PurchaseOrderEventSchema,
@@ -85,6 +88,7 @@ type WebhookEventName =
   | 'customer.password_reset'
   | 'customer.password_reset_requested'
   | 'data_request.completed'
+  | 'data_request.confirmation_requested'
   | 'data_request.created'
   | 'data_request.deleted'
   | 'data_request.updated'
@@ -142,6 +146,14 @@ type WebhookEventName =
   | 'line_item.created'
   | 'line_item.deleted'
   | 'line_item.updated'
+  | 'maintenance_task_run.cancelled'
+  | 'maintenance_task_run.created'
+  | 'maintenance_task_run.deleted'
+  | 'maintenance_task_run.errored'
+  | 'maintenance_task_run.interrupted'
+  | 'maintenance_task_run.started'
+  | 'maintenance_task_run.succeeded'
+  | 'maintenance_task_run.updated'
   | 'media.created'
   | 'media.deleted'
   | 'media.updated'
@@ -207,6 +219,10 @@ type WebhookEventName =
   | 'product.proposed'
   | 'product.rejected'
   | 'product.updated'
+  | 'product_category.created'
+  | 'product_category.deleted'
+  | 'product_collection.created'
+  | 'product_collection.deleted'
   | 'product_submission.created'
   | 'product_submission.deleted'
   | 'product_submission.updated'
@@ -339,6 +355,7 @@ export const webhookEventSchemas: Readonly<Record<WebhookEventName, z.ZodType>> 
   'customer.password_reset': CustomerSchema,
   'customer.password_reset_requested': PasswordResetRequestedEventSchema,
   'data_request.completed': DataRequestEventSchema,
+  'data_request.confirmation_requested': DataRequestConfirmationRequestedEventSchema,
   'data_request.created': DataRequestEventSchema,
   'data_request.deleted': DataRequestEventSchema,
   'data_request.updated': DataRequestEventSchema,
@@ -396,6 +413,14 @@ export const webhookEventSchemas: Readonly<Record<WebhookEventName, z.ZodType>> 
   'line_item.created': LineItemSchema,
   'line_item.deleted': LineItemSchema,
   'line_item.updated': LineItemSchema,
+  'maintenance_task_run.cancelled': WebhookRecordReferenceSchema,
+  'maintenance_task_run.created': WebhookRecordReferenceSchema,
+  'maintenance_task_run.deleted': WebhookRecordReferenceSchema,
+  'maintenance_task_run.errored': WebhookRecordReferenceSchema,
+  'maintenance_task_run.interrupted': WebhookRecordReferenceSchema,
+  'maintenance_task_run.started': WebhookRecordReferenceSchema,
+  'maintenance_task_run.succeeded': WebhookRecordReferenceSchema,
+  'maintenance_task_run.updated': WebhookRecordReferenceSchema,
   'media.created': MediaEventSchema,
   'media.deleted': MediaEventSchema,
   'media.updated': MediaEventSchema,
@@ -461,6 +486,10 @@ export const webhookEventSchemas: Readonly<Record<WebhookEventName, z.ZodType>> 
   'product.proposed': ProductSchema,
   'product.rejected': ProductSchema,
   'product.updated': ProductSchema,
+  'product_category.created': ProductCategorySchema,
+  'product_category.deleted': ProductCategorySchema,
+  'product_collection.created': ProductCollectionSchema,
+  'product_collection.deleted': ProductCollectionSchema,
   'product_submission.created': ProductSubmissionSchema,
   'product_submission.deleted': ProductSubmissionSchema,
   'product_submission.updated': ProductSubmissionSchema,

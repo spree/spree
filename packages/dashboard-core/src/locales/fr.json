@@ -1,5 +1,8 @@
 {
   "admin": {
+    "address_select": {
+      "none": "Aucune adresse sélectionnée"
+    },
     "app_name": "Spree Admin",
     "a11y": {
       "breadcrumb": "Fil d'Ariane",
@@ -34,7 +37,6 @@
     },
     "account": {
       "community": "Communauté",
-      "contact_support": "Contacter le support",
       "documentation": "Documentation",
       "edit_profile": "Modifier le profil",
       "language": {
@@ -42,8 +44,8 @@
         "update_failed": "Impossible d’enregistrer votre préférence de langue. Veuillez réessayer."
       },
       "log_out": "Se déconnecter",
-      "preferences": "Préférences",
-      "view_store": "Voir la boutique"
+      "report_issue": "Signaler un problème",
+      "send_feedback": "Envoyer un avis"
     },
     "actions": {
       "actions_menu": "Actions",
@@ -97,8 +99,13 @@
     "address_book": {
       "default_billing": "Facturation par défaut",
       "default_shipping": "Livraison par défaut",
+      "inherited_from": "Héritée de {{name}}",
       "set_default_billing": "Définir comme adresse de facturation par défaut",
-      "set_default_shipping": "Définir comme adresse de livraison par défaut"
+      "set_default_shipping": "Définir comme adresse de livraison par défaut",
+      "columns": {
+        "address": "Adresse",
+        "defaults": "Par défaut pour"
+      }
     },
     "auth": {
       "back_to_login": "Retour à la connexion",
@@ -113,6 +120,7 @@
         "title": "Réinitialiser votre mot de passe"
       },
       "login": {
+        "account_deactivated": "Ce compte a été désactivé. Contactez un administrateur pour rétablir l'accès.",
         "account_not_provisioned": "Ce compte n'est pas autorisé pour cette boutique. Demandez une invitation à un administrateur.",
         "divider": "ou",
         "invalid_oauth_state": "Cette session de connexion a expiré ou n'était pas valide. Veuillez recommencer.",
@@ -183,7 +191,10 @@
       "searching": "Recherche…",
       "select_placeholder": "Sélectionner…",
       "unsaved_changes": "Vous avez des modifications non enregistrées.",
-      "yes": "Oui"
+      "yes": "Oui",
+      "done": "Terminé",
+      "error": "Une erreur s'est produite.",
+      "unsaved_label": "Modifications non enregistrées"
     },
     "components": {
       "address_block": {
@@ -335,7 +346,8 @@
       "json_preview_drawer": {
         "collapse_depth": "Profondeur de réduction",
         "copied": "Copié",
-        "copy_all": "Tout copier",
+        "copy_curl": "Copier en curl",
+        "copy_json": "Copier le JSON",
         "depth": "Profondeur {{level}}",
         "failed_to_load": "Échec du chargement : {{message}}",
         "open_raw": "Ouvrir la réponse brute",
@@ -359,9 +371,12 @@
         "video_title": "Aperçu de la vidéo"
       },
       "metadata_card": {
+        "copy_reference": "Copier la clé {{system}}",
         "empty_description": "Les applications et intégrations remplissent ceci automatiquement.",
         "empty_title": "Aucune métadonnée",
-        "title": "Métadonnées"
+        "external_references": "Références externes",
+        "title": "Métadonnées",
+        "view": "Voir les métadonnées"
       },
       "page_header": {
         "copy_id": "Copier l'ID",
@@ -414,6 +429,7 @@
       },
       "table_toolbar": {
         "add_filter": "Ajouter un filtre",
+        "any_field": "{{field}} : tous",
         "ascending": "Croissant",
         "clear_all": "Tout effacer",
         "columns_tooltip": "Colonnes",
@@ -426,14 +442,13 @@
           "this_month": "Ce mois-ci",
           "today": "Aujourd'hui"
         },
-        "date_range_end": "Fin",
-        "date_range_start": "Début",
         "descending": "Décroissant",
         "filter_by": "Filtrer par…",
-        "filter_date_placeholder": "Choisir une date",
         "filter_select_placeholder": "Sélectionner…",
         "filter_text_placeholder": "Filtrer…",
         "filter_to_placeholder": "Filtrer sur…",
+        "n_selected": "{{count}} sélectionnés",
+        "only": "Uniquement",
         "operators": {
           "after": "après",
           "before": "avant",
@@ -459,9 +474,13 @@
         "remove_filter": "Supprimer le filtre",
         "reset_to_default": "Réinitialiser",
         "search_placeholder": "Rechercher…",
+        "select_all": "Tout sélectionner",
         "sort_by": "Trier par",
         "sort_tooltip": "Trier",
-        "visible_columns": "Colonnes visibles"
+        "visible_columns": "Colonnes visibles",
+        "row_density": "Densité des lignes",
+        "density_comfortable": "Confortable",
+        "density_compact": "Compacte"
       },
       "tag_combobox": {
         "create_option": "Créer « {{tag}} »",
@@ -474,12 +493,65 @@
         "light": "Clair",
         "system": "Système"
       },
+      "timezone_combobox": {
+        "empty": "Aucun fuseau horaire trouvé",
+        "placeholder": "Sélectionner un fuseau horaire",
+        "search_placeholder": "Rechercher un fuseau horaire…"
+      },
       "wizard": {
         "discard_cancel": "Continuer",
         "discard_confirm": "Abandonner",
         "discard_message": "Tout ce que vous avez saisi sera perdu. Cette action est irréversible.",
         "discard_title": "Abandonner ce brouillon ?"
+      },
+      "product_stock": {
+        "out_of_stock": "En rupture de stock",
+        "on_backorder": "En réapprovisionnement",
+        "in_stock": "{{count}} en stock",
+        "in_stock_short": "En stock",
+        "variants_one": "{{count}} variante",
+        "variants_other": "{{count}} variantes"
+      },
+      "developer_inspector": {
+        "title": "Outils de développement",
+        "description": "Requêtes à l’Admin API depuis cet onglet, conservées en mémoire uniquement. Les jetons et mots de passe sont masqués.",
+        "system_info": "Informations système",
+        "clear": "Effacer",
+        "tabs": {
+          "requests": "Requêtes",
+          "errors": "Erreurs"
+        },
+        "empty_requests": "Aucune requête pour l’instant. Utilisez le tableau de bord et elles apparaîtront ici.",
+        "empty_errors": "Aucune requête en échec.",
+        "select_request": "Sélectionnez une requête pour voir ses détails.",
+        "network_error": "Erreur réseau",
+        "status": "Statut",
+        "duration": "Durée",
+        "duration_ms": "{{value}} ms",
+        "request_id": "ID de requête",
+        "error_code": "Code d’erreur",
+        "query": "Paramètres de requête",
+        "request_body": "Corps de la requête",
+        "response_body": "Corps de la réponse",
+        "no_body": "Aucun corps",
+        "copy_curl": "Copier en curl",
+        "copy_sdk": "Copier en appel SDK",
+        "copy_response": "Copier la réponse",
+        "copy_request_id": "Copier l’ID de requête",
+        "copied": "Copié",
+        "menu_open": "Outils de développement"
+      },
+      "server_error": {
+        "title": "Une erreur s'est produite sur le serveur",
+        "request_id": "Requête {{id}}",
+        "report": "Signaler"
       }
+    },
+    "currency_amounts": {
+      "amount_in_currency": "Montant en {{currency}}",
+      "help": "Les devises laissées vides ne se voient pas proposer cette méthode de livraison.",
+      "label": "Montant",
+      "required": "Saisissez un montant dans au moins une devise."
     },
     "custom_field_definitions": {
       "errors": {
@@ -935,6 +1007,14 @@
       "order_multiple": {
         "label": "Multiple de commande",
         "help": "Chaque palier au-dessus du minimum. Laisser vide pour toute quantité."
+      },
+      "store": {
+        "digital_asset_authorized_clicks": {
+          "label": "Téléchargements autorisés"
+        },
+        "digital_asset_authorized_days": {
+          "label": "Jours de disponibilité"
+        }
       }
     },
     "image_upload": {
@@ -1015,16 +1095,59 @@
       },
       "wizard_title": "Import"
     },
+    "invitation": {
+      "accept": "Accepter l’invitation",
+      "accepting": "Acceptation…",
+      "could_not_accept": "Impossible d'accepter l'invitation",
+      "create_and_accept": "Créer un compte et accepter",
+      "create_to_accept": ". Créez votre compte pour accepter.",
+      "generic_error_message": "Une erreur s'est produite. Veuillez réessayer.",
+      "generic_error_title": "Impossible de charger l'invitation",
+      "invited_as_role": " en tant que {{role}}",
+      "invited_by": "{{email}} vous a invité",
+      "invited_generic": "Vous avez été invité",
+      "join_store": "Rejoindre {{store}}",
+      "loading": "Chargement de l'invitation…",
+      "missing_token_message": "Ce lien semble incomplet. Demandez à la personne qui vous a invité de vous le renvoyer.",
+      "missing_token_title": "Jeton d'invitation manquant",
+      "not_found_message": "Cette invitation a expiré, a été révoquée ou a déjà été acceptée. Demandez à la personne qui vous a invité de vous en envoyer une nouvelle.",
+      "not_found_title": "Invitation introuvable",
+      "password_confirmation": "Confirmer le mot de passe",
+      "sign_in_and_accept": "Se connecter et accepter",
+      "sign_in_to_accept": ". Connectez-vous pour accepter.",
+      "signed_in_as_another_account": "Vous êtes connecté en tant que {{email}}, mais cette invitation est destinée à {{invitee}}. Déconnectez-vous pour l’accepter.",
+      "signed_in_as_invitee": ". Vous êtes connecté en tant que {{email}}."
+    },
     "media_picker": {
+      "any": "Tous",
       "confirm": "Ajouter la sélection",
       "description": "Choisissez des fichiers déjà dans votre médiathèque, ou importez-en de nouveaux.",
+      "drop_hint_images": "Ou glissez-déposez des images ici",
+      "drop_hint_media": "Ou glissez-déposez des images et des vidéos ici",
       "empty": "Votre médiathèque est vide. Importez un fichier pour commencer.",
+      "filter_type": "Type",
+      "filter_usage": "Utilisation",
       "no_results": "Aucun fichier ne correspond à votre recherche.",
       "search_placeholder": "Rechercher par nom…",
       "selected_count_one": "{{count}} sélectionné",
       "selected_count_other": "{{count}} sélectionnés",
+      "sort_date_added": "Date d’ajout",
+      "sort_file_name": "Nom du fichier",
+      "sort_file_size": "Taille du fichier",
       "title": "Médiathèque",
-      "upload": "Importer"
+      "type_image": "Images",
+      "type_video": "Vidéos",
+      "upload": "Importer",
+      "usage_unused": "Non utilisé",
+      "usage_used": "Utilisé",
+      "view": "Affichage",
+      "view_grid": "Vue en grille",
+      "view_list": "Vue en liste"
+    },
+    "media_editor": {
+      "information": "Informations",
+      "details": "Détails",
+      "added": "Ajouté le {{date}}"
     },
     "messages": {
       "address_removed": "Adresse supprimée",
@@ -1463,11 +1586,13 @@
         "seeded_report_read_only": "Ce rapport est intégré et ne peut pas être modifié. Enregistrez plutôt une copie.",
         "taken": "est déjà utilisé",
         "too_long": "est trop long ({{count}} caractères maximum)",
+        "too_many_decimals": "a plus de {{count}} décimales",
         "too_short": "est trop court ({{count}} caractères minimum)",
         "wrong_length": "n'a pas la bonne longueur ({{count}} caractères attendus)"
       },
       "country_required": "Le pays est requis",
       "currency_required": "La devise est requise",
+      "locale_required": "La langue est requise",
       "first_name_required": "Le prénom est obligatoire",
       "invalid_email": "Saisissez une adresse e-mail valide",
       "invalid_email_or_password": "E-mail ou mot de passe invalide",
@@ -1479,7 +1604,8 @@
       "passwords_dont_match": "Les mots de passe ne correspondent pas",
       "positive_number": "{{field}} doit être supérieur à 0",
       "required": "{{field}} est obligatoire",
-      "store_name_required": "Le nom de la boutique est requis"
+      "store_name_required": "Le nom de la boutique est requis",
+      "too_many_decimals": "{{field}} peut avoir au plus {{count}} décimales"
     },
     "products": {
       "autocomplete": {
@@ -1514,12 +1640,18 @@
         "add_video_title": "Ajouter un lien vidéo",
         "assigned_variants_help": "Sélectionnez les variantes que cette image représente. Laissez vide pour l'appliquer à toutes les variantes.",
         "assigned_variants_label": "Variantes associées",
-        "delete_confirm": "Supprimer ce média ? Cette action est irréversible.",
+        "delete_confirm": "Retirer ce média ? Il sera supprimé à l’enregistrement du produit.",
+        "delete_selected_confirm_one": "Retirer le média sélectionné ? Il sera supprimé à l’enregistrement du produit.",
+        "delete_selected_confirm_other": "Retirer les {{count}} médias sélectionnés ? Ils seront supprimés à l’enregistrement du produit.",
         "drop_hint": "Glissez-déposez un média ici, ou cliquez pour parcourir",
         "edit_title": "Modifier le média",
         "file_types_hint": "Images (PNG, JPG, WebP) et vidéos (MP4, WebM, MOV)",
         "focal_point_help": "Cliquez sur l'image pour définir ce qui reste visible lors du recadrage.",
         "focal_point_reset": "Réinitialiser",
+        "select_all": "Sélectionner tous les médias",
+        "select_item": "Sélectionner {{name}}",
+        "selected_count_one": "{{count}} sélectionné",
+        "selected_count_other": "{{count}} sélectionnés",
         "unsupported_file_one": "{{count}} fichier n'a pas été ajouté — seules les images et vidéos sont prises en charge.",
         "unsupported_file_other": "{{count}} fichiers n'ont pas été ajoutés — seules les images et vidéos sont prises en charge.",
         "upload_failed": "Échec du téléversement de {{name}} : {{message}}",
@@ -1630,6 +1762,10 @@
           "failed_to_create_option_type": "Impossible de créer le type d’option",
           "failed_to_create_value": "Impossible de créer la valeur"
         },
+        "images_aria": "Images de {{name}}",
+        "images_description": "Cochez les images du produit qui montrent cette variante. Elles suivent l’ordre de la carte Médias, et la première cochée devient sa vignette — faites glisser les images dans cette carte pour la changer.",
+        "images_title": "Images de {{name}}",
+        "images_unsaved": "Enregistrez le produit pour ajouter des images à cette variante",
         "keep": "Tout conserver",
         "option_type_label": "Type d'option",
         "option_type_placeholder": "Choisissez un type d'option",
@@ -1651,6 +1787,7 @@
           "carton_placeholder": "Aucun carton",
           "pending_save": "Les modifications sont enregistrées avec le produit."
         },
+        "thumbnail_badge": "Vignette",
         "title": "Variantes",
         "variant_label": "Variante"
       }
@@ -2029,6 +2166,38 @@
           "description": "Le vendeur doit fournir une adresse pour les retours"
         }
       }
+    },
+    "digital_assets": {
+      "add": "Ajouter",
+      "all_variants": "Toutes les variantes",
+      "columns": {
+        "file": "Fichier",
+        "variant": "Variante",
+        "size": "Taille",
+        "downloads": "Téléchargements",
+        "days": "Jours"
+      },
+      "delete_description": "« {{name}} » ne sera plus téléchargeable par les personnes qui l'ont acheté. Effet immédiat.",
+      "delete_title": "Supprimer ce fichier ?",
+      "description": "Fichiers que les acheteurs peuvent télécharger après l'achat. Associez-les à un produit numérique, ou à un produit physique pour livrer un manuel ou une garantie.",
+      "download": "Télécharger",
+      "drop_hint": "Glissez-déposez des fichiers ici, ou cliquez pour parcourir",
+      "empty": "Aucun fichier pour le moment",
+      "limit_invalid": "Les limites doivent être des entiers supérieurs ou égaux à 1, ou vides.",
+      "limits_help": "Laissez les limites de téléchargements et de jours vides pour utiliser les paramètres de la boutique.",
+      "source": {
+        "upload": "Téléverser un fichier"
+      },
+      "store_default": "{{count}} (par défaut)",
+      "title": "Fichiers numériques",
+      "untitled": "Fichier sans nom",
+      "upload": "Ajouter un fichier",
+      "upload_failed": "Échec du téléversement de {{name}} : {{message}}",
+      "uploading": "Téléversement de {{name}}…",
+      "uploading_short": "Téléversement…",
+      "replace": "Remplacer le fichier",
+      "replace_description": "« {{name}} » est supprimé et tous les acheteurs téléchargent le nouveau fichier depuis leurs liens existants. Effet immédiat.",
+      "replace_title": "Remplacer ce fichier ?"
     }
   }
 }

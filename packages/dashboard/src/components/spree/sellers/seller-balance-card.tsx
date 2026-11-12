@@ -1,5 +1,5 @@
 import type { Seller } from '@spree/admin-sdk'
-import { Subject, usePermissions } from '@spree/dashboard-core'
+import { isPositiveMoney, Money, Subject, usePermissions } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -13,7 +13,7 @@ import {
 import { Link } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { useSellerBalances, useSettleSeller } from '../../../hooks/use-seller-ledger'
-import { ReadRow } from './seller-read-row'
+import { ReadRow } from '../read-row'
 
 /**
  * What this seller has earned and what they are still owed, per currency.
@@ -36,7 +36,7 @@ export function SellerBalanceCard({ seller }: { seller: Seller }) {
   const balances = data?.data ?? []
   if (balances.length === 0) return null
 
-  const owed = balances.some((balance) => Number.parseFloat(balance.balance) > 0)
+  const owed = balances.some((balance) => isPositiveMoney(balance.balance))
   const canSettle = permissions.can('update', Subject.SellerPayout) && owed
 
   // Settling moves money, so it is asked for rather than fired from a click.
@@ -72,7 +72,9 @@ export function SellerBalanceCard({ seller }: { seller: Seller }) {
             <ReadRow
               label={t('admin.payouts.balance.owed', { currency: balance.settlement_currency })}
             >
-              <span className="font-medium">{balance.display_balance}</span>
+              <span className="font-medium">
+                <Money amount={balance.balance} currency={balance.settlement_currency} />
+              </span>
             </ReadRow>
             <ReadRow
               label={
@@ -81,19 +83,23 @@ export function SellerBalanceCard({ seller }: { seller: Seller }) {
                   : t('admin.payouts.balance.earned')
               }
             >
-              {balance.display_earned}
+              <Money amount={balance.earned} currency={balance.currency} />
             </ReadRow>
             {balance.converted && (
               <ReadRow label={t('admin.payouts.balance.payable')}>
-                {balance.display_payable}
+                <Money amount={balance.payable} currency={balance.settlement_currency} />
               </ReadRow>
             )}
-            <ReadRow label={t('admin.payouts.balance.paid')}>{balance.display_paid}</ReadRow>
-            <ReadRow label={t('admin.payouts.balance.pending')}>{balance.display_pending}</ReadRow>
+            <ReadRow label={t('admin.payouts.balance.paid')}>
+              <Money amount={balance.paid} currency={balance.settlement_currency} />
+            </ReadRow>
+            <ReadRow label={t('admin.payouts.balance.pending')}>
+              <Money amount={balance.pending} currency={balance.currency} />
+            </ReadRow>
           </div>
         ))}
 
-        <div className="flex gap-4 border-t pt-3 text-sm">
+        <div className="flex gap-4 border-t pt-3 text-base">
           <Link
             to={'/$storeId/sellers/transfers' as string}
             search={sellerFilter(seller.id, 'seller-transfers')}

@@ -9,7 +9,7 @@ defineTable<SavedReport>('saved-reports', {
   docsPath: 'reports/reports',
   title: i18n.t('admin.reports.title'),
   description: i18n.t('admin.reports.subtitle'),
-  searchParam: 'name_cont',
+  searchParam: 'search',
   searchPlaceholder: i18n.t('admin.reports.table.search_placeholder'),
   defaultSort: { field: 'name', direction: 'asc' },
   emptyIcon: <ChartColumnIcon className="size-8 text-muted-foreground" />,

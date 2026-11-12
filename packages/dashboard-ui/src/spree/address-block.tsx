@@ -1,3 +1,4 @@
+import { intlDisplayName } from '@spree/core'
 import { useTranslation } from 'react-i18next'
 
 /**
@@ -28,31 +29,27 @@ function localizedCountryName(
   iso?: string | null,
   name?: string | null,
 ): string | null {
-  if (iso) {
-    try {
-      const localized = new Intl.DisplayNames([locale, 'en'], { type: 'region' }).of(iso)
-      if (localized) return localized
-    } catch {
-      // Runtime without Intl.DisplayNames coverage — fall back below.
-    }
-  }
-  return name ?? iso ?? null
+  const localized = iso ? intlDisplayName('region', locale, iso) : undefined
+  return localized || (name ?? iso ?? null)
 }
 
 export function AddressBlock({
   title,
   address,
+  emptyText,
 }: {
   /** Omitted where the surrounding card already names the address. */
   title?: string
   address: AddressBlockValue | null | undefined
+  /** Shown in place of the address when there is none. Defaults to "Not provided". */
+  emptyText?: string
 }) {
   const { t, i18n } = useTranslation()
   return (
     <div>
-      {title && <h6 className="font-semibold text-sm mb-1.5">{title}</h6>}
+      {title && <h6 className="font-semibold text-base mb-1.5">{title}</h6>}
       {address ? (
-        <div className="text-sm text-muted-foreground flex flex-col gap-0.5">
+        <div className="text-base text-muted-foreground flex flex-col gap-0.5">
           <div>{address.full_name}</div>
           {address.company && <div>{address.company}</div>}
           <div>{address.address1}</div>
@@ -66,8 +63,8 @@ export function AddressBlock({
           {address.phone && <div>{address.phone}</div>}
         </div>
       ) : (
-        <span className="text-sm text-muted-foreground">
-          {t('admin.components.address_block.not_provided')}
+        <span className="text-base text-muted-foreground">
+          {emptyText ?? t('admin.components.address_block.not_provided')}
         </span>
       )}
     </div>

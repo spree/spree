@@ -9,6 +9,14 @@ module Spree
 
           protected
 
+          def additional_sort_fields
+            Spree::SearchProvider::Base::SORT_FIELDS
+          end
+
+          def custom_field_filters?
+            true
+          end
+
           def model_class
             Spree::Product
           end

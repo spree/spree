@@ -36,6 +36,9 @@ import {
   TableHeader,
   TableHeaderRow,
   TableRow,
+  Tabs,
+  TabsList,
+  TabsTrigger,
   Tooltip,
   TooltipContent,
   TooltipTrigger,
@@ -56,6 +59,7 @@ import {
 import { createPortal } from 'react-dom'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
+import { runtimeListParams } from '../api-client'
 import { useAuth } from '../hooks/use-auth'
 import { useVisualViewportOffset } from '../hooks/use-visual-viewport-offset'
 import { filtersToRansack } from '../lib/filters-to-ransack'
@@ -141,9 +145,26 @@ export const resourceSearchSchema = z.object({
       return val
     }, z.array(z.string()))
     .optional(),
+  /** The open tab of a table with `views`; absent means the first. */
+  view: z.string().optional(),
 })
 
 export type ResourceSearch = z.infer<typeof resourceSearchSchema>
+
+/**
+ * State for a `ResourceTable` held in the component rather than the URL, so
+ * several tables can sit on one page. Spread the result onto the table.
+ */
+export function useEmbeddedTableSearch(initial: Partial<ResourceSearch> = {}) {
+  const [search, setSearch] = useState<Record<string, unknown>>(initial)
+  // Parsed once per change: the table memoizes on the parsed arrays.
+  const searchParams = useMemo(() => resourceSearchSchema.parse(search), [search])
+  return {
+    searchParams,
+    onSearchChange: (updates: Record<string, unknown>) =>
+      setSearch((previous) => ({ ...previous, ...updates })),
+  }
+}
 
 // ============================================================================
 // Props
@@ -165,6 +186,20 @@ export interface ResourceActionsContext {
   totalCount: number | undefined
 }
 
+/**
+ * One tab of a list split into parts that are never read together, such as
+ * the operator's own stock locations and their sellers'. Each tab is a fixed
+ * slice of the list, not a filter the merchant can clear.
+ */
+export interface TableView {
+  key: string
+  label: string
+  /** Request params sent while this tab is open, on top of `defaultParams`. */
+  params?: Record<string, unknown>
+  /** Columns this tab leaves out of the table, the column picker and the filters. */
+  hiddenColumns?: string[]
+}
+
 interface ResourceTableProps<T> {
   /** Registry key (e.g., 'products') */
   tableKey: string
@@ -176,10 +211,19 @@ interface ResourceTableProps<T> {
    * `[webhookDeliveriesTableKey(endpointId)]`).
    */
   queryKey: string | readonly unknown[]
-  /** Function that calls the SDK to fetch data */
-  queryFn: (params: Record<string, unknown>) => Promise<{ data: T[]; meta: PaginationMeta }>
+  /**
+   * Function that calls the SDK to fetch data. Its params are built at runtime
+   * from the table's columns and filters, so any typed SDK list method fits.
+   */
+  queryFn: (params: never) => Promise<{ data: T[]; meta: PaginationMeta }>
   /** Current search params from the route */
   searchParams: ResourceSearch
+  /**
+   * Takes the table's state changes instead of the URL — for a table embedded
+   * in a record page beside others, which would otherwise share one `page`
+   * and `filters`. Pair with `useEmbeddedTableSearch`.
+   */
+  onSearchChange?: (updates: Record<string, unknown>) => void
   /** Title displayed in the toolbar header. Overrides the table definition's title. */
   title?: string
   /**
@@ -199,6 +243,19 @@ interface ResourceTableProps<T> {
   docsPath?: string
   /** Default params always sent with every request (e.g., { complete: 1 } for orders) */
   defaultParams?: Record<string, unknown>
+  /** Splits the list into tabs; the first opens by default. */
+  views?: TableView[]
+  /**
+   * Columns left out entirely — not shown, not offered as filters — such as
+   * the seller on a seller's own page. Adds to the open view's.
+   */
+  hiddenColumns?: string[]
+  /**
+   * Draws the table as a card — border, corners and lift — holding its
+   * toolbar and pagination, with a plain, unpinned header row: for a table
+   * embedded among a record page's cards.
+   */
+  framed?: boolean
   /**
    * Actions to render in the toolbar (e.g., "Add Product" button). Either a
    * static node, or a function that receives the current table state — use
@@ -256,11 +313,15 @@ export function ResourceTable<T extends Record<string, any>>({
   queryKey,
   queryFn,
   searchParams,
+  onSearchChange,
   title,
   hideHeader = false,
   description,
   docsPath,
-  defaultParams,
+  defaultParams: baseParams,
+  views,
+  hiddenColumns: tableHiddenColumns,
+  framed = false,
   actions,
   reorder,
   bulkActions,
@@ -292,7 +353,18 @@ export function ResourceTable<T extends Record<string, any>>({
     search,
     filters,
     columns: urlColumns,
+    view: urlView,
   } = searchParams
+
+  const activeView = views?.find((v) => v.key === urlView) ?? views?.[0]
+  const hiddenColumns = useMemo(
+    () => [...(tableHiddenColumns ?? []), ...(activeView?.hiddenColumns ?? [])],
+    [tableHiddenColumns, activeView],
+  )
+  const defaultParams = useMemo(
+    () => (activeView?.params ? { ...baseParams, ...activeView.params } : baseParams),
+    [baseParams, activeView],
+  )
 
   // When the table is reorderable, sort is locked to the position field
   // ascending — anything else makes drag-and-drop meaningless. Otherwise
@@ -306,21 +378,24 @@ export function ResourceTable<T extends Record<string, any>>({
   const sort = reorder ? positionField : (urlSort ?? defaultSort.field)
   const dir: 'asc' | 'desc' = reorder ? 'asc' : (urlDir ?? defaultSort.direction)
 
-  const [searchInput, setSearchInput] = useState(search ?? '')
+  const searchable = table.searchable !== false
+  const [searchInput, setSearchInput] = useState(searchable ? (search ?? '') : '')
   const deferredSearch = useDeferredValue(searchInput)
 
   // Registry columns + dynamic custom-field columns. Memoized so the toolbar's
   // internal memos (FilterPanel `items` stability) keep stable deps.
   const extraColumns = customFieldColumns ?? metafieldColumns
   const allColumns = useMemo(
-    () => [...table.columns, ...(extraColumns ?? [])],
-    [table, extraColumns],
+    () => [...table.columns, ...(extraColumns ?? [])].filter((c) => !hiddenColumns.includes(c.key)),
+    [table, extraColumns, hiddenColumns],
   )
   const displayableColumns = useMemo(
     () => allColumns.filter((c) => c.displayable !== false),
     [allColumns],
   )
-  const defaultColumnKeys = getDefaultColumnKeys(table)
+  const defaultColumnKeys = getDefaultColumnKeys(table).filter(
+    (key) => !hiddenColumns.includes(key),
+  )
   const visibleColumnKeys = urlColumns ?? defaultColumnKeys
 
   const visibleColumns = useMemo(
@@ -371,7 +446,17 @@ export function ResourceTable<T extends Record<string, any>>({
   const { data, isLoading } = useQuery({
     queryKey: [
       ...queryKeyPrefix,
-      { page, limit, sort: sortString, search: deferredSearch, filters, expand: columnExpand },
+      // The fixed params are part of the key: a tab changing them would
+      // otherwise be answered from the previous tab's cache.
+      {
+        page,
+        limit,
+        sort: sortString,
+        search: deferredSearch,
+        filters,
+        expand: columnExpand,
+        params: defaultParams,
+      },
     ],
     queryFn: () => {
       const params: Record<string, unknown> = {
@@ -401,7 +486,7 @@ export function ResourceTable<T extends Record<string, any>>({
 
       Object.assign(params, filtersToRansack(filters as FilterRule[], allColumns))
 
-      return queryFn(params)
+      return queryFn(runtimeListParams(params))
     },
     enabled: !!token,
   })
@@ -466,6 +551,10 @@ export function ResourceTable<T extends Record<string, any>>({
 
   // Navigation helpers
   function updateSearch(updates: Record<string, unknown>) {
+    if (onSearchChange) {
+      onSearchChange(updates)
+      return
+    }
     navigate({
       search: (prev: Record<string, unknown>) => ({ ...prev, ...updates }) as never,
     })
@@ -483,6 +572,16 @@ export function ResourceTable<T extends Record<string, any>>({
   function handleFiltersChange(f: FilterRule[]) {
     updateSearch({
       filters: f.length > 0 ? JSON.stringify(f) : undefined,
+      page: 1,
+    })
+  }
+
+  // A filter set on one tab can name a column the next one hides, so a tab
+  // starts unfiltered.
+  function handleViewChange(key: string) {
+    updateSearch({
+      view: key === views?.[0]?.key ? undefined : key,
+      filters: undefined,
       page: 1,
     })
   }
@@ -539,6 +638,31 @@ export function ResourceTable<T extends Record<string, any>>({
         })
       : actions
 
+  const toolbar = (
+    <TableToolbar
+      columns={displayableColumns}
+      visibleColumns={visibleColumnKeys}
+      onVisibleColumnsChange={handleColumnsChange}
+      search={searchInput}
+      onSearchChange={handleSearchChange}
+      searchable={searchable}
+      searchPlaceholder={table.searchPlaceholder ?? t('admin.common.search_placeholder')}
+      sort={{ field: sort, direction: dir }}
+      onSortChange={handleSortChange}
+      filters={filters as FilterRule[]}
+      onFiltersChange={handleFiltersChange}
+      allColumns={allColumns}
+      hideSort={reorderActive}
+    />
+  )
+  const pagination = meta && (
+    <Pagination
+      meta={meta}
+      onPageChange={(p) => updateSearch({ page: p })}
+      onPageSizeChange={(size) => updateSearch({ limit: size, page: 1 })}
+    />
+  )
+
   return (
     // Below `sm` the table spans the full width: the page gutter plus the
     // card's own border spends ~34px of a 390px screen on chrome, and a table
@@ -585,26 +709,31 @@ export function ResourceTable<T extends Record<string, any>>({
       {pageOwnsHeader && resolvedActions && (
         <div className="flex flex-wrap items-center justify-end gap-2">{resolvedActions}</div>
       )}
-      <TableToolbar
-        columns={displayableColumns}
-        visibleColumns={visibleColumnKeys}
-        onVisibleColumnsChange={handleColumnsChange}
-        search={searchInput}
-        onSearchChange={handleSearchChange}
-        searchPlaceholder={table.searchPlaceholder ?? t('admin.common.search_placeholder')}
-        sort={{ field: sort, direction: dir }}
-        onSortChange={handleSortChange}
-        filters={filters as FilterRule[]}
-        onFiltersChange={handleFiltersChange}
-        allColumns={allColumns}
-        hideSort={reorderActive}
-      />
-      {/* `overflow-x-clip`, never `overflow-hidden`: the rows clip to the
-          rounded frame horizontally, but a `hidden` overflow on either axis
-          makes this a scroll container, and the pinned column row inside
-          would then stick to THIS box rather than to the page — which is to
-          say, scroll away with it. */}
-      <Card className="-mx-4 gap-0 overflow-x-clip rounded-none border-0 bg-transparent py-0 shadow-none sm:mx-0 sm:rounded-xl sm:border">
+      {views && views.length > 1 && (
+        <Tabs value={activeView?.key} onValueChange={(v) => handleViewChange(v as string)}>
+          <TabsList>
+            {views.map((v) => (
+              <TabsTrigger key={v.key} value={v.key}>
+                {v.label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
+      )}
+      {!framed && toolbar}
+      {/* Borderless: the list sits on the page with no card around it, its
+          header a rounded band and its rows divided by their own rules.
+          `overflow-x-clip`, never `overflow-hidden`: a `hidden` overflow on
+          either axis makes this a scroll container, and the pinned column row
+          inside would then stick to THIS box rather than to the page — which
+          is to say, scroll away with it. */}
+      <Card
+        className={cn(
+          'gap-0 overflow-x-clip',
+          !framed && 'rounded-none border-0 bg-transparent shadow-none',
+        )}
+      >
+        {framed && <div className="p-3">{toolbar}</div>}
         {reorderActive ? (
           <DndContext
             sensors={sensors}
@@ -615,7 +744,7 @@ export function ResourceTable<T extends Record<string, any>>({
               items={rows.map((r) => (r as any).id)}
               strategy={verticalListSortingStrategy}
             >
-              <Table stickyHeader roundedTop roundedBottom>
+              <Table stickyHeader={!framed} band={!framed}>
                 <TableHeader>
                   <TableHeaderRow>
                     <TableHead className="w-8" />
@@ -685,7 +814,8 @@ export function ResourceTable<T extends Record<string, any>>({
               // checkbox sitting beneath it — checking once, then never
               // unchecking.
               <div className="pointer-events-none sticky top-header-height z-30 h-0">
-                <div className="flex h-[2.1875rem] items-center ps-10 pe-4">
+                {/* The header band's height, so the actions centre on its checkbox. */}
+                <div className="flex h-10 items-center ps-10 pe-4">
                   <div className="pointer-events-auto min-w-0 flex-1">
                     <BulkActionBar
                       selectedIds={Array.from(selectedIds)}
@@ -735,7 +865,7 @@ export function ResourceTable<T extends Record<string, any>>({
                 </section>,
                 document.body,
               )}
-            <Table stickyHeader roundedTop roundedBottom>
+            <Table stickyHeader={!framed} band={!framed}>
               <TableHeader>
                 {/* Column headers stay mounted with rows selected, and the bulk
                     bar is laid over them. Swapping them for one `colSpan` cell
@@ -829,10 +959,8 @@ export function ResourceTable<T extends Record<string, any>>({
                         // the panel floats over its neighbours, and without this
                         // a merchant editing a figure has to count rows to see
                         // which record they are editing.
-                        className={cn(
-                          'has-data-[popup-open]:bg-accent-strong/40',
-                          isSelected && 'bg-accent-strong/75 hover:bg-accent-strong-hover',
-                        )}
+                        // The table's `band` style paints both from these.
+                        data-selected={isSelected || undefined}
                       >
                         {selectionEnabled && (
                           <TableCell className="w-8">
@@ -859,14 +987,11 @@ export function ResourceTable<T extends Record<string, any>>({
             </Table>
           </>
         )}
+        {/* Nothing to page through in an empty table. No rule of its own: the
+            last row's border already divides the two. */}
+        {framed && !!meta?.count && <div className="px-3 py-2">{pagination}</div>}
       </Card>
-      {meta && (
-        <Pagination
-          meta={meta}
-          onPageChange={(p) => updateSearch({ page: p })}
-          onPageSizeChange={(size) => updateSearch({ limit: size, page: 1 })}
-        />
-      )}
+      {!framed && pagination}
       {/* Clears the fixed bottom bar so it can't cover the pagination or the
           last row while a selection is active. Carries the same safe-area
           inset the bar pads itself by, or the home indicator's worth of bar

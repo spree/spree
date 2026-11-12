@@ -1,6 +1,13 @@
-import type { ColumnDef } from '@tanstack/react-table'
 import { useMemo } from 'react'
-import { DataGrid, DecimalCell, ReadOnlyCell, SelectCell, SwitchCell, TextCell } from './data-grid'
+import {
+  DataGrid,
+  type DataGridColumn,
+  DecimalCell,
+  ReadOnlyCell,
+  SelectCell,
+  SwitchCell,
+  TextCell,
+} from './data-grid'
 
 export interface BulkVariantsRow {
   id: string
@@ -139,7 +146,7 @@ export function BulkVariantsTable({
   cartonOptions,
   onChange,
 }: BulkVariantsTableProps) {
-  const columns = useMemo<ColumnDef<BulkVariantsRow>[]>(() => {
+  const columns = useMemo<DataGridColumn<BulkVariantsRow>[]>(() => {
     // Keyboard column coordinates, fixed per column: variant label is
     // read-only (unregistered), then sku=1, barcode=2, weight=3, unit=4,
     // height=5, width=6, depth=7, unit=8, preorderable=9, backorder=10,
@@ -148,7 +155,7 @@ export function BulkVariantsTable({
     const numericHeader = (label: string) => () => <span className="block text-right">{label}</span>
     const rowLabel = (r: BulkVariantsRow) => r.variantLabel ?? labels.variantDefault
 
-    const defs: ColumnDef<BulkVariantsRow>[] = [
+    const defs: DataGridColumn<BulkVariantsRow>[] = [
       {
         id: 'variant',
         header: labels.variant,
@@ -182,7 +189,7 @@ export function BulkVariantsTable({
           />
         ),
       },
-      ...DECIMAL_COLUMNS.map<ColumnDef<BulkVariantsRow>>(({ field, col }) => ({
+      ...DECIMAL_COLUMNS.map<DataGridColumn<BulkVariantsRow>>(({ field, col }) => ({
         id: field,
         header: numericHeader(labels[field]),
         cell: ({ row }) => (

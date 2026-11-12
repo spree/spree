@@ -32,7 +32,14 @@ import {
   toastManager,
   useConfirm,
 } from '@spree/dashboard-ui'
-import { HistoryIcon, RotateCcwIcon, SendIcon, Trash2Icon } from '@spree/dashboard-ui/icons'
+import {
+  HistoryIcon,
+  InfoIcon,
+  RotateCcwIcon,
+  SendIcon,
+  Trash2Icon,
+  TriangleAlertIcon,
+} from '@spree/dashboard-ui/icons'
 import {
   CodeEditor,
   type CodeEditorCompletion,
@@ -80,7 +87,8 @@ function EmailTemplateEditorPage() {
   const { permissions } = usePermissions()
   const canRead = permissions.can('read', Subject.EmailTemplate)
   const { defaultLocale } = useStore()
-  const [language, setLanguage] = useState(defaultLocale)
+  // Plain text, not a locale code: a version can also cover every language.
+  const [language, setLanguage] = useState<string>(defaultLocale)
   const [reloads, setReloads] = useState(0)
   const {
     data: template,
@@ -397,6 +405,8 @@ function EmailTemplateEditor({
         <PageHeader
           backTo="settings/emails/templates"
           title={emailTemplateName(t, template.key)}
+          resource={template}
+          endpoint={`/api/v3/admin/email_templates/${template.id}?language=${encodeURIComponent(language)}`}
           badges={<VersionBadge template={template} dirty={dirty} hasDraft={hasDraft} />}
           actions={
             canEdit && (
@@ -448,6 +458,7 @@ function EmailTemplateEditor({
         <div className="flex flex-col gap-4">
           {template.default_changed && template.base_body !== null && (
             <Alert variant="warning">
+              <TriangleAlertIcon />
               <AlertTitle>{t('admin.email_templates.default_update.title')}</AlertTitle>
               <AlertDescription>
                 {t('admin.email_templates.default_update.description')}
@@ -479,7 +490,7 @@ function EmailTemplateEditor({
                     <Textarea
                       id="email-template-subject"
                       rows={2}
-                      className="min-h-0 resize-y font-mono text-sm"
+                      className="min-h-0 resize-y font-mono text-base"
                       value={subject}
                       readOnly={!canEdit}
                       onChange={(event) => editSubject(event.target.value)}
@@ -607,6 +618,7 @@ function EveryLanguageNotice({ language }: { language: string }) {
 
   return (
     <Alert variant="info">
+      <InfoIcon />
       <AlertDescription>
         {t('admin.email_templates.every_language.notice', {
           language: languageName(language) ?? language,

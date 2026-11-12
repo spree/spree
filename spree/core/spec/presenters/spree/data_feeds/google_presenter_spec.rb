@@ -3,7 +3,7 @@ require 'spec_helper'
 RSpec.describe Spree::DataFeeds::GooglePresenter do
   let(:store) { @default_store }
   let(:data_feed) { create(:google_data_feed, store: store) }
-  let(:product) { create(:product, available_on: Date.current) }
+  let(:product) { create(:product, published_at: Date.current) }
   let!(:variant) { create(:with_image_variant, product: product) }
 
   subject { described_class.new(data_feed) }
@@ -89,7 +89,7 @@ Machine washable.</g:description>')
       end
 
       context 'when product is set to backorderable' do
-        let(:product) { create(:product, available_on: 1.year.from_now) }
+        let(:product) { create(:product, published_at: 1.year.from_now) }
 
         it 'shows backorder' do
           expect(xml).to include('<g:availability>backorder</g:availability>')
@@ -97,7 +97,7 @@ Machine washable.</g:description>')
       end
 
       context 'when availability date is nil' do
-        let(:product) { create(:product, available_on: nil) }
+        let(:product) { create(:product) }
 
         it 'shows in stock' do
           expect(xml).to include('<g:availability>in stock</g:availability>')

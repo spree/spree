@@ -1,13 +1,12 @@
-import type { Store } from '@spree/admin-sdk'
 // Entries use `labelKey` rather than a resolved `label` so the sidebar
 // re-renders on language change — see app-sidebar.tsx for resolution.
 import { hasVisibleSettingsEntries, nav, Subject } from '@spree/dashboard-core'
 import {
   AnalyticsIcon,
+  Building2Icon,
   GiftIcon,
   HomeIcon,
   InboxIcon,
-  MapIcon,
   PackageIcon,
   SettingsIcon,
   StoreIcon,
@@ -15,23 +14,7 @@ import {
   UsersIcon,
   WarehouseIcon,
 } from '@spree/dashboard-ui/icons'
-import { GettingStartedNavBadge } from '../components/spree/getting-started-nav-badge'
 import { navCounterBadge } from '../components/spree/nav-counter-badge'
-
-nav.add({
-  key: 'getting-started',
-  labelKey: 'admin.nav.getting_started',
-  path: '/getting-started',
-  icon: MapIcon,
-  position: 50,
-  subject: Subject.Store,
-  // Store setup is settings work — every staffer can READ the store (shell
-  // data), so gate on the authority the tasks actually need.
-  action: 'update',
-  // Legacy-admin parity: the entry disappears once every setup task is done.
-  if: ({ store }) => !!(store as Store | null)?.setup_tasks?.some((task) => !task.done),
-  badge: GettingStartedNavBadge,
-})
 
 nav.add({
   key: 'home',
@@ -201,14 +184,19 @@ nav.add({
       subject: Subject.CustomerGroup,
       position: 100,
     },
-    {
-      key: 'customers.companies',
-      labelKey: 'admin.nav.companies',
-      path: '/companies',
-      subject: Subject.Company,
-      position: 200,
-    },
   ],
+})
+
+// Business buyers get their own section rather than sitting under Customers:
+// a company is an organisation tree with its own catalogs, members and
+// onboarding, not a kind of customer.
+nav.add({
+  key: 'companies',
+  labelKey: 'admin.nav.companies',
+  path: '/companies',
+  icon: Building2Icon,
+  subject: Subject.Company,
+  position: 425,
 })
 
 // Only a marketplace has sellers, so the entry hides itself on a store whose

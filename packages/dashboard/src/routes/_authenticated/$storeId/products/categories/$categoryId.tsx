@@ -1,7 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { SpreeError } from '@spree/admin-sdk'
 import {
-  adminClient,
   extensionFormValues,
   extensionSubmitValues,
   mapSpreeErrorsToForm,
@@ -142,7 +141,7 @@ function CategoryDetail({ categoryId, storeId }: { categoryId: string; storeId: 
       <ProductMembershipStagingProvider form={form} name="staged_products">
         <form onSubmit={form.handleSubmit(onSubmit)}>
           {form.formState.errors.root?.message && (
-            <p className="text-sm text-destructive" role="alert">
+            <p className="text-base text-destructive" role="alert">
               {form.formState.errors.root.message}
             </p>
           )}
@@ -152,24 +151,25 @@ function CategoryDetail({ categoryId, storeId }: { categoryId: string; storeId: 
                 title={category?.name ?? ''}
                 backTo="products/categories"
                 actions={<FormActions form={form} saveLabel={t('admin.actions.save')} />}
-                resource={category ? { id: category.id } : undefined}
+                resource={category}
                 onDelete={handleDelete}
                 deleteConfirmMessage={t('admin.categories.delete_confirm', {
                   name: category?.name ?? '',
                 })}
                 deleteLabel={t('admin.categories.delete_label')}
-                jsonPreview={{
-                  title: `Category ${category?.name ?? ''}`,
-                  fetch: () => adminClient.categories.get(categoryId),
-                  endpoint: `/api/v3/admin/categories/${categoryId}`,
-                }}
+                endpoint={`/api/v3/admin/categories/${categoryId}`}
               />
             }
-            main={<CategoryMain form={form} category={category} />}
+            main={
+              <>
+                <CategoryMain form={form} category={category} />
+                <Slot name="category.form_main" context={{ category, mode: 'edit' }} />
+              </>
+            }
             sidebar={
               <>
                 <CategorySidebar form={form} category={category} />
-                <Slot name="category.form_sidebar" context={{ category }} />
+                <Slot name="category.form_sidebar" context={{ category, mode: 'edit' }} />
               </>
             }
           />

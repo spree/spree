@@ -65,7 +65,7 @@ RSpec.describe Spree::Payments::HandleWebhook do
       it 'completes the payment' do
         subject.call(payment_method: payment_method, action: :captured, payment_session: payment_session)
 
-        expect(order.reload.payments.first.state).to eq('completed')
+        expect(order.reload.payments.first.status).to eq('completed')
       end
 
       it 'completes the order with payment_state=paid' do
@@ -91,7 +91,7 @@ RSpec.describe Spree::Payments::HandleWebhook do
 
         expect(result).to be_success
         expect(order.reload.payments.count).to eq(1)
-        expect(order.payments.first.state).to eq('pending')
+        expect(order.payments.first.status).to eq('pending')
       end
 
       it 'completes the payment session' do
@@ -180,6 +180,36 @@ RSpec.describe Spree::Payments::HandleWebhook do
         expect {
           subject.call(payment_method: payment_method, action: :captured, payment_session: payment_session.reload)
         }.not_to change { order.payments.reload.count }
+      end
+    end
+
+    # The payment can complete without the order (synchronous confirmation, or
+    # an earlier delivery whose order completion did not stick); the next
+    # delivery or job retry must still place the order.
+    context 'when the payment is completed but the order is not' do
+      before do
+        allow(Spree.carts_complete_workflow).to receive(:call)
+        subject.call(payment_method: payment_method, action: :captured, payment_session: payment_session)
+        allow(Spree.carts_complete_workflow).to receive(:call).and_call_original
+      end
+
+      it 'completes the order on the next delivery without a second payment' do
+        expect(order.reload).not_to be_completed
+        expect(order.payments.completed.count).to eq(1)
+
+        result = subject.call(payment_method: payment_method, action: :captured, payment_session: payment_session.reload)
+
+        expect(result).to be_success
+        expect(order.reload).to be_completed
+        expect(order.payments.reload.count).to eq(1)
+      end
+
+      it 'completes a session left processing by the earlier delivery' do
+        payment_session.update_column(:status, 'processing')
+
+        subject.call(payment_method: payment_method, action: :captured, payment_session: payment_session.reload)
+
+        expect(payment_session.reload.status).to eq('completed')
       end
     end
 

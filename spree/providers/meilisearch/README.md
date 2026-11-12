@@ -22,7 +22,7 @@ Without this gem Spree searches the database directly (`Spree::SearchProvider::D
 
    These are environment variables rather than dashboard settings because the index is infrastructure — one server serves every store in the installation, and the reindex task has to reach it outside a request.
 
-2. Add the gem: `bundle add spree_meilisearch`
+2. Install it with `spree add meilisearch` (new projects include it already). Without the Spree CLI, add `gem 'spree_meilisearch'` to the Gemfile with the same version requirement as your `spree` gem.
 
 3. Select the provider in `config/initializers/spree.rb`:
 

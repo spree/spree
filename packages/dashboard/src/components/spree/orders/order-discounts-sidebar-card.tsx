@@ -1,5 +1,6 @@
 import type { Order } from '@spree/admin-sdk'
-import { adminClient, useResourceKey } from '@spree/dashboard-core'
+import { isZeroMoney } from '@spree/core'
+import { adminClient, Money, useResourceKey } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -18,6 +19,10 @@ import {
   FieldGroup,
   FieldLabel,
   Input,
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemTitle,
   Separator,
   useConfirm,
 } from '@spree/dashboard-ui'
@@ -42,7 +47,7 @@ export function DiscountsCard({ order }: { order: Order }) {
   )
 
   const isEditable = !order.completed_at
-  const couponPending = Boolean(order.coupon_code) && Number.parseFloat(order.discount_total) === 0
+  const couponPending = Boolean(order.coupon_code) && isZeroMoney(order.discount_total)
 
   return (
     <>
@@ -54,7 +59,7 @@ export function DiscountsCard({ order }: { order: Order }) {
           {/* Discount code — editable on drafts; frozen after completion */}
           <div className="flex items-center justify-between gap-2">
             <div className="flex flex-col">
-              <span className="text-sm font-medium">
+              <span className="text-base font-medium">
                 {t('admin.orders.detail.discount_section.label')}
               </span>
               {order.coupon_code ? (
@@ -100,12 +105,13 @@ export function DiscountsCard({ order }: { order: Order }) {
           {/* Gift card */}
           <div className="flex items-center justify-between gap-2">
             <div className="flex flex-col">
-              <span className="text-sm font-medium">
+              <span className="text-base font-medium">
                 {t('admin.orders.detail.gift_card_section.gift_card_label')}
               </span>
               {order.gift_card ? (
                 <span className="text-xs text-muted-foreground">
-                  {order.gift_card.code} · {order.display_gift_card_total}
+                  {order.gift_card.code} ·{' '}
+                  <Money amount={order.gift_card_total} currency={order.currency} />
                 </span>
               ) : (
                 <span className="text-xs text-muted-foreground">
@@ -216,26 +222,32 @@ function CouponCodeDialog({
                   </FieldLabel>
                   <div className="flex max-h-48 flex-col gap-1 overflow-y-auto">
                     {couponPromotions.map((promotion) => (
-                      <button
-                        type="button"
+                      <Item
                         key={promotion.id}
+                        variant="outline"
+                        size="sm"
+                        render={<button type="button" />}
                         onClick={() => setCode(promotion.code ?? '')}
                         className={cn(
-                          'flex items-center justify-between rounded-md border px-3 py-2 text-left text-sm hover:bg-accent',
+                          'flex-nowrap py-2 text-left hover:bg-accent',
                           code === promotion.code && 'border-primary',
                         )}
                       >
-                        <span className="truncate">{promotion.name}</span>
-                        <span className="ml-2 shrink-0 font-mono text-xs text-muted-foreground">
+                        <ItemContent className="min-w-0">
+                          <ItemTitle className="block truncate font-normal">
+                            {promotion.name}
+                          </ItemTitle>
+                        </ItemContent>
+                        <ItemActions className="font-mono text-xs text-muted-foreground">
                           {promotion.code}
-                        </span>
-                      </button>
+                        </ItemActions>
+                      </Item>
                     ))}
                   </div>
                 </Field>
               )}
               {mutation.isError && (
-                <p className="text-sm text-destructive">{(mutation.error as Error).message}</p>
+                <p className="text-base text-destructive">{(mutation.error as Error).message}</p>
               )}
             </FieldGroup>
           </DialogBody>

@@ -19,6 +19,42 @@ module Spree
         class DeliveryMethodsController < Seller::ResourceController
           scoped_resource :delivery_methods
 
+          # No provider fields: both are fixed for a seller's method, and
+          # permitting them would let a write fail validation for a choice the
+          # seller was never offered. No markup either — that prices a
+          # carrier's quote, and a seller has no carrier.
+          request_params :delivery_method do |body|
+            body.attribute :name, :string, required: true, on: :create
+            body.attribute :admin_name, :string, nullable: true
+            body.attribute :code, :string, nullable: true
+            body.attribute :delivery_profile_id, :id, description: "One of the marketplace's delivery profiles."
+            body.attribute :delivery_zone_id, :id,
+              nullable: true,
+              description: 'Narrows where the method ships; null serves everywhere the profile reaches.'
+            body.attribute :storefront_visible, :boolean
+            body.attribute :tracking_url, :string, nullable: true
+            body.attribute :estimated_transit_business_days_min, :integer, nullable: true
+            body.attribute :estimated_transit_business_days_max, :integer, nullable: true
+            body.attribute :calculator, :object,
+              description: "How the method is priced: a type from `/delivery_methods/calculators` and its preferences, per that type's `schema`." do |calculator|
+              calculator.attribute :type, :string, example: 'flat_rate'
+              calculator.attribute :preferences, :hash, example: { amount: '12.5' }
+            end
+            # Permitted in `permitted_params`, together with the attributes
+            # the seller's rule kinds declare on their own classes.
+            body.attribute :rules, :array,
+              permit: false,
+              as: 'DeliveryMethodRuleParams',
+              description: 'Replaces the whole set: a rule dropped here is deleted, so re-send surviving rules with their `id`. An empty list clears every condition.' do |rule|
+              rule.attribute :id, :id
+              rule.attribute :type, :string,
+                required: true,
+                description: 'A type from `/delivery_methods/rule_types`.'
+              rule.attribute :active, :boolean
+              rule.attribute :preferences, :hash
+            end
+          end
+
           # GET /api/v3/seller/delivery_methods/calculators
           # The ways a seller can price a method, with the preference schema
           # each one's form is rendered from.
@@ -29,7 +65,7 @@ module Spree
               {
                 type: calculator_class.api_type,
                 name: calculator_class.description,
-                preference_schema: calculator_class.respond_to?(:serialized_preference_schema) ? calculator_class.serialized_preference_schema : []
+                schema: calculator_class.preference_json_schema
               }
             end
 
@@ -48,7 +84,7 @@ module Spree
                 type: klass.api_type,
                 name: klass.human_name,
                 description: klass.human_description,
-                preference_schema: klass.serialized_preference_schema
+                schema: klass.preference_json_schema
               }
             end
 
@@ -64,9 +100,9 @@ module Spree
             @resource.assign_attributes(assignable_params)
             authorize_resource!(@resource, :create)
             rederive_origin_group(@resource)
-            assign_calculator(@resource)
+            @resource.assign_calculator_attributes(permitted_params[:calculator])
 
-            if @resource.errors.empty? && @resource.save
+            if @resource.save
               render json: serialize_resource(@resource), status: :created
             else
               render_validation_error(@resource.errors)
@@ -74,11 +110,13 @@ module Spree
           end
 
           def update
-            @resource.assign_attributes(assignable_params)
-            rederive_origin_group(@resource)
-            assign_calculator(@resource)
+            saved = save_atomically do
+              @resource.assign_attributes(assignable_params)
+              rederive_origin_group(@resource)
+              @resource.assign_calculator_attributes(permitted_params[:calculator])
+            end
 
-            if @resource.errors.empty? && @resource.save
+            if saved
               render json: serialize_resource(@resource)
             else
               render_validation_error(@resource.errors)
@@ -116,19 +154,10 @@ module Spree
             action_name == 'show' ? super : resource_scope.find_by_prefix_id!(params[:id])
           end
 
-          # No provider fields: both are fixed for a seller's method, and
-          # permitting them would let a write fail validation for a choice the
-          # seller was never offered. No markup either — that prices a
-          # carrier's quote, and a seller has no carrier.
           def permitted_params
             params.permit(
-              *model_additional_permitted_attributes,
-              :name, :admin_name, :code, :storefront_visible, :tracking_url,
-              :estimated_transit_business_days_min, :estimated_transit_business_days_max,
-              :calculator_type,
-              :delivery_profile_id, :delivery_zone_id,
-              calculator_preferences: {},
-              rules: [:id, :type, :active, { preferences: {} }, *subclassed_rule_attributes]
+              *permitted_attributes,
+              rules: [*request_params_schema.fields[:rules].schema.permit_list, *subclassed_rule_attributes]
             )
           end
 
@@ -175,7 +204,7 @@ module Spree
           # resolves its own pickers.
           def assignable_params
             attributes = permitted_params.except(
-              :delivery_profile_id, :delivery_zone_id, :calculator_type, :calculator_preferences, :rules
+              :delivery_profile_id, :delivery_zone_id, :calculator, :rules
             )
 
             if params.key?(:delivery_profile_id)
@@ -216,46 +245,6 @@ module Spree
               raise ActiveRecord::RecordNotFound unless allowed.include?(row['type'].to_s)
 
               row
-            end
-          end
-
-          def assign_calculator(delivery_method)
-            calculator_type = permitted_params[:calculator_type]
-            preferences = permitted_params[:calculator_preferences]
-
-            if calculator_type.present? && delivery_method.calculator&.class&.api_type != calculator_type
-              registered = Spree::DeliveryMethod.calculators.find do |klass|
-                klass.api_type == calculator_type
-              end
-              unless registered
-                delivery_method.errors.add(:calculator_type, :invalid)
-                return
-              end
-
-              # Resolved from the registry entry's OWN name, never the
-              # request's: nothing user-supplied reaches `constantize`. Going
-              # back through the name rather than instantiating `registered`
-              # directly is what survives a reload — in development the
-              # registry holds a class from an earlier one, and an instance of
-              # it fails the association's type check.
-              delivery_method.calculator = registered.to_s.constantize.new
-            end
-
-            return if preferences.blank?
-
-            # A payload may carry preferences without naming a calculator —
-            # editing the amount on a method that already has one, or creating
-            # with the default. The model only builds the default calculator
-            # at validation, so without this the preferences land on nothing
-            # and the amount the merchant typed is silently replaced by a free
-            # rate.
-            delivery_method.ensure_calculator
-            return if delivery_method.calculator.nil?
-
-            preferences.each do |key, value|
-              next unless delivery_method.calculator.has_preference?(key)
-
-              delivery_method.calculator.set_preference(key, value)
             end
           end
         end

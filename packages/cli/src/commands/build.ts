@@ -1,17 +1,19 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import * as p from '@clack/prompts'
-import type { Command } from 'commander'
+import { type Command, Option } from 'commander'
 import { execa } from 'execa'
 import pc from 'picocolors'
 import { detectProject, findApiDir, hasMonorepoSpreePath, isEjectedProject } from '../context.js'
+import { warnDeprecated } from '../deprecation.js'
 import { appServices, dockerCompose } from '../docker.js'
 
 export function registerBuildCommand(program: Command): void {
   program
     .command('build')
-    .description('Rebuild the dev image (after Dockerfile / .ruby-version changes)')
-    .option('--reset-bundle', 'also wipe the bundle_cache volume to re-seed gems')
+    .description('Rebuild the dev image (after Dockerfile or runtime version changes)')
+    .option('--reset-deps', 'also wipe the cached backend dependencies so they re-install')
+    .addOption(new Option('--reset-bundle').hideHelp())
     .option('--yes', 'skip confirmation prompts (for CI)')
     .option(
       '--production',
@@ -20,6 +22,7 @@ export function registerBuildCommand(program: Command): void {
     .option('--tag <tag>', 'image tag for --production (default: <project>-spree:latest)')
     .action(
       async (flags: {
+        resetDeps?: boolean
         resetBundle?: boolean
         yes?: boolean
         production?: boolean
@@ -29,12 +32,14 @@ export function registerBuildCommand(program: Command): void {
           await buildProductionImage(detectProject().projectDir, flags.tag)
           return
         }
-        await buildDevImage(flags)
+        if (flags.resetBundle)
+          warnDeprecated('spree build --reset-bundle', 'spree build --reset-deps')
+        await buildDevImage({ ...flags, resetDeps: flags.resetDeps || flags.resetBundle })
       },
     )
 }
 
-async function buildDevImage(flags: { resetBundle?: boolean; yes?: boolean }): Promise<void> {
+async function buildDevImage(flags: { resetDeps?: boolean; yes?: boolean }): Promise<void> {
   const ctx = detectProject()
 
   if (hasMonorepoSpreePath(ctx.projectDir)) {
@@ -60,11 +65,11 @@ async function buildDevImage(flags: { resetBundle?: boolean; yes?: boolean }): P
     process.exit(1)
   }
 
-  if (flags.resetBundle) {
+  if (flags.resetDeps) {
     if (!flags.yes) {
       const confirmed = await p.confirm({
         message:
-          'Wipe the bundle_cache volume? Any gems added via `spree bundle add` since the last image build will be lost.',
+          'Wipe the cached backend dependencies? Any extensions added via `spree add` since the last image build will be lost.',
         initialValue: false,
       })
       if (p.isCancel(confirmed) || !confirmed) {
@@ -106,8 +111,8 @@ async function buildDevImage(flags: { resetBundle?: boolean; yes?: boolean }): P
   p.note(
     [
       `Image rebuilt. Start the stack with ${pc.bold('spree dev')}.`,
-      flags.resetBundle
-        ? `On next boot, gems will re-seed into a fresh ${pc.dim('bundle_cache')} volume.`
+      flags.resetDeps
+        ? `On next boot, dependencies will re-seed into a fresh ${pc.dim('bundle_cache')} volume.`
         : '',
     ]
       .filter(Boolean)

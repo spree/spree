@@ -1,17 +1,4 @@
 {
-  "accept_invitation": {
-    "failed": "Nie udało się przyjąć tego zaproszenia. Mogło wygasnąć lub hasło było nieprawidłowe.",
-    "first_name": "Imię",
-    "invalid_link": "W tym linku brakuje tokenu. Otwórz link z wiadomości z zaproszeniem.",
-    "last_name": "Nazwisko",
-    "not_found": "To zaproszenie jest już nieważne. Poproś osobę, która Cię zaprosiła, o nowe.",
-    "password": "Hasło",
-    "password_confirmation": "Potwierdź hasło",
-    "submit": "Przyjmij zaproszenie",
-    "submitting": "Przyjmowanie…",
-    "subtitle": "Zaproszenie otrzymał adres {{email}}. Ustaw hasło, aby zakończyć.",
-    "title": "Dołącz do zespołu"
-  },
   "account": {
     "avatar": "Zdjęcie",
     "avatar_help": "Wyświetlane obok Twojego imienia w całym panelu. Najlepiej wyglądają zdjęcia kwadratowe.",
@@ -472,6 +459,7 @@
       "packing_slip_title": "List przewozowy — zamówienie {{number}}",
       "print_label": "Drukuj etykietę",
       "print_packing_slip": "Drukuj list przewozowy",
+      "quoted_after_review": "Wycena po weryfikacji",
       "ship_to": "Wysyłka do",
       "ships_from_label": "Wysyłka z",
       "split": "Podziel",
@@ -673,7 +661,8 @@
     "columns": {
       "name": "Produkt",
       "price": "Cena",
-      "status": "Status"
+      "status": "Status",
+      "inventory": "Stan magazynowy"
     },
     "custom_fields": "Szczegóły produktu",
     "details": "Szczegóły",
@@ -743,7 +732,8 @@
     "variant_remove_confirm_description": "Zniknie z produktu po zapisaniu.",
     "variant_remove_confirm_title": "Usunąć ten wariant?",
     "variants": "Warianty",
-    "variants_empty": "Ten produkt sprzedajesz jako jedną pozycję, w cenie powyżej. Dodaj wariant, aby sprzedawać go w opcjach takich jak rozmiar czy kolor."
+    "variants_empty": "Ten produkt sprzedajesz jako jedną pozycję, w cenie powyżej. Dodaj wariant, aby sprzedawać go w opcjach takich jak rozmiar czy kolor.",
+    "digital_files_review_notice": "Dodanie lub zastąpienie pliku wysyła ten produkt ponownie do weryfikacji; do ponownego zatwierdzenia przez marketplace nie jest w sprzedaży."
   },
   "profile": {
     "about": "O sprzedawcy",

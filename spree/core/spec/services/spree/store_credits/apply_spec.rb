@@ -13,6 +13,33 @@ describe Spree::StoreCredits::Apply, type: :service do
       create(:store_credit_payment_method)
     end
 
+    context 'when another store has the first available payment method' do
+      let(:store) { create(:store) }
+      let(:store_credit) { create(:store_credit, amount: order_total, store: store) }
+      let(:order) { create(:order, customer: store_credit.customer, total: order_total, store: store) }
+      let!(:payment_method) { create(:store_credit_payment_method, store: store, position: 100) }
+
+      it 'uses the payment method belonging to the order store' do
+        expect(subject).to be_success
+        expect(order.reload.payments.store_credits.first.payment_method).to eq(payment_method)
+      end
+
+      it 'does not require an available payment method when nothing is outstanding' do
+        payment_method.update!(active: false)
+        order.update_columns(total: 10, item_total: 10, payment_total: 10)
+
+        expect(subject).not_to be_success
+        expect(order.reload.payments).to be_empty
+      end
+
+      it 'does not fall back to a foreign method when the store has none available' do
+        payment_method.update!(active: false)
+
+        expect { subject }.to raise_error('Store credit payment method could not be found')
+        expect(order.reload.payments).to be_empty
+      end
+    end
+
     context 'there is no store credit' do
       let(:order) { create(:store_credits_order_without_user, total: order_total) }
 
@@ -141,7 +168,7 @@ describe Spree::StoreCredits::Apply, type: :service do
 
         described_class.call(order: order.reload)
         payment = order.reload.payments.store_credits.checkout.first
-        payment.purchase!
+        Spree.payment_process_workflow.call(payment: payment, action: :purchase)
 
         expect(payment.reload).to be_completed
         expect(store_credit.reload.amount_used).to eq(300)
@@ -203,12 +230,6 @@ describe Spree::StoreCredits::Apply, type: :service do
         create(:store_credit, amount: order_total, customer: older_store_credit.customer, store: store, created_at: 1.day.ago)
       end
       let(:order) { create(:order, customer: older_store_credit.customer, total: order_total, store: store) }
-
-      before do
-        Timecop.scale(3600)
-      end
-
-      after { Timecop.return }
 
       it 'spends the oldest store credit first' do
         expect(subject).to be_success

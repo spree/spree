@@ -9,7 +9,6 @@ export const EmailPaymentSchema = z.object({
   number: z.string(),
   status: z.string(),
   amount: z.string().nullable(),
-  display_amount: z.string().nullable(),
   source_type: z.string().nullable(),
   source_id: z.string().nullable(),
   source: z.record(z.string(), z.unknown()).nullable(),

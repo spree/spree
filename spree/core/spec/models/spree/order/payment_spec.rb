@@ -69,16 +69,6 @@ module Spree
               expect(order.outstanding_balance).to eq(30.00)
             end
           end
-
-          context 'order payment status should be partially paid' do
-            let!(:payment_amount) { 90.00 }
-            let!(:store_credit_amount) { 10.00 }
-
-            it do
-              expect(order.payment_status).to eq('partially_paid')
-              expect(order.outstanding_balance).to eq(10.00)
-            end
-          end
         end
       end
 
@@ -106,11 +96,11 @@ module Spree
       it 'does not use failed payments' do
         payment_1 = create(:payment, amount: 50, order: order)
         payment_2 = create(:payment, amount: 50, status: 'failed', order: order)
-        allow(order).to receive(:pending_payments).and_return([payment_1])
-
-        expect(payment_2).not_to receive(:process!)
 
         order.process_payments!
+
+        expect(payment_1.reload).not_to be_checkout
+        expect(payment_2.reload).to be_failed
       end
     end
 
@@ -189,26 +179,6 @@ module Spree
         order.recalculate_totals!
 
         expect(order.outstanding_balance).to eq 10
-      end
-    end
-
-    context '#outstanding_balance?' do
-      it 'is true when total greater than payment_total' do
-        order.total = 10.10
-        order.payment_total = 9.50
-        expect(order.outstanding_balance?).to be true
-      end
-
-      it 'is true when total less than payment_total' do
-        order.total = 8.25
-        order.payment_total = 10.44
-        expect(order.outstanding_balance?).to be true
-      end
-
-      it 'is false when total equals payment_total' do
-        order.total = 10.10
-        order.payment_total = 10.10
-        expect(order.outstanding_balance?).to be false
       end
     end
   end

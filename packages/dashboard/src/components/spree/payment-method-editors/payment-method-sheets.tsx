@@ -1,6 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { PaymentMethodType, PreferenceField } from '@spree/admin-sdk'
-import { defaultPreferences, mapSpreeErrorsToForm, useStore } from '@spree/dashboard-core'
+import type { PaymentMethodType, PreferenceSchema } from '@spree/admin-sdk'
+import {
+  defaultPreferences,
+  mapSpreeErrorsToForm,
+  RecordMetadataSection,
+  Subject,
+  usePermissions,
+  useStore,
+} from '@spree/dashboard-core'
 import {
   Button,
   Sheet,
@@ -9,17 +16,20 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
+  useConfirm,
 } from '@spree/dashboard-ui'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import {
   useCreatePaymentMethod,
+  useDeletePaymentMethod,
   usePaymentMethod,
   usePaymentMethodTypes,
   useUpdatePaymentMethod,
 } from '../../../hooks/use-payment-methods'
 import {
+  filterPaymentMethodProviderTypes,
   PAYMENT_METHOD_BASE_DEFAULTS,
   PAYMENT_METHOD_CREATE_DEFAULTS,
   paymentMethodBaseFormSchema,
@@ -27,6 +37,7 @@ import {
   paymentMethodValuesToCreateParams,
   paymentMethodValuesToUpdateParams,
 } from '../../../schemas/payment-method'
+import { DraftCustomFieldsCard, useCustomFieldsDraft } from '../custom-fields/custom-fields-inline'
 import { SetupGuideLink } from '../integrations/setup-guide-link'
 import { PaymentMethodForm } from './payment-method-form'
 import type { PaymentMethodFormValues } from './types'
@@ -47,15 +58,24 @@ export function CreatePaymentMethodSheet({
   open,
   onOpenChange,
   initialType,
+  manualOnly = false,
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
   initialType?: PaymentMethodType
+  /** Offers only the methods the store handles itself, not outside providers. */
+  manualOnly?: boolean
 }) {
   const { t } = useTranslation()
   const createMutation = useCreatePaymentMethod()
   const { data: typesResponse, isLoading: loadingTypes } = usePaymentMethodTypes()
-  const providerTypes = useMemo(() => typesResponse?.data ?? [], [typesResponse])
+  const providerTypes = useMemo(
+    () =>
+      filterPaymentMethodProviderTypes(typesResponse?.data ?? []).filter(
+        (entry) => !manualOnly || !entry.third_party,
+      ),
+    [typesResponse, manualOnly],
+  )
   // Seed `currency`-typed preferences with the store default so the merchant
   // sees and submits a real value — `CurrencySelect` only displays the
   // fallback now (it no longer commits via onChange).
@@ -65,9 +85,7 @@ export function CreatePaymentMethodSheet({
     ? { ...PAYMENT_METHOD_CREATE_DEFAULTS, type: initialType.type, name: initialType.label }
     : PAYMENT_METHOD_CREATE_DEFAULTS
   const initialPreferences = () =>
-    initialType
-      ? defaultPreferences(initialType.preference_schema, { currency: defaultCurrency })
-      : {}
+    initialType ? defaultPreferences(initialType.schema, { currency: defaultCurrency }) : {}
 
   const form = useForm<PaymentMethodFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -77,13 +95,13 @@ export function CreatePaymentMethodSheet({
 
   const [preferences, setPreferences] = useState<Record<string, unknown>>(initialPreferences)
   const providerType = form.watch('type') ?? ''
-  const preferenceSchema: PreferenceField[] = useMemo(
-    () => providerTypes.find((t) => t.type === providerType)?.preference_schema ?? [],
+  const preferenceSchema: PreferenceSchema | undefined = useMemo(
+    () => providerTypes.find((t) => t.type === providerType)?.schema,
     [providerTypes, providerType],
   )
 
   function handleProviderTypeChange(next: string) {
-    const nextSchema = providerTypes.find((t) => t.type === next)?.preference_schema ?? []
+    const nextSchema = providerTypes.find((t) => t.type === next)?.schema
     setPreferences(defaultPreferences(nextSchema, { currency: defaultCurrency }))
   }
 
@@ -124,7 +142,7 @@ export function CreatePaymentMethodSheet({
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
             {form.formState.errors.root?.message && (
-              <p className="text-sm text-destructive" role="alert">
+              <p className="text-base text-destructive" role="alert">
                 {form.formState.errors.root.message}
               </p>
             )}
@@ -175,6 +193,16 @@ export function EditPaymentMethodSheet({
   const { t } = useTranslation()
   const { data: paymentMethod, isLoading } = usePaymentMethod(id)
   const updateMutation = useUpdatePaymentMethod(id)
+  const customFields = useCustomFieldsDraft('payment_method', id)
+  const deleteMutation = useDeletePaymentMethod()
+  const confirm = useConfirm()
+  const { permissions } = usePermissions()
+  // The provider's preference schema comes from its `/types` entry, matched
+  // by the record's `type`.
+  const { data: typesData } = usePaymentMethodTypes({ enabled: open })
+  const preferenceSchema = typesData?.data.find(
+    (entry) => entry.type === paymentMethod?.type,
+  )?.schema
 
   const form = useForm<PaymentMethodFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -212,11 +240,20 @@ export function EditPaymentMethodSheet({
 
   async function onSubmit(values: PaymentMethodFormValues) {
     const params = paymentMethodValuesToUpdateParams(values)
-    if (preferencesDirty) params.preferences = preferences
+    // Read from the ref rather than the memo: a retry runs before the next
+    // render recomputes it.
+    const prefsDirty = JSON.stringify(preferences) !== originalPreferencesRef.current
+    if (prefsDirty) params.preferences = preferences
     try {
-      await updateMutation.mutateAsync(params)
-      form.reset(values)
-      originalPreferencesRef.current = JSON.stringify(preferences)
+      // The record saves first and is marked clean, so a retry after a failed
+      // custom field save sends only the custom fields.
+      const savesRecord = form.formState.isDirty || prefsDirty
+      if (savesRecord) {
+        await updateMutation.mutateAsync(params)
+        form.reset(values)
+        originalPreferencesRef.current = JSON.stringify(preferences)
+      }
+      if (!(await customFields.save({ announce: !savesRecord }))) return
       onOpenChange(false)
     } catch (err) {
       if (!mapSpreeErrorsToForm(err, form.setError)) throw err
@@ -227,6 +264,22 @@ export function EditPaymentMethodSheet({
   // returns it on the `type` attribute (see PaymentMethodSerializer).
   const providerType = paymentMethod?.type ?? ''
   const providerLabel = paymentProviderLabel(providerType)
+
+  async function handleDelete() {
+    if (!paymentMethod) return
+    const ok = await confirm({
+      title: t('admin.payment_methods.delete_confirm.title'),
+      message: t('admin.payment_methods.delete_confirm.message', { name: paymentMethod.name }),
+      variant: 'destructive',
+      confirmLabel: t('admin.actions.delete'),
+    })
+    if (!ok) return
+    // The mutation toasts its own outcome; a failure leaves the sheet open.
+    await deleteMutation
+      .mutateAsync(paymentMethod.id)
+      .then(() => onOpenChange(false))
+      .catch(() => undefined)
+  }
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -243,26 +296,39 @@ export function EditPaymentMethodSheet({
           <SetupGuideLink url={paymentMethod?.docs_url} />
         </SheetHeader>
         {isLoading ? (
-          <div className="p-4 text-sm text-muted-foreground">{t('admin.common.loading')}</div>
+          <div className="p-4 text-base text-muted-foreground">{t('admin.common.loading')}</div>
         ) : (
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
               {form.formState.errors.root?.message && (
-                <p className="text-sm text-destructive" role="alert">
+                <p className="text-base text-destructive" role="alert">
                   {form.formState.errors.root.message}
                 </p>
               )}
               <PaymentMethodForm
                 mode="edit"
                 form={form}
-                preferenceSchema={paymentMethod?.preference_schema ?? []}
+                preferenceSchema={preferenceSchema}
                 providerType={providerType}
                 paymentMethod={paymentMethod ?? null}
                 preferences={preferences}
                 onPreferencesChange={setPreferences}
               />
+              <DraftCustomFieldsCard draft={customFields} hideWhenEmpty />
+              <RecordMetadataSection metadata={paymentMethod?.metadata} />
             </div>
             <SheetFooter>
+              {permissions.can('destroy', Subject.PaymentMethod) && (
+                <Button
+                  type="button"
+                  variant="destructive-ghost"
+                  className="mr-auto"
+                  onClick={handleDelete}
+                  disabled={form.formState.isSubmitting || deleteMutation.isPending}
+                >
+                  {t('admin.actions.delete')}
+                </Button>
+              )}
               <Button
                 type="button"
                 variant="outline"
@@ -274,7 +340,8 @@ export function EditPaymentMethodSheet({
               <Button
                 type="submit"
                 disabled={
-                  form.formState.isSubmitting || (!form.formState.isDirty && !preferencesDirty)
+                  form.formState.isSubmitting ||
+                  (!form.formState.isDirty && !preferencesDirty && !customFields.isDirty)
                 }
               >
                 {form.formState.isSubmitting ? t('admin.actions.saving') : t('admin.actions.save')}

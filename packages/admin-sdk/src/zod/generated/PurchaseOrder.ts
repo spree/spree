@@ -28,7 +28,6 @@ export const PurchaseOrderSchema = z.object({
   quantity_ordered_total: z.number(),
   editable: z.boolean(),
   subtotal: z.string(),
-  display_subtotal: z.string(),
   supplier_id: z.string().nullable(),
   destination_location_id: z.string().nullable(),
   items: z.array(PurchaseOrderItemSchema).optional(),

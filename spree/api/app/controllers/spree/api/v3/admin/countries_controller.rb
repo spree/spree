@@ -24,6 +24,10 @@ module Spree
 
           protected
 
+          def filterable?
+            false
+          end
+
           def model_class
             Spree::Country
           end
@@ -33,7 +37,7 @@ module Spree
           end
 
           def scope
-            Spree::Country.all.sort_by(&:name)
+            Spree::Country.all.sort_by(&:iso)
           end
 
           def find_resource

@@ -10,6 +10,10 @@ module Spree
       # (ActiveJob handler lookup is reverse-declaration-order).
       discard_on ActiveJob::DeserializationError
 
+      # Bulk writers enqueue this inside their transaction; run before it
+      # commits, the job would index the product's previous prices.
+      self.enqueue_after_transaction_commit = true
+
       # @param resource_class [String] e.g. 'Spree::Product'
       # @param resource_id [String] always pass as string for UUID support
       # @param store_id [String] always pass as string for UUID support

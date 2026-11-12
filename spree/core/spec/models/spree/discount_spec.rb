@@ -32,8 +32,12 @@ describe Spree::Discount, type: :model do
   end
 
   it 'keeps provenance snapshots when the promotion is gone' do
+    promotion = create(:promotion)
     discount = create(:discount, order: order, line_item: line_item, amount: -2, kind: 'promotion',
-                      code: 'SUMMER10', value: 10, value_type: 'percent')
+                      promotion: promotion, code: 'SUMMER10', value: 10, value_type: 'percent')
+
+    promotion.destroy!
+
     expect(discount.reload.code).to eq('SUMMER10')
     expect(discount.promotion).to be_nil
   end

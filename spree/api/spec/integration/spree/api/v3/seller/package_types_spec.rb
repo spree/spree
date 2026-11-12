@@ -34,11 +34,14 @@ RSpec.describe 'Seller Package Types API', type: :request, swagger_doc: 'api-ref
         with — its size and weight are added to every rate.
       DESC
 
+      seller_sdk_example 'package-types/list'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       parameter name: :owner, in: :query, required: false, schema: { type: :string, enum: ['mine'] },
                 description: "Narrows the list to the seller's own packaging, leaving out the marketplace's shared rows"
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Records per page (max 100)'
+      filter_parameters_for
 
       response '200', 'package types listed' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
@@ -70,24 +73,10 @@ RSpec.describe 'Seller Package Types API', type: :request, swagger_doc: 'api-ref
         different owner's row and is left alone.
       DESC
 
+      seller_sdk_example 'package-types/create'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, required: true, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string },
-          kind: { type: :string, enum: Spree::PackageType::KINDS },
-          length: { type: :number, nullable: true },
-          width: { type: :number, nullable: true },
-          height: { type: :number, nullable: true },
-          dimensions_unit: { type: :string, nullable: true },
-          weight: { type: :number, nullable: true, description: "The empty package's own weight, added to every quote" },
-          max_weight: { type: :number, nullable: true },
-          weight_unit: { type: :string, nullable: true },
-          default: { type: :boolean },
-          metadata: { type: :object, nullable: true }
-        },
-        required: %w[name kind]
-      }
+      request_body_for
 
       response '201', 'package type created' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
@@ -130,6 +119,8 @@ RSpec.describe 'Seller Package Types API', type: :request, swagger_doc: 'api-ref
         marketplace row they may pack into.
       DESC
 
+      seller_sdk_example 'package-types/get'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 
       response '200', 'package type found' do
@@ -165,23 +156,10 @@ RSpec.describe 'Seller Package Types API', type: :request, swagger_doc: 'api-ref
         edit and answers 404.
       DESC
 
+      seller_sdk_example 'package-types/update'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, required: true, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string },
-          kind: { type: :string, enum: Spree::PackageType::KINDS },
-          length: { type: :number, nullable: true },
-          width: { type: :number, nullable: true },
-          height: { type: :number, nullable: true },
-          dimensions_unit: { type: :string, nullable: true },
-          weight: { type: :number, nullable: true },
-          max_weight: { type: :number, nullable: true },
-          weight_unit: { type: :string, nullable: true },
-          default: { type: :boolean },
-          metadata: { type: :object, nullable: true }
-        }
-      }
+      request_body_for
 
       response '200', 'package type updated' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
@@ -206,6 +184,8 @@ RSpec.describe 'Seller Package Types API', type: :request, swagger_doc: 'api-ref
         refused — name another default first, or every parcel silently falls
         back to the marketplace's box.
       DESC
+
+      seller_sdk_example 'package-types/delete'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 

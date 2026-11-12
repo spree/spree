@@ -37,6 +37,10 @@ Then install Docker:
 curl -fsSL https://get.docker.com | sh
 ```
 
+<Note>
+  The security group is the firewall here, and it does its job regardless of Docker: it filters traffic before it reaches the instance. A host firewall like `ufw` would not — Docker's own `iptables` rules publish container ports straight past it. That is also why the compose file below publishes only Caddy's `80` and `443`: `web` has no `ports:` entry, so port 3000 is reachable only from Caddy. See [Published ports and firewalls](/developer/deployment/docker#published-ports-and-firewalls) before adding one.
+</Note>
+
 ## 3. Run Spree
 
 Build [your project's image](/developer/deployment/docker) and push it to a registry the instance can pull from (ECR or any other) — or use the stock `ghcr.io/spree/spree:latest` image to start. Then create a `docker-compose.yml` on the instance:
@@ -54,7 +58,7 @@ services:
       ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY: ...
       ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY: ...
       ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT: ...
-      RAILS_HOST: store.example.com
+      SPREE_HOST: store.example.com
       # Uploads to S3 (recommended) — see /developer/deployment/assets
       # AWS_REGION: eu-west-1
       # AWS_BUCKET: my-store-uploads

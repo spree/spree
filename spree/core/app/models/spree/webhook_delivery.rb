@@ -25,6 +25,7 @@ module Spree
 
     # Ransack configuration
     self.whitelisted_ransackable_attributes = %w[event_name response_code execution_time success delivered_at created_at]
+    search_by :event_name
 
     # Event subjects whose permission is not found by class name alone.
     PAYLOAD_SUBJECT_CLASSES = {

@@ -40,6 +40,7 @@ RSpec.describe 'Admin Integrations API', type: :request, swagger_doc: 'api-refer
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
+      filter_parameters_for
 
       response '200', 'integrations found' do
         before { SpreeCarrier::Integration.create!(store: store, preferences: { api_key: 'sk-secret', account_number: '42' }) }
@@ -65,15 +66,7 @@ RSpec.describe 'Admin Integrations API', type: :request, swagger_doc: 'api-refer
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          type: { type: :string, example: 'carrier', description: 'Wire shorthand from GET /integrations/types' },
-          active: { type: :boolean, example: false },
-          preferences: { type: :object, example: { api_key: 'sk-secret', account_number: '42' } }
-        },
-        required: %w[type]
-      }
+      request_body_for
 
       response '201', 'integration connected' do
         let(:body) { { type: 'carrier', preferences: { api_key: 'sk-secret' } } }
@@ -104,7 +97,38 @@ RSpec.describe 'Admin Integrations API', type: :request, swagger_doc: 'api-refer
         run_test! do |response|
           data = JSON.parse(response.body)
           entry = data['data'].find { |row| row['type'] == 'carrier' }
-          expect(entry['preference_schema']).to be_an(Array)
+          expect(entry['schema']).to include('type' => 'object')
+        end
+      end
+    end
+  end
+
+  path '/api/v3/admin/integrations/{id}' do
+    patch 'Update integration' do
+      tags 'Integrations'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Changes an integration\'s credentials or turns it on or off. Setting active: true verifies the connection and fails with 422 when it cannot connect. Submitting a masked secret value back keeps the stored secret.'
+      admin_scope :write, :integrations
+
+      admin_sdk_example 'integrations/update'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :id, in: :path, type: :string
+      request_body_for
+
+      response '200', 'integration updated' do
+        let(:id) do
+          SpreeCarrier::Integration.create!(store: store, preferences: { api_key: 'sk-secret' }).prefixed_id
+        end
+        let(:body) { { active: true, preferences: { account_number: 'demo-0001' } } }
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['active']).to be true
+          expect(data['preferences']['account_number']).to eq('demo-0001')
         end
       end
     end

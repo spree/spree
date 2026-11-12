@@ -4,15 +4,23 @@ module Spree
       module CartResolvable
         extend ActiveSupport::Concern
 
+        include Spree::Api::V3::PurchaseSerialization
+
         protected
 
         # Find cart by prefixed ID and authorize read access (owner or guest
         # token). Completed carts are not carts anymore — they 404 unless the
         # caller opts in (idempotent completion, payment-session confirm races).
+        #
+        # Pass +token: nil+ to demand ownership. A guest token proves the
+        # caller holds this cart, which is the right bar for the cart's own
+        # contents and no higher — an endpoint reaching past the cart into
+        # something the account holds asks for the account instead.
+        #
         # @return [Spree::Cart]
-        def find_cart(include_completed: false)
+        def find_cart(include_completed: false, token: cart_token)
           @cart = resolve_cart(include_completed: include_completed)
-          authorize_storefront_read!(@cart, token: cart_token)
+          authorize_storefront_read!(@cart, token: token)
           @cart
         end
 
@@ -42,8 +50,15 @@ module Spree
         # Render the cart as JSON using the cart serializer. Rendering never
         # mutates: an action that wants unbuyable lines swept calls
         # +sweep_unbuyable_lines!+ itself first.
+        #
+        # Serialized from a fresh, lazily preloading read, since lazy
+        # preloading does not reach lines and fulfillments a write built. The
+        # warnings exist only in memory, so they are carried over.
         def render_cart(status: :ok)
-          render json: Spree.api.cart_serializer.new(@cart, params: serializer_params).to_h, status: status
+          cart = current_store.carts.where(id: @cart.id).preload_associations_lazily.take!
+          cart.warnings = @cart.warnings
+
+          render json: Spree.api.cart_serializer.new(cart, params: serializer_params).to_h, status: status
         end
 
         # Drops lines the customer can no longer buy — a discontinued product,
@@ -72,10 +87,15 @@ module Spree
         # storefront that knows nothing about groups still finds every order it
         # needs there.
         def render_order(status: :ok)
-          record = @cart.reload
-          serializer = record.is_a?(Spree::OrderGroup) ? Spree.api.order_group_serializer : Spree.api.order_serializer
+          # Read back through a lazily preloading relation rather than
+          # reloaded in place: a group's orders, and everything each of them
+          # renders, then load once for all of them instead of once per order.
+          purchases = @cart.is_a?(Spree::OrderGroup) ? current_store.order_groups : current_store.orders
+          # Chained through `where` first: an association collection drops the
+          # lazy flag when `find` rebuilds the query from the association.
+          record = purchases.where(id: @cart.id).preload_associations_lazily.take!
 
-          render json: serializer.new(record, params: serializer_params).to_h, status: status
+          render json: purchase_serializer_for(record).new(record, params: serializer_params).to_h, status: status
         end
 
         # Return the cart token from the request headers.

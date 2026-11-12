@@ -324,11 +324,6 @@ describe Spree::Media, type: :model do
       expect(asset.media_type).to eq('image')
     end
 
-    it 'defaults to image for Spree::Media subclass' do
-      image = Spree::Media.new
-      expect(image.media_type).to eq('image')
-    end
-
     it 'answers a predicate per media type' do
       expect(build(:media)).to be_image
       expect(build(:video_media)).to be_video
@@ -337,10 +332,6 @@ describe Spree::Media, type: :model do
   end
 
   describe 'video' do
-    it 'accepts an uploaded video file' do
-      expect(build(:video_media)).to be_valid
-    end
-
     it 'requires a file, not a URL' do
       asset = build(:media, media_type: 'video')
       asset.attachment.detach
@@ -369,10 +360,6 @@ describe Spree::Media, type: :model do
   end
 
   describe 'external video' do
-    it 'accepts a YouTube link' do
-      expect(build(:external_video_media)).to be_valid
-    end
-
     it 'accepts a Vimeo link' do
       expect(build(:external_video_media, external_video_url: 'https://vimeo.com/123456789')).to be_valid
     end
@@ -515,45 +502,6 @@ describe Spree::Media, type: :model do
     end
   end
 
-  describe 'delegated methods' do
-    let(:asset) { create(:media) }
-    let(:attachment) { asset.attachment }
-
-    before do
-      allow(asset).to receive(:attachment).and_return(attachment)
-    end
-
-    it 'delegates :key to attachment' do
-      expect(attachment).to receive(:key)
-      asset.key
-    end
-
-    it 'delegates :attached? to attachment' do
-      expect(attachment).to receive(:attached?)
-      asset.attached?
-    end
-
-    it 'delegates :variant to attachment' do
-      expect(attachment).to receive(:variant)
-      asset.variant
-    end
-
-    it 'delegates :variable? to attachment' do
-      expect(attachment).to receive(:variable?)
-      asset.variable?
-    end
-
-    it 'delegates :blob to attachment' do
-      expect(attachment).to receive(:blob)
-      asset.blob
-    end
-
-    it 'delegates :filename to attachment' do
-      expect(attachment).to receive(:filename)
-      asset.filename
-    end
-  end
-
   describe '.with_session_uploaded_assets_uuid' do
     subject { described_class.with_session_uploaded_assets_uuid(uuid) }
 
@@ -614,6 +562,22 @@ describe Spree::Media, type: :model do
         asset = create(:media)
         asset.external_url = 'https://example.com/Example-Image-001.png'
         expect(asset.external_url).to eq('https://example.com/Example-Image-001.png')
+      end
+
+      it 'sets the external URL on an unsaved media, which the job does before saving it' do
+        asset = build(:media)
+        asset.external_url = 'https://example.com/Example-Image-001.png'
+        asset.save!
+
+        expect(asset.reload.external_url).to eq('https://example.com/Example-Image-001.png')
+      end
+
+      # `has_many_inversing` is an app-level setting, so rely on the association itself rather
+      # than on it: a custom field built on an unsaved owner must know that owner.
+      it 'declares the inverse of custom_fields explicitly' do
+        reflection = described_class.reflect_on_association(:custom_fields)
+
+        expect(reflection.options[:inverse_of]).to eq(:resource)
       end
     end
   end

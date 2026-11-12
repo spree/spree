@@ -251,10 +251,19 @@ html:not(.dark) h4 {
   }
 }
 
-/* The article itself is capped at max-w-xl (576px); a wider measure is what
-   actually gives tables, code blocks and API examples room. */
-#content-container .flex.flex-row-reverse > .max-w-xl {
-  max-width: 52rem;
+/* The article is capped at --content-width (576px) and centred, leaving wide
+   empty gutters beside it. Let it fill the space left of the table of
+   contents instead — tables, code blocks and API examples need the room. The
+   cap keeps prose readable on very wide screens. */
+#content-container #content-area {
+  flex: 1 1 0%;
+  max-width: 60rem;
+}
+
+/* The homepage has no table of contents and lays out its own grids, so it
+   takes the full width. */
+#content-container #content-area:has(.home-page) {
+  max-width: none;
 }
 
 /* --- Navbar --------------------------------------------------------------- */
@@ -334,12 +343,34 @@ html:not(.dark) h4 {
   color: var(--spree-accent-strong) !important;
 }
 
+/* Inside callouts Mintlify colours links like the callout's own text, so
+   without the underline they are indistinguishable from it. */
+#content-container [data-callout-type] .link {
+  font-weight: 500;
+  text-decoration: underline !important;
+  text-decoration-thickness: 1px !important;
+  text-underline-offset: 3px !important;
+}
+
 .dark #content-container .link {
   color: #4d9fff !important;
 }
 
 .dark #content-container .link:hover {
   color: #7fb8ff !important;
+}
+
+/* The homepage hero carries its own headline, so Mintlify's page title,
+   breadcrumb and description would repeat it. */
+#content-area:has(.home-page) > #header {
+  display: none;
+}
+
+/* Homepage cards and pills colour their own text, so the body link colour
+   must not reach them. */
+#content-container .home-plain.link,
+.dark #content-container .home-plain.link {
+  color: inherit !important;
 }
 
 /* --- Changelog ------------------------------------------------------------ */
@@ -417,4 +448,70 @@ html:not(.dark) h4 {
 
 .dark :has(> .changelog-header) a {
   color: #4d9fff;
+}
+
+/* Tables, styled after the dashboard's: a filled header row, a rule between
+   rows and an outer border, so a wide table reads as one block rather than
+   drifting columns.
+   
+   `!important` throughout because Mintlify ships its own table rules and
+   loads this stylesheet before them. Fixed colours rather than CSS variables
+   for the same reason — the theme's own variables are not in scope here. */
+table {
+  border: 1px solid #d0d7de !important;
+  border-radius: 0.5rem !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  overflow: hidden !important;
+  width: 100%;
+}
+
+table thead {
+  background-color: #f3f4f6 !important;
+}
+
+table th {
+  font-weight: 500 !important;
+  text-align: left;
+  color: #4b5563 !important;
+  padding: 0.625rem 0.875rem !important;
+  border-bottom: 1px solid #d0d7de !important;
+}
+
+/* Vertical rules too, so columns in a wide table stay readable across. */
+table th + th,
+table td + td {
+  border-left: 1px solid #e8ebee !important;
+}
+
+table td {
+  padding: 0.75rem 0.875rem !important;
+  border-bottom: 1px solid #e8ebee !important;
+  vertical-align: middle;
+}
+
+table tbody tr:last-child td {
+  border-bottom: 0 !important;
+}
+
+.dark table {
+  border-color: #3d444d !important;
+}
+
+.dark table thead {
+  background-color: #21262d !important;
+}
+
+.dark table th {
+  color: #9198a1 !important;
+  border-bottom-color: #3d444d !important;
+}
+
+.dark table th + th,
+.dark table td + td {
+  border-left-color: #2a3038 !important;
+}
+
+.dark table td {
+  border-bottom-color: #2a3038 !important;
 }

@@ -14,16 +14,23 @@ RSpec.describe Spree::Api::V3::Admin::TagsController, type: :controller do
       let!(:tagged_product) { create(:product, store: store, tag_list: ['summer']) }
 
       it 'returns matching tag names for the type' do
-        get :index, params: { taggable_type: 'Spree::Product' }, as: :json
+        get :index, params: { taggable_type: 'product' }, as: :json
 
         expect(response).to have_http_status(:ok)
         expect(json_response['data'].map { |t| t['name'] }).to include('summer')
       end
 
       it 'rejects an unregistered taggable type' do
-        get :index, params: { taggable_type: 'Spree::Secret' }, as: :json
+        get :index, params: { taggable_type: 'secret' }, as: :json
 
         expect(response).to have_http_status(:unprocessable_content)
+      end
+
+      it 'rejects a Ruby class name' do
+        get :index, params: { taggable_type: 'Spree::Product' }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['message']).to include('product')
       end
     end
 
@@ -35,7 +42,7 @@ RSpec.describe Spree::Api::V3::Admin::TagsController, type: :controller do
       let!(:foreign_order) { create(:order, store: other_store, tag_list: ['fraud-watch']) }
 
       it 'excludes another store\'s order tags' do
-        get :index, params: { taggable_type: 'Spree::Order' }, as: :json
+        get :index, params: { taggable_type: 'order' }, as: :json
 
         names = json_response['data'].map { |t| t['name'] }
         expect(names).to include('vip')
@@ -51,11 +58,41 @@ RSpec.describe Spree::Api::V3::Admin::TagsController, type: :controller do
       let!(:foreign_product) { create(:product, store: other_store, tag_list: ['clearance']) }
 
       it 'excludes another store\'s product tags' do
-        get :index, params: { taggable_type: 'Spree::Product' }, as: :json
+        get :index, params: { taggable_type: 'product' }, as: :json
 
         names = json_response['data'].map { |t| t['name'] }
         expect(names).to include('bestseller')
         expect(names).not_to include('clearance')
+      end
+
+      it 'includes tags added in bulk' do
+        Spree::Tags::BulkAdd.call(tag_names: ['bulk-added'], records: Spree::Product.where(id: own_product.id))
+
+        get :index, params: { taggable_type: 'product' }, as: :json
+
+        expect(json_response['data'].map { |t| t['name'] }).to include('bulk-added')
+      end
+    end
+
+    context 'a taggable that declares a store tenant' do
+      let(:headers) { bearer_headers }
+
+      let(:other_store) { create(:store) }
+      let!(:own_user) { create(:user, tag_list: ['newsletter']) }
+      let!(:foreign_user) { create(:user, tag_list: ['wholesale']) }
+
+      before do
+        own_user.taggings.update_all(tenant: store.id.to_s)
+        foreign_user.taggings.update_all(tenant: other_store.id.to_s)
+        allow(Spree.customer_class).to receive(:tenant_column).and_return(:store_id)
+      end
+
+      it 'bounds its vocabulary to the current store' do
+        get :index, params: { taggable_type: Spree.customer_class.api_type }, as: :json
+
+        names = json_response['data'].map { |t| t['name'] }
+        expect(names).to include('newsletter')
+        expect(names).not_to include('wholesale')
       end
     end
 
@@ -67,7 +104,7 @@ RSpec.describe Spree::Api::V3::Admin::TagsController, type: :controller do
         let(:api_key) { create(:api_key, :secret, store: store, scopes: ['read_products']) }
 
         it 'forbids listing customer tags' do
-          get :index, params: { taggable_type: Spree.customer_class.to_s }, as: :json
+          get :index, params: { taggable_type: Spree.customer_class.api_type }, as: :json
 
           expect(response).to have_http_status(:forbidden)
           expect(json_response['error']['details']['required_scope']).to eq('read_customers')
@@ -78,7 +115,7 @@ RSpec.describe Spree::Api::V3::Admin::TagsController, type: :controller do
         let(:api_key) { create(:api_key, :secret, store: store, scopes: ['read_customers']) }
 
         it 'allows listing customer tags' do
-          get :index, params: { taggable_type: Spree.customer_class.to_s }, as: :json
+          get :index, params: { taggable_type: Spree.customer_class.api_type }, as: :json
 
           expect(response).to have_http_status(:ok)
           expect(json_response['data'].map { |t| t['name'] }).to include('vip')

@@ -15,6 +15,8 @@ RSpec.describe 'Admin Translatable Resources API', type: :request, swagger_doc: 
       description 'Returns every translatable resource type and its translatable fields (key + content type), so clients can render translation editors generically.'
       admin_scope :read, :settings
 
+      admin_sdk_example 'translatable-resources/list'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
 

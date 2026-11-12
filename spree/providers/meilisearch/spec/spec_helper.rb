@@ -27,7 +27,6 @@ rescue LoadError
 end
 
 require 'rspec/rails'
-require 'database_cleaner/active_record'
 require 'ffaker'
 require 'webmock/rspec'
 

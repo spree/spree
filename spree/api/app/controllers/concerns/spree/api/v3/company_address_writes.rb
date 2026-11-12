@@ -13,8 +13,10 @@ module Spree
 
         protected
 
+        # Each including controller declares the address it takes with
+        # `request_params`.
         def permitted_params
-          params.permit(:label, *Spree::Api::V3::AddressParams::ADDRESS_KEYS)
+          params.permit(*declared_permitted_attributes)
         end
 
         # @return [Hash] default keywords for Spree::Addresses::Create / Update

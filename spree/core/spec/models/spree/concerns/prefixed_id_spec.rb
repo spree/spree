@@ -87,14 +87,6 @@ RSpec.describe Spree::PrefixedId do
         expect(session.external_id).to eq('seti_test456')
       end
     end
-
-    context 'with no prefixed IDs present' do
-      it 'does not modify attributes' do
-        product = build(:product)
-        product.assign_attributes(name: 'Updated Name')
-        expect(product.name).to eq('Updated Name')
-      end
-    end
   end
 
   describe '.find_by_prefix_id!' do

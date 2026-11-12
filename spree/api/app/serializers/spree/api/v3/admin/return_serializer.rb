@@ -5,15 +5,17 @@ module Spree
     module V3
       module Admin
         class ReturnSerializer < V3::ReturnSerializer
+          include Concerns::ExternalReferencesAttribute
+
+          without_formatted_money
+
           typelize memo: [:string, nullable: true],
                    metadata: 'Record<string, unknown>',
-                   documents: "Array<{ kind: string; url: string }>",
                    stock_location_id: [:string, nullable: true],
                    created_by_id: [:string, nullable: true],
                    created_by_type: [:string, nullable: true, enum: Spree::Actor::BUILT_IN_KINDS, enum_type_name: 'ActorKind'],
-                   refunded_total: :string,
-                   display_refunded_total: :string,
-                   refundable_total: :string
+                   refund_total: [:string, nullable: false],
+                   refund_tax_total: [:string, nullable: false]
 
           attributes :memo, :metadata, created_at: :iso8601, updated_at: :iso8601
 
@@ -21,7 +23,10 @@ module Spree
 
           actor_attributes :created_by
 
-          attributes refunded_total: :string, display_refunded_total: :string, refundable_total: :string
+          money_attributes :refunded_total, :refundable_total
+          typelize refunded_total: [:string, nullable: false],
+                   refundable_total: [:string, nullable: false]
+
           many :return_line_items,
                resource: proc { Spree.api.admin_return_line_item_serializer },
                if: proc { expand?('return_line_items') }
@@ -33,6 +38,7 @@ module Spree
 
           # Paperwork the provider produced beside the label: a cross-border
           # return is declared like any other export.
+          typelize({ kind: :string, url: :string }, multi: true)
           attribute :documents do |return_record|
             return_record.provider.documents(return_record).map(&:as_json)
           end
@@ -43,6 +49,8 @@ module Spree
 
           # Where the inbound parcel is, as the carrier last reported it.
           many :deliveries, resource: proc { Spree.api.admin_delivery_serializer }
+
+          expandable_custom_fields admin: true
         end
       end
     end

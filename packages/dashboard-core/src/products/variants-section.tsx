@@ -16,6 +16,9 @@ import {
 import { CSS } from '@dnd-kit/utilities'
 import type { ProductFormValues, VariantFormValues } from '@spree/dashboard-core'
 import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
   Button,
   Card,
   CardContent,
@@ -30,12 +33,23 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
 } from '@spree/dashboard-ui'
-import { PencilIcon, SwatchBookIcon, XIcon } from '@spree/dashboard-ui/icons'
+import {
+  ImageIcon,
+  ImagePlusIcon,
+  PencilIcon,
+  SwatchBookIcon,
+  TriangleAlertIcon,
+  XIcon,
+} from '@spree/dashboard-ui/icons'
 import { type CSSProperties, useEffect, useMemo, useState } from 'react'
 import { type UseFormReturn, useFieldArray, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import type { PanelOptionType as OptionType } from '../api-client'
+import { MediaPickerDialog } from '../components/media-picker-dialog'
 import { BulkVariantsDialog } from './bulk-variants-dialog'
 import {
   useFormOptionTypes as useOptionTypes,
@@ -61,6 +75,8 @@ interface Props {
    * whatever it already has.
    */
   seedFromType?: boolean
+  /** The product form's key — names the variant sheet's slot. */
+  formKey?: string
 }
 
 // Derive the initial selected option types from current variant rows so the
@@ -122,7 +138,7 @@ function seedFromProductType(
     .filter((entry): entry is SelectedOptionType => entry !== null)
 }
 
-export function VariantsSection({ form, seedFromType = false }: Props) {
+export function VariantsSection({ form, seedFromType = false, formKey = 'product' }: Props) {
   const { t } = useTranslation()
   const { data: optionTypesData } = useOptionTypes()
   const allOptionTypes = useMemo(() => optionTypesData?.data ?? [], [optionTypesData])
@@ -140,6 +156,7 @@ export function VariantsSection({ form, seedFromType = false }: Props) {
   })
 
   const [editingIndex, setEditingIndex] = useState<number | null>(null)
+  const [pickingImagesFor, setPickingImagesFor] = useState<number | null>(null)
   const [sheetOpen, setSheetOpen] = useState(false)
   const [bulkOpen, setBulkOpen] = useState(false)
   const [orphanedKeys, setOrphanedKeys] = useState<string[]>([])
@@ -361,31 +378,34 @@ export function VariantsSection({ form, seedFromType = false }: Props) {
         />
 
         {orphanedKeys.length > 0 && (
-          <div className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm dark:border-amber-700 dark:bg-amber-950/40">
-            <p className="font-medium text-amber-900 dark:text-amber-100">
+          <Alert variant="warning">
+            <TriangleAlertIcon />
+            <AlertTitle>
               {t('admin.products.variants.orphan_warning', { count: orphanedKeys.length })}
-            </p>
-            {orphanedEntries.length > 0 && (
-              <ul className="mt-1 list-disc pl-5 text-amber-900 dark:text-amber-200">
-                {orphanedEntries.map((entry) => (
-                  <li key={entry.key}>{entry.label}</li>
-                ))}
-              </ul>
-            )}
-            <div className="mt-2 flex items-center justify-end gap-2">
-              <Button type="button" variant="ghost" size="sm" onClick={handleKeepOrphans}>
-                {t('admin.products.variants.keep')}
-              </Button>
-              <Button
-                type="button"
-                variant="destructive"
-                size="sm"
-                onClick={handleConfirmDropOrphans}
-              >
-                {t('admin.actions.remove')}
-              </Button>
-            </div>
-          </div>
+            </AlertTitle>
+            <AlertDescription>
+              {orphanedEntries.length > 0 && (
+                <ul className="list-disc pl-5">
+                  {orphanedEntries.map((entry) => (
+                    <li key={entry.key}>{entry.label}</li>
+                  ))}
+                </ul>
+              )}
+              <div className="mt-2 flex items-center justify-end gap-2">
+                <Button type="button" variant="ghost" size="sm" onClick={handleKeepOrphans}>
+                  {t('admin.products.variants.keep')}
+                </Button>
+                <Button
+                  type="button"
+                  variant="destructive"
+                  size="sm"
+                  onClick={handleConfirmDropOrphans}
+                >
+                  {t('admin.actions.remove')}
+                </Button>
+              </div>
+            </AlertDescription>
+          </Alert>
         )}
 
         {fields.length > 0 && !awaitingOptionValues && (
@@ -399,7 +419,7 @@ export function VariantsSection({ form, seedFromType = false }: Props) {
                 items={fields.map((f) => f._key)}
                 strategy={verticalListSortingStrategy}
               >
-                <Table>
+                <Table roundedTop>
                   <TableHeader>
                     <TableRow>
                       {!isSimpleProduct && (
@@ -425,6 +445,7 @@ export function VariantsSection({ form, seedFromType = false }: Props) {
                         optionTypes={allOptionTypes}
                         onEdit={() => handleEditRow(index)}
                         onRemove={() => handleRowRemove(index)}
+                        onPickImages={() => setPickingImagesFor(index)}
                       />
                     ))}
                   </TableBody>
@@ -437,10 +458,20 @@ export function VariantsSection({ form, seedFromType = false }: Props) {
 
       <BulkVariantsDialog form={form} open={bulkOpen} onOpenChange={setBulkOpen} />
 
+      {pickingImagesFor !== null && (
+        <VariantImagesPicker
+          form={form}
+          variantIndex={pickingImagesFor}
+          optionTypes={allOptionTypes}
+          onClose={() => setPickingImagesFor(null)}
+        />
+      )}
+
       {editingIndex !== null && (
         <VariantEditSheet
           form={form}
           variantIndex={editingIndex}
+          formKey={formKey}
           open={sheetOpen}
           onOpenChange={(o) => {
             setSheetOpen(o)
@@ -461,6 +492,7 @@ interface SortableVariantRowProps {
   optionTypes: OptionType[]
   onEdit: () => void
   onRemove: () => void
+  onPickImages: () => void
 }
 
 function SortableVariantRow({
@@ -471,6 +503,7 @@ function SortableVariantRow({
   optionTypes,
   onEdit,
   onRemove,
+  onPickImages,
 }: SortableVariantRowProps) {
   const { t } = useTranslation()
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
@@ -501,7 +534,19 @@ function SortableVariantRow({
           <DragHandle attributes={attributes} listeners={listeners} />
         </TableCell>
       )}
-      <TableCell className="font-medium">{label}</TableCell>
+      <TableCell className="font-medium">
+        <div className="flex items-center gap-3">
+          {!isSimpleProduct && (
+            <VariantImageButton
+              form={form}
+              variantId={variant.id}
+              label={label}
+              onPick={onPickImages}
+            />
+          )}
+          {label}
+        </div>
+      </TableCell>
       <TableCell>
         <Input
           aria-label={t('admin.fields.variant.sku.label')}
@@ -523,7 +568,7 @@ function SortableVariantRow({
           {!isSimpleProduct && (
             <Button
               type="button"
-              variant="ghost"
+              variant="destructive-ghost"
               size="icon-sm"
               aria-label={t('admin.products.variants.remove_row_aria', { name: label })}
               onClick={onRemove}
@@ -534,5 +579,161 @@ function SortableVariantRow({
         </div>
       </TableCell>
     </TableRow>
+  )
+}
+
+type MediaRow = NonNullable<ProductFormValues['media']>[number]
+
+/** A media row's stable key: its id once saved, before that its upload's. */
+function mediaRowKey(media: MediaRow): string | null {
+  return media.id ?? media.signed_id ?? media.uploadId ?? null
+}
+
+/**
+ * A variant's image: its first assigned image (in gallery
+ * order) as a thumbnail, with a count when it has more, or an empty dashed
+ * square. Opens the picker of the product's images. An unsaved variant has no
+ * id to assign media to yet, so its square waits for the save.
+ */
+function VariantImageButton({
+  form,
+  variantId,
+  label,
+  onPick,
+}: {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  form: UseFormReturn<ProductFormValues, any, any>
+  variantId?: string | null
+  label: string
+  onPick: () => void
+}) {
+  const { t } = useTranslation()
+  const media = useWatch({ control: form.control, name: 'media' }) ?? []
+  const assigned = variantId ? media.filter((m) => m.variant_ids?.includes(variantId)) : []
+  const first = assigned[0]
+  const preview = first?.previewUrl ?? null
+
+  const button = (
+    <button
+      type="button"
+      // `aria-disabled` rather than `disabled`: a disabled button gets no
+      // pointer events, so the tooltip saying why could never open.
+      onClick={variantId ? onPick : undefined}
+      aria-disabled={!variantId || undefined}
+      aria-label={t('admin.products.variants.images_aria', { name: label })}
+      className={cn(
+        'relative flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-md bg-card text-muted-foreground transition-colors hover:text-foreground focus-visible:shadow-field-focus aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:text-muted-foreground',
+        first ? 'border border-border-card' : 'border border-border border-dashed',
+      )}
+    >
+      {preview ? (
+        <img src={preview} alt="" className="size-full object-cover" />
+      ) : first ? (
+        <ImageIcon className="size-4" />
+      ) : (
+        <ImagePlusIcon className="size-4" />
+      )}
+      {assigned.length > 1 && (
+        <span className="absolute right-0.5 bottom-0.5 rounded bg-black/60 px-1 text-[10px] text-white tabular-nums leading-4">
+          +{assigned.length - 1}
+        </span>
+      )}
+    </button>
+  )
+
+  if (variantId) return button
+
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>{button}</TooltipTrigger>
+      <TooltipContent>{t('admin.products.variants.images_unsaved')}</TooltipContent>
+    </Tooltip>
+  )
+}
+
+/**
+ * The media picker over this product's own images, with the variant's
+ * current ones ticked. Done applies exactly the ticked set — the same
+ * many-to-many assignment the media editor's variant pills make, seen from
+ * the variant's side — and, like every product edit, saves with the product.
+ */
+function VariantImagesPicker({
+  form,
+  variantIndex,
+  optionTypes,
+  onClose,
+}: {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  form: UseFormReturn<ProductFormValues, any, any>
+  variantIndex: number
+  optionTypes: OptionType[]
+  onClose: () => void
+}) {
+  const { t } = useTranslation()
+  const variant = form.getValues(`variants.${variantIndex}`)
+  const variantId = variant?.id
+  if (!variant || !variantId) return null
+
+  const label = variantDisplayLabel(
+    variant,
+    t('admin.products.variants.default_variant'),
+    optionTypes,
+  )
+  const rows = form.getValues('media') ?? []
+  const options = rows.flatMap((m) => {
+    const key = mediaRowKey(m)
+    if (!key) return []
+    return [
+      {
+        id: key,
+        alt: m.alt,
+        filename: m.filename,
+        media_type: m.media_type,
+        small_url: m.previewUrl ?? null,
+      },
+    ]
+  })
+  const assigned = new Set(
+    rows.filter((m) => m.variant_ids?.includes(variantId)).flatMap((m) => mediaRowKey(m) ?? []),
+  )
+  const initialSelection = options.filter((option) => assigned.has(option.id))
+
+  return (
+    <MediaPickerDialog
+      open
+      onOpenChange={(open) => !open && onClose()}
+      // Keyed on the files and their alt text, so a file added or renamed
+      // since the last opening shows up rather than a cached copy.
+      queryKey={`variant-images-${variantId}-${options.map((o) => `${o.id}:${o.alt ?? ''}`).join(',')}`}
+      // Local, so the list is the form's — including files added this session.
+      search={async (query) => ({
+        data: query
+          ? options.filter((o) =>
+              `${o.alt ?? ''} ${o.filename ?? ''}`.toLowerCase().includes(query.toLowerCase()),
+            )
+          : options,
+      })}
+      initialSelection={initialSelection}
+      allowEmptyConfirm
+      browseControls={false}
+      // Listed in the Media card's order, so the first ticked is the one the
+      // variant row shows; the badge says which, live.
+      firstSelectedBadge={t('admin.products.variants.thumbnail_badge')}
+      title={t('admin.products.variants.images_title', { name: label })}
+      description={t('admin.products.variants.images_description')}
+      confirmLabel={t('admin.actions.done')}
+      onConfirm={(picked) => {
+        const ticked = new Set(picked.map((media) => media.id))
+        const next = (form.getValues('media') ?? []).map((m) => {
+          const ids = new Set(m.variant_ids ?? [])
+          const key = mediaRowKey(m)
+          if (key && ticked.has(key)) ids.add(variantId)
+          else ids.delete(variantId)
+          return { ...m, variant_ids: [...ids] }
+        })
+        form.setValue('media', next, { shouldDirty: true })
+        onClose()
+      }}
+    />
   )
 }

@@ -5,6 +5,7 @@ import type {
   PriceRule,
   ResourceTypeDefinition,
 } from '@spree/admin-sdk'
+import { MATCH_POLICIES, type MatchPolicy } from '@spree/core'
 import {
   adminClient,
   Can,
@@ -17,9 +18,10 @@ import {
   useResourceKey,
   useStore,
 } from '@spree/dashboard-core'
-import { DropdownMenuItem, useConfirm } from '@spree/dashboard-ui'
+import { Alert, AlertDescription, DropdownMenuItem, Item, useConfirm } from '@spree/dashboard-ui'
 import {
   CalendarOffIcon,
+  CircleAlertIcon,
   PauseIcon,
   PencilIcon,
   PlayIcon,
@@ -28,6 +30,7 @@ import {
   TrashIcon,
 } from '@spree/dashboard-ui/icons'
 import { useQueryClient } from '@tanstack/react-query'
+import type { TFunction } from 'i18next'
 import { useEffect, useState } from 'react'
 import {
   Controller,
@@ -37,7 +40,6 @@ import {
   useForm,
 } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { spreeJsonLinkResolver } from '../../../lib/json-link-resolver'
 import { BulkPriceEditorDialog } from '../bulk-price-editor/bulk-price-editor-dialog'
 import { catalogPriceColumns, catalogVariantRows } from '../catalog-price-columns'
 import { DeferredProductMembershipCard } from '../deferred-product-membership-card'
@@ -47,6 +49,7 @@ import {
   ProductMembershipStagingProvider,
   useProductMembershipStaging,
 } from '../product-membership-staging'
+import { TypePickerSheet } from '../type-picker-sheet'
 import { PriceListStatusBadge } from './status-badge'
 // Side-effect import — registers per-rule editors (customer, customer
 // group, …) into the slot registry. Must run before any RuleEditSheet
@@ -95,7 +98,6 @@ import {
   useRemovePriceListProducts,
 } from '../../../hooks/use-price-lists'
 import {
-  MATCH_POLICIES,
   PRICE_LIST_DEFAULTS,
   type PriceListFormValues,
   type PriceRuleFormDraft,
@@ -182,7 +184,7 @@ export function PriceListForm({
       description: priceList.description ?? '',
       starts_at: priceList.starts_at,
       ends_at: priceList.ends_at,
-      match_policy: (priceList.match_policy as 'all' | 'any') ?? 'all',
+      match_policy: (priceList.match_policy as MatchPolicy) ?? 'all',
       rules: initialRules.map(ruleDraftFromRule),
       staged_products: { adds: [], removes: [] },
       ...extensionFormValues('price_list', priceList),
@@ -217,7 +219,7 @@ export function PriceListForm({
     return (
       <ResourceLayout
         header={<PageHeader title={t('admin.common.loading')} backTo="products/price-lists" />}
-        main={<div className="text-sm text-muted-foreground">{t('admin.common.loading')}</div>}
+        main={<div className="text-base text-muted-foreground">{t('admin.common.loading')}</div>}
       />
     )
   }
@@ -258,7 +260,6 @@ export function PriceListForm({
                         title: `Price list ${priceList.name}`,
                         fetch: () => adminClient.priceLists.get(priceList.id),
                         endpoint: `/api/v3/admin/price_lists/${priceList.id}`,
-                        resolveLink: spreeJsonLinkResolver(storeId),
                       }
                     : undefined
                 }
@@ -298,12 +299,10 @@ export function PriceListForm({
             main={
               <>
                 {form.formState.errors.root?.message && (
-                  <p
-                    className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive"
-                    role="alert"
-                  >
-                    {form.formState.errors.root.message}
-                  </p>
+                  <Alert variant="destructive">
+                    <CircleAlertIcon />
+                    <AlertDescription>{form.formState.errors.root.message}</AlertDescription>
+                  </Alert>
                 )}
                 <RulesCard form={form} rulesArray={rulesArray} />
                 {mode === 'edit' && priceList && (
@@ -608,7 +607,7 @@ function RulesCard({
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <CardTitle>{t('admin.pages.products.price_lists.rules_section')}</CardTitle>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-base text-muted-foreground">
               {t('admin.pages.products.price_lists.rules_help')}
             </p>
           </div>
@@ -641,7 +640,7 @@ function RulesCard({
       <CardContent>
         <div className="space-y-2">
           {rulesArray.fields.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-base text-muted-foreground">
               {t('admin.pages.products.price_lists.rules_empty')}
             </p>
           ) : (
@@ -666,10 +665,17 @@ function RulesCard({
         </div>
 
         {pickerOpen && (
-          <RulePickerSheet
+          <TypePickerSheet
+            family="price_rule"
+            title={t('admin.pages.products.price_lists.add_rule')}
+            description={t('admin.pages.products.price_lists.add_rule_help')}
+            emptyMessage={t(
+              registeredTypes.length === 0
+                ? 'admin.pages.products.price_lists.rule_types_empty'
+                : 'admin.pages.products.price_lists.rule_types_all_used',
+            )}
             // One rule type per list (backend uniqueness on `type`).
             types={types.filter((tt) => !watchedRules.some((r) => r.type === tt.type))}
-            registeredCount={registeredTypes.length}
             open
             onOpenChange={(o) => !o && setPickerOpen(false)}
             onPicked={(type) => {
@@ -732,14 +738,14 @@ function RuleRow({
   }
 
   return (
-    <div className="flex w-full items-stretch rounded-md border bg-card hover:bg-accent/50">
+    <Item variant="outline" className="items-stretch gap-0 p-0 hover:bg-muted">
       <button
         type="button"
         onClick={onEdit}
-        className="min-w-0 flex-1 px-3 py-2 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-l-md"
+        className="min-w-0 flex-1 rounded-s-card px-3.5 py-3 text-left outline-none focus-visible:shadow-field-focus"
       >
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium">
+          <span className="text-base font-medium">
             {typeLabel('price_rule', draft.type, definition?.label)}
           </span>
           <PencilIcon className="size-3 text-muted-foreground" />
@@ -747,7 +753,7 @@ function RuleRow({
         <RuleSummary draft={draft} definition={definition} />
       </button>
       <Can I="destroy" a={Subject.PriceRule}>
-        <div className="flex items-center pr-1.5">
+        <div className="flex items-center pe-3">
           <Button type="button" size="icon-xs" variant="destructive-ghost" onClick={handleRemove}>
             <TrashIcon className="size-4" />
             {/* "Remove rule", not "Remove": the confirm dialog this opens has
@@ -757,7 +763,7 @@ function RuleRow({
           </Button>
         </div>
       </Can>
-    </div>
+    </Item>
   )
 }
 
@@ -818,12 +824,11 @@ function RuleSummary({
 
   // Fall back to the generic preferences dump for everything else
   // (Volume Rule's min_quantity, etc.). Skip keys already covered above.
-  for (const field of draft.preference_schema ?? []) {
-    if (PREFS_SHOWN_VIA_EMBED.has(field.key)) continue
-    const value = draft.preferences?.[field.key]
+  for (const [key, value] of Object.entries(draft.preferences ?? {})) {
+    if (PREFS_SHOWN_VIA_EMBED.has(key)) continue
     if (value === null || value === undefined || value === '') continue
     if (Array.isArray(value) && value.length === 0) continue
-    parts.push(`${humanize(field.key)}: ${formatPreferenceValue(value, t)}`)
+    parts.push(`${humanize(key)}: ${formatPreferenceValue(value, t)}`)
   }
 
   if (parts.length === 0) {
@@ -842,12 +847,10 @@ function RuleSummary({
  * when the embed is missing/empty — caller falls back to the preferences
  * dump.
  */
-type Translator = (key: string, options?: Record<string, unknown>) => string
-
 function nameList<T>(
   items: T[] | undefined,
   getLabel: (item: T) => string,
-  t: Translator,
+  t: TFunction,
 ): string | null {
   if (!items?.length) return null
   const labels = items.map(getLabel).filter(Boolean)
@@ -859,7 +862,7 @@ function nameList<T>(
   })
 }
 
-function formatPreferenceValue(value: unknown, t: Translator): string {
+function formatPreferenceValue(value: unknown, t: TFunction): string {
   if (Array.isArray(value)) return value.join(', ')
   if (typeof value === 'boolean') return t(value ? 'admin.common.yes' : 'admin.common.no')
   return String(value)
@@ -868,62 +871,6 @@ function formatPreferenceValue(value: unknown, t: Translator): string {
 function humanize(key: string): string {
   const spaced = key.replace(/_/g, ' ').trim()
   return spaced.charAt(0).toUpperCase() + spaced.slice(1)
-}
-
-function RulePickerSheet({
-  types,
-  registeredCount,
-  open,
-  onOpenChange,
-  onPicked,
-}: {
-  /** Types still selectable — already-added types are filtered out upstream. */
-  types: ResourceTypeDefinition[]
-  /** Total registered types regardless of selection — lets the empty state
-   *  distinguish "nothing registered" from "all already used". */
-  registeredCount: number
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  onPicked: (type: ResourceTypeDefinition) => void
-}) {
-  const { t } = useTranslation()
-  const emptyKey =
-    registeredCount === 0
-      ? 'admin.pages.products.price_lists.rule_types_empty'
-      : 'admin.pages.products.price_lists.rule_types_all_used'
-  return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent>
-        <SheetHeader>
-          <SheetTitle>{t('admin.pages.products.price_lists.add_rule')}</SheetTitle>
-          <SheetDescription>{t('admin.pages.products.price_lists.add_rule_help')}</SheetDescription>
-        </SheetHeader>
-        <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-4">
-          {types.length === 0 ? (
-            <p className="text-sm text-muted-foreground">{t(emptyKey)}</p>
-          ) : (
-            types.map((tt) => (
-              <button
-                key={tt.type}
-                type="button"
-                onClick={() => onPicked(tt)}
-                className="flex flex-col items-start rounded-md border p-3 text-left transition-colors hover:bg-accent/50"
-              >
-                <span className="text-sm font-medium">
-                  {typeLabel('price_rule', tt.type, tt.label)}
-                </span>
-                {typeDescription('price_rule', tt.type, tt.description) && (
-                  <span className="text-xs text-muted-foreground">
-                    {typeDescription('price_rule', tt.type, tt.description)}
-                  </span>
-                )}
-              </button>
-            ))
-          )}
-        </div>
-      </SheetContent>
-    </Sheet>
-  )
 }
 
 function RuleEditSheet({
@@ -977,7 +924,9 @@ function DefaultRuleEditor({ draft, onSave, onClose }: PriceRuleEditorContext) {
     setValues(draft.preferences ?? {})
   }, [draft])
 
-  const hasPreferences = !!draft.preference_schema?.length
+  const { data: typesData } = usePriceRuleTypes()
+  const schema = typesData?.data.find((type) => type.type === draft.type)?.schema
+  const hasPreferences = Object.keys(schema?.properties ?? {}).length > 0
 
   function handleSave() {
     onSave({ ...draft, preferences: values })
@@ -992,9 +941,9 @@ function DefaultRuleEditor({ draft, onSave, onClose }: PriceRuleEditorContext) {
       saveDisabled={!hasPreferences && draft.preferences == null}
     >
       {hasPreferences ? (
-        <PreferencesForm schema={draft.preference_schema} values={values} onChange={setValues} />
+        <PreferencesForm schema={schema} values={values} onChange={setValues} />
       ) : (
-        <p className="text-sm text-muted-foreground">
+        <p className="text-base text-muted-foreground">
           {t('admin.pages.products.price_lists.rule_no_options')}
         </p>
       )}

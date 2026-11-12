@@ -1,0 +1,93 @@
+---
+title: "Docs MCP Server"
+sidebarTitle: Docs MCP server
+description: "Connect Claude, Cursor, or any MCP-compatible AI agent to the Spree docs MCP server to search and read the latest documentation while building."
+---
+
+Spree hosts a [Model Context Protocol](https://modelcontextprotocol.io) server on top of this documentation. Once connected, your agent can search the docs and read full pages on demand — answering questions from the latest published documentation instead of stale training data.
+
+```text
+https://spreecommerce.org/docs/mcp
+```
+
+The server exposes two tools: full-text **search** across the documentation, and **reading** doc pages as Markdown.
+
+<Note>
+  This server is about Spree's documentation, not your store. To let an agent
+  work on your own catalog, orders and settings, see the
+  [Admin MCP server](/developer/mcp/overview) — the same protocol, hosted
+  by your application and authenticated with one of your API keys.
+</Note>
+
+## Setup
+
+In a [create-spree-app](/developer/create-spree-app/quickstart) project, one command connects Claude Code, Cursor and VS Code at once, and installs the [agent skills](/developer/agentic/agent-skills) too:
+
+```bash
+npx spree add ai            # skills + docs MCP server
+npx spree add ai --no-skills  # docs MCP server only
+```
+
+It adds the server to `.mcp.json`, `.cursor/mcp.json` and `.vscode/mcp.json`, keeping any servers those files already list, and points the project's `AGENTS.md` at it. Running it again changes nothing. Commit the files so your team gets the same setup.
+
+To connect a single tool by hand, or one outside a create-spree-app project:
+
+<Tabs>
+  <Tab title="Claude Code">
+    ```bash
+    claude mcp add --transport http spree-docs https://spreecommerce.org/docs/mcp
+    ```
+
+    Scope it to the project (`--scope project`) to share the connection with your team via `.mcp.json`, or keep the default local scope for just yourself.
+  </Tab>
+  <Tab title="Claude.ai / Claude Desktop">
+    Go to [Settings → Connectors](https://claude.ai/settings/connectors), click **Add custom connector**, and paste the URL:
+
+    ```text
+    https://spreecommerce.org/docs/mcp
+    ```
+  </Tab>
+  <Tab title="Cursor">
+    Add to `.cursor/mcp.json` in your project (or `~/.cursor/mcp.json` globally):
+
+    ```json
+    {
+      "mcpServers": {
+        "spree-docs": {
+          "url": "https://spreecommerce.org/docs/mcp"
+        }
+      }
+    }
+    ```
+  </Tab>
+  <Tab title="VS Code (Copilot)">
+    Add to `.vscode/mcp.json` in your project:
+
+    ```json
+    {
+      "servers": {
+        "spree-docs": {
+          "type": "http",
+          "url": "https://spreecommerce.org/docs/mcp"
+        }
+      }
+    }
+    ```
+  </Tab>
+  <Tab title="Other tools">
+    Any MCP client that supports remote servers over streamable HTTP can connect — point it at `https://spreecommerce.org/docs/mcp`. No authentication is required.
+  </Tab>
+</Tabs>
+
+## When to use MCP vs the other doc channels
+
+| Channel | Best for |
+|---|---|
+| **MCP server** (this page) | The latest published docs; agents working outside a scaffolded project; questions the installed skills don't cover |
+| **[`@spree/docs` npm package](/developer/agentic/llm-docs)** | Fast local reads inside a project — no network round-trip, works offline, pinned to what you installed |
+| **[Agent skills](/developer/agentic/agent-skills)** | Conventions and how-to knowledge the agent should apply without searching at all |
+| **[Admin MCP server](/developer/mcp/overview)** | Not docs at all — operating a real store: its catalog, orders, reports and settings |
+
+<Note>
+  New [create-spree-app](/developer/create-spree-app/quickstart) projects come connected (skip it with `--no-docs-mcp`) — Claude Code asks you to approve the server the first time you open the project. The project's `AGENTS.md` tells agents to search here and read pages from the local `@spree/docs` package, which matches the Spree version the project runs.
+</Note>

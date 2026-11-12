@@ -19,12 +19,6 @@ describe Spree::Product, type: :model do
       expect(product.name).to be_nil
     end
 
-    it 'handles nil value' do
-      product = build(:product)
-      product.name = nil
-      expect(product.name).to be_nil
-    end
-
     context 'with always_use_translations enabled' do
       before do
         Spree::Config.always_use_translations = true

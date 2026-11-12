@@ -159,6 +159,8 @@ ignore_unused:
   # Keys built with interpolation, which the scanner cannot follow.
   - 'spree.reporting.*'
   - 'spree.permissions_catalog.*'
+  # Spree::TypeLabels reads <family>_types.<api_type>.{name,description}.
+  - 'spree.{collection_rule,commission_rule,delivery_method_rule,order_routing_rule,promotion_action,promotion_rule,seller_requirement}_types.*'
   - 'spree.i18n.this_file_language'
 
 ## Exclude these keys from the `i18n-tasks eq-base' report:

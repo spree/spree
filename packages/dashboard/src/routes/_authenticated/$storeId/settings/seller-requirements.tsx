@@ -1,10 +1,11 @@
-import type { PreferenceField, SellerRequirement, SellerRequirementType } from '@spree/admin-sdk'
+import type { SellerRequirement, SellerRequirementType } from '@spree/admin-sdk'
 import type { ResourceFilterConfig } from '@spree/dashboard-core'
 import {
   adminClient,
   Can,
   defaultPreferences,
   PreferencesForm,
+  RecordMetadataSection,
   ResourceMultiAutocomplete,
   ResourceTable,
   resourceSearchSchema,
@@ -193,9 +194,7 @@ function CreateRequirementSheet({
   function handleTypeChange(value: string) {
     setType(value)
     const entry = types.find((candidate) => candidate.type === value)
-    setPreferences(
-      entry ? defaultPreferences(entry.preference_schema as unknown as PreferenceField[]) : {},
-    )
+    setPreferences(entry ? defaultPreferences(entry.schema) : {})
   }
 
   async function handleSave() {
@@ -232,7 +231,7 @@ function CreateRequirementSheet({
             // `role="alert"`: the message appears after a failed save, so a
             // screen reader has to be told rather than the operator being
             // expected to notice new text.
-            <p role="alert" className="text-destructive text-sm">
+            <p role="alert" className="text-destructive text-base">
               {saveError}
             </p>
           )}
@@ -318,8 +317,12 @@ function EditRequirementSheet({
   // blank and then save those blanks over the requirement.
   if (!requirement) return null
 
+  // Keyed by version: a sheet opened straight after a save can mount on the
+  // list from before it, and must re-seed once the refetch lands rather than
+  // save those stale values back.
   return (
     <EditRequirementForm
+      key={requirement.updated_at}
       requirement={requirement}
       kindEntry={kindEntry}
       open={open}
@@ -382,7 +385,7 @@ function EditRequirementForm({
             // `role="alert"`: the message appears after a failed save, so a
             // screen reader has to be told rather than the operator being
             // expected to notice new text.
-            <p role="alert" className="text-destructive text-sm">
+            <p role="alert" className="text-destructive text-base">
               {saveError}
             </p>
           )}
@@ -408,6 +411,7 @@ function EditRequirementForm({
               onChange={setActive}
             />
           </FieldGroup>
+          <RecordMetadataSection metadata={requirement?.metadata} />
         </div>
         <SheetFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
@@ -428,7 +432,7 @@ function EditRequirementForm({
 // taught about still renders its preference schema.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const ASSOCIATION_PICKERS: Record<string, (queryKey: string) => ResourceFilterConfig<any>> = {
-  custom_field_definition_ids: customFieldDefinitionAutocompleteProps('Spree::Seller'),
+  custom_field_definition_ids: customFieldDefinitionAutocompleteProps('seller'),
 }
 
 /**
@@ -527,9 +531,9 @@ function RequirementFields({
         />
       </Field>
 
-      {kindEntry.preference_schema.length > 0 && (
+      {Object.keys(kindEntry.schema.properties).length > 0 && (
         <PreferencesForm
-          schema={kindEntry.preference_schema as unknown as PreferenceField[]}
+          schema={kindEntry.schema}
           values={values.preferences}
           onChange={onChange.setPreferences}
           inlineDatePickers
@@ -592,7 +596,7 @@ function SettingSwitch({
   return (
     <div className="flex items-center justify-between gap-3">
       <div className="flex flex-col">
-        <label htmlFor={id} className="font-medium text-sm">
+        <label htmlFor={id} className="font-medium text-base">
           {label}
         </label>
         <span className="text-muted-foreground text-xs">{description}</span>

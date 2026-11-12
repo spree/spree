@@ -32,6 +32,35 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
       expect(json_response['number']).to eq(shipment.number)
       expect(json_response['status']).to eq(shipment.state)
     end
+
+    it 'finds the fulfillment by the key the shipping system knows it by' do
+      shipment.set_external_id('wms', 'SHIP-1')
+
+      get :show, params: { order_id: order.prefixed_id, id: 'external:wms:SHIP-1' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['id']).to eq(shipment.prefixed_id)
+      expect(json_response['external_references']).to eq('wms' => 'SHIP-1')
+    end
+
+    # A replayed create becomes an update, which must not receive the keys
+    # that only shape a new fulfillment.
+    it 'updates rather than re-creating when a shipping system replays a known key' do
+      shipment.set_external_id('wms', 'SHIP-1')
+
+      expect do
+        post :create, params: {
+          order_id: order.prefixed_id, stock_location_id: shipment.stock_location.prefixed_id, tracking: 'TRACK-9',
+          status: 'shipped', cost: '9.99', items: [{ item_id: order.line_items.first.prefixed_id, quantity: 1 }],
+          external_references: { wms: 'SHIP-1' }
+        }, as: :json
+      end.not_to change(Spree::Fulfillment, :count)
+
+      expect(response).to have_http_status(:ok)
+      shipment.reload
+      expect(shipment.tracking).to eq('TRACK-9')
+      expect(shipment.status).to eq('unfulfilled')
+    end
   end
 
   describe 'POST #create' do
@@ -79,6 +108,18 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
       expect(response).to have_http_status(:created)
       fulfillment = order.reload.shipments.first
       expect(fulfillment.delivery_method).to eq(delivery_method)
+    end
+
+    it 'refuses a delivery method from another store' do
+      delivery_method = create(:delivery_method, store: create(:store))
+
+      post :create, params: {
+        order_id: order.prefixed_id,
+        stock_location_id: shipment.stock_location.prefixed_id,
+        delivery_method_id: delivery_method.prefixed_id
+      }, as: :json
+
+      expect(response).to have_http_status(:not_found)
     end
 
     it "registers an already-shipped fulfillment with status: 'shipped' and an explicit cost" do
@@ -273,7 +314,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
         patch_cost(cost: '0')
 
         expect(response).to have_http_status(:ok), response.body
-        expect(json_response['cost']).to eq('0.0')
+        expect(json_response['cost']).to eq('0.00')
         expect(json_response['cost_source']).to eq('manual')
         expect(order.reload.delivery_total).to eq(0)
       end
@@ -293,7 +334,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
 
         patch_cost(tracking: 'DPD-7')
 
-        expect(json_response['cost']).to eq('4.5')
+        expect(json_response['cost']).to eq('4.50')
         expect(json_response['cost_source']).to eq('manual')
       end
 
@@ -301,7 +342,8 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
         patch_cost(cost: 'free')
 
         expect(response).to have_http_status(:unprocessable_content)
-        expect(json_response['error']['message']).to eq(I18n.t('spree.fulfillments.errors.invalid_cost'))
+        expect(json_response['error']['code']).to eq('invalid_money_format')
+        expect(json_response['error']['details']).to eq('cost' => ['must be a decimal string like "19.99"'])
         expect(shipment.reload.cost_source).to be_nil
       end
 
@@ -483,7 +525,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
         id: shipment.prefixed_id
       }, as: :json
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
     end
   end
 

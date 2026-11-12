@@ -9,12 +9,9 @@ module Spree
         # it is cropped, and which variants it belongs to.
         class MediaSerializer < V3::MediaSerializer
           typelize position: :number,
-                   variant_ids: [:string, multi: true],
-                   focal_point_x: [:number, nullable: true],
-                   focal_point_y: [:number, nullable: true]
+                   variant_ids: [:string, multi: true]
 
-          attributes :position, :focal_point_x, :focal_point_y,
-                     created_at: :iso8601, updated_at: :iso8601
+          attributes :position, created_at: :iso8601, updated_at: :iso8601
 
           attribute :variant_ids do |media|
             media.variants.map(&:prefixed_id)

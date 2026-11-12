@@ -60,8 +60,12 @@ module Spree
       # @return [Array<String>]
       def preference_tables
         Rails.application.eager_load! if defined?(Rails.application) && Rails.application
+        # An anonymous class (a spec's throwaway model) has no name to derive a
+        # table from, and asking raises, so it is skipped.
         owned = ActiveRecord::Base.descendants.filter_map do |model|
-          model.table_name if !model.abstract_class? && model.include?(Spree::Preferences::Preferable) && model.table_name
+          next if model.name.nil? || model.abstract_class? || !model.include?(Spree::Preferences::Preferable)
+
+          model.table_name
         end
 
         connection.tables.select { |table| owned.include?(table) && connection.column_exists?(table, :preferences) }.sort

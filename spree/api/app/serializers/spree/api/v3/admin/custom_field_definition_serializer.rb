@@ -9,15 +9,19 @@ module Spree
                    key: :string,
                    label: :string,
                    field_type: Spree::CustomField::FIELD_TYPE_TOKENS,
-                   resource_type: [:string, comment: 'Class name of the resource the field attaches to, for example Spree::Product, Spree::Order or Spree::Customer. Extensions may register more.'],
+                   resource_type: [:string, comment: 'Shorthand of the resource the field attaches to, for example product, variant, order, customer or category. Discover the full list from the resource_types endpoint; extensions may register more.'],
                    storefront_visible: :boolean,
                    searchable: :boolean,
                    sortable: :boolean,
                    filter_key: :string
 
-          attributes :namespace, :key, :label, :field_type, :resource_type, :storefront_visible,
+          attributes :namespace, :key, :label, :field_type, :storefront_visible,
                      :searchable, :sortable, :filter_key,
                      created_at: :iso8601, updated_at: :iso8601
+
+          attribute :resource_type do |definition|
+            Spree::Base.polymorphic_api_type(definition.resource_type)
+          end
         end
       end
     end

@@ -58,6 +58,14 @@ RSpec.describe 'Hosted React Dashboard', type: :request do
       expect(response.headers['Cache-Control']).to eq('no-cache')
     end
 
+    it 'tells search engines not to index the shell or its assets' do
+      get '/dashboard'
+      expect(response.headers['X-Robots-Tag']).to eq('noindex, nofollow')
+
+      get '/dashboard/assets/app-abc123.js'
+      expect(response.headers['X-Robots-Tag']).to eq('noindex, nofollow')
+    end
+
     it 'does not serve files outside the dist directory' do
       secret = File.expand_path(File.join(dist, '..', "spree-secret-#{Process.pid}.txt"))
       File.write(secret, 'top secret')

@@ -46,10 +46,10 @@ module Spree
           result.rows.each do |row|
             csv << Spree::CSV::FormulaSanitizer.row(
               row[:dimensions].map { |name, raw| hydration.label(name, raw) } +
-                query.metrics.map { |m| row[:metrics][m.name][:value] }
+                query.metrics.map { |m| m.format_value(row[:metrics][m.name][:value], result.meta[:currency]) }
             )
           end
-          totals = query.metrics.map { |m| result.totals[m.name][:value] }
+          totals = query.metrics.map { |m| m.format_value(result.totals[m.name][:value], result.meta[:currency]) }
           # With a breakdown the totals close the file under a "Total" label in
           # the first dimension column; without one the totals are the only row.
           label = query.dimensions.empty? ? [] : [I18n.t('spree.reporting.export.total')] + Array.new(query.dimensions.size - 1, '')

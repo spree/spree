@@ -23,13 +23,6 @@ RSpec.describe Spree::Purchase::Freight do
                              metadata: { 'freight_summary' => snapshot })
     end
 
-    it 'reads what the selected freight rate froze' do
-      create(:line_item, cart: cart, order: nil, variant: variant, quantity: 24)
-      select_freight_rate(cart, snapshot)
-
-      expect(cart.reload.freight_summary.total_cartons).to eq(2)
-    end
-
     # Items with carton data are not a freight shipment until a freight rate
     # says so — a retail basket of measured goods reports nothing.
     it 'has none before a freight rate is selected' do

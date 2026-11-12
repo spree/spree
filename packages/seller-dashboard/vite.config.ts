@@ -5,7 +5,7 @@ import { defineConfig } from 'vite'
 // generator, so the shell's committed routeTree.gen.ts is produced by the
 // exact machinery hosts use, which is what makes the shell's own routes
 // typecheck against the tree they compose into.
-import { spreeSellerDashboardPlugin } from './src/vite'
+import { spreeSellerDashboardPlugin } from './src/vite/index.ts'
 
 export default defineConfig({
   plugins: [spreeSellerDashboardPlugin({ root: import.meta.dirname }), react()],

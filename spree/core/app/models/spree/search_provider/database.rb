@@ -7,14 +7,6 @@ module Spree
         'best_selling' => :by_best_selling
       }.freeze
 
-      # @param store [Spree::Store]
-      # @param audience [Symbol, nil] who filters: `:store` (shoppers) limits
-      #   filters to what the storefront may query; `nil` is the back office
-      def initialize(store, audience: :store)
-        super(store)
-        @audience = audience
-      end
-
       def search_and_filter(scope:, query: nil, filters: {}, sort: nil, page: 1, limit: 25)
         filters = filters.is_a?(Hash) ? filters.dup : {}
         option_value_ids = filters.delete('with_option_value_ids') || filters.delete(:with_option_value_ids)
@@ -73,14 +65,14 @@ module Spree
       private
 
       def apply_search_and_filters(scope, query: nil, filters: {})
-        scope = scope.search(query, store) if query.present?
+        scope = scope.search(query, store, audience: audience) if query.present?
 
         filters = filters.to_unsafe_h if filters.respond_to?(:to_unsafe_h)
         scope, filters = scope.with_custom_field_filters(filters, schema: custom_field_schema)
 
         ransack_filters = sanitize_filters(filters)
         if ransack_filters.present?
-          search = scope.ransack(ransack_filters, auth_object: @audience)
+          search = scope.ransack(ransack_filters, auth_object: audience)
           scope = search.result(distinct: true)
         end
 
@@ -135,7 +127,7 @@ module Spree
             end
           }.join(',')
 
-          scope.ransack({ s: ransack_sort }, auth_object: @audience).result
+          scope.ransack({ s: ransack_sort }, auth_object: @audience).result.with_translation_fallback_order
         end
       end
 

@@ -17,11 +17,15 @@ module Spree
       # @param currency [String, nil] defaults to the store's; set it for a
       #   foreign-currency order
       # @param expected_at [Date, nil]
+      # @param cancel_by [Date, nil] the date past which the merchant no longer
+      #   wants the goods, so an order still open after it reads as overdue to
+      #   cancel rather than merely late
       # @param reference [String, nil] the supplier's own order number
       # @param notes [String, nil]
+      # @param metadata [Hash, nil]
       # @param created_by [Object, nil]
       def perform(store:, supplier:, destination_location:, items: [], currency: nil,
-                  expected_at: nil, cancel_by: nil, reference: nil, notes: nil, created_by: nil)
+                  expected_at: nil, cancel_by: nil, reference: nil, notes: nil, metadata: nil, created_by: nil)
         super
 
         step :build_purchase_order
@@ -50,6 +54,7 @@ module Spree
           created_by: created_by,
           status: Spree::PurchaseOrder.default_status
         )
+        @purchase_order.metadata = metadata if metadata
 
         Array(items).each do |item|
           @purchase_order.items.build(

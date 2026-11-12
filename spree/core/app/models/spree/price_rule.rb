@@ -16,18 +16,6 @@ module Spree
       raise NotImplementedError, "#{self.class.name} must implement #applicable?"
     end
 
-    # Whether this rule narrows its price list by geography. A list carrying one
-    # states the price for that geography outright, so its prices are charged as
-    # entered and never restated for the buyer's VAT rate
-    # (Spree::VatPriceCalculation). A rule that narrows by anything else — a
-    # quantity, a group, a channel — leaves its prices open to restatement, since
-    # they were not set for a country.
-    #
-    # @return [Boolean]
-    def geographic?
-      false
-    end
-
     # Whether this rule narrows by something about the purchase rather than
     # about the buyer. A catalog-owned price list has already been matched on
     # audience by the time the resolver holds it — the catalog assignment is
@@ -45,10 +33,9 @@ module Spree
       false
     end
 
-    # Instance-side reader, so rules are classified the same way
-    # `geographic?` classifies them (`rules.any?(&:geographic?)`). A kind
-    # whose answer depends on how it is configured overrides this, exactly
-    # as MarketRule does for `geographic?`.
+    # Instance-side reader, so rules can be classified per row
+    # (`price_rules.select(&:contextual?)`). A kind whose answer depends on how it is
+    # configured overrides this.
     #
     # @return [Boolean]
     def contextual?

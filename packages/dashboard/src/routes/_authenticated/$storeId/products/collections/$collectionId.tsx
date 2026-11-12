@@ -1,7 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { SpreeError } from '@spree/admin-sdk'
 import {
-  adminClient,
   extensionFormValues,
   extensionSubmitValues,
   mapSpreeErrorsToForm,
@@ -156,7 +155,7 @@ function CollectionDetail({ collectionId, storeId }: { collectionId: string; sto
       <ProductMembershipStagingProvider form={form} name="staged_products">
         <form onSubmit={form.handleSubmit(onSubmit)}>
           {form.formState.errors.root?.message && (
-            <p className="text-sm text-destructive" role="alert">
+            <p className="text-base text-destructive" role="alert">
               {form.formState.errors.root.message}
             </p>
           )}
@@ -166,24 +165,25 @@ function CollectionDetail({ collectionId, storeId }: { collectionId: string; sto
                 title={collection?.name ?? ''}
                 backTo="products/collections"
                 actions={<FormActions form={form} saveLabel={t('admin.actions.save')} />}
-                resource={collection ? { id: collection.id } : undefined}
+                resource={collection}
                 onDelete={handleDelete}
                 deleteConfirmMessage={t('admin.collections.delete_confirm.message', {
                   name: collection?.name ?? '',
                 })}
                 deleteLabel={t('admin.collections.delete_label')}
-                jsonPreview={{
-                  title: `Collection ${collection?.name ?? ''}`,
-                  fetch: () => adminClient.collections.get(collectionId),
-                  endpoint: `/api/v3/admin/collections/${collectionId}`,
-                }}
+                endpoint={`/api/v3/admin/collections/${collectionId}`}
               />
             }
-            main={<CollectionMain form={form} collection={collection} />}
+            main={
+              <>
+                <CollectionMain form={form} collection={collection} />
+                <Slot name="collection.form_main" context={{ collection, mode: 'edit' }} />
+              </>
+            }
             sidebar={
               <>
                 <CollectionSidebar form={form} collection={collection} />
-                <Slot name="collection.form_sidebar" context={{ collection }} />
+                <Slot name="collection.form_sidebar" context={{ collection, mode: 'edit' }} />
               </>
             }
           />

@@ -7,7 +7,7 @@ const client = createAdminClient({
 
 // region:example
 const { data: tags } = await client.tags.list({
-  taggable_type: 'Spree::User',
+  taggable_type: 'customer',
   q: 'vip',
 })
 

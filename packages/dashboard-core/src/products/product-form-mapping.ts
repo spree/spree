@@ -1,3 +1,4 @@
+import { extensionFormValues, extensionRowValues } from '../lib/form-fields-registry'
 import { i18n } from '../lib/i18n'
 import { normalizeQuantityRule } from './normalize-quantity'
 import type { MediaType, ProductFormValues, VariantFormValues } from './product-schema'
@@ -11,8 +12,18 @@ import type { PanelMedia, PanelProduct, PanelVariant } from './product-types'
  * this mapping would be two ways to disagree.
  */
 
-export function variantToFormValues(variant: PanelVariant, position: number): VariantFormValues {
+/**
+ * `formKey` is the product form's key (`'product'`, or `'seller.product'` in
+ * the seller panel); the rows' extension fields are registered under
+ * `${formKey}.variant` and `${formKey}.media`.
+ */
+export function variantToFormValues(
+  variant: PanelVariant,
+  position: number,
+  formKey = 'product',
+): VariantFormValues {
   return {
+    ...extensionFormValues(`${formKey}.variant`, variant),
     id: variant.id,
     sku: variant.sku ?? null,
     barcode: variant.barcode ?? null,
@@ -46,17 +57,21 @@ export function variantToFormValues(variant: PanelVariant, position: number): Va
     tax_category_id: variant.tax_category_id ?? null,
     // Base prices only: this array is posted back as the variant's base
     // prices, so a price-list row taken in here returns as the shop price.
-    prices: (variant.prices ?? [])
-      .filter((p) => p.currency != null && p.price_list_id == null)
-      .map((p) => ({
-        currency: p.currency as string,
-        // Keep amounts as the canonical decimal strings the API returns.
-        // The bulk price editor displays them with the locale's decimal
-        // separator and ships the raw user input unchanged on submit;
-        // `Spree::LocalizedNumber.parse` handles locale-aware parsing.
-        amount: p.amount != null ? String(p.amount) : '',
-        compare_at_amount: p.compare_at_amount != null ? String(p.compare_at_amount) : null,
-      })),
+    prices: (variant.prices ?? []).flatMap(
+      ({ currency, price_list_id, amount, compare_at_amount }) =>
+        currency != null && price_list_id == null
+          ? [
+              {
+                currency,
+                // Keep amounts as the canonical decimal strings the API returns;
+                // the price editor shows them in the admin's number format and
+                // normalizes edits back before they reach the form.
+                amount: amount != null ? String(amount) : '',
+                compare_at_amount: compare_at_amount != null ? String(compare_at_amount) : null,
+              },
+            ]
+          : [],
+    ),
     stock_levels: (variant.stock_levels ?? []).map((si) => ({
       id: si.id,
       stock_location_id: si.stock_location_id ?? si.stock_location?.id ?? '',
@@ -72,8 +87,9 @@ export function variantToFormValues(variant: PanelVariant, position: number): Va
 // late paint) so a new media field can't reach one and miss the other.
 // Takes the generated SDK type rather than a hand-listed shape, so a field
 // added to the serializer can't quietly go missing here.
-export function mediaToFormValues(media: PanelMedia, index: number) {
+export function mediaToFormValues(media: PanelMedia, index: number, formKey = 'product') {
   return {
+    ...extensionFormValues(`${formKey}.media`, media),
     id: media.id,
     alt: media.alt ?? null,
     position: media.position ?? index + 1,
@@ -94,6 +110,7 @@ export function mediaToFormValues(media: PanelMedia, index: number) {
     // on a video row resolves to its poster, so none of them work here.
     videoUrl: media.video_url,
     downloadUrl: media.download_url,
+    filename: media.filename ?? null,
   }
 }
 
@@ -104,6 +121,7 @@ export function productToFormValues(
   // captures it atomically instead of via a follow-up setValue that races
   // with the merchant's unsaved edits.
   media?: PanelMedia[],
+  formKey = 'product',
 ): ProductFormValues {
   const hasVariants = (product.variant_count ?? 0) > 0
   const variantSource = hasVariants
@@ -136,14 +154,14 @@ export function productToFormValues(
     meta_title: product.meta_title ?? '',
     meta_description: product.meta_description ?? '',
     slug: product.slug ?? '',
-    variants: variantSource.map((v, i) => variantToFormValues(v, i)),
+    variants: variantSource.map((v, i) => variantToFormValues(v, i, formKey)),
     custom_fields:
       product.custom_fields?.map((cf) => ({
         id: cf.id,
         custom_field_definition_id: cf.custom_field_definition_id,
         value: cf.value,
       })) ?? [],
-    media: media?.map(mediaToFormValues) ?? [],
+    media: media?.map((m, i) => mediaToFormValues(m, i, formKey)) ?? [],
     product_publications: (product.product_publications ?? []).map((l) => ({
       id: l.id,
       channel_id: l.channel_id,
@@ -151,6 +169,50 @@ export function productToFormValues(
       unpublished_at: l.unpublished_at ?? null,
     })),
   }
+}
+
+/**
+ * The submitted values with each variant and media row's extension fields put
+ * back from live form state. The Zod parse behind a submit strips keys the
+ * schema doesn't know from every row; it keeps the rows' order, so row `i` of
+ * the parse is row `i` of the form. Call it first in a submit handler, before
+ * rows are filtered or reordered.
+ */
+export function withExtensionRowValues(
+  formKey: string,
+  values: ProductFormValues,
+  raw: Partial<ProductFormValues>,
+): ProductFormValues {
+  return {
+    ...values,
+    variants: values.variants?.map((variant, index) => ({
+      ...variant,
+      ...extensionRowValues(`${formKey}.variant`, raw.variants?.[index]),
+    })),
+    media: values.media?.map((media, index) => ({
+      ...media,
+      ...extensionRowValues(`${formKey}.media`, raw.media?.[index]),
+    })),
+  }
+}
+
+// The API replaces each of these lists with what a save sends.
+const LIST_FIELDS = ['category_ids', 'collection_ids', 'tags'] as const
+
+/**
+ * The save payload without the category, collection and tag lists the merchant
+ * left unchanged, so a save keeps what something else added since the page loaded.
+ */
+export function omitUnchangedListFields(
+  payload: Record<string, unknown>,
+  dirtyFields: Partial<Record<(typeof LIST_FIELDS)[number], unknown>>,
+): Record<string, unknown> {
+  const trimmed = { ...payload }
+  for (const field of LIST_FIELDS) {
+    const dirty = dirtyFields[field]
+    if (!(Array.isArray(dirty) ? dirty.some(Boolean) : dirty)) delete trimmed[field]
+  }
+  return trimmed
 }
 
 // Strip UI-only fields (stock_location_name) and undefined entries so the
@@ -183,13 +245,14 @@ export function prepareVariantsTaxForProductSave(
   })
 }
 
-export function variantToWirePayload(v: VariantFormValues, index: number) {
+export function variantToWirePayload(v: VariantFormValues, index: number, formKey = 'product') {
   // DB columns `sku` and `weight` are NOT NULL with defaults ("", 0.0).
   // The other scalar fields (barcode, dimensions, weight_unit,
   // dimensions_unit, tax_category_id) ARE nullable — those we always send
   // even when null so the merchant can clear them. NOT-NULL fields fall
   // back to their schema defaults when blank.
   const payload: Record<string, unknown> = {
+    ...extensionRowValues(`${formKey}.variant`, v),
     position: index + 1,
     options: v.options,
     sku: v.sku ?? '',

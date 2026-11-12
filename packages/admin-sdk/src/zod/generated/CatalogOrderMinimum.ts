@@ -7,7 +7,6 @@ export const CatalogOrderMinimumSchema = z.object({
   created_at: z.string(),
   updated_at: z.string(),
   amount: z.string(),
-  display_amount: z.string(),
 });
 
 export type CatalogOrderMinimum = z.infer<typeof CatalogOrderMinimumSchema>;

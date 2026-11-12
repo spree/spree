@@ -22,20 +22,7 @@ RSpec.describe 'Customer Orders API', type: :request, swagger_doc: 'api-referenc
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Number of results per page (default: 25, max: 100)'
       parameter name: :sort, in: :query, type: :string, required: false,
                 description: 'Sort order. Prefix with - for descending. Values: completed_at, -completed_at, total, -total, number, -number'
-      parameter name: 'q[completed_at_gt]', in: :query, type: :string, required: false,
-                description: 'Filter by completed after date (ISO 8601)'
-      parameter name: 'q[completed_at_lt]', in: :query, type: :string, required: false,
-                description: 'Filter by completed before date (ISO 8601)'
-      parameter name: 'q[number_eq]', in: :query, type: :string, required: false,
-                description: 'Filter by exact order number (e.g., R123456)'
-      parameter name: 'q[state_eq]', in: :query, type: :string, required: false,
-                description: 'Filter by order state (complete, returned, canceled)'
-      parameter name: 'q[payment_state_eq]', in: :query, type: :string, required: false,
-                description: 'Filter by payment state (paid, balance_due, credit_owed, void, failed)'
-      parameter name: 'q[total_gteq]', in: :query, type: :number, required: false,
-                description: 'Filter by minimum total'
-      parameter name: 'q[total_lteq]', in: :query, type: :number, required: false,
-                description: 'Filter by maximum total'
+      filter_parameters_for
       parameter name: :expand, in: :query, type: :string, required: false,
                 description: 'Comma-separated associations to expand (items, fulfillments, payments, discounts, billing_address, shipping_address, gift_card). Use "none" to skip associations.'
       parameter name: :fields, in: :query, type: :string, required: false,

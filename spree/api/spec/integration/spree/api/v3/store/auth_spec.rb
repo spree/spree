@@ -121,13 +121,7 @@ RSpec.describe 'Authentication API', type: :request, swagger_doc: 'api-reference
       sdk_example 'auth/refresh'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          refresh_token: { type: :string, description: 'Refresh token from login response' }
-        },
-        required: %w[refresh_token]
-      }
+      request_body_for
 
       response '200', 'token refreshed' do
         let(:'x-spree-api-key') { api_key.token }
@@ -166,12 +160,7 @@ RSpec.describe 'Authentication API', type: :request, swagger_doc: 'api-reference
       sdk_example 'auth/logout'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          refresh_token: { type: :string, description: 'Refresh token to revoke' }
-        }
-      }
+      request_body_for
 
       response '204', 'logout successful' do
         let(:'x-spree-api-key') { api_key.token }

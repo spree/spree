@@ -23,4 +23,12 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryProfilesController, type: :control
       expect(json_response['data'].pluck('name')).to eq([default_profile.name, 'Oversized'])
     end
   end
+  describe 'GET #kinds' do
+    it 'names each registered kind by its shorthand only' do
+      get :kinds, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['data']).to include({ 'kind' => 'shipping' }, { 'kind' => 'digital' })
+    end
+  end
 end

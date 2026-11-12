@@ -15,7 +15,7 @@ RSpec.describe Spree::Api::V3::Admin::MediaLibraryController, type: :controller 
     it 'lists placed and unplaced files alike' do
       get :index, as: :json
 
-      ids = json_response['data'].map { |media| media['id'] }
+      ids = json_response['data'].pluck('id')
       expect(ids).to include(placed.prefixed_id, unplaced.prefixed_id)
     end
 
@@ -44,7 +44,7 @@ RSpec.describe Spree::Api::V3::Admin::MediaLibraryController, type: :controller 
       it 'lists the file once' do
         get :index, as: :json
 
-        ids = json_response['data'].map { |media| media['id'] }
+        ids = json_response['data'].pluck('id')
         expect(ids).to include(copy.prefixed_id)
         expect(ids).not_to include(placed.prefixed_id)
       end
@@ -76,7 +76,7 @@ RSpec.describe Spree::Api::V3::Admin::MediaLibraryController, type: :controller 
       it 'lists only this store' do
         get :index, as: :json
 
-        ids = json_response['data'].map { |media| media['id'] }
+        ids = json_response['data'].pluck('id')
         expect(ids).not_to include(foreign.prefixed_id)
       end
     end
@@ -85,7 +85,7 @@ RSpec.describe Spree::Api::V3::Admin::MediaLibraryController, type: :controller 
       it 'narrows to unplaced files' do
         get :index, params: { q: { unattached: true } }, as: :json
 
-        ids = json_response['data'].map { |media| media['id'] }
+        ids = json_response['data'].pluck('id')
         expect(ids).to include(unplaced.prefixed_id)
         expect(ids).not_to include(placed.prefixed_id)
       end
@@ -101,8 +101,44 @@ RSpec.describe Spree::Api::V3::Admin::MediaLibraryController, type: :controller 
 
         get :index, params: { q: { media_type_eq: 'video' } }, as: :json
 
-        ids = json_response['data'].map { |media| media['id'] }
+        ids = json_response['data'].pluck('id')
         expect(ids).to eq([video.prefixed_id])
+      end
+    end
+
+    describe 'sorting by the attached file' do
+      # A small file named to sort first, beside the factory's larger
+      # thinking-cat.jpg, so name and size each give a definite order.
+      let!(:icon) do
+        create(:media, viewable: nil).tap do |media|
+          media.attachment.attach(
+            io: File.open(Spree::Core::Engine.root.join('spec/fixtures/files/icon_256x256.png')),
+            filename: 'a-icon.png'
+          )
+        end
+      end
+
+      def listed_ids
+        json_response['data'].pluck('id')
+      end
+
+      it 'sorts by file name' do
+        get :index, params: { sort: 'filename', q: { unattached: true } }, as: :json
+
+        expect(listed_ids.first).to eq(icon.prefixed_id)
+      end
+
+      it 'sorts by file name, descending' do
+        get :index, params: { sort: '-filename', q: { unattached: true } }, as: :json
+
+        expect(listed_ids.last).to eq(icon.prefixed_id)
+      end
+
+      it 'sorts by file size' do
+        get :index, params: { sort: 'byte_size', q: { unattached: true } }, as: :json
+
+        expect(listed_ids.first).to eq(icon.prefixed_id)
+        expect(listed_ids).to include(unplaced.prefixed_id)
       end
     end
   end
@@ -175,6 +211,7 @@ RSpec.describe Spree::Api::V3::Admin::MediaLibraryController, type: :controller 
       expect(response).to have_http_status(:ok)
       names = json_response['data'].map { |reference| reference['name'] }
       expect(names).to include('Also uses it')
+      expect(json_response['data'].map { |reference| reference['owner_type'] }).to include('product')
     end
 
     it 'reports nothing for a file used nowhere else' do

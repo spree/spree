@@ -40,6 +40,35 @@ RSpec.describe Spree::Api::V3::Admin::Sellers::InvitationsController, type: :con
     end
   end
 
+  describe 'POST #create' do
+    let(:seller) { create(:seller, :approved, store: store) }
+
+    it "adds someone to a trading seller's team without changing its status" do
+      post :create, params: { seller_id: seller.prefixed_id, email: 'teammate@example.com' }, as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(json_response['email']).to eq('teammate@example.com')
+      expect(seller.invitations.last.role).to eq(seller.default_user_role)
+      expect(seller.reload).to be_approved
+    end
+
+    it 'refuses a seller that was rejected' do
+      seller.update!(status: 'rejected')
+
+      post :create, params: { seller_id: seller.prefixed_id, email: 'teammate@example.com' }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(seller.invitations).to be_empty
+    end
+
+    it 'refuses an address that is not an email' do
+      post :create, params: { seller_id: seller.prefixed_id, email: 'nope' }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(seller.invitations).to be_empty
+    end
+  end
+
   describe 'DELETE #destroy' do
     it 'withdraws the offer' do
       delete :destroy, params: { seller_id: seller.prefixed_id, id: invitation.prefixed_id }, as: :json

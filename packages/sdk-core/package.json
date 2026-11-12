@@ -27,14 +27,20 @@
     "build": "tsup",
     "dev": "tsup --watch",
     "typecheck": "tsc --noEmit",
+    "test": "vitest run",
     "lint": "biome check src",
     "lint:fix": "biome check --fix src",
     "format": "biome format --write src",
     "clean": "rm -rf dist"
   },
   "devDependencies": {
-    "tsup": "^8.5.1",
-    "typescript": "^6.0.3"
+    "@spree/core": "workspace:*",
+    "@types/spark-md5": "^3.0.5",
+    "spark-md5": "^3.0.2",
+    "tsup": "catalog:",
+    "typescript": "catalog:",
+    "yaml": "catalog:",
+    "vitest": "catalog:"
   },
   "engines": {
     "node": ">=18.0.0"

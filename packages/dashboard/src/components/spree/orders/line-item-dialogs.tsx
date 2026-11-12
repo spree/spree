@@ -1,11 +1,15 @@
 import type { Variant } from '@spree/admin-sdk'
-import { adminClient, formatPrice } from '@spree/dashboard-core'
+import { adminClient, formatPrice, useResourceKey } from '@spree/dashboard-core'
 import {
   Button,
   Field,
   FieldGroup,
   FieldLabel,
   Input,
+  Item,
+  ItemActions,
+  ItemContent,
+  ProductIdentity,
   Sheet,
   SheetContent,
   SheetDescription,
@@ -19,15 +23,22 @@ import { type FormEvent, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 /**
- * Catalog picker for the order edit screen. It writes nothing — the chosen
- * variant and quantity are handed back to the caller, which stages them as a
- * pending row until the merchant saves the order.
+ * Catalog picker for an order's items, on the edit screen and the new-order
+ * form. It writes nothing — the chosen variant and quantity are handed back to
+ * the caller, which stages them until the merchant saves.
  */
 export function AddLineItemDialog({
+  searchParams,
   open,
   onOpenChange,
   onSelect,
 }: {
+  /**
+   * Who is buying, where: `{ order_id }` for an existing order, or the market,
+   * channel, buyer and currency of one being created. Lists only what that
+   * buyer can be sold, priced as they would pay.
+   */
+  searchParams: Record<string, unknown>
   open: boolean
   onOpenChange: (open: boolean) => void
   onSelect: (variant: Variant, quantity: number) => void
@@ -38,8 +49,8 @@ export function AddLineItemDialog({
   const [quantity, setQuantity] = useState(1)
 
   const { data: variantsData } = useQuery({
-    queryKey: ['variants', 'search', search],
-    queryFn: () => adminClient.variants.list({ search, limit: 10 }),
+    queryKey: useResourceKey('variants', { picker: searchParams, search }),
+    queryFn: () => adminClient.variants.list({ search, limit: 10, ...searchParams }),
     enabled: search.length >= 3,
     staleTime: 30_000,
   })
@@ -56,6 +67,15 @@ export function AddLineItemDialog({
     setSearch('')
     setQuantity(1)
   }
+
+  // A variant's options and SKU on one line, under its product's name.
+  const variantDetails = (variant: Variant) =>
+    [
+      variant.options_text,
+      `${t('admin.orders.detail.variant_search.sku_prefix')}: ${variant.sku || '—'}`,
+    ]
+      .filter(Boolean)
+      .join(' · ')
 
   return (
     <Sheet open={open} onOpenChange={(o) => onOpenChange(o as boolean)}>
@@ -79,7 +99,7 @@ export function AddLineItemDialog({
                   autoFocus
                 />
                 {search.length >= 3 && variants.length > 0 && !selectedVariant && (
-                  <div className="mt-1 rounded-lg border border-border bg-popover text-popover-foreground shadow-xs max-h-[280px] overflow-y-auto">
+                  <div className="mt-1 rounded-xl border border-border bg-popover text-popover-foreground shadow-xs max-h-[280px] overflow-y-auto">
                     {variants.map((v) => (
                       <button
                         key={v.id}
@@ -88,16 +108,15 @@ export function AddLineItemDialog({
                           setSelectedVariant(v)
                           setSearch('')
                         }}
-                        className="flex w-full items-center gap-3 px-3 py-2.5 text-left text-sm hover:bg-accent transition-colors border-b last:border-0"
+                        className="flex w-full items-center gap-3 px-3 py-2.5 text-left text-base hover:bg-accent transition-colors border-b last:border-0"
                       >
-                        <div className="min-w-0 flex-1">
-                          <div className="font-medium truncate">{v.product_name ?? v.sku}</div>
-                          <div className="text-xs text-muted-foreground">
-                            {v.options_text && <span>{v.options_text} · </span>}
-                            {t('admin.orders.detail.variant_search.sku_prefix')}: {v.sku || '—'}
-                          </div>
-                        </div>
-                        <div className="text-sm font-medium whitespace-nowrap">
+                        <ProductIdentity
+                          name={v.product_name ?? v.sku}
+                          subtitle={variantDetails(v)}
+                          thumbnailUrl={v.thumbnail_url}
+                          className="flex-1"
+                        />
+                        <div className="text-base font-medium whitespace-nowrap">
                           {formatPrice(v.price)}
                         </div>
                       </button>
@@ -112,28 +131,26 @@ export function AddLineItemDialog({
               </Field>
 
               {selectedVariant && (
-                <div className="flex items-center justify-between rounded-lg border border-primary/30 bg-primary/5 p-3">
-                  <div>
-                    <div className="text-sm font-medium">
-                      {selectedVariant.product_name ?? selectedVariant.sku}
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      {selectedVariant.options_text && (
-                        <span>{selectedVariant.options_text} · </span>
-                      )}
-                      {t('admin.orders.detail.variant_search.sku_prefix')}:{' '}
-                      {selectedVariant.sku || '—'} · {formatPrice(selectedVariant.price)}
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setSelectedVariant(null)}
-                    className="rounded p-1 text-muted-foreground hover:bg-accent hover:text-foreground"
-                    aria-label={t('admin.a11y.clear_selection')}
-                  >
-                    <XCircleIcon className="size-4" />
-                  </button>
-                </div>
+                <Item variant="outline" className="border-primary/30 bg-primary/5">
+                  <ItemContent className="min-w-0">
+                    <ProductIdentity
+                      name={selectedVariant.product_name ?? selectedVariant.sku}
+                      subtitle={`${variantDetails(selectedVariant)} · ${formatPrice(selectedVariant.price)}`}
+                      thumbnailUrl={selectedVariant.thumbnail_url}
+                    />
+                  </ItemContent>
+                  <ItemActions>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon-xs"
+                      onClick={() => setSelectedVariant(null)}
+                      aria-label={t('admin.a11y.clear_selection')}
+                    >
+                      <XCircleIcon className="size-4" />
+                    </Button>
+                  </ItemActions>
+                </Item>
               )}
 
               <Field>

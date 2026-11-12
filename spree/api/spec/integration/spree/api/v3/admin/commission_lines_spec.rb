@@ -43,10 +43,7 @@ RSpec.describe 'Admin Commission Lines API', type: :request, swagger_doc: 'api-r
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false,
                 description: 'Number of records per page'
-      parameter name: :'q[seller_id_eq]', in: :query, type: :string, required: false,
-                description: 'Filter to one seller'
-      parameter name: :'q[order_id_eq]', in: :query, type: :string, required: false,
-                description: 'Filter to one order'
+      filter_parameters_for
       parameter name: :sort, in: :query, type: :string, required: false,
                 description: 'Sort by field. Prefix with `-` for descending (e.g., `-created_at`).'
       parameter name: :expand, in: :query, type: :string, required: false,
@@ -83,6 +80,8 @@ RSpec.describe 'Admin Commission Lines API', type: :request, swagger_doc: 'api-r
       security [api_key: [], bearer_auth: []]
       admin_scope :read, :commissions
 
+      admin_sdk_example 'commission_lines/get'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
 
@@ -93,7 +92,7 @@ RSpec.describe 'Admin Commission Lines API', type: :request, swagger_doc: 'api-r
         schema '$ref' => '#/components/schemas/CommissionLine'
 
         run_test! do |response|
-          expect(JSON.parse(response.body)['total']).to eq('12.1')
+          expect(JSON.parse(response.body)['total']).to eq('12.10')
         end
       end
 

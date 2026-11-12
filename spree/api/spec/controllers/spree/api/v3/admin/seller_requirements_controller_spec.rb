@@ -17,7 +17,7 @@ RSpec.describe Spree::Api::V3::Admin::SellerRequirementsController, type: :contr
       document = json_response['data'].find { |t| t['type'] == 'document' }
       expect(document['accepted_content_types']).to include('application/pdf', 'image/jpeg')
       # Nothing to configure — the list is fixed, so it is not a preference.
-      expect(document['preference_schema']).to be_empty
+      expect(document['schema']['properties']).to be_empty
     end
 
     it 'names the records a kind takes, so the picker is a picker' do
@@ -37,7 +37,7 @@ RSpec.describe Spree::Api::V3::Admin::SellerRequirementsController, type: :contr
       accept_terms = types.find { |t| t['type'] == 'accept_terms' }
       expect(accept_terms['name']).to eq('Accept terms')
       expect(accept_terms['allow_multiple']).to be false
-      expect(accept_terms['preference_schema']).to be_an(Array)
+      expect(accept_terms['schema']['properties'].keys).to include('terms_url', 'terms_effective_from')
 
       document = types.find { |t| t['type'] == 'document' }
       expect(document['allow_multiple']).to be true
@@ -144,7 +144,7 @@ RSpec.describe Spree::Api::V3::Admin::SellerRequirementsController, type: :contr
     let(:requirement) { create(:minimum_products_requirement, store: store) }
 
     it 'changes what the requirement asks for' do
-      patch :update, params: { id: requirement.prefixed_id, preferences: { minimum_count: 5 }, format: :json }
+      patch :update, params: { id: requirement.prefixed_id, preferences: { minimum_count: 5 } }, as: :json
 
       expect(response).to have_http_status(:ok)
       expect(requirement.reload.preferred_minimum_count).to eq(5)

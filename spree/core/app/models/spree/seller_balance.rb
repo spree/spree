@@ -57,6 +57,34 @@ module Spree
       )
     end
 
+    # Every position the seller holds, read with one grouped query per figure
+    # rather than four per position. See {Spree::Seller#balances}.
+    #
+    # @param seller [Spree::Seller]
+    # @return [Array<Spree::SellerBalance>]
+    def self.all_for(seller)
+      transfers = seller.seller_transfers.where.not(status: 'failed')
+      amounts = transfers.group(:currency, :settled_currency, :status).sum(:amount)
+      payable = transfers.completed.group(:currency, :settled_currency).sum(:settled_amount)
+      paid = transfers.completed.joins(:payout).merge(Spree::SellerPayout.completed).
+             group(:currency, :settled_currency).sum(:settled_amount)
+
+      pairs = amounts.keys.map { |currency, settlement_currency, _status| [currency, settlement_currency] }.uniq.sort
+      pairs.map do |pair|
+        amount_in = ->(*statuses) { statuses.sum(BigDecimal('0')) { |status| amounts.fetch([*pair, status], 0) } }
+
+        new(
+          seller: seller,
+          currency: pair.first,
+          settlement_currency: pair.last,
+          earned: amount_in.call('completed'),
+          pending: amount_in.call('pending', 'processing', 'unresolved'),
+          payable: payable.fetch(pair, 0),
+          paid: paid.fetch(pair, 0)
+        )
+      end
+    end
+
     # What the marketplace still owes, in the currency it can actually be sent
     # in.
     #

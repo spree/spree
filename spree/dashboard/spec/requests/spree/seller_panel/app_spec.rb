@@ -44,6 +44,14 @@ RSpec.describe 'Hosted seller panel', type: :request do
       expect(response.body).to include('seller panel shell')
     end
 
+    it 'tells search engines not to index the shell or its assets' do
+      get '/sellers'
+      expect(response.headers['X-Robots-Tag']).to eq('noindex, nofollow')
+
+      get '/sellers/assets/panel-abc123.js'
+      expect(response.headers['X-Robots-Tag']).to eq('noindex, nofollow')
+    end
+
     it 'serves hashed assets as immutable' do
       get '/sellers/assets/panel-abc123.js'
 

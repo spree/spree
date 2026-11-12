@@ -38,11 +38,11 @@
     },
     {
       "source": "/user/orders/order-states",
-      "destination": "/user/orders/order-statuses"
+      "destination": "/user/orders/orders"
     },
     {
       "source": "/user/orders/order-adjustments",
-      "destination": "/user/orders/discounts-fees-and-taxes"
+      "destination": "/user/orders/orders"
     },
     {
       "source": "/developer/core-concepts/companies-and-catalogs",
@@ -433,11 +433,35 @@
       "destination": "/user/loyalty/gift-cards"
     },
     {
+      "source": "/user/loyalty/issue-gift-card",
+      "destination": "/user/loyalty/gift-cards"
+    },
+    {
       "source": "/user/customers/issue-gift-card",
-      "destination": "/user/loyalty/issue-gift-card"
+      "destination": "/user/loyalty/gift-cards"
     },
     {
       "source": "/user/customers/assign-store-credits",
+      "destination": "/user/loyalty/store-credits"
+    },
+    {
+      "source": "/user/customers/create-customer",
+      "destination": "/user/customers/customers"
+    },
+    {
+      "source": "/user/customers/searching-customers",
+      "destination": "/user/customers/customers"
+    },
+    {
+      "source": "/user/customers/exporting-customers",
+      "destination": "/user/customers/customers"
+    },
+    {
+      "source": "/user/customers/edit-customer",
+      "destination": "/user/customers/customer-profile"
+    },
+    {
+      "source": "/user/loyalty/store-credits-list",
       "destination": "/user/loyalty/store-credits"
     },
     {
@@ -466,7 +490,7 @@
     },
     {
       "source": "/user/vendors/vendor-management",
-      "destination": "/user/sellers/managing-sellers"
+      "destination": "/user/sellers/sellers"
     },
     {
       "source": "/user/vendors/vendor-onboarding-manual",
@@ -491,10 +515,6 @@
     {
       "source": "/user/vendors/multi-vendor-checkout",
       "destination": "/user/sellers/orders"
-    },
-    {
-      "source": "/user/settings/marketplace",
-      "destination": "/user/sellers/payouts"
     },
     {
       "source": "/use-case/b2b/b2b-admin-capabilities",
@@ -526,7 +546,7 @@
     },
     {
       "source": "/use-case/marketplace/admin-dashboard",
-      "destination": "/user/sellers/managing-sellers"
+      "destination": "/user/sellers/sellers"
     },
     {
       "source": "/use-case/marketplace/capabilities",
@@ -586,7 +606,7 @@
     },
     {
       "source": "/user/settings/tax",
-      "destination": "/user/settings/tax-rates"
+      "destination": "/user/settings/taxes"
     },
     {
       "source": "/user/settings/returns-configuration",
@@ -606,7 +626,103 @@
     },
     {
       "source": "/user/manage-products/product-metafields",
-      "destination": "/user/manage-products/custom-product-fields"
+      "destination": "/user/products/custom-product-fields"
+    },
+    {
+      "source": "/user/manage-products/search-products",
+      "destination": "/user/products/products"
+    },
+    {
+      "source": "/user/manage-products/bulk-product-operations",
+      "destination": "/user/products/products"
+    },
+    {
+      "source": "/user/products/creating-products",
+      "destination": "/user/products/adding-products"
+    },
+    {
+      "source": "/user/products/editing-products",
+      "destination": "/user/products/adding-products"
+    },
+    {
+      "source": "/user/products/cloning-products",
+      "destination": "/user/products/adding-products"
+    },
+    {
+      "source": "/user/products/deleting-products",
+      "destination": "/user/products/adding-products"
+    },
+    {
+      "source": "/user/products/editing-multi-variant-products",
+      "destination": "/user/products/variants"
+    },
+    {
+      "source": "/user/manage-products/import-products",
+      "destination": "/user/products/import-and-export"
+    },
+    {
+      "source": "/user/manage-products/export-products",
+      "destination": "/user/products/import-and-export"
+    },
+    {
+      "source": "/user/manage-products/multi-currency-import-export",
+      "destination": "/user/products/import-and-export"
+    },
+    {
+      "source": "/user/manage-products/product-options",
+      "destination": "/user/products/options"
+    },
+    {
+      "source": "/user/manage-products/product-import-file-template",
+      "destination": "/user/products/import-template"
+    },
+    {
+      "source": "/user/manage-products/custom-product-fields",
+      "destination": "/user/products/custom-product-fields"
+    },
+    {
+      "source": "/user/orders/order-statuses",
+      "destination": "/user/orders/orders"
+    },
+    {
+      "source": "/user/orders/exporting-orders",
+      "destination": "/user/orders/orders"
+    },
+    {
+      "source": "/user/orders/searching-orders",
+      "destination": "/user/orders/orders"
+    },
+    {
+      "source": "/user/orders/discounts-fees-and-taxes",
+      "destination": "/user/orders/orders"
+    },
+    {
+      "source": "/user/orders/editing-orders",
+      "destination": "/user/orders/processing-orders"
+    },
+    {
+      "source": "/user/orders/cancelling-orders",
+      "destination": "/user/orders/processing-orders"
+    },
+    {
+      "source": "/user/orders/refunding-orders",
+      "destination": "/user/orders/processing-orders"
+    },
+    {
+      "source": "/user/orders/creating-orders",
+      "destination": "/user/orders/draft-orders"
+    },
+    {
+      "source": "/developer/agentic/admin-mcp",
+      "destination": "/developer/mcp/overview"
+    },
+    {
+      "source": "/developer/agentic/mcp",
+      "destination": "/developer/agentic/docs-mcp"
+    },
+    {
+      "source": "/user/sellers/managing-sellers",
+      "destination": "/user/sellers/sellers"
     }
   ],
   "contextual": {
@@ -632,6 +748,7 @@
               {
                 "group": "Develop",
                 "pages": [
+                  "index",
                   {
                     "group": "Getting Started",
                     "pages": [
@@ -701,6 +818,7 @@
                           "developer/core-concepts/translations",
                           "developer/core-concepts/slugs",
                           "developer/core-concepts/metafields",
+                          "developer/core-concepts/external-references",
                           "developer/core-concepts/imports-exports",
                           "developer/core-concepts/reporting"
                         ]
@@ -709,15 +827,26 @@
                     "icon": "book-open"
                   },
                   {
-                    "group": "AI-Assisted Development",
+                    "group": "Agentic Development",
                     "pages": [
                       "developer/agentic/overview",
                       "developer/agentic/agent-skills",
-                      "developer/agentic/mcp",
+                      "developer/agentic/docs-mcp",
                       "developer/agentic/llm-docs",
                       "developer/cli/admin-api"
                     ],
                     "icon": "sparkles"
+                  },
+                  {
+                    "group": "MCP Server",
+                    "pages": [
+                      "developer/mcp/overview",
+                      "developer/mcp/quick-start",
+                      "developer/mcp/tools",
+                      "developer/mcp/permissions",
+                      "developer/mcp/custom-tools"
+                    ],
+                    "icon": "plug"
                   },
                   {
                     "group": "Tutorial",
@@ -954,7 +1083,8 @@
                       "developer/how-to/extend-reporting",
                       "developer/how-to/custom-document-numbers",
                       "developer/how-to/custom-order-routing",
-                      "developer/how-to/custom-stock-splitter"
+                      "developer/how-to/custom-stock-splitter",
+                      "developer/how-to/maintenance-tasks"
                     ],
                     "icon": "compass"
                   },
@@ -977,7 +1107,8 @@
                       "developer/deployment/cdn",
                       "developer/deployment/background_jobs",
                       "developer/deployment/caching",
-                      "developer/deployment/database"
+                      "developer/deployment/database",
+                      "developer/deployment/usage-data"
                     ],
                     "icon": "server"
                   },
@@ -1067,6 +1198,7 @@
                       "api-reference/admin-api/errors",
                       "api-reference/admin-api/querying",
                       "api-reference/admin-api/monetary-amounts",
+                      "api-reference/admin-api/uploads",
                       "api-reference/admin-api/endpoints"
                     ]
                   },
@@ -1081,7 +1213,7 @@
               },
               {
                 "item": "Seller API",
-                "icon": "shop",
+                "icon": "handshake",
                 "description": "REST API for the marketplace seller panel",
                 "groups": [
                   {
@@ -1135,21 +1267,16 @@
                     "group": "Products",
                     "icon": "package",
                     "pages": [
-                      "user/products/creating-products",
-                      "user/products/editing-products",
-                      "user/products/editing-multi-variant-products",
-                      "user/products/cloning-products",
-                      "user/products/deleting-products",
-                      "user/manage-products/search-products",
-                      "user/manage-products/bulk-product-operations",
+                      "user/products/products",
+                      "user/products/adding-products",
+                      "user/products/variants",
+                      "user/products/options",
+                      "user/products/media",
                       "user/products/categories",
                       "user/products/collections",
-                      "user/manage-products/product-options",
-                      "user/manage-products/custom-product-fields",
-                      "user/manage-products/import-products",
-                      "user/manage-products/export-products",
-                      "user/manage-products/product-import-file-template",
-                      "user/manage-products/multi-currency-import-export"
+                      "user/products/custom-product-fields",
+                      "user/products/import-and-export",
+                      "user/products/import-template"
                     ]
                   },
                   {
@@ -1186,15 +1313,9 @@
                   {
                     "group": "Orders",
                     "pages": [
-                      "user/orders/order-statuses",
+                      "user/orders/orders",
                       "user/orders/processing-orders",
-                      "user/orders/creating-orders",
-                      "user/orders/editing-orders",
-                      "user/orders/discounts-fees-and-taxes",
-                      "user/orders/exporting-orders",
-                      "user/orders/cancelling-orders",
-                      "user/orders/refunding-orders",
-                      "user/orders/searching-orders",
+                      "user/orders/draft-orders",
                       "user/orders/returns",
                       "user/orders/exchanges",
                       "user/orders/claims"
@@ -1204,11 +1325,8 @@
                   {
                     "group": "Customers",
                     "pages": [
-                      "user/customers/create-customer",
+                      "user/customers/customers",
                       "user/customers/customer-profile",
-                      "user/customers/edit-customer",
-                      "user/customers/searching-customers",
-                      "user/customers/exporting-customers",
                       "user/customers/customer-groups",
                       "user/customers/companies"
                     ],
@@ -1220,10 +1338,11 @@
                     "pages": [
                       "user/sellers/sellers",
                       "user/sellers/onboarding",
-                      "user/sellers/managing-sellers",
+                      "user/sellers/seller-panel",
                       "user/sellers/products",
                       "user/sellers/orders",
                       "user/sellers/commission-rates",
+                      "user/sellers/transfers",
                       "user/sellers/payouts"
                     ]
                   },
@@ -1231,9 +1350,7 @@
                     "group": "Loyalty",
                     "pages": [
                       "user/loyalty/gift-cards",
-                      "user/loyalty/issue-gift-card",
-                      "user/loyalty/store-credits",
-                      "user/loyalty/store-credits-list"
+                      "user/loyalty/store-credits"
                     ],
                     "icon": "gift"
                   },
@@ -1254,6 +1371,15 @@
                     ]
                   },
                   {
+                    "group": "AI Agents",
+                    "icon": "bot",
+                    "pages": [
+                      "user/ai-agents/ai-agents",
+                      "user/ai-agents/connect-claude",
+                      "user/ai-agents/connect-chatgpt"
+                    ]
+                  },
+                  {
                     "group": "Settings",
                     "icon": "settings",
                     "pages": [
@@ -1262,6 +1388,7 @@
                         "icon": "store",
                         "pages": [
                           "user/settings/store-details",
+                          "user/settings/storefront",
                           "user/settings/emails",
                           "user/settings/policies",
                           "user/settings/sales-channels",
@@ -1275,6 +1402,7 @@
                         "pages": [
                           "user/settings/markets",
                           "user/settings/payments",
+                          "user/settings/taxes",
                           "user/settings/tax-categories",
                           "user/settings/tax-rates"
                         ]
@@ -1768,7 +1896,7 @@
                     "pages": [
                       "v5/developer/agentic/overview",
                       "v5/developer/agentic/agent-skills",
-                      "v5/developer/agentic/mcp",
+                      "v5/developer/agentic/docs-mcp",
                       "v5/developer/agentic/llm-docs"
                     ]
                   }
@@ -1822,6 +1950,7 @@
                       "api-reference/admin-api/errors",
                       "api-reference/admin-api/querying",
                       "api-reference/admin-api/monetary-amounts",
+                      "api-reference/admin-api/uploads",
                       "api-reference/admin-api/endpoints"
                     ]
                   },
@@ -2164,6 +2293,7 @@
                   "developer/core-concepts/translations",
                   "developer/core-concepts/slugs",
                   "developer/core-concepts/metafields",
+                  "developer/core-concepts/external-references",
                   "developer/core-concepts/imports-exports",
                   "developer/core-concepts/reporting"
                 ]
@@ -2464,7 +2594,8 @@
                 "pages": [
                   "developer/contributing/quickstart",
                   "developer/contributing/developing-spree",
-                  "developer/contributing/creating-an-extension"
+                  "developer/contributing/creating-an-extension",
+                  "developer/contributing/reporting-issues"
                 ]
               },
               {
@@ -2563,7 +2694,7 @@
                 "pages": [
                   "developer/agentic/overview",
                   "developer/agentic/agent-skills",
-                  "developer/agentic/mcp",
+                  "developer/agentic/docs-mcp",
                   "developer/agentic/llm-docs"
                 ]
               }
@@ -2617,6 +2748,7 @@
                   "api-reference/admin-api/errors",
                   "api-reference/admin-api/querying",
                   "api-reference/admin-api/monetary-amounts",
+                  "api-reference/admin-api/uploads",
                   "api-reference/admin-api/endpoints"
                 ]
               },
@@ -2631,7 +2763,7 @@
           },
           {
             "item": "Seller API",
-            "icon": "shop",
+            "icon": "handshake",
             "description": "REST API for the marketplace seller panel",
             "groups": [
               {
@@ -2790,21 +2922,16 @@
             "group": "Products",
             "icon": "package",
             "pages": [
-              "user/products/creating-products",
-              "user/products/editing-products",
-              "user/products/editing-multi-variant-products",
-              "user/products/cloning-products",
-              "user/products/deleting-products",
-              "user/manage-products/search-products",
-              "user/manage-products/bulk-product-operations",
+              "user/products/products",
+              "user/products/adding-products",
+              "user/products/variants",
+              "user/products/options",
+              "user/products/media",
               "user/products/categories",
               "user/products/collections",
-              "user/manage-products/product-options",
-              "user/manage-products/product-metafields",
-              "user/manage-products/import-products",
-              "user/manage-products/export-products",
-              "user/manage-products/product-import-file-template",
-              "user/manage-products/multi-currency-import-export"
+              "user/products/custom-product-fields",
+              "user/products/import-and-export",
+              "user/products/import-template"
             ]
           },
           {
@@ -2841,15 +2968,9 @@
           {
             "group": "Orders",
             "pages": [
-              "user/orders/order-statuses",
+              "user/orders/orders",
               "user/orders/processing-orders",
-              "user/orders/creating-orders",
-              "user/orders/editing-orders",
-              "user/orders/discounts-fees-and-taxes",
-              "user/orders/exporting-orders",
-              "user/orders/cancelling-orders",
-              "user/orders/refunding-orders",
-              "user/orders/searching-orders",
+              "user/orders/draft-orders",
               "user/orders/returns",
               "user/orders/exchanges",
               "user/orders/claims"
@@ -2858,11 +2979,8 @@
           {
             "group": "Customers",
             "pages": [
-              "user/customers/create-customer",
+              "user/customers/customers",
               "user/customers/customer-profile",
-              "user/customers/edit-customer",
-              "user/customers/searching-customers",
-              "user/customers/exporting-customers",
               "user/customers/customer-groups",
               "user/customers/companies"
             ]
@@ -2873,10 +2991,11 @@
             "pages": [
               "user/sellers/sellers",
               "user/sellers/onboarding",
-              "user/sellers/managing-sellers",
+              "user/sellers/seller-panel",
               "user/sellers/products",
               "user/sellers/orders",
               "user/sellers/commission-rates",
+              "user/sellers/transfers",
               "user/sellers/payouts"
             ]
           },
@@ -2884,9 +3003,7 @@
             "group": "Loyalty",
             "pages": [
               "user/loyalty/gift-cards",
-              "user/loyalty/issue-gift-card",
-              "user/loyalty/store-credits",
-              "user/loyalty/store-credits-list"
+              "user/loyalty/store-credits"
             ]
           },
           {
@@ -2905,9 +3022,19 @@
             ]
           },
           {
+            "group": "AI Agents",
+            "icon": "bot",
+            "pages": [
+              "user/ai-agents/ai-agents",
+              "user/ai-agents/connect-claude",
+              "user/ai-agents/connect-chatgpt"
+            ]
+          },
+          {
             "group": "Settings",
             "pages": [
               "user/settings/store-details",
+              "user/settings/storefront",
               "user/settings/sales-channels",
               "user/settings/users",
               "user/settings/emails",
@@ -2978,7 +3105,12 @@
           "name": "discord"
         }
       }
-    ]
+    ],
+    "primary": {
+      "label": "Try Sandbox",
+      "href": "https://spree.sh",
+      "type": "button"
+    }
   },
   "footer": {
     "socials": {

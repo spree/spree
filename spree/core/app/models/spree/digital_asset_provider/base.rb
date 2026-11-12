@@ -12,6 +12,8 @@ module Spree
     # into internal software and owns its own configuration. The base gives it
     # only the asset.
     class Base
+      extend Spree::ApiTyped
+
       attr_reader :digital_asset
 
       SETTING_TYPES = %i[string number boolean select].freeze

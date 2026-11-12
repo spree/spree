@@ -4,6 +4,17 @@ module Spree
       module Admin
         module Orders
           class ItemsController < BaseController
+            request_params :line_item do |body|
+              body.external_references
+              body.attribute :variant_id, :id, required: true, only: :create
+              body.attribute :quantity, :integer, example: 1, description: 'Defaults to 1 when adding an item.'
+              body.attribute :price, :decimal,
+                nullable: true,
+                description: "Negotiated unit price. Stamps the line `price_source: 'manual'`, so quantity changes and recalculation never re-price it; an explicit null reverts the line to catalog pricing. Omit to leave pricing alone. Draft (incomplete) orders only."
+              body.attribute :options, :hash, only: :create
+              body.attribute :metadata, :hash, only: :update
+            end
+
             # POST /api/v3/admin/orders/:order_id/items
             def create
               with_order_lock do
@@ -45,12 +56,16 @@ module Spree
             # DELETE /api/v3/admin/orders/:order_id/items/:id
             def destroy
               with_order_lock do
-                Spree.order_remove_line_item_service.call(
+                result = Spree.order_remove_line_item_service.call(
                   order: @parent,
                   line_item: @resource
                 )
 
-                head :no_content
+                if result.success?
+                  head :no_content
+                else
+                  render_order_item_error(result, default_code: ERROR_CODES[:processing_error])
+                end
               end
             end
 
@@ -69,7 +84,7 @@ module Spree
             end
 
             def permitted_params
-              params.permit(:variant_id, :quantity, :price, metadata: {}, options: {})
+              params.permit(*permitted_attributes)
             end
 
             private

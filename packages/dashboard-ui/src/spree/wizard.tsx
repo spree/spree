@@ -84,7 +84,7 @@ export function WizardProgress({ steps, current, onStepSelect, className }: Wiza
               tabIndex={navigable ? undefined : -1}
               aria-current={state === 'current' ? 'step' : undefined}
               className={cn(
-                'min-w-0 pb-7 text-left text-sm leading-none',
+                'min-w-0 pb-7 text-left text-base leading-none',
                 navigable && 'cursor-pointer hover:text-foreground',
                 state === 'current' ? 'font-medium text-foreground' : 'text-muted-foreground',
                 last && 'pb-0',
@@ -188,20 +188,14 @@ export function Wizard({
       }}
       modal
     >
-      <DialogContent
-        // Edge-to-edge minus a gutter, like the import wizard and the bulk
-        // price editor — every inset/translate/max is overridden.
-        className="!inset-3 !w-auto !max-w-none !translate-x-0 !translate-y-0 flex flex-col p-0"
-        style={{ maxHeight: 'none' }}
-        showCloseButton={false}
-      >
+      <DialogContent fullScreen showCloseButton={false}>
         <DialogHeader className="h-14 shrink-0 flex-row items-center gap-3 space-y-0 border-b border-border-subtle bg-background px-4 py-0">
           <div className="flex min-w-0 items-center gap-3">
             <DialogTitle className="truncate text-base">{title}</DialogTitle>
             {subtitle ? (
               <>
                 <span aria-hidden className="h-4 w-px shrink-0 bg-border" />
-                <span className="truncate text-muted-foreground text-sm">{subtitle}</span>
+                <span className="truncate text-muted-foreground text-base">{subtitle}</span>
               </>
             ) : null}
           </div>

@@ -13,8 +13,15 @@ const program = new Command()
   .description('Create a new Spree Commerce project')
   .argument('[directory]', 'project directory')
   .option('--no-dashboard', 'skip the admin dashboard (the built-in one stays at /dashboard)')
+  // Defined before its negation so that passing neither leaves the value
+  // undefined and the prompt asks.
+  .option('--seller-dashboard', 'include the marketplace seller dashboard')
   .option('--no-seller-dashboard', 'skip the marketplace seller dashboard')
   .option('--no-storefront', 'skip Next.js storefront setup')
+  .option('--agent-skills', 'install the Spree agent skills without asking')
+  .option('--no-agent-skills', 'skip installing the Spree agent skills')
+  .option('--docs-mcp', 'connect coding agents to the Spree docs MCP server without asking')
+  .option('--no-docs-mcp', 'skip connecting coding agents to the Spree docs MCP server')
   // Deprecated: the dashboard is included by default. Hidden, kept so
   // existing scripts keep working.
   .addOption(new Option('--react-dashboard').hideHelp())
@@ -40,8 +47,11 @@ const program = new Command()
       const options = await runPrompts({
         directory,
         noStorefront: flags.storefront === false ? true : undefined,
-        noSellerDashboard: flags.sellerDashboard === false ? true : undefined,
+        noSellerDashboard:
+          flags.sellerDashboard === undefined ? undefined : flags.sellerDashboard === false,
         noDashboard: flags.dashboard === false,
+        noAgentSkills: flags.agentSkills === undefined ? undefined : flags.agentSkills === false,
+        noDocsMcp: flags.docsMcp === undefined ? undefined : flags.docsMcp === false,
         noStart: flags.start === false ? true : undefined,
         packageManager,
       })
@@ -67,6 +77,11 @@ const program = new Command()
             `${label} port ${preferredPort} is in use, using port ${pc.bold(String(resolved))} instead.`,
           )
         }
+      }
+      if (mailpitSmtpPort !== 1025 || mailpitUiPort !== 8025) {
+        p.log.info(
+          `Another program is using those ports, often an earlier Spree project's mail catcher. ${pc.cyan('docker ps')} lists running containers; ${pc.cyan('docker compose down')} in that project's folder frees the ports.`,
+        )
       }
 
       await scaffold({ ...options, port, mailpitSmtpPort, mailpitUiPort })

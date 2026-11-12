@@ -39,14 +39,6 @@ module Spree
           subject.preferred_max_items = 3
           expect(subject.compute(package).round(2)).to eq(7.0)
         end
-
-        it 'allows creation of new object with all the attributes' do
-          FlexiRate.new(
-            preferred_first_item: 1,
-            preferred_additional_item: 1,
-            preferred_max_items: 1
-          )
-        end
       end
     end
   end

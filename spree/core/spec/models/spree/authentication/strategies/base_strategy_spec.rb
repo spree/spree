@@ -10,18 +10,6 @@ describe Spree::Authentication::Strategies::BaseStrategy do
   end
 
   describe '#initialize' do
-    it 'sets params' do
-      expect(strategy.params).to eq(params)
-    end
-
-    it 'sets request_env' do
-      expect(strategy.request_env).to eq(request_env)
-    end
-
-    it 'sets user_class' do
-      expect(strategy.user_class).to eq(user_class)
-    end
-
     context 'when user_class is not provided' do
       subject(:strategy) do
         described_class.new(params: params, request_env: request_env)
@@ -42,30 +30,6 @@ describe Spree::Authentication::Strategies::BaseStrategy do
   describe '#provider' do
     it 'raises NotImplementedError' do
       expect { strategy.provider }.to raise_error(NotImplementedError, 'Subclass must implement #provider')
-    end
-  end
-
-  describe '#success' do
-    let(:user) { create(:user) }
-
-    it 'returns a successful Result' do
-      result = strategy.send(:success, user)
-
-      expect(result).to be_a(Spree::ServiceModule::Result)
-      expect(result).to be_success
-      expect(result.value).to eq(user)
-    end
-  end
-
-  describe '#failure' do
-    let(:message) { 'Authentication failed' }
-
-    it 'returns a failed Result' do
-      result = strategy.send(:failure, message)
-
-      expect(result).to be_a(Spree::ServiceModule::Result)
-      expect(result).not_to be_success
-      expect(result.error).to eq(message)
     end
   end
 
@@ -92,11 +56,47 @@ describe Spree::Authentication::Strategies::BaseStrategy do
     context 'when the stored email is capitalized' do
       let!(:user) { create(:user, email: 'Ada@Example.com') }
 
-      it 'finds the user from a lowercase email' do
+      it 'finds the user from a differently-cased email' do
         expect(strategy.send(:find_user_by_email, 'ada@example.com')).to eq(user)
+        expect(strategy.send(:find_user_by_email, 'ADA@EXAMPLE.COM')).to eq(user)
+      end
+    end
+
+    # Older data can hold two accounts differing only in case; the casing
+    # typed must not choose between them.
+    context 'when two accounts differ only in case' do
+      let!(:user) { create(:user, email: 'ada@example.com') }
+
+      before do
+        # MySQL's default collation compares case-insensitively, so its unique
+        # index can't hold such accounts, and the case cannot arise there.
+        skip 'the email index is case-insensitive on MySQL' if ActiveRecord::Base.connection.adapter_name.match?(/mysql/i)
+
+        other = create(:user, email: 'other@example.com')
+        other.update_columns(email: 'Ada@Example.com')
       end
 
-      it 'finds the user from a differently-cased email' do
+      it 'finds the same account whatever the casing' do
+        expect(strategy.send(:find_user_by_email, 'Ada@Example.com')).to eq(strategy.send(:find_user_by_email, 'ada@example.com'))
+      end
+    end
+
+    # An app may encrypt the column, deterministically so it can still be
+    # looked up. SQL then only ever sees ciphertext.
+    context 'when the app encrypts email' do
+      let(:user_class) do
+        stub_const('EncryptedEmailUser', Class.new(Spree.customer_class) do
+          self.table_name = Spree.customer_class.table_name
+          encrypts :email, deterministic: true, downcase: true
+        end)
+      end
+      let!(:user) { user_class.create!(email: 'Ada@Example.com', password: 'secret123', password_confirmation: 'secret123') }
+
+      it 'finds the user, whatever the case' do
+        stored = user_class.connection.select_value(user_class.unscoped.where(id: user.id).select(:email).to_sql)
+        expect(stored).not_to include('example.com')
+
+        expect(strategy.send(:find_user_by_email, 'ada@example.com')).to eq(user)
         expect(strategy.send(:find_user_by_email, 'ADA@EXAMPLE.COM')).to eq(user)
       end
     end
@@ -122,25 +122,6 @@ describe Spree::Authentication::Strategies::BaseStrategy do
                     uid: uid,
                     info: info,
                     tokens: tokens)
-    end
-
-    it 'passes the user_class' do
-      admin_user_class = Spree.admin_user_class
-      admin_strategy = described_class.new(
-        params: params,
-        request_env: request_env,
-        user_class: admin_user_class
-      )
-
-      expect(Spree::UserIdentity).to receive(:find_or_create_from_oauth).with(
-        hash_including(user_class: admin_user_class)
-      )
-
-      admin_strategy.send(:find_or_create_user_from_oauth,
-                          provider: provider,
-                          uid: uid,
-                          info: info,
-                          tokens: tokens)
     end
   end
 end

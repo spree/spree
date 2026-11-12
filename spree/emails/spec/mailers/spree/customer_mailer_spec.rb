@@ -32,6 +32,46 @@ describe Spree::CustomerMailer, type: :mailer do
     end
   end
 
+  describe '#data_request_confirmation_email' do
+    let(:data_request) { create(:data_request, :awaiting_confirmation, store: store, customer: user) }
+    let(:confirmation_token) { 'secret-confirmation-token' }
+
+    it 'sends to the address the request names' do
+      message = described_class.data_request_confirmation_email(data_request, confirmation_token)
+
+      expect(message.to).to eq(['customer@example.com'])
+      expect(message.subject).to eq(
+        "#{store.name} #{I18n.t('spree.customer_mailer.data_request_confirmation_email.access.subject')}"
+      )
+    end
+
+    it 'links to the storefront URL with the token appended' do
+      message = described_class.data_request_confirmation_email(data_request, confirmation_token)
+
+      expect(message).to have_body_text("token=#{confirmation_token}")
+      expect(message).to have_body_text(store.storefront_url.to_s)
+    end
+
+    it 'prefers the redirect URL the API validated' do
+      message = described_class.data_request_confirmation_email(
+        data_request, confirmation_token, redirect_url: 'https://storefront.example.com/account/data-requests/confirm'
+      )
+
+      expect(message).to have_body_text(
+        "https://storefront.example.com/account/data-requests/confirm?token=#{confirmation_token}"
+      )
+    end
+
+    it 'says plainly that an erasure cannot be undone' do
+      data_request.update!(kind: Spree::DataRequest::ERASURE)
+
+      message = described_class.data_request_confirmation_email(data_request, confirmation_token)
+
+      expect(message.subject).to include(I18n.t('spree.customer_mailer.data_request_confirmation_email.erasure.subject'))
+      expect(message).to have_body_text('This cannot be undone')
+    end
+  end
+
   describe '#data_export_email' do
     let(:data_request) { create(:data_request, store: store, customer: user) }
 

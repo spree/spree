@@ -11,29 +11,28 @@ module Spree
         class TransferSerializer < V3::BaseSerializer
           typelize kind: :string,
                    status: :string,
-                   currency: :string,
-                   provider: :string,
+                   currency: [:string, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'],
+                   provider: [:string, comment: 'Payout provider. Built-in: system. Provider gems register more (e.g. stripe).'],
                    amount: :string,
                    settled_amount: 'string | null',
-                   settled_currency: 'string | null',
+                   settled_currency: [:string, nullable: true, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'],
                    converted: :boolean,
-                   display_amount: :string,
                    reference: 'string | null',
                    order_id: 'string | null',
                    order_number: 'string | null',
                    payout_id: 'string | null',
                    reversed_from_id: 'string | null'
 
-          attributes :kind, :status, :currency, :provider, :reference,
+          attributes :kind, :status, :currency, :reference,
                      created_at: :iso8601, updated_at: :iso8601
 
-          # A string, so the figure a seller is paid round-trips exactly.
-          attribute(:amount) { |transfer| transfer.amount&.to_s }
-          attribute(:display_amount) { |transfer| transfer.display_amount.to_s }
+          attribute(:amount) { |transfer| Spree::Money::Rounding.format(transfer.amount, transfer.currency) }
 
           # What this seller's account received, when the provider converted
           # on the way in. Null when it settled in the currency of the sale.
-          attribute(:settled_amount) { |transfer| transfer.settled_amount&.to_s }
+          attribute(:settled_amount) do |transfer|
+            Spree::Money::Rounding.format(transfer.settled_amount, transfer.settled_currency || transfer.currency)
+          end
           attribute(:settled_currency) { |transfer| transfer.settled_currency }
           attribute(:converted) { |transfer| transfer.converted? }
 
@@ -42,6 +41,8 @@ module Spree
           end
 
           attribute(:order_number) { |transfer| transfer.order&.number }
+
+          api_type_attributes :provider
         end
       end
     end

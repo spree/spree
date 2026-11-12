@@ -5,6 +5,8 @@ require 'rswag/specs'
 
 # Load OpenAPI helpers
 require 'spree/api/openapi/schema_helper'
+require 'spree/api/openapi/filter_documentation'
+require 'spree/api/testing_support/openapi'
 
 RSpec.configure do |config|
   # Output to the main spree docs directory at /docs/api-reference/
@@ -74,6 +76,7 @@ RSpec.configure do |config|
         { name: 'Orders', description: 'Order lookup' },
         { name: 'Customers', description: 'Customer account, addresses, saved payment methods, and order history' },
         { name: 'Markets', description: 'Markets, countries, currencies, and locales' },
+        { name: 'Store', description: "The current store's name and default SEO metadata" },
         { name: 'Wishlists', description: 'Customer wishlists' },
         { name: 'Newsletter Subscribers', description: 'Guest and customer newsletter subscriptions (double opt-in)' },
         { name: 'Policies', description: 'Store policies (return policy, privacy policy, terms of service)' },
@@ -168,9 +171,11 @@ RSpec.configure do |config|
         { name: 'Customers', description: 'Customer profiles, addresses, credit cards, and store credits' },
         { name: 'Email Templates', description: 'Customer email templates, the email layout and shared partials: drafts, previews, publishing and history' },
         { name: 'Exports', description: 'Async CSV exports of admin resources' },
+        { name: 'Files', description: 'Uploading the files that product media, imports, logos and documents use' },
         { name: 'Fulfillments', description: 'Order fulfillments — shipments, fulfill, cancel, resume, split' },
         { name: 'Gift Cards', description: 'Gift cards and gift card batches' },
         { name: 'Imports', description: 'Async CSV imports of admin resources, with per-row status and failed-row retry' },
+        { name: 'Maintenance Tasks', description: 'Operator-run data work — backfills, reindexes and upgrade steps — and the record of every run' },
         { name: 'Markets', description: 'Markets — geographic groupings of countries used for pricing, tax, and fulfillment rules' },
         { name: 'Option Types', description: 'Option types and option values used to build product variants (e.g. Size, Color)' },
         { name: 'Orders', description: 'Orders, order items, applied gift cards, and applied store credits' },
@@ -179,7 +184,7 @@ RSpec.configure do |config|
         { name: 'Pricing', description: 'Prices and price lists for currency-, market-, and customer-group-specific pricing' },
         { name: 'Products', description: 'Products, taxons/categories, product custom field values, and bulk product operations' },
         { name: 'Policies', description: "The store's legal documents — terms of service, privacy, returns, shipping" },
-        { name: 'Reasons', description: 'Merchant-owned vocabularies for why a return, claim, refund or cancellation happened' },
+        { name: 'Reasons', description: 'Merchant-owned vocabularies for why a return, claim, refund, cancellation or tax exemption happened' },
         { name: 'Promotions', description: 'Promotions, promotion rules, promotion actions, and coupon codes' },
         { name: 'Refunds', description: 'Order refunds' },
         { name: 'Settings', description: 'Store-level settings — store profile, tags, and configuration' },
@@ -294,7 +299,7 @@ RSpec.configure do |config|
         { name: 'Profile', description: "The seller's own record — presentation, contact details, addresses, and tax registration" },
         { name: 'Stock Locations', description: 'Where the seller keeps stock, and so where their returns are sent' },
         { name: 'Team', description: 'Who runs this seller, and the invitations nobody has accepted yet' },
-        { name: 'Uploads', description: 'Presigned direct uploads for the documents onboarding asks for' }
+        { name: 'Files', description: 'Uploading the files a profile, a submission or an import uses' }
       ],
       components: {
         securitySchemes: {
@@ -312,6 +317,10 @@ RSpec.configure do |config|
 
   config.openapi_format = :yaml
 
+  config.extend Spree::Api::TestingSupport::AdminOperation, type: :request
+  config.extend Spree::Api::TestingSupport::AgentTools, type: :request
+  config.extend Spree::Api::TestingSupport::SdkMethod, type: :request
+
   # Auto-generate examples from actual test responses
   # This captures real response data and embeds it in the OpenAPI spec
   # Note: We need to modify the example_group's metadata, not the example's,
@@ -323,9 +332,12 @@ RSpec.configure do |config|
     next unless respond_to?(:response) && response.present? && response.body.present?
 
     begin
+      # Parsed before the entry is created: a file download would otherwise
+      # leave an empty JSON media type on a response that never returns JSON.
+      example_body = JSON.parse(response.body, symbolize_names: true)
       content = response_metadata[:content] ||= {}
       content['application/json'] ||= {}
-      content['application/json'][:example] = JSON.parse(response.body, symbolize_names: true)
+      content['application/json'][:example] = example_body
     rescue JSON::ParserError
       # Skip if response body is not valid JSON
     end

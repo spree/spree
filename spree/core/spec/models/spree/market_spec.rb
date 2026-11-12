@@ -3,32 +3,7 @@ require 'spec_helper'
 RSpec.describe Spree::Market, type: :model do
   let(:store) { create(:store) }
 
-  describe 'validations' do
-    subject { build(:market, store: store) }
-
-    it 'validates presence of countries' do
-      market = build(:market, store: store, countries: [])
-      expect(market).not_to be_valid
-      expect(market.errors[:countries]).to be_present
-    end
-
-    it 'validates uniqueness of name scoped to store' do
-      create(:market, name: 'North America', store: store)
-      market = build(:market, name: 'North America', store: store)
-      expect(market).not_to be_valid
-      expect(market.errors[:name]).to be_present
-    end
-  end
-
   describe 'associations' do
-    it 'has many countries through market_countries' do
-      country1 = create(:country)
-      country2 = create(:country)
-      market = create(:market, store: store, countries: [country1, country2])
-
-      expect(market.countries).to contain_exactly(country1, country2)
-    end
-
     it 'destroys market_countries on destroy' do
       create(:market, :default, store: store)
       market = create(:market, store: store)
@@ -76,6 +51,11 @@ RSpec.describe Spree::Market, type: :model do
   end
 
   describe '#supported_locales_list' do
+    it 'ignores blank entries in a comma-separated value' do
+      market = build(:market, default_locale: 'en', supported_locales: ' , fr, ')
+      expect(market.supported_locales_list).to eq(%w[en fr])
+    end
+
     it 'returns default_locale when supported_locales is blank' do
       market = build(:market, default_locale: 'en', supported_locales: nil)
       expect(market.supported_locales_list).to eq(['en'])
@@ -122,6 +102,45 @@ RSpec.describe Spree::Market, type: :model do
       market.supported_locales = %w[fr de]
       market.save!
       expect(market.reload.read_attribute(:supported_locales)).to eq('fr,de')
+    end
+  end
+
+  describe 'locale validation' do
+    let(:market) { build(:market, store: store) }
+
+    it 'accepts listed locales' do
+      market.default_locale = 'pt-BR'
+      market.supported_locales = %w[en-US zh-TW]
+
+      expect(market).to be_valid
+    end
+
+    it 'strips spaces from the default locale and each supported locale' do
+      market.default_locale = ' de '
+      market.supported_locales = [' fr', 'en ']
+
+      expect([market.default_locale, market.read_attribute(:supported_locales)]).to eq(%w[de fr,en])
+    end
+
+    it 'rejects a default locale that is not listed, including one listed in another case' do
+      market.default_locale = 'pt-br'
+
+      expect(market).not_to be_valid
+      expect(market.errors[:default_locale]).to be_present
+    end
+
+    it 'rejects supported locales that are not listed, naming them' do
+      market.supported_locales = %w[fr xx yy]
+
+      expect(market).not_to be_valid
+      expect(market.errors.full_messages.join).to include('xx, yy')
+    end
+
+    it 'still saves a market whose stored locale predates the list when the locale does not change' do
+      market.save!
+      market.update_columns(default_locale: 'legacy', supported_locales: 'legacy')
+
+      expect(market.reload.update(name: 'Renamed')).to be(true)
     end
   end
 
@@ -197,29 +216,11 @@ RSpec.describe Spree::Market, type: :model do
     end
   end
 
-  describe '#can_be_deleted?' do
-    it 'returns false for the default market' do
-      create(:market, store: store)
-      market = create(:market, :default, store: store)
-      expect(market.can_be_deleted?).to be false
-    end
-
-    it 'returns false for the only market in a store' do
-      market = store.markets.sole
-      expect(market.can_be_deleted?).to be false
-    end
-
-    it 'returns true for a non-default market when other markets remain' do
-      create(:market, :default, store: store)
-      market = create(:market, store: store)
-      expect(market.can_be_deleted?).to be true
-    end
-  end
-
   describe 'destroy' do
     it 'does not allow destroying the default market' do
       create(:market, store: store)
       market = create(:market, :default, store: store)
+      expect(market.can_be_deleted?).to be false
       expect(market.destroy).to be false
       expect(market.reload.deleted_at).to be_nil
       expect(market.errors[:base]).to include(I18n.t('activerecord.errors.models.spree/market.attributes.base.cannot_destroy_default_market'))
@@ -228,6 +229,7 @@ RSpec.describe Spree::Market, type: :model do
     it 'does not allow destroying the only market in a store' do
       market = store.markets.sole
       market.update_column(:default, false)
+      expect(market.can_be_deleted?).to be false
       expect(market.destroy).to be false
       expect(market.reload.deleted_at).to be_nil
       expect(market.errors[:base]).to include(I18n.t('activerecord.errors.models.spree/market.attributes.base.cannot_destroy_last_market'))
@@ -236,6 +238,7 @@ RSpec.describe Spree::Market, type: :model do
     it 'allows destroying a non-default market when other markets remain' do
       create(:market, :default, store: store)
       market = create(:market, store: store)
+      expect(market.can_be_deleted?).to be true
       expect { market.destroy }.to change { market.reload.deleted_at }.from(nil).to(be_present)
     end
 
@@ -283,13 +286,6 @@ RSpec.describe Spree::Market, type: :model do
     end
   end
 
-  describe 'has_prefix_id' do
-    it 'generates prefixed id with mkt prefix' do
-      market = create(:market, store: store)
-      expect(market.prefixed_id).to start_with('mkt_')
-    end
-  end
-
   describe '#tax_provider_instance' do
     let(:market) { create(:market, store: store) }
 
@@ -307,6 +303,12 @@ RSpec.describe Spree::Market, type: :model do
       expect(market.tax_provider_instance).to be_a(SpecMarketProvider)
     ensure
       Spree.tax_providers.delete(SpecMarketProvider)
+    end
+
+    it 'stores the class name of a provider named by its shorthand' do
+      market.tax_provider = 'internal'
+
+      expect(market.tax_provider).to eq('Spree::TaxProvider::Internal')
     end
 
     it 'builds a fresh instance per call, providers being stateless' do

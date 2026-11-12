@@ -75,7 +75,7 @@ module Spree
           end
 
           it 'defaults date to current time' do
-            Timecop.freeze do
+            freeze_time do
               expect(subject.date).to be_within(1.second).of(Time.current)
             end
           end
@@ -282,7 +282,7 @@ module Spree
           end
 
           it 'generates a cache key with default values from Spree::Current' do
-            Timecop.freeze do
+            freeze_time do
               expected_parts = [
                 'spree',
                 'pricing',
@@ -311,7 +311,7 @@ module Spree
           end
 
           it 'includes present optional attributes in correct order' do
-            Timecop.freeze do
+            freeze_time do
               expected_parts = [
                 'spree',
                 'pricing',

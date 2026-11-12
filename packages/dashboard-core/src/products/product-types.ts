@@ -1,3 +1,5 @@
+import type { CountryCode, CurrencyCode } from '@spree/core'
+
 /**
  * What the shared product form reads off a product, its variants and its
  * media.
@@ -31,6 +33,8 @@ export interface PanelMedia {
   large_url?: string | null
   xlarge_url?: string | null
   download_url?: string | null
+  /** The file's own name; absent on a panel whose serializer omits it. */
+  filename?: string | null
 }
 
 export interface PanelVariant {
@@ -42,12 +46,12 @@ export interface PanelVariant {
   price?: { amount?: string | null; currency?: string | null } | null
   prices?: Array<{
     amount?: string | null
-    currency?: string | null
+    currency?: CurrencyCode | null
     compare_at_amount?: string | null
     price_list_id?: string | null
   }>
   cost_price?: string | null
-  cost_currency?: string | null
+  cost_currency?: CurrencyCode | null
   weight?: number | null
   height?: number | null
   width?: number | null
@@ -55,7 +59,7 @@ export interface PanelVariant {
   weight_unit?: string | null
   dimensions_unit?: string | null
   hs_code?: string | null
-  country_of_origin?: string | null
+  country_of_origin?: CountryCode | null
   customs_description?: string | null
   minimum_order_quantity?: number | null
   order_multiple?: number | null

@@ -1,12 +1,8 @@
 ---
-title: "Spree Seller API introduction and SDK quick start"
+title: "Seller API"
 sidebarTitle: "Introduction"
 description: "Overview of the Spree Seller API — the marketplace seller panel for managing a seller's own catalog, team, stock locations, and onboarding."
 ---
-
-import { Since } from '/snippets/since.mdx';
-
-<Since version="6.0" />
 
 The Seller API is a REST API for the **marketplace seller panel** — where a seller runs their own shop inside someone else's marketplace. It powers a seller's catalog, their team, their stock locations, and the onboarding checklist the marketplace asks them to complete.
 
@@ -81,8 +77,8 @@ const { data: products } = await client.products.list({ limit: 25 })
   <Card title="Stock locations" icon="warehouse">
     Manage where they keep stock, and so where returns are sent.
   </Card>
-  <Card title="Uploads" icon="upload">
-    Presign direct uploads for the documents onboarding asks for.
+  <Card title="Files" icon="upload" href="/api-reference/admin-api/uploads">
+    Upload the logos, documents and CSV files a profile, submission or import uses.
   </Card>
 </CardGroup>
 

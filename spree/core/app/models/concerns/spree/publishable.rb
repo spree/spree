@@ -91,9 +91,14 @@ module Spree
         end
 
         if events.include?(:delete)
-          before_destroy :capture_pre_destroy_payload, if: :should_publish_events?
+          before_destroy :capture_pre_destroy_payload, if: :lifecycle_publishing_enabled?
           after_commit :publish_delete_event, on: :destroy, if: :should_publish_events?
         end
+
+        after_save :note_lifecycle_write
+        after_destroy :note_lifecycle_destroy
+        after_commit :close_lifecycle_write
+        after_rollback :close_lifecycle_write
       end
 
       # A subclass publishes its lifecycle events under its own prefix, which may
@@ -202,8 +207,9 @@ module Spree
       return unless Spree::Events.enabled?
 
       @_current_event_name = event_name
-      payload ||= event_payload_for(event_name)
-      Spree::Events.publish(event_name, payload, metadata)
+      publish_in_event_store do
+        Spree::Events.publish(event_name, payload || event_payload_for(event_name), metadata)
+      end
     ensure
       @_current_event_name = nil
     end
@@ -308,7 +314,48 @@ module Spree
     end
 
     def should_publish_events?
+      !silenced_lifecycle_write? && lifecycle_publishing_enabled?
+    end
+
+    def lifecycle_publishing_enabled?
       self.class.publish_events && Spree::Events.lifecycle_enabled?
+    end
+
+    # Lifecycle events publish at commit, which can come after the block that
+    # silenced the write ended — a default record created in its parent's
+    # `after_create` commits together with the parent. Each write records
+    # whether events were on, so a record written only while they were off
+    # stays silent at commit; one written with them on still publishes.
+    #
+    # The marker is read, never cleared, at commit: Rails may check several
+    # commit callbacks for one commit (a soft delete is also an update), and
+    # the order commit callbacks run in is the host app's setting. A commit or
+    # rollback only closes it, and the next write starts a fresh one.
+    def note_lifecycle_write
+      reopen_lifecycle_write
+      @_spree_lifecycle_write_enabled ||= Spree::Events.lifecycle_enabled?
+    end
+
+    # A destroy commits as the delete event alone, so an earlier update made
+    # with events on must not carry it through.
+    def note_lifecycle_destroy
+      reopen_lifecycle_write
+      @_spree_lifecycle_write_enabled = Spree::Events.lifecycle_enabled?
+    end
+
+    def silenced_lifecycle_write?
+      @_spree_lifecycle_write_enabled == false
+    end
+
+    def close_lifecycle_write
+      @_spree_lifecycle_write_closed = true
+    end
+
+    def reopen_lifecycle_write
+      return unless @_spree_lifecycle_write_closed
+
+      @_spree_lifecycle_write_closed = false
+      @_spree_lifecycle_write_enabled = nil
     end
 
     # True when this commit was caused only by `touch` — no real save ran
@@ -343,7 +390,29 @@ module Spree
     end
 
     def capture_pre_destroy_payload
-      @_pre_destroy_payload = event_payload
+      @_pre_destroy_payload = in_event_store { event_payload }
+    end
+
+    # Publishes with the record's own store, so the event is
+    # attributed to it rather than to whatever store the caller happens to
+    # be in — the default store, in a job or a rake task.
+    #
+    # Spree::Event reads Spree::Current lazily, so store_id is settled here
+    # while the context is still open: a subscriber job or a webhook
+    # delivery reads it long after.
+    def publish_in_event_store
+      in_event_store do
+        published = yield
+        published.store_id if published.is_a?(Spree::Event)
+        published
+      end
+    end
+
+    def in_event_store(&block)
+      store = (respond_to?(:store) ? self.store : nil) || Spree::Current.store
+      return block.call if store.nil? || store == Spree::Current.store
+
+      Spree::Current.with_store(store, &block)
     end
   end
 end

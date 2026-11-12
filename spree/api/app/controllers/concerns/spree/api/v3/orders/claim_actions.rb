@@ -59,11 +59,7 @@ module Spree
           private
 
           def create_params
-            @create_params ||= params.permit(
-              :memo, :reason_id,
-              items: [:line_item_id, :quantity, :description, :send_replacement,
-                      :replacement_variant_id, :refund_amount]
-            )
+            @create_params ||= params.permit(*declared_permitted_attributes)
           end
 
           # Every claimed line is resolved through the order itself, so a line

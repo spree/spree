@@ -32,7 +32,7 @@ const sampleCertificate = {
   id: 'cert_abc123',
   company_id: 'comp_abc123',
   certificate_number: 'DE-RESALE-1',
-  reason_code: 'resale',
+  tax_exemption_reason_id: 'txr_abc123',
   status: 'pending',
   country_code: 'DE',
   state_code: null,
@@ -273,13 +273,13 @@ describe('companies', () => {
 
       await createTestClient().companies.taxExemptionCertificates.create('comp_abc123', {
         certificate_number: 'DE-RESALE-7',
-        reason_code: 'resale',
+        tax_exemption_reason_id: 'txr_abc123',
         document: 'signed-blob-id',
       })
 
       expect(body).toEqual({
         certificate_number: 'DE-RESALE-7',
-        reason_code: 'resale',
+        tax_exemption_reason_id: 'txr_abc123',
         document: 'signed-blob-id',
       })
     })

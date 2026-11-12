@@ -86,6 +86,7 @@ module Spree
     scope :by_position, -> { ordered }
 
     self.whitelisted_ransackable_attributes = %w[name active]
+    search_by :name
 
     # The catalogs that apply to a purchase node, nearest node first: the
     # node's own assignments before its parent's, catalog position breaking

@@ -8,7 +8,7 @@ defineTable<Promotion>('promotions', {
   docsPath: 'promotions/create-a-promotion',
   description: i18n.t('admin.table_descriptions.promotions'),
   title: i18n.t('admin.nav.promotions'),
-  searchParam: 'name_cont',
+  searchParam: 'search',
   searchPlaceholder: i18n.t('admin.promotions.table.search_placeholder'),
   defaultSort: { field: 'created_at', direction: 'desc' },
   emptyIcon: <TagIcon className="size-8 text-muted-foreground" />,
@@ -51,7 +51,7 @@ defineTable<Promotion>('promotions', {
       sortable: true,
       filterType: 'date',
       default: true,
-      className: 'text-sm text-muted-foreground whitespace-nowrap',
+      className: 'text-base text-muted-foreground whitespace-nowrap',
       render: (p) => (p.starts_at ? <RelativeTime iso={p.starts_at} /> : '—'),
     },
     {
@@ -60,7 +60,7 @@ defineTable<Promotion>('promotions', {
       sortable: true,
       filterType: 'date',
       default: true,
-      className: 'text-sm text-muted-foreground whitespace-nowrap',
+      className: 'text-base text-muted-foreground whitespace-nowrap',
       render: (p) => {
         if (!p.expires_at)
           return (

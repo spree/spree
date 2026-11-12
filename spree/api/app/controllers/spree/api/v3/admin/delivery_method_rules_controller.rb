@@ -15,7 +15,7 @@ module Spree
                 type: klass.api_type,
                 name: klass.human_name,
                 description: klass.human_description,
-                preference_schema: klass.serialized_preference_schema,
+                schema: klass.preference_json_schema,
                 # Association-backed config (e.g. `product_ids`) a rule accepts
                 # beyond its preferences, so admin UIs can render the right
                 # editor without hardcoding rule types.

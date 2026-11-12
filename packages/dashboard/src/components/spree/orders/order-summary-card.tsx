@@ -1,6 +1,17 @@
 import type { Order } from '@spree/admin-sdk'
-import { LocaleLabel, useStore } from '@spree/dashboard-core'
-import { Card, CardHeader, CardTitle, cn, Separator } from '@spree/dashboard-ui'
+import { isZeroMoney } from '@spree/core'
+import { isPositiveMoney, LocaleLabel, Money, useStore } from '@spree/dashboard-core'
+import {
+  Card,
+  CardContent,
+  CurrencyLabel,
+  cn,
+  Section,
+  SectionHeader,
+  SectionTitle,
+  Separator,
+} from '@spree/dashboard-ui'
+import { ReceiptTextIcon } from '@spree/dashboard-ui/icons'
 import { Link } from '@tanstack/react-router'
 import i18n from 'i18next'
 import type { ReactNode } from 'react'
@@ -23,20 +34,16 @@ function SummaryRow({
   value,
   bold,
   danger,
-  highlight,
 }: {
   label: string
   value: ReactNode
   bold?: boolean
   danger?: boolean
-  highlight?: boolean
 }) {
   return (
-    <div
-      className={cn('flex items-center justify-between px-5 py-2.5', highlight && 'bg-muted/50')}
-    >
-      <span className="text-sm">{label}</span>
-      <span className={cn('text-sm', bold && 'font-bold', danger && 'text-destructive')}>
+    <div className="flex items-center justify-between py-3 first:pt-0 last:pb-0">
+      <span className="text-base">{label}</span>
+      <span className={cn('text-base', bold && 'font-bold', danger && 'text-destructive')}>
         {value}
       </span>
     </div>
@@ -46,11 +53,11 @@ function SummaryRow({
 export function OrderSummaryCard({ order }: { order: Order }) {
   const { t } = useTranslation()
   const { storeId } = useStore()
-  const outstandingBalance = Number.parseFloat(order.amount_due)
+  const outstanding = isPositiveMoney(order.amount_due)
   // Read off the order rather than summed from its commission lines: the
   // figures are persisted columns, so the fee VAT the platform files and the
   // seller reclaims is the same number everywhere it is shown.
-  const commissionTax = Number.parseFloat(order.commission_tax_total)
+  const commissionTaxed = isPositiveMoney(order.commission_tax_total)
   // Keyed on the seller, not on the amount: a zero-rated or exempt rate still
   // writes commission lines, and the card below lists them, so hiding the
   // summary at zero would have the two panels disagree about the same order.
@@ -58,30 +65,128 @@ export function OrderSummaryCard({ order }: { order: Order }) {
   const showCommission = !!order.completed_at && !!order.seller_id
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('admin.pages.orders.detail.section_summary')}</CardTitle>
-      </CardHeader>
-      <div className="py-1">
-        {order.created_by && (
+    <Section>
+      <SectionHeader>
+        <SectionTitle>
+          <ReceiptTextIcon className="size-4" />
+          {t('admin.pages.orders.detail.section_summary')}
+        </SectionTitle>
+      </SectionHeader>
+      <Card>
+        <CardContent className="flex flex-col">
+          {/* Money first: what the order comes to and what is still owed is what
+            this card is opened for; where it came from follows. */}
           <SummaryRow
-            label={t('admin.pages.orders.detail.summary.created_by')}
-            value={<ActorLabel actor={order.created_by} />}
+            label={t('admin.fields.subtotal.label')}
+            value={<Money amount={order.item_total} currency={order.currency} />}
           />
-        )}
-        <SummaryRow
-          label={t('admin.fields.created_at.label')}
-          value={formatDate(order.created_at)}
-        />
 
-        {order.completed_at && (
+          {isPositiveMoney(order.delivery_total) && (
+            <SummaryRow
+              label={t('admin.fields.shipping.label')}
+              value={<Money amount={order.delivery_total} currency={order.currency} />}
+            />
+          )}
+
+          {!isZeroMoney(order.discount_total) && (
+            <SummaryRow
+              label={t('admin.orders.detail.summary.promotions')}
+              value={<Money amount={order.discount_total} currency={order.currency} />}
+            />
+          )}
+
+          {!isZeroMoney(order.adjustment_total) && (
+            <SummaryRow
+              label={t('admin.orders.detail.summary.adjustments')}
+              value={<Money amount={order.adjustment_total} currency={order.currency} />}
+            />
+          )}
+
+          {isPositiveMoney(order.included_tax_total) && (
+            <SummaryRow
+              label={t('admin.orders.detail.summary.tax_included')}
+              value={<Money amount={order.included_tax_total} currency={order.currency} />}
+            />
+          )}
+
+          {(isPositiveMoney(order.additional_tax_total) ||
+            (Boolean(order.completed_at) && isZeroMoney(order.included_tax_total))) && (
+            <SummaryRow
+              label={t('admin.orders.detail.summary.tax_additional')}
+              value={<Money amount={order.additional_tax_total} currency={order.currency} />}
+            />
+          )}
+
+          <Separator />
+
           <SummaryRow
-            label={t('admin.fields.completed_at.label')}
-            value={formatDate(order.completed_at)}
+            label={t('admin.fields.total.label')}
+            value={<Money amount={order.total} currency={order.currency} />}
+            bold
           />
-        )}
 
-        {/* Keyed on the status rather than the timestamp: resuming an order
+          {/* Labelled "marketplace fee" rather than a bare "fee": Spree::Fee is
+            a buyer-facing charge (handling, gift wrap, COD) that rolls into
+            the order total, while this is billed to the seller and does not.
+            The two must never read alike in one summary. */}
+          {showCommission && (
+            <>
+              <Separator />
+              <SummaryRow
+                label={t('admin.orders.detail.summary.commission_fee')}
+                value={<Money amount={order.commission_amount_total} currency={order.currency} />}
+              />
+              {commissionTaxed && (
+                <SummaryRow
+                  label={t('admin.orders.detail.summary.commission_tax')}
+                  value={<Money amount={order.commission_tax_total} currency={order.currency} />}
+                />
+              )}
+              <SummaryRow
+                label={t('admin.orders.detail.summary.commission_total')}
+                value={<Money amount={order.commission_total} currency={order.currency} />}
+                bold
+              />
+            </>
+          )}
+
+          <Separator />
+
+          {/* What has been paid and what is still owed, set apart together. */}
+
+          <div className="-mx-2 rounded-lg bg-accent/50 px-2 py-3">
+            <SummaryRow
+              label={t('admin.orders.detail.summary.payment_total')}
+              value={<Money amount={order.payment_total} currency={order.currency} />}
+            />
+            <SummaryRow
+              label={t('admin.orders.detail.summary.outstanding_balance')}
+              value={<Money amount={order.amount_due} currency={order.currency} />}
+              danger={outstanding}
+            />
+          </div>
+
+          <Separator />
+
+          {order.created_by && (
+            <SummaryRow
+              label={t('admin.pages.orders.detail.summary.created_by')}
+              value={<ActorLabel actor={order.created_by} />}
+            />
+          )}
+          <SummaryRow
+            label={t('admin.fields.created_at.label')}
+            value={formatDate(order.created_at)}
+          />
+
+          {order.completed_at && (
+            <SummaryRow
+              label={t('admin.fields.completed_at.label')}
+              value={formatDate(order.completed_at)}
+            />
+          )}
+
+          {/* Keyed on the status rather than the timestamp: resuming an order
             puts it back to placed but leaves the cancellation stamps as
             history, and that history should stop being reported as the order's
             current state.
@@ -89,163 +194,84 @@ export function OrderSummaryCard({ order }: { order: Order }) {
             Set apart from the timestamps above: a cancellation is its own
             story — when, who, why — and four rows of it run together with the
             order's own dates otherwise. */}
-        {order.status === 'canceled' && order.canceled_at && (
-          <>
-            <Separator />
+          {order.status === 'canceled' && order.canceled_at && (
+            <>
+              <Separator />
+              <SummaryRow
+                label={t('admin.orders.detail.summary.canceled_at')}
+                value={formatDate(order.canceled_at)}
+              />
+              {order.canceler && (
+                <SummaryRow
+                  label={t('admin.orders.detail.summary.canceler')}
+                  value={<ActorLabel actor={order.canceler} />}
+                />
+              )}
+              {order.cancel_reason_name && (
+                <SummaryRow
+                  label={t('admin.orders.detail.summary.cancel_reason')}
+                  value={order.cancel_reason_name}
+                />
+              )}
+              {order.cancel_note && (
+                <SummaryRow
+                  label={t('admin.orders.detail.summary.cancel_note')}
+                  value={order.cancel_note}
+                />
+              )}
+            </>
+          )}
+
+          {order.approved_at && order.approver && (
             <SummaryRow
-              label={t('admin.orders.detail.summary.canceled_at')}
-              value={formatDate(order.canceled_at)}
+              label={t('admin.orders.detail.summary.approved_by')}
+              value={<ActorLabel actor={order.approver} />}
             />
-            {order.canceler && (
-              <SummaryRow
-                label={t('admin.orders.detail.summary.canceler')}
-                value={<ActorLabel actor={order.canceler} />}
-              />
-            )}
-            {order.cancel_reason_name && (
-              <SummaryRow
-                label={t('admin.orders.detail.summary.cancel_reason')}
-                value={order.cancel_reason_name}
-              />
-            )}
-            {order.cancel_note && (
-              <SummaryRow
-                label={t('admin.orders.detail.summary.cancel_note')}
-                value={order.cancel_note}
-              />
-            )}
-          </>
-        )}
+          )}
 
-        {order.approved_at && order.approver && (
-          <SummaryRow
-            label={t('admin.orders.detail.summary.approved_by')}
-            value={<ActorLabel actor={order.approver} />}
-          />
-        )}
+          <Separator />
 
-        <Separator />
-
-        {order.channel && (
-          <SummaryRow
-            label={t('admin.pages.orders.detail.summary.channel')}
-            value={
-              <Link
-                to="/$storeId/settings/channels"
-                params={{ storeId }}
-                search={{ edit: order.channel.id }}
-                className="text-foreground hover:underline"
-              >
-                {order.channel.name}
-              </Link>
-            }
-          />
-        )}
-
-        {order.market && (
-          <SummaryRow
-            label={t('admin.pages.orders.detail.summary.market')}
-            value={
-              <Link
-                to="/$storeId/settings/markets"
-                params={{ storeId }}
-                search={{ edit: order.market.id }}
-                className="text-foreground hover:underline"
-              >
-                {order.market.name}
-              </Link>
-            }
-          />
-        )}
-        <SummaryRow
-          label={t('admin.pages.orders.detail.summary.locale')}
-          value={order.locale ? <LocaleLabel code={order.locale} /> : '—'}
-        />
-        <SummaryRow label={t('admin.fields.currency.label')} value={order.currency} />
-
-        <Separator />
-
-        <SummaryRow label={t('admin.fields.subtotal.label')} value={order.display_item_total} />
-
-        {Number.parseFloat(order.delivery_total) > 0 && (
-          <SummaryRow
-            label={t('admin.fields.shipping.label')}
-            value={order.display_delivery_total}
-          />
-        )}
-
-        {Number.parseFloat(order.discount_total) !== 0 && (
-          <SummaryRow
-            label={t('admin.orders.detail.summary.promotions')}
-            value={order.display_discount_total}
-          />
-        )}
-
-        {Number.parseFloat(order.adjustment_total) !== 0 && (
-          <SummaryRow
-            label={t('admin.orders.detail.summary.adjustments')}
-            value={order.display_adjustment_total}
-          />
-        )}
-
-        {Number.parseFloat(order.included_tax_total) > 0 && (
-          <SummaryRow
-            label={t('admin.orders.detail.summary.tax_included')}
-            value={order.display_included_tax_total}
-          />
-        )}
-
-        {(Number.parseFloat(order.additional_tax_total) > 0 ||
-          (Boolean(order.completed_at) && Number.parseFloat(order.included_tax_total) === 0)) && (
-          <SummaryRow
-            label={t('admin.orders.detail.summary.tax_additional')}
-            value={order.display_additional_tax_total}
-          />
-        )}
-
-        <Separator />
-
-        <SummaryRow label={t('admin.fields.total.label')} value={order.display_total} bold />
-
-        {/* Labelled "marketplace fee" rather than a bare "fee": Spree::Fee is
-            a buyer-facing charge (handling, gift wrap, COD) that rolls into
-            the order total, while this is billed to the seller and does not.
-            The two must never read alike in one summary. */}
-        {showCommission && (
-          <>
-            <Separator />
+          {order.channel && (
             <SummaryRow
-              label={t('admin.orders.detail.summary.commission_fee')}
-              value={order.display_commission_amount_total}
+              label={t('admin.pages.orders.detail.summary.channel')}
+              value={
+                <Link
+                  to="/$storeId/settings/channels"
+                  params={{ storeId }}
+                  search={{ edit: order.channel.id }}
+                  className="text-foreground hover:underline"
+                >
+                  {order.channel.name}
+                </Link>
+              }
             />
-            {commissionTax > 0 && (
-              <SummaryRow
-                label={t('admin.orders.detail.summary.commission_tax')}
-                value={order.display_commission_tax_total}
-              />
-            )}
+          )}
+
+          {order.market && (
             <SummaryRow
-              label={t('admin.orders.detail.summary.commission_total')}
-              value={order.display_commission_total}
-              bold
+              label={t('admin.pages.orders.detail.summary.market')}
+              value={
+                <Link
+                  to="/$storeId/settings/markets"
+                  params={{ storeId }}
+                  search={{ edit: order.market.id }}
+                  className="text-foreground hover:underline"
+                >
+                  {order.market.name}
+                </Link>
+              }
             />
-          </>
-        )}
-
-        <Separator />
-
-        <SummaryRow
-          label={t('admin.orders.detail.summary.payment_total')}
-          value={order.display_payment_total}
-          highlight
-        />
-        <SummaryRow
-          label={t('admin.orders.detail.summary.outstanding_balance')}
-          value={order.display_amount_due}
-          highlight
-          danger={outstandingBalance > 0}
-        />
-      </div>
-    </Card>
+          )}
+          <SummaryRow
+            label={t('admin.pages.orders.detail.summary.locale')}
+            value={order.locale ? <LocaleLabel code={order.locale} /> : '—'}
+          />
+          <SummaryRow
+            label={t('admin.fields.currency.label')}
+            value={<CurrencyLabel code={order.currency} />}
+          />
+        </CardContent>
+      </Card>
+    </Section>
   )
 }

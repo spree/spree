@@ -8,11 +8,8 @@ module Spree
         # against the order's raw `channel_id` directly. Scope confines the
         # existence check to the promotion's store so cross-store channel
         # IDs can't sneak in.
-        preference :channel_ids, :array, default: [],
-                   parse_on_set: normalize_id_preference(
-                     klass: Spree::Channel,
-                     scope: ->(rule) { rule.promotion.store.channels }
-                   )
+        preference :channel_ids, :array, of: :id, model: 'Spree::Channel', default: [],
+                   scope: ->(rule) { rule.promotion.store.channels }
 
         def channels
           return Spree::Channel.none if preferred_channel_ids.blank?

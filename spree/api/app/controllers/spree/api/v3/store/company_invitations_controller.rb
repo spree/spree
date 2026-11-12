@@ -17,6 +17,14 @@ module Spree
           # standing scope would 404 the unauthenticated invitee.
           skip_before_action :set_resource
 
+          request_params 'AcceptCompanyInvitationParams', action: :accept do |body|
+            body.attribute :first_name, :string, example: 'Ada'
+            body.attribute :last_name, :string, example: 'Lovelace'
+            body.attribute :phone, :string
+            body.attribute :password, :string, example: 'a-strong-password'
+            body.attribute :password_confirmation, :string, example: 'a-strong-password'
+          end
+
           # GET /api/v3/store/company_invitations/:token — what is being
           # joined. Expired and revoked tokens 404.
           def show
@@ -81,7 +89,7 @@ module Spree
           end
 
           def registration_params
-            params.permit(:first_name, :last_name, :phone, :password, :password_confirmation)
+            params.permit(*declared_permitted_attributes)
           end
         end
       end

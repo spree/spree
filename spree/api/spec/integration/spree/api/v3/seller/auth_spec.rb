@@ -35,15 +35,9 @@ RSpec.describe 'Seller Authentication API', type: :request, swagger_doc: 'api-re
         while still letting sellers sign in with a password.
       DESC
 
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          provider: { type: :string, enum: ['email'], default: 'email' },
-          email: { type: :string, format: 'email', example: 'seller@example.com' },
-          password: { type: :string, example: 'password123' }
-        },
-        required: %w[email password]
-      }
+      seller_sdk_example 'auth/login', as: :guest
+
+      request_body_for
 
       response '200', 'login successful' do
         let(:body) { { email: existing_seller_user.email, password: 'password123' } }
@@ -84,6 +78,8 @@ RSpec.describe 'Seller Authentication API', type: :request, swagger_doc: 'api-re
         revoked mid-session is refused rather than renewed.
       DESC
 
+      seller_sdk_example 'auth/refresh', as: :guest
+
       response '200', 'refresh successful' do
         let(:refresh_token_record) do
           create(:refresh_token, :for_admin, user: existing_seller_user,
@@ -121,6 +117,8 @@ RSpec.describe 'Seller Authentication API', type: :request, swagger_doc: 'api-re
       produces 'application/json'
       description 'Revokes the refresh-token cookie, ending the seller session.'
 
+      seller_sdk_example 'auth/logout', as: :guest
+
       response '204', 'logout successful' do
         run_test!
       end
@@ -136,6 +134,8 @@ RSpec.describe 'Seller Authentication API', type: :request, swagger_doc: 'api-re
         to render. Unauthenticated — a login page must be able to ask before
         anyone has signed in.
       DESC
+
+      seller_sdk_example 'auth/providers', as: :guest
 
       response '200', 'providers listed' do
         schema '$ref' => '#/components/schemas/AuthProvidersResponse'

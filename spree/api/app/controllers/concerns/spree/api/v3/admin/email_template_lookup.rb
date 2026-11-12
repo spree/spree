@@ -60,12 +60,17 @@ module Spree
 
           # An unsaved subject and body are previewed only when sent, so an
           # empty body still previews as empty. `branding` previews unsaved
-          # colors and font.
+          # colors and font, `mailer_logo_signed_id` an unsaved logo (null
+          # removes it, as it does when saving the store).
           def preview_arguments
             arguments = params.permit(:record_id, :subject, :body).to_h.symbolize_keys
             arguments[:locale] = language
             arguments[:email_key] = params[:email_key].to_s.tr('.', '/').presence
             arguments[:branding] = params.fetch(:branding, {}).permit(*Spree::Emails::Branding.attribute_names).to_h
+            if params.key?(:mailer_logo_signed_id)
+              signed_id = params[:mailer_logo_signed_id].presence&.to_s
+              arguments.merge!(mailer_logo_signed_id: signed_id, mailer_logo_cleared: signed_id.nil?)
+            end
             arguments
           end
 

@@ -8,8 +8,8 @@ import { Checkbox } from '../ui/checkbox'
 import { Field, FieldLabel } from '../ui/field'
 import { Input } from '../ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
-import { Thumbnail } from '../ui/thumbnail'
-import { PackageIcon, TriangleAlertIcon } from './icons'
+import { TriangleAlertIcon } from './icons'
+import { ProductIdentity } from './product-identity'
 
 /** A pickable row: what it looks like and how many units are on offer. */
 export type FulfillableRowData = {
@@ -48,10 +48,7 @@ function ItemQuantityRow({
 
   return (
     <div
-      className={cn(
-        'my-2 flex items-center gap-3 rounded-lg py-2 pl-2',
-        selected && 'bg-accent-strong',
-      )}
+      className={cn('my-2 flex items-center gap-3 rounded-lg p-2', selected && 'bg-accent-strong')}
     >
       <Controller
         control={form.control}
@@ -74,14 +71,12 @@ function ItemQuantityRow({
         )}
       />
 
-      <Thumbnail src={row.thumbnailUrl} fallback={<PackageIcon />} />
-
-      <div className="min-w-0 flex-1">
-        <div className="truncate font-medium text-sm">{row.name}</div>
-        {row.optionsText && (
-          <div className="truncate text-muted-foreground text-xs">{row.optionsText}</div>
-        )}
-      </div>
+      <ProductIdentity
+        name={row.name}
+        subtitle={row.optionsText}
+        thumbnailUrl={row.thumbnailUrl}
+        className="flex-1"
+      />
 
       <Controller
         control={form.control}
@@ -108,7 +103,7 @@ function ItemQuantityRow({
               }}
               onBlur={field.onBlur}
             />
-            <span className="w-16 whitespace-nowrap text-muted-foreground text-sm">
+            <span className="w-16 whitespace-nowrap text-muted-foreground text-base">
               {t('admin.orders.fulfill.of_units', { count: row.quantity })}
             </span>
           </div>
@@ -172,7 +167,7 @@ export function FulfillItemsForm({
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col">
       {errors.root?.message && (
-        <p className="text-destructive text-sm" role="alert">
+        <p className="px-4 pt-3 text-destructive text-base" role="alert">
           {errors.root.message}
         </p>
       )}
@@ -180,7 +175,10 @@ export function FulfillItemsForm({
       {rows.length === 0 ? (
         <p className="py-6 text-center text-muted-foreground">{t('admin.orders.fulfill.empty')}</p>
       ) : (
-        <div className="divide-y">
+        // Rows are inset 8px so a selected row's fill sits inside the card,
+        // and their own 8px padding lines the content up with the 16px card
+        // content below.
+        <div className="divide-y px-2">
           {rows.map((row, index) => (
             <ItemQuantityRow
               key={row.key}
@@ -194,7 +192,7 @@ export function FulfillItemsForm({
         </div>
       )}
 
-      <div className="grid grid-cols-1 gap-4 border-border-subtle border-t py-3 sm:grid-cols-2">
+      <div className="mx-4 grid grid-cols-1 gap-4 border-border-subtle border-t py-3 sm:grid-cols-2">
         <Field>
           <FieldLabel htmlFor={`${idPrefix}-tracking`}>
             {t('admin.orders.fulfill.tracking_label')}
@@ -241,7 +239,7 @@ export function FulfillItemsForm({
         render={({ field }) => (
           <label
             htmlFor={`${idPrefix}-notify`}
-            className="flex cursor-pointer items-center gap-2 py-3 text-sm"
+            className="flex cursor-pointer items-center gap-2 px-4 py-3 text-base"
           >
             <Checkbox
               id={`${idPrefix}-notify`}
@@ -254,7 +252,7 @@ export function FulfillItemsForm({
       />
 
       {!shipsEverything && totalSelected > 0 && (
-        <div className="px-3 pb-3">
+        <div className="px-4 pb-3">
           <Alert variant="warning">
             <TriangleAlertIcon />
             <AlertDescription>{t('admin.orders.fulfill.partial_hint')}</AlertDescription>
@@ -262,8 +260,8 @@ export function FulfillItemsForm({
         </div>
       )}
 
-      <div className="flex items-center justify-end gap-2 border-border-subtle border-t py-3">
-        <span className="mr-auto text-muted-foreground text-sm">
+      <div className="mx-4 flex items-center justify-end gap-2 border-border-subtle border-t py-3">
+        <span className="mr-auto text-muted-foreground text-base">
           {t('admin.orders.fulfill.units_selected')}: {totalSelected} / {totalAvailable}
         </span>
         <Button type="button" size="sm" variant="outline" onClick={onCancel}>

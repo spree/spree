@@ -88,6 +88,13 @@ module Spree
                        freeze
       end
 
+      # The alpha-2 code of every orderable country, the closed list the API
+      # types publish as `CountryCode`.
+      # @return [Array<String>]
+      def country_codes
+        @country_codes ||= countries.map(&:alpha2).sort.freeze
+      end
+
       # @param code [String] alpha-2 or alpha-3 code, any case
       # @return [ISO3166::Country, nil]
       def country(code)

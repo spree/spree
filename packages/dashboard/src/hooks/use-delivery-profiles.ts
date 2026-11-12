@@ -1,4 +1,8 @@
-import type { DeliveryProfile, DeliveryProfileParams } from '@spree/admin-sdk'
+import type {
+  DeliveryProfile,
+  DeliveryProfileCreateParams,
+  DeliveryProfileUpdateParams,
+} from '@spree/admin-sdk'
 import {
   adminClient,
   useResourceKey,
@@ -40,7 +44,11 @@ export function useDeliveryProfileKinds() {
 }
 
 export function useCreateDeliveryProfile() {
-  return useResourceMutation<DeliveryProfile, Error, DeliveryProfileParams & { name: string }>({
+  return useResourceMutation<
+    DeliveryProfile,
+    Error,
+    DeliveryProfileCreateParams & { name: string }
+  >({
     mutationFn: (params) => adminClient.deliveryProfiles.create(params),
     invalidate: [['delivery-profiles']],
     successMessage: i18n.t('admin.delivery_profiles.messages.created'),
@@ -49,7 +57,7 @@ export function useCreateDeliveryProfile() {
 }
 
 export function useUpdateDeliveryProfile(id: string) {
-  return useResourceMutation<DeliveryProfile, Error, DeliveryProfileParams>({
+  return useResourceMutation<DeliveryProfile, Error, DeliveryProfileUpdateParams>({
     mutationFn: (params) => adminClient.deliveryProfiles.update(id, params),
     invalidate: [['delivery-profiles'], ['delivery-profiles', id]],
     successMessage: i18n.t('admin.delivery_profiles.messages.updated'),

@@ -28,13 +28,7 @@ RSpec.describe 'Admin Order Gift Cards API', type: :request, swagger_doc: 'api-r
                 description: 'Bearer token for admin authentication'
       parameter name: :order_id, in: :path, type: :string, required: true,
                 description: 'Order ID'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        required: %w[code],
-        properties: {
-          code: { type: :string, description: 'Gift card code', example: 'GIFT-XXXX-YYYY' }
-        }
-      }
+      request_body_for
 
       response '201', 'gift card applied' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

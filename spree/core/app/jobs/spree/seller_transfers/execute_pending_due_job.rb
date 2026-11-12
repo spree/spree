@@ -1,6 +1,7 @@
 module Spree
   module SellerTransfers
-    # Hands every seller holding an unconfirmed earning to a job of their own.
+    # Hands every seller holding an unconfirmed earning or reversal to a job of
+    # their own.
     #
     # The transfer level's counterpart to {Spree::SellerPayouts::SweepDueJob},
     # and deliberately a separate schedule rather than something the settlement
@@ -39,17 +40,18 @@ module Spree
       # @param store [Spree::Store]
       # @return [ActiveRecord::Relation<Spree::Seller>]
       def sellers_awaiting_provider(store)
-        scope = store.sellers.approved.
-                where(id: Spree::SellerTransfer.for_store(store).awaiting_provider.select(:seller_id))
+        transfers = Spree::SellerTransfer.for_store(store)
+        sending = store.sellers.approved.where(id: transfers.awaiting_provider.select(:seller_id))
 
         # A seller the provider will not accept yet keeps their earnings
         # unconfirmed, and the job would return at once. Skipped rather than
         # enqueued, because a marketplace's half-onboarded sellers are a
         # standing population and this runs often — and nothing is lost by it:
         # finishing onboarding runs the job for them directly.
-        return scope unless store.payout_provider_class.requires_payout_account?
+        sending = sending.where.not(payouts_enabled_at: nil) if store.payout_provider_class.requires_payout_account?
 
-        scope.where.not(payouts_enabled_at: nil)
+        # Money owed back is pursued whatever the seller's standing.
+        sending.or(store.sellers.where(id: transfers.reversals_awaiting_provider.select(:seller_id)))
       end
     end
   end

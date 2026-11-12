@@ -30,7 +30,8 @@ const registrations = new Map<string, FormFieldRegistration[]>()
 
 /**
  * Registry of extension fields per built-in form. Form keys match the form's
- * slot prefix — `'product'` for the product detail form. Registered names
+ * slot prefix — `'product'` for the product detail form, `'product.media'` and
+ * `'product.variant'` for the rows of its media and variant lists. Registered names
  * must be unique per form; duplicates throw so two plugins can't silently
  * fight over one attribute.
  */
@@ -92,6 +93,27 @@ export function extensionSubmitValues(
   const out: Record<string, unknown> = {}
   for (const registration of registrations.get(formKey) ?? []) {
     out[registration.name] = form.getValues(registration.name)
+  }
+  return out
+}
+
+/** Names of every extension field registered on `formKey`. */
+export function extensionFieldNames(formKey: string): string[] {
+  return (registrations.get(formKey) ?? []).map((registration) => registration.name)
+}
+
+/**
+ * Extension field values carried by one row of a nested list — a media or
+ * variant row of the product form, registered under `'product.media'` /
+ * `'product.variant'`. Only keys the row actually holds are returned, so a
+ * row added after hydration (a fresh upload) sends nothing it never had.
+ */
+export function extensionRowValues(formKey: string, row: unknown): Record<string, unknown> {
+  if (!row || typeof row !== 'object') return {}
+
+  const out: Record<string, unknown> = {}
+  for (const name of extensionFieldNames(formKey)) {
+    if (name in row) out[name] = (row as Record<string, unknown>)[name]
   }
   return out
 }

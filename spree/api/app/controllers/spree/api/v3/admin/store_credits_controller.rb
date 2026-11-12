@@ -63,9 +63,6 @@ module Spree
                    )
 
             rows.map do |currency, amount, used, authorized|
-              # `SUM` answers an Integer on a whole-number total, and these
-              # totals render beside rows that serialize decimal strings — so
-              # "50" must not appear against their "50.0".
               figures = {
                 amount: amount.to_d,
                 amount_used: used.to_d,
@@ -74,10 +71,7 @@ module Spree
               figures[:amount_remaining] =
                 figures[:amount] - figures[:amount_used] - figures[:amount_authorized]
 
-              displays = figures.transform_keys { |name| :"display_#{name}" }.
-                         transform_values { |value| Spree::Money.new(value, currency: currency).to_s }
-
-              { currency: currency }.merge(figures.transform_values(&:to_s)).merge(displays)
+              { currency: currency }.merge(figures.transform_values { |value| Spree::Money::Rounding.format(value, currency) })
             end
           end
         end

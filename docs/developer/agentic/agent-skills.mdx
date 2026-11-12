@@ -15,7 +15,13 @@ The skills target Spree 6. For a Spree 5 project, use the [`v0.3.0` release](htt
 </Note>
 
 
-Run from your project directory:
+Projects created with [create-spree-app](/developer/create-spree-app/quickstart) install every skill during setup, unless you answer no or pass `--no-agent-skills`. To add them to an existing create-spree-app project, run from the project directory:
+
+```bash
+npx spree add ai
+```
+
+This also connects your agent to the [docs MCP server](/developer/agentic/docs-mcp); pass `--no-mcp` to install only the skills. In any other project, use the skills CLI directly:
 
 ```bash
 npx skills add spree/agent-skills

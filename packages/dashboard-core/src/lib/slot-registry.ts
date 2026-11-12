@@ -44,6 +44,16 @@ export interface NoStoreAccessSlotContext {
   signOut: () => Promise<void>
 }
 
+/**
+ * The page a signed-in user lands on at `/`, before entering a store. By
+ * default it opens their first store, or shows the `no_store_access` screen
+ * when they have none. Registering an entry replaces the whole page — for
+ * example with a list of stores to choose from and a way to create one.
+ */
+export const STORE_SELECTION_SLOT = 'store_selection'
+
+export type StoreSelectionSlotContext = NoStoreAccessSlotContext
+
 // ============================================================================
 // Registry — module-singleton keyed by slot name
 // ============================================================================

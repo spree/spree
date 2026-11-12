@@ -4,10 +4,11 @@
 
 The following versions are actively maintained and receive security patches.
 
-| Version | End of life |
+| Version | Supported |
 | ------- | ------------ |
-| 5.x     | 26.03.2027  |
-| 4.10    | 06.09.2026  |
+| 6.x     | ✅ |
+| 5.6     | ✅ Until 26.03.2027  |
+| < 5.6     | ❌ |
 
 Versions that are not listed above will not receive any security patches or fixes.
 

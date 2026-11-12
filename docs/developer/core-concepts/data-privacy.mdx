@@ -19,23 +19,107 @@ A person has the right to a copy of their data and the right to have it
 erased. Both arrive as a `Spree::DataRequest`, which records that the request
 was made and how it was answered.
 
-```http
-POST /api/v3/store/customers/me/data_requests   { "kind": "access" }
-POST /api/v3/store/customers/me/data_requests   { "kind": "erasure", "current_password": "..." }
+A customer opens a request from their account:
+
+<CodeGroup>
+
+```typescript Store SDK
+await client.customer.dataRequests.create(
+  { kind: 'access', redirect_url: 'https://myshop.com/account/data-requests/confirm' },
+  { token: customerJwt },
+)
+
+await client.customer.dataRequests.create(
+  { kind: 'erasure', current_password: '...', redirect_url: 'https://myshop.com/account/data-requests/confirm' },
+  { token: customerJwt },
+)
 ```
 
-The response is `202 Accepted` with a pending request. Building the export
-reads a person's whole history, so it happens in the background and the file
-arrives by email as a signed link that expires. Asking again while a request
-of the same kind is still in flight returns the one already running, rather
-than starting a second.
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/store/customers/me/data_requests' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
+  -H 'Authorization: Bearer <customer JWT>' \
+  -H 'Content-Type: application/json' \
+  -d '{ "kind": "access", "redirect_url": "https://myshop.com/account/data-requests/confirm" }'
+```
 
-An erasure request needs the account password, because erasure cannot be
+</CodeGroup>
+
+The response is `202 Accepted` with the request `awaiting_confirmation`.
+Nothing happens yet. A request also covers the guest orders placed at the
+account's email address, so it waits until it is confirmed from that address.
+
+An erasure request also needs the account password, because erasure cannot be
 undone and an unattended session should not be enough to trigger it.
+
+### Confirming a request
+
+Spree publishes `data_request.confirmation_requested`, carrying a confirmation
+token. `spree_emails` sends the person a link to `redirect_url` with
+`?token=` appended. A storefront that sends its own emails subscribes a webhook
+endpoint to the event instead: it carries a live credential, so only an
+endpoint that names it receives it (see [Webhooks](/developer/core-concepts/webhooks)).
+`redirect_url` is used only when it matches one of the store's allowed origins.
+Otherwise the link falls back to the store's storefront URL.
+
+The page the link opens confirms the request when the person presses a button:
+
+<CodeGroup>
+
+```typescript Store SDK
+await client.dataRequests.confirm(tokenFromTheLink)
+```
+
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/store/data_requests/<token>/confirmation' \
+  -H 'X-Spree-Api-Key: pk_xxx'
+```
+
+</CodeGroup>
+
+<Warning>
+Confirm on a button press, never when the page loads. Some mail scanners open
+links and run the page's scripts, and an erasure cannot be undone.
+</Warning>
+
+A request left unconfirmed for 24 hours lapses. Asking again while a request of
+the same kind is waiting for confirmation, or still being worked on, returns the
+existing one. A waiting request also gets its email sent again.
+
+### Receiving the export
+
+Building the export reads a person's whole history, so it happens in the
+background. When it is ready, `spree_emails` sends a download link to the same
+address. The link expires after seven days.
+
+The download link is shown only to whoever holds the confirmation token, never
+to the signed-in account. A storefront that sends its own emails reads it with
+the token:
+
+<CodeGroup>
+
+```typescript Store SDK
+const dataRequest = await client.dataRequests.get(tokenFromTheLink)
+// dataRequest.download_url is set once dataRequest.status is 'completed'
+```
+
+```bash cURL
+curl 'https://api.mystore.com/api/v3/store/data_requests/<token>' \
+  -H 'X-Spree-Api-Key: pk_xxx'
+```
+
+</CodeGroup>
+
+<Note>
+A store without `spree_emails`, and without a webhook handler for
+`data_request.confirmation_requested`, cannot complete a request a customer
+raises. Requests staff raise in the admin still work.
+</Note>
 
 Most requests never reach the storefront. They arrive as email to the
 merchant, often from someone who can no longer sign in, so the same two
-actions exist in the admin:
+actions exist in the admin. Staff confirm who they are dealing with
+themselves, so these requests need no email confirmation:
 
 ```http
 GET  /api/v3/admin/customers/:id/export
@@ -56,6 +140,14 @@ own retention obligation under accounting and tax law, and deleting them would
 trade one legal duty for another. On order addresses the country, state and a
 truncated postal code survive deliberately, so the jurisdiction a past sale was
 taxed in stays provable.
+
+A business-to-business order is the narrower case. An address book belonging to
+a company is left alone entirely — it is shared by every member, and one
+person's erasure is no warrant to rewrite it. Where an order recorded delivery
+to one of the company's sites, the contact name and phone on that record are
+erased and the site and trading name stay: they are the company's details, not
+the person's, and taking them would erase the merchant's record of a lawful
+sale along with them.
 
 A `customer.anonymized` event is published when it completes.
 
@@ -136,7 +228,7 @@ defaults to 30 days via `price_history_retention_days`; prune with:
 <CodeGroup>
 
 ```bash Spree CLI (Docker)
-spree rake spree:price_history:prune
+spree task price_history:prune
 ```
 
 ```bash Without Spree CLI

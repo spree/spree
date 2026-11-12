@@ -156,7 +156,7 @@ RSpec.describe Spree::Fulfillments::Update do
     it 'refuses a cost that is not an amount, and writes nothing' do
       # The last is more than the cost column holds, which would otherwise
       # fail the write with a database error.
-      ['', '-1', '12 boxes', 'NaN', '123456789012'].each do |value|
+      ['', '-1', '12 boxes', 'NaN', '1234567890123456'].each do |value|
         result = update(cost: value, fulfillment_attributes: { tracking: 'DPD-2' })
 
         expect(result).not_to be_success, "expected #{value.inspect} to be refused"

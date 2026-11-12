@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { Customer } from '@spree/admin-sdk'
-import { mapSpreeErrorsToForm, Subject, TagCombobox } from '@spree/dashboard-core'
+import { mapSpreeErrorsToForm, TagCombobox } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -8,7 +8,6 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-  Checkbox,
   Field,
   FieldError,
   FieldGroup,
@@ -21,6 +20,7 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
+  Switch,
 } from '@spree/dashboard-ui'
 import { MailIcon, PencilIcon, PhoneIcon, StarIcon } from '@spree/dashboard-ui/icons'
 import { useState } from 'react'
@@ -55,19 +55,19 @@ export function CustomerProfileCard({ customer }: { customer: Customer }) {
           </CardAction>
         </CardHeader>
         <CardContent className="flex flex-col gap-3">
-          <div className="flex items-center gap-2 text-sm">
+          <div className="flex items-center gap-2 text-base">
             <MailIcon className="size-4 text-muted-foreground" />
             <span className={customer.anonymized ? 'text-muted-foreground' : undefined}>
               {erasedFieldValue(customer.email, customer.anonymized)}
             </span>
           </div>
           {customer.phone && !customer.anonymized && (
-            <div className="flex items-center gap-2 text-sm">
+            <div className="flex items-center gap-2 text-base">
               <PhoneIcon className="size-4 text-muted-foreground" />
               <span>{customer.phone}</span>
             </div>
           )}
-          <div className="flex items-center gap-2 text-sm">
+          <div className="flex items-center gap-2 text-base">
             <StarIcon className="size-4 text-muted-foreground" />
             <span>
               {customer.accepts_email_marketing
@@ -149,7 +149,7 @@ function EditProfileSheet({
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
             {errors.root?.message && (
-              <p className="text-sm text-destructive" role="alert">
+              <p className="text-base text-destructive" role="alert">
                 {errors.root.message}
               </p>
             )}
@@ -198,7 +198,7 @@ function EditProfileSheet({
                   control={form.control}
                   render={({ field }) => (
                     <TagCombobox
-                      taggableType={Subject.Customer}
+                      taggableType="customer"
                       value={field.value}
                       onChange={field.onChange}
                     />
@@ -214,7 +214,7 @@ function EditProfileSheet({
                     name="accepts_email_marketing"
                     control={form.control}
                     render={({ field }) => (
-                      <Checkbox
+                      <Switch
                         id="accepts_email_marketing"
                         checked={!!field.value}
                         onCheckedChange={field.onChange}

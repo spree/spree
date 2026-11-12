@@ -2,6 +2,10 @@
 
 module Spree
   class CollectionRule < Spree.base_class
+    include Spree::TypeLabels
+
+    self.type_labels_scope = 'spree.collection_rule_types'
+
     has_prefix_id :crule
 
     MATCH_POLICIES = %w[is_equal_to is_not_equal_to contains does_not_contain].freeze
@@ -17,25 +21,6 @@ module Spree
     delegate :store, to: :collection
 
     validate :type_must_be_registered
-
-    # @return [String] localized display name for the rule kind, used by admin pickers
-    def self.human_name
-      I18n.t("spree.collection_rule_types.#{api_type}.name", default: api_type.titleize)
-    end
-
-    # @return [String] localized description for the rule kind
-    def self.human_description
-      I18n.t("spree.collection_rule_types.#{api_type}.description", default: '')
-    end
-
-    # Feeds the `description` field of `subclasses_with_preference_schema`
-    # (the `/types` discovery payload), which only reads `.description`.
-    def self.description
-      human_description
-    end
-
-    def human_name = self.class.human_name
-    def human_description = self.class.human_description
 
     registers_subclasses_via { Rails.application.config.spree.collection_rules }
 

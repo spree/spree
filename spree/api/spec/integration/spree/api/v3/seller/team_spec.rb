@@ -23,6 +23,8 @@ RSpec.describe 'Seller Team API', type: :request, swagger_doc: 'api-reference/se
         own team. Unpaginated — a seller's team is small by nature.
       DESC
 
+      seller_sdk_example 'team/list'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 
       response '200', 'team members listed' do
@@ -59,14 +61,10 @@ RSpec.describe 'Seller Team API', type: :request, swagger_doc: 'api-reference/se
         role, which already carries the whole seller vocabulary.
       DESC
 
+      seller_sdk_example 'team/invite'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          email: { type: :string, format: 'email', example: 'colleague@acme.test' }
-        },
-        required: %w[email]
-      }
+      request_body_for
 
       response '201', 'invitation sent' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
@@ -106,6 +104,8 @@ RSpec.describe 'Seller Team API', type: :request, swagger_doc: 'api-reference/se
         can sign in to, and only the marketplace operator could put someone back.
         The last remaining member is refused with `422`.
       DESC
+
+      seller_sdk_example 'team/delete'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 

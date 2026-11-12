@@ -43,6 +43,7 @@ erDiagram
 | `state_name` | Free text, for countries with no official list |
 | `label` | What the customer filed it under — "Home", "Office" |
 | `is_default_shipping`, `is_default_billing` | Whether it is the default in the address book |
+| `owner` | The address book it belongs to — `{ id, type, name }`, where `type` is `customer` or [`company`](/developer/core-concepts/companies). Read-only, and `null` for an address in no book: one a guest typed in, or the copy a placed order keeps |
 
 <Note>
 Countries and states are named by their **ISO codes** — `country_code: "US"`, `state_code: "CA"` — never by an ID. A code means the same thing everywhere, so you can send one without looking anything up first.

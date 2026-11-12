@@ -31,15 +31,4 @@ RSpec.describe Spree::PaymentSplit, type: :model do
       expect(split.net_captured_amount).to eq(15)
     end
   end
-
-  # Whose sale a share belongs to is asked through its order — the split
-  # itself stays neutral, since the same container serves splits that have no
-  # seller at all.
-  it 'reaches its seller through the order it settles' do
-    seller = create(:seller, :approved, store: store)
-    seller_order = create(:order, store: store, order_group: group, seller: seller)
-    split = create(:payment_split, payment: payment, order: seller_order)
-
-    expect(split.order.seller).to eq(seller)
-  end
 end

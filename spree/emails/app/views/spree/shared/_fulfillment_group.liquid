@@ -14,7 +14,12 @@
     {%- endif -%}
     {% render 'spree/shared/line_item' for group.items as item %}
     <mj-table css-class="summary" padding="16px 0 0">
-      {% render 'spree/shared/summary_row', label: 'shipping', translate: true, sub: group.name, value: group.display_cost %}
+      {%- if group.unpriced -%}
+        {%- assign cost = 'delivery_rates.quoted_after_review' | t -%}
+      {%- else -%}
+        {%- assign cost = group.cost | money -%}
+      {%- endif -%}
+      {% render 'spree/shared/summary_row', label: 'shipping', translate: true, sub: group.name, value: cost %}
     </mj-table>
   </mj-column>
 </mj-section>

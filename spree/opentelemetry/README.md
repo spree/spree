@@ -6,9 +6,8 @@ Distributed tracing for [Spree Commerce](https://spreecommerce.org) via
 With this gem installed, Spree exports traces as soon as the standard
 OpenTelemetry environment variables point at a collector — no code changes:
 
-```ruby
-# Gemfile
-gem 'spree_opentelemetry'
+```bash
+spree add opentelemetry   # or add gem 'spree_opentelemetry' to the Gemfile
 ```
 
 ```bash
@@ -34,7 +33,7 @@ is the kill switch.
 Span attributes never contain personal data — prefixed IDs, workflow/step
 names, gateway action names, and HTTP metadata only.
 
-See the [telemetry guide](https://docs.spreecommerce.org/developer/deployment/telemetry)
+See the [telemetry guide](https://spreecommerce.org/docs/developer/deployment/telemetry)
 for the full span catalog, collector examples, and sampling guidance.
 
 ## Code-level configuration

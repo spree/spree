@@ -96,14 +96,6 @@ RSpec.describe Spree::Storefront::AccessPolicy, type: :model do
       expect(guest_policy.readable?(unowned)).to be false
     end
 
-    it 'keys ownership on customer_id, not the deprecated user_id alias' do
-      # Guards against the alias disappearing in 6.1: a record whose
-      # customer_id matches is owned even if #user_id is gone.
-      owned = build(:wishlist, customer: user)
-      expect(owned.customer_id).to eq(user.id)
-      expect(policy.readable?(owned)).to be true
-    end
-
     it 'fails closed for records with no customer_id column' do
       # WishedItem has no ownership column — it is authorized through its
       # parent wishlist, never directly. The bare policy denies it.

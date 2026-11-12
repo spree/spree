@@ -3,31 +3,35 @@ module Spree
     module V3
       module Admin
         class FulfillmentSerializer < V3::FulfillmentSerializer
+          include Concerns::ExternalReferencesAttribute
+
+          without_formatted_money
+
           # The Admin API has no guest gating — money fields inherited from the
           # store serializer are always present, so override their nullability.
-          typelize cost: [:string, nullable: false], display_cost: [:string, nullable: false],
-                   total: [:string, nullable: false], display_total: [:string, nullable: false],
-                   discount_total: [:string, nullable: false], display_discount_total: [:string, nullable: false],
-                   additional_tax_total: [:string, nullable: false], display_additional_tax_total: [:string, nullable: false],
-                   included_tax_total: [:string, nullable: false], display_included_tax_total: [:string, nullable: false],
-                   tax_total: [:string, nullable: false], display_tax_total: [:string, nullable: false]
+          typelize cost: [:string, nullable: false],
+                   total: [:string, nullable: false],
+                   discount_total: [:string, nullable: false],
+                   additional_tax_total: [:string, nullable: false],
+                   included_tax_total: [:string, nullable: false],
+                   tax_total: [:string, nullable: false]
 
           typelize metadata: 'Record<string, unknown>',
-                   documents: "Array<{ kind: string; url: string }>",
                    provider_generates_labels: :boolean,
                    order_id: [:string, nullable: true],
                    stock_location_id: [:string, nullable: true],
-                   adjustment_total: :string,
-                   pre_tax_amount: :string,
                    cost_source: [:string, nullable: true, enum: [Spree::Fulfillment::MANUAL_COST_SOURCE]]
 
-          attributes :metadata, :adjustment_total, :pre_tax_amount, :cost_source,
-                     created_at: :iso8601, updated_at: :iso8601
+          attributes :metadata, :cost_source, created_at: :iso8601, updated_at: :iso8601
+
+          money_attributes :adjustment_total, :pre_tax_amount
+          typelize adjustment_total: [:string, nullable: false], pre_tax_amount: [:string, nullable: false]
 
           prefixed_id_attributes :order, :stock_location
 
           # Customs forms and other paperwork the provider produced beside the
           # label; the labels themselves are listed under +labels+.
+          typelize({ kind: :string, url: :string }, multi: true)
           attribute :documents do |fulfillment|
             fulfillment.provider.documents(fulfillment).map(&:as_json)
           end
@@ -58,6 +62,7 @@ module Spree
               resource: proc { Spree.api.admin_order_serializer },
               if: proc { expand?('order') }
 
+          expandable_custom_fields admin: true
         end
       end
     end

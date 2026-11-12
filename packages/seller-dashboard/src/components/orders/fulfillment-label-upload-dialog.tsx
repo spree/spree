@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import type { CurrencyCode } from '@spree/core'
 import {
   EMPTY_FILE_UPLOAD_VALUE,
   FileUploadField,
@@ -25,7 +26,7 @@ export function FulfillmentLabelUploadDialog({
 }: {
   orderId: string
   fulfillmentId: string
-  currency: string
+  currency: CurrencyCode
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
@@ -59,7 +60,7 @@ export function FulfillmentLabelUploadDialog({
     try {
       await uploadLabel.mutateAsync({
         fulfillmentId,
-        file: file.signedId,
+        file_signed_id: file.signedId,
         tracking_number: values.tracking_number.trim(),
         carrier: values.carrier.trim() || undefined,
         cost: values.cost.trim() || undefined,

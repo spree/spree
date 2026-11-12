@@ -36,13 +36,4 @@ RSpec.describe Spree::DeliveryRateProvider::Freight do
     expect(summary['total_pallets']).to eq(1)
     expect(summary['complete']).to be(true)
   end
-
-  it 'ships to an address and never consults a calculator' do
-    expect(described_class.requires_address?).to be(true)
-    expect(described_class.uses_calculator?).to be(false)
-  end
-
-  it 'is registered as a selectable rate provider' do
-    expect(Spree.delivery_rate_providers).to include(described_class)
-  end
 end

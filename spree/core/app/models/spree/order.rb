@@ -51,9 +51,10 @@ module Spree
     include Spree::NumberIdentifier
 
     publishes_lifecycle_events
-    publishes_events :approved, :canceled, :delivered, :fulfilled, :paid, :placed, :shipped,
+    publishes_events :approved, :canceled, :delivered, :fulfilled, :paid, :placed,
                      :resend_confirmation_email, :resend_digital_links_email
     publishes_event :completed, deprecated_alias_of: 'order.placed'
+    publishes_event :shipped, deprecated_alias_of: 'order.fulfilled'
     include Spree::HasCustomFields
     include Spree::Metadata
     include Spree::HasExternalReferences
@@ -151,9 +152,10 @@ module Spree
     self.whitelisted_ransackable_attributes = %w[
       completed_at email number status payment_status payment_state fulfillment_status shipment_state delivery_total
       total item_total total_quantity considered_risky channel_id currency coupon_code customer_id seller_id
-      order_group_id po_number
+      order_group_id po_number market_id locale
     ]
     self.whitelisted_ransackable_scopes = %w[complete incomplete refunded partially_refunded search]
+    self.ransackable_scope_types = %w[complete incomplete refunded partially_refunded].index_with('boolean')
     # A seller never sees the buyer's email, and a company member filtering the
     # company's orders must not learn a colleague's; the risk flag and coupon
     # are back-office data. `search` matches on the email too.
@@ -335,8 +337,10 @@ module Spree
     scope :reverse_chronological, -> { order(Arel.sql('spree_orders.completed_at IS NULL'), completed_at: :desc, created_at: :desc) }
 
     def self.search(query)
+      # Ransack passes `true` when the scope is called as a bare flag (`q[search]=1`)
+      return none unless query.is_a?(String) && query.present?
+
       sanitized_query = sanitize_query_for_search(query)
-      return none if query.blank?
 
       query_pattern = "%#{sanitized_query}%"
 
@@ -356,7 +360,11 @@ module Spree
         conditions << search_condition(Spree::Address, :last_name, full_name.last)
       end
 
-      left_joins(:bill_address).where(arel_table[:email].lower.eq(query.downcase)).or(where(conditions.reduce(:or)))
+      # The exact match goes through the model, so it still finds an order in
+      # an app that encrypts email, where SQL only ever sees ciphertext.
+      left_joins(:bill_address).where(email: query).
+        or(left_joins(:bill_address).where(arel_table[:email].lower.eq(query.downcase))).
+        or(where(conditions.reduce(:or)))
     end
 
     # Find an order by prefixed ID first, falling back to number, then integer id for backwards compatibility
@@ -415,7 +423,7 @@ module Spree
 
     # Returns the subtotal used for analytics integrations
     # It's a sum of the item total and the promo total
-    # @return [Float]
+    # @return [Float] a JSON number, as analytics providers expect
     def analytics_subtotal
       (item_total + line_items.sum(:discount_total)).to_f
     end
@@ -458,7 +466,7 @@ module Spree
     end
 
     def refunds_total
-      refunds.loaded? ? refunds.sum(&:amount) : refunds.sum(:amount)
+      read_association_in_memory?(:refunds) ? refunds.sum(0.to_d, &:amount) : refunds.sum(:amount)
     end
 
     # Checks if the order is partially refunded
@@ -707,7 +715,7 @@ module Spree
     #
     # @return [BigDecimal]
     def returned_items_refund_total
-      return refunds.select(&:for_returned_items?).sum(0.to_d, &:amount) if refunds.loaded?
+      return refunds.select(&:for_returned_items?).sum(0.to_d, &:amount) if read_association_in_memory?(:refunds)
 
       refunds.for_returned_items.sum(:amount)
     end
@@ -825,11 +833,10 @@ module Spree
     #   reaches it through +Spree.carts_complete_workflow+). Removed in 6.1.
     def finalize!
       Spree::Deprecation.warn('Spree::Order#finalize! is deprecated and will be removed in Spree 6.1. Completion runs through Spree.order_complete_workflow (Spree::Orders::Complete).')
-      Spree.order_complete_workflow.call(order: self, payment_pending: true)
+      Spree.order_complete_workflow.call(order: self, payment_pending: true, validated: true)
     end
 
     def fulfill!
-      fulfillments.each { |shipment| shipment.update!(self) if shipment.persisted? }
       save!
       update_statuses!
     end
@@ -920,6 +927,9 @@ module Spree
 
       shipment_ids = fulfillments.map(&:id)
       DeliveryRate.where(fulfillment_id: shipment_ids).delete_all
+      # A connector's key for a fulfillment that is going away would otherwise
+      # outlive it and block the key from naming the rebuilt one.
+      Spree::ExternalReference.where(resource_type: Spree::Fulfillment.name, resource_id: shipment_ids).delete_all if shipment_ids.any?
 
       fulfillments.delete_all
 
@@ -1216,7 +1226,7 @@ module Spree
     def valid_order_routing_strategy_class(klass_name)
       return if klass_name.blank?
 
-      klass = Spree.order_routing.strategies.find { |strategy| strategy.to_s == klass_name.to_s }
+      klass = Spree::ApiTyped.registered_class(Spree.order_routing.strategies, klass_name)
       return klass if klass
 
       Rails.logger.warn(
@@ -1274,7 +1284,7 @@ module Spree
     end
 
     def credit_card_nil_payment?(attributes)
-      payments.store_credits.present? && attributes[:amount].to_f.zero?
+      payments.store_credits.present? && Spree::Money::Rounding.blank_or_zero?(attributes[:amount])
     end
   end
 end

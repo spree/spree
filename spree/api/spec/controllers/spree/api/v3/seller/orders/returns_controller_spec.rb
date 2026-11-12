@@ -147,7 +147,7 @@ RSpec.describe Spree::Api::V3::Seller::Orders::ReturnsController, type: :control
           refund_method: 'store_credit', amount: 10_000
         }, as: :json
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(return_record.reload).not_to be_refunded
       end
     end

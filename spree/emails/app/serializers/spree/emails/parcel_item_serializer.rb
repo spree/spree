@@ -24,12 +24,12 @@ module Spree
         item.line_item.options_text
       end
 
-      attribute :display_price do |item|
-        item.line_item.display_price.to_s
+      attribute :price do |item|
+        Spree::Money::Rounding.format(item.line_item.price, item.line_item.currency, unit_price: true)
       end
 
-      attribute :display_amount do |item|
-        Spree::Money.new(item.line_item.price * item.quantity, currency: item.line_item.currency).to_s
+      attribute :amount do |item|
+        Spree::Money::Rounding.format(item.line_item.price * item.quantity, item.line_item.currency)
       end
     end
   end

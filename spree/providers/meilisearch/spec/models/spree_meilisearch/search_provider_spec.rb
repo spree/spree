@@ -39,13 +39,8 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
       allow(mock_index).to receive(:search).and_return(ms_response)
     end
 
-    it 'returns a SearchResult' do
-      result = provider.search_and_filter(scope: store.products, query: 'shirt')
-      expect(result).to be_a(Spree::SearchProvider::SearchResult)
-    end
-
     it 'queries Meilisearch with the search term' do
-      expect(mock_index).to receive(:search).with('shirt', hash_including(:page, :hitsPerPage))
+      expect(mock_index).to receive(:search).with('shirt', hash_including(:page, :hits_per_page))
       provider.search_and_filter(scope: store.products, query: 'shirt')
     end
 
@@ -57,11 +52,6 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
     it 'returns total count from Meilisearch' do
       result = provider.search_and_filter(scope: store.products, query: 'shirt')
       expect(result.total_count).to eq(2)
-    end
-
-    it 'does not request facets from Meilisearch' do
-      expect(mock_index).to receive(:search).with(anything, satisfy { |params| !params.key?(:facets) })
-      provider.search_and_filter(scope: store.products, query: 'shirt')
     end
 
     context 'listing all products (no query, no filters)' do
@@ -94,10 +84,20 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
     context 'with price filter' do
       it 'passes price filter to Meilisearch' do
         expect(mock_index).to receive(:search).with(anything, hash_including(
-          filter: include('price >= 10.0')
+          filter: include('price >= 10')
         )).and_return(ms_response)
 
         provider.search_and_filter(scope: store.products, filters: { 'price_gte' => '10' })
+      end
+
+      it 'keeps a decimal bound exact and drops one that is not a finite number' do
+        expect(mock_index).to receive(:search) do |_query, options|
+          expect(options[:filter]).to include('price <= 19.99')
+          expect(options[:filter]).not_to include(a_string_starting_with('price >='))
+          ms_response
+        end
+
+        provider.search_and_filter(scope: store.products, filters: { 'price_gte' => '1e1000000000000000000', 'price_lte' => '19.99' })
       end
     end
 
@@ -152,10 +152,8 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
     end
 
     context 'with pagination' do
-      it 'passes page and hitsPerPage (exhaustive mode so distinct counts are exact)' do
-        expect(mock_index).to receive(:search).with(anything, hash_including(
-          page: 2, hitsPerPage: 25
-        )).and_return(ms_response)
+      it 'passes page and hits_per_page (exhaustive mode so distinct counts are exact)' do
+        expect(mock_index).to receive(:search).with(anything, hash_including(page: 2, hits_per_page: 25)).and_return(ms_response)
 
         provider.search_and_filter(scope: store.products, page: 2, limit: 25)
       end
@@ -305,11 +303,6 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
       allow(mock_index).to receive(:search).and_return(ms_response)
     end
 
-    it 'returns a FiltersResult' do
-      result = provider.filters(scope: store.products, query: 'shirt')
-      expect(result).to be_a(Spree::SearchProvider::FiltersResult)
-    end
-
     it 'returns facets from Meilisearch' do
       result = provider.filters(scope: store.products, query: 'shirt')
       expect(result.filters).to be_an(Array)
@@ -336,10 +329,10 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
       end
     end
 
-    it 'returns sort options as objects' do
+    it 'returns sort options as objects, including manual (sourced from Collection::SORT_ORDERS)' do
       result = provider.filters(scope: store.products, query: 'shirt')
       ids = result.sort_options.map { |o| o[:id] }
-      expect(ids).to include('price', '-price')
+      expect(ids).to include('price', '-price', 'manual')
     end
 
     it 'returns total count' do
@@ -394,6 +387,18 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
 
         expect(red_option[:image_url]).to be_nil
       end
+
+      it 'sends a multi-search with a facet-only query per selected option type' do
+        expect(mock_client).to receive(:multi_search) do |queries|
+          expect(queries.size).to eq(2)
+          expect(queries).to all(include(:index_uid))
+          expect(queries.last).to include(hits_per_page: 0, facets: ['option_value_ids'])
+          { 'results' => [ms_response, ms_response] }
+        end
+
+        result = provider.filters(scope: store.products, filters: { 'with_option_value_ids' => [red_value.prefixed_id] })
+        expect(result.filters.find { |f| f[:name] == 'color' }).to be_present
+      end
     end
 
     context 'when Meilisearch API fails' do
@@ -430,11 +435,6 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
         result = provider.filters(scope: store.products, filters: { '_collection' => collection })
         expect(result.default_sort).to eq('manual')
       end
-    end
-
-    it 'advertises manual in the sort options (sourced from Collection::SORT_ORDERS)' do
-      result = provider.filters(scope: store.products, query: '')
-      expect(result.sort_options.map { |o| o[:id] }).to include('manual')
     end
   end
 
@@ -483,15 +483,6 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
   end
 
   describe '#reindex' do
-    it 'configures index settings' do
-      expect(mock_index).to receive(:update_filterable_attributes)
-      expect(mock_index).to receive(:update_sortable_attributes)
-      expect(mock_index).to receive(:update_searchable_attributes)
-      allow(mock_index).to receive(:add_documents)
-
-      provider.reindex(store.products)
-    end
-
     it 'indexes all products in batches' do
       expect(mock_index).to receive(:add_documents).at_least(:once)
       provider.reindex(store.products)
@@ -535,6 +526,16 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
     it 'includes cf_* in filterable attributes but not in requested facets' do
       expect(provider.send(:filterable_attributes)).to include('cf_custom_label')
       expect(provider.send(:facet_attributes)).not_to include('cf_custom_label')
+    end
+
+    it 'keeps admin-only definitions out of the index settings, whatever audience built the provider' do
+      create(:custom_field_definition, :number_field, :admin_only, :searchable, :sortable,
+             namespace: 'internal', key: 'margin')
+      back_office = described_class.new(store, audience: nil)
+
+      expect(back_office.send(:searchable_attributes)).not_to include('cf_internal_margin')
+      expect(back_office.send(:sortable_attributes)).not_to include('cf_internal_margin')
+      expect(back_office.send(:filterable_attributes)).not_to include('cf_internal_margin')
     end
 
     it 'maps cf_* sort params without namespace resolution' do

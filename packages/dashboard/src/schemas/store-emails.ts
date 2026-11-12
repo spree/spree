@@ -1,3 +1,4 @@
+import { EMAIL_FONTS } from '@spree/core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
 
@@ -11,17 +12,6 @@ const optionalColor = z
   .or(z.literal(''))
   .nullable()
   .optional()
-
-/** Fonts customer emails can use; mirrors `Spree::Emails::Branding::FONTS`. */
-export const EMAIL_FONTS = [
-  'inter',
-  'system',
-  'helvetica',
-  'georgia',
-  'roboto',
-  'lato',
-  'merriweather',
-] as const
 
 /** Colors customer emails can be branded with, in the order the card shows them. */
 export const EMAIL_BRANDING_COLORS = [
@@ -39,19 +29,19 @@ export const storeEmailsFormSchema = z.object({
     .email(),
   customer_support_email: optionalEmail,
   new_order_notifications_email: optionalEmail,
-  preferred_send_consumer_transactional_emails: z.boolean(),
-  preferred_email_accent_color: optionalColor,
-  preferred_email_background_color: optionalColor,
-  preferred_email_card_color: optionalColor,
-  preferred_email_text_color: optionalColor,
-  preferred_email_heading_color: optionalColor,
-  preferred_email_font: z.enum(EMAIL_FONTS),
+  send_consumer_transactional_emails: z.boolean(),
+  email_accent_color: optionalColor,
+  email_background_color: optionalColor,
+  email_card_color: optionalColor,
+  email_text_color: optionalColor,
+  email_heading_color: optionalColor,
+  email_font: z.enum(EMAIL_FONTS),
 
-  // Active Storage signed_id from a fresh direct upload. Frontend-only state.
+  // signed_id from a fresh upload. Frontend-only state.
   mailer_logo_signed_id: z.string().nullable().optional(),
   // Local blob URL for the just-picked file so the preview updates before save.
   mailer_logo_preview_url: z.string().nullable().optional(),
-  // Tracks the user clicking "Remove logo" — collapses to `mailer_logo: null`.
+  // Tracks the user clicking "Remove logo" — collapses to `mailer_logo_signed_id: null`.
   mailer_logo_cleared: z.boolean().optional(),
 })
 

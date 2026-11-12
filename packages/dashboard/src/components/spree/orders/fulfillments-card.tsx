@@ -1,19 +1,23 @@
 import type { Delivery, Fulfillment, Order } from '@spree/admin-sdk'
+import { FULFILLMENT_STATUSES, subsetOf } from '@spree/core'
 import {
   type FulfillmentItemRow,
+  formatAmount,
   fulfillmentItemRows,
+  isPositiveMoney,
+  Money,
   unfulfilledItemRows,
+  useMetadataSheet,
+  useMoneyLocale,
   useStockLocations,
+  ViewMetadataMenuItem,
 } from '@spree/dashboard-core'
 import {
   Badge,
   Button,
   Card,
-  CardAction,
   CardContent,
   CardFooter,
-  CardHeader,
-  CardTitle,
   Dialog,
   DialogBody,
   DialogContent,
@@ -34,13 +38,21 @@ import {
   type FulfillmentItemRowData,
   FulfillmentPanel,
   Input,
+  type PostSaleSelection,
+  type PostSaleUnit,
+  QuantityPicker,
   RelativeTime,
+  Section,
+  SectionActions,
+  SectionHeader,
+  SectionTitle,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
   StatusBadge,
+  selectedUnits,
   toastManager,
   useConfirm,
 } from '@spree/dashboard-ui'
@@ -59,6 +71,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useFulfillmentActions } from '../../../hooks/use-fulfillments'
 import { printPackingSlip } from '../../../lib/packing-slip'
+import { useProductLink } from '../variant-link'
 import { FulfillmentDeliveries } from './fulfillment-deliveries'
 import { FulfillmentDeliveryDialog } from './fulfillment-delivery-dialog'
 import { FulfillmentEditDialog } from './fulfillment-edit-dialog'
@@ -110,9 +123,9 @@ function unitsOf(fulfillment: Fulfillment): FulfillmentUnit[] {
  * unclaimed remainder is offered: units already sitting in a fulfillment move
  * via Split, and shipped ones do not move at all.
  */
-function orderUnits(order: Order): Array<{ itemId: string; label: string; quantity: number }> {
+function orderUnits(order: Order): PostSaleUnit[] {
   return unfulfilledItemRows(order.items ?? [], order.fulfillments ?? []).map((row) => ({
-    itemId: row.key,
+    id: row.key,
     label: [row.name, row.optionsText].filter(Boolean).join(' — ') || row.key,
     quantity: row.quantity,
   }))
@@ -296,11 +309,12 @@ function CreateFulfillmentDialog({
   const locations = data?.data ?? []
   const [stockLocationId, setStockLocationId] = useState('')
   const [error, setError] = useState<string | null>(null)
-  const [selection, setSelection] = useState<Record<string, number>>({})
+  const [selection, setSelection] = useState<PostSaleSelection>({})
 
-  const items = Object.entries(selection)
-    .filter(([, quantity]) => quantity > 0)
-    .map(([itemId, quantity]) => ({ item_id: itemId, quantity }))
+  const items = selectedUnits(selection).map(([itemId, quantity]) => ({
+    item_id: itemId,
+    quantity,
+  }))
 
   const locationOptions = locations.map((location) => ({
     value: location.id,
@@ -349,7 +363,7 @@ function CreateFulfillmentDialog({
         <DialogBody>
           <FieldGroup>
             {error && (
-              <p className="text-sm text-destructive" role="alert">
+              <p className="text-base text-destructive" role="alert">
                 {error}
               </p>
             )}
@@ -378,33 +392,7 @@ function CreateFulfillmentDialog({
 
             <Field>
               <FieldLabel>{t('admin.orders.detail.fulfillments.create_items')}</FieldLabel>
-              <div className="flex flex-col gap-2">
-                {units.map((unit) => (
-                  <div
-                    key={unit.itemId}
-                    className="flex items-center justify-between gap-4 rounded-lg border border-border-subtle p-3"
-                  >
-                    <span className="text-sm truncate">{unit.label}</span>
-                    <Input
-                      type="number"
-                      min={0}
-                      max={unit.quantity}
-                      className="w-20"
-                      aria-label={unit.label}
-                      value={selection[unit.itemId] ?? 0}
-                      onChange={(event) =>
-                        setSelection((current) => ({
-                          ...current,
-                          [unit.itemId]: Math.max(
-                            0,
-                            Math.min(Number(event.target.value), unit.quantity),
-                          ),
-                        }))
-                      }
-                    />
-                  </div>
-                ))}
-              </div>
+              <QuantityPicker units={units} selection={selection} onChange={setSelection} />
             </Field>
           </FieldGroup>
         </DialogBody>
@@ -427,14 +415,16 @@ function CreateFulfillmentDialog({
 
 // Which transitions the workflows actually accept, so the card does not
 // present an action that can only 422.
-const CAN_SHIP = ['unfulfilled']
-const CAN_CANCEL = ['unfulfilled']
-const CAN_EDIT = ['unfulfilled']
+const CAN_SHIP = subsetOf(FULFILLMENT_STATUSES, ['unfulfilled'])
+const CAN_CANCEL = subsetOf(FULFILLMENT_STATUSES, ['unfulfilled'])
+const CAN_EDIT = subsetOf(FULFILLMENT_STATUSES, ['unfulfilled'])
 // Receipt is confirmed after handover, never before.
-const CAN_MARK_DELIVERED = ['fulfilled']
+const CAN_MARK_DELIVERED = subsetOf(FULFILLMENT_STATUSES, ['fulfilled'])
 
 function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Fulfillment }) {
+  const productLink = useProductLink()
   const { t } = useTranslation()
+  const moneyLocale = useMoneyLocale()
   const confirm = useConfirm()
   const orderId = order.id
   const { cancel, markDelivered, buyLabel, refundLabel, deleteLabel } =
@@ -446,6 +436,7 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
   const [editingDelivery, setEditingDelivery] = useState<Delivery | undefined>()
   const [uploadOpen, setUploadOpen] = useState(false)
   const [fulfilling, setFulfilling] = useState(false)
+  const metadataSheet = useMetadataSheet()
 
   const editable = CAN_EDIT.includes(fulfillment.status)
   const splittable = editable && unitsOf(fulfillment).length > 0
@@ -530,6 +521,18 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
               </DropdownMenuItem>
             )}
 
+            <ViewMetadataMenuItem
+              metadata={fulfillment.metadata}
+              externalReferences={fulfillment.external_references}
+              onClick={() =>
+                metadataSheet.show(
+                  fulfillment.metadata,
+                  fulfillment.number,
+                  fulfillment.external_references,
+                )
+              }
+            />
+
             {CAN_CANCEL.includes(fulfillment.status) && (
               <>
                 <DropdownMenuSeparator />
@@ -563,8 +566,8 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
       {(fulfillment.delivery_method ||
         fulfillment.unpriced ||
         fulfillment.cost_source === 'manual' ||
-        Number.parseFloat(fulfillment.cost) > 0) && (
-        <CardContent className="flex items-center justify-between border-b border-border-subtle py-3 text-sm">
+        isPositiveMoney(fulfillment.cost)) && (
+        <CardContent className="mx-4 px-0 flex items-center justify-between border-b border-border-subtle py-3.5 text-base">
           <span className="text-muted-foreground">
             {/* The selected rate names the carrier service that actually
                 carries this parcel ("USPS GroundAdvantage"); the method is
@@ -578,7 +581,11 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
             {fulfillment.cost_source === 'manual' && (
               <Badge variant="secondary">{t('admin.orders.detail.fulfillments.manual_cost')}</Badge>
             )}
-            {fulfillment.display_cost}
+            {fulfillment.unpriced ? (
+              t('admin.orders.detail.fulfillments.quoted_after_review')
+            ) : (
+              <Money amount={fulfillment.cost} currency={order.currency} />
+            )}
           </span>
         </CardContent>
       )}
@@ -619,11 +626,12 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
       ) : (
         <>
           <FulfillmentItemList
+            productLink={productLink}
             rows={withPriceSource(fulfillmentItemRows(fulfillment, order.items ?? []), order)}
           />
 
           {shippable && (
-            <CardFooter className="justify-end gap-2 py-3">
+            <CardFooter className="justify-end gap-2 py-3.5">
               {canBuyLabel && (
                 <Button
                   type="button"
@@ -638,7 +646,7 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
                         message: selectedRate
                           ? t('admin.orders.detail.fulfillments.buy_label_confirm_rate', {
                               rate: selectedRate.name,
-                              cost: selectedRate.display_cost,
+                              cost: formatAmount(selectedRate.cost, order.currency, moneyLocale),
                             })
                           : t('admin.orders.detail.fulfillments.buy_label_confirm'),
                         confirmLabel: t('admin.orders.detail.fulfillments.buy_label'),
@@ -679,7 +687,7 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
           )}
 
           {deliverable && (
-            <CardFooter className="justify-end gap-2 py-3">
+            <CardFooter className="justify-end gap-2 py-3.5">
               <Button
                 type="button"
                 size="sm"
@@ -748,6 +756,8 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
           onOpenChange={setUploadOpen}
         />
       )}
+
+      {metadataSheet.sheet}
     </FulfillmentPanel>
   )
 }
@@ -774,6 +784,7 @@ function UnfulfilledItems({
   order: Order
   canCreate: boolean
 }) {
+  const productLink = useProductLink()
   const { t } = useTranslation()
   const totalUnits = rows.reduce((sum, row) => sum + row.quantity, 0)
 
@@ -784,7 +795,7 @@ function UnfulfilledItems({
   return (
     <div className="flex flex-col gap-2 rounded-lg border border-border-subtle border-dashed p-4">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <span className="font-medium text-sm">
+        <span className="font-medium text-base">
           {t('admin.orders.detail.fulfillments.awaiting_fulfillment', { count: totalUnits })}
         </span>
         <span className="text-muted-foreground text-xs">
@@ -794,7 +805,7 @@ function UnfulfilledItems({
         </span>
       </div>
 
-      <FulfillmentItemList rows={withPriceSource(rows, order)} />
+      <FulfillmentItemList productLink={productLink} rows={withPriceSource(rows, order)} />
     </div>
   )
 }
@@ -828,14 +839,14 @@ export function FulfillmentsCard({ order }: { order: Order }) {
 
   return (
     <>
-      <Card variant="container">
-        <CardHeader>
-          <CardTitle>
+      <Section>
+        <SectionHeader>
+          <SectionTitle>
             <TruckIcon className="size-4" />
             {t('admin.pages.orders.detail.section_fulfillments')}
             {groupCount > 0 && <Badge variant="outline">{groupCount}</Badge>}
-          </CardTitle>
-          <CardAction className="flex items-center gap-2">
+          </SectionTitle>
+          <SectionActions className="flex items-center gap-2">
             {order.fulfillment_status && <StatusBadge status={order.fulfillment_status} />}
             {canCreate && (
               <Button size="sm" variant="outline" onClick={() => setCreateOpen(true)}>
@@ -843,25 +854,27 @@ export function FulfillmentsCard({ order }: { order: Order }) {
                 {t('admin.orders.detail.fulfillments.create_title')}
               </Button>
             )}
-          </CardAction>
-        </CardHeader>
+          </SectionActions>
+        </SectionHeader>
         {groupCount === 0 ? (
-          <CardContent>
-            <p className="text-center text-muted-foreground py-8">
-              {t('admin.orders.detail.fulfillments.empty')}
-            </p>
-          </CardContent>
+          <Card>
+            <CardContent>
+              <p className="text-center text-muted-foreground py-8">
+                {t('admin.orders.detail.fulfillments.empty')}
+              </p>
+            </CardContent>
+          </Card>
         ) : (
-          <CardContent className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4">
             {unfulfilled.length > 0 && (
               <UnfulfilledItems rows={unfulfilled} order={order} canCreate={canCreate} />
             )}
             {fulfillments.map((fulfillment) => (
               <FulfillmentRow key={fulfillment.id} order={order} fulfillment={fulfillment} />
             ))}
-          </CardContent>
+          </div>
         )}
-      </Card>
+      </Section>
 
       {createOpen && (
         <CreateFulfillmentDialog order={order} open={createOpen} onOpenChange={setCreateOpen} />

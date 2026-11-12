@@ -1,4 +1,8 @@
-import type { DeliveryZone, DeliveryZoneParams } from '@spree/admin-sdk'
+import type {
+  DeliveryZone,
+  DeliveryZoneCreateParams,
+  DeliveryZoneUpdateParams,
+} from '@spree/admin-sdk'
 import {
   adminClient,
   useResourceKey,
@@ -53,7 +57,7 @@ export function useDeliveryZone(id: string | undefined) {
 }
 
 export function useCreateDeliveryZone() {
-  return useResourceMutation<DeliveryZone, Error, DeliveryZoneParams>({
+  return useResourceMutation<DeliveryZone, Error, DeliveryZoneCreateParams>({
     mutationFn: (params) => adminClient.deliveryZones.create(params),
     invalidate: [['delivery-zones']],
     successMessage: i18n.t('admin.delivery_zones.messages.created'),
@@ -62,7 +66,7 @@ export function useCreateDeliveryZone() {
 }
 
 export function useUpdateDeliveryZone(id: string) {
-  return useResourceMutation<DeliveryZone, Error, DeliveryZoneParams>({
+  return useResourceMutation<DeliveryZone, Error, DeliveryZoneUpdateParams>({
     mutationFn: (params) => adminClient.deliveryZones.update(id, params),
     invalidate: [['delivery-zones'], ['delivery-zones', id]],
     successMessage: i18n.t('admin.delivery_zones.messages.updated'),

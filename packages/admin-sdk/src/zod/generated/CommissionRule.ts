@@ -10,7 +10,6 @@ export const CommissionRuleSchema = z.object({
   type: z.string(),
   commission_rate_id: z.string(),
   preferences: z.record(z.string(), z.unknown()),
-  preference_schema: z.array(z.object({ key: z.string(), type: z.string(), default: z.unknown() })),
   product_ids: z.array(z.string()).nullable(),
   seller_ids: z.array(z.string()).nullable(),
   category_ids: z.array(z.string()).nullable(),

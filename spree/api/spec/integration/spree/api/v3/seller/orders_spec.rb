@@ -30,10 +30,13 @@ RSpec.describe 'Seller Orders API', type: :request, swagger_doc: 'api-reference/
         nobody's order.
       DESC
 
+      seller_sdk_example 'orders/list'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Records per page (max 100)'
       parameter name: :sort, in: :query, type: :string, required: false, description: 'Sort field; prefix with `-` for descending'
+      filter_parameters_for
 
       response '200', 'orders listed' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
@@ -68,6 +71,8 @@ RSpec.describe 'Seller Orders API', type: :request, swagger_doc: 'api-reference/
         How the customer paid the marketplace is deliberately absent — that is
         between the buyer and the operator.
       DESC
+
+      seller_sdk_example 'orders/get'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 
@@ -120,23 +125,10 @@ RSpec.describe 'Seller Orders API', type: :request, swagger_doc: 'api-reference/
         what that order was paid, and a partial figure is a return.
       DESC
 
+      seller_sdk_example 'orders/cancel'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, required: false, schema: {
-        type: :object,
-        properties: {
-          cancel_reason_id: {
-            type: :string,
-            nullable: true,
-            description: 'A reason from GET /order_cancellation_reasons'
-          },
-          cancel_note: { type: :string, nullable: true, description: 'Free text beside the reason' },
-          refund_payments: {
-            type: :boolean,
-            description: "Hand back what the buyer paid for this order's goods"
-          },
-          notify_customer: { type: :boolean, description: 'Email the customer about the cancellation' }
-        }
-      }
+      request_body_for(required: false)
 
       response '200', 'order canceled' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
@@ -172,33 +164,10 @@ RSpec.describe 'Seller Orders API', type: :request, swagger_doc: 'api-reference/
         nothing else about it, its totals included, is the seller's to change.
       DESC
 
-      address_correction = {
-        type: :object,
-        description: 'Only the lines that change; the rest is carried over',
-        properties: {
-          first_name: { type: :string },
-          last_name: { type: :string },
-          company: { type: :string, nullable: true },
-          address1: { type: :string },
-          address2: { type: :string, nullable: true },
-          city: { type: :string },
-          postal_code: { type: :string },
-          country_code: { type: :string },
-          state_code: { type: :string, nullable: true },
-          state_name: { type: :string, nullable: true },
-          phone: { type: :string, nullable: true },
-          label: { type: :string, nullable: true }
-        }
-      }
+      seller_sdk_example 'orders/address-update'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, required: true, schema: {
-        type: :object,
-        properties: {
-          shipping_address: address_correction,
-          billing_address: address_correction
-        }
-      }
+      request_body_for
 
       response '200', 'address corrected' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
@@ -239,6 +208,8 @@ RSpec.describe 'Seller Orders API', type: :request, swagger_doc: 'api-reference/
         the whole sale.
       DESC
 
+      seller_sdk_example 'orders/notes-get'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 
       response '200', 'notes' do
@@ -265,22 +236,10 @@ RSpec.describe 'Seller Orders API', type: :request, swagger_doc: 'api-reference/
         `internal_note_html` reads it back.
       DESC
 
+      seller_sdk_example 'orders/notes-update'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
-      parameter name: :body, in: :body, required: true, schema: {
-        type: :object,
-        properties: {
-          customer_note: {
-            type: :string,
-            nullable: true,
-            description: "What the buyer asked for"
-          },
-          internal_note: {
-            type: :string,
-            nullable: true,
-            description: "The seller's own working note, as HTML"
-          }
-        }
-      }
+      request_body_for
 
       response '200', 'notes updated' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }
@@ -318,7 +277,10 @@ RSpec.describe 'Seller Orders API', type: :request, swagger_doc: 'api-reference/
         what the list holds. Retired reasons are left out.
       DESC
 
+      seller_sdk_example 'order-cancellation-reasons/list'
+
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+      filter_parameters_for
 
       response '200', 'reasons listed' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }

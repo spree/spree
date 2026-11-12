@@ -10,12 +10,6 @@ RSpec.describe Spree::Exchange do
     expect(exchange).to be_requested
   end
 
-  it 'is reachable from its order' do
-    exchange = create(:exchange, store: store)
-
-    expect(exchange.order.reload.exchanges).to include(exchange)
-  end
-
   describe '#price_difference' do
     let(:exchange) { create(:exchange, store: store) }
     let(:line) { exchange.exchange_line_items.first }
@@ -50,10 +44,6 @@ RSpec.describe Spree::Exchange do
       line_item = line.line_item
 
       expect(line.original_price).to eq(line_item.amount / line_item.quantity)
-    end
-
-    it 'starts with nothing received' do
-      expect(line.received_quantity).to eq(0)
     end
   end
 end

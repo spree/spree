@@ -8,6 +8,9 @@ module Spree
     acts_as_paranoid
     acts_as_list scope: :store_id
 
+    self.whitelisted_ransackable_attributes = %w[currency default_locale]
+    search_by :name
+
     #
     # Associations
     #
@@ -69,11 +72,14 @@ module Spree
     # An unregistered class name would only fail at checkout, when a customer is
     # waiting on a total. The list is read at validation time so a provider gem
     # loaded after boot still counts.
+    normalizes :tax_provider, with: ->(value) { Spree::ApiTyped.class_name_for(Spree.tax_providers, value) }
     validates :tax_provider,
               inclusion: { in: ->(_market) { Spree.tax_providers.map(&:to_s) } },
               allow_blank: true
     validates :currency, presence: true
+    normalizes :default_locale, with: ->(value) { value.to_s.strip.presence }
     validates :default_locale, presence: true
+    validates_with Spree::LocaleCodesValidator, attributes: %i[default_locale supported_locales]
     validates :countries, presence: true
 
     #
@@ -141,7 +147,7 @@ module Spree
     #
     # @return [Array<String>]
     def supported_locales_list
-      @supported_locales_list ||= (supported_locales.to_s.split(',').map(&:strip) << default_locale).compact.uniq.sort
+      @supported_locales_list ||= (supported_locales.to_s.split(',').map(&:strip) << default_locale).compact_blank.uniq.sort
     end
 
     # Accepts an Array of locale codes and persists them as a comma-separated
@@ -152,7 +158,7 @@ module Spree
     # @param value [Array<String>, String, nil]
     def supported_locales=(value)
       @supported_locales_list = nil
-      normalized = value.is_a?(Array) ? value.compact.uniq.reject(&:blank?).join(',') : value
+      normalized = value.is_a?(Array) ? value.map { |code| code.to_s.strip }.reject(&:empty?).uniq.join(',') : value
       super(normalized)
     end
 

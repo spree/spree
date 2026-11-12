@@ -16,7 +16,7 @@ describe 'Promotion discounts and the taxable basis', type: :model do
   # Lazy on purpose: the tax rate must exist before the line item is created,
   # because Spree only creates tax adjustments from LineItem#update_tax_charge.
   # Each tax-mode context forces it in a before hook after its tax rate.
-  let(:line_item) { create(:line_item, order: order, variant: product.master, price: item_price, quantity: 1) }
+  let(:line_item) { create(:line_item, order: order, variant: product.default_variant, price: item_price, quantity: 1) }
 
   def build_cart!
     line_item
@@ -69,7 +69,7 @@ describe 'Promotion discounts and the taxable basis', type: :model do
   context 'with additional (US-style) tax of 10%' do
     let(:item_price) { 250 }
     let!(:tax_rate) do
-      create(:tax_rate, country_code: @default_country&.iso, tax_category: tax_category, amount: 0.10, included_in_price: false)
+      create(:tax_rate, country_code: @default_country&.iso, tax_category: tax_category, amount: 0.10)
     end
 
     before { build_cart! }
@@ -85,7 +85,7 @@ describe 'Promotion discounts and the taxable basis', type: :model do
       it 'computes tax on the discounted amount' do
         apply_coupon!
 
-        expect(order.promo_total).to eq(-125.00)
+        expect(order.discount_total).to eq(-125.00)
         expect(order.additional_tax_total).to eq(12.50)
         expect(order.total).to eq(137.50)
       end
@@ -97,7 +97,7 @@ describe 'Promotion discounts and the taxable basis', type: :model do
       it 'computes tax on the discounted amount' do
         apply_coupon!
 
-        expect(order.promo_total).to eq(-50.00)
+        expect(order.discount_total).to eq(-50.00)
         expect(order.additional_tax_total).to eq(20.00)
         expect(order.total).to eq(220.00)
       end
@@ -109,7 +109,7 @@ describe 'Promotion discounts and the taxable basis', type: :model do
       it 'computes tax on the discounted amount' do
         apply_coupon!
 
-        expect(order.promo_total).to eq(-125.00)
+        expect(order.discount_total).to eq(-125.00)
         expect(order.additional_tax_total).to eq(12.50)
         expect(order.total).to eq(137.50)
       end
@@ -129,7 +129,7 @@ describe 'Promotion discounts and the taxable basis', type: :model do
       it 'computes tax on the discounted amount' do
         apply_coupon!
 
-        expect(order.promo_total).to eq(-50.00)
+        expect(order.discount_total).to eq(-50.00)
         expect(order.additional_tax_total).to eq(20.00)
         expect(order.total).to eq(220.00)
       end
@@ -138,7 +138,7 @@ describe 'Promotion discounts and the taxable basis', type: :model do
     context 'with a whole-order promotion and several line items' do
       let(:other_product) { create(:product, price: 150, tax_category: tax_category, store: store) }
       let!(:other_line_item) do
-        create(:line_item, order: order, variant: other_product.master, price: 150, quantity: 1)
+        create(:line_item, order: order, variant: other_product.default_variant, price: 150, quantity: 1)
       end
       let!(:promotion) { whole_order_promotion(flat_calculator(80)) }
 
@@ -157,10 +157,13 @@ describe 'Promotion discounts and the taxable basis', type: :model do
   context 'with included (VAT-style) tax of 20%' do
     let(:item_price) { 350 }
     let!(:tax_rate) do
-      create(:tax_rate, country_code: @default_country&.iso, tax_category: tax_category, amount: 0.20, included_in_price: true)
+      create(:tax_rate, country_code: @default_country&.iso, tax_category: tax_category, amount: 0.20)
     end
 
-    before { build_cart! }
+    before do
+      store.default_market.update!(tax_inclusive: true)
+      build_cart!
+    end
 
     it 'starts from VAT on the full amount' do
       expect(order.included_tax_total).to eq(58.33)
@@ -173,7 +176,7 @@ describe 'Promotion discounts and the taxable basis', type: :model do
       it 'reports VAT on the discounted amount' do
         apply_coupon!
 
-        expect(order.promo_total).to eq(-175.00)
+        expect(order.discount_total).to eq(-175.00)
         expect(order.included_tax_total).to eq(29.17)
         expect(order.total).to eq(175.00)
       end
@@ -193,7 +196,7 @@ describe 'Promotion discounts and the taxable basis', type: :model do
       it 'reports VAT on the discounted amount' do
         apply_coupon!
 
-        expect(order.promo_total).to eq(-50.00)
+        expect(order.discount_total).to eq(-50.00)
         expect(order.included_tax_total).to eq(50.00)
         expect(order.total).to eq(300.00)
       end
@@ -205,7 +208,7 @@ describe 'Promotion discounts and the taxable basis', type: :model do
       it 'reports VAT on the discounted amount' do
         apply_coupon!
 
-        expect(order.promo_total).to eq(-175.00)
+        expect(order.discount_total).to eq(-175.00)
         expect(order.included_tax_total).to eq(29.17)
         expect(order.total).to eq(175.00)
       end
@@ -225,7 +228,7 @@ describe 'Promotion discounts and the taxable basis', type: :model do
       it 'reports VAT on the discounted amount' do
         apply_coupon!
 
-        expect(order.promo_total).to eq(-50.00)
+        expect(order.discount_total).to eq(-50.00)
         expect(order.included_tax_total).to eq(50.00)
         expect(order.total).to eq(300.00)
       end
@@ -239,7 +242,7 @@ describe 'Promotion discounts and the taxable basis', type: :model do
         Spree::PromotionHandler::Coupon.new(order).remove('DISCOUNT')
         order.reload
 
-        expect(order.promo_total).to eq(0)
+        expect(order.discount_total).to eq(0)
         expect(order.included_tax_total).to eq(58.33)
         expect(order.total).to eq(350.00)
       end

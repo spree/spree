@@ -16,9 +16,10 @@ module Spree
       #   may legitimately open empty and gain lines as the merchant packs
       # @param reference [String, nil] the merchant's own label for the trip
       # @param notes [String, nil]
+      # @param metadata [Hash, nil]
       # @param created_by [Object, nil]
       def perform(store:, source_location:, destination_location:, items: [],
-                  reference: nil, notes: nil, created_by: nil)
+                  reference: nil, notes: nil, metadata: nil, created_by: nil)
         super
 
         step :build_transfer
@@ -46,6 +47,7 @@ module Spree
           created_by: created_by,
           status: Spree::StockTransfer.default_status
         )
+        @stock_transfer.metadata = metadata if metadata
 
         Array(items).each do |item|
           @stock_transfer.items.build(variant: item[:variant], quantity_shipped: item[:quantity_shipped])

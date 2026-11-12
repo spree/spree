@@ -25,7 +25,7 @@ export function MarketplaceCard({ order }: { order: Order }) {
       <CardHeader>
         <CardTitle>{t('admin.orders.detail.section_seller')}</CardTitle>
       </CardHeader>
-      <CardContent className="flex flex-col gap-3 text-sm">
+      <CardContent className="flex flex-col gap-3 text-base">
         {order.seller_id ? (
           <div className="flex items-center gap-2">
             <StoreIcon className="size-4 shrink-0 text-muted-foreground" />
@@ -53,7 +53,7 @@ export function MarketplaceCard({ order }: { order: Order }) {
             <Link
               to={'/$storeId/orders' as string}
               search={orderGroupSearch(order.order_group_id)}
-              className="text-sm"
+              className="text-base"
             >
               {t('admin.orders.detail.order_group_view_all')}
             </Link>

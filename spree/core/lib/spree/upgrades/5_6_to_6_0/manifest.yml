@@ -12,8 +12,15 @@
 #     live in the upgrade doc at docs/developer/upgrades/5.6-to-6.0.mdx.
 #
 # This manifest is the machine-runnable shape — what `bin/rake spree:upgrade`
-# (in production) and `spree upgrade` (in dev) execute. Every step must be a
-# rake task and must be idempotent. Re-running the full manifest is safe.
+# (in production) and `spree upgrade` (in dev) execute. Every step must be
+# idempotent; re-running the full manifest is safe.
+#
+# Steps name a `task_class` — a Spree::MaintenanceTask that the walk runs
+# through the maintenance task runner, so a shell walk and a dashboard run
+# leave the same audit record and the same resume behaviour
+# (docs/plans/6.0-maintenance-tasks.md). Released manifests keep their `task`
+# rake names, which have shipped and may be scripted; the walker runs both
+# kinds.
 ---
 from: "5.6"
 to: "6.0"
@@ -151,7 +158,7 @@ steps:
 
   - id: migrate_users_to_customers
     name: "Move users onto the gem-owned Customer/AdminUser models"
-    task: "spree:upgrade:migrate_users_to_customers"
+    task_class: "Spree::MaintenanceTasks::Upgrade::UsersToCustomers"
     notes: |
       Copies the legacy Devise user table (default spree_users) into
       spree_customers, preserving ids so the renamed customer_id foreign keys
@@ -165,7 +172,9 @@ steps:
       that has_secure_password reads directly only when unpeppered; the task
       aborts if Devise.pepper is set. Because Devise is gone in 6.0 a former
       pepper can't be introspected, so when Devise is absent the task aborts until
-      you confirm none was used with CONFIRM_NO_PEPPER=true. Peppered / SSO /
+      you confirm none was used with CONFIRM_NO_PEPPER=true. The check is skipped
+      when there are no passwords to copy (e.g. an empty spree_users table), so
+      new projects pass without the flag. Peppered / SSO /
       non-bcrypt installs keep a custom customer_class instead (see the 5.6-to-6.0
       upgrade guide) and skip this step.
 
@@ -203,7 +212,8 @@ steps:
     task: "spree:migrate_shipping_to_delivery"
     notes: |
       Rewrites stored 'Spree::Shipment' class-name strings (state changes,
-      stock movements, legacy adjustments), renames the terminal fulfillment
+      stock movements, legacy adjustments) and the calculators' 'Spree::ShippingMethod'
+      calculable type (so delivery methods find their calculator), renames the terminal fulfillment
       status 'shipped' -> 'fulfilled', backfills the fulfillment provider on
       delivery methods (DigitalDelivery calculators become the Digital
       provider) and copies the provider-derived type onto existing
@@ -259,7 +269,7 @@ steps:
 
   - id: migrate_deliveries
     name: "Move tracking numbers onto deliveries"
-    task: "spree:migrate_deliveries"
+    task_class: "Spree::MaintenanceTasks::Upgrade::Deliveries"
     notes: |
       Every fulfillment carrying a 5.6 tracking number gets one delivery row
       with that number: the carrier axis (tracking number, carrier, carrier
@@ -320,7 +330,7 @@ steps:
 
   - id: migrate_promotion_option_value_rules
     name: "Rewrite Option Value promotion rules to stable option value ids"
-    task: "spree:upgrade:migrate_promotion_option_value_rules"
+    task_class: "Spree::MaintenanceTasks::Upgrade::PromotionOptionValueRules"
     notes: |
       Spree 6.0 stores Option Value promotion rules against Spree::OptionValue
       ids. Upgrades from 5.6 may still carry join-row ids from
@@ -363,7 +373,7 @@ steps:
 
   - id: migrate_returns
     name: "Move returns onto the new returns models"
-    task: "spree:upgrade:migrate_returns"
+    task_class: "Spree::MaintenanceTasks::Upgrade::Returns"
     notes: |
       Converts each ReturnAuthorization into a Spree::Return, or a
       Spree::Exchange when any of its return items named an exchange variant,
@@ -468,9 +478,31 @@ steps:
       once several stores hold tax configuration. The NOT NULL constraints land
       in 6.1. Idempotent.
 
+  - id: backfill_market_tax_inclusive
+    name: "Decide whether each market's prices include tax"
+    task: "spree:markets:backfill_tax_inclusive"
+    notes: |
+      In Spree 6 the market decides whether its prices include tax; tax rates
+      no longer carry an "included in price" flag. Each market takes the
+      convention its rates had: all included sets it to include tax, all added
+      on top sets it to add tax at checkout, and a market with no rates keeps
+      its setting. A market whose rates mixed the two is left unchanged and
+      named in the output, to be set by hand.
+
+      Prices are no longer adjusted for buyers abroad. A store that had a
+      default tax zone in 5.x and prices including tax now charges buyers
+      outside that zone the price as entered, with their own tax inside it.
+      Prices with tax added on top were never adjusted, and still have tax
+      added at checkout.
+
+      Run after migrate_tax_zones and backfill_tax_store_ids, which give each
+      rate its country and store; it stops if a rate still has no store.
+      Idempotent: each rate's old flag is read once and then cleared, so a
+      re-run leaves every market as it is.
+
   - id: backfill_order_coupon_codes
     name: "Backfill coupon codes on placed orders"
-    task: "spree:backfill_order_coupon_codes"
+    task_class: "Spree::MaintenanceTasks::Upgrade::OrderCouponCodes"
     notes: |
       spree_orders gains a coupon_code column in Spree 6, matching carts.
       Historical placed orders applied coupons only through the promotion
@@ -486,7 +518,7 @@ steps:
 
   - id: backfill_order_markets
     name: "Backfill order markets"
-    task: "spree:backfill_order_markets"
+    task_class: "Spree::MaintenanceTasks::Upgrade::BackfillOrderMarkets"
     notes: |
       Market is mandatory in Spree 6. Assigns the store's default market to
       orders that predate markets. Channel needs no step here — the 5.4→5.5
@@ -549,7 +581,7 @@ steps:
 
   - id: migrate_capture_methods
     name: "Convert payment method auto_capture into capture_method"
-    task: "spree:migrate_capture_methods"
+    task_class: "Spree::MaintenanceTasks::Upgrade::CaptureMethods"
     notes: |
       Payment methods say when they charge with a capture_method string
       (checkout, on_dispatch or manual) rather than an auto_capture boolean,
@@ -565,6 +597,19 @@ steps:
       The auto_capture column stays readable as a fallback for one release and
       is dropped in 6.1. Idempotent — only rows without a capture_method are
       written.
+
+  - id: store_regional_settings
+    name: "Convert store time zones and admin languages to standard codes"
+    task_class: "Spree::MaintenanceTasks::Upgrade::StoreRegionalSettings"
+    notes: |
+      A store's time zone is now always an IANA name such as America/New_York,
+      and its admin language a locale code Spree lists, the forms the API
+      accepts and browsers understand. Rails time zone names such as
+      "Eastern Time (US & Canada)" and locale spellings such as en_US are
+      converted. A time zone that names no zone is reset to the store default,
+      which is what the store already ran on; an admin language Spree does not
+      list is cleared, so staff see their own language. Idempotent — stores
+      already on standard codes are skipped.
 
   - id: product_types_backfill
     name: "Backfill product type store ownership"
@@ -601,7 +646,7 @@ steps:
 
   - id: migrate_stripe_webhook_keys
     name: "Move Stripe webhook signing secrets onto the gateway"
-    task: "spree:upgrade:migrate_stripe_webhook_keys"
+    task_class: "SpreeStripe::MaintenanceTasks::MigrateWebhookKeys"
     optional: true
     notes: |
       Only runs when spree_stripe is installed; skipped otherwise.
@@ -616,6 +661,40 @@ steps:
       secret and rejects incoming webhooks. Idempotent — gateways that already
       hold a secret are skipped, and the legacy tables stay in place as a
       rollback path until they are dropped in 6.1.
+
+  - id: migrate_paypal_payments
+    name: "Give PayPal payments taken before 6.0 the PayPal order id"
+    task_class: "SpreePaypalCheckout::MaintenanceTasks::MigratePayments"
+    optional: true
+    notes: |
+      Only runs when spree_paypal_checkout is installed; skipped otherwise.
+
+      The 0.x gem stored a PayPal payment's capture id as its response code.
+      In 6.0 the response code is always the PayPal order id, which is how a
+      payment session finds its payment, and the capture id lives in the
+      payment's metadata. This step rewrites each older payment to that shape,
+      finding its order through the payment session that took it or, for the
+      older checkout flow, through spree_paypal_checkout_orders.
+
+      Run it before dropping spree_paypal_checkout_orders: that table is the
+      only link from those older payments to their PayPal order. A payment it
+      cannot match is logged by id, counted, and left as it was; refund it in
+      PayPal. Supports a dry run, and is idempotent.
+
+  - id: register_paypal_webhooks
+    name: "Register each PayPal payment method's webhook"
+    task: "spree:upgrade:register_paypal_webhooks"
+    optional: true
+    notes: |
+      Only runs when spree_paypal_checkout is installed; skipped otherwise.
+
+      PayPal webhooks register themselves in 6.0 and are always verified with
+      the webhook's id. This finds or creates the webhook for each PayPal
+      method's URL, replaces the events of one created by hand under the 0.x
+      guide, and stores its id. Until it runs, methods created before the
+      upgrade reject every webhook delivery.
+
+      Idempotent.
 
   - id: backfill_import_export_tenancy
     name: "Place every import in a store, and a seller where one ran it"
@@ -680,6 +759,22 @@ steps:
 
       Idempotent — a store that already has a default package type is left
       alone, so a box edited since the upgrade is never overwritten.
+
+  - id: tax_exemption_reasons
+    name: "Give every store the default tax exemption reasons and link certificates to them"
+    task: "spree:upgrade:tax_exemption_reasons"
+    notes: |
+      Company tax exemption certificates point at one of the store's
+      exemption reasons, so a store without any cannot record a certificate.
+      Existing reason codes are saved in capitals, the way tax engines compare
+      them. Certificates recorded before reasons existed are linked to the
+      reason matching their old reason code; a code no reason holds gets a
+      reason of its own. Merchants using an external tax engine change each
+      reason's code to that engine's under Settings → Taxes → Exemption
+      reasons.
+
+      Idempotent — a reason the merchant already has under the same code or
+      name is left alone, and a certificate already linked is skipped.
 
   - id: migrate_external_receives_to_purchase_orders
     name: "Turn 5.x supplier receives into purchase orders, and give every transfer a store"
@@ -760,3 +855,32 @@ steps:
       this step again.
 
       Idempotent.
+
+  - id: assign_upload_stores
+    name: "Record which store owns every uploaded file"
+    task: "spree:uploads:assign_stores"
+    notes: |
+      Spree 6.0 records the store that owns every uploaded file, so a file from
+      one store cannot be attached in another and storage can be measured and
+      cleaned up per store. New files get their store when they are uploaded;
+      this gives existing files the store of the record they are attached to.
+
+      Files attached in more than one store are listed and left unchanged for
+      you to resolve. Files attached to nothing keep no store and are left
+      alone: the daily purge of never-attached uploads
+      (Spree::Uploads::PurgeUnattachedJob, see the upgrade guide) only
+      deletes files that belong to a store.
+
+      Run AFTER the steps that create or move attachments (media, categories,
+      returns), so their files are covered. Idempotent — files that already
+      have a store are skipped.
+
+  - id: backfill_tagging_tenants
+    name: "Stamp the store on taggings written without one"
+    task: "spree:upgrade:backfill_tagging_tenants"
+    notes: |
+      Tags added through the bulk endpoints carried no store on their
+      taggings, and the admin tag list filters by it, so those tags were
+      missing from the list. This stamps the store of the record on every
+      tagging without one, for each taggable that keeps its taggings per
+      store. Idempotent — taggings that already carry a store are skipped.

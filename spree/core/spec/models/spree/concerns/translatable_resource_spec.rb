@@ -53,6 +53,33 @@ RSpec.describe Spree::TranslatableResource, type: :model do
 
       Mobility.with_locale(:es) { expect(product.reload.name).not_to eq 'Máquina de espresso' }
     end
+
+    context 'when the last translated value of a locale is cleared' do
+      it 'removes the translation without leaving a blank row behind' do
+        option_type = create(:option_type, label: 'Size')
+        option_type.upsert_translations('de' => { 'label' => 'Größe' })
+        option_type.reload.upsert_translations('de' => { 'label' => nil })
+
+        expect(option_type.translations.reload.where(locale: 'de')).to be_empty
+      end
+
+      context 'on a store, whose translation rows are soft deleted' do
+        let(:translated_store) { create(:store, default_locale: 'en') }
+
+        before { allow(translated_store).to receive(:supported_locales_list).and_return(%w[en de]) }
+
+        it 'stops reading the cleared value and accepts a new one' do
+          translated_store.upsert_translations('de' => { 'seo_title' => 'Kaffeeladen' })
+          translated_store.upsert_translations('de' => { 'seo_title' => nil })
+
+          Mobility.with_locale(:de) { expect(translated_store.reload.seo_title(fallback: false)).to be_nil }
+
+          translated_store.upsert_translations('de' => { 'seo_title' => 'Kaffeehaus' })
+
+          Mobility.with_locale(:de) { expect(translated_store.reload.seo_title(fallback: false)).to eq 'Kaffeehaus' }
+        end
+      end
+    end
   end
 
   # OptionType's translatable column and public name are both `label` since
@@ -74,6 +101,41 @@ RSpec.describe Spree::TranslatableResource, type: :model do
     it 'reports untranslated fields as nil in the matrix' do
       matrix = Spree::Translations.matrix_for(option_type, locales: %w[de])
       expect(matrix.dig('de', 'label')).to be_nil
+    end
+  end
+
+  describe '.with_translation_fallback_order' do
+    let!(:alpha) { create(:product, name: 'Alpha', store: store) }
+    let!(:bravo) { create(:product, name: 'Bravo', store: store) }
+    let!(:charlie) { create(:product, name: 'Charlie', store: store) }
+
+    before do
+      create(:product_translation, translated_model: charlie, locale: 'de', name: 'Anton')
+      create(:product_translation, translated_model: bravo, locale: 'de', name: '')
+    end
+
+    def sorted(direction, distinct: true)
+      Spree::Product.where(id: [alpha, bravo, charlie]).
+        ransack(s: "name #{direction}").result(distinct: distinct).
+        with_translation_fallback_order
+    end
+
+    it 'sorts by the translation, falling back to the base name when it is missing or blank' do
+      Mobility.with_locale(:de) do
+        expect(sorted(:asc).to_a).to eq([alpha, charlie, bravo])
+        expect(sorted(:desc).to_a).to eq([bravo, charlie, alpha])
+      end
+    end
+
+    it 'sorts and counts a relation without DISTINCT' do
+      Mobility.with_locale(:de) do
+        expect(sorted(:asc, distinct: false).to_a).to eq([alpha, charlie, bravo])
+        expect(sorted(:asc, distinct: false).count(:all)).to eq(3)
+      end
+    end
+
+    it 'leaves a sort in the content locale on the base column' do
+      Mobility.with_locale(:en) { expect(sorted(:asc).to_a).to eq([alpha, bravo, charlie]) }
     end
   end
 

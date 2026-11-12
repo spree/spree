@@ -73,7 +73,7 @@ module Spree
       @current_store = store
 
       with_store_locale(@current_store) do
-        mail_template({ customer: email_data(customer, Spree.api.customer_serializer) }, to: customer.email)
+        mail_template({ customer: email_data(customer, Spree::Emails::CustomerSerializer) }, to: customer.email)
       end
     end
   end
@@ -164,5 +164,5 @@ bundle exec rspec
 
 ## Documentation
 
-- [Email Customization Guide](https://docs.spreecommerce.org/developer/customization/emails)
-- [Events System](https://docs.spreecommerce.org/developer/core-concepts/events)
+- [Email Customization Guide](https://spreecommerce.org/docs/developer/customization/emails)
+- [Events System](https://spreecommerce.org/docs/developer/core-concepts/events)

@@ -32,8 +32,7 @@ describe('commissionRateToFormValues', () => {
         id: 'comrule_1',
         type: 'seller_rule',
         commission_rate_id: 'crate_1',
-        preferences: { seller_ids: [42] },
-        preference_schema: [],
+        preferences: { seller_ids: ['sel_abc'] },
         created_at: '2026-01-01T00:00:00Z',
         updated_at: '2026-01-01T00:00:00Z',
         product_ids: null,
@@ -44,8 +43,7 @@ describe('commissionRateToFormValues', () => {
         id: 'comrule_2',
         type: 'category_rule',
         commission_rate_id: 'crate_1',
-        preferences: { category_ids: [7] },
-        preference_schema: [],
+        preferences: { category_ids: ['ctg_xyz'] },
         created_at: '2026-01-01T00:00:00Z',
         updated_at: '2026-01-01T00:00:00Z',
         product_ids: null,
@@ -70,7 +68,7 @@ describe('commissionRateValuesToParams', () => {
       code: '',
       enabled: true,
       kind: 'percentage',
-      value: 10,
+      value: '10',
       amounts: {},
       bounds: {},
       tax_inclusive: false,
@@ -96,5 +94,25 @@ describe('commissionRateValuesToParams', () => {
 
     expect(params.rules?.[0]?.preferences).toEqual({ seller_ids: ['sel_abc'] })
     expect(params.rules?.[1]?.preferences).toEqual({ category_ids: ['ctg_xyz'] })
+  })
+
+  it('sends the rate, bounds and tax rate as decimal strings', () => {
+    const params = commissionRateValuesToParams({
+      name: 'Audio',
+      code: '',
+      enabled: true,
+      kind: 'percentage',
+      value: '12.5',
+      amounts: {},
+      bounds: { USD: { min_amount: '1.50', max_amount: '' } },
+      tax_inclusive: false,
+      include_shipping: false,
+      commission_tax_rate: '7.7',
+      rules: [],
+    })
+
+    expect(params.value).toBe('12.5')
+    expect(params.bounds).toEqual({ USD: { min_amount: '1.50', max_amount: null } })
+    expect(params.commission_tax_rate).toBe('0.077')
   })
 })

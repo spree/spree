@@ -30,12 +30,7 @@ RSpec.describe 'Admin Order Store Credits API', type: :request, swagger_doc: 'ap
                 description: 'Bearer token for admin authentication'
       parameter name: :order_id, in: :path, type: :string, required: true,
                 description: 'Order ID'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          amount: { type: :string, description: 'Optional explicit amount; defaults to order outstanding balance' }
-        }
-      }
+      request_body_for
 
       response '201', 'store credit applied' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

@@ -50,6 +50,25 @@ RSpec.describe Spree::Api::V3::Admin::SellersController, type: :controller do
       expect(team_counts).to eq(0)
     end
 
+    it 'counts each seller products by status in one query' do
+      create(:product, store: store, seller: seller, status: 'proposed')
+      other = create(:seller, store: store)
+      create(:product, store: store, seller: other, status: 'active')
+
+      product_counts = 0
+      subscriber = ActiveSupport::Notifications.subscribe('sql.active_record') do |*, payload|
+        product_counts += 1 if payload[:sql].match?(/SELECT COUNT.*spree_products/i)
+      end
+
+      get :index, as: :json
+
+      ActiveSupport::Notifications.unsubscribe(subscriber)
+      rows = json_response['data'].index_by { |row| row['id'] }
+      expect(rows[seller.prefixed_id]['products_count_by_status']).to include('proposed' => 1, 'active' => 0)
+      expect(rows[other.prefixed_id]['products_count_by_status']).to include('proposed' => 0, 'active' => 1)
+      expect(product_counts).to eq(1)
+    end
+
     it 'says whether a seller can be bought from right now' do
       seller.update!(status: 'approved', holiday_mode_until: 2.weeks.from_now)
 
@@ -107,6 +126,23 @@ RSpec.describe Spree::Api::V3::Admin::SellersController, type: :controller do
 
       expect(response).to have_http_status(:ok)
       expect(json_response['contact_email']).to eq('hello@sparks.example')
+    end
+
+    it 'includes the keys external systems know the seller by' do
+      seller.set_external_id('stripe_connect', 'acct_123')
+
+      get :show, params: { id: seller.prefixed_id }, as: :json
+
+      expect(json_response['external_references']).to eq('stripe_connect' => 'acct_123')
+    end
+
+    it 'names the stock location its returns address is read from' do
+      location = create(:stock_location, store: store, seller: seller, returns_enabled: true)
+
+      get :show, params: { id: seller.prefixed_id }, as: :json
+
+      expect(json_response['returns_location_id']).to eq(location.prefixed_id)
+      expect(json_response['returns_address']['address1']).to eq(location.address1)
     end
 
     it "404s on another marketplace's seller" do
@@ -208,14 +244,61 @@ RSpec.describe Spree::Api::V3::Admin::SellersController, type: :controller do
       expect(json_response['billing_address']['city']).to eq('London')
     end
 
-    # The dashboard direct-uploads the file, then sends the resulting signed id.
+    it "writes the returns address onto the seller's returns location" do
+      location = create(:stock_location, store: store, seller: seller, returns_enabled: true)
+
+      patch :update, params: {
+        id: seller.prefixed_id,
+        returns_address: { company: 'Sparks Returns', address1: '1 Returns Way', city: 'Leeds',
+                           postal_code: 'LS1 1AA', country_code: 'GB' }
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      location.reload
+      expect([location.address1, location.zipcode]).to eq(['1 Returns Way', 'LS1 1AA'])
+      expect(json_response['returns_address']['city']).to eq('Leeds')
+    end
+
+    it 'answers with the returns location it created for a seller who had none' do
+      patch :update, params: {
+        id: seller.prefixed_id,
+        returns_address: { address1: '1 Returns Way', city: 'Leeds', postal_code: 'LS1 1AA', country_code: 'GB' }
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['returns_location_id']).to eq(seller.reload.returns_location.prefixed_id)
+      expect(json_response['returns_address']['address1']).to eq('1 Returns Way')
+    end
+
+    # A returns address is a stock location's, which `sellers` does not cover.
+    context 'with a key that may manage sellers but not stock locations' do
+      let(:secret_api_key) { create(:api_key, :secret, store: store, scopes: %w[write_sellers]) }
+      let(:headers) { api_key_headers }
+
+      it 'refuses the returns address' do
+        patch :update, params: { id: seller.prefixed_id, returns_address: { address1: '1 Returns Way' } }, as: :json
+
+        expect(response).to have_http_status(:forbidden)
+        expect(json_response['error']['details']['required_permission']).to eq('write_settings')
+        expect(seller.stock_locations).to be_empty
+      end
+
+      it 'still edits the rest of the seller' do
+        patch :update, params: { id: seller.prefixed_id, contact_email: 'new@sparks.example' }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(seller.reload.contact_email).to eq('new@sparks.example')
+      end
+    end
+
+    # The dashboard uploads the file, then sends the resulting signed id.
     it 'attaches branding from a signed id' do
       blob = ActiveStorage::Blob.create_and_upload!(
         io: File.open(Spree::Core::Engine.root.join('spec', 'fixtures', 'thinking-cat.jpg')),
         filename: 'thinking-cat.jpg', content_type: 'image/jpeg'
       )
 
-      patch :update, params: { id: seller.prefixed_id, logo: blob.signed_id }, as: :json
+      patch :update, params: { id: seller.prefixed_id, logo_signed_id: blob.signed_id }, as: :json
 
       expect(response).to have_http_status(:ok)
       expect(seller.reload.logo).to be_attached
@@ -228,7 +311,7 @@ RSpec.describe Spree::Api::V3::Admin::SellersController, type: :controller do
         filename: 'cover.jpg', content_type: 'image/jpeg'
       )
 
-      patch :update, params: { id: seller.prefixed_id, cover_photo: blob.signed_id }, as: :json
+      patch :update, params: { id: seller.prefixed_id, cover_photo_signed_id: blob.signed_id }, as: :json
 
       expect(seller.reload.cover_photo).to be_attached
       expect(json_response['cover_photo_url']).to be_present
@@ -240,7 +323,7 @@ RSpec.describe Spree::Api::V3::Admin::SellersController, type: :controller do
         filename: 'thinking-cat.jpg'
       )
 
-      patch :update, params: { id: seller.prefixed_id, logo: nil }, as: :json
+      patch :update, params: { id: seller.prefixed_id, logo_signed_id: nil }, as: :json
 
       expect(response).to have_http_status(:ok)
       expect(seller.reload.logo).not_to be_attached

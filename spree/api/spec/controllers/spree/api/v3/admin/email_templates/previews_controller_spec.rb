@@ -31,6 +31,21 @@ RSpec.describe Spree::Api::V3::Admin::EmailTemplates::PreviewsController, type: 
     expect(store.reload.preferred_email_card_color).to be_nil
   end
 
+  it 'previews an unsaved logo' do
+    blob = ActiveStorage::Blob.create_and_upload!(io: File.open(Spree::Core::Engine.root.join('spec/fixtures/files/icon_256x256.png')),
+                                                  filename: 'unsaved-logo.png')
+
+    post :create, params: { email_template_id: id, mailer_logo_signed_id: blob.signed_id }, as: :json
+
+    expect(json_response['variables']['store']['logo_url']).to include('unsaved-logo')
+  end
+
+  it 'says so when the unsaved logo is not a valid upload' do
+    post :create, params: { email_template_id: id, mailer_logo_signed_id: 'tampered' }, as: :json
+
+    expect(response).to have_http_status(:unprocessable_content)
+  end
+
   context 'when the sample shows records the caller may not read' do
     let(:headers) { { 'x-spree-api-key' => create(:api_key, :secret, store: store, scopes: scopes).plaintext_token } }
 

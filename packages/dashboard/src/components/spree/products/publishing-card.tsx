@@ -2,6 +2,9 @@ import type { Channel } from '@spree/admin-sdk'
 import type { ProductFormValues } from '@spree/dashboard-core'
 import { formatStoreDateTime, StoreDatePicker, useStore } from '@spree/dashboard-core'
 import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
   Button,
   Card,
   CardContent,
@@ -10,6 +13,11 @@ import {
   Checkbox,
   Field,
   FieldLabel,
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemMedia,
+  ItemTitle,
   Sheet,
   SheetContent,
   SheetDescription,
@@ -18,10 +26,10 @@ import {
   SheetTitle,
   Skeleton,
 } from '@spree/dashboard-ui'
-import { GlobeIcon, PencilIcon, SettingsIcon } from '@spree/dashboard-ui/icons'
+import { GlobeIcon, PencilIcon, SettingsIcon, TriangleAlertIcon } from '@spree/dashboard-ui/icons'
 import { parseISO } from 'date-fns'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Controller, type UseFormReturn, useFieldArray } from 'react-hook-form'
+import { Controller, type UseFormReturn, useFieldArray, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useChannels } from '../../../hooks/use-channels'
 
@@ -146,8 +154,9 @@ export function PublishingCard({
         </Button>
       </CardHeader>
       <CardContent className="flex flex-col gap-1">
+        {publicationsArray.fields.length > 0 && <MissingPriceAlert form={form} />}
         {publicationsArray.fields.length === 0 && (
-          <p className="text-sm text-muted-foreground">
+          <p className="text-base text-muted-foreground">
             {t('admin.pages.products.publishing.empty')}
           </p>
         )}
@@ -177,6 +186,45 @@ export function PublishingCard({
         publicationsArray={publicationsArray}
       />
     </Card>
+  )
+}
+
+// The storefront lists a product only in currencies it has a base price in,
+// unless the store shows unpriced products (Spree::ProductScopes.with_currency).
+// The form holds base prices only, so price-list prices never count here.
+function unpricedCurrencies(variants: ProductFormValues['variants'], currencies: string[]) {
+  const priced = new Set<string>(
+    (variants ?? []).flatMap((v) =>
+      (v.prices ?? []).filter((p) => p.amount.trim() !== '').map((p) => p.currency),
+    ),
+  )
+  return currencies.filter((currency) => !priced.has(currency))
+}
+
+function MissingPriceAlert({ form }: { form: ProductForm }) {
+  const { t, i18n } = useTranslation()
+  const { store } = useStore()
+  const [productStatus, variants] = useWatch({
+    control: form.control,
+    name: ['status', 'variants'],
+  })
+  if (productStatus !== 'active' || !store || store.show_products_without_price) return null
+
+  const missing = unpricedCurrencies(variants, store.supported_currencies)
+  if (missing.length === 0) return null
+
+  return (
+    <Alert variant="warning" className="mb-2">
+      <TriangleAlertIcon />
+      <AlertTitle>
+        {t('admin.pages.products.publishing.missing_price_title', {
+          currencies: new Intl.ListFormat(i18n.language).format(missing),
+        })}
+      </AlertTitle>
+      <AlertDescription>
+        {t('admin.pages.products.publishing.missing_price_description')}
+      </AlertDescription>
+    </Alert>
   )
 }
 
@@ -242,7 +290,7 @@ function PublicationRow({
     >
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
         <div className="flex items-center gap-2">
-          <span className="truncate text-sm font-medium">{channelName}</span>
+          <span className="truncate text-base font-medium">{channelName}</span>
           <span className="flex items-center gap-1 text-xs text-muted-foreground">
             <StatusDot status={status} />
             {t(`admin.pages.products.publishing.status_${status}`)}
@@ -271,9 +319,9 @@ function PublicationEditor({
   const unpublishedAtPath = `product_publications.${index}.unpublished_at` as const
 
   return (
-    <div className="flex flex-col gap-3 rounded-md border border-border bg-muted/20 px-3 py-3">
+    <Item variant="outline" className="flex-col items-stretch gap-3">
       <div className="flex items-center justify-between">
-        <span className="text-sm font-medium">{channelName}</span>
+        <span className="text-base font-medium">{channelName}</span>
         <Button type="button" variant="ghost" size="sm" className="h-7 text-xs" onClick={onDone}>
           {t('admin.actions.done')}
         </Button>
@@ -318,7 +366,7 @@ function PublicationEditor({
           {t('admin.fields.product_publication.unpublished_at.help')}
         </span>
       </Field>
-    </div>
+    </Item>
   )
 }
 
@@ -368,7 +416,7 @@ function ManageChannelsSheet({
             </>
           )}
           {!isLoading && channels.length === 0 && (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-base text-muted-foreground">
               {t('admin.pages.products.publishing.no_channels')}
             </p>
           )}
@@ -376,22 +424,28 @@ function ManageChannelsSheet({
             channels.map((channel) => {
               const checked = publicationsArray.fields.some((f) => f.channel_id === channel.id)
               return (
-                <button
+                <Item
                   key={channel.id}
-                  type="button"
+                  variant="outline"
+                  size="sm"
+                  render={<button type="button" />}
                   onClick={() => toggle(channel, !checked)}
-                  className="flex w-full cursor-pointer items-center gap-3 rounded-md border border-border bg-background px-3 py-2 text-left hover:bg-accent"
+                  className="cursor-pointer bg-background text-left hover:bg-accent"
                 >
-                  <Checkbox checked={checked} tabIndex={-1} />
-                  <span className="flex-1 text-sm">
-                    {channel.name ?? channel.code ?? channel.id}
-                  </span>
+                  <ItemMedia>
+                    <Checkbox checked={checked} tabIndex={-1} />
+                  </ItemMedia>
+                  <ItemContent>
+                    <ItemTitle className="font-normal">
+                      {channel.name ?? channel.code ?? channel.id}
+                    </ItemTitle>
+                  </ItemContent>
                   {!channel.active && (
-                    <span className="text-xs text-muted-foreground">
+                    <ItemActions className="text-xs text-muted-foreground">
                       {t('admin.pages.products.publishing.inactive_marker')}
-                    </span>
+                    </ItemActions>
                   )}
-                </button>
+                </Item>
               )
             })}
         </div>

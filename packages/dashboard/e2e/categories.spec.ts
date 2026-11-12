@@ -45,6 +45,23 @@ test.describe('categories management', () => {
     await expect(treeRow(page, name)).toBeVisible()
   })
 
+  // Filled by the probes in src/testing/slot-probes.tsx.
+  test('renders the plugin slots on the create and edit pages', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, CATEGORIES_PATH(creds.store_id), CTA)
+
+    await page.getByRole('button', { name: CTA }).click()
+    await expect(page.getByText('Slot probe: category.form_main (new)')).toBeVisible()
+    await expect(page.getByText('Slot probe: category.form_sidebar (new)')).toBeVisible()
+
+    await page.locator('#category-name').fill(`E2E Slots ${Date.now()}`)
+    await page.getByRole('button', { name: /^save$/i }).click()
+    await expect(page.getByText('Slot probe: category.form_main (edit)')).toBeVisible({
+      timeout: 15_000,
+    })
+    await expect(page.getByText('Slot probe: category.form_sidebar (edit)')).toBeVisible()
+  })
+
   test('edits a category name', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, CATEGORIES_PATH(creds.store_id), CTA)
@@ -139,6 +156,37 @@ test.describe('categories management', () => {
     await expect(page.getByText(/no products in this category yet/i)).toBeVisible({
       timeout: 15_000,
     })
+  })
+
+  test('adds products while creating a category', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, CATEGORIES_PATH(creds.store_id), CTA)
+
+    await page.getByRole('button', { name: CTA }).click()
+    await expect(page.getByRole('heading', { name: CTA })).toBeVisible({ timeout: 15_000 })
+    await page.locator('#category-name').fill(`E2E New With Products ${Date.now()}`)
+
+    await page.getByRole('button', { name: /add products/i }).click()
+    const picker = page.getByRole('dialog')
+    await picker.getByRole('searchbox').fill(FIXTURE_PROMO_PRODUCT)
+    const option = picker
+      .getByRole('button', { name: new RegExp(FIXTURE_PROMO_PRODUCT, 'i') })
+      .first()
+    await expect(option).toBeVisible({ timeout: 15_000 })
+    await option.click()
+    await picker.getByRole('button', { name: /^add 1$/i }).click()
+
+    // Staged on the new form until the category exists.
+    const productRow = page.getByRole('row', { name: new RegExp(FIXTURE_PROMO_PRODUCT, 'i') })
+    await expect(productRow.getByText(/^new$/i)).toBeVisible({ timeout: 15_000 })
+
+    await page.getByRole('button', { name: /^save$/i }).click()
+    await expect(page).toHaveURL(/\/products\/categories\/(?!new(?:\?|$))/, { timeout: 15_000 })
+
+    // The edit page reads the membership back from the server: persisted, not staged.
+    await page.reload()
+    await expect(productRow).toBeVisible({ timeout: 15_000 })
+    await expect(productRow.getByText(/^new$/i)).toHaveCount(0)
   })
 
   test('repositions a top-level category', async ({ page }) => {

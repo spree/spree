@@ -9,13 +9,11 @@ describe '6.0 data migration tasks' do
     load Spree::Core::Engine.root.join('lib', 'tasks', 'typed_adjustments_migration.rake')
     load Spree::Core::Engine.root.join('lib', 'tasks', 'carts_migration.rake')
     load Spree::Core::Engine.root.join('lib', 'tasks', 'products.rake')
-    load Spree::Core::Engine.root.join('lib', 'tasks', 'order_market_backfill.rake')
     load Spree::Core::Engine.root.join('lib', 'tasks', 'store_binding_migration.rake')
     load Spree::Core::Engine.root.join('lib', 'tasks', 'fulfillment_statuses_migration.rake')
     load Spree::Core::Engine.root.join('lib', 'tasks', 'deliveries_migration.rake')
     load Spree::Core::Engine.root.join('lib', 'tasks', 'tax_zones_migration.rake')
     load Spree::Core::Engine.root.join('lib', 'tasks', 'markets.rake')
-    load Spree::Core::Engine.root.join('lib', 'tasks', 'capture_methods_migration.rake')
     load Spree::Core::Engine.root.join('lib', 'tasks', 'typed_stock_movements_migration.rake')
   end
 
@@ -121,6 +119,19 @@ describe '6.0 data migration tasks' do
       run_task('spree:migrate_shipping_to_delivery')
 
       expect(method.reload.read_attribute(:storefront_visible)).to be(true)
+    end
+
+    it 'repoints legacy shipping method calculators at the delivery method' do
+      method = create(:delivery_method)
+      calculator = method.calculator
+      calculator.update_columns(calculable_type: 'Spree::ShippingMethod')
+      expect(method.reload.calculator).to be_nil
+
+      run_task('spree:migrate_shipping_to_delivery')
+      run_task('spree:migrate_shipping_to_delivery')
+
+      expect(calculator.reload.calculable_type).to eq('Spree::DeliveryMethod')
+      expect(method.reload.calculator).to eq(calculator)
     end
 
     it 'is idempotent' do
@@ -425,6 +436,64 @@ describe '6.0 data migration tasks' do
       run_task('spree:migrate_zones_to_delivery_zones')
       expect { run_task('spree:migrate_zones_to_delivery_zones') }.not_to change(Spree::DeliveryZone, :count)
     end
+
+    context 'when the method predates its store binding (store_id nil)' do
+      before { delivery_method.update_columns(store_id: nil, delivery_profile_id: nil) }
+
+      it 'resolves the store to the default store' do
+        run_task('spree:migrate_zones_to_delivery_zones')
+
+        delivery_zone = Spree::DeliveryZone.find_by(name: zone.name)
+        expect(delivery_zone).to be_present
+        expect(delivery_zone.store_id).to eq(Spree::Store.default.id)
+        expect(delivery_method.reload.delivery_zone_id).to eq(delivery_zone.id)
+      end
+    end
+
+    it 'warns about delivery methods left without a zone' do
+      zoneless = create(:delivery_method, name: 'Zoneless method')
+      zoneless.update_columns(delivery_zone_id: nil)
+
+      expect { Rake::Task['spree:migrate_zones_to_delivery_zones'].tap(&:reenable).invoke }.
+        to output(/WARNING: 1 delivery methods have no delivery zone.*Zoneless method/m).to_stdout
+    end
+  end
+
+  describe 'PromoteShippingCategoriesToDeliveryProfiles#copy_first_zone_onto_methods' do
+    let(:connection) { ActiveRecord::Base.connection }
+    let(:migration) do
+      require Spree::Core::Engine.root.join('db/migrate/20260809150001_promote_shipping_categories_to_delivery_profiles.rb').to_s
+      PromoteShippingCategoriesToDeliveryProfiles.new
+    end
+    let(:stored_method) { create(:delivery_method) }
+    let(:unbound_method) { create(:delivery_method).tap { |method| method.update_columns(store_id: nil) } }
+
+    # DDL commits implicitly on MySQL, so the table is created and dropped
+    # outside the per-example transaction.
+    before(:all) do
+      ActiveRecord::Base.connection.create_table :spree_delivery_method_zones, force: true do |t|
+        t.references :delivery_method, null: false
+        t.references :delivery_zone, null: false
+        t.timestamps
+      end
+    end
+
+    after(:all) { ActiveRecord::Base.connection.drop_table :spree_delivery_method_zones, if_exists: true }
+
+    it 'copies the first linked zone onto every method, including those without a store' do
+      now = Time.current
+      [[stored_method.id, 11], [unbound_method.id, 21], [unbound_method.id, 22]].each do |method_id, zone_id|
+        connection.insert(
+          "INSERT INTO spree_delivery_method_zones (delivery_method_id, delivery_zone_id, created_at, updated_at) " \
+          "VALUES (#{method_id}, #{zone_id}, '#{now.to_fs(:db)}', '#{now.to_fs(:db)}')"
+        )
+      end
+
+      silence_stream($stdout) { migration.send(:copy_first_zone_onto_methods) }
+
+      expect(stored_method.reload.delivery_zone_id).to eq(11)
+      expect(unbound_method.reload.delivery_zone_id).to eq(21)
+    end
   end
 
   describe 'spree:migrate_adjustments_to_typed_rows' do
@@ -472,7 +541,7 @@ describe '6.0 data migration tasks' do
       expect(fee.kind).to eq('surcharge')
 
       expect(order.reload.attributes.slice('total', 'discount_total', 'additional_tax_total')).to eq(totals_before)
-      expect(order.private_metadata['typed_adjustments_frozen']).to be_nil
+      expect(order.metadata['typed_adjustments_frozen']).to be_nil
     end
 
     it 'freezes orders whose typed sums do not reconcile' do
@@ -483,7 +552,7 @@ describe '6.0 data migration tasks' do
 
       run_task('spree:migrate_adjustments_to_typed_rows')
 
-      expect(order.reload.private_metadata['typed_adjustments_frozen']).to eq('totals_do_not_reconcile')
+      expect(order.reload.metadata['typed_adjustments_frozen']).to eq('totals_do_not_reconcile')
     end
 
     it 'skips orders that already carry typed rows' do
@@ -556,14 +625,78 @@ describe '6.0 data migration tasks' do
     end
   end
 
-  describe 'spree:backfill_order_markets' do
-    it 'assigns the store default market to orders missing one' do
-      order = create(:order, store: store)
-      order.update_columns(market_id: nil)
+  describe 'spree:markets:backfill_tax_inclusive' do
+    let(:tax_store) { create(:store) }
+    let(:tax_category) { create(:tax_category, store: tax_store) }
+    let!(:market) { create(:market, store: tax_store, countries: [Spree::Country.by_iso('DE')]) }
 
-      run_task('spree:backfill_order_markets')
+    def legacy_rate(country_code, included:)
+      create(:tax_rate, store: tax_store, tax_category: tax_category, country_code: country_code, included_in_price: included)
+    end
 
-      expect(order.reload.market_id).to eq(store.default_market.id)
+    it 'includes tax in the prices of a market whose rates were included in the price' do
+      legacy_rate('DE', included: true)
+      legacy_rate(nil, included: true)
+
+      run_task('spree:markets:backfill_tax_inclusive')
+
+      expect(market.reload).to be_tax_inclusive
+    end
+
+    it 'adds tax on top in a market whose rates were added on top' do
+      market.update_column(:tax_inclusive, true)
+      legacy_rate('DE', included: false)
+
+      run_task('spree:markets:backfill_tax_inclusive')
+
+      expect(market.reload).not_to be_tax_inclusive
+    end
+
+    it 'leaves a market whose rates mixed the two for the merchant to set' do
+      market.update_column(:tax_inclusive, true)
+      legacy_rate('DE', included: false)
+      legacy_rate(nil, included: true)
+
+      run_task('spree:markets:backfill_tax_inclusive')
+
+      expect(market.reload).to be_tax_inclusive
+    end
+
+    it "reads only the market's own store's rates" do
+      create(:tax_rate, store: store, country_code: 'DE', included_in_price: true)
+
+      run_task('spree:markets:backfill_tax_inclusive')
+
+      expect(market.reload).not_to be_tax_inclusive
+    end
+
+    it 'stops while some rates have no store yet' do
+      legacy_rate('DE', included: true).update_column(:store_id, nil)
+
+      expect { run_task('spree:markets:backfill_tax_inclusive') }.
+        to raise_error(SystemExit, /spree:backfill_tax_store_ids/).and output.to_stderr
+      expect(market.reload).not_to be_tax_inclusive
+    end
+
+    # Every upgrade walks every manifest, so this runs again on later upgrades.
+    it 'reads each old flag once, so running again keeps what the merchant set since' do
+      rate = legacy_rate('DE', included: true)
+      run_task('spree:markets:backfill_tax_inclusive')
+      market.update_column(:tax_inclusive, false)
+
+      run_task('spree:markets:backfill_tax_inclusive')
+
+      expect(rate.reload.included_in_price).to be_nil
+      expect(market.reload).not_to be_tax_inclusive
+    end
+
+    it 'leaves a market alone whose rates were all created after the upgrade' do
+      market.update_column(:tax_inclusive, true)
+      create(:tax_rate, store: tax_store, tax_category: tax_category, country_code: 'DE')
+
+      run_task('spree:markets:backfill_tax_inclusive')
+
+      expect(market.reload).to be_tax_inclusive
     end
   end
 
@@ -700,37 +833,6 @@ describe '6.0 data migration tasks' do
       run_task('spree:migrate_deliveries')
 
       expect(untracked.reload.deliveries).to be_empty
-    end
-  end
-
-  describe 'spree:migrate_capture_methods' do
-    it 'converts capture-on-authorization into charging at checkout' do
-      payment_method = create(:payment_method, store: store)
-      payment_method.update_columns(auto_capture: true, capture_method: nil)
-
-      run_task('spree:migrate_capture_methods')
-
-      expect(payment_method.reload.capture_method).to eq('checkout')
-    end
-
-    # The boolean only recorded "not at checkout"; it could not say whether
-    # dispatch or staff was meant to charge, so the store keeps deciding.
-    it 'leaves a method that did not capture on authorization inheriting' do
-      payment_method = create(:payment_method, store: store)
-      payment_method.update_columns(auto_capture: false, capture_method: nil)
-
-      run_task('spree:migrate_capture_methods')
-
-      expect(payment_method.reload.capture_method).to be_nil
-    end
-
-    it 'never overwrites a method that already has a capture method' do
-      payment_method = create(:payment_method, store: store)
-      payment_method.update_columns(auto_capture: true, capture_method: 'manual')
-
-      run_task('spree:migrate_capture_methods')
-
-      expect(payment_method.reload.capture_method).to eq('manual')
     end
   end
 

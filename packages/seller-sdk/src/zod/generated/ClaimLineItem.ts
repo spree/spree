@@ -13,7 +13,6 @@ export const ClaimLineItemSchema = z.object({
   included_tax_total: z.string(),
   additional_tax_total: z.string(),
   tax_total: z.string(),
-  display_refund_amount: z.string(),
   variant_id: z.string().nullable(),
   replacement_variant_id: z.string().nullable(),
   line_item_id: z.string().nullable(),

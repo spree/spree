@@ -28,10 +28,11 @@ module Spree
         success(cart)
       rescue ActiveRecord::RecordNotFound
         raise
-      rescue Spree::Pricing::PriceResolution::ProviderUnavailable => e
-        # A strict store could not confirm a price. The transaction has rolled
-        # back, so the address change is not committed either — better than
-        # saving a destination whose prices nobody stood behind.
+      rescue Spree::Pricing::PriceResolution::ProviderUnavailable, Spree::Tax::ProviderError => e
+        # A strict store could not confirm a price, or the tax engine did not
+        # produce tax. The transaction has rolled back, so the address change is
+        # not committed either — better than saving a destination whose prices
+        # or tax nobody stood behind.
         #
         # The in-memory cart still holds the rolled-back attributes, though, so
         # a caller that renders the object it passed in would show the customer
@@ -48,7 +49,7 @@ module Spree
         end
         cart.warnings |= warnings if warnings.present?
 
-        failure(cart, I18n.t('spree.cart_line_item.pricing_unavailable'))
+        failure(cart, { code: unavailable_code_for(e), message: unavailable_message_for(e) })
       rescue ActiveRecord::RecordInvalid => e
         failure(cart, e.record.errors.full_messages.to_sentence)
       rescue StandardError => e
@@ -89,7 +90,7 @@ module Spree
         cart.use_shipping = params[:use_shipping] if params.key?(:use_shipping)
         assign_preferred_stock_location if params.key?(:preferred_stock_location_id)
         assign_company if params.key?(:company_id)
-        assign_po_document if params.key?(:po_document)
+        assign_po_document if params.key?(:po_document_signed_id)
       end
 
       # The buyer's purchase order as an ActiveStorage signed blob id — the
@@ -97,12 +98,12 @@ module Spree
       # value detaches, so a buyer can withdraw a document they attached in
       # error.
       #
-      # An abandoned direct upload leaves the blob row behind without its
+      # An abandoned presigned upload leaves the blob row behind without its
       # bytes, and the buyer's client may still send back the signed id it was
       # handed. ActiveStorage raises a message-less FileNotFoundError for that,
       # which would otherwise reach the storefront as a bare class name.
       def assign_po_document
-        value = params[:po_document]
+        value = params[:po_document_signed_id]
 
         if value.blank?
           cart.po_document.detach
@@ -205,10 +206,7 @@ module Spree
       end
 
       def resolve_address_id(prefixed_id)
-        return unless cart.customer
-
-        decoded = Spree::Address.decode_prefixed_id(prefixed_id)
-        decoded ? cart.customer.addresses.find_by(id: decoded)&.id : nil
+        cart.selectable_address(prefixed_id)&.id
       end
 
       def assign_market
@@ -229,14 +227,38 @@ module Spree
         end
       end
 
+      # Three ways an external service can leave a sale unpriced, and a
+      # customer can only act on what they are told. A refused calculation
+      # carries the engine's own words, because "the postcode is not valid for
+      # that state" is something they can fix and "please try again" is not.
+      # The same split the API's own handler makes: a refusal names something
+      # to fix, an outage is worth retrying, and a price that could not be
+      # confirmed is neither tax case.
+      def unavailable_code_for(error)
+        case error
+        when Spree::Tax::CalculationRefused then 'tax_calculation_refused'
+        when Spree::Tax::ProviderError then 'tax_provider_unavailable'
+        else 'provider_unavailable'
+        end
+      end
+
+      def unavailable_message_for(error)
+        case error
+        when Spree::Tax::CalculationRefused then error.message.to_s
+        when Spree::Tax::ProviderError then I18n.t('spree.cart_line_item.tax_unavailable')
+        else I18n.t('spree.cart_line_item.pricing_unavailable')
+        end
+      end
+
       # Three-way dispatch on the cart→checkout transition:
       # entering checkout → Reserve, mid-checkout mutation → Extend, reverting to cart → Release.
+      # A new destination reserves again, because it can move the units to another origin.
       # A failed Reserve raises so the enclosing transaction rolls back and the
       # outer rescue surfaces the error to the API caller.
       def sync_stock_reservations(was_in_checkout:)
         if !cart.in_checkout?
           Spree::StockReservations::Release.call(cart: cart) if was_in_checkout
-        elsif was_in_checkout
+        elsif was_in_checkout && !@destination_changed && !@new_delivery_destination
           Spree::StockReservations::Extend.call(cart: cart)
         else
           result = Spree::StockReservations::Reserve.call(cart: cart)
@@ -256,10 +278,13 @@ module Spree
         else
           cart.recalculate_totals!
         end
-      rescue Spree::Pricing::PriceResolution::ProviderUnavailable
+      rescue Spree::Pricing::PriceResolution::ProviderUnavailable, Spree::Tax::ProviderError
         # Deliberately not swallowed like the rest: a strict store refusing to
         # price must roll the whole update back, so `call` sees it and the
-        # address change does not commit around unconfirmed prices.
+        # address change does not commit around unconfirmed prices. A tax engine
+        # that cannot answer is the same problem one column over — swallowing it
+        # showed the customer a total with tax missing and saved the address
+        # anyway, so the mistake only surfaced when they tried to pay.
         raise
       rescue StandardError => e
         Rails.error.report(e, context: { order_id: cart.id }, source: 'spree.checkout')

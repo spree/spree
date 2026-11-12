@@ -1,18 +1,26 @@
 import type { StoreCredit, StoreCreditCurrencyTotal } from '@spree/admin-sdk'
+import { isZeroMoney } from '@spree/core'
 import {
   Can,
+  formatAmount,
+  Money,
   PageHeader,
   ResourceTable,
   resourceSearchSchema,
   Subject,
+  useMoneyLocale,
   usePermissions,
 } from '@spree/dashboard-core'
 import {
-  Badge,
   Button,
   Card,
   CardContent,
+  CurrencyLabel,
   cn,
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemTitle,
   Pagination,
   RelativeTime,
   RowActions,
@@ -29,9 +37,11 @@ import {
 import { PencilIcon, PlusIcon, TrashIcon } from '@spree/dashboard-ui/icons'
 import { useIsFetching } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { useRef, useState } from 'react'
+import { type ReactNode, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
+import { ActorLabel } from '../../../../components/spree/actor-label'
+import { ApiCustomFieldsCard } from '../../../../components/spree/custom-fields/custom-fields-inline'
 import { EditStoreCreditDialog } from '../../../../components/spree/store-credits/edit-store-credit-dialog'
 import { IssueStoreCreditDialog } from '../../../../components/spree/store-credits/issue-store-credit-dialog'
 import { useDeleteCustomerStoreCredit } from '../../../../hooks/use-customer-store-credits'
@@ -203,7 +213,7 @@ function useStoreCreditActions() {
 
   const canDelete = (credit: StoreCredit) =>
     !!credit.customer_id &&
-    Number(credit.amount_used) === 0 &&
+    isZeroMoney(credit.amount_used) &&
     permissions.can('destroy', Subject.StoreCredit)
 
   /** Resolves to whether the credit was deleted, so a cancel keeps the panel open. */
@@ -250,22 +260,24 @@ function OutstandingTotals({
     >
       {totals.map((total) => (
         <Card key={total.currency}>
-          <CardContent className="flex flex-col gap-1 p-4">
+          <CardContent className="flex flex-col gap-1">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">
+              <span className="text-base text-muted-foreground">
                 {t('admin.store_credits.totals.outstanding')}
               </span>
-              <Badge variant="outline">{total.currency}</Badge>
+              <CurrencyLabel code={total.currency} className="text-base" />
             </div>
             <span className="font-semibold text-2xl tabular-nums">
-              {total.display_amount_remaining}
+              <Money amount={total.amount_remaining} currency={total.currency} />
             </span>
             <div className="flex gap-4 text-muted-foreground text-xs tabular-nums">
               <span>
-                {t('admin.store_credits.totals.issued')} {total.display_amount}
+                {t('admin.store_credits.totals.issued')}{' '}
+                <Money amount={total.amount} currency={total.currency} />
               </span>
               <span>
-                {t('admin.store_credits.totals.used')} {total.display_amount_used}
+                {t('admin.store_credits.totals.used')}{' '}
+                <Money amount={total.amount_used} currency={total.currency} />
               </span>
             </div>
           </CardContent>
@@ -294,6 +306,7 @@ function StoreCreditSheet({
   onDelete: (credit: StoreCredit) => void
 }) {
   const { t } = useTranslation()
+  const moneyLocale = useMoneyLocale()
   const [ledgerPage, setLedgerPage] = useState(1)
   const { data: credit, isLoading, isError } = useStoreCredit(id, ['customer', 'created_by'])
   const {
@@ -325,25 +338,25 @@ function StoreCreditSheet({
             <Skeleton className="h-40 w-full" />
           ) : (
             <>
-              <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+              <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-base">
                 <DetailRow
                   label={t('admin.fields.store_credit.amount.label')}
-                  value={credit.display_amount}
+                  value={formatAmount(credit.amount, credit.currency, moneyLocale)}
                   numeric
                 />
                 <DetailRow
                   label={t('admin.store_credits.columns.used')}
-                  value={credit.display_amount_used}
+                  value={formatAmount(credit.amount_used, credit.currency, moneyLocale)}
                   numeric
                 />
                 <DetailRow
                   label={t('admin.store_credits.columns.authorized')}
-                  value={credit.display_amount_authorized}
+                  value={formatAmount(credit.amount_authorized, credit.currency, moneyLocale)}
                   numeric
                 />
                 <DetailRow
                   label={t('admin.store_credits.columns.remaining')}
-                  value={credit.display_amount_remaining}
+                  value={formatAmount(credit.amount_remaining, credit.currency, moneyLocale)}
                   numeric
                   emphasis
                 />
@@ -357,7 +370,7 @@ function StoreCreditSheet({
                 />
                 <DetailRow
                   label={t('admin.store_credits.columns.issued_by')}
-                  value={credit.created_by?.email ?? '—'}
+                  value={credit.created_by ? <ActorLabel actor={credit.created_by} /> : '—'}
                 />
                 <DetailRow
                   label={t('admin.fields.store_credit.memo.label')}
@@ -365,12 +378,14 @@ function StoreCreditSheet({
                 />
               </dl>
 
+              <ApiCustomFieldsCard ownerType="store_credit" ownerId={credit.id} hideWhenEmpty />
+
               <div className="flex flex-col gap-2">
-                <h3 className="font-medium text-sm">{t('admin.store_credits.ledger.title')}</h3>
+                <h3 className="font-medium text-base">{t('admin.store_credits.ledger.title')}</h3>
                 {eventsError ? (
                   // Never "no movements" over an error — that would claim the
                   // balance never moved.
-                  <p className="text-destructive text-sm">
+                  <p className="text-destructive text-base">
                     {t('admin.store_credits.ledger.load_failed')}
                   </p>
                 ) : eventsLoading ? (
@@ -379,24 +394,31 @@ function StoreCreditSheet({
                   <>
                     <ul className="flex flex-col divide-y rounded-md border">
                       {events.data.map((event) => (
-                        <li
+                        <Item
                           key={event.id}
-                          className="flex items-baseline justify-between gap-3 p-3"
+                          render={<li />}
+                          className="flex-nowrap items-baseline gap-3 rounded-none border-0 p-3"
                         >
-                          <span className="text-sm">{event.display_action ?? event.action}</span>
-                          <span className="flex items-baseline gap-3">
-                            <span className="text-sm tabular-nums">{event.display_amount}</span>
+                          <ItemContent>
+                            <ItemTitle className="font-normal">
+                              {event.display_action ?? event.action}
+                            </ItemTitle>
+                          </ItemContent>
+                          <ItemActions className="items-baseline gap-3">
+                            <span className="text-base tabular-nums">
+                              <Money amount={event.amount} currency={credit.currency} />
+                            </span>
                             <span className="whitespace-nowrap text-muted-foreground text-xs">
                               <RelativeTime iso={event.created_at} />
                             </span>
-                          </span>
-                        </li>
+                          </ItemActions>
+                        </Item>
                       ))}
                     </ul>
                     {events.meta && <Pagination meta={events.meta} onPageChange={setLedgerPage} />}
                   </>
                 ) : (
-                  <p className="text-muted-foreground text-sm">
+                  <p className="text-muted-foreground text-base">
                     {t('admin.store_credits.ledger.empty')}
                   </p>
                 )}
@@ -447,7 +469,7 @@ function DetailRow({
   emphasis = false,
 }: {
   label: string
-  value: string
+  value: ReactNode
   numeric?: boolean
   emphasis?: boolean
 }) {

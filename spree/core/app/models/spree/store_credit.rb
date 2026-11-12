@@ -3,8 +3,12 @@ module Spree
     has_prefix_id :credit
 
     include Spree::SingleStoreResource
+    include Spree::ActedBy
     include Spree::HasCustomFields
     include Spree::Metadata
+    include Spree::CanonicalDecimals
+
+    canonical_decimals :amount
 
     publishes_lifecycle_events
 
@@ -22,7 +26,7 @@ module Spree
     # to attach it to.
     belongs_to :customer, class_name: "::#{Spree.customer_class}", optional: true
     include Spree::DeprecatedCustomerAlias
-    belongs_to :created_by, class_name: Spree.admin_user_class.to_s, foreign_key: 'created_by_id', optional: true
+    acted_by :created_by
     belongs_to :originator, polymorphic: true, optional: true
     belongs_to :refunded_order, class_name: 'Spree::Order', optional: true,
                                 inverse_of: :store_credit_refunds
@@ -36,8 +40,6 @@ module Spree
     validates :amount_used, numericality: { greater_than_or_equal_to: 0 }
     validate :amount_used_less_than_or_equal_to_amount
     validate :amount_authorized_less_than_or_equal_to_amount
-
-    delegate :email, to: :created_by, prefix: true, allow_nil: true
 
     # Redemption order: the oldest credit is spent first.
     scope :oldest_first, -> { order(:created_at, :id) }
@@ -105,13 +107,11 @@ module Spree
     extend Spree::DisplayMoney
     money_methods :amount, :amount_used, :amount_remaining, :amount_authorized
 
-    def amount=(amount)
-      self[:amount] = Spree::LocalizedNumber.parse(amount)
-    end
-
     self.whitelisted_ransackable_attributes = %w[customer_id created_by_id amount currency memo]
-    self.whitelisted_ransackable_associations = %w[customer created_by]
+    search_by :memo
+    self.whitelisted_ransackable_associations = %w[customer]
     self.whitelisted_ransackable_scopes = %w[outstanding from_gift_card]
+    self.ransackable_scope_types = %w[outstanding from_gift_card].index_with('boolean')
     # Staff notes and who issued the credit are back-office data.
     self.private_ransackable_attributes = { store: %w[memo created_by_id] }
 
@@ -282,6 +282,7 @@ module Spree
         amount: amount,
         customer_id: customer_id,
         created_by_id: created_by_id,
+        created_by_type: created_by_type,
         currency: currency,
         memo: credit_allocation_memo,
         store: store

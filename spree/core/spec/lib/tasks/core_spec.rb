@@ -81,25 +81,25 @@ describe 'core:archive_products' do
   end
 
   it 'draft, discontinue_on in the past -> archived' do
-    product.update(status: 'draft', discontinue_on: 1.day.ago)
+    product.update_columns(status: 'draft', discontinue_on: 1.day.ago)
     subject.invoke
     expect(product.reload.status).to eq('archived')
   end
 
   it 'draft, discontinue_on in the future -> draft' do
-    product.update(status: 'draft', discontinue_on: 1.day.from_now)
+    product.update_columns(status: 'draft', discontinue_on: 1.day.from_now)
     subject.invoke
     expect(product.reload.status).to eq('draft')
   end
 
   it 'active, discontinue_on in the past -> archived' do
-    product.update(status: 'active', discontinue_on: 1.day.ago)
+    product.update_columns(status: 'active', discontinue_on: 1.day.ago)
     subject.invoke
     expect(product.reload.status).to eq('archived')
   end
 
   it 'active, discontinue_on in the future -> active' do
-    product.update(status: 'active', discontinue_on: 1.day.from_now)
+    product.update_columns(status: 'active', discontinue_on: 1.day.from_now)
     subject.invoke
     expect(product.reload.status).to eq('active')
   end

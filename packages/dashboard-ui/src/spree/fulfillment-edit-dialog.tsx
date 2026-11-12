@@ -157,7 +157,7 @@ export function FulfillmentEditDialog({
 
           <DialogBody className="flex flex-col gap-4">
             {errorMessage && (
-              <p className="text-sm text-destructive" role="alert">
+              <p className="text-base text-destructive" role="alert">
                 {errorMessage}
               </p>
             )}

@@ -15,15 +15,14 @@ module Spree
           typelize completed_rows_count: :number,
                    failed_rows_count: :number,
                    processing_errors: [:string, nullable: true],
-                   preferred_delimiter: :string,
-                   schema_fields: 'Array<{ name: string; label: string; required: boolean }>',
+                   delimiter: :string,
                    csv_headers: [:string, multi: true],
                    sample_row: 'Record<string, string | null>',
                    original_filename: [:string, nullable: true],
                    original_byte_size: [:number, nullable: true],
                    original_file_url: [:string, nullable: true]
 
-          attributes :processing_errors, :preferred_delimiter
+          attributes :processing_errors, :delimiter
 
           # The file the seller uploaded. `original_file_url` is this branch's
           # own streaming endpoint (JWT-authenticated), not a signed
@@ -52,6 +51,7 @@ module Spree
             import.rows_status_counts['failed'] || 0
           end
 
+          typelize({ name: :string, label: :string, required: :boolean }, multi: true)
           attribute :schema_fields do |import|
             import.schema_fields.map do |field|
               { name: field[:name], label: field[:label], required: field[:required].present? }

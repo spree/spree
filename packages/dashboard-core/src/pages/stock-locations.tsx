@@ -33,7 +33,9 @@ import type { PanelStockLocation } from '../api-client'
 import { Can } from '../components/can'
 import { CountryCombobox } from '../components/country-combobox'
 import { StateCombobox, useCountryStates } from '../components/country-state-fields'
-import { ResourceTable, resourceSearchSchema } from '../components/resource-table'
+import { RecordMetadataSection } from '../components/record-metadata'
+import { ResourceTable, resourceSearchSchema, type TableView } from '../components/resource-table'
+import { HostFormSlot } from '../components/slot'
 import {
   canDeleteStockLocations,
   listStockLocations,
@@ -43,6 +45,7 @@ import {
   useUpdateStockLocation,
 } from '../hooks/use-stock-locations'
 import { mapSpreeErrorsToForm } from '../lib/form-errors'
+import { extensionFormValues, extensionSubmitValues } from '../lib/form-fields-registry'
 import { Subject } from '../lib/permissions'
 import { usePermissions } from '../providers/permission-provider'
 import {
@@ -90,8 +93,14 @@ export function StockLocationsPage({
   search,
   stockLevelsPanel: StockLevelsPanel,
   activityPanel: ActivityPanel,
+  formKey = 'stock_location',
+  views,
 }: {
   search: StockLocationsSearch
+  /** Tabs splitting the list — the operator's own locations and their sellers'. */
+  views?: TableView[]
+  /** Names the sheets' slot and extension fields — `seller.stock_location` in the seller panel. */
+  formKey?: string
   /** Rendered inside the edit sheet, below the form. Optional — see above. */
   stockLevelsPanel?: ComponentType<{ stockLocationId: string }>
   /** What changed in this warehouse, for reconciliation. Optional. */
@@ -143,6 +152,7 @@ export function StockLocationsPage({
         queryKey="stock-locations"
         queryFn={(params) => listStockLocations(params)}
         searchParams={search}
+        views={views}
         rowActions={(location) => (
           <RowActions
             actions={[
@@ -170,10 +180,13 @@ export function StockLocationsPage({
         }
       />
 
-      {isCreating && <CreateStockLocationSheet open onOpenChange={(o) => !o && closeSheet()} />}
+      {isCreating && (
+        <CreateStockLocationSheet formKey={formKey} open onOpenChange={(o) => !o && closeSheet()} />
+      )}
       {editId && (
         <EditStockLocationSheet
           id={editId}
+          formKey={formKey}
           open
           onOpenChange={(o) => !o && closeSheet()}
           stockLevelsPanel={StockLevelsPanel}
@@ -189,9 +202,11 @@ export function StockLocationsPage({
 // ============================================================================
 
 function CreateStockLocationSheet({
+  formKey,
   open,
   onOpenChange,
 }: {
+  formKey: string
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
@@ -201,13 +216,13 @@ function CreateStockLocationSheet({
   const form = useForm<StockLocationFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(stockLocationFormSchema) as any,
-    defaultValues: STOCK_LOCATION_DEFAULTS,
+    defaultValues: { ...STOCK_LOCATION_DEFAULTS, ...extensionFormValues(formKey, null) },
   })
 
   async function onSubmit(values: StockLocationFormValues) {
     try {
       const params = formValuesToParams(values)
-      await createMutation.mutateAsync(params)
+      await createMutation.mutateAsync({ ...params, ...extensionSubmitValues(formKey, form) })
       form.reset(STOCK_LOCATION_DEFAULTS)
       onOpenChange(false)
     } catch (err) {
@@ -231,6 +246,11 @@ function CreateStockLocationSheet({
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
             <StockLocationFormFields form={form} />
+            <HostFormSlot
+              form={form}
+              name={`${formKey}.form_fields`}
+              context={{ stockLocation: undefined, mode: 'new' }}
+            />
           </div>
           <SheetFooter>
             <Button
@@ -257,14 +277,20 @@ function CreateStockLocationSheet({
 // Edit Sheet
 // ============================================================================
 
-function EditStockLocationSheet({
+/**
+ * One location's editor. Exported so a record page that lists locations (a
+ * seller's) opens it in place rather than sending the operator to settings.
+ */
+export function EditStockLocationSheet({
   id,
+  formKey = 'stock_location',
   open,
   onOpenChange,
   stockLevelsPanel: StockLevelsPanel,
   activityPanel: ActivityPanel,
 }: {
   id: string
+  formKey?: string
   open: boolean
   onOpenChange: (open: boolean) => void
   stockLevelsPanel?: ComponentType<{ stockLocationId: string }>
@@ -284,14 +310,17 @@ function EditStockLocationSheet({
   // with whatever the server last persisted (including external edits).
   useEffect(() => {
     if (stockLocation) {
-      form.reset(stockLocationToFormValues(stockLocation))
+      form.reset({
+        ...stockLocationToFormValues(stockLocation),
+        ...extensionFormValues(formKey, stockLocation),
+      })
     }
-  }, [stockLocation, form])
+  }, [stockLocation, form, formKey])
 
   async function onSubmit(values: StockLocationFormValues) {
     try {
       const params = formValuesToParams(values)
-      await updateMutation.mutateAsync(params)
+      await updateMutation.mutateAsync({ ...params, ...extensionSubmitValues(formKey, form) })
       form.reset(values)
       onOpenChange(false)
     } catch (err) {
@@ -309,13 +338,19 @@ function EditStockLocationSheet({
           <SheetDescription>{t('admin.stock_locations.edit_description')}</SheetDescription>
         </SheetHeader>
         {isLoading ? (
-          <div className="p-4 text-sm text-muted-foreground">{t('admin.common.loading')}</div>
+          <div className="p-4 text-base text-muted-foreground">{t('admin.common.loading')}</div>
         ) : (
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
               <StockLocationFormFields form={form} />
+              <HostFormSlot
+                form={form}
+                name={`${formKey}.form_fields`}
+                context={{ stockLocation, mode: 'edit' }}
+              />
               {StockLevelsPanel && <StockLevelsPanel stockLocationId={id} />}
               {ActivityPanel && <ActivityPanel stockLocationId={id} />}
+              <RecordMetadataSection externalReferences={stockLocation?.external_references} />
             </div>
             <SheetFooter>
               <Button
@@ -357,7 +392,7 @@ function StockLocationFormFields({ form }: { form: UseFormReturn<StockLocationFo
     // to as well as its own.
     <div className="flex flex-col gap-6">
       {errors.root?.message && (
-        <p className="text-sm text-destructive" role="alert">
+        <p className="text-base text-destructive" role="alert">
           {errors.root.message}
         </p>
       )}

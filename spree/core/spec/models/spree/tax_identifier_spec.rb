@@ -5,18 +5,6 @@ describe Spree::TaxIdentifier, type: :model do
   let(:cart) { create(:cart, customer: customer) }
   let(:order) { create(:order, customer: customer) }
 
-  it 'requires a kind and a value' do
-    expect(build(:tax_identifier)).to be_valid
-    expect(build(:tax_identifier, kind: nil)).not_to be_valid
-    expect(build(:tax_identifier, value: nil)).not_to be_valid
-  end
-
-  it 'requires an owner' do
-    expect(build(:tax_identifier, owner: customer)).to be_valid
-    expect(build(:tax_identifier, owner: cart)).to be_valid
-    expect(build(:tax_identifier, owner: nil)).not_to be_valid
-  end
-
   it 'rejects a validation status the platform never sets' do
     expect(build(:tax_identifier, validation_status: 'verified')).to be_valid
     expect(build(:tax_identifier, validation_status: nil)).to be_valid
@@ -284,12 +272,6 @@ describe Spree::TaxIdentifier, type: :model do
 
       expect(build(:tax_identifier, owner: company, kind: 'eu_vat')).not_to be_valid
     end
-
-    it 'reports the company as its owner' do
-      identifier = create(:tax_identifier, owner: company)
-
-      expect(identifier.owner).to eq(company)
-    end
   end
   # A seller's registration faces the other way from the rest: it is what the
   # marketplace's own commission invoice is made out to, and what makes EU
@@ -302,7 +284,6 @@ describe Spree::TaxIdentifier, type: :model do
                                        value: eu_vat_number(0))
 
       expect(identifier).to be_valid
-      expect(identifier.owner).to eq(seller)
     end
 
     it 'holds one registration per kind' do

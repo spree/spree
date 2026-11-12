@@ -143,6 +143,7 @@ RSpec.describe Spree::Api::V3::Store::DeliveryMethodsController, type: :controll
           end
         end
         stub_const('TestPickupPointProvider', test_provider)
+        allow(Spree).to receive(:pickup_point_providers).and_return([test_provider])
         # update_columns: 'pickup_point' is deferred to 6.1 and no longer a
         # registered fulfillment type, but the endpoint still serves rows
         # carrying it (created before the deferral or via an extension).

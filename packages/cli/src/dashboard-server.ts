@@ -4,7 +4,6 @@ import path from 'node:path'
 import * as p from '@clack/prompts'
 import pc from 'picocolors'
 import { detectPackageManager } from './commands/add.js'
-import { DASHBOARD_PORT } from './constants.js'
 
 export function hasDashboardApp(projectDir: string): boolean {
   return fs.existsSync(path.join(projectDir, 'apps', 'dashboard', 'package.json'))
@@ -35,10 +34,10 @@ export function warnDashboardNotRunnable(projectDir: string): void {
 export interface DashboardDevServer {
   /**
    * The URL Vite actually reports once ready (it auto-bumps the port when
-   * 5173 is taken). Always settles — falls back to the default URL on
-   * timeout, spawn failure, early exit, or stop().
+   * 5173 is taken). Always settles — null when readiness was never
+   * confirmed: timeout, spawn failure, early exit, or stop().
    */
-  url: Promise<string>
+  url: Promise<string | null>
   stop: () => void
 }
 
@@ -74,20 +73,19 @@ export function startDashboardDevServer(projectDir: string): DashboardDevServer 
     shell: windows,
   })
 
-  const fallbackUrl = `http://localhost:${DASHBOARD_PORT}`
   let settled = false
-  let resolveUrl: (url: string) => void = () => {}
-  const url = new Promise<string>((resolve) => {
+  let resolveUrl: (url: string | null) => void = () => {}
+  const url = new Promise<string | null>((resolve) => {
     resolveUrl = resolve
   })
-  const settle = (value: string) => {
+  const settle = (value: string | null) => {
     settled = true
     clearTimeout(fallback)
     resolveUrl(value)
   }
   // Vite is normally ready in well under a second; a generous fallback keeps
   // `--open` from hanging if its output format ever changes.
-  const fallback = setTimeout(() => settle(fallbackUrl), 30_000)
+  const fallback = setTimeout(() => settle(null), 30_000)
   fallback.unref()
 
   const forward = (stream: NodeJS.ReadableStream, out: NodeJS.WriteStream) => {
@@ -113,7 +111,7 @@ export function startDashboardDevServer(projectDir: string): DashboardDevServer 
   // A spawn failure (missing binary, PATH issues) emits 'error' — unhandled
   // it would crash the CLI, the opposite of crash isolation.
   child.on('error', (error) => {
-    settle(fallbackUrl)
+    settle(null)
     p.log.warn(
       `Could not start the dashboard dev server (${error.message}) — start it manually with ` +
         `${pc.bold(`cd apps/dashboard && ${pm} run dev`)}. The API keeps running.`,
@@ -121,7 +119,7 @@ export function startDashboardDevServer(projectDir: string): DashboardDevServer 
   })
 
   child.on('exit', (code, signal) => {
-    settle(fallbackUrl)
+    settle(null)
     // Only a genuine crash warns: not our stop(), and not a signal exit —
     // Ctrl+C reaches the child before stop() runs, as SIGINT (signal) or a
     // 130 exit code depending on the package manager.
@@ -137,7 +135,7 @@ export function startDashboardDevServer(projectDir: string): DashboardDevServer 
     url,
     stop: () => {
       stopping = true
-      settle(fallbackUrl)
+      settle(null)
       if (child.exitCode !== null || child.killed) return
       if (!windows && child.pid) {
         // Signal the whole process group so Vite goes down with its wrapper.

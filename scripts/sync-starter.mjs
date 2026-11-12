@@ -6,6 +6,7 @@
 //   - `workspace:^` dependency ranges → floating ranges on the published
 //     packages (newest release through 1.x, floored at the version being
 //     released)
+//   - `catalog:` ranges → the version pnpm-workspace.yaml's catalog names
 //   - monorepo-only devDependencies dropped (the example plugin isn't on npm)
 //   - biome.json extends the workspace root config → replaced with a
 //     self-contained equivalent
@@ -29,6 +30,8 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { parse as parseYaml } from 'yaml'
+import { alignedPackages, majorFloorRange } from './version-packages.mjs'
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 
@@ -82,14 +85,21 @@ function publishedRange(name) {
   if (manifest.private) {
     throw new Error(`${name} is private — it can't be a dependency of the synced template`)
   }
-  // On 0.x, `^` never crosses a minor, so scaffolds stay frozen on whatever
-  // minor the CLI happened to be published against — a dashboard release
-  // without a CLI release in the same train would never reach users. Float
-  // instead, floored at the version this template was built against, through
-  // all of 0.x AND into 1.x so preview-era apps migrate to stable on their
-  // own. After 1.0, `^` floats within the major on its own.
+  // Packages released with Spree float over their whole major, floored at its
+  // first release rather than at the version in this workspace: the CLI that
+  // embeds this template releases on its own tag, possibly before that version
+  // reaches npm, and a range on an unpublished version fails every install.
   const { version } = manifest
-  return version.startsWith('0.') ? `>=${version} <2.0.0` : `^${version}`
+  if (alignedPackages().some((pkg) => pkg.name === name)) return majorFloorRange(version)
+  return `^${version}`
+}
+
+const { catalog } = parseYaml(fs.readFileSync(path.join(repoRoot, 'pnpm-workspace.yaml'), 'utf8'))
+
+function catalogRange(name) {
+  if (!catalog?.[name])
+    throw new Error(`${name} uses catalog: but pnpm-workspace.yaml's catalog has no entry for it`)
+  return catalog[name]
 }
 
 const pkgPath = path.join(targetDir, 'package.json')
@@ -102,6 +112,8 @@ for (const section of ['dependencies', 'devDependencies']) {
       delete deps[name]
     } else if (typeof range === 'string' && range.startsWith('workspace:')) {
       deps[name] = publishedRange(name)
+    } else if (range === 'catalog:') {
+      deps[name] = catalogRange(name)
     }
   }
 }
@@ -153,9 +165,20 @@ const standaloneBiome = {
   // monorepo root's list is irrelevant outside the workspace.
   files: starterBiome.files,
 }
-fs.writeFileSync(
-  path.join(targetDir, 'biome.json'),
-  `${JSON.stringify(standaloneBiome, null, 2)}\n`,
-)
+fs.writeFileSync(path.join(targetDir, 'biome.json'), `${formatJson(standaloneBiome)}\n`)
+
+// Biome keeps an array of plain values on one line when it fits the line
+// width; JSON.stringify always breaks it up, so a fresh app would fail
+// `biome check` on its own config.
+function formatJson(value) {
+  const lineWidth = rootBiome.formatter.lineWidth
+  return JSON.stringify(value, null, 2).replace(
+    /^( *)(.*)\[\n([^[\]{}]*?)\n *\]/gm,
+    (expanded, indent, key, items) => {
+      const inline = `${indent}${key}[${items.trim().split(/,\n */).join(', ')}]`
+      return inline.length <= lineWidth ? inline : expanded
+    },
+  )
+}
 
 console.log(`Synced ${starterDir} → ${targetDir}`)

@@ -2,6 +2,7 @@
 import { z } from 'zod';
 import { ClaimLineItemSchema } from './ClaimLineItem';
 import { ClaimReasonSchema } from './ClaimReason';
+import { CustomFieldSchema } from './CustomField';
 
 export const ClaimSchema = z.object({
   id: z.string(),
@@ -10,14 +11,15 @@ export const ClaimSchema = z.object({
   resolution: z.string().nullable(),
   order_id: z.string().nullable(),
   reason_id: z.string().nullable(),
-  refund_total: z.string(),
-  display_refund_total: z.string(),
+  refund_total: z.string().nullable(),
+  display_refund_total: z.string().nullable(),
   approved_at: z.string().nullable(),
   resolved_at: z.string().nullable(),
   denied_at: z.string().nullable(),
   canceled_at: z.string().nullable(),
   reason: ClaimReasonSchema.optional(),
   claim_line_items: z.array(ClaimLineItemSchema).optional(),
+  custom_fields: z.array(CustomFieldSchema).optional(),
 });
 
 export type Claim = z.infer<typeof ClaimSchema>;

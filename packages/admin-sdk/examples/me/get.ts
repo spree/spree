@@ -9,7 +9,7 @@ const client = createAdminClient({
 const me = await client.me.get()
 if (
   me.permissions.some(
-    (r) => r.allow && r.actions.includes('manage') && r.subjects.includes('Spree::Product'),
+    (r) => r.allow && r.actions.includes('manage') && r.subjects.includes('product'),
   )
 ) {
   // show "Create product" button

@@ -100,9 +100,14 @@ module Spree
     # the children loaded already (a serializer renders them, a gateway call
     # reads four of these in a row), and an aggregate per figure would issue a
     # query each time even against rows sitting in memory.
+    #
+    # +tax_total+ is each child's own derivation rather than a column, summed
+    # like the rest: asking the children keeps the group's answer the one they
+    # gave, where re-deriving it here from the two halves above would be a
+    # second way to reach the same figure.
     ROLLED_UP_TOTALS = %i[
       total item_total delivery_total additional_tax_total included_tax_total
-      discount_total fee_total
+      tax_total discount_total fee_total
     ].freeze
 
     ROLLED_UP_TOTALS.each do |figure|
@@ -112,7 +117,7 @@ module Spree
     end
 
     money_methods(*ROLLED_UP_TOTALS)
-    money_methods :gift_card_total
+    money_methods :gift_card_total, :amount_due
 
     alias ship_total delivery_total
 

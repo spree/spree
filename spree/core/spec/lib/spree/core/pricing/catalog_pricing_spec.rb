@@ -150,7 +150,7 @@ describe 'catalog-aware pricing' do
     context = Spree::Pricing::Context.new(variant: variant, currency: 'USD', store: store,
                                           channel: channel)
 
-    expect(Spree::Pricing::Resolver.new(context).resolve.amount).to eq(95)
+    expect(Spree::Pricing::PriceResolution.call(context).amount).to eq(95)
   end
 
   # An inactive catalog is off, and its owned list goes dormant WITH it: the

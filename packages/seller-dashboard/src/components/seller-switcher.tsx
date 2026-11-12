@@ -69,7 +69,7 @@ export function SellerSwitcher() {
         <AvatarFallback>{initials}</AvatarFallback>
       </Avatar>
       {!isCollapsed && (
-        <div className="grid flex-1 text-left text-sm leading-tight">
+        <div className="grid flex-1 text-left text-base leading-tight">
           <span className="truncate font-medium text-foreground">{current?.name}</span>
         </div>
       )}

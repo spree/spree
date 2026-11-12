@@ -45,12 +45,22 @@ module Spree
         @records = []
       end
 
-      # Distinct +write_<resource>+ scopes a caller needs to authorize this
-      # batch — one per resource type present. Lets the API layer gate an
-      # API-key request without re-deriving scope names.
+      # Distinct write permissions a caller needs to authorize this batch —
+      # one per resource type present.
+      #
+      # Each resource names its own, because several are guarded by a
+      # permission not named after them: an option type rides
+      # `write_products`, a policy rides `write_settings`. Deriving the name
+      # from the type produced strings outside the permission catalog, which
+      # no credential could hold and which the API therefore skipped — so a
+      # grant narrowed to reading could still rewrite a store's policy text.
+      #
+      # A type that resolves to nothing is left out; `resolve_record!` is what
+      # reports it, one entry at a time with its index.
+      #
       # @return [Array<String>]
       def required_scopes
-        @entries.map { |entry| "write_#{entry[:resource_type].to_s.pluralize}" }.uniq
+        @entries.filter_map { |entry| resource_class(entry[:resource_type])&.translation_write_permission }.uniq
       end
 
       # Upserts every entry in one transaction. Yields each resolved record

@@ -10,7 +10,7 @@ class AddCaptureMethodToPaymentMethods < ActiveRecord::Migration[8.1]
   # from the provider configuration form.
   #
   # Existing auto_capture values are carried over by
-  # spree:migrate_capture_methods, never here.
+  # the capture_methods maintenance task, never here.
   def change
     add_column :spree_payment_methods, :capture_method, :string
   end

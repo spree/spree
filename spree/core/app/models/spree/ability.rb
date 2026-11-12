@@ -95,6 +95,15 @@ module Spree
         apply_staff_baseline
         grantable_keys_for(roles).each { |key| activate_permission(key) }
       end
+
+      withhold_maintenance_tasks unless Spree::Config.maintenance_tasks_dashboard_enabled
+    end
+
+    # Applied last so it overrides the full-access grant, and travels to the
+    # dashboard with the other rules, which then hides the page.
+    def withhold_maintenance_tasks
+      cannot :manage, [Spree::MaintenanceTaskRun, :maintenance_task]
+      @permission_keys -= %w[read_maintenance_tasks write_maintenance_tasks]
     end
 
     # Every key the roles ask for, bounded at activation by what each role's
@@ -167,6 +176,9 @@ module Spree
 
     # Reference data every staff member can read regardless of keys — address
     # forms need countries/states, and the dashboard shell reads the store.
+    # The back office also reads the store's markets and channels: its
+    # currencies and languages come from the markets, and list filters offer
+    # both.
     #
     # The store grant is unrestricted only for the store's own back office.
     # Another panel reads the one store it operates under and no other, so a
@@ -180,6 +192,11 @@ module Spree
       else
         can :read, Spree::Store, id: @store.id
       end
+
+      return unless store_resource?
+
+      can :read, Spree::Market, store_id: @resource.id
+      can :read, Spree::Channel, store_id: @resource.id
     end
 
   end

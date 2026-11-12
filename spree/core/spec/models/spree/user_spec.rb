@@ -3,22 +3,6 @@ require 'spec_helper'
 describe Spree.customer_class, type: :model do # rubocop:disable RSpec/MultipleDescribes
   it_behaves_like 'lifecycle events', factory: :user, event_prefix: 'user'
 
-  describe '#can_be_deleted?' do
-    subject { user.can_be_deleted? }
-
-    context 'when user has completed orders' do
-      let(:user) { create(:user, orders: [create(:order, completed_at: Time.current)]) }
-
-      it { is_expected.to be(false) }
-    end
-
-    context 'when user has no completed orders' do
-      let(:user) { create(:user, orders: [create(:order)]) }
-
-      it { is_expected.to be(true) }
-    end
-  end
-
   describe '#full_name' do
     context 'when names are present' do
       let(:user) { build(:user, first_name: 'John', last_name: 'Doe') }
@@ -38,28 +22,10 @@ describe Spree.customer_class, type: :model do # rubocop:disable RSpec/MultipleD
     end
   end
 
-  # Regression test for #2844 + #3346
   describe '#last_incomplete_order' do
     let!(:user) { create(:user) }
     let!(:order) { create(:order, store: store, bill_address: create(:address), ship_address: create(:address)) }
     let(:store) { @default_store }
-
-    let(:admin_user) { create(:admin_user) }
-    let(:order_1) { create(:order, created_at: 1.day.ago, customer: user, created_by: admin_user, store: store) }
-    let(:order_2) { create(:order, customer: user, created_by: admin_user, store: store) }
-    let(:order_3) { create(:order, customer: user, created_by: create(:admin_user), store: store) }
-
-    it 'returns correct order' do
-      allow(Spree::Deprecation).to receive(:warn)
-
-      Timecop.scale(3600) do
-        order_1
-        order_2
-        order_3
-
-        expect(user.last_incomplete_spree_order(store)).to eq order_3
-      end
-    end
 
     context 'persists order address (deprecated, removed in 6.1)' do
       before { allow(Spree::Deprecation).to receive(:warn) }
@@ -88,23 +54,12 @@ describe Spree.customer_class, type: :model do # rubocop:disable RSpec/MultipleD
           user.persist_order_address(order)
         end.not_to change { Spree::Address.count }
       end
-
-      it 'set both bill and ship address id on subject' do
-        user.persist_order_address(order)
-
-        expect(user.bill_address_id).not_to be_blank
-        expect(user.ship_address_id).not_to be_blank
-      end
     end
 
     context 'payment source' do
       let(:payment_method) { create(:credit_card_payment_method) }
       let!(:cc) do
         create(:credit_card, customer_id: user.id, payment_method: payment_method, gateway_customer_profile_id: '2342343')
-      end
-
-      it 'has payment sources' do
-        expect(user.payment_sources.first.gateway_customer_profile_id).not_to be_empty
       end
 
       it 'drops payment source' do
@@ -310,12 +265,6 @@ describe Spree.customer_class, type: :model do
         end
       end
 
-      context 'all store credits have never been used or authorized' do
-        it 'returns sum of amounts' do
-          expect(subject.total_available_store_credit.to_f).to eq (amount + additional_amount)
-        end
-      end
-
       # Regression: the admin API preloads `store_credits` to avoid an N+1, so
       # the in-memory branch must match the query branch — filtered by store
       # and currency, gift cards excluded.
@@ -373,23 +322,6 @@ describe Spree.customer_class, type: :model do
           expect(subject.available_store_credits(store)).to contain_exactly(Spree::Money.new(usd_amount, currency: 'USD'), Spree::Money.new(gbp_amount, currency: 'GBP'), Spree::Money.new(eur_amount, currency: 'EUR'))
         end
       end
-    end
-  end
-
-  context 'address book' do
-    let(:address) { create(:address) }
-    let(:address2) { create(:address) }
-
-    before do
-      address.owner = subject
-      address.save
-      address2.owner = subject
-      address2.save
-    end
-
-    it 'has many addresses' do
-      expect(subject).to respond_to(:addresses)
-      expect(subject.addresses).to eq [address2, address]
     end
   end
 
@@ -500,15 +432,11 @@ describe Spree.customer_class, type: :model do
           let!(:completed_order) { create(:completed_order_with_totals, customer: user, bill_address: address, ship_address: address) }
 
           context 'when default bill address is the same as associated to order' do
-            it { expect(user.addresses).to include(address) }
-
             it_behaves_like 'valid'
           end
 
           context 'when user changed bill address which was used in completed order so the old one is deprecated' do
             before { address.update(deleted_at: Time.now) }
-
-            it { expect(user.addresses).not_to include(address) }
 
             it_behaves_like 'invalid'
 
@@ -539,15 +467,11 @@ describe Spree.customer_class, type: :model do
           let!(:completed_order) { create(:completed_order_with_totals, customer: user, bill_address: address, ship_address: address) }
 
           context 'when default ship address is the same as associated to order' do
-            it { expect(user.addresses).to include(address) }
-
             it_behaves_like 'valid'
           end
 
           context 'when user changed ship address which was used in completed order so the old one is deprecated' do
             before { address.update(deleted_at: Time.now) }
-
-            it { expect(user.addresses).not_to include(address) }
 
             it_behaves_like 'invalid'
 

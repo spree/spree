@@ -1,5 +1,11 @@
 import { type Fulfillment, type Order, SpreeError } from '@spree/admin-sdk'
-import { currencyParts, useStockLocations } from '@spree/dashboard-core'
+import { isZeroMoney } from '@spree/core'
+import {
+  currencyParts,
+  formatAmount,
+  useMoneyLocale,
+  useStockLocations,
+} from '@spree/dashboard-core'
 import {
   type FulfillmentEditValues,
   FulfillmentEditDialog as SharedFulfillmentEditDialog,
@@ -30,7 +36,8 @@ export function FulfillmentEditDialog({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
+  const moneyLocale = useMoneyLocale()
   const { update } = useFulfillmentActions(order.id)
   const { data: stockLocations } = useStockLocations()
   const { refetch: refetchOrder } = useOrder(order.id)
@@ -63,9 +70,11 @@ export function FulfillmentEditDialog({
   const rateOptions = (fulfillment.delivery_rates ?? []).map((rate) => ({
     value: rate.id,
     label: `${rate.name} — ${
-      !rate.unpriced && Number.parseFloat(rate.cost) === 0
-        ? t('admin.orders.detail.fulfillments.free')
-        : rate.display_cost
+      rate.unpriced
+        ? t('admin.orders.detail.fulfillments.quoted_after_review')
+        : isZeroMoney(rate.cost)
+          ? t('admin.orders.detail.fulfillments.free')
+          : formatAmount(rate.cost, order.currency, moneyLocale)
     }`,
   }))
 
@@ -75,7 +84,7 @@ export function FulfillmentEditDialog({
   const cost = {
     current: fulfillment.cost,
     overridden: fulfillment.cost_source === 'manual',
-    currencySymbol: currencyParts(order.currency, i18n.language).symbol,
+    currencySymbol: currencyParts(order.currency, moneyLocale).symbol,
   }
 
   async function handleSubmit(

@@ -1,5 +1,11 @@
 pre-commit:
   commands:
+    rubocop:
+      # The script picks the Ruby files. Without a spree/ bundle it only warns;
+      # Claude's pre-commit gate still blocks.
+      glob: "spree/**"
+      stage_fixed: true
+      run: scripts/lint/rubocop --fix {staged_files} || [ $? -eq 3 ]
     biome:
       glob: "**/*.{ts,tsx,js,jsx,mjs,cjs,mts,cts,json,jsonc}"
       stage_fixed: true
@@ -18,6 +24,7 @@ pre-commit:
         git add packages/sdk/src/types/generated/ packages/sdk/src/zod/generated/ packages/sdk/src/webhooks/generated/
         git add packages/admin-sdk/src/types/generated/ packages/admin-sdk/src/zod/generated/
         git add packages/seller-sdk/src/types/generated/ packages/seller-sdk/src/zod/generated/
+        git add packages/core/src/enums.generated.ts
     zod:
       # Types regenerated or edited without a serializer change, and changes to
       # the generator itself, still need fresh schemas.
@@ -28,8 +35,43 @@ pre-commit:
         pnpm generate:zod
         git add packages/sdk/src/zod/generated/ packages/admin-sdk/src/zod/generated/ packages/seller-sdk/src/zod/generated/
 
+    filters:
+      # The API reference carries the filter tables; regenerating it, or
+      # changing the generator, needs fresh SDK filter types.
+      glob:
+        - "docs/api-reference/{store,admin,seller}.yaml"
+        - "packages/sdk-core/scripts/generate-filters.ts"
+      run: |
+        pnpm generate:filters
+        git add packages/sdk/src/types/filters.generated.ts packages/admin-sdk/src/types/filters.generated.ts packages/seller-sdk/src/types/filters.generated.ts
+
+    params:
+      # The API reference carries the request schemas; regenerating it, or
+      # changing the generator, needs fresh SDK request types.
+      glob:
+        - "docs/api-reference/{store,admin,seller}.yaml"
+        - "packages/sdk-core/scripts/generate-params.ts"
+        - "packages/sdk-core/src/params-types.ts"
+      run: |
+        pnpm generate:params
+        git add packages/sdk/src/types/params/ packages/admin-sdk/src/types/params/ packages/seller-sdk/src/types/params/
+
+    code-lists:
+      # The country, currency, locale and unit lists come from the Store and
+      # Admin API references; regenerating them, or changing the generator,
+      # needs fresh lists.
+      glob:
+        - "docs/api-reference/{store,admin}.yaml"
+        - "packages/core/scripts/generate-code-lists.ts"
+      run: |
+        pnpm generate:code-lists
+        git add packages/core/src/code-lists.generated.ts
+
 pre-push:
   commands:
+    rubocop:
+      # Whole branch diff vs main, like biome-ci below.
+      run: scripts/lint/rubocop || [ $? -eq 3 ]
     biome-ci:
       # No glob filter: biome ci scopes itself via --changed --since=main to
       # validate the whole branch diff vs main. A glob would skip the check

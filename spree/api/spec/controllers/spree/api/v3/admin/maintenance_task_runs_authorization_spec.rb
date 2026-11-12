@@ -1,0 +1,140 @@
+require 'spec_helper'
+
+# Maintenance tasks can rewrite any data in the install, so the grant sits with
+# the other sensitive access keys rather than under settings: out of the box
+# only the admin role holds it (docs/plans/6.0-maintenance-tasks.md).
+RSpec.describe Spree::Api::V3::Admin::MaintenanceTaskRunsController, type: :controller do
+  render_views
+
+  include_context 'API v3 Admin with custom permissions'
+
+  before { request.headers.merge!(headers) }
+
+  let(:task_class) do
+    Class.new(Spree::MaintenanceTask) do
+      def self.name = 'TestMaintenance::Authorized'
+      def collection = Spree::Product.order(:id)
+      def process(product) = nil
+    end
+  end
+
+  let!(:run) { create(:maintenance_task_run, task_name: 'TestMaintenance::Authorized', status: 'running') }
+
+  before do
+    stub_const('TestMaintenance::Authorized', task_class)
+    Spree.maintenance_tasks << 'TestMaintenance::Authorized'
+  end
+
+  after { Spree.maintenance_tasks.delete('TestMaintenance::Authorized') }
+
+  context 'a role with no maintenance-task permission' do
+    let(:custom_permissions) { %w[read_orders write_products] }
+
+    it 'cannot list runs' do
+      get :index
+
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    # The point of the separate key: broad data permissions elsewhere must not
+    # add up to permission to run bulk rewrites.
+    it 'cannot start a run' do
+      post :create, params: { task_name: 'authorized' }
+
+      expect(response).to have_http_status(:forbidden)
+      expect(Spree::MaintenanceTaskRun.where(status: 'enqueued')).to be_empty
+    end
+  end
+
+  context 'a role granted read access only' do
+    let(:custom_permissions) { %w[read_maintenance_tasks] }
+
+    it 'can review the run history' do
+      get :index
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    it 'cannot start a run' do
+      post :create, params: { task_name: 'authorized' }
+
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    # A backtrace names internal paths and class names — detail that belongs
+    # to whoever may act on the run, not to everyone who may read it.
+    it 'does not see error backtraces' do
+      run.update!(status: 'errored', error_class: 'ArgumentError',
+                  error_message: 'boom', error_backtrace: "app/models/secret.rb:42")
+
+      get :show, params: { id: run.prefixed_id }
+
+      expect(json_response['error_message']).to eq('boom')
+      expect(json_response['error_backtrace']).to be_nil
+    end
+  end
+
+  # A secret key passes every CanCanCan check by design, so whether it may see
+  # a backtrace has to be read from its scopes.
+  context 'a secret key with read scope only' do
+    let(:secret_api_key) { create(:api_key, :secret, store: store, scopes: %w[read_maintenance_tasks]) }
+    let(:headers) { api_key_headers }
+
+    it 'does not see error backtraces' do
+      run.update!(status: 'errored', error_class: 'ArgumentError',
+                  error_message: 'boom', error_backtrace: "app/models/secret.rb:42")
+
+      get :show, params: { id: run.prefixed_id }
+
+      expect(json_response['error_message']).to eq('boom')
+      expect(json_response['error_backtrace']).to be_nil
+    end
+  end
+
+  # A secret key is authorized by its scopes rather than by the ability, so
+  # the switch has to refuse it in the controller.
+  context 'a secret key with write scope when the installation turns tasks off' do
+    let(:secret_api_key) { create(:api_key, :secret, store: store, scopes: %w[write_maintenance_tasks]) }
+    let(:headers) { api_key_headers }
+
+    before { allow(Spree::Config).to receive(:maintenance_tasks_dashboard_enabled).and_return(false) }
+
+    it 'cannot list runs' do
+      get :index
+
+      expect(response).to have_http_status(:forbidden)
+      expect(json_response['error']['message']).to include('spree upgrade')
+    end
+
+    it 'cannot start a run' do
+      run.update!(status: 'succeeded')
+
+      post :create, params: { task_name: 'authorized' }
+
+      expect(response).to have_http_status(:forbidden)
+      expect(Spree::MaintenanceTaskRun.where(status: 'enqueued')).to be_empty
+    end
+  end
+
+  context 'a role granted write access' do
+    let(:custom_permissions) { %w[write_maintenance_tasks] }
+
+    it 'can start a run' do
+      # Nothing may be in flight: one run per task is the rule.
+      run.update!(status: 'succeeded')
+
+      post :create, params: { task_name: 'authorized' }
+
+      expect(response).to have_http_status(:created)
+    end
+
+    it 'sees error backtraces' do
+      run.update!(status: 'errored', error_class: 'ArgumentError',
+                  error_message: 'boom', error_backtrace: "app/models/secret.rb:42")
+
+      get :show, params: { id: run.prefixed_id }
+
+      expect(json_response['error_backtrace']).to include('secret.rb')
+    end
+  end
+end

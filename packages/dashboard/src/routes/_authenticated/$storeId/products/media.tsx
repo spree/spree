@@ -1,11 +1,30 @@
 import type { Media, MediaUsageReference } from '@spree/admin-sdk'
+import { MEDIA_TYPES } from '@spree/core'
 import {
   adminClient,
   Can,
+  extensionFormValues,
+  extensionSubmitValues,
+  formatMediaBytes,
   ImageUploadField,
+  MediaEditorDialog,
+  MediaEditorSection,
+  MediaFilterChip,
+  MediaListHeader,
+  MediaRowBody,
+  MediaTileBody,
+  MediaViewMenu,
+  mapSpreeErrorsToForm,
+  mediaFileTypeLabel,
+  mediaListClassName,
+  mediaRowClassName,
+  mediaTileClassName,
   PageHeader,
+  Slot,
+  SortMenu,
   Subject,
-  useDirectUpload,
+  useFileUpload,
+  useMediaView,
   usePermissions,
 } from '@spree/dashboard-core'
 import {
@@ -16,43 +35,44 @@ import {
   ContextMenuItem,
   ContextMenuSeparator,
   ContextMenuTrigger,
+  cn,
   Field,
   FieldLabel,
   Input,
   MediaPreview,
   Pagination,
   SearchInput,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
   toastManager,
   useConfirm,
 } from '@spree/dashboard-ui'
 import {
   DownloadIcon,
-  FilmIcon,
   ImageIcon,
+  InfoIcon,
   Loader2Icon,
   PencilIcon,
-  PlayIcon,
   TrashIcon,
   UploadIcon,
 } from '@spree/dashboard-ui/icons'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { useDeferredValue, useRef, useState } from 'react'
+import type { TFunction } from 'i18next'
+import {
+  type ReactElement,
+  type ReactNode,
+  useDeferredValue,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
+import { FormProvider, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
 import {
+  DraftCustomFieldsCard,
+  useCustomFieldsDraft,
+} from '../../../../components/spree/custom-fields/custom-fields-inline'
+import {
   mediaPreviewUrl,
-  mediaThumbnailUrl,
   useCreateMediaLibraryFile,
   useDeleteMediaLibraryFile,
   useMediaLibrary,
@@ -63,7 +83,7 @@ import {
 const PLACEMENT_FILTERS = ['all', 'attached', 'unattached'] as const
 type PlacementFilter = (typeof PLACEMENT_FILTERS)[number]
 
-const TYPE_FILTERS = ['all', 'image', 'video', 'external_video'] as const
+const TYPE_FILTERS = ['all', ...MEDIA_TYPES] as const
 type TypeFilter = (typeof TYPE_FILTERS)[number]
 
 // Multiples of the widest grid (6 columns at lg), so a full page always ends
@@ -78,6 +98,8 @@ const mediaSearchSchema = z.object({
   search: z.string().optional(),
   placement: z.enum(PLACEMENT_FILTERS).optional().default('all'),
   type: z.enum(TYPE_FILTERS).optional().default('all'),
+  sort: z.enum(['created_at', 'filename', 'byte_size']).optional().default('created_at'),
+  direction: z.enum(['asc', 'desc']).optional().default('desc'),
 })
 
 export const Route = createFileRoute('/_authenticated/$storeId/products/media')({
@@ -92,7 +114,8 @@ function MediaLibraryPage() {
   const searchParams = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
 
-  const { page, limit: perPage, placement, type: mediaType } = searchParams
+  const { page, limit: perPage, placement, type: mediaType, sort, direction } = searchParams
+  const [view, setView] = useMediaView()
   // The input is local so typing is instant; the URL carries the committed
   // value. `replace` keeps keystrokes from piling up as history entries.
   const [searchInput, setSearchInput] = useState(searchParams.search ?? '')
@@ -111,7 +134,7 @@ function MediaLibraryPage() {
   const [uploading, setUploading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const directUpload = useDirectUpload()
+  const fileUpload = useFileUpload()
   const createFile = useCreateMediaLibraryFile()
   const deleteFile = useDeleteMediaLibraryFile()
 
@@ -129,6 +152,7 @@ function MediaLibraryPage() {
     ...(deferredSearch.trim() ? { filename_cont: deferredSearch.trim() } : {}),
     ...(placement === 'all' ? {} : { [placement]: true }),
     ...(mediaType === 'all' ? {} : { media_type_eq: mediaType }),
+    sort: `${direction === 'desc' ? '-' : ''}${sort}` as const,
   })
 
   const files = query.data?.data ?? []
@@ -147,7 +171,7 @@ function MediaLibraryPage() {
         // Per file, so one bad file doesn't discard the ones that worked and
         // the merchant is told which failed.
         try {
-          const upload = await directUpload.mutateAsync(file)
+          const upload = await fileUpload.mutateAsync(file)
           await createFile.mutateAsync({
             signed_id: upload.signedId,
             alt: file.name,
@@ -239,63 +263,65 @@ function MediaLibraryPage() {
                 ) : (
                   <UploadIcon className="size-4" />
                 )}
-                {t('admin.media_library.upload')}
+                <span>{t('admin.media_library.upload')}</span>
               </Button>
             </Can>
           }
         />
 
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-          <SearchInput
-            value={searchInput}
-            onValueChange={(value) => {
-              setSearchInput(value)
-              patchSearch({ search: value || undefined }, true)
-            }}
-            placeholder={t('admin.media_library.search_placeholder')}
-            clearLabel={t('admin.common.clear')}
-            className="sm:max-w-xs"
-          />
-
-          <Select
-            items={PLACEMENT_FILTERS.map((value) => ({
-              value,
-              label: t(`admin.media_library.placement.${value}`),
-            }))}
-            value={placement}
-            onValueChange={(value) => patchSearch({ placement: value as PlacementFilter })}
-          >
-            <SelectTrigger className="sm:w-44">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {PLACEMENT_FILTERS.map((value) => (
-                <SelectItem key={value} value={value}>
-                  {t(`admin.media_library.placement.${value}`)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <Select
-            items={TYPE_FILTERS.map((value) => ({
-              value,
-              label: t(`admin.media_library.type.${value}`),
-            }))}
-            value={mediaType}
-            onValueChange={(value) => patchSearch({ type: value as TypeFilter })}
-          >
-            <SelectTrigger className="sm:w-44">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {TYPE_FILTERS.map((value) => (
-                <SelectItem key={value} value={value}>
-                  {t(`admin.media_library.type.${value}`)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+        {/* The media picker's toolbar, so the library reads the same on its
+            page and in the dialog: search, sort and view on one row, the
+            filters as chips under it. */}
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center gap-2">
+            <SearchInput
+              value={searchInput}
+              onValueChange={(value) => {
+                setSearchInput(value)
+                patchSearch({ search: value || undefined }, true)
+              }}
+              placeholder={t('admin.media_library.search_placeholder')}
+              clearLabel={t('admin.common.clear')}
+              className="h-11 max-w-xl flex-1 lg:h-[2.125rem]"
+            />
+            <div className="ms-auto flex items-center gap-2">
+              <SortMenu
+                columns={[
+                  { key: 'created_at', label: t('admin.media_picker.sort_date_added') },
+                  { key: 'filename', label: t('admin.media_picker.sort_file_name') },
+                  { key: 'byte_size', label: t('admin.media_picker.sort_file_size') },
+                ]}
+                sort={{ field: sort, direction }}
+                onSortChange={(next) =>
+                  patchSearch({
+                    sort: next.field as typeof sort,
+                    direction: next.direction,
+                  })
+                }
+              />
+              <MediaViewMenu view={view} onViewChange={setView} />
+            </div>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <MediaFilterChip
+              label={t('admin.media_picker.filter_type')}
+              value={mediaType}
+              onChange={(value) => patchSearch({ type: value as TypeFilter })}
+              options={TYPE_FILTERS.map((value) => ({
+                value,
+                label: t(`admin.media_library.type.${value}`),
+              }))}
+            />
+            <MediaFilterChip
+              label={t('admin.media_picker.filter_usage')}
+              value={placement}
+              onChange={(value) => patchSearch({ placement: value as PlacementFilter })}
+              options={PLACEMENT_FILTERS.map((value) => ({
+                value,
+                label: t(`admin.media_library.placement.${value}`),
+              }))}
+            />
+          </div>
         </div>
 
         {/* No card around the grid: each tile already carries its own frame, so
@@ -307,69 +333,60 @@ function MediaLibraryPage() {
               <Loader2Icon className="size-5 animate-spin" />
             </div>
           ) : files.length === 0 ? (
-            <p className="py-16 text-center text-muted-foreground text-sm">
+            <p className="py-16 text-center text-muted-foreground text-base">
               {deferredSearch.trim() || placement !== 'all' || mediaType !== 'all'
                 ? t('admin.media_library.no_results')
                 : t('admin.media_library.empty')}
             </p>
           ) : (
-            <ul className="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-6">
-              {files.map((media) => (
-                <li key={media.id}>
-                  <ContextMenu>
-                    <ContextMenuTrigger
-                      render={
+            <div>
+              {view === 'list' && <MediaListHeader trailingClassName={USAGE_COLUMN} />}
+              <ul
+                className={
+                  view === 'grid'
+                    ? 'grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-6'
+                    : mediaListClassName
+                }
+              >
+                {files.map((media) => (
+                  <li key={media.id}>
+                    <MediaFileMenu
+                      media={media}
+                      canWrite={canWrite}
+                      onEdit={() => setSelected(media)}
+                      onDelete={() => handleDeleteFromGrid(media)}
+                      trigger={
                         <button
                           type="button"
                           onClick={() => setSelected(media)}
-                          className="block w-full cursor-pointer text-left overflow-hidden rounded-md border border-border transition-colors hover:border-muted-foreground focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
+                          className={view === 'grid' ? mediaTileClassName() : mediaRowClassName()}
                         />
                       }
                     >
-                      <MediaTile media={media} />
-                      <span className="block truncate px-2 py-1.5 text-xs">
-                        {media.alt || media.filename || ''}
-                      </span>
-                    </ContextMenuTrigger>
-
-                    {/* A shortcut to what the detail panel already offers —
-                      right-click is undiscoverable and absent on touch. */}
-                    <ContextMenuContent>
-                      <ContextMenuItem onClick={() => setSelected(media)}>
-                        <PencilIcon />
-                        {t('admin.actions.edit')}
-                      </ContextMenuItem>
-                      {media.download_url && (
-                        // A click rather than an anchor: Base UI's `render`
-                        // replaces the item, and the URL already carries a
-                        // Content-Disposition attachment header, so navigating
-                        // to it downloads rather than opening a page.
-                        <ContextMenuItem
-                          onClick={() => {
-                            window.location.href = media.download_url as string
-                          }}
-                        >
-                          <DownloadIcon />
-                          {t('admin.media_library.download')}
-                        </ContextMenuItem>
+                      {view === 'grid' ? (
+                        <MediaTileBody media={media} />
+                      ) : (
+                        <MediaRowBody
+                          media={media}
+                          trailing={
+                            <span
+                              className={cn(
+                                USAGE_COLUMN,
+                                'text-right text-muted-foreground text-xs',
+                              )}
+                            >
+                              {t(
+                                `admin.media_library.placement.${media.attached ? 'attached' : 'unattached'}`,
+                              )}
+                            </span>
+                          }
+                        />
                       )}
-                      {canWrite && (
-                        <>
-                          <ContextMenuSeparator />
-                          <ContextMenuItem
-                            variant="destructive"
-                            onClick={() => handleDeleteFromGrid(media)}
-                          >
-                            <TrashIcon />
-                            {t('admin.actions.delete')}
-                          </ContextMenuItem>
-                        </>
-                      )}
-                    </ContextMenuContent>
-                  </ContextMenu>
-                </li>
-              ))}
-            </ul>
+                    </MediaFileMenu>
+                  </li>
+                ))}
+              </ul>
+            </div>
           )}
         </div>
 
@@ -392,38 +409,72 @@ function MediaLibraryPage() {
   )
 }
 
-// One cell of the grid: a still, never a player — dozens of video elements in
-// one view is not a gallery. The detail panel uses MediaPreview, which plays.
-function MediaTile({ media }: { media: Media }) {
-  const thumbnail = mediaThumbnailUrl(media)
+/**
+ * A file's right-click menu, around whichever shape the view draws it in. A
+ * shortcut to what the detail panel already offers — right-click is
+ * undiscoverable and absent on touch.
+ */
+// The media page's own column after `MediaRowBody`'s: where the file is used.
+const USAGE_COLUMN = 'hidden w-24 shrink-0 md:block'
 
+function MediaFileMenu({
+  media,
+  canWrite,
+  onEdit,
+  onDelete,
+  trigger,
+  children,
+}: {
+  media: Media
+  canWrite: boolean
+  onEdit: () => void
+  onDelete: () => void
+  trigger: ReactElement
+  children: ReactNode
+}) {
+  const { t } = useTranslation()
   return (
-    <span className="relative flex aspect-square items-center justify-center bg-muted">
-      {thumbnail ? (
-        <img
-          src={thumbnail}
-          alt={media.alt ?? ''}
-          loading="lazy"
-          className="size-full object-cover"
-        />
-      ) : (
-        // A video with no poster has no still to show — say so with the film
-        // icon rather than a broken-image placeholder.
-        <MediaPlaceholderIcon media={media} />
-      )}
-      {media.media_type !== 'image' && (
-        <span className="absolute top-1.5 left-1.5 rounded bg-black/60 p-1 text-white">
-          <PlayIcon className="size-3" />
-        </span>
-      )}
-    </span>
+    <ContextMenu>
+      <ContextMenuTrigger render={trigger}>{children}</ContextMenuTrigger>
+      <ContextMenuContent>
+        <ContextMenuItem onClick={onEdit}>
+          <PencilIcon />
+          {t('admin.actions.edit')}
+        </ContextMenuItem>
+        {media.download_url && (
+          // A click rather than an anchor: Base UI's `render` replaces the
+          // item, and the URL already carries a Content-Disposition
+          // attachment header, so navigating to it downloads.
+          <ContextMenuItem
+            onClick={() => {
+              window.location.href = media.download_url as string
+            }}
+          >
+            <DownloadIcon />
+            {t('admin.media_library.download')}
+          </ContextMenuItem>
+        )}
+        <Slot name="media.context_menu" context={{ media, canWrite }} />
+        {canWrite && (
+          <>
+            <ContextMenuSeparator />
+            <ContextMenuItem variant="destructive" onClick={onDelete}>
+              <TrashIcon />
+              {t('admin.actions.delete')}
+            </ContextMenuItem>
+          </>
+        )}
+      </ContextMenuContent>
+    </ContextMenu>
   )
 }
 
-function MediaPlaceholderIcon({ media }: { media: Media }) {
-  const Icon = media.media_type === 'image' ? ImageIcon : FilmIcon
+interface MediaDetailFormValues {
+  alt: string
+}
 
-  return <Icon className="size-6 text-muted-foreground" />
+function mediaDetailFormValues(media: Media): MediaDetailFormValues {
+  return { alt: media.alt ?? '', ...extensionFormValues('media', media) }
 }
 
 function MediaDetailSheet({
@@ -435,16 +486,14 @@ function MediaDetailSheet({
   onOpenChange: (open: boolean) => void
   canWrite: boolean
 }) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { storeId } = Route.useParams()
   const confirm = useConfirm()
   const updateFile = useUpdateMediaLibraryFile()
   const usage = useMediaUsage(media?.id ?? null)
-  const [alt, setAlt] = useState('')
-  // Compared against what was last saved, not against the record the sheet
-  // opened with: that snapshot never refreshes, so after a successful save it
-  // would still hold the old alt and every close would ask to discard.
-  const [savedAlt, setSavedAlt] = useState('')
+  // A host form for `media.form_fields` widgets: what they bind saves with the
+  // sheet's Save, alongside the alt text.
+  const form = useForm<MediaDetailFormValues>({ defaultValues: { alt: '' } })
   const [poster, setPoster] = useState<{
     signedId: string | null
     previewUrl: string | null
@@ -453,34 +502,51 @@ function MediaDetailSheet({
 
   // Seeded from the record each time a different file is opened, so typing is
   // not overwritten by a background refetch of the same row.
+  // Cleared on close, so reopening the same file drops what was discarded.
   const [seededFor, setSeededFor] = useState<string | null>(null)
+  if (!media && seededFor !== null) setSeededFor(null)
   if (media && seededFor !== media.id) {
     setSeededFor(media.id)
-    setAlt(media.alt ?? '')
-    setSavedAlt(media.alt ?? '')
     setPoster({ signedId: null, previewUrl: null, cleared: false })
   }
+  // biome-ignore lint/correctness/useExhaustiveDependencies: keyed on the file, not on each refetch of it
+  useEffect(() => {
+    if (media) form.reset(mediaDetailFormValues(media))
+  }, [seededFor, form])
 
   const references = usage.data?.data ?? []
 
-  const isDirty = !!media && alt !== savedAlt
+  const customFields = useCustomFieldsDraft('media', media?.id ?? '')
+  const isDirty = !!media && (form.formState.isDirty || customFields.isDirty)
 
   // An explicit save, not save-on-blur: blur is invisible, so a merchant had
   // no way to tell whether their edit stuck.
-  function saveAlt() {
+  async function save(values: MediaDetailFormValues) {
     if (!media || !isDirty) return
 
-    const submitted = alt
-    updateFile.mutate(
-      { id: media.id, alt: submitted },
-      {
-        onSuccess: () => {
-          setSavedAlt(submitted)
-          toastManager.add({ type: 'success', title: t('admin.messages.saved') })
-        },
-        onError: () => toastManager.add({ type: 'error', title: t('admin.errors.failed_to_save') }),
-      },
-    )
+    try {
+      if (form.formState.isDirty) {
+        const submitted = form.getValues()
+        await updateFile.mutateAsync({
+          id: media.id,
+          alt: values.alt,
+          ...extensionSubmitValues('media', form),
+        })
+        // Re-baselined against what was just saved, not the record the sheet
+        // opened with: that snapshot never refreshes, so after a save every
+        // close would otherwise ask to discard. Also keeps a retry after a
+        // failed custom field save from re-sending the file. An edit typed
+        // while the request was out stays on screen and stays unsaved.
+        form.reset(submitted, { keepValues: true })
+      }
+      if (await customFields.save()) {
+        toastManager.add({ type: 'success', title: t('admin.messages.saved') })
+      }
+    } catch (error) {
+      if (!mapSpreeErrorsToForm(error, form.setError)) {
+        toastManager.add({ type: 'error', title: t('admin.errors.failed_to_save') })
+      }
+    }
   }
 
   // Closing with an unsaved edit would drop it silently, so ask first.
@@ -496,8 +562,7 @@ function MediaDetailSheet({
     if (discard) onOpenChange(false)
   }
 
-  // The poster saves on the spot — picking a file is already an explicit act,
-  // and there is no surrounding form to carry it.
+  // The poster saves on the spot — picking a file is already an explicit act.
   function savePoster(value: {
     signedId: string | null
     previewUrl: string | null
@@ -513,142 +578,150 @@ function MediaDetailSheet({
     })
   }
 
+  if (!media) return null
+
+  const details = [mediaFileTypeLabel(media), formatMediaBytes(media.byte_size, i18n.language)]
+    .filter(Boolean)
+    .join(' · ')
+
   return (
-    <Sheet open={!!media} onOpenChange={handleOpenChange}>
-      <SheetContent className="w-full sm:max-w-md">
-        {media && (
-          <>
-            <SheetHeader>
-              <SheetTitle>{media.filename || t('admin.media_library.file')}</SheetTitle>
-              <SheetDescription>
-                {media.attached
-                  ? t('admin.media_library.placement.attached')
-                  : t('admin.media_library.placement.unattached')}
-              </SheetDescription>
-            </SheetHeader>
+    <FormProvider {...form}>
+      <MediaEditorDialog
+        open
+        onOpenChange={handleOpenChange}
+        title={media.filename || t('admin.media_library.file')}
+        description={
+          media.attached
+            ? t('admin.media_library.placement.attached')
+            : t('admin.media_library.placement.unattached')
+        }
+        // A form, so Enter in any field saves, like any single-field form.
+        onSubmit={form.handleSubmit(save)}
+        actions={
+          canWrite && (
+            // Deleting a file is not editing it — that lives in the grid's
+            // context menu, away from the field a merchant is typing in.
+            <>
+              <Button type="button" variant="outline" onClick={() => handleOpenChange(false)}>
+                {t('admin.actions.cancel')}
+              </Button>
+              <Button type="submit" disabled={!isDirty || form.formState.isSubmitting}>
+                {form.formState.isSubmitting && <Loader2Icon className="size-4 animate-spin" />}
+                <span>{t('admin.actions.save')}</span>
+              </Button>
+            </>
+          )
+        }
+        preview={
+          <MediaPreview
+            fit="stage"
+            mediaType={media.media_type}
+            previewUrl={mediaPreviewUrl(media)}
+            videoUrl={media.video_url}
+            embedUrl={media.video_embed_url}
+            alt={form.watch('alt')}
+          />
+        }
+      >
+        <MediaEditorSection icon={<InfoIcon />} title={t('admin.media_editor.information')}>
+          {form.formState.errors.root?.message && (
+            <p className="text-destructive text-base" role="alert">
+              {form.formState.errors.root.message}
+            </p>
+          )}
 
-            <div className="flex-1 space-y-5 overflow-y-auto p-4">
-              <MediaPreview
-                mediaType={media.media_type}
-                previewUrl={mediaPreviewUrl(media)}
-                videoUrl={media.video_url}
-                embedUrl={media.video_embed_url}
-                alt={media.alt ?? ''}
-              />
+          <Field>
+            <FieldLabel htmlFor="media-alt">{t('admin.fields.media.alt.label')}</FieldLabel>
+            <Input
+              id="media-alt"
+              disabled={!canWrite}
+              placeholder={t('admin.fields.media.alt.placeholder')}
+              {...form.register('alt')}
+            />
+          </Field>
 
-              {/* A video needs a still for gallery tiles, emails and every
-                  listing that renders an <img>. YouTube supplies one; an
-                  upload or a Vimeo link does not. */}
-              {media.media_type !== 'image' && canWrite && (
-                <ImageUploadField
-                  label={t('admin.fields.media.poster.label')}
-                  help={t('admin.fields.media.poster.help')}
-                  serverUrl={media.poster_url}
-                  value={poster}
-                  onChange={savePoster}
-                />
-              )}
+          <Slot name="media.form_fields" context={{ media, canWrite }} />
 
-              <Field>
-                <FieldLabel htmlFor="media-alt">{t('admin.fields.media.alt.label')}</FieldLabel>
-                <Input
-                  id="media-alt"
-                  value={alt}
-                  disabled={!canWrite}
-                  onChange={(e) => setAlt(e.target.value)}
-                  // Enter saves, like any single-field form.
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && isDirty) {
-                      e.preventDefault()
-                      saveAlt()
-                    }
-                  }}
-                  placeholder={t('admin.fields.media.alt.placeholder')}
-                />
-              </Field>
+          <div className="flex flex-col gap-1 text-base">
+            <span className="font-medium">{t('admin.media_editor.details')}</span>
+            {details && <span className="text-muted-foreground">{details}</span>}
+            <span className="text-muted-foreground">
+              {t('admin.media_editor.added', {
+                date: new Date(media.created_at).toLocaleDateString(i18n.language, {
+                  day: 'numeric',
+                  month: 'short',
+                  year: 'numeric',
+                }),
+              })}
+            </span>
+          </div>
 
-              <dl className="space-y-2 text-sm">
-                <FileFact label={t('admin.media_library.facts.type')} value={media.content_type} />
-                <FileFact
-                  label={t('admin.media_library.facts.size')}
-                  value={formatBytes(media.byte_size)}
-                />
-              </dl>
+          <div className="flex flex-col gap-1.5 text-base">
+            <span className="font-medium">{t('admin.media_library.usage.title')}</span>
+            {usage.isLoading ? (
+              <Loader2Icon className="size-4 animate-spin text-muted-foreground" />
+            ) : references.length === 0 ? (
+              <span className="text-muted-foreground">{t('admin.media_library.usage.empty')}</span>
+            ) : (
+              <ul className="space-y-1.5">
+                {references.map((reference) => {
+                  const target = usageLink(reference)
 
-              <div>
-                <h3 className="mb-2 font-medium text-sm">{t('admin.media_library.usage.title')}</h3>
-                {usage.isLoading ? (
-                  <Loader2Icon className="size-4 animate-spin text-muted-foreground" />
-                ) : references.length === 0 ? (
-                  <p className="text-muted-foreground text-sm">
-                    {t('admin.media_library.usage.empty')}
-                  </p>
-                ) : (
-                  <ul className="space-y-1.5">
-                    {references.map((reference) => {
-                      const target = usageLink(reference)
-
-                      return (
-                        <li
-                          key={`${reference.kind}-${reference.owner_type}-${reference.owner_id}-${reference.field}`}
-                          className="flex items-center justify-between gap-2 text-sm"
+                  return (
+                    <li
+                      key={`${reference.kind}-${reference.owner_type}-${reference.owner_id}-${reference.field}`}
+                      className="flex items-center justify-between gap-2"
+                    >
+                      {target ? (
+                        <Link
+                          to={target.to}
+                          params={{ storeId, ...target.params }}
+                          className="truncate text-link underline-offset-4 hover:underline"
                         >
-                          {target ? (
-                            <Link
-                              to={target.to}
-                              params={{ storeId, ...target.params }}
-                              className="truncate underline-offset-4 hover:underline"
-                            >
-                              {reference.name}
-                            </Link>
-                          ) : (
-                            <span className="truncate">{reference.name}</span>
-                          )}
-                          <Badge variant="secondary">{usageBadgeLabel(reference, t)}</Badge>
-                        </li>
-                      )
-                    })}
-                  </ul>
-                )}
-              </div>
-            </div>
-
-            {canWrite && (
-              // Cancel / Save, matching the product gallery's edit sheet.
-              // Deleting a file is not editing it — that lives in the grid's
-              // context menu, away from the field a merchant is typing in.
-              <SheetFooter className="flex-row justify-end">
-                <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-                  {t('admin.actions.cancel')}
-                </Button>
-                <Button type="button" disabled={!isDirty || updateFile.isPending} onClick={saveAlt}>
-                  {updateFile.isPending && <Loader2Icon className="size-4 animate-spin" />}
-                  {t('admin.actions.save')}
-                </Button>
-              </SheetFooter>
+                          {reference.name}
+                        </Link>
+                      ) : (
+                        <span className="truncate">{reference.name}</span>
+                      )}
+                      <Badge variant="secondary">{usageBadgeLabel(reference, t)}</Badge>
+                    </li>
+                  )
+                })}
+              </ul>
             )}
-          </>
+          </div>
+        </MediaEditorSection>
+
+        {/* A video needs a still for gallery tiles, emails and every listing
+            that renders an <img>. YouTube supplies one; an upload or a Vimeo
+            link does not. */}
+        {media.media_type !== 'image' && canWrite && (
+          <MediaEditorSection icon={<ImageIcon />} title={t('admin.fields.media.poster.label')}>
+            <ImageUploadField
+              help={t('admin.fields.media.poster.help')}
+              serverUrl={media.poster_url}
+              value={poster}
+              onChange={savePoster}
+            />
+          </MediaEditorSection>
         )}
-      </SheetContent>
-    </Sheet>
+
+        {canWrite && <DraftCustomFieldsCard draft={customFields} hideWhenEmpty />}
+      </MediaEditorDialog>
+    </FormProvider>
   )
 }
 
-const USAGE_OWNER_LABELS: Record<string, string> = {
-  'Spree::Product': 'product',
-  'Spree::Variant': 'variant',
-  'Spree::Taxon': 'category',
-  'Spree::Category': 'category',
-  'Spree::Collection': 'collection',
-}
+const USAGE_OWNER_LABELS = new Set(['product', 'variant', 'category', 'collection'])
 
 // A placement's badge names what kind of place it is — a category placement
 // labeled "Product" would be wrong. Non-placement kinds (a bare image field, a
 // description embed) keep their kind label.
-function usageBadgeLabel(reference: MediaUsageReference, t: (key: string) => string): string {
+function usageBadgeLabel(reference: MediaUsageReference, t: TFunction): string {
   if (reference.kind === 'media') {
-    const owner = USAGE_OWNER_LABELS[reference.owner_type]
-    if (owner) return t(`admin.media_library.usage.owner.${owner}`)
+    if (USAGE_OWNER_LABELS.has(reference.owner_type)) {
+      return t(`admin.media_library.usage.owner.${reference.owner_type}`)
+    }
   }
 
   return t(`admin.media_library.usage.kind.${reference.kind}`)
@@ -663,25 +736,24 @@ function usageLink(
   if (!reference.owner_id) return null
 
   switch (reference.owner_type) {
-    case 'Spree::Product':
+    case 'product':
       return {
         to: '/$storeId/products/$productId',
         params: { productId: reference.owner_id },
       }
-    case 'Spree::Variant':
+    case 'variant':
       return null
-    case 'Spree::Taxon':
-    case 'Spree::Category':
+    case 'category':
       return {
         to: '/$storeId/products/categories/$categoryId',
         params: { categoryId: reference.owner_id },
       }
-    case 'Spree::Collection':
+    case 'collection':
       return {
         to: '/$storeId/products/collections/$collectionId',
         params: { collectionId: reference.owner_id },
       }
-    case 'Spree::Seller':
+    case 'seller':
       return {
         to: '/$storeId/sellers/$sellerId',
         params: { sellerId: reference.owner_id },
@@ -689,29 +761,4 @@ function usageLink(
     default:
       return null
   }
-}
-
-function FileFact({ label, value }: { label: string; value?: string | null }) {
-  if (!value) return null
-
-  return (
-    <div className="flex items-center justify-between gap-2">
-      <dt className="text-muted-foreground">{label}</dt>
-      <dd className="truncate">{value}</dd>
-    </div>
-  )
-}
-
-function formatBytes(bytes?: number | null): string | null {
-  if (!bytes) return null
-
-  const units = ['B', 'KB', 'MB', 'GB']
-  let value = bytes
-  let unit = 0
-  while (value >= 1024 && unit < units.length - 1) {
-    value /= 1024
-    unit += 1
-  }
-
-  return `${value.toFixed(unit === 0 ? 0 : 1)} ${units[unit]}`
 }

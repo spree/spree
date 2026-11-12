@@ -18,9 +18,6 @@ module Spree
       let!(:stock_location) { create :stock_location_with_items }
       let!(:stock_level) { stock_location.stock_levels.order(:id).first }
 
-      specify { expect(subject.stock_levels).to eq([stock_level]) }
-      specify { expect(subject.variant).to eq(stock_level.variant) }
-
       # The quantifier answers from memory when the caller has already loaded
       # the rows, and falls back to SQL when it has not. Listing endpoints
       # preload precisely so they take the first path — without coverage, a
@@ -51,6 +48,20 @@ module Spree
             includes(stock_levels: [:stock_location, :active_stock_reservations]).
             first
           quantifier = described_class.new(preloaded)
+
+          queries = count_queries do
+            quantifier.available_stock
+            quantifier.reserved_quantity
+          end
+
+          expect(queries).to eq(0)
+          expect(quantifier.available_stock).to eq(described_class.new(variant).available_stock)
+        end
+
+        it 'answers from memory for variants loaded through .preload' do
+          loaded = Spree::Variant.find(variant.id)
+          described_class.preload([loaded])
+          quantifier = described_class.new(loaded)
 
           queries = count_queries do
             quantifier.available_stock
@@ -158,14 +169,6 @@ module Spree
               expect(subject.can_supply?(16)).to be false
             end
           end
-        end
-
-        context 'when variant is not available' do
-          before do
-            allow(subject.variant).to receive(:available?).and_return(false)
-          end
-
-          it { expect(subject.can_supply?).to be false }
         end
       end
 

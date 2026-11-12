@@ -1,5 +1,79 @@
 packages:
-  - "packages/*"
+  - 'packages/*'
+
+# catalog: the one version of every third-party package that two or more
+# workspace packages install. Manifests refer to it as `catalog:`, so a bump is
+# a single line here and every package moves together. Separate ranges drifted:
+# Dependabot raised the apps' react-hook-form while dashboard-ui's peer range
+# kept an older copy installed, and the two copies' types no longer matched.
+# `pnpm publish` and scripts/sync-starter.mjs write the real range out.
+#
+# The catalog decides what this workspace installs and tests, not what the
+# published packages promise. Peer ranges stay hand-written floors, so a host
+# app or plugin on an older supported version keeps installing.
+#
+# @spree/dashboard-ui ships source, so its runtime dependencies are exact
+# versions here (no caret) and the package refers to them as `catalog:` like
+# everyone else. Never pin a version in a manifest next to a catalog entry:
+# Dependabot bumps each declaration on its own, so the two drift apart.
+#
+# scripts/check-dependency-ranges.mjs (CI) enforces all of this.
+catalogMode: prefer
+catalog:
+  '@base-ui/react': 1.8.0
+  '@biomejs/biome': ^2.6.6
+  '@changesets/changelog-github': ^1.0.1
+  '@changesets/cli': ^3.0.3
+  '@clack/prompts': ^1.9.0
+  '@dnd-kit/core': 6.3.1
+  '@dnd-kit/sortable': 10.0.0
+  '@dnd-kit/utilities': 3.2.2
+  '@fontsource-variable/geist': 5.3.0
+  '@fontsource-variable/geist-mono': 5.3.0
+  '@hookform/resolvers': ^7.0.5
+  '@playwright/test': ^1.65.0
+  '@tanstack/react-hotkeys': 0.23.0
+  '@tanstack/react-query': ^5.107.1
+  '@tanstack/react-router': ^1.170.46
+  '@tanstack/react-table': 9.3.1
+  '@tanstack/router-plugin': ^1.169.0
+  '@tanstack/virtual-file-routes': ^1.162.0
+  '@types/node': ^26.6.6
+  '@types/react': ^19.2.14
+  '@types/react-dom': ^19.2.3
+  '@typescript/typescript6': ^6.0.2
+  '@uiw/react-json-view': 1.12.2
+  '@vitejs/plugin-react': ^6.3.0
+  '@vitest/coverage-v8': ^5.1.0
+  'class-variance-authority': 0.7.1
+  'clsx': 2.1.1
+  'commander': ^15.1.0
+  'date-fns': 4.4.0
+  'date-fns-tz': 3.2.0
+  'execa': ^10.2.1
+  'flag-icons': 7.6.0
+  'i18next': ^27.1.1
+  'lucide-react': 1.71.0
+  'msw': ^3.0.4
+  'picocolors': ^1.1.1
+  'react': ^19.3.1
+  'react-colorful': 5.8.1
+  'react-day-picker': 10.0.2
+  'react-dom': ^19.3.1
+  'react-hook-form': ^7.91.0
+  'react-i18next': ^18.0.1
+  'recharts': 3.10.1
+  'shadcn': ^4.23.0
+  'tailwind-merge': 3.7.0
+  'tailwindcss': ^4.3.5
+  'tsup': ^9.0.0
+  'tsx': ^4.21.0
+  'tw-animate-css': 1.4.0
+  'typescript': ~7.0.2
+  'vite': ^8.3.7
+  'vitest': ^5.1.0
+  'yaml': ^2.9.1
+  'zod': ^4.6.7
 
 # Supply-chain hardening — see https://pnpm.io/supply-chain-security
 #
@@ -24,6 +98,14 @@ packages:
 minimumReleaseAge: 2880
 blockExoticSubdeps: true
 trustPolicy: no-downgrade
+# Versions the lockfile has always resolved but that published without the
+# provenance an earlier release had. Excluding them lets a full re-resolution
+# (pnpm update) accept the same versions again; it admits nothing new.
+#   chokidar 4.0.3 — via tsup
+#   semver 6.3.1   — via @babel/core 7, which every 7.x requires
+trustPolicyExclude:
+  - chokidar@4.0.3
+  - semver@6.3.1
 dangerouslyAllowAllBuilds: false
 
 # allowBuilds: per-package decision on whether install scripts run.
@@ -65,95 +147,43 @@ overrides:
   # refuses it. 9.3.0 carries provenance again and is in range. Drop this once
   # recharts resolves 9.3+ on its own.
   react-redux: 9.3.0
+  # Still load-bearing after the 2026-10 cleanup, when every security pin a
+  # plain update makes redundant was dropped:
+  #   esbuild        — vite 8 still resolves 0.27.x (GHSA-g7r4-m6w7-qqqr)
+  #   read-yaml-file — changesets' @manypkg resolves read-yaml-file 1, whose
+  #                    js-yaml 3 pulls a vulnerable sprintf-js; the 2.x line is
+  #                    on js-yaml 4
   esbuild: ^0.28.1
-  vite: ^8.0.16
-  js-yaml: ^4.3.2
-  # js-yaml ^4 drops the safeLoad API that read-yaml-file@1 calls; bump
-  # read-yaml-file (transitive via changesets) to its js-yaml-4 line so
-  # the js-yaml pin above doesn't break the release tooling.
   read-yaml-file: ^2.1.0
-  # Second wave, flagged by the weekly audit workflow. All single-version
-  # in the tree, all same-major bumps — no API breakage.
-  #   rollup         — path-traversal arbitrary file write (transitive via tsup)
-  #   hono           — CORS/cookie/path-traversal cluster (transitive via shadcn's MCP SDK)
-  #   qs             — DoS in qs.stringify (transitive via shadcn's MCP SDK -> express)
-  #   brace-expansion — ReDoS bypassing the documented max guard (transitive via shadcn -> ts-morph)
-  rollup: ^4.59.0
-  hono: ^4.13.5
-  qs: ^6.16.0
-  brace-expansion: ^5.0.9
-  # Third wave. Each of these resolves to a single version line in the tree,
-  # so a plain caret pin is enough — no per-advisory range keys needed.
-  #   nanoid          — unbounded loop on a negative or zero size
-  #   postcss         — source-map path traversal reads arbitrary .map files
-  #   fast-uri        — host confusion via backslash/IDN authority parsing
-  #   ip-address      — octal/IPv4-mapped parsing gaps that bypass SSRF checks
-  #   body-parser     — invalid limit value silently disables the size cap
-  #   @hono/node-server — serve-static path traversal on Windows via %5C
-  nanoid: ^3.3.18
-  postcss: ^8.5.23
-  fast-uri: ^3.1.6
-  ip-address: ^10.3.1
-  body-parser: ^2.3.0
-  '@hono/node-server': ^1.19.15
   # Fourth wave. A caret on @tiptap/core alone floated to 3.31.x while
   # @tiptap/react stayed on 3.22, which still imports cancelPositionCheck
   # and schedulePositionCheck — exports 3.31 removed. Pin the family
   # together on the patched line (prototype pollution <3.30.4, Markdown
   # ReDoS <3.30.5).
-  '@tiptap/core': 3.31.3
-  '@tiptap/pm': 3.31.3
-  '@tiptap/react': 3.31.3
-  '@tiptap/starter-kit': 3.31.3
-  '@tiptap/extensions': 3.31.3
-  '@tiptap/extension-image': 3.31.3
-  '@tiptap/extension-link': 3.31.3
-  '@tiptap/extension-placeholder': 3.31.3
-  # @tiptap/pm 3.31 wants prosemirror-model ^1.25.11 and prosemirror-view
-  # ^1.42.3, but schema-list/state still resolve the older 1.25.4 / 1.41.8
-  # line. Two copies make wrapInList throw, so list toolbar buttons no-op.
-  prosemirror-model: 1.25.11
-  prosemirror-view: 1.42.3
-  '@vitest/mocker': ^4.1.11
-  baseline-browser-mapping: ^2.11.0
-  browserslist: ^4.28.7
-  postcss-selector-parser: ^7.1.3
-  vitest: ^4.1.11
+  '@tiptap/core': 3.32.2
+  '@tiptap/pm': 3.32.2
+  '@tiptap/react': 3.32.2
+  '@tiptap/starter-kit': 3.32.2
+  '@tiptap/extensions': 3.32.2
+  '@tiptap/extension-bubble-menu': 3.32.2
+  '@tiptap/extension-floating-menu': 3.32.2
+  '@tiptap/extension-image': 3.32.2
+  '@tiptap/extension-link': 3.32.2
+  '@tiptap/extension-placeholder': 3.32.2
+  # @tiptap/pm 3.32 wants prosemirror-model ^1.25.12 and prosemirror-view
+  # ^1.42.6, but schema-list/state still resolve an older line. Two copies
+  # make wrapInList throw, so list toolbar buttons no-op.
+  prosemirror-model: 1.25.12
+  prosemirror-view: 1.42.6
 
 # auditConfig: advisories we have reviewed and decided not to fix. The weekly
 # security-audit workflow honors this list, so an entry here also stops the job
 # from re-proposing the same pin every week.
 #
-#   @babel/core (GHSA-4x5r-pxfx-6jf8, low) — patched in 7.29.6, but pinning it
-#   fails the install outright: our consumers (shadcn, @tanstack/router-plugin)
-#   require @babel/core ^7, every 7.x needs semver@^6.3.1, and 6.3.1 is the only
-#   6.x satisfying that. It published without the provenance its predecessors
-#   had, so trustPolicy: no-downgrade rejects it — verified, not assumed. Moving
-#   to @babel/core 8 (which uses semver@^7) would break both consumers.
-#   Build-time only and needs an attacker-controlled source map to exploit.
-#   Owner: @damianlegawiec. Review by 2026-11-22, or sooner if either consumer
-#   widens its range to @babel/core 8 or semver@6.3.1 regains provenance.
+#   braces (GHSA-vfj7-8cjw-p6xm, high) — the advisory names 3.0.4 as the fix,
+#   but 3.0.4 is not published on npm, so there is nothing to move to. Reached
+#   only through @changesets/cli's globbing over our own repository files.
+#   Review by 2026-11-22, or as soon as braces 3.0.4 is published.
 auditConfig:
   ignoreGhsas:
-    - GHSA-4x5r-pxfx-6jf8
-
-minimumReleaseAgeExclude:
-  - postcss-selector-parser@7.1.3
-  - browserslist@4.28.7
-  - qs@6.16.0
-  - fast-uri@3.1.6
-  - vitest@4.1.11
-  - '@vitest/mocker@4.1.11'
-  - baseline-browser-mapping@2.11.0
-  - js-yaml@4.3.2
-  - hono@4.13.5
-  - '@tiptap/core@3.31.3'
-  - '@tiptap/pm@3.31.3'
-  - '@tiptap/react@3.31.3'
-  - '@tiptap/starter-kit@3.31.3'
-  - '@tiptap/extensions@3.31.3'
-  - '@tiptap/extension-image@3.31.3'
-  - '@tiptap/extension-link@3.31.3'
-  - '@tiptap/extension-placeholder@3.31.3'
-  - prosemirror-model@1.25.11
-  - prosemirror-view@1.42.3
+    - GHSA-vfj7-8cjw-p6xm

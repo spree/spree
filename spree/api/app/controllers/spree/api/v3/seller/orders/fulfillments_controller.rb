@@ -23,6 +23,33 @@ module Spree
 
             before_action :set_resource, only: [:show, :update, :fulfill, :cancel, :split]
 
+            request_params :fulfillment do |body|
+              body.attribute :tracking, :string, nullable: true
+              body.attribute :tracking_carrier, :string, nullable: true
+              body.attribute :stock_location_id, :id,
+                description: "One of this seller's own stock locations; the rates requote from there."
+              body.attribute :selected_delivery_rate_id, :id,
+                description: 'One of the rates quoted for this parcel from its current origin.'
+            end
+
+            request_params 'FulfillmentFulfillParams', action: :fulfill do |body|
+              body.attribute :tracking, :string, description: 'Carrier tracking number.'
+              body.attribute :tracking_carrier, :string, description: 'Carrier name.'
+              body.attribute :notify_customer, :boolean, description: 'Send the dispatch email (default true).'
+              body.attribute :items, :array,
+                description: 'Ship only these lines; the rest split onto a new fulfillment.' do |item|
+                item.attribute :item_id, :id, required: true, description: 'Prefixed line item ID.'
+                item.attribute :quantity, :integer, required: true
+              end
+            end
+
+            request_params 'FulfillmentSplitParams', action: :split do |body|
+              body.attribute :variant_id, :id, required: true, description: 'The variant being moved out.'
+              body.attribute :quantity, :integer, required: true
+              body.attribute :stock_location_id, :id,
+                description: "One of this seller's own stock locations. Defaults to the source fulfillment's location."
+            end
+
             protected
 
             def serializer_class
@@ -34,8 +61,7 @@ module Spree
             end
 
             def permitted_params
-              params.permit(:tracking, :tracking_carrier, :stock_location_id,
-                            :selected_delivery_rate_id)
+              params.permit(*declared_permitted_attributes)
             end
 
             private

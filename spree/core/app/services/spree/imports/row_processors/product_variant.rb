@@ -4,9 +4,13 @@ module Spree
       class ProductVariant < Base
         OPTION_TYPES_COUNT = 3
         CATEGORY_FIELDS = %w[category1 category2 category3].freeze
+        # Written as plain decimals ("16.50"): the models store text as sent,
+        # and "1,599.99" or "16,50" would otherwise be saved as 1 or 16.
+        DECIMAL_FIELDS = %w[price compare_at_price cost_price weight height width depth carton_weight].freeze
 
         def initialize(row, **)
           super
+          ensure_decimals!
           @store = row.store
           @seller = import.seller
           # Before the product is saved: rows are not wrapped in a transaction,
@@ -82,6 +86,14 @@ module Spree
         end
 
         private
+
+        def ensure_decimals!
+          DECIMAL_FIELDS.each do |column|
+            Spree::Money::Rounding.parse_decimal(attributes[column])
+          rescue Spree::Money::InvalidFormat
+            raise ArgumentError, I18n.t('spree.import_invalid_number', column: column, value: attributes[column].to_s.strip)
+          end
+        end
 
         # A product-header (options-empty) row creates an option-less default
         # variant to hold product-level attributes. Once an option-bearing

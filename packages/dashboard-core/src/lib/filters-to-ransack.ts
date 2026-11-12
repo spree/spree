@@ -1,3 +1,4 @@
+import { FILTER_PREDICATES } from '@spree/core'
 import { type ColumnDef, type FilterRule, parseFilterIds } from './table-registry'
 
 /**
@@ -20,7 +21,9 @@ import { type ColumnDef, type FilterRule, parseFilterIds } from './table-registr
 // `q[xxx_in][]=...` for each item. The chip stores the IDs as a CSV string
 // in `FilterRule.value` so the URL serializer (which already JSON-stringifies
 // FilterRule[]) stays simple.
-const ARRAY_OPERATORS = new Set(['in', 'not_in'])
+const ARRAY_OPERATORS = new Set<string>(
+  Object.values(FILTER_PREDICATES).flatMap((predicates) => predicates.list),
+)
 
 const NEGATING_OPERATORS = new Set(['not_in', 'not_eq'])
 

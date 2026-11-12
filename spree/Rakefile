@@ -8,13 +8,15 @@ rescue LoadError
 end
 
 SPREE_CORE_GEMS = %w(core api).freeze
-SPREE_OPTIONAL_GEMS = %w(emails dashboard opentelemetry).freeze
+SPREE_OPTIONAL_GEMS = %w(emails dashboard mcp opentelemetry).freeze
 # Provider gems sit one directory deeper and their gem name doesn't match the
 # directory, so they carry the path explicitly.
 SPREE_PROVIDER_GEMS = {
   'spree_easypost' => 'providers/easypost',
   'spree_meilisearch' => 'providers/meilisearch',
-  'spree_stripe' => 'providers/stripe'
+  'spree_stripe' => 'providers/stripe',
+  # Last, so a failed push leaves every other gem published.
+  'spree_paypal_checkout' => 'providers/paypal'
 }.freeze
 
 task default: :test

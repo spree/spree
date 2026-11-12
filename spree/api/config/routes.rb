@@ -22,6 +22,9 @@ Spree::Core::Engine.add_routes do
         # Current channel context (never a list — see Store::ChannelController)
         resource :channel, only: [:show], controller: 'channel'
 
+        # Current store context (name and default SEO metadata, localized)
+        resource :store, only: [:show], controller: 'store'
+
         # Catalog
         resources :products, only: [:index, :show] do
           collection do
@@ -43,6 +46,7 @@ Spree::Core::Engine.add_routes do
             patch :associate
             post :complete
           end
+          resources :addresses, only: [:index], controller: 'carts/addresses'
           resources :items, only: [:create, :update, :destroy], controller: 'carts/items'
           resources :discount_codes, only: [:create, :destroy], controller: 'carts/discount_codes'
           resources :gift_cards, only: [:create, :destroy], controller: 'carts/gift_cards'
@@ -154,6 +158,10 @@ Spree::Core::Engine.add_routes do
         # Token-addressed so the emailed link works from a device that was
         # never signed in.
         get 'data_requests/:token/download', to: 'data_request_downloads#show', as: :data_request_download
+        # Addressed by the confirmation token emailed to the address a
+        # customer's own request names, for the same reason.
+        get 'data_requests/:token', to: 'data_requests#show', as: :data_request
+        post 'data_requests/:token/confirmation', to: 'data_request_confirmations#create', as: :data_request_confirmation
         # Legacy path — emailed and bookmarked URLs outlive the rename. Removed in 6.1.
         get 'digitals/:token', to: 'digital_links#show', as: :digital_download
 
@@ -238,6 +246,27 @@ Spree::Core::Engine.add_routes do
         post 'auth/password_resets', to: 'password_resets#create'
         patch 'auth/password_resets/:id', to: 'password_resets#update'
 
+        # OAuth 2.1 consent, read and decided by the dashboard. The admin's
+        # own session authorizes it: a secret key may authenticate here but
+        # can never grant authority on a person's behalf.
+        namespace :oauth do
+          get 'authorize', to: 'authorizations#show'
+          post 'authorize', to: 'authorizations#create'
+          delete 'authorize', to: 'authorizations#destroy'
+
+          # The OAuth clients registered against this store. Deleting one
+          # removes the registration; revoking a connection is the nested
+          # `tokens` resource, because that is what revoking deletes.
+          #
+          # Tokens are plural and addressable: a store registers a client once
+          # and every staff member connects to that same registration, so the
+          # live tokens are who is connected. Revoking one has to cut off that
+          # person and leave their colleagues working.
+          resources :applications, except: :show do
+            resources :tokens, only: %i[index destroy], controller: 'application_tokens'
+          end
+        end
+
         # Semantic reporting (docs/plans/6.0-analytics-semantic-layer.md)
         namespace :reporting do
           post :query
@@ -255,10 +284,16 @@ Spree::Core::Engine.add_routes do
         # Self-service profile updates (e.g. the admin's own UI language)
         patch 'me', to: 'me#update'
 
+        resource :updates, only: :show
+        resource :diagnostics, only: :show
+
         # Store Settings
         resource :store, only: [:show, :update], controller: 'store' do
           get :data_sources
         end
+        # The store's own custom fields and translations, addressed by its id like every other
+        # parent. The controller only ever resolves the current store.
+        resources :stores, only: [], concerns: [:custom_fieldable, :translatable]
 
         # Staff & access (invitations, admin users, roles, API keys)
         resources :admin_users, only: [:index, :show, :update, :destroy]
@@ -299,8 +334,8 @@ Spree::Core::Engine.add_routes do
         resources :roles, only: [:index, :show, :create, :update, :destroy]
         resources :permissions, only: [:index]
 
-        # Direct Uploads (Active Storage)
-        resources :direct_uploads, only: [:create]
+        # File uploads — see docs/plans/6.0-uploads-and-file-ownership.md
+        resources :files, only: [:create]
 
         # CSV Exports — see docs/plans/5.5-admin-spa-csv-export.md
         resources :exports, only: [:index, :show, :create, :destroy] do
@@ -322,7 +357,7 @@ Spree::Core::Engine.add_routes do
         end
 
         # Products
-        resources :product_types do
+        resources :product_types, concerns: :custom_fieldable do
           post :apply_to_products, on: :member
         end
         resources :products, concerns: [:custom_fieldable, :translatable] do
@@ -332,6 +367,11 @@ Spree::Core::Engine.add_routes do
             # (docs/plans/6.0-seller-product-submission.md).
             patch :approve
             patch :reject
+            # One product's status, through the workflow that publishes its
+            # event; bulk_status_update writes the column for many at once.
+            patch :activate
+            patch :archive
+            patch :draft
           end
           collection do
             post :bulk_status_update
@@ -364,7 +404,7 @@ Spree::Core::Engine.add_routes do
         # Media library — every file in the store, placed or not. Files are put
         # ON a product through the nested media routes above; this is where they
         # are uploaded, browsed and deleted.
-        resources :media, controller: 'media_library', only: [:index, :show, :create, :update, :destroy] do
+        resources :media, controller: 'media_library', only: [:index, :show, :create, :update, :destroy], concerns: :custom_fieldable do
           get :usage, on: :member
         end
 
@@ -399,7 +439,7 @@ Spree::Core::Engine.add_routes do
         resources :tax_categories
 
         # Tax Rates — the internal tax provider's configuration
-        resources :tax_rates
+        resources :tax_rates, concerns: :custom_fieldable
 
         # Selectable tax engines and their declared limits (discovery only)
         resources :tax_providers, only: [:index]
@@ -407,11 +447,12 @@ Spree::Core::Engine.add_routes do
         # preference, so there is nothing here to create.
         resources :payout_providers, only: [:index]
 
-        # Return / claim / refund / cancellation reasons (dropdowns + settings management)
+        # Return / claim / refund / cancellation / tax exemption reasons (dropdowns + settings management)
         resources :return_reasons
         resources :claim_reasons
         resources :refund_reasons
         resources :order_cancellation_reasons
+        resources :tax_exemption_reasons
 
         # Markets
         resources :markets
@@ -423,7 +464,7 @@ Spree::Core::Engine.add_routes do
           post :bulk_upsert, on: :collection
         end
         resources :stock_movements, only: [:index, :show]
-        resources :stock_transfers do
+        resources :stock_transfers, concerns: :custom_fieldable do
           member do
             patch :mark_ready
             patch :mark_in_transit
@@ -436,7 +477,7 @@ Spree::Core::Engine.add_routes do
 
         # Purchasing
         resources :suppliers
-        resources :purchase_orders do
+        resources :purchase_orders, concerns: :custom_fieldable do
           member do
             patch :mark_ordered
             patch :mark_draft
@@ -447,7 +488,7 @@ Spree::Core::Engine.add_routes do
         end
 
         # Payment Methods
-        resources :delivery_methods do
+        resources :delivery_methods, concerns: :custom_fieldable do
           collection do
             get :calculators
             get :fulfillment_providers
@@ -468,7 +509,7 @@ Spree::Core::Engine.add_routes do
                                     only: [:index, :show, :create, :update, :destroy]
         end
 
-        resources :payment_methods do
+        resources :payment_methods, concerns: :custom_fieldable do
           get :types, on: :collection
         end
 
@@ -477,8 +518,17 @@ Spree::Core::Engine.add_routes do
           post :test, on: :member
         end
 
+        # Maintenance tasks — see docs/plans/6.0-maintenance-tasks.md.
+        # A run names its task by the short name the upgrade steps give.
+        resources :upgrade_steps, only: [:index]
+        resources :maintenance_task_runs, only: [:index, :show, :create] do
+          scope module: :maintenance_task_runs do
+            resource :cancellation, only: [:create]
+          end
+        end
+
         # Promotions, with nested actions/rules/coupon codes.
-        resources :promotions do
+        resources :promotions, concerns: :custom_fieldable do
           resources :promotion_actions, only: [:index, :show, :create, :update, :destroy]
           resources :promotion_rules, only: [:index, :show, :create, :update, :destroy]
           resources :coupon_codes, only: [:index, :show]
@@ -561,7 +611,7 @@ Spree::Core::Engine.add_routes do
           # The operator is the only one who can repair a seller whose team
           # has locked itself out, which the seller's own panel cannot do.
           resources :team, only: [:index, :destroy], controller: 'sellers/team'
-          resources :invitations, only: [:index, :destroy], controller: 'sellers/invitations' do
+          resources :invitations, only: [:index, :create, :destroy], controller: 'sellers/invitations' do
             patch :resend, on: :member
             resource :acceptance_link, only: [:show], controller: 'sellers/invitations/acceptance_links'
           end
@@ -611,7 +661,7 @@ Spree::Core::Engine.add_routes do
         # Business customers — a tree of company nodes. Nested collections are
         # listed and created under their node and then addressed directly, so
         # a caller holding an entry id does not have to know its company.
-        resources :companies do
+        resources :companies, concerns: :custom_fieldable do
           # The node's address book.
           resources :addresses, controller: 'companies/addresses'
 
@@ -696,12 +746,12 @@ Spree::Core::Engine.add_routes do
         end
 
         # Gift cards
-        resources :gift_cards
+        resources :gift_cards, concerns: :custom_fieldable
         resources :gift_card_batches, only: [:index, :show, :create]
 
         # Store credits across all customers. Read-only: issuing, editing and
         # deleting a credit stays nested under the customer that holds it.
-        resources :store_credits, only: [:index, :show] do
+        resources :store_credits, only: [:index, :show], concerns: :custom_fieldable do
           resources :events, only: [:index], controller: 'store_credits/events'
         end
 
@@ -878,6 +928,10 @@ Spree::Core::Engine.add_routes do
             post :bulk_status_update
             delete :bulk_destroy
           end
+
+          resources :digital_assets, controller: 'products/digital_assets',
+                                     only: [:index, :create, :show, :update, :destroy]
+          resources :media, controller: 'products/media', only: [:destroy]
         end
 
 
@@ -961,7 +1015,7 @@ Spree::Core::Engine.add_routes do
         # Registry data — which carriers a tracking number can be pinned to.
         resources :tracking_carriers, only: [:index]
 
-        resources :direct_uploads, only: [:create]
+        resources :files, only: [:create]
 
         # CSV of what this seller sold, or of their catalogue. Created, polled
         # and downloaded — no index, since a seller has no history page to
@@ -1050,6 +1104,14 @@ Spree::Core::Engine.add_routes do
         end
       end
 
+      # RFC 9728 Protected Resource Metadata. One document per protected
+      # resource, named by the surface that registered it, so a client
+      # discovers which authorization server guards the URL it was given.
+      # Unauthenticated: a client has no credential at the point it asks.
+      get 'oauth/protected-resource/:resource_key',
+          to: 'oauth/metadata#show',
+          as: :oauth_protected_resource
+
       # Webhooks (outside of store namespace — no API key authentication)
       namespace :webhooks do
         post 'payments/:payment_method_id', to: 'payments#create', as: :payment_webhook
@@ -1063,5 +1125,35 @@ Spree::Core::Engine.add_routes do
         post 'payouts/:payment_method_id', to: 'payouts#create', as: :payout_webhook
       end
     end
+  end
+
+  # The authorization server's own endpoints: /oauth/authorize, /oauth/token,
+  # /oauth/revoke and RFC 8414 metadata. Outside the versioned API namespace —
+  # the OAuth protocol is not a Spree API resource and its paths are fixed by
+  # the spec and by what clients expect to find.
+  #
+  # `authorizations` is NOT skipped. Skipping it would leave the metadata
+  # document without an `authorization_endpoint`, which is required for the
+  # code flow, so a consumer client would have nowhere to send the browser.
+  # The controller is Spree's own and redirects to the dashboard's consent
+  # screen instead of rendering Doorkeeper's HTML.
+  #
+  # The application-management controllers stay skipped: connected apps are
+  # managed through /api/v3/admin/oauth/applications, under the Admin API's
+  # own authentication.
+  # `controllers` is a block method, not an option to `use_doorkeeper`.
+  #
+  # Doorkeeper's own controllers need a leading slash because these routes are
+  # drawn inside Spree::Core::Engine, which isolates the namespace — a bare
+  # `doorkeeper/tokens` resolves as `Spree::Doorkeeper::Tokens` and fails on
+  # the first request. Spree's own authorizations controller is named from the
+  # application root WITHOUT a slash, because the metadata document builds its
+  # URL with `url_for(controller: "/#{name}")` and adds the slash itself.
+  use_doorkeeper scope: 'oauth' do
+    controllers authorizations: 'api/v3/oauth/authorizations',
+                tokens: '/doorkeeper/tokens',
+                token_info: '/doorkeeper/token_info',
+                metadata: '/spree/api/v3/oauth/server_metadata'
+    skip_controllers :applications, :authorized_applications
   end
 end

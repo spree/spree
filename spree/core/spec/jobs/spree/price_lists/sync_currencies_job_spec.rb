@@ -20,7 +20,7 @@ describe Spree::PriceLists::SyncCurrenciesJob, type: :job do
     it 'adds the missing currency\'s placeholder rows and leaves the rest alone' do
       usd_before = price_list.prices.where(currency: 'USD').pluck(:id, :amount)
 
-      expect { subject }.to change { price_list.prices.where(currency: 'EUR').count }.from(0).to(product.variants_including_master.count)
+      expect { subject }.to change { price_list.prices.where(currency: 'EUR').count }.from(0).to(product.variants.count)
 
       expect(price_list.prices.where(currency: 'EUR').pluck(:amount).uniq).to eq([nil])
       expect(price_list.prices.where(currency: 'USD').pluck(:id, :amount)).to match_array(usd_before)
@@ -70,7 +70,7 @@ describe Spree::PriceLists::SyncCurrenciesJob, type: :job do
 
         perform_enqueued_jobs
 
-        expect(second_list.prices.where(currency: 'EUR').count).to eq(other_product.variants_including_master.count)
+        expect(second_list.prices.where(currency: 'EUR').count).to eq(other_product.variants.count)
       end
     end
   end

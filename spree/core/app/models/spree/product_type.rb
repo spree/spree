@@ -37,6 +37,7 @@ module Spree
     validates :store, presence: true
 
     self.whitelisted_ransackable_attributes = %w[name]
+    search_by :name
     self.whitelisted_ransackable_associations = %w[option_types]
 
     # Replace-set writer for the flat API payload. Each entry is

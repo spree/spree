@@ -350,6 +350,89 @@ describe('scaffold (no-start)', () => {
     )
   })
 
+  it('writes AGENTS.md with CLAUDE.md importing it', async () => {
+    const projectDir = getTempProjectDir()
+
+    await scaffold({
+      directory: projectDir,
+      storefront: false,
+      dashboard: false,
+      start: false,
+      packageManager: 'npm',
+      port: 3000,
+    })
+
+    expect(fs.readFileSync(path.join(projectDir, 'AGENTS.md'), 'utf-8')).toContain(
+      'Run everything through the Spree CLI',
+    )
+    expect(fs.readFileSync(path.join(projectDir, 'CLAUDE.md'), 'utf-8')).toBe('@AGENTS.md\n')
+  })
+
+  it('delegates the agent setup to `spree add ai`, passing what was declined', async () => {
+    const { execa } = await import('execa')
+    vi.mocked(execa).mockClear()
+    const projectDir = getTempProjectDir()
+
+    await scaffold({
+      directory: projectDir,
+      storefront: false,
+      dashboard: false,
+      agentSkills: false,
+      docsMcp: true,
+      start: false,
+      packageManager: 'npm',
+      port: 3000,
+    })
+
+    expect(vi.mocked(execa)).toHaveBeenCalledWith(
+      'npx',
+      ['spree', 'add', 'ai', '--quiet', '--no-skills'],
+      expect.objectContaining({ cwd: path.resolve(projectDir) }),
+    )
+  })
+
+  it('skips the agent setup when both halves are declined', async () => {
+    const { execa } = await import('execa')
+    vi.mocked(execa).mockClear()
+
+    await scaffold({
+      directory: getTempProjectDir(),
+      storefront: false,
+      dashboard: false,
+      agentSkills: false,
+      docsMcp: false,
+      start: false,
+      packageManager: 'npm',
+      port: 3000,
+    })
+
+    const addAi = vi.mocked(execa).mock.calls.find(([, args]) => (args as string[])?.[2] === 'ai')
+    expect(addAi).toBeUndefined()
+  })
+
+  // Agent setup is a convenience: a failure must not stop first-run setup.
+  it('continues to first-run setup when the agent setup fails', async () => {
+    const { execa } = await import('execa')
+    vi.mocked(execa).mockClear()
+    vi.mocked(execa).mockImplementation((async (_command: string, args: string[]) => {
+      if (args.includes('ai')) throw new Error('network down')
+    }) as never)
+
+    await scaffold({
+      directory: getTempProjectDir(),
+      storefront: false,
+      dashboard: false,
+      agentSkills: true,
+      start: true,
+      packageManager: 'pnpm',
+      port: 3000,
+    })
+
+    const init = vi.mocked(execa).mock.calls.find(([, args]) => (args as string[])?.[1] === 'init')
+    expect(init).toBeDefined()
+    vi.mocked(execa).mockReset()
+  })
+
   it('rejects non-empty directory', async () => {
     const projectDir = getTempProjectDir()
     fs.mkdirSync(projectDir, { recursive: true })

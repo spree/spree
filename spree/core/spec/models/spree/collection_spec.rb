@@ -3,14 +3,6 @@ require 'spec_helper'
 RSpec.describe Spree::Collection, type: :model do
   let(:store) { @default_store }
 
-  describe 'metadata' do
-    it 'defaults to an empty hash and round-trips a JSON value' do
-      collection = create(:collection, metadata: { erp_id: '123' })
-      expect(create(:collection).metadata).to eq({})
-      expect(collection.reload.metadata).to eq({ 'erp_id' => '123' })
-    end
-  end
-
   describe 'permalink generation' do
     it 'derives a url-safe permalink from the name' do
       expect(create(:collection, name: 'Summer Sale').permalink).to eq('summer-sale')
@@ -289,6 +281,21 @@ RSpec.describe Spree::Collection, type: :model do
 
       expect(reloaded_collection.reload.rules).to contain_exactly(keep)
       expect { drop.reload }.to raise_error(ActiveRecord::RecordNotFound)
+    end
+
+    it 'refuses a rule with an unknown type, naming the accepted ones' do
+      expect {
+        reloaded_collection.rules = [{ type: 'Spree::CollectionRules::Tag', value: 'sale', match_policy: 'is_equal_to' }]
+      }.to raise_error(Spree::Preferences::InvalidPreferences) { |error|
+        expect(error.failures).to contain_exactly(hash_including(pointer: '/rules/0/type'))
+        expect(error.message).to include('is not a collection rule offered here', 'tag', 'sale')
+      }
+    end
+
+    it 'refuses a new rule with no type, naming the accepted ones' do
+      expect {
+        reloaded_collection.rules = [{ value: 'sale', match_policy: 'is_equal_to' }]
+      }.to raise_error(Spree::Preferences::InvalidPreferences, %r{/rules/0/type: is required \(expected one of: .*tag})
     end
 
     it 'raises RecordNotFound for an unknown rule id' do

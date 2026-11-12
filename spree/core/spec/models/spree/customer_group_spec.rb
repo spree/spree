@@ -5,32 +5,11 @@ RSpec.describe Spree::CustomerGroup, type: :model do
   let(:customer_group) { create(:customer_group, store: store) }
 
   describe 'validations' do
-    context 'uniqueness' do
-      let!(:existing_group) { create(:customer_group, name: 'VIP', store: store) }
+    it 'validates uniqueness of name within store scope' do
+      create(:customer_group, name: 'VIP', store: store)
 
-      it 'validates uniqueness of name within store scope' do
-        new_group = build(:customer_group, name: 'VIP', store: store)
-        expect(new_group).not_to be_valid
-        expect(new_group.errors[:name]).to include('has already been taken')
-      end
-
-      it 'allows same name in different store' do
-        other_store = create(:store)
-        new_group = build(:customer_group, name: 'VIP', store: other_store)
-        expect(new_group).to be_valid
-      end
-    end
-  end
-
-  describe 'scopes' do
-    describe '.for_store' do
-      let!(:group1) { create(:customer_group, store: store) }
-      let!(:group2) { create(:customer_group, store: create(:store)) }
-
-      it 'returns groups for the specified store' do
-        expect(described_class.for_store(store)).to include(group1)
-        expect(described_class.for_store(store)).not_to include(group2)
-      end
+      expect(build(:customer_group, name: 'VIP', store: store)).not_to be_valid
+      expect(build(:customer_group, name: 'VIP', store: create(:store))).to be_valid
     end
   end
 
@@ -48,30 +27,19 @@ RSpec.describe Spree::CustomerGroup, type: :model do
     end
   end
 
-  describe 'soft delete' do
-    it 'supports soft deletion' do
-      customer_group.destroy
-      expect(described_class.with_deleted.find(customer_group.id)).to be_present
-      expect(described_class.find_by(id: customer_group.id)).to be_nil
-    end
-  end
-
   describe '#add_customers' do
     let(:user1) { create(:user) }
     let(:user2) { create(:user) }
     let(:user3) { create(:user) }
 
-    it 'adds customers to the group' do
+    it 'adds customers to the group and returns how many were added' do
+      count = nil
       expect {
-        customer_group.add_customers([user1.id, user2.id])
+        count = customer_group.add_customers([user1.id, user2.id])
       }.to change { customer_group.customer_group_users.count }.by(2)
 
-      expect(customer_group.users).to include(user1, user2)
-    end
-
-    it 'returns the count of added customers' do
-      count = customer_group.add_customers([user1.id, user2.id])
       expect(count).to eq(2)
+      expect(customer_group.users).to include(user1, user2)
     end
 
     it 'skips users already in the group' do
@@ -131,18 +99,15 @@ RSpec.describe Spree::CustomerGroup, type: :model do
       customer_group.add_customers([user1.id, user2.id, user3.id])
     end
 
-    it 'removes customers from the group' do
+    it 'removes customers from the group and returns how many were removed' do
+      count = nil
       expect {
-        customer_group.remove_customers([user1.id, user2.id])
+        count = customer_group.remove_customers([user1.id, user2.id])
       }.to change { customer_group.customer_group_users.count }.by(-2)
 
+      expect(count).to eq(2)
       expect(customer_group.users).not_to include(user1, user2)
       expect(customer_group.users).to include(user3)
-    end
-
-    it 'returns the count of removed customers' do
-      count = customer_group.remove_customers([user1.id, user2.id])
-      expect(count).to eq(2)
     end
 
     it 'returns 0 when users are not in the group' do

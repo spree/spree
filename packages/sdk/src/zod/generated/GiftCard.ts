@@ -1,5 +1,6 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import { CustomFieldSchema } from './CustomField';
 
 export const GiftCardSchema = z.object({
   id: z.string(),
@@ -17,6 +18,7 @@ export const GiftCardSchema = z.object({
   redeemed_at: z.string().nullable(),
   expired: z.boolean(),
   active: z.boolean(),
+  custom_fields: z.array(CustomFieldSchema).optional(),
 });
 
 export type GiftCard = z.infer<typeof GiftCardSchema>;

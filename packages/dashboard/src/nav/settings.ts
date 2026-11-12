@@ -1,21 +1,23 @@
 import { Subject, settingsNav } from '@spree/dashboard-core'
 import {
+  BotIcon,
   Building2Icon,
   ClipboardCheckIcon,
   CreditCardIcon,
   GlobeIcon,
   GlobeLockIcon,
+  InfoIcon,
   KeyRoundIcon,
   MailIcon,
   PackageIcon,
   PercentIcon,
   PlugIcon,
   RadioTowerIcon,
-  ReceiptTextIcon,
   ReturnRequestIcon,
   ScrollTextIcon,
   ShapesIcon,
   ShieldCheckIcon,
+  ShoppingCartIcon,
   StoreIcon,
   TagIcon,
   TruckIcon,
@@ -23,6 +25,7 @@ import {
   UsersIcon,
   WarehouseIcon,
   WebhookIcon,
+  WrenchIcon,
 } from '@spree/dashboard-ui/icons'
 
 // Built-in entries use `labelKey` so labels re-render on language change —
@@ -62,7 +65,7 @@ settingsNav.add({
   key: 'settings.store',
   labelKey: 'admin.settings_nav.items.store',
   descriptionKey: 'admin.settings_nav.descriptions.store',
-  keywords: ['general', 'name', 'timezone', 'locale', 'units', 'weight', 'currency'],
+  keywords: ['general', 'name', 'seo', 'timezone', 'locale', 'units', 'weight', 'order numbers'],
   path: '/store',
   icon: StoreIcon,
   group: 'store',
@@ -70,6 +73,30 @@ settingsNav.add({
   subject: Subject.Store,
   // Every staff member can READ the store (shell data: name, logo, timezone,
   // currencies); only settings managers should see the page that edits it.
+  action: 'update',
+})
+
+settingsNav.add({
+  key: 'settings.storefront',
+  labelKey: 'admin.settings_nav.items.storefront',
+  descriptionKey: 'admin.settings_nav.descriptions.storefront',
+  keywords: [
+    'storefront url',
+    'domain',
+    'storefront access',
+    'login required',
+    'prices hidden',
+    'guest checkout',
+    'confirm step',
+    'company',
+    'phone',
+    'address',
+  ],
+  path: '/storefront',
+  icon: ShoppingCartIcon,
+  group: 'store',
+  position: 150,
+  subject: Subject.Store,
   action: 'update',
 })
 
@@ -109,6 +136,18 @@ settingsNav.add({
 })
 
 settingsNav.add({
+  key: 'settings.ai-agents',
+  labelKey: 'admin.settings_nav.items.ai_agents',
+  descriptionKey: 'admin.settings_nav.descriptions.ai_agents',
+  keywords: ['oauth', 'agents', 'mcp', 'claude', 'assistant', 'integrations', 'revoke'],
+  path: '/ai-agents',
+  icon: BotIcon,
+  group: 'store',
+  position: 260,
+  subject: Subject.OauthApplication,
+})
+
+settingsNav.add({
   key: 'settings.channels',
   labelKey: 'admin.settings_nav.items.channels',
   descriptionKey: 'admin.settings_nav.descriptions.channels',
@@ -118,6 +157,9 @@ settingsNav.add({
   group: 'store',
   position: 300,
   subject: Subject.Channel,
+  // Every staff member reads channels for the shell, so `read` would show
+  // the page to all of them; it is for whoever may change them.
+  action: 'update',
 })
 
 settingsNav.add({
@@ -144,13 +186,25 @@ settingsNav.add({
   group: 'selling',
   position: 100,
   subject: Subject.Market,
+  // Every staff member reads markets for the shell, so `read` would show
+  // the page to all of them; it is for whoever may change them.
+  action: 'update',
 })
 
 settingsNav.add({
   key: 'settings.payment-methods',
   labelKey: 'admin.settings_nav.items.payment_methods',
   descriptionKey: 'admin.settings_nav.descriptions.payment_methods',
-  keywords: ['gateway', 'stripe', 'paypal', 'checkout', 'capture'],
+  keywords: [
+    'payment methods',
+    'gateway',
+    'provider',
+    'stripe',
+    'paypal',
+    'checkout',
+    'capture',
+    'check',
+  ],
   path: '/payment-methods',
   icon: CreditCardIcon,
   group: 'selling',
@@ -158,28 +212,33 @@ settingsNav.add({
   subject: Subject.PaymentMethod,
 })
 
+// Categories, rates and exemption reasons share one page, so a merchant
+// setting up tax finds all of it in one place.
 settingsNav.add({
-  key: 'settings.tax-categories',
-  labelKey: 'admin.settings_nav.items.tax_categories',
-  descriptionKey: 'admin.settings_nav.descriptions.tax_categories',
-  keywords: ['vat', 'gst', 'sales tax', 'tax class'],
-  path: '/tax-categories',
+  key: 'settings.taxes',
+  labelKey: 'admin.settings_nav.items.taxes',
+  descriptionKey: 'admin.settings_nav.descriptions.taxes',
+  keywords: [
+    'vat',
+    'gst',
+    'sales tax',
+    'tax class',
+    'tax categories',
+    'tax rates',
+    'rate',
+    'percentage',
+    'exemption',
+    'exempt',
+    'certificate',
+    'avalara',
+    'shipping address',
+    'billing address',
+  ],
+  path: '/taxes',
   icon: PercentIcon,
   group: 'selling',
   position: 300,
-  subject: Subject.TaxCategory,
-})
-
-settingsNav.add({
-  key: 'settings.tax-rates',
-  labelKey: 'admin.settings_nav.items.tax_rates',
-  descriptionKey: 'admin.settings_nav.descriptions.tax_rates',
-  keywords: ['vat', 'gst', 'sales tax', 'rate', 'percentage'],
-  path: '/tax-rates',
-  icon: ReceiptTextIcon,
-  group: 'selling',
-  position: 400,
-  subject: Subject.TaxRate,
+  subjects: [Subject.TaxCategory, Subject.TaxRate, Subject.TaxExemptionReason],
 })
 
 settingsNav.add({
@@ -343,6 +402,17 @@ settingsNav.add({
 })
 
 settingsNav.add({
+  key: 'settings.oauth_clients',
+  labelKey: 'admin.settings_nav.items.oauth_clients',
+  descriptionKey: 'admin.settings_nav.descriptions.oauth_clients',
+  path: '/oauth-clients',
+  icon: KeyRoundIcon,
+  group: 'developer',
+  position: 151,
+  subject: Subject.OauthApplication,
+})
+
+settingsNav.add({
   key: 'settings.webhooks',
   labelKey: 'admin.settings_nav.items.webhooks',
   descriptionKey: 'admin.settings_nav.descriptions.webhooks',
@@ -380,4 +450,33 @@ settingsNav.add({
   position: 400,
   subject: Subject.Product,
   action: 'update',
+})
+
+// Running a task can rewrite any data in the install, so the entry follows the
+// same grant the API enforces rather than a proxy permission.
+settingsNav.add({
+  key: 'settings.maintenance-tasks',
+  labelKey: 'admin.settings_nav.items.maintenance_tasks',
+  descriptionKey: 'admin.settings_nav.descriptions.maintenance_tasks',
+  keywords: ['backfill', 'reindex', 'upgrade', 'migration', 'data'],
+  path: '/maintenance-tasks',
+  icon: WrenchIcon,
+  group: 'developer',
+  position: 500,
+  subject: Subject.MaintenanceTaskRun,
+})
+
+// The report reveals the running version and stack, so the entry follows the
+// grant the API enforces.
+settingsNav.add({
+  key: 'settings.system-info',
+  labelKey: 'admin.settings_nav.items.system_info',
+  descriptionKey: 'admin.settings_nav.descriptions.system_info',
+  keywords: ['diagnostics', 'version', 'bug', 'issue', 'report', 'support', 'debug'],
+  path: '/system-info',
+  icon: InfoIcon,
+  group: 'developer',
+  position: 600,
+  subject: Subject.Store,
+  action: 'manage',
 })

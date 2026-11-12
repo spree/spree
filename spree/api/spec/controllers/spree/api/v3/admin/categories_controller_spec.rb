@@ -21,6 +21,24 @@ RSpec.describe Spree::Api::V3::Admin::CategoriesController, type: :controller do
       expect(response).to have_http_status(:ok)
       expect(json_response['data'].map { |c| c['id'] }).to include(category.prefixed_id)
     end
+
+    context 'sorted by name in a non-default locale' do
+      let!(:bags) { create(:category, name: 'Bags', store: store) }
+      let!(:accessories) { create(:category, name: 'Zubehoer', store: store) }
+
+      before do
+        Mobility.with_locale(:de) { accessories.update!(name: 'Accessoires') }
+        allow(controller).to receive(:current_locale).and_return('de')
+      end
+
+      it 'sorts by the translation, falling back to the base name' do
+        ids = [category, bags, accessories].map(&:prefixed_id)
+        get :index, params: { sort: 'name', q: { id_in: ids } }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['data'].pluck('id')).to eq([accessories, bags, category].map(&:prefixed_id))
+      end
+    end
   end
 
   describe 'GET #show' do
@@ -40,8 +58,8 @@ RSpec.describe Spree::Api::V3::Admin::CategoriesController, type: :controller do
 
     it 'rolls subcategory products up into the product count' do
       child = create(:category, name: 'Shirts', parent: category)
-      create(:product).taxons << category
-      create(:product).taxons << child
+      create(:product).categories << category
+      create(:product).categories << child
 
       get :show, params: { id: category.prefixed_id }, as: :json
 
@@ -105,7 +123,7 @@ RSpec.describe Spree::Api::V3::Admin::CategoriesController, type: :controller do
       imaged = create(:category, :with_header_image)
       expect(imaged.reload.image).to be_attached
 
-      patch :update, params: { id: imaged.prefixed_id, image: nil }, as: :json
+      patch :update, params: { id: imaged.prefixed_id, image_signed_id: nil }, as: :json
 
       expect(response).to have_http_status(:ok)
       expect(imaged.reload.image).not_to be_attached
