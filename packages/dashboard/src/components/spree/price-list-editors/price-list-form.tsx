@@ -30,6 +30,7 @@ import {
   TrashIcon,
 } from '@spree/dashboard-ui/icons'
 import { useQueryClient } from '@tanstack/react-query'
+import type { TFunction } from 'i18next'
 import { useEffect, useState } from 'react'
 import {
   Controller,
@@ -848,12 +849,10 @@ function RuleSummary({
  * when the embed is missing/empty — caller falls back to the preferences
  * dump.
  */
-type Translator = (key: string, options?: Record<string, unknown>) => string
-
 function nameList<T>(
   items: T[] | undefined,
   getLabel: (item: T) => string,
-  t: Translator,
+  t: TFunction,
 ): string | null {
   if (!items?.length) return null
   const labels = items.map(getLabel).filter(Boolean)
@@ -865,7 +864,7 @@ function nameList<T>(
   })
 }
 
-function formatPreferenceValue(value: unknown, t: Translator): string {
+function formatPreferenceValue(value: unknown, t: TFunction): string {
   if (Array.isArray(value)) return value.join(', ')
   if (typeof value === 'boolean') return t(value ? 'admin.common.yes' : 'admin.common.no')
   return String(value)

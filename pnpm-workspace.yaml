@@ -1,5 +1,5 @@
 packages:
-  - "packages/*"
+  - 'packages/*'
 
 # catalog: the one version of every third-party package that two or more
 # workspace packages install. Manifests refer to it as `catalog:`, so a bump is

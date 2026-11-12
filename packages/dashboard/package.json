@@ -104,10 +104,10 @@
     "@spree/dashboard-ui": "workspace:^",
     "@tanstack/react-query": "^5.104.5",
     "@tanstack/react-router": "^1.170.45",
-    "i18next": "^26.5.3",
+    "i18next": "^26.5.3 || ^27.0.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "react-hook-form": "^7.90.0",
-    "react-i18next": "^17.1.0"
+    "react-i18next": "^17.1.0 || ^18.0.0"
   }
 }
