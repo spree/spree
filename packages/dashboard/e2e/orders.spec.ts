@@ -446,6 +446,14 @@ async function seedTwoLineDraftOrder(page: Page, session: E2ELoginSession) {
     'get',
     '/stock_locations',
   )
+  // A draft order only takes products its channel sells.
+  const channels = await adminRequest<{ data: { id: string; default: boolean }[] }>(
+    page,
+    session,
+    'get',
+    '/channels',
+  )
+  const channelId = channels.data.find((channel) => channel.default)?.id
   const stamp = Date.now()
   const lines = [
     { name: `Kept line ${stamp}`, sku: `E2E-KEPT-${stamp}`, amount: '24.50', quantity: 2 },
@@ -458,6 +466,7 @@ async function seedTwoLineDraftOrder(page: Page, session: E2ELoginSession) {
       name: line.name,
       status: 'active',
       prices: [{ amount: line.amount, currency: 'USD' }],
+      product_publications: [{ channel_id: channelId }],
       variants: [
         {
           options: [],
