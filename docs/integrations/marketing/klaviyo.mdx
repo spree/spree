@@ -171,7 +171,7 @@ The reference storefront has no newsletter sign-up form. If yours adds one, call
 window.klaviyo?.identify({ email })
 ```
 
-Until the tag has loaded, the storefront sends nothing to Klaviyo and keeps nothing to send later, so a shopper who has not consented is not tracked, and what they did before accepting is not recorded. Ad blockers stop the script as well, and with it some browsing events and abandoned-checkout emails. A custom storefront sends these events itself.
+A shopper who has not consented is not tracked. An event from before the tag loaded waits up to 10 seconds for it, and only while the shopper stays on that page: a shopper who lands on a product page still sends its view once the tag loads, and one who accepts cookies sends at most the last 10 seconds of the page they accepted on, nothing from earlier pages. Ad blockers stop the script as well, and with it some browsing events and abandoned-checkout emails. A custom storefront sends these events itself.
 
 ## Erasing a customer
 
