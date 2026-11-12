@@ -48,5 +48,18 @@ module Spree
     ensure
       Spree.hooks.clear!
     end
+
+    it 'keeps the line when a handler rejects the removal after it is applied' do
+      Spree.hooks.register('orders.upsert_items.after_items_upserted') { |flow| flow.reject!('locked') }
+
+      result = nil
+      expect {
+        result = described_class.call(order: order, line_item: line_item)
+      }.not_to change { order.reload.line_items.count }
+
+      expect(result).to be_failure
+    ensure
+      Spree.hooks.clear!
+    end
   end
 end

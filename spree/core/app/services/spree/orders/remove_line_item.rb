@@ -11,17 +11,17 @@ module Spree
       # @param options [Hash] accepted for signature compatibility and ignored
       # @return [Spree::ServiceModule::Result] value is the removed line item
       def call(order:, line_item:, options: {})
-        ActiveRecord::Base.transaction do
-          result = Spree.order_upsert_items_workflow.call(
-            order: order,
-            items: [{ variant_id: line_item.variant_id, quantity: 0 }]
-          )
-          return failure(line_item, result.error) if result.failure?
+        # Not wrapped in a transaction of our own: the workflow's must stay the
+        # outermost, or a late rejection would commit the deleted line.
+        result = Spree.order_upsert_items_workflow.call(
+          order: order,
+          items: [{ variant_id: line_item.variant_id, quantity: 0 }]
+        )
+        return failure(line_item, result.error) if result.failure?
 
-          # The order workflow leaves totals to its caller.
-          Spree::Orders::Recalculate.call(order: order)
-          order.update_statuses!
-        end
+        # The order workflow leaves totals to its caller.
+        Spree::Orders::Recalculate.call(order: order)
+        order.update_statuses!
 
         success(line_item)
       end
