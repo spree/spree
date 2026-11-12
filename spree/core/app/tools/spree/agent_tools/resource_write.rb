@@ -83,7 +83,8 @@ module Spree
         rows = entry.unknown_row_fields(body, action)
         return [body, nil] if rows.nil?
 
-        [nil, { error: "#{entry.key} #{rows[:list]} rows do not accept #{rows[:unknown].to_sentence}.",
+        problem = rows[:not_object] ? 'must each be an object' : "do not accept #{rows[:unknown].to_sentence}"
+        [nil, { error: "#{entry.key} #{rows[:list]} rows #{problem}.",
                 accepted_attributes: { rows[:list] => rows[:accepted] } }]
       end
 

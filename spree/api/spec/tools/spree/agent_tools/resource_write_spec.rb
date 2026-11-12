@@ -233,6 +233,15 @@ RSpec.describe 'agent generic record writes' do
       expect(result[:accepted_attributes]['variants.prices']).to include('amount')
     end
 
+    it 'refuses a row that is not an object' do
+      product = create(:product, store: store)
+
+      result = tool('update_resource').call(resource: 'products', id: product.prefixed_id,
+                                            attributes: { 'custom_fields' => ['pages=128'] })
+
+      expect(result[:error]).to include('custom_fields rows must each be an object')
+    end
+
     it 'says what an update takes where it is less than a create' do
       described = tool('describe_resource').call(resource: 'exchanges')[:resources].first
 

@@ -153,7 +153,8 @@ module Spree
         #
         # @param body [Hash] string-keyed write body
         # @param action [Symbol]
-        # @return [Hash, nil] `{ list:, unknown:, accepted: }`, nil when every row fits
+        # @return [Hash, nil] `{ list:, unknown:, accepted: }`, with `not_object: true` in place of
+        #   `unknown:` for a row that is not an object; nil when every row fits
         def unknown_row_fields(body, action)
           find_unknown_row_fields(write_schema(action), body, [])
         end
@@ -168,7 +169,10 @@ module Spree
             next unless fields.is_a?(Hash) && fields.any? && row['additionalProperties'] != true
 
             list = [*path, name]
-            rows.grep(Hash).each do |values_of_row|
+            rows.each do |values_of_row|
+              # A row that is not an object is dropped by the endpoint too.
+              return { list: list.join('.'), not_object: true, accepted: fields.keys.sort } unless values_of_row.is_a?(Hash)
+
               unknown = values_of_row.keys.map(&:to_s) - fields.keys
               return { list: list.join('.'), unknown: unknown, accepted: fields.keys.sort } if unknown.any?
 

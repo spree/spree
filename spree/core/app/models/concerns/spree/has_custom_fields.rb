@@ -244,8 +244,9 @@ module Spree
         attributes = attributes.values if attributes.is_a?(Hash)
 
         # One write: a refused row undoes the rows before it, rather than
-        # leaving them saved behind an error.
-        self.class.transaction do
+        # leaving them saved behind an error. Its own savepoint, so a caller
+        # that rescues the error inside a wider transaction cannot keep them.
+        self.class.transaction(requires_new: true) do
           attributes.each_with_index do |raw, index|
             attrs = raw.respond_to?(:to_h) ? raw.to_h : raw
             attrs = attrs.with_indifferent_access
