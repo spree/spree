@@ -104,6 +104,7 @@ describe('spree eject', () => {
     const dev = fs.readFileSync(path.join(projectDir, 'docker-compose.dev.yml'), 'utf-8')
     expect(active).toBe(COMPOSE_DEV_FIXED)
     expect(dev).toBe(COMPOSE_DEV_FIXED)
+    expect(fs.existsSync(path.join(projectDir, 'docker-compose.yml.tmp'))).toBe(false)
   })
 
   it('switches the postgres healthcheck to TCP in both compose files', async () => {

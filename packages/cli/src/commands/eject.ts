@@ -79,7 +79,11 @@ export async function ejectProject(projectDir: string): Promise<void> {
   await prepareDatabase(projectDir, { stdio: 'inherit', composeFile: DEV_COMPOSE })
   await dockerCompose(['-f', DEV_COMPOSE, 'up', '-d'], projectDir, { stdio: 'inherit' })
 
-  fs.writeFileSync(path.join(projectDir, 'docker-compose.yml'), composeContent)
+  // Written beside it and renamed over it, so an interrupted write never
+  // leaves a half-written compose file.
+  const compose = path.join(projectDir, 'docker-compose.yml')
+  fs.writeFileSync(`${compose}.tmp`, composeContent)
+  fs.renameSync(`${compose}.tmp`, compose)
 
   p.note(
     [
