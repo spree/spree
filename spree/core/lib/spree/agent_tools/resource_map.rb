@@ -23,7 +23,7 @@ module Spree
       Entry = Struct.new(:key, :model_name, :permission, :serializer_name,
                          :dashboard_path, :scope_name, :write_permission,
                          :writable_attributes, :create_workflow_key, :update_workflow_key,
-                         :distinct, :api_paths, :access_permissions, keyword_init: true) do
+                         :distinct, :api_paths, :index_paths, :access_permissions, keyword_init: true) do
         # Whether this caller may read the resource.
         #
         # Imports and exports have no key of their own: each record is gated
@@ -128,11 +128,31 @@ module Spree
         # @param action [Symbol]
         # @return [String, nil]
         def parent_param(action)
-          Array(api_path(action)&.scan(/:([a-z_]+)/)).flatten.reject { |name| name == 'id' }.first
+          param_in(api_path(action))
+        end
+
+        # The records this resource can be listed under, each with the
+        # collection path that lists it there — claims under an order,
+        # products under a category or collection, variants under a product.
+        # A path nested twice is left out: one parent id cannot fill it.
+        #
+        # @return [Hash{String => String}] parent resource key => path
+        def index_parents
+          Array(index_paths.presence || api_path(:index)).each_with_object({}) do |path, parents|
+            next unless path.scan(/:[a-z_]+_id\b/).one?
+
+            parent = path.scan(PARENT_SEGMENT).flatten.first
+            parents[parent] ||= path if parent
+          end
         end
 
         # The operation's path with its segments filled, or nil when a nested
         # resource was not given the record it lives under.
+        #
+        # A search given a parent runs on the collection under that parent,
+        # chosen by the parent id's prefix, and is nil when the resource is
+        # not listed under that kind of record. Listing the whole store
+        # instead answered "the claims on order B" with every claim.
         #
         # Each value is percent-encoded so it stays one segment: a `?` or `/`
         # in an id would otherwise send the call to a different route than
@@ -145,11 +165,11 @@ module Spree
         # @param parent_id [String, nil]
         # @return [String, nil]
         def path_for(action, id: nil, parent_id: nil)
-          path = api_path(action)
+          path = action.to_sym == :index && parent_id.present? ? index_path_under(parent_id) : api_path(action)
           return if path.blank?
 
           path = path.sub(':id', ERB::Util.url_encode(id.to_s)) if id.present?
-          parent = parent_param(action)
+          parent = param_in(path)
           if parent
             return if parent_id.blank?
 
@@ -297,6 +317,15 @@ module Spree
           model_name.constantize
         end
 
+        # The prefix of this resource's ids (`or` for orders), or nil.
+        #
+        # @return [String, nil]
+        def id_prefix
+          model_class.try(:_prefix_id_prefix).presence
+        rescue NameError
+          nil
+        end
+
         # Records of this kind the asking admin may see.
         #
         # Takes the context rather than the store so the ability filter cannot
@@ -364,6 +393,23 @@ module Spree
         def filterable_scopes
           model_class.ransackable_scopes.map(&:to_s).sort
         end
+
+        private
+
+        def param_in(path)
+          Array(path&.scan(/:([a-z_]+)/)).flatten.reject { |name| name == 'id' }.first
+        end
+
+        # One parent needs no matching; the endpoint answers for an id of the
+        # wrong kind. Several are told apart by the id's prefix (`ctg_` is a
+        # category, `coll_` a collection).
+        def index_path_under(parent_id)
+          parents = index_parents
+          return parents.values.first if parents.one?
+
+          prefix = parent_id.to_s[/\A([a-z]+)_/, 1]
+          parents.find { |key, _path| prefix && ResourceMap.find(key)&.id_prefix == prefix }&.last
+        end
       end
 
 
@@ -403,12 +449,15 @@ module Spree
         # @param distinct [Boolean, nil] false where the controller disables
         #   DISTINCT on its own collection, which Postgres requires when the
         #   sort column is not in the select list
+        # @param index_paths [Array<String>, nil] every collection path the
+        #   resource is listed at, the nested ones under a parent included
         # @param access_permissions [Array<String>, nil] keys any one of which
         #   opens the resource, in place of `permission`
         # @return [Entry]
         def register(key:, model_name:, permission:, serializer_name:, dashboard_path: nil, scope_name: nil,
                      write_permission: nil, writable_attributes: [], create_workflow_key: nil,
-                     update_workflow_key: nil, distinct: nil, api_paths: nil, access_permissions: nil)
+                     update_workflow_key: nil, distinct: nil, api_paths: nil, index_paths: nil,
+                     access_permissions: nil)
           entry = Entry.new(key: key.to_s, model_name: model_name, permission: permission,
                             serializer_name: serializer_name, dashboard_path: dashboard_path,
                             scope_name: scope_name, write_permission: write_permission,
@@ -417,6 +466,7 @@ module Spree
                             update_workflow_key: update_workflow_key,
                             distinct: distinct,
                             api_paths: api_paths&.to_a,
+                            index_paths: index_paths,
                             access_permissions: access_permissions)
           entries[entry.key] = entry
         end
