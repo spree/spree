@@ -1,26 +1,45 @@
 ---
-description: Review, security-review, open and monitor a pull request for the current branch.
+description: Review, security-review, autofix, open and monitor a pull request for the current branch.
 ---
 
 Take the current branch from finished work to an open, monitored pull request
-on `spree/spree`. Run the steps in order and skip none because the change looks
-small. A pre-tool hook blocks `gh pr create` until steps 1–3 have run on the
-branch's `HEAD` and that commit is pushed.
+on `spree/spree`, in one uninterrupted run. Run the steps in order and skip
+none because the change looks small. A pre-tool hook blocks `gh pr create`
+until steps 1–3 have run on the branch's `HEAD` and that commit is pushed.
 
 Never run this on `main`: branch first (`feat/`, `fix/` or `chore/`). Commit any
 uncommitted work before step 1 so the reviews see it.
 
+## Run it end to end
+
+- `/code-review` and `/security-review` are sub-steps, not the end of this
+  command. Each one ends with its own report (`/code-review` through
+  `ReportFindings`). That report is input for the next step. Do not end the
+  turn, summarize or wait for the user after it. Go straight on to the next
+  step.
+- Fix every finding yourself. Do not ask which ones to fix and do not ask
+  before you commit, push or open the pull request.
+- Reject a finding only when it is wrong: a false positive, already handled,
+  or outside this branch's diff. Note a one-line reason for the final report.
+- Stop early only for something you cannot fix: a test failure you cannot
+  resolve, a fix that needs a product decision, or a permission error. Report
+  it, and leave the pull request unopened.
+
 ## 1. Code review
 
-Run `/code-review --fix` on the branch. Re-run `pnpm test:changed`, then commit
-the fixes. A finding you reject gets a one-line reason for the final report,
-not silence.
+Run `/code-review --fix` on the branch. Apply any finding the `--fix` pass left
+unapplied. Re-run `pnpm test:changed`, fix what fails, then commit with a
+`Fix: ` message.
 
 ## 2. Security review
 
-Run `/security-review` on the branch. Fix every confirmed finding, re-run
-`pnpm test:changed`, and commit. Record rejected findings the same way. If a
-fix changed any file, go back to step 1 so the fix gets both reviews.
+Run `/security-review` on the branch. It only reports, so fix every confirmed
+finding yourself. Re-run `pnpm test:changed`, fix what fails, then commit.
+
+If step 2 changed code, run `/code-review --fix` once more on those fixes only,
+and apply any finding it leaves unapplied. Re-run `pnpm test:changed`, fix what
+fails, then commit. Then go to step 3. Do not loop further: two rounds are
+enough.
 
 ## 3. Record the reviewed commit
 
