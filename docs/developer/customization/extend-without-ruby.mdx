@@ -78,11 +78,11 @@ if (event.name === 'order.placed') {
 }
 ```
 
-In another language, check that the `X-Spree-Webhook-Timestamp` header is a Unix time within 300 seconds of now, then compute the HMAC-SHA256 of `{timestamp}.{body}` with the endpoint's secret key over the raw request body, and compare it with the `X-Spree-Webhook-Signature` header in constant time. Reject the request if either check fails. The SDK does both.
+In another language, check that the `X-Spree-Webhook-Timestamp` header is a Unix time within 300 seconds of now, then compute the HMAC-SHA256 of `{timestamp}.{body}` with the endpoint's secret key over the raw request body, encode the digest as lowercase hexadecimal, and compare that string with the `X-Spree-Webhook-Signature` header in constant time. Reject the request if either check fails. The SDK does both.
 
 Things to know:
 
-- A failed delivery is retried, so your service can receive the same event more than once. Every attempt carries the same event `id`. Use it to skip events you have already handled.
+- A failed delivery is retried, so your service can receive the same event more than once. Every attempt carries the same event `id`. Pass it, or the record's ID, as an idempotency key to whatever the event triggers, so a second delivery does no extra work. See [Delivery guarantees](/developer/core-concepts/events#delivery-guarantees).
 - Payloads carry what a customer could see. For back-office fields, fetch the record from the Admin API with the `id` in the payload.
 - A webhook tells you something happened. It can't stop it or change it.
 

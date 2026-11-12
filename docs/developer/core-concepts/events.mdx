@@ -172,7 +172,7 @@ For `order.placed`, this means:
 
 So when a side effect must happen for every placed order — sending it to an ERP or a warehouse, for example — don't rely on the event alone:
 
-1. **Make the handler safe to run twice.** Key the work on the order's ID. Checking whether you already did it and then doing it is not enough on its own: a webhook and a reconciliation run can both pass the check at the same time, and a crash after the write repeats it on retry. Pass the order's ID as an idempotency key to the external system, or claim the order atomically (for example, an insert guarded by a unique constraint) before writing.
+1. **Make the handler safe to run twice.** Key the work on the order's ID. Checking whether you already did it and then doing it is not enough on its own: a webhook and a reconciliation run can both pass the check at the same time, and a crash after the write repeats it on retry. Pass the order's ID as an idempotency key to the external system, so it ignores a second write for the same order. If the external system can't take a key, claim the order atomically (for example, an insert guarded by a unique constraint) and record completion separately from the claim, so a run that finds a claim without a completion knows the write may not have happened and finishes it.
 2. **Reconcile from orders.** On a schedule, list the orders placed since your last check and handle any you haven't seen. The event gives you speed; the reconciliation makes sure nothing is lost.
 
 <Tabs>
@@ -186,6 +186,7 @@ So when a side effect must happen for every placed order — sending it to an ER
     while (page) {
       const { data: orders, meta } = await adminClient.orders.list({
         completed_at_gteq: since.toISOString(),
+        completed_at_lteq: runStartedAt.toISOString(), // orders after this belong to the next run
         sort: 'completed_at',
         limit: 100,
         page,
@@ -208,6 +209,7 @@ So when a side effect must happen for every placed order — sending it to an ER
     curl -G 'https://store.example.com/api/v3/admin/orders' \
       -H 'X-Spree-API-Key: sk_xxx' \
       -d 'q[completed_at_gteq]=2026-11-12T09:00:00Z' \
+      -d 'q[completed_at_lteq]=2026-11-12T10:00:00Z' \
       -d 'sort=completed_at' \
       -d 'limit=100' \
       -d 'page=1' # repeat with meta.next until it is null
@@ -221,7 +223,7 @@ Take the next checkpoint from the moment the run started, before reading, and sa
 
 **Listen for the specific event.** `order.placed` rather than `order.updated` with a status check.
 
-**Assume events can arrive more than once.** A retry after a network blip can redeliver. Make handlers safe to run twice — check whether you've already acted before acting.
+**Assume events can arrive more than once.** A retry after a network blip can redeliver. Make handlers safe to run twice: pass the event's or record's ID as an idempotency key to whatever you call, rather than checking whether you've already acted and then acting, which two deliveries can both pass at once. See [Delivery guarantees](#delivery-guarantees).
 
 **Don't chain long sequences of subscribers.** When one event triggers a subscriber that triggers another, working out what happened after the fact becomes archaeology. Prefer one handler that does the sequence.
 
