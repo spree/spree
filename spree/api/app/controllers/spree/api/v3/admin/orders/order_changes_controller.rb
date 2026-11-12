@@ -156,8 +156,8 @@ module Spree
               raise Spree::Money::InvalidFormat.new(e.message, field: :actions)
             end
 
-            # @return [Hash{String => ActiveRecord::Base}] records by the prefixed id asked for
-            # @raise [ActiveRecord::RecordNotFound] when any id is not in +scope+
+            # Records by the prefixed id asked for; any id outside +scope+ is a
+            # RecordNotFound.
             def resolve_ids(scope, prefixed_ids)
               prefixed_ids = prefixed_ids.compact_blank.uniq
               return {} if prefixed_ids.empty?

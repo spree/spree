@@ -45,7 +45,7 @@ module Spree
                   existing_ids = @parent.discounts.ids
                   result = apply_change(kind: 'add_discount', label: params[:label], value: value,
                                         value_type: value_type, line_item: line_item)
-                  next render_result_error(result) if result.failure?
+                  next render_change_error(result) if result.failure?
 
                   next render json: { data: serialize_collection(@parent.discounts.manual.where.not(id: existing_ids)) }, status: :created
                 end
@@ -77,7 +77,7 @@ module Spree
                   # and anything but a string is dropped rather than stringified.
                   label = permitted_params[:label]
                   result = apply_change(kind: 'update_discount', discount: @resource, label: label, amount: amount)
-                  next result.success? ? render(json: serialize_resource(@resource.reload)) : render_result_error(result)
+                  next result.success? ? render(json: serialize_resource(@resource.reload)) : render_change_error(result)
                 end
 
                 result = Spree.order_discount_update_service.call(order: @parent, discount: @resource, attributes: permitted_params)
@@ -99,7 +99,7 @@ module Spree
                   next render_promotion_row_error if @resource.promotion?
 
                   result = apply_change(kind: 'remove_discount', discount: @resource)
-                  next result.success? ? head(:no_content) : render_result_error(result)
+                  next result.success? ? head(:no_content) : render_change_error(result)
                 end
 
                 result = Spree.order_discount_destroy_service.call(order: @parent, discount: @resource)
@@ -138,6 +138,11 @@ module Spree
 
             def apply_change(**action)
               Spree.order_change_apply_service.call(order: @parent, actions: [action.compact], requested_by: current_actor)
+            end
+
+            # A refusal reads as it does on a draft, whichever path wrote the discount.
+            def render_change_error(result)
+              render_result_error(result, code: ERROR_CODES[:validation_error])
             end
 
             def render_promotion_row_error

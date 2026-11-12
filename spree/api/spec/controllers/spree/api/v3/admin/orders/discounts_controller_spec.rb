@@ -106,6 +106,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::DiscountsController, type: :contro
       post :create, params: { order_id: order.prefixed_id, label: 'Appeasement', value: '1.00' }, as: :json
 
       expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['code']).to eq('validation_error')
       expect(json_response['error']['message']).to match(/another change/i)
       expect(order.discounts).to be_empty
     end
