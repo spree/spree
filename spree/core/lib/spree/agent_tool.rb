@@ -115,9 +115,10 @@ class AgentTool
       # @param type [Symbol] JSON schema type
       # @param description [String]
       # @param required [Boolean]
-      # @param items [Symbol] what an array holds — a JSON Schema array without
-      #   it is ambiguous, and a client that validates arguments against the
-      #   schema rejects the call before the tool ever runs
+      # @param items [Symbol, Array<Symbol>] what an array holds — a JSON
+      #   Schema array without it is ambiguous, and a client that validates
+      #   arguments against the schema rejects the call before the tool ever
+      #   runs. Several types mean each element may be any one of them.
       # @return [void]
       def param(name, type: :string, description: nil, required: false, items: nil)
         # Reassigned rather than mutated, so declaring a param on a subclass
@@ -143,7 +144,7 @@ class AgentTool
           property['description'] = options[:description] if options[:description].present?
           # An array must say what it holds: a client validating arguments
           # against the schema refuses the call otherwise.
-          property['items'] = { 'type' => json_type(options[:items] || :string) } if property['type'] == 'array'
+          property['items'] = items_schema(options[:items]) if property['type'] == 'array'
 
           [name.to_s, property]
         end
@@ -156,6 +157,12 @@ class AgentTool
       end
 
       private
+
+      def items_schema(items)
+        types = Array(items || :string).map { |type| { 'type' => json_type(type) } }
+
+        types.one? ? types.first : { 'anyOf' => types }
+      end
 
       # A tool declares Ruby-ish types; JSON Schema wants its own names, and
       # anything unrecognised is a string, which every client can render.

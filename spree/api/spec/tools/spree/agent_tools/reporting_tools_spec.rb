@@ -79,6 +79,52 @@ RSpec.describe 'agent reporting tools' do
       expect(result[:row_count]).to be <= Spree::AgentTools::QueryReport::MAX_LIMIT
     end
 
+    # A saved report holds its date dimension as {name, grain}, and the
+    # schema handed to a client must let that through.
+    it 'offers a date dimension with a grain in its schema' do
+      items = Spree::AgentTools::QueryReport.input_schema.dig('properties', 'dimensions', 'items')
+
+      expect(items).to eq('anyOf' => [{ 'type' => 'string' }, { 'type' => 'object' }])
+    end
+
+    it 'groups a date dimension by the grain it is given' do
+      result = tool('query_report').call(metrics: ['net_sales'],
+                                         dimensions: [{ 'name' => 'completed_at', 'grain' => 'month' }],
+                                         time_range: { 'preset' => 'year_to_date' })
+
+      expect(result[:error]).to be_nil
+      expect(result.dig(:meta, :dimensions)).to eq([{ name: :completed_at, grain: :month }])
+      expect(result[:rows].size).to eq(Time.current.month)
+    end
+
+    # Hour grain is the reporting default, and over a year it is refused with
+    # advice the model cannot follow without a grain of its own.
+    it 'picks a grain that fits the range when given none' do
+      grain = lambda do |preset|
+        tool('query_report').call(metrics: ['net_sales'], dimensions: ['completed_at'],
+                                  time_range: { 'preset' => preset }).dig(:meta, :dimensions, 0, :grain)
+      end
+
+      expect(grain.call('today')).to eq(:hour)
+      expect(grain.call('last_30_days')).to eq(:day)
+      expect(grain.call('last_90_days')).to eq(:week)
+      expect(grain.call('last_12_months')).to eq(:month)
+    end
+
+    it 'reads a range written as from and to' do
+      result = tool('query_report').call(metrics: ['orders'], time_range: { 'from' => '2026-09-01', 'to' => '2026-11-30' })
+
+      range = result.dig(:meta, :time_range)
+      expect(range.first.to_date).to eq(Date.new(2026, 9, 1))
+      expect(range.last.to_date).to eq(Date.new(2026, 11, 30))
+    end
+
+    it 'refuses a range it cannot read rather than reporting on another' do
+      result = tool('query_report').call(metrics: ['orders'], time_range: { 'start' => '2026-09-01' })
+
+      expect(result[:error]).to include('time_range does not take start')
+    end
+
     # The registry's own rejection carries the valid names, so the model can
     # correct itself instead of guessing again.
     it 'names the valid members when given one that does not exist' do
