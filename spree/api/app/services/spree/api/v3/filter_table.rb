@@ -218,9 +218,8 @@ module Spree
           @kinds ||= model.ransackable_attributes(audience).map(&:to_s).uniq.sort.index_with { |attribute| attribute_kind(attribute) }
         end
 
-        # @return [String, Hash, Symbol, nil] the kind; nil for a default
-        #   attribute the model does not have (`position` on a table without
-        #   one), `:unclassified` for one the contract cannot describe
+        # @return [String, Hash, Symbol] the kind; `:unclassified` for one the
+        #   contract cannot describe
         def attribute_kind(attribute)
           if (code_type = code_type(attribute))
             return { 'code' => code_type }
