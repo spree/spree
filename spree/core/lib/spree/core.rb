@@ -701,6 +701,7 @@ require 'spree/agent_tool'
 require 'spree/agent_tools'
 require 'spree/events'
 require 'spree/store_scope_guard'
+require 'spree/removed_apis'
 require 'spree/uploads'
 
 # Not autoloaded from app/: the registry keeps registered steps in

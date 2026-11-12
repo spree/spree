@@ -13,6 +13,7 @@ Rails 8.1 engines, everything namespaced under `Spree::`. Follow Rails conventio
 - Per-request context: `Spree::Current.store`, `.currency`, `.locale`.
 - Customers and staff: `Spree.customer_class` and `Spree.admin_user_class`, never a user model constant (`Spree.user_class` is deprecated).
 - Swappable classes are registered in `Spree::Dependencies` (`Spree::Dependencies.cart_add_item_workflow = 'MyApp::AddItem'`). The old `*_service` keys are deprecated, and some are no longer consulted at all.
+- Removing a public Ruby API (a class, a method or a scope, once its deprecation shim is gone) adds it to `Spree::RemovedApis::REMOVED` in `core/lib/spree/removed_apis.rb`, under the release that removed it, with what replaced it. The `NoMethodError` or `NameError` then names the replacement, so coding agents and upgraders working from old Spree knowledge are pointed to the current API. Then regenerate the docs page that lists them: `UPDATE_DOCS=1 pnpm test:rspec core spec/lib/spree/removed_apis_spec.rb`.
 - YARD comments (`@param`, `@return`) on classes and non-obvious public methods only; never on private helpers.
 - Descriptive variable names, no abbreviations.
 - Jobs that iterate over records use `ActiveJob::Continuable`.
