@@ -170,6 +170,40 @@ describe('GeneratorOutput', () => {
   })
 })
 
+describe('GeneratorOutput with delayed chunks', () => {
+  it('keeps an action line whole when part of it was shown before the rest arrived', () => {
+    const output = new GeneratorOutput()
+    output.write('Generating', 'stdout')
+    output.takePrompt()
+    output.write(' brand\n      create  db/mig', 'stdout')
+    expect(output.hasPartialLine()).toBe(false)
+    output.write('rate/20260101_create_brands.rb\n', 'stdout')
+
+    const result = output.result()
+    expect(result.actions).toEqual([
+      { verb: 'created', target: 'db/migrate/20260101_create_brands.rb' },
+    ])
+    expect(nextSteps(result).map((step) => step.command)).toContain('spree migrate')
+  })
+
+  it('treats a bare carriage return as a line break', () => {
+    const output = new GeneratorOutput()
+    output.write('Loading\r      create  db/migrate/20260101_create_brands.rb\n', 'stdout')
+
+    expect(output.result().actions).toEqual([
+      { verb: 'created', target: 'db/migrate/20260101_create_brands.rb' },
+    ])
+  })
+
+  it('keeps bracketed warnings and drops other boot lines', () => {
+    const result = parseGeneratorOutput(
+      '[Spree Events] subscribed\n[Spree WARNING] Missing migrations.\n      create  app/models/spree/brand.rb\n',
+    )
+
+    expect(result.messages).toEqual(['[Spree WARNING] Missing migrations.'])
+  })
+})
+
 async function run(argv: string[]): Promise<void> {
   const program = new Command().enablePositionalOptions()
   registerGenerateCommand(program)

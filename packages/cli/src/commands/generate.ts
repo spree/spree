@@ -91,6 +91,8 @@ async function generateWithSummary(
     await dockerComposeStream(command, projectDir, {
       onOutput: (chunk, stream) => {
         output.write(chunk, stream)
+        // Only stdout carries prompts; a stderr warning mustn't delay or cancel one.
+        if (stream !== 'stdout') return
         clearTimeout(promptTimer)
         if (output.hasPartialLine()) promptTimer = setTimeout(showPrompt, PROMPT_DELAY_MS)
       },

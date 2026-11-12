@@ -40,17 +40,21 @@ const HIDDEN_STATUSES = new Set(['invoke', 'revoke', 'exist', 'run', 'rake', 'ge
 // biome-ignore lint/suspicious/noControlCharactersInRegex: matching escape codes is the point
 const ANSI = /\u001b\[[0-9;]*m/g
 
+const BOOT_WARNING = /^\[[^\]]*WARNING\]/
+
 /**
  * Parse a Rails generator's stdout into the actions it logged and the rest of
  * what it printed. Boot noise (lines starting with `[`, such as
- * `[Spree Events] …`) is dropped.
+ * `[Spree Events] …`) is dropped, except warnings.
  */
 export function parseGeneratorOutput(stdout: string): GeneratorResult {
   const actions: GeneratorAction[] = []
   const messages: string[] = []
   let previousWasAction = false
 
-  for (const raw of stdout.replace(ANSI, '').replaceAll('\r', '').split('\n')) {
+  // A bare carriage return (a progress line redrawn in place) still ends a line.
+  const text = stdout.replace(ANSI, '').replaceAll('\r\n', '\n').replaceAll('\r', '\n')
+  for (const raw of text.split('\n')) {
     const match = STATUS_LINE.exec(raw)
     if (match && isStatusColumn(match[1], match[2])) {
       previousWasAction = true
@@ -68,7 +72,9 @@ export function parseGeneratorOutput(stdout: string): GeneratorResult {
     }
     previousWasAction = false
 
-    if (raw.trimStart().startsWith('[')) continue
+    // Drop boot noise such as `[Spree Events] …`, but keep warnings such as
+    // `[Spree WARNING] Missing migrations.`
+    if (raw.trimStart().startsWith('[') && !BOOT_WARNING.test(raw.trimStart())) continue
     const line = raw.trimEnd()
     if (line === '' && (messages.length === 0 || messages.at(-1) === '')) continue
     messages.push(line)
@@ -160,15 +166,18 @@ function colorVerb(verb: string, text: string): string {
 /**
  * Collects a generator's output as it streams: the full transcript, for a
  * failure or `--verbose`, and stdout for the summary. A line still without a
- * newline after the generator goes quiet is a prompt waiting for an answer
- * (`Overwrite app/models/brand.rb? [Ynaqdhm]`); `takePrompt` hands it over to
- * be shown and starts the next line fresh, since the answer is echoed by the
- * terminal, not the generator.
+ * newline after the generator goes quiet may be a prompt waiting for an answer
+ * (`Overwrite app/models/brand.rb? [Ynaqdhm]`); `takePrompt` hands over the
+ * part not yet shown. Showing it doesn't take it from the summary: when the
+ * line ends, a status line split across chunks is parsed whole, and a prompt
+ * shown earlier is dropped so the generator's next line parses on its own
+ * (the answer is echoed by the terminal, not the generator).
  */
 export class GeneratorOutput {
   private chunks: { text: string; stream: 'stdout' | 'stderr' }[] = []
   private stdout = ''
   private partial = ''
+  private shown = 0
 
   write(text: string, stream: 'stdout' | 'stderr'): void {
     this.chunks.push({ text, stream })
@@ -176,21 +185,26 @@ export class GeneratorOutput {
 
     const lines = (this.partial + text).split('\n')
     this.partial = lines.pop() ?? ''
-    if (lines.length > 0) this.stdout += `${lines.join('\n')}\n`
+    if (lines.length === 0) return
+
+    if (this.shown > 0 && !STATUS_LINE.test(lines[0])) lines[0] = lines[0].slice(this.shown)
+    this.shown = 0
+    this.stdout += `${lines.join('\n')}\n`
   }
 
+  /** Whether part of the current line is waiting and could be a prompt. */
   hasPartialLine(): boolean {
-    return this.partial !== ''
+    return this.partial.length > this.shown && !STATUS_LINE.test(this.partial)
   }
 
   takePrompt(): string {
-    const prompt = this.partial
-    this.partial = ''
+    const prompt = this.partial.slice(this.shown)
+    this.shown = this.partial.length
     return prompt
   }
 
   result(): GeneratorResult {
-    return parseGeneratorOutput(this.stdout + this.partial)
+    return parseGeneratorOutput(this.stdout + this.partial.slice(this.shown))
   }
 
   /** Write everything the generator printed, each part to the stream it came from. */
