@@ -44,13 +44,16 @@ export function registerGenerateCommand(program: Command): void {
       const generator =
         name.includes(':') || RAILS_BUILTIN_GENERATORS.has(name) ? name : `spree:${name}`
 
-      // Options after the generator name belong to the generator, so `--yes`
-      // only counts before it — the retry command puts it there.
-      await ejectFirst(ctx.projectDir, {
-        task: 'Running a generator',
-        retry: ['spree', 'generate', '--yes', name, ...args].map(shellQuote).join(' '),
-        yes: Boolean(flags.yes),
-      })
+      // A generator's help writes nothing, so it needs no eject. Options after
+      // the generator name belong to the generator, so `--yes` only counts
+      // before it — the retry command puts it there.
+      if (!args.some((arg) => arg === '--help' || arg === '-h')) {
+        await ejectFirst(ctx.projectDir, {
+          task: 'Running a generator',
+          retry: ['spree', 'generate', '--yes', name, ...args].map(shellQuote).join(' '),
+          yes: Boolean(flags.yes),
+        })
+      }
 
       await dockerComposeExecOrRun(runGeneratorCommand(generator, args), ctx.projectDir)
     })

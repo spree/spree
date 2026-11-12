@@ -2,7 +2,6 @@ import * as p from '@clack/prompts'
 import { Command } from 'commander'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { addUncataloguedExtension } from '../src/commands/add'
-import { addExtension } from '../src/commands/add-extension'
 import { registerBundleCommand } from '../src/commands/bundle'
 import { ejectProject } from '../src/commands/eject'
 import { registerGenerateCommand } from '../src/commands/generate'
@@ -11,7 +10,6 @@ import { registerRakeCommand } from '../src/commands/rake'
 import { registerRoutesCommand } from '../src/commands/routes'
 import { runsFromSource } from '../src/context'
 import { dockerComposeExecOrRun } from '../src/docker'
-import { resolveExtension } from '../src/lib/extensions'
 
 vi.mock('../src/context', async (importOriginal) => ({
   ...(await importOriginal<typeof import('../src/context')>()),
@@ -28,7 +26,6 @@ vi.mock('@clack/prompts', () => ({
 }))
 
 vi.mock('../src/commands/eject', () => ({ ejectProject: vi.fn(async () => undefined) }))
-vi.mock('../src/commands/add-extension', () => ({ addExtension: vi.fn(async () => undefined) }))
 vi.mock('../src/commands/add', () => ({
   addUncataloguedExtension: vi.fn(async () => undefined),
 }))
@@ -170,28 +167,22 @@ describe('spree bundle on a project', () => {
     vi.restoreAllMocks()
   })
 
+  // Only an exact gem name is a catalogued extension: `stripe` is the Stripe
+  // gem, not the `stripe` extension.
   it.each([
     ['spree_stripe', 'spree add stripe'],
-    ['paypal', 'spree add paypal'],
-  ])('installs a catalogued %s through spree add', async (gem, replacement) => {
+    ['spree_paypal_checkout', 'spree add paypal'],
+    ['stripe', 'spree add --gem stripe'],
+    ['spree_foo', 'spree add --gem spree_foo'],
+  ])('installs %s through spree add', async (gem, replacement) => {
     await run(['bundle', 'add', gem])
 
-    expect(addExtension).toHaveBeenCalledWith(expect.any(Object), resolveExtension(gem), {
+    expect(addUncataloguedExtension).toHaveBeenCalledWith(gem, undefined, {
       yes: false,
       retry: `${replacement} --yes`,
     })
     expect(dockerComposeExecOrRun).not.toHaveBeenCalled()
     expect(stderr).toHaveBeenCalledWith(expect.stringContaining(replacement))
-  })
-
-  it('installs a gem outside the catalog through spree add --gem', async () => {
-    await run(['bundle', 'add', 'spree_foo'])
-
-    expect(addUncataloguedExtension).toHaveBeenCalledWith('spree_foo', undefined, {
-      yes: false,
-      retry: 'spree add --gem spree_foo --yes',
-    })
-    expect(dockerComposeExecOrRun).not.toHaveBeenCalled()
   })
 
   it('refuses to change the bundle of a project on the prebuilt image', async () => {
@@ -269,6 +260,18 @@ describe('spree generate on a project on the prebuilt image', () => {
     expect(ejectProject).toHaveBeenCalledWith('/proj')
     expect(dockerComposeExecOrRun).toHaveBeenCalledWith(
       ['bin/rails', 'generate', 'migration', 'AddX', '--force'],
+      '/proj',
+    )
+  })
+
+  it("shows a generator's help without ejecting", async () => {
+    Object.defineProperty(process.stdin, 'isTTY', { value: false, configurable: true })
+
+    await run(['generate', 'model', '--help'])
+
+    expect(ejectProject).not.toHaveBeenCalled()
+    expect(dockerComposeExecOrRun).toHaveBeenCalledWith(
+      ['bin/rails', 'generate', 'spree:model', '--help'],
       '/proj',
     )
   })

@@ -5,9 +5,8 @@ import { bundleCommand } from '../backend.js'
 import { detectProject, findApiDir, runsFromSource } from '../context.js'
 import { warnDeprecated } from '../deprecation.js'
 import { dockerComposeExecOrRun } from '../docker.js'
-import { addCommandFor, resolveExtension } from '../lib/extensions.js'
+import { addCommandFor, EXTENSIONS } from '../lib/extensions.js'
 import { addUncataloguedExtension } from './add.js'
-import { addExtension } from './add-extension.js'
 
 // Subcommands that change the bundle, which the prebuilt image never reads.
 const BUNDLE_WRITES = new Set(['add', 'remove', 'install', 'update', 'lock'])
@@ -31,17 +30,22 @@ export function registerBundleCommand(program: Command): void {
       // version, a source) only survives through `spree exec`.
       const gem =
         args[0] === 'add' && args.length === 2 && !args[1].startsWith('-') ? args[1] : undefined
-      const replacement = gem ? addCommandFor(gem) : `spree exec bundle ${args.join(' ')}`
+      // Only an exact gem name means a catalogued extension here: `bundle add
+      // stripe` asks for the Stripe gem, not the `stripe` extension.
+      const catalogued = gem && Object.values(EXTENSIONS).some((entry) => entry.gem === gem)
+      const replacement = gem
+        ? catalogued
+          ? addCommandFor(gem)
+          : `spree add --gem ${gem}`
+        : `spree exec bundle ${args.join(' ')}`
       warnDeprecated('spree bundle', replacement)
       const ctx = detectProject()
 
       if (gem) {
-        const opts = { yes: false, retry: `${replacement} --yes` }
-        const extension = resolveExtension(gem)
-        if (!extension) return addUncataloguedExtension(gem, undefined, opts)
-        p.intro(pc.bgCyan(pc.black(` Spree ${extension.label} `)))
-        await addExtension(ctx, extension, opts)
-        p.outro('Done!')
+        await addUncataloguedExtension(gem, undefined, {
+          yes: false,
+          retry: `${replacement} --yes`,
+        })
         return
       }
 
