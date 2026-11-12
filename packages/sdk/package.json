@@ -1,7 +1,7 @@
 {
   "name": "@spree/sdk",
   "version": "6.0.4",
-  "description": "Official TypeScript SDK for Spree Commerce Store API",
+  "description": "Official TypeScript SDK for the Spree Commerce Store API: carts, checkout, catalog and customer accounts for storefronts and apps on the open-source headless commerce platform",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -74,9 +74,16 @@
   },
   "keywords": [
     "spree",
-    "commerce",
+    "spree-commerce",
+    "headless-commerce",
     "ecommerce",
+    "ecommerce-api",
+    "commerce",
+    "storefront",
+    "marketplace",
     "api",
+    "rest",
+    "openapi",
     "sdk",
     "typescript",
     "headless"
