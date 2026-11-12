@@ -56,7 +56,7 @@
     "@spree/dashboard-core": "workspace:^",
     "@spree/dashboard-ui": "workspace:^",
     "@tanstack/react-query": "^5.104.5",
-    "@tanstack/react-router": "^1.170.45",
+    "@tanstack/react-router": "^1.170.46",
     "i18next": "^26.5.3 || ^27.0.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",

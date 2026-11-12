@@ -1,6 +1,7 @@
 import type { PaymentMethod, PaymentMethodType } from '@spree/admin-sdk'
 import { Subject, usePermissions } from '@spree/dashboard-core'
 import { Badge } from '@spree/dashboard-ui'
+import type { TFunction } from 'i18next'
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useUpdatePaymentMethod } from '../../../hooks/use-payment-methods'
@@ -8,7 +9,7 @@ import { isTestGateway } from '../../../schemas/payment-method'
 import { IntegrationCard } from '../integrations/integration-card'
 import { paymentProviderLabel } from '../payment-method-editors/payment-method-sheets'
 
-function paymentStatusLabels(t: (key: string) => string) {
+function paymentStatusLabels(t: TFunction) {
   return {
     active: t('admin.integrations.status.active'),
     inactive: t('admin.payment_methods.status.disabled'),

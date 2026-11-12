@@ -12,6 +12,7 @@ import {
 } from '@spree/dashboard-ui'
 import { PackageIcon } from '@spree/dashboard-ui/icons'
 import { useParams } from '@tanstack/react-router'
+import type { TFunction } from 'i18next'
 import type { ComponentProps, ReactNode } from 'react'
 import { useAuth } from '../hooks/use-auth'
 import { primarySidebarSide, useTranslation } from '../lib/i18n'
@@ -28,7 +29,7 @@ import { StoreSwitcher } from './store-switcher'
  * `labelKey` is resolved here rather than at registration so labels follow a
  * language change — a literal `label` is frozen at import time.
  */
-function entryToNavItem(entry: NavEntry, tenantId: string, t: (key: string) => string): NavItem {
+function entryToNavItem(entry: NavEntry, tenantId: string, t: TFunction): NavItem {
   const pathFor = (path: string) => (path === '/' ? `/${tenantId}` : `/${tenantId}${path}`)
   return {
     title: resolveNavLabel(entry, t),
