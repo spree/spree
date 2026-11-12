@@ -137,6 +137,15 @@ RSpec.describe 'seller requirement kinds', type: :model do
       expect(requirement.satisfied?(seller)).to be true
     end
 
+    # The contact email is how the marketplace reaches the seller, not part of
+    # the public profile, so it is only asked for when the operator opts in.
+    it 'does not ask for a contact email by default' do
+      seller.update!(about: 'We sell things.', contact_email: nil)
+      seller.logo.attach(io: StringIO.new('logo'), filename: 'logo.png', content_type: 'image/png')
+
+      expect(requirement.satisfied?(seller)).to be true
+    end
+
     it 'ignores the fields they did not' do
       requirement.update!(preferred_require_about: false, preferred_require_logo: false,
                           preferred_require_cover_photo: false, preferred_require_contact_email: false)

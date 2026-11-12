@@ -304,10 +304,16 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
     )
   }
 
-  // A profile's contact email is edited on General, the rest on Profile, so
-  // the link goes wherever the first gap is.
+  // The contact email is edited on General, everything else on Profile. A
+  // marketplace only asks for the email when it opts in, so the step points
+  // to General only once the public fields are filled and the email is the
+  // one thing left that it could be waiting for.
   const route =
-    requirement.kind === 'complete_profile' && profile && !profile.contact_email
+    requirement.kind === 'complete_profile' &&
+    profile &&
+    !profile.contact_email &&
+    profile.about &&
+    profile.logo_url
       ? '/$sellerId/settings/general'
       : panelRoute(requirement.kind)
   return (

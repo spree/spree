@@ -108,9 +108,12 @@ test.describe('seller panel — setup', () => {
     page,
   }) => {
     const home = await sellerLogin(page, FIXTURE_SELLER_WRITER_EMAIL)
-    await page.goto(`${home}/settings/general`)
-    await page.locator('#seller-contact-email').fill('')
     const save = page.getByRole('button', { name: /^save$/i }).first()
+
+    await page.goto(`${home}/settings/profile`)
+    await page.locator('#seller-about').click()
+    await page.keyboard.press('ControlOrMeta+A')
+    await page.keyboard.press('Backspace')
     if (await save.isEnabled()) {
       await save.click()
       await expect(page.getByText(/profile saved/i)).toBeVisible({ timeout: 15_000 })
@@ -121,15 +124,18 @@ test.describe('seller panel — setup', () => {
     await expect(step).toBeVisible({ timeout: 15_000 })
     if ((await step.getAttribute('aria-expanded')) !== 'true') await step.click()
 
-    await expect(page.getByText(/still missing:.*a contact email/i)).toBeVisible()
+    // A contact email is only asked for when the marketplace opts in.
+    await expect(page.getByText(/still missing:.*a description/i)).toBeVisible()
+    await expect(page.getByText(/still missing:.*contact email/i)).toHaveCount(0)
     await page
       .getByRole('link', { name: /^go there$/i })
       .first()
       .click()
-    await expect(page).toHaveURL(/\/settings\/general$/, { timeout: 15_000 })
+    await expect(page).toHaveURL(/\/settings\/profile$/, { timeout: 15_000 })
 
-    // The panel seller is shared across this shard, so put the email back.
-    await page.locator('#seller-contact-email').fill('panel-seller@example.com')
+    // The panel seller is shared across this shard, so put a description back.
+    await page.locator('#seller-about').click()
+    await page.locator('#seller-about').pressSequentially('Hand-thrown ceramics.')
     await save.click()
     await expect(page.getByText(/profile saved/i).first()).toBeVisible({ timeout: 15_000 })
   })

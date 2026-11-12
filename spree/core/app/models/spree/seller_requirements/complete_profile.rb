@@ -10,7 +10,7 @@ module Spree
       preference :require_about, :boolean, default: true
       preference :require_logo, :boolean, default: true
       preference :require_cover_photo, :boolean, default: false
-      preference :require_contact_email, :boolean, default: true
+      preference :require_contact_email, :boolean, default: false
 
       def met_by_seller?(seller)
         missing_fields(seller).empty?
