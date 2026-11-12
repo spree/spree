@@ -48,7 +48,7 @@ module Spree
         return invalid_filters(entry, unrecognised) if unrecognised.any?
 
         path = entry.path_for(:index, parent_id: parent_id)
-        return wrong_parent(entry, parent_id) if path.nil? && parent_id.present?
+        return wrong_parent(entry, parent_id) if path.nil? && parent_id.present? && !entry.nested?(:index)
         return not_searchable(entry) if path.nil?
 
         response = dispatch.call(method: :get, path: path, params: query_for(applied, sort, limit, page))

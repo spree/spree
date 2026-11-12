@@ -187,6 +187,13 @@ RSpec.describe Spree::AgentTools::SearchResources do
       expect(described[:listed_under]).to include('categories', 'collections', 'catalogs', 'price_lists')
     end
 
+    it 'keeps the nested refusal for a resource listed only two levels deep' do
+      result = tool.call(resource: 'deliveries', parent_id: create(:shipped_order, store: store).prefixed_id)
+
+      expect(result[:error]).not_to include('cannot be listed under')
+      expect(Spree::AgentTools::ResourceMap.find('deliveries').index_parents).to be_empty
+    end
+
     it 'refuses a parent for a resource never listed under one' do
       result = tool.call(resource: 'orders', parent_id: products.first.prefixed_id)
 

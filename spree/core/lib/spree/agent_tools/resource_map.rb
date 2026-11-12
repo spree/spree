@@ -134,11 +134,14 @@ module Spree
         # The records this resource can be listed under, each with the
         # collection path that lists it there — claims under an order,
         # products under a category or collection, variants under a product.
+        # A path nested twice is left out: one parent id cannot fill it.
         #
         # @return [Hash{String => String}] parent resource key => path
         def index_parents
           Array(index_paths.presence || api_path(:index)).each_with_object({}) do |path, parents|
-            parent = path.scan(PARENT_SEGMENT).flatten.last
+            next unless path.scan(/:[a-z_]+_id\b/).one?
+
+            parent = path.scan(PARENT_SEGMENT).flatten.first
             parents[parent] ||= path if parent
           end
         end
