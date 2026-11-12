@@ -88,6 +88,7 @@ module Spree
     self.whitelisted_ransackable_attributes = %w[amount compare_at_amount currency min_quantity price_list_id variant_id]
     self.whitelisted_ransackable_associations = %w[variant price_list]
     self.whitelisted_ransackable_scopes = %i[search]
+    self.ransackable_scope_types = { 'search' => 'text' }
 
     # Free-text search delegated to `Spree::Variant.search` (SKU + product
     # name + option-value presentation), wrapped in a subquery so that

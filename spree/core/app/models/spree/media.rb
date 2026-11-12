@@ -108,7 +108,7 @@ module Spree
     end
     private_class_method :attached_blob_column
     self.whitelisted_ransackable_scopes = %w[attached unattached filename_cont]
-    self.ransackable_scope_types = { 'attached' => 'boolean', 'unattached' => 'boolean' }
+    self.ransackable_scope_types = { 'attached' => 'boolean', 'unattached' => 'boolean', 'filename_cont' => 'text' }
 
     delegate :key, :attached?, :variant, :variable?, :blob, :filename, :variation, to: :attachment
 
