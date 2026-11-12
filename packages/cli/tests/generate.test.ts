@@ -170,6 +170,26 @@ describe('GeneratorOutput', () => {
   })
 })
 
+describe('nextSteps quoting', () => {
+  it('quotes a spec path a shell would expand', () => {
+    const steps = nextSteps(
+      parseGeneratorOutput('      create  spec/models/$(touch_pwned)_spec.rb\n'),
+    )
+
+    expect(steps.map((step) => step.command)).toEqual([
+      "spree test 'spec/models/$(touch_pwned)_spec.rb'",
+    ])
+  })
+
+  it('leaves ordinary spec paths as they are', () => {
+    const steps = nextSteps(parseGeneratorOutput('      create  spec/models/spree/brand_spec.rb\n'))
+
+    expect(steps.map((step) => step.command)).toEqual([
+      'spree test spec/models/spree/brand_spec.rb',
+    ])
+  })
+})
+
 describe('GeneratorOutput with delayed chunks', () => {
   it('keeps an action line whole when part of it was shown before the rest arrived', () => {
     const output = new GeneratorOutput()

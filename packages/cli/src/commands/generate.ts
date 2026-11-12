@@ -4,7 +4,7 @@ import { runGeneratorCommand } from '../backend.js'
 import { detectProject } from '../context.js'
 import { dockerComposeExecOrRun, dockerComposeStream } from '../docker.js'
 import { ejectFirst } from '../lib/eject-first.js'
-import { formatGeneratorSummary, GeneratorOutput } from '../lib/generator-output.js'
+import { formatGeneratorSummary, GeneratorOutput, shellQuote } from '../lib/generator-output.js'
 
 // Forwarded as-is so `spree generate migration AddX` hits Rails's own
 // generator instead of the non-existent `spree:migration`. `model` is
@@ -108,8 +108,4 @@ async function generateWithSummary(
   clearTimeout(promptTimer)
 
   console.log(formatGeneratorSummary(generator, output.result()))
-}
-
-function shellQuote(arg: string): string {
-  return /^[\w@%+=:,./-]+$/.test(arg) ? arg : `'${arg.replaceAll("'", `'\\''`)}'`
 }

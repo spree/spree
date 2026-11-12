@@ -91,6 +91,11 @@ function isStatusColumn(indent: string, status: string): boolean {
   )
 }
 
+/** Quote an argument for a POSIX shell unless it is plainly safe. */
+export function shellQuote(arg: string): string {
+  return /^[\w@%+=:,./-]+$/.test(arg) ? arg : `'${arg.replaceAll("'", `'\\''`)}'`
+}
+
 export interface NextStep {
   command: string
   reason?: string
@@ -122,7 +127,9 @@ export function nextSteps({ actions, messages }: GeneratorResult): NextStep[] {
     steps.push({ command: 'spree migrate' })
   }
 
-  const specs = touched.filter((path) => path.endsWith('_spec.rb'))
+  // The paths come from the container's output, and the command is meant to
+  // be pasted into a shell, so anything unusual is quoted.
+  const specs = touched.filter((path) => path.endsWith('_spec.rb')).map(shellQuote)
   if (specs.length > 0) steps.push({ command: `spree test ${specs.join(' ')}` })
 
   const printed = messages.join('\n')
