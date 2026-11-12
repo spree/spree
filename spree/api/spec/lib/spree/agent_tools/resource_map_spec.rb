@@ -46,8 +46,8 @@ RSpec.describe Spree::AgentTools::ResourceMap do
 
         it 'lists only filters the database can run' do
           entry.filterable_fields.each do |field|
-            filtering = -> { entry.scope_for(context).ransack("#{field}_null" => false).result.load }
-            expect(filtering).not_to raise_error, "#{entry.key} lists `#{field}`, which fails to filter"
+            filter = { "#{field}_null" => false }
+            expect { entry.scope_for(context).ransack(filter).result.load }.not_to raise_error, "#{entry.key} lists `#{field}`, which fails to filter"
           end
         end
       end
