@@ -12,41 +12,60 @@ module Spree
     # children rather than building new ones. A group with a canceled child is
     # left to its operator: placing its siblings would ship part of a purchase
     # someone already called off.
+    #
+    # Continuable: the cursor is the store and the last record handled in it,
+    # so a restart resumes where the sweep stopped.
     class FinalizeStaleDraftsJob < Spree::BaseJob
+      include ActiveJob::Continuable
+
       queue_as Spree.queues.default
 
       STALE_AFTER = 10.minutes
 
       def perform
-        stale_drafts = Spree::Order.drafts.
-                       where.not(cart_id: nil).
-                       where(completed_at: nil).
-                       where(created_at: ...STALE_AFTER.ago)
-
-        each_store_of(stale_drafts) do |orders|
-          orders.includes(:cart).find_each { |order| recover(order.cart, order.number) }
-        end
-
-        stale_groups = Spree::OrderGroup.
-                       joins(:cart).merge(Spree::Cart.incomplete).
-                       where(created_at: ...STALE_AFTER.ago).
-                       where.not(id: Spree::Order.canceled.where.not(order_group_id: nil).select(:order_group_id)).
-                       includes(:cart)
-
-        each_store_of(stale_groups) do |groups|
-          groups.find_each { |group| recover(group.cart, group.number) }
-        end
+        step(:recover_drafts) { |step| sweep(step, stale_drafts) }
+        step(:recover_groups) { |step| sweep(step, stale_groups) }
       end
 
       private
 
-      def recover(cart, number)
+      def stale_drafts
+        Spree::Order.drafts.where.not(cart_id: nil).where(completed_at: nil).where(created_at: ...STALE_AFTER.ago)
+      end
+
+      def stale_groups
+        Spree::OrderGroup.joins(:cart).merge(Spree::Cart.incomplete).where(created_at: ...STALE_AFTER.ago)
+      end
+
+      def sweep(step, records)
+        store_from, record_from = step.cursor
+        stores = Spree::Store.with_deleted.where(id: records.select(:store_id))
+        stores = stores.where(id: store_from..) if store_from
+
+        stores.find_each do |store|
+          Spree::Current.with_store(store) do
+            in_store = records.where(store_id: store.id).includes(:cart)
+            in_store = in_store.where(id: record_from..) if store.id == store_from && record_from
+
+            in_store.find_each do |record|
+              recover(record)
+              step.set!([store.id, record.id + 1])
+            end
+          end
+        end
+      end
+
+      def recover(record)
+        cart = record.cart
         return if cart.nil? || cart.completed?
+        # Asked here rather than in the query, so a cancellation made while the
+        # sweep was running is still seen.
+        return if record.is_a?(Spree::OrderGroup) && record.orders.canceled.exists?
 
         result = Spree::Dependencies.carts_complete_workflow.constantize.call(cart: cart)
-        Rails.logger.error("[Spree] Completion recovery failed for #{number}: #{result.error&.value}") if result.failure?
+        Rails.logger.error("[Spree] Completion recovery failed for #{record.number}: #{result.error&.value}") if result.failure?
       rescue StandardError => e
-        Rails.logger.error("[Spree] Completion recovery raised for #{number}: #{e.message}")
+        Rails.logger.error("[Spree] Completion recovery raised for #{record.number}: #{e.message}")
       end
     end
   end

@@ -52,20 +52,35 @@ RSpec.describe Spree::Orders::FinalizeStaleDraftsJob do
     end
 
     # The division moved the cart_id to the group and placed the first child,
-    # then the process died: the sibling is still a draft and the cart was
-    # never stamped, so no draft carries the cart_id the sweep looks for.
+    # then the process died before the sibling was ever placed or the cart
+    # stamped, so no draft carries the cart_id the draft sweep looks for.
     def interrupted_group
       cart = cart_for(seller, other_seller)
+      dying_completion = Class.new(Spree::Orders::Complete) do
+        workflow_key 'orders.complete'
+
+        define_method(:place_sibling) { |_sibling| nil }
+        private :place_sibling
+      end
+      allow(Spree).to receive(:order_complete_workflow).and_return(dying_completion)
       group = workflow.call(cart: cart).value
-      group.orders.order(:id).last.update_columns(status: 'draft', completed_at: nil)
+      allow(Spree).to receive(:order_complete_workflow).and_call_original
+
       cart.update_columns(completed_at: nil)
       group.update_columns(created_at: 1.hour.ago)
       group.orders.update_all(created_at: 1.hour.ago)
       group
     end
 
-    it 'resumes the same group and places the stranded sibling' do
+    def stock_movements_of(order)
+      Spree::StockMovement.where(order_id: order.id).pluck(:stock_level_id, :quantity, :kind).sort_by(&:to_s)
+    end
+
+    it 'resumes the same group and places the stranded sibling once' do
       group = interrupted_group
+      first, stranded = group.orders.order(:id).to_a
+      expect(stranded.reload.status).to eq('draft')
+      expect(stock_movements_of(stranded)).to be_empty
       order_ids = group.orders.ids
       payment_ids = Spree::Payment.ids
 
@@ -77,6 +92,16 @@ RSpec.describe Spree::Orders::FinalizeStaleDraftsJob do
       expect(Spree::OrderGroup.count).to eq(1)
       expect(Spree::Order.count).to eq(2)
       expect(Spree::Payment.ids).to match_array(payment_ids)
+      # The sibling's stock moved the way the first child's did, once.
+      expect(stock_movements_of(stranded).map { |_, quantity, kind| [quantity, kind] }).
+        to eq(stock_movements_of(first).map { |_, quantity, kind| [quantity, kind] })
+
+      movements = Spree::StockMovement.order(:id).pluck(:id)
+      levels = Spree::StockLevel.order(:id).pluck(:id, :count_on_hand, :allocated_count)
+      described_class.perform_now
+
+      expect(Spree::StockMovement.order(:id).pluck(:id)).to eq(movements)
+      expect(Spree::StockLevel.order(:id).pluck(:id, :count_on_hand, :allocated_count)).to eq(levels)
     end
 
     it 'leaves a group that is not stale yet' do
