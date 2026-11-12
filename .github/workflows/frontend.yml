@@ -195,6 +195,26 @@ jobs:
           done
           exit "$status"
 
+      # The steps above test the catalog's versions. Host apps may sit anywhere
+      # in the dashboard packages' peer ranges and compile their source, so
+      # the oldest version each range allows must keep type checking too.
+      - name: Check both apps on the oldest supported peer versions
+        if: ${{ !cancelled() }}
+        run: |
+          FLOORS=$(node scripts/peer-floors.mjs packages/dashboard packages/seller-dashboard packages/dashboard-core packages/dashboard-ui)
+          echo "Installing $FLOORS"
+          status=0
+          for app in dashboard seller-dashboard; do
+            (
+              cd "$RUNNER_TEMP/app/apps/$app" &&
+                pnpm add --save-exact $FLOORS &&
+                pnpm dedupe &&
+                pnpm typecheck &&
+                pnpm build
+            ) || status=1
+          done
+          exit "$status"
+
   sdk-integration:
     name: "SDK integration tests"
     runs-on: ubuntu-latest

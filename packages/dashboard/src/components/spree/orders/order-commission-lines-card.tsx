@@ -13,11 +13,12 @@ import {
   TableRow,
 } from '@spree/dashboard-ui'
 import { PercentIcon } from '@spree/dashboard-ui/icons'
+import type { TFunction } from 'i18next'
 import { useTranslation } from 'react-i18next'
 import { useOrderCommissionLines } from '../../../hooks/use-order'
 import { commissionRateLabel } from '../../../lib/commission-line-rate-label'
 
-function commissionSubjectLabel(line: CommissionLine, order: Order, t: (key: string) => string) {
+function commissionSubjectLabel(line: CommissionLine, order: Order, t: TFunction) {
   if (line.line_item_id) {
     const item = order.items?.find((row) => row.id === line.line_item_id)
     return item?.name ?? t('admin.orders.detail.commission_lines.line_item_fallback')

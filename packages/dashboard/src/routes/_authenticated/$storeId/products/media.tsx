@@ -55,6 +55,7 @@ import {
   UploadIcon,
 } from '@spree/dashboard-ui/icons'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import type { TFunction } from 'i18next'
 import {
   type ReactElement,
   type ReactNode,
@@ -716,7 +717,7 @@ const USAGE_OWNER_LABELS = new Set(['product', 'variant', 'category', 'collectio
 // A placement's badge names what kind of place it is — a category placement
 // labeled "Product" would be wrong. Non-placement kinds (a bare image field, a
 // description embed) keep their kind label.
-function usageBadgeLabel(reference: MediaUsageReference, t: (key: string) => string): string {
+function usageBadgeLabel(reference: MediaUsageReference, t: TFunction): string {
   if (reference.kind === 'media') {
     if (USAGE_OWNER_LABELS.has(reference.owner_type)) {
       return t(`admin.media_library.usage.owner.${reference.owner_type}`)
