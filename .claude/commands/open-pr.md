@@ -36,9 +36,10 @@ unapplied. Re-run `pnpm test:changed`, fix what fails, then commit with a
 Run `/security-review` on the branch. It only reports, so fix every confirmed
 finding yourself. Re-run `pnpm test:changed`, fix what fails, then commit.
 
-If step 2 changed code, run `/code-review --fix` once more on those fixes only
-and commit what it fixes. Then go to step 3. Do not loop further: two rounds
-are enough.
+If step 2 changed code, run `/code-review --fix` once more on those fixes only,
+and apply any finding it leaves unapplied. Re-run `pnpm test:changed`, fix what
+fails, then commit. Then go to step 3. Do not loop further: two rounds are
+enough.
 
 ## 3. Record the reviewed commit
 
