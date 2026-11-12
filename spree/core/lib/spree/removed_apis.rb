@@ -37,11 +37,13 @@ module Spree
                'Spree::Dependencies.carts_complete_workflow.constantize.call(cart: cart).'.freeze
     CHECKOUT_CUSTOMIZATION = 'Checkout has no state machine. Add a checkout requirement with ' \
                              'Spree::Checkout::Registry.add_requirement, or a step with Spree::Checkout::Registry.register_step, ' \
-                             "and run code at completion with a hook: Spree.hooks.register('carts.complete.before_finalize', ...).".freeze
+                             'and run side effects of placing an order in an order.placed subscriber (Spree::Subscriber).'.freeze
     ADJUSTMENTS = 'Adjustments are typed rows: tax_lines, discounts and fees.'.freeze
     RETURNS = 'Returns, exchanges and claims are their own records on the order: returns, exchanges, claims.'.freeze
     STATE_CHANGES = 'Status history is no longer stored. Subscribe to events instead (Spree::Subscriber).'.freeze
     PRIMARY_MEDIA = 'Use primary_media.'.freeze
+    CUSTOMER_PRICE = 'Use price_in(currency).display_amount for the base price, or, on a variant (product.default_variant), ' \
+                     'price_for(context).display_amount for the price a customer pays including price lists.'.freeze
     SEARCH = 'Use search, or q[search] in the Admin API.'.freeze
 
     ORDER_AND_CART = {
@@ -73,8 +75,8 @@ module Spree
       'price' => 'Prices are per currency: price_in(currency).amount or amount_in(currency).',
       'default_price' => 'Use price_in(currency).',
       'currency' => 'Pass the currency you mean to price_in(currency).',
-      'display_price' => 'Use price_in(currency).display_amount.',
-      'display_amount' => 'Use price_in(currency).display_amount.',
+      'display_price' => CUSTOMER_PRICE,
+      'display_amount' => CUSTOMER_PRICE,
       'display_compare_at_price' => 'Use price_in(currency).display_compare_at_amount.',
       'price_including_vat_for' => 'Use price_in(currency).amount: prices are charged as entered.',
       'has_default_price?' => 'Use prices.base_prices.exists?(currency: currency).',
