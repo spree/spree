@@ -39,11 +39,17 @@ function ToastViewport({ className, ...props }: ToastPrimitive.Viewport.Props) {
     <ToastPrimitive.Viewport
       data-slot="toast-viewport"
       className={cn(
-        // `z-40`, below the overlay layer (`z-50`) rather than above
-        // everything: the stack sits bottom-right, which is exactly where a
-        // side sheet's footer buttons are, and a toast drifting over Save is
-        // both unclickable and a click the merchant did not intend.
+        // `z-40`, below the overlay layer (`z-50`): the stack sits
+        // bottom-right, which is exactly where a side sheet's footer buttons
+        // are, and a toast drifting over Save is both unclickable and a click
+        // the merchant did not intend.
         'pointer-events-none fixed inset-x-4 bottom-[max(1rem,env(safe-area-inset-bottom))] z-40 mx-auto w-auto max-w-sm outline-none sm:right-4 sm:left-auto sm:mx-0 sm:w-full',
+        // While a sheet or dialog is open, a toast below it is never seen —
+        // often the only word that its save failed. So it rises above the
+        // overlay at the top, clear of the footer: centred over a dialog, and
+        // on the far side of a sheet so it covers none of it.
+        'modal-open:top-[max(1rem,env(safe-area-inset-top))] modal-open:bottom-auto modal-open:z-[60] modal-open:sm:inset-x-0 modal-open:sm:mx-auto',
+        'right-sheet-open:sm:right-auto right-sheet-open:sm:left-4 right-sheet-open:sm:mx-0',
         className,
       )}
       {...props}
@@ -71,6 +77,14 @@ function Toast({ className, ...props }: ToastPrimitive.Root.Props) {
         'data-expanded:data-ending-style:data-[swipe-direction=left]:[transform:translateX(calc(var(--toast-swipe-movement-x)-150%))_translateY(var(--offset-y))]',
         'data-expanded:data-ending-style:data-[swipe-direction=right]:[transform:translateX(calc(var(--toast-swipe-movement-x)+150%))_translateY(var(--offset-y))]',
         'data-expanded:data-ending-style:data-[swipe-direction=up]:[transform:translateY(calc(var(--toast-swipe-movement-y)-150%))]',
+        // Anchored to the top over an open sheet or dialog: the same stack,
+        // mirrored to grow downwards and to enter and leave upwards.
+        'modal-open:top-0 modal-open:bottom-auto modal-open:origin-top modal-open:after:top-auto modal-open:after:bottom-full',
+        'modal-open:[--offset-y:calc(var(--toast-offset-y)+calc(var(--toast-index)*var(--gap))+var(--toast-swipe-movement-y))]',
+        'modal-open:[transform:translateX(var(--toast-swipe-movement-x))_translateY(calc(var(--toast-swipe-movement-y)+(var(--toast-index)*var(--peek))+(var(--shrink)*var(--height))))_scale(var(--scale))]',
+        'modal-open:data-expanded:[transform:translateX(var(--toast-swipe-movement-x))_translateY(var(--offset-y))]',
+        'modal-open:data-starting-style:[transform:translateY(-150%)]',
+        'modal-open:[&[data-ending-style]:not([data-limited]):not([data-swipe-direction])]:[transform:translateY(-150%)]',
         className,
       )}
       {...props}
