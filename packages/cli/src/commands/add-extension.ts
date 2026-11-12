@@ -12,6 +12,7 @@ import {
 } from '../backend.js'
 import { findApiDir, isEjectedProject } from '../context.js'
 import { dockerComposeCapture, dockerComposeExecOrRun, restartAppServices } from '../docker.js'
+import { ejectFirst } from '../lib/eject-first.js'
 import {
   type Extension,
   gemfileDeclares,
@@ -19,14 +20,14 @@ import {
   lockfileIncludes,
   snapshotInstallFiles,
 } from '../lib/extensions.js'
-import { confirmOrExit } from '../lib/prompt.js'
 import type { ProjectContext } from '../types.js'
 import { detectPackageManager } from './add.js'
-import { ejectProject } from './eject.js'
 
 export interface AddExtensionOptions {
   /** Agree to every confirmation: ejecting, and installing outside the catalog. */
   yes: boolean
+  /** The exact command that agrees up front, when the caller is not `spree add`. */
+  retry?: string
 }
 
 // `dir` is both the folder under apps/ and the `spree add` name that creates it.
@@ -84,23 +85,11 @@ async function installGem(
       return false
     }
 
-    await confirmOrExit(
-      [
-        `This project runs the prebuilt Spree image, which cannot load new gems.`,
-        `Installing ${extension.label} ejects it first: the Rails app is then built from`,
-        `./${apiDir}, with a new development database that does not have your current data.`,
-        'Eject now?',
-      ].join('\n'),
-      opts.yes,
-    )
-    try {
-      await ejectProject(ctx.projectDir)
-    } catch (error) {
-      p.cancel(
-        `Ejecting failed, so ${extension.label} was not installed. Fix the problem above, run ${pc.bold('spree eject')}, then run this command again. ${error instanceof Error ? error.message : String(error)}`,
-      )
-      process.exit(1)
-    }
+    await ejectFirst(ctx.projectDir, {
+      task: `Installing ${extension.label}`,
+      retry: opts.retry,
+      yes: opts.yes,
+    })
   }
 
   const listed = gemfileDeclares(fs.readFileSync(gemfilePath, 'utf-8'), gem)

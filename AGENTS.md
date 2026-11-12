@@ -76,6 +76,7 @@ pnpm wt:template         # rebuild the template DB after schema-changing pulls
 - No co-author or "generated with" trailers.
 - Open every pull request with `/open-pr` (code review, security review, open, monitor). A hook blocks a bare `gh pr create` until both reviews have run on `HEAD`.
 - Pull request descriptions are public: no credentials, personal data or local URLs. Keep them short; bullets for larger changes.
+- Fix every real finding a reviewer reports — person or bot — in the same pull request, including bugs the change did not introduce. "It predates this change" and "it belongs in a follow-up" are not reasons to leave one. Skip a finding only when it is wrong, and say why on its thread.
 - Cut releases with `/release <version>` (audit, version bump, release notes, pull request, then tags, GitHub release, and the spree-starter and storefront bumps). A patch release publishes itself; a minor, major or prerelease prints the tag commands for a human.
 
 ## Testing
