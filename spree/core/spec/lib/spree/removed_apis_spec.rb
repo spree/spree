@@ -28,7 +28,9 @@ RSpec.describe Spree::RemovedApis do
   end
 
   it 'names the replacement for a removed class method called on a relation' do
-    expect(hint_for { Spree::Product.all.with_option('color') }).to include('Spree 6.0 removed Spree::Product.with_option. Use with_option_value.')
+    message = hint_for { Spree::Product.all.with_option('color') }
+
+    expect(message).to include('Spree 6.0 removed Spree::Product.with_option. Use with_option_value(option, value).')
   end
 
   it 'names the replacement for a removed constant' do

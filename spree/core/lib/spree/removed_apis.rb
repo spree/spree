@@ -126,14 +126,15 @@ module Spree
         'Spree::Product#featured_image' => PRIMARY_MEDIA,
         'Spree::DefaultPrice' => 'Use variant.price_in(currency) and variant.set_price(currency, amount).',
         'Spree::VatPriceCalculation' => 'Use price_in(currency).amount: prices include tax per market.',
-        'Spree::Product.with_option' => 'Use with_option_value.',
+        'Spree::Product.with_option' => 'Use with_option_value(option, value).',
         **expand(%w[Spree::Product], '.', %w[in_name in_name_or_keywords in_name_or_description].index_with(SEARCH)),
         'Spree::Product.with_ids' => 'Use where(id: ids).',
-        'Spree::Product.add_search_scope' => 'Declare it as a plain Active Record scope.',
+        'Spree::Product.add_search_scope' => 'Declare a plain Active Record scope. To filter by it through the Admin API (q[...]), ' \
+                                             'also register it with Spree.ransack.add_scope(Spree::Product, :scope_name).',
         **expand(%w[Spree::Product Spree::Variant], '.', { 'multi_search' => SEARCH }),
         'Spree::OptionType#color?' => 'Use color_swatch?.',
-        'Spree::Category#set_store' => 'Use ensure_store.',
-        'Spree::Category.for_taxonomy' => 'Use for_store.',
+        'Spree::Category#set_store' => 'Nothing to call: a new category gets its store from its parent or the current store when it is saved.',
+        'Spree::Category.for_taxonomy' => 'Use for_store(taxonomy.store). It returns every category in that store, not one taxonomy.',
 
         # Stores, addresses, users and permissions
         'Spree::Store#admin_users' => 'Use users.',
