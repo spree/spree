@@ -44,6 +44,32 @@ module Spree
       end
     end
 
+    describe 'date scopes' do
+      let!(:late) { create(:purchase_order, store: store, status: 'ordered', expected_at: Date.yesterday, cancel_by: Date.yesterday) }
+      let!(:due_today) { create(:purchase_order, store: store, status: 'ordered', expected_at: Date.current, cancel_by: Date.current) }
+      let!(:undated) { create(:purchase_order, store: store, status: 'ordered', expected_at: nil, cancel_by: nil) }
+      let!(:late_but_received) { create(:purchase_order, store: store, status: 'received', expected_at: Date.yesterday, cancel_by: Date.yesterday) }
+
+      %i[overdue past_cancel_by].each do |scope|
+        describe ".#{scope}" do
+          it 'splits open orders into late and not late, leaving closed ones on neither side' do
+            expect(described_class.ransack(scope => true).result).to contain_exactly(late)
+            expect(described_class.ransack(scope => 'false').result).to contain_exactly(due_today, undated)
+          end
+
+          it 'takes the side as a list, the way a multi-select filter sends it' do
+            expect(described_class.ransack(scope => ['true']).result).to contain_exactly(late)
+            expect(described_class.ransack(scope => ['false']).result).to contain_exactly(due_today, undated)
+          end
+
+          it 'applies no constraint when both sides are asked for' do
+            expect(described_class.ransack(scope => %w[true false]).result).
+              to contain_exactly(late, due_today, undated, late_but_received)
+          end
+        end
+      end
+    end
+
     describe '#subtotal' do
       it 'is what the supplier will invoice for everything ordered' do
         purchase_order = create(:purchase_order, store: store, quantity: 0)
