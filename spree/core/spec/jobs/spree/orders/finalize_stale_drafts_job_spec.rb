@@ -66,8 +66,9 @@ RSpec.describe Spree::Orders::FinalizeStaleDraftsJob do
       group = workflow.call(cart: cart).value
       allow(Spree).to receive(:order_complete_workflow).and_call_original
 
-      cart.update_columns(completed_at: nil)
-      group.update_columns(created_at: 1.hour.ago)
+      # A completed cart is read-only, so the crash is staged on the row.
+      Spree::Cart.where(id: cart.id).update_all(completed_at: nil)
+      Spree::OrderGroup.where(id: group.id).update_all(created_at: 1.hour.ago)
       group.orders.update_all(created_at: 1.hour.ago)
       group
     end
@@ -105,7 +106,7 @@ RSpec.describe Spree::Orders::FinalizeStaleDraftsJob do
     end
 
     it 'leaves a group that is not stale yet' do
-      interrupted_group.update_columns(created_at: 1.minute.ago)
+      Spree::OrderGroup.where(id: interrupted_group.id).update_all(created_at: 1.minute.ago)
       allow(workflow).to receive(:call)
 
       described_class.perform_now
@@ -123,7 +124,7 @@ RSpec.describe Spree::Orders::FinalizeStaleDraftsJob do
 
     it 'leaves a group with a canceled child to its operator' do
       group = interrupted_group
-      group.orders.order(:id).first.update_columns(status: 'canceled', canceled_at: Time.current)
+      group.orders.where(id: group.orders.order(:id).first.id).update_all(status: 'canceled', canceled_at: Time.current)
       stranded = group.orders.order(:id).last
 
       described_class.perform_now
