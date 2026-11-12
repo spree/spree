@@ -287,7 +287,7 @@ export function customFieldValueError(
 ): string | null {
   const rules = definition.validations
   if (!rules) return null
-  const message = (key: string, options?: Record<string, unknown>) =>
+  const message = (key: string, options: Record<string, unknown> = {}) =>
     i18n.t(`admin.components.custom_fields.errors.${key}`, options)
 
   if (isBlank(value)) return checkRequired && rules.required ? message('required') : null
