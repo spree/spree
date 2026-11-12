@@ -129,6 +129,71 @@ RSpec.describe Spree::AgentTools::SearchResources do
     end
   end
 
+  # parent_id used to be dropped for a resource also listed at the top
+  # level, so every claim in the store was reported as one order's.
+  describe 'under a parent' do
+    it "lists only the order's claims" do
+      claim = create(:claim, store: store, order: create(:shipped_order, store: store))
+      create(:approved_claim, store: store, order: create(:shipped_order, store: store))
+
+      result = tool.call(resource: 'claims', parent_id: claim.order.prefixed_id)
+
+      expect(result[:total]).to eq(1)
+      expect(result[:records].pluck(:id)).to eq([claim.prefixed_id])
+    end
+
+    it "lists only the category's products" do
+      category = create(:category, store: store)
+      create(:product_category, category: category, product: products.first, position: 1)
+
+      result = tool.call(resource: 'products', parent_id: category.prefixed_id)
+
+      expect(result[:total]).to eq(1)
+      expect(result[:records].pluck(:id)).to eq([products.first.prefixed_id])
+    end
+
+    it "counts pages for the collection's products" do
+      collection = create(:collection, store: store)
+      products.first(2).each { |product| create(:product_collection, collection: collection, product: product) }
+
+      result = tool.call(resource: 'products', parent_id: collection.prefixed_id, limit: 1, page: 2)
+
+      expect(result).to include(total: 2, pages: 2, count: 1)
+      expect(products.first(2).map(&:prefixed_id)).to include(result[:records].first[:id])
+    end
+
+    it "lists only the product's variants" do
+      product = create(:product, store: store)
+      create_list(:variant, 2, product: product)
+      create(:variant, product: products.first)
+
+      result = tool.call(resource: 'variants', parent_id: product.prefixed_id)
+
+      expected = product.reload.variants.map(&:prefixed_id)
+      expect(result[:total]).to eq(expected.size)
+      expect(result[:records].pluck(:id)).to match_array(expected)
+    end
+
+    it 'refuses a parent the resource is not listed under' do
+      result = tool.call(resource: 'products', parent_id: create(:shipped_order, store: store).prefixed_id)
+
+      expect(result[:error]).to include('cannot be listed under')
+      expect(result[:parents]).to include('categories', 'collections')
+    end
+
+    it 'is named by describe_resource' do
+      described = Spree::AgentTools::DescribeResource.new(context).call(resource: 'products')[:resources].first
+
+      expect(described[:listed_under]).to include('categories', 'collections', 'catalogs', 'price_lists')
+    end
+
+    it 'refuses a parent for a resource never listed under one' do
+      result = tool.call(resource: 'orders', parent_id: products.first.prefixed_id)
+
+      expect(result[:error]).to include('not listed under another record')
+    end
+  end
+
   describe 'store scoping' do
     # An explicit code: the factory's default collides with the suite-wide
     # default store.

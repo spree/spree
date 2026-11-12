@@ -48,6 +48,7 @@ module Spree
         return invalid_filters(entry, unrecognised) if unrecognised.any?
 
         path = entry.path_for(:index, parent_id: parent_id)
+        return wrong_parent(entry, parent_id) if path.nil? && parent_id.present?
         return not_searchable(entry) if path.nil?
 
         response = dispatch.call(method: :get, path: path, params: query_for(applied, sort, limit, page))
@@ -159,6 +160,17 @@ module Spree
 
       def forbidden(entry)
         { error: "You do not have permission to read #{entry.key}." }
+      end
+
+      # A parent the resource is not listed under is refused rather than
+      # dropped: dropped, the search listed the whole store and the model
+      # reported every claim as the one order's.
+      def wrong_parent(entry, parent_id)
+        parents = entry.index_parents.keys.sort
+        return { error: "#{entry.key} are not listed under another record. Search without parent_id and use filters." } if parents.empty?
+
+        { error: "#{entry.key} cannot be listed under #{parent_id}. Pass the id of one of: #{parents.join(', ')}.",
+          parents: parents }
       end
 
       # A resource reached only under a parent, or one whose controller
