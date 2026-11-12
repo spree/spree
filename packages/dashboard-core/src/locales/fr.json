@@ -325,7 +325,8 @@
         "drop_label": "Déposez un fichier ici ou cliquez pour parcourir",
         "invalid_type": "Ce type de fichier n'est pas accepté (attendu : {{accept}})",
         "upload_failed": "Échec du téléversement : {{message}}",
-        "uploading": "Téléversement…"
+        "uploading": "Téléversement…",
+        "replace": "Remplacer le fichier"
       },
       "import_button": {
         "delimiter_label": "Séparateur de colonnes",
@@ -1014,6 +1015,24 @@
         },
         "digital_asset_authorized_days": {
           "label": "Jours de disponibilité"
+        }
+      },
+      "seller": {
+        "about": {
+          "label": "À propos",
+          "help": "Affiché sur le profil boutique du vendeur."
+        },
+        "holiday_mode_until": {
+          "label": "Absent jusqu'au",
+          "placeholder": "Choisir une date",
+          "help": "Le catalogue reste visible mais rien ne peut être acheté jusque-là."
+        },
+        "contact_email": {
+          "help": "Destination des invitations et des avis de la place de marché."
+        },
+        "billing_email": {
+          "label": "E-mail de facturation",
+          "help": "Destination des factures de commission et des avis de versement, si elle diffère."
         }
       }
     },
@@ -1870,7 +1889,8 @@
       "value_count_other": "{{count}} valeurs"
     },
     "media_library": {
-      "download": "Télécharger"
+      "download": "Télécharger",
+      "choose_from_library": "Choisir dans la médiathèque"
     },
     "catalogs": {
       "terms": {
@@ -2198,6 +2218,17 @@
       "replace": "Remplacer le fichier",
       "replace_description": "« {{name}} » est supprimé et tous les acheteurs téléchargent le nouveau fichier depuis leurs liens existants. Effet immédiat.",
       "replace_title": "Remplacer ce fichier ?"
+    },
+    "sellers": {
+      "images": {
+        "cover_photo_label": "Photo de couverture",
+        "cover_photo_help": "Une bannière large en haut du profil du vendeur.",
+        "logo_label": "Logo",
+        "logo_help": "Un format carré convient le mieux. Affiché à côté du vendeur partout où il apparaît.",
+        "square_logo_label": "Logo carré",
+        "square_logo_help": "Pour les emplacements qui exigent un carré strict, comme un avatar."
+      },
+      "not_provided": "Non renseigné"
     }
   }
 }

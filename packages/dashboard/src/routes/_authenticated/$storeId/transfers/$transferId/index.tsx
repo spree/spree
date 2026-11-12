@@ -3,6 +3,7 @@ import {
   adminClient,
   Can,
   PageHeader,
+  ReadRow,
   RecordMetadataCard,
   Slot,
   Subject,
@@ -45,7 +46,6 @@ import { useTranslation } from 'react-i18next'
 import { CloseShortDialog } from '../../../../../components/spree/close-short-dialog'
 import { ApiCustomFieldsCard } from '../../../../../components/spree/custom-fields/custom-fields-inline'
 import { InventoryStatusBadge } from '../../../../../components/spree/inventory-status-badge'
-import { ReadRow } from '../../../../../components/spree/read-row'
 import { ReceiveDeliveryCard } from '../../../../../components/spree/receive-delivery-card'
 import { ResourceDetailSkeleton } from '../../../../../components/spree/route-pending'
 import { StockHistoryCard } from '../../../../../components/spree/stock-history-card'

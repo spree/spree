@@ -326,7 +326,8 @@
         "drop_label": "Upuść plik tutaj lub kliknij, aby przeglądać",
         "invalid_type": "Ten typ pliku nie jest akceptowany (oczekiwano: {{accept}})",
         "upload_failed": "Przesyłanie nie powiodło się: {{message}}",
-        "uploading": "Przesyłanie…"
+        "uploading": "Przesyłanie…",
+        "replace": "Zastąp plik"
       },
       "import_button": {
         "delimiter_label": "Separator kolumn",
@@ -1017,6 +1018,24 @@
         },
         "digital_asset_authorized_days": {
           "label": "Dostępne dni"
+        }
+      },
+      "seller": {
+        "about": {
+          "label": "O sprzedawcy",
+          "help": "Widoczne w profilu sprzedawcy w sklepie."
+        },
+        "holiday_mode_until": {
+          "label": "Nieobecny do",
+          "placeholder": "Wybierz datę",
+          "help": "Katalog pozostaje widoczny, ale do tego czasu nic nie da się kupić."
+        },
+        "contact_email": {
+          "help": "Tu trafiają zaproszenia i powiadomienia marketplace."
+        },
+        "billing_email": {
+          "label": "E-mail do rozliczeń",
+          "help": "Tu trafiają faktury prowizyjne i powiadomienia o wypłatach, jeśli są inne."
         }
       }
     },
@@ -1901,7 +1920,8 @@
       "value_count_other": "{{count}} wartości"
     },
     "media_library": {
-      "download": "Pobierz"
+      "download": "Pobierz",
+      "choose_from_library": "Wybierz z biblioteki"
     },
     "catalogs": {
       "terms": {
@@ -2229,6 +2249,17 @@
       "replace": "Zastąp plik",
       "replace_description": "„{{name}}” zostanie usunięty, a wszyscy kupujący pobiorą nowy plik ze swoich dotychczasowych linków. Obowiązuje natychmiast.",
       "replace_title": "Zastąpić ten plik?"
+    },
+    "sellers": {
+      "images": {
+        "cover_photo_label": "Zdjęcie w tle",
+        "cover_photo_help": "Szeroki baner u góry profilu sprzedawcy.",
+        "logo_label": "Logo",
+        "logo_help": "Najlepiej sprawdza się kwadrat. Widoczne przy sprzedawcy wszędzie tam, gdzie się pojawia.",
+        "square_logo_label": "Logo kwadratowe",
+        "square_logo_help": "Do miejsc wymagających ścisłego kwadratu, na przykład awatara."
+      },
+      "not_provided": "Nie podano"
     }
   }
 }

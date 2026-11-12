@@ -8,10 +8,10 @@ module Spree
         # `current_seller` — never an id from the request. A seller cannot
         # address another seller here even by guessing one.
         #
-        # What they may change is presentation, contact and addresses. Absent
-        # by design: `status` (the lifecycle belongs to the operator's
-        # workflows), the settlement and tax configuration, and `slug` — a
-        # seller renaming their own storefront address breaks every link
+        # What they may change is presentation, contact, addresses and holiday
+        # mode. Absent by design: `status` (the lifecycle belongs to the
+        # operator's workflows), the settlement and tax configuration, and
+        # `slug` — a seller renaming their own storefront address breaks every link
         # pointing at it.
         class ProfileController < Seller::BaseController
           # A singular resource, so this extends the plain base rather than
@@ -42,6 +42,9 @@ module Spree
             body.attribute :cover_photo_signed_id, :string,
               nullable: true,
               description: 'A `signed_id` from `POST /files`; `null` removes the image.'
+            body.attribute :holiday_mode_until, :datetime,
+                           nullable: true,
+                           description: 'Set while the seller is away: the catalog stays but stops selling. `null` ends holiday mode.'
             body.attribute :billing_address, :object, as: 'SellerAddressParams' do |billing_address|
               billing_address.include_attributes Spree::Api::V3::AddressRequestSchema
             end

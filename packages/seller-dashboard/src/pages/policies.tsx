@@ -124,7 +124,17 @@ export function PoliciesPage({ search }: { search: ResourceSearch }) {
 
   return (
     <div className="flex flex-col gap-6">
-      <PageHeader title={t('policies.title')} subtitle={t('policies.description')} sticky={false} />
+      <PageHeader
+        title={t('policies.title')}
+        description={t('policies.description')}
+        sticky={false}
+        actions={
+          <Button size="sm" onClick={() => setCreatingName('')}>
+            <PlusIcon className="size-4" />
+            {t('policies.add')}
+          </Button>
+        }
+      />
 
       {outstanding.length > 0 && (
         <Card>
@@ -176,12 +186,6 @@ export function PoliciesPage({ search }: { search: ResourceSearch }) {
             ]}
           />
         )}
-        actions={
-          <Button size="sm" onClick={() => setCreatingName('')}>
-            <PlusIcon className="size-4" />
-            {t('policies.add')}
-          </Button>
-        }
       />
 
       {creatingName !== null && (

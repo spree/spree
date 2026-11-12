@@ -325,7 +325,8 @@
         "drop_label": "أسقط ملفًا هنا، أو انقر للاستعراض",
         "invalid_type": "نوع الملف هذا غير مقبول (المتوقع: {{accept}})",
         "upload_failed": "فشل الرفع: {{message}}",
-        "uploading": "جارٍ الرفع…"
+        "uploading": "جارٍ الرفع…",
+        "replace": "استبدال الملف"
       },
       "import_button": {
         "delimiter_label": "فاصل الأعمدة",
@@ -1014,6 +1015,24 @@
         },
         "digital_asset_authorized_days": {
           "label": "الأيام المتاحة"
+        }
+      },
+      "seller": {
+        "about": {
+          "label": "نبذة",
+          "help": "تظهر في ملف البائع بالمتجر."
+        },
+        "holiday_mode_until": {
+          "label": "غائب حتى",
+          "placeholder": "اختر تاريخاً",
+          "help": "يبقى الكتالوج ظاهراً لكن لا يمكن الشراء حتى ذلك الحين."
+        },
+        "contact_email": {
+          "help": "تصل إليه الدعوات وإشعارات السوق."
+        },
+        "billing_email": {
+          "label": "بريد الفوترة",
+          "help": "تصل إليه فواتير العمولة وإشعارات الدفع إن اختلف."
         }
       }
     },
@@ -1875,7 +1894,8 @@
       "value_count_other": "{{count}} قيم"
     },
     "media_library": {
-      "download": "تنزيل"
+      "download": "تنزيل",
+      "choose_from_library": "اختر من المكتبة"
     },
     "catalogs": {
       "terms": {
@@ -2203,6 +2223,17 @@
       "replace": "استبدال الملف",
       "replace_description": "سيُحذف \"{{name}}\" وسيحمّل كل من اشتراه الملف الجديد من روابطه الحالية. يسري فورًا.",
       "replace_title": "استبدال هذا الملف؟"
+    },
+    "sellers": {
+      "images": {
+        "cover_photo_label": "صورة الغلاف",
+        "cover_photo_help": "لافتة عريضة أعلى ملف البائع.",
+        "logo_label": "الشعار",
+        "logo_help": "يُفضَّل الشكل المربّع. يظهر بجوار البائع في كل مكان يرد فيه.",
+        "square_logo_label": "شعار مربّع",
+        "square_logo_help": "للمواضع التي تتطلب مربّعاً دقيقاً، مثل الصورة الرمزية."
+      },
+      "not_provided": "غير محدد"
     }
   }
 }

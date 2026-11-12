@@ -325,7 +325,8 @@
         "drop_label": "Datei hier ablegen oder klicken zum Auswählen",
         "invalid_type": "Dieser Dateityp wird nicht akzeptiert (erwartet: {{accept}})",
         "upload_failed": "Upload fehlgeschlagen: {{message}}",
-        "uploading": "Wird hochgeladen…"
+        "uploading": "Wird hochgeladen…",
+        "replace": "Datei ersetzen"
       },
       "import_button": {
         "delimiter_label": "Spaltentrennzeichen",
@@ -1014,6 +1015,24 @@
         },
         "digital_asset_authorized_days": {
           "label": "Verfügbare Tage"
+        }
+      },
+      "seller": {
+        "about": {
+          "label": "Über",
+          "help": "Wird im Storefront-Profil des Verkäufers angezeigt."
+        },
+        "holiday_mode_until": {
+          "label": "Abwesend bis",
+          "placeholder": "Datum wählen",
+          "help": "Der Katalog bleibt sichtbar, es kann bis dahin aber nichts gekauft werden."
+        },
+        "contact_email": {
+          "help": "Hierhin gehen Einladungen und Mitteilungen des Marktplatzes."
+        },
+        "billing_email": {
+          "label": "Rechnungs-E-Mail",
+          "help": "Hierhin gehen Provisionsrechnungen und Auszahlungsmitteilungen, falls abweichend."
         }
       }
     },
@@ -1870,7 +1889,8 @@
       "value_count_other": "{{count}} Werte"
     },
     "media_library": {
-      "download": "Herunterladen"
+      "download": "Herunterladen",
+      "choose_from_library": "Aus Bibliothek wählen"
     },
     "catalogs": {
       "terms": {
@@ -2198,6 +2218,17 @@
       "replace": "Datei ersetzen",
       "replace_description": "„{{name}}“ wird entfernt, und alle Käufer laden über ihre bestehenden Links die neue Datei herunter. Dies gilt sofort.",
       "replace_title": "Diese Datei ersetzen?"
+    },
+    "sellers": {
+      "images": {
+        "cover_photo_label": "Titelbild",
+        "cover_photo_help": "Ein breites Banner oben auf dem Verkäuferprofil.",
+        "logo_label": "Logo",
+        "logo_help": "Quadratisch passt am besten. Wird überall neben dem Verkäufer angezeigt.",
+        "square_logo_label": "Quadratisches Logo",
+        "square_logo_help": "Für Stellen, die ein enges Quadrat brauchen, etwa ein Profilbild."
+      },
+      "not_provided": "Nicht angegeben"
     }
   }
 }

@@ -1,7 +1,10 @@
 import { i18n, Subject, settingsNav } from '@spree/dashboard-core'
 import {
+  Building2Icon,
   PackageIcon,
+  PercentIcon,
   ScrollTextIcon,
+  StoreIcon,
   TruckIcon,
   UsersRoundIcon,
   WarehouseIcon,
@@ -14,6 +17,12 @@ import {
 // Deliberately short. Most of what an operator configures is the
 // marketplace's, not a seller's; what belongs here is what a seller owns and
 // only they can answer.
+
+settingsNav.addGroup({
+  key: 'store',
+  label: i18n.t('nav.store'),
+  position: 100,
+})
 
 settingsNav.addGroup({
   key: 'fulfillment',
@@ -109,6 +118,50 @@ settingsNav.add({
   icon: ScrollTextIcon,
   group: 'legal',
   position: 100,
+  subject: 'seller_profile',
+  action: 'update',
+})
+
+// How the marketplace reaches this seller, the business behind them, their
+// addresses and holiday mode — everything about the seller that buyers never
+// see. The public face stays on the profile page.
+// What buyers see of the seller: name, description and images. After General,
+// which is what a seller opens settings for most.
+settingsNav.add({
+  key: 'settings.profile',
+  label: i18n.t('nav.profile'),
+  description: i18n.t('profile.subtitle'),
+  keywords: ['storefront', 'logo', 'cover', 'about', 'description', 'brand'],
+  path: '/profile',
+  icon: StoreIcon,
+  group: 'store',
+  position: 150,
+  subject: 'seller_profile',
+  action: 'update',
+})
+
+settingsNav.add({
+  key: 'settings.general',
+  label: i18n.t('nav.general'),
+  description: i18n.t('settings_general.description'),
+  keywords: ['contact', 'email', 'business', 'address', 'holiday', 'vacation', 'returns'],
+  path: '/general',
+  icon: Building2Icon,
+  group: 'store',
+  position: 100,
+  subject: 'seller_profile',
+  action: 'update',
+})
+
+settingsNav.add({
+  key: 'settings.taxes',
+  label: i18n.t('nav.taxes'),
+  description: i18n.t('taxes.description'),
+  keywords: ['vat', 'tax', 'registration', 'ein', 'remittance'],
+  path: '/taxes',
+  icon: PercentIcon,
+  group: 'store',
+  position: 200,
   subject: 'seller_profile',
   action: 'update',
 })

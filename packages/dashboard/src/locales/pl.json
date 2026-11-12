@@ -2084,22 +2084,8 @@
         "label": "Role"
       },
       "seller": {
-        "about": {
-          "help": "Widoczne w profilu sprzedawcy w sklepie.",
-          "label": "O sprzedawcy"
-        },
-        "billing_email": {
-          "help": "Tu trafiają faktury prowizyjne i powiadomienia o wypłatach, jeśli są inne.",
-          "label": "E-mail do rozliczeń"
-        },
         "contact_email": {
-          "help": "Tu trafiają zaproszenia i powiadomienia marketplace.",
           "placeholder": "kontakt@sparks.example"
-        },
-        "holiday_mode_until": {
-          "help": "Katalog pozostaje widoczny, ale do tego czasu nic nie da się kupić.",
-          "label": "Nieobecny do",
-          "placeholder": "Wybierz datę"
         },
         "minimum_payout_amount": {
           "help": "Niższe salda przechodzą na kolejną wypłatę.",
@@ -2112,12 +2098,12 @@
           "help": "Jak często ten sprzedawca otrzymuje wypłatę.",
           "label": "Harmonogram wypłat"
         },
-        "slug": {
-          "help": "Używany w adresie sklepu sprzedawcy. Gdy pusty, powstaje z nazwy."
-        },
         "tax_remittance": {
           "help": "Kto odprowadza podatek konsumencki od sprzedaży tego sprzedawcy.",
           "label": "Podatek rozlicza"
+        },
+        "slug": {
+          "help": "Używany w adresie sklepu sprzedawcy. Gdy pusty, powstaje z nazwy."
         }
       },
       "state": {
@@ -2909,7 +2895,6 @@
       "tax_inclusive": "Z podatkiem"
     },
     "media_library": {
-      "choose_from_library": "Wybierz z biblioteki",
       "delete_confirm": {
         "in_use_message_few": "Usunięcie „{{name}}” wyjmie plik z biblioteki i z {{count}} miejsc, które go używają. Opisy z osadzonym obrazem go utracą.",
         "in_use_message_many": "Usunięcie „{{name}}” wyjmie plik z biblioteki i z {{count}} miejsc, które go używają. Opisy z osadzonym obrazem go utracą.",
@@ -5532,33 +5517,20 @@
       },
       "detail": {
         "billing_address": "Adres rozliczeniowy",
-        "contact": "Kontakt",
         "delete_label": "Usuń sprzedawcę",
-        "edit_contact": "Edytuj kontakt",
-        "edit_cover": "Edytuj zdjęcie w tle",
-        "edit_logo": "Edytuj logo",
-        "edit_profile": "Edytuj profil",
         "edit_settlement": "Edytuj wypłaty i podatki",
         "joined": "Dołączył",
         "load_error": "Nie udało się wczytać tego sprzedawcy",
-        "no_about": "Ten sprzedawca nie napisał jeszcze opisu.",
         "returns_address": "Adres zwrotów",
-        "settlement": "Wypłaty i podatki"
+        "settlement": "Wypłaty i podatki",
+        "edit_cover": "Edytuj zdjęcie w tle",
+        "edit_logo": "Edytuj logo",
+        "edit_profile": "Edytuj profil",
+        "no_about": "Ten sprzedawca nie napisał jeszcze opisu.",
+        "contact": "Kontakt",
+        "edit_contact": "Edytuj kontakt"
       },
       "empty": "Nie ma jeszcze sprzedawców",
-      "holiday": {
-        "end": "Zakończ tryb urlopowy",
-        "off": "Wyłączony. Sprzedawca przyjmuje zamówienia jak zwykle.",
-        "title": "Tryb urlopowy"
-      },
-      "images": {
-        "cover_photo_help": "Szeroki baner u góry profilu sprzedawcy.",
-        "cover_photo_label": "Zdjęcie w tle",
-        "logo_help": "Najlepiej sprawdza się kwadrat. Widoczne przy sprzedawcy wszędzie tam, gdzie się pojawia.",
-        "logo_label": "Logo",
-        "square_logo_help": "Do miejsc wymagających ścisłego kwadratu, na przykład awatara.",
-        "square_logo_label": "Logo kwadratowe"
-      },
       "invite_sheet": {
         "description": "Po przyjęciu zaproszenia osoba dołącza do zespołu sprzedawcy i może zalogować się do własnego panelu.",
         "email_help": "Zaproszenie trafi na ten adres.",
@@ -5581,8 +5553,6 @@
         "update_failed": "Nie udało się zaktualizować sprzedawcy",
         "updated": "Sprzedawca zaktualizowany"
       },
-      "not_provided": "Nie podano",
-      "on_holiday_notice": "Ten sprzedawca jest nieobecny. Jego katalog pozostaje widoczny, ale nic nie da się kupić.",
       "onboarding": {
         "actions": {
           "accept": "Akceptuj",
@@ -5696,7 +5666,13 @@
         },
         "title": "Zespół"
       },
-      "team_column": "Zespół"
+      "team_column": "Zespół",
+      "holiday": {
+        "title": "Tryb urlopowy",
+        "end": "Zakończ tryb urlopowy",
+        "off": "Wyłączony. Sprzedawca przyjmuje zamówienia jak zwykle."
+      },
+      "on_holiday_notice": "Ten sprzedawca jest nieobecny. Jego katalog pozostaje widoczny, ale nic nie da się kupić."
     },
     "settings": {
       "webhooks": {

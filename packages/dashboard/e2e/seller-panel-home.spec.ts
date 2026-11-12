@@ -103,4 +103,29 @@ test.describe('seller panel — setup', () => {
     await expect(page.getByText(/terms accepted/i)).toBeVisible({ timeout: 15_000 })
     await expect(step.getByText(/^done$/i)).toBeVisible({ timeout: 15_000 })
   })
+
+  test('complete profile says what is missing and links to where it is edited', async ({
+    page,
+  }) => {
+    const home = await sellerLogin(page, FIXTURE_SELLER_WRITER_EMAIL)
+    await page.goto(`${home}/settings/general`)
+    await page.locator('#seller-contact-email').fill('')
+    const save = page.getByRole('button', { name: /^save$/i }).first()
+    if (await save.isEnabled()) {
+      await save.click()
+      await expect(page.getByText(/profile saved/i)).toBeVisible({ timeout: 15_000 })
+    }
+
+    await page.goto(`${home}/onboarding`)
+    const step = page.getByRole('button', { name: /complete profile/i })
+    await expect(step).toBeVisible({ timeout: 15_000 })
+    if ((await step.getAttribute('aria-expanded')) !== 'true') await step.click()
+
+    await expect(page.getByText(/still missing:.*a contact email/i)).toBeVisible()
+    await page
+      .getByRole('link', { name: /^go there$/i })
+      .first()
+      .click()
+    await expect(page).toHaveURL(/\/settings\/general$/, { timeout: 15_000 })
+  })
 })

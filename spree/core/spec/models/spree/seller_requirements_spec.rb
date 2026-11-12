@@ -143,6 +143,22 @@ RSpec.describe 'seller requirement kinds', type: :model do
 
       expect(requirement.satisfied?(seller)).to be true
     end
+
+    # A ticked field the seller has not filled is otherwise invisible: the
+    # checklist line only says "complete your profile".
+    it 'names what is still missing, and nothing once it is complete' do
+      requirement.update!(preferred_require_about: true, preferred_require_logo: false,
+                          preferred_require_contact_email: true)
+      seller.update!(about: nil, contact_email: nil)
+
+      expect(requirement.blocker(seller)).to eq(
+        state: 'incomplete', message: 'Still missing: a description and a contact email.'
+      )
+
+      seller.update!(about: 'We sell things.', contact_email: 'hello@example.com')
+
+      expect(requirement.blocker(seller)).to be_nil
+    end
   end
 
   describe Spree::SellerRequirements::BillingAddress do

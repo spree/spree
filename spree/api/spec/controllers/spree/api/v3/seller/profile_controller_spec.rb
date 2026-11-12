@@ -154,6 +154,26 @@ RSpec.describe Spree::Api::V3::Seller::ProfileController, type: :controller do
       expect(seller.reload.slug).to eq(original)
     end
 
+    it 'puts the seller on holiday until a date' do
+      until_at = 2.weeks.from_now.change(usec: 0)
+
+      patch :update, params: { holiday_mode_until: until_at.iso8601 }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(seller.reload.holiday_mode_until).to eq(until_at)
+      expect(json_response['on_holiday']).to be(true)
+    end
+
+    it 'ends holiday mode when sent null' do
+      seller.update!(holiday_mode_until: 2.weeks.from_now)
+
+      patch :update, params: { holiday_mode_until: nil }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(seller.reload.holiday_mode_until).to be_nil
+      expect(json_response['on_holiday']).to be(false)
+    end
+
     it 'reports validation errors' do
       patch :update, params: { name: '' }, as: :json
 

@@ -360,7 +360,10 @@
     "delivery_methods": "Delivery methods",
     "package_types": "Package types",
     "earnings": "Earnings",
-    "payouts": "Payouts"
+    "payouts": "Payouts",
+    "general": "General",
+    "taxes": "Taxes",
+    "store": "Store"
   },
   "onboarding": {
     "accept_terms": "Accept the terms",
@@ -730,48 +733,21 @@
     "digital_files_review_notice": "Adding or replacing a file sends this product back to review, and it is off sale until the marketplace approves it again."
   },
   "profile": {
-    "about": "About",
     "add_address": "Add address",
     "address_filled": "Added",
     "address_missing": "Not added",
     "address_not_provided": "No address yet.",
-    "at_a_glance": "At a glance",
     "billing_address": "Billing address",
-    "billing_email": "Billing email",
-    "business_details": "Business details",
-    "contact_email": "Contact email",
     "edit": "Edit",
-    "edit_title": "Edit your profile",
-    "joined": "Joined",
     "legal_name": "Legal name",
     "minimum_payout": "Minimum payout",
-    "name": "Name",
-    "no_about": "You have not written a description yet.",
-    "not_provided": "Not provided",
-    "on_holiday_notice": "Holiday mode is on, so your products are visible but cannot be bought.",
     "operator_managed": "Set by the marketplace",
     "payout_schedule": "Payout schedule",
-    "products_count": "Products",
     "registration_number": "Registration number",
     "returns_address": "Returns address",
-    "save": "Save changes",
     "saved": "Profile saved",
-    "saving": "Saving…",
-    "section_contact": "Contact",
-    "section_settlement": "Payouts and tax",
-    "section_standing": "Standing",
     "select_tax_identifier_kind": "Select or type a registration type",
-    "status_help": {
-      "approved": "You are approved and can sell on this marketplace.",
-      "canceled": "This seller account is closed.",
-      "invited": "You have been invited. Finish getting set up to apply.",
-      "onboarding": "Work through your checklist, then submit for review.",
-      "pending": "The marketplace has not started your application yet.",
-      "ready_for_review": "The marketplace is reviewing your application.",
-      "rejected": "Your application was not accepted. Contact the marketplace to find out more.",
-      "suspended": "Selling is paused. Contact the marketplace to find out more."
-    },
-    "subtitle": "How your storefront presents you, and how the marketplace reaches you.",
+    "subtitle": "How your storefront presents you to buyers.",
     "tax_identifier_kind": "Registration type",
     "tax_identifier_kinds": {
       "au_abn": "Australian Business Number",
@@ -781,13 +757,16 @@
       "us_ein": "US EIN"
     },
     "tax_remittance": "Tax remitted by",
-    "team_count": "Team members",
     "vat_number": "VAT number",
     "vat_status": {
       "pending": "We are checking this number.",
       "unavailable": "The registry could not be reached — we will try again.",
       "unsupported": "This number is recorded as entered; we cannot check it automatically.",
       "unverified": "This number could not be verified."
+    },
+    "sections": {
+      "details": "Details",
+      "images": "Images"
     }
   },
   "reset_password": {
@@ -848,5 +827,19 @@
       "member": "Member"
     },
     "title": "Your team"
+  },
+  "settings_general": {
+    "title": "General",
+    "description": "How the marketplace reaches you, your business, your addresses and holiday mode.",
+    "sections": {
+      "contact": "Contact",
+      "business": "Business",
+      "addresses": "Addresses",
+      "holiday": "Holiday mode"
+    }
+  },
+  "taxes": {
+    "title": "Taxes",
+    "description": "Your tax registrations, and who remits tax on your sales."
   }
 }

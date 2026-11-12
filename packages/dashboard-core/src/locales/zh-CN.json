@@ -325,7 +325,8 @@
         "drop_label": "将文件拖放到此处，或点击浏览",
         "invalid_type": "不接受此文件类型（应为：{{accept}}）",
         "upload_failed": "上传失败：{{message}}",
-        "uploading": "正在上传…"
+        "uploading": "正在上传…",
+        "replace": "替换文件"
       },
       "import_button": {
         "delimiter_label": "列分隔符",
@@ -1014,6 +1015,24 @@
         },
         "digital_asset_authorized_days": {
           "label": "可用天数"
+        }
+      },
+      "seller": {
+        "about": {
+          "label": "简介",
+          "help": "显示在卖家的店铺资料页。"
+        },
+        "holiday_mode_until": {
+          "label": "休假至",
+          "placeholder": "选择日期",
+          "help": "在此之前商品仍然可见，但无法购买。"
+        },
+        "contact_email": {
+          "help": "邀请和市场通知会发送到这里。"
+        },
+        "billing_email": {
+          "label": "账单邮箱",
+          "help": "佣金发票和结算通知的接收邮箱（如果不同）。"
         }
       }
     },
@@ -1869,7 +1888,8 @@
       "value_count_other": "{{count}} 个值"
     },
     "media_library": {
-      "download": "下载"
+      "download": "下载",
+      "choose_from_library": "从媒体库选择"
     },
     "catalogs": {
       "terms": {
@@ -2197,6 +2217,17 @@
       "replace": "替换文件",
       "replace_description": "“{{name}}”将被移除，所有买家将通过现有链接下载新文件。立即生效。",
       "replace_title": "替换此文件？"
+    },
+    "sellers": {
+      "images": {
+        "cover_photo_label": "封面图",
+        "cover_photo_help": "卖家资料页顶部的宽幅横幅。",
+        "logo_label": "标志",
+        "logo_help": "建议使用正方形。会在卖家出现的各处显示在其旁边。",
+        "square_logo_label": "方形标志",
+        "square_logo_help": "用于需要严格正方形的位置，例如头像。"
+      },
+      "not_provided": "未填写"
     }
   }
 }

@@ -1,5 +1,5 @@
 import type { Seller } from '@spree/admin-sdk'
-import { Subject, usePermissions } from '@spree/dashboard-core'
+import { ReadRow, Subject, usePermissions } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -17,7 +17,6 @@ import { PencilIcon } from '@spree/dashboard-ui/icons'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { sellerValuesToParams } from '../../../schemas/seller'
-import { ReadRow } from '../read-row'
 import { SellerAddress } from './seller-address-card'
 import { SellerInlineForm } from './seller-inline-form'
 

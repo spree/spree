@@ -1,5 +1,5 @@
 import type { Seller } from '@spree/admin-sdk'
-import { StoreDatePicker } from '@spree/dashboard-core'
+import { ReadRow, StoreDatePicker } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -18,7 +18,6 @@ import { Controller } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useUpdateSeller } from '../../../hooks/use-sellers'
 import { sellerValuesToParams } from '../../../schemas/seller'
-import { ReadRow } from '../read-row'
 import { SellerInlineForm } from './seller-inline-form'
 
 /**

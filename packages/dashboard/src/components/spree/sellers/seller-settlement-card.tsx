@@ -1,6 +1,12 @@
 import type { Seller } from '@spree/admin-sdk'
 import { PAYOUT_SCHEDULE_INTERVALS, TAX_REMITTANCES } from '@spree/core'
-import { currencyParts, formatAmount, useMoneyLocale, useStore } from '@spree/dashboard-core'
+import {
+  currencyParts,
+  formatAmount,
+  ReadRow,
+  useMoneyLocale,
+  useStore,
+} from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -28,7 +34,6 @@ import { useState } from 'react'
 import { Controller } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { sellerValuesToParams } from '../../../schemas/seller'
-import { ReadRow } from '../read-row'
 import { SellerInlineForm } from './seller-inline-form'
 
 /**

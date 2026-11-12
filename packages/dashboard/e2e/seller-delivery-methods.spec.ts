@@ -27,11 +27,15 @@ async function signInAsNewSeller(
   await page.locator('#invite-email').fill(`e2e-shipping-${suffix}@example.com`)
 
   const [listResponse] = await Promise.all([
+    // The page's own first read of this list can still be in flight when
+    // Send is clicked, and it comes back empty — so wait for the list that
+    // holds the invitation just sent.
     page.waitForResponse(
-      (res) =>
+      async (res) =>
         /\/api\/v3\/admin\/sellers\/[^/]+\/invitations$/.test(res.url()) &&
         res.request().method() === 'GET' &&
-        res.status() === 200,
+        res.status() === 200 &&
+        ((await res.json()) as { data: unknown[] }).data.length > 0,
       { timeout: 20_000 },
     ),
     page.getByRole('button', { name: /send invitation/i }).click(),

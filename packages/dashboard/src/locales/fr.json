@@ -2066,22 +2066,8 @@
         "label": "Rôles"
       },
       "seller": {
-        "about": {
-          "help": "Affiché sur le profil boutique du vendeur.",
-          "label": "À propos"
-        },
-        "billing_email": {
-          "help": "Destination des factures de commission et des avis de versement, si elle diffère.",
-          "label": "E-mail de facturation"
-        },
         "contact_email": {
-          "help": "Destination des invitations et des avis de la place de marché.",
           "placeholder": "bonjour@sparks.example"
-        },
-        "holiday_mode_until": {
-          "help": "Le catalogue reste visible mais rien ne peut être acheté jusque-là.",
-          "label": "Absent jusqu'au",
-          "placeholder": "Choisir une date"
         },
         "minimum_payout_amount": {
           "help": "Les soldes inférieurs sont reportés au versement suivant.",
@@ -2094,12 +2080,12 @@
           "help": "À quelle fréquence ce vendeur est payé.",
           "label": "Fréquence de versement"
         },
-        "slug": {
-          "help": "Utilisé dans l'adresse de la boutique du vendeur. Dérivé du nom s'il est vide."
-        },
         "tax_remittance": {
           "help": "Qui déclare la taxe à la consommation sur les ventes de ce vendeur.",
           "label": "Taxe reversée par"
+        },
+        "slug": {
+          "help": "Utilisé dans l'adresse de la boutique du vendeur. Dérivé du nom s'il est vide."
         }
       },
       "state": {
@@ -2890,7 +2876,6 @@
       "tax_inclusive": "TTC"
     },
     "media_library": {
-      "choose_from_library": "Choisir dans la médiathèque",
       "delete_confirm": {
         "in_use_message_one": "Supprimer « {{name}} » le retire de votre médiathèque et de l’emplacement qui l’utilise. Les descriptions qui l’intègrent perdront l’image.",
         "in_use_message_other": "Supprimer « {{name}} » le retire de votre médiathèque et des {{count}} emplacements qui l’utilisent. Les descriptions qui l’intègrent perdront l’image.",
@@ -5468,33 +5453,20 @@
       },
       "detail": {
         "billing_address": "Adresse de facturation",
-        "contact": "Contact",
         "delete_label": "Supprimer le vendeur",
-        "edit_contact": "Modifier le contact",
-        "edit_cover": "Modifier la photo de couverture",
-        "edit_logo": "Modifier le logo",
-        "edit_profile": "Modifier le profil",
         "edit_settlement": "Modifier les versements et les taxes",
         "joined": "Inscrit",
         "load_error": "Impossible de charger ce vendeur",
-        "no_about": "Ce vendeur n'a pas encore rédigé de description.",
         "returns_address": "Adresse de retour",
-        "settlement": "Versements et taxes"
+        "settlement": "Versements et taxes",
+        "edit_cover": "Modifier la photo de couverture",
+        "edit_logo": "Modifier le logo",
+        "edit_profile": "Modifier le profil",
+        "no_about": "Ce vendeur n'a pas encore rédigé de description.",
+        "contact": "Contact",
+        "edit_contact": "Modifier le contact"
       },
       "empty": "Aucun vendeur pour le moment",
-      "holiday": {
-        "end": "Terminer le mode vacances",
-        "off": "Désactivé. Le vendeur accepte les commandes normalement.",
-        "title": "Mode vacances"
-      },
-      "images": {
-        "cover_photo_help": "Une bannière large en haut du profil du vendeur.",
-        "cover_photo_label": "Photo de couverture",
-        "logo_help": "Un format carré convient le mieux. Affiché à côté du vendeur partout où il apparaît.",
-        "logo_label": "Logo",
-        "square_logo_help": "Pour les emplacements qui exigent un carré strict, comme un avatar.",
-        "square_logo_label": "Logo carré"
-      },
       "invite_sheet": {
         "description": "La personne rejoint l'équipe du vendeur en acceptant et peut alors se connecter à son propre espace.",
         "email_help": "L'invitation part à cette adresse.",
@@ -5517,8 +5489,6 @@
         "update_failed": "Impossible de mettre à jour le vendeur",
         "updated": "Vendeur mis à jour"
       },
-      "not_provided": "Non renseigné",
-      "on_holiday_notice": "Ce vendeur est absent. Son catalogue reste visible mais rien ne peut être acheté.",
       "onboarding": {
         "actions": {
           "accept": "Accepter",
@@ -5632,7 +5602,13 @@
         },
         "title": "Équipe"
       },
-      "team_column": "Équipe"
+      "team_column": "Équipe",
+      "holiday": {
+        "title": "Mode vacances",
+        "end": "Terminer le mode vacances",
+        "off": "Désactivé. Le vendeur accepte les commandes normalement."
+      },
+      "on_holiday_notice": "Ce vendeur est absent. Son catalogue reste visible mais rien ne peut être acheté."
     },
     "settings": {
       "webhooks": {

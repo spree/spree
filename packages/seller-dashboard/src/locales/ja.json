@@ -360,7 +360,10 @@
     "delivery_methods": "配送方法",
     "package_types": "こん包タイプ",
     "earnings": "収益",
-    "payouts": "支払い"
+    "payouts": "支払い",
+    "general": "一般",
+    "taxes": "税金",
+    "store": "ストア"
   },
   "onboarding": {
     "accept_terms": "規約に同意する",
@@ -730,48 +733,21 @@
     "digital_files_review_notice": "ファイルを追加または差し替えると、この商品は再審査になり、マーケットプレイスが再び承認するまで販売が停止されます。"
   },
   "profile": {
-    "about": "紹介",
     "add_address": "住所を追加",
     "address_filled": "追加済み",
     "address_missing": "未登録",
     "address_not_provided": "住所はまだありません。",
-    "at_a_glance": "概要",
     "billing_address": "請求先住所",
-    "billing_email": "請求用のメールアドレス",
-    "business_details": "事業者情報",
-    "contact_email": "連絡先メールアドレス",
     "edit": "編集",
-    "edit_title": "プロフィールを編集",
-    "joined": "登録日",
     "legal_name": "正式名称",
     "minimum_payout": "最低支払額",
-    "name": "名前",
-    "no_about": "説明はまだ書かれていません。",
-    "not_provided": "未登録",
-    "on_holiday_notice": "休業モードがオンのため、商品は表示されますが購入できません。",
     "operator_managed": "マーケットプレイスが設定",
     "payout_schedule": "支払いのスケジュール",
-    "products_count": "商品",
     "registration_number": "登録番号",
     "returns_address": "返品先の住所",
-    "save": "変更を保存",
     "saved": "プロフィールを保存しました",
-    "saving": "保存中…",
-    "section_contact": "連絡先",
-    "section_settlement": "支払いと税",
-    "section_standing": "状態",
     "select_tax_identifier_kind": "登録の種類を選択または入力",
-    "status_help": {
-      "approved": "承認済みです。このマーケットプレイスで販売できます。",
-      "canceled": "このセラーアカウントは閉鎖されています。",
-      "invited": "招待されています。設定を完了して申請してください。",
-      "onboarding": "チェックリストを進めてから、審査を申請してください。",
-      "pending": "マーケットプレイスはまだ申請の処理を始めていません。",
-      "ready_for_review": "マーケットプレイスが申請を審査しています。",
-      "rejected": "申請は承認されませんでした。詳しくはマーケットプレイスにお問い合わせください。",
-      "suspended": "販売は一時停止中です。詳しくはマーケットプレイスにお問い合わせください。"
-    },
-    "subtitle": "ストアでのあなたの紹介と、マーケットプレイスからの連絡先です。",
+    "subtitle": "ストアが購入者にどのように表示されるか。",
     "tax_identifier_kind": "登録の種類",
     "tax_identifier_kinds": {
       "au_abn": "オーストラリア事業者番号（ABN）",
@@ -781,13 +757,16 @@
       "us_ein": "米国の EIN"
     },
     "tax_remittance": "税の納付者",
-    "team_count": "チームメンバー",
     "vat_number": "VAT 番号",
     "vat_status": {
       "pending": "この番号を確認しています。",
       "unavailable": "登録機関に接続できませんでした。後でもう一度確認します。",
       "unsupported": "この番号は入力されたとおりに記録されます。自動では確認できません。",
       "unverified": "この番号を確認できませんでした。"
+    },
+    "sections": {
+      "details": "詳細",
+      "images": "画像"
     }
   },
   "reset_password": {
@@ -848,5 +827,19 @@
       "member": "メンバー"
     },
     "title": "チーム"
+  },
+  "settings_general": {
+    "title": "一般",
+    "description": "マーケットプレイスからの連絡先、事業者情報、住所、休業モード。",
+    "sections": {
+      "contact": "連絡先",
+      "business": "事業者情報",
+      "addresses": "住所",
+      "holiday": "休業モード"
+    }
+  },
+  "taxes": {
+    "title": "税金",
+    "description": "税務登録と、売上の税金を納付する当事者。"
   }
 }

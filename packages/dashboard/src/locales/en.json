@@ -2066,22 +2066,8 @@
         "label": "Roles"
       },
       "seller": {
-        "about": {
-          "help": "Shown on the seller’s storefront profile.",
-          "label": "About"
-        },
-        "billing_email": {
-          "help": "Where commission invoices and payout notices go, if different.",
-          "label": "Billing email"
-        },
         "contact_email": {
-          "help": "Where invitations and marketplace notices go.",
           "placeholder": "hello@sparks.example"
-        },
-        "holiday_mode_until": {
-          "help": "The catalog stays visible but nothing can be bought until then.",
-          "label": "Away until",
-          "placeholder": "Pick a date"
         },
         "minimum_payout_amount": {
           "help": "Balances below this carry over to the next payout.",
@@ -2094,12 +2080,12 @@
           "help": "How often this seller is paid.",
           "label": "Payout schedule"
         },
-        "slug": {
-          "help": "Used in the seller’s storefront address. Derived from the name when left empty."
-        },
         "tax_remittance": {
           "help": "Who accounts for consumer tax on this seller’s sales.",
           "label": "Tax remitted by"
+        },
+        "slug": {
+          "help": "Used in the seller’s storefront address. Derived from the name when left empty."
         }
       },
       "state": {
@@ -2889,7 +2875,6 @@
       "tax_inclusive": "Inclusive"
     },
     "media_library": {
-      "choose_from_library": "Choose from library",
       "delete_confirm": {
         "in_use_message_one": "Deleting “{{name}}” removes it from your library and from the {{count}} place using it. Descriptions that embed it will lose the image.",
         "in_use_message_other": "Deleting “{{name}}” removes it from your library and from all {{count}} places using it. Descriptions that embed it will lose the image.",
@@ -5466,33 +5451,20 @@
       },
       "detail": {
         "billing_address": "Billing address",
-        "contact": "Contact",
         "delete_label": "Delete seller",
-        "edit_contact": "Edit contact",
-        "edit_cover": "Edit cover photo",
-        "edit_logo": "Edit logo",
-        "edit_profile": "Edit profile",
         "edit_settlement": "Edit payouts and tax",
         "joined": "Joined",
         "load_error": "Could not load this seller",
-        "no_about": "This seller has not written a description yet.",
         "returns_address": "Returns address",
-        "settlement": "Payouts and tax"
+        "settlement": "Payouts and tax",
+        "edit_cover": "Edit cover photo",
+        "edit_logo": "Edit logo",
+        "edit_profile": "Edit profile",
+        "no_about": "This seller has not written a description yet.",
+        "contact": "Contact",
+        "edit_contact": "Edit contact"
       },
       "empty": "No sellers yet",
-      "holiday": {
-        "end": "End holiday mode",
-        "off": "Off. The seller is taking orders as usual.",
-        "title": "Holiday mode"
-      },
-      "images": {
-        "cover_photo_help": "A wide banner across the top of the seller profile.",
-        "cover_photo_label": "Cover photo",
-        "logo_help": "Square works best. Shown beside the seller everywhere they appear.",
-        "logo_label": "Logo",
-        "square_logo_help": "Used where a tight square is needed, such as an avatar.",
-        "square_logo_label": "Square logo"
-      },
       "invite_sheet": {
         "description": "They join the seller team when they accept and can then sign in to their own panel.",
         "email_help": "The invitation goes to this address.",
@@ -5515,8 +5487,6 @@
         "update_failed": "Could not update the seller",
         "updated": "Seller updated"
       },
-      "not_provided": "Not provided",
-      "on_holiday_notice": "This seller is away. Their catalog stays visible but nothing can be bought from them.",
       "onboarding": {
         "actions": {
           "accept": "Accept",
@@ -5630,7 +5600,13 @@
         },
         "title": "Team"
       },
-      "team_column": "Team"
+      "team_column": "Team",
+      "holiday": {
+        "title": "Holiday mode",
+        "end": "End holiday mode",
+        "off": "Off. The seller is taking orders as usual."
+      },
+      "on_holiday_notice": "This seller is away. Their catalog stays visible but nothing can be bought from them."
     },
     "settings": {
       "webhooks": {

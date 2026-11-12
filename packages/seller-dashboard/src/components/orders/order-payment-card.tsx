@@ -1,4 +1,4 @@
-import { formatMoney, useMoneyLocale } from '@spree/dashboard-core'
+import { formatMoney, ReadRow, useMoneyLocale } from '@spree/dashboard-core'
 import {
   Card,
   CardAction,
@@ -17,7 +17,6 @@ import {
 import { CreditCardIcon } from '@spree/dashboard-ui/icons'
 import type { Order } from '@spree/seller-sdk'
 import { useTranslation } from 'react-i18next'
-import { ReadRow } from '../read-row'
 
 /**
  * What the buyer paid for this order.

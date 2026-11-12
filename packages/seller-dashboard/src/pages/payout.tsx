@@ -3,6 +3,7 @@ import {
   formatStoreDateTime,
   Money,
   PageHeader,
+  ReadRow,
   Slot,
   useMoneyLocale,
 } from '@spree/dashboard-core'
@@ -26,7 +27,6 @@ import { Link, useParams } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CenteredMessage } from '../components/centered-message'
-import { ReadRow } from '../components/read-row'
 import { RetryableError } from '../components/retryable-error'
 import { usePayout, useTransfers } from '../hooks/use-ledger'
 import { useStoreTimezone } from '../hooks/use-store-timezone'

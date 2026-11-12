@@ -3,7 +3,7 @@ import type { AccountUpdateParams, MeResponse } from '@spree/seller-sdk'
 import { z } from 'zod/v4'
 
 // The signed-in person's own account (PATCH /me) — not the seller business
-// they act for, which is `pages/profile.tsx`. Every field is optional: the
+// they act for, which is `pages/profile-settings.tsx`. Every field is optional: the
 // panel asks for a name but does not require one.
 //
 // The panel's languages are NOT listed here. They are derived at render time

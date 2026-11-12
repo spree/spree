@@ -1,14 +1,12 @@
-import { ExportButton, PageHeader, type ResourceSearch, ResourceTable } from '@spree/dashboard-core'
+import { ExportButton, type ResourceSearch, ResourceTable } from '@spree/dashboard-core'
 import { useRowClickBridge } from '@spree/dashboard-ui'
 import type { Order } from '@spree/seller-sdk'
 import { useNavigate, useParams } from '@tanstack/react-router'
-import { useTranslation } from 'react-i18next'
 import { sellerClient } from '../api-client'
 import '../tables/orders'
 
 /** What this seller has sold, newest first. */
 export function OrdersPage({ search }: { search: ResourceSearch }) {
-  const { t } = useTranslation()
   const { sellerId } = useParams({ from: '/_authenticated/$sellerId' })
   const navigate = useNavigate()
 
@@ -17,17 +15,12 @@ export function OrdersPage({ search }: { search: ResourceSearch }) {
   )
 
   return (
-    <div className="flex flex-col gap-4">
-      <PageHeader title={t('orders.title')} sticky={false} />
-
-      <ResourceTable<Order>
-        hideHeader
-        tableKey="seller-orders"
-        queryKey="seller-orders"
-        queryFn={(params) => sellerClient().orders.list(params)}
-        searchParams={search}
-        actions={(ctx) => <ExportButton type="orders" {...ctx} />}
-      />
-    </div>
+    <ResourceTable<Order>
+      tableKey="seller-orders"
+      queryKey="seller-orders"
+      queryFn={(params) => sellerClient().orders.list(params)}
+      searchParams={search}
+      actions={(ctx) => <ExportButton type="orders" {...ctx} />}
+    />
   )
 }

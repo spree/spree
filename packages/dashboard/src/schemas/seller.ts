@@ -1,93 +1,13 @@
-import type { Seller, SellerCreateParams } from '@spree/admin-sdk'
-import { PAYOUT_SCHEDULE_INTERVALS, TAX_REMITTANCES } from '@spree/core'
-import { blankToNull } from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
 
-export const sellerFormSchema = z.object({
-  name: z
-    .string()
-    .trim()
-    .min(1, { error: requiredMessage('name') }),
-  slug: z.string().trim().optional(),
-  contact_email: z.email().or(z.literal('')).optional(),
-  billing_email: z.email().or(z.literal('')).optional(),
-  about: z.string().optional(),
-  tax_remittance: z.enum(TAX_REMITTANCES).optional(),
-  payouts_schedule_interval: z.enum(PAYOUT_SCHEDULE_INTERVALS).or(z.literal('')).optional(),
-  minimum_payout_amount: z.string().trim().optional(),
-  holiday_mode_until: z.string().optional(),
-  // Three-state image fields, one triple per attachment. See ResourceImageField.
-  logo_signed_id: z.string().nullable(),
-  logo_preview_url: z.string().nullable(),
-  logo_cleared: z.boolean(),
-  square_logo_signed_id: z.string().nullable(),
-  square_logo_preview_url: z.string().nullable(),
-  square_logo_cleared: z.boolean(),
-  cover_photo_signed_id: z.string().nullable(),
-  cover_photo_preview_url: z.string().nullable(),
-  cover_photo_cleared: z.boolean(),
-})
-
-export type SellerFormValues = z.infer<typeof sellerFormSchema>
-
-export const SELLER_DEFAULTS: SellerFormValues = {
-  name: '',
-  slug: '',
-  contact_email: '',
-  billing_email: '',
-  about: '',
-  tax_remittance: 'seller',
-  payouts_schedule_interval: '',
-  minimum_payout_amount: '',
-  holiday_mode_until: '',
-  logo_signed_id: null,
-  logo_preview_url: null,
-  logo_cleared: false,
-  square_logo_signed_id: null,
-  square_logo_preview_url: null,
-  square_logo_cleared: false,
-  cover_photo_signed_id: null,
-  cover_photo_preview_url: null,
-  cover_photo_cleared: false,
-}
-
-/**
- * The form seeded from a saved seller. Images start as the empty triple: the
- * saved ones are shown through the field's `serverUrl`, and the triple only
- * carries what the operator changes this time.
- */
-export function sellerFormValues(seller: Seller): SellerFormValues {
-  return {
-    ...SELLER_DEFAULTS,
-    name: seller.name,
-    slug: seller.slug,
-    contact_email: seller.contact_email ?? '',
-    billing_email: seller.billing_email ?? '',
-    about: seller.about_html ?? '',
-    tax_remittance: (seller.tax_remittance ?? 'seller') as SellerFormValues['tax_remittance'],
-    payouts_schedule_interval: (seller.payouts_schedule_interval ??
-      '') as SellerFormValues['payouts_schedule_interval'],
-    minimum_payout_amount: seller.minimum_payout_amount ?? '',
-    holiday_mode_until: seller.holiday_mode_until ?? '',
-  }
-}
-
-export function sellerValuesToParams(values: SellerFormValues): SellerCreateParams {
-  return {
-    name: values.name,
-    slug: blankToNull(values.slug) ?? undefined,
-    contact_email: blankToNull(values.contact_email),
-    billing_email: blankToNull(values.billing_email),
-    about: blankToNull(values.about),
-    tax_remittance: values.tax_remittance,
-    payouts_schedule_interval: blankToNull(values.payouts_schedule_interval) as
-      | SellerCreateParams['payouts_schedule_interval']
-      | null,
-    minimum_payout_amount: blankToNull(values.minimum_payout_amount),
-    holiday_mode_until: blankToNull(values.holiday_mode_until),
-  }
-}
+export {
+  SELLER_DEFAULTS,
+  type SellerFormValues,
+  sellerFormSchema,
+  sellerFormValues,
+  sellerValuesToParams,
+} from '@spree/dashboard-core'
 
 export const sellerInviteSchema = z.object({
   email: z.email({ error: requiredMessage('email') }),

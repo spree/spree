@@ -22,15 +22,24 @@ export function shouldEmitRichTextChange(next: string, previous: string): boolea
   if (!sameRichText(next, previous)) return true
   if (!visibleText(previous) && !hasImage(previous)) return false
 
-  const previousHtml = looksLikeHtml(previous.trim()) ? previous : `<p>${previous}</p>`
+  const previousHtml = wrapInline(previous.trim())
   return countParagraphs(next) !== countParagraphs(previousHtml)
 }
 
 function canonicalizeRichText(html: string): string {
   const withoutTrailingEmpty = stripTrailingEmptyParagraphs((html ?? '').trim())
   if (!visibleText(withoutTrailingEmpty) && !hasImage(withoutTrailingEmpty)) return ''
-  if (!looksLikeHtml(withoutTrailingEmpty)) return `<p>${withoutTrailingEmpty}</p>`
-  return withoutTrailingEmpty
+  return wrapInline(withoutTrailingEmpty)
+}
+
+// Block elements the editor keeps at the top level. Content that starts with
+// anything else — bare text, or inline markup such as `<strong>` — is what the
+// editor wraps in a paragraph on mount, which is not a change.
+const BLOCK_START = /^<(p|h[1-6]|ul|ol|li|blockquote|pre|div|hr|figure|table)[\s>/]/i
+
+function wrapInline(html: string): string {
+  if (looksLikeHtml(html) && BLOCK_START.test(html)) return html
+  return `<p>${html}</p>`
 }
 
 function stripTrailingEmptyParagraphs(html: string): string {

@@ -360,7 +360,10 @@
     "delivery_methods": "Phương thức giao hàng",
     "package_types": "Các loại gói",
     "earnings": "Thu nhập",
-    "payouts": "Xuất chi"
+    "payouts": "Xuất chi",
+    "general": "Chung",
+    "taxes": "Thuế",
+    "store": "Cửa hàng"
   },
   "onboarding": {
     "accept_terms": "Chấp nhận các điều khoản",
@@ -730,48 +733,21 @@
     "digital_files_review_notice": "Việc thêm hoặc thay thế tệp sẽ gửi sản phẩm này trở lại để xem xét và sản phẩm sẽ được giảm giá cho đến khi được thị trường chấp thuận lại."
   },
   "profile": {
-    "about": "Về",
     "add_address": "Thêm địa chỉ",
     "address_filled": "Đã thêm",
     "address_missing": "Chưa được thêm",
     "address_not_provided": "Chưa có địa chỉ.",
-    "at_a_glance": "Trong nháy mắt",
     "billing_address": "Địa chỉ thanh toán",
-    "billing_email": "Email thanh toán",
-    "business_details": "Chi tiết doanh nghiệp",
-    "contact_email": "Email liên hệ",
     "edit": "Chỉnh sửa",
-    "edit_title": "Chỉnh sửa hồ sơ của bạn",
-    "joined": "Đã tham gia",
     "legal_name": "Tên pháp lý",
     "minimum_payout": "Thanh toán tối thiểu",
-    "name": "Tên",
-    "no_about": "Bạn chưa viết mô tả.",
-    "not_provided": "Không được cung cấp",
-    "on_holiday_notice": "Chế độ nghỉ lễ đang bật nên sản phẩm của bạn có thể nhìn thấy nhưng không thể mua được.",
     "operator_managed": "Do sàn thương mại điện tử thiết lập",
     "payout_schedule": "Lịch thanh toán",
-    "products_count": "Sản phẩm",
     "registration_number": "Số đăng ký",
     "returns_address": "Trả về địa chỉ",
-    "save": "Lưu thay đổi",
     "saved": "Đã lưu hồ sơ",
-    "saving": "Đang lưu…",
-    "section_contact": "Liên hệ",
-    "section_settlement": "Các khoản thanh toán và thuế",
-    "section_standing": "Đứng",
     "select_tax_identifier_kind": "Chọn hoặc nhập loại đăng ký",
-    "status_help": {
-      "approved": "Bạn được chấp thuận và có thể bán trên thị trường này.",
-      "canceled": "Tài khoản người bán này đã bị đóng.",
-      "invited": "Bạn đã được mời. Hoàn tất việc thiết lập để áp dụng.",
-      "onboarding": "Làm việc thông qua danh sách kiểm tra của bạn, sau đó gửi để xem xét.",
-      "pending": "Thị trường vẫn chưa bắt đầu ứng dụng của bạn.",
-      "ready_for_review": "Thị trường đang xem xét đơn đăng ký của bạn.",
-      "rejected": "Đơn đăng ký của bạn không được chấp nhận. Hãy liên hệ với thị trường để tìm hiểu thêm.",
-      "suspended": "Việc bán hàng bị tạm dừng. Hãy liên hệ với thị trường để tìm hiểu thêm."
-    },
-    "subtitle": "Cửa hàng trực tuyến của bạn giới thiệu bạn như thế nào và thị trường tiếp cận bạn như thế nào.",
+    "subtitle": "Cách cửa hàng giới thiệu bạn với người mua.",
     "tax_identifier_kind": "Loại đăng ký",
     "tax_identifier_kinds": {
       "au_abn": "Số doanh nghiệp Úc",
@@ -781,13 +757,16 @@
       "us_ein": "EIN Hoa Kỳ"
     },
     "tax_remittance": "Thuế được nộp bởi",
-    "team_count": "Thành viên nhóm",
     "vat_number": "Số thuế GTGT",
     "vat_status": {
       "pending": "Chúng tôi đang kiểm tra con số này.",
       "unavailable": "Không thể truy cập cơ quan đăng ký - chúng tôi sẽ thử lại.",
       "unsupported": "Số này được ghi lại như đã nhập; chúng tôi không thể kiểm tra nó một cách tự động.",
       "unverified": "Con số này không thể được xác minh."
+    },
+    "sections": {
+      "details": "Thông tin",
+      "images": "Hình ảnh"
     }
   },
   "reset_password": {
@@ -848,5 +827,19 @@
       "member": "Thành viên"
     },
     "title": "Nhóm của bạn"
+  },
+  "settings_general": {
+    "title": "Chung",
+    "description": "Cách sàn liên hệ với bạn, doanh nghiệp, địa chỉ và chế độ nghỉ.",
+    "sections": {
+      "contact": "Liên hệ",
+      "business": "Doanh nghiệp",
+      "addresses": "Địa chỉ",
+      "holiday": "Chế độ nghỉ"
+    }
+  },
+  "taxes": {
+    "title": "Thuế",
+    "description": "Các đăng ký thuế của bạn và bên nộp thuế cho doanh số của bạn."
   }
 }

@@ -96,12 +96,7 @@ export function SellerReturnsLocationCard({ headless = false }: { headless?: boo
     )
 
   const editButton = (
-    <Button
-      variant={hasAddress ? 'outline' : 'default'}
-      size="sm"
-      disabled={!location}
-      onClick={() => setEditing(true)}
-    >
+    <Button variant="outline" size="sm" disabled={!location} onClick={() => setEditing(true)}>
       {hasAddress ? <PencilIcon className="size-4" /> : <PlusIcon className="size-4" />}
       {hasAddress ? t('profile.edit') : t('profile.add_address')}
     </Button>

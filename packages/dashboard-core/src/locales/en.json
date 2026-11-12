@@ -325,7 +325,8 @@
         "drop_label": "Drop a file here, or click to browse",
         "invalid_type": "This file type is not accepted (expected: {{accept}})",
         "upload_failed": "Upload failed: {{message}}",
-        "uploading": "Uploading…"
+        "uploading": "Uploading…",
+        "replace": "Replace file"
       },
       "import_button": {
         "delimiter_label": "Column separator",
@@ -1016,6 +1017,24 @@
         },
         "digital_asset_authorized_days": {
           "label": "Days available"
+        }
+      },
+      "seller": {
+        "about": {
+          "label": "About",
+          "help": "Shown on the seller’s storefront profile."
+        },
+        "holiday_mode_until": {
+          "label": "Away until",
+          "placeholder": "Pick a date",
+          "help": "The catalog stays visible but nothing can be bought until then."
+        },
+        "contact_email": {
+          "help": "Where invitations and marketplace notices go."
+        },
+        "billing_email": {
+          "label": "Billing email",
+          "help": "Where commission invoices and payout notices go, if different."
         }
       }
     },
@@ -1872,7 +1891,8 @@
       "value_count_other": "{{count}} values"
     },
     "media_library": {
-      "download": "Download"
+      "download": "Download",
+      "choose_from_library": "Choose from library"
     },
     "catalogs": {
       "terms": {
@@ -2200,6 +2220,17 @@
       "replace": "Replace file",
       "replace_description": "\"{{name}}\" is removed and everyone who bought it downloads the new file from their existing links. This takes effect immediately.",
       "replace_title": "Replace this file?"
+    },
+    "sellers": {
+      "images": {
+        "cover_photo_label": "Cover photo",
+        "cover_photo_help": "A wide banner across the top of the seller profile.",
+        "logo_label": "Logo",
+        "logo_help": "Square works best. Shown beside the seller everywhere they appear.",
+        "square_logo_label": "Square logo",
+        "square_logo_help": "Used where a tight square is needed, such as an avatar."
+      },
+      "not_provided": "Not provided"
     }
   }
 }
