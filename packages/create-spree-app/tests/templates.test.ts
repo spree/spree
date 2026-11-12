@@ -94,6 +94,16 @@ describe('rootPackageJsonContent', () => {
     expect(pkg.dependencies['@spree/cli']).toBe('^3.8.0')
   })
 
+  it('SPREE_DOCS_VERSION overrides the @spree/docs spec (unpublished-docs testing)', () => {
+    process.env.SPREE_DOCS_VERSION = 'file:/tmp/spree-docs-local.tgz'
+    try {
+      const pkg = JSON.parse(rootPackageJsonContent('my-store'))
+      expect(pkg.dependencies['@spree/docs']).toBe('file:/tmp/spree-docs-local.tgz')
+    } finally {
+      delete process.env.SPREE_DOCS_VERSION
+    }
+  })
+
   // Agents read the local docs as the truth for this project, so they must
   // describe the Spree the server runs, not whatever npm published last.
   it('declares @spree/docs on the Spree major, like the dashboard packages', () => {
