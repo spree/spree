@@ -242,28 +242,33 @@ module Spree
 
       def apply_custom_field_attrs(attributes)
         attributes = attributes.values if attributes.is_a?(Hash)
-        attributes.each_with_index do |raw, index|
-          attrs = raw.respond_to?(:to_h) ? raw.to_h : raw
-          attrs = attrs.with_indifferent_access
-          definition_id = attrs[:custom_field_definition_id] || attrs[:metafield_definition_id] ||
-                          definition_id_of_custom_field(attrs[:id])
 
-          # A row that names no field was skipped, and the write answered as
-          # if it had saved the value.
-          if definition_id.blank?
-            message = attrs[:id].present? ? "Unknown custom field id: #{attrs[:id].inspect}" : "can't be blank"
-            errors.add("custom_fields[#{index}].custom_field_definition_id", message)
-            raise ActiveRecord::RecordInvalid, self
-          end
+        # One write: a refused row undoes the rows before it, rather than
+        # leaving them saved behind an error.
+        self.class.transaction do
+          attributes.each_with_index do |raw, index|
+            attrs = raw.respond_to?(:to_h) ? raw.to_h : raw
+            attrs = attrs.with_indifferent_access
+            definition_id = attrs[:custom_field_definition_id] || attrs[:metafield_definition_id] ||
+                            definition_id_of_custom_field(attrs[:id])
 
-          begin
-            set_custom_field(definition_id, attrs[:value])
-          rescue ArgumentError => e
-            # Convert an unknown / malformed definition id into a field-level
-            # validation error so the controller returns 422 with structured
-            # `details`, instead of leaking ArgumentError as a 400/500.
-            errors.add("custom_fields[#{index}].custom_field_definition_id", e.message)
-            raise ActiveRecord::RecordInvalid, self
+            # A row that names no field was skipped, and the write answered as
+            # if it had saved the value.
+            if definition_id.blank?
+              message = attrs[:id].present? ? "Unknown custom field id: #{attrs[:id].inspect}" : "can't be blank"
+              errors.add("custom_fields[#{index}].custom_field_definition_id", message)
+              raise ActiveRecord::RecordInvalid, self
+            end
+
+            begin
+              set_custom_field(definition_id, attrs[:value])
+            rescue ArgumentError => e
+              # Convert an unknown / malformed definition id into a field-level
+              # validation error so the controller returns 422 with structured
+              # `details`, instead of leaking ArgumentError as a 400/500.
+              errors.add("custom_fields[#{index}].custom_field_definition_id", e.message)
+              raise ActiveRecord::RecordInvalid, self
+            end
           end
         end
       end

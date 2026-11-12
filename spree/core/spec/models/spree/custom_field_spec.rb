@@ -184,6 +184,12 @@ RSpec.describe Spree::CustomField, type: :model do
       expect { product.update!(custom_fields: [{ value: 128 }]) }.to raise_error(ActiveRecord::RecordInvalid)
       expect(field.reload.value.to_i).to eq(120)
     end
+
+    it 'saves none of the rows when one is refused' do
+      expect { product.update!(custom_fields: [{ id: field.prefixed_id, value: 128 }, { value: 1 }]) }.
+        to raise_error(ActiveRecord::RecordInvalid)
+      expect(field.reload.value.to_i).to eq(120)
+    end
   end
 
   describe 'deprecated definition writer' do
