@@ -262,13 +262,17 @@ RSpec.describe 'agent generic record writes' do
       expect(field.reload.value.to_i).to eq(128)
     end
 
-    it 'refuses a custom field row that names no field' do
+    it 'refuses a custom field id the record does not have' do
       product = create(:product, store: store)
+      other = create(:product, store: store)
+      definition = create(:custom_field_definition, :number_field, store: store, resource_type: 'Spree::Product')
+      foreign = other.set_custom_field(definition, 5)
 
       result = tool('update_resource').call(resource: 'products', id: product.prefixed_id,
-                                            attributes: { 'custom_fields' => [{ 'value' => 128 }] })
+                                            attributes: { 'custom_fields' => [{ 'id' => foreign.prefixed_id, 'value' => 128 }] })
 
       expect(result[:error]).to be_present
+      expect(foreign.reload.value.to_i).to eq(5)
     end
 
     it 'moves a company\'s default billing address under the name the read shows' do

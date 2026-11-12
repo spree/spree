@@ -180,13 +180,14 @@ RSpec.describe Spree::CustomField, type: :model do
       expect(other.reload.value.to_i).to eq(5)
     end
 
-    it 'refuses a row that names no field' do
-      expect { product.update!(custom_fields: [{ value: 128 }]) }.to raise_error(ActiveRecord::RecordInvalid)
+    it 'skips a row that names no field, as the Admin API documents' do
+      product.update!(custom_fields: [{ value: 128 }])
+
       expect(field.reload.value.to_i).to eq(120)
     end
 
     it 'saves none of the rows when one is refused' do
-      expect { product.update!(custom_fields: [{ id: field.prefixed_id, value: 128 }, { value: 1 }]) }.
+      expect { product.update!(custom_fields: [{ id: field.prefixed_id, value: 128 }, { id: 'cf_nope', value: 1 }]) }.
         to raise_error(ActiveRecord::RecordInvalid)
       expect(field.reload.value.to_i).to eq(120)
     end

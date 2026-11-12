@@ -253,13 +253,14 @@ module Spree
             definition_id = attrs[:custom_field_definition_id] || attrs[:metafield_definition_id] ||
                             definition_id_of_custom_field(attrs[:id])
 
-            # A row that names no field was skipped, and the write answered as
-            # if it had saved the value.
-            if definition_id.blank?
-              message = attrs[:id].present? ? "Unknown custom field id: #{attrs[:id].inspect}" : "can't be blank"
-              errors.add("custom_fields[#{index}].custom_field_definition_id", message)
+            # A row naming a value this record does not have is refused rather
+            # than skipped: the caller meant a particular field. A row naming
+            # no field at all is still skipped, as the Admin API documents.
+            if definition_id.blank? && attrs[:id].present?
+              errors.add("custom_fields[#{index}].id", "Unknown custom field id: #{attrs[:id].inspect}")
               raise ActiveRecord::RecordInvalid, self
             end
+            next if definition_id.blank?
 
             begin
               set_custom_field(definition_id, attrs[:value])
