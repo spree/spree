@@ -1,0 +1,77 @@
+---
+title: Spree vs Vendure
+description: How Spree and Vendure compare on language, REST versus GraphQL, licence, marketplace, B2B, channels, admin, MCP and hosting, with a source for every Vendure fact.
+---
+
+Spree and Vendure are both headless commerce backends with a React admin dashboard, multi-vendor building blocks and an MCP server that can change data. The biggest differences are the licence, the API style and the language.
+
+<Info>
+  Vendure facts are **as of November 2026**, checked against Vendure 3.8.2 ([npm](https://www.npmjs.com/package/@vendure/core)). Each one links to its source. See the [overview](/developer/compare/overview) for all four platforms side by side.
+</Info>
+
+## At a glance
+
+| | Spree | Vendure (as of November 2026) |
+| --- | --- | --- |
+| Language | Ruby on Rails 8.1 | TypeScript on Node.js 22.12 or later, with NestJS ([README](https://github.com/vendurehq/vendure)) |
+| Database | PostgreSQL, MySQL, SQLite | PostgreSQL, MySQL, MariaDB, SQLite ([README](https://github.com/vendurehq/vendure)) |
+| Install | `npx create-spree-app`, or the Docker image `ghcr.io/spree/spree` | `npx @vendure/create` ([README](https://github.com/vendurehq/vendure)) |
+| API | REST: Store, Admin and Seller APIs | GraphQL: Shop and Admin APIs ([README](https://github.com/vendurehq/vendure)) |
+| SDK | `@spree/sdk`, `@spree/admin-sdk`, `@spree/seller-sdk` | No client SDK found; a typed GraphQL schema ([README](https://github.com/vendurehq/vendure)) |
+| Licence | BSD-3-Clause (Rails engines), MIT (SDKs, dashboards, MCP server) | GPLv3, with an exception that lets plugins use another licence, or the Vendure Commercial License ([LICENSE.md](https://github.com/vendurehq/vendure/blob/master/LICENSE.md)) |
+| Marketplace | Built in | Sellers and channels in core. The documented marketplace is an example plugin "for educational purposes" ([docs](https://docs.vendure.io/current/framework/how-to/multi-vendor-marketplaces)) |
+| B2B | Built in, without quotes. Company roles, approvals and spending limits need Spree Enterprise | Company accounts, quotes, contract pricing and single sign-on are in paid plans ([README](https://github.com/vendurehq/vendure)) |
+| Several stores | One store per installation; many channels and markets | Channels: "multi-channel, multi-region, multi-currency and multi-language from one instance" ([README](https://github.com/vendurehq/vendure)) |
+| Admin UI | React dashboard and seller panel | React and TanStack dashboard ([README](https://github.com/vendurehq/vendure)) |
+| MCP server | Built in, back office only, read and write | `@vendure/mcp-plugin`: 18 shop tools and 24 admin tools, read and write ([release](https://github.com/vendurehq/vendure/releases/tag/v3.8.0), [PR](https://github.com/vendurehq/vendure/pull/5262)) |
+| Managed hosting | No; free hosted sandbox | Vendure Cloud in design-partner preview, general availability planned for Q1 2027 ([README](https://github.com/vendurehq/vendure)) |
+
+## Licence
+
+This is the main practical difference.
+
+- **Vendure** moved its core from MIT to GPLv3 in version 3.0 ([announcement](https://vendure.io/blog/license-change-announcement)). Its [`LICENSE.md`](https://github.com/vendurehq/vendure/blob/master/LICENSE.md) offers GPLv3, with a plugin exception so your own plugins can use another licence, or the Vendure Commercial License under a separate agreement. Paid plans include the commercial licence ([README](https://github.com/vendurehq/vendure)).
+- **Spree** uses BSD-3-Clause for its Rails engines and MIT for its MCP server, provider gems, SDKs and dashboards. Both are permissive: you can modify and ship Spree without publishing your changes. Check the [`LICENSE`](https://github.com/spree/spree/blob/main/LICENSE) file in each gem and package.
+
+Have your own counsel review what GPLv3 means for your deployment.
+
+## Where Vendure is stronger
+
+- **GraphQL.** If your team prefers GraphQL, Vendure has typed Shop and Admin GraphQL APIs. Spree's APIs are REST only.
+- **Several storefronts in one open-source installation.** Vendure channels serve several regions, currencies and languages from one instance ([README](https://github.com/vendurehq/vendure)). Spree's [channels](/developer/core-concepts/channels) and [markets](/developer/core-concepts/markets) belong to one store. Separate stores with separate data need separate Spree installations or Spree Enterprise [multi-tenancy](/developer/multi-tenant/quickstart).
+- **Shop tools for agents.** Vendure's MCP plugin has tools for the shop as well as the back office ([release](https://github.com/vendurehq/vendure/releases/tag/v3.8.0)). Spree's [MCP server](/developer/mcp/overview) covers the back office only. Shopping agents use the Store API.
+- **Quotes.** Vendure's paid plans include quotes ([README](https://github.com/vendurehq/vendure)). Spree has no quotes in open source or Enterprise yet.
+- **One language.** Vendure is TypeScript end to end.
+- **MariaDB.** Vendure supports MariaDB as well as PostgreSQL, MySQL and SQLite.
+
+## Where Spree is stronger
+
+- **Permissive licence.** BSD-3-Clause and MIT, with no copyleft. See [Licence](#licence) above.
+- **Production marketplace in the box.** Spree ships seller onboarding, per-seller order splitting, commissions, payouts with Stripe Connect, a [seller panel](/user/sellers/seller-panel) and a Seller API. Vendure has sellers and channels in core, but its documented marketplace plugin is an example for learning ([docs](https://docs.vendure.io/current/framework/how-to/multi-vendor-marketplaces)). See [Build a multi-vendor marketplace](/developer/how-to/build-a-marketplace).
+- **B2B in open source.** Companies, catalogs, price lists, volume pricing, order minimums, gated wholesale channels and pay by invoice are part of open-source Spree. In Vendure, company accounts and contract pricing are in paid plans ([README](https://github.com/vendurehq/vendure)). See [Build a B2B store](/developer/how-to/build-a-b2b-store).
+- **Typed REST clients and a prebuilt image.** Spree publishes TypeScript SDKs for each API, and a stock Docker image, `ghcr.io/spree/spree`. See the [SDK quickstart](/developer/sdk/quickstart) and [Docker deployment](/developer/deployment/docker).
+
+## Similar in both
+
+- A React admin dashboard you can extend with your own pages ([Vendure README](https://github.com/vendurehq/vendure); Spree [dashboard plugins](/developer/dashboard/plugins/overview)).
+- An MCP server that can read and write, under the connecting user's permissions ([Vendure PR](https://github.com/vendurehq/vendure/pull/5262); Spree [MCP permissions](/developer/mcp/permissions)).
+- A scaffolding command on npm: `create-spree-app` and `@vendure/create`.
+
+## Sources
+
+All Vendure sources were checked in November 2026.
+
+- Vendure repository README — https://github.com/vendurehq/vendure
+- Vendure licence — https://github.com/vendurehq/vendure/blob/master/LICENSE.md
+- Vendure 3.8.0 release notes — https://github.com/vendurehq/vendure/releases/tag/v3.8.0
+- MCP plugin pull request — https://github.com/vendurehq/vendure/pull/5262
+- `@vendure/core` on npm — https://www.npmjs.com/package/@vendure/core
+- Multi-vendor marketplaces guide — https://docs.vendure.io/current/framework/how-to/multi-vendor-marketplaces
+- Licence change announcement — https://vendure.io/blog/license-change-announcement
+
+## Related
+
+- [Spree compared with other open-source commerce platforms](/developer/compare/overview)
+- [Spree vs Medusa](/developer/compare/medusa)
+- [Spree vs Saleor](/developer/compare/saleor)
+- [Architecture](/developer/core-concepts/architecture)

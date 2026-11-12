@@ -758,6 +758,16 @@
                     "icon": "rocket"
                   },
                   {
+                    "group": "Compare",
+                    "pages": [
+                      "developer/compare/overview",
+                      "developer/compare/medusa",
+                      "developer/compare/saleor",
+                      "developer/compare/vendure"
+                    ],
+                    "icon": "scale"
+                  },
+                  {
                     "group": "Core Concepts",
                     "pages": [
                       {

@@ -1,0 +1,73 @@
+---
+title: Spree vs Medusa
+description: How Spree and Medusa compare on language, APIs, SDKs, licence, marketplace, B2B, multi-store, admin, MCP and hosting, with a source for every Medusa fact.
+---
+
+Spree and Medusa are both headless commerce backends with REST APIs, a typed TypeScript client and an admin dashboard. The biggest differences are the language they are written in, what ships in the box for marketplaces and B2B, and how their MCP servers work.
+
+<Info>
+  Medusa facts are **as of November 2026**, checked against Medusa 2.22.6 ([releases](https://github.com/medusajs/medusa/releases)). Each one links to its source. See the [overview](/developer/compare/overview) for all four platforms side by side.
+</Info>
+
+## At a glance
+
+| | Spree | Medusa (as of November 2026) |
+| --- | --- | --- |
+| Language | Ruby on Rails 8.1 | TypeScript on Node.js 22.22 or later ([README](https://github.com/medusajs/medusa)) |
+| Database | PostgreSQL, MySQL, SQLite | PostgreSQL ([README](https://github.com/medusajs/medusa)) |
+| Install | `npx create-spree-app`, or the Docker image `ghcr.io/spree/spree` | `npx create-medusa-app` ([README](https://github.com/medusajs/medusa)). A Docker guide starts from a starter repository and builds your own image ([docs](https://docs.medusajs.com/learn/installation/docker)) |
+| API | REST: Store, Admin and Seller APIs | REST: Store and Admin API routes ([JS SDK README](https://github.com/medusajs/medusa/tree/develop/packages/core/js-sdk)) |
+| SDK | `@spree/sdk`, `@spree/admin-sdk`, `@spree/seller-sdk` | `@medusajs/js-sdk` with `sdk.store`, `sdk.admin` and `sdk.auth` ([README](https://github.com/medusajs/medusa/tree/develop/packages/core/js-sdk)) |
+| Licence | BSD-3-Clause (Rails engines), MIT (SDKs, dashboards, MCP server) | MIT, except role-based access control and single sign-on, which are Enterprise Edition ([LICENSE](https://github.com/medusajs/medusa/blob/develop/LICENSE), [ENTERPRISE-LICENSE.md](https://github.com/medusajs/medusa/blob/develop/ENTERPRISE-LICENSE.md)) |
+| Staff roles and permissions | Open source | Enterprise Edition ([ENTERPRISE-LICENSE.md](https://github.com/medusajs/medusa/blob/develop/ENTERPRISE-LICENSE.md)) |
+| Marketplace | Built in | Recipe: you build a marketplace module and an order-splitting workflow ([docs](https://docs.medusajs.com/resources/recipes/marketplace)) |
+| B2B | Built in, without quotes. Company roles, approvals and spending limits need Spree Enterprise | Official MIT B2B starter with company accounts, spending limits, approvals and quotes ([repo](https://github.com/medusajs/b2b-starter)) |
+| Several stores | One store per installation; many channels and markets | Store module can hold several stores; scoping data to a store needs custom code ([docs](https://docs.medusajs.com/resources/commerce-modules/store)) |
+| Admin UI | React dashboard and seller panel | Medusa Admin ([README](https://github.com/medusajs/medusa)) |
+| MCP server | Built in, read and write | Medusa Cloud server, read-only at announcement ([blog](https://medusajs.com/blog/announcing-medusa-mcp)); self-hosted plugin in preview ([npm](https://www.npmjs.com/package/@medusajs/commerce-mcp-plugin)) |
+| Managed hosting | No; free hosted sandbox | Medusa Cloud ([README](https://github.com/medusajs/medusa)) |
+
+## Where Medusa is stronger
+
+- **One language.** Medusa is TypeScript end to end. A JavaScript team can write backend customizations without learning Ruby.
+- **Quotes and approvals in open source.** The official [B2B starter](https://github.com/medusajs/b2b-starter) is MIT-licensed and includes quotes, order approvals and per-employee spending limits. Spree has no quotes, and its approvals and spending limits need a [Spree Enterprise licence](/developer/core-concepts/companies#company-governance).
+- **Several stores in one installation.** Medusa's [Store module](https://docs.medusajs.com/resources/commerce-modules/store) can hold several stores, though you write the code that scopes products and orders to each one. Open-source Spree runs one store per installation.
+- **Managed hosting.** Medusa offers Medusa Cloud ([README](https://github.com/medusajs/medusa)). Spree offers a free sandbox for trying it, but you host production yourself.
+
+## Where Spree is stronger
+
+- **Marketplace in the box.** Spree ships sellers, seller onboarding, per-seller order splitting, commissions, payouts with Stripe Connect, a [seller panel](/user/sellers/seller-panel) and a Seller API. Medusa documents a [recipe](https://docs.medusajs.com/resources/recipes/marketplace) where you build these yourself.
+- **B2B pricing in core.** Companies with divisions, catalogs, price lists, volume pricing, order minimums and multiples, gated wholesale channels, pay by invoice and freight are part of open-source Spree. See [Build a B2B store](/developer/how-to/build-a-b2b-store).
+- **Roles and permissions in open source.** Spree's [staff roles](/developer/core-concepts/staff-roles) are open source. In Medusa, role-based access control is Enterprise Edition code ([ENTERPRISE-LICENSE.md](https://github.com/medusajs/medusa/blob/develop/ENTERPRISE-LICENSE.md)).
+- **MCP server that can act.** Spree's [MCP server](/developer/mcp/overview) is part of every installation. It has tools that change data, such as cancelling an order or capturing a payment, limited to what the connecting user approved. Medusa's hosted server was read-only when announced ([blog](https://medusajs.com/blog/announcing-medusa-mcp)), and its self-hosted plugin is a preview release ([npm](https://www.npmjs.com/package/@medusajs/commerce-mcp-plugin)).
+- **Prebuilt Docker image.** You can run stock Spree from `ghcr.io/spree/spree` without building anything. See [Docker deployment](/developer/deployment/docker).
+- **More database choices.** Spree runs on PostgreSQL, MySQL or SQLite. See [Database configuration](/developer/deployment/database).
+
+## Similar in both
+
+- REST APIs for the storefront and the back office, with typed TypeScript clients.
+- An admin dashboard that ships with the backend ([Medusa README](https://github.com/medusajs/medusa)).
+- A scaffolding command on npm: `create-spree-app` and `create-medusa-app` ([Medusa README](https://github.com/medusajs/medusa)).
+
+## Sources
+
+All Medusa sources were checked in November 2026.
+
+- Medusa repository README — https://github.com/medusajs/medusa
+- Medusa licence — https://github.com/medusajs/medusa/blob/develop/LICENSE
+- Medusa Enterprise Edition materials — https://github.com/medusajs/medusa/blob/develop/ENTERPRISE-LICENSE.md
+- Medusa releases — https://github.com/medusajs/medusa/releases
+- `@medusajs/js-sdk` — https://github.com/medusajs/medusa/tree/develop/packages/core/js-sdk
+- Install Medusa with Docker — https://docs.medusajs.com/learn/installation/docker
+- Marketplace recipe — https://docs.medusajs.com/resources/recipes/marketplace
+- Store module — https://docs.medusajs.com/resources/commerce-modules/store
+- B2B starter — https://github.com/medusajs/b2b-starter
+- Announcing Medusa MCP — https://medusajs.com/blog/announcing-medusa-mcp
+- `@medusajs/commerce-mcp-plugin` — https://www.npmjs.com/package/@medusajs/commerce-mcp-plugin
+
+## Related
+
+- [Spree compared with other open-source commerce platforms](/developer/compare/overview)
+- [Spree vs Saleor](/developer/compare/saleor)
+- [Spree vs Vendure](/developer/compare/vendure)
+- [Architecture](/developer/core-concepts/architecture)

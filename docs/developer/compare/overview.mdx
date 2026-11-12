@@ -1,0 +1,75 @@
+---
+title: Spree compared with other open-source commerce platforms
+sidebarTitle: Overview
+description: A side-by-side, sourced comparison of Spree, Medusa, Saleor and Vendure — language, APIs, licence, marketplace, B2B, multi-store, admin, MCP and hosting.
+---
+
+This page compares Spree with three other open-source commerce backends: [Medusa](/developer/compare/medusa), [Saleor](/developer/compare/saleor) and [Vendure](/developer/compare/vendure). It is written for developers and coding agents choosing a backend.
+
+<Info>
+  Facts about Medusa, Saleor and Vendure are **as of November 2026**. Each one links to the official repository, package or documentation it comes from, so you can check it. Projects change quickly. If a fact here is out of date, please [open an issue](https://github.com/spree/spree/issues).
+</Info>
+
+## Summary
+
+- **Pick Spree** if you want REST APIs with typed TypeScript clients, a built-in multi-vendor marketplace, B2B pricing and companies, and an MCP server that can change data, all under permissive licences.
+- **Pick Medusa** if your team wants one language (TypeScript) across backend and frontend, and you want quotes and order approvals in an open-source B2B starter.
+- **Pick Saleor** if you want a GraphQL API, a Python and Django backend, and several channels with their own currency and warehouses in one open-source installation.
+- **Pick Vendure** if you want a GraphQL API on Node.js and NestJS, the widest choice of databases, and are comfortable with GPLv3 or a commercial licence.
+
+## Feature table
+
+| | Spree | Medusa | Saleor | Vendure |
+| --- | --- | --- | --- | --- |
+| **Language and runtime** | Ruby on Rails 8.1, Ruby 3.2 or later | TypeScript on Node.js 22.22 or later ([README](https://github.com/medusajs/medusa)) | Python 3.12 and Django 5.2 ([pyproject.toml](https://github.com/saleor/saleor/blob/main/pyproject.toml)) | TypeScript on Node.js 22.12 or later, NestJS ([README](https://github.com/vendurehq/vendure)) |
+| **Database** | PostgreSQL, MySQL, SQLite | PostgreSQL ([README](https://github.com/medusajs/medusa)) | PostgreSQL, through the psycopg driver ([pyproject.toml](https://github.com/saleor/saleor/blob/main/pyproject.toml)) | PostgreSQL, MySQL, MariaDB, SQLite ([README](https://github.com/vendurehq/vendure)) |
+| **How you run it** | `npx create-spree-app`, or the prebuilt Docker image `ghcr.io/spree/spree` | `npx create-medusa-app` ([README](https://github.com/medusajs/medusa)); a Docker guide ([docs](https://docs.medusajs.com/learn/installation/docker)) | Prebuilt Docker image `ghcr.io/saleor/saleor` ([package](https://github.com/saleor/saleor/pkgs/container/saleor)) | `npx @vendure/create` ([README](https://github.com/vendurehq/vendure)) |
+| **API style** | REST: Store, Admin and Seller APIs with OpenAPI specs | REST: Store and Admin API routes ([JS SDK README](https://github.com/medusajs/medusa/tree/develop/packages/core/js-sdk)) | GraphQL only ([README](https://github.com/saleor/saleor)) | GraphQL: Shop and Admin APIs ([README](https://github.com/vendurehq/vendure)) |
+| **First-party client SDKs** | `@spree/sdk`, `@spree/admin-sdk`, `@spree/seller-sdk` (TypeScript) | `@medusajs/js-sdk` for Store and Admin APIs ([README](https://github.com/medusajs/medusa/tree/develop/packages/core/js-sdk)) | `@saleor/app-sdk` for building Saleor apps ([npm](https://www.npmjs.com/package/@saleor/app-sdk)); no general client SDK found | No client SDK found; typed GraphQL schema ([README](https://github.com/vendurehq/vendure)) |
+| **Core licence** | BSD-3-Clause (Rails engines); MIT (MCP server, providers, SDKs, dashboards) | MIT, except Enterprise Edition code for roles and single sign-on ([LICENSE](https://github.com/medusajs/medusa/blob/develop/LICENSE), [ENTERPRISE-LICENSE.md](https://github.com/medusajs/medusa/blob/develop/ENTERPRISE-LICENSE.md)) | BSD-3-Clause ([README](https://github.com/saleor/saleor)) | GPLv3 with a plugin exception, or a commercial licence ([LICENSE.md](https://github.com/vendurehq/vendure/blob/master/LICENSE.md)) |
+| **Multi-vendor marketplace** | Built in: sellers, order splitting, commissions, payouts, seller panel and Seller API | Not built in; documented recipe to build a marketplace module ([docs](https://docs.medusajs.com/resources/recipes/marketplace)) | Not built in; no seller types in the GraphQL schema ([schema](https://github.com/saleor/saleor/blob/main/saleor/graphql/schema.graphql)) | Seller and channel primitives; documented guide with an example plugin "for educational purposes" ([docs](https://docs.vendure.io/current/framework/how-to/multi-vendor-marketplaces)) |
+| **B2B** | Built in: companies, catalogs, price lists, volume pricing, order minimums, gated channels, purchase order numbers, pay by invoice, freight. Company roles, approvals and spending limits need Spree Enterprise. No quotes | Official MIT B2B starter: company accounts, spending limits, approvals, quotes ([repo](https://github.com/medusajs/b2b-starter)) | Customer types in the schema ([schema](https://github.com/saleor/saleor/blob/main/saleor/graphql/schema.graphql)); no company or quote types | Company accounts, quotes, contract pricing and single sign-on are in paid plans ([README](https://github.com/vendurehq/vendure)) |
+| **Several stores in one installation** | No: one store per installation, with many sales channels and markets. Several stores need Spree Enterprise multi-tenancy | Store module can hold several stores; linking data to a store needs custom code ([docs](https://docs.medusajs.com/resources/commerce-modules/store)) | Channels, each with its own currency, country and warehouses ([schema](https://github.com/saleor/saleor/blob/main/saleor/graphql/schema.graphql)) | Channels: "multi-channel, multi-region, multi-currency and multi-language from one instance" ([README](https://github.com/vendurehq/vendure)) |
+| **Admin UI** | React dashboard, extensible with plugins; separate seller panel | Medusa Admin dashboard ([README](https://github.com/medusajs/medusa)) | React dashboard in a separate repository ([repo](https://github.com/saleor/saleor-dashboard)) | React and TanStack dashboard ([README](https://github.com/vendurehq/vendure)) |
+| **MCP server for the store** | Built in, read and write, limited to the permissions the user approved | Hosted on Medusa Cloud, read-only at announcement ([blog](https://medusajs.com/blog/announcing-medusa-mcp)); self-hosted plugin in preview ([npm](https://www.npmjs.com/package/@medusajs/commerce-mcp-plugin)) | Separate AGPL-3.0 server, read-only, for Saleor Cloud stores ([repo](https://github.com/saleor/saleor-mcp)) | `@vendure/mcp-plugin`, 42 tools for shop and admin, read and write ([release](https://github.com/vendurehq/vendure/releases/tag/v3.8.0), [PR](https://github.com/vendurehq/vendure/pull/5262)) |
+| **Managed hosting** | Self-hosted; free hosted sandbox for trying Spree | Medusa Cloud ([README](https://github.com/medusajs/medusa)) | Saleor Cloud ([README](https://github.com/saleor/saleor)) | Vendure Cloud in design-partner preview, general availability planned for Q1 2027 ([README](https://github.com/vendurehq/vendure)) |
+| **Latest release (November 2026)** | 6.0.4 | 2.22.6 ([releases](https://github.com/medusajs/medusa/releases)) | 3.23.49 ([releases](https://github.com/saleor/saleor/releases)) | 3.8.2 ([npm](https://www.npmjs.com/package/@vendure/core)) |
+
+## Where each Spree claim comes from
+
+Every Spree fact above can be checked in the [spree/spree repository](https://github.com/spree/spree) or these docs:
+
+- **Licence** — [`LICENSE`](https://github.com/spree/spree/blob/main/LICENSE) and the licence file in each gem and package. `spree_core`, `spree_api`, `spree_emails` and `spree_dashboard` are BSD-3-Clause. `spree_mcp`, the provider gems and every `@spree/*` TypeScript package are MIT.
+- **Runtime and database** — `spree_core` requires Rails 8.1 and Ruby 3.2 or later. See [Database configuration](/developer/deployment/database).
+- **Running it** — [Installing Spree](/developer/getting-started/quickstart) and [Docker deployment](/developer/deployment/docker).
+- **APIs and SDKs** — [Architecture](/developer/core-concepts/architecture) and the [SDK quickstart](/developer/sdk/quickstart).
+- **Marketplace** — [Build a multi-vendor marketplace](/developer/how-to/build-a-marketplace) and [Sellers](/developer/core-concepts/sellers).
+- **B2B** — [Build a B2B store](/developer/how-to/build-a-b2b-store) and [Companies](/developer/core-concepts/companies).
+- **One store per installation** — [Stores](/developer/core-concepts/stores), [Channels](/developer/core-concepts/channels), [Markets](/developer/core-concepts/markets) and [Multi-tenant quickstart](/developer/multi-tenant/quickstart).
+- **Admin UI** — [Admin dashboard](/developer/dashboard/overview).
+- **MCP server** — [MCP server overview](/developer/mcp/overview) and [tool reference](/developer/mcp/tools).
+
+## What "one store per installation" means
+
+An open-source Spree installation runs one store. That store can still sell in many places:
+
+- **Sales channels** — online, point of sale, wholesale, a mobile app. Each has its own product assortment and access rules. See [Channels](/developer/core-concepts/channels).
+- **Markets** — regions with their own currency, languages and prices. See [Markets](/developer/core-concepts/markets).
+
+Separate brands or businesses with separate data need separate stores. In open source, that means separate installations. Spree Enterprise adds [multi-tenancy](/developer/multi-tenant/quickstart), which runs many isolated stores in one installation.
+
+Saleor and Vendure channels, and the Medusa Store module, let one open-source installation hold several storefronts. If you need that without a commercial licence, they are a better fit.
+
+## Detailed comparisons
+
+<CardGroup cols={3}>
+  <Card title="Spree vs Medusa" icon="scale" href="/developer/compare/medusa">
+    REST on Ruby on Rails, or REST on Node.js.
+  </Card>
+  <Card title="Spree vs Saleor" icon="scale" href="/developer/compare/saleor">
+    REST on Ruby on Rails, or GraphQL on Django.
+  </Card>
+  <Card title="Spree vs Vendure" icon="scale" href="/developer/compare/vendure">
+    BSD and MIT, or GPLv3 and commercial.
+  </Card>
+</CardGroup>

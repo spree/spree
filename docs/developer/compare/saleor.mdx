@@ -1,0 +1,69 @@
+---
+title: Spree vs Saleor
+description: How Spree and Saleor compare on language, REST versus GraphQL, SDKs, licence, marketplace, B2B, channels, admin, MCP and hosting, with a source for every Saleor fact.
+---
+
+Spree and Saleor are both headless commerce backends under the BSD-3-Clause licence, with a prebuilt Docker image and a React dashboard. The biggest differences are the API style, the language, and what ships in the box for marketplaces, B2B and AI agents.
+
+<Info>
+  Saleor facts are **as of November 2026**, checked against Saleor 3.23.49 ([releases](https://github.com/saleor/saleor/releases)). Each one links to its source. See the [overview](/developer/compare/overview) for all four platforms side by side.
+</Info>
+
+## At a glance
+
+| | Spree | Saleor (as of November 2026) |
+| --- | --- | --- |
+| Language | Ruby on Rails 8.1 | Python 3.12 and Django 5.2 ([pyproject.toml](https://github.com/saleor/saleor/blob/main/pyproject.toml)) |
+| Database | PostgreSQL, MySQL, SQLite | PostgreSQL, through the psycopg driver ([pyproject.toml](https://github.com/saleor/saleor/blob/main/pyproject.toml)) |
+| Install | `npx create-spree-app`, or the Docker image `ghcr.io/spree/spree` | Docker image `ghcr.io/saleor/saleor` ([package](https://github.com/saleor/saleor/pkgs/container/saleor)) |
+| API | REST: Store, Admin and Seller APIs | GraphQL only: "GraphQL native, API-only" ([README](https://github.com/saleor/saleor)) |
+| SDK | `@spree/sdk`, `@spree/admin-sdk`, `@spree/seller-sdk` | `@saleor/app-sdk` for building Saleor apps ([npm](https://www.npmjs.com/package/@saleor/app-sdk)). No general-purpose client SDK found; clients query GraphQL directly |
+| Licence | BSD-3-Clause (Rails engines), MIT (SDKs, dashboards, MCP server) | BSD-3-Clause ([README](https://github.com/saleor/saleor)) |
+| Marketplace | Built in | Not built in. The GraphQL schema has no seller or vendor types ([schema](https://github.com/saleor/saleor/blob/main/saleor/graphql/schema.graphql)) |
+| B2B | Built in, without quotes. Company roles, approvals and spending limits need Spree Enterprise | Customer types ([schema](https://github.com/saleor/saleor/blob/main/saleor/graphql/schema.graphql)). The schema has no company or quote types |
+| Several stores | One store per installation; many channels and markets | Channels, each with its own currency, default country and warehouses ([schema](https://github.com/saleor/saleor/blob/main/saleor/graphql/schema.graphql)) |
+| Admin UI | React dashboard and seller panel, served by the backend | React dashboard in a separate repository, BSD-3-Clause ([repo](https://github.com/saleor/saleor-dashboard)) |
+| MCP server | Built in, read and write | Separate server, read-only, AGPL-3.0, for stores on Saleor Cloud running 3.21 or later ([repo](https://github.com/saleor/saleor-mcp)) |
+| Managed hosting | No; free hosted sandbox | Saleor Cloud ([README](https://github.com/saleor/saleor)) |
+
+## Where Saleor is stronger
+
+- **GraphQL.** If your team prefers GraphQL, Saleor is GraphQL-native. Spree's APIs are REST only.
+- **Several storefronts in one open-source installation.** A Saleor channel has its own currency, country and warehouses ([schema](https://github.com/saleor/saleor/blob/main/saleor/graphql/schema.graphql)). Spree also has [channels](/developer/core-concepts/channels) and [markets](/developer/core-concepts/markets), but they belong to one store. Separate stores with separate data need separate Spree installations or Spree Enterprise [multi-tenancy](/developer/multi-tenant/quickstart).
+- **Python.** Teams that work in Python and Django can customize Saleor in the language they know.
+- **Managed hosting.** Saleor offers Saleor Cloud ([README](https://github.com/saleor/saleor)). Spree offers a free sandbox for trying it, but you host production yourself.
+
+## Where Spree is stronger
+
+- **Marketplace in the box.** Spree ships sellers, onboarding, per-seller order splitting, commissions, payouts, a [seller panel](/user/sellers/seller-panel) and a Seller API. Saleor has no seller model ([schema](https://github.com/saleor/saleor/blob/main/saleor/graphql/schema.graphql)). See [Build a multi-vendor marketplace](/developer/how-to/build-a-marketplace).
+- **B2B in core.** Companies with divisions and members, catalogs, price lists, volume pricing, order minimums, gated wholesale channels, purchase order numbers, pay by invoice and freight are part of open-source Spree. Saleor's schema has customer types but no company or quote types. See [Build a B2B store](/developer/how-to/build-a-b2b-store).
+- **Typed client SDKs.** Spree publishes TypeScript clients for the Store, Admin and Seller APIs. See the [SDK quickstart](/developer/sdk/quickstart).
+- **MCP server that can act, on any installation.** Spree's [MCP server](/developer/mcp/overview) is part of every installation, self-hosted or not. It has tools that change data, limited to what the connecting user approved. Saleor's server is read-only, separately licensed under AGPL-3.0, and its hosted instance connects to stores on Saleor Cloud ([repo](https://github.com/saleor/saleor-mcp)).
+- **More database choices.** Spree runs on PostgreSQL, MySQL or SQLite. See [Database configuration](/developer/deployment/database).
+
+## Similar in both
+
+- BSD-3-Clause licence for the core.
+- A prebuilt Docker image (`ghcr.io/spree/spree`, `ghcr.io/saleor/saleor`).
+- A React admin dashboard.
+- Headless: you build or adopt a separate storefront.
+
+## Sources
+
+All Saleor sources were checked in November 2026.
+
+- Saleor repository README — https://github.com/saleor/saleor
+- Saleor `pyproject.toml` — https://github.com/saleor/saleor/blob/main/pyproject.toml
+- Saleor GraphQL schema — https://github.com/saleor/saleor/blob/main/saleor/graphql/schema.graphql
+- Saleor releases — https://github.com/saleor/saleor/releases
+- Saleor container image — https://github.com/saleor/saleor/pkgs/container/saleor
+- Saleor dashboard — https://github.com/saleor/saleor-dashboard
+- `@saleor/app-sdk` — https://www.npmjs.com/package/@saleor/app-sdk
+- Saleor MCP server — https://github.com/saleor/saleor-mcp
+
+## Related
+
+- [Spree compared with other open-source commerce platforms](/developer/compare/overview)
+- [Spree vs Medusa](/developer/compare/medusa)
+- [Spree vs Vendure](/developer/compare/vendure)
+- [Architecture](/developer/core-concepts/architecture)
