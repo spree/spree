@@ -1,5 +1,5 @@
 import { expect, type Page, test } from '@playwright/test'
-import { createTaxRate, login } from './helpers'
+import { adminRequest, createTaxRate, login } from './helpers'
 
 const STORE_URL = /\/api\/v3\/admin\/store(\?|$)/
 
@@ -192,10 +192,17 @@ test.describe('getting started', () => {
       timeout: 15_000,
     })
 
+    const created = page.waitForResponse(
+      (res) => res.request().method() === 'POST' && /\/tax_rates(\?|$)/.test(res.url()),
+    )
     await createTaxRate(page, { name: `E2E Setup Rate ${Date.now()}`, ratePercent: '5' })
+    const { id } = (await (await created).json()) as { id: string }
 
     // The checklist re-reads the store after the save, without a reload.
     await expect(page.getByText(/^your store is set up$/i)).toBeVisible({ timeout: 15_000 })
     await expect(checklist).toHaveCount(0)
+
+    // Left in place, the rate taxes every later spec's orders in this shard.
+    await adminRequest(page, creds, 'delete', `/tax_rates/${id}`)
   })
 })
