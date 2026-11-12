@@ -7,9 +7,8 @@ module Spree
     module Replacements
       private
 
-      # @param record [Spree::Exchange, Spree::Claim]
-      # @param items [Array<Hash>] `[{ variant:, quantity:, line_item: }]`
-      # @return [Array<Spree::Fulfillment>]
+      # Ships +items+ (`[{ variant:, quantity:, line_item: }]`) for an
+      # exchange or claim and answers the fulfillments it created.
       def ship_replacements(record, items, requested_by: nil)
         actions = items.map { |item| item.merge(kind: 'add_fulfillment') }
         service = Spree.order_change_apply_service.new
