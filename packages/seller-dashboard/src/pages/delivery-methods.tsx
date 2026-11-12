@@ -5,7 +5,6 @@ import {
   defaultPreferences,
   filterPreferenceSchema,
   hasCurrencyAmount,
-  PageHeader,
   PreferencesForm,
   type ResourceSearch,
   ResourceTable,
@@ -118,14 +117,8 @@ export function DeliveryMethodsPage({ search }: { search: ResourceSearch }) {
 
   return (
     <div className="flex flex-col gap-6">
-      <PageHeader
-        title={t('delivery_methods.title')}
-        subtitle={t('delivery_methods.description')}
-        sticky={false}
-      />
-
       <ResourceTable<DeliveryMethod>
-        hideHeader
+        description={t('delivery_methods.description')}
         tableKey="seller-delivery-methods"
         queryKey="seller-delivery-methods"
         queryFn={(params) => sellerClient().deliveryMethods.list(params)}

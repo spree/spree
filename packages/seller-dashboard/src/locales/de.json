@@ -360,7 +360,10 @@
     "profile": "Profil",
     "settings": "Einstellungen",
     "sign_out": "Abmelden",
-    "team": "Team"
+    "team": "Team",
+    "general": "Allgemein",
+    "taxes": "Steuern",
+    "store": "Shop"
   },
   "onboarding": {
     "accept_terms": "Bedingungen annehmen",
@@ -589,7 +592,14 @@
     "not_found": "Diese Auszahlung wurde nicht gefunden.",
     "search_placeholder": "Nach Referenz suchen",
     "subtitle": "Was der Marktplatz Ihnen überwiesen hat und was unterwegs ist.",
-    "title": "Auszahlungen"
+    "title": "Auszahlungen",
+    "schedule_intervals": {
+      "daily": "Täglich",
+      "weekly": "Wöchentlich",
+      "biweekly": "Alle zwei Wochen",
+      "monthly": "Monatlich",
+      "manual": "Wenn der Marktplatz eine sendet"
+    }
   },
   "policies": {
     "add": "Richtlinie hinzufügen",
@@ -730,48 +740,21 @@
     "digital_files_review_notice": "Das Hinzufügen oder Ersetzen einer Datei schickt dieses Produkt zurück in die Prüfung; es ist nicht verkäuflich, bis der Marktplatz es erneut freigibt."
   },
   "profile": {
-    "about": "Über uns",
     "add_address": "Adresse hinzufügen",
     "address_filled": "Hinzugefügt",
     "address_missing": "Nicht hinzugefügt",
     "address_not_provided": "Noch keine Adresse.",
-    "at_a_glance": "Auf einen Blick",
     "billing_address": "Rechnungsadresse",
-    "billing_email": "Rechnungs-E-Mail",
-    "business_details": "Unternehmensangaben",
-    "contact_email": "Kontakt-E-Mail",
     "edit": "Bearbeiten",
-    "edit_title": "Profil bearbeiten",
-    "joined": "Dabei seit",
     "legal_name": "Firmenname",
     "minimum_payout": "Mindestauszahlung",
-    "name": "Name",
-    "no_about": "Sie haben noch keine Beschreibung verfasst.",
-    "not_provided": "Nicht angegeben",
-    "on_holiday_notice": "Der Urlaubsmodus ist aktiv, Ihre Produkte sind also sichtbar, aber nicht bestellbar.",
     "operator_managed": "Vom Marktplatz festgelegt",
     "payout_schedule": "Auszahlungsrhythmus",
-    "products_count": "Produkte",
     "registration_number": "Registernummer",
     "returns_address": "Rücksendeadresse",
-    "save": "Änderungen speichern",
     "saved": "Profil gespeichert",
-    "saving": "Wird gespeichert…",
-    "section_contact": "Kontakt",
-    "section_settlement": "Auszahlungen und Steuern",
-    "section_standing": "Status",
     "select_tax_identifier_kind": "Registrierungsart wählen oder eingeben",
-    "status_help": {
-      "approved": "Sie sind freigegeben und können auf diesem Marktplatz verkaufen.",
-      "canceled": "Dieses Verkäuferkonto ist geschlossen.",
-      "invited": "Sie wurden eingeladen. Schließen Sie die Einrichtung ab, um sich zu bewerben.",
-      "onboarding": "Arbeiten Sie Ihre Checkliste ab und reichen Sie dann zur Prüfung ein.",
-      "pending": "Der Marktplatz hat Ihre Bewerbung noch nicht begonnen.",
-      "ready_for_review": "Der Marktplatz prüft Ihre Bewerbung.",
-      "rejected": "Ihre Bewerbung wurde nicht angenommen. Wenden Sie sich an den Marktplatz, um mehr zu erfahren.",
-      "suspended": "Der Verkauf ist pausiert. Wenden Sie sich an den Marktplatz, um mehr zu erfahren."
-    },
-    "subtitle": "Wie Ihr Shop Sie darstellt und wie der Marktplatz Sie erreicht.",
+    "subtitle": "Wie Ihr Shop Sie Käufern präsentiert.",
     "tax_identifier_kind": "Registrierungsart",
     "tax_identifier_kinds": {
       "au_abn": "Australian Business Number",
@@ -781,13 +764,16 @@
       "us_ein": "US EIN"
     },
     "tax_remittance": "Steuer abgeführt von",
-    "team_count": "Teammitglieder",
     "vat_number": "USt-IdNr.",
     "vat_status": {
       "pending": "Wir prüfen diese Nummer.",
       "unavailable": "Das Register war nicht erreichbar — wir versuchen es erneut.",
       "unsupported": "Diese Nummer wird wie eingegeben erfasst; wir können sie nicht automatisch prüfen.",
       "unverified": "Diese Nummer konnte nicht bestätigt werden."
+    },
+    "sections": {
+      "details": "Angaben",
+      "images": "Bilder"
     }
   },
   "reset_password": {
@@ -848,5 +834,23 @@
       "member": "Mitglied"
     },
     "title": "Ihr Team"
+  },
+  "settings_general": {
+    "title": "Allgemein",
+    "description": "Wie der Marktplatz Sie erreicht, Ihr Unternehmen, Ihre Adressen und der Urlaubsmodus.",
+    "sections": {
+      "contact": "Kontakt",
+      "business": "Unternehmen",
+      "addresses": "Adressen",
+      "holiday": "Urlaubsmodus"
+    }
+  },
+  "taxes": {
+    "title": "Steuern",
+    "description": "Ihre Steuerregistrierungen und wer die Steuer auf Ihre Verkäufe abführt.",
+    "remittance": {
+      "seller": "Sie",
+      "platform": "Der Marktplatz"
+    }
   }
 }

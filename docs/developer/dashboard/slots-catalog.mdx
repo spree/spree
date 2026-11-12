@@ -437,7 +437,7 @@ Staff invitations have no slot: the invitations endpoint deliberately accepts no
 
 Rendered by the marketplace seller panel (`@spree/seller-dashboard`) rather than the admin dashboard, and registered the same way, in the seller panel's own plugins. Their names start with `seller.` followed by the page — `seller.form_main` and `seller.form_sidebar` above belong to the admin dashboard instead.
 
-The product page is a host form with the form key `seller.product` (`seller.product.media` and `seller.product.variant` for the rows its sheets edit): fields a widget binds with `useHostForm()` save with the product. The Seller API accepts only the attributes your extension declares in `additional_seller_permitted_attributes` — see [Writable by sellers](/developer/customization/api#writable-by-sellers). The other seller panel pages have no page-wide form, so widgets there save via their own Seller API calls.
+The product page is a host form with the form key `seller.product` (`seller.product.media` and `seller.product.variant` for the rows its sheets edit): fields a widget binds with `useHostForm()` save with the product. The Seller API accepts only the attributes your extension declares in `additional_seller_permitted_attributes` — see [Writable by sellers](/developer/customization/api#writable-by-sellers). **Settings → Profile** is a host form too, with the form key `seller.profile`: fields bound there save with the profile, and the Seller API accepts what your extension declares in `Spree::Seller.additional_seller_permitted_attributes`. The other seller panel pages have no page-wide form, so widgets there save via their own Seller API calls.
 
 | Slot | Where | Context |
 |---|---|---|
@@ -448,8 +448,8 @@ The product page is a host form with the form key `seller.product` (`seller.prod
 | `seller.product.variant.form_fields` | The variant editor sheet on the product pages | `{ variant, variantIndex, fieldPrefix }` — host form key `seller.product.variant` |
 | `seller.order.form_sidebar` | Order detail page, end of the sidebar column | `{ order }` |
 | `seller.payout.form_sidebar` | Payout detail page, end of the sidebar column | `{ payout }` |
-| `seller.profile.form_main` | Profile page, end of the main column | `{ profile }` |
-| `seller.profile.form_sidebar` | Profile page, end of the sidebar column | `{ profile }` |
+| `seller.profile.form_main` | **Settings → Profile**, after the form's sections | `{ profile }` — host form key `seller.profile` |
+| `seller.profile.form_sidebar` | **Settings → Profile**, after `seller.profile.form_main`. The page has one column. | `{ profile }` — host form key `seller.profile` |
 | `seller.stock_location.form_fields` | Stock location create and edit sheets | `{ stockLocation, mode }` — host form key `seller.stock_location` |
 | `seller.package_type.form_fields` | Package type create and edit sheets | `{ packageType, mode }` — host form key `seller.package_type` |
 | `seller.team.actions` | Team page, in the header's action area — bulk invite, export, an external directory sync | `{ sellerId }` |

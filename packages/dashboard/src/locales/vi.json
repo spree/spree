@@ -2066,22 +2066,8 @@
         "label": "Vai trò"
       },
       "seller": {
-        "about": {
-          "help": "Hiển thị trên hồ sơ cửa hàng trực tuyến của người bán.",
-          "label": "Về"
-        },
-        "billing_email": {
-          "help": "Nơi gửi hóa đơn hoa hồng và thông báo thanh toán, nếu khác.",
-          "label": "Email thanh toán"
-        },
         "contact_email": {
-          "help": "Nơi lời mời và thông báo thị trường đi.",
           "placeholder": "xin chào@sparks.example"
-        },
-        "holiday_mode_until": {
-          "help": "Danh mục vẫn hiển thị nhưng không thể mua được gì cho đến lúc đó.",
-          "label": "Đi xa cho đến khi",
-          "placeholder": "Chọn một ngày"
         },
         "minimum_payout_amount": {
           "help": "Số dư dưới mức này sẽ được chuyển sang khoản thanh toán tiếp theo.",
@@ -2094,12 +2080,12 @@
           "help": "Tần suất người bán này được thanh toán.",
           "label": "Lịch thanh toán"
         },
-        "slug": {
-          "help": "Được sử dụng trong địa chỉ cửa hàng của người bán. Bắt nguồn từ tên khi để trống."
-        },
         "tax_remittance": {
           "help": "Ai tính thuế tiêu dùng đối với doanh số bán hàng của người bán này.",
           "label": "Thuế được nộp bởi"
+        },
+        "slug": {
+          "help": "Được sử dụng trong địa chỉ cửa hàng của người bán. Bắt nguồn từ tên khi để trống."
         }
       },
       "state": {
@@ -2888,7 +2874,6 @@
       "tax_inclusive": "Bao gồm"
     },
     "media_library": {
-      "choose_from_library": "Chọn từ thư viện",
       "delete_confirm": {
         "in_use_message_one": "Việc xóa “{{name}}” sẽ xóa nó khỏi thư viện của bạn và khỏi vị trí {{count}} sử dụng nó. Mô tả nhúng nó sẽ làm mất hình ảnh.",
         "in_use_message_other": "Việc xóa “{{name}}” sẽ xóa nó khỏi thư viện của bạn và khỏi tất cả {{count}} địa điểm sử dụng nó. Mô tả nhúng nó sẽ làm mất hình ảnh.",
@@ -5432,33 +5417,20 @@
       },
       "detail": {
         "billing_address": "Địa chỉ thanh toán",
-        "contact": "Liên hệ",
         "delete_label": "Xóa người bán",
-        "edit_contact": "Chỉnh sửa liên hệ",
-        "edit_cover": "Sửa ảnh bìa",
-        "edit_logo": "Sửa logo",
-        "edit_profile": "Chỉnh sửa hồ sơ",
         "edit_settlement": "Chỉnh sửa khoản thanh toán và thuế",
         "joined": "Tham gia",
         "load_error": "Không thể tải người bán này",
-        "no_about": "Người bán này chưa viết mô tả.",
         "returns_address": "Trả về địa chỉ",
-        "settlement": "Các khoản thanh toán và thuế"
+        "settlement": "Các khoản thanh toán và thuế",
+        "edit_cover": "Sửa ảnh bìa",
+        "edit_logo": "Sửa logo",
+        "edit_profile": "Chỉnh sửa hồ sơ",
+        "no_about": "Người bán này chưa viết mô tả.",
+        "contact": "Liên hệ",
+        "edit_contact": "Chỉnh sửa liên hệ"
       },
       "empty": "Chưa có người bán",
-      "holiday": {
-        "end": "Kết thúc chế độ nghỉ",
-        "off": "Tắt. Người bán vẫn nhận đơn hàng như bình thường.",
-        "title": "Chế độ nghỉ"
-      },
-      "images": {
-        "cover_photo_help": "Một biểu ngữ rộng trên đầu hồ sơ người bán.",
-        "cover_photo_label": "Ảnh bìa",
-        "logo_help": "Hình vuông hoạt động tốt nhất. Hiển thị bên cạnh người bán ở mọi nơi họ xuất hiện.",
-        "logo_label": "Biểu tượng",
-        "square_logo_help": "Được sử dụng khi cần có hình vuông chặt chẽ, chẳng hạn như hình đại diện.",
-        "square_logo_label": "Logo hình vuông"
-      },
       "invite_sheet": {
         "description": "Họ tham gia nhóm người bán khi họ chấp nhận và sau đó có thể đăng nhập vào bảng điều khiển của riêng họ.",
         "email_help": "Lời mời sẽ được gửi tới địa chỉ này.",
@@ -5481,8 +5453,6 @@
         "update_failed": "Không thể cập nhật người bán",
         "updated": "Người bán đã cập nhật"
       },
-      "not_provided": "Không được cung cấp",
-      "on_holiday_notice": "Người bán này đi vắng. Danh mục của họ vẫn hiển thị nhưng không thể mua được gì từ họ.",
       "onboarding": {
         "actions": {
           "accept": "Chấp nhận",
@@ -5596,7 +5566,13 @@
         },
         "title": "Đội"
       },
-      "team_column": "Đội"
+      "team_column": "Đội",
+      "holiday": {
+        "title": "Chế độ nghỉ",
+        "end": "Kết thúc chế độ nghỉ",
+        "off": "Tắt. Người bán vẫn nhận đơn hàng như bình thường."
+      },
+      "on_holiday_notice": "Người bán này đi vắng. Danh mục của họ vẫn hiển thị nhưng không thể mua được gì từ họ."
     },
     "settings": {
       "webhooks": {

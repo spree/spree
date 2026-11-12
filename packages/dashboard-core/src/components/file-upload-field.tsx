@@ -12,8 +12,8 @@ import {
   FieldLabel,
   toastManager,
 } from '@spree/dashboard-ui'
-import { FileIcon, UploadCloudIcon, XIcon } from '@spree/dashboard-ui/icons'
-import { type ReactNode, useState } from 'react'
+import { FileIcon, UploadCloudIcon, UploadIcon, XIcon } from '@spree/dashboard-ui/icons'
+import { type ReactNode, useId, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useFileUpload } from '../hooks/use-file-upload'
 
@@ -203,46 +203,65 @@ export function FileUploadField({
           }
         : null
 
+  const inputRef = useRef<HTMLInputElement>(null)
+  const inputId = useId()
+  const input = (
+    <input
+      ref={inputRef}
+      id={inputId}
+      type="file"
+      accept={accept}
+      className="sr-only"
+      // With a file attached, Replace is the keyboard's way in; the bare
+      // input would be a second, unlabelled tab stop.
+      tabIndex={attached ? -1 : undefined}
+      disabled={disabled || !!pending}
+      onChange={(e) => {
+        const picked = e.target.files?.[0]
+        if (picked) void handlePicked(picked)
+        e.target.value = ''
+      }}
+    />
+  )
+
   return (
     <Field>
       {label && <FieldLabel>{label}</FieldLabel>}
       <div className="flex flex-col gap-2">
-        {/* A <label> wrapping the file input: clicking anywhere opens the
-            picker natively. The input is sr-only (not display:none) so it
-            stays in the tab order — keyboard users Tab to it and press
-            Enter/Space; the label paints a focus ring via has-[:focus-visible]. */}
-        <label
-          className={cn(
-            'flex cursor-pointer flex-col items-center justify-center gap-2 rounded-md border border-border border-dashed px-4 py-8 text-center transition-colors hover:bg-accent/50',
-            'has-[:focus-visible]:border-ring has-[:focus-visible]:ring-[3px] has-[:focus-visible]:ring-ring/50',
-            (disabled || !!pending) && 'pointer-events-none opacity-60',
-          )}
-          onDragOver={(e) => e.preventDefault()}
-          onDrop={(e) => {
-            e.preventDefault()
-            const dropped = e.dataTransfer.files?.[0]
-            if (dropped) void handlePicked(dropped)
-          }}
-        >
-          <UploadCloudIcon className="size-6 text-muted-foreground" />
-          <span className="text-muted-foreground text-base">
-            {dropLabel ?? t('admin.components.file_upload.drop_label')}
-          </span>
-          <span className="mt-1 inline-flex h-8 items-center rounded-md border border-border bg-background px-3 font-medium text-base hover:bg-accent">
-            {browseLabel ?? t('admin.components.file_upload.browse')}
-          </span>
-          <input
-            type="file"
-            accept={accept}
-            className="sr-only"
-            disabled={disabled || !!pending}
-            onChange={(e) => {
-              const picked = e.target.files?.[0]
-              if (picked) void handlePicked(picked)
-              e.target.value = ''
+        {/* With a file attached the row below is the whole field — Replace
+            and Remove act on it — so the drop zone only shows while empty.
+            The input itself always renders, so Replace has something to open. */}
+        {attached ? (
+          input
+        ) : (
+          // A <label> wrapping the file input: clicking anywhere opens the
+          // picker natively. The input is sr-only (not display:none) so it
+          // stays in the tab order — keyboard users Tab to it and press
+          // Enter/Space; the label paints a focus ring via has-[:focus-visible].
+          <label
+            htmlFor={inputId}
+            className={cn(
+              'flex cursor-pointer flex-col items-center justify-center gap-2 rounded-md border border-border border-dashed px-4 py-8 text-center transition-colors hover:bg-accent/50',
+              'has-[:focus-visible]:border-ring has-[:focus-visible]:ring-[3px] has-[:focus-visible]:ring-ring/50',
+              disabled && 'pointer-events-none opacity-60',
+            )}
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={(e) => {
+              e.preventDefault()
+              const dropped = e.dataTransfer.files?.[0]
+              if (dropped) void handlePicked(dropped)
             }}
-          />
-        </label>
+          >
+            <UploadCloudIcon className="size-6 text-muted-foreground" />
+            <span className="text-muted-foreground text-base">
+              {dropLabel ?? t('admin.components.file_upload.drop_label')}
+            </span>
+            <span className="mt-1 inline-flex h-8 items-center rounded-md border border-border bg-background px-3 font-medium text-base hover:bg-accent">
+              {browseLabel ?? t('admin.components.file_upload.browse')}
+            </span>
+            {input}
+          </label>
+        )}
 
         {attached && (
           <Attachment className="w-full" state={attached.state}>
@@ -269,6 +288,14 @@ export function FileUploadField({
               </AttachmentDescription>
             </AttachmentContent>
             <AttachmentActions>
+              <AttachmentAction
+                type="button"
+                aria-label={t('admin.components.file_upload.replace')}
+                onClick={() => inputRef.current?.click()}
+                disabled={disabled || !!pending}
+              >
+                <UploadIcon />
+              </AttachmentAction>
               <AttachmentAction
                 type="button"
                 aria-label={t('admin.actions.remove')}

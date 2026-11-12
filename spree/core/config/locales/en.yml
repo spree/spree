@@ -1655,6 +1655,13 @@ en:
         name: Billing address
       complete_profile:
         description: Fill in the public profile shoppers see
+        fields:
+          about: a description
+          contact_email: a contact email
+          cover_photo: a cover photo
+          logo: a logo
+          name: a name
+        missing: 'Still missing: %{fields}.'
         name: Complete profile
       delivery_method:
         description: Offer at least one way to ship your orders

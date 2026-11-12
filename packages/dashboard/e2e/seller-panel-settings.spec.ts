@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, type Page, test } from '@playwright/test'
 import {
   FIXTURE_SELLER_WRITER_EMAIL,
   openRowMenu,
@@ -10,27 +10,100 @@ import {
 // Everything here edits the seller it signs in as, so it signs in as the
 // panel seller rather than the ledger seller the read-only specs look at.
 
-test.describe('seller panel — profile', () => {
-  test('edits the description and contact email, and they survive a reload', async ({ page }) => {
-    const home = await sellerLogin(page, FIXTURE_SELLER_WRITER_EMAIL)
-    await page.goto(`${home}/profile`)
+/** The page's Save, in its header. */
+function save(page: Page) {
+  return page.getByRole('button', { name: /^save$/i }).first()
+}
 
-    const email = `hello-${Date.now()}@panel-seller.test`
-    await page
-      .getByRole('button', { name: /^edit$/i })
-      .first()
-      .click()
-    await expect(page.getByRole('heading', { name: /edit your profile/i })).toBeVisible()
-    await page.locator('#about').fill('Hand-thrown ceramics from a two-person studio.')
-    await page.locator('#contact_email').fill(email)
-    await page.getByRole('button', { name: /save changes/i }).click()
+test.describe('seller panel — profile', () => {
+  test('edits the description, and it survives a reload', async ({ page }) => {
+    const home = await sellerLogin(page, FIXTURE_SELLER_WRITER_EMAIL)
+    await page.goto(`${home}/settings/profile`)
+    await expect(page.getByRole('heading', { name: /^profile$/i, level: 1 })).toBeVisible({
+      timeout: 15_000,
+    })
+    // The storefront address is the marketplace's to change, and the
+    // operator's media library is not the seller's to browse.
+    await expect(page.locator('#seller-slug')).toHaveCount(0)
+    await expect(page.getByRole('button', { name: /choose from library/i })).toHaveCount(0)
+    await expect(page.getByText(/^cover photo$/i)).toBeVisible()
+    // Opening the page is not a change.
+    await expect(save(page)).toBeDisabled()
+
+    const about = `Hand-thrown ceramics ${Date.now()}`
+    await page.locator('#seller-about').click()
+    await page.keyboard.press('ControlOrMeta+A')
+    await page.locator('#seller-about').pressSequentially(about)
+    await save(page).click()
     await expect(page.getByText(/profile saved/i)).toBeVisible({ timeout: 15_000 })
 
     await page.reload()
-    await expect(page.getByText('Hand-thrown ceramics from a two-person studio.')).toBeVisible({
+    await expect(page.getByText(about)).toBeVisible({ timeout: 15_000 })
+  })
+
+  test('sends the old profile address to settings', async ({ page }) => {
+    const home = await sellerLogin(page, FIXTURE_SELLER_WRITER_EMAIL)
+    await page.goto(`${home}/profile`)
+    await expect(page).toHaveURL(/\/settings\/profile$/, { timeout: 15_000 })
+  })
+})
+
+test.describe('seller panel — general settings', () => {
+  test('edits the contact email, and it survives a reload', async ({ page }) => {
+    const home = await sellerLogin(page, FIXTURE_SELLER_WRITER_EMAIL)
+    await page.goto(`${home}/settings/general`)
+    await expect(page.getByRole('heading', { name: /^general$/i, level: 1 })).toBeVisible({
       timeout: 15_000,
     })
-    await expect(page.getByText(email)).toBeVisible()
+
+    const email = `hello-${Date.now()}@panel-seller.test`
+    await page.locator('#seller-contact-email').fill(email)
+    await save(page).click()
+    await expect(page.getByText(/profile saved/i)).toBeVisible({ timeout: 15_000 })
+
+    await page.reload()
+    await expect(page.locator('#seller-contact-email')).toHaveValue(email, { timeout: 15_000 })
+  })
+
+  test('turns holiday mode on and ends it', async ({ page }) => {
+    const home = await sellerLogin(page, FIXTURE_SELLER_WRITER_EMAIL)
+    await page.goto(`${home}/settings/general`)
+
+    await page.locator('#seller-holiday-mode-until').click()
+    const calendar = page.getByRole('dialog')
+    // The 15th of next month is always in the future.
+    await calendar.getByRole('button', { name: /next month/i }).click()
+    await calendar.getByRole('gridcell', { name: '15' }).click()
+    await page.keyboard.press('Escape')
+    await save(page).click()
+    await expect(page.getByText(/profile saved/i)).toBeVisible({ timeout: 15_000 })
+    await waitForToastsToClear(page)
+
+    await page.reload()
+    const clear = page.getByRole('button', { name: /^clear date$/i })
+    await expect(clear).toBeVisible({ timeout: 15_000 })
+
+    await clear.click()
+    await save(page).click()
+    await expect(page.getByText(/profile saved/i)).toBeVisible({ timeout: 15_000 })
+    await page.reload()
+    await expect(page.locator('#seller-contact-email')).toBeVisible({ timeout: 15_000 })
+    await expect(clear).toHaveCount(0)
+  })
+})
+
+test.describe('seller panel — taxes', () => {
+  test('lists tax registrations under settings', async ({ page }) => {
+    const home = await sellerLogin(page, FIXTURE_SELLER_WRITER_EMAIL)
+    await page.goto(`${home}/settings`)
+    await page
+      .getByRole('link', { name: /^taxes/i })
+      .first()
+      .click()
+    await expect(page.getByRole('heading', { name: /^taxes$/i, level: 1 })).toBeVisible({
+      timeout: 15_000,
+    })
+    await expect(page.getByText(/tax remitted by/i).first()).toBeVisible()
   })
 })
 

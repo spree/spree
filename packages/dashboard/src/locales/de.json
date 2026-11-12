@@ -2066,22 +2066,8 @@
         "label": "Rollen"
       },
       "seller": {
-        "about": {
-          "help": "Wird im Storefront-Profil des Verkäufers angezeigt.",
-          "label": "Über"
-        },
-        "billing_email": {
-          "help": "Hierhin gehen Provisionsrechnungen und Auszahlungsmitteilungen, falls abweichend.",
-          "label": "Rechnungs-E-Mail"
-        },
         "contact_email": {
-          "help": "Hierhin gehen Einladungen und Mitteilungen des Marktplatzes.",
           "placeholder": "hallo@sparks.example"
-        },
-        "holiday_mode_until": {
-          "help": "Der Katalog bleibt sichtbar, es kann bis dahin aber nichts gekauft werden.",
-          "label": "Abwesend bis",
-          "placeholder": "Datum wählen"
         },
         "minimum_payout_amount": {
           "help": "Kleinere Beträge werden auf die nächste Auszahlung übertragen.",
@@ -2094,12 +2080,12 @@
           "help": "Wie oft dieser Verkäufer ausgezahlt wird.",
           "label": "Auszahlungsrhythmus"
         },
-        "slug": {
-          "help": "Teil der Storefront-Adresse des Verkäufers. Wird aus dem Namen abgeleitet, wenn leer."
-        },
         "tax_remittance": {
           "help": "Wer die Verbrauchsteuer auf die Verkäufe dieses Verkäufers abführt.",
           "label": "Steuer abgeführt von"
+        },
+        "slug": {
+          "help": "Teil der Storefront-Adresse des Verkäufers. Wird aus dem Namen abgeleitet, wenn leer."
         }
       },
       "state": {
@@ -2889,7 +2875,6 @@
       "tax_inclusive": "Inklusive"
     },
     "media_library": {
-      "choose_from_library": "Aus Bibliothek wählen",
       "delete_confirm": {
         "in_use_message_one": "Beim Löschen von „{{name}}“ wird die Datei aus Ihrer Bibliothek und von der {{count}} Stelle entfernt, die sie verwendet. Beschreibungen, die sie einbetten, verlieren das Bild.",
         "in_use_message_other": "Beim Löschen von „{{name}}“ wird die Datei aus Ihrer Bibliothek und von allen {{count}} Stellen entfernt, die sie verwenden. Beschreibungen, die sie einbetten, verlieren das Bild.",
@@ -5466,33 +5451,20 @@
       },
       "detail": {
         "billing_address": "Rechnungsadresse",
-        "contact": "Kontakt",
         "delete_label": "Verkäufer löschen",
-        "edit_contact": "Kontakt bearbeiten",
-        "edit_cover": "Titelbild bearbeiten",
-        "edit_logo": "Logo bearbeiten",
-        "edit_profile": "Profil bearbeiten",
         "edit_settlement": "Auszahlungen und Steuern bearbeiten",
         "joined": "Beigetreten",
         "load_error": "Dieser Verkäufer konnte nicht geladen werden",
-        "no_about": "Dieser Verkäufer hat noch keine Beschreibung verfasst.",
         "returns_address": "Retourenadresse",
-        "settlement": "Auszahlungen und Steuern"
+        "settlement": "Auszahlungen und Steuern",
+        "edit_cover": "Titelbild bearbeiten",
+        "edit_logo": "Logo bearbeiten",
+        "edit_profile": "Profil bearbeiten",
+        "no_about": "Dieser Verkäufer hat noch keine Beschreibung verfasst.",
+        "contact": "Kontakt",
+        "edit_contact": "Kontakt bearbeiten"
       },
       "empty": "Noch keine Verkäufer",
-      "holiday": {
-        "end": "Urlaubsmodus beenden",
-        "off": "Aus. Der Verkäufer nimmt wie gewohnt Bestellungen an.",
-        "title": "Urlaubsmodus"
-      },
-      "images": {
-        "cover_photo_help": "Ein breites Banner oben auf dem Verkäuferprofil.",
-        "cover_photo_label": "Titelbild",
-        "logo_help": "Quadratisch passt am besten. Wird überall neben dem Verkäufer angezeigt.",
-        "logo_label": "Logo",
-        "square_logo_help": "Für Stellen, die ein enges Quadrat brauchen, etwa ein Profilbild.",
-        "square_logo_label": "Quadratisches Logo"
-      },
       "invite_sheet": {
         "description": "Mit der Annahme tritt die Person dem Verkäuferteam bei und kann sich in ihrem eigenen Bereich anmelden.",
         "email_help": "Die Einladung geht an diese Adresse.",
@@ -5515,8 +5487,6 @@
         "update_failed": "Verkäufer konnte nicht aktualisiert werden",
         "updated": "Verkäufer aktualisiert"
       },
-      "not_provided": "Nicht angegeben",
-      "on_holiday_notice": "Dieser Verkäufer ist abwesend. Sein Katalog bleibt sichtbar, es kann aber nichts gekauft werden.",
       "onboarding": {
         "actions": {
           "accept": "Annehmen",
@@ -5630,7 +5600,13 @@
         },
         "title": "Team"
       },
-      "team_column": "Team"
+      "team_column": "Team",
+      "holiday": {
+        "title": "Urlaubsmodus",
+        "end": "Urlaubsmodus beenden",
+        "off": "Aus. Der Verkäufer nimmt wie gewohnt Bestellungen an."
+      },
+      "on_holiday_notice": "Dieser Verkäufer ist abwesend. Sein Katalog bleibt sichtbar, es kann aber nichts gekauft werden."
     },
     "settings": {
       "webhooks": {

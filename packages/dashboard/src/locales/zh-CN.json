@@ -2061,22 +2061,8 @@
         "label": "角色"
       },
       "seller": {
-        "about": {
-          "help": "显示在卖家的店铺资料页。",
-          "label": "简介"
-        },
-        "billing_email": {
-          "help": "佣金发票和结算通知的接收邮箱（如果不同）。",
-          "label": "账单邮箱"
-        },
         "contact_email": {
-          "help": "邀请和市场通知会发送到这里。",
           "placeholder": "hello@sparks.example"
-        },
-        "holiday_mode_until": {
-          "help": "在此之前商品仍然可见，但无法购买。",
-          "label": "休假至",
-          "placeholder": "选择日期"
         },
         "minimum_payout_amount": {
           "help": "低于此金额的余额会顺延到下次结算。",
@@ -2089,12 +2075,12 @@
           "help": "该卖家多久收到一次款项。",
           "label": "结算周期"
         },
-        "slug": {
-          "help": "用于卖家店铺地址。留空时根据名称生成。"
-        },
         "tax_remittance": {
           "help": "由谁为该卖家的销售申报消费税。",
           "label": "税务申报方"
+        },
+        "slug": {
+          "help": "用于卖家店铺地址。留空时根据名称生成。"
         }
       },
       "state": {
@@ -2883,7 +2869,6 @@
       "tax_inclusive": "含税"
     },
     "media_library": {
-      "choose_from_library": "从媒体库选择",
       "delete_confirm": {
         "in_use_message_other": "删除“{{name}}”会将其从媒体库以及使用它的 {{count}} 个位置中移除。嵌入它的描述将失去该图片。",
         "message": "删除“{{name}}”会将其从媒体库中移除。仍在使用它的位置将失去该图片。",
@@ -5453,33 +5438,20 @@
       },
       "detail": {
         "billing_address": "账单地址",
-        "contact": "联系方式",
         "delete_label": "删除卖家",
-        "edit_contact": "编辑联系方式",
-        "edit_cover": "编辑封面照片",
-        "edit_logo": "编辑徽标",
-        "edit_profile": "编辑资料",
         "edit_settlement": "编辑结算与税务",
         "joined": "加入于",
         "load_error": "无法加载该卖家",
-        "no_about": "该卖家尚未填写简介。",
         "returns_address": "退货地址",
-        "settlement": "结算与税务"
+        "settlement": "结算与税务",
+        "edit_cover": "编辑封面照片",
+        "edit_logo": "编辑徽标",
+        "edit_profile": "编辑资料",
+        "no_about": "该卖家尚未填写简介。",
+        "contact": "联系方式",
+        "edit_contact": "编辑联系方式"
       },
       "empty": "暂无卖家",
-      "holiday": {
-        "end": "结束休假模式",
-        "off": "已关闭。卖家正常接单。",
-        "title": "休假模式"
-      },
-      "images": {
-        "cover_photo_help": "卖家资料页顶部的宽幅横幅。",
-        "cover_photo_label": "封面图",
-        "logo_help": "建议使用正方形。会在卖家出现的各处显示在其旁边。",
-        "logo_label": "标志",
-        "square_logo_help": "用于需要严格正方形的位置，例如头像。",
-        "square_logo_label": "方形标志"
-      },
       "invite_sheet": {
         "description": "对方接受后即加入卖家团队，并可登录自己的面板。",
         "email_help": "邀请将发送到该邮箱。",
@@ -5502,8 +5474,6 @@
         "update_failed": "无法更新卖家",
         "updated": "卖家已更新"
       },
-      "not_provided": "未填写",
-      "on_holiday_notice": "该卖家处于休假状态。商品仍然可见，但无法购买。",
       "onboarding": {
         "actions": {
           "accept": "接受",
@@ -5617,7 +5587,13 @@
         },
         "title": "团队"
       },
-      "team_column": "团队"
+      "team_column": "团队",
+      "holiday": {
+        "title": "休假模式",
+        "end": "结束休假模式",
+        "off": "已关闭。卖家正常接单。"
+      },
+      "on_holiday_notice": "该卖家处于休假状态。商品仍然可见，但无法购买。"
     },
     "settings": {
       "webhooks": {

@@ -18,6 +18,10 @@ export type ProfileUpdateParams = {
   square_logo_signed_id?: string | null
   /** A `signed_id` from `POST /files`; `null` removes the image. */
   cover_photo_signed_id?: string | null
+  /**
+   * Set while the seller is away: the catalog stays but stops selling. `null` ends holiday mode.
+   */
+  holiday_mode_until?: string | null
   billing_address?: SellerAddressParams
   /**
    * Answers to the custom fields this marketplace's onboarding asks for. A field nothing asked for

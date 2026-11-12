@@ -32960,6 +32960,12 @@ components:
           type: string
           description: A `signed_id` from `POST /files`; `null` removes the image.
           nullable: true
+        holiday_mode_until:
+          type: string
+          format: date-time
+          description: 'Set while the seller is away: the catalog stays but stops
+            selling. `null` ends holiday mode.'
+          nullable: true
         billing_address:
           "$ref": "#/components/schemas/SellerAddressParams"
         custom_fields:

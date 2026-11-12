@@ -325,7 +325,8 @@
         "drop_label": "ファイルをここにドロップするか、クリックして選んでください",
         "invalid_type": "この種類のファイルは使えません（使えるもの: {{accept}}）",
         "upload_failed": "アップロードに失敗しました: {{message}}",
-        "uploading": "アップロード中…"
+        "uploading": "アップロード中…",
+        "replace": "ファイルを置き換える"
       },
       "import_button": {
         "delimiter_label": "列の区切り文字",
@@ -1016,6 +1017,24 @@
         },
         "digital_asset_authorized_days": {
           "label": "ダウンロードできる日数"
+        }
+      },
+      "seller": {
+        "about": {
+          "label": "紹介",
+          "help": "販売者のストアのプロフィールに表示します。"
+        },
+        "holiday_mode_until": {
+          "label": "休業の終了日",
+          "placeholder": "日付を選ぶ",
+          "help": "その日までカタログは表示されますが、何も購入できません。"
+        },
+        "contact_email": {
+          "help": "招待とマーケットプレイスの通知の送り先です。"
+        },
+        "billing_email": {
+          "label": "請求用のメールアドレス",
+          "help": "手数料の請求書と支払いの通知の送り先です（異なる場合）。"
         }
       }
     },
@@ -1872,7 +1891,8 @@
       "value_count_other": "値 {{count}} 件"
     },
     "media_library": {
-      "download": "ダウンロード"
+      "download": "ダウンロード",
+      "choose_from_library": "ライブラリから選ぶ"
     },
     "catalogs": {
       "terms": {
@@ -2200,6 +2220,17 @@
       "replace": "ファイルを置き換え",
       "replace_description": "「{{name}}」は削除され、購入した人は今までのリンクから新しいファイルをダウンロードします。すぐに反映されます。",
       "replace_title": "このファイルを置き換えますか？"
+    },
+    "sellers": {
+      "images": {
+        "cover_photo_label": "カバー写真",
+        "cover_photo_help": "販売者のプロフィールの上部に表示する横長のバナーです。",
+        "logo_label": "ロゴ",
+        "logo_help": "正方形がおすすめです。販売者が表示されるすべての場所で横に出ます。",
+        "square_logo_label": "正方形のロゴ",
+        "square_logo_help": "アバターなど、小さな正方形が必要な場所で使います。"
+      },
+      "not_provided": "未提出"
     }
   }
 }

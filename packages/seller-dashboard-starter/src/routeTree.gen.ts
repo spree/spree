@@ -30,9 +30,12 @@ import { Route as ProductsProductIdRouteImport } from './../../seller-dashboard/
 import { Route as ProductsNewRouteImport } from './../../seller-dashboard/src/routes/_authenticated/$sellerId/products/new'
 import { Route as SettingsIndexRouteImport } from './../../seller-dashboard/src/routes/_authenticated/$sellerId/settings/index'
 import { Route as SettingsDeliveryMethodsRouteImport } from './../../seller-dashboard/src/routes/_authenticated/$sellerId/settings/delivery-methods'
+import { Route as SettingsGeneralRouteImport } from './../../seller-dashboard/src/routes/_authenticated/$sellerId/settings/general'
 import { Route as SettingsPackageTypesRouteImport } from './../../seller-dashboard/src/routes/_authenticated/$sellerId/settings/package-types'
 import { Route as SettingsPoliciesRouteImport } from './../../seller-dashboard/src/routes/_authenticated/$sellerId/settings/policies'
+import { Route as SettingsProfileRouteImport } from './../../seller-dashboard/src/routes/_authenticated/$sellerId/settings/profile'
 import { Route as SettingsStockLocationsRouteImport } from './../../seller-dashboard/src/routes/_authenticated/$sellerId/settings/stock-locations'
+import { Route as SettingsTaxesRouteImport } from './../../seller-dashboard/src/routes/_authenticated/$sellerId/settings/taxes'
 import { Route as SettingsTeamRouteImport } from './../../seller-dashboard/src/routes/_authenticated/$sellerId/settings/team'
 
 const authenticatedRoute = authenticatedRouteImport.update({
@@ -140,6 +143,11 @@ const SettingsDeliveryMethodsRoute = SettingsDeliveryMethodsRouteImport.update({
   path: '/delivery-methods',
   getParentRoute: () => SettingsRoute,
 } as any)
+const SettingsGeneralRoute = SettingsGeneralRouteImport.update({
+  id: '/general',
+  path: '/general',
+  getParentRoute: () => SettingsRoute,
+} as any)
 const SettingsPackageTypesRoute = SettingsPackageTypesRouteImport.update({
   id: '/package-types',
   path: '/package-types',
@@ -150,9 +158,19 @@ const SettingsPoliciesRoute = SettingsPoliciesRouteImport.update({
   path: '/policies',
   getParentRoute: () => SettingsRoute,
 } as any)
+const SettingsProfileRoute = SettingsProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => SettingsRoute,
+} as any)
 const SettingsStockLocationsRoute = SettingsStockLocationsRouteImport.update({
   id: '/stock-locations',
   path: '/stock-locations',
+  getParentRoute: () => SettingsRoute,
+} as any)
+const SettingsTaxesRoute = SettingsTaxesRouteImport.update({
+  id: '/taxes',
+  path: '/taxes',
   getParentRoute: () => SettingsRoute,
 } as any)
 const SettingsTeamRoute = SettingsTeamRouteImport.update({
@@ -177,9 +195,12 @@ export interface FileRoutesByFullPath {
   '/$sellerId/products/$productId': typeof ProductsProductIdRoute
   '/$sellerId/products/new': typeof ProductsNewRoute
   '/$sellerId/settings/delivery-methods': typeof SettingsDeliveryMethodsRoute
+  '/$sellerId/settings/general': typeof SettingsGeneralRoute
   '/$sellerId/settings/package-types': typeof SettingsPackageTypesRoute
   '/$sellerId/settings/policies': typeof SettingsPoliciesRoute
+  '/$sellerId/settings/profile': typeof SettingsProfileRoute
   '/$sellerId/settings/stock-locations': typeof SettingsStockLocationsRoute
+  '/$sellerId/settings/taxes': typeof SettingsTaxesRoute
   '/$sellerId/settings/team': typeof SettingsTeamRoute
   '/$sellerId/earnings/': typeof EarningsIndexRoute
   '/$sellerId/orders/': typeof OrdersIndexRoute
@@ -201,9 +222,12 @@ export interface FileRoutesByTo {
   '/$sellerId/products/$productId': typeof ProductsProductIdRoute
   '/$sellerId/products/new': typeof ProductsNewRoute
   '/$sellerId/settings/delivery-methods': typeof SettingsDeliveryMethodsRoute
+  '/$sellerId/settings/general': typeof SettingsGeneralRoute
   '/$sellerId/settings/package-types': typeof SettingsPackageTypesRoute
   '/$sellerId/settings/policies': typeof SettingsPoliciesRoute
+  '/$sellerId/settings/profile': typeof SettingsProfileRoute
   '/$sellerId/settings/stock-locations': typeof SettingsStockLocationsRoute
+  '/$sellerId/settings/taxes': typeof SettingsTaxesRoute
   '/$sellerId/settings/team': typeof SettingsTeamRoute
   '/$sellerId/earnings': typeof EarningsIndexRoute
   '/$sellerId/orders': typeof OrdersIndexRoute
@@ -229,9 +253,12 @@ export interface FileRoutesById {
   '/_authenticated/$sellerId/products/$productId': typeof ProductsProductIdRoute
   '/_authenticated/$sellerId/products/new': typeof ProductsNewRoute
   '/_authenticated/$sellerId/settings/delivery-methods': typeof SettingsDeliveryMethodsRoute
+  '/_authenticated/$sellerId/settings/general': typeof SettingsGeneralRoute
   '/_authenticated/$sellerId/settings/package-types': typeof SettingsPackageTypesRoute
   '/_authenticated/$sellerId/settings/policies': typeof SettingsPoliciesRoute
+  '/_authenticated/$sellerId/settings/profile': typeof SettingsProfileRoute
   '/_authenticated/$sellerId/settings/stock-locations': typeof SettingsStockLocationsRoute
+  '/_authenticated/$sellerId/settings/taxes': typeof SettingsTaxesRoute
   '/_authenticated/$sellerId/settings/team': typeof SettingsTeamRoute
   '/_authenticated/$sellerId/earnings/': typeof EarningsIndexRoute
   '/_authenticated/$sellerId/orders/': typeof OrdersIndexRoute
@@ -257,9 +284,12 @@ export interface FileRouteTypes {
     | '/$sellerId/products/$productId'
     | '/$sellerId/products/new'
     | '/$sellerId/settings/delivery-methods'
+    | '/$sellerId/settings/general'
     | '/$sellerId/settings/package-types'
     | '/$sellerId/settings/policies'
+    | '/$sellerId/settings/profile'
     | '/$sellerId/settings/stock-locations'
+    | '/$sellerId/settings/taxes'
     | '/$sellerId/settings/team'
     | '/$sellerId/earnings/'
     | '/$sellerId/orders/'
@@ -281,9 +311,12 @@ export interface FileRouteTypes {
     | '/$sellerId/products/$productId'
     | '/$sellerId/products/new'
     | '/$sellerId/settings/delivery-methods'
+    | '/$sellerId/settings/general'
     | '/$sellerId/settings/package-types'
     | '/$sellerId/settings/policies'
+    | '/$sellerId/settings/profile'
     | '/$sellerId/settings/stock-locations'
+    | '/$sellerId/settings/taxes'
     | '/$sellerId/settings/team'
     | '/$sellerId/earnings'
     | '/$sellerId/orders'
@@ -308,9 +341,12 @@ export interface FileRouteTypes {
     | '/_authenticated/$sellerId/products/$productId'
     | '/_authenticated/$sellerId/products/new'
     | '/_authenticated/$sellerId/settings/delivery-methods'
+    | '/_authenticated/$sellerId/settings/general'
     | '/_authenticated/$sellerId/settings/package-types'
     | '/_authenticated/$sellerId/settings/policies'
+    | '/_authenticated/$sellerId/settings/profile'
     | '/_authenticated/$sellerId/settings/stock-locations'
+    | '/_authenticated/$sellerId/settings/taxes'
     | '/_authenticated/$sellerId/settings/team'
     | '/_authenticated/$sellerId/earnings/'
     | '/_authenticated/$sellerId/orders/'
@@ -476,6 +512,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsDeliveryMethodsRouteImport
       parentRoute: typeof SettingsRoute
     }
+    '/_authenticated/$sellerId/settings/general': {
+      id: '/_authenticated/$sellerId/settings/general'
+      path: '/general'
+      fullPath: '/$sellerId/settings/general'
+      preLoaderRoute: typeof SettingsGeneralRouteImport
+      parentRoute: typeof SettingsRoute
+    }
     '/_authenticated/$sellerId/settings/package-types': {
       id: '/_authenticated/$sellerId/settings/package-types'
       path: '/package-types'
@@ -490,11 +533,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsPoliciesRouteImport
       parentRoute: typeof SettingsRoute
     }
+    '/_authenticated/$sellerId/settings/profile': {
+      id: '/_authenticated/$sellerId/settings/profile'
+      path: '/profile'
+      fullPath: '/$sellerId/settings/profile'
+      preLoaderRoute: typeof SettingsProfileRouteImport
+      parentRoute: typeof SettingsRoute
+    }
     '/_authenticated/$sellerId/settings/stock-locations': {
       id: '/_authenticated/$sellerId/settings/stock-locations'
       path: '/stock-locations'
       fullPath: '/$sellerId/settings/stock-locations'
       preLoaderRoute: typeof SettingsStockLocationsRouteImport
+      parentRoute: typeof SettingsRoute
+    }
+    '/_authenticated/$sellerId/settings/taxes': {
+      id: '/_authenticated/$sellerId/settings/taxes'
+      path: '/taxes'
+      fullPath: '/$sellerId/settings/taxes'
+      preLoaderRoute: typeof SettingsTaxesRouteImport
       parentRoute: typeof SettingsRoute
     }
     '/_authenticated/$sellerId/settings/team': {
@@ -509,18 +566,24 @@ declare module '@tanstack/react-router' {
 
 interface SettingsRouteChildren {
   SettingsDeliveryMethodsRoute: typeof SettingsDeliveryMethodsRoute
+  SettingsGeneralRoute: typeof SettingsGeneralRoute
   SettingsPackageTypesRoute: typeof SettingsPackageTypesRoute
   SettingsPoliciesRoute: typeof SettingsPoliciesRoute
+  SettingsProfileRoute: typeof SettingsProfileRoute
   SettingsStockLocationsRoute: typeof SettingsStockLocationsRoute
+  SettingsTaxesRoute: typeof SettingsTaxesRoute
   SettingsTeamRoute: typeof SettingsTeamRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
 }
 
 const SettingsRouteChildren: SettingsRouteChildren = {
   SettingsDeliveryMethodsRoute: SettingsDeliveryMethodsRoute,
+  SettingsGeneralRoute: SettingsGeneralRoute,
   SettingsPackageTypesRoute: SettingsPackageTypesRoute,
   SettingsPoliciesRoute: SettingsPoliciesRoute,
+  SettingsProfileRoute: SettingsProfileRoute,
   SettingsStockLocationsRoute: SettingsStockLocationsRoute,
+  SettingsTaxesRoute: SettingsTaxesRoute,
   SettingsTeamRoute: SettingsTeamRoute,
   SettingsIndexRoute: SettingsIndexRoute,
 }

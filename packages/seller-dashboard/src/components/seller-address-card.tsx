@@ -73,7 +73,7 @@ export function SellerAddressCard({
   )
 
   const editButton = (
-    <Button variant={address ? 'outline' : 'default'} size="sm" onClick={() => setEditing(true)}>
+    <Button variant="outline" size="sm" onClick={() => setEditing(true)}>
       {address ? <PencilIcon className="size-4" /> : <PlusIcon className="size-4" />}
       {address ? t('profile.edit') : t('profile.add_address')}
     </Button>

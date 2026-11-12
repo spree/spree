@@ -325,7 +325,8 @@
         "drop_label": "Thả một tập tin ở đây, hoặc bấm vào để duyệt",
         "invalid_type": "Loại tệp này không được chấp nhận (dự kiến: {{accept}})",
         "upload_failed": "Tải lên không thành công: {{message}}",
-        "uploading": "Đang tải lên…"
+        "uploading": "Đang tải lên…",
+        "replace": "Thay tệp"
       },
       "import_button": {
         "delimiter_label": "Dấu phân cách cột",
@@ -1016,6 +1017,24 @@
         },
         "digital_asset_authorized_days": {
           "label": "Số ngày có sẵn"
+        }
+      },
+      "seller": {
+        "about": {
+          "label": "Về",
+          "help": "Hiển thị trên hồ sơ cửa hàng trực tuyến của người bán."
+        },
+        "holiday_mode_until": {
+          "label": "Đi xa cho đến khi",
+          "placeholder": "Chọn một ngày",
+          "help": "Danh mục vẫn hiển thị nhưng không thể mua được gì cho đến lúc đó."
+        },
+        "contact_email": {
+          "help": "Nơi lời mời và thông báo thị trường đi."
+        },
+        "billing_email": {
+          "label": "Email thanh toán",
+          "help": "Nơi gửi hóa đơn hoa hồng và thông báo thanh toán, nếu khác."
         }
       }
     },
@@ -1872,7 +1891,8 @@
       "value_count_other": "giá trị {{count}}"
     },
     "media_library": {
-      "download": "Tải xuống"
+      "download": "Tải xuống",
+      "choose_from_library": "Chọn từ thư viện"
     },
     "catalogs": {
       "terms": {
@@ -2200,6 +2220,17 @@
       "replace": "Thay thế tập tin",
       "replace_description": "\"{{name}}\" bị xóa và tất cả những người đã mua nó sẽ tải xuống tệp mới từ các liên kết hiện có của họ. Điều này có hiệu lực ngay lập tức.",
       "replace_title": "Thay thế tập tin này?"
+    },
+    "sellers": {
+      "images": {
+        "cover_photo_label": "Ảnh bìa",
+        "cover_photo_help": "Một biểu ngữ rộng trên đầu hồ sơ người bán.",
+        "logo_label": "Biểu tượng",
+        "logo_help": "Hình vuông hoạt động tốt nhất. Hiển thị bên cạnh người bán ở mọi nơi họ xuất hiện.",
+        "square_logo_label": "Logo hình vuông",
+        "square_logo_help": "Được sử dụng khi cần có hình vuông chặt chẽ, chẳng hạn như hình đại diện."
+      },
+      "not_provided": "Không được cung cấp"
     }
   }
 }

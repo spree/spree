@@ -360,7 +360,10 @@
     "profile": "资料",
     "settings": "设置",
     "sign_out": "退出登录",
-    "team": "团队"
+    "team": "团队",
+    "general": "常规",
+    "taxes": "税务",
+    "store": "店铺"
   },
   "onboarding": {
     "accept_terms": "接受条款",
@@ -587,7 +590,14 @@
     "not_found": "找不到该打款记录。",
     "search_placeholder": "按编号搜索",
     "subtitle": "市场已向你支付的金额，以及正在打款途中的金额。",
-    "title": "打款"
+    "title": "打款",
+    "schedule_intervals": {
+      "daily": "每天",
+      "weekly": "每周",
+      "biweekly": "每两周",
+      "monthly": "每月",
+      "manual": "由平台发起时"
+    }
   },
   "policies": {
     "add": "添加政策",
@@ -727,48 +737,21 @@
     "digital_files_review_notice": "添加或替换文件会将此商品重新送审，在平台再次批准前将暂停销售。"
   },
   "profile": {
-    "about": "简介",
     "add_address": "添加地址",
     "address_filled": "已添加",
     "address_missing": "未添加",
     "address_not_provided": "尚无地址。",
-    "at_a_glance": "概览",
     "billing_address": "账单地址",
-    "billing_email": "账单邮箱",
-    "business_details": "企业信息",
-    "contact_email": "联系邮箱",
     "edit": "编辑",
-    "edit_title": "编辑你的资料",
-    "joined": "加入时间",
     "legal_name": "法定名称",
     "minimum_payout": "最低打款金额",
-    "name": "名称",
-    "no_about": "你还没有填写简介。",
-    "not_provided": "未提供",
-    "on_holiday_notice": "休假模式已开启，你的商品可见但无法购买。",
     "operator_managed": "由市场设置",
     "payout_schedule": "打款周期",
-    "products_count": "商品",
     "registration_number": "注册号",
     "returns_address": "退货地址",
-    "save": "保存修改",
     "saved": "资料已保存",
-    "saving": "正在保存…",
-    "section_contact": "联系方式",
-    "section_settlement": "打款与税务",
-    "section_standing": "账户状态",
     "select_tax_identifier_kind": "选择或输入登记类型",
-    "status_help": {
-      "approved": "你已获批准，可以在此市场销售。",
-      "canceled": "此卖家账户已关闭。",
-      "invited": "你已收到邀请。完成设置即可提交申请。",
-      "onboarding": "逐项完成清单，然后提交审核。",
-      "pending": "市场尚未开始处理你的申请。",
-      "ready_for_review": "市场正在审核你的申请。",
-      "rejected": "你的申请未被接受。请联系市场了解详情。",
-      "suspended": "销售已暂停。请联系市场了解详情。"
-    },
-    "subtitle": "你的店铺如何展示你，以及市场如何联系你。",
+    "subtitle": "您的店铺如何向买家展示您。",
     "tax_identifier_kind": "登记类型",
     "tax_identifier_kinds": {
       "au_abn": "澳大利亚商业号码",
@@ -778,13 +761,16 @@
       "us_ein": "美国 EIN"
     },
     "tax_remittance": "税款申报方",
-    "team_count": "团队成员",
     "vat_number": "增值税号",
     "vat_status": {
       "pending": "我们正在核验此号码。",
       "unavailable": "无法连接登记机构 — 我们会稍后重试。",
       "unsupported": "此号码按录入内容存档，我们无法自动核验。",
       "unverified": "此号码无法通过核验。"
+    },
+    "sections": {
+      "details": "详细信息",
+      "images": "图片"
     }
   },
   "reset_password": {
@@ -845,5 +831,23 @@
       "member": "成员"
     },
     "title": "你的团队"
+  },
+  "settings_general": {
+    "title": "常规",
+    "description": "平台如何联系您、您的企业信息、地址和休假模式。",
+    "sections": {
+      "contact": "联系方式",
+      "business": "企业信息",
+      "addresses": "地址",
+      "holiday": "休假模式"
+    }
+  },
+  "taxes": {
+    "title": "税务",
+    "description": "您的税务登记，以及由谁为您的销售缴纳税款。",
+    "remittance": {
+      "seller": "您",
+      "platform": "平台"
+    }
   }
 }

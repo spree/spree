@@ -2066,22 +2066,8 @@
         "label": "役割"
       },
       "seller": {
-        "about": {
-          "help": "販売者のストアのプロフィールに表示します。",
-          "label": "紹介"
-        },
-        "billing_email": {
-          "help": "手数料の請求書と支払いの通知の送り先です（異なる場合）。",
-          "label": "請求用のメールアドレス"
-        },
         "contact_email": {
-          "help": "招待とマーケットプレイスの通知の送り先です。",
           "placeholder": "hello@sparks.example"
-        },
-        "holiday_mode_until": {
-          "help": "その日までカタログは表示されますが、何も購入できません。",
-          "label": "休業の終了日",
-          "placeholder": "日付を選ぶ"
         },
         "minimum_payout_amount": {
           "help": "これより少ない残高は次の支払いに繰り越します。",
@@ -2094,12 +2080,12 @@
           "help": "この販売者に支払う頻度です。",
           "label": "支払いのスケジュール"
         },
-        "slug": {
-          "help": "販売者のストアのアドレスに使います。空欄なら名前から作ります。"
-        },
         "tax_remittance": {
           "help": "この販売者の売上にかかる消費税を処理する人です。",
           "label": "税の納付者"
+        },
+        "slug": {
+          "help": "販売者のストアのアドレスに使います。空欄なら名前から作ります。"
         }
       },
       "state": {
@@ -2888,7 +2874,6 @@
       "tax_inclusive": "税込み"
     },
     "media_library": {
-      "choose_from_library": "ライブラリから選ぶ",
       "delete_confirm": {
         "in_use_message_one": "「{{name}}」を削除すると、ライブラリと、使っている {{count}} か所から消えます。埋め込んでいる説明では画像がなくなります。",
         "in_use_message_other": "「{{name}}」を削除すると、ライブラリと、使っている {{count}} か所すべてから消えます。埋め込んでいる説明では画像がなくなります。",
@@ -5465,33 +5450,20 @@
       },
       "detail": {
         "billing_address": "請求先住所",
-        "contact": "連絡先",
         "delete_label": "販売者を削除",
-        "edit_contact": "連絡先を編集",
-        "edit_cover": "カバー写真を編集",
-        "edit_logo": "ロゴを編集",
-        "edit_profile": "プロフィールを編集",
         "edit_settlement": "支払いと税を編集",
         "joined": "参加",
         "load_error": "この販売者を読み込めませんでした",
-        "no_about": "この販売者はまだ説明を書いていません。",
         "returns_address": "返品先の住所",
-        "settlement": "支払いと税"
+        "settlement": "支払いと税",
+        "edit_cover": "カバー写真を編集",
+        "edit_logo": "ロゴを編集",
+        "edit_profile": "プロフィールを編集",
+        "no_about": "この販売者はまだ説明を書いていません。",
+        "contact": "連絡先",
+        "edit_contact": "連絡先を編集"
       },
       "empty": "販売者はまだいません",
-      "holiday": {
-        "end": "休暇モードを終了",
-        "off": "オフ。販売者は通常どおり注文を受け付けています。",
-        "title": "休暇モード"
-      },
-      "images": {
-        "cover_photo_help": "販売者のプロフィールの上部に表示する横長のバナーです。",
-        "cover_photo_label": "カバー写真",
-        "logo_help": "正方形がおすすめです。販売者が表示されるすべての場所で横に出ます。",
-        "logo_label": "ロゴ",
-        "square_logo_help": "アバターなど、小さな正方形が必要な場所で使います。",
-        "square_logo_label": "正方形のロゴ"
-      },
       "invite_sheet": {
         "description": "招待を受け入れると販売者のチームに加わり、自分の画面にサインインできるようになります。",
         "email_help": "招待はこのアドレスに送ります。",
@@ -5514,8 +5486,6 @@
         "update_failed": "販売者を更新できませんでした",
         "updated": "販売者を更新しました"
       },
-      "not_provided": "未提出",
-      "on_holiday_notice": "この販売者は不在です。カタログは表示されたままですが、購入はできません。",
       "onboarding": {
         "actions": {
           "accept": "受理",
@@ -5629,7 +5599,13 @@
         },
         "title": "チーム"
       },
-      "team_column": "チーム"
+      "team_column": "チーム",
+      "holiday": {
+        "title": "休暇モード",
+        "end": "休暇モードを終了",
+        "off": "オフ。販売者は通常どおり注文を受け付けています。"
+      },
+      "on_holiday_notice": "この販売者は不在です。カタログは表示されたままですが、購入はできません。"
     },
     "settings": {
       "webhooks": {

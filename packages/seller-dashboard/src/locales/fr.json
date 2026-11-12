@@ -360,7 +360,10 @@
     "profile": "Profil",
     "settings": "Paramètres",
     "sign_out": "Se déconnecter",
-    "team": "Équipe"
+    "team": "Équipe",
+    "general": "Général",
+    "taxes": "Taxes",
+    "store": "Boutique"
   },
   "onboarding": {
     "accept_terms": "Accepter les conditions",
@@ -589,7 +592,14 @@
     "not_found": "Ce versement est introuvable.",
     "search_placeholder": "Rechercher par référence",
     "subtitle": "Ce que la place de marché vous a versé, et ce qui est en route.",
-    "title": "Versements"
+    "title": "Versements",
+    "schedule_intervals": {
+      "daily": "Quotidien",
+      "weekly": "Hebdomadaire",
+      "biweekly": "Toutes les deux semaines",
+      "monthly": "Mensuel",
+      "manual": "Quand la marketplace en envoie un"
+    }
   },
   "policies": {
     "add": "Ajouter des conditions",
@@ -730,48 +740,21 @@
     "digital_files_review_notice": "Ajouter ou remplacer un fichier renvoie ce produit en révision ; il n’est plus en vente jusqu’à ce que la place de marché l’approuve de nouveau."
   },
   "profile": {
-    "about": "À propos",
     "add_address": "Ajouter une adresse",
     "address_filled": "Ajoutée",
     "address_missing": "Non ajoutée",
     "address_not_provided": "Aucune adresse pour l’instant.",
-    "at_a_glance": "En bref",
     "billing_address": "Adresse de facturation",
-    "billing_email": "E-mail de facturation",
-    "business_details": "Informations sur l’entreprise",
-    "contact_email": "E-mail de contact",
     "edit": "Modifier",
-    "edit_title": "Modifier votre profil",
-    "joined": "Inscrit le",
     "legal_name": "Raison sociale",
     "minimum_payout": "Versement minimum",
-    "name": "Nom",
-    "no_about": "Vous n’avez pas encore rédigé de description.",
-    "not_provided": "Non renseigné",
-    "on_holiday_notice": "Le mode vacances est activé : vos produits restent visibles mais ne peuvent pas être achetés.",
     "operator_managed": "Défini par la place de marché",
     "payout_schedule": "Fréquence des versements",
-    "products_count": "Produits",
     "registration_number": "Numéro d’immatriculation",
     "returns_address": "Adresse de retour",
-    "save": "Enregistrer les modifications",
     "saved": "Profil enregistré",
-    "saving": "Enregistrement…",
-    "section_contact": "Contact",
-    "section_settlement": "Versements et fiscalité",
-    "section_standing": "Situation",
     "select_tax_identifier_kind": "Choisissez ou saisissez un type d’immatriculation",
-    "status_help": {
-      "approved": "Vous êtes approuvé et pouvez vendre sur cette place de marché.",
-      "canceled": "Ce compte vendeur est fermé.",
-      "invited": "Vous avez été invité. Terminez votre configuration pour déposer votre candidature.",
-      "onboarding": "Parcourez votre liste d’étapes, puis soumettez pour examen.",
-      "pending": "La place de marché n’a pas encore commencé l’examen de votre candidature.",
-      "ready_for_review": "La place de marché examine votre candidature.",
-      "rejected": "Votre candidature n’a pas été retenue. Contactez la place de marché pour en savoir plus.",
-      "suspended": "La vente est suspendue. Contactez la place de marché pour en savoir plus."
-    },
-    "subtitle": "Comment votre boutique vous présente, et comment la place de marché vous joint.",
+    "subtitle": "Comment votre boutique vous présente aux acheteurs.",
     "tax_identifier_kind": "Type d’immatriculation",
     "tax_identifier_kinds": {
       "au_abn": "Australian Business Number",
@@ -781,13 +764,16 @@
       "us_ein": "EIN américain"
     },
     "tax_remittance": "Taxe reversée par",
-    "team_count": "Membres de l’équipe",
     "vat_number": "Numéro de TVA",
     "vat_status": {
       "pending": "Nous vérifions ce numéro.",
       "unavailable": "Le registre est injoignable — nous réessaierons.",
       "unsupported": "Ce numéro est enregistré tel quel ; nous ne pouvons pas le vérifier automatiquement.",
       "unverified": "Ce numéro n’a pas pu être vérifié."
+    },
+    "sections": {
+      "details": "Informations",
+      "images": "Images"
     }
   },
   "reset_password": {
@@ -848,5 +834,23 @@
       "member": "Membre"
     },
     "title": "Votre équipe"
+  },
+  "settings_general": {
+    "title": "Général",
+    "description": "Comment la marketplace vous contacte, votre entreprise, vos adresses et le mode vacances.",
+    "sections": {
+      "contact": "Contact",
+      "business": "Entreprise",
+      "addresses": "Adresses",
+      "holiday": "Mode vacances"
+    }
+  },
+  "taxes": {
+    "title": "Taxes",
+    "description": "Vos immatriculations fiscales, et qui reverse la taxe sur vos ventes.",
+    "remittance": {
+      "seller": "Vous",
+      "platform": "La marketplace"
+    }
   }
 }

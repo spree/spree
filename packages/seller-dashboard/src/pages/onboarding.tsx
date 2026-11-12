@@ -43,6 +43,7 @@ import { sellerClient } from '../api-client'
 import { CenteredMessage } from '../components/centered-message'
 import { SellerAddressCard } from '../components/seller-address-card'
 import { SellerReturnsLocationCard } from '../components/seller-returns-location-card'
+import { useProfile } from '../hooks/use-profile'
 
 /**
  * What the marketplace asks of this seller before admitting them.
@@ -189,14 +190,11 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
   const [file, setFile] = useState<FileUploadValue>(EMPTY_FILE_UPLOAD_VALUE)
   const [fields, setFields] = useState<Record<string, string>>({})
 
-  // Only the billing address needs it, and it is already loaded by the
-  // profile page and the sidebar switcher — this reads the same cache entry.
-  // The returns address does not: it lives on a stock location, which its own
-  // card fetches.
-  const { data: profile } = useQuery({
-    queryKey: ['seller', sellerId, 'profile'],
-    queryFn: () => sellerClient().profile.get(),
-    enabled: requirement.kind === 'billing_address',
+  // The billing address edits it, and a complete-profile line reads it to
+  // pick which settings page to link to. The returns address does not: it
+  // lives on a stock location, which its own card fetches.
+  const { data: profile } = useProfile({
+    enabled: requirement.kind === 'billing_address' || requirement.kind === 'complete_profile',
   })
 
   const invalidate = () =>
@@ -306,6 +304,12 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
     )
   }
 
+  // A profile's contact email is edited on General, the rest on Profile, so
+  // the link goes wherever the first gap is.
+  const route =
+    requirement.kind === 'complete_profile' && profile && !profile.contact_email
+      ? '/$sellerId/settings/general'
+      : panelRoute(requirement.kind)
   return (
     <>
       {rejection}
@@ -407,7 +411,13 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
         </div>
       )}
 
-      {/* Addresses are filled in here rather than on the profile page: a
+      {/* Why the line is not done yet, when the server can say: what a
+          profile still lacks, or where a payout provider has got to. */}
+      {requirement.blocker?.message && (
+        <p className="text-muted-foreground text-base">{requirement.blocker.message}</p>
+      )}
+
+      {/* Addresses are filled in here rather than on the settings page: a
           seller working through setup should not be sent away and lose their
           place. Same card either way, so the two cannot diverge. */}
       {requirement.kind === 'billing_address' && profile && (
@@ -429,10 +439,6 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
           repeatedly wondering why nothing changed. */}
       {requirement.kind === 'payout_account' && (
         <div className="flex flex-col items-start gap-2">
-          {requirement.blocker?.message && (
-            <p className="text-muted-foreground text-base">{requirement.blocker.message}</p>
-          )}
-
           {requirement.blocker?.state === 'pending' ? (
             <p className="text-muted-foreground text-base">
               {t('onboarding.awaiting_payout_provider')}
@@ -456,10 +462,10 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
           about (a provider's hosted flow), and it has no idea how this panel
           routes. Anything unmapped falls through to `action_url` below, so a
           kind added by a gem still gets a way in without this file changing. */}
-      {panelRoute(requirement.kind) && (
+      {route && (
         <div className="flex justify-start">
           <Button asChild>
-            <Link to={panelRoute(requirement.kind)!} params={{ sellerId }}>
+            <Link to={route} params={{ sellerId }}>
               {t('onboarding.go')}
               <ChevronRightIcon className="size-4" />
             </Link>
@@ -497,7 +503,7 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
 function panelRoute(kind: string): string | undefined {
   switch (kind) {
     case 'complete_profile':
-      return '/$sellerId/profile'
+      return '/$sellerId/settings/profile'
     case 'policy':
       return '/$sellerId/settings/policies'
     case 'delivery_method':

@@ -6,7 +6,14 @@ import type {
   MediaSort,
   MediaUpdateParams,
 } from '@spree/admin-sdk'
-import { adminClient, useResourceKey, useResourceKeyBuilder } from '@spree/dashboard-core'
+import {
+  adminClient,
+  type MediaLibrarySource,
+  mediaPickerListParams,
+  useFileUpload,
+  useResourceKey,
+  useResourceKeyBuilder,
+} from '@spree/dashboard-core'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 export type MediaLibraryFilters = ListParams<MediaFilters, MediaSort>
@@ -109,4 +116,28 @@ export function mediaThumbnailUrl(media: Media): string | null {
  */
 export function mediaPreviewUrl(media: Media): string | null {
   return media.large_url ?? media.poster_url ?? media.original_url ?? mediaThumbnailUrl(media)
+}
+
+/**
+ * The operator's media library, as an image field's "Choose from library"
+ * searches and uploads into it.
+ */
+export function useMediaLibrarySource(): MediaLibrarySource {
+  const createLibraryFile = useCreateMediaLibraryFile()
+  const fileUpload = useFileUpload()
+
+  return {
+    search: (query, options) =>
+      adminClient.media.list({
+        limit: 48,
+        ...mediaPickerListParams(query, options),
+        media_type_eq: 'image',
+      }),
+    onUpload: async (file) => {
+      const upload = await fileUpload.mutateAsync(file)
+      // The library row shows the stored file, so the local preview is unused.
+      URL.revokeObjectURL(upload.previewUrl)
+      return createLibraryFile.mutateAsync({ signed_id: upload.signedId, alt: file.name })
+    },
+  }
 }
