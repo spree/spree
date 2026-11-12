@@ -145,7 +145,7 @@ function SupplierPartCard({
 }) {
   const { t } = useTranslation()
   const updateMutation = useUpdateSupplier(supplier.id)
-  const { form, set, save, submitAttempted, isDirty } = useSupplierForm(
+  const { form, set, save, submitAttempted, isDirty, serverErrors } = useSupplierForm(
     supplier,
     (payload) => updateMutation.mutateAsync(payload),
     part,
@@ -158,7 +158,13 @@ function SupplierPartCard({
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         <fieldset disabled={!canEdit} className="min-w-0">
-          <SupplierFormFields form={form} set={set} submitAttempted={submitAttempted} part={part} />
+          <SupplierFormFields
+            form={form}
+            set={set}
+            submitAttempted={submitAttempted}
+            serverErrors={serverErrors}
+            part={part}
+          />
         </fieldset>
         {canEdit && (
           <div className="flex justify-end">

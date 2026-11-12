@@ -1,5 +1,10 @@
 import type { Supplier } from '@spree/admin-sdk'
-import { CountryCombobox, StateCombobox, useCountryStates } from '@spree/dashboard-core'
+import {
+  CountryCombobox,
+  StateCombobox,
+  useCountryStates,
+  useServerErrors,
+} from '@spree/dashboard-core'
 import { Field, FieldError, FieldGroup, FieldLabel, Input, Textarea } from '@spree/dashboard-ui'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -100,8 +105,11 @@ export function useSupplierForm(
     setSaved(formFor(supplier))
   }
 
+  const serverErrors = useServerErrors()
+
   function set<K extends keyof SupplierFormState>(key: K, value: SupplierFormState[K]) {
     setForm((prev) => ({ ...prev, [key]: value }))
+    serverErrors.clear(key)
   }
 
   async function save() {
@@ -115,22 +123,33 @@ export function useSupplierForm(
       keys.map((key) => [key, form[key].trim() || null]),
     ) as Record<string, string | null>
 
-    const record = await persist(payload).catch(() => undefined)
-    if (record) setSaved(form)
+    const record = await persist(payload).catch((error) => {
+      serverErrors.capture(error)
+      return undefined
+    })
+    if (record) {
+      setSaved(form)
+      serverErrors.reset()
+    }
     return record
   }
 
   const isDirty = keys.some((key) => form[key] !== saved[key])
 
-  return { form, set, save, submitAttempted, isDirty }
+  return { form, set, save, submitAttempted, isDirty, serverErrors }
+}
+
+function ServerError({ message }: { message?: string }) {
+  return message ? <FieldError>{message}</FieldError> : null
 }
 
 export function SupplierFormFields({
   form,
   set,
   submitAttempted,
+  serverErrors,
   part,
-}: Pick<ReturnType<typeof useSupplierForm>, 'form' | 'set' | 'submitAttempted'> & {
+}: Pick<ReturnType<typeof useSupplierForm>, 'form' | 'set' | 'submitAttempted' | 'serverErrors'> & {
   /** One half only; omitted, every field shows. */
   part?: SupplierFormPart
 }) {
@@ -138,8 +157,17 @@ export function SupplierFormFields({
   const showAddress = part !== 'details'
   const { t } = useTranslation()
   const { states } = useCountryStates(form.country_code)
+  const { errors } = serverErrors
+  const summary = serverErrors.offscreenSummary(
+    part ? SUPPLIER_PARTS[part] : Object.keys(EMPTY_FORM),
+  )
   return (
     <FieldGroup>
+      {summary && (
+        <p className="text-base text-destructive" role="alert">
+          {summary}
+        </p>
+      )}
       {showDetails && (
         <>
           <Field>
@@ -148,10 +176,12 @@ export function SupplierFormFields({
               id="supplier-name"
               value={form.name}
               onChange={(event) => set('name', event.target.value)}
-              aria-invalid={(submitAttempted && !form.name.trim()) || undefined}
+              aria-invalid={(submitAttempted && !form.name.trim()) || !!errors.name || undefined}
             />
-            {submitAttempted && !form.name.trim() && (
+            {submitAttempted && !form.name.trim() ? (
               <FieldError>{t('admin.suppliers.errors.name_blank')}</FieldError>
+            ) : (
+              <ServerError message={errors.name} />
             )}
           </Field>
 
@@ -164,6 +194,7 @@ export function SupplierFormFields({
               value={form.contact_name}
               onChange={(event) => set('contact_name', event.target.value)}
             />
+            <ServerError message={errors.contact_name} />
           </Field>
 
           <Field>
@@ -174,6 +205,7 @@ export function SupplierFormFields({
               value={form.email}
               onChange={(event) => set('email', event.target.value)}
             />
+            <ServerError message={errors.email} />
           </Field>
 
           <Field>
@@ -183,6 +215,7 @@ export function SupplierFormFields({
               value={form.phone}
               onChange={(event) => set('phone', event.target.value)}
             />
+            <ServerError message={errors.phone} />
           </Field>
         </>
       )}
@@ -197,6 +230,7 @@ export function SupplierFormFields({
               value={form.address1}
               onChange={(event) => set('address1', event.target.value)}
             />
+            <ServerError message={errors.address1} />
           </Field>
 
           <Field>
@@ -208,6 +242,7 @@ export function SupplierFormFields({
               value={form.address2}
               onChange={(event) => set('address2', event.target.value)}
             />
+            <ServerError message={errors.address2} />
           </Field>
 
           <Field>
@@ -217,6 +252,7 @@ export function SupplierFormFields({
               value={form.city}
               onChange={(event) => set('city', event.target.value)}
             />
+            <ServerError message={errors.city} />
           </Field>
 
           <Field>
@@ -228,6 +264,7 @@ export function SupplierFormFields({
               value={form.postal_code}
               onChange={(event) => set('postal_code', event.target.value)}
             />
+            <ServerError message={errors.postal_code} />
           </Field>
 
           <Field>
@@ -266,6 +303,7 @@ export function SupplierFormFields({
             value={form.notes}
             onChange={(event) => set('notes', event.target.value)}
           />
+          <ServerError message={errors.notes} />
         </Field>
       )}
     </FieldGroup>
