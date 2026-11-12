@@ -74,7 +74,7 @@
     "@dnd-kit/utilities": "catalog:",
     "@hookform/resolvers": "catalog:",
     "@spree/core": "workspace:^",
-    "@tailwindcss/vite": "^4.3.4",
+    "@tailwindcss/vite": "^4.3.5",
     "@tanstack/react-hotkeys": "catalog:",
     "date-fns": "catalog:",
     "date-fns-tz": "catalog:",
