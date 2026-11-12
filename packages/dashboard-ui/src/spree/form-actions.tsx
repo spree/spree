@@ -24,6 +24,7 @@ export function FormSaveButton<TFieldValues extends FieldValues>({
   label,
   savingLabel,
   dirty = false,
+  disabled = false,
 }: {
   form: UseFormReturn<TFieldValues, any, any>
   label?: string
@@ -33,12 +34,14 @@ export function FormSaveButton<TFieldValues extends FieldValues>({
    * saves from its own submit — counted as dirty alongside the form's own.
    */
   dirty?: boolean
+  /** Holds Save back for a reason the form state cannot see, such as an upload in flight. */
+  disabled?: boolean
 }) {
   const { t } = useTranslation()
   const { isDirty, isSubmitting } = useFormState({ control: form.control })
 
   return (
-    <Button type="submit" disabled={!(isDirty || dirty) || isSubmitting}>
+    <Button type="submit" disabled={!(isDirty || dirty) || isSubmitting || disabled}>
       {isSubmitting && <Loader2Icon className="animate-spin" />}
       <span>
         {isSubmitting
@@ -109,12 +112,15 @@ export function FormActions<TFieldValues extends FieldValues>({
   discardLabel,
   onDiscard,
   dirty,
+  disabled,
 }: {
   form: UseFormReturn<TFieldValues, any, any>
   saveLabel?: string
   savingLabel?: string
   discardLabel?: string
   onDiscard?: () => void
+  /** Holds Save back, as on `FormSaveButton`. */
+  disabled?: boolean
   /**
    * Unsaved changes held outside the form — custom field drafts the page
    * saves from its own submit — counted as dirty alongside the form's own.
@@ -124,7 +130,13 @@ export function FormActions<TFieldValues extends FieldValues>({
   return (
     <>
       <FormDiscardButton form={form} label={discardLabel} onDiscard={onDiscard} dirty={dirty} />
-      <FormSaveButton form={form} label={saveLabel} savingLabel={savingLabel} dirty={dirty} />
+      <FormSaveButton
+        form={form}
+        label={saveLabel}
+        savingLabel={savingLabel}
+        dirty={dirty}
+        disabled={disabled}
+      />
     </>
   )
 }

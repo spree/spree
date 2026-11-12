@@ -590,7 +590,14 @@
     "not_found": "找不到该打款记录。",
     "search_placeholder": "按编号搜索",
     "subtitle": "市场已向你支付的金额，以及正在打款途中的金额。",
-    "title": "打款"
+    "title": "打款",
+    "schedule_intervals": {
+      "daily": "每天",
+      "weekly": "每周",
+      "biweekly": "每两周",
+      "monthly": "每月",
+      "manual": "由平台发起时"
+    }
   },
   "policies": {
     "add": "添加政策",
@@ -837,6 +844,10 @@
   },
   "taxes": {
     "title": "税务",
-    "description": "您的税务登记，以及由谁为您的销售缴纳税款。"
+    "description": "您的税务登记，以及由谁为您的销售缴纳税款。",
+    "remittance": {
+      "seller": "您",
+      "platform": "平台"
+    }
   }
 }

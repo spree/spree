@@ -34,7 +34,7 @@ export function PayoutsPage({ search }: { search: ResourceSearch }) {
         description={
           profile &&
           [
-            `${t('profile.payout_schedule')}: ${profile.payouts_schedule_interval ?? '—'}`,
+            `${t('profile.payout_schedule')}: ${profile.payouts_schedule_interval ? t(`payouts.schedule_intervals.${profile.payouts_schedule_interval}`) : '—'}`,
             `${t('profile.minimum_payout')}: ${formatAmount(profile.minimum_payout_amount, profile.default_currency, moneyLocale)}`,
             t('profile.operator_managed'),
           ].join(' · ')

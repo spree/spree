@@ -59,6 +59,8 @@ export interface ResourceImageFieldProps<Name extends string, T extends ImageFie
   labelKey?: string
   helpKey?: string
   mediaLibrary?: MediaLibrarySource
+  /** Called with true while a picked image uploads; see `FileUploadField`. */
+  onUploadingChange?: (uploading: boolean) => void
 }
 
 /**
@@ -76,6 +78,7 @@ export function ResourceImageField<Name extends string, T extends ImageFieldsFor
   labelKey,
   helpKey,
   mediaLibrary,
+  onUploadingChange,
 }: ResourceImageFieldProps<Name, T>) {
   const { t } = useTranslation()
   const [picking, setPicking] = useState(false)
@@ -101,6 +104,7 @@ export function ResourceImageField<Name extends string, T extends ImageFieldsFor
         serverUrl={serverUrl}
         label={t(`${translationNamespace}.images.${resolvedLabelKey}`)}
         help={t(`${translationNamespace}.images.${resolvedHelpKey}`)}
+        onUploadingChange={onUploadingChange}
         value={{
           signedId: imageForm.watch(signedIdField),
           previewUrl: imageForm.watch(previewField),

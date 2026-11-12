@@ -136,8 +136,13 @@ module Spree
             end
           end
 
+          # Plus what extensions opened to sellers — never the operator-level
+          # list — so fields a plugin adds to the panel's profile form save.
           def permitted_params
-            normalize_params(params.permit(*declared_permitted_attributes))
+            normalize_params(
+              params.permit(*declared_permitted_attributes,
+                            *Array(Spree::Seller.try(:additional_seller_permitted_attributes)))
+            )
           end
 
           private

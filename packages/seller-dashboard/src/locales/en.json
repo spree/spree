@@ -592,7 +592,14 @@
     "not_found": "This payout could not be found.",
     "search_placeholder": "Search by reference",
     "subtitle": "What the marketplace has sent you, and what is on its way.",
-    "title": "Payouts"
+    "title": "Payouts",
+    "schedule_intervals": {
+      "daily": "Daily",
+      "weekly": "Weekly",
+      "biweekly": "Every two weeks",
+      "monthly": "Monthly",
+      "manual": "When the marketplace sends one"
+    }
   },
   "policies": {
     "add": "Add policy",
@@ -840,6 +847,10 @@
   },
   "taxes": {
     "title": "Taxes",
-    "description": "Your tax registrations, and who remits tax on your sales."
+    "description": "Your tax registrations, and who remits tax on your sales.",
+    "remittance": {
+      "seller": "You",
+      "platform": "The marketplace"
+    }
   }
 }

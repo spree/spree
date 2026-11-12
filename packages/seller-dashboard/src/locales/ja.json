@@ -592,7 +592,14 @@
     "not_found": "この支払いが見つかりませんでした。",
     "search_placeholder": "参照で検索",
     "subtitle": "マーケットプレイスから送金された金額と、送金予定の金額です。",
-    "title": "支払い"
+    "title": "支払い",
+    "schedule_intervals": {
+      "daily": "毎日",
+      "weekly": "毎週",
+      "biweekly": "隔週",
+      "monthly": "毎月",
+      "manual": "マーケットプレイスが送金したとき"
+    }
   },
   "policies": {
     "add": "ポリシーを追加",
@@ -840,6 +847,10 @@
   },
   "taxes": {
     "title": "税金",
-    "description": "税務登録と、売上の税金を納付する当事者。"
+    "description": "税務登録と、売上の税金を納付する当事者。",
+    "remittance": {
+      "seller": "あなた",
+      "platform": "マーケットプレイス"
+    }
   }
 }

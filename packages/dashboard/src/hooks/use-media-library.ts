@@ -135,6 +135,8 @@ export function useMediaLibrarySource(): MediaLibrarySource {
       }),
     onUpload: async (file) => {
       const upload = await fileUpload.mutateAsync(file)
+      // The library row shows the stored file, so the local preview is unused.
+      URL.revokeObjectURL(upload.previewUrl)
       return createLibraryFile.mutateAsync({ signed_id: upload.signedId, alt: file.name })
     },
   }

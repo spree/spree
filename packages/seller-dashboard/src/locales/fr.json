@@ -592,7 +592,14 @@
     "not_found": "Ce versement est introuvable.",
     "search_placeholder": "Rechercher par référence",
     "subtitle": "Ce que la place de marché vous a versé, et ce qui est en route.",
-    "title": "Versements"
+    "title": "Versements",
+    "schedule_intervals": {
+      "daily": "Quotidien",
+      "weekly": "Hebdomadaire",
+      "biweekly": "Toutes les deux semaines",
+      "monthly": "Mensuel",
+      "manual": "Quand la marketplace en envoie un"
+    }
   },
   "policies": {
     "add": "Ajouter des conditions",
@@ -840,6 +847,10 @@
   },
   "taxes": {
     "title": "Taxes",
-    "description": "Vos immatriculations fiscales, et qui reverse la taxe sur vos ventes."
+    "description": "Vos immatriculations fiscales, et qui reverse la taxe sur vos ventes.",
+    "remittance": {
+      "seller": "Vous",
+      "platform": "La marketplace"
+    }
   }
 }

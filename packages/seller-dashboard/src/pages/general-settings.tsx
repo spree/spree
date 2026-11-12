@@ -102,6 +102,11 @@ function GeneralSettingsForm({ profile }: { profile: Profile }) {
         }
         main={
           <>
+            {errors.root?.message && (
+              <p className="text-base text-destructive" role="alert">
+                {errors.root.message}
+              </p>
+            )}
             <SettingsSection title={t('settings_general.sections.contact')} icon={<MailIcon />}>
               <CardContent>
                 <SettingsFieldGroup>

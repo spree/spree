@@ -592,7 +592,14 @@
     "not_found": "Không thể tìm thấy khoản thanh toán này.",
     "search_placeholder": "Tìm kiếm theo tham chiếu",
     "subtitle": "Những gì thị trường đã gửi cho bạn và những gì đang trên đường đến.",
-    "title": "Xuất chi"
+    "title": "Xuất chi",
+    "schedule_intervals": {
+      "daily": "Hằng ngày",
+      "weekly": "Hằng tuần",
+      "biweekly": "Hai tuần một lần",
+      "monthly": "Hằng tháng",
+      "manual": "Khi sàn gửi"
+    }
   },
   "policies": {
     "add": "Thêm chính sách",
@@ -840,6 +847,10 @@
   },
   "taxes": {
     "title": "Thuế",
-    "description": "Các đăng ký thuế của bạn và bên nộp thuế cho doanh số của bạn."
+    "description": "Các đăng ký thuế của bạn và bên nộp thuế cho doanh số của bạn.",
+    "remittance": {
+      "seller": "Bạn",
+      "platform": "Sàn"
+    }
   }
 }

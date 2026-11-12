@@ -592,7 +592,14 @@
     "not_found": "Diese Auszahlung wurde nicht gefunden.",
     "search_placeholder": "Nach Referenz suchen",
     "subtitle": "Was der Marktplatz Ihnen überwiesen hat und was unterwegs ist.",
-    "title": "Auszahlungen"
+    "title": "Auszahlungen",
+    "schedule_intervals": {
+      "daily": "Täglich",
+      "weekly": "Wöchentlich",
+      "biweekly": "Alle zwei Wochen",
+      "monthly": "Monatlich",
+      "manual": "Wenn der Marktplatz eine sendet"
+    }
   },
   "policies": {
     "add": "Richtlinie hinzufügen",
@@ -840,6 +847,10 @@
   },
   "taxes": {
     "title": "Steuern",
-    "description": "Ihre Steuerregistrierungen und wer die Steuer auf Ihre Verkäufe abführt."
+    "description": "Ihre Steuerregistrierungen und wer die Steuer auf Ihre Verkäufe abführt.",
+    "remittance": {
+      "seller": "Sie",
+      "platform": "Der Marktplatz"
+    }
   }
 }

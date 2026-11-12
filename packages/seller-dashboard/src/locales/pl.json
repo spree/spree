@@ -596,7 +596,14 @@
     "not_found": "Nie znaleziono tej wypłaty.",
     "search_placeholder": "Szukaj po numerze referencyjnym",
     "subtitle": "Ile marketplace Ci już przekazał i co jest w drodze.",
-    "title": "Wypłaty"
+    "title": "Wypłaty",
+    "schedule_intervals": {
+      "daily": "Codziennie",
+      "weekly": "Co tydzień",
+      "biweekly": "Co dwa tygodnie",
+      "monthly": "Co miesiąc",
+      "manual": "Gdy marketplace ją wyśle"
+    }
   },
   "policies": {
     "add": "Dodaj regulamin",
@@ -846,6 +853,10 @@
   },
   "taxes": {
     "title": "Podatki",
-    "description": "Twoje rejestracje podatkowe i kto odprowadza podatek od Twojej sprzedaży."
+    "description": "Twoje rejestracje podatkowe i kto odprowadza podatek od Twojej sprzedaży.",
+    "remittance": {
+      "seller": "Ty",
+      "platform": "Marketplace"
+    }
   }
 }

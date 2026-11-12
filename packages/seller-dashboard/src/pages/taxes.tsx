@@ -28,7 +28,9 @@ export function TaxesPage() {
             description={t('profile.operator_managed')}
           >
             <CardContent>
-              <ReadRow label={t('profile.tax_remittance')}>{profile?.tax_remittance}</ReadRow>
+              <ReadRow label={t('profile.tax_remittance')}>
+                {profile && t(`taxes.remittance.${profile.tax_remittance}`)}
+              </ReadRow>
             </CardContent>
           </SettingsSection>
         </>
