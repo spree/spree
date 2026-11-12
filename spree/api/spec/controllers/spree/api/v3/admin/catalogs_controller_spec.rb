@@ -202,6 +202,13 @@ RSpec.describe Spree::Api::V3::Admin::CatalogsController, type: :controller do
         expect(catalog.reload.price_list).to be_nil
       end
 
+      it 'refuses an id inside the price_list object' do
+        patch :update, params: { id: catalog.prefixed_id, price_list: { id: existing_list.prefixed_id } }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(existing_list.reload.catalog_id).to be_nil
+      end
+
       it 'refuses a price_list_id' do
         patch :update, params: { id: catalog.prefixed_id, price_list_id: existing_list.prefixed_id }, as: :json
 

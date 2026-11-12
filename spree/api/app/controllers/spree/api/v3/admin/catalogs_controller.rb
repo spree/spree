@@ -186,12 +186,14 @@ module Spree
 
           private
 
-          # `permit` drops a scalar where it expects an object, so a price
-          # list id — an agent's natural guess — would answer ok and change
-          # nothing. A catalog only ever owns a list written inline.
+          # `permit` drops a scalar where it expects an object, and an `id`
+          # inside the object, so a price list id — an agent's natural guess —
+          # would answer ok and change nothing. A catalog only ever owns a list written inline.
           def reject_price_list_reference
             value = params[:price_list]
-            return unless params.key?(:price_list_id) || (!value.nil? && !value.is_a?(ActionController::Parameters))
+            reference = params.key?(:price_list_id) ||
+                        (value.is_a?(ActionController::Parameters) ? value.key?(:id) : !value.nil?)
+            return unless reference
 
             message = I18n.t('spree.catalogs.price_list_must_be_inline')
             render_error(
