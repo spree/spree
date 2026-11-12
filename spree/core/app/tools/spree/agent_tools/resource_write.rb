@@ -80,27 +80,11 @@ module Spree
                          accepted_attributes: accepted }]
         end
 
-        row_refusal = unknown_row_fields(entry, action, body)
-        row_refusal ? [nil, row_refusal] : [body, nil]
-      end
+        rows = entry.unknown_row_fields(body, action)
+        return [body, nil] if rows.nil?
 
-      # The first list whose rows carry a field the row does not take.
-      #
-      # @return [Hash, nil]
-      def unknown_row_fields(entry, action, body)
-        entry.nested_collection_shapes(action).each do |name, fields|
-          known = fields.map { |field| field['name'] }
-          rows = body[name]
-          next unless rows.is_a?(Array)
-
-          unknown = rows.grep(Hash).flat_map(&:keys).uniq - known
-          next if unknown.empty?
-
-          return { error: "#{entry.key} #{name} rows do not accept #{unknown.to_sentence}.",
-                   accepted_attributes: { name => known } }
-        end
-
-        nil
+        [nil, { error: "#{entry.key} #{rows[:list]} rows do not accept #{rows[:unknown].to_sentence}.",
+                accepted_attributes: { rows[:list] => rows[:accepted] } }]
       end
 
       # The path for this write, or the refusal saying which record a nested

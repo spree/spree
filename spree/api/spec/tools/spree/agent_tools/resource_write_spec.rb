@@ -223,6 +223,24 @@ RSpec.describe 'agent generic record writes' do
       expect(result[:accepted_attributes]['custom_fields']).to include('custom_field_definition_id', 'id', 'value')
     end
 
+    it 'checks the fields of rows inside rows' do
+      product = create(:product, store: store)
+
+      result = tool('update_resource').call(resource: 'products', id: product.prefixed_id,
+                                            attributes: { 'variants' => [{ 'prices' => [{ 'currency' => 'USD', 'amount_typo' => '12.00' }] }] })
+
+      expect(result[:error]).to include('amount_typo')
+      expect(result[:accepted_attributes]['variants.prices']).to include('amount')
+    end
+
+    it 'says what an update takes where it is less than a create' do
+      described = tool('describe_resource').call(resource: 'exchanges')[:resources].first
+
+      expect(described[:writable_attributes]).to include('items')
+      expect(described[:updatable_attributes]).to include('memo')
+      expect(described[:updatable_attributes]).not_to include('items')
+    end
+
     it 'changes a custom field value named by its own id' do
       product = create(:product, store: store)
       definition = create(:custom_field_definition, :number_field, store: store, resource_type: 'Spree::Product')

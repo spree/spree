@@ -145,6 +145,41 @@ module Spree
           end
         end
 
+        # The first list in a write body whose rows carry a field the row
+        # does not take, looked for at every depth: a product's variants
+        # carry their own prices, and a typo in a price row is dropped by the
+        # endpoint as surely as one at the top. A row documented as open
+        # (`additionalProperties: true`) is left alone.
+        #
+        # @param body [Hash] string-keyed write body
+        # @param action [Symbol]
+        # @return [Hash, nil] `{ list:, unknown:, accepted: }`, nil when every row fits
+        def unknown_row_fields(body, action)
+          find_unknown_row_fields(write_schema(action), body, [])
+        end
+
+        def find_unknown_row_fields(properties, values, path)
+          properties.each do |name, schema|
+            rows = values[name]
+            next unless rows.is_a?(Array) && schema.is_a?(Hash) && schema['type'] == 'array'
+
+            row = Spree::Api::AgentWriteSchemas.resolve_schema(schema['items'])
+            fields = row&.dig('properties')
+            next unless fields.is_a?(Hash) && fields.any? && row['additionalProperties'] != true
+
+            list = [*path, name]
+            rows.grep(Hash).each do |values_of_row|
+              unknown = values_of_row.keys.map(&:to_s) - fields.keys
+              return { list: list.join('.'), unknown: unknown, accepted: fields.keys.sort } if unknown.any?
+
+              found = find_unknown_row_fields(fields, values_of_row.stringify_keys, list)
+              return found if found
+            end
+          end
+
+          nil
+        end
+
         # The record a nested resource is reached through — `order_id` for an
         # order's items, discounts and fees — or nil for a top-level one.
         #
