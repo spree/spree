@@ -212,7 +212,7 @@ export interface PanelApiClient {
    * A download is a bare `fetch`, not an SDK call, so it bypasses whatever
    * the client normally attaches — which on the seller panel is
    * `X-Spree-Seller-Id`, and without it every Seller API request is refused
-   * before the action runs. The admin panel needs none, so it registers none.
+   * before the action runs; on the admin panel, `X-Spree-Store-Id`.
    */
   downloadHeaders?(): Record<string, string>
   /**

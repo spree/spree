@@ -13,6 +13,12 @@ setApiClient({
   setToken: (token: string) => adminClient.setToken(token),
   onUnauthorized: (handler) => adminClient.onUnauthorized(handler),
   clearTenant: () => adminClient.setStore(''),
+  // A download is a bare fetch, so it names the store itself, as every SDK
+  // call does.
+  downloadHeaders: (): Record<string, string> => {
+    const storeId = adminClient.getStore()
+    return storeId ? { 'X-Spree-Store-Id': storeId } : {}
+  },
   fetchPermissions: async () => {
     const response = await adminClient.me.get()
 

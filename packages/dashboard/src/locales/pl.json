@@ -5739,7 +5739,8 @@
         "taxes": "Kategorie podatkowe, stawki i powody zwolnień",
         "ai_agents": "Agenty AI z dostępem do tego sklepu",
         "oauth_clients": "Rejestrowanie i konfiguracja klientów OAuth",
-        "storefront": "Adres sklepu, kto może przeglądać, kasa i pola adresu"
+        "storefront": "Adres sklepu, kto może przeglądać, kasa i pola adresu",
+        "system_info": "Wersje i konfiguracja do dołączenia do zgłoszenia błędu"
       },
       "groups": {
         "audit": "Audyt",
@@ -5782,7 +5783,8 @@
         "taxes": "Podatki",
         "ai_agents": "Agenci AI",
         "oauth_clients": "Klienci OAuth",
-        "storefront": "Sklep i kasa"
+        "storefront": "Sklep i kasa",
+        "system_info": "Informacje o systemie"
       },
       "breadcrumbs": {
         "marketplace": "Marketplace"
@@ -6976,6 +6978,42 @@
       "run_label": "Uruchom to",
       "copy_command": "Kopiuj polecenie",
       "cli_then_sign_in": "Otworzy przeglądarkę, abyś mógł się zalogować i zatwierdzić uprawnienia agenta."
+    },
+    "system_info": {
+      "title": "Informacje o systemie",
+      "unavailable": "Aby zobaczyć informacje o systemie, potrzebujesz uprawnień do zarządzania sklepem.",
+      "load_failed": "Nie udało się wczytać raportu.",
+      "copy": "Kopiuj jako Markdown",
+      "copied": "Skopiowano",
+      "report_issue": "Zgłoś problem na GitHubie"
+    },
+    "feedback": {
+      "title": "Wyślij opinię",
+      "description": "Trafia do zespołu Spree na GitHubie. Nic nie zostanie wysłane, dopóki tego tam nie opublikujesz.",
+      "kinds": {
+        "bug": "Zgłoś błąd",
+        "idea": "Zaproponuj pomysł",
+        "other": "Coś innego"
+      },
+      "message": {
+        "bug": "Co się stało?",
+        "idea": "Co Spree powinno umieć?",
+        "other": "Twoja opinia"
+      },
+      "placeholder": {
+        "bug": "Co próbowałeś zrobić i co poszło nie tak?",
+        "idea": "Jaki problem by to dla Ciebie rozwiązało?",
+        "other": "Cokolwiek, o czym zespół Spree powinien wiedzieć"
+      },
+      "failed_requests": "Dołącz ostatnie nieudane żądania ({{count}})",
+      "failed_requests_hint": "Tylko metoda, ścieżka, status, kod błędu i ID żądania. Nigdy treść żądania ani odpowiedzi.",
+      "system_info_included": "Zanonimizowane informacje o systemie są dołączone.",
+      "system_info_unavailable": "Informacje o systemie nie są dołączone: wymagają uprawnienia do zarządzania sklepem.",
+      "review_system_info": "Zobacz informacje o systemie",
+      "open_issue": "Otwórz zgłoszenie na GitHubie",
+      "open_discussion": "Otwórz dyskusję na GitHubie",
+      "copied_to_paste": "Za długie na link, więc zostało skopiowane. Wklej to na GitHubie.",
+      "copy_failed": "Za długie na link, a kopiowanie się nie powiodło. Skróć wiadomość albo skopiuj raport z Ustawienia → Informacje o systemie."
     }
   }
 }

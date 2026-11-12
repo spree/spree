@@ -24,8 +24,8 @@ class AgentTool
     # The parameter every generic resource tool takes for a resource that
     # lives under another record, such as an order's items.
     PARENT_ID_DESCRIPTION = 'For a resource reached through another record (describe_resource names ' \
-                            'it as parent, e.g. an order for its items, discounts and fees): that ' \
-                            'record\'s id as shown in search results'.freeze
+                            'it as parent or listed_under, e.g. an order for its items and claims, a ' \
+                            'category for its products): that record\'s id as shown in search results'.freeze
 
     # Declarations live in class attributes rather than plain class-level
     # instance variables so a subclass inherits them. Subclassing a tool to

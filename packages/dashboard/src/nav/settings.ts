@@ -6,6 +6,7 @@ import {
   CreditCardIcon,
   GlobeIcon,
   GlobeLockIcon,
+  InfoIcon,
   KeyRoundIcon,
   MailIcon,
   PackageIcon,
@@ -463,4 +464,19 @@ settingsNav.add({
   group: 'developer',
   position: 500,
   subject: Subject.MaintenanceTaskRun,
+})
+
+// The report reveals the running version and stack, so the entry follows the
+// grant the API enforces.
+settingsNav.add({
+  key: 'settings.system-info',
+  labelKey: 'admin.settings_nav.items.system_info',
+  descriptionKey: 'admin.settings_nav.descriptions.system_info',
+  keywords: ['diagnostics', 'version', 'bug', 'issue', 'report', 'support', 'debug'],
+  path: '/system-info',
+  icon: InfoIcon,
+  group: 'developer',
+  position: 600,
+  subject: Subject.Store,
+  action: 'manage',
 })

@@ -170,6 +170,17 @@ module Spree
     @@search_provider = value.to_s
   end
 
+  # Sections of the diagnostics report (see Spree::Diagnostics), as class
+  # names so an initializer can add one before its class is autoloaded.
+  #
+  #   Spree.diagnostics_sections << 'MyGem::DiagnosticsSection'
+  #
+  # @return [Array<String>]
+  def self.diagnostics_sections
+    @@diagnostics_sections ||= %w[Platform Runtime Infrastructure Preferences].
+                               map { |name| "Spree::Diagnostics::Sections::#{name}" }
+  end
+
   # Tax ID validators, keyed by registration kind.
   #
   # Core ships one, for +eu_vat+, and it checks format only — the shape of an EU

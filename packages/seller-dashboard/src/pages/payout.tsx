@@ -71,7 +71,8 @@ export function PayoutPage() {
               label={t(`earnings.statuses.${payout.status}`, { defaultValue: payout.status })}
             />
           }
-          resource={{ id: payout.id }}
+          resource={payout}
+          endpoint={`/api/v3/seller/payouts/${payout.id}`}
         />
       }
       main={

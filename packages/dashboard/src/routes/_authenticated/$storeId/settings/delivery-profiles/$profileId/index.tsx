@@ -1,5 +1,5 @@
 import type { DeliveryProfile } from '@spree/admin-sdk'
-import { adminClient, PageHeader, Slot } from '@spree/dashboard-core'
+import { PageHeader, Slot } from '@spree/dashboard-core'
 import { ErrorState, ResourceLayout } from '@spree/dashboard-ui'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
@@ -11,7 +11,6 @@ import {
   useDeleteDeliveryProfile,
   useDeliveryProfile,
 } from '../../../../../../hooks/use-delivery-profiles'
-import { spreeJsonLinkResolver } from '../../../../../../lib/json-link-resolver'
 
 /**
  * The method sheet is driven from the URL so a deep link opens it over a live
@@ -71,13 +70,8 @@ function DeliveryProfileDetailBody({ profile }: { profile: DeliveryProfile }) {
         <PageHeader
           title={profile.name}
           backTo="settings/delivery-profiles"
-          resource={{ id: profile.id }}
-          jsonPreview={{
-            title: `Delivery profile ${profile.name}`,
-            fetch: () => adminClient.deliveryProfiles.get(profile.id),
-            endpoint: `/api/v3/admin/delivery_profiles/${profile.id}`,
-            resolveLink: spreeJsonLinkResolver(storeId),
-          }}
+          resource={profile}
+          endpoint={`/api/v3/admin/delivery_profiles/${profile.id}`}
           onDelete={profile.default ? undefined : handleDelete}
           deleteLabel={t('admin.delivery_profiles.detail.delete_label')}
           deleteConfirmTitle={t('admin.delivery_profiles.delete_confirm.title')}

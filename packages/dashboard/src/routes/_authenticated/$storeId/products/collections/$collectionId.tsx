@@ -1,7 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { SpreeError } from '@spree/admin-sdk'
 import {
-  adminClient,
   extensionFormValues,
   extensionSubmitValues,
   mapSpreeErrorsToForm,
@@ -166,17 +165,13 @@ function CollectionDetail({ collectionId, storeId }: { collectionId: string; sto
                 title={collection?.name ?? ''}
                 backTo="products/collections"
                 actions={<FormActions form={form} saveLabel={t('admin.actions.save')} />}
-                resource={collection ? { id: collection.id } : undefined}
+                resource={collection}
                 onDelete={handleDelete}
                 deleteConfirmMessage={t('admin.collections.delete_confirm.message', {
                   name: collection?.name ?? '',
                 })}
                 deleteLabel={t('admin.collections.delete_label')}
-                jsonPreview={{
-                  title: `Collection ${collection?.name ?? ''}`,
-                  fetch: () => adminClient.collections.get(collectionId),
-                  endpoint: `/api/v3/admin/collections/${collectionId}`,
-                }}
+                endpoint={`/api/v3/admin/collections/${collectionId}`}
               />
             }
             main={

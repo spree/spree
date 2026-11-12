@@ -31,7 +31,6 @@ import { Link, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { orderQueryKey, useDeleteOrder } from '../../../hooks/use-order'
-import { spreeJsonLinkResolver } from '../../../lib/json-link-resolver'
 import { orderGroupSearch } from '../../../lib/order-group-search'
 import { OrderCancelDialog } from './order-cancel-dialog'
 
@@ -267,7 +266,6 @@ export function OrderHeader({ order }: { order: Order }) {
           title: `Order ${order.number}`,
           fetch: () => adminClient.orders.get(orderId),
           endpoint: `/api/v3/admin/orders/${orderId}`,
-          resolveLink: spreeJsonLinkResolver(storeId),
         }}
       />
     </>

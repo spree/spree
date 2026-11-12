@@ -103,6 +103,32 @@ export interface RequestConfig {
    * Defaults to fetch's built-in default (`'same-origin'` in browsers) when omitted.
    */
   credentials?: RequestCredentials
+  /**
+   * Called once per HTTP attempt, after it succeeds or fails. Bodies and
+   * headers are passed by reference, credentials included, so a listener that
+   * stores them must copy and redact first.
+   */
+  onRequestComplete?: (event: RequestCompleteEvent) => void
+}
+
+/** One finished HTTP attempt, as `onRequestComplete` receives it. */
+export interface RequestCompleteEvent {
+  method: string
+  /** Path including the API prefix, e.g. `/api/v3/admin/products`. */
+  path: string
+  query?: InternalRequestOptions['params']
+  /** The full URL requested, with the base and the serialised query. */
+  url: string
+  /** `null` when no response arrived (network error). */
+  status: number | null
+  durationMs: number
+  /** The `X-Request-Id` response header, for matching server logs. */
+  requestId: string | null
+  requestHeaders: Record<string, string>
+  requestBody: unknown
+  /** Parsed JSON, or `undefined` when the body was empty or not read. */
+  responseBody: unknown
+  error?: unknown
 }
 
 export interface AuthConfig {
@@ -206,7 +232,45 @@ export function createRequestFn(
     const hasIdempotencyKey = !!effectiveIdempotencyKey
     const maxAttempts = config.retryConfig ? config.retryConfig.maxRetries + 1 : 1
 
+    const onComplete = config.onRequestComplete
+    let startedAt = 0
+    const report = (response: Response | null, responseBody: unknown, error?: unknown) => {
+      if (!onComplete) return
+      try {
+        onComplete({
+          method,
+          path: `${basePath}${path}`,
+          query: params,
+          url: url.toString(),
+          status: response?.status ?? null,
+          durationMs: performance.now() - startedAt,
+          requestId: response?.headers.get('x-request-id') ?? null,
+          requestHeaders,
+          requestBody: body,
+          responseBody,
+          ...(error === undefined ? {} : { error }),
+        })
+      } catch {
+        // A broken listener must never fail the request it observes.
+      }
+    }
+    // Not awaited, so a body that fails to parse still rejects past the retry loop.
+    const reportBody = <R>(response: Response, parsed: Promise<R>): Promise<R> => {
+      if (!onComplete) return parsed
+      return parsed.then(
+        (data) => {
+          report(response, data)
+          return data
+        },
+        (error) => {
+          report(response, undefined, error)
+          throw error
+        },
+      )
+    }
+
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      if (onComplete) startedAt = performance.now()
       try {
         const response = await config.fetchFn(url.toString(), {
           method,
@@ -223,6 +287,7 @@ export function createRequestFn(
             config.retryConfig &&
             shouldRetryOnStatus(method, response.status, config.retryConfig, hasIdempotencyKey)
           ) {
+            report(response, undefined)
             const retryAfter = response.headers.get('Retry-After')
             const delay = retryAfter
               ? Math.min(parseInt(retryAfter, 10) * 1000, config.retryConfig.maxDelay)
@@ -232,27 +297,27 @@ export function createRequestFn(
           }
 
           const errorBody: ErrorResponse | null = await response.json().catch(() => null)
-          if (
+          // Proxy error pages and empty bodies must not turn HTTP failures into network retries.
+          const spreeError =
             typeof errorBody?.error?.code === 'string' &&
             typeof errorBody.error.message === 'string'
-          ) {
-            throw new SpreeError(errorBody, response.status)
-          }
-
-          // Proxy error pages and empty bodies must not turn HTTP failures into network retries.
-          throw new SpreeError(
-            {
-              error: {
-                code: 'http_error',
-                message: `Request failed with status ${response.status}`,
-              },
-            },
-            response.status,
-          )
+              ? new SpreeError(errorBody, response.status)
+              : new SpreeError(
+                  {
+                    error: {
+                      code: 'http_error',
+                      message: `Request failed with status ${response.status}`,
+                    },
+                  },
+                  response.status,
+                )
+          report(response, errorBody ?? undefined, spreeError)
+          throw spreeError
         }
 
         // Handle 204 No Content (empty body)
         if (response.status === 204) {
+          report(response, undefined)
           return undefined as T
         }
 
@@ -260,16 +325,19 @@ export function createRequestFn(
         if (response.status === 202) {
           const contentType = response.headers.get('content-type')
           if (contentType?.includes('application/json')) {
-            return response.json() as Promise<T>
+            return reportBody(response, response.json() as Promise<T>)
           }
+          report(response, undefined)
           return undefined as T
         }
 
-        return response.json() as Promise<T>
+        return reportBody(response, response.json() as Promise<T>)
       } catch (error) {
         if (error instanceof SpreeError) {
           throw error
         }
+
+        report(null, undefined, error)
 
         const isLastAttempt = attempt >= maxAttempts - 1
 

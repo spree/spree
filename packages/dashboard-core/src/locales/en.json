@@ -37,7 +37,6 @@
     },
     "account": {
       "community": "Community",
-      "contact_support": "Contact Support",
       "documentation": "Documentation",
       "edit_profile": "Edit Profile",
       "language": {
@@ -45,8 +44,8 @@
         "update_failed": "Could not save your language preference. Please try again."
       },
       "log_out": "Log out",
-      "preferences": "Preferences",
-      "view_store": "View store"
+      "report_issue": "Report an issue",
+      "send_feedback": "Send feedback"
     },
     "actions": {
       "actions_menu": "Actions",
@@ -349,7 +348,8 @@
       "json_preview_drawer": {
         "collapse_depth": "Collapse depth",
         "copied": "Copied",
-        "copy_all": "Copy all",
+        "copy_curl": "Copy as curl",
+        "copy_json": "Copy JSON",
         "depth": "Depth {{level}}",
         "failed_to_load": "Failed to load: {{message}}",
         "open_raw": "Open raw response",
@@ -513,6 +513,40 @@
         "in_stock_short": "In stock",
         "variants_one": "{{count}} variant",
         "variants_other": "{{count}} variants"
+      },
+      "developer_inspector": {
+        "title": "Developer tools",
+        "description": "Admin API requests from this tab, kept in memory only. Tokens and passwords are hidden.",
+        "system_info": "System info",
+        "clear": "Clear",
+        "tabs": {
+          "requests": "Requests",
+          "errors": "Errors"
+        },
+        "empty_requests": "No requests yet. Use the dashboard and they will appear here.",
+        "empty_errors": "No failed requests.",
+        "select_request": "Select a request to see its details.",
+        "network_error": "Network error",
+        "status": "Status",
+        "duration": "Duration",
+        "duration_ms": "{{value}} ms",
+        "request_id": "Request ID",
+        "error_code": "Error code",
+        "query": "Query parameters",
+        "request_body": "Request body",
+        "response_body": "Response body",
+        "no_body": "No body",
+        "copy_curl": "Copy as curl",
+        "copy_sdk": "Copy as SDK call",
+        "copy_response": "Copy response",
+        "copy_request_id": "Copy request ID",
+        "copied": "Copied",
+        "menu_open": "Developer Tools"
+      },
+      "server_error": {
+        "title": "Something went wrong on the server",
+        "request_id": "Request {{id}}",
+        "report": "Report"
       }
     },
     "currency_amounts": {

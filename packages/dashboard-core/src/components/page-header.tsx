@@ -21,7 +21,10 @@ import {
 import type { JsonPreviewDrawerProps } from '@spree/dashboard-ui/spree/json-preview-drawer'
 import { lazy, type ReactNode, Suspense, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { getApiClient, hasApiClient } from '../api-client'
+import { buildCurlCommand } from '../lib/curl'
 import { docsUrl } from '../lib/docs'
+import { useJsonLinkResolver } from '../providers/json-link-resolver-provider'
 import { useRegisterPageHeader, useStickyHeaderOffset } from '../providers/sticky-header-provider'
 import { Slot } from './slot'
 
@@ -130,8 +133,15 @@ interface PageHeaderProps {
   /** Heading for the delete prompt. Defaults to none, as the message carries it. */
   deleteConfirmTitle?: string
   /**
-   * When supplied, the more-actions dropdown gains a "View as JSON" item that
-   * opens a developer-style drawer with the resource payload.
+   * The record's Admin API path, e.g. `/api/v3/admin/products/prod_xyz`.
+   * Together with `resource` it adds "View as JSON", showing `resource` as
+   * loaded — no second request.
+   */
+  endpoint?: string
+  /**
+   * A custom "View as JSON" drawer, for a page whose payload differs from
+   * `resource` (Orders load a richer shape than the header shows). Wins over
+   * `endpoint`.
    */
   jsonPreview?: PageHeaderJsonPreview
 }
@@ -162,13 +172,13 @@ export function PageHeader({
   deleteLabel,
   deleteConfirmMessage,
   deleteConfirmTitle,
+  endpoint,
   jsonPreview,
 }: PageHeaderProps) {
   const { t } = useTranslation()
   const slotCtx = { ...slotContext, resource }
-  const showDropdown = Boolean(
-    resource || onDelete || dropdownItems || destructiveItems || jsonPreview,
-  )
+  const json = useJsonPreview({ title, resource, endpoint, jsonPreview })
+  const showDropdown = Boolean(resource || onDelete || dropdownItems || destructiveItems || json)
   const [jsonOpen, setJsonOpen] = useState(false)
   // Latches true on first open so the drawer (and its lazy JsonView chunk)
   // doesn't mount until the user actually invokes it, but stays mounted
@@ -285,17 +295,51 @@ export function PageHeader({
             deleteLabel={deleteLabel ?? t('admin.actions.delete')}
             deleteConfirmMessage={deleteConfirmMessage}
             deleteConfirmTitle={deleteConfirmTitle}
-            onOpenJson={jsonPreview ? openJson : undefined}
+            onOpenJson={json ? openJson : undefined}
           />
         )}
       </div>
 
-      {jsonPreview && jsonEverOpened && (
+      {json && jsonEverOpened && (
         <Suspense fallback={null}>
-          <JsonPreviewDrawer open={jsonOpen} onOpenChange={setJsonOpen} {...jsonPreview} />
+          <JsonPreviewDrawer
+            open={jsonOpen}
+            onOpenChange={setJsonOpen}
+            {...json}
+            curl={json.endpoint ? curlFor(json.endpoint) : undefined}
+          />
         </Suspense>
       )}
     </header>
+  )
+}
+
+function useJsonPreview({
+  title,
+  resource,
+  endpoint,
+  jsonPreview,
+}: Pick<PageHeaderProps, 'title' | 'resource' | 'endpoint' | 'jsonPreview'>) {
+  const contextResolveLink = useJsonLinkResolver()
+  const preview: PageHeaderJsonPreview | undefined =
+    jsonPreview ??
+    (resource && endpoint
+      ? {
+          title: typeof title === 'string' ? title : undefined,
+          fetch: () => Promise.resolve(resource),
+          endpoint,
+        }
+      : undefined)
+  if (!preview) return undefined
+
+  return { ...preview, resolveLink: preview.resolveLink ?? contextResolveLink }
+}
+
+// Built only once the drawer opens, not on every header render.
+function curlFor(endpoint: string) {
+  return buildCurlCommand(
+    endpoint,
+    hasApiClient() ? (getApiClient().downloadHeaders?.() ?? {}) : {},
   )
 }
 

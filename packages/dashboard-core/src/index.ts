@@ -99,14 +99,15 @@ export * from './hooks/use-table-density'
 export * from './hooks/use-visual-viewport-offset'
 export * from './lib/cancel-order-form'
 export * from './lib/create-action-registry'
-export * from './lib/currency-amounts'
 // ---------------------------------------------------------------------------
 // Registries — pluggable extension points (nav, route, slot, table,
 // settings-nav, form fields, custom field components)
 // ---------------------------------------------------------------------------
+export * from './lib/currency-amounts'
 export * from './lib/custom-field-components'
 export * from './lib/date-presets'
 export * from './lib/delivery-form'
+export { type DeveloperInspectorEntry, isFailedEntry } from './lib/developer-inspector'
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -162,6 +163,12 @@ export * from './products/video-url'
 // Providers — must be mounted by the consuming app shell
 // ---------------------------------------------------------------------------
 export * from './providers/auth-provider'
+export {
+  DeveloperInspectorProvider,
+  useDeveloperInspectorEntries,
+  useOptionalDeveloperInspector,
+} from './providers/developer-inspector-provider'
+export * from './providers/json-link-resolver-provider'
 export * from './providers/permission-provider'
 export * from './providers/sticky-header-provider'
 export * from './providers/store-provider'

@@ -37,7 +37,6 @@
     },
     "account": {
       "community": "Cộng đồng",
-      "contact_support": "Liên hệ hỗ trợ",
       "documentation": "Tài liệu",
       "edit_profile": "Chỉnh sửa hồ sơ",
       "language": {
@@ -45,8 +44,8 @@
         "update_failed": "Không thể lưu tùy chọn ngôn ngữ của bạn. Vui lòng thử lại."
       },
       "log_out": "Đăng xuất",
-      "preferences": "Tùy chọn",
-      "view_store": "Xem cửa hàng"
+      "report_issue": "Báo cáo sự cố",
+      "send_feedback": "Gửi phản hồi"
     },
     "actions": {
       "actions_menu": "Thao tác",
@@ -349,7 +348,8 @@
       "json_preview_drawer": {
         "collapse_depth": "Độ sâu thu gọn",
         "copied": "Đã sao chép",
-        "copy_all": "Sao chép tất cả",
+        "copy_curl": "Sao chép dạng curl",
+        "copy_json": "Sao chép JSON",
         "depth": "Độ sâu {{level}}",
         "failed_to_load": "Không tải được: {{message}}",
         "open_raw": "Mở phản hồi thô",
@@ -513,6 +513,40 @@
         "in_stock_short": "Còn hàng",
         "variants_one": "{{count}} biến thể",
         "variants_other": "{{count}} biến thể"
+      },
+      "developer_inspector": {
+        "title": "Công cụ nhà phát triển",
+        "description": "Các yêu cầu Admin API từ tab này, chỉ lưu trong bộ nhớ. Token và mật khẩu được ẩn.",
+        "system_info": "Thông tin hệ thống",
+        "clear": "Xóa",
+        "tabs": {
+          "requests": "Yêu cầu",
+          "errors": "Lỗi"
+        },
+        "empty_requests": "Chưa có yêu cầu nào. Sử dụng bảng điều khiển và chúng sẽ xuất hiện ở đây.",
+        "empty_errors": "Không có yêu cầu thất bại.",
+        "select_request": "Chọn một yêu cầu để xem chi tiết.",
+        "network_error": "Lỗi mạng",
+        "status": "Trạng thái",
+        "duration": "Thời lượng",
+        "duration_ms": "{{value}} ms",
+        "request_id": "ID yêu cầu",
+        "error_code": "Mã lỗi",
+        "query": "Tham số truy vấn",
+        "request_body": "Nội dung yêu cầu",
+        "response_body": "Nội dung phản hồi",
+        "no_body": "Không có nội dung",
+        "copy_curl": "Sao chép dạng curl",
+        "copy_sdk": "Sao chép dạng lệnh gọi SDK",
+        "copy_response": "Sao chép phản hồi",
+        "copy_request_id": "Sao chép ID yêu cầu",
+        "copied": "Đã sao chép",
+        "menu_open": "Công cụ nhà phát triển"
+      },
+      "server_error": {
+        "title": "Đã xảy ra lỗi trên máy chủ",
+        "request_id": "Yêu cầu {{id}}",
+        "report": "Báo cáo"
       }
     },
     "currency_amounts": {

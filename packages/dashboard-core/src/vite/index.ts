@@ -103,7 +103,59 @@ export function spreeDashboardPlugin(options: SpreeDashboardPluginOptions = {}):
     dashboardTailwindSourcePlugin(options),
     tailwindcss(),
     dashboardFontPreloadPlugin(),
+    dashboardPackagesPlugin(),
   ]
+}
+
+/**
+ * Bakes the host's installed `@spree/*` package versions into the build as
+ * `__SPREE_PACKAGES__`, so the diagnostics report can name the dashboard a
+ * merchant actually deployed, which the server has no way to know.
+ */
+function dashboardPackagesPlugin(): Plugin {
+  return {
+    name: 'spree:dashboard-packages',
+    config(config) {
+      const root = path.resolve(config.root ?? process.cwd())
+      return { define: { __SPREE_PACKAGES__: JSON.stringify(installedSpreePackages(root)) } }
+    },
+  }
+}
+
+/**
+ * `@spree/*` packages the host installs, directly or through another Spree
+ * package (`@spree/core` comes in with the dashboard), by installed version.
+ * Exported for tests.
+ */
+export function installedSpreePackages(root: string): Record<string, string> {
+  const versions: Record<string, string> = {}
+  const visit = (packageRoot: string, includeDev: boolean) => {
+    const manifest = readJson(path.join(packageRoot, 'package.json'))
+    const dependencies = {
+      ...manifest?.dependencies,
+      ...manifest?.peerDependencies,
+      ...(includeDev ? manifest?.devDependencies : {}),
+    }
+    const require = createRequire(path.join(packageRoot, 'package.json'))
+    for (const name of Object.keys(dependencies)) {
+      if (!name.startsWith('@spree/') || name in versions) continue
+      const dependencyRoot = resolvePackageRoot(name, require)
+      const dependency = dependencyRoot && readJson(path.join(dependencyRoot, 'package.json'))
+      if (!dependencyRoot || !dependency || dependency.private) continue
+      versions[name] = dependency.version
+      visit(dependencyRoot, false)
+    }
+  }
+  visit(root, true)
+  return Object.fromEntries(Object.entries(versions).sort(([a], [b]) => a.localeCompare(b)))
+}
+
+function readJson(file: string): Record<string, any> | null {
+  try {
+    return JSON.parse(fs.readFileSync(file, 'utf-8'))
+  } catch {
+    return null
+  }
 }
 
 /** The Latin subset of the dashboard's sans font, which nearly every page renders. */
@@ -324,12 +376,14 @@ function formatPluginErrorOverlay(errors: PluginError[]): string {
  * including ours, don't list it there.
  */
 function resolvePackageSourceDir(pkg: string, require: NodeJS.Require): string | null {
+  const packageRoot = resolvePackageRoot(pkg, require)
+  return packageRoot && path.join(packageRoot, 'src')
+}
+
+function resolvePackageRoot(pkg: string, require: NodeJS.Require): string | null {
   try {
     const entryPath = require.resolve(pkg)
-    const entryFile = entryPath.startsWith('file:') ? fileURLToPath(entryPath) : entryPath
-    const packageRoot = findPackageRoot(entryFile)
-    if (!packageRoot) return null
-    return path.join(packageRoot, 'src')
+    return findPackageRoot(entryPath.startsWith('file:') ? fileURLToPath(entryPath) : entryPath)
   } catch {
     return null
   }

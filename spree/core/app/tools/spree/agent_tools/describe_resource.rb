@@ -109,6 +109,9 @@ module Spree
           # product's variants when written — needs that record's id as
           # parent_id on the calls whose route runs under it.
           parent: %i[index create update].lazy.filter_map { |action| entry.parent_key(action) }.first,
+          # The records a search can list this resource under with parent_id
+          # — products under a category, collection or catalog.
+          listed_under: entry.index_parents.keys.sort.presence,
           filterable_fields: entry.filterable_fields,
           # What a generic write accepts, so the model learns the schema here
           # rather than by sending an invalid write and reading the refusal —

@@ -405,6 +405,8 @@ function EmailTemplateEditor({
         <PageHeader
           backTo="settings/emails/templates"
           title={emailTemplateName(t, template.key)}
+          resource={template}
+          endpoint={`/api/v3/admin/email_templates/${template.id}?language=${encodeURIComponent(language)}`}
           badges={<VersionBadge template={template} dirty={dirty} hasDraft={hasDraft} />}
           actions={
             canEdit && (

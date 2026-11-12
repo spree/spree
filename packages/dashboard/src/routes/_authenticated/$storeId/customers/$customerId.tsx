@@ -20,7 +20,6 @@ import { CustomerTaxIdentifiersCard } from '../../../../components/spree/custome
 import { ResourceDetailSkeleton } from '../../../../components/spree/route-pending'
 import { useCustomer, useCustomerOrders } from '../../../../hooks/use-customers'
 import { customerDisplayName } from '../../../../lib/erased-customer'
-import { spreeJsonLinkResolver } from '../../../../lib/json-link-resolver'
 
 export const Route = createFileRoute('/_authenticated/$storeId/customers/$customerId')({
   component: CustomerDetailPage,
@@ -47,7 +46,6 @@ function CustomerDetailPage() {
 
 function CustomerBody({ customer }: { customer: Customer }) {
   const { t } = useTranslation()
-  const { storeId } = Route.useParams()
   const { data, isLoading } = useCustomerOrders(customer.id, { limit: 10 })
   const orders = data?.data ?? []
   const totalCount = data?.meta?.count ?? orders.length
@@ -86,15 +84,8 @@ function CustomerBody({ customer }: { customer: Customer }) {
             // destructive one: it took the store credit and gift cards with
             // it. Privacy and data, below, is the one action, and it behaves
             // the same whatever the customer has done.
-            resource={{ id: customer.id }}
-            jsonPreview={{
-              title: `Customer ${customer.email}`,
-              // Reuse what `useCustomer` already loaded — opening the drawer
-              // shouldn't trigger a duplicate fetch.
-              fetch: () => Promise.resolve(customer),
-              endpoint: `/api/v3/admin/customers/${customer.id}`,
-              resolveLink: spreeJsonLinkResolver(storeId),
-            }}
+            resource={customer}
+            endpoint={`/api/v3/admin/customers/${customer.id}`}
           />
           <CustomerLifetimeStatsCard customer={customer} />
         </>

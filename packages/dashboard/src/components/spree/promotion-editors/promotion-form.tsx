@@ -35,7 +35,6 @@ import {
   useForm,
 } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { spreeJsonLinkResolver } from '../../../lib/json-link-resolver'
 import { TypePickerSheet } from '../type-picker-sheet'
 import { EditorShell } from './editor-shell'
 import './register'
@@ -191,7 +190,6 @@ export function PromotionForm({
   deletePending = false,
 }: PromotionFormProps) {
   const { t } = useTranslation()
-  const { storeId } = useStore()
   const { permissions } = usePermissions()
   // `Can` is a component, and the header takes a callback rather than markup —
   // so the same permission is checked as a predicate here.
@@ -321,7 +319,6 @@ export function PromotionForm({
                       title: `Promotion ${promotion.name}`,
                       fetch: () => adminClient.promotions.get(promotion.id),
                       endpoint: `/api/v3/admin/promotions/${promotion.id}`,
-                      resolveLink: spreeJsonLinkResolver(storeId),
                     }
                   : undefined
               }

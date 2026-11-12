@@ -203,6 +203,7 @@ module Spree
             serializer_name: serializer.name,
             dashboard_path: DASHBOARD_PATHS[key],
             api_paths: api_paths,
+            index_paths: Array(api_paths[:index]),
             write_permission: write_permission_for(model, scope, create_workflow, update_workflow, writable, controller),
             writable_attributes: writable,
             create_workflow_key: create_workflow,
@@ -310,7 +311,10 @@ module Spree
               # nothing about depth — so a resource served both at the top
               # level and under a parent kept whichever won on scope, and a
               # tool was handed a path with an unfillable `:parent_id` in it.
-              api_paths: paths
+              api_paths: paths,
+              # Every collection path, not only the shallowest, so a search
+              # under a parent reaches the controller that lists its records.
+              index_paths: candidates.flat_map { |entry| entry[:index_paths] }.uniq
             )
           end
         end

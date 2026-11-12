@@ -7,6 +7,7 @@ import type {
 } from '@spree/admin-sdk'
 import { createContext, type ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import { getApiClient, type PanelSession } from '../api-client'
+import { clearDeveloperInspector } from '../lib/developer-inspector'
 import { ADMIN_LOCALE_STORAGE_KEY, sessionLocale, switchLocale } from '../lib/i18n'
 import { queryClient } from '../lib/query-client'
 
@@ -122,6 +123,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // landed. Server-side authorization is unaffected either way; this is about
     // not showing one principal what another may do.
     queryClient.clear()
+    clearDeveloperInspector()
     setToken(null)
     setUser(null)
     clearRefreshTimer()

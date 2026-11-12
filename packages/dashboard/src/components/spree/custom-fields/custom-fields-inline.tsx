@@ -73,6 +73,7 @@ import {
   TagIcon,
 } from '@spree/dashboard-ui/icons'
 import { Link, useParams } from '@tanstack/react-router'
+import type { TFunction } from 'i18next'
 import {
   createContext,
   type ReactNode,
@@ -903,7 +904,7 @@ function CustomFieldDisplayRow({
 }
 
 // Compact, read-only rendering of a stored value for the display grid.
-function formatDisplayValue(value: unknown, fieldType: string, t: (key: string) => string): string {
+function formatDisplayValue(value: unknown, fieldType: string, t: TFunction): string {
   const empty = t('admin.common.empty_value')
   if (value === null || value === undefined || value === '') return empty
   if (fieldType === 'boolean') return value ? t('admin.common.yes') : t('admin.common.no')

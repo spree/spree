@@ -71,7 +71,6 @@ import {
   useDeleteCatalog,
   useSaveCatalog,
 } from '../../../../../hooks/use-catalogs'
-import { spreeJsonLinkResolver } from '../../../../../lib/json-link-resolver'
 import type { AssignmentEntry } from '../../../../../schemas/catalog'
 import {
   CATALOG_DEFAULTS,
@@ -277,7 +276,6 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
                       expand: ['assignments', 'price_list', 'price_list.price_rules'],
                     }),
                   endpoint: `/api/v3/admin/catalogs/${catalog.id}`,
-                  resolveLink: spreeJsonLinkResolver(storeId),
                 }}
                 onDelete={permissions.can('destroy', Subject.Catalog) ? handleDelete : undefined}
                 deleteLabel={t('admin.catalogs.detail.delete_label')}

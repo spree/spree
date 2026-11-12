@@ -285,6 +285,7 @@ Spree::Core::Engine.add_routes do
         patch 'me', to: 'me#update'
 
         resource :updates, only: :show
+        resource :diagnostics, only: :show
 
         # Store Settings
         resource :store, only: [:show, :update], controller: 'store' do

@@ -3,11 +3,14 @@ import {
   AppShellProvider,
   adminClient,
   CommandPaletteProvider,
+  DeveloperInspectorProvider,
+  JsonLinkResolverProvider,
   StoreProvider,
 } from '@spree/dashboard-core'
 import { createFileRoute, Outlet, useRouterState } from '@tanstack/react-router'
-import { useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { CommandPalette } from '../../components/spree/command-palette/command-palette'
+import { FeedbackDialog } from '../../components/spree/feedback-dialog'
 import { GettingStartedWidget } from '../../components/spree/getting-started-widget'
 import { Notifications } from '../../components/spree/notifications'
 import { PluginRoutePage, usePluginRouteClaim } from '../../components/spree/plugin-route-page'
@@ -15,6 +18,8 @@ import { ProfileDialog } from '../../components/spree/profile-dialog'
 import { useDashboardCounters } from '../../hooks/use-dashboard-counters'
 import { useSetupCompleteToast } from '../../hooks/use-setup-complete-toast'
 import { getAvailableUiLocales } from '../../i18n-setup'
+import type { FeedbackKind } from '../../lib/feedback-link'
+import { spreeJsonLinkResolver } from '../../lib/json-link-resolver'
 
 // Derived once from the shipped locale bundles — stable for the app lifetime.
 const UI_LOCALES = getAvailableUiLocales()
@@ -38,15 +43,37 @@ function StoreLayout() {
   // now keys its query by the active store — so switching store refetches them
   // on its own. The manual reload this used to run here is not just redundant
   // but harmful: it re-ran whenever its callback changed identity.
+  const resolveLink = useMemo(() => spreeJsonLinkResolver(storeId), [storeId])
+  const [feedback, setFeedback] = useState<{ open: boolean; kind: FeedbackKind }>({
+    open: false,
+    kind: 'bug',
+  })
+  const sendFeedback = useCallback(
+    (kind?: 'bug') => setFeedback((current) => ({ open: true, kind: kind ?? current.kind })),
+    [],
+  )
 
   return (
     <StoreProvider storeId={storeId}>
-      <CommandPaletteProvider>
-        <AppShellProvider>
-          <StoreShell storeId={storeId} inSettings={inSettings} />
-        </AppShellProvider>
-        <CommandPalette />
-      </CommandPaletteProvider>
+      <JsonLinkResolverProvider resolveLink={resolveLink}>
+        <DeveloperInspectorProvider
+          systemInfoPath={`/${storeId}/settings/system-info`}
+          onSendFeedback={sendFeedback}
+        >
+          <CommandPaletteProvider>
+            <AppShellProvider>
+              <StoreShell storeId={storeId} inSettings={inSettings} />
+            </AppShellProvider>
+            <CommandPalette />
+            <FeedbackDialog
+              open={feedback.open}
+              onOpenChange={(open) => setFeedback((current) => ({ ...current, open }))}
+              kind={feedback.kind}
+              onKindChange={(kind) => setFeedback((current) => ({ ...current, kind }))}
+            />
+          </CommandPaletteProvider>
+        </DeveloperInspectorProvider>
+      </JsonLinkResolverProvider>
     </StoreProvider>
   )
 }

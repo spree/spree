@@ -30,6 +30,7 @@ import {
   TrashIcon,
 } from '@spree/dashboard-ui/icons'
 import { useQueryClient } from '@tanstack/react-query'
+import type { TFunction } from 'i18next'
 import { useEffect, useState } from 'react'
 import {
   Controller,
@@ -39,7 +40,6 @@ import {
   useForm,
 } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { spreeJsonLinkResolver } from '../../../lib/json-link-resolver'
 import { BulkPriceEditorDialog } from '../bulk-price-editor/bulk-price-editor-dialog'
 import { catalogPriceColumns, catalogVariantRows } from '../catalog-price-columns'
 import { DeferredProductMembershipCard } from '../deferred-product-membership-card'
@@ -260,7 +260,6 @@ export function PriceListForm({
                         title: `Price list ${priceList.name}`,
                         fetch: () => adminClient.priceLists.get(priceList.id),
                         endpoint: `/api/v3/admin/price_lists/${priceList.id}`,
-                        resolveLink: spreeJsonLinkResolver(storeId),
                       }
                     : undefined
                 }
@@ -848,12 +847,10 @@ function RuleSummary({
  * when the embed is missing/empty — caller falls back to the preferences
  * dump.
  */
-type Translator = (key: string, options?: Record<string, unknown>) => string
-
 function nameList<T>(
   items: T[] | undefined,
   getLabel: (item: T) => string,
-  t: Translator,
+  t: TFunction,
 ): string | null {
   if (!items?.length) return null
   const labels = items.map(getLabel).filter(Boolean)
@@ -865,7 +862,7 @@ function nameList<T>(
   })
 }
 
-function formatPreferenceValue(value: unknown, t: Translator): string {
+function formatPreferenceValue(value: unknown, t: TFunction): string {
   if (Array.isArray(value)) return value.join(', ')
   if (typeof value === 'boolean') return t(value ? 'admin.common.yes' : 'admin.common.no')
   return String(value)
