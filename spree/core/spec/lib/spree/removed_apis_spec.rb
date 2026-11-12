@@ -1,6 +1,13 @@
 require 'spec_helper'
 
 RSpec.describe Spree::RemovedApis do
+  def hint_error(&block)
+    block.call
+    raise 'expected an error'
+  rescue NameError => e
+    e
+  end
+
   def hint_for(&block)
     block.call
     raise 'expected an error'
@@ -64,6 +71,31 @@ RSpec.describe Spree::RemovedApis do
     expect { variant.price }.to raise_error(NoMethodError) { |error| expect(error.message).not_to include('Spree 6.0') }
     expect(variant.respond_to?(:price)).to be(false)
     expect(variant.try(:price)).to be_nil
+  end
+
+  it 'logs the hint when Rails reports the error, since the Rails log prints only #message' do
+    allow(Rails.logger).to receive(:warn)
+    error = hint_error { Spree::Order.new.next }
+
+    Rails.error.report(error)
+
+    expect(Rails.logger).to have_received(:warn).with(a_string_including('Spree 6.0 removed Spree::Order#next.'))
+  end
+
+  it 'keeps the documentation page in sync' do
+    doc_path = File.expand_path('../../../../../docs/developer/upgrades/removed-apis.mdx', __dir__)
+    skip 'docs are not checked out' unless File.exist?(doc_path)
+
+    File.write(doc_path, described_class.to_mdx) if ENV['UPDATE_DOCS']
+
+    expect(File.read(doc_path)).to eq(described_class.to_mdx),
+                                   'Regenerate it: UPDATE_DOCS=1 pnpm test:rspec core spec/lib/spree/removed_apis_spec.rb'
+  end
+
+  it 'keeps replacements safe to render in an MDX table' do
+    replacements = described_class::REMOVED.values.flat_map(&:values)
+
+    expect(replacements.grep(/[{}<>|]/)).to be_empty
   end
 
   it 'never hints at a name that still exists' do

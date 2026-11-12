@@ -9,11 +9,15 @@ module Spree
   # those errors naming what to use instead.
   #
   # The hint is added to Exception#detailed_message, the text Ruby, IRB and
-  # RSpec print for an error. (The Rails log and error page print #message,
-  # so they don't show it.) The error keeps its class, its #message and its
+  # RSpec print for an error. The Rails log prints #message instead, so
+  # ErrorSubscriber logs the hint for errors Rails reports (unhandled request
+  # and job errors). The error keeps its class, its #message and its
   # #respond_to? answers, so rescues and duck typing behave exactly as they
   # did. Removed names are never defined, so nothing that still exists can be
   # shadowed.
+  #
+  # docs/developer/upgrades/removed-apis.mdx lists every entry; regenerate it
+  # with UPDATE_DOCS=1 pnpm test:rspec core spec/lib/spree/removed_apis_spec.rb.
   #
   # Keys: 'Spree::Order#next' is an instance method, 'Spree::Order.checkout_flow'
   # a class method (also matched when called on a relation), 'Spree::Adjustment'
@@ -125,7 +129,7 @@ module Spree
         'Spree::Product.with_option' => 'Use with_option_value.',
         **expand(%w[Spree::Product], '.', %w[in_name in_name_or_keywords in_name_or_description].index_with(SEARCH)),
         'Spree::Product.with_ids' => 'Use where(id: ids).',
-        'Spree::Product.add_search_scope' => 'Declare a plain scope :name, -> { ... }.',
+        'Spree::Product.add_search_scope' => 'Declare it as a plain Active Record scope.',
         **expand(%w[Spree::Product Spree::Variant], '.', { 'multi_search' => SEARCH }),
         'Spree::OptionType#color?' => 'Use color_swatch?.',
         'Spree::Category#set_store' => 'Use ensure_store.',
@@ -215,6 +219,44 @@ module Spree
       candidates = receiver == Object ? [name] : ["#{receiver.name}::#{name}"]
       candidates << "Spree::#{name}" if receiver.name.to_s.match?(/\ASpree::\w+\z/)
       candidates.find { |candidate| known?(candidate) }
+    end
+
+    # @return [String] the documentation page listing every removed API
+    def to_mdx
+      sections = REMOVED.map do |version, entries|
+        rows = entries.map { |key, replacement| "| `#{key}` | #{replacement} |" }
+        <<~MARKDOWN
+          ## Removed in Spree #{version}
+
+          See the [upgrade guide](#{UPGRADE_GUIDES.fetch(version)}) for the reasons behind each change.
+
+          | Removed | Use instead |
+          | --- | --- |
+          #{rows.join("\n")}
+        MARKDOWN
+      end
+
+      <<~MARKDOWN
+        ---
+        title: Removed Ruby APIs
+        description: Ruby classes and methods removed from Spree, and what replaced each one.
+        ---
+
+        Code written for an older Spree release, or by a coding agent working from old examples, may call one of these APIs. It fails with a `NoMethodError` or `NameError`, and Ruby, the Rails console, RSpec and the Rails log add the replacement below to that error.
+
+        APIs that still work but print a deprecation warning are not listed here. They are in the upgrade guide for the release that deprecated them.
+
+        #{sections.join("\n")}
+      MARKDOWN
+    end
+
+    # Logs the hint for an error Rails reports, such as an unhandled error in
+    # a request or a job, so it appears in the Rails log next to the error.
+    class ErrorSubscriber
+      def report(error, **)
+        hint = Spree::RemovedApis.hint_for(error) if error.is_a?(NameError)
+        Rails.logger&.warn(hint) if hint
+      end
     end
 
     # Prepended to NameError (and so NoMethodError).

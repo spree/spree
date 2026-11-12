@@ -1,0 +1,127 @@
+---
+title: Removed Ruby APIs
+description: Ruby classes and methods removed from Spree, and what replaced each one.
+---
+
+Code written for an older Spree release, or by a coding agent working from old examples, may call one of these APIs. It fails with a `NoMethodError` or `NameError`, and Ruby, the Rails console, RSpec and the Rails log add the replacement below to that error.
+
+APIs that still work but print a deprecation warning are not listed here. They are in the upgrade guide for the release that deprecated them.
+
+## Removed in Spree 6.0
+
+See the [upgrade guide](https://spreecommerce.org/docs/developer/upgrades/5.6-to-6.0) for the reasons behind each change.
+
+| Removed | Use instead |
+| --- | --- |
+| `Spree::Order#next` | Checkout has no state machine. Write cart fields in any order (Spree::Carts::Update, or the Store API cart endpoints), read cart.current_checkout_step and the cart requirements to see what is missing, and place the order with Spree::Dependencies.carts_complete_workflow.constantize.call(cart: cart). |
+| `Spree::Order#next!` | Checkout has no state machine. Write cart fields in any order (Spree::Carts::Update, or the Store API cart endpoints), read cart.current_checkout_step and the cart requirements to see what is missing, and place the order with Spree::Dependencies.carts_complete_workflow.constantize.call(cart: cart). |
+| `Spree::Order#state` | Orders have status (draft, placed, canceled). Carts have no status: completed_at marks completion, and current_checkout_step says where checkout stands. |
+| `Spree::Order#state=` | Status changes through workflows, for example Spree::Orders::Cancel. Carts have no status. |
+| `Spree::Order#can_go_to_state?` | Checkout has no state machine. Write cart fields in any order (Spree::Carts::Update, or the Store API cart endpoints), read cart.current_checkout_step and the cart requirements to see what is missing, and place the order with Spree::Dependencies.carts_complete_workflow.constantize.call(cart: cart). |
+| `Spree::Order#restart_checkout_flow` | Checkout has no state machine. Write cart fields in any order (Spree::Carts::Update, or the Store API cart endpoints), read cart.current_checkout_step and the cart requirements to see what is missing, and place the order with Spree::Dependencies.carts_complete_workflow.constantize.call(cart: cart). |
+| `Spree::Order#contents` | Change cart items with Spree.cart_add_item_workflow or Spree::Dependencies.cart_upsert_items_workflow. |
+| `Spree::Order#adjustments` | Adjustments are typed rows: tax_lines, discounts and fees. |
+| `Spree::Order#all_adjustments` | Adjustments are typed rows: tax_lines, discounts and fees. |
+| `Spree::Order#state_changes` | Status history is no longer stored. Subscribe to events instead (Spree::Subscriber). |
+| `Spree::Cart#next` | Checkout has no state machine. Write cart fields in any order (Spree::Carts::Update, or the Store API cart endpoints), read cart.current_checkout_step and the cart requirements to see what is missing, and place the order with Spree::Dependencies.carts_complete_workflow.constantize.call(cart: cart). |
+| `Spree::Cart#next!` | Checkout has no state machine. Write cart fields in any order (Spree::Carts::Update, or the Store API cart endpoints), read cart.current_checkout_step and the cart requirements to see what is missing, and place the order with Spree::Dependencies.carts_complete_workflow.constantize.call(cart: cart). |
+| `Spree::Cart#state` | Orders have status (draft, placed, canceled). Carts have no status: completed_at marks completion, and current_checkout_step says where checkout stands. |
+| `Spree::Cart#state=` | Status changes through workflows, for example Spree::Orders::Cancel. Carts have no status. |
+| `Spree::Cart#can_go_to_state?` | Checkout has no state machine. Write cart fields in any order (Spree::Carts::Update, or the Store API cart endpoints), read cart.current_checkout_step and the cart requirements to see what is missing, and place the order with Spree::Dependencies.carts_complete_workflow.constantize.call(cart: cart). |
+| `Spree::Cart#restart_checkout_flow` | Checkout has no state machine. Write cart fields in any order (Spree::Carts::Update, or the Store API cart endpoints), read cart.current_checkout_step and the cart requirements to see what is missing, and place the order with Spree::Dependencies.carts_complete_workflow.constantize.call(cart: cart). |
+| `Spree::Cart#contents` | Change cart items with Spree.cart_add_item_workflow or Spree::Dependencies.cart_upsert_items_workflow. |
+| `Spree::Cart#adjustments` | Adjustments are typed rows: tax_lines, discounts and fees. |
+| `Spree::Cart#all_adjustments` | Adjustments are typed rows: tax_lines, discounts and fees. |
+| `Spree::Cart#state_changes` | Status history is no longer stored. Subscribe to events instead (Spree::Subscriber). |
+| `Spree::Order.checkout_flow` | Checkout has no state machine. Add a checkout requirement with Spree::Checkout::Registry.add_requirement, or a step with Spree::Checkout::Registry.register_step, and run side effects of placing an order in an order.placed subscriber (Spree::Subscriber). |
+| `Spree::Order.checkout_steps` | Checkout has no state machine. Add a checkout requirement with Spree::Checkout::Registry.add_requirement, or a step with Spree::Checkout::Registry.register_step, and run side effects of placing an order in an order.placed subscriber (Spree::Subscriber). |
+| `Spree::Order.insert_checkout_step` | Checkout has no state machine. Add a checkout requirement with Spree::Checkout::Registry.add_requirement, or a step with Spree::Checkout::Registry.register_step, and run side effects of placing an order in an order.placed subscriber (Spree::Subscriber). |
+| `Spree::Order.remove_checkout_step` | Checkout has no state machine. Add a checkout requirement with Spree::Checkout::Registry.add_requirement, or a step with Spree::Checkout::Registry.register_step, and run side effects of placing an order in an order.placed subscriber (Spree::Subscriber). |
+| `Spree::Order.remove_transition` | Checkout has no state machine. Add a checkout requirement with Spree::Checkout::Registry.add_requirement, or a step with Spree::Checkout::Registry.register_step, and run side effects of placing an order in an order.placed subscriber (Spree::Subscriber). |
+| `Spree::Order.go_to_state` | Checkout has no state machine. Add a checkout requirement with Spree::Checkout::Registry.add_requirement, or a step with Spree::Checkout::Registry.register_step, and run side effects of placing an order in an order.placed subscriber (Spree::Subscriber). |
+| `Spree::Order.state_machine` | Spree 6 has no state machines. Records move between statuses through workflows. |
+| `Spree::Order.multi_search` | Use search, or q[search] in the Admin API. |
+| `Spree::Cart.checkout_flow` | Checkout has no state machine. Add a checkout requirement with Spree::Checkout::Registry.add_requirement, or a step with Spree::Checkout::Registry.register_step, and run side effects of placing an order in an order.placed subscriber (Spree::Subscriber). |
+| `Spree::Cart.checkout_steps` | Checkout has no state machine. Add a checkout requirement with Spree::Checkout::Registry.add_requirement, or a step with Spree::Checkout::Registry.register_step, and run side effects of placing an order in an order.placed subscriber (Spree::Subscriber). |
+| `Spree::Cart.insert_checkout_step` | Checkout has no state machine. Add a checkout requirement with Spree::Checkout::Registry.add_requirement, or a step with Spree::Checkout::Registry.register_step, and run side effects of placing an order in an order.placed subscriber (Spree::Subscriber). |
+| `Spree::Cart.remove_checkout_step` | Checkout has no state machine. Add a checkout requirement with Spree::Checkout::Registry.add_requirement, or a step with Spree::Checkout::Registry.register_step, and run side effects of placing an order in an order.placed subscriber (Spree::Subscriber). |
+| `Spree::Cart.remove_transition` | Checkout has no state machine. Add a checkout requirement with Spree::Checkout::Registry.add_requirement, or a step with Spree::Checkout::Registry.register_step, and run side effects of placing an order in an order.placed subscriber (Spree::Subscriber). |
+| `Spree::Cart.go_to_state` | Checkout has no state machine. Add a checkout requirement with Spree::Checkout::Registry.add_requirement, or a step with Spree::Checkout::Registry.register_step, and run side effects of placing an order in an order.placed subscriber (Spree::Subscriber). |
+| `Spree::Cart.state_machine` | Spree 6 has no state machines. Records move between statuses through workflows. |
+| `Spree::Cart.multi_search` | Use search, or q[search] in the Admin API. |
+| `Spree::Order#line_item_adjustments` | Use line_item_tax_lines and line_item_discounts. |
+| `Spree::Order#shipment_adjustments` | Use fulfillment_tax_lines and fulfillment_discounts. |
+| `Spree::Order#return_authorizations` | Returns, exchanges and claims are their own records on the order: returns, exchanges, claims. |
+| `Spree::Order#customer_returns` | Returns, exchanges and claims are their own records on the order: returns, exchanges, claims. |
+| `Spree::Order#reimbursements` | Returns, exchanges and claims are their own records on the order: returns, exchanges, claims. |
+| `Spree::Order::Checkout` | Checkout has no state machine. Add a checkout requirement with Spree::Checkout::Registry.add_requirement, or a step with Spree::Checkout::Registry.register_step, and run side effects of placing an order in an order.placed subscriber (Spree::Subscriber). |
+| `Spree::OrderContents` | Change cart items with Spree.cart_add_item_workflow or Spree::Dependencies.cart_upsert_items_workflow. |
+| `Spree::Adjustment` | Adjustments are typed rows: Spree::TaxLine, Spree::Discount and Spree::Fee. |
+| `Spree::LineItem#adjustments` | Adjustments are typed rows: tax_lines, discounts and fees. |
+| `Spree::Fulfillment#adjustments` | Adjustments are typed rows: tax_lines, discounts and fees. |
+| `Spree::StateChange` | Status history is no longer stored. Subscribe to events instead (Spree::Subscriber). |
+| `Spree::LogEntry` | Status history is no longer stored. Subscribe to events instead (Spree::Subscriber). |
+| `Spree::Payment#state_changes` | Status history is no longer stored. Subscribe to events instead (Spree::Subscriber). |
+| `Spree::Payment#log_entries` | Status history is no longer stored. Subscribe to events instead (Spree::Subscriber). |
+| `Spree::Fulfillment#state_changes` | Status history is no longer stored. Subscribe to events instead (Spree::Subscriber). |
+| `Spree::ReturnAuthorization` | Use Spree::Return, or Spree::Exchange when different items go out. |
+| `Spree::CustomerReturn` | Use Spree::Return: receiving is a status on the same record. |
+| `Spree::Reimbursement` | Refund a return with the Spree::Returns::Refund workflow. |
+| `Spree::ReimbursementType` | Refund a return with the Spree::Returns::Refund workflow. |
+| `Spree::ReturnItem` | Use Spree::ReturnLineItem, Spree::ExchangeLineItem or Spree::ClaimLineItem. |
+| `Spree::Variant#price` | Prices are per currency: price_in(currency).amount or amount_in(currency). |
+| `Spree::Variant#default_price` | Use price_in(currency). |
+| `Spree::Variant#currency` | Pass the currency you mean to price_in(currency). |
+| `Spree::Variant#display_price` | Use price_in(currency).display_amount for the base price, or, on a variant (product.default_variant), price_for(context).display_amount for the price a customer pays including price lists. |
+| `Spree::Variant#display_amount` | Use price_in(currency).display_amount for the base price, or, on a variant (product.default_variant), price_for(context).display_amount for the price a customer pays including price lists. |
+| `Spree::Variant#display_compare_at_price` | Use price_in(currency).display_compare_at_amount. |
+| `Spree::Variant#price_including_vat_for` | Use price_in(currency).amount: prices are charged as entered. |
+| `Spree::Variant#has_default_price?` | Use prices.base_prices.exists?(currency: currency). |
+| `Spree::Variant#default_image` | Use primary_media. |
+| `Spree::Variant#primary_image` | Use primary_media. |
+| `Spree::Product#price` | Prices are per currency: price_in(currency).amount or amount_in(currency). |
+| `Spree::Product#default_price` | Use price_in(currency). |
+| `Spree::Product#currency` | Pass the currency you mean to price_in(currency). |
+| `Spree::Product#display_price` | Use price_in(currency).display_amount for the base price, or, on a variant (product.default_variant), price_for(context).display_amount for the price a customer pays including price lists. |
+| `Spree::Product#display_amount` | Use price_in(currency).display_amount for the base price, or, on a variant (product.default_variant), price_for(context).display_amount for the price a customer pays including price lists. |
+| `Spree::Product#display_compare_at_price` | Use price_in(currency).display_compare_at_amount. |
+| `Spree::Product#price_including_vat_for` | Use price_in(currency).amount: prices are charged as entered. |
+| `Spree::Product#has_default_price?` | Use prices.base_prices.exists?(currency: currency). |
+| `Spree::Product#default_image` | Use primary_media. |
+| `Spree::Product#primary_image` | Use primary_media. |
+| `Spree::Variant#price=` | Use set_price(currency, amount). |
+| `Spree::Variant#compare_at_price=` | Use set_price(currency, amount, compare_at_amount). |
+| `Spree::Product#price=` | Set prices on a variant: default_variant.set_price(currency, amount). |
+| `Spree::Product#compare_at_price=` | Set prices on a variant: default_variant.set_price(currency, amount, compare_at_amount). |
+| `Spree::Product#featured_image` | Use primary_media. |
+| `Spree::DefaultPrice` | Use variant.price_in(currency) and variant.set_price(currency, amount). |
+| `Spree::VatPriceCalculation` | Use price_in(currency).amount: prices include tax per market. |
+| `Spree::Product.with_option` | Use with_option_value. |
+| `Spree::Product.in_name` | Use search, or q[search] in the Admin API. |
+| `Spree::Product.in_name_or_keywords` | Use search, or q[search] in the Admin API. |
+| `Spree::Product.in_name_or_description` | Use search, or q[search] in the Admin API. |
+| `Spree::Product.with_ids` | Use where(id: ids). |
+| `Spree::Product.add_search_scope` | Declare it as a plain Active Record scope. |
+| `Spree::Product.multi_search` | Use search, or q[search] in the Admin API. |
+| `Spree::Variant.multi_search` | Use search, or q[search] in the Admin API. |
+| `Spree::OptionType#color?` | Use color_swatch?. |
+| `Spree::Category#set_store` | Use ensure_store. |
+| `Spree::Category.for_taxonomy` | Use for_store. |
+| `Spree::Store#admin_users` | Use users. |
+| `Spree::Store#supported_shipping_zones` | Use countries_with_shipping_coverage. |
+| `Spree::Address#user_default_billing?` | Use is_default_billing?. |
+| `Spree::Address#user_default_shipping?` | Use is_default_shipping?. |
+| `Spree.searcher_class` | Use Spree.search_provider. |
+| `Spree::PermittedAttributes` | Add writable API attributes with Spree::Product.additional_permitted_attributes += [...] (any model; always +=). |
+| `Spree::Preference` | Preferences live on each model in a JSON preferences column. |
+| `Spree::User` | Use Spree.customer_class for customers and Spree.admin_user_class for staff. |
+| `Spree::PromotionHandler::Page` | Apply the promotion with a coupon code, or make it automatic. |
+| `Spree::Carts::Empty` | Remove items through the Store API cart items endpoints, or delete the cart with Spree.cart_destroy_service. |
+| `Spree::Payments::Create` | Use the Store API payments endpoint, Spree::StoreCredits::Apply or Spree.gift_card_apply_workflow. |
+| `Spree::Report` | Use reporting queries for aggregates, or a Spree::Export subclass for CSV rows. |
+| `Spree::ReportLineItem` | Use reporting queries for aggregates, or a Spree::Export subclass for CSV rows. |
+| `Spree::ImageMethods` | Use Active Storage variants with cdn_image_url. |
+| `Spree::Frontend` | The Rails storefront is gone. Build the storefront on the Store API (/api/v3/store), for example with the Next.js storefront and @spree/sdk. |
+| `Spree::Backend` | The Rails admin is gone. The back office is the React Admin Dashboard on the Admin API (/api/v3/admin); extend it with dashboard plugins. |
+| `Spree::Api::V2` | API v2 is gone. Use the Store API (/api/v3/store) or the Admin API (/api/v3/admin). |
+

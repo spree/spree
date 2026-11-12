@@ -99,6 +99,7 @@ module Spree
       # wins over the environment — is never rejected for a stale env var.
       config.after_initialize do
         Spree::Core::Configuration.validate_env!(Spree::Config)
+        Rails.error.subscribe(Spree::RemovedApis::ErrorSubscriber.new)
       end
 
       # I18n's config lives in fiber/thread-local storage that survives across
