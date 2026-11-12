@@ -1,7 +1,7 @@
 {
   "name": "create-spree-app",
   "version": "2.4.2",
-  "description": "Create a Spree Commerce project with one command: the open-source headless commerce platform as a Docker image with REST Store and Admin APIs, TypeScript SDKs, an admin dashboard, an MCP server and a built-in marketplace. Needs only Node.js and Docker",
+  "description": "Create a Spree Commerce project with one command: the open-source headless commerce platform as a Docker image with REST Store and Admin APIs, TypeScript SDKs, an admin dashboard, an MCP server and a built-in marketplace. Needs only Node.js, Git and Docker",
   "type": "module",
   "bin": "./dist/index.js",
   "files": [

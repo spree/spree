@@ -2,7 +2,7 @@
 
 [Spree Commerce](https://spreecommerce.org) developer documentation and OpenAPI specs, packaged as Markdown for local access by AI agents and development tools.
 
-Spree is an open-source headless commerce platform: REST Store and Admin APIs with OpenAPI specs, TypeScript SDKs, an MCP server and a built-in marketplace, with the backend running as a Docker image. Start a project with `npx create-spree-app@latest my-store` (Node.js and Docker only, no Ruby).
+Spree is an open-source headless commerce platform: REST Store and Admin APIs with OpenAPI specs, TypeScript SDKs, an MCP server and a built-in marketplace, with the backend running as a Docker image. Start a project with `npx create-spree-app@latest my-store` (Node.js, Git and Docker only, no Ruby).
 
 ## Installation
 

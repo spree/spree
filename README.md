@@ -31,7 +31,7 @@
 npx create-spree-app@latest my-store
 ```
 
-You need [Node.js](https://nodejs.org/) 24+ and [Docker](https://docs.docker.com/get-docker/) running. You don't need Ruby to run Spree or to integrate with it. The command scaffolds a project, pulls the Spree image, seeds the database and configures API keys. Then you have:
+You need [Node.js](https://nodejs.org/) 24+, [Git](https://git-scm.com/) and [Docker](https://docs.docker.com/get-docker/) running. You don't need Ruby to run Spree or to integrate with it. The command scaffolds a project, pulls the Spree image, seeds the database and configures API keys. Then you have:
 
 | What | Where |
 | --- | --- |
@@ -43,7 +43,7 @@ You need [Node.js](https://nodejs.org/) 24+ and [Docker](https://docs.docker.com
 | Seller Panel for marketplaces (optional) | `http://localhost:5174` — start it from `apps/seller-dashboard`. The API also serves it at `http://localhost:3000/sellers` |
 | Emails sent in development | `http://localhost:8025` (Mailpit) |
 
-Port 3000 is the default; pass `--port` to change it. Day-to-day work goes through the [Spree CLI](https://spreecommerce.org/docs/developer/cli/quickstart) that comes with the project (`spree dev`, `spree stop`, `spree api get /products`). See the [quickstart](https://spreecommerce.org/docs/developer/getting-started/quickstart) for every option.
+Port 3000 is the default; pass `--port` to change it. Day-to-day work goes through the [Spree CLI](https://spreecommerce.org/docs/developer/cli/quickstart) that comes with the project; run it from the project folder with `npx` (`npx spree dev`, `npx spree stop`, `npx spree api get /products`). See the [quickstart](https://spreecommerce.org/docs/developer/getting-started/quickstart) for every option.
 
 **The Docker image.** The backend is [`ghcr.io/spree/spree`](https://github.com/orgs/spree/packages/container/package/spree) (`linux/amd64` and `linux/arm64`), built from [spree/spree-starter](https://github.com/spree/spree-starter) on every release. It holds the Store and Admin APIs, the MCP server, the Admin Dashboard and Seller Panel, and background jobs, and needs only Postgres. Deploy it to any Docker host.
 
@@ -98,9 +98,9 @@ Run a SaaS platform where each tenant gets its own isolated store — catalog, o
 
 ## Customizing the backend
 
-This is the only part of Spree that involves Ruby. The backend is a Ruby on Rails application: in a `create-spree-app` project it lives in `server/` (a copy of [spree/spree-starter](https://github.com/spree/spree-starter)), with the Spree gems from this repository mounted. Out of the box the project runs the prebuilt image; `spree eject` switches it to build from `server/` with live reloading. Even then Ruby runs inside Docker, so you don't need to install it.
+This is the only part of Spree that involves Ruby. The backend is a Ruby on Rails application: in a `create-spree-app` project it lives in `server/` (a copy of [spree/spree-starter](https://github.com/spree/spree-starter)), with the Spree gems from this repository mounted. Out of the box the project runs the prebuilt image; `spree eject` switches it to build from `server/` with live reloading. Ejecting also switches to a separate `spree_development` database, prepared and seeded from scratch, so data you created before ejecting doesn't carry over. Even then Ruby runs inside Docker, so you don't need to install it.
 
-Extend Spree without forking it, in this order: [events and subscribers](https://spreecommerce.org/docs/developer/core-concepts/events), [workflow hooks](https://spreecommerce.org/docs/developer/customization/workflows), [dependencies](https://spreecommerce.org/docs/developer/customization/dependencies), extensions, and decorators as a last resort. Run Rails commands through the CLI — `spree generate`, `spree migrate`, `spree console`, `spree rspec`. Start with the [Customization Guide](https://spreecommerce.org/docs/developer/customization/quickstart).
+Extend Spree without forking it, in this order: [events and subscribers](https://spreecommerce.org/docs/developer/core-concepts/events), [workflow hooks](https://spreecommerce.org/docs/developer/customization/workflows), [dependencies](https://spreecommerce.org/docs/developer/customization/dependencies), extensions, and decorators as a last resort. Run Rails commands through the CLI — `spree generate`, `spree migrate`, `spree console`, `spree test`. Start with the [Customization Guide](https://spreecommerce.org/docs/developer/customization/quickstart).
 
 ## Agentic Development
 
