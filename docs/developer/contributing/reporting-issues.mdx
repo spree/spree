@@ -28,7 +28,7 @@ The report is built to be pasted into a public issue:
 - Errors show the class and the Spree code location only, never the message. Your own application's code appears as `app/[redacted]`, and gems that don't come from rubygems.org or the Spree team as `gem/[redacted]`. Use the request ID to find the full message in your logs.
 - Gems are listed by name only when they are Spree's own or installed from rubygems.org; other gems built on Spree are only counted.
 
-Recent errors are Spree errors your server answered with a 5xx or reported itself; refused requests, such as an invalid address, are left out. They are kept in the Rails cache, so clearing the cache empties the list. Restarting the server empties it only when the cache lives in the server's memory. `spree info` and `bin/rails spree:info` leave them out: they run in a process of their own, which usually can't see the server's list.
+Recent errors are Spree errors your server answered with a 5xx or reported itself; refused requests, such as an invalid address, are left out. They are kept in the Rails cache, so clearing the cache empties the list. Restarting the server empties it only when the cache lives in the server's memory. `spree info` leaves them out: it runs in a process of its own, which usually can't see the server's list.
 
 ## Get the report
 
@@ -69,23 +69,11 @@ A secret API key gets a 404: the report reveals the running Spree version, so on
 
 ### From the command line
 
-<Tabs>
-  <Tab title="Spree CLI">
-    ```bash
-    spree info
-    ```
+```bash
+spree info
+```
 
-    `spree info` adds the CLI's own details: Node, package manager, operating system, Docker and your `@spree/*` package versions. Add `--issue` to open a pre-filled GitHub issue, or `--json` for machine-readable output.
-  </Tab>
-  <Tab title="Without CLI">
-    ```bash
-    cd server
-    bin/rails spree:info
-    ```
-
-    Set `FORMAT=json` for JSON. This works on a deployed server too — run it in your host's shell, such as `heroku run` or `render ssh`.
-  </Tab>
-</Tabs>
+`spree info` adds the CLI's own details: Node, package manager, operating system, Docker and your `@spree/*` package versions. Add `--issue` to open a pre-filled GitHub issue, or `--json` for machine-readable output.
 
 ## Add a section from an extension
 

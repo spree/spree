@@ -40,6 +40,6 @@ body:
     attributes:
       label: Diagnostics report
       description: |
-        Paste the output of `spree info` or `bin/rails spree:info`, or use **Copy as Markdown** in Dashboard → Settings → System info. It contains no names, emails, URLs or error messages.
+        Paste the output of `spree info`, or use **Copy as Markdown** in Dashboard → Settings → System info. It contains no names, emails, URLs or error messages.
     validations:
       required: true
