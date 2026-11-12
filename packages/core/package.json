@@ -1,6 +1,6 @@
 {
   "name": "@spree/core",
-  "version": "6.0.3",
+  "version": "6.0.4",
   "description": "Universal Spree Commerce code: country, currency, locale and unit code lists, exact money arithmetic and the filter vocabulary",
   "type": "module",
   "sideEffects": false,

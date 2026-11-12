@@ -1,5 +1,23 @@
 # @spree/dashboard-ui
 
+## 6.0.4
+
+### Patch Changes
+
+- [#15136](https://github.com/spree/spree/pull/15136) [`688ae75`](https://github.com/spree/spree/commit/688ae75c9bf25439928fadd2e914035cfc4803c2) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Refreshed the look of the admin dashboard and the seller panel: the Inter font, one 13px text size, a neutral palette with 12px corners and a near-black dark theme. Fields, cards, switches, tabs and alerts share one style, list tables lose their frame and gain a compact row density, and date filters use a range calendar. Records on detail pages sit under titled sections instead of cards nested in cards, and the settings nav sits beside the icon rail.
+  
+  For plugin authors, `@spree/dashboard-ui` adds `Section`, `StatItem`, `ProductIdentity`, `CurrencyLabel`, `DateRangePanel` and new icons, and `@spree/dashboard-core` adds `useTableDensity`. The card `variant` prop is deprecated and has no effect: group records under a `Section` instead.
+
+- [#15176](https://github.com/spree/spree/pull/15176) [`8a1a876`](https://github.com/spree/spree/commit/8a1a8765c15209a60e4eb8bfc447fb90adfbebd9) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `JsonPreviewDrawer` takes a `curl` command and offers Copy as curl beside Copy JSON.
+
+- [#15181](https://github.com/spree/spree/pull/15181) [`9895bd8`](https://github.com/spree/spree/commit/9895bd8ce21f5201d52ed494cfa57d657b29bc50) Thanks [@dependabot](https://github.com/apps/dependabot)! - The dashboard packages accept i18next 27 and react-i18next 18 as peer dependencies, alongside i18next 26 and react-i18next 17.
+
+- [#15177](https://github.com/spree/spree/pull/15177) [`ab8f82f`](https://github.com/spree/spree/commit/ab8f82fc5d4f91beb42447f84df9106d79e7a39a) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `CollapsibleContent` now slides and fades open and closed, with its chevrons turning in step, and stays instant under reduced motion.
+
+- [#15190](https://github.com/spree/spree/pull/15190) [`f9db63d`](https://github.com/spree/spree/commit/f9db63d5f25d75938bd813d14e5edf57580c470c) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `FormSaveButton` and `FormActions` take `disabled`, to hold Save back for a reason the form state cannot see, such as an upload in flight. A rich text field no longer marks its form as changed when it opens on a description that is inline markup without paragraphs. A date picker's label is left-aligned.
+- Updated dependencies []:
+  - @spree/core@6.0.4
+
 ## 6.0.3
 
 ### Patch Changes

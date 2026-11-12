@@ -1,5 +1,29 @@
 # @spree/admin-sdk
 
+## 6.0.4
+
+### Patch Changes
+
+- [#15136](https://github.com/spree/spree/pull/15136) [`b67452b`](https://github.com/spree/spree/commit/b67452b2ef9ca9802de1d6cab3c88d98da1ebe76) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Adding a company member takes `customer_id` for an existing customer, as an alternative to `customer_email`, so `CompanyMembershipCreateParams.customer_email` is now optional.
+
+- [#15136](https://github.com/spree/spree/pull/15136) [`7a5dca8`](https://github.com/spree/spree/commit/7a5dca8d999cc5132c083ce68476492165794521) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `CompanyMembership` can carry its `customer` when listed with `expand: ['customer']`, so a members list can show each member's name.
+
+- [#15176](https://github.com/spree/spree/pull/15176) [`8a1a876`](https://github.com/spree/spree/commit/8a1a8765c15209a60e4eb8bfc447fb90adfbebd9) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added `adminClient.diagnostics.get()`, which reads the anonymised diagnostics report behind the dashboard's Settings → System info. The client takes an optional `onRequestComplete` option, called after every request with its request ID, and gains `getStore()`. File downloads now send the store header.
+
+- [#15136](https://github.com/spree/spree/pull/15136) [`6f3de61`](https://github.com/spree/spree/commit/6f3de6138e6879caf065798ddd2462360d5b06f6) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Order line items carry `product_id`, so an order page can link each line to its product without expanding the variant.
+
+- [#15136](https://github.com/spree/spree/pull/15136) [`fd2364a`](https://github.com/spree/spree/commit/fd2364a3b8de751d4e115ea8786da47de91431ae) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Media can be filtered and sorted by file name and file size (`filename`, `byte_size`).
+
+- [#15145](https://github.com/spree/spree/pull/15145) [`6bb42c3`](https://github.com/spree/spree/commit/6bb42c3aa3a8feab481996580e8566ffd3f9624f) Thanks [@beobungbu](https://github.com/beobungbu)! - Avoid reading browser location when an explicit base URL is configured, and support native environments where window exists without location.
+
+- [#15177](https://github.com/spree/spree/pull/15177) [`ab8f82f`](https://github.com/spree/spree/commit/ab8f82fc5d4f91beb42447f84df9106d79e7a39a) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - A seller now carries `products_count_by_status`, how many of their products are in each status, read in the same query as `products_count`.
+
+- [#15177](https://github.com/spree/spree/pull/15177) [`ab8f82f`](https://github.com/spree/spree/commit/ab8f82fc5d4f91beb42447f84df9106d79e7a39a) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Updating a seller takes `returns_address`, written inline like `billing_address`. It is saved onto the seller's returns stock location, or a new one for a seller who has none, so the seller page edits it in place instead of opening the stock location. `@spree/dashboard-core` exports `EditStockLocationSheet`, so a record page can open a location's editor without leaving the page.
+
+- [#15136](https://github.com/spree/spree/pull/15136) [`c7ba0e1`](https://github.com/spree/spree/commit/c7ba0e18b28b17ef454e2e6dedae4ed4885ac794) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added `returns_location_id` to `Seller`: the stock location its `returns_address` is read from, which is where that address is edited.
+
+- [#15170](https://github.com/spree/spree/pull/15170) [`09b1cde`](https://github.com/spree/spree/commit/09b1cdefb6742aa9e293369b6f77e02bb5e6499b) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added `sellers.invitations.create`, which invites someone to a seller's team without changing the seller's status. The seller page's team card uses it, so an approved seller can get its first user, and each pending invitation now has a Copy invitation link action.
+
 ## 6.0.3
 
 ### Patch Changes

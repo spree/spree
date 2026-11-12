@@ -1,5 +1,9 @@
 # @spree/core
 
+## 6.0.4
+
+Released with Spree 6.0.4, with no changes of its own.
+
 ## 6.0.3
 
 ### Patch Changes

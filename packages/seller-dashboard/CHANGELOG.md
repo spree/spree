@@ -1,5 +1,36 @@
 # @spree/seller-dashboard
 
+## 6.0.4
+
+### Patch Changes
+
+- [#15191](https://github.com/spree/spree/pull/15191) [`335fa1b`](https://github.com/spree/spree/commit/335fa1bbd675470f41934d8840a4231a4e6aa80b) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The seller setup checklist's Complete profile step now links to Settings → General only when the contact email is the one thing left, since a new Complete profile requirement no longer asks for a contact email unless the marketplace turns it on. Marketplaces set up on an earlier 6.0 release keep asking for the contact email until they turn it off.
+
+- [#15136](https://github.com/spree/spree/pull/15136) [`688ae75`](https://github.com/spree/spree/commit/688ae75c9bf25439928fadd2e914035cfc4803c2) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The order page shows the items of returns, exchanges and claims like fulfillments, and order lines link to their product.
+
+- [#15136](https://github.com/spree/spree/pull/15136) [`688ae75`](https://github.com/spree/spree/commit/688ae75c9bf25439928fadd2e914035cfc4803c2) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Refreshed the look of the admin dashboard and the seller panel: the Inter font, one 13px text size, a neutral palette with 12px corners and a near-black dark theme. Fields, cards, switches, tabs and alerts share one style, list tables lose their frame and gain a compact row density, and date filters use a range calendar. Records on detail pages sit under titled sections instead of cards nested in cards, and the settings nav sits beside the icon rail.
+  
+  For plugin authors, `@spree/dashboard-ui` adds `Section`, `StatItem`, `ProductIdentity`, `CurrencyLabel`, `DateRangePanel` and new icons, and `@spree/dashboard-core` adds `useTableDensity`. The card `variant` prop is deprecated and has no effect: group records under a `Section` instead.
+
+- [#15136](https://github.com/spree/spree/pull/15136) [`688ae75`](https://github.com/spree/spree/commit/688ae75c9bf25439928fadd2e914035cfc4803c2) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The media library opens as a large dialog with search, type and usage filters, upload, grid or list view and sorting, and the Media page gains the same views. Product media opens in a full-screen editor and can be removed in bulk, with files only deleted once the product saves, and each variant picks its images from the product's own.
+  
+  `MediaPickerSheet` is deprecated in favour of `MediaPickerDialog`, and `useFormDeleteProductMedia` in favour of marking files in `removed_media_ids` and saving with `useCommitRemovedProductMedia`. Both old names keep working until the next minor release.
+
+- [#15136](https://github.com/spree/spree/pull/15136) [`688ae75`](https://github.com/spree/spree/commit/688ae75c9bf25439928fadd2e914035cfc4803c2) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Payment methods became a Payments page: payment providers with their logos and status, manual payment methods, a Checkout order sheet for the order checkout offers them in, and the payment capture setting. Bogus is marked as a test gateway. Tax by shipping address moved to the Taxes page, and a new Storefront & checkout page holds the storefront URL, storefront access, checkout and address settings that used to be on the store page. Settings pages show a label beside its control on desktop, and the store timezone is a searchable picker.
+  
+  `@spree/dashboard-core` adds `SettingsContainer`, `SettingsFieldGroup`, `SettingsRow`, `SettingsSelectField`, `SettingsSwitchField` and `TimezoneCombobox`, and `SettingsSection` takes an `icon`. The payment methods list table (`payment-methods`) is gone, so columns a plugin added to it no longer show.
+
+- [#15176](https://github.com/spree/spree/pull/15176) [`8a1a876`](https://github.com/spree/spree/commit/8a1a8765c15209a60e4eb8bfc447fb90adfbebd9) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Order, payout and product pages offer View as JSON, with Copy JSON and Copy as curl, and the developer inspector (Ctrl/Cmd+Shift+D) lists recent API requests with their request IDs.
+
+- [#15181](https://github.com/spree/spree/pull/15181) [`9895bd8`](https://github.com/spree/spree/commit/9895bd8ce21f5201d52ed494cfa57d657b29bc50) Thanks [@dependabot](https://github.com/apps/dependabot)! - The dashboard packages accept i18next 27 and react-i18next 18 as peer dependencies, alongside i18next 26 and react-i18next 17.
+
+- [#15183](https://github.com/spree/spree/pull/15183) [`4fff674`](https://github.com/spree/spree/commit/4fff67489e2df29c93edcdf1726426522db24ee3) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The `@tanstack/react-router` peer range starts at 1.170.46, the oldest version the dashboards type check against. Apps on 1.170.45 already failed to type check, so no working setup is excluded.
+
+- [#15190](https://github.com/spree/spree/pull/15190) [`f9db63d`](https://github.com/spree/spree/commit/f9db63d5f25d75938bd813d14e5edf57580c470c) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The settings gain a Store group with three single-column form pages. Profile holds the name, description, logo and cover photo shoppers see, and replaces the old Profile page, whose address now redirects there. General holds the contact and business details, addresses and holiday mode. Taxes holds tax registrations. List pages show their title and actions on one row.
+- Updated dependencies [[`6f3de61`](https://github.com/spree/spree/commit/6f3de6138e6879caf065798ddd2462360d5b06f6), [`6bb42c3`](https://github.com/spree/spree/commit/6bb42c3aa3a8feab481996580e8566ffd3f9624f), [`f9db63d`](https://github.com/spree/spree/commit/f9db63d5f25d75938bd813d14e5edf57580c470c), [`fd2364a`](https://github.com/spree/spree/commit/fd2364a3b8de751d4e115ea8786da47de91431ae)]:
+  - @spree/seller-sdk@6.0.4
+  - @spree/core@6.0.4
+
 ## 6.0.3
 
 ### Patch Changes
