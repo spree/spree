@@ -164,10 +164,11 @@ test.describe('seller panel — setup', () => {
 
     const context = await browser.newContext()
     const seller = await context.newPage()
-    const home = await sellerLogin(seller, FIXTURE_SELLER_WRITER_EMAIL)
-    let originalEmail: string | null = null
+    const save = seller.getByRole('button', { name: /^save$/i }).first()
+    let home = ''
+    let originalEmail = ''
     try {
-      const save = seller.getByRole('button', { name: /^save$/i }).first()
+      home = await sellerLogin(seller, FIXTURE_SELLER_WRITER_EMAIL)
 
       // Everything public filled in, so the email is the only gap.
       await seller.goto(`${home}/settings/profile`)
@@ -211,18 +212,22 @@ test.describe('seller panel — setup', () => {
       await expect(seller).toHaveURL(/\/settings\/general$/, { timeout: 15_000 })
     } finally {
       // The panel seller is shared across this shard, so put back the email it
-      // had, whether or not the checks above passed.
-      if (originalEmail) {
-        await seller.goto(`${home}/settings/general`)
-        await seller.locator('#seller-contact-email').fill(originalEmail)
-        const save = seller.getByRole('button', { name: /^save$/i }).first()
-        if (await save.isEnabled()) {
-          await save.click()
-          await expect(seller.getByText(/profile saved/i).first()).toBeVisible({ timeout: 15_000 })
+      // had and switch the requirement off, whether or not the checks passed.
+      try {
+        if (originalEmail) {
+          await seller.goto(`${home}/settings/general`)
+          await seller.locator('#seller-contact-email').fill(originalEmail)
+          if (await save.isEnabled()) {
+            await save.click()
+            await expect(seller.getByText(/profile saved/i).first()).toBeVisible({
+              timeout: 15_000,
+            })
+          }
         }
+      } finally {
+        await context.close()
+        await setRequireEmail(false)
       }
-      await context.close()
-      await setRequireEmail(false)
     }
   })
 })
