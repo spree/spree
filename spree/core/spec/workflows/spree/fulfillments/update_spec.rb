@@ -110,5 +110,42 @@ RSpec.describe Spree::Fulfillments::Update do
       expect(fulfillment.primary_delivery.tracking_number).to eq('NEW-1')
       expect(fulfillment.primary_delivery.status).to eq('pending')
     end
+
+    it 'changes the carrier of the primary delivery when sent without a number' do
+      number = fulfillment.primary_delivery.tracking_number
+
+      result = described_class.call(fulfillment: fulfillment, fulfillment_attributes: { tracking_carrier: 'Royal Mail Tracked 24' })
+
+      expect(result).to be_success
+      expect(fulfillment.reload.primary_delivery.carrier).to eq('Royal Mail Tracked 24')
+      expect(fulfillment.primary_delivery.tracking_number).to eq(number)
+    end
+
+    it 'refuses a carrier when there is no tracking number to attach it to' do
+      fulfillment.deliveries.destroy_all
+
+      result = described_class.call(fulfillment: fulfillment, fulfillment_attributes: { tracking_carrier: 'ups' })
+
+      expect(result).to be_failure
+      expect(result.error.to_s).to include('no tracking number')
+    end
+
+    it 'removes the primary delivery when the number is blanked' do
+      result = described_class.call(fulfillment: fulfillment, fulfillment_attributes: { tracking: '' })
+
+      expect(result).to be_success
+      expect(fulfillment.reload.deliveries).to be_empty
+    end
+
+    it 'refuses to blank a number a shipping label minted' do
+      label = create(:shipping_label, owner: fulfillment)
+      fulfillment.primary_delivery.update_columns(shipping_label_id: label.id)
+
+      result = described_class.call(fulfillment: fulfillment, fulfillment_attributes: { tracking: '' })
+
+      expect(result).to be_failure
+      expect(result.error.to_s).to include('refund the label')
+      expect(fulfillment.reload.deliveries).to be_present
+    end
   end
 end

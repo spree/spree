@@ -82,7 +82,7 @@ module Spree
       #
       # @return [Array(String, nil), Array(nil, Hash)]
       def write_path(entry, action, id: nil, parent_id: nil)
-        path = entry.path_for(action, id: id, parent_id: parent_id)
+        path = entry.path_for(action, id: id, parent_id: parent_id, context: context)
         return [path, nil] if path
 
         [nil, nested_resource_error(entry, verb_for(action), action)]

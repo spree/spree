@@ -18,7 +18,9 @@ module Spree
 
       # The parent segment of a nested path: `/promotions/:promotion_id/promotion_rules`
       # names `promotions`.
-      PARENT_SEGMENT = %r{/(?<parent>[a-z_]+)/:[a-z_]+_id(?:/|\z)}
+      # The trailing slash is looked ahead rather than consumed, so a path
+      # nested twice yields both parents.
+      PARENT_SEGMENT = %r{/(?<parent>[a-z_]+)/:[a-z_]+_id(?=/|\z)}
 
       Entry = Struct.new(:key, :model_name, :permission, :serializer_name,
                          :dashboard_path, :scope_name, :write_permission,
@@ -123,12 +125,29 @@ module Spree
         end
 
         # The record a nested resource is reached through — `order_id` for an
-        # order's items, discounts and fees — or nil for a top-level one.
+        # order's items, discounts and fees — or nil for a top-level one. The
+        # innermost one for a path nested twice: `fulfillment_id` for a
+        # delivery.
         #
         # @param action [Symbol]
         # @return [String, nil]
         def parent_param(action)
-          Array(api_path(action)&.scan(/:([a-z_]+)/)).flatten.reject { |name| name == 'id' }.first
+          path_params(action).last
+        end
+
+        # Whether one parent id is enough to reach this resource: the
+        # parent's own parents, if any, are read off the parent record.
+        #
+        # @param action [Symbol]
+        # @return [Boolean]
+        def reachable_through_parent?(action)
+          return false if parent_param(action).nil?
+
+          ancestors = path_params(action)[0...-1]
+          return true if ancestors.empty?
+
+          parent_model = ResourceMap.find(parent_key(action))&.model_class
+          parent_model.present? && ancestors.size == 1 && parent_model.method_defined?(ancestors.first.delete_suffix('_id'))
         end
 
         # The operation's path with its segments filled, or nil when a nested
@@ -140,11 +159,17 @@ module Spree
         # segment left unfilled — a resource nested two levels deep — is nil
         # too, rather than dispatched with a placeholder in it.
         #
+        # A path nested twice (`/orders/:order_id/fulfillments/:fulfillment_id/deliveries`)
+        # takes the innermost parent's id; the outer one is read off that
+        # record, under the caller's store and permissions, so `context` is
+        # needed for it.
+        #
         # @param action [Symbol]
         # @param id [String, nil]
         # @param parent_id [String, nil]
+        # @param context [Spree::AgentTools::Context, nil]
         # @return [String, nil]
-        def path_for(action, id: nil, parent_id: nil)
+        def path_for(action, id: nil, parent_id: nil, context: nil)
           path = api_path(action)
           return if path.blank?
 
@@ -154,8 +179,26 @@ module Spree
             return if parent_id.blank?
 
             path = path.sub(":#{parent}", ERB::Util.url_encode(parent_id.to_s))
+            path = fill_ancestors(path, action, parent_id, context) if context
           end
           path unless path.match?(/:[a-z_]+/)
+        end
+
+        def path_params(action)
+          Array(api_path(action)&.scan(/:([a-z_]+)/)).flatten.reject { |name| name == 'id' }
+        end
+
+        def fill_ancestors(path, action, parent_id, context)
+          ancestors = path_params(action)[0...-1]
+          return path if ancestors.empty? || !reachable_through_parent?(action)
+
+          parent_entry = ResourceMap.find(parent_key(action))
+          return path unless parent_entry.readable_by?(context)
+
+          ancestor = parent_entry.scope_for(context).find_by_prefix_id(parent_id)&.public_send(ancestors.first.delete_suffix('_id'))
+          return path if ancestor.nil?
+
+          path.sub(":#{ancestors.first}", ERB::Util.url_encode(ancestor.prefixed_id.to_s))
         end
 
         # The associations the show operation will include when asked, read

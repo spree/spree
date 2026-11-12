@@ -22,7 +22,8 @@ module Spree
       # @param fulfillment_attributes [Hash] attributes to assign; +stock_location_id+
       #   moves the fulfillment, +selected_delivery_rate_id+ changes its rate,
       #   +tracking+ (with +tracking_carrier+) creates or corrects the primary
-      #   delivery — a corrected number starts its carrier journey over
+      #   delivery — a corrected number starts its carrier journey over; a
+      #   blank +tracking+ removes it, and +tracking_carrier+ alone re-labels it
       # @param shipment [Spree::Fulfillment, nil] @deprecated use +fulfillment+
       # @param shipment_attributes [Hash, nil] @deprecated use +fulfillment_attributes+
       # @return [Spree::ServiceModule::Result] the updated fulfillment on success
@@ -38,6 +39,8 @@ module Spree
 
         @fulfillment = fulfillment || shipment
         @attributes = (fulfillment_attributes || shipment_attributes || {}).to_h.with_indifferent_access
+        @tracking_given = @attributes.key?(:tracking)
+        @carrier_given = @attributes.key?(:tracking_carrier)
         @tracking = @attributes.delete(:tracking)
         @tracking_carrier = @attributes.delete(:tracking_carrier)
         @origin_changed = origin_change?
@@ -71,11 +74,39 @@ module Spree
         failure(@fulfillment) unless @fulfillment.update(@attributes)
       end
 
+      # A blank number and a carrier on its own are requests too: answering
+      # them with a success that changed nothing let an agent tell a merchant
+      # a wrong number was gone when the customer could still see it.
       def apply_tracking
-        result = Spree.delivery_upsert_primary_service.call(
-          fulfillment: @fulfillment, tracking: @tracking, carrier: @tracking_carrier
-        )
-        failure(@fulfillment, result.error.to_s) if result.failure?
+        result =
+          if @tracking_given && @tracking.blank?
+            remove_primary_delivery
+          elsif @tracking.blank? && @carrier_given
+            relabel_primary_delivery
+          else
+            Spree.delivery_upsert_primary_service.call(
+              fulfillment: @fulfillment, tracking: @tracking, carrier: @tracking_carrier
+            )
+          end
+
+        failure(@fulfillment, result.error.to_s) if result&.failure?
+      end
+
+      def remove_primary_delivery
+        primary = @fulfillment.primary_delivery
+        return if primary.nil?
+
+        Spree.delivery_destroy_service.call(delivery: primary)
+      end
+
+      def relabel_primary_delivery
+        primary = @fulfillment.primary_delivery
+        if primary.nil?
+          @fulfillment.errors.add(:base, :carrier_without_tracking, message: I18n.t('spree.deliveries.errors.carrier_without_tracking'))
+          return failure(@fulfillment)
+        end
+
+        failure(@fulfillment, primary.errors.full_messages.to_sentence) unless primary.update(carrier: @tracking_carrier)
       end
 
       def requote_after_origin_change

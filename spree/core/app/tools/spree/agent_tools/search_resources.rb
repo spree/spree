@@ -47,7 +47,7 @@ module Spree
         unrecognised = unrecognised_filters(entry, applied)
         return invalid_filters(entry, unrecognised) if unrecognised.any?
 
-        path = entry.path_for(:index, parent_id: parent_id)
+        path = entry.path_for(:index, parent_id: parent_id, context: context)
         return not_searchable(entry) if path.nil?
 
         response = dispatch.call(method: :get, path: path, params: query_for(applied, sort, limit, page))

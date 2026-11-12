@@ -789,6 +789,7 @@ en:
     default_wishlist_name: Wishlist
     deliveries:
       errors:
+        carrier_without_tracking: This fulfillment has no tracking number yet — send the tracking number together with the carrier
         delivered: This consignment has already arrived — its arrival is what the returns window counts from, so it cannot be deleted
         has_label: This delivery was created by a shipping label — refund the label instead of deleting the delivery
     delivery: Delivery

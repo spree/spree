@@ -251,9 +251,7 @@ class AgentTool
 
       owner = parent.singularize.tr('_', ' ')
       sentences = ["#{entry.key} belong to #{owner.match?(/\A[aeiou]/) ? 'an' : 'a'} #{owner} and cannot be #{verb} on their own."]
-      # Offered only where one parent id fills the path; a resource nested
-      # twice has no generic route.
-      reachable = entry.path_for(action, id: 'id', parent_id: 'parent').present?
+      reachable = entry.reachable_through_parent?(action)
       sentences << "Pass the #{owner}'s id as parent_id to reach them under it." if reachable
       # Each suggested call is one this caller may actually make; a hint
       # that leads straight to a permission refusal is worse than none.

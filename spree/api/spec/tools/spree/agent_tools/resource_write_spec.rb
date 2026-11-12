@@ -110,6 +110,54 @@ RSpec.describe 'agent generic record writes' do
     end
   end
 
+  # A delivery sits two levels down, under a fulfillment under an order:
+  # the fulfillment is the parent_id, and the order is read off it.
+  describe 'a resource nested twice' do
+    let(:order) { create(:shipped_order, store: store) }
+    let(:fulfillment) { order.fulfillments.first }
+    let!(:delivery) { create(:delivery, owner: fulfillment, store: store, tracking_number: '1Z999AA10123456784') }
+    let(:deliveries_key) { Spree::AgentTools::ResourceMap.all.find { |entry| entry.model_name == 'Spree::Delivery' }.key }
+
+    it 'lists the deliveries of one fulfillment' do
+      result = tool('search_resources').call(resource: deliveries_key, parent_id: fulfillment.prefixed_id)
+
+      expect(result[:error]).to be_nil
+      expect(result[:records].pluck(:id)).to include(delivery.prefixed_id)
+    end
+
+    it 'changes the carrier of a delivery' do
+      result = tool('update_resource').call(resource: deliveries_key, id: delivery.prefixed_id,
+                                            parent_id: fulfillment.prefixed_id,
+                                            attributes: { 'carrier' => 'Royal Mail Tracked 24' })
+
+      expect(result[:error]).to be_nil
+      expect(delivery.reload.carrier).to eq('Royal Mail Tracked 24')
+    end
+
+    it 'deletes a wrong tracking number' do
+      result = tool('delete_resource').call(resource: deliveries_key, id: delivery.prefixed_id,
+                                            parent_id: fulfillment.prefixed_id)
+
+      expect(result[:error]).to be_nil
+      expect(Spree::Delivery.exists?(delivery.id)).to be(false)
+    end
+
+    it 'asks for the fulfillment when none is given' do
+      result = tool('search_resources').call(resource: deliveries_key)
+
+      expect(result[:error]).to include('belong to a fulfillment', 'as parent_id')
+    end
+
+    it 'does not reach a fulfillment of another store' do
+      other_store = create(:store)
+      other_order = create(:shipped_order, store: other_store)
+
+      result = tool('search_resources').call(resource: deliveries_key, parent_id: other_order.fulfillments.first.prefixed_id)
+
+      expect(result[:records]).to be_nil
+    end
+  end
+
   # An order's items, discounts and fees exist only under their order, so
   # the generic tools take the order as parent_id and fill it into the path.
   describe 'a resource nested under an order' do
