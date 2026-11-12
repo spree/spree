@@ -1,4 +1,3 @@
-import type { TFunction } from 'i18next'
 // Inline custom-fields editor — generic-context shape, three providers,
 // predictable save modes (never on-blur). This is the single custom-fields
 // surface across the dashboard.
@@ -74,6 +73,7 @@ import {
   TagIcon,
 } from '@spree/dashboard-ui/icons'
 import { Link, useParams } from '@tanstack/react-router'
+import type { TFunction } from 'i18next'
 import {
   createContext,
   type ReactNode,

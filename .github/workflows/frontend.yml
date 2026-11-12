@@ -9,7 +9,7 @@ permissions:
 
 jobs:
   check:
-    name: "Lint, typecheck, test and build"
+    name: 'Lint, typecheck, test and build'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -99,7 +99,7 @@ jobs:
   # @spree/* package is a symlink resolved under the root overrides, while a
   # generated app installs packed tarballs on its own.
   scaffolded-app:
-    name: "Scaffolded app (typecheck and lint)"
+    name: 'Scaffolded app (typecheck and lint)'
     runs-on: ubuntu-latest
     steps:
       # Runs the pull request's install and build scripts; nothing needs an
@@ -178,6 +178,32 @@ jobs:
           pnpm dedupe
           pnpm build && pnpm typecheck && pnpm lint
 
+      # The steps above test the catalog's versions. Host apps may sit anywhere
+      # in the dashboard packages' peer ranges and compile their source, so
+      # the oldest version each range allows must keep type checking too. Each
+      # app is restored afterwards so the TypeScript 6 check sees the catalog.
+      - name: Check both apps on the oldest supported peer versions
+        if: ${{ !cancelled() }}
+        run: |
+          FLOORS=$(node scripts/peer-floors.mjs packages/dashboard packages/seller-dashboard packages/dashboard-core packages/dashboard-ui)
+          echo "Installing $FLOORS"
+          status=0
+          for app in dashboard seller-dashboard; do
+            cd "$RUNNER_TEMP/app/apps/$app"
+            cp package.json package.json.orig
+            cp pnpm-lock.yaml pnpm-lock.yaml.orig
+            (
+              pnpm add --save-exact $FLOORS &&
+                pnpm dedupe &&
+                pnpm typecheck &&
+                pnpm build
+            ) || status=1
+            mv package.json.orig package.json
+            mv pnpm-lock.yaml.orig pnpm-lock.yaml
+            pnpm install --frozen-lockfile
+          done
+          exit "$status"
+
       # New apps start on TypeScript 7, but apps created earlier stay on 6 and
       # compile the dashboard packages' source with it, so both must keep
       # type checking.
@@ -195,28 +221,8 @@ jobs:
           done
           exit "$status"
 
-      # The steps above test the catalog's versions. Host apps may sit anywhere
-      # in the dashboard packages' peer ranges and compile their source, so
-      # the oldest version each range allows must keep type checking too.
-      - name: Check both apps on the oldest supported peer versions
-        if: ${{ !cancelled() }}
-        run: |
-          FLOORS=$(node scripts/peer-floors.mjs packages/dashboard packages/seller-dashboard packages/dashboard-core packages/dashboard-ui)
-          echo "Installing $FLOORS"
-          status=0
-          for app in dashboard seller-dashboard; do
-            (
-              cd "$RUNNER_TEMP/app/apps/$app" &&
-                pnpm add --save-exact $FLOORS &&
-                pnpm dedupe &&
-                pnpm typecheck &&
-                pnpm build
-            ) || status=1
-          done
-          exit "$status"
-
   sdk-integration:
-    name: "SDK integration tests"
+    name: 'SDK integration tests'
     runs-on: ubuntu-latest
     env:
       RAILS_ENV: test
@@ -251,7 +257,7 @@ jobs:
         run: pnpm test:integration
 
   dashboard-e2e:
-    name: "Dashboard E2E (${{ matrix.shard }}/4)"
+    name: 'Dashboard E2E (${{ matrix.shard }}/4)'
     runs-on: ubuntu-latest
     # Each shard is a full isolated stack (own Rails + SQLite + Vite), so
     # shards can't interfere through shared server state the way parallel
@@ -307,7 +313,7 @@ jobs:
       # against (packages/dashboard/src/testing/slot-probes.tsx).
       - name: Build dashboard packages
         env:
-          VITE_E2E_SLOT_PROBES: "1"
+          VITE_E2E_SLOT_PROBES: '1'
         run: pnpm turbo build --filter=@spree/dashboard --filter=@spree/seller-dashboard-starter --cache-dir=.turbo
 
       - name: Setup dummy Rails app
@@ -344,7 +350,7 @@ jobs:
       - name: Run dashboard E2E tests
         working-directory: packages/dashboard
         env:
-          E2E_PREVIEW: "1"
+          E2E_PREVIEW: '1'
         run: pnpm test:e2e --shard=${{ matrix.shard }}/4
 
       # First-run setup needs a stack with no admin, which the main suite's
@@ -354,7 +360,7 @@ jobs:
         if: ${{ !cancelled() && matrix.shard == 1 }}
         working-directory: packages/dashboard
         env:
-          E2E_PREVIEW: "1"
+          E2E_PREVIEW: '1'
         run: pnpm test:e2e:first-run
 
       - name: Upload Playwright report
@@ -368,4 +374,3 @@ jobs:
             packages/dashboard/playwright-report-first-run/
             packages/dashboard/test-results-first-run/
           retention-days: 14
-
