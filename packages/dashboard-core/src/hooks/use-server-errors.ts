@@ -1,26 +1,16 @@
-import { SpreeError } from '@spree/admin-sdk'
 import { toastManager } from '@spree/dashboard-ui'
 import { useCallback, useState } from 'react'
-import type { FieldValues, UseFormSetError } from 'react-hook-form'
-import { mapSpreeErrorsToForm } from '../lib/form-errors'
 import { i18n } from '../lib/i18n'
+import {
+  NO_SERVER_ERRORS,
+  offscreenSummaryOf,
+  readServerErrors,
+  type ServerErrorState,
+  serverErrorStateFrom,
+  withoutField,
+} from '../lib/server-errors'
 
-/** Server messages by field name, plus `root` for the failure summary. */
-export type ServerErrors = Partial<Record<string, string>>
-
-/**
- * The messages of a rejected save, as `mapSpreeErrorsToForm` would set them.
- *
- * @returns null when the error is not from the API
- */
-export function readServerErrors(error: unknown): ServerErrors | null {
-  const errors: ServerErrors = {}
-  const setError = ((name: string, { message }: { message?: string }) => {
-    errors[name] = message
-  }) as UseFormSetError<FieldValues>
-
-  return mapSpreeErrorsToForm(error, setError) ? errors : null
-}
+export { readServerErrors, type ServerErrors } from '../lib/server-errors'
 
 /**
  * Toasts a failed write in the words a form would show it, for a dialog with
@@ -53,9 +43,7 @@ export function toastMutationError(error: unknown): void {
  * ```
  */
 export function useServerErrors() {
-  const [errors, setErrors] = useState<ServerErrors>({})
-  // Every field the server named, `base` and nested keys included, which get no message of their own.
-  const [fields, setFields] = useState<string[]>([])
+  const [state, setState] = useState<ServerErrorState>(NO_SERVER_ERRORS)
 
   /**
    * Keeps the messages of a `SpreeError`, replacing the previous ones.
@@ -63,41 +51,25 @@ export function useServerErrors() {
    * @returns `false` when the error is not from the API, for the caller to rethrow
    */
   const capture = useCallback((error: unknown): boolean => {
-    const next = readServerErrors(error)
+    const next = serverErrorStateFrom(error)
     if (!next) return false
 
-    setErrors(next)
-    setFields(error instanceof SpreeError && error.details ? Object.keys(error.details) : [])
+    setState(next)
     return true
   }, [])
 
   /** Drops one field's message once the merchant changes that field. */
   const clear = useCallback((field: string) => {
-    setErrors((previous) => {
-      if (!(field in previous)) return previous
-      const { [field]: _cleared, ...rest } = previous
-      return rest
-    })
+    setState((previous) => withoutField(previous, field))
   }, [])
 
-  const reset = useCallback(() => {
-    setErrors({})
-    setFields([])
-  }, [])
+  const reset = useCallback(() => setState(NO_SERVER_ERRORS), [])
 
-  /**
-   * The summary, while the server named a field this form does not render
-   * (`base` included): it is the only place that message can show. A field
-   * on screen shows its own, and a refusal with no field is already toasted
-   * by `useResourceMutation`.
-   *
-   * @param shown the field names this form renders
-   */
+  /** @see offscreenSummaryOf */
   const offscreenSummary = useCallback(
-    (shown: readonly string[]) =>
-      fields.some((key) => !shown.includes(key)) ? errors.root : undefined,
-    [errors, fields],
+    (shown: readonly string[]) => offscreenSummaryOf(state, shown),
+    [state],
   )
 
-  return { errors, offscreenSummary, capture, clear, reset }
+  return { errors: state.errors, offscreenSummary, capture, clear, reset }
 }
