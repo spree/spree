@@ -219,13 +219,20 @@ module Spree
 
     # @param stock_level [Spree::StockLevel, nil] the variant's level here, when
     #   the caller loaded it already
-    def fill_status(variant, quantity, stock_level: nil)
+    # @param excluded_order [Spree::Cart, Spree::Order, nil] the purchase whose
+    #   existing holds remain available while packing it again
+    def fill_status(variant, quantity, stock_level: nil, excluded_order: nil)
       if item = stock_level || stock_level_or_create(variant)
-        if item.available_count >= quantity
+        available = if excluded_order
+                      Spree::Stock::Quantifier.new(variant, self, stock_levels: [item], excluded_order: excluded_order).total_on_hand
+                    else
+                      item.available_count
+                    end
+        if available >= quantity
           on_hand = quantity
           backordered = 0
         else
-          on_hand = item.available_count
+          on_hand = available
           on_hand = 0 if on_hand < 0
           # A pre-order oversells like a backorder: the shortfall becomes
           # backordered inventory units (the backorder_limit cap is enforced

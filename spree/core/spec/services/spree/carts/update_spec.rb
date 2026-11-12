@@ -42,6 +42,124 @@ module Spree
         end
       end
 
+      describe 'updating the purchase company' do
+        let(:cart) do
+          create(:cart, customer: user, store: store, currency: 'USD').tap do |purchase|
+            2.times do
+              product = create(:product, store: store)
+              create(:line_item, cart: purchase, order: nil, variant: product.default_variant)
+            end
+          end
+        end
+        let(:first_company) { create(:company, store: store) }
+        let(:second_company) { create(:company, store: store) }
+
+        before do
+          [first_company, second_company].zip([7, 13]).each do |company, amount|
+            create(:company_membership, company: company, customer: user)
+            catalog = create(:catalog, store: store)
+            create(:catalog_assignment, catalog: catalog, assignable: company)
+            price_list = create(:price_list, :active, store: store, catalog: catalog)
+            cart.line_items.each do |line_item|
+              create(:price, variant: line_item.variant, price_list: price_list, currency: 'USD', amount: amount)
+            end
+          end
+          cart.recalculate_for_address_change!
+        end
+
+        it 'reprices existing items when choosing, switching and clearing the company' do
+          base_prices = cart.line_items.reload.pluck(:price)
+
+          [first_company, second_company, nil].zip([7, 13, nil]).each do |company, amount|
+            result = described_class.call(cart: cart, params: { company_id: company&.prefixed_id })
+
+            expect(result).to be_success
+            expect(cart.reload.company).to eq(company)
+            expect(cart.line_items.pluck(:price)).to eq(amount ? Array.new(base_prices.size, amount) : base_prices)
+          end
+        end
+
+        it 'reprices every line when company and items arrive together' do
+          result = described_class.call(cart: cart, params: {
+            company_id: first_company.prefixed_id,
+            items: [{ variant_id: cart.line_items.first.variant.prefixed_id, quantity: 2 }]
+          })
+
+          expect(result).to be_success
+          expect(cart.reload.line_items.pluck(:price)).to all(eq(7))
+          expect(cart.line_items.first.quantity).to eq(2)
+        end
+
+        it 'does not rebuild delivery proposals for the unchanged company' do
+          cart.update!(company: first_company)
+          cart.recalculate_for_address_change!
+
+          expect(cart).not_to receive(:recalculate_for_address_change!)
+
+          expect(described_class.call(cart: cart, params: { company_id: first_company.prefixed_id })).to be_success
+        end
+
+        it 'keeps its valid hold when an earlier origin is held by another checkout' do
+          stub_store_preferences(store, stock_reservations_enabled: true)
+          other_location = create(:stock_location, store: store, backorderable_default: false)
+          store.default_channel.stock_locations = [store_stock_location, other_location]
+          cart.update!(email: user.email)
+          cart.line_items.each do |line_item|
+            line_item.variant.stock_levels.each { |level| level.update!(count_on_hand: 0, backorderable: false) }
+            line_item.variant.product.delivery_profile.default_origin_group.stock_locations = [store_stock_location, other_location]
+            first_level = store_stock_location.stock_level_or_create(line_item.variant)
+            first_level.set_count_on_hand(1)
+            second_level = other_location.stock_level_or_create(line_item.variant)
+            second_level.set_count_on_hand(1)
+            other_cart = create(:cart, store: store, email: 'other@example.com')
+            other_line = create(:line_item, cart: other_cart, order: nil, variant: line_item.variant, quantity: 1)
+            create(:stock_reservation, cart: other_cart, order: nil, line_item: other_line, stock_level: first_level, quantity: 1)
+            create(:stock_reservation, cart: cart, order: nil, line_item: line_item, stock_level: second_level, quantity: 1)
+          end
+          own_holds = Spree::StockReservation.for_order(cart).pluck(:id)
+          expect(own_holds.size).to eq(2)
+          address = create(:address, customer: user)
+          cart.update!(ship_address: address, bill_address: address)
+          express = create(:delivery_method, store: store)
+          express.calculator.update!(preferred_amount: 15)
+          cart.recalculate_for_address_change!
+          expect(cart.fulfillments.reload).to be_present
+          cart.fulfillments.each do |fulfillment|
+            fulfillment.selected_delivery_rate_id = fulfillment.delivery_rates.find_by!(delivery_method: express).id
+          end
+          cart.reload
+          expect(cart.fulfillments.map { |fulfillment| fulfillment.selected_delivery_rate.delivery_method }).to all(eq(express))
+
+          result = described_class.call(cart: cart, params: { company_id: first_company.prefixed_id })
+
+          expect(result).to be_success
+          expect(Spree::StockReservation.for_order(cart).pluck(:id)).to match_array(own_holds)
+          expect(cart.fulfillments.reload).to be_present
+          expect(cart.fulfillments.reload.map(&:stock_location_id)).to all(eq(other_location.id))
+          expect(cart.fulfillments.map { |fulfillment| fulfillment.selected_delivery_rate.delivery_method }).to all(eq(express))
+          expect(cart.line_items.reload.pluck(:price)).to all(eq(7))
+        end
+
+        it 'rolls the company change back when prices cannot be confirmed' do
+          prices = cart.line_items.reload.pluck(:price)
+          provider = Class.new(Spree::PricingProvider::Base) do
+            def self.key = 'company_contract'
+            def price_for(_context) = raise(Timeout::Error)
+          end
+          Spree.pricing_providers << provider
+          stub_store_preferences(store, pricing_provider: 'company_contract')
+
+          result = described_class.call(cart: cart, params: { company_id: first_company.prefixed_id })
+
+          expect(result).to be_failure
+          expect(cart.company_id).to be_nil
+          expect(cart.reload.company_id).to be_nil
+          expect(cart.line_items.pluck(:price)).to eq(prices)
+        ensure
+          Spree.pricing_providers.delete(provider) if provider
+        end
+      end
+
       describe 'updating customer_note' do
         let(:params) { { customer_note: 'Leave at the door' } }
 

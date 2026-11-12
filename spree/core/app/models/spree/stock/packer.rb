@@ -18,6 +18,7 @@ module Spree
       # @return [Hash{Integer => Hash{Integer => Spree::StockLevel}}] by location, then variant
       def self.stock_levels_by_location(stock_locations, variant_ids)
         Spree::StockLevel.where(stock_location_id: stock_locations.map(&:id), variant_id: variant_ids).
+          includes(:active_stock_reservations).
           order(:id).group_by(&:stock_location_id).
           transform_values { |levels| levels.group_by(&:variant_id).transform_values(&:first) }
       end
@@ -40,6 +41,11 @@ module Spree
         end
       end
 
+      # Builds this location's proposal, sharing each variant's stock across
+      # its lines. The owner's existing checkout holds stay available to it;
+      # competing holds still reduce the quantity this package may offer.
+      #
+      # @return [Spree::Stock::Package]
       def default_package
         package = build_package
 
@@ -48,8 +54,12 @@ module Spree
         # The package's variants and their levels here, each in one query
         # rather than one per variant. Lowest id first, as StockLocation#stock_level reads.
         variants = variants_for(units_by_variant_id)
-        stock_levels = @stock_levels || stock_location.stock_levels.where(variant_id: units_by_variant_id.keys).order(:id).
-                       group_by(&:variant_id).transform_values(&:first)
+        stock_levels = @stock_levels
+        unless stock_levels
+          levels = stock_location.stock_levels.where(variant_id: units_by_variant_id.keys)
+          levels = levels.includes(:active_stock_reservations) if owner
+          stock_levels = levels.order(:id).group_by(&:variant_id).transform_values(&:first)
+        end
 
         units_by_variant_id.each do |variant_id, units|
           variant = variants[variant_id] || Spree::Variant.find(variant_id)
@@ -59,7 +69,7 @@ module Spree
             stock_level = stock_levels[variant_id]
             next if stock_level.nil?
 
-            on_hand, backordered = stock_location.fill_status(variant, units.sum(&:quantity), stock_level: stock_level)
+            on_hand, backordered = stock_location.fill_status(variant, units.sum(&:quantity), stock_level: stock_level, excluded_order: owner)
             # Two lines of one variant draw on one shelf, so it is split
             # between them in order rather than offered to each in full.
             units.each do |unit|

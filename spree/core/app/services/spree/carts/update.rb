@@ -3,12 +3,17 @@ module Spree
     class Update
       prepend Spree::ServiceModule::Base
 
+      # Applies the cart change and recalculates affected prices, delivery
+      # proposals and checkout holds. A service-owned savepoint keeps these
+      # writes atomic when the caller already holds the cart-lock transaction.
       def call(cart:, params:)
         @cart = cart
         @params = params.to_h.deep_symbolize_keys
         was_in_checkout = cart.in_checkout?
 
-        ApplicationRecord.transaction do
+        # The API already holds a transaction through the cart lock. A provider
+        # failure rescued below must roll back these writes, not join that lock.
+        ApplicationRecord.transaction(requires_new: true) do
           assign_cart_attributes
           clear_shipping_address_if_outside_market
           assign_address(:shipping_address)
@@ -62,9 +67,11 @@ module Spree
 
       # Pickup intent counts as a destination change: proposals priced for
       # shipping (or for another counter) are stale once the customer picks
-      # or clears a pickup location.
+      # or clears a pickup location. A company change also invalidates prices
+      # and proposals, even when the shipping destination stays the same.
       def destination_changed?
         cart.saved_change_to_ship_address_id? ||
+          cart.saved_change_to_company_id? ||
           cart.saved_change_to_market_id? ||
           cart.saved_change_to_preferred_stock_location_id?
       end
