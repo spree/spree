@@ -41190,7 +41190,7 @@ paths:
                   deprecated: false
                   replaced_by:
                 meta:
-                  count: 260
+                  count: 270
   "/api/v3/admin/catalogs":
     get:
       summary: List catalogs
