@@ -200,7 +200,9 @@ function StockLevelRow({ item }: { item: StockLevel }) {
   // In a sheet: a rejected count shows beside its input, not in a toast.
   const updateMutation = useUpdateStockLevel(item.id, [], { showValidationErrors: false })
   const serverErrors = useServerErrors()
-  const countError = serverErrors.errors.count_on_hand
+  // The count is the row's only error slot, so a message for any other field lands there too.
+  const countError =
+    serverErrors.errors.count_on_hand ?? serverErrors.offscreenSummary(['count_on_hand'])
   const [count, setCount] = useState<number>(item.count_on_hand)
   const [backorderable, setBackorderable] = useState<boolean>(item.backorderable)
 
@@ -256,7 +258,7 @@ function StockLevelRow({ item }: { item: StockLevel }) {
           className={`ml-auto w-20 text-right ${isLowStock ? 'border-amber-500' : ''}`}
           aria-label={`On hand for ${variantLabel}`}
         />
-        {countError && <FieldError className="text-right">{countError}</FieldError>}
+        <FieldError className="text-right">{countError}</FieldError>
       </TableCell>
       <TableCell>
         <Switch

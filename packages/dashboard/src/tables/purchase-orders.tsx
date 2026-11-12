@@ -163,7 +163,6 @@ defineTable<PurchaseOrder>('purchase-orders', {
       key: 'created_at',
       label: i18n.t('admin.fields.created_at.label'),
       sortable: true,
-      default: false,
       filterable: true,
       filterType: 'date',
       className: 'text-base text-muted-foreground whitespace-nowrap',

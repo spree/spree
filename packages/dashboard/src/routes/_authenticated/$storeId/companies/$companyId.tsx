@@ -940,7 +940,7 @@ function AddMemberDialog({
                   serverErrors.reset()
                 }}
               />
-              {customerError && <FieldError>{customerError}</FieldError>}
+              <FieldError>{customerError}</FieldError>
             </Field>
             <Field>
               <FieldLabel htmlFor="member-email">
@@ -958,7 +958,7 @@ function AddMemberDialog({
                 }}
                 aria-invalid={!!emailError || undefined}
               />
-              {emailError && <FieldError>{emailError}</FieldError>}
+              <FieldError>{emailError}</FieldError>
               <FieldDescription>{t('admin.fields.company_membership.email.help')}</FieldDescription>
             </Field>
 

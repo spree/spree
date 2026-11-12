@@ -1,3 +1,4 @@
+import { SpreeError } from '@spree/admin-sdk'
 import { toastManager } from '@spree/dashboard-ui'
 import { useCallback, useState } from 'react'
 import type { FieldValues, UseFormSetError } from 'react-hook-form'
@@ -53,6 +54,8 @@ export function toastMutationError(error: unknown): void {
  */
 export function useServerErrors() {
   const [errors, setErrors] = useState<ServerErrors>({})
+  // Every field the server named, `base` and nested keys included, which get no message of their own.
+  const [fields, setFields] = useState<string[]>([])
 
   /**
    * Keeps the messages of a `SpreeError`, replacing the previous ones.
@@ -64,6 +67,7 @@ export function useServerErrors() {
     if (!next) return false
 
     setErrors(next)
+    setFields(error instanceof SpreeError && error.details ? Object.keys(error.details) : [])
     return true
   }, [])
 
@@ -76,21 +80,23 @@ export function useServerErrors() {
     })
   }, [])
 
-  const reset = useCallback(() => setErrors({}), [])
+  const reset = useCallback(() => {
+    setErrors({})
+    setFields([])
+  }, [])
 
   /**
-   * The summary, while a field this form does not render has a message: it
-   * is the only place that message can show. A field on screen shows its own,
-   * and a refusal with no field is already toasted by `useResourceMutation`.
+   * The summary, while the server named a field this form does not render
+   * (`base` included): it is the only place that message can show. A field
+   * on screen shows its own, and a refusal with no field is already toasted
+   * by `useResourceMutation`.
    *
    * @param shown the field names this form renders
    */
   const offscreenSummary = useCallback(
     (shown: readonly string[]) =>
-      Object.keys(errors).some((key) => key !== 'root' && !shown.includes(key))
-        ? errors.root
-        : undefined,
-    [errors],
+      fields.some((key) => !shown.includes(key)) ? errors.root : undefined,
+    [errors, fields],
   )
 
   return { errors, offscreenSummary, capture, clear, reset }

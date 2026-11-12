@@ -401,7 +401,12 @@ function AddPaymentDialog({
               onOpenChange(false)
               reset()
             },
-            onError: toastMutationError,
+            // The payment exists by now; staying open would let a retry create a second one.
+            onError: (error) => {
+              toastMutationError(error)
+              onOpenChange(false)
+              reset()
+            },
           })
         } else {
           onOpenChange(false)

@@ -129,12 +129,12 @@ export function PurchaseOrderForm({
   // Saved costs arrive canonical ("3.80") and are shown with the admin's own
   // decimal mark, so an untouched cost reads back unchanged.
   const moneyLocale = useMoneyLocale()
-  const { decimal } = currencyParts(initial.currency ?? 'USD', moneyLocale)
-  const [lines, setLines] = useState<VariantLine[]>(() =>
-    initial.lines.map((line) =>
+  const [lines, setLines] = useState<VariantLine[]>(() => {
+    const { decimal } = currencyParts(initial.currency ?? 'USD', moneyLocale)
+    return initial.lines.map((line) =>
       line.unitCost ? { ...line, unitCost: line.unitCost.replace('.', decimal) } : line,
-    ),
-  )
+    )
+  })
   const [creatingSupplier, setCreatingSupplier] = useState(false)
   const [pickerOpen, setPickerOpen] = useState(false)
 

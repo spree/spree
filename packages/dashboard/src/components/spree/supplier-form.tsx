@@ -139,10 +139,6 @@ export function useSupplierForm(
   return { form, set, save, submitAttempted, isDirty, serverErrors }
 }
 
-function ServerError({ message }: { message?: string }) {
-  return message ? <FieldError>{message}</FieldError> : null
-}
-
 export function SupplierFormFields({
   form,
   set,
@@ -158,8 +154,12 @@ export function SupplierFormFields({
   const { t } = useTranslation()
   const { states } = useCountryStates(form.country_code)
   const { errors } = serverErrors
+  const showState = !!form.country_code && states.length > 0
+  // Only fields with an input on screen carry their own message; state_name has none here.
   const summary = serverErrors.offscreenSummary(
-    part ? SUPPLIER_PARTS[part] : Object.keys(EMPTY_FORM),
+    (part ? SUPPLIER_PARTS[part] : (Object.keys(EMPTY_FORM) as (keyof SupplierFormState)[])).filter(
+      (key) => key !== 'state_name' && (key !== 'state_code' || showState),
+    ),
   )
   return (
     <FieldGroup>
@@ -181,7 +181,7 @@ export function SupplierFormFields({
             {submitAttempted && !form.name.trim() ? (
               <FieldError>{t('admin.suppliers.errors.name_blank')}</FieldError>
             ) : (
-              <ServerError message={errors.name} />
+              <FieldError>{errors.name}</FieldError>
             )}
           </Field>
 
@@ -194,7 +194,7 @@ export function SupplierFormFields({
               value={form.contact_name}
               onChange={(event) => set('contact_name', event.target.value)}
             />
-            <ServerError message={errors.contact_name} />
+            <FieldError>{errors.contact_name}</FieldError>
           </Field>
 
           <Field>
@@ -205,7 +205,7 @@ export function SupplierFormFields({
               value={form.email}
               onChange={(event) => set('email', event.target.value)}
             />
-            <ServerError message={errors.email} />
+            <FieldError>{errors.email}</FieldError>
           </Field>
 
           <Field>
@@ -215,7 +215,7 @@ export function SupplierFormFields({
               value={form.phone}
               onChange={(event) => set('phone', event.target.value)}
             />
-            <ServerError message={errors.phone} />
+            <FieldError>{errors.phone}</FieldError>
           </Field>
         </>
       )}
@@ -230,7 +230,7 @@ export function SupplierFormFields({
               value={form.address1}
               onChange={(event) => set('address1', event.target.value)}
             />
-            <ServerError message={errors.address1} />
+            <FieldError>{errors.address1}</FieldError>
           </Field>
 
           <Field>
@@ -242,7 +242,7 @@ export function SupplierFormFields({
               value={form.address2}
               onChange={(event) => set('address2', event.target.value)}
             />
-            <ServerError message={errors.address2} />
+            <FieldError>{errors.address2}</FieldError>
           </Field>
 
           <Field>
@@ -252,7 +252,7 @@ export function SupplierFormFields({
               value={form.city}
               onChange={(event) => set('city', event.target.value)}
             />
-            <ServerError message={errors.city} />
+            <FieldError>{errors.city}</FieldError>
           </Field>
 
           <Field>
@@ -264,7 +264,7 @@ export function SupplierFormFields({
               value={form.postal_code}
               onChange={(event) => set('postal_code', event.target.value)}
             />
-            <ServerError message={errors.postal_code} />
+            <FieldError>{errors.postal_code}</FieldError>
           </Field>
 
           <Field>
@@ -279,9 +279,10 @@ export function SupplierFormFields({
                 set('state_code', '')
               }}
             />
+            <FieldError>{errors.country_code}</FieldError>
           </Field>
 
-          {form.country_code && states.length > 0 && (
+          {showState && (
             <Field>
               <FieldLabel htmlFor="supplier-state">{t('admin.fields.state.label')}</FieldLabel>
               <StateCombobox
@@ -291,6 +292,7 @@ export function SupplierFormFields({
                 value={form.state_code}
                 onValueChange={(abbr) => set('state_code', abbr)}
               />
+              <FieldError>{errors.state_code}</FieldError>
             </Field>
           )}
         </>
@@ -303,7 +305,7 @@ export function SupplierFormFields({
             value={form.notes}
             onChange={(event) => set('notes', event.target.value)}
           />
-          <ServerError message={errors.notes} />
+          <FieldError>{errors.notes}</FieldError>
         </Field>
       )}
     </FieldGroup>
