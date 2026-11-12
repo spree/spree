@@ -1,5 +1,17 @@
 # @spree/seller-sdk
 
+## 6.0.4
+
+### Patch Changes
+
+- [#15136](https://github.com/spree/spree/pull/15136) [`6f3de61`](https://github.com/spree/spree/commit/6f3de6138e6879caf065798ddd2462360d5b06f6) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Order line items carry `product_id`, so an order page can link each line to its product without expanding the variant.
+
+- [#15145](https://github.com/spree/spree/pull/15145) [`6bb42c3`](https://github.com/spree/spree/commit/6bb42c3aa3a8feab481996580e8566ffd3f9624f) Thanks [@beobungbu](https://github.com/beobungbu)! - Avoid reading browser location when an explicit base URL is configured, and support native environments where window exists without location.
+
+- [#15190](https://github.com/spree/spree/pull/15190) [`f9db63d`](https://github.com/spree/spree/commit/f9db63d5f25d75938bd813d14e5edf57580c470c) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `profile.update` accepts `holiday_mode_until`, so a seller can set or end their own holiday mode.
+
+- [#15136](https://github.com/spree/spree/pull/15136) [`fd2364a`](https://github.com/spree/spree/commit/fd2364a3b8de751d4e115ea8786da47de91431ae) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added `products.media.delete` for removing a file from a product's gallery. A product update never removes a file it was not sent, so this is the only way to take one off; the `media` description on product create and update now says so.
+
 ## 6.0.3
 
 ### Patch Changes

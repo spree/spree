@@ -1,5 +1,17 @@
 # @spree/cli
 
+## 3.7.0
+
+### Minor Changes
+
+- [#15171](https://github.com/spree/spree/pull/15171) [`42c7a92`](https://github.com/spree/spree/commit/42c7a92e56290a585938556e1becc3f1ce7c9974) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `spree upgrade` now offers to update the Spree agent skills. When `skills-lock.json` lists skills from `spree/agent-skills`, it asks, then installs every skill from the main branch right after the `@spree/*` packages, so installed skills move to the newest version and new ones are added. A failed download only warns, now with the `skills` CLI's own reason, and `--yes` accepts the update.
+
+### Patch Changes
+
+- [#15176](https://github.com/spree/spree/pull/15176) [`8a1a876`](https://github.com/spree/spree/commit/8a1a8765c15209a60e4eb8bfc447fb90adfbebd9) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added `spree info`, which prints the anonymised diagnostics report a Spree server gives for bug reports: Spree and gem versions, runtime, infrastructure, settings changed from their defaults and recent Spree errors. `--json` prints it as JSON and `--issue` opens a GitHub issue with the report filled in.
+
+- [#15127](https://github.com/spree/spree/pull/15127) [`9495a16`](https://github.com/spree/spree/commit/9495a16c22fe379cf41734f6320910a299d88ec2) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `spree sdk generate` now types a response whose schema is declared inline, such as `{ data: [...] }`, from that schema, as `<Namespace><Method>Response`, instead of as the resource's record; a list declared that way is not wrapped in `PaginatedResponse` again. `x-spree-sdk-method` and `x-spree-sdk-namespace` (`sdk_method` in an rswag spec) name a method and its namespace without an `operationId`, which also names the operation's agent tool, so a path nested under one of the SDK's resources, such as `/carts/{cart_id}/quote_attachments`, can go in a namespace of the extension's own instead of `carts`, which `extend` refuses. A namespace that is not an identifier, and two inline response types of one name, are refused with the path to fix instead of writing a client that does not compile.
+
 ## 3.6.3
 
 ### Patch Changes

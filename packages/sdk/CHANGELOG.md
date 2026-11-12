@@ -1,5 +1,11 @@
 # @spree/sdk
 
+## 6.0.4
+
+### Patch Changes
+
+- [#15145](https://github.com/spree/spree/pull/15145) [`6bb42c3`](https://github.com/spree/spree/commit/6bb42c3aa3a8feab481996580e8566ffd3f9624f) Thanks [@beobungbu](https://github.com/beobungbu)! - Avoid reading browser location when an explicit base URL is configured, and support native environments where window exists without location.
+
 ## 6.0.3
 
 ### Patch Changes
