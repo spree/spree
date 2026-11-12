@@ -1,0 +1,6 @@
+---
+"@spree/cli": minor
+"create-spree-app": patch
+---
+
+`spree generate` now ejects a project still on the prebuilt image before running, after asking, because the prebuilt image never loads files written to `server/`. With no terminal to ask in, it stops and prints the exact `spree generate --yes …` command to run once the developer agrees. The deprecated `spree bundle add <gem>` now installs the gem through `spree add`, and `spree bundle add|remove|install|update|lock` refuses on a project that is not ejected instead of changing nothing. New projects' agent instructions describe this in one line instead of a section.

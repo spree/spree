@@ -174,7 +174,7 @@ function usageError(message: string): never {
  * through the catalog. Names are checked so neither can be read as a flag,
  * and the developer confirms, since nothing vouches for the package.
  */
-async function addUncataloguedExtension(
+export async function addUncataloguedExtension(
   gem: string | undefined,
   npm: string | undefined,
   opts: AddExtensionOptions,
@@ -193,6 +193,7 @@ async function addUncataloguedExtension(
     await confirmOrExit(
       `${uncatalogued.join(' and ')} ${uncatalogued.length > 1 ? 'are' : 'is'} not in the Spree extension catalog. Install anyway?`,
       opts.yes,
+      { retry: opts.retry },
     )
   }
   await addExtension(

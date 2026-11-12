@@ -106,6 +106,12 @@ export function isEjectedProject(projectDir: string): boolean {
   }
 }
 
+// Whether the running app loads code and gems from the API directory: an
+// ejected project, or a monorepo edge project, which boots from source.
+export function runsFromSource(projectDir: string): boolean {
+  return isEjectedProject(projectDir) || hasMonorepoSpreePath(projectDir)
+}
+
 /**
  * The sample-data choice create-spree-app persists in `.env`, so a deferred
  * first run (through `spree dev`) honors the answer given at scaffold time.

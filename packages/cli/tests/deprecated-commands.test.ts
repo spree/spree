@@ -1,14 +1,36 @@
+import * as p from '@clack/prompts'
 import { Command } from 'commander'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { addUncataloguedExtension } from '../src/commands/add'
+import { addExtension } from '../src/commands/add-extension'
 import { registerBundleCommand } from '../src/commands/bundle'
+import { ejectProject } from '../src/commands/eject'
 import { registerGenerateCommand } from '../src/commands/generate'
 import { registerRailsCommand } from '../src/commands/rails'
 import { registerRakeCommand } from '../src/commands/rake'
 import { registerRoutesCommand } from '../src/commands/routes'
+import { runsFromSource } from '../src/context'
 import { dockerComposeExecOrRun } from '../src/docker'
+import { resolveExtension } from '../src/lib/extensions'
 
-vi.mock('../src/context', () => ({
+vi.mock('../src/context', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../src/context')>()),
   detectProject: () => ({ mode: 'docker', projectDir: '/proj', port: 3000 }),
+  runsFromSource: vi.fn(() => true),
+}))
+
+vi.mock('@clack/prompts', () => ({
+  cancel: vi.fn(),
+  confirm: vi.fn(),
+  isCancel: () => false,
+  intro: vi.fn(),
+  outro: vi.fn(),
+}))
+
+vi.mock('../src/commands/eject', () => ({ ejectProject: vi.fn(async () => undefined) }))
+vi.mock('../src/commands/add-extension', () => ({ addExtension: vi.fn(async () => undefined) }))
+vi.mock('../src/commands/add', () => ({
+  addUncataloguedExtension: vi.fn(async () => undefined),
 }))
 
 vi.mock('../src/docker', () => ({
@@ -59,15 +81,17 @@ describe('deprecated Rails-named commands', () => {
       ['bin/rake', 'db:rollback', 'STEP=2'],
       'spree exec bin/rake',
     ],
-    [['bundle', 'add', 'spree_stripe'], ['bundle', 'add', 'spree_stripe'], 'spree add stripe'],
-    [['bundle', 'add', 'paypal'], ['bundle', 'add', 'paypal'], 'spree add paypal'],
-    [['bundle', 'add', 'spree_foo'], ['bundle', 'add', 'spree_foo'], 'spree add --gem spree_foo'],
     [
       ['bundle', 'add', '--version', '~> 6.0', 'spree_stripe'],
       ['bundle', 'add', '--version', '~> 6.0', 'spree_stripe'],
       'spree exec bundle add --version ~> 6.0 spree_stripe',
     ],
     [['bundle', 'outdated'], ['bundle', 'outdated'], 'spree exec bundle outdated'],
+    [
+      ['bundle', 'remove', 'spree_foo'],
+      ['bundle', 'remove', 'spree_foo'],
+      'spree exec bundle remove',
+    ],
     [['routes'], ['bin/rails', 'routes'], 'spree api endpoints'],
     [
       ['routes', '-g', 'products'],
@@ -126,5 +150,135 @@ describe('spree generate', () => {
       '/proj',
     )
     expect(stderr).not.toHaveBeenCalled()
+    expect(ejectProject).not.toHaveBeenCalled()
+  })
+})
+
+describe('spree bundle on a project', () => {
+  let stderr: ReturnType<typeof vi.spyOn>
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+    stderr = vi.spyOn(console, 'error').mockImplementation(() => {})
+    vi.spyOn(process, 'exit').mockImplementation((code?: number | string | null) => {
+      throw new Error(`process.exit(${code})`)
+    })
+  })
+
+  afterEach(() => {
+    vi.mocked(runsFromSource).mockReturnValue(true)
+    vi.restoreAllMocks()
+  })
+
+  it.each([
+    ['spree_stripe', 'spree add stripe'],
+    ['paypal', 'spree add paypal'],
+  ])('installs a catalogued %s through spree add', async (gem, replacement) => {
+    await run(['bundle', 'add', gem])
+
+    expect(addExtension).toHaveBeenCalledWith(expect.any(Object), resolveExtension(gem), {
+      yes: false,
+      retry: `${replacement} --yes`,
+    })
+    expect(dockerComposeExecOrRun).not.toHaveBeenCalled()
+    expect(stderr).toHaveBeenCalledWith(expect.stringContaining(replacement))
+  })
+
+  it('installs a gem outside the catalog through spree add --gem', async () => {
+    await run(['bundle', 'add', 'spree_foo'])
+
+    expect(addUncataloguedExtension).toHaveBeenCalledWith('spree_foo', undefined, {
+      yes: false,
+      retry: 'spree add --gem spree_foo --yes',
+    })
+    expect(dockerComposeExecOrRun).not.toHaveBeenCalled()
+  })
+
+  it('refuses to change the bundle of a project on the prebuilt image', async () => {
+    vi.mocked(runsFromSource).mockReturnValue(false)
+
+    await expect(run(['bundle', 'remove', 'spree_foo'])).rejects.toThrow('process.exit(1)')
+
+    expect(dockerComposeExecOrRun).not.toHaveBeenCalled()
+    expect(p.cancel).toHaveBeenCalledWith(expect.stringContaining('spree add <extension>'))
+  })
+
+  it('still reads the bundle of a project on the prebuilt image', async () => {
+    vi.mocked(runsFromSource).mockReturnValue(false)
+
+    await run(['bundle', 'outdated'])
+
+    expect(dockerComposeExecOrRun).toHaveBeenCalledWith(
+      ['bundle', 'outdated'],
+      '/proj',
+      expect.any(Object),
+    )
+  })
+})
+
+describe('spree generate on a project on the prebuilt image', () => {
+  const originalIsTTY = process.stdin.isTTY
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+    vi.mocked(runsFromSource).mockReturnValue(false)
+    vi.spyOn(process, 'exit').mockImplementation((code?: number | string | null) => {
+      throw new Error(`process.exit(${code})`)
+    })
+  })
+
+  afterEach(() => {
+    vi.mocked(runsFromSource).mockReturnValue(true)
+    Object.defineProperty(process.stdin, 'isTTY', { value: originalIsTTY, configurable: true })
+    vi.restoreAllMocks()
+  })
+
+  it('stops with no terminal to ask in, naming the command that agrees', async () => {
+    Object.defineProperty(process.stdin, 'isTTY', { value: false, configurable: true })
+
+    await expect(run(['generate', 'api_resource', 'Brand', "title:string{it's}"])).rejects.toThrow(
+      'process.exit(1)',
+    )
+
+    expect(ejectProject).not.toHaveBeenCalled()
+    expect(dockerComposeExecOrRun).not.toHaveBeenCalled()
+    const message = vi.mocked(p.cancel).mock.calls[0][0]
+    expect(message).toContain('ask them first')
+    expect(message).toContain(`spree generate --yes api_resource Brand 'title:string{it'\\''s}'`)
+  })
+
+  it('ejects and then generates once the developer agrees', async () => {
+    Object.defineProperty(process.stdin, 'isTTY', { value: true, configurable: true })
+    vi.mocked(p.confirm).mockResolvedValue(true)
+
+    await run(['generate', 'model_decorator', 'Product'])
+
+    expect(ejectProject).toHaveBeenCalledWith('/proj')
+    expect(dockerComposeExecOrRun).toHaveBeenCalledWith(
+      ['bin/rails', 'generate', 'spree:model_decorator', 'Product'],
+      '/proj',
+    )
+  })
+
+  it('ejects without asking with --yes before the generator name', async () => {
+    Object.defineProperty(process.stdin, 'isTTY', { value: false, configurable: true })
+
+    await run(['generate', '--yes', 'migration', 'AddX', '--force'])
+
+    expect(p.confirm).not.toHaveBeenCalled()
+    expect(ejectProject).toHaveBeenCalledWith('/proj')
+    expect(dockerComposeExecOrRun).toHaveBeenCalledWith(
+      ['bin/rails', 'generate', 'migration', 'AddX', '--force'],
+      '/proj',
+    )
+  })
+
+  it('stops without ejecting when the developer declines', async () => {
+    Object.defineProperty(process.stdin, 'isTTY', { value: true, configurable: true })
+    vi.mocked(p.confirm).mockResolvedValue(false)
+
+    await expect(run(['generate', 'model_decorator', 'Product'])).rejects.toThrow('process.exit(0)')
+    expect(ejectProject).not.toHaveBeenCalled()
+    expect(dockerComposeExecOrRun).not.toHaveBeenCalled()
   })
 })

@@ -296,6 +296,8 @@ spree generate migration AddPositionToSpreeBrands position:integer  # Rails buil
 
 `spree:api_resource` scaffolds the full v3 surface: model, migration, Store + Admin controllers and serializers, factory, controller specs, routes, and the `read_<resources>` / `write_<resources>` permissions that let staff roles and secret API keys reach the Admin API.
 
+The prebuilt image never loads files from `server/`, so on a project that still runs it, the command offers to [eject](#spree-eject) the project first. Ejecting switches to a new development database without your current data, so it asks before doing it. Pass `--yes` before the generator name to agree up front (`spree generate --yes model Brand`). With no terminal to ask in, for example when a coding agent runs it, the command stops and prints that `--yes` command.
+
 ### `spree filters types`
 
 Generate TypeScript declarations for your app's list filters, so the SDKs accept and autocomplete the filters and sort fields your app adds. It reads them from the running app and writes `src/types/spree-filters.d.ts` into each app under `apps/` (storefront, dashboard, seller panel), for the SDK that app uses. Run it again after you change a filter.
