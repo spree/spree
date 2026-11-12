@@ -358,6 +358,8 @@ curl -X PATCH 'https://api.mystore.com/api/v3/admin/sellers/sel_xxx/approve' \
 
 Approval is refused while a required requirement is unmet, unless `override_requirements` says the operator means it. The override is recorded on the `seller.approved` event along with what was outstanding — the operator can step over the checklist, but not without saying so.
 
+The same flag admits a seller who never started onboarding — one you created and either never invited, or invited and nobody has accepted yet. Without it, a `pending` or `invited` seller cannot be approved.
+
 **Suspend and reject are not the same thing.** Reject turns away an applicant who never traded; it refuses an approved seller outright. Suspend halts a trading seller: their catalog stops selling, their record and history stay, and `approve` is the way back. A suspended seller being reinstated is not re-measured against the checklist, because they were admitted once already.
 
 A seller can also take themselves off sale without any operator involvement, by setting `holiday_mode_until`. The catalog stays visible; what stops is selling.

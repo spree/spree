@@ -88,7 +88,10 @@ module Spree
 
           request_params 'SellerApproveParams', action: :approve do |body|
             body.attribute :override_requirements, :boolean,
-              description: 'Admits a seller whose onboarding checklist is unfinished: the operator\'s deliberate exception, which the `seller.approved` event records along with what was outstanding.'
+                           description: "Admits a seller whose onboarding checklist is unfinished: the operator's " \
+                                        'deliberate exception, which the `seller.approved` event records along with ' \
+                                        'what was outstanding. Also admits a `pending` or `invited` seller who never ' \
+                                        'started onboarding, which is refused without it.'
           end
 
           request_params 'SellerReopenOnboardingParams', action: :reopen_onboarding do |body|

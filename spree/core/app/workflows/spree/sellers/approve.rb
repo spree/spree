@@ -2,6 +2,11 @@ module Spree
   module Sellers
     # Lets a seller trade. Also the way back for one that was suspended or
     # turned down, which is why the guard admits more than the linear path.
+    #
+    # A seller the operator created and never invited (or whose invitation is
+    # still open) can be admitted too, but only with `override_requirements`:
+    # the operator is skipping onboarding altogether, so it must be as
+    # deliberate — and as visible on the event — as skipping the checklist.
     class Approve < Spree::Workflow
       hooks :validate, :after_approve
 
@@ -40,6 +45,7 @@ module Spree
 
         return if seller.onboarding? || seller.ready_for_review? ||
                   seller.suspended? || seller.rejected?
+        return if override_requirements && (seller.pending? || seller.invited?)
 
         failure(seller, :not_approvable)
       end
