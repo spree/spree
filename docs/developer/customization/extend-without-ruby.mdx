@@ -1,0 +1,196 @@
+---
+title: Extending Spree without Ruby
+sidebarTitle: Without Ruby
+description: Connect your own services, scripts, admin screens and AI agents to Spree through webhooks, the Admin API, the TypeScript SDKs, the MCP server and dashboard plugins — no Ruby required.
+---
+
+Your team doesn't have to write Ruby to build on Spree. The backend runs from a prebuilt Docker image, and everything below works against that image as it is:
+
+- **Webhooks** tell your services when something happens.
+- **The Admin API**, called with a scoped secret key, lets them read and change the store.
+- **The TypeScript SDKs** give typed clients for both.
+- **The MCP server** lets an AI agent read and change the store on a person's behalf.
+- **Dashboard plugins** add your own screens to the admin, written in React.
+
+Ruby is still the right tool for a few jobs. See [When to use Ruby instead](#when-to-use-ruby-instead).
+
+## Quick reference
+
+| What you want to do | Use |
+|---|---|
+| Sync orders, customers or stock to an ERP, CRM or warehouse | [Webhooks](#webhooks), then the [Admin API](#the-admin-api) for anything the payload leaves out |
+| Run a nightly import, a scheduled report or a data pipeline | [The Admin API](#the-admin-api) with a secret key |
+| Build a storefront or a mobile app | [The Store API](/api-reference/store-api/introduction) through [`@spree/sdk`](/developer/sdk/quickstart) |
+| Let staff ask an assistant to cancel an order or update stock | [The MCP server](#the-mcp-server) |
+| Add a screen, a column or a widget to the admin | [Dashboard plugins](#dashboard-plugins) |
+| Store your own data on products, orders or customers | [Custom fields](/developer/core-concepts/metafields), [metadata](/developer/customization/metadata) or [external references](/developer/core-concepts/external-references) |
+| Block an operation or change how Spree calculates something | Ruby — see [When to use Ruby instead](#when-to-use-ruby-instead) |
+
+## Webhooks
+
+A webhook sends an HTTP POST to your service when an event happens in the store — an order is placed, a payment is completed, a product sells out. Your service can be written in any language.
+
+Create an endpoint in the dashboard under **Settings → Webhooks**, or through the Admin API:
+
+<Tabs>
+  <Tab title="Admin SDK">
+    ```typescript
+    import { createAdminClient } from '@spree/admin-sdk'
+
+    const client = createAdminClient({
+      baseUrl: 'https://store.example.com',
+      secretKey: process.env.SPREE_SECRET_KEY,
+    })
+
+    const endpoint = await client.webhookEndpoints.create({
+      url: 'https://erp.example.com/webhooks/spree',
+      subscriptions: ['order.placed', 'order.canceled'],
+      active: true,
+    })
+
+    // Returned only once. Store it to verify signatures.
+    endpoint.secret_key
+    ```
+  </Tab>
+  <Tab title="cURL">
+    ```bash
+    curl -X POST 'https://store.example.com/api/v3/admin/webhook_endpoints' \
+      -H 'X-Spree-API-Key: sk_xxx' \
+      -H 'Content-Type: application/json' \
+      -d '{
+        "url": "https://erp.example.com/webhooks/spree",
+        "subscriptions": ["order.placed", "order.canceled"],
+        "active": true
+      }'
+    ```
+  </Tab>
+</Tabs>
+
+Every request is signed with HMAC-SHA256. Always check the signature before you trust a payload. In JavaScript or TypeScript, `@spree/sdk/webhooks` checks it and returns a typed event:
+
+```typescript
+import { constructWebhookEvent } from '@spree/sdk/webhooks'
+
+const event = constructWebhookEvent(rawBody, request.headers, process.env.SPREE_WEBHOOK_SECRET!)
+
+if (event.name === 'order.placed') {
+  await erp.createSalesOrder(event.data) // typed as an Order
+}
+```
+
+In another language, compute the HMAC-SHA256 of `{timestamp}.{body}` with the endpoint's secret key, using the `X-Spree-Webhook-Timestamp` header and the raw request body, and compare it with the `X-Spree-Webhook-Signature` header.
+
+Things to know:
+
+- A failed delivery is retried, so your service can receive the same event more than once. Every attempt carries the same event `id`. Use it to skip events you have already handled.
+- Payloads carry what a customer could see. For back-office fields, fetch the record from the Admin API with the `id` in the payload.
+- A webhook tells you something happened. It can't stop it or change it.
+
+See [Webhooks](/developer/core-concepts/webhooks) for the payload format, the headers, retries and the delivery log, and [Delivery guarantees](/developer/core-concepts/events#delivery-guarantees) for making sure every placed order reaches your service.
+
+## The Admin API
+
+The Admin API is the back office as a REST API: products, orders, customers, stock, fulfillments, settings and more. It is described by an [OpenAPI specification](/api-reference/admin), so you can generate a client for any language from it.
+
+Integrations authenticate with a **secret API key**. Each key carries **scopes** — `read_orders`, `write_fulfillments`, `read_all` and so on — and can only reach what its scopes allow. Give each integration its own key with the fewest scopes it needs.
+
+Create a key in the dashboard under **Settings → API Keys**, or with the Spree CLI:
+
+```bash
+spree api-key create --type secret --scopes read_orders,write_fulfillments
+```
+
+Then call the API:
+
+<Tabs>
+  <Tab title="Admin SDK">
+    ```typescript
+    const { data: orders } = await client.orders.list({
+      payment_status_eq: 'paid',
+      fulfillment_status_eq: 'unfulfilled',
+      sort: '-completed_at',
+    })
+    ```
+  </Tab>
+  <Tab title="cURL">
+    ```bash
+    curl -G 'https://store.example.com/api/v3/admin/orders' \
+      -H 'X-Spree-API-Key: sk_xxx' \
+      -d 'q[payment_status_eq]=paid' \
+      -d 'q[fulfillment_status_eq]=unfulfilled' \
+      -d 'sort=-completed_at'
+    ```
+  </Tab>
+</Tabs>
+
+Writes through the Admin API run the same workflows as the dashboard. Cancelling an order through the API checks the same rules, refunds the same way, sends the same emails and publishes the same events as cancelling it by hand.
+
+Secret keys belong on a server. Never put one in a browser, a mobile app or a public repository.
+
+See [Admin API authentication](/api-reference/admin-api/authentication) for every scope, [Querying](/api-reference/admin-api/querying) for filters and pagination, and [`spree api`](/developer/cli/admin-api) to call the API from scripts and the terminal.
+
+## The TypeScript SDKs
+
+Spree publishes typed clients for its APIs:
+
+| Package | API | For |
+|---|---|---|
+| [`@spree/sdk`](/developer/sdk/quickstart) | Store API | Storefronts, mobile apps, and verifying webhooks |
+| [`@spree/admin-sdk`](/developer/sdk/admin/quickstart) | Admin API | Integrations, scripts and admin tools |
+| `@spree/seller-sdk` | Seller API | Tools for sellers on a marketplace |
+
+The types are generated from the API itself, so your editor knows the fields of every record and the filters every list accepts.
+
+## The MCP server
+
+Your store serves an MCP server at `/api/v3/admin/mcp`, with nothing extra to deploy. Connect Claude, Cursor or your own agent to it, and the agent can work in the back office in plain language.
+
+The server **reads and writes**:
+
+- **Reads:** search products, orders and customers, read a record in full, run reports.
+- **Writes:** cancel an order, capture a payment, update stock, curate a collection, start an import, and more.
+
+Each write runs the same workflow the dashboard runs, so validations, emails and webhooks behave exactly as they would if a person clicked the button. The agent's client asks for confirmation before a write runs.
+
+An agent acts for the person who connected it, and only within the permissions that person approved. It is never offered API keys, webhooks, roles or staff accounts. Any Admin API action your own app adds becomes a tool too, once it is documented in your OpenAPI specification.
+
+The MCP server is for requests a person makes in words. For anything scheduled or automatic, use the Admin API with a secret key.
+
+See [MCP Server](/developer/mcp/overview), [the tool reference](/developer/mcp/tools) and [Permissions and consent](/developer/mcp/permissions).
+
+## Dashboard plugins
+
+The admin dashboard is a React application. You extend it in TypeScript: add pages and navigation entries, place components in slots on existing screens, add table columns, translations and themes.
+
+For your own project, register them in `src/plugins.ts` in your dashboard app — no package needed. To share an extension between projects or publish it, package it as a [dashboard plugin](/developer/dashboard/plugins/overview).
+
+Your screens talk to the Admin API through the same typed client the dashboard uses, so they follow the signed-in person's permissions.
+
+See [Dashboard customization](/developer/dashboard/customization/quickstart) and [Backend integration](/developer/dashboard/customization/backend).
+
+## When to use Ruby instead
+
+The options above work from outside Spree's process. Write Ruby when the change has to happen inside it:
+
+| You need to | Use | Why not from outside |
+|---|---|---|
+| Block an operation — refuse a cart, cap a quantity, veto a cancellation | [A workflow hook](/developer/customization/workflows) | A webhook arrives after the operation has happened |
+| Run code while an operation happens, in the same request | [A workflow hook](/developer/customization/workflows) or [a subscriber](/developer/core-concepts/events#reacting-inside-spree) | A webhook is delivered later, by a background job |
+| Add a checkout step or requirement | [The checkout registry](/developer/customization/checkout) | Requirements are evaluated inside the cart |
+| Calculate tax or delivery rates your own way, or change search | [A provider](/developer/customization/quickstart#providers) | Spree calls the provider while it calculates |
+| Add a model, a database column or an association | [A decorator](/developer/customization/decorators) or your own model | Custom fields and metadata cover most data. A new table needs Ruby |
+| Add an API endpoint | [API customization](/developer/customization/api) | Endpoints are Rails controllers |
+
+You can mix both. A common setup keeps validation in a small Ruby hook and does everything else — syncing, notifications, reporting — from a TypeScript service over webhooks and the Admin API.
+
+<Note>
+Ruby code runs only once the project builds the backend from its own source instead of the prebuilt image. Switch with [`spree eject`](/developer/cli/quickstart#spree-eject).
+</Note>
+
+## Related
+
+- [Customization quickstart](/developer/customization/quickstart) — every way to customize Spree, in order of recommendation
+- [Events](/developer/core-concepts/events) — what Spree announces, and delivery guarantees
+- [Webhooks](/developer/core-concepts/webhooks) — endpoints, payloads, signatures and retries
+- [Admin SDK](/developer/sdk/admin/quickstart) — the typed Admin API client
+- [MCP Server](/developer/mcp/overview) — connecting AI agents to a store

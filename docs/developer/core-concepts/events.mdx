@@ -158,6 +158,50 @@ Every event Spree publishes is declared this way, which is what lets the admin d
 
 The payload is the model's Store API serializer, as for built-in events. To send something else, pass a serializer of your own: `publishes_event :flagged_for_review, serializer: 'MyApp::FraudFlagEventSerializer'`. Keep it to what a customer could see; back-office fields belong behind the Admin API. Facts about the event rather than the record, such as who triggered it, go in its metadata: `order.publish_event('order.flagged_for_review', nil, rule: 'velocity')`.
 
+## Delivery guarantees
+
+Spree hands an event to its subscribers in the process that published it. Events are not saved first and sent later. A background subscriber, and every webhook, then runs as a background job.
+
+For `order.placed`, this means:
+
+- **It is published once per order**, by the completion that placed it — at checkout, or when a draft order is completed in the dashboard.
+- **At checkout, it is published after the order is saved.** The database transaction that places the order has committed before the event goes out, so nothing hears about an order that was then rolled back.
+- **A repeated completion doesn't publish it again.** A double-clicked Place Order or a retried request finds the order already placed and returns it without publishing.
+- **It can be missed.** If the process stops after the order is saved but before the event is published — a crash, a deploy, a stopped container — the order stays placed and no `order.placed` is ever published for it.
+- **Failures after publishing are retried.** A background subscriber that raises an error runs again, up to 3 attempts in all. A webhook delivery that fails is sent again, up to 5 attempts. A synchronous subscriber is not retried.
+
+So when a side effect must happen for every placed order — sending it to an ERP or a warehouse, for example — don't rely on the event alone:
+
+1. **Make the handler safe to run twice.** Key the work on the order's ID and check whether you already did it. Retries and repeated deliveries then do no harm.
+2. **Reconcile from orders.** On a schedule, list the orders placed since your last check and handle any you haven't seen. The event gives you speed; the reconciliation makes sure nothing is lost.
+
+<Tabs>
+  <Tab title="Admin SDK">
+    ```typescript
+    const { data: orders } = await adminClient.orders.list({
+      completed_at_gteq: lastCheckedAt, // e.g. '2026-11-12T09:00:00Z'
+      sort: 'completed_at',
+      limit: 100,
+    })
+
+    for (const order of orders) {
+      if (!(await alreadySynced(order.id))) await syncToErp(order)
+    }
+    ```
+  </Tab>
+  <Tab title="cURL">
+    ```bash
+    curl -G 'https://store.example.com/api/v3/admin/orders' \
+      -H 'X-Spree-API-Key: sk_xxx' \
+      -d 'q[completed_at_gteq]=2026-11-12T09:00:00Z' \
+      -d 'sort=completed_at' \
+      -d 'limit=100'
+    ```
+  </Tab>
+</Tabs>
+
+Page through the results until there are none left, and move `lastCheckedAt` back by a few minutes each run, so an order placed while the previous run was reading isn't skipped.
+
 ## Guidance
 
 **Listen for the specific event.** `order.placed` rather than `order.updated` with a status check.
