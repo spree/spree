@@ -454,12 +454,6 @@ module Spree
     before_save :set_install_id
     after_create :create_default_policies
     after_create :create_default_delivery_profile
-    # The search index is named after the store code, so a new code means a
-    # new, unconfigured index. Configuring it up front keeps product writes,
-    # which no longer push index settings, from landing in an index whose
-    # product_id is not yet filterable; clearing it removes any documents
-    # written before that, which the rebuild then replaces.
-    after_commit :enqueue_search_index_setup, on: [:create, :update], if: -> { previously_new_record? || saved_change_to_code? }
 
     #
     # Scopes
@@ -761,12 +755,6 @@ module Spree
 
     # Products without a profile fall back to this one, so it must exist
     # from the store's first moment.
-    def enqueue_search_index_setup
-      return unless Spree.search_provider.safe_constantize&.indexing_required?
-
-      Spree::SearchProvider::ReindexJob.perform_later(id.to_s, clear: true)
-    end
-
     def create_default_delivery_profile
       Spree::Events.disable do
         Spree::DeliveryProfiles::Shipping.create!(store: self, name: 'General', default: true)

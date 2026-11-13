@@ -86,11 +86,6 @@ module Spree
         # no-op by default
       end
 
-      # Remove every document from the store's index, keeping its settings.
-      def clear_index
-        # no-op by default
-      end
-
       # Configure index settings (filterable, sortable, searchable attributes).
       # Called by rake task before indexing. No-op for database provider.
       def ensure_index_settings!

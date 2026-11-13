@@ -5,13 +5,7 @@ module Spree
     module SearchCapabilities
       extend ActiveSupport::Concern
 
-      # Columns that decide a definition's place in the search index: its
-      # settings and the cf_* attribute product documents carry.
-      SEARCH_INDEX_SETTINGS_ATTRIBUTES = %w[searchable sortable storefront_visible filter_key field_type resource_type].freeze
-
       included do
-        after_commit :enqueue_search_reindex, if: :search_index_settings_changed?
-
         attribute :searchable, :boolean, default: false
         attribute :sortable, :boolean, default: false
 
@@ -64,29 +58,6 @@ module Spree
       end
 
       private
-
-      def search_index_settings_changed?
-        return false unless [resource_type, resource_type_before_last_save].include?('Spree::Product')
-        return searchable? || sortable? if previously_new_record? || destroyed?
-
-        return false unless saved_changes.keys.intersect?(SEARCH_INDEX_SETTINGS_ATTRIBUTES)
-
-        # A field neither searchable nor sortable, before or after the change,
-        # never reaches a document, so nothing in the index changes with it.
-        searchable? || sortable? || searchable_before_last_save || sortable_before_last_save
-      end
-
-      def enqueue_search_reindex
-        return unless search_provider_indexing?
-
-        Spree::SearchProvider::ReindexJob.perform_later(store_id.to_s)
-      end
-
-      def search_provider_indexing?
-        Spree.search_provider.constantize.indexing_required?
-      rescue NameError
-        false
-      end
 
       # @return [String, nil] nil while either segment is still blank, so a
       #   half-filled record does not persist a meaningless +cf__+.

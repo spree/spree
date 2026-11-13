@@ -5,16 +5,6 @@ module SpreeMeilisearch
   # with the caller's ActiveRecord scope, so a stale index can never widen
   # what a customer is allowed to see.
   class SearchProvider < Spree::SearchProvider::Base
-    # Raised when Meilisearch fails or cancels a task it had accepted, so the
-    # job that sent it retries instead of leaving the index incomplete.
-    class TaskFailed < StandardError; end
-    class SettingsUpdateFailed < TaskFailed; end
-
-    # A batch of 500 documents can take a while to index; polling every 50ms
-    # (the client default) is what flooded Meilisearch before.
-    TASK_TIMEOUT_MS = 60_000
-    TASK_POLL_INTERVAL_MS = 250
-
     PREFIXED_ID_PATTERN = /\A[a-z]+_[A-Za-z0-9]+\z/
     ALLOWED_STATUSES = %w[active draft archived paused].freeze
     BUILT_IN_FILTERABLE_ATTRIBUTES = %w[product_id status in_stock preorder store_ids channel_ids locale currency available_on discontinue_on price category_ids collection_ids grouping_id tags option_value_ids option_value_combination_ids].freeze
@@ -81,14 +71,8 @@ module SpreeMeilisearch
       )
     end
 
-    def clear_index
-      await_task!(client.index(index_name).delete_all_documents, TaskFailed, 'clear')
-    end
-
-    # Index settings are pushed by reindex (Spree::SearchProvider::ReindexJob
-    # runs one when they change), not here: pushing and awaiting them on every product
-    # write flooded Meilisearch into 429s during bulk imports.
     def index(product)
+      ensure_index_settings_once!
       documents = presenter_class.new(product, store).call
       # Delete first: membership docs use grouping-specific ids, so a product
       # that left a grouping would otherwise leave an orphaned stale doc.
@@ -103,8 +87,7 @@ module SpreeMeilisearch
     def index_batch(documents)
       return if documents.empty?
 
-      # Awaited, so a rejected batch raises before ReindexJob moves its cursor past it.
-      await_task!(client.index(index_name).add_documents(documents, 'id'), TaskFailed, 'documents')
+      client.index(index_name).add_documents(documents, 'id')
     end
 
     # Remove all documents for a product by its prefixed_id (e.g. 'prod_abc')
@@ -123,7 +106,7 @@ module SpreeMeilisearch
 
       # On a full reindex, clear first so stale docs (e.g. membership docs for
       # removed groupings) don't linger; a scoped reindex keeps upsert semantics.
-      clear_index if full_reindex
+      client.index(index_name).delete_all_documents if full_reindex
 
       indexed = 0
       scope.reorder(id: :asc)
@@ -153,7 +136,7 @@ module SpreeMeilisearch
       tasks << index.update_sortable_attributes(sortable_attributes)
       tasks << index.update_searchable_attributes(searchable_attributes)
       tasks << index.update_distinct_attribute(distinct_attribute)
-      tasks.compact.each { |task| await_task!(task, SettingsUpdateFailed, 'settings') }
+      tasks.each { |task| task&.await }
       @index_settings_configured = true
     end
 
@@ -254,16 +237,17 @@ module SpreeMeilisearch
         end
       rescue ::Meilisearch::ApiError => e
         # Self-heal when a newly added filterable attribute (e.g. `preorder`)
-        # is referenced before the index settings were refreshed, or the
-        # index was never configured — otherwise every search on an upgraded
-        # store returns empty until a reindex.
-        if %w[invalid_search_filter invalid_search_sort invalid_search_facets].include?(e.code) && !settings_refreshed
+        # is referenced before the index settings were refreshed — otherwise
+        # every search on an upgraded store returns empty until a reindex or
+        # the next product write.
+        if %w[invalid_search_filter invalid_search_sort].include?(e.code) && !settings_refreshed
           settings_refreshed = true
-          retry if refresh_index_settings
+          ensure_index_settings!
+          retry
         end
 
         Rails.logger.warn { "[Meilisearch] Search failed: #{e.message}. Run `rake spree:search:reindex` to initialize the index." }
-        Rails.error.report(e, handled: true, source: 'spree.search', context: { index: index_name, query: query })
+        Rails.error.report(e, handled: true, context: { index: index_name, query: query })
         return nil
       end
 
@@ -298,23 +282,6 @@ module SpreeMeilisearch
       end
 
       (ms_result['facetDistribution'] || {}).merge('option_value_ids' => merged_ov_dist)
-    end
-
-    def await_task!(task, error_class, what)
-      return task if task.nil?
-
-      task.await(TASK_TIMEOUT_MS, TASK_POLL_INTERVAL_MS)
-      raise error_class, "Meilisearch rejected the #{what} task for #{index_name}: #{task.error.inspect}" unless task.succeeded?
-
-      task
-    end
-
-    def refresh_index_settings
-      ensure_index_settings!
-      true
-    rescue SettingsUpdateFailed => e
-      Rails.error.report(e, handled: true, source: 'spree.search', context: { index: index_name })
-      false
     end
 
     def presenter_class

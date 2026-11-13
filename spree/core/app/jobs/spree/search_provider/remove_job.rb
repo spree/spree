@@ -2,7 +2,11 @@ module Spree
   module SearchProvider
     class RemoveJob < Spree::BaseJob
       queue_as Spree.queues.search
-      include Spree::SearchProvider::RateLimited
+
+      # Shares IndexJob's per-store limit, see there.
+      if respond_to?(:limits_concurrency)
+        limits_concurrency to: 1, key: ->(_prefixed_id, store_id) { store_id }, group: 'spree_search_provider', duration: 5.minutes
+      end
 
       # Search providers are external services; broad retry covers network blips and 5xx.
       retry_on StandardError, wait: :polynomially_longer, attempts: 5

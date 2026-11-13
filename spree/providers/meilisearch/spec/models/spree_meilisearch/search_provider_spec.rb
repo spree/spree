@@ -284,36 +284,6 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
         expect(result.products).to include(product_1, product_2)
       end
     end
-
-    context 'when the index was never configured for facets' do
-      before do
-        error = Meilisearch::ApiError.new(
-          400, 'Bad Request',
-          { 'code' => 'invalid_search_facets', 'message' => 'Attribute `in_stock` is not filterable.' }
-        )
-        calls = 0
-        allow(mock_index).to receive(:search) do
-          calls += 1
-          raise error if calls == 1
-
-          ms_response
-        end
-      end
-
-      it 'pushes index settings and retries the search once' do
-        expect(mock_index).to receive(:update_filterable_attributes)
-
-        result = provider.search_and_filter(scope: store.products, query: 'shirt')
-        expect(result.products).to include(product_1, product_2)
-      end
-
-      it 'returns no results instead of raising when Meilisearch rejects the settings' do
-        task = double('Meilisearch::Models::Task', await: nil, succeeded?: false, error: { 'code' => 'internal' })
-        allow(mock_index).to receive(:update_filterable_attributes).and_return(task)
-
-        expect(provider.search_and_filter(scope: store.products, query: 'shirt').products).to be_empty
-      end
-    end
   end
 
   describe '#filters' do
@@ -469,13 +439,6 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
   end
 
   describe '#index' do
-    it 'leaves the index settings to reindex' do
-      allow(mock_index).to receive(:add_documents)
-      expect(mock_index).not_to receive(:update_filterable_attributes)
-
-      2.times { described_class.new(store).index(product_1) }
-    end
-
     it 'adds documents to Meilisearch index with id as primary key' do
       expect(mock_index).to receive(:add_documents).with(
         array_including(hash_including(product_id: product_1.prefixed_id, name: 'Blue Shirt')),
@@ -519,42 +482,6 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
     end
   end
 
-  describe '#clear_index' do
-    it 'removes every document from the store index' do
-      expect(mock_index).to receive(:delete_all_documents)
-
-      provider.clear_index
-    end
-
-    it 'raises when Meilisearch fails the clear, so the reindex retries before rebuilding' do
-      task = double('Meilisearch::Models::Task', succeeded?: false, error: { 'code' => 'internal' })
-      allow(task).to receive(:await)
-      allow(mock_index).to receive(:delete_all_documents).and_return(task)
-
-      expect { provider.clear_index }.to raise_error(described_class::TaskFailed, /clear task/)
-    end
-  end
-
-  describe '#index_batch' do
-    let(:task) { double('Meilisearch::Models::Task', succeeded?: true) }
-
-    before { allow(task).to receive(:await) }
-
-    it 'waits for the batch, polling gently' do
-      allow(mock_index).to receive(:add_documents).and_return(task)
-      expect(task).to receive(:await).with(described_class::TASK_TIMEOUT_MS, described_class::TASK_POLL_INTERVAL_MS)
-
-      provider.index_batch([{ id: 'prod_abc_en_USD' }])
-    end
-
-    it 'raises when Meilisearch rejects the batch, so the reindex cursor does not move past it' do
-      allow(task).to receive_messages(succeeded?: false, error: { 'code' => 'invalid_document_fields' })
-      allow(mock_index).to receive(:add_documents).and_return(task)
-
-      expect { provider.index_batch([{ id: 'prod_abc_en_USD' }]) }.to raise_error(described_class::TaskFailed, /documents task/)
-    end
-  end
-
   describe '#reindex' do
     it 'indexes all products in batches' do
       expect(mock_index).to receive(:add_documents).at_least(:once)
@@ -582,13 +509,6 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
       allow(mock_index).to receive(:update_searchable_attributes)
 
       provider.ensure_index_settings!
-    end
-
-    it 'raises when Meilisearch fails a settings task, so the job pushing them retries' do
-      task = double('Meilisearch::Models::Task', await: nil, succeeded?: false, error: { 'code' => 'invalid_settings_filterable_attributes' })
-      allow(mock_index).to receive(:update_filterable_attributes).and_return(task)
-
-      expect { provider.ensure_index_settings! }.to raise_error(described_class::SettingsUpdateFailed, /invalid_settings_filterable_attributes/)
     end
   end
 
