@@ -21,6 +21,18 @@ RSpec.describe 'Agent benchmark: gift message', type: :request do
     expect(JSON.parse(response.body)['gift_message']).to eq('Happy birthday!')
   end
 
+  it 'keeps the gift message on the order once the cart is placed' do
+    ready = create(:cart_ready_to_complete, store: store)
+    ready_headers = { 'x-spree-api-key' => api_key.token, 'x-spree-token' => ready.token }
+    patch "/api/v3/store/carts/#{ready.prefixed_id}", params: { gift_message: 'With love' }, headers: ready_headers, as: :json
+    expect(response).to have_http_status(:ok)
+
+    post "/api/v3/store/carts/#{ready.prefixed_id}/complete", headers: ready_headers, as: :json
+    expect(response).to have_http_status(:ok)
+    order = Spree::Order.find_by_prefix_id!(JSON.parse(response.body)['id'])
+    expect(order.gift_message).to eq('With love')
+  end
+
   it 'rejects a gift message longer than 500 characters' do
     patch "/api/v3/store/carts/#{cart.prefixed_id}", params: { gift_message: 'a' * 501 }, headers: headers, as: :json
     expect(response).to have_http_status(:unprocessable_content)
