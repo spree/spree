@@ -36,7 +36,7 @@ Your project's `Dockerfile` builds on `ghcr.io/spree/spree-base`, an image Spree
 ARG SPREE_BASE=ghcr.io/spree/spree-base:6.1
 
 FROM ${SPREE_BASE}-build AS build
-COPY --chown=rails:rails Gemfile* .ruby-version* server/Gemfile* server/.ruby-version* backend/Gemfile* backend/.ruby-version* ./
+COPY --chown=rails:rails Gemfile* .ruby-version* [s]erver/Gemfile* [s]erver/.ruby-version* [b]ackend/Gemfile* [b]ackend/.ruby-version* ./
 RUN spree-image-build gems
 COPY . /src
 RUN spree-image-build app /src

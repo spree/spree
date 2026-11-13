@@ -13,7 +13,10 @@ ARG SPREE_BASE=ghcr.io/spree/spree-base:6.1
 FROM ${SPREE_BASE}-build AS build
 
 # Gems first, in their own layer: a code change does not reinstall them.
-COPY --chown=rails:rails Gemfile* .ruby-version* server/Gemfile* server/.ruby-version* backend/Gemfile* backend/.ruby-version* ./
+# The Gemfile sits at the context root, or under server/ (backend/ in older
+# projects). `[s]erver` is a wildcard, so a directory that is absent is skipped
+# where a plain `server/` would fail the build.
+COPY --chown=rails:rails Gemfile* .ruby-version* [s]erver/Gemfile* [s]erver/.ruby-version* [b]ackend/Gemfile* [b]ackend/.ruby-version* ./
 RUN spree-image-build gems
 
 COPY . /src
