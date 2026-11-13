@@ -90,9 +90,9 @@ export function isStockDockerfile(content: string): boolean {
 
 // The `build:` block every stock development compose file carries, with or
 // without the `dev` target older Dockerfiles lacked. The lookahead refuses a
-// block with any further key, which is the project's own.
+// block with any further key, even after a blank line: that is the project's own.
 const STOCK_BUILD_BLOCK =
-  /^([ \t]*)build:\n\1[ \t]+context: \S+\n\1[ \t]+dockerfile: Dockerfile\n(?:\1[ \t]+target: dev\n)?(?!\1[ \t]+\S)/m
+  /^([ \t]*)build:\n\1[ \t]+context: \S+\n\1[ \t]+dockerfile: Dockerfile\n(?:\1[ \t]+target: dev\n)?(?!(?:[ \t]*\n)*\1[ \t]+\S)/m
 
 /** Whether a compose file builds an image itself, rather than running a published one. */
 export function composeBuildsImage(content: string): boolean {
@@ -120,15 +120,22 @@ export function composeOnBaseImage(content: string, line: string): string | null
   const mapping = outdent === -1 ? after : after.slice(0, outdent)
   const rest = outdent === -1 ? '' : after.slice(outdent)
 
+  // `environment:` may be a mapping (`KEY: value`) or a list (`- KEY=value`).
+  const asList = new RegExp(`^${indent}environment:\\n(?:[ \\t]*(?:#.*)?\\n)*[ \\t]*-`, 'm').test(
+    mapping,
+  )
+
   // The old development image set these itself; the base image is built for
   // production, so the compose file has to.
   const development = [
-    ['RAILS_ENV', 'development'],
-    ['BUNDLE_DEPLOYMENT', '"0"'],
-    ['BUNDLE_WITHOUT', '""'],
+    ['RAILS_ENV', 'development', 'development'],
+    ['BUNDLE_DEPLOYMENT', '"0"', '0'],
+    ['BUNDLE_WITHOUT', '""', ''],
   ]
-    .filter(([name]) => !new RegExp(`^${indent}[ \\t]+${name}:`, 'm').test(mapping))
-    .map(([name, value]) => `${indent}  ${name}: ${value}\n`)
+    .filter(([name]) => !new RegExp(`^${indent}[ \\t]+(?:-[ \\t]*)?${name}[:=]`, 'm').test(mapping))
+    .map(([name, value, bare]) =>
+      asList ? `${indent}  - ${name}=${bare}\n` : `${indent}  ${name}: ${value}\n`,
+    )
     .join('')
 
   const environment = new RegExp(`^${indent}environment:\\n`, 'm')

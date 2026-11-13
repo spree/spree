@@ -247,3 +247,19 @@ describe('composeOnBaseImage, in a compose file with several services', () => {
     expect(moved).toContain('      BUNDLE_WITHOUT: ""\n      RAILS_ENV: development\n')
   })
 })
+
+describe('composeOnBaseImage, with less common compose shapes', () => {
+  it('writes list items when the service lists its environment', () => {
+    const compose =
+      'services:\n  web:\n    build:\n      context: .\n      dockerfile: Dockerfile\n    environment:\n      - DATABASE_HOST=postgres\n'
+    expect(composeOnBaseImage(compose, '6.1')).toBe(
+      'services:\n  web:\n    image: ghcr.io/spree/spree-base:6.1-build\n    environment:\n      - RAILS_ENV=development\n      - BUNDLE_DEPLOYMENT=0\n      - BUNDLE_WITHOUT=\n      - DATABASE_HOST=postgres\n',
+    )
+  })
+
+  it('is null when a key of the project follows the stock ones after a blank line', () => {
+    const compose =
+      'services:\n  web:\n    build:\n      context: .\n      dockerfile: Dockerfile\n\n      args:\n        FOO: bar\n'
+    expect(composeOnBaseImage(compose, '6.1')).toBeNull()
+  })
+})
