@@ -49,12 +49,16 @@ export function setContact(cart: CartRef, email: string, address: CheckoutAddres
   )
 }
 
-// Picks the given rate for every fulfillment, or each one's first rate.
-export async function chooseDelivery(cart: CartRef, rateId?: string): Promise<Cart> {
+// Picks each fulfillment's chosen rate (keyed by fulfillment id), or its first
+// rate when none was chosen.
+export async function chooseDelivery(
+  cart: CartRef,
+  rateIds: Record<string, string> = {},
+): Promise<Cart> {
   let current = await getCart(cart)
   for (const fulfillment of current.fulfillments ?? []) {
     const rates = fulfillment.delivery_rates ?? []
-    const rate = rates.find((candidate) => candidate.id === rateId) ?? rates[0]
+    const rate = rates.find((candidate) => candidate.id === rateIds[fulfillment.id]) ?? rates[0]
     if (!rate) throw new Error(`No delivery option for fulfillment ${fulfillment.id}`)
     current = await spree().carts.fulfillments.update(
       cart.id,

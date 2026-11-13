@@ -34,7 +34,12 @@ async function saveDelivery(formData: FormData) {
   'use server'
   const cart = await currentCart()
   if (!cart) redirect('/cart')
-  await chooseDelivery(cart, field(formData, 'rateId'))
+  // One radio group per fulfillment, named rate:<fulfillment id>.
+  const rateIds: Record<string, string> = {}
+  for (const [name, value] of formData.entries()) {
+    if (name.startsWith('rate:')) rateIds[name.slice('rate:'.length)] = String(value)
+  }
+  await chooseDelivery(cart, rateIds)
   redirect('/checkout')
 }
 
@@ -88,19 +93,22 @@ export default async function CheckoutPage() {
         <>
           <h2>Delivery</h2>
           <form action={saveDelivery}>
-            {cart.fulfillments.flatMap((fulfillment) =>
-              fulfillment.delivery_rates.map((rate) => (
-                <label key={rate.id} style={{ display: 'block' }}>
-                  <input
-                    type="radio"
-                    name="rateId"
-                    value={rate.id}
-                    defaultChecked={rate.selected}
-                  />{' '}
-                  {rate.name} ({rate.cost})
-                </label>
-              )),
-            )}
+            {cart.fulfillments.map((fulfillment, index) => (
+              <fieldset key={fulfillment.id}>
+                <legend>Shipment {index + 1}</legend>
+                {fulfillment.delivery_rates.map((rate) => (
+                  <label key={rate.id} style={{ display: 'block' }}>
+                    <input
+                      type="radio"
+                      name={`rate:${fulfillment.id}`}
+                      value={rate.id}
+                      defaultChecked={rate.selected}
+                    />{' '}
+                    {rate.name} ({rate.cost})
+                  </label>
+                ))}
+              </fieldset>
+            ))}
             <button type="submit">Use this delivery</button>
           </form>
         </>
