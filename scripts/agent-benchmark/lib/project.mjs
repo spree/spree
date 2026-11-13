@@ -90,6 +90,8 @@ export async function scaffoldProject({ workDir, port, createCommand, imageTag, 
     'init',
     '--no-sample-data',
     '--no-open',
+    // Without it init stays attached to the logs and never returns.
+    '--detach',
     '--admin-email',
     admin.email,
     '--admin-password',
