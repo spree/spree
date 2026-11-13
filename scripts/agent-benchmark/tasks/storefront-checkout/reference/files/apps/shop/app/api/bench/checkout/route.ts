@@ -22,7 +22,10 @@ export async function POST(request: Request) {
     await chooseDelivery(cart)
     await payOffline(cart)
     const order = await placeOrder(cart)
-    return Response.json({ orderId: order.id })
+    return Response.json({
+      orderId: order.id,
+      confirmationUrl: `/orders/${order.id}?token=${encodeURIComponent(order.token)}`,
+    })
   } catch (error) {
     return Response.json(
       { error: error instanceof Error ? error.message : String(error) },

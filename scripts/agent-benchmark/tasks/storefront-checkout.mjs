@@ -39,6 +39,50 @@ export function orderMismatch(order, { variantId, quantity, email }) {
   return null
 }
 
+// Fetches the storefront pages the prompt asks for and returns what is wrong
+// with them, or null. `get(path)` answers { status, text } after redirects.
+// The pages must render server-side, so the names are in the HTML itself.
+export async function pageProblems(
+  get,
+  { productName, productPaths, orderNumber, confirmationUrl },
+) {
+  // The problem with the page at path, or null when it answers 200 and shows text.
+  const problem = async (label, path, text) => {
+    let page
+    try {
+      page = await get(path)
+    } catch (error) {
+      return `${label} (${path}) failed: ${error.message}`
+    }
+    if (page.status !== 200) return `${label} (${path}) answered ${page.status}`
+    if (text && !page.text.includes(text)) {
+      return `${label} (${path}) does not show ${JSON.stringify(text)}`
+    }
+    return null
+  }
+  const problems = [await problem('The product listing', '/', productName)]
+  // The product page may live at the product's slug or its id.
+  let productProblem = 'The product has neither a slug nor an id'
+  for (const path of productPaths) {
+    productProblem = await problem('The product page', path, productName)
+    if (!productProblem) break
+  }
+  problems.push(productProblem)
+  problems.push(await problem('The cart page', '/cart'))
+  problems.push(await problem('The checkout page', '/checkout'))
+  const isShopPath =
+    typeof confirmationUrl === 'string' &&
+    confirmationUrl.startsWith('/') &&
+    !confirmationUrl.startsWith('//')
+  problems.push(
+    isShopPath
+      ? await problem('The confirmation page', confirmationUrl, orderNumber)
+      : `confirmationUrl ${JSON.stringify(confirmationUrl)} is not a path on the shop`,
+  )
+  const found = problems.filter(Boolean)
+  return found.length ? found.join('\n') : null
+}
+
 async function check({ projectDir, port, keys }) {
   const shopDir = path.join(projectDir, 'apps', 'shop')
   const manifest = path.join(shopDir, 'package.json')
@@ -83,7 +127,7 @@ async function check({ projectDir, port, keys }) {
     const body = await response.text()
     if (!response.ok)
       return { passed: false, details: `Route answered ${response.status}: ${body}` }
-    const { orderId } = JSON.parse(body)
+    const { orderId, confirmationUrl } = JSON.parse(body)
     const order = await api.admin('GET', `/orders/${orderId}?expand=items`)
     const placed = order.status === 200 && Boolean(order.json?.completed_at)
     if (!placed) {
@@ -94,11 +138,31 @@ async function check({ projectDir, port, keys }) {
     }
     // The order must be the one just submitted, not any completed order.
     const mismatch = orderMismatch(order.json, submitted)
+    if (mismatch) {
+      return {
+        passed: false,
+        details: `Order ${order.json.number} does not match the checkout request: ${mismatch}`,
+      }
+    }
+    // The route alone is not a storefront: the pages must answer too.
+    const shop = `http://127.0.0.1:${shopPort}`
+    const pages = await pageProblems(
+      async (path) => {
+        const page = await fetch(new URL(path, shop))
+        return { status: page.status, text: await page.text() }
+      },
+      {
+        productName: product.name,
+        productPaths: [product.slug, product.id].filter(Boolean).map((key) => `/products/${key}`),
+        orderNumber: order.json.number,
+        confirmationUrl,
+      },
+    )
     return {
-      passed: !mismatch,
-      details: mismatch
-        ? `Order ${order.json.number} does not match the checkout request: ${mismatch}`
-        : `Order ${order.json.number} placed.`,
+      passed: !pages,
+      details: pages
+        ? `Order ${order.json.number} placed, but the pages fall short:\n${pages}`
+        : `Order ${order.json.number} placed, and every page answers.`,
     }
   } finally {
     try {
@@ -116,13 +180,20 @@ export default {
   timeoutMinutes: 60,
   prompt: `Build a small Next.js storefront in apps/shop (App Router, TypeScript) on top of this Spree backend, using the @spree/sdk package.
 
-It needs a product listing page, a product page with "add to cart", a cart page, and a guest checkout: email, shipping address, delivery method, payment, and an order confirmation page.
+It needs these pages, rendered on the server so their content is in the HTML the server sends:
+- a product listing at /,
+- a product page with "add to cart" at /products/<the product's slug or id>,
+- a cart page at /cart,
+- a guest checkout at /checkout: email, shipping address, delivery method and payment,
+- an order confirmation page that shows the order number.
+
+The cart and checkout pages must also load for a visitor with no cart yet.
 
 Read the API URL and publishable key from the SPREE_API_URL and SPREE_PUBLISHABLE_KEY environment variables.
 
 So we can test it end to end, also add a route handler at POST /api/bench/checkout that takes
   {"variantId": "...", "quantity": 1, "email": "...", "address": {"firstName", "lastName", "address1", "city", "postalCode", "stateCode", "countryCode", "phone"}}
-runs the whole guest checkout through the same code the pages use (picking the first delivery option and a payment method that needs no card), and answers {"orderId": "<the placed order's id>"}.
+runs the whole guest checkout through the same code the pages use (picking the first delivery option and a payment method that needs no card), and answers {"orderId": "<the placed order's id>", "confirmationUrl": "<the path of that order's confirmation page>"}.
 
 If the store is not yet able to take such an order (for example it has no delivery method or no suitable payment method), set it up. "npm run build" must pass.`,
   check,
