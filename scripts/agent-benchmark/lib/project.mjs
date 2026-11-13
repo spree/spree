@@ -28,8 +28,11 @@ export function sh(
     let stderr = ''
     let timedOut = false
     let settled = false
+    let killed = false
+    let exit = null
     const timers = []
     const kill = (signal) => {
+      if (signal === 'SIGKILL') killed = true
       try {
         if (group && child.pid) process.kill(-child.pid, signal)
         else child.kill(signal)
@@ -41,6 +44,9 @@ export function sh(
       if (settled) return
       settled = true
       for (const timer of timers) clearTimeout(timer)
+      // After a timeout the leader can exit while group members that ignored
+      // SIGTERM live on: still SIGKILL the group after the grace period.
+      if (timedOut && !killed) setTimeout(() => kill('SIGKILL'), graceMs).unref()
       resolve({ code: code ?? 1, signal, stdout, stderr, timedOut })
     }
     timers.push(
@@ -56,7 +62,8 @@ export function sh(
               setTimeout(() => {
                 child.stdout.destroy()
                 child.stderr.destroy()
-                finish(null, 'SIGKILL')
+                // Keep the child's own result if it has exited.
+                finish(exit?.code ?? null, exit?.signal ?? 'SIGKILL')
               }, graceMs),
             )
           }, graceMs),
@@ -72,6 +79,9 @@ export function sh(
     })
     child.on('error', (error) => {
       stderr += String(error)
+    })
+    child.on('exit', (code, signal) => {
+      exit = { code, signal }
     })
     child.on('close', (code, signal) => finish(code, signal))
     if (input) child.stdin.write(input)
