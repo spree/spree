@@ -937,6 +937,66 @@
         "additionalProperties": false
       }
     },
+    "tax_rates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "rate_percent": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "^-?\\d+(\\.\\d+)?$"
+              }
+            ]
+          },
+          "show_rate_in_label": {
+            "type": "boolean"
+          },
+          "tax_category": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Tax category name."
+          },
+          "country": {
+            "description": "The country the rate taxes; `null` taxes every country.",
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Z]{2}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "state": {
+            "description": "State abbreviation within that country; `null` taxes the whole country.",
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "tax_category"
+        ],
+        "additionalProperties": false
+      }
+    },
     "delivery_profiles": {
       "type": "array",
       "items": {
@@ -1395,6 +1455,50 @@
         "additionalProperties": false
       }
     },
+    "custom_field_definitions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "namespace": {
+            "type": "string"
+          },
+          "key": {
+            "type": "string",
+            "minLength": 1
+          },
+          "label": {
+            "type": "string"
+          },
+          "field_type": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Field type, e.g. `short_text`, `number`. Set on create."
+          },
+          "resource_type": {
+            "type": "string",
+            "minLength": 1,
+            "description": "What the field attaches to, e.g. `product`, `category`, `seller`. Set on create."
+          },
+          "storefront_visible": {
+            "type": "boolean"
+          },
+          "searchable": {
+            "type": "boolean"
+          },
+          "sortable": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "key",
+          "field_type",
+          "resource_type"
+        ],
+        "additionalProperties": false,
+        "description": "Matched on resource type, namespace and key together, so changing one of them declares another definition. The field type cannot change once the definition exists."
+      }
+    },
     "categories": {
       "type": "array",
       "items": {
@@ -1420,6 +1524,15 @@
           },
           "meta_keywords": {
             "type": "string"
+          },
+          "custom_fields": {
+            "description": "Custom field values by key, e.g. `{ material: Cotton }`. A key in another namespace is written `namespace.key`. Fields left out are untouched; `null` clears one.",
+            "type": "object",
+            "propertyNames": {
+              "type": "string",
+              "minLength": 1
+            },
+            "additionalProperties": {}
           }
         },
         "required": [
@@ -1531,6 +1644,15 @@
               "maximum": 9007199254740991
             },
             "description": "Opening stock per stock location name, written when the variant is created and never compared again."
+          },
+          "custom_fields": {
+            "description": "Custom field values by key, e.g. `{ material: Cotton }`. A key in another namespace is written `namespace.key`. Fields left out are untouched; `null` clears one.",
+            "type": "object",
+            "propertyNames": {
+              "type": "string",
+              "minLength": 1
+            },
+            "additionalProperties": {}
           },
           "variants": {
             "description": "Option variants; the whole set, since variants absent here are removed.",
@@ -1749,6 +1871,15 @@
               "approved",
               "suspended"
             ]
+          },
+          "custom_fields": {
+            "description": "Custom field values by key, e.g. `{ material: Cotton }`. A key in another namespace is written `namespace.key`. Fields left out are untouched; `null` clears one.",
+            "type": "object",
+            "propertyNames": {
+              "type": "string",
+              "minLength": 1
+            },
+            "additionalProperties": {}
           }
         },
         "required": [

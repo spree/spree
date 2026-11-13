@@ -833,3 +833,237 @@ products:
     })
   })
 })
+
+describe('tax rates', () => {
+  it('creates a rate against its category and reads a decimal rate back as unchanged', async () => {
+    const api = new FakeApi()
+    api.seed('/tax_categories', [])
+    api.seed('/tax_rates', [])
+    const { config } = parseConfig(`
+version: 1
+tax_categories:
+  - name: Default
+tax_rates:
+  - name: German VAT
+    tax_category: Default
+    country: DE
+    rate_percent: 19
+`)
+    const report = await deployConfig(config, api)
+    expect(reportHasFailures(report)).toBe(false)
+    const [rate] = api.all('/tax_rates')
+    expect(rate).toMatchObject({
+      name: 'German VAT',
+      tax_category_id: api.all('/tax_categories')[0].id,
+      country_code: 'DE',
+      // Decimals travel as strings.
+      rate_percent: '19',
+    })
+
+    rate.rate_percent = '19.0'
+    expect(kinds(await planConfig(config, api))).toMatchObject({
+      'tax_rates/German VAT': 'unchanged',
+    })
+    const captured = await introspect(api, { include: ['tax_rates'] })
+    expect(captured.tax_rates).toEqual([
+      { name: 'German VAT', tax_category: 'Default', country: 'DE', rate_percent: 19 },
+    ])
+  })
+
+  it('leaves the jurisdiction alone unless the file names it, and widens it with null', async () => {
+    const api = new FakeApi()
+    api.seed('/tax_categories', [{ id: 'tc_1', name: 'Default' }])
+    api.seed('/tax_rates', [
+      { name: 'VAT', tax_category_id: 'tc_1', country_code: 'DE', state_code: null },
+    ])
+    const silent = parseConfig('version: 1\ntax_rates:\n  - name: VAT\n    tax_category: Default\n')
+    expect(kinds(await planConfig(silent.config, api))).toEqual({ 'tax_rates/VAT': 'unchanged' })
+
+    const everywhere = parseConfig(
+      'version: 1\ntax_rates:\n  - name: VAT\n    tax_category: Default\n    country: null\n',
+    )
+    const plan = await planConfig(everywhere.config, api)
+    expect(planOperations(plan)[0].changes).toEqual([
+      { attribute: 'country_code', from: 'DE', to: null },
+    ])
+  })
+})
+
+describe('custom fields', () => {
+  const FILE = `
+version: 1
+custom_field_definitions:
+  - resource_type: product
+    key: material
+    field_type: short_text
+  - resource_type: product
+    namespace: specs
+    key: weight
+    field_type: number
+products:
+  - slug: tee
+    name: Tee
+    custom_fields:
+      material: Cotton
+      specs.weight: 180
+`
+
+  it('creates definitions before the records that set their values', async () => {
+    const api = new FakeApi()
+    api.seed('/custom_field_definitions', [])
+    api.seed('/products', [])
+    const { config } = parseConfig(FILE)
+    const report = await deployConfig(config, api)
+    expect(reportHasFailures(report)).toBe(false)
+    expect(api.all('/custom_field_definitions').map((definition) => definition.namespace)).toEqual([
+      'custom',
+      'specs',
+    ])
+    expect(api.all('/products')[0].custom_fields).toMatchObject([
+      { key: 'custom.material', value: 'Cotton' },
+      { key: 'specs.weight', value: 180 },
+    ])
+
+    expect(Object.values(kinds(await planConfig(config, api)))).toEqual([
+      'unchanged',
+      'unchanged',
+      'unchanged',
+    ])
+    const captured = await introspect(api, { include: ['custom_field_definitions', 'products'] })
+    expect(captured.custom_field_definitions?.[0]).toEqual({
+      resource_type: 'product',
+      key: 'material',
+      field_type: 'short_text',
+    })
+    expect(captured.products?.[0].custom_fields).toEqual({
+      material: 'Cotton',
+      'specs.weight': 180,
+    })
+
+    // A number field reads back as a decimal string: no change, and a number in the file.
+    const [product] = api.all('/products')
+    const weight = (product.custom_fields as Payload[]).find(
+      (field) => field.key === 'specs.weight',
+    )
+    if (weight) weight.value = '180.0'
+    expect(kinds(await planConfig(config, api))).toMatchObject({ 'products/tee': 'unchanged' })
+    const reread = await introspect(api, { include: ['products'] })
+    expect(reread.products?.[0].custom_fields).toMatchObject({ 'specs.weight': 180 })
+
+    // A changed value is shown under the key the file uses.
+    const edited = parseConfig(FILE.replace('material: Cotton', 'material: Linen'))
+    const update = planOperations(await planConfig(edited.config, api)).find(
+      (operation) => operation.key === 'tee',
+    )
+    expect(update?.changes).toEqual([
+      {
+        attribute: 'custom_fields',
+        from: { material: 'Cotton', 'specs.weight': '180.0' },
+        to: { material: 'Linen', 'specs.weight': 180 },
+      },
+    ])
+    await deployConfig(edited.config, api)
+    expect(api.all('/products')[0].custom_fields).toMatchObject([
+      { key: 'custom.material', value: 'Linen' },
+      { key: 'specs.weight', value: 180 },
+    ])
+  })
+
+  it('matches a definition on resource type, namespace and key together', async () => {
+    const api = new FakeApi()
+    api.seed('/custom_field_definitions', [
+      { resource_type: 'category', namespace: 'custom', key: 'material', field_type: 'short_text' },
+      { resource_type: 'product', namespace: 'specs', key: 'material', field_type: 'short_text' },
+    ])
+    const { config } = parseConfig(`
+version: 1
+custom_field_definitions:
+  - resource_type: product
+    key: material
+    field_type: short_text
+`)
+    const plan = await planConfig(config, api, { prune: ['custom_field_definitions'] })
+    expect(kinds(plan)).toEqual({
+      'custom_field_definitions/product:custom.material': 'create',
+      'custom_field_definitions/category:custom.material': 'delete',
+      'custom_field_definitions/product:specs.material': 'delete',
+    })
+  })
+
+  it('refuses a field type that differs from the live definition, and never sends the fixed attributes', async () => {
+    const api = new FakeApi()
+    api.seed('/custom_field_definitions', [
+      { resource_type: 'product', namespace: 'custom', key: 'material', field_type: 'number' },
+    ])
+    const changed = parseConfig(`
+version: 1
+custom_field_definitions:
+  - resource_type: product
+    key: material
+    field_type: short_text
+`)
+    const plan = await planConfig(changed.config, api)
+    expect(planHasErrors(plan)).toBe(true)
+    expect(planOperations(plan)[0].message).toMatch(/field type cannot change/)
+
+    const relabelled = parseConfig(`
+version: 1
+custom_field_definitions:
+  - resource_type: product
+    key: material
+    field_type: number
+    label: Fabric
+`)
+    await deployConfig(relabelled.config, api)
+    const patch = api.calls.find((call) => call.method === 'PATCH')
+    expect(patch?.body).toEqual({ label: 'Fabric' })
+  })
+
+  it('leaves values the file does not name alone, and clears one set to null', async () => {
+    const api = new FakeApi()
+    api.seed('/custom_field_definitions', [
+      { id: 'cfdef_1', resource_type: 'seller', namespace: 'custom', key: 'vat_id' },
+      { id: 'cfdef_2', resource_type: 'seller', namespace: 'custom', key: 'founded' },
+    ])
+    api.seed('/sellers', [
+      {
+        slug: 'acme',
+        name: 'Acme',
+        custom_fields: [
+          { key: 'custom.vat_id', value: 'DE1', custom_field_definition_id: 'cfdef_1' },
+          { key: 'custom.founded', value: 1999, custom_field_definition_id: 'cfdef_2' },
+        ],
+      },
+    ])
+    const { config } = parseConfig(`
+version: 1
+sellers:
+  - slug: acme
+    name: Acme
+    custom_fields:
+      vat_id: null
+`)
+    await deployConfig(config, api)
+    expect(api.all('/sellers')[0].custom_fields).toEqual([
+      { key: 'custom.founded', value: 1999, custom_field_definition_id: 'cfdef_2' },
+    ])
+    expect(kinds(await planConfig(config, api))).toEqual({ 'sellers/acme': 'unchanged' })
+  })
+
+  it('names a value whose definition neither exists nor is declared', async () => {
+    const api = new FakeApi()
+    api.seed('/custom_field_definitions', [])
+    api.seed('/categories', [])
+    const { config } = parseConfig(`
+version: 1
+categories:
+  - permalink: shoes
+    name: Shoes
+    custom_fields:
+      season: Summer
+`)
+    const plan = await planConfig(config, api)
+    expect(planHasErrors(plan)).toBe(true)
+    expect(planOperations(plan)[0].message).toMatch(/category:custom\.season/)
+  })
+})

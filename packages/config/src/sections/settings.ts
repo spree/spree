@@ -6,6 +6,7 @@ import type {
   Store as SdkStore,
   Supplier as SdkSupplier,
   TaxCategory as SdkTaxCategory,
+  TaxRate as SdkTaxRate,
 } from '@spree/admin-sdk'
 import {
   CHANNEL_ATTRIBUTES,
@@ -21,7 +22,9 @@ import {
   SUPPLIER_ATTRIBUTES,
   type SupplierEntry,
   TAX_CATEGORY_ATTRIBUTES,
+  TAX_RATE_ATTRIBUTES,
   type TaxCategoryEntry,
+  type TaxRateEntry,
 } from '../schema.js'
 import type { LiveRecord } from '../types.js'
 import {
@@ -45,6 +48,7 @@ type StockLocation = SdkStockLocation & LiveRecord
 type Store = SdkStore & LiveRecord
 type Supplier = SdkSupplier & LiveRecord
 type TaxCategory = SdkTaxCategory & LiveRecord
+type TaxRate = SdkTaxRate & LiveRecord
 
 export const store: Section<StoreEntry, Store> = {
   name: 'store',
@@ -184,6 +188,37 @@ export const taxCategories = plainSection<TaxCategoryEntry, TaxCategory>({
   async toFile(live) {
     const entry = present(live as unknown as TaxCategoryEntry, TAX_CATEGORY_ATTRIBUTES)
     return { ...entry, ...(live.is_default ? { default: true } : {}) } as TaxCategoryEntry
+  },
+})
+
+export const taxRates = plainSection<TaxRateEntry, TaxRate>({
+  name: 'tax_rates',
+  scope: 'write_settings',
+  introspectByDefault: true,
+  key: 'name',
+  attributes: TAX_RATE_ATTRIBUTES,
+  defaults: { show_rate_in_label: true },
+  references: (config) => ({
+    tax_categories: (config.tax_rates ?? []).map((rate) => rate.tax_category),
+  }),
+  async desired(entry, ctx, path) {
+    const payload: Payload = pick(entry, TAX_RATE_ATTRIBUTES)
+    payload.tax_category_id = await ctx.ref('tax_categories', entry.tax_category, path)
+    if (entry.country !== undefined) payload.country_code = entry.country
+    if (entry.state !== undefined) payload.state_code = entry.state
+    return payload
+  },
+  async toFile(live, ctx) {
+    const entry = present(live as unknown as TaxRateEntry, TAX_RATE_ATTRIBUTES)
+    const category = live.tax_category_id
+      ? await ctx.keyOf('tax_categories', String(live.tax_category_id))
+      : null
+    return {
+      ...entry,
+      ...(category ? { tax_category: category } : {}),
+      ...(live.country_code ? { country: live.country_code } : {}),
+      ...(live.state_code ? { state: live.state_code } : {}),
+    } as TaxRateEntry
   },
 })
 

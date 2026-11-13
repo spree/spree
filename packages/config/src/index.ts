@@ -35,6 +35,7 @@ export type {
   ChannelEntry,
   CustomerEntry,
   CustomerGroupEntry,
+  CustomFieldDefinitionEntry,
   DeliveryMethodEntry,
   DeliveryZoneEntry,
   MarketEntry,
@@ -46,6 +47,7 @@ export type {
   SupplierEntry,
   TaxCategoryEntry,
   TaxExemptionReasonEntry,
+  TaxRateEntry,
   VariantEntry,
 } from './schema.js'
 export { configSchema, SCHEMA_URL, toJsonSchema } from './schema.js'

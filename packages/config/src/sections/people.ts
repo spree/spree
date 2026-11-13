@@ -2,6 +2,13 @@ import type { Customer as SdkCustomer, Seller as SdkSeller } from '@spree/admin-
 import type { CustomerEntry, SellerEntry } from '../schema.js'
 import { CUSTOMER_ATTRIBUTES, SELLER_ATTRIBUTES } from '../schema.js'
 import type { LiveRecord } from '../types.js'
+import {
+  customFieldReferences,
+  customFieldsPayload,
+  customFieldsToFile,
+  liveCustomFields,
+  withCustomFieldsBody,
+} from './custom-fields.js'
 import { keysOf, type Payload, pick, present, refs, type Section } from './section.js'
 
 // The SDK's generated types plus the index signature, so a section can read
@@ -59,18 +66,29 @@ export const sellers: Section<SellerEntry, Seller> = {
   path: '/sellers',
   keyAttribute: 'slug',
   filterable: true,
+  expand: ['custom_fields'],
   entries: (config) => config.sellers ?? [],
   entryKey: (entry) => entry.slug,
-  async desired(entry) {
-    // `status` is not writable: it moves through the approve/suspend actions in afterWrite.
-    return { ...pick(entry, SELLER_ATTRIBUTES), ...(entry.status ? { status: entry.status } : {}) }
+  references: (config) => ({
+    custom_field_definitions: customFieldReferences('seller', config.sellers ?? []),
+  }),
+  async desired(entry, ctx, path) {
+    return {
+      ...pick(entry, SELLER_ATTRIBUTES),
+      // `status` is not writable: it moves through the approve/suspend actions in afterWrite.
+      ...(entry.status ? { status: entry.status } : {}),
+      ...(await customFieldsPayload('seller', entry.custom_fields, ctx, path)),
+    }
+  },
+  async current(live, _ctx, desired) {
+    return { ...live, ...liveCustomFields(live, desired) }
   },
   async create(payload, _entry, ctx) {
-    const { status: _status, ...body } = payload
+    const { status: _status, ...body } = await withCustomFieldsBody('seller', payload, ctx)
     return ctx.client.request<Seller>('POST', '/sellers', { body })
   },
   async update(live, payload, _entry, ctx) {
-    const { status: _status, ...body } = payload
+    const { status: _status, ...body } = await withCustomFieldsBody('seller', payload, ctx)
     return ctx.client.request<Seller>('PATCH', `/sellers/${live.id}`, { body })
   },
   // Approval steps over the onboarding checklist the way an operator can:
@@ -95,6 +113,6 @@ export const sellers: Section<SellerEntry, Seller> = {
     // written without one, since the file cannot ask for that state.
     if (live.status === 'approved') entry.status = 'approved'
     if (live.status === 'suspended') entry.status = 'suspended'
-    return entry
+    return { ...entry, ...customFieldsToFile(live) }
   },
 }

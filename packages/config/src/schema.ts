@@ -41,6 +41,13 @@ const stockByLocation = z
     'Opening stock per stock location name, written when the variant is created and never compared again.',
   )
 const names = (description: string) => z.array(nonEmpty).optional().describe(description)
+// A value is whatever its definition's field type takes; the API checks it.
+const customFieldValues = z
+  .record(nonEmpty, z.unknown())
+  .optional()
+  .describe(
+    'Custom field values by key, e.g. `{ material: Cotton }`. A key in another namespace is written `namespace.key`. Fields left out are untouched; `null` clears one.',
+  )
 
 // --- Attributes each section writes as they are -----------------------------
 
@@ -117,6 +124,17 @@ export const MARKET_ATTRIBUTES = [
 ] as const
 export const CUSTOMER_GROUP_ATTRIBUTES = ['name', 'description'] as const
 export const TAX_CATEGORY_ATTRIBUTES = ['name', 'tax_code', 'description'] as const
+export const TAX_RATE_ATTRIBUTES = ['name', 'rate_percent', 'show_rate_in_label'] as const
+export const CUSTOM_FIELD_DEFINITION_ATTRIBUTES = [
+  'namespace',
+  'key',
+  'label',
+  'field_type',
+  'resource_type',
+  'storefront_visible',
+  'searchable',
+  'sortable',
+] as const
 export const DELIVERY_PROFILE_ATTRIBUTES = ['name', 'kind', 'default'] as const
 export const DELIVERY_ZONE_ATTRIBUTES = ['name', 'description'] as const
 export const DELIVERY_METHOD_ATTRIBUTES = [
@@ -285,6 +303,36 @@ export const taxCategorySchema = z
   })
   .strict()
 
+export const taxRateSchema = z
+  .object({
+    ...specShape('tax_rates', TAX_RATE_ATTRIBUTES),
+    name: nonEmpty,
+    tax_category: nonEmpty.describe('Tax category name.'),
+    country: isoCountry
+      .nullable()
+      .optional()
+      .describe('The country the rate taxes; `null` taxes every country.'),
+    state: nonEmpty
+      .nullable()
+      .optional()
+      .describe('State abbreviation within that country; `null` taxes the whole country.'),
+  })
+  .strict()
+
+export const customFieldDefinitionSchema = z
+  .object({
+    ...specShape('custom_field_definitions', CUSTOM_FIELD_DEFINITION_ATTRIBUTES),
+    resource_type: nonEmpty.describe(
+      'What the field attaches to, e.g. `product`, `category`, `seller`. Set on create.',
+    ),
+    key: nonEmpty,
+    field_type: nonEmpty.describe('Field type, e.g. `short_text`, `number`. Set on create.'),
+  })
+  .strict()
+  .describe(
+    'Matched on resource type, namespace and key together, so changing one of them declares another definition. The field type cannot change once the definition exists.',
+  )
+
 export const deliveryProfileSchema = z
   .object({
     ...specShape('delivery_profiles', DELIVERY_PROFILE_ATTRIBUTES),
@@ -375,6 +423,7 @@ export const categorySchema = z
       'Full path, e.g. `clothing/t-shirts`; the parent is the path without its last segment.',
     ),
     name: nonEmpty,
+    custom_fields: customFieldValues,
   })
   .strict()
 
@@ -412,6 +461,7 @@ export const productSchema = z
     prices: moneyByCurrency.optional().describe('Prices of a simple product.'),
     compare_at_prices: moneyByCurrency.optional(),
     stock: stockByLocation.optional(),
+    custom_fields: customFieldValues,
     variants: z
       .array(variantSchema)
       .optional()
@@ -457,6 +507,7 @@ export const sellerSchema = z
       .describe(
         'Moves the seller through approve or suspend. A seller can be approved once onboarding has started; a freshly created one cannot.',
       ),
+    custom_fields: customFieldValues,
   })
   .strict()
 
@@ -514,6 +565,7 @@ export const configSchema = z
     markets: z.array(marketSchema).optional(),
     customer_groups: z.array(customerGroupSchema).optional(),
     tax_categories: z.array(taxCategorySchema).optional(),
+    tax_rates: z.array(taxRateSchema).optional(),
     delivery_profiles: z.array(deliveryProfileSchema).optional(),
     delivery_zones: z.array(deliveryZoneSchema).optional(),
     delivery_methods: z.array(deliveryMethodSchema).optional(),
@@ -521,6 +573,7 @@ export const configSchema = z
     payment_methods: z.array(paymentMethodSchema).optional(),
     suppliers: z.array(supplierSchema).optional(),
     product_types: z.array(productTypeSchema).optional(),
+    custom_field_definitions: z.array(customFieldDefinitionSchema).optional(),
     categories: z.array(categorySchema).optional(),
     products: z.array(productSchema).optional(),
     customers: z.array(customerSchema).optional(),
@@ -543,6 +596,8 @@ export type ChannelEntry = z.infer<typeof channelSchema>
 export type MarketEntry = z.infer<typeof marketSchema>
 export type CustomerGroupEntry = z.infer<typeof customerGroupSchema>
 export type TaxCategoryEntry = z.infer<typeof taxCategorySchema>
+export type TaxRateEntry = z.infer<typeof taxRateSchema>
+export type CustomFieldDefinitionEntry = z.infer<typeof customFieldDefinitionSchema>
 export type DeliveryProfileEntry = z.infer<typeof deliveryProfileSchema>
 export type DeliveryZoneEntry = z.infer<typeof deliveryZoneSchema>
 export type DeliveryMethodEntry = z.infer<typeof deliveryMethodSchema>

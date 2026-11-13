@@ -17,6 +17,13 @@ import {
 import { decimalString } from '../spec.js'
 import type { LiveRecord } from '../types.js'
 import {
+  customFieldReferences,
+  customFieldsPayload,
+  customFieldsToFile,
+  liveCustomFields,
+  withCustomFieldsBody,
+} from './custom-fields.js'
+import {
   FIRST_PARTY,
   keysOf,
   type Payload,
@@ -123,6 +130,10 @@ export const categories: Section<CategoryEntry, Category> = {
   path: '/categories',
   keyAttribute: 'permalink',
   filterable: true,
+  expand: ['custom_fields'],
+  references: (config) => ({
+    custom_field_definitions: customFieldReferences('category', config.categories ?? []),
+  }),
   entries: (config) =>
     [...(config.categories ?? [])].sort(
       (left, right) => left.permalink.split('/').length - right.permalink.split('/').length,
@@ -136,21 +147,22 @@ export const categories: Section<CategoryEntry, Category> = {
         ? { description: canonicalMarkup(entry.description) }
         : {}),
       parent_id: parent ? await ctx.ref('categories', parent, path) : null,
+      ...(await customFieldsPayload('category', entry.custom_fields, ctx, path)),
     }
   },
   async current(live, _ctx, desired) {
-    return { ...live, ...descriptionPair(desired, live) }
+    return { ...live, ...descriptionPair(desired, live), ...liveCustomFields(live, desired) }
   },
   async create(payload, entry, ctx) {
     return ctx.client.request<Category>('POST', '/categories', {
       body: {
-        ...payload,
+        ...(await withCustomFieldsBody('category', payload, ctx)),
         ...(entry.description !== undefined ? { description: entry.description } : {}),
       },
     })
   },
   async update(live, payload, entry, ctx) {
-    const { parent_id: parentId, ...body } = payload
+    const { parent_id: parentId, ...body } = await withCustomFieldsBody('category', payload, ctx)
     // The update ignores a blank parent, so moving a category to the top
     // level goes through the reposition action.
     if (parentId === null && live.parent_id) {
@@ -167,10 +179,13 @@ export const categories: Section<CategoryEntry, Category> = {
     })
   },
   async toFile(live) {
-    return present(
-      { ...live, description: live.description_html } as unknown as CategoryEntry,
-      CATEGORY_ATTRIBUTES,
-    ) as CategoryEntry
+    return {
+      ...present(
+        { ...live, description: live.description_html } as unknown as CategoryEntry,
+        CATEGORY_ATTRIBUTES,
+      ),
+      ...customFieldsToFile(live),
+    } as CategoryEntry
   },
 }
 
@@ -183,6 +198,7 @@ const PRODUCT_EXPAND = [
   'variants.option_values',
   'categories',
   'product_publications',
+  'custom_fields',
 ]
 
 const VARIANT_ATTRIBUTES: (keyof VariantEntry)[] = [
@@ -364,6 +380,7 @@ export const products: Section<ProductEntry, Product> = {
       tax_categories: products.flatMap((product) => product.tax_category ?? []),
       categories: products.flatMap((product) => product.categories ?? []),
       channels: products.flatMap((product) => product.channels ?? []),
+      custom_field_definitions: customFieldReferences('product', products),
       stock_locations: products.flatMap((product) =>
         entryVariants(product).flatMap((variant) => Object.keys(variant.stock ?? {})),
       ),
@@ -381,6 +398,7 @@ export const products: Section<ProductEntry, Product> = {
     // Channels are compared as codes and written through the bulk endpoints
     // in afterWrite, since the product payload has no channel list.
     if (entry.channels) payload.channels = [...entry.channels].sort()
+    Object.assign(payload, await customFieldsPayload('product', entry.custom_fields, ctx, path))
     const variants = entryVariants(entry)
     if (variants.length) {
       payload.variants = sortVariants(
@@ -407,6 +425,7 @@ export const products: Section<ProductEntry, Product> = {
     return {
       ...live,
       ...descriptionPair(desired, live),
+      ...liveCustomFields(live, desired),
       category_ids: ((live.categories as LiveRecord[] | undefined) ?? []).map(
         (category) => category.id,
       ),
@@ -425,7 +444,7 @@ export const products: Section<ProductEntry, Product> = {
     }
   },
   async create(payload, entry, ctx) {
-    const { channels: _channels, ...body } = payload
+    const { channels: _channels, ...body } = await withCustomFieldsBody('product', payload, ctx)
     // The comparison used the canonical form; the write sends the markup the
     // file holds.
     if (entry.description !== undefined) body.description = entry.description
@@ -435,7 +454,7 @@ export const products: Section<ProductEntry, Product> = {
     })
   },
   async update(live, payload, entry, ctx) {
-    const { channels: _channels, ...body } = payload
+    const { channels: _channels, ...body } = await withCustomFieldsBody('product', payload, ctx)
     if (entry.description !== undefined) body.description = entry.description
     // A variant already on the product is addressed by id, so the full
     // replacement the API performs updates it in place instead of recreating it.
@@ -520,6 +539,7 @@ export const products: Section<ProductEntry, Product> = {
     if (categories.length) entry.categories = categories
     const channels = await keysOf(ctx, 'channels', publishedChannelIds(live))
     if (channels.length) entry.channels = channels
+    Object.assign(entry, customFieldsToFile(live))
 
     const variants = await Promise.all(
       ((live.variants as LiveVariant[] | undefined) ?? []).map((variant) =>
