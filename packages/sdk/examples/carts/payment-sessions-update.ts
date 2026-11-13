@@ -13,7 +13,7 @@ const session = await client.carts.paymentSessions.update(
     amount: '50.00',
   },
   {
-    token: '<token>',
+    spreeToken: '<cart-token>',
   },
 )
 

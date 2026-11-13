@@ -12,7 +12,7 @@ const payment = await client.carts.payments.create(
     payment_method_id: 'pm_abc123',
   },
   {
-    token: '<token>',
+    spreeToken: '<cart-token>',
   },
 )
 
