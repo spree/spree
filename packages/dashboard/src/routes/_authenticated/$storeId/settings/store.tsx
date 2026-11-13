@@ -435,6 +435,8 @@ function StoreSettingsForm({ store }: { store: Store }) {
                       labelKey="logo_label"
                       helpKey="logo_help"
                       onUploadingChange={setLogoUploading}
+                      // A logo picked mid-save would be cleared by the post-save reset.
+                      disabled={form.formState.isSubmitting}
                     />
                   </FieldGroup>
                 </CardContent>
