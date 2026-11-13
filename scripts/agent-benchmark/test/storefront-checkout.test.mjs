@@ -46,7 +46,7 @@ describe('storefront checkout page check', () => {
     async (path) => {
       const all = { ...pages, ...overrides }
       return path in all && all[path] !== null
-        ? { status: 200, text: all[path] }
+        ? { status: 200, text: all[path], path }
         : { status: 404, text: 'Not found' }
     }
   const expected = {
@@ -100,5 +100,16 @@ describe('storefront checkout page check', () => {
       return shop()(path)
     }
     assert.match(await pageProblems(failing, expected), /checkout page .* failed: socket hang up/)
+  })
+
+  it('rejects a checkout page that only redirects to the cart', async () => {
+    const redirecting = async (path) =>
+      path === '/checkout'
+        ? { status: 200, text: '<p>Your cart is empty.</p>', path: '/cart' }
+        : shop()(path)
+    assert.match(
+      await pageProblems(redirecting, expected),
+      /checkout page \(\/checkout\) redirects to \/cart/,
+    )
   })
 })

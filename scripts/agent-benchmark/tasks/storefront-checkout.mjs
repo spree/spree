@@ -40,14 +40,15 @@ export function orderMismatch(order, { variantId, quantity, email }) {
 }
 
 // Fetches the storefront pages the prompt asks for and returns what is wrong
-// with them, or null. `get(path)` answers { status, text } after redirects.
+// with them, or null. `get(path)` answers { status, text, path } after
+// redirects, where path is the one it ended on.
 // The pages must render server-side, so the names are in the HTML itself.
 export async function pageProblems(
   get,
   { productName, productPaths, orderNumber, confirmationUrl },
 ) {
   // The problem with the page at path, or null when it answers 200 and shows text.
-  const problem = async (label, path, text) => {
+  const problem = async (label, path, text, { stay = false } = {}) => {
     let page
     try {
       page = await get(path)
@@ -55,6 +56,7 @@ export async function pageProblems(
       return `${label} (${path}) failed: ${error.message}`
     }
     if (page.status !== 200) return `${label} (${path}) answered ${page.status}`
+    if (stay && page.path !== path) return `${label} (${path}) redirects to ${page.path}`
     if (text && !page.text.includes(text)) {
       return `${label} (${path}) does not show ${JSON.stringify(text)}`
     }
@@ -69,7 +71,8 @@ export async function pageProblems(
   }
   problems.push(productProblem)
   problems.push(await problem('The cart page', '/cart'))
-  problems.push(await problem('The checkout page', '/checkout'))
+  // A checkout that only redirects to the cart is not a checkout page.
+  problems.push(await problem('The checkout page', '/checkout', null, { stay: true }))
   const isShopPath =
     typeof confirmationUrl === 'string' &&
     confirmationUrl.startsWith('/') &&
@@ -149,7 +152,12 @@ async function check({ projectDir, port, keys }) {
     const pages = await pageProblems(
       async (path) => {
         const page = await fetch(new URL(path, shop))
-        return { status: page.status, text: await page.text() }
+        const landed = new URL(page.url)
+        return {
+          status: page.status,
+          text: await page.text(),
+          path: landed.pathname + landed.search,
+        }
       },
       {
         productName: product.name,
@@ -187,7 +195,7 @@ It needs these pages, rendered on the server so their content is in the HTML the
 - a guest checkout at /checkout: email, shipping address, delivery method and payment,
 - an order confirmation page that shows the order number.
 
-The cart and checkout pages must also load for a visitor with no cart yet.
+The cart and checkout pages must also load for a visitor with no cart yet, at their own address rather than redirecting.
 
 Read the API URL and publishable key from the SPREE_API_URL and SPREE_PUBLISHABLE_KEY environment variables.
 

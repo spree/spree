@@ -66,8 +66,17 @@ const ADDRESS_FIELDS = [
 
 export default async function CheckoutPage() {
   const ref = await currentCart()
-  if (!ref) redirect('/cart')
-  const cart = await getCart(ref)
+  const cart = ref ? await getCart(ref) : null
+  if (!ref || !cart || cart.items.length === 0) {
+    return (
+      <main>
+        <h1>Checkout</h1>
+        <p>
+          Your cart is empty. <a href="/">Browse products</a>
+        </p>
+      </main>
+    )
+  }
   const methods = await offlinePaymentMethods(ref)
   return (
     <main>
