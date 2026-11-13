@@ -4,9 +4,7 @@ module Spree
       queue_as Spree.queues.search
 
       # Shares IndexJob's per-store limit, see there.
-      if respond_to?(:limits_concurrency)
-        limits_concurrency to: 1, key: ->(_prefixed_id, store_id) { store_id }, group: 'spree_search_provider', duration: 5.minutes
-      end
+      limits_concurrency to: 1, key: ->(*, store_id) { store_id }, group: 'spree_search', duration: 5.minutes if respond_to?(:limits_concurrency)
 
       # Search providers are external services; broad retry covers network blips and 5xx.
       retry_on StandardError, wait: :polynomially_longer, attempts: 5

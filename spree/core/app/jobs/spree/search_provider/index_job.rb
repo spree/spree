@@ -9,9 +9,7 @@ module Spree
       # time; the rest wait as blocked executions, so no update is lost. Shared
       # with RemoveJob. The duration only has to outlive one job; expiry lifts
       # the cap, it doesn't drop jobs. Solid Queue only (no-op elsewhere).
-      if respond_to?(:limits_concurrency)
-        limits_concurrency to: 1, key: ->(_resource_class, _resource_id, store_id) { store_id }, group: 'spree_search_provider', duration: 5.minutes
-      end
+      limits_concurrency to: 1, key: ->(*, store_id) { store_id }, group: 'spree_search', duration: 5.minutes if respond_to?(:limits_concurrency)
 
       # Search providers are external services (Meilisearch, etc.); a transient 5xx or
       # network blip should not drop the index update.
