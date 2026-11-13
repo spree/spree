@@ -2,11 +2,24 @@ import { runAcceptanceSpec } from '../lib/project.mjs'
 
 // A local listener stands in for the external service, so the check holds
 // whichever HTTP client the agent picks.
+//
+// The starter sets Solid Queue as the job adapter for every environment, and
+// ActiveJob::TestHelper keeps an adapter the app configured, so jobs would
+// land in the queue tables and perform_enqueued_jobs would run none of them.
+// The spec switches to the test adapter itself.
 const SPEC = `require 'rails_helper'
 require 'socket'
 
 RSpec.describe 'Agent benchmark: order sync', type: :model do
   include ActiveJob::TestHelper
+
+  around do |example|
+    adapter = ActiveJob::Base.queue_adapter
+    ActiveJob::Base.queue_adapter = :test
+    example.run
+  ensure
+    ActiveJob::Base.queue_adapter = adapter
+  end
 
   let(:server) { TCPServer.new('127.0.0.1', 0) }
   let(:requests) { Queue.new }
@@ -26,6 +39,8 @@ RSpec.describe 'Agent benchmark: order sync', type: :model do
         client.write("HTTP/1.1 200 OK\\r\\nContent-Length: 2\\r\\nConnection: close\\r\\n\\r\\n{}")
         client.close
       end
+    rescue IOError
+      # The server closed after the example.
     end
     stub_const('ENV', ENV.to_h.merge('ORDER_SYNC_URL' => "http://127.0.0.1:#{port}/orders"))
   end
