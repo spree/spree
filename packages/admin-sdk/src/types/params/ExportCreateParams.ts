@@ -4,7 +4,7 @@ export type ExportCreateParams = {
   /**
    * Which dataset to export, as its shorthand: `products`, `orders`, `customers`,
    * `product_translations`, `gift_cards`, `coupon_codes`, `newsletter_subscribers`,
-   * `price_list_prices`, `purchase_orders`, or a type an extension registers.
+   * `price_list_prices`, `purchase_orders`, `invoices`, or a type an extension registers.
    */
   type: string
   /**

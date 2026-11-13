@@ -20,7 +20,7 @@ module Spree
             body.attribute :type, :string,
               required: true, on: :create,
               example: 'products',
-              description: 'Which dataset to export, as its shorthand: `products`, `orders`, `customers`, `product_translations`, `gift_cards`, `coupon_codes`, `newsletter_subscribers`, `price_list_prices`, `purchase_orders`, or a type an extension registers.'
+              description: 'Which dataset to export, as its shorthand: `products`, `orders`, `customers`, `product_translations`, `gift_cards`, `coupon_codes`, `newsletter_subscribers`, `price_list_prices`, `purchase_orders`, `invoices`, or a type an extension registers.'
             body.attribute :record_selection, :string,
               choices: %w[filtered all],
               example: 'filtered',

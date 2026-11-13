@@ -4,6 +4,7 @@ import { StatItem } from '@spree/dashboard-ui'
 import { Link } from '@tanstack/react-router'
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useSellerMissingInvoicesCount } from '../../../hooks/use-invoices'
 import { useReportingQuery } from '../../../hooks/use-reporting'
 import { useSellerOrdersCount } from '../../../hooks/use-sellers'
 import { GrowthBadge } from '../reporting/growth-badge'
@@ -22,10 +23,11 @@ export function SellerStats({ seller }: { seller: Seller }) {
   const canReadOrders = permissions.can('read', Subject.Order)
   const orders = useSellerOrdersCount(seller.id, false, canReadOrders)
   const toFulfill = useSellerOrdersCount(seller.id, true, canReadOrders)
+  const missingInvoices = useSellerMissingInvoicesCount(seller.id, canReadOrders)
   const inReview = seller.products_count_by_status.proposed
 
   return (
-    <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
+    <div className="grid grid-cols-2 gap-3 lg:grid-cols-6">
       <SalesStat
         sellerId={seller.id}
         metric="net_sales"
@@ -53,6 +55,18 @@ export function SellerStats({ seller }: { seller: Seller }) {
               </StatLink>
             }
           />
+          <StatItem
+            label={t('admin.sellers.missing_invoices')}
+            value={
+              <StatLink
+                to="/$storeId/orders"
+                params={{ storeId }}
+                search={sellerOrdersMissingInvoiceSearch(seller.id)}
+              >
+                {missingInvoices.data ?? '—'}
+              </StatLink>
+            }
+          />
         </>
       )}
       {permissions.can('read', Subject.Product) && (
@@ -71,6 +85,17 @@ export function SellerStats({ seller }: { seller: Seller }) {
       )}
     </div>
   )
+}
+
+/** The seller's placed orders that are paid but have no invoice or receipt yet. */
+function sellerOrdersMissingInvoiceSearch(sellerId: string) {
+  const { filters } = sellerOrdersSearch(sellerId)
+  return {
+    filters: [
+      ...filters,
+      { id: 'missing_invoice', field: 'missing_invoice', operator: 'in', value: 'true' },
+    ],
+  }
 }
 
 function SalesStat({

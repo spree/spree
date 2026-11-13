@@ -69,6 +69,13 @@ nav.add({
       position: 400,
       badge: navCounterBadge('claims'),
     },
+    {
+      key: 'invoices',
+      labelKey: 'admin.nav.invoices',
+      path: '/invoices',
+      subject: Subject.Order,
+      position: 500,
+    },
   ],
 })
 

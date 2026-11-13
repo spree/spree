@@ -6,9 +6,13 @@ const client = createClient({
 })
 
 // region:example
-const { data: documents } = await client.orders.documents.list('or_abc123', {}, {
-  token: '<token>',
-})
+const { data: documents } = await client.orders.documents.list(
+  'or_abc123',
+  {},
+  {
+    token: '<token>',
+  },
+)
 
 // endregion:example
 

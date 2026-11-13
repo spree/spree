@@ -106,6 +106,7 @@ RSpec.describe 'Admin Invoices API', type: :request, swagger_doc: 'api-reference
       security [api_key: [], bearer_auth: []]
       description 'Streams the PDF. Served through the API, never a storage link, so these credentials protect it.'
       admin_scope :read, :orders
+      admin_sdk_example 'invoices/download'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true

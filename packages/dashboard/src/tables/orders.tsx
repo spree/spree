@@ -287,5 +287,20 @@ defineTable('orders', {
       displayable: false,
       ransackAttribute: 'line_items_variant_sku',
     },
+    {
+      // A scope: placed and paid, with no invoice or receipt yet — the list a
+      // merchant or marketplace operator works through to chase invoices.
+      key: 'missing_invoice',
+      label: i18n.t('admin.orders.columns.missing_invoice'),
+      ransackAttribute: 'missing_invoice',
+      ransackScope: true,
+      filterable: true,
+      filterType: 'boolean',
+      booleanLabels: {
+        true: i18n.t('admin.orders.filters.missing_invoice'),
+        false: i18n.t('admin.orders.filters.has_invoice'),
+      },
+      displayable: false,
+    },
   ],
 })

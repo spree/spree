@@ -98,5 +98,20 @@ defineTable<Order>('seller-orders', {
       default: true,
       render: (order) => formatMoney(order.total, order.currency, i18n.language),
     },
+    {
+      // Paid orders with no invoice or receipt yet: what the marketplace will
+      // ask this seller for.
+      key: 'missing_invoice',
+      label: i18n.t('orders.columns.missing_invoice'),
+      ransackAttribute: 'missing_invoice',
+      ransackScope: true,
+      filterable: true,
+      filterType: 'boolean',
+      booleanLabels: {
+        true: i18n.t('orders.filters.missing_invoice'),
+        false: i18n.t('orders.filters.has_invoice'),
+      },
+      displayable: false,
+    },
   ],
 })

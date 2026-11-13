@@ -74,6 +74,7 @@ RSpec.describe 'Seller Invoices API', type: :request, swagger_doc: 'api-referenc
     get 'Download an invoice' do
       tags 'Invoices'
       security [bearer_auth: []]
+      seller_sdk_example 'invoices/download'
 
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
 
