@@ -15,11 +15,19 @@ module Spree
             schema.attribute :assignable_id, :id, required: true, example: 'comp_86Rf07xd4z'
           end
 
+          PRICE_LIST_DESCRIPTION = 'The price list this catalog prices through, written inline: ' \
+                                   'an object creates the owned list or updates it. Null deletes the list (a soft delete). ' \
+                                   'Omit the key, or send `{}`, to leave the pricing alone. ' \
+                                   'An existing price list cannot be attached by id: the list is written here and owned by this catalog. ' \
+                                   'A catalog with an empty assortment prices without hiding anything; ' \
+                                   'curate or import products to make it restrictive.'.freeze
+
           scoped_resource :products
 
           before_action :set_resource,
                         only: [:show, :update, :destroy, :assign, :import_products,
                                :activate, :deactivate]
+          before_action :reject_price_list_reference, only: [:create, :update]
 
           request_params :catalog do |body|
             body.attribute :name, :string, required: true, on: :create, example: 'VIP Assortment'
@@ -43,9 +51,9 @@ module Spree
             body.attribute :order_minimums, :array, of: Spree::Api::V3::Admin::CatalogOrderMinimumRequestSchema,
               description: 'The whole order-minimum set. A currency left out has its minimum lifted; omitting the key leaves them alone.'
             body.attribute :price_list, :object,
-              nullable: true,
-              as: 'CatalogPriceListParams',
-              description: 'The price list this catalog prices through, written inline: an object creates the owned list or updates it. Null deletes the list (a soft delete). Omit the key, or send `{}`, to leave the pricing alone. A catalog with an empty assortment prices without hiding anything; curate or import products to make it restrictive.' do |price_list|
+                           nullable: true,
+                           as: 'CatalogPriceListParams',
+                           description: PRICE_LIST_DESCRIPTION do |price_list|
               price_list.attribute :name, :string
               price_list.attribute :description, :string, nullable: true
               price_list.attribute :status, :string
@@ -177,6 +185,24 @@ module Spree
           end
 
           private
+
+          # `permit` drops a scalar where it expects an object, and an `id`
+          # inside the object, so a price list id — an agent's natural guess —
+          # would answer ok and change nothing. A catalog only ever owns a list written inline.
+          def reject_price_list_reference
+            value = params[:price_list]
+            reference = params.key?(:price_list_id) ||
+                        (value.is_a?(ActionController::Parameters) ? value.key?(:id) : !value.nil?)
+            return unless reference
+
+            message = I18n.t('spree.catalogs.price_list_must_be_inline')
+            render_error(
+              code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:validation_error],
+              message: message,
+              status: :unprocessable_content,
+              details: { price_list: [message] }
+            )
+          end
 
           # The audience vocabulary is closed; each type resolves through the
           # store so another tenant's record is a 404, never an assignment.

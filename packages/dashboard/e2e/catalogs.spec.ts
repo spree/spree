@@ -497,4 +497,59 @@ test.describe('catalogs', () => {
       await deleteCatalogPickerProducts(page, creds.store_id, creds.accessToken, seededProductIds)
     }
   })
+
+  // Agents write catalogs through the Admin API, where a price list id once
+  // answered ok and saved nothing. The dashboard always sends the list inline,
+  // so this path is only reachable through the API.
+  test('refuses an existing price list given by id', async ({ page }) => {
+    const creds = await login(page)
+    const headers = {
+      'X-Spree-Store-Id': creds.store_id,
+      Authorization: `Bearer ${creds.accessToken}`,
+    }
+    const stamp = Date.now()
+
+    const listResponse = await page.request.post('/api/v3/admin/price_lists', {
+      headers,
+      data: { name: `E2E Trade ${stamp}` },
+    })
+    expect(listResponse.ok()).toBe(true)
+    const priceList = (await listResponse.json()) as { id: string }
+
+    const name = `E2E Linked Catalog ${stamp}`
+    const refusedCreate = await page.request.post('/api/v3/admin/catalogs', {
+      headers,
+      data: { name, price_list: priceList.id },
+    })
+    expect(refusedCreate.status()).toBe(422)
+    const createError = (await refusedCreate.json()) as { error: { message: string } }
+    expect(createError.error.message).toMatch(/cannot use an existing price list/i)
+
+    const catalogResponse = await page.request.post('/api/v3/admin/catalogs', {
+      headers,
+      data: { name: `E2E Unpriced Catalog ${stamp}` },
+    })
+    expect(catalogResponse.ok()).toBe(true)
+    const catalog = (await catalogResponse.json()) as { id: string }
+
+    const refusedUpdate = await page.request.patch(`/api/v3/admin/catalogs/${catalog.id}`, {
+      headers,
+      data: { price_list: priceList.id },
+    })
+    expect(refusedUpdate.status()).toBe(422)
+
+    const reread = await page.request.get(
+      `/api/v3/admin/catalogs/${catalog.id}?expand=price_list`,
+      {
+        headers,
+      },
+    )
+    const stored = (await reread.json()) as { price_list: unknown; pricing_strategy: string }
+    expect(stored.price_list ?? null).toBeNull()
+    expect(stored.pricing_strategy).toBe('base')
+
+    // The refused create left nothing behind for the merchant to find.
+    await gotoIndex(page, CATALOGS_PATH(creds.store_id), CTA)
+    await expect(page.getByText(name)).toHaveCount(0)
+  })
 })
