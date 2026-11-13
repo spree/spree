@@ -415,11 +415,23 @@ module Spree
     validates :mail_from_address, email: { allow_blank: false }
     validates :customer_support_email, email: { allow_blank: true }
     # Storefronts render these as links, so only a handle, a scheme-less address
-    # or an http(s) URL is accepted, never another scheme or a control character.
+    # or an http(s) URL is accepted, never another scheme, a space or an invisible
+    # character. Ruby's \s is ASCII-only, hence the Unicode classes.
+    # Checked only when the value changes, so a value saved before this rule
+    # does not block saving the store's other settings.
     SOCIAL_FIELDS = %i[facebook twitter instagram].freeze
-    SOCIAL_FIELD_FORMAT = %r{\A(?:@?[\w.-]+(?:/[^\s[:cntrl:]]*)?|https?://[^\s[:cntrl:]]+)\z}i
+    SOCIAL_FIELD_FORMAT = %r{
+      \A(?!(?:.*/)?\.\.(?:/|\z))                                   # no ".." path segment
+      (?:
+        https?://[^[:space:][:cntrl:]\p{Cf}]+                      # a web address
+      | (?://)?@?[\p{L}\p{N}_.-]*[\p{L}\p{N}_][\p{L}\p{N}_.-]*(?::\d+)? # a handle, or a host with an optional port
+        (?:/[^[:space:][:cntrl:]\p{Cf}]*)?                         # and an optional path
+      )\z
+    }xi
     normalizes(*SOCIAL_FIELDS, with: ->(value) { value.strip.presence })
-    validates(*SOCIAL_FIELDS, format: { with: SOCIAL_FIELD_FORMAT }, allow_blank: true)
+    SOCIAL_FIELDS.each do |field|
+      validates field, format: { with: SOCIAL_FIELD_FORMAT }, allow_blank: true, if: :"will_save_change_to_#{field}?"
+    end
     # FIXME: we should remove this condition in v5
     if !ENV['SPREE_DISABLE_DB_CONNECTION'] &&
        connected? &&
