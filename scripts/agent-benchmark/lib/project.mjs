@@ -95,11 +95,12 @@ export async function scaffoldProject({
   if (devImage) {
     const devCompose = path.join(projectDir, 'docker-compose.dev.yml')
     const source = fs.readFileSync(devCompose, 'utf8')
+    // The build: key stays: the CLI reads it as the mark of an ejected project.
     const swapped = source.replace(
-      /^ {2}build:\n(?: {4}.*\n)+/m,
-      `  image: ${devImage}\n  pull_policy: never\n`,
+      /^( {4})dockerfile: .*\n {4}target: dev\n/m,
+      `$1dockerfile_inline: FROM ${devImage}\n`,
     )
-    if (swapped === source) throw new Error(`No build: block to replace in ${devCompose}`)
+    if (swapped === source) throw new Error(`No dev build to replace in ${devCompose}`)
     fs.writeFileSync(devCompose, swapped)
   }
 

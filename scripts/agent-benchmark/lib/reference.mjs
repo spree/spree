@@ -2,8 +2,9 @@
 // The reference agent: applies the hand-written solution in
 // tasks/<task>/reference/ to the current directory, the way a coding agent
 // would. Files under files/ are copied over the project, then apply.sh (if
-// any) runs from the project root. Calibrates the checks: every task should
-// pass with its reference solution.
+// any) runs from the project root, with REFERENCE_DIR set to the reference
+// folder. Calibrates the checks: every task should pass with its reference
+// solution.
 //
 //   node lib/reference.mjs <task-id>
 import { spawnSync } from 'node:child_process'
@@ -24,6 +25,9 @@ if (fs.existsSync(filesDir)) fs.cpSync(filesDir, process.cwd(), { recursive: tru
 const script = path.join(referenceDir, 'apply.sh')
 if (fs.existsSync(script)) {
   // The script's output goes to stderr: stdout is the agent transcript.
-  const result = spawnSync('bash', [script], { stdio: ['ignore', 2, 2] })
+  const result = spawnSync('bash', [script], {
+    stdio: ['ignore', 2, 2],
+    env: { ...process.env, REFERENCE_DIR: referenceDir },
+  })
   process.exit(result.status ?? 1)
 }
