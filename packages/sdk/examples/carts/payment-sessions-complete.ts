@@ -13,7 +13,7 @@ const session = await client.carts.paymentSessions.complete(
     session_result: 'success',
   },
   {
-    token: '<token>',
+    spreeToken: '<cart-token>',
   },
 )
 
