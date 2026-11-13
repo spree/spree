@@ -303,6 +303,25 @@ describe Spree::Store, type: :model, without_global_store: true do
         expect(store.errors[:customer_support_email]).to be_present
       end
     end
+
+    describe 'social accounts' do
+      it 'accepts a handle or a web address' do
+        store = build(:store, facebook: 'https://facebook.com/shop', twitter: '@shop', instagram: 'shop.beans')
+        expect(store).to be_valid
+      end
+
+      it 'refuses a value with any other scheme' do
+        store = build(:store, facebook: 'javascript:alert(1)', twitter: 'data:text/html,x', instagram: 'mailto:a@b.co')
+        expect(store).not_to be_valid
+        expect(store.errors.attribute_names).to include(:facebook, :twitter, :instagram)
+      end
+
+      it 'strips whitespace and stores blank as nil' do
+        store = build(:store, twitter: '  @shop ', instagram: '   ')
+        expect(store.twitter).to eq('@shop')
+        expect(store.instagram).to be_nil
+      end
+    end
   end
 
   context 'Translations' do

@@ -225,6 +225,12 @@ function StoreSettingsForm({ store }: { store: Store }) {
     // Extension fields come from live form state — the Zod parse behind
     // `values` strips keys the first-party schema doesn't know.
     const extensionValues = extensionSubmitValues('store', form)
+    // The server trims these too; trimming here keeps the reset form equal to what was saved.
+    const socials = {
+      facebook: values.facebook.trim(),
+      twitter: values.twitter.trim(),
+      instagram: values.instagram.trim(),
+    }
     try {
       if (storeDirty) {
         await updateMutation.mutateAsync({
@@ -232,9 +238,9 @@ function StoreSettingsForm({ store }: { store: Store }) {
           seo_title: values.seo_title || null,
           meta_description: values.meta_description || null,
           meta_keywords: values.meta_keywords || null,
-          facebook: values.facebook.trim() || null,
-          twitter: values.twitter.trim() || null,
-          instagram: values.instagram.trim() || null,
+          facebook: socials.facebook || null,
+          twitter: socials.twitter || null,
+          instagram: socials.instagram || null,
           ...signedIdParam('logo', values.logo_signed_id, values.logo_cleared),
           admin_locale: (values.admin_locale || null) as LocaleCode | null,
           timezone: values.timezone,
@@ -266,6 +272,7 @@ function StoreSettingsForm({ store }: { store: Store }) {
         // also means a retry after a failed custom field save sends only those.
         form.reset({
           ...values,
+          ...socials,
           logo_signed_id: null,
           logo_preview_url: null,
           logo_cleared: false,
