@@ -50,6 +50,67 @@ RSpec.describe Spree::CustomFieldDefinition, type: :model do
     end
   end
 
+  describe 'search index settings' do
+    include ActiveJob::TestHelper
+
+    let(:indexing_provider_class) do
+      Class.new(Spree::SearchProvider::Base) do
+        def self.indexing_required?
+          true
+        end
+
+        def self.name
+          'CustomFieldDefinitionSpec::IndexingProvider'
+        end
+      end
+    end
+
+    before do
+      stub_const(indexing_provider_class.name, indexing_provider_class)
+      allow(Spree).to receive(:search_provider).and_return(indexing_provider_class.name)
+    end
+
+    let(:configure_job) { Spree::SearchProvider::ConfigureIndexJob }
+
+    it 'pushes the settings when a searchable product field is added' do
+      expect { create(:custom_field_definition, :short_text_field, :searchable) }.
+        to have_enqueued_job(configure_job).with(@default_store.id.to_s)
+    end
+
+    it 'pushes the settings when a field becomes sortable' do
+      definition = create(:custom_field_definition, :short_text_field)
+
+      expect { definition.update!(sortable: true) }.to have_enqueued_job(configure_job).with(@default_store.id.to_s)
+    end
+
+    it 'pushes the settings when a searchable field is removed' do
+      definition = create(:custom_field_definition, :short_text_field, :searchable)
+
+      expect { definition.destroy! }.to have_enqueued_job(configure_job)
+    end
+
+    it 'leaves the settings alone for a field search does not use' do
+      expect { create(:custom_field_definition, :short_text_field) }.not_to have_enqueued_job(configure_job)
+    end
+
+    it 'leaves the settings alone when only the label changes' do
+      definition = create(:custom_field_definition, :short_text_field, :searchable)
+
+      expect { definition.update!(label: 'Renamed') }.not_to have_enqueued_job(configure_job)
+    end
+
+    it 'leaves the settings alone for fields on other resources' do
+      expect { create(:custom_field_definition, :for_variant, :short_text_field, searchable: true) }.
+        not_to have_enqueued_job(configure_job)
+    end
+
+    it 'enqueues nothing when the provider needs no index' do
+      allow(Spree).to receive(:search_provider).and_call_original
+
+      expect { create(:custom_field_definition, :short_text_field, :searchable) }.not_to have_enqueued_job(configure_job)
+    end
+  end
+
   describe 'searchable / sortable validations' do
     it 'allows searchable on short_text' do
       definition = build(:custom_field_definition, :short_text_field, searchable: true)

@@ -284,6 +284,36 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
         expect(result.products).to include(product_1, product_2)
       end
     end
+
+    context 'when the index was never configured for facets' do
+      before do
+        error = ::Meilisearch::ApiError.new(
+          400, 'Bad Request',
+          { 'code' => 'invalid_search_facets', 'message' => 'Attribute `in_stock` is not filterable.' }
+        )
+        calls = 0
+        allow(mock_index).to receive(:search) do
+          calls += 1
+          raise error if calls == 1
+
+          ms_response
+        end
+      end
+
+      it 'pushes index settings and retries the search once' do
+        expect(mock_index).to receive(:update_filterable_attributes)
+
+        result = provider.search_and_filter(scope: store.products, query: 'shirt')
+        expect(result.products).to include(product_1, product_2)
+      end
+
+      it 'returns no results instead of raising when Meilisearch rejects the settings' do
+        task = double('Meilisearch::Models::Task', await: nil, succeeded?: false, error: { 'code' => 'internal' })
+        allow(mock_index).to receive(:update_filterable_attributes).and_return(task)
+
+        expect(provider.search_and_filter(scope: store.products, query: 'shirt').products).to be_empty
+      end
+    end
   end
 
   describe '#filters' do
@@ -439,6 +469,13 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
   end
 
   describe '#index' do
+    it 'leaves the index settings to ConfigureIndexJob' do
+      allow(mock_index).to receive(:add_documents)
+      expect(mock_index).not_to receive(:update_filterable_attributes)
+
+      2.times { described_class.new(store).index(product_1) }
+    end
+
     it 'adds documents to Meilisearch index with id as primary key' do
       expect(mock_index).to receive(:add_documents).with(
         array_including(hash_including(product_id: product_1.prefixed_id, name: 'Blue Shirt')),
@@ -510,105 +547,12 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
 
       provider.ensure_index_settings!
     end
-  end
 
-  describe '#ensure_index_settings_once!' do
-    let(:cache) { ActiveSupport::Cache::MemoryStore.new }
-    let(:settings_task) { double('Meilisearch::Models::Task') }
+    it 'raises when Meilisearch fails a settings task, so the job pushing them retries' do
+      task = double('Meilisearch::Models::Task', await: nil, succeeded?: false, error: { 'code' => 'invalid_settings_filterable_attributes' })
+      allow(mock_index).to receive(:update_filterable_attributes).and_return(task)
 
-    before do
-      allow(Rails).to receive(:cache).and_return(cache)
-      allow(mock_index).to receive(:update_filterable_attributes).and_return(settings_task)
-      allow(settings_task).to receive(:await)
-      allow(settings_task).to receive(:succeeded?).and_return(true)
-      allow(mock_index).to receive(:add_documents)
-    end
-
-    it 'pushes settings once across provider instances, as each IndexJob builds a new one' do
-      expect(mock_index).to receive(:update_filterable_attributes).once
-
-      3.times { described_class.new(store).index(product_1) }
-    end
-
-    it 'polls the settings tasks gently so concurrent jobs do not trip the rate limiter' do
-      expect(settings_task).to receive(:await).with(described_class::TASK_AWAIT_TIMEOUT_MS, described_class::TASK_AWAIT_INTERVAL_MS)
-
-      provider.ensure_index_settings_once!
-    end
-
-    it 'pushes settings again when the storefront custom field schema changes' do
-      described_class.new(store).index(product_1)
-      create(:custom_field_definition, :short_text_field, :searchable, namespace: 'custom', key: 'label')
-
-      expect(mock_index).to receive(:update_searchable_attributes).with(include('cf_custom_label'))
-
-      described_class.new(store).index(product_1)
-    end
-
-    it 'keeps each store index separate' do
-      other_store = create(:store)
-      described_class.new(store).index(product_1)
-
-      expect(mock_index).to receive(:update_filterable_attributes).once
-
-      described_class.new(other_store).ensure_index_settings_once!
-    end
-
-    it 'does not record the settings as pushed when the push fails' do
-      allow(settings_task).to receive(:await).and_raise(Meilisearch::ApiError.new(429, 'Too Many Requests', nil))
-
-      expect { described_class.new(store).ensure_index_settings_once! }.to raise_error(Meilisearch::ApiError)
-
-      allow(settings_task).to receive(:await)
-      expect(mock_index).to receive(:update_filterable_attributes).once
-      described_class.new(store).ensure_index_settings_once!
-    end
-
-    it 'skips the push while another job is already pushing the same settings' do
-      cache.write("spree_meilisearch/index_settings/#{store.code}_products/lock", true)
-
-      expect(mock_index).not_to receive(:update_filterable_attributes)
-      expect(mock_index).to receive(:add_documents)
-
-      described_class.new(store).index(product_1)
-    end
-
-    it 'leaves a lock taken by another job in place' do
-      allow(settings_task).to receive(:await) { cache.write("spree_meilisearch/index_settings/#{store.code}_products/lock", 'other-job') }
-
-      described_class.new(store).ensure_index_settings_once!
-
-      expect(cache.read("spree_meilisearch/index_settings/#{store.code}_products/lock")).to eq('other-job')
-    end
-
-    it 'skips the push when another job finished it before the lock was taken' do
-      provider = described_class.new(store)
-      digest = provider.send(:index_settings_digest, provider.send(:index_settings))
-      allow(cache).to receive(:write).and_call_original
-      allow(cache).to receive(:write).with(a_string_ending_with('/lock'), anything, anything) do |*args, **opts|
-        cache.write("spree_meilisearch/index_settings/#{store.code}_products", digest)
-        ActiveSupport::Cache::MemoryStore.instance_method(:write).bind_call(cache, *args, **opts)
-      end
-
-      expect(mock_index).not_to receive(:update_filterable_attributes)
-
-      provider.ensure_index_settings_once!
-    end
-
-    it 'releases the push lock once the settings are pushed' do
-      described_class.new(store).ensure_index_settings_once!
-
-      expect(cache.exist?("spree_meilisearch/index_settings/#{store.code}_products/lock")).to be(false)
-    end
-
-    it 'does not record the settings as pushed when a settings task fails or is cancelled' do
-      allow(settings_task).to receive(:succeeded?).and_return(false)
-      allow(settings_task).to receive(:error).and_return({ 'code' => 'invalid_settings_filterable_attributes' })
-      described_class.new(store).ensure_index_settings_once!
-
-      allow(settings_task).to receive(:succeeded?).and_return(true)
-      expect(mock_index).to receive(:update_filterable_attributes).once
-      described_class.new(store).ensure_index_settings_once!
+      expect { provider.ensure_index_settings! }.to raise_error(described_class::SettingsUpdateFailed, /invalid_settings_filterable_attributes/)
     end
   end
 

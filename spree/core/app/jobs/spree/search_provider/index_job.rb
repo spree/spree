@@ -2,6 +2,7 @@ module Spree
   module SearchProvider
     class IndexJob < Spree::BaseJob
       queue_as Spree.queues.search
+      include Spree::SearchProvider::RateLimited
 
       # Search providers are external services (Meilisearch, etc.); a transient 5xx or
       # network blip should not drop the index update.

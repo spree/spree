@@ -5,24 +5,14 @@ module SpreeMeilisearch
   # with the caller's ActiveRecord scope, so a stale index can never widen
   # what a customer is allowed to see.
   class SearchProvider < Spree::SearchProvider::Base
+    # Raised when Meilisearch fails or cancels a settings task, so the job
+    # pushing them retries instead of leaving the index half configured.
+    class SettingsUpdateFailed < StandardError; end
+
     PREFIXED_ID_PATTERN = /\A[a-z]+_[A-Za-z0-9]+\z/
     ALLOWED_STATUSES = %w[active draft archived paused].freeze
     BUILT_IN_FILTERABLE_ATTRIBUTES = %w[product_id status in_stock preorder store_ids channel_ids locale currency available_on discontinue_on price category_ids collection_ids grouping_id tags option_value_ids option_value_combination_ids].freeze
     CUSTOM_FIELD_RANGE_OPERATORS = { 'gt' => '>', 'gteq' => '>=', 'lt' => '<', 'lteq' => '<=' }.freeze
-
-    # How long a successful settings push is trusted before the next write
-    # re-pushes it. Settings only change when the storefront custom field
-    # schema changes, and that changes the digest, so this is just a backstop
-    # for an index recreated outside Spree.
-    INDEX_SETTINGS_CACHE_TTL = 12.hours
-    # Polling GET /tasks every 50ms (the client default) across many
-    # concurrent jobs is what trips Meilisearch's rate limiter.
-    TASK_AWAIT_TIMEOUT_MS = 10_000
-    TASK_AWAIT_INTERVAL_MS = 250
-    # While one job pushes settings, the others skip the push instead of all
-    # pushing at once on a cold cache. Meilisearch applies a settings update
-    # to documents already in the index, so skipping it is safe.
-    INDEX_SETTINGS_LOCK_TTL = 1.minute
 
     def self.indexing_required?
       true
@@ -85,8 +75,10 @@ module SpreeMeilisearch
       )
     end
 
+    # Index settings are pushed by Spree::SearchProvider::ConfigureIndexJob
+    # when they change, not here: pushing and awaiting them on every product
+    # write flooded Meilisearch into 429s during bulk imports.
     def index(product)
-      ensure_index_settings_once!
       documents = presenter_class.new(product, store).call
       # Delete first: membership docs use grouping-specific ids, so a product
       # that left a grouping would otherwise leave an orphaned stale doc.
@@ -144,51 +136,26 @@ module SpreeMeilisearch
     # Waits for all settings tasks to complete before returning so that
     # subsequent add_documents calls use the correct filterable/sortable attributes.
     def ensure_index_settings!
-      settings = index_settings
       index = client.index(index_name)
       tasks = []
-      tasks << index.update_filterable_attributes(settings[:filterable_attributes])
-      tasks << index.update_sortable_attributes(settings[:sortable_attributes])
-      tasks << index.update_searchable_attributes(settings[:searchable_attributes])
-      tasks << index.update_distinct_attribute(settings[:distinct_attribute])
-      tasks.compact!
-      tasks.each { |task| task.await(TASK_AWAIT_TIMEOUT_MS, TASK_AWAIT_INTERVAL_MS) }
-      # A settings task that fails or is cancelled (rather than raising) must
-      # not be cached as pushed, or every job would trust the stale index for
-      # the whole TTL.
-      unsuccessful = tasks.reject(&:succeeded?)
-      if unsuccessful.any?
-        Rails.logger.warn { "[Meilisearch] Settings update did not succeed for #{index_name}: #{unsuccessful.map(&:error).inspect}" }
-        return
+      tasks << index.update_filterable_attributes(filterable_attributes)
+      tasks << index.update_sortable_attributes(sortable_attributes)
+      tasks << index.update_searchable_attributes(searchable_attributes)
+      tasks << index.update_distinct_attribute(distinct_attribute)
+      tasks.compact.each do |task|
+        task.await
+        raise SettingsUpdateFailed, "Meilisearch rejected the settings for #{index_name}: #{task.error.inspect}" unless task.succeeded?
       end
-
-      Rails.cache.write(index_settings_cache_key, index_settings_digest(settings), expires_in: INDEX_SETTINGS_CACHE_TTL)
       @index_settings_configured = true
     end
 
-    # Configures index settings only when they differ from what was last
-    # pushed. Every IndexJob builds a fresh provider, so an instance-level
-    # memo alone re-pushed four settings tasks (and polled /tasks until they
-    # finished) on every product write; bulk writes such as imports and sample
-    # data then flooded Meilisearch into 429s. The digest is shared through
-    # Rails.cache, so jobs across processes skip the push until the settings
-    # actually change.
+    # Lightweight guard — configures index settings once per provider instance.
+    # Meilisearch settings updates are idempotent, so repeated calls are safe
+    # but we avoid the overhead by memoizing.
     def ensure_index_settings_once!
       return if @index_settings_configured
-      return @index_settings_configured = true if index_settings_current?
 
-      lock_token = SecureRandom.uuid
-      return unless Rails.cache.write(index_settings_lock_key, lock_token, unless_exist: true, expires_in: INDEX_SETTINGS_LOCK_TTL)
-
-      begin
-        # Another job may have finished the push between the check and the lock.
-        return @index_settings_configured = true if index_settings_current?
-
-        ensure_index_settings!
-      ensure
-        # The lock may have expired and been taken by another job meanwhile.
-        Rails.cache.delete(index_settings_lock_key) if Rails.cache.read(index_settings_lock_key) == lock_token
-      end
+      ensure_index_settings!
     end
 
     # The index is the storefront's: shoppers search it and the back office
@@ -279,13 +246,12 @@ module SpreeMeilisearch
         end
       rescue ::Meilisearch::ApiError => e
         # Self-heal when a newly added filterable attribute (e.g. `preorder`)
-        # is referenced before the index settings were refreshed — otherwise
-        # every search on an upgraded store returns empty until a reindex or
-        # the next product write.
+        # is referenced before the index settings were refreshed, or the
+        # index was never configured — otherwise every search on an upgraded
+        # store returns empty until a reindex.
         if %w[invalid_search_filter invalid_search_sort invalid_search_facets].include?(e.code) && !settings_refreshed
           settings_refreshed = true
-          ensure_index_settings!
-          retry
+          retry if refresh_index_settings
         end
 
         Rails.logger.warn { "[Meilisearch] Search failed: #{e.message}. Run `rake spree:search:reindex` to initialize the index." }
@@ -326,29 +292,12 @@ module SpreeMeilisearch
       (ms_result['facetDistribution'] || {}).merge('option_value_ids' => merged_ov_dist)
     end
 
-    def index_settings
-      {
-        filterable_attributes: filterable_attributes,
-        sortable_attributes: sortable_attributes,
-        searchable_attributes: searchable_attributes,
-        distinct_attribute: distinct_attribute
-      }
-    end
-
-    def index_settings_current?
-      Rails.cache.read(index_settings_cache_key) == index_settings_digest(index_settings)
-    end
-
-    def index_settings_cache_key
-      "spree_meilisearch/index_settings/#{index_name}"
-    end
-
-    def index_settings_lock_key
-      "#{index_settings_cache_key}/lock"
-    end
-
-    def index_settings_digest(settings)
-      Digest::SHA256.hexdigest(settings.to_json)
+    def refresh_index_settings
+      ensure_index_settings!
+      true
+    rescue SettingsUpdateFailed => e
+      Rails.error.report(e, handled: true, context: { index: index_name })
+      false
     end
 
     def presenter_class

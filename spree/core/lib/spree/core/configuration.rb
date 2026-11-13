@@ -195,6 +195,13 @@ module Spree
       # imports
       preference :large_import_threshold, :integer, default: 500, env: 'SPREE_LARGE_IMPORT_THRESHOLD' # imports with more rows than this skip per-row UI broadcasts and use bulk processing
 
+      # search
+      # Most search index and removal jobs a worker may start per second,
+      # shared by every store, so a bulk import cannot flood the search
+      # provider with requests. 0 leaves them unlimited. Enforced only with
+      # the solid_queue-rate_limit gem on Solid Queue; read when the jobs load.
+      preference :search_index_rate_limit, :integer, default: 0, env: 'SPREE_SEARCH_INDEX_RATE_LIMIT'
+
       # maintenance tasks
       # Turn off to run upgrade steps only from the command line: the dashboard
       # page and its Admin API endpoints are refused. For hosts where the people

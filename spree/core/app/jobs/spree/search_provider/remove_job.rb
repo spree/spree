@@ -2,6 +2,7 @@ module Spree
   module SearchProvider
     class RemoveJob < Spree::BaseJob
       queue_as Spree.queues.search
+      include Spree::SearchProvider::RateLimited
 
       # Search providers are external services; broad retry covers network blips and 5xx.
       retry_on StandardError, wait: :polynomially_longer, attempts: 5
