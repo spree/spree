@@ -10,8 +10,9 @@ RSpec.describe 'Store API', type: :request, swagger_doc: 'api-reference/store.ya
       tags 'Store'
       produces 'application/json'
       security [api_key: []]
-      description "Returns the current store's name and default SEO metadata in the requested locale. " \
-                  "A field without a translation falls back to the store's default locale."
+      description "Returns the current store's name, default SEO metadata, logo, social accounts and public email " \
+                  'addresses, so a storefront can render its page metadata, structured data and email sender. ' \
+                  "Translated fields use the requested locale; one without a translation falls back to the store's default locale."
 
       sdk_example 'store/get'
 
@@ -29,6 +30,7 @@ RSpec.describe 'Store API', type: :request, swagger_doc: 'api-reference/store.ya
           data = JSON.parse(response.body)
           expect(data['id']).to eq(store.prefixed_id)
           expect(data['name']).to eq(store.name)
+          expect(data['mail_from_address']).to eq(store.mail_from_address)
         end
       end
 

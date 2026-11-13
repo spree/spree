@@ -32302,13 +32302,18 @@ paths:
                 name: Spree Test Store
                 seo_title:
                 meta_description: Sample store description.
+                meta_keywords:
+                facebook: spreecommerce
+                twitter: spreecommerce
+                instagram: spreecommerce
+                customer_support_email: support@example.com
+                mail_from_address: no-reply@example.com
+                logo_url:
                 metadata: {}
                 code: spree_1
                 default_currency: USD
                 default_locale: en
                 default_country_code: US
-                mail_from_address: no-reply@example.com
-                customer_support_email: support@example.com
                 new_order_notifications_email: store-owner@example.com
                 created_at: '2026-11-11T12:45:25.412Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -32610,7 +32615,6 @@ paths:
                 - zh-HK
                 - zh-TW
                 - zu
-                logo_url:
                 mailer_logo_url:
               schema:
                 "$ref": "#/components/schemas/Store"
@@ -32674,13 +32678,18 @@ paths:
                 name: Renamed Store
                 seo_title:
                 meta_description: Sample store description.
+                meta_keywords:
+                facebook: spreecommerce
+                twitter: spreecommerce
+                instagram: spreecommerce
+                customer_support_email: support@example.com
+                mail_from_address: no-reply@example.com
+                logo_url:
                 metadata: {}
                 code: spree_1
                 default_currency: USD
                 default_locale: en
                 default_country_code: US
-                mail_from_address: no-reply@example.com
-                customer_support_email: support@example.com
                 new_order_notifications_email: store-owner@example.com
                 created_at: '2026-11-11T12:45:25.412Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -32982,7 +32991,6 @@ paths:
                 - zh-HK
                 - zh-TW
                 - zu
-                logo_url:
                 mailer_logo_url:
               schema:
                 "$ref": "#/components/schemas/Store"
@@ -74934,6 +74942,33 @@ components:
         meta_description:
           type: string
           nullable: true
+        meta_keywords:
+          type: string
+          nullable: true
+        facebook:
+          type: string
+          nullable: true
+          description: 'Facebook page, as entered by the merchant: a handle or a full
+            URL.'
+        twitter:
+          type: string
+          nullable: true
+          description: 'X (Twitter) account, as entered by the merchant: a handle
+            or a full URL.'
+        instagram:
+          type: string
+          nullable: true
+          description: 'Instagram account, as entered by the merchant: a handle or
+            a full URL.'
+        customer_support_email:
+          type: string
+          nullable: true
+        mail_from_address:
+          type: string
+          nullable: true
+        logo_url:
+          type: string
+          nullable: true
         metadata:
           type: object
         code:
@@ -75568,12 +75603,6 @@ components:
           - ZA
           - ZM
           - ZW
-        mail_from_address:
-          type: string
-          nullable: true
-        customer_support_email:
-          type: string
-          nullable: true
         new_order_notifications_email:
           type: string
           nullable: true
@@ -76687,9 +76716,6 @@ components:
             - zh-HK
             - zh-TW
             - zu
-        logo_url:
-          type: string
-          nullable: true
         mailer_logo_url:
           type: string
           nullable: true
@@ -76698,13 +76724,18 @@ components:
       - name
       - seo_title
       - meta_description
+      - meta_keywords
+      - facebook
+      - twitter
+      - instagram
+      - customer_support_email
+      - mail_from_address
+      - logo_url
       - metadata
       - code
       - default_currency
       - default_locale
       - default_country_code
-      - mail_from_address
-      - customer_support_email
       - new_order_notifications_email
       - created_at
       - updated_at
@@ -76764,7 +76795,6 @@ components:
       - supported_currencies
       - supported_locales
       - available_locales
-      - logo_url
       - mailer_logo_url
       x-typelizer: true
     Supplier:
@@ -86978,6 +87008,26 @@ components:
           type: string
           description: The storefront's default meta description, in the store's default
             language.
+          nullable: true
+        meta_keywords:
+          type: string
+          description: The storefront's default meta keywords, comma-separated, in
+            the default language.
+          nullable: true
+        facebook:
+          type: string
+          description: 'The Facebook page: a handle or a full URL.'
+          example: https://facebook.com/mystore
+          nullable: true
+        twitter:
+          type: string
+          description: 'The X (Twitter) account: a handle or a full URL.'
+          example: mystore
+          nullable: true
+        instagram:
+          type: string
+          description: 'The Instagram account: a handle or a full URL.'
+          example: mystore
           nullable: true
         admin_locale:
           allOf:

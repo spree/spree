@@ -10806,9 +10806,10 @@ paths:
       - Store
       security:
       - api_key: []
-      description: Returns the current store's name and default SEO metadata in the
-        requested locale. A field without a translation falls back to the store's
-        default locale.
+      description: Returns the current store's name, default SEO metadata, logo, social
+        accounts and public email addresses, so a storefront can render its page metadata,
+        structured data and email sender. Translated fields use the requested locale;
+        one without a translation falls back to the store's default locale.
       x-codeSamples:
       - lang: javascript
         label: Spree SDK
@@ -10847,6 +10848,13 @@ paths:
                 name: Spree Test Store
                 seo_title:
                 meta_description: Sample store description.
+                meta_keywords:
+                facebook: spreecommerce
+                twitter: spreecommerce
+                instagram: spreecommerce
+                customer_support_email: support@example.com
+                mail_from_address: no-reply@example.com
+                logo_url:
               schema:
                 "$ref": "#/components/schemas/Store"
         '401':
@@ -23185,11 +23193,45 @@ components:
         meta_description:
           type: string
           nullable: true
+        meta_keywords:
+          type: string
+          nullable: true
+        facebook:
+          type: string
+          nullable: true
+          description: 'Facebook page, as entered by the merchant: a handle or a full
+            URL.'
+        twitter:
+          type: string
+          nullable: true
+          description: 'X (Twitter) account, as entered by the merchant: a handle
+            or a full URL.'
+        instagram:
+          type: string
+          nullable: true
+          description: 'Instagram account, as entered by the merchant: a handle or
+            a full URL.'
+        customer_support_email:
+          type: string
+          nullable: true
+        mail_from_address:
+          type: string
+          nullable: true
+        logo_url:
+          type: string
+          nullable: true
       required:
       - id
       - name
       - seo_title
       - meta_description
+      - meta_keywords
+      - facebook
+      - twitter
+      - instagram
+      - customer_support_email
+      - mail_from_address
+      - logo_url
       x-typelizer: true
     SupplierEvent:
       type: object

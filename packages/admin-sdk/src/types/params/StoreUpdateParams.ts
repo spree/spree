@@ -13,6 +13,14 @@ export type StoreUpdateParams = {
   seo_title?: string | null
   /** The storefront's default meta description, in the store's default language. */
   meta_description?: string | null
+  /** The storefront's default meta keywords, comma-separated, in the default language. */
+  meta_keywords?: string | null
+  /** The Facebook page: a handle or a full URL. */
+  facebook?: string | null
+  /** The X (Twitter) account: a handle or a full URL. */
+  twitter?: string | null
+  /** The Instagram account: a handle or a full URL. */
+  instagram?: string | null
   /** The language the dashboard opens in for every staff member; null lets each use their own. */
   admin_locale?: LocaleCode | null
   timezone?: TimeZone
