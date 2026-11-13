@@ -79,6 +79,7 @@ module Spree
       end
 
       def assign_cart_attributes
+        assign_additional_attributes
         cart.email = params[:email] if params[:email].present?
         cart.customer_note = params[:customer_note] if params.key?(:customer_note)
         cart.po_number = params[:po_number] if params.key?(:po_number)
@@ -91,6 +92,14 @@ module Spree
         assign_preferred_stock_location if params.key?(:preferred_stock_location_id)
         assign_company if params.key?(:company_id)
         assign_po_document if params.key?(:po_document_signed_id)
+      end
+
+      # Columns an extension made writable with
+      # `Spree::Cart.additional_permitted_attributes += [...]`. Assigned before
+      # the core fields, so a core field always goes through its own handling.
+      def assign_additional_attributes
+        keys = Spree::Cart.additional_permitted_attributes.flat_map { |attribute| attribute.is_a?(Hash) ? attribute.keys : attribute }.map(&:to_sym)
+        cart.assign_attributes(params.slice(*keys)) if keys.any?
       end
 
       # The buyer's purchase order as an ActiveStorage signed blob id — the
