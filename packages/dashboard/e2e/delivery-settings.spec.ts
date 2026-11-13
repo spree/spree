@@ -252,6 +252,27 @@ test.describe('delivery profiles', () => {
     await expect(sheet.getByText(FIXTURE_BULK_CHANNEL_NAME)).toBeVisible()
   })
 
+  // A switch setting keeps its help text, and the switch is described by it.
+  test('describes a condition switch with its help text', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, DELIVERY_PROFILES_PATH(creds.store_id), PROFILE_CTA)
+    await createProfile(page, `E2E Switch Help ${Date.now()}`)
+
+    await page
+      .getByRole('button', { name: /add method/i })
+      .first()
+      .click()
+    const sheet = page.getByRole('dialog')
+    await sheet.getByRole('button', { name: /^add condition$/i }).click()
+    await page.getByRole('menuitem', { name: /^company$/i }).click()
+
+    const companyOnly = sheet.getByRole('switch', { name: /only for company orders/i })
+    await expect(companyOnly).toBeVisible({ timeout: 15_000 })
+    await expect(companyOnly).toHaveAccessibleDescription(
+      /offered only to orders placed for a company/i,
+    )
+  })
+
   // A currency left blank is not offered, the store's default currency
   // included, and a method with no amount in any currency is refused rather
   // than saved as one nobody can be quoted.

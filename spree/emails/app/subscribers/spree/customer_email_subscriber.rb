@@ -9,7 +9,7 @@ module Spree
       return unless user
 
       store = find_store(event)
-      return unless store.prefers_send_consumer_transactional_emails?
+      return unless store.sends_customer_email?('spree/customer_mailer/password_reset_email')
 
       CustomerMailer.password_reset_email(
         user,

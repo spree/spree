@@ -142,7 +142,7 @@ bundle remove spree_emails
 
 ### Using Third-Party Email Services
 
-If you prefer to use a third-party email service like Klaviyo for transactional emails, you can use the [spree_klaviyo](https://github.com/spree/spree_klaviyo) extension. This allows you to leverage Klaviyo's email marketing platform for order confirmations, shipment notifications, and other transactional emails.
+An active integration can send some customer emails in Spree's place, and Spree then skips them. The [Klaviyo integration](https://spreecommerce.org/docs/integrations/marketing/klaviyo) sends the newsletter confirmation, and at the merchant's choice the order confirmation, cancellation, shipping and refund emails. Emails whose link carries a token Spree must redeem, such as a password reset, always stay with Spree. See [Emails](https://spreecommerce.org/docs/developer/customization/emails#integrations-that-send-customer-emails) to make your own integration do this.
 
 ## Previewing emails
 

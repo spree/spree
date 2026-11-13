@@ -1,0 +1,73 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://a.klaviyo.com/api/lists/XXXXXX
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Content-Type:
+      - application/json
+      User-Agent:
+      - klaviyo-api-ruby/19.0.0
+      Revision:
+      - '2026-10-15'
+      Accept:
+      - application/vnd.api+json
+      Authorization:
+      - Klaviyo-API-Key <FILTERED>
+      Expect:
+      - ''
+  response:
+    status:
+      code: 404
+      message: ''
+    headers:
+      Date:
+      - Thu, 05 Nov 2026 14:31:52 GMT
+      Content-Type:
+      - application/vnd.api+json
+      Content-Length:
+      - '192'
+      Cf-Ray:
+      - a55c90894b10bf28-WAW
+      Cf-Cache-Status:
+      - DYNAMIC
+      Allow:
+      - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+      Content-Language:
+      - en-us
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Vary:
+      - Accept, Accept-Language, Cookie, Origin
+      X-Content-Type-Options:
+      - nosniff
+      Cid:
+      - VkW83s
+      Content-Security-Policy:
+      - base-uri 'none'; object-src 'none'; script-src 'report-sample' 'strict-dynamic'
+        'unsafe-eval'; frame-ancestors 'self' login.bigcommerce.com *.mybigcommerce.com
+        admin.shopify.com klaviyo.file.force.com klaviyo.lightning.force.com klaviyo.my.salesforce.com;
+        report-uri /csp/
+      Ratelimit-Limit:
+      - 75, 75;w=1, 750;w=60
+      Ratelimit-Remaining:
+      - '73'
+      Ratelimit-Reset:
+      - '0'
+      X-Envoy-Upstream-Service-Time:
+      - '68'
+      X-Klaviyo-Api-Revision:
+      - '2026-10-15'
+      X-Klaviyo-Req-Id:
+      - a92be88a-ddca-4938-9d5e-a70fb920fa6c
+    body:
+      encoding: ASCII-8BIT
+      string: '{"errors":[{"id":"a92be88a-ddca-4938-9d5e-a70fb920fa6c","status":404,"code":"not_found","title":"Not
+        found.","detail":"A list with id `XXXXXX` does not exist.","source":{"pointer":"/data/"}}]}'
+  recorded_at: Thu, 05 Nov 2026 14:31:52 GMT
+recorded_with: VCR 6.4.1

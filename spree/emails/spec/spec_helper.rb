@@ -76,6 +76,9 @@ RSpec.configure do |config|
 
   config.before(:each) do
     reset_spree_preferences
+    # The current store's integrations are cached here, and an example's
+    # integrations must not decide whether the next one sends an email.
+    Spree::Current.reset
     I18n.locale = :en
     ActionMailer::Base.default_url_options = {}
   end

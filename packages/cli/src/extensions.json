@@ -10,7 +10,7 @@
       "release": "spree"
     },
     "adyen": { "label": "Adyen", "gem": "spree_adyen" },
-    "klaviyo": { "label": "Klaviyo", "gem": "spree_klaviyo" },
+    "klaviyo": { "label": "Klaviyo", "gem": "spree_klaviyo", "release": "spree" },
     "avatax_official": {
       "label": "Avalara AvaTax",
       "gem": "spree_avatax_official",

@@ -10,7 +10,7 @@ module Spree
       return if subscriber.verified?
 
       store = subscriber.store || Spree::Current.store || Spree::Store.default
-      return unless store.prefers_send_consumer_transactional_emails?
+      return unless store.sends_customer_email?('spree/newsletter_mailer/email_confirmation')
 
       NewsletterMailer.email_confirmation(subscriber, redirect_url: event.payload['redirect_url']).deliver_later
     end

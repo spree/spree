@@ -52,6 +52,9 @@ module Spree
     # Scopes
     #
     scope :active, -> { where(active: true) }
+    # A row an uninstalled gem left behind names a class that no longer loads,
+    # and instantiating it would raise ActiveRecord::SubclassNotFound.
+    scope :registered, -> { where(type: ['Spree::Integration', *Spree.integrations.map(&:to_s)]) }
 
     # This attribute is used to temporarily store connection-related error messages
     # that can be displayed to users when testing or validating integration connections.
@@ -142,6 +145,19 @@ module Spree
     # @return [Hash, nil]
     def parse_webhook_event(_raw_post, _headers)
       nil
+    end
+
+    # Template keys ({Spree.editable_email_templates}) of the customer emails
+    # this integration sends in Spree's place while it is active, so Spree
+    # skips them (see {Spree::Store#sends_customer_email?}).
+    #
+    # Never list an email whose link carries a token Spree must later redeem
+    # (password reset, data export, a digital download): the integration's
+    # copy could not carry a working link.
+    #
+    # @return [Array<String>]
+    def replaced_customer_emails
+      []
     end
 
     # Checks if the integration can establish a connection.

@@ -354,6 +354,96 @@ describe Spree::Store, type: :model, without_global_store: true do
     end
   end
 
+  describe 'customer emails taken over by integrations' do
+    let(:store) { create(:store) }
+    let(:template_key) { 'spree/order_mailer/confirm_email' }
+    let(:replacing_class) do
+      Class.new(Spree::Integration) do
+        def self.name = 'TestIntegrations::EmailSender'
+
+        preference :replaced, :array, of: :string, default: []
+
+        def replaced_customer_emails = preferred_replaced
+      end
+    end
+
+    before do
+      stub_const('TestIntegrations::EmailSender', replacing_class)
+      allow(Spree).to receive(:integrations).and_return(['TestIntegrations::EmailSender'])
+    end
+
+    def create_sender(replaced:, active: true, store: self.store)
+      TestIntegrations::EmailSender.create!(store: store, active: active, preferred_replaced: replaced)
+    end
+
+    describe '#sends_customer_email?' do
+      it 'sends by default' do
+        expect(store.sends_customer_email?(template_key)).to be(true)
+      end
+
+      it 'does not send with customer emails turned off' do
+        store.update!(preferred_send_consumer_transactional_emails: false)
+
+        expect(store.sends_customer_email?(template_key)).to be(false)
+      end
+
+      it 'does not send an email an active integration takes over' do
+        create_sender(replaced: [template_key])
+
+        expect(store.sends_customer_email?(template_key)).to be(false)
+      end
+
+      it 'sends while that integration is inactive' do
+        create_sender(replaced: [template_key], active: false)
+
+        expect(store.sends_customer_email?(template_key)).to be(true)
+      end
+
+      it 'sends an email the integration does not take over' do
+        create_sender(replaced: ['spree/order_mailer/cancel_email'])
+
+        expect(store.sends_customer_email?(template_key)).to be(true)
+      end
+
+      it "ignores another store's integration" do
+        create_sender(replaced: [template_key], store: create(:store))
+
+        expect(store.sends_customer_email?(template_key)).to be(true)
+      end
+
+      it 'sends past a row whose integration gem was uninstalled' do
+        create_sender(replaced: []).update_column(:type, 'Uninstalled::Integration')
+
+        expect(store.sends_customer_email?(template_key)).to be(true)
+      end
+    end
+
+    describe '#active_integrations' do
+      it "reads the current store's request cache without a query" do
+        integration = create_sender(replaced: [])
+        Spree::Current.store = store
+        Spree::Current.integrations = [integration]
+
+        queries = 0
+        counter = ->(*, payload) { queries += 1 unless payload[:name].to_s.in?(%w[SCHEMA TRANSACTION]) }
+
+        ActiveSupport::Notifications.subscribed(counter, 'sql.active_record') do
+          expect(store.active_integrations).to eq([integration])
+        end
+
+        expect(queries).to eq(0)
+      end
+
+      it "loads another store's active integrations" do
+        integration = create_sender(replaced: [])
+        create_sender(replaced: [], active: false, store: create(:store))
+        Spree::Current.store = create(:store)
+
+        expect(store.active_integrations).to eq([integration])
+      end
+    end
+  end
+
   describe '.current' do
     let!(:store_1) { Spree::Store.first || create(:store) }
 

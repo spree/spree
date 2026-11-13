@@ -1,0 +1,70 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://a.klaviyo.com/api/profile-subscription-bulk-create-jobs
+    body:
+      encoding: UTF-8
+      string: '{"data":{"type":"profile-subscription-bulk-create-job","attributes":{"profiles":{"data":[{"type":"profile","attributes":{"email":"<KLAVIYO_TEST_INBOX_USER>+subscribe-ecf1724b@<KLAVIYO_TEST_INBOX_DOMAIN>","subscriptions":{"email":{"marketing":{"consent":"SUBSCRIBED"}}}}}]}},"relationships":{"list":{"data":{"type":"list","id":"Wv3WNB"}}}}}'
+    headers:
+      Content-Type:
+      - application/vnd.api+json
+      User-Agent:
+      - klaviyo-api-ruby/19.0.0
+      Revision:
+      - '2026-10-15'
+      Accept:
+      - application/vnd.api+json
+      Authorization:
+      - Klaviyo-API-Key <FILTERED>
+      Expect:
+      - ''
+  response:
+    status:
+      code: 202
+      message: ''
+    headers:
+      Date:
+      - Thu, 05 Nov 2026 14:31:51 GMT
+      Content-Length:
+      - '0'
+      Cf-Ray:
+      - a55c9083decabf28-WAW
+      Cf-Cache-Status:
+      - DYNAMIC
+      Allow:
+      - GET, POST, HEAD, OPTIONS
+      Content-Language:
+      - en-us
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Vary:
+      - Accept, Accept-Language, Cookie, Origin
+      X-Content-Type-Options:
+      - nosniff
+      Cid:
+      - VkW83s
+      Content-Security-Policy:
+      - frame-ancestors 'self' login.bigcommerce.com *.mybigcommerce.com admin.shopify.com
+        klaviyo.file.force.com klaviyo.lightning.force.com klaviyo.my.salesforce.com;
+        base-uri 'none'; object-src 'none'; script-src 'report-sample' 'strict-dynamic'
+        'unsafe-eval'; report-uri /csp/
+      Ratelimit-Limit:
+      - 75, 75;w=1, 750;w=60
+      Ratelimit-Remaining:
+      - '72'
+      Ratelimit-Reset:
+      - '0'
+      X-Envoy-Upstream-Service-Time:
+      - '66'
+      X-Klaviyo-Api-Revision:
+      - '2026-10-15'
+      X-Klaviyo-Req-Id:
+      - 3505f2a1-b7ec-471f-b120-1255d56e3ca3
+    body:
+      encoding: ASCII-8BIT
+      string: ''
+  recorded_at: Thu, 05 Nov 2026 14:31:51 GMT
+recorded_with: VCR 6.4.1
