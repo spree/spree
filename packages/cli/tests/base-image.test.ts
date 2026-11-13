@@ -397,6 +397,8 @@ describe('composeOnBaseImage, with other file shapes', () => {
 
     // A key of the project on that last line still makes the block its own.
     expect(composeOnBaseImage(`${stock}      args: {}`, '6.1', 'server')).toBeNull()
+    // So does the short form as the very last line of the file.
+    expect(composeOnBaseImage('services:\n  web:\n    build: ./server', '6.1', 'server')).toBeNull()
   })
 
   it('treats differently spelled paths to the Rails app as the same context', () => {
