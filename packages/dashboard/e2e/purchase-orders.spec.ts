@@ -125,6 +125,41 @@ test.describe('purchase orders', () => {
     await expect(page.getByRole('link', { name: /^edit$/i })).toHaveCount(0)
   })
 
+  // A comma is how many merchants write a decimal, and a number input once read
+  // "3,80" as 380.
+  test('reads a unit cost typed with a comma as a decimal', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, PURCHASE_ORDERS_PATH(creds.store_id), CTA)
+    await page.getByRole('button', { name: CTA }).click()
+    await expect(page.getByRole('heading', { name: /new purchase order/i })).toBeVisible()
+
+    await page.locator('#supplier').fill(FIXTURE_SUPPLIER)
+    await page.getByRole('option', { name: FIXTURE_SUPPLIER }).click()
+    await page.locator('#destination').click()
+    await page.getByRole('option', { name: FIXTURE_TRANSFER_DESTINATION }).click()
+
+    await page
+      .getByRole('button', { name: /add a product/i })
+      .first()
+      .click()
+    const picker = page.getByRole('dialog')
+    await picker.getByRole('searchbox').fill(FIXTURE_TRANSFER_SKU)
+    await picker.getByRole('button', { name: new RegExp(FIXTURE_TRANSFER_PRODUCT) }).click()
+    await picker.getByRole('button', { name: /^add 1$/i }).click()
+    await expect(picker).toBeHidden()
+    await page.getByRole('spinbutton', { name: /^ordered$/i }).fill('12')
+
+    const createDraft = page.getByRole('button', { name: /create draft/i })
+    await page.getByLabel(/^unit cost$/i).fill('3,80')
+    await expect(createDraft).toBeEnabled()
+    await createDraft.click()
+
+    await expect(page).toHaveURL(/\/purchase-orders\/po_/, { timeout: 15_000 })
+    const line = page.getByRole('row').filter({ hasText: FIXTURE_TRANSFER_PRODUCT })
+    await expect(line).toContainText('3.80')
+    await expect(line).toContainText('45.60')
+  })
+
   test('counts in part of a delivery, then closes the order short', async ({ page }) => {
     const creds = await login(page)
     const purchaseOrder = await createPurchaseOrder(page, creds.accessToken, {

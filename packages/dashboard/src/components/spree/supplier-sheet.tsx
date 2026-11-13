@@ -38,7 +38,7 @@ export function SupplierSheet({
   const mutation = id ? updateMutation : createMutation
 
   // The sheet edits every field, so the payload always carries the name.
-  const { form, set, save, submitAttempted } = useSupplierForm(supplier, (payload) =>
+  const { form, set, save, submitAttempted, serverErrors } = useSupplierForm(supplier, (payload) =>
     mutation.mutateAsync(payload as SupplierCreateParams),
   )
 
@@ -60,7 +60,12 @@ export function SupplierSheet({
         </SheetHeader>
 
         <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-4">
-          <SupplierFormFields form={form} set={set} submitAttempted={submitAttempted} />
+          <SupplierFormFields
+            form={form}
+            set={set}
+            submitAttempted={submitAttempted}
+            serverErrors={serverErrors}
+          />
           {id && <RecordMetadataSection metadata={supplier?.metadata} />}
         </div>
 

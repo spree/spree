@@ -98,6 +98,8 @@ export function useAddCustomerGroupMember(groupId: string) {
     invalidate: [['customer-groups'], ['customers']],
     successMessage: i18n.t('admin.customers.groups.detail.messages.member_added'),
     errorMessage: i18n.t('admin.customers.groups.detail.messages.member_change_failed'),
+    // Picked from a list in a dialog: there is no field to put it beside.
+    showValidationErrors: true,
   })
 }
 
