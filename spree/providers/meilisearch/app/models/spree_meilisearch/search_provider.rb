@@ -181,6 +181,9 @@ module SpreeMeilisearch
       return unless Rails.cache.write(index_settings_lock_key, lock_token, unless_exist: true, expires_in: INDEX_SETTINGS_LOCK_TTL)
 
       begin
+        # Another job may have finished the push between the check and the lock.
+        return @index_settings_configured = true if index_settings_current?
+
         ensure_index_settings!
       ensure
         # The lock may have expired and been taken by another job meanwhile.

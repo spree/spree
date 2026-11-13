@@ -581,6 +581,20 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
       expect(cache.read("spree_meilisearch/index_settings/#{store.code}_products/lock")).to eq('other-job')
     end
 
+    it 'skips the push when another job finished it before the lock was taken' do
+      provider = described_class.new(store)
+      digest = provider.send(:index_settings_digest, provider.send(:index_settings))
+      allow(cache).to receive(:write).and_call_original
+      allow(cache).to receive(:write).with(a_string_ending_with('/lock'), anything, anything) do |*args, **opts|
+        cache.write("spree_meilisearch/index_settings/#{store.code}_products", digest)
+        ActiveSupport::Cache::MemoryStore.instance_method(:write).bind_call(cache, *args, **opts)
+      end
+
+      expect(mock_index).not_to receive(:update_filterable_attributes)
+
+      provider.ensure_index_settings_once!
+    end
+
     it 'releases the push lock once the settings are pushed' do
       described_class.new(store).ensure_index_settings_once!
 
