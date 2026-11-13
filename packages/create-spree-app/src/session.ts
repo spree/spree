@@ -53,13 +53,21 @@ export async function runUntilInterrupted(
     interrupted = true
     signalGroup('SIGINT')
   }
-  // A detached group outlives us unless stopped explicitly.
+  // The detached group is outside the terminal's foreground group, so it gets
+  // neither the hang-up of a closed terminal nor a signal sent to us. Pass
+  // both on, and stop it on any other exit, so it never outlives us.
   const onExit = () => signalGroup('SIGTERM')
+  const onSignal = (signal: NodeJS.Signals) => {
+    signalGroup(signal)
+    process.exit(128 + (signal === 'SIGHUP' ? 1 : 15))
+  }
 
   process.stdin.setRawMode(true)
   process.stdin.on('data', onKey)
   process.stdin.resume()
   process.on('exit', onExit)
+  process.on('SIGHUP', onSignal)
+  process.on('SIGTERM', onSignal)
 
   try {
     await child
@@ -67,6 +75,8 @@ export async function runUntilInterrupted(
     if (!interrupted) throw err
   } finally {
     process.off('exit', onExit)
+    process.off('SIGHUP', onSignal)
+    process.off('SIGTERM', onSignal)
     process.stdin.off('data', onKey)
     process.stdin.setRawMode(false)
     process.stdin.pause()
