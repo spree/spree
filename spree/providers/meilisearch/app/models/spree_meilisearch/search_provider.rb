@@ -427,32 +427,52 @@ module SpreeMeilisearch
       end
     end
 
-    # Meilisearch has stable filter operators for equality, ranges, and
+    # Meilisearch has stable filter operators for equality, ranges, IN and
     # EXISTS — but no string contains/starts/ends (CONTAINS is still
     # experimental), so those predicates are ignored here. The Database
-    # provider supports the full predicate set.
+    # provider supports the full predicate set. Dates are indexed as ISO 8601
+    # strings, which Meilisearch's range operators compare lexicographically.
     def custom_field_filter_condition(key, value)
       parsed = custom_field_schema.parse_filter(key)
       return nil unless parsed
 
-      attribute = parsed[:definition].filter_key
-      numeric = parsed[:definition].field_type == 'number'
+      definition = parsed[:definition]
+      predicate = parsed[:predicate]
+      attribute = definition.filter_key
+      numeric = definition.field_type == 'number'
+      if %w[date date_time].include?(definition.field_type) && %w[present blank].exclude?(predicate)
+        return date_filter_condition(definition, predicate, value)
+      end
 
-      case parsed[:predicate]
+      case predicate
       when 'present'
         "#{attribute} EXISTS"
       when 'blank'
         "#{attribute} NOT EXISTS"
       when 'eq', 'not_eq'
-        operator = parsed[:predicate] == 'eq' ? '=' : '!='
+        operator = predicate == 'eq' ? '=' : '!='
         formatted = format_custom_field_filter_value(value, numeric)
         formatted && "#{attribute} #{operator} #{formatted}"
+      when 'in', 'not_in'
+        formatted = Array(value).map(&:to_s).compact_blank.map { |choice| format_custom_field_filter_value(choice, false) }
+        return nil if formatted.empty?
+
+        # As in the database provider, `not_in` matches only products that have a value.
+        predicate == 'in' ? "#{attribute} IN [#{formatted.join(', ')}]" : "#{attribute} EXISTS AND #{attribute} NOT IN [#{formatted.join(', ')}]"
       when *CUSTOM_FIELD_RANGE_OPERATORS.keys
         return nil unless numeric
 
         formatted = format_custom_field_filter_value(value, numeric)
-        formatted && "#{attribute} #{CUSTOM_FIELD_RANGE_OPERATORS[parsed[:predicate]]} #{formatted}"
+        formatted && "#{attribute} #{CUSTOM_FIELD_RANGE_OPERATORS[predicate]} #{formatted}"
       end
+    end
+
+    # Bounds normalized the way values are indexed, so they compare as strings.
+    def date_filter_condition(definition, predicate, value)
+      conditions = definition.field_type_class&.filter_conditions(predicate, value, store: definition.store)
+      conditions&.map do |operator, bound|
+        "#{definition.filter_key} #{CUSTOM_FIELD_RANGE_OPERATORS.fetch(operator, '=')} #{format_custom_field_filter_value(bound, false)}"
+      end&.join(' AND ')
     end
 
     # The bound as a plain decimal, or nil for anything else, so a malformed

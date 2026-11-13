@@ -1,0 +1,158 @@
+# frozen_string_literal: true
+
+module Spree
+  class CustomFieldDefinition
+    # The `validations` rules a definition places on its values. Which rules
+    # apply is up to the field type (`supported_validation_rules`); every type
+    # takes `required`, which the server leaves to the forms that edit the
+    # value. Values are checked against the rules in Spree::CustomField, on
+    # new writes only.
+    module ValidationRules
+      extend ActiveSupport::Concern
+
+      BOUND_RULES = %w[min max].freeze
+      BOOLEAN_RULES = %w[required multiple].freeze
+
+      included do
+        before_validation :normalize_validations
+        validate :validations_must_apply_to_field_type
+        validate :sortable_must_be_single_choice
+        validate :multiple_must_stay_while_values_hold_several, on: :update
+        after_update :unwrap_single_choice_lists, if: :multiple_choices_turned_off?
+      end
+
+      # Accepts permitted request params as well as a plain hash.
+      def validations=(rules)
+        super(rules.respond_to?(:permitted?) ? rules.to_h : rules)
+      end
+
+      # @return [Hash{String => Object}] the rules, empty when there are none
+      def validation_rules
+        rules = self[:validations]
+        rules.is_a?(Hash) ? rules : {}
+      end
+
+      def required?
+        validation_rules['required'] == true
+      end
+
+      def multiple_choices?
+        validation_rules['multiple'] == true
+      end
+
+      # @return [Array<Hash{String => String}>] a `choice` field's `value` / `label` pairs, in order
+      def choices
+        Array(validation_rules['choices']).grep(Hash)
+      end
+
+      # @return [Array<String>] the values a `choice` field may store
+      def choice_values
+        choices.pluck('value')
+      end
+
+      private
+
+      # Bounds are stored in the type's canonical form (a UTC date-time, a
+      # whole character count), so values compare against them directly. An
+      # unparseable bound is left as sent for the validation to name.
+      def normalize_validations
+        rules = self[:validations]
+        return self.validations = nil if rules.blank?
+        return unless rules.is_a?(Hash)
+
+        rules = rules.deep_stringify_keys.compact
+        BOUND_RULES.each do |rule|
+          next unless rules.key?(rule) && field_type_class
+
+          bound = field_type_class.normalize_validation_bound(rules[rule], store: store, rule: rule)
+          rules[rule] = bound unless bound.nil?
+        end
+        rules['choices'] = rules['choices'].map { |choice| normalize_choice(choice) } if rules['choices'].is_a?(Array)
+
+        self.validations = rules
+      end
+
+      def normalize_choice(choice)
+        return choice unless choice.is_a?(Hash)
+
+        value = choice['value'].to_s.strip
+        label = choice['label'].to_s.strip
+        { 'value' => value, 'label' => label.presence || value }
+      end
+
+      def validations_must_apply_to_field_type
+        rules = self[:validations]
+        return add_validations_error(:validations_not_an_object) unless rules.nil? || rules.is_a?(Hash)
+        return if field_type_class.nil?
+
+        rules ||= {}
+
+        unknown = rules.keys - ['required', *field_type_class.supported_validation_rules]
+        return add_validations_error(:validation_unknown_rule, rules: unknown.join(', ')) if unknown.any?
+
+        validate_boolean_rules(rules)
+        validate_bound_rules(rules)
+        validate_choices_rule(rules) if field_type_class.supported_validation_rules.include?('choices')
+      end
+
+      def validate_boolean_rules(rules)
+        (BOOLEAN_RULES & rules.keys).each do |rule|
+          add_validations_error(:validation_not_a_boolean, rule: rule) unless [true, false].include?(rules[rule])
+        end
+      end
+
+      def validate_bound_rules(rules)
+        bounds = rules.slice(*BOUND_RULES)
+        invalid = bounds.reject { |rule, bound| field_type_class.normalize_validation_bound(bound, store: store, rule: rule) == bound }
+        invalid.each_key { |rule| add_validations_error(:validation_invalid_bound, rule: rule) }
+        return if invalid.any? || bounds.size < 2
+
+        min, max = bounds.values_at('min', 'max').map { |bound| field_type_class.comparable_bound(bound) }
+        add_validations_error(:validation_min_above_max) if min > max
+      end
+
+      def validate_choices_rule(rules)
+        choices = rules['choices']
+        return add_validations_error(:validation_choices_required) if choices.blank?
+        return add_validations_error(:validation_choices_invalid) unless choices.is_a?(Array) && choices.all? do |choice|
+          choice.is_a?(Hash) && choice['value'].present?
+        end
+
+        add_validations_error(:validation_choices_not_unique) if choice_values.uniq.size != choice_values.size
+      end
+
+      # Several stored values have no single sort position.
+      def sortable_must_be_single_choice
+        return unless sortable? && multiple_choices?
+
+        errors.add(:sortable, :single_choice_only, message: I18n.t('spree.errors.messages.custom_field_sortable_single_choice_only'))
+      end
+
+      # A stored list has no single value to fall back to.
+      def multiple_must_stay_while_values_hold_several
+        return unless will_save_change_to_validations? && !multiple_choices?
+        return unless (validations_in_database || {})['multiple'] == true
+        # A JSON list of two or more strings has `","` between them.
+        return unless custom_fields.where(Spree::CustomField.arel_table[:value].matches('%","%')).exists?
+
+        add_validations_error(:validation_multiple_in_use)
+      end
+
+      def multiple_choices_turned_off?
+        saved_change_to_validations? && !multiple_choices? && (validations_before_last_save || {})['multiple'] == true
+      end
+
+      # Lists of one become bare values, so a single choice sorts by its value.
+      def unwrap_single_choice_lists
+        custom_fields.where(Spree::CustomField.arel_table[:value].matches('[%')).find_each do |custom_field|
+          values = custom_field.chosen_values
+          custom_field.update_column(:value, values.first) if values.one?
+        end
+      end
+
+      def add_validations_error(type, **)
+        errors.add(:validations, type, **, message: I18n.t("spree.errors.messages.custom_field_#{type}", **))
+      end
+    end
+  end
+end

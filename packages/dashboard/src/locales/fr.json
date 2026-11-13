@@ -582,7 +582,15 @@
         "empty_title": "Aucun champ personnalisé pour le moment",
         "errors": {
           "failed_to_save": "Impossible d’enregistrer le champ personnalisé",
-          "failed_to_load": "Impossible de charger les champs personnalisés. Rechargez la page pour réessayer."
+          "failed_to_load": "Impossible de charger les champs personnalisés. Rechargez la page pour réessayer.",
+          "required": "Saisissez une valeur",
+          "too_short": "Utilisez au moins {{count}} caractères",
+          "too_long": "Utilisez au plus {{count}} caractères",
+          "less_than_min": "Doit être au moins {{min}}",
+          "greater_than_max": "Doit être au plus {{max}}",
+          "before_min": "Doit être le {{min}} ou après",
+          "after_max": "Doit être le {{max}} ou avant",
+          "choice_not_offered": "{{value}} ne fait pas partie des choix"
         },
         "manage_in_settings": "Gérer dans les paramètres",
         "new_definition_description": "Définissez un champ personnalisé pour stocker des informations typées et structurées sur vos {{resource}}.",
@@ -591,7 +599,12 @@
         "section_title": "Champs personnalisés",
         "set_up": "Configurer les champs personnalisés",
         "values_save_partial_failed": "Certains champs personnalisés n’ont pas pu être enregistrés : {{fields}}",
-        "values_saved": "Champs personnalisés enregistrés"
+        "values_saved": "Champs personnalisés enregistrés",
+        "required_field_hint": "Obligatoire",
+        "values_invalid": "Corrigez ces champs personnalisés avant d'enregistrer : {{fields}}",
+        "definitions_check_failed": "Impossible de vérifier les champs personnalisés. Réessayez d’enregistrer.",
+        "choose": "Choisir…",
+        "no_choices": "Aucun choix correspondant"
       }
     },
     "custom_field_definitions": {
@@ -1450,7 +1463,10 @@
             "long_text": "Texte long",
             "number": "Nombre",
             "rich_text": "Texte enrichi",
-            "short_text": "Texte court"
+            "short_text": "Texte court",
+            "date": "Date",
+            "date_time": "Date et heure",
+            "choice": "Choix"
           },
           "read_only_help": "Le type ne peut pas être modifié une fois que des valeurs existent — le changer rendrait les valeurs enregistrées inexploitables."
         },
@@ -1495,16 +1511,50 @@
           "api_only_group": "Uniquement via l'API"
         },
         "searchable": {
-          "help": "Inclure les valeurs dans la recherche de produits de la boutique (texte court, texte long et nombre uniquement). Après activation avec Meilisearch, exécutez rake spree:search:reindex pour mettre à jour les produits existants.",
+          "help": "Inclure les valeurs dans la recherche de produits de la boutique. Après activation avec Meilisearch, exécutez rake spree:search:reindex pour mettre à jour les produits existants.",
           "label": "Recherchable"
         },
         "sortable": {
-          "help": "Autoriser le tri des listes de produits de la boutique par ce champ (texte court et nombre uniquement). Après activation avec Meilisearch, exécutez rake spree:search:reindex pour mettre à jour les produits existants.",
+          "help": "Autoriser le tri des listes de produits de la boutique par ce champ. Après activation avec Meilisearch, exécutez rake spree:search:reindex pour mettre à jour les produits existants.",
           "label": "Triable"
         },
         "storefront_visible": {
           "column_label": "Boutique",
           "label": "Visible sur la boutique"
+        },
+        "validations": {
+          "title": "Validation",
+          "help": "Vérifié à l'enregistrement d'une valeur. Les valeurs existantes restent inchangées jusqu'à leur modification.",
+          "required": {
+            "label": "Obligatoire",
+            "help": "Signale le champ et empêche ce tableau de bord de l'enregistrer vide."
+          },
+          "min": {
+            "length": "Nombre minimal de caractères",
+            "number": "Minimum",
+            "date": "Date la plus proche",
+            "date_time": "Date et heure les plus proches"
+          },
+          "max": {
+            "length": "Nombre maximal de caractères",
+            "number": "Maximum",
+            "date": "Date la plus lointaine",
+            "date_time": "Date et heure les plus lointaines"
+          },
+          "choices": {
+            "label": "Choix",
+            "value": "Valeur",
+            "choice_label": "Libellé affiché",
+            "add": "Ajouter un choix",
+            "remove": "Supprimer le choix",
+            "required": "Ajoutez au moins un choix",
+            "value_required": "Saisissez une valeur",
+            "duplicate": "Chaque valeur doit être différente"
+          },
+          "multiple": {
+            "label": "Autoriser plusieurs choix",
+            "help": "La valeur devient une liste. Un champ à plusieurs choix ne peut pas être triable."
+          }
         }
       },
       "customer": {

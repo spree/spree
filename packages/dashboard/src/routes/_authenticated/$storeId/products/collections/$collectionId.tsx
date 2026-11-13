@@ -25,6 +25,7 @@ import {
   CollectionMain,
   CollectionSidebar,
 } from '../../../../../components/spree/collections/collection-form'
+import { customFieldsAllowSubmit } from '../../../../../components/spree/custom-fields/custom-fields-inline'
 import {
   EMPTY_STAGING,
   flushProductMembership,
@@ -97,6 +98,7 @@ function CollectionDetail({ collectionId, storeId }: { collectionId: string; sto
   }, [collection, form])
 
   const onSubmit = async (values: CollectionFormValues) => {
+    if (!(await customFieldsAllowSubmit(form))) return
     // Read before any reset — extension values live in raw form state (the
     // Zod parse behind `values` strips keys the schema doesn't know).
     const extensionValues = extensionSubmitValues('collection', form)

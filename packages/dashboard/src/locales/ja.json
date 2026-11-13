@@ -582,7 +582,15 @@
         "empty_title": "カスタムフィールドはまだありません",
         "errors": {
           "failed_to_save": "カスタムフィールドを保存できませんでした",
-          "failed_to_load": "カスタムフィールドを読み込めませんでした。ページを再読み込みしてお試しください。"
+          "failed_to_load": "カスタムフィールドを読み込めませんでした。ページを再読み込みしてお試しください。",
+          "required": "値を入力してください",
+          "too_short": "{{count}}文字以上で入力してください",
+          "too_long": "{{count}}文字以内で入力してください",
+          "less_than_min": "{{min}}以上である必要があります",
+          "greater_than_max": "{{max}}以下である必要があります",
+          "before_min": "{{min}}以降である必要があります",
+          "after_max": "{{max}}以前である必要があります",
+          "choice_not_offered": "{{value}}は選択肢にありません"
         },
         "manage_in_settings": "設定で管理",
         "new_definition_description": "{{resource}}に型付きの構造化情報を保存するカスタムフィールドを定義します。",
@@ -591,7 +599,12 @@
         "section_title": "カスタムフィールド",
         "set_up": "カスタムフィールドを設定",
         "values_save_partial_failed": "一部のカスタムフィールドを保存できませんでした: {{fields}}",
-        "values_saved": "カスタムフィールドを保存しました"
+        "values_saved": "カスタムフィールドを保存しました",
+        "required_field_hint": "必須",
+        "values_invalid": "保存する前に次のカスタムフィールドを修正してください: {{fields}}",
+        "definitions_check_failed": "カスタムフィールドを確認できませんでした。もう一度保存してください。",
+        "choose": "選択…",
+        "no_choices": "一致する選択肢がありません"
       }
     },
     "custom_field_definitions": {
@@ -1450,7 +1463,10 @@
             "long_text": "長いテキスト",
             "number": "数値",
             "rich_text": "リッチテキスト",
-            "short_text": "短いテキスト"
+            "short_text": "短いテキスト",
+            "date": "日付",
+            "date_time": "日時",
+            "choice": "選択肢"
           },
           "read_only_help": "値が入った後は型を変更できません。変えると、保存されている値の解釈がおかしくなります。"
         },
@@ -1495,16 +1511,50 @@
           "api_only_group": "API からのみ"
         },
         "searchable": {
-          "help": "ストアの商品テキスト検索に値を含めます（短いテキスト・長いテキスト・数値のみ）。Meilisearch で有効にした後は、既存の商品を更新するために rake spree:search:reindex を実行してください。",
+          "help": "ストアの商品テキスト検索に値を含めます。Meilisearch で有効にした後は、既存の商品を更新するために rake spree:search:reindex を実行してください。",
           "label": "検索対象"
         },
         "sortable": {
-          "help": "ストアの商品一覧をこのフィールドで並べ替えられるようにします（短いテキストと数値のみ）。Meilisearch で有効にした後は、既存の商品を更新するために rake spree:search:reindex を実行してください。",
+          "help": "ストアの商品一覧をこのフィールドで並べ替えられるようにします。Meilisearch で有効にした後は、既存の商品を更新するために rake spree:search:reindex を実行してください。",
           "label": "並べ替え可能"
         },
         "storefront_visible": {
           "column_label": "ストア",
           "label": "ストアに表示"
+        },
+        "validations": {
+          "title": "検証",
+          "help": "値の保存時に確認されます。既存の値は編集されるまでそのまま残ります。",
+          "required": {
+            "label": "必須",
+            "help": "項目に印を付け、このダッシュボードで空のまま保存できないようにします。"
+          },
+          "min": {
+            "length": "最小文字数",
+            "number": "最小値",
+            "date": "最も早い日付",
+            "date_time": "最も早い日時"
+          },
+          "max": {
+            "length": "最大文字数",
+            "number": "最大値",
+            "date": "最も遅い日付",
+            "date_time": "最も遅い日時"
+          },
+          "choices": {
+            "label": "選択肢",
+            "value": "値",
+            "choice_label": "表示ラベル",
+            "add": "選択肢を追加",
+            "remove": "選択肢を削除",
+            "required": "選択肢を1つ以上追加してください",
+            "value_required": "値を入力してください",
+            "duplicate": "値はそれぞれ異なる必要があります"
+          },
+          "multiple": {
+            "label": "複数選択を許可",
+            "help": "値はリストになります。複数選択の項目は並べ替えに使えません。"
+          }
         }
       },
       "customer": {

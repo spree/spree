@@ -8,11 +8,14 @@ module Spree
       # sets the admin dashboard's filter panel offers for string/number columns
       # (see packages/dashboard-core/src/components/table-toolbar.tsx).
       TEXT_FILTER_PREDICATES = %w[i_cont cont eq not_eq start end present blank].freeze
-      NUMBER_FILTER_PREDICATES = %w[eq gt gteq lt lteq present blank].freeze
+      # Numbers, and dates, which compare as ISO 8601 text.
+      RANGE_FILTER_PREDICATES = %w[eq gt gteq lt lteq present blank].freeze
+      # A field allowing several choices matches when any of its values does.
+      CHOICE_FILTER_PREDICATES = %w[eq not_eq in not_in present blank].freeze
 
       # Longest first so a key ending in +_i_cont+ isn't mis-split as the
       # shorter +_cont+ against a definition keyed +..._i+.
-      ORDERED_FILTER_PREDICATES = (TEXT_FILTER_PREDICATES | NUMBER_FILTER_PREDICATES).
+      ORDERED_FILTER_PREDICATES = (TEXT_FILTER_PREDICATES | RANGE_FILTER_PREDICATES | CHOICE_FILTER_PREDICATES).
                                   sort_by { |predicate| -predicate.length }.freeze
 
       attr_reader :store, :audience
@@ -122,7 +125,11 @@ module Spree
       # @param field_type [String]
       # @return [Array<String>]
       def filter_predicates_for(field_type)
-        field_type == 'number' ? NUMBER_FILTER_PREDICATES : TEXT_FILTER_PREDICATES
+        case field_type
+        when 'number', 'date', 'date_time' then RANGE_FILTER_PREDICATES
+        when 'choice' then CHOICE_FILTER_PREDICATES
+        else TEXT_FILTER_PREDICATES
+        end
       end
 
       # Stamp for Store API filters cache keys.
@@ -148,12 +155,13 @@ module Spree
       end
 
       def sort_option_label(name, field_type, direction)
-        suffix =
-          if field_type == 'number'
-            direction == :asc ? I18n.t('spree.sort_low_to_high') : I18n.t('spree.sort_high_to_low')
-          else
-            direction == :asc ? I18n.t('spree.sort_a_to_z') : I18n.t('spree.sort_z_to_a')
+        ascending, descending =
+          case field_type
+          when 'number' then %w[sort_low_to_high sort_high_to_low]
+          when 'date', 'date_time' then %w[sort_oldest_first sort_newest_first]
+          else %w[sort_a_to_z sort_z_to_a]
           end
+        suffix = I18n.t("spree.#{direction == :asc ? ascending : descending}")
         "#{name} (#{suffix})"
       end
     end

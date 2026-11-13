@@ -109,6 +109,9 @@ module SpreeMeilisearch
       case field_type
       when 'number'
         serialized.to_f
+      when 'choice'
+        # An array when several values are allowed; Meilisearch matches `=` on any element.
+        serialized
       else
         serialized.to_s
       end

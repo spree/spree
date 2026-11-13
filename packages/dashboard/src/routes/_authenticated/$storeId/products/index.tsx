@@ -12,6 +12,7 @@ import {
   TagCombobox,
   useCustomFieldDefinitions,
   usePermissions,
+  useStore,
 } from '@spree/dashboard-core'
 import {
   BulkDialog,
@@ -62,6 +63,7 @@ import {
   useBulkRemoveProductTags,
   useCloneProduct,
 } from '../../../../hooks/use-products'
+import { formatCustomFieldValue } from '../../../../schemas/custom-field-definition'
 import '../../../../tables/products'
 import { toastManager } from '@spree/dashboard-ui'
 
@@ -72,9 +74,11 @@ const productsSearchSchema = resourceSearchSchema.extend(importWizardSearchSchem
 // Custom field type → filter operator set. Anything unmapped filters as text.
 // Narrowed to the variants that need no companion field (`enum` needs
 // `filterOptions`, `tags` needs `taggableType`, and so on).
-const CUSTOM_FIELD_FILTER_TYPES: Record<string, 'string' | 'number' | 'boolean'> = {
+const CUSTOM_FIELD_FILTER_TYPES: Record<string, 'string' | 'number' | 'boolean' | 'date'> = {
   number: 'number',
   boolean: 'boolean',
+  date: 'date',
+  date_time: 'date',
 }
 
 export const Route = createFileRoute('/_authenticated/$storeId/products/')({
@@ -328,6 +332,7 @@ function ProductsPage() {
   )
 
   const { data: definitionsResponse } = useCustomFieldDefinitions('product')
+  const { timezone } = useStore()
   // Searchable/sortable custom fields become full table columns: displayable
   // (opt-in via the column selector), sortable when the definition allows it,
   // and filterable with the operator set matching the field type.
@@ -337,22 +342,27 @@ function ProductsPage() {
       .filter(
         (definition) => (definition.searchable || definition.sortable) && definition.filter_key,
       )
-      .map((definition) => ({
-        key: definition.filter_key,
-        label: definition.label,
-        default: false,
-        sortable: definition.sortable,
-        filterable: true,
-        filterType: CUSTOM_FIELD_FILTER_TYPES[definition.field_type] ?? 'string',
-        expand: 'custom_fields',
-        render: (product: Product) => {
-          const value = product.custom_fields?.find(
-            (field) => field.custom_field_definition_id === definition.id,
-          )?.value
-          return value == null || value === '' ? '—' : String(value)
-        },
-      }))
-  }, [definitionsResponse])
+      .map((definition): ColumnDef<Product> => {
+        const column = {
+          key: definition.filter_key,
+          label: definition.label,
+          default: false,
+          sortable: definition.sortable,
+          filterable: true,
+          expand: 'custom_fields',
+          render: (product: Product) => {
+            const value = product.custom_fields?.find(
+              (field) => field.custom_field_definition_id === definition.id,
+            )?.value
+            return formatCustomFieldValue(value, definition, timezone)
+          },
+        }
+        // Choices filter by picking from the definition's own list.
+        return definition.field_type === 'choice'
+          ? { ...column, filterType: 'enum', filterOptions: definition.validations.choices }
+          : { ...column, filterType: CUSTOM_FIELD_FILTER_TYPES[definition.field_type] ?? 'string' }
+      })
+  }, [definitionsResponse, timezone])
 
   return (
     <>

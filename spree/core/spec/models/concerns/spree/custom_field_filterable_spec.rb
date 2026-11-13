@@ -127,4 +127,60 @@ RSpec.describe Spree::CustomFieldFilterable do
       expect(to_sql(expression)).to eq(quoted_column)
     end
   end
+
+  describe 'date and choice fields' do
+    let!(:launch) { create(:custom_field_definition, :date_time_field, :sortable, namespace: 'custom', key: 'launch') }
+    let!(:zone) { create(:custom_field_definition, :choice_field, :searchable, namespace: 'custom', key: 'zone') }
+    let!(:zones) { create(:custom_field_definition, :multiple_choice_field, :searchable, namespace: 'custom', key: 'zones') }
+
+    before do
+      product_1.set_custom_field(launch, '2026-10-12T08:00:00Z')
+      product_2.set_custom_field(launch, '2026-10-13T08:00:00Z')
+      product_1.set_custom_field(zone, 'a')
+      product_2.set_custom_field(zone, 'b')
+      product_1.set_custom_field(zones, %w[a b])
+      product_2.set_custom_field(zones, %w[c])
+    end
+
+    it 'compares dates after normalizing the filter value the way values are stored' do
+      expect(filter({ 'cf_custom_launch_gteq' => '2026-10-13' }).first).to contain_exactly(product_2)
+      expect(filter({ 'cf_custom_launch_lt' => '2026-10-12T10:00:00+02:00' }).first).to be_empty
+      expect(filter({ 'cf_custom_launch_lteq' => '2026-10-12T10:00:00+02:00' }).first).to contain_exactly(product_1)
+    end
+
+    it 'reads a bound with a space between date and time, as the dashboard sends it' do
+      expect(filter({ 'cf_custom_launch_lteq' => '2026-10-12 23:59:59.999999' }).first).to contain_exactly(product_1)
+    end
+
+    it 'compares a bare date against the whole day of a date-time field' do
+      expect(filter({ 'cf_custom_launch_eq' => '2026-10-12' }).first).to contain_exactly(product_1)
+      expect(filter({ 'cf_custom_launch_gt' => '2026-10-12' }).first).to contain_exactly(product_2)
+      expect(filter({ 'cf_custom_launch_lteq' => '2026-10-12' }).first).to contain_exactly(product_1)
+    end
+
+    it 'drops a date filter it cannot read' do
+      expect(filter({ 'cf_custom_launch_gt' => 'soon' }).first).to match_array([product_1, product_2, product_3])
+    end
+
+    it 'matches a single choice with eq, not_eq and in' do
+      expect(filter({ 'cf_custom_zone_eq' => 'a' }).first).to contain_exactly(product_1)
+      expect(filter({ 'cf_custom_zone_not_eq' => 'a' }).first).to contain_exactly(product_2)
+      expect(filter({ 'cf_custom_zone_in' => %w[a b] }).first).to contain_exactly(product_1, product_2)
+      expect(filter({ 'cf_custom_zone_not_in' => %w[a] }).first).to contain_exactly(product_2)
+    end
+
+    it 'matches a multiple choice when any of its values matches' do
+      expect(filter({ 'cf_custom_zones_eq' => 'b' }).first).to contain_exactly(product_1)
+      expect(filter({ 'cf_custom_zones_in' => %w[b c] }).first).to contain_exactly(product_1, product_2)
+      expect(filter({ 'cf_custom_zones_not_eq' => 'a' }).first).to contain_exactly(product_2)
+      expect(filter({ 'cf_custom_zones_not_in' => %w[a] }).first).to contain_exactly(product_2)
+    end
+
+    it 'matches a value written before the field allowed several choices' do
+      product_3.set_custom_field(zone, 'c')
+      zone.update!(validations: zone.validation_rules.merge('multiple' => true))
+
+      expect(filter({ 'cf_custom_zone_eq' => 'c' }).first).to contain_exactly(product_3)
+    end
+  end
 end
