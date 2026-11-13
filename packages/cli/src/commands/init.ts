@@ -79,7 +79,11 @@ export async function runFirstRunSetup(flags: {
   const sampleData = flags.sampleData && (readSampleDataFromEnv(ctx.projectDir) ?? true)
 
   p.log.step('Pulling latest images...')
-  await dockerCompose(['pull'], ctx.projectDir, { stdio: 'inherit' })
+  // A registry that is down or rate limiting (Docker Hub's anonymous limit, a
+  // CI runner, a machine offline) must not stop init when the images are
+  // already here: compose then starts the local copies, and only an image it
+  // has never pulled fails, at `up`, with Docker's own message.
+  await dockerCompose(['pull', '--ignore-pull-failures'], ctx.projectDir, { stdio: 'inherit' })
 
   const s = p.spinner()
   // The prebuilt image prepares its database in its entrypoint; the dev
