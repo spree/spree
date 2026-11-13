@@ -30,6 +30,8 @@ export async function runUntilInterrupted(
     return false
   }
 
+  // Raw mode first: if it fails, nothing has been started yet.
+  process.stdin.setRawMode(true)
   const child = execa(command, args, {
     cwd,
     detached: true,
@@ -62,7 +64,6 @@ export async function runUntilInterrupted(
     process.exit(128 + (signal === 'SIGHUP' ? 1 : 15))
   }
 
-  process.stdin.setRawMode(true)
   process.stdin.on('data', onKey)
   process.stdin.resume()
   process.on('exit', onExit)
