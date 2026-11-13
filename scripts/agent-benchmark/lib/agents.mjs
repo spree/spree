@@ -4,6 +4,12 @@ import path from 'node:path'
 // How each coding agent is run headless. Every agent runs with its permission
 // prompts off, inside a throwaway directory, and prints a JSON event stream.
 export const AGENTS = {
+  // Changes nothing. Calibrates the checks: every task should fail on the
+  // untouched scaffold, or its check can't tell a solution from no work.
+  baseline: {
+    format: 'stream-json',
+    command: () => ['true', []],
+  },
   claude: {
     format: 'stream-json',
     command: (prompt, { model, cwd }) => {
