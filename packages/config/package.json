@@ -1,7 +1,7 @@
 {
   "name": "@spree/config",
   "version": "6.0.3",
-  "description": "Declarative store configuration for Spree Commerce: plan and deploy a spree.config.yml through the Admin API",
+  "description": "Declarative store configuration for Spree Commerce: plan and deploy a spree.store.yml through the Admin API",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
