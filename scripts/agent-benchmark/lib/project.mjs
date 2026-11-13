@@ -7,17 +7,62 @@ import net from 'node:net'
 import path from 'node:path'
 
 // Runs a command and resolves with its exit code and output. Never rejects on
-// a non-zero exit: checks decide what a failure means.
-export function sh(command, args, { cwd, env, timeoutMs = 30 * 60_000, input, onStdout } = {}) {
+// a non-zero exit: checks decide what a failure means. On timeout the whole
+// process group gets SIGTERM, then SIGKILL after graceMs; timedOut records the
+// timeout whatever signal the process ended with.
+export function sh(
+  command,
+  args,
+  { cwd, env, timeoutMs = 30 * 60_000, graceMs = 10_000, input, onStdout } = {},
+) {
   return new Promise((resolve) => {
+    const group = process.platform !== 'win32'
     const child = spawn(command, args, {
       cwd,
       env: { ...process.env, ...env },
       stdio: ['pipe', 'pipe', 'pipe'],
+      // Its own process group, so a timeout reaches the tools it started too.
+      detached: group,
     })
     let stdout = ''
     let stderr = ''
-    const timer = setTimeout(() => child.kill('SIGTERM'), timeoutMs)
+    let timedOut = false
+    let settled = false
+    const timers = []
+    const kill = (signal) => {
+      try {
+        if (group && child.pid) process.kill(-child.pid, signal)
+        else child.kill(signal)
+      } catch {
+        // Already gone.
+      }
+    }
+    const finish = (code, signal) => {
+      if (settled) return
+      settled = true
+      for (const timer of timers) clearTimeout(timer)
+      resolve({ code: code ?? 1, signal, stdout, stderr, timedOut })
+    }
+    timers.push(
+      setTimeout(() => {
+        timedOut = true
+        kill('SIGTERM')
+        timers.push(
+          setTimeout(() => {
+            kill('SIGKILL')
+            // A process outside the group can still hold the pipes open:
+            // stop waiting for them.
+            timers.push(
+              setTimeout(() => {
+                child.stdout.destroy()
+                child.stderr.destroy()
+                finish(null, 'SIGKILL')
+              }, graceMs),
+            )
+          }, graceMs),
+        )
+      }, timeoutMs),
+    )
     child.stdout.on('data', (chunk) => {
       stdout += chunk
       onStdout?.(chunk)
@@ -28,10 +73,7 @@ export function sh(command, args, { cwd, env, timeoutMs = 30 * 60_000, input, on
     child.on('error', (error) => {
       stderr += String(error)
     })
-    child.on('close', (code, signal) => {
-      clearTimeout(timer)
-      resolve({ code: code ?? 1, signal, stdout, stderr, timedOut: signal === 'SIGTERM' })
-    })
+    child.on('close', (code, signal) => finish(code, signal))
     if (input) child.stdin.write(input)
     child.stdin.end()
   })
@@ -51,6 +93,10 @@ export async function freePort(from = 3000) {
 
 export const spree = (projectDir, args, options = {}) =>
   sh('npx', ['--no-install', 'spree', ...args], { cwd: projectDir, ...options })
+
+// Where scaffoldProject creates the project, so a caller can tear it down
+// even when scaffolding fails halfway.
+export const projectDirFor = (workDir) => path.join(workDir, 'app')
 
 // Scaffolds the project the way a developer would, minus the questions.
 export async function scaffoldProject({
@@ -75,7 +121,7 @@ export async function scaffoldProject({
   ]
   if (!storefront) args.push('--no-storefront')
   const created = await sh(command, args, { cwd: workDir, env: { CI: '1' } })
-  const projectDir = path.join(workDir, 'app')
+  const projectDir = projectDirFor(workDir)
   if (created.code !== 0) {
     throw new Error(`create-spree-app failed:\n${created.stdout}\n${created.stderr}`)
   }
@@ -107,6 +153,16 @@ export async function scaffoldProject({
   const admin = {
     email: 'benchmark@example.com',
     password: crypto.randomBytes(12).toString('hex'),
+  }
+  // --detach ships in spree/spree#15209. Without it Commander rejects the
+  // flag, so say so rather than fail every task on an unknown option.
+  const initHelp = await spree(projectDir, ['init', '--help'])
+  if (!/--detach\b/.test(initHelp.stdout + initHelp.stderr)) {
+    throw new Error(
+      "The scaffolded project's Spree CLI does not support `spree init --detach` " +
+        '(added in spree/spree#15209). Use a create-spree-app/@spree/cli release that ' +
+        'includes it, or point --create-command at one.',
+    )
   }
   const init = await spree(projectDir, [
     'init',

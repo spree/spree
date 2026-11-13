@@ -16,6 +16,7 @@ import {
   freePort,
   isEjected,
   mintKeys,
+  projectDirFor,
   scaffoldProject,
   sh,
   spree,
@@ -75,6 +76,8 @@ const log = (message) => console.log(`[${new Date().toISOString().slice(11, 19)}
 
 async function runOnce(task, attempt) {
   const runDir = path.join(outDir, `${task.id}--${options.agent}--${attempt}`)
+  // A rerun into the same --out must not score an earlier run's artifacts.
+  fs.rmSync(runDir, { recursive: true, force: true })
   fs.mkdirSync(runDir, { recursive: true })
   const workDir = fs.mkdtempSync(path.join(os.tmpdir(), 'spree-bench-'))
   const startedAt = new Date()
@@ -91,6 +94,10 @@ async function runOnce(task, attempt) {
     workDir,
   }
   let projectDir = null
+  // Set before scaffolding, so a scaffold that fails after starting
+  // containers is still torn down.
+  let composeDir = null
+  let baseCommit = 'HEAD'
   let ctx = { workDir }
   let scaffoldEjected = false
 
@@ -98,6 +105,7 @@ async function runOnce(task, attempt) {
     if (task.project) {
       const port = await freePort(3000)
       log(`${task.id} #${attempt}: scaffolding a project on port ${port}`)
+      composeDir = projectDirFor(workDir)
       const scaffold = await scaffoldProject({
         workDir,
         port,
@@ -128,6 +136,9 @@ async function runOnce(task, attempt) {
           cwd: projectDir,
         },
       )
+      // The diff base: an agent that commits its work must still show it all.
+      const head = await sh('git', ['rev-parse', 'HEAD'], { cwd: projectDir })
+      if (head.code === 0) baseCommit = head.stdout.trim()
     }
 
     const cwd = projectDir ?? workDir
@@ -145,11 +156,12 @@ async function runOnce(task, attempt) {
     fs.writeFileSync(path.join(runDir, 'stderr.log'), result.stderr)
     meta.agentExitCode = result.code
     meta.agentTimedOut = result.timedOut
+    meta.agentSignal = result.signal ?? null
     meta.agentWallMs = Date.now() - agentStart
 
     if (projectDir) {
       await sh('git', ['add', '-A'], { cwd: projectDir })
-      const diff = await sh('git', ['diff', '--cached', 'HEAD'], { cwd: projectDir })
+      const diff = await sh('git', ['diff', '--cached', baseCommit], { cwd: projectDir })
       fs.writeFileSync(path.join(runDir, 'diff.patch'), diff.stdout)
       // Judge the code, not whether the agent remembered to restart.
       await spree(projectDir, ['restart'])
@@ -180,13 +192,41 @@ async function runOnce(task, attempt) {
     meta.wallMs = Date.now() - startedAt.getTime()
     fs.writeFileSync(path.join(runDir, 'meta.json'), JSON.stringify(meta, null, 2))
     if (!options.keep) {
-      // The containers and volumes belong to this throwaway project only.
-      if (projectDir)
-        await sh('docker', ['compose', 'down', '-v', '--remove-orphans'], { cwd: projectDir })
-      fs.rmSync(workDir, { recursive: true, force: true })
+      await teardown(workDir, composeDir)
     } else {
       log(`${task.id} #${attempt}: kept ${workDir}`)
     }
+  }
+}
+
+async function teardown(workDir, composeDir) {
+  if (composeDir && fs.existsSync(composeDir)) {
+    // The --dev-image container runs as root, so files it wrote into the
+    // bind-mounted server/ may be root-owned: hand them back to this user.
+    const serverDir = path.join(composeDir, 'server')
+    const uid = process.getuid?.()
+    if (options['dev-image'] && uid && fs.existsSync(serverDir)) {
+      await sh('docker', [
+        'run',
+        '--rm',
+        '--entrypoint',
+        'chown',
+        '-v',
+        `${serverDir}:/rails`,
+        options['dev-image'],
+        '-R',
+        `${uid}:${process.getgid()}`,
+        '/rails',
+      ])
+    }
+    // The containers and volumes belong to this throwaway project only.
+    await sh('docker', ['compose', 'down', '-v', '--remove-orphans'], { cwd: composeDir })
+  }
+  try {
+    fs.rmSync(workDir, { recursive: true, force: true })
+  } catch (error) {
+    // A leftover directory must not stop later attempts or the report.
+    log(`could not remove ${workDir}: ${error.message}`)
   }
 }
 

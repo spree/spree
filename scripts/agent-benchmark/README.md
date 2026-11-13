@@ -149,6 +149,10 @@ node scripts/agent-benchmark/run.mjs --agent reference --dev-image spree-bench-d
 The harness then points the project's `docker-compose.dev.yml` at that image
 before the baseline commit, so the agent's diff does not show the change.
 
+That image runs as root, so files it writes into the bind-mounted `server/` can
+be root-owned. Before tearing a project down, the harness runs the image once
+more to hand `server/` back to your user.
+
 ## Test the scorer
 
 ```bash
