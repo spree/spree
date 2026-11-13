@@ -93,6 +93,18 @@ RSpec.describe Spree::CustomFieldDefinition, type: :model do
       expect { create(:custom_field_definition, :short_text_field) }.not_to have_enqueued_job(reindex_job)
     end
 
+    it 'reindexes when a field stops being searchable, to drop it from documents' do
+      definition = create(:custom_field_definition, :short_text_field, :searchable)
+
+      expect { definition.update!(searchable: false) }.to have_enqueued_job(reindex_job)
+    end
+
+    it 'leaves the index alone when a field search does not use changes visibility' do
+      definition = create(:custom_field_definition, :short_text_field)
+
+      expect { definition.update!(storefront_visible: false) }.not_to have_enqueued_job(reindex_job)
+    end
+
     it 'leaves the index alone when only the label changes' do
       definition = create(:custom_field_definition, :short_text_field, :searchable)
 

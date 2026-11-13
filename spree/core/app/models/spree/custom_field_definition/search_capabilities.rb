@@ -69,7 +69,11 @@ module Spree
         return false unless [resource_type, resource_type_before_last_save].include?('Spree::Product')
         return searchable? || sortable? if previously_new_record? || destroyed?
 
-        saved_changes.keys.intersect?(SEARCH_INDEX_SETTINGS_ATTRIBUTES)
+        return false unless saved_changes.keys.intersect?(SEARCH_INDEX_SETTINGS_ATTRIBUTES)
+
+        # A field neither searchable nor sortable, before or after the change,
+        # never reaches a document, so nothing in the index changes with it.
+        searchable? || sortable? || searchable_before_last_save || sortable_before_last_save
       end
 
       def enqueue_search_reindex
