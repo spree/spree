@@ -519,6 +519,14 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
     end
   end
 
+  describe '#clear_index' do
+    it 'removes every document from the store index' do
+      expect(mock_index).to receive(:delete_all_documents)
+
+      provider.clear_index
+    end
+  end
+
   describe '#reindex' do
     it 'indexes all products in batches' do
       expect(mock_index).to receive(:add_documents).at_least(:once)

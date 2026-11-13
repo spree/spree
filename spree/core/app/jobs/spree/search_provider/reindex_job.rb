@@ -2,7 +2,10 @@ module Spree
   module SearchProvider
     # Pushes a store's index settings, then rebuilds its product documents in
     # batches. Enqueued when a custom field definition changes what the index
-    # holds, so indexing a product never has to push or wait for settings.
+    # holds, so indexing a product never has to push or wait for settings,
+    # and with +clear: true+ for a new index, whose documents written before
+    # its settings existed may be stale: clearing it first leaves only what
+    # the rebuild sends.
     #
     # On ActiveJob Continuations: the cursor is the last product id indexed,
     # so a retry or a deploy mid-run resumes there instead of re-sending the
@@ -18,7 +21,7 @@ module Spree
       # One reindex per store at a time; later ones wait their turn rather
       # than being dropped, so the last one always reflects the newest
       # definitions. Solid Queue-specific (no-op on other adapters).
-      limits_concurrency to: 1, key: ->(store_id) { store_id }, duration: 1.hour if respond_to?(:limits_concurrency)
+      limits_concurrency to: 1, key: ->(store_id, *) { store_id }, duration: 1.hour if respond_to?(:limits_concurrency)
 
       retry_on StandardError, wait: :polynomially_longer, attempts: 5
       # Must come after `retry_on StandardError` so DeserializationError lands in discard
@@ -26,7 +29,8 @@ module Spree
       discard_on ActiveJob::DeserializationError
 
       # @param store_id [String] always pass as string for UUID support
-      def perform(store_id)
+      # @param clear [Boolean] remove every document before rebuilding
+      def perform(store_id, clear: false)
         # Outside the steps on purpose: runs on every execution, resumes included.
         @store = Spree::Store.find_by(id: store_id)
         return unless @store
@@ -37,6 +41,7 @@ module Spree
         @provider = provider_class.new(@store)
 
         step :push_settings
+        step :clear_index if clear
         step :index_products
       end
 
@@ -44,6 +49,10 @@ module Spree
 
       def push_settings
         @provider.ensure_index_settings!
+      end
+
+      def clear_index
+        @provider.clear_index
       end
 
       def index_products(step)

@@ -75,6 +75,10 @@ module SpreeMeilisearch
       )
     end
 
+    def clear_index
+      client.index(index_name).delete_all_documents
+    end
+
     # Index settings are pushed by reindex (Spree::SearchProvider::ReindexJob
     # runs one when they change), not here: pushing and awaiting them on every product
     # write flooded Meilisearch into 429s during bulk imports.
@@ -112,7 +116,7 @@ module SpreeMeilisearch
 
       # On a full reindex, clear first so stale docs (e.g. membership docs for
       # removed groupings) don't linger; a scoped reindex keeps upsert semantics.
-      client.index(index_name).delete_all_documents if full_reindex
+      clear_index if full_reindex
 
       indexed = 0
       scope.reorder(id: :asc)

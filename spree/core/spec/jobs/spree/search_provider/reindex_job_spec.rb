@@ -45,6 +45,21 @@ RSpec.describe Spree::SearchProvider::ReindexJob, type: :job do
     described_class.perform_now(store.id.to_s)
   end
 
+  it 'keeps existing documents unless asked to clear the index' do
+    expect(provider).not_to receive(:clear_index)
+    allow(provider).to receive(:index_batch)
+
+    described_class.perform_now(store.id.to_s)
+  end
+
+  it 'clears the index between pushing the settings and rebuilding when asked' do
+    expect(provider).to receive(:ensure_index_settings!).ordered
+    expect(provider).to receive(:clear_index).ordered
+    expect(provider).to receive(:index_batch).twice.ordered
+
+    described_class.perform_now(store.id.to_s, clear: true)
+  end
+
   it 'resumes after the last product indexed rather than starting over' do
     job = described_class.new(store.id.to_s)
     job.continuation = ActiveJob::Continuation.new(job, 'completed' => ['push_settings'],

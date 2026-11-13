@@ -289,14 +289,14 @@ describe Spree::Store, type: :model, without_global_store: true do
       allow(Spree).to receive(:search_provider).and_return(indexing_provider_class.name)
     end
 
-    it 'configures the index of a new store before any product reaches it' do
-      expect { create(:store) }.to have_enqueued_job(Spree::SearchProvider::ReindexJob)
+    it 'configures and clears the index of a new store, dropping anything written before its settings' do
+      expect { create(:store) }.to have_enqueued_job(Spree::SearchProvider::ReindexJob).with(anything, clear: true)
     end
 
     it 'configures the new index when the store code changes' do
       store = create(:store)
 
-      expect { store.update!(code: 'renamed-store') }.to have_enqueued_job(Spree::SearchProvider::ReindexJob).with(store.id.to_s)
+      expect { store.update!(code: 'renamed-store') }.to have_enqueued_job(Spree::SearchProvider::ReindexJob).with(store.id.to_s, clear: true)
     end
 
     it 'leaves the index alone for other store updates' do
