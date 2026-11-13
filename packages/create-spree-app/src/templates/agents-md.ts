@@ -138,6 +138,8 @@ export function agentsMdContent(
     `The \`@spree/docs\` range spans the Spree major, so check \`${spree} info\` first: when its`,
     "`@spree/docs` version differs from the server's Spree version, the running server wins. Otherwise,",
     'when these files and anything else disagree, these files are right for this project.',
+    `\`${spree} info\` needs Spree 6.0.4 or newer on the server; on an older server, read the`,
+    `version from \`${spree} exec bundle list\` (the \`spree_core\` line) instead.`,
     '',
     '## Spree agent skills',
     '',

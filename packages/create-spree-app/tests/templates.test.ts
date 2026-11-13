@@ -290,6 +290,7 @@ describe('agentsMdContent', () => {
     expect(content).not.toMatch(/if `@spree\/docs` is installed/i)
     expect(content).toContain('check `pnpm spree info` first')
     expect(content).toContain("differs from the server's Spree version, the running server wins")
+    expect(content).toContain('read the\nversion from `pnpm spree exec bundle list` (the `spree_core` line)')
     expect(content).toContain('`skills-lock.json` records; `pnpm spree upgrade` moves them')
   })
 })
