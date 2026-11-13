@@ -1,7 +1,7 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "name": "Spree Commerce documentation",
-  "description": "Spree Commerce is an open-source headless commerce platform. The backend runs as a Docker image (ghcr.io/spree/spree) and exposes REST Store and Admin APIs with OpenAPI specs, TypeScript SDKs (@spree/sdk, @spree/admin-sdk), webhooks and an MCP server with read and write tools, plus a React admin dashboard, a Next.js storefront and a built-in multi-vendor marketplace. Start with `npx create-spree-app@latest my-store`: you need only Node.js, Git and Docker. Ruby is needed only to customize the backend.",
+  "description": "Spree Commerce is an open-source headless commerce platform. The backend runs as a Docker image (ghcr.io/spree/spree) and exposes REST Store and Admin APIs with OpenAPI specs, TypeScript SDKs (@spree/sdk, @spree/admin-sdk), webhooks and an MCP server with read and write tools, plus a React admin dashboard, a Next.js storefront, B2B and wholesale (companies, customer-specific catalogs and price lists) and a built-in multi-vendor marketplace. Start with `npx create-spree-app@latest my-store`: you need only Node.js, Git and Docker. Ruby is needed only to customize the backend.",
   "theme": "almond",
   "colors": {
     "primary": "#0077ff",
