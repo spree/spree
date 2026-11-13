@@ -64,18 +64,18 @@ async function check({ projectDir, port, keys }) {
   if (!variantId) return { passed: false, details: `No variant id in ${JSON.stringify(product)}` }
 
   const shopPort = await freePort(4100)
-  const server = spawn('npx', ['next', 'start', '-p', String(shopPort)], {
+  const server = spawn('npx', ['next', 'start', '-H', '127.0.0.1', '-p', String(shopPort)], {
     cwd: shopDir,
     env: { ...process.env, ...env },
     stdio: 'ignore',
     detached: true,
   })
   try {
-    if (!(await waitFor(`http://localhost:${shopPort}/`))) {
+    if (!(await waitFor(`http://127.0.0.1:${shopPort}/`))) {
       return { passed: false, details: 'next start did not answer within two minutes.' }
     }
     const submitted = { variantId, quantity: 1, email: `ada+${Date.now()}@example.com` }
-    const response = await fetch(`http://localhost:${shopPort}/api/bench/checkout`, {
+    const response = await fetch(`http://127.0.0.1:${shopPort}/api/bench/checkout`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ ...submitted, address: ADDRESS }),

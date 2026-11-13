@@ -205,7 +205,12 @@ async function teardown(workDir, composeDir) {
     // bind-mounted server/ may be root-owned: hand them back to this user.
     const serverDir = path.join(composeDir, 'server')
     const uid = process.getuid?.()
-    if (options['dev-image'] && uid && fs.existsSync(serverDir)) {
+    // Only a real directory inside the project: never follow a symlink out of it.
+    const inProject =
+      fs.existsSync(serverDir) &&
+      !fs.lstatSync(serverDir).isSymbolicLink() &&
+      fs.realpathSync(serverDir).startsWith(fs.realpathSync(composeDir) + path.sep)
+    if (options['dev-image'] && uid && inProject) {
       await sh('docker', [
         'run',
         '--rm',

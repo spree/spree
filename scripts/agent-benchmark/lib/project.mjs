@@ -175,7 +175,11 @@ export async function scaffoldProject({
     '--admin-password',
     admin.password,
   ])
-  if (init.code !== 0) throw new Error(`spree init failed:\n${init.stdout}\n${init.stderr}`)
+  if (init.code !== 0) {
+    // The output can echo the admin password; keep it out of meta.json.
+    const output = `${init.stdout}\n${init.stderr}`.replaceAll(admin.password, '[redacted]')
+    throw new Error(`spree init failed:\n${output}`)
+  }
   await waitForServer(port)
 
   return { projectDir, admin, keys: await mintKeys(projectDir) }
@@ -189,7 +193,11 @@ async function mintKey(projectDir, type, scopes) {
   // biome-ignore lint/suspicious/noControlCharactersInRegex: strips ANSI colours
   const plain = result.stdout.replace(/\u001b\[[0-9;]*m/g, '')
   const token = plain.match(new RegExp(`${prefix}[A-Za-z0-9_-]{8,}`))?.[0]
-  if (!token) throw new Error(`Could not mint a ${type} key:\n${plain}\n${result.stderr}`)
+  if (!token) {
+    // Never copy a key into an error that ends up in meta.json.
+    const redact = (text) => text.replace(/\b(pk|sk)_[A-Za-z0-9_-]{8,}/g, '$1_[redacted]')
+    throw new Error(`Could not mint a ${type} key:\n${redact(plain)}\n${redact(result.stderr)}`)
+  }
   return token
 }
 
