@@ -89,10 +89,14 @@ export function isStockDockerfile(content: string): boolean {
 }
 
 // The `build:` block every stock development compose file carries, with or
-// without the `dev` target older Dockerfiles lacked. The lookahead refuses a
-// block with any further key, even after a blank line: that is the project's own.
+// without the `dev` target older Dockerfiles lacked. Anchored: it is matched
+// at the start of a block already found.
 const STOCK_BUILD_BLOCK =
-  /^([ \t]*)build:\n\1[ \t]+context: \S+\n\1[ \t]+dockerfile: Dockerfile\n(?:\1[ \t]+target: dev\n)?(?!(?:[ \t]*\n)*\1[ \t]+\S)/m
+  /^([ \t]*)build:\n\1[ \t]+context: \S+\n\1[ \t]+dockerfile: Dockerfile\n(?:\1[ \t]+target: dev\n)?/
+
+// Any `build:` key with its body: the long form with indented keys below it,
+// or the short form with the context on the same line.
+const BUILD_KEY = /^([ \t]*)build:[ \t]*(\S.*)?\n((?:(?:\1[ \t]+\S.*|[ \t]*)\n)*)/gm
 
 /** Whether a compose file builds an image itself, rather than running a published one. */
 export function composeBuildsImage(content: string): boolean {
@@ -100,27 +104,63 @@ export function composeBuildsImage(content: string): boolean {
 }
 
 /**
- * A development compose file switched from building the project's Dockerfile
- * to running the base image's build variant, for every service that builds
- * it. Null when it has no stock `build:` block.
+ * A development compose file switched from building the Rails app's
+ * Dockerfile to running the base image's build variant, in every service
+ * that builds it.
+ *
+ * `appContext` is the build context of the Rails app, relative to the compose
+ * file (`.`, `server`). A block with another context builds another app and
+ * is left alone; without `appContext`, every block is taken to build the
+ * Rails app. Null when a block that builds the Rails app is not the stock
+ * one: the thin Dockerfile has no `dev` target for it to build.
  */
-export function composeOnBaseImage(content: string, line: string): string | null {
-  let moved = moveBuildBlock(content, line)
-  if (moved === null) return null
-  for (let next = moveBuildBlock(moved, line); next !== null; next = moveBuildBlock(moved, line)) {
-    moved = next
+export function composeOnBaseImage(
+  content: string,
+  line: string,
+  appContext?: string,
+): string | null {
+  let moved = content
+  let from = 0
+  for (;;) {
+    BUILD_KEY.lastIndex = from
+    const found = BUILD_KEY.exec(moved)
+    if (!found) return moved
+
+    const [, , inline, body] = found
+    const context = buildContext(inline ?? body.match(/^[ \t]+context:[ \t]*(\S+)/m)?.[1])
+    if (appContext !== undefined && context !== buildContext(appContext)) {
+      from = found.index + found[0].length
+      continue
+    }
+
+    const stock = moved.slice(found.index).match(STOCK_BUILD_BLOCK)
+    // The stock block must be the whole block: any further key is the project's own.
+    if (!stock || body.trimEnd() !== stock[0].replace(/^[ \t]*build:\n/, '').trimEnd()) return null
+
+    moved = moveBuildBlock(moved, line, found.index, stock[0].length, stock[1])
+    from = found.index
   }
-  return moved
 }
 
-// Moves the first stock `build:` block, and makes the mapping it sits in (a
-// service, or an anchor services share) a development container.
-function moveBuildBlock(content: string, line: string): string | null {
-  const block = content.match(STOCK_BUILD_BLOCK)
-  if (!block) return null
+// `./server/`, `"server"` and `server` name one build context.
+function buildContext(value: string | undefined): string {
+  const cleaned = (value ?? '.')
+    .replace(/^["']|["']$/g, '')
+    .replace(/^\.\//, '')
+    .replace(/\/+$/, '')
+  return cleaned === '' ? '.' : cleaned
+}
 
-  const indent = block[1]
-  const start = block.index ?? 0
+// Replaces the stock `build:` block at `start` with the base image, and makes
+// the mapping it sits in (a service, or an anchor services share) a
+// development container.
+function moveBuildBlock(
+  content: string,
+  line: string,
+  start: number,
+  length: number,
+  indent: string,
+): string {
   const image = `${indent}image: ${BASE_IMAGE}:${line}-build\n`
 
   // The mapping reaches from the line that opens it (indented less) to the
@@ -131,7 +171,7 @@ function moveBuildBlock(content: string, line: string): string | null {
   const head = above.slice(0, first).join('\n') + (first > 0 ? '\n' : '')
   const upper = above.slice(first).join('\n')
 
-  const below = content.slice(start + block[0].length)
+  const below = content.slice(start + length)
   const outdent = below.search(new RegExp(`^(?!${indent})[ \\t]*[^\\s#]`, 'm'))
   const lower = outdent === -1 ? below : below.slice(0, outdent)
   const rest = outdent === -1 ? '' : below.slice(outdent)
@@ -244,15 +284,15 @@ export function planBaseImageMove(
     return { writes: [], skipped: `${relative(dockerfile)} has changes of your own` }
   }
 
+  const appContext = path.relative(projectDir, appDir) || '.'
   const writes: BaseImageMove['writes'] = []
   for (const name of COMPOSE_FILES) {
     const file = path.join(projectDir, name)
     if (!fs.existsSync(file)) continue
     const compose = fs.readFileSync(file, 'utf-8')
-    if (!composeBuildsImage(compose)) continue
-    const moved = composeOnBaseImage(compose, line)
-    if (!moved) return { writes: [], skipped: `${name} has a build section of your own` }
-    writes.push({ file, content: moved })
+    const moved = composeOnBaseImage(compose, line, appContext)
+    if (moved === null) return { writes: [], skipped: `${name} has a build section of your own` }
+    if (moved !== compose) writes.push({ file, content: moved })
   }
 
   writes.push({ file: dockerfile, content: projectDockerfile(line) })

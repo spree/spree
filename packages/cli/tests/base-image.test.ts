@@ -199,6 +199,10 @@ describe('planBaseImageMove', () => {
     fs.rmSync(path.join(projectDir, 'server'), { recursive: true })
     fs.writeFileSync(path.join(projectDir, 'Dockerfile'), 'FROM ruby AS dev\n')
     fs.writeFileSync(path.join(projectDir, 'Gemfile'), "gem 'spree'\n")
+    fs.writeFileSync(
+      path.join(projectDir, 'docker-compose.dev.yml'),
+      STOCK_DEV_COMPOSE.replace('context: ./server', 'context: .'),
+    )
 
     const move = planBaseImageMove(projectDir, 'server', '6.1', stock)
 
@@ -342,5 +346,35 @@ describe('planBaseImageMove, for a project already on the base image', () => {
 
   it('does nothing on the same line', () => {
     expect(planBaseImageMove(projectDir, 'server', '6.1')).toEqual({ writes: [] })
+  })
+})
+
+describe('composeOnBaseImage, with several apps in one compose file', () => {
+  const stock = (name: string, context: string, extra = '') =>
+    `  ${name}:\n    build:\n      context: ${context}\n      dockerfile: Dockerfile\n      target: dev\n${extra}`
+
+  // The thin Dockerfile has no dev target, so a block that still asks for one
+  // would fail to build after the move.
+  it('is null when one service builds the Rails app in its own way', () => {
+    const compose = `services:\n${stock('web', './server')}${stock('worker', './server', '      args:\n        FOO: bar\n')}`
+    expect(composeOnBaseImage(compose, '6.1', 'server')).toBeNull()
+  })
+
+  it('leaves a service that builds another app alone', () => {
+    const compose = `services:\n${stock('web', './server')}${stock('storefront', './apps/storefront')}`
+    const moved = composeOnBaseImage(compose, '6.1', 'server') as string
+    expect(moved.match(/image: ghcr\.io\/spree\/spree-base:6\.1-build/g)).toHaveLength(1)
+    expect(moved).toContain(stock('storefront', './apps/storefront'))
+  })
+
+  it('is null for the short form, which names no Dockerfile or target', () => {
+    expect(
+      composeOnBaseImage('services:\n  web:\n    build: ./server\n', '6.1', 'server'),
+    ).toBeNull()
+  })
+
+  it('returns the file unchanged when nothing builds the Rails app', () => {
+    const compose = `services:\n${stock('storefront', './apps/storefront')}`
+    expect(composeOnBaseImage(compose, '6.1', 'server')).toBe(compose)
   })
 })

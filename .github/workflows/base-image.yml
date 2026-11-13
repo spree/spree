@@ -47,9 +47,25 @@ jobs:
         with:
           persist-credentials: false
 
+      # Each ref is resolved to a commit once, here, so both architectures of
+      # a line build the same source even if a branch moves during the run.
       - id: read
+        shell: bash
         run: |
-          echo "lines=$(jq -c . docker/base/lines.json)" >> "$GITHUB_OUTPUT"
+          commit() { git ls-remote "$1" "$2" | head -n 1 | cut -f 1; }
+
+          lines=$(jq -c '.[]' docker/base/lines.json | while read -r line; do
+            ref=$(jq -r .ref <<< "$line")
+            if [ "refs/heads/$ref" = "$GITHUB_REF" ]; then sha=$GITHUB_SHA; else sha=$(commit origin "$ref"); fi
+            starter=$(commit https://github.com/spree/spree-starter.git "$(jq -r .starter_ref <<< "$line")")
+            if [ -z "$sha" ] || [ -z "$starter" ]; then
+              echo "::error::cannot resolve the refs of line $(jq -r .line <<< "$line")" >&2
+              exit 1
+            fi
+            jq -c --arg sha "$sha" --arg starter "$starter" '. + {sha: $sha, starter_sha: $starter}' <<< "$line"
+          done | jq -sc .)
+
+          echo "lines=$lines" >> "$GITHUB_OUTPUT"
           echo "date=$(date -u +%Y%m%d%H%M)" >> "$GITHUB_OUTPUT"
 
   build:
@@ -75,12 +91,12 @@ jobs:
       RUBY_VERSION: ${{ matrix.line.ruby }}
       NODE_VERSION: ${{ matrix.line.node }}
     steps:
-      # A run on main builds each line from the ref lines.json names for it.
-      # A pull request, or a manual run from another branch, proves its own
-      # definition.
+      # A run on main builds each line from the commit its ref in lines.json
+      # resolved to. A pull request, or a manual run from another branch,
+      # proves its own definition.
       - uses: actions/checkout@v7
         with:
-          ref: ${{ github.ref == 'refs/heads/main' && matrix.line.ref || github.sha }}
+          ref: ${{ github.ref == 'refs/heads/main' && matrix.line.sha || github.sha }}
           persist-credentials: false
 
       - name: Build the runtime image and the build variant
@@ -124,7 +140,7 @@ jobs:
       - uses: actions/checkout@v7
         with:
           repository: spree/spree-starter
-          ref: ${{ matrix.line.starter_ref }}
+          ref: ${{ matrix.line.starter_sha }}
           path: starter
           persist-credentials: false
 
