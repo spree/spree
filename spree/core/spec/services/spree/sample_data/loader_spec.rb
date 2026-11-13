@@ -163,6 +163,15 @@ RSpec.describe Spree::SampleData::Loader, type: :service, without_global_store: 
       expect(wholesale.products.count).to be > 30
     end
 
+    it 'offers the invoice payment method on the wholesale channel only' do
+      invoice = store.payment_methods.find_by(name: 'Pay on invoice')
+      rule = invoice.payment_method_rules.sole
+
+      expect(invoice).to be_storefront_visible
+      expect(rule).to be_a(Spree::PaymentMethodRules::ChannelRule)
+      expect(rule.preferred_channel_ids.map(&:to_s)).to eq([wholesale.id.to_s])
+    end
+
     it 'creates an approved wholesale buyer' do
       buyer = Spree.customer_class.find_by(email: 'wholesale@example.com')
       group = store.customer_groups.find_by(name: 'Wholesale')

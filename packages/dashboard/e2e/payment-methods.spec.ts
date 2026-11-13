@@ -45,9 +45,9 @@ async function seedCheck(page: Page, creds: E2ELoginSession, name: string) {
   })
 }
 
-// The lifecycle tests install providers through the pickers, which offer each
-// one once per store, so they run in order against the shared database and
-// each removes what it added.
+// A provider's Connect row shows only while the store has none of it, so the
+// lifecycle tests run in order against the shared database and each removes
+// what it added.
 test.describe.configure({ mode: 'serial' })
 
 test.describe('payments', () => {
@@ -92,6 +92,16 @@ test.describe('payments', () => {
     const row = methodRow(page, name)
     await expect(row).toBeVisible({ timeout: 15_000 })
     await expect(methodRow(page, 'Bogus')).toHaveCount(0)
+
+    // Another account of it is added from the section, and the picker says
+    // how many the store already has.
+    await page.getByRole('button', { name: /^add account$/i }).click()
+    await expect(page.getByRole('heading', { name: /add payment method/i })).toBeVisible()
+    await page.locator('#type').click()
+    await expect(page.getByRole('option', { name: /^Bogus · 1 installed$/ })).toBeVisible()
+    await expect(page.getByRole('option', { name: 'Check' })).toHaveCount(0)
+    await page.keyboard.press('Escape')
+    await page.keyboard.press('Escape')
 
     // The plain setting comes back as typed, the secret only as a mask.
     await row.getByRole('button', { name: /^configure$/i }).click()
@@ -150,6 +160,59 @@ test.describe('payments', () => {
     await expect(page.getByRole('heading', { name: updated })).toBeVisible({ timeout: 15_000 })
     await deleteFromSheet(page)
     await expect(updatedRow).toHaveCount(0, { timeout: 15_000 })
+  })
+
+  test('adds checkout conditions to a payment method', async ({ page }) => {
+    const creds = await login(page)
+    const method = await seedCheck(page, creds, `E2E Conditions ${Date.now()}`)
+    await openPayments(page, creds.store_id)
+
+    const row = methodRow(page, method.name)
+    await row.getByRole('button', { name: /^configure$/i }).click()
+    await expect(page.getByText(/no conditions/i)).toBeVisible({ timeout: 15_000 })
+
+    await page.getByRole('button', { name: /add condition/i }).click()
+    await page.getByRole('menuitem', { name: 'Order total' }).click()
+    await page.getByLabel('Minimum order total (USD)').fill('5000')
+
+    await page.getByRole('button', { name: /add condition/i }).click()
+    await page.getByRole('menuitem', { name: 'Company' }).click()
+
+    await page.getByRole('button', { name: /^save$/i }).click()
+    await expect(page.getByRole('heading', { name: method.name })).toHaveCount(0, {
+      timeout: 15_000,
+    })
+
+    await page.reload()
+    await row.getByRole('button', { name: /^configure$/i }).click()
+    await expect(page.getByLabel('Minimum order total (USD)')).toHaveValue('5000.00', {
+      timeout: 15_000,
+    })
+    const companySwitch = page.getByRole('switch', { name: /turn company on or off/i })
+    await expect(companySwitch).toBeChecked()
+
+    // Switching a condition off keeps it, but stops it applying.
+    await companySwitch.click()
+    // Removing one drops it.
+    await page
+      .getByText('Order total', { exact: true })
+      .locator('xpath=ancestor::div[contains(@class,"border")][1]')
+      .getByRole('button', { name: /^delete$/i })
+      .click()
+    await page.getByRole('button', { name: /^save$/i }).click()
+    await expect(page.getByRole('heading', { name: method.name })).toHaveCount(0, {
+      timeout: 15_000,
+    })
+
+    const rules = await adminRequest<{ data: { type: string; active: boolean }[] }>(
+      page,
+      creds,
+      'get',
+      `/payment_methods/${method.id}/rules`,
+    )
+    expect(rules.data).toEqual([expect.objectContaining({ type: 'company_rule', active: false })])
+
+    await adminRequest(page, creds, 'delete', `/payment_methods/${method.id}`)
   })
 
   test('orders the methods checkout offers', async ({ page }) => {

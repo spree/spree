@@ -7,6 +7,19 @@ import { z } from 'zod/v4'
 // form's empty option maps back to null on submit.
 export const CAPTURE_METHOD_OVERRIDES = ['', ...CAPTURE_METHODS] as const
 
+/**
+ * One checkout condition as held in form state. `id` is absent for rules
+ * added in this editing session; dropping a rule from the array deletes it.
+ */
+export const paymentMethodRuleSchema = z.object({
+  id: z.string().optional(),
+  type: z.string(),
+  active: z.boolean(),
+  preferences: z.record(z.string(), z.unknown()),
+})
+
+export type PaymentMethodRuleDraft = z.infer<typeof paymentMethodRuleSchema>
+
 export const paymentMethodBaseFormSchema = z.object({
   name: z.string().min(1, { error: requiredMessage('name') }),
   description: z.string().optional(),
@@ -17,6 +30,7 @@ export const paymentMethodBaseFormSchema = z.object({
   // top-level type is optional on the shared shape and required on the
   // create-only schema below.
   type: z.string().optional(),
+  rules: z.array(paymentMethodRuleSchema),
 })
 
 export const paymentMethodCreateFormSchema = paymentMethodBaseFormSchema.extend({
@@ -31,6 +45,7 @@ export const PAYMENT_METHOD_BASE_DEFAULTS: PaymentMethodFormValues = {
   storefront_visible: true,
   active: true,
   capture_method: '',
+  rules: [],
 }
 
 export const PAYMENT_METHOD_CREATE_DEFAULTS: PaymentMethodFormValues = {
@@ -48,12 +63,13 @@ export function isTestGateway(type: string) {
   return TEST_GATEWAY_TYPES.includes(type)
 }
 
-/** The providers a merchant may add: not hidden, and not already installed on this store. */
-export function filterPaymentMethodProviderTypes<T extends { type: string; installed?: boolean }>(
-  types: T[],
-): T[] {
+/**
+ * The providers a merchant may add. One already installed stays listed: a
+ * second record of a provider is how a store runs a second account.
+ */
+export function filterPaymentMethodProviderTypes<T extends { type: string }>(types: T[]): T[] {
   const hidden = new Set<string>(PAYMENT_METHOD_TYPES_HIDDEN_FROM_PICKER)
-  return types.filter((entry) => !hidden.has(entry.type) && !entry.installed)
+  return types.filter((entry) => !hidden.has(entry.type))
 }
 
 export function paymentMethodValuesToCreateParams(
@@ -71,11 +87,18 @@ export function paymentMethodValuesToCreateParams(
     capture_method: v.capture_method || null,
     storefront_visible: v.storefront_visible,
     ...(Object.keys(preferences).length > 0 ? { preferences } : {}),
+    ...(v.rules.length > 0 ? { rules: v.rules } : {}),
   }
 }
 
+/**
+ * `rules` replaces the method's whole set on the server, so it is sent only
+ * when the conditions were edited — a rule added elsewhere while the sheet was
+ * open is not wiped by saving an unrelated field.
+ */
 export function paymentMethodValuesToUpdateParams(
   v: PaymentMethodFormValues,
+  { rulesChanged = true }: { rulesChanged?: boolean } = {},
 ): PaymentMethodUpdateParams {
   return {
     name: v.name,
@@ -83,5 +106,6 @@ export function paymentMethodValuesToUpdateParams(
     active: v.active,
     capture_method: v.capture_method || null,
     storefront_visible: v.storefront_visible,
+    ...(rulesChanged ? { rules: v.rules } : {}),
   }
 }

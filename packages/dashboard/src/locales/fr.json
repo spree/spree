@@ -4521,6 +4521,7 @@
             "description": "Installez une extension de prestataire de paiement pour accepter les cartes et portefeuilles."
           },
           "manual_title": "Méthodes de paiement manuelles",
+          "add_account": "Ajouter un compte",
           "add_manual": "Ajouter une méthode manuelle",
           "manual_empty": {
             "title": "Aucune méthode de paiement manuelle",
@@ -4635,6 +4636,17 @@
       }
     },
     "payment_methods": {
+      "conditions": {
+        "active": "Activer ou désactiver {{name}}",
+        "add": "Ajouter une condition",
+        "description": "Ce moyen de paiement n’est proposé au paiement de la boutique que si toutes les conditions actives sont remplies. Les paiements saisis dans le tableau de bord les ignorent.",
+        "empty": "Aucune condition : ce moyen de paiement est proposé à chaque paiement.",
+        "fields": {
+          "max_totals": "Total de commande maximum",
+          "min_totals": "Total de commande minimum"
+        },
+        "title": "Conditions au paiement"
+      },
       "create_description": "Choisissez un fournisseur et configurez ses identifiants.",
       "create_label": "Créer un moyen de paiement",
       "delete_confirm": {
@@ -4648,6 +4660,7 @@
         "updated": "Moyen de paiement mis à jour"
       },
       "provider_description": "Fournisseur : {{provider}}",
+      "provider_installed": "{{provider}} · {{count}} installé(s)",
       "status": {
         "disabled": "Désactivé"
       },

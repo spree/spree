@@ -2069,6 +2069,28 @@
           "description": "Realizuj z lokalizacji przypiętej do zamówienia, jeśli została ustawiona"
         }
       },
+      "payment_method_rule": {
+        "channel_rule": {
+          "description": "Oferuj tę metodę płatności tylko w wybranych kanałach sprzedaży",
+          "name": "Kanał"
+        },
+        "company_rule": {
+          "description": "Oferuj tę metodę płatności tylko zamówieniom składanym dla firmy albo dla wybranych firm i ich działów",
+          "name": "Firma"
+        },
+        "customer_group_rule": {
+          "description": "Oferuj tę metodę płatności tylko klientom z wybranych grup",
+          "name": "Grupa klientów"
+        },
+        "market_rule": {
+          "description": "Oferuj tę metodę płatności tylko na wybranych rynkach — w ten sposób sklep korzysta też z drugiego konta tego samego dostawcy",
+          "name": "Rynek"
+        },
+        "order_total_rule": {
+          "description": "Oferuj tę metodę płatności tylko wtedy, gdy wartość zamówienia mieści się w zakresie, ustalanym dla każdej waluty",
+          "name": "Wartość zamówienia"
+        }
+      },
       "price_rule": {
         "channel_rule": {
           "name": "Kanał sprzedaży",

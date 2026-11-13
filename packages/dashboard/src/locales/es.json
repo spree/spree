@@ -887,6 +887,7 @@
             "description": "Instala una extensión de proveedor de pago para aceptar tarjetas y billeteras."
           },
           "manual_title": "Métodos de pago manuales",
+          "add_account": "Añadir cuenta",
           "add_manual": "Añadir método manual",
           "manual_empty": {
             "title": "No hay métodos de pago manuales",
@@ -6058,6 +6059,17 @@
       "tax_inclusive": "Incluido"
     },
     "payment_methods": {
+      "conditions": {
+        "active": "Activar o desactivar {{name}}",
+        "add": "Añadir condición",
+        "description": "Ofrece este método de pago en el checkout de la tienda solo cuando se cumplen todas las condiciones activas. Los pagos registrados en el panel las ignoran.",
+        "empty": "Sin condiciones: este método de pago se ofrece en todos los checkouts.",
+        "fields": {
+          "max_totals": "Total máximo del pedido",
+          "min_totals": "Total mínimo del pedido"
+        },
+        "title": "Condiciones de pago"
+      },
       "create_description": "Elegí un proveedor y configurá sus credenciales.",
       "create_label": "Crear método de pago",
       "delete_confirm": {
@@ -6071,6 +6083,7 @@
         "updated": "Método de pago actualizado"
       },
       "provider_description": "Proveedor: {{provider}}",
+      "provider_installed": "{{provider}} · {{count}} instalados",
       "status": {
         "disabled": "Deshabilitado"
       },

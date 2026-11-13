@@ -718,6 +718,7 @@ en:
       email_required: Email address is required
       line_items_required: Add at least one item to your cart
       order_minimum_not_met: Orders must come to at least %{minimum}. Add %{shortfall} more to check out.
+      payment_method_unavailable: "%{name} is no longer available for this order. Choose another payment method"
       payment_required: Add a payment method
       po_number_required: A purchase order number is required for this account
       ship_address_required: Shipping address is required
@@ -895,11 +896,13 @@ en:
         invalid_json: 'must be valid JSON: %{detail}'
         invalid_order_routing_rule: is not a registered order routing rule
         invalid_order_routing_strategy: is not a registered order routing strategy
+        invalid_payment_method_rule: is not a registered payment method rule
         invalid_refund_method: must be one of original_payment, store_credit
         invalid_seller_requirement: is not a registered seller requirement
         invalid_status: Invalid status
         invalid_storefront_access: is not a valid storefront access level
         items_not_a_list: items must be a list of objects
+        min_total_above_max: The minimum order total for %{currency} is above its maximum
         missing_row_type: 'is required (expected one of: %{types})'
         money_preference_too_many_decimals: has more than %{count} decimal places for %{currency}
         must_be_greater_than_min_amount: must be greater than or equal to the minimum
@@ -909,6 +912,7 @@ en:
         oidc_authentication_failed: We could not sign you in with this provider. Please try again.
         oidc_missing_code: The identity provider did not return an authorization code.
         oidc_requires_redirect: This provider requires signing in through its own login page.
+        payout_provider_unavailable: "%{provider} cannot pay sellers on this store yet. Check its requirements, such as having exactly one active payment method of that provider"
         pickup_point_not_found: pickup point could not be found with this provider
         product_in_review: A product awaiting review is approved or rejected, not moved to another status
         product_not_in_store: must all belong to this store
@@ -1093,6 +1097,22 @@ en:
     payment: Payment
     payment_method: Payment Method
     payment_method_not_supported: That payment method is unsupported. Please choose another one.
+    payment_method_rule_types:
+      channel_rule:
+        description: Offers the payment method only on the selected channels
+        name: Channel
+      company_rule:
+        description: Offers the payment method only to orders placed for a company, or for the selected companies and their divisions
+        name: Company
+      customer_group_rule:
+        description: Offers the payment method only to customers in the selected groups
+        name: Customer group
+      market_rule:
+        description: Offers the payment method only in the selected markets
+        name: Market
+      order_total_rule:
+        description: Limits the payment method to orders within a total range, set per currency
+        name: Order total
     payment_methods: Payment Methods
     payment_processing_failed: Payment could not be processed, please check the details you entered
     payment_source: Payment source

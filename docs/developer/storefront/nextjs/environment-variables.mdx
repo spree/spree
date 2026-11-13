@@ -68,7 +68,7 @@ Publishable keys for client-side payment SDKs, read when the matching gateway is
 
 | Variable | Description |
 |----------|-------------|
-| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Stripe publishable key (`pk_…`) |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Stripe publishable key (`pk_…`). Optional: the storefront reads the key from the Stripe payment method the cart is offered, so a store running several Stripe accounts loads the right one. Used only when the method sends no key. Removed in 6.2. |
 
 ## Analytics
 
