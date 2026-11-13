@@ -1,6 +1,7 @@
 import type { SectionSource } from '../context.js'
 import type { SectionName } from '../types.js'
 import { categories, products, productTypes } from './catalog.js'
+import { customFieldDefinitions } from './custom-fields.js'
 import { deliveryMethods, deliveryProfiles, deliveryZones, packageTypes } from './delivery.js'
 import { customers, sellers } from './people.js'
 import type { AnySection } from './section.js'
@@ -12,6 +13,7 @@ import {
   store,
   suppliers,
   taxCategories,
+  taxRates,
 } from './settings.js'
 import {
   allowedOrigins,
@@ -41,6 +43,7 @@ export const ORDERED_SECTIONS: AnySection[] = [
   markets,
   customerGroups,
   taxCategories,
+  taxRates,
   deliveryProfiles,
   deliveryZones,
   deliveryMethods,
@@ -48,6 +51,7 @@ export const ORDERED_SECTIONS: AnySection[] = [
   paymentMethods,
   suppliers,
   productTypes,
+  customFieldDefinitions,
   categories,
   products,
   customers,
