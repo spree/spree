@@ -74,7 +74,11 @@
     "openapi",
     "sdk",
     "typescript",
-    "headless"
+    "headless",
+    "b2b-commerce",
+    "wholesale",
+    "multi-vendor",
+    "multi-seller"
   ],
   "author": "Vendo Connect Inc.",
   "license": "MIT",

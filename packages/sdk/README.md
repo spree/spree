@@ -2,7 +2,7 @@
 
 Official TypeScript SDK for the [Spree Commerce](https://spreecommerce.org) Store API v3 — fully typed resource clients, guest and customer authentication, carts and checkout, with runtime Zod schemas generated from the API's serializers.
 
-Spree is an open-source headless commerce platform: REST Store and Admin APIs with OpenAPI specs, TypeScript SDKs, an MCP server and a built-in marketplace, with the backend running as a Docker image. Start a backend with `npx create-spree-app@latest my-store` (Node.js, Git and Docker only, no Ruby).
+Spree is an open-source headless commerce platform: REST Store and Admin APIs with OpenAPI specs, TypeScript SDKs, an MCP server and a built-in marketplace, with the backend running as a Docker image. Start a backend with `npx create-spree-app@latest my-store` (Node.js, Git and Docker only).
 
 ## Installation
 

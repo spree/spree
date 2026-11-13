@@ -2,7 +2,7 @@
 
 Official TypeScript SDK for the **[Spree Commerce](https://spreecommerce.org) Admin API** — manage products, orders, customers, fulfillments, payments, and store configuration from server-to-server integrations or admin tooling.
 
-Spree is an open-source headless commerce platform: REST Store and Admin APIs with OpenAPI specs, TypeScript SDKs, an MCP server and a built-in marketplace, with the backend running as a Docker image. Start a backend with `npx create-spree-app@latest my-store` (Node.js, Git and Docker only, no Ruby).
+Spree is an open-source headless commerce platform: REST Store and Admin APIs with OpenAPI specs, TypeScript SDKs, an MCP server and a built-in marketplace, with the backend running as a Docker image. Start a backend with `npx create-spree-app@latest my-store` (Node.js, Git and Docker only).
 
 `@spree/admin-sdk` is released with Spree and carries its version: `@spree/admin-sdk@6.0.x` works with Spree 6.0.x. Review the [changelog](./CHANGELOG.md) before upgrading.
 
