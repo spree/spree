@@ -50,4 +50,44 @@ describe('sh', () => {
     }
     assert.ok(state === 'gone' || state === 'Z', `descendant is still running (${state})`)
   })
+
+  it('kills a surviving descendant even when nothing else keeps Node running', {
+    skip: process.platform === 'win32',
+  }, async () => {
+    const fs = await import('node:fs')
+    const pidFile = `/tmp/sh-test-${process.pid}-${Date.now()}-alone`
+    const lib = new URL('../lib/project.mjs', import.meta.url).href
+    // A separate Node process that exits as soon as nothing holds it open.
+    const script = `
+      const { sh } = await import(${JSON.stringify(lib)})
+      await sh('sh', ['-c', '(trap "" TERM; exec >/dev/null 2>&1; sleep 30) & echo $! > ${pidFile}; sleep 30'], { timeoutMs: 200, graceMs: 200 })
+    `
+    const node = await sh(process.execPath, ['--input-type=module', '-e', script], {
+      timeoutMs: 10_000,
+    })
+    assert.equal(node.code, 0, node.stderr)
+    const pid = Number(fs.readFileSync(pidFile, 'utf8'))
+    fs.rmSync(pidFile, { force: true })
+    await new Promise((resolve) => setTimeout(resolve, 300))
+    let state = 'gone'
+    try {
+      state = fs.readFileSync(`/proc/${pid}/stat`, 'utf8').split(' ')[2]
+    } catch {}
+    if (state !== 'gone' && state !== 'Z') process.kill(pid, 'SIGKILL')
+    assert.ok(state === 'gone' || state === 'Z', `descendant outlived Node (${state})`)
+  })
+
+  it('keeps the exit status of a leader that exited while a process outside the group held the pipes', {
+    skip: process.platform !== 'linux',
+  }, async () => {
+    // The leader exits cleanly on SIGTERM; a setsid process keeps stdout open.
+    const result = await sh(
+      'sh',
+      ['-c', 'trap "exit 0" TERM; setsid sleep 3 & while :; do sleep 0.05; done'],
+      { timeoutMs: 200, graceMs: 200 },
+    )
+    assert.equal(result.timedOut, true)
+    assert.equal(result.code, 0)
+    assert.equal(result.signal, null)
+  })
 })

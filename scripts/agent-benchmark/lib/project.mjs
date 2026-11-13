@@ -45,8 +45,9 @@ export function sh(
       settled = true
       for (const timer of timers) clearTimeout(timer)
       // After a timeout the leader can exit while group members that ignored
-      // SIGTERM live on: still SIGKILL the group after the grace period.
-      if (timedOut && !killed) setTimeout(() => kill('SIGKILL'), graceMs).unref()
+      // SIGTERM live on: still SIGKILL the group after the grace period. The
+      // timer stays referenced so Node cannot exit before it fires.
+      if (timedOut && !killed) setTimeout(() => kill('SIGKILL'), graceMs)
       resolve({ code: code ?? 1, signal, stdout, stderr, timedOut })
     }
     timers.push(
@@ -62,8 +63,9 @@ export function sh(
               setTimeout(() => {
                 child.stdout.destroy()
                 child.stderr.destroy()
-                // Keep the child's own result if it has exited.
-                finish(exit?.code ?? null, exit?.signal ?? 'SIGKILL')
+                // Keep the child's own result, signal included, if it has exited.
+                if (exit) finish(exit.code, exit.signal)
+                else finish(null, 'SIGKILL')
               }, graceMs),
             )
           }, graceMs),
