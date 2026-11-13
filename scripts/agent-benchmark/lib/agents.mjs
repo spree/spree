@@ -13,6 +13,13 @@ export const AGENTS = {
     format: 'stream-json',
     command: () => ['true', []],
   },
+  // Ejects the project and changes nothing else. For the checks that run a
+  // spec, the baseline fails before the spec runs (the project was never
+  // ejected); this shows the spec itself fails on untouched code.
+  'eject-only': {
+    format: 'stream-json',
+    command: () => ['npx', ['--no-install', 'spree', 'eject']],
+  },
   // Applies the hand-written solution in tasks/<task>/reference/. Calibrates
   // the checks the other way: every task should pass with it.
   reference: {

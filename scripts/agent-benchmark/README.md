@@ -32,7 +32,7 @@ node scripts/agent-benchmark/run.mjs --model claude-sonnet-4-6
 | Option | Default | Meaning |
 | --- | --- | --- |
 | `--task` | `all` | Task ids, comma-separated (file names in `tasks/`) |
-| `--agent` | `claude` | `claude`, `codex`, `cursor`, `baseline` (changes nothing; every task should fail) or `reference` (applies the task's hand-written solution; every task should pass). The last two calibrate the checks |
+| `--agent` | `claude` | `claude`, `codex`, `cursor`, `baseline` (changes nothing; every task should fail), `eject-only` (ejects and changes nothing else, so spec checks run and fail) or `reference` (applies the task's hand-written solution; every task should pass). The last three calibrate the checks |
 | `--repeat` | `1` | Runs per task |
 | `--model` | agent default | Passed to the agent CLI |
 | `--out` | a new folder under the system temp dir | Where results go |

@@ -4,7 +4,7 @@
 // See scripts/agent-benchmark/README.md.
 //
 //   node scripts/agent-benchmark/run.mjs [--task id,id|all]
-//     [--agent claude|codex|cursor|baseline|reference] [--repeat N] [--model name]
+//     [--agent claude|codex|cursor|baseline|eject-only|reference] [--repeat N] [--model name]
 //     [--out dir] [--image-tag tag] [--dev-image image]
 //     [--create-command "npx --yes create-spree-app@latest"] [--keep]
 import fs from 'node:fs'
