@@ -54,6 +54,7 @@ import {
   detectSpreePackages,
   isExactVersion,
   isOlderVersion,
+  moveToBaseImage,
   moveToReleaseLine,
   packageAddArgs,
   packageDedupeArgs,
@@ -364,6 +365,38 @@ describe('moveToReleaseLine', () => {
     expect(moveToReleaseLine(dir, LINE)).toEqual([])
     writePackageJson('{ not json')
     expect(moveToReleaseLine(dir, LINE)).toEqual([])
+  })
+})
+
+describe('moveToBaseImage', () => {
+  let dir: string
+
+  beforeEach(() => {
+    dir = fs.mkdtempSync(path.join(os.tmpdir(), 'spree-upgrade-base-image-'))
+    fs.mkdirSync(path.join(dir, 'server'))
+    fs.writeFileSync(path.join(dir, 'server', 'Gemfile'), "gem 'spree'\n")
+    fs.writeFileSync(path.join(dir, 'server', 'Dockerfile'), 'FROM ruby\nRUN echo mine\n')
+    vi.mocked(p.log.warn).mockClear()
+    vi.mocked(p.confirm).mockClear()
+  })
+
+  afterEach(() => fs.rmSync(dir, { recursive: true, force: true }))
+
+  it('does nothing before the first Spree line with a base image', async () => {
+    await moveToBaseImage(dir, { yes: true }, { ...LINE, version: '6.0.4' })
+
+    expect(p.log.warn).not.toHaveBeenCalled()
+    expect(fs.readFileSync(path.join(dir, 'server', 'Dockerfile'), 'utf-8')).toContain('mine')
+  })
+
+  it('leaves a Dockerfile the project changed alone and says why', async () => {
+    await moveToBaseImage(dir, { yes: true }, { ...LINE, version: '6.1.0' })
+
+    expect(p.log.warn).toHaveBeenCalledWith(
+      expect.stringContaining('server/Dockerfile has changes of your own'),
+    )
+    expect(p.confirm).not.toHaveBeenCalled()
+    expect(fs.readFileSync(path.join(dir, 'server', 'Dockerfile'), 'utf-8')).toContain('mine')
   })
 })
 

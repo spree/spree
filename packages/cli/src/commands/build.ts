@@ -4,14 +4,23 @@ import * as p from '@clack/prompts'
 import { type Command, Option } from 'commander'
 import { execa } from 'execa'
 import pc from 'picocolors'
-import { detectProject, findApiDir, hasMonorepoSpreePath, isEjectedProject } from '../context.js'
+import {
+  buildsDevImage,
+  detectProject,
+  findApiDir,
+  hasMonorepoSpreePath,
+  isEjectedProject,
+} from '../context.js'
 import { warnDeprecated } from '../deprecation.js'
 import { appServices, dockerCompose } from '../docker.js'
+import { usesBaseImage } from '../lib/base-image.js'
 
 export function registerBuildCommand(program: Command): void {
   program
     .command('build')
-    .description('Rebuild the dev image (after Dockerfile or runtime version changes)')
+    .description(
+      'Update the dev image: pull the newer Spree base image, or rebuild your Dockerfile',
+    )
     .option('--reset-deps', 'also wipe the cached backend dependencies so they re-install')
     .addOption(new Option('--reset-bundle').hideHelp())
     .option('--yes', 'skip confirmation prompts (for CI)')
@@ -53,17 +62,21 @@ async function buildDevImage(flags: { resetDeps?: boolean; yes?: boolean }): Pro
     process.exit(1)
   }
 
-  // Always build against the active docker-compose.yml — the same file
-  // `spree dev` runs. After `spree eject` that contains a `build:` section
-  // pointing at the API directory; before eject, it's a prebuilt-image stack and
-  // there's nothing to rebuild.
+  // Always act on the active docker-compose.yml — the same file `spree dev`
+  // runs. Before eject it's a prebuilt-image stack and there's nothing to
+  // update here.
   if (!isEjectedProject(ctx.projectDir)) {
     console.error(
-      `\n${pc.red('Error:')} docker-compose.yml has no \`build:\` section. ` +
-        `Run ${pc.bold('spree eject')} first to switch to a build-from-source stack.\n`,
+      `\n${pc.red('Error:')} this project runs the prebuilt Spree image. ` +
+        `Run ${pc.bold('spree eject')} first to run it from your source.\n`,
     )
     process.exit(1)
   }
+
+  // A project on the Spree base image has no image of its own to build: the
+  // development container is the published build variant, and gems live in a
+  // volume. Updating it means pulling.
+  const pulls = !buildsDevImage(ctx.projectDir)
 
   if (flags.resetDeps) {
     if (!flags.yes) {
@@ -103,14 +116,18 @@ async function buildDevImage(flags: { resetDeps?: boolean; yes?: boolean }): Pro
     }
   }
 
-  console.log(`\n${pc.bold('Rebuilding dev image...')}\n`)
-  await dockerCompose(['build', ...(await appServices(ctx.projectDir))], ctx.projectDir, {
-    stdio: 'inherit',
-  })
+  console.log(
+    `\n${pc.bold(pulls ? 'Pulling the Spree base image...' : 'Rebuilding dev image...')}\n`,
+  )
+  await dockerCompose(
+    [pulls ? 'pull' : 'build', ...(await appServices(ctx.projectDir))],
+    ctx.projectDir,
+    { stdio: 'inherit' },
+  )
 
   p.note(
     [
-      `Image rebuilt. Start the stack with ${pc.bold('spree dev')}.`,
+      `${pulls ? 'Base image updated' : 'Image rebuilt'}. Start the stack with ${pc.bold('spree dev')}.`,
       flags.resetDeps
         ? `On next boot, dependencies will re-seed into a fresh ${pc.dim('bundle_cache')} volume.`
         : '',
@@ -156,11 +173,13 @@ export function planProductionBuild(
 
   const hasDashboard = fs.existsSync(path.join(projectDir, 'apps', 'dashboard', 'package.json'))
 
-  // The layout-normalizing Dockerfile leaves a distinctive marker
-  // (`.spree-custom-app`; `.spree-custom-dashboard` in its first release);
-  // without it, root context would break the build (the old file expects the
-  // Rails app at the context root), so fall back to the old API-directory context.
-  if (!/\.spree-custom-(app|dashboard)\b/.test(fs.readFileSync(dockerfile, 'utf-8'))) {
+  // A Dockerfile on the Spree base image, and the layout-normalizing one
+  // before it (marked `.spree-custom-app`; `.spree-custom-dashboard` in its
+  // first release), find the Rails app and the dashboard in a root context.
+  // Anything older expects the Rails app at the context root, so it keeps the
+  // API-directory context.
+  const content = fs.readFileSync(dockerfile, 'utf-8')
+  if (!usesBaseImage(content) && !/\.spree-custom-(app|dashboard)\b/.test(content)) {
     return {
       args: ['build', apiPath, '-f', dockerfile, '-t', imageTag],
       imageTag,

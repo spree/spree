@@ -1,0 +1,204 @@
+import fs from 'node:fs'
+import os from 'node:os'
+import path from 'node:path'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import {
+  baseImageLine,
+  composeOnBaseImage,
+  isStockDockerfile,
+  planBaseImageMove,
+  projectDockerfile,
+  usesBaseImage,
+  withLooseRubyPin,
+} from '../src/lib/base-image.js'
+
+const STOCK_DEV_COMPOSE = `x-app: &app
+  build:
+    context: ./server
+    dockerfile: Dockerfile
+    target: dev
+  env_file: .env
+  environment:
+    DATABASE_HOST: postgres
+  volumes:
+    - ./server:/rails
+    - bundle_cache:/usr/local/bundle
+
+services:
+  web:
+    <<: *app
+`
+
+describe('baseImageLine', () => {
+  it('is the minor line of a Spree version', () => {
+    expect(baseImageLine('6.1.0')).toBe('6.1')
+    expect(baseImageLine('6.2.3')).toBe('6.2')
+    expect(baseImageLine('6.1.0-rc.1')).toBe('6.1')
+    expect(baseImageLine('7.0.0')).toBe('7.0')
+  })
+
+  it('is undefined before the first line with a base image', () => {
+    expect(baseImageLine('6.0.4')).toBeUndefined()
+    expect(baseImageLine('5.4.2')).toBeUndefined()
+    expect(baseImageLine('not a version')).toBeUndefined()
+  })
+})
+
+describe('projectDockerfile', () => {
+  // docker/project/Dockerfile is the canonical copy; spree-starter ships it
+  // and CI builds it. The one the CLI writes must not drift from it.
+  it('matches the canonical Dockerfile in the monorepo', () => {
+    const canonical = fs.readFileSync(
+      path.resolve(__dirname, '../../../docker/project/Dockerfile'),
+      'utf-8',
+    )
+    expect(projectDockerfile('6.1')).toBe(canonical)
+  })
+
+  it('names the base image of the given line', () => {
+    expect(projectDockerfile('6.2')).toContain('ARG SPREE_BASE=ghcr.io/spree/spree-base:6.2\n')
+    expect(usesBaseImage(projectDockerfile('6.2'))).toBe(true)
+  })
+})
+
+describe('isStockDockerfile', () => {
+  it('is false for a Dockerfile the starter never shipped', () => {
+    expect(isStockDockerfile('FROM ruby:4.0\nRUN echo mine\n')).toBe(false)
+    expect(isStockDockerfile(projectDockerfile('6.1'))).toBe(false)
+  })
+})
+
+describe('composeOnBaseImage', () => {
+  it('swaps the stock build block for the build image and sets the development environment', () => {
+    expect(composeOnBaseImage(STOCK_DEV_COMPOSE, '6.1')).toBe(`x-app: &app
+  image: ghcr.io/spree/spree-base:6.1-build
+  env_file: .env
+  environment:
+    RAILS_ENV: development
+    BUNDLE_DEPLOYMENT: "0"
+    BUNDLE_WITHOUT: ""
+    DATABASE_HOST: postgres
+  volumes:
+    - ./server:/rails
+    - bundle_cache:/usr/local/bundle
+
+services:
+  web:
+    <<: *app
+`)
+  })
+
+  it('handles a build block without the dev target and without an environment key', () => {
+    const compose =
+      'services:\n  web:\n    build:\n      context: .\n      dockerfile: Dockerfile\n    ports:\n      - "3000:3000"\n'
+    expect(composeOnBaseImage(compose, '6.1')).toBe(
+      'services:\n  web:\n    image: ghcr.io/spree/spree-base:6.1-build\n    environment:\n      RAILS_ENV: development\n      BUNDLE_DEPLOYMENT: "0"\n      BUNDLE_WITHOUT: ""\n    ports:\n      - "3000:3000"\n',
+    )
+  })
+
+  it('is null for a build block the project has changed', () => {
+    const custom = STOCK_DEV_COMPOSE.replace(
+      'dockerfile: Dockerfile',
+      'dockerfile: Dockerfile.custom',
+    )
+    expect(composeOnBaseImage(custom, '6.1')).toBeNull()
+  })
+})
+
+describe('withLooseRubyPin', () => {
+  it('lets the base image decide the Ruby patch version', () => {
+    const gemfile = "source 'https://rubygems.org'\nruby file: '.ruby-version'\n\ngem 'spree'\n"
+    expect(withLooseRubyPin(gemfile, '4.0.9\n')).toBe(
+      "source 'https://rubygems.org'\nruby '~> 4.0.0'\n\ngem 'spree'\n",
+    )
+  })
+
+  it('is null when the Gemfile has no exact pin, or the version cannot be read', () => {
+    expect(withLooseRubyPin("ruby '~> 4.0.0'\n", '4.0.9')).toBeNull()
+    expect(withLooseRubyPin("ruby file: '.ruby-version'\n", undefined)).toBeNull()
+    expect(withLooseRubyPin("ruby file: '.ruby-version'\n", 'ruby-head')).toBeNull()
+  })
+})
+
+describe('planBaseImageMove', () => {
+  let projectDir: string
+  const stock = () => true
+  const changed = () => false
+
+  beforeEach(() => {
+    projectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'spree-base-image-'))
+    fs.mkdirSync(path.join(projectDir, 'server'))
+    fs.writeFileSync(path.join(projectDir, 'server', 'Dockerfile'), 'FROM ruby AS dev\n')
+    fs.writeFileSync(path.join(projectDir, 'server', 'Gemfile'), "ruby file: '.ruby-version'\n")
+    fs.writeFileSync(path.join(projectDir, 'server', '.ruby-version'), '4.0.9\n')
+    fs.writeFileSync(path.join(projectDir, 'docker-compose.dev.yml'), STOCK_DEV_COMPOSE)
+    fs.writeFileSync(
+      path.join(projectDir, 'docker-compose.yml'),
+      'services:\n  web:\n    image: ghcr.io/spree/spree:latest\n',
+    )
+  })
+
+  afterEach(() => {
+    fs.rmSync(projectDir, { recursive: true, force: true })
+  })
+
+  const written = (move: ReturnType<typeof planBaseImageMove>) =>
+    move.writes.map(({ file }) => path.relative(projectDir, file))
+
+  it('moves the Dockerfile, the development compose file and the Ruby pin together', () => {
+    const move = planBaseImageMove(projectDir, 'server', '6.1', stock)
+
+    expect(move.skipped).toBeUndefined()
+    expect(written(move)).toEqual(['docker-compose.dev.yml', 'server/Dockerfile', 'server/Gemfile'])
+    expect(move.writes[1].content).toBe(projectDockerfile('6.1'))
+  })
+
+  it('also moves the active compose file of an ejected project', () => {
+    fs.writeFileSync(path.join(projectDir, 'docker-compose.yml'), STOCK_DEV_COMPOSE)
+
+    const move = planBaseImageMove(projectDir, 'server', '6.1', stock)
+
+    expect(written(move)).toContain('docker-compose.yml')
+  })
+
+  it('leaves a Dockerfile the project has changed alone, and says so', () => {
+    const move = planBaseImageMove(projectDir, 'server', '6.1', changed)
+
+    expect(move.writes).toEqual([])
+    expect(move.skipped).toBe('server/Dockerfile has changes of your own')
+  })
+
+  it('writes nothing when a compose file builds in its own way', () => {
+    fs.writeFileSync(
+      path.join(projectDir, 'docker-compose.dev.yml'),
+      STOCK_DEV_COMPOSE.replace('target: dev', 'target: custom'),
+    )
+
+    const move = planBaseImageMove(projectDir, 'server', '6.1', stock)
+
+    expect(move.writes).toEqual([])
+    expect(move.skipped).toBe('docker-compose.dev.yml has a build section of your own')
+  })
+
+  it('does nothing for a project already on the base image', () => {
+    fs.writeFileSync(path.join(projectDir, 'server', 'Dockerfile'), projectDockerfile('6.1'))
+
+    expect(planBaseImageMove(projectDir, 'server', '6.1', stock)).toEqual({ writes: [] })
+  })
+
+  it('does nothing without a Dockerfile', () => {
+    fs.rmSync(path.join(projectDir, 'server', 'Dockerfile'))
+
+    expect(planBaseImageMove(projectDir, 'server', '6.1', stock)).toEqual({ writes: [] })
+  })
+
+  it('finds the Rails app at the root of a bare starter clone', () => {
+    fs.rmSync(path.join(projectDir, 'server'), { recursive: true })
+    fs.writeFileSync(path.join(projectDir, 'Dockerfile'), 'FROM ruby AS dev\n')
+    fs.writeFileSync(path.join(projectDir, 'Gemfile'), "gem 'spree'\n")
+
+    const move = planBaseImageMove(projectDir, 'server', '6.1', stock)
+
+    expect(written(move)).toEqual(['docker-compose.dev.yml', 'Dockerfile'])
+  })
+})

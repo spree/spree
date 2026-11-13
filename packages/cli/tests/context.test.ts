@@ -2,7 +2,7 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { detectProject, isEjectedProject } from '../src/context'
+import { buildsDevImage, detectProject, isEjectedProject } from '../src/context'
 
 describe('detectProject', () => {
   const tempDirs: string[] = []
@@ -149,9 +149,19 @@ describe('isEjectedProject', () => {
     const dir = makeTempDir()
     fs.writeFileSync(
       path.join(dir, 'docker-compose.yml'),
-      'services:\n  web:\n    image: spree/spree:latest\n',
+      'services:\n  web:\n    image: ghcr.io/spree/spree:latest\n    volumes:\n      - storage_data:/rails/storage\n',
     )
     expect(isEjectedProject(dir)).toBe(false)
+  })
+
+  it('is true for a compose that mounts the source into the base image', () => {
+    const dir = makeTempDir()
+    fs.writeFileSync(
+      path.join(dir, 'docker-compose.yml'),
+      'services:\n  web:\n    image: ghcr.io/spree/spree-base:6.1-build\n    volumes:\n      - ./server:/rails\n      - bundle_cache:/usr/local/bundle\n',
+    )
+    expect(isEjectedProject(dir)).toBe(true)
+    expect(buildsDevImage(dir)).toBe(false)
   })
 
   it('is false when docker-compose.yml is missing', () => {

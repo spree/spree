@@ -2,7 +2,7 @@ import * as p from '@clack/prompts'
 import { type Options as ExecaOptions, execa } from 'execa'
 import pc from 'picocolors'
 import { backendTaskCommand, PREPARE_DATABASE } from './backend.js'
-import { hasMonorepoSpreePath } from './context.js'
+import { buildsDevImage, hasMonorepoSpreePath } from './context.js'
 
 export async function dockerCompose(args: string[], projectDir: string, options?: ExecaOptions) {
   try {
@@ -297,7 +297,10 @@ export async function prepareDatabase(
   const stdio = options?.stdio ?? 'pipe'
   const file = options?.composeFile ? ['-f', options.composeFile] : []
   await dockerCompose([...file, 'up', '-d', '--wait', 'postgres'], projectDir, { stdio })
-  await dockerCompose([...file, 'run', '--rm', '--build', 'web', ...PREPARE_DATABASE], projectDir, {
+  // `--build` only where there is something to build: a compose file that
+  // runs the published base image has no `build:` section.
+  const build = buildsDevImage(projectDir, options?.composeFile) ? ['--build'] : []
+  await dockerCompose([...file, 'run', '--rm', ...build, 'web', ...PREPARE_DATABASE], projectDir, {
     stdio,
   })
 }

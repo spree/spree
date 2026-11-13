@@ -11,7 +11,7 @@ import {
   UPGRADE,
   updatePackagesCommand,
 } from '../backend.js'
-import { detectProject, hasMonorepoSpreePath, isEjectedProject } from '../context.js'
+import { detectProject, findApiDir, hasMonorepoSpreePath, isEjectedProject } from '../context.js'
 import {
   dockerCompose,
   dockerComposeCapture,
@@ -27,6 +27,7 @@ import {
   installAgentSkills,
   skillsFailureMessage,
 } from '../lib/ai.js'
+import { baseImageLine, planBaseImageMove } from '../lib/base-image.js'
 import { RELEASE_LINE, type ReleaseLine, releaseLineFor } from '../lib/release-line.js'
 import { APP_DIRS, detectPackageManager, generateRouteTree } from './add.js'
 
@@ -97,6 +98,7 @@ async function upgrade(flags: UpgradeFlags): Promise<void> {
   if (isEjectedProject(ctx.projectDir)) {
     const gemsUpdated = await runBundleUpdate(ctx.projectDir, flags)
     line = await serverReleaseLine(ctx.projectDir, { fromNewImage: false })
+    await moveToBaseImage(ctx.projectDir, flags, line)
     await updateSpreePackages(ctx.projectDir, flags, line)
     await updateSpreeAgentSkills(ctx.projectDir, flags)
     await runMigrate(ctx.projectDir, flags)
@@ -110,6 +112,7 @@ async function upgrade(flags: UpgradeFlags): Promise<void> {
   } else {
     const imagePulled = await pullImage(ctx.projectDir, flags)
     line = await serverReleaseLine(ctx.projectDir, { fromNewImage: imagePulled })
+    await moveToBaseImage(ctx.projectDir, flags, line)
     await updateSpreePackages(ctx.projectDir, flags, line)
     await updateSpreeAgentSkills(ctx.projectDir, flags)
     if (imagePulled) await recreateContainers(ctx.projectDir)
@@ -159,6 +162,50 @@ async function confirmStep(message: string, flags: UpgradeFlags): Promise<boolea
     process.exit(0)
   }
   return confirmed
+}
+
+/**
+ * Moves the project's own Docker build onto the Spree base image, from the
+ * first Spree line that has one: the Dockerfile shrinks to a few lines on the
+ * base, and the development container runs the base's build variant instead
+ * of an image built here. Files the project has changed are left alone.
+ */
+export async function moveToBaseImage(
+  projectDir: string,
+  flags: UpgradeFlags,
+  line: ReleaseLine,
+): Promise<void> {
+  const baseLine = baseImageLine(line.version)
+  if (!baseLine) return
+
+  const move = planBaseImageMove(projectDir, findApiDir(projectDir), baseLine)
+  if (move.skipped) {
+    p.log.warn(
+      `Your Docker build was not moved onto the Spree base image: ${move.skipped}. ` +
+        `It keeps working as it is. To move it by hand, see ${pc.cyan('https://spreecommerce.org/docs/developer/deployment/docker')}.`,
+    )
+    return
+  }
+  if (move.writes.length === 0) return
+
+  const files = move.writes.map(({ file }) => path.relative(projectDir, file)).join(', ')
+  if (
+    !(await confirmStep(
+      `Move your Docker build onto the Spree base image, so it gets security fixes by rebuilding? Rewrites ${files}.`,
+      flags,
+    ))
+  ) {
+    p.log.info('Leaving the Docker build as it is.')
+    return
+  }
+
+  for (const { file, content } of move.writes) fs.writeFileSync(file, content)
+  p.log.success(`Moved the Docker build onto ghcr.io/spree/spree-base:${baseLine} (${files}).`)
+  if (isEjectedProject(projectDir)) {
+    p.log.info(
+      `The running containers still use the old image. Run ${pc.bold('spree stop')} and ${pc.bold('spree dev')} to switch.`,
+    )
+  }
 }
 
 async function pullImage(projectDir: string, flags: UpgradeFlags): Promise<boolean> {
