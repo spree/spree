@@ -103,11 +103,13 @@ RSpec.describe Spree::RemovedApis do
   it 'never hints at a name that still exists' do
     still_defined = described_class::REMOVED.values.flat_map(&:keys).select do |key|
       if (match = key.match(/\A(?<owner>[\w:]+)#(?<name>.+)\z/))
-        owner = match[:owner].constantize
+        owner = match[:owner].safe_constantize
+        next false unless owner
+
         owner.method_defined?(match[:name]) || owner.private_method_defined?(match[:name]) ||
           (owner < ActiveRecord::Base && owner.attribute_names.include?(match[:name].delete_suffix('=')))
       elsif (match = key.match(/\A(?<owner>[\w:]+)\.(?<name>.+)\z/))
-        match[:owner].constantize.respond_to?(match[:name], true)
+        match[:owner].safe_constantize&.respond_to?(match[:name], true)
       else
         begin
           Object.const_get(key)
