@@ -6773,3 +6773,25 @@ which loads them on demand.
 **Consequences:** Spree images do not appear in Docker Hub search. A bare `spree/...` or `spreecommerce/...` image name must never be written anywhere. A Docker Hub mirror becomes possible only if a namespace claim with Docker succeeds; until then it stays a deferred item.
 
 **Plan:** `6.1-spree-base-image.md`.
+
+
+## 2026-11-13 — TypeScript subscribers are a bridge: a queue table and a Node worker, reacting only
+
+**Context:** A `create-spree-app` project can react to events only in Ruby. Spree's webhooks need a receiving service with a public address. The platforms Spree is compared with run TypeScript handlers inside the server, which a Ruby server cannot do. A later Spree major is planned to be TypeScript-native, so any TypeScript API added now must not be broken then.
+
+**Decision:** `apps/subscribers` holds TypeScript files, found by folder, written with `defineSubscriber` from a new `@spree/subscribers` package. Spree writes events to a dedicated `spree_subscriber_events` queue table; a Node worker in the same container reads it directly from Postgres, runs the handlers and writes back through the Admin API with a key the scaffolder creates. Rows are deleted on success and swept after a retention period. Events caused by the worker's own writes are not queued. It ships in 6.1 as a developer preview and is stable in 6.2. It stays a bridge: no blocking calls, no multiple apps, no externally hosted apps, no dashboard extensions from apps in 6.x.
+
+**Consequences:** TypeScript subscribers need Postgres. No Admin API operations are added for the worker. Handlers get the event and an `admin` client only, never a database handle, and must be safe to run twice. Events that carry credentials stay in Ruby. The next major is bound to three commitments: an in-process subscriber receives the same full event envelope; `defineSubscriber` and `admin` keep working; subscribers stay asynchronous and after-commit.
+
+**Plan:** `6.1-typescript-subscribers.md`.
+
+
+## 2026-11-13 — `@spree/core` stays the browser-safe shared package; server TypeScript gets its own package
+
+**Context:** `@spree/core` holds what every client shares (enums, money helpers, filters, event names) and is imported by the dashboards in the browser. A TypeScript-native server will need a home for models and services, and the name matches the Ruby gem that is the server core.
+
+**Decision:** `@spree/core` keeps its current meaning: no server code, no HTTP, no runtime dependencies. Server-side TypeScript goes in a separate package that depends on `@spree/core`, never the other way round. Moving the shared code out and giving the name to the server was rejected: it is a breaking rename for everything that imports `@spree/core` today. Start with one server package, not many.
+
+**Consequences:** The TypeScript package name does not match the Ruby gem: `spree_core` is the server, `@spree/core` is not. No general server package is created in 6.x; the subscribers runner lives inside `@spree/subscribers` until the next major is designed.
+
+**Plan:** `6.1-typescript-subscribers.md`.
