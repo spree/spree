@@ -135,6 +135,10 @@ describe('cdTarget', () => {
     )
   })
 
+  it('quotes characters PowerShell would split on, on Windows only', () => {
+    expect(cdTarget(path.join(home, 'shop,us'), home)).toBe(windows ? '"shop,us"' : 'shop,us')
+  })
+
   it('quotes paths the shell would split or expand', () => {
     expect(cdTarget(path.join(home, "my store's"), home)).toBe(
       windows ? `"my store's"` : `'my store'\\''s'`,
