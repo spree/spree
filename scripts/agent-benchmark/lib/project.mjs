@@ -192,7 +192,10 @@ export function apiClient(port, keys) {
 }
 
 // Creates an active product with one priced, stocked variant through the
-// Admin API, for checks that need something to sell.
+// Admin API, for checks that need something to sell. It is published on the
+// store's default channel: a product the Admin API creates is in no channel
+// unless the request says so, and the Store API sells only what a channel
+// publishes.
 export async function createProduct(api, { name, sku, amount = '19.99', currency = 'USD' }) {
   const locations = await api.admin('GET', '/stock_locations')
   const stockLocationId = locations.json?.data?.[0]?.id
@@ -200,9 +203,11 @@ export async function createProduct(api, { name, sku, amount = '19.99', currency
   if (stockLocationId) {
     variant.stock_levels = [{ stock_location_id: stockLocationId, count_on_hand: 100 }]
   }
-  const created = await api.admin('POST', '/products', {
-    body: { name, status: 'active', variants: [variant] },
-  })
+  const channels = await api.admin('GET', '/channels')
+  const channel = channels.json?.data?.find((row) => row.default) ?? channels.json?.data?.[0]
+  const product = { name, status: 'active', variants: [variant] }
+  if (channel) product.product_publications = [{ channel_id: channel.id }]
+  const created = await api.admin('POST', '/products', { body: product })
   if (created.status >= 300) {
     throw new Error(`Creating product ${name} failed (${created.status}): ${created.text}`)
   }
