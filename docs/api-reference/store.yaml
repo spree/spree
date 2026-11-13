@@ -2851,7 +2851,7 @@ paths:
           })
 
           const cart = await client.carts.get('cart_abc123', {
-            token: '<token>',
+            spreeToken: '<cart-token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -3047,7 +3047,7 @@ paths:
               },
             },
             {
-              token: '<token>',
+              spreeToken: '<cart-token>',
             },
           )
       parameters:
@@ -3228,7 +3228,7 @@ paths:
           })
 
           await client.carts.delete('cart_abc123', {
-            token: '<token>',
+            spreeToken: '<cart-token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -3280,6 +3280,7 @@ paths:
 
           const cart = await client.carts.associate('cart_abc123', {
             token: '<token>',
+            spreeToken: '<cart-token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -3518,7 +3519,7 @@ paths:
           })
 
           const order = await client.carts.complete('cart_abc123', {
-            token: '<token>',
+            spreeToken: '<cart-token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -3837,7 +3838,7 @@ paths:
           })
 
           const cart = await client.carts.discountCodes.apply('cart_abc123', 'SAVE10', {
-            token: '<token>',
+            spreeToken: '<cart-token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -4034,7 +4035,7 @@ paths:
           })
 
           const cart = await client.carts.discountCodes.remove('cart_abc123', 'SAVE10', {
-            token: '<token>',
+            spreeToken: '<cart-token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -4229,7 +4230,7 @@ paths:
               selected_delivery_rate_id: 'dr_abc123',
             },
             {
-              token: '<token>',
+              spreeToken: '<cart-token>',
             },
           )
       parameters:
@@ -4523,7 +4524,7 @@ paths:
           })
 
           const cart = await client.carts.giftCards.apply('cart_abc123', 'GC-ABCD-1234', {
-            token: '<token>',
+            spreeToken: '<cart-token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -4763,7 +4764,7 @@ paths:
           })
 
           const cart = await client.carts.giftCards.remove('cart_abc123', 'gc_abc123', {
-            token: '<token>',
+            spreeToken: '<cart-token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -4973,7 +4974,7 @@ paths:
               quantity: 2,
             },
             {
-              token: '<token>',
+              spreeToken: '<cart-token>',
             },
           )
       parameters:
@@ -5224,7 +5225,7 @@ paths:
               quantity: 5,
             },
             {
-              token: '<token>',
+              spreeToken: '<cart-token>',
             },
           )
       parameters:
@@ -5410,7 +5411,7 @@ paths:
           })
 
           const cart = await client.carts.items.delete('cart_abc123', 'li_abc123', {
-            token: '<token>',
+            spreeToken: '<cart-token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -5567,7 +5568,7 @@ paths:
               payment_method_id: 'pm_abc123',
             },
             {
-              token: '<token>',
+              spreeToken: '<cart-token>',
             },
           )
       parameters:
@@ -5685,7 +5686,7 @@ paths:
           })
 
           const session = await client.carts.paymentSessions.get('cart_abc123', 'ps_abc123', {
-            token: '<token>',
+            spreeToken: '<cart-token>',
           })
       responses:
         '200':
@@ -5751,7 +5752,7 @@ paths:
               amount: '50.00',
             },
             {
-              token: '<token>',
+              spreeToken: '<cart-token>',
             },
           )
       parameters: []
@@ -5846,7 +5847,7 @@ paths:
               session_result: 'success',
             },
             {
-              token: '<token>',
+              spreeToken: '<cart-token>',
             },
           )
       parameters:
@@ -5927,7 +5928,7 @@ paths:
               payment_method_id: 'pm_abc123',
             },
             {
-              token: '<token>',
+              spreeToken: '<cart-token>',
             },
           )
       parameters:
@@ -6580,7 +6581,7 @@ paths:
             'or_abc123',
             {},
             {
-              token: '<token>',
+              spreeToken: '<order-token>',
             },
           )
       parameters:
