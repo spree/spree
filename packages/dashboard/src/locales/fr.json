@@ -3369,6 +3369,9 @@
           "price_reverting": "Retour au prix catalogue",
           "removed": "À retirer"
         },
+        "balance_change": "Variation du solde",
+        "balance_owed_hint": "Après l'enregistrement, le client a un solde à régler. Encaissez-le depuis les paiements de la commande.",
+        "balance_refund_hint": "Après l'enregistrement, le client doit être remboursé. Remboursez-le depuis les paiements de la commande.",
         "catalog_price_unknown": "prix catalogue",
         "columns": {
           "line_total": "Total de la ligne",
@@ -3383,7 +3386,10 @@
         "title": "Modifier la commande",
         "totals_hint": "Les totaux sont recalculés par le serveur après l'enregistrement.",
         "totals_preview_confirm_hint": "Confirmé par le serveur lors de l'enregistrement.",
+        "totals_preview_failed": "Ces modifications ne peuvent pas être appliquées : {{message}}",
         "totals_preview_hint": "Les frais de port, les taxes et les promotions sont recalculés par le serveur après l'enregistrement.",
+        "totals_preview_loading": "Mise à jour des totaux…",
+        "totals_preview_server_hint": "Calculé par la boutique, livraison, taxes et promotions comprises. Rien n'est enregistré avant que vous cliquiez sur Enregistrer.",
         "totals_title": "Totaux",
         "validation": {
           "below_fulfilled_one": "Impossible de descendre sous {{count}} unité traitée",
@@ -4374,6 +4380,7 @@
             "media": "Médias",
             "newsletter_subscriber": "Abonné à la newsletter",
             "order": "Commande",
+            "order_change": "Modification de commande",
             "order_group": "Groupe de commandes",
             "payment": "Paiement",
             "payment_session": "Session de paiement",

@@ -1,0 +1,100 @@
+module Spree
+  # One proposed mutation inside a Spree::OrderChange: a typed `kind` plus
+  # the concrete rows it touches, never a polymorphic subject
+  # (docs/plans/decisions.md 2026-07-27).
+  #
+  #   add_item         variant, quantity
+  #   update_item      line_item, quantity
+  #   remove_item      line_item
+  #   receive_item     variant, quantity — restocks at the return's or exchange's location
+  #   add_fulfillment  line_item, variant, quantity — ships a replacement
+  #   add_discount     label, value, value_type, line_item (optional) — a manual discount
+  #   update_discount  discount, label and/or amount
+  #   remove_discount  discount
+  class OrderChangeAction < Spree.base_class
+    has_prefix_id :ordchga
+
+    include Spree::Metadata
+
+    ITEM_KINDS = %w[add_item update_item remove_item].freeze
+    # Kinds that move goods but not money: a set of only these leaves the
+    # order total alone, so confirming it skips the re-sum.
+    STOCK_KINDS = %w[receive_item add_fulfillment].freeze
+    # Manual discount rows; promotion rows belong to recalculation.
+    DISCOUNT_KINDS = %w[add_discount update_discount remove_discount].freeze
+    KINDS = (ITEM_KINDS + STOCK_KINDS + DISCOUNT_KINDS).freeze
+
+    belongs_to :order_change, class_name: 'Spree::OrderChange', inverse_of: :actions
+
+    belongs_to :line_item, class_name: 'Spree::LineItem', optional: true
+    belongs_to :variant, class_name: 'Spree::Variant', optional: true
+    belongs_to :fulfillment, class_name: 'Spree::Fulfillment', optional: true
+    belongs_to :discount, class_name: 'Spree::Discount', optional: true
+    belongs_to :delivery_method, class_name: 'Spree::DeliveryMethod', optional: true
+
+    validates :kind, inclusion: { in: KINDS }
+    validates :quantity, numericality: { only_integer: true, greater_than: 0 }, allow_nil: true
+    validates :variant, presence: true, if: -> { kind.in?(%w[add_item receive_item add_fulfillment]) }
+    validates :line_item, presence: true, if: -> { kind.in?(%w[update_item remove_item add_fulfillment]) }
+    validates :quantity, presence: true, if: -> { kind.in?(%w[add_item update_item receive_item add_fulfillment]) }
+    validates :label, presence: true, if: -> { kind == 'add_discount' }
+    validates :value, numericality: { greater_than: 0 }, if: -> { kind == 'add_discount' }
+    validates :value_type, inclusion: { in: %w[flat percent] }, if: -> { kind == 'add_discount' }
+    validates :discount, presence: true, if: -> { kind.in?(%w[update_discount remove_discount]) }
+    validates :amount, numericality: { less_than_or_equal_to: 0 }, allow_nil: true
+    validate :update_discount_changes_something
+    validate :line_item_belongs_to_order
+    validate :discount_is_manual_on_order
+    validate :stock_kind_has_post_sale_record
+
+    # What `add_discount` takes off, as a string: money in the order's
+    # currency for a flat discount, a plain rate for a percentage.
+    #
+    # @return [String, nil]
+    def formatted_value
+      return if value.nil?
+      return Spree::Money::Rounding.format_decimal(value) if value_type == 'percent'
+
+      Spree::Money::Rounding.format(value, order_change.order.currency)
+    end
+
+    private
+
+    # A line item from another order would let one set edit someone else's.
+    def line_item_belongs_to_order
+      return if line_item.nil? || order_change.nil?
+      return if line_item.order_id == order_change.order_id
+
+      errors.add(:line_item, :invalid)
+    end
+
+    def update_discount_changes_something
+      return unless kind == 'update_discount' && label.blank? && amount.nil?
+
+      errors.add(:base, :blank, message: I18n.t('spree.order_change_update_discount_empty'))
+    end
+
+    # A discount from another order would let one set edit someone else's,
+    # and a promotion's row is rewritten by every recalculation.
+    def discount_is_manual_on_order
+      return if discount.nil? || order_change.nil?
+      return errors.add(:discount, :invalid) unless discount.order_id == order_change.order_id
+
+      errors.add(:discount, :invalid, message: I18n.t('spree.errors.messages.promotion_discount_not_editable')) if discount.promotion?
+    end
+
+    # Restocks and replacement shipments are what a return, exchange or claim
+    # does once it has checked what came back and what is owed; on their own
+    # they would move stock nobody accounted for.
+    def stock_kind_has_post_sale_record
+      return unless STOCK_KINDS.include?(kind)
+
+      record = order_change&.post_sale_record
+      # A claim keeps the goods it is about, so it has nowhere to restock to.
+      return if record && (kind != 'receive_item' || record.respond_to?(:stock_location))
+
+      errors.add(:kind, :requires_post_sale_record,
+                 message: I18n.t('spree.order_change_requires_post_sale_record'))
+    end
+  end
+end

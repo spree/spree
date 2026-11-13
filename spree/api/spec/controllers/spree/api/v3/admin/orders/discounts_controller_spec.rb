@@ -85,6 +85,60 @@ RSpec.describe Spree::Api::V3::Admin::Orders::DiscountsController, type: :contro
     end
   end
 
+  # A placed order's discount is an order change, so it is recorded and
+  # waits for no other open change; a draft's is written directly.
+  describe 'on a placed order' do
+    it 'records each write as a confirmed order change' do
+      post :create, params: { order_id: order.prefixed_id, label: 'Appeasement', value: '1.00' }, as: :json
+      discount = order.discounts.manual.first
+      patch :update, params: { order_id: order.prefixed_id, id: discount.prefixed_id, amount: '-0.50' }, as: :json
+      delete :destroy, params: { order_id: order.prefixed_id, id: discount.prefixed_id }, as: :json
+
+      expect(order.order_changes.map { |change| change.actions.sole.kind }).
+        to contain_exactly('add_discount', 'update_discount', 'remove_discount')
+      expect(order.order_changes).to all(be_confirmed)
+      expect(order.reload.discounts.manual).to be_empty
+    end
+
+    it 'is refused while another change to the order is open' do
+      Spree::OrderChanges::Begin.call(order: order)
+
+      post :create, params: { order_id: order.prefixed_id, label: 'Appeasement', value: '1.00' }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['code']).to eq('validation_error')
+      expect(json_response['error']['message']).to match(/another change/i)
+      expect(order.discounts).to be_empty
+    end
+
+    it 'refuses a blank label as a draft does' do
+      discount = create(:discount, order: order, line_item: line_item, amount: -2, label: 'Loyalty', kind: 'manual')
+
+      patch :update, params: { order_id: order.prefixed_id, id: discount.prefixed_id, label: '', amount: '-1.00' }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(discount.reload.label).to eq('Loyalty')
+      expect(discount.amount).to eq(-2)
+    end
+
+    it 'never stringifies a label that is not a string' do
+      discount = create(:discount, order: order, line_item: line_item, amount: -2, label: 'Loyalty', kind: 'manual')
+
+      patch :update, params: { order_id: order.prefixed_id, id: discount.prefixed_id, label: { a: 1 }, amount: '-1.00' }, as: :json
+
+      expect(discount.reload.label).to eq('Loyalty')
+    end
+
+    it 'leaves a draft order without a change record' do
+      draft = create(:order_with_line_items, store: store)
+
+      post :create, params: { order_id: draft.prefixed_id, label: 'Appeasement', value: '1.00' }, as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(draft.order_changes).to be_empty
+    end
+  end
+
   describe 'PATCH #update' do
     let!(:manual_discount) do
       create(:discount, order: order, line_item: line_item, amount: -2, label: 'Loyalty', kind: 'manual')

@@ -3367,6 +3367,9 @@
           "price_reverting": "カタログ価格に戻します",
           "removed": "削除します"
         },
+        "balance_change": "残高の変動",
+        "balance_owed_hint": "保存後、お客様に未払いの残高があります。注文の支払いから回収してください。",
+        "balance_refund_hint": "保存後、お客様への返金が必要です。注文の支払いから返金してください。",
         "catalog_price_unknown": "カタログ価格",
         "columns": {
           "line_total": "明細の合計",
@@ -3381,7 +3384,10 @@
         "title": "注文を編集",
         "totals_hint": "保存すると、サーバーが合計を再計算します。",
         "totals_preview_confirm_hint": "保存すると、サーバーが確定します。",
+        "totals_preview_failed": "この変更は適用できません: {{message}}",
         "totals_preview_hint": "保存すると、サーバーが送料・税・プロモーションを再計算します。",
+        "totals_preview_loading": "合計を更新しています…",
+        "totals_preview_server_hint": "配送料、税金、プロモーションを含めてストアが計算します。保存をクリックするまで何も保存されません。",
         "totals_title": "合計",
         "validation": {
           "below_fulfilled_one": "処理済みの {{count}} 点より少なくはできません",
@@ -4371,6 +4377,7 @@
             "media": "メディア",
             "newsletter_subscriber": "ニュースレターの購読者",
             "order": "注文",
+            "order_change": "注文の変更",
             "order_group": "注文グループ",
             "payment": "支払い",
             "payment_session": "支払いセッション",

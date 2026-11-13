@@ -740,6 +740,7 @@
             "media": "Medios",
             "newsletter_subscriber": "Suscriptor de newsletter",
             "order": "Pedido",
+            "order_change": "Cambio de pedido",
             "order_group": "Grupo de pedidos",
             "payment": "Pago",
             "payment_session": "Sesión de pago",
@@ -3074,6 +3075,9 @@
           "price_reverting": "Volviendo al precio de catálogo",
           "removed": "Quitando"
         },
+        "balance_change": "Cambio de saldo",
+        "balance_owed_hint": "Después de guardar, el cliente tiene un saldo pendiente. Cóbralo desde los pagos del pedido.",
+        "balance_refund_hint": "Después de guardar, al cliente se le debe un reembolso. Reembólsalo desde los pagos del pedido.",
         "catalog_price_unknown": "precio de catálogo",
         "columns": {
           "line_total": "Total de la línea",
@@ -3088,7 +3092,10 @@
         "title": "Editar pedido",
         "totals_hint": "El servidor recalcula los totales después de guardar.",
         "totals_preview_confirm_hint": "Confirmado por el servidor al guardar.",
+        "totals_preview_failed": "Estos cambios no se pueden aplicar: {{message}}",
         "totals_preview_hint": "El servidor recalcula el envío, los impuestos y las promociones después de guardar.",
+        "totals_preview_loading": "Actualizando totales…",
+        "totals_preview_server_hint": "Calculado por la tienda, incluidos envío, impuestos y promociones. No se guarda nada hasta que hagas clic en Guardar.",
         "totals_title": "Totales",
         "validation": {
           "below_fulfilled_one": "No puede ser menos que {{count}} unidad cumplida",

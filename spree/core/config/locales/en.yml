@@ -1068,6 +1068,17 @@ en:
     order: Order
     order_canceled: Order canceled
     order_cannot_be_deleted: Completed orders and orders with settled payments cannot be deleted
+    order_change_actions_malformed: Each action must be an object with a kind.
+    order_change_empty: Add at least one change before submitting it.
+    order_change_in_progress: Another change to this order is in progress. Confirm or cancel it first.
+    order_change_line_item_gone: A line this change edits is no longer on the order. Cancel the change and make it again.
+    order_change_not_open: This change has already been confirmed or canceled.
+    order_change_not_pending: This change has already been submitted and can no longer be edited.
+    order_change_not_requested: Only a submitted change can be confirmed.
+    order_change_order_canceled: A canceled order cannot be changed.
+    order_change_order_not_placed: Only a placed order can be changed this way. Edit a draft order directly.
+    order_change_requires_post_sale_record: is made by returns, exchanges and claims, which check what came back and what is owed first
+    order_change_update_discount_empty: Give the discount a new label or amount.
     order_routing:
       strategies:
         legacy: Legacy

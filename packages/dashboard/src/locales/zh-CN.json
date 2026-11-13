@@ -3359,6 +3359,9 @@
           "price_reverting": "将恢复为目录价格",
           "removed": "待移除"
         },
+        "balance_change": "余额变动",
+        "balance_owed_hint": "保存后，客户有待付余额。请通过订单的付款收取。",
+        "balance_refund_hint": "保存后，客户应获得退款。请通过订单的付款进行退款。",
         "catalog_price_unknown": "目录价格",
         "columns": {
           "line_total": "小计",
@@ -3373,7 +3376,10 @@
         "title": "编辑订单",
         "totals_hint": "保存后，服务器会重新计算金额。",
         "totals_preview_confirm_hint": "保存时由服务器确认。",
+        "totals_preview_failed": "无法应用这些更改：{{message}}",
         "totals_preview_hint": "运费、税费和促销将在保存后由服务器重新计算。",
+        "totals_preview_loading": "正在更新合计…",
+        "totals_preview_server_hint": "由商店计算，包括运费、税费和促销。点击保存之前不会保存任何内容。",
         "totals_title": "金额",
         "validation": {
           "below_fulfilled_one": "不能低于已履行的 {{count}} 件",
@@ -4360,6 +4366,7 @@
             "media": "媒体",
             "newsletter_subscriber": "邮件订阅者",
             "order": "订单",
+            "order_change": "订单变更",
             "order_group": "订单组",
             "payment": "支付",
             "payment_session": "支付会话",

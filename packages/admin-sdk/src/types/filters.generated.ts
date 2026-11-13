@@ -255,6 +255,10 @@ export type OrderCancellationReasonFields = Filter.BooleanFilters<'active'>
   & Filter.IdFilters<'id'>
   & Filter.TextFilters<'name'>
 
+export type OrderChangeFields = Filter.RangeFilters<'confirmed_at' | 'created_at' | 'updated_at'>
+  & Filter.IdFilters<'id'>
+  & Filter.EnumFilters<'status', 'pending' | 'requested' | 'confirmed' | 'canceled' | 'declined'>
+
 export type OrderGroupFields = Filter.RangeFilters<'created_at' | 'updated_at'>
   & Filter.TextFilters<'email' | 'number'>
   & Filter.IdFilters<'id'>
@@ -1618,6 +1622,26 @@ export type OrderCancellationReasonFilters = OrderCancellationReasonFields
   & OrderCancellationReasonFilterExtensions
 
 export type OrderCancellationReasonSort = Filter.SortKey<'active' | 'created_at' | 'id' | 'name' | 'updated_at' | (keyof OrderCancellationReasonSortExtensions & string)>
+
+/**
+ * Filters your app adds to OrderChange lists. Generate them with `spree filters types`,
+ * or declare them by hand in a file that has an `export`:
+ *
+ *     export {}
+ *     declare module '@spree/admin-sdk' {
+ *       interface OrderChangeFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
+export interface OrderChangeFilterExtensions {}
+
+/** Sort fields your app adds to OrderChange lists, as keys: `{ erp_id: true }`. */
+export interface OrderChangeSortExtensions {}
+
+export type OrderChangeFilters = OrderChangeFields
+  & Filter.OrFilters
+  & OrderChangeFilterExtensions
+
+export type OrderChangeSort = Filter.SortKey<'confirmed_at' | 'created_at' | 'id' | 'status' | 'updated_at' | (keyof OrderChangeSortExtensions & string)>
 
 /**
  * Filters your app adds to OrderGroup lists. Generate them with `spree filters types`,

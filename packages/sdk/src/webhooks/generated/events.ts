@@ -23,6 +23,7 @@ import type {
   NewsletterSubscriber,
   NewsletterSubscriberRequestEvent,
   Order,
+  OrderChangeEvent,
   OrderGroup,
   PasswordResetRequestedEvent,
   Payment,
@@ -188,6 +189,12 @@ export interface WebhookEventMap {
   /** @deprecated Use `order.fulfilled` instead. */
   'order.shipped': Order
   'order.updated': Order
+  'order_change.canceled': OrderChangeEvent
+  'order_change.confirmed': OrderChangeEvent
+  'order_change.created': OrderChangeEvent
+  'order_change.deleted': OrderChangeEvent
+  'order_change.requested': OrderChangeEvent
+  'order_change.updated': OrderChangeEvent
   'order_group.completed': OrderGroup
   'order_group.created': OrderGroup
   'order_group.deleted': OrderGroup

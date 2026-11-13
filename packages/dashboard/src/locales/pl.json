@@ -3400,6 +3400,9 @@
           "price_reverting": "Powrót do ceny katalogowej",
           "removed": "Do usunięcia"
         },
+        "balance_change": "Zmiana salda",
+        "balance_owed_hint": "Po zapisaniu klient ma saldo do zapłaty. Pobierz je w płatnościach zamówienia.",
+        "balance_refund_hint": "Po zapisaniu klientowi należy się zwrot. Zwróć środki w płatnościach zamówienia.",
         "catalog_price_unknown": "cena katalogowa",
         "columns": {
           "line_total": "Wartość pozycji",
@@ -3414,7 +3417,10 @@
         "title": "Edytuj zamówienie",
         "totals_hint": "Sumy są przeliczane przez serwer po zapisaniu zmian.",
         "totals_preview_confirm_hint": "Potwierdzane przez serwer po zapisaniu.",
+        "totals_preview_failed": "Tych zmian nie można zastosować: {{message}}",
         "totals_preview_hint": "Wysyłka, podatki i promocje zostaną przeliczone przez serwer po zapisaniu.",
+        "totals_preview_loading": "Aktualizowanie sum…",
+        "totals_preview_server_hint": "Wyliczone przez sklep, z wysyłką, podatkami i promocjami. Nic nie zostanie zapisane, dopóki nie klikniesz Zapisz.",
         "totals_title": "Sumy",
         "validation": {
           "below_fulfilled_few": "Nie można zejść poniżej {{count}} zrealizowanych sztuk",
@@ -4422,6 +4428,7 @@
             "media": "Multimedia",
             "newsletter_subscriber": "Subskrybent newslettera",
             "order": "Zamówienie",
+            "order_change": "Zmiana zamówienia",
             "order_group": "Grupa zamówień",
             "payment": "Płatność",
             "payment_session": "Sesja płatności",
