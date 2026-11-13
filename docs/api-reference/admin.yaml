@@ -10489,6 +10489,7 @@ paths:
                     shipping_label_id:
                   external_references: {}
                   metadata: {}
+                  cost_source:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   adjustment_total: '0.00'
@@ -10601,6 +10602,7 @@ paths:
                   shipping_label_id:
                 external_references: {}
                 metadata: {}
+                cost_source:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 adjustment_total: '0.00'
@@ -10734,6 +10736,7 @@ paths:
                   shipping_label_id:
                 external_references: {}
                 metadata: {}
+                cost_source:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 adjustment_total: '0.00'
@@ -10751,7 +10754,7 @@ paths:
       - api_key: []
         bearer_auth: []
       description: |-
-        Updates a fulfillment (tracking, delivery rate).
+        Updates a fulfillment (tracking, delivery rate, delivery cost).
 
         **Required scope:** `write_fulfillments` (for API-key authentication).
       x-codeSamples:
@@ -10767,6 +10770,11 @@ paths:
 
           const fulfillment = await client.orders.fulfillments.update('or_UkLWZg9DAJ', 'ful_UkLWZg9DAJ', {
             tracking: '1Z999AA10123456784',
+          })
+
+          // Price a parcel by hand; send `cost: null` to go back to its delivery rate.
+          const repriced = await client.orders.fulfillments.update('or_UkLWZg9DAJ', 'ful_UkLWZg9DAJ', {
+            cost: '0.00',
           })
       - lang: bash
         label: Spree CLI
@@ -10808,8 +10816,8 @@ paths:
                 pickup_point_data:
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 unpriced: false
-                cost: '100.00'
-                total: '100.00'
+                cost: '0.00'
+                total: '0.00'
                 discount_total: '0.00'
                 additional_tax_total: '0.00'
                 included_tax_total: '0.00'
@@ -10838,6 +10846,7 @@ paths:
                   shipping_label_id:
                 external_references: {}
                 metadata: {}
+                cost_source: manual
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 adjustment_total: '0.00'
@@ -10847,6 +10856,16 @@ paths:
                 documents: []
                 labels: []
                 provider_generates_labels: false
+        '422':
+          description: invalid delivery cost
+          content:
+            application/json:
+              example:
+                error:
+                  code: processing_error
+                  message: cost must be a non-negative number
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
         content:
           application/json:
@@ -10948,6 +10967,7 @@ paths:
                   shipping_label_id:
                 external_references: {}
                 metadata: {}
+                cost_source:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 adjustment_total: '0.00'
@@ -11061,6 +11081,7 @@ paths:
                   shipping_label_id:
                 external_references: {}
                 metadata: {}
+                cost_source:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 adjustment_total: '0.00'
@@ -11179,6 +11200,7 @@ paths:
                   shipping_label_id:
                 external_references: {}
                 metadata: {}
+                cost_source:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 adjustment_total: '0.00'
@@ -11281,6 +11303,7 @@ paths:
                   deliveries: []
                   external_references: {}
                   metadata: {}
+                  cost_source:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   adjustment_total: '0.00'
@@ -65451,6 +65474,11 @@ components:
           type: object
         metadata:
           type: object
+        cost_source:
+          type: string
+          nullable: true
+          enum:
+          - manual
         created_at:
           type: string
         updated_at:
@@ -65511,6 +65539,7 @@ components:
       - deliveries
       - external_references
       - metadata
+      - cost_source
       - created_at
       - updated_at
       - adjustment_total
@@ -83139,11 +83168,15 @@ components:
           type: string
           format: decimal
           pattern: "^-?\\d+(\\.\\d+)?$"
-          description: 'Explicit shipping cost, such as the 3PL price. Defaults to
-            the summed cost of the fully drained source fulfillments, which keeps
-            the order total unchanged. Persists only with `status: shipped`; pending
-            fulfillments are re-priced by the rate engine.'
+          description: 'On create, an explicit shipping cost, such as the 3PL price.
+            Defaults to the summed cost of the fully drained source fulfillments,
+            which keeps the order total unchanged. Persists only with `status: shipped`;
+            pending fulfillments are re-priced by the rate engine. On update, a delivery
+            cost set by hand, which no re-quote, rate change or move to another stock
+            location changes afterwards: send null to go back to the selected delivery
+            rate''s price, or omit it to leave the cost as it is.'
           example: '7.42'
+          nullable: true
         status:
           type: string
           enum:
@@ -83254,6 +83287,19 @@ components:
             format where possible.'
         selected_delivery_rate_id:
           type: string
+        cost:
+          type: string
+          format: decimal
+          pattern: "^-?\\d+(\\.\\d+)?$"
+          description: 'On create, an explicit shipping cost, such as the 3PL price.
+            Defaults to the summed cost of the fully drained source fulfillments,
+            which keeps the order total unchanged. Persists only with `status: shipped`;
+            pending fulfillments are re-priced by the rate engine. On update, a delivery
+            cost set by hand, which no re-quote, rate change or move to another stock
+            location changes afterwards: send null to go back to the selected delivery
+            rate''s price, or omit it to leave the cost as it is.'
+          example: '7.42'
+          nullable: true
     GiftCardApplyParams:
       type: object
       properties:

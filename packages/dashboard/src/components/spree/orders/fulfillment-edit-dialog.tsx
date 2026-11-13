@@ -1,7 +1,15 @@
 import { type Fulfillment, type Order, SpreeError } from '@spree/admin-sdk'
 import { isZeroMoney } from '@spree/core'
-import { formatAmount, useMoneyLocale, useStockLocations } from '@spree/dashboard-core'
-import { FulfillmentEditDialog as SharedFulfillmentEditDialog } from '@spree/dashboard-ui'
+import {
+  currencyParts,
+  formatAmount,
+  useMoneyLocale,
+  useStockLocations,
+} from '@spree/dashboard-core'
+import {
+  type FulfillmentEditValues,
+  FulfillmentEditDialog as SharedFulfillmentEditDialog,
+} from '@spree/dashboard-ui'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useFulfillmentActions } from '../../../hooks/use-fulfillments'
@@ -9,11 +17,13 @@ import { useOrder } from '../../../hooks/use-order'
 import { useStockCoverage } from '../../../hooks/use-stock-coverage'
 
 /**
- * Where the fulfillment ships from and which priced service carries it.
+ * Where the fulfillment ships from, which priced service carries it, and what
+ * the customer is charged for it.
  *
  * The dialog itself is shared with the seller panel; this supplies the
  * operator's view of it — every warehouse in the store, marked for whether it
- * can actually cover the parcel — and owns the writes.
+ * can actually cover the parcel, and the delivery cost the seller cannot set —
+ * and owns the writes.
  */
 export function FulfillmentEditDialog({
   order,
@@ -71,17 +81,28 @@ export function FulfillmentEditDialog({
   const currentOriginId = fulfillment.stock_location_id ?? ''
   const currentRateId = fulfillment.selected_delivery_rate_id ?? ''
 
+  const cost = {
+    current: fulfillment.cost,
+    overridden: fulfillment.cost_source === 'manual',
+    currencySymbol: currencyParts(order.currency, moneyLocale).symbol,
+  }
+
   async function handleSubmit(
-    values: { stockLocationId: string; selectedDeliveryRateId: string },
-    changed: { origin: boolean; rate: boolean },
+    values: FulfillmentEditValues,
+    changed: { origin: boolean; rate: boolean; cost: boolean },
   ): Promise<'requote' | 'done'> {
     setErrorMessage(undefined)
+
+    // A cost set by hand survives the re-quote a move triggers, so it rides
+    // with whichever write goes first.
+    const costParams = changed.cost ? { cost: values.cost } : {}
 
     try {
       if (changed.origin) {
         await update.mutateAsync({
           fulfillmentId: fulfillment.id,
           stock_location_id: values.stockLocationId,
+          ...costParams,
         })
 
         // The server re-quotes on the move and re-selects an equivalent method
@@ -92,10 +113,11 @@ export function FulfillmentEditDialog({
         return 'requote'
       }
 
-      if (changed.rate) {
+      if (changed.rate || changed.cost) {
         await update.mutateAsync({
           fulfillmentId: fulfillment.id,
-          selected_delivery_rate_id: values.selectedDeliveryRateId,
+          ...(changed.rate ? { selected_delivery_rate_id: values.selectedDeliveryRateId } : {}),
+          ...costParams,
         })
       }
 
@@ -117,6 +139,7 @@ export function FulfillmentEditDialog({
       rateOptions={rateOptions}
       currentOriginId={currentOriginId}
       currentRateId={currentRateId}
+      cost={cost}
       onSubmit={handleSubmit}
       pending={update.isPending}
       errorMessage={errorMessage}

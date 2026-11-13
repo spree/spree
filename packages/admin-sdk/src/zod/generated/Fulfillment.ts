@@ -38,6 +38,7 @@ export const FulfillmentSchema = z.object({
   custom_fields: z.array(CustomFieldSchema).optional(),
   external_references: z.record(z.string(), z.string()),
   metadata: z.record(z.string(), z.unknown()),
+  cost_source: z.string().nullable(),
   created_at: z.string(),
   updated_at: z.string(),
   adjustment_total: z.string(),
@@ -76,6 +77,7 @@ export const FulfillmentSchema = z.object({
   custom_fields: z.ZodOptional<z.ZodType<Exclude<Fulfillment['custom_fields'], undefined>>>;
   external_references: z.ZodType<Fulfillment['external_references']>;
   metadata: z.ZodType<Fulfillment['metadata']>;
+  cost_source: z.ZodType<Fulfillment['cost_source']>;
   created_at: z.ZodType<Fulfillment['created_at']>;
   updated_at: z.ZodType<Fulfillment['updated_at']>;
   adjustment_total: z.ZodType<Fulfillment['adjustment_total']>;

@@ -144,13 +144,15 @@ Only the address you edit changes. The order's totals stay as they were, even wh
 
 On the **Fulfillments** card, open a parcel's **Actions** menu.
 
-- **Edit** changes where the parcel ships from and which delivery method carries it. **Ships from** lists your stock locations, marking any that cannot cover the order as out of stock, and **Delivery method** lists the methods that reach the address, with their prices.
-- **Split** divides a parcel in two, so part of an order can go now and the rest follow. Each half then has its own tracking, carrier and status.
+- **Edit** changes where the parcel ships from, which delivery method carries it, and what the customer pays for its delivery. **Ships from** lists your stock locations, marking any that cannot cover the order as out of stock, and **Delivery method** lists the methods that reach the address, with their prices. **Delivery cost** charges a different amount from the method's price: enter 0 to make it free, or clear it to go back to the method's price.
+- **Split** divides a parcel in two, so part of an order can go now and the rest follow. Each half then has its own tracking, carrier, status and delivery charge.
 - **Cancel** cancels that parcel.
 
 ![A fulfillment's Actions menu, showing Edit, Split and the other parcel actions](/docs/images/user/orders/processing-orders/7-fulfillment-actions.png)
 
 Splitting suits an order whose items cannot sensibly travel together. One is in stock and another is not, so the customer gets what is ready rather than waiting for the whole order. Or the goods need different handling altogether: a lamp goes by parcel carrier while a sofa needs a two-person delivery.
+
+The new parcel is charged its delivery method's price, so the order total goes up and a paid order shows an amount due. If the customer should not pay for delivery twice, **Edit** the new parcel and set its **Delivery cost** to 0. A parcel with a cost you set shows a **Manual** label, and keeps that cost when you change its delivery method or where it ships from.
 
 <Note>Where products routinely ship differently, [<u>delivery profiles</u>](/user/settings/delivery-profiles) can separate them at checkout, so the order arrives already split rather than needing splitting by hand.</Note>
 
