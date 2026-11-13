@@ -5,11 +5,12 @@ module Spree
     module SearchCapabilities
       extend ActiveSupport::Concern
 
-      # Columns that decide a definition's place in the search index settings.
+      # Columns that decide a definition's place in the search index: its
+      # settings and the cf_* attribute product documents carry.
       SEARCH_INDEX_SETTINGS_ATTRIBUTES = %w[searchable sortable storefront_visible filter_key field_type resource_type].freeze
 
       included do
-        after_commit :enqueue_search_index_configuration, if: :search_index_settings_changed?
+        after_commit :enqueue_search_reindex, if: :search_index_settings_changed?
 
         attribute :searchable, :boolean, default: false
         attribute :sortable, :boolean, default: false
@@ -71,10 +72,10 @@ module Spree
         saved_changes.keys.intersect?(SEARCH_INDEX_SETTINGS_ATTRIBUTES)
       end
 
-      def enqueue_search_index_configuration
+      def enqueue_search_reindex
         return unless search_provider_indexing?
 
-        Spree::SearchProvider::ConfigureIndexJob.perform_later(store_id.to_s)
+        Spree::SearchProvider::ReindexJob.perform_later(store_id.to_s)
       end
 
       def search_provider_indexing?

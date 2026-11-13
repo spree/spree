@@ -98,7 +98,7 @@ boot rather than silently reverting to the default.
 
 | Variable | Default | What it does |
 |---|---|---|
-| `SPREE_SEARCH_INDEX_RATE_LIMIT` | `0` | Most product index and removal jobs started per second, shared by every store, so bulk imports cannot overwhelm the search provider. `0` means no limit. Needs the [solid_queue-rate_limit](https://github.com/dtcristo/solid_queue-rate_limit) gem on Solid Queue. |
+| `SPREE_SEARCH_INDEX_RATE_LIMIT` | `0` | Most product index and removal jobs started per second, shared by every store, so bulk imports cannot overwhelm the search provider. `0` means no limit. Needs the [solid_queue-rate_limit](https://github.com/dtcristo/solid_queue-rate_limit) gem, version 0.2.0 or newer, on Solid Queue. |
 
 ## API authentication
 

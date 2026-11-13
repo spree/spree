@@ -287,7 +287,7 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
 
     context 'when the index was never configured for facets' do
       before do
-        error = ::Meilisearch::ApiError.new(
+        error = Meilisearch::ApiError.new(
           400, 'Bad Request',
           { 'code' => 'invalid_search_facets', 'message' => 'Attribute `in_stock` is not filterable.' }
         )
@@ -469,7 +469,7 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
   end
 
   describe '#index' do
-    it 'leaves the index settings to ConfigureIndexJob' do
+    it 'leaves the index settings to reindex' do
       allow(mock_index).to receive(:add_documents)
       expect(mock_index).not_to receive(:update_filterable_attributes)
 

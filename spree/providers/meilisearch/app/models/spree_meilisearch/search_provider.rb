@@ -75,8 +75,8 @@ module SpreeMeilisearch
       )
     end
 
-    # Index settings are pushed by Spree::SearchProvider::ConfigureIndexJob
-    # when they change, not here: pushing and awaiting them on every product
+    # Index settings are pushed by reindex (Spree::SearchProvider::ReindexJob
+    # runs one when they change), not here: pushing and awaiting them on every product
     # write flooded Meilisearch into 429s during bulk imports.
     def index(product)
       documents = presenter_class.new(product, store).call
@@ -255,7 +255,7 @@ module SpreeMeilisearch
         end
 
         Rails.logger.warn { "[Meilisearch] Search failed: #{e.message}. Run `rake spree:search:reindex` to initialize the index." }
-        Rails.error.report(e, handled: true, context: { index: index_name, query: query })
+        Rails.error.report(e, handled: true, source: 'spree.search', context: { index: index_name, query: query })
         return nil
       end
 
@@ -296,7 +296,7 @@ module SpreeMeilisearch
       ensure_index_settings!
       true
     rescue SettingsUpdateFailed => e
-      Rails.error.report(e, handled: true, context: { index: index_name })
+      Rails.error.report(e, handled: true, source: 'spree.search', context: { index: index_name })
       false
     end
 
