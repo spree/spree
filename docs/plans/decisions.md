@@ -6751,3 +6751,14 @@ which loads them on demand.
 **Consequences:** Errors must be reported through `Rails.error.report` with a `spree.*` source to show up in reports. Changed settings are reported only when they are booleans, numbers or fixed-choice strings; free-form strings never are. Gems are named only when they are Spree's own or come from rubygems.org, and the diagnostics endpoint's `errors[].error_class` is a deliberate exception to the no-class-names-on-the-wire rule. Secret API keys still never see the running version. Because this is a patch release, the work adds no migrations and changes no existing response or signature.
 
 **Plan:** `6.0-diagnostics-and-issue-reporting.md`.
+
+
+## 2026-11-13 — Spree publishes a base image; project Dockerfiles build on it
+
+**Context:** Every project builds its production image from a 200-line Dockerfile copied from `spree/spree-starter`. Each copy drifts from upstream, and operating system, Ruby and Node security fixes have to be applied by each project by hand. The stock image is rebuilt only when a Spree version tag is pushed. The planned TypeScript subscribers app also needs Node in the production image, which the current Dockerfile deliberately leaves out.
+
+**Decision:** Spree publishes `ghcr.io/spree/spree-base` per Spree minor line: a runtime image and a build variant, both with Ruby and Node, and no gems. Build logic moves into a `spree-image-build` script in the build variant, run as two steps (gems, then app). A project's Dockerfile starts `FROM` the floating line tag. An ejected project runs in development on the build variant directly, with no local image build. The definition lives in `spree/spree` and replaces the spree-starter Dockerfile; the stock `ghcr.io/spree/spree` image is built from the same base. Target is Spree 6.1.
+
+**Consequences:** Node is always present in the production image. The base is rebuilt on a schedule, and a rebuild moves the floating tag only after the stock image built on it passes its health check. The Ruby patch version belongs to the base, so the starter's `Gemfile` stops pinning an exact patch. A new runtime system package goes into the base, not into project Dockerfiles. The image contract (app path, build commands, port, health check, entrypoint behaviour, the two dashboard path variables) is kept small on purpose, so a later Spree major can change what is inside the base without changing project Dockerfiles.
+
+**Plan:** `6.1-spree-base-image.md`. **Plans amended:** `5.6-project-layout-and-dashboard.md` ("No Node in the final image", and the dashboard build stages living in the project Dockerfile, are superseded).
