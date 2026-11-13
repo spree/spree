@@ -6759,6 +6759,17 @@ which loads them on demand.
 
 **Decision:** Spree publishes `ghcr.io/spree/spree-base` per Spree minor line: a runtime image and a build variant, both with Ruby and Node, and no gems. Build logic moves into a `spree-image-build` script in the build variant, run as two steps (gems, then app). A project's Dockerfile starts `FROM` the floating line tag. An ejected project runs in development on the build variant directly, with no local image build. The definition lives in `spree/spree` and replaces the spree-starter Dockerfile; the stock `ghcr.io/spree/spree` image is built from the same base. Target is Spree 6.1.
 
-**Consequences:** Node is always present in the production image. The base is rebuilt on a schedule, and a rebuild moves the floating tag only after the stock image built on it passes its health check. The Ruby patch version belongs to the base, so the starter's `Gemfile` stops pinning an exact patch. A new runtime system package goes into the base, not into project Dockerfiles. The image contract (app path, build commands, port, health check, entrypoint behaviour, the two dashboard path variables) is kept small on purpose, so a later Spree major can change what is inside the base without changing project Dockerfiles.
+**Consequences:** Node is always present in the production image. The base is rebuilt weekly for the current and the previous Spree minor line (an older line is frozen), and a rebuild moves the floating tag only after the stock image built on it passes its health check. The Ruby patch version belongs to the base, so the starter's `Gemfile` stops pinning an exact patch. A new runtime system package goes into the base, not into project Dockerfiles. The image contract (app path, build commands, port, health check, entrypoint behaviour, the two dashboard path variables) is kept small on purpose, so a later Spree major can change what is inside the base without changing project Dockerfiles.
 
 **Plan:** `6.1-spree-base-image.md`. **Plans amended:** `5.6-project-layout-and-dashboard.md` ("No Node in the final image", and the dashboard build stages living in the project Dockerfile, are superseded).
+
+
+## 2026-11-13 — Spree images are published to GHCR only, named in full, and signed
+
+**Context:** Spree does not control the `spree` or `spreecommerce` namespaces on Docker Hub. `spreecommerce/spree` there was last updated in 2019 and is still pulled. An image name with no registry host resolves to Docker Hub, which is what a person or a coding agent writing from memory produces.
+
+**Decision:** Spree images (`spree`, `spree-base`) are published only at `ghcr.io/spree`. There is no Docker Hub mirror and no new Docker Hub namespace. Every image reference in code, scaffolded files and docs includes the registry host. Each published image carries a build provenance attestation. The `AGENTS.md` files scaffolded into projects say that nothing on Docker Hub is official.
+
+**Consequences:** Spree images do not appear in Docker Hub search. A bare `spree/...` or `spreecommerce/...` image name must never be written anywhere. A Docker Hub mirror becomes possible only if a namespace claim with Docker succeeds; until then it stays a deferred item.
+
+**Plan:** `6.1-spree-base-image.md`.
