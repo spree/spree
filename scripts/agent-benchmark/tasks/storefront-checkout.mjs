@@ -84,7 +84,7 @@ async function check({ projectDir, port, keys }) {
     if (!response.ok)
       return { passed: false, details: `Route answered ${response.status}: ${body}` }
     const { orderId } = JSON.parse(body)
-    const order = await api.admin('GET', `/orders/${orderId}`)
+    const order = await api.admin('GET', `/orders/${orderId}?expand=items`)
     const placed = order.status === 200 && Boolean(order.json?.completed_at)
     if (!placed) {
       return {

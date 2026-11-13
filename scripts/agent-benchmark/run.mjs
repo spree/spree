@@ -220,7 +220,17 @@ async function teardown(workDir, composeDir) {
       ])
     }
     // The containers and volumes belong to this throwaway project only.
-    await sh('docker', ['compose', 'down', '-v', '--remove-orphans'], { cwd: composeDir })
+    const down = await sh('docker', ['compose', 'down', '-v', '--remove-orphans'], {
+      cwd: composeDir,
+    })
+    if (down.code !== 0 || down.timedOut) {
+      // Keep the compose files so the containers and volumes can still be removed.
+      log(
+        `docker compose down failed (${down.timedOut ? 'timed out' : `exit ${down.code}`}); ` +
+          `kept ${workDir} so you can run it again there: ${down.stderr.trim().split('\n').pop() ?? ''}`,
+      )
+      return
+    }
   }
   try {
     fs.rmSync(workDir, { recursive: true, force: true })

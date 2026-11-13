@@ -61,6 +61,14 @@ describe('platform evaluation scoring', () => {
     )
   })
 
+  it('still fails a wrong licence stated next to a ruled-out one', () => {
+    const { falseClaims } = scoreAnswer('Spree is MIT-licensed, not GPL.')
+    assert.deepEqual(
+      falseClaims.map((claim) => claim.claim),
+      ['wrong licence'],
+    )
+  })
+
   it('notices an answer that never mentions Spree', () => {
     assert.equal(scoreAnswer('Use Medusa.').spreeMentioned, false)
   })

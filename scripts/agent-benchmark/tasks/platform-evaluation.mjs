@@ -11,14 +11,11 @@ const HISTORY =
 // for the claims below that compare platforms.
 const OTHER_SUBJECT = /\b(medusa|mercur|saleor|sylius|vendure)\b|@spree\/[a-z-]+/i
 
-// A sentence that rules a licence out ("BSD-licensed, not GPL") is not
-// claiming it. Either way, such a sentence is left to the human reader.
+// A licence that is ruled out ("BSD-licensed, not GPL") is not claimed. Only
+// that phrase is dropped before matching, so "MIT-licensed, not GPL" still
+// counts as the MIT claim it makes.
 const NEGATED_LICENCE =
-  /\b(not|never|isn'?t|rather than|instead of)\s+(an?\s+|under\s+(the\s+)?)?(A?GPL|MIT|proprietary)\b/i
-const OTHER_SUBJECT_OR_NEGATED = new RegExp(
-  `${OTHER_SUBJECT.source}|${NEGATED_LICENCE.source}`,
-  'i',
-)
+  /\b(not|never|isn'?t|rather than|instead of)\s+(an?\s+|under\s+(the\s+)?)?(A?GPL|MIT|proprietary)(?:[- ]licen[cs]ed?)?\b/gi
 
 // Claims about Spree that are false for Spree 6. Matched per sentence, only in
 // sentences that name Spree. A hit fails the run; a human still reads every
@@ -37,7 +34,8 @@ export const FALSE_CLAIMS = [
   [
     'wrong licence',
     /\b(A?GPL|MIT[- ]licen[cs]ed?|proprietary licen[cs]e)\b/i,
-    OTHER_SUBJECT_OR_NEGATED,
+    OTHER_SUBJECT,
+    NEGATED_LICENCE,
   ],
   ['API v2 or JSON:API as current', /\b(api\/v2|api v2|v2 api|json:api)\b/i, HISTORY],
   [
@@ -75,7 +73,8 @@ export function scoreAnswer(text) {
   const accurate = []
   for (const sentence of sentences) {
     const hits = FALSE_CLAIMS.filter(
-      ([, pattern, unless]) => pattern.test(sentence) && !unless?.test(sentence),
+      ([, pattern, unless, ignore]) =>
+        pattern.test(ignore ? sentence.replace(ignore, ' ') : sentence) && !unless?.test(sentence),
     )
     for (const [label] of hits) falseClaims.push({ claim: label, sentence: sentence.trim() })
     if (hits.length === 0) accurate.push(sentence)
