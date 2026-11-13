@@ -1,0 +1,243 @@
+name: Base image
+
+# Builds ghcr.io/spree/spree-base (runtime and build variant) for every Spree
+# line in docker/base/lines.json, proves each build by booting a stock Spree
+# image on top of it, and publishes it. A pull request builds and proves, and
+# publishes nothing. See docker/README.md.
+
+on:
+  pull_request:
+    paths:
+      - "docker/**"
+      - ".github/workflows/base-image.yml"
+  push:
+    branches: [main]
+    paths:
+      - "docker/**"
+      - ".github/workflows/base-image.yml"
+  schedule:
+    # Weekly, so operating system, Ruby and Node security fixes reach projects
+    # that rebuild.
+    - cron: "23 3 * * 1"
+  workflow_dispatch:
+
+concurrency:
+  group: base-image-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+env:
+  IMAGE: ghcr.io/spree/spree-base
+
+jobs:
+  lines:
+    name: Read the lines to build
+    runs-on: ubuntu-latest
+    outputs:
+      lines: ${{ steps.read.outputs.lines }}
+      date: ${{ steps.read.outputs.date }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - id: read
+        run: |
+          echo "lines=$(jq -c . docker/base/lines.json)" >> "$GITHUB_OUTPUT"
+          echo "date=$(date -u +%Y%m%d)" >> "$GITHUB_OUTPUT"
+
+  build:
+    name: "Build ${{ matrix.line.line }} (${{ matrix.platform.arch }})"
+    needs: lines
+    runs-on: ${{ matrix.platform.runner }}
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        line: ${{ fromJSON(needs.lines.outputs.lines) }}
+        platform:
+          - arch: amd64
+            runner: ubuntu-latest
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+    env:
+      LINE: ${{ matrix.line.line }}
+      ARCH: ${{ matrix.platform.arch }}
+      STAGED: ${{ matrix.line.line }}-${{ needs.lines.outputs.date }}
+      RUBY_VERSION: ${{ matrix.line.ruby }}
+      NODE_VERSION: ${{ matrix.line.node }}
+    steps:
+      # A pull request proves its own definition; every other run builds each
+      # line from the ref lines.json names for it.
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.sha || matrix.line.ref }}
+
+      - name: Build the runtime image and the build variant
+        run: |
+          for target in runtime build; do
+            tag="$IMAGE:$LINE"
+            [ "$target" = build ] && tag="$tag-build"
+            docker build docker/base --pull --target "$target" \
+              --build-arg RUBY_VERSION="$RUBY_VERSION" \
+              --build-arg NODE_VERSION="$NODE_VERSION" \
+              --build-arg SPREE_LINE="$LINE" \
+              --tag "$tag"
+          done
+
+      - name: Check what the images hold
+        run: |
+          docker run --rm "$IMAGE:$LINE" ruby --version
+          docker run --rm "$IMAGE:$LINE" node --version
+          test "$(docker run --rm "$IMAGE:$LINE" id -u)" = 1000
+          docker run --rm "$IMAGE:$LINE-build" pnpm --version
+          docker run --rm "$IMAGE:$LINE-build" psql --version
+
+          size() { docker image inspect "$1" --format '{{.Size}}' | awk '{ printf "%.0f MB", $1 / 1000000 }'; }
+          {
+            echo "### spree-base $LINE ($ARCH)"
+            echo "| Image | Size |"
+            echo "| --- | --- |"
+            echo "| runtime | $(size "$IMAGE:$LINE") |"
+            echo "| build variant | $(size "$IMAGE:$LINE-build") |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: A project on a newer Spree line is refused
+        run: |
+          mkdir newer && touch newer/Gemfile
+          printf 'GEM\n  specs:\n    spree_core (99.0.0)\n' > newer/Gemfile.lock
+          if docker run --rm -v "$PWD/newer:/rails" "$IMAGE:$LINE-build" spree-image-build gems; then
+            echo "::error::spree-image-build accepted a project newer than the base"
+            exit 1
+          fi
+
+      - uses: actions/checkout@v7
+        with:
+          repository: spree/spree-starter
+          ref: ${{ matrix.line.starter_ref }}
+          path: starter
+
+      # The gate: a stock Spree image built on this base must boot. The image is
+      # never pushed; spree/spree-starter publishes the stock image.
+      - name: Build a stock image on the base (bare-clone layout)
+        run: |
+          cp docker/project/Dockerfile starter/Dockerfile
+          docker build starter --build-arg SPREE_BASE="$IMAGE:$LINE" --tag stock:standalone
+
+      - name: Build a stock image on the base (create-spree-app layout)
+        if: matrix.platform.arch == 'amd64'
+        run: |
+          mkdir project
+          cp -R starter project/server
+          printf '**/.git\n**/node_modules\n' > project/.dockerignore
+          docker build project --file project/server/Dockerfile \
+            --build-arg SPREE_BASE="$IMAGE:$LINE" --tag stock:project
+
+      - name: Boot the stock image
+        run: |
+          docker network create gate
+          docker run -d --name postgres --network gate \
+            -e POSTGRES_HOST_AUTH_METHOD=trust postgres:18-alpine
+          until docker exec postgres pg_isready -h 127.0.0.1 -U postgres; do sleep 2; done
+
+          docker run -d --name app --network gate -p 3000:3000 \
+            -e DATABASE_URL=postgres://postgres@postgres:5432/spree_production \
+            -e SECRET_KEY_BASE="$(openssl rand -hex 64)" \
+            -e RAILS_FORCE_SSL=false -e RAILS_ASSUME_SSL=false \
+            stock:standalone
+
+          for attempt in $(seq 1 120); do
+            if curl -fsS -o /dev/null http://localhost:3000/up; then break; fi
+            if [ "$attempt" = 120 ] || [ "$(docker inspect -f '{{.State.Running}}' app)" != true ]; then
+              docker logs app
+              echo "::error::the stock image did not become healthy"
+              exit 1
+            fi
+            sleep 5
+          done
+
+          curl -fsSL -o /dev/null http://localhost:3000/dashboard/
+          curl -fsSL -o /dev/null http://localhost:3000/sellers/
+          docker exec app node --version
+
+      # A report, not a gate: a scan that fails must not stop the rebuild
+      # that delivers the fixes.
+      - name: Scan the runtime image for known vulnerabilities
+        continue-on-error: true
+        run: |
+          {
+            echo "### Vulnerabilities with a fix available, $LINE ($ARCH)"
+            echo '```'
+            docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+              ghcr.io/aquasecurity/trivy@sha256:8f6bb947dbc528902e11f2f5be52f7b519f6a39d5d148f41166f2040499768fb \
+              image --quiet --ignore-unfixed --severity HIGH,CRITICAL "$IMAGE:$LINE"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: docker/login-action@v3
+        if: github.event_name != 'pull_request'
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Each architecture is pushed under its own dated tag; the publish job
+      # joins them, so the line tag only moves once every build has passed.
+      - name: Push this architecture
+        if: github.event_name != 'pull_request'
+        run: |
+          docker tag "$IMAGE:$LINE" "$IMAGE:$STAGED-$ARCH"
+          docker tag "$IMAGE:$LINE-build" "$IMAGE:$STAGED-build-$ARCH"
+          docker push "$IMAGE:$STAGED-$ARCH"
+          docker push "$IMAGE:$STAGED-build-$ARCH"
+
+  publish:
+    name: "Publish ${{ matrix.line.line }}"
+    if: github.event_name != 'pull_request'
+    needs: [lines, build]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
+    strategy:
+      matrix:
+        line: ${{ fromJSON(needs.lines.outputs.lines) }}
+    env:
+      LINE: ${{ matrix.line.line }}
+      STAGED: ${{ matrix.line.line }}-${{ needs.lines.outputs.date }}
+    steps:
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Move the line tag and add the dated tag
+        id: tags
+        run: |
+          docker buildx imagetools create \
+            --tag "$IMAGE:$LINE" --tag "$IMAGE:$STAGED" \
+            "$IMAGE:$STAGED-amd64" "$IMAGE:$STAGED-arm64"
+          docker buildx imagetools create \
+            --tag "$IMAGE:$LINE-build" --tag "$IMAGE:$STAGED-build" \
+            "$IMAGE:$STAGED-build-amd64" "$IMAGE:$STAGED-build-arm64"
+
+          digest() { docker buildx imagetools inspect "$1" --format '{{json .Manifest}}' | jq -r .digest; }
+          echo "runtime=$(digest "$IMAGE:$LINE")" >> "$GITHUB_OUTPUT"
+          echo "build=$(digest "$IMAGE:$LINE-build")" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/attest-build-provenance@v2
+        with:
+          subject-name: ${{ env.IMAGE }}
+          subject-digest: ${{ steps.tags.outputs.runtime }}
+          push-to-registry: true
+
+      - uses: actions/attest-build-provenance@v2
+        with:
+          subject-name: ${{ env.IMAGE }}
+          subject-digest: ${{ steps.tags.outputs.build }}
+          push-to-registry: true
