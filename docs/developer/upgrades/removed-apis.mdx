@@ -112,7 +112,7 @@ See the [upgrade guide](https://spreecommerce.org/docs/developer/upgrades/5.6-to
 | `Spree::Address#user_default_billing?` | Use is_default_billing?. |
 | `Spree::Address#user_default_shipping?` | Use is_default_shipping?. |
 | `Spree.searcher_class` | Use Spree.search_provider. |
-| `Spree::PermittedAttributes` | Add writable API attributes with Spree::Product.additional_permitted_attributes += [...] (any model; always +=). |
+| `Spree::PermittedAttributes` | Add writable API attributes with Spree::Product.additional_permitted_attributes += [...] inside Rails.application.config.to_prepare (any model; always +=). |
 | `Spree::Preference` | Preferences live on each model in a JSON preferences column. |
 | `Spree::User` | Use Spree.customer_class for customers and Spree.admin_user_class for staff. |
 | `Spree::PromotionHandler::Page` | Apply the promotion with a coupon code, or make it automatic. |

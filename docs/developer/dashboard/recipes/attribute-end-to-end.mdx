@@ -59,7 +59,9 @@ Spree.api.admin_product_serializer = 'Admin::ProductSerializer'
 
 ```ruby
 # config/initializers/spree.rb
-Spree::Product.additional_permitted_attributes += [:lead_time_days]
+Rails.application.config.to_prepare do
+  Spree::Product.additional_permitted_attributes += [:lead_time_days]
+end
 ```
 
 **The Ransack allowlist** — makes it *filterable and sortable*. Both the list's sort param and every filter predicate go through Ransack, and Ransack refuses attributes that aren't allowlisted:
