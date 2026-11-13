@@ -157,3 +157,62 @@ describe('Codex transcripts', () => {
     assert.equal(metrics.toolErrors, 1)
   })
 })
+
+describe('Codex run status', () => {
+  const codex = (events) =>
+    scoreTranscript(events.map((event) => JSON.stringify(event)).join('\n'), { format: 'codex' })
+
+  it('is an agent error when the transcript is empty or never completes a turn', () => {
+    assert.equal(codex([]).agentError, true)
+    assert.equal(codex([{ type: 'thread.started' }, { type: 'turn.started' }]).agentError, true)
+  })
+
+  it('is an agent error when a failure event appears', () => {
+    assert.equal(codex([{ type: 'error', message: 'stream closed' }]).agentError, true)
+    assert.equal(
+      codex([{ type: 'turn.completed' }, { type: 'turn.failed', error: {} }]).agentError,
+      true,
+    )
+  })
+
+  it('succeeds once a turn completes', () => {
+    assert.equal(codex([{ type: 'turn.started' }, { type: 'turn.completed' }]).agentError, false)
+  })
+})
+
+describe('legacy code written by edits', () => {
+  const legacy = (name, input) => {
+    const event = {
+      type: 'assistant',
+      message: { id: 'm1', content: [{ type: 'tool_use', id: 't1', name, input }] },
+    }
+    return scoreTranscript(JSON.stringify(event)).legacyCodeWritten
+  }
+
+  it('does not count a legacy API an Edit replaces', () => {
+    assert.equal(
+      legacy('Edit', {
+        file_path: 'a.rb',
+        old_string: 'order.adjustments',
+        new_string: 'order.discounts',
+      }),
+      0,
+    )
+    assert.equal(
+      legacy('MultiEdit', {
+        file_path: 'a.rb',
+        edits: [{ old_string: 'Spree.user_class', new_string: 'Spree.customer_class' }],
+      }),
+      0,
+    )
+  })
+
+  it('counts a legacy API an Edit or Write introduces', () => {
+    assert.equal(legacy('Edit', { old_string: 'x', new_string: 'order.adjustments' }), 1)
+    assert.equal(
+      legacy('MultiEdit', { edits: [{ old_string: 'x', new_string: 'Spree.user_class' }] }),
+      1,
+    )
+    assert.equal(legacy('Write', { file_path: 'a.rb', content: 'order.adjustments' }), 1)
+  })
+})

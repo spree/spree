@@ -121,11 +121,17 @@ export function parseCodex(events) {
   const results = []
   let modelCalls = 0
   let usage = null
+  // An error until a turn completes: an empty or cut-off transcript is not a
+  // success. A failure event anywhere keeps it an error.
+  let completed = false
+  let failed = false
   for (const event of events) {
     if (event.type === 'turn.completed') {
       modelCalls += 1
+      completed = true
       usage = event.usage ?? usage
     }
+    if (event.type === 'turn.failed' || event.type === 'error') failed = true
     if (event.type !== 'item.completed' || !event.item) continue
     const { item } = event
     if (item.type === 'command_execution') {
@@ -145,7 +151,13 @@ export function parseCodex(events) {
     modelCalls,
     calls,
     results,
-    summary: { isError: false, durationMs: null, numTurns: modelCalls, costUsd: null, usage },
+    summary: {
+      isError: failed || !completed,
+      durationMs: null,
+      numTurns: modelCalls,
+      costUsd: null,
+      usage,
+    },
   }
 }
 
@@ -156,6 +168,17 @@ function inputText(input) {
   if (Array.isArray(input)) return input.map(inputText).join('\n')
   if (typeof input === 'object') return Object.values(input).map(inputText).join('\n')
   return String(input)
+}
+
+// What an edit tool writes: the replacement text only for Edit and MultiEdit,
+// so replacing a legacy API is not counted as writing it.
+function writtenText(call) {
+  const { input } = call
+  if (call.name === 'Edit' && typeof input?.new_string === 'string') return input.new_string
+  if (call.name === 'MultiEdit' && Array.isArray(input?.edits)) {
+    return input.edits.map((edit) => edit?.new_string ?? '').join('\n')
+  }
+  return inputText(input)
 }
 
 function excerpt(text, index = 0, length = 200) {
@@ -194,14 +217,15 @@ export function computeMetrics(parsed) {
     if (DOCS.some((pattern) => pattern.test(text)) || DOCS_TOOL.test(call.name)) docsLookups += 1
 
     if (EDIT_TOOLS.has(call.name)) {
+      const written = writtenText(call)
       for (const [label, pattern] of LEGACY_PATTERNS) {
-        const match = pattern.exec(text)
+        const match = pattern.exec(written)
         if (!match) continue
         legacyCodeWritten += 1
         stumbles.push({
           kind: 'legacy_code_written',
           api: label,
-          excerpt: excerpt(text, match.index),
+          excerpt: excerpt(written, match.index),
         })
       }
     }

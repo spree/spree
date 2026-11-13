@@ -11,6 +11,15 @@ const HISTORY =
 // for the claims below that compare platforms.
 const OTHER_SUBJECT = /\b(medusa|mercur|saleor|sylius|vendure)\b|@spree\/[a-z-]+/i
 
+// A sentence that rules a licence out ("BSD-licensed, not GPL") is not
+// claiming it. Either way, such a sentence is left to the human reader.
+const NEGATED_LICENCE =
+  /\b(not|never|isn'?t|rather than|instead of)\s+(an?\s+|under\s+(the\s+)?)?(A?GPL|MIT|proprietary)\b/i
+const OTHER_SUBJECT_OR_NEGATED = new RegExp(
+  `${OTHER_SUBJECT.source}|${NEGATED_LICENCE.source}`,
+  'i',
+)
+
 // Claims about Spree that are false for Spree 6. Matched per sentence, only in
 // sentences that name Spree. A hit fails the run; a human still reads every
 // answer, because a pattern cannot tell "Spree lacks X" from "unlike Spree, Y
@@ -25,7 +34,11 @@ export const FALSE_CLAIMS = [
     /\b(no|lacks?|without|doesn'?t (support|have|offer)|not (support|built|included)|(requires?|needs?) (a )?(paid|enterprise|third-party|extension|plugin))\b[^.]*\b(multi-?vendor|marketplace)/i,
     OTHER_SUBJECT,
   ],
-  ['wrong licence', /\b(A?GPL|MIT[- ]licen[cs]ed?|proprietary licen[cs]e)\b/i, OTHER_SUBJECT],
+  [
+    'wrong licence',
+    /\b(A?GPL|MIT[- ]licen[cs]ed?|proprietary licen[cs]e)\b/i,
+    OTHER_SUBJECT_OR_NEGATED,
+  ],
   ['API v2 or JSON:API as current', /\b(api\/v2|api v2|v2 api|json:api)\b/i, HISTORY],
   [
     'Rails-rendered storefront or admin',

@@ -27,6 +27,18 @@ async function waitFor(url, timeoutMs = 120_000) {
   return false
 }
 
+export function orderMismatch(order, { variantId, quantity, email }) {
+  if (order.email?.toLowerCase() !== email.toLowerCase()) {
+    return `email is ${order.email}, expected ${email}`
+  }
+  const items = (order.items ?? []).map((item) => `${item.variant_id} x ${item.quantity}`)
+  const expected = `${variantId} x ${quantity}`
+  if (items.length !== 1 || items[0] !== expected) {
+    return `items are [${items.join(', ')}], expected [${expected}]`
+  }
+  return null
+}
+
 async function check({ projectDir, port, keys }) {
   const shopDir = path.join(projectDir, 'apps', 'shop')
   const manifest = path.join(shopDir, 'package.json')
@@ -62,10 +74,11 @@ async function check({ projectDir, port, keys }) {
     if (!(await waitFor(`http://localhost:${shopPort}/`))) {
       return { passed: false, details: 'next start did not answer within two minutes.' }
     }
+    const submitted = { variantId, quantity: 1, email: `ada+${Date.now()}@example.com` }
     const response = await fetch(`http://localhost:${shopPort}/api/bench/checkout`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ variantId, quantity: 1, email: 'ada@example.com', address: ADDRESS }),
+      body: JSON.stringify({ ...submitted, address: ADDRESS }),
     })
     const body = await response.text()
     if (!response.ok)
@@ -73,11 +86,19 @@ async function check({ projectDir, port, keys }) {
     const { orderId } = JSON.parse(body)
     const order = await api.admin('GET', `/orders/${orderId}`)
     const placed = order.status === 200 && Boolean(order.json?.completed_at)
+    if (!placed) {
+      return {
+        passed: false,
+        details: `Order ${orderId} is not placed (${order.status}): ${order.text}`,
+      }
+    }
+    // The order must be the one just submitted, not any completed order.
+    const mismatch = orderMismatch(order.json, submitted)
     return {
-      passed: placed,
-      details: placed
-        ? `Order ${order.json.number} placed.`
-        : `Order ${orderId} is not placed (${order.status}): ${order.text}`,
+      passed: !mismatch,
+      details: mismatch
+        ? `Order ${order.json.number} does not match the checkout request: ${mismatch}`
+        : `Order ${order.json.number} placed.`,
     }
   } finally {
     try {

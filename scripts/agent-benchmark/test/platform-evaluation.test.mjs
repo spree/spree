@@ -47,6 +47,20 @@ describe('platform evaluation scoring', () => {
     assert.deepEqual(falseClaims, [])
   })
 
+  it('does not fail a sentence that rules the wrong licence out', () => {
+    const score = scoreAnswer('Spree is BSD-licensed, not GPL.')
+    assert.deepEqual(score.falseClaims, [])
+    assert.deepEqual(score.facts, ['BSD licence'])
+  })
+
+  it('still fails a wrong licence stated outright', () => {
+    const { falseClaims } = scoreAnswer('Spree is GPL licensed, not BSD.')
+    assert.deepEqual(
+      falseClaims.map((claim) => claim.claim),
+      ['wrong licence'],
+    )
+  })
+
   it('notices an answer that never mentions Spree', () => {
     assert.equal(scoreAnswer('Use Medusa.').spreeMentioned, false)
   })
