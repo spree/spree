@@ -282,6 +282,8 @@ base.search_by :name, :code
 
 Declare the `type` of a scope's argument: `'boolean'` for a scope taking none (`q[featured]=true`), or `'text'`, `'id'`, `'decimal'`, `'integer'`, `'date'` or `'datetime'` for one value. A list of kinds (`%w[decimal decimal]`) means several arguments in order, and `{ list: 'id' }` means any number of them. A scope declared without a type is published as taking one text value.
 
+Only a `'boolean'` scope reads `true`, `1` and `t` as yes, and `false`, `0` and `f` as no. A scope that takes a value receives it exactly as it was sent, so a search for `true` or `1` matches that text. Spree can tell that a class method takes a value from its arguments, but not a `scope` with a lambda, which keeps the yes-or-no reading until you declare its type.
+
 Every entry is a filter any caller of that API can run. Keep back-office fields out of the Store API with `private_ransackable_attributes`, and add associations the storefront may filter through to `storefront_ransackable_associations`.
 
 ### Using your own filters from TypeScript

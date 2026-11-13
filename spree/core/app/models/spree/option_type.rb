@@ -27,6 +27,7 @@ module Spree
     # Magic methods
     #
     self.whitelisted_ransackable_scopes = %w[search_by_name]
+    self.ransackable_scope_types = { 'search_by_name' => 'text' }
     # `label` is what admin surfaces display, so it has to be filterable —
     # matching Spree::OptionValue, which already allows it.
     self.whitelisted_ransackable_attributes = %w[label name kind]

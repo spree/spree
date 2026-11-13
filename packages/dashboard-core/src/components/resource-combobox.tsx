@@ -33,6 +33,12 @@ export interface ResourceComboboxProps<T extends ComboboxOption>
   search: (query: string) => Promise<{ data: T[]; meta?: { count: number } }>
 
   /**
+   * Shortest query worth sending, for an endpoint that finds nothing below
+   * it. A shorter one shows a hint instead; an empty one still calls `search`.
+   */
+  minSearchLength?: number
+
+  /**
    * Hydrate the currently-selected ID into a record so the trigger can show
    * its label (e.g. on first render after deep-link reload). Called once
    * per `value` change. Should return the record listed by ID.
@@ -72,6 +78,7 @@ export function ResourceCombobox<T extends ComboboxOption>({
   value,
   onChange,
   search,
+  minSearchLength = 0,
   hydrate,
   queryKey,
   getOptionLabel,
@@ -86,6 +93,7 @@ export function ResourceCombobox<T extends ComboboxOption>({
   const { t } = useTranslation()
   const placeholderLabel = placeholder ?? t('admin.common.search_placeholder')
   const emptyLabel = emptyText ?? t('admin.common.no_results')
+  const minSearchLabel = t('admin.common.search_min_length', { count: minSearchLength })
 
   // Base UI's Combobox owns the input element so it can write the selected
   // option's label into it on pick. We observe the typed query via
@@ -101,10 +109,12 @@ export function ResourceCombobox<T extends ComboboxOption>({
   // keystroke — React batches the search to the next idle paint.
   const deferredInput = useDeferredValue(input)
   const trimmedQuery = deferredInput.trim()
+  const searchTooShort = trimmedQuery.length > 0 && trimmedQuery.length < minSearchLength
 
-  const { data: searchData } = useQuery({
+  const { data: fetchedSearchData } = useQuery({
     queryKey: [queryKey, tenantId, 'search', trimmedQuery],
     queryFn: () => search(trimmedQuery),
+    enabled: !searchTooShort,
     // The cache key is the picker's own, not the resource's, so a mutation
     // elsewhere (a customer created on another page) never invalidates it.
     // Every search refetches; cached rows for a repeated term still paint first.
@@ -115,6 +125,9 @@ export function ResourceCombobox<T extends ComboboxOption>({
     placeholderData: (previous, previousQuery) =>
       previousQuery?.queryKey[1] === tenantId ? previous : undefined,
   })
+  // A disabled query still serves the placeholder, which would leave the
+  // previous query's rows under text that matches nothing.
+  const searchData = searchTooShort ? undefined : fetchedSearchData
 
   // Hydrate the currently selected ID into a record so the trigger shows
   // its label after a deep-link reload (before the user types anything).
@@ -138,6 +151,7 @@ export function ResourceCombobox<T extends ComboboxOption>({
 
   const visibleSearchCount = searchData?.data.length ?? 0
   const hiddenCount = Math.max(0, (searchData?.meta?.count ?? 0) - visibleSearchCount)
+  const minSearchHintInFooter = searchTooShort && items.length > 0
 
   return (
     <HeadlessResourceCombobox
@@ -148,10 +162,16 @@ export function ResourceCombobox<T extends ComboboxOption>({
       getOptionLabel={getOptionLabel}
       renderOption={renderOption}
       placeholder={placeholderLabel}
-      emptyText={emptyLabel}
+      emptyText={searchTooShort ? minSearchLabel : emptyLabel}
       listFooter={
-        hiddenCount > 0 || action ? (
+        hiddenCount > 0 || action || minSearchHintInFooter ? (
           <>
+            {/* The selected record stays listed, so the empty text never shows. */}
+            {minSearchHintInFooter && (
+              <p className="border-t border-border px-2.5 py-2 text-muted-foreground text-xs">
+                {minSearchLabel}
+              </p>
+            )}
             {hiddenCount > 0 && (
               <p className="border-t border-border px-2.5 py-2 text-muted-foreground text-xs">
                 {t('admin.common.combobox_more_results', { count: hiddenCount })}
