@@ -56,6 +56,13 @@ module Spree
         failure(cart, e.message)
       end
 
+      # Fields assign_cart_attributes handles itself; an extension can't
+      # reroute them through a plain assignment.
+      CORE_ATTRIBUTES = %i[
+        email customer_note po_number market_id currency locale metadata use_shipping
+        preferred_stock_location_id company_id po_document_signed_id
+      ].freeze
+
       private
 
       attr_reader :cart, :params
@@ -94,19 +101,12 @@ module Spree
         assign_po_document if params.key?(:po_document_signed_id)
       end
 
-      # Fields assign_cart_attributes handles itself; an extension can't
-      # reroute them through a plain assignment.
-      CORE_ATTRIBUTES = %i[
-        email customer_note po_number market_id currency locale metadata use_shipping
-        preferred_stock_location_id company_id po_document_signed_id
-      ].freeze
-
       # Columns an extension made writable with
       # `Spree::Cart.additional_permitted_attributes += [...]`.
       def assign_additional_attributes
-        keys = Array(Spree::Cart.try(:additional_permitted_attributes))
-               .flat_map { |attribute| attribute.is_a?(Hash) ? attribute.keys : attribute }
-               .map(&:to_sym) - CORE_ATTRIBUTES
+        keys = Array(Spree::Cart.try(:additional_permitted_attributes)).
+               flat_map { |attribute| attribute.is_a?(Hash) ? attribute.keys : attribute }.
+               map(&:to_sym) - CORE_ATTRIBUTES
         cart.assign_attributes(params.slice(*keys)) if keys.any?
       end
 
