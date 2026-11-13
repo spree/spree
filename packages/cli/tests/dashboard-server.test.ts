@@ -38,4 +38,25 @@ describe('dashboard-server gating', () => {
     fs.writeFileSync(path.join(dashboardDir, 'package.json'), '{"name":"dashboard"}\n')
     expect(hasDashboardApp(projectDir)).toBe(true)
   })
+
+  // Its own process group gets no hang-up when the terminal closes, so the
+  // server listens for it and stops; stop() removes those listeners again.
+  it('stops on SIGHUP and SIGTERM until stopped', () => {
+    const dashboardDir = path.join(projectDir, 'apps', 'dashboard')
+    fs.mkdirSync(path.join(dashboardDir, 'node_modules'), { recursive: true })
+    fs.writeFileSync(
+      path.join(dashboardDir, 'package.json'),
+      '{"name":"dashboard","scripts":{"dev":"node -e \\"setTimeout(() => {}, 60000)\\""}}\n',
+    )
+    const hup = process.listenerCount('SIGHUP')
+    const term = process.listenerCount('SIGTERM')
+
+    const server = startDashboardDevServer(projectDir)
+    expect(process.listenerCount('SIGHUP')).toBe(hup + 1)
+    expect(process.listenerCount('SIGTERM')).toBe(term + 1)
+
+    server?.stop()
+    expect(process.listenerCount('SIGHUP')).toBe(hup)
+    expect(process.listenerCount('SIGTERM')).toBe(term)
+  })
 })

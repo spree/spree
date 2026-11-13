@@ -7,7 +7,7 @@ import { DEFAULT_SPREE_PORT } from './constants.js'
 import { runPrompts } from './prompts.js'
 import { scaffold } from './scaffold.js'
 import type { PackageManager } from './types.js'
-import { detectPackageManager, runCommand } from './utils.js'
+import { cdTarget, detectPackageManager, runCommand } from './utils.js'
 
 const program = new Command()
   .name('create-spree-app')
@@ -88,15 +88,15 @@ const program = new Command()
       const stopped = await scaffold({ ...options, port, mailpitSmtpPort, mailpitUiPort })
 
       if (stopped) {
-        const projectName = path.basename(path.resolve(options.directory))
+        // Ctrl+C can land at any stage of setup: `run dev` finishes whatever
+        // is left, and containers that already started keep running.
+        const cdDir = cdTarget(path.resolve(options.directory))
         p.outro(
           [
-            // Ctrl+C ends the log stream and the dashboard dev server; the
-            // Docker containers keep running.
-            `Your store is still running at ${pc.cyan(`http://localhost:${port}`)}. Next:`,
-            `  ${pc.cyan(`cd ${projectName}`)}`,
-            `  ${pc.cyan(`${options.packageManager} run dev`)}     ${pc.dim('# develop with live logs')}`,
-            `  ${pc.cyan(`${runCommand(options.packageManager)} spree stop`)}  ${pc.dim('# stop it')}`,
+            'Stopped. Next:',
+            `  ${pc.cyan(`cd ${cdDir}`)}`,
+            `  ${pc.cyan(`${options.packageManager} run dev`)}     ${pc.dim('# start the store, finishing setup if needed')}`,
+            `  ${pc.cyan(`${runCommand(options.packageManager)} spree stop`)}  ${pc.dim('# stop containers that are still running')}`,
           ].join('\n'),
         )
       } else {

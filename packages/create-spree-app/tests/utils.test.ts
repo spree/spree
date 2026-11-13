@@ -1,6 +1,7 @@
 import { execa } from 'execa'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import {
+  cdTarget,
   detectPackageManager,
   generateEncryptionKeys,
   generateSecretKeyBase,
@@ -116,5 +117,17 @@ describe('storefrontPm', () => {
   it('keeps npm and pnpm as-is', () => {
     expect(storefrontPm('npm')).toBe('npm')
     expect(storefrontPm('pnpm')).toBe('pnpm')
+  })
+})
+
+describe('cdTarget', () => {
+  it('keeps the path the user typed, relative to where they ran the command', () => {
+    expect(cdTarget('/home/me/my-store', '/home/me')).toBe('my-store')
+    expect(cdTarget('/home/me/projects/my-store', '/home/me')).toBe('projects/my-store')
+    expect(cdTarget('/srv/my-store', '/home/me')).toBe('../../srv/my-store')
+  })
+
+  it('quotes paths the shell would split or expand', () => {
+    expect(cdTarget("/home/me/my store's", '/home/me')).toBe(`'my store'\\''s'`)
   })
 })
