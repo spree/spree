@@ -49,7 +49,9 @@ where that is acceptable.
 
 1. Scaffolds a project with `create-spree-app --no-start`, then runs
    `spree init` with a generated admin account. The harness mints its own
-   publishable key and `write_all` secret key; the agent never sees them.
+   publishable key and `write_all` secret key, kept outside the project. The
+   agent doesn't see them while it works; the product-custom-field-filter
+   check later runs the script the agent wrote with the secret key.
 2. Commits the scaffold to a local git repository.
 3. Runs the agent once, headless, with the task prompt. No follow-up turns.
 4. Saves the agent's diff, restarts the app and runs the task's acceptance

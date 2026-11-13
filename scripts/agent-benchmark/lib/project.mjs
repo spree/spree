@@ -137,8 +137,9 @@ async function mintKey(projectDir, type, scopes) {
   return token
 }
 
-// The harness's own keys. They live outside the project, so the agent never
-// sees them.
+// The harness's own keys. They live outside the project, so the agent doesn't
+// see them while it works (one check later runs an agent-written script with
+// the secret key).
 export async function mintKeys(projectDir) {
   return {
     publishable: await mintKey(projectDir, 'publishable'),
