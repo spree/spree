@@ -1,6 +1,9 @@
+import fs from 'node:fs'
+import os from 'node:os'
+import path from 'node:path'
 import { Command } from 'commander'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { registerGenerateCommand } from '../src/commands/generate'
+import { appPathPrefix, registerGenerateCommand } from '../src/commands/generate'
 import {
   type DockerComposeStreamOptions,
   dockerComposeExecOrRun,
@@ -125,6 +128,31 @@ describe('formatGeneratorSummary', () => {
 Next:
   spree restart  # config/initializers/spree.rb loads only at boot
   spree test spec/subscribers/oms_order_sync_subscriber_spec.rb`)
+  })
+
+  it('leads file paths, but not commands run in the container, to the app', () => {
+    expect(
+      formatGeneratorSummary('spree:subscriber', parseGeneratorOutput(SUBSCRIBER_OUTPUT), {
+        pathPrefix: 'server/',
+      }),
+    ).toBe(`spree:subscriber finished:
+  created  server/app/subscribers/oms_order_sync_subscriber.rb
+  changed  server/config/initializers/spree.rb
+  created  server/spec/subscribers/oms_order_sync_subscriber_spec.rb
+
+Next:
+  spree restart  # server/config/initializers/spree.rb loads only at boot
+  spree test spec/subscribers/oms_order_sync_subscriber_spec.rb`)
+  })
+
+  it('leaves a target that is code, not a file, as it is', () => {
+    const summary = formatGeneratorSummary(
+      'spree:api_resource',
+      parseGeneratorOutput('       route  resources :brands\n      create  Gemfile.lock\n'),
+      { pathPrefix: 'server/' },
+    )
+    expect(summary).toContain('changed  resources :brands')
+    expect(summary).toContain('created  server/Gemfile.lock')
   })
 
   it('says so when the generator touched nothing, and shows what it printed', () => {
@@ -266,6 +294,10 @@ describe('spree generate output', () => {
     vi.restoreAllMocks()
   })
 
+  beforeEach(() => {
+    vi.spyOn(process, 'cwd').mockReturnValue('/proj')
+  })
+
   it('prints a summary instead of the generator and Docker output', async () => {
     streamOutput([
       ['web container is not running — using a one-off container\n', 'stderr'],
@@ -341,5 +373,36 @@ describe('spree generate output', () => {
 
     expect(stdout[0]).toBe('Overwrite? [Ynaqdh] ')
     expect(stdout.join('')).toContain('changed   app/models/spree/brand.rb')
+  })
+})
+
+describe('appPathPrefix', () => {
+  let root: string
+
+  beforeEach(() => {
+    root = fs.mkdtempSync(path.join(os.tmpdir(), 'spree-generate-'))
+  })
+
+  afterEach(() => {
+    fs.rmSync(root, { recursive: true, force: true })
+  })
+
+  it('leads into server/ from a create-spree-app project root', () => {
+    fs.mkdirSync(path.join(root, 'server'))
+    expect(appPathPrefix(root, root)).toBe('server/')
+  })
+
+  it('is empty when run from the app itself', () => {
+    fs.mkdirSync(path.join(root, 'server'))
+    expect(appPathPrefix(root, path.join(root, 'server'))).toBe('')
+  })
+
+  it('is empty in a bare clone, where the project is the app', () => {
+    expect(appPathPrefix(root, root)).toBe('')
+  })
+
+  it('climbs out of a folder inside the app', () => {
+    fs.mkdirSync(path.join(root, 'server', 'app'), { recursive: true })
+    expect(appPathPrefix(root, path.join(root, 'server', 'app'))).toBe('../')
   })
 })

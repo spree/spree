@@ -107,7 +107,10 @@ export interface NextStep {
  * migration, and `spree test` for new specs. A step the generator already
  * names in its own output is left out.
  */
-export function nextSteps({ actions, messages }: GeneratorResult): NextStep[] {
+export function nextSteps(
+  { actions, messages }: GeneratorResult,
+  { pathPrefix = '' }: SummaryOptions = {},
+): NextStep[] {
   const touched = actions
     .filter((action) => action.verb === 'created' || action.verb === 'changed')
     .map((action) => action.target.split(' ')[0])
@@ -119,7 +122,7 @@ export function nextSteps({ actions, messages }: GeneratorResult): NextStep[] {
   if (bootFiles.length > 0) {
     steps.push({
       command: 'spree restart',
-      reason: `${[...new Set(bootFiles)].join(', ')} ${bootFiles.length === 1 ? 'loads' : 'load'} only at boot`,
+      reason: `${[...new Set(bootFiles)].map((file) => pathPrefix + file).join(', ')} ${bootFiles.length === 1 ? 'loads' : 'load'} only at boot`,
     })
   }
 
@@ -128,7 +131,8 @@ export function nextSteps({ actions, messages }: GeneratorResult): NextStep[] {
   }
 
   // The paths come from the container's output, and the command is meant to
-  // be pasted into a shell, so anything unusual is quoted.
+  // be pasted into a shell, so anything unusual is quoted. `spree test` runs
+  // in the container, so these stay relative to the app, without pathPrefix.
   const specs = touched.filter((path) => path.endsWith('_spec.rb')).map(shellQuote)
   if (specs.length > 0) steps.push({ command: `spree test ${specs.join(' ')}` })
 
@@ -136,8 +140,29 @@ export function nextSteps({ actions, messages }: GeneratorResult): NextStep[] {
   return steps.filter((step) => !printed.includes(step.command.split(' ').slice(0, 2).join(' ')))
 }
 
+export interface SummaryOptions {
+  /**
+   * Leads from where the command was run to the Rails app, e.g. `server/`, so
+   * the files listed can be opened from there. Empty when run from the app.
+   */
+  pathPrefix?: string
+}
+
+// A target that names a file, such as `app/models/brand.rb` or `Gemfile`, as
+// opposed to the code a `route` or `environment` action logs.
+const FILE_TARGET = /^(?:[\w.-]+\/)+[\w.-]+$|^[\w-]+\.\w+$|^Gemfile$/
+
+function withPrefix(target: string, pathPrefix: string): string {
+  return pathPrefix && FILE_TARGET.test(target.split(' ')[0]) ? pathPrefix + target : target
+}
+
 /** The short report `spree generate` prints in place of the generator's own output. */
-export function formatGeneratorSummary(generator: string, result: GeneratorResult): string {
+export function formatGeneratorSummary(
+  generator: string,
+  result: GeneratorResult,
+  options: SummaryOptions = {},
+): string {
+  const pathPrefix = options.pathPrefix ?? ''
   const lines: string[] = []
   const width = Math.max(0, ...result.actions.map((action) => action.verb.length)) + 2
 
@@ -146,13 +171,13 @@ export function formatGeneratorSummary(generator: string, result: GeneratorResul
   } else {
     lines.push(`${generator} finished:`)
     for (const { verb, target } of result.actions) {
-      lines.push(`  ${colorVerb(verb, verb.padEnd(width))}${target}`)
+      lines.push(`  ${colorVerb(verb, verb.padEnd(width))}${withPrefix(target, pathPrefix)}`)
     }
   }
 
   if (result.messages.length > 0) lines.push('', ...result.messages)
 
-  const steps = nextSteps(result)
+  const steps = nextSteps(result, { pathPrefix })
   if (steps.length > 0) {
     lines.push('', 'Next:')
     for (const { command, reason } of steps) {

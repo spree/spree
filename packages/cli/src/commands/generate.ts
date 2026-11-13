@@ -1,7 +1,9 @@
+import fs from 'node:fs'
+import path from 'node:path'
 import type { Command } from 'commander'
 import pc from 'picocolors'
 import { runGeneratorCommand } from '../backend.js'
-import { detectProject } from '../context.js'
+import { detectProject, findApiDir } from '../context.js'
 import { dockerComposeExecOrRun, dockerComposeStream } from '../docker.js'
 import { ejectFirst } from '../lib/eject-first.js'
 import { formatGeneratorSummary, GeneratorOutput, shellQuote } from '../lib/generator-output.js'
@@ -68,6 +70,19 @@ export function registerGenerateCommand(program: Command): void {
     })
 }
 
+/**
+ * The path from `cwd` to the Rails app, with a trailing slash, so the files a
+ * generator reports can be opened from where the command was run: `server/`
+ * from a create-spree-app project root, nothing from the app itself (or a
+ * bare clone of spree-starter, where the project is the app).
+ */
+export function appPathPrefix(projectDir: string, cwd: string): string {
+  const apiPath = path.join(projectDir, findApiDir(projectDir))
+  const appDir = fs.existsSync(apiPath) ? apiPath : projectDir
+  const relative = path.relative(cwd, appDir)
+  return relative === '' ? '' : `${relative.split(path.sep).join('/')}/`
+}
+
 // How long a line without a newline sits before it counts as a prompt.
 const PROMPT_DELAY_MS = 150
 
@@ -107,5 +122,9 @@ async function generateWithSummary(
   }
   clearTimeout(promptTimer)
 
-  console.log(formatGeneratorSummary(generator, output.result()))
+  console.log(
+    formatGeneratorSummary(generator, output.result(), {
+      pathPrefix: appPathPrefix(projectDir, process.cwd()),
+    }),
+  )
 }
