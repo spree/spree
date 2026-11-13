@@ -137,6 +137,15 @@ RSpec.describe Spree::CustomFieldDefinition, type: :model do
     end
   end
 
+  describe 'namespace' do
+    it 'defaults to custom for a definition created without one' do
+      definition = create(:custom_field_definition, namespace: nil, key: 'material')
+
+      expect(definition.namespace).to eq('custom')
+      expect(definition.full_key).to eq('custom.material')
+    end
+  end
+
   describe '#filter_key' do
     it 'combines the namespace and key' do
       custom_field_definition = build(:custom_field_definition, namespace: 'custom', key: 'material')

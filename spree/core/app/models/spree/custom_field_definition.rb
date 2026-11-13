@@ -2,6 +2,9 @@ module Spree
   class CustomFieldDefinition < Spree.base_class
     has_prefix_id :cfdef
 
+    # The namespace of a definition created without one.
+    DEFAULT_NAMESPACE = 'custom'.freeze
+
     include Spree::SingleStoreResource
     include Spree::CustomFieldDefinition::SearchCapabilities
 
@@ -36,6 +39,7 @@ module Spree
     normalizes :key, with: ->(value) { value.to_s.parameterize.underscore.strip }
     normalizes :namespace, with: ->(value) { value.to_s.parameterize.underscore.strip }
     before_validation :set_default_type, if: -> { self[:field_type].blank? }, on: :create
+    before_validation :set_default_namespace, if: -> { namespace.blank? }, on: :create
     before_validation :set_label_from_key, if: -> { label.blank? }, on: :create
     before_validation :set_filter_key
 
@@ -183,6 +187,10 @@ module Spree
 
     def set_default_type
       self[:field_type] ||= Spree.custom_fields.types.first.to_s
+    end
+
+    def set_default_namespace
+      self.namespace = DEFAULT_NAMESPACE
     end
 
     def set_label_from_key
