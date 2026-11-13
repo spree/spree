@@ -125,26 +125,43 @@ module SpreeMeilisearch
       indexed
     end
 
+    # How long a successful settings push is trusted before the next write
+    # re-pushes it. Settings only change when the storefront custom field
+    # schema changes, and that changes the digest, so this is just a backstop
+    # for an index recreated outside Spree.
+    INDEX_SETTINGS_CACHE_TTL = 12.hours
+    # Polling GET /tasks every 50ms (the client default) across many
+    # concurrent jobs is what trips Meilisearch's rate limiter.
+    TASK_AWAIT_TIMEOUT_MS = 30_000
+    TASK_AWAIT_INTERVAL_MS = 250
+
     # Configure index settings for filtering, sorting, and faceting.
     # Called automatically by reindex, but can be called separately.
     # Waits for all settings tasks to complete before returning so that
     # subsequent add_documents calls use the correct filterable/sortable attributes.
     def ensure_index_settings!
+      settings = index_settings
       index = client.index(index_name)
       tasks = []
-      tasks << index.update_filterable_attributes(filterable_attributes)
-      tasks << index.update_sortable_attributes(sortable_attributes)
-      tasks << index.update_searchable_attributes(searchable_attributes)
-      tasks << index.update_distinct_attribute(distinct_attribute)
-      tasks.each { |task| task&.await }
+      tasks << index.update_filterable_attributes(settings[:filterable_attributes])
+      tasks << index.update_sortable_attributes(settings[:sortable_attributes])
+      tasks << index.update_searchable_attributes(settings[:searchable_attributes])
+      tasks << index.update_distinct_attribute(settings[:distinct_attribute])
+      tasks.each { |task| task&.await(TASK_AWAIT_TIMEOUT_MS, TASK_AWAIT_INTERVAL_MS) }
+      Rails.cache.write(index_settings_cache_key, index_settings_digest(settings), expires_in: INDEX_SETTINGS_CACHE_TTL)
       @index_settings_configured = true
     end
 
-    # Lightweight guard — configures index settings once per provider instance.
-    # Meilisearch settings updates are idempotent, so repeated calls are safe
-    # but we avoid the overhead by memoizing.
+    # Configures index settings only when they differ from what was last
+    # pushed. Every IndexJob builds a fresh provider, so an instance-level
+    # memo alone re-pushed four settings tasks (and polled /tasks until they
+    # finished) on every product write; bulk writes such as imports and sample
+    # data then flooded Meilisearch into 429s. The digest is shared through
+    # Rails.cache, so jobs across processes skip the push until the settings
+    # actually change.
     def ensure_index_settings_once!
       return if @index_settings_configured
+      return @index_settings_configured = true if index_settings_current?
 
       ensure_index_settings!
     end
@@ -282,6 +299,27 @@ module SpreeMeilisearch
       end
 
       (ms_result['facetDistribution'] || {}).merge('option_value_ids' => merged_ov_dist)
+    end
+
+    def index_settings
+      {
+        filterable_attributes: filterable_attributes,
+        sortable_attributes: sortable_attributes,
+        searchable_attributes: searchable_attributes,
+        distinct_attribute: distinct_attribute
+      }
+    end
+
+    def index_settings_current?
+      Rails.cache.read(index_settings_cache_key) == index_settings_digest(index_settings)
+    end
+
+    def index_settings_cache_key
+      "spree_meilisearch/index_settings/#{index_name}"
+    end
+
+    def index_settings_digest(settings)
+      Digest::SHA256.hexdigest(settings.to_json)
     end
 
     def presenter_class

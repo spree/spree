@@ -512,6 +512,58 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
     end
   end
 
+  describe '#ensure_index_settings_once!' do
+    let(:cache) { ActiveSupport::Cache::MemoryStore.new }
+    let(:settings_task) { double('Meilisearch::Models::Task') }
+
+    before do
+      allow(Rails).to receive(:cache).and_return(cache)
+      allow(mock_index).to receive(:update_filterable_attributes).and_return(settings_task)
+      allow(settings_task).to receive(:await)
+      allow(mock_index).to receive(:add_documents)
+    end
+
+    it 'pushes settings once across provider instances, as each IndexJob builds a new one' do
+      expect(mock_index).to receive(:update_filterable_attributes).once
+
+      3.times { described_class.new(store).index(product_1) }
+    end
+
+    it 'polls the settings tasks gently so concurrent jobs do not trip the rate limiter' do
+      expect(settings_task).to receive(:await).with(described_class::TASK_AWAIT_TIMEOUT_MS, described_class::TASK_AWAIT_INTERVAL_MS)
+
+      provider.ensure_index_settings_once!
+    end
+
+    it 'pushes settings again when the storefront custom field schema changes' do
+      described_class.new(store).index(product_1)
+      create(:custom_field_definition, :short_text_field, :searchable, namespace: 'custom', key: 'label')
+
+      expect(mock_index).to receive(:update_searchable_attributes).with(include('cf_custom_label'))
+
+      described_class.new(store).index(product_1)
+    end
+
+    it 'keeps each store index separate' do
+      other_store = create(:store)
+      described_class.new(store).index(product_1)
+
+      expect(mock_index).to receive(:update_filterable_attributes).once
+
+      described_class.new(other_store).ensure_index_settings_once!
+    end
+
+    it 'does not record the settings as pushed when the push fails' do
+      allow(settings_task).to receive(:await).and_raise(::Meilisearch::ApiError.new(429, 'Too Many Requests', nil))
+
+      expect { described_class.new(store).ensure_index_settings_once! }.to raise_error(::Meilisearch::ApiError)
+
+      allow(settings_task).to receive(:await)
+      expect(mock_index).to receive(:update_filterable_attributes).once
+      described_class.new(store).ensure_index_settings_once!
+    end
+  end
+
   describe 'custom_field searchable / sortable settings' do
     let!(:definition) do
       create(:custom_field_definition, :short_text_field, :searchable, :sortable,
