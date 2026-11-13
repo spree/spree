@@ -2422,6 +2422,22 @@
         "meta_description": {
           "label": "Meta-Beschreibung",
           "help": "Eine kurze Zusammenfassung, die Suchmaschinen unter dem Titel anzeigen."
+        },
+        "meta_keywords": {
+          "label": "Meta-Keywords",
+          "help": "Durch Kommas getrennte Keywords für Suchmaschinen."
+        },
+        "facebook": {
+          "label": "Facebook",
+          "placeholder": "https://facebook.com/yourstore"
+        },
+        "twitter": {
+          "label": "X (Twitter)",
+          "placeholder": "@yourstore"
+        },
+        "instagram": {
+          "label": "Instagram",
+          "placeholder": "@yourstore"
         }
       },
       "store_credit": {
@@ -6015,6 +6031,14 @@
       },
       "seo": {
         "title": "Suchmaschinen-Eintrag"
+      },
+      "images": {
+        "logo_label": "Logo",
+        "logo_help": "Wird im Dashboard angezeigt und von deinem Storefront verwendet, zum Beispiel in Suchergebnissen. PNG, JPG oder WebP."
+      },
+      "social": {
+        "title": "Soziale Medien",
+        "description": "Dein Storefront verlinkt diese Konten und nennt sie Suchmaschinen. Gib einen Benutzernamen oder eine vollständige URL ein."
       }
     },
     "table_descriptions": {

@@ -2422,6 +2422,22 @@
         "meta_description": {
           "label": "Mô tả meta",
           "help": "Một công cụ tìm kiếm tóm tắt ngắn hiển thị dưới tiêu đề."
+        },
+        "meta_keywords": {
+          "label": "Từ khóa meta",
+          "help": "Các từ khóa cho công cụ tìm kiếm, phân cách bằng dấu phẩy."
+        },
+        "facebook": {
+          "label": "Facebook",
+          "placeholder": "https://facebook.com/yourstore"
+        },
+        "twitter": {
+          "label": "X (Twitter)",
+          "placeholder": "@yourstore"
+        },
+        "instagram": {
+          "label": "Instagram",
+          "placeholder": "@yourstore"
         }
       },
       "store_credit": {
@@ -5981,6 +5997,14 @@
       },
       "seo": {
         "title": "Danh sách công cụ tìm kiếm"
+      },
+      "images": {
+        "logo_label": "Logo",
+        "logo_help": "Hiển thị trong bảng điều khiển và được cửa hàng của bạn sử dụng, ví dụ trong kết quả tìm kiếm. PNG, JPG hoặc WebP."
+      },
+      "social": {
+        "title": "Mạng xã hội",
+        "description": "Cửa hàng của bạn liên kết đến các tài khoản này và khai báo chúng cho công cụ tìm kiếm. Nhập tên tài khoản hoặc URL đầy đủ."
       }
     },
     "table_descriptions": {

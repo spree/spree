@@ -2422,6 +2422,22 @@
         "meta_description": {
           "label": "メタディスクリプション",
           "help": "検索結果でタイトルの下に表示される短い説明文です。"
+        },
+        "meta_keywords": {
+          "label": "メタキーワード",
+          "help": "検索エンジン向けのキーワード（カンマ区切り）。"
+        },
+        "facebook": {
+          "label": "Facebook",
+          "placeholder": "https://facebook.com/yourstore"
+        },
+        "twitter": {
+          "label": "X (Twitter)",
+          "placeholder": "@yourstore"
+        },
+        "instagram": {
+          "label": "Instagram",
+          "placeholder": "@yourstore"
         }
       },
       "store_credit": {
@@ -6014,6 +6030,14 @@
       },
       "seo": {
         "title": "検索エンジンでの表示"
+      },
+      "images": {
+        "logo_label": "ロゴ",
+        "logo_help": "ダッシュボードに表示され、ストアフロントの検索結果などでも使われます。PNG、JPG、WebP。"
+      },
+      "social": {
+        "title": "ソーシャルメディア",
+        "description": "ストアフロントはこれらのアカウントにリンクし、検索エンジンに伝えます。ハンドル名または完全な URL を入力してください。"
       }
     },
     "table_descriptions": {
