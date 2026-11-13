@@ -169,12 +169,14 @@ jobs:
       - name: Scan the runtime image for known vulnerabilities
         continue-on-error: true
         run: |
+          # The scanner reads an export of the image; it gets no Docker socket.
+          docker save "$IMAGE:$LINE" --output "$RUNNER_TEMP/runtime.tar"
           {
             echo "### Vulnerabilities with a fix available, $LINE ($ARCH)"
             echo '```'
-            docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+            docker run --rm -v "$RUNNER_TEMP/runtime.tar:/runtime.tar:ro" \
               ghcr.io/aquasecurity/trivy@sha256:8f6bb947dbc528902e11f2f5be52f7b519f6a39d5d148f41166f2040499768fb \
-              image --quiet --ignore-unfixed --severity HIGH,CRITICAL "$IMAGE:$LINE"
+              image --quiet --ignore-unfixed --severity HIGH,CRITICAL --input /runtime.tar
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
 
