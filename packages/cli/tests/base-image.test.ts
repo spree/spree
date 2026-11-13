@@ -378,3 +378,31 @@ describe('composeOnBaseImage, with several apps in one compose file', () => {
     expect(composeOnBaseImage(compose, '6.1', 'server')).toBe(compose)
   })
 })
+
+describe('composeOnBaseImage, with other file shapes', () => {
+  const stock =
+    'services:\n  web:\n    build:\n      context: ./server\n      dockerfile: Dockerfile\n      target: dev\n'
+
+  it('reads a file saved with Windows line endings, and keeps them', () => {
+    const moved = composeOnBaseImage(stock.replace(/\n/g, '\r\n'), '6.1', 'server') as string
+    expect(moved).toContain('    image: ghcr.io/spree/spree-base:6.1-build\r\n')
+    expect(moved).not.toContain('build:')
+    expect(moved.replace(/\r\n/g, '')).not.toContain('\n')
+  })
+
+  it('reads a last line that has no newline', () => {
+    const moved = composeOnBaseImage(stock.replace(/\n$/, ''), '6.1', 'server') as string
+    expect(moved).not.toContain('build:')
+    expect(moved.endsWith('\n')).toBe(false)
+
+    // A key of the project on that last line still makes the block its own.
+    expect(composeOnBaseImage(`${stock}      args: {}`, '6.1', 'server')).toBeNull()
+  })
+
+  it('treats differently spelled paths to the Rails app as the same context', () => {
+    for (const context of ['./server/.', './server/../server', 'server/', '"./server"']) {
+      const compose = stock.replace('context: ./server', `context: ${context}`)
+      expect(composeOnBaseImage(compose, '6.1', 'server')).not.toContain('build:')
+    }
+  })
+})

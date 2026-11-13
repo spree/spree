@@ -119,12 +119,24 @@ export function composeOnBaseImage(
   line: string,
   appContext?: string,
 ): string | null {
-  let moved = content
+  // Scanned with Unix line endings and a final newline, so a file saved with
+  // CRLF, or one whose last line is unterminated, is read whole. What is
+  // written back keeps the file's own endings.
+  const crlf = content.includes('\r\n')
+  const unterminated = content !== '' && !content.endsWith('\n')
+  const text = content.replace(/\r\n/g, '\n') + (unterminated ? '\n' : '')
+  const restore = (result: string) => {
+    if (result === text) return content
+    const trimmed = unterminated ? result.replace(/\n$/, '') : result
+    return crlf ? trimmed.replace(/\n/g, '\r\n') : trimmed
+  }
+
+  let moved = text
   let from = 0
   for (;;) {
     BUILD_KEY.lastIndex = from
     const found = BUILD_KEY.exec(moved)
-    if (!found) return moved
+    if (!found) return restore(moved)
 
     const [, , inline, body] = found
     const context = buildContext(inline ?? body.match(/^[ \t]+context:[ \t]*(\S+)/m)?.[1])
@@ -142,13 +154,10 @@ export function composeOnBaseImage(
   }
 }
 
-// `./server/`, `"server"` and `server` name one build context.
+// `./server/`, `"server"`, `./server/.` and `server` name one build context.
 function buildContext(value: string | undefined): string {
-  const cleaned = (value ?? '.')
-    .replace(/^["']|["']$/g, '')
-    .replace(/^\.\//, '')
-    .replace(/\/+$/, '')
-  return cleaned === '' ? '.' : cleaned
+  const unquoted = (value ?? '.').replace(/^["']|["']$/g, '')
+  return path.posix.normalize(unquoted).replace(/\/+$/, '') || '.'
 }
 
 // Replaces the stock `build:` block at `start` with the base image, and makes
