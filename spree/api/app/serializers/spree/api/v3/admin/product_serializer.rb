@@ -21,7 +21,8 @@ module Spree
                    price: ['Price', nullable: true],
                    deleted_at: [:string, nullable: true],
                    metadata: 'Record<string, unknown>',
-                   submission: ['ProductSubmission', nullable: true]
+                   submission: ['ProductSubmission', nullable: true],
+                   collection_ids: [:string, multi: true, comment: 'Collections the product is hand-picked into; rule memberships are left out.']
 
           attributes :status,
                      :metadata, deleted_at: :iso8601,
@@ -115,6 +116,10 @@ module Spree
           many :collections,
                resource: proc { Spree.api.admin_collection_serializer },
                if: proc { expand?('collections') }
+
+          attribute :collection_ids do |product|
+            product.hand_picked_collection_ids.map { |id| Spree::Collection.prefixed_id_for(id) }
+          end
 
           expandable_custom_fields admin: true
 

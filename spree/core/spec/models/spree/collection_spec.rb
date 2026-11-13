@@ -43,6 +43,103 @@ RSpec.describe Spree::Collection, type: :model do
     end
   end
 
+  describe '.find_from_permalink_history!' do
+    let!(:collection) { create(:collection, name: 'Summer', store: store).tap { |record| record.update!(permalink: 'winter') } }
+
+    it 'finds the collection that used the permalink, within the scope' do
+      expect(store.collections.find_from_permalink_history!('summer')).to eq(collection)
+    end
+
+    it 'misses outside the scope' do
+      expect { create(:store).collections.find_from_permalink_history!('summer') }.to raise_error(ActiveRecord::RecordNotFound)
+      expect { store.collections.find_from_permalink_history!('autumn') }.to raise_error(ActiveRecord::RecordNotFound)
+    end
+  end
+
+  describe '#rules=' do
+    let(:collection) { create(:automatic_collection, store: store) }
+    let(:category) { create(:category, store: store) }
+
+    it 'writes preferences through the rule type schema' do
+      collection.update!(rules: [{ type: 'category', value: category.prefixed_id, match_policy: 'is_equal_to',
+                                   preferences: { include_descendants: true } }])
+
+      expect(collection.reload.rules.sole.preferred_include_descendants).to be(true)
+      expect {
+        collection.update(rules: [{ type: 'category', value: category.prefixed_id, match_policy: 'is_equal_to',
+                                    preferences: { include_descendants: 'false' } }])
+      }.to raise_error(Spree::Preferences::InvalidPreferences)
+    end
+
+    it 'refuses preferences the rule type does not declare' do
+      expect {
+        collection.update(rules: [{ type: 'category', value: category.prefixed_id, match_policy: 'is_equal_to', preferences: { foo: 1 } }])
+      }.to raise_error(Spree::Preferences::InvalidPreferences)
+    end
+
+    it 'replaces a rule whose type changes, so the new type reads its own value' do
+      rule = create(:tag_collection_rule, collection: collection, value: 'sale', match_policy: 'is_equal_to')
+
+      collection.update!(rules: [{ id: rule.prefixed_id, type: 'category', value: category.prefixed_id, match_policy: 'is_equal_to' }])
+
+      new_rule = collection.reload.rules.sole
+      expect(new_rule).to be_a(Spree::CollectionRules::Category)
+      expect(new_rule.value).to eq(category.id.to_s)
+      expect(Spree::CollectionRule.exists?(rule.id)).to be(false)
+    end
+  end
+
+  describe '#publications=' do
+    let(:collection) { create(:collection, :unpublished, store: store) }
+    let!(:pos) { create(:channel, store: store, name: 'POS', code: 'pos') }
+
+    it 'replaces the publication set and ignores channels of another store' do
+      collection.update!(publications: [{ channel_id: store.default_channel.prefixed_id }])
+      foreign = create(:channel, store: create(:store))
+
+      collection.update!(publications: [{ channel_id: pos.prefixed_id, published_at: 1.day.from_now }, { channel_id: foreign.prefixed_id }])
+
+      expect(collection.reload.channels).to contain_exactly(pos)
+      expect(collection.publications.published).to be_empty
+    end
+  end
+
+  it 'refuses a publication without a channel instead of unpublishing everywhere' do
+    collection = create(:collection, store: store)
+
+    expect(collection.update(publications: [{ published_at: 1.day.from_now }])).to be(false)
+    expect(collection.reload.publications).not_to be_empty
+  end
+
+  it 'reports an invalid publication window on the collection' do
+    collection = create(:collection, :unpublished, store: store)
+
+    saved = collection.update(publications: [{ channel_id: store.default_channel.prefixed_id,
+                                               published_at: 2.days.from_now, unpublished_at: 1.day.from_now }])
+
+    expect(saved).to be(false)
+    expect(collection.errors[:publications]).to be_present
+  end
+
+  it 'drops its promotion rule links when destroyed' do
+    collection = create(:collection, store: store)
+    rule = Spree::Promotion::Rules::Collection.create!(promotion: create(:promotion, store: store), collection_ids: [collection.id])
+
+    collection.destroy!
+
+    expect(rule.reload.collection_ids).to be_empty
+  end
+
+  describe '.published_on' do
+    it 'lists collections live on the channel' do
+      live = create(:collection, store: store)
+      hidden = create(:collection, :unpublished, store: store)
+
+      expect(described_class.published_on(store.default_channel)).to include(live)
+      expect(described_class.published_on(store.default_channel)).not_to include(hidden)
+    end
+  end
+
   describe 'validations' do
     it 'rejects an unknown sort_order' do
       collection = build(:collection, sort_order: 'nonsense')
@@ -95,6 +192,8 @@ RSpec.describe Spree::Collection, type: :model do
 
   describe 'automatic regeneration callback' do
     let(:collection) { create(:automatic_collection) }
+
+    before { create(:tag_collection_rule, collection: collection, value: 'sale') }
 
     it 'regenerates products when the match policy changes' do
       expect(collection).to receive(:regenerate_products)

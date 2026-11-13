@@ -345,10 +345,23 @@
       },
       "delete_label": "حذف المجموعة",
       "empty": "لا توجد مجموعات بعد.",
-      "fields": {
-        "automatic": {
-          "label": "تحديد المنتجات تلقائيًا وفق قواعد"
+      "exclusions": {
+        "confirm_message": "استبعاد \"{{name}}\"؟ سيغادر المجموعة الآن ويبقى خارجها حتى لو طابقته القواعد.",
+        "confirm_title": "استبعاد المنتج",
+        "description": "تبقى خارج هذه المجموعة مهما طابقتها القواعد. تُطبَّق التغييرات هنا فورًا.",
+        "exclude": "استبعاد",
+        "exclude_row": "استبعاد {{name}}",
+        "messages": {
+          "excluded": "تم استبعاد المنتج",
+          "removed": "تمت إزالة الاستبعاد"
         },
+        "remove": "إزالة الاستبعاد",
+        "remove_confirm_message": "السماح بعودة \"{{name}}\"؟ سيعود إلى المجموعة إذا طابقته القواعد.",
+        "remove_confirm_title": "إزالة الاستبعاد",
+        "remove_row": "إزالة استبعاد {{name}}",
+        "title": "المنتجات المستبعدة"
+      },
+      "fields": {
         "rule_match_policy": {
           "label": "الشرط"
         },
@@ -387,10 +400,8 @@
       "new_title": "مجموعة جديدة",
       "products": {
         "add_cta": "إضافة منتجات",
-        "automatic_hint": "تُحدد المنتجات وفق القواعد أعلاه وتُحدَّث تلقائيًا.",
         "column_product": "المنتج",
         "empty": "لا توجد منتجات في هذه المجموعة بعد.",
-        "empty_automatic": "لا توجد منتجات مطابقة للقواعد بعد.",
         "filter_placeholder": "تصفية المنتجات…",
         "no_matches": "لا توجد منتجات مطابقة للتصفية.",
         "pending_added_badge": "جديد",
@@ -400,20 +411,37 @@
         "remove": "إزالة من المجموعة",
         "remove_selected": "إزالة",
         "restore": "استعادة",
+        "rules_hint": "يعود المنتج الذي تطابقه القواعد بعد إزالته. استبعده لإبقائه خارجًا.",
         "search_placeholder": "ابحث عن منتجات…",
         "select_all": "تحديد الكل",
         "select_row": "تحديد المنتج",
         "title": "المنتجات"
       },
+      "publishing": {
+        "empty": "لم تُنشر بعد على أي قناة بيع.",
+        "manage_description": "اختر قنوات البيع التي تعرض واجهاتها هذه المجموعة."
+      },
       "rule_match_policies": {
         "contains": "يحتوي على",
         "does_not_contain": "لا يحتوي على",
+        "ends_with": "ينتهي بـ",
+        "greater_than": "أكبر من",
         "is_equal_to": "يساوي",
-        "is_not_equal_to": "لا يساوي"
+        "is_not_equal_to": "لا يساوي",
+        "less_than": "أقل من",
+        "starts_with": "يبدأ بـ"
       },
       "rules": {
         "add": "إضافة قاعدة",
-        "description": "اختر المنتجات يدويًا، أو دع القواعد تُبقي المجموعة محدَّثة.",
+        "amount_invalid": "أدخل مبلغًا مثل 49.99.",
+        "boolean_false": "لا",
+        "boolean_true": "نعم",
+        "currency_label": "العملة",
+        "custom_field_empty": "لا توجد حقول مخصصة مُعلَّمة لقواعد المجموعات.",
+        "custom_field_label": "حقل مخصص",
+        "custom_field_placeholder": "اختر حقلًا مخصصًا…",
+        "description": "تختار القواعد المنتجات تلقائيًا. تبقى المنتجات التي تضيفها يدويًا إلى جانبها.",
+        "include_descendants": "تضمين الفئات الفرعية",
         "remove": "إزالة القاعدة",
         "title": "العضوية",
         "on_sale": "معروض بخصم",
@@ -1460,6 +1488,10 @@
         "label": "الدولة"
       },
       "custom_field_definition": {
+        "collection_condition": {
+          "help": "يتيح للمجموعات التلقائية اختيار المنتجات حسب هذا الحقل. حقول المنتج النصية والرقمية ونعم/لا فقط.",
+          "label": "استخدام في قواعد المجموعات"
+        },
         "field_type": {
           "label": "النوع",
           "options": {
@@ -4385,6 +4417,7 @@
             "cart": "سلة التسوق",
             "catalog": "كتالوج",
             "claim": "مطالبة",
+            "collection": "مجموعة",
             "company": "شركة",
             "company_invitation": "دعوة شركة",
             "custom": "Custom",
@@ -5207,6 +5240,7 @@
       },
       "rule_summary": {
         "category_count": "{{count}} فئات",
+        "collection_count": "{{count}} مجموعات",
         "customer_count": "{{count}} عملاء",
         "product_count": "{{count}} منتجات"
       },
@@ -5230,6 +5264,21 @@
         },
         "channel": {
           "label": "القنوات"
+        },
+        "collection": {
+          "empty": "لا توجد مجموعات مطابقة",
+          "label": "المجموعات",
+          "match_policy": {
+            "all": {
+              "description": "يجب أن يحتوي الطلب على منتج من كل مجموعة.",
+              "label": "كل هذه المجموعات"
+            },
+            "any": {
+              "description": "يجب أن يحتوي الطلب على منتج من واحدة منها على الأقل.",
+              "label": "أي من هذه المجموعات"
+            }
+          },
+          "search_placeholder": "ابحث في المجموعات…"
         },
         "country": {
           "empty": "لا توجد بلدان متطابقة",

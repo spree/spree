@@ -1,5 +1,6 @@
 // This file is auto-generated from the request schemas in docs/api-reference by `pnpm generate:params`. Do not edit directly.
 
+import type { CollectionPublicationParams } from './CollectionPublicationParams'
 import type { CollectionRuleParams } from './CollectionRuleParams'
 import type { CustomFieldValueParams } from './CustomFieldValueParams'
 
@@ -20,7 +21,11 @@ export type CollectionUpdateParams = {
   image_signed_id?: string | null
   /** A `signed_id` from `files.upload()` for the square image, or null to remove it. */
   square_image_signed_id?: string | null
-  /** When true, membership is materialized from `rules` instead of curated by hand. */
+  /**
+   * Ignored. Membership combines `rules`, hand-picked products and exclusions.
+   * @deprecated Ignored: a collection is automatic while it has `rules`. Send `rules: []` to remove
+   * them. Removed in 6.2.
+   */
   automatic?: boolean
   /** Whether a product must match all rules or any of them. Defaults to `all`. */
   rules_match_policy?: 'all' | 'any'
@@ -34,6 +39,11 @@ export type CollectionUpdateParams = {
    * and existing rules left out are removed.
    */
   rules?: CollectionRuleParams[]
+  /**
+   * The complete set of channels the collection is published on. Channels left out are unpublished.
+   * Omit on create to publish on every active channel.
+   */
+  publications?: CollectionPublicationParams[]
   /** Custom field values, each validated against its definition. */
   custom_fields?: CustomFieldValueParams[]
 }

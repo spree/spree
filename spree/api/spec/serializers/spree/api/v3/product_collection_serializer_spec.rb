@@ -3,7 +3,7 @@ require 'spec_helper'
 RSpec.describe Spree::Api::V3::ProductCollectionSerializer do
   let(:product) { create(:product) }
   let(:collection) { create(:collection) }
-  let(:product_collection) { Spree::ProductCollection.create!(product: product, collection: collection) }
+  let(:product_collection) { Spree::ProductCollection.create!(product: product, collection: collection, source: 'manual') }
 
   subject(:payload) { described_class.new(product_collection).to_h }
 

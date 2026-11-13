@@ -9,6 +9,8 @@ export type PromotionRuleCreateParams = {
   product_ids?: string[]
   /** For the `category` rule. */
   category_ids?: string[]
+  /** For the `collection` rule. */
+  collection_ids?: string[]
   /** For the `user` rule: the customers who qualify. */
   customer_ids?: string[]
 }

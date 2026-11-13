@@ -125,6 +125,29 @@ RSpec.describe Spree::Api::V3::Store::CategoriesController, type: :controller do
       end
     end
 
+    context 'after a rename' do
+      let!(:renamed) { create(:category, name: 'Shoes', permalink: 'shoes') }
+
+      before { renamed.update!(permalink: 'footwear') }
+
+      it 'resolves the old permalink and returns the current one' do
+        get :show, params: { id: 'shoes' }
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['id']).to eq(renamed.prefixed_id)
+        expect(json_response['permalink']).to eq(renamed.reload.permalink)
+      end
+
+      it "does not resolve another store's old permalink" do
+        foreign = create(:category, store: other_store, name: 'Hats', permalink: 'hats')
+        foreign.update!(permalink: 'caps')
+
+        get :show, params: { id: 'hats' }
+
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+
     context 'finding by prefix_id' do
       it 'returns the category by prefix_id' do
         get :show, params: { id: category.prefixed_id }

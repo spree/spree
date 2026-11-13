@@ -1,6 +1,7 @@
 import type {
   Category,
   Channel,
+  Collection,
   Country,
   Customer,
   CustomerGroup,
@@ -38,6 +39,7 @@ export interface PromotionRuleFormDraft extends PromotionRuleDraftParams {
    */
   products?: Product[]
   categories?: Category[]
+  collections?: Collection[]
   customers?: Customer[]
   customer_groups?: CustomerGroup[]
   countries?: Country[]
@@ -171,9 +173,11 @@ export function ruleDraftFromRule(rule: PromotionRule): PromotionRuleFormDraft {
     preferences: rule.preferences,
     product_ids: rule.product_ids ?? undefined,
     category_ids: rule.category_ids ?? undefined,
+    collection_ids: rule.collection_ids ?? undefined,
     customer_ids: rule.customer_ids ?? undefined,
     products: rule.products,
     categories: rule.categories,
+    collections: rule.collections,
     customers: rule.customers,
     customer_groups: rule.customer_groups,
     countries: rule.countries,
@@ -216,6 +220,7 @@ export function ruleDraftToPayload(draft: PromotionRuleFormDraft): PromotionRule
     channels: _______,
     markets: ________,
     option_values: _________,
+    collections: __________,
     ...rest
   } = draft
   return rest

@@ -631,6 +631,11 @@
       "code": {
         "label": "Mã"
       },
+      "collection_rule": {
+        "value": {
+          "label": "Giá trị"
+        }
+      },
       "company": {
         "label": "Công ty"
       },
@@ -1980,6 +1985,34 @@
         "tag": {
           "name": "Gắn thẻ",
           "description": "Sản phẩm có thẻ phù hợp"
+        },
+        "category": {
+          "name": "Danh mục",
+          "description": "Sản phẩm trong một danh mục, có thể gồm danh mục con"
+        },
+        "product_type": {
+          "name": "Loại sản phẩm",
+          "description": "Sản phẩm thuộc một loại"
+        },
+        "price": {
+          "name": "Giá",
+          "description": "Sản phẩm có biến thể giá trên hoặc dưới một mức"
+        },
+        "in_stock": {
+          "name": "Còn hàng",
+          "description": "Sản phẩm có biến thể bán được ngay"
+        },
+        "title": {
+          "name": "Tiêu đề",
+          "description": "Sản phẩm có tên khớp văn bản"
+        },
+        "seller": {
+          "name": "Người bán",
+          "description": "Sản phẩm do người bán trên sàn đăng"
+        },
+        "custom_field": {
+          "name": "Trường tùy chỉnh",
+          "description": "Sản phẩm có trường tùy chỉnh khớp giá trị"
         }
       },
       "commission_rule": {
@@ -2136,6 +2169,10 @@
         "product": {
           "name": "(Các) sản phẩm",
           "description": "Đơn hàng bao gồm (các) sản phẩm được chỉ định"
+        },
+        "collection": {
+          "name": "Bộ sưu tập",
+          "description": "Đơn hàng có sản phẩm thuộc bộ sưu tập chỉ định"
         }
       },
       "seller_requirement": {

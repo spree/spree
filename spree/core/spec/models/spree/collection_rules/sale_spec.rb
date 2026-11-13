@@ -12,6 +12,14 @@ RSpec.describe Spree::CollectionRules::Sale, type: :model do
     let!(:regular) { create(:product, price: 10) }
     let(:scope) { store.products.where(id: [on_sale.id, regular.id]) }
 
+    it 'reads the rule currency rather than the store default' do
+      eur_sale = create(:product, price: 10)
+      create(:price, variant: eur_sale.default_variant, currency: 'EUR', amount: 8, compare_at_amount: 9)
+      rule = build(:sale_collection_rule, :is_equal_to, collection: collection, currency: 'EUR')
+
+      expect(rule.apply(store.products)).to contain_exactly(eur_sale)
+    end
+
     it 'returns the scope unchanged for an unknown match policy' do
       rule = build(:sale_collection_rule, collection: collection, value: true, match_policy: 'bogus')
 

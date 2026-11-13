@@ -1189,34 +1189,49 @@ describe Spree::Product, type: :model do
       expect(product.reload.collections).not_to include(foreign)
     end
 
-    # Automatic membership is materialized from rules: it must survive a write
-    # that doesn't mention it, and must not be settable by hand.
-    context 'with automatic collections' do
+    # The list is the hand-picked set; rule memberships survive a write that
+    # doesn't mention them.
+    context 'with rule memberships' do
       let!(:automatic) { create(:automatic_collection, store: store) }
 
-      before { Spree::ProductCollection.create!(collection: automatic, product: product) }
+      before { create(:product_collection, :rule, collection: automatic, product: product) }
 
-      it 'preserves automatic membership when assigning manual collections' do
+      it 'keeps a rule membership the payload leaves out' do
         product.update!(collection_ids: [collection.id])
 
         expect(product.reload.collections).to include(collection, automatic)
+        expect(product.hand_picked_collection_ids).to eq([collection.id])
       end
 
-      it 'ignores an automatic collection passed by hand' do
-        other_automatic = create(:automatic_collection, store: store)
+      it 'makes a rule membership the payload names hand-picked' do
+        product.update!(collection_ids: [automatic.id])
 
-        product.update!(collection_ids: [collection.id, other_automatic.id])
-
-        expect(product.reload.collections).to include(collection, automatic)
-        expect(product.reload.collections).not_to include(other_automatic)
+        expect(Spree::ProductCollection.find_by(collection: automatic, product: product).source).to eq('manual')
       end
 
-      it 'clears manual membership on an empty array without touching automatic' do
+      it 'drops hand-picks on an empty array and regenerates their collection' do
         product.update!(collection_ids: [collection.id])
 
         product.update!(collection_ids: [])
 
         expect(product.reload.collections).to eq([automatic])
+      end
+
+      it 'counts a pre-6.1 membership of a manual collection as hand-picked' do
+        create(:product_collection, collection: collection, product: product).update_columns(source: nil)
+
+        expect(product.reload.hand_picked_collection_ids).to eq([collection.id])
+
+        product.update!(collection_ids: [])
+        expect(product.reload.collections).to eq([automatic])
+      end
+
+      it 'lifts an exclusion when the product is hand-picked' do
+        create(:collection_exclusion, collection: collection, product: product)
+
+        product.update!(collection_ids: [collection.id])
+
+        expect(collection.exclusions.reload).to be_empty
       end
     end
   end
@@ -1238,8 +1253,10 @@ describe Spree::Product, type: :model do
 
   describe 'after_commit :auto_match_collections' do
     it 'is invoked on an eligible save' do
-      expect_any_instance_of(described_class).to receive(:auto_match_collections).at_least(:once)
-      create(:product, store: store)
+      create(:automatic_collection, store: store)
+
+      expect { create(:product, store: store) }.
+        to have_enqueued_job(Spree::Products::AutoMatchCollectionsJob).at_least(:once)
     end
   end
 
@@ -1256,6 +1273,65 @@ describe Spree::Product, type: :model do
     it 'does not enqueue when the store has no automatic collections' do
       expect { product.auto_match_collections }.
         not_to have_enqueued_job(Spree::Products::AutoMatchCollectionsJob)
+    end
+
+    it 'only enqueues for rule types a collection of the store uses' do
+      create(:tag_collection_rule, collection: create(:automatic_collection, store: store), value: 'sale')
+
+      expect { product.auto_match_collections(rule_types: [Spree::CollectionRules::Price]) }.
+        not_to have_enqueued_job(Spree::Products::AutoMatchCollectionsJob)
+      expect { product.auto_match_collections(rule_types: [Spree::CollectionRules::Tag]) }.
+        to have_enqueued_job(Spree::Products::AutoMatchCollectionsJob)
+    end
+
+    it 'enqueues once while a job is pending' do
+      create(:automatic_collection, store: store)
+      allow(Rails).to receive(:cache).and_return(ActiveSupport::Cache::MemoryStore.new)
+
+      expect { 2.times { product.auto_match_collections } }.
+        to have_enqueued_job(Spree::Products::AutoMatchCollectionsJob).exactly(:once)
+    end
+
+    it 'is enqueued when a price changes and a collection uses a price rule' do
+      create(:price_collection_rule, collection: create(:automatic_collection, store: store))
+
+      expect { Spree::Price.find_by(variant: product.default_variant, currency: 'USD').update!(amount: 77) }.
+        to have_enqueued_job(Spree::Products::AutoMatchCollectionsJob).with(product.id)
+    end
+
+    it 'still enqueues when the cache is unreachable' do
+      create(:automatic_collection, store: store)
+      allow(Rails.cache).to receive(:read).and_return(nil)
+      allow(Rails.cache).to receive(:write).and_return(nil)
+
+      expect { product.auto_match_collections }.to have_enqueued_job(Spree::Products::AutoMatchCollectionsJob)
+    end
+
+    it 'is enqueued when an allocation takes the last unit' do
+      create(:in_stock_collection_rule, collection: create(:automatic_collection, store: store))
+      level = product.default_variant.stock_levels.first
+      level.update_columns(count_on_hand: 1, allocated_count: 0, backorderable: false)
+
+      expect { level.reload.adjust_allocated_count(1) }.
+        to have_enqueued_job(Spree::Products::AutoMatchCollectionsJob).with(product.id)
+    end
+
+    it 'is not enqueued when stock moves without crossing zero' do
+      create(:in_stock_collection_rule, collection: create(:automatic_collection, store: store))
+      level = product.default_variant.stock_levels.first
+      level.update_columns(count_on_hand: 10, allocated_count: 0)
+
+      expect { level.reload.update!(count_on_hand: 9) }.not_to have_enqueued_job(Spree::Products::AutoMatchCollectionsJob)
+    end
+
+    it 'is enqueued when stock changes and a collection uses an in-stock rule' do
+      create(:in_stock_collection_rule, collection: create(:automatic_collection, store: store))
+
+      level = product.default_variant.stock_levels.first
+      level.update_columns(count_on_hand: 0, allocated_count: 0, backorderable: false)
+
+      expect { level.reload.update!(count_on_hand: 7) }.
+        to have_enqueued_job(Spree::Products::AutoMatchCollectionsJob).with(product.id)
     end
   end
 

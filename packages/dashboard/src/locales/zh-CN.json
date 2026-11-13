@@ -340,10 +340,23 @@
       },
       "delete_label": "删除系列",
       "empty": "暂无系列。",
-      "fields": {
-        "automatic": {
-          "label": "根据规则自动选入商品"
+      "exclusions": {
+        "confirm_message": "排除“{{name}}”？它会立即移出系列，即使符合规则也不会再加入。",
+        "confirm_title": "排除商品",
+        "description": "无论规则如何匹配，都不会加入此系列。此处的更改会立即生效。",
+        "exclude": "排除",
+        "exclude_row": "排除 {{name}}",
+        "messages": {
+          "excluded": "商品已排除",
+          "removed": "已取消排除"
         },
+        "remove": "取消排除",
+        "remove_confirm_message": "重新允许“{{name}}”？如果符合规则，它会重新加入系列。",
+        "remove_confirm_title": "取消排除",
+        "remove_row": "取消排除 {{name}}",
+        "title": "已排除的商品"
+      },
+      "fields": {
         "rule_match_policy": {
           "label": "条件"
         },
@@ -382,10 +395,8 @@
       "new_title": "新建系列",
       "products": {
         "add_cta": "添加商品",
-        "automatic_hint": "商品由上方规则决定，并会自动更新。",
         "column_product": "商品",
         "empty": "该系列暂无商品。",
-        "empty_automatic": "暂无商品符合规则。",
         "filter_placeholder": "筛选商品…",
         "no_matches": "没有符合筛选条件的商品。",
         "pending_added_badge": "新增",
@@ -395,20 +406,37 @@
         "remove": "从系列中移除",
         "remove_selected": "移除",
         "restore": "恢复",
+        "rules_hint": "符合规则的商品在移除后会重新出现。排除它即可使其不再加入。",
         "search_placeholder": "搜索商品…",
         "select_all": "全选",
         "select_row": "选择商品",
         "title": "商品"
       },
+      "publishing": {
+        "empty": "尚未在任何销售渠道发布。",
+        "manage_description": "选择在其店面展示此系列的销售渠道。"
+      },
       "rule_match_policies": {
         "contains": "包含",
         "does_not_contain": "不包含",
+        "ends_with": "结尾是",
+        "greater_than": "大于",
         "is_equal_to": "等于",
-        "is_not_equal_to": "不等于"
+        "is_not_equal_to": "不等于",
+        "less_than": "小于",
+        "starts_with": "开头是"
       },
       "rules": {
         "add": "添加规则",
-        "description": "手动选择商品，或由规则自动维护系列。",
+        "amount_invalid": "请输入金额，例如 49.99。",
+        "boolean_false": "否",
+        "boolean_true": "是",
+        "currency_label": "货币",
+        "custom_field_empty": "没有标记为可用于系列规则的自定义字段。",
+        "custom_field_label": "自定义字段",
+        "custom_field_placeholder": "选择自定义字段…",
+        "description": "规则会自动挑选商品。手动添加的商品会一并保留。",
+        "include_descendants": "包含子分类",
         "remove": "删除规则",
         "title": "商品来源",
         "on_sale": "促销中",
@@ -1437,6 +1465,10 @@
         "label": "国家/地区"
       },
       "custom_field_definition": {
+        "collection_condition": {
+          "help": "允许自动系列按此字段挑选商品。仅限商品的文本、数字和是/否字段。",
+          "label": "用于系列规则"
+        },
         "field_type": {
           "label": "类型",
           "options": {
@@ -4337,6 +4369,7 @@
             "cart": "购物车",
             "catalog": "目录",
             "claim": "索赔",
+            "collection": "系列",
             "company": "公司",
             "company_invitation": "公司邀请",
             "custom": "自定义",
@@ -5153,6 +5186,7 @@
       },
       "rule_summary": {
         "category_count": "{{count}} 个分类",
+        "collection_count": "{{count}} 个系列",
         "customer_count": "{{count}} 位客户",
         "product_count": "{{count}} 个商品"
       },
@@ -5176,6 +5210,21 @@
         },
         "channel": {
           "label": "渠道"
+        },
+        "collection": {
+          "empty": "没有匹配的系列",
+          "label": "系列",
+          "match_policy": {
+            "all": {
+              "description": "订单必须包含每个系列的商品。",
+              "label": "所有这些系列"
+            },
+            "any": {
+              "description": "订单必须至少包含其中一个系列的商品。",
+              "label": "任一系列"
+            }
+          },
+          "search_placeholder": "搜索系列…"
         },
         "country": {
           "empty": "没有匹配的国家/地区",

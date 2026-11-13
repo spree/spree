@@ -4,15 +4,20 @@ module Spree
       prepend Spree::ServiceModule::Base
       include Spree::ProductMemberships
 
-      # Removes the given products from the given collections and re-packs positions.
+      # Removes the given products from the given collections and re-packs
+      # positions. A collection with rules is regenerated afterwards, so a
+      # product its rules still match comes back as a rule member; to keep it
+      # out, exclude it.
       #
       # @param collections [Array<Spree::Collection>]
       # @param products [Array<Spree::Product>]
+      # @param regenerate [Boolean] false when the caller keeps the product out itself
       # @return [Spree::ServiceModule::Base::Result]
-      def call(collections:, products:)
+      def call(collections:, products:, regenerate: true)
         return if collections.blank? || products.blank?
 
         remove_memberships(collections, products)
+        collections.each(&:enqueue_regenerate_products) if regenerate
         success(true)
       end
 

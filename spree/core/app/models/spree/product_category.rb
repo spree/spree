@@ -26,6 +26,7 @@ module Spree
     # skip these callbacks and recompute explicitly.
     after_create :recalculate_category_products_count
     after_destroy :recalculate_category_products_count
+    after_commit -> { product&.auto_match_collections(rule_types: [Spree::CollectionRules::Category]) }, on: %i[create destroy]
 
     self.whitelisted_ransackable_attributes = ['category_id', 'product_id']
 

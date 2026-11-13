@@ -3,84 +3,99 @@ module Spree
     class RegenerateProducts
       prepend ::Spree::ServiceModule::Base
 
-      # Rebuilds a collection's materialized ProductCollection membership from its rules.
+      # Brings a collection's rule-derived membership up to date. Rows the
+      # rules no longer match are removed and newly matched products are
+      # appended; hand-picked rows are never touched, and excluded products
+      # never stay. Surviving rows keep their positions, so a manual sort
+      # order covers rule-derived and hand-picked products alike.
       #
       # @param collection [Spree::Collection]
       # @return [Spree::ServiceModule::Base::Result]
       def call(collection:)
         return if collection.nil?
         return if collection.destroyed?
-        return if collection.manual?
 
-        # Loaded rather than plucked: a row dropped below is gone by the time
-        # its deleted event can be published, so it has to be held.
-        previous_rows = collection.product_collections.order(position: :asc).to_a
-        previous_products_ids = previous_rows.map(&:product_id)
-        matching_ids = collection.products_matching_rules.ids
-        matching = matching_ids.to_set
+        collection.claim_unknown_membership_sources!
+        memberships = Spree::ProductCollection.where(collection_id: collection.id)
+        sources = memberships.order(:position).pluck(:product_id, :source).to_h
 
-        retained_rows = previous_rows.select { |row| matching.include?(row.product_id) }
-        removed_rows = previous_rows - retained_rows
-        added_ids = matching_ids - previous_products_ids
+        excluded_ids = collection.exclusions.pluck(:product_id)
+        matched_ids = collection.products_matching_rules.where.not(id: excluded_ids).ids
+        rule_ids = sources.reject { |_, source| source == 'manual' }.keys
 
-        # Hard-delete (no callbacks). Class-level delete rather than the
-        # association proxy, which under `dependent: :destroy_async` doesn't
-        # reliably remove rows here.
-        Spree::ProductCollection.where(id: removed_rows.map(&:id)).delete_all if removed_rows.any?
+        stale_ids = (rule_ids - matched_ids) | (sources.keys & excluded_ids)
+        new_ids = matched_ids - sources.keys
 
-        # Close the gaps the removals left, keeping the survivors in the order
-        # they were already in. One statement rather than one per row:
-        # dropping an early member shifts every row behind it.
-        moved = retained_rows.each_with_index.filter_map do |row, index|
-          next if row.position == index + 1
-
-          { id: row.id, collection_id: collection.id, product_id: row.product_id,
-            position: index + 1, created_at: row.created_at, updated_at: Time.current }
+        removed = []
+        ApplicationRecord.transaction do
+          removed = remove(memberships, stale_ids, excluded_ids)
+          append(collection, memberships, new_ids)
         end
 
-        Spree::ProductCollection.upsert_all(moved, unique_by: (:id unless Spree.mysql?)) if moved.any?
-
-        if added_ids.any?
-          records_to_insert = added_ids.map.with_index(retained_rows.size + 1) do |product_id, position|
-            product_collection_attributes(product_id, collection, position)
-          end
-
-          Spree::ProductCollection.insert_all(records_to_insert)
-        end
-
-        # Expire cache + reindex the union of previous and new members, so products
-        # dropped when the match set empties also refresh their stale collection_ids.
-        products = Spree::Product.where(id: (previous_products_ids + matching_ids).uniq)
-        products.touch_all
-        products.each(&:enqueue_search_index)
-
-        # counter caches — bulk insert/delete bypass the ProductCollection counter_cache callbacks
-        Spree::Collection.reset_counters(collection.id, :product_collections)
-        Spree::Product.reset_counters_in_bulk(previous_products_ids + matching_ids, :product_collections)
-
-        publish_membership_events(collection, removed_rows, added_ids)
-
+        refresh(collection, stale_ids + new_ids)
+        publish_events(removed, 'deleted')
+        publish_events(memberships.where(product_id: new_ids), 'created') if new_ids.any?
         success(collection)
       end
 
       private
 
-      def publish_membership_events(collection, removed_rows, added_ids)
-        removed_rows.each { |row| row.publish_event('product_collection.deleted') }
-        return if added_ids.empty?
+      # Deletes the rows and closes the gaps they leave in the positions.
+      # Excluded products go whatever their source; other stale rows only if
+      # they are still rule rows, so a hand-pick made meanwhile survives.
+      # Returns the deleted rows, held for their events.
+      def remove(memberships, product_ids, excluded_ids)
+        return [] if product_ids.empty?
 
-        Spree::ProductCollection.where(collection_id: collection.id, product_id: added_ids).
-          find_each { |row| row.publish_event('product_collection.created') }
+        removed = memberships.where(product_id: product_ids & excluded_ids).
+                  or(memberships.where(product_id: product_ids - excluded_ids).where.not(source: 'manual')).
+                  order(:id).lock.to_a
+        Spree::ProductCollection.where(id: removed.map(&:id)).delete_all
+        now = Time.current
+        # Locked so a row deleted meanwhile is not re-inserted by the upsert.
+        remaining = memberships.order(:id).lock.pluck(:position, :collection_id, :product_id, :source).sort_by(&:first).map { |row| row.drop(1) }
+        return removed if remaining.empty?
+
+        rows = remaining.map.with_index(1) do |(collection_id, product_id, source), position|
+          { collection_id: collection_id, product_id: product_id, source: source, position: position, created_at: now, updated_at: now }
+        end
+        Spree::ProductCollection.upsert_all(rows, unique_by: (%i[collection_id product_id] unless Spree.mysql?), update_only: %i[position])
+        removed
       end
 
-      def product_collection_attributes(product_id, collection, position)
-        {
-          product_id: product_id,
-          collection_id: collection.id,
-          position: position,
-          created_at: Time.current,
-          updated_at: Time.current
-        }
+      def append(collection, memberships, product_ids)
+        return if product_ids.empty?
+
+        position = memberships.maximum(:position).to_i
+        now = Time.current
+
+        Spree::ProductCollection.insert_all(
+          product_ids.map do |product_id|
+            {
+              collection_id: collection.id, product_id: product_id, source: 'rule',
+              position: (position += 1), created_at: now, updated_at: now
+            }
+          end
+        )
+      end
+
+      # Bulk writes skip the counter caches and touches, so they happen here.
+      def refresh(collection, changed_product_ids)
+        Spree::Collection.reset_counters(collection.id, :product_collections)
+        return if changed_product_ids.empty?
+
+        Spree::Product.reset_counters_in_bulk(changed_product_ids, :product_collections)
+        products = Spree::Product.where(id: changed_product_ids)
+        products.touch_all
+        products.each(&:enqueue_search_index)
+      end
+
+      def publish_events(memberships, action)
+        memberships = memberships.to_a
+        return if memberships.empty?
+
+        ActiveRecord::Associations::Preloader.new(records: memberships, associations: { product: :store }).call
+        memberships.each { |membership| membership.publish_event("product_collection.#{action}") }
       end
     end
   end

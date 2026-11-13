@@ -16,6 +16,13 @@ module Spree
 
     before { Spree::Collections::AddProducts.call(collections: [collection], products: products) }
 
+    it 'regenerates a collection with rules, so products its rules match come back' do
+      create(:tag_collection_rule, collection: collection, value: 'sale')
+
+      expect { described_class.call(collections: [collection], products: [products.second]) }.
+        to have_enqueued_job(Spree::Collections::RegenerateProductsJob).with(collection.id)
+    end
+
     it 'removes the given products and re-packs positions' do
       described_class.call(collections: [collection], products: [products.second])
 

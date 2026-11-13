@@ -797,6 +797,8 @@ paths:
                   description_html: ''
                   image_url:
                   square_image_url:
+                  image_alt:
+                  square_image_alt:
                 meta:
                   page: 1
                   limit: 25
@@ -878,6 +880,8 @@ paths:
                 description_html: ''
                 image_url:
                 square_image_url:
+                image_alt:
+                square_image_alt:
               schema:
                 "$ref": "#/components/schemas/Collection"
         '404':
@@ -1064,7 +1068,6 @@ paths:
           | Prefix | Attributes |
           |---|---|
           | `categories_` | `automatic`, `children_count`, `created_at`, `depth`, `id`, `name`, `parent_id`, `permalink`, `position`, `pretty_name`, `products_count`, `updated_at` |
-          | `collections_` | `automatic`, `created_at`, `id`, `name`, `permalink`, `position`, `products_count`, `sort_order`, `updated_at` |
           | `tags_` | `created_at`, `id`, `name`, `updated_at` |
 
           </Accordion>
@@ -1097,8 +1100,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 3836979
-                  slug: product-3836979
+                  name: Product 3876979
+                  slug: product-3876979
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1357,7 +1360,6 @@ paths:
           | Prefix | Attributes |
           |---|---|
           | `categories_` | `automatic`, `children_count`, `created_at`, `depth`, `id`, `name`, `parent_id`, `permalink`, `position`, `pretty_name`, `products_count`, `updated_at` |
-          | `collections_` | `automatic`, `created_at`, `id`, `name`, `permalink`, `position`, `products_count`, `sort_order`, `updated_at` |
           | `tags_` | `created_at`, `id`, `name`, `updated_at` |
 
           </Accordion>
@@ -1390,8 +1392,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 4319085
-                  slug: product-4319085
+                  name: Product 4359085
+                  slug: product-4359085
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1422,8 +1424,8 @@ paths:
                   original_price:
                   seller_id:
                 - id: prod_gbHJdmfrXB
-                  name: Product 4328209
-                  slug: product-4328209
+                  name: Product 4368209
+                  slug: product-4368209
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1552,8 +1554,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 4596885
-                slug: product-4596885
+                name: Product 4636885
+                slug: product-4636885
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -1778,7 +1780,6 @@ paths:
           | Prefix | Attributes |
           |---|---|
           | `categories_` | `automatic`, `children_count`, `created_at`, `depth`, `id`, `name`, `parent_id`, `permalink`, `position`, `pretty_name`, `products_count`, `updated_at` |
-          | `collections_` | `automatic`, `created_at`, `id`, `name`, `permalink`, `position`, `products_count`, `sort_order`, `updated_at` |
           | `tags_` | `created_at`, `id`, `name`, `updated_at` |
 
           </Accordion>
@@ -2190,7 +2191,7 @@ paths:
           content:
             application/json:
               example:
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--22ede2e3d9cdad77551bf7a67e01face0a96aedc
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--ca2de1e1371d135da8adcefbc4d976658957b0f0
                 filename: purchase-order.pdf
                 content_type: application/pdf
                 byte_size: 48210
@@ -2198,7 +2199,7 @@ paths:
                 expires_at: '2026-01-16T12:00:00.000Z'
                 upload:
                   method: PUT
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiIwc3NuNW5kM3RneWtwcWJndXdybGprZjNwbjc4IiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjQ4MjEwLCJjaGVja3N1bSI6IjVXMjhrY2ZxcDlLMGY1djRZN2VyUkE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--a14c3a39c55e67d9104f389ddda9d8126fb71040
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiIwc3NuNW5kM3RneWtwcWJndXdybGprZjNwbjc4IiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjQ4MjEwLCJjaGVja3N1bSI6IjVXMjhrY2ZxcDlLMGY1djRZN2VyUkE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--124686539eb9be09ad4d793f9836d40a131202db
                   headers:
                     Content-Type: application/pdf
               schema:
@@ -2505,8 +2506,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 354715
-                    slug: product-354715
+                    name: Product 358715
+                    slug: product-358715
                     options_text: ''
                     price: '10.00'
                     display_price: "$10.00"
@@ -2626,8 +2627,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 3552171
-                    slug: product-3552171
+                    name: Product 3592171
+                    slug: product-3592171
                     options_text: ''
                     price: '10.00'
                     display_price: "$10.00"
@@ -2915,7 +2916,7 @@ paths:
                 total_quantity: 0
                 warnings:
                 - code: line_item_removed
-                  message: Product 359307 was removed because it was sold out
+                  message: Product 363307 was removed because it was sold out
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                 coupon_code:
@@ -3158,8 +3159,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3603263
-                  slug: product-3603263
+                  name: Product 3643263
+                  slug: product-3643263
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -3382,8 +3383,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3628992
-                  slug: product-3628992
+                  name: Product 3668992
+                  slug: product-3668992
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -3631,8 +3632,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3654794
-                  slug: product-3654794
+                  name: Product 3694794
+                  slug: product-3694794
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -3952,8 +3953,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3982614
-                  slug: product-3982614
+                  name: Product 4022614
+                  slug: product-4022614
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -4147,8 +4148,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3993461
-                  slug: product-3993461
+                  name: Product 4033461
+                  slug: product-4033461
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -4336,8 +4337,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 4018182
-                  slug: product-4018182
+                  name: Product 4058182
+                  slug: product-4058182
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -4657,8 +4658,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 4035702
-                  slug: product-4035702
+                  name: Product 4075702
+                  slug: product-4075702
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -4901,8 +4902,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 4079569
-                  slug: product-4079569
+                  name: Product 4119569
+                  slug: product-4119569
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -5031,10 +5032,10 @@ paths:
                 total_quantity: 2
                 warnings:
                 - code: delivery_unavailable
-                  message: Product 41063 cannot be delivered to the selected address
+                  message: Product 41463 cannot be delivered to the selected address
                   line_item_id: li_UkLWZg9DAJ
                 - code: delivery_unavailable
-                  message: Product 411298 cannot be delivered to the selected address
+                  message: Product 415298 cannot be delivered to the selected address
                   line_item_id: li_gbHJdmfrXB
                 coupon_code:
                 item_total: '29.99'
@@ -5093,8 +5094,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 41063
-                  slug: product-41063
+                  name: Product 41463
+                  slug: product-41463
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -5124,8 +5125,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 411298
-                  slug: product-411298
+                  name: Product 415298
+                  slug: product-415298
                   options_text: ''
                   price: '19.99'
                   display_price: "$19.99"
@@ -5340,8 +5341,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 4179165
-                  slug: product-4179165
+                  name: Product 4219165
+                  slug: product-4219165
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -6148,8 +6149,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 4829789
-                  slug: product-4829789
+                  name: Product 4869789
+                  slug: product-4869789
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -6333,8 +6334,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 484179
-                  slug: product-484179
+                  name: Product 488179
+                  slug: product-488179
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -6694,8 +6695,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 421496
-                  slug: product-421496
+                  name: Product 425496
+                  slug: product-425496
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -8074,8 +8075,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 3855270
-                    slug: product-3855270
+                    name: Product 3895270
+                    slug: product-3895270
                     options_text: ''
                     price: '10.00'
                     display_price: "$10.00"
@@ -8403,8 +8404,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3875633
-                  slug: product-3875633
+                  name: Product 3915633
+                  slug: product-3915633
                   options_text: ''
                   price: '10.00'
                   display_price: "$10.00"
@@ -11298,7 +11299,7 @@ paths:
                 variant:
                   id: variant_gbHJdmfrXB
                   product_id: prod_gbHJdmfrXB
-                  sku: SKU-594
+                  sku: SKU-598
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -11384,7 +11385,7 @@ paths:
                 variant:
                   id: variant_UkLWZg9DAJ
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-595
+                  sku: SKU-599
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -11812,7 +11813,7 @@ paths:
                   slug: privacy-policy
                   body: ''
                   body_html: ''
-                  updated_at: '2026-11-10T13:27:20.350Z'
+                  updated_at: '2026-11-09T10:27:03.490Z'
                 - id: pol_OIJLhNcSbf
                   name: Privacy Policy
                   slug: privacy-policy-f4e5666d-52c2-4d89-aec5-cc55d69c7174
@@ -11830,19 +11831,19 @@ paths:
                   slug: returns-policy
                   body: ''
                   body_html: ''
-                  updated_at: '2026-11-10T13:27:20.359Z'
+                  updated_at: '2026-11-09T10:27:03.492Z'
                 - id: pol_VqXmZF31wY
                   name: Shipping Policy
                   slug: shipping-policy
                   body: ''
                   body_html: ''
-                  updated_at: '2026-11-10T13:27:20.367Z'
+                  updated_at: '2026-11-09T10:27:03.495Z'
                 - id: pol_UkLWZg9DAJ
                   name: Terms of Service
                   slug: terms-of-service
                   body: ''
                   body_html: ''
-                  updated_at: '2026-11-10T13:27:20.335Z'
+                  updated_at: '2026-11-09T10:27:03.487Z'
                 meta:
                   page: 1
                   limit: 25
@@ -12914,8 +12915,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 3845649
-                    slug: product-3845649
+                    name: Product 3885649
+                    slug: product-3885649
                     options_text: ''
                     price: '10.00'
                     display_price: "$10.00"
@@ -15361,6 +15362,28 @@ components:
       - denied_at
       - canceled_at
       x-typelizer: true
+    CollectionPublication:
+      type: object
+      properties:
+        id:
+          type: string
+        published_at:
+          type: string
+          nullable: true
+        unpublished_at:
+          type: string
+          nullable: true
+        collection_id:
+          type: string
+        channel_id:
+          type: string
+      required:
+      - id
+      - published_at
+      - unpublished_at
+      - collection_id
+      - channel_id
+      x-typelizer: true
     Collection:
       type: object
       properties:
@@ -15394,6 +15417,8 @@ components:
           nullable: true
         products_count:
           type: number
+          description: Members of the collection in every market. A market-correct
+            count is the listing endpoint `meta.count`.
         description:
           type: string
         description_html:
@@ -15402,6 +15427,12 @@ components:
           type: string
           nullable: true
         square_image_url:
+          type: string
+          nullable: true
+        image_alt:
+          type: string
+          nullable: true
+        square_image_alt:
           type: string
           nullable: true
         custom_fields:
@@ -15422,6 +15453,8 @@ components:
       - description_html
       - image_url
       - square_image_url
+      - image_alt
+      - square_image_alt
       x-typelizer: true
     CompanyInvitation:
       type: object
@@ -21540,6 +21573,38 @@ components:
       - display_compare_at_amount
       - price_list_id
       x-typelizer: true
+    ProductCategory:
+      type: object
+      properties:
+        id:
+          type: string
+        product_id:
+          type: string
+          nullable: true
+        category_id:
+          type: string
+          nullable: true
+      required:
+      - id
+      - product_id
+      - category_id
+      x-typelizer: true
+    ProductCollection:
+      type: object
+      properties:
+        id:
+          type: string
+        product_id:
+          type: string
+          nullable: true
+        collection_id:
+          type: string
+          nullable: true
+      required:
+      - id
+      - product_id
+      - collection_id
+      x-typelizer: true
     ProductFilterAvailabilityOption:
       type: object
       properties:
@@ -25246,7 +25311,6 @@ components:
         updated_at: datetime
       associations:
         categories: Category
-        collections: Collection
         tags: Tag
       scopes:
         ascend_by_price: boolean

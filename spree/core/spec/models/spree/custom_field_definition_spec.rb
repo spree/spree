@@ -50,6 +50,18 @@ RSpec.describe Spree::CustomFieldDefinition, type: :model do
     end
   end
 
+  describe 'collection_condition validation' do
+    it 'allows product text, number and boolean fields' do
+      expect(build(:custom_field_definition, :number_field, collection_condition: true)).to be_valid
+      expect(build(:custom_field_definition, :boolean_field, collection_condition: true)).to be_valid
+    end
+
+    it 'refuses other field types and resources' do
+      expect(build(:custom_field_definition, :json_field, collection_condition: true)).not_to be_valid
+      expect(build(:custom_field_definition, resource_type: 'Spree::Customer', collection_condition: true)).not_to be_valid
+    end
+  end
+
   describe 'searchable / sortable validations' do
     it 'allows searchable on short_text' do
       definition = build(:custom_field_definition, :short_text_field, searchable: true)

@@ -1,5 +1,13 @@
 import { expect, type Page, test } from '@playwright/test'
-import { FIXTURE_PROMO_PRODUCT, gotoIndex, login, openRowMenu, rowButton } from './helpers'
+import {
+  deleteCatalogPickerProducts,
+  FIXTURE_PROMO_PRODUCT,
+  gotoIndex,
+  login,
+  openRowMenu,
+  rowButton,
+  seedCatalogPickerProducts,
+} from './helpers'
 
 const COLLECTIONS_PATH = (storeId: string) => `/${storeId}/products/collections`
 const CTA = /new collection/i
@@ -85,7 +93,7 @@ test.describe('collections management', () => {
     await expect(page.getByRole('button', { name: new RegExp(`^${original}$`) })).toHaveCount(0)
   })
 
-  test('adds and removes a product on a manual collection', async ({ page }) => {
+  test('adds and removes a product on a collection', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, COLLECTIONS_PATH(creds.store_id), CTA)
 
@@ -181,59 +189,132 @@ test.describe('collections management', () => {
     })
   })
 
-  test('flipping to rules hides the curation controls before saving', async ({ page }) => {
+  test('publishes on every active channel and keeps an unchecked one off', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, COLLECTIONS_PATH(creds.store_id), CTA)
 
-    const name = `E2E Toggle ${Date.now()}`
-    await createCollection(page, name)
-
-    // Curate one product so the panel has a row carrying the controls.
-    await page.getByRole('button', { name: /add products/i }).click()
-    const picker = page.getByRole('dialog')
-    await picker.getByRole('searchbox').fill(FIXTURE_PROMO_PRODUCT)
-    const option = picker
-      .getByRole('button', { name: new RegExp(FIXTURE_PROMO_PRODUCT, 'i') })
-      .first()
-    await expect(option).toBeVisible({ timeout: 15_000 })
-    await option.click()
-    await picker.getByRole('button', { name: /^add 1$/i }).click()
-
-    const productRow = page.getByRole('row', { name: new RegExp(FIXTURE_PROMO_PRODUCT, 'i') })
-    await expect(productRow).toBeVisible({ timeout: 15_000 })
-    await expect(productRow.getByRole('button', { name: /remove from collection/i })).toBeVisible()
-
-    // Switching to rule-driven membership takes the curation affordances away
-    // immediately — no save required, because saving would hand membership to
-    // the rules and discard anything picked by hand.
-    await page.getByRole('switch', { name: /set members automatically/i }).click()
-
-    await expect(page.getByText(/members are set by the rules above/i)).toBeVisible()
-    await expect(page.getByRole('button', { name: /add products/i })).toHaveCount(0)
-    await expect(productRow.getByRole('button', { name: /remove from collection/i })).toHaveCount(0)
-    await expect(productRow.getByRole('checkbox')).toHaveCount(0)
-
-    // Switching back restores them.
-    await page.getByRole('switch', { name: /set members automatically/i }).click()
-    await expect(page.getByRole('button', { name: /add products/i })).toBeVisible()
-    await expect(productRow.getByRole('button', { name: /remove from collection/i })).toBeVisible()
-  })
-
-  test('creates an automatic collection whose membership is read-only', async ({ page }) => {
-    const creds = await login(page)
-    await gotoIndex(page, COLLECTIONS_PATH(creds.store_id), CTA)
-
-    const name = `E2E Automatic ${Date.now()}`
     await page.getByRole('button', { name: CTA }).click()
     await expect(page.getByRole('heading', { name: CTA })).toBeVisible({ timeout: 15_000 })
+    const name = `E2E Publishing ${Date.now()}`
     await page.locator('#collection-name').fill(name)
 
-    // Flipping the switch reveals the match policy and seeds a blank rule row.
-    // Target the switch role specifically — Base UI also renders a hidden
-    // checkbox input carrying the same accessible name.
-    await page.getByRole('switch', { name: /set members automatically/i }).click()
-    // Each rule kind brings its own value control: a switch for "On sale",
-    // a number of days for "Recently published", tags for a tag rule.
+    // A new collection starts on every active channel, as the server would.
+    await expect(page.getByText(/visible to customers now/i).first()).toBeVisible({
+      timeout: 15_000,
+    })
+    await page.getByRole('button', { name: /^save$/i }).click()
+    await expect(page.getByRole('heading', { name, level: 1 })).toBeVisible({ timeout: 15_000 })
+
+    // Uncheck the first channel it is published on.
+    await page.getByRole('button', { name: /^manage$/i }).click()
+    const sheet = page.getByRole('dialog')
+    const published = sheet
+      .getByRole('button')
+      .filter({ has: page.getByRole('checkbox', { checked: true }) })
+    const channelName = ((await published.first().textContent()) ?? '').trim()
+    await published.first().click()
+    await sheet.getByRole('button', { name: /^done$/i }).click()
+    await page.getByRole('button', { name: /^save$/i }).click()
+    await expect(page.getByRole('button', { name: /^save$/i })).toBeDisabled({ timeout: 15_000 })
+
+    await page.reload()
+    await page.getByRole('button', { name: /^manage$/i }).click()
+    await expect(
+      page.getByRole('dialog').getByRole('button', { name: channelName }).getByRole('checkbox'),
+    ).not.toBeChecked({ timeout: 15_000 })
+  })
+
+  test('rules pick products, hand-picks stay and exclusions keep products out', async ({
+    page,
+  }) => {
+    const creds = await login(page)
+    const handPicked = `E2E Hand Picked ${Date.now()}`
+    const productIds = await seedCatalogPickerProducts(
+      page,
+      creds.store_id,
+      handPicked,
+      creds.accessToken,
+      1,
+    )
+
+    try {
+      await gotoIndex(page, COLLECTIONS_PATH(creds.store_id), CTA)
+      await createCollection(page, `E2E Rules ${Date.now()}`)
+
+      // Price under 50 (the promo product is 19.99)…
+      await page.getByRole('button', { name: /add rule/i }).click()
+      await page
+        .getByRole('combobox', { name: /^rule$/i })
+        .first()
+        .click()
+      await page.getByRole('option', { name: /^price$/i }).click()
+      await page
+        .getByRole('combobox', { name: /^condition$/i })
+        .first()
+        .click()
+      await page.getByRole('option', { name: /^is less than$/i }).click()
+      await page.locator('#collection-rule-value-0').fill('50')
+
+      // …and a title naming it.
+      await page.getByRole('button', { name: /add rule/i }).click()
+      await page
+        .getByRole('combobox', { name: /^rule$/i })
+        .nth(1)
+        .click()
+      await page.getByRole('option', { name: /^title$/i }).click()
+      await page.locator('#collection-rule-value-1').fill(FIXTURE_PROMO_PRODUCT)
+
+      await page.getByRole('button', { name: /^save$/i }).click()
+      const ruleRow = page.getByRole('row', { name: new RegExp(FIXTURE_PROMO_PRODUCT, 'i') })
+      await expect(ruleRow).toBeVisible({ timeout: 15_000 })
+
+      // Hand-pick a product the rules don't match: it stays alongside them.
+      await page.getByRole('button', { name: /add products/i }).click()
+      const picker = page.getByRole('dialog')
+      await picker.getByRole('searchbox').fill(handPicked)
+      const option = picker.getByRole('button', { name: new RegExp(handPicked, 'i') }).first()
+      await expect(option).toBeVisible({ timeout: 15_000 })
+      await option.click()
+      await picker.getByRole('button', { name: /^add 1$/i }).click()
+      await page.getByRole('button', { name: /^save$/i }).click()
+      const pickedRow = page.getByRole('row', { name: new RegExp(handPicked, 'i') })
+      await expect(pickedRow.getByText(/^new$/i)).toHaveCount(0, { timeout: 15_000 })
+      await page.reload()
+      await expect(pickedRow).toBeVisible({ timeout: 15_000 })
+      await expect(ruleRow).toBeVisible()
+
+      // Exclude the rule-matched product: it leaves now and is listed as excluded.
+      await ruleRow.getByRole('button', { name: /^exclude/i }).click()
+      await page
+        .getByRole('alertdialog')
+        .or(page.getByRole('dialog'))
+        .getByRole('button', { name: /^exclude$/i })
+        .click()
+      const excluded = page.getByText(/^excluded products/i)
+      await expect(excluded).toBeVisible({ timeout: 15_000 })
+      await expect(ruleRow.getByRole('button', { name: /remove from collection/i })).toHaveCount(0)
+
+      // Lifting the exclusion empties the list.
+      await page.getByRole('button', { name: /^remove exclusion of/i }).click()
+      await page
+        .getByRole('alertdialog')
+        .or(page.getByRole('dialog'))
+        .getByRole('button', { name: /^remove exclusion$/i })
+        .click()
+      await expect(excluded).toHaveCount(0, { timeout: 15_000 })
+    } finally {
+      await deleteCatalogPickerProducts(page, creds.store_id, creds.accessToken, productIds)
+    }
+  })
+
+  test('gives each rule kind its own control', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, COLLECTIONS_PATH(creds.store_id), CTA)
+    const name = `E2E Rule Kinds ${Date.now()}`
+    await createCollection(page, name)
+
+    // A switch for "On sale", a number of days for "Recently published", tags for a tag rule.
+    await page.getByRole('button', { name: /add rule/i }).click()
     const ruleKind = page.getByRole('combobox', { name: /^rule$/i }).first()
     await ruleKind.click()
     await page.getByRole('option', { name: /on sale/i }).click()
@@ -247,23 +328,29 @@ test.describe('collections management', () => {
     const tags = page.getByPlaceholder(/pick tags/i)
     await tags.fill('summer')
     await tags.press('Enter')
+    await page.getByRole('button', { name: /^save$/i }).click()
+    await expect(page.getByRole('button', { name: /^save$/i })).toBeDisabled({ timeout: 15_000 })
 
+    await page.reload()
+    await expect(page.getByText('summer', { exact: true })).toBeVisible({ timeout: 15_000 })
+  })
+
+  test('refuses a price rule without an amount', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, COLLECTIONS_PATH(creds.store_id), CTA)
+    await createCollection(page, `E2E Bad Price ${Date.now()}`)
+
+    await page.getByRole('button', { name: /add rule/i }).click()
+    await page
+      .getByRole('combobox', { name: /^rule$/i })
+      .first()
+      .click()
+    await page.getByRole('option', { name: /^price$/i }).click()
+    // A number input only takes numbers; an empty one is what reaches the form.
     await page.getByRole('button', { name: /^save$/i }).click()
 
-    // Create lands on the edit page, hydrated from the persisted row — so the
-    // rule and the automatic flag both round-tripped through the API.
-    await expect(page.getByRole('heading', { name, level: 1 })).toBeVisible({ timeout: 15_000 })
-    await expect(page.getByText('summer', { exact: true })).toBeVisible()
-
-    // The products panel is read-only: it explains that the rules own the
-    // membership and offers no way to curate by hand.
-    await expect(page.getByText(/members are set by the rules above/i)).toBeVisible()
-    await expect(page.getByRole('button', { name: /add products/i })).toHaveCount(0)
-
-    // The index labels it as automatic.
-    await page.goto(COLLECTIONS_PATH(creds.store_id))
-    const row = page.locator('tr').filter({ hasText: name })
-    await expect(row.getByText(/^automatic$/i)).toBeVisible({ timeout: 15_000 })
+    await expect(page.getByText(/value is required/i)).toBeVisible()
+    await expect(page.locator('#collection-rule-value-0')).toHaveAttribute('aria-invalid', 'true')
   })
 
   test('deletes a collection', async ({ page }) => {

@@ -102,7 +102,7 @@ module Spree
 
     attribute :eligible_for_collection_matching, :boolean, default: false
     before_validation -> { self.eligible_for_collection_matching = new_record? ? discounted? : discounted? != was_discounted? }
-    after_commit -> { variant&.product&.auto_match_collections }, if: -> { eligible_for_collection_matching? }
+    after_commit :auto_match_product_collections
 
     def money
       Spree::Money.new(amount || 0, currency: currency.upcase)
@@ -243,6 +243,18 @@ module Spree
     end
 
     private
+
+    # A sale flip can move the product in or out of any rule-based collection;
+    # a base price change only matters to price rules. A row moved onto or off
+    # a price list was or became a base price, so it counts too.
+    def auto_match_product_collections
+      if eligible_for_collection_matching?
+        variant&.product&.auto_match_collections
+      elsif saved_change_to_price_list_id? ||
+            (price_list_id.nil? && (destroyed? || saved_change_to_amount? || saved_change_to_currency?))
+        variant&.product&.auto_match_collections(rule_types: [Spree::CollectionRules::Price])
+      end
+    end
 
     # Base prices are what a shopper is quoted on a product page, and a
     # quantity-dependent shop price would make every PDP quantity-dependent —

@@ -341,10 +341,23 @@
       },
       "delete_label": "Supprimer la collection",
       "empty": "Aucune collection pour le moment.",
-      "fields": {
-        "automatic": {
-          "label": "Définir les produits automatiquement selon des règles"
+      "exclusions": {
+        "confirm_message": "Exclure « {{name}} » ? Il quitte la collection maintenant et reste exclu même si les règles le sélectionnent.",
+        "confirm_title": "Exclure le produit",
+        "description": "Tenus hors de cette collection quelles que soient les règles. Les modifications ici s'appliquent immédiatement.",
+        "exclude": "Exclure",
+        "exclude_row": "Exclure {{name}}",
+        "messages": {
+          "excluded": "Produit exclu",
+          "removed": "Exclusion retirée"
         },
+        "remove": "Retirer l'exclusion",
+        "remove_confirm_message": "Réautoriser « {{name}} » ? Il revient dans la collection si les règles le sélectionnent.",
+        "remove_confirm_title": "Retirer l'exclusion",
+        "remove_row": "Retirer l'exclusion de {{name}}",
+        "title": "Produits exclus"
+      },
+      "fields": {
         "rule_match_policy": {
           "label": "Condition"
         },
@@ -383,10 +396,8 @@
       "new_title": "Nouvelle collection",
       "products": {
         "add_cta": "Ajouter des produits",
-        "automatic_hint": "Les produits sont définis par les règles ci-dessus et se mettent à jour automatiquement.",
         "column_product": "Produit",
         "empty": "Aucun produit dans cette collection pour le moment.",
-        "empty_automatic": "Aucun produit ne correspond encore aux règles.",
         "filter_placeholder": "Filtrer les produits…",
         "no_matches": "Aucun produit ne correspond à votre filtre.",
         "pending_added_badge": "Nouveau",
@@ -396,20 +407,37 @@
         "remove": "Retirer de la collection",
         "remove_selected": "Retirer",
         "restore": "Restaurer",
+        "rules_hint": "Un produit correspondant aux règles revient après son retrait. Excluez-le pour le tenir à l'écart.",
         "search_placeholder": "Rechercher des produits…",
         "select_all": "Tout sélectionner",
         "select_row": "Sélectionner le produit",
         "title": "Produits"
       },
+      "publishing": {
+        "empty": "Pas encore publiée sur un canal de vente.",
+        "manage_description": "Choisissez les canaux de vente dont les vitrines affichent cette collection."
+      },
       "rule_match_policies": {
         "contains": "contient",
         "does_not_contain": "ne contient pas",
+        "ends_with": "se termine par",
+        "greater_than": "est supérieur à",
         "is_equal_to": "est égal à",
-        "is_not_equal_to": "est différent de"
+        "is_not_equal_to": "est différent de",
+        "less_than": "est inférieur à",
+        "starts_with": "commence par"
       },
       "rules": {
         "add": "Ajouter une règle",
-        "description": "Choisissez les produits à la main ou laissez des règles tenir la collection à jour.",
+        "amount_invalid": "Saisissez un montant comme 49.99.",
+        "boolean_false": "Non",
+        "boolean_true": "Oui",
+        "currency_label": "Devise",
+        "custom_field_empty": "Aucun champ personnalisé n'est marqué pour les règles de collection.",
+        "custom_field_label": "Champ personnalisé",
+        "custom_field_placeholder": "Choisissez un champ personnalisé…",
+        "description": "Les règles choisissent les produits automatiquement. Les produits ajoutés à la main restent à leurs côtés.",
+        "include_descendants": "Inclure les sous-catégories",
         "remove": "Supprimer la règle",
         "title": "Composition",
         "on_sale": "En promotion",
@@ -1442,6 +1470,10 @@
         "label": "Pays"
       },
       "custom_field_definition": {
+        "collection_condition": {
+          "help": "Permet aux collections automatiques de choisir les produits selon ce champ. Champs produit texte, nombre et oui/non uniquement.",
+          "label": "Utiliser dans les règles de collection"
+        },
         "field_type": {
           "label": "Type",
           "options": {
@@ -4351,6 +4383,7 @@
             "cart": "Panier",
             "catalog": "Catalogue",
             "claim": "Réclamation",
+            "collection": "Collection",
             "company": "Entreprise",
             "company_invitation": "Invitation d'entreprise",
             "custom": "Personnalisé",
@@ -5168,6 +5201,7 @@
       },
       "rule_summary": {
         "category_count": "{{count}} catégories",
+        "collection_count": "{{count}} collections",
         "customer_count": "{{count}} clients",
         "product_count": "{{count}} produits"
       },
@@ -5191,6 +5225,21 @@
         },
         "channel": {
           "label": "Canaux"
+        },
+        "collection": {
+          "empty": "Aucune collection ne correspond",
+          "label": "Collections",
+          "match_policy": {
+            "all": {
+              "description": "La commande doit contenir un produit de chaque collection.",
+              "label": "Toutes ces collections"
+            },
+            "any": {
+              "description": "La commande doit contenir un produit d'au moins l'une d'elles.",
+              "label": "N'importe laquelle de ces collections"
+            }
+          },
+          "search_placeholder": "Rechercher des collections…"
         },
         "country": {
           "empty": "Aucun pays ne correspond",

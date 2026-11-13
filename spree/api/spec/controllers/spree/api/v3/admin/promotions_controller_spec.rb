@@ -182,6 +182,30 @@ RSpec.describe Spree::Api::V3::Admin::PromotionsController, type: :controller do
         expect(rule.category_ids).to eq([category.id])
       end
 
+      it 'creates a Collection rule with prefixed collection_ids and renders them back' do
+        collection = create(:collection, store: store)
+
+        post :create,
+             params: base_params.merge(rules: [{ type: 'collection', collection_ids: [collection.prefixed_id] }], expand: 'rules'),
+             as: :json
+
+        expect(response).to have_http_status(:created)
+        rule = Spree::Promotion.find_by_prefix_id(json_response['id']).rules.first
+        expect(rule).to be_a(Spree::Promotion::Rules::Collection)
+        expect(rule.collection_ids).to eq([collection.id])
+      end
+
+      it "refuses a Collection rule naming another store's collection" do
+        foreign = create(:collection, store: create(:store))
+
+        post :create,
+             params: base_params.merge(rules: [{ type: 'collection', collection_ids: [foreign.prefixed_id] }]),
+             as: :json
+
+        expect(response.status).to be_in([404, 422])
+        expect(Spree::PromotionRuleCollection.count).to eq(0)
+      end
+
       it 'creates multiple rules of different types in one request' do
         post :create,
              params: base_params.merge(

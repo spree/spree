@@ -71,6 +71,17 @@ module Spree
       end
     end
 
+    # The alt text of the library file placed in a slot.
+    #
+    # @param slot [Symbol] attachment name, e.g. +:image+
+    # @return [String, nil]
+    def library_media_alt(slot)
+      attachment = public_send(slot).attachment
+      return if attachment.nil?
+
+      media.find { |placement| placement.attachment_attachment&.blob_id == attachment.blob_id }&.alt
+    end
+
     private
 
     # Attachment changes are consumed by the save, so whether a slot moved has

@@ -23,6 +23,8 @@ module Spree
     has_many :order_routing_rules, class_name: 'Spree::OrderRoutingRule', dependent: :destroy
     has_many :publications, class_name: 'Spree::ProductPublication', dependent: :destroy
     has_many :products, through: :publications, class_name: 'Spree::Product'
+    has_many :collection_publications, class_name: 'Spree::CollectionPublication', dependent: :destroy, inverse_of: :channel
+    has_many :collections, through: :collection_publications, class_name: 'Spree::Collection'
     # When set, only the default catalog's products are visible on this
     # channel; unset means all publications.
     belongs_to :default_catalog, class_name: 'Spree::Catalog', optional: true
@@ -93,6 +95,34 @@ module Spree
       removed.size
     end
 
+    # Publishes the given collections on every channel in the current scope
+    # (`store.channels.active.add_collections(collection_ids)`). A channel
+    # gets collections only this way: nothing publishes onto a channel when it
+    # is created.
+    # @param collection_ids [Array<Integer>, Integer]
+    # @return [Integer] the number of CollectionPublications created or updated
+    def self.add_collections(collection_ids)
+      collection_ids = Array(collection_ids).map(&:to_s).uniq
+      channels = all.to_a
+      return 0 if collection_ids.empty? || channels.empty?
+
+      count = channels.sum { |channel| channel.send(:upsert_collection_publications, collection_ids) }
+      Spree::Collection.where(id: collection_ids).touch_all
+      count
+    end
+
+    # Unpublishes the given collections from every channel in the current scope.
+    # @param collection_ids [Array<Integer>, Integer]
+    # @return [Integer] the number of CollectionPublications destroyed
+    def self.remove_collections(collection_ids)
+      collection_ids = Array(collection_ids).map(&:to_s).uniq
+      channels = all.to_a
+      return 0 if collection_ids.empty? || channels.empty?
+
+      Spree::CollectionPublication.includes(:collection, :channel).
+        where(channel_id: channels.map(&:id), collection_id: collection_ids).destroy_all.size
+    end
+
     # @param product_ids [Array<String>]
     # @return [void]
     def self.refresh_products(product_ids)
@@ -134,6 +164,30 @@ module Spree
       count
     end
 
+    # Publishes the given collections on this channel, with an optional window.
+    # @param collection_ids [Array<Integer>, Integer]
+    # @param published_at [Time, nil] when the publications go live; nil means immediately
+    # @param unpublished_at [Time, nil] when the publications come down; nil means never
+    # @return [Integer] the number of CollectionPublications created or updated
+    def add_collections(collection_ids, published_at: nil, unpublished_at: nil)
+      collection_ids = Array(collection_ids).map(&:to_s).uniq
+      return 0 if collection_ids.empty?
+
+      count = upsert_collection_publications(collection_ids, published_at: published_at, unpublished_at: unpublished_at)
+      Spree::Collection.where(id: collection_ids).touch_all
+      count
+    end
+
+    # Unpublishes the given collections from this channel.
+    # @param collection_ids [Array<Integer>, Integer]
+    # @return [Integer] the number of CollectionPublications destroyed
+    def remove_collections(collection_ids)
+      collection_ids = Array(collection_ids).map(&:to_s).uniq
+      return 0 if collection_ids.empty?
+
+      collection_publications.includes(:collection).where(collection_id: collection_ids).destroy_all.size
+    end
+
     # @return [Boolean]
     def can_be_deleted?
       !default? && !api_keys.active.exists?
@@ -168,6 +222,14 @@ module Spree
     private
 
     def upsert_publications(product_ids, published_at: nil, unpublished_at: nil)
+      upsert_publication_rows(Spree::ProductPublication, :product_id, product_ids, published_at, unpublished_at)
+    end
+
+    def upsert_collection_publications(collection_ids, published_at: nil, unpublished_at: nil)
+      upsert_publication_rows(Spree::CollectionPublication, :collection_id, collection_ids, published_at, unpublished_at)
+    end
+
+    def upsert_publication_rows(publication_class, foreign_key, record_ids, published_at, unpublished_at)
       now = Time.current
       # Only include window columns in the upsert payload when the caller
       # explicitly passed a value. Leaving them out keeps existing
@@ -179,7 +241,7 @@ module Spree
       base[:published_at] = published_at unless published_at.nil?
       base[:unpublished_at] = unpublished_at unless unpublished_at.nil?
 
-      records_to_upsert = product_ids.map { |product_id| base.merge(product_id: product_id) }
+      records_to_upsert = record_ids.map { |record_id| base.merge(foreign_key => record_id) }
 
       # Only update the window columns the caller passed. When neither was
       # passed, treat re-publish as a no-op (+on_duplicate: :skip+ → MySQL
@@ -194,9 +256,9 @@ module Spree
              end
       # MySQL infers the conflict target from the table's unique constraints
       # and rejects an explicit +unique_by+; PostgreSQL/SQLite require it.
-      opts[:unique_by] = %i[product_id channel_id] unless mysql_adapter?
+      opts[:unique_by] = [foreign_key, :channel_id] unless mysql_adapter?
 
-      Spree::ProductPublication.upsert_all(records_to_upsert, **opts)
+      publication_class.upsert_all(records_to_upsert, **opts)
       records_to_upsert.size
     end
 

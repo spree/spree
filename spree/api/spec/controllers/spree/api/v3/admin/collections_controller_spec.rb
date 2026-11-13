@@ -135,6 +135,81 @@ RSpec.describe Spree::Api::V3::Admin::CollectionsController, type: :controller d
       post :create, params: { name: '' }, as: :json
       expect(response).to have_http_status(:unprocessable_content)
     end
+
+    context 'publishing' do
+      let!(:online) { store.default_channel }
+      let!(:pos) { create(:channel, store: store, name: 'POS') }
+      let!(:retired) { create(:channel, store: store, name: 'Retired', active: false) }
+
+      it 'publishes on every active channel of the store when no publications are sent' do
+        post :create, params: { name: 'New Arrivals' }, as: :json
+
+        expect(response).to have_http_status(:created)
+        expect(created_collection.publications.map(&:channel)).to match_array(store.channels.active.to_a)
+        expect(created_collection.publications.map(&:channel)).not_to include(retired)
+      end
+
+      it 'publishes only on the channels sent' do
+        post :create, params: { name: 'POS Only', publications: [{ channel_id: pos.prefixed_id }] }, as: :json
+
+        expect(response).to have_http_status(:created)
+        expect(created_collection.publications.map(&:channel)).to eq([pos])
+      end
+
+      it 'ignores the deprecated automatic flag' do
+        post :create, params: { name: 'Flagged', automatic: true }, as: :json
+
+        expect(response).to have_http_status(:created)
+        expect(created_collection.automatic).to be(false)
+      end
+    end
+
+    context 'rule types' do
+      let(:category) { create(:category, store: store) }
+
+      it 'stores a record-backed rule value from its prefixed id and renders it back' do
+        post :create, params: {
+          name: 'Shoes', expand: 'rules',
+          rules: [{ type: 'category', value: category.prefixed_id, match_policy: 'is_equal_to',
+                    preferences: { include_descendants: true } }]
+        }, as: :json
+
+        expect(response).to have_http_status(:created)
+        rule = created_collection.rules.first
+        expect(rule.value).to eq(category.id.to_s)
+        expect(rule.preferred_include_descendants).to be(true)
+        expect(json_response['rules'].first).to include('value' => category.prefixed_id)
+      end
+
+      it 'accepts a currency on a price rule' do
+        post :create, params: {
+          name: 'Under 50', expand: 'rules',
+          rules: [{ type: 'price', value: '50', match_policy: 'less_than', currency: 'USD' }]
+        }, as: :json
+
+        expect(response).to have_http_status(:created)
+        expect(json_response['rules'].first).to include('currency' => 'USD', 'match_policy' => 'less_than')
+      end
+
+      it 'refuses a relation the rule type does not accept' do
+        post :create, params: {
+          name: 'Bad Title', rules: [{ type: 'title', value: 'shirt', match_policy: 'greater_than' }]
+        }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(Spree::Collection.where(name: 'Bad Title')).not_to exist
+      end
+
+      it "refuses another store's category" do
+        foreign = create(:category, store: other_store)
+
+        post :create, params: {
+          name: 'Foreign', rules: [{ type: 'category', value: foreign.prefixed_id, match_policy: 'is_equal_to' }]
+        }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+      end
+    end
   end
 
   describe 'PATCH #update' do
@@ -191,6 +266,28 @@ RSpec.describe Spree::Api::V3::Admin::CollectionsController, type: :controller d
         expect(response).to have_http_status(:unprocessable_content)
         expect(automatic.reload.rules.map(&:type)).not_to include('Spree::Store')
       end
+    end
+  end
+
+  describe 'publications' do
+    let!(:pos) { create(:channel, store: store, name: 'POS') }
+
+    it 'replaces the set on update' do
+      patch :update, params: {
+        id: collection.prefixed_id,
+        publications: [{ channel_id: pos.prefixed_id, published_at: 1.day.from_now.iso8601 }]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(collection.publications.reload.map(&:channel)).to eq([pos])
+      expect(collection.publications.first.published_at).to be_present
+    end
+
+    it 'renders publications when expanded' do
+      get :show, params: { id: collection.prefixed_id, expand: 'publications' }, as: :json
+
+      expect(json_response['publications'].pluck('channel_id')).
+        to include(store.default_channel.prefixed_id)
     end
   end
 
