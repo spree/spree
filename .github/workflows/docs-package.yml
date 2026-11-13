@@ -1,5 +1,8 @@
 name: Docs Package
 
+# Checks that the docs package builds. It is published with each Spree release,
+# by release.yml on the v<version> tag, under the Spree version.
+
 on:
   push:
     branches: [main]
@@ -8,7 +11,6 @@ on:
       - "docs/api-reference/**"
       - "docs/integrations/**"
       - "packages/docs/**"
-      - "spree/core/lib/spree/core/version.rb"
   pull_request:
     paths:
       - "docs/developer/**"
@@ -49,66 +51,3 @@ jobs:
             echo "Expected at least 100 files, got $FILE_COUNT"
             exit 1
           fi
-
-  release:
-    name: "Release"
-    needs: build
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      id-token: write
-    defaults:
-      run:
-        working-directory: packages/docs
-    steps:
-      - uses: actions/checkout@v7
-
-      - uses: pnpm/action-setup@v6
-
-      - uses: actions/setup-node@v7.1.0
-        with:
-          node-version: 22
-          cache: pnpm
-          registry-url: https://registry.npmjs.org
-
-      - run: pnpm install --frozen-lockfile
-        working-directory: .
-
-      # Trusted Publishing requires npm >= 11.5.1, but the bundled npm
-      # on Node 22 is 10.9.7. A plain `npm install -g npm@latest` swaps
-      # npm's own files in place and the in-flight install can't find
-      # its own dependencies (MODULE_NOT_FOUND: promise-retry). Install
-      # to a separate prefix and prepend to PATH instead.
-      - name: Upgrade npm for Trusted Publishing support
-        run: |
-          npm install -g npm@latest --prefix="$HOME/.npm-global"
-          echo "$HOME/.npm-global/bin" >> "$GITHUB_PATH"
-        working-directory: .
-
-      # The package carries the Spree version (`pnpm version:packages` sets it),
-      # so a project's local docs match the Spree it runs. A version is
-      # published once, from the first push to main that carries it: the
-      # release commit. Later docs changes wait for the next Spree release.
-      - name: Check the version
-        id: version
-        run: |
-          VERSION=$(node -p "require('./package.json').version")
-          SPREE=$(node --input-type=module -e "import { gemVersion, npmVersion } from '../../scripts/version-packages.mjs'; console.log(npmVersion(gemVersion()))")
-          if [ "$VERSION" != "$SPREE" ]; then
-            echo "packages/docs is at $VERSION but Spree is at $SPREE. Run pnpm version:packages."
-            exit 1
-          fi
-          if [ -n "$(npm view "@spree/docs@$VERSION" version 2>/dev/null)" ]; then
-            echo "@spree/docs@$VERSION is already on npm."
-            echo "publish=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "publish=true" >> "$GITHUB_OUTPUT"
-            echo "tag=$(node --input-type=module -e "import { distTag } from '../../scripts/publish-packages.mjs'; console.log(distTag('$VERSION'))")" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Build and Publish
-        if: steps.version.outputs.publish == 'true'
-        env:
-          DIST_TAG: ${{ steps.version.outputs.tag }}
-        run: node scripts/build.js && npm publish --provenance --access public --tag "$DIST_TAG"

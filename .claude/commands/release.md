@@ -218,10 +218,10 @@ same commands and the notes, run none of them, and stop.
    ```
 
    A `create-spree-app` tag waits for the docs: new projects depend on
-   `@spree/docs` on the Spree major, which the Docs Package run on the merge
-   commit publishes, and `release.yml` does not wait for that run. Push the
-   tag only once that run concluded `success` and `npm view
-   "@spree/docs@^<major>.0.0-0" version` prints a version on that major.
+   `@spree/docs` on the Spree major, which the `v<version>` run publishes.
+   Push a `create-spree-app` tag only once that run concluded `success`, or
+   `npm view "@spree/docs@^<major>.0.0-0" version` already prints a version
+   on that major.
 
    The push starts one `release.yml` run per tag. Find each run by its tag,
    not by its place in the recent list, and wait for every one of them:

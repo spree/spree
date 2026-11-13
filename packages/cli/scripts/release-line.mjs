@@ -10,7 +10,7 @@ function readJson(file) {
 
 /**
  * The packages that share the Spree version (the Changesets fixed group with
- * `@spree/sdk`, plus `@spree/docs`, which docs-package.yml publishes under the
+ * `@spree/sdk`, plus `@spree/docs`, which the Spree release publishes under the
  * Spree version) and that version, so `spree upgrade` can move a project off an
  * older numbering. Until every package in the group carries the same version
  * there is no shared line to move to, and the list is empty. Injected at build

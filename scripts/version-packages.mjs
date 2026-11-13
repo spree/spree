@@ -5,8 +5,8 @@
 // the version of those packages: `@spree/sdk@6.0.2` is the SDK for Spree 6.0.2.
 // Packages outside the group (`@spree/cli`, `create-spree-app`) keep the
 // version Changesets gives them. `@spree/docs` also takes the Spree version, so
-// a project's local docs match its server; docs-package.yml publishes it once
-// that version is on `main`.
+// a project's local docs match its server; release.yml publishes it with the
+// rest of the release on the `v<version>` tag.
 //
 // Bump `Spree::VERSION` first, then run `pnpm version:packages`.
 //

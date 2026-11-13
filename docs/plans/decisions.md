@@ -55,7 +55,7 @@
 
 **Decision:** `release.yml` publishes everything, started by a tag on a commit already on `main`. `v6.0.0.rc7` releases the gems and the npm packages that share the Spree version; `@spree/cli@3.5.0` and `create-spree-app@2.4.1` release those tools on their own. A first job checks the tag against `Spree::VERSION` and the package versions before anything publishes, and every step skips versions already on its registry. One script (`scripts/publish-packages.mjs`) publishes npm packages in dependency order. `packages.yml` only runs checks. `pnpm version:tools` versions the tools between Spree releases while the group's changesets wait. The templates the CLI embeds accept their whole major (`^6.0.0-0`) instead of the workspace version, so a CLI tag never points at packages not yet on npm.
 
-**Consequences:** Nothing reaches npm from a merge alone; a release is the tag. npm Trusted Publishing names the workflow file, so every published package must trust `release.yml` before its first tag release. GitHub starts no workflow for more than three tags pushed at once. `@spree/docs` keeps publishing from `docs-package.yml`.
+**Consequences:** Nothing reaches npm from a merge alone; a release is the tag. npm Trusted Publishing names the workflow file, so every published package must trust `release.yml` before its first tag release. GitHub starts no workflow for more than three tags pushed at once. `@spree/docs` publishes with each Spree release too: it carries the Spree version, and the `v<version>` tag releases it (amended 2026-11-13; it used to publish a patch from `docs-package.yml` on every docs merge).
 
 **Plan amended:** `6.0-beta-release.md` (Key Decision 3, References).
 
