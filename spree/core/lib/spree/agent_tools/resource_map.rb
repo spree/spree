@@ -117,9 +117,71 @@ module Spree
         # The attributes the Admin API would accept on a write, so the generic
         # tools offer exactly the same surface as the endpoint.
         #
+        # Registered per action where create and update differ — an exchange
+        # takes its items when opened and never after.
+        #
+        # @param action [Symbol, nil] :create or :update; nil for either
         # @return [Array<String>]
-        def writable_attribute_names
-          Array(writable_attributes).map(&:to_s).sort
+        def writable_attribute_names(action = nil)
+          names = if writable_attributes.is_a?(Hash)
+                    action ? writable_attributes[action.to_sym] : writable_attributes.values.flatten
+                  else
+                    writable_attributes
+                  end
+
+          Array(names).map(&:to_s).uniq.sort
+        end
+
+        # The documented body of the operation a write dispatches to, or of
+        # both when no action is named (the create's description wins).
+        #
+        # @param action [Symbol, nil]
+        # @return [Hash] JSON Schema properties
+        def write_schema(action = nil)
+          return {} unless defined?(Spree::Api::AgentWriteSchemas)
+
+          (action ? [action.to_sym] : %i[update create]).reduce({}) do |schema, each|
+            schema.merge(Spree::Api::AgentWriteSchemas.for_operation(api_path(each), each))
+          end
+        end
+
+        # The first list in a write body whose rows carry a field the row
+        # does not take, looked for at every depth: a product's variants
+        # carry their own prices, and a typo in a price row is dropped by the
+        # endpoint as surely as one at the top. A row documented as open
+        # (`additionalProperties: true`) is left alone.
+        #
+        # @param body [Hash] string-keyed write body
+        # @param action [Symbol]
+        # @return [Hash, nil] `{ list:, unknown:, accepted: }`, with `not_object: true` in place of
+        #   `unknown:` for a row that is not an object; nil when every row fits
+        def unknown_row_fields(body, action)
+          find_unknown_row_fields(write_schema(action), body, [])
+        end
+
+        def find_unknown_row_fields(properties, values, path)
+          properties.each do |name, schema|
+            rows = values[name]
+            next unless rows.is_a?(Array) && schema.is_a?(Hash) && schema['type'] == 'array'
+
+            row = Spree::Api::AgentWriteSchemas.resolve_schema(schema['items'])
+            fields = row&.dig('properties')
+            next unless fields.is_a?(Hash) && fields.any? && row['additionalProperties'] != true
+
+            list = [*path, name]
+            rows.each do |values_of_row|
+              # A row that is not an object is dropped by the endpoint too.
+              return { list: list.join('.'), not_object: true, accepted: fields.keys.sort } unless values_of_row.is_a?(Hash)
+
+              unknown = values_of_row.keys.map(&:to_s) - fields.keys
+              return { list: list.join('.'), unknown: unknown, accepted: fields.keys.sort } if unknown.any?
+
+              found = find_unknown_row_fields(fields, values_of_row.stringify_keys, list)
+              return found if found
+            end
+          end
+
+          nil
         end
 
         # The record a nested resource is reached through — `order_id` for an
@@ -273,11 +335,10 @@ module Spree
         # and, where the parent reconciles its list, leaves behind whatever
         # the first write created.
         #
-        # @return [Hash{String => Array<String>}] attribute => the keys of one row
-        def nested_collection_shapes
-          return {} unless defined?(Spree::Api::AgentWriteSchemas)
-
-          Spree::Api::AgentWriteSchemas.for(key).each_with_object({}) do |(name, schema), shapes|
+        # @param action [Symbol, nil] the write the rows are for; nil for either
+        # @return [Hash{String => Array<Hash>}] attribute => the fields of one row
+        def nested_collection_shapes(action = nil)
+          write_schema(action).each_with_object({}) do |(name, schema), shapes|
             next unless schema.is_a?(Hash) && schema['type'] == 'array'
 
             # A row's shape is published as a component too, so the array
@@ -442,7 +503,8 @@ module Spree
         # @param scope_name [Symbol, nil] narrows the model to a slice of itself
         # @param write_permission [String, nil] the `write_*` key, absent when
         #   the controller offers no writes
-        # @param writable_attributes [Array<Symbol>] what a write may set
+        # @param writable_attributes [Array<Symbol>, Hash{Symbol => Array<Symbol>}]
+        #   what a write may set, or what each of create and update may set
         # @param create_workflow_key [String, nil] set when the controller
         #   declares a create workflow, which the generic write defers to
         # @param update_workflow_key [String, nil] likewise for updates

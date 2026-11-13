@@ -142,4 +142,94 @@ RSpec.describe Spree::AgentTools::ResourceMap do
       expect(described[:listed_under]).to eq(%w[categories collections])
     end
   end
+
+  # What a write accepts, read per operation. The Admin API document is not
+  # loaded here, so a stand-in answers for it with one product body.
+  describe 'checking a write body' do
+    let(:base) { '/api/v3/admin' }
+    let(:context) { context_holding('read_products', 'write_products') }
+    let(:price_row) { { 'properties' => { 'amount' => {}, 'currency' => {} } } }
+    let(:variant_row) { { 'properties' => { 'sku' => {}, 'prices' => { 'type' => 'array', 'items' => price_row } } } }
+    let(:product_body) do
+      { 'name' => {},
+        'variants' => { 'type' => 'array', 'items' => variant_row },
+        'metadata_rows' => { 'type' => 'array', 'items' => { 'properties' => { 'key' => {} }, 'additionalProperties' => true } } }
+    end
+    let(:schemas) do
+      body = product_body
+      Module.new do
+        define_singleton_method(:for_operation) { |path, _action| path.to_s.end_with?('/:id') ? body.except('variants') : body }
+        define_singleton_method(:resolve_schema) { |schema, _depth = 0| schema }
+      end
+    end
+
+    let!(:entry) do
+      described_class.register(key: 'products', model_name: 'Spree::Product', permission: 'read_products',
+                               serializer_name: 'Spree::Product', write_permission: 'write_products',
+                               writable_attributes: { create: %w[name variants metadata_rows], update: %w[name metadata_rows] },
+                               api_paths: { index: "#{base}/products", create: "#{base}/products",
+                                            update: "#{base}/products/:id" })
+    end
+
+    before { stub_const('Spree::Api::AgentWriteSchemas', schemas) }
+
+    def create_product(attributes)
+      Spree::AgentTools::CreateResource.new(context).call(resource: 'products', attributes: attributes)
+    end
+
+    it 'lists what each write accepts, and both together' do
+      expect(entry.writable_attribute_names(:update)).to eq(%w[metadata_rows name])
+      expect(entry.writable_attribute_names).to eq(%w[metadata_rows name variants])
+    end
+
+    it 'takes a plain list for every write' do
+      plain = described_class.register(key: 'markets', model_name: 'Spree::Market', permission: 'read_settings',
+                                       serializer_name: 'Spree::Market', writable_attributes: %i[name])
+
+      expect(plain.writable_attribute_names(:update)).to eq(['name'])
+    end
+
+    it 'refuses an attribute only a create takes' do
+      result = Spree::AgentTools::UpdateResource.new(context).call(resource: 'products', id: 'prod_1',
+                                                                   attributes: { 'variants' => [] })
+
+      expect(result[:error]).to eq('products does not accept variants.')
+      expect(result[:accepted_attributes]).to eq(%w[metadata_rows name])
+    end
+
+    it 'names a field inside rows inside rows' do
+      result = create_product('variants' => [{ 'sku' => 'A', 'prices' => [{ 'amount' => '1.00', 'amount_typo' => '2' }] }])
+
+      expect(result[:error]).to eq('products variants.prices rows do not accept amount_typo.')
+      expect(result[:accepted_attributes]).to eq('variants.prices' => %w[amount currency])
+    end
+
+    it 'refuses a row that is not an object' do
+      result = create_product('variants' => ['sku-a'])
+
+      expect(result[:error]).to eq('products variants rows must each be an object.')
+    end
+
+    it 'leaves an open row alone' do
+      expect(entry.unknown_row_fields({ 'metadata_rows' => [{ 'anything' => 1 }] }, :create)).to be_nil
+    end
+
+    it 'refuses a write whose operation documents no body' do
+      bare = described_class.register(key: 'tags', model_name: 'Spree::Tag', permission: 'read_products',
+                                      serializer_name: 'Spree::Tag', api_paths: { create: "#{base}/tags" })
+
+      result = Spree::AgentTools::CreateResource.new(context).call(resource: 'tags', attributes: { 'name' => 'x' })
+
+      expect(bare.writable_attribute_names(:create)).to be_empty
+      expect(result[:error]).to eq('tags cannot be created this way — call describe_resource to see what can.')
+    end
+
+    it 'says what an update takes where it is less than a create' do
+      described = Spree::AgentTools::DescribeResource.new(context).call(resource: 'products')[:resources].first
+
+      expect(described[:writable_attributes]).to eq(%w[metadata_rows name variants])
+      expect(described[:updatable_attributes]).to eq(%w[metadata_rows name])
+      expect(described[:nested_attributes]['variants'].pluck('name')).to eq(%w[prices sku])
+    end
+  end
 end

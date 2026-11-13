@@ -242,22 +242,49 @@ module Spree
 
       def apply_custom_field_attrs(attributes)
         attributes = attributes.values if attributes.is_a?(Hash)
-        attributes.each_with_index do |raw, index|
-          attrs = raw.respond_to?(:to_h) ? raw.to_h : raw
-          attrs = attrs.with_indifferent_access
-          definition_id = attrs[:custom_field_definition_id] || attrs[:metafield_definition_id]
-          next if definition_id.blank?
 
-          begin
-            set_custom_field(definition_id, attrs[:value])
-          rescue ArgumentError => e
-            # Convert an unknown / malformed definition id into a field-level
-            # validation error so the controller returns 422 with structured
-            # `details`, instead of leaking ArgumentError as a 400/500.
-            errors.add("custom_fields[#{index}].custom_field_definition_id", e.message)
-            raise ActiveRecord::RecordInvalid, self
+        # One write: a refused row undoes the rows before it, rather than
+        # leaving them saved behind an error. Its own savepoint, so a caller
+        # that rescues the error inside a wider transaction cannot keep them.
+        self.class.transaction(requires_new: true) do
+          attributes.each_with_index do |raw, index|
+            attrs = raw.respond_to?(:to_h) ? raw.to_h : raw
+            attrs = attrs.with_indifferent_access
+            definition_id = attrs[:custom_field_definition_id] || attrs[:metafield_definition_id] ||
+                            definition_id_of_custom_field(attrs[:id])
+
+            # A row naming a value this record does not have is refused rather
+            # than skipped: the caller meant a particular field. A row naming
+            # no field at all is still skipped, as the Admin API documents.
+            if definition_id.blank? && attrs[:id].present?
+              errors.add("custom_fields[#{index}].id", "Unknown custom field id: #{attrs[:id].inspect}")
+              raise ActiveRecord::RecordInvalid, self
+            end
+            next if definition_id.blank?
+
+            begin
+              set_custom_field(definition_id, attrs[:value])
+            rescue ArgumentError => e
+              # Convert an unknown / malformed definition id into a field-level
+              # validation error so the controller returns 422 with structured
+              # `details`, instead of leaking ArgumentError as a 400/500.
+              errors.add("custom_fields[#{index}].custom_field_definition_id", e.message)
+              raise ActiveRecord::RecordInvalid, self
+            end
           end
         end
+      end
+
+      # The definition behind one of this record's own values, so a row
+      # naming the value it changes (`{ id: 'cf_…', value: 128 }`) — the id a
+      # read shows — updates it. Another record's value reads as unknown.
+      #
+      # @param id [String, Integer, nil] a prefixed or raw custom field id
+      # @return [Integer, String, nil]
+      def definition_id_of_custom_field(id)
+        return if id.blank? || new_record?
+
+        custom_fields.find_by_param(id.to_s)&.custom_field_definition_id
       end
 
       # Resolve any of the supported reference shapes to a raw definition id.

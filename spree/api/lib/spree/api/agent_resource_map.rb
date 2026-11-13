@@ -193,8 +193,8 @@ module Spree
 
           create_workflow = workflow_key(instance, :create_workflow)
           update_workflow = workflow_key(instance, :update_workflow)
-          writable = AgentWriteSchemas.attribute_names(key)
           api_paths = api_paths_for(controller)
+          writable = writable_attributes_for(api_paths)
 
           {
             key: key,
@@ -280,6 +280,8 @@ module Spree
 
             narrowest = candidates.min_by { |entry| [scope_breadth(entry[:permission]), entry[:permission]] }
             contested = candidates.map { |entry| entry[:permission] }.uniq.size > 1
+            paths = shallowest_paths(candidates)
+            writable = contested ? {} : writable_attributes_for(paths)
 
             # A workflow declaration is not in dispute — whichever controller
             # declares one, that is how the resource is written, and the
@@ -294,8 +296,12 @@ module Spree
               serializer_name: shallowest_candidate(candidates)[:serializer_name],
               create_workflow_key: candidates.filter_map { |entry| entry[:create_workflow_key] }.first,
               update_workflow_key: candidates.filter_map { |entry| entry[:update_workflow_key] }.first,
-              write_permission: contested ? nil : narrowest[:write_permission],
-              writable_attributes: contested ? [] : narrowest[:writable_attributes],
+              write_permission: shared_write_permission(candidates, writable),
+              # Read off the operations the tools dispatch to, which are the
+              # shallowest paths below rather than the narrowest controller's
+              # own: checked against another controller's body, a write could
+              # pass the check and still be dropped.
+              writable_attributes: writable,
               # One controller refusing DISTINCT is enough: its sort would
               # make Postgres reject the query, and whichever controller
               # happened to sort first is not an answer.
@@ -305,7 +311,7 @@ module Spree
               # nothing about depth — so a resource served both at the top
               # level and under a parent kept whichever won on scope, and a
               # tool was handed a path with an unfillable `:parent_id` in it.
-              api_paths: shallowest_paths(candidates),
+              api_paths: paths,
               # Every collection path, not only the shallowest, so a search
               # under a parent reaches the controller that lists its records.
               index_paths: candidates.flat_map { |entry| entry[:index_paths] }.uniq
@@ -321,6 +327,33 @@ module Spree
           scope ? Array(scope.resources).size : Float::INFINITY
         rescue StandardError
           Float::INFINITY
+        end
+
+        # What each write accepts, from the body documented for the exact
+        # operation a tool dispatches to.
+        #
+        # @param api_paths [Hash{Symbol => String}]
+        # @return [Hash{Symbol => Array<String>}] action => attribute names
+        def writable_attributes_for(api_paths)
+          %i[create update].each_with_object({}) do |action, result|
+            names = AgentWriteSchemas.for_operation(api_paths.to_h[action], action).keys
+            result[action] = names if names.any?
+          end
+        end
+
+        # The write key of controllers sharing one read scope — an order's
+        # exchanges and the store-wide exchange listing both ride `orders`.
+        # The one that only lists has no write key of its own, which is not
+        # a reason to withdraw the other's. Nil when any controller that
+        # writes refused the generic write (it hands out authority), or when
+        # the read scopes disagree, which is `writable` coming back empty.
+        def shared_write_permission(candidates, writable)
+          return if writable.empty?
+
+          writers = candidates.select { |entry| entry[:writable_attributes].present? }
+          return if writers.any? { |entry| entry[:write_permission].nil? }
+
+          writers.filter_map { |entry| entry[:write_permission] }.first
         end
 
         # A resource is generically writable only when the Admin API writes it

@@ -43980,7 +43980,7 @@ paths:
       - api_key: []
         bearer_auth: []
       description: |-
-        Adds an address to the business. Pass `default_billing: true` or `default_shipping: true` to make it the default of that kind.
+        Adds an address to the business. Pass `is_default_billing: true` or `is_default_shipping: true` to make it the default of that kind.
 
         **Required scope:** `write_customers` (for API-key authentication).
       x-codeSamples:
@@ -44005,13 +44005,13 @@ paths:
             country_code: 'US',
             state_code: 'NY',
             phone: '+12125551234',
-            default_shipping: true,
+            is_default_shipping: true,
           })
       - lang: bash
         label: Spree CLI
         source: spree api post /companies/{company_id}/addresses -d '{"first_name":"Jane","last_name":"Doe","company":"Acme
           Wholesale","label":"Warehouse","address1":"350 Fifth Avenue","city":"New
-          York","postal_code":"10118","country_code":"US","state_code":"NY","phone":"+12125551234","default_shipping":true}'
+          York","postal_code":"10118","country_code":"US","state_code":"NY","phone":"+12125551234","is_default_shipping":true}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -44080,7 +44080,7 @@ paths:
       - api_key: []
         bearer_auth: []
       description: |-
-        Changes an address of the business. Pass `default_billing` or `default_shipping` to move that default to it, or `false` to give it up.
+        Changes an address of the business. Pass `is_default_billing` or `is_default_shipping` to move that default to it, or `false` to give it up.
 
         **Required scope:** `write_customers` (for API-key authentication).
       x-codeSamples:
@@ -44096,12 +44096,12 @@ paths:
 
           const address = await client.companies.addresses.update('comp_UkLWZg9DAJ', 'addr_k5nR8xLqPz', {
             label: 'Northern Warehouse',
-            default_billing: true,
+            is_default_billing: true,
           })
       - lang: bash
         label: Spree CLI
         source: spree api patch /companies/{company_id}/addresses/{id} -d '{"label":"Northern
-          Warehouse","default_billing":true}'
+          Warehouse","is_default_billing":true}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -81672,14 +81672,22 @@ components:
         state_name:
           type: string
           description: For countries without states in the database.
+        is_default_billing:
+          type: boolean
+          description: True makes this the default address of that kind, false gives
+            the slot up, and leaving it out keeps the current default.
+        is_default_shipping:
+          type: boolean
+          description: True makes this the default address of that kind, false gives
+            the slot up, and leaving it out keeps the current default.
         default_billing:
           type: boolean
-          description: True makes this the default address of that kind, false gives
-            the slot up, and leaving it out keeps the current default.
+          description: 'Deprecated: Use `is_default_billing`. Removed in 6.1.'
+          deprecated: true
         default_shipping:
           type: boolean
-          description: True makes this the default address of that kind, false gives
-            the slot up, and leaving it out keeps the current default.
+          description: 'Deprecated: Use `is_default_shipping`. Removed in 6.1.'
+          deprecated: true
       required:
       - first_name
       - last_name
@@ -81719,14 +81727,22 @@ components:
         state_name:
           type: string
           description: For countries without states in the database.
+        is_default_billing:
+          type: boolean
+          description: True makes this the default address of that kind, false gives
+            the slot up, and leaving it out keeps the current default.
+        is_default_shipping:
+          type: boolean
+          description: True makes this the default address of that kind, false gives
+            the slot up, and leaving it out keeps the current default.
         default_billing:
           type: boolean
-          description: True makes this the default address of that kind, false gives
-            the slot up, and leaving it out keeps the current default.
+          description: 'Deprecated: Use `is_default_billing`. Removed in 6.1.'
+          deprecated: true
         default_shipping:
           type: boolean
-          description: True makes this the default address of that kind, false gives
-            the slot up, and leaving it out keeps the current default.
+          description: 'Deprecated: Use `is_default_shipping`. Removed in 6.1.'
+          deprecated: true
     CompanyCreateParams:
       type: object
       properties:

@@ -12547,8 +12547,8 @@ paths:
       security:
       - api_key: []
         bearer_auth: []
-      description: 'Adds a labeled site to the node. Pass `default_billing: true`
-        or `default_shipping: true` to make it the default of that kind.'
+      description: 'Adds a labeled site to the node. Pass `is_default_billing: true`
+        or `is_default_shipping: true` to make it the default of that kind.'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -24352,14 +24352,22 @@ components:
           type: string
           description: 'Deprecated: Use `postal_code`. Removed in 6.1.'
           deprecated: true
-        default_billing:
+        is_default_billing:
           type: boolean
           description: True makes this the node's default billing address, false gives
             that up, and leaving it out changes nothing.
-        default_shipping:
+        is_default_shipping:
           type: boolean
           description: True makes this the node's default shipping address, false
             gives that up, and leaving it out changes nothing.
+        default_billing:
+          type: boolean
+          description: 'Deprecated: Use `is_default_billing`. Removed in 6.1.'
+          deprecated: true
+        default_shipping:
+          type: boolean
+          description: 'Deprecated: Use `is_default_shipping`. Removed in 6.1.'
+          deprecated: true
       required:
       - first_name
       - last_name
@@ -24403,14 +24411,22 @@ components:
           type: string
           description: 'Deprecated: Use `postal_code`. Removed in 6.1.'
           deprecated: true
-        default_billing:
+        is_default_billing:
           type: boolean
           description: True makes this the node's default billing address, false gives
             that up, and leaving it out changes nothing.
-        default_shipping:
+        is_default_shipping:
           type: boolean
           description: True makes this the node's default shipping address, false
             gives that up, and leaving it out changes nothing.
+        default_billing:
+          type: boolean
+          description: 'Deprecated: Use `is_default_billing`. Removed in 6.1.'
+          deprecated: true
+        default_shipping:
+          type: boolean
+          description: 'Deprecated: Use `is_default_shipping`. Removed in 6.1.'
+          deprecated: true
     CompletePaymentSessionParams:
       type: object
       properties:

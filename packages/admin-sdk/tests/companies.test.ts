@@ -127,7 +127,7 @@ describe('companies', () => {
       const listed = await client.companies.addresses.list('comp_abc123')
       await client.companies.addresses.create('comp_abc123', {
         label: 'Plant 2 dock',
-        default_shipping: true,
+        is_default_shipping: true,
         city: 'Hamburg',
         country_code: 'DE',
       })
@@ -139,7 +139,7 @@ describe('companies', () => {
       expect(listed.data[0]?.id).toBe('caddr_abc123')
       expect(body).toEqual({
         label: 'Plant 2 dock',
-        default_shipping: true,
+        is_default_shipping: true,
         city: 'Hamburg',
         country_code: 'DE',
       })

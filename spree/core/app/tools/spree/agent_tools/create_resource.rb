@@ -19,7 +19,7 @@ module Spree
         entry, refusal = writable_entry(resource, :create)
         return refusal if refusal
 
-        body, rejection = body_for(entry, attributes)
+        body, rejection = body_for(entry, :create, attributes)
         return rejection if rejection
 
         path, missing = write_path(entry, :create, parent_id: parent_id)

@@ -401,22 +401,42 @@ RSpec.describe 'Admin MCP endpoint', type: :request do
     end
 
     # The envelope is not checked, but a write a tool dispatches is: an
-    # amount still has to be canonical when it reaches the Admin API.
+    # amount still has to be canonical when it reaches the Admin API. Sent
+    # through `prices`, the field a variant update documents — a bare
+    # `price` is refused by the tool before it is dispatched.
     it 'still refuses a malformed price on a dispatched write' do
       product = create(:product, store: store)
       variant = product.default_variant
       price_before = variant.amount_in(store.default_currency)
+      malformed_price = { 'currency' => store.default_currency, 'amount' => '1,599.99' }
 
       body = post_rpc('tools/call',
                       { name: 'update_resource',
                         arguments: { 'resource' => 'variants', 'id' => variant.prefixed_id,
                                      'parent_id' => product.prefixed_id,
-                                     'attributes' => { 'price' => '1,599.99' } } },
+                                     'attributes' => { 'prices' => [malformed_price] } } },
                       headers: { 'Authorization' => "Bearer #{token}" })
 
       expect(body.dig('result', 'isError')).to be(true)
       expect(body.dig('result', 'content', 0, 'text')).to include('decimal string')
       expect(variant.reload.amount_in(store.default_currency)).to eq(price_before)
+    end
+
+    # A variant update takes its prices as rows; a bare `price` was dropped
+    # while the write answered ok.
+    it 'names the field a variant price is written under' do
+      product = create(:product, store: store)
+      variant = product.default_variant
+
+      body = post_rpc('tools/call',
+                      { name: 'update_resource',
+                        arguments: { 'resource' => 'variants', 'id' => variant.prefixed_id,
+                                     'parent_id' => product.prefixed_id,
+                                     'attributes' => { 'price' => '15.99' } } },
+                      headers: { 'Authorization' => "Bearer #{token}" })
+
+      expect(body.dig('result', 'isError')).to be(true)
+      expect(body.dig('result', 'content', 0, 'text')).to include('does not accept price', 'prices')
     end
 
     it 'carries the endpoint\'s own refusal back as a tool error' do

@@ -84,6 +84,14 @@ module Spree
         entry.writable_attribute_names.presence
       end
 
+      def updatable_attributes_for(entry)
+        writable = writable_attributes_for(entry)
+        return if writable.nil?
+
+        updatable = entry.writable_attribute_names(:update)
+        updatable unless updatable == writable
+      end
+
       # The action tools this caller is offered, by resource, worked out once
       # per call rather than once per resource described.
       def actions_for(entry)
@@ -110,6 +118,9 @@ module Spree
           # which is what create_resource and update_resource tell it to do.
           # Offered only where the caller could actually write.
           writable_attributes: writable_attributes_for(entry),
+          # Where an update takes less than a create — an exchange's items
+          # are fixed once it is opened — what update_resource accepts.
+          updatable_attributes: updatable_attributes_for(entry),
           # The action tools that act on this resource — cancel, approve,
           # capture — so a model that found an order learns what it can do
           # to one without scanning the whole tool list.

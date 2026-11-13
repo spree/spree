@@ -13,12 +13,14 @@ module Spree
               body.include_attributes Spree::Api::V3::AddressRequestSchema
               body.require_attributes :first_name, :last_name, :address1, :city, :country_code, on: :create
               body.attribute :zipcode, :string, deprecated: 'Use `postal_code`. Removed in 6.1.'
-              body.attribute :default_billing, :boolean,
+              body.attribute :is_default_billing, :boolean,
                 permit: false,
                 description: "True makes this the node's default billing address, false gives that up, and leaving it out changes nothing."
-              body.attribute :default_shipping, :boolean,
+              body.attribute :is_default_shipping, :boolean,
                 permit: false,
                 description: "True makes this the node's default shipping address, false gives that up, and leaving it out changes nothing."
+              body.attribute :default_billing, :boolean, permit: false, deprecated: 'Use `is_default_billing`. Removed in 6.1.'
+              body.attribute :default_shipping, :boolean, permit: false, deprecated: 'Use `is_default_shipping`. Removed in 6.1.'
             end
 
             # POST /api/v3/store/companies/:company_id/addresses

@@ -18,6 +18,10 @@ module Spree
       # but not `/api/v3/admin/markets/{id}` or a nested child.
       COLLECTION_PATH = %r{\A/api/v3/admin/(?<key>[a-z0-9_]+)\z}
 
+      # The verbs a generic write dispatches with. An update is documented as
+      # PATCH, or as PUT on the few routes that replace a whole record.
+      OPERATION_METHODS = { create: %w[post], update: %w[patch put] }.freeze
+
       class << self
         # The writable properties for one resource.
         #
@@ -31,6 +35,33 @@ module Spree
         # @return [Array<String>] the attribute names a write may set
         def attribute_names(key)
           self.for(key).keys
+        end
+
+        # The writable properties of the one operation a tool dispatches to.
+        #
+        # Read per path and verb rather than per resource: a resource written
+        # under a parent (an order's exchanges, a company's addresses) has no
+        # top-level body at all, and an update often accepts less than a
+        # create — an exchange's items are fixed once it is opened. Checking
+        # a write against the wrong list let the endpoint drop an attribute
+        # and answer 200.
+        #
+        # @param path [String] the route template, e.g.
+        #   "/api/v3/admin/orders/:order_id/exchanges/:id"
+        # @param action [Symbol] :create or :update
+        # @return [Hash] JSON Schema properties, empty when the operation
+        #   documents no body
+        def for_operation(path, action)
+          return {} if path.blank?
+
+          operations[[path.to_s, action.to_sym]] ||= begin
+            documented = Array(document['paths']).to_h[path.to_s.gsub(/:([a-z_]+)/, '{\\1}')]
+            body = Array(OPERATION_METHODS[action.to_sym]).lazy.filter_map do |verb|
+              documented&.dig(verb, 'requestBody', 'content', 'application/json', 'schema')
+            end.first
+
+            resolve_schema(body)&.dig('properties') || {}
+          end
         end
 
         # Core's generated document, which the merged one starts from.
@@ -52,12 +83,17 @@ module Spree
         # @return [void]
         def reset!
           @schemas = nil
+          @operations = nil
         end
 
         private
 
         def schemas
           @schemas ||= load_schemas
+        end
+
+        def operations
+          @operations ||= {}
         end
 
         def load_schemas

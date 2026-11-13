@@ -24,10 +24,14 @@ export type CompanyAddressUpdateParams = {
    * True makes this the node's default billing address, false gives that up, and leaving it out
    * changes nothing.
    */
-  default_billing?: boolean
+  is_default_billing?: boolean
   /**
    * True makes this the node's default shipping address, false gives that up, and leaving it out
    * changes nothing.
    */
+  is_default_shipping?: boolean
+  /** @deprecated Use `is_default_billing`. Removed in 6.1. */
+  default_billing?: boolean
+  /** @deprecated Use `is_default_shipping`. Removed in 6.1. */
   default_shipping?: boolean
 }
