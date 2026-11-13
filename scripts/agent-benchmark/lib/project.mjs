@@ -53,7 +53,14 @@ export const spree = (projectDir, args, options = {}) =>
   sh('npx', ['--no-install', 'spree', ...args], { cwd: projectDir, ...options })
 
 // Scaffolds the project the way a developer would, minus the questions.
-export async function scaffoldProject({ workDir, port, createCommand, imageTag, storefront }) {
+export async function scaffoldProject({
+  workDir,
+  port,
+  createCommand,
+  imageTag,
+  devImage,
+  storefront,
+}) {
   const [command, ...baseArgs] = createCommand.split(' ')
   const args = [
     ...baseArgs,
@@ -80,6 +87,20 @@ export async function scaffoldProject({ workDir, port, createCommand, imageTag, 
       envPath,
       env.replace(/^SPREE_VERSION_TAG=.*$/m, `SPREE_VERSION_TAG=${imageTag}`),
     )
+  }
+
+  // Ejecting builds server/Dockerfile's dev stage, which needs the Debian
+  // mirrors. Where they are unreachable, a prebuilt dev image stands in for
+  // it (see dev-image/Dockerfile).
+  if (devImage) {
+    const devCompose = path.join(projectDir, 'docker-compose.dev.yml')
+    const source = fs.readFileSync(devCompose, 'utf8')
+    const swapped = source.replace(
+      /^ {2}build:\n(?: {4}.*\n)+/m,
+      `  image: ${devImage}\n  pull_policy: never\n`,
+    )
+    if (swapped === source) throw new Error(`No build: block to replace in ${devCompose}`)
+    fs.writeFileSync(devCompose, swapped)
   }
 
   const admin = {

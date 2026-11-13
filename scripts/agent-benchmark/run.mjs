@@ -3,15 +3,24 @@
 // keeps each transcript, diff and acceptance result, then writes a report.
 // See scripts/agent-benchmark/README.md.
 //
-//   node scripts/agent-benchmark/run.mjs [--task id,id|all] [--agent claude|codex|cursor|baseline]
-//     [--repeat N] [--model name] [--out dir] [--image-tag tag]
+//   node scripts/agent-benchmark/run.mjs [--task id,id|all]
+//     [--agent claude|codex|cursor|baseline|reference] [--repeat N] [--model name]
+//     [--out dir] [--image-tag tag] [--dev-image image]
 //     [--create-command "npx --yes create-spree-app@latest"] [--keep]
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { parseArgs } from 'node:util'
 import { AGENTS } from './lib/agents.mjs'
-import { freePort, scaffoldProject, sh, spree, waitForServer } from './lib/project.mjs'
+import {
+  freePort,
+  isEjected,
+  mintKeys,
+  scaffoldProject,
+  sh,
+  spree,
+  waitForServer,
+} from './lib/project.mjs'
 import { loadTasks } from './lib/tasks.mjs'
 import { writeReport } from './score.mjs'
 
@@ -23,6 +32,7 @@ const { values: options } = parseArgs({
     model: { type: 'string' },
     out: { type: 'string' },
     'image-tag': { type: 'string' },
+    'dev-image': { type: 'string' },
     'create-command': { type: 'string', default: 'npx --yes create-spree-app@latest' },
     keep: { type: 'boolean', default: false },
     help: { type: 'boolean', short: 'h', default: false },
@@ -34,7 +44,7 @@ if (options.help) {
     fs
       .readFileSync(new URL(import.meta.url), 'utf8')
       .split('\n')
-      .slice(1, 8)
+      .slice(1, 9)
       .join('\n'),
   )
   process.exit(0)
@@ -76,11 +86,13 @@ async function runOnce(task, attempt) {
     attempt,
     startedAt: startedAt.toISOString(),
     imageTag: options['image-tag'] ?? null,
+    devImage: options['dev-image'] ?? null,
     createCommand: options['create-command'],
     workDir,
   }
   let projectDir = null
   let ctx = { workDir }
+  let scaffoldEjected = false
 
   try {
     if (task.project) {
@@ -91,11 +103,13 @@ async function runOnce(task, attempt) {
         port,
         createCommand: options['create-command'],
         imageTag: options['image-tag'],
+        devImage: options['dev-image'],
         storefront: task.project.storefront,
       })
       projectDir = scaffold.projectDir
       ctx = { ...ctx, projectDir, port, keys: scaffold.keys, admin: scaffold.admin }
       meta.port = port
+      scaffoldEjected = isEjected(projectDir)
       // A baseline commit, so everything the agent changes shows in one diff.
       await sh('git', ['init', '-q'], { cwd: projectDir })
       await sh('git', ['add', '-A'], { cwd: projectDir })
@@ -118,7 +132,7 @@ async function runOnce(task, attempt) {
 
     const cwd = projectDir ?? workDir
     fs.writeFileSync(path.join(runDir, 'prompt.txt'), task.prompt)
-    const [command, args] = agent.command(task.prompt, { model: options.model, cwd })
+    const [command, args] = agent.command(task.prompt, { model: options.model, cwd, task: task.id })
     const transcript = fs.createWriteStream(path.join(runDir, 'transcript.jsonl'))
     log(`${task.id} #${attempt}: running ${options.agent}`)
     const agentStart = Date.now()
@@ -140,6 +154,12 @@ async function runOnce(task, attempt) {
       // Judge the code, not whether the agent remembered to restart.
       await spree(projectDir, ['restart'])
       await waitForServer(ctx.port)
+      // Ejecting moves the app to a new database, which has none of the
+      // harness's keys: mint them again there.
+      if (isEjected(projectDir) && !scaffoldEjected) {
+        ctx = { ...ctx, keys: await mintKeys(projectDir) }
+        meta.keysRemintedAfterEject = true
+      }
     } else if (fs.existsSync(path.join(workDir, 'ANSWER.md'))) {
       fs.copyFileSync(path.join(workDir, 'ANSWER.md'), path.join(runDir, 'ANSWER.md'))
     }
