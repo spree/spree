@@ -102,7 +102,7 @@ export function isEjectedProject(projectDir: string): boolean {
   // either it builds the project's Dockerfile, or it mounts the source into
   // the base image's build variant (`- ./server:/rails`). The prebuilt-image
   // compose does neither — it only mounts `/rails/storage`.
-  return composeBuildsImage(compose) || /^\s*-\s*\.[\w./-]*:\/rails\s*$/m.test(compose)
+  return composeBuildsImage(compose) || /^\s*-\s*["']?\.[\w./-]*:\/rails["']?\s*$/m.test(compose)
 }
 
 /**

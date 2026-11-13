@@ -31,6 +31,6 @@ A project then builds against the local images with `docker build . -f server/Do
 
 ## Publishing
 
-`.github/workflows/base-image.yml` builds every line in `base/lines.json` weekly and when this directory changes. For each line and architecture it builds both variants, builds a stock Spree image from `spree/spree-starter` on top, and boots it. Only when every build passes does it move the line tag (`6.1`, `6.1-build`), add dated tags (`6.1-20261116`, `6.1-20261116-build`) and attach a build provenance attestation. A pull request runs the same builds and publishes nothing.
+`.github/workflows/base-image.yml` builds every line in `base/lines.json` weekly and when this directory changes. For each line and architecture it builds both variants, builds a stock Spree image from `spree/spree-starter` on top, and boots it. Only when every build passes does it move the line tag (`6.1`, `6.1-build`), add dated tags (`6.1-202611160323`, `6.1-2026111603230323-build`) and attach a build provenance attestation. A pull request runs the same builds and publishes nothing.
 
 The stock image `ghcr.io/spree/spree` is published by `spree/spree-starter`, from its copy of `project/Dockerfile`.

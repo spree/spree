@@ -4,7 +4,7 @@
 # holds Ruby, Node and the system libraries; `spree-image-build` installs the
 # gems and builds the app and the dashboards. Rebuilding picks up the base's
 # security fixes. To pin a build, set SPREE_BASE to a dated tag such as
-# ghcr.io/spree/spree-base:6.1-20261116.
+# ghcr.io/spree/spree-base:6.1-202611160323.
 #
 # The build context is the project root of a create-spree-app project, or the
 # Rails app itself in a bare clone of spree-starter.

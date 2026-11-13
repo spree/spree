@@ -34,6 +34,8 @@ env:
 jobs:
   lines:
     name: Read the lines to build
+    # Forks check their pull requests and publish nothing.
+    if: github.event_name == 'pull_request' || github.repository == 'spree/spree'
     runs-on: ubuntu-latest
     outputs:
       lines: ${{ steps.read.outputs.lines }}
@@ -44,7 +46,7 @@ jobs:
       - id: read
         run: |
           echo "lines=$(jq -c . docker/base/lines.json)" >> "$GITHUB_OUTPUT"
-          echo "date=$(date -u +%Y%m%d)" >> "$GITHUB_OUTPUT"
+          echo "date=$(date -u +%Y%m%d%H%M)" >> "$GITHUB_OUTPUT"
 
   build:
     name: "Build ${{ matrix.line.line }} (${{ matrix.platform.arch }})"

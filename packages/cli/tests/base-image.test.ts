@@ -204,3 +204,46 @@ describe('planBaseImageMove', () => {
     expect(written(move)).toEqual(['docker-compose.dev.yml', 'Dockerfile'])
   })
 })
+
+describe('composeOnBaseImage, in a compose file with several services', () => {
+  const compose = `services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev
+    ports:
+      - "3000:3000"
+  postgres:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+`
+
+  it('adds the development environment to the service that was built, not to another one', () => {
+    expect(composeOnBaseImage(compose, '6.1')).toBe(`services:
+  web:
+    image: ghcr.io/spree/spree-base:6.1-build
+    environment:
+      RAILS_ENV: development
+      BUNDLE_DEPLOYMENT: "0"
+      BUNDLE_WITHOUT: ""
+    ports:
+      - "3000:3000"
+  postgres:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+`)
+  })
+
+  it('does not repeat a variable the service already sets', () => {
+    const withEnv = compose.replace(
+      '    ports:\n',
+      '    environment:\n      RAILS_ENV: development\n    ports:\n',
+    )
+    const moved = composeOnBaseImage(withEnv, '6.1') as string
+    expect(moved.match(/RAILS_ENV:/g)).toHaveLength(1)
+    expect(moved).toContain('      BUNDLE_WITHOUT: ""\n      RAILS_ENV: development\n')
+  })
+})

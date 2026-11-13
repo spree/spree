@@ -34,7 +34,7 @@ export function projectDockerfile(line: string): string {
 # holds Ruby, Node and the system libraries; \`spree-image-build\` installs the
 # gems and builds the app and the dashboards. Rebuilding picks up the base's
 # security fixes. To pin a build, set SPREE_BASE to a dated tag such as
-# ${BASE_IMAGE}:${line}-20261116.
+# ${BASE_IMAGE}:${line}-202611160323.
 #
 # The build context is the project root of a create-spree-app project, or the
 # Rails app itself in a bare clone of spree-starter.
@@ -106,23 +106,34 @@ export function composeOnBaseImage(content: string, line: string): string | null
   if (!block) return null
 
   const indent = block[1]
+  const image = `${indent}image: ${BASE_IMAGE}:${line}-build\n`
+  const start = block.index ?? 0
+  const before = content.slice(0, start)
+  const after = content.slice(start + block[0].length)
+
+  // The rest of the mapping the build block sat in: up to the first line
+  // indented less than it. The variables belong there, not in another service.
+  const outdent = after.search(new RegExp(`^(?!${indent})[ \\t]*[^\\s#]`, 'm'))
+  const mapping = outdent === -1 ? after : after.slice(0, outdent)
+  const rest = outdent === -1 ? '' : after.slice(outdent)
+
   // The old development image set these itself; the base image is built for
   // production, so the compose file has to.
   const development = [
-    `${indent}  RAILS_ENV: development`,
-    `${indent}  BUNDLE_DEPLOYMENT: "0"`,
-    `${indent}  BUNDLE_WITHOUT: ""`,
-  ].join('\n')
+    ['RAILS_ENV', 'development'],
+    ['BUNDLE_DEPLOYMENT', '"0"'],
+    ['BUNDLE_WITHOUT', '""'],
+  ]
+    .filter(([name]) => !new RegExp(`^${indent}[ \\t]+${name}:`, 'm').test(mapping))
+    .map(([name, value]) => `${indent}  ${name}: ${value}\n`)
+    .join('')
 
-  const moved = content.replace(STOCK_BUILD_BLOCK, `${indent}image: ${BASE_IMAGE}:${line}-build\n`)
   const environment = new RegExp(`^${indent}environment:\\n`, 'm')
-  if (environment.test(moved)) {
-    return moved.replace(environment, (key) => `${key}${development}\n`)
+  if (environment.test(mapping)) {
+    return before + image + mapping.replace(environment, (key) => key + development) + rest
   }
-  return moved.replace(
-    `${indent}image: ${BASE_IMAGE}:${line}-build\n`,
-    (image) => `${image}${indent}environment:\n${development}\n`,
-  )
+  const added = development ? `${indent}environment:\n${development}` : ''
+  return before + image + added + mapping + rest
 }
 
 /**

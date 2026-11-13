@@ -69,10 +69,10 @@ In development, `spree build` pulls the newer build image.
 
 ### Pinning a build
 
-The tag `6.1` moves with every rebuild. Each rebuild is also published under a dated tag that never moves. Pin it when two builds of the same commit must be identical:
+The tag `6.1` moves with every rebuild. Each rebuild is also published under a tag stamped with its date and time, which never moves. Pin it when two builds of the same commit must be identical:
 
 ```bash
-docker build . -f server/Dockerfile --build-arg SPREE_BASE=ghcr.io/spree/spree-base:6.1-20261116 -t my-store
+docker build . -f server/Dockerfile --build-arg SPREE_BASE=ghcr.io/spree/spree-base:6.1-202611160323 -t my-store
 ```
 
 A pinned project gets no fixes until you change the tag.
