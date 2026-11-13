@@ -10,6 +10,20 @@ module SpreeMeilisearch
     BUILT_IN_FILTERABLE_ATTRIBUTES = %w[product_id status in_stock preorder store_ids channel_ids locale currency available_on discontinue_on price category_ids collection_ids grouping_id tags option_value_ids option_value_combination_ids].freeze
     CUSTOM_FIELD_RANGE_OPERATORS = { 'gt' => '>', 'gteq' => '>=', 'lt' => '<', 'lteq' => '<=' }.freeze
 
+    # How long a successful settings push is trusted before the next write
+    # re-pushes it. Settings only change when the storefront custom field
+    # schema changes, and that changes the digest, so this is just a backstop
+    # for an index recreated outside Spree.
+    INDEX_SETTINGS_CACHE_TTL = 12.hours
+    # Polling GET /tasks every 50ms (the client default) across many
+    # concurrent jobs is what trips Meilisearch's rate limiter.
+    TASK_AWAIT_TIMEOUT_MS = 10_000
+    TASK_AWAIT_INTERVAL_MS = 250
+    # While one job pushes settings, the others skip the push instead of all
+    # pushing at once on a cold cache. Meilisearch applies a settings update
+    # to documents already in the index, so skipping it is safe.
+    INDEX_SETTINGS_LOCK_TTL = 1.minute
+
     def self.indexing_required?
       true
     end
@@ -125,16 +139,6 @@ module SpreeMeilisearch
       indexed
     end
 
-    # How long a successful settings push is trusted before the next write
-    # re-pushes it. Settings only change when the storefront custom field
-    # schema changes, and that changes the digest, so this is just a backstop
-    # for an index recreated outside Spree.
-    INDEX_SETTINGS_CACHE_TTL = 12.hours
-    # Polling GET /tasks every 50ms (the client default) across many
-    # concurrent jobs is what trips Meilisearch's rate limiter.
-    TASK_AWAIT_TIMEOUT_MS = 30_000
-    TASK_AWAIT_INTERVAL_MS = 250
-
     # Configure index settings for filtering, sorting, and faceting.
     # Called automatically by reindex, but can be called separately.
     # Waits for all settings tasks to complete before returning so that
@@ -147,7 +151,16 @@ module SpreeMeilisearch
       tasks << index.update_sortable_attributes(settings[:sortable_attributes])
       tasks << index.update_searchable_attributes(settings[:searchable_attributes])
       tasks << index.update_distinct_attribute(settings[:distinct_attribute])
-      tasks.each { |task| task&.await(TASK_AWAIT_TIMEOUT_MS, TASK_AWAIT_INTERVAL_MS) }
+      tasks.compact!
+      tasks.each { |task| task.await(TASK_AWAIT_TIMEOUT_MS, TASK_AWAIT_INTERVAL_MS) }
+      # A settings task that fails (rather than raising) must not be cached as
+      # pushed, or every job would trust the stale index for the whole TTL.
+      failed = tasks.select(&:failed?)
+      if failed.any?
+        Rails.logger.warn { "[Meilisearch] Settings update failed for #{index_name}: #{failed.map(&:error).inspect}" }
+        return
+      end
+
       Rails.cache.write(index_settings_cache_key, index_settings_digest(settings), expires_in: INDEX_SETTINGS_CACHE_TTL)
       @index_settings_configured = true
     end
@@ -162,8 +175,13 @@ module SpreeMeilisearch
     def ensure_index_settings_once!
       return if @index_settings_configured
       return @index_settings_configured = true if index_settings_current?
+      return unless Rails.cache.write(index_settings_lock_key, true, unless_exist: true, expires_in: INDEX_SETTINGS_LOCK_TTL)
 
-      ensure_index_settings!
+      begin
+        ensure_index_settings!
+      ensure
+        Rails.cache.delete(index_settings_lock_key)
+      end
     end
 
     # The index is the storefront's: shoppers search it and the back office
@@ -257,7 +275,7 @@ module SpreeMeilisearch
         # is referenced before the index settings were refreshed — otherwise
         # every search on an upgraded store returns empty until a reindex or
         # the next product write.
-        if %w[invalid_search_filter invalid_search_sort].include?(e.code) && !settings_refreshed
+        if %w[invalid_search_filter invalid_search_sort invalid_search_facets].include?(e.code) && !settings_refreshed
           settings_refreshed = true
           ensure_index_settings!
           retry
@@ -316,6 +334,10 @@ module SpreeMeilisearch
 
     def index_settings_cache_key
       "spree_meilisearch/index_settings/#{index_name}"
+    end
+
+    def index_settings_lock_key
+      "#{index_settings_cache_key}/lock"
     end
 
     def index_settings_digest(settings)

@@ -520,6 +520,7 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
       allow(Rails).to receive(:cache).and_return(cache)
       allow(mock_index).to receive(:update_filterable_attributes).and_return(settings_task)
       allow(settings_task).to receive(:await)
+      allow(settings_task).to receive(:failed?).and_return(false)
       allow(mock_index).to receive(:add_documents)
     end
 
@@ -559,6 +560,31 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
       expect { described_class.new(store).ensure_index_settings_once! }.to raise_error(::Meilisearch::ApiError)
 
       allow(settings_task).to receive(:await)
+      expect(mock_index).to receive(:update_filterable_attributes).once
+      described_class.new(store).ensure_index_settings_once!
+    end
+
+    it 'skips the push while another job is already pushing the same settings' do
+      cache.write("spree_meilisearch/index_settings/#{store.code}_products/lock", true)
+
+      expect(mock_index).not_to receive(:update_filterable_attributes)
+      expect(mock_index).to receive(:add_documents)
+
+      described_class.new(store).index(product_1)
+    end
+
+    it 'releases the push lock once the settings are pushed' do
+      described_class.new(store).ensure_index_settings_once!
+
+      expect(cache.exist?("spree_meilisearch/index_settings/#{store.code}_products/lock")).to be(false)
+    end
+
+    it 'does not record the settings as pushed when a settings task fails' do
+      allow(settings_task).to receive(:failed?).and_return(true)
+      allow(settings_task).to receive(:error).and_return({ 'code' => 'invalid_settings_filterable_attributes' })
+      described_class.new(store).ensure_index_settings_once!
+
+      allow(settings_task).to receive(:failed?).and_return(false)
       expect(mock_index).to receive(:update_filterable_attributes).once
       described_class.new(store).ensure_index_settings_once!
     end
