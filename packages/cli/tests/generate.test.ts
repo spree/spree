@@ -155,6 +155,16 @@ Next:
     expect(summary).toContain('created  server/Gemfile.lock')
   })
 
+  it('leads root dotfiles to the app too', () => {
+    const summary = formatGeneratorSummary(
+      'rspec:install',
+      parseGeneratorOutput('      create  .rspec\n      create  .rubocop.yml\n'),
+      { pathPrefix: 'server/' },
+    )
+    expect(summary).toContain('created  server/.rspec')
+    expect(summary).toContain('created  server/.rubocop.yml')
+  })
+
   it('says so when the generator touched nothing, and shows what it printed', () => {
     expect(
       formatGeneratorSummary(

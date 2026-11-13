@@ -148,9 +148,10 @@ export interface SummaryOptions {
   pathPrefix?: string
 }
 
-// A target that names a file, such as `app/models/brand.rb` or `Gemfile`, as
-// opposed to the code a `route` or `environment` action logs.
-const FILE_TARGET = /^(?:[\w.-]+\/)+[\w.-]+$|^[\w-]+\.\w+$|^Gemfile$/
+// A target that names a file, such as `app/models/brand.rb`, `Gemfile` or a
+// root dotfile like `.rspec`, as opposed to the code a `route` or
+// `environment` action logs (`resources :brands`).
+const FILE_TARGET = /^(?:[\w.-]+\/)+[\w.-]+$|^\.?[\w-]+\.[\w.]+$|^\.[\w-]+$|^Gemfile$/
 
 function withPrefix(target: string, pathPrefix: string): string {
   return pathPrefix && FILE_TARGET.test(target.split(' ')[0]) ? pathPrefix + target : target
