@@ -219,6 +219,13 @@ describe('readmeContent', () => {
 })
 
 describe('agentsMdContent', () => {
+  // A bare image name resolves to Docker Hub, where Spree owns no namespace.
+  it('names the only registry Spree images are published to', () => {
+    const content = agentsMdContent(true)
+    expect(content).toContain('ghcr.io/spree/spree-base')
+    expect(content).toContain('Nothing on Docker Hub is official')
+  })
+
   it('lists apps/dashboard when the dashboard is included', () => {
     const content = agentsMdContent(true, true)
     expect(content).toContain('`apps/dashboard/`')

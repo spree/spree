@@ -93,7 +93,16 @@ Confirm CI is green on `origin/main` HEAD: `gh run list --branch main --limit 6`
 5. For a minor or major release, add the entry to `docs/changelog.mdx` (the
    6.0.0 release commit shows the shape) and make sure the upgrade guide under
    `docs/developer/upgrades/` exists. Patch releases skip this.
-6. Commit as `Released Spree <version>`. The body says which tools moved and
+6. For a minor or major release, add the new line to `docker/base/lines.json`
+   so its base image is published (`docs/plans/6.1-spree-base-image.md`). The
+   entry names the line (`6.2`), the Ruby and Node versions it runs on, and
+   the git ref in this repository and in spree-starter its image is built
+   from. Keep the previous minor's entry, pointed at the ref that still
+   receives its patch releases, and remove any entry older than that: its
+   base image is frozen. Update the base image tag in
+   `docker/project/Dockerfile` to the new line; it is the file spree-starter
+   ships. Patch releases skip this.
+7. Commit as `Released Spree <version>`. The body says which tools moved and
    which stayed, and why. Amend the fixes from the reviews that run before the
    pull request opens into it; once it is open, `/open-pr` pushes each round
    as its own commit and the pull request is squash-merged.

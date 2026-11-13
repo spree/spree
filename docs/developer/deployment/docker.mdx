@@ -28,6 +28,96 @@ docker build . -f server/Dockerfile -t my-store
 
 Both produce the same image — and it's exactly what Render and Railway build from your repository. Migrations run automatically on boot.
 
+## The Spree Base Image
+
+Your project's `Dockerfile` builds on `ghcr.io/spree/spree-base`, an image Spree maintains. It holds Ruby, Node.js and the system libraries Spree needs, and none of your code or gems.
+
+```dockerfile server/Dockerfile
+ARG SPREE_BASE=ghcr.io/spree/spree-base:6.1
+
+FROM ${SPREE_BASE}-build AS build
+COPY --chown=rails:rails Gemfile* .ruby-version* server/Gemfile* server/.ruby-version* backend/Gemfile* backend/.ruby-version* ./
+RUN spree-image-build gems
+COPY . /src
+RUN spree-image-build app /src
+
+FROM ${SPREE_BASE}
+COPY --chown=rails:rails --from=build /usr/local/bundle /usr/local/bundle
+COPY --chown=rails:rails --from=build /rails /rails
+```
+
+There are two variants of the image:
+
+| Image | Used for |
+| --- | --- |
+| `ghcr.io/spree/spree-base:6.1` | The final stage of your production image |
+| `ghcr.io/spree/spree-base:6.1-build` | The build stage, and the container `spree dev` runs an ejected project in. Adds compilers, pnpm and `spree-image-build` |
+
+`spree-image-build gems` installs your gems. `spree-image-build app` copies your Rails app in, builds `apps/dashboard` and `apps/seller-dashboard` (or the stock ones when you have not customized them), and precompiles assets.
+
+### Getting security fixes
+
+Spree rebuilds the base image every week, for the current and the previous Spree release line, with the latest operating system, Ruby and Node.js fixes. A rebuild is published only after a stock Spree image built on it boots and passes its health check.
+
+To pick the fixes up, rebuild your image and deploy it:
+
+```bash
+spree build --production
+```
+
+In development, `spree build` pulls the newer build image.
+
+### Pinning a build
+
+The tag `6.1` moves with every rebuild. Each rebuild is also published under a dated tag that never moves. Pin it when two builds of the same commit must be identical:
+
+```bash
+docker build . -f server/Dockerfile --build-arg SPREE_BASE=ghcr.io/spree/spree-base:6.1-20261116 -t my-store
+```
+
+A pinned project gets no fixes until you change the tag.
+
+### Adding system packages
+
+Install them in the final stage of your `Dockerfile`, as root, and switch back to the app user:
+
+```dockerfile
+FROM ${SPREE_BASE}
+
+USER root
+RUN apt-get update -qq && apt-get install --no-install-recommends -y ffmpeg && rm -rf /var/lib/apt/lists
+USER 1000:1000
+
+COPY --chown=rails:rails --from=build /usr/local/bundle /usr/local/bundle
+COPY --chown=rails:rails --from=build /rails /rails
+```
+
+A package a gem needs to compile also goes into the build stage, the same way.
+
+### Verifying an image
+
+Spree publishes its images only at `ghcr.io/spree`. Always write the registry host: a bare name such as `spree/spree` points at Docker Hub, where nothing is maintained by Spree.
+
+Every published image carries a build provenance attestation. To check that an image was built by the Spree repository's workflow, use the [GitHub CLI](https://cli.github.com):
+
+```bash
+gh attestation verify oci://ghcr.io/spree/spree-base:6.1 --repo spree/spree
+```
+
+### Using a different base
+
+If you need another distribution or a hardened vendor image, copy the definition of the base image from [`docker/base`](https://github.com/spree/spree/tree/main/docker/base) in the Spree repository — its `Dockerfile` and the `spree-image-build` script — and build your own. You then apply security fixes yourself.
+
+### Moving an existing project
+
+Projects created before Spree 6.1 have a longer, self-contained `Dockerfile`. It keeps working. `spree upgrade` offers to replace it with the one above when you move to Spree 6.1 or later. It leaves a `Dockerfile` or compose file you have changed alone and tells you so.
+
+To move by hand:
+
+1. Replace `server/Dockerfile` with the file above.
+2. In `server/Gemfile`, change `ruby file: '.ruby-version'` to `ruby '~> 4.0.0'`. The base image decides the Ruby patch version.
+3. In your compose files, replace the `build:` section of the app with `image: ghcr.io/spree/spree-base:6.1-build`, and add `RAILS_ENV: development`, `BUNDLE_DEPLOYMENT: "0"` and `BUNDLE_WITHOUT: ""` to its `environment:`.
+
 ## Running the Image
 
 One app container plus Postgres is a complete deployment:
@@ -121,7 +211,7 @@ Background jobs run inside the web container by default. When job load deserves 
 On Linux, every `ports:` entry is implemented with Docker's own `iptables` NAT and `FORWARD` rules, and those rules are evaluated **before** the host's `INPUT` chain. A host firewall such as `ufw` or `firewalld` never sees that traffic: `ufw default deny incoming` with `ports: "5432:5432"` in a compose file still leaves Postgres open to the whole internet, and a database or cache published that way is found by scanners within minutes. Docker Engine 28.0 tightened what *unpublished* ports leak to the local network, but a port published on all interfaces is as reachable on Docker 28 as it was before.
 
 <Warning>
-  Never add a `ports:` entry to `postgres` (or Redis, or Meilisearch) on an internet-facing host. The compose file above runs Postgres with `POSTGRES_HOST_AUTH_METHOD: trust` — passwordless — which is only safe because the container has no published port and is reachable solely from the compose network. `spree upgrade` does not rewrite compose files, so projects created before Spree 5.5.2 should [check their port bindings](/developer/upgrades/5.6-to-6.0#check-the-ports-your-compose-files-publish).
+  Never add a `ports:` entry to `postgres` (or Redis, or Meilisearch) on an internet-facing host. The compose file above runs Postgres with `POSTGRES_HOST_AUTH_METHOD: trust` — passwordless — which is only safe because the container has no published port and is reachable solely from the compose network. `spree upgrade` does not change the ports your compose files publish, so projects created before Spree 5.5.2 should [check their port bindings](/developer/upgrades/5.6-to-6.0#check-the-ports-your-compose-files-publish).
 </Warning>
 
 What this means for a production host:

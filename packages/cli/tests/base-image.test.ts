@@ -52,7 +52,9 @@ describe('projectDockerfile', () => {
       path.resolve(__dirname, '../../../docker/project/Dockerfile'),
       'utf-8',
     )
-    expect(projectDockerfile('6.1')).toBe(canonical)
+    const line = canonical.match(/^ARG SPREE_BASE=ghcr\.io\/spree\/spree-base:(\S+)$/m)?.[1]
+    expect(line).toBeDefined()
+    expect(projectDockerfile(line as string)).toBe(canonical)
   })
 
   it('names the base image of the given line', () => {
