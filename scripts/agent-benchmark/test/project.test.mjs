@@ -1,6 +1,22 @@
 import assert from 'node:assert/strict'
+import fs from 'node:fs'
 import { describe, it } from 'node:test'
 import { sh } from '../lib/project.mjs'
+
+// The /proc state of a process ('Z' for a zombie), 'gone' only when the
+// kernel says no such process (ESRCH), 'alive' when it exists but /proc is
+// unavailable, and the error code when the probe itself fails.
+function processState(pid) {
+  try {
+    return fs.readFileSync(`/proc/${pid}/stat`, 'utf8').split(' ')[2]
+  } catch {}
+  try {
+    process.kill(pid, 0)
+    return 'alive'
+  } catch (error) {
+    return error.code === 'ESRCH' ? 'gone' : `probe failed: ${error.code}`
+  }
+}
 
 describe('sh', () => {
   it('returns the exit code and output', async () => {
@@ -34,27 +50,17 @@ describe('sh', () => {
       { timeoutMs: 200, graceMs: 200 },
     )
     assert.equal(result.timedOut, true)
-    const fs = await import('node:fs')
     const pid = Number(fs.readFileSync(pidFile, 'utf8'))
     fs.rmSync(pidFile, { force: true })
     await new Promise((resolve) => setTimeout(resolve, 600))
     // Gone, or a zombie waiting for an init that does not reap (as in some containers).
-    let state = 'gone'
-    try {
-      state = fs.readFileSync(`/proc/${pid}/stat`, 'utf8').split(' ')[2]
-    } catch {
-      try {
-        process.kill(pid, 0)
-        state = 'alive'
-      } catch {}
-    }
+    const state = processState(pid)
     assert.ok(state === 'gone' || state === 'Z', `descendant is still running (${state})`)
   })
 
   it('kills a surviving descendant even when nothing else keeps Node running', {
     skip: process.platform === 'win32',
   }, async () => {
-    const fs = await import('node:fs')
     const pidFile = `/tmp/sh-test-${process.pid}-${Date.now()}-alone`
     const lib = new URL('../lib/project.mjs', import.meta.url).href
     // A separate Node process that exits as soon as nothing holds it open.
@@ -69,11 +75,12 @@ describe('sh', () => {
     const pid = Number(fs.readFileSync(pidFile, 'utf8'))
     fs.rmSync(pidFile, { force: true })
     await new Promise((resolve) => setTimeout(resolve, 300))
-    let state = 'gone'
-    try {
-      state = fs.readFileSync(`/proc/${pid}/stat`, 'utf8').split(' ')[2]
-    } catch {}
-    if (state !== 'gone' && state !== 'Z') process.kill(pid, 'SIGKILL')
+    const state = processState(pid)
+    if (state !== 'gone' && state !== 'Z') {
+      try {
+        process.kill(pid, 'SIGKILL')
+      } catch {}
+    }
     assert.ok(state === 'gone' || state === 'Z', `descendant outlived Node (${state})`)
   })
 
