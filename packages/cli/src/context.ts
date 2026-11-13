@@ -100,9 +100,13 @@ export function isEjectedProject(projectDir: string): boolean {
   if (compose === undefined) return false
   // Cheap YAML probes. An ejected project runs the app from its own source:
   // either it builds the project's Dockerfile, or it mounts the source into
-  // the base image's build variant (`- ./server:/rails`). The prebuilt-image
+  // the base image's build variant (`- ./server:/rails`, with or without
+  // mount options such as `:cached`). The prebuilt-image
   // compose does neither — it only mounts `/rails/storage`.
-  return composeBuildsImage(compose) || /^\s*-\s*["']?\.[\w./-]*:\/rails["']?\s*$/m.test(compose)
+  return (
+    composeBuildsImage(compose) ||
+    /^\s*-\s*["']?\.[\w./-]*:\/rails(?::[\w,=-]+)?["']?\s*$/m.test(compose)
+  )
 }
 
 /**

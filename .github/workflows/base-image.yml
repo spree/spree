@@ -21,8 +21,10 @@ on:
     - cron: "23 3 * * 1"
   workflow_dispatch:
 
+# One group per ref, whatever started the run: the weekly rebuild and a merge
+# both publish the same tags from main, so they must never run side by side.
 concurrency:
-  group: base-image-${{ github.event_name }}-${{ github.ref }}
+  group: base-image-${{ github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
@@ -73,11 +75,12 @@ jobs:
       RUBY_VERSION: ${{ matrix.line.ruby }}
       NODE_VERSION: ${{ matrix.line.node }}
     steps:
-      # A pull request proves its own definition; every other run builds each
-      # line from the ref lines.json names for it.
+      # A run on main builds each line from the ref lines.json names for it.
+      # A pull request, or a manual run from another branch, proves its own
+      # definition.
       - uses: actions/checkout@v7
         with:
-          ref: ${{ github.event_name == 'pull_request' && github.sha || matrix.line.ref }}
+          ref: ${{ github.ref == 'refs/heads/main' && matrix.line.ref || github.sha }}
           persist-credentials: false
 
       - name: Build the runtime image and the build variant

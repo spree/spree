@@ -6,6 +6,7 @@ import {
   baseImageLine,
   composeOnBaseImage,
   isStockDockerfile,
+  onBaseImageLine,
   planBaseImageMove,
   projectDockerfile,
   usesBaseImage,
@@ -261,5 +262,85 @@ describe('composeOnBaseImage, with less common compose shapes', () => {
     const compose =
       'services:\n  web:\n    build:\n      context: .\n      dockerfile: Dockerfile\n\n      args:\n        FOO: bar\n'
     expect(composeOnBaseImage(compose, '6.1')).toBeNull()
+  })
+})
+
+describe('composeOnBaseImage, across a whole service', () => {
+  it('uses an environment block that sits above the build block', () => {
+    const compose =
+      'services:\n  web:\n    environment:\n      DATABASE_HOST: postgres\n    build:\n      context: .\n      dockerfile: Dockerfile\n      target: dev\n    ports:\n      - "3000:3000"\n'
+    const moved = composeOnBaseImage(compose, '6.1') as string
+    expect(moved.match(/environment:/g)).toHaveLength(1)
+    expect(moved).toBe(
+      'services:\n  web:\n    environment:\n      RAILS_ENV: development\n      BUNDLE_DEPLOYMENT: "0"\n      BUNDLE_WITHOUT: ""\n      DATABASE_HOST: postgres\n    image: ghcr.io/spree/spree-base:6.1-build\n    ports:\n      - "3000:3000"\n',
+    )
+  })
+
+  it('moves every service that builds the stock Dockerfile', () => {
+    const service = (name: string) =>
+      `  ${name}:\n    build:\n      context: .\n      dockerfile: Dockerfile\n      target: dev\n`
+    const moved = composeOnBaseImage(
+      `services:\n${service('web')}${service('worker')}`,
+      '6.1',
+    ) as string
+    expect(moved).not.toContain('build:')
+    expect(moved.match(/image: ghcr\.io\/spree\/spree-base:6\.1-build/g)).toHaveLength(2)
+    expect(moved.match(/RAILS_ENV: development/g)).toHaveLength(2)
+  })
+})
+
+describe('onBaseImageLine', () => {
+  it('moves line tags of an older Spree line, in Dockerfiles and compose files', () => {
+    expect(onBaseImageLine(projectDockerfile('6.1'), '6.2')).toBe(
+      projectDockerfile('6.2').replace(
+        'spree-base:6.2-202611160323',
+        'spree-base:6.1-202611160323',
+      ),
+    )
+    expect(onBaseImageLine('    image: ghcr.io/spree/spree-base:6.1-build\n', '6.2')).toBe(
+      '    image: ghcr.io/spree/spree-base:6.2-build\n',
+    )
+  })
+
+  it('leaves a pinned build, the same line and a newer line alone', () => {
+    expect(
+      onBaseImageLine('ARG SPREE_BASE=ghcr.io/spree/spree-base:6.1-202611160323\n', '6.2'),
+    ).toBeNull()
+    expect(onBaseImageLine(projectDockerfile('6.2'), '6.2')).toBeNull()
+    expect(onBaseImageLine('image: ghcr.io/spree/spree-base:6.3-build\n', '6.2')).toBeNull()
+  })
+})
+
+describe('planBaseImageMove, for a project already on the base image', () => {
+  let projectDir: string
+
+  beforeEach(() => {
+    projectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'spree-base-image-line-'))
+    fs.mkdirSync(path.join(projectDir, 'server'))
+    fs.writeFileSync(path.join(projectDir, 'server', 'Gemfile'), "gem 'spree'\n")
+    fs.writeFileSync(path.join(projectDir, 'server', 'Dockerfile'), projectDockerfile('6.1'))
+    fs.writeFileSync(
+      path.join(projectDir, 'docker-compose.yml'),
+      'services:\n  web:\n    image: ghcr.io/spree/spree-base:6.1-build\n    volumes:\n      - ./server:/rails\n',
+    )
+  })
+
+  afterEach(() => fs.rmSync(projectDir, { recursive: true, force: true }))
+
+  // The build refuses a base image older than the project's Spree.
+  it('moves the line up when the project moves to a newer Spree line', () => {
+    const move = planBaseImageMove(projectDir, 'server', '6.2')
+
+    expect(move.lineOnly).toBe(true)
+    expect(move.writes.map(({ file }) => path.relative(projectDir, file))).toEqual([
+      'server/Dockerfile',
+      'docker-compose.yml',
+    ])
+    expect(move.writes[0].content).toContain('ARG SPREE_BASE=ghcr.io/spree/spree-base:6.2\n')
+    expect(move.writes[1].content).toContain('image: ghcr.io/spree/spree-base:6.2-build\n')
+  })
+
+  it('does nothing on the same line', () => {
+    expect(planBaseImageMove(projectDir, 'server', '6.1')).toEqual({ writes: [] })
   })
 })

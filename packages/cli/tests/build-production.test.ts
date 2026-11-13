@@ -66,9 +66,11 @@ describe('planProductionBuild', () => {
     const plan = planProductionBuild(projectDir, 'shop:1')
 
     expect(plan.dashboard).toBe('custom')
+    // `--pull`: rebuilding is how the project gets the base image's fixes.
     expect(plan.args).toEqual([
       'build',
       projectDir,
+      '--pull',
       '-f',
       path.join(projectDir, 'backend', 'Dockerfile'),
       '-t',

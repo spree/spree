@@ -164,6 +164,21 @@ describe('isEjectedProject', () => {
     expect(buildsDevImage(dir)).toBe(false)
   })
 
+  it('recognises a source mount that is quoted or carries mount options', () => {
+    const dir = makeTempDir()
+    for (const mount of [
+      '"./server:/rails"',
+      './server:/rails:cached',
+      "'./backend:/rails:delegated'",
+    ]) {
+      fs.writeFileSync(
+        path.join(dir, 'docker-compose.yml'),
+        `services:\n  web:\n    image: ghcr.io/spree/spree-base:6.1-build\n    volumes:\n      - ${mount}\n`,
+      )
+      expect(isEjectedProject(dir)).toBe(true)
+    }
+  })
+
   it('is false when docker-compose.yml is missing', () => {
     const dir = makeTempDir()
     expect(isEjectedProject(dir)).toBe(false)

@@ -65,6 +65,12 @@ To pick the fixes up, rebuild your image and deploy it:
 spree build --production
 ```
 
+`spree build --production` always fetches the newest base image. With plain Docker, pass `--pull`, or Docker reuses the copy of the base image it already has:
+
+```bash
+docker build --pull . -f server/Dockerfile -t my-store
+```
+
 In development, `spree build` pulls the newer build image.
 
 ### Pinning a build

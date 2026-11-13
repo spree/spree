@@ -101,28 +101,45 @@ export function composeBuildsImage(content: string): boolean {
 
 /**
  * A development compose file switched from building the project's Dockerfile
- * to running the base image's build variant. Null when its `build:` block is
- * not the stock one.
+ * to running the base image's build variant, for every service that builds
+ * it. Null when it has no stock `build:` block.
  */
 export function composeOnBaseImage(content: string, line: string): string | null {
+  let moved = moveBuildBlock(content, line)
+  if (moved === null) return null
+  for (let next = moveBuildBlock(moved, line); next !== null; next = moveBuildBlock(moved, line)) {
+    moved = next
+  }
+  return moved
+}
+
+// Moves the first stock `build:` block, and makes the mapping it sits in (a
+// service, or an anchor services share) a development container.
+function moveBuildBlock(content: string, line: string): string | null {
   const block = content.match(STOCK_BUILD_BLOCK)
   if (!block) return null
 
   const indent = block[1]
-  const image = `${indent}image: ${BASE_IMAGE}:${line}-build\n`
   const start = block.index ?? 0
-  const before = content.slice(0, start)
-  const after = content.slice(start + block[0].length)
+  const image = `${indent}image: ${BASE_IMAGE}:${line}-build\n`
 
-  // The rest of the mapping the build block sat in: up to the first line
-  // indented less than it. The variables belong there, not in another service.
-  const outdent = after.search(new RegExp(`^(?!${indent})[ \\t]*[^\\s#]`, 'm'))
-  const mapping = outdent === -1 ? after : after.slice(0, outdent)
-  const rest = outdent === -1 ? '' : after.slice(outdent)
+  // The mapping reaches from the line that opens it (indented less) to the
+  // next line indented less. Its other keys may sit above or below `build:`.
+  const above = content.slice(0, start).split('\n')
+  let first = above.length - 1
+  while (first > 0 && belongsTo(indent, above[first - 1])) first--
+  const head = above.slice(0, first).join('\n') + (first > 0 ? '\n' : '')
+  const upper = above.slice(first).join('\n')
 
+  const below = content.slice(start + block[0].length)
+  const outdent = below.search(new RegExp(`^(?!${indent})[ \\t]*[^\\s#]`, 'm'))
+  const lower = outdent === -1 ? below : below.slice(0, outdent)
+  const rest = outdent === -1 ? '' : below.slice(outdent)
+
+  const environment = new RegExp(`^${indent}environment:\\n`, 'm')
   // `environment:` may be a mapping (`KEY: value`) or a list (`- KEY=value`).
   const asList = new RegExp(`^${indent}environment:\\n(?:[ \\t]*(?:#.*)?\\n)*[ \\t]*-`, 'm').test(
-    mapping,
+    upper + lower,
   )
 
   // The old development image set these itself; the base image is built for
@@ -132,18 +149,41 @@ export function composeOnBaseImage(content: string, line: string): string | null
     ['BUNDLE_DEPLOYMENT', '"0"', '0'],
     ['BUNDLE_WITHOUT', '""', ''],
   ]
-    .filter(([name]) => !new RegExp(`^${indent}[ \\t]+(?:-[ \\t]*)?${name}[:=]`, 'm').test(mapping))
+    .filter(
+      ([name]) => !new RegExp(`^${indent}[ \\t]+(?:-[ \\t]*)?${name}[:=]`, 'm').test(upper + lower),
+    )
     .map(([name, value, bare]) =>
       asList ? `${indent}  - ${name}=${bare}\n` : `${indent}  ${name}: ${value}\n`,
     )
     .join('')
 
-  const environment = new RegExp(`^${indent}environment:\\n`, 'm')
-  if (environment.test(mapping)) {
-    return before + image + mapping.replace(environment, (key) => key + development) + rest
-  }
+  const withVariables = (part: string) => part.replace(environment, (key) => key + development)
+  if (environment.test(upper)) return head + withVariables(upper) + image + lower + rest
+  if (environment.test(lower)) return head + upper + image + withVariables(lower) + rest
   const added = development ? `${indent}environment:\n${development}` : ''
-  return before + image + added + mapping + rest
+  return head + upper + image + added + lower + rest
+}
+
+function belongsTo(indent: string, line: string): boolean {
+  return line.trim() === '' || line.trimStart().startsWith('#') || line.startsWith(indent)
+}
+
+/**
+ * Content whose base image references on an older Spree line point at `line`.
+ * A tag pinned to one build (`6.1-202611160323`) is the project's choice and
+ * is left alone. Null when nothing changes.
+ */
+export function onBaseImageLine(content: string, line: string): string | null {
+  const [major, minor] = line.split('.').map(Number)
+  const moved = content.replace(
+    /(ghcr\.io\/spree\/spree-base:)(\d+)\.(\d+)(?=(?:-build)?["']?[ \t]*$)/gm,
+    (match, image: string, tagMajor: string, tagMinor: string) => {
+      const older =
+        Number(tagMajor) < major || (Number(tagMajor) === major && Number(tagMinor) < minor)
+      return older ? `${image}${line}` : match
+    },
+  )
+  return moved === content ? null : moved
 }
 
 /**
@@ -163,12 +203,18 @@ export interface BaseImageMove {
   writes: { file: string; content: string }[]
   /** Why the project was left alone, when it was. */
   skipped?: string
+  /** True when the project is already on the base image and only its line moves. */
+  lineOnly?: boolean
 }
 
+const COMPOSE_FILES = ['docker-compose.dev.yml', 'docker-compose.yml']
+
 /**
- * What moving a project's Docker build onto the base image would write. All
- * or nothing: the thin Dockerfile has no `dev` target, so a compose file that
- * still builds one must move with it.
+ * What moving a project's Docker build onto the base image of a Spree line
+ * would write. For a stock project it is all or nothing: the thin Dockerfile
+ * has no `dev` target, so a compose file that still builds one must move with
+ * it. A project already on the base image only has its line moved up, so the
+ * image keeps matching the Spree version it runs.
  */
 export function planBaseImageMove(
   projectDir: string,
@@ -183,13 +229,23 @@ export function planBaseImageMove(
   const dockerfile = path.join(appDir, 'Dockerfile')
   if (!fs.existsSync(dockerfile)) return { writes: [] }
   const current = fs.readFileSync(dockerfile, 'utf-8')
-  if (usesBaseImage(current)) return { writes: [] }
+
+  if (usesBaseImage(current)) {
+    const files = [dockerfile, ...COMPOSE_FILES.map((name) => path.join(projectDir, name))]
+    const writes = files.flatMap((file) => {
+      if (!fs.existsSync(file)) return []
+      const content = onBaseImageLine(fs.readFileSync(file, 'utf-8'), line)
+      return content ? [{ file, content }] : []
+    })
+    return writes.length > 0 ? { writes, lineOnly: true } : { writes }
+  }
+
   if (!isStock(current)) {
     return { writes: [], skipped: `${relative(dockerfile)} has changes of your own` }
   }
 
   const writes: BaseImageMove['writes'] = []
-  for (const name of ['docker-compose.dev.yml', 'docker-compose.yml']) {
+  for (const name of COMPOSE_FILES) {
     const file = path.join(projectDir, name)
     if (!fs.existsSync(file)) continue
     const compose = fs.readFileSync(file, 'utf-8')

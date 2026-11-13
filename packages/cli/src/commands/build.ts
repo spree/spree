@@ -189,8 +189,11 @@ export function planProductionBuild(
   }
 
   ensureRootDockerignore(projectDir)
+  // `--pull` on the base image: a rebuild is how a project gets the base's
+  // security fixes, and without it Docker reuses the copy it already has.
+  const pull = usesBaseImage(content) ? ['--pull'] : []
   return {
-    args: ['build', projectDir, '-f', dockerfile, '-t', imageTag],
+    args: ['build', projectDir, ...pull, '-f', dockerfile, '-t', imageTag],
     imageTag,
     apiDir,
     dashboard: hasDashboard ? 'custom' : 'stock-or-none',
