@@ -6777,7 +6777,7 @@ which loads them on demand.
 
 ## 2026-11-13 — TypeScript subscribers are a bridge: a queue table and a Node worker, reacting only
 
-**Context:** A `create-spree-app` project can react to events only in Ruby. Spree's webhooks need a receiving service with a public address. The platforms Spree is compared with run TypeScript handlers inside the server, which a Ruby server cannot do. A later Spree major is planned to be TypeScript-native, so any TypeScript API added now must not be broken then.
+**Context:** A `create-spree-app` project can react to events only in Ruby. Spree's webhooks need a receiving service with a public address. A Ruby server cannot run TypeScript handlers in-process. A later Spree major is planned to be TypeScript-native, so any TypeScript API added now must not be broken then.
 
 **Decision:** `apps/subscribers` holds TypeScript files, found by folder, written with `defineSubscriber` from a new `@spree/subscribers` package. Spree writes events to a dedicated `spree_subscriber_events` queue table; a Node worker in the same container reads it directly from Postgres, runs the handlers and writes back through the Admin API with a key the scaffolder creates. Rows are deleted on success and swept after a retention period. Events caused by the worker's own writes are not queued. It ships in 6.1 as a developer preview and is stable in 6.2. It stays a bridge: no blocking calls, no multiple apps, no externally hosted apps, no dashboard extensions from apps in 6.x.
 
