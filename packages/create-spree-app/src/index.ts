@@ -1,3 +1,4 @@
+import path from 'node:path'
 import * as p from '@clack/prompts'
 import { Command, Option } from 'commander'
 import getPort, { portNumbers } from 'get-port'
@@ -5,6 +6,7 @@ import pc from 'picocolors'
 import { DEFAULT_SPREE_PORT } from './constants.js'
 import { runPrompts } from './prompts.js'
 import { scaffold } from './scaffold.js'
+import { openShell } from './session.js'
 import type { PackageManager } from './types.js'
 import { detectPackageManager } from './utils.js'
 
@@ -84,9 +86,17 @@ const program = new Command()
         )
       }
 
-      await scaffold({ ...options, port, mailpitSmtpPort, mailpitUiPort })
+      const stopped = await scaffold({ ...options, port, mailpitSmtpPort, mailpitUiPort })
 
-      p.outro('Happy selling!')
+      if (stopped) {
+        const projectName = path.basename(path.resolve(options.directory))
+        p.outro(
+          `Servers stopped. Opening a shell in ${pc.bold(projectName)} — ${pc.cyan(`${options.packageManager} run dev`)} starts them again, ${pc.cyan('exit')} returns to where you were.`,
+        )
+        await openShell(path.resolve(options.directory))
+      } else {
+        p.outro('Happy selling!')
+      }
     } catch (err) {
       if (err instanceof Error && err.message.includes('cancelled')) {
         p.cancel('Setup cancelled.')

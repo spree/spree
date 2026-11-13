@@ -1,12 +1,12 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import * as p from '@clack/prompts'
-import { execa } from 'execa'
 import pc from 'picocolors'
 import { setupAgents } from './agents.js'
 import { DASHBOARD_PORT, SELLER_DASHBOARD_PORT, STOREFRONT_REPO } from './constants.js'
 import { scaffoldApp } from './dashboard.js'
 import { downloadServer } from './server.js'
+import { runUntilInterrupted } from './session.js'
 import { installRootDeps, scaffoldStorefront } from './storefront.js'
 import { agentsMdContent, claudeMdContent } from './templates/agents-md.js'
 import { dependabotContent } from './templates/dependabot.js'
@@ -24,7 +24,8 @@ import {
   storefrontPm,
 } from './utils.js'
 
-export async function scaffold(options: ScaffoldOptions): Promise<void> {
+/** Resolves `true` when the user stopped the started servers with Ctrl+C. */
+export async function scaffold(options: ScaffoldOptions): Promise<boolean> {
   const projectDir = path.resolve(options.directory)
   const projectName = path.basename(projectDir)
   const { port, storefront, dashboard, sellerDashboard } = options
@@ -198,11 +199,9 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
     // The CLI still offers it on demand via `spree sample-data`.
     const initArgs = ['spree', 'init', '--no-sample-data']
 
+    let stopped: boolean
     try {
-      await execa(runCommand(options.packageManager), initArgs, {
-        cwd: projectDir,
-        stdio: 'inherit',
-      })
+      stopped = await runUntilInterrupted(runCommand(options.packageManager), initArgs, projectDir)
     } catch {
       // init streams its own output, so the underlying failure is already on
       // screen — what the operator needs from us is the recovery command.
@@ -211,31 +210,34 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
       )
     }
 
+    // After Ctrl+C the user continues in a shell inside the project.
+    const appsDir = stopped ? 'apps' : `${projectName}/apps`
     if (storefrontReady) {
       p.log.info(
-        `${pc.bold('Storefront')}: ${pc.cyan(`cd ${projectName}/apps/storefront && ${storefrontPm(options.packageManager)} run dev`)}`,
+        `${pc.bold('Storefront')}: ${pc.cyan(`cd ${appsDir}/storefront && ${storefrontPm(options.packageManager)} run dev`)}`,
       )
     }
     if (sellerDashboardReady) {
       p.log.info(
-        `${pc.bold('Seller Panel')}: ${pc.cyan(`cd ${projectName}/apps/seller-dashboard && ${options.packageManager} run dev`)} ${pc.dim(`→ http://localhost:${SELLER_DASHBOARD_PORT}`)}`,
+        `${pc.bold('Seller Panel')}: ${pc.cyan(`cd ${appsDir}/seller-dashboard && ${options.packageManager} run dev`)} ${pc.dim(`→ http://localhost:${SELLER_DASHBOARD_PORT}`)}`,
       )
     }
     // No dashboard line here — with the dashboard chosen, `spree init`'s
     // summary already leads with it (served at /dashboard, plus the
     // customize command).
     if (!agentsReady) p.note(agentSetupHint(options.packageManager).join('\n'), 'AI coding agents')
-  } else {
-    printSuccessWithoutDocker(
-      projectName,
-      port,
-      storefrontReady,
-      dashboardReady,
-      sellerDashboardReady,
-      agentsReady,
-      options.packageManager,
-    )
+    return stopped
   }
+  printSuccessWithoutDocker(
+    projectName,
+    port,
+    storefrontReady,
+    dashboardReady,
+    sellerDashboardReady,
+    agentsReady,
+    options.packageManager,
+  )
+  return false
 }
 
 function printSuccessWithoutDocker(
