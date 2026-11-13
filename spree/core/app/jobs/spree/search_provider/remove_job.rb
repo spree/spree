@@ -3,6 +3,9 @@ module Spree
     class RemoveJob < Spree::BaseJob
       queue_as Spree.queues.search
 
+      # Shares IndexJob's per-store limit, see there.
+      limits_concurrency to: 1, key: ->(*, store_id) { store_id }, group: 'spree_search', duration: 5.minutes if respond_to?(:limits_concurrency)
+
       # Search providers are external services; broad retry covers network blips and 5xx.
       retry_on StandardError, wait: :polynomially_longer, attempts: 5
       # Must come after `retry_on StandardError` so DeserializationError lands in discard
