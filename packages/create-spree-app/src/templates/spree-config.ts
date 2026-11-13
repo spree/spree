@@ -1,5 +1,5 @@
 /**
- * The project's `spree.config.yml`: the store's declared shape, deployed by
+ * The project's `spree.store.yml`: the store's declared shape, deployed by
  * `spree init` after seeding and by `spree config deploy` from then on. It
  * ships as a skeleton because first-run setup owns the store name, country,
  * currency and default market — a file that pre-filled those would fight the
@@ -18,7 +18,7 @@ export function spreeConfigContent(): string {
 #
 # The store name, country, currency and default market come from first-run
 # setup. Capture them here afterwards with:
-#   spree config introspect --out spree.config.yml
+#   spree config introspect --out spree.store.yml
 #
 # Docs: https://spreecommerce.org/docs/developer/cli/configurator
 version: 1

@@ -37,7 +37,7 @@ import {
 import { handleApiError } from '../api/output.js'
 import { detectProject } from '../context.js'
 
-export const DEFAULT_CONFIG_FILE = 'spree.config.yml'
+export const DEFAULT_CONFIG_FILE = 'spree.store.yml'
 
 interface PlanFlags extends CredentialFlags {
   config?: string
@@ -79,7 +79,7 @@ function withPlanFlags(command: Command): Command {
     )
 }
 
-/** `spree.config.yml` at the project root when inside a project, else in the working directory. */
+/** `spree.store.yml` at the project root when inside a project, else in the working directory. */
 export function resolveConfigFile(flag: string | undefined, cwd = process.cwd()): string {
   if (flag) return path.resolve(cwd, flag)
   try {
@@ -231,7 +231,7 @@ export function registerConfigCommand(program: Command): void {
   const config = program
     .command('config')
     .description(
-      'Declarative store configuration: validate, diff, deploy and introspect spree.config.yml',
+      'Declarative store configuration: validate, diff, deploy and introspect spree.store.yml',
     )
 
   config.addHelpText(
@@ -243,7 +243,7 @@ export function registerConfigCommand(program: Command): void {
       '  spree config diff                              # what deploy would change (exit 1 when something would)',
       '  spree config deploy --prune products           # apply, deleting products missing from the file',
       '  spree config deploy --fail-on-delete --yes     # CI: refuse any delete, skip the prompt',
-      '  spree config introspect --out spree.config.yml # write the live configuration to a file',
+      '  spree config introspect --out spree.store.yml # write the live configuration to a file',
       '  spree config provision                         # give a new store its defaults (setup does this for you)',
     ].join('\n'),
   )

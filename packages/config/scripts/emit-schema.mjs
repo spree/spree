@@ -1,4 +1,4 @@
-// Writes the JSON Schema for spree.config.yml from the built engine, so the
+// Writes the JSON Schema for spree.store.yml from the built engine, so the
 // file editors validate against is the same definition the CLI validates with.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'

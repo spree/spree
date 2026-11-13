@@ -1,3 +1,11 @@
+## 2026-11-13: The store configuration file is `spree.store.yml`; `spree.config.ts` is reserved for Spree 7
+
+**Context:** The configurator (`6.0-cli-configurator.md`, spree/spree#14655) deployed a file named `spree.config.yml`. A TypeScript server in Spree 7 will need an application config that wires modules, plugins and providers, and `spree.config.ts` is the natural name for it.
+
+**Decision:** The store data file is `spree.store.yml`. The name `spree.config.ts` is reserved for the Spree 7 application config and must not be used for anything else. YAML stays the canonical format for store data.
+
+**Consequences:** Nothing shipped under the old name, so there is no bridge. Plans that introduce a project-level TypeScript config use `spree.config.ts` for application wiring only, never for store data.
+
 ## 2026-11-03: Store defaults leave the Ruby seeds in 6.1, not 6.0
 
 **Context:** The configurator work (`6.0-cli-configurator.md`, spree/spree#14655) moves the defaults every new store starts with out of `db:seed` and into configurator files deployed through the Admin API. Spree 6.0.0 shipped before it merged, with the seeds still creating those defaults.
@@ -6273,7 +6281,7 @@ matched on natural keys, never prefixed IDs. Deploy is additive: deletes
 happen only in sections named in `--prune`, and `--fail-on-delete` refuses any
 plan with a delete. The engine lives inside `@spree/cli` as an exported
 library entry so the dashboard e2e setup imports it. Every project scaffolded
-by `create-spree-app` ships a `spree.config.yml` with the store, its default
+by `create-spree-app` ships a `spree.store.yml` with the store, its default
 channel and default market, and `spree init` deploys it.
 
 **Bootstrap stays in Ruby.** The store row, the immutable admin role, the
@@ -6295,7 +6303,7 @@ Plan: `6.0-cli-configurator.md`.
 Building the configurator raised three calls about first-run setup and two
 about the configurator's own first release.
 
-**The scaffolded `spree.config.yml` is a skeleton.** First-run setup already
+**The scaffolded `spree.store.yml` is a skeleton.** First-run setup already
 asks the merchant for the store name, country, currency and locale and builds
 the default market, warehouse and delivery zones from those answers. A file
 that pre-filled a `store` or `markets` section would be deployed before the
