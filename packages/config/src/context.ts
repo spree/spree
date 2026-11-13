@@ -23,6 +23,8 @@ export interface SectionSource {
   listParams?: Record<string, string | number | boolean>
   /** Natural key of a live record; defaults to its `keyAttribute`. */
   liveKey?: (live: LiveRecord) => string
+  /** The attributes `liveKey` reads, when the key is made of several. */
+  keyFields?: string[]
   /** Natural keys the file declares; a read-only source declares none. */
   fileKeys?: (config: SpreeConfig) => string[]
 }
@@ -120,7 +122,7 @@ export class RunContext {
     if (cached?.complete) return cached.byKey
     const records = await listAll(this.client, source.path, {
       ...(source.listParams ?? {}),
-      fields: `id,${source.keyAttribute}`,
+      fields: ['id', ...(source.keyFields ?? [source.keyAttribute])].join(','),
     })
     const byKey = new Map<string, LiveRecord[]>()
     for (const record of records) {

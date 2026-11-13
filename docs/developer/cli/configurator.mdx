@@ -41,6 +41,12 @@ tax_categories:
   - name: Default
     default: true
 
+tax_rates:
+  - name: German VAT
+    tax_category: Default
+    country: DE
+    rate_percent: 19
+
 delivery_zones:
   - name: Europe
     countries: [DE, FR, NL, PL]
@@ -99,9 +105,11 @@ The header line points editors at the published JSON Schema, so VS Code and ever
 | `markets` | `name` | `currency`, `countries`, `default_locale`, `supported_locales`; this is where currency and country live. The default locale always counts as supported, so the list need not repeat it |
 | `customer_groups` | `name` | |
 | `tax_categories` | `name` | `default: true` marks the store default |
+| `tax_rates` | `name` | `tax_category` by name, `rate_percent`, and the `country` and `state` the rate taxes; `country: null` taxes every country |
 | `delivery_zones` | `name` | `countries` and `states` members; postal-code members added in the dashboard are kept as they are |
 | `delivery_methods` | `name` | `delivery_zone` by name, `calculator` with `type` and `preferences`, `pickup_locations` by stock location name; unique per store and owner |
 | `suppliers` | `name` | |
+| `custom_field_definitions` | `resource_type`, `namespace` and `key` together | `field_type` is set on create and cannot change; `namespace` defaults to `custom` |
 | `categories` | `permalink` | the full path, so `clothing/t-shirts` nests under `clothing`; `description` is HTML |
 | `products` | `slug` | `categories` by permalink, `channels` by code; a simple product carries `sku`, `prices` and `stock` itself, a product with options lists `variants`; `description` is HTML |
 | `customers` | `email` | `customer_groups` by name; `password` is set on create only. Emails are compared ignoring case |
@@ -122,6 +130,28 @@ Every plain attribute a section accepts is the attribute the Admin API documents
 Slugs and permalinks are written the way the store saves them: lowercase letters and digits joined by hyphens (`classic-tee`, `clothing/t-shirts`). The file refuses any other spelling, because the store would rewrite it and the next deploy would no longer find the record.
 
 Prices are keyed by currency and stock by stock location name. A product's `variants` list is the whole set: a variant missing from it is removed on deploy. A simple product that sets `prices` or `stock` needs its `sku`, and the simple form is refused for a product whose variants have options, since it would replace them all.
+
+**Custom fields.** Declare a field once under `custom_field_definitions`, then set its value on any product, category or seller under `custom_fields`:
+
+```yaml spree.store.yml
+custom_field_definitions:
+  - resource_type: product
+    key: material
+    field_type: short_text
+  - resource_type: product
+    namespace: specs
+    key: weight
+    field_type: number
+
+products:
+  - slug: classic-tee
+    name: Classic Tee
+    custom_fields:
+      material: Cotton
+      specs.weight: 180
+```
+
+A key is written bare when its definition is in the default `custom` namespace, and as `namespace.key` otherwise. A deploy changes only the fields an entry names: the rest keep their values, and `null` clears one. Changing a definition's resource type, namespace or key declares a new definition; the old one stays unless the section is pruned, which also deletes the values stored under it.
 
 **Stock is opening stock.** The file's quantities are written when a variant is created. After that, counts change with every sale and delivery, so a deploy never compares or overwrites them. Manage ongoing stock levels in the dashboard or through the [Admin API](/developer/cli/admin-api).
 

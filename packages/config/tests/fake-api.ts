@@ -60,8 +60,10 @@ export class FakeApi implements ConfigClient {
       return record as T
     }
     if (method === 'POST') {
-      const body = this.materializeBody(path, options.body as Record<string, unknown>)
+      const { custom_fields: values, ...written } = options.body as Record<string, unknown>
+      const body = this.materializeBody(path, written)
       const record = { ...body, id: this.nextId(path) } as Record_
+      this.writeCustomFields(record, values)
       this.collections.set(path, [...this.all(path), record])
       return record as T
     }
@@ -69,10 +71,9 @@ export class FakeApi implements ConfigClient {
     if (!member) throw new Error(`unhandled ${method} ${path}`)
     if (method === 'PATCH') {
       const record = this.find(member[1], member[2])
-      Object.assign(
-        record,
-        this.materializeBody(member[1], options.body as Record<string, unknown>),
-      )
+      const { custom_fields: values, ...written } = options.body as Record<string, unknown>
+      Object.assign(record, this.materializeBody(member[1], written))
+      this.writeCustomFields(record, values)
       return record as T
     }
     if (method === 'DELETE') {
@@ -93,6 +94,25 @@ export class FakeApi implements ConfigClient {
       throw error
     }
     return record
+  }
+
+  // Inline values upsert by definition and read back with their namespaced
+  // key; a blank value removes the field, and fields not named are kept.
+  private writeCustomFields(record: Record_, values: unknown): void {
+    if (!Array.isArray(values)) return
+    let fields = (record.custom_fields as Record<string, unknown>[] | undefined) ?? []
+    for (const { custom_field_definition_id: id, value } of values as Record<string, unknown>[]) {
+      const definition = this.find('/custom_field_definitions', id as string)
+      fields = fields.filter((field) => field.custom_field_definition_id !== id)
+      if (value === null || value === '') continue
+      fields.push({
+        key: `${definition.namespace}.${definition.key}`,
+        field_type: definition.field_type,
+        value,
+        custom_field_definition_id: id,
+      })
+    }
+    record.custom_fields = fields
   }
 
   // Products carry their variants and publications inline, like the real
