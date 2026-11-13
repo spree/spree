@@ -946,6 +946,79 @@ describe('spree upgrade', () => {
       )
     })
 
+    it('removes the Spree skills the new release no longer has, and no one else’s', async () => {
+      writeProject({ ejected: true })
+      installSpreeSkills()
+      routeExeca({
+        spreeVersion: '6.0.4',
+        skillsTags: ['v6.0.1'],
+        skillsStdout: JSON.stringify([{ name: 'spree-api-v3', status: 'installed' }]),
+      })
+
+      await runUpgrade()
+
+      const add = commands.indexOf(
+        'pnpm dlx skills add spree/agent-skills#v6.0.1 --skill * --yes --json',
+      )
+      const remove = commands.indexOf('pnpm dlx skills remove spree-checkout --yes')
+      expect(add).toBeGreaterThan(-1)
+      expect(remove).toBeGreaterThan(add)
+      expect(commands.filter((command) => command.includes('skills remove'))).toHaveLength(1)
+    })
+
+    it('removes nothing when the skills CLI reports no skills', async () => {
+      writeProject({ ejected: true })
+      installSpreeSkills()
+      routeExeca({ spreeVersion: '6.0.4', skillsTags: ['v6.0.1'] })
+
+      await runUpgrade()
+
+      expect(commands.some((command) => command.includes('skills remove'))).toBe(false)
+    })
+
+    it('keeps the Spree skills the lockfile already records at the new release', async () => {
+      writeProject({ ejected: true })
+      fs.writeFileSync(
+        path.join(projectDir, 'skills-lock.json'),
+        JSON.stringify({
+          version: 2,
+          skills: {
+            'spree-api-v3': { source: 'spree/agent-skills', ref: 'v6.0.1', sourceType: 'github' },
+          },
+        }),
+      )
+      routeExeca({
+        spreeVersion: '6.0.4',
+        skillsTags: ['v6.0.1'],
+        skillsStdout: JSON.stringify([{ name: 'spree-checkout', status: 'installed' }]),
+      })
+
+      await runUpgrade()
+
+      expect(commands.some((command) => command.includes('skills remove'))).toBe(false)
+    })
+
+    it('names the obsolete skills it could not remove', async () => {
+      writeProject({ ejected: true })
+      installSpreeSkills()
+      routeExeca({
+        spreeVersion: '6.0.4',
+        skillsTags: ['v6.0.1'],
+        skillsStdout: JSON.stringify([{ name: 'spree-api-v3', status: 'installed' }]),
+        failOn: 'skills remove',
+      })
+
+      await runUpgrade()
+
+      expect(
+        vi
+          .mocked(prompts.log.warn)
+          .mock.calls.some(([message]) =>
+            String(message).includes('pnpm dlx skills remove spree-checkout --yes'),
+          ),
+      ).toBe(true)
+    })
+
     it('runs the skills CLI with npx in npm and Yarn projects', async () => {
       writeProject({ ejected: true })
       installSpreeSkills()

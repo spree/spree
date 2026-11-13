@@ -13,6 +13,7 @@ import {
   addDocsSectionToAgentInstructions,
   installAgentSkills,
   installSkillsArgs,
+  obsoleteSkillsMessage,
   resolveAgentSkillsRef,
   skillsFailureMessage,
 } from '../lib/ai.js'
@@ -250,8 +251,9 @@ export async function addAi(ctx: ProjectContext, opts: AddAiOptions): Promise<bo
     s.start('Installing Spree agent skills...')
     const ref = await resolveAgentSkillsRef(RELEASE_LINE.version)
     try {
-      await installAgentSkills(ctx.projectDir, packageManager, ref)
+      const leftover = await installAgentSkills(ctx.projectDir, packageManager, ref)
       s.stop(`Spree agent skills ${ref ?? 'from the main branch'} installed.`)
+      if (leftover.length > 0) p.log.warn(obsoleteSkillsMessage(packageManager, leftover))
     } catch (err) {
       ready = false
       s.stop(pc.yellow('Spree agent skills were not installed.'))

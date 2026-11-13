@@ -25,6 +25,7 @@ import {
   hasSpreeAgentSkills,
   installAgentSkills,
   installSkillsArgs,
+  obsoleteSkillsMessage,
   resolveAgentSkillsRef,
   skillsFailureMessage,
 } from '../lib/ai.js'
@@ -551,8 +552,9 @@ async function updateSpreeAgentSkills(
   const s = p.spinner()
   s.start('Updating the Spree agent skills...')
   try {
-    await installAgentSkills(projectDir, packageManager, ref)
+    const leftover = await installAgentSkills(projectDir, packageManager, ref)
     s.stop(`Spree agent skills updated to ${ref ?? 'the main branch'}.`)
+    if (leftover.length > 0) p.log.warn(obsoleteSkillsMessage(packageManager, leftover))
   } catch (err) {
     s.stop(pc.yellow('Spree agent skills were not updated.'))
     p.log.warn(skillsFailureMessage('updated', packageManager, installSkillsArgs(ref), err))
