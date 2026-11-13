@@ -32,11 +32,12 @@ node scripts/agent-benchmark/run.mjs --model claude-sonnet-4-6
 | Option | Default | Meaning |
 | --- | --- | --- |
 | `--task` | `all` | Task ids, comma-separated (file names in `tasks/`) |
-| `--agent` | `claude` | `claude`, `codex`, `cursor`, or `baseline` (changes nothing; every task should fail, which calibrates the checks) |
+| `--agent` | `claude` | `claude`, `codex`, `cursor`, `baseline` (changes nothing; every task should fail) or `reference` (applies the task's hand-written solution; every task should pass). The last two calibrate the checks |
 | `--repeat` | `1` | Runs per task |
 | `--model` | agent default | Passed to the agent CLI |
 | `--out` | a new folder under the system temp dir | Where results go |
 | `--image-tag` | `latest` | `SPREE_VERSION_TAG` for the project, to measure another Spree image |
+| `--dev-image` | none | An image to run the ejected project on instead of building `server/Dockerfile`'s dev stage, for machines that cannot reach the Debian mirrors. See below |
 | `--create-command` | `npx --yes create-spree-app@latest` | How to scaffold, e.g. `node /path/to/spree/packages/create-spree-app/dist/index.js` to test an unreleased scaffold |
 | `--keep` | off | Keep the project and its containers after the run |
 
@@ -52,7 +53,8 @@ where that is acceptable.
 2. Commits the scaffold to a local git repository.
 3. Runs the agent once, headless, with the task prompt. No follow-up turns.
 4. Saves the agent's diff, restarts the app and runs the task's acceptance
-   check.
+   check. If the agent ejected the project, the app now runs on a new
+   database, so the harness mints its keys again there first.
 5. Removes the containers, volumes and project, unless `--keep` is given.
 
 The platform evaluation task skips steps 1, 2 and 5: it runs in an empty
@@ -123,7 +125,27 @@ it copies a hidden spec into the project, runs it with `spree test`, and
 removes it again. Checks that test behaviour over HTTP use `apiClient`.
 
 Before relying on a new task, calibrate it: confirm the check fails on the
-untouched scaffold and passes on a solution you wrote by hand.
+untouched scaffold (`--agent baseline`) and passes on a solution written by
+hand (`--agent reference`).
+
+A task's reference solution lives in `tasks/<id>/reference/`: `files/` is
+copied over the project (or the empty directory of a task without one), then
+`apply.sh`, if there is one, runs from there. It uses the Spree CLI the way an
+agent would: `spree eject`, `spree migrate`, `spree test`.
+
+## Without the Debian mirrors
+
+Ejecting builds the starter's `dev` image, which installs Debian packages.
+Where `deb.debian.org` is unreachable, build a stand-in once from a scaffolded
+project's `server/` directory and pass it with `--dev-image`:
+
+```bash
+docker build -t spree-bench-dev -f scripts/agent-benchmark/dev-image/Dockerfile /path/to/app/server
+node scripts/agent-benchmark/run.mjs --agent reference --dev-image spree-bench-dev
+```
+
+The harness then points the project's `docker-compose.dev.yml` at that image
+before the baseline commit, so the agent's diff does not show the change.
 
 ## Test the scorer
 

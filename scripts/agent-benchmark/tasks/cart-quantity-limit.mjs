@@ -1,6 +1,12 @@
 import { runAcceptanceSpec } from '../lib/project.mjs'
 
 // Covers every way a line can reach 11: one add, two adds, and an update.
+//
+// Adds must answer 422. A quantity update runs carts.upsert_items, where
+// Spree skips a vetoed item and answers 200 with the reason in the cart's
+// warnings (documented in customization/workflows.md), so an update passes
+// with either a 422 or that warning. Either way the shopper must be told the
+// maximum, and the line must keep its quantity.
 const SPEC = `require 'rails_helper'
 
 RSpec.describe 'Agent benchmark: cart quantity limit', type: :request do
@@ -20,6 +26,14 @@ RSpec.describe 'Agent benchmark: cart quantity limit', type: :request do
     cart.reload.line_items.sum(:quantity)
   end
 
+  # What the shopper is told: the error on a 422, the warnings on a 200.
+  def shopper_message
+    body = JSON.parse(response.body)
+    return body['error'].to_json if response.status == 422
+
+    Array(body['warnings']).to_json
+  end
+
   it 'accepts 10 units' do
     add(10)
     expect(response).to have_http_status(:created)
@@ -29,6 +43,7 @@ RSpec.describe 'Agent benchmark: cart quantity limit', type: :request do
   it 'rejects 11 units in one add' do
     add(11)
     expect(response).to have_http_status(:unprocessable_content)
+    expect(shopper_message).to include('10')
     expect(line_quantity).to eq(0)
   end
 
@@ -37,6 +52,7 @@ RSpec.describe 'Agent benchmark: cart quantity limit', type: :request do
     expect(response).to have_http_status(:created)
     add(6)
     expect(response).to have_http_status(:unprocessable_content)
+    expect(shopper_message).to include('10')
     expect(line_quantity).to eq(6)
   end
 
@@ -45,7 +61,8 @@ RSpec.describe 'Agent benchmark: cart quantity limit', type: :request do
     item_id = JSON.parse(response.body)['items'].first['id']
     patch "/api/v3/store/carts/#{cart.prefixed_id}/items/#{item_id}",
           params: { quantity: 11 }, headers: headers, as: :json
-    expect(response).to have_http_status(:unprocessable_content)
+    expect(response.status).to eq(422).or eq(200)
+    expect(shopper_message).to include('10')
     expect(line_quantity).to eq(5)
   end
 end

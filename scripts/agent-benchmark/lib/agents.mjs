@@ -1,5 +1,8 @@
 import fs from 'node:fs'
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const REFERENCE_SCRIPT = fileURLToPath(new URL('./reference.mjs', import.meta.url))
 
 // How each coding agent is run headless. Every agent runs with its permission
 // prompts off, inside a throwaway directory, and prints a JSON event stream.
@@ -9,6 +12,12 @@ export const AGENTS = {
   baseline: {
     format: 'stream-json',
     command: () => ['true', []],
+  },
+  // Applies the hand-written solution in tasks/<task>/reference/. Calibrates
+  // the checks the other way: every task should pass with it.
+  reference: {
+    format: 'stream-json',
+    command: (_prompt, { task }) => ['node', [REFERENCE_SCRIPT, task]],
   },
   claude: {
     format: 'stream-json',
