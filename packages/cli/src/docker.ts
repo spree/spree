@@ -375,15 +375,7 @@ export async function dockerComposeCapture(
     process.stderr.write(`${message}\n`),
   )
 
-  const args = ['compose', mode]
-  if (mode === 'run') args.push('--rm')
-  args.push('-T')
-  if (env) {
-    for (const [key, value] of Object.entries(env)) {
-      args.push('-e', `${key}=${value}`)
-    }
-  }
-  args.push(service, ...argv)
+  const args = nonInteractiveArgs(mode, service, argv, env)
 
   // `compose up -d` can recreate a container moments before this runs — a
   // recovering project does exactly that — and `exec` into a container that
@@ -402,6 +394,57 @@ export async function dockerComposeCapture(
     }
   }
   throw lastError
+}
+
+function nonInteractiveArgs(
+  mode: 'exec' | 'run',
+  service: string,
+  argv: string[],
+  env?: Record<string, string>,
+): string[] {
+  const args = ['compose', mode]
+  if (mode === 'run') args.push('--rm')
+  args.push('-T')
+  for (const [key, value] of Object.entries(env ?? {})) {
+    args.push('-e', `${key}=${value}`)
+  }
+  args.push(service, ...argv)
+  return args
+}
+
+export interface DockerComposeStreamOptions extends DockerComposeExecOrRunOptions {
+  onOutput: (chunk: string, stream: 'stdout' | 'stderr') => void
+}
+
+/**
+ * Run a command like dockerComposeExecOrRun, but hand its stdout and stderr
+ * to `onOutput` as they arrive instead of printing them. Stdin stays attached
+ * (without a TTY), so the command can still read an answer to a prompt. The
+ * one-off container notice goes to `onOutput` too, as stderr. Throws the
+ * ExecaError when the command exits non-zero.
+ */
+export async function dockerComposeStream(
+  argv: string[],
+  projectDir: string,
+  options: DockerComposeStreamOptions,
+): Promise<void> {
+  const { service = 'web', env, onOutput } = options
+  const mode = await resolveComposeMode(projectDir, options, (message) =>
+    onOutput(`${message}\n`, 'stderr'),
+  )
+
+  const subprocess = execa('docker', nonInteractiveArgs(mode, service, argv, env), {
+    cwd: projectDir,
+    stdin: 'inherit',
+    stdout: 'pipe',
+    stderr: 'pipe',
+    buffer: false,
+  })
+  for (const stream of ['stdout', 'stderr'] as const) {
+    subprocess[stream]?.setEncoding('utf8')
+    subprocess[stream]?.on('data', (chunk: string) => onOutput(chunk, stream))
+  }
+  await subprocess
 }
 
 /**

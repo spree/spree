@@ -297,6 +297,21 @@ spree generate migration AddPositionToSpreeBrands position:integer  # Rails buil
 
 `spree:api_resource` scaffolds the full v3 surface: model, migration, Store + Admin controllers and serializers, factory, controller specs, routes, and the `read_<resources>` / `write_<resources>` permissions that let staff roles and secret API keys reach the Admin API.
 
+The command prints a short summary instead of the generator's full output: the files it created, changed or skipped, anything the generator says on its own, and what to run next. File paths are relative to the directory you ran the command from, so from a project root they start with `server/`. The `spree test` paths are relative to the app, because that command runs inside the container.
+
+```
+spree:subscriber finished:
+  created  server/app/subscribers/oms_order_sync_subscriber.rb
+  changed  server/config/initializers/spree.rb
+  created  server/spec/subscribers/oms_order_sync_subscriber_spec.rb
+
+Next:
+  spree restart  # server/config/initializers/spree.rb loads only at boot
+  spree test spec/subscribers/oms_order_sync_subscriber_spec.rb
+```
+
+Pass `--verbose` before the generator name to see the full output (`spree generate --verbose model Brand`). When a generator fails, the command prints everything it printed, including the Rails and Docker output, and exits with the generator's exit code. A generator's `--help` is always shown in full.
+
 The prebuilt image never loads files from `server/`, so on a project that still runs it, the command offers to [eject](#spree-eject) the project first. Ejecting switches to a new development database without your current data, so it asks before doing it. Pass `--yes` before the generator name to agree up front (`spree generate --yes model Brand`). With no terminal to ask in, for example when a coding agent runs it, the command stops and prints that `--yes` command.
 
 ### `spree filters types`
