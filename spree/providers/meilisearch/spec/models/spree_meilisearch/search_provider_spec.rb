@@ -525,6 +525,34 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
 
       provider.clear_index
     end
+
+    it 'raises when Meilisearch fails the clear, so the reindex retries before rebuilding' do
+      task = double('Meilisearch::Models::Task', succeeded?: false, error: { 'code' => 'internal' })
+      allow(task).to receive(:await)
+      allow(mock_index).to receive(:delete_all_documents).and_return(task)
+
+      expect { provider.clear_index }.to raise_error(described_class::TaskFailed, /clear task/)
+    end
+  end
+
+  describe '#index_batch' do
+    let(:task) { double('Meilisearch::Models::Task', succeeded?: true) }
+
+    before { allow(task).to receive(:await) }
+
+    it 'waits for the batch, polling gently' do
+      allow(mock_index).to receive(:add_documents).and_return(task)
+      expect(task).to receive(:await).with(described_class::TASK_TIMEOUT_MS, described_class::TASK_POLL_INTERVAL_MS)
+
+      provider.index_batch([{ id: 'prod_abc_en_USD' }])
+    end
+
+    it 'raises when Meilisearch rejects the batch, so the reindex cursor does not move past it' do
+      allow(task).to receive_messages(succeeded?: false, error: { 'code' => 'invalid_document_fields' })
+      allow(mock_index).to receive(:add_documents).and_return(task)
+
+      expect { provider.index_batch([{ id: 'prod_abc_en_USD' }]) }.to raise_error(described_class::TaskFailed, /documents task/)
+    end
   end
 
   describe '#reindex' do

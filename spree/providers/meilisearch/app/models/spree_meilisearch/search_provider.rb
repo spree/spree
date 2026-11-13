@@ -5,9 +5,15 @@ module SpreeMeilisearch
   # with the caller's ActiveRecord scope, so a stale index can never widen
   # what a customer is allowed to see.
   class SearchProvider < Spree::SearchProvider::Base
-    # Raised when Meilisearch fails or cancels a settings task, so the job
-    # pushing them retries instead of leaving the index half configured.
-    class SettingsUpdateFailed < StandardError; end
+    # Raised when Meilisearch fails or cancels a task it had accepted, so the
+    # job that sent it retries instead of leaving the index incomplete.
+    class TaskFailed < StandardError; end
+    class SettingsUpdateFailed < TaskFailed; end
+
+    # A batch of 500 documents can take a while to index; polling every 50ms
+    # (the client default) is what flooded Meilisearch before.
+    TASK_TIMEOUT_MS = 60_000
+    TASK_POLL_INTERVAL_MS = 250
 
     PREFIXED_ID_PATTERN = /\A[a-z]+_[A-Za-z0-9]+\z/
     ALLOWED_STATUSES = %w[active draft archived paused].freeze
@@ -76,7 +82,7 @@ module SpreeMeilisearch
     end
 
     def clear_index
-      client.index(index_name).delete_all_documents
+      await_task!(client.index(index_name).delete_all_documents, TaskFailed, 'clear')
     end
 
     # Index settings are pushed by reindex (Spree::SearchProvider::ReindexJob
@@ -97,7 +103,8 @@ module SpreeMeilisearch
     def index_batch(documents)
       return if documents.empty?
 
-      client.index(index_name).add_documents(documents, 'id')
+      # Awaited, so a rejected batch raises before ReindexJob moves its cursor past it.
+      await_task!(client.index(index_name).add_documents(documents, 'id'), TaskFailed, 'documents')
     end
 
     # Remove all documents for a product by its prefixed_id (e.g. 'prod_abc')
@@ -146,10 +153,7 @@ module SpreeMeilisearch
       tasks << index.update_sortable_attributes(sortable_attributes)
       tasks << index.update_searchable_attributes(searchable_attributes)
       tasks << index.update_distinct_attribute(distinct_attribute)
-      tasks.compact.each do |task|
-        task.await
-        raise SettingsUpdateFailed, "Meilisearch rejected the settings for #{index_name}: #{task.error.inspect}" unless task.succeeded?
-      end
+      tasks.compact.each { |task| await_task!(task, SettingsUpdateFailed, 'settings') }
       @index_settings_configured = true
     end
 
@@ -294,6 +298,15 @@ module SpreeMeilisearch
       end
 
       (ms_result['facetDistribution'] || {}).merge('option_value_ids' => merged_ov_dist)
+    end
+
+    def await_task!(task, error_class, what)
+      return task if task.nil?
+
+      task.await(TASK_TIMEOUT_MS, TASK_POLL_INTERVAL_MS)
+      raise error_class, "Meilisearch rejected the #{what} task for #{index_name}: #{task.error.inspect}" unless task.succeeded?
+
+      task
     end
 
     def refresh_index_settings
