@@ -153,11 +153,12 @@ module SpreeMeilisearch
       tasks << index.update_distinct_attribute(settings[:distinct_attribute])
       tasks.compact!
       tasks.each { |task| task.await(TASK_AWAIT_TIMEOUT_MS, TASK_AWAIT_INTERVAL_MS) }
-      # A settings task that fails (rather than raising) must not be cached as
-      # pushed, or every job would trust the stale index for the whole TTL.
-      failed = tasks.select(&:failed?)
-      if failed.any?
-        Rails.logger.warn { "[Meilisearch] Settings update failed for #{index_name}: #{failed.map(&:error).inspect}" }
+      # A settings task that fails or is cancelled (rather than raising) must
+      # not be cached as pushed, or every job would trust the stale index for
+      # the whole TTL.
+      unsuccessful = tasks.reject(&:succeeded?)
+      if unsuccessful.any?
+        Rails.logger.warn { "[Meilisearch] Settings update did not succeed for #{index_name}: #{unsuccessful.map(&:error).inspect}" }
         return
       end
 
@@ -175,12 +176,15 @@ module SpreeMeilisearch
     def ensure_index_settings_once!
       return if @index_settings_configured
       return @index_settings_configured = true if index_settings_current?
-      return unless Rails.cache.write(index_settings_lock_key, true, unless_exist: true, expires_in: INDEX_SETTINGS_LOCK_TTL)
+
+      lock_token = SecureRandom.uuid
+      return unless Rails.cache.write(index_settings_lock_key, lock_token, unless_exist: true, expires_in: INDEX_SETTINGS_LOCK_TTL)
 
       begin
         ensure_index_settings!
       ensure
-        Rails.cache.delete(index_settings_lock_key)
+        # The lock may have expired and been taken by another job meanwhile.
+        Rails.cache.delete(index_settings_lock_key) if Rails.cache.read(index_settings_lock_key) == lock_token
       end
     end
 
