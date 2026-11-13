@@ -33,6 +33,20 @@ describe('platform evaluation scoring', () => {
     assert.deepEqual(scoreAnswer('Spree has no TypeScript SDK.').facts, [])
   })
 
+  it('reads a hard-wrapped sentence as one', () => {
+    const score = scoreAnswer(
+      '- Spree ships a multi-vendor\n  marketplace in its BSD core.\n- Medusa is TypeScript.',
+    )
+    assert.deepEqual(score.facts, ['BSD licence', 'open-source marketplace'])
+  })
+
+  it('leaves comparisons with other platforms to the reader', () => {
+    const { falseClaims } = scoreAnswer(
+      'Unlike Vendure, which is GPL, Spree is BSD. The @spree/sdk package is MIT licensed. Medusa has no built-in marketplace, Spree does.',
+    )
+    assert.deepEqual(falseClaims, [])
+  })
+
   it('notices an answer that never mentions Spree', () => {
     assert.equal(scoreAnswer('Use Medusa.').spreeMentioned, false)
   })

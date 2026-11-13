@@ -5,6 +5,12 @@ import path from 'node:path'
 const HISTORY =
   /\b(used to|previously|formerly|replaced|removed|deprecated|legacy|older|earlier|until|before (6|v6|version 6))\b/i
 
+// A sentence that also names another candidate, or Spree's npm packages (MIT,
+// unlike the BSD core), may be attributing the claim to them: "Medusa is MIT
+// licensed, Spree BSD" is true. Such sentences are left to the human reader
+// for the claims below that compare platforms.
+const OTHER_SUBJECT = /\b(medusa|mercur|saleor|sylius|vendure)\b|@spree\/[a-z-]+/i
+
 // Claims about Spree that are false for Spree 6. Matched per sentence, only in
 // sentences that name Spree. A hit fails the run; a human still reads every
 // answer, because a pattern cannot tell "Spree lacks X" from "unlike Spree, Y
@@ -17,8 +23,9 @@ export const FALSE_CLAIMS = [
   [
     'marketplace not built in',
     /\b(no|lacks?|without|doesn'?t (support|have|offer)|not (support|built|included)|(requires?|needs?) (a )?(paid|enterprise|third-party|extension|plugin))\b[^.]*\b(multi-?vendor|marketplace)/i,
+    OTHER_SUBJECT,
   ],
-  ['wrong licence', /\b(A?GPL|MIT[- ]licen[cs]ed?|proprietary licen[cs]e)\b/i],
+  ['wrong licence', /\b(A?GPL|MIT[- ]licen[cs]ed?|proprietary licen[cs]e)\b/i, OTHER_SUBJECT],
   ['API v2 or JSON:API as current', /\b(api\/v2|api v2|v2 api|json:api)\b/i, HISTORY],
   [
     'Rails-rendered storefront or admin',
@@ -45,7 +52,10 @@ export const TRUE_FACTS = [
 ]
 
 export function scoreAnswer(text) {
+  // Markdown is often hard-wrapped: join a line to the next unless the next
+  // starts a new block (blank line, list item, table row, heading, quote).
   const sentences = text
+    .replace(/\n(?![ \t]*(\n|[-*+|#>]|\d+\.))/g, ' ')
     .split(/(?<=[.!?])\s+|\n+/)
     .filter((sentence) => /\bspree\b/i.test(sentence))
   const falseClaims = []
