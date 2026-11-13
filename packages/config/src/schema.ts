@@ -2,7 +2,7 @@ import { z } from 'zod'
 import { specShape } from './spec.js'
 
 /**
- * The shape of `spree.config.yml`. Sections mirror Admin API resources but
+ * The shape of `spree.store.yml`. Sections mirror Admin API resources but
  * are written the way a person writes them: references by natural key, prices
  * keyed by currency, stock keyed by warehouse name.
  *

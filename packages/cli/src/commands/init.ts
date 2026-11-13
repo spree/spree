@@ -47,7 +47,7 @@ export function registerInitCommand(program: Command): void {
   program
     .command('init')
     .description(
-      'First-run setup: start services, seed, configure API keys, deploy spree.config.yml',
+      'First-run setup: start services, seed, configure API keys, deploy spree.store.yml',
     )
     .option('--no-sample-data', 'skip loading sample data on scripted installs (see --admin-email)')
     .option('--no-open', 'skip opening browser')
@@ -414,7 +414,7 @@ export function updateStorefrontEnv(projectDir: string, apiKey: string): void {
 
 /**
  * On a scripted install, which has no setup screen, deploys the store
- * defaults and then the project's `spree.config.yml` — the store's declared
+ * defaults and then the project's `spree.store.yml` — the store's declared
  * shape, committed with the project — against the freshly seeded server. The
  * project's own key is read-only by design, so a write key is minted for
  * this run and revoked as soon as the deploy is over. Answers whether the

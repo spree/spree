@@ -1,6 +1,6 @@
 ---
 title: "Store Configuration as Code"
-description: "Describe a store in spree.config.yml and deploy it to any environment with spree config"
+description: "Describe a store in spree.store.yml and deploy it to any environment with spree config"
 ---
 
 `spree config` treats a YAML file as the desired configuration of a store and reconciles a live instance against it through the [Admin API](/developer/cli/admin-api). The same file provisions a fresh local project, a staging environment and a hosted production store, because records are matched on natural keys (a channel's code, a product's slug, a warehouse's name) rather than on ids that differ per environment.
@@ -12,7 +12,7 @@ spree config deploy                    # diff, confirm, apply
 spree config introspect --out store.yml   # write the live configuration to a file
 ```
 
-A configuration file is reviewable in a pull request, runs from CI against any instance, and needs no Ruby on the machine that runs it. Every project created with `create-spree-app` ships a `spree.config.yml` at its root, and `spree init` deploys it right after seeding.
+A configuration file is reviewable in a pull request, runs from CI against any instance, and needs no Ruby on the machine that runs it. Every project created with `create-spree-app` ships a `spree.store.yml` at its root, and `spree init` deploys it right after seeding.
 
 <Note>
 The file describes configuration and catalog. Orders, payments, fulfillments and payouts are history, not configuration, and never appear in it. The store row, the first admin account and the first API key come from installation and first-run setup, which the file cannot replace.
@@ -20,7 +20,7 @@ The file describes configuration and catalog. Orders, payments, fulfillments and
 
 ## The file
 
-```yaml spree.config.yml
+```yaml spree.store.yml
 # yaml-language-server: $schema=https://spreecommerce.org/docs/schemas/spree-config/1.json
 version: 1
 
@@ -204,11 +204,11 @@ spree config deploy
 `spree config introspect` reads the live store and writes it out in the file format: ids, timestamps and computed values stripped, references written as natural keys, descriptions as their HTML, the `$schema` header on top. A variant with no SKU is written without one, and the file then asks for a SKU before it can be deployed. By default it reads every section but products and customers, since a large catalog belongs in the [CSV import and export](/developer/customization/imports) pipeline rather than a hand-edited file; `--include products` adds it.
 
 ```bash
-spree config introspect --out spree.config.yml
+spree config introspect --out spree.store.yml
 spree config introspect --include channels,delivery_zones,delivery_methods
 ```
 
-This is how a project captures what first-run setup created. The scaffolded `spree.config.yml` is a skeleton on purpose: the store name, country, currency and default market are answered on the setup screen, and a file that pre-filled them would overwrite those answers on the next deploy. Once setup has run, introspect writes the real values into the file and the file becomes the source of truth.
+This is how a project captures what first-run setup created. The scaffolded `spree.store.yml` is a skeleton on purpose: the store name, country, currency and default market are answered on the setup screen, and a file that pre-filled them would overwrite those answers on the next deploy. Once setup has run, introspect writes the real values into the file and the file becomes the source of truth.
 
 ## Using the engine from code
 

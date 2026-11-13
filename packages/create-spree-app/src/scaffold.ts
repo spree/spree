@@ -103,7 +103,7 @@ export async function scaffold(options: ScaffoldOptions): Promise<boolean> {
   )
   fs.writeFileSync(path.join(projectDir, '.gitignore'), gitignoreContent())
   fs.writeFileSync(path.join(projectDir, '.dockerignore'), dockerignoreContent())
-  fs.writeFileSync(path.join(projectDir, 'spree.config.yml'), spreeConfigContent())
+  fs.writeFileSync(path.join(projectDir, 'spree.store.yml'), spreeConfigContent())
 
   s.stop('Project structure created.')
 
