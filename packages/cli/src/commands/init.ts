@@ -39,12 +39,17 @@ export function registerInitCommand(program: Command): void {
       'scripted installs only: seed an admin account instead of printing the setup link',
     )
     .option('--admin-password <password>', 'password for the admin account seeded by --admin-email')
+    .option(
+      '--detach',
+      'scripted installs: exit once setup is done, leaving the stack running, instead of starting the dashboard dev server and streaming logs',
+    )
     .action(
       async (flags: {
         sampleData: boolean
         open: boolean
         adminEmail?: string
         adminPassword?: string
+        detach?: boolean
       }) => {
         await runFirstRunSetup(flags)
       },
@@ -63,6 +68,7 @@ export async function runFirstRunSetup(flags: {
   open: boolean
   adminEmail?: string
   adminPassword?: string
+  detach?: boolean
 }): Promise<void> {
   const ctx = detectProject()
 
@@ -243,6 +249,10 @@ export async function runFirstRunSetup(flags: {
     ].join('\n'),
     'Your Spree store is ready!',
   )
+
+  // A scripted install (CI, a benchmark, a provisioning script) needs init to
+  // return; the stack keeps running in Docker either way.
+  if (flags.detach) return
 
   // Co-run the dashboard's Vite dev server so the admin the card names is
   // actually running. Spawned after the card so its prefixed output doesn't
