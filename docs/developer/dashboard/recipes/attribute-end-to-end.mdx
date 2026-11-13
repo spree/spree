@@ -68,7 +68,9 @@ end
 
 ```ruby
 # config/initializers/spree.rb
-Spree::Product.whitelisted_ransackable_attributes |= %w[lead_time_days]
+Rails.application.config.to_prepare do
+  Spree::Product.whitelisted_ransackable_attributes |= %w[lead_time_days]
+end
 ```
 
 Add a Rails validation while you're here (`validates :lead_time_days, numericality: { greater_than_or_equal_to: 0, allow_nil: true }`) — it's the authoritative validation, and the dashboard renders its 422 message inline on the field automatically.
