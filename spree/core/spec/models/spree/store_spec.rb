@@ -340,7 +340,7 @@ describe Spree::Store, type: :model, without_global_store: true do
       end
 
       it 'refuses a value with any other scheme' do
-        store = build(:store, facebook: 'javascript:alert(1)', twitter: 'data:text/html,x', instagram: 'mailto:a@b.co')
+        store = build(:store, facebook: 'javascript:alert(1)', twitter: 'javascript:0/alert(1)', instagram: 'mailto:a@b.co')
         expect(store).not_to be_valid
         expect(store.errors.attribute_names).to include(:facebook, :twitter, :instagram)
       end

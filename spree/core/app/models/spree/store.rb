@@ -424,7 +424,8 @@ module Spree
       \A(?!(?:.*/)?\.\.(?:/|\z))                                   # no ".." path segment
       (?:
         https?://[^[:space:][:cntrl:]\p{Cf}]+                      # a web address
-      | (?://)?@?[\p{L}\p{N}_.-]*[\p{L}\p{N}_][\p{L}\p{N}_.-]*(?::\d+)? # a handle, or a host with an optional port
+      | (?://[\p{L}\p{N}.-]+(?::\d+)?                              # a protocol-relative host, where a port is unambiguous
+        | @?[\p{L}\p{N}_.-]*[\p{L}\p{N}_][\p{L}\p{N}_.-]*)          # or a handle or bare host, never "name:"
         (?:/[^[:space:][:cntrl:]\p{Cf}]*)?                         # and an optional path
       )\z
     }xi
