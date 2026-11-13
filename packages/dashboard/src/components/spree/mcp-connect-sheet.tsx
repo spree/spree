@@ -46,15 +46,14 @@ type McpConnectSheetProps = {
  * Registered alongside the hosted one because terminal clients such as Codex
  * redirect to a local port rather than the vendor's servers, and the port is
  * chosen at run time. RFC 8252 §7.3 says to compare loopback redirects ignoring the
- * port, which Doorkeeper does — but only for an IP literal, since it decides
- * by parsing the host as an address.
+ * port, which Doorkeeper does.
  */
 const LOOPBACK_CALLBACK = 'http://127.0.0.1/callback'
 
 /**
- * Claude Code only ever calls back on `localhost`, never the IP literal, and
- * Doorkeeper compares a `localhost` callback exactly, port included. So the
- * registration names a fixed port and the command pins Claude Code to it.
+ * Claude Code only ever calls back on `localhost`, never the IP literal. The
+ * command pins its port so the registered callback reads the same as the one
+ * Claude Code sends.
  */
 const CLAUDE_CODE_PORT = 3118
 const CLAUDE_CODE_CALLBACK = `http://localhost:${CLAUDE_CODE_PORT}/callback`
