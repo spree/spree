@@ -1,11 +1,12 @@
 ---
 title: Extending Spree without Ruby
 sidebarTitle: Without Ruby
-description: Connect your own services, scripts, admin screens and AI agents to Spree through webhooks, the Admin API, the TypeScript SDKs, the MCP server and dashboard plugins — no Ruby required.
+description: Configure Spree with environment variables and connect your own services, scripts, admin screens and AI agents through webhooks, the Admin API, the TypeScript SDKs, the MCP server and dashboard plugins — no Ruby required.
 ---
 
 Your team doesn't have to write Ruby to build on Spree. The backend runs from a prebuilt Docker image, and everything below works against that image as it is:
 
+- **Environment variables** configure the application: database, hosts, email, file storage, search, background jobs, error tracking and more.
 - **Webhooks** tell your services when something happens.
 - **The Admin API**, called with a scoped secret key, lets them read and change the store.
 - **The TypeScript SDKs** give typed clients for both.
@@ -18,6 +19,7 @@ Ruby is still the right tool for a few jobs. See [When to use Ruby instead](#whe
 
 | What you want to do | Use |
 |---|---|
+| Point Spree at your database, email server, file storage, search or error tracking | [Environment variables](#configure-with-environment-variables) |
 | Sync orders, customers or stock to an ERP, CRM or warehouse | [Webhooks](#webhooks), then the [Admin API](#the-admin-api) for anything the payload leaves out |
 | Run a nightly import, a scheduled report or a data pipeline | [The Admin API](#the-admin-api) with a secret key |
 | Build a storefront or a mobile app | [The Store API](/api-reference/store-api/introduction) through [`@spree/sdk`](/developer/sdk/quickstart) |
@@ -25,6 +27,23 @@ Ruby is still the right tool for a few jobs. See [When to use Ruby instead](#whe
 | Add a screen, a column or a widget to the admin | [Dashboard plugins](#dashboard-plugins) |
 | Store your own data on products, orders or customers | [Custom fields](/developer/core-concepts/metafields), [metadata](/developer/customization/metadata) or [external references](/developer/core-concepts/external-references) |
 | Block an operation or change how Spree calculates something | Ruby — see [When to use Ruby instead](#when-to-use-ruby-instead) |
+
+## Configure with environment variables
+
+The whole application is configured through environment variables, so the prebuilt image runs in any environment without a code change. Set them in the project's `.env` for local development, or in your hosting provider's settings in production.
+
+| Area | Variables |
+|---|---|
+| Database and secrets | `DATABASE_URL`, `SECRET_KEY_BASE`, the three `ACTIVE_RECORD_ENCRYPTION_*` keys |
+| URLs | `SPREE_HOST`, `CDN_HOST` |
+| Web server and background jobs | `PORT`, `WEB_CONCURRENCY`, `RAILS_MAX_THREADS`, `SOLID_QUEUE_IN_PUMA`, `JOB_CONCURRENCY`, `JOB_THREADS` |
+| Email | `SMTP_HOST`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`, `SMTP_FROM_ADDRESS` |
+| File storage | `AWS_*` for Amazon S3, `CLOUDFLARE_*` for Cloudflare R2 |
+| Search | `MEILISEARCH_URL`, `MEILISEARCH_API_KEY` switch product search to Meilisearch |
+| Error tracking and logs | `SENTRY_DSN`, `RAILS_LOG_LEVEL` |
+| SSL | `RAILS_ASSUME_SSL`, `RAILS_FORCE_SSL` |
+
+[Environment Variables](/developer/deployment/environment_variables) lists every variable. Store settings, such as markets, currencies, payment methods, delivery methods, taxes, staff and roles, are data rather than configuration: change them in the dashboard or through the [Admin API](#the-admin-api).
 
 ## Webhooks
 
@@ -189,6 +208,7 @@ Ruby code runs only once the project builds the backend from its own source inst
 
 ## Related
 
+- [Environment Variables](/developer/deployment/environment_variables) — every configuration variable
 - [Customization quickstart](/developer/customization/quickstart) — every way to customize Spree, in order of recommendation
 - [Events](/developer/core-concepts/events) — what Spree announces, and delivery guarantees
 - [Webhooks](/developer/core-concepts/webhooks) — endpoints, payloads, signatures and retries
