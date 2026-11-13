@@ -306,8 +306,14 @@ describe Spree::Store, type: :model, without_global_store: true do
 
     describe 'social accounts' do
       it 'accepts a handle or a web address' do
-        store = build(:store, facebook: 'https://facebook.com/shop', twitter: '@shop', instagram: 'shop.beans')
+        store = build(:store, facebook: 'https://facebook.com/shop', twitter: '@shop', instagram: 'instagram.com/shop.beans')
         expect(store).to be_valid
+      end
+
+      it 'refuses a scheme hidden behind a tab or a control character' do
+        store = build(:store, facebook: "java\tscript:alert(1)", twitter: "\u0001javascript:alert(1)")
+        expect(store).not_to be_valid
+        expect(store.errors.attribute_names).to include(:facebook, :twitter)
       end
 
       it 'refuses a value with any other scheme' do

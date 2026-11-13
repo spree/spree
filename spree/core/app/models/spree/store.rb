@@ -414,10 +414,12 @@ module Spree
     validate :order_number_sequence_start_unchanged_after_first_number, on: :update
     validates :mail_from_address, email: { allow_blank: false }
     validates :customer_support_email, email: { allow_blank: true }
-    # Storefronts render these as links, so a value that names a scheme must be a web address.
+    # Storefronts render these as links, so only a handle, a scheme-less address
+    # or an http(s) URL is accepted, never another scheme or a control character.
     SOCIAL_FIELDS = %i[facebook twitter instagram].freeze
+    SOCIAL_FIELD_FORMAT = %r{\A(?:@?[\w.-]+(?:/[^\s[:cntrl:]]*)?|https?://[^\s[:cntrl:]]+)\z}i
     normalizes(*SOCIAL_FIELDS, with: ->(value) { value.strip.presence })
-    validates(*SOCIAL_FIELDS, format: { without: %r{\A(?!https?://)[a-z][a-z0-9+.-]*:}i, message: :invalid }, allow_blank: true)
+    validates(*SOCIAL_FIELDS, format: { with: SOCIAL_FIELD_FORMAT }, allow_blank: true)
     # FIXME: we should remove this condition in v5
     if !ENV['SPREE_DISABLE_DB_CONNECTION'] &&
        connected? &&
