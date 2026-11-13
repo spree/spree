@@ -7,7 +7,7 @@ description: "Authenticate Spree Admin API requests using secret API keys for se
 The Admin API supports two authentication methods: **secret API keys** for server-to-server integrations, and **JWT bearer tokens** for admin SPA / interactive sessions. Every request must include credentials — there is no public surface.
 
 <Warning>
-Secret API keys grant full administrative access to your store. **Never embed them in client-side code, mobile apps, or public repositories.** Use them only from secure server environments.
+Secret API keys grant administrative access to your store, limited to the [scopes](#secret-api-keys-scopes) they carry (`write_all` is full admin). **Never embed them in client-side code, mobile apps, or public repositories.** Use them only from secure server environments, and give each key the narrowest scopes it needs.
 </Warning>
 
 ## Secret API key
