@@ -37,7 +37,7 @@ module Spree
         @provider = provider_class.new(@store)
 
         step :push_settings
-        step :index_products, start: 0
+        step :index_products
       end
 
       private
@@ -48,8 +48,10 @@ module Spree
 
       def index_products(step)
         loop do
-          products = @store.products.where(Spree::Product.arel_table[:id].gt(step.cursor)).
-                     reorder(:id).limit(BATCH_SIZE).preload_associations_lazily.to_a
+          # No cursor on the first batch: a literal 0 cannot be compared with a UUID id.
+          products = @store.products.reorder(:id).limit(BATCH_SIZE).preload_associations_lazily
+          products = products.where(Spree::Product.arel_table[:id].gt(step.cursor)) if step.cursor
+          products = products.to_a
           break if products.empty?
 
           @provider.index_batch(products.flat_map { |product| product.search_presentation(@store) })
