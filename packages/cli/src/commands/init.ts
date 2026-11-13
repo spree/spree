@@ -176,10 +176,13 @@ export async function runFirstRunSetup(flags: {
   // key off the same runnable check so they can't disagree — if the dev
   // server can't start (deps install failed above), the card says how to
   // install it instead of advertising a dead URL.
-  const dashboardRunnable = dashboardDevRunnable(ctx.projectDir)
-  if (hasDashboardApp(ctx.projectDir) && !dashboardRunnable) {
+  const devDashboardInstalled = dashboardDevRunnable(ctx.projectDir)
+  if (hasDashboardApp(ctx.projectDir) && !devDashboardInstalled) {
     warnDashboardNotRunnable(ctx.projectDir)
   }
+  // --detach returns before the dev server starts, so the card names the
+  // dashboard the API serves instead of a dev server that never comes up.
+  const dashboardRunnable = devDashboardInstalled && !flags.detach
   // No credentials means no admin was seeded — the operator creates one in
   // the browser through the seed's one-time setup link. Built against the
   // dashboard this card is advertising (the dev server `spree dev` starts, or
