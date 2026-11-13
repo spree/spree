@@ -227,7 +227,7 @@ async function teardown(workDir, composeDir) {
       // Keep the compose files so the containers and volumes can still be removed.
       log(
         `docker compose down failed (${down.timedOut ? 'timed out' : `exit ${down.code}`}); ` +
-          `kept ${workDir} so you can run it again there: ${down.stderr.trim().split('\n').pop() ?? ''}`,
+          `kept ${workDir}; run \`docker compose down -v\` in ${composeDir} to finish: ${down.stderr.trim().split('\n').pop() ?? ''}`,
       )
       return
     }
