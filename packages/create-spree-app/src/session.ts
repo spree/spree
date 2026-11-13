@@ -1,14 +1,12 @@
-import { spawn } from 'node:child_process'
 import { execa } from 'execa'
 
 const CTRL_C = '\x03'
 
 /**
- * Whether this process can hand the terminal over to a shell in the project
- * directory once the servers stop. Only on an interactive POSIX terminal:
- * Windows has no process groups to forward Ctrl+C to.
+ * Whether Ctrl+C can be caught as a keypress: only on an interactive POSIX
+ * terminal. Windows has no process groups to forward it to.
  */
-export function canOpenProjectShell(): boolean {
+function canCatchCtrlC(): boolean {
   return Boolean(process.stdin.isTTY && process.stdout.isTTY) && process.platform !== 'win32'
 }
 
@@ -18,7 +16,7 @@ export function canOpenProjectShell(): boolean {
  *
  * Ctrl+C normally sends SIGINT to the whole foreground process group, which
  * includes the `npx` / `pnpm dlx` wrapper that launched us — the wrapper exits,
- * the shell takes the terminal back, and nothing can run afterwards. So the
+ * and this process dies before it can print what to do next. So the
  * terminal goes into raw mode (Ctrl+C becomes a keypress, not a signal) and
  * the keypress is forwarded as SIGINT to the command's own process group only.
  */
@@ -27,7 +25,7 @@ export async function runUntilInterrupted(
   args: string[],
   cwd: string,
 ): Promise<boolean> {
-  if (!canOpenProjectShell()) {
+  if (!canCatchCtrlC()) {
     await execa(command, args, { cwd, stdio: 'inherit' })
     return false
   }
@@ -74,25 +72,4 @@ export async function runUntilInterrupted(
     process.stdin.pause()
   }
   return interrupted
-}
-
-/**
- * Opens the user's shell in `dir` and waits for it to exit. A program cannot
- * change its parent shell's directory, so this nested shell is how the user
- * lands in the new project after stopping the servers.
- */
-export async function openShell(dir: string): Promise<void> {
-  const shell = process.env.SHELL || '/bin/sh'
-  // Ctrl+C inside the shell is the shell's business, never a reason to exit.
-  const ignore = () => {}
-  process.on('SIGINT', ignore)
-  try {
-    await new Promise<void>((resolve) => {
-      const child = spawn(shell, [], { cwd: dir, stdio: 'inherit' })
-      child.on('exit', () => resolve())
-      child.on('error', () => resolve())
-    })
-  } finally {
-    process.off('SIGINT', ignore)
-  }
 }

@@ -210,16 +210,14 @@ export async function scaffold(options: ScaffoldOptions): Promise<boolean> {
       )
     }
 
-    // After Ctrl+C the user continues in a shell inside the project.
-    const appsDir = stopped ? 'apps' : `${projectName}/apps`
     if (storefrontReady) {
       p.log.info(
-        `${pc.bold('Storefront')}: ${pc.cyan(`cd ${appsDir}/storefront && ${storefrontPm(options.packageManager)} run dev`)}`,
+        `${pc.bold('Storefront')}: ${pc.cyan(`cd ${projectName}/apps/storefront && ${storefrontPm(options.packageManager)} run dev`)}`,
       )
     }
     if (sellerDashboardReady) {
       p.log.info(
-        `${pc.bold('Seller Panel')}: ${pc.cyan(`cd ${appsDir}/seller-dashboard && ${options.packageManager} run dev`)} ${pc.dim(`→ http://localhost:${SELLER_DASHBOARD_PORT}`)}`,
+        `${pc.bold('Seller Panel')}: ${pc.cyan(`cd ${projectName}/apps/seller-dashboard && ${options.packageManager} run dev`)} ${pc.dim(`→ http://localhost:${SELLER_DASHBOARD_PORT}`)}`,
       )
     }
     // No dashboard line here — with the dashboard chosen, `spree init`'s
