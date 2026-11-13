@@ -423,8 +423,9 @@ module Spree
     SOCIAL_FIELD_FORMAT = %r{
       \A(?!(?:.*/)?\.\.(?:/|\z))                                   # no ".." path segment
       (?:
-        https?://[^[:space:][:cntrl:]\p{Cf}]+                      # a web address
-      | (?://[\p{L}\p{N}.-]+(?::\d+)?                              # a protocol-relative host, where a port is unambiguous
+        https?://[\p{L}\p{N}.-]+(?::\d{1,5})?                      # a web address: a host (no userinfo) and an optional port
+        (?:[/?\#][^[:space:][:cntrl:]\p{Cf}]*)?                    # then a path, query or fragment
+      | (?://[\p{L}\p{N}.-]+(?::\d{1,5})?                          # a protocol-relative host, where a port is unambiguous
         | @?[\p{L}\p{N}_.-]*[\p{L}\p{N}_][\p{L}\p{N}_.-]*)          # or a handle or bare host, never "name:"
         (?:/[^[:space:][:cntrl:]\p{Cf}]*)?                         # and an optional path
       )\z

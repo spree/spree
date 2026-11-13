@@ -60,7 +60,7 @@ import {
   WarehouseIcon,
 } from '@spree/dashboard-ui/icons'
 import { createFileRoute } from '@tanstack/react-router'
-import { useCallback, useEffect, useMemo, useRef } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import {
@@ -183,6 +183,9 @@ function StoreSettingsForm({ store }: { store: Store }) {
   // A language change saved with the store but held back by a failed custom
   // field save. The retry no longer sees it against the refreshed store.
   const pendingLocaleSwitch = useRef(false)
+  // The logo's signed id arrives only once its upload finishes; saving before
+  // then would report success without the new logo.
+  const [logoUploading, setLogoUploading] = useState(false)
 
   // Shows the merchant the shape their next order number will take. The
   // sequential preview uses the configured starting value, which is only
@@ -216,6 +219,7 @@ function StoreSettingsForm({ store }: { store: Store }) {
   }, [unitSystem, form])
 
   const onSubmit = async (values: StoreSettingsFormValues) => {
+    if (logoUploading) return
     // Whether the admin language was changed in THIS save — compared against the
     // store's currently-persisted value, not RHF's `dirtyFields` (which a Base UI
     // Select via Controller doesn't reliably populate). Saving unrelated fields
@@ -390,6 +394,7 @@ function StoreSettingsForm({ store }: { store: Store }) {
                 <FormActions
                   form={form}
                   dirty={customFields.isDirty}
+                  disabled={logoUploading}
                   onDiscard={() => {
                     form.reset()
                     customFields.reset()
@@ -429,6 +434,7 @@ function StoreSettingsForm({ store }: { store: Store }) {
                       translationNamespace="admin.store"
                       labelKey="logo_label"
                       helpKey="logo_help"
+                      onUploadingChange={setLogoUploading}
                     />
                   </FieldGroup>
                 </CardContent>

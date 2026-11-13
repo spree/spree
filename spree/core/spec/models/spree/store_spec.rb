@@ -339,6 +339,12 @@ describe Spree::Store, type: :model, without_global_store: true do
         expect(store.reload.update(name: 'Renamed')).to be(true)
       end
 
+      it 'refuses a web address with a malformed port or with credentials before the host' do
+        store = build(:store, facebook: 'https://facebook.com:7z/shop', twitter: 'https://x.com@evil.example/shop', instagram: 'https://')
+        expect(store).not_to be_valid
+        expect(store.errors.attribute_names).to include(:facebook, :twitter, :instagram)
+      end
+
       it 'refuses a value with any other scheme' do
         store = build(:store, facebook: 'javascript:alert(1)', twitter: 'javascript:0/alert(1)', instagram: 'mailto:a@b.co')
         expect(store).not_to be_valid
