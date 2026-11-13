@@ -1,3 +1,4 @@
+import path from 'node:path'
 import { execa } from 'execa'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import {
@@ -121,13 +122,22 @@ describe('storefrontPm', () => {
 })
 
 describe('cdTarget', () => {
+  const windows = process.platform === 'win32'
+  const home = path.resolve('/home/me')
+
   it('keeps the path the user typed, relative to where they ran the command', () => {
-    expect(cdTarget('/home/me/my-store', '/home/me')).toBe('my-store')
-    expect(cdTarget('/home/me/projects/my-store', '/home/me')).toBe('projects/my-store')
-    expect(cdTarget('/srv/my-store', '/home/me')).toBe('../../srv/my-store')
+    expect(cdTarget(path.join(home, 'my-store'), home)).toBe('my-store')
+    expect(cdTarget(path.join(home, 'projects', 'my-store'), home)).toBe(
+      path.join('projects', 'my-store'),
+    )
+    expect(cdTarget(path.resolve('/srv/my-store'), home)).toBe(
+      path.join('..', '..', 'srv', 'my-store'),
+    )
   })
 
   it('quotes paths the shell would split or expand', () => {
-    expect(cdTarget("/home/me/my store's", '/home/me')).toBe(`'my store'\\''s'`)
+    expect(cdTarget(path.join(home, "my store's"), home)).toBe(
+      windows ? `"my store's"` : `'my store'\\''s'`,
+    )
   })
 })

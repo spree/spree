@@ -112,7 +112,9 @@ export function globalAddCommand(pm: PackageManager): string {
  */
 export function cdTarget(dir: string, cwd = process.cwd()): string {
   const target = path.relative(cwd, dir) || '.'
+  if (process.platform === 'win32') {
+    return /^[\w@%+=:,.\\/-]+$/.test(target) ? target : `"${target}"`
+  }
   if (/^[\w@%+=:,./-]+$/.test(target)) return target
-  if (process.platform === 'win32') return `"${target}"`
   return `'${target.replace(/'/g, `'\\''`)}'`
 }
