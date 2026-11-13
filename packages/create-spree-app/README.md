@@ -1,6 +1,6 @@
 # create-spree-app
 
-Create a [Spree Commerce](https://spreecommerce.org) project with one command. Spree is an open-source headless commerce platform: REST Store and Admin APIs with OpenAPI specs, TypeScript SDKs, webhooks, an MCP server and a built-in marketplace, with the backend running as a Docker image ([`ghcr.io/spree/spree`](https://github.com/orgs/spree/packages/container/package/spree)). You need only Node.js, Git and Docker — Ruby is needed only if you customize the backend.
+Create a [Spree Commerce](https://spreecommerce.org) project with one command. Spree is an open-source headless commerce platform: REST Store and Admin APIs with OpenAPI specs, TypeScript SDKs, webhooks, an MCP server and a built-in marketplace, with the backend running as a Docker image ([`ghcr.io/spree/spree`](https://github.com/orgs/spree/packages/container/package/spree)). You need only Node.js, Git and Docker.
 
 The project includes the Spree API (Store and Admin APIs, and the MCP server at `/api/v3/admin/mcp`), the Admin Dashboard, an optional Next.js storefront, an optional marketplace seller panel, and the `spree` CLI for day-to-day work. Setup completes automatically: image pulled, database seeded, API keys configured.
 
