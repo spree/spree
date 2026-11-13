@@ -223,7 +223,8 @@ same commands and the notes, run none of them, and stop.
    `create-spree-app` projects depend on `@spree/docs` on the Spree major, and
    `spree upgrade` moves a project's `@spree/docs` to its server's version.
    Push a `@spree/cli` or `create-spree-app` tag only once `npm view
-   "@spree/docs@<version>" version` prints `<version>`. A tool release
+   "@spree/docs@<npm version>" version` prints `<npm version>` (`6.0.0-rc.7`
+   for `6.0.0.rc7`). A tool release
    between Spree releases needs no wait: the docs for the current version
    are already on npm.
 
