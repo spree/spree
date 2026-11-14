@@ -15,6 +15,59 @@ Keep up with the latest features and improvements in Spree Commerce!
 
 </div>
 
+<Update label="Dashboard refresh" description="November 12, 2026" tags={["Dashboard", "Seller Panel", "Catalog"]}>
+  The admin dashboard and the seller panel have been reworked page by page, so more fits on the screen and the next step is easier to find. Available in Spree 6.0.4.
+
+  - **Easier to read.** A new typeface, a neutral color palette and a near-black dark theme. Tables gain a **Compact** row density that fits about half as many rows again on a laptop screen.
+  - **Orders lead with what matters.** The order page opens with the totals, the balance and the next payment step. Fulfillments, returns, payments, discounts and fees each sit under their own heading.
+  - **A bigger media library.** Pick images from a large dialog with search, filters, sorting and a grid or list view. Product media opens in a full-screen editor, and each variant picks its images from its own row.
+  - **No more silently hidden products.** An active product warns you when it has no price in one of your store's currencies, because shoppers paying in that currency cannot see it.
+  - **Stock across all locations.** Filter inventory to items that are out of stock or running low across every location together, not only one at a time.
+  - **Quicker customer and supplier work.** Suppliers and customer groups open on their own pages. Every customer picker searches by name or email and offers **Add new customer**.
+
+  Forms now show **Unsaved changes** beside the Save button, so an edit made far down a long page is not missed.
+
+  **Learn more:** [Media library](/user/products/media) · [Products user guide](/user/products/products) · [Theming](/developer/dashboard/customization/theming)
+</Update>
+
+<Update label="Seller management for marketplace operators" description="November 12, 2026" tags={["Marketplace", "Dashboard", "Seller Panel"]}>
+  Running a marketplace means knowing how each seller is doing, and fixing their details without a round of emails. The seller page in your dashboard is now a working overview of that seller's business. Available in Spree 6.0.4.
+
+  - **Performance at a glance.** Each seller's page opens with the last 30 days of net sales and commission, the orders still to fulfill and the products waiting for review.
+  - **Products and orders on the page.** The seller's products and orders are listed in full, and products in review can be approved or sent back right there.
+  - **Edit in place.** Change contact details, the returns address, images and holiday mode without leaving the page.
+  - **Set up sellers yourself.** Approve a seller who has not been through onboarding, such as one you created on a vendor's behalf. Invite people to the team of a seller who is already approved.
+  - **Simpler seller settings.** In the seller panel, sellers manage their contact details, addresses and holiday mode, their public profile and their tax registrations on three plain pages under **Settings**.
+
+  **Learn more:** [Sellers user guide](/user/sellers/sellers) · [Onboarding](/user/sellers/onboarding) · [Seller panel](/user/sellers/seller-panel)
+</Update>
+
+<Update label="PayPal payments" description="November 5, 2026" tags={["Payments", "Integrations"]}>
+  PayPal is back as an official payment provider, released together with Spree at the same version. Shoppers can pay with their PayPal balance, a linked card or a bank account. Available in Spree 6.0.3.
+
+  - **More ways to pay.** PayPal, Pay Later, Venmo for US merchants, and card payments for guests who have no PayPal account.
+  - **Two fields to set up.** Enter your Client ID and Secret under **Settings → Payments**. Spree checks them with PayPal when you save and registers the webhooks for you.
+  - **Take the money when you choose.** PayPal follows your capture setting: at checkout, on dispatch or manually.
+  - **Verified notifications.** Every notification PayPal sends is checked with PayPal before Spree acts on it.
+
+  Stores that take PayPal on Spree 5.6 can now upgrade to 6.0. Existing payment methods and payments carry over, and the upgrade guide lists the two extra steps.
+
+  **Learn more:** [PayPal integration](/integrations/payments/paypal) · [Upgrade guide](/developer/upgrades/5.6-to-6.0#paypal)
+</Update>
+
+<Update label="AI agents can run every back-office action" description="November 5, 2026" tags={["AI"]}>
+  AI agents connected to your store through the MCP server can now do what your team does in the dashboard, not only look things up and edit records. Available in Spree 6.0.3.
+
+  - **Every action is covered.** Agents can approve returns, claims and exchanges, clone products, resend invitations and run every other action the dashboard offers, with no extra setup.
+  - **Whole tasks from one request.** Agents reach records that live inside another, such as an order's items or a promotion's rules, so one request can set up a complete promotion.
+  - **Approval where it matters.** Agents still ask before deleting, refunding and other changes. Uploading a file, starting an import or creating an export no longer counts as risky.
+  - **The same limits as before.** An agent can never do more than the staff member who connected it.
+
+  Developers who document their extension's Admin API get its actions as agent tools automatically.
+
+  **Learn more:** [AI agents user guide](/user/ai-agents/ai-agents) · [Tools reference](/developer/mcp/tools) · [Custom tools](/developer/mcp/custom-tools)
+</Update>
+
 <Update label="Spree 6.0" description="October 27, 2026" tags={["Release"]}>
   Spree 6.0 is now stable. It brings together everything in this changelog since August: a new React dashboard, a seller panel for marketplaces, B2B wholesale, built-in AI agent access, and emails that merchants edit themselves.
 
