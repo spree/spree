@@ -1,3 +1,11 @@
+## 2026-11-14: Extensions add configurator sections from modules the store file lists
+
+**Context:** The configurator's sections were a fixed list inside `@spree/config`, so an extension that adds a resource to the Admin API could not be configured from `spree.store.yml` (`6.0-cli-configurator.md`).
+
+**Decision:** The file's `extensions:` key lists JavaScript modules, by path or by package. Each default-exports a section made with `defineSection`; the CLI imports them before reading the rest of the file. Each extension validates its own entries with the schema it brings. Extension sections run after every built-in section.
+
+**Consequences:** An extension that wants to be configurable ships a module with its section next to its Admin API endpoints. The name `extensions` is taken at the top of the file, and no built-in section may be called that. `spree.config.ts` stays reserved for Spree 7.
+
 ## 2026-11-14: Sample data is a recipe of store files and CSV imports, with no orders
 
 **Context:** After the store defaults left Ruby (`6.0-cli-configurator.md`), the sample data loader was the largest piece of setup still written in Ruby. Most of it is configuration; products and customers are already CSV imports; the orders were built by writing rows directly and did not use the sample customers.

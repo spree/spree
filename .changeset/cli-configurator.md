@@ -12,3 +12,4 @@ Added `spree config`: declarative store configuration from a YAML file.
 - `tax_rates` and `custom_field_definitions` sections, and `custom_fields` values on products, categories and sellers.
 - `option_types`, `collections`, `companies`, `price_lists`, `catalogs` and `promotions` sections; `rules` on delivery methods; option types, categories and custom fields on product types.
 - `spree sample-data` loads the demo store through the Admin API: a recipe of store files and CSV imports, exported from `@spree/config/sample-data`. `runRecipe`, `deployStep` and `importStep` build your own.
+- Extensions add their own sections: list a module under `extensions:` in the file, and export a section made with `defineSection` from it.
