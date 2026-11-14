@@ -78,6 +78,22 @@ test.describe('products list', () => {
     await expect(row(page, pricey.name)).toBeHidden()
   })
 
+  test("shows the default variant's SKU in the SKU column", async ({ page }) => {
+    const session = await login(page)
+    const { stamp, cheap } = await seedProducts(page, session)
+    await gotoIndex(page, PRODUCTS_PATH(session.store_id), CTA)
+    await searchList(page, SEARCH, stamp)
+    await expect(row(page, cheap.name)).toBeVisible({ timeout: 15_000 })
+
+    await page.getByRole('button', { name: /^columns$/i }).click()
+    await page.getByRole('menuitemcheckbox', { name: /^sku$/i }).click()
+    await page.keyboard.press('Escape')
+
+    await expect(row(page, cheap.name).getByRole('cell', { name: cheap.sku })).toBeVisible({
+      timeout: 15_000,
+    })
+  })
+
   test('shows how many units are in stock', async ({ page }) => {
     const session = await login(page)
     const locations = await adminRequest<{ data: { id: string }[] }>(

@@ -1,4 +1,4 @@
-import type { Channel } from '@spree/admin-sdk'
+import type { Channel, Product } from '@spree/admin-sdk'
 import { PRODUCT_STATUSES } from '@spree/core'
 import { defineTable, formatPrice, ProductStockSummary } from '@spree/dashboard-core'
 import { ProductIdentity, StatusBadge, TagList } from '@spree/dashboard-ui'
@@ -10,7 +10,7 @@ import { channelAutocompleteProps } from '../hooks/use-channels'
 import { productTypeAutocompleteProps } from '../hooks/use-product-types'
 import { sellerAutocompleteProps } from '../hooks/use-sellers'
 
-defineTable('products', {
+defineTable<Product>('products', {
   docsPath: 'products/creating-products',
   description: i18n.t('admin.table_descriptions.products'),
   title: i18n.t('admin.nav.products'),
@@ -77,9 +77,12 @@ defineTable('products', {
       // Not filterable: the search box already matches SKUs, and matches them
       // better — it searches every variant's, where this filtered only the
       // default variant's.
+      // The SKU lives on the default variant, not the product, so it is
+      // requested only while the column is on.
+      expand: 'default_variant',
       default: false,
       className: 'text-base text-muted-foreground',
-      render: (product) => product.sku ?? '—',
+      render: (product) => product.default_variant?.sku || '—',
     },
     {
       key: 'price',
