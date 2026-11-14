@@ -186,10 +186,12 @@ export function filePreferences(preferences: Record<string, unknown> | undefined
 /** Operator-owned rows only, on tables a marketplace's sellers also write to. */
 export const FIRST_PARTY = { 'q[seller_id_null]': 1 } as const
 
-type PlainOptions<Entry, Live extends LiveRecord> = Omit<
+export type PlainOptions<Entry, Live extends LiveRecord> = Omit<
   Section<Entry, Live>,
   'entries' | 'entryKey' | 'keyAttribute' | 'path' | 'filterable' | 'desired' | 'toFile'
 > & {
+  /** The Admin API path of the resource, when it is not `/<section name>`. */
+  path?: string
   /** The live attribute holding the key, when the API reads it back under another name. */
   keyAttribute?: string
   filterable?: boolean
@@ -214,8 +216,15 @@ type PlainOptions<Entry, Live extends LiveRecord> = Omit<
 export function plainSection<Entry extends object, Live extends LiveRecord>(
   options: PlainOptions<Entry, Live>,
 ): Section<Entry, Live> {
-  const { key, attributes, defaults = {}, fixedOnCreate = [], toFile, ...rest } = options
-  const path = `/${options.name}`
+  const {
+    key,
+    attributes,
+    defaults = {},
+    fixedOnCreate = [],
+    toFile,
+    path = `/${options.name}`,
+    ...rest
+  } = options
   return {
     path,
     keyAttribute: key,

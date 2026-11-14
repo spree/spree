@@ -5,11 +5,15 @@
 
 import { configSchema, type SpreeConfig } from './schema.js'
 
-/** Every section the file may carry — the schema's keys, less the version. */
-export type SectionName = Exclude<keyof SpreeConfig, 'version'>
+/** Top-level keys of the file that are not sections. */
+export const RESERVED_KEYS = ['version', 'extensions'] as const
 
+/** Every built-in section the file may carry — the schema's keys, less the reserved ones. */
+export type SectionName = Exclude<keyof SpreeConfig, (typeof RESERVED_KEYS)[number]>
+
+/** Every section name, built-in and registered by an extension. */
 export const SECTION_NAMES = Object.keys(configSchema.shape).filter(
-  (key) => key !== 'version',
+  (key) => !(RESERVED_KEYS as readonly string[]).includes(key),
 ) as SectionName[]
 
 export interface RequestOptions {

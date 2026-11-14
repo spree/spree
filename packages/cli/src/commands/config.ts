@@ -10,6 +10,7 @@ import {
   ConfigValidationError,
   introspect,
   loadConfig,
+  loadExtensions,
   missingScopes,
   type PlannedRun,
   planConfig,
@@ -59,6 +60,7 @@ interface DeployOutcome {
 }
 
 interface IntrospectFlags extends CredentialFlags {
+  config?: string
   out?: string
   include?: string
 }
@@ -112,19 +114,24 @@ export function parseSections(value: string | undefined, flag: string): SectionN
   return names as SectionName[]
 }
 
-function readConfigOrExit(file: string) {
+function exitOnInvalidFile(file: string, error: unknown): void {
+  if (!(error instanceof ConfigValidationError)) return
+  process.stderr.write(`${pc.red('error:')} ${file} is not a valid configuration file:\n`)
+  for (const issue of error.issues) {
+    process.stderr.write(
+      `  ${issue.path}${issue.line ? pc.dim(` (line ${issue.line})`) : ''}: ${issue.message}\n`,
+    )
+  }
+  process.exit(2)
+}
+
+/** Reads the file, with the sections its extensions add. */
+async function readConfigOrExit(file: string) {
   try {
+    await loadExtensions(file)
     return loadConfig(file)
   } catch (error) {
-    if (error instanceof ConfigValidationError) {
-      process.stderr.write(`${pc.red('error:')} ${file} is not a valid configuration file:\n`)
-      for (const issue of error.issues) {
-        process.stderr.write(
-          `  ${issue.path}${issue.line ? pc.dim(` (line ${issue.line})`) : ''}: ${issue.message}\n`,
-        )
-      }
-      process.exit(2)
-    }
+    exitOnInvalidFile(file, error)
     if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
       process.stderr.write(
         `${pc.red('error:')} ${file} does not exist. Pass --config <file> or run \`spree config introspect --out ${DEFAULT_CONFIG_FILE}\` to create one.\n`,
@@ -255,9 +262,9 @@ export function registerConfigCommand(program: Command): void {
       '-c, --config <file>',
       `configuration file (default: ${DEFAULT_CONFIG_FILE} in the project)`,
     )
-    .action((flags: { config?: string }) => {
+    .action(async (flags: { config?: string }) => {
       const file = resolveConfigFile(flags.config)
-      const loaded = readConfigOrExit(file)
+      const loaded = await readConfigOrExit(file)
       process.stdout.write(
         `${pc.green('✓')} ${file} is valid (${loaded.sections.length ? loaded.sections.join(', ') : 'no sections'})\n`,
       )
@@ -269,7 +276,7 @@ export function registerConfigCommand(program: Command): void {
       .description('Show what deploy would change; exits 1 when the store differs from the file'),
   ).action(async (flags: PlanFlags) => {
     const file = resolveConfigFile(flags.config)
-    const { config: loaded } = readConfigOrExit(file)
+    const { config: loaded } = await readConfigOrExit(file)
     const prune = parsePrune(flags.prune)
     let baseUrl: string | undefined
     try {
@@ -297,7 +304,7 @@ export function registerConfigCommand(program: Command): void {
     )
     .action(async (flags: DeployFlags) => {
       const file = resolveConfigFile(flags.config)
-      const { config: loaded } = readConfigOrExit(file)
+      const { config: loaded } = await readConfigOrExit(file)
       await deploy(flags, file, async () => loaded)
     })
 
@@ -329,10 +336,21 @@ export function registerConfigCommand(program: Command): void {
   )
     .option('-o, --out <file>', 'write to this file instead of stdout')
     .option(
+      '-c, --config <file>',
+      `file whose extensions add sections to read (default: ${DEFAULT_CONFIG_FILE} in the project)`,
+    )
+    .option(
       '--include <sections>',
       `comma-separated sections to read (default: everything but products and customers)`,
     )
     .action(async (flags: IntrospectFlags) => {
+      const extended = resolveConfigFile(flags.config)
+      try {
+        await loadExtensions(extended)
+      } catch (error) {
+        exitOnInvalidFile(extended, error)
+        throw error
+      }
       const include = parseSections(flags.include, '--include')
       let baseUrl: string | undefined
       try {
