@@ -1,5 +1,6 @@
 require 'spec_helper'
 require 'spree/api/openapi/path_sorter'
+require 'tempfile'
 
 RSpec.describe Spree::Api::OpenAPI::PathSorter do
   let(:yaml) do
@@ -66,5 +67,18 @@ RSpec.describe Spree::Api::OpenAPI::PathSorter do
   it 'is idempotent' do
     once = described_class.sort_text(yaml)
     expect(described_class.sort_text(once)).to eq(once)
+  end
+
+  describe '.sort_file!' do
+    it 'rewrites an unsorted file once and reports whether it changed' do
+      Tempfile.create(['openapi', '.yaml']) do |file|
+        file.write(yaml)
+        file.close
+
+        expect(described_class.sort_file!(file.path)).to be(true)
+        expect(File.read(file.path)).to eq(described_class.sort_text(yaml))
+        expect(described_class.sort_file!(file.path)).to be(false)
+      end
+    end
   end
 end
