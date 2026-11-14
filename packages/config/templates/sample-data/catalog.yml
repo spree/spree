@@ -28,14 +28,14 @@ collections:
     sort_order: available_on desc
     rules:
       # Days back the window reaches.
-      - { type: available_on, value: "30", match_policy: is_equal_to }
+      - { type: available_on, value: '30', match_policy: is_equal_to }
   - permalink: on-sale
     name: On Sale
     automatic: true
     rules_match_policy: all
     sort_order: price asc
     rules:
-      - { type: sale, value: "true", match_policy: is_equal_to }
+      - { type: sale, value: 'true', match_policy: is_equal_to }
   # Best selling is a sort, not a rule: a shelf the merchant curates, ordered
   # by what actually sells.
   - permalink: best-sellers
