@@ -270,6 +270,7 @@ module Spree
     # option-value presentation (e.g. "Red", "XL"). The 3-char floor
     # keeps single-letter queries from triggering a full scan.
     def self.search(query)
+      query = query.to_s
       return none if query.blank? || query.length < 3
 
       conditions = [

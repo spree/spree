@@ -45,6 +45,8 @@ RSpec.describe Spree::RansackableAttributes do
       expect(Spree::Supplier.search('acme')).to contain_exactly(supplier)
       expect(Spree::Supplier.search('JANE')).to contain_exactly(supplier)
       expect(Spree::Supplier.search('')).to include(supplier, other)
+      expect(Spree::Supplier.search(true)).to include(supplier, other)
+      expect(Spree::Supplier.search).to include(supplier, other)
     end
 
     it 'reaches through associations' do
