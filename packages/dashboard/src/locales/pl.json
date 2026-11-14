@@ -2440,6 +2440,22 @@
         "meta_description": {
           "label": "Opis meta",
           "help": "Krótkie podsumowanie, które wyszukiwarki pokazują pod tytułem."
+        },
+        "meta_keywords": {
+          "label": "Słowa kluczowe meta",
+          "help": "Słowa kluczowe dla wyszukiwarek, oddzielone przecinkami."
+        },
+        "facebook": {
+          "label": "Facebook",
+          "placeholder": "https://facebook.com/yourstore"
+        },
+        "twitter": {
+          "label": "X (Twitter)",
+          "placeholder": "@yourstore"
+        },
+        "instagram": {
+          "label": "Instagram",
+          "placeholder": "@yourstore"
         }
       },
       "store_credit": {
@@ -6083,6 +6099,14 @@
       },
       "seo": {
         "title": "Wynik w wyszukiwarce"
+      },
+      "images": {
+        "logo_label": "Logo",
+        "logo_help": "Wyświetlane w panelu i używane przez sklep, na przykład w wynikach wyszukiwania. PNG, JPG lub WebP."
+      },
+      "social": {
+        "title": "Media społecznościowe",
+        "description": "Sklep linkuje do tych kont i podaje je wyszukiwarkom. Wpisz nazwę konta lub pełny adres URL."
       }
     },
     "table_descriptions": {

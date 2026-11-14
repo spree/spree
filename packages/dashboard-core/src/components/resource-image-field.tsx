@@ -61,6 +61,8 @@ export interface ResourceImageFieldProps<Name extends string, T extends ImageFie
   mediaLibrary?: MediaLibrarySource
   /** Called with true while a picked image uploads; see `FileUploadField`. */
   onUploadingChange?: (uploading: boolean) => void
+  /** Blocks picking or removing an image, e.g. while the owning form saves. */
+  disabled?: boolean
 }
 
 /**
@@ -79,6 +81,7 @@ export function ResourceImageField<Name extends string, T extends ImageFieldsFor
   helpKey,
   mediaLibrary,
   onUploadingChange,
+  disabled = false,
 }: ResourceImageFieldProps<Name, T>) {
   const { t } = useTranslation()
   const [picking, setPicking] = useState(false)
@@ -105,6 +108,7 @@ export function ResourceImageField<Name extends string, T extends ImageFieldsFor
         label={t(`${translationNamespace}.images.${resolvedLabelKey}`)}
         help={t(`${translationNamespace}.images.${resolvedHelpKey}`)}
         onUploadingChange={onUploadingChange}
+        disabled={disabled}
         value={{
           signedId: imageForm.watch(signedIdField),
           previewUrl: imageForm.watch(previewField),
@@ -119,7 +123,13 @@ export function ResourceImageField<Name extends string, T extends ImageFieldsFor
 
       {mediaLibrary && (
         <>
-          <Button type="button" variant="outline" size="sm" onClick={() => setPicking(true)}>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            disabled={disabled}
+            onClick={() => setPicking(true)}
+          >
             <LibraryIcon className="size-4" />
             {t('admin.media_library.choose_from_library')}
           </Button>

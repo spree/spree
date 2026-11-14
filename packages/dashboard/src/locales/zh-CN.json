@@ -2417,6 +2417,22 @@
         "meta_description": {
           "label": "元描述",
           "help": "搜索引擎在标题下方显示的简短摘要。"
+        },
+        "meta_keywords": {
+          "label": "Meta 关键词",
+          "help": "供搜索引擎使用的关键词，用逗号分隔。"
+        },
+        "facebook": {
+          "label": "Facebook",
+          "placeholder": "https://facebook.com/yourstore"
+        },
+        "twitter": {
+          "label": "X (Twitter)",
+          "placeholder": "@yourstore"
+        },
+        "instagram": {
+          "label": "Instagram",
+          "placeholder": "@yourstore"
         }
       },
       "store_credit": {
@@ -6001,6 +6017,14 @@
       },
       "seo": {
         "title": "搜索引擎展示"
+      },
+      "images": {
+        "logo_label": "徽标",
+        "logo_help": "显示在后台中，并由店面使用，例如在搜索结果中。PNG、JPG 或 WebP。"
+      },
+      "social": {
+        "title": "社交媒体",
+        "description": "店面会链接到这些账号并告知搜索引擎。请输入用户名或完整网址。"
       }
     },
     "table_descriptions": {

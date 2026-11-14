@@ -322,6 +322,65 @@ test.describe('store settings — general', () => {
     await expect(save).toBeDisabled({ timeout: 15_000 })
   })
 
+  test('saves the meta keywords and social accounts', async ({ page }) => {
+    const creds = await login(page)
+    await page.goto(STORE_PATH(creds.store_id))
+    const keywords = page.getByLabel(/^meta keywords$/i)
+    const facebook = page.getByLabel(/^facebook$/i)
+    const twitter = page.getByLabel(/^x \(twitter\)$/i)
+    const instagram = page.getByLabel(/^instagram$/i)
+    await expect(keywords).toBeVisible({ timeout: 15_000 })
+
+    const handle = `e2e${Date.now()}`
+    await keywords.fill('coffee, beans')
+    await facebook.fill(`https://facebook.com/${handle}`)
+    await twitter.fill(`@${handle}`)
+    await instagram.fill(handle)
+    const save = page.getByRole('button', { name: /^save$/i })
+    await save.click()
+    await expect(save).toBeDisabled({ timeout: 15_000 })
+
+    await page.reload()
+    await expect(keywords).toHaveValue('coffee, beans', { timeout: 15_000 })
+    await expect(facebook).toHaveValue(`https://facebook.com/${handle}`)
+    await expect(twitter).toHaveValue(`@${handle}`)
+    await expect(instagram).toHaveValue(handle)
+
+    // Clear them so later specs in this shard start from a blank store.
+    for (const field of [keywords, facebook, twitter, instagram]) await field.fill('')
+    await save.click()
+    await expect(save).toBeDisabled({ timeout: 15_000 })
+  })
+
+  // Uploads, saves and then removes the logo, so the shared store ends where
+  // it started.
+  test('uploads the store logo, then removes it', async ({ page }) => {
+    const creds = await login(page)
+    await page.goto(STORE_PATH(creds.store_id))
+    await expect(page.locator('#store-name')).toBeVisible({ timeout: 15_000 })
+
+    const savedLogo = page.getByText(/^attached file$/i)
+    const save = page.getByRole('button', { name: /^save$/i })
+
+    await page.locator('input[type="file"]').setInputFiles(FIXTURE_IMAGE)
+    await expect(page.getByText(/uploading/i)).toBeHidden({ timeout: 30_000 })
+    await expect(savedLogo).toBeVisible()
+    await save.click()
+    await expect(save).toBeDisabled({ timeout: 15_000 })
+
+    await page.reload()
+    await expect(savedLogo).toBeVisible({ timeout: 15_000 })
+
+    await page.getByRole('button', { name: /^remove$/i }).click()
+    await expect(savedLogo).toHaveCount(0)
+    await save.click()
+    await expect(save).toBeDisabled({ timeout: 15_000 })
+
+    await page.reload()
+    await expect(page.locator('#store-name')).toBeVisible({ timeout: 15_000 })
+    await expect(savedLogo).toHaveCount(0)
+  })
+
   // A store with no storefront of its own reads back no storefront URL: the
   // dashboard neither offers to "View store" nor prefills the connect form
   // with an address the merchant never entered.

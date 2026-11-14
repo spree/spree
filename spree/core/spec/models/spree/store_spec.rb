@@ -303,6 +303,60 @@ describe Spree::Store, type: :model, without_global_store: true do
         expect(store.errors[:customer_support_email]).to be_present
       end
     end
+
+    describe 'social accounts' do
+      it 'accepts a handle or a web address' do
+        store = build(:store, facebook: 'https://facebook.com/shop', twitter: '@shop', instagram: 'instagram.com/shop.beans')
+        expect(store).to be_valid
+      end
+
+      it 'accepts a dotted or non-Latin handle, a port and a protocol-relative address' do
+        store = build(:store, facebook: '//facebook.com:443/shop', twitter: 'café', instagram: 'shop.beans')
+        expect(store).to be_valid
+      end
+
+      it 'refuses a path that climbs out of the account, or a handle with no letter or digit' do
+        store = build(:store, facebook: '@shop/../../x', twitter: '..', instagram: '-')
+        expect(store).not_to be_valid
+        expect(store.errors.attribute_names).to include(:facebook, :twitter, :instagram)
+      end
+
+      it 'refuses a scheme hidden behind a tab or a control character' do
+        store = build(:store, facebook: "java\tscript:alert(1)", twitter: "\u0001javascript:alert(1)")
+        expect(store).not_to be_valid
+        expect(store.errors.attribute_names).to include(:facebook, :twitter)
+      end
+
+      it 'refuses a Unicode space or an invisible character' do
+        store = build(:store, facebook: "https://facebook.com/a\u00A0b", twitter: "x.com/\u202Eshop", instagram: "instagram.com/a\u2028b")
+        expect(store).not_to be_valid
+        expect(store.errors.attribute_names).to include(:facebook, :twitter, :instagram)
+      end
+
+      it 'keeps a value saved before the format rule from blocking other changes' do
+        store = create(:store)
+        store.update_column(:facebook, 'facebook.com/My Shop')
+        expect(store.reload.update(name: 'Renamed')).to be(true)
+      end
+
+      it 'refuses a web address with a malformed port or with credentials before the host' do
+        store = build(:store, facebook: 'https://facebook.com:7z/shop', twitter: 'https://x.com@evil.example/shop', instagram: 'https://')
+        expect(store).not_to be_valid
+        expect(store.errors.attribute_names).to include(:facebook, :twitter, :instagram)
+      end
+
+      it 'refuses a value with any other scheme' do
+        store = build(:store, facebook: 'javascript:alert(1)', twitter: 'javascript:0/alert(1)', instagram: 'mailto:a@b.co')
+        expect(store).not_to be_valid
+        expect(store.errors.attribute_names).to include(:facebook, :twitter, :instagram)
+      end
+
+      it 'strips whitespace and stores blank as nil' do
+        store = build(:store, twitter: '  @shop ', instagram: '   ')
+        expect(store.twitter).to eq('@shop')
+        expect(store.instagram).to be_nil
+      end
+    end
   end
 
   context 'Translations' do
