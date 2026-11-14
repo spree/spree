@@ -70,6 +70,32 @@ describe('withRedaction', () => {
     expect(breadcrumb?.message).toBe('?token=redacted')
   })
 
+  it('redacts whatever a host hook adds, at any depth', async () => {
+    const { beforeSend } = withRedaction({
+      beforeSend: (event) => ({
+        ...event,
+        contexts: { navigation: { url: '/reset-password?token=abc' } },
+        tags: { last_page: '/reset-password?token=def' },
+        extra: { a: { b: { c: { d: { e: { f: { url: '?token=ghi' } } } } } } },
+      }),
+    })
+
+    const sent = JSON.stringify(await beforeSend?.({ type: undefined }, {}))
+
+    expect(sent).not.toMatch(/abc|def|ghi/)
+    expect(sent.match(/token=redacted/g)).toHaveLength(3)
+  })
+
+  it('survives circular data', () => {
+    const data: Record<string, unknown> = { url: '?token=abc' }
+    data.self = data
+
+    expect(scrubBreadcrumb({ category: 'console', data }).data).toEqual({
+      url: '?token=redacted',
+      self: '[Circular]',
+    })
+  })
+
   it('keeps what the host’s hooks drop dropped', async () => {
     const { beforeSend, beforeBreadcrumb } = withRedaction({
       beforeSend: () => null,

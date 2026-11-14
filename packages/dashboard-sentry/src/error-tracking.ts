@@ -16,47 +16,45 @@ export function errorTrackingEnabled({
   return Boolean(dsn) && (production || enableInDevelopment === true)
 }
 
-// Strings anywhere inside `value`: console breadcrumbs keep each logged
-// argument in `data.arguments`, and a rejected plain object lands in
-// `extra.__serialized__`. An object's `toJSON` result is what Sentry sends,
-// so that is what gets redacted.
-function redactDeep(value: unknown, depth = 0): unknown {
+// Every string inside `value`, however deep: console breadcrumbs keep each
+// logged argument in `data.arguments`, a rejected plain object lands in
+// `extra.__serialized__`, and a host hook can add data anywhere. An object's
+// `toJSON` result is what Sentry sends, so that is what gets redacted. A value
+// already seen on the current path is a cycle, which Sentry drops too.
+function redactDeep(value: unknown, ancestors = new WeakSet<object>()): unknown {
   if (typeof value === 'string') return redactTokens(value)
-  if (depth > 5 || value === null || typeof value !== 'object') return value
-  if ('toJSON' in value && typeof value.toJSON === 'function') {
-    return redactDeep(value.toJSON(), depth + 1)
+  if (value === null || typeof value !== 'object') return value
+  if (ancestors.has(value)) return '[Circular]'
+  ancestors.add(value)
+  try {
+    if ('toJSON' in value && typeof value.toJSON === 'function') {
+      return redactDeep(value.toJSON(), ancestors)
+    }
+    if (Array.isArray(value)) return value.map((item) => redactDeep(item, ancestors))
+    return Object.fromEntries(
+      Object.entries(value).map(([key, item]) => [key, redactDeep(item, ancestors)]),
+    )
+  } finally {
+    ancestors.delete(value)
   }
-  if (Array.isArray(value)) return value.map((item) => redactDeep(item, depth + 1))
-  return Object.fromEntries(
-    Object.entries(value).map(([key, item]) => [key, redactDeep(item, depth + 1)]),
-  )
 }
 
-// Sentry may have normalized a whole `data` or `extra` object to a string by
-// the time an event is sent, so the result keeps whatever shape it came in.
-function redactData<T>(data: T): T {
-  return redactDeep(data) as T
+/**
+ * Every field of the event: its URL and headers, messages, extra data,
+ * contexts, tags and breadcrumbs, including anything a host `beforeSend`
+ * added. Sentry's own processing metadata holds live SDK objects and is never
+ * sent, so it is left alone. A field Sentry normalized to a string keeps that
+ * shape.
+ */
+export function scrubErrorEvent(event: Sentry.ErrorEvent): Sentry.ErrorEvent {
+  const { sdkProcessingMetadata, ...sent } = event
+  return { ...(redactDeep(sent) as Sentry.ErrorEvent), sdkProcessingMetadata }
 }
 
-// The page URL, its Referer header, the error's own text, its extra data and
-// its breadcrumbs as Sentry normalized them.
-export function scrubErrorEvent(event: Sentry.ErrorEvent) {
-  if (event.request?.url) event.request.url = redactTokens(event.request.url)
-  if (event.request?.headers) event.request.headers = redactData(event.request.headers)
-  if (event.message) event.message = redactTokens(event.message)
-  for (const exception of event.exception?.values ?? []) {
-    if (exception.value) exception.value = redactTokens(exception.value)
-  }
-  if (event.extra) event.extra = redactData(event.extra)
-  for (const breadcrumb of event.breadcrumbs ?? []) scrubBreadcrumb(breadcrumb)
-  return event
-}
-
-// Navigation (from, to), fetch/XHR (url) and console (message) breadcrumbs.
-export function scrubBreadcrumb(breadcrumb: Sentry.Breadcrumb) {
-  if (breadcrumb.message) breadcrumb.message = redactTokens(breadcrumb.message)
-  if (breadcrumb.data) breadcrumb.data = redactData(breadcrumb.data)
-  return breadcrumb
+// Navigation (from, to), fetch/XHR (url) and console (message, arguments)
+// breadcrumbs.
+export function scrubBreadcrumb(breadcrumb: Sentry.Breadcrumb): Sentry.Breadcrumb {
+  return redactDeep(breadcrumb) as Sentry.Breadcrumb
 }
 
 /**
