@@ -6,7 +6,7 @@ import { type ChildProcess, execSync, spawn } from 'node:child_process'
 import { writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { createAdminClient } from '@spree/admin-sdk'
-import { provisionStore, renderReport, reportHasFailures } from '@spree/config'
+import { provisionStore, renderReport, reportHasFailures } from '@spree/seeds'
 
 const API_GEM_DIR = resolve(__dirname, '../../../../spree/api')
 const RAILS = 'bundle exec spec/dummy/bin/rails'

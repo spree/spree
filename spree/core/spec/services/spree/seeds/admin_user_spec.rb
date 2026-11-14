@@ -23,7 +23,7 @@ RSpec.describe Spree::Seeds::AdminUser do
 
     # This install never sees the setup screen, so the seed answers the
     # country question itself — defaulting to what it hardcoded before. The
-    # defaults shaped by the answer come from `spree config provision`.
+    # defaults shaped by the answer come from `spree seed defaults`.
     it 'places the store in the US by default' do
       subject
 

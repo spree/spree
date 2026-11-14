@@ -41,7 +41,7 @@ module Spree
       # This install never sees the setup screen, so the country question is
       # answered by the environment instead — defaulting to the US, which is
       # what these installs got when the seeds hardcoded it. The defaults
-      # shaped by the answer are deployed afterwards (`spree config provision`).
+      # shaped by the answer are deployed afterwards (`spree seed defaults`).
       def relocate_store(store)
         country = Spree::Country.by_iso(ENV.fetch('STORE_COUNTRY', 'US')) || Spree::Country.by_iso('US')
 

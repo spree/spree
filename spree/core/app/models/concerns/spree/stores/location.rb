@@ -4,7 +4,7 @@ module Spree
     # trade. Both are answered once, at first-run setup or by the seed on a
     # scripted install; everything shaped by the answer (warehouse, delivery
     # zones, pickup, the parcel box) is deployed afterwards by the
-    # configurator's store defaults (docs/plans/6.0-cli-configurator.md).
+    # seeds engine's store defaults (docs/plans/6.0-cli-configurator.md).
     module Location
       extend ActiveSupport::Concern
 

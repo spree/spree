@@ -55,10 +55,10 @@ echo "▸ Rebuilding $TEMPLATE_DB (full migration run + seeds, ~4-5 min)"
 
 # The seed creates only the store and its admin; the defaults a store trades
 # with (tax categories, warehouse, delivery zones, reasons) are deployed by
-# @spree/config through the Admin API, as first-run setup does. Boot a server
+# @spree/seeds through the Admin API, as first-run setup does. Boot a server
 # on the template for that, on a free port, and stop it afterwards.
 echo "▸ Deploying the store defaults"
-pnpm turbo build --filter=@spree/config --output-logs=errors-only >/dev/null
+pnpm turbo build --filter=@spree/seeds --output-logs=errors-only >/dev/null
 port=4100
 while ! port_free "$port"; do port=$((port + 1)); done
 # The same task `spree init` mints its deploy key with. Boot can print

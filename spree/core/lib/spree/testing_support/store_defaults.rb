@@ -1,7 +1,7 @@
 module Spree
   module TestingSupport
-    # A Ruby stand-in for the configurator's store defaults
-    # (packages/config/templates), for specs that need a provisioned store and
+    # A Ruby stand-in for the seeds engine's store defaults
+    # (packages/seeds/templates), for specs that need a provisioned store and
     # have no Admin API to deploy them through. It builds only what Ruby code
     # reads back; the templates stay the one source of truth.
     module StoreDefaults

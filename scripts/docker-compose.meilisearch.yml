@@ -28,7 +28,7 @@ services:
     ports:
       # Loopback-only: no API key is set in dev, and a 0.0.0.0 publish would
       # bypass host firewalls on Linux (Docker inserts its NAT rules first).
-      - "127.0.0.1:${SPREE_MEILISEARCH_PORT:-7700}:7700"
+      - '127.0.0.1:${SPREE_MEILISEARCH_PORT:-7700}:7700'
     healthcheck:
       test: curl -f http://localhost:7700/health || exit 1
       interval: 5s

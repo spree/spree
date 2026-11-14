@@ -42,7 +42,7 @@ npx @spree/cli dev
 
 ### `spree init`
 
-First-run setup. Starts Docker services, seeds the database, generates API keys, deploys the project's `spree.store.yml` (see [`spree config`](#spree-config)), and prints the one-time setup link where you create the admin account and can load sample data.
+First-run setup. Starts Docker services, seeds the database, generates API keys, deploys the project's `spree.seeds.yml` (see [`spree seed`](#spree-seed)), and prints the one-time setup link where you create the admin account and can load sample data.
 
 ```bash
 spree init
@@ -212,15 +212,20 @@ spree open
 
 ### `spree seed`
 
-Seed the database: the store, its admin role and first API key, and the first admin when `ADMIN_EMAIL` and `ADMIN_PASSWORD` are set. The defaults a store trades with come from [`spree config provision`](/developer/cli/configurator#store-defaults), which first-run setup runs for you.
+Seed the store. Inside a project it first runs the database seeds (the store, its admin role and first API key, and the first admin when `ADMIN_EMAIL` and `ADMIN_PASSWORD` are set), then deploys the project's `spree.seeds.yml` through the Admin API: channels, markets, tax, delivery zones and methods, warehouses, categories, products, customers. With `--base-url` or `--profile` it seeds another instance from the file. Records match on natural keys, so one file works against local, staging and production. See [Seeding a Store from a File](/developer/cli/seeds).
 
 ```bash
-spree seed
+spree seed                             # database seeds, then deploy spree.seeds.yml
+spree seed --dry-run                   # what would change, nothing written
+spree seed --fail-on-delete            # apply; refuse any delete (CI guard)
+spree seed validate                    # check the file, offline
+spree seed introspect --out store.yml  # capture the live store into a file
+spree seed defaults                    # give a store its defaults (setup does this for you)
 ```
 
 ### `spree sample-data`
 
-Load sample products, categories, and images. The store needs its [defaults](/developer/cli/configurator#store-defaults) first: finish first-run setup, or run `spree config provision`.
+Load sample products, categories, and images. The store needs its [defaults](/developer/cli/seeds#store-defaults) first: finish first-run setup, or run `spree seed defaults`.
 
 ```bash
 spree sample-data
@@ -268,18 +273,6 @@ spree api post /products -d '{"name":"Classic Tee","prices":[{"currency":"USD","
 spree api endpoints --resource orders    # endpoints + required scopes, offline
 spree api schema "POST /orders"          # request/response schema, offline
 spree api status
-```
-
-### `spree config`
-
-Describe the store in `spree.store.yml` (every new project ships one) and deploy it anywhere through the Admin API: channels, markets, tax, delivery zones and methods, warehouses, categories, products, customers. Records match on natural keys, so one file works against local, staging and production. See [Store Configuration as Code](/developer/cli/configurator).
-
-```bash
-spree config validate                    # schema check, offline
-spree config diff                        # what deploy would change
-spree config deploy --fail-on-delete     # apply; refuse any delete (CI guard)
-spree config introspect --out store.yml  # capture the live store into a file
-spree config provision                   # give a store its defaults (setup does this for you)
 ```
 
 ### `spree auth`
