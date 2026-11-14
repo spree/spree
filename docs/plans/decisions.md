@@ -1,3 +1,11 @@
+## 2026-11-14: `spree seed` is the one command; the file is `spree.seeds.yml`; sample data stays in Ruby
+
+**Context:** The store file was deployed by `spree config …` from the `@spree/config` package, next to `spree seed`, which ran the database seeds. `config` is the natural name for the application config of a TypeScript Spree 7. Sample data had been rewritten as a recipe run through the Admin API, which needed the browser tab to stay open when started from the setup screen (`6.0-cli-configurator.md`).
+
+**Decision:** `spree seed` runs the database seeds and then deploys `spree.seeds.yml` through the Admin API; `--dry-run` is the diff, and `validate`, `introspect` and `defaults` sit under it. The package is `@spree/seeds`. This replaces the 2026-11-13 file name `spree.store.yml` and the same-day sample data recipe entry below: the Ruby sample data loader, job and rake task are restored as they were, sample orders included.
+
+**Consequences:** `spree config`, `@spree/config` and `spree.config.ts` are free for Spree 7. Sample data is the one piece of setup that stays Ruby; a new kind of sample record is a Ruby file under `db/sample_data` or a CSV import.
+
 ## 2026-11-14: Sample data is a recipe of store files and CSV imports, with no orders
 
 **Context:** After the store defaults left Ruby (`6.0-cli-configurator.md`), the sample data loader was the largest piece of setup still written in Ruby. Most of it is configuration; products and customers are already CSV imports; the orders were built by writing rows directly and did not use the sample customers.

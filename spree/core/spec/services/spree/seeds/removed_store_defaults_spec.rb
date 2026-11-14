@@ -4,7 +4,7 @@ RSpec.describe Spree::Seeds::RemovedStoreDefaults do
   let(:store) { @default_store }
 
   it 'warns and creates nothing for a removed seed service' do
-    expect(Spree::Deprecation).to receive(:warn).with(/Spree::Seeds::TaxCategories is deprecated.*spree config provision/)
+    expect(Spree::Deprecation).to receive(:warn).with(/Spree::Seeds::TaxCategories is deprecated.*spree seed defaults/)
 
     expect { Spree::Seeds::TaxCategories.call(store: store) }.not_to change(Spree::TaxCategory, :count)
   end

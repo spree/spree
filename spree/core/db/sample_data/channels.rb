@@ -7,7 +7,7 @@ store.channels.find_or_create_by!(code: 'pos') do |channel|
   channel.name = 'Point of Sale'
 end
 
-# Normally created by the store defaults (@spree/config); created here too so
+# Normally created by the store defaults (@spree/seeds); created here too so
 # a store provisioned before the gated wholesale channel existed still gets
 # it, upgraded with the gated posture when it's missing.
 wholesale = store.channels.find_or_create_by!(code: 'wholesale') do |channel|

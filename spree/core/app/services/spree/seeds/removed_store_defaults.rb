@@ -5,7 +5,7 @@ module Spree
     # they keep the old names loadable for one release.
     #
     # @deprecated Removed in Spree 6.2. Deploy the store defaults with
-    #   `spree config provision` instead.
+    #   `spree seed defaults` instead.
     class RemovedStoreDefaults
       prepend Spree::ServiceModule::Base
 
@@ -17,7 +17,7 @@ module Spree
       private
 
       def replacement
-        'Store defaults are deployed through the Admin API: run `spree config provision`.'
+        'Store defaults are deployed through the Admin API: run `spree seed defaults`.'
       end
     end
   end

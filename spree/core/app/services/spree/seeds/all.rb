@@ -5,7 +5,7 @@ module Spree
     # ADMIN_PASSWORD are set, the first admin (otherwise first-run setup
     # creates it). Everything a
     # store trades with — tax categories, channels, reasons, the warehouse,
-    # delivery zones — is the configurator's store defaults, deployed once the
+    # delivery zones — is the seeds engine's store defaults, deployed once the
     # store knows where it sells from (docs/plans/6.0-cli-configurator.md).
     class All
       prepend Spree::ServiceModule::Base

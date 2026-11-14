@@ -12,7 +12,7 @@ export function useProvisionStore() {
     mutationFn: async (storeId: string | null) => {
       // The engine (YAML parser, schemas, templates) is only needed here, so
       // it stays out of the bundle every other admin page loads.
-      const { provisionStore, renderReport, reportHasFailures } = await import('@spree/config')
+      const { provisionStore, renderReport, reportHasFailures } = await import('@spree/seeds')
       if (storeId) adminClient.setStore(storeId)
       const report = await provisionStore(adminClient)
       if (reportHasFailures(report)) throw new Error(renderReport(report))
