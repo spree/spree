@@ -355,11 +355,22 @@ module Spree
         # A seller builds variants from the marketplace's option types and
         # values and never adds to them, so a name the store does not have
         # fails the row before the product is written.
+        #
+        # Looked up under the same keys as `find_or_create_option_type!` and
+        # `find_or_create_option_value!`, so the import-wide cache serves
+        # these lookups across rows and to `process!` after them. A seller's
+        # import never creates, so what is cached is what the store has.
         def ensure_seller_options_exist!
           options.each do |option|
-            option_type = store_option_types.with_name(option[:option_name]).first
+            option_type = cached_lookup(:option_type, option[:option_name]) do
+              store_option_types.with_name(option[:option_name]).first
+            end
             raise ArgumentError, I18n.t('spree.product_import_unknown_option_type', name: option[:option_name]) unless option_type
-            next if option_type.option_values.with_name(option[:option_value]).exists?
+
+            option_value = cached_lookup(:option_value, option_type.id, option[:option_value]) do
+              option_type.option_values.with_name(option[:option_value]).first
+            end
+            next if option_value
 
             raise ArgumentError, I18n.t('spree.product_import_unknown_option_value',
                                         option_type: option_type.label.presence || option_type.name,
