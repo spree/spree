@@ -784,7 +784,7 @@
           "label": "Xác nhận mật khẩu"
         },
         "sample_data": {
-          "help": "Thêm các sản phẩm demo, danh mục, khách hàng và đơn đặt hàng ở chế độ nền để bạn có thể khám phá trang tổng quan. Mất vài phút và tải hình ảnh sản phẩm.",
+          "help": "Thêm sản phẩm, danh mục, khách hàng và thiết lập bán sỉ mẫu trong khi bạn khám phá bảng điều khiển. Mất vài phút và tải ảnh sản phẩm xuống, vì vậy hãy giữ tab này mở.",
           "label": "Tải dữ liệu mẫu"
         },
         "store_name": {

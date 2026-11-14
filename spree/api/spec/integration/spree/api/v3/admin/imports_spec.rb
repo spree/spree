@@ -128,7 +128,7 @@ RSpec.describe 'Admin Imports API', type: :request, swagger_doc: 'api-reference/
       tags 'Imports'
       security [api_key: [], bearer_auth: []]
       description 'Redirects to a populated example CSV for the given import type — the same ' \
-                  'sample data `rake spree:load_sample_data` uses, pinned to the installed ' \
+                  'sample data `spree sample-data` loads, pinned to the installed ' \
                   'Spree version. Returns 404 for a type that ships no example file.'
       admin_scope_note 'the write scope of the imported resource — `write_products` for product imports, `write_customers` for customer imports, etc.'
 

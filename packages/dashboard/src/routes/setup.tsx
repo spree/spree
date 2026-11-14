@@ -21,6 +21,7 @@ import { z } from 'zod/v4'
 import { AuthShell } from '../components/spree/auth-shell'
 import { StoreSetupFields } from '../components/spree/store-setup-fields'
 import { useProvisionStore } from '../hooks/use-provision-store'
+import { loadSampleDataInBackground } from '../lib/load-sample-data'
 import { type SetupFormValues, setupFormSchema } from '../schemas/auth'
 
 const setupSearchSchema = z.object({
@@ -138,6 +139,8 @@ function SetupLoader({
 interface ClaimedStore {
   storeId: string | null
   storeName: string
+  /** Whether the merchant asked for the demo catalog. */
+  sampleData: boolean
 }
 
 function SetupForm({
@@ -154,7 +157,7 @@ function SetupForm({
   const provision = useProvisionStore()
   // Set once the account exists: the setup token is spent, so a failed
   // provisioning step is retried on its own rather than by resubmitting.
-  const [claimed, setClaimed] = useState<{ storeId: string | null; storeName: string } | null>(null)
+  const [claimed, setClaimed] = useState<ClaimedStore | null>(null)
 
   const form = useForm<SetupFormValues>({
     resolver: zodResolver(setupFormSchema),
@@ -204,15 +207,23 @@ function SetupForm({
     } catch {
       return
     }
+    // Sample data builds on the defaults just deployed, and is loaded from
+    // here rather than by the server, through the same API as everything else.
+    if (store.sampleData) loadSampleDataInBackground(t)
     continueToStore(store)
   }
 
   const onSubmit = async (data: SetupFormValues) => {
     onStarted()
     try {
-      const session = await completeSetup({ ...data, setup_token: token })
+      const { sample_data: sampleData, ...account } = data
+      const session = await completeSetup({ ...account, setup_token: token })
       const store = session.user?.stores?.[0]
-      const claim = { storeId: store?.id ?? null, storeName: store?.name ?? data.store_name }
+      const claim = {
+        storeId: store?.id ?? null,
+        storeName: store?.name ?? data.store_name,
+        sampleData,
+      }
       setClaimed(claim)
       await provisionAndContinue(claim)
     } catch (err) {

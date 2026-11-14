@@ -445,7 +445,7 @@ module Spree
       end
 
       # Publicly downloadable example CSV for this import type — the same file
-      # `rake spree:load_sample_data` feeds through this very pipeline, so it is
+      # `spree sample-data` feeds through this very pipeline, so it is
       # a working example rather than a hand-maintained sample that can drift
       # from the schema.
       #

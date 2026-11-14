@@ -15,7 +15,7 @@ const merchant = {
   password: 'first-run-123',
 }
 
-async function fillSetupForm(page: Page) {
+async function fillSetupForm(page: Page, { sampleData = false } = {}) {
   await expect(page.getByRole('heading', { name: 'Set up Spree' })).toBeVisible()
 
   await page.getByLabel('Store name').fill(merchant.storeName)
@@ -39,8 +39,10 @@ async function fillSetupForm(page: Page) {
   await page.getByLabel('Password', { exact: true }).fill(merchant.password)
   await page.getByLabel('Confirm password').fill(merchant.password)
 
-  // Sample data downloads product images for minutes — not part of this flow.
-  await page.getByRole('checkbox', { name: 'Load sample data' }).uncheck()
+  // Ticked by default.
+  const sampleDataBox = page.getByRole('checkbox', { name: 'Load sample data' })
+  await expect(sampleDataBox).toBeChecked()
+  if (!sampleData) await sampleDataBox.uncheck()
 }
 
 // Serial and in order: completing setup closes it for the rest of the run.
@@ -77,8 +79,21 @@ test.describe
       await page.addInitScript(() => {
         delete (Crypto.prototype as { randomUUID?: unknown }).randomUUID
       })
+      // The sample data load starts in the browser once the store is ready and
+      // runs for minutes, importing a catalog with its images. Uploads are
+      // refused here, so it gets as far as its first import and stops: enough
+      // to see it start, deploy its first file and report what went wrong.
+      await page.route('**/api/v3/admin/files', (route) =>
+        route.fulfill({
+          status: 422,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            error: { code: 'validation_error', message: 'Uploads are off in this test' },
+          }),
+        }),
+      )
       await page.goto(setupUrl)
-      await fillSetupForm(page)
+      await fillSetupForm(page, { sampleData: true })
       await page.getByRole('button', { name: 'Complete setup' }).click()
 
       await expect(page.getByText('Welcome, your store is now ready!')).toBeVisible({
@@ -88,6 +103,11 @@ test.describe
       await expect(page.getByRole('heading', { name: 'Getting Started' })).toBeVisible()
       await expect(page.getByText(merchant.storeName).first()).toBeVisible()
 
+      await expect(page.getByText('Sample data could not be loaded')).toBeVisible({
+        timeout: 60_000,
+      })
+      await expect(page.getByText(/Importing products failed/)).toBeVisible()
+
       // Setup deployed the store defaults for the chosen country: a warehouse
       // in Poland, and the reasons and tax categories every store starts with.
       const storePath = new URL(page.url()).pathname.replace(/\/getting-started$/, '')
@@ -95,6 +115,9 @@ test.describe
       await expect(page.getByText('Shop location')).toBeVisible()
       await page.goto(`${storePath}/settings/taxes/categories`)
       await expect(page.getByText('Non-taxable')).toBeVisible()
+      // The sample data's first file went in before the import was refused.
+      await page.goto(`${storePath}/settings/package-types`)
+      await expect(page.getByText('Master carton')).toBeVisible()
 
       await page.getByRole('button', { name: 'User menu' }).click()
       await page.getByRole('menuitem', { name: 'Log out' }).click()
