@@ -17,10 +17,7 @@ Then start it from the app's entry module, `src/main.tsx`, before the app render
 ```tsx
 import { initDashboardSentry } from '@spree/dashboard-sentry'
 
-initDashboardSentry({
-  dsn: import.meta.env.VITE_SENTRY_DSN,
-  release: import.meta.env.VITE_SENTRY_RELEASE,
-})
+initDashboardSentry({ dsn: import.meta.env.VITE_SENTRY_DSN })
 ```
 
 Use the DSN of a browser (React) Sentry project. It is public by design, and with no DSN the call does nothing, so the same build runs with Sentry on or off. `initDashboardSentry` takes any [Sentry browser option](https://docs.sentry.io/platforms/javascript/guides/react/configuration/options/), plus:
@@ -42,6 +39,40 @@ What gets reported:
 Not-found pages and redirects are not errors and are skipped. Single-use tokens in password reset, email confirmation and invitation links are replaced with `redacted` in error events and breadcrumbs before they leave the browser, after your own `beforeSend` and `beforeBreadcrumb` run.
 
 The plugin turns on error reporting only. Tracing, Session Replay and other Sentry features stay off unless you pass their options. Token redaction does not cover them: replays and trace spans can record the page URL, including a reset or invitation token.
+
+### Readable stack traces
+
+A production build is minified, so its stack traces are unreadable until Sentry has the build's source maps. Upload them at build time with Sentry's Vite plugin:
+
+```bash
+pnpm add -D @sentry/vite-plugin
+```
+
+```ts
+// vite.config.ts
+import { sentryVitePlugin } from '@sentry/vite-plugin'
+
+export default defineConfig({
+  build: { sourcemap: 'hidden' },
+  plugins: [
+    spreeDashboardPlugin(),
+    react(),
+    sentryVitePlugin({
+      org: process.env.SENTRY_ORG,
+      project: process.env.SENTRY_PROJECT,
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+      sourcemaps: { filesToDeleteAfterUpload: ['./dist/**/*.map'] },
+    }),
+  ],
+})
+```
+
+- `SENTRY_AUTH_TOKEN` is read only while building, in Node, so it never reaches the browser bundle. Keep it out of `VITE_` variables, which are.
+- `sourcemap: 'hidden'` writes the maps without linking them from the bundle, and `filesToDeleteAfterUpload` removes them once uploaded, so they are not deployed with the app.
+- The plugin also sets the release on each event, so `initDashboardSentry` needs no `release` option.
+- Without `SENTRY_AUTH_TOKEN` the plugin skips the upload, so local builds work without it.
+
+Use the seller panel's `spreeSellerDashboardPlugin()` in its own `vite.config.ts` the same way.
 
 ## Another service
 
