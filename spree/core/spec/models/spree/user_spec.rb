@@ -27,7 +27,7 @@ describe Spree.customer_class, type: :model do # rubocop:disable RSpec/MultipleD
     let!(:order) { create(:order, store: store, bill_address: create(:address), ship_address: create(:address)) }
     let(:store) { @default_store }
 
-    context 'persists order address (deprecated, removed in 6.1)' do
+    context 'persists order address (deprecated, removed in 6.5)' do
       before { allow(Spree::Deprecation).to receive(:warn) }
 
       it 'warns that nothing needs to call it' do

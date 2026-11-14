@@ -4,7 +4,7 @@ module Spree
   class StockLevel < Spree.base_class
     # Dual-emits the pre-6.0 `stock_item.*` lifecycle events beside the
     # `stock_level.*` ones, so a webhook endpoint a merchant configured against
-    # the old names keeps receiving deliveries for one release. Removed in 6.1,
+    # the old names keeps receiving deliveries for one release. Removed in 6.5,
     # the same way {Spree::Fulfillment::CustomEvents} carries `shipment.*`.
     #
     # The twins are written here rather than as an option on

@@ -125,7 +125,7 @@ interface ApplyStoreCredit {
    *   as the cart can use.
    */
   (cartId: string, amount?: string, options?: RequestOptions): Promise<Cart>
-  /** @deprecated Pass the amount as a decimal string (`'25.00'`). A number is refused from 6.1. */
+  /** @deprecated Pass the amount as a decimal string (`'25.00'`). A number is refused from 6.5. */
   (cartId: string, amount: number, options?: RequestOptions): Promise<Cart>
 }
 

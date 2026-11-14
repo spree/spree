@@ -73,15 +73,15 @@ module Spree
       order || cart
     end
 
-    # @deprecated Use {#stock_level}; removed in 6.1.
+    # @deprecated Use {#stock_level}; removed in 6.5.
     def stock_item
-      Spree::Deprecation.warn('Spree::StockReservation#stock_item is deprecated and will be removed in Spree 6.1. Use #stock_level instead.')
+      Spree::Deprecation.warn('Spree::StockReservation#stock_item is deprecated and will be removed in Spree 6.5. Use #stock_level instead.')
       stock_level
     end
 
-    # @deprecated Use {#stock_level=}; removed in 6.1.
+    # @deprecated Use {#stock_level=}; removed in 6.5.
     def stock_item=(record)
-      Spree::Deprecation.warn('Spree::StockReservation#stock_item= is deprecated and will be removed in Spree 6.1. Use #stock_level= instead.')
+      Spree::Deprecation.warn('Spree::StockReservation#stock_item= is deprecated and will be removed in Spree 6.5. Use #stock_level= instead.')
       self.stock_level = record
     end
 

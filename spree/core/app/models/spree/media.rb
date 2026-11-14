@@ -181,7 +181,7 @@ module Spree
     default_scope { includes(attachment_attachment: :blob, poster_attachment: :blob) }
 
     # `type` is a vestige of the old Spree::Image/Spree::Video STI —
-    # media_type is the discriminator now. The column drops in 6.1.
+    # media_type is the discriminator now. The column drops in 6.5.
     self.inheritance_column = nil
 
     store_accessor :metadata, :session_uploaded_assets_uuid

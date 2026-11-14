@@ -76,15 +76,19 @@ module Spree
       expires_at < Time.current
     end
 
-    # @deprecated Call Spree.invitation_accept_workflow — removed in 6.1.
+    # @deprecated Call Spree.invitation_accept_workflow — removed in 6.5.
     def accept
-      Spree::Deprecation.warn('Spree::Invitation#accept is deprecated and will be removed in Spree 6.1. Call Spree.invitation_accept_workflow instead.')
+      Spree::Deprecation.warn(
+        'Spree::Invitation#accept is deprecated and will be removed in Spree 6.5. Call Spree.invitation_accept_workflow instead.'
+      )
       Spree.invitation_accept_workflow.call(invitation: self).success?
     end
 
-    # @deprecated Call Spree.invitation_accept_workflow — removed in 6.1.
+    # @deprecated Call Spree.invitation_accept_workflow — removed in 6.5.
     def accept!
-      Spree::Deprecation.warn('Spree::Invitation#accept! is deprecated and will be removed in Spree 6.1. Call Spree.invitation_accept_workflow instead.')
+      Spree::Deprecation.warn(
+        'Spree::Invitation#accept! is deprecated and will be removed in Spree 6.5. Call Spree.invitation_accept_workflow instead.'
+      )
       result = Spree.invitation_accept_workflow.call(invitation: self)
 
       if result.failure?

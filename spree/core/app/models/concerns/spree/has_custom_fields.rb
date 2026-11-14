@@ -22,19 +22,21 @@ module Spree
         [namespace, key]
       end
 
-      # Deprecated 6.0 names, removed in 6.1.
+      # Deprecated 6.0 names, removed in 6.5.
       def ensure_metafield_definition_exists!(key_with_namespace, store: Spree::Current.store)
-        Spree::Deprecation.warn('ensure_metafield_definition_exists! is deprecated and will be removed in Spree 6.1. Use ensure_custom_field_definition_exists! instead.')
+        Spree::Deprecation.warn(
+          'ensure_metafield_definition_exists! is deprecated and will be removed in Spree 6.5. Use ensure_custom_field_definition_exists! instead.'
+        )
         ensure_custom_field_definition_exists!(key_with_namespace, store: store)
       end
 
       def with_metafield_key(key_with_namespace)
-        Spree::Deprecation.warn('.with_metafield_key is deprecated and will be removed in Spree 6.1. Use .with_custom_field_key instead.')
+        Spree::Deprecation.warn('.with_metafield_key is deprecated and will be removed in Spree 6.5. Use .with_custom_field_key instead.')
         with_custom_field_key(key_with_namespace)
       end
 
       def with_metafield_key_value(key_with_namespace, value)
-        Spree::Deprecation.warn('.with_metafield_key_value is deprecated and will be removed in Spree 6.1. Use .with_custom_field_key_value instead.')
+        Spree::Deprecation.warn('.with_metafield_key_value is deprecated and will be removed in Spree 6.5. Use .with_custom_field_key_value instead.')
         with_custom_field_key_value(key_with_namespace, value)
       end
     end
@@ -46,7 +48,7 @@ module Spree
       has_many :custom_fields, -> { includes(:custom_field_definition) }, as: :resource, inverse_of: :resource, class_name: 'Spree::CustomField', dependent: :destroy
       has_many :storefront_custom_fields, -> { includes(:custom_field_definition).storefront_visible }, as: :resource, class_name: 'Spree::CustomField'
 
-      # Deprecated 6.0 association names, removed in 6.1. `private_metafields`
+      # Deprecated 6.0 association names, removed in 6.5. `private_metafields`
       # has no replacement — read `custom_fields` and filter, or query
       # Spree::CustomField.admin_only directly.
       has_many :metafields, -> { includes(:custom_field_definition) }, as: :resource, class_name: 'Spree::CustomField', deprecated: true
@@ -170,26 +172,26 @@ module Spree
         custom_fields.with_key(namespace, key).exists?
       end
 
-      # Deprecated 6.0 names, removed in 6.1.
+      # Deprecated 6.0 names, removed in 6.5.
       def set_metafield(definition_or_key, value)
-        Spree::Deprecation.warn('#set_metafield is deprecated and will be removed in Spree 6.1. Use #set_custom_field instead.')
+        Spree::Deprecation.warn('#set_metafield is deprecated and will be removed in Spree 6.5. Use #set_custom_field instead.')
         set_custom_field(definition_or_key, value)
       end
 
       def get_metafield(key_with_namespace)
-        Spree::Deprecation.warn('#get_metafield is deprecated and will be removed in Spree 6.1. Use #get_custom_field instead.')
+        Spree::Deprecation.warn('#get_metafield is deprecated and will be removed in Spree 6.5. Use #get_custom_field instead.')
         get_custom_field(key_with_namespace)
       end
 
       def has_metafield?(key_with_namespace)
-        Spree::Deprecation.warn('#has_metafield? is deprecated and will be removed in Spree 6.1. Use #has_custom_field? instead.')
+        Spree::Deprecation.warn('#has_metafield? is deprecated and will be removed in Spree 6.5. Use #has_custom_field? instead.')
         has_custom_field?(key_with_namespace)
       end
 
       # Legacy payloads key the definition as `metafield_definition_id`, which
       # the new writer rejects — translate rather than silently dropping them.
       def metafields_attributes=(attributes)
-        Spree::Deprecation.warn('#metafields_attributes= is deprecated and will be removed in Spree 6.1. Use #custom_fields_attributes= instead.')
+        Spree::Deprecation.warn('#metafields_attributes= is deprecated and will be removed in Spree 6.5. Use #custom_fields_attributes= instead.')
 
         attributes = attributes.values if attributes.is_a?(Hash)
         translated = attributes.map do |attrs|

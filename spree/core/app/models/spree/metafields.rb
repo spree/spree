@@ -2,7 +2,7 @@
 
 module Spree
   # Deprecation bridge for the 6.0 custom-fields rename. Serves the two roles
-  # the old `Spree::Metafields` name had, and is removed in 6.1:
+  # the old `Spree::Metafields` name had, and is removed in 6.5:
   #
   # 1. The concern — `include Spree::Metafields` still works and gives a model
   #    the full custom-fields surface via {Spree::HasCustomFields}.
@@ -22,7 +22,7 @@ module Spree
 
     included do
       Spree::Deprecation.warn(
-        "include Spree::Metafields is deprecated and will be removed in Spree 6.1. " \
+        'include Spree::Metafields is deprecated and will be removed in Spree 6.5. ' \
         "Use include Spree::HasCustomFields instead (#{name})."
       )
 

@@ -96,27 +96,31 @@ module Spree
       stock_levels.exists?(variant: variant)
     end
 
-    # @deprecated Use {#stock_levels}; removed in 6.1.
+    # @deprecated Use {#stock_levels}; removed in 6.5.
     def stock_items
-      Spree::Deprecation.warn('Spree::StockLocation#stock_items is deprecated and will be removed in Spree 6.1. Use #stock_levels instead.')
+      Spree::Deprecation.warn('Spree::StockLocation#stock_items is deprecated and will be removed in Spree 6.5. Use #stock_levels instead.')
       stock_levels
     end
 
-    # @deprecated Use {#stock_level}; removed in 6.1.
+    # @deprecated Use {#stock_level}; removed in 6.5.
     def stock_item(variant_id)
-      Spree::Deprecation.warn('Spree::StockLocation#stock_item is deprecated and will be removed in Spree 6.1. Use #stock_level instead.')
+      Spree::Deprecation.warn('Spree::StockLocation#stock_item is deprecated and will be removed in Spree 6.5. Use #stock_level instead.')
       stock_level(variant_id)
     end
 
-    # @deprecated Use {#set_up_stock_level}; removed in 6.1.
+    # @deprecated Use {#set_up_stock_level}; removed in 6.5.
     def set_up_stock_item(variant)
-      Spree::Deprecation.warn('Spree::StockLocation#set_up_stock_item is deprecated and will be removed in Spree 6.1. Use #set_up_stock_level instead.')
+      Spree::Deprecation.warn(
+        'Spree::StockLocation#set_up_stock_item is deprecated and will be removed in Spree 6.5. Use #set_up_stock_level instead.'
+      )
       set_up_stock_level(variant)
     end
 
-    # @deprecated Use {#stock_level_or_create}; removed in 6.1.
+    # @deprecated Use {#stock_level_or_create}; removed in 6.5.
     def stock_item_or_create(variant_or_variant_id)
-      Spree::Deprecation.warn('Spree::StockLocation#stock_item_or_create is deprecated and will be removed in Spree 6.1. Use #stock_level_or_create instead.')
+      Spree::Deprecation.warn(
+        'Spree::StockLocation#stock_item_or_create is deprecated and will be removed in Spree 6.5. Use #stock_level_or_create instead.'
+      )
       stock_level_or_create(variant_or_variant_id)
     end
 

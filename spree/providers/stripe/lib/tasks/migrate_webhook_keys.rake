@@ -109,7 +109,7 @@ namespace :spree do
       until a new endpoint is registered.
 
       Idempotent. The legacy tables are left in place as a rollback path and
-      are dropped in 6.1.
+      are dropped in 6.5.
     DESC
     task migrate_stripe_webhook_keys: :environment do
       result = SpreeStripe::WebhookKeysMigrator.new.call

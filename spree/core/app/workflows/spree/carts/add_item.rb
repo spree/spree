@@ -16,7 +16,7 @@ module Spree
       #   surface only (draft orders); refused once the order is placed.
       def perform(variant:, cart: nil, order: nil, quantity: nil, metadata: {}, options: {}, price: nil)
         if order
-          Spree::Deprecation.warn('Calling Spree::Carts::AddItem with order: is deprecated and will be removed in Spree 6.1. Pass cart: instead.')
+          Spree::Deprecation.warn('Calling Spree::Carts::AddItem with order: is deprecated and will be removed in Spree 6.5. Pass cart: instead.')
           cart ||= order
         end
         super(cart: cart, variant: variant, quantity: quantity, metadata: metadata, options: options, price: price)

@@ -909,7 +909,7 @@ describe Spree::Fulfillment, type: :model do
     end
   end
 
-  # Legacy writer — removed in 6.1. Host code assigning tracking the old way
+  # Legacy writer — removed in 6.5. Host code assigning tracking the old way
   # still lands it where every reader looks.
   describe '#tracking= (deprecated)' do
     before { allow(Spree::Deprecation).to receive(:warn) }

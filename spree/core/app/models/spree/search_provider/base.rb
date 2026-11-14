@@ -27,9 +27,9 @@ module Spree
         @custom_field_schema ||= CustomFieldSchema.new(store, audience: audience)
       end
 
-      # Deprecated 6.0 name, removed in 6.1.
+      # Deprecated 6.0 name, removed in 6.5.
       def metafield_schema
-        Spree::Deprecation.warn('#metafield_schema is deprecated and will be removed in Spree 6.1. Use #custom_field_schema instead.')
+        Spree::Deprecation.warn('#metafield_schema is deprecated and will be removed in Spree 6.5. Use #custom_field_schema instead.')
         custom_field_schema
       end
 

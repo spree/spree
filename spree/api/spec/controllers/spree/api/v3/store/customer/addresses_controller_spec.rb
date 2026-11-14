@@ -119,7 +119,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::AddressesController, type: :cont
     end
 
     # state_abbr is the name storefronts shipped against; both halves of the
-    # bridge stay until 6.1 removes it.
+    # bridge stay until 6.5 removes it.
     it 'still answers to the deprecated state_abbr on read' do
       post :create, params: address_params
 

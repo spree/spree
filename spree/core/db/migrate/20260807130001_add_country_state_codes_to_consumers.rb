@@ -15,7 +15,7 @@ class AddCountryStateCodesToConsumers < ActiveRecord::Migration[7.2]
     add_index :spree_market_countries, [:market_id, :country_code],
               unique: true, name: 'index_spree_market_countries_on_market_id_and_country_code'
 
-    # The country foreign key stays until 6.1 so the upgrade task keeps its
+    # The country foreign key stays until 6.5 so the upgrade task keeps its
     # source data, but nothing writes it any more — a market country is
     # identified by its ISO code now.
     change_column_null :spree_market_countries, :country_id, true

@@ -3,7 +3,7 @@
 # 5.6 → 6.0: fold the FlatRate calculator's eligibility bound preferences
 # into DeliveryMethodRule rows (docs/plans/6.0-delivery-method-rules.md).
 # The calculator preferences keep working as a deprecation bridge through
-# 6.0; this task moves the data so the bridge can drop in 6.1.
+# 6.0; this task moves the data so the bridge can drop in 6.5.
 namespace :spree do
   desc 'Convert FlatRate calculator eligibility bounds into delivery method rules'
   task migrate_calculator_bounds_to_delivery_method_rules: :environment do

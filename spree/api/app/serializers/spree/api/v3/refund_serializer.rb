@@ -7,7 +7,7 @@ module Spree
         typelize transaction_id: [:string, nullable: true],
                  payment_id: [:string, nullable: true], refund_reason_id: [:string, nullable: true],
                  originator_id: [:string, nullable: true], originator_type: [:string, nullable: true],
-                 reimbursement_id: [:string, nullable: true, deprecated: 'Always null: reimbursements are gone. Use `originator_id`. Removed in 6.1.']
+                 reimbursement_id: [:string, nullable: true, deprecated: 'Always null: reimbursements are gone. Use `originator_id`. Removed in 6.5.']
 
         attributes :transaction_id
 
@@ -24,7 +24,7 @@ module Spree
         end
 
         # @deprecated Reimbursements were folded into returns, which a refund
-        #   names as its +originator+. Removed in 6.1.
+        #   names as its +originator+. Removed in 6.5.
         attribute(:reimbursement_id) { nil }
       end
     end

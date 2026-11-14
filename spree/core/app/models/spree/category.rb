@@ -39,14 +39,16 @@ module Spree
     # Associations
     #
     # @deprecated Read only by the 5.6 -> 6.0 upgrade task, which needs the
-    #   column to find the rows it migrates. Removed in 6.1 with Spree::Taxonomy.
+    #   column to find the rows it migrates. Removed in 6.5 with Spree::Taxonomy.
     belongs_to :taxonomy, class_name: 'Spree::Taxonomy', inverse_of: :taxons, optional: true, deprecated: true
     has_many :product_categories, -> { order(:position) }, class_name: 'Spree::ProductCategory', dependent: :destroy_async, inverse_of: :category
     has_many :products, through: :product_categories
 
-    # @deprecated Use #product_categories; removed in 6.1.
+    # @deprecated Use #product_categories; removed in 6.5.
     def classifications
-      Spree::Deprecation.warn('Spree::Category#classifications is deprecated and will be removed in Spree 6.1. Use Spree::Category#product_categories instead.')
+      Spree::Deprecation.warn(
+        'Spree::Category#classifications is deprecated and will be removed in Spree 6.5. Use Spree::Category#product_categories instead.'
+      )
       product_categories
     end
 
@@ -159,7 +161,7 @@ module Spree
     # Categories are manual only in 6.0 — rule-based (automatic) membership lives on
     # Spree::Collection. The automatic/rules_match_policy/sort_order columns and the
     # spree_taxon_rules table are retained for the Phase 4 data migration and dropped
-    # in 6.1. Nothing creates an automatic category any more, so the model
+    # in 6.5. Nothing creates an automatic category any more, so the model
     # associations carry no scope; the API controllers still apply it as a
     # boundary guard against rows an install has yet to migrate.
     scope :manual, -> { where.not(automatic: true) }
@@ -480,7 +482,7 @@ module Spree
     # A category added under a legacy taxonomy-backed parent inherits its
     # taxonomy, so #ensure_store and the .for_store fallback can still resolve a
     # store for installs that have not yet run the 6.0 upgrade task. Removed in
-    # 6.1 with Spree::Taxonomy.
+    # 6.5 with Spree::Taxonomy.
     # A tree belongs to one store.
     def parent_belongs_to_same_store
       return if parent.blank?

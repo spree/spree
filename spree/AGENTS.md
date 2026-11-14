@@ -85,7 +85,7 @@ Admin serializers extend Store serializers; every serializer an Admin one refere
 - Associations are their own serializers, never hand-built hashes. Keep serializers lean; logic goes on the model. Never use `typelize_from`.
 - An attribute block only reads: a method call, a format or a one-line fallback. Branching, lookups and queries go on the model (`user.status`, `user.invited_by(store)`), where they are tested once and reused outside the API.
 - Value lists: **closed** lists use `enum:` + `enum_type_name:` and are added to `Typelizer::OpenEnums::CLOSED_LIST_NAMES`; **open** lists (`has_status`, kinds extensions can add) use `enum_type_name:` alone; registry-driven `type` attributes stay `:string` with a `comment:` listing the built-ins. Both named kinds are generated into `@spree/core`.
-- Deprecated fields are marked (`deprecated: 'Use X. Removed in 6.1.'`), not just described.
+- Deprecated fields are marked (`deprecated: 'Use X. Removed in 6.5.'`), not just described.
 - After a serializer change run the type pipeline: `cd spree/api && bundle exec rake typelizer:generate`, then `pnpm generate:zod` from the root (the Lefthook pre-commit hook does both), then integration specs and `bundle exec rake rswag:specs:swaggerize`. Restart Rails — Alba caches definitions at boot.
 
 ## Events and webhooks

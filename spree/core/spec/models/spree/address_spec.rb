@@ -39,7 +39,7 @@ describe Spree::Address, type: :model do
     end
   end
 
-  describe 'clone (deprecated, becomes the standard Ruby clone in 6.1)' do
+  describe 'clone (deprecated, becomes the standard Ruby clone in 6.5)' do
     before { allow(Spree::Deprecation).to receive(:warn) }
 
     it 'warns and points at #snapshot' do

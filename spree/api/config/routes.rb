@@ -162,7 +162,7 @@ Spree::Core::Engine.add_routes do
         # customer's own request names, for the same reason.
         get 'data_requests/:token', to: 'data_requests#show', as: :data_request
         post 'data_requests/:token/confirmation', to: 'data_request_confirmations#create', as: :data_request_confirmation
-        # Legacy path — emailed and bookmarked URLs outlive the rename. Removed in 6.1.
+        # Legacy path — emailed and bookmarked URLs outlive the rename. Removed in 6.5.
         get 'digitals/:token', to: 'digital_links#show', as: :digital_download
 
         # Data Feeds (public, no auth required)

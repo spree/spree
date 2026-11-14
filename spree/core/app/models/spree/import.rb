@@ -157,41 +157,49 @@ module Spree
       nil
     end
 
-    # @deprecated Call the Spree::Imports workflows — removed in 6.1.
+    # @deprecated Call the Spree::Imports workflows — removed in 6.5.
     def start_mapping!
-      Spree::Deprecation.warn('Spree::Import#start_mapping! is deprecated and will be removed in Spree 6.1. Call Spree.import_start_mapping_workflow instead.')
+      Spree::Deprecation.warn(
+        'Spree::Import#start_mapping! is deprecated and will be removed in Spree 6.5. Call Spree.import_start_mapping_workflow instead.'
+      )
       run_pipeline_workflow(Spree.import_start_mapping_workflow)
     end
 
-    # @deprecated Call Spree.import_complete_mapping_workflow — removed in 6.1.
+    # @deprecated Call Spree.import_complete_mapping_workflow — removed in 6.5.
     def complete_mapping!
-      Spree::Deprecation.warn('Spree::Import#complete_mapping! is deprecated and will be removed in Spree 6.1. Call Spree.import_complete_mapping_workflow instead.')
+      Spree::Deprecation.warn(
+        'Spree::Import#complete_mapping! is deprecated and will be removed in Spree 6.5. Call Spree.import_complete_mapping_workflow instead.'
+      )
       run_pipeline_workflow(Spree.import_complete_mapping_workflow)
     end
 
-    # @deprecated Call Spree.import_start_processing_workflow — removed in 6.1.
+    # @deprecated Call Spree.import_start_processing_workflow — removed in 6.5.
     def start_processing!
-      Spree::Deprecation.warn('Spree::Import#start_processing! is deprecated and will be removed in Spree 6.1. Call Spree.import_start_processing_workflow instead.')
+      Spree::Deprecation.warn(
+        'Spree::Import#start_processing! is deprecated and will be removed in Spree 6.5. Call Spree.import_start_processing_workflow instead.'
+      )
       run_pipeline_workflow(Spree.import_start_processing_workflow)
     end
 
-    # @deprecated Call Spree.import_complete_workflow — removed in 6.1.
+    # @deprecated Call Spree.import_complete_workflow — removed in 6.5.
     def complete!
-      Spree::Deprecation.warn('Spree::Import#complete! is deprecated and will be removed in Spree 6.1. Call Spree.import_complete_workflow instead.')
+      Spree::Deprecation.warn('Spree::Import#complete! is deprecated and will be removed in Spree 6.5. Call Spree.import_complete_workflow instead.')
       run_pipeline_workflow(Spree.import_complete_workflow)
     end
 
-    # @deprecated Set the status — removed in 6.1. Failure was never a step of
+    # @deprecated Set the status — removed in 6.5. Failure was never a step of
     #   its own; the controller records the parse error directly.
     def fail!
-      Spree::Deprecation.warn('Spree::Import#fail! is deprecated and will be removed in Spree 6.1. Write the status instead.')
+      Spree::Deprecation.warn('Spree::Import#fail! is deprecated and will be removed in Spree 6.5. Write the status instead.')
       update!(status: 'failed')
     end
 
-    # @deprecated Call Spree.import_retry_failed_rows_workflow — removed in 6.1.
+    # @deprecated Call Spree.import_retry_failed_rows_workflow — removed in 6.5.
     #   Returns false when there is nothing to retry, as the guarded event did.
     def retry_failed_rows
-      Spree::Deprecation.warn('Spree::Import#retry_failed_rows is deprecated and will be removed in Spree 6.1. Call Spree.import_retry_failed_rows_workflow instead.')
+      Spree::Deprecation.warn(
+        'Spree::Import#retry_failed_rows is deprecated and will be removed in Spree 6.5. Call Spree.import_retry_failed_rows_workflow instead.'
+      )
       Spree.import_retry_failed_rows_workflow.call(import: self).success?
     end
 
@@ -363,7 +371,7 @@ module Spree
 
     # Who ran this import — the seller when one did, otherwise the store.
     #
-    # @deprecated Read `seller` and `store` — removed in 6.1. Kept because the
+    # @deprecated Read `seller` and `store` — removed in 6.5. Kept because the
     #   polymorphic `owner` shipped in 5.6 and the v3 serializer still emits
     #   `owner_type`/`owner_id` from it.
     # @return [Spree::Seller, Spree::Store]
@@ -371,9 +379,9 @@ module Spree
       seller || store
     end
 
-    # @deprecated Assign `seller:` or `store:` — removed in 6.1.
+    # @deprecated Assign `seller:` or `store:` — removed in 6.5.
     def owner=(record)
-      Spree::Deprecation.warn('Spree::Import#owner= is deprecated and will be removed in Spree 6.1. Assign seller: or store: instead.')
+      Spree::Deprecation.warn('Spree::Import#owner= is deprecated and will be removed in Spree 6.5. Assign seller: or store: instead.')
 
       case record
       when Spree::Seller

@@ -29,7 +29,7 @@ module Spree
 
           # Resolution order: the secret key's bound store, then the header,
           # then the default store — deprecated for JWT requests; the header
-          # becomes required in 6.1.
+          # becomes required in 6.5.
           #
           # @return [Spree::Store, nil]
           def current_store

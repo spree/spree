@@ -8,12 +8,12 @@ module Spree
       # @param order [Spree::Order]
       # @param approver [Object, nil] who approved it — an admin user or an
       #   API key (see Spree.actor_classes)
-      # @param level [String, nil] deprecated and ignored — removed in Spree 6.1
-      # @param note [String, nil] deprecated and ignored — removed in Spree 6.1
+      # @param level [String, nil] deprecated and ignored — removed in Spree 6.5
+      # @param note [String, nil] deprecated and ignored — removed in Spree 6.5
       # @return [Spree::ServiceModule::Result]
       def call(order:, approver: nil, level: nil, note: nil)
         if level.present? || note.present?
-          Spree::Deprecation.warn('Spree::Orders::Approve no longer accepts level or note — they were never read and will be removed in Spree 6.1.')
+          Spree::Deprecation.warn('Spree::Orders::Approve no longer accepts level or note — they were never read and will be removed in Spree 6.5.')
         end
 
         changes = { considered_risky: false, approved_at: Time.current }

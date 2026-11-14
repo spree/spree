@@ -9,7 +9,7 @@ class AddStoreToSpreeMedia < ActiveRecord::Migration[8.1]
     # to scope the library index without it.
     #
     # Existing rows are filled in by spree:upgrade:backfill_media_store_ids.
-    # The NOT NULL constraint waits for 6.1, once that task has had a release
+    # The NOT NULL constraint waits for 6.5, once that task has had a release
     # to run everywhere.
     add_reference :spree_media, :store, index: true
   end

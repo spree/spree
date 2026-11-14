@@ -2,7 +2,7 @@
 
 module Spree
   # Deprecation alias for Spree::DigitalAsset, renamed from Spree::Digital in
-  # 6.0. Retained for one release; removed in 6.1.
+  # 6.0. Retained for one release; removed in 6.5.
   #
   # A plain constant alias rather than a DeprecatedConstantProxy: the proxy
   # would name the calling site, but it fails `is_a?`/`===` checks, so legacy

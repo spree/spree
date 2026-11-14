@@ -19,19 +19,19 @@ interface DeliveryRate {
   unpriced: boolean;
   freight_summary: FreightSummary | null;
   /** `cost` formatted with its currency symbol in the request's language.
-   * @deprecated Format `cost` with its currency instead. Removed in 6.1. */
+   * @deprecated Format `cost` with its currency instead. Removed in 6.5. */
   display_cost: string | null;
   /** `total` formatted with its currency symbol in the request's language.
-   * @deprecated Format `total` with its currency instead. Removed in 6.1. */
+   * @deprecated Format `total` with its currency instead. Removed in 6.5. */
   display_total: string | null;
   /** `additional_tax_total` formatted with its currency symbol in the request's language.
-   * @deprecated Format `additional_tax_total` with its currency instead. Removed in 6.1. */
+   * @deprecated Format `additional_tax_total` with its currency instead. Removed in 6.5. */
   display_additional_tax_total: string | null;
   /** `included_tax_total` formatted with its currency symbol in the request's language.
-   * @deprecated Format `included_tax_total` with its currency instead. Removed in 6.1. */
+   * @deprecated Format `included_tax_total` with its currency instead. Removed in 6.5. */
   display_included_tax_total: string | null;
   /** `tax_total` formatted with its currency symbol in the request's language.
-   * @deprecated Format `tax_total` with its currency instead. Removed in 6.1. */
+   * @deprecated Format `tax_total` with its currency instead. Removed in 6.5. */
   display_tax_total: string | null;
   delivery_method: DeliveryMethod;
 }

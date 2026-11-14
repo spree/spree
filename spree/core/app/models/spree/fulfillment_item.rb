@@ -24,7 +24,7 @@ module Spree
         backordered.order('spree_orders.completed_at ASC')
     end
 
-    # Legacy names — removed in 6.1.
+    # Legacy names — removed in 6.5.
     belongs_to :shipment, class_name: 'Spree::Fulfillment', foreign_key: :fulfillment_id, optional: true, touch: true, deprecated: true
     alias_attribute :shipment_id, :fulfillment_id
     # @deprecated the column is +status+ since 6.0
@@ -69,11 +69,11 @@ module Spree
     end
     alias fill_backorder fill_backorder!
 
-    # @deprecated Write the status — removed in 6.1. `return` was a state
+    # @deprecated Write the status — removed in 6.5. `return` was a state
     #   machine event name and could never be called as written (it parses as
     #   the keyword), so this exists only for `send(:return!)`-style callers.
     def return!
-      Spree::Deprecation.warn('Spree::FulfillmentItem#return! is deprecated and will be removed in Spree 6.1. Write the status instead.')
+      Spree::Deprecation.warn('Spree::FulfillmentItem#return! is deprecated and will be removed in Spree 6.5. Write the status instead.')
       return false unless shipped?
 
       update!(status: 'returned')

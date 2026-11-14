@@ -69,7 +69,7 @@ module Spree
 
         # Countries stopped being records in 6.0, so a rule still configured
         # with the legacy row id is resolved by reading the table the upgrade
-        # keeps until 6.1. Rules saved since store the ISO code directly.
+        # keeps until 6.5. Rules saved since store the ISO code directly.
         def legacy_country_code(country_id)
           connection = ActiveRecord::Base.connection
           return nil unless connection.table_exists?('spree_countries')

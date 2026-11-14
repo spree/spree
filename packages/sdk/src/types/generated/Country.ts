@@ -6,7 +6,7 @@ import type {Market, State, CountryCode} from '@/types'
 interface Country {
   iso: CountryCode;
   iso3: string;
-  /** @deprecated Name the country from `iso` with `Intl.DisplayNames` (type `region`). Removed in 6.1. */
+  /** @deprecated Name the country from `iso` with `Intl.DisplayNames` (type `region`). Removed in 6.5. */
   name: string;
   states_required: boolean;
   zipcode_required: boolean;

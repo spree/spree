@@ -18,10 +18,12 @@ module Spree
                          "Add `gem 'spree_meilisearch'` to your Gemfile."
       end
 
-      Spree::Deprecation.warn(
-        "Spree::SearchProvider::#{name} is deprecated and will be removed in Spree 6.1. " \
-        "Use #{replacement} instead."
-      ) if defined?(Spree::Deprecation)
+      if defined?(Spree::Deprecation)
+        Spree::Deprecation.warn(
+          "Spree::SearchProvider::#{name} is deprecated and will be removed in Spree 6.5. " \
+          "Use #{replacement} instead."
+        )
+      end
 
       replacement.constantize
     end

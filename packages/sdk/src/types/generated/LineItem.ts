@@ -17,45 +17,45 @@ interface LineItem {
   /** The price of one unit. */
   price: string | null;
   /** `price` formatted with its currency symbol in the request's language.
-   * @deprecated Format `price` with its currency instead. Removed in 6.1. */
+   * @deprecated Format `price` with its currency instead. Removed in 6.5. */
   display_price: string | null;
   /** What this line costs: price times quantity, with its discounts, fees and added tax. */
   total: string | null;
   /** `total` formatted with its currency symbol in the request's language.
-   * @deprecated Format `total` with its currency instead. Removed in 6.1. */
+   * @deprecated Format `total` with its currency instead. Removed in 6.5. */
   display_total: string | null;
   /** This line's discounts, fees and added tax together. */
   adjustment_total: string | null;
   /** `adjustment_total` formatted with its currency symbol in the request's language.
-   * @deprecated Format `adjustment_total` with its currency instead. Removed in 6.1. */
+   * @deprecated Format `adjustment_total` with its currency instead. Removed in 6.5. */
   display_adjustment_total: string | null;
   /** Tax added on top of the price. */
   additional_tax_total: string | null;
   /** `additional_tax_total` formatted with its currency symbol in the request's language.
-   * @deprecated Format `additional_tax_total` with its currency instead. Removed in 6.1. */
+   * @deprecated Format `additional_tax_total` with its currency instead. Removed in 6.5. */
   display_additional_tax_total: string | null;
   /** Tax already included in the price. */
   included_tax_total: string | null;
   /** `included_tax_total` formatted with its currency symbol in the request's language.
-   * @deprecated Format `included_tax_total` with its currency instead. Removed in 6.1. */
+   * @deprecated Format `included_tax_total` with its currency instead. Removed in 6.5. */
   display_included_tax_total: string | null;
   /** What promotions take off this line, as a negative amount. */
   discount_total: string | null;
   /** `discount_total` formatted with its currency symbol in the request's language.
-   * @deprecated Format `discount_total` with its currency instead. Removed in 6.1. */
+   * @deprecated Format `discount_total` with its currency instead. Removed in 6.5. */
   display_discount_total: string | null;
   /** This line after discounts, without tax. */
   pre_tax_amount: string | null;
   /** `pre_tax_amount` formatted with its currency symbol in the request's language.
-   * @deprecated Format `pre_tax_amount` with its currency instead. Removed in 6.1. */
+   * @deprecated Format `pre_tax_amount` with its currency instead. Removed in 6.5. */
   display_pre_tax_amount: string | null;
   /** Price times quantity, after discounts. */
   discounted_amount: string | null;
   /** `discounted_amount` formatted with its currency symbol in the request's language.
-   * @deprecated Format `discounted_amount` with its currency instead. Removed in 6.1. */
+   * @deprecated Format `discounted_amount` with its currency instead. Removed in 6.5. */
   display_discounted_amount: string | null;
   /** `compare_at_amount` formatted with its currency symbol in the request's language.
-   * @deprecated Format `compare_at_amount` with its currency instead. Removed in 6.1. */
+   * @deprecated Format `compare_at_amount` with its currency instead. Removed in 6.5. */
   display_compare_at_amount: string | null;
   /** The compare-at price times quantity, or null when the variant has none. */
   compare_at_amount: string | null;

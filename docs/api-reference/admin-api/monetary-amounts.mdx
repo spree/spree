@@ -18,7 +18,7 @@ Every monetary field is returned as a decimal string, with its currency on the r
 }
 ```
 
-The Admin and Seller APIs return amounts only, with no `display_*` formatted copies: format them for the person reading them, in their own language. Format and calculate with the SDK's [money helpers](#money-helpers); without the SDK, pass the string to `Intl.NumberFormat`, which reads a numeric string exactly, and calculate with a decimal library rather than `parseFloat`. The [Store API](/api-reference/store-api/monetary-amounts) and webhook payloads still carry `display_*` fields, deprecated and removed in 6.1; email templates format amounts with the `money` filter.
+The Admin and Seller APIs return amounts only, with no `display_*` formatted copies: format them for the person reading them, in their own language. Format and calculate with the SDK's [money helpers](#money-helpers); without the SDK, pass the string to `Intl.NumberFormat`, which reads a numeric string exactly, and calculate with a decimal library rather than `parseFloat`. The [Store API](/api-reference/store-api/monetary-amounts) and webhook payloads still carry `display_*` fields, deprecated and removed in 6.5; email templates format amounts with the `money` filter.
 
 ## Money helpers
 

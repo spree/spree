@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Defined here rather than in lib/spree/core/ — this is a one-release upgrade
-# step that dies with the polymorphic originator in 6.1, not engine
+# step that dies with the polymorphic originator in 6.5, not engine
 # infrastructure. Same placement as Spree::ReturnsMigrator in a sibling task.
 module Spree
   # Types the legacy stock-movement history and reconciles open fulfillments

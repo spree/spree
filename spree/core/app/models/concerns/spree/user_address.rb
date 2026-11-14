@@ -31,9 +31,12 @@ module Spree
       #   it accepts to the customer's defaults on its own (see
       #   Spree::Purchase::Addresses), and a guest who registers after placing
       #   an order has that order's addresses adopted by Spree::Customers::Create.
-      #   Removed in Spree 6.1.
+      #   Removed in Spree 6.5.
       def persist_order_address(order)
-        Spree::Deprecation.warn('Spree::UserAddress#persist_order_address is deprecated and will be removed in Spree 6.1. Checkout already promotes the addresses it accepts to the customer\'s defaults.')
+        Spree::Deprecation.warn(
+          'Spree::UserAddress#persist_order_address is deprecated and will be removed in Spree 6.5. ' \
+          "Checkout already promotes the addresses it accepts to the customer's defaults."
+        )
 
         # FIXME: we should check if the User's address is associated with country accepted by Store
         # if not we should try to find an address with valid country in User's address book

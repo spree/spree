@@ -5,7 +5,9 @@ module Spree
 
       def call(cart: nil, order: nil)
         if order
-          Spree::Deprecation.warn('Calling Spree::StockReservations::Extend with order: is deprecated and will be removed in Spree 6.1. Pass cart: instead.')
+          Spree::Deprecation.warn(
+            'Calling Spree::StockReservations::Extend with order: is deprecated and will be removed in Spree 6.5. Pass cart: instead.'
+          )
           cart ||= order
         end
         return success(cart) unless Spree::StorePreferences.read(cart&.store, :stock_reservations_enabled)

@@ -5,7 +5,7 @@ module Spree
 
       def call(cart: nil, order: nil, variant: nil, quantity: nil, options: nil)
         if order
-          Spree::Deprecation.warn('Calling Spree::Carts::RemoveItem with order: is deprecated and will be removed in Spree 6.1. Pass cart: instead.')
+          Spree::Deprecation.warn('Calling Spree::Carts::RemoveItem with order: is deprecated and will be removed in Spree 6.5. Pass cart: instead.')
           cart ||= order
         end
         options ||= {}

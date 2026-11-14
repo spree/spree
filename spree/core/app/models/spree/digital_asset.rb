@@ -142,7 +142,7 @@ module Spree
     end
 
     # The legacy digital.* events are dual-emitted for one release
-    # (webhook contract bridge — removed in 6.1).
+    # (webhook contract bridge — removed in 6.5).
     def publish_create_event
       publish_event('digital.created')
       super

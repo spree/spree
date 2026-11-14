@@ -137,27 +137,38 @@ module Spree
     alias_attribute :price, :amount
     alias_attribute :compare_at_price, :compare_at_amount
 
-    # @deprecated Prices are charged as entered for every buyer since 6.0. Use {#price}; removed in 6.1.
+    # @deprecated Prices are charged as entered for every buyer since 6.0. Use {#price}; removed in 6.5.
     def price_including_vat_for(_price_options = {})
-      Spree::Deprecation.warn('Spree::Price#price_including_vat_for is deprecated and will be removed in Spree 6.1. Prices are charged as entered; use #price instead.')
+      Spree::Deprecation.warn(
+        'Spree::Price#price_including_vat_for is deprecated and will be removed in Spree 6.5. Prices are charged as entered; use #price instead.'
+      )
       price
     end
 
-    # @deprecated Use {#compare_at_price}; removed in 6.1.
+    # @deprecated Use {#compare_at_price}; removed in 6.5.
     def compare_at_price_including_vat_for(_price_options = {})
-      Spree::Deprecation.warn('Spree::Price#compare_at_price_including_vat_for is deprecated and will be removed in Spree 6.1. Prices are charged as entered; use #compare_at_price instead.')
+      Spree::Deprecation.warn(
+        'Spree::Price#compare_at_price_including_vat_for is deprecated and will be removed in Spree 6.5. ' \
+        'Prices are charged as entered; use #compare_at_price instead.'
+      )
       compare_at_price
     end
 
-    # @deprecated Use {#display_price}; removed in 6.1.
+    # @deprecated Use {#display_price}; removed in 6.5.
     def display_price_including_vat_for(_price_options = {})
-      Spree::Deprecation.warn('Spree::Price#display_price_including_vat_for is deprecated and will be removed in Spree 6.1. Prices are charged as entered; use #display_price instead.')
+      Spree::Deprecation.warn(
+        'Spree::Price#display_price_including_vat_for is deprecated and will be removed in Spree 6.5. ' \
+        'Prices are charged as entered; use #display_price instead.'
+      )
       display_price
     end
 
-    # @deprecated Use {#display_compare_at_price}; removed in 6.1.
+    # @deprecated Use {#display_compare_at_price}; removed in 6.5.
     def display_compare_at_price_including_vat_for(_price_options = {})
-      Spree::Deprecation.warn('Spree::Price#display_compare_at_price_including_vat_for is deprecated and will be removed in Spree 6.1. Prices are charged as entered; use #display_compare_at_price instead.')
+      Spree::Deprecation.warn(
+        'Spree::Price#display_compare_at_price_including_vat_for is deprecated and will be removed in Spree 6.5. ' \
+        'Prices are charged as entered; use #display_compare_at_price instead.'
+      )
       display_compare_at_price
     end
 

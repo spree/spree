@@ -1,5 +1,5 @@
 # Defined here rather than in lib/spree/core/ — this is a one-release upgrade
-# step that dies with the legacy tables in 6.1, not engine infrastructure.
+# step that dies with the legacy tables in 6.5, not engine infrastructure.
 # Same placement as Spree::TypedAdjustmentsMigration in the sibling task.
 module Spree
   # Copies the legacy ReturnAuthorization chain onto the 6.0 Return and
@@ -28,7 +28,7 @@ module Spree
       @failed = []
       # Schema facts, fixed for the life of the run. The column outlives the
       # table by a release: Spree::Refund stopped declaring the association
-      # in 6.0 and the column drops in 6.1.
+      # in 6.0 and the column drops in 6.5.
       @relink_refunds = connection.table_exists?('spree_reimbursements') &&
                         connection.column_exists?(Spree::Refund.table_name, :reimbursement_id)
     end
@@ -248,7 +248,7 @@ module Spree
     #
     # Addresses spree_refunds.reimbursement_id by column name rather than
     # through the association: Spree::Refund no longer declares it in 6.0,
-    # and the column itself is dropped in 6.1.
+    # and the column itself is dropped in 6.5.
     def relink_refunds(items, record)
       return unless @relink_refunds
 
@@ -281,7 +281,7 @@ namespace :spree do
 
       Reads the legacy tables by name through throwaway model classes; the
       legacy models themselves are deleted in 6.0. The tables stay in place as
-      a rollback safety net and drop in 6.1.
+      a rollback safety net and drop in 6.5.
 
       A row that can't be converted is reported and skipped so one bad
       authorization doesn't stop the batch, but the task then aborts, because

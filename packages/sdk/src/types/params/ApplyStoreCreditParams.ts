@@ -2,7 +2,7 @@
 
 export type ApplyStoreCreditParams = {
   /**
-   * Defaults to as much as the cart can use. A JSON number is still read until 6.1, with a
+   * Defaults to as much as the cart can use. A JSON number is still read until 6.5, with a
    * deprecation warning.
    */
   amount?: string

@@ -584,7 +584,7 @@ RSpec.describe Spree::Purchase::Addresses do
       end
     end
 
-    describe 'use_billing clone callback (deprecated bridge, removed in 6.1)' do
+    describe 'use_billing clone callback (deprecated bridge, removed in 6.5)' do
       let(:order) { build(:order) }
 
       before do

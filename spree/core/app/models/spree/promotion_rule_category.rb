@@ -8,14 +8,14 @@ module Spree
 
     validates :promotion_rule_id, uniqueness: { scope: :category_id }, allow_nil: true
 
-    # @deprecated Use #category / #category=; removed in 6.1.
+    # @deprecated Use #category / #category=; removed in 6.5.
     def taxon
-      Spree::Deprecation.warn('Spree::PromotionRuleCategory#taxon is deprecated and will be removed in Spree 6.1. Use #category instead.')
+      Spree::Deprecation.warn('Spree::PromotionRuleCategory#taxon is deprecated and will be removed in Spree 6.5. Use #category instead.')
       category
     end
 
     def taxon=(value)
-      Spree::Deprecation.warn('Spree::PromotionRuleCategory#taxon= is deprecated and will be removed in Spree 6.1. Use #category= instead.')
+      Spree::Deprecation.warn('Spree::PromotionRuleCategory#taxon= is deprecated and will be removed in Spree 6.5. Use #category= instead.')
       self.category = value
     end
   end

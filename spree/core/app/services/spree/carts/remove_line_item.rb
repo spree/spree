@@ -3,7 +3,7 @@ module Spree
     # @deprecated Removing an item is an upsert with quantity zero. Call
     #   Spree::Carts::UpsertItems so the removal passes the same
     #   'carts.upsert_items.validate' hook every other item mutation does.
-    #   Removed in Spree 6.1.
+    #   Removed in Spree 6.5.
     class RemoveLineItem
       prepend Spree::ServiceModule::Base
 
@@ -11,7 +11,7 @@ module Spree
       #   the upsert path identifies the row by variant, not by line-item options.
       def call(cart: nil, order: nil, line_item: nil, options: nil)
         Spree::Deprecation.warn(
-          'Spree::Carts::RemoveLineItem is deprecated and will be removed in Spree 6.1. ' \
+          'Spree::Carts::RemoveLineItem is deprecated and will be removed in Spree 6.5. ' \
           'Use Spree::Carts::UpsertItems with quantity: 0 instead. Note it removes the ' \
           'cart\'s line item for the variant, which is this one unless the cart holds ' \
           'several rows of the same variant.'

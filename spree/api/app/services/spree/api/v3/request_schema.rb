@@ -23,7 +23,7 @@ module Spree
       # creating only. `only: :create` (or `:update`) accepts the field on one
       # action alone. `permit: false` documents a field the controller reads
       # from the raw params itself. `format:` documents a string's format
-      # (`email`, `uri`). `deprecated: 'Use country_code. Removed in 6.1.'`
+      # (`email`, `uri`). `deprecated: 'Use country_code. Removed in 6.5.'`
       # keeps a field working while the API reference and the SDK types flag it.
       class RequestSchema
         KINDS = {

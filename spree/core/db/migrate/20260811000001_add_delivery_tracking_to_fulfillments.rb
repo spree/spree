@@ -10,7 +10,7 @@ class AddDeliveryTrackingToFulfillments < ActiveRecord::Migration[8.1]
     add_column :spree_fulfillments, :delivered_at, :datetime
 
     # `tracking` is the 5.6 column spree:migrate_deliveries reads; it is
-    # dropped in 6.1 once every row has its delivery.
+    # dropped in 6.5 once every row has its delivery.
     add_index :spree_fulfillments, :tracking
     add_index :spree_fulfillments, :status
   end

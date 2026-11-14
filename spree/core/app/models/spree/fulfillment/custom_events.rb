@@ -12,7 +12,7 @@ module Spree
     # - fulfillment.canceled:  Fulfillment was canceled
     #
     # The legacy shipment.* / order.shipped events are dual-emitted for one
-    # release (webhook contract bridge — removed in 6.1).
+    # release (webhook contract bridge — removed in 6.5).
     #
     # NOTE: These methods are called from the Spree::Fulfillments workflows,
     # never from ActiveRecord callbacks — publishing is part of the transition
@@ -20,9 +20,11 @@ module Spree
     module CustomEvents
       extend ActiveSupport::Concern
 
-      # @deprecated `ready` is not a status since 6.0; removed in 6.1.
+      # @deprecated `ready` is not a status since 6.0; removed in 6.5.
       def publish_fulfillment_ready_event
-        Spree::Deprecation.warn('Spree::Fulfillment#publish_fulfillment_ready_event is deprecated and will be removed in Spree 6.1. The ready status no longer exists.')
+        Spree::Deprecation.warn(
+          'Spree::Fulfillment#publish_fulfillment_ready_event is deprecated and will be removed in Spree 6.5. The ready status no longer exists.'
+        )
         nil
       end
 
@@ -45,7 +47,7 @@ module Spree
         metadata = { notify_customer: notify_customer? }
 
         publish_event('fulfillment.fulfilled', nil, metadata)
-        # Legacy name — removed in 6.1
+        # Legacy name — removed in 6.5
         publish_event('shipment.shipped', nil, metadata)
 
         # Force reload of fulfillments association to see the new status
@@ -68,19 +70,25 @@ module Spree
         return unless Spree::Events.enabled?
 
         publish_event('fulfillment.canceled')
-        # Legacy name — removed in 6.1
+        # Legacy name — removed in 6.5
         publish_event('shipment.canceled')
       end
 
-      # @deprecated Use {#publish_fulfillment_fulfilled_event}; removed in 6.1.
+      # @deprecated Use {#publish_fulfillment_fulfilled_event}; removed in 6.5.
       def publish_shipment_shipped_event
-        Spree::Deprecation.warn('Spree::Fulfillment#publish_shipment_shipped_event is deprecated and will be removed in Spree 6.1. Use #publish_fulfillment_fulfilled_event instead.')
+        Spree::Deprecation.warn(
+          'Spree::Fulfillment#publish_shipment_shipped_event is deprecated and will be removed in Spree 6.5. ' \
+          'Use #publish_fulfillment_fulfilled_event instead.'
+        )
         publish_fulfillment_fulfilled_event
       end
 
-      # @deprecated Use {#publish_fulfillment_canceled_event}; removed in 6.1.
+      # @deprecated Use {#publish_fulfillment_canceled_event}; removed in 6.5.
       def publish_shipment_canceled_event
-        Spree::Deprecation.warn('Spree::Fulfillment#publish_shipment_canceled_event is deprecated and will be removed in Spree 6.1. Use #publish_fulfillment_canceled_event instead.')
+        Spree::Deprecation.warn(
+          'Spree::Fulfillment#publish_shipment_canceled_event is deprecated and will be removed in Spree 6.5. ' \
+          'Use #publish_fulfillment_canceled_event instead.'
+        )
         publish_fulfillment_canceled_event
       end
 
@@ -88,7 +96,7 @@ module Spree
 
       def publish_order_fulfilled_event
         order.publish_event('order.fulfilled')
-        # Legacy name — removed in 6.1
+        # Legacy name — removed in 6.5
         order.publish_event('order.shipped')
       end
     end

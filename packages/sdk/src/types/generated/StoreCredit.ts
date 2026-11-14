@@ -9,13 +9,13 @@ interface StoreCredit {
   amount_used: string | null;
   amount_remaining: string | null;
   /** `amount` formatted with its currency symbol in the request's language.
-   * @deprecated Format `amount` with its currency instead. Removed in 6.1. */
+   * @deprecated Format `amount` with its currency instead. Removed in 6.5. */
   display_amount: string | null;
   /** `amount_used` formatted with its currency symbol in the request's language.
-   * @deprecated Format `amount_used` with its currency instead. Removed in 6.1. */
+   * @deprecated Format `amount_used` with its currency instead. Removed in 6.5. */
   display_amount_used: string | null;
   /** `amount_remaining` formatted with its currency symbol in the request's language.
-   * @deprecated Format `amount_remaining` with its currency instead. Removed in 6.1. */
+   * @deprecated Format `amount_remaining` with its currency instead. Removed in 6.5. */
   display_amount_remaining: string | null;
   currency: CurrencyCode;
   custom_fields?: Array<CustomField>;

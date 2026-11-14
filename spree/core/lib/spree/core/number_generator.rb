@@ -1,6 +1,6 @@
 module Spree
   module Core
-    # @deprecated Use {Spree::HasNumber} instead. Removed in Spree 6.1.
+    # @deprecated Use {Spree::HasNumber} instead. Removed in Spree 6.5.
     #
     #   # before
     #   include Spree::Core::NumberGenerator.new(prefix: 'R')
@@ -25,13 +25,14 @@ module Spree
       attr_accessor :prefix, :length
 
       def initialize(options)
+        super()
         @prefix  = options.fetch(:prefix)
         @length  = options.fetch(:length, DEFAULT_LENGTH)
         @letters = options[:letters]
 
         Spree::Deprecation.warn(
           'Spree::Core::NumberGenerator is deprecated and will be removed in ' \
-          "Spree 6.1. Replace `include Spree::Core::NumberGenerator.new(prefix: '#{@prefix}')` " \
+          "Spree 6.5. Replace `include Spree::Core::NumberGenerator.new(prefix: '#{@prefix}')` " \
           "with `has_spree_number prefix: '#{@prefix}'`. " \
           'See docs/plans/6.0-document-numbers.md.'
         )

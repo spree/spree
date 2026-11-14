@@ -7,7 +7,7 @@ module Spree
     # of checkout addresses to the customer's defaults, and the ship→bill cloning
     # predicate. The shipping address is canonical: use_shipping copies it
     # onto the billing address; the reverse use_billing direction is a
-    # deprecated 6.1-removal bridge. Clone callbacks are wired per model.
+    # deprecated 6.5-removal bridge. Clone callbacks are wired per model.
     module Addresses
       extend ActiveSupport::Concern
 
@@ -85,13 +85,16 @@ module Spree
       end
 
       # @deprecated The shipping address is canonical — use +use_shipping+ to
-      #   copy it onto the billing address. Removed in 6.1.
+      #   copy it onto the billing address. Removed in 6.5.
       def use_billing=(value)
-        Spree::Deprecation.warn('use_billing is deprecated and will be removed in Spree 6.1. The shipping address comes first — use use_shipping to copy it onto the billing address.')
+        Spree::Deprecation.warn(
+          'use_billing is deprecated and will be removed in Spree 6.5. ' \
+          'The shipping address comes first — use use_shipping to copy it onto the billing address.'
+        )
         @use_billing = value
       end
 
-      # @deprecated See {#use_billing=}; removed in 6.1.
+      # @deprecated See {#use_billing=}; removed in 6.5.
       # @return [Boolean]
       def use_billing?
         use_billing.in?([true, 'true', '1'])
@@ -194,7 +197,7 @@ module Spree
       # customer's default ship address.
       #
       # @deprecated The shipping address is canonical (see {#use_billing=});
-      #   removed in 6.1 together with the use_billing bridge.
+      #   removed in 6.5 together with the use_billing bridge.
       # @return [true]
       def clone_billing_address
         self.ship_address = bill_address if bill_address

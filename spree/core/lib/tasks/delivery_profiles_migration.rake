@@ -7,7 +7,7 @@
 # deliberately left out: store assignment, kind detection, folding
 # non-narrowing categories into the store default, and re-homing methods
 # from the legacy method↔category m:n (spree_shipping_method_categories,
-# which survives to 6.1 as this task's source and rollback reference).
+# which survives to 6.5 as this task's source and rollback reference).
 namespace :spree do
   desc 'Assign 5.x shipping-category rows their store, kind and methods as delivery profiles'
   task migrate_delivery_profiles: :environment do
@@ -104,6 +104,6 @@ namespace :spree do
       puts "store #{store.code}: #{count} unassigned products moved to the default profile" if count.positive?
     end
 
-    puts 'migrate_delivery_profiles done. spree_shipping_method_categories is kept until 6.1 as the rollback reference.'
+    puts 'migrate_delivery_profiles done. spree_shipping_method_categories is kept until 6.5 as the rollback reference.'
   end
 end

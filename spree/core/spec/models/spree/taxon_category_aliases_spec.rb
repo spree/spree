@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-# Covers the Taxon -> Category deprecation aliases (renamed in 6.0, removed in 6.1):
+# Covers the Taxon -> Category deprecation aliases (renamed in 6.0, removed in 6.5):
 # constant aliases stay real classes (AR-safe), and every resurrected service/job,
 # the taxons queue, and the method bridges warn through Spree::Deprecation.
 RSpec.describe 'Taxon -> Category deprecation aliases' do

@@ -26,7 +26,7 @@ RSpec.describe Spree::Api::V3::RefundSerializer do
     end
   end
 
-  it 'keeps the deprecated reimbursement_id, always null, until 6.1' do
+  it 'keeps the deprecated reimbursement_id, always null, until 6.5' do
     expect(subject['reimbursement_id']).to be_nil
     expect(Spree::Api::V3::Admin::RefundSerializer.new(refund, params: base_params).to_h).not_to have_key('reimbursement_id')
   end

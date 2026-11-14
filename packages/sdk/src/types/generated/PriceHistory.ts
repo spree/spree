@@ -7,10 +7,10 @@ interface PriceHistory {
   id: string;
   currency: CurrencyCode;
   amount: string | null;
-  /** @deprecated Use `amount`. Removed in 6.1. */
+  /** @deprecated Use `amount`. Removed in 6.5. */
   amount_in_cents: number | null;
   /** `amount` formatted with its currency symbol in the request's language.
-   * @deprecated Format `amount` with its currency instead. Removed in 6.1. */
+   * @deprecated Format `amount` with its currency instead. Removed in 6.5. */
   display_amount: string;
   recorded_at: string;
 }

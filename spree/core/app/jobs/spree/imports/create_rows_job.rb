@@ -1,9 +1,11 @@
 module Spree
   module Imports
-    # @deprecated Use {Spree::Imports::ProcessJob}; removed in 6.1.
+    # @deprecated Use {Spree::Imports::ProcessJob}; removed in 6.5.
     class CreateRowsJob < Spree::Imports::BaseJob
       def perform(import_id)
-        Spree::Deprecation.warn('Spree::Imports::CreateRowsJob is deprecated and will be removed in Spree 6.1. Use Spree::Imports::ProcessJob instead.')
+        Spree::Deprecation.warn(
+          'Spree::Imports::CreateRowsJob is deprecated and will be removed in Spree 6.5. Use Spree::Imports::ProcessJob instead.'
+        )
         Spree::Imports::ProcessJob.perform_now(import_id)
       end
     end

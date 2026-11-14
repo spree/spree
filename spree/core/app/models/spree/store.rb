@@ -262,7 +262,7 @@ module Spree
     has_many :store_credits, class_name: 'Spree::StoreCredit'
     has_many :store_credit_events, through: :store_credits, class_name: 'Spree::StoreCreditEvent'
 
-    # @deprecated Taxonomy is data-only in 6.0 and dropped in 6.1; use #categories.
+    # @deprecated Taxonomy is data-only in 6.0 and dropped in 6.5; use #categories.
     has_many :taxonomies, class_name: 'Spree::Taxonomy', deprecated: true
     has_many :categories, class_name: 'Spree::Category'
     has_many :collections, class_name: 'Spree::Collection', dependent: :destroy_async
@@ -276,20 +276,20 @@ module Spree
     has_many :custom_field_definitions, class_name: 'Spree::CustomFieldDefinition',
              inverse_of: :store, dependent: :destroy_async
 
-    # @deprecated Use #categories; removed in 6.1.
+    # @deprecated Use #categories; removed in 6.5.
     def taxons
-      Spree::Deprecation.warn('Spree::Store#taxons is deprecated and will be removed in Spree 6.1. Use #categories instead.')
+      Spree::Deprecation.warn('Spree::Store#taxons is deprecated and will be removed in Spree 6.5. Use #categories instead.')
       categories
     end
 
     def taxons=(value)
-      Spree::Deprecation.warn('Spree::Store#taxons= is deprecated and will be removed in Spree 6.1. Use #categories= instead.')
+      Spree::Deprecation.warn('Spree::Store#taxons= is deprecated and will be removed in Spree 6.5. Use #categories= instead.')
       self.categories = value
     end
 
-    # @deprecated Use {#stock_levels}; removed in 6.1.
+    # @deprecated Use {#stock_levels}; removed in 6.5.
     def stock_items
-      Spree::Deprecation.warn('Spree::Store#stock_items is deprecated and will be removed in Spree 6.1. Use #stock_levels instead.')
+      Spree::Deprecation.warn('Spree::Store#stock_items is deprecated and will be removed in Spree 6.5. Use #stock_levels instead.')
       stock_levels
     end
 
@@ -519,7 +519,7 @@ module Spree
       @default_country_for_market = country
     end
 
-    # @deprecated Use +default_country_code=+. Removed in 6.1.
+    # @deprecated Use +default_country_code=+. Removed in 6.5.
     def default_country_iso=(code)
       Spree::Deprecation.warn('Spree::Store#default_country_iso= is deprecated, use #default_country_code= instead')
       self.default_country_code = code
@@ -733,15 +733,15 @@ module Spree
       preferred_capture_method.presence || Spree::CaptureMethod::DEFAULT_CAPTURE_METHOD
     end
 
-    # @deprecated Use #preferred_capture_method; removed in 6.1.
+    # @deprecated Use #preferred_capture_method; removed in 6.5.
     def preferred_auto_capture
-      Spree::Deprecation.warn('Store#preferred_auto_capture is deprecated and will be removed in Spree 6.1. Use #preferred_capture_method instead.')
+      Spree::Deprecation.warn('Store#preferred_auto_capture is deprecated and will be removed in Spree 6.5. Use #preferred_capture_method instead.')
       capture_at_checkout?
     end
 
-    # @deprecated Use #preferred_capture_method=; removed in 6.1.
+    # @deprecated Use #preferred_capture_method=; removed in 6.5.
     def preferred_auto_capture=(value)
-      Spree::Deprecation.warn('Store#preferred_auto_capture= is deprecated and will be removed in Spree 6.1. Use #preferred_capture_method= instead.')
+      Spree::Deprecation.warn('Store#preferred_auto_capture= is deprecated and will be removed in Spree 6.5. Use #preferred_capture_method= instead.')
       # Turning it off only says "not at checkout" — it cannot distinguish
       # dispatch from manual, so an existing on_dispatch choice is preserved.
       self.preferred_capture_method = if value.to_b
@@ -753,15 +753,19 @@ module Spree
                                       end
     end
 
-    # @deprecated Use #preferred_capture_method; removed in 6.1.
+    # @deprecated Use #preferred_capture_method; removed in 6.5.
     def preferred_auto_capture_on_dispatch
-      Spree::Deprecation.warn('Store#preferred_auto_capture_on_dispatch is deprecated and will be removed in Spree 6.1. Use #preferred_capture_method instead.')
+      Spree::Deprecation.warn(
+        'Store#preferred_auto_capture_on_dispatch is deprecated and will be removed in Spree 6.5. Use #preferred_capture_method instead.'
+      )
       capture_on_dispatch?
     end
 
-    # @deprecated Use #preferred_capture_method=; removed in 6.1.
+    # @deprecated Use #preferred_capture_method=; removed in 6.5.
     def preferred_auto_capture_on_dispatch=(value)
-      Spree::Deprecation.warn('Store#preferred_auto_capture_on_dispatch= is deprecated and will be removed in Spree 6.1. Use #preferred_capture_method= instead.')
+      Spree::Deprecation.warn(
+        'Store#preferred_auto_capture_on_dispatch= is deprecated and will be removed in Spree 6.5. Use #preferred_capture_method= instead.'
+      )
       self.preferred_capture_method = if value.to_b
                                         'on_dispatch'
                                       elsif capture_on_dispatch?

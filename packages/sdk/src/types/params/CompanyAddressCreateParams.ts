@@ -18,7 +18,7 @@ export type CompanyAddressCreateParams = {
   state_code?: string
   /** For countries without states in the database. */
   state_name?: string
-  /** @deprecated Use `postal_code`. Removed in 6.1. */
+  /** @deprecated Use `postal_code`. Removed in 6.5. */
   zipcode?: string
   /**
    * True makes this the node's default billing address, false gives that up, and leaving it out

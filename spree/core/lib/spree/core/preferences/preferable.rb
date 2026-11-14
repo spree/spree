@@ -283,7 +283,7 @@ module Spree::Preferences::Preferable
       # `(value, owner = nil)` shapes.
       value = parse_on_set.arity.abs > 1 ? parse_on_set.call(value, self) : parse_on_set.call(value)
     end
-    # Spree 6.0 bridge, removed with incomplete declarations in 6.1: an id list
+    # Spree 6.0 bridge, removed with incomplete declarations in 6.5: an id list
     # an extension declared without `of: :id` still has its prefixed ids
     # decoded, as the API did for every `*_ids` key before.
     if definition[:type] == :array && definition[:of].nil? && name.to_s.end_with?('_ids') && value.is_a?(Array)

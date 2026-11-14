@@ -8,7 +8,7 @@ module Spree
     # Rates name their country and state directly since 6.0. No code reads
     # zone_id any more, but the column stays in the database through 6.0: it is
     # what `spree:migrate_tax_zones` converts from, and that task runs after
-    # db:migrate. The physical drop lands in 6.1.
+    # db:migrate. The physical drop lands in 6.5.
     #
     # The same goes for included_in_price: whether tax sits inside a price is
     # the market's choice (Spree::Market#tax_inclusive), and the column is read
@@ -79,15 +79,15 @@ module Spree
       self.amount = parsed && parsed / 100
     end
 
-    # @deprecated Use {#rate_percent}; removed in 6.1.
+    # @deprecated Use {#rate_percent}; removed in 6.5.
     def amount_percentage
-      Spree::Deprecation.warn('Spree::TaxRate#amount_percentage is deprecated and will be removed in Spree 6.1. Use #rate_percent instead.')
+      Spree::Deprecation.warn('Spree::TaxRate#amount_percentage is deprecated and will be removed in Spree 6.5. Use #rate_percent instead.')
       rate_percent
     end
 
-    # @deprecated Use {#rate_percent=}; removed in 6.1.
+    # @deprecated Use {#rate_percent=}; removed in 6.5.
     def amount_percentage=(value)
-      Spree::Deprecation.warn('Spree::TaxRate#amount_percentage= is deprecated and will be removed in Spree 6.1. Use #rate_percent= instead.')
+      Spree::Deprecation.warn('Spree::TaxRate#amount_percentage= is deprecated and will be removed in Spree 6.5. Use #rate_percent= instead.')
       self.rate_percent = value
     end
 
