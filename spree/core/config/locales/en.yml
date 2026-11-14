@@ -926,6 +926,8 @@ en:
         store_is_already_set: Store is already set
         unknown_calculator_type: "%{type} is not a calculator offered here"
         unknown_custom_field_type: 'is not a known custom field type (expected one of: %{types})'
+        unknown_option_type: names %{name}, which is not one of the marketplace's option types
+        unknown_option_value: names %{value}, which is not one of the values of %{option_type}
         unknown_row_type: "%{type} is not a %{family} offered here (expected one of: %{types})"
         unknown_scopes: 'contains unknown scopes: %{scopes}'
         unregistered_actor: is not a registered actor class
@@ -1201,6 +1203,8 @@ en:
     privacy_policy: Privacy Policy
     processing: Processing
     product: Product
+    product_import_unknown_option_type: The marketplace has no option type named %{name}.
+    product_import_unknown_option_value: "%{option_type} has no value named %{value}."
     product_import_unknown_stock_location: You have no stock location named %{name}.
     product_translations: Product Translations
     products: Products

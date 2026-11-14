@@ -102,6 +102,7 @@ module Spree
 
           before_action :set_status_resource, only: [:submit, :draft, :archive]
           before_action :require_ids!, only: [:bulk_submit, :bulk_status_update, :bulk_destroy]
+          before_action :refuse_unknown_variant_options, only: [:create, :update]
 
           # PATCH /api/v3/seller/products/:id/submit
           #
@@ -302,6 +303,39 @@ module Spree
           end
 
           private
+
+          # A seller builds variants from the marketplace's option types and
+          # values and never adds to them, but `Variant#options=` creates
+          # whatever a payload names. Each option is matched here the way that
+          # writer matches it, against this store's vocabulary, so an unknown
+          # name is a 422 before anything is written.
+          def refuse_unknown_variant_options
+            requested = Array(params[:variants]).grep(ActionController::Parameters).
+                        flat_map { |variant| Array(variant[:options]).grep(ActionController::Parameters) }.
+                        select { |option| option[:name].present? && option[:value].present? }.
+                        map { |option| [option[:name].to_s, option[:value].to_s] }.
+                        uniq { |name, value| [name.parameterize, value.parameterize] }
+            return if requested.empty?
+
+            option_types = Spree::OptionType.for_store(current_store).
+                           where(name: requested.map { |name, _| name.parameterize }.uniq).
+                           includes(:option_values).index_by(&:name)
+            errors = ActiveModel::Errors.new(Spree::Product.new)
+
+            requested.each do |name, value|
+              option_type = option_types[name.parameterize]
+              if option_type.nil?
+                errors.add(:variants, :unknown_option_type,
+                           message: I18n.t('spree.errors.messages.unknown_option_type', name: name))
+              elsif option_type.option_values.none? { |option_value| option_value.name == value.parameterize }
+                errors.add(:variants, :unknown_option_value,
+                           message: I18n.t('spree.errors.messages.unknown_option_value',
+                                           value: value, option_type: option_type.label.presence || option_type.name))
+              end
+            end
+
+            render_validation_error(errors) if errors.any?
+          end
 
           # 422s when the caller omits `ids` entirely, matching the operator's
           # bulk endpoints. An explicit empty array is a no-op, which is what a

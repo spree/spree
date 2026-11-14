@@ -33764,8 +33764,10 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/VariantOptionParams"
-          description: One pair per option type the variant takes part in (size, color).
-            Option types and values are created when missing.
+          description: One pair per option type the variant takes part in (size, color),
+            naming an option type and value the marketplace already defines (see `GET
+            /option_types`). A seller cannot add to that vocabulary, so an unknown
+            name is refused with a 422.
         prices:
           type: array
           items:

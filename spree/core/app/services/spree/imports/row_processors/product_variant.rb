@@ -13,6 +13,7 @@ module Spree
           ensure_decimals!
           @store = row.store
           @seller = import.seller
+          ensure_seller_options_exist! if seller.present?
           # Before the product is saved: rows are not wrapped in a transaction,
           # so an unknown location must fail the row with nothing written.
           @stock_location = import_stock_location if attributes['inventory_count'].present?
@@ -349,6 +350,21 @@ module Spree
 
         def store_option_types
           Spree::OptionType.for_store(store)
+        end
+
+        # A seller builds variants from the marketplace's option types and
+        # values and never adds to them, so a name the store does not have
+        # fails the row before the product is written.
+        def ensure_seller_options_exist!
+          options.each do |option|
+            option_type = store_option_types.with_name(option[:option_name]).first
+            raise ArgumentError, I18n.t('spree.product_import_unknown_option_type', name: option[:option_name]) unless option_type
+            next if option_type.option_values.with_name(option[:option_value]).exists?
+
+            raise ArgumentError, I18n.t('spree.product_import_unknown_option_value',
+                                        option_type: option_type.label.presence || option_type.name,
+                                        value: option[:option_value])
+          end
         end
 
         def find_or_create_option_value!(option_type, label)
