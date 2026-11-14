@@ -17,6 +17,10 @@ export class FakeApi implements ConfigClient {
     body?: unknown
     params?: RequestOptions['params']
   }[] = []
+  /** What a kinds endpoint lists, by path (with its query string, when it takes one). */
+  kinds: Record<string, { type: string; schema?: unknown }[]> = {}
+  /** Product ids held by a parent, by `<path>/<id>`. */
+  readonly members = new Map<string, string[]>()
   private sequence = 0
 
   seed(path: string, records: Record<string, unknown>[]): void {
@@ -41,6 +45,16 @@ export class FakeApi implements ConfigClient {
     if (path === '/store') {
       if (method === 'PATCH') this.store = { ...this.store, ...(options.body as object) }
       return this.store as T
+    }
+    const kindsKey = options.params?.type ? `${path}?type=${options.params.type}` : path
+    if (method === 'GET' && this.kinds[kindsKey]) return { data: this.kinds[kindsKey] } as T
+    const nested = path.match(/^(\/[a-z_]+)\/([^/]+)\/(products|memberships)$/)
+    if (nested) return this.nested(method, nested[1], nested[2], nested[3], options.body) as T
+    const toggle = path.match(/^\/price_lists\/([^/]+)\/(activate|deactivate)$/)
+    if (method === 'PATCH' && toggle) {
+      const record = this.find('/price_lists', toggle[1])
+      record.status = toggle[2] === 'activate' ? 'active' : 'inactive'
+      return record as T
     }
     if (method === 'GET') return this.list(path, options.params ?? {}) as T
     if (method === 'POST' && path === '/products/bulk_add_to_channels')
@@ -72,7 +86,10 @@ export class FakeApi implements ConfigClient {
     if (method === 'PATCH') {
       const record = this.find(member[1], member[2])
       const { custom_fields: values, ...written } = options.body as Record<string, unknown>
-      Object.assign(record, this.materializeBody(member[1], written))
+      Object.assign(
+        record,
+        this.materializeBody(member[1], { ...written, __live: record, id: record.id }),
+      )
       this.writeCustomFields(record, values)
       return record as T
     }
@@ -96,6 +113,53 @@ export class FakeApi implements ConfigClient {
     return record
   }
 
+  // Product membership and company membership: list, add, remove.
+  private nested(method: string, path: string, id: string, kind: string, body: unknown): unknown {
+    const parent = this.find(path, id)
+    if (kind === 'memberships') {
+      const memberships = (parent.memberships as Record_[] | undefined) ?? []
+      if (method === 'POST') {
+        const { customer_email: email } = body as { customer_email: string }
+        const customer = this.all('/customers').find((candidate) => candidate.email === email)
+        if (!customer) throw new Error(`no customer ${email}`)
+        parent.memberships = [...memberships, { id: this.nextId('/memberships'), email }]
+      }
+      return { data: parent.memberships ?? [], meta: { pages: 1, next: null } }
+    }
+    const key = `${path}/${id}`
+    const held = this.members.get(key) ?? []
+    const ids = ((body as { product_ids?: string[] } | undefined)?.product_ids ?? []).map(String)
+    if (method === 'POST') this.members.set(key, [...new Set([...held, ...ids])])
+    if (method === 'DELETE')
+      this.members.set(
+        key,
+        held.filter((member) => !ids.includes(member)),
+      )
+    // A catalog lists its products without their slug.
+    const data = (this.members.get(key) ?? []).map((member) => {
+      const product = this.find('/products', member)
+      return path === '/catalogs' ? { id: product.id, name: product.name } : product
+    })
+    return { data, meta: { pages: 1, next: null } }
+  }
+
+  // A typed set replaces the old one; entries with an id are kept under it,
+  // and a kind can be held once, as on a promotion.
+  private typedSet(live: unknown, sent: unknown, uniqueKinds: boolean): Record_[] {
+    const existing = (live as Record_[] | undefined) ?? []
+    const rows = sent as Record<string, unknown>[]
+    const kept = rows.flatMap((row) => (row.id ? [row.id] : []))
+    const survivors = existing.filter((row) => kept.includes(row.id))
+    return rows.map((row) => {
+      if (uniqueKinds && !row.id && survivors.some((survivor) => survivor.type === row.type)) {
+        const error = new Error('Type has already been taken') as Error & { status: number }
+        error.status = 422
+        throw error
+      }
+      return { ...row, id: (row.id as string) ?? this.nextId('/rules') } as Record_
+    })
+  }
+
   // Inline values upsert by definition and read back with their namespaced
   // key; a blank value removes the field, and fields not named are kept.
   private writeCustomFields(record: Record_, values: unknown): void {
@@ -117,9 +181,56 @@ export class FakeApi implements ConfigClient {
 
   // Products carry their variants and publications inline, like the real
   // serializer when expanded.
-  private materializeBody(path: string, body: Record<string, unknown>): Record<string, unknown> {
+  private materializeBody(path: string, sent: Record<string, unknown>): Record<string, unknown> {
+    // A PATCH hands in the record being changed, for the sets that keep ids.
+    const { __live: live, ...body } = sent
+    if (path === '/promotions') body.__live = live
     // The API reads a requirement's type shorthand back as `kind`.
     if (path === '/seller_requirements' && body.type) return { ...body, kind: body.type }
+    if (path === '/option_types' && body.option_values) {
+      return {
+        ...body,
+        option_values: (body.option_values as Record<string, unknown>[]).map((value) => ({
+          ...value,
+          id: (value.id as string) ?? this.nextId('/option_values'),
+        })),
+      }
+    }
+    if (path === '/product_types' && body.custom_field_definitions) {
+      return {
+        ...body,
+        custom_field_definitions: (body.custom_field_definitions as Record_[]).map((field) => {
+          const definition = this.find('/custom_field_definitions', field.id)
+          return { ...field, key: definition.key, namespace: definition.namespace }
+        }),
+      }
+    }
+    if (path === '/catalogs' && body.assignments) {
+      return {
+        ...body,
+        assignments: (body.assignments as Record<string, string>[]).map((assignment) => ({
+          ...assignment,
+          assignable_name: this.find(
+            assignment.assignable_type === 'company' ? '/companies' : '/customer_groups',
+            assignment.assignable_id,
+          ).name,
+        })),
+      }
+    }
+    if (path === '/price_lists' && body.rules) {
+      const { rules, ...rest } = body
+      const live = rest.id ? this.find('/price_lists', rest.id as string).price_rules : []
+      return { ...rest, price_rules: this.typedSet(live, rules, false) }
+    }
+    if (path === '/promotions') {
+      const live = body.__live as Record_ | undefined
+      const { __live: _live, ...rest } = body
+      return {
+        ...rest,
+        ...(rest.rules ? { rules: this.typedSet(live?.rules, rest.rules, true) } : {}),
+        ...(rest.actions ? { actions: this.typedSet(live?.actions, rest.actions, true) } : {}),
+      }
+    }
     if (path !== '/products') return body
     const { variants, category_ids, ...rest } = body
     const result: Record<string, unknown> = { ...rest }

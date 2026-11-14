@@ -1,5 +1,7 @@
 import type {
   Category as SdkCategory,
+  Collection as SdkCollection,
+  OptionType as SdkOptionType,
   Product as SdkProduct,
   ProductType as SdkProductType,
 } from '@spree/admin-sdk'
@@ -8,6 +10,10 @@ import { ConfigError } from '../errors.js'
 import {
   CATEGORY_ATTRIBUTES,
   type CategoryEntry,
+  COLLECTION_ATTRIBUTES,
+  type CollectionEntry,
+  OPTION_TYPE_ATTRIBUTES,
+  type OptionTypeEntry,
   PRODUCT_ATTRIBUTES,
   PRODUCT_TYPE_ATTRIBUTES,
   type ProductEntry,
@@ -20,9 +26,12 @@ import {
   customFieldReferences,
   customFieldsPayload,
   customFieldsToFile,
+  definitionKey,
   liveCustomFields,
   withCustomFieldsBody,
 } from './custom-fields.js'
+import { desiredMembers, liveMembers, membersToFile, syncMembers } from './membership.js'
+import { sortedRules } from './rules.js'
 import {
   FIRST_PARTY,
   keysOf,
@@ -37,10 +46,101 @@ import {
 // The SDK's generated types plus the index signature, so a section can read
 // both declared attributes and the associations an `expand` adds.
 type Category = SdkCategory & LiveRecord
+type Collection = SdkCollection & LiveRecord
+type OptionType = SdkOptionType & LiveRecord
 type Product = SdkProduct & LiveRecord
 type ProductType = SdkProductType & LiveRecord
 
+// --- Option types ----------------------------------------------------------
+
+interface LiveOptionValueRow {
+  id: string
+  name: string
+  label?: string
+  position?: number
+  color_code?: string | null
+}
+
+const liveValues = (live: OptionType) =>
+  [...((live.option_values as LiveOptionValueRow[] | undefined) ?? [])].sort(
+    (left, right) => (left.position ?? 0) - (right.position ?? 0),
+  )
+
+export const optionTypes: Section<OptionTypeEntry, OptionType> = {
+  name: 'option_types',
+  scope: 'write_products',
+  introspectByDefault: true,
+  path: '/option_types',
+  keyAttribute: 'name',
+  filterable: true,
+  expand: ['option_values'],
+  entries: (config) => config.option_types ?? [],
+  entryKey: (entry) => entry.name,
+  async desired(entry) {
+    return {
+      ...pick(entry, OPTION_TYPE_ATTRIBUTES),
+      // The order of the list is the display order.
+      ...(entry.values
+        ? {
+            option_values: entry.values.map((value, index) => ({ ...value, position: index + 1 })),
+          }
+        : {}),
+    }
+  },
+  async current(live, _ctx, desired) {
+    if (!desired.option_values) return live
+    // Positions are compared as an order, since the store may number them
+    // from any start.
+    return {
+      ...live,
+      option_values: liveValues(live).map((value, index) => ({ ...value, position: index + 1 })),
+    }
+  },
+  // A value already on the type is addressed by id, so the replacement the
+  // API performs changes it in place: variants keep the value they hold.
+  async update(live, payload, _entry, ctx) {
+    const existing = liveValues(live)
+    const body = Array.isArray(payload.option_values)
+      ? {
+          ...payload,
+          option_values: (payload.option_values as Payload[]).map((value) => {
+            const match = existing.find((candidate) => candidate.name === value.name)
+            return match ? { id: match.id, ...value } : value
+          }),
+        }
+      : payload
+    return ctx.client.request<OptionType>('PATCH', `/option_types/${live.id}`, {
+      params: { expand: 'option_values' },
+      body,
+    })
+  },
+  async toFile(live) {
+    const values = liveValues(live).map((value) => ({
+      name: value.name,
+      ...(value.label && value.label !== value.name ? { label: value.label } : {}),
+      ...(value.color_code ? { color_code: value.color_code } : {}),
+    }))
+    return {
+      ...present(live as unknown as OptionTypeEntry, OPTION_TYPE_ATTRIBUTES),
+      ...(values.length ? { values } : {}),
+    } as OptionTypeEntry
+  },
+}
+
 // --- Product types ---------------------------------------------------------
+
+interface LiveTypeField {
+  id: string
+  key: string
+  namespace: string
+  required?: boolean
+  sort_order?: number
+}
+
+const liveTypeFields = (live: ProductType) =>
+  [...((live.custom_field_definitions as LiveTypeField[] | undefined) ?? [])].sort(
+    (left, right) => (left.sort_order ?? 0) - (right.sort_order ?? 0),
+  )
 
 export const productTypes = plainSection<ProductTypeEntry, ProductType>({
   name: 'product_types',
@@ -48,24 +148,64 @@ export const productTypes = plainSection<ProductTypeEntry, ProductType>({
   introspectByDefault: true,
   key: 'name',
   attributes: PRODUCT_TYPE_ATTRIBUTES,
-  references: (config) => ({
-    delivery_profiles: (config.product_types ?? []).flatMap((type) => type.delivery_profile ?? []),
-  }),
-  async desired(entry, ctx, path) {
+  references: (config) => {
+    const types = config.product_types ?? []
     return {
-      ...pick(entry, PRODUCT_TYPE_ATTRIBUTES),
-      ...(entry.delivery_profile
-        ? { delivery_profile_id: await ctx.ref('delivery_profiles', entry.delivery_profile, path) }
-        : {}),
+      delivery_profiles: types.flatMap((type) => type.delivery_profile ?? []),
+      option_types: types.flatMap((type) => type.option_types ?? []),
+      categories: types.flatMap((type) => type.categories ?? []),
+      custom_field_definitions: types.flatMap((type) =>
+        (type.custom_fields ?? []).map((field) => definitionKey('product', field.key)),
+      ),
+    }
+  },
+  async desired(entry, ctx, path) {
+    const payload: Payload = pick(entry, PRODUCT_TYPE_ATTRIBUTES)
+    if (entry.delivery_profile)
+      payload.delivery_profile_id = await ctx.ref('delivery_profiles', entry.delivery_profile, path)
+    const optionTypeIds = await refs(ctx, 'option_types', entry.option_types, path)
+    if (optionTypeIds) payload.option_type_ids = optionTypeIds
+    const categoryIds = await refs(ctx, 'categories', entry.categories, path)
+    if (categoryIds) payload.category_ids = categoryIds
+    if (entry.custom_fields) {
+      // The order of the list is the order the product form shows them in.
+      payload.custom_field_definitions = await Promise.all(
+        entry.custom_fields.map(async (field, index) => ({
+          id: await ctx.ref('custom_field_definitions', definitionKey('product', field.key), path),
+          required: field.required ?? false,
+          sort_order: index,
+        })),
+      )
+    }
+    return payload
+  },
+  async current(live, _ctx, desired) {
+    if (!desired.custom_field_definitions) return live
+    return {
+      ...live,
+      custom_field_definitions: liveTypeFields(live).map((field, index) => ({
+        id: field.id,
+        required: field.required ?? false,
+        sort_order: index,
+      })),
     }
   },
   async toFile(live, ctx) {
     const profile = live.delivery_profile_id
       ? await ctx.keyOf('delivery_profiles', String(live.delivery_profile_id))
       : null
+    const optionTypeNames = await keysOf(ctx, 'option_types', live.option_type_ids)
+    const categoryPermalinks = await keysOf(ctx, 'categories', live.category_ids)
+    const fields = liveTypeFields(live).map((field) => ({
+      key: field.namespace === 'custom' ? field.key : `${field.namespace}.${field.key}`,
+      ...(field.required ? { required: true } : {}),
+    }))
     return {
       ...present(live as unknown as ProductTypeEntry, PRODUCT_TYPE_ATTRIBUTES),
       ...(profile ? { delivery_profile: profile } : {}),
+      ...(optionTypeNames.length ? { option_types: optionTypeNames } : {}),
+      ...(categoryPermalinks.length ? { categories: categoryPermalinks } : {}),
+      ...(fields.length ? { custom_fields: fields } : {}),
     } as ProductTypeEntry
   },
 })
@@ -590,4 +730,85 @@ async function variantToFile(live: LiveVariant, ctx: RunContext): Promise<Varian
   }
   if (Object.keys(stock).length) entry.stock = stock
   return entry
+}
+
+// --- Collections -----------------------------------------------------------
+
+interface CollectionRule {
+  type: string
+  value?: string | null
+  match_policy?: string | null
+}
+
+const ruleFields = (rule: CollectionRule) => ({
+  type: rule.type,
+  ...(rule.value !== undefined && rule.value !== null ? { value: String(rule.value) } : {}),
+  ...(rule.match_policy ? { match_policy: rule.match_policy } : {}),
+})
+
+export const collections: Section<CollectionEntry, Collection> = {
+  name: 'collections',
+  scope: 'write_collections',
+  introspectByDefault: true,
+  path: '/collections',
+  keyAttribute: 'permalink',
+  filterable: true,
+  expand: ['rules', 'custom_fields'],
+  entries: (config) => config.collections ?? [],
+  entryKey: (entry) => entry.permalink,
+  references: (config) => ({
+    products: (config.collections ?? []).flatMap((collection) => collection.products ?? []),
+    custom_field_definitions: customFieldReferences('collection', config.collections ?? []),
+  }),
+  async desired(entry, ctx, path) {
+    return {
+      ...pick(entry, COLLECTION_ATTRIBUTES),
+      ...(entry.description !== undefined
+        ? { description: canonicalMarkup(entry.description) }
+        : {}),
+      ...(entry.rules ? { rules: sortedRules(entry.rules) } : {}),
+      ...(await desiredMembers(entry.products, ctx, path)),
+      ...(await customFieldsPayload('collection', entry.custom_fields, ctx, path)),
+    }
+  },
+  async current(live, ctx, desired) {
+    return {
+      ...live,
+      ...descriptionPair(desired, live),
+      ...(desired.rules
+        ? { rules: sortedRules(live.rules as CollectionRule[] | undefined).map(ruleFields) }
+        : {}),
+      ...(await liveMembers(ctx, '/collections', live, desired)),
+      ...liveCustomFields(live, desired),
+    }
+  },
+  async create(payload, entry, ctx) {
+    const { products: _products, ...body } = await withCustomFieldsBody('collection', payload, ctx)
+    if (entry.description !== undefined) body.description = entry.description
+    return ctx.client.request<Collection>('POST', '/collections', { body })
+  },
+  async update(live, payload, entry, ctx) {
+    const { products: _products, ...body } = await withCustomFieldsBody('collection', payload, ctx)
+    if (entry.description !== undefined) body.description = entry.description
+    return ctx.client.request<Collection>('PATCH', `/collections/${live.id}`, { body })
+  },
+  afterWrite: (entry, live, _changes, ctx) =>
+    syncMembers(ctx, '/collections', live, entry.products),
+  async toFile(live, ctx) {
+    const rules = sortedRules(live.rules as CollectionRule[] | undefined).map(ruleFields)
+    const entry = present(
+      { ...live, description: live.description_html } as unknown as CollectionEntry,
+      COLLECTION_ATTRIBUTES,
+    ) as CollectionEntry
+    if (entry.automatic === false) delete entry.automatic
+    if (entry.rules_match_policy === 'all') delete entry.rules_match_policy
+    if (entry.sort_order === 'manual') delete entry.sort_order
+    return {
+      ...entry,
+      ...(rules.length ? { rules } : {}),
+      // An automatic collection's products are whatever its rules select.
+      ...(live.automatic ? {} : await membersToFile(ctx, '/collections', live)),
+      ...customFieldsToFile(live),
+    } as CollectionEntry
+  },
 }

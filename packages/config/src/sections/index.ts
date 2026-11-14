@@ -1,9 +1,11 @@
 import type { SectionSource } from '../context.js'
 import type { SectionName } from '../types.js'
-import { categories, products, productTypes } from './catalog.js'
+import { catalogs, companies, priceLists } from './b2b.js'
+import { categories, collections, optionTypes, products, productTypes } from './catalog.js'
 import { customFieldDefinitions } from './custom-fields.js'
 import { deliveryMethods, deliveryProfiles, deliveryZones, packageTypes } from './delivery.js'
 import { customers, sellers } from './people.js'
+import { promotions } from './promotions.js'
 import type { AnySection } from './section.js'
 import {
   channels,
@@ -50,12 +52,18 @@ export const ORDERED_SECTIONS: AnySection[] = [
   packageTypes,
   paymentMethods,
   suppliers,
-  productTypes,
+  optionTypes,
   customFieldDefinitions,
   categories,
+  productTypes,
   products,
+  collections,
   customers,
+  companies,
+  priceLists,
+  catalogs,
   sellers,
+  promotions,
   returnReasons,
   claimReasons,
   refundReasons,

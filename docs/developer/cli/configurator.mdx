@@ -107,17 +107,23 @@ The header line points editors at the published JSON Schema, so VS Code and ever
 | `tax_categories` | `name` | `default: true` marks the store default |
 | `tax_rates` | `name` | `tax_category` by name, `rate_percent`, and the `country` and `state` the rate taxes; `country: null` taxes every country |
 | `delivery_zones` | `name` | `countries` and `states` members; postal-code members added in the dashboard are kept as they are |
-| `delivery_methods` | `name` | `delivery_zone` by name, `calculator` with `type` and `preferences`, `pickup_locations` by stock location name; unique per store and owner |
+| `delivery_methods` | `name` | `delivery_zone` by name, `calculator` with `type` and `preferences`, `rules` (the whole set), `pickup_locations` by stock location name; unique per store and owner |
 | `suppliers` | `name` | |
+| `option_types` | `name` | `values` in display order; the list is the whole set |
 | `custom_field_definitions` | `resource_type`, `namespace` and `key` together | `field_type` is set on create and cannot change; `namespace` defaults to `custom` |
 | `categories` | `permalink` | the full path, so `clothing/t-shirts` nests under `clothing`; `description` is HTML |
 | `products` | `slug` | `categories` by permalink, `channels` by code; a simple product carries `sku`, `prices` and `stock` itself, a product with options lists `variants`; `description` is HTML |
+| `collections` | `permalink` | an automatic collection lists its `rules`; a curated one lists its `products` by slug, and the list is the whole set |
 | `customers` | `email` | `customer_groups` by name; `password` is set on create only. Emails are compared ignoring case |
+| `companies` | `name` | `parent` by name; `members` are emails of existing customers, added but never removed. Cannot be pruned |
+| `price_lists` | `name` | `active`, and `rules` saying who the list applies to. Prices per variant come from the price list CSV import |
+| `catalogs` | `name` | `companies` and `customer_groups` are the whole audience; `products` by slug is the whole assortment |
+| `promotions` | `name` | `rules` and `actions` by kind, each the whole set; codes are saved in lower case |
 | `sellers` | `slug` | `status: approved` or `suspended` once onboarding has started |
 | `delivery_profiles` | `name` | `kind` (`shipping` or `digital`) is set on create |
 | `package_types` | `name` | dimensions and tare in the units you write them in |
 | `payment_methods` | `name` | `type` (for example `store_credit`) is set on create; gateway credentials are not written from the file |
-| `product_types` | `name` | `delivery_profile` by name |
+| `product_types` | `name` | `delivery_profile`, `option_types` and `categories` by key; `custom_fields` lists the fields the product form shows, in order |
 | `return_reasons`, `claim_reasons`, `refund_reasons`, `order_cancellation_reasons` | `name` | |
 | `tax_exemption_reasons` | `code` | the code a tax engine reads for certificates holding the reason; saved in capitals |
 | `commission_rates` | `code` | |
@@ -131,7 +137,22 @@ Slugs and permalinks are written the way the store saves them: lowercase letters
 
 Prices are keyed by currency and stock by stock location name. A product's `variants` list is the whole set: a variant missing from it is removed on deploy. A simple product that sets `prices` or `stock` needs its `sku`, and the simple form is refused for a product whose variants have options, since it would replace them all.
 
-**Custom fields.** Declare a field once under `custom_field_definitions`, then set its value on any product, category or seller under `custom_fields`:
+**Rules, actions and calculators** are written by kind, with that kind's settings under `preferences`. An amount is a plain number, and a setting that lists records takes their keys, not their ids:
+
+```yaml spree.store.yml
+price_lists:
+  - name: Trade prices
+    active: true
+    rules:
+      - type: volume_rule
+        preferences: { min_quantity: 10 }
+      - type: customer_group_rule
+        preferences: { customer_group_ids: [Wholesale] }
+```
+
+A rule list is the whole set: a rule missing from it is removed on deploy.
+
+**Custom fields.** Declare a field once under `custom_field_definitions`, then set its value on any product, category, collection or seller under `custom_fields`:
 
 ```yaml spree.store.yml
 custom_field_definitions:
@@ -198,7 +219,7 @@ spree config deploy --fail-on-delete            # refuse any plan that contains 
 
 Deletes are opt-in per section through `--prune`. Without it a deploy only creates and updates, and `diff` reports live records absent from the file as not managed, so a stale record is visible without being at risk. `--fail-on-delete` is the CI guard: a plan that would delete anything stops the run before touching the store.
 
-Three sections can never be pruned: `store`, `customers` (customer accounts belong to the whole installation, not to one store) and `sellers` (a seller carries orders and payouts; remove one from the dashboard).
+Four sections can never be pruned: `store`, `customers` (customer accounts belong to the whole installation, not to one store), `companies` (a company carries orders, addresses and tax records) and `sellers` (a seller carries orders and payouts). Remove a company or a seller from the dashboard.
 
 ## Credentials
 

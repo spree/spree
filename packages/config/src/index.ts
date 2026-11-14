@@ -31,15 +31,22 @@ export { applyProvisioning, provisionStore, storeDefaults } from './provision.js
 export type { RenderOptions } from './render.js'
 export { countByKind, planToJson, renderPlan, renderReport, summaryLine } from './render.js'
 export type {
+  CatalogEntry,
   CategoryEntry,
   ChannelEntry,
+  CollectionEntry,
+  CompanyEntry,
   CustomerEntry,
   CustomerGroupEntry,
   CustomFieldDefinitionEntry,
   DeliveryMethodEntry,
   DeliveryZoneEntry,
   MarketEntry,
+  OptionTypeEntry,
+  PriceListEntry,
   ProductEntry,
+  PromotionEntry,
+  RuleEntry,
   SellerEntry,
   SpreeConfig,
   StockLocationEntry,

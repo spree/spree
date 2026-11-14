@@ -1,5 +1,5 @@
 import type { RunContext, SectionSource } from '../context.js'
-import type { PendingRef } from '../diff.js'
+import { numericString, type PendingRef } from '../diff.js'
 import type { SpreeConfig } from '../schema.js'
 import { numbersAsNumbers } from '../spec.js'
 import type { AttributeChange, LiveRecord, SectionName } from '../types.js'
@@ -160,6 +160,27 @@ export function present<T extends object>(source: T, attributes: readonly (keyof
     entry[attribute] = value
   }
   return entry
+}
+
+function isEmptyPreference(value: unknown): boolean {
+  if (value === null || value === undefined) return true
+  if (Array.isArray(value)) return value.length === 0
+  return typeof value === 'object' && Object.keys(value as object).length === 0
+}
+
+/**
+ * Preferences as a file reads best: unset ones left out, and amounts the API
+ * reports as numeric strings written as plain numbers.
+ */
+export function filePreferences(preferences: Record<string, unknown> | undefined) {
+  return Object.fromEntries(
+    Object.entries(preferences ?? {})
+      .filter(([, value]) => !isEmptyPreference(value))
+      .map(([key, value]) => [
+        key,
+        typeof value === 'string' ? (numericString(value) ?? value) : value,
+      ]),
+  )
 }
 
 /** Operator-owned rows only, on tables a marketplace's sellers also write to. */

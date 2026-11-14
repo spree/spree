@@ -1043,6 +1043,32 @@
               "type": "string",
               "minLength": 1
             }
+          },
+          "rules": {
+            "description": "Eligibility rules; the whole set, since rules absent here are removed.",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Kind shorthand, e.g. `item_total_rule`."
+                },
+                "active": {
+                  "type": "boolean"
+                },
+                "preferences": {
+                  "type": "object",
+                  "propertyNames": {
+                    "type": "string"
+                  },
+                  "additionalProperties": {}
+                }
+              },
+              "required": ["type"],
+              "additionalProperties": false
+            }
           }
         },
         "required": ["name"],
@@ -1206,7 +1232,7 @@
         "additionalProperties": false
       }
     },
-    "product_types": {
+    "option_types": {
       "type": "array",
       "items": {
         "type": "object",
@@ -1215,13 +1241,47 @@
             "type": "string",
             "minLength": 1
           },
-          "delivery_profile": {
-            "description": "Delivery profile name.",
+          "label": {
             "type": "string",
             "minLength": 1
+          },
+          "position": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "filterable": {
+            "type": "boolean"
+          },
+          "kind": {
+            "type": "string",
+            "enum": ["dropdown", "color_swatch", "buttons"]
+          },
+          "values": {
+            "description": "Option values in display order; the whole set, since values absent here are removed.",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "label": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "color_code": {
+                  "description": "Hex color of a `color_swatch` value.",
+                  "type": ["string", "null"]
+                }
+              },
+              "required": ["name"],
+              "additionalProperties": false
+            }
           }
         },
-        "required": ["name"],
+        "required": ["name", "label"],
         "additionalProperties": false
       }
     },
@@ -1302,6 +1362,60 @@
           }
         },
         "required": ["permalink", "name"],
+        "additionalProperties": false
+      }
+    },
+    "product_types": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "delivery_profile": {
+            "description": "Delivery profile name.",
+            "type": "string",
+            "minLength": 1
+          },
+          "option_types": {
+            "description": "Option type names given to products created with this type.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "categories": {
+            "description": "Category permalinks given to products created with this type.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "custom_fields": {
+            "description": "The custom fields the product form shows for this type, in order; the whole set.",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "key": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Key of a product custom field definition; `namespace.key` outside the default namespace."
+                },
+                "required": {
+                  "type": "boolean"
+                }
+              },
+              "required": ["key"],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": ["name"],
         "additionalProperties": false
       }
     },
@@ -1511,6 +1625,218 @@
         "additionalProperties": false
       }
     },
+    "collections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "permalink": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:[-_][a-z0-9]+)*$"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": {
+            "type": "string"
+          },
+          "meta_title": {
+            "type": "string"
+          },
+          "meta_description": {
+            "type": "string"
+          },
+          "meta_keywords": {
+            "type": "string"
+          },
+          "automatic": {
+            "type": "boolean"
+          },
+          "rules_match_policy": {
+            "type": "string",
+            "enum": ["all", "any"]
+          },
+          "sort_order": {
+            "type": "string",
+            "enum": [
+              "manual",
+              "best_selling",
+              "price asc",
+              "price desc",
+              "available_on desc",
+              "available_on asc",
+              "name asc",
+              "name desc"
+            ]
+          },
+          "rules": {
+            "description": "Rules of an automatic collection; the whole set.",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Rule kind shorthand, e.g. `tag`."
+                },
+                "value": {
+                  "type": "string"
+                },
+                "match_policy": {
+                  "type": "string"
+                }
+              },
+              "required": ["type"],
+              "additionalProperties": false
+            }
+          },
+          "products": {
+            "description": "Product slugs of a hand-curated collection; the whole set, since products absent here are removed.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "custom_fields": {
+            "description": "Custom field values by key, e.g. `{ material: Cotton }`. A key in another namespace is written `namespace.key`. Fields left out are untouched; `null` clears one.",
+            "type": "object",
+            "propertyNames": {
+              "type": "string",
+              "minLength": 1
+            },
+            "additionalProperties": {}
+          }
+        },
+        "required": ["permalink", "name"],
+        "additionalProperties": false
+      }
+    },
+    "promotions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": {
+            "type": ["string", "null"]
+          },
+          "code": {
+            "type": ["string", "null"]
+          },
+          "path": {
+            "type": ["string", "null"]
+          },
+          "starts_at": {
+            "type": ["string", "null"]
+          },
+          "expires_at": {
+            "type": ["string", "null"]
+          },
+          "usage_limit": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "match_policy": {
+            "type": "string",
+            "enum": ["all", "any"]
+          },
+          "kind": {
+            "type": "string",
+            "enum": ["coupon_code", "automatic"]
+          },
+          "rules": {
+            "description": "Eligibility rules; the whole set.",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Kind shorthand, e.g. `item_total_rule`."
+                },
+                "active": {
+                  "type": "boolean"
+                },
+                "preferences": {
+                  "type": "object",
+                  "propertyNames": {
+                    "type": "string"
+                  },
+                  "additionalProperties": {}
+                }
+              },
+              "required": ["type"],
+              "additionalProperties": false
+            }
+          },
+          "actions": {
+            "description": "What the promotion does; the whole set.",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Kind shorthand, e.g. `item_total_rule`."
+                },
+                "active": {
+                  "type": "boolean"
+                },
+                "preferences": {
+                  "type": "object",
+                  "propertyNames": {
+                    "type": "string"
+                  },
+                  "additionalProperties": {}
+                },
+                "calculator": {
+                  "description": "For adjustment actions.",
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "Calculator type shorthand, e.g. `flat_rate`."
+                    },
+                    "preferences": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": ["string", "number", "boolean", "null"]
+                      }
+                    }
+                  },
+                  "required": ["type"],
+                  "additionalProperties": false
+                }
+              },
+              "required": ["type"],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": ["name"],
+        "additionalProperties": false
+      }
+    },
     "customers": {
       "type": "array",
       "items": {
@@ -1555,6 +1881,167 @@
         },
         "required": ["email"],
         "additionalProperties": false
+      }
+    },
+    "companies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "kind": {
+            "type": "string",
+            "enum": ["company", "division"]
+          },
+          "po_number_required": {
+            "type": "boolean"
+          },
+          "parent": {
+            "description": "Name of the company or division this one sits under.",
+            "type": "string",
+            "minLength": 1
+          },
+          "members": {
+            "description": "Emails of existing customers who buy for this company. Listed customers are added; members added elsewhere are kept.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "email",
+              "pattern": "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+            }
+          }
+        },
+        "required": ["name"],
+        "additionalProperties": false
+      }
+    },
+    "price_lists": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": {
+            "type": ["string", "null"]
+          },
+          "match_policy": {
+            "type": "string",
+            "enum": ["all", "any"]
+          },
+          "starts_at": {
+            "type": ["string", "null"]
+          },
+          "ends_at": {
+            "type": ["string", "null"]
+          },
+          "active": {
+            "description": "Activates or deactivates the list; a new list starts as a draft.",
+            "type": "boolean"
+          },
+          "rules": {
+            "description": "Who and what the list applies to; the whole set. A rule that lists records takes their natural keys.",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Kind shorthand, e.g. `item_total_rule`."
+                },
+                "active": {
+                  "type": "boolean"
+                },
+                "preferences": {
+                  "type": "object",
+                  "propertyNames": {
+                    "type": "string"
+                  },
+                  "additionalProperties": {}
+                }
+              },
+              "required": ["type"],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": ["name"],
+        "additionalProperties": false
+      }
+    },
+    "catalogs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": {
+            "type": ["string", "null"]
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "minimum_order_quantity": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "order_multiple": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "companies": {
+            "description": "Company names the catalog is assigned to; a company covers its divisions.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "customer_groups": {
+            "description": "Customer group names the catalog is assigned to.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "products": {
+            "description": "Product slugs in the assortment; the whole set.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "required": ["name"],
+        "additionalProperties": false,
+        "description": "`companies` and `customer_groups` together are the whole audience: set one and the other is cleared unless it is set too."
       }
     },
     "sellers": {
