@@ -1,4 +1,4 @@
-import { reportError } from '@spree/dashboard-core'
+import { reportCaughtError } from '@spree/dashboard-core'
 import { ErrorState } from '@spree/dashboard-ui'
 import type { AnyRoute, RouterConstructorOptions, RouterHistory } from '@tanstack/react-router'
 import { createRouter } from '@tanstack/react-router'
@@ -39,6 +39,6 @@ export function createSellerRouter<TRouteTree extends AnyRoute>(
     // window.onerror would see it.
     defaultErrorComponent: ({ error, reset }) =>
       createElement(ErrorState, { error, onRetry: reset }),
-    defaultOnCatch: reportError,
+    defaultOnCatch: reportCaughtError,
   })
 }

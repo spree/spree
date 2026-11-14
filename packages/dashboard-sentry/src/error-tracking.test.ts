@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest'
-import { errorTrackingEnabled, scrubBreadcrumb, scrubErrorEvent } from './error-tracking'
+import {
+  errorTrackingEnabled,
+  panelFromPackages,
+  scrubBreadcrumb,
+  scrubErrorEvent,
+} from './error-tracking'
 
 describe('errorTrackingEnabled', () => {
   it('needs a DSN', () => {
@@ -55,6 +60,14 @@ describe('scrubErrorEvent', () => {
   })
 })
 
+describe('panelFromPackages', () => {
+  it('names the panel the build bundles', () => {
+    expect(panelFromPackages({ '@spree/dashboard': '6.0.4' })).toBe('admin')
+    expect(panelFromPackages({ '@spree/seller-dashboard': '6.0.4' })).toBe('seller')
+    expect(panelFromPackages(undefined)).toBeUndefined()
+  })
+})
+
 describe('scrubBreadcrumb', () => {
   it('redacts tokens in navigation and request breadcrumbs', () => {
     const navigation = scrubBreadcrumb({
@@ -88,5 +101,25 @@ describe('scrubBreadcrumb', () => {
       message: 'Error: could not open /dashboard/reset-password?token=abc',
     })
     expect(log.message).toBe('Error: could not open /dashboard/reset-password?token=redacted')
+  })
+
+  it('redacts percent-encoded tokens inside another URL', () => {
+    const navigation = scrubBreadcrumb({
+      category: 'navigation',
+      data: {
+        to: '/login?redirect=%2Freset-password%3Ftoken%3Dabc%26step%3D2',
+        from: '/x?next=%2Fapi%2Fv3%2Fadmin%2Fauth%2Fpassword_resets%2Fabc%3Fa%3D1',
+      },
+    })
+    expect(navigation.data).toEqual({
+      to: '/login?redirect=%2Freset-password%3Ftoken%3Dredacted%26step%3D2',
+      from: '/x?next=%2Fapi%2Fv3%2Fadmin%2Fauth%2Fpassword_resets%2Fredacted%3Fa%3D1',
+    })
+  })
+
+  it('redacts a token after the hash', () => {
+    expect(scrubBreadcrumb({ message: '/reset-password#token=abc' }).message).toBe(
+      '/reset-password#token=redacted',
+    )
   })
 })

@@ -1,6 +1,13 @@
+import { CatchBoundary } from '@tanstack/react-router'
 import { Fragment } from 'react'
 import { FormProvider, type UseFormReturn } from 'react-hook-form'
-import { type SlotAmbientContext, useSlotEntries } from '../lib/slot-registry'
+import { reportCaughtError } from '../lib/error-reporting'
+import {
+  APP_ROOT_SLOT,
+  type AppRootSlotContext,
+  type SlotAmbientContext,
+  useSlotEntries,
+} from '../lib/slot-registry'
 
 export interface SlotProps<TContext> {
   /** Slot name, e.g. "product.form_sidebar" or "order.dropdown". */
@@ -47,6 +54,23 @@ export function Slot<TContext extends object = object>({
         )
       })}
     </>
+  )
+}
+
+/**
+ * The `app.root` slot, mounted once per panel above the router. Nothing above
+ * it catches errors, so a widget that throws is reported and dropped instead
+ * of blanking the whole panel.
+ */
+export function AppRootSlot({ panel }: AppRootSlotContext) {
+  return (
+    <CatchBoundary
+      getResetKey={() => panel}
+      errorComponent={() => null}
+      onCatch={reportCaughtError}
+    >
+      <Slot<AppRootSlotContext> name={APP_ROOT_SLOT} context={{ panel }} />
+    </CatchBoundary>
   )
 }
 

@@ -1,4 +1,4 @@
-import { getPluginRoutes, type RootRouteEntry, reportError } from '@spree/dashboard-core'
+import { getPluginRoutes, type RootRouteEntry, reportCaughtError } from '@spree/dashboard-core'
 import { ErrorState } from '@spree/dashboard-ui'
 import {
   type AnyRoute,
@@ -66,7 +66,7 @@ export function createDashboardRouter<TRouteTree extends AnyRoute>(
       createElement(ErrorState, { error, onRetry: reset }),
     // The error screen stops the error, so it never reaches window.onerror;
     // this hands it to error-tracking plugins.
-    defaultOnCatch: reportError,
+    defaultOnCatch: reportCaughtError,
     // Long enough that a fast navigation never flashes a skeleton, short enough
     // that a slow one doesn't look frozen.
     defaultPendingMs: 300,

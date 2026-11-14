@@ -40,18 +40,36 @@ export function scrubBreadcrumb(breadcrumb: Sentry.Breadcrumb) {
 }
 
 /**
+ * The panel a build is for, from the Spree packages it bundles, so events
+ * raised while the app starts — before `app.root` mounts — are tagged too.
+ */
+export function panelFromPackages(packages: Record<string, string> | undefined) {
+  if (packages?.['@spree/dashboard']) return 'admin'
+  if (packages?.['@spree/seller-dashboard']) return 'seller'
+}
+
+/**
  * Starts Sentry. Its global handlers capture errors outside React (event
  * handlers, promise rejections) and render errors no error screen catches.
  */
-export function initErrorTracking(options: { dsn: string; environment: string; release?: string }) {
+export function initErrorTracking({
+  panel,
+  ...options
+}: {
+  dsn: string
+  environment: string
+  release?: string
+  panel?: string
+}) {
   Sentry.init({
     ...options,
+    initialScope: panel ? { tags: { panel } } : undefined,
     beforeSend: scrubErrorEvent,
     beforeBreadcrumb: scrubBreadcrumb,
   })
 }
 
-// Errors a panel's error screens caught, handed over by `onError`.
+// Errors a panel's error screens caught, handed over through `errorReporters`.
 export function captureCaughtError(error: unknown, errorInfo?: ErrorInfo) {
   const mechanism = { handled: true, type: 'auto.function.react.error_handler' }
   if (errorInfo) Sentry.captureReactException(error, errorInfo, { mechanism })

@@ -28,7 +28,7 @@ What gets reported:
 - Uncaught errors and unhandled promise rejections.
 - Errors a page throws while rendering or loading data, including the ones the panel's error screen catches and shows.
 - The signed-in user's ID and email, cleared on sign-out.
-- A `panel` tag, `admin` or `seller`, so both apps can share one Sentry project.
+- A `panel` tag, `admin` or `seller`, so both apps can share one Sentry project. Events raised while the app starts are tagged too.
 
 Not-found pages and redirects are not errors and are skipped. Single-use tokens in password reset, email confirmation and invitation links are replaced with `redacted` in URLs, messages and breadcrumbs before anything leaves the browser.
 
@@ -38,7 +38,7 @@ The plugin sends errors only. Tracing belongs to OpenTelemetry, which Spree uses
 
 An error-tracking plugin needs two things from the dashboard:
 
-- `onError` in `defineDashboardPlugin`, called with every error the panel's error screens catch. These errors never reach `window.onerror`, where most error trackers listen.
+- `errorReporters` in `defineDashboardPlugin`, keyed by a unique id. Each one is called with every error the panel's error screens catch. These errors never reach `window.onerror`, where most error trackers listen.
 - The [`app.root` slot](/developer/dashboard/slots-catalog#app-root), rendered once inside the signed-in session, to attach the user to reports.
 
 ```tsx
@@ -56,9 +56,11 @@ function TrackerUser({ panel }: AppRootSlotContext) {
 }
 
 defineDashboardPlugin({
-  onError: (error) => tracker.capture(error),
+  errorReporters: { tracker: (error) => tracker.capture(error) },
   slots: { [APP_ROOT_SLOT]: [{ id: 'tracker-user', component: TrackerUser as never }] },
 })
 ```
+
+An error boundary of your own reports the same way: pass `reportCaughtError` from `@spree/dashboard-core` as the `onCatch` of `RouteErrorBoundary` or TanStack Router's `CatchBoundary`.
 
 Mark the package as a dashboard plugin so both panels load it — see [Distributing plugins](/developer/dashboard/plugins/distributing).

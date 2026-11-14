@@ -145,12 +145,12 @@ export interface DashboardPluginConfig {
    */
   locales?: Record<string, Record<string, unknown>>
   /**
-   * Called with every render or loader error the panel's error screens catch
-   * — errors that never reach `window.onerror`. Error-tracking plugins
-   * forward them to their service. The router's `notFound()` and
-   * `redirect()` are filtered out first.
+   * Error reporters keyed by a unique id, each called with every render or
+   * loader error the panel's error screens catch — errors that never reach
+   * `window.onerror`. Error-tracking plugins forward them to their service.
+   * The router's `notFound()` and `redirect()` are filtered out first.
    */
-  onError?: ErrorReporter
+  errorReporters?: Record<string, ErrorReporter>
 }
 
 /**
@@ -253,7 +253,11 @@ export function defineDashboardPlugin(config: DashboardPluginConfig): void {
     }
   }
 
-  if (config.onError) addErrorReporter(config.onError)
+  if (config.errorReporters) {
+    for (const [id, reporter] of Object.entries(config.errorReporters)) {
+      safely(addErrorReporter, id, reporter)
+    }
+  }
 
   if (errors.length === 1) throw errors[0]
   if (errors.length > 1) {

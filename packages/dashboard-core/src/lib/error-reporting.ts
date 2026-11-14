@@ -8,13 +8,18 @@ import type { ErrorInfo } from 'react'
  */
 export type ErrorReporter = (error: unknown, errorInfo?: ErrorInfo) => void
 
-const reporters = new Set<ErrorReporter>()
+const reporters = new Map<string, ErrorReporter>()
 
-/** Registers `reporter`; returns a function that removes it. */
-export function addErrorReporter(reporter: ErrorReporter): () => void {
-  reporters.add(reporter)
+/**
+ * Registers `reporter` under `id`; returns a function that removes it. Throws
+ * when `id` is taken, so re-running a plugin's registration never reports
+ * each error twice.
+ */
+export function addErrorReporter(id: string, reporter: ErrorReporter): () => void {
+  if (reporters.has(id)) throw new Error(`Error reporter "${id}" is already registered.`)
+  reporters.set(id, reporter)
   return () => {
-    reporters.delete(reporter)
+    if (reporters.get(id) === reporter) reporters.delete(id)
   }
 }
 
@@ -23,9 +28,9 @@ export function addErrorReporter(reporter: ErrorReporter): () => void {
  * `notFound()` and `redirect()` are control flow, not errors, so they are
  * skipped. A reporter that throws doesn't stop the others.
  */
-export function reportError(error: unknown, errorInfo?: ErrorInfo): void {
+export function reportCaughtError(error: unknown, errorInfo?: ErrorInfo): void {
   if (isNotFound(error) || isRedirect(error)) return
-  for (const reporter of reporters) {
+  for (const reporter of reporters.values()) {
     try {
       reporter(error, errorInfo)
     } catch (reporterError) {
