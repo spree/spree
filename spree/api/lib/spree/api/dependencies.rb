@@ -48,7 +48,7 @@ module Spree
 
       SELLER_SERIALIZERS =
         %i[address country state profile policy team_member account invitation invitation_acceptance_link product product_type
-           delivery_profile delivery_method delivery_method_rule delivery_zone variant media stock_level order
+           option_type delivery_profile delivery_method delivery_method_rule delivery_zone variant media stock_level order
            order_line_item fulfillment fulfillment_item delivery delivery_rate shipping_label return
            return_line_item exchange exchange_line_item claim claim_line_item reason package_type stock_location
            requirement_custom_field tax_identifier requirement_status import import_row import_mapping

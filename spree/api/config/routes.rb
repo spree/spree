@@ -1045,6 +1045,11 @@ Spree::Core::Engine.add_routes do
         # the operator's (docs/plans/6.0-seller-product-submission.md).
         resources :product_types, only: [:index, :show]
 
+        # The option types and values a seller builds variants from. Read
+        # only: the vocabulary is the operator's, the variants are the seller's
+        # (docs/plans/6.0-multi-vendor-marketplace.md).
+        resources :option_types, only: [:index, :show]
+
         # The marketplace's delivery vocabulary, for the product form's picker.
         # Read only: a seller assigns a profile, never creates one
         # (docs/plans/6.0-multi-vendor-marketplace.md, Decision 13).

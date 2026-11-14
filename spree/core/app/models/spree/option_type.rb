@@ -23,6 +23,32 @@ module Spree
       :option_values
     end
 
+    # The option names and values a write asks for that the store does not
+    # offer, matched as `Variant#set_option_value` matches them. A seller
+    # builds variants from these and never adds to them.
+    #
+    # @param store [Spree::Store]
+    # @param pairs [Array<Array(String, String)>] option type names and value names
+    # @return [Array<Hash>] one `{ name:, value:, option_type: }` per unknown pair;
+    #   `option_type` is nil when the type itself is unknown
+    def self.unknown_options(store, pairs)
+      pairs = pairs.map { |name, value| [name.to_s, value.to_s] }.uniq { |name, value| [name.parameterize, value.parameterize] }
+      return [] if pairs.empty?
+
+      option_types = for_store(store).where(name: pairs.map { |name, _| name.parameterize }.uniq).index_by(&:name)
+      # Only the values named, not every value of each type: Size can carry hundreds.
+      known_values = Spree::OptionValue.where(option_type_id: option_types.values.map(&:id),
+                                              name: pairs.map { |_, value| value.parameterize }.uniq).
+                     pluck(:option_type_id, :name).to_set
+
+      pairs.filter_map do |name, value|
+        option_type = option_types[name.parameterize]
+        next if option_type && known_values.include?([option_type.id, value.parameterize])
+
+        { name: name, value: value, option_type: option_type }
+      end
+    end
+
     #
     # Magic methods
     #

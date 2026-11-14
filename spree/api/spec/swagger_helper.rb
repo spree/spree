@@ -293,6 +293,7 @@ RSpec.configure do |config|
         { name: 'Delivery Profiles', description: "The marketplace's delivery vocabulary — what kind of goods a product is, which decides how it ships" },
         { name: 'Delivery Zones', description: "The marketplace's destinations, for narrowing where a seller's own method ships" },
         { name: 'Onboarding', description: 'The marketplace checklist a seller completes before admission, and what they submit against it' },
+        { name: 'Option Types', description: "The marketplace's option types and values, which a seller builds variants from" },
         { name: 'Policies', description: "The seller's own legal documents, as the marketplace asks them to publish" },
         { name: 'Product Types', description: 'The types a seller may list a product against, and what each adds' },
         { name: 'Products', description: "The seller's own catalog" },

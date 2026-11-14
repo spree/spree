@@ -267,7 +267,7 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
                 form={form}
                 formKey="seller.product"
               />
-              <VariantsCard form={form} formKey="seller.product" />
+              <VariantsCard form={form} formKey="seller.product" seedFromType={mode === 'new'} />
               <PricesCard
                 form={form}
                 productName={product?.name ?? ''}

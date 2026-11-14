@@ -82,6 +82,12 @@ RSpec.describe 'Seller CSV import', type: :request do
   end
 
   it 'imports a product with variants' do
+    # A seller builds variants from the marketplace's options; an import never
+    # adds to them.
+    size = create(:option_type, store: store, name: 'size', label: 'Size')
+    create(:option_value, option_type: size, name: 'small', label: 'Small')
+    create(:option_value, option_type: size, name: 'large', label: 'Large')
+
     # The shape `db/sample_data/products.csv` uses: a product header row with
     # no options, then one row per variant.
     variant_csv = <<~CSV

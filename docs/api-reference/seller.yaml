@@ -13564,6 +13564,220 @@ paths:
             application/octet-stream:
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/seller/option_types":
+    get:
+      summary: List option types
+      tags:
+      - Option Types
+      security:
+      - bearer_auth: []
+      description: |
+        The marketplace's option types (Size, Colour), which a seller builds
+        their product's variants from.
+
+        Read only. The option types and their values are the marketplace's; a
+        seller picks from them when listing. Pass `expand=option_values` for
+        the values a variant may take, and send the chosen option type's
+        `name` and value's `name` as a variant's `options`. A product type's
+        `option_type_ids` name the option types picking it adds.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const { data: optionTypes } = await client.optionTypes.list({
+            expand: ['option_values'],
+            sort: 'position',
+          })
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: q[search]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Matches any of name and label (partial, case-insensitive).
+      - name: q[search_by_name]
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Applies `search_by_name` to the given value.
+      - name: page
+        in: query
+        required: false
+        description: Page number
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        required: false
+        description: Records per page (max 100)
+        schema:
+          type: integer
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to include. `option_values` adds
+          the values.
+        schema:
+          type: string
+      - name: q
+        in: query
+        required: false
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+          additionalProperties: true
+        description: Attribute filters, as `q[<attribute>_<predicate>]=value`. See
+          Filters above for the list.
+      x-mint:
+        content: |-
+          ## Filters
+
+          Filter with `q[<attribute>_<predicate>]=value`, for example `q[name_cont]=…`. Send a list as `q[<attribute>_in][]=a&q[<attribute>_in][]=b`. [How filters work](/api-reference/admin-api/querying#which-filters-an-endpoint-accepts).
+
+          | Attribute | Kind | Predicates |
+          |---|---|---|
+          | `created_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `id` | Prefixed ID | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `kind` | One of `dropdown`, `color_swatch`, `buttons` | `eq` `not_eq` `in` `not_in` `null` `not_null` |
+          | `label` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `name` | Text | `eq` `not_eq` `in` `not_in` `cont` `i_cont` `not_cont` `start` `end` `null` `not_null` `present` `blank` |
+          | `position` | Number | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+          | `updated_at` | Date and time | `eq` `not_eq` `in` `not_in` `lt` `lteq` `gt` `gteq` `null` `not_null` |
+
+          **Sort by:** `created_at`, `id`, `kind`, `label`, `name`, `position`, `updated_at`. Prefix a field with `-` to sort descending.
+      x-spree-filters:
+        table: OptionType
+        sortable:
+        - created_at
+        - id
+        - kind
+        - label
+        - name
+        - position
+        - updated_at
+      responses:
+        '200':
+          description: option types listed
+          content:
+            application/json:
+              example:
+                data:
+                - id: opt_UkLWZg9DAJ
+                  name: size
+                  label: Size
+                  position: 1
+                  kind: dropdown
+                  option_values:
+                  - id: optval_UkLWZg9DAJ
+                    option_type_id: opt_UkLWZg9DAJ
+                    name: small
+                    label: Small
+                    position: 1
+                    color_code:
+                    option_type_name: size
+                    option_type_label: Size
+                    image_url:
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/OptionType"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
+  "/api/v3/seller/option_types/{id}":
+    get:
+      summary: Get an option type
+      tags:
+      - Option Types
+      security:
+      - bearer_auth: []
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Seller SDK
+        source: |-
+          import { createSellerClient } from '@spree/seller-sdk'
+
+          const client = createSellerClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+            sellerId: 'sel_UkLWZg9DAJ',
+          })
+
+          const optionType = await client.optionTypes.get('opt_UkLWZg9DAJ', {
+            expand: ['option_values'],
+          })
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Option type ID
+        schema:
+          type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to include. `option_values` adds
+          the values.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: option type found
+          content:
+            application/json:
+              example:
+                id: opt_UkLWZg9DAJ
+                name: size
+                label: Size
+                position: 1
+                kind: dropdown
+                option_values:
+                - id: optval_UkLWZg9DAJ
+                  option_type_id: opt_UkLWZg9DAJ
+                  name: small
+                  label: Small
+                  position: 1
+                  color_code:
+                  option_type_name: size
+                  option_type_label: Size
+                  image_url:
+              schema:
+                "$ref": "#/components/schemas/OptionType"
   "/api/v3/seller/policies":
     get:
       summary: List policies
@@ -13972,6 +14186,7 @@ paths:
                 data:
                 - id: pt_UkLWZg9DAJ
                   name: Apparel
+                  option_type_ids: []
                   option_type_labels: []
                 meta:
                   page: 1
@@ -14035,6 +14250,7 @@ paths:
               example:
                 id: pt_UkLWZg9DAJ
                 name: Apparel
+                option_type_ids: []
                 option_type_labels: []
               schema:
                 "$ref": "#/components/schemas/ProductType"
@@ -24185,6 +24401,9 @@ tags:
 - name: Onboarding
   description: The marketplace checklist a seller completes before admission, and
     what they submit against it
+- name: Option Types
+  description: The marketplace's option types and values, which a seller builds variants
+    from
 - name: Policies
   description: The seller's own legal documents, as the marketplace asks them to publish
 - name: Product Types
@@ -24716,34 +24935,6 @@ components:
       - field_type
       - key
       - value
-      x-typelizer: true
-    OptionType:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        label:
-          type: string
-        position:
-          type: number
-        kind:
-          type: string
-          enum:
-          - dropdown
-          - color_swatch
-          - buttons
-        custom_fields:
-          type: array
-          items:
-            "$ref": "#/components/schemas/CustomField"
-      required:
-      - id
-      - name
-      - label
-      - position
-      - kind
       x-typelizer: true
     OptionValue:
       type: object
@@ -26839,6 +27030,38 @@ components:
       - created_at
       - updated_at
       x-typelizer: true
+    OptionType:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        label:
+          type: string
+        position:
+          type: number
+        kind:
+          type: string
+          enum:
+          - dropdown
+          - color_swatch
+          - buttons
+        custom_fields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CustomField"
+        option_values:
+          type: array
+          items:
+            "$ref": "#/components/schemas/OptionValue"
+      required:
+      - id
+      - name
+      - label
+      - position
+      - kind
+      x-typelizer: true
     OrderLineItem:
       type: object
       properties:
@@ -28544,6 +28767,10 @@ components:
           type: string
         name:
           type: string
+        option_type_ids:
+          type: array
+          items:
+            type: string
         option_type_labels:
           type: array
           items:
@@ -28551,6 +28778,7 @@ components:
       required:
       - id
       - name
+      - option_type_ids
       - option_type_labels
       x-typelizer: true
     Profile:
@@ -33536,8 +33764,10 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/VariantOptionParams"
-          description: One pair per option type the variant takes part in (size, color).
-            Option types and values are created when missing.
+          description: One pair per option type the variant takes part in (size, color),
+            naming an option type and value the marketplace already defines (see `GET
+            /option_types`). A seller cannot add to that vocabulary, so an unknown
+            name is refused with a 422.
         prices:
           type: array
           items:
@@ -33712,6 +33942,23 @@ components:
         updated_at: datetime
       associations: {}
       scopes: {}
+    OptionType:
+      attributes:
+        created_at: datetime
+        id: id
+        kind:
+          enum:
+          - dropdown
+          - color_swatch
+          - buttons
+        label: text
+        name: text
+        position: integer
+        updated_at: datetime
+      associations: {}
+      scopes:
+        search: text
+        search_by_name: text
     Order:
       attributes:
         channel_id: id

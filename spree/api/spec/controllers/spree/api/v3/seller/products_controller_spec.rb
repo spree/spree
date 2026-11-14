@@ -320,6 +320,62 @@ RSpec.describe Spree::Api::V3::Seller::ProductsController, type: :controller do
       expect(mine.reload.variants.map(&:sku)).to include('LAMP-1')
     end
 
+    # Option types and values are the marketplace's vocabulary. The operator's
+    # writer creates whatever a payload names; a seller's payload may only
+    # name what already exists in this store.
+    describe 'variant options' do
+      let!(:size) { create(:option_type, store: store, name: 'size', label: 'Size') }
+      let!(:small) { create(:option_value, option_type: size, name: 'small', label: 'Small') }
+
+      def write_options(options)
+        patch :update, params: { id: mine.prefixed_id, variants: [{ sku: 'LAMP-OPT', options: options }] }, as: :json
+      end
+
+      it "builds a variant from the marketplace's option type and value" do
+        write_options([{ name: 'size', value: 'small' }])
+
+        expect(response).to have_http_status(:ok)
+        variant = mine.reload.variants.find_by(sku: 'LAMP-OPT')
+        expect(variant.option_values).to eq([small])
+      end
+
+      it 'refuses an option type the marketplace does not offer, creating nothing' do
+        expect {
+          write_options([{ name: 'material', value: 'plastic' }])
+        }.not_to change { [Spree::OptionType.count, Spree::OptionValue.count, Spree::Variant.count] }
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('validation_error')
+        expect(json_response['error']['details']['variants'].first).to include('material')
+      end
+
+      it 'refuses a value the option type does not offer, creating nothing' do
+        expect {
+          write_options([{ name: 'size', value: 'enormous' }])
+        }.not_to change { [Spree::OptionValue.count, Spree::Variant.count] }
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['details']['variants'].first).to include('enormous', 'Size')
+      end
+
+      it "refuses another store's option type" do
+        create(:option_type, store: create(:store), name: 'material')
+
+        write_options([{ name: 'material', value: 'plastic' }])
+
+        expect(response).to have_http_status(:unprocessable_content)
+      end
+
+      it 'refuses an unknown option on create too' do
+        expect {
+          post :create, params: { name: 'Plastic Lamp', variants: [{ options: [{ name: 'material', value: 'plastic' }] }] },
+                        as: :json
+        }.not_to change { [Spree::Product.count, Spree::OptionType.count] }
+
+        expect(response).to have_http_status(:unprocessable_content)
+      end
+    end
+
     # `Variant#stock_levels=` resolves a location against the product's store,
     # which on a marketplace spans every seller — so the ids are narrowed to
     # this seller's before the payload gets there.
@@ -587,6 +643,13 @@ RSpec.describe Spree::Api::V3::Seller::ProductsController, type: :controller do
 
     it 'cannot write' do
       patch :update, params: { id: mine.prefixed_id, name: 'Nope' }, as: :json
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    # Refused for the write itself, before it learns which options the
+    # marketplace offers.
+    it 'cannot create, even naming options the store does not offer' do
+      post :create, params: { name: 'Nope', variants: [{ options: [{ name: 'material', value: 'plastic' }] }] }, as: :json
       expect(response).to have_http_status(:forbidden)
     end
   end

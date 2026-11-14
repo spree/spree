@@ -79,7 +79,7 @@ Every line of the file is a variant, and all of a product's lines share one `slu
 
 Keep the line carrying the product's details first. The other lines find their product by slug, so they fail if the product is neither already in the store nor created by an earlier line.
 
-An option value the store does not have yet is created as the line is imported, so a line with the value `Bronze` adds both the variant and a new **Bronze** value to the store's **Color** option.
+An option value the store does not have yet is created as the line is imported, so a line with the value `Bronze` adds both the variant and a new **Bronze** value to the store's **Color** option. A seller's import is the exception: a seller cannot add options or values, so their line fails instead and names the option or value to set up first.
 
 ## How to Fill In Prices in More Than One Currency
 

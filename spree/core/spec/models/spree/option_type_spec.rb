@@ -227,4 +227,29 @@ describe Spree::OptionType, type: :model do
       expect(Spree::ProductOptionType.new(product: product, option_type: own)).to be_valid
     end
   end
+
+  describe '.unknown_options' do
+    let(:store) { create(:store) }
+    let!(:size) { create(:option_type, store: store, name: 'size', label: 'Size') }
+
+    before { create(:option_value, option_type: size, name: 'small', label: 'Small') }
+
+    it 'matches names the way a variant writer does' do
+      expect(described_class.unknown_options(store, [%w[Size Small]])).to be_empty
+    end
+
+    it 'names an option type the store does not have' do
+      expect(described_class.unknown_options(store, [%w[Material Plastic]])).
+        to eq([{ name: 'Material', value: 'Plastic', option_type: nil }])
+    end
+
+    it 'names a value the option type does not have' do
+      expect(described_class.unknown_options(store, [%w[Size Enormous]])).
+        to eq([{ name: 'Size', value: 'Enormous', option_type: size }])
+    end
+
+    it "does not offer another store's option types" do
+      expect(described_class.unknown_options(create(:store), [%w[Size Small]]).first[:option_type]).to be_nil
+    end
+  end
 end
