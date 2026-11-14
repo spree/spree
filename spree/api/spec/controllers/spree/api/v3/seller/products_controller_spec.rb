@@ -645,6 +645,13 @@ RSpec.describe Spree::Api::V3::Seller::ProductsController, type: :controller do
       patch :update, params: { id: mine.prefixed_id, name: 'Nope' }, as: :json
       expect(response).to have_http_status(:forbidden)
     end
+
+    # Refused for the write itself, before it learns which options the
+    # marketplace offers.
+    it 'cannot create, even naming options the store does not offer' do
+      post :create, params: { name: 'Nope', variants: [{ options: [{ name: 'material', value: 'plastic' }] }] }, as: :json
+      expect(response).to have_http_status(:forbidden)
+    end
   end
 
   describe 'bulk actions' do

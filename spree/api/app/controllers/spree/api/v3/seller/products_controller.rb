@@ -310,6 +310,11 @@ module Spree
           # writer matches it, against this store's vocabulary, so an unknown
           # name is a 422 before anything is written.
           def refuse_unknown_variant_options
+            # `create` authorizes inside the action, after this filter: a
+            # caller who may not create a product is told that, not which of
+            # the marketplace's options their payload missed.
+            authorize_resource!(build_resource, :create) if action_name == 'create'
+
             requested = Array(params[:variants]).grep(ActionController::Parameters).
                         flat_map { |variant| Array(variant[:options]).grep(ActionController::Parameters) }.
                         select { |option| option[:name].present? && option[:value].present? }.
@@ -319,7 +324,12 @@ module Spree
 
             option_types = Spree::OptionType.for_store(current_store).
                            where(name: requested.map { |name, _| name.parameterize }.uniq).
-                           includes(:option_values).index_by(&:name)
+                           index_by(&:name)
+            # Only the values named, not every value of each type: a type such
+            # as Size can carry hundreds.
+            known_values = Spree::OptionValue.where(option_type_id: option_types.values.map(&:id),
+                                                    name: requested.map { |_, value| value.parameterize }.uniq).
+                           pluck(:option_type_id, :name).to_set
             errors = ActiveModel::Errors.new(Spree::Product.new)
 
             requested.each do |name, value|
@@ -327,7 +337,7 @@ module Spree
               if option_type.nil?
                 errors.add(:variants, :unknown_option_type,
                            message: I18n.t('spree.errors.messages.unknown_option_type', name: name))
-              elsif option_type.option_values.none? { |option_value| option_value.name == value.parameterize }
+              elsif known_values.exclude?([option_type.id, value.parameterize])
                 errors.add(:variants, :unknown_option_value,
                            message: I18n.t('spree.errors.messages.unknown_option_value',
                                            value: value, option_type: option_type.label.presence || option_type.name))
