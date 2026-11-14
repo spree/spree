@@ -25,6 +25,7 @@ RSpec.describe Spree::Api::OpenAPI::PathSorter do
           post:
             tags:
             - Carts
+            - "Reports: Daily"
       tags:
       - name: Wishlists
         description: Customer wishlists
@@ -47,11 +48,12 @@ RSpec.describe Spree::Api::OpenAPI::PathSorter do
     ])
   end
 
-  it 'rewrites the tags block in the same order, adding undeclared tags' do
+  it 'rewrites the tags block in the same order, adding every undeclared operation tag' do
     expect(sorted['tags']).to eq([
       { 'name' => 'Authentication', 'description' => 'Customer authentication (login, logout, token refresh)' },
       { 'name' => 'Carts' },
       { 'name' => 'Companies' },
+      { 'name' => 'Reports: Daily' },
       { 'name' => 'Wishlists', 'description' => 'Customer wishlists' }
     ])
   end

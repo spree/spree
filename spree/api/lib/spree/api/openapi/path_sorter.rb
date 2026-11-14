@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'yaml'
+
 module Spree
   module Api
     module OpenAPI
@@ -40,13 +42,15 @@ module Spree
 
           tags_range = block_range(lines, 'tags:')
           tag_entries = tags_range ? collect_tag_entries(lines, tags_range) : {}
-          blocks.each { |b| tag_entries[b[:tag]] ||= "- name: #{b[:tag]}\n" if b[:tag] }
+          blocks.flat_map { |block| block[:tags] }.uniq.each do |name|
+            tag_entries[name] ||= YAML.dump([{ 'name' => name }]).delete_prefix("---\n")
+          end
 
           order = tag_entries.keys.sort_by { |name| tag_sort_key(name) }
           rank = order.each_with_index.to_h
 
           sorted_blocks = blocks.each_with_index.sort_by do |block, index|
-            [rank.fetch(block[:tag], rank.size), index]
+            [rank.fetch(block[:tags].first, rank.size), index]
           end.map(&:first)
 
           replacements = { paths_range => sorted_blocks.sum('') { |block| block[:text] } }
@@ -89,7 +93,7 @@ module Spree
           range.each do |i|
             line = lines[i]
             if line.start_with?('- name: ')
-              current = unquote(line.sub('- name: ', '').strip)
+              current = scalar(line.sub('- name: ', ''))
               entries[current] = +''
             end
             entries[current] << line if current
@@ -97,14 +101,15 @@ module Spree
           entries
         end
 
-        # Each path block as { tag:, text: }. A block starts on a line beginning
-        # with two spaces and a slash, optionally quoted.
+        # Each path block as { tags:, text: }, its first tag deciding its place.
+        # A block starts on a line beginning with two spaces and a slash,
+        # optionally quoted.
         def collect_path_blocks(lines, range)
           starts = range.select { |i| path_header?(lines[i]) }
           starts.each_with_index.map do |from, idx|
             to = starts[idx + 1] || range.end
             slice = lines[from...to]
-            { tag: extract_primary_tag(slice), text: slice.join }
+            { tags: extract_tags(slice), text: slice.join }
           end
         end
 
@@ -112,24 +117,25 @@ module Spree
           line.start_with?('  "/') || line.start_with?('  /')
         end
 
-        # The first tag of the first operation in a path block.
-        def extract_primary_tag(slice)
-          slice.each_with_index do |line, idx|
-            next unless line.match?(/\A {6}tags:\s*$/)
-
-            slice[(idx + 1)..].each do |next_line|
-              if next_line.start_with?('      - ')
-                value = next_line[8..].strip
-                return unquote(value) unless value.empty?
-              end
-              break if next_line.match?(/\A {0,4}\S/)
+        # Every operation's tags in a path block, in order.
+        def extract_tags(slice)
+          tags = []
+          in_tags = false
+          slice.each do |line|
+            if line.match?(/\A {6}tags:\s*$/)
+              in_tags = true
+            elsif in_tags && line.start_with?('      - ')
+              tags << scalar(line[8..])
+            else
+              in_tags = false
             end
           end
-          nil
+          tags.uniq
         end
 
-        def unquote(value)
-          value.match?(/\A(["']).*\1\z/) ? value[1..-2] : value
+        # A YAML scalar as written by Psych, quotes and escapes included.
+        def scalar(text)
+          YAML.safe_load(text).to_s
         end
       end
     end
