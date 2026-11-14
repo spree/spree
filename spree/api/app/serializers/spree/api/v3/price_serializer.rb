@@ -9,8 +9,8 @@ module Spree
                  display_compare_at_amount: display_money_type(:display_compare_at_amount),
                  currency: [:string, nullable: true, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'],
                  price_list_id: [:string, nullable: true],
-                 amount_in_cents: [:number, nullable: true, deprecated: 'Use `amount`. Removed in 6.1.'],
-                 compare_at_amount_in_cents: [:number, nullable: true, deprecated: 'Use `compare_at_amount`. Removed in 6.1.']
+                 amount_in_cents: [:number, nullable: true, deprecated: 'Use `amount`. Removed in 6.5.'],
+                 compare_at_amount_in_cents: [:number, nullable: true, deprecated: 'Use `compare_at_amount`. Removed in 6.5.']
 
         attributes :currency
 

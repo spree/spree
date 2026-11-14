@@ -92,7 +92,7 @@ module Spree
 
           # Categories exclude automatic (rule-based) rows, which still live in
           # spree_categories until the Phase 4 migration moves them to Collections.
-          # No-op after migration; the .manual scope is removed in 6.1.
+          # No-op after migration; the .manual scope is removed in 6.3.
           def scope
             super.manual
           end

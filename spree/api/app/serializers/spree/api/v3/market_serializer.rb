@@ -6,14 +6,14 @@ module Spree
                  default_locale: [:string, enum: Spree::Locales::ALL, enum_type_name: 'LocaleCode'],
                  supported_locales: [:string, multi: true, enum: Spree::Locales::ALL, enum_type_name: 'LocaleCode'],
                  country_codes: [:string, multi: true, enum: Spree::IsoData.country_codes, enum_type_name: 'CountryCode'],
-                 country_isos: [:string, multi: true, deprecated: 'Use `country_codes`. Removed in 6.1.'],
+                 country_isos: [:string, multi: true, deprecated: 'Use `country_codes`. Removed in 6.5.'],
                  tax_inclusive: :boolean,
                  default: :boolean
 
         attributes :name, :currency, :default_locale, :tax_inclusive, :default, :country_codes
 
         # @deprecated Storefronts shipped against this name; use +country_codes+.
-        #   Removed in 6.1.
+        #   Removed in 6.5.
         attribute :country_isos, &:country_codes
 
         attribute :supported_locales do |market|

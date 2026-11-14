@@ -14,7 +14,7 @@ namespace :spree do
     created = 0
     skipped = 0
 
-    # The column is dropped in 6.1; until then the model reads tracking from
+    # The column is dropped in 6.3; until then the model reads tracking from
     # the delivery, so the legacy value is read straight off the row.
     fulfillments = Spree::Fulfillment.unscoped.
                    where.not(tracking: [nil, '']).

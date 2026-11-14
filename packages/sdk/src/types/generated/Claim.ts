@@ -12,7 +12,7 @@ interface Claim {
   reason_id: string | null;
   refund_total: string | null;
   /** `refund_total` formatted with its currency symbol in the request's language.
-   * @deprecated Format `refund_total` with its currency instead. Removed in 6.1. */
+   * @deprecated Format `refund_total` with its currency instead. Removed in 6.5. */
   display_refund_total: string | null;
   approved_at: string | null;
   resolved_at: string | null;

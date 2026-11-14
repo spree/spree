@@ -22,9 +22,9 @@ interface EmailAddress {
   quick_checkout: boolean;
   is_default_billing: boolean;
   is_default_shipping: boolean;
-  /** @deprecated Use `state_code`. Removed in 6.1. */
+  /** @deprecated Use `state_code`. Removed in 6.5. */
   state_abbr: string | null;
-  /** @deprecated Use `country_code`. Removed in 6.1. */
+  /** @deprecated Use `country_code`. Removed in 6.5. */
   country_iso: string;
   state_name: string | null;
 }

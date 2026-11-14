@@ -24,7 +24,7 @@ module Spree
     # Spree::Money (amount and currency) and convert it to the provider's own
     # unit. Methods that have not opted in receive an integer in hundredths of
     # the currency, which is wrong for yen and dinar; that bridge is removed in
-    # Spree 6.1.
+    # Spree 6.5.
     class_attribute :accepts_money_amounts, default: false, instance_writer: false
 
     # Blank falls back to the store, so a method only overrides when a merchant
@@ -286,7 +286,7 @@ module Spree
       store_preference(:capture_method).presence || Spree::CaptureMethod::DEFAULT_CAPTURE_METHOD
     end
 
-    # @deprecated Use #capture_at_checkout?; removed in 6.1. Deliberately does
+    # @deprecated Use #capture_at_checkout?; removed in 6.3. Deliberately does
     #   not warn — it runs on every payment and would flood the logs.
     def auto_capture?
       capture_at_checkout?
@@ -342,21 +342,23 @@ module Spree
       public_preference_keys.index_with { |key| get_preference(key) }
     end
 
-    # @deprecated Use {#storefront_visible?}; removed in 6.1.
+    # @deprecated Use {#storefront_visible?}; removed in 6.3.
     def available_on_front_end?
-      Spree::Deprecation.warn('Spree::PaymentMethod#available_on_front_end? is deprecated and will be removed in Spree 6.1. Use #storefront_visible? instead.')
+      Spree::Deprecation.warn(
+        'Spree::PaymentMethod#available_on_front_end? is deprecated and will be removed in Spree 6.3. Use #storefront_visible? instead.'
+      )
       storefront_visible?
     end
 
-    # @deprecated Use {#storefront_visible}; removed in 6.1.
+    # @deprecated Use {#storefront_visible}; removed in 6.3.
     def display_on
-      Spree::Deprecation.warn('Spree::PaymentMethod#display_on is deprecated and will be removed in Spree 6.1. Use #storefront_visible instead.')
+      Spree::Deprecation.warn('Spree::PaymentMethod#display_on is deprecated and will be removed in Spree 6.3. Use #storefront_visible instead.')
       storefront_visible? ? 'both' : 'back_end'
     end
 
-    # @deprecated Use {#storefront_visible=}; removed in 6.1.
+    # @deprecated Use {#storefront_visible=}; removed in 6.3.
     def display_on=(value)
-      Spree::Deprecation.warn('Spree::PaymentMethod#display_on= is deprecated and will be removed in Spree 6.1. Use #storefront_visible= instead.')
+      Spree::Deprecation.warn('Spree::PaymentMethod#display_on= is deprecated and will be removed in Spree 6.3. Use #storefront_visible= instead.')
       self.storefront_visible = value.to_s != 'back_end'
     end
 
@@ -398,7 +400,7 @@ module Spree
       Spree::Deprecation.warn(
         "#{self.class.name} receives amounts as an integer in hundredths, which is wrong for currencies " \
         'without two decimals. Set `self.accepts_money_amounts = true` and take a Spree::Money ' \
-        '(amount and currency); hundredths are removed in Spree 6.1.'
+        '(amount and currency); hundredths are removed in Spree 6.5.'
       )
     end
   end

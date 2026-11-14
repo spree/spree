@@ -30,15 +30,15 @@ module Spree
         @owner || order
       end
 
-      # @deprecated Use {#delivery_rates}; removed in 6.1.
+      # @deprecated Use {#delivery_rates}; removed in 6.3.
       def shipping_rates
-        Spree::Deprecation.warn('Spree::Stock::Package#shipping_rates is deprecated and will be removed in Spree 6.1. Use #delivery_rates instead.')
+        Spree::Deprecation.warn('Spree::Stock::Package#shipping_rates is deprecated and will be removed in Spree 6.3. Use #delivery_rates instead.')
         delivery_rates
       end
 
-      # @deprecated Use {#delivery_rates=}; removed in 6.1.
+      # @deprecated Use {#delivery_rates=}; removed in 6.3.
       def shipping_rates=(rates)
-        Spree::Deprecation.warn('Spree::Stock::Package#shipping_rates= is deprecated and will be removed in Spree 6.1. Use #delivery_rates= instead.')
+        Spree::Deprecation.warn('Spree::Stock::Package#shipping_rates= is deprecated and will be removed in Spree 6.3. Use #delivery_rates= instead.')
         self.delivery_rates = rates
       end
 
@@ -154,9 +154,11 @@ module Spree
         profile.delivery_methods
       end
 
-      # @deprecated Use {#eligible_delivery_methods}; removed in 6.1.
+      # @deprecated Use {#eligible_delivery_methods}; removed in 6.3.
       def shipping_methods
-        Spree::Deprecation.warn('Spree::Stock::Package#shipping_methods is deprecated and will be removed in Spree 6.1. Use #eligible_delivery_methods instead.')
+        Spree::Deprecation.warn(
+          'Spree::Stock::Package#shipping_methods is deprecated and will be removed in Spree 6.3. Use #eligible_delivery_methods instead.'
+        )
         eligible_delivery_methods.to_a
       end
 
@@ -179,9 +181,9 @@ module Spree
         )
       end
 
-      # @deprecated Use {#to_fulfillment}; removed in 6.1.
+      # @deprecated Use {#to_fulfillment}; removed in 6.3.
       def to_shipment
-        Spree::Deprecation.warn('Spree::Stock::Package#to_shipment is deprecated and will be removed in Spree 6.1. Use #to_fulfillment instead.')
+        Spree::Deprecation.warn('Spree::Stock::Package#to_shipment is deprecated and will be removed in Spree 6.3. Use #to_fulfillment instead.')
         to_fulfillment
       end
 

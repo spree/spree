@@ -136,16 +136,16 @@ export type CollectionListParams = ListParams<CollectionFilters, CollectionSort>
 
 export type OrderListParams = ListParams<OrderFilters, OrderSort>
 
-/** @deprecated Renamed to `LineItemInputParams`. Removed in 6.1. */
+/** @deprecated Renamed to `LineItemInputParams`. Removed in 6.5. */
 export type LineItemInput = LineItemInputParams
 
-/** @deprecated Split by action: `AddressCreateParams` and `AddressUpdateParams`. Removed in 6.1. */
+/** @deprecated Split by action: `AddressCreateParams` and `AddressUpdateParams`. Removed in 6.5. */
 export type AddressParams = AddressUpdateParams
 
-/** @deprecated Split by action: `CompanyAddressCreateParams` and `CompanyAddressUpdateParams`. Removed in 6.1. */
+/** @deprecated Split by action: `CompanyAddressCreateParams` and `CompanyAddressUpdateParams`. Removed in 6.5. */
 export type CompanyAddressParams = CompanyAddressUpdateParams
 
-/** @deprecated Renamed to `AppliedPromotion`, the type of `cart.discounts` and `order.discounts`. Removed in 6.1. */
+/** @deprecated Renamed to `AppliedPromotion`, the type of `cart.discounts` and `order.discounts`. Removed in 6.5. */
 export type Discount = AppliedPromotion
 
 // Product filters: the names storefronts import, kept as aliases of the generated types

@@ -5,9 +5,9 @@ import type {CurrencyCode} from '@/types'
 
 interface Currency {
   iso_code: CurrencyCode;
-  /** @deprecated Name the currency from `iso_code` with `Intl.DisplayNames` (type `currency`). Removed in 6.1. */
+  /** @deprecated Name the currency from `iso_code` with `Intl.DisplayNames` (type `currency`). Removed in 6.5. */
   name: string;
-  /** @deprecated Format amounts with `formatMoney` or `Intl.NumberFormat`, which place the symbol. Removed in 6.1. */
+  /** @deprecated Format amounts with `formatMoney` or `Intl.NumberFormat`, which place the symbol. Removed in 6.5. */
   symbol: string;
   decimal_places: number;
 }

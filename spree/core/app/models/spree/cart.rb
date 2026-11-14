@@ -79,7 +79,7 @@ module Spree
       end
     end
     has_many :fulfillment_items, through: :fulfillments, class_name: 'Spree::FulfillmentItem'
-    # Legacy name (5.x carts were orders) — removed in 6.1
+    # Legacy name (5.x carts were orders) — removed in 6.3
     has_many :shipments, -> { order(:created_at, :id) }, class_name: 'Spree::Fulfillment', inverse_of: :cart, deprecated: true
     has_many :order_promotions, class_name: 'Spree::OrderPromotion', inverse_of: :cart, dependent: :destroy
     has_many :promotions, through: :order_promotions, class_name: 'Spree::Promotion'
@@ -107,7 +107,7 @@ module Spree
     delegate :name, to: :customer, prefix: true, allow_nil: true
 
     # @deprecated Store API bridge — carts have no order-style number; the
-    #   prefixed ID is the identifier. Removed from the API in 6.1.
+    #   prefixed ID is the identifier. Removed from the API in 6.5.
     # @return [String]
     def number
       prefixed_id

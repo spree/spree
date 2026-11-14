@@ -32,7 +32,7 @@ class UnifyImportAndExportTenancy < ActiveRecord::Migration[8.1]
     add_index :spree_imports, [:store_id, :seller_id]
     add_index :spree_exports, [:store_id, :seller_id]
 
-    # `owner_type`/`owner_id` survive to 6.1 as the backfill's source and its
+    # `owner_type`/`owner_id` survive to 6.3 as the backfill's source and its
     # rollback path, and `Import#owner` keeps reading through them for one
     # release. `null: false` on the new store_id waits for the same release,
     # once spree:upgrade:backfill_import_export_tenancy has run everywhere.

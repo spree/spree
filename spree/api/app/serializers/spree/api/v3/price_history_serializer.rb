@@ -7,7 +7,7 @@ module Spree
         typelize display_amount: display_money_type(:display_amount, nullable: false),
                  currency: [:string, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'],
                  recorded_at: :string,
-                 amount_in_cents: [:number, nullable: true, deprecated: 'Use `amount`. Removed in 6.1.']
+                 amount_in_cents: [:number, nullable: true, deprecated: 'Use `amount`. Removed in 6.5.']
 
         attributes :currency
 

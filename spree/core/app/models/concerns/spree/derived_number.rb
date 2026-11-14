@@ -11,7 +11,7 @@ module Spree
   #
   # Rows created before 6.0 keep their stored number, so gateway references
   # and packing slips already in the wild still resolve. New rows never write
-  # the column — it is frozen legacy data awaiting the 6.1 drop.
+  # the column — it is frozen legacy data awaiting the 6.3 drop.
   module DerivedNumber
     extend ActiveSupport::Concern
 

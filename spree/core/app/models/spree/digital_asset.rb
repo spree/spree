@@ -141,8 +141,8 @@ module Spree
       provider_type.blank? || Spree.digital_asset_providers.map(&:to_s).include?(provider_type)
     end
 
-    # The legacy digital.* events are dual-emitted for one release
-    # (webhook contract bridge — removed in 6.1).
+    # The legacy digital.* events are dual-emitted until 6.5
+    # (webhook contract bridge — removed in 6.5).
     def publish_create_event
       publish_event('digital.created')
       super

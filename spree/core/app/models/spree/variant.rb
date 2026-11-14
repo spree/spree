@@ -546,21 +546,21 @@ module Spree
       update_column(:primary_media_id, first_media&.id)
     end
 
-    # @deprecated Read #gallery_media directly; removed in 6.1. Nothing in
+    # @deprecated Read #gallery_media directly; removed in 6.3. Nothing in
     #   Spree calls this — a hover image is a storefront presentation choice,
     #   not something core should name.
     # @return [Spree::Media, nil]
     def secondary_image
-      Spree::Deprecation.warn('Spree::Variant#secondary_image is deprecated and will be removed in Spree 6.1. Use #gallery_media instead.')
+      Spree::Deprecation.warn('Spree::Variant#secondary_image is deprecated and will be removed in Spree 6.3. Use #gallery_media instead.')
       gallery_media.second
     end
 
-    # @deprecated Read #gallery_media directly; removed in 6.1. Nothing in
+    # @deprecated Read #gallery_media directly; removed in 6.3. Nothing in
     #   Spree calls this, and which images to show beside the main one is a
     #   storefront presentation choice.
     # @return [Array<Spree::Media>]
     def additional_images
-      Spree::Deprecation.warn('Spree::Variant#additional_images is deprecated and will be removed in Spree 6.1. Use #gallery_media instead.')
+      Spree::Deprecation.warn('Spree::Variant#additional_images is deprecated and will be removed in Spree 6.3. Use #gallery_media instead.')
       gallery_media.reject { |media| media.id == primary_media&.id }
     end
 
@@ -752,15 +752,15 @@ module Spree
       stock_levels.where.not(stock_location_id: location_ids_in_payload).destroy_all if persisted?
     end
 
-    # @deprecated Use {#stock_levels}; removed in 6.1.
+    # @deprecated Use {#stock_levels}; removed in 6.3.
     def stock_items
-      Spree::Deprecation.warn('Spree::Variant#stock_items is deprecated and will be removed in Spree 6.1. Use #stock_levels instead.')
+      Spree::Deprecation.warn('Spree::Variant#stock_items is deprecated and will be removed in Spree 6.3. Use #stock_levels instead.')
       stock_levels
     end
 
-    # @deprecated Use {#stock_levels=}; removed in 6.1.
+    # @deprecated Use {#stock_levels=}; removed in 6.3.
     def stock_items=(value)
-      Spree::Deprecation.warn('Spree::Variant#stock_items= is deprecated and will be removed in Spree 6.1. Use #stock_levels= instead.')
+      Spree::Deprecation.warn('Spree::Variant#stock_items= is deprecated and will be removed in Spree 6.3. Use #stock_levels= instead.')
       self.stock_levels = value
     end
 
@@ -788,9 +788,11 @@ module Spree
       end
     end
 
-    # @deprecated Use +stock_levels_attributes=+; removed in 6.1.
+    # @deprecated Use +stock_levels_attributes=+; removed in 6.3.
     def stock_items_attributes=(value)
-      Spree::Deprecation.warn('Spree::Variant#stock_items_attributes= is deprecated and will be removed in Spree 6.1. Use #stock_levels_attributes= instead.')
+      Spree::Deprecation.warn(
+        'Spree::Variant#stock_items_attributes= is deprecated and will be removed in Spree 6.3. Use #stock_levels_attributes= instead.'
+      )
       self.stock_levels_attributes = value
     end
 

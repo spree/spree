@@ -443,7 +443,7 @@ module Spree
           dimension :payment_status, base: :orders, column: :payment_status,
                     values: -> { Spree::Order::PAYMENT_STATUSES }
           # The rollup values Orders::UpdateStatuses writes today; the model
-          # constant still carries the legacy machine states until 6.1.
+          # constant still carries the legacy machine states until 6.3.
           dimension :fulfillment_status, base: :orders, column: :fulfillment_status,
                     values: -> { %w[backorder canceled partial unfulfilled fulfilled delivered] }
 

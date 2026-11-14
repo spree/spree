@@ -132,7 +132,7 @@ namespace :spree do
     puts "\n  migrated #{migrated}, skipped #{skipped}, failed #{failed}. (Manual categories stay as categories.)"
 
     # Sever the taxonomy structure from the surviving (manual) categories — in 6.0
-    # categories are store-owned; Taxonomy + the taxonomy_id column drop in 6.1.
+    # categories are store-owned; Taxonomy + the taxonomy_id column drop in 6.3.
     puts 'Severing taxonomy links from surviving categories...'
 
     # Drop legacy taxonomy roots (parentless, taxonomy-backed containers) left with no

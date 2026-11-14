@@ -166,7 +166,7 @@ describe('carts', () => {
       expect(result.id).toBe('cart_1')
     })
 
-    it('still accepts a number until 6.1', async () => {
+    it('still accepts a number until 6.5', async () => {
       const result = await client.carts.storeCredits.apply('cart_1', 25, opts)
       expect(result.id).toBe('cart_1')
     })

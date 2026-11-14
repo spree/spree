@@ -1,5 +1,5 @@
 module Spree
-  # Migration-only shell, removed in Spree 6.1: rows survive solely as source
+  # Migration-only shell, removed in Spree 6.3: rows survive solely as source
   # data for the 5.6→6.0 zone, market and tax migrations. Countries and states
   # are reference data in 6.0, so member ids resolve against the legacy tables
   # rather than through associations.

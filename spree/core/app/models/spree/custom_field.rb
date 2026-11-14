@@ -88,30 +88,30 @@ module Spree
     end
 
     #
-    # Deprecated 6.0 names, removed in 6.1
+    # Deprecated 6.0 names, removed in 6.3
     #
     def metafield_definition
-      Spree::Deprecation.warn('#metafield_definition is deprecated and will be removed in Spree 6.1. Use #custom_field_definition instead.')
+      Spree::Deprecation.warn('#metafield_definition is deprecated and will be removed in Spree 6.3. Use #custom_field_definition instead.')
       custom_field_definition
     end
 
     def metafield_definition_id
-      Spree::Deprecation.warn('#metafield_definition_id is deprecated and will be removed in Spree 6.1. Use #custom_field_definition_id instead.')
+      Spree::Deprecation.warn('#metafield_definition_id is deprecated and will be removed in Spree 6.3. Use #custom_field_definition_id instead.')
       custom_field_definition_id
     end
 
     def metafield_definition_id=(value)
-      Spree::Deprecation.warn('#metafield_definition_id= is deprecated and will be removed in Spree 6.1. Use #custom_field_definition_id= instead.')
+      Spree::Deprecation.warn('#metafield_definition_id= is deprecated and will be removed in Spree 6.3. Use #custom_field_definition_id= instead.')
       self.custom_field_definition_id = value
     end
 
     def metafield_definition=(value)
-      Spree::Deprecation.warn('#metafield_definition= is deprecated and will be removed in Spree 6.1. Use #custom_field_definition= instead.')
+      Spree::Deprecation.warn('#metafield_definition= is deprecated and will be removed in Spree 6.3. Use #custom_field_definition= instead.')
       self.custom_field_definition = value
     end
 
     def name
-      Spree::Deprecation.warn('#name is deprecated and will be removed in Spree 6.1. Use #label instead.')
+      Spree::Deprecation.warn('#name is deprecated and will be removed in Spree 6.3. Use #label instead.')
       label
     end
 

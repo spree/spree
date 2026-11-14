@@ -5,7 +5,7 @@ RSpec.describe Spree::Api::V3::StockLocationSerializer do
 
   subject { described_class.new(stock_location, params: { store: @default_store, currency: 'USD' }).to_h }
 
-  it 'keeps the 5.6 names for the country and state codes until 6.1' do
+  it 'keeps the 5.6 names for the country and state codes until 6.5' do
     expect(subject).to include('country_code' => 'US', 'country_iso' => 'US', 'state_code' => 'DC', 'state_abbr' => 'DC')
   end
 

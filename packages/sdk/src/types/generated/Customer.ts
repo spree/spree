@@ -14,7 +14,7 @@ interface Customer {
   full_name: string;
   available_store_credit_total: string;
   /** `available_store_credit_total` formatted with its currency symbol in the request's language.
-   * @deprecated Format `available_store_credit_total` with its currency instead. Removed in 6.1. */
+   * @deprecated Format `available_store_credit_total` with its currency instead. Removed in 6.5. */
   display_available_store_credit_total: string;
   addresses: Array<Address>;
   default_billing_address: Address | null;

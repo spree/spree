@@ -7,7 +7,7 @@ class RenameTaxonsToCategories < ActiveRecord::Migration[7.2]
     # Promotion↔category join (Spree::PromotionRuleCategory) and the Mobility
     # translations table follow the same rename now, so no class needs a
     # table_name/foreign_key pin. (spree_taxon_rules + spree_prototype_taxons keep
-    # taxon_id: the former is dropped in 6.1, the latter renamed by 6.0-product-types.)
+    # taxon_id: the former is dropped in 6.3, the latter renamed by 6.0-product-types.)
     rename_table :spree_promotion_rule_taxons, :spree_promotion_rule_categories
     rename_column :spree_promotion_rule_categories, :taxon_id, :category_id
 

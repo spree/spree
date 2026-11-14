@@ -3,7 +3,7 @@ module Spree
     module V3
       module Admin
         class RefundSerializer < V3::RefundSerializer
-          # The Store API keeps this deprecated name until 6.1.
+          # The Store API keeps this deprecated name until 6.5.
           _attributes.delete(:reimbursement_id)
 
           typelize payment_id: [:string, nullable: true],

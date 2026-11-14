@@ -5,7 +5,7 @@ module Spree
     # Strips all non-price-like characters from the number, taking into account locale settings.
     def self.parse(number)
       Spree::Deprecation.warn(
-        'Spree::LocalizedNumber is deprecated and will be removed in Spree 6.1. ' \
+        'Spree::LocalizedNumber is deprecated and will be removed in Spree 6.3. ' \
         'Parse a canonical decimal string with BigDecimal, or Spree::Money::Rounding.parse_canonical for API input.'
       )
       return number unless number.is_a?(String)

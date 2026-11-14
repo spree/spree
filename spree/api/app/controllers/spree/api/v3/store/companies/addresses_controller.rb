@@ -12,7 +12,7 @@ module Spree
             request_params :company_address do |body|
               body.include_attributes Spree::Api::V3::AddressRequestSchema
               body.require_attributes :first_name, :last_name, :address1, :city, :country_code, on: :create
-              body.attribute :zipcode, :string, deprecated: 'Use `postal_code`. Removed in 6.1.'
+              body.attribute :zipcode, :string, deprecated: 'Use `postal_code`. Removed in 6.5.'
               body.attribute :default_billing, :boolean,
                 permit: false,
                 description: "True makes this the node's default billing address, false gives that up, and leaving it out changes nothing."

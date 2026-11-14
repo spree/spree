@@ -43,9 +43,9 @@ module Spree
 
     # Redemption order: the oldest credit is spent first.
     scope :oldest_first, -> { order(:created_at, :id) }
-    # @deprecated Removed in Spree 6.1 — store credit types are gone; use {.oldest_first}.
+    # @deprecated Removed in Spree 6.3 — store credit types are gone; use {.oldest_first}.
     scope :order_by_priority, lambda {
-      Spree::Deprecation.warn('Spree::StoreCredit.order_by_priority is deprecated and will be removed in Spree 6.1. Use .oldest_first instead.')
+      Spree::Deprecation.warn('Spree::StoreCredit.order_by_priority is deprecated and will be removed in Spree 6.3. Use .oldest_first instead.')
       oldest_first
     }
 

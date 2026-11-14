@@ -24213,11 +24213,11 @@ components:
             express checkouts that share a partial address.
         country_iso:
           type: string
-          description: 'Deprecated: Use `country_code`. Removed in 6.1.'
+          description: 'Deprecated: Use `country_code`. Removed in 6.5.'
           deprecated: true
         state_abbr:
           type: string
-          description: 'Deprecated: Use `state_code`. Removed in 6.1.'
+          description: 'Deprecated: Use `state_code`. Removed in 6.5.'
           deprecated: true
         is_default_billing:
           type: boolean
@@ -24269,11 +24269,11 @@ components:
             express checkouts that share a partial address.
         country_iso:
           type: string
-          description: 'Deprecated: Use `country_code`. Removed in 6.1.'
+          description: 'Deprecated: Use `country_code`. Removed in 6.5.'
           deprecated: true
         state_abbr:
           type: string
-          description: 'Deprecated: Use `state_code`. Removed in 6.1.'
+          description: 'Deprecated: Use `state_code`. Removed in 6.5.'
           deprecated: true
         is_default_billing:
           type: boolean
@@ -24307,7 +24307,7 @@ components:
           format: decimal
           pattern: "^-?\\d+(\\.\\d+)?$"
           description: Defaults to as much as the cart can use. A JSON number is still
-            read until 6.1, with a deprecation warning.
+            read until 6.5, with a deprecation warning.
           example: '10.00'
     CartAddressParams:
       type: object
@@ -24351,11 +24351,11 @@ components:
             express checkouts that share a partial address.
         country_iso:
           type: string
-          description: 'Deprecated: Use `country_code`. Removed in 6.1.'
+          description: 'Deprecated: Use `country_code`. Removed in 6.5.'
           deprecated: true
         state_abbr:
           type: string
-          description: 'Deprecated: Use `state_code`. Removed in 6.1.'
+          description: 'Deprecated: Use `state_code`. Removed in 6.5.'
           deprecated: true
     CompanyAddressCreateParams:
       type: object
@@ -24392,7 +24392,7 @@ components:
           description: For countries without states in the database.
         zipcode:
           type: string
-          description: 'Deprecated: Use `postal_code`. Removed in 6.1.'
+          description: 'Deprecated: Use `postal_code`. Removed in 6.5.'
           deprecated: true
         default_billing:
           type: boolean
@@ -24443,7 +24443,7 @@ components:
           description: For countries without states in the database.
         zipcode:
           type: string
-          description: 'Deprecated: Use `postal_code`. Removed in 6.1.'
+          description: 'Deprecated: Use `postal_code`. Removed in 6.5.'
           deprecated: true
         default_billing:
           type: boolean

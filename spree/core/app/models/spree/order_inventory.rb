@@ -10,9 +10,9 @@ module Spree
 
     delegate :fulfillment_items, to: :line_item
 
-    # @deprecated Use {#fulfillment_items}; removed in 6.1.
+    # @deprecated Use {#fulfillment_items}; removed in 6.3.
     def inventory_units
-      Spree::Deprecation.warn('Spree::OrderInventory#inventory_units is deprecated and will be removed in Spree 6.1. Use #fulfillment_items instead.')
+      Spree::Deprecation.warn('Spree::OrderInventory#inventory_units is deprecated and will be removed in Spree 6.3. Use #fulfillment_items instead.')
       fulfillment_items
     end
 

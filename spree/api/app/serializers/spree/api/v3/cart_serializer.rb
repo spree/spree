@@ -4,7 +4,8 @@ module Spree
       # Store API Cart Serializer
       # Pre-purchase cart data with checkout progression info
       class CartSerializer < BaseSerializer
-        typelize number: [:string, deprecated: 'Use `id`; a cart has no order number. Removed in 6.1.'], current_step: :string, completed_steps: 'string[]', token: :string,
+        typelize number: [:string, deprecated: 'Use `id`; a cart has no order number. Removed in 6.5.'],
+                 current_step: :string, completed_steps: 'string[]', token: :string,
                  email: [:string, nullable: true], customer_note: [:string, nullable: true],
                  market_id: [:string, nullable: true], channel_id: [:string, nullable: true], currency: [:string, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'],
                  locale: [:string, nullable: true, enum: Spree::Locales::ALL, enum_type_name: 'LocaleCode'], total_quantity: :number, coupon_code: [:string, nullable: true],
@@ -52,7 +53,7 @@ module Spree
         end
 
         # @deprecated `number` mirrors `id` (carts have no order-style
-        #   number) — kept one release for 5.x clients; removed in 6.1.
+        #   number) — kept until 6.5 for 5.x clients.
         attributes :number, :token, :email, :customer_note, :po_number,
                    :currency, :locale, :total_quantity, :warnings, :coupon_code
 
@@ -75,7 +76,7 @@ module Spree
         # with its numbers stripped tells them nothing they can act on.
         attribute :requirements do |order|
           # 5.6 storefronts matched the delivery requirement by its field, so
-          # it keeps the old name until 6.1; `code` already carries the new one.
+          # it keeps the old name until 6.5; `code` already carries the new one.
           requirements = Spree::Checkout::Requirements.new(order).call.map do |requirement|
             requirement[:field] == 'delivery_method' ? requirement.merge(field: 'shipping_method') : requirement
           end

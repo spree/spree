@@ -30,9 +30,9 @@ module Spree
       @wishlist_items_count ||= variant_ids.count
     end
 
-    # @deprecated Use {#wishlist_items_count}; removed in 6.1.
+    # @deprecated Use {#wishlist_items_count}; removed in 6.3.
     def wished_items_count
-      Spree::Deprecation.warn('Spree::Wishlist#wished_items_count is deprecated and will be removed in Spree 6.1. Use #wishlist_items_count instead.')
+      Spree::Deprecation.warn('Spree::Wishlist#wished_items_count is deprecated and will be removed in Spree 6.3. Use #wishlist_items_count instead.')
       wishlist_items_count
     end
 

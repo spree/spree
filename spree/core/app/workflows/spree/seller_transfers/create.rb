@@ -9,7 +9,7 @@ module Spree
     #
     # Idempotent by the unique index on `(order_id) WHERE kind = 'earning'` —
     # the fulfillment event can fire more than once (it is dual-emitted under a
-    # legacy name for one release), and a re-fired event must find the earning
+    # legacy name until 6.5), and a re-fired event must find the earning
     # that exists rather than credit the seller twice.
     class Create < Spree::Workflow
       hooks :validate, :after_create

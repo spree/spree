@@ -48,7 +48,7 @@ class RenameShippingToFulfillmentAndDelivery < ActiveRecord::Migration[7.2]
     rename_column :spree_orders, :shipment_state, :fulfillment_status
     rename_column :spree_orders, :shipment_total, :delivery_total
 
-    # Authoritative from 6.0; display_on stays readable until the 6.1 drop.
+    # Authoritative from 6.0; display_on stays readable until the 6.3 drop.
     # Existing rows get their real value from the spree:migrate_shipping_to_delivery
     # data task, which runs after this migration.
     add_column :spree_delivery_methods, :storefront_visible, :boolean, null: false, default: true

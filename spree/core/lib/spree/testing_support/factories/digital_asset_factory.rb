@@ -8,6 +8,6 @@ FactoryBot.define do
     variant
   end
 
-  # @deprecated Use :digital_asset; removed in 6.1.
+  # @deprecated Use :digital_asset; removed in 6.3.
   factory :digital, parent: :digital_asset
 end
