@@ -203,6 +203,44 @@ export const SUPPLIER_ATTRIBUTES = [
   'postal_code',
 ] as const
 export const PRODUCT_TYPE_ATTRIBUTES = ['name'] as const
+export const OPTION_TYPE_ATTRIBUTES = ['name', 'label', 'position', 'filterable', 'kind'] as const
+export const COLLECTION_ATTRIBUTES = [
+  'permalink',
+  'name',
+  'description',
+  'meta_title',
+  'meta_description',
+  'meta_keywords',
+  'automatic',
+  'rules_match_policy',
+  'sort_order',
+] as const
+export const PROMOTION_ATTRIBUTES = [
+  'name',
+  'description',
+  'code',
+  'path',
+  'starts_at',
+  'expires_at',
+  'usage_limit',
+  'match_policy',
+  'kind',
+] as const
+export const COMPANY_ATTRIBUTES = ['name', 'kind', 'po_number_required'] as const
+export const PRICE_LIST_ATTRIBUTES = [
+  'name',
+  'description',
+  'match_policy',
+  'starts_at',
+  'ends_at',
+] as const
+export const CATALOG_ATTRIBUTES = [
+  'name',
+  'description',
+  'active',
+  'minimum_order_quantity',
+  'order_multiple',
+] as const
 export const CATEGORY_ATTRIBUTES = [
   'permalink',
   'name',
@@ -361,6 +399,16 @@ export const deliveryZoneSchema = z
     message: 'a zone lists either `countries` or `all_countries_except`, not both',
   })
 
+// A rule or action of some registered kind. Its settings are that kind's own,
+// so the API checks them; the file only says which kind and what it holds.
+export const ruleSchema = z
+  .object({
+    type: nonEmpty.describe('Kind shorthand, e.g. `item_total_rule`.'),
+    active: z.boolean().optional(),
+    preferences: z.record(z.string(), z.unknown()).optional(),
+  })
+  .strict()
+
 export const calculatorSchema = z
   .object({
     type: nonEmpty.describe('Calculator type shorthand, e.g. `flat_rate`.'),
@@ -377,6 +425,10 @@ export const deliveryMethodSchema = z
     calculator: calculatorSchema.optional(),
     tax_category: nonEmpty.optional().describe('Tax category name.'),
     pickup_locations: names('Stock location names a pickup method offers as collection points.'),
+    rules: z
+      .array(ruleSchema)
+      .optional()
+      .describe('Eligibility rules; the whole set, since rules absent here are removed.'),
   })
   .strict()
 
@@ -408,11 +460,48 @@ export const supplierSchema = z
   })
   .strict()
 
+export const optionValueSchema = z
+  .object({
+    name: nonEmpty,
+    label: nonEmpty.optional(),
+    color_code: z.string().nullable().optional().describe('Hex color of a `color_swatch` value.'),
+  })
+  .strict()
+
+export const optionTypeSchema = z
+  .object({
+    ...specShape('option_types', OPTION_TYPE_ATTRIBUTES),
+    name: nonEmpty,
+    label: nonEmpty,
+    values: z
+      .array(optionValueSchema)
+      .optional()
+      .describe(
+        'Option values in display order; the whole set, since values absent here are removed.',
+      ),
+  })
+  .strict()
+
 export const productTypeSchema = z
   .object({
     ...specShape('product_types', PRODUCT_TYPE_ATTRIBUTES),
     name: nonEmpty,
     delivery_profile: nonEmpty.optional().describe('Delivery profile name.'),
+    option_types: names('Option type names given to products created with this type.'),
+    categories: names('Category permalinks given to products created with this type.'),
+    custom_fields: z
+      .array(
+        z
+          .object({
+            key: nonEmpty.describe(
+              'Key of a product custom field definition; `namespace.key` outside the default namespace.',
+            ),
+            required: z.boolean().optional(),
+          })
+          .strict(),
+      )
+      .optional()
+      .describe('The custom fields the product form shows for this type, in order; the whole set.'),
   })
   .strict()
 
@@ -486,6 +575,54 @@ export const productSchema = z
     { message: 'a simple product that sets prices or stock needs its `sku`', path: ['sku'] },
   )
 
+export const collectionSchema = z
+  .object({
+    ...specShape('collections', COLLECTION_ATTRIBUTES),
+    permalink: slug,
+    name: nonEmpty,
+    rules: z
+      .array(
+        z
+          .object({
+            type: nonEmpty.describe('Rule kind shorthand, e.g. `tag`.'),
+            value: z.string().optional(),
+            match_policy: z.string().optional(),
+          })
+          .strict(),
+      )
+      .optional()
+      .describe('Rules of an automatic collection; the whole set.'),
+    products: names(
+      'Product slugs of a hand-curated collection; the whole set, since products absent here are removed.',
+    ),
+    custom_fields: customFieldValues,
+  })
+  .strict()
+  .refine((collection) => !(collection.automatic && collection.products), {
+    message: 'an automatic collection takes its products from `rules`, not from `products`',
+    path: ['products'],
+  })
+
+export const promotionActionSchema = ruleSchema
+  .extend({
+    calculator: calculatorSchema.optional().describe('For adjustment actions.'),
+  })
+  .strict()
+
+export const promotionSchema = z
+  .object({
+    ...specShape('promotions', PROMOTION_ATTRIBUTES),
+    name: nonEmpty,
+    // Codes are saved in lower case and matched ignoring case.
+    code: z.string().trim().toLowerCase().nullable().optional(),
+    rules: z.array(ruleSchema).optional().describe('Eligibility rules; the whole set.'),
+    actions: z
+      .array(promotionActionSchema)
+      .optional()
+      .describe('What the promotion does; the whole set.'),
+  })
+  .strict()
+
 export const customerSchema = z
   .object({
     ...specShape('customers', CUSTOMER_ATTRIBUTES),
@@ -495,6 +632,50 @@ export const customerSchema = z
     customer_groups: names('Customer group names.'),
   })
   .strict()
+
+export const companySchema = z
+  .object({
+    ...specShape('companies', COMPANY_ATTRIBUTES),
+    name: nonEmpty,
+    parent: nonEmpty.optional().describe('Name of the company or division this one sits under.'),
+    members: z
+      .array(z.string().trim().toLowerCase().email())
+      .optional()
+      .describe(
+        'Emails of existing customers who buy for this company. Listed customers are added; members added elsewhere are kept.',
+      ),
+  })
+  .strict()
+
+export const priceListSchema = z
+  .object({
+    ...specShape('price_lists', PRICE_LIST_ATTRIBUTES),
+    name: nonEmpty,
+    active: z
+      .boolean()
+      .optional()
+      .describe('Activates or deactivates the list; a new list starts as a draft.'),
+    rules: z
+      .array(ruleSchema)
+      .optional()
+      .describe(
+        'Who and what the list applies to; the whole set. A rule that lists records takes their natural keys.',
+      ),
+  })
+  .strict()
+
+export const catalogSchema = z
+  .object({
+    ...specShape('catalogs', CATALOG_ATTRIBUTES),
+    name: nonEmpty,
+    companies: names('Company names the catalog is assigned to; a company covers its divisions.'),
+    customer_groups: names('Customer group names the catalog is assigned to.'),
+    products: names('Product slugs in the assortment; the whole set.'),
+  })
+  .strict()
+  .describe(
+    '`companies` and `customer_groups` together are the whole audience: set one and the other is cleared unless it is set too.',
+  )
 
 export const sellerSchema = z
   .object({
@@ -572,11 +753,17 @@ export const configSchema = z
     package_types: z.array(packageTypeSchema).optional(),
     payment_methods: z.array(paymentMethodSchema).optional(),
     suppliers: z.array(supplierSchema).optional(),
-    product_types: z.array(productTypeSchema).optional(),
+    option_types: z.array(optionTypeSchema).optional(),
     custom_field_definitions: z.array(customFieldDefinitionSchema).optional(),
     categories: z.array(categorySchema).optional(),
+    product_types: z.array(productTypeSchema).optional(),
     products: z.array(productSchema).optional(),
+    collections: z.array(collectionSchema).optional(),
+    promotions: z.array(promotionSchema).optional(),
     customers: z.array(customerSchema).optional(),
+    companies: z.array(companySchema).optional(),
+    price_lists: z.array(priceListSchema).optional(),
+    catalogs: z.array(catalogSchema).optional(),
     sellers: z.array(sellerSchema).optional(),
     return_reasons: z.array(returnReasonSchema).optional(),
     claim_reasons: z.array(claimReasonSchema).optional(),
@@ -605,11 +792,18 @@ export type PackageTypeEntry = z.infer<typeof packageTypeSchema>
 export type PaymentMethodEntry = z.infer<typeof paymentMethodSchema>
 export type StockLocationEntry = z.infer<typeof stockLocationSchema>
 export type SupplierEntry = z.infer<typeof supplierSchema>
+export type OptionTypeEntry = z.infer<typeof optionTypeSchema>
+export type RuleEntry = z.infer<typeof ruleSchema>
 export type ProductTypeEntry = z.infer<typeof productTypeSchema>
 export type CategoryEntry = z.infer<typeof categorySchema>
 export type VariantEntry = z.infer<typeof variantSchema>
 export type ProductEntry = z.infer<typeof productSchema>
+export type CollectionEntry = z.infer<typeof collectionSchema>
+export type PromotionEntry = z.infer<typeof promotionSchema>
 export type CustomerEntry = z.infer<typeof customerSchema>
+export type CompanyEntry = z.infer<typeof companySchema>
+export type PriceListEntry = z.infer<typeof priceListSchema>
+export type CatalogEntry = z.infer<typeof catalogSchema>
 export type SellerEntry = z.infer<typeof sellerSchema>
 export type ReasonEntry = z.infer<typeof returnReasonSchema>
 export type TaxExemptionReasonEntry = z.infer<typeof taxExemptionReasonSchema>

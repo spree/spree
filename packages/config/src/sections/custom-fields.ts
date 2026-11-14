@@ -18,7 +18,7 @@ const FIXED = ['resource_type', 'namespace', 'key', 'field_type'] as const
  * key, e.g. `product:custom.material`. A key written without a namespace is
  * in the default one.
  */
-function definitionKey(resourceType: string, key: string): string {
+export function definitionKey(resourceType: string, key: string): string {
   return `${resourceType}:${key.includes('.') ? key : `${DEFAULT_NAMESPACE}.${key}`}`
 }
 

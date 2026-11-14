@@ -5,7 +5,6 @@ import type {
   PackageType as SdkPackageType,
 } from '@spree/admin-sdk'
 import type { RunContext } from '../context.js'
-import { numericString } from '../diff.js'
 import {
   DELIVERY_METHOD_ATTRIBUTES,
   DELIVERY_PROFILE_ATTRIBUTES,
@@ -15,11 +14,13 @@ import {
   type DeliveryZoneEntry,
   PACKAGE_TYPE_ATTRIBUTES,
   type PackageTypeEntry,
+  type RuleEntry,
 } from '../schema.js'
-import { decimalString } from '../spec.js'
 import type { LiveRecord } from '../types.js'
+import { comparableRules, desiredRules, rulesToFile, wirePreferences, wireRules } from './rules.js'
 import {
   FIRST_PARTY,
+  filePreferences,
   keysOf,
   type Payload,
   partialIdList,
@@ -198,78 +199,8 @@ export const deliveryZones: Section<DeliveryZoneEntry, DeliveryZone> = {
 // Pickup may also run from sellers' warehouses, which the file cannot name.
 const methodPickupLocations = partialIdList('stock_locations', 'stock_location_ids')
 
-function isEmptyPreference(value: unknown): boolean {
-  if (value === null || value === undefined) return true
-  if (Array.isArray(value)) return value.length === 0
-  return typeof value === 'object' && Object.keys(value as object).length === 0
-}
-
-function numeric(value: unknown): unknown {
-  if (typeof value !== 'string') return value
-  return numericString(value) ?? value
-}
-
-interface PreferenceSchema {
-  type?: string | string[]
-  format?: string
-  pattern?: string
-}
-
-interface CalculatorType {
-  type: string
-  schema?: { properties?: Record<string, PreferenceSchema> }
-}
-
-/**
- * An amount, rate or percentage: a string (possibly nullable) in money or
- * decimal format, or a percentage that only carries the decimal pattern.
- */
-function isDecimalPreference(schema: PreferenceSchema | undefined): boolean {
-  if (!schema) return false
-  const types = Array.isArray(schema.type) ? schema.type : [schema.type]
-  if (!types.includes('string')) return false
-  return (
-    schema.format === 'money' ||
-    schema.format === 'decimal' ||
-    schema.pattern === String.raw`^-?\d+(\.\d+)?$`
-  )
-}
-
-const calculatorTypes = new WeakMap<RunContext, Promise<CalculatorType[]>>()
-
-/** The calculator types and their preference schemas, read once per run. */
-function calculatorsFor(ctx: RunContext): Promise<CalculatorType[]> {
-  let types = calculatorTypes.get(ctx)
-  if (!types) {
-    types = ctx.client
-      .request<{ data: CalculatorType[] }>('GET', '/delivery_methods/calculators')
-      .then((response) => response.data)
-    calculatorTypes.set(ctx, types)
-  }
-  return types
-}
-
-/**
- * Calculator preferences as the API takes them: an amount the file wrote as
- * a number goes out as a decimal string, per the calculator's own schema.
- */
-async function wireCalculator(
-  calculator: { type: string; preferences?: Record<string, unknown> },
-  ctx: RunContext,
-) {
-  if (!calculator.preferences) return calculator
-  const definition = (await calculatorsFor(ctx)).find((type) => type.type === calculator.type)
-  const properties = definition?.schema?.properties ?? {}
-  return {
-    ...calculator,
-    preferences: Object.fromEntries(
-      Object.entries(calculator.preferences).map(([key, value]) => [
-        key,
-        isDecimalPreference(properties[key]) ? decimalString(value) : value,
-      ]),
-    ),
-  }
-}
+const CALCULATORS = '/delivery_methods/calculators'
+const RULE_TYPES = '/delivery_method_rules/types'
 
 export const deliveryMethods: Section<DeliveryMethodEntry, DeliveryMethod> = {
   name: 'delivery_methods',
@@ -301,14 +232,24 @@ export const deliveryMethods: Section<DeliveryMethodEntry, DeliveryMethod> = {
     const pickupLocations = await refs(ctx, 'stock_locations', entry.pickup_locations, path)
     if (pickupLocations) payload.stock_location_ids = pickupLocations
     if (entry.calculator) payload.calculator = entry.calculator
+    if (entry.rules) payload.rules = await desiredRules(entry.rules, RULE_TYPES, ctx, path)
     return payload
   },
-  current: (live, ctx, desired) => methodPickupLocations.current(live, ctx, desired),
+  async current(live, ctx, desired) {
+    return {
+      ...(await methodPickupLocations.current(live, ctx, desired)),
+      ...(desired.rules ? { rules: comparableRules(live.rules) } : {}),
+    }
+  },
   async wire(payload, ctx) {
     const calculator = payload.calculator as
       | { type: string; preferences?: Record<string, unknown> }
       | undefined
-    return calculator ? { ...payload, calculator: await wireCalculator(calculator, ctx) } : payload
+    return {
+      ...payload,
+      ...(calculator ? { calculator: await wirePreferences(calculator, CALCULATORS, ctx) } : {}),
+      ...(payload.rules ? { rules: await wireRules(payload.rules, RULE_TYPES, ctx) } : {}),
+    }
   },
   async update(live, payload, _entry, ctx) {
     return ctx.client.request<DeliveryMethod>('PATCH', `/delivery_methods/${live.id}`, {
@@ -342,13 +283,7 @@ export const deliveryMethods: Section<DeliveryMethodEntry, DeliveryMethod> = {
       | null
       | undefined
     if (calculator) {
-      // Unset preferences and numeric strings are how the API reports them;
-      // a file reads better without the former and with plain numbers.
-      const preferences = Object.fromEntries(
-        Object.entries(calculator.preferences ?? {})
-          .filter(([, value]) => !isEmptyPreference(value))
-          .map(([key, value]) => [key, numeric(value)]),
-      )
+      const preferences = filePreferences(calculator.preferences)
       entry.calculator = {
         type: calculator.type,
         ...(Object.keys(preferences).length
@@ -356,6 +291,8 @@ export const deliveryMethods: Section<DeliveryMethodEntry, DeliveryMethod> = {
           : {}),
       }
     }
+    const rules = await rulesToFile(live.rules as RuleEntry[] | undefined, RULE_TYPES, ctx)
+    if (rules.length) entry.rules = rules
     return entry
   },
 }
