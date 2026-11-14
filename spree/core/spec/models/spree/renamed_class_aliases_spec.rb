@@ -35,4 +35,15 @@ RSpec.describe 'renamed class aliases' do
       expect(store.default_country_iso_code).to eq(store.default_country_code)
     end
   end
+
+  describe 'Spree::Store#default_country_iso=' do
+    it 'warns with the removal release and sets the default country code' do
+      store = build(:store)
+
+      expect(Spree::Deprecation).to receive(:warn).with(/default_country_iso= is deprecated.*Spree 6\.3/)
+      store.default_country_iso = 'DE'
+
+      expect(store.read_attribute(:default_country_code)).to eq('DE')
+    end
+  end
 end
