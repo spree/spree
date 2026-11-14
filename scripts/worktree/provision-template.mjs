@@ -1,9 +1,9 @@
-// Deploys the store defaults (packages/config/templates) into the template
+// Deploys the store defaults (packages/seeds/templates) into the template
 // database through the Admin API of a Rails server booted on it, then revokes
 // the key it was given. Called by make-template.sh with the server's URL and
 // a secret key minted for the run.
 import { createAdminClient } from '@spree/admin-sdk'
-import { provisionStore, renderReport, reportHasFailures } from '@spree/config'
+import { provisionStore, renderReport, reportHasFailures } from '@spree/seeds'
 
 const [baseUrl, secretKey] = process.argv.slice(2)
 const client = createAdminClient({ baseUrl, secretKey, retry: false })

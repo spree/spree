@@ -14,7 +14,7 @@ import { envContent } from './templates/env.js'
 import { dockerignoreContent, gitignoreContent } from './templates/gitignore.js'
 import { rootPackageJsonContent } from './templates/package-json.js'
 import { readmeContent } from './templates/readme.js'
-import { spreeConfigContent } from './templates/spree-config.js'
+import { spreeConfigContent } from './templates/spree-seeds.js'
 import type { PackageManager, ScaffoldOptions } from './types.js'
 import {
   cdTarget,
@@ -103,7 +103,7 @@ export async function scaffold(options: ScaffoldOptions): Promise<boolean> {
   )
   fs.writeFileSync(path.join(projectDir, '.gitignore'), gitignoreContent())
   fs.writeFileSync(path.join(projectDir, '.dockerignore'), dockerignoreContent())
-  fs.writeFileSync(path.join(projectDir, 'spree.store.yml'), spreeConfigContent())
+  fs.writeFileSync(path.join(projectDir, 'spree.seeds.yml'), spreeConfigContent())
 
   s.stop('Project structure created.')
 

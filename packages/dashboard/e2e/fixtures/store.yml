@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=https://spreecommerce.org/docs/schemas/spree-config/1.json
+# yaml-language-server: $schema=https://spreecommerce.org/docs/schemas/spree-seeds/1.json
 #
 # Everything the dashboard e2e suite needs on the test store, deployed through
 # the Admin API by global-setup.ts before any spec runs. Records are matched

@@ -54,7 +54,7 @@
     "@changesets/cli": "catalog:",
     "@spree/admin-sdk": "workspace:*",
     "@spree/cli": "workspace:*",
-    "@spree/config": "workspace:*",
+    "@spree/seeds": "workspace:*",
     "@typescript/typescript6": "catalog:",
     "semver": "^7.8.5",
     "turbo": "^2.11.9",

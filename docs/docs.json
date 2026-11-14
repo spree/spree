@@ -839,7 +839,7 @@
                       "developer/agentic/docs-mcp",
                       "developer/agentic/llm-docs",
                       "developer/cli/admin-api",
-                      "developer/cli/configurator"
+                      "developer/cli/seeds"
                     ],
                     "icon": "sparkles"
                   },
@@ -2678,7 +2678,7 @@
                 "pages": [
                   "developer/cli/quickstart",
                   "developer/cli/admin-api",
-                  "developer/cli/configurator"
+                  "developer/cli/seeds"
                 ]
               }
             ]

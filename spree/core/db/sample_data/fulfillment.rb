@@ -46,7 +46,7 @@ international = store.delivery_zones.find_by(name: 'International')
 # provisioned yet, so the background loader retries rather than exiting.
 if domestic.nil? || international.nil?
   raise Spree::SampleData::StoreNotProvisioned,
-        'This store has no Domestic and International delivery zones. Run `spree config provision`, then load sample data.'
+        'This store has no Domestic and International delivery zones. Run `spree seed defaults`, then load sample data.'
 end
 
 currency = store.default_currency

@@ -2,12 +2,12 @@ import { writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { createAdminClient } from '@spree/admin-sdk'
 import {
-  deployConfig,
-  loadConfig,
+  deploySeeds,
+  loadSeeds,
   provisionStore,
   renderReport,
   reportHasFailures,
-} from '@spree/config/node'
+} from '@spree/seeds/node'
 import {
   FIXTURE_BOGUS_GATEWAY,
   FIXTURE_BOGUS_ORDER_EMAIL,
@@ -88,7 +88,7 @@ const BOOTSTRAP_RUBY = [
   `s.default_market.update!(supported_locales: s.default_market.supported_locales_list | ['de']) unless s.default_market.supported_locales_list.include?('de')`,
   // The deploy key: write_all so every section of the fixture file can be
   // written, printed once and never persisted anywhere else.
-  'deploy_key = s.api_keys.create!(name: "e2e configurator", key_type: "secret", scopes: ["write_all"])',
+  'deploy_key = s.api_keys.create!(name: "e2e seeds", key_type: "secret", scopes: ["write_all"])',
   // A store whose market writes a comma decimal (Dutch) and prices in EUR: the
   // server reads every request in the market's language, so this is where a
   // price is misread if anything parses money by locale. Its name sorts after
@@ -98,7 +98,7 @@ const BOOTSTRAP_RUBY = [
   // Placed in the Netherlands the way first-run setup places a store; its
   // defaults are deployed through the Admin API once the server is up.
   'comma_store.relocate(country: Spree::Country.find_by_iso!("NL"), locale: "nl", currency: "EUR") unless comma_store.read_attribute(:default_country_code) == "NL"',
-  'comma_deploy_key = comma_store.api_keys.create!(name: "e2e configurator", key_type: "secret", scopes: ["write_all"])',
+  'comma_deploy_key = comma_store.api_keys.create!(name: "e2e seeds", key_type: "secret", scopes: ["write_all"])',
   // A second market in USD, so the store sells in a currency written with a
   // period as well as its own.
   `comma_store.markets.find_or_create_by!(name: 'United States') { |m| m.currency = 'USD'; m.default_locale = 'en'; m.countries = [Spree::Country.find_by_iso!('US')] } unless comma_store.markets.exists?(currency: 'USD')`,
@@ -162,7 +162,7 @@ const transactionsRuby = (ledgerSellerSlug: string) =>
     `unless inventory_level.stock_reservations.exists?; inventory_cart = Spree::Cart.create!(store: s, currency: s.default_currency, email: 'e2e-inventory@example.com'); inventory_line = inventory_cart.line_items.create!(variant: inventory_variant, quantity: ${FIXTURE_INVENTORY_RESERVED}); inventory_level.stock_reservations.create!(cart: inventory_cart, line_item: inventory_line, quantity: ${FIXTURE_INVENTORY_RESERVED}, expires_at: 10.years.from_now); end`,
   ].join('; ')
 
-type StoreConfig = ReturnType<typeof loadConfig>['config']
+type StoreSeeds = ReturnType<typeof loadSeeds>['config']
 
 /**
  * The specs reference fixtures through the constants in `helpers.ts`; the
@@ -170,8 +170,8 @@ type StoreConfig = ReturnType<typeof loadConfig>['config']
  * cheaper than a spec failing on a record that was never seeded. Checked on
  * the keys the specs and the Ruby block below resolve by.
  */
-function assertFixturesDeclared(config: StoreConfig): void {
-  const expected: [keyof StoreConfig, string, string][] = [
+function assertFixturesDeclared(config: StoreSeeds): void {
+  const expected: [keyof StoreSeeds, string, string][] = [
     ['channels', 'code', FIXTURE_BULK_CHANNEL_CODE],
     ['categories', 'permalink', FIXTURE_PROMO_TAXON_PERMALINK],
     ['categories', 'permalink', FIXTURE_BULK_CATEGORY_PERMALINK],
@@ -207,7 +207,7 @@ function assertFixturesDeclared(config: StoreConfig): void {
 }
 
 /** The ledger seller's slug as the file states it, for the Ruby block that adds its payouts. */
-function ledgerSellerSlug(config: StoreConfig): string {
+function ledgerSellerSlug(config: StoreSeeds): string {
   const seller = (config.sellers ?? []).find(
     (candidate) => candidate.name === FIXTURE_LEDGER_SELLER,
   )
@@ -276,7 +276,7 @@ export default async function globalSetup() {
     ].join('\n'),
   )
 
-  const { config } = loadConfig(STORE_CONFIG)
+  const { config } = loadSeeds(STORE_CONFIG)
   assertFixturesDeclared(config)
 
   const {
@@ -310,7 +310,7 @@ export default async function globalSetup() {
   if (reportHasFailures(commaDefaults)) {
     throw new Error(`Deploying the Dutch store's defaults failed:\n${renderReport(commaDefaults)}`)
   }
-  const report = await deployConfig(config, client, { prune: ['products'] })
+  const report = await deploySeeds(config, client, { prune: ['products'] })
   if (reportHasFailures(report)) {
     throw new Error(`Deploying e2e/fixtures/store.yml failed:\n${renderReport(report)}`)
   }

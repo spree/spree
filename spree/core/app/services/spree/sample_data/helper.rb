@@ -33,12 +33,12 @@ module Spree
 
       # Sample data builds on the store defaults (tax categories, the digital
       # profile, the warehouse and delivery zones), which only the
-      # configurator deploys, so it refuses a store that never got them.
+      # seeds engine deploys, so it refuses a store that never got them.
       def ensure_store_provisioned(store)
         return if store&.provisioned?
 
         raise StoreNotProvisioned,
-              'This store has not been provisioned. Finish first-run setup, or run `spree config provision`, then load sample data.'
+              'This store has not been provisioned. Finish first-run setup, or run `spree seed defaults`, then load sample data.'
       end
 
       def without_geocoding

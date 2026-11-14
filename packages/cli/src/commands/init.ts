@@ -5,13 +5,13 @@ import { setTimeout as sleep } from 'node:timers/promises'
 import * as p from '@clack/prompts'
 import { createAdminClient } from '@spree/admin-sdk'
 import {
-  ConfigValidationError,
-  deployConfig,
-  loadConfig,
+  deploySeeds,
+  loadSeeds,
   provisionStore,
   renderReport,
   reportHasFailures,
-} from '@spree/config/node'
+  SeedsValidationError,
+} from '@spree/seeds/node'
 import type { Command } from 'commander'
 import { execa } from 'execa'
 import pc from 'picocolors'
@@ -38,7 +38,7 @@ import {
   streamLogs,
 } from '../docker.js'
 import { detectPackageManager, ensureDashboardDevEnv } from './add.js'
-import { DEFAULT_CONFIG_FILE } from './config.js'
+import { DEFAULT_SEEDS_FILE } from './seed.js'
 
 const HEALTH_CHECK_INTERVAL_MS = 3000
 const HEALTH_CHECK_TIMEOUT_MS = 120_000
@@ -47,7 +47,7 @@ export function registerInitCommand(program: Command): void {
   program
     .command('init')
     .description(
-      'First-run setup: start services, seed, configure API keys, deploy spree.store.yml',
+      'First-run setup: start services, seed, configure API keys, deploy spree.seeds.yml',
     )
     .option('--no-sample-data', 'skip loading sample data on scripted installs (see --admin-email)')
     .option('--no-open', 'skip opening browser')
@@ -174,7 +174,7 @@ export async function runFirstRunSetup(flags: {
   // Sample-data imports need an admin as their owner; without credentials
   // the seed minted none, and the setup screen offers the load instead.
   // Sample data builds on the store defaults, so it waits for a store that
-  // got them; `spree sample-data` loads it once `spree config provision` has.
+  // got them; `spree sample-data` loads it once `spree seed defaults` has.
   const sampleDataLoaded = sampleData && provisioned
   if (sampleDataLoaded) {
     s.start('Loading sample data...')
@@ -182,7 +182,7 @@ export async function runFirstRunSetup(flags: {
     s.stop('Sample data loaded.')
   } else if (sampleData && adminEmail && adminPassword) {
     p.log.warn(
-      'Sample data skipped: the store defaults are missing. Run `spree config provision`, then `spree sample-data`.',
+      'Sample data skipped: the store defaults are missing. Run `spree seed defaults`, then `spree sample-data`.',
     )
   } else if (sampleData) {
     p.log.info(
@@ -414,7 +414,7 @@ export function updateStorefrontEnv(projectDir: string, apiKey: string): void {
 
 /**
  * On a scripted install, which has no setup screen, deploys the store
- * defaults and then the project's `spree.store.yml` — the store's declared
+ * defaults and then the project's `spree.seeds.yml` — the store's declared
  * shape, committed with the project — against the freshly seeded server. The
  * project's own key is read-only by design, so a write key is minted for
  * this run and revoked as soon as the deploy is over. Answers whether the
@@ -425,25 +425,25 @@ async function deployStoreConfiguration(
   port: number,
   { provision }: { provision: boolean },
 ): Promise<boolean> {
-  const file = path.join(projectDir, DEFAULT_CONFIG_FILE)
+  const file = path.join(projectDir, DEFAULT_SEEDS_FILE)
   // Without a scripted admin the store is claimed on the setup screen, which
   // deploys the defaults the project file may refer to; deploying it before
   // that would fail on every such reference.
   if (!provision) {
     if (fs.existsSync(file)) {
       p.log.info(
-        `${DEFAULT_CONFIG_FILE} is deployed after first-run setup: run \`spree config deploy\` once the store is set up.`,
+        `${DEFAULT_SEEDS_FILE} is deployed after first-run setup: run \`spree seed\` once the store is set up.`,
       )
     }
     return false
   }
-  let config: ReturnType<typeof loadConfig>['config'] | null = null
+  let config: ReturnType<typeof loadSeeds>['config'] | null = null
   if (fs.existsSync(file)) {
     try {
-      ;({ config } = loadConfig(file))
+      ;({ config } = loadSeeds(file))
     } catch (error) {
-      if (!(error instanceof ConfigValidationError)) throw error
-      p.log.warn(`Skipping ${DEFAULT_CONFIG_FILE}: ${error.message}`)
+      if (!(error instanceof SeedsValidationError)) throw error
+      p.log.warn(`Skipping ${DEFAULT_SEEDS_FILE}: ${error.message}`)
     }
   }
 
@@ -452,7 +452,7 @@ async function deployStoreConfiguration(
   const skipDeploy = (error: unknown) => {
     s.stop(pc.yellow('Could not configure the store.'))
     p.log.warn(
-      `${error instanceof Error ? error.message : String(error)}\nRun \`spree config provision\` and \`spree config deploy\` once the app is up.`,
+      `${error instanceof Error ? error.message : String(error)}\nRun \`spree seed defaults\` and \`spree seed\` once the app is up.`,
     )
   }
   s.start('Setting up store defaults...')
@@ -478,7 +478,7 @@ async function deployStoreConfiguration(
     provisioned = !reportHasFailures(defaults)
     const results = [
       ...defaults.results,
-      ...(config ? (await deployConfig(config, client)).results : []),
+      ...(config ? (await deploySeeds(config, client)).results : []),
     ]
     const report = { results }
     if (reportHasFailures(report)) {

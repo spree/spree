@@ -24,8 +24,8 @@ namespace :spree do
         end
       end
 
-      # The reasons a new store gets from the configurator's store defaults
-      # (packages/config/templates/store-defaults.yml), for stores that
+      # The reasons a new store gets from the seeds engine's store defaults
+      # (packages/seeds/templates/store-defaults.yml), for stores that
       # predate them.
       defaults = {
         'RESALE' => 'Resale',

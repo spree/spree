@@ -25,13 +25,13 @@ Run from your Spree project directory:
 | `spree add ai` | Install the Spree agent skills and connect coding agents to the Spree docs MCP server |
 | `spree build --production` | Build the production image — the Spree API plus your dashboard, in one |
 | `spree console` / `spree shell` / `spree logs` | Backend console, container shell, log tailing |
-| `spree migrate` / `spree seed` / `spree sample-data` | Database tasks |
+| `spree migrate` / `spree sample-data` | Database tasks |
 | `spree generate …` | Spree generators (models, API resources, subscribers, migrations) |
 | `spree task <name>` | Run a Spree maintenance task (e.g. `search:reindex`) |
 | `spree user create` / `spree api-key …` | Admin users and scoped API keys |
 | `spree encryption init` | Add encryption keys to `.env` (`--print` to only print a set) |
 | `spree api get/post/patch/delete <path>` | Call the Admin API directly (`spree api endpoints` lists routes + scopes) |
-| `spree config validate/diff/deploy/introspect` | Declarative store configuration: reconcile `spree.store.yml` against any instance through the Admin API |
+| `spree seed` (`--dry-run`, `validate`, `introspect`, `defaults`) | Seed a store from a file: run the database seeds, then deploy `spree.seeds.yml` to any instance through the Admin API |
 | `spree test` | Run the backend test suite inside the container |
 | `spree exec <command>` | Run any other command inside the container |
 

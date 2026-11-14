@@ -58,9 +58,9 @@ RSpec.describe Spree::Seeds::All do
       expect(store.api_keys.publishable).to exist
     end
 
-    # Everything a store trades with is the configurator's store defaults,
+    # Everything a store trades with is the seeds engine's store defaults,
     # deployed once the store knows where it sells from.
-    it 'leaves the store defaults to the configurator' do
+    it 'leaves the store defaults to the seeds engine' do
       subject
 
       store = Spree::Store.find_by(default: true)
