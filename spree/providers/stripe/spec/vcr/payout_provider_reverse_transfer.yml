@@ -150,6 +150,39 @@ http_interactions:
         }
   recorded_at: Wed, 28 Oct 2026 12:35:20 GMT
 - request:
+    method: get
+    uri: https://api.stripe.com/v1/charges/ch_3UVW4aFmGsiQWfE609Q0eAZB?expand%5B%5D=balance_transaction
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Authorization:
+      - Bearer <STRIPE_SECRET_KEY>
+      Stripe-Version:
+      - '2023-10-16'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "id": "ch_3UVW4aFmGsiQWfE609Q0eAZB",
+          "object": "charge",
+          "amount": 10000,
+          "currency": "usd",
+          "balance_transaction": {
+            "object": "balance_transaction",
+            "amount": 10000,
+            "currency": "usd"
+          }
+        }
+  recorded_at: Wed, 28 Oct 2026 12:35:20 GMT
+- request:
     method: post
     uri: https://api.stripe.com/v1/transfers
     body:
@@ -553,6 +586,36 @@ http_interactions:
           "data": [],
           "has_more": false,
           "url": "/v1/transfers/tr_3UVW4aFmGsiQWfE60GzM4283/reversals"
+        }
+  recorded_at: Wed, 28 Oct 2026 12:35:23 GMT
+- request:
+    method: get
+    uri: https://api.stripe.com/v1/transfers/tr_3UVW4aFmGsiQWfE60GzM4283
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Authorization:
+      - Bearer <STRIPE_SECRET_KEY>
+      Stripe-Version:
+      - '2023-10-16'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "id": "tr_3UVW4aFmGsiQWfE60GzM4283",
+          "object": "transfer",
+          "amount": 4250,
+          "amount_reversed": 0,
+          "currency": "usd",
+          "source_transaction": "ch_3UVW4aFmGsiQWfE609Q0eAZB"
         }
   recorded_at: Wed, 28 Oct 2026 12:35:23 GMT
 - request:
