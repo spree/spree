@@ -133,6 +133,13 @@ RSpec.describe Spree::Api::V3::Store::Customer::AddressesController, type: :cont
       expect(json_response['state_code']).to eq(state.abbr)
     end
 
+    it 'still accepts the deprecated country_iso alone on write' do
+      post :create, params: address_params.except(:country_code).merge(country_iso: country.iso)
+
+      expect(response).to have_http_status(:created)
+      expect(json_response['country_code']).to eq(country.iso)
+    end
+
     it 'accepts quick_checkout, relaxing the phone requirement' do
       post :create, params: address_params.except(:phone).merge(quick_checkout: true)
 

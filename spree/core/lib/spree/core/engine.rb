@@ -597,7 +597,10 @@ module Spree
         app/models/spree/classification.rb
         app/models/spree/promotion/rules/taxon.rb
         app/models/spree/promotion_rule_taxon.rb
+        app/models/spree/prototype.rb
         app/models/spree/return_authorization_reason.rb
+        app/models/spree/shipment.rb
+        app/models/spree/shipping_method.rb
         app/models/spree/taxon.rb
         app/services/spree/checkout/add_store_credit.rb
         app/services/spree/checkout/remove_store_credit.rb
