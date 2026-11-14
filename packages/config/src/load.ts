@@ -1,9 +1,7 @@
 import { LineCounter, parseDocument } from 'yaml'
-import { type ZodError, z } from 'zod'
+import type { ZodError } from 'zod'
 import { ConfigError } from './errors.js'
 import { configSchema, type SpreeConfig } from './schema.js'
-import { extensionSchemas } from './sections/index.js'
-import { RESERVED_KEYS } from './types.js'
 
 // `$${NAME}` is the escape for a literal `${NAME}`.
 const PLACEHOLDER = /\$(\$?)\{([A-Za-z_][A-Za-z0-9_]*)\}/g
@@ -169,43 +167,13 @@ export function parseConfig(
     throw error
   }
 
-  const extensions = extensionSchemas()
-  // An extension's entries are checked by its own schema, below.
-  const schema = extensions.size
-    ? configSchema.extend(
-        Object.fromEntries(
-          [...extensions.keys()].map((name) => [name, z.array(z.unknown()).optional()]),
-        ),
-      )
-    : configSchema
-  let result = schema.safeParse(substituted)
+  let result = configSchema.safeParse(substituted)
   if (!result.success && whole.size) {
     const typed = typePlaceholders(substituted, result.error, whole)
-    if (typed) result = schema.safeParse(typed)
+    if (typed) result = configSchema.safeParse(typed)
   }
   if (!result.success) throw new ConfigValidationError(issuesFrom(result.error, lineOf))
 
-  const config = result.data as SpreeConfig & Record<string, unknown>
-  const issues: ConfigIssue[] = []
-  for (const [name, entrySchema] of extensions) {
-    const entries = config[name] as unknown[] | undefined
-    if (!entries) continue
-    config[name] = entries.map((entry, index) => {
-      const parsed = entrySchema.safeParse(entry)
-      if (parsed.success) return parsed.data
-      for (const issue of parsed.error.issues) {
-        const path = [name, index, ...issue.path].filter(
-          (segment): segment is string | number => typeof segment !== 'symbol',
-        )
-        issues.push({ path: formatPath(path), line: lineOf(path), message: issue.message })
-      }
-      return entry
-    })
-  }
-  if (issues.length) throw new ConfigValidationError(issues)
-
-  const sections = Object.keys(raw as object).filter(
-    (key) => !(RESERVED_KEYS as readonly string[]).includes(key),
-  )
-  return { config, sections }
+  const sections = Object.keys(raw as object).filter((key) => key !== 'version')
+  return { config: result.data, sections }
 }
