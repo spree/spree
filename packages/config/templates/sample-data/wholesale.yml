@@ -1,0 +1,66 @@
+# yaml-language-server: $schema=../../schemas/spree-config.json
+#
+# Sample data, step 3: a wholesale buyer, their company and their terms, so a
+# fresh store can show the whole trade story: sign in as the buyer, see
+# trade prices, check out on the wholesale channel.
+version: 1
+
+customer_groups:
+  - name: Wholesale
+
+customers:
+  - email: wholesale@example.com
+    first_name: Wanda
+    last_name: Wholesale
+    password: spree123
+    customer_groups: [Wholesale]
+
+# Trade prices for the wholesale group, from 10 of an item up; below that a
+# buyer pays retail. The prices themselves are the price list CSV.
+price_lists:
+  - name: Wholesale
+    description: Wholesale pricing for approved B2B buyers (40% off retail) on orders of 10+ per item
+    active: true
+    rules:
+      - type: volume_rule
+        preferences:
+          min_quantity: 10
+      - type: customer_group_rule
+        preferences:
+          customer_group_ids: [Wholesale]
+
+# The buyer belongs to the division and buys for it.
+companies:
+  - name: Acme Industrial
+    kind: company
+  - name: Acme EMEA
+    kind: division
+    parent: Acme Industrial
+    members: [wholesale@example.com]
+
+# Assigned once at the top of the company, so its divisions get it too. It
+# only narrows the assortment; prices still come from the wholesale list.
+catalogs:
+  - name: Wholesale Assortment
+    companies: [Acme Industrial]
+    products:
+      - automatic-espresso-machine
+      - semi-automatic-espresso-machine
+      - drip-coffee-maker
+      - digital-air-fryer-4l
+      - digital-air-fryer-6l
+      - dual-basket-air-fryer
+      - high-speed-blender
+      - personal-blender
+      - electric-kettle-1-7l
+      - temperature-control-kettle
+      - 2-slice-toaster
+      - 4-slice-toaster
+      - food-processor-3l
+      - air-purifier-compact
+      - air-purifier-tower
+      - air-purifier-pro
+      - ultrasonic-humidifier-2l
+      - smart-humidifier-4l
+      - tower-fan
+      - pedestal-fan
