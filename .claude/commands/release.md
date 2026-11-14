@@ -149,7 +149,7 @@ npx spree upgrade
 | --- | --- |
 | Spree gems | `<version>` |
 | `@spree/sdk`, `@spree/admin-sdk`, `@spree/seller-sdk`, `@spree/core` | `<npm version>` |
-| `@spree/dashboard`, `@spree/dashboard-core`, `@spree/dashboard-ui`, `@spree/seller-dashboard` | `<npm version>` |
+| `@spree/dashboard`, `@spree/dashboard-core`, `@spree/dashboard-ui`, `@spree/seller-dashboard`, `@spree/dashboard-sentry` | `<npm version>` |
 | `@spree/cli` | `<version>` |
 | `create-spree-app` | `<version>` (unchanged) |
 
