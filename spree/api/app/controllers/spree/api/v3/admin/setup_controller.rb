@@ -14,6 +14,10 @@ module Spree
           skip_scope_check!
           skip_before_action :authenticate_admin!, only: [:show, :countries, :create]
 
+          SAMPLE_DATA_DEPRECATION =
+            'Ignored. Load sample data through the Admin API once setup is done: the dashboard does it when ' \
+            'the merchant asks, and `spree sample-data` does it from a terminal. Removed in 6.2.'.freeze
+
           request_params 'SetupParams', action: :create do |body|
             body.attribute :setup_token, :string,
               required: true,
@@ -38,9 +42,7 @@ module Spree
               permit: false,
               example: 'USD',
               description: "ISO 4217 currency. Defaults to the country's own currency: pass one only when the store prices in something else."
-            body.attribute :sample_data, :boolean,
-              permit: false,
-              description: 'Load the demo catalog, customers and orders in the background once the admin account exists. The load takes minutes, so the response does not wait for it.'
+            body.attribute :sample_data, :boolean, permit: false, deprecated: SAMPLE_DATA_DEPRECATION
           end
 
           # Only create checks the setup token, so only create needs the strict
@@ -93,11 +95,6 @@ module Spree
               user = Spree.admin_user_class.create!(admin_user_params)
               adopt_default_store(user, store)
             end
-
-            # Outside the lock: the loader needs the admin committed, and it
-            # runs for minutes, so it is queued rather than awaited. It waits
-            # until the dashboard has deployed the store defaults.
-            Spree::SampleData::LoadJob.perform_later(store.id) if sample_data_requested?
 
             refresh_token = Spree::RefreshToken.create_for(user, audience: JWT_AUDIENCE_ADMIN, request_env: request_env_for_token)
             set_refresh_cookie(refresh_token)
@@ -207,9 +204,6 @@ module Spree
             )
           end
 
-          def sample_data_requested?
-            ActiveModel::Type::Boolean.new.cast(params[:sample_data]) == true
-          end
 
           def admin_user_params
             params.permit(*declared_permitted_attributes)

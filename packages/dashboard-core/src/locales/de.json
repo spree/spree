@@ -782,7 +782,7 @@
           "label": "Passwort bestätigen"
         },
         "sample_data": {
-          "help": "Fügt im Hintergrund Demo-Produkte, Kategorien, Kunden und Bestellungen hinzu, damit Sie das Dashboard erkunden können. Dauert einige Minuten und lädt Produktbilder herunter.",
+          "help": "Fügt Demo-Produkte, Kategorien, Kunden und eine Großhandelseinrichtung hinzu, während Sie das Dashboard erkunden. Dauert einige Minuten und lädt Produktbilder herunter; lassen Sie diesen Tab geöffnet.",
           "label": "Beispieldaten laden"
         },
         "store_name": {

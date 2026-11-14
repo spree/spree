@@ -26,8 +26,9 @@ export type SetupParams = {
    */
   currency?: CurrencyCode
   /**
-   * Load the demo catalog, customers and orders in the background once the admin account exists.
-   * The load takes minutes, so the response does not wait for it.
+   * @deprecated Ignored. Load sample data through the Admin API once setup is done: the dashboard
+   * does it when the merchant asks, and `spree sample-data` does it from a terminal. Removed in
+   * 6.2.
    */
   sample_data?: boolean
 }

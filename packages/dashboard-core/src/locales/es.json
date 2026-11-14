@@ -806,7 +806,7 @@
           "label": "Confirmar contraseña"
         },
         "sample_data": {
-          "help": "Agrega productos, categorías, clientes y pedidos de demostración en segundo plano para que puedas explorar el dashboard. Tarda unos minutos y descarga imágenes de productos.",
+          "help": "Añade productos, categorías, clientes y una configuración mayorista de demostración mientras exploras el panel. Tarda unos minutos y descarga imágenes de productos; mantén esta pestaña abierta.",
           "label": "Cargar datos de ejemplo"
         },
         "store_name": {
