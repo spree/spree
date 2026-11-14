@@ -148,7 +148,7 @@ feature by hand. Prepare it; do not leave it running:
   spree:install:migrations db:migrate`, then `pnpm wt:template` so future
   worktrees inherit the schema.
 - Seed whatever the feature needs to be visible. Sample products and images:
-  `pnpm server:load_sample_data`. Sellers: `bin/rails
+  `cd server && bin/rails spree:load_sample_data`. Sellers: `bin/rails
   spree:sellers:sample_data`. Anything feature-specific (a company, a catalog,
   a price list, a delivery method) — create it through the Admin API or a
   `bin/rails runner` script so the QA path starts from real records, and note

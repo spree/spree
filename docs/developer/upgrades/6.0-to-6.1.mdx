@@ -34,11 +34,7 @@ bundle exec rake spree:upgrade
 
 An existing store keeps every record its seeds created, so upgrading changes nothing in it. What changes is a new install, or a script that runs `db:seed` and then expects the defaults to be there: deploy them afterwards with `spree config provision`. Do not run `spree config provision` on a store that already has its defaults; it would add *Domestic* and *International* zones and a default tax category beside the ones the store already uses.
 
-### Sample data is loaded through the Admin API
-
-The demo store is now a recipe of [store files](/developer/cli/configurator) and CSV imports, run by `spree sample-data` or by ticking *Load sample data* on the setup screen. It needs a store that has its defaults, and it is safe to run again: it only adds what is missing.
-
-The sample orders and the sample return are no longer loaded.
+`spree:load_sample_data` now refuses a store that never got its defaults, and names the command that deploys them.
 
 ### Deprecated
 
@@ -48,7 +44,4 @@ These keep working in 6.1 but print a deprecation warning, and are removed in 6.
 | --- | --- |
 | `Spree::Seeds::StoreResources` and the services it ran (`Spree::Seeds::TaxCategories`, `Spree::Seeds::Channels`, `Spree::Seeds::ReturnsEnvironment` and the rest) | They no longer create anything. Deploy the [store defaults](/developer/cli/configurator#store-defaults) with `spree config provision` |
 | `Spree::Stores::ProvisionDefaults` | It no longer creates anything. `Spree::Store#relocate` moves a store and its default market to another country; `spree config provision` deploys its defaults |
-| The `spree:install` generator's `--sample` option and the Rails application template's `LOAD_SAMPLE_DATA` | Both are ignored, because sample data needs a store that finished setup. Load it afterwards with `spree sample-data` |
-| `rake spree:load_sample_data`, `rake spree_sample:load`, `Spree::SampleData::Loader` and `Spree::SampleData::LoadJob` | They no longer load anything. Run `spree sample-data` |
-| `Spree::SampleData::ImportRunner` | Create the import through the Admin API |
-| The `sample_data` attribute of `POST /api/v3/admin/setup` | It is ignored. Load sample data through the Admin API once setup is done |
+| The `spree:install` generator's `--sample` option and the Rails application template's `LOAD_SAMPLE_DATA` | Both are ignored, because sample data needs a store that finished setup. Load it afterwards with `spree:load_sample_data` |

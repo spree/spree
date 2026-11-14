@@ -14,10 +14,6 @@
       "types": "./dist/node.d.ts",
       "default": "./dist/node.js"
     },
-    "./sample-data": {
-      "types": "./dist/sample-data.d.ts",
-      "default": "./dist/sample-data.js"
-    },
     "./schemas/spree-config.json": "./schemas/spree-config.json"
   },
   "files": [
