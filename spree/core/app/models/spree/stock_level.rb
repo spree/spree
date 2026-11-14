@@ -7,7 +7,7 @@ module Spree
     include Spree::HasCustomFields
     include Spree::Metadata
     include Spree::HasExternalReferences
-    # Dual-emits the pre-rename `stock_item.*` names for one release.
+    # Dual-emits the pre-rename `stock_item.*` names until 6.5.
     include Spree::StockLevel::CustomEvents
 
     publishes_lifecycle_events

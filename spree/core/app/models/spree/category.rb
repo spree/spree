@@ -5,7 +5,7 @@ require 'stringex'
 module Spree
   # The hierarchical product category (formerly Spree::Taxon), on spree_categories,
   # owned directly via store_id — a parentless category is a genuine top-level node.
-  # Spree::Taxon is retained as a deprecation alias for one release. Rule-based
+  # Spree::Taxon is retained as a deprecation alias until 6.5. Rule-based
   # (automatic) membership now lives on Spree::Collection.
   class Category < Spree.base_class
     include Spree::SingleStoreResource

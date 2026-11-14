@@ -594,7 +594,7 @@ steps:
       own setting. Run after store_settings_backfill_from_config so the store
       they inherit from already holds the right value.
 
-      The auto_capture column stays readable as a fallback for one release and
+      The auto_capture column stays readable as a fallback until 6.5 and
       is dropped in 6.5. Idempotent — only rows without a capture_method are
       written.
 

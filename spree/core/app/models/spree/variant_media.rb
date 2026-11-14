@@ -1,6 +1,6 @@
 module Spree
   # FK column is `media_id`, matching Spree::Media and its table. The `:asset`
-  # association name stays readable for one release alongside `:media`.
+  # association name stays readable until 6.5 alongside `:media`.
   class VariantMedia < Spree.base_class
     self.table_name = 'spree_variant_media'
 

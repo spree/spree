@@ -2,7 +2,7 @@
 
 module Spree
   # Deprecation alias for Spree::Category, renamed from Spree::Taxon in 6.0.
-  # Retained for one release so existing code and extensions that reference
+  # Retained until 6.5 so existing code and extensions that reference
   # Spree::Taxon keep working; the canonical class is Spree::Category. Removed
   # in 6.5 (along with the spree_taxonomies table and the automatic-taxon columns).
   #

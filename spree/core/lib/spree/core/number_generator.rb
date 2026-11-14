@@ -9,7 +9,7 @@ module Spree
     #   has_spree_number prefix: 'R'
     #
     # Kept as a shell so existing models and extension decorators keep
-    # working for one release. Including it wires up {Spree::HasNumber} with
+    # working until 6.5. Including it wires up {Spree::HasNumber} with
     # the given prefix, which means numbers now follow the store's format
     # preference (sequential by default) rather than always being random.
     # Hosts that need the old random numbers should switch the store's

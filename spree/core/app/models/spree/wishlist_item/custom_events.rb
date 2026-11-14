@@ -4,7 +4,7 @@ module Spree
   class WishlistItem < Spree.base_class
     # Dual-emits the pre-6.0 `wished_item.*` lifecycle events beside the
     # `wishlist_item.*` ones, so a webhook endpoint a merchant configured
-    # against the old names keeps receiving deliveries for one release.
+    # against the old names keeps receiving deliveries until 6.5.
     # Removed in 6.5, the same way {Spree::StockLevel::CustomEvents} carries
     # `stock_item.*`.
     module CustomEvents

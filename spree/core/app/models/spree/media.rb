@@ -1,7 +1,7 @@
 module Spree
   # Merchandising media for commerce entities — product photography, variant
   # shots, product video. Renamed from Spree::Asset in 6.0; Spree::Asset stays
-  # readable as a deprecated alias for one release.
+  # readable as a deprecated alias until 6.5.
   class Media < Spree.base_class
     has_prefix_id :media
 

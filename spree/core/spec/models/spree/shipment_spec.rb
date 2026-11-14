@@ -1016,7 +1016,7 @@ describe Spree::Fulfillment, type: :model do
       expect(subject).not_to include(*fulfilled_shipments)
     end
 
-    # ready_or_pending survives one release as an alias, since the two statuses
+    # ready_or_pending survives until 6.5 as an alias, since the two statuses
     # it named both became unfulfilled.
     it 'is what the deprecated ready_or_pending scope returns' do
       expect(described_class.ready_or_pending).to match_array(subject)

@@ -2,7 +2,7 @@ module Spree
   module SearchProvider
     # Meilisearch moved out of core into the spree_meilisearch gem at 6.0, taking
     # the document presenter with it. Applications configure the provider by
-    # class name, so resolve the old constants to the new ones for one release
+    # class name, so resolve the old constants to the new ones until 6.5
     # rather than failing at boot with a bare NameError.
     MOVED_TO_SPREE_MEILISEARCH = {
       Meilisearch: 'SpreeMeilisearch::SearchProvider',

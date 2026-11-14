@@ -2,7 +2,7 @@
 
 module Spree
   # Deprecation alias for Spree::ReturnReason, renamed in 6.0 along with the
-  # removal of the ReturnAuthorization chain. Retained for one release so
+  # removal of the ReturnAuthorization chain. Retained until 6.5 so
   # existing code and extensions keep working; removed in 6.5.
   #
   # A true constant alias — the class, table (spree_return_reasons), prefix

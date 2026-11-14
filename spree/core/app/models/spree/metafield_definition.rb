@@ -2,7 +2,7 @@
 
 module Spree
   # Deprecation alias for Spree::CustomFieldDefinition, renamed from
-  # Spree::MetafieldDefinition in 6.0. Retained for one release; removed in 6.5.
+  # Spree::MetafieldDefinition in 6.0. Retained until 6.5.
   # A plain constant alias for the same reason as {Spree::Metafield}.
   #
   # Note the columns renamed alongside the class: `name` is now `label`,

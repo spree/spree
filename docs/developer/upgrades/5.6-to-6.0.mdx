@@ -175,7 +175,7 @@ Products now carry a `default_variant_id` foreign key; `is_master` is gone from 
 bundle exec rake spree:migrate_taxons_to_categories_and_collections
 ```
 
-Taxons become `Spree::Category` (hierarchy) and automatic taxons become `Spree::Collection` (flat, rule-based). `Spree::Taxon` remains as an alias for one release.
+Taxons become `Spree::Category` (hierarchy) and automatic taxons become `Spree::Collection` (flat, rule-based). `Spree::Taxon` remains as an alias until 6.5.
 
 ### Move rich text out of Action Text
 
@@ -288,7 +288,7 @@ Copies your legacy Devise customer table (default `spree_users`) into `spree_cus
 bundle exec rake spree:upgrade:migrate_country_state_codes
 ```
 
-Countries and states are no longer database records in 6.0. Addresses, delivery zone members, market countries, stock locations and stores now name them by ISO code (`country_code`, `state_code`), and this task fills those columns from the old `country_id` / `state_id` references. The old `country_iso` / `state_abbr` names still work on addresses for one release.
+Countries and states are no longer database records in 6.0. Addresses, delivery zone members, market countries, stock locations and stores now name them by ISO code (`country_code`, `state_code`), and this task fills those columns from the old `country_id` / `state_id` references. The old `country_iso` / `state_abbr` names still work on addresses until 6.5.
 
 ### Record which store owns every uploaded file
 
@@ -406,7 +406,7 @@ Spree::Checkout::Registry.add_requirement(
 
 ## Statuses: derived, then persisted
 
-`payment_state` and `shipment_state` machine columns are replaced by `payment_status` and `fulfillment_status` — stored, indexed, and recomputed from payment/refund/fulfillment records by a single writer, `Spree::Orders::UpdateStatuses`. The legacy names remain as read aliases for one release.
+`payment_state` and `shipment_state` machine columns are replaced by `payment_status` and `fulfillment_status` — stored, indexed, and recomputed from payment/refund/fulfillment records by a single writer, `Spree::Orders::UpdateStatuses`. The legacy names remain as read aliases until 6.5.
 
 Behavior to review:
 
@@ -430,7 +430,7 @@ Transition-triggered recalculation is gone with the machine. Instead:
 
 - **`Order#finalize!` is deprecated** (removed in 6.5) and delegates to the workflow. Behavioral change: finalizing an **already-completed order is now a no-op** — the workflow halts idempotently instead of re-running side effects.
 - **Completion side effects moved out of the model.** Newsletter subscription, checkout account creation and risk assessment run in the synchronous `Spree::OrderPlacedSubscriber` on the `order.placed` event. Decorators that patched `finalize!` should become event subscribers or `before_finalize` hook handlers.
-- **`order.placed` is the completion event.** `order.completed` still fires as a deprecated alias for one release (webhook consumers should migrate; wildcard subscribers can dedupe on the `deprecated_alias_of` metadata marker).
+- **`order.placed` is the completion event.** `order.completed` still fires as a deprecated alias until 6.5 (webhook consumers should migrate; wildcard subscribers can dedupe on the `deprecated_alias_of` metadata marker).
 - `Order.register_update_hook` no longer runs during completion.
 
 ## Addresses
@@ -441,7 +441,7 @@ The full address surface is shared by Cart and Order through `Spree::Purchase::A
 - `ship_address_id=` / `bill_address_id=` are **ownership-guarded**: an address not owned by the record's customer resolves to `nil`.
 - A signed-in customer entering checkout gets blank address slots **auto-filled from their saved defaults**.
 - **`use_billing` is deprecated** (removed in 6.5): the shipping address is canonical — use `use_shipping` to copy ship → bill.
-- The `firstname`, `lastname` and `zipcode` **columns are renamed** to `first_name`, `last_name` and `postal_code`. The API has used the new names since 5.4, but two things carried the old ones and now change: **validation error keys** (a client sending `postal_code` used to get its error back under `zipcode`) and **Ransack filter keys** (`q[zipcode_cont]` becomes `q[postal_code_cont]`). The old method names still read for one release. The Admin and Seller APIs no longer accept `firstname` and `lastname` in an address payload: send `first_name` and `last_name`.
+- The `firstname`, `lastname` and `zipcode` **columns are renamed** to `first_name`, `last_name` and `postal_code`. The API has used the new names since 5.4, but two things carried the old ones and now change: **validation error keys** (a client sending `postal_code` used to get its error back under `zipcode`) and **Ransack filter keys** (`q[zipcode_cont]` becomes `q[postal_code_cont]`). The old method names still read until 6.5. The Admin and Seller APIs no longer accept `firstname` and `lastname` in an address payload: send `first_name` and `last_name`.
 
 **The Admin and Seller APIs drop their deprecated fields in 6.0.** The Store API keeps its deprecated fields until 6.5, marked `deprecated` in the API reference and the SDK types; the Admin and Seller APIs remove theirs now:
 
@@ -560,7 +560,7 @@ A gift also no longer counts toward spend thresholds or toward the amount a perc
 
 ## Dependency injection changes
 
-6.0 introduces `*_workflow` keys for the flows that graduated to the workflow tier. The old `*_service` keys **stay settable and readable one release so applications don't crash at boot — but a legacy write is stashed, not applied**: a class written against the old service contract is not interchangeable with the workflow the new call sites consume. Reads return your stashed class (legacy code calling its own override keeps working), falling back to the workflow. Removed in 6.5.
+6.0 introduces `*_workflow` keys for the flows that graduated to the workflow tier. The old `*_service` keys **stay settable and readable until 6.5 so applications don't crash at boot — but a legacy write is stashed, not applied**: a class written against the old service contract is not interchangeable with the workflow the new call sites consume. Reads return your stashed class (legacy code calling its own override keeps working), falling back to the workflow. Removed in 6.5.
 
 | Legacy key (stash-only) | 6.0 key | Resolves to |
 |---|---|---|
@@ -791,7 +791,7 @@ These were deprecated in 5.x and are **gone now** — there is no bridge, so cal
 
 ### Custom fields replace metafields
 
-The metafields system is now custom fields: `Spree::CustomField` and `Spree::CustomFieldDefinition`, stored in `spree_custom_fields` and `spree_custom_field_definitions`. The legacy class names, the concern, and the reader methods all keep working for one release with a deprecation warning (see the table further down), so most applications need no code change to upgrade.
+The metafields system is now custom fields: `Spree::CustomField` and `Spree::CustomFieldDefinition`, stored in `spree_custom_fields` and `spree_custom_field_definitions`. The legacy class names, the concern, and the reader methods all keep working until 6.5 with a deprecation warning (see the table further down), so most applications need no code change to upgrade.
 
 Two things do change under you, both handled by `db:migrate`:
 
@@ -1100,7 +1100,7 @@ Spree's translations for emails, API messages and validation messages are now pa
 
 ## Deprecated in 6.0, removed in 6.5
 
-Every rename keeps the legacy name working for one release with a deprecation warning. The notable ones:
+Every rename keeps the legacy name working until 6.5 with a deprecation warning. The notable ones:
 
 Before 6.0 a cart was an incomplete order, so extensions written for 5.x (payment gateways in particular) call these names on carts. The rows marked *Order and Cart* are answered by `Spree::Cart` as well as `Spree::Order`, with the same warning.
 
@@ -1138,7 +1138,7 @@ Before 6.0 a cart was an incomplete order, so extensions written for 5.x (paymen
 | `Order#delivery_required?` (Order and Cart) | `#delivery_step_required?` — digital and pickup are deliveries too; this asks whether the customer must choose a delivery option |
 | `Order#requires_ship_address?` (Order and Cart) | `#shipping_address_required?` — decided by the selected delivery methods (`DeliveryMethod#requires_address?`); digital, pickup, and pickup-point deliveries need no customer address |
 | `requirements[].field` `shipping_method` (Store API) | `code` `delivery_method_required`; the field becomes `delivery_method` in 6.5 |
-| `Cart#number` (Store API field) | `id` — carts have no order-style number; the field mirrors the prefixed ID for one release |
+| `Cart#number` (Store API field) | `id` — carts have no order-style number; the field mirrors the prefixed ID until 6.5 |
 | `order.completed` event | `order.placed` |
 | Calling cart services with `order:` kwargs | `cart:` kwargs |
 | `OrderWalkthrough` (testing support) | factories: `:cart_ready_for_delivery`, `:cart_ready_to_complete`, `:completed_order_with_totals` |
@@ -1158,7 +1158,7 @@ Before 6.0 a cart was an incomplete order, so extensions written for 5.x (paymen
 | `Spree::SearchProvider::ProductPresenter` | `SpreeMeilisearch::ProductPresenter` (moved to the `spree_meilisearch` gem) |
 | `Spree::Digital` | `Spree::DigitalAsset` (table `spree_digitals` → `spree_digital_assets`, `digital_id` → `digital_asset_id`) |
 | `Variant#digitals`, `Product#digitals`, `DigitalLink#digital` | `#digital_assets` / `#digital_asset` |
-| `digital.created` / `.updated` / `.deleted` events | `digital_asset.*` (both emitted for one release) |
+| `digital.created` / `.updated` / `.deleted` events | `digital_asset.*` (both emitted until 6.5) |
 | `PermittedAttributes.digital_attributes` | `.digital_asset_attributes` |
 | `GET /api/v3/store/digitals/:token` | `GET /api/v3/store/digital_links/:token` (old path keeps working) |
 
@@ -1178,7 +1178,7 @@ Spree.search_provider = 'SpreeMeilisearch::SearchProvider'
 
 Your `MEILISEARCH_URL` and `MEILISEARCH_API_KEY` settings are unchanged, and **no reindex is needed** — the documents have the same shape. Applications that subclassed the document presenter should inherit from `SpreeMeilisearch::ProductPresenter` instead.
 
-The old class names keep working for one release, so an application that only names them in an initializer boots with a deprecation warning rather than an error — but the gem must be installed either way, since the classes now live there.
+The old class names keep working until 6.5, so an application that only names them in an initializer boots with a deprecation warning rather than an error — but the gem must be installed either way, since the classes now live there.
 
 ## Staff permissions: roles are data
 
@@ -1240,7 +1240,7 @@ A storefront built on the Store API and `@spree/sdk`, such as the [Spree storefr
 
 1. Upgrade `@spree/sdk` to 2.x and run the type checker (`pnpm exec tsc --noEmit`, or your framework's build).
 2. Match each error against the table below and apply its fix. Fix values where they come from (a context, a form, an API response), not with a cast at each call site.
-3. Search for the deprecated names in the [deprecated fields](#deprecated-fields-still-work-until-61) section and switch them, even where nothing fails to compile.
+3. Search for the deprecated names in the [deprecated fields](#deprecated-fields-still-work-until-65) section and switch them, even where nothing fails to compile.
 
 To hand the upgrade to a coding agent, give it the [prompt below](#upgrade-with-a-coding-agent).
 

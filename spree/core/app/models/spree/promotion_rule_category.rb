@@ -1,7 +1,7 @@
 module Spree
   # Join model between a Spree::Promotion::Rules::Category rule and a
-  # Spree::Category. Renamed from Spree::PromotionRuleTaxon in 6.0 (alias kept for
-  # one release).
+  # Spree::Category. Renamed from Spree::PromotionRuleTaxon in 6.0 (alias kept
+  # until 6.5).
   class PromotionRuleCategory < Spree.base_class
     belongs_to :promotion_rule, class_name: 'Spree::PromotionRule'
     belongs_to :category, class_name: 'Spree::Category'

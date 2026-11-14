@@ -292,7 +292,7 @@ module Spree
     # @deprecated Cancel through {Spree::Fulfillments::Cancel}; removed in 6.5.
     #   Restocking and the provider call are workflow steps now, so this no
     #   longer runs as a transition callback. Kept only so a host app that
-    #   called it directly keeps working for one release.
+    #   called it directly keeps working until 6.5.
     def after_cancel
       Spree::Deprecation.warn(
         'Spree::Fulfillment#after_cancel is deprecated and will be removed in Spree 6.5. Cancel through Spree::Fulfillments::Cancel instead.'

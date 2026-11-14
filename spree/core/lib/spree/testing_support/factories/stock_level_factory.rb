@@ -1,5 +1,5 @@
 FactoryBot.define do
-  # :stock_item is the pre-6.0 name, kept for one release so host-app factories
+  # :stock_item is the pre-6.0 name, kept until 6.5 so host-app factories
   # and specs written against it keep working.
   factory :stock_level, class: Spree::StockLevel, aliases: [:stock_item] do
     backorderable { true }

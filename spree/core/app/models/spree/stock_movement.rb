@@ -76,7 +76,7 @@ module Spree
     delegate :variant, :variant_id, to: :stock_level, allow_nil: true
     delegate :product, to: :variant
 
-    # `stock_item_id` rides along for one release beside the name that replaced
+    # `stock_item_id` rides along until 6.5 beside the name that replaced
     # it: Ransack resolves attribute aliases, and dropping the old filter would
     # hand a client still sending it the whole collection rather than an error.
     self.whitelisted_ransackable_attributes = %w[quantity kind reason created_at stock_level_id

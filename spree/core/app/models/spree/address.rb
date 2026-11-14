@@ -534,7 +534,7 @@ module Spree
     end
 
     # The ISO code is what the address stores; the association is kept in step
-    # with it for the one release it still exists. Assigning +country+ directly
+    # with it until 6.5 removes it. Assigning +country+ directly
     # is equally supported — whichever half was set fills in the other.
     def normalize_country
       submitted_iso = self[:country_code].presence

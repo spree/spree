@@ -53,7 +53,7 @@ module Spree
         end
 
         # @deprecated `number` mirrors `id` (carts have no order-style
-        #   number) — kept one release for 5.x clients; removed in 6.5.
+        #   number) — kept until 6.5 for 5.x clients.
         attributes :number, :token, :email, :customer_note, :po_number,
                    :currency, :locale, :total_quantity, :warnings, :coupon_code
 

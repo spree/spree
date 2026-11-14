@@ -285,7 +285,7 @@ module Spree
       include Spree::DependenciesHelper
 
       # 6.0 tier rename: these seams resolve Spree::Workflow classes now.
-      # The old *_service names stay settable and readable one release so
+      # The old *_service names stay settable and readable until 6.5 so
       # applications don't crash at boot — but a legacy write is stashed,
       # NOT applied to the workflow seam: a class written against the old
       # service contract is not interchangeable with the workflow the new

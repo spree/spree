@@ -2,7 +2,7 @@
 
 module Spree
   # Deprecation alias for Spree::Media, renamed from Spree::Asset in 6.0.
-  # Retained for one release so existing code and extensions that reference
+  # Retained until 6.5 so existing code and extensions that reference
   # Spree::Asset keep working; the canonical class is Spree::Media. Removed in
   # 6.5, together with Spree::Image (which this replaces).
   #
