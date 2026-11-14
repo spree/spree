@@ -740,6 +740,8 @@ export const allowedOriginSchema = z
 export const configSchema = z
   .object({
     version: z.literal(1),
+    // Modules whose sections the file may also carry; loaded before the rest is read.
+    extensions: z.array(nonEmpty).optional(),
     store: storeSchema.optional(),
     stock_locations: z.array(stockLocationSchema).optional(),
     channels: z.array(channelSchema).optional(),

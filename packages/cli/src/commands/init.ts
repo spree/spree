@@ -7,6 +7,7 @@ import {
   ConfigValidationError,
   deployConfig,
   loadConfig,
+  loadExtensions,
   provisionStore,
   renderReport,
   reportHasFailures,
@@ -465,6 +466,7 @@ async function deployStoreConfiguration(
   let config: ReturnType<typeof loadConfig>['config'] | null = null
   if (fs.existsSync(file)) {
     try {
+      await loadExtensions(file)
       ;({ config } = loadConfig(file))
     } catch (error) {
       if (!(error instanceof ConfigValidationError)) throw error

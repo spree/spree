@@ -7,6 +7,8 @@ export { applyPlan, deployConfig, reportHasFailures } from './apply.js'
 export { RunContext } from './context.js'
 export { diffAttributes, PendingRef, valuesEqual } from './diff.js'
 export { ConfigError, DanglingReferenceError } from './errors.js'
+export type { SectionOptions } from './extension.js'
+export { defineSection } from './extension.js'
 export type { IntrospectOptions } from './introspect.js'
 export { introspect, renderConfigYaml } from './introspect.js'
 export type { ConfigIssue, LoadedConfig, Variables } from './load.js'
@@ -61,7 +63,8 @@ export type {
 } from './schema.js'
 export { configSchema, SCHEMA_URL, toJsonSchema } from './schema.js'
 export { missingScopes, requiredScopes } from './scopes.js'
-export { ORDERED_SECTIONS, SECTIONS } from './sections/index.js'
+export type { EntrySchema, SectionDefinition } from './sections/index.js'
+export { ORDERED_SECTIONS, registerSection, SECTIONS } from './sections/index.js'
 export type {
   ApplyReport,
   ApplyResult,

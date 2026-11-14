@@ -1,0 +1,11 @@
+version: 1
+extensions:
+  - ./loyalty-extension.ts
+customer_groups:
+  - name: Gold members
+loyalty_tiers:
+  - code: gold
+    name: Gold
+    points: 500
+    customer_group: Gold members
+  - code: silver
