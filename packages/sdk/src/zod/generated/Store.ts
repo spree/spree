@@ -11,7 +11,6 @@ export const StoreSchema = z.object({
   twitter: z.string().nullable(),
   instagram: z.string().nullable(),
   customer_support_email: z.string().nullable(),
-  mail_from_address: z.string().nullable(),
   logo_url: z.string().nullable(),
 });
 

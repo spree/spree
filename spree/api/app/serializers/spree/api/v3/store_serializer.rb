@@ -13,12 +13,11 @@ module Spree
                  facebook: [:string, nullable: true, comment: 'Facebook page, as entered by the merchant: a handle or a full URL.'],
                  twitter: [:string, nullable: true, comment: 'X (Twitter) account, as entered by the merchant: a handle or a full URL.'],
                  instagram: [:string, nullable: true, comment: 'Instagram account, as entered by the merchant: a handle or a full URL.'],
-                 customer_support_email: [:string, nullable: true],
-                 mail_from_address: [:string, nullable: true]
+                 customer_support_email: [:string, nullable: true]
 
         attributes :name, :seo_title, :meta_description, :meta_keywords,
                    :facebook, :twitter, :instagram,
-                   :customer_support_email, :mail_from_address
+                   :customer_support_email
 
         attribute :logo_url do |store|
           image_url_for(store.logo)

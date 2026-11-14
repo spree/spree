@@ -10807,9 +10807,9 @@ paths:
       security:
       - api_key: []
       description: Returns the current store's name, default SEO metadata, logo, social
-        accounts and public email addresses, so a storefront can render its page metadata,
-        structured data and email sender. Translated fields use the requested locale;
-        one without a translation falls back to the store's default locale.
+        accounts and customer support email, so a storefront can render its page metadata
+        and structured data. Translated fields use the requested locale; one without
+        a translation falls back to the store's default locale.
       x-codeSamples:
       - lang: javascript
         label: Spree SDK
@@ -10853,7 +10853,6 @@ paths:
                 twitter: spreecommerce
                 instagram: spreecommerce
                 customer_support_email: support@example.com
-                mail_from_address: no-reply@example.com
                 logo_url:
               schema:
                 "$ref": "#/components/schemas/Store"
@@ -23214,9 +23213,6 @@ components:
         customer_support_email:
           type: string
           nullable: true
-        mail_from_address:
-          type: string
-          nullable: true
         logo_url:
           type: string
           nullable: true
@@ -23230,7 +23226,6 @@ components:
       - twitter
       - instagram
       - customer_support_email
-      - mail_from_address
       - logo_url
       x-typelizer: true
     SupplierEvent:

@@ -10,6 +10,7 @@ module Spree
                    supported_locales: [:string, multi: true, enum: Spree::Locales::ALL, enum_type_name: 'LocaleCode'],
                    available_locales: [:string, multi: true, enum: Spree::Locales::ALL, enum_type_name: 'LocaleCode'],
                    mailer_logo_url: [:string, nullable: true],
+                   mail_from_address: [:string, nullable: true],
                    new_order_notifications_email: [:string, nullable: true],
                    order_routing_strategy: [:string, comment: 'Order routing strategy. Built-in: rules. Extensions may register more.'],
                    payout_provider: [:string, nullable: true, comment: 'Payout provider; null uses the installation default. Built-in: system. Provider gems register more (e.g. stripe).'],
@@ -21,6 +22,7 @@ module Spree
                      :default_currency,
                      :default_locale,
                      :default_country_code,
+                     :mail_from_address,
                      :new_order_notifications_email,
                      created_at: :iso8601, updated_at: :iso8601
 

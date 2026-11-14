@@ -34,7 +34,7 @@ RSpec.describe Spree::Api::V3::Store::StoreController, type: :controller do
       expect(json_response['meta_keywords']).to eq('coffee, beans')
     end
 
-    it 'returns the branding, social accounts and public email addresses' do
+    it 'returns the branding, social accounts and support email' do
       get :show
 
       expect(json_response).to include(
@@ -42,7 +42,6 @@ RSpec.describe Spree::Api::V3::Store::StoreController, type: :controller do
         'twitter' => 'coffeeshop',
         'instagram' => 'coffeeshop.beans',
         'customer_support_email' => 'help@coffee.example',
-        'mail_from_address' => 'orders@coffee.example',
         'logo_url' => nil
       )
     end
@@ -84,7 +83,7 @@ RSpec.describe Spree::Api::V3::Store::StoreController, type: :controller do
       get :show
 
       expect(json_response.keys).to match_array(%w[id name seo_title meta_description meta_keywords logo_url
-                                                   facebook twitter instagram customer_support_email mail_from_address])
+                                                   facebook twitter instagram customer_support_email])
     end
   end
 end

@@ -81,8 +81,7 @@ A storefront reads the store's public identity from the Store API, with a publis
 | `name`, `seo_title`, `meta_description`, `meta_keywords` | The home page title and default page metadata. Translated |
 | `logo_url` | The logo in your header and in Organization structured data. A full URL, or `null` |
 | `facebook`, `twitter`, `instagram` | Social links and `sameAs` in structured data. Stored as the merchant typed them: a handle (`@mystore`), an address without a scheme (`facebook.com/mystore`) or a full `https://` URL. Turn the first two into an absolute profile URL on that network before using one as a link or a `sameAs` value; a browser would otherwise resolve it against your storefront |
-| `customer_support_email` | Where customers write to. Translated; `null` when unset, so fall back to `mail_from_address` |
-| `mail_from_address` | The sender of emails your storefront sends itself |
+| `customer_support_email` | Where customers write to, such as the `contactPoint` in structured data. Translated; `null` when unset |
 
 A translated field with no translation for the requested locale returns the default-language value.
 
@@ -100,8 +99,7 @@ A translated field with no translation for the requested locale returns the defa
     //   facebook: "https://facebook.com/mystore",
     //   twitter: "@mystore",
     //   instagram: "mystore",
-    //   customer_support_email: "support@mystore.com",
-    //   mail_from_address: "no-reply@mystore.com"
+    //   customer_support_email: "support@mystore.com"
     // }
     ```
   </Tab>
@@ -114,7 +112,7 @@ A translated field with no translation for the requested locale returns the defa
   </Tab>
 </Tabs>
 
-Merchants edit the name, logo, SEO fields and social accounts on **Settings → Store** in the dashboard, and translate the SEO fields with **Manage translations** on the same page. The email addresses live on **Settings → Emails**. See [Translations](/developer/core-concepts/translations).
+Merchants edit the name, logo, SEO fields and social accounts on **Settings → Store** in the dashboard, and translate the SEO fields with **Manage translations** on the same page. The support email lives on **Settings → Emails**. See [Translations](/developer/core-concepts/translations).
 
 ## Channels vs. Markets
 
