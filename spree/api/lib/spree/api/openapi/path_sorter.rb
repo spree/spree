@@ -3,24 +3,25 @@
 module Spree
   module Api
     module OpenAPI
-      # Reorders the `paths:` block of a generated OpenAPI YAML so paths are grouped
-      # by tag, in the same order as the top-level `tags:` array.
+      # Orders a generated OpenAPI YAML for the Mintlify sidebar: Authentication
+      # first, every other tag alphabetical.
       #
-      # rswag emits paths in the order specs are loaded (alphabetical by filename),
-      # which doesn't match the curated `tags:` array order in swagger_helper.rb.
-      # Mintlify groups sidebar sections by the *first appearance* of each tag in
-      # `paths:` — so after this sort runs, the sidebar matches the `tags:` array.
+      # rswag emits paths in the order specs are loaded, and Mintlify renders one
+      # sidebar group per tag in the order tags first appear in `paths:`. So this
+      # reorders the `paths:` block by each path's primary tag, and rewrites the
+      # top-level `tags:` block in the same order, adding any tag an operation
+      # uses but swagger_helper.rb doesn't declare.
       #
       # The reorder is line-based to preserve the exact text formatting that
       # rswag/Psych produced (indentation, multi-line string wrapping, etc.).
       module PathSorter
+        FIRST_TAG = 'Authentication'
+
         module_function
 
-        # Sort the `paths:` block in `path` so each path's first-operation primary
-        # tag follows the order defined in the document's top-level `tags:` array.
         # Returns true if the file was rewritten, false if already sorted.
         def sort_file!(path)
-          original = File.read(path)
+          original = File.read(path, encoding: Encoding::UTF_8)
           sorted = sort_text(original)
           return false if sorted == original
 
@@ -28,84 +29,90 @@ module Spree
           true
         end
 
-        # Pure-string variant: sort a YAML document's `paths:` block by tag order.
         def sort_text(yaml)
           lines = yaml.lines
-          tag_rank = extract_tag_rank(lines)
-          return yaml if tag_rank.empty?
 
-          paths_start = lines.index { |l| l.start_with?('paths:') }
-          return yaml unless paths_start
+          paths_range = block_range(lines, 'paths:')
+          return yaml unless paths_range
 
-          paths_end_exclusive = (paths_start + 1...lines.size).find do |i|
-            line = lines[i]
-            line.match?(/\A[A-Za-z]/) || line.start_with?('x-')
-          end || lines.size
-
-          blocks = collect_path_blocks(lines, paths_start + 1, paths_end_exclusive)
+          blocks = collect_path_blocks(lines, paths_range)
           return yaml if blocks.empty?
 
-          unknown_rank = tag_rank.size
-          sorted_blocks = blocks.each_with_index.sort_by do |block, original_index|
-            [tag_rank.fetch(block[:tag], unknown_rank), original_index]
+          tags_range = block_range(lines, 'tags:')
+          tag_entries = tags_range ? collect_tag_entries(lines, tags_range) : {}
+          blocks.each { |b| tag_entries[b[:tag]] ||= "- name: #{b[:tag]}\n" if b[:tag] }
+
+          order = tag_entries.keys.sort_by { |name| tag_sort_key(name) }
+          rank = order.each_with_index.to_h
+
+          sorted_blocks = blocks.each_with_index.sort_by do |block, index|
+            [rank.fetch(block[:tag], rank.size), index]
           end.map(&:first)
 
-          prefix = lines[0..paths_start].join
-          suffix = lines[paths_end_exclusive..].to_a.join
-          prefix + sorted_blocks.map { |b| b[:text] }.join + suffix
+          replacements = { paths_range => sorted_blocks.sum('') { |block| block[:text] } }
+          replacements[tags_range] = order.map { |name| tag_entries[name] }.join if tags_range
+
+          replace_ranges(lines, replacements)
         end
 
-        # Parse the top-level `tags:` block and return { tag_name => index } in
-        # declared order. Returns {} if not found.
-        def extract_tag_rank(lines)
-          start = lines.index { |l| l.start_with?('tags:') }
-          return {} unless start
+        def tag_sort_key(name)
+          [name == FIRST_TAG ? 0 : 1, name.downcase]
+        end
 
-          rank = {}
-          i = start + 1
-          while i < lines.size
+        # The body lines of a top-level key, as a range excluding the key itself.
+        def block_range(lines, key)
+          start = lines.index { |l| l.start_with?(key) }
+          return unless start
+
+          finish = ((start + 1)...lines.size).find { |i| top_level?(lines[i]) } || lines.size
+          (start + 1)...finish
+        end
+
+        def top_level?(line)
+          line.match?(/\A[A-Za-z]/) || line.start_with?('x-')
+        end
+
+        def replace_ranges(lines, replacements)
+          out = +''
+          cursor = 0
+          replacements.sort_by { |range, _| range.begin }.each do |range, text|
+            out << lines[cursor...range.begin].join << text
+            cursor = range.end
+          end
+          out << lines[cursor..].to_a.join
+        end
+
+        # { tag_name => entry_text } in declared order.
+        def collect_tag_entries(lines, range)
+          entries = {}
+          current = nil
+          range.each do |i|
             line = lines[i]
             if line.start_with?('- name: ')
-              rank[line.sub('- name: ', '').strip] = rank.size
-            elsif line.match?(/\A[A-Za-z]/) || line.start_with?('x-')
-              break
+              current = unquote(line.sub('- name: ', '').strip)
+              entries[current] = +''
             end
-            i += 1
+            entries[current] << line if current
           end
-          rank
+          entries
         end
 
-        # Collect each path block as { tag:, text: } from lines[range].
-        # A path block starts on a line beginning with two spaces + a quote.
-        def collect_path_blocks(lines, start_idx, end_idx_exclusive)
-          blocks = []
-          current_start = nil
-
-          (start_idx...end_idx_exclusive).each do |i|
-            if path_header?(lines[i])
-              blocks << build_block(lines, current_start, i) if current_start
-              current_start = i
-            end
+        # Each path block as { tag:, text: }. A block starts on a line beginning
+        # with two spaces and a slash, optionally quoted.
+        def collect_path_blocks(lines, range)
+          starts = range.select { |i| path_header?(lines[i]) }
+          starts.each_with_index.map do |from, idx|
+            to = starts[idx + 1] || range.end
+            slice = lines[from...to]
+            { tag: extract_primary_tag(slice), text: slice.join }
           end
-          blocks << build_block(lines, current_start, end_idx_exclusive) if current_start
-
-          blocks
         end
 
         def path_header?(line)
           line.start_with?('  "/') || line.start_with?('  /')
         end
 
-        def build_block(lines, from, to_exclusive)
-          slice = lines[from...to_exclusive]
-          {
-            tag: extract_primary_tag(slice),
-            text: slice.join
-          }
-        end
-
-        # Within a path block, find the first `tags:` line and return the first
-        # tag value following it (the path block's "primary" tag).
+        # The first tag of the first operation in a path block.
         def extract_primary_tag(slice)
           slice.each_with_index do |line, idx|
             next unless line.match?(/\A {6}tags:\s*$/)
@@ -113,12 +120,16 @@ module Spree
             slice[(idx + 1)..].each do |next_line|
               if next_line.start_with?('      - ')
                 value = next_line[8..].strip
-                return value unless value.empty?
+                return unquote(value) unless value.empty?
               end
               break if next_line.match?(/\A {0,4}\S/)
             end
           end
           nil
+        end
+
+        def unquote(value)
+          value.match?(/\A(["']).*\1\z/) ? value[1..-2] : value
         end
       end
     end

@@ -28,10 +28,8 @@ namespace :rswag do
       t.rspec_opts = ['--format Rswag::Specs::SwaggerFormatter', '--order defined']
     end
 
-    # rswag emits paths in spec-load order (alphabetical by filename), which doesn't
-    # match the curated order in swagger_helper.rb's `tags:` array. Mintlify groups
-    # sidebar sections by first-tag-appearance in `paths:`, so reorder paths here
-    # so the sidebar follows the `tags:` array.
+    # Mintlify orders sidebar groups by first tag appearance in `paths:`, so sort
+    # the groups alphabetically (Authentication first).
     Rake::Task['rswag:specs:swaggerize'].enhance do
       $LOAD_PATH.unshift(File.expand_path('lib', __dir__))
       require 'spree/api/openapi/path_sorter'
@@ -42,7 +40,7 @@ namespace :rswag do
         next unless File.exist?(path)
 
         if Spree::Api::OpenAPI::PathSorter.sort_file!(path)
-          puts "Reordered paths by tag → #{path}"
+          puts "Sorted paths and tags → #{path}"
         end
       end
     end

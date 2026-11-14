@@ -80,7 +80,7 @@ RSpec.configure do |config|
         { name: 'Wishlists', description: 'Customer wishlists' },
         { name: 'Newsletter Subscribers', description: 'Guest and customer newsletter subscriptions (double opt-in)' },
         { name: 'Policies', description: 'Store policies (return policy, privacy policy, terms of service)' },
-        { name: 'Digitals', description: 'Digital product downloads' }
+        { name: 'Digital Links', description: 'Digital product downloads' }
       ],
       components: {
         securitySchemes: {
@@ -156,10 +156,9 @@ RSpec.configure do |config|
           }
         }
       ],
-      # Authentication first, the rest alphabetical — Mintlify renders one
-      # sidebar group per tag in this order, and any operation tag missing
-      # from this list gets appended at the bottom of the sidebar. Keep every
-      # operation tag listed.
+      # Descriptions for the sidebar groups. Order doesn't matter: the
+      # rswag:specs:swaggerize task sorts groups alphabetically, Authentication
+      # first (Spree::Api::OpenAPI::PathSorter).
       tags: [
         { name: 'Authentication', description: 'Admin user login, logout, token refresh, and current user profile' },
         { name: 'Allowed Origins', description: 'CORS allowlist for storefront and admin client origins' },
@@ -282,9 +281,7 @@ RSpec.configure do |config|
           }
         }
       ],
-      # Authentication first, the rest alphabetical — see the Admin API's
-      # note above: Mintlify renders one sidebar group per tag in this
-      # order, so every operation tag must be listed here.
+      # See the Admin API's note above.
       tags: [
         { name: 'Authentication', description: 'Seller sign-in, token refresh, logout, and invitation acceptance' },
         { name: 'Account', description: 'The signed-in user, the sellers they may act for, and what they may do' },
