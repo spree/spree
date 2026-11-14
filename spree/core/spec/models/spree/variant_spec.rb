@@ -433,6 +433,10 @@ describe Spree::Variant, type: :model do
         expect(described_class.search(nil)).to be_empty
       end
 
+      it 'returns none when Ransack passes a bare flag' do
+        expect(described_class.search(true)).to be_empty
+      end
+
       it 'returns none for queries under the 3-char floor' do
         expect(described_class.search('Re')).to be_empty
       end

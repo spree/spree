@@ -35,6 +35,28 @@ RSpec.describe Spree::RansackableAttributes do
     end
   end
 
+  describe '.search_scope' do
+    # Ransack sends `q[search]=1` as `true`, or as no argument at all.
+    [Spree::Variant, Spree::Order, Spree::Product, Spree::Price].each do |model|
+      it "#{model} treats a bare flag as no term" do
+        expect { model.search(true).to_a }.not_to raise_error
+        expect { model.search.to_a }.not_to raise_error
+        expect { model.search(nil).to_a }.not_to raise_error
+      end
+    end
+
+    it 'returns no records for a blank term, or all of them when declared with blank: :all' do
+      expect(Spree::Variant.search(true)).to be_empty
+      expect(Spree::Order.search('   ')).to be_empty
+      expect(Spree::Price.search(true).to_sql).to eq(Spree::Price.all.to_sql)
+    end
+
+    it 'handles a bare flag on the customer search' do
+      expect { Spree.customer_class.search(true).to_a }.not_to raise_error
+      expect(Spree.customer_class.search(true)).to be_empty
+    end
+  end
+
   describe '.search_by' do
     let(:store) { @default_store }
 
@@ -45,6 +67,14 @@ RSpec.describe Spree::RansackableAttributes do
       expect(Spree::Supplier.search('acme')).to contain_exactly(supplier)
       expect(Spree::Supplier.search('JANE')).to contain_exactly(supplier)
       expect(Spree::Supplier.search('')).to include(supplier, other)
+    end
+
+    it 'filters nothing when Ransack sends the scope as a bare flag' do
+      supplier = create(:supplier, store: store)
+
+      expect(Spree::Supplier.search(true)).to include(supplier)
+      expect(Spree::Supplier.search).to include(supplier)
+      expect { Spree::Supplier.ransack(search: true).result.to_a }.not_to raise_error
     end
 
     it 'reaches through associations' do

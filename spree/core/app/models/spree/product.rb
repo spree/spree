@@ -281,9 +281,7 @@ module Spree
     #   background caller (an export, say) passes its own.
     # @param audience [Symbol, nil] `:store` keeps a shopper's search off the
     #   custom fields hidden from the storefront; `nil` is the back office
-    scope :search, ->(query, store = Spree::Current.store, audience: nil) {
-      next none if query.blank?
-
+    search_scope do |query, store = Spree::Current.store, audience: nil|
       product_ids = Spree::Variant.search_by_product_name_or_sku(query).pluck(:product_id)
 
       searchable_definitions = store.custom_field_definitions.
@@ -303,7 +301,7 @@ module Spree
                       end
 
       where(id: (product_ids + custom_field_ids).uniq.compact)
-    }
+    end
 
     scope :archivable, -> { where(status: %w[active draft]) }
     scope :by_source, ->(source) { send(source) }

@@ -269,9 +269,7 @@ module Spree
     # Free-text variant search: SKU, parent product name, and any
     # option-value presentation (e.g. "Red", "XL"). The 3-char floor
     # keeps single-letter queries from triggering a full scan.
-    def self.search(query)
-      return none if query.blank? || query.length < 3
-
+    search_scope(min_length: 3) do |query|
       conditions = [
         search_condition(self, :sku, query),
         search_condition(Spree::OptionValue, :label, query),
