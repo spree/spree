@@ -97,6 +97,20 @@ describe('scrubErrorEvent breadcrumbs', () => {
     expect(breadcrumb.data?.arguments).toEqual(['/reset-password?token=redacted'])
     expect(event.breadcrumbs?.[0]?.message).toBe('open /reset-password?token=redacted')
   })
+
+  it('redacts breadcrumb data Sentry normalized to a string', () => {
+    const event = scrubErrorEvent({
+      type: undefined,
+      breadcrumbs: [
+        {
+          category: 'console',
+          data: '/reset-password?token=abc' as unknown as Record<string, unknown>,
+        },
+      ],
+    })
+
+    expect(event.breadcrumbs?.[0]?.data).toBe('/reset-password?token=redacted')
+  })
 })
 
 describe('scrubBreadcrumb', () => {

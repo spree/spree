@@ -30,21 +30,22 @@ function redactDeep(value: unknown, depth = 0): unknown {
   )
 }
 
-function redactValues(values: Record<string, unknown> | undefined) {
-  if (!values) return
-  for (const [key, value] of Object.entries(values)) values[key] = redactDeep(value)
+// Sentry may have normalized a whole `data` or `extra` object to a string by
+// the time an event is sent, so the result keeps whatever shape it came in.
+function redactData<T>(data: T): T {
+  return redactDeep(data) as T
 }
 
 // The page URL, its Referer header, the error's own text, its extra data and
 // its breadcrumbs as Sentry normalized them.
 export function scrubErrorEvent(event: Sentry.ErrorEvent) {
   if (event.request?.url) event.request.url = redactTokens(event.request.url)
-  redactValues(event.request?.headers)
+  if (event.request?.headers) event.request.headers = redactData(event.request.headers)
   if (event.message) event.message = redactTokens(event.message)
   for (const exception of event.exception?.values ?? []) {
     if (exception.value) exception.value = redactTokens(exception.value)
   }
-  redactValues(event.extra)
+  if (event.extra) event.extra = redactData(event.extra)
   for (const breadcrumb of event.breadcrumbs ?? []) scrubBreadcrumb(breadcrumb)
   return event
 }
@@ -52,7 +53,7 @@ export function scrubErrorEvent(event: Sentry.ErrorEvent) {
 // Navigation (from, to), fetch/XHR (url) and console (message) breadcrumbs.
 export function scrubBreadcrumb(breadcrumb: Sentry.Breadcrumb) {
   if (breadcrumb.message) breadcrumb.message = redactTokens(breadcrumb.message)
-  redactValues(breadcrumb.data)
+  if (breadcrumb.data) breadcrumb.data = redactData(breadcrumb.data)
   return breadcrumb
 }
 
