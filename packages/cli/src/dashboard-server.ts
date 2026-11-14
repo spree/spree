@@ -1,5 +1,6 @@
 import { type ChildProcess, spawn } from 'node:child_process'
 import fs from 'node:fs'
+import { constants } from 'node:os'
 import path from 'node:path'
 import * as p from '@clack/prompts'
 import pc from 'picocolors'
@@ -131,22 +132,32 @@ export function startDashboardDevServer(projectDir: string): DashboardDevServer 
     }
   })
 
-  return {
-    url,
-    stop: () => {
-      stopping = true
-      settle(null)
-      if (child.exitCode !== null || child.killed) return
-      if (!windows && child.pid) {
-        // Signal the whole process group so Vite goes down with its wrapper.
-        try {
-          process.kill(-child.pid, 'SIGTERM')
-          return
-        } catch {
-          // group already gone — fall through to the direct kill
-        }
-      }
-      child.kill('SIGTERM')
-    },
+  // Its own process group gets neither a closed terminal's hang-up nor a
+  // signal sent to the CLI, so stop it on both before exiting as they would.
+  const onSignal = (signal: NodeJS.Signals) => {
+    stop()
+    process.exit(128 + constants.signals[signal])
   }
+  process.once('SIGHUP', onSignal)
+  process.once('SIGTERM', onSignal)
+
+  const stop = () => {
+    process.off('SIGHUP', onSignal)
+    process.off('SIGTERM', onSignal)
+    stopping = true
+    settle(null)
+    if (child.exitCode !== null || child.killed) return
+    if (!windows && child.pid) {
+      // Signal the whole process group so Vite goes down with its wrapper.
+      try {
+        process.kill(-child.pid, 'SIGTERM')
+        return
+      } catch {
+        // group already gone — fall through to the direct kill
+      }
+    }
+    child.kill('SIGTERM')
+  }
+
+  return { url, stop }
 }
