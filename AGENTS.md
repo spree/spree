@@ -65,7 +65,7 @@ pnpm wt:template         # rebuild the template DB after schema-changing pulls
 - **Prefixed IDs** (`prod_86Rf07xd4z`) in every request, response and event payload — never raw integer ids. IDs are strings; never cast them to integers.
 - **No Ruby class names on the wire** — not in requests, responses, filters, webhooks, permission subjects, SDK types or docs. Use the short `api_type` name (`Spree::PriceRules::VolumeRule` → `volume_rule`). Details in `spree/AGENTS.md`.
 - **Read and write names match.** A field a serializer exposes is accepted under the same name on write; legacy column names are bridged on the model, never by the client.
-- **Deprecate, never remove.** Store, Admin and Seller APIs are stable contracts: a renamed field keeps working, marked `deprecated:`, until the next minor release, and the upgrade guide names its replacement. Ruby renames keep the old name working for one release with a deprecation warning.
+- **Deprecate, never remove.** Store, Admin and Seller APIs are stable contracts: a renamed field keeps working, marked `deprecated:`, for five minor releases (deprecated in 6.0, removed in 6.5), and the upgrade guide names its replacement. Ruby renames keep the old name working for the same five minor releases with a deprecation warning. Name the removal release in the message (`Removed in 6.5.`).
 - **Money is never a float**, in Ruby or TypeScript (`docs/plans/6.0-money-correctness.md`).
 - **One store per installation.** Store-owned data belongs to a store; cross-store sharing is gone.
 
