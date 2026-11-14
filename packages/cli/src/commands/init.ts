@@ -3,6 +3,7 @@ import { platform } from 'node:os'
 import path from 'node:path'
 import { setTimeout as sleep } from 'node:timers/promises'
 import * as p from '@clack/prompts'
+import { createAdminClient } from '@spree/admin-sdk'
 import {
   ConfigValidationError,
   deployConfig,
@@ -11,13 +12,16 @@ import {
   renderReport,
   reportHasFailures,
 } from '@spree/config/node'
-import { sampleData } from '@spree/config/sample-data'
 import type { Command } from 'commander'
 import { execa } from 'execa'
 import pc from 'picocolors'
-import { withTemporaryKey } from '../api/temporary-key.js'
 import { SEED_TASK, spreeTask } from '../backend.js'
-import { mintProjectCredentials, writeAdminEmail, writeProjectSetupMarker } from '../config.js'
+import {
+  mintApiKey,
+  mintProjectCredentials,
+  writeAdminEmail,
+  writeProjectSetupMarker,
+} from '../config.js'
 import { DASHBOARD_PORT, STOREFRONT_PORT } from '../constants.js'
 import { detectProject, isEjectedProject, readSampleDataFromEnv } from '../context.js'
 import {
@@ -33,7 +37,6 @@ import {
   primeBundleVolume,
   streamLogs,
 } from '../docker.js'
-import { loadSampleData } from '../sample-data.js'
 import { detectPackageManager, ensureDashboardDevEnv } from './add.js'
 import { DEFAULT_CONFIG_FILE } from './config.js'
 
@@ -174,7 +177,9 @@ export async function runFirstRunSetup(flags: {
   // got them; `spree sample-data` loads it once `spree config provision` has.
   const sampleDataLoaded = sampleData && provisioned
   if (sampleDataLoaded) {
-    await loadSampleDataInto(ctx.projectDir, ctx.port)
+    s.start('Loading sample data...')
+    await captureTask(spreeTask('load_sample_data'), ctx.projectDir)
+    s.stop('Sample data loaded.')
   } else if (sampleData && adminEmail && adminPassword) {
     p.log.warn(
       'Sample data skipped: the store defaults are missing. Run `spree config provision`, then `spree sample-data`.',
@@ -415,36 +420,6 @@ export function updateStorefrontEnv(projectDir: string, apiKey: string): void {
  * this run and revoked as soon as the deploy is over. Answers whether the
  * store defaults were all written, which sample data needs.
  */
-const DEPLOY_KEY = 'spree init (config deploy)'
-const SAMPLE_DATA_KEY = 'spree init (sample data)'
-
-function warnKeyNotRevoked(name: string): void {
-  p.log.warn(
-    `Could not revoke the key minted for this run; revoke "${name}" with \`spree api-key revoke\`.`,
-  )
-}
-
-/**
- * Loads the demo store through the Admin API with a key minted for the run.
- * A failure leaves setup standing: the recipe is safe to run again.
- */
-async function loadSampleDataInto(projectDir: string, port: number): Promise<void> {
-  const s = p.spinner()
-  s.start('Loading sample data...')
-  try {
-    const { revoked } = await withTemporaryKey(projectDir, port, SAMPLE_DATA_KEY, (client) =>
-      loadSampleData(client, sampleData(), (message) => s.message(message)),
-    )
-    s.stop('Sample data loaded.')
-    if (!revoked) warnKeyNotRevoked(SAMPLE_DATA_KEY)
-  } catch (error) {
-    s.stop(pc.yellow('Could not load sample data.'))
-    p.log.warn(
-      `${error instanceof Error ? error.message : String(error)}\nRun \`spree sample-data\` once the app is up.`,
-    )
-  }
-}
-
 async function deployStoreConfiguration(
   projectDir: string,
   port: number,
@@ -481,30 +456,54 @@ async function deployStoreConfiguration(
     )
   }
   s.start('Setting up store defaults...')
-  let provisioned = false
+  // A revoke that did not happen (Ctrl-C mid-deploy) must not block the next
+  // run: the fixed name supersedes the leftover key.
+  let token: string
   try {
-    const { revoked } = await withTemporaryKey(projectDir, port, DEPLOY_KEY, async (client) => {
-      const defaults = await provisionStore(client)
-      provisioned = !reportHasFailures(defaults)
-      const results = [
-        ...defaults.results,
-        ...(config ? (await deployConfig(config, client)).results : []),
-      ]
-      const report = { results }
-      if (reportHasFailures(report)) {
-        s.stop(pc.yellow('Store configured with failures.'))
-        p.log.warn(renderReport(report))
-      } else {
-        s.stop(
-          results.length
-            ? `Store configured (${results.length} record${results.length === 1 ? '' : 's'} written).`
-            : 'Store configured (nothing to change).',
-        )
-      }
+    token = await mintApiKey(projectDir, {
+      name: 'spree init (config deploy)',
+      keyType: 'secret',
+      scopes: ['write_all'],
+      replace: true,
     })
-    if (!revoked) warnKeyNotRevoked(DEPLOY_KEY)
   } catch (error) {
     skipDeploy(error)
+    return false
+  }
+
+  const client = createAdminClient({ baseUrl: `http://localhost:${port}`, secretKey: token })
+  let provisioned = false
+  try {
+    const defaults = await provisionStore(client)
+    provisioned = !reportHasFailures(defaults)
+    const results = [
+      ...defaults.results,
+      ...(config ? (await deployConfig(config, client)).results : []),
+    ]
+    const report = { results }
+    if (reportHasFailures(report)) {
+      s.stop(pc.yellow('Store configured with failures.'))
+      p.log.warn(renderReport(report))
+    } else {
+      s.stop(
+        results.length
+          ? `Store configured (${results.length} record${results.length === 1 ? '' : 's'} written).`
+          : 'Store configured (nothing to change).',
+      )
+    }
+  } catch (error) {
+    skipDeploy(error)
+  } finally {
+    // The key exists for this deploy only; revoking it through the API needs
+    // no rake round-trip and works whether or not the deploy succeeded.
+    try {
+      const current = await client.apiKeys.current()
+      await client.apiKeys.revoke(current.id)
+    } catch {
+      p.log.warn(
+        'Could not revoke the deploy key; revoke "spree init (config deploy)" with `spree api-key revoke`.',
+      )
+    }
   }
   return provisioned
 }

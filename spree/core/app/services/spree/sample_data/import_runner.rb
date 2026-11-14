@@ -20,11 +20,6 @@ module Spree
       # @return [Spree::ServiceModule::Result] wrapping the import — completed
       #   when inline, queued otherwise
       def call(csv_path:, import_class:, store: nil, user: nil, inline: false, skip_events: false, attributes: {})
-        Spree::Deprecation.warn(
-          'Spree::SampleData::ImportRunner is deprecated and will be removed in Spree 6.2. ' \
-          'Create the import through the Admin API, or build a Spree::Import and call the import workflows.'
-        )
-
         import = Spree::SampleData::ImportBuilder.call(
           csv_path: csv_path, import_class: import_class, store: store, user: user,
           inline: inline, skip_events: skip_events, attributes: attributes

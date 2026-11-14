@@ -5807,13 +5807,7 @@
       "provisioning": "Przygotowywanie sklepu…",
       "provisioning_failed": "Twoje konto jest gotowe, ale nie udało się skonfigurować domyślnych ustawień sklepu (magazyn, strefy dostaw, kategorie podatkowe).",
       "provisioning_retry": "Spróbuj ponownie",
-      "provisioning_continue": "Przejdź do panelu",
-      "sample_data": {
-        "loading": "Wczytywanie danych przykładowych…",
-        "step": "Krok {{number}} z {{total}}. Potrwa to kilka minut; możesz pracować dalej.",
-        "loaded": "Dane przykładowe wczytane",
-        "failed": "Nie udało się wczytać danych przykładowych"
-      }
+      "provisioning_continue": "Przejdź do panelu"
     },
     "staff": {
       "actions": {

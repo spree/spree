@@ -5741,13 +5741,7 @@
       "provisioning": "Ihr Shop wird vorbereitet…",
       "provisioning_failed": "Ihr Konto ist bereit, aber die Standardeinstellungen des Shops (Lager, Versandzonen, Steuerkategorien) konnten nicht eingerichtet werden.",
       "provisioning_retry": "Erneut versuchen",
-      "provisioning_continue": "Weiter zum Dashboard",
-      "sample_data": {
-        "loading": "Beispieldaten werden geladen…",
-        "step": "Schritt {{number}} von {{total}}. Das dauert einige Minuten; Sie können weiterarbeiten.",
-        "loaded": "Beispieldaten geladen",
-        "failed": "Beispieldaten konnten nicht geladen werden"
-      }
+      "provisioning_continue": "Weiter zum Dashboard"
     },
     "staff": {
       "actions": {

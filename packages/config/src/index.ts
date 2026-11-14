@@ -28,8 +28,6 @@ export {
 } from './plan.js'
 export type { DefaultsOptions } from './provision.js'
 export { applyProvisioning, provisionStore, storeDefaults } from './provision.js'
-export type { ImportOptions, RecipeClient, RecipeProgress, RecipeStep } from './recipe.js'
-export { deployStep, importStep, RecipeError, runRecipe } from './recipe.js'
 export type { RenderOptions } from './render.js'
 export { countByKind, planToJson, renderPlan, renderReport, summaryLine } from './render.js'
 export type {

@@ -5728,13 +5728,7 @@
       "provisioning": "正在准备您的商店…",
       "provisioning_failed": "您的账户已就绪，但无法设置商店的默认配置（仓库、配送区域、税种）。",
       "provisioning_retry": "重试",
-      "provisioning_continue": "继续前往仪表板",
-      "sample_data": {
-        "loading": "正在加载示例数据…",
-        "step": "第 {{number}} 步，共 {{total}} 步。需要几分钟，您可以继续操作。",
-        "loaded": "示例数据已加载",
-        "failed": "无法加载示例数据"
-      }
+      "provisioning_continue": "继续前往仪表板"
     },
     "staff": {
       "actions": {

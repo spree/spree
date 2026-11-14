@@ -38,9 +38,17 @@ Every new store starts with the basics of a wholesale setup, from the [store def
 
 To try the whole flow quickly, load the sample data. It adds a demo trade buyer, a wholesale price list with quantity breaks, and a two-level company (*Acme Industrial* with an *Acme EMEA* division) that the buyer belongs to:
 
-```bash
+<CodeGroup>
+
+```bash Spree CLI
 spree sample-data
 ```
+
+```bash Without CLI
+bin/rails spree:load_sample_data
+```
+
+</CodeGroup>
 
 The demo buyer signs in as `wholesale@example.com` / `spree123`. The sample data also creates a *Wholesale Assortment* catalog assigned to Acme Industrial. It is created switched off, so activate it when you want to see a restricted range.
 

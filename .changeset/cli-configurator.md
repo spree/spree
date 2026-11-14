@@ -11,4 +11,3 @@ Added `spree config`: declarative store configuration from a YAML file.
 - `spree init` deploys the project's `spree.store.yml` after seeding with a key minted for that run, and no longer prompts for an admin account: the setup screen creates it and offers sample data. `--admin-email` / `--admin-password` remain for scripted installs, where `--no-sample-data` still applies.
 - `tax_rates` and `custom_field_definitions` sections, and `custom_fields` values on products, categories and sellers.
 - `option_types`, `collections`, `companies`, `price_lists`, `catalogs` and `promotions` sections; `rules` on delivery methods; option types, categories and custom fields on product types.
-- `spree sample-data` loads the demo store through the Admin API: a recipe of store files and CSV imports, exported from `@spree/config/sample-data`. `runRecipe`, `deployStep` and `importStep` build your own.
