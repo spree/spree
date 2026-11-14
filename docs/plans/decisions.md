@@ -6783,7 +6783,7 @@ which loads them on demand.
 
 **Consequences:** TypeScript subscribers need Postgres. No Admin API operations are added for the worker. Handlers get the event and an `admin` client only, never a database handle, and must be safe to run twice. Events that carry credentials stay in Ruby. The next major is bound to three commitments: an in-process subscriber receives the same full event envelope; `defineSubscriber` and `admin` keep working; subscribers stay asynchronous and after-commit.
 
-**Plan:** `6.1-typescript-subscribers.md`.
+**Plan:** `6.2-typescript-subscribers.md` (renamed from `6.1-typescript-subscribers.md` on 2026-11-14).
 
 
 ## 2026-11-13 — `@spree/core` stays the browser-safe shared package; server TypeScript gets its own package
@@ -6794,4 +6794,15 @@ which loads them on demand.
 
 **Consequences:** The TypeScript package name does not match the Ruby gem: `spree_core` is the server, `@spree/core` is not. No general server package is created in 6.x; the subscribers runner lives inside `@spree/subscribers` until the next major is designed.
 
-**Plan:** `6.1-typescript-subscribers.md`.
+**Plan:** `6.2-typescript-subscribers.md` (renamed from `6.1-typescript-subscribers.md` on 2026-11-14).
+
+
+## 2026-11-14 — TypeScript subscribers move to 6.2; handlers read the database through read-only models
+
+**Context:** The 2026-11-13 entry gave a handler the event and an `admin` client only, so every read was an Admin API request: a network call and one of Puma's request threads, for code that runs next to the server. The next major keeps most of today's tables. Two other transports were examined: a Node process started per event by a Solid Queue job, measured in a spike, and two Postgres queue libraries, read in full.
+
+**Decision:** The plan moves from 6.1 to 6.2, still as a developer preview. A handler receives the event, a read-only `db` (Drizzle, with generated models) and `admin`. Reads go to Postgres directly. Writes go through `admin`, which is promised as the Admin API's operations and not as an HTTP client, so the same calls can run in-process later. Models are generated for the models that publish events (about 55) and the records read next to them, not for every table. The queue table and the long-running Node worker are confirmed over the two alternatives.
+
+**Consequences:** The "never a database handle" consequence of the 2026-11-13 entry is reversed. The table layout becomes visible to projects, so the models are labelled unstable and are outside what the preview promises. Handlers never get a way to write to the database. The models are the first server-side TypeScript that is more than one table, so the 2026-11-13 statement that no general server package is created in 6.x is open again; the models get their own plan. The base image keeps its 6.1 target.
+
+**Plan:** `6.2-typescript-subscribers.md`.
