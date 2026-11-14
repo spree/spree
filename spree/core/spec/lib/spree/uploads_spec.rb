@@ -44,7 +44,7 @@ RSpec.describe Spree::Uploads do
 
     it 'logs, without refusing, a file of another store' do
       # Category images also become media library placements, which report too.
-      expect(Rails.logger).to receive(:warn).with(/belongs to store #{other_store.id}.*Spree 6.5 refuses/).at_least(:once)
+      expect(Rails.logger).to receive(:warn).with(/belongs to store #{other_store.id}.*Spree 6.1 refuses/).at_least(:once)
 
       category.update!(image_signed_id: create_blob(store_id: other_store.id).signed_id)
 

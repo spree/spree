@@ -2,7 +2,7 @@ module Spree
   # Store ownership of uploaded files (docs/plans/6.0-uploads-and-file-ownership.md).
   #
   # Every `ActiveStorage::Blob` records the store that owns it, and attaching a
-  # blob to a record of another store is reported. Spree 6.0 only logs; 6.5
+  # blob to a record of another store is reported. Spree 6.0 only logs; 6.1
   # refuses, so one release of logs finds every path that still creates blobs
   # without a store.
   module Uploads
@@ -93,7 +93,7 @@ module Spree
       def report_store_mismatch(reason)
         Rails.logger.warn(
           "[Spree] Attached file #{blob.id} #{reason}, but #{record_type}##{record_id} (#{name}) " \
-          "belongs to store #{owner_store_id}. Spree 6.5 refuses this attachment."
+          "belongs to store #{owner_store_id}. Spree 6.1 refuses this attachment."
         )
       end
     end
