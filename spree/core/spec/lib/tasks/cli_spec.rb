@@ -35,6 +35,15 @@ describe 'spree:cli:create_api_key' do
       expect(key.scopes).to eq(%w[read_orders write_promotions])
     end
 
+    it "records one of the store's admins as the key's creator, so its imports have an owner" do
+      admin = create(:admin_user)
+      store.add_user(admin)
+
+      expect { subject.invoke }.to output(/\Ask_/).to_stdout
+
+      expect(store.api_keys.secret.order(:created_at).last.created_by).to eq(store.users.first)
+    end
+
     context 'when an active key already carries the name' do
       let!(:previous) { create(:api_key, :secret, name: 'CI key', store: store, scopes: %w[read_all]) }
 
