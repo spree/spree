@@ -42,13 +42,14 @@ npx @spree/cli dev
 
 ### `spree init`
 
-First-run setup. Starts Docker services, seeds the database, generates an API key, and optionally loads sample data.
+First-run setup. Starts Docker services, seeds the database, generates API keys, deploys the project's `spree.seeds.yml` (see [`spree seed`](#spree-seed)), and prints the one-time setup link where you create the admin account and can load sample data.
 
 ```bash
 spree init
-spree init --no-sample-data   # Skip sample data
-spree init --no-open           # Skip opening browser
-spree init --detach            # Exit when setup is done (scripts, CI); the stack keeps running
+spree init --no-open                                   # Skip opening browser
+spree init --admin-email ops@example.com \
+           --admin-password '********' --no-sample-data  # Scripted install: seed the admin, skip sample data
+spree init --detach                                    # Exit when setup is done (scripts, CI); the stack keeps running
 ```
 
 ### `spree dev`
@@ -211,15 +212,20 @@ spree open
 
 ### `spree seed`
 
-Seed the database.
+Seed the store. Inside a project it first runs the database seeds (the store, its admin role and first API key, and the first admin when `ADMIN_EMAIL` and `ADMIN_PASSWORD` are set), then deploys the project's `spree.seeds.yml` through the Admin API: channels, markets, tax, delivery zones and methods, warehouses, categories, products, customers. With `--base-url` or `--profile` it seeds another instance from the file. Records match on natural keys, so one file works against local, staging and production. See [Seeding a Store from a File](/developer/cli/seeds).
 
 ```bash
-spree seed
+spree seed                             # database seeds, then deploy spree.seeds.yml
+spree seed --dry-run                   # what would change, nothing written
+spree seed --fail-on-delete            # apply; refuse any delete (CI guard)
+spree seed validate                    # check the file, offline
+spree seed introspect --out store.yml  # capture the live store into a file
+spree seed defaults                    # give a store its defaults (setup does this for you)
 ```
 
 ### `spree sample-data`
 
-Load sample products, categories, and images.
+Load sample products, categories, and images. The store needs its [defaults](/developer/cli/seeds#store-defaults) first: finish first-run setup, or run `spree seed defaults`.
 
 ```bash
 spree sample-data

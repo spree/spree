@@ -8,6 +8,7 @@
       "@spree/admin-sdk",
       "@spree/seller-sdk",
       "@spree/core",
+      "@spree/seeds",
       "@spree/dashboard",
       "@spree/dashboard-core",
       "@spree/dashboard-ui",

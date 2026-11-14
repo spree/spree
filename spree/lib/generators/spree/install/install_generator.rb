@@ -6,7 +6,7 @@ module Spree
   class InstallGenerator < Rails::Generators::Base
     class_option :migrate, type: :boolean, default: true, banner: 'Run Spree migrations'
     class_option :seed, type: :boolean, default: true, banner: 'load seed data (migrations must be run)'
-    class_option :sample, type: :boolean, default: false, banner: 'load sample data (migrations must be run)'
+    class_option :sample, type: :boolean, default: false, banner: 'deprecated and ignored: run bin/rails spree:load_sample_data after setup'
     class_option :auto_accept, type: :boolean
     class_option :user_class, type: :string
     class_option :admin_user_class, type: :string
@@ -22,12 +22,14 @@ module Spree
     def prepare_options
       @run_migrations = options[:migrate]
       @load_seed_data = options[:seed]
-      @load_sample_data = options[:sample]
+      @load_seed_data = false unless @run_migrations
+    end
 
-      unless @run_migrations
-        @load_seed_data = false
-        @load_sample_data = false
-      end
+    def warn_about_sample_option
+      return unless options[:sample]
+
+      say_status :deprecated, '--sample is ignored and will be removed in Spree 6.2: sample data needs a store that finished setup. ' \
+                              'Load it afterwards with bin/rails spree:load_sample_data', :yellow
     end
 
     def add_files
@@ -88,22 +90,6 @@ module Spree
       end
     end
 
-    def load_sample_data
-      if @load_sample_data
-        # Sample-data imports need an admin as their owner. Without explicit
-        # credentials the seed mints none (first-run setup does), so loading
-        # now would raise mid-install.
-        if admin_account_available?
-          say_status :loading, 'sample data'
-          rake 'spree:load_sample_data'
-        else
-          say_status :skipping, 'sample data (needs an admin account — finish setup, then run bin/rails spree:load_sample_data)'
-        end
-      else
-        say_status :skipping, 'sample data (you can always run bin/rails spree:load_sample_data)'
-      end
-    end
-
     def notify_about_routes
       insert_into_file(File.join('config', 'routes.rb'),
                        after: "Rails.application.routes.draw do\n") do
@@ -138,7 +124,7 @@ module Spree
 
     # Whether this install ends up with an admin account: explicit credentials
     # were passed to the seed, or one already exists (re-install into a
-    # configured app). Drives the sample-data guard and the completion notes.
+    # configured app). Drives the completion notes.
     def admin_account_available?
       credentials = (options[:admin_email].presence || ENV['ADMIN_EMAIL'].presence) &&
         (options[:admin_password].presence || ENV['ADMIN_PASSWORD'].presence)

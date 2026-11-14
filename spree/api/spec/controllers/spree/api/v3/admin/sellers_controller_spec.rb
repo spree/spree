@@ -193,6 +193,19 @@ RSpec.describe Spree::Api::V3::Admin::SellersController, type: :controller do
       expect(seller.reload).to be_pending
     end
 
+    it 'changes a custom field value the seller already holds' do
+      definition = create(:custom_field_definition, :short_text_field, resource_type: 'Spree::Seller', store: store, key: 'vat_id')
+      seller.set_custom_field(definition, 'DE1')
+
+      patch :update, params: {
+        id: seller.prefixed_id,
+        custom_fields: [{ custom_field_definition_id: definition.prefixed_id, value: 'DE2' }]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(seller.reload.custom_fields.map(&:value)).to eq(['DE2'])
+    end
+
     # Written as `about`, read back as both the plain text and the markup —
     # the column holds HTML either way.
     it 'keeps the markup in the description' do
@@ -437,7 +450,9 @@ RSpec.describe Spree::Api::V3::Admin::SellersController, type: :controller do
   describe 'the onboarding checklist on a page of sellers' do
     it 'reads every seller’s box in one query' do
       store.seller_requirements.destroy_all
-      Spree::SellerRequirement.provision_defaults(store)
+      %w[AcceptTerms CompleteProfile BillingAddress DeliveryMethod PackageType].each do |kind|
+        store.seller_requirements.create!(type: "Spree::SellerRequirements::#{kind}")
+      end
       4.times do |index|
         seller = create(:seller, :approved, store: store, name: "Box Seller #{index}")
         create(:package_type, :measured_default_box, store: store, seller: seller)

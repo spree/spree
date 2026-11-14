@@ -60,6 +60,7 @@
   },
   "devDependencies": {
     "@spree/admin-sdk": "workspace:^",
+    "@spree/seeds": "workspace:^",
     "@spree/sdk-core": "workspace:*",
     "@types/node": "catalog:",
     "tsup": "catalog:",
@@ -69,5 +70,8 @@
   },
   "engines": {
     "node": ">=20"
+  },
+  "exports": {
+    ".": "./dist/index.js"
   }
 }

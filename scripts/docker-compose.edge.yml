@@ -49,6 +49,7 @@ services:
     # boot (~5s) that no-ops when nothing changed.
     command:
       [
-        "sh", "-c",
-        "(bundle check || bundle install) && bin/rails spree:install:migrations db:prepare && exec bin/rails server -b 0.0.0.0 -p 3000"
+        'sh',
+        '-c',
+        '(bundle check || bundle install) && bin/rails spree:install:migrations db:prepare && exec bin/rails server -b 0.0.0.0 -p 3000',
       ]

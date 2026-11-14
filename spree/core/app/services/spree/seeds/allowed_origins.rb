@@ -1,14 +1,6 @@
 module Spree
   module Seeds
-    class AllowedOrigins
-      prepend Spree::ServiceModule::Base
-      include StoreScoped
-
-      private
-
-      def seed(store)
-        store.allowed_origins.find_or_create_by!(origin: 'http://localhost')
-      end
-    end
+    # @deprecated Removed in Spree 6.2; see {Spree::Seeds::RemovedStoreDefaults}.
+    class AllowedOrigins < RemovedStoreDefaults; end
   end
 end
