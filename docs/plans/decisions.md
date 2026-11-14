@@ -6751,3 +6751,58 @@ which loads them on demand.
 **Consequences:** Errors must be reported through `Rails.error.report` with a `spree.*` source to show up in reports. Changed settings are reported only when they are booleans, numbers or fixed-choice strings; free-form strings never are. Gems are named only when they are Spree's own or come from rubygems.org, and the diagnostics endpoint's `errors[].error_class` is a deliberate exception to the no-class-names-on-the-wire rule. Secret API keys still never see the running version. Because this is a patch release, the work adds no migrations and changes no existing response or signature.
 
 **Plan:** `6.0-diagnostics-and-issue-reporting.md`.
+
+
+## 2026-11-13 — Spree publishes a base image; project Dockerfiles build on it
+
+**Context:** Every project builds its production image from a 200-line Dockerfile copied from `spree/spree-starter`. Each copy drifts from upstream, and operating system, Ruby and Node security fixes have to be applied by each project by hand. The stock image is rebuilt only when a Spree version tag is pushed. The planned TypeScript subscribers app also needs Node in the production image, which the current Dockerfile deliberately leaves out.
+
+**Decision:** Spree publishes `ghcr.io/spree/spree-base` per Spree minor line: a runtime image and a build variant, both with Ruby and Node, and no gems. Build logic moves into a `spree-image-build` script in the build variant, run as two steps (gems, then app). A project's Dockerfile starts `FROM` the floating line tag. An ejected project runs in development on the build variant directly, with no local image build. The definition lives in `spree/spree` and replaces the spree-starter Dockerfile; the stock `ghcr.io/spree/spree` image is built from the same base. Target is Spree 6.1.
+
+**Consequences:** Node is always present in the production image. The base is rebuilt weekly for the current and the previous Spree minor line (an older line is frozen), and a rebuild moves the floating tag only after the stock image built on it passes its health check. The Ruby patch version belongs to the base, so the starter's `Gemfile` stops pinning an exact patch. A new runtime system package goes into the base, not into project Dockerfiles. The image contract (app path, build commands, port, health check, entrypoint behaviour, the two dashboard path variables) is kept small on purpose, so a later Spree major can change what is inside the base without changing project Dockerfiles.
+
+**Plan:** `6.1-spree-base-image.md`. **Plans amended:** `5.6-project-layout-and-dashboard.md` ("No Node in the final image", and the dashboard build stages living in the project Dockerfile, are superseded).
+
+
+## 2026-11-13 — Spree images are published to GHCR only, named in full, and signed
+
+**Context:** Spree does not control the `spree` or `spreecommerce` namespaces on Docker Hub. `spreecommerce/spree` there was last updated in 2019 and is still pulled. An image name with no registry host resolves to Docker Hub, which is what a person or a coding agent writing from memory produces.
+
+**Decision:** Spree images (`spree`, `spree-base`) are published only at `ghcr.io/spree`. There is no Docker Hub mirror and no new Docker Hub namespace. Every image reference in code, scaffolded files and docs includes the registry host. Each published image carries a build provenance attestation. The `AGENTS.md` files scaffolded into projects say that nothing on Docker Hub is official.
+
+**Consequences:** Spree images do not appear in Docker Hub search. A bare `spree/...` or `spreecommerce/...` image name must never be written anywhere. A Docker Hub mirror becomes possible only if a namespace claim with Docker succeeds; until then it stays a deferred item.
+
+**Plan:** `6.1-spree-base-image.md`.
+
+
+## 2026-11-13 — TypeScript subscribers are a bridge: a queue table and a Node worker, reacting only
+
+**Context:** A `create-spree-app` project can react to events only in Ruby. Spree's webhooks need a receiving service with a public address. A Ruby server cannot run TypeScript handlers in-process. A later Spree major is planned to be TypeScript-native, so any TypeScript API added now must not be broken then.
+
+**Decision:** `apps/subscribers` holds TypeScript files, found by folder, written with `defineSubscriber` from a new `@spree/subscribers` package. Spree writes events to a dedicated `spree_subscriber_events` queue table; a Node worker in the same container reads it directly from Postgres, runs the handlers and writes back through the Admin API with a key the scaffolder creates. Rows are deleted on success and swept after a retention period. Events caused by the worker's own writes are not queued. It ships in 6.1 as a developer preview and is stable in 6.2. It stays a bridge: no blocking calls, no multiple apps, no externally hosted apps, no dashboard extensions from apps in 6.x.
+
+**Consequences:** TypeScript subscribers need Postgres. No Admin API operations are added for the worker. Handlers get the event and an `admin` client only, never a database handle, and must be safe to run twice. Events that carry credentials stay in Ruby. The next major is bound to three commitments: an in-process subscriber receives the same full event envelope; `defineSubscriber` and `admin` keep working; subscribers stay asynchronous and after-commit.
+
+**Plan:** `6.2-typescript-subscribers.md` (renamed from `6.1-typescript-subscribers.md` on 2026-11-14).
+
+
+## 2026-11-13 — `@spree/core` stays the browser-safe shared package; server TypeScript gets its own package
+
+**Context:** `@spree/core` holds what every client shares (enums, money helpers, filters, event names) and is imported by the dashboards in the browser. A TypeScript-native server will need a home for models and services, and the name matches the Ruby gem that is the server core.
+
+**Decision:** `@spree/core` keeps its current meaning: no server code, no HTTP, no runtime dependencies. Server-side TypeScript goes in a separate package that depends on `@spree/core`, never the other way round. Moving the shared code out and giving the name to the server was rejected: it is a breaking rename for everything that imports `@spree/core` today. Start with one server package, not many.
+
+**Consequences:** The TypeScript package name does not match the Ruby gem: `spree_core` is the server, `@spree/core` is not. No general server package is created in 6.x; the subscribers runner lives inside `@spree/subscribers` until the next major is designed.
+
+**Plan:** `6.2-typescript-subscribers.md` (renamed from `6.1-typescript-subscribers.md` on 2026-11-14).
+
+
+## 2026-11-14 — TypeScript subscribers move to 6.2; handlers read the database through read-only models
+
+**Context:** The 2026-11-13 entry gave a handler the event and an `admin` client only, so every read was an Admin API request: a network call and one of Puma's request threads, for code that runs next to the server. The next major keeps most of today's tables. Two other transports were examined: a Node process started per event by a Solid Queue job, measured in a spike, and two Postgres queue libraries, read in full.
+
+**Decision:** The plan moves from 6.1 to 6.2, still as a developer preview. A handler receives the event, a read-only `db` (Drizzle, with generated models) and `admin`. Reads go to Postgres directly. Writes go through `admin`, which is promised as the Admin API's operations and not as an HTTP client, so the same calls can run in-process later. Models are generated for the models that publish events (about 55) and the records read next to them, not for every table. The queue table and the long-running Node worker are confirmed over the two alternatives.
+
+**Consequences:** The "never a database handle" consequence of the 2026-11-13 entry is reversed. The table layout becomes visible to projects, so the models are labelled unstable and are outside what the preview promises. Handlers never get a way to write to the database. The models are the first server-side TypeScript that is more than one table, so the 2026-11-13 statement that no general server package is created in 6.x is open again; the models get their own plan. The base image keeps its 6.1 target.
+
+**Plan:** `6.2-typescript-subscribers.md`.

@@ -1,6 +1,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { DEFAULT_SPREE_PORT } from './constants.js'
+import { composeBuildsImage } from './lib/base-image.js'
 import type { ProjectContext } from './types.js'
 
 export function detectProject(cwd: string = process.cwd()): ProjectContext {
@@ -95,14 +96,34 @@ export function hasMonorepoSpreePath(projectDir: string): boolean {
 // build-from-source dev stack (e.g. compiling admin assets the image would have
 // baked in but the bind-mount now masks).
 export function isEjectedProject(projectDir: string): boolean {
-  const composeFile = path.join(projectDir, 'docker-compose.yml')
-  if (!fs.existsSync(composeFile)) return false
+  const compose = readCompose(projectDir)
+  if (compose === undefined) return false
+  // Cheap YAML probes. An ejected project runs the app from its own source:
+  // either it builds the project's Dockerfile, or it mounts the source into
+  // the base image's build variant (`- ./server:/rails`, with or without
+  // mount options such as `:cached`). The prebuilt-image
+  // compose does neither — it only mounts `/rails/storage`.
+  return (
+    composeBuildsImage(compose) ||
+    /^\s*-\s*["']?\.[\w./-]*:\/rails(?::[\w,=-]+)?["']?\s*$/m.test(compose)
+  )
+}
+
+/**
+ * Whether the active compose file builds an image from the project's
+ * Dockerfile. False for a project that runs the published base image, which
+ * has nothing to build.
+ */
+export function buildsDevImage(projectDir: string, composeFile = 'docker-compose.yml'): boolean {
+  const compose = readCompose(projectDir, composeFile)
+  return compose !== undefined && composeBuildsImage(compose)
+}
+
+function readCompose(projectDir: string, composeFile = 'docker-compose.yml'): string | undefined {
   try {
-    // Cheap YAML probe — `build:` at the start of a line is the only valid
-    // position for a service-level build directive.
-    return /^\s*build\s*:/m.test(fs.readFileSync(composeFile, 'utf-8'))
+    return fs.readFileSync(path.join(projectDir, composeFile), 'utf-8')
   } catch {
-    return false
+    return undefined
   }
 }
 

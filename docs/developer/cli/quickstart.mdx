@@ -76,11 +76,11 @@ Restart `web` and `worker` in place — same image, same volumes, fresh backend 
 spree restart
 ```
 
-Not appropriate for dependency changes (Ctrl+C and re-run `spree dev`), Dockerfile or runtime version changes (use `spree build`), or compose file changes (Ctrl+C and re-run `spree dev`).
+Not appropriate for dependency changes (Ctrl+C and re-run `spree dev`), a newer base image (use `spree build`), or compose file changes (Ctrl+C and re-run `spree dev`).
 
 ### `spree build`
 
-Rebuild the dev image after Dockerfile or runtime version changes. Only relevant after `spree eject`.
+Update the image an ejected project runs in. It pulls the newer [Spree base image](/developer/deployment/docker#the-spree-base-image), which carries operating system, Ruby and Node.js security fixes. In a project created before Spree 6.1 that still builds its own dev image, it rebuilds that image instead. Only relevant after `spree eject`.
 
 ```bash
 spree build
@@ -128,7 +128,7 @@ Switch from the prebuilt Docker image to building from your local `server/` dire
 spree eject
 ```
 
-After ejecting, the Docker image is built from `server/Dockerfile`. Edit files in `server/` and run `spree dev` to rebuild and restart with your changes.
+After ejecting, the app runs from the source in `server/`, mounted into the Spree base image. Edit files in `server/` and they reload on the next request. `server/Dockerfile` builds your production image.
 
 See [Customizing the Backend](/developer/create-spree-app/quickstart#customizing-the-backend) for details on what you can customize.
 
