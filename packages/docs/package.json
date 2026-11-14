@@ -1,6 +1,6 @@
 {
   "name": "@spree/docs",
-  "version": "0.1.0",
+  "version": "6.0.4",
   "description": "Spree Commerce developer documentation as local Markdown and OpenAPI specs, for AI agents working on the open-source headless commerce platform",
   "keywords": [
     "spree",

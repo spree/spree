@@ -132,17 +132,20 @@ jobs:
       # `pnpm publish` does in release.yml.
       - name: Pack packages
         run: |
-          for pkg in core admin-sdk seller-sdk dashboard-ui dashboard-core dashboard seller-dashboard cli; do
+          for pkg in core admin-sdk seller-sdk dashboard-ui dashboard-core dashboard seller-dashboard cli docs; do
             pnpm --dir "packages/$pkg" pack --pack-destination "$RUNNER_TEMP/tarballs"
           done
 
       # Outside the checkout, so the project doesn't join this pnpm workspace.
       # SPREE_CLI_VERSION points the project at the packed CLI, which carries
-      # the starter templates the apps are created from.
+      # the starter templates the apps are created from. SPREE_DOCS_VERSION
+      # does the same for the docs, which can be a version ahead of npm.
       - name: Create project
         run: |
           CLI_TARBALL=$(ls "$RUNNER_TEMP"/tarballs/spree-cli-*.tgz)
-          SPREE_CLI_VERSION="file:$CLI_TARBALL" node packages/create-spree-app/dist/index.js "$RUNNER_TEMP/app" \
+          DOCS_TARBALL=$(ls "$RUNNER_TEMP"/tarballs/spree-docs-*.tgz)
+          SPREE_CLI_VERSION="file:$CLI_TARBALL" SPREE_DOCS_VERSION="file:$DOCS_TARBALL" \
+            node packages/create-spree-app/dist/index.js "$RUNNER_TEMP/app" \
             --no-start --no-storefront --seller-dashboard --no-agent-skills --use-pnpm
 
       # The apps pin @spree/* to npm ranges. Overriding every package with its

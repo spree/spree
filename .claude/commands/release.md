@@ -222,9 +222,20 @@ same commands and the notes, run none of them, and stop.
 
    ```bash
    git tag v<version> <merge sha>
-   git tag '@spree/cli@<version>' <merge sha>     # only tools that moved
-   git push origin v<version> '@spree/cli@<version>'
+   git push origin v<version>
+   # once the v<version> run below concluded success, and only tools that moved:
+   git tag '@spree/cli@<version>' <merge sha>
+   git push origin '@spree/cli@<version>'
    ```
+
+   Tool tags wait for the docs, which the `v<version>` run publishes:
+   `create-spree-app` projects depend on `@spree/docs` on the Spree major, and
+   `spree upgrade` moves a project's `@spree/docs` to its server's version.
+   Push a `@spree/cli` or `create-spree-app` tag only once `npm view
+   "@spree/docs@<npm version>" version` prints `<npm version>` (`6.0.0-rc.7`
+   for `6.0.0.rc7`). A tool release
+   between Spree releases needs no wait: the docs for the current version
+   are already on npm.
 
    The push starts one `release.yml` run per tag. Find each run by its tag,
    not by its place in the recent list, and wait for every one of them:

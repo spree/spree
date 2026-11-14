@@ -4,6 +4,8 @@ import path from 'node:path'
 import { execa } from 'execa'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { addAi } from '../src/commands/add.js'
+import { agentSkillsRefFor } from '../src/lib/ai.js'
+import { RELEASE_LINE } from '../src/lib/release-line.js'
 import type { ProjectContext } from '../src/types.js'
 
 vi.mock('execa', () => ({ execa: vi.fn(async () => ({})) }))
@@ -203,7 +205,9 @@ describe('addAi', () => {
     expect(fs.existsSync(path.join(projectDir, '.mcp.json'))).toBe(false)
   })
 
+  // The first call lists the skills release tags.
   it('reports skills that failed to install although the run exited with code 0', async () => {
+    vi.mocked(execa).mockResolvedValueOnce({ stdout: '' } as never)
     vi.mocked(execa).mockResolvedValueOnce({
       stdout: JSON.stringify([{ name: 'spree-api-v3', status: 'failed', error: 'EACCES' }]),
     } as never)
@@ -212,10 +216,60 @@ describe('addAi', () => {
   })
 
   it('reports a failed skills install without undoing the docs server', async () => {
+    vi.mocked(execa).mockResolvedValueOnce({ stdout: '' } as never)
     vi.mocked(execa).mockRejectedValueOnce(new Error('network down'))
 
     expect(await addAi(ctx(), { skills: true, mcp: true, quiet: true })).toBe(false)
 
     expect(JSON.parse(read('.mcp.json')).mcpServers['spree-docs']).toBeDefined()
+  })
+
+  it('installs the skills release written for the Spree version', async () => {
+    write('pnpm-lock.yaml', '')
+    vi.mocked(execa).mockResolvedValueOnce({
+      stdout: [
+        `aaa\trefs/tags/v${RELEASE_LINE.version}`,
+        'bbb\trefs/tags/v0.3.0',
+        'ccc\trefs/tags/v99.0.0',
+      ].join('\n'),
+    } as never)
+
+    expect(await addAi(ctx(), { skills: true, mcp: false, quiet: true })).toBe(true)
+
+    expect(vi.mocked(execa)).toHaveBeenCalledWith(
+      'git',
+      ['ls-remote', '--tags', '--refs', 'https://github.com/spree/agent-skills.git'],
+      expect.anything(),
+    )
+    expect(vi.mocked(execa)).toHaveBeenCalledWith(
+      'pnpm',
+      [
+        'dlx',
+        'skills',
+        'add',
+        `spree/agent-skills#v${RELEASE_LINE.version}`,
+        '--skill',
+        '*',
+        '--yes',
+        '--json',
+      ],
+      expect.anything(),
+    )
+  })
+})
+
+describe('agentSkillsRefFor', () => {
+  const tags = ['v0.3.0', 'v6.0.0', 'v6.0.1', 'v6.0.5', 'v6.1.0', 'spree-6', 'v6.0.x']
+
+  it('picks the newest release on the same minor line that is not newer', () => {
+    expect(agentSkillsRefFor('6.0.4', tags)).toBe('v6.0.1')
+    expect(agentSkillsRefFor('6.0.5', tags)).toBe('v6.0.5')
+    expect(agentSkillsRefFor('6.1.2', tags)).toBe('v6.1.0')
+  })
+
+  it('finds none before the line has a release', () => {
+    expect(agentSkillsRefFor('6.2.0', tags)).toBeUndefined()
+    expect(agentSkillsRefFor('6.0.0-rc.7', tags)).toBeUndefined()
+    expect(agentSkillsRefFor('6.0.4', [])).toBeUndefined()
   })
 })
