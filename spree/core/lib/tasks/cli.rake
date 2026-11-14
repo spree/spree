@@ -20,7 +20,10 @@ namespace :spree do
       # with the old key revoked and no replacement.
       key = Spree::ApiKey.transaction do
         store.api_keys.active.where(name: name).find_each(&:revoke!) if ENV['REPLACE'] == 'true'
-        store.api_keys.create!(name: name, key_type: key_type, scopes: scopes)
+        # Whoever can run this task administers the installation, so the key
+        # acts for one of the store's admins once there is one: imports and
+        # exports made with it need an owner.
+        store.api_keys.create!(name: name, key_type: key_type, scopes: scopes, created_by: store.users.first)
       end
       print key.plaintext_token
     end
