@@ -1,6 +1,8 @@
+import path from 'node:path'
 import { execa } from 'execa'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import {
+  cdTarget,
   detectPackageManager,
   generateEncryptionKeys,
   generateSecretKeyBase,
@@ -116,5 +118,30 @@ describe('storefrontPm', () => {
   it('keeps npm and pnpm as-is', () => {
     expect(storefrontPm('npm')).toBe('npm')
     expect(storefrontPm('pnpm')).toBe('pnpm')
+  })
+})
+
+describe('cdTarget', () => {
+  const windows = process.platform === 'win32'
+  const home = path.resolve('/home/me')
+
+  it('keeps the path the user typed, relative to where they ran the command', () => {
+    expect(cdTarget(path.join(home, 'my-store'), home)).toBe('my-store')
+    expect(cdTarget(path.join(home, 'projects', 'my-store'), home)).toBe(
+      path.join('projects', 'my-store'),
+    )
+    expect(cdTarget(path.resolve('/srv/my-store'), home)).toBe(
+      path.join('..', '..', 'srv', 'my-store'),
+    )
+  })
+
+  it('quotes characters PowerShell would split on, on Windows only', () => {
+    expect(cdTarget(path.join(home, 'shop,us'), home)).toBe(windows ? '"shop,us"' : 'shop,us')
+  })
+
+  it('quotes paths the shell would split or expand', () => {
+    expect(cdTarget(path.join(home, "my store's"), home)).toBe(
+      windows ? `"my store's"` : `'my store'\\''s'`,
+    )
   })
 })

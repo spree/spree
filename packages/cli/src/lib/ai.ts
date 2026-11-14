@@ -3,10 +3,12 @@ import path from 'node:path'
 import { execa } from 'execa'
 import pc from 'picocolors'
 import { isNotFound } from '../config.js'
+import { isOlderVersion } from './release-line.js'
 
 export const DOCS_MCP_URL = 'https://spreecommerce.org/docs/mcp'
 export const DOCS_MCP_SERVER_NAME = 'spree-docs'
 export const AGENT_SKILLS_REPO = 'spree/agent-skills'
+const AGENT_SKILLS_GIT_URL = `https://github.com/${AGENT_SKILLS_REPO}.git`
 
 /**
  * Project-level MCP files of each coding agent that reads one. Claude Code and
@@ -146,14 +148,59 @@ export function dlxCommand(packageManager: string): string[] {
   return ['npx', '--yes']
 }
 
-/** The `skills` CLI arguments that install every Spree agent skill. */
-export const INSTALL_SKILLS_ARGS: readonly string[] = Object.freeze([
-  'add',
-  AGENT_SKILLS_REPO,
-  '--skill',
-  '*',
-  '--yes',
-])
+/**
+ * The `skills` CLI arguments that install every Spree agent skill, from the
+ * given release tag of `spree/agent-skills`, or from its main branch without one.
+ */
+export function installSkillsArgs(ref?: string): string[] {
+  const source = ref ? `${AGENT_SKILLS_REPO}#${ref}` : AGENT_SKILLS_REPO
+  return ['add', source, '--skill', '*', '--yes']
+}
+
+const RELEASE_TAG = /^v(\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?)$/
+
+/**
+ * The release of the Spree agent skills written for a Spree version: the
+ * newest `v<version>` tag on the same minor line that is not newer than it.
+ * The skills are tagged only when they change, so `v6.0.1` serves Spree 6.0.4
+ * until a later 6.0 tag exists.
+ *
+ * @param spreeVersion the Spree version in npm spelling, e.g. `6.0.4`
+ * @param tags the tags of `spree/agent-skills`
+ * @return the tag, or undefined when no release covers that line yet
+ */
+export function agentSkillsRefFor(spreeVersion: string, tags: string[]): string | undefined {
+  const line = spreeVersion.split('.').slice(0, 2).join('.')
+  let newest: string | undefined
+  for (const tag of tags) {
+    const version = tag.match(RELEASE_TAG)?.[1]
+    if (!version || version.split('.').slice(0, 2).join('.') !== line) continue
+    if (isOlderVersion(spreeVersion, version)) continue
+    if (newest === undefined || isOlderVersion(newest, version)) newest = version
+  }
+  return newest && `v${newest}`
+}
+
+/**
+ * The release tag of the Spree agent skills for a Spree version, read from
+ * GitHub. Undefined when no release covers it or the tags cannot be listed,
+ * and the skills then come from the main branch.
+ */
+export async function resolveAgentSkillsRef(spreeVersion: string): Promise<string | undefined> {
+  try {
+    const { stdout } = await execa('git', ['ls-remote', '--tags', '--refs', AGENT_SKILLS_GIT_URL], {
+      stdin: 'ignore',
+      timeout: 30_000,
+    })
+    const tags = String(stdout ?? '')
+      .split('\n')
+      .map((line) => line.split('refs/tags/')[1]?.trim())
+      .filter((tag): tag is string => Boolean(tag))
+    return agentSkillsRefFor(spreeVersion, tags)
+  } catch {
+    return undefined
+  }
+}
 
 /** The full command that runs the `skills` CLI with the given arguments. */
 function skillsCommand(packageManager: string, args: readonly string[]): string[] {
@@ -185,7 +232,7 @@ async function runSkills(
   projectDir: string,
   packageManager: string,
   args: readonly string[],
-): Promise<void> {
+): Promise<unknown> {
   const [command, ...rest] = skillsCommand(packageManager, args)
   let stdout: unknown
   try {
@@ -201,22 +248,84 @@ async function runSkills(
   }
   const failures = failedSkills(stdout)
   if (failures.length > 0) throw new Error(failures.join('\n'))
+  return stdout
+}
+
+// The names of the skills in the `--json` output of `skills add`: every skill
+// the source has, whatever happened to it.
+function reportedSkills(stdout: unknown): Set<string> {
+  if (typeof stdout !== 'string') return new Set()
+  try {
+    const results: unknown = JSON.parse(stdout)
+    if (!Array.isArray(results)) return new Set()
+    return new Set(
+      results
+        .map((result) => (isObject(result) ? result.name : undefined))
+        .filter((name): name is string => typeof name === 'string'),
+    )
+  } catch {
+    return new Set()
+  }
 }
 
 /**
  * Install every Spree agent skill for each coding agent the `skills` CLI
- * detects, without prompting. Run again, it moves the installed skills to the
- * newest version on the main branch of `spree/agent-skills` and adds the ones
- * published since.
+ * detects, without prompting. The skills-lock.json the `skills` CLI writes
+ * records the release each skill came from, so `spree upgrade` can move them
+ * with the server. Run again, it replaces the installed skills with that
+ * release's, adds the ones it has that are missing, and removes the Spree
+ * skills it no longer has. Skills from other sources are left alone.
  *
  * @param projectDir the project root
  * @param packageManager the project's package manager, which runs the `skills` CLI
+ * @param ref the release tag from `resolveAgentSkillsRef`; the main branch without one
+ * @return the obsolete Spree skills that could not be removed; empty when none are left
  */
 export async function installAgentSkills(
   projectDir: string,
   packageManager: string,
-): Promise<void> {
-  await runSkills(projectDir, packageManager, INSTALL_SKILLS_ARGS)
+  ref?: string,
+): Promise<string[]> {
+  const stdout = await runSkills(projectDir, packageManager, installSkillsArgs(ref))
+  const obsolete = obsoleteSpreeAgentSkills(projectDir, ref, reportedSkills(stdout))
+  if (obsolete.length === 0) return []
+  // `skills remove` keeps a skill folder the developer has edited.
+  const [command, ...rest] = skillsCommand(packageManager, ['remove', ...obsolete, '--yes'])
+  try {
+    await execa(command, rest, { cwd: projectDir, stdin: 'ignore', timeout: 120_000 })
+  } catch {
+    return obsolete
+  }
+  return obsoleteSpreeAgentSkills(projectDir, ref, reportedSkills(stdout))
+}
+
+/**
+ * The Spree skills left behind by an install: the ones `skills-lock.json`
+ * attributes to `spree/agent-skills` at another release than the one just
+ * installed, and that the install did not report. The `skills` CLI merges a
+ * release's skills into the lockfile, so a skill the release dropped keeps
+ * its old entry. Both checks must agree, so a skill is never removed on the
+ * strength of one of them, and nothing is removed when the install reported
+ * no skills at all.
+ *
+ * @param ref the release tag just installed; the main branch without one
+ * @param installed the skill names the install reported
+ */
+export function obsoleteSpreeAgentSkills(
+  projectDir: string,
+  ref: string | undefined,
+  installed: ReadonlySet<string>,
+): string[] {
+  if (installed.size === 0) return []
+  const skills = readSkillsLock(projectDir)
+  return Object.entries(skills)
+    .filter(
+      ([name, entry]) =>
+        isSpreeAgentSkill(entry) &&
+        (typeof entry.ref === 'string' ? entry.ref : undefined) !== ref &&
+        !installed.has(name),
+    )
+    .map(([name]) => name)
 }
 
 function normalizeSource(source: string): string {
@@ -236,18 +345,25 @@ function normalizeSource(source: string): string {
  * @return false when there are none or the lockfile is unreadable
  */
 export function hasSpreeAgentSkills(projectDir: string): boolean {
+  return Object.values(readSkillsLock(projectDir)).some(isSpreeAgentSkill)
+}
+
+// The `skills` entries of skills-lock.json; none when it is missing or unreadable.
+function readSkillsLock(projectDir: string): Record<string, unknown> {
   try {
     const lock = JSON.parse(fs.readFileSync(path.join(projectDir, 'skills-lock.json'), 'utf-8'))
-    if (!isObject(lock) || !isObject(lock.skills)) return false
-    return Object.values(lock.skills).some(
-      (entry) =>
-        isObject(entry) &&
-        typeof entry.source === 'string' &&
-        normalizeSource(entry.source) === AGENT_SKILLS_REPO,
-    )
+    return isObject(lock) && isObject(lock.skills) ? lock.skills : {}
   } catch {
-    return false
+    return {}
   }
+}
+
+function isSpreeAgentSkill(entry: unknown): entry is Record<string, unknown> {
+  return (
+    isObject(entry) &&
+    typeof entry.source === 'string' &&
+    normalizeSource(entry.source) === AGENT_SKILLS_REPO
+  )
 }
 
 // Enough of the reason to name the cause without flooding the terminal.
@@ -280,6 +396,15 @@ export function skillsFailureMessage(
     .slice(-FAILURE_REASON_LINES)
     .join('\n')
   return `The Spree agent skills were not ${what}. Run ${pc.bold(command)} to try again.\n${reason}`
+}
+
+/**
+ * The warning for Spree skills an install left behind because `skills remove`
+ * failed: which ones, and the command that removes them.
+ */
+export function obsoleteSkillsMessage(packageManager: string, skills: readonly string[]): string {
+  const command = skillsCommand(packageManager, ['remove', ...skills, '--yes']).join(' ')
+  return `These Spree agent skills are not in the installed release: ${skills.join(', ')}. Run ${pc.bold(command)} to remove them.`
 }
 
 // These files hold the developer's own content, so a failed write must leave

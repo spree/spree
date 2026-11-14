@@ -2422,6 +2422,22 @@
         "meta_description": {
           "label": "Méta-description",
           "help": "Un court résumé que les moteurs de recherche affichent sous le titre."
+        },
+        "meta_keywords": {
+          "label": "Mots-clés meta",
+          "help": "Mots-clés séparés par des virgules pour les moteurs de recherche."
+        },
+        "facebook": {
+          "label": "Facebook",
+          "placeholder": "https://facebook.com/yourstore"
+        },
+        "twitter": {
+          "label": "X (Twitter)",
+          "placeholder": "@yourstore"
+        },
+        "instagram": {
+          "label": "Instagram",
+          "placeholder": "@yourstore"
         }
       },
       "store_credit": {
@@ -6017,6 +6033,14 @@
       },
       "seo": {
         "title": "Référencement"
+      },
+      "images": {
+        "logo_label": "Logo",
+        "logo_help": "Affiché dans le tableau de bord et utilisé par votre boutique, par exemple dans les résultats de recherche. PNG, JPG ou WebP."
+      },
+      "social": {
+        "title": "Réseaux sociaux",
+        "description": "Votre boutique renvoie vers ces comptes et les signale aux moteurs de recherche. Saisissez un identifiant ou une URL complète."
       }
     },
     "table_descriptions": {

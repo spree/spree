@@ -1,7 +1,7 @@
 {
   "name": "@spree/cli",
   "version": "3.7.0",
-  "description": "CLI for managing Spree Commerce projects",
+  "description": "CLI for Spree Commerce, the open-source headless commerce platform: runs the Docker image locally, generators, API keys and an Admin API client for scripts and AI agents",
   "type": "module",
   "bin": {
     "spree": "./bin/spree.js"
@@ -26,11 +26,19 @@
   },
   "keywords": [
     "spree",
-    "commerce",
+    "spree-commerce",
+    "headless-commerce",
     "ecommerce",
-    "cli",
+    "ecommerce-api",
+    "commerce",
+    "marketplace",
+    "b2b-commerce",
+    "wholesale",
     "docker",
-    "typescript"
+    "mcp",
+    "cli",
+    "typescript",
+    "ai-agents"
   ],
   "author": "Vendo Connect Inc.",
   "license": "MIT",

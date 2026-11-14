@@ -15,41 +15,30 @@ module Spree
     # which is why this lives in `spree_api` rather than in any one gem that
     # happens to need it.
     module Oauth
-      # Whether a redirect URI points at the machine the client runs on, by IP
-      # literal (`127.0.0.1`, `[::1]`).
-      #
-      # Decided by parsing the host as an address, the same way Doorkeeper
-      # does when it ignores the port of a loopback redirect.
+      # Whether a redirect URI points at the machine the client runs on: an IP
+      # literal (`127.0.0.1`, `[::1]`) or `localhost`. Doorkeeper ignores the
+      # port of exactly these (RFC 8252 §7.3), and matches `localhost` only in
+      # lowercase.
       #
       # @param uri [URI, String]
       # @return [Boolean]
       def self.loopback_uri?(uri)
         host = uri.respond_to?(:host) ? uri.host : URI.parse(uri.to_s).host
         return false if host.blank?
+        return true if host == 'localhost'
 
         IPAddr.new(host).loopback?
       rescue StandardError
         false
       end
 
-      # Whether a redirect URI may use plain http: an IP-literal loopback, or
-      # `localhost` with an explicit port.
-      #
-      # Claude Code only ever calls back on `http://localhost:<port>`. Doorkeeper
-      # compares a `localhost` callback exactly, so the host must be lowercase
-      # and the port explicit: anything else could never match an
-      # authorization.
+      # Whether a redirect URI may use plain http: only a loopback one, which
+      # never leaves the machine.
       #
       # @param uri [URI, String]
       # @return [Boolean]
       def self.local_redirect_uri?(uri)
-        uri = URI.parse(uri.to_s) unless uri.respond_to?(:host)
-        return true if loopback_uri?(uri)
-
-        uri.host == 'localhost' &&
-          (1..65_535).cover?(uri.port) && uri.port != uri.default_port
-      rescue StandardError
-        false
+        loopback_uri?(uri)
       end
 
       # Protected resources, each registered by the surface that owns it as a

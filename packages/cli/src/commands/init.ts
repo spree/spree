@@ -39,12 +39,17 @@ export function registerInitCommand(program: Command): void {
       'scripted installs only: seed an admin account instead of printing the setup link',
     )
     .option('--admin-password <password>', 'password for the admin account seeded by --admin-email')
+    .option(
+      '--detach',
+      'scripted installs: exit once setup is done, leaving the stack running, instead of starting the dashboard dev server and streaming logs',
+    )
     .action(
       async (flags: {
         sampleData: boolean
         open: boolean
         adminEmail?: string
         adminPassword?: string
+        detach?: boolean
       }) => {
         await runFirstRunSetup(flags)
       },
@@ -63,6 +68,7 @@ export async function runFirstRunSetup(flags: {
   open: boolean
   adminEmail?: string
   adminPassword?: string
+  detach?: boolean
 }): Promise<void> {
   const ctx = detectProject()
 
@@ -79,7 +85,11 @@ export async function runFirstRunSetup(flags: {
   const sampleData = flags.sampleData && (readSampleDataFromEnv(ctx.projectDir) ?? true)
 
   p.log.step('Pulling latest images...')
-  await dockerCompose(['pull'], ctx.projectDir, { stdio: 'inherit' })
+  // A registry that is down or rate limiting (Docker Hub's anonymous limit, a
+  // CI runner, a machine offline) must not stop init when the images are
+  // already here: compose then starts the local copies, and only an image it
+  // has never pulled fails, at `up`, with Docker's own message.
+  await dockerCompose(['pull', '--ignore-pull-failures'], ctx.projectDir, { stdio: 'inherit' })
 
   const s = p.spinner()
   // The prebuilt image prepares its database in its entrypoint; the dev
@@ -166,10 +176,13 @@ export async function runFirstRunSetup(flags: {
   // key off the same runnable check so they can't disagree — if the dev
   // server can't start (deps install failed above), the card says how to
   // install it instead of advertising a dead URL.
-  const dashboardRunnable = dashboardDevRunnable(ctx.projectDir)
-  if (hasDashboardApp(ctx.projectDir) && !dashboardRunnable) {
+  const devDashboardInstalled = dashboardDevRunnable(ctx.projectDir)
+  if (hasDashboardApp(ctx.projectDir) && !devDashboardInstalled) {
     warnDashboardNotRunnable(ctx.projectDir)
   }
+  // --detach returns before the dev server starts, so the card names the
+  // dashboard the API serves instead of a dev server that never comes up.
+  const dashboardRunnable = devDashboardInstalled && !flags.detach
   // No credentials means no admin was seeded — the operator creates one in
   // the browser through the seed's one-time setup link. Built against the
   // dashboard this card is advertising (the dev server `spree dev` starts, or
@@ -239,6 +252,10 @@ export async function runFirstRunSetup(flags: {
     ].join('\n'),
     'Your Spree store is ready!',
   )
+
+  // A scripted install (CI, a benchmark, a provisioning script) needs init to
+  // return; the stack keeps running in Docker either way.
+  if (flags.detach) return
 
   // Co-run the dashboard's Vite dev server so the admin the card names is
   // actually running. Spawned after the card so its prefixed output doesn't

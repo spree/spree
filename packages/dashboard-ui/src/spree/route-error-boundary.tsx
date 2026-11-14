@@ -1,4 +1,4 @@
-import { Component, type ReactNode } from 'react'
+import { Component, type ErrorInfo, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Button } from '../ui/button'
 import {
@@ -66,6 +66,11 @@ interface RouteErrorBoundaryProps {
   children: ReactNode
   /** Optional fallback renderer; receives the caught error and a reset function. */
   fallback?: (error: Error, reset: () => void) => ReactNode
+  /**
+   * Called with each caught error. Pass `reportCaughtError` from
+   * `@spree/dashboard-core` so error-tracking plugins see it.
+   */
+  onCatch?: (error: Error, errorInfo: ErrorInfo) => void
 }
 
 interface RouteErrorBoundaryState {
@@ -89,6 +94,10 @@ export class RouteErrorBoundary extends Component<
 
   static getDerivedStateFromError(error: Error): RouteErrorBoundaryState {
     return { error }
+  }
+
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    this.props.onCatch?.(error, errorInfo)
   }
 
   reset = () => {

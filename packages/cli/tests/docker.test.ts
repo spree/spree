@@ -1,3 +1,4 @@
+import { EventEmitter } from 'node:events'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 vi.mock('execa', () => ({ execa: vi.fn().mockResolvedValue({ stdout: '' }) }))
@@ -23,6 +24,7 @@ import {
   dockerComposeCapture,
   dockerComposeExecOrRun,
   dockerComposeRun,
+  dockerComposeStream,
   prepareDatabase,
   primeBundleVolume,
 } from '../src/docker'
@@ -363,6 +365,68 @@ describe('dockerComposeCapture', () => {
       code: 1,
     })
     expect(cancelMock).toHaveBeenCalled()
+  })
+})
+
+describe('dockerComposeStream', () => {
+  beforeEach(() => {
+    monorepoEdge = false
+    logInfoMock.mockClear()
+    mockExeca.mockReset()
+  })
+
+  // A subprocess stand-in: a promise carrying stdout/stderr emitters that
+  // send their chunks before it settles.
+  function streamingExeca(webUp: boolean, chunks: [string, 'stdout' | 'stderr'][]): void {
+    mockExeca.mockImplementation(((_cmd: string, args: string[]) => {
+      if (args.includes('ps')) return Promise.resolve({ stdout: webUp ? 'running' : '' })
+      const streams = { stdout: new EventEmitter(), stderr: new EventEmitter() }
+      const done = new Promise((resolve) =>
+        setTimeout(() => {
+          for (const [chunk, stream] of chunks) streams[stream].emit('data', chunk)
+          resolve({})
+        }, 0),
+      )
+      for (const stream of Object.values(streams)) Object.assign(stream, { setEncoding: vi.fn() })
+      return Object.assign(done, streams)
+    }) as never)
+  }
+
+  it('execs without a TTY, keeps stdin attached and hands over both streams', async () => {
+    streamingExeca(true, [
+      ['      create  app/models/spree/brand.rb\n', 'stdout'],
+      ['warning\n', 'stderr'],
+    ])
+    const onOutput = vi.fn()
+
+    await dockerComposeStream(['bin/rails', 'generate', 'spree:model', 'Brand'], '/proj', {
+      onOutput,
+    })
+
+    expect(mockExeca).toHaveBeenCalledWith(
+      'docker',
+      ['compose', 'exec', '-T', 'web', 'bin/rails', 'generate', 'spree:model', 'Brand'],
+      { cwd: '/proj', stdin: 'inherit', stdout: 'pipe', stderr: 'pipe', buffer: false },
+    )
+    expect(onOutput.mock.calls).toEqual([
+      ['      create  app/models/spree/brand.rb\n', 'stdout'],
+      ['warning\n', 'stderr'],
+    ])
+  })
+
+  it('falls back to a one-off container and reports that as stderr output', async () => {
+    streamingExeca(false, [])
+    const onOutput = vi.fn()
+
+    await dockerComposeStream(['bin/rails', 'generate', 'migration', 'AddX'], '/proj', { onOutput })
+
+    expect(mockExeca).toHaveBeenCalledWith(
+      'docker',
+      ['compose', 'run', '--rm', '-T', 'web', 'bin/rails', 'generate', 'migration', 'AddX'],
+      expect.any(Object),
+    )
+    expect(onOutput).toHaveBeenCalledWith(expect.stringContaining('one-off container'), 'stderr')
+    expect(logInfoMock).not.toHaveBeenCalled()
   })
 })
 

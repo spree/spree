@@ -1,8 +1,12 @@
+import fs from 'node:fs'
+import path from 'node:path'
 import type { Command } from 'commander'
+import pc from 'picocolors'
 import { runGeneratorCommand } from '../backend.js'
-import { detectProject } from '../context.js'
-import { dockerComposeExecOrRun } from '../docker.js'
+import { detectProject, findApiDir } from '../context.js'
+import { dockerComposeExecOrRun, dockerComposeStream } from '../docker.js'
 import { ejectFirst } from '../lib/eject-first.js'
+import { formatGeneratorSummary, GeneratorOutput, shellQuote } from '../lib/generator-output.js'
 
 // Forwarded as-is so `spree generate migration AddX` hits Rails's own
 // generator instead of the non-existent `spree:migration`. `model` is
@@ -37,9 +41,10 @@ export function registerGenerateCommand(program: Command): void {
     )
     .argument('[args...]', 'arguments to pass to the generator')
     .option('-y, --yes', 'Eject a project still on the prebuilt image without asking')
+    .option('--verbose', "Print the generator's full output instead of a summary")
     .allowUnknownOption(true)
     .passThroughOptions(true)
-    .action(async (name: string, args: string[], flags: { yes?: boolean }) => {
+    .action(async (name: string, args: string[], flags: { yes?: boolean; verbose?: boolean }) => {
       const ctx = detectProject()
       const generator =
         name.includes(':') || RAILS_BUILTIN_GENERATORS.has(name) ? name : `spree:${name}`
@@ -47,7 +52,8 @@ export function registerGenerateCommand(program: Command): void {
       // A generator's help writes nothing, so it needs no eject. Options after
       // the generator name belong to the generator, so `--yes` only counts
       // before it — the retry command puts it there.
-      if (!args.some((arg) => arg === '--help' || arg === '-h')) {
+      const help = args.some((arg) => arg === '--help' || arg === '-h')
+      if (!help) {
         await ejectFirst(ctx.projectDir, {
           task: 'Running a generator',
           retry: ['spree', 'generate', '--yes', name, ...args].map(shellQuote).join(' '),
@@ -55,10 +61,70 @@ export function registerGenerateCommand(program: Command): void {
         })
       }
 
-      await dockerComposeExecOrRun(runGeneratorCommand(generator, args), ctx.projectDir)
+      const command = runGeneratorCommand(generator, args)
+      if (help || flags.verbose) {
+        await dockerComposeExecOrRun(command, ctx.projectDir)
+      } else {
+        await generateWithSummary(generator, command, ctx.projectDir)
+      }
     })
 }
 
-function shellQuote(arg: string): string {
-  return /^[\w@%+=:,./-]+$/.test(arg) ? arg : `'${arg.replaceAll("'", `'\\''`)}'`
+/**
+ * The path from `cwd` to the Rails app, with a trailing slash, so the files a
+ * generator reports can be opened from where the command was run: `server/`
+ * from a create-spree-app project root, nothing from the app itself (or a
+ * bare clone of spree-starter, where the project is the app).
+ */
+export function appPathPrefix(projectDir: string, cwd: string): string {
+  const apiPath = path.join(projectDir, findApiDir(projectDir))
+  const appDir = fs.existsSync(apiPath) ? apiPath : projectDir
+  const relative = path.relative(cwd, appDir)
+  return relative === '' ? '' : `${relative.split(path.sep).join('/')}/`
+}
+
+// How long a line without a newline sits before it counts as a prompt.
+const PROMPT_DELAY_MS = 150
+
+/**
+ * Run the generator with its output captured, then print only what it
+ * created and changed and what to run next. Rails boot and Docker output stay
+ * hidden unless the generator fails, when everything it printed is shown.
+ */
+async function generateWithSummary(
+  generator: string,
+  command: string[],
+  projectDir: string,
+): Promise<void> {
+  const output = new GeneratorOutput()
+  let promptTimer: NodeJS.Timeout | undefined
+  const showPrompt = () => {
+    if (output.hasPartialLine()) process.stdout.write(output.takePrompt())
+  }
+
+  try {
+    await dockerComposeStream(command, projectDir, {
+      onOutput: (chunk, stream) => {
+        output.write(chunk, stream)
+        // Only stdout carries prompts; a stderr warning mustn't delay or cancel one.
+        if (stream !== 'stdout') return
+        clearTimeout(promptTimer)
+        if (output.hasPartialLine()) promptTimer = setTimeout(showPrompt, PROMPT_DELAY_MS)
+      },
+    })
+  } catch (error) {
+    clearTimeout(promptTimer)
+    output.replay(process)
+    const exitCode = (error as { exitCode?: number }).exitCode
+    if (typeof exitCode !== 'number') throw error
+    console.error(pc.red(`\n${generator} failed (exit code ${exitCode}).`))
+    process.exit(exitCode || 1)
+  }
+  clearTimeout(promptTimer)
+
+  console.log(
+    formatGeneratorSummary(generator, output.result(), {
+      pathPrefix: appPathPrefix(projectDir, process.cwd()),
+    }),
+  )
 }

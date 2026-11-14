@@ -54,6 +54,20 @@ export const STORE_SELECTION_SLOT = 'store_selection'
 
 export type StoreSelectionSlotContext = NoStoreAccessSlotContext
 
+/**
+ * Rendered once for the whole panel, inside the auth, permission and query
+ * providers but outside the router — signed in or not. For components that
+ * render nothing and wire the session into a third-party service: attach the
+ * signed-in user to error reports, identify them in analytics. Both the
+ * admin dashboard and the seller panel render it.
+ */
+export const APP_ROOT_SLOT = 'app.root'
+
+export interface AppRootSlotContext {
+  /** Which panel is running, for tagging events. */
+  panel: 'admin' | 'seller'
+}
+
 // ============================================================================
 // Registry — module-singleton keyed by slot name
 // ============================================================================

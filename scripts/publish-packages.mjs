@@ -3,7 +3,8 @@
 // dist-tag follows the version: `0.x` → `next`, a prerelease → `beta`, else
 // `latest`. Run by release.yml:
 //
-//   v6.0.0.rc7               the packages that share the Spree version
+//   v6.0.0.rc7               the packages that share the Spree version, and
+//                            @spree/docs, the docs for that version
 //   @spree/cli@3.5.0         @spree/cli
 //   create-spree-app@2.4.1   create-spree-app
 //
@@ -106,6 +107,10 @@ function publish(packages) {
   }
 }
 
+// Carries the Spree version outside the Changesets group (it has no
+// changelog), so a project's local docs match its server. Released with Spree.
+const DOCS = '@spree/docs'
+
 // Released on their own tags, independently of Spree.
 const TOOLS = ['@spree/cli', 'create-spree-app']
 
@@ -126,7 +131,7 @@ export function packagesForTag(gitTag) {
         `the tag does not match Spree::VERSION ${spreeVersion} (expected v${spreeVersion})`,
       )
     }
-    const packages = alignedPackages()
+    const packages = [...alignedPackages(), { name: DOCS, dir: workspacePackages().get(DOCS) }]
     for (const { name, dir } of packages) {
       const { version } = manifest(dir)
       if (version !== expected) problems.push(`${name} is at ${version}, expected ${expected}`)

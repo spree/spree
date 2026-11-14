@@ -2440,6 +2440,22 @@
         "meta_description": {
           "label": "الوصف التعريفي",
           "help": "ملخص قصير تعرضه محركات البحث أسفل العنوان."
+        },
+        "meta_keywords": {
+          "label": "الكلمات المفتاحية الوصفية",
+          "help": "كلمات مفتاحية لمحركات البحث مفصولة بفواصل."
+        },
+        "facebook": {
+          "label": "Facebook",
+          "placeholder": "https://facebook.com/yourstore"
+        },
+        "twitter": {
+          "label": "X (Twitter)",
+          "placeholder": "@yourstore"
+        },
+        "instagram": {
+          "label": "Instagram",
+          "placeholder": "@yourstore"
         }
       },
       "store_credit": {
@@ -6060,6 +6076,14 @@
       },
       "seo": {
         "title": "الظهور في محركات البحث"
+      },
+      "images": {
+        "logo_label": "الشعار",
+        "logo_help": "يظهر في لوحة التحكم ويستخدمه متجرك، مثلًا في نتائج البحث. PNG أو JPG أو WebP."
+      },
+      "social": {
+        "title": "وسائل التواصل الاجتماعي",
+        "description": "يرتبط متجرك بهذه الحسابات ويعرضها لمحركات البحث. أدخل اسم المستخدم أو رابطًا كاملًا."
       }
     },
     "table_descriptions": {

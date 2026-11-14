@@ -48,6 +48,7 @@ First-run setup. Starts Docker services, seeds the database, generates an API ke
 spree init
 spree init --no-sample-data   # Skip sample data
 spree init --no-open           # Skip opening browser
+spree init --detach            # Exit when setup is done (scripts, CI); the stack keeps running
 ```
 
 ### `spree dev`
@@ -96,8 +97,8 @@ spree build --yes            # Skip confirmation prompts (for CI)
 Upgrade your project to the latest Spree release in one go. It works for both kinds of project:
 
 1. **Update the server** — on a project that runs the prebuilt image, it pulls the latest Spree image. On an [ejected](#spree-eject) project, it updates the Spree gems with `bundle update`.
-2. **Update the `@spree/*` packages** — `@spree/cli` in the project root, and the dashboard packages and SDKs in `apps/dashboard` and `apps/seller-dashboard`. The dashboard packages and SDKs move to the Spree version your server now runs. `@spree/cli` moves to the newest release its range in `package.json` allows.
-3. **Update the agent skills** — if the project has the [Spree agent skills](/developer/agentic/agent-skills) (listed in `skills-lock.json`), it asks whether to update them, then installs every skill from the main branch of `spree/agent-skills`: installed skills move to the newest version and skills published since are added. The skills are not versioned with Spree, so every run pulls the newest ones. A Spree skill you removed is installed again; skills from other sources are left alone. Projects without the Spree skills are not asked; install them with [`spree add ai`](#spree-add).
+2. **Update the `@spree/*` packages** — `@spree/cli` and `@spree/docs` in the project root, and the dashboard packages and SDKs in `apps/dashboard` and `apps/seller-dashboard`. The docs, dashboard packages and SDKs carry the Spree version and move to a `^` range on the version your server now runs, so they can resolve to a later compatible release. `@spree/cli` moves to the newest release its range in `package.json` allows.
+3. **Update the agent skills** — if the project has the [Spree agent skills](/developer/agentic/agent-skills) (listed in `skills-lock.json`), it asks whether to update them, then installs every skill from the `spree/agent-skills` release for the Spree version your server now runs: the newest `v6.0.x` tag that is not newer than a 6.0.x server, for example. `skills-lock.json` records the release each skill came from. When there is no such tag yet, or the releases can't be listed, the skills come from the main branch. A Spree skill you removed is installed again; skills from other sources are left alone. Projects without the Spree skills are not asked; install them with [`spree add ai`](#spree-add).
 4. **Migrate the database** — on a prebuilt-image project, it recreates the containers and the migrations run as they start. On an ejected project, it applies pending migrations.
 5. **Run data backfills** — the version-specific steps from the upgrade manifest that convert existing records. An ejected project's app is then restarted so it loads the new gems.
 
@@ -142,7 +143,7 @@ spree add ai                  # Spree agent skills + the docs MCP server for cod
 spree add stripe              # an extension, installed end to end
 ```
 
-`spree add ai` installs the [Spree agent skills](/developer/agentic/agent-skills) and connects Claude Code, Cursor and VS Code to the [docs MCP server](/developer/agentic/docs-mcp). It keeps the MCP servers your config files already list and is safe to re-run. Pass `--no-skills` or `--no-mcp` to set up only one of the two.
+`spree add ai` installs the [Spree agent skills](/developer/agentic/agent-skills) from the release for the CLI's Spree version (the newest tag on its minor line that is not newer than it; from the main branch when there is no such tag, or the releases can't be listed) and connects Claude Code, Cursor and VS Code to the [docs MCP server](/developer/agentic/docs-mcp). It keeps the MCP servers your config files already list and is safe to re-run. Pass `--no-skills` or `--no-mcp` to set up only one of the two.
 
 #### Extensions
 
@@ -295,6 +296,21 @@ spree generate migration AddPositionToSpreeBrands position:integer  # Rails buil
 ```
 
 `spree:api_resource` scaffolds the full v3 surface: model, migration, Store + Admin controllers and serializers, factory, controller specs, routes, and the `read_<resources>` / `write_<resources>` permissions that let staff roles and secret API keys reach the Admin API.
+
+The command prints a short summary instead of the generator's full output: the files it created, changed or skipped, anything the generator says on its own, and what to run next. File paths are relative to the directory you ran the command from, so from a project root they start with `server/`. The `spree test` paths are relative to the app, because that command runs inside the container.
+
+```
+spree:subscriber finished:
+  created  server/app/subscribers/oms_order_sync_subscriber.rb
+  changed  server/config/initializers/spree.rb
+  created  server/spec/subscribers/oms_order_sync_subscriber_spec.rb
+
+Next:
+  spree restart  # server/config/initializers/spree.rb loads only at boot
+  spree test spec/subscribers/oms_order_sync_subscriber_spec.rb
+```
+
+Pass `--verbose` before the generator name to see the full output (`spree generate --verbose model Brand`). When a generator fails, the command prints everything it printed, including the Rails and Docker output, and exits with the generator's exit code. A generator's `--help` is always shown in full.
 
 The prebuilt image never loads files from `server/`, so on a project that still runs it, the command offers to [eject](#spree-eject) the project first. Ejecting switches to a new development database without your current data, so it asks before doing it. Pass `--yes` before the generator name to agree up front (`spree generate --yes model Brand`). With no terminal to ask in, for example when a coding agent runs it, the command stops and prints that `--yes` command.
 

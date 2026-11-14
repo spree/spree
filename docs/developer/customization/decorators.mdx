@@ -378,7 +378,9 @@ it — but you rarely need a decorator for that. Extensions append to the model'
 own list from an initializer:
 
 ```ruby server/config/initializers/spree.rb
-Spree::Product.additional_permitted_attributes += [:brand_id]
+Rails.application.config.to_prepare do
+  Spree::Product.additional_permitted_attributes += [:brand_id]
+end
 ```
 
 Always `+=`, never `=`, or you drop what another extension added.

@@ -143,7 +143,7 @@ module Spree
         'Spree::Address#user_default_shipping?' => 'Use is_default_shipping?.',
         'Spree.searcher_class' => 'Use Spree.search_provider.',
         'Spree::PermittedAttributes' => 'Add writable API attributes with Spree::Product.additional_permitted_attributes += [...] ' \
-                                        '(any model; always +=).',
+                                        'inside Rails.application.config.to_prepare (any model; always +=).',
         'Spree::Preference' => 'Preferences live on each model in a JSON preferences column.',
         'Spree::User' => 'Use Spree.customer_class for customers and Spree.admin_user_class for staff.',
 

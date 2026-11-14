@@ -141,6 +141,7 @@ export {
   SendIcon,
   SettingsIcon,
   ShapesIcon,
+  Share2Icon,
   ShieldAlertIcon,
   ShieldCheckIcon,
   ShieldIcon,

@@ -53,7 +53,6 @@ import {
   detectSpreeGems,
   detectSpreePackages,
   isExactVersion,
-  isOlderVersion,
   moveToBaseImage,
   moveToReleaseLine,
   packageAddArgs,
@@ -62,7 +61,7 @@ import {
   registerUpgradeCommand,
   sdkAdvisory,
 } from '../src/commands/upgrade'
-import { npmVersionOf, releaseLineFor } from '../src/lib/release-line'
+import { isOlderVersion, npmVersionOf, releaseLineFor } from '../src/lib/release-line'
 
 describe('npmVersionOf', () => {
   it('spells gem versions the way the packages are published', () => {
@@ -337,6 +336,27 @@ describe('moveToReleaseLine', () => {
     expect(readPackageJson()).toBe(source)
   })
 
+  // Projects created before @spree/docs carried the Spree version depend on
+  // its `latest`, which can be ahead of the server.
+  it('moves a package on `latest` and older docs onto the line', () => {
+    writePackageJson(
+      JSON.stringify({
+        dependencies: { '@spree/docs': 'latest', '@spree/dashboard': 'latest' },
+      }),
+    )
+    expect(
+      moveToReleaseLine(dir, { ...LINE, packages: [...LINE.packages, '@spree/docs'] }),
+    ).toEqual([
+      { name: '@spree/docs', from: 'latest', to: '^6.0.0-rc.7' },
+      { name: '@spree/dashboard', from: 'latest', to: '^6.0.0-rc.7' },
+    ])
+
+    writePackageJson(JSON.stringify({ dependencies: { '@spree/docs': '^0.1.421' } }))
+    expect(moveToReleaseLine(dir, { ...LINE, packages: ['@spree/docs'] })).toEqual([
+      { name: '@spree/docs', from: '^0.1.421', to: '^6.0.0-rc.7' },
+    ])
+  })
+
   it('gives release candidate pins a range once the line is a final version', () => {
     writePackageJson(
       JSON.stringify({
@@ -548,14 +568,19 @@ describe('spree upgrade', () => {
     failOn,
     failWith,
     skillsStdout = '[]',
+    skillsTags = [],
     spreeVersion = '6.0.0.rc7',
   }: {
     failOn?: string
     failWith?: { message?: string; stdout?: string }
     skillsStdout?: string
+    skillsTags?: string[]
     spreeVersion?: string | null
   } = {}): void {
     mockExeca.mockImplementation((async (cmd: string, args: string[]) => {
+      if (args.includes('ls-remote')) {
+        return { stdout: skillsTags.map((tag) => `abc123\trefs/tags/${tag}`).join('\n') }
+      }
       if (args.includes('ps')) return { stdout: 'running' }
       if (args.includes('--name-only')) return { stdout: 'spree\nspree_core\n' }
       if (args.includes('list')) {
@@ -932,6 +957,99 @@ describe('spree upgrade', () => {
       expect(commands.indexOf(update)).toBeLessThan(
         commands.indexOf('docker compose exec web bin/rails spree:install:migrations db:migrate'),
       )
+    })
+
+    it("installs the skills release for the server's Spree version", async () => {
+      writeProject({ ejected: true })
+      installSpreeSkills()
+      routeExeca({
+        spreeVersion: '6.0.4',
+        skillsTags: ['v0.3.0', 'v6.0.0', 'v6.0.1', 'v6.0.5', 'v6.1.0'],
+      })
+
+      await runInteractively(() => true)
+
+      expect(commands).toContain(
+        'pnpm dlx skills add spree/agent-skills#v6.0.1 --skill * --yes --json',
+      )
+      expect(vi.mocked(p.confirm)).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: 'Update the Spree agent skills to v6.0.1, the release for Spree 6.0.4?',
+        }),
+      )
+    })
+
+    it('removes the Spree skills the new release no longer has, and no one else’s', async () => {
+      writeProject({ ejected: true })
+      installSpreeSkills()
+      routeExeca({
+        spreeVersion: '6.0.4',
+        skillsTags: ['v6.0.1'],
+        skillsStdout: JSON.stringify([{ name: 'spree-api-v3', status: 'installed' }]),
+      })
+
+      await runUpgrade()
+
+      const add = commands.indexOf(
+        'pnpm dlx skills add spree/agent-skills#v6.0.1 --skill * --yes --json',
+      )
+      const remove = commands.indexOf('pnpm dlx skills remove spree-checkout --yes')
+      expect(add).toBeGreaterThan(-1)
+      expect(remove).toBeGreaterThan(add)
+      expect(commands.filter((command) => command.includes('skills remove'))).toHaveLength(1)
+    })
+
+    it('removes nothing when the skills CLI reports no skills', async () => {
+      writeProject({ ejected: true })
+      installSpreeSkills()
+      routeExeca({ spreeVersion: '6.0.4', skillsTags: ['v6.0.1'] })
+
+      await runUpgrade()
+
+      expect(commands.some((command) => command.includes('skills remove'))).toBe(false)
+    })
+
+    it('keeps the Spree skills the lockfile already records at the new release', async () => {
+      writeProject({ ejected: true })
+      fs.writeFileSync(
+        path.join(projectDir, 'skills-lock.json'),
+        JSON.stringify({
+          version: 2,
+          skills: {
+            'spree-api-v3': { source: 'spree/agent-skills', ref: 'v6.0.1', sourceType: 'github' },
+          },
+        }),
+      )
+      routeExeca({
+        spreeVersion: '6.0.4',
+        skillsTags: ['v6.0.1'],
+        skillsStdout: JSON.stringify([{ name: 'spree-checkout', status: 'installed' }]),
+      })
+
+      await runUpgrade()
+
+      expect(commands.some((command) => command.includes('skills remove'))).toBe(false)
+    })
+
+    it('names the obsolete skills it could not remove', async () => {
+      writeProject({ ejected: true })
+      installSpreeSkills()
+      routeExeca({
+        spreeVersion: '6.0.4',
+        skillsTags: ['v6.0.1'],
+        skillsStdout: JSON.stringify([{ name: 'spree-api-v3', status: 'installed' }]),
+        failOn: 'skills remove',
+      })
+
+      await runUpgrade()
+
+      expect(
+        vi
+          .mocked(prompts.log.warn)
+          .mock.calls.some(([message]) =>
+            String(message).includes('pnpm dlx skills remove spree-checkout --yes'),
+          ),
+      ).toBe(true)
     })
 
     it('runs the skills CLI with npx in npm and Yarn projects', async () => {

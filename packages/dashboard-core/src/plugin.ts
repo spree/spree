@@ -34,6 +34,8 @@
 import i18n from 'i18next'
 import type { CustomFieldComponent } from './lib/custom-field-components'
 import { customFieldComponents } from './lib/custom-field-components'
+import type { ErrorReporter } from './lib/error-reporting'
+import { addErrorReporter } from './lib/error-reporting'
 import type { FormFieldRegistration } from './lib/form-fields-registry'
 import { formFields } from './lib/form-fields-registry'
 import type { NavEntry } from './lib/nav-registry'
@@ -142,6 +144,13 @@ export interface DashboardPluginConfig {
    * resolved in the store's locale rather than the admin's.
    */
   locales?: Record<string, Record<string, unknown>>
+  /**
+   * Error reporters keyed by a unique id, each called with every render or
+   * loader error the panel's error screens catch — errors that never reach
+   * `window.onerror`. Error-tracking plugins forward them to their service.
+   * The router's `notFound()` and `redirect()` are filtered out first.
+   */
+  errorReporters?: Record<string, ErrorReporter>
 }
 
 /**
@@ -241,6 +250,12 @@ export function defineDashboardPlugin(config: DashboardPluginConfig): void {
   if (config.customFieldComponents) {
     for (const [key, component] of Object.entries(config.customFieldComponents)) {
       safely(customFieldComponents.register, key, component)
+    }
+  }
+
+  if (config.errorReporters) {
+    for (const [id, reporter] of Object.entries(config.errorReporters)) {
+      safely(addErrorReporter, id, reporter)
     }
   }
 

@@ -72,15 +72,35 @@ curl 'https://api.mystore.com/api/v3/admin/store' \
 
 This is an admin endpoint, so it requires a secret API key (`sk_xxx`) or a Bearer JWT — a publishable key cannot reach it.
 
-### Storefront SEO
+### Storefront identity and SEO
 
-A storefront reads the store's public name and default SEO metadata — `seo_title` and `meta_description` — from the Store API, in the shopper's language. Use them for the home page title and description. A field with no translation for the requested locale returns the default-language value.
+A storefront reads the store's public identity from the Store API, with a publishable key, in the shopper's language:
+
+| Field | Use it for |
+|-------|-----------|
+| `name`, `seo_title`, `meta_description`, `meta_keywords` | The home page title and default page metadata. Translated |
+| `logo_url` | The logo in your header and in Organization structured data. A full URL, or `null` |
+| `facebook`, `twitter`, `instagram` | Social links and `sameAs` in structured data. Stored as the merchant typed them: a handle (`@mystore`), an address without a scheme (`facebook.com/mystore`) or a full `https://` URL. Turn the first two into an absolute profile URL on that network before using one as a link or a `sameAs` value; a browser would otherwise resolve it against your storefront |
+| `customer_support_email` | Where customers write to, such as the `contactPoint` in structured data. Translated; `null` when unset |
+
+A translated field with no translation for the requested locale returns the default-language value.
 
 <Tabs>
   <Tab title="Store SDK">
     ```typescript
     const store = await client.store.get({ locale: 'de' })
-    // { id: "store_k5nR8xLq", name: "My Store", seo_title: "Frischer Kaffee", meta_description: "…" }
+    // {
+    //   id: "store_k5nR8xLq",
+    //   name: "My Store",
+    //   seo_title: "Frischer Kaffee",
+    //   meta_description: "…",
+    //   meta_keywords: "kaffee, bohnen",
+    //   logo_url: "https://cdn.mystore.com/logo.png",
+    //   facebook: "https://facebook.com/mystore",
+    //   twitter: "@mystore",
+    //   instagram: "mystore",
+    //   customer_support_email: "support@mystore.com"
+    // }
     ```
   </Tab>
   <Tab title="cURL">
@@ -92,7 +112,7 @@ A storefront reads the store's public name and default SEO metadata — `seo_tit
   </Tab>
 </Tabs>
 
-Merchants edit the default-language values on **Settings → Store** in the dashboard and translate them with **Manage translations** on the same page. See [Translations](/developer/core-concepts/translations).
+Merchants edit the name, logo, SEO fields and social accounts on **Settings → Store** in the dashboard, and translate the SEO fields with **Manage translations** on the same page. The support email lives on **Settings → Emails**. See [Translations](/developer/core-concepts/translations).
 
 ## Channels vs. Markets
 

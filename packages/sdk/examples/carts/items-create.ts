@@ -13,7 +13,7 @@ const cart = await client.carts.items.create(
     quantity: 2,
   },
   {
-    token: '<token>',
+    spreeToken: '<cart-token>',
   },
 )
 

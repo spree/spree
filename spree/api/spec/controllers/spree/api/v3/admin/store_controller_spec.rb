@@ -199,7 +199,7 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
     end
 
     context 'with SEO params' do
-      let(:params) { { seo_title: 'Fresh Coffee Beans', meta_description: 'Roasted every morning' } }
+      let(:params) { { seo_title: 'Fresh Coffee Beans', meta_description: 'Roasted every morning', meta_keywords: 'coffee, beans' } }
 
       it 'saves them and returns them' do
         subject
@@ -207,7 +207,9 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
         expect(response).to have_http_status(:ok)
         expect(json_response['seo_title']).to eq('Fresh Coffee Beans')
         expect(json_response['meta_description']).to eq('Roasted every morning')
+        expect(json_response['meta_keywords']).to eq('coffee, beans')
         expect(store.reload.seo_title).to eq('Fresh Coffee Beans')
+        expect(store.meta_keywords).to eq('coffee, beans')
       end
 
       context 'when the request resolves to a non-default locale' do
@@ -226,6 +228,19 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
           expect(Mobility.with_locale(:en) { store.reload.seo_title }).to eq('Fresh Coffee Beans')
           expect(Mobility.with_locale(:de) { store.reload.seo_title(fallback: false) }).to eq('Frische Kaffeebohnen')
         end
+      end
+    end
+
+    context 'with social accounts' do
+      let(:params) { { facebook: 'https://facebook.com/coffee', twitter: 'coffee', instagram: 'coffee.beans' } }
+      let(:saved) { params.stringify_keys }
+
+      it 'saves them and returns them' do
+        subject
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response).to include(saved)
+        expect(store.reload.slice(:facebook, :twitter, :instagram)).to eq(saved)
       end
     end
 

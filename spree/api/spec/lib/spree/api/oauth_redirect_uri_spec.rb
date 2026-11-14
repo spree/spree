@@ -43,19 +43,9 @@ RSpec.describe 'OAuth redirect URIs' do
 
     # Claude Code calls back on `http://localhost:<port>` and never on the IP
     # literal, so it can only be registered by name.
-    it 'accepts localhost by name with an explicit port' do
+    it 'accepts localhost by name, with or without a port' do
       expect(build_with('http://localhost:3118/callback')).to be_valid
-    end
-
-    # Doorkeeper ignores the port only for IP literals, so a port-less
-    # `localhost` registration could never be authorized.
-    it 'refuses localhost by name without a port' do
-      expect(build_with('http://localhost/callback')).not_to be_valid
-    end
-
-    it 'refuses localhost on a port no client can listen on' do
-      expect(build_with('http://localhost:0/callback')).not_to be_valid
-      expect(build_with('http://localhost:65536/callback')).not_to be_valid
+      expect(build_with('http://localhost/callback')).to be_valid
     end
 
     # Doorkeeper matches a `localhost` callback exactly, and clients send it
@@ -100,8 +90,13 @@ RSpec.describe 'OAuth redirect URIs' do
       expect(authorizable?('http://localhost:3118/callback')).to be(true)
     end
 
-    it 'is refused on any other port' do
-      expect(authorizable?('http://localhost:49821/callback')).to be(false)
+    # RFC 8252 §7.3: the port of a loopback callback varies at run time.
+    it 'is authorized on any other port' do
+      expect(authorizable?('http://localhost:49821/callback')).to be(true)
+    end
+
+    it 'still refuses another host on the registered port' do
+      expect(authorizable?('http://localhost.example.test:3118/callback')).to be(false)
     end
   end
 end

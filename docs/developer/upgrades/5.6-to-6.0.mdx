@@ -920,15 +920,19 @@ buckets, and only the last needs this hook:
 | Config for an STI type you register (promotion rule, delivery method rule, …) | `additional_permitted_attributes` on that subclass, as before — unchanged |
 | A real database column your extension added to a core model | `additional_permitted_attributes` on the model |
 
-**3. Point each declaration at the model.** It stays in your initializer — only
-the receiver changes, from the global registry to the model itself:
+**3. Point each declaration at the model.** It stays in your initializer, but
+the receiver changes from the global registry to the model itself, and the line
+moves into a `to_prepare` block — Spree's models are not loaded yet when the
+initializer file runs:
 
 ```ruby config/initializers/spree.rb
 # Before
 Spree::PermittedAttributes.product_attributes << :brand_id
 
 # After
-Spree::Product.additional_permitted_attributes += [:brand_id]
+Rails.application.config.to_prepare do
+  Spree::Product.additional_permitted_attributes += [:brand_id]
+end
 ```
 
 Use `+=`, not `=` — the list is per model, and assigning replaces whatever

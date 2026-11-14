@@ -3,7 +3,8 @@ name: Release
 # Every release starts from a tag pushed on a commit already on main:
 #
 #   v6.0.0.rc7               the Spree gems, and the npm packages that share the
-#                            Spree version (SDKs, @spree/core, dashboards)
+#                            Spree version (SDKs, @spree/core, dashboards,
+#                            @spree/docs)
 #   @spree/cli@3.5.0         @spree/cli
 #   create-spree-app@2.4.1   create-spree-app
 #

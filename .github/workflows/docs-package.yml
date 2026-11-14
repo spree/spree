@@ -1,5 +1,8 @@
 name: Docs Package
 
+# Checks that the docs package builds. It is published with each Spree release,
+# by release.yml on the v<version> tag, under the Spree version.
+
 on:
   push:
     branches: [main]
@@ -48,52 +51,3 @@ jobs:
             echo "Expected at least 100 files, got $FILE_COUNT"
             exit 1
           fi
-
-  release:
-    name: "Release"
-    needs: build
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      id-token: write
-    defaults:
-      run:
-        working-directory: packages/docs
-    steps:
-      - uses: actions/checkout@v7
-
-      - uses: pnpm/action-setup@v6
-
-      - uses: actions/setup-node@v7.1.0
-        with:
-          node-version: 22
-          cache: pnpm
-          registry-url: https://registry.npmjs.org
-
-      - run: pnpm install --frozen-lockfile
-        working-directory: .
-
-      # Trusted Publishing requires npm >= 11.5.1, but the bundled npm
-      # on Node 22 is 10.9.7. A plain `npm install -g npm@latest` swaps
-      # npm's own files in place and the in-flight install can't find
-      # its own dependencies (MODULE_NOT_FOUND: promise-retry). Install
-      # to a separate prefix and prepend to PATH instead.
-      - name: Upgrade npm for Trusted Publishing support
-        run: |
-          npm install -g npm@latest --prefix="$HOME/.npm-global"
-          echo "$HOME/.npm-global/bin" >> "$GITHUB_PATH"
-        working-directory: .
-
-      - name: Bump version above published
-        run: |
-          PUBLISHED=$(npm view @spree/docs version 2>/dev/null || echo "0.0.0")
-          echo "Published version: $PUBLISHED"
-          # Set package.json to published version, then bump patch
-          npm version "$PUBLISHED" --no-git-tag-version --allow-same-version
-          npm version patch --no-git-tag-version
-          NEW=$(node -p "require('./package.json').version")
-          echo "Publishing version: $NEW"
-
-      - name: Build and Publish
-        run: node scripts/build.js && npm publish --provenance --access public
