@@ -38,6 +38,16 @@ RSpec.describe Spree::Api::V3::Seller::OptionTypesController, type: :controller 
       expect(json_response['data'].pluck('id')).not_to include(elsewhere.prefixed_id)
     end
 
+    # The product form resolves a product type's option types by id, since
+    # the list it loads is one page.
+    it 'narrows to the ids named' do
+      other = create(:option_type, store: store, name: 'colour')
+
+      get :index, params: { q: { id_in: [other.prefixed_id] } }, as: :json
+
+      expect(json_response['data'].pluck('id')).to eq([other.prefixed_id])
+    end
+
     # How the operator maintains the vocabulary is not a seller's to read.
     it 'withholds what the operator keeps to maintain the option type' do
       get :index, as: :json
