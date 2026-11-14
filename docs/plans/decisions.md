@@ -1,8 +1,8 @@
-## 2026-11-14: Sample data is a recipe of store files and CSV imports; sample orders come from an orders import
+## 2026-11-14: Sample data is a recipe of store files and CSV imports, with no orders
 
 **Context:** After the store defaults left Ruby (`6.0-cli-configurator.md`), the sample data loader was the largest piece of setup still written in Ruby. Most of it is configuration; products and customers are already CSV imports; the orders were built by writing rows directly and did not use the sample customers.
 
-**Decision:** Sample data is an ordered recipe run through the Admin API by `spree sample-data` and the setup screen: store files deployed by the configurator, interleaved with CSV imports. Sample orders become a CSV loaded by a new orders import, which gets its own plan. `spree:load_sample_data` and `Spree::SampleData::Loader` stay for 6.1 as a deprecation warning that loads nothing, and are removed in 6.2.
+**Decision:** Sample data is an ordered recipe run through the Admin API by `spree sample-data` and the setup screen: store files deployed by the configurator, interleaved with CSV imports. Sample data has no orders and no return: an orders CSV import to bring them back was considered and dropped. `spree:load_sample_data` and `Spree::SampleData::Loader` stay for 6.1 as a deprecation warning that loads nothing, and are removed in 6.2.
 
 **Consequences:** Anything sample data needs must be reachable through the Admin API: a new kind of sample record means a configurator section or a CSV import, never a Ruby file under `db/sample_data`. A script that calls `spree:load_sample_data` must call `spree sample-data` on 6.1.
 
