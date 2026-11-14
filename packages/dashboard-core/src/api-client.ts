@@ -157,8 +157,9 @@ export interface PanelApiClient {
     list(params?: Record<string, unknown>): Promise<{ data: PanelOptionType[] }>
     /**
      * Naming a new option (Size, Colour) while building a variant matrix.
-     * Operator-only: a seller names options inline on the variant instead,
-     * so their client leaves these out and the builder hides.
+     * Operator-only: a seller picks from the marketplace's option types and
+     * values, so their client registers `list` alone and the builder hides
+     * the actions that would add to them.
      *
      * `name` and `label` are named rather than left to a loose record — they
      * are what the API requires, and a contract that did not say so would
@@ -616,10 +617,9 @@ export interface PanelProductType {
   name: string
   option_type_ids?: string[]
   /**
-   * The option types picking this type will add, already named. A panel that
-   * manages no option-type vocabulary (a seller's) cannot resolve
-   * `option_type_ids` against a list it never loads, so its API sends the
-   * labels instead and the form reads whichever it was given.
+   * The option types picking this type will add, already named. A seller's
+   * API sends them alongside the ids, so the form can name them without
+   * resolving the ids first; the form reads whichever it was given.
    */
   option_type_labels?: string[]
   category_ids?: string[]

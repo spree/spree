@@ -10,7 +10,13 @@ import {
   openRowMenu,
   sellerLogin,
 } from './helpers'
-import { inventoryCard, mediaCard } from './products-helpers'
+import {
+  addOptionToVariants,
+  categorizationCard,
+  inventoryCard,
+  mediaCard,
+  variantsCard,
+} from './products-helpers'
 
 // The card serves whatever is attached, so the shared image fixture will do.
 const DIGITAL_FILE = path.join(
@@ -25,6 +31,22 @@ async function listProduct(page: Page, home: string, name: string) {
   await page.getByRole('button', { name: /^save$/i }).click()
   await expect(page).toHaveURL(/\/products\/prod_/, { timeout: 20_000 })
   await expect(page.getByRole('heading', { name })).toBeVisible()
+}
+
+/** An option type the marketplace defines, with two values, through the Admin API. */
+async function marketplaceOptionType(page: Page) {
+  const suffix = Date.now()
+  const label = `E2E Seller Size ${suffix}`
+  const admin = await adminApiSession(page)
+  const optionType = await adminRequest<{ id: string }>(page, admin, 'post', '/option_types', {
+    name: `e2e-seller-size-${suffix}`,
+    label,
+    option_values: [
+      { name: 'small', label: 'Small' },
+      { name: 'large', label: 'Large' },
+    ],
+  })
+  return { admin, id: optionType.id, label }
 }
 
 function productRow(page: Page, name: string) {
@@ -146,6 +168,70 @@ test.describe('seller panel — products', () => {
       timeout: 15_000,
     })
     await expect(page.getByText(/something went wrong/i)).toHaveCount(0)
+  })
+
+  // The option types are the marketplace's; the variants built from them are
+  // the seller's.
+  test("builds variants from the marketplace's option types", async ({ page }) => {
+    const { label } = await marketplaceOptionType(page)
+    const home = await sellerLogin(page, FIXTURE_SELLER_WRITER_EMAIL)
+    const name = `E2E Sized Lamp ${Date.now()}`
+
+    await page.goto(`${home}/products/new`)
+    await page.locator('#product-name').fill(name)
+    await addOptionToVariants(page, label, ['Small', 'Large'])
+
+    const skuInputs = variantsCard(page).getByRole('textbox', { name: /^sku$/i })
+    await expect(skuInputs).toHaveCount(2, { timeout: 15_000 })
+
+    await page.getByRole('button', { name: /^save$/i }).click()
+    await expect(page).toHaveURL(/\/products\/prod_/, { timeout: 20_000 })
+    await page.reload()
+    await expect(page.getByRole('heading', { name })).toBeVisible({ timeout: 30_000 })
+    await expect(skuInputs).toHaveCount(2, { timeout: 15_000 })
+    await expect(variantsCard(page).getByText(label).first()).toBeVisible()
+  })
+
+  // Read only: a seller picks from the vocabulary, and the builder offers no
+  // way to add to it.
+  test('offers no way to add an option type or value', async ({ page }) => {
+    const { label } = await marketplaceOptionType(page)
+    const home = await sellerLogin(page, FIXTURE_SELLER_WRITER_EMAIL)
+
+    await page.goto(`${home}/products/new`)
+    const card = variantsCard(page)
+    await card.getByRole('button', { name: /add option/i }).click()
+    await expect(card.getByRole('button', { name: /new option type/i })).toHaveCount(0)
+    await card.getByRole('combobox').first().click()
+    await page.getByRole('option', { name: label, exact: true }).click()
+    await expect(card.getByRole('button', { name: 'Small', exact: true })).toBeVisible()
+    await expect(card.getByRole('button', { name: /new value/i })).toHaveCount(0)
+  })
+
+  // A product type is what hands a seller its option types, so picking one on
+  // a new listing offers them in Variants, ready for values.
+  test("offers a product type's option types on a new listing", async ({ page }) => {
+    const { admin, id, label } = await marketplaceOptionType(page)
+    const typeName = `E2E Seller Type ${Date.now()}`
+    await adminRequest(page, admin, 'post', '/product_types', {
+      name: typeName,
+      option_type_ids: [id],
+    })
+    const home = await sellerLogin(page, FIXTURE_SELLER_WRITER_EMAIL)
+
+    await page.goto(`${home}/products/new`)
+    await page.locator('#product-name').fill(`E2E Typed Lamp ${Date.now()}`)
+    await categorizationCard(page).getByRole('combobox').first().click()
+    await page.getByRole('option', { name: typeName, exact: true }).click()
+
+    const card = variantsCard(page)
+    await expect(card.getByText(label).first()).toBeVisible({ timeout: 15_000 })
+    await card.getByRole('button', { name: 'Small', exact: true }).click()
+    await card.getByRole('button', { name: 'Large', exact: true }).click()
+    await card.getByRole('button', { name: /^done$/i }).click()
+    await expect(card.getByRole('textbox', { name: /^sku$/i })).toHaveCount(2, {
+      timeout: 15_000,
+    })
   })
 
   // Putting a product on sale is the marketplace's decision; the seller asks.

@@ -123,17 +123,27 @@ export function createSellerApiClient({
       create: (params) => sellerClient().stockLocations.create(params),
       update: (id, params) => sellerClient().stockLocations.update(id, params),
     },
-    // The marketplace's vocabulary the product form picks from: types and
-    // delivery profiles only. Categories, collections and tags are filing,
-    // which is the operator's at review, so they are not registered and the
-    // shared Categorization card offers just these two
-    // (docs/plans/6.0-multi-vendor-marketplace.md, Decision 13).
+    // The marketplace's vocabulary the product form picks from: types,
+    // delivery profiles and option types. Categories, collections and tags
+    // are filing, which is the operator's at review, so they are not
+    // registered and the shared Categorization card offers just types and
+    // profiles (docs/plans/6.0-multi-vendor-marketplace.md, Decision 13).
     productTypes: {
       list: (params) => sellerClient().productTypes.list(runtimeListParams(params)),
       get: (id) => sellerClient().productTypes.get(id),
     },
     deliveryProfiles: {
       list: (params) => sellerClient().deliveryProfiles.list(runtimeListParams(params)),
+    },
+    // The option types a seller builds variants from, with their values, and
+    // what a picked product type offers as rows. Read only: no `create` or
+    // `update`, so the variants builder offers the marketplace's options and
+    // values without the actions that would add to them.
+    optionTypes: {
+      list: (params) =>
+        sellerClient().optionTypes.list(
+          runtimeListParams({ ...params, expand: ['option_values'] }),
+        ),
     },
     // What this seller packs into: their own boxes and cartons, plus the
     // marketplace's shared packaging, which the API lists read-only. Backs
