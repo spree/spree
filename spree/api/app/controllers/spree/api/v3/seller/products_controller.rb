@@ -318,33 +318,24 @@ module Spree
             requested = Array(params[:variants]).grep(ActionController::Parameters).
                         flat_map { |variant| Array(variant[:options]).grep(ActionController::Parameters) }.
                         select { |option| option[:name].present? && option[:value].present? }.
-                        map { |option| [option[:name].to_s, option[:value].to_s] }.
-                        uniq { |name, value| [name.parameterize, value.parameterize] }
-            return if requested.empty?
+                        map { |option| [option[:name], option[:value]] }
+            unknown = Spree::OptionType.unknown_options(current_store, requested)
+            return if unknown.empty?
 
-            option_types = Spree::OptionType.for_store(current_store).
-                           where(name: requested.map { |name, _| name.parameterize }.uniq).
-                           index_by(&:name)
-            # Only the values named, not every value of each type: a type such
-            # as Size can carry hundreds.
-            known_values = Spree::OptionValue.where(option_type_id: option_types.values.map(&:id),
-                                                    name: requested.map { |_, value| value.parameterize }.uniq).
-                           pluck(:option_type_id, :name).to_set
             errors = ActiveModel::Errors.new(Spree::Product.new)
-
-            requested.each do |name, value|
-              option_type = option_types[name.parameterize]
-              if option_type.nil?
+            unknown.each do |option|
+              if option[:option_type].nil?
                 errors.add(:variants, :unknown_option_type,
-                           message: I18n.t('spree.errors.messages.unknown_option_type', name: name))
-              elsif known_values.exclude?([option_type.id, value.parameterize])
+                           message: I18n.t('spree.errors.messages.unknown_option_type', name: option[:name]))
+              else
                 errors.add(:variants, :unknown_option_value,
                            message: I18n.t('spree.errors.messages.unknown_option_value',
-                                           value: value, option_type: option_type.label.presence || option_type.name))
+                                           value: option[:value],
+                                           option_type: option[:option_type].label.presence || option[:option_type].name))
               end
             end
 
-            render_validation_error(errors) if errors.any?
+            render_validation_error(errors)
           end
 
           # 422s when the caller omits `ids` entirely, matching the operator's
