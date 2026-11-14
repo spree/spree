@@ -2,7 +2,7 @@ module Spree
   module Products
     # @deprecated Automatic taxon matching moved to Spree::Collection in 6.0.
     #   Delegates to Spree::Products::AutoMatchCollections (same `product:` signature);
-    #   removed in 6.5.
+    #   removed in 6.3.
     class AutoMatchTaxons
       prepend ::Spree::ServiceModule::Base
 
@@ -10,7 +10,7 @@ module Spree
       # @return [Spree::ServiceModule::Base::Result]
       def call(product:)
         Spree::Deprecation.warn(
-          'Spree::Products::AutoMatchTaxons is deprecated and will be removed in Spree 6.5. ' \
+          'Spree::Products::AutoMatchTaxons is deprecated and will be removed in Spree 6.3. ' \
           'Automatic membership moved to collections; use Spree::Products::AutoMatchCollections instead.'
         )
         Spree::Products::AutoMatchCollections.call(product: product)

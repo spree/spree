@@ -20,7 +20,7 @@ RSpec.describe 'renamed class aliases' do
         Spree.const_get(legacy_name)
         Spree.send(:remove_const, legacy_name)
 
-        expect(Spree::Deprecation).to receive(:warn).with(/Spree::#{legacy_name} is deprecated.*Spree 6\.5.*#{replacement}/)
+        expect(Spree::Deprecation).to receive(:warn).with(/Spree::#{legacy_name} is deprecated.*Spree 6\.3.*#{replacement}/)
 
         load Spree::Core::Engine.root.join(path).to_s
       end
@@ -31,7 +31,7 @@ RSpec.describe 'renamed class aliases' do
     it 'warns with the removal release and returns the default country code' do
       store = build(:store)
 
-      expect(Spree::Deprecation).to receive(:warn).with(/default_country_iso_code is deprecated.*Spree 6\.5/)
+      expect(Spree::Deprecation).to receive(:warn).with(/default_country_iso_code is deprecated.*Spree 6\.3/)
       expect(store.default_country_iso_code).to eq(store.default_country_code)
     end
   end

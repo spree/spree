@@ -840,7 +840,7 @@ describe '6.0 data migration tasks' do
     let(:stock_location) { create(:stock_location) }
     let(:variant) { create(:variant) }
     let(:stock_level) { stock_location.stock_level_or_create(variant) }
-    # The legacy authorizations table survives to 6.5 and is reached the same
+    # The legacy authorizations table survives to 6.3 and is reached the same
     # way the task reaches it.
     let(:legacy_authorizations) { Class.new(ActiveRecord::Base) { self.table_name = 'spree_return_authorizations' } }
 

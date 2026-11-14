@@ -1,6 +1,6 @@
 module Spree
   module Core
-    # @deprecated Use {Spree::HasNumber} instead. Removed in Spree 6.5.
+    # @deprecated Use {Spree::HasNumber} instead. Removed in Spree 6.3.
     #
     #   # before
     #   include Spree::Core::NumberGenerator.new(prefix: 'R')
@@ -9,7 +9,7 @@ module Spree
     #   has_spree_number prefix: 'R'
     #
     # Kept as a shell so existing models and extension decorators keep
-    # working until 6.5. Including it wires up {Spree::HasNumber} with
+    # working until 6.3. Including it wires up {Spree::HasNumber} with
     # the given prefix, which means numbers now follow the store's format
     # preference (sequential by default) rather than always being random.
     # Hosts that need the old random numbers should switch the store's
@@ -32,7 +32,7 @@ module Spree
 
         Spree::Deprecation.warn(
           'Spree::Core::NumberGenerator is deprecated and will be removed in ' \
-          "Spree 6.5. Replace `include Spree::Core::NumberGenerator.new(prefix: '#{@prefix}')` " \
+          "Spree 6.3. Replace `include Spree::Core::NumberGenerator.new(prefix: '#{@prefix}')` " \
           "with `has_spree_number prefix: '#{@prefix}'`. " \
           'See docs/plans/6.0-document-numbers.md.'
         )

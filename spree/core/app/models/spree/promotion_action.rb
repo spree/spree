@@ -60,7 +60,7 @@ module Spree
     end
 
     # STI type names for a discount scope, covering both the 6.0 names and
-    # the legacy names still present in the type column until the 6.5 data
+    # the legacy names still present in the type column until the 6.3 data
     # migration.
     #
     # @param scope [Symbol] :line_item, :fulfillment or :order

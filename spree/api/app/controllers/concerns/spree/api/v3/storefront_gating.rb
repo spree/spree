@@ -43,11 +43,11 @@ module Spree
         # Renders a 401 with the shared +authentication_required+ error code.
         # @param message [String] translated error message
         # @param legacy_default [String, nil] deprecated: the two-argument form
-        #   (key under +spree.+, fallback text) is removed in Spree 6.5
+        #   (key under +spree.+, fallback text) is removed in Spree 6.3
         def render_authentication_required(message, legacy_default = nil)
           unless legacy_default.nil?
             Spree::Deprecation.warn(
-              'render_authentication_required(key, default) is deprecated and will be removed in Spree 6.5. Pass the translated message instead.'
+              'render_authentication_required(key, default) is deprecated and will be removed in Spree 6.3. Pass the translated message instead.'
             )
             message = I18n.t("spree.#{message}", default: legacy_default)
           end

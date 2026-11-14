@@ -6,13 +6,13 @@ module Spree
       def call(guest_cart: nil, guest_order: nil, customer: nil, user: nil, override_email: true, guest_only: false)
         if guest_order
           Spree::Deprecation.warn(
-            'Calling Spree::Carts::Associate with guest_order: is deprecated and will be removed in Spree 6.5. Pass guest_cart: instead.'
+            'Calling Spree::Carts::Associate with guest_order: is deprecated and will be removed in Spree 6.3. Pass guest_cart: instead.'
           )
           guest_cart ||= guest_order
         end
         if user && customer.nil?
           Spree::Deprecation.warn(
-            'Calling Spree::Carts::Associate with user: is deprecated and will be removed in Spree 6.5. Pass customer: instead.'
+            'Calling Spree::Carts::Associate with user: is deprecated and will be removed in Spree 6.3. Pass customer: instead.'
           )
           customer = user
         end

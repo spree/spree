@@ -2,7 +2,7 @@ module Spree
   module Taxons
     # @deprecated Renamed to Spree::Categories::AddProducts in 6.0. This shim keeps
     #   the old `taxons:` keyword working by delegating to the renamed service;
-    #   removed in 6.5.
+    #   removed in 6.3.
     class AddProducts
       prepend Spree::ServiceModule::Base
 
@@ -11,7 +11,7 @@ module Spree
       # @return [Spree::ServiceModule::Base::Result]
       def call(taxons:, products:)
         Spree::Deprecation.warn(
-          'Spree::Taxons::AddProducts is deprecated and will be removed in Spree 6.5. Use Spree::Categories::AddProducts instead.'
+          'Spree::Taxons::AddProducts is deprecated and will be removed in Spree 6.3. Use Spree::Categories::AddProducts instead.'
         )
         Spree::Categories::AddProducts.call(categories: taxons, products: products)
       end

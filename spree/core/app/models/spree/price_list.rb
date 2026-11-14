@@ -130,30 +130,30 @@ module Spree
     include Spree::HasStatus
     has_status :draft, :active, :inactive, :scheduled, default: :draft
 
-    # @deprecated Call Spree.price_list_activate_workflow — removed in 6.5.
+    # @deprecated Call Spree.price_list_activate_workflow — removed in 6.3.
     #   Kept literal: the old event always went straight to active, and the
     #   workflow schedules a future-dated list instead. A caller relying on
     #   this shell gets what it always got.
     def activate
       Spree::Deprecation.warn(
-        'Spree::PriceList#activate is deprecated and will be removed in Spree 6.5. Call Spree.price_list_activate_workflow instead.'
+        'Spree::PriceList#activate is deprecated and will be removed in Spree 6.3. Call Spree.price_list_activate_workflow instead.'
       )
       update(status: 'active')
     end
 
-    # @deprecated Call Spree.price_list_deactivate_workflow — removed in 6.5.
+    # @deprecated Call Spree.price_list_deactivate_workflow — removed in 6.3.
     def deactivate
       Spree::Deprecation.warn(
-        'Spree::PriceList#deactivate is deprecated and will be removed in Spree 6.5. Call Spree.price_list_deactivate_workflow instead.'
+        'Spree::PriceList#deactivate is deprecated and will be removed in Spree 6.3. Call Spree.price_list_deactivate_workflow instead.'
       )
       Spree.price_list_deactivate_workflow.call(price_list: self).success?
     end
 
-    # @deprecated Call Spree.price_list_activate_workflow — removed in 6.5.
+    # @deprecated Call Spree.price_list_activate_workflow — removed in 6.3.
     #   It picks scheduled or active from the dates itself.
     def schedule
       Spree::Deprecation.warn(
-        'Spree::PriceList#schedule is deprecated and will be removed in Spree 6.5. Call Spree.price_list_activate_workflow instead.'
+        'Spree::PriceList#schedule is deprecated and will be removed in Spree 6.3. Call Spree.price_list_activate_workflow instead.'
       )
       update(status: 'scheduled')
     end

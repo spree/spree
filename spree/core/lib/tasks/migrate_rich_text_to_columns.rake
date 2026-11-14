@@ -22,7 +22,7 @@ namespace :spree do
     Idempotent — a row whose column already matches the sanitized Action Text
     body is skipped, and writes go through +update_all+ so timestamps and
     webhooks don't churn. Source rows are left in place as the rollback path and
-    are dropped with the Action Text tables in 6.5.
+    are dropped with the Action Text tables in 6.3.
   DESC
   task migrate_rich_text_to_columns: :environment do
     # Action Text is not loaded by Spree any more — 6.0 stores rich text in its

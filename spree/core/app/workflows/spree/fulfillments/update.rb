@@ -32,7 +32,7 @@ module Spree
         if shipment || shipment_attributes
           Spree::Deprecation.warn(
             'Calling Spree::Fulfillments::Update with shipment:/shipment_attributes: keywords is deprecated ' \
-            'and will be removed in Spree 6.5. Use fulfillment:/fulfillment_attributes: instead.'
+            'and will be removed in Spree 6.3. Use fulfillment:/fulfillment_attributes: instead.'
           )
         end
 

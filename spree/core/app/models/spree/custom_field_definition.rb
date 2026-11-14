@@ -82,40 +82,40 @@ module Spree
     end
 
     #
-    # Deprecated 6.0 column names, removed in 6.5
+    # Deprecated 6.0 column names, removed in 6.3
     #
     def name
-      Spree::Deprecation.warn('#name is deprecated and will be removed in Spree 6.5. Use #label instead.')
+      Spree::Deprecation.warn('#name is deprecated and will be removed in Spree 6.3. Use #label instead.')
       label
     end
 
     def name=(value)
-      Spree::Deprecation.warn('#name= is deprecated and will be removed in Spree 6.5. Use #label= instead.')
+      Spree::Deprecation.warn('#name= is deprecated and will be removed in Spree 6.3. Use #label= instead.')
       self.label = value
     end
 
     def metafield_type
       Spree::Deprecation.warn(
-        '#metafield_type is deprecated and will be removed in Spree 6.5. ' \
+        '#metafield_type is deprecated and will be removed in Spree 6.3. ' \
         'Use #field_type (which returns an API token) or #field_type_class_name instead.'
       )
       field_type_class_name
     end
 
     def metafield_type=(value)
-      Spree::Deprecation.warn('#metafield_type= is deprecated and will be removed in Spree 6.5. Use #field_type= instead.')
+      Spree::Deprecation.warn('#metafield_type= is deprecated and will be removed in Spree 6.3. Use #field_type= instead.')
       self.field_type = value
     end
 
     # The tri-state display_on collapsed into the storefront_visible boolean;
     # 'front_end' folds into visible since it never meant hidden-from-storefront.
     def display_on
-      Spree::Deprecation.warn('#display_on is deprecated and will be removed in Spree 6.5. Use #storefront_visible instead.')
+      Spree::Deprecation.warn('#display_on is deprecated and will be removed in Spree 6.3. Use #storefront_visible instead.')
       storefront_visible? ? 'both' : 'back_end'
     end
 
     def display_on=(value)
-      Spree::Deprecation.warn('#display_on= is deprecated and will be removed in Spree 6.5. Use #storefront_visible= instead.')
+      Spree::Deprecation.warn('#display_on= is deprecated and will be removed in Spree 6.3. Use #storefront_visible= instead.')
       self.storefront_visible = value.to_s != 'back_end'
     end
 

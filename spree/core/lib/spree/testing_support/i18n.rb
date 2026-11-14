@@ -1,8 +1,8 @@
 # Deprecated: Spree's specs now catch missing keys through Rails'
-# config.i18n.raise_on_missing_translations. Removed in Spree 6.5.
+# config.i18n.raise_on_missing_translations. Removed in Spree 6.3.
 if defined?(Spree::Deprecation)
   Spree::Deprecation.warn(
     'spree/testing_support/i18n is deprecated and does nothing; set config.i18n.raise_on_missing_translations = true in your test environment ' \
-    'instead. It will be removed in Spree 6.5.'
+    'instead. It will be removed in Spree 6.3.'
   )
 end

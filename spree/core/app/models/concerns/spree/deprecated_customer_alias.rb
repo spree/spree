@@ -1,7 +1,7 @@
 module Spree
   # Deprecation shim for the 6.0 user_id -> customer_id / belongs_to :user -> :customer
   # rename. Included by customer-facing models so `.user` / `.user_id` keep working
-  # until Spree 6.5.
+  # until Spree 6.3.
   module DeprecatedCustomerAlias
     extend ActiveSupport::Concern
 
@@ -12,7 +12,7 @@ module Spree
     def user
       if defined?(Spree::Deprecation)
         Spree::Deprecation.warn(
-          "#{self.class}#user is deprecated and will be removed in Spree 6.5. Use #customer instead."
+          "#{self.class}#user is deprecated and will be removed in Spree 6.3. Use #customer instead."
         )
       end
       customer
@@ -21,7 +21,7 @@ module Spree
     def user=(value)
       if defined?(Spree::Deprecation)
         Spree::Deprecation.warn(
-          "#{self.class}#user= is deprecated and will be removed in Spree 6.5. Use #customer= instead."
+          "#{self.class}#user= is deprecated and will be removed in Spree 6.3. Use #customer= instead."
         )
       end
       self.customer = value

@@ -6,7 +6,7 @@ namespace :spree do
       credit exists is its originator (return, exchange, claim, gift card)
       plus the free-text memo — so this keeps the only information a
       category row held visible in the dashboard once the column and table
-      are dropped in 6.5.
+      are dropped in 6.3.
 
       Only credits with a blank memo are touched, so nothing an admin wrote
       is overwritten. Idempotent — a credit whose memo is already filled is

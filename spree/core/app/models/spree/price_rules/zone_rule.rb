@@ -1,6 +1,6 @@
 module Spree
   module PriceRules
-    # Deprecated STI shell, removed in Spree 6.5. Exists only so price-rule
+    # Deprecated STI shell, removed in Spree 6.3. Exists only so price-rule
     # rows created before `spree:migrate_tax_zones` runs still load — the task
     # converts each row to a {MarketRule} where the zone's countries match a
     # market exactly, and otherwise deactivates the price list and removes the

@@ -1,5 +1,5 @@
 module Spree
-  # @deprecated Removed in Spree 6.5 together with its table. Nothing in Spree
+  # @deprecated Removed in Spree 6.3 together with its table. Nothing in Spree
   #   ever created a store credit type, so the +priority+ it was meant to
   #   provide never drove redemption order; store credits are now spent
   #   oldest first ({Spree::StoreCredit.oldest_first}). The class stays only so
@@ -11,7 +11,7 @@ module Spree
     DEFAULT_TYPE_NAME = 'Expiring'.freeze
 
     after_initialize do
-      Spree::Deprecation.warn('Spree::StoreCreditType is deprecated and will be removed in Spree 6.5. ' \
+      Spree::Deprecation.warn('Spree::StoreCreditType is deprecated and will be removed in Spree 6.3. ' \
                               'Store credits are spent oldest first — see Spree::StoreCredit.oldest_first.')
     end
   end

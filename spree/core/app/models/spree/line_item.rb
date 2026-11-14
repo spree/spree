@@ -106,15 +106,15 @@ module Spree
     # (admin add-to-this-fulfillment flows).
     attr_accessor :target_fulfillment
 
-    # @deprecated Use {#target_fulfillment}; removed in 6.5.
+    # @deprecated Use {#target_fulfillment}; removed in 6.3.
     def target_shipment
-      Spree::Deprecation.warn('Spree::LineItem#target_shipment is deprecated and will be removed in Spree 6.5. Use #target_fulfillment instead.')
+      Spree::Deprecation.warn('Spree::LineItem#target_shipment is deprecated and will be removed in Spree 6.3. Use #target_fulfillment instead.')
       target_fulfillment
     end
 
-    # @deprecated Use {#target_fulfillment=}; removed in 6.5.
+    # @deprecated Use {#target_fulfillment=}; removed in 6.3.
     def target_shipment=(value)
-      Spree::Deprecation.warn('Spree::LineItem#target_shipment= is deprecated and will be removed in Spree 6.5. Use #target_fulfillment= instead.')
+      Spree::Deprecation.warn('Spree::LineItem#target_shipment= is deprecated and will be removed in Spree 6.3. Use #target_fulfillment= instead.')
       self.target_fulfillment = value
     end
 
@@ -347,16 +347,16 @@ module Spree
       end
     end
 
-    # @deprecated Use {#delivery_cost}; removed in 6.5.
+    # @deprecated Use {#delivery_cost}; removed in 6.3.
     def shipping_cost
-      Spree::Deprecation.warn('Spree::LineItem#shipping_cost is deprecated and will be removed in Spree 6.5. Use #delivery_cost instead.')
+      Spree::Deprecation.warn('Spree::LineItem#shipping_cost is deprecated and will be removed in Spree 6.3. Use #delivery_cost instead.')
       delivery_cost
     end
 
-    # @deprecated Use {#display_delivery_cost}; removed in 6.5.
+    # @deprecated Use {#display_delivery_cost}; removed in 6.3.
     def display_shipping_cost
       Spree::Deprecation.warn(
-        'Spree::LineItem#display_shipping_cost is deprecated and will be removed in Spree 6.5. Use #display_delivery_cost instead.'
+        'Spree::LineItem#display_shipping_cost is deprecated and will be removed in Spree 6.3. Use #display_delivery_cost instead.'
       )
       display_delivery_cost
     end

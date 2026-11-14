@@ -4,7 +4,7 @@ class AddStoreIdToSpreeTaxRatesAndCategories < ActiveRecord::Migration[8.1]
     # configuration, so they belong to a store like every other commerce
     # setting. Kept null: true here; existing rows are backfilled by
     # `spree:backfill_tax_store_ids` and presence is enforced on the model.
-    # The NOT NULL constraints land in 6.5.
+    # The NOT NULL constraints land in 6.3.
     add_reference :spree_tax_rates, :store, null: true
     add_reference :spree_tax_categories, :store, null: true
 

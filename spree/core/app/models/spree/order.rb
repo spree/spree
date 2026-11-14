@@ -12,13 +12,13 @@ module Spree
     # What Orders::UpdateStatuses derives — the only writer of the column.
     PAYMENT_STATUSES = %w(none authorized partially_paid paid partially_refunded refunded overcharged voided).freeze
     # @deprecated legacy machine vocabulary; rows carrying it stay valid until
-    #   the status migration rewrites them. Removed in 6.5.
+    #   the status migration rewrites them. Removed in 6.3.
     PAYMENT_STATES = %w(balance_due credit_owed failed paid void)
     FULFILLMENT_STATUSES = %w(backorder canceled partial unfulfilled fulfilled delivered pending ready shipped)
-    # @deprecated legacy name — remove in 6.5 together with the 'shipped' value
+    # @deprecated legacy name — remove in 6.3 together with the 'shipped' value
     SHIPMENT_STATES = FULFILLMENT_STATUSES
     # @deprecated legacy machine vocabulary — line-item removability is
-    #   completion-based since 6.0; removed in 6.5.
+    #   completion-based since 6.0; removed in 6.3.
     LINE_ITEM_REMOVABLE_STATES = %w(cart address delivery payment confirm resumed)
 
     extend Spree::DisplayMoney
@@ -85,7 +85,7 @@ module Spree
     # @deprecated Only Carts can auto remove out of stock items
     def remove_out_of_stock_items!
       Spree::Deprecation.warn(
-        'Spree::Order#remove_out_of_stock_items! is deprecated and will be removed in Spree 6.5. This method now works only on Spree::Cart objects'
+        'Spree::Order#remove_out_of_stock_items! is deprecated and will be removed in Spree 6.3. This method now works only on Spree::Cart objects'
       )
 
       existing_warnings = warnings
@@ -107,57 +107,57 @@ module Spree
     # Where the checkout stands within that list is not, which is why the
     # readers below report a finished checkout.
 
-    # @deprecated Checkout steps belong to Spree::Cart; removed in 6.5.
+    # @deprecated Checkout steps belong to Spree::Cart; removed in 6.3.
     def checkout_steps
       Spree::Deprecation.warn(
-        'Spree::Order#checkout_steps is deprecated and will be removed in Spree 6.5. ' \
+        'Spree::Order#checkout_steps is deprecated and will be removed in Spree 6.3. ' \
         'Checkout steps belong to Spree::Cart — ask the cart before it is completed.'
       )
       Spree::Checkout::Registry.step_names_for(self)
     end
 
-    # @deprecated See {#checkout_steps}; removed in 6.5.
+    # @deprecated See {#checkout_steps}; removed in 6.3.
     def has_checkout_step?(step)
       Spree::Deprecation.warn(
-        'Spree::Order#has_checkout_step? is deprecated and will be removed in Spree 6.5. ' \
+        'Spree::Order#has_checkout_step? is deprecated and will be removed in Spree 6.3. ' \
         'Checkout steps belong to Spree::Cart — ask the cart before it is completed.'
       )
       step.present? && Spree::Checkout::Registry.step_names_for(self).include?(step.to_s)
     end
 
-    # @deprecated See {#checkout_steps}; removed in 6.5.
+    # @deprecated See {#checkout_steps}; removed in 6.3.
     def checkout_step_index(step)
       Spree::Deprecation.warn(
-        'Spree::Order#checkout_step_index is deprecated and will be removed in Spree 6.5. ' \
+        'Spree::Order#checkout_step_index is deprecated and will be removed in Spree 6.3. ' \
         'Checkout steps belong to Spree::Cart — ask the cart before it is completed.'
       )
       Spree::Checkout::Registry.step_names_for(self).index(step).to_i
     end
 
-    # @deprecated See {#checkout_steps}; removed in 6.5. An order has no
+    # @deprecated See {#checkout_steps}; removed in 6.3. An order has no
     #   outstanding step, so this is always 'complete'.
     def current_checkout_step
       Spree::Deprecation.warn(
-        'Spree::Order#current_checkout_step is deprecated and will be removed in Spree 6.5. ' \
+        'Spree::Order#current_checkout_step is deprecated and will be removed in Spree 6.3. ' \
         "An order is past checkout, so this is always 'complete'."
       )
       'complete'
     end
 
-    # @deprecated See {#checkout_steps}; removed in 6.5.
+    # @deprecated See {#checkout_steps}; removed in 6.3.
     def final_checkout_step
       Spree::Deprecation.warn(
-        'Spree::Order#final_checkout_step is deprecated and will be removed in Spree 6.5. ' \
+        'Spree::Order#final_checkout_step is deprecated and will be removed in Spree 6.3. ' \
         'Checkout steps belong to Spree::Cart — ask the cart before it is completed.'
       )
       Spree::Checkout::Registry.step_names_for(self).reject { |step| step == 'complete' }.last || 'address'
     end
 
-    # @deprecated See {#checkout_steps}; removed in 6.5. Every step is behind
+    # @deprecated See {#checkout_steps}; removed in 6.3. Every step is behind
     #   an order, so this is the whole list bar 'complete'.
     def completed_checkout_steps
       Spree::Deprecation.warn(
-        'Spree::Order#completed_checkout_steps is deprecated and will be removed in Spree 6.5. ' \
+        'Spree::Order#completed_checkout_steps is deprecated and will be removed in Spree 6.3. ' \
         "An order is past checkout, so every step bar 'complete' is behind it."
       )
       Spree::Checkout::Registry.step_names_for(self).reject { |step| step == 'complete' }
@@ -294,11 +294,11 @@ module Spree
     has_many :fulfillment_discounts, through: :fulfillments, source: :discounts
 
     alias items line_items
-    # Legacy names — removed in 6.5 (real names: fulfillments, delivery_total,
+    # Legacy names — removed in 6.3 (real names: fulfillments, delivery_total,
     # fulfillment_status since 6.0)
     has_many :shipments, class_name: 'Spree::Fulfillment', inverse_of: :order, deprecated: true
     alias_attribute :shipment_state, :fulfillment_status
-    # Deprecated alias — the column is payment_status since 6.0; remove in 6.5.
+    # Deprecated alias — the column is payment_status since 6.0; remove in 6.3.
     alias_attribute :payment_state, :payment_status
 
     delegate :has_markets?, to: :store, prefix: true
@@ -306,7 +306,7 @@ module Spree
     accepts_nested_attributes_for :line_items
     accepts_nested_attributes_for :payments, reject_if: :credit_card_nil_payment?
     accepts_nested_attributes_for :fulfillments
-    # @deprecated legacy writer — removed in 6.5
+    # @deprecated legacy writer — removed in 6.3
     alias shipments_attributes= fulfillments_attributes=
 
     before_create :link_by_email
@@ -323,13 +323,13 @@ module Spree
     validates :fulfillment_status, inclusion: { in: FULFILLMENT_STATUSES, allow_blank: true }
 
     # @deprecated Both warn and run the full recalculation; use
-    #   {#recalculate_totals!}. Removed in 6.5.
+    #   {#recalculate_totals!}. Removed in 6.3.
     delegate :update_totals, :persist_totals, to: :updater
     delegate :merge!, to: :merger
     delegate :first_name, :last_name, to: :bill_address, prefix: true, allow_nil: true
 
     # @deprecated The delegated names follow the renamed address columns since
-    #   6.0; removed in 6.5.
+    #   6.0; removed in 6.3.
     alias bill_address_firstname bill_address_first_name
     alias bill_address_lastname bill_address_last_name
 
@@ -420,7 +420,7 @@ module Spree
     # Use this method in other gems that wish to register their own custom logic
     # that should be called after Order#update
     def self.register_update_hook(hook)
-      Spree::Deprecation.warn('Order.register_update_hook is deprecated and will be removed in Spree 6.5')
+      Spree::Deprecation.warn('Order.register_update_hook is deprecated and will be removed in Spree 6.3')
       update_hooks.add(hook)
     end
 
@@ -436,7 +436,7 @@ module Spree
 
     # Promotion actions of the given discount scope, covering both the 6.0
     # class names and the legacy STI names still present in the type column
-    # until the 6.5 data migration.
+    # until the 6.3 data migration.
     def promotion_actions_of_scope(scope)
       Spree::PromotionAction.where(type: Spree::PromotionAction.types_for_discount_scope(scope))
     end
@@ -465,7 +465,7 @@ module Spree
     end
 
     # @deprecated machine vocabulary — data-derived bridge for the 6.0
-    #   transition, removed in 6.5. An order is "cart-like" while a draft
+    #   transition, removed in 6.3. An order is "cart-like" while a draft
     #   with no checkout data.
     def cart?
       draft? && !completed? && email.blank? && ship_address_id.blank?
@@ -629,7 +629,7 @@ module Spree
     end
 
     # @deprecated Use {#recalculate_totals!} for money and {#update_statuses!}
-    #   for payment/fulfillment statuses; removed in 6.5.
+    #   for payment/fulfillment statuses; removed in 6.3.
     def updater
       @updater ||= Spree.order_updater.new(self)
     end
@@ -648,7 +648,7 @@ module Spree
       Spree.order_update_statuses_service.call(order: self)
     end
 
-    # @deprecated Use {Spree::Carts::Merge}; removed in 6.5.
+    # @deprecated Use {Spree::Carts::Merge}; removed in 6.3.
     def merger
       @merger ||= Spree::OrderMerger.new(self)
     end
@@ -681,9 +681,9 @@ module Spree
       update!(nullified_attributes)
     end
 
-    # @deprecated Use {#disassociate_customer!}; removed in 6.5.
+    # @deprecated Use {#disassociate_customer!}; removed in 6.3.
     def disassociate_user!
-      Spree::Deprecation.warn('Spree::Order#disassociate_user! is deprecated and will be removed in Spree 6.5. Use #disassociate_customer! instead.')
+      Spree::Deprecation.warn('Spree::Order#disassociate_user! is deprecated and will be removed in Spree 6.3. Use #disassociate_customer! instead.')
       disassociate_customer!
     end
 
@@ -850,10 +850,10 @@ module Spree
     # Finalizes an in progress order after checkout is complete.
     # Called after transition to complete state when payments will have been processed
     # @deprecated Completion lives in {Spree::Orders::Complete} (checkout
-    #   reaches it through +Spree.carts_complete_workflow+). Removed in 6.5.
+    #   reaches it through +Spree.carts_complete_workflow+). Removed in 6.3.
     def finalize!
       Spree::Deprecation.warn(
-        'Spree::Order#finalize! is deprecated and will be removed in Spree 6.5. ' \
+        'Spree::Order#finalize! is deprecated and will be removed in Spree 6.3. ' \
         'Completion runs through Spree.order_complete_workflow (Spree::Orders::Complete).'
       )
       Spree.order_complete_workflow.call(order: self, payment_pending: true, validated: true)
@@ -875,10 +875,10 @@ module Spree
     # If so add error and restart checkout.
     # @deprecated Completion validation lives in
     #   {Spree::Checkout::DefaultRequirements} (the +discontinued+ stock
-    #   error). Removed in 6.5.
+    #   error). Removed in 6.3.
     def ensure_line_item_variants_are_not_discontinued
       Spree::Deprecation.warn(
-        'Spree::Order#ensure_line_item_variants_are_not_discontinued is deprecated and will be removed in Spree 6.5. ' \
+        'Spree::Order#ensure_line_item_variants_are_not_discontinued is deprecated and will be removed in Spree 6.3. ' \
         'Completion validation lives in Spree::Checkout::Requirements.'
       )
       if line_items.any? { |li| !li.variant || li.variant.discontinued? }
@@ -891,10 +891,10 @@ module Spree
 
     # @deprecated Completion validation lives in
     #   {Spree::Checkout::DefaultRequirements} (the +out_of_stock+ stock
-    #   error). Removed in 6.5.
+    #   error). Removed in 6.3.
     def ensure_line_items_are_in_stock
       Spree::Deprecation.warn(
-        'Spree::Order#ensure_line_items_are_in_stock is deprecated and will be removed in Spree 6.5. ' \
+        'Spree::Order#ensure_line_items_are_in_stock is deprecated and will be removed in Spree 6.3. ' \
         'Completion validation lives in Spree::Checkout::Requirements.'
       )
       if insufficient_stock_lines.present?
@@ -907,7 +907,7 @@ module Spree
 
     def use_all_coupon_codes
       Spree::Deprecation.warn(
-        'Spree::Order#use_all_coupon_codes is deprecated and will be removed in Spree 6.5. Use Spree::CouponCodes::CouponCodesHandler instead.'
+        'Spree::Order#use_all_coupon_codes is deprecated and will be removed in Spree 6.3. Use Spree::CouponCodes::CouponCodesHandler instead.'
       )
       Spree::CouponCodes::CouponCodesHandler.new(order: self).use_all_codes
     end
@@ -916,7 +916,7 @@ module Spree
 
     def can_add_coupon?
       Spree::Deprecation.warn(
-        'Spree::Order#can_add_coupon? is deprecated and will be removed in Spree 6.5. Use Spree::Promotion.order_activatable? instead.'
+        'Spree::Order#can_add_coupon? is deprecated and will be removed in Spree 6.3. Use Spree::Promotion.order_activatable? instead.'
       )
       Spree::Promotion.order_activatable?(self)
     end
@@ -939,9 +939,9 @@ module Spree
       total.positive? && fulfillments.delivered.size == total
     end
 
-    # @deprecated Use {#fully_fulfilled?}; removed in 6.5.
+    # @deprecated Use {#fully_fulfilled?}; removed in 6.3.
     def fully_shipped?
-      Spree::Deprecation.warn('Spree::Order#fully_shipped? is deprecated and will be removed in Spree 6.5. Use #fully_fulfilled? instead.')
+      Spree::Deprecation.warn('Spree::Order#fully_shipped? is deprecated and will be removed in Spree 6.3. Use #fully_fulfilled? instead.')
       fully_fulfilled?
     end
 
@@ -1024,10 +1024,10 @@ module Spree
       end.flatten.compact
     end
 
-    # @deprecated Use {#line_items_without_delivery_rates}; removed in 6.5.
+    # @deprecated Use {#line_items_without_delivery_rates}; removed in 6.3.
     def line_items_without_shipping_rates
       Spree::Deprecation.warn(
-        'Spree::Order#line_items_without_shipping_rates is deprecated and will be removed in Spree 6.5. ' \
+        'Spree::Order#line_items_without_shipping_rates is deprecated and will be removed in Spree 6.3. ' \
         'Use #line_items_without_delivery_rates instead.'
       )
       line_items_without_delivery_rates
@@ -1070,10 +1070,10 @@ module Spree
       fulfillments.map { |fulfillment| fulfillment.refresh_rates(audience) }
     end
 
-    # @deprecated Use {#refresh_delivery_rates}; removed in 6.5.
+    # @deprecated Use {#refresh_delivery_rates}; removed in 6.3.
     def refresh_shipment_rates(audience = DeliveryMethod::STOREFRONT)
       Spree::Deprecation.warn(
-        'Spree::Order#refresh_shipment_rates is deprecated and will be removed in Spree 6.5. Use #refresh_delivery_rates instead.'
+        'Spree::Order#refresh_shipment_rates is deprecated and will be removed in Spree 6.3. Use #refresh_delivery_rates instead.'
       )
       refresh_delivery_rates(audience)
     end
@@ -1084,7 +1084,7 @@ module Spree
     end
 
     def shipping_method
-      Spree::Deprecation.warn('Spree::Order#shipping_method is deprecated and will be removed in Spree 6.5. Please use Spree::Order#delivery_method')
+      Spree::Deprecation.warn('Spree::Order#shipping_method is deprecated and will be removed in Spree 6.3. Please use Spree::Order#delivery_method')
       delivery_method
     end
 
@@ -1115,7 +1115,7 @@ module Spree
     # @return [Spree::ServiceModule::Result]
     def canceled_by(user, canceled_at = nil)
       Spree::Deprecation.warn(
-        'Spree::Order#canceled_by is deprecated and will be removed in Spree 6.5. Use Spree.order_cancel_workflow (Spree::Orders::Cancel) instead.'
+        'Spree::Order#canceled_by is deprecated and will be removed in Spree 6.3. Use Spree.order_cancel_workflow (Spree::Orders::Cancel) instead.'
       )
       Spree.order_cancel_workflow.call(order: self, canceler: user, canceled_at: canceled_at)
     end
@@ -1213,7 +1213,7 @@ module Spree
     # @return [BigDecimal]
     def cart_promo_total
       Spree::Deprecation.warn(
-        'Spree::Order#cart_promo_total is deprecated and will be removed in Spree 6.5. Please use order.cart.discount_total instead'
+        'Spree::Order#cart_promo_total is deprecated and will be removed in Spree 6.3. Please use order.cart.discount_total instead'
       )
       discounts.promotion.nonzero.for_line_items.sum(:amount)
     end

@@ -11,7 +11,7 @@ module Spree
       #   currency so upgraded stores quote unchanged.
       preference :currency, :string, format: :currency, default: -> { Spree::Store.default.default_currency }
 
-      RULE_DEPRECATION = 'Use a Spree::DeliveryMethodRules rule on the delivery method instead; removed in Spree 6.5.'.freeze
+      RULE_DEPRECATION = 'Use a Spree::DeliveryMethodRules rule on the delivery method instead; removed in Spree 6.3.'.freeze
 
       preference :minimum_item_total, :money, default: nil, nullable: true, deprecated: RULE_DEPRECATION
       preference :maximum_item_total, :money, default: nil, nullable: true, deprecated: RULE_DEPRECATION

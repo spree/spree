@@ -1,7 +1,7 @@
 module Spree
   # Merchandising media for commerce entities — product photography, variant
   # shots, product video. Renamed from Spree::Asset in 6.0; Spree::Asset stays
-  # readable as a deprecated alias until 6.5.
+  # readable as a deprecated alias until 6.3.
   class Media < Spree.base_class
     has_prefix_id :media
 
@@ -181,7 +181,7 @@ module Spree
     default_scope { includes(attachment_attachment: :blob, poster_attachment: :blob) }
 
     # `type` is a vestige of the old Spree::Image/Spree::Video STI —
-    # media_type is the discriminator now. The column drops in 6.5.
+    # media_type is the discriminator now. The column drops in 6.3.
     self.inheritance_column = nil
 
     store_accessor :metadata, :session_uploaded_assets_uuid

@@ -86,21 +86,21 @@ module Spree
     resolve_class_setting(:customer_class, @@customer_class, constantize)
   end
 
-  # @deprecated Spree.user_class was renamed to Spree.customer_class in 6.0; removed in 6.5.
+  # @deprecated Spree.user_class was renamed to Spree.customer_class in 6.0; removed in 6.3.
   def self.user_class(constantize: true)
     if defined?(Spree::Deprecation)
       Spree::Deprecation.warn(
-        'Spree.user_class is deprecated and will be removed in Spree 6.5. Use Spree.customer_class instead.'
+        'Spree.user_class is deprecated and will be removed in Spree 6.3. Use Spree.customer_class instead.'
       )
     end
     customer_class(constantize: constantize)
   end
 
-  # @deprecated Spree.user_class= was renamed to Spree.customer_class= in 6.0; removed in 6.5.
+  # @deprecated Spree.user_class= was renamed to Spree.customer_class= in 6.0; removed in 6.3.
   def self.user_class=(value)
     if defined?(Spree::Deprecation)
       Spree::Deprecation.warn(
-        'Spree.user_class= is deprecated and will be removed in Spree 6.5. Use Spree.customer_class= instead.'
+        'Spree.user_class= is deprecated and will be removed in Spree 6.3. Use Spree.customer_class= instead.'
       )
     end
     self.customer_class = value
@@ -143,17 +143,17 @@ module Spree
       payouts: :default,
       maintenance_tasks: :default
     ).tap do |queues|
-      # @deprecated The taxons queue was renamed to categories in 6.0; removed in 6.5.
+      # @deprecated The taxons queue was renamed to categories in 6.0; removed in 6.3.
       queues.define_singleton_method(:taxons) do
         if defined?(Spree::Deprecation)
           Spree::Deprecation.warn(
-            'Spree.queues.taxons is deprecated and will be removed in Spree 6.5. Use Spree.queues.categories instead.'
+            'Spree.queues.taxons is deprecated and will be removed in Spree 6.3. Use Spree.queues.categories instead.'
           )
         end
         categories
       end
 
-      # @deprecated Renamed with the stock level rename in 6.0; removed in 6.5.
+      # @deprecated Renamed with the stock level rename in 6.0; removed in 6.3.
       #
       # The writer matters as much as the reader here: these are ordered options, so
       # an existing initializer assigning the old name would quietly define a
@@ -161,7 +161,7 @@ module Spree
       queues.define_singleton_method(:stock_location_stock_items) do
         if defined?(Spree::Deprecation)
           Spree::Deprecation.warn(
-            'Spree.queues.stock_location_stock_items is deprecated and will be removed in Spree 6.5. ' \
+            'Spree.queues.stock_location_stock_items is deprecated and will be removed in Spree 6.3. ' \
             'Use Spree.queues.stock_location_stock_levels instead.'
           )
         end
@@ -171,7 +171,7 @@ module Spree
       queues.define_singleton_method(:stock_location_stock_items=) do |value|
         if defined?(Spree::Deprecation)
           Spree::Deprecation.warn(
-            'Spree.queues.stock_location_stock_items= is deprecated and will be removed in Spree 6.5. ' \
+            'Spree.queues.stock_location_stock_items= is deprecated and will be removed in Spree 6.3. ' \
             'Use Spree.queues.stock_location_stock_levels= instead.'
           )
         end
@@ -501,7 +501,7 @@ module Spree
   def self.metafields
     if defined?(Spree::Deprecation)
       Spree::Deprecation.warn(
-        'Spree.metafields is deprecated and will be removed in Spree 6.5. Use Spree.custom_fields instead.'
+        'Spree.metafields is deprecated and will be removed in Spree 6.3. Use Spree.custom_fields instead.'
       )
     end
     custom_fields

@@ -15,9 +15,9 @@ module Spree
         end
       end
 
-      # @deprecated Use {#fulfillments}; removed in 6.5.
+      # @deprecated Use {#fulfillments}; removed in 6.3.
       def shipments
-        Spree::Deprecation.warn('Spree::Stock::Coordinator#shipments is deprecated and will be removed in Spree 6.5. Use #fulfillments instead.')
+        Spree::Deprecation.warn('Spree::Stock::Coordinator#shipments is deprecated and will be removed in Spree 6.3. Use #fulfillments instead.')
         fulfillments
       end
 

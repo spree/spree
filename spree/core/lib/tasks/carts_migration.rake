@@ -29,7 +29,7 @@ namespace :spree do
     stats = Hash.new(0)
 
     # spree_state_changes has no model anymore (removed in 6.0; the table
-    # survives until 6.5 as legacy data), so read it anonymously.
+    # survives until 6.3 as legacy data), so read it anonymously.
     state_changes = Class.new(ActiveRecord::Base) { self.table_name = 'spree_state_changes' }
 
     incomplete = Spree::Order.unscoped.where(completed_at: nil, canceled_at: nil)

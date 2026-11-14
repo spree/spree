@@ -53,7 +53,7 @@ module Spree
 
         Spree::Deprecation.warn(
           'Passing an Integer amount to the payment capture workflow is deprecated and is read as hundredths of ' \
-          'the currency. Pass the amount in the currency\'s own units as a BigDecimal; removed in Spree 6.5.'
+          'the currency. Pass the amount in the currency\'s own units as a BigDecimal; removed in Spree 6.3.'
         )
         Spree::Money::Rounding.from_hundredths(amount)
       end

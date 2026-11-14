@@ -89,7 +89,7 @@ module Spree
     # @deprecated The classification_count column was renamed to categories_count in 6.0.
     alias_attribute :classification_count, :categories_count
 
-    # @deprecated Use #product_categories; removed in 6.5.
+    # @deprecated Use #product_categories; removed in 6.3.
     # The live row in the review trail, or nil for a product nobody submitted.
     #
     # @return [Spree::ProductSubmission, nil]
@@ -116,28 +116,28 @@ module Spree
     end
 
     def classifications
-      Spree::Deprecation.warn('Spree::Product#classifications is deprecated and will be removed in Spree 6.5. Use #product_categories instead.')
+      Spree::Deprecation.warn('Spree::Product#classifications is deprecated and will be removed in Spree 6.3. Use #product_categories instead.')
       product_categories
     end
 
-    # @deprecated Use #categories / #category_ids; removed in 6.5.
+    # @deprecated Use #categories / #category_ids; removed in 6.3.
     def taxons
-      Spree::Deprecation.warn('Spree::Product#taxons is deprecated and will be removed in Spree 6.5. Use #categories instead.')
+      Spree::Deprecation.warn('Spree::Product#taxons is deprecated and will be removed in Spree 6.3. Use #categories instead.')
       categories
     end
 
     def taxons=(value)
-      Spree::Deprecation.warn('Spree::Product#taxons= is deprecated and will be removed in Spree 6.5. Use #categories= instead.')
+      Spree::Deprecation.warn('Spree::Product#taxons= is deprecated and will be removed in Spree 6.3. Use #categories= instead.')
       self.categories = value
     end
 
     def taxon_ids
-      Spree::Deprecation.warn('Spree::Product#taxon_ids is deprecated and will be removed in Spree 6.5. Use #category_ids instead.')
+      Spree::Deprecation.warn('Spree::Product#taxon_ids is deprecated and will be removed in Spree 6.3. Use #category_ids instead.')
       category_ids
     end
 
     def taxon_ids=(ids)
-      Spree::Deprecation.warn('Spree::Product#taxon_ids= is deprecated and will be removed in Spree 6.5. Use #category_ids= instead.')
+      Spree::Deprecation.warn('Spree::Product#taxon_ids= is deprecated and will be removed in Spree 6.3. Use #category_ids= instead.')
       self.category_ids = ids
     end
 
@@ -424,23 +424,23 @@ module Spree
     include Spree::HasStatus
     has_status(*ALL_STATUSES, default: :draft)
 
-    # @deprecated Call Spree.product_activate_workflow — removed in 6.5.
+    # @deprecated Call Spree.product_activate_workflow — removed in 6.3.
     def activate!
       Spree::Deprecation.warn(
-        'Spree::Product#activate! is deprecated and will be removed in Spree 6.5. Call Spree.product_activate_workflow instead.'
+        'Spree::Product#activate! is deprecated and will be removed in Spree 6.3. Call Spree.product_activate_workflow instead.'
       )
       run_status_workflow(Spree.product_activate_workflow)
     end
 
-    # @deprecated Call Spree.product_archive_workflow — removed in 6.5.
+    # @deprecated Call Spree.product_archive_workflow — removed in 6.3.
     def archive!
-      Spree::Deprecation.warn('Spree::Product#archive! is deprecated and will be removed in Spree 6.5. Call Spree.product_archive_workflow instead.')
+      Spree::Deprecation.warn('Spree::Product#archive! is deprecated and will be removed in Spree 6.3. Call Spree.product_archive_workflow instead.')
       run_status_workflow(Spree.product_archive_workflow)
     end
 
-    # @deprecated Call Spree.product_draft_workflow — removed in 6.5.
+    # @deprecated Call Spree.product_draft_workflow — removed in 6.3.
     def draft!
-      Spree::Deprecation.warn('Spree::Product#draft! is deprecated and will be removed in Spree 6.5. Call Spree.product_draft_workflow instead.')
+      Spree::Deprecation.warn('Spree::Product#draft! is deprecated and will be removed in Spree 6.3. Call Spree.product_draft_workflow instead.')
       run_status_workflow(Spree.product_draft_workflow)
     end
 
@@ -552,7 +552,7 @@ module Spree
 
       variant_count > 1
     end
-    # @deprecated Use #has_multiple_variants? — will be removed in Spree 6.5.
+    # @deprecated Use #has_multiple_variants? — will be removed in Spree 6.3.
     alias has_variants? has_multiple_variants?
 
     # Returns the product's media gallery.
@@ -583,12 +583,12 @@ module Spree
       @variant_for_images ||= find_variant_for_images
     end
 
-    # @deprecated Read #gallery_media directly; removed in 6.5. Nothing in
+    # @deprecated Read #gallery_media directly; removed in 6.3. Nothing in
     #   Spree calls this — a hover image is a storefront presentation choice,
     #   not something core should name.
     # @return [Spree::Media, nil]
     def secondary_image
-      Spree::Deprecation.warn('Spree::Product#secondary_image is deprecated and will be removed in Spree 6.5. Use #gallery_media instead.')
+      Spree::Deprecation.warn('Spree::Product#secondary_image is deprecated and will be removed in Spree 6.3. Use #gallery_media instead.')
       gallery_media.second
     end
 
@@ -772,25 +772,25 @@ module Spree
                          end
     end
 
-    # @deprecated Use {#stock_levels}; removed in 6.5.
+    # @deprecated Use {#stock_levels}; removed in 6.3.
     def stock_items
-      Spree::Deprecation.warn('Spree::Product#stock_items is deprecated and will be removed in Spree 6.5. Use #stock_levels instead.')
+      Spree::Deprecation.warn('Spree::Product#stock_items is deprecated and will be removed in Spree 6.3. Use #stock_levels instead.')
       stock_levels
     end
 
-    # @deprecated Use #default_variant — the master variant is being removed in Spree 6.5.
+    # @deprecated Use #default_variant — the master variant is being removed in Spree 6.3.
     def master
-      Spree::Deprecation.warn('Spree::Product#master is deprecated and will be removed in Spree 6.5. Use #default_variant instead.')
+      Spree::Deprecation.warn('Spree::Product#master is deprecated and will be removed in Spree 6.3. Use #default_variant instead.')
       default_variant
     end
 
-    # @deprecated Use #variants — will be removed in Spree 6.5.
+    # @deprecated Use #variants — will be removed in Spree 6.3.
     def variants_including_master
-      Spree::Deprecation.warn('Spree::Product#variants_including_master is deprecated and will be removed in Spree 6.5. Use #variants instead.')
+      Spree::Deprecation.warn('Spree::Product#variants_including_master is deprecated and will be removed in Spree 6.3. Use #variants instead.')
       variants
     end
 
-    # @deprecated Use #default_variant_id — will be removed in Spree 6.5.
+    # @deprecated Use #default_variant_id — will be removed in Spree 6.3.
     def master_id
       default_variant_id
     end
@@ -805,7 +805,7 @@ module Spree
 
     # @deprecated Use {#primary_category}.
     def main_taxon
-      Spree::Deprecation.warn('Spree::Product#main_taxon is deprecated and will be removed in Spree 6.5. Use #primary_category instead.')
+      Spree::Deprecation.warn('Spree::Product#main_taxon is deprecated and will be removed in Spree 6.3. Use #primary_category instead.')
       primary_category
     end
 

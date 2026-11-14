@@ -2,7 +2,7 @@
 
 module Spree
   # Deprecation alias for Spree::CustomField, renamed from Spree::Metafield in
-  # 6.0. Retained until 6.5.
+  # 6.0. Retained until 6.3.
   #
   # A plain constant alias rather than a DeprecatedConstantProxy: the proxy
   # would warn on first reference and name the calling site, but it fails

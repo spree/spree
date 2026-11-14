@@ -1,5 +1,5 @@
 module Spree
-  # @deprecated Removed in Spree 6.5. Every method is a thin shim over the
+  # @deprecated Removed in Spree 6.3. Every method is a thin shim over the
   #   flows that own the work:
   #
   #   * money    — {Spree::Carts::RecalculateTotals} /
@@ -21,14 +21,14 @@ module Spree
 
     # @deprecated Use {Spree::Carts::RecalculateTotals} /
     #   {Spree::Orders::RecalculateTotals} (or +#recalculate_totals!+);
-    #   removed in 6.5.
+    #   removed in 6.3.
     def update
       deprecate_totals(__method__)
       recalculate_totals
       update_statuses if order.completed?
     end
 
-    # @deprecated Use {Spree::Carts::RecalculateTotals}; removed in 6.5. The
+    # @deprecated Use {Spree::Carts::RecalculateTotals}; removed in 6.3. The
     #   totals workflow rebuilds the typed adjustment rows as part of its
     #   money pass.
     def recalculate_adjustments
@@ -36,57 +36,57 @@ module Spree
       recalculate_totals
     end
 
-    # @deprecated Use {Spree::Carts::RecalculateTotals}; removed in 6.5.
+    # @deprecated Use {Spree::Carts::RecalculateTotals}; removed in 6.3.
     def update_totals
       deprecate_totals(__method__)
       recalculate_totals
     end
 
-    # @deprecated Use {Spree::Carts::RecalculateTotals}; removed in 6.5.
+    # @deprecated Use {Spree::Carts::RecalculateTotals}; removed in 6.3.
     def update_payment_total
       deprecate_totals(__method__)
       recalculate_totals
       order.payment_total
     end
 
-    # @deprecated Use {Spree::Carts::RecalculateTotals}; removed in 6.5.
+    # @deprecated Use {Spree::Carts::RecalculateTotals}; removed in 6.3.
     def update_item_total
       deprecate_totals(__method__)
       recalculate_totals
       order.item_total
     end
 
-    # @deprecated Use {Spree::Carts::RecalculateTotals}; removed in 6.5.
+    # @deprecated Use {Spree::Carts::RecalculateTotals}; removed in 6.3.
     def update_order_total
       deprecate_totals(__method__)
       recalculate_totals
       order.total
     end
 
-    # @deprecated Use {Spree::Carts::RecalculateTotals}; removed in 6.5.
+    # @deprecated Use {Spree::Carts::RecalculateTotals}; removed in 6.3.
     def update_adjustment_total
       deprecate_totals(__method__)
       recalculate_totals
       order.adjustment_total
     end
 
-    # @deprecated Use {Spree::Carts::RecalculateTotals}; removed in 6.5.
+    # @deprecated Use {Spree::Carts::RecalculateTotals}; removed in 6.3.
     def update_item_count
       deprecate_totals(__method__)
       recalculate_totals
       order.total_quantity
     end
 
-    # @deprecated Use {Spree::Carts::RecalculateTotals}; removed in 6.5.
+    # @deprecated Use {Spree::Carts::RecalculateTotals}; removed in 6.3.
     def persist_totals
       deprecate_totals(__method__)
       recalculate_totals
     end
 
-    # @deprecated Use {Spree::Carts::RecalculateTotals}; removed in 6.5.
+    # @deprecated Use {Spree::Carts::RecalculateTotals}; removed in 6.3.
     def update_shipment_total
       Spree::Deprecation.warn(
-        'Spree::OrderUpdater#update_shipment_total is deprecated and will be removed in Spree 6.5. ' \
+        'Spree::OrderUpdater#update_shipment_total is deprecated and will be removed in Spree 6.3. ' \
         'Use Spree::Carts::RecalculateTotals / Spree::Orders::RecalculateTotals (or #recalculate_totals!) instead.'
       )
       recalculate_totals
@@ -94,7 +94,7 @@ module Spree
     end
 
     # @deprecated Use {Spree::Orders::UpdateStatuses} (or
-    #   +#update_statuses!+); removed in 6.5. UpdateStatuses writes the 6.0
+    #   +#update_statuses!+); removed in 6.3. UpdateStatuses writes the 6.0
     #   vocabulary (none/authorized/partially_paid/paid/partially_refunded/
     #   refunded/overcharged/voided), not the legacy balance_due/credit_owed/
     #   failed/void names.
@@ -105,7 +105,7 @@ module Spree
     end
 
     # @deprecated Use {Spree::Orders::UpdateStatuses} (or
-    #   +#update_statuses!+); removed in 6.5.
+    #   +#update_statuses!+); removed in 6.3.
     def update_shipment_state
       deprecate_statuses(__method__)
       update_statuses
@@ -114,10 +114,10 @@ module Spree
 
     # @deprecated Use {Spree::Orders::UpdateStatuses} for the state roll-up
     #   and {Spree::Carts::Recalculate} for the delivery proposal rebuild;
-    #   removed in 6.5.
+    #   removed in 6.3.
     def update_shipments
       Spree::Deprecation.warn(
-        'Spree::OrderUpdater#update_shipments is deprecated and will be removed in Spree 6.5. ' \
+        'Spree::OrderUpdater#update_shipments is deprecated and will be removed in Spree 6.3. ' \
         'Use Spree::Orders::UpdateStatuses (fulfillment states) and Spree::Carts::Recalculate (delivery proposals) instead.'
       )
 
@@ -134,11 +134,11 @@ module Spree
       end
     end
 
-    # @deprecated Order update hooks are removed in 6.5 — subscribe to the
+    # @deprecated Order update hooks are removed in 6.3 — subscribe to the
     #   +order.updated+ event instead.
     def run_hooks
       Spree::Deprecation.warn(
-        'Spree::OrderUpdater#run_hooks is deprecated and will be removed in Spree 6.5. Subscribe to the order.updated event instead.'
+        'Spree::OrderUpdater#run_hooks is deprecated and will be removed in Spree 6.3. Subscribe to the order.updated event instead.'
       )
       update_hooks.each { |hook| order.send hook }
     end
@@ -171,14 +171,14 @@ module Spree
 
     def deprecate_totals(method_name)
       Spree::Deprecation.warn(
-        "Spree::OrderUpdater##{method_name} is deprecated and will be removed in Spree 6.5. " \
+        "Spree::OrderUpdater##{method_name} is deprecated and will be removed in Spree 6.3. " \
         'Use Spree::Carts::RecalculateTotals / Spree::Orders::RecalculateTotals (or #recalculate_totals!) instead.'
       )
     end
 
     def deprecate_statuses(method_name)
       Spree::Deprecation.warn(
-        "Spree::OrderUpdater##{method_name} is deprecated and will be removed in Spree 6.5. " \
+        "Spree::OrderUpdater##{method_name} is deprecated and will be removed in Spree 6.3. " \
         'Use Spree::Orders::UpdateStatuses (or #update_statuses!) instead.'
       )
     end

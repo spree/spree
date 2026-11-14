@@ -80,24 +80,24 @@ module Spree
       data_json[mapping.file_column]
     end
 
-    # @deprecated Write the status — removed in 6.5. A row's lifecycle belongs
+    # @deprecated Write the status — removed in 6.3. A row's lifecycle belongs
     #   to +process!+, which is the only thing that should move it.
     def start_processing!
-      Spree::Deprecation.warn('Spree::ImportRow#start_processing! is deprecated and will be removed in Spree 6.5. Use #process! instead.')
+      Spree::Deprecation.warn('Spree::ImportRow#start_processing! is deprecated and will be removed in Spree 6.3. Use #process! instead.')
       update!(status: 'processing')
     end
 
-    # @deprecated Write the status — removed in 6.5.
+    # @deprecated Write the status — removed in 6.3.
     def complete!
-      Spree::Deprecation.warn('Spree::ImportRow#complete! is deprecated and will be removed in Spree 6.5. Use #process! instead.')
+      Spree::Deprecation.warn('Spree::ImportRow#complete! is deprecated and will be removed in Spree 6.3. Use #process! instead.')
       update!(status: 'completed')
       publish_event('import_row.completed')
       true
     end
 
-    # @deprecated Write the status — removed in 6.5.
+    # @deprecated Write the status — removed in 6.3.
     def fail!
-      Spree::Deprecation.warn('Spree::ImportRow#fail! is deprecated and will be removed in Spree 6.5. Use #process! instead.')
+      Spree::Deprecation.warn('Spree::ImportRow#fail! is deprecated and will be removed in Spree 6.3. Use #process! instead.')
       update!(status: 'failed')
       publish_event('import_row.failed')
       true

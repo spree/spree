@@ -1,9 +1,9 @@
 module Spree
-  # Deprecated: use Spree::FulfillmentMailer. Removed in Spree 6.5.
+  # Deprecated: use Spree::FulfillmentMailer. Removed in Spree 6.3.
   class ShipmentMailer < FulfillmentMailer
     def shipped_email(shipment, resend = false)
       Spree::Deprecation.warn(
-        'Spree::ShipmentMailer#shipped_email is deprecated and will be removed in Spree 6.5. Use Spree::FulfillmentMailer#fulfilled_email instead.'
+        'Spree::ShipmentMailer#shipped_email is deprecated and will be removed in Spree 6.3. Use Spree::FulfillmentMailer#fulfilled_email instead.'
       )
       fulfilled_email(shipment, resend)
     end

@@ -3,7 +3,7 @@ module Spree
     # @deprecated Categories are manual in 6.0 and no longer regenerate membership
     #   from rules — that behavior moved to Spree::Collection. There is no faithful
     #   category target, so this shim warns and no-ops (returns the given taxon).
-    #   Use Spree::Collections::RegenerateProducts for collections. Removed in 6.5.
+    #   Use Spree::Collections::RegenerateProducts for collections. Removed in 6.3.
     class RegenerateProducts
       prepend ::Spree::ServiceModule::Base
 
@@ -12,7 +12,7 @@ module Spree
       def call(taxon: nil)
         Spree::Deprecation.warn(
           'Spree::Taxons::RegenerateProducts is deprecated and does nothing in Spree 6.0 — categories are manual. ' \
-          'Rule-based membership moved to Spree::Collection; use Spree::Collections::RegenerateProducts. Removed in 6.5.'
+          'Rule-based membership moved to Spree::Collection; use Spree::Collections::RegenerateProducts. Removed in 6.3.'
         )
         success(taxon)
       end

@@ -1,5 +1,5 @@
 # Defined here rather than in lib/spree/core/ — this is a one-release upgrade
-# step that dies with the country and state tables in 6.5, not engine
+# step that dies with the country and state tables in 6.3, not engine
 # infrastructure. Same placement as Spree::ReturnsMigrator in a sibling task.
 module Spree
   # Copies country and state foreign keys onto the ISO string columns that

@@ -461,7 +461,7 @@ describe Spree::Order, type: :model do
   end
 
   # The deprecated twin of #payment_methods; it must keep matching its
-  # replacement until it is removed in 6.5.
+  # replacement until it is removed in 6.3.
   describe '#collect_payment_methods' do
     it 'includes an active storefront-visible method' do
       payment_method = store.payment_methods.create!(name: 'Fake', active: true, storefront_visible: true)

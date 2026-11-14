@@ -18,7 +18,7 @@ module Spree
         self.additional_permitted_attributes = [customer_ids: []]
 
         # Wire-format shorthand is `customer`; the rule class keeps the `User`
-        # name until the 6.5 rename (see docs/plans/6.0-platform-auth.md).
+        # name until the 6.3 rename (see docs/plans/6.0-platform-auth.md).
         def self.api_type
           'customer'
         end

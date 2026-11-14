@@ -1,5 +1,5 @@
 module Spree
-  # Migration-only shell, removed in Spree 6.5 with {Spree::Zone}.
+  # Migration-only shell, removed in Spree 6.3 with {Spree::Zone}.
   class ZoneMember < Spree.base_class
     # No zoneable association: countries and states are reference data in 6.0,
     # so the type and id columns are plain values resolved against the legacy

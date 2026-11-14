@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 # The module factory is a deprecated shell over Spree::HasNumber (removed in
-# 6.5). What matters here is that models written against the old API still get
+# 6.3). What matters here is that models written against the old API still get
 # numbered — not how the number is produced, which has its own spec.
 describe Spree::Core::NumberGenerator do
   let(:model) do
@@ -26,7 +26,7 @@ describe Spree::Core::NumberGenerator do
   it 'warns that the module is going away' do
     model
 
-    expect(Spree::Deprecation).to have_received(:warn).with(/removed in Spree 6.5/)
+    expect(Spree::Deprecation).to have_received(:warn).with(/removed in Spree 6.3/)
   end
 
   it 'points at the replacement' do

@@ -295,14 +295,14 @@ module Spree
     # @deprecated Carts are {Spree::Cart} since 6.0, so an incomplete order is
     #   a backoffice draft rather than the customer's cart. Use
     #   +carts.where(store: store)+ for carts, or +orders.drafts+ for drafts.
-    #   Removed in Spree 6.5.
+    #   Removed in Spree 6.3.
     # @param [Spree::Store] store
     # @param [Hash] options
     # @option options [Array<Symbol>] :includes
     # @return [Spree::Order]
     def last_incomplete_spree_order(store, options = {})
       Spree::Deprecation.warn(
-        'Spree::CustomerMethods#last_incomplete_spree_order is deprecated and will be removed in Spree 6.5. ' \
+        'Spree::CustomerMethods#last_incomplete_spree_order is deprecated and will be removed in Spree 6.3. ' \
         'Carts are Spree::Cart since 6.0 and this returns draft orders; use #carts for the customer\'s carts.'
       )
 
@@ -393,10 +393,10 @@ module Spree
     #   every column carrying personal data rather than three on this row —
     #   the address book, the address snapshots on past orders, gateway
     #   profiles, OAuth identities and live sessions all outlived this method.
-    #   Removed in Spree 6.5.
+    #   Removed in Spree 6.3.
     def scramble_email_and_names
       Spree::Deprecation.warn(
-        'Spree::CustomerMethods#scramble_email_and_names is deprecated and will be removed in Spree 6.5. Use Spree::Customers::Anonymize instead.'
+        'Spree::CustomerMethods#scramble_email_and_names is deprecated and will be removed in Spree 6.3. Use Spree::Customers::Anonymize instead.'
       )
 
       Spree.customer_anonymize_workflow.call(customer: self, store: Spree::Current.store).success?

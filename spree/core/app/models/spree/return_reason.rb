@@ -4,7 +4,7 @@ module Spree
   #
   # Renamed from Spree::ReturnAuthorizationReason in 6.0 now that the
   # ReturnAuthorization chain is gone; Spree::ReturnAuthorizationReason
-  # remains as a deprecated alias until 6.5.
+  # remains as a deprecated alias until 6.3.
   class ReturnReason < Spree.base_class
     has_prefix_id :rar
 

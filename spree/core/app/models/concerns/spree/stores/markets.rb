@@ -34,10 +34,10 @@ module Spree
         end
       end
 
-      # @deprecated Use +default_country_code+. Removed in 6.5.
+      # @deprecated Use +default_country_code+. Removed in 6.3.
       def default_country_iso_code
         Spree::Deprecation.warn(
-          'Spree::Store#default_country_iso_code is deprecated and will be removed in Spree 6.5. Use #default_country_code instead.'
+          'Spree::Store#default_country_iso_code is deprecated and will be removed in Spree 6.3. Use #default_country_code instead.'
         )
         default_country_code
       end

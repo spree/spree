@@ -178,7 +178,7 @@ module Spree
       # Prepended rather than defined outright, so `super` reaches the
       # generated reader.
       #
-      # Removed in 6.5, once the backfill is a release behind.
+      # Removed in 6.3, once the backfill is a release behind.
       def define_transitional_actor_reader(name)
         transitional_actor_readers.module_eval do
           define_method(name) do
@@ -188,7 +188,7 @@ module Spree
             Spree::Deprecation.warn(
               "#{self.class.name}##{name} resolved through #{Spree.admin_user_class} because " \
               "#{name}_type is blank. Run `rake spree:upgrade:backfill_actor_types`; the fallback " \
-              'is removed in Spree 6.5.'
+              'is removed in Spree 6.3.'
             )
 
             # Fill the type across the whole lazily-preloaded group, not just

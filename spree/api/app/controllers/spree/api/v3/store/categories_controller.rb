@@ -16,7 +16,7 @@ module Spree
           end
 
           # Exclude automatic (rule-based) rows still living in spree_categories
-          # until the Phase 4 migration moves them to Collections (removed in 6.5).
+          # until the Phase 4 migration moves them to Collections (removed in 6.3).
           def scope
             super.manual
           end

@@ -32,7 +32,7 @@ class RenameMetafieldsToCustomFields < ActiveRecord::Migration[7.2]
     # column (docs/plans/6.0-rich-text-descriptions.md). Action Text keys rows
     # by the owner's STI base class, so they are found under the pre-rename
     # class name. The source rows are left in place as the rollback path; the
-    # table is dropped in 6.5.
+    # table is dropped in 6.3.
     copy_action_text_bodies_into_values
 
     # display_on (both/front_end/back_end) collapses to a boolean. Only

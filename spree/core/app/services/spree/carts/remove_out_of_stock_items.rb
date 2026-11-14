@@ -6,7 +6,7 @@ module Spree
       def call(cart: nil, order: nil)
         if order
           Spree::Deprecation.warn(
-            'Calling Spree::Carts::RemoveOutOfStockItems with order: is deprecated and will be removed in Spree 6.5. Pass cart: instead.'
+            'Calling Spree::Carts::RemoveOutOfStockItems with order: is deprecated and will be removed in Spree 6.3. Pass cart: instead.'
           )
           cart ||= order
         end

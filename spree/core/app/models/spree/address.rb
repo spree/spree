@@ -65,7 +65,7 @@ module Spree
 
     # @deprecated The canonical names are +country_code+ and +state_code+,
     #   matching the tax tables. Kept because the Store API shipped
-    #   +country_iso+ and +state_abbr+; both are removed in 6.5.
+    #   +country_iso+ and +state_abbr+; both are removed in 6.3.
     alias_attribute :state_abbr, :state_code
     alias_attribute :country_iso, :country_code
 
@@ -133,9 +133,9 @@ module Spree
       value.to_s.gsub(/[\s-]/, '').upcase
     end
 
-    # @deprecated Use {.normalize_postal_code}; removed in 6.5.
+    # @deprecated Use {.normalize_postal_code}; removed in 6.3.
     def self.normalize_zipcode(value)
-      Spree::Deprecation.warn('Spree::Address.normalize_zipcode is deprecated and will be removed in Spree 6.5. Use .normalize_postal_code instead.')
+      Spree::Deprecation.warn('Spree::Address.normalize_zipcode is deprecated and will be removed in Spree 6.3. Use .normalize_postal_code instead.')
       normalize_postal_code(value)
     end
 
@@ -144,10 +144,10 @@ module Spree
       self.class.normalize_postal_code(postal_code)
     end
 
-    # @deprecated Use {#normalized_postal_code}; removed in 6.5.
+    # @deprecated Use {#normalized_postal_code}; removed in 6.3.
     def normalized_zipcode
       Spree::Deprecation.warn(
-        'Spree::Address#normalized_zipcode is deprecated and will be removed in Spree 6.5. Use #normalized_postal_code instead.'
+        'Spree::Address#normalized_zipcode is deprecated and will be removed in Spree 6.3. Use #normalized_postal_code instead.'
       )
       normalized_postal_code
     end
@@ -241,11 +241,11 @@ module Spree
 
     # @deprecated The address's owner may be a customer, a company node or a
     #   seller, so {#owner} replaces the customer-only association. Removed in
-    #   Spree 6.5.
+    #   Spree 6.3.
     def user
       if defined?(Spree::Deprecation)
         Spree::Deprecation.warn(
-          'Spree::Address#user is deprecated and will be removed in Spree 6.5. Use #owner instead.'
+          'Spree::Address#user is deprecated and will be removed in Spree 6.3. Use #owner instead.'
         )
       end
       customer_owner
@@ -254,7 +254,7 @@ module Spree
     def user=(value)
       if defined?(Spree::Deprecation)
         Spree::Deprecation.warn(
-          'Spree::Address#user= is deprecated and will be removed in Spree 6.5. Use #owner= instead.'
+          'Spree::Address#user= is deprecated and will be removed in Spree 6.3. Use #owner= instead.'
         )
       end
       self.owner = value
@@ -263,7 +263,7 @@ module Spree
     def user_id
       if defined?(Spree::Deprecation)
         Spree::Deprecation.warn(
-          'Spree::Address#user_id is deprecated and will be removed in Spree 6.5. Use #owner_id instead.'
+          'Spree::Address#user_id is deprecated and will be removed in Spree 6.3. Use #owner_id instead.'
         )
       end
       owner_id if customer_owned?
@@ -336,11 +336,11 @@ module Spree
     # @deprecated Overriding Ruby's +Object#clone+ was a mistake: this returns
     #   a value copy with the owner, label and metadata stripped, which is not
     #   what +clone+ means anywhere else in Ruby. The override is removed in
-    #   Spree 6.5 and +clone+ becomes the standard shallow copy. Use
+    #   Spree 6.3 and +clone+ becomes the standard shallow copy. Use
     #   {#snapshot} for the ownerless copy a purchase keeps.
     def clone
       Spree::Deprecation.warn(
-        'Spree::Address#clone is deprecated. From Spree 6.5 it behaves as the standard Ruby Object#clone — ' \
+        'Spree::Address#clone is deprecated. From Spree 6.3 it behaves as the standard Ruby Object#clone — ' \
         'a shallow copy keeping the owner and every other attribute. Use #snapshot for the ownerless copy a purchase keeps.'
       )
 
@@ -446,7 +446,7 @@ module Spree
       require_zipcode?
     end
 
-    # @deprecated Override {#require_postal_code?}; removed in 6.5.
+    # @deprecated Override {#require_postal_code?}; removed in 6.3.
     def require_zipcode?
       !quick_checkout && (country ? country.zipcode_required? : true)
     end
@@ -534,7 +534,7 @@ module Spree
     end
 
     # The ISO code is what the address stores; the association is kept in step
-    # with it until 6.5 removes it. Assigning +country+ directly
+    # with it until 6.3 removes it. Assigning +country+ directly
     # is equally supported — whichever half was set fills in the other.
     def normalize_country
       submitted_iso = self[:country_code].presence

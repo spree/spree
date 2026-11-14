@@ -294,7 +294,7 @@ interface ResourceTableProps<T> {
    * filter attributes.
    */
   customFieldColumns?: ColumnDef<T>[]
-  /** @deprecated Use `customFieldColumns` — removed in Spree 6.5. */
+  /** @deprecated Use `customFieldColumns` — removed in Spree 6.3. */
   metafieldColumns?: ColumnDef<T>[]
 }
 

@@ -205,7 +205,7 @@ module Spree::Preferences
 
       Spree::Deprecation.warn(
         "#{self.name} preference `#{name}` (#{type}) needs #{missing}; until it has one, its schema accepts any value. " \
-        'Spree 6.5 will raise for an incomplete declaration.'
+        'Spree 6.3 will raise for an incomplete declaration.'
       )
     end
 

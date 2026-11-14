@@ -11,7 +11,7 @@ module Spree
 
         customer = @params.delete(:customer)
         if @params.key?(:user)
-          Spree::Deprecation.warn('Passing user: to Spree::Carts::Create is deprecated and will be removed in Spree 6.5. Pass customer: instead.')
+          Spree::Deprecation.warn('Passing user: to Spree::Carts::Create is deprecated and will be removed in Spree 6.3. Pass customer: instead.')
           customer ||= @params.delete(:user)
         end
 

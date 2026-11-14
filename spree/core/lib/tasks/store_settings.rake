@@ -58,7 +58,7 @@ namespace :spree do
       Idempotent: each store is copied to at most once and stores already
       carrying a non-default value are left alone, so a merchant's own change
       is never overwritten. Remove the settings from your initializer
-      afterwards — the globals are deprecated and are deleted in 6.5.
+      afterwards — the globals are deprecated and are deleted in 6.3.
     DESC
     task backfill_from_config: :environment do
       changed = Spree::StoreSettingsBackfill::MOVED_SETTINGS.reject do |name, config|

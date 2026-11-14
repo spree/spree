@@ -75,7 +75,7 @@ module Spree
       # legacy workflow keys in core, these forward instead of stashing: a
       # serializer renders the same model under a new class name, so an
       # override written against the old key is still the class the host app
-      # wants used. Removed in 6.5.
+      # wants used. Removed in 6.3.
       LEGACY_SERIALIZER_KEYS = {
         stock_item_serializer: :stock_level_serializer,
         admin_stock_item_serializer: :admin_stock_level_serializer,
@@ -85,17 +85,17 @@ module Spree
 
       LEGACY_SERIALIZER_KEYS.each do |legacy, current|
         define_method("#{legacy}=") do |value|
-          Spree::Deprecation.warn("Spree.api.#{legacy}= is deprecated and will be removed in Spree 6.5. Use #{current}= instead.")
+          Spree::Deprecation.warn("Spree.api.#{legacy}= is deprecated and will be removed in Spree 6.3. Use #{current}= instead.")
           send("#{current}=", value)
         end
 
         define_method(legacy) do
-          Spree::Deprecation.warn("Spree.api.#{legacy} is deprecated and will be removed in Spree 6.5. Use #{current} instead.")
+          Spree::Deprecation.warn("Spree.api.#{legacy} is deprecated and will be removed in Spree 6.3. Use #{current} instead.")
           send(current)
         end
 
         define_method("#{legacy}_class") do
-          Spree::Deprecation.warn("Spree.api.#{legacy}_class is deprecated and will be removed in Spree 6.5. Use #{current}_class instead.")
+          Spree::Deprecation.warn("Spree.api.#{legacy}_class is deprecated and will be removed in Spree 6.3. Use #{current}_class instead.")
           send("#{current}_class")
         end
       end

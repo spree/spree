@@ -286,7 +286,7 @@ module Spree
       store_preference(:capture_method).presence || Spree::CaptureMethod::DEFAULT_CAPTURE_METHOD
     end
 
-    # @deprecated Use #capture_at_checkout?; removed in 6.5. Deliberately does
+    # @deprecated Use #capture_at_checkout?; removed in 6.3. Deliberately does
     #   not warn — it runs on every payment and would flood the logs.
     def auto_capture?
       capture_at_checkout?
@@ -342,23 +342,23 @@ module Spree
       public_preference_keys.index_with { |key| get_preference(key) }
     end
 
-    # @deprecated Use {#storefront_visible?}; removed in 6.5.
+    # @deprecated Use {#storefront_visible?}; removed in 6.3.
     def available_on_front_end?
       Spree::Deprecation.warn(
-        'Spree::PaymentMethod#available_on_front_end? is deprecated and will be removed in Spree 6.5. Use #storefront_visible? instead.'
+        'Spree::PaymentMethod#available_on_front_end? is deprecated and will be removed in Spree 6.3. Use #storefront_visible? instead.'
       )
       storefront_visible?
     end
 
-    # @deprecated Use {#storefront_visible}; removed in 6.5.
+    # @deprecated Use {#storefront_visible}; removed in 6.3.
     def display_on
-      Spree::Deprecation.warn('Spree::PaymentMethod#display_on is deprecated and will be removed in Spree 6.5. Use #storefront_visible instead.')
+      Spree::Deprecation.warn('Spree::PaymentMethod#display_on is deprecated and will be removed in Spree 6.3. Use #storefront_visible instead.')
       storefront_visible? ? 'both' : 'back_end'
     end
 
-    # @deprecated Use {#storefront_visible=}; removed in 6.5.
+    # @deprecated Use {#storefront_visible=}; removed in 6.3.
     def display_on=(value)
-      Spree::Deprecation.warn('Spree::PaymentMethod#display_on= is deprecated and will be removed in Spree 6.5. Use #storefront_visible= instead.')
+      Spree::Deprecation.warn('Spree::PaymentMethod#display_on= is deprecated and will be removed in Spree 6.3. Use #storefront_visible= instead.')
       self.storefront_visible = value.to_s != 'back_end'
     end
 

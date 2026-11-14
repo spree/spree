@@ -68,7 +68,7 @@ steps:
       polymorphic type column an extension points at media rows.
 
       Run immediately after db:migrate. Spree::Asset stays readable as a
-      deprecated alias until 6.5, so code referencing it keeps working either
+      deprecated alias until 6.3, so code referencing it keeps working either
       way; this step is about the stored strings.
 
       Idempotent — rows already saying Spree::Media are left alone.
@@ -205,7 +205,7 @@ steps:
 
       Only copies where an Action Text row exists, so content already in the
       column is never overwritten. Source rows are left in place as the rollback
-      path and are dropped with the Action Text tables in 6.5. Idempotent.
+      path and are dropped with the Action Text tables in 6.3. Idempotent.
 
   - id: migrate_shipping_to_delivery
     name: "Backfill fulfillment & delivery naming"
@@ -247,7 +247,7 @@ steps:
       inside the other profile if both links were intended. Run after
       migrate_shipping_to_delivery (it reads the backfilled fulfillment
       providers). Idempotent — processed rows gain a store_id and drop out of
-      the work set. spree_shipping_method_categories survives to 6.5 as the
+      the work set. spree_shipping_method_categories survives to 6.3 as the
       source and rollback reference.
 
   - id: migrate_fulfillment_statuses
@@ -388,7 +388,7 @@ steps:
       Reads the legacy tables by name (the legacy models are gone in 6.0) and
       writes history without validation, so rows referencing deleted variants
       or stock locations still copy. The legacy tables stay in place as a
-      safety net and are dropped in 6.5.
+      safety net and are dropped in 6.3.
 
       Resumable by construction: the legacy number is copied onto the new
       record and uniquely indexed there, so the task scopes itself to the
@@ -437,7 +437,7 @@ steps:
       a fulfillment shipped before the task runs never gets an allocation,
       and dispatch only ships allocated units, so its stock is never
       decremented twice. originator_type and originator_id stay in place as
-      the rollback path and are dropped in 6.5. Tune the load size with
+      the rollback path and are dropped in 6.3. Tune the load size with
       BATCH_SIZE (default 5000).
 
   - id: backfill_delivery_and_stock_store_ids
@@ -446,7 +446,7 @@ steps:
     notes: |
       Delivery methods and stock locations carry a store_id in Spree 6.
       Unassigned rows go to the default store; additional stores manage
-      their own records afterwards. The NOT NULL constraints land in 6.5.
+      their own records afterwards. The NOT NULL constraints land in 6.3.
       Idempotent.
 
   - id: migrate_tax_zones
@@ -476,7 +476,7 @@ steps:
       afterwards. Category names become unique per store rather than globally,
       so installs that relied on global names may need to reconcile duplicates
       once several stores hold tax configuration. The NOT NULL constraints land
-      in 6.5. Idempotent.
+      in 6.3. Idempotent.
 
   - id: backfill_market_tax_inclusive
     name: "Decide whether each market's prices include tax"
@@ -524,7 +524,7 @@ steps:
       orders that predate markets. Channel needs no step here — the 5.4→5.5
       manifest's channels step already backfills channel_id on every upgrade
       path. Run before the cart conversion so converted carts inherit
-      resolved values. The NOT NULL constraints on spree_orders land in 6.5.
+      resolved values. The NOT NULL constraints on spree_orders land in 6.3.
       Idempotent.
 
   - id: migrate_incomplete_orders_to_carts
@@ -573,7 +573,7 @@ steps:
       a non-default value of its own.
 
       Remove the settings from your initializer afterwards — the globals are
-      deprecated and are deleted in 6.5.
+      deprecated and are deleted in 6.3.
 
       Idempotent: each store is visited at most once, recorded in its metadata,
       so a later run never undoes a change made in the dashboard after the
@@ -594,8 +594,8 @@ steps:
       own setting. Run after store_settings_backfill_from_config so the store
       they inherit from already holds the right value.
 
-      The auto_capture column stays readable as a fallback until 6.5 and
-      is dropped in 6.5. Idempotent — only rows without a capture_method are
+      The auto_capture column stays readable as a fallback until 6.3 and
+      is dropped in 6.3. Idempotent — only rows without a capture_method are
       written.
 
   - id: store_regional_settings
@@ -642,7 +642,7 @@ steps:
       originator (return, exchange, claim, gift card) plus the memo, so this
       copies each legacy category name into the memo of credits that have
       none. Admin-written memos are never overwritten. Idempotent, and a
-      no-op once the legacy tables are dropped in 6.5.
+      no-op once the legacy tables are dropped in 6.3.
 
   - id: migrate_stripe_webhook_keys
     name: "Move Stripe webhook signing secrets onto the gateway"
@@ -660,7 +660,7 @@ steps:
       Until this runs, a gateway carrying a pre-6.0 endpoint has no signing
       secret and rejects incoming webhooks. Idempotent — gateways that already
       hold a secret are skipped, and the legacy tables stay in place as a
-      rollback path until they are dropped in 6.5.
+      rollback path until they are dropped in 6.3.
 
   - id: migrate_paypal_payments
     name: "Give PayPal payments taken before 6.0 the PayPal order id"
@@ -711,7 +711,7 @@ steps:
       are invisible to every scoped query, including the admin list.
 
       The owner_type/owner_id columns stay in place as this step's source and
-      its rollback path; they are dropped in 6.5, along with the deprecated
+      its rollback path; they are dropped in 6.3, along with the deprecated
       Import#owner reader. Exports need no data step — they have always had a
       store, and their seller_id column is new for everyone.
 

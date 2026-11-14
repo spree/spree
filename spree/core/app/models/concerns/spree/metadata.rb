@@ -11,7 +11,7 @@ module Spree
       serialize :metadata, coder: HashSerializer
     end
 
-    # Deprecated alias for the renamed `metadata` column. Removed in Spree 6.5.
+    # Deprecated alias for the renamed `metadata` column. Removed in Spree 6.3.
     #
     # Only the reader and writer are bridged. The column is gone, so the attribute
     # methods Active Record generated alongside it — `private_metadata?`,
@@ -19,12 +19,12 @@ module Spree
     # `private_metadata_before_type_cast` and the rest of the dirty-tracking family
     # — no longer exist and raise NoMethodError. Call the `metadata` equivalents.
     def private_metadata
-      Spree::Deprecation.warn('private_metadata is deprecated and will be removed in Spree 6.5. Use metadata instead.')
+      Spree::Deprecation.warn('private_metadata is deprecated and will be removed in Spree 6.3. Use metadata instead.')
       metadata
     end
 
     def private_metadata=(value)
-      Spree::Deprecation.warn('private_metadata= is deprecated and will be removed in Spree 6.5. Use metadata= instead.')
+      Spree::Deprecation.warn('private_metadata= is deprecated and will be removed in Spree 6.3. Use metadata= instead.')
       self.metadata = value
     end
 

@@ -89,7 +89,7 @@ module Spree
     default_scope { order(:created_at) }
 
     scope :from_credit_card, -> { where(source_type: 'Spree::CreditCard') }
-    # @deprecated use the status scopes / +where(status:)+ — removed in 6.5
+    # @deprecated use the status scopes / +where(status:)+ — removed in 6.3
     scope :with_state, ->(s) { where(status: s.to_s) }
     # "offset" is reserved by activerecord
     scope :offset_payment, -> { where("source_type = 'Spree::Payment' AND amount < 0 AND status = 'completed'") }
@@ -238,15 +238,15 @@ module Spree
         (!payment_method.respond_to?(:can_capture?) || payment_method.can_capture?(self))
     end
 
-    # @deprecated read +status+ — removed in 6.5
+    # @deprecated read +status+ — removed in 6.3
     def state
-      Spree::Deprecation.warn('Spree::Payment#state is deprecated and will be removed in Spree 6.5. Use #status instead.')
+      Spree::Deprecation.warn('Spree::Payment#state is deprecated and will be removed in Spree 6.3. Use #status instead.')
       status
     end
 
-    # @deprecated write +status+ — removed in 6.5
+    # @deprecated write +status+ — removed in 6.3
     def state=(value)
-      Spree::Deprecation.warn('Spree::Payment#state= is deprecated and will be removed in Spree 6.5. Use #status= instead.')
+      Spree::Deprecation.warn('Spree::Payment#state= is deprecated and will be removed in Spree 6.3. Use #status= instead.')
       self.status = value
     end
 
@@ -464,9 +464,9 @@ module Spree
       INVALID_STATUSES.include?(status)
     end
 
-    # @deprecated use {#has_invalid_status?} — removed in 6.5
+    # @deprecated use {#has_invalid_status?} — removed in 6.3
     def has_invalid_state?
-      Spree::Deprecation.warn('Spree::Payment#has_invalid_state? is deprecated and will be removed in Spree 6.5. Use #has_invalid_status? instead.')
+      Spree::Deprecation.warn('Spree::Payment#has_invalid_state? is deprecated and will be removed in Spree 6.3. Use #has_invalid_status? instead.')
       has_invalid_status?
     end
 

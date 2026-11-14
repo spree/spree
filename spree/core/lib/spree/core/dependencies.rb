@@ -285,14 +285,14 @@ module Spree
       include Spree::DependenciesHelper
 
       # 6.0 tier rename: these seams resolve Spree::Workflow classes now.
-      # The old *_service names stay settable and readable until 6.5 so
+      # The old *_service names stay settable and readable until 6.3 so
       # applications don't crash at boot — but a legacy write is stashed,
       # NOT applied to the workflow seam: a class written against the old
       # service contract is not interchangeable with the workflow the new
       # call sites consume. Reads return the stashed value (legacy code
       # calling its own class keeps working), falling back to the workflow
       # class — safe for legacy callers, whose old keyword vocabulary the
-      # workflows accept through alias_argument bridges. Removed in 6.5.
+      # workflows accept through alias_argument bridges. Removed in 6.3.
       LEGACY_WORKFLOW_KEYS = {
         cart_add_item_service: :cart_add_item_workflow,
         cart_recalculate_service: :cart_recalculate_workflow,
@@ -309,7 +309,7 @@ module Spree
       # service rename: the new class speaks the fulfillment keyword
       # vocabulary (still accepting the old shipment keywords with a
       # warning), but a legacy override written against the old keywords is
-      # not interchangeable with what the new call sites pass. Removed in 6.5.
+      # not interchangeable with what the new call sites pass. Removed in 6.3.
       LEGACY_SERVICE_KEYS = {
         shipment_update_service: :fulfillment_update_workflow,
         fulfillment_update_service: :fulfillment_update_workflow,
@@ -321,7 +321,7 @@ module Spree
       # Pure renames: the class, its contract and its keyword vocabulary are
       # unchanged, so unlike LEGACY_WORKFLOW_KEYS an override written against
       # the old name IS applied — there is nothing incompatible about it.
-      # Removed in 6.5.
+      # Removed in 6.3.
       RENAMED_SERVICE_KEYS = {
         checkout_add_store_credit_service: :store_credit_apply_service,
         checkout_remove_store_credit_service: :store_credit_remove_service
@@ -330,7 +330,7 @@ module Spree
       RENAMED_SERVICE_KEYS.each do |legacy, current|
         define_method("#{legacy}=") do |value|
           Spree::Deprecation.warn(
-            "Spree::Dependencies##{legacy}= is deprecated and will be removed in Spree 6.5. " \
+            "Spree::Dependencies##{legacy}= is deprecated and will be removed in Spree 6.3. " \
             "Use #{current}= instead."
           )
           send("#{current}=", value)
@@ -338,7 +338,7 @@ module Spree
 
         define_method(legacy) do
           Spree::Deprecation.warn(
-            "Spree::Dependencies##{legacy} is deprecated and will be removed in Spree 6.5. " \
+            "Spree::Dependencies##{legacy} is deprecated and will be removed in Spree 6.3. " \
             "Use #{current} instead."
           )
           send(current)
@@ -348,7 +348,7 @@ module Spree
         # constantized reader too.
         define_method("#{legacy}_class") do
           Spree::Deprecation.warn(
-            "Spree::Dependencies##{legacy} is deprecated and will be removed in Spree 6.5. " \
+            "Spree::Dependencies##{legacy} is deprecated and will be removed in Spree 6.3. " \
             "Use #{current} instead."
           )
           send("#{current}_class")
@@ -364,18 +364,18 @@ module Spree
           Spree::Deprecation.warn(
             "Spree::Dependencies##{legacy}= is deprecated and NO LONGER CONSULTED by Spree — " \
             "the override was not applied. Port the class to the #{current} contract and " \
-            "set #{current}= instead. The #{legacy} name is removed in Spree 6.5."
+            "set #{current}= instead. The #{legacy} name is removed in Spree 6.3."
           )
           legacy_workflow_overrides[legacy] = value
         end
 
         define_method(legacy) do
-          Spree::Deprecation.warn("Spree::Dependencies##{legacy} is deprecated and will be removed in Spree 6.5. Use #{current} instead.")
+          Spree::Deprecation.warn("Spree::Dependencies##{legacy} is deprecated and will be removed in Spree 6.3. Use #{current} instead.")
           legacy_workflow_overrides.fetch(legacy) { send(current) }
         end
 
         define_method("#{legacy}_class") do
-          Spree::Deprecation.warn("Spree::Dependencies##{legacy} is deprecated and will be removed in Spree 6.5. Use #{current} instead.")
+          Spree::Deprecation.warn("Spree::Dependencies##{legacy} is deprecated and will be removed in Spree 6.3. Use #{current} instead.")
           if legacy_workflow_overrides.key?(legacy)
             value = legacy_workflow_overrides[legacy]
             value.is_a?(String) ? value.constantize : value
