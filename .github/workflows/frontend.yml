@@ -132,7 +132,7 @@ jobs:
       # `pnpm publish` does in release.yml.
       - name: Pack packages
         run: |
-          for pkg in core admin-sdk seller-sdk config dashboard-ui dashboard-core dashboard seller-dashboard cli; do
+          for pkg in core admin-sdk seller-sdk config dashboard-ui dashboard-core dashboard seller-dashboard cli docs; do
             pnpm --dir "packages/$pkg" pack --pack-destination "$RUNNER_TEMP/tarballs"
           done
 
@@ -235,7 +235,7 @@ jobs:
 
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "4.0"
+          ruby-version: '4.0'
           bundler-cache: true
           working-directory: spree/api
 
@@ -279,7 +279,7 @@ jobs:
 
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "4.0"
+          ruby-version: '4.0'
           bundler-cache: true
           working-directory: spree/api
 
