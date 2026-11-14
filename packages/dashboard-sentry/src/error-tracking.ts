@@ -16,10 +16,14 @@ export function errorTrackingEnabled({ dsn, production, enableInDevelopment }: E
 
 // Strings anywhere inside `value`: console breadcrumbs keep each logged
 // argument in `data.arguments`, and a rejected plain object lands in
-// `extra.__serialized__`.
+// `extra.__serialized__`. An object's `toJSON` result is what Sentry sends,
+// so that is what gets redacted.
 function redactDeep(value: unknown, depth = 0): unknown {
   if (typeof value === 'string') return redactTokens(value)
   if (depth > 5 || value === null || typeof value !== 'object') return value
+  if ('toJSON' in value && typeof value.toJSON === 'function') {
+    return redactDeep(value.toJSON(), depth + 1)
+  }
   if (Array.isArray(value)) return value.map((item) => redactDeep(item, depth + 1))
   return Object.fromEntries(
     Object.entries(value).map(([key, item]) => [key, redactDeep(item, depth + 1)]),
@@ -31,7 +35,8 @@ function redactValues(values: Record<string, unknown> | undefined) {
   for (const [key, value] of Object.entries(values)) values[key] = redactDeep(value)
 }
 
-// The page URL, its Referer header, the error's own text and its extra data.
+// The page URL, its Referer header, the error's own text, its extra data and
+// its breadcrumbs as Sentry normalized them.
 export function scrubErrorEvent(event: Sentry.ErrorEvent) {
   if (event.request?.url) event.request.url = redactTokens(event.request.url)
   redactValues(event.request?.headers)
@@ -40,6 +45,7 @@ export function scrubErrorEvent(event: Sentry.ErrorEvent) {
     if (exception.value) exception.value = redactTokens(exception.value)
   }
   redactValues(event.extra)
+  for (const breadcrumb of event.breadcrumbs ?? []) scrubBreadcrumb(breadcrumb)
   return event
 }
 

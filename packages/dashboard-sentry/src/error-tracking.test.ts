@@ -85,6 +85,20 @@ describe('scrubErrorEvent extra data', () => {
   })
 })
 
+describe('scrubErrorEvent breadcrumbs', () => {
+  it('redacts what an argument serializes to', () => {
+    const argument = { toJSON: () => '/reset-password?token=abc' }
+    const breadcrumb = scrubBreadcrumb({ category: 'console', data: { arguments: [argument] } })
+    const event = scrubErrorEvent({
+      type: undefined,
+      breadcrumbs: [{ category: 'console', message: 'open /reset-password?token=def' }],
+    })
+
+    expect(breadcrumb.data?.arguments).toEqual(['/reset-password?token=redacted'])
+    expect(event.breadcrumbs?.[0]?.message).toBe('open /reset-password?token=redacted')
+  })
+})
+
 describe('scrubBreadcrumb', () => {
   it('redacts tokens in navigation and request breadcrumbs', () => {
     const navigation = scrubBreadcrumb({

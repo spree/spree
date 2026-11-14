@@ -67,20 +67,27 @@ export function AppRootSlot({ panel }: AppRootSlotContext) {
   const entries = useSlotEntries(APP_ROOT_SLOT) as readonly SlotEntry<AppRootSlotContext>[]
   return (
     <>
-      {entries
-        .filter((entry) => (entry.if ? entry.if({ panel }) : true))
-        .map(({ id, component: Component }) => (
-          <CatchBoundary
-            key={id}
-            getResetKey={() => panel}
-            errorComponent={() => null}
-            onCatch={reportCaughtError}
-          >
-            <Component panel={panel} />
-          </CatchBoundary>
-        ))}
+      {entries.map((entry) => (
+        <CatchBoundary
+          key={entry.id}
+          getResetKey={() => panel}
+          errorComponent={() => null}
+          onCatch={reportCaughtError}
+        >
+          <AppRootEntry entry={entry} panel={panel} />
+        </CatchBoundary>
+      ))}
     </>
   )
+}
+
+// Inside the entry's boundary, so a throwing `if` drops only this entry.
+function AppRootEntry({
+  entry: { if: visible, component: Component },
+  panel,
+}: AppRootSlotContext & { entry: SlotEntry<AppRootSlotContext> }) {
+  if (visible && !visible({ panel })) return null
+  return <Component panel={panel} />
 }
 
 /**
