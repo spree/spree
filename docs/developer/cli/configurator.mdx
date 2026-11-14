@@ -223,67 +223,6 @@ await runRecipe(client, [
 
 `client` is an Admin SDK client. Each step is safe to repeat, so a recipe that stopped halfway is finished by running it again.
 
-## Sections from extensions
-
-An extension that adds a resource to the Admin API can add a section for it to the file. The section lives in a JavaScript module, and the file lists the module:
-
-```yaml
-version: 1
-extensions:
-  - ./config/loyalty.mjs        # a path, from the file's directory
-  - "@acme/spree-loyalty/config" # or a package the project has installed
-loyalty_tiers:
-  - code: gold
-    name: Gold
-    points: 500
-    customer_group: Gold members
-```
-
-The module's default export is one section, or a list of them, made with `defineSection`:
-
-```typescript
-import { defineSection } from '@spree/config'
-import { z } from 'zod'
-
-export default defineSection({
-  name: 'loyalty_tiers', // the file's key, and the Admin API path: /loyalty_tiers
-  scope: 'write_loyalty', // the scope a secret key needs to deploy it
-  key: 'code', // what a record is matched on
-  attributes: ['code', 'name', 'points'], // written as they are, both ways
-  schema: z
-    .object({
-      code: z.string().min(1),
-      name: z.string().optional(),
-      points: z.number().int().optional(),
-      customer_group: z.string().optional(),
-    })
-    .strict(),
-  references: (tiers) => ({
-    customer_groups: tiers.flatMap((tier) => tier.customer_group ?? []),
-  }),
-  async desired(entry, ctx, path) {
-    return {
-      code: entry.code,
-      name: entry.name,
-      points: entry.points,
-      ...(entry.customer_group
-        ? { customer_group_id: await ctx.ref('customer_groups', entry.customer_group, path) }
-        : {}),
-    }
-  },
-})
-```
-
-- `schema` checks one entry before anything is sent. A problem is reported with its path and line, like any other.
-- A section with only plain attributes needs `name`, `scope`, `key`, `attributes` and `schema`. `desired` and `toFile` are for references to other sections, which the file writes as natural keys; `references` names the keys a run will look up, so they load in one request.
-- `path` sets the Admin API path when it is not `/<name>`, and `defaults` lists values `introspect` leaves out.
-- Extension sections are deployed after every built-in section, in the order the file lists their modules, so they can refer to anything before them. `--prune` removes their records first.
-- Every `spree config` command reads the list, so `diff`, `deploy`, `--prune` and `introspect --include` all know the section.
-
-Listing a module runs its code on the machine that runs the command, so list only modules you would install as a dependency. The published JSON Schema knows the built-in sections only, so an editor underlines an extension's section; the CLI is the check that counts.
-
-Code that uses the engine directly registers the same definition with `registerSection(definition)` before it reads a file.
-
 ## Diff and deploy
 
 `spree config diff` reads the store and prints, per section, what a deploy would create, update or delete, with attribute-level detail for updates. It exits 0 when the store already matches the file, 1 when it does not, and 2 when the file has a problem (a dangling reference, a key shared by two live records). `--format json` prints the plan for CI to post.
