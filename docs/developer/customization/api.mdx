@@ -291,8 +291,14 @@ To make a new column writable on a Spree model without decorating the
 controllers that write it, append to the model's permitted attributes:
 
 ```ruby config/initializers/spree.rb
-Spree::Product.additional_permitted_attributes += [:brand_id]
+Rails.application.config.to_prepare do
+  Spree::Product.additional_permitted_attributes += [:brand_id]
+end
 ```
+
+Declare it inside `to_prepare`: Spree's models are not loaded yet when the
+initializer file itself runs, so a bare `Spree::Product` there fails at boot
+with `uninitialized constant Spree::Product`.
 
 Standard resource endpoints append these to their own allowlist, so one
 declaration covers the model's create and update endpoints.
@@ -303,7 +309,9 @@ media column writable both through the media endpoints and as part of a product
 save:
 
 ```ruby config/initializers/spree.rb
-Spree::Media.additional_permitted_attributes += [:photo_credit]
+Rails.application.config.to_prepare do
+  Spree::Media.additional_permitted_attributes += [:photo_credit]
+end
 ```
 
 Use `+=`, never `=` — assigning replaces what another extension added — and

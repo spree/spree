@@ -44,7 +44,7 @@ Gem::Specification.new do |s|
   # authorization spec requires and which cannot be added from outside — the
   # audience has to be bound when the token is issued. Relax to '~> 6.0' once
   # 6.0.0 is final.
-  s.add_dependency 'doorkeeper', '~> 6.0.0.rc2'
+  s.add_dependency 'doorkeeper', '~> 6.0.0.rc3'
   s.add_dependency 'friendly_id', '~> 5.2', '>= 5.2.1'
   s.add_dependency 'geocoder'
   # json 3 removed the positional options hash, which ActiveSupport::JSON.decode

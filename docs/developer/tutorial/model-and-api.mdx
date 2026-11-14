@@ -187,10 +187,12 @@ The allowlist is deliberate: every entry is a query any caller can run, so add o
 Finally, the Admin API has to accept `brand_id` on write, or the picker you build in step 2 will appear to work and save nothing. Extensions append to the model's list rather than replacing it:
 
 ```ruby server/config/initializers/spree.rb
-Spree::Product.additional_permitted_attributes += [:brand_id]
+Rails.application.config.to_prepare do
+  Spree::Product.additional_permitted_attributes += [:brand_id]
+end
 ```
 
-Always `+=`, never `=` — assigning would drop whatever another extension added.
+Always `+=`, never `=` — assigning would drop whatever another extension added. Keep it inside `to_prepare`: at the top level of the initializer, Spree's models are not loaded yet and boot fails with `uninitialized constant Spree::Product`.
 
 ## Next step
 

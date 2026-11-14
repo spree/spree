@@ -21,7 +21,7 @@ const cart = await client.carts.update(
     },
   },
   {
-    token: '<token>',
+    spreeToken: '<cart-token>',
   },
 )
 

@@ -329,6 +329,8 @@ Every attempt carries the same event `id`, so use it to ignore an event your rec
 
 If an endpoint fails 15 deliveries in a row, Spree disables it and emails the store staff. Fix the endpoint, then turn it back on by marking it active again.
 
+Retries cover a delivery that failed, not an event that was never published. When every placed order must reach your system, also reconcile from the Admin API. See [Delivery guarantees](/developer/core-concepts/events#delivery-guarantees).
+
 ### Checking Delivery Status
 
 Inspect an endpoint's delivery log, and re-send a failed delivery, via the Admin API:

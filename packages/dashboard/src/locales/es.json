@@ -2448,6 +2448,22 @@
         "meta_description": {
           "label": "Meta descripción",
           "help": "Un breve resumen que los buscadores muestran bajo el título."
+        },
+        "meta_keywords": {
+          "label": "Palabras clave meta",
+          "help": "Palabras clave separadas por comas para los buscadores."
+        },
+        "facebook": {
+          "label": "Facebook",
+          "placeholder": "https://facebook.com/yourstore"
+        },
+        "twitter": {
+          "label": "X (Twitter)",
+          "placeholder": "@yourstore"
+        },
+        "instagram": {
+          "label": "Instagram",
+          "placeholder": "@yourstore"
         }
       },
       "store_credit": {
@@ -6354,6 +6370,14 @@
       },
       "seo": {
         "title": "Ficha en buscadores"
+      },
+      "images": {
+        "logo_label": "Logotipo",
+        "logo_help": "Se muestra en el panel y lo usa tu tienda online, por ejemplo en los resultados de búsqueda. PNG, JPG o WebP."
+      },
+      "social": {
+        "title": "Redes sociales",
+        "description": "Tu tienda online enlaza estas cuentas y las indica a los buscadores. Introduce un usuario o una URL completa."
       }
     },
     "company_invitations": {

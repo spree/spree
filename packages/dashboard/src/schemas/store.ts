@@ -19,6 +19,14 @@ export const storeSettingsFormSchema = z.object({
   name: z.string().min(1, { error: requiredMessage('store.name') }),
   seo_title: z.string(),
   meta_description: z.string(),
+  meta_keywords: z.string(),
+  facebook: z.string(),
+  twitter: z.string(),
+  instagram: z.string(),
+  // Image triple for the store logo. See ResourceImageField.
+  logo_signed_id: z.string().nullable(),
+  logo_preview_url: z.string().nullable(),
+  logo_cleared: z.boolean(),
   // A language the server does not list is refused there, under this field,
   // rather than here, where a stored one would block every other setting.
   admin_locale: z.string().nullable().optional(),

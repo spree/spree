@@ -1,6 +1,6 @@
 # @spree/cli
 
-CLI for managing [Spree Commerce](https://spreecommerce.org) projects — Docker-based dev stack, generators, API keys, and a gh-style Admin API client.
+CLI for [Spree Commerce](https://spreecommerce.org), the open-source headless commerce platform with REST Store and Admin APIs, TypeScript SDKs, an MCP server and a built-in marketplace. It runs the Spree Docker image locally and manages the project: dev stack, generators, API keys, and a gh-style Admin API client for scripts and AI agents. You need only Node.js and Docker.
 
 Automatically included in projects created with [`create-spree-app`](https://spreecommerce.org/docs/developer/create-spree-app/quickstart). Can also be installed standalone:
 

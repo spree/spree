@@ -7,7 +7,7 @@ const client = createClient({
 
 // region:example
 const cart = await client.carts.giftCards.apply('cart_abc123', 'GC-ABCD-1234', {
-  token: '<token>',
+  spreeToken: '<cart-token>',
 })
 
 // endregion:example

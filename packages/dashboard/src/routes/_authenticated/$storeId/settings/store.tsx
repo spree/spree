@@ -20,6 +20,7 @@ import {
   SettingsSelectField,
   SettingsSwitchField,
   Slot,
+  signedIdParam,
   TimezoneCombobox,
   useAuth,
   useStore,
@@ -53,18 +54,20 @@ import {
   LanguagesIcon,
   PackageIcon,
   SearchIcon,
+  Share2Icon,
   StoreIcon,
   TagsIcon,
   WarehouseIcon,
 } from '@spree/dashboard-ui/icons'
 import { createFileRoute } from '@tanstack/react-router'
-import { useCallback, useEffect, useMemo, useRef } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import {
   DraftCustomFieldsCard,
   useCustomFieldsDraft,
 } from '../../../../components/spree/custom-fields/custom-fields-inline'
+import { ResourceImageField } from '../../../../components/spree/resource-image-field'
 import { ResourceTranslationsCard } from '../../../../components/spree/translations/resource-translations-card'
 import {
   useStoreDataSources,
@@ -82,7 +85,8 @@ export const Route = createFileRoute('/_authenticated/$storeId/settings/store')(
   component: StoreSettingsPage,
 })
 
-const SEO_TRANSLATABLE_FIELDS = ['seo_title', 'meta_description'] as const
+const SEO_TRANSLATABLE_FIELDS = ['seo_title', 'meta_description', 'meta_keywords'] as const
+const SOCIAL_FIELDS = ['facebook', 'twitter', 'instagram'] as const
 
 const PRICING_PROVIDER_DOCS_URL = 'https://spreecommerce.org/docs/developer/providers/pim'
 const INVENTORY_PROVIDER_DOCS_URL = 'https://spreecommerce.org/docs/developer/providers/erp'
@@ -92,6 +96,13 @@ function storeToFormValues(store: Store): StoreSettingsFormValues {
     name: store.name,
     seo_title: store.seo_title ?? '',
     meta_description: store.meta_description ?? '',
+    meta_keywords: store.meta_keywords ?? '',
+    facebook: store.facebook ?? '',
+    twitter: store.twitter ?? '',
+    instagram: store.instagram ?? '',
+    logo_signed_id: null,
+    logo_preview_url: null,
+    logo_cleared: false,
     admin_locale: store.admin_locale ?? '',
     timezone: store.timezone,
     unit_system: (store.unit_system as UnitSystem) ?? 'metric',
@@ -172,6 +183,9 @@ function StoreSettingsForm({ store }: { store: Store }) {
   // A language change saved with the store but held back by a failed custom
   // field save. The retry no longer sees it against the refreshed store.
   const pendingLocaleSwitch = useRef(false)
+  // The logo's signed id arrives only once its upload finishes; saving before
+  // then would report success without the new logo.
+  const [logoUploading, setLogoUploading] = useState(false)
 
   // Shows the merchant the shape their next order number will take. The
   // sequential preview uses the configured starting value, which is only
@@ -205,6 +219,7 @@ function StoreSettingsForm({ store }: { store: Store }) {
   }, [unitSystem, form])
 
   const onSubmit = async (values: StoreSettingsFormValues) => {
+    if (logoUploading) return
     // Whether the admin language was changed in THIS save — compared against the
     // store's currently-persisted value, not RHF's `dirtyFields` (which a Base UI
     // Select via Controller doesn't reliably populate). Saving unrelated fields
@@ -214,12 +229,23 @@ function StoreSettingsForm({ store }: { store: Store }) {
     // Extension fields come from live form state — the Zod parse behind
     // `values` strips keys the first-party schema doesn't know.
     const extensionValues = extensionSubmitValues('store', form)
+    // The server trims these too; trimming here keeps the reset form equal to what was saved.
+    const socials = {
+      facebook: values.facebook.trim(),
+      twitter: values.twitter.trim(),
+      instagram: values.instagram.trim(),
+    }
     try {
       if (storeDirty) {
         await updateMutation.mutateAsync({
           name: values.name,
           seo_title: values.seo_title || null,
           meta_description: values.meta_description || null,
+          meta_keywords: values.meta_keywords || null,
+          facebook: socials.facebook || null,
+          twitter: socials.twitter || null,
+          instagram: socials.instagram || null,
+          ...signedIdParam('logo', values.logo_signed_id, values.logo_cleared),
           admin_locale: (values.admin_locale || null) as LocaleCode | null,
           timezone: values.timezone,
           unit_system: values.unit_system,
@@ -248,7 +274,14 @@ function StoreSettingsForm({ store }: { store: Store }) {
         // switch below reloads the page while the `beforeunload` dirty-guard is
         // still armed, triggering the browser's "unsaved changes" prompt. It
         // also means a retry after a failed custom field save sends only those.
-        form.reset({ ...values, ...extensionValues })
+        form.reset({
+          ...values,
+          ...socials,
+          logo_signed_id: null,
+          logo_preview_url: null,
+          logo_cleared: false,
+          ...extensionValues,
+        })
         pendingLocaleSwitch.current = localeChanged
       }
       // Before the language switch, which may reload the page.
@@ -361,6 +394,7 @@ function StoreSettingsForm({ store }: { store: Store }) {
                 <FormActions
                   form={form}
                   dirty={customFields.isDirty}
+                  disabled={logoUploading}
                   onDiscard={() => {
                     form.reset()
                     customFields.reset()
@@ -393,6 +427,17 @@ function StoreSettingsForm({ store }: { store: Store }) {
                       />
                       <FieldError errors={[errors.name]} />
                     </Field>
+                    <ResourceImageField
+                      form={form}
+                      kind="logo"
+                      serverUrl={store.logo_url}
+                      translationNamespace="admin.store"
+                      labelKey="logo_label"
+                      helpKey="logo_help"
+                      onUploadingChange={setLogoUploading}
+                      // A logo picked mid-save would be cleared by the post-save reset.
+                      disabled={form.formState.isSubmitting}
+                    />
                   </FieldGroup>
                 </CardContent>
               </SettingsSection>
@@ -427,6 +472,45 @@ function StoreSettingsForm({ store }: { store: Store }) {
                       </FieldDescription>
                       <FieldError errors={[errors.meta_description]} />
                     </Field>
+                    <Field>
+                      <FieldLabel htmlFor="store-meta-keywords">
+                        {t('admin.fields.store.meta_keywords.label')}
+                      </FieldLabel>
+                      <Input
+                        id="store-meta-keywords"
+                        aria-invalid={!!errors.meta_keywords || undefined}
+                        {...form.register('meta_keywords')}
+                      />
+                      <FieldDescription>
+                        {t('admin.fields.store.meta_keywords.help')}
+                      </FieldDescription>
+                      <FieldError errors={[errors.meta_keywords]} />
+                    </Field>
+                  </FieldGroup>
+                </CardContent>
+              </SettingsSection>
+
+              <SettingsSection
+                title={t('admin.store.social.title')}
+                description={t('admin.store.social.description')}
+                icon={<Share2Icon />}
+              >
+                <CardContent>
+                  <FieldGroup>
+                    {SOCIAL_FIELDS.map((field) => (
+                      <Field key={field}>
+                        <FieldLabel htmlFor={`store-${field}`}>
+                          {t(`admin.fields.store.${field}.label`)}
+                        </FieldLabel>
+                        <Input
+                          id={`store-${field}`}
+                          placeholder={t(`admin.fields.store.${field}.placeholder`)}
+                          aria-invalid={!!errors[field] || undefined}
+                          {...form.register(field)}
+                        />
+                        <FieldError errors={[errors[field]]} />
+                      </Field>
+                    ))}
                   </FieldGroup>
                 </CardContent>
               </SettingsSection>

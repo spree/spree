@@ -1,4 +1,4 @@
-import { AuthProvider, PermissionProvider, queryClient } from '@spree/dashboard-core'
+import { AppRootSlot, AuthProvider, PermissionProvider, queryClient } from '@spree/dashboard-core'
 import { ConfirmProvider, ThemeProvider, TooltipProvider } from '@spree/dashboard-ui'
 import { QueryClientProvider } from '@tanstack/react-query'
 import type { AnyRouter } from '@tanstack/react-router'
@@ -38,6 +38,7 @@ export function SellerDashboard({ router }: { router: AnyRouter }) {
             <ConfirmProvider>
               <AuthProvider>
                 <PermissionProvider>
+                  <AppRootSlot panel="seller" />
                   <RouterProvider router={router} />
                 </PermissionProvider>
               </AuthProvider>

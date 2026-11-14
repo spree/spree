@@ -2422,6 +2422,22 @@
         "meta_description": {
           "label": "Meta description",
           "help": "A short summary search engines show under the title."
+        },
+        "meta_keywords": {
+          "label": "Meta keywords",
+          "help": "Comma-separated keywords for search engines."
+        },
+        "facebook": {
+          "label": "Facebook",
+          "placeholder": "https://facebook.com/yourstore"
+        },
+        "twitter": {
+          "label": "X (Twitter)",
+          "placeholder": "@yourstore"
+        },
+        "instagram": {
+          "label": "Instagram",
+          "placeholder": "@yourstore"
         }
       },
       "store_credit": {
@@ -6015,6 +6031,14 @@
       },
       "seo": {
         "title": "Search engine listing"
+      },
+      "images": {
+        "logo_label": "Logo",
+        "logo_help": "Shown in the dashboard and used by your storefront, for example in search results. PNG, JPG or WebP."
+      },
+      "social": {
+        "title": "Social media",
+        "description": "Your storefront links to these accounts and lists them for search engines. Enter a handle or a full URL."
       }
     },
     "table_descriptions": {

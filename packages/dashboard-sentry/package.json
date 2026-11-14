@@ -1,0 +1,65 @@
+{
+  "name": "@spree/dashboard-sentry",
+  "license": "MIT",
+  "version": "6.0.4",
+  "description": "Sentry error tracking for the Spree admin dashboard and seller panel: one initDashboardSentry() call in the host's entry module.",
+  "author": "Vendo Connect Inc.",
+  "homepage": "https://spreecommerce.org",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/spree/spree.git",
+    "directory": "packages/dashboard-sentry"
+  },
+  "keywords": [
+    "spree",
+    "dashboard",
+    "plugin",
+    "sentry",
+    "error-tracking"
+  ],
+  "type": "module",
+  "main": "./src/index.ts",
+  "module": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "sideEffects": false,
+  "files": [
+    "src",
+    "!src/**/*.test.ts",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "lint": "biome check .",
+    "lint:fix": "biome check --fix .",
+    "format": "biome format --write .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@sentry/react": "^11.12.0"
+  },
+  "peerDependencies": {
+    "@spree/dashboard-core": ">=6.0.4 <7.0.0-0",
+    "react": "^19.2.6"
+  },
+  "devDependencies": {
+    "@spree/admin-sdk": "workspace:^",
+    "@spree/dashboard-core": "workspace:^",
+    "@spree/dashboard-ui": "workspace:^",
+    "@tanstack/react-query": "catalog:",
+    "@tanstack/react-router": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "i18next": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-hook-form": "catalog:",
+    "react-i18next": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vitest": "catalog:"
+  }
+}
