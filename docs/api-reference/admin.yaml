@@ -14217,7 +14217,7 @@ paths:
     get:
       summary: List delivery method custom fields
       tags:
-      - Delivery
+      - Delivery Settings
       security:
       - api_key: []
         bearer_auth: []
@@ -14341,7 +14341,7 @@ paths:
     get:
       summary: List delivery profiles
       tags:
-      - Delivery
+      - Delivery Settings
       security:
       - api_key: []
         bearer_auth: []
@@ -14453,7 +14453,7 @@ paths:
     post:
       summary: Create a delivery profile
       tags:
-      - Delivery
+      - Delivery Settings
       security:
       - api_key: []
         bearer_auth: []
@@ -14544,7 +14544,7 @@ paths:
     get:
       summary: List origin groups
       tags:
-      - Delivery
+      - Delivery Settings
       security:
       - api_key: []
         bearer_auth: []
@@ -14661,7 +14661,7 @@ paths:
     post:
       summary: Create an origin group
       tags:
-      - Delivery
+      - Delivery Settings
       security:
       - api_key: []
         bearer_auth: []
@@ -14731,7 +14731,7 @@ paths:
     patch:
       summary: Update a delivery profile
       tags:
-      - Delivery
+      - Delivery Settings
       security:
       - api_key: []
         bearer_auth: []
@@ -14801,7 +14801,7 @@ paths:
     delete:
       summary: Delete a delivery profile
       tags:
-      - Delivery
+      - Delivery Settings
       security:
       - api_key: []
         bearer_auth: []
@@ -14842,7 +14842,7 @@ paths:
     get:
       summary: List delivery methods
       tags:
-      - Delivery
+      - Delivery Settings
       security:
       - api_key: []
         bearer_auth: []
@@ -14984,7 +14984,7 @@ paths:
     post:
       summary: Create delivery method
       tags:
-      - Delivery
+      - Delivery Settings
       security:
       - api_key: []
         bearer_auth: []
@@ -15073,7 +15073,7 @@ paths:
     patch:
       summary: Update delivery method
       tags:
-      - Delivery
+      - Delivery Settings
       security:
       - api_key: []
         bearer_auth: []
@@ -15167,7 +15167,7 @@ paths:
     get:
       summary: List delivery calculators
       tags:
-      - Delivery
+      - Delivery Settings
       security:
       - api_key: []
         bearer_auth: []
@@ -15354,7 +15354,7 @@ paths:
     get:
       summary: List delivery zones
       tags:
-      - Delivery
+      - Delivery Settings
       security:
       - api_key: []
         bearer_auth: []
@@ -15461,7 +15461,7 @@ paths:
     post:
       summary: Create delivery zone
       tags:
-      - Delivery
+      - Delivery Settings
       security:
       - api_key: []
         bearer_auth: []
@@ -15554,7 +15554,7 @@ paths:
     patch:
       summary: Update delivery zone
       tags:
-      - Delivery
+      - Delivery Settings
       security:
       - api_key: []
         bearer_auth: []
@@ -15646,7 +15646,7 @@ paths:
     get:
       summary: List delivery method rules
       tags:
-      - Delivery
+      - Delivery Settings
       security:
       - api_key: []
         bearer_auth: []
@@ -15755,7 +15755,7 @@ paths:
     post:
       summary: Create a delivery method rule
       tags:
-      - Delivery
+      - Delivery Settings
       security:
       - api_key: []
         bearer_auth: []
@@ -15838,7 +15838,7 @@ paths:
     patch:
       summary: Update a delivery method rule
       tags:
-      - Delivery
+      - Delivery Settings
       security:
       - api_key: []
         bearer_auth: []
@@ -59781,7 +59781,9 @@ tags:
 - name: Customers
   description: Customer profiles, addresses, credit cards, and store credits
 - name: Deliveries
-- name: Delivery
+- name: Delivery Settings
+  description: How orders ship — delivery methods and their rules, delivery profiles,
+    and delivery zones
 - name: Email Templates
   description: 'Customer email templates, the email layout and shared partials: drafts,
     previews, publishing and history'

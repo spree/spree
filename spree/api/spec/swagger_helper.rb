@@ -168,6 +168,7 @@ RSpec.configure do |config|
         { name: 'Custom Fields', description: 'Custom field definitions for products, variants, customers, and other resources' },
         { name: 'Customer Groups', description: 'Customer groups for segmenting customers (e.g. wholesale, VIP) used by pricing and promotions' },
         { name: 'Customers', description: 'Customer profiles, addresses, credit cards, and store credits' },
+        { name: 'Delivery Settings', description: 'How orders ship — delivery methods and their rules, delivery profiles, and delivery zones' },
         { name: 'Email Templates', description: 'Customer email templates, the email layout and shared partials: drafts, previews, publishing and history' },
         { name: 'Exports', description: 'Async CSV exports of admin resources' },
         { name: 'Files', description: 'Uploading the files that product media, imports, logos and documents use' },
