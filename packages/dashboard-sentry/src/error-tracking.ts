@@ -2,16 +2,18 @@ import * as Sentry from '@sentry/react'
 import type { ErrorInfo } from 'react'
 import { redactTokens } from './redact-tokens'
 
-export interface ErrorTrackingEnv {
-  dsn?: string
-  production: boolean
-  enableInDevelopment?: string
-}
-
 // Development builds stay quiet unless asked, like the server's
 // SENTRY_REPORT_ON_DEVELOPMENT.
-export function errorTrackingEnabled({ dsn, production, enableInDevelopment }: ErrorTrackingEnv) {
-  return Boolean(dsn) && (production || enableInDevelopment === 'true')
+export function errorTrackingEnabled({
+  dsn,
+  production,
+  enableInDevelopment,
+}: {
+  dsn?: string
+  production: boolean
+  enableInDevelopment?: boolean
+}) {
+  return Boolean(dsn) && (production || enableInDevelopment === true)
 }
 
 // Strings anywhere inside `value`: console breadcrumbs keep each logged
@@ -67,24 +69,26 @@ export function panelFromPackages(packages: Record<string, string> | undefined) 
 }
 
 /**
- * Starts Sentry. Its global handlers capture errors outside React (event
- * handlers, promise rejections) and render errors no error screen catches.
+ * The host's own `beforeSend` and `beforeBreadcrumb`, followed by token
+ * redaction, so nothing a host hook adds or keeps can carry a token out.
  */
-export function initErrorTracking({
-  panel,
-  ...options
-}: {
-  dsn: string
-  environment: string
-  release?: string
-  panel?: string
-}) {
-  Sentry.init({
-    ...options,
-    initialScope: panel ? { tags: { panel } } : undefined,
-    beforeSend: scrubErrorEvent,
-    beforeBreadcrumb: scrubBreadcrumb,
-  })
+export function withRedaction({
+  beforeSend,
+  beforeBreadcrumb,
+}: Pick<Sentry.BrowserOptions, 'beforeSend' | 'beforeBreadcrumb'>): Pick<
+  Sentry.BrowserOptions,
+  'beforeSend' | 'beforeBreadcrumb'
+> {
+  return {
+    beforeSend: async (event, hint) => {
+      const kept = beforeSend ? await beforeSend(event, hint) : event
+      return kept && scrubErrorEvent(kept)
+    },
+    beforeBreadcrumb: (breadcrumb, hint) => {
+      const kept = beforeBreadcrumb ? beforeBreadcrumb(breadcrumb, hint) : breadcrumb
+      return kept && scrubBreadcrumb(kept)
+    },
+  }
 }
 
 // Errors a panel's error screens caught, handed over through `errorReporters`.

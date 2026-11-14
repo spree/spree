@@ -2,7 +2,7 @@
   "name": "@spree/dashboard-sentry",
   "license": "MIT",
   "version": "6.0.4",
-  "description": "Sentry error tracking for the Spree admin dashboard and seller panel. Install it and set VITE_SENTRY_DSN — no code changes.",
+  "description": "Sentry error tracking for the Spree admin dashboard and seller panel: one initDashboardSentry() call in the host's entry module.",
   "author": "Vendo Connect Inc.",
   "homepage": "https://spreecommerce.org",
   "repository": {
@@ -24,9 +24,7 @@
   "exports": {
     ".": "./src/index.ts"
   },
-  "sideEffects": [
-    "./src/index.ts"
-  ],
+  "sideEffects": false,
   "files": [
     "src",
     "!src/**/*.test.ts",
@@ -39,11 +37,6 @@
     "format": "biome format --write .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"
-  },
-  "spree": {
-    "dashboard": {
-      "plugin": true
-    }
   },
   "dependencies": {
     "@sentry/react": "^11.12.0"

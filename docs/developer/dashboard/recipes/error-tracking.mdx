@@ -12,16 +12,25 @@ description: Send admin dashboard and seller panel errors to Sentry with the off
 pnpm add @spree/dashboard-sentry
 ```
 
-Then set the DSN of a browser (React) Sentry project in the app's `.env` and restart the dev server or rebuild. No code changes are needed: the dashboard's Vite plugin finds the package and loads it.
+Then start it from the app's entry module, `src/main.tsx`, before the app renders:
 
-| Variable | Purpose |
-|---|---|
-| `VITE_SENTRY_DSN` | Sentry project DSN. The plugin stays off while it is blank. The DSN is public by design |
-| `VITE_SENTRY_ENVIRONMENT` | Environment name on each event. Defaults to the Vite mode, such as `production` |
-| `VITE_SENTRY_RELEASE` | Release name on each event, for example the commit you deployed |
-| `VITE_SENTRY_ENABLE_IN_DEVELOPMENT` | Set to `true` to report from the dev server. Off by default |
+```tsx
+import { initDashboardSentry } from '@spree/dashboard-sentry'
 
-These values are compiled into the browser bundle, so set them when you build, not only when you run the server.
+initDashboardSentry({
+  dsn: import.meta.env.VITE_SENTRY_DSN,
+  release: import.meta.env.VITE_SENTRY_RELEASE,
+})
+```
+
+Use the DSN of a browser (React) Sentry project. It is public by design, and with no DSN the call does nothing, so the same build runs with Sentry on or off. `initDashboardSentry` takes any [Sentry browser option](https://docs.sentry.io/platforms/javascript/guides/react/configuration/options/), plus:
+
+| Option | Default | Purpose |
+|---|---|---|
+| `environment` | The Vite mode, such as `production` | Environment name on each event |
+| `enableInDevelopment` | `false` | Report from the dev server too. Development builds stay quiet otherwise |
+
+`VITE_` values are compiled into the browser bundle, so set them when you build, not only when you run the server. Call it the same way in the seller panel's `src/main.tsx`.
 
 What gets reported:
 
@@ -30,9 +39,9 @@ What gets reported:
 - The signed-in user's ID and email, cleared on sign-out.
 - A `panel` tag, `admin` or `seller`, so both apps can share one Sentry project. Events raised while the app starts are tagged too.
 
-Not-found pages and redirects are not errors and are skipped. Single-use tokens in password reset, email confirmation and invitation links are replaced with `redacted` in URLs, messages and breadcrumbs before anything leaves the browser.
+Not-found pages and redirects are not errors and are skipped. Single-use tokens in password reset, email confirmation and invitation links are replaced with `redacted` in error events and breadcrumbs before they leave the browser, after your own `beforeSend` and `beforeBreadcrumb` run.
 
-The plugin sends errors only. Tracing belongs to OpenTelemetry, which Spree uses on the server.
+The plugin turns on error reporting only. Tracing, Session Replay and other Sentry features stay off unless you pass their options. Token redaction does not cover them: replays and trace spans can record the page URL, including a reset or invitation token.
 
 ## Another service
 
@@ -63,4 +72,4 @@ defineDashboardPlugin({
 
 An error boundary of your own reports the same way: pass `reportCaughtError` from `@spree/dashboard-core` as the `onCatch` of `RouteErrorBoundary` or TanStack Router's `CatchBoundary`.
 
-Mark the package as a dashboard plugin so both panels load it — see [Distributing plugins](/developer/dashboard/plugins/distributing).
+Call `defineDashboardPlugin` from a function the host calls in its entry module, as `initDashboardSentry` does, or mark the package as a dashboard plugin so both panels load it on install — see [Distributing plugins](/developer/dashboard/plugins/distributing).

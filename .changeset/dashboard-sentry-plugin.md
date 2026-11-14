@@ -5,4 +5,4 @@
 "@spree/seller-dashboard": patch
 ---
 
-Added `@spree/dashboard-sentry`, a plugin that reports admin dashboard and seller panel errors to Sentry once installed and given a `VITE_SENTRY_DSN`. Plugins can now receive the errors the panels' error screens catch through `errorReporters` in `defineDashboardPlugin`, and mount session-wide components in the new `app.root` slot, which both panels render. The seller panel now shows the same error screen with a retry button as the admin dashboard instead of the router's bare fallback, and `RouteErrorBoundary` takes an `onCatch` callback.
+Added `@spree/dashboard-sentry`, which reports admin dashboard and seller panel errors to Sentry: call `initDashboardSentry({ dsn })` in the app's entry module, with any other Sentry browser option. Plugins can now receive the errors the panels' error screens catch through `errorReporters` in `defineDashboardPlugin`, and mount session-wide components in the new `app.root` slot, which both panels render. The seller panel now shows the same error screen with a retry button as the admin dashboard instead of the router's bare fallback, and `RouteErrorBoundary` takes an `onCatch` callback.

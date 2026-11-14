@@ -4,13 +4,12 @@ import {
   panelFromPackages,
   scrubBreadcrumb,
   scrubErrorEvent,
+  withRedaction,
 } from './error-tracking'
 
 describe('errorTrackingEnabled', () => {
   it('needs a DSN', () => {
-    expect(
-      errorTrackingEnabled({ dsn: '', production: true, enableInDevelopment: undefined }),
-    ).toBe(false)
+    expect(errorTrackingEnabled({ dsn: '', production: true })).toBe(false)
   })
 
   it('reports from production builds', () => {
@@ -18,17 +17,14 @@ describe('errorTrackingEnabled', () => {
       errorTrackingEnabled({
         dsn: 'https://k@o1.ingest.sentry.io/1',
         production: true,
-        enableInDevelopment: undefined,
       }),
     ).toBe(true)
   })
 
   it('stays off in development unless asked', () => {
     const dsn = 'https://k@o1.ingest.sentry.io/1'
-    expect(errorTrackingEnabled({ dsn, production: false, enableInDevelopment: undefined })).toBe(
-      false,
-    )
-    expect(errorTrackingEnabled({ dsn, production: false, enableInDevelopment: 'true' })).toBe(true)
+    expect(errorTrackingEnabled({ dsn, production: false })).toBe(false)
+    expect(errorTrackingEnabled({ dsn, production: false, enableInDevelopment: true })).toBe(true)
   })
 })
 
@@ -57,6 +53,31 @@ describe('scrubErrorEvent', () => {
     })
     expect(event.message).toBe('Lookup failed for /auth/invitations/inv_1/lookup?token=redacted')
     expect(event.exception?.values?.[0]?.value).toBe('PATCH /auth/password_resets/redacted failed')
+  })
+})
+
+describe('withRedaction', () => {
+  it('redacts after the host’s own hooks', async () => {
+    const { beforeSend, beforeBreadcrumb } = withRedaction({
+      beforeSend: (event) => ({ ...event, message: `${event.message} /reset-password?token=abc` }),
+      beforeBreadcrumb: (breadcrumb) => ({ ...breadcrumb, message: '?token=def' }),
+    })
+
+    const event = await beforeSend?.({ type: undefined, message: 'Failed' }, {})
+    const breadcrumb = beforeBreadcrumb?.({ category: 'console' }, {})
+
+    expect(event?.message).toBe('Failed /reset-password?token=redacted')
+    expect(breadcrumb?.message).toBe('?token=redacted')
+  })
+
+  it('keeps what the host’s hooks drop dropped', async () => {
+    const { beforeSend, beforeBreadcrumb } = withRedaction({
+      beforeSend: () => null,
+      beforeBreadcrumb: () => null,
+    })
+
+    expect(await beforeSend?.({ type: undefined }, {})).toBeNull()
+    expect(beforeBreadcrumb?.({ category: 'console' }, {})).toBeNull()
   })
 })
 
