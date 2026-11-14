@@ -34,6 +34,10 @@
   },
   "redirects": [
     {
+      "source": "/api-reference/admin-api/delivery/:slug*",
+      "destination": "/api-reference/admin-api/delivery-settings/:slug*"
+    },
+    {
       "source": "/user/settings/payouts",
       "destination": "/user/settings/marketplace"
     },
