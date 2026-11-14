@@ -5703,13 +5703,7 @@
       "rate_limited_title": "Quá nhiều lần thử",
       "rate_limited_message": "Thiết lập đã được kiểm tra quá nhiều lần trong một thời gian ngắn. Đợi một phút rồi thử lại.",
       "check_failed_title": "Không thể kiểm tra thiết lập",
-      "check_failed_message": "Không thể kết nối với máy chủ để kiểm tra xem cài đặt này có cần thiết lập hay không. Hãy chắc chắn rằng nó đang chạy, sau đó thử lại.",
-      "sample_data": {
-        "loading": "Đang tải dữ liệu mẫu…",
-        "step": "Bước {{number}} trên {{total}}. Việc này mất vài phút; bạn có thể tiếp tục làm việc.",
-        "loaded": "Đã tải dữ liệu mẫu",
-        "failed": "Không thể tải dữ liệu mẫu"
-      }
+      "check_failed_message": "Không thể kết nối với máy chủ để kiểm tra xem cài đặt này có cần thiết lập hay không. Hãy chắc chắn rằng nó đang chạy, sau đó thử lại."
     },
     "staff": {
       "actions": {

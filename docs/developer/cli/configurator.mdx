@@ -205,24 +205,6 @@ A default whose type an installation has not registered (a seller requirement ki
 
 [Sample data](/developer/cli/quickstart#spree-sample-data) builds on these defaults, so it refuses a store that never got them.
 
-## Recipes
-
-Some setups cannot be one file. The demo store's product types have to exist before its products are imported, and its collections can only be created after. A recipe is that order written down: a list of steps, each a store file to deploy or a CSV to import through the Admin API.
-
-[`spree sample-data`](/developer/cli/quickstart#spree-sample-data) is a recipe, and `@spree/config` exports what it is made of:
-
-```typescript
-import { deployStep, importStep, runRecipe } from '@spree/config'
-
-await runRecipe(client, [
-  deployStep('Setting up product types', setupYaml),
-  importStep('Importing products', { type: 'products', csv: productsCsv, filename: 'products.csv' }),
-  deployStep('Creating collections', collectionsYaml),
-])
-```
-
-`client` is an Admin SDK client. Each step is safe to repeat, so a recipe that stopped halfway is finished by running it again.
-
 ## Diff and deploy
 
 `spree config diff` reads the store and prints, per section, what a deploy would create, update or delete, with attribute-level detail for updates. It exits 0 when the store already matches the file, 1 when it does not, and 2 when the file has a problem (a dangling reference, a key shared by two live records). `--format json` prints the plan for CI to post.

@@ -5743,13 +5743,7 @@
       "provisioning": "Préparation de votre boutique…",
       "provisioning_failed": "Votre compte est prêt, mais les réglages par défaut de la boutique (entrepôt, zones de livraison, catégories de taxe) n'ont pas pu être configurés.",
       "provisioning_retry": "Réessayer",
-      "provisioning_continue": "Continuer vers le tableau de bord",
-      "sample_data": {
-        "loading": "Chargement des données d'exemple…",
-        "step": "Étape {{number}} sur {{total}}. Cela prend quelques minutes ; vous pouvez continuer à travailler.",
-        "loaded": "Données d'exemple chargées",
-        "failed": "Les données d'exemple n'ont pas pu être chargées"
-      }
+      "provisioning_continue": "Continuer vers le tableau de bord"
     },
     "staff": {
       "actions": {

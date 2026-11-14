@@ -782,7 +782,7 @@
           "label": "Confirmer le mot de passe"
         },
         "sample_data": {
-          "help": "Ajoute des produits, des catégories, des clients et une configuration de vente en gros de démonstration pendant que vous explorez le tableau de bord. Prend quelques minutes et télécharge des images de produits ; gardez cet onglet ouvert.",
+          "help": "Ajoute en arrière-plan des produits, catégories, clients et commandes de démonstration pour explorer le tableau de bord. Le chargement prend quelques minutes et télécharge les images des produits.",
           "label": "Charger des données d’exemple"
         },
         "store_name": {

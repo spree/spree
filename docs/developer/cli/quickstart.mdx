@@ -220,14 +220,11 @@ spree seed
 
 ### `spree sample-data`
 
-Load the demo store through the Admin API: products with images, categories, collections, customers, and a wholesale buyer with their company and trade prices. The store needs its [defaults](/developer/cli/configurator#store-defaults) first: finish first-run setup, or run `spree config provision`.
+Load sample products, categories, and images. The store needs its [defaults](/developer/cli/configurator#store-defaults) first: finish first-run setup, or run `spree config provision`.
 
 ```bash
-spree sample-data                                                        # the project in this directory
-spree sample-data --base-url https://store.example.com --api-key sk_...  # any Spree instance
+spree sample-data
 ```
-
-It takes a few minutes, because the server downloads every product image. It is safe to run again: it only adds what is missing, so it also finishes a load that was interrupted.
 
 ### `spree user create`
 
@@ -404,6 +401,7 @@ The test database is created on the first run. See the [Testing tutorial](/devel
 Run a Spree maintenance task. The task names are stable; anything after the name goes to the task in the task runner's own format.
 
 ```bash
+spree task load_sample_data
 spree task search:reindex
 spree task price_history:seed
 spree task price_history:prune

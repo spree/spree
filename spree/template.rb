@@ -60,7 +60,7 @@ def warn_about_load_sample_data
   return unless ENV['LOAD_SAMPLE_DATA'] == 'true'
 
   say 'LOAD_SAMPLE_DATA is ignored and will be removed in Spree 6.2: sample data needs a store that finished setup. ' \
-      'Load it afterwards with the Spree CLI: spree sample-data', :yellow
+      'Load it afterwards with: bin/rails spree:load_sample_data', :yellow
 end
 
 def show_success_message
@@ -88,7 +88,7 @@ def show_success_message
   say
   say 'Useful commands:', :yellow
   say '  bin/rails console                # Rails console'
-  say '  spree sample-data                # Load sample data (after setup, with the Spree CLI)'
+  say '  bin/rails spree:load_sample_data # Load sample data (after setup)'
   say
 end
 

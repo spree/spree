@@ -1,0 +1,109 @@
+# Wholesale demo setup on top of the gated channel the store defaults create: an approved demo buyer and a customer-group price
+# list, so a fresh install can walk the whole B2B portal story — sign in as
+# the buyer, see wholesale prices, check out on the wholesale channel.
+store = Spree::Current.store
+
+wholesale_group = store.customer_groups.find_or_create_by!(name: 'Wholesale')
+
+buyer = Spree.customer_class.find_by(email: 'wholesale@example.com')
+if buyer.nil?
+  buyer = Spree.customer_class.new(
+    email: 'wholesale@example.com',
+    password: 'spree123',
+    password_confirmation: 'spree123',
+    first_name: 'Wanda',
+    last_name: 'Wholesale'
+  )
+  buyer.save!
+end
+wholesale_group.add_customers([buyer.id])
+
+price_list = store.price_lists.find_or_create_by!(name: 'Wholesale') do |list|
+  list.description = 'Wholesale pricing for approved B2B buyers (40% off retail) on orders of 10+ per item'
+end
+
+# Case-pack minimum: the trade price applies only when a buyer orders at least
+# WHOLESALE_MIN_QUANTITY of a single item (VolumeRule matches per line item, not
+# per order). Below the threshold the buyer falls back to the retail price — no
+# hard checkout block. This is what makes the demo feel like real wholesale.
+wholesale_min_quantity = 10
+
+unless price_list.price_rules.any? { |rule| rule.is_a?(Spree::PriceRules::VolumeRule) }
+  volume_rule = Spree::PriceRules::VolumeRule.new(price_list: price_list)
+  volume_rule.preferred_min_quantity = wholesale_min_quantity
+  volume_rule.save!
+end
+
+unless price_list.price_rules.any? { |rule| rule.is_a?(Spree::PriceRules::CustomerGroupRule) }
+  # price_list must be assigned before the preference — the customer-group-id
+  # normalizer resolves groups through rule.store (delegated to price_list).
+  rule = Spree::PriceRules::CustomerGroupRule.new(price_list: price_list)
+  rule.preferred_customer_group_ids = [wholesale_group.id]
+  rule.save!
+end
+
+# Same paths the admin UI uses: add_products materializes a blank row per
+# variant × supported currency (skipping rows that already exist), then trade
+# prices (40% off that currency's own retail price) fill in wherever a base
+# price exists and the row is still blank. Both steps are idempotent, so
+# re-running sample data converges partial state — new products, newly
+# supported currencies, or a previously interrupted run — without clobbering
+# hand-edited amounts.
+price_list.add_products(store.products.ids)
+
+blank_prices = price_list.prices.where(amount: nil).pluck(:id, :variant_id, :currency)
+if blank_prices.any?
+  base_amounts = Spree::Price.where(price_list_id: nil, variant_id: blank_prices.map { |_, variant_id, _| variant_id }.uniq)
+                             .pluck(:variant_id, :currency, :amount)
+                             .each_with_object({}) { |(variant_id, currency, amount), memo| memo[[variant_id, currency]] = amount }
+
+  rows = blank_prices.filter_map do |id, variant_id, currency|
+    amount = base_amounts[[variant_id, currency]]
+    next if amount.blank?
+
+    { id: id, variant_id: variant_id, currency: currency, amount: (amount * 0.6).round(2) }
+  end
+
+  price_list.bulk_update_prices(rows) if rows.any?
+end
+
+# Quantity breaks on a few lines, loaded through the price-list CSV import —
+# the very file the import sheet offers as its example, so the example is a
+# working ladder. The import merges, so re-running converges like the rest.
+breaks = Spree::SampleData::ImportRunner.call(
+  csv_path: Spree::Core::Engine.root.join('db', 'sample_data', 'price_list_prices.csv'),
+  import_class: Spree::Imports::PriceListPrices,
+  store: store,
+  inline: true,
+  attributes: { price_list: price_list }
+)
+# A row that failed means the example file and products.csv have drifted
+# apart, which the import reports per row rather than by failing the run.
+raise "Sample price-list import failed: #{breaks.error}" if breaks.failure?
+failed_rows = breaks.value.rows.failed.pluck(:validation_errors)
+raise "Sample price-list rows failed: #{failed_rows.join('; ')}" if failed_rows.any?
+
+Spree.price_list_activate_workflow.call(price_list: price_list) unless price_list.active?
+
+# A two-level organization tree so the demo walks the whole B2B story: the
+# buyer is a member of the EMEA division and buys for it, while the catalog is
+# assigned once at the root and covers the subtree
+# (docs/plans/6.0-b2b-companies-and-catalogs.md).
+company = store.companies.find_or_create_by!(name: 'Acme Industrial') do |record|
+  record.kind = 'company'
+end
+company.set_external_id('erp', 'ACME-1') if company.external_id_for('erp').blank?
+
+division = store.companies.find_or_create_by!(name: 'Acme EMEA') do |record|
+  record.kind = 'division'
+  record.parent = company
+end
+
+division.memberships.find_or_create_by!(customer: buyer)
+
+# The per-tree catalog: assigned to the root, so the division's buyers see it
+# too. Assortment-only — pricing keeps coming from the wholesale price list,
+# which shows the two axes composing.
+catalog = store.catalogs.find_or_create_by!(name: 'Wholesale Assortment')
+catalog.add_products(store.products.order(:id).limit(20).ids)
+catalog.catalog_assignments.find_or_create_by!(assignable: company)
