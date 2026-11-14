@@ -10,6 +10,7 @@ module Spree
         types = Rails.application.config.spree.time_based_collection_rules.map(&:to_s)
 
         time_based = Spree::Collection.automatic.
+                     where(store_id: Spree::Store.select(:id)).
                      where(id: Spree::CollectionRule.where(type: types).select(:collection_id))
 
         each_store_of(time_based) do |collections|
