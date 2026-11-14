@@ -1,6 +1,7 @@
 import {
   matchPluginRoute,
   outranksRouterMatch,
+  reportError,
   SettingsContainer,
   usePermissions,
   usePluginRoutes,
@@ -18,7 +19,7 @@ const CATCH_ALL_ROUTE_ID = '/_authenticated/$storeId/$'
  */
 export function PluginRoutePage({ storeId, path }: { storeId: string; path: string }) {
   return (
-    <CatchBoundary getResetKey={() => path} errorComponent={PluginRouteError}>
+    <CatchBoundary getResetKey={() => path} errorComponent={PluginRouteError} onCatch={reportError}>
       <MatchedPluginRoute storeId={storeId} path={path} />
     </CatchBoundary>
   )

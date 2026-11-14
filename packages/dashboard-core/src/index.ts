@@ -115,6 +115,7 @@ export { type DeveloperInspectorEntry, isFailedEntry } from './lib/developer-ins
 // ---------------------------------------------------------------------------
 export * from './lib/docs'
 export * from './lib/download'
+export * from './lib/error-reporting'
 export * from './lib/filters-to-ransack'
 export * from './lib/form-errors'
 export * from './lib/form-fields-registry'

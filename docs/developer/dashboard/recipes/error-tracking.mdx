@@ -1,0 +1,64 @@
+---
+title: Track dashboard errors
+sidebarTitle: Error tracking
+description: Send admin dashboard and seller panel errors to Sentry with the official plugin, or to another service with your own.
+---
+
+## Sentry
+
+`@spree/dashboard-sentry` reports errors from the admin dashboard and the seller panel. Install it in each app you deploy:
+
+```bash
+pnpm add @spree/dashboard-sentry
+```
+
+Then set the DSN of a browser (React) Sentry project in the app's `.env` and restart the dev server or rebuild. No code changes are needed: the dashboard's Vite plugin finds the package and loads it.
+
+| Variable | Purpose |
+|---|---|
+| `VITE_SENTRY_DSN` | Sentry project DSN. The plugin stays off while it is blank. The DSN is public by design |
+| `VITE_SENTRY_ENVIRONMENT` | Environment name on each event. Defaults to the Vite mode, such as `production` |
+| `VITE_SENTRY_RELEASE` | Release name on each event, for example the commit you deployed |
+| `VITE_SENTRY_ENABLE_IN_DEVELOPMENT` | Set to `true` to report from the dev server. Off by default |
+
+These values are compiled into the browser bundle, so set them when you build, not only when you run the server.
+
+What gets reported:
+
+- Uncaught errors and unhandled promise rejections.
+- Errors a page throws while rendering or loading data, including the ones the panel's error screen catches and shows.
+- The signed-in user's ID and email, cleared on sign-out.
+- A `panel` tag, `admin` or `seller`, so both apps can share one Sentry project.
+
+Not-found pages and redirects are not errors and are skipped. Single-use tokens in password reset, email confirmation and invitation links are replaced with `redacted` in URLs, messages and breadcrumbs before anything leaves the browser.
+
+The plugin sends errors only. Tracing belongs to OpenTelemetry, which Spree uses on the server.
+
+## Another service
+
+An error-tracking plugin needs two things from the dashboard:
+
+- `onError` in `defineDashboardPlugin`, called with every error the panel's error screens catch. These errors never reach `window.onerror`, where most error trackers listen.
+- The [`app.root` slot](/developer/dashboard/slots-catalog#app-root), rendered once inside the signed-in session, to attach the user to reports.
+
+```tsx
+import { APP_ROOT_SLOT, type AppRootSlotContext, defineDashboardPlugin, useAuth } from '@spree/dashboard-core'
+import { useEffect } from 'react'
+import { tracker } from './tracker'
+
+function TrackerUser({ panel }: AppRootSlotContext) {
+  const { user, isInitializing } = useAuth()
+  useEffect(() => {
+    if (isInitializing) return
+    tracker.setUser(user ? { id: user.id, panel } : null)
+  }, [user, panel, isInitializing])
+  return null
+}
+
+defineDashboardPlugin({
+  onError: (error) => tracker.capture(error),
+  slots: { [APP_ROOT_SLOT]: [{ id: 'tracker-user', component: TrackerUser as never }] },
+})
+```
+
+Mark the package as a dashboard plugin so both panels load it — see [Distributing plugins](/developer/dashboard/plugins/distributing).

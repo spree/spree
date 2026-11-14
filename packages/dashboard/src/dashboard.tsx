@@ -1,4 +1,11 @@
-import { AuthProvider, PermissionProvider, queryClient } from '@spree/dashboard-core'
+import {
+  APP_ROOT_SLOT,
+  type AppRootSlotContext,
+  AuthProvider,
+  PermissionProvider,
+  queryClient,
+  Slot,
+} from '@spree/dashboard-core'
 import { ConfirmProvider, ThemeProvider, TooltipProvider } from '@spree/dashboard-ui'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { type AnyRouter, RouterProvider } from '@tanstack/react-router'
@@ -51,6 +58,8 @@ export function Dashboard({ router }: { router: AnyRouter }) {
             <PermissionProvider>
               <TooltipProvider>
                 <ConfirmProvider>
+                  {/* Mounted once for the whole panel, inside the auth session: error tracking, analytics. */}
+                  <Slot<AppRootSlotContext> name={APP_ROOT_SLOT} context={{ panel: 'admin' }} />
                   <RouterProvider router={router} />
                 </ConfirmProvider>
               </TooltipProvider>

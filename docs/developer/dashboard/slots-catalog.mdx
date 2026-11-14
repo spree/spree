@@ -14,6 +14,7 @@ If you need a new injection point in a built-in page, open a PR adding `<Slot na
 |---|---|---|
 | Every page | Page header | `page.actions`, `page.actions_dropdown` |
 | Every page | Tabbed sub-navigation | `page.tabs` |
+| Whole panel | Admin dashboard and seller panel | `app.root` |
 | Products | Product | `product.form_main`, `product.form_sidebar`, `product.media.*`, `product.variant.form_fields` |
 | Products | Media library | `media.form_fields`, `media.context_menu` |
 | Products | Category | `category.form_main`, `category.form_sidebar` |
@@ -57,6 +58,17 @@ function MyWidget({ product }: { product: Product }) {
 ```
 
 The same applies to an entry's `if` predicate: it receives the slot context, but not `permissions` — gate inside the component for now.
+
+## Panel slot
+
+### `app.root`
+
+| Where | Once for the whole panel — the admin dashboard and the seller panel — inside the auth, permission and query providers, outside the router. Signed in or not |
+|---|---|
+| Use | Components that render nothing and connect the session to another service: attach the signed-in user to error reports, identify them in analytics |
+| Context | `{ panel }` — `'admin'` or `'seller'` |
+
+Import the name as `APP_ROOT_SLOT` and the context type as `AppRootSlotContext` from `@spree/dashboard-core`. Read the session with `useAuth()`; wait until `isInitializing` is false before treating a missing `user` as signed out. See [Error tracking](/developer/dashboard/recipes/error-tracking).
 
 ## Page header slots
 
