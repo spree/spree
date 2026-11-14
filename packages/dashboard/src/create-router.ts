@@ -1,5 +1,9 @@
-import { getPluginRoutes, type RootRouteEntry, reportCaughtError } from '@spree/dashboard-core'
-import { ErrorState } from '@spree/dashboard-ui'
+import {
+  getPluginRoutes,
+  type RootRouteEntry,
+  RouteErrorScreen,
+  reportCaughtError,
+} from '@spree/dashboard-core'
 import {
   type AnyRoute,
   createRoute,
@@ -57,13 +61,8 @@ export function createDashboardRouter<TRouteTree extends AnyRoute>(
     // TanStack renders a bare "Loading…" string on an otherwise blank page.
     defaultPendingComponent: RoutePending,
     // Without this a thrown render or loader error takes the whole admin down
-    // to a white screen. TanStack hands the component `{ error, reset }`, so
-    // the merchant gets the message and a retry rather than a dead tab.
-    // `createElement` rather than JSX so this stays a `.ts` module: renaming
-    // it to `.tsx` changes the specifier every importer resolves, which a
-    // running dev server caches and then fails to find.
-    defaultErrorComponent: ({ error, reset }) =>
-      createElement(ErrorState, { error, onRetry: reset }),
+    // to a white screen; the merchant gets the message and a retry instead.
+    defaultErrorComponent: RouteErrorScreen,
     // The error screen stops the error, so it never reaches window.onerror;
     // this hands it to error-tracking plugins.
     defaultOnCatch: reportCaughtError,

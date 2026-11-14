@@ -25,4 +25,23 @@ test.describe('seller panel — error screen', () => {
     await expect(page).toHaveURL(/\/products/)
     await expect(page.getByText('Something went wrong')).toHaveCount(0)
   })
+
+  test('Try again fetches the page again and recovers', async ({ page }) => {
+    let broken = true
+    await page.route('**/api/v3/seller/profile', async (route) => {
+      if (route.request().method() !== 'GET' || !broken) return route.fallback()
+      const response = await route.fetch()
+      const profile = await response.json()
+      await route.fulfill({ response, json: { ...profile, products_count: { broken: true } } })
+    })
+
+    await sellerLogin(page)
+    await expect(page.getByText('Something went wrong')).toBeVisible({ timeout: 15_000 })
+
+    broken = false
+    await page.getByRole('button', { name: 'Try again' }).click()
+
+    await expect(page.getByRole('heading', { name: /^Hello, / })).toBeVisible({ timeout: 15_000 })
+    await expect(page.getByText('Something went wrong')).toHaveCount(0)
+  })
 })

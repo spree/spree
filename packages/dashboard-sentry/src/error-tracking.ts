@@ -14,14 +14,24 @@ export function errorTrackingEnabled({ dsn, production, enableInDevelopment }: E
   return Boolean(dsn) && (production || enableInDevelopment === 'true')
 }
 
-function redactValues(values: Record<string, unknown> | undefined) {
-  if (!values) return
-  for (const [key, value] of Object.entries(values)) {
-    if (typeof value === 'string') values[key] = redactTokens(value)
-  }
+// Strings anywhere inside `value`: console breadcrumbs keep each logged
+// argument in `data.arguments`, and a rejected plain object lands in
+// `extra.__serialized__`.
+function redactDeep(value: unknown, depth = 0): unknown {
+  if (typeof value === 'string') return redactTokens(value)
+  if (depth > 5 || value === null || typeof value !== 'object') return value
+  if (Array.isArray(value)) return value.map((item) => redactDeep(item, depth + 1))
+  return Object.fromEntries(
+    Object.entries(value).map(([key, item]) => [key, redactDeep(item, depth + 1)]),
+  )
 }
 
-// The page URL, its Referer header, and the error's own text.
+function redactValues(values: Record<string, unknown> | undefined) {
+  if (!values) return
+  for (const [key, value] of Object.entries(values)) values[key] = redactDeep(value)
+}
+
+// The page URL, its Referer header, the error's own text and its extra data.
 export function scrubErrorEvent(event: Sentry.ErrorEvent) {
   if (event.request?.url) event.request.url = redactTokens(event.request.url)
   redactValues(event.request?.headers)
@@ -29,6 +39,7 @@ export function scrubErrorEvent(event: Sentry.ErrorEvent) {
   for (const exception of event.exception?.values ?? []) {
     if (exception.value) exception.value = redactTokens(exception.value)
   }
+  redactValues(event.extra)
   return event
 }
 

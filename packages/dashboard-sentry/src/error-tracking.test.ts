@@ -68,6 +68,23 @@ describe('panelFromPackages', () => {
   })
 })
 
+describe('scrubErrorEvent extra data', () => {
+  it('redacts tokens in a rejected plain object', () => {
+    const event = scrubErrorEvent({
+      type: undefined,
+      extra: {
+        __serialized__: { message: 'open /reset-password?token=abc', nested: ['?token=def'] },
+      },
+    })
+    expect(event.extra).toEqual({
+      __serialized__: {
+        message: 'open /reset-password?token=redacted',
+        nested: ['?token=redacted'],
+      },
+    })
+  })
+})
+
 describe('scrubBreadcrumb', () => {
   it('redacts tokens in navigation and request breadcrumbs', () => {
     const navigation = scrubBreadcrumb({
@@ -95,12 +112,21 @@ describe('scrubBreadcrumb', () => {
     expect(reset.data?.url).toBe('/api/v3/admin/auth/password_resets/redacted')
   })
 
-  it('redacts tokens in console breadcrumbs', () => {
+  it('redacts tokens in console breadcrumbs, arguments included', () => {
     const log = scrubBreadcrumb({
       category: 'console',
+      level: 'error',
       message: 'Error: could not open /dashboard/reset-password?token=abc',
+      data: {
+        arguments: ['Error: could not open', { url: '/dashboard/reset-password?token=abc' }],
+        logger: 'console',
+      },
     })
     expect(log.message).toBe('Error: could not open /dashboard/reset-password?token=redacted')
+    expect(log.data).toEqual({
+      arguments: ['Error: could not open', { url: '/dashboard/reset-password?token=redacted' }],
+      logger: 'console',
+    })
   })
 
   it('redacts percent-encoded tokens inside another URL', () => {

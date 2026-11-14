@@ -6,6 +6,7 @@ import {
   APP_ROOT_SLOT,
   type AppRootSlotContext,
   type SlotAmbientContext,
+  type SlotEntry,
   useSlotEntries,
 } from '../lib/slot-registry'
 
@@ -59,18 +60,26 @@ export function Slot<TContext extends object = object>({
 
 /**
  * The `app.root` slot, mounted once per panel above the router. Nothing above
- * it catches errors, so a widget that throws is reported and dropped instead
- * of blanking the whole panel.
+ * it catches errors, so each entry gets its own boundary: one that throws is
+ * reported and dropped, and the others keep running.
  */
 export function AppRootSlot({ panel }: AppRootSlotContext) {
+  const entries = useSlotEntries(APP_ROOT_SLOT) as readonly SlotEntry<AppRootSlotContext>[]
   return (
-    <CatchBoundary
-      getResetKey={() => panel}
-      errorComponent={() => null}
-      onCatch={reportCaughtError}
-    >
-      <Slot<AppRootSlotContext> name={APP_ROOT_SLOT} context={{ panel }} />
-    </CatchBoundary>
+    <>
+      {entries
+        .filter((entry) => (entry.if ? entry.if({ panel }) : true))
+        .map(({ id, component: Component }) => (
+          <CatchBoundary
+            key={id}
+            getResetKey={() => panel}
+            errorComponent={() => null}
+            onCatch={reportCaughtError}
+          >
+            <Component panel={panel} />
+          </CatchBoundary>
+        ))}
+    </>
   )
 }
 

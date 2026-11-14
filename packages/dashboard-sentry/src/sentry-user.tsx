@@ -19,6 +19,8 @@ export function SentryUser({ panel }: AppRootSlotContext) {
     // The session is still being restored from the refresh cookie.
     if (isInitializing) return
     setUser(id ? { id, email: email ?? undefined } : null)
+    // Unmounted, it can no longer see a sign-out, so it stops naming the user.
+    return () => setUser(null)
   }, [id, email, isInitializing])
 
   return null
