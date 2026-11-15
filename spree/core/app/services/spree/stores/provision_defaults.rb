@@ -1,6 +1,6 @@
 module Spree
   module Stores
-    # @deprecated Removed in Spree 6.2. Move a store to another country with
+    # @deprecated Removed in Spree 6.4. Move a store to another country with
     #   {Spree::Store#relocate} and deploy its defaults with `spree seed defaults`.
     class ProvisionDefaults < Spree::Seeds::RemovedStoreDefaults
       private

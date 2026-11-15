@@ -28,7 +28,7 @@ module Spree
     def warn_about_sample_option
       return unless options[:sample]
 
-      say_status :deprecated, '--sample is ignored and will be removed in Spree 6.2: sample data needs a store that finished setup. ' \
+      say_status :deprecated, '--sample is ignored and will be removed in Spree 6.4: sample data needs a store that finished setup. ' \
                               'Load it afterwards with bin/rails spree:load_sample_data', :yellow
     end
 
