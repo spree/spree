@@ -138,6 +138,9 @@ module SpreeMeilisearch
     # subsequent add_documents calls use the correct filterable/sortable attributes.
     def ensure_index_settings!
       index = client.index(index_name)
+      # Forget the last applied settings first: a push that raises partway
+      # leaves the index in between, and the next job must push again.
+      Rails.cache.delete(index_settings_cache_key)
       tasks = []
       tasks << index.update_filterable_attributes(filterable_attributes)
       tasks << index.update_sortable_attributes(sortable_attributes)
@@ -147,11 +150,9 @@ module SpreeMeilisearch
       @index_settings_configured = true
       # Only a push Meilisearch applied counts: a failed, cancelled or missing
       # task must be pushed again by the next job.
-      if tasks.all? { |task| task&.succeeded? }
-        Rails.cache.write(index_settings_cache_key, index_settings_digest, expires_in: SETTINGS_CACHE_TTL)
-      else
-        Rails.cache.delete(index_settings_cache_key)
-      end
+      return unless tasks.all? { |task| task&.succeeded? }
+
+      Rails.cache.write(index_settings_cache_key, index_settings_digest, expires_in: SETTINGS_CACHE_TTL)
     end
 
     # Lightweight guard for single-product writes. Every index job builds a new

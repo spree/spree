@@ -545,6 +545,16 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
       expect(mock_index).to have_received(:update_filterable_attributes).twice
     end
 
+    it 'forgets the remembered push when a later explicit push raises' do
+      described_class.new(store).index(product_1)
+      allow(settings_task).to receive(:await).and_raise(Meilisearch::ApiError.new(429, 'Too Many Requests', '{}'))
+      expect { described_class.new(store).ensure_index_settings! }.to raise_error(Meilisearch::ApiError)
+      allow(settings_task).to receive(:await).and_return(nil)
+      described_class.new(store).index(product_2)
+
+      expect(mock_index).to have_received(:update_filterable_attributes).exactly(3).times
+    end
+
     it 'keeps each store index separate' do
       other_store = create(:store)
       described_class.new(store).index(product_1)
