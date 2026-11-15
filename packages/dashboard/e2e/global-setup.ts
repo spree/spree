@@ -102,9 +102,8 @@ const BOOTSTRAP_RUBY = [
   'puts JSON.generate(api_url: "http://localhost:#{port}", admin_email: admin.email, admin_password: "spree123", store_id: s.prefixed_id, store_name: s.name, comma_store_id: comma_store.prefixed_id, deploy_token: deploy_key.plaintext_token, comma_deploy_token: comma_deploy_key.plaintext_token)',
 ].join('; ')
 
-// What no API writes: the ledger's settled and owed payouts, the seller panel
-// accounts, a payment carrying the issuer's answers and a checkout's
-// reservation. Written directly once the deployed records exist, keyed on the
+// What no API writes: the ledger's settled and owed payouts, a payment
+// carrying the issuer's answers and a checkout's reservation. Written directly once the deployed records exist, keyed on the
 // same natural keys the files declare.
 const transactionsRuby = (ledgerSellerSlug: string) =>
   [
@@ -118,15 +117,6 @@ const transactionsRuby = (ledgerSellerSlug: string) =>
     `ledger_seller.seller_payouts.where(amount: ${FIXTURE_LEDGER_OWED_AMOUNT}).first_or_create!(store: s, currency: s.default_currency, provider: Spree::PayoutProvider::System.provider_key, status: 'pending')`,
     `ledger_order = s.orders.where(seller: ledger_seller).first || Spree::Order.create!(store: s, seller: ledger_seller, currency: s.default_currency, email: 'e2e-ledger@example.com', status: 'placed', completed_at: Time.current)`,
     `ledger_seller.seller_transfers.first_or_create!(store: s, order: ledger_order, payout: ledger_payout, amount: ${FIXTURE_LEDGER_PAYOUT_AMOUNT}, currency: s.default_currency, kind: 'earning', provider: Spree::PayoutProvider::System.provider_key, status: 'completed')`,
-    // Seller panel accounts. One runs the ledger seller, whose sale and payouts
-    // give the read-only panel screens something to show; the other runs a
-    // seller of its own that the specs editing a profile, policy or team may
-    // change freely. One seller each, so neither lands on the seller picker.
-    `seller_user = Spree.admin_user_class.where(email: '${FIXTURE_SELLER_USER_EMAIL}').first_or_create! { |u| u.password = '${FIXTURE_SELLER_PASSWORD}'; u.password_confirmation = '${FIXTURE_SELLER_PASSWORD}'; u.first_name = 'Lee'; u.last_name = 'Ledger' }`,
-    'ledger_seller.add_user(seller_user)',
-    `panel_seller = s.sellers.find_by!(name: '${FIXTURE_PANEL_SELLER}')`,
-    `seller_writer = Spree.admin_user_class.where(email: '${FIXTURE_SELLER_WRITER_EMAIL}').first_or_create! { |u| u.password = '${FIXTURE_SELLER_PASSWORD}'; u.password_confirmation = '${FIXTURE_SELLER_PASSWORD}'; u.first_name = 'Pat'; u.last_name = 'Panel' }`,
-    'panel_seller.add_user(seller_writer)',
     // A card payment the test gateway has charged, so its page at the gateway's
     // dashboard has an address, and whose card failed both of the issuer's
     // checks. Written directly: what the issuer answered comes from the
@@ -222,13 +212,69 @@ async function deployFixtures(
 }
 
 /**
+ * The store's admin, signed in. An invitation records who sent it, so it
+ * cannot be sent with the deploy key, which belongs to no person.
+ */
+async function signInOperator(credentials: Record<string, string>): Promise<AdminClient> {
+  const operator = createAdminClient({
+    baseUrl: credentials.api_url,
+    storeId: credentials.store_id,
+    retry: false,
+  })
+  const session = await operator.auth.login({
+    email: credentials.admin_email,
+    password: credentials.admin_password,
+  })
+  operator.setToken(session.token)
+  return operator
+}
+
+/**
+ * A seller panel account, made the way a real one is: the operator invites
+ * the address onto the seller's team, and the invitee accepts with the token
+ * from the invitation's link, which creates the account.
+ */
+async function inviteSellerAccount(
+  client: AdminClient,
+  apiUrl: string,
+  sellerId: string,
+  account: { email: string; first_name: string; last_name: string },
+) {
+  const invitation = await client.sellers.invitations.create(sellerId, { email: account.email })
+  const link = await client.sellers.invitations.acceptanceLink(sellerId, invitation.id)
+  // The link is a path when the app has no origin configured.
+  const token = new URL(link.acceptance_url, apiUrl).searchParams.get('token')
+  if (!token) throw new Error(`The invitation link for ${account.email} carries no token`)
+
+  await createSellerClient({ baseUrl: apiUrl, retry: false }).auth.acceptInvitation(
+    invitation.id,
+    token,
+    {
+      password: FIXTURE_SELLER_PASSWORD,
+      password_confirmation: FIXTURE_SELLER_PASSWORD,
+      first_name: account.first_name,
+      last_name: account.last_name,
+    },
+  )
+}
+
+/**
  * What the operator does to the deployed records: the default market offers
  * German, so the orders list can show a German-language order in the US
- * market, and the ledger seller is approved without an onboarding checklist.
+ * market, the ledger seller is approved without an onboarding checklist, and
+ * each seller gets its panel account. One runs the ledger seller, whose sale
+ * and payouts give the read-only panel screens something to show; the other
+ * runs a seller of its own that the specs editing a profile, policy or team
+ * may change freely. One seller each, so neither lands on the seller picker.
  *
  * @returns The ledger seller's id.
  */
-async function prepareStore(client: AdminClient, sellerSlug: string): Promise<string> {
+async function prepareStore(
+  client: AdminClient,
+  credentials: Record<string, string>,
+  sellerSlug: string,
+): Promise<string> {
+  const apiUrl = credentials.api_url
   const markets = await client.markets.list({ limit: 100 })
   const market = markets.data.find((candidate) => candidate.default)
   if (!market) throw new Error('The e2e store has no default market')
@@ -242,6 +288,21 @@ async function prepareStore(client: AdminClient, sellerSlug: string): Promise<st
   const seller = sellers.data.find((candidate) => candidate.slug === sellerSlug)
   if (!seller) throw new Error(`The deploy did not create seller "${sellerSlug}"`)
   await client.sellers.approve(seller.id, { override_requirements: true })
+
+  const operator = await signInOperator(credentials)
+  await inviteSellerAccount(operator, apiUrl, seller.id, {
+    email: FIXTURE_SELLER_USER_EMAIL,
+    first_name: 'Lee',
+    last_name: 'Ledger',
+  })
+
+  const panelSeller = sellers.data.find((candidate) => candidate.name === FIXTURE_PANEL_SELLER)
+  if (!panelSeller) throw new Error(`The deploy did not create seller "${FIXTURE_PANEL_SELLER}"`)
+  await inviteSellerAccount(operator, apiUrl, panelSeller.id, {
+    email: FIXTURE_SELLER_WRITER_EMAIL,
+    first_name: 'Pat',
+    last_name: 'Panel',
+  })
   return seller.id
 }
 
@@ -385,7 +446,7 @@ export default async function globalSetup() {
   await deployFixtures('e2e/fixtures/comma-store.yml', commaConfig, commaClient)
 
   const sellerSlug = ledgerSellerSlug(config)
-  const sellerId = await prepareStore(client, sellerSlug)
+  const sellerId = await prepareStore(client, credentials, sellerSlug)
   runRails(transactionsRuby(sellerSlug), RAILS_ENV, 'Transaction fixtures runner')
   await prepareLedgerSeller(credentials.api_url, sellerId, 'USD')
 }
