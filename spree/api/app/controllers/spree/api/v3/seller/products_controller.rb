@@ -240,6 +240,7 @@ module Spree
             attrs[:variants] = attrs[:variants]&.map do |variant|
               variant = variant.merge(prices: default_price_currencies(variant[:prices])) if variant.key?(:prices)
               variant = variant.merge(stock_levels: own_stock_levels(variant[:stock_levels])) if variant.key?(:stock_levels)
+              variant = variant.merge(options: existing_options(variant[:options])) if variant[:options].present?
               variant
             end
 
@@ -277,6 +278,33 @@ module Spree
             return nil if value.blank?
 
             current_store.delivery_profiles.find_by_prefix_id!(value).id
+          end
+
+          # A variant names its options by type and value, and the model creates
+          # whichever it cannot find. That is right for an operator and wrong
+          # here: the option vocabulary is the marketplace's, so a seller may
+          # only choose from it. Each pair is resolved against the store's
+          # existing types and values; one that does not exist is a 404, like
+          # any other picker value a seller cannot use.
+          def existing_options(options)
+            vocabulary = option_vocabulary
+
+            options.filter_map do |option|
+              # Blank pairs are skipped by the model; they are not a lookup.
+              next if option[:name].blank? || option[:value].blank?
+
+              option_type = vocabulary[option[:name].to_s.parameterize] || raise(ActiveRecord::RecordNotFound)
+              option_value = option_type.option_values.find { |value| value.name == option[:value].to_s.parameterize } ||
+                             raise(ActiveRecord::RecordNotFound)
+
+              option.merge(name: option_type.name, value: option_value.name)
+            end
+          end
+
+          # The store's option types with their values, loaded once per request
+          # and keyed by name.
+          def option_vocabulary
+            @option_vocabulary ||= Spree::OptionType.for_store(current_store).includes(:option_values).index_by(&:name)
           end
 
           # Stock belongs to the warehouse it sits in, and a seller has their

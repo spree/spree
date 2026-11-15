@@ -320,6 +320,61 @@ RSpec.describe Spree::Api::V3::Seller::ProductsController, type: :controller do
       expect(mine.reload.variants.map(&:sku)).to include('LAMP-1')
     end
 
+    # The option vocabulary is the marketplace's: a seller chooses from it, and
+    # the model's create-when-missing behaviour must not be reachable.
+    describe 'variant options' do
+      let!(:size) { create(:option_type, name: 'size', label: 'Size', store: store) }
+      let!(:small) { create(:option_value, name: 'small', label: 'Small', option_type: size) }
+
+      it 'accepts an existing option type and value' do
+        patch :update,
+              params: { id: mine.prefixed_id, variants: [{ sku: 'LAMP-S', options: [{ name: 'size', value: 'small' }] }] },
+              as: :json
+
+        expect(response).to have_http_status(:ok)
+        variant = mine.reload.variants.find_by(sku: 'LAMP-S')
+        expect(variant.option_values).to contain_exactly(small)
+      end
+
+      it 'ignores a blank option pair like the model does' do
+        patch :update,
+              params: { id: mine.prefixed_id, variants: [{ sku: 'LAMP-B', options: [{ name: '', value: '' }] }] },
+              as: :json
+
+        expect(response).to have_http_status(:ok)
+      end
+
+      it 'does not create an option type' do
+        expect do
+          patch :update,
+                params: { id: mine.prefixed_id, variants: [{ sku: 'LAMP-C', options: [{ name: 'colour', value: 'red' }] }] },
+                as: :json
+        end.not_to change(Spree::OptionType, :count)
+
+        expect(response).to have_http_status(:not_found)
+      end
+
+      it 'does not create an option value' do
+        expect do
+          patch :update,
+                params: { id: mine.prefixed_id, variants: [{ sku: 'LAMP-L', options: [{ name: 'size', value: 'large' }] }] },
+                as: :json
+        end.not_to change(Spree::OptionValue, :count)
+
+        expect(response).to have_http_status(:not_found)
+      end
+
+      it "does not match another store's option type" do
+        create(:option_type, name: 'material', label: 'Material', store: create(:store))
+
+        patch :update,
+              params: { id: mine.prefixed_id, variants: [{ sku: 'LAMP-M', options: [{ name: 'material', value: 'wood' }] }] },
+              as: :json
+
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+
     # `Variant#stock_levels=` resolves a location against the product's store,
     # which on a marketplace spans every seller — so the ids are narrowed to
     # this seller's before the payload gets there.

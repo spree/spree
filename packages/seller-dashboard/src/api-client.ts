@@ -1,5 +1,5 @@
 import { i18n, runtimeListParams, setApiClient } from '@spree/dashboard-core'
-import type { SellerApiClient, SellerExportCreateParams } from '@spree/seller-sdk'
+import type { OptionType, SellerApiClient, SellerExportCreateParams } from '@spree/seller-sdk'
 import { createSellerClient } from '@spree/seller-sdk'
 
 /**
@@ -122,6 +122,31 @@ export function createSellerApiClient({
       get: (id) => sellerClient().stockLocations.get(id),
       create: (params) => sellerClient().stockLocations.create(params),
       update: (id, params) => sellerClient().stockLocations.update(id, params),
+    },
+    // The option types and values a seller builds variants from. Read only:
+    // there is no `create` or `update`, so the shared options builder offers
+    // just the marketplace's existing vocabulary, never a way to add to it.
+    //
+    // The shared builder asks for one page of 100 and renders only what it is
+    // given, so every page is fetched here: a vocabulary larger than a page
+    // must still be fully pickable. Capped so a runaway cannot loop forever.
+    optionTypes: {
+      list: async (params) => {
+        const MAX_PAGES = 20
+        const data: OptionType[] = []
+        let page = 1
+
+        for (let fetched = 0; fetched < MAX_PAGES; fetched += 1) {
+          const result = await sellerClient().optionTypes.list(
+            runtimeListParams({ ...params, page, expand: ['option_values'] }),
+          )
+          data.push(...result.data)
+          if (!result.meta.next) break
+          page = result.meta.next
+        }
+
+        return { data }
+      },
     },
     // The marketplace's vocabulary the product form picks from: types and
     // delivery profiles only. Categories, collections and tags are filing,
