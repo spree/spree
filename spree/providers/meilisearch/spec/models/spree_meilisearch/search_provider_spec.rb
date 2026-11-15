@@ -462,6 +462,85 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
     end
   end
 
+  describe 'index settings on product writes' do
+    include ActiveSupport::Testing::TimeHelpers
+
+    let(:cache) { ActiveSupport::Cache::MemoryStore.new }
+    let(:settings_task) { instance_double(::Meilisearch::Models::Task, await: nil, succeeded?: true) }
+
+    before do
+      allow(Rails).to receive(:cache).and_return(cache)
+      allow(mock_index).to receive(:add_documents)
+      %i[update_filterable_attributes update_sortable_attributes update_searchable_attributes update_distinct_attribute].each do |update|
+        allow(mock_index).to receive(update).and_return(settings_task)
+      end
+    end
+
+    it 'pushes the settings once per index across provider instances' do
+      described_class.new(store).index(product_1)
+      described_class.new(store).index(product_2)
+
+      expect(mock_index).to have_received(:update_filterable_attributes).once
+      expect(mock_index).to have_received(:update_distinct_attribute).once
+    end
+
+    it 'polls settings tasks every 250ms instead of the client default' do
+      provider.index(product_1)
+
+      expect(settings_task).to have_received(:await).with(5_000, 250).exactly(4).times
+    end
+
+    it 'pushes again when the settings change' do
+      described_class.new(store).index(product_1)
+      create(:custom_field_definition, :short_text_field, :searchable, :sortable, namespace: 'custom', key: 'label')
+      described_class.new(store).index(product_2)
+
+      expect(mock_index).to have_received(:update_filterable_attributes).twice
+    end
+
+    it 'pushes again after the remembered push expires' do
+      described_class.new(store).index(product_1)
+      travel_to(described_class::SETTINGS_CACHE_TTL.from_now + 1.minute) do
+        described_class.new(store).index(product_2)
+      end
+
+      expect(mock_index).to have_received(:update_filterable_attributes).twice
+    end
+
+    it 'pushes again when a settings task did not succeed' do
+      allow(settings_task).to receive(:succeeded?).and_return(false)
+
+      described_class.new(store).index(product_1)
+      described_class.new(store).index(product_2)
+
+      expect(mock_index).to have_received(:update_filterable_attributes).twice
+    end
+
+    it 'pushes again when awaiting a settings task raised' do
+      allow(settings_task).to receive(:await).and_raise(::Meilisearch::ApiError.new(429, 'Too Many Requests', '{}'))
+
+      expect { described_class.new(store).index(product_1) }.to raise_error(::Meilisearch::ApiError)
+      allow(settings_task).to receive(:await).and_return(nil)
+      described_class.new(store).index(product_2)
+
+      expect(mock_index).to have_received(:update_filterable_attributes).twice
+    end
+
+    it 'keeps each store index separate' do
+      other_store = create(:store)
+      described_class.new(store).index(product_1)
+      described_class.new(other_store).index(product_1)
+
+      expect(mock_index).to have_received(:update_filterable_attributes).twice
+    end
+
+    it 'still pushes on every explicit ensure_index_settings! call' do
+      2.times { described_class.new(store).ensure_index_settings! }
+
+      expect(mock_index).to have_received(:update_filterable_attributes).twice
+    end
+  end
+
   describe '#remove' do
     it 'deletes all locale/currency variants by product_id filter' do
       expect(mock_index).to receive(:delete_documents).with(filter: "product_id = '#{product_1.prefixed_id}'")

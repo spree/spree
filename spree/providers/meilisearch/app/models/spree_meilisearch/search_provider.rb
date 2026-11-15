@@ -9,6 +9,13 @@ module SpreeMeilisearch
     ALLOWED_STATUSES = %w[active draft archived paused].freeze
     BUILT_IN_FILTERABLE_ATTRIBUTES = %w[product_id status in_stock preorder store_ids channel_ids locale currency available_on discontinue_on price category_ids collection_ids grouping_id tags option_value_ids option_value_combination_ids].freeze
     CUSTOM_FIELD_RANGE_OPERATORS = { 'gt' => '>', 'gteq' => '>=', 'lt' => '<', 'lteq' => '<=' }.freeze
+    # How long a settings push is remembered. The entry is keyed by a digest of
+    # the settings, so a schema change pushes at once; the expiry only bounds
+    # how long an index recreated outside Spree stays unconfigured.
+    SETTINGS_CACHE_TTL = 1.hour
+    SETTINGS_TASK_TIMEOUT_MS = 5_000
+    # The client's default of 50ms is 20 requests a second per waiting job.
+    SETTINGS_TASK_POLL_INTERVAL_MS = 250
 
     def self.indexing_required?
       true
@@ -136,15 +143,23 @@ module SpreeMeilisearch
       tasks << index.update_sortable_attributes(sortable_attributes)
       tasks << index.update_searchable_attributes(searchable_attributes)
       tasks << index.update_distinct_attribute(distinct_attribute)
-      tasks.each { |task| task&.await }
+      tasks.compact!
+      tasks.each { |task| task.await(SETTINGS_TASK_TIMEOUT_MS, SETTINGS_TASK_POLL_INTERVAL_MS) }
       @index_settings_configured = true
+      # Only a push Meilisearch applied counts: a failed or cancelled task
+      # must be pushed again by the next job.
+      Rails.cache.write(index_settings_cache_key, true, expires_in: SETTINGS_CACHE_TTL) if tasks.all?(&:succeeded?)
     end
 
-    # Lightweight guard — configures index settings once per provider instance.
-    # Meilisearch settings updates are idempotent, so repeated calls are safe
-    # but we avoid the overhead by memoizing.
+    # Lightweight guard for single-product writes. Every index job builds a new
+    # provider, so a per-instance memo alone made each product write push four
+    # settings tasks and poll Meilisearch until they finished; a bulk write
+    # (import, sample data) then flooded it into 429 Too Many Requests. The
+    # push is remembered in Rails.cache per index and per settings digest, so
+    # it repeats only when the settings change or the entry expires.
     def ensure_index_settings_once!
       return if @index_settings_configured
+      return @index_settings_configured = true if Rails.cache.exist?(index_settings_cache_key)
 
       ensure_index_settings!
     end
@@ -294,6 +309,11 @@ module SpreeMeilisearch
 
     def index_name
       "#{store.code}_products"
+    end
+
+    def index_settings_cache_key
+      settings = [filterable_attributes, sortable_attributes, searchable_attributes, distinct_attribute]
+      "spree_meilisearch/index_settings/#{index_name}/#{Digest::SHA256.hexdigest(settings.to_json)}"
     end
 
     def storefront_custom_field_schema
