@@ -59,7 +59,7 @@ end
 def warn_about_load_sample_data
   return unless ENV['LOAD_SAMPLE_DATA'] == 'true'
 
-  say 'LOAD_SAMPLE_DATA is ignored and will be removed in Spree 6.2: sample data needs a store that finished setup. ' \
+  say 'LOAD_SAMPLE_DATA is ignored and will be removed in Spree 6.4: sample data needs a store that finished setup. ' \
       'Load it afterwards with: bin/rails spree:load_sample_data', :yellow
 end
 

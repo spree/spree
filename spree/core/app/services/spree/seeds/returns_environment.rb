@@ -1,6 +1,6 @@
 module Spree
   module Seeds
-    # @deprecated Removed in Spree 6.2; see {Spree::Seeds::RemovedStoreDefaults}.
+    # @deprecated Removed in Spree 6.4; see {Spree::Seeds::RemovedStoreDefaults}.
     class ReturnsEnvironment < RemovedStoreDefaults; end
   end
 end
