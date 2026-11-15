@@ -407,6 +407,9 @@ importers:
       '@spree/dashboard-ui':
         specifier: workspace:^
         version: link:../dashboard-ui
+      '@spree/seller-sdk':
+        specifier: workspace:^
+        version: link:../seller-sdk
       '@tanstack/react-query':
         specifier: 'catalog:'
         version: 5.107.1(@types/react@19.3.0)(react@19.3.1)
