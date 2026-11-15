@@ -19,7 +19,7 @@ export function AssistantMarkdown({ text }: { text: string }) {
   const blocks = text.trim().split(/\n{2,}/)
 
   return (
-    <div className="max-w-[85%] space-y-2 text-sm">
+    <div className="space-y-2 text-sm">
       {blocks.map((block, blockIndex) => {
         const lines = block.split('\n')
         const isList = lines.every((line) => /^\s*([-*+]|\d+\.)\s+/.test(line))

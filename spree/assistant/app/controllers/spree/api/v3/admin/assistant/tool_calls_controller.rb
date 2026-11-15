@@ -88,10 +88,10 @@ module Spree
             # Scoped through the chat, so a call id from someone else's
             # conversation is a 404 rather than an approval.
             def load_tool_call
-              @tool_call = Spree::AssistantToolCall
-                           .joins(:message)
-                           .where(spree_assistant_messages: { chat_id: @chat.id })
-                           .find_by_prefix_id!(params[:id])
+              @tool_call = Spree::AssistantToolCall.
+                           joins(:message).
+                           where(spree_assistant_messages: { chat_id: @chat.id }).
+                           find_by_prefix_id!(params[:id])
             end
 
             def require_assistant_permission!

@@ -3,17 +3,18 @@
 ENV['RAILS_ENV'] ||= 'test'
 
 begin
-  require File.expand_path('../dummy/config/environment', __FILE__)
+  require File.expand_path('dummy/config/environment', __dir__)
 rescue LoadError
   puts 'Could not load dummy application. Please ensure you have run `bundle exec rake test_app`'
 end
 
 require 'rspec/rails'
-require 'database_cleaner/active_record'
 
 require 'spree/testing_support/factories'
 require 'spree/testing_support/jobs'
 require 'spree/testing_support/store'
+require 'spree/api/testing_support/v3/base'
+require 'spree/api/testing_support/agent_dispatch_headers'
 
 require 'spree/assistant/testing_support/scripted_provider'
 

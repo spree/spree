@@ -3,13 +3,16 @@ require 'spec_helper'
 RSpec.describe Spree::Assistant::ToolAdapter do
   let(:store) { @default_store }
   let(:admin) { create(:admin_user) }
-  let(:context) { Spree::Assistant::Context.new(store: store, user: admin, ability: ability) }
+  let(:context) do
+    Spree::AgentTools::Context.new(store: store, user: admin, ability: ability,
+                                   request_headers: agent_headers_for(admin))
+  end
   let(:ability) { full_ability_for(admin) }
   # A real ability rather than a double: the tools now call `accessible_by`,
   # which needs CanCanCan's actual machinery. `admin` here is a full admin, so
-  # this grants everything — record-level narrowing is exercised in
-  # spec/authorization_spec.rb.
-  def full_ability_for(user)
+  # this grants everything — record-level narrowing is exercised by core's
+  # agent tool specs.
+  def full_ability_for(_user)
     Class.new do
       include CanCan::Ability
 
@@ -28,7 +31,7 @@ RSpec.describe Spree::Assistant::ToolAdapter do
   let!(:product) { create(:product, store: store, status: 'active') }
 
   def adapter_for(tool_name)
-    tool = Spree::Assistant.tools.find_by_name(tool_name).new(context)
+    tool = Spree.admin_agent_tools.find { |candidate| candidate.tool_name == tool_name }.new(context)
     described_class.build(tool, turn)
   end
 
@@ -61,44 +64,73 @@ RSpec.describe Spree::Assistant::ToolAdapter do
     end
 
     it 'is declared to the library as needing approval' do
-      expect(adapter_for('update_product_status').requires_approval?).to be(true)
+      expect(adapter_for('products_draft').requires_approval?).to be(true)
       expect(adapter_for('search_resources').requires_approval?).to be(false)
     end
 
+    # The tools come from core's shared registry, and anything an extension
+    # registers there reaches the assistant with no assistant code involved.
+    # So the gate is asserted over every write in it, not over one example.
+    it 'holds every write in the registry without running it' do
+      writes = Spree.admin_agent_tools.available_for(context).select(&:mutating?)
+      expect(writes.size).to be > 10
+
+      writes.each do |tool|
+        expect(tool).not_to receive(:call)
+        adapter = described_class.build(tool, Spree::Assistant::Turn.new)
+        tool_call = RubyLLM::ToolCall.new(id: "toolu_#{tool.tool_name}", name: tool.tool_name, arguments: {})
+
+        expect(adapter.requires_approval?).to be(true), "#{tool.tool_name} is not held for approval"
+        expect(adapter.approval_resolver.call(tool_call)).to be_nil
+      end
+    end
+
     it 'holds the change and leaves the store alone' do
-      adapter = adapter_for('update_product_status')
+      adapter = adapter_for('products_draft')
 
       # nil is the library's "still pending", which is what stops the loop.
-      expect(resolve(adapter, id: product.slug, status: 'draft')).to be_nil
+      expect(resolve(adapter, id: product.prefixed_id)).to be_nil
       expect(product.reload.status).to eq('active')
       expect(turn.proposal).to be_present
-      expect(turn.proposal[:arguments]).to include(id: product.slug, status: 'draft')
+      expect(turn.proposal[:arguments]).to include(id: product.prefixed_id)
     end
 
     # The library documents a resolver as an idempotent read and may consult it
     # more than once for the same call, so re-reading must not be mistaken for
     # a second change.
     it 'records one proposal however often the same call is resolved' do
-      adapter = adapter_for('update_product_status')
+      adapter = adapter_for('products_draft')
 
-      3.times { resolve(adapter, id: product.slug, status: 'draft') }
+      3.times { resolve(adapter, id: product.prefixed_id) }
 
       expect(turn.proposal[:tool_call_id]).to eq('toolu_1')
-      expect(turn.proposal[:arguments]).to include(status: 'draft')
     end
 
     # A model can ask for several changes in one response. Keeping only the
     # first is what stops a merchant approving one card believing they approved
     # both.
     it 'keeps only the first of several changes in one response' do
-      adapter = adapter_for('update_product_status')
+      adapter = adapter_for('products_draft')
 
-      resolve(adapter, call_id: 'toolu_1', id: product.slug, status: 'draft')
-      resolve(adapter, call_id: 'toolu_2', id: product.slug, status: 'archived')
+      other = create(:product, store: store, status: 'active')
+      resolve(adapter, call_id: 'toolu_1', id: product.prefixed_id)
+      resolve(adapter, call_id: 'toolu_2', id: other.prefixed_id)
 
       expect(turn.proposal[:tool_call_id]).to eq('toolu_1')
-      expect(turn.proposal[:arguments]).to include(status: 'draft')
+      expect(turn.proposal[:arguments]).to include(id: product.prefixed_id)
       expect(product.reload.status).to eq('active')
+    end
+  end
+
+  describe 'the parameter schema' do
+    # The library's own builder says every array holds strings; a stock
+    # update's rows are objects, and a vendor validating arguments against the
+    # schema would refuse the call.
+    it 'says what a list holds' do
+      schema = described_class.parameters_schema(Spree::AgentTools::SetStock.new(context))
+
+      expect(schema[:properties]['rows']).to include(type: 'array', items: { type: 'object' })
+      expect(schema[:required]).to eq(['rows'])
     end
   end
 
@@ -113,33 +145,5 @@ RSpec.describe Spree::Assistant::ToolAdapter do
 
       expect(results.last[:error]).to include('limit reached')
     end
-  end
-end
-
-RSpec.describe 'tool declaration inheritance' do
-  # Subclassing a tool is the documented extension path. With declarations in
-  # bare class-level ivars, a subclass came back `mutating? == false` — so a
-  # host tweaking a write tool got one that skipped the approval card, the
-  # permission gate and argument validation all at once.
-  let(:subclass) { Class.new(Spree::Assistant::Tools::UpdateProductStatus) }
-
-  it 'keeps the mutating flag, so the approval gate still applies' do
-    expect(subclass.mutating?).to be(true)
-  end
-
-  it 'keeps the permission gate' do
-    expect(subclass.permission).to eq('write_products')
-  end
-
-  it 'keeps the name and params' do
-    expect(subclass.tool_name).to eq('update_product_status')
-    expect(subclass.params.keys).to contain_exactly(:id, :status)
-  end
-
-  it 'does not leak a subclass param back onto its parent' do
-    subclass.param(:extra, description: 'only here')
-
-    expect(subclass.params).to have_key(:extra)
-    expect(Spree::Assistant::Tools::UpdateProductStatus.params).not_to have_key(:extra)
   end
 end

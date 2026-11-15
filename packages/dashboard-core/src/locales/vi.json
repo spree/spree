@@ -194,7 +194,9 @@
       "yes": "Có",
       "done": "Xong",
       "error": "Đã xảy ra lỗi.",
-      "unsaved_label": "Thay đổi chưa lưu"
+      "unsaved_label": "Thay đổi chưa lưu",
+      "scroll_to_end": "Cuộn đến cuối",
+      "scroll_to_start": "Cuộn đến đầu"
     },
     "components": {
       "address_block": {
@@ -266,7 +268,8 @@
         "no_results": "Không có kết quả nào cho \"{{query}}\".",
         "placeholder": "Tìm kiếm sản phẩm, đơn hàng, khách hàng…",
         "search_label": "Tìm kiếm bất cứ điều gì…",
-        "title": "Tìm kiếm và lệnh"
+        "title": "Tìm kiếm và lệnh",
+        "ask_assistant": "Hỏi trợ lý: \"{{query}}\""
       },
       "confirm_dialog": {
         "title": "Bạn có chắc không?"

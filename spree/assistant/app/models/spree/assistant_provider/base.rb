@@ -45,7 +45,9 @@ module Spree
         def integration_for(store)
           return if integration_class.blank?
 
-          store&.integrations&.active&.find_by(type: integration_class)
+          return if store.nil?
+
+          store.integrations.active.find_by(type: integration_class)
         end
 
         # Shape the dashboard's provider picker reads.
@@ -54,11 +56,10 @@ module Spree
         # @return [Hash]
         def to_api_hash(store)
           {
-            id: name,
             key: provider_key.to_s,
             name: display_name,
             default_model: default_model,
-            integration_type: integration_class,
+            integration_type: Spree::Integration.api_type_for(integration_class),
             available: available_for_store?(store)
           }
         end

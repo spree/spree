@@ -177,6 +177,11 @@ module Spree
         Spree::AgentTools::DefaultCatalog.install(app.config.spree.admin_agent_tools)
       end
 
+      # After Rails sets its own reload check, which this wraps.
+      config.after_initialize do |app|
+        Spree::AgentTools::ApiDispatch.guard_reloading(app)
+      end
+
 
       # Country and subdivision names are translated by the countries gem, which
       # only loads the locales it is told about. This runs after initialization

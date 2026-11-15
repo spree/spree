@@ -63,6 +63,31 @@ module Spree
       # request's business, not the operation's.
       FORWARDED_HEADERS = %w[HTTP_AUTHORIZATION HTTP_X_SPREE_API_KEY HTTP_HOST].freeze
 
+      class << self
+        # Keeps code reloading out of a dispatched call, in development.
+        #
+        # A dispatched call runs inside a request that is still open — for the
+        # dashboard assistant, a stream that stays open until the turn ends.
+        # Reloading needs every open request to finish first, so an inner
+        # request that decides to reload waits on its own caller forever. The
+        # caller has already reloaded on its way in, so the inner one has
+        # nothing to pick up.
+        #
+        # @param app [Rails::Application]
+        # @return [void]
+        def guard_reloading(app)
+          return unless app.config.reloading_enabled?
+
+          check = app.reloader.check
+          app.reloader.check = -> { !dispatching? && check.call }
+        end
+
+        # @return [Boolean] whether this thread is inside a dispatched call
+        def dispatching?
+          ActiveSupport::IsolatedExecutionState[:spree_agent_tools_dispatching].present?
+        end
+      end
+
       # @param context [Spree::AgentTools::Context]
       def initialize(context)
         @context = context
@@ -97,6 +122,13 @@ module Spree
         # restoring an empty hash is what keeps it a hash.
         saved_request_store = defined?(RequestStore) ? RequestStore.store.to_h.dup : nil
 
+        dispatching = ActiveSupport::IsolatedExecutionState[:spree_agent_tools_dispatching]
+        ActiveSupport::IsolatedExecutionState[:spree_agent_tools_dispatching] = true
+        # The caller's own reload is remembered until its response closes,
+        # which would make the inner request reload again regardless of the
+        # check above.
+        Rails.application.reloader.reloaded! if Rails.application.config.reloading_enabled?
+
         begin
           status, headers, rack_body = Rails.application.call(env)
           text = read(rack_body)
@@ -111,6 +143,7 @@ module Spree
           ActiveSupport::ExecutionContext.push if defined?(ActiveSupport::ExecutionContext)
           saved.each { |name, value| Spree::Current.public_send(:"#{name}=", value) }
           RequestStore.store = saved_request_store unless saved_request_store.nil?
+          ActiveSupport::IsolatedExecutionState[:spree_agent_tools_dispatching] = dispatching
         end
       end
 

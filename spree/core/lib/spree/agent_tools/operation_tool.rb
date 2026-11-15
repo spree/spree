@@ -82,13 +82,21 @@ module Spree
       end
 
       # The line a client shows before the call runs: the operation's own
-      # summary and the records it names.
+      # summary and the records it names. An approval card is all a merchant
+      # sees, so each record is named the way the dashboard names it, looked
+      # up under the caller's store; one that cannot be read stays an id.
       #
       # @param arguments [Hash]
       # @return [String]
       def summary(arguments)
         arguments, = map_legacy_arguments(arguments.transform_keys(&:to_s))
-        named = operation.path_params.filter_map { |segment| arguments[segment] }
+        named = operation.path_params.filter_map do |segment|
+          id = arguments[segment]
+          next if id.blank?
+
+          record = record_for(segment, id)
+          (record && (record.try(:number) || record.try(:name))).presence || id
+        end
         [operation.summary, named.reverse.join(' ').presence].compact.join(' ')
       end
 

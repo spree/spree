@@ -73,16 +73,26 @@ module Spree
         }.compact
       end
 
+      # Read by the merchant as a step of the answer, so it names fields and
+      # scopes the way they would ("out of stock products by status") rather
+      # than the Ransack keys the model sent ("status_eq").
       def summary(arguments)
         label = arguments[:resource].to_s.tr('_', ' ')
-        filters = arguments[:filters]
-        return "Search #{label}" if filters.blank?
+        keys = Array(arguments[:filters]&.keys).map(&:to_s)
+        scopes = ResourceMap.find(arguments[:resource])&.filterable_scopes || []
+        named, fields = keys.partition { |key| scopes.include?(key) }
 
-        described = filters.keys.map { |key| key.to_s.tr('_', ' ') }.join(', ')
-        "Search #{label} by #{described}"
+        subject = [*named.map { |key| key.tr('_', ' ') }, label].join(' ')
+        fields = fields.map { |key| field_label(key) }.uniq
+        fields.any? ? "Search #{subject} by #{fields.join(', ')}" : "Search #{subject}"
       end
 
       private
+
+      def field_label(key)
+        predicate = Ransack.predicates.keys.sort_by(&:length).reverse.find { |name| key.end_with?("_#{name}") }
+        key.delete_suffix(predicate ? "_#{predicate}" : '').tr('_', ' ')
+      end
 
       def dispatch
         @dispatch ||= ApiDispatch.new(context)

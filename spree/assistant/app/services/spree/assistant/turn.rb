@@ -41,7 +41,7 @@ module Spree
       # same call is a no-op, because the library treats an approval resolver
       # as an idempotent read and may consult it more than once per turn.
       #
-      # @param tool [Spree::Assistant::Tool]
+      # @param tool [Spree::AgentTool]
       # @param arguments [Hash]
       # @param tool_call_id [String] the library's id for this call
       # @return [Boolean] whether this proposal was the one recorded

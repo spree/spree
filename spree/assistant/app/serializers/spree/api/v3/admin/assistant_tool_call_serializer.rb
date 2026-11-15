@@ -20,9 +20,7 @@ module Spree
           attributes :name, :status, :summary, :arguments,
                      created_at: :iso8601, resolved_at: :iso8601
 
-          attribute :awaiting_approval do |tool_call|
-            tool_call.awaiting_approval?
-          end
+          attribute :awaiting_approval, &:awaiting_approval?
 
           # Withheld while a decision is outstanding — there is no result yet,
           # and the placeholder is an implementation detail.

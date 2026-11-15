@@ -30,10 +30,10 @@ module Spree
         def last_tool_results_text
           messages = last_provider_payload&.dig(:messages) || []
 
-          messages.flat_map { |message| message[:content].is_a?(Array) ? message[:content] : [] }
-                  .select { |block| (block[:type] || block['type']).to_s == 'tool_result' }
-                  .map { |block| (block[:content] || block['content']).to_s }
-                  .join(' ')
+          messages.flat_map { |message| message[:content].is_a?(Array) ? message[:content] : [] }.
+            select { |block| (block[:type] || block['type']).to_s == 'tool_result' }.
+            map { |block| (block[:content] || block['content']).to_s }.
+            join(' ')
         end
 
         # @return [void]

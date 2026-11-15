@@ -3,10 +3,14 @@ require 'spec_helper'
 RSpec.describe Spree::Assistant::ResolveToolCall do
   let(:store) { @default_store }
   let(:admin) { create(:admin_user) }
-  let(:context) { Spree::Assistant::Context.new(store: store, user: admin, ability: ability) }
+  let(:context) do
+    Spree::AgentTools::Context.new(store: store, user: admin, ability: ability,
+                                   request_headers: agent_headers_for(admin))
+  end
   let(:ability) do
     Class.new do
       include CanCan::Ability
+
       def initialize = can(:manage, :all)
       def permission_keys = Spree.permissions.catalog_keys
     end.new
@@ -18,8 +22,8 @@ RSpec.describe Spree::Assistant::ResolveToolCall do
   let!(:tool_call) do
     call = message.tool_calls.create!(
       tool_call_id: "call_#{SecureRandom.hex(4)}",
-      name: 'update_product_status',
-      arguments: { 'id' => product.slug, 'status' => 'draft' },
+      name: 'products_draft',
+      arguments: { 'id' => product.prefixed_id },
       status: Spree::AssistantToolCall::PROPOSED
     )
     chat.assistant_messages.create!(role: 'tool', content: 'AWAITING', tool_call: call)

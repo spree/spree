@@ -16,6 +16,11 @@ module Spree
               render json: { data: chats.map { |chat| serialize(chat) } }
             end
 
+            # GET /api/v3/admin/assistant/chats/:id
+            def show
+              render json: { data: serialize(@chat, include_messages: true) }
+            end
+
             # POST /api/v3/admin/assistant/chats
             def create
               chat = Spree::AssistantChat.create!(
@@ -24,11 +29,6 @@ module Spree
               )
 
               render json: { data: serialize(chat) }, status: :created
-            end
-
-            # GET /api/v3/admin/assistant/chats/:id
-            def show
-              render json: { data: serialize(@chat, include_messages: true) }
             end
 
             # DELETE /api/v3/admin/assistant/chats/:id

@@ -85,6 +85,30 @@ RSpec.describe 'agent generic record writes' do
     end
   end
 
+  # The confirmation line is the whole approval card, so it names the record
+  # the way the merchant knows it and says what the new value will be.
+  describe 'the confirmation line' do
+    let(:product) { create(:product, store: store, name: 'Blue Shirt') }
+
+    it 'names the record and the new value of an edit' do
+      summary = tool('update_resource').summary(
+        resource: 'products', id: product.prefixed_id, attributes: { 'name' => 'Red Shirt', 'tags' => %w[a b] }
+      )
+
+      expect(summary).to eq('Update product Blue Shirt: name to "Red Shirt" and tags')
+    end
+
+    it 'names the record a delete removes' do
+      expect(tool('delete_resource').summary(resource: 'products', id: product.prefixed_id)).
+        to eq('Delete product Blue Shirt')
+    end
+
+    it 'falls back to the id for a record it cannot see' do
+      expect(tool('delete_resource').summary(resource: 'products', id: 'prod_nope')).
+        to eq('Delete product prod_nope')
+    end
+  end
+
   describe 'create_resource' do
     # Built through the store's own association, so the record carries its
     # tenancy from where it was built rather than from an attribute the caller

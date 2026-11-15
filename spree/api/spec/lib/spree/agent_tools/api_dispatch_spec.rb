@@ -102,6 +102,27 @@ RSpec.describe Spree::AgentTools::ApiDispatch do
     end
   end
 
+  # In development the caller's request is still open — the assistant's
+  # stream stays open for the whole turn — and reloading code waits for every
+  # open request to finish, so an inner request that reloads waits forever.
+  describe 'code reloading' do
+    it 'is never started by the inner request' do
+      reloader = Class.new(ActiveSupport::Reloader) { self.check = -> { true } }
+      described_class.guard_reloading(double(config: double(reloading_enabled?: true), reloader: reloader))
+
+      seen_inside = nil
+      allow(Rails.application).to receive(:call).and_wrap_original do |original, env|
+        seen_inside = reloader.check.call
+        original.call(env)
+      end
+
+      dispatcher_for(reader).call(method: :get, path: '/api/v3/admin/products')
+
+      expect(seen_inside).to be(false)
+      expect(reloader.check.call).to be(true)
+    end
+  end
+
   describe 'a failing call' do
     it 'carries the API error rather than raising' do
       response = dispatcher_for(reader).call(method: :get, path: '/api/v3/admin/products/prod_nope')

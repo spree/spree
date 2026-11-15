@@ -6910,6 +6910,42 @@
       "open_discussion": "Mở thảo luận trên GitHub",
       "copied_to_paste": "Quá dài cho một liên kết nên đã được sao chép. Hãy dán vào GitHub.",
       "copy_failed": "Quá dài cho một liên kết và không thể sao chép. Hãy rút ngắn tin nhắn hoặc sao chép báo cáo từ Cài đặt → Thông tin hệ thống."
+    },
+    "assistant": {
+      "approve": "Phê duyệt",
+      "beta": "Beta",
+      "close": "Đóng",
+      "collapse": "Thu gọn",
+      "description": "Hỏi về cửa hàng của bạn hoặc nhờ trợ giúp để hoàn thành công việc.",
+      "disclaimer": "Trợ lý có thể mắc lỗi. Hãy kiểm tra những thông tin quan trọng.",
+      "empty": "Đặt một câu hỏi về cửa hàng của bạn để bắt đầu.",
+      "expand": "Mở rộng",
+      "new_chat": "Cuộc trò chuyện mới",
+      "placeholder": "Hỏi về sản phẩm, đơn hàng, khuyến mãi…",
+      "reject": "Từ chối",
+      "send": "Gửi",
+      "status": {
+        "proposed": "Cần bạn phê duyệt",
+        "executed": "Đã xong",
+        "rejected": "Đã từ chối",
+        "failed": "Thất bại"
+      },
+      "suggestions": {
+        "products": "Sản phẩm nào đang hết hàng?",
+        "orders": "Cho tôi xem các đơn hàng gần đây",
+        "promotions": "Những khuyến mãi nào đang chạy?"
+      },
+      "thinking": "Đang xử lý…",
+      "title": "Trợ lý",
+      "more_records_one": "Còn {{count}} mục không được hiển thị",
+      "more_records_other": "Còn {{count}} mục không được hiển thị",
+      "errors": {
+        "turn_failed": "Trợ lý không thể hoàn thành yêu cầu. Vui lòng thử lại."
+      },
+      "delete_chat": "Xóa cuộc trò chuyện",
+      "delete_chat_confirm": "Xóa \"{{name}}\"? Không thể hoàn tác thao tác này.",
+      "recent_chats": "Cuộc trò chuyện gần đây",
+      "untitled_chat": "Cuộc trò chuyện chưa đặt tên"
     }
   }
 }

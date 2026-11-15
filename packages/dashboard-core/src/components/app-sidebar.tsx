@@ -203,13 +203,16 @@ export function AppSidebar({
         )}
       </SidebarContent>
       {/* Outside the scroll area on desktop, so Settings stays in reach and the
-          list fades out above it rather than scrolling it away. */}
-      {!isLoading && !isMobile && <NavBottom items={bottomItems} className="py-2" />}
+          list fades out above it rather than scrolling it away. The actions
+          open a surface, which puts them with the nav rather than with the
+          identity menu below the rule. */}
+      {!isLoading && !isMobile && (
+        <NavBottom items={bottomItems} className="py-2">
+          {actions}
+        </NavBottom>
+      )}
       <SidebarFooter className="hidden md:flex">
         {widget}
-        {/* Above the account row: these open a surface, which puts them with
-            the nav rather than with the identity menu. */}
-        {actions}
         {/* In icon mode the rail is too narrow for a row, so the control
             stacks above the avatar. */}
         <div

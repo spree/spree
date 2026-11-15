@@ -3,16 +3,19 @@ require 'spec_helper'
 RSpec.describe Spree::Assistant::RunTurn do
   let(:store) { @default_store }
   let(:admin) { create(:admin_user) }
-  let(:context) { Spree::Assistant::Context.new(store: store, user: admin, ability: full_ability) }
+  let(:context) do
+    Spree::AgentTools::Context.new(store: store, user: admin, ability: full_ability,
+                                   request_headers: agent_headers_for(admin))
+  end
   let(:chat) { Spree::AssistantChat.create!(store: store, admin_user: admin) }
   let!(:product) { create(:product, store: store, name: 'Blue Shirt', status: 'active') }
 
   let(:full_ability) { full_ability_for(admin) }
   # A real ability rather than a double: the tools now call `accessible_by`,
   # which needs CanCanCan's actual machinery. `admin` here is a full admin, so
-  # this grants everything — record-level narrowing is exercised in
-  # spec/authorization_spec.rb.
-  def full_ability_for(user)
+  # this grants everything — record-level narrowing is exercised by core's
+  # agent tool specs.
+  def full_ability_for(_user)
     Class.new do
       include CanCan::Ability
 
@@ -25,7 +28,6 @@ RSpec.describe Spree::Assistant::RunTurn do
       end
     end.new
   end
-
 
   before do
     integration = Spree::Integrations::Anthropic.new(store: store)
@@ -65,7 +67,7 @@ RSpec.describe Spree::Assistant::RunTurn do
 
       tools = last_provider_payload[:tools]
       by_name = tools.index_by { |tool| (tool[:name] || tool['name']).to_s }
-      expect(by_name.keys).to include('search_resources', 'update_product_status')
+      expect(by_name.keys).to include('search_resources', 'products_draft')
 
       schema = by_name['search_resources'][:input_schema].deep_stringify_keys
       expect(schema['properties'].keys).to include('resource', 'filters', 'limit')
@@ -82,7 +84,7 @@ RSpec.describe Spree::Assistant::RunTurn do
     let(:proposal) { chat.pending_tool_call }
 
     before do
-      script_provider(provider_tool_use('update_product_status', { id: product.slug, status: 'draft' }))
+      script_provider(provider_tool_use('products_draft', { id: product.prefixed_id }))
     end
 
     it 'halts without touching the store' do
@@ -91,7 +93,7 @@ RSpec.describe Spree::Assistant::RunTurn do
       expect(turn).to be_awaiting_approval
       expect(product.reload.status).to eq('active')
       expect(proposal.status).to eq(Spree::AssistantToolCall::PROPOSED)
-      expect(proposal.arguments['status']).to eq('draft')
+      expect(proposal.arguments['id']).to eq(product.prefixed_id)
     end
 
     # The gate's whole promise, asserted at the only level that proves it: run
@@ -100,8 +102,11 @@ RSpec.describe Spree::Assistant::RunTurn do
     # library never calls it, so a regression here is silent unless counted.
     it 'never reaches the tool while the change is held, and reaches it once on approval' do
       calls = 0
-      allow_any_instance_of(Spree::Assistant::Tools::UpdateProductStatus)
-        .to receive(:call).and_wrap_original { |original, *args, **kwargs| calls += 1; original.call(*args, **kwargs) }
+      allow_any_instance_of(Spree.admin_agent_tools.find { |tool| tool.tool_name == 'products_draft' }).
+        to(receive(:call).and_wrap_original do |original, *args, **kwargs|
+             calls += 1
+             original.call(*args, **kwargs)
+           end)
 
       run(message: 'set Blue Shirt to draft')
 
@@ -130,7 +135,7 @@ RSpec.describe Spree::Assistant::RunTurn do
         script_provider(
           provider_tool_uses(
             ['search_resources', { resource: 'products', limit: 1 }],
-            ['update_product_status', { id: product.slug, status: 'draft' }]
+            ['products_draft', { id: product.prefixed_id }]
           )
         )
       end
@@ -140,7 +145,7 @@ RSpec.describe Spree::Assistant::RunTurn do
 
         expect(turn).to be_awaiting_approval
         expect(product.reload.status).to eq('active')
-        expect(turn.activity.map { |entry| entry[:name] }).to include('search_resources')
+        expect(turn.activity.pluck(:name)).to include('search_resources')
       end
     end
 

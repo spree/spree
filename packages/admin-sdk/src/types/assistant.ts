@@ -15,7 +15,6 @@ export interface AssistantStatus {
 }
 
 export interface AssistantProviderOption {
-  id: string
   key: string
   name: string
   default_model: string

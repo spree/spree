@@ -54,6 +54,7 @@ require 'spree/testing_support/image_helpers'
 require 'spree/testing_support/editable_email_templates'
 
 require 'spree/api/testing_support/v3/base'
+require 'spree/api/testing_support/agent_dispatch_headers'
 require 'spree/api/testing_support/factories'
 
 def json_response

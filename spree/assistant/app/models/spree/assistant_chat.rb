@@ -24,8 +24,6 @@ module Spree
              inverse_of: :chat,
              dependent: :destroy
 
-    validates :admin_user, presence: true
-
     scope :owned_by, ->(admin_user) { where(admin_user_id: admin_user.id) }
     scope :recent_first, -> { order(updated_at: :desc) }
 
@@ -48,14 +46,14 @@ module Spree
     #
     # @return [Spree::AssistantToolCall, nil]
     def pending_tool_call
-      Spree::AssistantToolCall
-        .joins(:message)
-        .where(spree_assistant_messages: { chat_id: id })
-        .where(status: Spree::AssistantToolCall::PROPOSED)
+      Spree::AssistantToolCall.
+        joins(:message).
+        where(spree_assistant_messages: { chat_id: id }).
+        where(status: Spree::AssistantToolCall::PROPOSED).
         # ordered so a chat holding more than one outstanding proposal always
         # resolves the newest, rather than whatever the database returns first
-        .order(id: :desc)
-        .first
+        order(id: :desc).
+        first
     end
   end
 end

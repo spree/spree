@@ -11,7 +11,7 @@ module Spree
     # that never happened.
     class RunTurn
       # @param chat [Spree::AssistantChat]
-      # @param context [Spree::Assistant::Context]
+      # @param context [Spree::AgentTools::Context]
       # @param message [String, nil] a new merchant message, or nil to continue
       # @param on_event [Proc, nil] receives streamed events for the SSE endpoint
       def initialize(chat:, context:, message: nil, on_event: nil)
@@ -55,7 +55,7 @@ module Spree
 
         llm_chat.with_instructions(SystemPrompt.new(context: context).to_s)
 
-        tools = Spree::Assistant.tools.available_for(context)
+        tools = Spree.admin_agent_tools.available_for(context)
         adapters = tools.map { |tool| ToolAdapter.build(tool, turn) }
         llm_chat.with_tools(*adapters) if adapters.any?
 

@@ -20,6 +20,35 @@ export interface AssistantTranscriptEntry {
   resource?: string
   /** Records that matched, which can exceed the rows shown. */
   total?: number
+  /** Where a step the assistant took has got to. */
+  status?: 'running' | 'done' | 'error'
+  /** Why a step failed, in the API's own words. */
+  detail?: string
+}
+
+/**
+ * Settles the step still running, the one a result belongs to. Tools run one
+ * at a time within a turn, so the open step is the latest one.
+ */
+function settleStep(
+  entries: AssistantTranscriptEntry[],
+  status: 'done' | 'error',
+  detail?: string,
+): AssistantTranscriptEntry[] {
+  let index = entries.length - 1
+  while (index >= 0 && entries[index].status !== 'running') index -= 1
+  if (index === -1) return entries
+
+  const next = [...entries]
+  next[index] = { ...next[index], status, detail }
+  return next
+}
+
+/** Closes any step a turn ended without reporting on. */
+function settleAllSteps(entries: AssistantTranscriptEntry[]): AssistantTranscriptEntry[] {
+  return entries.some((entry) => entry.status === 'running')
+    ? entries.map((entry) => (entry.status === 'running' ? { ...entry, status: 'done' } : entry))
+    : entries
 }
 
 export function useAssistantStatus() {
@@ -83,10 +112,19 @@ export function useAssistantConversation() {
         case 'tool_call.started':
           // Only reads reach here; a mutation arrives as a proposal instead.
           if (!event.data.mutating) {
-            append({ kind: 'activity', text: event.data.summary || event.data.name })
+            append({
+              kind: 'activity',
+              text: event.data.summary || event.data.name,
+              status: 'running',
+            })
           }
           break
         case 'tool_call.result':
+          setEntries((current) =>
+            event.data.error
+              ? settleStep(current, 'error', event.data.error)
+              : settleStep(current, 'done'),
+          )
           if (event.data.records?.length) {
             append({
               kind: 'records',
@@ -94,8 +132,6 @@ export function useAssistantConversation() {
               resource: event.data.resource,
               total: event.data.total,
             })
-          } else if (event.data.error) {
-            append({ kind: 'activity', text: event.data.error })
           }
           break
         case 'tool_call.proposed':
@@ -157,6 +193,7 @@ export function useAssistantConversation() {
           setError(i18n.t('admin.assistant.errors.turn_failed'))
         }
       } finally {
+        setEntries(settleAllSteps)
         setStreaming(false)
       }
     },
@@ -183,6 +220,7 @@ export function useAssistantConversation() {
           setError(i18n.t('admin.assistant.errors.turn_failed'))
         }
       } finally {
+        setEntries(settleAllSteps)
         setStreaming(false)
       }
     },

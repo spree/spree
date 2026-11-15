@@ -1,4 +1,5 @@
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@spree/dashboard-ui'
+import { NavIcon } from '@spree/dashboard-core'
+import { SidebarMenuButton, SidebarMenuItem } from '@spree/dashboard-ui'
 import { SparklesIcon } from '@spree/dashboard-ui/icons'
 import { useTranslation } from 'react-i18next'
 import { useAssistant } from './assistant-provider'
@@ -23,17 +24,15 @@ export function AssistantToggle() {
   const label = t('admin.assistant.title')
 
   return (
-    <SidebarMenu>
-      <SidebarMenuItem>
-        {/* `isActive` rather than a pressed variant: to the rail this reads as
-            the current surface, which is what the nav items use, so an open
-            assistant is lit the same way an open section is. `tooltip` is what
-            names it once the rail collapses to icons. */}
-        <SidebarMenuButton isActive={open} tooltip={label} aria-pressed={open} onClick={toggle}>
-          <SparklesIcon />
-          <span>{label}</span>
-        </SidebarMenuButton>
-      </SidebarMenuItem>
-    </SidebarMenu>
+    <SidebarMenuItem>
+      {/* `isActive` rather than a pressed variant: to the rail this reads as
+          the current surface, which is what the nav items use, so an open
+          assistant is lit the same way an open section is. `tooltip` is what
+          names it once the rail collapses to icons. */}
+      <SidebarMenuButton isActive={open} tooltip={label} aria-pressed={open} onClick={toggle}>
+        <NavIcon icon={SparklesIcon} isActive={open} />
+        <span>{label}</span>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
   )
 }

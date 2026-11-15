@@ -1,15 +1,31 @@
 import {
   Badge,
+  Bubble,
+  BubbleContent,
   Button,
   cn,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupTextarea,
+  Message,
+  MessageContent,
   MessageScroller,
   MessageScrollerButton,
   MessageScrollerContent,
   MessageScrollerItem,
   MessageScrollerProvider,
   MessageScrollerViewport,
+  Trace,
+  TraceCollapsible,
+  TraceCollapsibleContent,
+  TraceCollapsibleTrigger,
+  TraceIcon,
+  TraceLine,
+  TraceTitle,
 } from '@spree/dashboard-ui'
 import {
+  AlertTriangleIcon,
   ArrowUpIcon,
   CheckIcon,
   Loader2Icon,
@@ -81,7 +97,11 @@ export function AssistantPanel({ onClose, expanded, onToggleExpanded }: Assistan
       // header's rule and the composer inside the card's corners.
       className="flex h-full w-full flex-col overflow-hidden bg-card md:rounded-xl"
     >
-      <header className="flex h-header-height border-b border-border shrink-0 items-center justify-between gap-2 px-4">
+      {/* `rail-header-height`, not `header-height`: the latter is the measured
+          sticky offset for pinned bands and is legitimately `0` on a page with
+          no header, which collapsed this row to nothing. This is a fixed
+          chrome row, so it takes the constant the rail's own header rows use. */}
+      <header className="flex h-rail-header-height shrink-0 items-center justify-between gap-2 border-b border-border px-4">
         <AssistantHistoryMenu
           currentChatId={chatId}
           currentTitle={chatTitle}
@@ -110,8 +130,6 @@ export function AssistantPanel({ onClose, expanded, onToggleExpanded }: Assistan
         </div>
       </header>
 
-      {/* The dotted field reads as "nothing here yet" without a wall of text,
-          and recedes the moment a conversation starts. */}
       <div
         className={cn(
           // `min-h-0` so this flex child may shrink below its content and the
@@ -119,12 +137,10 @@ export function AssistantPanel({ onClose, expanded, onToggleExpanded }: Assistan
           // the scroller's viewport, never to this wrapper.
           'min-h-0 flex-1 px-4',
           empty && 'overflow-y-auto',
-          empty &&
-            '[background-image:radial-gradient(theme(colors.border)_1px,transparent_1px)] [background-position:0_0] [background-size:16px_16px]',
         )}
       >
         {empty ? (
-          <div className="flex h-full flex-col justify-end pb-4">
+          <div className="flex h-full flex-col justify-center py-4">
             <h3 className="flex items-center gap-2 font-semibold text-xl">
               {t('admin.assistant.title')}
               <Badge variant="secondary" className="font-normal">
@@ -154,15 +170,19 @@ export function AssistantPanel({ onClose, expanded, onToggleExpanded }: Assistan
             <MessageScroller className="h-full">
               <MessageScrollerViewport>
                 <MessageScrollerContent aria-busy={streaming} className="gap-3 py-4">
-                  {entries.map((entry) => (
+                  {groupSteps(entries).map((row) => (
                     <MessageScrollerItem
-                      key={entry.id}
-                      messageId={entry.id}
+                      key={row[0].id}
+                      messageId={row[0].id}
                       // A merchant's question starts a turn, so anchoring there
                       // keeps the question in view while the answer arrives.
-                      scrollAnchor={entry.kind === 'user'}
+                      scrollAnchor={row[0].kind === 'user'}
                     >
-                      <TranscriptRow entry={entry} onResolve={resolve} busy={streaming} />
+                      {row[0].kind === 'activity' ? (
+                        <AssistantSteps steps={row} />
+                      ) : (
+                        <TranscriptRow entry={row[0]} onResolve={resolve} busy={streaming} />
+                      )}
                     </MessageScrollerItem>
                   ))}
 
@@ -183,35 +203,40 @@ export function AssistantPanel({ onClose, expanded, onToggleExpanded }: Assistan
       </div>
 
       <div className="shrink-0 p-3">
-        <form
-          onSubmit={handleSubmit}
-          className="rounded-xl border bg-card p-2 shadow-sm focus-within:ring-1 focus-within:ring-ring"
-        >
-          <textarea
-            ref={inputRef}
-            rows={2}
-            placeholder={t('admin.assistant.placeholder')}
-            disabled={streaming}
-            className="w-full resize-none bg-transparent px-1 py-1 text-sm outline-none placeholder:text-muted-foreground disabled:opacity-50"
-            onKeyDown={(event) => {
-              // Enter sends; Shift+Enter is a newline — chat convention.
-              if (event.key === 'Enter' && !event.shiftKey) {
-                event.preventDefault()
-                submit(inputRef.current?.value ?? '')
-              }
-            }}
-          />
-          <div className="flex justify-end">
-            <Button
-              type="submit"
-              size="icon"
-              className="size-7 rounded-full"
+        <form onSubmit={handleSubmit}>
+          {/* `bg-background`, not the group's own `bg-card`: the panel itself
+              is already the card, so a card-on-card composer has no fill to
+              distinguish it and reads as a bare outline. The page ground is
+              what reads as an inset field here — the same inversion the rail's
+              search box uses. */}
+          <InputGroup className="rounded-xl bg-background">
+            <InputGroupTextarea
+              ref={inputRef}
+              rows={2}
+              placeholder={t('admin.assistant.placeholder')}
               disabled={streaming}
-              aria-label={t('admin.assistant.send')}
-            >
-              <ArrowUpIcon className="size-4" />
-            </Button>
-          </div>
+              className="max-h-40 min-h-0 text-sm"
+              onKeyDown={(event) => {
+                // Enter sends; Shift+Enter is a newline — chat convention.
+                if (event.key === 'Enter' && !event.shiftKey) {
+                  event.preventDefault()
+                  submit(inputRef.current?.value ?? '')
+                }
+              }}
+            />
+            <InputGroupAddon align="block-end" className="justify-end">
+              <InputGroupButton
+                type="submit"
+                variant="default"
+                size="icon-xs"
+                className="rounded-full"
+                disabled={streaming}
+                aria-label={t('admin.assistant.send')}
+              >
+                <ArrowUpIcon />
+              </InputGroupButton>
+            </InputGroupAddon>
+          </InputGroup>
         </form>
         <p className="mt-2 text-center text-muted-foreground text-xs">
           {t('admin.assistant.disclaimer')}
@@ -234,20 +259,29 @@ function TranscriptRow({
 
   if (entry.kind === 'user') {
     return (
-      <div className="ml-auto max-w-[85%] rounded-lg bg-muted px-3 py-2 text-sm">{entry.text}</div>
+      <Message align="end">
+        <MessageContent>
+          <Bubble variant="muted" align="end">
+            <BubbleContent className="whitespace-pre-wrap">{entry.text}</BubbleContent>
+          </Bubble>
+        </MessageContent>
+      </Message>
     )
   }
 
   if (entry.kind === 'assistant') {
-    return <AssistantMarkdown text={entry.text ?? ''} />
-  }
-
-  if (entry.kind === 'activity') {
     return (
-      <div className="flex items-center gap-2 text-muted-foreground text-xs">
-        <WrenchIcon className="size-3" />
-        {entry.text}
-      </div>
+      <Message>
+        <MessageContent>
+          {/* Ghost: a reply spans the column unframed, so records and
+              approval cards below it line up with its text. */}
+          <Bubble variant="ghost">
+            <BubbleContent>
+              <AssistantMarkdown text={entry.text ?? ''} />
+            </BubbleContent>
+          </Bubble>
+        </MessageContent>
+      </Message>
     )
   }
 
@@ -286,6 +320,55 @@ function TranscriptRow({
         </div>
       )}
     </div>
+  )
+}
+
+/**
+ * Rows for the transcript, with each run of consecutive steps as one row, so
+ * the lookups behind an answer read as one list rather than loose lines.
+ */
+function groupSteps(entries: AssistantTranscriptEntry[]): AssistantTranscriptEntry[][] {
+  const rows: AssistantTranscriptEntry[][] = []
+  for (const entry of entries) {
+    const previous = rows.at(-1)
+    if (entry.kind === 'activity' && previous?.[0].kind === 'activity') previous.push(entry)
+    else rows.push([entry])
+  }
+  return rows
+}
+
+function AssistantSteps({ steps }: { steps: AssistantTranscriptEntry[] }) {
+  return (
+    <Trace className="gap-1.5">
+      {steps.map((step) => {
+        const line = (
+          // A finished step takes no status: that is the component's "done".
+          <TraceLine status={step.status === 'done' ? undefined : step.status} className="text-xs">
+            <TraceIcon>
+              {step.status === 'error' ? (
+                <AlertTriangleIcon className="size-3.5" />
+              ) : (
+                <WrenchIcon className="size-3.5" />
+              )}
+            </TraceIcon>
+            <TraceTitle>{step.text}</TraceTitle>
+          </TraceLine>
+        )
+
+        // Only a failure has more to say; the reason stays folded so one bad
+        // lookup does not push the answer down the panel.
+        if (step.status === 'error' && step.detail) {
+          return (
+            <TraceCollapsible key={step.id}>
+              <TraceCollapsibleTrigger>{line}</TraceCollapsibleTrigger>
+              <TraceCollapsibleContent className="text-xs">{step.detail}</TraceCollapsibleContent>
+            </TraceCollapsible>
+          )
+        }
+
+        return <div key={step.id}>{line}</div>
+      })}
+    </Trace>
   )
 }
 

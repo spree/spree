@@ -14,49 +14,36 @@ module Spree
 
     # The conversation could not run at all — no vendor connected, or the vendor
     # refused. Surfaced to the merchant rather than swallowed.
-    ProviderError = Class.new(StandardError)
+    class ProviderError < StandardError
+    end
 
     # A tool call was approved twice, or resolved after it had already been
     # decided.
-    AlreadyResolvedError = Class.new(StandardError)
+    class AlreadyResolvedError < StandardError
+    end
 
     # The approving admin no longer holds the permission the tool needs.
-    ForbiddenError = Class.new(StandardError)
+    class ForbiddenError < StandardError
+    end
 
     # A held call names a tool that is no longer registered.
-    UnknownToolError = Class.new(StandardError)
+    class UnknownToolError < StandardError
+    end
 
     # Registries live in this gem's own config namespace rather than core's
     # `Spree::Environment` struct: core must not grow a member for an optional
     # gem, and the accessors below keep the calling convention identical to
     # `Spree.tax_providers`.
-    Environment = Struct.new(:tools, :providers)
+    Environment = Struct.new(:providers)
 
     class << self
-      # The tool registry. Extensions append their own:
-      #
-      #   Spree::Assistant.tools << MyApp::Assistant::Tools::SyncSupplier
-      #
-      # @return [Spree::Assistant::Registry]
-      def tools
-        config.tools
-      end
-
-      def tools=(value)
-        config.tools = value
-      end
-
       # AI vendors the assistant can run on. Registered like tax or
       # delivery-rate providers, so a host app or extension appends its own.
       #
       # @return [Array<Class>]
-      def providers
-        config.providers
-      end
+      delegate :providers, to: :config
 
-      def providers=(value)
-        config.providers = value
-      end
+      delegate :providers=, to: :config
 
       # @return [Spree::Assistant::Environment]
       def config

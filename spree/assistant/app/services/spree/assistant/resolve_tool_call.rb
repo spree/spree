@@ -8,7 +8,7 @@ module Spree
     # learns what happened and can answer.
     class ResolveToolCall
       # @param tool_call [Spree::AssistantToolCall]
-      # @param context [Spree::Assistant::Context]
+      # @param context [Spree::AgentTools::Context]
       # @param approve [Boolean]
       def initialize(tool_call:, context:, approve:)
         @tool_call = tool_call
@@ -39,9 +39,9 @@ module Spree
       # move the row out of `proposed`, and the loser is told it was already
       # decided.
       def claim!
-        claimed = Spree::AssistantToolCall
-                  .where(id: tool_call.id, status: Spree::AssistantToolCall::PROPOSED)
-                  .update_all(
+        claimed = Spree::AssistantToolCall.
+                  where(id: tool_call.id, status: Spree::AssistantToolCall::PROPOSED).
+                  update_all(
                     status: approve ? Spree::AssistantToolCall::APPROVED : Spree::AssistantToolCall::REJECTED,
                     updated_at: Time.current
                   )
@@ -104,7 +104,7 @@ module Spree
       end
 
       def build_tool
-        tool_class = Spree::Assistant.tools.find_by_name(tool_call.name)
+        tool_class = Spree.admin_agent_tools.find { |candidate| candidate.tool_name == tool_call.name }
         raise UnknownToolError, tool_call.name if tool_class.nil?
 
         tool_class.new(context)

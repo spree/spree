@@ -12,11 +12,11 @@ permissions:
 
 jobs:
   build-postgres:
-    name: "Build (PostgreSQL)"
+    name: 'Build (PostgreSQL)'
     runs-on: ubuntu-latest
     env:
       DB: postgres
-      RAILS_VERSION: "~> 8.1.0"
+      RAILS_VERSION: '~> 8.1.0'
       BUNDLE_JOBS: 4
       BUNDLE_RETRY: 3
     steps:
@@ -61,11 +61,11 @@ jobs:
           done
 
   build-mysql:
-    name: "Build (MySQL)"
+    name: 'Build (MySQL)'
     runs-on: ubuntu-latest
     env:
       DB: mysql
-      RAILS_VERSION: "~> 8.1.0"
+      RAILS_VERSION: '~> 8.1.0'
       BUNDLE_JOBS: 4
       BUNDLE_RETRY: 3
     steps:
@@ -110,7 +110,7 @@ jobs:
           done
 
   test-postgres:
-    name: "Test ${{ matrix.project }} (PostgreSQL, ${{ matrix.shard }}/${{ matrix.total_shards }})"
+    name: 'Test ${{ matrix.project }} (PostgreSQL, ${{ matrix.shard }}/${{ matrix.total_shards }})'
     needs: build-postgres
     runs-on: ubuntu-latest
     strategy:
@@ -133,11 +133,24 @@ jobs:
           # The suites are small, so a runner each cost more in queue time than
           # they saved. This is also the only job with the Meilisearch service,
           # so spree_meilisearch's integration spec runs here.
-          - { project: providers, dirs: "providers/easypost providers/meilisearch providers/paypal providers/stripe", shard: 1, total_shards: 1, procs: 2 }
+          - {
+              project: providers,
+              dirs: 'providers/easypost providers/meilisearch providers/paypal providers/stripe',
+              shard: 1,
+              total_shards: 1,
+              procs: 2,
+            }
           # optional-gems: 1 runner × 2 procs — dashboard, mcp, opentelemetry and assistant
           # share a lane. Each suite runs in seconds, far less than a runner's
           # setup, so a runner each only added queue time.
-          - { project: optional-gems, dirs: "dashboard mcp opentelemetry assistant", flags: dashboard, shard: 1, total_shards: 1, procs: 2 }
+          - {
+              project: optional-gems,
+              dirs: 'dashboard mcp opentelemetry assistant',
+              flags: dashboard,
+              shard: 1,
+              total_shards: 1,
+              procs: 2,
+            }
     services:
       postgres:
         image: postgres:16
@@ -166,7 +179,7 @@ jobs:
       DB_USERNAME: postgres
       DB_PASSWORD: postgres
       MEILISEARCH_URL: http://localhost:7700
-      RAILS_VERSION: "~> 8.1.0"
+      RAILS_VERSION: '~> 8.1.0'
       CI_ARTIFACTS: /tmp/test-artifacts
       BUNDLE_JOBS: 4
       BUNDLE_RETRY: 3
@@ -281,7 +294,7 @@ jobs:
           if-no-files-found: ignore
 
   test-mysql:
-    name: "Test ${{ matrix.project }} (MySQL, ${{ matrix.shard }}/${{ matrix.total_shards }})"
+    name: 'Test ${{ matrix.project }} (MySQL, ${{ matrix.shard }}/${{ matrix.total_shards }})'
     needs: build-mysql
     runs-on: ubuntu-latest
     strategy:
@@ -300,11 +313,24 @@ jobs:
           # providers: 1 runner × 2 procs — every provider gem shares a lane.
           # No Meilisearch service here, so spree_meilisearch's integration spec
           # skips itself; its unit specs still run against MySQL.
-          - { project: providers, dirs: "providers/easypost providers/meilisearch providers/paypal providers/stripe", shard: 1, total_shards: 1, procs: 2 }
+          - {
+              project: providers,
+              dirs: 'providers/easypost providers/meilisearch providers/paypal providers/stripe',
+              shard: 1,
+              total_shards: 1,
+              procs: 2,
+            }
           # optional-gems: 1 runner × 2 procs — dashboard, mcp, opentelemetry and assistant
           # share a lane. Each suite runs in seconds, far less than a runner's
           # setup, so a runner each only added queue time.
-          - { project: optional-gems, dirs: "dashboard mcp opentelemetry assistant", flags: dashboard, shard: 1, total_shards: 1, procs: 2 }
+          - {
+              project: optional-gems,
+              dirs: 'dashboard mcp opentelemetry assistant',
+              flags: dashboard,
+              shard: 1,
+              total_shards: 1,
+              procs: 2,
+            }
     services:
       mysql:
         image: mysql:8.0
@@ -322,7 +348,7 @@ jobs:
       DB_HOST: 127.0.0.1
       DB_USERNAME: root
       DB_PASSWORD: password
-      RAILS_VERSION: "~> 8.1.0"
+      RAILS_VERSION: '~> 8.1.0'
       CI_ARTIFACTS: /tmp/test-artifacts
       BUNDLE_JOBS: 4
       BUNDLE_RETRY: 3
@@ -421,7 +447,7 @@ jobs:
           if-no-files-found: ignore
 
   brakeman:
-    name: "Security scan (Brakeman)"
+    name: 'Security scan (Brakeman)'
     needs: build-postgres
     runs-on: ubuntu-latest
     env:
@@ -468,4 +494,3 @@ jobs:
           name: brakeman-reports
           path: spree/brakeman-*.*
           if-no-files-found: ignore
-

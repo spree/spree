@@ -1,10 +1,10 @@
 module Spree
   module Assistant
-    # Turns a {Spree::Assistant::Tool} into the class shape RubyLLM expects.
+    # Turns a {Spree::AgentTool} into the class shape RubyLLM expects.
     #
-    # This is the ONLY place that knows how the LLM library models tools, which
-    # is what keeps the registry reusable and a library upgrade a one-file
-    # change — the promise this file made under 1.x and kept at 2.0.
+    # This is the ONLY place that knows how the LLM library models tools. The
+    # tools themselves are core's registry ({Spree.admin_agent_tools}), the
+    # same one the MCP server offers, so a tool registered once reaches both.
     #
     # A mutating tool never executes during a turn. It declares
     # `requires_approval`, so the library stops the loop with the call pending
@@ -14,31 +14,16 @@ module Spree
     # admin — which is why the resolver here always answers "still pending"
     # rather than consulting a decision recorded elsewhere.
     class ToolAdapter
-      TYPE_MAP = {
-        string: 'string',
-        integer: 'integer',
-        number: 'number',
-        boolean: 'boolean',
-        array: 'array',
-        object: 'object'
-      }.freeze
-
       class << self
-        # @param tool [Spree::Assistant::Tool]
+        # @param tool [Spree::AgentTool] instantiated for the asking admin
         # @param turn [Spree::Assistant::Turn] collects the held proposal
         # @return [RubyLLM::Tool]
         def build(tool, turn)
-          type_map = TYPE_MAP
+          schema = parameters_schema(tool)
 
           Class.new(::RubyLLM::Tool) do
             description tool.description
-
-            tool.params.each do |param_name, options|
-              parameter param_name,
-                        type: type_map.fetch(options[:type], 'string'),
-                        description: options[:description],
-                        required: options[:required]
-            end
+            parameters schema if schema
 
             define_method(:name) { tool.tool_name }
 
@@ -81,6 +66,45 @@ module Spree
               tool.call(**arguments)
             end
           end.new
+        end
+
+        # The tool's declared params as JSON Schema.
+        #
+        # Written out rather than declared one `parameter` at a time, because
+        # the library's own builder says every array holds strings — and a
+        # stock update's rows or a report's filters are lists of objects, which
+        # a vendor validating arguments against the schema would then refuse.
+        #
+        # @param tool [Spree::AgentTool]
+        # @return [Hash, nil]
+        def parameters_schema(tool)
+          return if tool.params.empty?
+
+          properties = tool.params.to_h do |param_name, options|
+            property = { type: json_type(options[:type]), description: options[:description] }.compact
+            property[:items] = { type: json_type(options[:items]) } if property[:type] == 'array'
+
+            [param_name.to_s, property]
+          end
+
+          {
+            type: 'object',
+            properties: properties,
+            required: tool.params.select { |_name, options| options[:required] }.keys.map(&:to_s)
+          }
+        end
+
+        private
+
+        def json_type(type)
+          case type&.to_sym
+          when :integer then 'integer'
+          when :number, :float, :decimal then 'number'
+          when :boolean then 'boolean'
+          when :array then 'array'
+          when :object, :hash then 'object'
+          else 'string'
+          end
         end
       end
     end

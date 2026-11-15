@@ -12,7 +12,8 @@ Gemini; which vendor a store uses is a store setting.
 ## Two rules it is built around
 
 **It can only do what you can do.** Every tool executes as the signed-in admin,
-scoped to the current store, through the same services the Admin API uses. The
+scoped to the current store, through the same endpoints and workflows the Admin
+API uses. The
 tools offered to the model are filtered by that admin's permissions — someone
 without permission to edit products is never offered a tool that edits products.
 
@@ -35,34 +36,19 @@ bin/rails db:migrate
 
 Then connect a provider in the dashboard under Settings → Integrations.
 
-## Adding your own tools
+## Tools
 
-Tools are plain classes registered in `Spree::Assistant.tools`:
+The assistant uses Spree's shared agent tools (`Spree.admin_agent_tools`), the
+same ones the MCP server offers. A tool an extension registers there reaches
+both, with no assistant code involved:
 
 ```ruby
-class MyApp::Assistant::Tools::RestockVariant < Spree::Assistant::Tool
-  tool_name 'restock_variant'
-  description 'Add stock for a variant at a location.'
-  permission 'write_stock_levels'
-  mutating!
-
-  param :variant_id, description: 'Variant id', required: true
-  param :quantity, type: :integer, description: 'Units to add', required: true
-
-  def call(variant_id:, quantity:)
-    # scope through context.store, write through a workflow
-  end
-
-  def summary(arguments)
-    "Add #{arguments[:quantity]} units to #{arguments[:variant_id]}"
-  end
-end
-
-Spree::Assistant.tools << MyApp::Assistant::Tools::RestockVariant
+# server/config/initializers/spree.rb
+Spree.admin_agent_tools << MyApp::AgentTools::RestockVariant
 ```
 
-Declaring `mutating!` is what puts a tool behind the approval card. Write
-`summary` for anything that mutates — it is the sentence the merchant judges the
-change by.
+Any tool declared `mutating!` waits behind an approval card in the dashboard.
+Its `summary` is the sentence the merchant decides on, so write one that names
+the record and the change.
 
 See `docs/plans/6.0-dashboard-assistant.md` for the full design.

@@ -201,6 +201,20 @@ RSpec.describe Spree::AgentTools::SearchResources do
     end
   end
 
+  # Shown to the merchant as a step of the answer, so it reads as words
+  # rather than the filter keys the model sent.
+  describe 'the step line' do
+    it 'names fields without their filter operators' do
+      expect(tool.summary(resource: 'products', filters: { 'status_eq' => 'active', 'name_cont' => 'shirt' })).
+        to eq('Search products by status, name')
+    end
+
+    it 'puts a named scope in front of the resource' do
+      expect(tool.summary(resource: 'products', filters: { 'out_of_stock' => true })).
+        to eq('Search out of stock products')
+    end
+  end
+
   describe 'store scoping' do
     # An explicit code: the factory's default collides with the suite-wide
     # default store.

@@ -47,11 +47,15 @@ module Spree
         { error: e.message }
       end
 
+      # Names metrics and dimensions by their labels ("Net sales by month"),
+      # because the merchant reads this as a step of the answer.
       def summary(arguments)
-        metrics = Array(arguments[:metrics]).join(', ')
-        dimensions = Array(arguments[:dimensions])
+        schema = Spree::Reporting::Schema.new(store: context.store)
+        metrics = Array(arguments[:metrics]).map { |name| schema.label_for(:metrics, name) }
+        dimensions = Array(arguments[:dimensions]).map { |name| schema.label_for(:dimensions, name).downcase }
 
-        dimensions.any? ? "Report #{metrics} by #{dimensions.join(', ')}" : "Report #{metrics}"
+        title = "Report #{metrics.join(', ').downcase}"
+        dimensions.any? ? "#{title} by #{dimensions.join(', ')}" : title
       end
 
       private

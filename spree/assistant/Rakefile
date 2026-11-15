@@ -8,8 +8,7 @@ RSpec::Core::RakeTask.new
 
 task default: :spec
 
-desc "Generates a dummy app for testing"
-task :test_app do
-  ENV['LIB_NAME'] = 'spree_assistant'
-  Rake::Task['common:test_app'].invoke
-end
+ENV['LIB_NAME'] = 'spree_assistant'
+
+desc 'Generates a dummy app for testing'
+task test_app: 'common:test_app'

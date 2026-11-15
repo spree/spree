@@ -32,12 +32,18 @@ module Spree
 
             # Who is asking, and where — every tool runs inside this.
             #
-            # @return [Spree::Assistant::Context]
+            # Tools that reach the Admin API repeat this request's own
+            # credential, so a change the merchant approves runs under the
+            # approving admin's permissions and through the same controller
+            # checks as the dashboard.
+            #
+            # @return [Spree::AgentTools::Context]
             def assistant_context
-              @assistant_context ||= Spree::Assistant::Context.new(
+              @assistant_context ||= Spree::AgentTools::Context.new(
                 store: current_store,
                 user: current_user,
-                ability: current_ability
+                ability: current_ability,
+                request_headers: request.env.slice(*Spree::AgentTools::ApiDispatch::FORWARDED_HEADERS)
               )
             end
 

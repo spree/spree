@@ -208,11 +208,7 @@ function CommandPaletteContent({ setOpen }: { setOpen: (open: boolean) => void }
           // not just resource search — a query can match a nav command while
           // the API search returns nothing.
           hasResults={
-            hasResults ||
-            createMatches.length > 0 ||
-            gotoItems.length > 0 ||
-            showLogout ||
-            showAsk
+            hasResults || createMatches.length > 0 || gotoItems.length > 0 || showLogout || showAsk
           }
           query={input}
         />
