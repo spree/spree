@@ -143,12 +143,11 @@ module SpreeMeilisearch
       tasks << index.update_sortable_attributes(sortable_attributes)
       tasks << index.update_searchable_attributes(searchable_attributes)
       tasks << index.update_distinct_attribute(distinct_attribute)
-      tasks.compact!
-      tasks.each { |task| task.await(SETTINGS_TASK_TIMEOUT_MS, SETTINGS_TASK_POLL_INTERVAL_MS) }
+      tasks.each { |task| task&.await(SETTINGS_TASK_TIMEOUT_MS, SETTINGS_TASK_POLL_INTERVAL_MS) }
       @index_settings_configured = true
-      # Only a push Meilisearch applied counts: a failed or cancelled task
-      # must be pushed again by the next job.
-      Rails.cache.write(index_settings_cache_key, true, expires_in: SETTINGS_CACHE_TTL) if tasks.all?(&:succeeded?)
+      # Only a push Meilisearch applied counts: a failed, cancelled or missing
+      # task must be pushed again by the next job.
+      Rails.cache.write(index_settings_cache_key, true, expires_in: SETTINGS_CACHE_TTL) if tasks.all? { |task| task&.succeeded? }
     end
 
     # Lightweight guard for single-product writes. Every index job builds a new

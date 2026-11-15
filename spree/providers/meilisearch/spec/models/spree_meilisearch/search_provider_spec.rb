@@ -516,6 +516,15 @@ RSpec.describe SpreeMeilisearch::SearchProvider do
       expect(mock_index).to have_received(:update_filterable_attributes).twice
     end
 
+    it 'pushes again when an update returned no task' do
+      allow(mock_index).to receive(:update_distinct_attribute).and_return(nil)
+
+      described_class.new(store).index(product_1)
+      described_class.new(store).index(product_2)
+
+      expect(mock_index).to have_received(:update_filterable_attributes).twice
+    end
+
     it 'pushes again when awaiting a settings task raised' do
       allow(settings_task).to receive(:await).and_raise(::Meilisearch::ApiError.new(429, 'Too Many Requests', '{}'))
 
