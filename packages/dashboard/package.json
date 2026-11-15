@@ -81,6 +81,7 @@
     "@spree/dashboard-core": "workspace:^",
     "@spree/dashboard-plugin-example": "workspace:^",
     "@spree/dashboard-ui": "workspace:^",
+    "@spree/seller-sdk": "workspace:^",
     "@tanstack/react-query": "catalog:",
     "@tanstack/react-router": "catalog:",
     "@types/node": "catalog:",

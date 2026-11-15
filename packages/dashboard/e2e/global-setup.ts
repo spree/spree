@@ -1,6 +1,6 @@
 import { writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
-import { createAdminClient } from '@spree/admin-sdk'
+import { type Client as AdminClient, createAdminClient } from '@spree/admin-sdk'
 import {
   deploySeeds,
   loadSeeds,
@@ -8,6 +8,7 @@ import {
   renderReport,
   reportHasFailures,
 } from '@spree/seeds/node'
+import { createSellerClient } from '@spree/seller-sdk'
 import {
   FIXTURE_BOGUS_GATEWAY,
   FIXTURE_BOGUS_ORDER_EMAIL,
@@ -56,6 +57,7 @@ const PORT = process.env.E2E_RAILS_PORT || '3010'
 // reaches the API gem's RSpec suite, which shares the dummy app.
 const TEST_SQLITE = resolve(API_GEM_DIR, 'spec/dummy/db/spree_test_e2e.sqlite3')
 const STORE_CONFIG = resolve(E2E_DIR, 'fixtures/store.yml')
+const COMMA_STORE_CONFIG = resolve(E2E_DIR, 'fixtures/comma-store.yml')
 
 const RAILS_ENV = {
   ...process.env,
@@ -82,10 +84,6 @@ const BOOTSTRAP_RUBY = [
   'admin = Spree.admin_user_class.first || Spree.admin_user_class.create!(email: "admin@example.com", password: "spree123", password_confirmation: "spree123")',
   'admin.update!(password: "spree123", password_confirmation: "spree123")',
   's.add_user(admin, Spree::Role.default_admin_role(s)) unless s.role_users.exists?(user: admin)',
-  // An order's locale has to be one its market offers, so the orders list can
-  // show a German-language order in the default US market. The default market
-  // comes with the store, so the fixture file does not name it.
-  `s.default_market.update!(supported_locales: s.default_market.supported_locales_list | ['de']) unless s.default_market.supported_locales_list.include?('de')`,
   // The deploy key: write_all so every section of the fixture file can be
   // written, printed once and never persisted anywhere else.
   'deploy_key = s.api_keys.create!(name: "e2e seeds", key_type: "secret", scopes: ["write_all"])',
@@ -99,54 +97,27 @@ const BOOTSTRAP_RUBY = [
   // defaults are deployed through the Admin API once the server is up.
   'comma_store.relocate(country: Spree::Country.find_by_iso!("NL"), locale: "nl", currency: "EUR") unless comma_store.read_attribute(:default_country_code) == "NL"',
   'comma_deploy_key = comma_store.api_keys.create!(name: "e2e seeds", key_type: "secret", scopes: ["write_all"])',
-  // A second market in USD, so the store sells in a currency written with a
-  // period as well as its own.
-  `comma_store.markets.find_or_create_by!(name: 'United States') { |m| m.currency = 'USD'; m.default_locale = 'en'; m.countries = [Spree::Country.find_by_iso!('US')] } unless comma_store.markets.exists?(currency: 'USD')`,
   'comma_store.add_user(admin, Spree::Role.default_admin_role(comma_store)) unless comma_store.role_users.exists?(user: admin)',
-  // A card payment the Bogus gateway has charged, so its page at the gateway's
-  // dashboard has an address, and whose card failed both of the issuer's
-  // checks. On this store because the payment method specs install Bogus on the
-  // default one, and a store holds each provider once. Written directly:
-  // charging a card needs a full checkout.
-  `comma_bogus = comma_store.payment_methods.where(type: 'Spree::Gateway::Bogus').first_or_create!(name: '${FIXTURE_BOGUS_GATEWAY}', active: true, storefront_visible: false)`,
-  `gateway_order = comma_store.orders.find_by(email: '${FIXTURE_BOGUS_ORDER_EMAIL}') || Spree::Order.create!(store: comma_store, currency: 'EUR', email: '${FIXTURE_BOGUS_ORDER_EMAIL}', status: 'placed', completed_at: Time.current, total: 10)`,
-  "gateway_card = Spree::CreditCard.where(payment_method: comma_bogus, gateway_customer_profile_id: 'BGS-E2E').first_or_create!(number: '4111111111111111', verification_value: '123', month: 12, year: 1.year.from_now.year, name: 'E2E Customer', cc_type: 'visa')",
-  `gateway_order.payments.create!(payment_method: comma_bogus, source: gateway_card, amount: 10, status: 'completed', response_code: '${FIXTURE_BOGUS_TRANSACTION_ID}', avs_response: 'N', cvv_response_code: 'N', cvv_response_message: 'CVV does not match').capture_events.create!(amount: 10) unless gateway_order.payments.exists?`,
-  // The same gateway answers captures, voids and refunds as requested, the
-  // way a provider that reports their outcome by webhook does; the payment
-  // above is already captured, so it is unaffected.
-  'comma_bogus.update!(preferred_requested_mode: true) unless comma_bogus.preferred_requested_mode',
   'port = ENV.fetch("PORT", 3010)',
   'puts JSON.generate(api_url: "http://localhost:#{port}", admin_email: admin.email, admin_password: "spree123", store_id: s.prefixed_id, store_name: s.name, comma_store_id: comma_store.prefixed_id, deploy_token: deploy_key.plaintext_token, comma_deploy_token: comma_deploy_key.plaintext_token)',
 ].join('; ')
 
-// Transaction data the fixture file cannot carry (orders, payouts, transfers,
-// a checkout's reservation): written directly once the configured records
-// exist, keyed on the same natural keys the file declares.
+// What no API writes: the ledger's settled and owed payouts, the seller panel
+// accounts, a payment carrying the issuer's answers and a checkout's
+// reservation. Written directly once the deployed records exist, keyed on the
+// same natural keys the files declare.
 const transactionsRuby = (ledgerSellerSlug: string) =>
   [
     's = Spree::Store.default',
     // A seller with one settled earning and one payout still owed, so the
     // marketplace ledger screens have rows to read and a settlement to mark
-    // paid. Both are produced by fulfilment and the payout sweep, neither of
-    // which an E2E run can reach.
+    // paid. The sweep settles whatever a seller has earned, so no request can
+    // ask for a payout of a given amount.
     `ledger_seller = s.sellers.find_by!(slug: '${ledgerSellerSlug}')`,
-    // Approved directly: the approve workflow wants a seller who has started
-    // onboarding, and a ledger fixture never signs in.
-    "ledger_seller.update!(status: 'approved') unless ledger_seller.approved?",
     `ledger_payout = ledger_seller.seller_payouts.where(amount: ${FIXTURE_LEDGER_PAYOUT_AMOUNT}).first_or_create!(store: s, currency: s.default_currency, provider: Spree::PayoutProvider::System.provider_key, status: 'pending')`,
     `ledger_seller.seller_payouts.where(amount: ${FIXTURE_LEDGER_OWED_AMOUNT}).first_or_create!(store: s, currency: s.default_currency, provider: Spree::PayoutProvider::System.provider_key, status: 'pending')`,
     `ledger_order = s.orders.where(seller: ledger_seller).first || Spree::Order.create!(store: s, seller: ledger_seller, currency: s.default_currency, email: 'e2e-ledger@example.com', status: 'placed', completed_at: Time.current)`,
     `ledger_seller.seller_transfers.first_or_create!(store: s, order: ledger_order, payout: ledger_payout, amount: ${FIXTURE_LEDGER_PAYOUT_AMOUNT}, currency: s.default_currency, kind: 'earning', provider: Spree::PayoutProvider::System.provider_key, status: 'completed')`,
-    // In review on every run: a spec approves it, and update_columns skips the
-    // review workflow that would otherwise be the only way back.
-    `Spree::Product.where(name: '${FIXTURE_LEDGER_PRODUCT_IN_REVIEW}').first_or_create!(store: s, seller: ledger_seller, status: 'draft').tap { |p| p.default_variant.set_price(s.default_currency, 25); p.update_columns(status: 'proposed') }`,
-    // Where the ledger seller takes returns: a postable location, so the
-    // seller page shows a returns address and links to the location behind it.
-    // The location the API created with the seller has no address, so it stops
-    // taking returns.
-    `returns_location = ledger_seller.stock_locations.where(name: '${FIXTURE_LEDGER_RETURNS_LOCATION}').first_or_create!(store: s, active: true, returns_enabled: true, address1: '1 Returns Way', city: 'Albany', zipcode: '12207', country_code: 'US', state_code: 'NY')`,
-    'ledger_seller.stock_locations.where.not(id: returns_location.id).update_all(returns_enabled: false)',
     // Seller panel accounts. One runs the ledger seller, whose sale and payouts
     // give the read-only panel screens something to show; the other runs a
     // seller of its own that the specs editing a profile, policy or team may
@@ -156,6 +127,15 @@ const transactionsRuby = (ledgerSellerSlug: string) =>
     `panel_seller = s.sellers.find_by!(name: '${FIXTURE_PANEL_SELLER}')`,
     `seller_writer = Spree.admin_user_class.where(email: '${FIXTURE_SELLER_WRITER_EMAIL}').first_or_create! { |u| u.password = '${FIXTURE_SELLER_PASSWORD}'; u.password_confirmation = '${FIXTURE_SELLER_PASSWORD}'; u.first_name = 'Pat'; u.last_name = 'Panel' }`,
     'panel_seller.add_user(seller_writer)',
+    // A card payment the test gateway has charged, so its page at the gateway's
+    // dashboard has an address, and whose card failed both of the issuer's
+    // checks. Written directly: what the issuer answered comes from the
+    // gateway, and no request can set it.
+    "comma_store = Spree::Store.find_by!(code: 'e2e-nl')",
+    `comma_bogus = comma_store.payment_methods.find_by!(name: '${FIXTURE_BOGUS_GATEWAY}')`,
+    `gateway_order = comma_store.orders.find_by(email: '${FIXTURE_BOGUS_ORDER_EMAIL}') || Spree::Order.create!(store: comma_store, currency: 'EUR', email: '${FIXTURE_BOGUS_ORDER_EMAIL}', status: 'placed', completed_at: Time.current, total: 10)`,
+    "gateway_card = Spree::CreditCard.where(payment_method: comma_bogus, gateway_customer_profile_id: 'BGS-E2E').first_or_create!(number: '4111111111111111', verification_value: '123', month: 12, year: 1.year.from_now.year, name: 'E2E Customer', cc_type: 'visa')",
+    `gateway_order.payments.create!(payment_method: comma_bogus, source: gateway_card, amount: 10, status: 'completed', response_code: '${FIXTURE_BOGUS_TRANSACTION_ID}', avs_response: 'N', cvv_response_code: 'N', cvv_response_message: 'CVV does not match').capture_events.create!(amount: 10) unless gateway_order.payments.exists?`,
     // The Inventory page's SKU, held by one checkout at the destination. The
     // hold is a reservation row written directly — the row keeps the level's
     // counter itself — because a real checkout needs reservations switched on
@@ -172,9 +152,17 @@ type StoreSeeds = ReturnType<typeof loadSeeds>['config']
  * The specs reference fixtures through the constants in `helpers.ts`; the
  * file is what creates them. Refuse to start when they disagree, which is
  * cheaper than a spec failing on a record that was never seeded. Checked on
- * the keys the specs and the Ruby block below resolve by.
+ * the keys the specs and the setup steps below resolve by.
  */
-function assertFixturesDeclared(config: StoreSeeds): void {
+function assertFixturesDeclared(config: StoreSeeds, commaConfig: StoreSeeds): void {
+  const gateway = (commaConfig.payment_methods ?? []).some(
+    (method) => method.name === FIXTURE_BOGUS_GATEWAY,
+  )
+  if (!gateway) {
+    throw new Error(
+      `e2e/fixtures/comma-store.yml does not declare payment method "${FIXTURE_BOGUS_GATEWAY}"`,
+    )
+  }
   const expected: [keyof StoreSeeds, string, string][] = [
     ['channels', 'code', FIXTURE_BULK_CHANNEL_CODE],
     ['categories', 'permalink', FIXTURE_PROMO_TAXON_PERMALINK],
@@ -210,7 +198,7 @@ function assertFixturesDeclared(config: StoreSeeds): void {
   }
 }
 
-/** The ledger seller's slug as the file states it, for the Ruby block that adds its payouts. */
+/** The ledger seller's slug as the file states it, to find the record the deploy created. */
 function ledgerSellerSlug(config: StoreSeeds): string {
   const seller = (config.sellers ?? []).find(
     (candidate) => candidate.name === FIXTURE_LEDGER_SELLER,
@@ -218,6 +206,81 @@ function ledgerSellerSlug(config: StoreSeeds): string {
   if (!seller)
     throw new Error(`e2e/fixtures/store.yml does not declare seller "${FIXTURE_LEDGER_SELLER}"`)
   return seller.slug
+}
+
+/** Deploys one fixture file, and stops the run when any record fails. */
+async function deployFixtures(
+  file: string,
+  config: StoreSeeds,
+  client: AdminClient,
+  prune?: string[],
+) {
+  const report = await deploySeeds(config, client, prune ? { prune } : undefined)
+  if (reportHasFailures(report)) {
+    throw new Error(`Deploying ${file} failed:\n${renderReport(report)}`)
+  }
+}
+
+/**
+ * What the operator does to the deployed records: the default market offers
+ * German, so the orders list can show a German-language order in the US
+ * market, and the ledger seller is approved without an onboarding checklist.
+ *
+ * @returns The ledger seller's id.
+ */
+async function prepareStore(client: AdminClient, sellerSlug: string): Promise<string> {
+  const markets = await client.markets.list({ limit: 100 })
+  const market = markets.data.find((candidate) => candidate.default)
+  if (!market) throw new Error('The e2e store has no default market')
+  if (!market.supported_locales.includes('de')) {
+    await client.markets.update(market.id, {
+      supported_locales: [...market.supported_locales, 'de'],
+    })
+  }
+
+  const sellers = await client.sellers.list({ limit: 100 })
+  const seller = sellers.data.find((candidate) => candidate.slug === sellerSlug)
+  if (!seller) throw new Error(`The deploy did not create seller "${sellerSlug}"`)
+  await client.sellers.approve(seller.id, { override_requirements: true })
+  return seller.id
+}
+
+/**
+ * What the ledger seller does in their own panel, through the Seller API: a
+ * postable location that takes their returns, so the seller page shows a
+ * returns address, and a product sent for review, which a spec approves.
+ */
+async function prepareLedgerSeller(apiUrl: string, sellerId: string, currency: string) {
+  const seller = createSellerClient({ baseUrl: apiUrl, retry: false })
+  const session = await seller.auth.login({
+    email: FIXTURE_SELLER_USER_EMAIL,
+    password: FIXTURE_SELLER_PASSWORD,
+  })
+  seller.setToken(session.token)
+  seller.setSeller(sellerId)
+
+  // The location created with the seller has no address, so it stops taking
+  // returns once the postable one exists.
+  const existing = await seller.stockLocations.list({ limit: 100 })
+  await seller.stockLocations.create({
+    name: FIXTURE_LEDGER_RETURNS_LOCATION,
+    active: true,
+    returns_enabled: true,
+    address1: '1 Returns Way',
+    city: 'Albany',
+    zipcode: '12207',
+    country_code: 'US',
+    state_code: 'NY',
+  })
+  for (const location of existing.data) {
+    await seller.stockLocations.update(location.id, { returns_enabled: false })
+  }
+
+  const product = await seller.products.create({
+    name: FIXTURE_LEDGER_PRODUCT_IN_REVIEW,
+    prices: [{ currency, amount: '25' }],
+  })
+  await seller.products.submit(product.id)
 }
 
 export default async function globalSetup() {
@@ -281,7 +344,8 @@ export default async function globalSetup() {
   )
 
   const { config } = loadSeeds(STORE_CONFIG)
-  assertFixturesDeclared(config)
+  const { config: commaConfig } = loadSeeds(COMMA_STORE_CONFIG)
+  assertFixturesDeclared(config, commaConfig)
 
   const {
     deploy_token: deployToken,
@@ -308,16 +372,20 @@ export default async function globalSetup() {
     throw new Error(`Deploying the store defaults failed:\n${renderReport(defaults)}`)
   }
   // The Dutch store gets every default, the country-shaped ones included.
-  const commaDefaults = await provisionStore(
-    createAdminClient({ baseUrl: credentials.api_url, secretKey: commaDeployToken, retry: false }),
-  )
+  const commaClient = createAdminClient({
+    baseUrl: credentials.api_url,
+    secretKey: commaDeployToken,
+    retry: false,
+  })
+  const commaDefaults = await provisionStore(commaClient)
   if (reportHasFailures(commaDefaults)) {
     throw new Error(`Deploying the Dutch store's defaults failed:\n${renderReport(commaDefaults)}`)
   }
-  const report = await deploySeeds(config, client, { prune: ['products'] })
-  if (reportHasFailures(report)) {
-    throw new Error(`Deploying e2e/fixtures/store.yml failed:\n${renderReport(report)}`)
-  }
+  await deployFixtures('e2e/fixtures/store.yml', config, client, ['products'])
+  await deployFixtures('e2e/fixtures/comma-store.yml', commaConfig, commaClient)
 
-  runRails(transactionsRuby(ledgerSellerSlug(config)), RAILS_ENV, 'Transaction fixtures runner')
+  const sellerSlug = ledgerSellerSlug(config)
+  const sellerId = await prepareStore(client, sellerSlug)
+  runRails(transactionsRuby(sellerSlug), RAILS_ENV, 'Transaction fixtures runner')
+  await prepareLedgerSeller(credentials.api_url, sellerId, 'USD')
 }

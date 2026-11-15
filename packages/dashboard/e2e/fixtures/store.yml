@@ -53,10 +53,10 @@ customers:
     password: customer123
 
 # The ledger seller has one settled earning and one payout still owed; the
-# panel seller is the one seller-panel specs may edit freely. Payouts and the
-# sellers' sign-in accounts are not configuration and stay in the Ruby block of
-# global-setup, which also marks the ledger seller approved: the API only
-# approves a seller who has started onboarding, and this one never will.
+# panel seller is the one seller-panel specs may edit freely. global-setup
+# approves the ledger seller through the Admin API and adds its returns
+# location and a product in review through the Seller API. Payouts and the
+# sellers' sign-in accounts are written in its Ruby block.
 sellers:
   - slug: e2e-ledger-seller
     name: E2E Ledger Seller
