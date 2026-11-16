@@ -3279,6 +3279,7 @@
         "reason_placeholder": "¿Qué debería cambiar el vendedor?",
         "reject": "Devolver",
         "rejected": "Devuelto al vendedor",
+        "save_first": "Guarda primero tus cambios. Aprobar o devolver no los guarda.",
         "send_back": "Devolver"
       },
       "save_label": "Guardar producto",

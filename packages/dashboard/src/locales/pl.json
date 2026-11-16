@@ -5073,6 +5073,7 @@
         "reason_placeholder": "Co sprzedawca ma zmienić?",
         "reject": "Odeślij",
         "rejected": "Odesłano do sprzedawcy",
+        "save_first": "Najpierw zapisz zmiany. Zatwierdzenie ani odesłanie ich nie zapisuje.",
         "send_back": "Odeślij"
       },
       "save_label": "Zapisz produkt",
