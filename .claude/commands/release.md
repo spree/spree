@@ -337,8 +337,25 @@ DATABASE_NAME=spree_starter_release bin/rails db:drop
   body, push, and open the pull request with `gh pr create --repo
   spree/spree-starter --base main`. Its description lists the new migrations
   and says what each one does. Its CI builds the Docker image and runs the
-  specs; watch it with `gh pr checks --watch --repo spree/spree-starter`. A
-  human merges it.
+  specs; watch it with `gh pr checks --watch --repo spree/spree-starter`. Its
+  `bundle audit` step fails on any new advisory, even for a gem this release
+  did not move (6.0.5 hit seven in Puma): fix it in the same pull request with
+  `bundle update <gem> --conservative`. A human merges it.
+- The merge does not publish the image `spree init` and new projects run. The
+  starter's `release.yml` builds `ghcr.io/spree/spree` from a `v*` tag, so tag
+  the bump's merge commit with the Spree version and push it:
+
+  ```bash
+  git fetch origin && git tag v<version> <merge sha> && git push origin v<version>
+  gh run list --repo spree/spree-starter --workflow release.yml --branch v<version> --json databaseId,conclusion
+  ```
+
+  Tag only after the bump merges: a tag on an earlier commit builds the old
+  gems (6.0.4 had to be re-cut as `v6.0.4.1`). Wait for the run to conclude
+  `success`. Skip this for a prerelease (`6.1.0.rc1`) and for a patch on an
+  older minor line (`6.0.6` after `6.1.0`): the starter's `release.yml` also
+  tags every image `latest`, so either tag would replace the newest stable
+  image new projects pull.
 
 ## 7. Bump the storefront's SDK
 
@@ -380,5 +397,5 @@ pnpm exec tsc --noEmit && pnpm run check && pnpm run test
 The pull request URL, the audit items the user accepted or deferred, the tool
 versions bumped or kept, the follow-ups the audit produced (regenerated docs, a
 changeset a commit forgot, an upgrade note) and, after the merge, the release
-URL (or the tag and release commands for a human), the registry checks and the
-spree-starter and storefront pull requests.
+URL (or the tag and release commands for a human), the registry checks, the
+spree-starter and storefront pull requests and the starter's image release run.
