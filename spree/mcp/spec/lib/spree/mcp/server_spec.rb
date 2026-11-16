@@ -34,6 +34,16 @@ RSpec.describe Spree::Mcp::Server do
       expect(result.dig('serverInfo', 'name')).to eq('spree-admin')
       expect(result['instructions']).to include('describe_resource')
     end
+
+    # Only exports are served as resources, so the instructions must not
+    # promise an agent the documents attached to records.
+    it 'says documents attached to records are handed over as links, not read' do
+      result = call('initialize', protocolVersion: '2026-07-28', capabilities: {},
+                                  clientInfo: { name: 'rspec', version: '1' })['result']
+
+      expect(result['instructions']).to include('Finished exports are the only files you can read')
+      expect(result['instructions']).to include('give them that link')
+    end
   end
 
   describe 'tools/list' do
