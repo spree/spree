@@ -187,6 +187,8 @@ module Spree
     #   { action: :captured/:authorized/:failed/:canceled,
     #     payment_session: <Spree::PaymentSession>,
     #     metadata: {} }
+    #   metadata reaches the session's settlement through a background job, so
+    #   it must be JSON-safe with string keys.
     # @raise [Spree::PaymentMethod::WebhookSignatureError] if signature is invalid
     def parse_webhook_event(raw_body, headers)
       raise ::NotImplementedError, 'You must implement parse_webhook_event method for this gateway.'

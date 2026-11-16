@@ -63,7 +63,8 @@ RSpec.describe Spree::Api::V3::Webhooks::PaymentsController, type: :controller d
         }.to have_enqueued_job(Spree::Payments::HandleWebhookJob).with(
           payment_method_id: other_payment_method.id,
           action: 'captured',
-          payment_session_id: payment_session.id
+          payment_session_id: payment_session.id,
+          metadata: {}
         )
 
         expect(response).to have_http_status(:ok)
@@ -122,9 +123,32 @@ RSpec.describe Spree::Api::V3::Webhooks::PaymentsController, type: :controller d
             .with(
               payment_method_id: payment_method.id,
               action: 'captured',
-              payment_session_id: payment_session.id
+              payment_session_id: payment_session.id,
+              metadata: {}
             )
         end
+      end
+
+      it "enqueues the parser's metadata" do
+        allow_any_instance_of(Spree::PaymentMethod).to receive(:parse_webhook_event).and_return(
+          { action: :captured, payment_session: payment_session, metadata: { 'psp_reference' => 'PSP123' } }
+        )
+
+        expect {
+          post :create, params: { payment_method_id: payment_method.prefixed_id }
+        }.to have_enqueued_job(Spree::Payments::HandleWebhookJob).with(
+          hash_including(metadata: { 'psp_reference' => 'PSP123' })
+        )
+      end
+
+      it 'enqueues empty metadata when the parser returns none' do
+        allow_any_instance_of(Spree::PaymentMethod).to receive(:parse_webhook_event).and_return(
+          { action: :captured, payment_session: payment_session }
+        )
+
+        expect {
+          post :create, params: { payment_method_id: payment_method.prefixed_id }
+        }.to have_enqueued_job(Spree::Payments::HandleWebhookJob).with(hash_including(metadata: {}))
       end
     end
   end

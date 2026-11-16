@@ -50,6 +50,16 @@ RSpec.describe Spree::Payments::HandleWebhook do
         subject.call(payment_method: payment_method, action: :captured, payment_session: payment_session)
       end
 
+      it 'passes the metadata to the settlement' do
+        expect(payment_session).to receive(:settle_payment!).
+          with(captured: true, metadata: { 'psp_reference' => 'PSP123' }).and_call_original
+
+        subject.call(
+          payment_method: payment_method, action: :captured, payment_session: payment_session,
+          metadata: { 'psp_reference' => 'PSP123' }
+        )
+      end
+
       it 'creates a payment record' do
         expect {
           subject.call(payment_method: payment_method, action: :captured, payment_session: payment_session)

@@ -41,7 +41,8 @@ module Spree
             Spree::Payments::HandleWebhookJob.set(wait: 30.seconds).perform_later(
               payment_method_id: payment_method.id,
               action: result[:action].to_s,
-              payment_session_id: result[:payment_session].id
+              payment_session_id: result[:payment_session].id,
+              metadata: result[:metadata] || {}
             )
 
             head :ok
