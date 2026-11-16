@@ -1,5 +1,19 @@
 # @spree/dashboard-core
 
+## 6.0.5
+
+### Patch Changes
+
+- [#15220](https://github.com/spree/spree/pull/15220) [`f32acce`](https://github.com/spree/spree/commit/f32accecc5873d951cbd5d57a8410aeffd33d7f8) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Plugins can now receive the errors the panels' error screens catch through `errorReporters` in `defineDashboardPlugin`, and mount session-wide components in the new `app.root` slot, each behind its own error boundary. `RouteErrorBoundary` takes an `onCatch` callback, and the router error screen both panels share retries by refetching the page's data.
+
+- [#15230](https://github.com/spree/spree/pull/15230) [`53d2936`](https://github.com/spree/spree/commit/53d2936a5750d9a3b806b97a45c7712393b35622) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Resource tables now sort by clicking a sortable column header: the first click sorts ascending, the next flips the direction, and the header shows the current direction.
+
+- [#15219](https://github.com/spree/spree/pull/15219) [`8092164`](https://github.com/spree/spree/commit/8092164492d6f006adb766d6f309255a6cf8c26f) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The product form's Variants card now lets a seller's client register a `list` of option types alone, so the seller panel offers the marketplace's option types and values to pick from without the actions that add new ones. The form fetches a product type's option types by id, so a type naming option types past the first 100 still offers them, in both panels.
+
+- [#15216](https://github.com/spree/spree/pull/15216) [`40fe3a3`](https://github.com/spree/spree/commit/40fe3a3640c3964ddcf78842f7af36f31be059b1) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `ResourceImageField` takes a `disabled` prop that blocks picking or removing an image, for example while the owning form saves.
+- Updated dependencies []:
+  - @spree/core@6.0.5
+
 ## 6.0.4
 
 ### Patch Changes
