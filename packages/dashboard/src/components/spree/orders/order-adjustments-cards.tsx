@@ -13,6 +13,7 @@ import {
   formatMoney,
   Money,
   percentOf,
+  toastMutationError,
   useMetadataSheet,
   ViewMetadataMenuItem,
 } from '@spree/dashboard-core'
@@ -454,6 +455,7 @@ function AddDiscountDialog({
           setValue('')
           onOpenChange(false)
         },
+        onError: toastMutationError,
       },
     )
   }
@@ -626,7 +628,7 @@ function AddFeeDialog({
         kind,
         ...(target !== 'order' ? { line_item_id: target } : {}),
       },
-      { onSuccess: () => onOpenChange(false) },
+      { onSuccess: () => onOpenChange(false), onError: toastMutationError },
     )
   }
 
