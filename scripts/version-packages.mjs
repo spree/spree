@@ -186,7 +186,8 @@ export function sharedChangesets() {
     .flatMap((file) => {
       const frontMatter = fs
         .readFileSync(path.join(dir, file), 'utf8')
-        .match(/^---\r?\n(?:([\s\S]*?)\r?\n)?---[ \t]*(?:\r?\n|$)/)
+        // The front matter pattern of @changesets/parse, so this reads what Changesets reads.
+        .match(/\s*---([\s\S]*?)\r?\n\s*---(\s*(?:\n|$)[\s\S]*)/)
       const names = Object.keys(YAML.parse(frontMatter?.[1] ?? '') ?? {})
       return names.length > 1 ? [`.changeset/${file} names ${names.join(', ')}`] : []
     })

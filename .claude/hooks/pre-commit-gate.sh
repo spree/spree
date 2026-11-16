@@ -216,9 +216,10 @@ while IFS= read -r segment; do
   # another repository (the release's spree-starter, storefront and
   # agent-skills bumps) is not gated. gh reads `--repo` as `[HOST/]OWNER/REPO`
   # or a URL, so every spelling of this repository is gated. The shell expands
-  # `$REPO`, `` `cmd` `` and `{a,b}` into arguments the gate never sees — a
-  # later `--repo spree/spree` among them — so a command holding any of them,
-  # or one the gate could not read to its end, stays gated.
+  # `$REPO`, `` `cmd` `` and `{a,b}` into arguments the gate never sees, and
+  # drops a `#` comment the gate would read as arguments — either can hide
+  # which `--repo` gh gets — so a command holding any of them, or one the gate
+  # could not read to its end, stays gated.
   repo_name=$(tr '[:upper:]' '[:lower:]' <<<"$REPO_FLAG")
   repo_name="${repo_name#*://}"
   repo_name="${repo_name#git@}"
@@ -226,7 +227,7 @@ while IFS= read -r segment; do
   repo_name="${repo_name#github.com[:/]}"
   repo_name="${repo_name%/}"
   repo_name="${repo_name%.git}"
-  if [ $flags_read -eq 0 ] && [[ "$LAUNCHED" != *[\$\`{]* ]] \
+  if [ $flags_read -eq 0 ] && [[ "$LAUNCHED" != *[\$\`{#]* ]] \
     && [[ "$repo_name" =~ ^[a-z0-9_.-]+/[a-z0-9_.-]+$ ]] && [ "$repo_name" != "spree/spree" ]; then
     continue
   fi
