@@ -17,6 +17,11 @@ uncommitted work before step 1 so the reviews see it.
   `ReportFindings`). That report is input for the next step. Do not end the
   turn, summarize or wait for the user after it. Go straight on to the next
   step.
+- A review that runs in the background ends your turn while you wait. When its
+  result arrives, resume at the next step. Do not repeat the review's report
+  to the user as your reply.
+- This command has one closing message: the final report below. It holds the
+  pull request URL, or the reason there is none.
 - Fix every finding yourself. Do not ask which ones to fix and do not ask
   before you commit, push or open the pull request.
 - Reject a finding only when it is wrong: a false positive, already handled,
@@ -33,8 +38,19 @@ unapplied. Re-run `pnpm test:changed`, fix what fails, then commit with a
 
 ## 2. Security review
 
-Run `/security-review` on the branch. It only reports, so fix every confirmed
-finding yourself. Re-run `pnpm test:changed`, fix what fails, then commit.
+Run `/security-review` in a subagent, never in this conversation. Start one
+`general-purpose` agent with this prompt:
+
+> Run the `/security-review` skill on the current branch and reply with its
+> full report.
+
+The skill tells whoever runs it that the final reply must be the report and
+nothing else. Loaded here, that instruction ends this command at the report.
+In a subagent it only shapes the subagent's reply.
+
+The report is input, not the end. The skill only reports, so fix every
+confirmed finding yourself. Re-run `pnpm test:changed`, fix what fails, then
+commit. With no findings, go straight to step 3.
 
 If step 2 changed code, run `/code-review --fix` once more on those fixes only,
 and apply any finding it leaves unapplied. Re-run `pnpm test:changed`, fix what
