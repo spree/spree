@@ -60,7 +60,6 @@ import { VariantEditSheet } from './variant-edit-sheet'
 import {
   emptyOptionTypeRows,
   generateVariantCombinations,
-  type OptionTypeRowSource,
   optionsKey,
   reconcileVariants,
   type SelectedOptionType,
@@ -78,10 +77,10 @@ export interface VariantsSectionProps {
    */
   seedFromType?: boolean
   /**
-   * A saved product's own option types. Those no variant uses yet — such as
-   * the ones a product type adds on create — are offered as empty rows.
+   * A saved product's own option types, in order. Those no variant uses yet —
+   * such as the ones a product type adds on create — are offered as empty rows.
    */
-  productOptionTypes?: OptionTypeRowSource[]
+  productOptionTypeIds?: string[]
   /** The product form's key — names the variant sheet's slot. */
   formKey?: string
 }
@@ -127,7 +126,7 @@ function deriveSelectedFromVariants(
 export function VariantsSection({
   form,
   seedFromType = false,
-  productOptionTypes,
+  productOptionTypeIds,
   formKey = 'product',
 }: VariantsSectionProps) {
   const { t } = useTranslation()
@@ -139,6 +138,24 @@ export function VariantsSection({
   // may not contain every option type the product type references.
   const { data: typeOptionTypesData } = useOptionTypesByIds(productType?.option_type_ids)
   const typeOptionTypes = useMemo(() => typeOptionTypesData?.data ?? [], [typeOptionTypesData])
+  // By id for the same reason: the registry's first page may miss the
+  // product's own option types, which every variant's options belong to.
+  const { data: productOptionTypesData } = useOptionTypesByIds(productOptionTypeIds)
+  const productOptionTypes = useMemo(
+    () => productOptionTypesData?.data ?? [],
+    [productOptionTypesData],
+  )
+  const extraOptionTypes = useMemo(
+    () => [...typeOptionTypes, ...productOptionTypes],
+    [typeOptionTypes, productOptionTypes],
+  )
+  const knownOptionTypes = useMemo(() => {
+    const known = new Map(allOptionTypes.map((optionType) => [optionType.id, optionType]))
+    extraOptionTypes.forEach((optionType) => {
+      if (!known.has(optionType.id)) known.set(optionType.id, optionType)
+    })
+    return [...known.values()]
+  }, [allOptionTypes, extraOptionTypes])
 
   const variantsArray = useFieldArray<ProductFormValues, 'variants', '_key'>({
     control: form.control,
@@ -152,28 +169,29 @@ export function VariantsSection({
   const [bulkOpen, setBulkOpen] = useState(false)
   const [orphanedKeys, setOrphanedKeys] = useState<string[]>([])
 
-  // `selected` is fully derived from the current variants array + the global
-  // option-type registry. Changes flow: builder → handleOptionsChange writes
-  // RHF variants → next render derives `selected` from the new variants. No
-  // local state to drift out of sync.
+  // Rows with values are derived from the current variants array. Changes
+  // flow: builder → handleOptionsChange writes RHF variants → next render
+  // derives them from the new variants.
   const watchedVariants = useWatch({ control: form.control, name: 'variants' })
   const derived = useMemo(
-    () => deriveSelectedFromVariants(watchedVariants ?? [], allOptionTypes),
-    [watchedVariants, allOptionTypes],
+    () => deriveSelectedFromVariants(watchedVariants ?? [], knownOptionTypes),
+    [watchedVariants, knownOptionTypes],
   )
 
-  // A product type's option types are *offered* as empty rows, once, when the
-  // merchant picks the type on a new product. They live in local state rather
-  // than being derived every render: an empty row writes no variants, so a
-  // derived version would regenerate itself the moment the merchant removed it.
-  // Once any row has values the variants array takes over as the source.
-  const [offeredOptionTypes, setOfferedOptionTypes] = useState<SelectedOptionType[]>(() =>
-    emptyOptionTypeRows(
-      (productOptionTypes ?? []).map((optionType) => optionType.id),
-      productOptionTypes ?? [],
-    ),
-  )
+  // Option types no variant uses yet are *offered* as empty rows, once: a
+  // product type's when the merchant picks it on a new product, and a saved
+  // product's own once they resolve. They live in local state rather than
+  // being derived every render: an empty row writes no variants, so a derived
+  // version would regenerate itself the moment the merchant removed it. Rows
+  // with values always come from the variants array.
+  const [offeredOptionTypes, setOfferedOptionTypes] = useState<SelectedOptionType[]>([])
   const [offeredForTypeId, setOfferedForTypeId] = useState<string | null>(null)
+  const [offeredProductOptionTypes, setOfferedProductOptionTypes] = useState(false)
+
+  if (!offeredProductOptionTypes && productOptionTypes.length > 0) {
+    setOfferedProductOptionTypes(true)
+    setOfferedOptionTypes(emptyOptionTypeRows(productOptionTypeIds ?? [], productOptionTypes))
+  }
 
   useEffect(() => {
     // Clearing the type withdraws the offer; anything the merchant built is in
@@ -200,7 +218,16 @@ export function VariantsSection({
     setOfferedOptionTypes(emptyOptionTypeRows(configuredIds, typeOptionTypes))
   }, [seedFromType, productTypeId, offeredForTypeId, derived.length, productType, typeOptionTypes])
 
-  const selected = derived.length > 0 ? derived : offeredOptionTypes
+  // The variants' option types, then the offered rows they don't cover. With
+  // no variant options at all, the offered rows stand in whole, values and all.
+  const selected = useMemo(() => {
+    const derivedIds = new Set(derived.map((optionType) => optionType.id))
+    const offered = offeredOptionTypes.filter(
+      (optionType) =>
+        !derivedIds.has(optionType.id) && (derived.length === 0 || optionType.values.length === 0),
+    )
+    return [...derived, ...offered]
+  }, [derived, offeredOptionTypes])
 
   const fields = variantsArray.fields
   const hasOptionTypes = selected.length > 0
@@ -370,7 +397,7 @@ export function VariantsSection({
         <VariantsOptionsBuilder
           selected={selected}
           onChange={handleOptionsChange}
-          extraOptionTypes={typeOptionTypes}
+          extraOptionTypes={extraOptionTypes}
         />
 
         {orphanedKeys.length > 0 && (

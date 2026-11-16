@@ -187,14 +187,15 @@ export function GeneralCard({
 export function VariantsCard({
   form,
   seedFromType,
-  productOptionTypes,
+  productOptionTypeIds,
   formKey = 'product',
-}: FormCardProps & Pick<VariantsSectionProps, 'seedFromType' | 'productOptionTypes' | 'formKey'>) {
+}: FormCardProps &
+  Pick<VariantsSectionProps, 'seedFromType' | 'productOptionTypeIds' | 'formKey'>) {
   return (
     <VariantsSection
       form={form}
       seedFromType={seedFromType}
-      productOptionTypes={productOptionTypes}
+      productOptionTypeIds={productOptionTypeIds}
       formKey={formKey}
     />
   )

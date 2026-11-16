@@ -317,7 +317,11 @@ function ProductForm({ product }: { product: Product }) {
               {/* Media before variants, so a variant's image square points back
                   at a gallery already on screen above it. */}
               <MediaCard productId={productId} variants={assignableVariants} form={form} />
-              <VariantsCard form={form} productOptionTypes={product.option_types} />
+              <VariantsCard
+                key={product.id}
+                form={form}
+                productOptionTypeIds={product.option_types?.map((optionType) => optionType.id)}
+              />
               <PricesCard form={form} productName={product.name} />
               <InventoryCard
                 form={form}

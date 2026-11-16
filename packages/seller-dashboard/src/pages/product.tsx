@@ -269,10 +269,11 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
                 formKey="seller.product"
               />
               <VariantsCard
+                key={product?.id ?? 'new'}
                 form={form}
                 formKey="seller.product"
                 seedFromType={mode === 'new'}
-                productOptionTypes={product?.option_types}
+                productOptionTypeIds={product?.option_types?.map((optionType) => optionType.id)}
               />
               <PricesCard
                 form={form}
