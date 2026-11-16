@@ -3,6 +3,7 @@ import {
   adminClient,
   currencyParts,
   Money,
+  toastMutationError,
   useMetadataSheet,
   ViewMetadataMenuItem,
 } from '@spree/dashboard-core'
@@ -400,12 +401,19 @@ function AddPaymentDialog({
               onOpenChange(false)
               reset()
             },
+            // The payment exists by now; staying open would let a retry create a second one.
+            onError: (error) => {
+              toastMutationError(error)
+              onOpenChange(false)
+              reset()
+            },
           })
         } else {
           onOpenChange(false)
           reset()
         }
       },
+      onError: toastMutationError,
     })
   }
 
