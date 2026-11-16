@@ -3,3 +3,11 @@ en:
   spree:
     adyen:
       errors:
+        invalid_api_key: Adyen rejected this API key. Check it in your Customer Area under Developers, API credentials.
+        merchant_account_unreachable: This API key cannot reach the merchant account %{merchant_account}. Check the account name, or use a credential that has access to it.
+        no_answer: 'Adyen did not answer: %{message}'
+        payment_not_found: No Adyen payment matches this session.
+        psp_reference_missing: Adyen cannot be asked to capture, cancel or refund this payment without its PSP reference, which Spree never recorded. Handle it in your Adyen Customer Area.
+        refused: 'Adyen refused the request: %{message}'
+        role_missing: This API key lacks a role the integration needs. Give it API credentials read and write, and Webhooks read and write, in your Customer Area.
+        session_required: Adyen payments are taken through a payment session.
