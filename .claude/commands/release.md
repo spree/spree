@@ -337,8 +337,22 @@ DATABASE_NAME=spree_starter_release bin/rails db:drop
   body, push, and open the pull request with `gh pr create --repo
   spree/spree-starter --base main`. Its description lists the new migrations
   and says what each one does. Its CI builds the Docker image and runs the
-  specs; watch it with `gh pr checks --watch --repo spree/spree-starter`. A
-  human merges it.
+  specs; watch it with `gh pr checks --watch --repo spree/spree-starter`. Its
+  `bundle audit` step fails on any new advisory, even for a gem this release
+  did not move (6.0.5 hit seven in Puma): fix it in the same pull request with
+  `bundle update <gem> --conservative`. A human merges it.
+- The merge does not publish the image `spree init` and new projects run. The
+  starter's `release.yml` builds `ghcr.io/spree/spree` from a `v*` tag, so tag
+  the merge commit with the Spree version and push it:
+
+  ```bash
+  git fetch origin && git tag v<version> origin/main && git push origin v<version>
+  gh run list --repo spree/spree-starter --workflow release.yml --branch v<version> --json databaseId,conclusion
+  ```
+
+  Tag only after the bump merges: a tag on an earlier commit builds the old
+  gems (6.0.4 had to be re-cut as `v6.0.4.1`). Wait for the run to conclude
+  `success`.
 
 ## 7. Bump the storefront's SDK
 

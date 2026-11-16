@@ -126,3 +126,11 @@ for (const file of OPENAPI_FILES) {
 }
 
 console.log(`@spree/docs: converted ${totalFiles} files to ${DIST_DIR}`)
+
+// Source directories that go missing are only warned about above, so a build
+// that lost most of the docs would otherwise still pass and publish.
+const MIN_FILES = 100
+if (totalFiles < MIN_FILES) {
+  console.error(`@spree/docs: expected at least ${MIN_FILES} files, got ${totalFiles}`)
+  process.exit(1)
+}

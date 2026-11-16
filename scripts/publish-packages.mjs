@@ -89,21 +89,39 @@ function publish(packages) {
   const filters = packages.flatMap(({ name }) => ['--filter', name])
   execFileSync('pnpm', ['turbo', 'build', ...filters], { cwd: repoRoot, stdio: 'inherit' })
 
+  // One failure (say, a package whose npm Trusted Publishing lapsed) must not
+  // hold back the unrelated packages after it. Its dependents are still held
+  // back: they would point at a version npm does not have.
+  const failed = []
   for (const { name, dir } of dependencyOrder(packages)) {
-    const { version } = manifest(dir)
+    const { version, dependencies = {}, peerDependencies = {} } = manifest(dir)
     if (isPublished(name, version)) {
       console.log(`${name}@${version} is already on npm, skipping.`)
       continue
     }
+    const failedDependency = failed.find((dep) => dep in { ...dependencies, ...peerDependencies })
+    if (failedDependency) {
+      console.error(`Not publishing ${name}@${version}: ${failedDependency} failed to publish.`)
+      failed.push(name)
+      continue
+    }
     const tag = distTag(version)
     console.log(`Publishing ${name}@${version} under ${tag}.`)
-    // `pnpm publish`, not `npm publish`: it rewrites `workspace:` ranges, which
-    // npm would ship verbatim, and runs each package's prepublishOnly build.
-    execFileSync(
-      'pnpm',
-      ['publish', '--provenance', '--access', 'public', '--tag', tag, '--no-git-checks'],
-      { cwd: dir, stdio: 'inherit' },
-    )
+    try {
+      // `pnpm publish`, not `npm publish`: it rewrites `workspace:` ranges, which
+      // npm would ship verbatim, and runs each package's prepublishOnly build.
+      execFileSync(
+        'pnpm',
+        ['publish', '--provenance', '--access', 'public', '--tag', tag, '--no-git-checks'],
+        { cwd: dir, stdio: 'inherit' },
+      )
+    } catch {
+      console.error(`Failed to publish ${name}@${version}.`)
+      failed.push(name)
+    }
+  }
+  if (failed.length > 0) {
+    throw new Error(`Not published: ${failed.join(', ')}. Fix the cause and re-run the failed job.`)
   }
 }
 
