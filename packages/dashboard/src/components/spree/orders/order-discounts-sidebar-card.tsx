@@ -275,20 +275,35 @@ function ApplyGiftCardDialog({
   onOpenChange: (open: boolean) => void
 }) {
   const { t } = useTranslation()
+  const [code, setCode] = useState('')
   const mutation = useOrderMutation(orderId, (params: { code: string }) =>
     adminClient.orders.giftCards.apply(orderId, params),
   )
 
+  // Drop any error from the previous attempt when the dialog closes, so
+  // reopening it doesn't greet the user with a stale "not found".
+  function handleOpenChange(next: boolean) {
+    if (!next) mutation.reset()
+    onOpenChange(next)
+  }
+
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    const fd = new FormData(e.currentTarget)
-    const code = (fd.get('code') as string).trim()
-    if (!code) return
-    mutation.mutate({ code }, { onSuccess: () => onOpenChange(false) })
+    const trimmed = code.trim()
+    if (!trimmed) return
+    mutation.mutate(
+      { code: trimmed },
+      {
+        onSuccess: () => {
+          setCode('')
+          handleOpenChange(false)
+        },
+      },
+    )
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{t('admin.orders.detail.gift_card_section.apply_dialog_title')}</DialogTitle>
@@ -304,15 +319,20 @@ function ApplyGiftCardDialog({
                 <Input
                   id="gift-card-code"
                   name="code"
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
                   placeholder={t('admin.orders.detail.gift_card_section.code_placeholder')}
                   required
                   autoFocus
                 />
               </Field>
+              {mutation.isError && (
+                <p className="text-base text-destructive">{(mutation.error as Error).message}</p>
+              )}
             </FieldGroup>
           </DialogBody>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <Button type="button" variant="outline" onClick={() => handleOpenChange(false)}>
               {t('admin.actions.cancel')}
             </Button>
             <Button type="submit" disabled={mutation.isPending}>
