@@ -123,7 +123,8 @@ gh_pr_create='^gh([[:space:]]+-[^[:space:]]+([[:space:]]+[^-[:space:]][^[:space:
 # value is never read as a flag, and short flags may be clustered (`-fH x`) or
 # attached (`-Hx`, `-H=x`). Returns 1 when a quote is left open (the argument
 # continues on a later line the gate cannot see) and 2 for a flag it does not
-# know, since an unknown flag may take a value that hides a `--head`.
+# know, since an unknown flag may take a value that hides a `--head`. Returns 3
+# for a `#` comment: the shell drops it, but a `--head` in it would be read.
 HEAD_FLAG=""
 REPO_FLAG=""
 read_head_flag() {
@@ -137,6 +138,7 @@ read_head_flag() {
     [[ "$s" =~ $word ]] || return 1
     tok="${BASH_REMATCH[0]}"
     s="${s:${#tok}}"
+    [[ "$tok" == \#* ]] && return 3
     tok="${tok//[\"\']/}"
     case "$next" in
       head) HEAD_FLAG="$tok"; next=""; continue ;;
@@ -194,6 +196,10 @@ while IFS= read -r segment; do
   read_head_flag "${LAUNCHED#*create}"
   flags_read=$?
   case $flags_read in
+    3)
+      echo "Blocked: $seg" >&2
+      echo "Remove the # comment from gh pr create: the shell drops it, so a flag inside it would mislead the gate." >&2
+      exit 2 ;;
     2)
       echo "Blocked: $seg" >&2
       echo "The gate does not know one of these gh pr create flags, so it cannot tell which branch this opens. Use the long flag names --head, --title, --body-file." >&2
