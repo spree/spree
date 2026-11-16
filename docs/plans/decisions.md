@@ -6817,3 +6817,15 @@ which loads them on demand.
 **Consequences:** The 2026-11-13 statement that no general server package is created in 6.x is reversed; the name and top-level shape of the next major's server package are fixed now. `@spree/core` stays browser-safe, and `@spree/server` is never imported by browser code. The models are unstable until the next major settles its schema, version with the Spree gems, and give no way to write in 6.x. Ruby class names, encrypted attributes and floats for money stay out of them. A handler works with two vocabularies: snake_case in event payloads and the API, camelCase in the models. The base image keeps Node in its 6.1 runtime image although nothing in 6.1 runs it.
 
 **Plan:** `6.2-typescript-models.md`. **Plans amended:** `6.2-typescript-subscribers.md` (the models now have a plan and a package), `6.1-spree-base-image.md` (Node in the runtime image reconfirmed).
+
+
+## 2026-11-16 — The `spree` CLI runs its operations commands inside the production image
+
+**Context:** The CLI reaches an app only through Docker Compose, so a developer uses `spree` on their machine and `bin/rails` on production. The base image puts Node in every production image. The longer-term goal is a hosted offering where the CLI on a laptop reaches a remote machine; that design is not settled.
+
+**Decision:** The CLI gains a second way to run a backend command: directly, when the image sets `SPREE_CLI_RUNNER=direct`. Eight operations commands work that way (`migrate`, `migrate:status`, `migrate:rollback`, `task`, `upgrade`, `console`, `seed`, `exec`); every other command stops and says it belongs on the developer's machine. The base runtime image carries the CLI for its Spree line. A Ruby `bin/spree` was rejected as a second implementation of the same commands. Remote access is out of scope.
+
+**Consequences:** `spree` for operations joins the base image's contract, so whatever later runs commands in a container can call it without knowing the backend. Inside the image `spree upgrade` runs only the post-deploy steps and `spree migrate` copies no migrations from the gems. The image's CLI and a developer's CLI can differ within a release line, so a direct command must keep working across the versions of one line. The work is two pull requests: the CLI change now, the image step after the base image merges.
+
+**Plan:** `6.1-cli-inside-the-container.md`. **Plans amended:** `6.1-spree-base-image.md` (the image contract gains the CLI's operations commands).
+
