@@ -629,20 +629,19 @@ export interface PanelProductType {
 /**
  * A stock location as the shared page reads it.
  *
- * Structural rather than either SDK's type: the two serializers overlap on
- * everything this page shows, and the fields only one of them carries
- * (`admin_name`, `propagate_all_variants`) are optional here so the page can
- * hide what a panel does not send.
+ * Structural rather than either SDK's type. Both serializers send every
+ * setting the form edits, and those are required here: the form saves every
+ * field back, so one a panel did not send would be written off.
  */
 export interface PanelStockLocation {
   id: string
   name: string
-  admin_name?: string | null
+  admin_name: string | null
   kind: string
   active: boolean
   default: boolean
-  propagate_all_variants?: boolean
-  backorderable_default?: boolean
+  propagate_all_variants: boolean
+  backorderable_default: boolean
   address1?: string | null
   address2?: string | null
   city?: string | null
@@ -654,11 +653,11 @@ export interface PanelStockLocation {
   state_name?: string | null
   /** Rendered read-only in the table; either panel's serializer derives it. */
   state_text?: string | null
-  pickup_enabled?: boolean
+  pickup_enabled: boolean
   /** Whether this location accepts goods coming back. */
-  returns_enabled?: boolean
+  returns_enabled: boolean
   /** Open on read — a serializer answers whatever is stored. */
-  pickup_stock_policy?: string
+  pickup_stock_policy: string
   pickup_ready_in_minutes?: number | null
   pickup_instructions?: string | null
   /** Operator-only; the seller panel's serializer leaves it out. */
