@@ -70,6 +70,23 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       end
     end
 
+    {
+      { 'price' => '-5.00' } => 'price must be greater than or equal to 0, got -5.00.',
+      { 'price' => '1000000000000000000' } => /\Aprice must be less than or equal to .+, got 1000000000000000000\.\z/,
+      { 'price' => '10.00', 'compare_at_price' => '-1' } => 'compare_at_price must be greater than or equal to 0, got -1.'
+    }.each do |prices, message|
+      context "with prices the price model refuses (#{prices.values.join(' / ')})" do
+        let(:row_data) { csv_row_hash({ 'slug' => 'refused-kettle', 'name' => 'Refused Kettle' }.merge(prices)) }
+
+        before { import.mappings.find_by(schema_field: 'compare_at_price')&.update(file_column: 'compare_at_price') }
+
+        it 'fails the row before the product is written' do
+          expect { described_class.new(row) }.to raise_error(ArgumentError, message)
+          expect(Spree::Product.find_by(slug: 'refused-kettle')).to be_nil
+        end
+      end
+    end
+
     it 'stores the units the file declared alongside the measurements' do
       default_variant = product.default_variant
 

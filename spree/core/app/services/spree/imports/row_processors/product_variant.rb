@@ -11,6 +11,7 @@ module Spree
         def initialize(row, **)
           super
           ensure_decimals!
+          ensure_price_within_limits!
           @store = row.store
           @seller = import.seller
           ensure_seller_options_exist! if seller.present?
@@ -94,6 +95,25 @@ module Spree
             Spree::Money::Rounding.parse_decimal(attributes[column])
           rescue Spree::Money::InvalidFormat
             raise ArgumentError, I18n.t('spree.import_invalid_number', column: column, value: attributes[column].to_s.strip)
+          end
+        end
+
+        # A price that reads as a number can still be one the Price model
+        # refuses, such as a negative one. Judged by the model's own rules
+        # before the product is written, or the row would fail on the price
+        # write and leave an unpriced product behind. A compare-at price is
+        # only written alongside a price, so it is judged only then too.
+        def ensure_price_within_limits!
+          return if attributes['price'].blank?
+
+          price = Spree::Price.new(amount: attributes['price'].strip, compare_at_amount: attributes['compare_at_price'].presence&.strip)
+          price.validate
+          { amount: 'price', compare_at_amount: 'compare_at_price' }.each do |attribute, column|
+            error = price.errors.where(attribute).first
+            next if error.nil?
+
+            raise ArgumentError, I18n.t('spree.product_import_invalid_price', column: column, message: error.message,
+                                                                              value: attributes[column].strip)
           end
         end
 
