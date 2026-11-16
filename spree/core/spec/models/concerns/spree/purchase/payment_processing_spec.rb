@@ -47,6 +47,7 @@ RSpec.shared_examples 'a payment processing host' do
       context 'when there is other unprocessed payment' do
         let(:other_payment) { create_payment(record, amount: 5, status: 'checkout') }
         let(:unprocessed_payments) { [other_payment] }
+        let(:total) { 15 }
 
         before do
           record.payments << other_payment

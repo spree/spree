@@ -79,6 +79,36 @@ RSpec.describe Spree::Payments::Process do
     end
   end
 
+  describe 'an order carrying other live payments' do
+    let(:order) { create(:order, store: store, total: 49.99) }
+    let(:payment) do
+      create(:payment, order: order, payment_method: gateway, source: card, status: 'checkout', amount: 40, response_code: nil)
+    end
+
+    before { allow(gateway).to receive(:capture_at_checkout?).and_return(false) }
+
+    it 'charges only what the others leave owing' do
+      create(:payment, order: order, payment_method: gateway, source: create(:credit_card), status: 'pending', amount: 40)
+
+      result = described_class.call(payment: payment)
+
+      expect(result).to be_success
+      expect(payment.reload.amount).to eq(BigDecimal('9.99'))
+      expect(payment).to be_pending
+    end
+
+    it 'refuses a payment the others already cover' do
+      create(:payment, order: order, payment_method: gateway, source: create(:credit_card), status: 'completed', amount: 49.99)
+      expect(gateway).not_to receive(:authorize)
+
+      result = described_class.call(payment: payment)
+
+      expect(result).to be_failure
+      expect(result.error.value).to eq(I18n.t('spree.order_payment_already_covered'))
+      expect(payment.reload).to be_checkout
+    end
+  end
+
   describe 'retrying' do
     it 'processes a failed payment again — the failure may have been transient' do
       payment.update_column(:status, 'failed')

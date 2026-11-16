@@ -17,6 +17,7 @@ module Spree
         super
 
         step :ensure_processable
+        step :limit_to_amount_owed
         run_hooks :validate
         run_hooks :before_process
 
@@ -42,6 +43,18 @@ module Spree
           payment.invalidate!
           failure(payment, I18n.t('spree.payment_method_not_supported'))
         end
+      end
+
+      # Several live payments can sit on one order, so one is charged only
+      # what the others leave owing and shrunk to that before the gateway
+      # sees it. A payment the others already cover is refused.
+      def limit_to_amount_owed
+        owed = payment.amount_owed_by_order(including_in_flight: true)
+        return if owed.nil? || payment.amount <= owed
+
+        failure(payment, I18n.t('spree.order_payment_already_covered')) unless owed.positive?
+
+        payment.update!(amount: owed)
       end
 
       # A payment that completed concurrently — the webhook settled it while

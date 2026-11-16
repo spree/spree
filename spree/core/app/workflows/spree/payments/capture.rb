@@ -24,6 +24,7 @@ module Spree
 
         step :ensure_capturable
         step :ensure_within_payment_amount
+        step :ensure_within_amount_owed
         # Veto point — fraud holds, manual review. Before any money moves.
         run_hooks :validate
         run_hooks :before_capture
@@ -81,6 +82,15 @@ module Spree
         failure(payment, :capture_exceeds_payment_amount)
       end
 
+      # Other payments on the order may have captured some of its total
+      # already; this one may take only what they left owing.
+      def ensure_within_amount_owed
+        owed = payment.amount_owed_by_order(including_in_flight: false)
+        return if owed.nil? || @amount <= owed
+
+        failure(payment, I18n.t('spree.capture_exceeds_amount_owed', amount: Spree::Money.new(owed, currency: payment.currency).to_s))
+      end
+
       def claim
         halt!(payment) unless payment.started_processing!
       rescue Spree::Core::GatewayError => error
@@ -127,6 +137,9 @@ module Spree
       # outside the lock.
       def authorize_remainder
         return if remainder.blank?
+        # What the order still owes was captured: holding the rest would only
+        # keep the customer's money tied up.
+        return remainder.void! if remainder.amount_owed_by_order(including_in_flight: true)&.zero?
 
         result = Spree.payment_process_workflow.call(payment: remainder, action: :authorize)
         failure(remainder, result.error.value.to_s) if result.failure?

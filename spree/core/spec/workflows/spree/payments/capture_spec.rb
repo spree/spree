@@ -164,6 +164,37 @@ RSpec.describe Spree::Payments::Capture do
     end
   end
 
+  describe 'an order carrying other payments' do
+    let(:order) { create(:order, store: store, total: 49.99) }
+    let(:payment) do
+      create(:payment, order: order, payment_method: gateway, source: card, status: 'pending', amount: 40, response_code: '123')
+    end
+
+    before do
+      create(:payment, order: order, payment_method: gateway, source: create(:credit_card), status: 'completed', amount: 40)
+    end
+
+    it 'refuses to capture more than the order still owes' do
+      expect(gateway).not_to receive(:capture)
+
+      result = described_class.call(payment: payment)
+
+      expect(result).to be_failure
+      expect(result.error.value).to eq(I18n.t('spree.capture_exceeds_amount_owed', amount: money('9.99').to_s))
+      expect(payment.reload).to be_pending
+    end
+
+    it 'captures what is owed and releases the rest' do
+      allow(gateway).to receive(:capture).and_return(success_response)
+
+      result = described_class.call(payment: payment, amount: BigDecimal('9.99'))
+
+      expect(result).to be_success
+      expect(payment.reload.amount).to eq(BigDecimal('9.99'))
+      expect(order.payments.where(status: %w[pending completed]).sum(:amount)).to eq(BigDecimal('49.99'))
+    end
+  end
+
   describe 'racing a concurrent settlement' do
     # The stale-instance race: the webhook settles the payment while an
     # admin's already-loaded copy still reads pending. The claim must

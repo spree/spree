@@ -373,6 +373,30 @@ module Spree
       amount - captured_amount
     end
 
+    # What the order still owes besides this payment: its total less what its
+    # other payments captured and, with +including_in_flight+, what they hold
+    # authorized. An order can carry several live payments, so this is the
+    # most any one of them may take. Read from the payment rows rather than
+    # the order's cached totals, which trail the payments settling.
+    #
+    # @param including_in_flight [Boolean] also count other pending and
+    #   processing payments
+    # @return [BigDecimal, nil] nil for a payment not made against an order
+    def amount_owed_by_order(including_in_flight:)
+      return if order_id.nil?
+
+      fresh_order = Spree::Order.find(order_id)
+      return BigDecimal('0') if fresh_order.canceled?
+
+      others = fresh_order.payments.where.not(id: id)
+      captured = others.where(status: 'completed')
+      owed = fresh_order.total - captured.sum(:amount) + Spree::Refund.where(payment_id: captured.select(:id)).sum(:amount) -
+             fresh_order.returned_items_refund_total
+      owed -= others.where(status: %w[pending processing]).sum(:amount) if including_in_flight
+
+      [owed, BigDecimal('0')].max
+    end
+
     # Row work only — moves the uncaptured remainder onto a new pending
     # payment and shrinks this one to what was captured. The caller authorizes
     # the returned remainder at the gateway afterwards, outside any lock.
