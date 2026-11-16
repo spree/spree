@@ -1094,6 +1094,7 @@ en:
     path: Path
     payment: Payment
     payment_method: Payment Method
+    payment_method_missing: This payment no longer has a payment method, so it cannot be sent to a payment provider.
     payment_method_not_supported: That payment method is unsupported. Please choose another one.
     payment_methods: Payment Methods
     payment_processing_failed: Payment could not be processed, please check the details you entered

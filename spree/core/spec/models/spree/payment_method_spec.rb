@@ -310,7 +310,9 @@ describe Spree::PaymentMethod, type: :model do
 
     it 'destroys the payment method' do
       expect { payment_method.destroy }.to change(Spree::PaymentMethod, :count).by(-1).and change(Spree::CreditCard, :count).by(-1).and change(Spree::GatewayCustomer, :count).by(-1)
-      expect(payment.reload.payment_method).to be_nil
+      # The payment keeps naming the method, so it can still be captured, voided or refunded.
+      expect(payment.reload.payment_method_id).to eq(payment_method.id)
+      expect(payment.payment_method).to eq(payment_method)
       expect(credit_card.reload.payment_method).to be_nil
       expect(credit_card.reload.deleted_at).not_to be_nil
     end

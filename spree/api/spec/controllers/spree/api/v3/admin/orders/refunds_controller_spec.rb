@@ -39,5 +39,26 @@ RSpec.describe Spree::Api::V3::Admin::Orders::RefundsController, type: :controll
       expect(response).to have_http_status(:created)
       expect(json_response['amount']).to eq('5.00')
     end
+
+    it 'refunds a payment whose payment method was deleted' do
+      payment.payment_method.destroy!
+
+      post :create, params: { order_id: order.prefixed_id, payment_id: payment.prefixed_id, amount: '5.00' }, as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(payment.reload.refunds.sum(:amount)).to eq(5)
+    end
+
+    it 'refuses a payment with no payment method without writing anything' do
+      payment.update_column(:payment_method_id, nil)
+
+      expect {
+        post :create, params: { order_id: order.prefixed_id, payment_id: payment.prefixed_id, amount: '5.00' }, as: :json
+      }.not_to change(Spree::Refund, :count)
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['message']).to eq(I18n.t('spree.payment_method_missing'))
+      expect(order.reload.payment_total).to eq(order.total)
+    end
   end
 end

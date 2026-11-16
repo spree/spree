@@ -33,6 +33,8 @@ module Spree
       def ensure_voidable
         halt!(payment) if payment.void?
         failure(payment, :payment_not_voidable) unless payment.can_void?
+        # Without a method there is no gateway to release the authorization at.
+        failure(payment, :payment_method_missing) if payment.response_code.present? && payment.payment_method.nil?
       end
 
       def void_at_gateway

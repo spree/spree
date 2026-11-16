@@ -65,9 +65,8 @@ module Spree
       # this workflow again.
       def ensure_capturable
         halt!(payment) if payment.completed?
-        return if payment.pending? || payment.checkout? || payment.processing? || payment.failed?
-
-        failure(payment, :payment_not_capturable)
+        failure(payment, :payment_not_capturable) unless payment.pending? || payment.checkout? || payment.processing? || payment.failed?
+        failure(payment, :payment_method_missing) if payment.payment_method.nil?
       end
 
       # A capture takes some or all of what was authorized, never more: a
@@ -124,9 +123,10 @@ module Spree
       end
 
       # The remainder's authorization is its own network call, so it stays
-      # outside the lock.
+      # outside the lock. A deleted method takes no new authorization, so the
+      # remainder of a capture on one is left pending for the merchant to settle.
       def authorize_remainder
-        return if remainder.blank?
+        return if remainder.blank? || remainder.payment_method.deleted?
 
         result = Spree.payment_process_workflow.call(payment: remainder, action: :authorize)
         failure(remainder, result.error.value.to_s) if result.failure?

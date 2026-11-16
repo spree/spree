@@ -62,6 +62,39 @@ RSpec.describe Spree::Payments::Capture do
       expect(payment.capture_events.sum(:amount)).to eq(BigDecimal('10.04'))
     end
 
+    it 'captures a payment whose payment method was deleted' do
+      payment
+      gateway.destroy!
+      expect_any_instance_of(Spree::Gateway::Bogus).to receive(:capture).and_return(success_response)
+
+      result = described_class.call(payment: payment.reload)
+
+      expect(result).to be_success
+      expect(payment.reload).to be_completed
+    end
+
+    it 'leaves the remainder of a partial capture on a deleted payment method pending, without a new authorization' do
+      payment
+      gateway.destroy!
+      expect_any_instance_of(Spree::Gateway::Bogus).to receive(:capture).and_return(success_response)
+      expect_any_instance_of(Spree::Gateway::Bogus).not_to receive(:authorize)
+
+      result = described_class.call(payment: payment.reload, amount: BigDecimal('10'))
+
+      expect(result).to be_success
+      expect(order.payments.pending.last.amount).to eq(35.75)
+    end
+
+    it 'refuses a payment whose payment method is gone, leaving it pending' do
+      payment.update_column(:payment_method_id, nil)
+
+      result = described_class.call(payment: payment.reload)
+
+      expect(result).to be_failure
+      expect(result.error.value).to eq(:payment_method_missing)
+      expect(payment.reload).to be_pending
+    end
+
     it 'refuses a capture of nothing' do
       expect(gateway).not_to receive(:capture)
 

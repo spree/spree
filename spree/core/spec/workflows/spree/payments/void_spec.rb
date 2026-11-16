@@ -38,6 +38,16 @@ RSpec.describe Spree::Payments::Void do
       expect(described_class.call(payment: payment)).to be_success
     end
 
+    it 'refuses a payment whose payment method is gone, leaving it pending' do
+      payment.update_column(:payment_method_id, nil)
+
+      result = described_class.call(payment: payment.reload)
+
+      expect(result).to be_failure
+      expect(result.error.value).to eq(:payment_method_missing)
+      expect(payment.reload).to be_pending
+    end
+
     it 'voids without calling the gateway when nothing ever reached it' do
       payment.update_column(:response_code, nil)
       expect(gateway).not_to receive(:void)
