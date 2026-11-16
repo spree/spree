@@ -174,7 +174,6 @@ export function useAddCompanyMember(companyId: string) {
     ],
     successMessage: i18n.t('admin.company_memberships.messages.added'),
     errorMessage: i18n.t('admin.errors.failed_to_create'),
-    showValidationErrors: true,
   })
 }
 

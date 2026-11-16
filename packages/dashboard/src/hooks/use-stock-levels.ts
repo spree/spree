@@ -48,7 +48,12 @@ export function useStockLevels(params: UseStockLevelsParams = {}) {
   })
 }
 
-export function useUpdateStockLevel(id: string, extraInvalidate: QueryKey[] = []) {
+export function useUpdateStockLevel(
+  id: string,
+  extraInvalidate: QueryKey[] = [],
+  /** False where the caller shows a rejected count beside its input. */
+  { showValidationErrors = true }: { showValidationErrors?: boolean } = {},
+) {
   const queryClient = useQueryClient()
   const buildKey = useResourceKeyBuilder()
 
@@ -62,7 +67,7 @@ export function useUpdateStockLevel(id: string, extraInvalidate: QueryKey[] = []
     invalidate: [['stock-levels', id], ...extraInvalidate],
     successMessage: i18n.t('admin.stock_levels.messages.stock_updated'),
     errorMessage: i18n.t('admin.errors.failed_to_update'),
-    showValidationErrors: true,
+    showValidationErrors,
     onSuccess: (updated) => {
       queryClient.setQueriesData<{ data: StockLevel[] }>(
         { queryKey: buildKey('stock-levels') },
