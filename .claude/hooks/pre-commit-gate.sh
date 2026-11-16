@@ -232,7 +232,7 @@ while IFS= read -r segment; do
   repo_name="${repo_name#github.com[:/]}"
   repo_name="${repo_name%/}"
   repo_name="${repo_name%.git}"
-  if [ $flags_read -eq 0 ] && [[ "$LAUNCHED" =~ ^[[:alnum:][:space:]\"\'_./:=@,+%-]*$ ]] \
+  if [ $flags_read -eq 0 ] && [[ "$LAUNCHED" =~ ^[[:alnum:]\ $'\t'\"\'_./:=@,+%-]*$ ]] \
     && [[ "$repo_name" =~ ^[a-z0-9_.-]+/[a-z0-9_.-]+$ ]] && [ "$repo_name" != "spree/spree" ]; then
     continue
   fi
