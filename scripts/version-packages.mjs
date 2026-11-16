@@ -186,7 +186,7 @@ export function sharedChangesets() {
     .flatMap((file) => {
       const frontMatter = fs
         .readFileSync(path.join(dir, file), 'utf8')
-        .match(/^---\r?\n([\s\S]*?)\r?\n?---/)
+        .match(/^---\r?\n(?:([\s\S]*?)\r?\n)?---[ \t]*(?:\r?\n|$)/)
       const names = Object.keys(YAML.parse(frontMatter?.[1] ?? '') ?? {})
       return names.length > 1 ? [`.changeset/${file} names ${names.join(', ')}`] : []
     })

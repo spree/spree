@@ -192,7 +192,8 @@ while IFS= read -r segment; do
   # A multi-line argument hides whatever follows it, so a `--head` placed after
   # one cannot be read and the gate would check the wrong branch.
   read_head_flag "${LAUNCHED#*create}"
-  case $? in
+  flags_read=$?
+  case $flags_read in
     2)
       echo "Blocked: $seg" >&2
       echo "The gate does not know one of these gh pr create flags, so it cannot tell which branch this opens. Use the long flag names --head, --title, --body-file." >&2
@@ -214,8 +215,10 @@ while IFS= read -r segment; do
   # The reviews cover this repository's code, so a pull request opened on
   # another repository (the release's spree-starter, storefront and
   # agent-skills bumps) is not gated. gh reads `--repo` as `[HOST/]OWNER/REPO`
-  # or a URL, so every spelling of this repository is gated. A value the
-  # shell would still expand (`"$REPO"`) is not a literal name and stays gated.
+  # or a URL, so every spelling of this repository is gated. The shell expands
+  # `$REPO`, `` `cmd` `` and `{a,b}` into arguments the gate never sees — a
+  # later `--repo spree/spree` among them — so a command holding any of them,
+  # or one the gate could not read to its end, stays gated.
   repo_name=$(tr '[:upper:]' '[:lower:]' <<<"$REPO_FLAG")
   repo_name="${repo_name#*://}"
   repo_name="${repo_name#git@}"
@@ -223,7 +226,10 @@ while IFS= read -r segment; do
   repo_name="${repo_name#github.com[:/]}"
   repo_name="${repo_name%/}"
   repo_name="${repo_name%.git}"
-  if [[ "$repo_name" =~ ^[a-z0-9_.-]+/[a-z0-9_.-]+$ ]] && [ "$repo_name" != "spree/spree" ]; then continue; fi
+  if [ $flags_read -eq 0 ] && [[ "$LAUNCHED" != *[\$\`{]* ]] \
+    && [[ "$repo_name" =~ ^[a-z0-9_.-]+/[a-z0-9_.-]+$ ]] && [ "$repo_name" != "spree/spree" ]; then
+    continue
+  fi
   review_dir="$pr_dir"
   head_owner=""
   if [ -n "$HEAD_FLAG" ]; then
