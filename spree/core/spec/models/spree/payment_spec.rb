@@ -793,6 +793,26 @@ describe Spree::Payment, type: :model do
     end
   end
 
+  describe 'money waiting on the provider' do
+    let(:settled) { create(:payment, order: order, amount: 100, status: 'completed') }
+
+    it 'counts completed and empty capture events as captured, not requested or failed ones' do
+      create(:payment_capture_event, payment: settled, amount: 40)
+      create(:payment_capture_event, payment: settled, amount: 10).update_column(:status, nil)
+      create(:payment_capture_event, :requested, payment: settled, amount: 30)
+      create(:payment_capture_event, :failed, payment: settled, amount: 20)
+
+      expect(settled.captured_amount).to eq(50)
+    end
+
+    it 'reserves the balance of a requested refund and releases a failed one' do
+      create(:refund, :requested, payment: settled, amount: 30)
+      create(:refund, :failed, payment: settled, amount: 20)
+
+      expect(settled.credit_allowed).to eq(70)
+    end
+  end
+
   describe '#credit_allowed' do
     # Regression test for #4403 & #4407
     it 'is the difference between offsets total and payment amount' do

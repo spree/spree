@@ -50,6 +50,17 @@ RSpec.describe Spree::OrderGroup, type: :model do
       expect(settled.amount_due).to eq(total)
     end
 
+    it 'counts only refunds the provider completed' do
+      payment = create(:payment, order: nil, order_group: group, amount: total, status: 'completed')
+      child = group.orders.first
+      create(:payment_split, payment: payment, order: child, authorized_amount: child.total, captured_amount: child.total)
+      create(:refund, :requested, payment: payment, order: child, amount: 5)
+      create(:refund, :failed, payment: payment, order: child, amount: 5)
+
+      expect(settled.payment_total).to eq(total)
+      expect(settled.amount_due).to eq(0)
+    end
+
     it 'is nothing once the payment the group holds covers it' do
       create(:payment, order: nil, order_group: group, amount: total, status: 'completed')
 

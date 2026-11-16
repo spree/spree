@@ -42,6 +42,19 @@ RSpec.describe Spree::Fulfillment, 'capture on dispatch in a split checkout' do
     expect(captured_for(seller_order)).to eq(0)
   end
 
+  context 'when the provider answers the capture later' do
+    let(:payment_method) do
+      create(:credit_card_payment_method, store: store, capture_method: 'on_dispatch', preferred_requested_mode: true)
+    end
+
+    it 'keeps the share authorized, its claim held until the provider answers' do
+      dispatch(seller_order, worth: 40)
+
+      expect(payment.reload).to be_requested
+      expect(seller_split.reload).to have_attributes(captured_amount: 0, claimed_amount: 40)
+    end
+  end
+
   it 'captures no more than the order’s own share' do
     dispatch(seller_order, worth: 100)
 

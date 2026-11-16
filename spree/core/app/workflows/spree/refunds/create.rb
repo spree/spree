@@ -49,7 +49,7 @@ module Spree
         if refund.requested?
           refund.publish_event('refund.requested')
         else
-          payment.publish_event('payment.refunded')
+          payment.publish_event('payment.refunded', nil, refund_id: refund.prefixed_id)
         end
         success(refund)
       end

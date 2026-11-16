@@ -68,11 +68,12 @@ module Spree
     # instead of the denormalized column, because that column is written by a
     # subscriber after the fact: two refunds landing together would each read a
     # share that still looked unrefunded. {Spree::Refunds::Create} bounds every
-    # refund by this under the payment's lock.
+    # refund by this under the payment's lock. A refund still waiting on its
+    # provider counts, so its amount cannot be refunded twice.
     #
     # @return [BigDecimal]
     def refundable_amount
-      already_refunded = Spree::Refund.where(payment_id: payment_id, order_id: order_id).sum(:amount)
+      already_refunded = Spree::Refund.not_failed.where(payment_id: payment_id, order_id: order_id).sum(:amount)
       captured_amount - already_refunded
     end
 

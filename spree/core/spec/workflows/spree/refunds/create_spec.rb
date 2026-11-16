@@ -106,7 +106,7 @@ RSpec.describe Spree::Refunds::Create do
 
     context 'when the provider answers at once' do
       it 'completes the refund and publishes payment.refunded' do
-        expect(payment).to receive(:publish_event).with('payment.refunded')
+        expect(payment).to receive(:publish_event).with('payment.refunded', nil, refund_id: kind_of(String))
 
         refund = described_class.call(payment: payment, amount: 10).value
 
@@ -120,7 +120,7 @@ RSpec.describe Spree::Refunds::Create do
       before { payment.payment_method.update!(preferred_requested_mode: true) }
 
       it 'leaves the refund requested with its transaction id and publishes refund.requested' do
-        expect(payment).not_to receive(:publish_event).with('payment.refunded')
+        expect(payment).not_to receive(:publish_event).with('payment.refunded', any_args)
         expect_any_instance_of(Spree::Refund).to receive(:publish_event).with('refund.requested')
 
         result = described_class.call(payment: payment, amount: 10)

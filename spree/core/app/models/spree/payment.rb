@@ -319,8 +319,9 @@ module Spree
       offsets.sum(:amount)
     end
 
+    # A requested refund keeps its amount reserved until the provider answers.
     def credit_allowed
-      amount - (offsets_total.abs + refunds.sum(:amount))
+      amount - (offsets_total.abs + refunds.not_failed.sum(:amount))
     end
 
     def can_credit?
@@ -395,7 +396,7 @@ module Spree
     end
 
     def captured_amount
-      capture_events.sum(:amount)
+      capture_events.completed_or_unset.sum(:amount)
     end
 
     def uncaptured_amount

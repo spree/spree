@@ -874,6 +874,9 @@ module Spree
 
       begin
         capture_at_gateway(payment, bounded)
+        # The provider answers by webhook: the claim stays until then, which
+        # records the share as captured or releases it.
+        return bounded if payment.reload.requested?
       rescue StandardError
         # Released only when the money truly never moved. The capture workflow
         # keeps working after the charge commits — it authorizes the remainder
