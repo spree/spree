@@ -29,7 +29,7 @@ module Spree
       @_store_locale_active = true
       begin
         Spree::Locales::SetFallbackLocaleForStore.new.call(store: store) if store
-        I18n.with_locale(locale, &block)
+        Spree::Current.with_content_locale(store&.default_locale) { I18n.with_locale(locale, &block) }
       ensure
         @_store_locale_active = previously_active
         Mobility.store_based_fallbacks = previous_fallbacks

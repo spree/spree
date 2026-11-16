@@ -46,6 +46,31 @@ RSpec.describe Spree::Exports::Products, type: :model do
     end
   end
 
+  # The job runs in the locale of the request that asked for the export,
+  # which for a store written in Dutch is not the application's default.
+  describe "#generate for a store whose default locale is not the application's" do
+    let(:dutch_store) { create(:store, default_locale: 'nl', supported_locales: 'nl,en') }
+
+    before { create(:product, store: dutch_store, name: 'Fiets', description: 'Een stadsfiets') }
+
+    it 'writes the product names and descriptions' do
+      export = described_class.new(store: dutch_store)
+      export.save!
+      I18n.with_locale(:nl) { export.generate }
+
+      rows = CSV.parse(export.attachment.download, headers: true)
+      expect(rows.map { |row| row.values_at('name', 'description') }).to eq [['Fiets', 'Een stadsfiets']]
+    end
+
+    it "does not leave the exported store's content locale behind" do
+      export = described_class.new(store: dutch_store)
+      export.save!
+      I18n.with_locale(:nl) { export.generate }
+
+      expect(Spree::Current.content_locale).to eq(store.default_locale)
+    end
+  end
+
   describe '#csv_headers' do
     let(:base_headers) do
       [

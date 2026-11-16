@@ -116,7 +116,9 @@ module Spree
       # An export runs in a job, where nothing has named a store. Scopes that
       # read the current one — the product search's custom-field arm, address
       # validation — would otherwise answer for the default store rather than
-      # the one whose records are being exported.
+      # the one whose records are being exported. The store also names the
+      # locale its base columns are written in, so names and descriptions are
+      # read from them rather than from a translation the store has not made.
       Spree::Current.set(store: store) do
         send(:"generate_#{format}")
         handle_attachment

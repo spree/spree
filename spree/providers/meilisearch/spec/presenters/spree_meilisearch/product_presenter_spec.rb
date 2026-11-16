@@ -247,6 +247,23 @@ RSpec.describe SpreeMeilisearch::ProductPresenter do
       end
     end
 
+    context "when the store's default locale is not the application's" do
+      let(:dutch_store) { create(:store, default_locale: 'nl', supported_locales: 'nl,en') }
+      let(:product) { create(:product, name: 'Fiets', store: dutch_store) }
+      let(:presenter) { described_class.new(product, dutch_store.reload) }
+
+      before do
+        dutch_store.default_market.update!(supported_locales: 'nl,en')
+        product.translations.create!(locale: 'en', name: 'Bicycle')
+      end
+
+      it 'indexes the base columns under the store locale and translations under theirs' do
+        names = documents.reject { |d| d.key?(:grouping_id) }.to_h { |d| [d[:locale], d[:name]] }
+
+        expect(names).to eq('nl' => 'Fiets', 'en' => 'Bicycle')
+      end
+    end
+
     context 'with option values' do
       let(:product) { create(:product_with_option_types) }
 

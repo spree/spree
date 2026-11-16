@@ -107,6 +107,20 @@ describe Spree::BaseMailer, type: :mailer do
       expect(resolved).to eq('Acme')
     end
 
+    # The base columns hold the store's default locale, whatever the
+    # application's own default locale is.
+    it "reads the base columns as the store's default locale" do
+      german_store = create(:store, default_locale: 'de', supported_locales: 'de,en')
+      product = create(:product, name: 'Fahrrad', store: german_store)
+      product.translations.create!(locale: 'en', name: 'Bicycle')
+
+      names = %w[de en].index_with do |locale|
+        mailer.with_store_locale(german_store, locale) { Spree::Product.find(product.id).name }
+      end
+
+      expect(names).to eq('de' => 'Fahrrad', 'en' => 'Bicycle')
+    end
+
     it 'restores the previous locale and fallbacks afterwards' do
       I18n.locale = :en
       previous_fallbacks = Mobility.store_based_fallbacks
