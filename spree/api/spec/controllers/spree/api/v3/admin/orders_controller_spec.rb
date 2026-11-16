@@ -309,6 +309,39 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
       end
     end
 
+    # Refunds are their own permission, as on /orders/:id/refunds.
+    context 'when expanding refunds' do
+      let(:placed) { create(:completed_order_with_totals, store: store) }
+      let(:headers) { { 'x-spree-api-key' => key.plaintext_token } }
+
+      before do
+        payment = create(:payment, order: placed, amount: placed.total, status: 'completed')
+        create(:refund, payment: payment, amount: 10)
+      end
+
+      context 'with a key that reads orders but not refunds' do
+        let(:key) { create(:api_key, :secret, store: store, scopes: ['read_orders']) }
+
+        it 'leaves the refunds out and keeps the total' do
+          get :show, params: { id: placed.prefixed_id, expand: 'refunds' }, as: :json
+
+          expect(response).to have_http_status(:ok)
+          expect(json_response).not_to have_key('refunds')
+          expect(json_response['refunds_total']).to eq('10.00')
+        end
+      end
+
+      context 'with a key that also reads refunds' do
+        let(:key) { create(:api_key, :secret, store: store, scopes: %w[read_orders read_refunds]) }
+
+        it 'expands them' do
+          get :show, params: { id: placed.prefixed_id, expand: 'refunds' }, as: :json
+
+          expect(json_response['refunds'].pluck('amount')).to eq(['10.00'])
+        end
+      end
+    end
+
     it 'shows the full gift card code to a caller who can read gift cards' do
       order.update_column(:gift_card_id, create(:gift_card, store: store, code: 'fullcode9999').id)
 

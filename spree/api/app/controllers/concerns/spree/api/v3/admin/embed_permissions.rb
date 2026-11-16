@@ -26,6 +26,8 @@ module Spree
             'payment' => 'read_payments',
             'payments' => 'read_payments',
             'payment_splits' => 'read_payments',
+            'refund' => 'read_refunds',
+            'refunds' => 'read_refunds',
             'customer' => 'read_customers',
             'customers' => 'read_customers',
             'gift_card' => 'read_gift_cards',
