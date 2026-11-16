@@ -725,6 +725,42 @@ describe Spree::Payment, type: :model do
     end
   end
 
+  describe 'a requested payment' do
+    let(:requested_payment) { create(:payment, order: order, status: 'requested') }
+
+    it 'cannot be claimed, voided or captured' do
+      expect { requested_payment.started_processing! }.to raise_error(Spree::Core::GatewayError, /requested/)
+      expect(requested_payment.can_void?).to be false
+      expect(requested_payment.can_capture?).to be false
+    end
+
+    describe '#requested_action' do
+      it 'is capture when a capture event waits on the provider' do
+        create(:payment_capture_event, :requested, payment: requested_payment)
+
+        expect(requested_payment.requested_action).to eq('capture')
+      end
+
+      it 'is void when no capture event waits' do
+        create(:payment_capture_event, payment: requested_payment)
+
+        expect(requested_payment.requested_action).to eq('void')
+      end
+
+      it 'reads preloaded capture events without a query' do
+        create(:payment_capture_event, :requested, payment: requested_payment)
+        loaded = Spree::Payment.includes(:capture_events).find(requested_payment.id)
+
+        expect(loaded.capture_events).not_to receive(:requested)
+        expect(loaded.requested_action).to eq('capture')
+      end
+
+      it 'is nil for a payment that is not requested' do
+        expect(build_stubbed(:payment, status: 'pending').requested_action).to be_nil
+      end
+    end
+  end
+
   describe '#credit_allowed' do
     # Regression test for #4403 & #4407
     it 'is the difference between offsets total and payment amount' do

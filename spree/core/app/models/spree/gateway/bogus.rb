@@ -13,6 +13,9 @@ module Spree
 
     preference :dummy_key, :string, default: 'PUBLICKEY123'
     preference :dummy_secret_key, :password, default: 'SECRETKEY123'
+    # Answers captures, voids and refunds the way a provider that reports
+    # their outcome by webhook does, so core can test that path without one.
+    preference :requested_mode, :boolean, default: false
 
     def provider_class
       self.class
@@ -50,18 +53,28 @@ module Spree
     end
 
     def credit(_money, _credit_card, _response_code, _options = {})
+      if preferred_requested_mode
+        return Spree::PaymentResponse.new(true, 'Bogus Gateway: Refund requested', {},
+                                          test: true, requested: true, authorization: "BGS-refund-#{SecureRandom.hex(6)}")
+      end
+
       Spree::PaymentResponse.new(true, 'Bogus Gateway: Forced success', {}, test: true, authorization: generate_authorization)
     end
 
     def capture(_money, authorization, _gateway_options)
       if authorization&.start_with?('BGS-')
-        Spree::PaymentResponse.new(true, 'Bogus Gateway: Forced success', {}, test: true)
+        return Spree::PaymentResponse.new(true, 'Bogus Gateway: Forced success', {}, test: true) unless preferred_requested_mode
+
+        Spree::PaymentResponse.new(true, 'Bogus Gateway: Capture requested', {},
+                                   test: true, requested: true, reference: "BGS-capture-#{SecureRandom.hex(6)}")
       else
         Spree::PaymentResponse.new(false, 'Bogus Gateway: Forced failure', error: 'Bogus Gateway: Forced failure', test: true)
       end
     end
 
     def void(_response_code, _credit_card, _options = {})
+      return Spree::PaymentResponse.new(true, 'Bogus Gateway: Void requested', {}, test: true, requested: true) if preferred_requested_mode
+
       Spree::PaymentResponse.new(true, 'Bogus Gateway: Forced success', {}, test: true, authorization: "void-#{generate_authorization}")
     end
 

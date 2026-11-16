@@ -6,6 +6,7 @@ module Spree
     include Spree::HasCustomFields
     include Spree::Metadata
     include Spree::CanonicalDecimals
+    include Spree::SettlementStatus
 
     canonical_decimals :amount
     include Spree::InstrumentsGatewayCalls

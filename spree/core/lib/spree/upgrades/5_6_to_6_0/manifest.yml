@@ -696,6 +696,22 @@ steps:
 
       Idempotent.
 
+  - id: backfill_settlement_statuses
+    name: "Mark existing capture events and refunds as completed"
+    task_class: "Spree::MaintenanceTasks::Upgrade::BackfillSettlementStatuses"
+    notes: |
+      Capture events and refunds gained a status in a 6.0 patch release: a
+      payment provider may now accept a capture or refund and report its
+      outcome later by webhook, and the row waits as requested until it does.
+      The migration adds the column empty. This marks every existing row
+      completed, since that money already moved. Until it runs, an empty status
+      reads as completed, so no total changes.
+
+      Stores already on 6.0 run it after updating to that patch release, with
+      `spree upgrade --step backfill_settlement_statuses`.
+
+      Idempotent, and supports a dry run.
+
   - id: backfill_import_export_tenancy
     name: "Place every import in a store, and a seller where one ran it"
     task: "spree:upgrade:backfill_import_export_tenancy"

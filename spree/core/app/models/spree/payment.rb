@@ -125,7 +125,11 @@ module Spree
     # `invalid` status deliberately generates no predicate or scope: `invalid?`
     # is ActiveModel's, use +has_invalid_status?+.
     include Spree::HasStatus
-    has_status :checkout, :processing, :pending, :completed, :failed, :void, :invalid,
+    # `requested` waits on the provider's webhook after it accepted a capture
+    # or void (a gateway answering `requested?`). It is in none of the
+    # claimable, voidable or capturable lists: nothing may start on the
+    # payment until the provider answers.
+    has_status :checkout, :processing, :pending, :requested, :completed, :failed, :void, :invalid,
                default: :checkout
 
     # Status writes, called from the payments workflows and Processing. The
@@ -236,6 +240,19 @@ module Spree
     def can_capture?
       status.in?(CAPTURABLE_STATUSES) &&
         (!payment_method.respond_to?(:can_capture?) || payment_method.can_capture?(self))
+    end
+
+    # What the provider is still answering for a `requested` payment: a capture
+    # leaves a capture event waiting, a void leaves none.
+    #
+    # @return [String, nil] 'capture', 'void', or nil when nothing is requested
+    def requested_action
+      return unless requested?
+
+      # Read off the loaded rows when a list preloaded them, so serializing one
+      # costs no query per payment.
+      waiting = capture_events.loaded? ? capture_events.any?(&:requested?) : capture_events.requested.exists?
+      waiting ? 'capture' : 'void'
     end
 
     # @deprecated read +status+ — removed in 6.3
