@@ -58,7 +58,9 @@ import {
 } from './use-product-form-data'
 import { VariantEditSheet } from './variant-edit-sheet'
 import {
+  emptyOptionTypeRows,
   generateVariantCombinations,
+  type OptionTypeRowSource,
   optionsKey,
   reconcileVariants,
   type SelectedOptionType,
@@ -66,7 +68,7 @@ import {
 } from './variants-matrix'
 import { VariantsOptionsBuilder } from './variants-options-builder'
 
-interface Props {
+export interface VariantsSectionProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   form: UseFormReturn<ProductFormValues, any, any>
   /**
@@ -75,6 +77,11 @@ interface Props {
    * whatever it already has.
    */
   seedFromType?: boolean
+  /**
+   * A saved product's own option types. Those no variant uses yet — such as
+   * the ones a product type adds on create — are offered as empty rows.
+   */
+  productOptionTypes?: OptionTypeRowSource[]
   /** The product form's key — names the variant sheet's slot. */
   formKey?: string
 }
@@ -117,28 +124,12 @@ function deriveSelectedFromVariants(
     .filter((x): x is SelectedOptionType => x !== null)
 }
 
-// Empty rows for a product type's option types — a starting point, not state.
-function seedFromProductType(
-  optionTypeIds: string[],
-  allOptionTypes: OptionType[],
-): SelectedOptionType[] {
-  return optionTypeIds
-    .map<SelectedOptionType | null>((id, idx) => {
-      const optionType = allOptionTypes.find((candidate) => candidate.id === id)
-      if (!optionType) return null
-
-      return {
-        id: optionType.id,
-        name: optionType.name,
-        label: optionType.label,
-        position: optionType.position ?? idx,
-        values: [],
-      }
-    })
-    .filter((entry): entry is SelectedOptionType => entry !== null)
-}
-
-export function VariantsSection({ form, seedFromType = false, formKey = 'product' }: Props) {
+export function VariantsSection({
+  form,
+  seedFromType = false,
+  productOptionTypes,
+  formKey = 'product',
+}: VariantsSectionProps) {
   const { t } = useTranslation()
   const { data: optionTypesData } = useOptionTypes()
   const allOptionTypes = useMemo(() => optionTypesData?.data ?? [], [optionTypesData])
@@ -176,7 +167,12 @@ export function VariantsSection({ form, seedFromType = false, formKey = 'product
   // than being derived every render: an empty row writes no variants, so a
   // derived version would regenerate itself the moment the merchant removed it.
   // Once any row has values the variants array takes over as the source.
-  const [offeredOptionTypes, setOfferedOptionTypes] = useState<SelectedOptionType[]>([])
+  const [offeredOptionTypes, setOfferedOptionTypes] = useState<SelectedOptionType[]>(() =>
+    emptyOptionTypeRows(
+      (productOptionTypes ?? []).map((optionType) => optionType.id),
+      productOptionTypes ?? [],
+    ),
+  )
   const [offeredForTypeId, setOfferedForTypeId] = useState<string | null>(null)
 
   useEffect(() => {
@@ -201,7 +197,7 @@ export function VariantsSection({ form, seedFromType = false, formKey = 'product
     if (configuredIds.length > 0 && typeOptionTypes.length === 0) return
 
     setOfferedForTypeId(productTypeId)
-    setOfferedOptionTypes(seedFromProductType(configuredIds, typeOptionTypes))
+    setOfferedOptionTypes(emptyOptionTypeRows(configuredIds, typeOptionTypes))
   }, [seedFromType, productTypeId, offeredForTypeId, derived.length, productType, typeOptionTypes])
 
   const selected = derived.length > 0 ? derived : offeredOptionTypes

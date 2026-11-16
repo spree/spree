@@ -113,7 +113,7 @@ import {
   useFormProductTypes as useProductTypes,
   useFormTaxCategories as useTaxCategories,
 } from './use-product-form-data'
-import { VariantsSection } from './variants-section'
+import { VariantsSection, type VariantsSectionProps } from './variants-section'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type FormCardProps = { form: UseFormReturn<ProductFormValues, any, any> }
@@ -187,9 +187,17 @@ export function GeneralCard({
 export function VariantsCard({
   form,
   seedFromType,
+  productOptionTypes,
   formKey = 'product',
-}: FormCardProps & { seedFromType?: boolean; formKey?: string }) {
-  return <VariantsSection form={form} seedFromType={seedFromType} formKey={formKey} />
+}: FormCardProps & Pick<VariantsSectionProps, 'seedFromType' | 'productOptionTypes' | 'formKey'>) {
+  return (
+    <VariantsSection
+      form={form}
+      seedFromType={seedFromType}
+      productOptionTypes={productOptionTypes}
+      formKey={formKey}
+    />
+  )
 }
 
 // ---------------------------------------------------------------------------

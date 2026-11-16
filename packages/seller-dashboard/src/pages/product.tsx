@@ -47,6 +47,7 @@ const PRODUCT_EXPAND = [
   'default_variant.stock_levels',
   'default_variant.stock_levels.stock_location',
   'media',
+  'option_types',
   'submission',
 ].join(',')
 
@@ -267,7 +268,12 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
                 form={form}
                 formKey="seller.product"
               />
-              <VariantsCard form={form} formKey="seller.product" seedFromType={mode === 'new'} />
+              <VariantsCard
+                form={form}
+                formKey="seller.product"
+                seedFromType={mode === 'new'}
+                productOptionTypes={product?.option_types}
+              />
               <PricesCard
                 form={form}
                 productName={product?.name ?? ''}
