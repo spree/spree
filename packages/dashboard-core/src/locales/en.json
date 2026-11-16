@@ -479,6 +479,7 @@
         "search_placeholder": "Search…",
         "select_all": "Select all",
         "sort_by": "Sort by",
+        "sort_by_column": "Sort by {{column}}",
         "sort_tooltip": "Sort",
         "visible_columns": "Visible columns",
         "row_density": "Row density",

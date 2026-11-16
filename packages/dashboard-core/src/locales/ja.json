@@ -479,6 +479,7 @@
         "search_placeholder": "検索…",
         "select_all": "すべて選択",
         "sort_by": "並べ替え",
+        "sort_by_column": "{{column}}で並べ替え",
         "sort_tooltip": "並べ替え",
         "visible_columns": "表示する列",
         "row_density": "行の密度",

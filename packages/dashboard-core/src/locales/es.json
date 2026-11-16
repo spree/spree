@@ -286,6 +286,7 @@
         "search_placeholder": "Buscar…",
         "select_all": "Seleccionar todo",
         "sort_by": "Ordenar por",
+        "sort_by_column": "Ordenar por {{column}}",
         "sort_tooltip": "Ordenar",
         "visible_columns": "Columnas visibles",
         "row_density": "Densidad de filas",

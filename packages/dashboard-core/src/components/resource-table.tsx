@@ -44,7 +44,12 @@ import {
   TooltipTrigger,
   useIsMobile,
 } from '@spree/dashboard-ui'
-import { InfoIcon } from '@spree/dashboard-ui/icons'
+import {
+  ChevronDownIcon,
+  ChevronsUpDownIcon,
+  ChevronUpIcon,
+  InfoIcon,
+} from '@spree/dashboard-ui/icons'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import {
@@ -94,12 +99,21 @@ const filterSchema = z.object({
  * reserved, incoming — need somewhere to say what they count. A tooltip keeps
  * that out of the header row until it is asked for.
  */
-function ColumnLabel({ column, hideHint }: { column: ColumnDef; hideHint?: boolean }) {
-  if (!column.labelHint || hideHint) return column.label
+function ColumnLabel({
+  column,
+  hideHint,
+  sort,
+}: {
+  column: ColumnDef
+  hideHint?: boolean
+  sort?: ColumnSort
+}) {
+  const label = sort ? <SortButton column={column} sort={sort} /> : column.label
+  if (!column.labelHint || hideHint) return label
 
   return (
     <span className="inline-flex items-center gap-1">
-      {column.label}
+      {label}
       <Tooltip>
         <TooltipTrigger asChild>
           {/* Focusable and named, so the explanation opens on focus as well as
@@ -117,6 +131,46 @@ function ColumnLabel({ column, hideHint }: { column: ColumnDef; hideHint?: boole
         </TooltipContent>
       </Tooltip>
     </span>
+  )
+}
+
+interface ColumnSort {
+  direction?: 'asc' | 'desc'
+  onSort: () => void
+}
+
+/**
+ * A sortable column's label as a button. Named "Sort by <column>" rather than
+ * the bare label, so it is not mistaken for a toolbar control of the same name.
+ */
+function SortButton({ column, sort }: { column: ColumnDef; sort: ColumnSort }) {
+  const { t } = useTranslation()
+  const Icon =
+    sort.direction === 'asc'
+      ? ChevronUpIcon
+      : sort.direction === 'desc'
+        ? ChevronDownIcon
+        : ChevronsUpDownIcon
+
+  return (
+    <button
+      type="button"
+      onClick={sort.onSort}
+      aria-label={t('admin.components.table_toolbar.sort_by_column', { column: column.label })}
+      className={cn(
+        'group/sort -mx-1 inline-flex cursor-pointer items-center gap-1 rounded-sm px-1 hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2',
+        sort.direction && 'text-foreground',
+      )}
+    >
+      {column.label}
+      <Icon
+        aria-hidden
+        className={cn(
+          'size-3.5 shrink-0',
+          !sort.direction && 'opacity-50 group-hover/sort:opacity-100',
+        )}
+      />
+    </button>
   )
 }
 
@@ -569,6 +623,20 @@ export function ResourceTable<T extends Record<string, any>>({
     updateSearch({ sort: s.field, dir: s.direction, page: 1 })
   }
 
+  // A header click sorts by that column ascending, and a second click flips it.
+  function columnSort(col: ColumnDef): ColumnSort | undefined {
+    if (!col.sortable) return undefined
+    const active = col.key === sort
+    return {
+      direction: active ? dir : undefined,
+      onSort: () =>
+        handleSortChange({
+          field: col.key,
+          direction: active && dir === 'asc' ? 'desc' : 'asc',
+        }),
+    }
+  }
+
   function handleFiltersChange(f: FilterRule[]) {
     updateSearch({
       filters: f.length > 0 ? JSON.stringify(f) : undefined,
@@ -886,6 +954,16 @@ export function ResourceTable<T extends Record<string, any>>({
                   {headerColumns.map((col) => (
                     <TableHead
                       key={col.key}
+                      aria-sort={
+                        col.key === sort && col.sortable
+                          ? dir === 'asc'
+                            ? 'ascending'
+                            : 'descending'
+                          : undefined
+                      }
+                      // Names the column by its label alone, not by the sort
+                      // button's "Sort by …" inside it.
+                      aria-label={col.sortable ? col.label : undefined}
                       className={cn(
                         col.headerClassName,
                         'transition-colors duration-150 ease-out',
@@ -901,7 +979,12 @@ export function ResourceTable<T extends Record<string, any>>({
                       {/* The hint hides with the label: an info icon floating
                           over the bulk-actions band would be the only thing
                           left in the row. */}
-                      <ColumnLabel column={col} hideHint={bulkActive && !isMobile} />
+                      <ColumnLabel
+                        column={col}
+                        hideHint={bulkActive && !isMobile}
+                        // Not clickable while the bulk bar covers the labels.
+                        sort={bulkActive && !isMobile ? undefined : columnSort(col)}
+                      />
                     </TableHead>
                   ))}
                   {rowActionsEnabled && (

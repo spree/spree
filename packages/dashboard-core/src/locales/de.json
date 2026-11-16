@@ -477,6 +477,7 @@
         "search_placeholder": "Suchen…",
         "select_all": "Alle auswählen",
         "sort_by": "Sortieren nach",
+        "sort_by_column": "Nach {{column}} sortieren",
         "sort_tooltip": "Sortieren",
         "visible_columns": "Sichtbare Spalten",
         "row_density": "Zeilendichte",
