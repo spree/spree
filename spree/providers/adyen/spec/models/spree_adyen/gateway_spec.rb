@@ -400,3 +400,29 @@ RSpec.describe SpreeAdyen::Gateway, 'money verbs' do
     end
   end
 end
+
+RSpec.describe SpreeAdyen::Gateway, 'configuration after save' do
+  include ActiveJob::TestHelper
+
+  let(:gateway) { create(:adyen_gateway) }
+
+  it 'is configured when created' do
+    expect { create(:adyen_gateway) }.to have_enqueued_job(SpreeAdyen::ConfigureJob)
+  end
+
+  it 'is configured again when the credential or merchant account changes' do
+    gateway
+
+    expect { gateway.update!(preferred_api_key: 'AQE_new') }.to have_enqueued_job(SpreeAdyen::ConfigureJob).with(gateway.id)
+    expect { gateway.update!(preferred_merchant_account: 'OtherECOM') }.to have_enqueued_job(SpreeAdyen::ConfigureJob)
+    expect { gateway.update!(preferred_test_mode: false, preferred_live_url_prefix: 'prefix') }.to have_enqueued_job(SpreeAdyen::ConfigureJob)
+  end
+
+  it 'is not configured again when only what configuration writes changes' do
+    gateway
+
+    expect do
+      gateway.update!(preferred_client_key: 'test_KEY', preferred_hmac_key: 'AB' * 32, preferred_webhook_id: 'WBHK1')
+    end.not_to have_enqueued_job(SpreeAdyen::ConfigureJob)
+  end
+end

@@ -36,6 +36,7 @@ module SpreeAdyen
     validates :preferred_api_key, :preferred_merchant_account, presence: true
     validates :preferred_live_url_prefix, presence: true, unless: :preferred_test_mode
     validate :validate_credential, unless: -> { Rails.env.test? }, if: :credentials_changed?
+    after_commit :configure_async, on: %i[create update]
 
     def self.logo_url
       'https://spreecommerce.org/docs/images/integrations/logos/adyen.png'
@@ -253,6 +254,14 @@ module SpreeAdyen
     end
 
     private
+
+    # Configured when the method is created and whenever the credential or the
+    # merchant account changes. Not when configuration itself stores what it wrote.
+    def configure_async
+      return unless previously_new_record? || CREDENTIAL_PREFERENCES.any? { |key| public_send(:"saved_change_to_preferred_#{key}?") }
+
+      SpreeAdyen::ConfigureJob.perform_later(id)
+    end
 
     def credentials_changed?
       return false if preferred_api_key.blank? || preferred_merchant_account.blank?
