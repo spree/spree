@@ -10,13 +10,6 @@ module Spree
     # request and per job.
     attribute :store_scope_guard_armed
 
-    # The content locale resolved from the store, as opposed to the one a
-    # request assigns. An attribute rather than an instance variable so a
-    # nested store context (#with_store) snapshots and restores it with
-    # everything else it resolved.
-    # @api private
-    attribute :resolved_content_locale
-
     # Scratch space for provider strategies to memoize a call across the
     # request — part of the delivery rate provider contract (nothing in core
     # writes to it): a carrier gem keys its quote here so several delivery
@@ -36,7 +29,6 @@ module Spree
     # fallback below, which is not a scoping claim to check.
     def store=(value)
       Spree::StoreScopeGuard.arm! if value
-      self.resolved_content_locale = nil
       super
     end
 
@@ -94,23 +86,22 @@ module Spree
     end
 
     # Returns the locale that base (untranslated) record columns are authored
-    # in — the current store's default locale. It is assigned per request
-    # alongside +I18n.locale+ and must never be written to the process-global
-    # +I18n.default_locale+, which every thread in the server process shares.
-    #
-    # Outside a request — a job, a rake task, the console — it is resolved from
-    # the store, which is the locale its columns were written in whatever the
-    # application's own default locale is.
+    # in for the current request — the current store's default locale. It is
+    # assigned per request alongside +I18n.locale+ and must never be written
+    # to the process-global +I18n.default_locale+, which every thread in the
+    # server process shares. Outside a request it falls back to the
+    # application default locale.
     # @return [String] locale code, e.g. +"en"+, +"de"+
     def content_locale
-      super.presence || store_content_locale
+      super.presence || I18n.default_locale.name
     end
 
-    # Runs the block with +content_locale+ assigned, for work that knows which
-    # store's content it is reading but does not declare a whole store context
-    # — a mailer rendering in one store's locale, a search document builder.
-    # Restores what was assigned before, which outside a request is nothing, so
-    # the next unit of work resolves its own.
+    # Runs the block with +content_locale+ assigned, for work outside a request
+    # that reads a store's content in that store's own locales — an export, a
+    # mailer, a search document builder. Nothing assigns the content locale
+    # there, so base columns would be read as the application's default locale
+    # instead of the store's. Restores what was assigned before, which outside
+    # a request is nothing.
     #
     # @param locale [String, Symbol, nil] locale code
     # @return [Object] the block's result
@@ -273,20 +264,6 @@ module Spree
     end
 
     private
-
-    # The store's default locale, resolved once per unit of work: it is read on
-    # every translated attribute read, and with no store context declared it
-    # costs a query for the default store. The application default is assigned
-    # first because resolving the store reads a translated default scope, which
-    # asks for the content locale again.
-    #
-    # @return [String] locale code
-    def store_content_locale
-      resolved_content_locale.presence || begin
-        self.resolved_content_locale = I18n.default_locale.name
-        self.resolved_content_locale = store&.default_locale.presence || I18n.default_locale.name
-      end
-    end
 
     # One key for every buyer-derived memo, so they cannot drift apart.
     #

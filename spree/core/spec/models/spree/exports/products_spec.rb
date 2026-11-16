@@ -46,20 +46,22 @@ RSpec.describe Spree::Exports::Products, type: :model do
     end
   end
 
-  # The job runs in the locale of the request that asked for the export,
-  # which for a store written in Dutch is not the application's default.
+  # The job runs in the locale of whatever asked for the export — a request in
+  # the store's own language, or the application's default.
   describe "#generate for a store whose default locale is not the application's" do
     let(:dutch_store) { create(:store, default_locale: 'nl', supported_locales: 'nl,en') }
 
     before { create(:product, store: dutch_store, name: 'Fiets', description: 'Een stadsfiets') }
 
-    it 'writes the product names and descriptions' do
-      export = described_class.new(store: dutch_store)
-      export.save!
-      I18n.with_locale(:nl) { export.generate }
+    %i[nl en].each do |job_locale|
+      it "writes the product names and descriptions when the job runs in #{job_locale}" do
+        export = described_class.new(store: dutch_store)
+        export.save!
+        I18n.with_locale(job_locale) { export.generate }
 
-      rows = CSV.parse(export.attachment.download, headers: true)
-      expect(rows.map { |row| row.values_at('name', 'description') }).to eq [['Fiets', 'Een stadsfiets']]
+        rows = CSV.parse(export.attachment.download, headers: true)
+        expect(rows.map { |row| row.values_at('name', 'description') }).to eq [['Fiets', 'Een stadsfiets']]
+      end
     end
 
     it "does not leave the exported store's content locale behind" do
@@ -67,7 +69,7 @@ RSpec.describe Spree::Exports::Products, type: :model do
       export.save!
       I18n.with_locale(:nl) { export.generate }
 
-      expect(Spree::Current.content_locale).to eq(store.default_locale)
+      expect(Spree::Current.attributes[:content_locale]).to be_nil
     end
   end
 

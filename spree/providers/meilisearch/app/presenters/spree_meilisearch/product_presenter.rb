@@ -42,9 +42,11 @@ module SpreeMeilisearch
       if documents.empty?
         fallback_currency = store.default_market&.currency || store.supported_currencies_list.first&.iso_code
         if fallback_currency && lowest_price(fallback_currency)
-          base = build_document(default_locale, fallback_currency, default_locale)
-          documents << base
-          documents.concat(membership_documents(base, default_locale, fallback_currency))
+          Mobility.with_locale(default_locale) do
+            base = build_document(default_locale, fallback_currency, default_locale)
+            documents << base
+            documents.concat(membership_documents(base, default_locale, fallback_currency))
+          end
         end
       end
 

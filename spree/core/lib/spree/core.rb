@@ -250,10 +250,8 @@ module Spree
   # read, write and query the base (untranslated) column when the target
   # locale is the request's content locale — see Spree::Current#content_locale.
   # Evaluated on every translated attribute read, so it must stay
-  # allocation-free (Symbol#name returns the frozen interned string; Mobility
-  # always passes Symbol locales) and must not query per read: where no request
-  # assigned a content locale, Spree::Current resolves one from the store once
-  # for the whole unit of work.
+  # allocation-free and must not touch the database (Symbol#name returns the
+  # frozen interned string; Mobility always passes Symbol locales).
   def self.mobility_column_fallback
     return false if always_use_translations?
 

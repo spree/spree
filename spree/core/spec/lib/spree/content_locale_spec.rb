@@ -61,34 +61,6 @@ RSpec.describe 'content locale request state' do
     end
   end
 
-  # A job, a rake task or the console never assigns a content locale, and the
-  # store's own locale is the one its base columns were written in — which is
-  # not the application's default locale for a store that does not sell in it.
-  describe 'the content locale outside a request' do
-    let(:dutch_store) { create(:store, default_locale: 'nl', supported_locales: 'nl,en') }
-
-    before { Spree::Current.store = dutch_store }
-
-    it "resolves to the current store's default locale" do
-      expect(Spree::Current.content_locale).to eq('nl')
-    end
-
-    it 'reads base columns under the store locale and translations under theirs' do
-      product = I18n.with_locale(:nl) { create(:product, name: 'Fiets', store: dutch_store) }
-      product.translations.create!(locale: 'en', name: 'Bicycle')
-
-      names = %i[nl en].index_with { |locale| Mobility.with_locale(locale) { Spree::Product.find(product.id).name } }
-
-      expect(names).to eq(nl: 'Fiets', en: 'Bicycle')
-    end
-
-    it 'keeps an explicitly assigned content locale' do
-      Spree::Current.content_locale = 'en'
-
-      expect(Spree::Current.content_locale).to eq('en')
-    end
-  end
-
   describe 'locale state reset between requests' do
     it "installs the i18n gem's config-resetting middleware" do
       # I18n.locale lives in fiber-local storage that survives across requests

@@ -116,12 +116,12 @@ module Spree
       # An export runs in a job, where nothing has named a store. Scopes that
       # read the current one — the product search's custom-field arm, address
       # validation — would otherwise answer for the default store rather than
-      # the one whose records are being exported. The store also names the
-      # locale its base columns are written in, so names and descriptions are
-      # read from them rather than from a translation the store has not made.
+      # the one whose records are being exported.
       Spree::Current.set(store: store) do
-        send(:"generate_#{format}")
-        handle_attachment
+        in_store_locale do
+          send(:"generate_#{format}")
+          handle_attachment
+        end
       end
 
       send_export_done_email
@@ -370,6 +370,18 @@ module Spree
     end
 
     private
+
+    # Runs the block reading translated columns the way a request for this
+    # store's own language does. The job otherwise runs in the locale of
+    # whatever enqueued it, with the application's default locale standing in
+    # for the one the base columns are written in, and a store written in
+    # another language exports blank names and descriptions.
+    def in_store_locale(&block)
+      locale = store.default_locale
+      return yield if locale.blank?
+
+      Spree::Current.with_content_locale(locale) { I18n.with_locale(locale, &block) }
+    end
 
     def seller_scope_must_be_available
       return if model_class.respond_to?(:for_seller)

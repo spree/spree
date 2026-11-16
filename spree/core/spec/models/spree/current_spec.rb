@@ -241,23 +241,9 @@ RSpec.describe Spree::Current do
 
       expect(described_class.with_store(other_store) { described_class.channel }).to eq(other_store.default_channel)
     end
-
-    # The content locale decides whether a translated read answers from the
-    # base column, so an inner store's locale left behind reads the outer
-    # store's content as a language it was never written in.
-    it "does not leave the inner store's content locale behind" do
-      store.update!(default_locale: 'nl', supported_locales: 'nl,en')
-      described_class.store = other_store
-
-      described_class.with_store(store) { described_class.content_locale }
-
-      expect(described_class.content_locale).to eq(other_store.default_locale)
-    end
   end
 
   describe '.with_content_locale' do
-    let(:store) { create(:store, default_locale: 'nl', supported_locales: 'nl,en') }
-
     it 'runs the block in the given locale' do
       expect(described_class.with_content_locale('nl') { described_class.content_locale }).to eq('nl')
     end
@@ -270,8 +256,12 @@ RSpec.describe Spree::Current do
       expect(described_class.content_locale).to eq('de')
     end
 
-    # Assigned, the locale would answer for the next store this unit of work
-    # touches; left unassigned it resolves from that store instead.
+    it 'accepts a symbol, which the column fallback compares as a string' do
+      expect(described_class.with_content_locale(:nl) { described_class.content_locale }).to eq('nl')
+    end
+
+    # Left assigned, one store's locale would answer for whatever this job or
+    # thread reads next.
     it 'leaves the content locale unassigned where it was unassigned before' do
       described_class.with_content_locale('nl') { :noop }
 
