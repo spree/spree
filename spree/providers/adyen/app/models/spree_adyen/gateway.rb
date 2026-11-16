@@ -6,6 +6,9 @@ module SpreeAdyen
   class Gateway < ::Spree::Gateway
     self.accepts_money_amounts = true
 
+    include SpreeAdyen::Gateway::PaymentSessions
+    include SpreeAdyen::Gateway::PaymentSetupSessions
+
     # Typed by the operator.
     preference :api_key, :password
     preference :merchant_account, :string
