@@ -712,6 +712,41 @@ steps:
 
       Idempotent, and supports a dry run.
 
+  - id: migrate_adyen_payments
+    name: "Give Adyen payments taken before 6.0 their PSP reference"
+    task_class: "SpreeAdyen::MaintenanceTasks::MigratePayments"
+    optional: true
+    notes: |
+      Only runs when spree_adyen is installed; skipped otherwise.
+
+      In 6.0 an Adyen payment keeps its PSP reference in its metadata, where
+      captures, cancels, refunds and the dashboard link read it. This copies it
+      there for payments from the 5.x legacy checkout, moves the capture and
+      cancellation references 5.x kept in custom fields, and marks payments
+      left in 5.x's capture_pending or void_pending as captured or void.
+      Payment-session payments 5.x never gave a PSP reference cannot be
+      recovered: they are counted and logged by id, to handle in Adyen, as are
+      the payments it marks done.
+
+      Stores already on 6.0 run it with `spree upgrade --step migrate_adyen_payments`.
+      Supports a dry run, and is idempotent.
+
+  - id: configure_adyen_gateways
+    name: "Configure each Adyen payment method's webhook and keys"
+    task: "spree:upgrade:configure_adyen_gateways"
+    optional: true
+    notes: |
+      Only runs when spree_adyen is installed; skipped otherwise.
+
+      Moves each Adyen method's previous HMAC key out of its metadata, which
+      the Admin API returns, into a secret preference, then configures the
+      method: client key, allowed origins, and a webhook on the 6.0 URL. A
+      webhook 5.x left on /adyen/webhooks is moved in place, keeping its key
+      and the deliveries Adyen queued for it.
+
+      Stores already on 6.0 run it with `spree upgrade --step configure_adyen_gateways`.
+      Idempotent.
+
   - id: backfill_import_export_tenancy
     name: "Place every import in a store, and a seller where one ran it"
     task: "spree:upgrade:backfill_import_export_tenancy"
