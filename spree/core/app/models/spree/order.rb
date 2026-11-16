@@ -32,6 +32,9 @@ module Spree
     include Spree::Purchase::QuantityRules
     include Spree::Purchase::PurchaseOrder
     include Spree::Purchase::Market
+    # The market the order was sold in, kept after that market is deleted:
+    # its withdrawal period and return window still apply to the order.
+    belongs_to :market, -> { with_deleted }, class_name: 'Spree::Market', inverse_of: :orders
     include Spree::Purchase::Currency
     include Spree::Purchase::Locale
     include Spree::Purchase::DigitalItems
