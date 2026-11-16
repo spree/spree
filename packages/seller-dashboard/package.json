@@ -33,6 +33,7 @@
     "src",
     "dist/vite-plugin",
     "README.md",
+    "CHANGELOG.md",
     "LICENSE"
   ],
   "scripts": {

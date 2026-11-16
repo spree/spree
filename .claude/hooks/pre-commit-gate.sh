@@ -117,32 +117,40 @@ match_segment() {
 pr_dir="${hook_cwd:-${CLAUDE_PROJECT_DIR:-.}}"
 gh_pr_create='^gh([[:space:]]+-[^[:space:]]+([[:space:]]+[^-[:space:]][^[:space:]]*)?)*[[:space:]]+pr[[:space:]]+create([[:space:]);}]|$)'
 
-# Sets HEAD_FLAG to the last `--head`/`-H` value in a command line, reading it
+# Sets HEAD_FLAG and REPO_FLAG to the last `--head`/`-H` and `--repo`/`-R`
+# values in a command line, reading them
 # the way gh's option parser does: quoted arguments are one word, a flag's
 # value is never read as a flag, and short flags may be clustered (`-fH x`) or
 # attached (`-Hx`, `-H=x`). Returns 1 when a quote is left open (the argument
 # continues on a later line the gate cannot see) and 2 for a flag it does not
-# know, since an unknown flag may take a value that hides a `--head`.
+# know, since an unknown flag may take a value that hides a `--head`. Returns 3
+# for a `#` comment: the shell drops it, but a `--head` in it would be read.
 HEAD_FLAG=""
+REPO_FLAG=""
 read_head_flag() {
   local s="$1" tok next="" rest char
   local word="^(\"[^\"]*\"|'[^']*'|[^[:space:]\"']+)+"
   local value_longs=" --assignee --base --body --body-file --label --milestone --project --reviewer --repo --title --template --recover "
   local switch_longs=" --draft --fill --fill-first --fill-verbose --web --editor --dry-run --no-maintainer-edit --help "
   HEAD_FLAG=""
+  REPO_FLAG=""
   while s="${s#"${s%%[![:space:]]*}"}"; [ -n "$s" ]; do
     [[ "$s" =~ $word ]] || return 1
     tok="${BASH_REMATCH[0]}"
     s="${s:${#tok}}"
+    [[ "$tok" == \#* ]] && return 3
     tok="${tok//[\"\']/}"
     case "$next" in
       head) HEAD_FLAG="$tok"; next=""; continue ;;
+      repo) REPO_FLAG="$tok"; next=""; continue ;;
       skip) next=""; continue ;;
     esac
     case "$tok" in
       --) return 0 ;;
       --head) next=head ;;
       --head=*) HEAD_FLAG="${tok#--head=}" ;;
+      --repo) next=repo ;;
+      --repo=*) REPO_FLAG="${tok#--repo=}" ;;
       --*=*) [[ "$value_longs" == *" ${tok%%=*} "* ]] || return 2 ;;
       --*)
         if [[ "$value_longs" == *" $tok "* ]]; then next=skip
@@ -155,7 +163,8 @@ read_head_flag() {
           case "$char" in
             [dfweh]) continue ;;
             H) rest="${rest#=}"; if [ -n "$rest" ]; then HEAD_FLAG="$rest"; else next=head; fi; break ;;
-            [aBbFlmprRtT]) [ -n "$rest" ] || next=skip; break ;;
+            R) rest="${rest#=}"; if [ -n "$rest" ]; then REPO_FLAG="$rest"; else next=repo; fi; break ;;
+            [aBbFlmprtT]) [ -n "$rest" ] || next=skip; break ;;
             *) return 2 ;;
           esac
         done ;;
@@ -185,7 +194,12 @@ while IFS= read -r segment; do
   # A multi-line argument hides whatever follows it, so a `--head` placed after
   # one cannot be read and the gate would check the wrong branch.
   read_head_flag "${LAUNCHED#*create}"
-  case $? in
+  flags_read=$?
+  case $flags_read in
+    3)
+      echo "Blocked: $seg" >&2
+      echo "Remove the # comment from gh pr create: the shell drops it, so a flag inside it would mislead the gate." >&2
+      exit 2 ;;
     2)
       echo "Blocked: $seg" >&2
       echo "The gate does not know one of these gh pr create flags, so it cannot tell which branch this opens. Use the long flag names --head, --title, --body-file." >&2
@@ -203,6 +217,24 @@ while IFS= read -r segment; do
     echo "Blocked: $seg" >&2
     echo "Keep gh pr create on one line without backslashes: quote arguments, or pass the body with --body-file." >&2
     exit 2
+  fi
+  # The reviews cover this repository's code, so a pull request opened on
+  # another repository (the release's spree-starter, storefront and
+  # agent-skills bumps) is not gated. gh reads `--repo` as `[HOST/]OWNER/REPO`
+  # or a URL, so every spelling of this repository is gated. Expansions,
+  # comments and redirections change which arguments gh gets without the gate
+  # seeing it, so only a command made of plain words and quotes, read to its
+  # end, can skip the gate.
+  repo_name=$(tr '[:upper:]' '[:lower:]' <<<"$REPO_FLAG")
+  repo_name="${repo_name#*://}"
+  repo_name="${repo_name#git@}"
+  repo_name="${repo_name#www.}"
+  repo_name="${repo_name#github.com[:/]}"
+  repo_name="${repo_name%/}"
+  repo_name="${repo_name%.git}"
+  if [ $flags_read -eq 0 ] && [[ "$LAUNCHED" =~ ^[[:alnum:]\ $'\t'\"\'_./:=@,+%-]*$ ]] \
+    && [[ "$repo_name" =~ ^[a-z0-9_.-]+/[a-z0-9_.-]+$ ]] && [ "$repo_name" != "spree/spree" ]; then
+    continue
   fi
   review_dir="$pr_dir"
   head_owner=""

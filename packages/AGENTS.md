@@ -39,6 +39,8 @@ pnpm workspace + Turbo, Biome for lint and format (`pnpm lint`, `pnpm lint:fix`,
 
 Changesets live in the root `.changeset/` (`pnpm changeset`). The API-facing packages version together with the Spree gem version; release with `pnpm version:packages`, never plain `changeset version`.
 
+**One changeset per package.** Changesets copies a changeset's text into every package it names, so a change to several packages adds one changeset for each, saying what changed in that package for its users: the SDK's entry names the SDK method, the dashboard's names the screen. A package with no changes of its own needs none; the release gives it a "Released with Spree" entry. CI fails on a changeset naming more than one package (`pnpm changeset:check`). The changelog ships inside each package, so an agent reading `node_modules` sees what its version changed.
+
 ## End-to-end tests (Playwright)
 
 Specs live in `packages/dashboard/e2e/` — `<resource>.spec.ts` for the admin, `seller-<area>.spec.ts` for the seller panel — and run with `pnpm wt:e2e`. The setup boots its own Rails and Vite and seeds the database. CI shards the suite, so every spec creates its own records and depends on no other file.
