@@ -11,6 +11,7 @@ export const CreditCardSchema = z.object({
   name: z.string().nullable(),
   default: z.boolean(),
   gateway_payment_profile_id: z.string().nullable(),
+  payment_method_id: z.string(),
   custom_fields: z.array(CustomFieldSchema).optional(),
 });
 
