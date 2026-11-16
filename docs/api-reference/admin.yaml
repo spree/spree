@@ -30698,6 +30698,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 payment_total: '0.00'
+                refunds_total: '0.00'
                 commission_amount_total: '0.00'
                 commission_tax_total: '0.00'
                 commission_total: '0.00'
