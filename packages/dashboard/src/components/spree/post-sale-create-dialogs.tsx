@@ -42,6 +42,7 @@ import {
 import i18n from 'i18next'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { VARIANT_SEARCH_MIN_LENGTH } from '../../lib/variant-search'
 import { ReasonField } from './reason-field'
 
 /**
@@ -224,6 +225,7 @@ export function CreateExchangeDialog({
                           fields: VARIANT_PICKER_FIELDS,
                         })
                       }
+                      minSearchLength={VARIANT_SEARCH_MIN_LENGTH}
                       hydrate={(ids) =>
                         adminClient.variants.list({
                           id_in: ids,
