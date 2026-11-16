@@ -352,9 +352,10 @@ DATABASE_NAME=spree_starter_release bin/rails db:drop
 
   Tag only after the bump merges: a tag on an earlier commit builds the old
   gems (6.0.4 had to be re-cut as `v6.0.4.1`). Wait for the run to conclude
-  `success`. Skip this for a prerelease (`6.1.0.rc1`): the starter's
-  `release.yml` also tags every image `latest`, so a prerelease tag would
-  replace the stable image new projects pull.
+  `success`. Skip this for a prerelease (`6.1.0.rc1`) and for a patch on an
+  older minor line (`6.0.6` after `6.1.0`): the starter's `release.yml` also
+  tags every image `latest`, so either tag would replace the newest stable
+  image new projects pull.
 
 ## 7. Bump the storefront's SDK
 
