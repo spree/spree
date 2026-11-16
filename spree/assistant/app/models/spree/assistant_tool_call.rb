@@ -16,6 +16,9 @@ module Spree
     FAILED = 'failed'.freeze
     STATUSES = [PROPOSED, APPROVED, REJECTED, EXECUTED, FAILED].freeze
 
+    attribute :arguments, default: -> { {} }
+    attribute :result, default: -> { {} }
+
     belongs_to :message, class_name: 'Spree::AssistantMessage', inverse_of: :tool_calls
 
     # The tool-result MESSAGE answering this call — distinct from the `result`

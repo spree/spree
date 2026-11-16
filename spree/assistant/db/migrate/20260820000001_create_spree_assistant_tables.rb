@@ -35,11 +35,11 @@ class CreateSpreeAssistantTables < ActiveRecord::Migration[8.1]
       t.references :resolved_by, index: true
 
       if t.respond_to?(:jsonb)
-        t.jsonb :arguments, default: {}
-        t.jsonb :result, default: {}
+        t.jsonb :arguments
+        t.jsonb :result
       else
-        t.json :arguments, default: {}
-        t.json :result, default: {}
+        t.json :arguments
+        t.json :result
       end
 
       t.timestamps

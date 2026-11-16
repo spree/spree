@@ -77,6 +77,8 @@ export type StoreUpdateParams = {
   pricing_provider?: string
   /** Where stock levels come from: a registered provider key, or `internal`. */
   inventory_provider?: string
+  /** The dashboard assistant's AI vendor, such as `anthropic`. */
+  assistant_provider?: string
   /** `strict` refuses to price when the provider cannot answer; `fallback` uses the catalog. */
   pricing_provider_failure_policy?: 'fallback' | 'strict'
   /**
