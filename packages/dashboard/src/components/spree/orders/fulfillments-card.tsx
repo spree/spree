@@ -565,6 +565,7 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
           is still pending. */}
       {(fulfillment.delivery_method ||
         fulfillment.unpriced ||
+        fulfillment.cost_source === 'manual' ||
         isPositiveMoney(fulfillment.cost)) && (
         <CardContent className="mx-4 px-0 flex items-center justify-between border-b border-border-subtle py-3.5 text-base">
           <span className="text-muted-foreground">
@@ -576,7 +577,10 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
               fulfillment.delivery_method?.name ??
               t('admin.pages.orders.detail.no_delivery_method')}
           </span>
-          <span>
+          <span className="flex items-center gap-2">
+            {fulfillment.cost_source === 'manual' && (
+              <Badge variant="secondary">{t('admin.orders.detail.fulfillments.manual_cost')}</Badge>
+            )}
             {fulfillment.unpriced ? (
               t('admin.orders.detail.fulfillments.quoted_after_review')
             ) : (

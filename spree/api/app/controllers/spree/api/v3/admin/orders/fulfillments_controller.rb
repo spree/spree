@@ -32,9 +32,9 @@ module Spree
                 only: :create,
                 description: 'Delivery method attached as the selected rate. Defaults to the delivery method of the fully drained source fulfillments.'
               body.attribute :cost, :decimal,
-                only: :create,
+                nullable: true,
                 example: '7.42',
-                description: 'Explicit shipping cost, such as the 3PL price. Defaults to the summed cost of the fully drained source fulfillments, which keeps the order total unchanged. Persists only with `status: shipped`; pending fulfillments are re-priced by the rate engine.'
+                description: "On create, an explicit shipping cost, such as the 3PL price. Defaults to the summed cost of the fully drained source fulfillments, which keeps the order total unchanged. Persists only with `status: shipped`; pending fulfillments are re-priced by the rate engine. On update, a delivery cost set by hand, which no re-quote, rate change or move to another stock location changes afterwards: send null to go back to the selected delivery rate's price, or omit it to leave the cost as it is."
               body.attribute :status, :string,
                 only: :create,
                 choices: %w[shipped],
@@ -153,6 +153,24 @@ module Spree
             # Forcing past a stock or payment guard is the operator's call.
             def fulfill_workflow_options
               { force: fulfill_params[:force].to_b }
+            end
+
+            # The workflow assigns these to the record raw, so cost goes through
+            # update_workflow_options instead.
+            def update_attributes
+              super.except('cost')
+            end
+
+            # cost is tri-state — absent leaves the charge alone, an amount
+            # overrides it, an explicit null hands the parcel back to its rate —
+            # so it is forwarded only when the request carried the key.
+            def update_workflow_options
+              return {} unless params.key?(:cost)
+              return { cost: nil } if params[:cost].nil?
+
+              # permit drops a value that is not a scalar to nil, which would
+              # read as a revert; blank is refused as an invalid cost instead.
+              { cost: params.permit(:cost)[:cost] || '' }
             end
 
             # The whole catalogue, and any warehouse this staff member may

@@ -30,11 +30,14 @@ export type FulfillmentCreateParams = {
    */
   delivery_method_id?: string
   /**
-   * Explicit shipping cost, such as the 3PL price. Defaults to the summed cost of the fully drained
-   * source fulfillments, which keeps the order total unchanged. Persists only with
-   * `status: shipped`; pending fulfillments are re-priced by the rate engine.
+   * On create, an explicit shipping cost, such as the 3PL price. Defaults to the summed cost of the
+   * fully drained source fulfillments, which keeps the order total unchanged. Persists only with
+   * `status: shipped`; pending fulfillments are re-priced by the rate engine. On update, a delivery
+   * cost set by hand, which no re-quote, rate change or move to another stock location changes
+   * afterwards: send null to go back to the selected delivery rate's price, or omit it to leave the
+   * cost as it is.
    */
-  cost?: string
+  cost?: string | null
   /** Pass `shipped` to register an already-shipped external fulfillment. */
   status?: 'shipped'
   metadata?: Record<string, unknown>
