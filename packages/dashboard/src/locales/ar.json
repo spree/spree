@@ -3315,7 +3315,8 @@
           "load_error": "تعذر تحميل مدفوعات هذا الطلب.",
           "view_at_gateway": "عرض في {{gateway}}",
           "view_details": "عرض التفاصيل",
-          "failed_card_checks": "فشل التحقق من البطاقة"
+          "failed_card_checks": "فشل التحقق من البطاقة",
+          "refund": "استرداد"
         },
         "priced_by": "التسعير من {{name}}",
         "purchase_order": {
@@ -3342,7 +3343,8 @@
           "payment_total": "إجمالي الدفع",
           "promotions": "الترقيات",
           "tax_additional": "الضريبة (الإضافية)",
-          "tax_included": "الضريبة (متضمنة)"
+          "tax_included": "الضريبة (متضمنة)",
+          "refunded": "المبلغ المسترد"
         },
         "tracking": {
           "fulfilled_prefix": "تم التنفيذ",

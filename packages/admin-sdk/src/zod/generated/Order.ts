@@ -19,6 +19,7 @@ import { OrderCancellationReasonSchema } from './OrderCancellationReason';
 import { PaymentSchema } from './Payment';
 import { PaymentMethodSchema } from './PaymentMethod';
 import { PaymentSplitSchema } from './PaymentSplit';
+import { RefundSchema } from './Refund';
 import { ReturnSchema } from './Return';
 import { SellerSchema } from './Seller';
 import { StockLocationSchema } from './StockLocation';
@@ -80,6 +81,7 @@ export const OrderSchema = z.object({
   created_at: z.string(),
   updated_at: z.string(),
   payment_total: z.string(),
+  refunds_total: z.string(),
   commission_amount_total: z.string(),
   commission_tax_total: z.string(),
   commission_total: z.string(),
@@ -105,6 +107,7 @@ export const OrderSchema = z.object({
   customer_id: z.string().nullable(),
   applied_promotions: z.array(AppliedPromotionSchema).optional(),
   payment_splits: z.array(PaymentSplitSchema).optional(),
+  get refunds() { return z.array(RefundSchema).optional(); },
   cart: CartSchema.optional(),
   channel: ChannelSchema.optional(),
   preferred_stock_location: StockLocationSchema.optional(),
@@ -172,6 +175,7 @@ export const OrderSchema = z.object({
   created_at: z.ZodType<Order['created_at']>;
   updated_at: z.ZodType<Order['updated_at']>;
   payment_total: z.ZodType<Order['payment_total']>;
+  refunds_total: z.ZodType<Order['refunds_total']>;
   commission_amount_total: z.ZodType<Order['commission_amount_total']>;
   commission_tax_total: z.ZodType<Order['commission_tax_total']>;
   commission_total: z.ZodType<Order['commission_total']>;
@@ -197,6 +201,7 @@ export const OrderSchema = z.object({
   customer_id: z.ZodType<Order['customer_id']>;
   applied_promotions: z.ZodOptional<z.ZodType<Exclude<Order['applied_promotions'], undefined>>>;
   payment_splits: z.ZodOptional<z.ZodType<Exclude<Order['payment_splits'], undefined>>>;
+  refunds: z.ZodOptional<z.ZodType<Exclude<Order['refunds'], undefined>>>;
   cart: z.ZodOptional<z.ZodType<Exclude<Order['cart'], undefined>>>;
   channel: z.ZodOptional<z.ZodType<Exclude<Order['channel'], undefined>>>;
   preferred_stock_location: z.ZodOptional<z.ZodType<Exclude<Order['preferred_stock_location'], undefined>>>;

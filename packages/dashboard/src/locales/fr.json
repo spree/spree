@@ -3292,7 +3292,8 @@
           "load_error": "Impossible de charger les paiements de cette commande.",
           "view_at_gateway": "Voir sur {{gateway}}",
           "view_details": "Voir les détails",
-          "failed_card_checks": "Vérifications de carte échouées"
+          "failed_card_checks": "Vérifications de carte échouées",
+          "refund": "Remboursement"
         },
         "priced_by": "Tarifé par {{name}}",
         "purchase_order": {
@@ -3319,7 +3320,8 @@
           "payment_total": "Total des paiements",
           "promotions": "Promotions",
           "tax_additional": "Taxe (supplémentaire)",
-          "tax_included": "Taxe (incluse)"
+          "tax_included": "Taxe (incluse)",
+          "refunded": "Remboursé"
         },
         "tracking": {
           "fulfilled_prefix": "Traité",

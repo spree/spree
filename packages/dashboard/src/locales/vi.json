@@ -3290,7 +3290,8 @@
           "load_error": "Không thể tải các khoản thanh toán cho đơn đặt hàng này.",
           "view_at_gateway": "Xem tại {{gateway}}",
           "view_details": "Xem chi tiết",
-          "failed_card_checks": "Kiểm tra thẻ không thành công"
+          "failed_card_checks": "Kiểm tra thẻ không thành công",
+          "refund": "Hoàn tiền"
         },
         "priced_by": "Được định giá bởi {{name}}",
         "purchase_order": {
@@ -3317,7 +3318,8 @@
           "payment_total": "Tổng số tiền thanh toán",
           "promotions": "Khuyến mãi",
           "tax_additional": "Thuế (bổ sung)",
-          "tax_included": "Thuế (đã bao gồm)"
+          "tax_included": "Thuế (đã bao gồm)",
+          "refunded": "Đã hoàn tiền"
         },
         "tracking": {
           "fulfilled_prefix": "Đã xử lý",

@@ -3291,7 +3291,8 @@
           "load_error": "Die Zahlungen für diese Bestellung konnten nicht geladen werden.",
           "view_at_gateway": "In {{gateway}} ansehen",
           "view_details": "Details ansehen",
-          "failed_card_checks": "Kartenprüfung fehlgeschlagen"
+          "failed_card_checks": "Kartenprüfung fehlgeschlagen",
+          "refund": "Rückerstattung"
         },
         "priced_by": "Preis von {{name}}",
         "purchase_order": {
@@ -3318,7 +3319,8 @@
           "payment_total": "Zahlungssumme",
           "promotions": "Aktionen",
           "tax_additional": "Steuer (zusätzlich)",
-          "tax_included": "Steuer (inklusive)"
+          "tax_included": "Steuer (inklusive)",
+          "refunded": "Erstattet"
         },
         "tracking": {
           "fulfilled_prefix": "Erfüllt",

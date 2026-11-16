@@ -3290,7 +3290,8 @@
           "load_error": "この注文の支払いを読み込めませんでした。",
           "view_at_gateway": "{{gateway}}で見る",
           "view_details": "詳細を見る",
-          "failed_card_checks": "カードの確認に失敗"
+          "failed_card_checks": "カードの確認に失敗",
+          "refund": "返金"
         },
         "priced_by": "{{name}}による価格",
         "purchase_order": {
@@ -3317,7 +3318,8 @@
           "payment_total": "支払い合計",
           "promotions": "プロモーション",
           "tax_additional": "税（外税）",
-          "tax_included": "税（内税）"
+          "tax_included": "税（内税）",
+          "refunded": "返金済み"
         },
         "tracking": {
           "fulfilled_prefix": "処理済み",

@@ -3321,7 +3321,8 @@
           "load_error": "Nie udało się wczytać płatności tego zamówienia.",
           "view_at_gateway": "Zobacz w {{gateway}}",
           "view_details": "Zobacz szczegóły",
-          "failed_card_checks": "Nieudana weryfikacja karty"
+          "failed_card_checks": "Nieudana weryfikacja karty",
+          "refund": "Zwrot"
         },
         "priced_by": "Cena z {{name}}",
         "purchase_order": {
@@ -3348,7 +3349,8 @@
           "payment_total": "Suma płatności",
           "promotions": "Promocje",
           "tax_additional": "Podatek (dodatkowy)",
-          "tax_included": "Podatek (wliczony)"
+          "tax_included": "Podatek (wliczony)",
+          "refunded": "Zwrócono"
         },
         "tracking": {
           "fulfilled_prefix": "Zrealizowano",

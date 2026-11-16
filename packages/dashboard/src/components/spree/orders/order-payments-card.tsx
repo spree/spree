@@ -1,9 +1,12 @@
-import type { Order, Payment } from '@spree/admin-sdk'
+import type { Order, Payment, Refund } from '@spree/admin-sdk'
+import { negateMoney } from '@spree/core'
 import {
   adminClient,
   currencyParts,
+  formatStoreDateTime,
   Money,
   useMetadataSheet,
+  useStore,
   ViewMetadataMenuItem,
 } from '@spree/dashboard-core'
 import {
@@ -56,14 +59,16 @@ import {
   InfoIcon,
   PlusIcon,
   ShieldAlertIcon,
+  Undo2Icon,
   XCircleIcon,
 } from '@spree/dashboard-ui/icons'
 import { useQuery } from '@tanstack/react-query'
 import i18n from 'i18next'
-import { type FormEvent, useEffect, useState } from 'react'
+import { type FormEvent, Fragment, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useOrderMutation } from '../../../hooks/use-order'
 import { useOrderGroup } from '../../../hooks/use-seller-ledger'
+import { refundsByPayment } from '../../../lib/refunds-by-payment'
 import { PaymentDetailsDialog } from './payment-details-dialog'
 
 export function PaymentsCard({ order }: { order: Order }) {
@@ -88,6 +93,7 @@ export function PaymentsCard({ order }: { order: Order }) {
   // whole branch exists to prevent.
   const awaitingGroup = grouped && groupPending
   const splits = order.payment_splits ?? []
+  const refunds = useMemo(() => refundsByPayment(order.refunds), [order.refunds])
 
   const captureMutation = useOrderMutation(orderId, (paymentId: string) =>
     adminClient.orders.payments.capture(orderId, paymentId, {}),
@@ -163,78 +169,88 @@ export function PaymentsCard({ order }: { order: Order }) {
             </TableHeader>
             <TableBody>
               {payments.map((payment) => (
-                <TableRow key={payment.id}>
-                  <TableCell className="font-medium">{payment.number}</TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {payment.payment_method?.name ?? '—'}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex flex-wrap items-center gap-1.5">
-                      {/* A pending card payment that can be captured holds an
+                <Fragment key={payment.id}>
+                  <TableRow>
+                    <TableCell className="font-medium">{payment.number}</TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {payment.payment_method?.name ?? '—'}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        {/* A pending card payment that can be captured holds an
                           authorization — the same thing the order's status
                           calls it, so the two never disagree. */}
-                      {payment.status === 'pending' && payment.can_capture ? (
-                        <StatusBadge
-                          status="authorized"
-                          label={t('admin.orders.payment_statuses.authorized')}
+                        {payment.status === 'pending' && payment.can_capture ? (
+                          <StatusBadge
+                            status="authorized"
+                            label={t('admin.orders.payment_statuses.authorized')}
+                          />
+                        ) : (
+                          <StatusBadge status={payment.status} />
+                        )}
+                        {(payment.avs_risky || payment.cvv_risky) && (
+                          <Badge variant="warning">
+                            <ShieldAlertIcon />
+                            {t('admin.orders.detail.payments_table.failed_card_checks')}
+                          </Badge>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-right font-medium whitespace-nowrap tabular-nums">
+                      <Money amount={payment.amount} currency={order.currency} />
+                    </TableCell>
+                    {grouped && (
+                      <TableCell className="text-right whitespace-nowrap tabular-nums">
+                        <Money
+                          amount={
+                            splits.find((split) => split.payment_id === payment.id)?.captured_amount
+                          }
+                          currency={order.currency}
                         />
-                      ) : (
-                        <StatusBadge status={payment.status} />
-                      )}
-                      {(payment.avs_risky || payment.cvv_risky) && (
-                        <Badge variant="warning">
-                          <ShieldAlertIcon />
-                          {t('admin.orders.detail.payments_table.failed_card_checks')}
-                        </Badge>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-right font-medium whitespace-nowrap tabular-nums">
-                    <Money amount={payment.amount} currency={order.currency} />
-                  </TableCell>
-                  {grouped && (
-                    <TableCell className="text-right whitespace-nowrap tabular-nums">
-                      <Money
-                        amount={
-                          splits.find((split) => split.payment_id === payment.id)?.captured_amount
-                        }
+                      </TableCell>
+                    )}
+                    <TableCell>
+                      <PaymentActionsMenu
+                        payment={payment}
                         currency={order.currency}
+                        // Capturing or voiding a grouped payment acts on every
+                        // order in the checkout, so this page only links out.
+                        canCapture={!grouped && payment.can_capture}
+                        canVoid={!grouped && payment.can_void}
+                        onCapture={async () => {
+                          if (
+                            await confirm({
+                              message: t('admin.orders.detail.confirm.capture_message'),
+                              variant: 'default',
+                              confirmLabel: t('admin.pages.orders.detail.actions.capture'),
+                            })
+                          ) {
+                            captureMutation.mutate(payment.id)
+                          }
+                        }}
+                        onVoid={async () => {
+                          if (
+                            await confirm({
+                              message: t('admin.orders.detail.confirm.void_message'),
+                              variant: 'destructive',
+                              confirmLabel: t('admin.pages.orders.detail.actions.void'),
+                            })
+                          ) {
+                            voidMutation.mutate(payment.id)
+                          }
+                        }}
                       />
                     </TableCell>
-                  )}
-                  <TableCell>
-                    <PaymentActionsMenu
-                      payment={payment}
+                  </TableRow>
+                  {refunds.get(payment.id)?.map((refund) => (
+                    <RefundRow
+                      key={refund.id}
+                      refund={refund}
                       currency={order.currency}
-                      // Capturing or voiding a grouped payment acts on every
-                      // order in the checkout, so this page only links out.
-                      canCapture={!grouped && payment.can_capture}
-                      canVoid={!grouped && payment.can_void}
-                      onCapture={async () => {
-                        if (
-                          await confirm({
-                            message: t('admin.orders.detail.confirm.capture_message'),
-                            variant: 'default',
-                            confirmLabel: t('admin.pages.orders.detail.actions.capture'),
-                          })
-                        ) {
-                          captureMutation.mutate(payment.id)
-                        }
-                      }}
-                      onVoid={async () => {
-                        if (
-                          await confirm({
-                            message: t('admin.orders.detail.confirm.void_message'),
-                            variant: 'destructive',
-                            confirmLabel: t('admin.pages.orders.detail.actions.void'),
-                          })
-                        ) {
-                          voidMutation.mutate(payment.id)
-                        }
-                      }}
+                      grouped={grouped}
                     />
-                  </TableCell>
-                </TableRow>
+                  ))}
+                </Fragment>
               ))}
             </TableBody>
           </Table>
@@ -242,6 +258,40 @@ export function PaymentsCard({ order }: { order: Order }) {
       </Card>
       <AddPaymentDialog order={order} open={addOpen} onOpenChange={setAddOpen} />
     </Section>
+  )
+}
+
+/** A refund, listed under the payment it went back to. */
+function RefundRow({
+  refund,
+  currency,
+  grouped,
+}: {
+  refund: Refund
+  currency: string
+  grouped: boolean
+}) {
+  const { t } = useTranslation()
+  const { timezone } = useStore()
+
+  return (
+    <TableRow>
+      <TableCell className="text-muted-foreground">
+        <span className="flex items-center gap-1.5 ps-4">
+          <Undo2Icon className="size-3.5" />
+          {t('admin.orders.detail.payments_table.refund')}
+        </span>
+      </TableCell>
+      <TableCell className="text-muted-foreground">{refund.refund_reason_name ?? '—'}</TableCell>
+      <TableCell className="text-muted-foreground whitespace-nowrap">
+        {formatStoreDateTime(refund.created_at, timezone)}
+      </TableCell>
+      <TableCell className="text-right whitespace-nowrap tabular-nums">
+        <Money amount={refund.amount ? negateMoney(refund.amount) : null} currency={currency} />
+      </TableCell>
+      {grouped && <TableCell />}
+      <TableCell />
+    </TableRow>
   )
 }
 

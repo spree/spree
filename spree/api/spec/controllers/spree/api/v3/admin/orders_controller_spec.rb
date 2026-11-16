@@ -242,6 +242,24 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
                              'order_id' => child.prefixed_id, 'captured_amount' => '100.00')
     end
 
+    it "expands the order's refunds with their reasons, and totals them" do
+      placed = create(:completed_order_with_totals, store: store)
+      payment = create(:payment, order: placed, amount: placed.total, status: 'completed')
+      reason = create(:refund_reason, store: store, name: 'Damaged in transit')
+      first = create(:refund, payment: payment, amount: 10, reason: reason)
+      create(:refund, payment: payment, amount: 5, reason: reason)
+
+      get :show, params: { id: placed.prefixed_id, expand: 'payments,refunds' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['refunds_total']).to eq('15.00')
+      expect(json_response['refunds'].size).to eq(2)
+      expect(json_response['refunds']).to include(
+        a_hash_including('id' => first.prefixed_id, 'payment_id' => payment.prefixed_id,
+                         'amount' => '10.00', 'refund_reason_name' => 'Damaged in transit')
+      )
+    end
+
     subject { get :show, params: { id: order.prefixed_id }, as: :json }
 
     before { request.headers.merge!(headers) }

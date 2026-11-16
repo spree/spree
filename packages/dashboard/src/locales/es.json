@@ -2997,7 +2997,8 @@
           "load_error": "No se pudieron cargar los pagos de este pedido.",
           "view_at_gateway": "Ver en {{gateway}}",
           "view_details": "Ver detalles",
-          "failed_card_checks": "Verificaciones de tarjeta fallidas"
+          "failed_card_checks": "Verificaciones de tarjeta fallidas",
+          "refund": "Reembolso"
         },
         "priced_by": "Precio según {{name}}",
         "purchase_order": {
@@ -3024,7 +3025,8 @@
           "payment_total": "Total pagado",
           "promotions": "Promociones",
           "tax_additional": "Impuesto (adicional)",
-          "tax_included": "Impuesto (incluido)"
+          "tax_included": "Impuesto (incluido)",
+          "refunded": "Reembolsado"
         },
         "tracking": {
           "fulfilled_prefix": "Cumplido",

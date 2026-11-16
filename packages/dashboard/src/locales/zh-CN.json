@@ -3282,7 +3282,8 @@
           "load_error": "无法加载此订单的付款信息。",
           "view_at_gateway": "在 {{gateway}} 中查看",
           "view_details": "查看详情",
-          "failed_card_checks": "银行卡验证未通过"
+          "failed_card_checks": "银行卡验证未通过",
+          "refund": "退款"
         },
         "priced_by": "定价来自 {{name}}",
         "purchase_order": {
@@ -3309,7 +3310,8 @@
           "payment_total": "支付总额",
           "promotions": "优惠",
           "tax_additional": "税（额外）",
-          "tax_included": "税（含）"
+          "tax_included": "税（含）",
+          "refunded": "已退款"
         },
         "tracking": {
           "fulfilled_prefix": "已履行",
