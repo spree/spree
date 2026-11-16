@@ -309,6 +309,16 @@ module Spree
       raise ::NotImplementedError, 'You must implement cancel method for this payment method.'
     end
 
+    # Whether #cancel voids the payment. A gateway that cannot void a
+    # captured charge refunds it through Refunds::Create instead, or leaves it
+    # standing when `refund:` is false, so the payment stays completed with
+    # any refund recorded against it.
+    #
+    # @param payment [Spree::Payment]
+    def cancel_voids?(payment)
+      can_void?(payment)
+    end
+
     # Whether the payment can be voided in its current state. Gateways that
     # cannot void a captured payment override this.
     # @param _payment [Spree::Payment]
