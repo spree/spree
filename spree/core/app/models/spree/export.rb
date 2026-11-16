@@ -316,8 +316,10 @@ module Spree
       "#{type.demodulize.underscore}-#{store.code}-#{created_at.strftime('%Y%m%d%H%M%S')}.#{format}"
     end
 
+    # Unique per run: the file name repeats for every export of a store's type
+    # in the same second, and two workers writing one path corrupt each other.
     def export_tmp_file_path
-      Rails.root.join('tmp', export_file_name)
+      @export_tmp_file_path ||= Rails.root.join('tmp', "#{SecureRandom.hex(8)}-#{export_file_name}")
     end
 
     # Public API name for the +results_url+ preference (read/write symmetry).
