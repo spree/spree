@@ -3327,6 +3327,7 @@
         "variant_search": {
           "description": "Suchen Sie nach einer Produktvariante, die diesem Auftrag hinzugefügt werden soll.",
           "empty": "Keine Varianten gefunden",
+          "no_permission": "Ihre Rolle darf keine Produkte ansehen und kann daher den Katalog nicht durchsuchen. Bitten Sie einen Administrator, Ihrer Rolle „Produkte ansehen“ hinzuzufügen.",
           "label": "Variante suchen",
           "placeholder": "Produktname oder SKU eingeben (min. 3 Zeichen)…",
           "sku_prefix": "SKU"

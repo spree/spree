@@ -1,11 +1,11 @@
-import { expect, type Page, request, test } from '@playwright/test'
+import { expect, type Page, test } from '@playwright/test'
 import {
+  addTeammate,
   adminRequest,
-  type E2ELoginSession,
   escapeRegex,
-  invitationAcceptancePath,
   login,
   openRowMenu,
+  TEAMMATE_PASSWORD,
 } from './helpers'
 
 const STAFF_PATH = (storeId: string) => `/${storeId}/settings/staff`
@@ -17,43 +17,6 @@ async function inviteFromDialog(page: Page, email: string) {
   await page.getByRole('option').first().click()
   await page.getByRole('button', { name: /send invitation/i }).click()
   await expect(page.getByRole('row').filter({ hasText: email })).toBeVisible({ timeout: 15_000 })
-}
-
-/**
- * Puts a second teammate on the store through the API: an invitation, then
- * its acceptance. Accepting signs the invitee in, so it happens in a request
- * context of its own — sharing the page's would swap the admin's session
- * cookie for the invitee's.
- */
-async function addTeammate(page: Page, session: E2ELoginSession, email: string, roleId?: string) {
-  const headers = { Authorization: `Bearer ${session.accessToken}` }
-  const roles = await page.request.get('/api/v3/admin/roles', { headers }).then((res) => res.json())
-  const created = await page.request.post('/api/v3/admin/invitations', {
-    headers,
-    data: { email, role_id: roleId ?? roles.data[0].id },
-  })
-  expect(created.status(), await created.text()).toBe(201)
-  const invitation = (await created.json()) as { id: string }
-
-  const acceptance = new URL(
-    await invitationAcceptancePath(page, session, `/api/v3/admin/invitations/${invitation.id}`),
-    'http://localhost',
-  )
-  const invitee = await request.newContext({ baseURL: new URL(page.url()).origin })
-  try {
-    const accepted = await invitee.post(`/api/v3/admin/auth/invitations/${invitation.id}/accept`, {
-      data: {
-        token: acceptance.searchParams.get('token'),
-        password: 'e2e-password-123',
-        password_confirmation: 'e2e-password-123',
-        first_name: 'Robin',
-        last_name: 'Teammate',
-      },
-    })
-    expect(accepted.ok(), await accepted.text()).toBeTruthy()
-  } finally {
-    await invitee.dispose()
-  }
 }
 
 test.describe('staff', () => {
@@ -191,7 +154,7 @@ test.describe('staff', () => {
     const context = await browser.newContext({ baseURL: new URL(page.url()).origin })
     try {
       const teammate = await context.newPage()
-      await login(teammate, { email, password: 'e2e-password-123' })
+      await login(teammate, { email, password: TEAMMATE_PASSWORD })
       await teammate.goto(`/${session.store_id}/orders`)
       // The Orders link only renders once the teammate's permissions have
       // loaded, so the Settings check below cannot pass on an empty sidebar.

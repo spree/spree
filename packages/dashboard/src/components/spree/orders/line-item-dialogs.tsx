@@ -1,5 +1,5 @@
 import type { Variant } from '@spree/admin-sdk'
-import { adminClient, formatPrice, useResourceKey } from '@spree/dashboard-core'
+import { adminClient, formatPrice, usePermissions, useResourceKey } from '@spree/dashboard-core'
 import {
   Button,
   Field,
@@ -47,11 +47,14 @@ export function AddLineItemDialog({
   const [search, setSearch] = useState('')
   const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null)
   const [quantity, setQuantity] = useState(1)
+  // Searching lists the catalog, which a role that manages orders may not
+  // be allowed to read; say so rather than reporting no matches.
+  const canSearch = usePermissions().permissionKeys.includes('read_products')
 
   const { data: variantsData } = useQuery({
     queryKey: useResourceKey('variants', { picker: searchParams, search }),
     queryFn: () => adminClient.variants.list({ search, limit: 10, ...searchParams }),
-    enabled: search.length >= 3,
+    enabled: canSearch && search.length >= 3,
     staleTime: 30_000,
   })
 
@@ -96,8 +99,14 @@ export function AddLineItemDialog({
                     setSearch(e.target.value)
                     setSelectedVariant(null)
                   }}
+                  disabled={!canSearch}
                   autoFocus
                 />
+                {!canSearch && (
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {t('admin.orders.detail.variant_search.no_permission')}
+                  </p>
+                )}
                 {search.length >= 3 && variants.length > 0 && !selectedVariant && (
                   <div className="mt-1 rounded-xl border border-border bg-popover text-popover-foreground shadow-xs max-h-[280px] overflow-y-auto">
                     {variants.map((v) => (
@@ -123,7 +132,7 @@ export function AddLineItemDialog({
                     ))}
                   </div>
                 )}
-                {search.length >= 3 && variants.length === 0 && !selectedVariant && (
+                {canSearch && search.length >= 3 && variants.length === 0 && !selectedVariant && (
                   <p className="mt-1 text-xs text-muted-foreground">
                     {t('admin.orders.detail.variant_search.empty')}
                   </p>

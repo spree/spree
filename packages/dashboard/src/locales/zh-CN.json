@@ -3318,6 +3318,7 @@
         "variant_search": {
           "description": "搜索要添加到此订单的商品变体。",
           "empty": "未找到变体",
+          "no_permission": "您的角色无权查看商品，因此无法搜索商品目录。请联系管理员为您的角色添加“查看商品”权限。",
           "label": "搜索变体",
           "placeholder": "输入商品名称或 SKU（至少 3 个字符）…",
           "sku_prefix": "SKU"

@@ -3033,6 +3033,7 @@
         "variant_search": {
           "description": "Buscá una variante de producto para agregar a este pedido.",
           "empty": "No se encontraron variantes",
+          "no_permission": "Tu rol no puede ver productos, así que no puede buscar en el catálogo. Pide a un administrador que añada Ver productos a tu rol.",
           "label": "Buscar variante",
           "placeholder": "Escribí el nombre del producto o el SKU (mínimo 3 caracteres)…",
           "sku_prefix": "SKU"
