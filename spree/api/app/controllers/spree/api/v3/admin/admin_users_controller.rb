@@ -25,12 +25,13 @@ module Spree
 
           # DELETE /api/v3/admin/admin_users/:id
           # Removes role assignments for the current store rather than deleting
-          # the account globally. The user keeps access to any other stores.
+          # the account globally, and revokes their pending invitations here.
+          # The user keeps access to any other stores.
           def destroy
             authorize!(:destroy, @resource)
             return if reject_unauthorized_role_removal!(@resource, @resource.spree_roles.for_resource(current_store).to_a)
 
-            @resource.role_users.where(role: current_store.roles).destroy_all
+            current_store.remove_user(@resource)
             head :no_content
           end
 
@@ -115,6 +116,9 @@ module Spree
           # Reconcile the user's roles on this store to match `desired_role_ids`.
           # Adds missing assignments and removes extras — no-op for unchanged.
           def apply_role_ids(desired_role_ids)
+            # Clearing every role is a removal from staff.
+            return current_store.remove_user(@resource) if desired_role_ids.empty?
+
             store_roles = current_store.roles
             current = @resource.role_users.where(role: store_roles).pluck(:role_id).map(&:to_s)
             target = desired_role_ids.map(&:to_s)

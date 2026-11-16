@@ -30,16 +30,35 @@ module Spree
       role.role_users.find_or_create_by!(user: user)
     end
 
-    # Revokes a user's access to the resource
+    # Revokes a user's access to the resource, including any invitation still
+    # pending for them here, so they cannot rejoin by accepting it.
     # @param user [Spree.admin_user_class] The user to remove from the resource
     # @return [void]
     def remove_user(user)
-      Spree::RoleUser.where(user: user, role: roles).destroy_all
+      # Invitations first: an acceptance locks its invitation row, so this
+      # waits for one in flight and then removes the role it granted.
+      transaction do
+        revoke_pending_invitations_for(user)
+        Spree::RoleUser.where(user: user, role: roles).destroy_all
+      end
     end
 
     # this can be overridden in the base model to use a different user role, eg. 'seller'
     def default_user_role
       Spree::Role.default_admin_role(self)
+    end
+
+    private
+
+    # Matched by invitee and, case-insensitively, by email: an invitation sent
+    # before the account existed carries only the address.
+    def revoke_pending_invitations_for(user)
+      pending = invitations.pending
+      by_email = pending.where("LOWER(#{Spree::Invitation.table_name}.email) = LOWER(?)", user.email) if user.email.present?
+      matching = pending.where(invitee: user)
+      matching = matching.or(by_email) if by_email
+
+      matching.destroy_all
     end
   end
 end

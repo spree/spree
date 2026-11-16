@@ -146,6 +146,29 @@ RSpec.describe Spree::Api::V3::Admin::AdminUsersController, type: :controller do
         expect(target.role_users.where(role: store.roles)).not_to exist
       end
 
+      it 'revokes the member\'s other pending invitations, so they cannot rejoin' do
+        target.role_users.destroy_all
+        invitation = create(:invitation, resource: store, role: staff_role, email: target.email)
+        create(:role_user, user: target, role: staff_role)
+
+        delete :destroy, params: { id: target.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:no_content)
+        expect(Spree::Invitation.find_by(id: invitation.id)).to be_nil
+      end
+
+      it 'revokes the member\'s pending invitations when their roles are cleared' do
+        target.role_users.destroy_all
+        invitation = create(:invitation, resource: store, role: staff_role, email: target.email)
+        create(:role_user, user: target, role: staff_role)
+
+        patch :update, params: { id: target.prefixed_id, role_ids: [] }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(target.role_users.where(role: store.roles)).not_to exist
+        expect(Spree::Invitation.find_by(id: invitation.id)).to be_nil
+      end
+
       it 'forbids assigning a role whose permissions exceed its own' do
         owner_role = create(:role, name: 'owner', permissions: Spree.permissions.grantable_keys(:store))
 
