@@ -160,6 +160,8 @@ Retrying re-runs only the failures, so a file where three rows out of ten thousa
 A value that isn't a number is rejected, never guessed at. A price written as `"12,50"` fails rather than being read as `1250` — which would be a hundredfold overcharge. Fix the file rather than hoping the import is lenient.
 </Warning>
 
+A product row that creates a product or a variant needs a price; with a blank price the row fails with "price is missing" and nothing is created. A blank price on a row that updates an existing variant keeps the price it already has.
+
 ## Interrupted work resumes
 
 Imports remember which row they reached. If the server restarts halfway through a large file, processing picks up where it stopped rather than starting again or skipping the remainder.
