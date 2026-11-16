@@ -29,9 +29,10 @@ on:
     paths: *paths
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  # On main every commit keeps its own preview, so only pull requests cancel.
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  # On main every commit keeps its own preview, so each gets its own group: a
+  # shared one would let a later push replace a commit's pending run.
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.ref || github.sha }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
