@@ -110,8 +110,7 @@ test.describe('post-sale', () => {
       returns.locator('[data-slot="status-badge"]').filter({ hasText: /^refunded$/i }),
     ).toBeVisible({ timeout: 15_000 })
 
-    await page.reload()
-    await expect(card(page, /^payments/i).getByRole('row', { name: /refund/i })).toBeVisible({
+    await expect(card(page, /^payments/i).getByText(/^Refund · /)).toBeVisible({
       timeout: 15_000,
     })
     await expect(card(page, /^summary/i).getByText(/^refunded$/i)).toBeVisible()

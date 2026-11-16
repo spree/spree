@@ -7,7 +7,9 @@ export function refundsByPayment(refunds: Refund[] | undefined): Map<string, Ref
 
   for (const refund of oldestFirst) {
     if (!refund.payment_id) continue
-    byPayment.set(refund.payment_id, [...(byPayment.get(refund.payment_id) ?? []), refund])
+    const forPayment = byPayment.get(refund.payment_id)
+    if (forPayment) forPayment.push(refund)
+    else byPayment.set(refund.payment_id, [refund])
   }
 
   return byPayment

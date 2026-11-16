@@ -261,7 +261,10 @@ export function PaymentsCard({ order }: { order: Order }) {
   )
 }
 
-/** A refund, listed under the payment it went back to. */
+/**
+ * A refund, listed under the payment it went back to. On a grouped order the
+ * refund is this order's alone, so it sits in the "This order" column.
+ */
 function RefundRow({
   refund,
   currency,
@@ -276,21 +279,23 @@ function RefundRow({
 
   return (
     <TableRow>
-      <TableCell className="text-muted-foreground">
-        <span className="flex items-center gap-1.5 ps-4">
+      <TableCell colSpan={3} className="text-muted-foreground">
+        <span className="flex flex-wrap items-center gap-1.5 ps-4">
           <Undo2Icon className="size-3.5" />
-          {t('admin.orders.detail.payments_table.refund')}
+          {[
+            t('admin.orders.detail.payments_table.refund'),
+            refund.refund_reason_name,
+            formatStoreDateTime(refund.created_at, timezone),
+          ]
+            .filter(Boolean)
+            .join(' · ')}
         </span>
       </TableCell>
-      <TableCell className="text-muted-foreground">{refund.refund_reason_name ?? '—'}</TableCell>
-      <TableCell className="text-muted-foreground whitespace-nowrap">
-        {formatStoreDateTime(refund.created_at, timezone)}
-      </TableCell>
+      {grouped && <TableCell />}
       <TableCell className="text-right whitespace-nowrap tabular-nums">
         <Money amount={refund.amount ? negateMoney(refund.amount) : null} currency={currency} />
       </TableCell>
-      {grouped && <TableCell />}
-      <TableCell />
+      {!grouped && <TableCell />}
     </TableRow>
   )
 }
