@@ -5009,6 +5009,7 @@
         "reason_placeholder": "Was soll der Verkäufer ändern?",
         "reject": "Zurücksenden",
         "rejected": "An den Verkäufer zurückgesendet",
+        "save_first": "Speichern Sie zuerst Ihre Änderungen. Freigeben oder Zurücksenden speichert sie nicht.",
         "send_back": "Zurücksenden"
       },
       "save_label": "Produkt speichern",
