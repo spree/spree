@@ -343,10 +343,10 @@ DATABASE_NAME=spree_starter_release bin/rails db:drop
   `bundle update <gem> --conservative`. A human merges it.
 - The merge does not publish the image `spree init` and new projects run. The
   starter's `release.yml` builds `ghcr.io/spree/spree` from a `v*` tag, so tag
-  the merge commit with the Spree version and push it:
+  the bump's merge commit with the Spree version and push it:
 
   ```bash
-  git fetch origin && git tag v<version> origin/main && git push origin v<version>
+  git fetch origin && git tag v<version> <merge sha> && git push origin v<version>
   gh run list --repo spree/spree-starter --workflow release.yml --branch v<version> --json databaseId,conclusion
   ```
 
@@ -394,5 +394,5 @@ pnpm exec tsc --noEmit && pnpm run check && pnpm run test
 The pull request URL, the audit items the user accepted or deferred, the tool
 versions bumped or kept, the follow-ups the audit produced (regenerated docs, a
 changeset a commit forgot, an upgrade note) and, after the merge, the release
-URL (or the tag and release commands for a human), the registry checks and the
-spree-starter and storefront pull requests.
+URL (or the tag and release commands for a human), the registry checks, the
+spree-starter and storefront pull requests and the starter's image release run.
