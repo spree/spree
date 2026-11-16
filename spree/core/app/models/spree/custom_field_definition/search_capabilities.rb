@@ -67,10 +67,6 @@ module Spree
         "cf_#{namespace}_#{key}"
       end
 
-      def field_type_class
-        field_type_class_name.presence&.safe_constantize
-      end
-
       def search_sort_capabilities_compatible_with_type
         return unless searchable? || sortable?
 

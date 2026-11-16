@@ -582,7 +582,15 @@
         "empty_title": "Chưa có trường tùy chỉnh nào",
         "errors": {
           "failed_to_save": "Không lưu được trường tùy chỉnh",
-          "failed_to_load": "Không thể tải các trường tùy chỉnh. Tải lại trang để thử lại."
+          "failed_to_load": "Không thể tải các trường tùy chỉnh. Tải lại trang để thử lại.",
+          "required": "Nhập giá trị",
+          "too_short": "Dùng ít nhất {{count}} ký tự",
+          "too_long": "Dùng tối đa {{count}} ký tự",
+          "less_than_min": "Phải ít nhất là {{min}}",
+          "greater_than_max": "Phải tối đa là {{max}}",
+          "before_min": "Phải vào hoặc sau {{min}}",
+          "after_max": "Phải vào hoặc trước {{max}}",
+          "choice_not_offered": "{{value}} không phải là một lựa chọn"
         },
         "manage_in_settings": "Quản lý trong cài đặt",
         "new_definition_description": "Xác định trường tùy chỉnh để lưu trữ thông tin có cấu trúc, đã nhập trên {{resource}} của bạn.",
@@ -591,7 +599,12 @@
         "section_title": "Trường tùy chỉnh",
         "set_up": "Thiết lập các trường tùy chỉnh",
         "values_save_partial_failed": "Không thể lưu một số trường tùy chỉnh: {{fields}}",
-        "values_saved": "Đã lưu trường tùy chỉnh"
+        "values_saved": "Đã lưu trường tùy chỉnh",
+        "required_field_hint": "Bắt buộc",
+        "values_invalid": "Sửa các trường tùy chỉnh này trước khi lưu: {{fields}}",
+        "definitions_check_failed": "Không thể kiểm tra các trường tùy chỉnh. Hãy thử lưu lại.",
+        "choose": "Chọn…",
+        "no_choices": "Không có lựa chọn phù hợp"
       }
     },
     "custom_field_definitions": {
@@ -1450,7 +1463,10 @@
             "long_text": "Văn bản dài",
             "number": "Số",
             "rich_text": "Văn bản phong phú",
-            "short_text": "Văn bản ngắn"
+            "short_text": "Văn bản ngắn",
+            "date": "Ngày",
+            "date_time": "Ngày và giờ",
+            "choice": "Lựa chọn"
           },
           "read_only_help": "Không thể thay đổi loại khi giá trị tồn tại — việc chuyển đổi loại này sẽ khiến các giá trị được lưu trữ bị hiểu sai."
         },
@@ -1495,16 +1511,50 @@
           "api_only_group": "Chỉ thông qua API"
         },
         "searchable": {
-          "help": "Bao gồm các giá trị trong tìm kiếm văn bản sản phẩm trên cửa hàng trực tuyến (văn bản ngắn, văn bản dài và chỉ số). Sau khi kích hoạt Meilisearch, hãy chạy rake spree:search:reindex để các sản phẩm hiện có được cập nhật.",
+          "help": "Bao gồm các giá trị trong tìm kiếm văn bản sản phẩm trên cửa hàng trực tuyến. Sau khi kích hoạt Meilisearch, hãy chạy rake spree:search:reindex để các sản phẩm hiện có được cập nhật.",
           "label": "Có thể tìm kiếm"
         },
         "sortable": {
-          "help": "Cho phép danh sách sản phẩm trên cửa hàng trực tuyến sắp xếp theo trường này (chỉ văn bản ngắn và số). Sau khi kích hoạt Meilisearch, hãy chạy rake spree:search:reindex để các sản phẩm hiện có được cập nhật.",
+          "help": "Cho phép danh sách sản phẩm trên cửa hàng trực tuyến sắp xếp theo trường này. Sau khi kích hoạt Meilisearch, hãy chạy rake spree:search:reindex để các sản phẩm hiện có được cập nhật.",
           "label": "Có thể sắp xếp"
         },
         "storefront_visible": {
           "column_label": "Cửa hàng trực tuyến",
           "label": "Hiển thị trên cửa hàng trực tuyến"
+        },
+        "validations": {
+          "title": "Xác thực",
+          "help": "Được kiểm tra khi lưu giá trị. Giá trị hiện có giữ nguyên cho đến khi được chỉnh sửa.",
+          "required": {
+            "label": "Bắt buộc",
+            "help": "Đánh dấu trường và không cho bảng điều khiển này lưu khi để trống."
+          },
+          "min": {
+            "length": "Số ký tự tối thiểu",
+            "number": "Tối thiểu",
+            "date": "Ngày sớm nhất",
+            "date_time": "Ngày và giờ sớm nhất"
+          },
+          "max": {
+            "length": "Số ký tự tối đa",
+            "number": "Tối đa",
+            "date": "Ngày muộn nhất",
+            "date_time": "Ngày và giờ muộn nhất"
+          },
+          "choices": {
+            "label": "Lựa chọn",
+            "value": "Giá trị",
+            "choice_label": "Nhãn hiển thị",
+            "add": "Thêm lựa chọn",
+            "remove": "Xóa lựa chọn",
+            "required": "Thêm ít nhất một lựa chọn",
+            "value_required": "Nhập giá trị",
+            "duplicate": "Mỗi giá trị phải khác nhau"
+          },
+          "multiple": {
+            "label": "Cho phép chọn nhiều",
+            "help": "Giá trị trở thành danh sách. Trường chọn nhiều không thể sắp xếp."
+          }
         }
       },
       "customer": {

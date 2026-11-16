@@ -13,7 +13,7 @@ Without this gem Spree searches the database directly (`Spree::SearchProvider::D
 
 ## Setup
 
-1. Run Meilisearch, and point the application at it:
+1. Run Meilisearch 1.15 or later (date custom field filters compare text ranges, which older servers refuse), and point the application at it:
 
    ```bash
    MEILISEARCH_URL=http://localhost:7700

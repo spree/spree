@@ -25,6 +25,7 @@ module Spree
            delivery_origin_group integration delivery_method_rule delivery_zone_member fee consent_record customer
            data_request newsletter_subscriber order order_group product product_type
            product_type_custom_field_definition variant price price_history custom_field custom_field_definition
+           custom_field_validations custom_field_choice
            category collection collection_rule line_item option_type option_value media stock_level stock_movement
            stock_transfer stock_transfer_item supplier purchase_order purchase_order_item stock_receipt
            stock_receipt_item fulfillment fulfillment_item delivery shipping_label gift_card gift_card_batch payment

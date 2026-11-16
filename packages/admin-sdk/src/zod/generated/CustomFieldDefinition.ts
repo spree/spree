@@ -1,5 +1,6 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import { CustomFieldValidationsSchema } from './CustomFieldValidations';
 
 export const CustomFieldDefinitionSchema = z.object({
   id: z.string(),
@@ -14,6 +15,7 @@ export const CustomFieldDefinitionSchema = z.object({
   created_at: z.string(),
   updated_at: z.string(),
   resource_type: z.string(),
+  validations: CustomFieldValidationsSchema,
 });
 
 export type CustomFieldDefinition = z.infer<typeof CustomFieldDefinitionSchema>;
