@@ -49,9 +49,12 @@ RSpec.describe Spree::Exports::Products, type: :model do
   # The job runs in the locale of whatever asked for the export — a request in
   # the store's own language, or the application's default.
   describe "#generate for a store whose default locale is not the application's" do
-    let(:dutch_store) { create(:store, default_locale: 'nl', supported_locales: 'nl,en') }
+    let(:dutch_store) { create(:store) }
 
-    before { create(:product, store: dutch_store, name: 'Fiets', description: 'Een stadsfiets') }
+    before do
+      dutch_store.default_market.update!(default_locale: 'nl', supported_locales: 'nl,en')
+      create(:product, store: dutch_store.reload, name: 'Fiets', description: 'Een stadsfiets')
+    end
 
     %i[nl en].each do |job_locale|
       it "writes the product names and descriptions when the job runs in #{job_locale}" do

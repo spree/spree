@@ -248,12 +248,12 @@ RSpec.describe SpreeMeilisearch::ProductPresenter do
     end
 
     context "when the store's default locale is not the application's" do
-      let(:dutch_store) { create(:store, default_locale: 'nl', supported_locales: 'nl,en') }
+      let(:dutch_store) { create(:store) }
       let(:product) { create(:product, name: 'Fiets', store: dutch_store) }
       let(:presenter) { described_class.new(product, dutch_store.reload) }
 
       before do
-        dutch_store.default_market.update!(supported_locales: 'nl,en')
+        dutch_store.default_market.update!(default_locale: 'nl', supported_locales: 'nl,en')
         product.translations.create!(locale: 'en', name: 'Bicycle')
       end
 

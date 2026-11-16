@@ -107,10 +107,12 @@ describe Spree::BaseMailer, type: :mailer do
       expect(resolved).to eq('Acme')
     end
 
-    # The base columns hold the store's default locale, whatever the
-    # application's own default locale is.
-    it "reads the base columns as the store's default locale" do
-      german_store = create(:store, default_locale: 'de', supported_locales: 'de,en')
+    # The base columns hold the locale of the store's default market, whatever
+    # the application's own default locale is.
+    it "reads the base columns as the default market's locale" do
+      german_store = create(:store)
+      german_store.default_market.update!(default_locale: 'de', supported_locales: 'de,en')
+      german_store.reload
       product = create(:product, name: 'Fahrrad', store: german_store)
       product.translations.create!(locale: 'en', name: 'Bicycle')
 

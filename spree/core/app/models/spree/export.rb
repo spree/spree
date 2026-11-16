@@ -377,7 +377,7 @@ module Spree
     # for the one the base columns are written in, and a store written in
     # another language exports blank names and descriptions.
     def in_store_locale(&block)
-      locale = store.default_locale
+      locale = store.default_market&.default_locale
       return yield if locale.blank?
 
       Spree::Current.with_content_locale(locale) { I18n.with_locale(locale, &block) }

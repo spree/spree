@@ -130,7 +130,7 @@ module SpreeMeilisearch
     end
 
     def default_locale
-      @default_locale ||= store.default_locale.presence || I18n.default_locale.to_s
+      @default_locale ||= store.default_market&.default_locale || I18n.default_locale.to_s
     end
 
     # Read a translated attribute with fallback to default locale.
