@@ -141,6 +141,35 @@ RSpec.describe Spree::Api::V3::Webhooks::PaymentsController, type: :controller d
         )
       end
 
+      it 'routes the outcome of a capture, void or refund to the modification job, by reference' do
+        allow_any_instance_of(Spree::PaymentMethod).to receive(:parse_webhook_event).and_return(
+          { action: :refund_failed, reference: 'PSP-REFUND-1', metadata: { 'reason' => 'Refused' } }
+        )
+
+        freeze_time do
+          expect {
+            post :create, params: { payment_method_id: payment_method.prefixed_id }
+          }.to have_enqueued_job(Spree::Payments::HandleModificationWebhookJob).with(
+            payment_method_id: payment_method.id, action: 'refund_failed', reference: 'PSP-REFUND-1', payment_id: nil,
+            metadata: { 'reason' => 'Refused' }, received_at: Time.current.iso8601
+          )
+        end
+        expect(response).to have_http_status(:ok)
+      end
+
+      it 'passes the payment a capture outcome names' do
+        payment = create(:payment, payment_method: payment_method, status: 'processing')
+        allow_any_instance_of(Spree::PaymentMethod).to receive(:parse_webhook_event).and_return(
+          { action: :capture_succeeded, reference: 'PSP-CAPTURE-1', payment: payment, metadata: { 'amount' => '10.0' } }
+        )
+
+        expect {
+          post :create, params: { payment_method_id: payment_method.prefixed_id }
+        }.to have_enqueued_job(Spree::Payments::HandleModificationWebhookJob).with(
+          hash_including(reference: 'PSP-CAPTURE-1', payment_id: payment.id, metadata: { 'amount' => '10.0' })
+        )
+      end
+
       it 'enqueues empty metadata when the parser returns none' do
         allow_any_instance_of(Spree::PaymentMethod).to receive(:parse_webhook_event).and_return(
           { action: :captured, payment_session: payment_session }

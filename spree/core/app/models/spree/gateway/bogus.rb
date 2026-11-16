@@ -182,6 +182,26 @@ module Spree
       %w(capture void credit)
     end
 
+    # In requested mode, accepts a plain JSON outcome naming the action and the
+    # record's reference, so specs and the dashboard's end-to-end test can
+    # answer a requested capture, void or refund through the webhook endpoint:
+    #   { "action": "capture_succeeded", "reference": "<capture event transaction id>" }
+    #   { "action": "void_failed", "reference": "<payment response code>", "reason": "..." }
+    #   { "action": "refund_succeeded", "reference": "<refund transaction id>" }
+    def parse_webhook_event(raw_body, headers)
+      return super unless preferred_requested_mode
+
+      body = JSON.parse(raw_body)
+      action = body['action'].to_s
+      reference = body['reference'].to_s
+      return if reference.blank? || Spree::Payments::HandleModificationWebhook::OUTCOME_RECORDS.keys.map(&:to_s).exclude?(action)
+
+      metadata = body['reason'].present? ? { 'reason' => body['reason'].to_s } : {}
+      { action: action.to_sym, reference: reference, metadata: metadata }
+    rescue JSON::ParserError
+      raise WebhookSignatureError
+    end
+
     private
 
     def generate_authorization

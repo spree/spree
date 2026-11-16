@@ -896,11 +896,7 @@ module Spree
     # caller in the rescue path is already raising the reason the capture
     # failed, and losing that to a bookkeeping error would hide it.
     def settle_share(split, amount, captured:)
-      split.with_lock do
-        attributes = { claimed_amount: split.claimed_amount - amount }
-        attributes[:captured_amount] = split.captured_amount + amount if captured
-        split.update!(attributes)
-      end
+      split.with_lock { split.settle_claim!(amount, captured: captured) }
     rescue StandardError => e
       Rails.error.report(e, handled: true, context: { payment_split_id: split.id }, source: 'spree.core')
     end

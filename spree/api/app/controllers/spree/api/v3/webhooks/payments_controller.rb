@@ -38,12 +38,18 @@ module Spree
 
             # Process asynchronously — gateways have timeout limits and will
             # retry on timeouts, so we must return 200 quickly.
-            Spree::Payments::HandleWebhookJob.set(wait: 30.seconds).perform_later(
-              payment_method_id: payment_method.id,
-              action: result[:action].to_s,
-              payment_session_id: result[:payment_session].id,
-              metadata: result[:metadata] || {}
-            )
+            # The outcome of a capture, void or refund the provider accepted
+            # earlier names its record by reference (PaymentMethod#parse_webhook_event).
+            if result.key?(:reference)
+              enqueue_modification(payment_method, result)
+            else
+              Spree::Payments::HandleWebhookJob.set(wait: 30.seconds).perform_later(
+                payment_method_id: payment_method.id,
+                action: result[:action].to_s,
+                payment_session_id: result[:payment_session].id,
+                metadata: result[:metadata] || {}
+              )
+            end
 
             head :ok
           rescue Spree::PaymentMethod::WebhookSignatureError
@@ -53,6 +59,19 @@ module Spree
           rescue StandardError => e
             Rails.error.report(e, source: 'spree.webhooks.payments')
             head :ok
+          end
+
+          private
+
+          def enqueue_modification(payment_method, result)
+            Spree::Payments::HandleModificationWebhookJob.perform_later(
+              payment_method_id: payment_method.id,
+              action: result[:action].to_s,
+              reference: result[:reference].to_s,
+              payment_id: result[:payment]&.id,
+              metadata: result[:metadata] || {},
+              received_at: Time.current.iso8601
+            )
           end
         end
       end

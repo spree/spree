@@ -88,6 +88,17 @@ module Spree
       authorized_amount - captured_amount - claimed_amount
     end
 
+    # Turns a claim into what it turned out to be: money the gateway took, or
+    # nothing at all.
+    #
+    # @param amount [BigDecimal] how much of the claim settles
+    # @param captured [Boolean] whether the gateway took it
+    def settle_claim!(amount, captured:)
+      attributes = { claimed_amount: claimed_amount - amount }
+      attributes[:captured_amount] = captured_amount + amount if captured
+      update!(attributes)
+    end
+
     # @return [Boolean] whether a charge for this share is still in flight —
     #   reserved by a parcel, and not yet confirmed by the gateway
     def capture_in_flight?
