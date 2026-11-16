@@ -127,10 +127,20 @@ RSpec.describe Spree::Assistant::ToolAdapter do
     # update's rows are objects, and a vendor validating arguments against the
     # schema would refuse the call.
     it 'says what a list holds' do
-      schema = described_class.parameters_schema(Spree::AgentTools::SetStock.new(context))
+      schema = described_class.build(Spree::AgentTools::SetStock.new(context), turn).parameters_schema
 
-      expect(schema[:properties]['rows']).to include(type: 'array', items: { type: 'object' })
-      expect(schema[:required]).to eq(['rows'])
+      expect(schema['properties']['rows']).to include('type' => 'array', 'items' => { 'type' => 'object' })
+      expect(schema['required']).to eq(['rows'])
+    end
+
+    # Operations declare no `param`s: their arguments are the request's, read
+    # from the OpenAPI document. Offering them without it left the model no
+    # way to name the record, and refused every argument it sent anyway.
+    it 'offers an operation its own arguments' do
+      adapter = adapter_for('products_draft')
+
+      expect(adapter.parameters_schema['properties']).to include('id')
+      expect(adapter.execute(id: product.prefixed_id)[:error].to_s).not_to include('Unknown argument')
     end
   end
 

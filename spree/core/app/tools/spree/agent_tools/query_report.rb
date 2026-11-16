@@ -51,14 +51,20 @@ module Spree
       # because the merchant reads this as a step of the answer.
       def summary(arguments)
         schema = Spree::Reporting::Schema.new(store: context.store)
-        metrics = Array(arguments[:metrics]).map { |name| schema.label_for(:metrics, name) }
-        dimensions = Array(arguments[:dimensions]).map { |name| schema.label_for(:dimensions, name).downcase }
+        metrics = Array(arguments[:metrics]).map { |name| in_sentence(schema.label_for(:metrics, name)) }
+        dimensions = Array(arguments[:dimensions]).map { |name| in_sentence(schema.label_for(:dimensions, name)) }
 
-        title = "Report #{metrics.join(', ').downcase}"
+        title = "Report #{metrics.join(', ')}"
         dimensions.any? ? "#{title} by #{dimensions.join(', ')}" : title
       end
 
       private
+
+      # A label as it reads mid-sentence: the leading capital drops, but an
+      # acronym such as AOV keeps its case.
+      def in_sentence(label)
+        label.to_s.sub(/\A\p{Lu}(?!\p{Lu})/, &:downcase)
+      end
 
       def build_query(metrics:, dimensions:, time_range:, filters:, sort:, limit:, currency:)
         parameters = {

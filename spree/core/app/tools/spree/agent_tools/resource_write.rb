@@ -110,8 +110,9 @@ module Spree
       # @param id [String]
       # @return [String]
       def record_label(resource, id)
-        record = ResourceMap.find(resource)&.scope_for(context)&.find_by_prefix_id(id.to_s)
-        (record && (record.try(:number) || record.try(:name))).presence || id.to_s
+        entry = ResourceMap.find(resource)
+        record = entry.scope_for(context).find_by_prefix_id(id.to_s) if entry&.readable_by?(context)
+        ResourceMap.record_name(record, id)
       rescue StandardError
         id.to_s
       end

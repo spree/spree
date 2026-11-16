@@ -63,6 +63,15 @@ module Spree
       # request's business, not the operation's.
       FORWARDED_HEADERS = %w[HTTP_AUTHORIZATION HTTP_X_SPREE_API_KEY HTTP_HOST].freeze
 
+      # See {.guard_reloading}.
+      module ReloadGuard
+        def check!
+          return false if Spree::AgentTools::ApiDispatch.dispatching?
+
+          super
+        end
+      end
+
       class << self
         # Keeps code reloading out of a dispatched call, in development.
         #
@@ -73,13 +82,17 @@ module Spree
         # caller has already reloaded on its way in, so the inner one has
         # nothing to pick up.
         #
+        # Wraps `check!` rather than replacing `check`: Rails assigns `check`
+        # in a finisher initializer that runs after every `after_initialize`
+        # hook, so a wrapped lambda would be overwritten, and `check!` also
+        # answers the caller's remembered decision without consulting it.
+        #
         # @param app [Rails::Application]
         # @return [void]
         def guard_reloading(app)
           return unless app.config.reloading_enabled?
 
-          check = app.reloader.check
-          app.reloader.check = -> { !dispatching? && check.call }
+          app.reloader.singleton_class.prepend(ReloadGuard)
         end
 
         # @return [Boolean] whether this thread is inside a dispatched call
@@ -124,10 +137,6 @@ module Spree
 
         dispatching = ActiveSupport::IsolatedExecutionState[:spree_agent_tools_dispatching]
         ActiveSupport::IsolatedExecutionState[:spree_agent_tools_dispatching] = true
-        # The caller's own reload is remembered until its response closes,
-        # which would make the inner request reload again regardless of the
-        # check above.
-        Rails.application.reloader.reloaded! if Rails.application.config.reloading_enabled?
 
         begin
           status, headers, rack_body = Rails.application.call(env)

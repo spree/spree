@@ -19,11 +19,13 @@ module Spree
         # @param turn [Spree::Assistant::Turn] collects the held proposal
         # @return [RubyLLM::Tool]
         def build(tool, turn)
-          schema = parameters_schema(tool)
+          schema = tool.class.input_schema
+          known = schema['properties'].keys
+          required = schema['required']
 
           Class.new(::RubyLLM::Tool) do
             description tool.description
-            parameters schema if schema
+            parameters schema if known.any?
 
             define_method(:name) { tool.tool_name }
 
@@ -55,56 +57,15 @@ module Spree
               # `execute` accepts bare keywords and its validator reads the
               # method signature. Without this, a missing or invented argument
               # reaches the tool and raises ArgumentError out of the turn.
-              missing = tool.params.filter_map do |param_name, options|
-                param_name if options[:required] && arguments[param_name].blank?
-              end
+              missing = required.select { |param_name| arguments[param_name.to_sym].blank? }
               next { error: "Missing required argument(s): #{missing.join(', ')}" } if missing.any?
 
-              unknown = arguments.keys - tool.params.keys
+              unknown = arguments.keys.map(&:to_s) - known
               next { error: "Unknown argument(s): #{unknown.join(', ')}" } if unknown.any?
 
               tool.call(**arguments)
             end
           end.new
-        end
-
-        # The tool's declared params as JSON Schema.
-        #
-        # Written out rather than declared one `parameter` at a time, because
-        # the library's own builder says every array holds strings — and a
-        # stock update's rows or a report's filters are lists of objects, which
-        # a vendor validating arguments against the schema would then refuse.
-        #
-        # @param tool [Spree::AgentTool]
-        # @return [Hash, nil]
-        def parameters_schema(tool)
-          return if tool.params.empty?
-
-          properties = tool.params.to_h do |param_name, options|
-            property = { type: json_type(options[:type]), description: options[:description] }.compact
-            property[:items] = { type: json_type(options[:items]) } if property[:type] == 'array'
-
-            [param_name.to_s, property]
-          end
-
-          {
-            type: 'object',
-            properties: properties,
-            required: tool.params.select { |_name, options| options[:required] }.keys.map(&:to_s)
-          }
-        end
-
-        private
-
-        def json_type(type)
-          case type&.to_sym
-          when :integer then 'integer'
-          when :number, :float, :decimal then 'number'
-          when :boolean then 'boolean'
-          when :array then 'array'
-          when :object, :hash then 'object'
-          else 'string'
-          end
         end
       end
     end

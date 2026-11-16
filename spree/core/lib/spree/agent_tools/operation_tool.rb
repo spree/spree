@@ -94,8 +94,7 @@ module Spree
           id = arguments[segment]
           next if id.blank?
 
-          record = record_for(segment, id)
-          (record && (record.try(:number) || record.try(:name))).presence || id
+          ResourceMap.record_name(record_for(segment, id), id)
         end
         [operation.summary, named.reverse.join(' ').presence].compact.join(' ')
       end

@@ -112,14 +112,14 @@ RSpec.describe Spree::AgentTools::ApiDispatch do
 
       seen_inside = nil
       allow(Rails.application).to receive(:call).and_wrap_original do |original, env|
-        seen_inside = reloader.check.call
+        seen_inside = reloader.check!
         original.call(env)
       end
 
       dispatcher_for(reader).call(method: :get, path: '/api/v3/admin/products')
 
       expect(seen_inside).to be(false)
-      expect(reloader.check.call).to be(true)
+      expect(reloader.check!).to be(true)
     end
   end
 
