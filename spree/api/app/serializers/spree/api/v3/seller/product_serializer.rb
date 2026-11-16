@@ -46,7 +46,7 @@ module Spree
                if: proc { expand?('media') }
 
           many :option_types,
-               resource: proc { Spree.api.option_type_serializer },
+               resource: proc { Spree.api.seller_option_type_serializer },
                if: proc { expand?('option_types') }
 
           # Why the marketplace sent this back, so the panel can show it

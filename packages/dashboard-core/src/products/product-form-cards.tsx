@@ -1132,8 +1132,7 @@ export function CategorizationCard({ form }: FormCardProps) {
   // builder won't surface these, so the name is the only signal the merchant
   // gets about what the type contributes.
   const typeOptionTypeNames = useMemo(() => {
-    // Served already named where the panel has no option-type list to resolve
-    // ids against — a seller's API sends labels for exactly this reason.
+    // Served already named by a seller's API, so the hint needs no lookup.
     const labels = selectedProductType?.option_type_labels
     if (labels?.length) return labels
 

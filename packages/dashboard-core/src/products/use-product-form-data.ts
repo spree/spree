@@ -96,20 +96,32 @@ export function useFormProductType(id?: string) {
 }
 
 /**
- * Option types named by a product type, resolved from the full list rather
- * than fetched by id — the list is already cached and small enough that a
- * second round trip buys nothing.
+ * Fetches the option types a product type names, by id, through the
+ * registered client. Both the Admin and the Seller option-types endpoints
+ * filter on `id_in`, so this works in either panel.
+ */
+export async function fetchOptionTypesByIds(ids: string[]): Promise<{ data: PanelOptionType[] }> {
+  const client = getApiClient()
+  if (!client.optionTypes || ids.length === 0) return { data: [] }
+
+  return client.optionTypes.list({ id_in: ids, limit: ids.length })
+}
+
+/**
+ * Option types named by a product type, fetched by id rather than picked out
+ * of the form's list: that list is one page, so a type naming an option type
+ * past it would otherwise offer nothing.
  */
 export function useFormOptionTypesByIds(ids?: string[]) {
-  const { data, ...rest } = useFormOptionTypes(Boolean(ids?.length))
-  const wanted = new Set(ids ?? [])
+  const client = getApiClient()
+  const wanted = ids ?? []
 
-  return {
-    ...rest,
-    data: ids?.length
-      ? { data: (data?.data ?? []).filter((type) => wanted.has(type.id)) }
-      : undefined,
-  }
+  return useQuery({
+    queryKey: useResourceKey('option-types', 'panel-form', 'by-ids', wanted),
+    queryFn: () => fetchOptionTypesByIds(wanted),
+    enabled: wanted.length > 0 && Boolean(client.optionTypes),
+    staleTime: FIVE_MINUTES,
+  })
 }
 
 export function useFormTaxCategories() {
