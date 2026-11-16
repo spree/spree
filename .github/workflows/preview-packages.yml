@@ -1,0 +1,63 @@
+name: Preview packages
+
+# Publishes the SDKs, @spree/core and the dashboard packages to pkg.pr.new for
+# every pull request and every push to main, so an unreleased fix can be
+# installed without cutting a release:
+#
+#   pnpm add https://pkg.pr.new/@spree/dashboard@<pull request number>
+#   pnpm add https://pkg.pr.new/@spree/dashboard@<commit sha>
+#
+# The previews from one run depend on each other, so @spree/dashboard installs
+# the @spree/dashboard-core built from the same commit. The pkg.pr.new GitHub
+# App must be installed on the repository; it posts the install commands as a
+# comment on the pull request.
+on:
+  push:
+    branches: [main]
+    paths: &paths
+      - 'packages/**'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'turbo.json'
+      - '.github/workflows/preview-packages.yml'
+  pull_request:
+    paths: *paths
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    name: Publish preview packages
+    # A fork's code would be published under the @spree names without review.
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    env:
+      PACKAGES: >-
+        core sdk admin-sdk seller-sdk
+        dashboard-ui dashboard-core dashboard seller-dashboard dashboard-sentry
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm turbo build $(printf -- '--filter=./packages/%s ' $PACKAGES)
+
+      # --pnpm packs with `pnpm pack`, which writes out the workspace: and
+      # catalog: ranges that npm would ship verbatim.
+      - name: Publish to pkg.pr.new
+        run: pnpm dlx pkg-pr-new@0.0.93 publish --pnpm --packageManager=pnpm,npm $(printf -- './packages/%s ' $PACKAGES)
