@@ -50,14 +50,18 @@ if (local) {
   process.exit(0)
 }
 
-// npm's metadata replicates to mirrors over several minutes, and a caret range
-// can resolve to the previous version from a stale one.
+// npm's metadata replicates to mirrors over several minutes. The exact version
+// is installed, so neither a stale mirror nor a newer minor release can satisfy
+// it; the caret range then goes in package.json and keeps that resolution.
 retry(`@spree/sdk@${version} on npm`, () => {
-  run('pnpm', ['add', `@spree/sdk@^${version}`], { cwd: dir })
-  if (!lockfile().includes(`'@spree/sdk@${version}'`))
-    run('pnpm', ['update', '@spree/sdk'], { cwd: dir })
+  run('pnpm', ['add', `@spree/sdk@${version}`], { cwd: dir })
   return lockfile().includes(`'@spree/sdk@${version}'`)
 })
+const manifestPath = path.join(dir, 'package.json')
+const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'))
+manifest.dependencies['@spree/sdk'] = `^${version}`
+fs.writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`)
+run('pnpm', ['install'], { cwd: dir })
 assertChangedOnly(dir, ['package.json', 'pnpm-lock.yaml'])
 
 // A type error means the Store API changed shape in this release: the caller

@@ -214,7 +214,8 @@ while IFS= read -r segment; do
   # The reviews cover this repository's code, so a pull request opened on
   # another repository (the release's spree-starter, storefront and
   # agent-skills bumps) is not gated. gh reads `--repo` as `[HOST/]OWNER/REPO`
-  # or a URL, so every spelling of this repository is gated.
+  # or a URL, so every spelling of this repository is gated. A value the
+  # shell would still expand (`"$REPO"`) is not a literal name and stays gated.
   repo_name=$(tr '[:upper:]' '[:lower:]' <<<"$REPO_FLAG")
   repo_name="${repo_name#*://}"
   repo_name="${repo_name#git@}"
@@ -222,7 +223,7 @@ while IFS= read -r segment; do
   repo_name="${repo_name#github.com[:/]}"
   repo_name="${repo_name%/}"
   repo_name="${repo_name%.git}"
-  if [ -n "$repo_name" ] && [ "$repo_name" != "spree/spree" ]; then continue; fi
+  if [[ "$repo_name" =~ ^[a-z0-9_.-]+/[a-z0-9_.-]+$ ]] && [ "$repo_name" != "spree/spree" ]; then continue; fi
   review_dir="$pr_dir"
   head_owner=""
   if [ -n "$HEAD_FLAG" ]; then

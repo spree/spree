@@ -20,6 +20,7 @@ import { execFileSync } from 'node:child_process'
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import YAML from 'yaml'
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 
@@ -185,11 +186,8 @@ export function sharedChangesets() {
     .flatMap((file) => {
       const frontMatter = fs
         .readFileSync(path.join(dir, file), 'utf8')
-        .match(/^---\n([\s\S]*?)\n---/)
-      const names = (frontMatter?.[1] ?? '')
-        .split('\n')
-        .map((line) => line.match(/^\s*["']?([^"':\s]+)["']?\s*:/)?.[1])
-        .filter(Boolean)
+        .match(/^---\r?\n([\s\S]*?)\r?\n?---/)
+      const names = Object.keys(YAML.parse(frontMatter?.[1] ?? '') ?? {})
       return names.length > 1 ? [`.changeset/${file} names ${names.join(', ')}`] : []
     })
 }

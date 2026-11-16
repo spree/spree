@@ -35,9 +35,9 @@ const gems = ['spree', ...subdirectories('spree'), ...subdirectories('spree/prov
 const lockedVersions = () => {
   const versions = new Map()
   for (const [, gem, spec] of lockfile().matchAll(/^ {4}([a-z0-9_-]+) \(([^)]+)\)/gm)) {
-    versions.set(gem, [...new Set([...(versions.get(gem) ?? []), spec.split('-')[0]])].join(', '))
+    versions.set(gem, (versions.get(gem) ?? new Set()).add(spec.split('-')[0]))
   }
-  return versions
+  return new Map([...versions].map(([gem, specs]) => [gem, [...specs].join(', ')]))
 }
 const before = lockedVersions()
 
@@ -68,11 +68,13 @@ if (vulnerable.length > 0) {
   if (remaining.length > 0) throw new Error(`bundle audit still fails for ${remaining.join(', ')}`)
 }
 
-// Both names are set so neither the development nor the test database is a
-// name other worktrees or sessions on this machine may be using.
+// Both names are set, and unique to this run, so neither the development nor
+// the test database is one that other worktrees, sessions or releases on this
+// machine may be using. An inherited DATABASE_URL would win over both names.
 const databases = {
-  DATABASE_NAME: 'spree_starter_release',
-  DATABASE_NAME_TEST: 'spree_starter_release_test',
+  DATABASE_URL: undefined,
+  DATABASE_NAME: `spree_starter_release_${process.pid}`,
+  DATABASE_NAME_TEST: `spree_starter_release_${process.pid}_test`,
 }
 const migrationsBefore = new Set(fs.readdirSync(path.join(dir, 'db/migrate')))
 try {

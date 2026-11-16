@@ -57,6 +57,7 @@ jobs:
               - "pnpm-workspace.yaml"
               - "scripts/sync-starter.mjs"
               - "scripts/check-dependency-ranges.mjs"
+              - "scripts/version-packages.mjs"
               - ".github/workflows/ci.yml"
               - ".github/workflows/frontend.yml"
 
