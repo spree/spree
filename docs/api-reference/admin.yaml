@@ -33109,7 +33109,7 @@ paths:
       - api_key: []
         bearer_auth: []
       description: |-
-        Creates a new payment for the order.
+        Records a payment on the order, for the amount given or, by default, what the order still owes after the payments already recorded on it. The order's other payments are left as they are. The payment starts uncaptured (`checkout`) and counts towards the paid total once it is captured.
 
         **Required scope:** `write_payments` (for API-key authentication).
       x-codeSamples:
@@ -33298,7 +33298,7 @@ paths:
       - api_key: []
         bearer_auth: []
       description: |-
-        Captures a pending payment, in full or for part of the authorized amount.
+        Captures an uncaptured (`checkout`) or authorized (`pending`) payment, in full or for part of its amount. A captured payment counts towards the order's paid total.
 
         **Required scope:** `write_payments` (for API-key authentication).
       x-codeSamples:
@@ -84481,7 +84481,8 @@ components:
           type: string
           format: decimal
           pattern: "^-?\\d+(\\.\\d+)?$"
-          description: Defaults to the order total left after store credit.
+          description: Defaults to what the order still owes after the payments already
+            recorded on it.
         source_id:
           type: string
           description: A saved payment source of the order's customer (a credit card),

@@ -1,4 +1,5 @@
 import type { Order, Payment } from '@spree/admin-sdk'
+import { isPositiveMoney, subtractMoney, sumMoney } from '@spree/core'
 import {
   adminClient,
   currencyParts,
@@ -318,6 +319,23 @@ function PaymentActionsMenu({
   )
 }
 
+const UNCAPTURED_PAYMENT_STATUSES = ['checkout', 'pending', 'processing']
+
+// What a new payment should cover: the amount due, less the payments already
+// recorded and not yet captured. Store credit is left out, since the amount
+// due takes it off already.
+function amountLeftToPay(order: Order): string {
+  const uncaptured = (order.payments ?? [])
+    .filter(
+      (payment) =>
+        UNCAPTURED_PAYMENT_STATUSES.includes(payment.status) &&
+        payment.source_type !== 'store_credit',
+    )
+    .map((payment) => payment.amount)
+  const left = subtractMoney(order.amount_due ?? '0', sumMoney(uncaptured), order.currency)
+  return isPositiveMoney(left) ? left : ''
+}
+
 function AddPaymentDialog({
   order,
   open,
@@ -332,14 +350,15 @@ function AddPaymentDialog({
   const customerId = order.customer_id ?? undefined
   const [paymentMethodId, setPaymentMethodId] = useState<string>('')
   const [sourceId, setSourceId] = useState<string>('')
-  const [amount, setAmount] = useState<string>(order.amount_due ?? '')
+  const defaultAmount = amountLeftToPay(order)
+  const [amount, setAmount] = useState<string>(defaultAmount)
   const [capture, setCapture] = useState(false)
   const { symbol: currencySymbol } = currencyParts(order.currency, i18n.language)
 
-  // Re-seed amount from outstanding balance whenever the dialog opens.
+  // Re-seed amount from what is left to pay whenever the dialog opens.
   useEffect(() => {
-    if (open) setAmount(order.amount_due ?? '')
-  }, [open, order.amount_due])
+    if (open) setAmount(defaultAmount)
+  }, [open, defaultAmount])
 
   const { data: methodsData } = useQuery({
     queryKey: ['payment-methods'],
@@ -499,7 +518,7 @@ function AddPaymentDialog({
                     id="pay-amount"
                     type="number"
                     step="any"
-                    placeholder={order.amount_due ?? '0.00'}
+                    placeholder={defaultAmount || '0.00'}
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
                   />

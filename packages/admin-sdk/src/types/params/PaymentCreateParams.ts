@@ -2,7 +2,7 @@
 
 export type PaymentCreateParams = {
   payment_method_id: string
-  /** Defaults to the order total left after store credit. */
+  /** Defaults to what the order still owes after the payments already recorded on it. */
   amount?: string
   /**
    * A saved payment source of the order's customer (a credit card), for an off-session charge. Used

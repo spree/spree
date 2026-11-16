@@ -603,9 +603,14 @@ module Spree
                                 action_authorization_code: response_code)
     end
 
+    # A buyer who picks another way to pay at checkout replaces the attempt
+    # they started, so a cart keeps one live payment. An order is paid from
+    # the back office, where each payment recorded is money the merchant
+    # means to collect alongside the others.
     def invalidate_old_payments
       # invalid payment or store_credit payment shouldn't invalidate other payment types
       return if has_invalid_status? || store_credit?
+      return unless owner.is_a?(Spree::Cart)
 
       owner.payments.with_state('checkout').where.not(id: id).each do |payment|
         payment.invalidate! unless payment.store_credit?

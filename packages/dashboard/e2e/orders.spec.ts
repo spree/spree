@@ -1,6 +1,7 @@
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { expect, type Page, test } from '@playwright/test'
+import { subtractMoney } from '@spree/core'
 import {
   addNewOrderItem,
   adminRequest,
@@ -12,6 +13,7 @@ import {
   FIXTURE_BOGUS_TRANSACTION_ID,
   FIXTURE_PROMO_CUSTOMER_EMAIL,
   FIXTURE_PROMO_PRODUCT,
+  FIXTURE_PROMO_SKU,
   fillAddressForm,
   login,
   section,
@@ -901,5 +903,64 @@ test.describe('order payments', () => {
 
     await expect(page.getByRole('menuitem', { name: 'View details' })).toBeVisible()
     await expect(page.getByRole('menuitem', { name: 'Void' })).toHaveCount(0)
+  })
+})
+
+test.describe('recording several payments on a draft order', () => {
+  test.afterEach(async ({ page }) => deleteSeededRecords(page))
+
+  test('suggests what is left to pay and keeps the earlier payment', async ({ page }) => {
+    const creds = await login(page)
+    const methodName = `E2E Bank transfer ${Date.now()}`
+    await seedRecord(page, creds, '/payment_methods', {
+      type: 'check',
+      name: methodName,
+      active: true,
+    })
+    const variants = await adminRequest<{ data: { id: string }[] }>(
+      page,
+      creds,
+      'get',
+      `/variants?q[sku_eq]=${FIXTURE_PROMO_SKU}`,
+    )
+    const order = await adminRequest<{ id: string; total: string; currency: string }>(
+      page,
+      creds,
+      'post',
+      '/orders',
+      {
+        email: `e2e-two-payments-${Date.now()}@example.com`,
+        items: [{ variant_id: variants.data[0].id, quantity: 1 }],
+      },
+    )
+
+    await page.goto(`/${creds.store_id}/orders/${order.id}`)
+    const payments = section(page, /^payments/i)
+
+    const addPayment = async (amount?: string) => {
+      await payments.getByRole('button', { name: /^add$/i }).click({ timeout: 15_000 })
+      const dialog = page.getByRole('dialog')
+      await dialog.locator('#pay-method').click()
+      await page.getByRole('option', { name: methodName }).click()
+      if (amount) await dialog.locator('#pay-amount').fill(amount)
+      return dialog
+    }
+
+    let dialog = await addPayment('5')
+    await dialog.getByRole('button', { name: /^add$/i }).click()
+    await expect(dialog).toBeHidden()
+    await expect(payments.locator('tr').filter({ hasText: methodName })).toHaveCount(1)
+
+    // The second payment is offered what the first leaves unpaid, and
+    // recording it leaves the first one live.
+    dialog = await addPayment()
+    await expect(dialog.locator('#pay-amount')).toHaveValue(
+      subtractMoney(order.total, '5', order.currency),
+    )
+    await dialog.getByRole('button', { name: /^add$/i }).click()
+    await expect(dialog).toBeHidden()
+
+    await expect(payments.locator('tr').filter({ hasText: methodName })).toHaveCount(2)
+    await expect(payments.getByText(/^invalid$/i)).toHaveCount(0)
   })
 })

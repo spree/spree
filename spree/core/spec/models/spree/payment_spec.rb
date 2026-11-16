@@ -224,6 +224,30 @@ describe Spree::Payment, type: :model do
       end
     end
 
+    describe 'invalidating earlier payments' do
+      let(:check_method) { create(:check_payment_method, store: store) }
+
+      context 'on a cart' do
+        let(:cart) { create(:cart_with_line_items, store: store) }
+
+        it 'invalidates the payment the new one replaces' do
+          replaced = create(:payment, cart: cart, order: nil, payment_method: check_method, amount: 10)
+          create(:payment, cart: cart, order: nil, payment_method: check_method, amount: 10)
+
+          expect(replaced.reload.status).to eq('invalid')
+        end
+      end
+
+      context 'on an order' do
+        it "leaves the order's other unprocessed payments live" do
+          first = create(:payment, order: order, payment_method: check_method, amount: 40)
+          create(:payment, order: order, payment_method: check_method, amount: 10)
+
+          expect(first.reload.status).to eq('checkout')
+        end
+      end
+    end
+
     describe '#create_payment_profile' do
       context 'when payment method supports profiles' do
         context 'when source is a credit card' do

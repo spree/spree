@@ -33,6 +33,19 @@ module Spree
       expect(line_item.price_source).to eq('manual')
     end
 
+    it 'processes every payment recorded on a draft, not only the last one' do
+      draft = create(:order_with_line_items, store: store)
+      draft.update_columns(status: 'draft', completed_at: nil)
+      check_method = create(:check_payment_method, store: store)
+      first = create(:payment, order: draft, payment_method: check_method, amount: 4, response_code: nil)
+      second = create(:payment, order: draft, payment_method: check_method, amount: draft.total - 4, response_code: nil)
+
+      result = described_class.call(order: draft)
+
+      expect(result).to be_success
+      expect([first.reload.status, second.reload.status]).to all(be_in(%w[pending completed]))
+    end
+
     # The path company certificates take: unpinned, it resolves live at credit.
     describe 'tax exemptions' do
       let(:draft) { create(:order_ready_to_ship, store: store).tap { |o| o.update_columns(status: 'draft', completed_at: nil) } }

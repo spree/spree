@@ -62,6 +62,14 @@ module Spree
         payments.select(&:checkout?)
       end
 
+      # What is still owed once every live payment is counted, settled or not —
+      # the amount a new payment should be for. Never negative.
+      #
+      # @return [BigDecimal]
+      def amount_left_to_pay
+        [outstanding_balance - payments.valid.where.not(status: 'completed').sum(:amount), BigDecimal('0')].max
+      end
+
       private
 
       # On a list the association batches across the page, so the loaded rows
