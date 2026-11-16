@@ -19,7 +19,8 @@ module Spree
     include Spree::Payment::CustomEvents
 
     publishes_lifecycle_events
-    publishes_events :captured, :completed, :paid, :refunded, :voided
+    publishes_events :captured, :completed, :paid, :refunded, :voided,
+                     :capture_requested, :capture_failed, :void_requested, :void_failed
 
     NON_RISKY_AVS_CODES = ['B', 'D', 'H', 'J', 'M', 'Q', 'T', 'V', 'X', 'Y'].freeze
     RISKY_AVS_CODES     = ['A', 'C', 'E', 'F', 'G', 'I', 'K', 'L', 'N', 'O', 'P', 'R', 'S', 'U', 'W', 'Z'].freeze
@@ -31,6 +32,9 @@ module Spree
     # method is consulted. Extend them to support gateways with other flows.
     VOIDABLE_STATUSES   = %w[pending processing completed checkout].freeze
     CAPTURABLE_STATUSES = %w[checkout pending].freeze
+    # A payment settlement must leave alone: captured, or waiting on its
+    # provider's answer to a capture or void.
+    SETTLED_OR_WAITING_STATUSES = %w[completed requested].freeze
 
     with_options inverse_of: :payments do
       belongs_to :order, class_name: 'Spree::Order', touch: true, optional: true
@@ -206,6 +210,14 @@ module Spree
       assign_attributes(updates.except(:updated_at))
       clear_attribute_changes(updates.except(:updated_at).keys)
       publish_event('payment.voided')
+      true
+    end
+
+    # The provider accepted a void and answers by webhook, which voids the
+    # payment then.
+    def request_void!
+      update!(status: 'requested')
+      publish_event('payment.void_requested')
       true
     end
 

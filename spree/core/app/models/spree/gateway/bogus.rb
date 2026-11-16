@@ -80,6 +80,8 @@ module Spree
 
     # Voids outright, so there is no captured charge for `refund:` to govern.
     def cancel(_response_code, _payment = nil, refund: true)
+      return Spree::PaymentResponse.new(true, 'Bogus Gateway: Cancel requested', {}, test: true, requested: true) if preferred_requested_mode
+
       Spree::PaymentResponse.new(true, 'Bogus Gateway: Forced success', {}, test: true, authorization: generate_authorization)
     end
 

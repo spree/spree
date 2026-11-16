@@ -39,6 +39,7 @@ module Spree
         end
 
         step :ensure_cancellable
+        step :ensure_no_requested_payment
         step :ensure_reason_belongs_to_store
         step :ensure_refund_amount_is_settleable
 
@@ -89,6 +90,20 @@ module Spree
         return if refund_amount.blank? || order.grouped?
 
         order.errors.add(:base, :refund_amount_requires_shared_payment, message: I18n.t('spree.errors.messages.refund_amount_requires_shared_payment'))
+        failure(order)
+      end
+
+      # Voiding a payment whose capture or void the provider is still answering
+      # would release a hold it may be capturing.
+      def ensure_no_requested_payment
+        payments = if order.grouped?
+                     Spree::Payment.where(id: order.payment_splits.select(:payment_id))
+                   else
+                     order.payments
+                   end
+        return unless payments.requested.exists?
+
+        order.errors.add(:base, :payment_requested, message: I18n.t('spree.payment_requested_awaiting_provider'))
         failure(order)
       end
 

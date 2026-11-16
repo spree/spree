@@ -101,6 +101,38 @@ RSpec.describe Spree::Refunds::Create do
     end
   end
 
+  describe 'crediting at the gateway' do
+    before { allow_any_instance_of(Spree::Refund).to receive(:perform!).and_call_original }
+
+    context 'when the provider answers at once' do
+      it 'completes the refund and publishes payment.refunded' do
+        expect(payment).to receive(:publish_event).with('payment.refunded')
+
+        refund = described_class.call(payment: payment, amount: 10).value
+
+        expect(refund.reload).to be_completed
+        expect(refund.read_attribute(:status)).to eq('completed')
+        expect(refund.transaction_id).to be_present
+      end
+    end
+
+    context 'when the provider answers later' do
+      before { payment.payment_method.update!(preferred_requested_mode: true) }
+
+      it 'leaves the refund requested with its transaction id and publishes refund.requested' do
+        expect(payment).not_to receive(:publish_event).with('payment.refunded')
+        expect_any_instance_of(Spree::Refund).to receive(:publish_event).with('refund.requested')
+
+        result = described_class.call(payment: payment, amount: 10)
+
+        expect(result).to be_success
+        refund = result.value.reload
+        expect(refund).to be_requested
+        expect(refund.transaction_id).to start_with('BGS-refund-')
+      end
+    end
+  end
+
   describe 'hooks' do
     it 'lets a validate handler veto the refund before the record is created' do
       Spree.hooks.register('refunds.create.validate') { |flow| flow.reject!('refunds disabled') }

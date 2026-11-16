@@ -15,6 +15,7 @@ module Spree
     end
 
     publishes_lifecycle_events
+    publishes_events :requested, :failed
 
     belongs_to :payment, inverse_of: :refunds
     # Which order is being put right. A refund against an ordinary payment
@@ -116,6 +117,9 @@ module Spree
     # blank transaction_id means the credit has not happened yet; a present
     # one makes this a no-op, so replays are safe.
     #
+    # A gateway that answers +requested?+ leaves the refund requested until
+    # its webhook completes or fails it.
+    #
     # @raise [Spree::Core::GatewayError] when the gateway declines or is down
     # @return [true]
     def perform!
@@ -124,7 +128,8 @@ module Spree
       @response = process!(payment.payment_method.gateway_amount(amount, currency))
 
       self.transaction_id = @response.authorization
-      update_columns(transaction_id: transaction_id)
+      self.status = @response.requested? ? 'requested' : 'completed'
+      update_columns(transaction_id: transaction_id, status: status)
       update_order
       true
     end

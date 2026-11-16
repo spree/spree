@@ -67,14 +67,16 @@ module Spree
       # @param captured [Boolean, nil] whether the gateway reports the funds
       #   as captured. Callers who know the gateway state pass it; nil falls
       #   back to when the payment method charges.
-      def confirm!(captured: nil)
+      # @param capture_reference [String, nil] the provider's id for the
+      #   capture, recorded so a late capture failure can find it
+      def confirm!(captured: nil, capture_reference: nil)
         captured = payment_method&.capture_at_checkout? if captured.nil?
 
         started_processing! if checkout?
 
         if captured && can_complete?
           complete!
-          capture_events.create!(amount: amount)
+          capture_events.create!(amount: amount, status: 'completed', transaction_id: capture_reference)
         elsif can_pend?
           pend!
         end
@@ -88,13 +90,20 @@ module Spree
       # A captured charge the gateway did not void keeps its completed status:
       # the money was either refunded, which the refund records, or kept.
       #
+      # A provider that answers +requested?+ settles later by webhook: an
+      # uncaptured payment waits on its void, and a completed one stays
+      # completed while the refund the gateway requested carries the outcome.
+      #
       # @param refund [Boolean] whether money already captured may be returned
       def cancel!(refund: true)
         voids = payment_method.cancel_voids?(self)
         response = instrument_gateway_call(:cancel, payment_method) do
           payment_method.cancel(response_code, self, refund: refund)
         end
-        handle_response(response, voids ? :void : :keep)
+        return handle_response(response, voids ? :void : :keep) unless response.success? && response.requested?
+        return true if completed?
+
+        request_void!
       end
 
       def gateway_options

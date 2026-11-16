@@ -153,6 +153,34 @@ RSpec.describe Spree::PaymentSession, type: :model do
       end
     end
 
+    context 'when the session names the capture' do
+      it 'writes the reference on a completed capture event' do
+        allow(payment_session).to receive(:capture_reference_for_settlement).and_return('PSP123')
+
+        payment = payment_session.settle_payment!(captured: true)
+
+        expect(payment.capture_events.sole).to have_attributes(status: 'completed', transaction_id: 'PSP123')
+      end
+
+      it 'names none by default' do
+        payment = payment_session.settle_payment!(captured: true)
+
+        expect(payment.capture_events.sole.transaction_id).to be_nil
+      end
+    end
+
+    context 'when the payment is waiting on its provider' do
+      it 'leaves it alone' do
+        payment = payment_session.settle_payment!(captured: false)
+        payment.update!(status: 'requested')
+
+        payment_session.settle_payment!(captured: true)
+
+        expect(payment.reload).to be_requested
+        expect(payment.capture_events).to be_empty
+      end
+    end
+
     context 'when the payment is already completed' do
       it 'leaves it untouched without a duplicate capture event' do
         first_settlement = payment_session.settle_payment!(captured: true)

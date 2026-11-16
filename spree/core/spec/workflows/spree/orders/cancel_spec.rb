@@ -223,6 +223,47 @@ module Spree
       end
     end
 
+    describe 'a payment waiting on its provider' do
+      let(:order) { create(:completed_order_with_totals) }
+      let!(:payment) { create(:payment, order: order, amount: order.total, status: 'requested') }
+
+      it 'refuses to cancel the order' do
+        result = subject.call(order: order, canceler: user)
+
+        expect(result).to be_failure
+        expect(order.errors[:base]).to include(I18n.t('spree.payment_requested_awaiting_provider'))
+        expect(order.reload).not_to be_canceled
+        expect(payment.reload).to be_requested
+      end
+    end
+
+    describe 'a provider that answers a cancel later' do
+      let(:order) { create(:completed_order_with_totals) }
+
+      before { payment.payment_method.update!(preferred_requested_mode: true) }
+
+      context 'with an uncaptured payment' do
+        let!(:payment) { create(:payment, order: order, amount: order.total, status: 'pending') }
+
+        it 'leaves the payment requested, waiting on the void' do
+          subject.call(order: order, canceler: user)
+
+          expect(payment.reload).to be_requested
+          expect(payment.requested_action).to eq('void')
+        end
+      end
+
+      context 'with a completed payment' do
+        let!(:payment) { create(:payment, order: order, amount: order.total, status: 'completed') }
+
+        it 'keeps the payment completed' do
+          subject.call(order: order, canceler: user)
+
+          expect(payment.reload).to be_completed
+        end
+      end
+    end
+
     describe 'a capped refund on an ordinary order' do
       it 'is refused rather than silently refunding everything' do
         result = subject.call(order: order, canceler: user, refund_payments: true, refund_amount: '25.00')

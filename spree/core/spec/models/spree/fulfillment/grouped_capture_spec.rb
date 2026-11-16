@@ -33,6 +33,15 @@ RSpec.describe Spree::Fulfillment, 'capture on dispatch in a split checkout' do
 
   before { payment }
 
+  it 'passes by a shared payment waiting on its provider' do
+    payment.update!(status: 'requested')
+    expect(Spree.payment_capture_workflow).not_to receive(:call)
+
+    dispatch(seller_order, worth: 40)
+
+    expect(captured_for(seller_order)).to eq(0)
+  end
+
   it 'captures no more than the order’s own share' do
     dispatch(seller_order, worth: 100)
 

@@ -761,6 +761,38 @@ describe Spree::Payment, type: :model do
     end
   end
 
+  describe '#cancel!' do
+    let(:bogus) { create(:credit_card_payment_method, store: store) }
+    let(:uncaptured) { create(:payment, order: order, payment_method: bogus, status: 'pending') }
+    let(:captured) { create(:payment, order: order, payment_method: bogus, status: 'completed') }
+
+    context 'when the provider answers at once' do
+      it 'voids the payment' do
+        uncaptured.cancel!
+
+        expect(uncaptured.reload).to be_void
+      end
+    end
+
+    context 'when the provider answers later' do
+      before { bogus.update!(preferred_requested_mode: true) }
+
+      it 'leaves an uncaptured payment requested, waiting on the void' do
+        expect(uncaptured).to receive(:publish_event).with('payment.void_requested')
+
+        uncaptured.cancel!
+
+        expect(uncaptured.reload).to be_requested
+      end
+
+      it 'keeps a completed payment completed' do
+        captured.cancel!
+
+        expect(captured.reload).to be_completed
+      end
+    end
+  end
+
   describe '#credit_allowed' do
     # Regression test for #4403 & #4407
     it 'is the difference between offsets total and payment amount' do
