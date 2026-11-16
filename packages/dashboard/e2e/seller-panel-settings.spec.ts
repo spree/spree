@@ -174,11 +174,14 @@ test.describe('seller panel — stock locations', () => {
     await expect(page.getByRole('switch', { name: /allow customer pickup/i })).toBeChecked({
       timeout: 15_000,
     })
+    // Save stays disabled until the form is dirty, so make an unrelated edit.
+    const renamed = `${name} (renamed)`
+    await page.locator('#name').fill(renamed)
     await page.getByRole('button', { name: /^save$/i }).click()
-    await expect(page.getByRole('heading', { name })).toHaveCount(0, { timeout: 15_000 })
+    await expect(rowButton(page, renamed)).toBeVisible({ timeout: 15_000 })
 
     await page.reload()
-    await rowButton(page, name).click({ timeout: 15_000 })
+    await rowButton(page, renamed).click({ timeout: 15_000 })
     await expect(page.getByRole('switch', { name: /allow customer pickup/i })).toBeChecked({
       timeout: 15_000,
     })
