@@ -296,7 +296,9 @@ New projects come from [spree/spree-starter](https://github.com/spree/spree-star
 whose lockfile pins the Spree gems and whose `db/migrate` holds a copy of every
 gem migration. Run this once the gems are on RubyGems (phase 5 step 4), from
 the repository root of a worktree, whose Postgres the scratch database below
-uses.
+uses. Skip this phase for a patch on an older minor line (`6.0.6` after
+`6.1.0`): the starter tracks the newest release, and `bundle update` would
+resolve to it.
 
 ```bash
 rm -rf tmp/spree-starter
@@ -352,10 +354,9 @@ DATABASE_NAME=spree_starter_release bin/rails db:drop
 
   Tag only after the bump merges: a tag on an earlier commit builds the old
   gems (6.0.4 had to be re-cut as `v6.0.4.1`). Wait for the run to conclude
-  `success`. Skip this for a prerelease (`6.1.0.rc1`) and for a patch on an
-  older minor line (`6.0.6` after `6.1.0`): the starter's `release.yml` also
-  tags every image `latest`, so either tag would replace the newest stable
-  image new projects pull.
+  `success`. Skip this for a prerelease (`6.1.0.rc1`): the starter's
+  `release.yml` also tags every image `latest`, so a prerelease tag would
+  replace the stable image new projects pull.
 
 ## 7. Bump the storefront's SDK
 
