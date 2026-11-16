@@ -398,6 +398,42 @@ module Spree
         end
       end
 
+      describe 'with an automatic whole-order promotion for a customer group' do
+        let(:customer_group) { create(:customer_group, store: store) }
+        let(:member) { create(:user) }
+        let!(:promotion) do
+          create(:promotion, code: nil, kind: :automatic, store: store).tap do |promotion|
+            Spree::Promotion::Rules::CustomerGroup.create!(promotion: promotion, preferred_customer_group_ids: [customer_group.id])
+            calculator = Spree::Calculator::FlatPercentItemTotal.new(preferred_flat_percent: 10)
+            Spree::Promotion::Actions::CreateAdjustment.create!(calculator: calculator, promotion: promotion)
+          end
+        end
+
+        before { create(:customer_group_user, customer_group: customer_group, customer: member) }
+
+        it 'applies it when items are added to an order for a customer in the group' do
+          member_order = create(:order, customer: member, store: store)
+
+          described_class.call(order: member_order, params: { items: [{ variant_id: variant.prefixed_id, quantity: 1 }] })
+
+          member_order.reload
+          expect(member_order.promotions).to include(promotion)
+          expect(member_order.discount_total).to eq(-(member_order.item_total * 10 / 100).round(2))
+        end
+
+        it 'applies it when the order moves to a customer in the group, and drops the discount when it moves back' do
+          described_class.call(order: order, params: { items: [{ variant_id: variant.prefixed_id, quantity: 1 }] })
+          expect(order.reload.discount_total).to eq(0)
+
+          described_class.call(order: order, params: { customer_id: member.id })
+          expect(order.reload.promotions).to include(promotion)
+          expect(order.discount_total).to eq(-(order.item_total * 10 / 100).round(2))
+
+          described_class.call(order: order, params: { customer_id: user.id })
+          expect(order.reload.discount_total).to eq(0)
+        end
+      end
+
       describe 'with an automatic free-shipping promotion' do
         let!(:promotion) { create(:free_shipping_promotion, kind: :automatic) }
         let(:initial_address) { create(:address, country: country, state: state) }

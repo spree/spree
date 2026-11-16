@@ -8,6 +8,9 @@ module Spree
     class Update
       prepend Spree::ServiceModule::Base
 
+      # Who is buying and in which market: what automatic promotion rules read, besides the items and the destination.
+      PROMOTION_CONTEXT_ATTRIBUTES = %w[customer_id email company_id market_id channel_id currency].freeze
+
       def call(order:, params: {})
         @order = order
         @params = params.to_h.deep_symbolize_keys
@@ -27,11 +30,14 @@ module Spree
           # the transaction, leaving the address rows written above behind.
           raise ActiveRecord::RecordInvalid, @order unless @order.update(@params)
 
+          promotion_context_changed = @order.saved_changes.keys.intersect?(PROMOTION_CONTEXT_ATTRIBUTES)
+
           process_items(items_param) if items_param
 
           # An address row edited in place keeps its id, so an edit to the fields a quote reads counts too.
           destination_changed = @order.ship_address_id != ship_address_id_before || @order.ship_address&.saved_change_to_destination?
           build_fulfillments(keep_selection: !destination_changed) if items_param || destination_changed
+          activate_promotions if items_param || destination_changed || promotion_context_changed
 
           @order.recalculate_totals!
           @order.update_statuses!
@@ -96,6 +102,14 @@ module Spree
       def build_fulfillments(keep_selection:)
         result = Spree::Orders::BuildFulfillments.call(order: @order, keep_selection: keep_selection)
         propagate_step_failure!(result, fallback: 'Failed to build shipments') if result.failure?
+      end
+
+      # Automatic promotions the order qualifies for, as a cart gets them, and
+      # those it no longer does dropped. Totals come first: rules and
+      # calculators read the item total.
+      def activate_promotions
+        @order.recalculate_totals!
+        Spree::PromotionHandler::Cart.new(@order).activate
       end
 
       # Surface why the step failed on the order, the way Orders::Create does.
