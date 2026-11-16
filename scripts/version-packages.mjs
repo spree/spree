@@ -13,6 +13,9 @@
 // `pnpm version:tools` (`--tools`) versions only the packages outside the
 // group, for a CLI or create-spree-app release between Spree releases; the
 // group's pending changesets wait for the next Spree release.
+//
+// `pnpm changeset:check` (`--check`) fails on a changeset that names more than
+// one package; CI runs it, and both versioning commands run it first.
 import { execFileSync } from 'node:child_process'
 import fs from 'node:fs'
 import path from 'node:path'
@@ -120,16 +123,83 @@ function setPeerRanges(manifestPath, names, range) {
   fs.writeFileSync(manifestPath, source)
 }
 
-function updateChangelog(changelogPath, { computed, target, changed, spreeVersion }) {
+function updateChangelog(changelogPath, { computed, target, changed, spreeVersion, groupNames }) {
   if (!fs.existsSync(changelogPath)) return
   const source = fs.readFileSync(changelogPath, 'utf8')
   const updated = changed
     ? source.replace(`## ${computed}\n`, `## ${target}\n`)
-    : source.replace(
-        /^(# .+\n)/,
-        `$1\n## ${target}\n\nReleased with Spree ${spreeVersion}, with no changes of its own.\n`,
-      )
-  fs.writeFileSync(changelogPath, updated)
+    : source.replace(/^(# .+\n)/, `$1\n## ${target}\n\n${noOwnChanges(spreeVersion)}\n`)
+  fs.writeFileSync(changelogPath, ownChangesOnly(updated, target, spreeVersion, groupNames))
+}
+
+const noOwnChanges = (spreeVersion) =>
+  `Released with Spree ${spreeVersion}, with no changes of its own.`
+
+/**
+ * The changelog with `target`'s section reduced to the package's own changes.
+ * The group always releases together, so Changesets' "Updated dependencies"
+ * entries for other group packages say nothing, and a package moved only by
+ * the group gets "No changes in this release." instead of the wording above.
+ *
+ * @param {string} source
+ * @param {string} target
+ * @param {string} spreeVersion
+ * @param {string[]} groupNames
+ * @returns {string}
+ */
+export function ownChangesOnly(source, target, spreeVersion, groupNames) {
+  const start = source.indexOf(`## ${target}\n`)
+  if (start === -1) return source
+  const bodyStart = start + `## ${target}\n`.length
+  const next = source.indexOf('\n## ', bodyStart)
+  const end = next === -1 ? source.length : next + 1
+  let body = source
+    .slice(bodyStart, end)
+    .replace(/^- Updated dependencies.*\n((?: {2}- .*\n)+)/gm, (entry, deps) =>
+      deps
+        .trim()
+        .split('\n')
+        .every((line) => groupNames.some((name) => line.includes(`- ${name}@`)))
+        ? ''
+        : entry,
+    )
+    .replace(/^### .+\n\n(?=### |$)/gm, '')
+  if (!/^- /m.test(body)) body = `\n${noOwnChanges(spreeVersion)}\n\n`
+  return source.slice(0, bodyStart) + body + source.slice(end)
+}
+
+/**
+ * The pending changesets that name more than one package. Changesets copies a
+ * changeset's text word for word into every package it names, so a change to
+ * several packages takes one changeset per package, each describing that
+ * package's part of it.
+ *
+ * @returns {string[]}
+ */
+export function sharedChangesets() {
+  const dir = path.join(repoRoot, '.changeset')
+  return fs
+    .readdirSync(dir)
+    .filter((file) => file.endsWith('.md') && file !== 'README.md')
+    .flatMap((file) => {
+      const frontMatter = fs
+        .readFileSync(path.join(dir, file), 'utf8')
+        .match(/^---\n([\s\S]*?)\n---/)
+      const names = (frontMatter?.[1] ?? '')
+        .split('\n')
+        .map((line) => line.match(/^\s*["']?([^"':\s]+)["']?\s*:/)?.[1])
+        .filter(Boolean)
+      return names.length > 1 ? [`.changeset/${file} names ${names.join(', ')}`] : []
+    })
+}
+
+function checkChangesets() {
+  const shared = sharedChangesets()
+  if (shared.length === 0) return
+  throw new Error(
+    `Each changeset must name one package, so its text describes that package:\n- ${shared.join('\n- ')}\n` +
+      'Split each into one changeset per package, saying what changed in that package.',
+  )
 }
 
 function versionTools() {
@@ -141,6 +211,8 @@ function versionTools() {
 }
 
 function main() {
+  if (process.argv.includes('--check')) return checkChangesets()
+  checkChangesets()
   if (process.argv.includes('--tools')) return versionTools()
 
   const spreeVersion = gemVersion()
@@ -172,7 +244,13 @@ function main() {
 
   for (const { name, dir, manifestPath, computed, changed } of plans) {
     if (before.get(name) !== target) {
-      updateChangelog(path.join(dir, 'CHANGELOG.md'), { computed, target, changed, spreeVersion })
+      updateChangelog(path.join(dir, 'CHANGELOG.md'), {
+        computed,
+        target,
+        changed,
+        spreeVersion,
+        groupNames: names,
+      })
       setVersion(manifestPath, computed, target)
       console.log(`${name}: ${before.get(name)} → ${target}`)
     }

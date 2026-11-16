@@ -3,6 +3,18 @@
 One workspace-wide Changesets instance — add changesets here (`pnpm changeset`
 from the repo root), never in per-package `.changeset/` directories.
 
+## One changeset per package
+
+Changesets copies a changeset's text word for word into every package its
+front matter names. A change to several packages therefore adds one changeset
+per package, each describing that package's part of the change, in the same
+pull request. `pnpm changeset:check` fails on a changeset that names more than
+one package; CI runs it, and so do `pnpm version:packages` and
+`pnpm version:tools`.
+
+Each package publishes its `CHANGELOG.md`, so what a changeset says is what
+the package's users read in `node_modules`.
+
 ## Packages released with Spree
 
 The packages that talk to the Spree API — `@spree/sdk`, `@spree/admin-sdk`,

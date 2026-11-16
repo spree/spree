@@ -42,6 +42,7 @@ jobs:
               - ".github/workflows/backend.yml"
             frontend:
               - "packages/**"
+              - ".changeset/**"
               - "spree/api/app/**"
               - "spree/api/lib/typelizer/**"
               - "spree/core/app/**"
