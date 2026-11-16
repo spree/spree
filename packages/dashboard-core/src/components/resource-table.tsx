@@ -139,18 +139,16 @@ interface ColumnSort {
   onSort: () => void
 }
 
+const SORT_ICONS = { asc: ChevronUpIcon, desc: ChevronDownIcon }
+const ARIA_SORT = { asc: 'ascending', desc: 'descending' } as const
+
 /**
  * A sortable column's label as a button. Named "Sort by <column>" rather than
  * the bare label, so it is not mistaken for a toolbar control of the same name.
  */
 function SortButton({ column, sort }: { column: ColumnDef; sort: ColumnSort }) {
   const { t } = useTranslation()
-  const Icon =
-    sort.direction === 'asc'
-      ? ChevronUpIcon
-      : sort.direction === 'desc'
-        ? ChevronDownIcon
-        : ChevronsUpDownIcon
+  const Icon = sort.direction ? SORT_ICONS[sort.direction] : ChevronsUpDownIcon
 
   return (
     <button
@@ -398,6 +396,7 @@ export function ResourceTable<T extends Record<string, any>>({
   // with `md:` leaves its text in the accessibility tree, so "2 selected"
   // and every action label match twice.
   const isMobile = useIsMobile()
+  const labelsCovered = bulkActive && !isMobile
 
   const {
     page,
@@ -875,7 +874,7 @@ export function ResourceTable<T extends Record<string, any>>({
                 the same sticky offset as the pinned header keeps the two
                 travelling together; the start padding clears the select-all
                 checkbox, which stays visible and interactive underneath. */}
-            {bulkActive && !isMobile && (
+            {labelsCovered && (
               // `pointer-events-none` on the overlay, re-enabled only on the
               // bar itself: the start-padding gutter is part of this div and
               // would otherwise swallow every click aimed at the select-all
@@ -951,42 +950,39 @@ export function ResourceTable<T extends Record<string, any>>({
                       />
                     </TableHead>
                   )}
-                  {headerColumns.map((col) => (
-                    <TableHead
-                      key={col.key}
-                      aria-sort={
-                        col.key === sort && col.sortable
-                          ? dir === 'asc'
-                            ? 'ascending'
-                            : 'descending'
-                          : undefined
-                      }
-                      // Names the column by its label alone, not by the sort
-                      // button's "Sort by …" inside it.
-                      aria-label={col.sortable ? col.label : undefined}
-                      className={cn(
-                        col.headerClassName,
-                        'transition-colors duration-150 ease-out',
-                        // Hide the text, not the cell: `opacity-0` would erase
-                        // the cell's muted background and bottom rule too,
-                        // leaving rows visible through the band behind the
-                        // bulk actions overlay. Only where that overlay is
-                        // drawn — on a phone the bar is at the foot of the
-                        // screen and the column labels stay readable.
-                        bulkActive && !isMobile && 'text-transparent select-none',
-                      )}
-                    >
-                      {/* The hint hides with the label: an info icon floating
+                  {headerColumns.map((col) => {
+                    const colSort = columnSort(col)
+                    return (
+                      <TableHead
+                        key={col.key}
+                        aria-sort={colSort?.direction && ARIA_SORT[colSort.direction]}
+                        // Names the column by its label alone, not by the sort
+                        // button's "Sort by …" inside it.
+                        aria-label={colSort ? col.label : undefined}
+                        className={cn(
+                          col.headerClassName,
+                          'transition-colors duration-150 ease-out',
+                          // Hide the text, not the cell: `opacity-0` would erase
+                          // the cell's muted background and bottom rule too,
+                          // leaving rows visible through the band behind the
+                          // bulk actions overlay. Only where that overlay is
+                          // drawn — on a phone the bar is at the foot of the
+                          // screen and the column labels stay readable.
+                          labelsCovered && 'text-transparent select-none',
+                        )}
+                      >
+                        {/* The hint hides with the label: an info icon floating
                           over the bulk-actions band would be the only thing
                           left in the row. */}
-                      <ColumnLabel
-                        column={col}
-                        hideHint={bulkActive && !isMobile}
-                        // Not clickable while the bulk bar covers the labels.
-                        sort={bulkActive && !isMobile ? undefined : columnSort(col)}
-                      />
-                    </TableHead>
-                  ))}
+                        <ColumnLabel
+                          column={col}
+                          hideHint={labelsCovered}
+                          // Not clickable while the bulk bar covers the labels.
+                          sort={labelsCovered ? undefined : colSort}
+                        />
+                      </TableHead>
+                    )
+                  })}
                   {rowActionsEnabled && (
                     <TableHead className="w-12">
                       <span className="sr-only">{t('admin.row_actions.menu_label')}</span>
