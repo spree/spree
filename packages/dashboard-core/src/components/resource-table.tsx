@@ -108,19 +108,42 @@ function ColumnLabel({
   hideHint?: boolean
   sort?: ColumnSort
 }) {
-  const label = sort ? <SortButton column={column} sort={sort} /> : column.label
-  if (!column.labelHint || hideHint) return label
+  const SortIcon = sort && (sort.direction ? SORT_ICONS[sort.direction] : ChevronsUpDownIcon)
+  const sortIcon = SortIcon && (
+    <SortIcon
+      aria-hidden
+      className={cn(
+        'ms-1 inline size-3.5 align-[-0.125em]',
+        !sort?.direction && 'opacity-50 group-hover/th:opacity-100',
+      )}
+    />
+  )
+  // A bare text node, not wrapped in an element: the table's sizing copy of
+  // the header hides every element in a cell, and the label must stay to name
+  // the column there.
+  if (!column.labelHint || hideHint) {
+    return (
+      <>
+        {column.label}
+        {sortIcon}
+      </>
+    )
+  }
 
   return (
     <span className="inline-flex items-center gap-1">
-      {label}
+      <span className="inline-flex items-center">
+        {column.label}
+        {sortIcon}
+      </span>
       <Tooltip>
         <TooltipTrigger asChild>
           {/* Focusable and named, so the explanation opens on focus as well as
-              hover and reaches a screen reader the same way. */}
+              hover and reaches a screen reader the same way. Raised above the
+              sort button that covers the cell. */}
           <button
             type="button"
-            className="cursor-help rounded-sm text-muted-foreground focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
+            className="relative z-10 cursor-help rounded-sm text-muted-foreground focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
             aria-label={column.labelHint}
           >
             <InfoIcon className="size-3.5" />
@@ -143,32 +166,20 @@ const SORT_ICONS = { asc: ChevronUpIcon, desc: ChevronDownIcon }
 const ARIA_SORT = { asc: 'ascending', desc: 'descending' } as const
 
 /**
- * A sortable column's label as a button. Named "Sort by <column>" rather than
+ * Covers a sortable header cell, so the whole cell is the click target while
+ * the label stays the cell's own text. Named "Sort by <column>" rather than
  * the bare label, so it is not mistaken for a toolbar control of the same name.
  */
 function SortButton({ column, sort }: { column: ColumnDef; sort: ColumnSort }) {
   const { t } = useTranslation()
-  const Icon = sort.direction ? SORT_ICONS[sort.direction] : ChevronsUpDownIcon
 
   return (
     <button
       type="button"
       onClick={sort.onSort}
       aria-label={t('admin.components.table_toolbar.sort_by_column', { column: column.label })}
-      className={cn(
-        'group/sort -mx-1 inline-flex cursor-pointer items-center gap-1 rounded-sm px-1 hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2',
-        sort.direction && 'text-foreground',
-      )}
-    >
-      {column.label}
-      <Icon
-        aria-hidden
-        className={cn(
-          'size-3.5 shrink-0',
-          !sort.direction && 'opacity-50 group-hover/sort:opacity-100',
-        )}
-      />
-    </button>
+      className="absolute inset-0 cursor-pointer focus-visible:outline-2 focus-visible:outline-ring focus-visible:-outline-offset-2"
+    />
   )
 }
 
@@ -956,12 +967,14 @@ export function ResourceTable<T extends Record<string, any>>({
                       <TableHead
                         key={col.key}
                         aria-sort={colSort?.direction && ARIA_SORT[colSort.direction]}
-                        // Names the column by its label alone, not by the sort
-                        // button's "Sort by …" inside it.
-                        aria-label={colSort ? col.label : undefined}
                         className={cn(
                           col.headerClassName,
                           'transition-colors duration-150 ease-out',
+                          colSort && 'group/th relative',
+                          colSort &&
+                            !labelsCovered &&
+                            'hover:text-foreground has-[>button:active]:text-foreground/70',
+                          colSort?.direction && 'text-foreground',
                           // Hide the text, not the cell: `opacity-0` would erase
                           // the cell's muted background and bottom rule too,
                           // leaving rows visible through the band behind the
@@ -974,12 +987,9 @@ export function ResourceTable<T extends Record<string, any>>({
                         {/* The hint hides with the label: an info icon floating
                           over the bulk-actions band would be the only thing
                           left in the row. */}
-                        <ColumnLabel
-                          column={col}
-                          hideHint={labelsCovered}
-                          // Not clickable while the bulk bar covers the labels.
-                          sort={labelsCovered ? undefined : colSort}
-                        />
+                        <ColumnLabel column={col} hideHint={labelsCovered} sort={colSort} />
+                        {/* Not clickable while the bulk bar covers the labels. */}
+                        {colSort && !labelsCovered && <SortButton column={col} sort={colSort} />}
                       </TableHead>
                     )
                   })}
