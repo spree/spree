@@ -63,5 +63,10 @@ module SpreeAdyen
     def payment_profiles_supported?
       true
     end
+
+    # Not offered for a currency missing from Adyen's currency table.
+    def available_for_order?(order)
+      super && SpreeAdyen::Amounts.supported?(order.currency)
+    end
   end
 end
