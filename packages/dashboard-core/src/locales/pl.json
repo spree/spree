@@ -478,6 +478,7 @@
         "search_placeholder": "Szukaj…",
         "select_all": "Zaznacz wszystko",
         "sort_by": "Sortuj według",
+        "sort_by_column": "Sortuj według: {{column}}",
         "sort_tooltip": "Sortuj",
         "visible_columns": "Widoczne kolumny",
         "row_density": "Gęstość wierszy",

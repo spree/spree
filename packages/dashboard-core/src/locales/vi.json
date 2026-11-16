@@ -479,6 +479,7 @@
         "search_placeholder": "Tìm kiếm…",
         "select_all": "Chọn tất cả",
         "sort_by": "Sắp xếp theo",
+        "sort_by_column": "Sắp xếp theo {{column}}",
         "sort_tooltip": "Sắp xếp",
         "visible_columns": "Cột hiển thị",
         "row_density": "Mật độ hàng",

@@ -477,6 +477,7 @@
         "search_placeholder": "بحث…",
         "select_all": "تحديد الكل",
         "sort_by": "ترتيب حسب",
+        "sort_by_column": "ترتيب حسب {{column}}",
         "sort_tooltip": "ترتيب",
         "visible_columns": "الأعمدة المرئية",
         "row_density": "كثافة الصفوف",

@@ -44,7 +44,12 @@ import {
   TooltipTrigger,
   useIsMobile,
 } from '@spree/dashboard-ui'
-import { InfoIcon } from '@spree/dashboard-ui/icons'
+import {
+  ChevronDownIcon,
+  ChevronsUpDownIcon,
+  ChevronUpIcon,
+  InfoIcon,
+} from '@spree/dashboard-ui/icons'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import {
@@ -94,19 +99,51 @@ const filterSchema = z.object({
  * reserved, incoming — need somewhere to say what they count. A tooltip keeps
  * that out of the header row until it is asked for.
  */
-function ColumnLabel({ column, hideHint }: { column: ColumnDef; hideHint?: boolean }) {
-  if (!column.labelHint || hideHint) return column.label
+function ColumnLabel({
+  column,
+  hideHint,
+  sort,
+}: {
+  column: ColumnDef
+  hideHint?: boolean
+  sort?: ColumnSort
+}) {
+  const SortIcon = sort && (sort.direction ? SORT_ICONS[sort.direction] : ChevronsUpDownIcon)
+  const sortIcon = SortIcon && (
+    <SortIcon
+      aria-hidden
+      className={cn(
+        'ms-1 inline size-3.5 align-[-0.125em]',
+        !sort?.direction && 'opacity-50 group-hover/th:opacity-100',
+      )}
+    />
+  )
+  // A bare text node, not wrapped in an element: the table's sizing copy of
+  // the header hides every element in a cell, and the label must stay to name
+  // the column there.
+  if (!column.labelHint || hideHint) {
+    return (
+      <>
+        {column.label}
+        {sortIcon}
+      </>
+    )
+  }
 
   return (
     <span className="inline-flex items-center gap-1">
-      {column.label}
+      <span className="inline-flex items-center">
+        {column.label}
+        {sortIcon}
+      </span>
       <Tooltip>
         <TooltipTrigger asChild>
           {/* Focusable and named, so the explanation opens on focus as well as
-              hover and reaches a screen reader the same way. */}
+              hover and reaches a screen reader the same way. Raised above the
+              sort button that covers the cell. */}
           <button
             type="button"
-            className="cursor-help rounded-sm text-muted-foreground focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
+            className="relative z-10 cursor-help rounded-sm text-muted-foreground focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
             aria-label={column.labelHint}
           >
             <InfoIcon className="size-3.5" />
@@ -117,6 +154,32 @@ function ColumnLabel({ column, hideHint }: { column: ColumnDef; hideHint?: boole
         </TooltipContent>
       </Tooltip>
     </span>
+  )
+}
+
+interface ColumnSort {
+  direction?: 'asc' | 'desc'
+  onSort: () => void
+}
+
+const SORT_ICONS = { asc: ChevronUpIcon, desc: ChevronDownIcon }
+const ARIA_SORT = { asc: 'ascending', desc: 'descending' } as const
+
+/**
+ * Covers a sortable header cell, so the whole cell is the click target while
+ * the label stays the cell's own text. Named "Sort by <column>" rather than
+ * the bare label, so it is not mistaken for a toolbar control of the same name.
+ */
+function SortButton({ column, sort }: { column: ColumnDef; sort: ColumnSort }) {
+  const { t } = useTranslation()
+
+  return (
+    <button
+      type="button"
+      onClick={sort.onSort}
+      aria-label={t('admin.components.table_toolbar.sort_by_column', { column: column.label })}
+      className="absolute inset-0 cursor-pointer focus-visible:outline-2 focus-visible:outline-ring focus-visible:-outline-offset-2"
+    />
   )
 }
 
@@ -344,6 +407,7 @@ export function ResourceTable<T extends Record<string, any>>({
   // with `md:` leaves its text in the accessibility tree, so "2 selected"
   // and every action label match twice.
   const isMobile = useIsMobile()
+  const labelsCovered = bulkActive && !isMobile
 
   const {
     page,
@@ -567,6 +631,20 @@ export function ResourceTable<T extends Record<string, any>>({
 
   function handleSortChange(s: SortOption) {
     updateSearch({ sort: s.field, dir: s.direction, page: 1 })
+  }
+
+  // A header click sorts by that column ascending, and a second click flips it.
+  function columnSort(col: ColumnDef): ColumnSort | undefined {
+    if (!col.sortable) return undefined
+    const active = col.key === sort
+    return {
+      direction: active ? dir : undefined,
+      onSort: () =>
+        handleSortChange({
+          field: col.key,
+          direction: active && dir === 'asc' ? 'desc' : 'asc',
+        }),
+    }
   }
 
   function handleFiltersChange(f: FilterRule[]) {
@@ -807,7 +885,7 @@ export function ResourceTable<T extends Record<string, any>>({
                 the same sticky offset as the pinned header keeps the two
                 travelling together; the start padding clears the select-all
                 checkbox, which stays visible and interactive underneath. */}
-            {bulkActive && !isMobile && (
+            {labelsCovered && (
               // `pointer-events-none` on the overlay, re-enabled only on the
               // bar itself: the start-padding gutter is part of this div and
               // would otherwise swallow every click aimed at the select-all
@@ -883,27 +961,38 @@ export function ResourceTable<T extends Record<string, any>>({
                       />
                     </TableHead>
                   )}
-                  {headerColumns.map((col) => (
-                    <TableHead
-                      key={col.key}
-                      className={cn(
-                        col.headerClassName,
-                        'transition-colors duration-150 ease-out',
-                        // Hide the text, not the cell: `opacity-0` would erase
-                        // the cell's muted background and bottom rule too,
-                        // leaving rows visible through the band behind the
-                        // bulk actions overlay. Only where that overlay is
-                        // drawn — on a phone the bar is at the foot of the
-                        // screen and the column labels stay readable.
-                        bulkActive && !isMobile && 'text-transparent select-none',
-                      )}
-                    >
-                      {/* The hint hides with the label: an info icon floating
+                  {headerColumns.map((col) => {
+                    const colSort = columnSort(col)
+                    return (
+                      <TableHead
+                        key={col.key}
+                        aria-sort={colSort?.direction && ARIA_SORT[colSort.direction]}
+                        className={cn(
+                          col.headerClassName,
+                          'transition-colors duration-150 ease-out',
+                          colSort && 'group/th relative',
+                          colSort &&
+                            !labelsCovered &&
+                            'hover:text-foreground has-[>button:active]:text-foreground/70',
+                          colSort?.direction && 'text-foreground',
+                          // Hide the text, not the cell: `opacity-0` would erase
+                          // the cell's muted background and bottom rule too,
+                          // leaving rows visible through the band behind the
+                          // bulk actions overlay. Only where that overlay is
+                          // drawn — on a phone the bar is at the foot of the
+                          // screen and the column labels stay readable.
+                          labelsCovered && 'text-transparent select-none',
+                        )}
+                      >
+                        {/* The hint hides with the label: an info icon floating
                           over the bulk-actions band would be the only thing
                           left in the row. */}
-                      <ColumnLabel column={col} hideHint={bulkActive && !isMobile} />
-                    </TableHead>
-                  ))}
+                        <ColumnLabel column={col} hideHint={labelsCovered} sort={colSort} />
+                        {/* Not clickable while the bulk bar covers the labels. */}
+                        {colSort && !labelsCovered && <SortButton column={col} sort={colSort} />}
+                      </TableHead>
+                    )
+                  })}
                   {rowActionsEnabled && (
                     <TableHead className="w-12">
                       <span className="sr-only">{t('admin.row_actions.menu_label')}</span>
