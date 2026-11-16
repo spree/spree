@@ -30,17 +30,21 @@ if (local) {
     .split('\n')
     .pop()
   const tarballPath = path.resolve(packDir, tarball)
+  let typeChecks = true
   try {
     run('pnpm', ['add', `@spree/sdk@file:${tarballPath}`], { cwd: dir })
     run('pnpm', ['exec', 'tsc', '--noEmit'], { cwd: dir })
   } catch {
+    typeChecks = false
+  } finally {
+    fs.rmSync(tarballPath, { force: true })
+  }
+  if (!typeChecks) {
     console.error(
       '\nThe storefront does not type-check against this worktree’s @spree/sdk. ' +
         'Fix the storefront in a pull request before the release, so its SDK bump needs no changes.',
     )
     process.exit(1)
-  } finally {
-    fs.rmSync(tarballPath, { force: true })
   }
   console.log('\nThe storefront type-checks against this worktree’s @spree/sdk.')
   process.exit(0)
@@ -71,7 +75,7 @@ run(
     '-m',
     `Updated @spree/sdk to ^${version}`,
     '-m',
-    `Moves the storefront to the SDK released with Spree ${gemVersion()}.`,
+    `Moves the storefront to @spree/sdk ${version} so it builds against this release's Store API.`,
   ],
   { cwd: dir },
 )

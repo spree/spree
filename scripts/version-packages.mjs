@@ -138,8 +138,8 @@ const noOwnChanges = (spreeVersion) =>
 /**
  * The changelog with `target`'s section reduced to the package's own changes.
  * The group always releases together, so Changesets' "Updated dependencies"
- * entries for other group packages say nothing, and a package moved only by
- * the group gets "No changes in this release." instead of the wording above.
+ * entries for other group packages say nothing, and a package left with no
+ * entries gets the "Released with Spree" line instead.
  *
  * @param {string} source
  * @param {string} target
@@ -164,6 +164,7 @@ export function ownChangesOnly(source, target, spreeVersion, groupNames) {
         : entry,
     )
     .replace(/^### .+\n\n(?=### |$)/gm, '')
+    .replace(/\n{3,}/g, '\n\n')
   if (!/^- /m.test(body)) body = `\n${noOwnChanges(spreeVersion)}\n\n`
   return source.slice(0, bodyStart) + body + source.slice(end)
 }

@@ -45,12 +45,12 @@ jobs:
       - name: Check lockfile has no duplicate packages
         run: pnpm dedupe --check
 
-      # The pre-commit hook regenerates schemas, but it can be skipped or not
-      # installed, so a commit can still carry types without matching schemas.
       # Changesets copies a changeset's text into every package it names.
       - name: Check each changeset names one package
         run: pnpm changeset:check
 
+      # The pre-commit hook regenerates schemas, but it can be skipped or not
+      # installed, so a commit can still carry types without matching schemas.
       - name: Check Zod schemas are up to date
         run: |
           pnpm generate:zod

@@ -54,7 +54,11 @@ const audit = () => {
     read('bundle', ['exec', 'bundle-audit', 'check', '--update'], { cwd: dir })
     return []
   } catch (error) {
-    return [...new Set([...String(error.stdout).matchAll(/^Name: (\S+)/gm)].map((m) => m[1]))]
+    const names = [...String(error.stdout).matchAll(/^Name: (\S+)/gm)].map((m) => m[1])
+    // A failure that names no gem (bundle-audit missing, no advisory database)
+    // is not a clean audit.
+    if (names.length === 0) throw error
+    return [...new Set(names)]
   }
 }
 const vulnerable = audit()
@@ -76,9 +80,14 @@ try {
     cwd: dir,
     env: databases,
   })
-} finally {
-  run('bin/rails', ['db:drop'], { cwd: dir, env: databases })
+} catch (error) {
+  // Keep the migrate error: a failing drop here would hide it.
+  try {
+    run('bin/rails', ['db:drop'], { cwd: dir, env: databases })
+  } catch {}
+  throw error
 }
+run('bin/rails', ['db:drop'], { cwd: dir, env: databases })
 const migrations = fs
   .readdirSync(path.join(dir, 'db/migrate'))
   .filter((file) => !migrationsBefore.has(file))

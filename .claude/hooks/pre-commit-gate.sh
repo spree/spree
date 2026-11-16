@@ -204,11 +204,6 @@ while IFS= read -r segment; do
         exit 2
       fi ;;
   esac
-  # The reviews cover this repository's code, so a pull request opened on
-  # another repository (the release's spree-starter, storefront and
-  # agent-skills bumps) is not gated.
-  repo_name=$(tr '[:upper:]' '[:lower:]' <<<"${REPO_FLAG#https://github.com/}")
-  if [ -n "$repo_name" ] && [ "${repo_name%.git}" != "spree/spree" ]; then continue; fi
   # A backslash escapes a space (`Fix\ --head=x` is one argument) or continues
   # the line, and the gate reads neither the way the shell does.
   if [[ "$LAUNCHED" == *\\* ]]; then
@@ -216,6 +211,18 @@ while IFS= read -r segment; do
     echo "Keep gh pr create on one line without backslashes: quote arguments, or pass the body with --body-file." >&2
     exit 2
   fi
+  # The reviews cover this repository's code, so a pull request opened on
+  # another repository (the release's spree-starter, storefront and
+  # agent-skills bumps) is not gated. gh reads `--repo` as `[HOST/]OWNER/REPO`
+  # or a URL, so every spelling of this repository is gated.
+  repo_name=$(tr '[:upper:]' '[:lower:]' <<<"$REPO_FLAG")
+  repo_name="${repo_name#*://}"
+  repo_name="${repo_name#git@}"
+  repo_name="${repo_name#www.}"
+  repo_name="${repo_name#github.com[:/]}"
+  repo_name="${repo_name%/}"
+  repo_name="${repo_name%.git}"
+  if [ -n "$repo_name" ] && [ "$repo_name" != "spree/spree" ]; then continue; fi
   review_dir="$pr_dir"
   head_owner=""
   if [ -n "$HEAD_FLAG" ]; then
