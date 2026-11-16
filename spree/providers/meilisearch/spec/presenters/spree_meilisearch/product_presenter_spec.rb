@@ -262,6 +262,20 @@ RSpec.describe SpreeMeilisearch::ProductPresenter do
 
         expect(names).to eq('nl' => 'Fiets', 'en' => 'Bicycle')
       end
+
+      # A store cannot lose its last market, so the legacy branch is reached
+      # here by hiding them.
+      context 'and no market to build documents for' do
+        let(:presenter) do
+          described_class.new(product, dutch_store.reload.tap { |store| allow(store).to receive(:markets).and_return(Spree::Market.none) })
+        end
+
+        it "indexes one document in the store's locale, read from the base columns" do
+          names = documents.reject { |d| d.key?(:grouping_id) }.map { |d| [d[:locale], d[:name]] }
+
+          expect(names).to eq([%w[nl Fiets]])
+        end
+      end
     end
 
     context 'with option values' do
