@@ -23425,6 +23425,7 @@ paths:
                   state_text: AL
                   pickup_ready_in_minutes:
                   pickup_instructions:
+                  admin_name:
                   address2:
                   state_name:
                   phone: "(202) 456-1111"
@@ -23432,6 +23433,10 @@ paths:
                   active: true
                   default: false
                   kind: warehouse
+                  backorderable_default: true
+                  propagate_all_variants: false
+                  pickup_enabled: false
+                  pickup_stock_policy: local
                   returns_enabled: true
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
@@ -23511,6 +23516,7 @@ paths:
                 state_text:
                 pickup_ready_in_minutes:
                 pickup_instructions:
+                admin_name:
                 address2:
                 state_name:
                 phone:
@@ -23518,6 +23524,10 @@ paths:
                 active: true
                 default: false
                 kind: warehouse
+                backorderable_default: false
+                propagate_all_variants: false
+                pickup_enabled: false
+                pickup_stock_policy: local
                 returns_enabled: true
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -23595,6 +23605,7 @@ paths:
                 state_text: AL
                 pickup_ready_in_minutes:
                 pickup_instructions:
+                admin_name:
                 address2:
                 state_name:
                 phone: "(202) 456-1111"
@@ -23602,6 +23613,10 @@ paths:
                 active: true
                 default: false
                 kind: warehouse
+                backorderable_default: true
+                propagate_all_variants: false
+                pickup_enabled: false
+                pickup_stock_policy: local
                 returns_enabled: true
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -23668,6 +23683,7 @@ paths:
                 state_text: AL
                 pickup_ready_in_minutes:
                 pickup_instructions:
+                admin_name:
                 address2:
                 state_name:
                 phone: "(202) 456-1111"
@@ -23675,6 +23691,10 @@ paths:
                 active: true
                 default: false
                 kind: warehouse
+                backorderable_default: true
+                propagate_all_variants: false
+                pickup_enabled: false
+                pickup_stock_policy: local
                 returns_enabled: true
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -30312,6 +30332,9 @@ components:
         pickup_instructions:
           type: string
           nullable: true
+        admin_name:
+          type: string
+          nullable: true
         address2:
           type: string
           nullable: true
@@ -30338,6 +30361,17 @@ components:
           - type: string
           description: The values listed are the built-in ones; extensions may add
             more.
+        backorderable_default:
+          type: boolean
+        propagate_all_variants:
+          type: boolean
+        pickup_enabled:
+          type: boolean
+        pickup_stock_policy:
+          type: string
+          enum:
+          - local
+          - any
         returns_enabled:
           type: boolean
         created_at:
@@ -30356,6 +30390,7 @@ components:
       - state_text
       - pickup_ready_in_minutes
       - pickup_instructions
+      - admin_name
       - address2
       - state_name
       - phone
@@ -30363,6 +30398,10 @@ components:
       - active
       - default
       - kind
+      - backorderable_default
+      - propagate_all_variants
+      - pickup_enabled
+      - pickup_stock_policy
       - returns_enabled
       - created_at
       - updated_at
