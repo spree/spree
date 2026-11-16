@@ -7,15 +7,20 @@ name: Preview packages
 #   pnpm add https://pkg.pr.new/@spree/dashboard@<pull request number>
 #   pnpm add https://pkg.pr.new/@spree/dashboard@<commit sha>
 #
-# The previews from one run depend on each other, so @spree/dashboard installs
-# the @spree/dashboard-core built from the same commit. The pkg.pr.new GitHub
-# App must be installed on the repository; it posts the install commands as a
-# comment on the pull request.
+# Regular dependencies between previews (such as @spree/core) point at the
+# preview from the same run. Peer dependencies keep their npm ranges, so add
+# every Spree peer from the same run too (for @spree/dashboard: dashboard-core,
+# dashboard-ui and admin-sdk), or the released versions from npm are installed.
+# pnpm 11 blocks dependencies pulled from tarball URLs, so the installing app
+# needs `blockExoticSubdeps: false` while it uses previews. The pkg.pr.new
+# GitHub App must be installed on the repository; it posts the install
+# commands as a comment on the pull request.
 on:
   push:
     branches: [main]
     paths: &paths
       - 'packages/**'
+      - 'package.json'
       - 'pnpm-lock.yaml'
       - 'pnpm-workspace.yaml'
       - 'turbo.json'
@@ -25,7 +30,8 @@ on:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  # On main every commit keeps its own preview, so only pull requests cancel.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
@@ -52,10 +58,18 @@ jobs:
           node-version: 22
           cache: pnpm
 
+      # Restores the Turbo cache the frontend workflow saves for this commit.
+      - uses: actions/cache/restore@v6
+        with:
+          path: .turbo
+          key: turbo-${{ runner.os }}-${{ github.sha }}
+          restore-keys: |
+            turbo-${{ runner.os }}-
+
       - run: pnpm install --frozen-lockfile
 
       - name: Build
-        run: pnpm turbo build $(printf -- '--filter=./packages/%s ' $PACKAGES)
+        run: pnpm turbo build --cache-dir=.turbo $(printf -- '--filter=./packages/%s ' $PACKAGES)
 
       # --pnpm packs with `pnpm pack`, which writes out the workspace: and
       # catalog: ranges that npm would ship verbatim.
