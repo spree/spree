@@ -1,5 +1,11 @@
 # @spree/seller-sdk
 
+## 6.0.5
+
+### Patch Changes
+
+- [#15219](https://github.com/spree/spree/pull/15219) [`8092164`](https://github.com/spree/spree/commit/8092164492d6f006adb766d6f309255a6cf8c26f) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added `client.optionTypes.list()` and `client.optionTypes.get()` for the new read-only `GET /api/v3/seller/option_types` endpoint. Pass `expand: ['option_values']` for the values. Product types now carry `option_type_ids` next to `option_type_labels`. A product or variant written through `/api/v3/seller/products` that names an option type or value the store does not already have is now refused with a 422 naming `variants` instead of creating it.
+
 ## 6.0.4
 
 ### Patch Changes

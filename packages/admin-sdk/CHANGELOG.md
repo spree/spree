@@ -1,5 +1,11 @@
 # @spree/admin-sdk
 
+## 6.0.5
+
+### Patch Changes
+
+- [#15216](https://github.com/spree/spree/pull/15216) [`40fe3a3`](https://github.com/spree/spree/commit/40fe3a3640c3964ddcf78842f7af36f31be059b1) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `client.store.update()` now accepts `meta_keywords`, `facebook`, `twitter` and `instagram`, and the store the Admin API returns includes `logo_url` and those fields. Social accounts must be a handle, a scheme-less address or an `http(s)` URL.
+
 ## 6.0.4
 
 ### Patch Changes
