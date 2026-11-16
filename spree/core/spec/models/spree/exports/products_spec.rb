@@ -67,6 +67,18 @@ RSpec.describe Spree::Exports::Products, type: :model do
       end
     end
 
+    # The admin filtered a list shown in English; the export holds the rows
+    # that list showed, written in the store's own language.
+    it 'selects rows by a translated filter in the locale it was asked for in' do
+      dutch_store.products.first.translations.create!(locale: 'en', name: 'Bicycle')
+      export = described_class.new(store: dutch_store, search_params: { name_cont: 'Bicycle' })
+      export.save!
+      I18n.with_locale(:en) { export.generate }
+
+      rows = CSV.parse(export.attachment.download, headers: true)
+      expect(rows.pluck('name')).to eq ['Fiets']
+    end
+
     it "does not leave the exported store's content locale behind" do
       export = described_class.new(store: dutch_store)
       export.save!
