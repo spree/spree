@@ -3322,7 +3322,9 @@
           "view_at_gateway": "Zobacz w {{gateway}}",
           "view_details": "Zobacz szczegóły",
           "failed_card_checks": "Nieudana weryfikacja karty",
-          "card_checks_unavailable": "Weryfikacja karty niedostępna"
+          "card_checks_unavailable": "Weryfikacja karty niedostępna",
+          "capture_requested": "Zażądano pobrania",
+          "void_requested": "Zażądano anulowania"
         },
         "priced_by": "Cena z {{name}}",
         "purchase_order": {
@@ -3389,7 +3391,16 @@
           },
           "captures": "Pobrania środków",
           "captures_empty": "Nie pobrano jeszcze żadnych środków.",
-          "captured_at": "Pobrano"
+          "captured_at": "Pobrano",
+          "refunds": "Zwroty",
+          "refunds_empty": "Nic jeszcze nie zwrócono.",
+          "refunded_at": "Zwrócono",
+          "refund_statuses": {
+            "requested": "Zażądano",
+            "completed": "Zakończono",
+            "failed": "Nieudany"
+          },
+          "failure_reason": "Powód: {{reason}}"
         },
         "customer_edit": {
           "title": "Edytuj klienta",

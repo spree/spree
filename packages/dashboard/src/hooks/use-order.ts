@@ -23,6 +23,7 @@ export function useOrder(orderId: string) {
           'payments',
           'payments.payment_method',
           'payments.capture_events',
+          'payments.refunds',
           // An order from a split checkout has no payments of its own; what
           // it has is a share of each payment made against its group.
           'payment_splits',

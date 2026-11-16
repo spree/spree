@@ -3283,7 +3283,9 @@
           "view_at_gateway": "在 {{gateway}} 中查看",
           "view_details": "查看详情",
           "failed_card_checks": "银行卡验证未通过",
-          "card_checks_unavailable": "银行卡校验不可用"
+          "card_checks_unavailable": "银行卡校验不可用",
+          "capture_requested": "已请求扣款",
+          "void_requested": "已请求作废"
         },
         "priced_by": "定价来自 {{name}}",
         "purchase_order": {
@@ -3350,7 +3352,16 @@
           },
           "captures": "扣款记录",
           "captures_empty": "尚未扣款。",
-          "captured_at": "扣款时间"
+          "captured_at": "扣款时间",
+          "refunds": "退款",
+          "refunds_empty": "尚未退款。",
+          "refunded_at": "退款时间",
+          "refund_statuses": {
+            "requested": "已请求",
+            "completed": "已完成",
+            "failed": "失败"
+          },
+          "failure_reason": "原因：{{reason}}"
         },
         "customer_edit": {
           "title": "编辑客户",

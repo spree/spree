@@ -2998,7 +2998,9 @@
           "view_at_gateway": "Ver en {{gateway}}",
           "view_details": "Ver detalles",
           "failed_card_checks": "Verificaciones de tarjeta fallidas",
-          "card_checks_unavailable": "Verificaciones de tarjeta no disponibles"
+          "card_checks_unavailable": "Verificaciones de tarjeta no disponibles",
+          "capture_requested": "Captura solicitada",
+          "void_requested": "Anulación solicitada"
         },
         "priced_by": "Precio según {{name}}",
         "purchase_order": {
@@ -3065,7 +3067,16 @@
           },
           "captures": "Capturas",
           "captures_empty": "Aún no se ha capturado nada.",
-          "captured_at": "Capturado"
+          "captured_at": "Capturado",
+          "refunds": "Reembolsos",
+          "refunds_empty": "Aún no se ha reembolsado nada.",
+          "refunded_at": "Reembolsado",
+          "refund_statuses": {
+            "requested": "Solicitado",
+            "completed": "Completado",
+            "failed": "Fallido"
+          },
+          "failure_reason": "Motivo: {{reason}}"
         },
         "customer_edit": {
           "title": "Editar cliente",

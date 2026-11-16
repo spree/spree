@@ -3293,7 +3293,9 @@
           "view_at_gateway": "Voir sur {{gateway}}",
           "view_details": "Voir les détails",
           "failed_card_checks": "Vérifications de carte échouées",
-          "card_checks_unavailable": "Vérifications de carte non disponibles"
+          "card_checks_unavailable": "Vérifications de carte non disponibles",
+          "capture_requested": "Capture demandée",
+          "void_requested": "Annulation demandée"
         },
         "priced_by": "Tarifé par {{name}}",
         "purchase_order": {
@@ -3360,7 +3362,16 @@
           },
           "captures": "Captures",
           "captures_empty": "Rien n'a encore été capturé.",
-          "captured_at": "Capturé"
+          "captured_at": "Capturé",
+          "refunds": "Remboursements",
+          "refunds_empty": "Rien n'a encore été remboursé.",
+          "refunded_at": "Remboursé",
+          "refund_statuses": {
+            "requested": "Demandé",
+            "completed": "Terminé",
+            "failed": "Échoué"
+          },
+          "failure_reason": "Motif : {{reason}}"
         },
         "customer_edit": {
           "title": "Modifier le client",

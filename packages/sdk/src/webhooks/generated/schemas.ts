@@ -181,6 +181,8 @@ type WebhookEventName =
   | 'order_group.deleted'
   | 'order_group.resend_confirmation_email'
   | 'order_group.updated'
+  | 'payment.capture_failed'
+  | 'payment.capture_requested'
   | 'payment.captured'
   | 'payment.completed'
   | 'payment.created'
@@ -188,6 +190,8 @@ type WebhookEventName =
   | 'payment.paid'
   | 'payment.refunded'
   | 'payment.updated'
+  | 'payment.void_failed'
+  | 'payment.void_requested'
   | 'payment.voided'
   | 'payment_session.canceled'
   | 'payment_session.completed'
@@ -240,6 +244,8 @@ type WebhookEventName =
   | 'purchase_order.updated'
   | 'refund.created'
   | 'refund.deleted'
+  | 'refund.failed'
+  | 'refund.requested'
   | 'refund.updated'
   | 'return.approved'
   | 'return.canceled'
@@ -448,6 +454,8 @@ export const webhookEventSchemas: Readonly<Record<WebhookEventName, z.ZodType>> 
   'order_group.deleted': OrderGroupSchema,
   'order_group.resend_confirmation_email': OrderGroupSchema,
   'order_group.updated': OrderGroupSchema,
+  'payment.capture_failed': PaymentSchema,
+  'payment.capture_requested': PaymentSchema,
   'payment.captured': PaymentSchema,
   'payment.completed': PaymentSchema,
   'payment.created': PaymentSchema,
@@ -455,6 +463,8 @@ export const webhookEventSchemas: Readonly<Record<WebhookEventName, z.ZodType>> 
   'payment.paid': PaymentSchema,
   'payment.refunded': PaymentSchema,
   'payment.updated': PaymentSchema,
+  'payment.void_failed': PaymentSchema,
+  'payment.void_requested': PaymentSchema,
   'payment.voided': PaymentSchema,
   'payment_session.canceled': PaymentSessionSchema,
   'payment_session.completed': PaymentSessionSchema,
@@ -507,6 +517,8 @@ export const webhookEventSchemas: Readonly<Record<WebhookEventName, z.ZodType>> 
   'purchase_order.updated': PurchaseOrderEventSchema,
   'refund.created': RefundSchema,
   'refund.deleted': RefundSchema,
+  'refund.failed': RefundSchema,
+  'refund.requested': RefundSchema,
   'refund.updated': RefundSchema,
   'return.approved': ReturnSchema,
   'return.canceled': ReturnSchema,

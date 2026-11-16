@@ -3291,7 +3291,9 @@
           "view_at_gateway": "{{gateway}}で見る",
           "view_details": "詳細を見る",
           "failed_card_checks": "カードの確認に失敗",
-          "card_checks_unavailable": "カード確認は利用不可"
+          "card_checks_unavailable": "カード確認は利用不可",
+          "capture_requested": "キャプチャ依頼中",
+          "void_requested": "取消依頼中"
         },
         "priced_by": "{{name}}による価格",
         "purchase_order": {
@@ -3358,7 +3360,16 @@
           },
           "captures": "確定",
           "captures_empty": "まだ確定したものはありません。",
-          "captured_at": "確定済み"
+          "captured_at": "確定済み",
+          "refunds": "返金",
+          "refunds_empty": "まだ返金はありません。",
+          "refunded_at": "返金日",
+          "refund_statuses": {
+            "requested": "依頼中",
+            "completed": "完了",
+            "failed": "失敗"
+          },
+          "failure_reason": "理由: {{reason}}"
         },
         "customer_edit": {
           "title": "顧客を編集",

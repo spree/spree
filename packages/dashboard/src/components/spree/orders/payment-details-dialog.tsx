@@ -1,4 +1,4 @@
-import type { Payment } from '@spree/admin-sdk'
+import type { Payment, Refund } from '@spree/admin-sdk'
 import { Money } from '@spree/dashboard-core'
 import {
   Badge,
@@ -73,7 +73,39 @@ export function riskyCardChecks(
   return null
 }
 
-/** What the card issuer reported about a payment, and each capture of its money. */
+/**
+ * A payment's status. One waiting on its provider names what it is waiting
+ * for: a capture or a void the provider accepted and has not answered yet.
+ */
+export function PaymentStatusBadge({ payment }: { payment: Payment }) {
+  const { t } = useTranslation()
+
+  if (payment.status !== 'requested') return <StatusBadge status={payment.status} />
+
+  return (
+    <StatusBadge
+      status="requested"
+      label={
+        payment.requested_action === 'capture'
+          ? t('admin.orders.detail.payments_table.capture_requested')
+          : t('admin.orders.detail.payments_table.void_requested')
+      }
+    />
+  )
+}
+
+function RefundStatusBadge({ refund }: { refund: Refund }) {
+  const { t } = useTranslation()
+  const labels: Record<string, string> = {
+    requested: t('admin.orders.detail.payment_details.refund_statuses.requested'),
+    completed: t('admin.orders.detail.payment_details.refund_statuses.completed'),
+    failed: t('admin.orders.detail.payment_details.refund_statuses.failed'),
+  }
+
+  return <StatusBadge status={refund.status} label={labels[refund.status]} />
+}
+
+/** What the card issuer reported about a payment, each capture of its money and each refund. */
 export function PaymentDetailsDialog({
   payment,
   currency,
@@ -87,6 +119,7 @@ export function PaymentDetailsDialog({
 }) {
   const { t } = useTranslation()
   const captures = payment.capture_events ?? []
+  const refunds = payment.refunds ?? []
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -109,7 +142,7 @@ export function PaymentDetailsDialog({
               {t('admin.orders.detail.payments_table.state')}
             </dt>
             <dd>
-              <StatusBadge status={payment.status} />
+              <PaymentStatusBadge payment={payment} />
             </dd>
             <dt className="text-muted-foreground">{t('admin.fields.amount.label')}</dt>
             <dd className="tabular-nums">
@@ -159,6 +192,50 @@ export function PaymentDetailsDialog({
                       </TableCell>
                       <TableCell className="text-right tabular-nums">
                         <Money amount={capture.amount} currency={currency} />
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+          </section>
+          <section className="flex flex-col gap-2">
+            <h3 className="font-medium text-base">
+              {t('admin.orders.detail.payment_details.refunds')}
+            </h3>
+            {refunds.length === 0 ? (
+              <p className="text-muted-foreground text-base">
+                {t('admin.orders.detail.payment_details.refunds_empty')}
+              </p>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>{t('admin.orders.detail.payment_details.refunded_at')}</TableHead>
+                    <TableHead>{t('admin.orders.detail.payments_table.state')}</TableHead>
+                    <TableHead className="text-right">{t('admin.fields.amount.label')}</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {refunds.map((refund) => (
+                    <TableRow key={refund.id} data-testid="payment-refund-row">
+                      <TableCell>
+                        <RelativeTime iso={refund.created_at} />
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex flex-col gap-1">
+                          <RefundStatusBadge refund={refund} />
+                          {refund.failure_reason && (
+                            <span className="text-muted-foreground text-xs">
+                              {t('admin.orders.detail.payment_details.failure_reason', {
+                                reason: refund.failure_reason,
+                              })}
+                            </span>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right tabular-nums">
+                        <Money amount={refund.amount} currency={currency} />
                       </TableCell>
                     </TableRow>
                   ))}

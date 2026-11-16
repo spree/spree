@@ -3316,7 +3316,9 @@
           "view_at_gateway": "عرض في {{gateway}}",
           "view_details": "عرض التفاصيل",
           "failed_card_checks": "فشل التحقق من البطاقة",
-          "card_checks_unavailable": "فحوصات البطاقة غير متاحة"
+          "card_checks_unavailable": "فحوصات البطاقة غير متاحة",
+          "capture_requested": "تم طلب التحصيل",
+          "void_requested": "تم طلب الإلغاء"
         },
         "priced_by": "التسعير من {{name}}",
         "purchase_order": {
@@ -3383,7 +3385,16 @@
           },
           "captures": "عمليات التحصيل",
           "captures_empty": "لم يتم تحصيل أي مبلغ بعد.",
-          "captured_at": "تاريخ التحصيل"
+          "captured_at": "تاريخ التحصيل",
+          "refunds": "المبالغ المستردة",
+          "refunds_empty": "لم يُسترد أي مبلغ بعد.",
+          "refunded_at": "تاريخ الاسترداد",
+          "refund_statuses": {
+            "requested": "مطلوب",
+            "completed": "مكتمل",
+            "failed": "فشل"
+          },
+          "failure_reason": "السبب: {{reason}}"
         },
         "customer_edit": {
           "title": "تعديل العميل",

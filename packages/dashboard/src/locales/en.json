@@ -3292,7 +3292,9 @@
           "view_at_gateway": "View at {{gateway}}",
           "view_details": "View details",
           "failed_card_checks": "Failed card checks",
-          "card_checks_unavailable": "Card checks not available"
+          "card_checks_unavailable": "Card checks not available",
+          "capture_requested": "Capture requested",
+          "void_requested": "Void requested"
         },
         "priced_by": "Priced by {{name}}",
         "purchase_order": {
@@ -3359,7 +3361,16 @@
           },
           "captures": "Captures",
           "captures_empty": "Nothing has been captured yet.",
-          "captured_at": "Captured"
+          "captured_at": "Captured",
+          "refunds": "Refunds",
+          "refunds_empty": "Nothing has been refunded yet.",
+          "refunded_at": "Refunded",
+          "refund_statuses": {
+            "requested": "Requested",
+            "completed": "Completed",
+            "failed": "Failed"
+          },
+          "failure_reason": "Reason: {{reason}}"
         },
         "customer_edit": {
           "title": "Edit customer",
