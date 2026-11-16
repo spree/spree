@@ -1,6 +1,11 @@
 import type { OptionType } from '@spree/admin-sdk'
 import { describe, expect, it } from 'vitest'
-import { autoExpandIndex, composeOptionsText, type SelectedOptionType } from './variants-matrix'
+import {
+  autoExpandIndex,
+  composeOptionsText,
+  emptyOptionTypeRows,
+  type SelectedOptionType,
+} from './variants-matrix'
 
 // composeOptionsText only reads name/label/position/option_values; cast minimal
 // fixtures rather than fabricating timestamps + ids that the helper ignores.
@@ -150,5 +155,33 @@ describe('autoExpandIndex', () => {
 
   it('offers nothing when there are no rows', () => {
     expect(autoExpandIndex([], new Set())).toBe(-1)
+  })
+})
+
+describe('emptyOptionTypeRows', () => {
+  const color = { id: 'opt_color', name: 'color', label: 'Color', position: 2 }
+  const size = { id: 'opt_size', name: 'size', label: 'Size' }
+
+  // A product made from a product type gets the type's option types before
+  // any variant uses them, so the variants alone show nothing to build from.
+  it("offers a saved product's option types as empty rows", () => {
+    expect(emptyOptionTypeRows(['opt_color'], [color])).toEqual([
+      { id: 'opt_color', name: 'color', label: 'Color', position: 2, values: [] },
+    ])
+  })
+
+  it('follows the order of the ids and falls back to it for the position', () => {
+    const rows = emptyOptionTypeRows(['opt_size', 'opt_color'], [color, size])
+
+    expect(rows.map((row) => [row.id, row.position])).toEqual([
+      ['opt_size', 0],
+      ['opt_color', 2],
+    ])
+  })
+
+  it('skips an id that did not resolve', () => {
+    const rows = emptyOptionTypeRows(['opt_missing', 'opt_color'], [color])
+
+    expect(rows.map((row) => row.id)).toEqual(['opt_color'])
   })
 })

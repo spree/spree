@@ -24,6 +24,34 @@ export interface SelectedOptionType {
   values: SelectedOptionValue[]
 }
 
+/** What an empty option row needs from an option type. */
+export type OptionTypeRowSource = Pick<OptionType, 'id' | 'name' | 'label' | 'position'>
+
+/**
+ * Empty rows for option types no variant uses yet — a product type's, offered
+ * on a new product, or a saved product's own. A starting point, not state.
+ * Rows follow `optionTypeIds`; an id missing from `optionTypes` is skipped.
+ */
+export function emptyOptionTypeRows(
+  optionTypeIds: string[],
+  optionTypes: OptionTypeRowSource[],
+): SelectedOptionType[] {
+  return optionTypeIds
+    .map<SelectedOptionType | null>((id, idx) => {
+      const optionType = optionTypes.find((candidate) => candidate.id === id)
+      if (!optionType) return null
+
+      return {
+        id: optionType.id,
+        name: optionType.name,
+        label: optionType.label,
+        position: optionType.position ?? idx,
+        values: [],
+      }
+    })
+    .filter((entry): entry is SelectedOptionType => entry !== null)
+}
+
 /**
  * Which option row the builder should open on its own: the first one still
  * awaiting values that the merchant hasn't already dismissed. A product type
