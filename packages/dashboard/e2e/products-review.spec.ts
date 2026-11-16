@@ -11,6 +11,17 @@ import {
 import { addProductCategory, categorizationCard, publishingCard } from './products-helpers'
 
 const SAVE_FIRST = /save your changes first/i
+const DECISION_REQUEST = /\/api\/v3\/admin\/products\/[^/]+\/(approve|reject)$/
+
+/** Every approve or reject request the page sends, from here on. */
+function recordDecisionRequests(page: Page): string[] {
+  const decisions: string[] = []
+  page.on('request', (request) => {
+    const match = new URL(request.url()).pathname.match(DECISION_REQUEST)
+    if (request.method() === 'PATCH' && match) decisions.push(match[1])
+  })
+  return decisions
+}
 
 /**
  * A product the panel seller lists and submits for review through the Seller
@@ -89,20 +100,26 @@ test.describe('product review', () => {
     const creds = await login(page)
 
     await openProduct(page, creds.store_id, productId)
+    const decisions = recordDecisionRequests(page)
     await addProductCategory(page, FIXTURE_BULK_CATEGORY)
 
     await page.getByRole('button', { name: /^approve$/i }).click()
-    await expect(page.getByText(SAVE_FIRST).first()).toBeVisible()
+    await expect(page.getByText(SAVE_FIRST)).toBeVisible()
     await expect(page.getByRole('dialog')).toHaveCount(0)
+
+    // The Approve warning has to go before Send back is tried, so the one
+    // that shows next can only be Send back's own.
+    await expect(page.getByText(SAVE_FIRST)).toHaveCount(0, { timeout: 15_000 })
 
     await page.getByRole('button', { name: /^send back$/i }).click()
     await page.getByRole('button', { name: /^send back$/i }).click()
-    await expect(page.getByText(SAVE_FIRST).first()).toBeVisible()
+    await expect(page.getByText(SAVE_FIRST)).toBeVisible()
     await expect(page.getByText(/sent back to the seller/i)).toHaveCount(0)
     await page.getByRole('button', { name: /^cancel$/i }).click()
 
     // Still awaiting a decision: nothing was sent.
     await expect(page.getByRole('button', { name: /^approve$/i })).toBeVisible()
+    expect(decisions).toEqual([])
 
     await page.getByRole('button', { name: /save product/i }).click()
     await expect(page.getByRole('button', { name: /save product/i })).toBeDisabled({
@@ -110,6 +127,7 @@ test.describe('product review', () => {
     })
 
     await approve(page)
+    expect(decisions).toEqual(['approve'])
 
     await page.reload()
     await expect(
