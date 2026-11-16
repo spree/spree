@@ -8,6 +8,7 @@ module SpreeAdyen
 
     include SpreeAdyen::Gateway::PaymentSessions
     include SpreeAdyen::Gateway::PaymentSetupSessions
+    include SpreeAdyen::Gateway::Webhooks
 
     # Typed by the operator.
     preference :api_key, :password
