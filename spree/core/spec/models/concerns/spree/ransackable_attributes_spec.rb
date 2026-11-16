@@ -7,6 +7,13 @@ RSpec.describe Spree::RansackableAttributes do
       expect(Spree::Order.ransackable_attributes).to include('email')
       expect(Spree::Variant.ransackable_attributes).to include('cost_price')
     end
+
+    it 'offers the shared defaults only where the model has them' do
+      expect(Spree::CustomFieldDefinition.ransackable_attributes).not_to include('name', 'position')
+      expect(Spree::CustomFieldDefinition.ransackable_attributes).to include('id', 'label', 'created_at')
+      expect(Spree::Product.ransackable_attributes).to include('name')
+      expect(Spree::Category.ransackable_attributes).to include('position')
+    end
   end
 
   describe 'for the Store API' do

@@ -32,9 +32,8 @@ module Spree::RansackableAttributes
 
     class_attribute :default_ransackable_attributes
     # `position` is included so any `acts_as_list` model is sortable by it
-    # without each subclass having to opt in. Ransack ignores attributes
-    # the model doesn't actually expose, so this is a no-op for tables
-    # without a position column.
+    # without each subclass having to opt in. Each one is offered only where
+    # the model has it, since filtering on a missing column fails in SQL.
     self.default_ransackable_attributes = %w[id name updated_at created_at position]
 
     def self.ransackable_associations(auth_object = nil)
@@ -47,7 +46,8 @@ module Spree::RansackableAttributes
     end
 
     def self.ransackable_attributes(auth_object = nil)
-      base = default_ransackable_attributes | (whitelisted_ransackable_attributes || [])
+      base = default_ransackable_attributes.select { |attribute| ransack_attribute_defined?(attribute) }
+      base |= whitelisted_ransackable_attributes || []
       base |= Spree.ransack.custom_attributes_for(self)
       return base unless Spree::RansackableAttributes.restricted_audience?(auth_object)
 
@@ -62,6 +62,12 @@ module Spree::RansackableAttributes
 
       base - Array(private_ransackable_scopes[auth_object.to_sym])
     end
+
+    def self.ransack_attribute_defined?(attribute)
+      attribute_names.include?(attribute) || _ransackers.key?(attribute) || attribute_aliases.key?(attribute) ||
+        (respond_to?(:translatable_fields) && translatable_fields.map(&:to_s).include?(attribute))
+    end
+    private_class_method :ransack_attribute_defined?
 
     # Declares the `search` filter (`q[search]=term`): a case-insensitive
     # partial match on any of the given attributes, which may reach through
