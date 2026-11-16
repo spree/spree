@@ -533,6 +533,20 @@ describe Spree::Cart, type: :model do
         expect(cart.fulfillments.reload).to be_empty
         expect(cart.warnings.map { |warning| warning[:code] }).to include('delivery_unavailable')
       end
+
+      # A free rate is still a rate: pruning is about having nothing to offer,
+      # never about what the offer costs.
+      it 'keeps a proposal whose only delivery rate is free' do
+        shipping_method.calculator.update!(preferred_amount: 0)
+
+        cart.rebuild_fulfillments!
+
+        fulfillment = cart.fulfillments.first
+        expect(fulfillment.selected_delivery_rate.cost).to eq(0)
+        expect(fulfillment).to be_free
+        expect(cart.warnings).to be_blank
+        expect(cart.ensure_available_delivery_rates).to be(true)
+      end
     end
 
     describe '#ensure_available_delivery_rates' do
