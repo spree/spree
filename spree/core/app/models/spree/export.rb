@@ -117,9 +117,12 @@ module Spree
       # read the current one — the product search's custom-field arm, address
       # validation — would otherwise answer for the default store rather than
       # the one whose records are being exported.
+      @filter_locale = I18n.locale
       Spree::Current.set(store: store) do
-        send(:"generate_#{format}")
-        handle_attachment
+        in_store_locale do
+          send(:"generate_#{format}")
+          handle_attachment
+        end
       end
 
       send_export_done_email
@@ -205,6 +208,10 @@ module Spree
     end
 
     def records_to_export
+      in_filter_locale { filtered_records }
+    end
+
+    def filtered_records
       return scope.ransack.result if search_params.blank?
 
       params = decoded_search_params
@@ -368,6 +375,26 @@ module Spree
     end
 
     private
+
+    # Runs the block reading translated columns the way a request for this
+    # store's own language does. The job otherwise runs in the locale of
+    # whatever enqueued it, with the application's default locale standing in
+    # for the one the base columns are written in, and a store written in
+    # another language exports blank names and descriptions.
+    def in_store_locale(&block)
+      locale = store.default_market&.default_locale
+      return yield if locale.blank?
+
+      Spree::Current.with_content_locale(locale) { I18n.with_locale(locale, &block) }
+    end
+
+    # Builds the query in the locale the export was asked for in, which the job
+    # inherits from the request. A filter on a translated column was written
+    # against the list the admin was looking at, so it selects the same rows
+    # here; only their content is then read in the store's own language.
+    def in_filter_locale(&)
+      I18n.with_locale(@filter_locale || I18n.locale, &)
+    end
 
     def seller_scope_must_be_available
       return if model_class.respond_to?(:for_seller)

@@ -17,6 +17,14 @@ module SpreeMeilisearch
     # page by the merchant's hand-set position. Each document has flat name,
     # description, price fields (no dynamic suffixes).
     def call
+      # Indexing runs in a job or a rake task, where nothing has named the
+      # locale the base columns are written in.
+      Spree::Current.with_content_locale(default_locale) { build_documents }
+    end
+
+    private
+
+    def build_documents
       documents = []
 
       market_locale_pairs.each do |market, locale|
@@ -34,16 +42,16 @@ module SpreeMeilisearch
       if documents.empty?
         fallback_currency = store.default_market&.currency || store.supported_currencies_list.first&.iso_code
         if fallback_currency && lowest_price(fallback_currency)
-          base = build_document(default_locale, fallback_currency, default_locale)
-          documents << base
-          documents.concat(membership_documents(base, default_locale, fallback_currency))
+          Mobility.with_locale(default_locale) do
+            base = build_document(default_locale, fallback_currency, default_locale)
+            documents << base
+            documents.concat(membership_documents(base, default_locale, fallback_currency))
+          end
         end
       end
 
       documents
     end
-
-    private
 
     # Build a document for a given locale and currency
     # @param locale [String] the locale to build the document for
