@@ -46,36 +46,32 @@ module Spree
       end
 
       # Several live payments can sit on one order, so one is charged only
-      # what the others leave owing and shrunk to that before the gateway
-      # sees it. A payment the others already cover is refused.
+      # what the others leave owing. A payment the others already cover is
+      # refused here, before the hooks; the resize itself happens under the
+      # lock in claim, so it can never land on a payment another run is
+      # already charging.
       def limit_to_amount_owed
-        # A completed payment is never charged again (claim halts on it), so
-        # its recorded amount is left alone.
+        # A completed payment is never charged again (claim halts on it).
         return if payment.completed?
 
         owed = payment.amount_owed_by_order(including_in_flight: true)
-        return if owed.nil? || payment.amount <= owed
+        return if owed.nil? || owed.positive?
 
-        failure(payment, I18n.t('spree.order_payment_already_covered')) unless owed.positive?
-
-        # Guarded against a settlement landing since the check above: a
-        # payment that completed meanwhile keeps its amount, and like claim
-        # below, that is a success rather than an error.
-        halt!(payment) unless payment.resize_unless_completed!(owed)
+        failure(payment, I18n.t('spree.order_payment_already_covered'))
       end
 
-      # A payment that completed concurrently — the webhook settled it while
-      # this request was in flight — is a success, not an error.
-      # The limit again, under the order's row lock and together with the
-      # claim: of two payments processed at once on one order, the second
-      # reads after the first has claimed (processing), so it is limited to
-      # what the first leaves owing rather than both taking the full balance.
+      # Under the order's row lock: what is owed, the resize to it, and the
+      # claim happen together. Of two payments processed at once on one
+      # order, the second reads after the first has claimed (processing), so
+      # it is limited to what the first leaves owing rather than both taking
+      # the full balance. A payment another run already claimed, or one the
+      # webhook settled meanwhile, is a success, not an error.
       def claim
         outcome = with_order_lock do
           owed = payment.amount_owed_by_order(including_in_flight: true)
           if owed && payment.amount > owed
             next :covered unless owed.positive?
-            next :settled unless payment.resize_unless_completed!(owed)
+            next :settled unless payment.resize_if_unclaimed!(owed)
           end
           payment.started_processing! ? :claimed : :settled
         end

@@ -286,16 +286,26 @@ module Spree
       create_eligible_credit_event
     end
 
-    # Shrinks this payment to +new_amount+ unless it has completed in the
-    # meantime. One conditional UPDATE, so a settlement landing after the
-    # caller last read the row is never overwritten. Store credit gets an
-    # eligibility event for the new amount, as {#update_store_credit_amount!}
-    # records one.
+    # Statuses a payment can be resized from: nobody has claimed it for the
+    # gateway yet, and it has not settled.
+    RESIZABLE_STATUSES = %w[checkout pending failed].freeze
+
+    # Shrinks this payment to +new_amount+ while nobody has claimed it. One
+    # conditional UPDATE, so a payment another run is charging (processing)
+    # or one that settled since the caller read it keeps the amount the
+    # gateway sees. An unsaved payment is resized in memory and saved with
+    # its claim. Store credit gets an eligibility event for the new amount,
+    # as {#update_store_credit_amount!} records one.
     #
     # @param new_amount [BigDecimal]
-    # @return [Boolean] false when the payment had already completed
-    def resize_unless_completed!(new_amount)
-      resized = self.class.unscoped.where(id: id).where.not(status: 'completed').
+    # @return [Boolean] false when the payment was claimed or completed meanwhile
+    def resize_if_unclaimed!(new_amount)
+      if new_record?
+        self.amount = new_amount
+        return true
+      end
+
+      resized = self.class.unscoped.where(id: id, status: RESIZABLE_STATUSES).
                 update_all(amount: new_amount, updated_at: Time.current)
       return false if resized.zero?
 

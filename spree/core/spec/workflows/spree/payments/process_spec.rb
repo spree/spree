@@ -142,6 +142,30 @@ RSpec.describe Spree::Payments::Process do
       expect(payment.reload.amount).to eq(BigDecimal('9.99'))
     end
 
+    it 'leaves the amount of a payment another run has already claimed' do
+      create(:payment, order: order, payment_method: gateway, source: create(:credit_card), status: 'pending', amount: 40)
+      payment # read while still checkout
+      Spree::Payment.find(payment.id).update_columns(status: 'processing')
+      expect(gateway).not_to receive(:authorize)
+
+      result = described_class.call(payment: payment) # stale: still reads checkout
+
+      expect(result).to be_success
+      expect(Spree::Payment.find(payment.id).amount).to eq(40)
+    end
+
+    it 'limits an unsaved payment and saves it with its claim' do
+      create(:payment, order: order, payment_method: gateway, source: create(:credit_card), status: 'pending', amount: 40)
+      unsaved = Spree::Payment.new(order: order, payment_method: gateway, source: card, status: 'checkout', amount: 40)
+      allow(gateway).to receive(:authorize).and_return(success_response)
+
+      result = described_class.call(payment: unsaved)
+
+      expect(result).to be_success
+      expect(unsaved).to be_persisted
+      expect(unsaved.reload.amount).to eq(BigDecimal('9.99'))
+    end
+
     it 'refuses a payment the others already cover' do
       create(:payment, order: order, payment_method: gateway, source: create(:credit_card), status: 'completed', amount: BigDecimal('49.99'))
       expect(gateway).not_to receive(:authorize)
