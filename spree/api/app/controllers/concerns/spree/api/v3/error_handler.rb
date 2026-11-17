@@ -128,6 +128,8 @@ module Spree
 
         # Main error rendering method with Stripe-style structure
         def render_error(code:, message:, status:, details: nil)
+          message = I18n.t('spree.api.errors.request_failed') if message.blank?
+
           error_response = {
             error: {
               code: code,

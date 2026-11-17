@@ -386,6 +386,14 @@ function AddPaymentDialog({
     setCapture(false)
   }
 
+  // Drop the previous attempt's error when the dialog closes, so reopening it
+  // doesn't greet the admin with a refusal from a payment method they've since
+  // changed.
+  function handleOpenChange(next: boolean) {
+    if (!next) mutation.reset()
+    onOpenChange(next)
+  }
+
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     if (!canSubmit) return
@@ -410,7 +418,7 @@ function AddPaymentDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{t('admin.orders.detail.payment_form.title')}</DialogTitle>
@@ -517,10 +525,14 @@ function AddPaymentDialog({
                   </label>
                 </Field>
               )}
+
+              {mutation.isError && (
+                <p className="text-base text-destructive">{(mutation.error as Error).message}</p>
+              )}
             </FieldGroup>
           </DialogBody>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <Button type="button" variant="outline" onClick={() => handleOpenChange(false)}>
               {t('admin.actions.cancel')}
             </Button>
             <Button
