@@ -119,30 +119,32 @@ export function DiscountsCard({ order }: { order: Order }) {
                 </span>
               )}
             </div>
-            {order.gift_card ? (
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={async () => {
-                  if (
-                    await confirm({
-                      message: t('admin.orders.detail.confirm.remove_gift_card_message'),
-                      confirmLabel: t('admin.actions.remove'),
-                    })
-                  ) {
-                    removeGiftCardMutation.mutate(undefined)
-                  }
-                }}
-                disabled={removeGiftCardMutation.isPending}
-              >
-                {t('admin.actions.remove')}
-              </Button>
-            ) : (
-              <Button size="sm" variant="outline" onClick={() => setGiftCardOpen(true)}>
-                <PlusIcon className="size-4" />
-                {t('admin.actions.apply')}
-              </Button>
-            )}
+            {/* A placed order neither takes nor gives back a gift card */}
+            {isEditable &&
+              (order.gift_card ? (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={async () => {
+                    if (
+                      await confirm({
+                        message: t('admin.orders.detail.confirm.remove_gift_card_message'),
+                        confirmLabel: t('admin.actions.remove'),
+                      })
+                    ) {
+                      removeGiftCardMutation.mutate(undefined)
+                    }
+                  }}
+                  disabled={removeGiftCardMutation.isPending}
+                >
+                  {t('admin.actions.remove')}
+                </Button>
+              ) : (
+                <Button size="sm" variant="outline" onClick={() => setGiftCardOpen(true)}>
+                  <PlusIcon className="size-4" />
+                  {t('admin.actions.apply')}
+                </Button>
+              ))}
           </div>
         </CardContent>
       </Card>

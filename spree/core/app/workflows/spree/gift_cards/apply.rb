@@ -49,6 +49,9 @@ module Spree
           # card-then-record, which is the order Spree::GiftCards::Remove
           # uses and which the transaction would otherwise keep.
           step :lock_affected_records
+          # Again under the lock: the order may have been placed since the
+          # caller loaded it.
+          step :ensure_order_open
           step :release_open_holds
           run_hooks :release_holds
 
@@ -69,6 +72,8 @@ module Spree
       private
 
       def ensure_applicable
+        ensure_order_open
+
         # A gift card and a store credit are two ways of paying from a
         # balance; mixing them on one order is not supported.
         failure(order, :gift_card_using_store_credit_error) if order.using_store_credit?
@@ -86,6 +91,13 @@ module Spree
         # A card issued to someone is theirs alone.
         failure(order, :gift_card_customer_not_logged_in) if order.customer.blank?
         failure(order, :gift_card_mismatched_customer) if gift_card.customer != order.customer
+      end
+
+      # A placed order never takes the payment this creates, and
+      # Spree::GiftCards::Remove refuses it, so a card drawn down here could
+      # never be given back.
+      def ensure_order_open
+        failure(order, :apply_gift_card_on_completed_order_error) if order.completed?
       end
 
       def lock_gift_card

@@ -60,6 +60,33 @@ RSpec.describe Spree::GiftCards::Apply do
     end
   end
 
+  context 'when the order is completed' do
+    let(:order) { create(:completed_order_with_totals, store: store, customer: order_user, line_items_price: 30) }
+
+    it 'refuses it and leaves the card balance alone' do
+      expect { subject }.not_to change(Spree::StoreCredit, :count)
+
+      expect(subject).to be_failure
+      expect(subject.error.value).to eq(:apply_gift_card_on_completed_order_error)
+      expect(gift_card.reload.amount_used).to eq(0)
+      expect(order.reload.gift_card).to be_nil
+      expect(order.payments.store_credits).to be_empty
+    end
+  end
+
+  context 'when the order is placed after the caller loaded it' do
+    before { Spree::Order.where(id: order.id).update_all(completed_at: Time.current) }
+
+    it 'refuses it and leaves the card balance alone' do
+      expect(order.completed?).to be(false)
+      expect { subject }.not_to change(Spree::StoreCredit, :count)
+
+      expect(subject).to be_failure
+      expect(subject.error.value).to eq(:apply_gift_card_on_completed_order_error)
+      expect(gift_card.reload.amount_used).to eq(0)
+    end
+  end
+
   context 'when the gift card has a different currency' do
     let(:gift_card) { create(:gift_card, amount: 50, store: store, customer: gift_card_user, currency: 'USD') }
     let(:order) { create(:order, store: store, customer: order_user, currency: 'EUR') }

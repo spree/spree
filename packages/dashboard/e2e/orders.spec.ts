@@ -713,6 +713,21 @@ test.describe('order customer', () => {
   })
 })
 
+test.describe('order discounts and credit', () => {
+  // The API refuses a gift card on a placed order, so the page does not offer one.
+  test('offers no gift card on a placed order', async ({ page }) => {
+    const creds = await login(page)
+    const order = await createPlacedOrder(page, creds.accessToken, { quantity: 1, ship: false })
+
+    await page.goto(`${ORDERS_PATH(creds.store_id)}/${order.id}`)
+    const discountsCard = page.locator('[data-slot="card"]').filter({
+      has: page.locator('[data-slot="card-title"]', { hasText: /^discounts & credit$/i }),
+    })
+    await expect(discountsCard.getByText(/^gift card$/i)).toBeVisible({ timeout: 15_000 })
+    await expect(discountsCard.getByRole('button', { name: /^apply$/i })).toHaveCount(0)
+  })
+})
+
 test.describe('order tags', () => {
   async function createDraft(page: Page, storeId: string, email: string) {
     await page.goto(NEW_ORDER_PATH(storeId))
