@@ -24,11 +24,14 @@ module Spree
       # keeps one property per name within a serializer and so would hide two
       # attributes of one serializer that disagree.
       #
-      # @return [Array<Typelizer::Property>] the named enum properties of every serializer each Typelizer writer emits
+      # Typelizer's default writer is left out: Spree writes nothing with it,
+      # and it takes every serializer class, an unnamed one from a spec included.
+      #
+      # @return [Array<Typelizer::Property>] the named enum properties of every serializer Spree's writers emit
       def self.serializer_properties
-        Typelizer.configuration.writers.keys
-                 .flat_map { |writer_name| Typelizer.interfaces(writer_name: writer_name) }
-                 .flat_map { |interface| named_properties(interface.properties + interface.trait_interfaces.flat_map(&:properties)) }
+        writers = Typelizer.configuration.writers.keys - [Typelizer::Configuration::DEFAULT_WRITER_NAME]
+        writers.flat_map { |writer_name| Typelizer.interfaces(writer_name: writer_name) }.
+          flat_map { |interface| named_properties(interface.properties + interface.trait_interfaces.flat_map(&:properties)) }
       end
 
       # @param properties [Array<Typelizer::Property>]

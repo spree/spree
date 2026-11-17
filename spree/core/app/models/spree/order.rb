@@ -1314,7 +1314,7 @@ module Spree
               message: I18n.t('spree.cart_line_item.delivery_unavailable', li_name: line_item.name),
               line_item_id: line_item.prefixed_id,
               variant_id: line_item.variant&.prefixed_id
-            }
+            }.compact
           end
         else
           errors.add(:base, :items_cannot_be_shipped, message: I18n.t('spree.items_cannot_be_shipped'))

@@ -65,7 +65,7 @@ module Spree
 
           query.aggregated_metrics.group_by(&:base).each do |base, metrics|
             scope = base_scope(base, range, grouped: grouped)
-            selects = metrics.map { |m| "#{resolve_sql(m.sql_for(grouped: grouped))} AS #{metric_alias(m)}" }
+            selects = metrics.map { |m| "#{metric_sql(m, scope: scope, grouped: grouped)} AS #{metric_alias(m)}" }
 
             if grouped
               dimension_selects = query.dimensions.map do |d|
@@ -111,6 +111,49 @@ module Spree
           scope.reorder(nil)
         end
 
+        # A metric's aggregate for this query, resolved against the scope it
+        # runs on. A metric reading a joined row (grouped_sql) only reads it
+        # when the scope actually carries that join — grouping by product
+        # never joins discounts, so it falls back to the per-line subquery.
+        #
+        # The subquery form receives the filters on the dimensions that read
+        # the same joined rows (%{dimension_filters}): filtered to one
+        # promotion, a line also carrying another must contribute only the
+        # filtered promotion's money, not the line's combined discount.
+        def metric_sql(metric, scope:, grouped:)
+          joins = grouped ? carried_joins(scope) : []
+          format(metric.sql_for(grouped: grouped, joins: joins),
+                 placeholders.merge(dimension_filters: joined_row_filters(metric)))
+        end
+
+        # The joins the scope carries, in ActiveRecord's joins format. Compared
+        # by full association path (Reporting.join_paths): a join reached
+        # through another base's path (`{ order: :ship_address }`) is not the
+        # base's own `:ship_address`, and `{ variant: :product }` does not
+        # bring in `{ variant: { product: :product_categories } }`.
+        def carried_joins(scope)
+          scope.joins_values + scope.left_outer_joins_values
+        end
+
+        # Extra subquery conditions for the filters on dimensions that read
+        # the rows this metric's grouped_joins would join. Values bind through
+        # Arel quoting and the column is a validated identifier.
+        def joined_row_filters(metric)
+          return '' if metric.grouped_joins.blank?
+
+          query.filters.filter_map do |filter|
+            dimension = filter[:dimension]
+            next unless dimension.base == metric.base
+            # The dimension's column must live on rows the subquery itself
+            # reads: one joining past them (`{ promotion_discounts: :promotion }`)
+            # would name a table the subquery has no FROM entry for.
+            next if dimension.joins.blank?
+            next unless Reporting.joins_cover?(metric.grouped_joins, dimension.joins)
+
+            " AND #{in_predicate(qualified_column(dimension), filter[:values]).to_sql}"
+          end.join
+        end
+
         # Dimension joins are declared from their own base; they only apply
         # when the executing scope is that base (an :orders-based metric never
         # joins line-item tables — validate_bases! guarantees compatibility).
@@ -141,13 +184,18 @@ module Spree
             metric = filter[:metric]
             next unless names.include?(metric.name)
 
-            # The value rides as a bind rather than an interpolation: it is
-            # the only piece of request data that reaches the statement, and
-            # the aggregate beside it is registered SQL.
+            # The value is quoted by Arel rather than interpolated: it is the
+            # only piece of request data that reaches the comparison, and the
+            # aggregate beside it is registered SQL. Not a `?` bind: the
+            # aggregate can carry quoted filter values of its own (a coupon
+            # code containing `?`), and ActiveRecord would count those as
+            # placeholders too and refuse the statement.
             scope = scope.having(
-              Arel.sql("#{resolve_sql(metric.sql_for(grouped: true))} " \
-                       "#{COMPARISONS.fetch(filter[:op]).first} ?"),
-              filter[:value]
+              Arel::Nodes::InfixOperation.new(
+                COMPARISONS.fetch(filter[:op]).first,
+                Arel::Nodes::Grouping.new(Arel.sql(metric_sql(metric, scope: scope, grouped: true))),
+                Arel::Nodes.build_quoted(filter[:value])
+              )
             )
           end
 
@@ -170,9 +218,22 @@ module Spree
               table = scope.klass.arel_table
               ids = join_for(base_relation(base, range), dimension, base).where(predicate).select(table[:id])
               scope = scope.where(table[:id].in(ids.arel))
+              # When the grouped query already joins the rows this filter
+              # reads, the id subquery alone keeps every joined row of a
+              # matching line: filtered to one promotion and grouped by
+              # promotion, a line carrying two would still report the other
+              # one's group. Narrow the joined rows themselves as well.
+              scope = scope.where(predicate) if joins_rows_of?(scope, dimension, base)
             end
           end
           scope
+        end
+
+        # Only when the scope carries the dimension's whole join path: grouped
+        # by product, a category filter's product_categories table is not in
+        # the FROM clause even though its first hop (variant) is.
+        def joins_rows_of?(scope, dimension, base)
+          dimension.base == base && Reporting.joins_cover?(carried_joins(scope), dimension.joins)
         end
 
         # `column IN (values)` as an Arel node. The column is a validated
@@ -236,7 +297,7 @@ module Spree
         def apply_sql_sort(scope, metrics)
           return scope unless metrics.any? { |m| m.name == sort_metric.name }
 
-          scope.order(Arel.sql("#{resolve_sql(sort_metric.sql_for(grouped: true))} " \
+          scope.order(Arel.sql("#{metric_sql(sort_metric, scope: scope, grouped: true)} " \
                                "#{query.sort[:direction] == :desc ? 'DESC' : 'ASC'}"))
             .limit(query.limit)
         end

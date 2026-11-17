@@ -3326,6 +3326,7 @@
         "variant_search": {
           "description": "Tìm kiếm mẫu mã sản phẩm để thêm vào đơn hàng này.",
           "empty": "Không tìm thấy biến thể nào",
+          "no_permission": "Vai trò của bạn không được xem sản phẩm nên không thể tìm trong danh mục. Hãy nhờ quản trị viên thêm quyền Xem sản phẩm vào vai trò của bạn.",
           "label": "Tìm kiếm biến thể",
           "placeholder": "Nhập tên sản phẩm hoặc SKU (tối thiểu 3 ký tự)…",
           "sku_prefix": "Mã hàng"
@@ -4975,6 +4976,7 @@
         "reason_placeholder": "Người bán nên thay đổi điều gì?",
         "reject": "Gửi lại",
         "rejected": "Gửi lại cho người bán",
+        "save_first": "Hãy lưu thay đổi trước. Phê duyệt hoặc gửi trả lại không lưu các thay đổi này.",
         "send_back": "Gửi lại"
       },
       "save_label": "Lưu sản phẩm",

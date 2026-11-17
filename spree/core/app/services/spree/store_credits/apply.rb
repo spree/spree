@@ -33,7 +33,7 @@ module Spree
           @order.update_hooks.each { |hook| @order.send(hook) } if @order.respond_to?(:update_hooks)
           success(@order)
         else
-          failure(@order)
+          failure(@order, I18n.t('spree.store_credit_not_applied'))
         end
       end
 

@@ -86,6 +86,12 @@ module Spree
       handle_action(action, :credit, auth_code)
     end
 
+    # Cancelling gives the credit back, so the payment is void even when it
+    # was captured.
+    def cancel_voids?(_payment)
+      true
+    end
+
     # Credit goes back to the customer's balance rather than a card, so this
     # is a release rather than a refund and `refund:` does not apply.
     def cancel(auth_code, _payment = nil, refund: true)

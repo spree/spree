@@ -4,6 +4,7 @@ import {
   adminClient,
   currencyParts,
   Money,
+  toastMutationError,
   useMetadataSheet,
   ViewMetadataMenuItem,
 } from '@spree/dashboard-core'
@@ -393,6 +394,24 @@ function AddPaymentDialog({
     setCapture(false)
   }
 
+  // Drop a settled attempt's error when the dialog closes, so reopening it
+  // doesn't greet the admin with a refusal from a payment method they've since
+  // changed.
+  function handleOpenChange(next: boolean) {
+    if (!next && !mutation.isPending) mutation.reset()
+    onOpenChange(next)
+  }
+
+  function clearSettledError() {
+    if (mutation.isError) mutation.reset()
+  }
+
+  // Closing never resets an in-flight request, so one that fails after the
+  // dialog is gone keeps its error into the next open. Clear it while closed.
+  useEffect(() => {
+    if (!open && mutation.isError) mutation.reset()
+  }, [open, mutation.isError, mutation.reset])
+
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     if (!canSubmit) return
@@ -407,17 +426,24 @@ function AddPaymentDialog({
               onOpenChange(false)
               reset()
             },
+            // The payment exists by now; staying open would let a retry create a second one.
+            onError: (error) => {
+              toastMutationError(error)
+              onOpenChange(false)
+              reset()
+            },
           })
         } else {
           onOpenChange(false)
           reset()
         }
       },
+      onError: toastMutationError,
     })
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{t('admin.orders.detail.payment_form.title')}</DialogTitle>
@@ -435,6 +461,7 @@ function AddPaymentDialog({
                   onValueChange={(v) => {
                     setPaymentMethodId(v)
                     setSourceId('')
+                    clearSettledError()
                   }}
                 >
                   <SelectTrigger id="pay-method">
@@ -471,7 +498,13 @@ function AddPaymentDialog({
                       {t('admin.orders.detail.payment_form.no_saved_cards')}
                     </p>
                   ) : (
-                    <Select value={sourceId} onValueChange={setSourceId}>
+                    <Select
+                      value={sourceId}
+                      onValueChange={(v) => {
+                        setSourceId(v)
+                        clearSettledError()
+                      }}
+                    >
                       <SelectTrigger id="pay-source">
                         <SelectValue
                           placeholder={t('admin.orders.detail.payment_form.source_placeholder')}
@@ -508,7 +541,10 @@ function AddPaymentDialog({
                     step="any"
                     placeholder={defaultAmount || '0.00'}
                     value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
+                    onChange={(e) => {
+                      setAmount(e.target.value)
+                      clearSettledError()
+                    }}
                   />
                 </InputGroup>
                 <p className="text-xs text-muted-foreground mt-1">
@@ -524,10 +560,16 @@ function AddPaymentDialog({
                   </label>
                 </Field>
               )}
+
+              {mutation.isError && (
+                <p className="text-base text-destructive" role="alert">
+                  {(mutation.error as Error).message}
+                </p>
+              )}
             </FieldGroup>
           </DialogBody>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <Button type="button" variant="outline" onClick={() => handleOpenChange(false)}>
               {t('admin.actions.cancel')}
             </Button>
             <Button

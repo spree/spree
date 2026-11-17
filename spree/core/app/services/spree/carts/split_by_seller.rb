@@ -142,7 +142,10 @@ module Spree
         move_typed_lines(sibling, line_item_ids, divided)
         copy_promotions(source_order, sibling)
         copy_tax_identifier(source_order, sibling)
-        copy_po_document(source_order, sibling)
+        # The PO number rides along in CARRIED_TO_SIBLING, so the document
+        # behind it has to as well — otherwise a buyer whose checkout splits
+        # sees their reference on every order and the paperwork on only one.
+        sibling.copy_po_document_from!(source_order)
 
         sibling.reload
       end
@@ -386,18 +389,6 @@ module Spree
         attributes = identifier.attributes.except('id', 'owner_type', 'owner_id',
                                                   'created_at', 'updated_at')
         sibling.create_tax_identifier!(attributes)
-      end
-
-      # The PO number rides along in CARRIED_TO_SIBLING, so the document behind
-      # it has to as well — otherwise a buyer whose checkout splits sees their
-      # reference on every order and the paperwork on only one. The same blob,
-      # like the completion copy.
-      def copy_po_document(source_order, sibling)
-        return unless source_order.po_document.attached?
-
-        return if sibling.po_document.attach(source_order.po_document.blob)
-
-        raise ActiveRecord::RecordInvalid, sibling
       end
 
       # An order-level fee was charged for the checkout as a whole, so it is

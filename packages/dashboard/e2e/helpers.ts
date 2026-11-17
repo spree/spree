@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs'
-import { expect, type Locator, type Page } from '@playwright/test'
+import { request as apiRequest, expect, type Locator, type Page } from '@playwright/test'
 import { CREDENTIALS_FILE } from './paths'
 
 /** A CSV to hand to a file input, one row per entry. */
@@ -631,6 +631,52 @@ export async function invitationAcceptancePath(
   const { acceptance_url } = (await res.json()) as { acceptance_url: string }
   // Tolerate either path-only (no app origin configured) or an absolute URL.
   return acceptance_url.replace(/^https?:\/\/[^/]+/, '')
+}
+
+/** The password `addTeammate` gives the teammate it puts on the store. */
+export const TEAMMATE_PASSWORD = 'e2e-password-123'
+
+/**
+ * Puts a second teammate on the store through the API: an invitation, then
+ * its acceptance. Accepting signs the invitee in, so it happens in a request
+ * context of its own — sharing the page's would swap the admin's session
+ * cookie for the invitee's. Without `roleId` the teammate gets the first role
+ * listed.
+ */
+export async function addTeammate(
+  page: Page,
+  session: E2ELoginSession,
+  email: string,
+  roleId?: string,
+) {
+  const headers = { Authorization: `Bearer ${session.accessToken}` }
+  const roles = await page.request.get('/api/v3/admin/roles', { headers }).then((res) => res.json())
+  const created = await page.request.post('/api/v3/admin/invitations', {
+    headers,
+    data: { email, role_id: roleId ?? roles.data[0].id },
+  })
+  expect(created.status(), await created.text()).toBe(201)
+  const invitation = (await created.json()) as { id: string }
+
+  const acceptance = new URL(
+    await invitationAcceptancePath(page, session, `/api/v3/admin/invitations/${invitation.id}`),
+    'http://localhost',
+  )
+  const invitee = await apiRequest.newContext({ baseURL: new URL(page.url()).origin })
+  try {
+    const accepted = await invitee.post(`/api/v3/admin/auth/invitations/${invitation.id}/accept`, {
+      data: {
+        token: acceptance.searchParams.get('token'),
+        password: TEAMMATE_PASSWORD,
+        password_confirmation: TEAMMATE_PASSWORD,
+        first_name: 'Robin',
+        last_name: 'Teammate',
+      },
+    })
+    expect(accepted.ok(), await accepted.text()).toBeTruthy()
+  } finally {
+    await invitee.dispose()
+  }
 }
 
 /**

@@ -84,13 +84,18 @@ module Spree
       # off: a subquery over the line gives both rows the combined figure, and
       # the breakdown then adds up to double what the store discounted.
       #
-      # The grouped query is the only one that carries the join (Decision 13),
-      # so the dimensionless total uses the subquery form below instead.
+      # Only a query grouped by a promotion dimension carries the join
+      # (Decision 13), so the dimensionless total and breakdowns by any other
+      # dimension use the subquery form below instead (see grouped_joins).
       PROMOTION_DISCOUNTS_JOINED = 'SUM(-COALESCE(%{discounts}.amount, 0))'.freeze
 
+      # Unaliased so a promotion or coupon filter (%{dimension_filters}, which
+      # names %{discounts}.promotion_id) narrows these rows: filtered to one
+      # promotion, a line carrying two must count only that promotion's money.
       PROMOTION_DISCOUNTS_SUBQUERY = <<~SQL.squish.freeze
-        SUM(COALESCE((SELECT -SUM(d.amount) FROM %{discounts} d
-                      WHERE d.line_item_id = %{line_items}.id AND d.kind = 'promotion'), 0))
+        SUM(COALESCE((SELECT -SUM(%{discounts}.amount) FROM %{discounts}
+                      WHERE %{discounts}.line_item_id = %{line_items}.id AND %{discounts}.kind = 'promotion'
+                      %{dimension_filters}), 0))
       SQL
 
       # Checkouts that used a promotion. Counted in checkouts rather than
@@ -406,6 +411,7 @@ module Spree
 
           metric :promotion_discounts, sql: PROMOTION_DISCOUNTS_SUBQUERY,
                                        grouped_sql: PROMOTION_DISCOUNTS_JOINED,
+                                       grouped_joins: [:promotion_discounts],
                                        base: :line_items, format: :money,
                                        subject: -> { Spree::Promotion }, key_scope: 'read_promotions'
           # Counted in checkouts, not orders: a basket spanning several sellers

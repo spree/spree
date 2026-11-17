@@ -171,6 +171,58 @@ RSpec.describe Spree::CSV::ProductVariantPresenter do
       end
     end
 
+    # Spree 6 uploads land on the product and reach a variant through
+    # variant_media, never on variant.images.
+    context 'with product-level media' do
+      let!(:variant_images) { [] }
+      let!(:product_media) { create_list(:media, 2, viewable: product) }
+      let(:image_columns) { subject.values_at(*%w[image1_src image2_src image3_src].map { |name| described_class::CSV_HEADERS.index(name) }) }
+
+      it 'exports the product gallery on the product row as original files the import can fetch' do
+        expect(image_columns[0]).to include('/blobs/').and end_with(product_media[0].filename.to_s)
+        expect(image_columns[1]).to end_with(product_media[1].filename.to_s)
+        expect(image_columns[2]).to be_nil
+      end
+
+      it 'leaves out videos' do
+        product_media[0].update_column(:media_type, 'video')
+        product.reload
+
+        expect(image_columns[0]).to end_with(product_media[1].filename.to_s)
+        expect(image_columns[1]).to be_nil
+      end
+
+      context 'on a variant row' do
+        let(:variant) { create(:variant, product: product) }
+        let(:presenter) { described_class.new(product, variant, 1, properties, taxons, store, custom_fields) }
+
+        it 'exports only the media linked to the variant' do
+          Spree::VariantMedia.create!(variant: variant, asset: product_media[1])
+
+          expect(image_columns[0]).to end_with(product_media[1].filename.to_s)
+          expect(image_columns[1]).to be_nil
+        end
+
+        it 'exports no images when none is linked' do
+          expect(image_columns.compact).to be_empty
+        end
+
+        context 'when it is the first row' do
+          let(:presenter) { described_class.new(product, variant, 0, properties, taxons, store, custom_fields) }
+
+          it 'exports only the media linked to the variant' do
+            Spree::VariantMedia.create!(variant: variant, asset: product_media[1])
+
+            expect(image_columns.compact).to contain_exactly(end_with(product_media[1].filename.to_s))
+          end
+
+          it 'falls back to the product gallery when none is linked' do
+            expect(image_columns.compact.size).to eq 2
+          end
+        end
+      end
+    end
+
     describe 'images host' do
       context 'when default host is set' do
         before do
