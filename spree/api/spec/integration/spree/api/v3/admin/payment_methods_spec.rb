@@ -333,8 +333,8 @@ RSpec.describe 'Admin Payment Methods API', type: :request, swagger_doc: 'api-re
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Enumerates the registered payment method rule kinds with their names, descriptions and preference schemas, ' \
-                  'for building an "Add condition" picker. Plugins extend the list by registering ' \
-                  '`Spree::PaymentMethodRule` subclasses in `Spree.payment_method_rules`.'
+                  'for building an "Add condition" picker. Extensions can register their own rule kinds, ' \
+                  'which appear here too.'
       admin_scope :read, :settings
 
       admin_sdk_example 'payment-methods/rule-types'

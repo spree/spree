@@ -57,6 +57,20 @@ RSpec.describe SpreeStripe::PayoutProvider do
         described_class.new.transfer!(seller_transfer)
       end
 
+      it 'draws on a charge an earlier gateway record took on the same account' do
+        earlier = create(:stripe_gateway, store: store, name: 'Stripe (old)', active: false,
+                                          preferences: { publishable_key: gateway.preferred_publishable_key,
+                                                         secret_key: gateway.preferred_secret_key })
+        payment.update_columns(payment_method_id: earlier.id)
+
+        expect(Stripe::Transfer).to receive(:create) do |payload, _options|
+          expect(payload[:source_transaction]).to eq('ch_1')
+          Stripe::StripeObject.construct_from(id: 'tr_1')
+        end
+
+        described_class.new.transfer!(seller_transfer)
+      end
+
       it 'draws on the charge and leaves its group alone' do
         expect(Stripe::Transfer).to receive(:create) do |payload, _options|
           expect(payload[:source_transaction]).to eq('ch_1')

@@ -113,18 +113,22 @@ catalog.catalog_assignments.find_or_create_by!(assignable: company)
 # what keeps it off the retail channel (docs/plans/6.1-payment-method-rules.md).
 wholesale_channel = store.channels.find_by(code: Spree::Seeds::Channels::WHOLESALE_CODE)
 if wholesale_channel
-  invoice = store.payment_methods.find_or_initialize_by(type: 'Spree::PaymentMethod::Check', name: 'Pay on invoice')
-  invoice.description = 'Invoice payable on your agreed terms.'
-  invoice.active = true
-  invoice.storefront_visible = true
-  invoice.save!
+  # Saved together, so a failed rule never leaves the invoice method on retail
+  # checkout unrestricted.
+  Spree::PaymentMethod.transaction do
+    invoice = store.payment_methods.find_or_initialize_by(type: 'Spree::PaymentMethod::Check', name: 'Pay on invoice')
+    invoice.description = 'Invoice payable on your agreed terms.'
+    invoice.active = true
+    invoice.storefront_visible = true
+    invoice.save!
 
-  # The method is assigned first: the channel ids resolve through its store.
-  # Reset on every run, so an edited or switched-off rule cannot leave the
-  # invoice offered on retail checkout.
-  rule = invoice.payment_method_rules.find_by(type: 'Spree::PaymentMethodRules::ChannelRule') ||
-         Spree::PaymentMethodRules::ChannelRule.new(payment_method: invoice)
-  rule.active = true
-  rule.preferred_channel_ids = [wholesale_channel.id]
-  rule.save!
+    # The method is assigned first: the channel ids resolve through its store.
+    # Reset on every run, so an edited or switched-off rule cannot leave the
+    # invoice offered on retail checkout.
+    rule = invoice.payment_method_rules.find_by(type: 'Spree::PaymentMethodRules::ChannelRule') ||
+           Spree::PaymentMethodRules::ChannelRule.new(payment_method: invoice)
+    rule.active = true
+    rule.preferred_channel_ids = [wholesale_channel.id]
+    rule.save!
+  end
 end

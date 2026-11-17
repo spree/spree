@@ -1301,6 +1301,16 @@ RSpec.describe SpreeStripe::Gateway do
       expect(legacy.secret_preferences).not_to have_key('publishable_key')
       expect(legacy.preferred_secret_key).to eq('sk_test_1')
     end
+
+    it 'is not brought back from the secrets once cleared' do
+      gateway.update_columns(preferences: gateway.preferences.except('publishable_key'),
+                             secret_preferences: { 'secret_key' => 'sk_test_1', 'publishable_key' => 'pk_test_legacy' })
+      legacy = described_class.find(gateway.id)
+      legacy.assign_preferences({ 'publishable_key' => '' })
+
+      expect(legacy).not_to be_valid
+      expect(legacy.errors[:preferred_publishable_key]).to be_present
+    end
   end
 
   describe 'running two accounts' do

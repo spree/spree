@@ -35,11 +35,18 @@ module SpreeStripe
 
     # Stores before 6.1 kept the publishable key with the secrets. Read from
     # there until the next save moves it across — through the stored value, so
-    # the admin form shows it as well as the reader.
+    # the admin form shows it as well as the reader. A key cleared through
+    # the preferences is left blank, so presence validation still refuses it.
     def stored_preference(name)
       return super unless name.to_sym == :publishable_key
+      return super if @publishable_key_assigned
 
       super { nil }.presence || legacy_publishable_key || yield
+    end
+
+    def set_preference(name, value)
+      @publishable_key_assigned = true if name.to_sym == :publishable_key
+      super
     end
 
     def self.logo_url
@@ -342,7 +349,7 @@ module SpreeStripe
       legacy = legacy_publishable_key
       return if legacy.nil?
 
-      self.preferred_publishable_key = legacy if (preferences || {}).with_indifferent_access[:publishable_key].blank?
+      self.preferred_publishable_key = legacy if !@publishable_key_assigned && (preferences || {}).with_indifferent_access[:publishable_key].blank?
       self.secret_preferences = secret_preferences.except('publishable_key')
     end
 

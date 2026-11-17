@@ -21,6 +21,13 @@ describe Spree::PaymentMethodRule, type: :model do
 
       expect(build(:channel_payment_method_rule, payment_method: payment_method)).not_to be_valid
     end
+
+    it 'refuses a missing active flag instead of failing on save' do
+      rule = build(:channel_payment_method_rule, payment_method: payment_method, active: nil)
+
+      expect(rule).not_to be_valid
+      expect(rule.errors[:active]).to be_present
+    end
   end
 
   describe Spree::PaymentMethodRules::ChannelRule do
@@ -80,6 +87,13 @@ describe Spree::PaymentMethodRule, type: :model do
     it 'refuses a minimum above the maximum in one currency' do
       rule = described_class.new(payment_method: payment_method,
                                  preferred_min_totals: { 'USD' => '500' }, preferred_max_totals: { 'USD' => '100' })
+
+      expect(rule).not_to be_valid
+      expect(rule.errors.full_messages.join).to include('USD')
+    end
+
+    it 'refuses a negative total' do
+      rule = described_class.new(payment_method: payment_method, preferred_max_totals: { 'USD' => '-1' })
 
       expect(rule).not_to be_valid
       expect(rule.errors.full_messages.join).to include('USD')

@@ -410,10 +410,21 @@ module SpreeStripe
     # fail every card-funded transfer on an id Stripe cannot use. The charge
     # is recorded on the payment when its session completes.
     def source_charge_for(seller_transfer, gateway)
-      payment = seller_transfer.order.settlement_payments.valid.completed.
-                find { |candidate| candidate.payment_method_id == gateway.id }
+      payment = seller_transfer.order.settlement_payments.valid.completed.includes(:payment_method).
+                find { |candidate| same_stripe_account?(candidate.payment_method, gateway) }
 
       payment&.metadata&.dig('stripe_charge_id')
+    end
+
+    # A gateway record replaced by another for the same Stripe account still
+    # took its charges on that account. A publishable key belongs to exactly
+    # one account, so matching keys means the same account.
+    def same_stripe_account?(payment_method, gateway)
+      return true if payment_method == gateway
+      return false unless payment_method.is_a?(SpreeStripe::Gateway)
+
+      key = gateway.preferred_publishable_key
+      key.present? && payment_method.preferred_publishable_key == key
     end
   end
 end
