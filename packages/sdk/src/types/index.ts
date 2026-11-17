@@ -92,7 +92,12 @@ export type {
 export type * from './params'
 
 // Convenience aliases for the inline types of the generated Cart
-/** A single unsatisfied checkout prerequisite. */
+/**
+ * A single unsatisfied checkout prerequisite: the checkout `step` it belongs
+ * to (e.g. "address", "payment"), the `field` that needs to be satisfied
+ * (e.g. "email", "shipping_address"), a machine-readable `code` and a
+ * human-readable `message`.
+ */
 export type CheckoutRequirement = CartType['requirements'][number]
 export type CartWarning = CartType['warnings'][number]
 
