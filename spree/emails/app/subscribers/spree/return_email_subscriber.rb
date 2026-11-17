@@ -8,8 +8,7 @@ module Spree
       return_record = find_return(event)
       return unless return_record
 
-      store = return_record.store
-      return unless store.prefers_send_consumer_transactional_emails?
+      return unless return_record.store.sends_customer_email?('spree/return_mailer/refunded_email')
       # A return owed nothing closes without a refund, so there is none to announce.
       return if return_record.refunded_total.zero?
 

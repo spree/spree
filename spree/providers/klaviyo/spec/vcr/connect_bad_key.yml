@@ -1,0 +1,52 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://a.klaviyo.com/api/lists/Wv3WNB
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Content-Type:
+      - application/json
+      User-Agent:
+      - klaviyo-api-ruby/19.0.0
+      Revision:
+      - '2026-10-15'
+      Accept:
+      - application/vnd.api+json
+      Authorization:
+      - Klaviyo-API-Key <FILTERED>
+      Expect:
+      - ''
+  response:
+    status:
+      code: 401
+      message: ''
+    headers:
+      Date:
+      - Thu, 05 Nov 2026 14:31:52 GMT
+      Content-Type:
+      - application/vnd.api+json
+      Content-Length:
+      - '229'
+      Cf-Ray:
+      - a55c908abbf0bf28-WAW
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      X-Envoy-Upstream-Service-Time:
+      - '2'
+      X-Klaviyo-Req-Id:
+      - 849a8bd0-3c3e-4d81-96b9-b009509c9167
+    body:
+      encoding: ASCII-8BIT
+      string: '{"errors":[{"code":"authentication_failed","status":401,"id":"849a8bd0-3c3e-4d81-96b9-b009509c9167","detail":"Incorrect
+        authentication credentials.","title":"Incorrect authentication credentials.","source":{"pointer":"/data/"}}]}'
+  recorded_at: Thu, 05 Nov 2026 14:31:52 GMT
+recorded_with: VCR 6.4.1

@@ -1,0 +1,210 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://a.klaviyo.com/api/profile-import
+    body:
+      encoding: UTF-8
+      string: '{"data":{"type":"profile","attributes":{"email":"<KLAVIYO_TEST_INBOX_USER>+conflict-a-468fa2f9@<KLAVIYO_TEST_INBOX_DOMAIN>","first_name":"Klaviyo","last_name":"Test","external_id":"cus_8dd52fdc"}}}'
+    headers:
+      Content-Type:
+      - application/vnd.api+json
+      User-Agent:
+      - klaviyo-api-ruby/19.0.0
+      Revision:
+      - '2026-10-15'
+      Accept:
+      - application/vnd.api+json
+      Authorization:
+      - Klaviyo-API-Key <FILTERED>
+      Expect:
+      - ''
+  response:
+    status:
+      code: 201
+      message: ''
+    headers:
+      Date:
+      - Thu, 05 Nov 2026 14:31:55 GMT
+      Content-Type:
+      - application/vnd.api+json
+      Content-Length:
+      - '1609'
+      Cf-Ray:
+      - a55c9099cf58bf28-WAW
+      Cf-Cache-Status:
+      - DYNAMIC
+      Allow:
+      - POST, OPTIONS
+      Content-Language:
+      - en-us
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Vary:
+      - Accept, Accept-Language, Cookie, Origin
+      X-Content-Type-Options:
+      - nosniff
+      Cid:
+      - VkW83s
+      Content-Security-Policy:
+      - script-src 'report-sample' 'strict-dynamic' 'unsafe-eval'; base-uri 'none';
+        frame-ancestors 'self' login.bigcommerce.com *.mybigcommerce.com admin.shopify.com
+        klaviyo.file.force.com klaviyo.lightning.force.com klaviyo.my.salesforce.com;
+        object-src 'none'; report-uri /csp/
+      Ratelimit-Limit:
+      - 75, 75;w=1, 750;w=60
+      Ratelimit-Remaining:
+      - '74'
+      Ratelimit-Reset:
+      - '0'
+      X-Envoy-Upstream-Service-Time:
+      - '158'
+      X-Klaviyo-Api-Revision:
+      - '2026-10-15'
+      X-Klaviyo-Req-Id:
+      - ce19afec-d484-4b79-b2fc-9a296d536500
+    body:
+      encoding: ASCII-8BIT
+      string: '{"data":{"type":"profile","id":"01M6P1Z7590DSAPDYBD5TG1ATH","attributes":{"email":"<KLAVIYO_TEST_INBOX_USER>+conflict-a-468fa2f9@<KLAVIYO_TEST_INBOX_DOMAIN>","phone_number":null,"external_id":"cus_8dd52fdc","anonymous_id":null,"whatsapp_bsuid":null,"first_name":"Klaviyo","last_name":"Test","organization":null,"locale":null,"title":null,"image":null,"created":"2026-11-05T14:31:55.345409+00:00","updated":"2026-11-05T14:31:55.345427+00:00","last_event_date":null,"location":{"address1":null,"address2":null,"city":null,"country":null,"latitude":null,"longitude":null,"region":null,"zip":null,"timezone":null,"ip":null},"properties":{},"identifiers":[]},"relationships":{"lists":{"links":{"self":"https://a.klaviyo.com/api/profiles/01M6P1Z7590DSAPDYBD5TG1ATH/relationships/lists/","related":"https://a.klaviyo.com/api/profiles/01M6P1Z7590DSAPDYBD5TG1ATH/lists/"}},"segments":{"links":{"self":"https://a.klaviyo.com/api/profiles/01M6P1Z7590DSAPDYBD5TG1ATH/relationships/segments/","related":"https://a.klaviyo.com/api/profiles/01M6P1Z7590DSAPDYBD5TG1ATH/segments/"}},"push-tokens":{"links":{"self":"https://a.klaviyo.com/api/profiles/01M6P1Z7590DSAPDYBD5TG1ATH/relationships/push-tokens/","related":"https://a.klaviyo.com/api/profiles/01M6P1Z7590DSAPDYBD5TG1ATH/push-tokens/"}},"conversation":{"links":{"self":"https://a.klaviyo.com/api/profiles/01M6P1Z7590DSAPDYBD5TG1ATH/relationships/conversation/","related":"https://a.klaviyo.com/api/profiles/01M6P1Z7590DSAPDYBD5TG1ATH/conversation/"}}},"links":{"self":"https://a.klaviyo.com/api/profiles/01M6P1Z7590DSAPDYBD5TG1ATH/"}},"links":{"self":"https://a.klaviyo.com/api/profile-import"}}'
+  recorded_at: Thu, 05 Nov 2026 14:31:55 GMT
+- request:
+    method: post
+    uri: https://a.klaviyo.com/api/profile-import
+    body:
+      encoding: UTF-8
+      string: '{"data":{"type":"profile","attributes":{"email":"<KLAVIYO_TEST_INBOX_USER>+conflict-b-ee8ba917@<KLAVIYO_TEST_INBOX_DOMAIN>","first_name":"Klaviyo","last_name":"Test","external_id":"cus_02bd0cfd"}}}'
+    headers:
+      Content-Type:
+      - application/vnd.api+json
+      User-Agent:
+      - klaviyo-api-ruby/19.0.0
+      Revision:
+      - '2026-10-15'
+      Accept:
+      - application/vnd.api+json
+      Authorization:
+      - Klaviyo-API-Key <FILTERED>
+      Expect:
+      - ''
+  response:
+    status:
+      code: 201
+      message: ''
+    headers:
+      Date:
+      - Thu, 05 Nov 2026 14:31:55 GMT
+      Content-Type:
+      - application/vnd.api+json
+      Content-Length:
+      - '1609'
+      Cf-Ray:
+      - a55c909ba8e4bf28-WAW
+      Cf-Cache-Status:
+      - DYNAMIC
+      Allow:
+      - POST, OPTIONS
+      Content-Language:
+      - en-us
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Vary:
+      - Accept, Accept-Language, Cookie, Origin
+      X-Content-Type-Options:
+      - nosniff
+      Cid:
+      - VkW83s
+      Content-Security-Policy:
+      - script-src 'report-sample' 'strict-dynamic' 'unsafe-eval'; base-uri 'none';
+        frame-ancestors 'self' login.bigcommerce.com *.mybigcommerce.com admin.shopify.com
+        klaviyo.file.force.com klaviyo.lightning.force.com klaviyo.my.salesforce.com;
+        object-src 'none'; report-uri /csp/
+      Ratelimit-Limit:
+      - 75, 75;w=1, 750;w=60
+      Ratelimit-Remaining:
+      - '73'
+      Ratelimit-Reset:
+      - '0'
+      X-Envoy-Upstream-Service-Time:
+      - '159'
+      X-Klaviyo-Api-Revision:
+      - '2026-10-15'
+      X-Klaviyo-Req-Id:
+      - 4f232b13-8f79-46b8-af86-7f612ae83c8c
+    body:
+      encoding: ASCII-8BIT
+      string: '{"data":{"type":"profile","id":"01M6P1Z7EE4G2VWF8WGWE2XNGY","attributes":{"email":"<KLAVIYO_TEST_INBOX_USER>+conflict-b-ee8ba917@<KLAVIYO_TEST_INBOX_DOMAIN>","phone_number":null,"external_id":"cus_02bd0cfd","anonymous_id":null,"whatsapp_bsuid":null,"first_name":"Klaviyo","last_name":"Test","organization":null,"locale":null,"title":null,"image":null,"created":"2026-11-05T14:31:55.639380+00:00","updated":"2026-11-05T14:31:55.639400+00:00","last_event_date":null,"location":{"address1":null,"address2":null,"city":null,"country":null,"latitude":null,"longitude":null,"region":null,"zip":null,"timezone":null,"ip":null},"properties":{},"identifiers":[]},"relationships":{"lists":{"links":{"self":"https://a.klaviyo.com/api/profiles/01M6P1Z7EE4G2VWF8WGWE2XNGY/relationships/lists/","related":"https://a.klaviyo.com/api/profiles/01M6P1Z7EE4G2VWF8WGWE2XNGY/lists/"}},"segments":{"links":{"self":"https://a.klaviyo.com/api/profiles/01M6P1Z7EE4G2VWF8WGWE2XNGY/relationships/segments/","related":"https://a.klaviyo.com/api/profiles/01M6P1Z7EE4G2VWF8WGWE2XNGY/segments/"}},"push-tokens":{"links":{"self":"https://a.klaviyo.com/api/profiles/01M6P1Z7EE4G2VWF8WGWE2XNGY/relationships/push-tokens/","related":"https://a.klaviyo.com/api/profiles/01M6P1Z7EE4G2VWF8WGWE2XNGY/push-tokens/"}},"conversation":{"links":{"self":"https://a.klaviyo.com/api/profiles/01M6P1Z7EE4G2VWF8WGWE2XNGY/relationships/conversation/","related":"https://a.klaviyo.com/api/profiles/01M6P1Z7EE4G2VWF8WGWE2XNGY/conversation/"}}},"links":{"self":"https://a.klaviyo.com/api/profiles/01M6P1Z7EE4G2VWF8WGWE2XNGY/"}},"links":{"self":"https://a.klaviyo.com/api/profile-import"}}'
+  recorded_at: Thu, 05 Nov 2026 14:31:55 GMT
+- request:
+    method: post
+    uri: https://a.klaviyo.com/api/profile-import
+    body:
+      encoding: UTF-8
+      string: '{"data":{"type":"profile","attributes":{"email":"<KLAVIYO_TEST_INBOX_USER>+conflict-a-468fa2f9@<KLAVIYO_TEST_INBOX_DOMAIN>","first_name":"Klaviyo","last_name":"Test","external_id":"cus_02bd0cfd"}}}'
+    headers:
+      Content-Type:
+      - application/vnd.api+json
+      User-Agent:
+      - klaviyo-api-ruby/19.0.0
+      Revision:
+      - '2026-10-15'
+      Accept:
+      - application/vnd.api+json
+      Authorization:
+      - Klaviyo-API-Key <FILTERED>
+      Expect:
+      - ''
+  response:
+    status:
+      code: 200
+      message: ''
+    headers:
+      Date:
+      - Thu, 05 Nov 2026 14:31:56 GMT
+      Content-Type:
+      - application/vnd.api+json
+      Content-Length:
+      - '1602'
+      Cf-Ray:
+      - a55c909d8a58bf28-WAW
+      Cf-Cache-Status:
+      - DYNAMIC
+      Allow:
+      - POST, OPTIONS
+      Content-Language:
+      - en-us
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Vary:
+      - Accept, Accept-Language, Cookie, Origin
+      X-Content-Type-Options:
+      - nosniff
+      Cid:
+      - VkW83s
+      Content-Security-Policy:
+      - base-uri 'none'; object-src 'none'; frame-ancestors 'self' login.bigcommerce.com
+        *.mybigcommerce.com admin.shopify.com klaviyo.file.force.com klaviyo.lightning.force.com
+        klaviyo.my.salesforce.com; script-src 'report-sample' 'strict-dynamic' 'unsafe-eval';
+        report-uri /csp/
+      Ratelimit-Limit:
+      - 75, 75;w=1, 750;w=60
+      Ratelimit-Remaining:
+      - '72'
+      Ratelimit-Reset:
+      - '0'
+      X-Envoy-Upstream-Service-Time:
+      - '139'
+      X-Klaviyo-Api-Revision:
+      - '2026-10-15'
+      X-Klaviyo-Req-Id:
+      - ec42b6f9-6437-4198-9afd-e4056a01a18a
+    body:
+      encoding: ASCII-8BIT
+      string: '{"data":{"type":"profile","id":"01M6P1Z7EE4G2VWF8WGWE2XNGY","attributes":{"email":"<KLAVIYO_TEST_INBOX_USER>+conflict-a-468fa2f9@<KLAVIYO_TEST_INBOX_DOMAIN>","phone_number":null,"external_id":"cus_02bd0cfd","anonymous_id":null,"whatsapp_bsuid":null,"first_name":"Klaviyo","last_name":"Test","organization":null,"locale":null,"title":null,"image":null,"created":"2026-11-05T14:31:56+00:00","updated":"2026-11-05T14:31:55.905357+00:00","last_event_date":null,"location":{"address1":null,"address2":null,"city":null,"country":null,"latitude":null,"longitude":null,"region":null,"zip":null,"timezone":null,"ip":null},"properties":{},"identifiers":[]},"relationships":{"lists":{"links":{"self":"https://a.klaviyo.com/api/profiles/01M6P1Z7EE4G2VWF8WGWE2XNGY/relationships/lists/","related":"https://a.klaviyo.com/api/profiles/01M6P1Z7EE4G2VWF8WGWE2XNGY/lists/"}},"segments":{"links":{"self":"https://a.klaviyo.com/api/profiles/01M6P1Z7EE4G2VWF8WGWE2XNGY/relationships/segments/","related":"https://a.klaviyo.com/api/profiles/01M6P1Z7EE4G2VWF8WGWE2XNGY/segments/"}},"push-tokens":{"links":{"self":"https://a.klaviyo.com/api/profiles/01M6P1Z7EE4G2VWF8WGWE2XNGY/relationships/push-tokens/","related":"https://a.klaviyo.com/api/profiles/01M6P1Z7EE4G2VWF8WGWE2XNGY/push-tokens/"}},"conversation":{"links":{"self":"https://a.klaviyo.com/api/profiles/01M6P1Z7EE4G2VWF8WGWE2XNGY/relationships/conversation/","related":"https://a.klaviyo.com/api/profiles/01M6P1Z7EE4G2VWF8WGWE2XNGY/conversation/"}}},"links":{"self":"https://a.klaviyo.com/api/profiles/01M6P1Z7EE4G2VWF8WGWE2XNGY/"}},"links":{"self":"https://a.klaviyo.com/api/profile-import"}}'
+  recorded_at: Thu, 05 Nov 2026 14:31:55 GMT
+recorded_with: VCR 6.4.1

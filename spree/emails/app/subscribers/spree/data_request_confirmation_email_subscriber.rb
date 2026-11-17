@@ -9,7 +9,7 @@ module Spree
     def handle(event)
       data_request = Spree::DataRequest.find_by_prefix_id(event.payload['id'])
       return unless data_request&.confirmable?
-      return unless data_request.store.prefers_send_consumer_transactional_emails?
+      return unless data_request.store.sends_customer_email?('spree/customer_mailer/data_request_confirmation_email')
 
       CustomerMailer.data_request_confirmation_email(
         data_request,

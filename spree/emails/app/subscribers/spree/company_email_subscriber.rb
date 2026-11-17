@@ -11,7 +11,7 @@ module Spree
       invitation = Spree::CompanyInvitation.find_by_prefix_id(event.payload['id'])
       return unless invitation
       return unless invitation.pending?
-      return unless invitation.store&.prefers_send_consumer_transactional_emails?
+      return unless invitation.store&.sends_customer_email?('spree/company_mailer/invitation_email')
 
       CompanyMailer.invitation_email(invitation.id).deliver_later
     end

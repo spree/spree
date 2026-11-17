@@ -1,20 +1,21 @@
 ---
 title: "Connect Klaviyo email marketing platform to Spree Commerce"
 sidebarTitle: Klaviyo
-description: "Connect Spree to Klaviyo to sync customer profiles, track ecommerce events, and power email and SMS marketing automations, segmentation, and newsletter signups."
+description: "Connect Spree to Klaviyo to sync customer profiles, newsletter sign-ups and order events, and let Klaviyo send your newsletter confirmation and order emails."
 ---
 
-Klaviyo is a powerful marketing automation platform used for email and SMS campaigns. By connecting your store to Klaviyo, you can automatically track user interactions, build audience profiles, and grow your newsletter subscriber base - all without manual setup.
+Klaviyo is a marketing automation platform for email and SMS. Connecting your store sends Klaviyo what it needs to segment customers and run flows: customer profiles, newsletter sign-ups, and every order from purchase to refund, under Klaviyo's standard ecommerce metric names. Klaviyo's flow templates, metric mapping and lifetime-value reports recognise the data without extra setup.
 
-With Spree’s native integration, you can start collecting meaningful data for segmentation and automation with just a few clicks.
+Two parts work together:
+
+- **Spree's server** sends what only it knows: profiles, newsletter sign-ups and removals, purchases, cancellations, shipments and refunds.
+- **Your storefront** sends browsing events and Started Checkout, and tells Klaviyo who is shopping, through Klaviyo's script, which you load from Google Tag Manager once the shopper consents.
 
 <Info>
-  You must have an existing Klaviyo account to connect this integration.
+  You need an existing Klaviyo account to connect this integration.
 </Info>
 
 ## Installation
-
-To install the Klaviyo integration, you need to run the following command:
 
 <CodeGroup>
 
@@ -22,96 +23,160 @@ To install the Klaviyo integration, you need to run the following command:
 spree add klaviyo
 ```
 
-```bash Without Spree CLI
-bundle add spree_klaviyo && bin/rails g spree_klaviyo:install && bin/rails db:migrate
+```ruby Without Spree CLI
+# server/Gemfile — use the same version requirement as your `spree` gem, then run `bundle install`
+gem 'spree_klaviyo', '>= 6.0.0'
 ```
 
 </CodeGroup>
 
-The Spree CLI also runs the migrations and restarts the server for you. Without it, restart the server yourself after the commands finish.
+The Spree CLI restarts the server for you. Without it, restart the server yourself. The integration registers itself, so there is nothing to generate and no migrations to run.
+
+The Klaviyo SDK uses libcurl, which Spree's server image already includes.
+
+## Create a private API key
+
+In Klaviyo, go to **Settings → Account → API keys** and click **Create Private API Key**.
+
+![The API keys page in Klaviyo's settings](/images/integrations/klaviyo/3.create_private_key.png)
+
+Choose **Custom Key** and give it these scopes:
+
+| Scope | Access | Used for |
+|---|---|---|
+| Events | Read/Write | Order and refund events |
+| Lists | Read/Write | Checking the connection, newsletter sign-ups |
+| Profiles | Read/Write | Customer profiles |
+| Subscriptions | Read/Write | Email-marketing consent |
+| Data Privacy | Write | Deleting the profile of a customer you erase |
+
+![Klaviyo's form for a new private key with custom scopes](/images/integrations/klaviyo/4.configure_private_key.png)
+
+Turning the integration on reads your newsletter list, so a wrong key, a key without the Lists scope or a wrong list id stops it with Klaviyo's own message. A key missing one of the other scopes still connects. The first call that needs the missing scope is then refused and reported to your error tracker, so check the scopes before you connect.
 
 ## Connect Klaviyo
 
-Sign in to your Spree admin dashboard and navigate to the Integrations tab. 
+In the Spree admin dashboard, open **Settings → Integrations**, find Klaviyo under Marketing and add it. Enter:
 
-![](/images/integrations/klaviyo/1.klaviyo.png)
+- **Private API key**: the key you just created.
+- **Newsletter list ID**: the Klaviyo list newsletter sign-ups go to. Find it in Klaviyo under **Audience → Lists & segments**, in the list's settings.
 
-To connect Klaviyo, locate the Klaviyo tile under the Marketing section and click Connect Klaviyo to open the setup form.
+Save, then turn the integration on. Only an active integration sends anything to Klaviyo.
 
-![](/images/integrations/klaviyo/2.creation_form.png)
+## Newsletter sign-ups and double opt-in
 
-You’ll need to enter the following:
+Klaviyo runs the newsletter opt-in. Every sign-up goes to Klaviyo at once, and the list's own opt-in setting, which you choose in Klaviyo, decides what happens next:
 
-- **Public API Key**: This key identifies your account to Klaviyo.
-- **Private API Key**: Used to authorize and securely send event and profile data.
-- **Newsletter List ID**: The ID of the Klaviyo list you want to use for newsletter signups.
-  - This list will be used as the default newsletter list for customers signing up from the storefront or checkout.
+- **Double opt-in**: Klaviyo emails its confirmation and adds the address once the shopper clicks the link. Design the confirmation email in Klaviyo, under the list's settings. Many markets expect double opt-in, including Germany, Austria, Switzerland and much of the EU.
+- **Single opt-in**: Klaviyo adds the address at once, and nobody sends a confirmation.
 
-Click **Create** to finalize the integration.
+While the integration is active, Spree does not send its own newsletter confirmation in either case. A signed-in customer who ticks "email me" also confirms through Klaviyo's email on a double opt-in list, because the list's setting covers every source.
 
-<Info>
-  You must configure your Private API Key in Klaviyo before you can finalize the integration (see below).
-</Info>
+An address that signs up again before confirming is sent another confirmation email.
 
-## Configure API Key Permissions in Klaviyo
+When a subscription is removed (the customer opts out, staff delete the subscriber, or you erase the customer), Spree unsubscribes the address, which revokes its email-marketing consent in Klaviyo. Klaviyo keeps consent per account, not per list. Stores that share one Klaviyo account therefore share consent: an unsubscribe sent for one store stops marketing email from all of them.
 
-Before you can finalize the creation of your Klaviyo integration, you’ll need to create a Private API Key. To do so navigate to Settings → Account → API Keys in Klaviyo.
+Confirmations and unsubscribes made in Klaviyo are not reflected in Spree. Klaviyo is the record of marketing consent for your store.
 
-![](/images/integrations/klaviyo/3.create_private_key.png)
+## What Spree sends
 
-Click Create Private API Key to open the key creation form.
+| In Spree | In Klaviyo |
+|---|---|
+| A customer is created or updated | The profile is created or updated |
+| A newsletter sign-up | The address is subscribed to your list |
+| A newsletter subscription is removed | The address is unsubscribed |
+| An order is placed | The profile is updated from the order, plus Placed Order and one Ordered Product per line |
+| A package ships | Fulfilled Order, for that package |
+| An order is canceled | Canceled Order |
+| A return is refunded | Return Refunded, unless nothing was refunded |
+| A customer is erased | The profile is deleted, 30 minutes later |
 
-![](/images/integrations/klaviyo/4.configure_private_key.png)
+A split checkout on a marketplace is one purchase: it sends one Placed Order with the whole basket, and its sellers' orders send none. Shipments and cancellations are still sent per seller's order.
 
-When generating your Private API Key in Klaviyo, you must enable specific access scopes for the integration to function properly:
+Each profile carries the customer's email, name and location from their billing address, plus an external id so Klaviyo keeps one profile when the customer changes their email. A guest is identified by email alone. When a guest registers, Klaviyo adds the external id to their guest profile, so their history stays on one profile.
 
-- **Events** - Read/Write Access
-- **Lists** - Read/Write Access
-- **Profiles** - Read/Write Access
-- **Subscriptions** - Read/Write Access
+### Event properties
 
-You can configure this by selecting Custom Key during key configuration, then selecting the required scopes as mentioned above.
+The events use the property names of Klaviyo's ecommerce guide, so Klaviyo's templates can use them directly:
+
+- **Placed Order** and **Canceled Order**: `OrderId`, `Items`, `ItemNames`, `Categories`, `DiscountCode`, `DiscountValue`, `Subtotal`, `ShippingTotal`, `TaxTotal`, `Total`, `BillingAddress`, `ShippingAddress` and `NotifyCustomer`.
+- **Ordered Product**: one line's `ProductID`, `SKU`, `ProductName`, `Quantity`, `ItemPrice`, `RowTotal`, `ProductURL`, `ImageURL` and `Categories`, plus `OrderId`.
+- **Fulfilled Order**: `OrderId`, `TrackingNumber`, `TrackingURL`, the package's `Items` and `ItemNames`, `ShippingAddress` and `NotifyCustomer`.
+- **Return Refunded**: `ReturnNumber`, `OrderId`, the returned `Items`, `ItemNames`, `RefundedTotal` and `Currency`.
+
+Each item in `Items` carries the same fields as Ordered Product. `OrderId` is the order number the customer was given: for a split checkout, that is the purchase's number. Every event is sent once, even when Spree retries it.
+
+### Lifetime value
+
+Placed Order, Ordered Product, Fulfilled Order and Canceled Order carry a value, so Klaviyo counts revenue and subtracts a cancellation from the customer's lifetime value. Refunds never reduce lifetime value: Return Refunded carries the refunded total as a property, not as revenue. On a marketplace, a seller's cancellation does not reduce it either, because it cannot be matched to the purchase's Placed Order. Treat lifetime value in Klaviyo as approximate for marketplace stores.
+
+## Let Klaviyo send your order emails
+
+Four switches in the integration form hand an order email over to Klaviyo. While a switch is on, Spree stops sending that email, and a Klaviyo flow sends it instead:
+
+| Switch | Spree stops sending | Build the flow on |
+|---|---|---|
+| Klaviyo sends the order confirmation | The order confirmation | Placed Order |
+| Klaviyo sends the cancellation email | The cancellation email | Canceled Order |
+| Klaviyo sends the shipping confirmation | The shipping confirmation | Fulfilled Order |
+| Klaviyo sends the refund email | The refund email | Return Refunded |
+
+Klaviyo receives each event exactly when Spree would have sent the email, so turning a switch on neither adds nor loses an email.
 
 <Warning>
-  Without the appropriate access levels, some tracked events or newsletter subscriptions may fail to reach Klaviyo.
+  Build and turn on the flow in Klaviyo before you turn its switch on. Otherwise customers get no email at all.
 </Warning>
 
-## Event Tracking
+Staff can place an order for a customer, cancel one or mark a package shipped without notifying the customer, and Spree then skips its email. Placed Order, Canceled Order and Fulfilled Order carry that choice as `NotifyCustomer`. Add a flow filter on `NotifyCustomer` equals `true` to each flow that replaces a Spree email, because the flow cannot know otherwise.
 
-Once the integration is connected, Spree automatically tracks the following customer events and sends them to Klaviyo:
+Keep in mind:
 
-- Product view
-- Product list view
-- Product search
-- Product added to cart
-- Product removed from cart
-- Checkout step view
-- Checkout step complete
-- Coupon entered/removed
-- Coupon applied/denied
-- Checkout email entered
-- Newsletter subscription
-- Unsubscribe from newsletter
-- Order Completed
-- Package Shipped
-- Cancelled Order
+- **Resend confirmation** in the dashboard sends nothing for an email Klaviyo has taken over.
+- Emails whose link Spree must later redeem always stay with Spree: password resets, data exports and data request confirmations, digital downloads, payment links and company invitations.
+- A storefront that sends its own emails from webhooks, such as the reference storefront's Resend option, is not affected by these switches. Turn those emails off in the storefront.
 
-<Note>
-  When a user subscribes to the newsletter on the storefront, they’re automatically added to the list you configured in the integration settings.
-</Note>
+## Stores coming from the 1.x extension
 
-These events populate the Audience → Profiles section in Klaviyo, where you can view each user's tracked activity and properties. Lists used for newsletter subscriptions can be found in Audience → Lists & Segments.
+The 1.x extension sent each customer's database id as the profile's external id. Turn on **Match profiles by database ID** so the profiles it created keep matching. A new Klaviyo account should leave it off: profiles then carry the customer's Spree id (`cus_…`), which you can look up in the dashboard and the API. Stores that share one Klaviyo account should use the same setting.
 
-## Managing Your Integration
+With the switch off, Klaviyo does not match a 1.x profile by its email. It creates a second profile with the same email and the customer's Spree id, and the history the 1.x extension sent stays on the first one. Events, which Spree sends by email, keep going to the older 1.x profile, while profile updates go to the new one.
 
-![](/images/integrations/klaviyo/5.manage_integration.png)
+See the [upgrade guide](/developer/upgrades/5.6-to-6.0#klaviyo) for everything else that changed from 1.x.
 
-After setup, you can revisit the integration form at any time to:
+## Storefront tracking
 
-- **Edit keys** - useful if you want to swap out a list ID or rotate API keys.
-- **Update configuration** - simply adjust the values and click Update.
-- **Delete the integration** - click the Delete button in the bottom right of the form.
+The Next.js storefront sends Klaviyo's onsite events through Klaviyo's script, which you load from Google Tag Manager so that the shopper's cookie consent decides whether it runs. Set `GTM_ID` in the storefront to your container's id, then in Tag Manager:
 
-<Note>
-  Removing the integration stops data from being sent to Klaviyo, but it won’t affect historical data already collected.
-</Note>
+1. Add a **Custom HTML** tag with Klaviyo's script, using your account's six-character public API key, shown under **Settings → Account → API keys** in Klaviyo:
+
+   ```html
+   <script async src="https://static.klaviyo.com/onsite/js/AbC123/klaviyo.js?company_id=AbC123"></script>
+   ```
+
+2. Fire it on every page, but only once the shopper has accepted marketing cookies: use your consent platform's trigger, or the tag's **Consent Settings**.
+3. Do not add the Viewed Product tag from [Klaviyo's Tag Manager guide](https://help.klaviyo.com/hc/en-us/articles/360015392131). The storefront sends that event, so a second tag would record every view twice.
+4. Publish the container.
+
+With the script loaded, the storefront sends:
+
+- **Viewed Product** on a product page, and **Added to Cart** when the shopper adds it.
+- **Started Checkout** when checkout opens for a shopper who already gave their email, otherwise once they enter it. Its `CheckoutURL` opens the storefront's cart page.
+- **Active on Site**, which Klaviyo's script sends by itself.
+
+The storefront also identifies the shopper by email when they sign in, sign up or enter their email at checkout. That joins the browser's anonymous history to the profile Spree sends, since only the browser holds Klaviyo's visitor cookie.
+
+The reference storefront has no newsletter sign-up form. If yours adds one, call Klaviyo's `identify` with the email when the form is submitted, as well as subscribing through Spree:
+
+```typescript
+window.klaviyo?.identify({ email })
+```
+
+A shopper who has not consented is not tracked. An event from before the tag loaded waits up to 10 seconds for it, and only while the shopper stays on that page: a shopper who lands on a product page still sends its view once the tag loads, and one who accepts cookies sends at most the last 10 seconds of the page they accepted on, nothing from earlier pages. Ad blockers stop the script as well, and with it some browsing events and abandoned-checkout emails. A custom storefront sends these events itself.
+
+## Erasing a customer
+
+When you erase a customer, Spree asks every active Klaviyo integration, in every store, to delete the person's profile. Klaviyo deletes every profile with their email, so a duplicate goes too. The request goes out 30 minutes after the erasure, after the unsubscribes of their newsletter subscriptions. Deletion removes the profile's whole history in Klaviyo and cannot be undone, which is what erasure requires.
+
+Deletion needs the **Data Privacy (write)** scope. Without it, Klaviyo refuses the request with 403, and the failure is only reported to your error tracker. The profile stays in Klaviyo, so check the scope.
+
+After an erasure, nothing more is sent for that person, even when their retained orders are later canceled or shipped.
