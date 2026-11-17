@@ -67,6 +67,10 @@ Gem::Specification.new do |s|
   s.add_dependency 'rails-html-sanitizer', '~> 1.6'
   s.add_dependency 'rails-i18n', '~> 8.0'
   s.add_dependency 'ransack', '>= 4.1'
+  # regexp_parser 2.13.2 made `implements` private, and json_schemer 2.5 still
+  # calls it, so loading json_schemer raises NoMethodError and Spree cannot
+  # boot. Unpin once a json_schemer release works with it.
+  s.add_dependency 'regexp_parser', '< 2.13.2'
   s.add_dependency 'request_store', '~> 1.5'
 
   s.add_dependency 'stringex'
