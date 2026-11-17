@@ -36,9 +36,12 @@ jobs:
     # One release at a time, so a release never reads which one is latest while
     # another is being created. On the job, so CI runs on other commits never
     # queue here.
+    # `queue: max` keeps every waiting release instead of only the newest; it
+    # postdates actionlint 1.7.12, which reports it as unknown.
     concurrency:
       group: release-on-merge
       cancel-in-progress: false
+      queue: max
     runs-on: ubuntu-latest
     timeout-minutes: 120
     permissions:

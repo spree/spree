@@ -68,8 +68,9 @@ const workflowRuns = (workflow, query) =>
   read('gh', [
     'api',
     '--paginate',
+    // Only the fields read here, so years of history stay within the output buffer.
     '--jq',
-    '.workflow_runs[]',
+    '.workflow_runs[] | {id, status, conclusion, display_title}',
     `repos/${repo}/actions/workflows/${workflow}/runs?per_page=100&${query}`,
   ])
     .split('\n')
