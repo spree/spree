@@ -67,6 +67,27 @@ module Spree
         resolved_company&.po_number_required? || false
       end
 
+      # Attaches the purchase order document of +source+ to this persisted
+      # record. The same blob is attached to both rather than uploaded twice,
+      # and the source keeps its copy, so a transaction that rolls back leaves
+      # the buyer's upload where they left it.
+      #
+      # On a persisted, unchanged record `attach` saves at once and answers
+      # nil instead of raising when the save is refused. Unchecked, the record
+      # would silently have no paperwork, so the refusal is raised instead.
+      #
+      # @param source [Spree::Cart, Spree::Order]
+      # @raise [ActiveRecord::RecordInvalid] when the document is refused
+      # @return [void]
+      def copy_po_document_from!(source)
+        return unless source.po_document.attached?
+        return if po_document.attach(source.po_document.blob)
+
+        # A callback can refuse the save without saying why.
+        errors.add(:po_document, :invalid) if errors.empty?
+        raise ActiveRecord::RecordInvalid, self
+      end
+
       private
 
       # The size validation above reads the blob's recorded `byte_size`, which

@@ -295,7 +295,7 @@ module Spree
           copy_promotions!(cart, order)
           copy_tax_identifier!(cart, order)
           copy_tax_exemptions!(cart, order, line_item_map, fulfillment_map, fee_map)
-          copy_po_document!(cart, order)
+          order.copy_po_document_from!(cart)
           repoint_money_records!(cart, order)
           Spree.cart_copiers.each { |copier| copier.call(cart: cart, order: order, line_item_map: line_item_map) }
 
@@ -401,24 +401,6 @@ module Spree
           context: { item_id: override['item_id'] },
           source: 'spree.core'
         )
-      end
-
-      # The buyer's purchase order follows the number onto the order. The same
-      # blob is attached to both records rather than uploaded twice — the cart
-      # keeps its copy so a completion that rolls back leaves the buyer's
-      # upload where they left it.
-      #
-      # The order is persisted and unchanged here, so `attach` saves
-      # immediately and answers nil instead of raising when the save is
-      # refused. Left unchecked the placed order would simply have no
-      # paperwork, silently — so the failure is raised into the completion
-      # transaction rather than dropped.
-      def copy_po_document!(cart, order)
-        return unless cart.po_document.attached?
-
-        return if order.po_document.attach(cart.po_document.blob)
-
-        raise ActiveRecord::RecordInvalid, order
       end
 
       # Which link of the chain produced the snapshot, so a placed order's tax
