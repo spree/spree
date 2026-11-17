@@ -434,6 +434,40 @@ module Spree
         end
       end
 
+      describe 'with an automatic promotion whose rule reads an attribute no core rule does' do
+        # Named, so the rule row's STI type resolves.
+        let(:metadata_rule_class) do
+          stub_const('VipMetadataRule', Class.new(Spree::PromotionRule) do
+            def applicable?(promotable)
+              promotable.is_a?(Spree::Order)
+            end
+
+            def eligible?(order, _options = {})
+              order.metadata.to_h['vip'] == '1'
+            end
+          end)
+        end
+        let!(:promotion) do
+          create(:promotion, code: nil, kind: :automatic, store: store).tap do |promotion|
+            metadata_rule_class.create!(promotion: promotion)
+            calculator = Spree::Calculator::FlatPercentItemTotal.new(preferred_flat_percent: 10)
+            Spree::Promotion::Actions::CreateAdjustment.create!(calculator: calculator, promotion: promotion)
+          end
+        end
+
+        it 're-evaluates the promotion when that attribute changes' do
+          described_class.call(order: order, params: { items: [{ variant_id: variant.prefixed_id, quantity: 1 }] })
+          expect(order.reload.discount_total).to eq(0)
+
+          described_class.call(order: order, params: { metadata: { vip: '1' } })
+          expect(order.reload.promotions).to include(promotion)
+          expect(order.discount_total).to eq(-(order.item_total * 10 / 100).round(2))
+
+          described_class.call(order: order, params: { metadata: { vip: '0' } })
+          expect(order.reload.discount_total).to eq(0)
+        end
+      end
+
       describe 'with an automatic free-shipping promotion' do
         let!(:promotion) { create(:free_shipping_promotion, kind: :automatic) }
         let(:initial_address) { create(:address, country: country, state: state) }

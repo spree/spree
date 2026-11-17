@@ -8,9 +8,6 @@ module Spree
     class Update
       prepend Spree::ServiceModule::Base
 
-      # Who is buying and in which market: what automatic promotion rules read, besides the items and the destination.
-      PROMOTION_CONTEXT_ATTRIBUTES = %w[customer_id email company_id market_id channel_id currency].freeze
-
       def call(order:, params: {})
         @order = order
         @params = params.to_h.deep_symbolize_keys
@@ -30,14 +27,14 @@ module Spree
           # the transaction, leaving the address rows written above behind.
           raise ActiveRecord::RecordInvalid, @order unless @order.update(@params)
 
-          promotion_context_changed = @order.saved_changes.keys.intersect?(PROMOTION_CONTEXT_ATTRIBUTES)
-
           process_items(items_param) if items_param
 
           # An address row edited in place keeps its id, so an edit to the fields a quote reads counts too.
           destination_changed = @order.ship_address_id != ship_address_id_before || @order.ship_address&.saved_change_to_destination?
           build_fulfillments(keep_selection: !destination_changed) if items_param || destination_changed
-          activate_promotions if items_param || destination_changed || promotion_context_changed
+          # Every edit, not a list of the attributes today's rules read: a rule
+          # added later (a company rule, a custom one) can read any of them.
+          activate_promotions
 
           @order.recalculate_totals!
           @order.update_statuses!
