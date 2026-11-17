@@ -391,7 +391,9 @@ module Spree
       others = fresh_order.payments.where.not(id: id)
       # One statement for both sums, so a sibling settling between two reads
       # can't drop out of the completed sum and the in-flight sum at once.
-      by_status = others.where(status: %w[completed pending processing]).group(:status).sum(:amount)
+      # reorder(nil): the default created_at ordering is not grouped, which
+      # MySQL's only_full_group_by refuses.
+      by_status = others.where(status: %w[completed pending processing]).reorder(nil).group(:status).sum(:amount)
       captured = others.where(status: 'completed')
       owed = fresh_order.total - by_status.fetch('completed', 0) + Spree::Refund.where(payment_id: captured.select(:id)).sum(:amount) -
              fresh_order.returned_items_refund_total
