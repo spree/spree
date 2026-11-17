@@ -613,7 +613,7 @@ RSpec.describe Spree::Reporting::Query do
       end
 
       it 'ranks categories by net revenue' do
-        category = create(:category, store: store)
+        category = create(:category)
         order1.products.each { |product| product.categories << category }
 
         result = run(metrics: %w[net_sales units_sold], dimensions: %w[category], sort: '-net_sales')
@@ -1135,6 +1135,19 @@ RSpec.describe Spree::Reporting::Query do
         expect(result.rows.map { |row| row[:dimensions][:promotion] }).to eq([promotion.id])
         expect(result.rows.first[:metrics][:promotion_discounts][:value]).to eq(5.0)
         expect(result.totals[:promotion_discounts][:value]).to eq(5.0)
+      end
+
+      # The product dimension joins the variant, the first hop of the category
+      # path; the category's own table must not be assumed joined from that.
+      it 'filters by category while grouped by product' do
+        category = create(:category)
+        order.line_items.first.product.categories << category
+
+        result = run(metrics: %w[promotion_discounts net_sales], dimensions: %w[product],
+                     filters: [{ dimension: 'category', op: 'eq', value: category.prefixed_id }])
+
+        expect(result.rows.size).to eq(1)
+        expect(result.rows.first[:metrics][:promotion_discounts][:value]).to eq(7.0)
       end
 
       it 'counts only the filtered code in the dimensionless total' do

@@ -121,43 +121,33 @@ module Spree
         # promotion, a line also carrying another must contribute only the
         # filtered promotion's money, not the line's combined discount.
         def metric_sql(metric, scope:, grouped:)
-          joins = grouped ? joined_associations(scope) : []
+          joins = grouped ? carried_joins(scope) : []
           format(metric.sql_for(grouped: grouped, joins: joins),
                  placeholders.merge(dimension_filters: joined_row_filters(metric)))
         end
 
-        # The associations the scope joins, by their top-level name. A nested
-        # join (`{ promotion_discounts: :promotion }`) still joins its
-        # top-level association; one reached through another base's path
-        # (`{ order: :ship_address }`) counts under the path, not the table.
-        def joined_associations(scope)
-          (scope.joins_values + scope.left_outer_joins_values).flat_map do |join|
-            case join
-            when Hash then join.keys
-            when Symbol, String then [join]
-            else []
-            end
-          end.map(&:to_sym)
+        # The joins the scope carries, in ActiveRecord's joins format. Compared
+        # by full association path (Reporting.join_paths): a join reached
+        # through another base's path (`{ order: :ship_address }`) is not the
+        # base's own `:ship_address`, and `{ variant: :product }` does not
+        # bring in `{ variant: { product: :product_categories } }`.
+        def carried_joins(scope)
+          scope.joins_values + scope.left_outer_joins_values
         end
 
         # Extra subquery conditions for the filters on dimensions that read
         # the rows this metric's grouped_joins would join. Values bind through
         # Arel quoting and the column is a validated identifier.
         def joined_row_filters(metric)
-          needed = Array(metric.grouped_joins).map(&:to_sym)
-          return '' if needed.empty?
+          return '' if metric.grouped_joins.blank?
 
           query.filters.filter_map do |filter|
             dimension = filter[:dimension]
             next unless dimension.base == metric.base
-            next unless top_level_joins(dimension.joins).intersect?(needed)
+            next unless Reporting.joins_cover?(dimension.joins, metric.grouped_joins)
 
             " AND #{in_predicate(qualified_column(dimension), filter[:values]).to_sql}"
           end.join
-        end
-
-        def top_level_joins(joins)
-          Array.wrap(joins).flat_map { |join| join.is_a?(Hash) ? join.keys : join }.map(&:to_sym)
         end
 
         # Dimension joins are declared from their own base; they only apply
@@ -235,8 +225,11 @@ module Spree
           scope
         end
 
+        # Only when the scope carries the dimension's whole join path: grouped
+        # by product, a category filter's product_categories table is not in
+        # the FROM clause even though its first hop (variant) is.
         def joins_rows_of?(scope, dimension, base)
-          dimension.base == base && (top_level_joins(dimension.joins) - joined_associations(scope)).empty?
+          dimension.base == base && Reporting.joins_cover?(carried_joins(scope), dimension.joins)
         end
 
         # `column IN (values)` as an Arel node. The column is a validated

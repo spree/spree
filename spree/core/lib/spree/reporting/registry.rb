@@ -1,5 +1,29 @@
 module Spree
   module Reporting
+    # Every association path a joins spec reaches, in ActiveRecord's joins
+    # format: `[{ variant: { product: :product_categories } }]` reaches
+    # [:variant], [:variant, :product] and [:variant, :product, :product_categories].
+    # Comparing paths rather than top-level names keeps a nested join from
+    # passing for its first hop alone.
+    #
+    # @param joins [Symbol, String, Hash, Array, nil]
+    # @return [Array<Array<Symbol>>]
+    def self.join_paths(joins, prefix = [])
+      case joins
+      when Hash
+        joins.flat_map { |name, nested| [prefix + [name.to_sym]] + join_paths(nested, prefix + [name.to_sym]) }
+      when Array then joins.flat_map { |join| join_paths(join, prefix) }
+      when Symbol, String then [prefix + [joins.to_sym]]
+      else []
+      end.uniq
+    end
+
+    # Whether the joins carried cover every association path the required
+    # joins reach.
+    def self.joins_cover?(carried, required)
+      (join_paths(required) - join_paths(carried)).empty?
+    end
+
     # A metric aggregates rows into one number.
     #
     # @!attribute sql
@@ -47,12 +71,13 @@ module Spree
       # not in the FROM clause at all.
       #
       # @param grouped [Boolean] whether this is the grouped query
-      # @param joins [Array<Symbol>] the associations the grouped query joined
+      # @param joins [Array<Symbol, Hash>] the joins the grouped query carries,
+      #   in ActiveRecord's joins format
       # @return [String]
       def sql_for(grouped:, joins: [])
         return sql unless grouped && grouped_sql.present? && grouped_joins.present?
 
-        (Array(grouped_joins).map(&:to_sym) - Array(joins).map(&:to_sym)).empty? ? grouped_sql : sql
+        Reporting.joins_cover?(joins, grouped_joins) ? grouped_sql : sql
       end
 
       def derived? = ratio.present?

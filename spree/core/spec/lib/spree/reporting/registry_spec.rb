@@ -36,6 +36,18 @@ RSpec.describe Spree::Reporting::Registry do
     end
   end
 
+  describe '.join_paths' do
+    it 'expands nested joins into every path they reach' do
+      expect(Spree::Reporting.join_paths([{ variant: { product: :product_categories } }, :order]))
+        .to contain_exactly(%i[variant], %i[variant product], %i[variant product product_categories], %i[order])
+    end
+
+    it 'does not treat the first hop of a nested join as covering the whole path' do
+      expect(Spree::Reporting.joins_cover?([:variant], [{ variant: { product: :product_categories } }])).to be(false)
+      expect(Spree::Reporting.joins_cover?([{ variant: { product: :product_categories } }], [:variant])).to be(true)
+    end
+  end
+
   describe '#dimension' do
     it 'registers value dimensions by default' do
       registry.dimension :warehouse, base: :orders, column: :stock_location_id
