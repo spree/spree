@@ -28,7 +28,7 @@ import {
 } from '@spree/dashboard-ui'
 import { PlusIcon } from '@spree/dashboard-ui/icons'
 import { useQuery } from '@tanstack/react-query'
-import { type FormEvent, useState } from 'react'
+import { type FormEvent, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useOrderMutation } from '../../../hooks/use-order'
 
@@ -282,16 +282,22 @@ function ApplyGiftCardDialog({
     adminClient.orders.giftCards.apply(orderId, params),
   )
 
-  // Drop any error from the previous attempt when the dialog closes, so
-  // reopening it doesn't greet the user with a stale "not found".
+  // Drop a settled attempt's error when the dialog closes, so reopening it
+  // doesn't greet the user with a stale "not found".
   function handleOpenChange(next: boolean) {
-    if (!next) mutation.reset()
+    if (!next && !mutation.isPending) mutation.reset()
     onOpenChange(next)
   }
 
   function clearSettledError() {
     if (mutation.isError) mutation.reset()
   }
+
+  // Closing never resets an in-flight request, so one that fails after the
+  // dialog is gone keeps its error into the next open. Clear it while closed.
+  useEffect(() => {
+    if (!open && mutation.isError) mutation.reset()
+  }, [open, mutation.isError, mutation.reset])
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
