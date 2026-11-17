@@ -18,7 +18,7 @@ permissions:
 
 jobs:
   changes:
-    name: "Detect changes"
+    name: 'Detect changes'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -42,12 +42,14 @@ jobs:
               - ".github/workflows/backend.yml"
             frontend:
               - "packages/**"
+              - ".changeset/**"
               - "spree/api/app/**"
               - "spree/api/lib/typelizer/**"
               - "spree/core/app/**"
               - "docs/developer/**"
               - "docs/api-reference/**"
               - "docs/integrations/**"
+              - "docs/snippets/**"
               - "pnpm-lock.yaml"
               - "turbo.json"
               - "biome.json"
@@ -55,11 +57,12 @@ jobs:
               - "pnpm-workspace.yaml"
               - "scripts/sync-starter.mjs"
               - "scripts/check-dependency-ranges.mjs"
+              - "scripts/version-packages.mjs"
               - ".github/workflows/ci.yml"
               - ".github/workflows/frontend.yml"
 
   backend-suite:
-    name: "Backend"
+    name: 'Backend'
     needs: changes
     if: needs.changes.outputs.backend == 'true'
     uses: ./.github/workflows/backend.yml
@@ -67,7 +70,7 @@ jobs:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   frontend-suite:
-    name: "Frontend"
+    name: 'Frontend'
     needs: changes
     if: needs.changes.outputs.frontend == 'true'
     uses: ./.github/workflows/frontend.yml
@@ -75,7 +78,7 @@ jobs:
   # The two checks branch protection requires. Each fails on any failed or
   # cancelled job in its suite, and passes when the suite passed or was skipped.
   backend:
-    name: "backend"
+    name: 'backend'
     needs: [changes, backend-suite]
     if: always()
     runs-on: ubuntu-latest
@@ -92,7 +95,7 @@ jobs:
           done
 
   frontend:
-    name: "frontend"
+    name: 'frontend'
     needs: [changes, frontend-suite]
     if: always()
     runs-on: ubuntu-latest

@@ -137,7 +137,10 @@ module Spree
         # Replaces the writers Spree configured for its own SDKs: run in an
         # extension's app, they would write core's types into the installed gem.
         def configure(serializers, out)
-          ours = ->(serializer) { Object.const_source_location(serializer.name)&.first.to_s.start_with?("#{serializers}/") }
+          # An unnamed class has no source file to place it in the extension.
+          ours = lambda do |serializer|
+            serializer.name && Object.const_source_location(serializer.name)&.first.to_s.start_with?("#{serializers}/")
+          end
 
           Typelizer.configure do |config|
             config.reset_writers!
@@ -163,15 +166,12 @@ module Spree
         end
 
         def run_typelizer
-          enabled = ENV['TYPELIZER']
           source = Typelizer::OpenEnums.source
-          ENV['TYPELIZER'] = 'true'
           Typelizer::OpenEnums.source = nil
 
           require 'typelizer/generator'
-          Typelizer::Generator.call(force: true)
+          Typelizer::Generator.call(force: true, skip_check: true)
         ensure
-          ENV['TYPELIZER'] = enabled
           Typelizer::OpenEnums.source = source
         end
 

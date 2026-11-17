@@ -1,5 +1,19 @@
 # @spree/dashboard
 
+## 6.0.5
+
+### Patch Changes
+
+- [#15220](https://github.com/spree/spree/pull/15220) [`f32acce`](https://github.com/spree/spree/commit/f32accecc5873d951cbd5d57a8410aeffd33d7f8) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The admin dashboard renders the new `app.root` slot and hands the errors its error screens catch to plugins' `errorReporters`, which `@spree/dashboard-sentry` uses to report them to Sentry.
+
+- [#15218](https://github.com/spree/spree/pull/15218) [`3336f17`](https://github.com/spree/spree/commit/3336f179583f8d17bcd8ae359e6a3d06ad273f91) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The products list's SKU column now shows each product's default variant SKU instead of "—" for every row. It requests the default variant only while the column is on.
+
+- [#15230](https://github.com/spree/spree/pull/15230) [`53d2936`](https://github.com/spree/spree/commit/53d2936a5750d9a3b806b97a45c7712393b35622) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Resource tables now sort by clicking a sortable column header: the first click sorts ascending, the next flips the direction, and the header shows the current direction.
+
+- [#15216](https://github.com/spree/spree/pull/15216) [`40fe3a3`](https://github.com/spree/spree/commit/40fe3a3640c3964ddcf78842f7af36f31be059b1) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Store settings gains a store logo upload, a meta keywords field in the search engine listing card and a Social media card for Facebook, X and Instagram.
+- Updated dependencies []:
+  - @spree/core@6.0.5
+
 ## 6.0.4
 
 ### Patch Changes

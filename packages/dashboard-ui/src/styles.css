@@ -23,6 +23,9 @@
 @import "flag-icons/css/flag-icons.min.css";
 
 @custom-variant dark (&:is(.dark *));
+/* While a sheet or dialog is open; the toast stack moves above it. */
+@custom-variant modal-open (&:where(html:has(:is([data-slot="sheet-content"], [data-slot="dialog-content"])[data-open]) *));
+@custom-variant right-sheet-open (&:where(html:has([data-slot="sheet-content"][data-side="right"][data-open]) *));
 
 /* ============================================================================
    Spree Admin Theme

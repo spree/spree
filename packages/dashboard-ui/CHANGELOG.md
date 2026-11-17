@@ -1,5 +1,13 @@
 # @spree/dashboard-ui
 
+## 6.0.5
+
+### Patch Changes
+
+- [#15216](https://github.com/spree/spree/pull/15216) [`40fe3a3`](https://github.com/spree/spree/commit/40fe3a3640c3964ddcf78842f7af36f31be059b1) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added `Share2Icon` to the icon set.
+- Updated dependencies []:
+  - @spree/core@6.0.5
+
 ## 6.0.4
 
 ### Patch Changes

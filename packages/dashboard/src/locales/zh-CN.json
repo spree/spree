@@ -4996,6 +4996,7 @@
         "reason_placeholder": "卖家需要修改什么？",
         "reject": "退回",
         "rejected": "已退回给卖家",
+        "save_first": "请先保存更改。批准或退回不会保存这些更改。",
         "send_back": "退回"
       },
       "save_label": "保存产品",

@@ -32,6 +32,11 @@ function manifest(dir) {
   return JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf8'))
 }
 
+function runtimeDependencies(dir) {
+  const { dependencies = {}, peerDependencies = {} } = manifest(dir)
+  return Object.keys({ ...dependencies, ...peerDependencies })
+}
+
 function workspacePackages() {
   const packagesDir = path.join(repoRoot, 'packages')
   return new Map(
@@ -53,13 +58,10 @@ function workspacePackages() {
 export function dependencyOrder(packages) {
   const names = new Set(packages.map(({ name }) => name))
   const dependsOn = new Map(
-    packages.map(({ name, dir }) => {
-      const { dependencies = {}, peerDependencies = {} } = manifest(dir)
-      return [
-        name,
-        Object.keys({ ...dependencies, ...peerDependencies }).filter((dep) => names.has(dep)),
-      ]
-    }),
+    packages.map(({ name, dir }) => [
+      name,
+      runtimeDependencies(dir).filter((dep) => names.has(dep)),
+    ]),
   )
   const ordered = []
   const visit = (name, trail = []) => {
@@ -86,24 +88,44 @@ function isPublished(name, version) {
 }
 
 function publish(packages) {
-  const filters = packages.flatMap(({ name }) => ['--filter', name])
-  execFileSync('pnpm', ['turbo', 'build', ...filters], { cwd: repoRoot, stdio: 'inherit' })
-
+  // One failure (say, a package whose build broke or whose npm Trusted
+  // Publishing lapsed) must not hold back the unrelated packages after it. Its
+  // dependents are still held back: they would point at a version npm does not
+  // have. Each package builds on its own so a broken build fails only itself.
+  const failed = []
   for (const { name, dir } of dependencyOrder(packages)) {
     const { version } = manifest(dir)
     if (isPublished(name, version)) {
       console.log(`${name}@${version} is already on npm, skipping.`)
       continue
     }
+    const failedDependency = runtimeDependencies(dir).find((dep) => failed.includes(dep))
+    if (failedDependency) {
+      console.error(`Not publishing ${name}@${version}: ${failedDependency} failed to publish.`)
+      failed.push(name)
+      continue
+    }
     const tag = distTag(version)
     console.log(`Publishing ${name}@${version} under ${tag}.`)
-    // `pnpm publish`, not `npm publish`: it rewrites `workspace:` ranges, which
-    // npm would ship verbatim, and runs each package's prepublishOnly build.
-    execFileSync(
-      'pnpm',
-      ['publish', '--provenance', '--access', 'public', '--tag', tag, '--no-git-checks'],
-      { cwd: dir, stdio: 'inherit' },
-    )
+    try {
+      execFileSync('pnpm', ['turbo', 'build', '--filter', name], {
+        cwd: repoRoot,
+        stdio: 'inherit',
+      })
+      // `pnpm publish`, not `npm publish`: it rewrites `workspace:` ranges, which
+      // npm would ship verbatim, and runs each package's prepublishOnly build.
+      execFileSync(
+        'pnpm',
+        ['publish', '--provenance', '--access', 'public', '--tag', tag, '--no-git-checks'],
+        { cwd: dir, stdio: 'inherit' },
+      )
+    } catch {
+      console.error(`Failed to build or publish ${name}@${version}.`)
+      failed.push(name)
+    }
+  }
+  if (failed.length > 0) {
+    throw new Error(`Not published: ${failed.join(', ')}. Fix the cause and re-run the failed job.`)
   }
 }
 

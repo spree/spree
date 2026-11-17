@@ -14,6 +14,10 @@ Rails.application.config.after_initialize do
 
     config.plugin_configs = Spree::Api::TypelizerGeneration.plugin_configs
 
+    # Typelizer always carries a default writer, which takes every serializer.
+    # Each SDK has its own writer below, so the default one writes nothing.
+    config.reject_class = ->(**) { true }
+
     # Serializers that exist only for the Admin API. Event serializers stay in:
     # they describe the `data` of the typed webhook events the Store SDK ships.
     store_excluded = Spree::Api::TypelizerGeneration::STORE_EXCLUDED

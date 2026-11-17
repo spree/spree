@@ -84,6 +84,40 @@ test.describe('inventory', () => {
     await expect(page.getByText(FIXTURE_TRANSFER_DESTINATION)).toBeVisible()
   })
 
+  // The line arrives before any source is chosen, so it must not lock From,
+  // and From must not offer the warehouse the stock is going to.
+  test('opens a transfer with the row on it and lets the source be chosen', async ({ page }) => {
+    const creds = await login(page)
+
+    await page.goto(INVENTORY_PATH(creds.store_id))
+    await page.getByPlaceholder(/search sku or product/i).fill(FIXTURE_INVENTORY_SKU)
+
+    const row = page
+      .getByRole('row')
+      .filter({ hasText: FIXTURE_INVENTORY_SKU })
+      .filter({ hasText: FIXTURE_TRANSFER_DESTINATION })
+    await expect(row).toBeVisible({ timeout: 15_000 })
+
+    await row.getByRole('button', { name: /add incoming stock/i }).click()
+    await page.getByRole('link', { name: /create transfer/i }).click()
+
+    await expect(page.getByRole('heading', { name: /new stock transfer/i })).toBeVisible({
+      timeout: 15_000,
+    })
+    await expect(page.getByText(FIXTURE_INVENTORY_SKU)).toBeVisible()
+    await expect(page.locator('#destination')).toHaveText(FIXTURE_TRANSFER_DESTINATION)
+
+    const from = page.locator('#source')
+    await expect(from).toBeEnabled()
+    await from.click()
+    await expect(page.getByRole('option', { name: FIXTURE_TRANSFER_DESTINATION })).toHaveCount(0)
+    await page.getByRole('option', { name: FIXTURE_TRANSFER_SOURCE }).click()
+
+    await expect(from).toHaveText(FIXTURE_TRANSFER_SOURCE)
+    await expect(page.locator('#destination')).toHaveText(FIXTURE_TRANSFER_DESTINATION)
+    await expect(page.getByRole('button', { name: /create draft/i })).toBeEnabled()
+  })
+
   // Both controls live in the toolbar rather than behind Add filter. The
   // stock status is a multi-select scope, which sends one query parameter per
   // value — the shape that first came back a 400.

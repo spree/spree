@@ -5011,6 +5011,7 @@
         "reason_placeholder": "Que doit changer le vendeur ?",
         "reject": "Renvoyer",
         "rejected": "Renvoyé au vendeur",
+        "save_first": "Enregistrez d'abord vos modifications. Approuver ou renvoyer ne les enregistre pas.",
         "send_back": "Renvoyer"
       },
       "save_label": "Enregistrer le produit",

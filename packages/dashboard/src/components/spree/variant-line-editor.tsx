@@ -23,6 +23,7 @@ import {
 } from '@spree/dashboard-ui'
 import { PackageIcon, PlusIcon, TrashIcon } from '@spree/dashboard-ui/icons'
 import { useTranslation } from 'react-i18next'
+import { VARIANT_SEARCH_MIN_LENGTH } from '../../lib/variant-search'
 import { VariantLink } from './variant-link'
 
 /**
@@ -158,6 +159,7 @@ export function VariantLineEditor({
             ...(stockLocationId ? { available_at_stock_location: stockLocationId } : {}),
           })
         }
+        minSearchLength={VARIANT_SEARCH_MIN_LENGTH}
         getOptionLabel={(variant) => variant.product_name ?? variant.sku ?? variant.id}
         getOptionImageUrl={(variant) => variant.thumbnail_url}
         getOptionSubtitle={(variant) =>
@@ -240,10 +242,13 @@ export function VariantLineEditor({
                       <InputGroupAddon>
                         <InputGroupText>{currency ?? ''}</InputGroupText>
                       </InputGroupAddon>
+                      {/* Text, not a number input: browsers disagree on what a
+                          comma means there, and Safari in English reads
+                          "3,80" as 380. The form reads it in the admin's own
+                          format instead. */}
                       <InputGroupInput
-                        type="number"
-                        min={0}
-                        step="any"
+                        type="text"
+                        inputMode="decimal"
                         value={unitCost ?? ''}
                         onChange={(event) => update(variant.id, { unitCost: event.target.value })}
                         className="text-right tabular-nums"

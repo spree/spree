@@ -1,5 +1,18 @@
 # @spree/seller-dashboard
 
+## 6.0.5
+
+### Patch Changes
+
+- [#15220](https://github.com/spree/spree/pull/15220) [`f32acce`](https://github.com/spree/spree/commit/f32accecc5873d951cbd5d57a8410aeffd33d7f8) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The seller panel now shows the same error screen with a retry button as the admin dashboard instead of the router's bare fallback. It renders the new `app.root` slot and hands the errors its error screens catch to plugins' `errorReporters`, which `@spree/dashboard-sentry` uses to report them to Sentry.
+
+- [#15230](https://github.com/spree/spree/pull/15230) [`53d2936`](https://github.com/spree/spree/commit/53d2936a5750d9a3b806b97a45c7712393b35622) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Resource tables now sort by clicking a sortable column header: the first click sorts ascending, the next flips the direction, and the header shows the current direction.
+
+- [#15219](https://github.com/spree/spree/pull/15219) [`8092164`](https://github.com/spree/spree/commit/8092164492d6f006adb766d6f309255a6cf8c26f) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Sellers can now build variants from the option types the marketplace defines. The product form's Variants card lists the marketplace's option types and their values to pick from, and picking a product type on a new listing offers its option types there, as the operator's form does. A seller still cannot add an option type or a value; that stays with the marketplace.
+- Updated dependencies [[`8092164`](https://github.com/spree/spree/commit/8092164492d6f006adb766d6f309255a6cf8c26f)]:
+  - @spree/seller-sdk@6.0.5
+  - @spree/core@6.0.5
+
 ## 6.0.4
 
 ### Patch Changes

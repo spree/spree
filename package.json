@@ -46,7 +46,8 @@
     "docs:dev": "cd docs && mint dev --port 3333",
     "changeset": "changeset",
     "version:packages": "node scripts/version-packages.mjs",
-    "version:tools": "node scripts/version-packages.mjs --tools"
+    "version:tools": "node scripts/version-packages.mjs --tools",
+    "changeset:check": "node scripts/version-packages.mjs --check"
   },
   "devDependencies": {
     "@biomejs/biome": "catalog:",

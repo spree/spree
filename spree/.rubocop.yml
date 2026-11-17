@@ -110,6 +110,13 @@ Metrics/PerceivedComplexity:
 Metrics/ParameterLists:
   CountKeywordArgs: false
 
+# --- Gemspec ----------------------------------------------------------------
+
+# No Spree gem requires MFA to publish; turning that on is a release decision.
+# The offense spans the whole specification, so it would block every gemspec edit.
+Gemspec/RequireMFA:
+  Enabled: false
+
 # --- Rails ------------------------------------------------------------------
 
 # Engines inherit from Spree::Base and Spree's own base classes, never the

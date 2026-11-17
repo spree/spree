@@ -4,12 +4,20 @@ module Spree
       # to avoid N+1 queries
       def scope_includes
         includes = [:tax_category, :option_types, :categories, { variants: variant_includes }]
+        includes << { media: media_includes }
         includes << { custom_fields: :custom_field_definition }
         includes
       end
 
       def variant_includes
-        [:images, :prices, { stock_levels: :stock_location, option_values: [:option_type] }]
+        [
+          :prices, :variant_media,
+          { images: media_includes, associated_media: media_includes, stock_levels: :stock_location, option_values: [:option_type] }
+        ]
+      end
+
+      def media_includes
+        { attachment_attachment: :blob }
       end
 
       def multi_line_csv?
