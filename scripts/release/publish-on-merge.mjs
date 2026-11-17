@@ -16,7 +16,13 @@
 import { execFileSync } from 'node:child_process'
 import fs from 'node:fs'
 import path from 'node:path'
-import { isPublished, manifest, TOOLS, workspacePackages } from '../publish-packages.mjs'
+import {
+  isNewerVersion,
+  isPublished,
+  manifest,
+  TOOLS,
+  workspacePackages,
+} from '../publish-packages.mjs'
 import { gemVersion, npmVersion } from '../version-packages.mjs'
 import { read, repoRoot, retry, run } from './lib.mjs'
 
@@ -36,16 +42,6 @@ function apiOrNull(endpoint) {
     if (String(error.stderr).includes('HTTP 404')) return null
     throw error
   }
-}
-
-const parseVersion = (tag) => tag.replace(/^v/, '').split('.').map(Number)
-
-function isNewer(version, than) {
-  const [a, b] = [parseVersion(version), parseVersion(than)]
-  for (let i = 0; i < Math.max(a.length, b.length); i++) {
-    if ((a[i] ?? 0) !== (b[i] ?? 0)) return (a[i] ?? 0) > (b[i] ?? 0)
-  }
-  return false
 }
 
 /** The commit a tag points at, or null when there is no such tag. */
@@ -162,7 +158,8 @@ function createRelease(tag, notes) {
   const latest = apiOrNull(`repos/${repo}/releases/latest`)?.tag_name
   // Only a stable Spree release is compared; anything else (say, a tool's
   // release marked latest by hand) gives way to this one.
-  const isLatest = !latest || !/^v\d+\.\d+\.\d+$/.test(latest) || isNewer(tag, latest)
+  const isLatest =
+    !latest || !/^v\d+\.\d+\.\d+$/.test(latest) || isNewerVersion(tag.slice(1), latest.slice(1))
   const notesFile = path.join(repoRoot, 'tmp', `release-notes-${tag.slice(1)}.md`)
   fs.mkdirSync(path.dirname(notesFile), { recursive: true })
   fs.writeFileSync(notesFile, `${notes}\n`)

@@ -1,7 +1,9 @@
 // Publishes the npm packages a release tag names, skipping any version already
 // on npm, so a release that failed part-way can simply run again. The npm
 // dist-tag follows the version: `0.x` → `next`, a prerelease → `beta`, else
-// `latest`. Run by release.yml:
+// `latest`, unless npm's `latest` is already newer (a patch on an older minor,
+// or releases published out of order), which takes `latest-<major>.<minor>`.
+// Run by release.yml:
 //
 //   v6.0.0.rc7               the packages that share the Spree version, and
 //                            @spree/docs, the docs for that version
@@ -76,6 +78,29 @@ export function dependencyOrder(packages) {
   return ordered
 }
 
+/** `6.1.0` is newer than `6.0.7`; both are stable versions. */
+export function isNewerVersion(version, than) {
+  const [a, b] = [version, than].map((v) => v.split('.').map(Number))
+  const index = a.findIndex((part, i) => part !== b[i])
+  return index !== -1 && a[index] > b[index]
+}
+
+function keepNewerLatest(name, version, tag) {
+  if (tag !== 'latest') return tag
+  let latest = ''
+  try {
+    latest = execFileSync('npm', ['view', name, 'dist-tags.latest'], {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim()
+  } catch {
+    // A package not on npm yet has no latest to keep.
+  }
+  if (!latest || !isNewerVersion(latest, version)) return tag
+  const [major, minor] = version.split('.')
+  return `latest-${major}.${minor}`
+}
+
 export function isPublished(name, version) {
   try {
     return (
@@ -107,7 +132,7 @@ function publish(packages) {
       failed.push(name)
       continue
     }
-    const tag = distTag(version)
+    const tag = keepNewerLatest(name, version, distTag(version))
     console.log(`Publishing ${name}@${version} under ${tag}.`)
     try {
       execFileSync('pnpm', ['turbo', 'build', '--filter', name], {
