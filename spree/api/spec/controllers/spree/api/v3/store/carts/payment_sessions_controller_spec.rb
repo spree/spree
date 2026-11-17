@@ -166,6 +166,16 @@ RSpec.describe Spree::Api::V3::Store::Carts::PaymentSessionsController, type: :c
       expect(json_response['amount']).to eq('50.00')
     end
 
+    it 'rejects the update once a rule excludes the method from the cart' do
+      create(:company_payment_method_rule, payment_method: payment_method)
+
+      patch :update, params: { cart_id: order.prefixed_id, id: payment_session.to_param, amount: 50.00 }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['code']).to eq('payment_method_unavailable')
+      expect(payment_session.reload.amount).to eq(order.total)
+    end
+
     context 'when the cart is already completed' do
       before { order.update_columns(completed_at: Time.current) }
 

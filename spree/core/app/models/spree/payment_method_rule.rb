@@ -21,6 +21,7 @@ module Spree
     attribute :active, :boolean, default: true
 
     validates :type, presence: true
+    validates :active, inclusion: { in: [true, false] }
     # One instance of each rule kind per method — duplicates would either be
     # a no-op or contradict themselves under AND semantics.
     validates :type, uniqueness: { scope: [:payment_method_id, *spree_base_uniqueness_scope] }

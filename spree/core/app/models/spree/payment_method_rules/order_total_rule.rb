@@ -8,6 +8,7 @@ module Spree
       preference :max_totals, :hash, keys: :currency, values: :money, default: {}
 
       validate :minimum_not_above_maximum
+      validate :totals_not_negative
 
       def eligible?(purchase)
         total = purchase.total.to_d
@@ -29,6 +30,19 @@ module Spree
 
           errors.add(:base, :min_total_above_max,
                      message: I18n.t('spree.errors.messages.min_total_above_max', currency: currency.to_s.upcase))
+        end
+      end
+
+      # A negative maximum matches no cart, and a negative minimum limits nothing.
+      def totals_not_negative
+        [preferred_min_totals, preferred_max_totals].each do |amounts|
+          (amounts || {}).each_key do |currency|
+            value = threshold(amounts, currency)
+            next if value.nil? || value >= 0
+
+            errors.add(:base, :negative_total,
+                       message: I18n.t('spree.errors.messages.negative_total', currency: currency.to_s.upcase))
+          end
         end
       end
 
