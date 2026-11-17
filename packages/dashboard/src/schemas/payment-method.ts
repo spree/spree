@@ -73,11 +73,14 @@ export function filterPaymentMethodProviderTypes<T extends { type: string }>(typ
 }
 
 /**
- * The name a new method starts with: the provider's label, numbered when the
- * store already has that provider, since names are unique within a store.
+ * The name a new method starts with: the provider's label, numbered past any
+ * name the store already uses, since names are unique within a store.
  */
-export function defaultPaymentMethodName(entry: { label: string; installed_count?: number }) {
-  return entry.installed_count ? `${entry.label} ${entry.installed_count + 1}` : entry.label
+export function defaultPaymentMethodName(label: string, takenNames: string[]) {
+  const taken = new Set(takenNames.map((name) => name.toLowerCase()))
+  let name = label
+  for (let n = 2; taken.has(name.toLowerCase()); n++) name = `${label} ${n}`
+  return name
 }
 
 export function paymentMethodValuesToCreateParams(

@@ -26,6 +26,7 @@ import {
   useCreatePaymentMethod,
   useDeletePaymentMethod,
   usePaymentMethod,
+  usePaymentMethods,
   usePaymentMethodTypes,
   useUpdatePaymentMethod,
 } from '../../../hooks/use-payment-methods'
@@ -87,12 +88,14 @@ export function CreatePaymentMethodSheet({
   // sees and submits a real value — `CurrencySelect` only displays the
   // fallback now (it no longer commits via onChange).
   const { defaultCurrency } = useStore()
+  const { data: methodsResponse } = usePaymentMethods()
+  const takenNames = (methodsResponse?.data ?? []).map((method) => method.name)
 
   const createDefaults: PaymentMethodFormValues = initialType
     ? {
         ...PAYMENT_METHOD_CREATE_DEFAULTS,
         type: initialType.type,
-        name: defaultPaymentMethodName(initialType),
+        name: defaultPaymentMethodName(initialType.label, takenNames),
       }
     : PAYMENT_METHOD_CREATE_DEFAULTS
   const initialPreferences = () =>
@@ -112,8 +115,15 @@ export function CreatePaymentMethodSheet({
   )
 
   function handleProviderTypeChange(next: string) {
-    const nextSchema = providerTypes.find((t) => t.type === next)?.schema
-    setPreferences(defaultPreferences(nextSchema, { currency: defaultCurrency }))
+    const entry = providerTypes.find((t) => t.type === next)
+    setPreferences(defaultPreferences(entry?.schema, { currency: defaultCurrency }))
+    // Prefill the Name field from the provider — but only if the admin
+    // hasn't typed something themselves yet.
+    if (entry && !form.formState.dirtyFields.name) {
+      form.setValue('name', defaultPaymentMethodName(entry.label, takenNames), {
+        shouldDirty: false,
+      })
+    }
   }
 
   async function onSubmit(values: PaymentMethodFormValues) {
