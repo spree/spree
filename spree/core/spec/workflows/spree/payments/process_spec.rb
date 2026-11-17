@@ -117,6 +117,18 @@ RSpec.describe Spree::Payments::Process do
       expect(eligible.pluck(:amount)).to include(BigDecimal('9.99'))
     end
 
+    it 'leaves the amount of a payment that completed after it was read' do
+      create(:payment, order: order, payment_method: gateway, source: create(:credit_card), status: 'pending', amount: 40)
+      payment # read while still checkout
+      Spree::Payment.find(payment.id).update_columns(status: 'completed')
+      expect(gateway).not_to receive(:authorize)
+
+      result = described_class.call(payment: payment) # stale: still reads checkout
+
+      expect(result).to be_success
+      expect(Spree::Payment.find(payment.id).amount).to eq(40)
+    end
+
     it 'refuses a payment the others already cover' do
       create(:payment, order: order, payment_method: gateway, source: create(:credit_card), status: 'completed', amount: BigDecimal('49.99'))
       expect(gateway).not_to receive(:authorize)

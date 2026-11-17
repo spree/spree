@@ -286,6 +286,25 @@ module Spree
       create_eligible_credit_event
     end
 
+    # Shrinks this payment to +new_amount+ unless it has completed in the
+    # meantime. One conditional UPDATE, so a settlement landing after the
+    # caller last read the row is never overwritten. Store credit gets an
+    # eligibility event for the new amount, as {#update_store_credit_amount!}
+    # records one.
+    #
+    # @param new_amount [BigDecimal]
+    # @return [Boolean] false when the payment had already completed
+    def resize_unless_completed!(new_amount)
+      resized = self.class.unscoped.where(id: id).where.not(status: 'completed')
+                    .update_all(amount: new_amount, updated_at: Time.current)
+      return false if resized.zero?
+
+      self.amount = new_amount
+      clear_attribute_changes(%i[amount])
+      create_eligible_credit_event if store_credit?
+      true
+    end
+
     def offsets_total
       offsets.sum(:amount)
     end

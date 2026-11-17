@@ -58,13 +58,10 @@ module Spree
 
         failure(payment, I18n.t('spree.order_payment_already_covered')) unless owed.positive?
 
-        # Store credit is charged against an eligibility event for its exact
-        # amount, so it is resized through the helper that records a new one.
-        if payment.payment_method&.store_credit?
-          payment.update_store_credit_amount!(owed)
-        else
-          payment.update!(amount: owed)
-        end
+        # Guarded against a settlement landing since the check above: a
+        # payment that completed meanwhile keeps its amount, and like claim
+        # below, that is a success rather than an error.
+        halt!(payment) unless payment.resize_unless_completed!(owed)
       end
 
       # A payment that completed concurrently — the webhook settled it while
