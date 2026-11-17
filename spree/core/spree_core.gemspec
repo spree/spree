@@ -67,6 +67,17 @@ Gem::Specification.new do |s|
   s.add_dependency 'rails-html-sanitizer', '~> 1.6'
   s.add_dependency 'rails-i18n', '~> 8.0'
   s.add_dependency 'ransack', '>= 4.1'
+  # regexp_parser 2.13.2 made Regexp::Syntax::Base.implements private as part of
+  # freezing syntax definitions for Ractor support. json_schemer probes for it
+  # with `respond_to?(:implements)` to tell new regexp_parser from old; the probe
+  # now says "old", so it builds a Syntax instance and calls `implements` on it,
+  # which raises. json_schemer is required from spree/core.rb, so this breaks
+  # boot, not just the tests, and 2.5.0 is its latest release.
+  #
+  # Capped rather than excluding 2.13.2 alone: the privatization looks deliberate
+  # and permanent, so later versions are likelier to keep it than to revert. Lift
+  # this once json_schemer stops probing a private method.
+  s.add_dependency 'regexp_parser', '< 2.13.2'
   s.add_dependency 'request_store', '~> 1.5'
 
   s.add_dependency 'stringex'
