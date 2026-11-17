@@ -91,17 +91,9 @@ export type {
 } from './generated'
 export type * from './params'
 
-// Checkout requirement — a single unsatisfied checkout prerequisite
-export interface CheckoutRequirement {
-  /** Checkout step this requirement belongs to (e.g. "address", "payment") */
-  step: string
-  /** Field that needs to be satisfied (e.g. "email", "shipping_address") */
-  field: string
-  /** Human-readable message describing what's needed */
-  message: string
-}
-
-// Cart warning type — convenience alias for the inline type from the generated Cart
+// Convenience aliases for the inline types of the generated Cart
+/** A single unsatisfied checkout prerequisite. */
+export type CheckoutRequirement = CartType['requirements'][number]
 export type CartWarning = CartType['warnings'][number]
 
 // Hand-written domain types

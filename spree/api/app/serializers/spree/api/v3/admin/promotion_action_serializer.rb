@@ -43,7 +43,9 @@ module Spree
           # Line items the action will add for CreateLineItems. variant_id
           # is prefixed for consistency with the rest of the API. Null on
           # actions that don't have the association.
-          typelize({ variant_id: :string, quantity: :number }, multi: true, nullable: true)
+          typelize({ variant_id: :string, quantity: :number },
+                   multi: true, nullable: true,
+                   comment: 'Rows of a `create_line_items` action: the variant added to the order and how many')
           attribute :line_items do |action|
             next nil unless action.respond_to?(:promotion_action_line_items)
 
