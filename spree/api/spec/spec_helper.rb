@@ -103,5 +103,16 @@ RSpec.configure do |config|
     Spree::Current.reset
   end
 
+  # The locale and the request context are per-thread globals, and a
+  # group's before(:all) runs after the previous example's hooks but before
+  # its own before(:each). Reset them on the way out too, so no group set up
+  # in before(:all) inherits what an earlier example left behind: a leaked
+  # German locale made the sample-data seed fail to validate the store's
+  # English name.
+  config.after(:each) do
+    I18n.locale = I18n.default_locale
+    Spree::Current.reset
+  end
+
   config.order = :random unless ENV['OPENAPI'] == 'true'
 end
