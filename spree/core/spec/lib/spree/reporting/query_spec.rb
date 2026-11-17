@@ -1156,8 +1156,9 @@ RSpec.describe Spree::Reporting::Query do
       it 'filters by a dimension that joins past the discount rows' do
         registry = Spree::Reporting::Registry.new
         Spree::Reporting::DefaultVocabulary.install(registry)
-        registry.dimension :promotion_name, base: :line_items, column: '%{promotions}.name',
-                           joins: [{ promotion_discounts: :promotion }]
+        registry.dimension :promotion_name, base: :line_items,
+                                            column: '%{promotions}.name',
+                                            joins: [{ promotion_discounts: :promotion }]
         query = described_class.new(store: store, registry: registry,
                                     params: { metrics: %w[promotion_discounts],
                                               filters: [{ dimension: 'promotion_name', op: 'eq', value: 'Spring Sale' }] })
