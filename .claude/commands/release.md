@@ -1,5 +1,5 @@
 ---
-description: Cut a Spree release — audit, version bump, release notes, pull request, then tags and the GitHub release (automatic for a patch, printed for a human otherwise), the spree-starter bump and the storefront SDK bump.
+description: Cut a Spree release — audit, version bump, release notes, pull request, then tags and the GitHub release (published by release-on-merge.yml for a patch, printed for a human otherwise), the spree-starter bump and the storefront SDK bump.
 ---
 
 Cut the Spree release named in the arguments: `6.0.2`, `6.1.0` or a
@@ -8,15 +8,16 @@ next patch of `Spree::VERSION` and confirm it.
 
 Version: $ARGUMENTS
 
-Releases are published by `.github/workflows/release.yml` from tags pushed on a
-commit already on `main`; `.changeset/README.md` has the mechanics. This command
-wraps them with the review a release needs. Run the phases in order. Phase 5
-pushes the tags and creates the GitHub release itself for a patch release
-(`X.Y.Z` with `Z` above zero and no prerelease label); for a minor, major or
-prerelease it only prints the commands, and a human runs them. Phases 6 and 7
-bump spree-starter and the storefront once the gems and packages are
-published. All three need the pull request merged, so the command usually
-stops after phase 4 and is run again to publish.
+Releases are published by `.github/workflows/release.yml` on tags of a commit
+already on `main`; `.changeset/README.md` has the mechanics. This command
+wraps them with the review a release needs. Run the phases in order. A patch
+release (`X.Y.Z` with `Z` above zero and no prerelease label) publishes itself
+when its pull request merges: `.github/workflows/release-on-merge.yml` tags the
+merge commit, publishes and creates the GitHub release, and phase 5 watches it.
+For a minor, major or prerelease, phase 5 only prints the commands, and a
+human runs them. Phases 6 and 7 bump spree-starter and the storefront once the
+gems and packages are published. All three need the pull request merged, so
+the command usually stops after phase 4 and is run again to publish.
 
 Pull requests on other repositories (agent-skills, spree-starter,
 storefront) open with plain `gh pr create --repo <owner/name>`: the
@@ -213,23 +214,55 @@ commands, documented patterns), opened with `gh pr create --repo
 spree/agent-skills`. Once it merges, tag the merge commit `v<version>` and
 push it; a tag no server has reached yet changes nothing for existing
 projects. With nothing to sync, tag `main` as it is, so the release still has
-skills tagged for it.
+skills tagged for it. For a patch release that moves a tool, push this tag
+before the release pull request merges: `release-on-merge.yml` stops before
+publishing `@spree/cli` or `create-spree-app` while it is missing.
 
 Stop when `/open-pr` reports: the merge needs a human review.
 
 ## 5. Publish (after the merge)
 
-Run from a checkout of `main` at the merge commit (`git pull`). Check
-`Spree::VERSION` is the target, no `v<version>` tag exists yet, and every
-workflow that ran on the merge commit succeeded: `gh run list --commit <merge
-sha> --json name,conclusion`. Tests must be among them: every release commit
-changes `Spree::VERSION` under `spree/`, so a missing Tests run means CI never
-covered the merge commit. Stop on a missing, failed or cancelled run.
+Run from a checkout of `main` at the merge commit (`git pull`), and check
+`Spree::VERSION` is the target.
 
-Decide who publishes. A **patch release** (`X.Y.Z`, `Z` above zero, no
-prerelease label) is published by this command: run the commands below in
-order. A **minor, major or prerelease** is published by a human: print the
-same commands and the notes, run none of them, and stop.
+### A patch release
+
+`release-on-merge.yml` publishes it once CI passes on the merge commit.
+`scripts/release/publish-on-merge.mjs` holds its steps, in the order of the
+manual commands below: it checks the backend suite ran, reads the notes from
+the pull request description, tags the merge commit `v<version>`, runs
+`release.yml` on the tag, waits for `@spree/docs` on npm, tags and releases
+each tool whose `package.json` version is not on npm yet, creates the GitHub
+release (`--latest` only when it is the newest stable release) and starts
+`discord-release.yml`. Watch it:
+
+```bash
+gh run list --workflow release-on-merge.yml --json databaseId,status,conclusion,displayTitle --jq '.[] | select(.displayTitle == "Release on merge of <merge sha>")'
+gh run watch <id>
+```
+
+It starts only when the `CI` run on the merge commit concludes `success`. A
+failed or cancelled CI run is re-run with `gh run rerun <id> --failed`, and
+the release starts once it passes. Each `release.yml` run it starts shows in
+its log; when one fails, re-run that run's failed jobs, then re-run
+`release-on-merge.yml` with `gh run rerun <id> --failed`. Every step skips
+what already exists, so re-running is always safe. When it concluded
+`success`, go to step 4 below, which every release runs. When it cannot finish (say, GitHub Actions is down),
+run the manual commands below: they skip nothing that it did, but each one
+is safe to repeat.
+
+### A minor, major or prerelease, or the manual fallback
+
+Check no `v<version>` tag exists yet (for the fallback, that it tags the
+merge commit) and every workflow that ran on the merge commit succeeded: `gh
+run list --commit <merge sha> --json name,conclusion`. `CI` must be among them
+with its `Backend /` jobs run, not skipped: every release commit changes
+`Spree::VERSION` under `spree/`, so a CI run without them never covered the
+merge commit. Stop on a missing, failed or cancelled run.
+
+For a minor, major or prerelease, print the commands below and the notes, run
+none of them, and stop: a human publishes it. For the patch fallback, run them
+in order.
 
 1. Recover the notes first, before anything is pushed, so a problem with them
    stops the release while nothing has happened yet. They are in the pull
@@ -259,6 +292,11 @@ same commands and the notes, run none of them, and stop.
    git tag '@spree/cli@<version>' <merge sha>
    git push origin '@spree/cli@<version>'
    ```
+
+   A tag `release-on-merge.yml` already made on the merge commit stays as it
+   is: pushing it again starts nothing. Re-run the failed `release.yml` run on
+   it, or start one with `gh workflow run release.yml --ref <tag>` when it has
+   none.
 
    Tool tags wait for the docs, which the `v<version>` run publishes:
    `create-spree-app` projects depend on `@spree/docs` on the Spree major, and
@@ -299,12 +337,12 @@ same commands and the notes, run none of them, and stop.
    by hand if no run exists:
 
    ```bash
-   gh run list --workflow discord-release.yml --event release --json headBranch,conclusion --jq '.[] | select(.headBranch == "v<version>")'
+   gh run list --workflow discord-release.yml --json displayTitle,status,conclusion --jq '.[] | select(.displayTitle == "Post v<version> to changelog")'
    gh workflow run discord-release.yml -f tag=v<version> -f channel=changelog
    ```
 
-   Run the second command only when the first prints nothing, so the release
-   is not posted twice. Skip this for a prerelease, which is never posted.
+   Run the second command only when the first prints nothing or only failed
+   runs, so the release is not posted twice. Skip this for a prerelease, which is never posted.
 
 4. Wait until the registries serve the exact version. A green release
    workflow means the upload finished, not that the version is installable:

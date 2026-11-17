@@ -9,8 +9,10 @@ on:
   pull_request:
   merge_group:
 
+# A release commit's run gets a group of its own, so a later push to main
+# cannot cancel the run release-on-merge.yml waits for.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}${{ startsWith(github.event.head_commit.message, 'Released Spree ') && format('-{0}', github.sha) || '' }}
   cancel-in-progress: true
 
 permissions:

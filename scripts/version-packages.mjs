@@ -18,9 +18,9 @@
 // one package; CI runs it, and both versioning commands run it first.
 import { execFileSync } from 'node:child_process'
 import fs from 'node:fs'
+import { createRequire } from 'node:module'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import YAML from 'yaml'
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 
@@ -179,6 +179,9 @@ export function ownChangesOnly(source, target, spreeVersion, groupNames) {
  * @returns {string[]}
  */
 export function sharedChangesets() {
+  // Loaded here rather than imported, so release.yml reads versions through this
+  // module without installing the workspace.
+  const YAML = createRequire(import.meta.url)('yaml')
   const dir = path.join(repoRoot, '.changeset')
   return fs
     .readdirSync(dir)

@@ -30,13 +30,23 @@ API, so they keep their own versions and release on their own tags.
 ## Releasing
 
 `/release <version>` runs the process below with the audit and release notes a
-release needs, publishing a patch release itself and leaving a minor, major or
-prerelease to a human; this section records the mechanics.
+release needs, leaving a minor, major or prerelease to a human; this section
+records the mechanics.
 
-Every release is published by `.github/workflows/release.yml` from a tag
-pushed on a commit already on `main`. The workflow checks the tag against the
-versions in the repository first, and skips any version already published, so
-a failed release can be re-run.
+Every release is published by `.github/workflows/release.yml` on a tag of a
+commit already on `main`. The workflow checks the tag against the versions in
+the repository first, then that npm Trusted Publishing accepts it for every
+package it will publish, and skips any version already published, so a failed
+release can be re-run.
+
+A patch release (`6.0.6`) needs no tags pushed by hand. Once CI passes on the
+squash merge of its `Released Spree <version>` pull request,
+`.github/workflows/release-on-merge.yml` tags the merge commit, runs
+`release.yml` on each tag, publishes each tool whose version is not on npm
+yet, and creates the GitHub release from the notes in the pull request
+description. Its tags start no workflow by themselves, so it starts
+`release.yml` with `workflow_dispatch`, which keeps `release.yml` the
+workflow npm Trusted Publishing checks.
 
 | Tag | Publishes |
 | --- | --- |
@@ -52,7 +62,8 @@ a failed release can be re-run.
    then moves every package in the group to the Spree version. A package with
    no changes still gets the new version and a changelog entry saying so.
    Pending changesets for the tools are versioned too.
-3. Merge, then push the Spree tag, plus a tag for each tool whose version
+3. Merge. For a patch release, `release-on-merge.yml` does the rest. For any
+   other release, push the Spree tag, plus a tag for each tool whose version
    changed: `git push origin v6.0.0.rc7 @spree/cli@3.5.0`.
 
 **A tool release between Spree releases:** run `pnpm version:tools`, which
