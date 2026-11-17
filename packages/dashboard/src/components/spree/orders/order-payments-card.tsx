@@ -398,10 +398,11 @@ function AddPaymentDialog({
     if (mutation.isError) mutation.reset()
   }
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: the open transition is the trigger — depending on isError would clear the message the instant a submit fails with the dialog still open
+  // Closing never resets an in-flight request, so one that fails after the
+  // dialog is gone keeps its error into the next open. Clear it while closed.
   useEffect(() => {
-    if (open && mutation.isError) mutation.reset()
-  }, [open])
+    if (!open && mutation.isError) mutation.reset()
+  }, [open, mutation.isError, mutation.reset])
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
