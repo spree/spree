@@ -215,6 +215,38 @@ test.describe('payments', () => {
     await adminRequest(page, creds, 'delete', `/payment_methods/${method.id}`)
   })
 
+  test('keeps a condition someone else added while the sheet was open', async ({ page }) => {
+    const creds = await login(page)
+    const method = await seedCheck(page, creds, `E2E Stale Conditions ${Date.now()}`)
+    await openPayments(page, creds.store_id)
+
+    await methodRow(page, method.name)
+      .getByRole('button', { name: /^configure$/i })
+      .click()
+    await expect(page.getByText(/no conditions/i)).toBeVisible({ timeout: 15_000 })
+
+    // Another admin saves a condition after this sheet loaded.
+    await adminRequest(page, creds, 'post', `/payment_methods/${method.id}/rules`, {
+      type: 'company_rule',
+    })
+
+    await page.getByRole('button', { name: /add condition/i }).click()
+    await page.getByRole('menuitem', { name: 'Order total' }).click()
+    await page.getByLabel('Minimum order total (USD)').fill('5000')
+    await page.getByRole('button', { name: /^save$/i }).click()
+
+    await expect(page.getByRole('alert')).toContainText(/someone else changed these conditions/i)
+    const rules = await adminRequest<{ data: { type: string }[] }>(
+      page,
+      creds,
+      'get',
+      `/payment_methods/${method.id}/rules`,
+    )
+    expect(rules.data.map((rule) => rule.type)).toEqual(['company_rule'])
+
+    await adminRequest(page, creds, 'delete', `/payment_methods/${method.id}`)
+  })
+
   test('orders the methods checkout offers', async ({ page }) => {
     const creds = await login(page)
     const stamp = Date.now()

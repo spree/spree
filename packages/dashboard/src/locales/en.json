@@ -4654,6 +4654,7 @@
       "conditions": {
         "active": "Turn {{name}} on or off",
         "add": "Add condition",
+        "changed_elsewhere": "Someone else changed these conditions since you opened this payment method. Close it and open it again to see their changes.",
         "description": "Offer this payment method at storefront checkout only when every active condition is met. Payments taken in the dashboard ignore them.",
         "empty": "No conditions — this payment method is offered at every checkout.",
         "fields": {

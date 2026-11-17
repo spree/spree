@@ -6080,6 +6080,7 @@
       "conditions": {
         "active": "Activar o desactivar {{name}}",
         "add": "Añadir condición",
+        "changed_elsewhere": "Otra persona ha cambiado estas condiciones desde que abriste este método de pago. Ciérralo y vuelve a abrirlo para ver sus cambios.",
         "description": "Ofrece este método de pago en el checkout de la tienda solo cuando se cumplen todas las condiciones activas. Los pagos registrados en el panel las ignoran.",
         "empty": "Sin condiciones: este método de pago se ofrece en todos los checkouts.",
         "fields": {

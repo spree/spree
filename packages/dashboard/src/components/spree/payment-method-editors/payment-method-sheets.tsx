@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { PaymentMethod, PaymentMethodType, PreferenceSchema } from '@spree/admin-sdk'
 import {
+  adminClient,
   defaultPreferences,
   mapSpreeErrorsToForm,
   RecordMetadataSection,
@@ -29,6 +30,7 @@ import {
   useUpdatePaymentMethod,
 } from '../../../hooks/use-payment-methods'
 import {
+  defaultPaymentMethodName,
   filterPaymentMethodProviderTypes,
   PAYMENT_METHOD_BASE_DEFAULTS,
   PAYMENT_METHOD_CREATE_DEFAULTS,
@@ -87,7 +89,11 @@ export function CreatePaymentMethodSheet({
   const { defaultCurrency } = useStore()
 
   const createDefaults: PaymentMethodFormValues = initialType
-    ? { ...PAYMENT_METHOD_CREATE_DEFAULTS, type: initialType.type, name: initialType.label }
+    ? {
+        ...PAYMENT_METHOD_CREATE_DEFAULTS,
+        type: initialType.type,
+        name: defaultPaymentMethodName(initialType),
+      }
     : PAYMENT_METHOD_CREATE_DEFAULTS
   const initialPreferences = () =>
     initialType ? defaultPreferences(initialType.schema, { currency: defaultCurrency }) : {}
@@ -256,8 +262,17 @@ export function EditPaymentMethodSheet({
   async function onSubmit(values: PaymentMethodFormValues) {
     // Compared with what was loaded rather than read from `dirtyFields`,
     // which a field array only fills in when something subscribes to it.
-    const rulesChanged =
-      JSON.stringify(values.rules) !== JSON.stringify(form.formState.defaultValues?.rules ?? [])
+    const loadedRules = JSON.stringify(form.formState.defaultValues?.rules ?? [])
+    const rulesChanged = JSON.stringify(values.rules) !== loadedRules
+    // `rules` replaces the whole set, so a condition someone else saved since
+    // this sheet opened would be deleted without a word. Refuse instead.
+    if (rulesChanged) {
+      const current = await adminClient.paymentMethods.get(id)
+      if (JSON.stringify(rulesFromRecord(current)) !== loadedRules) {
+        form.setError('root', { message: t('admin.payment_methods.conditions.changed_elsewhere') })
+        return
+      }
+    }
     const params = paymentMethodValuesToUpdateParams(values, { rulesChanged })
     // Read from the ref rather than the memo: a retry runs before the next
     // render recomputes it.
