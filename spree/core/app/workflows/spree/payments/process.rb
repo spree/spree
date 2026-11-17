@@ -68,6 +68,11 @@ module Spree
       # webhook settled meanwhile, is a success, not an error.
       def claim
         outcome = with_order_lock do
+          # Another run already claimed it (ensure_processable refuses a
+          # processing payment, but only the in-memory one); that run owns
+          # the charge and the amount the gateway sees.
+          next :settled if payment.persisted? && Spree::Payment.unscoped.exists?(id: payment.id, status: 'processing')
+
           owed = payment.amount_owed_by_order(including_in_flight: true)
           if owed && payment.amount > owed
             next :covered unless owed.positive?

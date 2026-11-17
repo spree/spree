@@ -154,6 +154,18 @@ RSpec.describe Spree::Payments::Process do
       expect(Spree::Payment.find(payment.id).amount).to eq(40)
     end
 
+    it 'leaves a payment another run claimed even when no resize is needed' do
+      payment # read while still checkout, at 40
+      # Another run resized it to what was owed then and claimed it.
+      Spree::Payment.find(payment.id).update_columns(status: 'processing', amount: 10)
+      expect(gateway).not_to receive(:authorize)
+
+      result = described_class.call(payment: payment) # stale: still reads checkout at 40, and 49.99 is owed
+
+      expect(result).to be_success
+      expect(Spree::Payment.find(payment.id).amount).to eq(10)
+    end
+
     it 'limits an unsaved payment and saves it with its claim' do
       create(:payment, order: order, payment_method: gateway, source: create(:credit_card), status: 'pending', amount: 40)
       unsaved = Spree::Payment.new(order: order, payment_method: gateway, source: card, status: 'checkout', amount: 40)
