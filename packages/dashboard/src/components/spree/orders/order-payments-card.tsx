@@ -541,7 +541,9 @@ function AddPaymentDialog({
               )}
 
               {mutation.isError && (
-                <p className="text-base text-destructive">{(mutation.error as Error).message}</p>
+                <p className="text-base text-destructive" role="alert">
+                  {(mutation.error as Error).message}
+                </p>
               )}
             </FieldGroup>
           </DialogBody>
