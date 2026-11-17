@@ -1109,6 +1109,18 @@ RSpec.describe Spree::Reporting::Query do
         expect(result.totals[:promotion_discounts][:value]).to eq(5.0)
       end
 
+      # A quoted `?` inside the discount subquery used to be counted as a bind
+      # placeholder for the HAVING value, and the statement was refused.
+      it 'filters on discount money while filtered by a code containing a question mark' do
+        Spree::Discount.where(promotion: promotion).update_all(code: 'SAVE?10')
+
+        result = run(metrics: %w[promotion_discounts], dimensions: %w[product],
+                     filters: [{ dimension: 'coupon_code', op: 'eq', value: 'SAVE?10' }],
+                     metric_filters: [{ metric: 'promotion_discounts', op: 'gte', value: 1 }])
+
+        expect(result.rows.first[:metrics][:promotion_discounts][:value]).to eq(5.0)
+      end
+
       it 'counts only the filtered code in the dimensionless total' do
         result = run(metrics: %w[promotion_discounts], filters: [{ dimension: 'coupon_code', op: 'eq', value: 'SPRING' }])
 

@@ -190,13 +190,18 @@ module Spree
             metric = filter[:metric]
             next unless names.include?(metric.name)
 
-            # The value rides as a bind rather than an interpolation: it is
-            # the only piece of request data that reaches the statement, and
-            # the aggregate beside it is registered SQL.
+            # The value is quoted by Arel rather than interpolated: it is the
+            # only piece of request data that reaches the comparison, and the
+            # aggregate beside it is registered SQL. Not a `?` bind: the
+            # aggregate can carry quoted filter values of its own (a coupon
+            # code containing `?`), and ActiveRecord would count those as
+            # placeholders too and refuse the statement.
             scope = scope.having(
-              Arel.sql("#{metric_sql(metric, scope: scope, grouped: true)} " \
-                       "#{COMPARISONS.fetch(filter[:op]).first} ?"),
-              filter[:value]
+              Arel::Nodes::InfixOperation.new(
+                COMPARISONS.fetch(filter[:op]).first,
+                Arel.sql(metric_sql(metric, scope: scope, grouped: true)),
+                Arel::Nodes.build_quoted(filter[:value])
+              )
             )
           end
 
