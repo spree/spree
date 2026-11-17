@@ -10,7 +10,7 @@ The center of the multi-tenant architecture is the `Spree::Tenant` class. This i
 
 Every tenanted model includes a `tenant_id` column. This is used to identify which tenant a record belongs to. It's row-level multi-tenancy.
 
-After creating a new tenant it will automatically create store and run [Spree seeds](https://github.com/spree/spree/tree/main/core/app/services/spree/seeds) to populate data such as countries, zones, tax rates, etc.
+After creating a new tenant it will automatically create store and run [Spree seeds](https://github.com/spree/spree/tree/main/spree/core/app/services/spree/seeds) to populate data such as countries, zones, tax rates, etc.
 
 ## Tenanted models
 
