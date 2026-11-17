@@ -468,6 +468,61 @@ module Spree
         end
       end
 
+      describe 'with an automatic promotion that gifts a physical item' do
+        let(:gift) { create(:product_in_stock).default_variant }
+        let(:initial_address) { create(:address, country: country, state: state) }
+        let(:order) { create(:order, customer: user, store: store, ship_address: initial_address) }
+        let!(:promotion) do
+          create(:promotion, code: nil, kind: :automatic, store: store).tap do |promotion|
+            create(:promotion_action_create_line_items, promotion: promotion).
+              promotion_action_line_items.create!(variant: gift, quantity: 1)
+          end
+        end
+
+        it 'puts the gifted line on a fulfillment' do
+          described_class.call(order: order, params: { items: [{ variant_id: variant.prefixed_id, quantity: 1 }] })
+
+          order.reload
+          gift_line = order.line_items.find_by(variant_id: gift.id)
+          expect(gift_line).to be_present
+          expect(order.fulfillments.flat_map(&:inventory_units).map(&:line_item_id)).to include(gift_line.id)
+        end
+
+        context 'when only the customer changes and that makes the order qualify' do
+          let(:customer_group) { create(:customer_group, store: store) }
+          let(:member) { create(:user) }
+
+          before do
+            Spree::Promotion::Rules::CustomerGroup.create!(promotion: promotion, preferred_customer_group_ids: [customer_group.id])
+            create(:customer_group_user, customer_group: customer_group, customer: member)
+          end
+
+          it 'puts the gifted line on a fulfillment, though the edit builds none of its own' do
+            described_class.call(order: order, params: { items: [{ variant_id: variant.prefixed_id, quantity: 1 }] })
+            expect(order.reload.line_items.find_by(variant_id: gift.id)).to be_nil
+
+            described_class.call(order: order, params: { customer_id: member.id })
+
+            order.reload
+            gift_line = order.line_items.find_by(variant_id: gift.id)
+            expect(gift_line).to be_present
+            expect(order.fulfillments.flat_map(&:inventory_units).map(&:line_item_id)).to include(gift_line.id)
+          end
+
+          it 'takes the gift off the fulfillments when the order stops qualifying' do
+            described_class.call(order: order, params: { items: [{ variant_id: variant.prefixed_id, quantity: 1 }] })
+            described_class.call(order: order, params: { customer_id: member.id })
+            expect(order.reload.line_items.find_by(variant_id: gift.id)).to be_present
+
+            described_class.call(order: order, params: { customer_id: user.id })
+
+            order.reload
+            expect(order.line_items.find_by(variant_id: gift.id)).to be_nil
+            expect(order.fulfillments.flat_map(&:inventory_units).map(&:variant_id)).to contain_exactly(variant.id)
+          end
+        end
+      end
+
       describe 'with an automatic free-shipping promotion' do
         let!(:promotion) { create(:free_shipping_promotion, kind: :automatic) }
         let(:initial_address) { create(:address, country: country, state: state) }
