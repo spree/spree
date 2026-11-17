@@ -150,7 +150,7 @@ module Spree
           query.filters.filter_map do |filter|
             dimension = filter[:dimension]
             next unless dimension.base == metric.base
-            next unless (top_level_joins(dimension.joins) & needed).any?
+            next unless top_level_joins(dimension.joins).intersect?(needed)
 
             " AND #{in_predicate(qualified_column(dimension), filter[:values]).to_sql}"
           end.join
