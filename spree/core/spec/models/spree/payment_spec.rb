@@ -597,7 +597,9 @@ describe Spree::Payment, type: :model do
         context 'if successful' do
           it 'records the capture under the owner row lock' do
             expect(payment.payment_method).to receive(:capture).and_return(success_response)
-            expect(payment.owner).to receive(:with_lock).and_call_original
+            # Twice: the claim checks what is owed under the lock, then the
+            # capture is recorded under it.
+            expect(payment.owner).to receive(:with_lock).twice.and_call_original
 
             payment.capture!
             expect(Spree::Deprecation).to have_received(:warn).with(/Payment#capture! is deprecated/)

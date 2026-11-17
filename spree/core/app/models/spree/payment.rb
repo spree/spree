@@ -400,8 +400,10 @@ module Spree
     #
     # @param including_in_flight [Boolean] also count other pending and
     #   processing payments
+    # @param including_processing [Boolean] also count other processing
+    #   payments — the ones being charged at the gateway right now
     # @return [BigDecimal, nil] nil for a payment not made against an order
-    def amount_owed_by_order(including_in_flight:)
+    def amount_owed_by_order(including_in_flight:, including_processing: false)
       return if order_id.nil?
 
       fresh_order = Spree::Order.find(order_id)
@@ -416,7 +418,11 @@ module Spree
       captured = others.where(status: 'completed')
       owed = fresh_order.total - by_status.fetch('completed', 0) + Spree::Refund.where(payment_id: captured.select(:id)).sum(:amount) -
              fresh_order.returned_items_refund_total
-      owed -= by_status.fetch('pending', 0) + by_status.fetch('processing', 0) if including_in_flight
+      if including_in_flight
+        owed -= by_status.fetch('pending', 0) + by_status.fetch('processing', 0)
+      elsif including_processing
+        owed -= by_status.fetch('processing', 0)
+      end
 
       [owed, BigDecimal('0')].max
     end

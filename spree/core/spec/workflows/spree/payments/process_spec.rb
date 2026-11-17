@@ -129,6 +129,19 @@ RSpec.describe Spree::Payments::Process do
       expect(Spree::Payment.find(payment.id).amount).to eq(40)
     end
 
+    it 'limits to what is owed once another payment claimed after the first check' do
+      sibling = create(:payment, order: order, payment_method: gateway, source: create(:credit_card), status: 'checkout', amount: 40)
+      # The validate hook runs between the early limit and the claim — the
+      # window another request's claim can land in.
+      Spree.hooks.register('payments.process.validate') { |_flow| sibling.update_columns(status: 'processing') }
+      allow(gateway).to receive(:authorize).and_return(success_response)
+
+      result = described_class.call(payment: payment)
+
+      expect(result).to be_success
+      expect(payment.reload.amount).to eq(BigDecimal('9.99'))
+    end
+
     it 'refuses a payment the others already cover' do
       create(:payment, order: order, payment_method: gateway, source: create(:credit_card), status: 'completed', amount: BigDecimal('49.99'))
       expect(gateway).not_to receive(:authorize)

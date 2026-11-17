@@ -195,6 +195,30 @@ RSpec.describe Spree::Payments::Capture do
     end
   end
 
+  describe 'racing another capture on the same order' do
+    let(:order) { create(:order, store: store, total: BigDecimal('49.99')) }
+    let(:payment) do
+      create(:payment, order: order, payment_method: gateway, source: card, status: 'pending', amount: 40, response_code: '123')
+    end
+    let!(:sibling) do
+      create(:payment, order: order, payment_method: gateway, source: create(:credit_card), status: 'pending', amount: 40,
+                       response_code: '456')
+    end
+
+    it 'refuses once the other has claimed between the first check and this claim' do
+      # The validate hook runs after the early owed check and before the
+      # claim — the window another request's claim can land in.
+      Spree.hooks.register('payments.capture.validate') { |_flow| sibling.update_columns(status: 'processing') }
+      expect(gateway).not_to receive(:capture)
+
+      result = described_class.call(payment: payment)
+
+      expect(result).to be_failure
+      expect(result.error.value).to eq(I18n.t('spree.capture_exceeds_amount_owed', amount: money('9.99').to_s))
+      expect(payment.reload).to be_pending
+    end
+  end
+
   describe 'racing a concurrent settlement' do
     # The stale-instance race: the webhook settles the payment while an
     # admin's already-loaded copy still reads pending. The claim must

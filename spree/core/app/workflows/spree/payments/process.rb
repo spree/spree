@@ -66,10 +66,27 @@ module Spree
 
       # A payment that completed concurrently — the webhook settled it while
       # this request was in flight — is a success, not an error.
+      # The limit again, under the order's row lock and together with the
+      # claim: of two payments processed at once on one order, the second
+      # reads after the first has claimed (processing), so it is limited to
+      # what the first leaves owing rather than both taking the full balance.
       def claim
-        halt!(payment) unless payment.started_processing!
+        outcome = with_order_lock do
+          owed = payment.amount_owed_by_order(including_in_flight: true)
+          if owed && payment.amount > owed
+            next :covered unless owed.positive?
+            next :settled unless payment.resize_unless_completed!(owed)
+          end
+          payment.started_processing! ? :claimed : :settled
+        end
+        failure(payment, I18n.t('spree.order_payment_already_covered')) if outcome == :covered
+        halt!(payment) if outcome == :settled
       rescue Spree::Core::GatewayError => error
         failure(payment, error.message)
+      end
+
+      def with_order_lock(&)
+        payment.order_id ? payment.owner.with_lock(&) : yield
       end
 
       def process_at_gateway
