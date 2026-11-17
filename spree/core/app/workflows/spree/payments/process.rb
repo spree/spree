@@ -17,7 +17,6 @@ module Spree
         super
 
         step :ensure_processable
-        step :limit_to_amount_owed
         run_hooks :validate
         run_hooks :before_process
 
@@ -46,44 +45,41 @@ module Spree
       end
 
       # Several live payments can sit on one order, so one is charged only
-      # what the others leave owing. A payment the others already cover is
-      # refused here, before the hooks; the resize itself happens under the
-      # lock in claim, so it can never land on a payment another run is
-      # already charging.
-      def limit_to_amount_owed
-        # A completed payment is never charged again (claim halts on it).
-        return if payment.completed?
-
-        owed = payment.amount_owed_by_order(including_in_flight: true)
-        return if owed.nil? || owed.positive?
-
-        failure(payment, I18n.t('spree.order_payment_already_covered'))
-      end
-
-      # Under the order's row lock: what is owed, the resize to it, and the
-      # claim happen together. Of two payments processed at once on one
-      # order, the second reads after the first has claimed (processing), so
-      # it is limited to what the first leaves owing rather than both taking
-      # the full balance. A payment another run already claimed, or one the
-      # webhook settled meanwhile, is a success, not an error.
+      # what the others leave owing. Under the order's row lock, the payment's
+      # current status, what is owed, the resize to it and the claim are read
+      # and written together: of two payments processed at once on one order,
+      # the second reads after the first has claimed (processing), so it is
+      # limited to what the first leaves owing rather than both taking the
+      # full balance.
       def claim
-        outcome = with_order_lock do
-          # Another run already claimed it (ensure_processable refuses a
-          # processing payment, but only the in-memory one); that run owns
-          # the charge and the amount the gateway sees.
-          next :settled if payment.persisted? && Spree::Payment.unscoped.exists?(id: payment.id, status: 'processing')
-
-          owed = payment.amount_owed_by_order(including_in_flight: true)
-          if owed && payment.amount > owed
-            next :covered unless owed.positive?
-            next :settled unless payment.resize_if_unclaimed!(owed)
-          end
-          payment.started_processing! ? :claimed : :settled
-        end
+        outcome = with_order_lock { claim_within_amount_owed }
         failure(payment, I18n.t('spree.order_payment_already_covered')) if outcome == :covered
         halt!(payment) if outcome == :settled
       rescue Spree::Core::GatewayError => error
         failure(payment, error.message)
+      end
+
+      # The row's status decides first, since the instance may be stale. A
+      # payment another run claimed (processing) or one that settled is that
+      # run's — a success here, not an error. A dead one (void, invalid) is
+      # left to started_processing!, which raises for it, so it still fails.
+      def claim_within_amount_owed
+        status = current_status
+        return :settled if %w[processing completed].include?(status)
+
+        if Spree::Payment::RESIZABLE_STATUSES.include?(status)
+          owed = payment.amount_owed_by_order(including_in_flight: true)
+          if owed && payment.amount > owed
+            return :covered unless owed.positive?
+            return claim_within_amount_owed unless payment.resize_if_unclaimed!(owed)
+          end
+        end
+
+        payment.started_processing! ? :claimed : :settled
+      end
+
+      def current_status
+        payment.persisted? ? Spree::Payment.unscoped.where(id: payment.id).pick(:status) : payment.status
       end
 
       def with_order_lock(&)

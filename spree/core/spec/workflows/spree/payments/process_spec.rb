@@ -166,6 +166,25 @@ RSpec.describe Spree::Payments::Process do
       expect(Spree::Payment.find(payment.id).amount).to eq(10)
     end
 
+    it 'still fails a payment a hook voided before the claim' do
+      create(:payment, order: order, payment_method: gateway, source: create(:credit_card), status: 'pending', amount: 40)
+      Spree.hooks.register('payments.process.validate') { |_flow| Spree::Payment.find(payment.id).update_columns(status: 'void') }
+      expect(gateway).not_to receive(:authorize)
+
+      result = described_class.call(payment: payment)
+
+      expect(result).to be_failure
+      expect(Spree::Payment.find(payment.id).amount).to eq(40)
+    end
+
+    it 'leaves a completed payment on a canceled order as a success' do
+      payment.update_columns(status: 'completed')
+      order.update_columns(status: 'canceled')
+      expect(gateway).not_to receive(:authorize)
+
+      expect(described_class.call(payment: payment)).to be_success
+    end
+
     it 'limits an unsaved payment and saves it with its claim' do
       create(:payment, order: order, payment_method: gateway, source: create(:credit_card), status: 'pending', amount: 40)
       unsaved = Spree::Payment.new(order: order, payment_method: gateway, source: card, status: 'checkout', amount: 40)
