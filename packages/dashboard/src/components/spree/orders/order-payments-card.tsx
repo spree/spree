@@ -61,7 +61,7 @@ import {
 } from '@spree/dashboard-ui/icons'
 import { useQuery } from '@tanstack/react-query'
 import i18n from 'i18next'
-import { type FormEvent, useEffect, useState } from 'react'
+import { type FormEvent, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useOrderMutation } from '../../../hooks/use-order'
 import { useOrderGroup } from '../../../hooks/use-seller-ledger'
@@ -339,10 +339,14 @@ function AddPaymentDialog({
   const [capture, setCapture] = useState(false)
   const { symbol: currencySymbol } = currencyParts(order.currency, i18n.language)
 
-  // Re-seed amount from what is left to pay whenever the dialog opens.
-  useEffect(() => {
+  // Seed the amount from what is left to pay each time the dialog opens, and
+  // only then: an order refreshing while it is open must not overwrite what
+  // the merchant typed.
+  const [seededOpen, setSeededOpen] = useState(false)
+  if (open !== seededOpen) {
+    setSeededOpen(open)
     if (open) setAmount(defaultAmount)
-  }, [open, defaultAmount])
+  }
 
   const { data: methodsData } = useQuery({
     queryKey: ['payment-methods'],

@@ -49,8 +49,9 @@ RSpec.describe 'Admin Order Payments API', type: :request, swagger_doc: 'api-ref
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Records a payment on the order, for the amount given or, by default, what the order still owes after the ' \
-                  'payments already recorded on it. The order\'s other payments are left as they are. The payment starts ' \
-                  'uncaptured (`checkout`) and counts towards the paid total once it is captured.'
+                  'payments already recorded on it (failed, invalid and void payments don\'t count). The order\'s other payments ' \
+                  'are left as they are. The payment starts uncaptured (`checkout`) and counts towards the paid total once it is ' \
+                  'captured.'
       admin_scope :write, :payments
 
       admin_sdk_example 'order-payments/create'
@@ -119,8 +120,10 @@ RSpec.describe 'Admin Order Payments API', type: :request, swagger_doc: 'api-ref
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Captures an uncaptured (`checkout`) or authorized (`pending`) payment, in full or for part of its ' \
-                  'amount. A captured payment counts towards the order\'s paid total.'
+      description 'Captures an authorized (`pending`) payment, in full or for part of its amount. An uncaptured (`checkout`) ' \
+                  'payment can be captured only when its payment method needs no authorization first. A capture may take at ' \
+                  'most what the order still owes after its other captured payments: a larger amount is refused, and so is any ' \
+                  'capture once nothing is owed. A captured payment counts towards the order\'s paid total.'
       admin_scope :write, :payments
 
       admin_sdk_example 'order-payments/capture'

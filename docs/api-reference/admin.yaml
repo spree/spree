@@ -33120,7 +33120,7 @@ paths:
       - api_key: []
         bearer_auth: []
       description: |-
-        Records a payment on the order, for the amount given or, by default, what the order still owes after the payments already recorded on it. The order's other payments are left as they are. The payment starts uncaptured (`checkout`) and counts towards the paid total once it is captured.
+        Records a payment on the order, for the amount given or, by default, what the order still owes after the payments already recorded on it (failed, invalid and void payments don't count). The order's other payments are left as they are. The payment starts uncaptured (`checkout`) and counts towards the paid total once it is captured.
 
         **Required scope:** `write_payments` (for API-key authentication).
       x-codeSamples:
@@ -33309,7 +33309,7 @@ paths:
       - api_key: []
         bearer_auth: []
       description: |-
-        Captures an uncaptured (`checkout`) or authorized (`pending`) payment, in full or for part of its amount. A captured payment counts towards the order's paid total.
+        Captures an authorized (`pending`) payment, in full or for part of its amount. An uncaptured (`checkout`) payment can be captured only when its payment method needs no authorization first. A capture may take at most what the order still owes after its other captured payments: a larger amount is refused, and so is any capture once nothing is owed. A captured payment counts towards the order's paid total.
 
         **Required scope:** `write_payments` (for API-key authentication).
       x-codeSamples:
@@ -69190,7 +69190,8 @@ components:
         amount_left_to_pay:
           type: string
           description: What a new payment should be for, the amount due less the
-            payments recorded and not yet captured. Never negative.
+            payments recorded and not yet captured. Failed, invalid and void payments
+            don't count. Never negative.
         commission_amount_total:
           type: string
         commission_tax_total:
@@ -84498,7 +84499,7 @@ components:
           format: decimal
           pattern: "^-?\\d+(\\.\\d+)?$"
           description: Defaults to what the order still owes after the payments already
-            recorded on it.
+            recorded on it (failed, invalid and void payments are not counted).
         source_id:
           type: string
           description: A saved payment source of the order's customer (a credit card),

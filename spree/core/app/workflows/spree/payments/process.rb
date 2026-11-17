@@ -49,12 +49,22 @@ module Spree
       # what the others leave owing and shrunk to that before the gateway
       # sees it. A payment the others already cover is refused.
       def limit_to_amount_owed
+        # A completed payment is never charged again (claim halts on it), so
+        # its recorded amount is left alone.
+        return if payment.completed?
+
         owed = payment.amount_owed_by_order(including_in_flight: true)
         return if owed.nil? || payment.amount <= owed
 
         failure(payment, I18n.t('spree.order_payment_already_covered')) unless owed.positive?
 
-        payment.update!(amount: owed)
+        # Store credit is charged against an eligibility event for its exact
+        # amount, so it is resized through the helper that records a new one.
+        if payment.payment_method&.store_credit?
+          payment.update_store_credit_amount!(owed)
+        else
+          payment.update!(amount: owed)
+        end
       end
 
       # A payment that completed concurrently — the webhook settled it while

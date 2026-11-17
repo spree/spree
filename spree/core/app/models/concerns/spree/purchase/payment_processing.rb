@@ -94,8 +94,8 @@ module Spree
         unprocessed_payments.each do |payment|
           break if settled_payment_total >= total
           # An order can carry several live payments; once those processed
-          # so far cover it, the rest are left uncharged.
-          break if is_a?(Spree::Order) && payments.where(status: %w[completed pending processing]).sum(:amount) >= total
+          # so far cover it, net of refunds, the rest are left uncharged.
+          break if is_a?(Spree::Order) && payment.amount_owed_by_order(including_in_flight: true)&.zero?
 
           result = Spree.payment_process_workflow.call(payment: payment, action: action)
           raise Spree::Core::GatewayError, result.error.value.to_s if result.failure?

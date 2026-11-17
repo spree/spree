@@ -389,10 +389,13 @@ module Spree
       return BigDecimal('0') if fresh_order.canceled?
 
       others = fresh_order.payments.where.not(id: id)
+      # One statement for both sums, so a sibling settling between two reads
+      # can't drop out of the completed sum and the in-flight sum at once.
+      by_status = others.where(status: %w[completed pending processing]).group(:status).sum(:amount)
       captured = others.where(status: 'completed')
-      owed = fresh_order.total - captured.sum(:amount) + Spree::Refund.where(payment_id: captured.select(:id)).sum(:amount) -
+      owed = fresh_order.total - by_status.fetch('completed', 0) + Spree::Refund.where(payment_id: captured.select(:id)).sum(:amount) -
              fresh_order.returned_items_refund_total
-      owed -= others.where(status: %w[pending processing]).sum(:amount) if including_in_flight
+      owed -= by_status.fetch('pending', 0) + by_status.fetch('processing', 0) if including_in_flight
 
       [owed, BigDecimal('0')].max
     end
