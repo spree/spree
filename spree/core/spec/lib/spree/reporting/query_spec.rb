@@ -1063,6 +1063,26 @@ RSpec.describe Spree::Reporting::Query do
       expect(result.totals[:promotion_discounts][:value]).to eq(5.0)
     end
 
+    # Only the promotion dimensions join the discount rows. Grouped by
+    # anything else, the joined aggregate named a table missing from the FROM
+    # clause and the query failed outright.
+    it 'breaks discounts down by a dimension that does not join them' do
+      result = run(metrics: %w[promotion_discounts], dimensions: %w[product])
+
+      expect(result.rows.size).to eq(1)
+      expect(result.rows.first[:metrics][:promotion_discounts][:value]).to eq(5.0)
+      expect(result.totals[:promotion_discounts][:value]).to eq(5.0)
+    end
+
+    it 'sorts and filters discounts grouped by a dimension that does not join them' do
+      result = run(metrics: %w[promotion_discounts net_sales], dimensions: %w[product],
+                   sort: '-promotion_discounts', limit: 5,
+                   metric_filters: [{ metric: 'promotion_discounts', op: 'gt', value: 0 }])
+
+      expect(result.rows.size).to eq(1)
+      expect(result.rows.first[:metrics][:promotion_discounts][:value]).to eq(5.0)
+    end
+
     it 'breaks discounts down by the redeemed code' do
       result = run(metrics: %w[promotion_discounts], dimensions: %w[coupon_code])
 

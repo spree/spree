@@ -65,7 +65,7 @@ module Spree
 
           query.aggregated_metrics.group_by(&:base).each do |base, metrics|
             scope = base_scope(base, range, grouped: grouped)
-            selects = metrics.map { |m| "#{resolve_sql(m.sql_for(grouped: grouped))} AS #{metric_alias(m)}" }
+            selects = metrics.map { |m| "#{resolve_sql(metric_sql(m, grouped: grouped))} AS #{metric_alias(m)}" }
 
             if grouped
               dimension_selects = query.dimensions.map do |d|
@@ -111,6 +111,24 @@ module Spree
           scope.reorder(nil)
         end
 
+        # A metric's aggregate for this query. A metric reading a joined row
+        # (grouped_sql) only reads it when one of the grouped dimensions
+        # brought that join in — grouping by seller never joins discounts.
+        def metric_sql(metric, grouped:)
+          metric.sql_for(grouped: grouped, joins: grouped ? dimension_joins_on(metric.base) : [])
+        end
+
+        # The associations the grouped query on this base joins directly.
+        # A dimension reached through another base joins under that base's
+        # path, so its tables are not the base's own direct joins.
+        def dimension_joins_on(base)
+          @dimension_joins_on ||= {}
+          @dimension_joins_on[base] ||= query.dimensions.flat_map do |d|
+            dimension = d[:dimension]
+            dimension.base == base ? Array(dimension.joins) : []
+          end
+        end
+
         # Dimension joins are declared from their own base; they only apply
         # when the executing scope is that base (an :orders-based metric never
         # joins line-item tables — validate_bases! guarantees compatibility).
@@ -145,7 +163,7 @@ module Spree
             # the only piece of request data that reaches the statement, and
             # the aggregate beside it is registered SQL.
             scope = scope.having(
-              Arel.sql("#{resolve_sql(metric.sql_for(grouped: true))} " \
+              Arel.sql("#{resolve_sql(metric_sql(metric, grouped: true))} " \
                        "#{COMPARISONS.fetch(filter[:op]).first} ?"),
               filter[:value]
             )
@@ -236,7 +254,7 @@ module Spree
         def apply_sql_sort(scope, metrics)
           return scope unless metrics.any? { |m| m.name == sort_metric.name }
 
-          scope.order(Arel.sql("#{resolve_sql(sort_metric.sql_for(grouped: true))} " \
+          scope.order(Arel.sql("#{resolve_sql(metric_sql(sort_metric, grouped: true))} " \
                                "#{query.sort[:direction] == :desc ? 'DESC' : 'ASC'}"))
             .limit(query.limit)
         end
