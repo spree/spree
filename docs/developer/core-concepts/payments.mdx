@@ -139,10 +139,10 @@ Rules decide whether a payment method is offered at storefront checkout. A metho
 | `channel_rule` | `channel_ids` | The cart is on one of the channels. |
 | `market_rule` | `market_ids` | The cart is in one of the markets. |
 | `order_total_rule` | `min_totals`, `max_totals` (amounts keyed by currency) | The total is within the bounds for the cart's currency. A currency with no amount is not limited. |
-| `customer_group_rule` | `customer_group_ids` | The customer belongs to one of the groups. Guests never pass. |
+| `customer_group_rule` | `customer_group_ids` | The customer belongs to one of the groups. Guests never pass once a group is listed. |
 | `company_rule` | `company_ids`, `company_orders_only` | The cart is placed for a listed company or one of its divisions. With no companies listed, `company_orders_only` requires any company. |
 
-An empty id list restricts nothing, so a rule saved half-configured never hides a method. Rules are sent with the payment method as `rules`, which replaces the whole set, or managed one at a time:
+An empty `channel_ids`, `market_ids` or `customer_group_ids` list restricts nothing, so a rule saved half-configured never hides a method. A `company_rule` with no companies listed still requires a company while `company_orders_only` is on, which is the default. Rules are sent with the payment method as `rules`, which replaces the whole set, or managed one at a time:
 
 <Tabs>
 <Tab title="Admin SDK">
