@@ -110,8 +110,11 @@ module Spree
       def apply_discount_action(action)
         case action.kind
         when 'add_discount'
+          # Read fresh: the preloaded line predates this set's item edits, and a
+          # discount sized on its old quantity would take off the wrong amount.
+          line_item = order.line_items.find(action.line_item_id) if action.line_item_id
           Spree.order_discount_create_service.call(order: order, label: action.label, value: action.value,
-                                                   value_type: action.value_type, line_item: action.line_item)
+                                                   value_type: action.value_type, line_item: line_item)
         when 'update_discount'
           Spree.order_discount_update_service.call(order: order, discount: action.discount,
                                                    attributes: { label: action.label, amount: action.amount }.compact)
