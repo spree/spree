@@ -122,71 +122,6 @@ module Spree
               },
               required: %w[allow actions subjects has_conditions]
             },
-            ImportSchemaField: {
-              type: :object,
-              description: 'A canonical column of an import type, including per-store custom field columns',
-              properties: {
-                name: { type: :string, description: 'Canonical field name used in mappings', example: 'slug' },
-                label: { type: :string, description: 'Human-readable label', example: 'Slug' },
-                required: { type: :boolean, description: 'Whether the field must be mapped before processing' }
-              },
-              required: %w[name label required]
-            },
-            CheckoutRequirement: {
-              type: :object,
-              properties: {
-                step: { type: :string, description: 'Checkout step this requirement belongs to', example: 'payment' },
-                field: { type: :string, description: 'Field that needs to be satisfied', example: 'payment' },
-                message: { type: :string, description: 'Human-readable requirement message', example: 'Add a payment method' }
-              },
-              required: %w[step field message]
-            },
-            CartWarning: {
-              type: :object,
-              description: 'A warning about a cart issue (e.g., item removed due to stock change)',
-              properties: {
-                code: { type: :string, description: 'Machine-readable warning code', example: 'line_item_removed' },
-                message: { type: :string, description: 'Human-readable warning message', example: 'Blue T-Shirt was removed because it was sold out' },
-                line_item_id: { type: :string, nullable: true, description: 'Prefixed line item ID (when applicable)', example: 'li_abc123' },
-                variant_id: { type: :string, nullable: true, description: 'Prefixed variant ID (when applicable)', example: 'variant_abc123' },
-                item_index: {
-                  type: :integer,
-                  nullable: true,
-                  description: 'Position in the submitted items array, for warnings raised while applying a batch of item changes',
-                  example: 1
-                }
-              },
-              required: %w[code message]
-            },
-            FulfillmentManifestItem: {
-              type: :object,
-              description: 'An item within a fulfillment — which line item and how many units are in this fulfillment',
-              properties: {
-                item_id: { type: :string, description: 'Line item ID', example: 'li_abc123' },
-                variant_id: { type: :string, description: 'Variant ID', example: 'variant_abc123' },
-                quantity: { type: :integer, description: 'Quantity in this fulfillment', example: 2 }
-              },
-              required: %w[item_id variant_id quantity]
-            },
-            AdminUserRoleAssignment: {
-              type: :object,
-              description: 'A role assignment for the current store on a staff member',
-              properties: {
-                id: { type: :string, description: 'Prefixed role ID', example: 'role_abc123' },
-                name: { type: :string, description: 'Role name', example: 'admin' }
-              },
-              required: %w[id name]
-            },
-            AdminUserStore: {
-              type: :object,
-              description: 'A store the staff member can access through a role assignment',
-              properties: {
-                id: { type: :string, description: 'Prefixed store ID', example: 'store_abc123' },
-                name: { type: :string, description: 'Store name', example: 'My Store' },
-                code: { type: :string, description: 'Store code', example: 'my-store' }
-              },
-              required: %w[id name code]
-            },
             PreferenceSchema: {
               type: :object,
               description: 'The JSON Schema (draft 2020-12) of a type\'s `preferences`: one property per setting, ' \
@@ -194,15 +129,6 @@ module Spree
                            '`x-spree-secret` for a secret and `x-spree-prefix` for an id list. Unknown keys are refused.',
               additionalProperties: true,
               example: { type: 'object', properties: { amount: { type: 'string', format: 'money', default: '0.0' } }, additionalProperties: false }
-            },
-            PromotionActionLineItem: {
-              type: :object,
-              description: 'One row in a `create_line_items` action — the variant added to the order and how many',
-              properties: {
-                variant_id: { type: :string, example: 'variant_abc123' },
-                quantity: { type: :integer, example: 1 }
-              },
-              required: %w[variant_id quantity]
             }
           }
         end
@@ -389,19 +315,15 @@ module Spree
             strip_null_from_enums(s)
           end
           patch_typescript_only_types(schemas, writer_name)
-          patch_cart_schema(schemas)
-          patch_fulfillment_schema(schemas)
-          patch_admin_user_schema(schemas)
-          patch_promotion_rule_schema(schemas)
-          patch_promotion_action_schema(schemas)
-          patch_import_schema(schemas)
+          patch_promotion_action_calculator(schemas)
           schemas
         end
 
         # Typelizer publishes a type only TypeScript can express (`Array<{ … }>`,
         # `any`) as a plain object. Give each such property the shape the API
-        # sends — an array, or any value — so responses validate against it;
-        # the patches below then point some arrays at a named item component.
+        # sends — an array, or any value — so responses validate against it.
+        # A list of objects is better declared as an inline shape
+        # (`typelize({ id: :string }, multi: true)`), which documents its fields.
         def patch_typescript_only_types(schemas, writer_name)
           Typelizer.interfaces(writer_name: writer_name).each do |interface|
             properties = (schemas[interface.name] || schemas[interface.name.to_sym])&.dig(:properties)
@@ -426,125 +348,14 @@ module Spree
           end
         end
 
-        # Same Array<{...}> issue as cart/fulfillment — patch Import#schema_fields
-        # to reference the ImportSchemaField component schema.
-        def patch_import_schema(schemas)
-          import = schemas['Import'] || schemas[:Import]
-          return unless import
-
-          props = import[:properties]
-          return unless props
-
-          fields_key = props.key?('schema_fields') ? 'schema_fields' : :schema_fields
-          if props[fields_key]
-            props[fields_key] = {
-              type: :array,
-              items: { '$ref' => '#/components/schemas/ImportSchemaField' }
-            }
-          end
-        end
-
-        # Typelizer cannot represent Array<{...}> inline object types in OpenAPI,
-        # so we patch them to reference manually-defined component schemas.
-        def patch_cart_schema(schemas)
-          cart = schemas['Cart'] || schemas[:Cart]
-          return unless cart
-
-          props = cart[:properties]
-          return unless props
-
-          req_key = props.key?('requirements') ? 'requirements' : :requirements
-          if props[req_key]
-            props[req_key] = {
-              type: :array,
-              items: { '$ref' => '#/components/schemas/CheckoutRequirement' }
-            }
-          end
-
-          warn_key = props.key?('warnings') ? 'warnings' : :warnings
-          if props[warn_key]
-            props[warn_key] = {
-              type: :array,
-              items: { '$ref' => '#/components/schemas/CartWarning' }
-            }
-          end
-        end
-
-        # Same Array<{...}> issue as cart/fulfillment — patch AdminUser#roles
-        # to reference the AdminUserRoleAssignment component schema.
-        def patch_admin_user_schema(schemas)
-          admin_user = schemas['AdminUser'] || schemas[:AdminUser]
-          return unless admin_user
-
-          props = admin_user[:properties]
-          return unless props
-
-          roles_key = props.key?('roles') ? 'roles' : :roles
-          if props[roles_key]
-            props[roles_key] = {
-              type: :array,
-              items: { '$ref' => '#/components/schemas/AdminUserRoleAssignment' }
-            }
-          end
-
-          stores_key = props.key?('stores') ? 'stores' : :stores
-          if props[stores_key]
-            props[stores_key] = {
-              type: :array,
-              items: { '$ref' => '#/components/schemas/AdminUserStore' }
-            }
-          end
-        end
-
-        # Same Array<{...}> + Array<string> typelize hints that Typelizer
-        # collapses to `object` in OpenAPI. Patch the affected properties to
-        # their correct array shapes.
-        def patch_promotion_rule_schema(schemas)
-          rule = schemas['PromotionRule'] || schemas[:PromotionRule]
-          return unless rule
-
-          patch_id_arrays(rule, %w[product_ids category_ids customer_ids option_value_ids])
-        end
-
-        def patch_promotion_action_schema(schemas)
+        # The calculator's TypeScript type has another name than its component.
+        def patch_promotion_action_calculator(schemas)
           action = schemas['PromotionAction'] || schemas[:PromotionAction]
-          return unless action
-
-          props = action[:properties]
+          props = action&.dig(:properties)
           return unless props
 
-          calc_key = props.key?('calculator') ? 'calculator' : :calculator
-          if props[calc_key]
-            props[calc_key] = {
-              allOf: [{ '$ref' => '#/components/schemas/PromotionActionCalculator' }],
-              nullable: true
-            }
-          end
-
-          items_key = props.key?('line_items') ? 'line_items' : :line_items
-          if props[items_key]
-            props[items_key] = {
-              type: :array,
-              items: { '$ref' => '#/components/schemas/PromotionActionLineItem' },
-              nullable: true
-            }
-          end
-        end
-
-        def patch_id_arrays(schema, keys)
-          props = schema[:properties]
-          return unless props
-
-          keys.each do |key|
-            actual = props.key?(key) ? key : key.to_sym
-            next unless props[actual]
-
-            props[actual] = {
-              type: :array,
-              items: { type: :string },
-              nullable: true
-            }
-          end
+          key = props.key?('calculator') ? 'calculator' : :calculator
+          props[key] = { allOf: [{ '$ref' => '#/components/schemas/PromotionActionCalculator' }], nullable: true } if props[key]
         end
 
         # One component per subtype Spree ships (`PromotionRuleItemTotalPreferences`)
@@ -613,24 +424,6 @@ module Spree
 
           key = props.key?('calculator') ? 'calculator' : :calculator
           props[key] = { allOf: [{ '$ref' => '#/components/schemas/DeliveryMethodCalculator' }], nullable: true } if props[key]
-        end
-
-        # Typelizer cannot represent Array<{...}> inline object types in OpenAPI,
-        # so we patch Fulfillment#items to reference the FulfillmentManifestItem component schema.
-        def patch_fulfillment_schema(schemas)
-          fulfillment = schemas['Fulfillment'] || schemas[:Fulfillment]
-          return unless fulfillment
-
-          props = fulfillment[:properties]
-          return unless props
-
-          items_key = props.key?('items') ? 'items' : :items
-          if props[items_key]
-            props[items_key] = {
-              type: :array,
-              items: { '$ref' => '#/components/schemas/FulfillmentManifestItem' }
-            }
-          end
         end
 
         # Typelizer adds nil to enum arrays for nullable fields.
