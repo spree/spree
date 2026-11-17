@@ -383,21 +383,19 @@ module Spree
         private
 
         def typelizer_schemas(writer_name)
-          with_typelizer_enabled do
-            schemas = Typelizer.openapi_schemas(writer_name: writer_name)
-            schemas.each_value do |s|
-              s[:'x-typelizer'] = true
-              strip_null_from_enums(s)
-            end
-            patch_typescript_only_types(schemas, writer_name)
-            patch_cart_schema(schemas)
-            patch_fulfillment_schema(schemas)
-            patch_admin_user_schema(schemas)
-            patch_promotion_rule_schema(schemas)
-            patch_promotion_action_schema(schemas)
-            patch_import_schema(schemas)
-            schemas
+          schemas = Typelizer.openapi_schemas(writer_name: writer_name)
+          schemas.each_value do |s|
+            s[:'x-typelizer'] = true
+            strip_null_from_enums(s)
           end
+          patch_typescript_only_types(schemas, writer_name)
+          patch_cart_schema(schemas)
+          patch_fulfillment_schema(schemas)
+          patch_admin_user_schema(schemas)
+          patch_promotion_rule_schema(schemas)
+          patch_promotion_action_schema(schemas)
+          patch_import_schema(schemas)
+          schemas
         end
 
         # Typelizer publishes a type only TypeScript can express (`Array<{ … }>`,
@@ -646,16 +644,6 @@ module Spree
 
             prop[:enum] = prop[:enum].compact
           end
-        end
-
-        # Typelizer is normally disabled in test/production, but we need it
-        # enabled to generate OpenAPI schemas from serializer type hints
-        def with_typelizer_enabled
-          original = ENV['TYPELIZER']
-          ENV['TYPELIZER'] = 'true'
-          yield
-        ensure
-          ENV['TYPELIZER'] = original
         end
       end
     end
