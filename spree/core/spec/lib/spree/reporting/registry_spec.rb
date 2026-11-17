@@ -17,6 +17,23 @@ RSpec.describe Spree::Reporting::Registry do
       registry.metric :margin, sql: 'SUM(y)', base: :orders, replace: true
       expect(registry.metric!(:margin).sql).to eq('SUM(y)')
     end
+
+    # A grouped aggregate reading a joined table is only valid when the
+    # grouping actually joined it; without the declaration it cannot tell.
+    it 'requires grouped_joins whenever grouped_sql is declared' do
+      expect do
+        registry.metric :joined, sql: 'SUM(x)', grouped_sql: 'SUM(t.x)', base: :line_items
+      end.to raise_error(ArgumentError, /grouped_joins/)
+    end
+
+    it 'uses grouped_sql only when the grouped query carries its joins' do
+      registry.metric :joined, sql: 'SUM(x)', grouped_sql: 'SUM(t.x)', grouped_joins: [:t], base: :line_items
+      metric = registry.metric!(:joined)
+
+      expect(metric.sql_for(grouped: true, joins: [:t])).to eq('SUM(t.x)')
+      expect(metric.sql_for(grouped: true, joins: [:variant])).to eq('SUM(x)')
+      expect(metric.sql_for(grouped: false, joins: [:t])).to eq('SUM(x)')
+    end
   end
 
   describe '#dimension' do

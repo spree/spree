@@ -30,7 +30,9 @@ module Spree
     #   The dimension joins grouped_sql reads from. The grouped query carries
     #   only the joins of the dimensions it groups by, so grouped_sql applies
     #   only when one of them brought these in; any other grouping falls back
-    #   to `sql`.
+    #   to `sql`. Required with grouped_sql. A `sql` that reads the same rows
+    #   through a subquery may embed `%{dimension_filters}`, which receives the
+    #   filters on dimensions joining those rows as extra AND conditions.
     # @!attribute suggests
     #   Metric to reach for instead when this one is refused for a breakdown
     #   it cannot answer — named in the error so a caller learns the
@@ -48,10 +50,9 @@ module Spree
       # @param joins [Array<Symbol>] the associations the grouped query joined
       # @return [String]
       def sql_for(grouped:, joins: [])
-        return sql unless grouped && grouped_sql.present?
-        return grouped_sql if grouped_joins.blank?
+        return sql unless grouped && grouped_sql.present? && grouped_joins.present?
 
-        (Array(grouped_joins) - Array(joins)).empty? ? grouped_sql : sql
+        (Array(grouped_joins).map(&:to_sym) - Array(joins).map(&:to_sym)).empty? ? grouped_sql : sql
       end
 
       def derived? = ratio.present?
@@ -245,6 +246,10 @@ module Spree
         raise ArgumentError, "metric #{name} already registered (pass replace: true to override)" if @metrics.key?(name) && !replace
         if opts[:subject] && opts[:key_scope].blank?
           raise ArgumentError, "metric #{name} declares a subject and must also declare its key_scope"
+        end
+
+        if opts[:grouped_sql].present? && opts[:grouped_joins].blank?
+          raise ArgumentError, "metric #{name} declares grouped_sql and must also declare the grouped_joins it reads"
         end
 
         opts[:format] ||= :integer

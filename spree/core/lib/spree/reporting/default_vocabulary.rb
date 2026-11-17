@@ -89,9 +89,13 @@ module Spree
       # dimension use the subquery form below instead (see grouped_joins).
       PROMOTION_DISCOUNTS_JOINED = 'SUM(-COALESCE(%{discounts}.amount, 0))'.freeze
 
+      # Unaliased so a promotion or coupon filter (%{dimension_filters}, which
+      # names %{discounts}.promotion_id) narrows these rows: filtered to one
+      # promotion, a line carrying two must count only that promotion's money.
       PROMOTION_DISCOUNTS_SUBQUERY = <<~SQL.squish.freeze
-        SUM(COALESCE((SELECT -SUM(d.amount) FROM %{discounts} d
-                      WHERE d.line_item_id = %{line_items}.id AND d.kind = 'promotion'), 0))
+        SUM(COALESCE((SELECT -SUM(%{discounts}.amount) FROM %{discounts}
+                      WHERE %{discounts}.line_item_id = %{line_items}.id AND %{discounts}.kind = 'promotion'
+                      %{dimension_filters}), 0))
       SQL
 
       # Checkouts that used a promotion. Counted in checkouts rather than

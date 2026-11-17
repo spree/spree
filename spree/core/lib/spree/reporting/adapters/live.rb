@@ -65,7 +65,7 @@ module Spree
 
           query.aggregated_metrics.group_by(&:base).each do |base, metrics|
             scope = base_scope(base, range, grouped: grouped)
-            selects = metrics.map { |m| "#{resolve_sql(metric_sql(m, grouped: grouped))} AS #{metric_alias(m)}" }
+            selects = metrics.map { |m| "#{metric_sql(m, scope: scope, grouped: grouped)} AS #{metric_alias(m)}" }
 
             if grouped
               dimension_selects = query.dimensions.map do |d|
@@ -111,22 +111,53 @@ module Spree
           scope.reorder(nil)
         end
 
-        # A metric's aggregate for this query. A metric reading a joined row
-        # (grouped_sql) only reads it when one of the grouped dimensions
-        # brought that join in — grouping by seller never joins discounts.
-        def metric_sql(metric, grouped:)
-          metric.sql_for(grouped: grouped, joins: grouped ? dimension_joins_on(metric.base) : [])
+        # A metric's aggregate for this query, resolved against the scope it
+        # runs on. A metric reading a joined row (grouped_sql) only reads it
+        # when the scope actually carries that join — grouping by product
+        # never joins discounts, so it falls back to the per-line subquery.
+        #
+        # The subquery form receives the filters on the dimensions that read
+        # the same joined rows (%{dimension_filters}): filtered to one
+        # promotion, a line also carrying another must contribute only the
+        # filtered promotion's money, not the line's combined discount.
+        def metric_sql(metric, scope:, grouped:)
+          joins = grouped ? joined_associations(scope) : []
+          format(metric.sql_for(grouped: grouped, joins: joins),
+                 placeholders.merge(dimension_filters: joined_row_filters(metric)))
         end
 
-        # The associations the grouped query on this base joins directly.
-        # A dimension reached through another base joins under that base's
-        # path, so its tables are not the base's own direct joins.
-        def dimension_joins_on(base)
-          @dimension_joins_on ||= {}
-          @dimension_joins_on[base] ||= query.dimensions.flat_map do |d|
-            dimension = d[:dimension]
-            dimension.base == base ? Array(dimension.joins) : []
-          end
+        # The associations the scope joins, by their top-level name. A nested
+        # join (`{ promotion_discounts: :promotion }`) still joins its
+        # top-level association; one reached through another base's path
+        # (`{ order: :ship_address }`) counts under the path, not the table.
+        def joined_associations(scope)
+          (scope.joins_values + scope.left_outer_joins_values).flat_map do |join|
+            case join
+            when Hash then join.keys
+            when Symbol, String then [join]
+            else []
+            end
+          end.map(&:to_sym)
+        end
+
+        # Extra subquery conditions for the filters on dimensions that read
+        # the rows this metric's grouped_joins would join. Values bind through
+        # Arel quoting and the column is a validated identifier.
+        def joined_row_filters(metric)
+          needed = Array(metric.grouped_joins).map(&:to_sym)
+          return '' if needed.empty?
+
+          query.filters.filter_map do |filter|
+            dimension = filter[:dimension]
+            next unless dimension.base == metric.base
+            next unless (top_level_joins(dimension.joins) & needed).any?
+
+            " AND #{in_predicate(qualified_column(dimension), filter[:values]).to_sql}"
+          end.join
+        end
+
+        def top_level_joins(joins)
+          Array.wrap(joins).flat_map { |join| join.is_a?(Hash) ? join.keys : join }.map(&:to_sym)
         end
 
         # Dimension joins are declared from their own base; they only apply
@@ -163,7 +194,7 @@ module Spree
             # the only piece of request data that reaches the statement, and
             # the aggregate beside it is registered SQL.
             scope = scope.having(
-              Arel.sql("#{resolve_sql(metric_sql(metric, grouped: true))} " \
+              Arel.sql("#{metric_sql(metric, scope: scope, grouped: true)} " \
                        "#{COMPARISONS.fetch(filter[:op]).first} ?"),
               filter[:value]
             )
@@ -254,7 +285,7 @@ module Spree
         def apply_sql_sort(scope, metrics)
           return scope unless metrics.any? { |m| m.name == sort_metric.name }
 
-          scope.order(Arel.sql("#{resolve_sql(metric_sql(sort_metric, grouped: true))} " \
+          scope.order(Arel.sql("#{metric_sql(sort_metric, scope: scope, grouped: true)} " \
                                "#{query.sort[:direction] == :desc ? 'DESC' : 'ASC'}"))
             .limit(query.limit)
         end

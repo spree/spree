@@ -1083,6 +1083,39 @@ RSpec.describe Spree::Reporting::Query do
       expect(result.rows.first[:metrics][:promotion_discounts][:value]).to eq(5.0)
     end
 
+    context 'with a line carrying two promotions' do
+      let!(:second) { create(:promotion, store: store, name: 'Summer Sale') }
+
+      before do
+        Spree::Discount.create!(order: order, line_item: order.line_items.first, promotion: second,
+                                kind: 'promotion', label: 'Summer Sale', amount: -2)
+      end
+
+      it 'credits the line its combined discount once when grouped by product' do
+        result = run(metrics: %w[promotion_discounts], dimensions: %w[product])
+
+        expect(result.rows.size).to eq(1)
+        expect(result.rows.first[:metrics][:promotion_discounts][:value]).to eq(7.0)
+        expect(result.totals[:promotion_discounts][:value]).to eq(7.0)
+      end
+
+      # Filtered to one promotion, the line must contribute only that
+      # promotion's money, not the line's combined discount.
+      it 'counts only the filtered promotion when grouped by product' do
+        result = run(metrics: %w[promotion_discounts], dimensions: %w[product],
+                     filters: [{ dimension: 'promotion', op: 'eq', value: promotion.prefixed_id }])
+
+        expect(result.rows.first[:metrics][:promotion_discounts][:value]).to eq(5.0)
+        expect(result.totals[:promotion_discounts][:value]).to eq(5.0)
+      end
+
+      it 'counts only the filtered code in the dimensionless total' do
+        result = run(metrics: %w[promotion_discounts], filters: [{ dimension: 'coupon_code', op: 'eq', value: 'SPRING' }])
+
+        expect(result.totals[:promotion_discounts][:value]).to eq(5.0)
+      end
+    end
+
     it 'breaks discounts down by the redeemed code' do
       result = run(metrics: %w[promotion_discounts], dimensions: %w[coupon_code])
 
