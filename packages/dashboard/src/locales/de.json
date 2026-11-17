@@ -4675,6 +4675,7 @@
       "conditions": {
         "active": "{{name}} ein- oder ausschalten",
         "add": "Bedingung hinzufügen",
+        "changed_elsewhere": "Jemand anderes hat diese Bedingungen geändert, seit Sie diese Zahlungsart geöffnet haben. Schließen Sie sie und öffnen Sie sie erneut, um die Änderungen zu sehen.",
         "description": "Diese Zahlungsart wird im Shop-Checkout nur angeboten, wenn alle aktiven Bedingungen erfüllt sind. Zahlungen im Dashboard ignorieren sie.",
         "empty": "Keine Bedingungen – diese Zahlungsart wird bei jedem Checkout angeboten.",
         "fields": {

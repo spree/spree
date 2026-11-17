@@ -4657,6 +4657,7 @@
       "conditions": {
         "active": "Bật hoặc tắt {{name}}",
         "add": "Thêm điều kiện",
+        "changed_elsewhere": "Người khác đã thay đổi các điều kiện này kể từ khi bạn mở phương thức thanh toán này. Hãy đóng và mở lại để xem các thay đổi.",
         "description": "Chỉ hiển thị phương thức thanh toán này khi thanh toán trên cửa hàng nếu mọi điều kiện đang bật đều thỏa mãn. Thanh toán nhập trong bảng điều khiển bỏ qua các điều kiện này.",
         "empty": "Không có điều kiện — phương thức thanh toán này được hiển thị ở mọi lần thanh toán.",
         "fields": {

@@ -72,6 +72,14 @@ export function filterPaymentMethodProviderTypes<T extends { type: string }>(typ
   return types.filter((entry) => !hidden.has(entry.type))
 }
 
+/**
+ * The name a new method starts with: the provider's label, numbered when the
+ * store already has that provider, since names are unique within a store.
+ */
+export function defaultPaymentMethodName(entry: { label: string; installed_count?: number }) {
+  return entry.installed_count ? `${entry.label} ${entry.installed_count + 1}` : entry.label
+}
+
 export function paymentMethodValuesToCreateParams(
   v: PaymentMethodFormValues,
   preferences: Record<string, unknown>,

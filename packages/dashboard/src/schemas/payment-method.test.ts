@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { filterPaymentMethodProviderTypes } from './payment-method'
+import { defaultPaymentMethodName, filterPaymentMethodProviderTypes } from './payment-method'
 
 describe('filterPaymentMethodProviderTypes', () => {
   it('removes custom payment source from the provider picker list', () => {
@@ -33,5 +33,15 @@ describe('filterPaymentMethodProviderTypes', () => {
     ]
 
     expect(filterPaymentMethodProviderTypes(types).map((t) => t.type)).toEqual(['stripe', 'check'])
+  })
+})
+
+describe('defaultPaymentMethodName', () => {
+  it('uses the provider label for a first account', () => {
+    expect(defaultPaymentMethodName({ label: 'Stripe', installed_count: 0 })).toBe('Stripe')
+  })
+
+  it('numbers another account, since names are unique within a store', () => {
+    expect(defaultPaymentMethodName({ label: 'Stripe', installed_count: 1 })).toBe('Stripe 2')
   })
 })
