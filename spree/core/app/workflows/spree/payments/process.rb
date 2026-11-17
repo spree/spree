@@ -59,12 +59,13 @@ module Spree
         failure(payment, error.message)
       end
 
-      # The row's status decides first, since the instance may be stale. A
-      # payment another run claimed (processing) or one that settled is that
-      # run's — a success here, not an error. A dead one (void, invalid) is
-      # left to started_processing!, which raises for it, so it still fails.
+      # The row decides, since the instance may be stale: its amount is the one
+      # charged, and its status says whose the payment is. A payment another
+      # run claimed (processing) or one that settled is that run's — a success
+      # here, not an error. A dead one (void, invalid) is left to
+      # started_processing!, which raises for it, so it still fails.
       def claim_within_amount_owed
-        status = current_status
+        status = refresh_from_row
         return :settled if %w[processing completed].include?(status)
 
         if Spree::Payment::RESIZABLE_STATUSES.include?(status)
@@ -78,8 +79,16 @@ module Spree
         payment.started_processing! ? :claimed : :settled
       end
 
-      def current_status
-        payment.persisted? ? Spree::Payment.unscoped.where(id: payment.id).pick(:status) : payment.status
+      # Reads the status and amount another run may have written since this
+      # instance was loaded. Deliberately not a reload, which would discard the
+      # in-memory source (card numbers never persist).
+      def refresh_from_row
+        return payment.status unless payment.persisted?
+
+        status, amount = Spree::Payment.unscoped.where(id: payment.id).pick(:status, :amount)
+        payment.amount = amount
+        payment.clear_attribute_changes(%i[amount])
+        status
       end
 
       def with_order_lock(&)

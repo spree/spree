@@ -166,6 +166,29 @@ RSpec.describe Spree::Payments::Process do
       expect(Spree::Payment.find(payment.id).amount).to eq(10)
     end
 
+    it 'charges the amount the row holds when another run resized it after it was read' do
+      payment # read while still checkout, at 40
+      # Another run resized it to what was owed then, claimed it and failed at the gateway.
+      Spree::Payment.find(payment.id).update_columns(status: 'failed', amount: BigDecimal('9.99'))
+      charged = gateway.gateway_amount(BigDecimal('9.99'), payment.currency)
+      expect(gateway).to receive(:authorize).with(charged, anything, anything).and_return(success_response)
+
+      result = described_class.call(payment: payment) # stale: still reads checkout at 40, and 49.99 is owed
+
+      expect(result).to be_success
+      expect(Spree::Payment.find(payment.id).amount).to eq(BigDecimal('9.99'))
+    end
+
+    it 'keeps the unsaved source details when refreshing the payment from its row' do
+      payment.source.verification_value = '123'
+      allow(gateway).to receive(:authorize) do |_amount, source, _options|
+        expect(source.verification_value).to eq('123')
+        success_response
+      end
+
+      expect(described_class.call(payment: payment)).to be_success
+    end
+
     it 'still fails a payment a hook voided before the claim' do
       create(:payment, order: order, payment_method: gateway, source: create(:credit_card), status: 'pending', amount: 40)
       Spree.hooks.register('payments.process.validate') { |_flow| Spree::Payment.find(payment.id).update_columns(status: 'void') }
