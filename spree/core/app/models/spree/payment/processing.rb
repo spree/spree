@@ -85,12 +85,16 @@ module Spree
       # payment_method.cancel routes refunds through Refunds::Create. An
       # adapter that can void the payment outright does so either way.
       #
+      # A captured charge the gateway did not void keeps its completed status:
+      # the money was either refunded, which the refund records, or kept.
+      #
       # @param refund [Boolean] whether money already captured may be returned
       def cancel!(refund: true)
+        voids = payment_method.cancel_voids?(self)
         response = instrument_gateway_call(:cancel, payment_method) do
           payment_method.cancel(response_code, self, refund: refund)
         end
-        handle_response(response, :void)
+        handle_response(response, voids ? :void : :keep)
       end
 
       def gateway_options
@@ -122,6 +126,7 @@ module Spree
           when :complete then complete!
           when :pend then pend!
           when :void then void!
+          when :keep then nil
           else raise ArgumentError, "Unknown payment success state: #{success_state.inspect}"
           end
         else

@@ -15,6 +15,16 @@ RSpec.describe SpreeStripe::Gateway do
     end
   end
 
+  describe '#cancel_voids?' do
+    it 'is false for a completed payment, which is refunded or kept rather than voided' do
+      expect(gateway.cancel_voids?(build_stubbed(:payment, status: 'completed'))).to be false
+    end
+
+    it 'is true for an authorized payment' do
+      expect(gateway.cancel_voids?(build_stubbed(:payment, status: 'pending'))).to be true
+    end
+  end
+
   describe '#payment_intent_accepted?' do
     subject { gateway.payment_intent_accepted?(stripe_payment_intent) }
 
@@ -455,6 +465,15 @@ RSpec.describe SpreeStripe::Gateway do
         end
       end
 
+      it 'keeps the payment completed, with the refund recorded, when an order is canceled' do
+        VCR.use_cassette('create_refund') do
+          payment.cancel!(refund: true)
+
+          expect(payment.reload).to be_completed
+          expect(payment.refunds.sum(:amount)).to eq(10.0)
+        end
+      end
+
       # Stripe cannot void a drawn charge, so it refunds on cancellation — but
       # an operator who asked to keep the money must not have it sent back
       # anyway.
@@ -466,6 +485,12 @@ RSpec.describe SpreeStripe::Gateway do
 
           expect(subject.success?).to be true
           expect(subject.authorization).to eq(payment_intent_id)
+        end
+
+        it 'keeps the payment completed' do
+          payment.cancel!(refund: false)
+
+          expect(payment.reload).to be_completed
         end
       end
 
