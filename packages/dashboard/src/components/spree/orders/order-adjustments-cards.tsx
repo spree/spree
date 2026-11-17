@@ -244,7 +244,7 @@ export function OrderDiscountsCard({ order }: { order: Order }) {
       confirmLabel: t('admin.actions.delete'),
       variant: 'destructive',
     })
-    if (confirmed) deleteDiscountMutation.mutate(row.id)
+    if (confirmed) deleteDiscountMutation.mutate(row.id, { onError: toastMutationError })
   }
 
   return (
@@ -340,7 +340,7 @@ export function FeesCard({ order }: { order: Order }) {
       confirmLabel: t('admin.actions.delete'),
       variant: 'destructive',
     })
-    if (confirmed) deleteFeeMutation.mutate(row.id)
+    if (confirmed) deleteFeeMutation.mutate(row.id, { onError: toastMutationError })
   }
 
   return (
