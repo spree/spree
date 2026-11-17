@@ -37,11 +37,16 @@ describe('filterPaymentMethodProviderTypes', () => {
 })
 
 describe('defaultPaymentMethodName', () => {
-  it('uses the provider label for a first account', () => {
-    expect(defaultPaymentMethodName({ label: 'Stripe', installed_count: 0 })).toBe('Stripe')
+  it('uses the provider label while no method has it', () => {
+    expect(defaultPaymentMethodName('Stripe', ['Check'])).toBe('Stripe')
   })
 
-  it('numbers another account, since names are unique within a store', () => {
-    expect(defaultPaymentMethodName({ label: 'Stripe', installed_count: 1 })).toBe('Stripe 2')
+  it('numbers past every name the store already uses', () => {
+    expect(defaultPaymentMethodName('Stripe', ['Stripe', 'stripe 2', 'Stripe 3'])).toBe('Stripe 4')
+  })
+
+  it('skips a numbered name already taken by another method', () => {
+    expect(defaultPaymentMethodName('Stripe', ['Stripe 2'])).toBe('Stripe')
+    expect(defaultPaymentMethodName('Stripe', ['Stripe', 'Stripe 2'])).toBe('Stripe 3')
   })
 })

@@ -19,7 +19,6 @@ import {
 } from '@spree/dashboard-ui'
 import { Controller, type UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { defaultPaymentMethodName } from '../../../schemas/payment-method'
 import { PaymentMethodConditions } from './payment-method-conditions'
 import {
   type PaymentMethodEditorContext,
@@ -111,12 +110,6 @@ export function PaymentMethodForm({
                 onValueChange={(next) => {
                   field.onChange(next)
                   onProviderTypeChange?.(next)
-                  // Prefill the Name field from the provider — but only if
-                  // the admin hasn't typed something themselves yet.
-                  const entry = providerTypes.find((t) => t.type === next)
-                  if (entry && !form.formState.dirtyFields.name) {
-                    form.setValue('name', defaultPaymentMethodName(entry), { shouldDirty: false })
-                  }
                 }}
               >
                 <SelectTrigger id="type" aria-invalid={!!form.formState.errors.type}>
