@@ -3326,6 +3326,7 @@
         "variant_search": {
           "description": "Tìm kiếm mẫu mã sản phẩm để thêm vào đơn hàng này.",
           "empty": "Không tìm thấy biến thể nào",
+          "no_permission": "Vai trò của bạn không được xem sản phẩm nên không thể tìm trong danh mục. Hãy nhờ quản trị viên thêm quyền Xem sản phẩm vào vai trò của bạn.",
           "label": "Tìm kiếm biến thể",
           "placeholder": "Nhập tên sản phẩm hoặc SKU (tối thiểu 3 ký tự)…",
           "sku_prefix": "Mã hàng"

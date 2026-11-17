@@ -3327,6 +3327,7 @@
         "variant_search": {
           "description": "Search for a product variant to add to this order.",
           "empty": "No variants found",
+          "no_permission": "Your role cannot view products, so it cannot search the catalog. Ask an admin to add View products to your role.",
           "label": "Search variant",
           "placeholder": "Type product name or SKU (min 3 chars)…",
           "sku_prefix": "SKU"

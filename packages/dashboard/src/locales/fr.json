@@ -3328,6 +3328,7 @@
         "variant_search": {
           "description": "Recherchez une variante de produit à ajouter à cette commande.",
           "empty": "Aucune variante trouvée",
+          "no_permission": "Votre rôle ne permet pas de voir les produits, il ne peut donc pas rechercher dans le catalogue. Demandez à un administrateur d’ajouter « Voir les produits » à votre rôle.",
           "label": "Rechercher une variante",
           "placeholder": "Saisissez le nom du produit ou le SKU (3 caractères min.)…",
           "sku_prefix": "SKU"

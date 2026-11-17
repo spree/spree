@@ -1,5 +1,5 @@
 import type { Variant } from '@spree/admin-sdk'
-import { adminClient, formatPrice, useResourceKey } from '@spree/dashboard-core'
+import { adminClient, formatPrice, usePermissions, useResourceKey } from '@spree/dashboard-core'
 import {
   Button,
   Field,
@@ -48,11 +48,14 @@ export function AddLineItemDialog({
   const [search, setSearch] = useState('')
   const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null)
   const [quantity, setQuantity] = useState(1)
+  // Searching lists the catalog, which a role that manages orders may not
+  // be allowed to read; say so rather than reporting no matches.
+  const canSearch = usePermissions().permissionKeys.includes('read_products')
 
   const { data: variantsData } = useQuery({
     queryKey: useResourceKey('variants', { picker: searchParams, search }),
     queryFn: () => adminClient.variants.list({ search, limit: 10, ...searchParams }),
-    enabled: search.length >= VARIANT_SEARCH_MIN_LENGTH,
+    enabled: canSearch && search.length >= VARIANT_SEARCH_MIN_LENGTH,
     staleTime: 30_000,
   })
 
@@ -97,9 +100,15 @@ export function AddLineItemDialog({
                     setSearch(e.target.value)
                     setSelectedVariant(null)
                   }}
+                  disabled={!canSearch}
                   autoFocus
                 />
-                {search.length > 0 && search.length < VARIANT_SEARCH_MIN_LENGTH && (
+                {!canSearch && (
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {t('admin.orders.detail.variant_search.no_permission')}
+                  </p>
+                )}
+                {canSearch && search.length > 0 && search.length < VARIANT_SEARCH_MIN_LENGTH && (
                   <p className="mt-1 text-xs text-muted-foreground">
                     {t('admin.common.search_min_length', { count: VARIANT_SEARCH_MIN_LENGTH })}
                   </p>
@@ -131,7 +140,8 @@ export function AddLineItemDialog({
                       ))}
                     </div>
                   )}
-                {search.length >= VARIANT_SEARCH_MIN_LENGTH &&
+                {canSearch &&
+                  search.length >= VARIANT_SEARCH_MIN_LENGTH &&
                   variants.length === 0 &&
                   !selectedVariant && (
                     <p className="mt-1 text-xs text-muted-foreground">

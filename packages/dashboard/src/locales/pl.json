@@ -3357,6 +3357,7 @@
         "variant_search": {
           "description": "Wyszukaj wariant produktu, aby dodać go do tego zamówienia.",
           "empty": "Nie znaleziono wariantów",
+          "no_permission": "Twoja rola nie może wyświetlać produktów, więc nie może przeszukiwać katalogu. Poproś administratora o dodanie do roli uprawnienia Wyświetlanie produktów.",
           "label": "Wyszukaj wariant",
           "placeholder": "Wpisz nazwę produktu lub SKU (min. 3 znaki)…",
           "sku_prefix": "SKU"
