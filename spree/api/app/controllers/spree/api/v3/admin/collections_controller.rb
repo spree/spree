@@ -10,6 +10,9 @@ module Spree
         class CollectionsController < ResourceController
           scoped_resource :collections
 
+          PUBLICATIONS_DESCRIPTION = 'The complete set of channels the collection is published on. Channels left out are unpublished. ' \
+                                     'Omit on create to publish on every active channel.'.freeze
+
           request_params :collection do |body|
             body.attribute :name, :string, required: true, on: :create, example: 'On Sale'
             body.attribute :description, :string,
@@ -27,7 +30,8 @@ module Spree
               nullable: true,
               description: 'A `signed_id` from `files.upload()` for the square image, or null to remove it.'
             body.attribute :automatic, :boolean,
-              description: 'When true, membership is materialized from `rules` instead of curated by hand.'
+                           deprecated: 'Ignored: a collection is automatic while it has `rules`. Send `rules: []` to remove them. Removed in 6.2.',
+                           description: 'Ignored. Membership combines `rules`, hand-picked products and exclusions.'
             body.attribute :rules_match_policy, :string,
               choices: Spree::Collection::RULES_MATCH_POLICIES,
               description: 'Whether a product must match all rules or any of them. Defaults to `all`.'
@@ -42,10 +46,28 @@ module Spree
               rule.attribute :type, :string,
                 example: 'tag',
                 description: 'Wire shorthand for the rule kind, from the collection rule types endpoint.'
-              rule.attribute :value, :string, example: 'summer'
+              rule.attribute :value, :string,
+                             example: 'summer',
+                             description: 'What the rule compares against: a prefixed id for the category, product type and seller types.'
               rule.attribute :match_policy, :string,
-                choices: Spree::CollectionRule::MATCH_POLICIES,
-                example: 'contains'
+                             choices: Spree::CollectionRule::MATCH_POLICIES,
+                             example: 'contains',
+                             description: 'The relation. Each rule type accepts the `match_policies` the rule types endpoint lists for it.'
+              rule.attribute :currency, :currency,
+                             nullable: true,
+                             description: 'For `price` and `sale` rules: the currency they evaluate in. Null means the default currency of the store.'
+              rule.attribute :preferences, :hash,
+                             description: 'Values for the settings schema of the rule type, from the rule types endpoint.'
+            end
+            # Applied by the model's sync setter (Spree::Collection#publications=).
+            body.attribute :publications, :array,
+                           as: 'CollectionPublicationParams',
+                           description: PUBLICATIONS_DESCRIPTION do |publication|
+              publication.attribute :channel_id, :id, example: 'ch_abc123'
+              publication.attribute :published_at, :datetime,
+                                    nullable: true, description: 'When the collection goes live on the channel. Null means immediately.'
+              publication.attribute :unpublished_at, :datetime,
+                                    nullable: true, description: 'When the collection comes down from the channel. Null means never.'
             end
             body.attribute :custom_fields, :array, of: Spree::Api::V3::CustomFieldValueRequestSchema,
               description: 'Custom field values, each validated against its definition.'
@@ -66,7 +88,11 @@ module Spree
           # own rules): the write path reads the association through the `rules=`
           # sync setter regardless of what the response expands.
           def scope_includes
-            [:rules]
+            [:rules, :publications]
+          end
+
+          def create_workflow
+            Spree.collection_create_workflow
           end
 
           def scope
@@ -75,8 +101,9 @@ module Spree
 
           # normalize_params is deliberately NOT called: it would rewrite
           # +rules+ to +rules_attributes+ and route past the sync setter.
+          # `automatic` is accepted for compatibility and dropped: rules decide it.
           def permitted_params
-            params.permit(*permitted_attributes)
+            params.permit(*permitted_attributes).except(:automatic)
           end
         end
       end

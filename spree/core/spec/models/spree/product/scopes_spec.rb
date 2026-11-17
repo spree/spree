@@ -76,8 +76,8 @@ describe 'Product scopes', type: :model do
     let!(:product_b) { create(:product) }
 
     before do
-      Spree::ProductCollection.create!(collection: collection_a, product: product_a)
-      Spree::ProductCollection.create!(collection: collection_b, product: product_b)
+      Spree::ProductCollection.create!(collection: collection_a, product: product_a, source: 'manual')
+      Spree::ProductCollection.create!(collection: collection_b, product: product_b, source: 'manual')
     end
 
     it 'returns only products directly in the collection' do

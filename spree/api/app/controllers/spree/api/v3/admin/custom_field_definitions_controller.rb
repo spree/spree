@@ -28,6 +28,8 @@ module Spree
               description: 'Include values in storefront product text search. Supported for `short_text`, `long_text` and `number` fields; other types are refused.'
             body.attribute :sortable, :boolean,
               description: 'Allow storefront product listings to sort by this field (`sort=cf_{namespace}_{key}`). Supported for `short_text` and `number` fields; other types are refused.'
+            body.attribute :collection_condition, :boolean,
+                           description: 'Offer this field in collection rules. Product short text, long text, number and boolean fields only.'
           end
 
           # GET /api/v3/admin/custom_field_definitions/resource_types

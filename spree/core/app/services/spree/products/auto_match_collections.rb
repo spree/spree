@@ -3,88 +3,74 @@ module Spree
     class AutoMatchCollections
       prepend ::Spree::ServiceModule::Base
 
-      # Re-evaluates a product's membership in the automatic collections of its store —
-      # removing it from collections it no longer matches and adding it to ones it now does.
+      # Re-evaluates a product against the rules of its store's collections:
+      # rule rows it no longer matches are removed and collections it now
+      # matches gain a rule row at the end. Hand-picked rows and exclusions
+      # are left as they are.
       #
       # @param product [Spree::Product]
       # @return [Spree::ServiceModule::Base::Result]
       def call(product:)
         return if product.blank?
 
-        collections_to_remove = []
-        collections_to_add = []
+        collections = Spree::Collection.automatic.where(store_id: product.store_id).includes(:rules, :store).to_a
+        memberships = Spree::ProductCollection.where(product_id: product.id, collection_id: collections.map(&:id)).index_by(&:collection_id)
+        excluded_ids = Spree::CollectionExclusion.where(product_id: product.id, collection_id: collections.map(&:id)).pluck(:collection_id)
 
-        # existing memberships that no longer match (tags/prices changed)
-        product.collections.automatic.includes(:rules).find_each do |collection|
-          collections_to_remove << collection unless collection.products_matching_rules.ids.include?(product.id)
+        to_remove = []
+        to_add = []
+
+        collections.each do |collection|
+          membership = memberships[collection.id]
+          next if membership&.source == 'manual'
+
+          # A rule row can land just after an exclusion commits; the exclusion wins.
+          matches = excluded_ids.exclude?(collection.id) && collection.products_matching_rules(product_ids: [product.id]).exists?
+          to_remove << collection if membership && !matches
+          to_add << collection if membership.nil? && matches
         end
 
-        # Held before the delete: the rows are gone by the time their deleted
-        # events can be published.
-        removed_rows = []
+        # A row from before 6.1 has no source; on an automatic collection its rules made it.
+        removed = Spree::ProductCollection.where(product_id: product.id, collection_id: to_remove.map(&:id), source: [nil, 'rule']).to_a
+        Spree::ProductCollection.where(id: removed.map(&:id)).delete_all if removed.any?
+        add(product, to_add)
 
-        if collections_to_remove.any?
-          scope = Spree::ProductCollection.where(collection: collections_to_remove, product: product)
-          removed_rows = scope.to_a
-          scope.delete_all
-        end
+        affected_ids = (to_remove + to_add).map(&:id)
+        return success(product) if affected_ids.empty?
 
-        # automatic collections in the product's store that it now matches
-        Spree::Collection.automatic.where(store_id: product.store_id).includes(:rules, :products).find_each do |collection|
-          collections_to_add << collection if collection.products.exclude?(product) && collection.products_matching_rules.ids.include?(product.id)
-        end
-
-        if collections_to_add.any?
-          products_counts = Spree::Collection.where(id: collections_to_add.pluck(:id)).
-                            joins(:product_collections).
-                            reorder('').
-                            group(:collection_id).
-                            count(:product_id)
-
-          Spree::ProductCollection.insert_all(
-            collections_to_add.map do |collection|
-              position = products_counts[collection.id].to_i + 1
-              product_collection_attributes(collection, product, position)
-            end
-          )
-        end
-
-        all_affected = (collections_to_remove + collections_to_add).uniq
-
-        if all_affected.any?
-          affected_ids = all_affected.pluck(:id)
-          Spree::Collection.where(id: affected_ids).touch_all
-          product.touch
-          product.enqueue_search_index
-
-          # counter caches — bulk insert/delete bypass the counter_cache callbacks
-          affected_ids.each { |id| Spree::Collection.reset_counters(id, :product_collections) }
-          Spree::Product.reset_counters(product.id, :product_collections)
-        end
-
-        publish_membership_events(product, removed_rows, collections_to_add)
+        refresh(product, affected_ids)
+        removed.each { |row| row.publish_event('product_collection.deleted') }
+        Spree::ProductCollection.where(product_id: product.id, collection_id: to_add.map(&:id)).
+          find_each { |row| row.publish_event('product_collection.created') }
 
         success(product)
       end
 
       private
 
-      def publish_membership_events(product, removed_rows, added_collections)
-        removed_rows.each { |row| row.publish_event('product_collection.deleted') }
-        return if added_collections.empty?
+      def add(product, collections)
+        return if collections.empty?
 
-        Spree::ProductCollection.where(collection_id: added_collections.map(&:id), product_id: product.id).
-          find_each { |row| row.publish_event('product_collection.created') }
+        last_positions = Spree::ProductCollection.where(collection_id: collections.map(&:id)).group(:collection_id).maximum(:position)
+        now = Time.current
+
+        Spree::ProductCollection.insert_all(
+          collections.map do |collection|
+            {
+              collection_id: collection.id, product_id: product.id, source: 'rule',
+              position: last_positions[collection.id].to_i + 1, created_at: now, updated_at: now
+            }
+          end
+        )
       end
 
-      def product_collection_attributes(collection, product, position)
-        {
-          collection_id: collection.id,
-          product_id: product.id,
-          position: position,
-          created_at: Time.current,
-          updated_at: Time.current
-        }
+      # Bulk writes skip the counter caches and touches, so they happen here.
+      def refresh(product, collection_ids)
+        Spree::Collection.where(id: collection_ids).touch_all
+        Spree::Collection.reset_counters_in_bulk(collection_ids, :product_collections)
+        Spree::Product.reset_counters(product.id, :product_collections)
+        product.touch
+        product.enqueue_search_index
       end
     end
   end

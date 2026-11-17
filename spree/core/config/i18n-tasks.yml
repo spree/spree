@@ -150,6 +150,10 @@ ignore_missing:
   - 'unauthorized.default'
 
 ## Consider these keys used:
+# In Slavic languages and French the singular form also covers other
+# numbers (21, 0, 1.5), so it names the count where English says "1".
+ignore_inconsistent_interpolations:
+  - 'errors.messages.not_saved.one'
 ignore_unused:
   # Read by Rails itself (model names, attribute names, validation messages, formats).
   - 'activerecord.*'

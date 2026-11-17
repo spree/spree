@@ -85,7 +85,7 @@ module Spree
 
             def collection
               collection_id = params[:collection_id]
-              @collection ||= collection_id.present? ? current_store.collections.find_by_param(collection_id) : nil
+              @collection ||= collection_id.present? ? storefront_collections.find_by_param(collection_id) : nil
             end
           end
         end

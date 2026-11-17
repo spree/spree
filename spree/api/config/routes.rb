@@ -422,6 +422,10 @@ Spree::Core::Engine.add_routes do
         resources :collections, concerns: [:custom_fieldable, :translatable] do
           # Manual product membership + ordering within the collection.
           concerns :product_membership, controller: 'collections/products', positioned: true
+          # Per-channel publishing, with an optional window.
+          resources :publications, controller: 'collections/publications', only: [:index, :create, :update, :destroy]
+          # Products kept out whatever the rules match or a merchant picked.
+          resources :exclusions, controller: 'collections/exclusions', only: [:index, :create, :destroy]
         end
 
         # Subclass discovery for the collection rules editor, mirroring

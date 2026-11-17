@@ -72,8 +72,8 @@ describe Spree::Price, type: :model do
           end
 
           context 'and is still discounted' do
-            it 'does not touch shop product' do
-              expect_any_instance_of(Spree::Product).not_to receive(:auto_match_collections)
+            it 're-matches only for price rules' do
+              expect_any_instance_of(Spree::Product).to receive(:auto_match_collections).with(rule_types: [Spree::CollectionRules::Price])
               price.reload.update(amount: 15)
             end
           end
@@ -101,9 +101,14 @@ describe Spree::Price, type: :model do
           end
 
           context 'and is still not discounted' do
-            it 'does not touch shop product' do
-              expect_any_instance_of(Spree::Product).not_to receive(:auto_match_collections)
+            it 're-matches only for price rules' do
+              expect_any_instance_of(Spree::Product).to receive(:auto_match_collections).with(rule_types: [Spree::CollectionRules::Price])
               price.reload.update(amount: 15)
+            end
+
+            it 're-matches price rules when only the currency changes' do
+              expect_any_instance_of(Spree::Product).to receive(:auto_match_collections).with(rule_types: [Spree::CollectionRules::Price])
+              price.reload.update(currency: 'EUR')
             end
           end
         end

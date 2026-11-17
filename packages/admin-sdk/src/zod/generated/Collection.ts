@@ -1,5 +1,6 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import { CollectionPublicationSchema } from './CollectionPublication';
 import { CollectionRuleSchema } from './CollectionRule';
 import { CustomFieldSchema } from './CustomField';
 
@@ -17,6 +18,8 @@ export const CollectionSchema = z.object({
   description_html: z.string(),
   image_url: z.string().nullable(),
   square_image_url: z.string().nullable(),
+  image_alt: z.string().nullable(),
+  square_image_alt: z.string().nullable(),
   custom_fields: z.array(CustomFieldSchema).optional(),
   translations: z.record(z.string(), z.record(z.string(), z.union([z.string(), z.number()]).nullable())).optional(),
   automatic: z.boolean(),
@@ -25,6 +28,7 @@ export const CollectionSchema = z.object({
   created_at: z.string(),
   updated_at: z.string(),
   rules: z.array(CollectionRuleSchema).optional(),
+  publications: z.array(CollectionPublicationSchema).optional(),
 });
 
 export type Collection = z.infer<typeof CollectionSchema>;

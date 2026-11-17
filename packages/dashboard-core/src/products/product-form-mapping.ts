@@ -139,14 +139,9 @@ export function productToFormValues(
     description: product.description_html ?? '',
     status: (product.status as ProductFormValues['status']) ?? 'draft',
     category_ids: product.categories?.map((category) => category.id) ?? product.category_ids ?? [],
-    // Manual membership only — this field is what the picker edits, and the
-    // API preserves automatic membership regardless of what it sends. Hydrating
-    // automatic collections here would render chips a merchant can remove to
-    // no effect.
-    collection_ids:
-      product.collections?.filter((collection) => !collection.automatic).map((c) => c.id) ??
-      product.collection_ids ??
-      [],
+    // Hand-picked collections only: the API reads and writes the same set,
+    // and keeps memberships the collections' rules created either way.
+    collection_ids: product.collection_ids ?? [],
     tags: product.tags ?? [],
     tax_category_id: product.tax_category_id ?? null,
     product_type_id: product.product_type_id ?? null,

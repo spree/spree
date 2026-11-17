@@ -8,6 +8,9 @@ module Spree
           # pre-scope, so Meilisearch's own filtering/counting/pagination works),
           # and the collection's sort_order is the default when the request omits `sort`.
           class ProductsController < Spree::Api::V3::Store::ProductsController
+            include Spree::Api::V3::Store::PermalinkLookup
+            include Spree::Api::V3::Store::StorefrontCollections
+
             protected
 
             def collection
@@ -38,18 +41,12 @@ module Spree
               direction == 'desc' ? "-#{field}" : field
             end
 
-            # Resolve by permalink or prefixed ID, mirroring CollectionsController#find_resource
-            # (including the default-locale fallback so a non-default-locale permalink still
-            # resolves the PLP the collection detail page can load).
+            # The same published-on-this-channel collections the collection
+            # endpoints serve, so an unpublished collection's listing is a 404.
             def current_collection
-              @current_collection ||= begin
-                id = params[:collection_id]
-                if id.to_s.start_with?('coll_')
-                  current_store.collections.find_by_prefix_id!(id)
-                else
-                  find_with_fallback_default_locale { current_store.collections.i18n.find_by!(permalink: id) }
-                end
-              end
+              @current_collection ||= find_by_id_or_permalink!(
+                storefront_collections, params[:collection_id]
+              )
             end
           end
         end

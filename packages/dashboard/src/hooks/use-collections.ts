@@ -1,3 +1,4 @@
+import { zodResolver } from '@hookform/resolvers/zod'
 import type { Collection, CollectionCreateParams, CollectionUpdateParams } from '@spree/admin-sdk'
 import {
   adminClient,
@@ -7,6 +8,9 @@ import {
 } from '@spree/dashboard-core'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import i18n from 'i18next'
+import { useCallback, useRef } from 'react'
+import type { Resolver } from 'react-hook-form'
+import { type CollectionFormValues, collectionFormSchema } from '../schemas/collection'
 import { TRANSLATIONS_QUERY_RESOURCE, useInvalidateTranslations } from './use-translations'
 
 export function useCollections() {
@@ -15,6 +19,28 @@ export function useCollections() {
     queryFn: () => adminClient.collections.list({ limit: 100, sort: 'position' }),
     staleTime: 1000 * 60 * 5,
   })
+}
+
+/**
+ * The collection form's resolver. Which rule types take no value is a fact
+ * of the types endpoint, read at validation time so a resolver created before
+ * the types load still sees them. Until they load no rule needs a value, so a
+ * saved In Stock rule never blocks Save; the API still validates.
+ */
+export function useCollectionFormResolver(): Resolver<CollectionFormValues> {
+  const { data } = useCollectionRuleTypes()
+  const valuelessTypes = useRef<string[] | null>(null)
+  valuelessTypes.current = data
+    ? data.data
+        .filter((ruleType) => (ruleType as { value_required?: boolean }).value_required === false)
+        .map((ruleType) => ruleType.type)
+    : null
+
+  return useCallback<Resolver<CollectionFormValues>>(
+    (values, context, options) =>
+      zodResolver(collectionFormSchema(valuelessTypes.current))(values, context, options),
+    [],
+  )
 }
 
 // The rule-kind registry is static at runtime — cache forever, not store-scoped.
@@ -29,10 +55,12 @@ export function useCollectionRuleTypes() {
 export function useCollection(id: string | undefined) {
   return useQuery({
     queryKey: useResourceKey('collections', id ?? 'noop'),
-    // `rules` is expand-gated server-side; the edit form hydrates its rule
-    // editor from it, so the detail read has to ask for it explicitly.
+    // `rules` and `publications` are expand-gated server-side; the edit form
+    // hydrates its rule editor and Publishing card from them.
     queryFn: () =>
-      adminClient.collections.get(id as string, { expand: ['rules', 'custom_fields'] }),
+      adminClient.collections.get(id as string, {
+        expand: ['rules', 'publications', 'custom_fields'],
+      }),
     enabled: !!id,
   })
 }
@@ -104,9 +132,8 @@ const collectionProductsKey = (collectionId: string) =>
   ['collections', collectionId, 'products'] as const
 
 /**
- * One page of a collection's products, ordered by membership position. Works
- * for automatic collections too — there the list is materialized from the
- * rules and is read-only.
+ * One page of a collection's products, ordered by membership position:
+ * rule-matched and hand-picked members alike.
  *
  * Paginated rather than capped: a collection can hold thousands of products,
  * and a single truncated fetch would hide the rest with no way to reach them.
@@ -127,7 +154,7 @@ export function listCollectionProductsPage(collectionId: string, page: number, l
   return adminClient.collections.products.list(collectionId, { page, limit })
 }
 
-/** Add one or many products to a manual collection in a single request. */
+/** Hand-pick one or many products into a collection in a single request. */
 export function useAddCollectionProducts(collectionId: string) {
   return useResourceMutation<unknown, Error, string[]>({
     mutationFn: (productIds) => adminClient.collections.products.create(collectionId, productIds),
@@ -173,8 +200,8 @@ export function useRepositionCollectionProduct(collectionId: string) {
  * (product edit page, bulk-action dialog). Pass a unique `queryKey` per
  * instance so independent caches don't collide.
  *
- * Only manual collections are offered: automatic membership is rebuilt from
- * rules, so a hand-picked add would be dropped on the next regeneration.
+ * Every collection is offered: hand-picked membership survives regeneration
+ * whether or not the collection also has rules.
  */
 export function collectionAutocompleteProps(queryKey: string) {
   return {
@@ -182,7 +209,6 @@ export function collectionAutocompleteProps(queryKey: string) {
     search: (q: string) =>
       adminClient.collections.list({
         search: q,
-        automatic_eq: false,
         limit: 100,
         sort: 'name',
         fields: ['name'],
@@ -192,4 +218,39 @@ export function collectionAutocompleteProps(queryKey: string) {
     placeholder: i18n.t('admin.products.collection_search_placeholder'),
     emptyText: i18n.t('admin.products.no_collections_found'),
   }
+}
+
+// ---------------------------------------------------------------------------
+// Exclusions — products kept out whatever the rules match
+// ---------------------------------------------------------------------------
+
+export function useCollectionExclusions(collectionId: string, page = 1, limit = 25) {
+  return useQuery({
+    queryKey: useResourceKey('collections', collectionId, 'exclusions', `${page}:${limit}`),
+    queryFn: () =>
+      adminClient.collections.exclusions.list(collectionId, { page, limit, expand: ['product'] }),
+    placeholderData: (previous) => previous,
+  })
+}
+
+/** Exclude a product: it leaves the collection now and stays out. */
+export function useExcludeCollectionProduct(collectionId: string) {
+  return useResourceMutation<unknown, Error, string>({
+    mutationFn: (productId) =>
+      adminClient.collections.exclusions.create(collectionId, { product_id: productId }),
+    invalidate: [['collections', collectionId]],
+    successMessage: i18n.t('admin.collections.exclusions.messages.excluded'),
+    errorMessage: i18n.t('admin.errors.failed_to_update'),
+  })
+}
+
+/** Lift an exclusion: the product comes back if the rules match it. */
+export function useRemoveCollectionExclusion(collectionId: string) {
+  return useResourceMutation<void, Error, string>({
+    mutationFn: (exclusionId) =>
+      adminClient.collections.exclusions.delete(collectionId, exclusionId),
+    invalidate: [['collections', collectionId]],
+    successMessage: i18n.t('admin.collections.exclusions.messages.removed'),
+    errorMessage: i18n.t('admin.errors.failed_to_update'),
+  })
 }

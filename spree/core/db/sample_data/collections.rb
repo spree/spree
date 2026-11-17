@@ -25,10 +25,10 @@ automatic_collections = [
 automatic_collections.each do |attributes|
   collection = store.collections.find_or_initialize_by(permalink: attributes[:permalink])
   collection.name = attributes[:name]
-  collection.automatic = true
   collection.rules_match_policy = 'all'
   collection.sort_order = attributes[:sort_order]
   collection.save!
+  store.channels.active.add_collections(collection.id) unless collection.publications.exists?
 
   unless collection.rules.exists?(type: attributes[:rule_type])
     collection.rules.create!(
@@ -46,9 +46,9 @@ end
 # the catalog to demonstrate curation.
 best_sellers = store.collections.find_or_initialize_by(permalink: 'best-sellers')
 best_sellers.name = 'Best Sellers'
-best_sellers.automatic = false
 best_sellers.sort_order = 'best_selling'
 best_sellers.save!
+store.channels.active.add_collections(best_sellers.id) unless best_sellers.publications.exists?
 
 if best_sellers.products.empty?
   Spree::Collections::AddProducts.call(

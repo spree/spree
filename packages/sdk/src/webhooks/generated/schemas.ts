@@ -3,6 +3,7 @@ import { z } from 'zod'
 import {
   CartSchema,
   ClaimSchema,
+  CollectionSchema,
   CompanySchema,
   CompanyInvitationSchema,
   CustomerSchema,
@@ -76,6 +77,8 @@ type WebhookEventName =
   | 'claim.opened'
   | 'claim.resolved'
   | 'claim.updated'
+  | 'collection.published'
+  | 'collection.unpublished'
   | 'company.created'
   | 'company.deleted'
   | 'company.updated'
@@ -343,6 +346,8 @@ export const webhookEventSchemas: Readonly<Record<WebhookEventName, z.ZodType>> 
   'claim.opened': ClaimSchema,
   'claim.resolved': ClaimSchema,
   'claim.updated': ClaimSchema,
+  'collection.published': CollectionSchema,
+  'collection.unpublished': CollectionSchema,
   'company.created': CompanySchema,
   'company.deleted': CompanySchema,
   'company.updated': CompanySchema,
