@@ -398,6 +398,11 @@ function AddPaymentDialog({
     if (mutation.isError) mutation.reset()
   }
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: the open transition is the trigger — depending on isError would clear the message the instant a submit fails with the dialog still open
+  useEffect(() => {
+    if (open && mutation.isError) mutation.reset()
+  }, [open])
+
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     if (!canSubmit) return
