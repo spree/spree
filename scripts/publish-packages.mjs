@@ -91,10 +91,12 @@ function keepNewerLatest(name, version, tag) {
   try {
     latest = execFileSync('npm', ['view', name, 'dist-tags.latest'], {
       encoding: 'utf8',
-      stdio: ['ignore', 'pipe', 'ignore'],
+      stdio: ['ignore', 'pipe', 'pipe'],
     }).trim()
-  } catch {
-    // A package not on npm yet has no latest to keep.
+  } catch (error) {
+    // Only a package not on npm yet has no latest to keep; any other failure
+    // stops, rather than risk moving latest backward.
+    if (!String(error.stderr).includes('E404')) throw error
   }
   if (!latest || !isNewerVersion(latest, version)) return tag
   const [major, minor] = version.split('.')

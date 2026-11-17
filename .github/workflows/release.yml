@@ -104,6 +104,12 @@ jobs:
   release-npm:
     name: Release npm packages
     needs: preflight
+    # One npm release at a time across every tag, so each version reads npm's
+    # latest dist-tag only after the one before it has published.
+    concurrency:
+      group: release-npm
+      cancel-in-progress: false
+      queue: max
     runs-on: ubuntu-latest
     # Must match the environment in each package's npm Trusted Publishing setting.
     environment: release
