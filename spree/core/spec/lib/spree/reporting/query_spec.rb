@@ -1150,6 +1150,21 @@ RSpec.describe Spree::Reporting::Query do
         expect(result.rows.first[:metrics][:promotion_discounts][:value]).to eq(7.0)
       end
 
+      # A filter dimension joining past the discount rows names a table the
+      # per-line subquery never reads, so it narrows through the outer
+      # query's id filter instead of inside the subquery.
+      it 'filters by a dimension that joins past the discount rows' do
+        registry = Spree::Reporting::Registry.new
+        Spree::Reporting::DefaultVocabulary.install(registry)
+        registry.dimension :promotion_name, base: :line_items, column: '%{promotions}.name',
+                           joins: [{ promotion_discounts: :promotion }]
+        query = described_class.new(store: store, registry: registry,
+                                    params: { metrics: %w[promotion_discounts],
+                                              filters: [{ dimension: 'promotion_name', op: 'eq', value: 'Spring Sale' }] })
+
+        expect(query.execute.totals[:promotion_discounts][:value]).to eq(7.0)
+      end
+
       it 'counts only the filtered code in the dimensionless total' do
         result = run(metrics: %w[promotion_discounts], filters: [{ dimension: 'coupon_code', op: 'eq', value: 'SPRING' }])
 

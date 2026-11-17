@@ -144,7 +144,11 @@ module Spree
           query.filters.filter_map do |filter|
             dimension = filter[:dimension]
             next unless dimension.base == metric.base
-            next unless Reporting.joins_cover?(dimension.joins, metric.grouped_joins)
+            # The dimension's column must live on rows the subquery itself
+            # reads: one joining past them (`{ promotion_discounts: :promotion }`)
+            # would name a table the subquery has no FROM entry for.
+            next if dimension.joins.blank?
+            next unless Reporting.joins_cover?(metric.grouped_joins, dimension.joins)
 
             " AND #{in_predicate(qualified_column(dimension), filter[:values]).to_sql}"
           end.join

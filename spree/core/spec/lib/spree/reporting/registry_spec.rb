@@ -38,8 +38,8 @@ RSpec.describe Spree::Reporting::Registry do
 
   describe '.join_paths' do
     it 'expands nested joins into every path they reach' do
-      expect(Spree::Reporting.join_paths([{ variant: { product: :product_categories } }, :order]))
-        .to contain_exactly(%i[variant], %i[variant product], %i[variant product product_categories], %i[order])
+      expect(Spree::Reporting.join_paths([{ variant: { product: :product_categories } }, :order])).
+        to contain_exactly(%i[variant], %i[variant product], %i[variant product product_categories], %i[order])
     end
 
     it 'does not treat the first hop of a nested join as covering the whole path' do
