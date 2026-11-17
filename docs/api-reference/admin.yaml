@@ -28147,6 +28147,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 payment_total: '0.00'
+                amount_left_to_pay: '0.00'
                 commission_amount_total: '0.00'
                 commission_tax_total: '0.00'
                 commission_total: '0.00'
@@ -29020,6 +29021,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 payment_total: '0.00'
+                amount_left_to_pay: '0.00'
                 commission_amount_total: '0.00'
                 commission_tax_total: '0.00'
                 commission_total: '0.00'
@@ -29373,6 +29375,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   payment_total: '0.00'
+                  amount_left_to_pay: '0.00'
                   commission_amount_total: '0.00'
                   commission_tax_total: '0.00'
                   commission_total: '0.00'
@@ -29599,6 +29602,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 payment_total: '0.00'
+                amount_left_to_pay: '0.00'
                 commission_amount_total: '0.00'
                 commission_tax_total: '0.00'
                 commission_total: '0.00'
@@ -29756,6 +29760,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 payment_total: '0.00'
+                amount_left_to_pay: '0.00'
                 commission_amount_total: '0.00'
                 commission_tax_total: '0.00'
                 commission_total: '0.00'
@@ -29903,6 +29908,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 payment_total: '0.00'
+                amount_left_to_pay: '0.00'
                 commission_amount_total: '0.00'
                 commission_tax_total: '0.00'
                 commission_total: '0.00'
@@ -30102,6 +30108,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 payment_total: '110.00'
+                amount_left_to_pay: '0.00'
                 commission_amount_total: '0.00'
                 commission_tax_total: '0.00'
                 commission_total: '0.00'
@@ -30281,6 +30288,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 payment_total: '0.00'
+                amount_left_to_pay: '0.00'
                 commission_amount_total: '0.00'
                 commission_tax_total: '0.00'
                 commission_total: '0.00'
@@ -30421,6 +30429,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 payment_total: '0.00'
+                amount_left_to_pay: '0.00'
                 commission_amount_total: '0.00'
                 commission_tax_total: '0.00'
                 commission_total: '0.00'
@@ -30555,6 +30564,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 payment_total: '0.00'
+                amount_left_to_pay: '0.00'
                 commission_amount_total: '0.00'
                 commission_tax_total: '0.00'
                 commission_total: '0.00'
@@ -30694,6 +30704,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 payment_total: '0.00'
+                amount_left_to_pay: '0.00'
                 commission_amount_total: '0.00'
                 commission_tax_total: '0.00'
                 commission_total: '0.00'
@@ -69176,6 +69187,10 @@ components:
           type: string
         payment_total:
           type: string
+        amount_left_to_pay:
+          type: string
+          description: What a new payment should be for, the amount due less the
+            payments recorded and not yet captured. Never negative.
         commission_amount_total:
           type: string
         commission_tax_total:
@@ -69349,6 +69364,7 @@ components:
       - created_at
       - updated_at
       - payment_total
+      - amount_left_to_pay
       - commission_amount_total
       - commission_tax_total
       - commission_total

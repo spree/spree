@@ -72,6 +72,7 @@ interface Order {
   created_at: string;
   updated_at: string;
   payment_total: string;
+  amount_left_to_pay: string;
   commission_amount_total: string;
   commission_tax_total: string;
   commission_total: string;

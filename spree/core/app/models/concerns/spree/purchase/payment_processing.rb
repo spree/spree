@@ -67,7 +67,7 @@ module Spree
       #
       # @return [BigDecimal]
       def amount_left_to_pay
-        [outstanding_balance - payments.valid.where.not(status: 'completed').sum(:amount), BigDecimal('0')].max
+        [outstanding_balance - valid_payments.reject { |payment| payment.status == 'completed' }.sum(BigDecimal('0'), &:amount), BigDecimal('0')].max
       end
 
       private

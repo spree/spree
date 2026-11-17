@@ -1,5 +1,5 @@
 import type { Order, Payment } from '@spree/admin-sdk'
-import { isPositiveMoney, subtractMoney, sumMoney } from '@spree/core'
+import { isPositiveMoney } from '@spree/core'
 import {
   adminClient,
   currencyParts,
@@ -319,23 +319,6 @@ function PaymentActionsMenu({
   )
 }
 
-const UNCAPTURED_PAYMENT_STATUSES = ['checkout', 'pending', 'processing']
-
-// What a new payment should cover: the amount due, less the payments already
-// recorded and not yet captured. Store credit is left out, since the amount
-// due takes it off already.
-function amountLeftToPay(order: Order): string {
-  const uncaptured = (order.payments ?? [])
-    .filter(
-      (payment) =>
-        UNCAPTURED_PAYMENT_STATUSES.includes(payment.status) &&
-        payment.source_type !== 'store_credit',
-    )
-    .map((payment) => payment.amount)
-  const left = subtractMoney(order.amount_due ?? '0', sumMoney(uncaptured), order.currency)
-  return isPositiveMoney(left) ? left : ''
-}
-
 function AddPaymentDialog({
   order,
   open,
@@ -350,7 +333,8 @@ function AddPaymentDialog({
   const customerId = order.customer_id ?? undefined
   const [paymentMethodId, setPaymentMethodId] = useState<string>('')
   const [sourceId, setSourceId] = useState<string>('')
-  const defaultAmount = amountLeftToPay(order)
+  // The server works out what is left to pay; nothing here repeats which payment statuses count.
+  const defaultAmount = isPositiveMoney(order.amount_left_to_pay) ? order.amount_left_to_pay : ''
   const [amount, setAmount] = useState<string>(defaultAmount)
   const [capture, setCapture] = useState(false)
   const { symbol: currencySymbol } = currencyParts(order.currency, i18n.language)
