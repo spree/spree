@@ -509,6 +509,26 @@ module Spree
             expect(order.fulfillments.flat_map(&:inventory_units).map(&:line_item_id)).to include(gift_line.id)
           end
 
+          context 'and the order held only digital items until then' do
+            let(:digital_variant) { create(:digital_product).default_variant }
+
+            it 'builds a fulfillment for the gift and charges its delivery' do
+              described_class.call(order: order, params: { items: [{ variant_id: digital_variant.prefixed_id, quantity: 1 }] })
+              # A digital line sits on a fulfillment of its own, so the gift's
+              # recalculation has one to rebuild.
+              expect(order.reload.delivery_step_required?).to be(false)
+              expect(order.fulfillments.flat_map(&:inventory_units).map(&:variant_id)).to eq([digital_variant.id])
+
+              described_class.call(order: order, params: { customer_id: member.id })
+
+              order.reload
+              gift_line = order.line_items.find_by(variant_id: gift.id)
+              expect(gift_line).to be_present
+              expect(order.fulfillments.flat_map(&:inventory_units).map(&:line_item_id)).to include(gift_line.id)
+              expect(order.delivery_total).to eq(5)
+            end
+          end
+
           it 'takes the gift off the fulfillments when the order stops qualifying' do
             described_class.call(order: order, params: { items: [{ variant_id: variant.prefixed_id, quantity: 1 }] })
             described_class.call(order: order, params: { customer_id: member.id })
