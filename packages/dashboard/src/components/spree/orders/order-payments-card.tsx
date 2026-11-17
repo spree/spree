@@ -386,11 +386,11 @@ function AddPaymentDialog({
     setCapture(false)
   }
 
-  // Drop the previous attempt's error when the dialog closes, so reopening it
+  // Drop a settled attempt's error when the dialog closes, so reopening it
   // doesn't greet the admin with a refusal from a payment method they've since
   // changed.
   function handleOpenChange(next: boolean) {
-    if (!next) mutation.reset()
+    if (!next && !mutation.isPending) mutation.reset()
     onOpenChange(next)
   }
 
