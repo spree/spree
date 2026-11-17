@@ -7,6 +7,10 @@ export type AddressFields = Filter.TextFilters<'address1' | 'address2' | 'city' 
   & Filter.IdFilters<'id'>
   & Filter.CodeFilters<'country_code', Filter.CountryCode>
 
+export type CartFields = Filter.RangeFilters<'completed_at' | 'created_at' | 'updated_at'>
+  & Filter.TextFilters<'email' | 'token'>
+  & Filter.IdFilters<'id'>
+
 export type CategoryFields = Filter.BooleanFilters<'automatic'>
   & Filter.RangeFilters<'children_count' | 'depth' | 'position' | 'products_count', number>
   & Filter.RangeFilters<'created_at' | 'updated_at'>
@@ -118,6 +122,26 @@ export type AddressFilters = AddressFields
   & AddressFilterExtensions
 
 export type AddressSort = Filter.SortKey<'address1' | 'address2' | 'city' | 'company' | 'country_code' | 'created_at' | 'first_name' | 'id' | 'last_name' | 'phone' | 'postal_code' | 'state_code' | 'updated_at' | (keyof AddressSortExtensions & string)>
+
+/**
+ * Filters your app adds to Cart lists. Generate them with `spree filters types`,
+ * or declare them by hand in a file that has an `export`:
+ *
+ *     export {}
+ *     declare module '@spree/sdk' {
+ *       interface CartFilterExtensions { erp_id_eq?: string }
+ *     }
+ */
+export interface CartFilterExtensions {}
+
+/** Sort fields your app adds to Cart lists, as keys: `{ erp_id: true }`. */
+export interface CartSortExtensions {}
+
+export type CartFilters = CartFields
+  & Filter.OrFilters
+  & CartFilterExtensions
+
+export type CartSort = Filter.SortKey<'completed_at' | 'created_at' | 'email' | 'id' | 'token' | 'updated_at' | (keyof CartSortExtensions & string)>
 
 /**
  * Filters your app adds to Category lists. Generate them with `spree filters types`,
