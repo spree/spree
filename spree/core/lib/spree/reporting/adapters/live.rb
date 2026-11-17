@@ -199,7 +199,7 @@ module Spree
             scope = scope.having(
               Arel::Nodes::InfixOperation.new(
                 COMPARISONS.fetch(filter[:op]).first,
-                Arel.sql(metric_sql(metric, scope: scope, grouped: true)),
+                Arel::Nodes::Grouping.new(Arel.sql(metric_sql(metric, scope: scope, grouped: true))),
                 Arel::Nodes.build_quoted(filter[:value])
               )
             )

@@ -1118,7 +1118,14 @@ RSpec.describe Spree::Reporting::Query do
                      filters: [{ dimension: 'coupon_code', op: 'eq', value: 'SAVE?10' }],
                      metric_filters: [{ metric: 'promotion_discounts', op: 'gte', value: 1 }])
 
+        expect(result.rows.size).to eq(1)
         expect(result.rows.first[:metrics][:promotion_discounts][:value]).to eq(5.0)
+
+        excluded = run(metrics: %w[promotion_discounts], dimensions: %w[product],
+                       filters: [{ dimension: 'coupon_code', op: 'eq', value: 'SAVE?10' }],
+                       metric_filters: [{ metric: 'promotion_discounts', op: 'gt', value: 5 }])
+
+        expect(excluded.rows).to be_empty
       end
 
       it 'counts only the filtered code in the dimensionless total' do
