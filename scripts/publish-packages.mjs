@@ -30,7 +30,7 @@ export function distTag(version) {
   return version.includes('-') ? 'beta' : 'latest'
 }
 
-function manifest(dir) {
+export function manifest(dir) {
   return JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf8'))
 }
 
@@ -39,7 +39,7 @@ function runtimeDependencies(dir) {
   return Object.keys({ ...dependencies, ...peerDependencies })
 }
 
-function workspacePackages() {
+export function workspacePackages() {
   const packagesDir = path.join(repoRoot, 'packages')
   return new Map(
     fs
@@ -76,7 +76,7 @@ export function dependencyOrder(packages) {
   return ordered
 }
 
-function isPublished(name, version) {
+export function isPublished(name, version) {
   try {
     return (
       execFileSync('npm', ['view', `${name}@${version}`, 'version'], {
@@ -166,6 +166,8 @@ async function preflight(packages) {
     if (exchange.ok) {
       console.log(`npm accepts this workflow for ${name}.`)
     } else {
+      // npm sets up Trusted Publishing only for a package that exists, so a new
+      // package's first version is published by hand.
       const { message } = await exchange.json().catch(() => ({}))
       console.error(
         `npm rejects this workflow for ${name}: HTTP ${exchange.status} ${message ?? ''}`,
@@ -187,7 +189,7 @@ async function preflight(packages) {
 const DOCS = '@spree/docs'
 
 // Released on their own tags, independently of Spree.
-const TOOLS = ['@spree/cli', 'create-spree-app']
+export const TOOLS = ['@spree/cli', 'create-spree-app']
 
 /**
  * The packages a release tag names, after checking that the versions in the

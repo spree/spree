@@ -15,14 +15,11 @@
 // exists, so a failed run is re-run as it is.
 import fs from 'node:fs'
 import path from 'node:path'
+import { isPublished, manifest, TOOLS, workspacePackages } from '../publish-packages.mjs'
 import { gemVersion, npmVersion } from '../version-packages.mjs'
 import { read, repoRoot, retry, run } from './lib.mjs'
 
 const { GITHUB_REPOSITORY: repo, SHA: sha, CI_RUN_ID: ciRunId, SUBJECT: subject } = process.env
-const TOOLS = [
-  { name: '@spree/cli', dir: 'packages/cli' },
-  { name: 'create-spree-app', dir: 'packages/create-spree-app' },
-]
 
 const api = (endpoint, ...args) => JSON.parse(read('gh', ['api', endpoint, ...args]) || 'null')
 
@@ -31,14 +28,6 @@ function apiOrNull(endpoint) {
     return api(endpoint)
   } catch {
     return null
-  }
-}
-
-function onNpm(name, version) {
-  try {
-    return read('npm', ['view', `${name}@${version}`, 'version']).trim() === version
-  } catch {
-    return false
   }
 }
 
@@ -72,11 +61,10 @@ const workflowRuns = (workflow, query) =>
   api(`repos/${repo}/actions/workflows/${workflow}/runs?per_page=50&${query}`).workflow_runs
 
 /**
- * Starts `workflow` on `ref` and returns the new run's id. Older API versions
- * answer the dispatch without the run, so the run is then found by its start time.
+ * Starts `workflow` on `ref` and returns the new run's id, which the dispatch
+ * returns when asked, so the run is never guessed from a list.
  */
 function dispatch(workflow, ref, inputs = {}) {
-  const since = new Date(Date.now() - 5000).toISOString()
   const fields = Object.entries(inputs).flatMap(([key, value]) => ['-f', `inputs[${key}]=${value}`])
   const response = api(
     `repos/${repo}/actions/workflows/${workflow}/dispatches`,
@@ -88,20 +76,9 @@ function dispatch(workflow, ref, inputs = {}) {
     'return_run_details=true',
     ...fields,
   )
-  if (response?.workflow_run_id) return response.workflow_run_id
-  let id
-  retry(
-    `The ${workflow} run on ${ref}`,
-    () => {
-      id = workflowRuns(
-        workflow,
-        `event=workflow_dispatch&created=${encodeURIComponent(`>=${since}`)}`,
-      ).find((run) => run.head_branch === ref)?.id
-      return Boolean(id)
-    },
-    5,
-  )
-  return id
+  if (!response?.workflow_run_id)
+    throw new Error(`GitHub started ${workflow} on ${ref} without a run id.`)
+  return response.workflow_run_id
 }
 
 function watch(id, what) {
@@ -166,7 +143,9 @@ function createRelease(tag, notes) {
     return console.log(`The GitHub release ${tag} already exists.`)
   }
   const latest = apiOrNull(`repos/${repo}/releases/latest`)?.tag_name
-  const isLatest = !latest || isNewer(tag, latest)
+  // Only a stable Spree release is compared; anything else (say, a tool's
+  // release marked latest by hand) gives way to this one.
+  const isLatest = !latest || !/^v\d+\.\d+\.\d+$/.test(latest) || isNewer(tag, latest)
   const notesFile = path.join(repoRoot, 'tmp', `release-notes-${tag.slice(1)}.md`)
   fs.mkdirSync(path.dirname(notesFile), { recursive: true })
   fs.writeFileSync(notesFile, `${notes}\n`)
@@ -189,11 +168,12 @@ function createRelease(tag, notes) {
 function postToDiscord(tag) {
   const title = `Post ${tag} to changelog`
   const runs = workflowRuns('discord-release.yml', '').filter((run) => run.display_title === title)
-  if (runs.some((run) => run.status !== 'completed' || run.conclusion === 'success')) {
+  if (runs.some((run) => run.conclusion === 'success')) {
     return console.log(`${tag} is already posted to Discord.`)
   }
+  const active = runs.find((run) => run.status !== 'completed')
   watch(
-    dispatch('discord-release.yml', 'main', { tag, channel: 'changelog' }),
+    active?.id ?? dispatch('discord-release.yml', 'main', { tag, channel: 'changelog' }),
     `the Discord post of ${tag}`,
   )
 }
@@ -222,12 +202,10 @@ function main() {
   // The tools need the docs this release published: `create-spree-app`
   // projects depend on `@spree/docs`, and `spree upgrade` moves it to the
   // server's version.
-  retry('@spree/docs on npm', () => onNpm('@spree/docs', npmVersion(version)))
-  const tools = TOOLS.map(({ name, dir }) => {
-    const { version: toolVersion } = JSON.parse(
-      fs.readFileSync(path.join(repoRoot, dir, 'package.json'), 'utf8'),
-    )
-    return { name, tag: `${name}@${toolVersion}`, published: onNpm(name, toolVersion) }
+  retry('@spree/docs on npm', () => isPublished('@spree/docs', npmVersion(version)))
+  const tools = TOOLS.map((name) => {
+    const { version: toolVersion } = manifest(workspacePackages().get(name))
+    return { name, tag: `${name}@${toolVersion}`, published: isPublished(name, toolVersion) }
   })
   const pending = tools.filter(({ published }) => !published)
   for (const { tag: toolTag } of tools.filter(({ published }) => published)) {
