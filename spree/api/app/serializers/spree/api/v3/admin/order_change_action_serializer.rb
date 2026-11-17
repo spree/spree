@@ -25,13 +25,21 @@ module Spree
             Spree::Money::Rounding.format(record.amount, record.order_change.order.currency) unless record.amount.nil?
           end
 
-          # From the column: a removed discount's row is gone, and the action
-          # still has to say which one it removed.
+          # From the columns: a removed line or discount is gone and a deleted
+          # variant is hidden, and the action still has to say which one it named.
+          attribute :line_item_id do |record|
+            Spree::LineItem.prefixed_id_for(record.line_item_id)
+          end
+
+          attribute :variant_id do |record|
+            Spree::Variant.prefixed_id_for(record.variant_id)
+          end
+
           attribute :discount_id do |record|
             Spree::Discount.prefixed_id_for(record.discount_id)
           end
 
-          prefixed_id_attributes :line_item, :variant, :fulfillment, :delivery_method
+          prefixed_id_attributes :fulfillment, :delivery_method
         end
       end
     end

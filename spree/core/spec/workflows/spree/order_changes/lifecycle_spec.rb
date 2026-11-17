@@ -326,6 +326,16 @@ RSpec.describe 'Spree::OrderChanges workflows' do
       expect(order.discounts.manual.map(&:line_item_id)).to include(added.id)
     end
 
+    it 'sizes a line discount on the quantity the same change gives the line' do
+      line_item.update_columns(quantity: 1)
+      new_quantity_amount = line_item.price * 2
+
+      apply({ kind: 'update_item', line_item: line_item, quantity: 2 },
+            { kind: 'add_discount', label: 'Half off', value: 50, value_type: 'percent', line_item: line_item })
+
+      expect(order.reload.discounts.manual.sole.amount).to eq(-(new_quantity_amount / 2))
+    end
+
     it 'changes and removes a manual discount' do
       discount = manual_discount
 
