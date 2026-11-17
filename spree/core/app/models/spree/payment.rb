@@ -295,8 +295,8 @@ module Spree
     # @param new_amount [BigDecimal]
     # @return [Boolean] false when the payment had already completed
     def resize_unless_completed!(new_amount)
-      resized = self.class.unscoped.where(id: id).where.not(status: 'completed')
-                    .update_all(amount: new_amount, updated_at: Time.current)
+      resized = self.class.unscoped.where(id: id).where.not(status: 'completed').
+                update_all(amount: new_amount, updated_at: Time.current)
       return false if resized.zero?
 
       self.amount = new_amount
