@@ -287,6 +287,10 @@ function ApplyGiftCardDialog({
     onOpenChange(next)
   }
 
+  function clearSettledError() {
+    if (mutation.isError) mutation.reset()
+  }
+
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     const trimmed = code.trim()
@@ -320,7 +324,10 @@ function ApplyGiftCardDialog({
                   id="gift-card-code"
                   name="code"
                   value={code}
-                  onChange={(e) => setCode(e.target.value)}
+                  onChange={(e) => {
+                    setCode(e.target.value)
+                    clearSettledError()
+                  }}
                   placeholder={t('admin.orders.detail.gift_card_section.code_placeholder')}
                   required
                   autoFocus

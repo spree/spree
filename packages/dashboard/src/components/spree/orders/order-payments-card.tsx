@@ -394,6 +394,10 @@ function AddPaymentDialog({
     onOpenChange(next)
   }
 
+  function clearSettledError() {
+    if (mutation.isError) mutation.reset()
+  }
+
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     if (!canSubmit) return
@@ -436,6 +440,7 @@ function AddPaymentDialog({
                   onValueChange={(v) => {
                     setPaymentMethodId(v)
                     setSourceId('')
+                    clearSettledError()
                   }}
                 >
                   <SelectTrigger id="pay-method">
@@ -472,7 +477,13 @@ function AddPaymentDialog({
                       {t('admin.orders.detail.payment_form.no_saved_cards')}
                     </p>
                   ) : (
-                    <Select value={sourceId} onValueChange={setSourceId}>
+                    <Select
+                      value={sourceId}
+                      onValueChange={(v) => {
+                        setSourceId(v)
+                        clearSettledError()
+                      }}
+                    >
                       <SelectTrigger id="pay-source">
                         <SelectValue
                           placeholder={t('admin.orders.detail.payment_form.source_placeholder')}
@@ -509,7 +520,10 @@ function AddPaymentDialog({
                     step="any"
                     placeholder={order.amount_due ?? '0.00'}
                     value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
+                    onChange={(e) => {
+                      setAmount(e.target.value)
+                      clearSettledError()
+                    }}
                   />
                 </InputGroup>
                 <p className="text-xs text-muted-foreground mt-1">
