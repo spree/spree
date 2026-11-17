@@ -237,7 +237,7 @@ release (`--latest` only when it is the newest stable release) and starts
 `discord-release.yml`. Watch it:
 
 ```bash
-gh run list --workflow release-on-merge.yml --json databaseId,status,conclusion,headSha --jq '.[] | select(.headSha == "<merge sha>")'
+gh run list --workflow release-on-merge.yml --json databaseId,status,conclusion,displayTitle --jq '.[] | select(.displayTitle == "Release on merge of <merge sha>")'
 gh run watch <id>
 ```
 
@@ -292,6 +292,11 @@ in order.
    git tag '@spree/cli@<version>' <merge sha>
    git push origin '@spree/cli@<version>'
    ```
+
+   A tag `release-on-merge.yml` already made on the merge commit stays as it
+   is: pushing it again starts nothing. Re-run the failed `release.yml` run on
+   it, or start one with `gh workflow run release.yml --ref <tag>` when it has
+   none.
 
    Tool tags wait for the docs, which the `v<version>` run publishes:
    `create-spree-app` projects depend on `@spree/docs` on the Spree major, and

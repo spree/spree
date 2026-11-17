@@ -9,15 +9,16 @@ name: Release on merge
 #
 # A failed run is re-run as it is: every step skips what already exists. When
 # CI on the release commit fails and is re-run, this starts again once it passes.
+#
+# The run's own commit is main's newest, not the release commit, so the name
+# carries the release commit for finding the run.
+run-name: Release on merge of ${{ github.event.workflow_run.head_sha }}
+
 on:
   workflow_run:
     workflows: [CI]
     types: [completed]
     branches: [main]
-
-concurrency:
-  group: release-on-merge-${{ github.event.workflow_run.head_sha }}
-  cancel-in-progress: false
 
 permissions:
   contents: read
@@ -32,6 +33,12 @@ jobs:
       github.event.workflow_run.conclusion == 'success' &&
       github.event.workflow_run.head_repository.full_name == github.repository &&
       startsWith(github.event.workflow_run.head_commit.message, 'Released Spree ')
+    # One release at a time, so a release never reads which one is latest while
+    # another is being created. On the job, so CI runs on other commits never
+    # queue here.
+    concurrency:
+      group: release-on-merge
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     timeout-minutes: 120
     permissions:

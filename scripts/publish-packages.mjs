@@ -160,7 +160,7 @@ async function preflight(packages) {
     const { value } = await idToken.json()
 
     const exchange = await fetch(
-      `https://registry.npmjs.org/-/npm/v1/oidc/token/exchange/package/${name.replace('/', '%2f')}`,
+      `https://registry.npmjs.org/-/npm/v1/oidc/token/exchange/package/${name.replaceAll('/', '%2f')}`,
       { method: 'POST', headers: { Authorization: `Bearer ${value}` } },
     )
     if (exchange.ok) {

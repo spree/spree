@@ -13,6 +13,7 @@
 // so it starts release.yml itself; that keeps release.yml the workflow npm and
 // RubyGems see, which Trusted Publishing needs. Every step skips what already
 // exists, so a failed run is re-run as it is.
+import { execFileSync } from 'node:child_process'
 import fs from 'node:fs'
 import path from 'node:path'
 import { isPublished, manifest, TOOLS, workspacePackages } from '../publish-packages.mjs'
@@ -23,11 +24,17 @@ const { GITHUB_REPOSITORY: repo, SHA: sha, CI_RUN_ID: ciRunId, SUBJECT: subject 
 
 const api = (endpoint, ...args) => JSON.parse(read('gh', ['api', endpoint, ...args]) || 'null')
 
+/** Null only when GitHub answers 404; any other failure stops the run. */
 function apiOrNull(endpoint) {
   try {
-    return api(endpoint)
-  } catch {
-    return null
+    const out = execFileSync('gh', ['api', endpoint], {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'pipe'],
+    })
+    return JSON.parse(out)
+  } catch (error) {
+    if (String(error.stderr).includes('HTTP 404')) return null
+    throw error
   }
 }
 
@@ -58,7 +65,16 @@ function ensureTag(tag) {
 }
 
 const workflowRuns = (workflow, query) =>
-  api(`repos/${repo}/actions/workflows/${workflow}/runs?per_page=50&${query}`).workflow_runs
+  read('gh', [
+    'api',
+    '--paginate',
+    '--jq',
+    '.workflow_runs[]',
+    `repos/${repo}/actions/workflows/${workflow}/runs?per_page=100&${query}`,
+  ])
+    .split('\n')
+    .filter(Boolean)
+    .map((line) => JSON.parse(line))
 
 /**
  * Starts `workflow` on `ref` and returns the new run's id, which the dispatch
