@@ -1128,6 +1128,15 @@ RSpec.describe Spree::Reporting::Query do
         expect(excluded.rows).to be_empty
       end
 
+      it 'reports only the filtered promotion when grouped by promotion' do
+        result = run(metrics: %w[promotion_discounts], dimensions: %w[promotion],
+                     filters: [{ dimension: 'promotion', op: 'eq', value: promotion.prefixed_id }])
+
+        expect(result.rows.map { |row| row[:dimensions][:promotion] }).to eq([promotion.id])
+        expect(result.rows.first[:metrics][:promotion_discounts][:value]).to eq(5.0)
+        expect(result.totals[:promotion_discounts][:value]).to eq(5.0)
+      end
+
       it 'counts only the filtered code in the dimensionless total' do
         result = run(metrics: %w[promotion_discounts], filters: [{ dimension: 'coupon_code', op: 'eq', value: 'SPRING' }])
 

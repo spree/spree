@@ -224,9 +224,19 @@ module Spree
               table = scope.klass.arel_table
               ids = join_for(base_relation(base, range), dimension, base).where(predicate).select(table[:id])
               scope = scope.where(table[:id].in(ids.arel))
+              # When the grouped query already joins the rows this filter
+              # reads, the id subquery alone keeps every joined row of a
+              # matching line: filtered to one promotion and grouped by
+              # promotion, a line carrying two would still report the other
+              # one's group. Narrow the joined rows themselves as well.
+              scope = scope.where(predicate) if joins_rows_of?(scope, dimension, base)
             end
           end
           scope
+        end
+
+        def joins_rows_of?(scope, dimension, base)
+          dimension.base == base && (top_level_joins(dimension.joins) - joined_associations(scope)).empty?
         end
 
         # `column IN (values)` as an Arel node. The column is a validated
