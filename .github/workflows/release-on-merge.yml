@@ -1,0 +1,58 @@
+name: Release on merge
+
+# Publishes a patch release (X.Y.Z, Z above zero) when CI passes on the squash
+# merge of its release pull request, a commit titled "Released Spree <version>
+# (#<number>)" on main. scripts/release/publish-on-merge.mjs tags the commit,
+# runs release.yml on each tag, creates the GitHub release from the notes in
+# the pull request's description and posts it to Discord. A minor, major or
+# prerelease is left to a human.
+#
+# A failed run is re-run as it is: every step skips what already exists. When
+# CI on the release commit fails and is re-run, this starts again once it passes.
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+
+concurrency:
+  group: release-on-merge-${{ github.event.workflow_run.head_sha }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    name: Publish the patch release
+    # A fork's pull request can be on a branch named main, so only pushes to
+    # this repository count.
+    if: >-
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_repository.full_name == github.repository &&
+      startsWith(github.event.workflow_run.head_commit.message, 'Released Spree ')
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    permissions:
+      actions: write
+      contents: write
+      pull-requests: read
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          persist-credentials: false
+
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: 22
+
+      - name: Tag, publish and announce the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ github.event.workflow_run.head_sha }}
+          CI_RUN_ID: ${{ github.event.workflow_run.id }}
+          SUBJECT: ${{ github.event.workflow_run.head_commit.message }}
+        run: node scripts/release/publish-on-merge.mjs

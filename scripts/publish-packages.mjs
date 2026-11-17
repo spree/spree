@@ -8,9 +8,11 @@
 //   @spree/cli@3.5.0         @spree/cli
 //   create-spree-app@2.4.1   create-spree-app
 //
-//   node scripts/publish-packages.mjs verify <tag>    the tag matches the versions
-//                                                     in the repository
-//   node scripts/publish-packages.mjs publish <tag>   build and publish what it names
+//   node scripts/publish-packages.mjs verify <tag>     the tag matches the versions
+//                                                      in the repository
+//   node scripts/publish-packages.mjs preflight <tag>  npm accepts this workflow for
+//                                                      every package it will publish
+//   node scripts/publish-packages.mjs publish <tag>    build and publish what it names
 import { execFileSync } from 'node:child_process'
 import fs from 'node:fs'
 import path from 'node:path'
@@ -129,6 +131,57 @@ function publish(packages) {
   }
 }
 
+/**
+ * Checks that npm Trusted Publishing accepts this workflow run for every
+ * package the tag would publish, before anything is published. It makes the
+ * same OIDC token exchange `npm publish` makes and throws the short-lived token
+ * away; the exchange alone publishes nothing. A package whose trusted publisher
+ * lapsed then stops the release before the gems or any other package ship.
+ *
+ * @param {Array<{ name: string, dir: string }>} packages
+ */
+async function preflight(packages) {
+  const pending = packages.filter(({ name, dir }) => !isPublished(name, manifest(dir).version))
+  if (pending.length === 0) return console.log('Every package is already on npm.')
+
+  const { ACTIONS_ID_TOKEN_REQUEST_URL: requestUrl, ACTIONS_ID_TOKEN_REQUEST_TOKEN: requestToken } =
+    process.env
+  if (!requestUrl || !requestToken) {
+    throw new Error('No GitHub OIDC token available: the job needs `id-token: write`.')
+  }
+
+  const rejected = []
+  for (const { name } of pending) {
+    // A fresh ID token per package, as `npm publish` fetches one per package.
+    const url = new URL(requestUrl)
+    url.searchParams.append('audience', 'npm:registry.npmjs.org')
+    const idToken = await fetch(url, { headers: { Authorization: `Bearer ${requestToken}` } })
+    if (!idToken.ok) throw new Error(`GitHub refused an OIDC token: HTTP ${idToken.status}`)
+    const { value } = await idToken.json()
+
+    const exchange = await fetch(
+      `https://registry.npmjs.org/-/npm/v1/oidc/token/exchange/package/${name.replace('/', '%2f')}`,
+      { method: 'POST', headers: { Authorization: `Bearer ${value}` } },
+    )
+    if (exchange.ok) {
+      console.log(`npm accepts this workflow for ${name}.`)
+    } else {
+      const { message } = await exchange.json().catch(() => ({}))
+      console.error(
+        `npm rejects this workflow for ${name}: HTTP ${exchange.status} ${message ?? ''}`,
+      )
+      rejected.push(name)
+    }
+  }
+  if (rejected.length > 0) {
+    throw new Error(
+      `npm Trusted Publishing rejects ${rejected.join(', ')}. Check each package's trusted publisher ` +
+        '(organization spree, repository spree, workflow release.yml, environment release) on npmjs.com, ' +
+        'then re-run the failed jobs.',
+    )
+  }
+}
+
 // Carries the Spree version outside the Changesets group (it has no
 // changelog), so a project's local docs match its server. Released with Spree.
 const DOCS = '@spree/docs'
@@ -186,8 +239,9 @@ function main([command, gitTag]) {
     const packages = packagesForTag(gitTag)
     return console.log(`${gitTag} releases ${packages.map(({ name }) => name).join(', ')}.`)
   }
+  if (command === 'preflight') return preflight(packagesForTag(gitTag))
   if (command === 'publish') return publish(packagesForTag(gitTag))
-  throw new Error('Usage: publish-packages.mjs verify|publish <tag>')
+  throw new Error('Usage: publish-packages.mjs verify|preflight|publish <tag>')
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) main(process.argv.slice(2))
