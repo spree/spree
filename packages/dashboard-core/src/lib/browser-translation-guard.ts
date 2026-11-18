@@ -41,6 +41,7 @@ type DomNode = {
 type GuardableNode = {
   removeChild<T>(child: T): T
   insertBefore<T>(node: T, child: unknown): T
+  appendChild<T>(node: T): T
 }
 
 /** The parts of a `MutationRecord` the guard reads. */
@@ -64,7 +65,6 @@ export type BrowserTranslationGuardOptions = {
 // Original text node → the translator's `<font>` that took its place. Weak, so
 // a node React has let go of is not kept alive.
 const replacements = new WeakMap<object, DomNode>()
-let replacementSeen = false
 
 const isText = (node: DomNode | null | undefined): node is DomNode => node?.nodeType === TEXT_NODE
 const isFont = (node: DomNode | null | undefined): node is DomNode =>
@@ -86,7 +86,6 @@ const fromTranslator = (font: DomNode): boolean =>
 function remember(text: DomNode, font: DomNode): void {
   if (!fromTranslator(font)) return
   replacements.set(text, font)
-  replacementSeen = true
 }
 
 /**
@@ -119,7 +118,14 @@ export function recordTranslatorReplacements(records: Iterable<TranslatorMutatio
   }
 }
 
-const translatedDocument = (): boolean => replacementSeen || markedTranslated()
+// Whether the page is being translated now: marked as translated, or still
+// holding a wrapper Google Translate made. Both go away when the translation
+// is reverted, so the fallback below does too.
+function translatedDocument(): boolean {
+  if (markedTranslated()) return true
+  if (typeof document === 'undefined') return false
+  return document.querySelector('font[style*="vertical-align: inherit"]') !== null
+}
 
 function ownDescriptor(proto: object, key: string): PropertyDescriptor | undefined {
   for (let p: object | null = proto; p; p = Object.getPrototypeOf(p)) {
@@ -130,7 +136,7 @@ function ownDescriptor(proto: object, key: string): PropertyDescriptor | undefin
 }
 
 /**
- * Makes `removeChild`, `insertBefore` and `nodeValue` follow nodes a browser
+ * Makes `removeChild`, `insertBefore`, `appendChild` and `nodeValue` follow nodes a browser
  * translator has replaced, and starts watching the document for those
  * replacements. Safe to call more than once; only the first call patches.
  *
@@ -167,8 +173,16 @@ export function guardAgainstBrowserTranslation(
     return replacement && replacement.parentNode === parent ? replacement : null
   }
 
+  // React moving a text node the translator replaced moves its `<font>`, or
+  // the translation would stay behind and show next to the moved text.
+  const movedStandIn = (node: unknown, parent: unknown): DomNode | null => {
+    const text = node as DomNode | null
+    return text && !text.parentNode ? standIn(text, parent) : null
+  }
+
   const removeChild = proto.removeChild
   const insertBefore = proto.insertBefore
+  const appendChild = proto.appendChild
 
   proto.removeChild = function <T>(this: GuardableNode, child: T): T {
     const node = child as DomNode | null
@@ -184,13 +198,32 @@ export function guardAgainstBrowserTranslation(
   }
 
   proto.insertBefore = function <T>(this: GuardableNode, node: T, reference: unknown): T {
+    // Putting the text back before its own `<font>` is the translation being
+    // undone, not React moving it.
+    const standing = movedStandIn(node, this)
+    const moved = standing === reference ? null : standing
+    const inserted = moved ?? node
     const ref = reference as DomNode | null
-    if (!ref || ref.parentNode === this) return insertBefore.call(this, node, reference) as T
+    if (!ref || ref.parentNode === this) {
+      insertBefore.call(this, inserted, reference)
+      return node
+    }
     const wrapper = standIn(ref, this)
-    if (wrapper) return insertBefore.call(this, node, wrapper) as T
+    if (wrapper) {
+      insertBefore.call(this, inserted, wrapper)
+      return node
+    }
     if (!isTranslated()) return insertBefore.call(this, node, reference) as T
     warnMoved('insertBefore')
-    return insertBefore.call(this, node, null) as T
+    insertBefore.call(this, inserted, null)
+    return node
+  }
+
+  proto.appendChild = function <T>(this: GuardableNode, node: T): T {
+    const moved = movedStandIn(node, this)
+    if (!moved) return appendChild.call(this, node) as T
+    appendChild.call(this, moved)
+    return node
   }
 
   const nodeValue = ownDescriptor(proto, 'nodeValue')

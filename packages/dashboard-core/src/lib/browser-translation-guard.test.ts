@@ -149,6 +149,24 @@ describe('guardAgainstBrowserTranslation', () => {
     expect(parent.childNodes).toEqual([spinner, font, button])
   })
 
+  it('moves the translation when React reorders the text it replaced', () => {
+    const { el, text } = setup()
+    const parent = el('div')
+    const label = text('A')
+    const b = el('B')
+    const c = el('C')
+    parent.appendChild(label)
+    parent.appendChild(b)
+    parent.appendChild(c)
+    const { font } = translate(label, 'À')
+
+    expect(parent.insertBefore(label, c)).toBe(label)
+    expect(parent.childNodes).toEqual([b, font, c])
+    expect(label.parentNode).toBeNull()
+    expect(parent.appendChild(label)).toBe(label)
+    expect(parent.childNodes).toEqual([b, c, font])
+  })
+
   it('follows a text node the translator moved into its wrapper', () => {
     const { el, text } = setup()
     const parent = el('div')
@@ -341,6 +359,30 @@ describe('guardAgainstBrowserTranslation', () => {
     expect(parent.childNodes).toEqual([span])
     parent.insertBefore(added, label)
     expect(parent.childNodes).toEqual([span, added])
+  })
+
+  it('drops the translated-page fallback once the translation is reverted', () => {
+    const marks = new Set(['translated-ltr'])
+    let styledFont = false
+    vi.stubGlobal('document', {
+      documentElement: { classList: { contains: (name: string) => marks.has(name) } },
+      querySelector: () => (styledFont ? {} : null),
+    })
+    vi.spyOn(console, 'warn').mockImplementation(() => {})
+    class Node extends FakeNode {}
+    guardAgainstBrowserTranslation(Node.prototype, { watcher: null })
+    const parent = new Node('div')
+    const other = new Node('div')
+    const label = new Node('#text', 'Save')
+    other.appendChild(label)
+
+    expect(() => parent.removeChild(label)).not.toThrow()
+    marks.clear()
+    styledFont = true
+    expect(() => parent.removeChild(label)).not.toThrow()
+    styledFont = false
+    expect(() => parent.removeChild(label)).toThrow(/NotFoundError/)
+    vi.unstubAllGlobals()
   })
 
   it('leaves untranslated nodes on the original methods', () => {
