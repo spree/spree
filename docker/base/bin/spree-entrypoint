@@ -1,0 +1,14 @@
+#!/bin/bash -e
+
+if [ "${RAILS_ENV:-production}" = "production" ]; then
+  # Create or migrate the database before the server starts.
+  if [[ "$*" == *"bin/rails server"* ]]; then
+    ./bin/rails db:prepare
+  fi
+elif [ -f Gemfile ]; then
+  # A development container mounts the source and keeps gems in a volume, so
+  # they are installed here, before any command, rather than baked into an image.
+  bundle check > /dev/null 2>&1 || bundle install
+fi
+
+exec "$@"

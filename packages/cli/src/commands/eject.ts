@@ -10,9 +10,9 @@ import { dockerCompose, prepareDatabase } from '../docker.js'
 // dev compose. Source under the API directory becomes live in the container —
 // edits reload via Zeitwerk on next request, no rebuild needed.
 //
-// Image rebuilds (`spree build`) are only required for Dockerfile or
-// .ruby-version changes; extensions go through `spree add` and persist in
-// the bundle_cache volume.
+// The dev container is the Spree base image's build variant (or, in older
+// projects, an image built from the project's Dockerfile); gems, including
+// extensions added through `spree add`, persist in the bundle_cache volume.
 const DEV_COMPOSE = 'docker-compose.dev.yml'
 
 export function registerEjectCommand(program: Command) {
@@ -68,8 +68,8 @@ export async function ejectProject(projectDir: string): Promise<void> {
 
   // The dev environment uses its own spree_development database, and the
   // app server exits when it is missing — create and migrate it first.
-  // The dev compose has `build:` defined, so this first `run` also builds
-  // the image — no separate explicit build step needed.
+  // This first `run` also gets the image ready: it pulls the base image, or
+  // builds the project's Dockerfile when the dev compose has `build:`.
   //
   // Both steps run against the dev compose directly, and docker-compose.yml
   // is swapped only once they succeed: the swapped file is what marks a
@@ -97,7 +97,7 @@ export async function ejectProject(projectDir: string): Promise<void> {
       `  ${pc.dim(`${apiDir}/config/`)}          — backend configuration (instant reload)`,
       `  ${pc.dim(`${apiDir}/Gemfile`)}          — add extensions via ${pc.bold('spree add <extension>')}`,
       '',
-      `Rebuild only on Dockerfile or runtime version changes: ${pc.bold('spree build')}`,
+      `Get a newer base image (security fixes) with ${pc.bold('spree build')}.`,
     ].join('\n'),
     'Ejected!',
   )

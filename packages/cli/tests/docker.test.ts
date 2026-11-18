@@ -4,8 +4,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 vi.mock('execa', () => ({ execa: vi.fn().mockResolvedValue({ stdout: '' }) }))
 
 let monorepoEdge = false
+let buildsImage = true
 vi.mock('../src/context', () => ({
   hasMonorepoSpreePath: () => monorepoEdge,
+  buildsDevImage: () => buildsImage,
 }))
 
 const cancelMock = vi.fn()
@@ -171,7 +173,25 @@ describe('primeBundleVolume', () => {
 })
 
 describe('prepareDatabase', () => {
-  afterEach(() => mockExeca.mockReset())
+  afterEach(() => {
+    mockExeca.mockReset()
+    buildsImage = true
+  })
+
+  // A project on the Spree base image runs a published image: its compose
+  // file has no `build:` section, so there is nothing to build first.
+  it('does not ask compose to build when the compose file runs a published image', async () => {
+    buildsImage = false
+
+    await prepareDatabase('/proj')
+
+    expect(mockExeca).toHaveBeenNthCalledWith(
+      2,
+      'docker',
+      ['compose', 'run', '--rm', 'web', 'bin/rails', 'db:prepare'],
+      { cwd: '/proj', stdio: 'pipe' },
+    )
+  })
 
   it('waits for a healthy postgres, then runs db:prepare in a one-off web container', async () => {
     await prepareDatabase('/proj')

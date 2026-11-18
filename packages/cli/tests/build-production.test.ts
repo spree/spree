@@ -3,6 +3,7 @@ import os from 'node:os'
 import path from 'node:path'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { planProductionBuild } from '../src/commands/build.js'
+import { projectDockerfile } from '../src/lib/base-image.js'
 
 /**
  * Pure planning logic for `spree build --production` — the safety contract:
@@ -51,6 +52,25 @@ describe('planProductionBuild', () => {
     expect(plan.args).toEqual([
       'build',
       projectDir,
+      '-f',
+      path.join(projectDir, 'backend', 'Dockerfile'),
+      '-t',
+      'shop:1',
+    ])
+  })
+
+  it('builds from the project root with a Dockerfile on the Spree base image', () => {
+    writeDockerfile(projectDockerfile('6.1'))
+    writeDashboardApp()
+
+    const plan = planProductionBuild(projectDir, 'shop:1')
+
+    expect(plan.dashboard).toBe('custom')
+    // `--pull`: rebuilding is how the project gets the base image's fixes.
+    expect(plan.args).toEqual([
+      'build',
+      projectDir,
+      '--pull',
       '-f',
       path.join(projectDir, 'backend', 'Dockerfile'),
       '-t',

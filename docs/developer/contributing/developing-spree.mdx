@@ -57,7 +57,7 @@ pnpm server:restart # restart web + worker in place
 pnpm server:logs    # follow web container logs (when the stack runs detached)
 pnpm server:console # open a Rails console inside the container
 pnpm server:seed    # re-run database seeds
-pnpm server:build   # rebuild the dev image (only after Dockerfile / .ruby-version changes)
+pnpm server:build   # update the dev image (pulls the newer Spree base image)
 ```
 
 `server:dev` behaves like any TS dev server (`vite dev`, the dashboard's `pnpm dev`): it runs in the foreground and Ctrl+C stops the app containers. Postgres, Redis, and Meilisearch keep running for a fast next boot — `pnpm server:stop` shuts everything down.

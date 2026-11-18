@@ -1,0 +1,126 @@
+#!/usr/bin/env bash
+#
+# Builds a Spree project inside the spree-base build image. A project's
+# Dockerfile runs it in two steps, so gems keep their own image layer:
+#
+#   spree-image-build gems            installs the gems of the Gemfile in the working directory
+#   spree-image-build app <context>   copies the Rails app in and builds the dashboards and assets
+#
+# The result is /rails (the app, with the dashboard in /rails/dashboard and the
+# seller panel in /rails/seller-dashboard) and the gems in $BUNDLE_PATH.
+
+set -euo pipefail
+
+APP_DIR=/rails
+cli_dir=""
+template_dir=""
+
+fail() {
+  echo "spree-image-build: $*" >&2
+  exit 1
+}
+
+usage() {
+  sed -n '3,10p' "$0" | sed 's/^# \{0,1\}//' >&2
+  exit 2
+}
+
+# The Spree minor line (6.1) a Gemfile.lock resolves to; empty when it names no
+# released spree_core.
+spree_line_of() {
+  sed -n 's/^    spree_core (\([0-9][0-9]*\.[0-9][0-9]*\)\..*/\1/p' "$1" | head -n 1
+}
+
+# A project may be on an older Spree line than the base, never a newer one:
+# the base carries the runtime its own line was tested on.
+check_spree_line() {
+  local base=${SPREE_BASE_LINE:-} project newest
+  [ -n "$base" ] || return 0
+  project=$(spree_line_of "$1")
+  [ -n "$project" ] || return 0
+  newest=$(printf '%s\n%s\n' "$project" "$base" | sort -V | tail -n 1)
+  [ "$newest" = "$base" ] || fail "this project uses Spree $project, which is newer than this base image (spree-base:$base). Change the image tag in your Dockerfile to spree-base:$project."
+}
+
+has_gem() {
+  bundle info "$1" > /dev/null 2>&1
+}
+
+build_gems() {
+  [ -f Gemfile ] && [ -f Gemfile.lock ] || fail "no Gemfile and Gemfile.lock in $(pwd). COPY them in before running 'spree-image-build gems'."
+  check_spree_line Gemfile.lock
+
+  bundle install || fail "bundle install failed. If the error above is about the Ruby version: this base image has Ruby ${RUBY_VERSION}, and the base decides the patch version. Make the 'ruby' line of your Gemfile accept it, for example: ruby '~> ${RUBY_VERSION%.*}.0'"
+
+  rm -rf ~/.bundle "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git
+  if has_gem bootsnap; then bundle exec bootsnap precompile --gemfile; fi
+}
+
+# Unpacks the @spree/cli release that carries the stock app templates, once,
+# and sets template_dir. Not run in a subshell: a failure must stop the build.
+find_stock_template() {
+  if [ -z "$cli_dir" ]; then
+    cli_dir=$(mktemp -d)
+    npm pack "@spree/cli@${SPREE_CLI_VERSION}" --pack-destination "$cli_dir" > /dev/null
+    tar -xzf "$cli_dir"/spree-cli-*.tgz -C "$cli_dir"
+  fi
+  template_dir="$cli_dir/package/dist/templates/$1"
+  [ -d "$template_dir" ] || fail "@spree/cli@${SPREE_CLI_VERSION} ships no $1 template. Use a newer base image."
+}
+
+# Builds one single-page app into <out>: the project's own when <custom> holds
+# one, the stock template otherwise.
+build_frontend() {
+  local name=$1 custom=$2 template=$3 base_path=$4 out=$5 work
+  work=$(mktemp -d)
+
+  if [ -f "$custom/package.json" ]; then
+    echo "==> Building apps/$name"
+    cp -R "$custom/." "$work/"
+    rm -rf "$work/node_modules" "$work/dist" "$work/.tanstack"
+    # The committed lockfile is installed as it is: drift between package.json
+    # and the lockfile fails here instead of re-resolving inside the image.
+    (cd "$work" && pnpm install --frozen-lockfile)
+  else
+    echo "==> Building the stock $name"
+    find_stock_template "$template"
+    cp -R "$template_dir/." "$work/"
+    (cd "$work" && pnpm install)
+  fi
+
+  (cd "$work" && VITE_BASE_PATH="$base_path" pnpm build)
+  rm -rf "$out"
+  mkdir -p "$out"
+  cp -R "$work/dist/." "$out/"
+  rm -rf "$work"
+}
+
+build_app() {
+  local context=${1:-} source
+  [ -n "$context" ] && [ -d "$context" ] || usage
+
+  if [ -f "$context/server/Gemfile" ]; then
+    source="$context/server"
+  elif [ -f "$context/backend/Gemfile" ]; then
+    source="$context/backend"
+  elif [ -f "$context/Gemfile" ]; then
+    source="$context"
+  else
+    fail "no Rails app in the build context (looked for server/Gemfile, backend/Gemfile and Gemfile)."
+  fi
+
+  cp -R "$source/." "$APP_DIR/"
+  cd "$APP_DIR"
+
+  build_frontend dashboard "$context/apps/dashboard" dashboard-starter /dashboard/ "$APP_DIR/dashboard"
+  build_frontend seller-dashboard "$context/apps/seller-dashboard" seller-dashboard-starter /sellers/ "$APP_DIR/seller-dashboard"
+
+  if has_gem bootsnap; then bundle exec bootsnap precompile app/ lib/; fi
+  SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
+}
+
+case "${1:-}" in
+  gems) build_gems ;;
+  app) build_app "${2:-}" ;;
+  *) usage ;;
+esac

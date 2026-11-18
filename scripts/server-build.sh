@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# server-build.sh — rebuild the edge dev image (`pnpm server:build`).
+# server-build.sh — update the edge dev image (`pnpm server:build`): pull the
+# Spree base image, or rebuild the starter's Dockerfile where it still has one.
 #
 # The edge flow rewrites server/Gemfile.lock with a PATH block pointing at
 # the host monorepo (an absolute path like /Users/you/spree/spree). The
@@ -17,6 +18,17 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 
+DEV_COMPOSE="server/docker-compose.dev.yml"
+
+# A starter on the Spree base image builds nothing: its dev stack runs the
+# published build image, and the edge boot installs the gems. Updating it
+# means pulling.
+if ! grep -qE '^[[:space:]]*build[[:space:]]*:' "$DEV_COMPOSE"; then
+  echo "→ The dev stack runs the Spree base image; pulling the newer one"
+  SPREE_PATH="$ROOT" docker compose -f "$DEV_COMPOSE" -f scripts/docker-compose.edge.yml pull web
+  exit 0
+fi
+
 LOCK="server/Gemfile.lock"
 
 if grep -q "remote: $ROOT/spree" "$LOCK" 2>/dev/null; then
@@ -32,4 +44,4 @@ if grep -q "remote: $ROOT/spree" "$LOCK" 2>/dev/null; then
 fi
 
 echo "→ Building web + worker"
-SPREE_PATH="$ROOT" docker compose -f server/docker-compose.dev.yml -f scripts/docker-compose.edge.yml build web worker
+SPREE_PATH="$ROOT" docker compose -f "$DEV_COMPOSE" -f scripts/docker-compose.edge.yml build web worker
