@@ -242,6 +242,27 @@ describe('guardAgainstBrowserTranslation', () => {
     expect(texts(parent)).toEqual(['Help'])
   })
 
+  it('does not pair a <font> insertion with a removal from a later batch', () => {
+    const { el, text } = setup({ translated: false })
+    const parent = el('div')
+    const label = text('Save')
+    parent.appendChild(label)
+    const font = el('FONT')
+    font.textContent = 'Help'
+    parent.insertBefore(font, label)
+    recordTranslatorReplacements([
+      { removedNodes: [], addedNodes: [font], previousSibling: null, nextSibling: label },
+    ])
+    parent.removeChild(label)
+    recordTranslatorReplacements([
+      { removedNodes: [label], addedNodes: [], previousSibling: font, nextSibling: null },
+    ])
+
+    label.nodeValue = 'Saved'
+    expect(texts(parent)).toEqual(['Help'])
+    expect(() => parent.removeChild(label)).toThrow(/NotFoundError/)
+  })
+
   it('does not remove a <font> for an element inside it', () => {
     const { el } = setup()
     const panel = el('div')

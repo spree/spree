@@ -63,9 +63,6 @@ export type BrowserTranslationGuardOptions = {
 // Original text node → the translator's `<font>` that took its place. Weak, so
 // a node React has let go of is not kept alive.
 const replacements = new WeakMap<object, DomNode>()
-// Text node → the `<font>` inserted right before it: the first half of a
-// translator's insert-then-remove swap.
-const insertedBefore = new WeakMap<object, DomNode>()
 let replacementSeen = false
 
 const isText = (node: DomNode | null | undefined): node is DomNode => node?.nodeType === TEXT_NODE
@@ -81,12 +78,16 @@ function remember(text: DomNode, font: DomNode): void {
  * Remembers each text node a translator swapped for a `<font>`. A translator
  * either replaces the node in one step (one record that removes the text and
  * adds the `<font>`), or inserts the `<font>` right before the text and then
- * removes the text. A `<font>` that merely sits next to a removed text node is
- * not a swap.
+ * removes the text. A translator does both halves in one task, so they arrive
+ * in the same batch of records; an insertion is only paired with a removal from
+ * that batch. A `<font>` that merely sits next to a removed text node, or was
+ * inserted before it some time earlier, is not a swap.
  *
  * @param records mutation records from a `MutationObserver` on the document
  */
 export function recordTranslatorReplacements(records: Iterable<TranslatorMutation>): void {
+  // Text node → the `<font>` inserted right before it in this batch.
+  const insertedBefore = new Map<DomNode, DomNode>()
   for (const { removedNodes, addedNodes, previousSibling, nextSibling } of records) {
     if (removedNodes.length > 0 && addedNodes.length === removedNodes.length) {
       for (let i = 0; i < removedNodes.length; i++) {
