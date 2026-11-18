@@ -25,6 +25,16 @@ describe 'rendered emails', type: :mailer do
     end
   end
 
+  let(:refunded_return) do
+    order = create(:shipped_order, store: store)
+    order.line_items.first.update_columns(quantity: 3)
+    order.fulfillment_items.sole.update_columns(quantity: 3)
+
+    create(:received_return, order: order, store: store).tap do |return_record|
+      return_record.return_line_items.sole.update!(quantity: 2, received_quantity: 1)
+    end
+  end
+
   let(:emails) do
     {
       'order confirmation' => Spree::OrderMailer.confirm_email(order),
@@ -67,5 +77,33 @@ describe 'rendered emails', type: :mailer do
     end
 
     expect(emails['order confirmation'].html_part.decoded).to include('&lt;a href=&quot;https://evil.test&quot;&gt;')
+  end
+
+  it 'shows the credited quantity on a refund, not the ordered or announced quantity' do
+    html = Spree::ReturnMailer.refunded_email(refunded_return).html_part.decoded
+
+    expect(html).to include('1 x')
+    expect(html).not_to include('2 x')
+    expect(html).not_to include('3 x')
+  end
+
+  it 'shows the credited quantity and amount on a discounted refund, not the list price' do
+    order = create(:shipped_order, store: store)
+    line_item = order.line_items.first
+    line_item.update_columns(quantity: 3, price: 10, taxable_adjustment_total: -6)
+    order.fulfillment_items.sole.update_columns(quantity: 3)
+
+    return_record = create(:received_return, order: order, store: store)
+    credited = return_record.return_line_items.sole
+    expect(credited.credited_quantity).to eq(1)
+
+    html = Spree::ReturnMailer.refunded_email(return_record).html_part.decoded
+    credited_money = Spree::Money.new(credited.credited_worth, currency: credited.currency).to_s
+    list_money = Spree::Money.new(line_item.price, currency: line_item.currency).to_s
+
+    expect(html).to include('1 x')
+    expect(html).to include(credited_money)
+    expect(html).not_to include('3 x')
+    expect(html).not_to include(list_money)
   end
 end
