@@ -3282,7 +3282,8 @@
           "load_error": "无法加载此订单的付款信息。",
           "view_at_gateway": "在 {{gateway}} 中查看",
           "view_details": "查看详情",
-          "failed_card_checks": "银行卡验证未通过"
+          "failed_card_checks": "银行卡验证未通过",
+          "card_checks_unavailable": "银行卡校验不可用"
         },
         "priced_by": "定价来自 {{name}}",
         "purchase_order": {

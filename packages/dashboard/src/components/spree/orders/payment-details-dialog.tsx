@@ -31,17 +31,23 @@ const OUTCOME_VARIANTS = {
   not_checked: 'outline',
 } as const
 
-// Results where the issuer did not run the check at all — the system was
-// down, the card or its issuer does not support it — as opposed to one it ran
-// and the details did not match. Spree still counts these as risky; only the
-// label differs. Meanings follow ActiveMerchant's AVSResult and CVVResult.
-const UNAVAILABLE_AVS_CODES = new Set(['E', 'G', 'I', 'R', 'S', 'U'])
-const UNAVAILABLE_CVV_CODES = new Set(['P', 'S', 'U', 'X'])
+// Results where the check was not run, or only in part — the issuer's system
+// was down, the card or its issuer does not support it, or the street line was
+// not verified — as opposed to one that was run and did not match. Spree still
+// counts these as risky; only the label differs. Meanings follow
+// ActiveMerchant's AVSResult and CVVResult. CVV `S` (a code is on the card but
+// none was sent) is the merchant's omission, so it stays a failure.
+const UNAVAILABLE_AVS_CODES = new Set(['E', 'G', 'I', 'P', 'R', 'S', 'U'])
+const UNAVAILABLE_CVV_CODES = new Set(['P', 'U', 'X'])
+
+function riskyOutcome(code: string, unavailableCodes: Set<string>): CheckOutcome {
+  return unavailableCodes.has(code.trim().toUpperCase()) ? 'unavailable' : 'failed'
+}
 
 export function addressCheck(payment: Pick<Payment, 'avs_response' | 'avs_risky'>): CheckOutcome {
   if (!payment.avs_response) return 'not_checked'
   if (!payment.avs_risky) return 'passed'
-  return UNAVAILABLE_AVS_CODES.has(payment.avs_response) ? 'unavailable' : 'failed'
+  return riskyOutcome(payment.avs_response, UNAVAILABLE_AVS_CODES)
 }
 
 export function securityCodeCheck(
@@ -49,7 +55,20 @@ export function securityCodeCheck(
 ): CheckOutcome {
   if (!payment.cvv_response_code) return 'not_checked'
   if (!payment.cvv_risky) return 'passed'
-  return UNAVAILABLE_CVV_CODES.has(payment.cvv_response_code) ? 'unavailable' : 'failed'
+  return riskyOutcome(payment.cvv_response_code, UNAVAILABLE_CVV_CODES)
+}
+
+/**
+ * The worst of a card payment's two checks when either is risky, for the
+ * warning on the payments table — so the table and this dialog agree.
+ */
+export function riskyCardChecks(
+  payment: Pick<Payment, 'avs_response' | 'avs_risky' | 'cvv_response_code' | 'cvv_risky'>,
+): 'failed' | 'unavailable' | null {
+  const outcomes = [addressCheck(payment), securityCodeCheck(payment)]
+  if (outcomes.includes('failed')) return 'failed'
+  if (outcomes.includes('unavailable')) return 'unavailable'
+  return null
 }
 
 /** What the card issuer reported about a payment, and each capture of its money. */

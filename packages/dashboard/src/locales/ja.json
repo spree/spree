@@ -3290,7 +3290,8 @@
           "load_error": "この注文の支払いを読み込めませんでした。",
           "view_at_gateway": "{{gateway}}で見る",
           "view_details": "詳細を見る",
-          "failed_card_checks": "カードの確認に失敗"
+          "failed_card_checks": "カードの確認に失敗",
+          "card_checks_unavailable": "カード確認は利用不可"
         },
         "priced_by": "{{name}}による価格",
         "purchase_order": {
