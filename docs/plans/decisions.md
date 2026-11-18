@@ -34,6 +34,16 @@ Rejected: the storefront record, which only earns its place when a store has sev
 
 **Plan:** `6.1-storefront-connection.md`. **Plans amended:** `5.6-store-channel-context-and-key-binding.md` (the single binding becomes a set).
 
+## 2026-11-18: PostgreSQL full-text search returns as a core provider and becomes the default on PostgreSQL
+
+**Context:** `5.4-search-provider.md` removed the `pg_search` gem and settled on plain ILIKE for the built-in search, with Meilisearch as the upgrade. Since 2026-07-19 the Database provider is the default everywhere, so most installations search with a substring match: no word order tolerance, no word forms, no ranking. Almost every installation runs PostgreSQL, which can do all three without another service. `rails-active_search` (Basecamp, alpha) was reviewed as a base and not used: no aggregations, record scopes applied after paging, a hardcoded `english` configuration and a document table that needs a reindex.
+
+**Decision:** Core gains `Spree::SearchProvider::Postgres < Database`, written in plain SQL with no gem. It overrides only the text match and the default order. `Spree.search_provider` resolves by adapter (Postgres on PostgreSQL, Database otherwise) unless set explicitly. It searches product name and description at query time behind expression GIN indexes, so there is no search document table and nothing to backfill; everything `Product.search` matched before is still returned, ranked after the full-text hits. Stemming follows the request locale and falls back to `simple`; only the `english` indexes ship. When `pg_trgm` is enabled, a query that matches nothing falls back to the closest product names. Admin product search stays on the Database provider. Target 6.1. The same entry closes the plan's open questions: the provider is global, product search is the whole contract, and facet counts already adjust to selected options.
+
+**Consequences:** Storefront search results change in 6.1 on PostgreSQL; the upgrade guide names the one-line opt-out. PostgreSQL-specific search SQL lives in the provider only: no adapter branches in model scopes, and no `pg_search`. Search migrations are no-ops on MySQL and SQLite and never fail when `pg_trgm` is unavailable. Meilisearch remains the documented step up for large catalogs.
+
+**Plan:** `5.4-search-provider.md` (amended: Key Decisions, Phase 7, Constraints, Resolved Question 2, Open Questions emptied).
+
 ## 2026-11-04: Payment method rules use the delivery-method-rules API shape; CompanyRule gains a presence mode
 
 **Context:** Implementing `6.1-payment-method-rules.md`. The plan drafted shallow rule routes and an `expand=payment_method_rules` read, but the newer sibling family, `DeliveryMethodRule`, embeds `rules` on its parent, writes them through the same field, and nests all CRUD under the parent. The plan's `CompanyRule` matched listed companies only, and under the fail-open convention an empty list restricts nothing, so "every company buyer" could not be expressed.

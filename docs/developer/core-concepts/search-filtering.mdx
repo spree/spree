@@ -385,13 +385,74 @@ See [Querying](/api-reference/store-api/querying) for the full list of filtering
 
 ## Search Providers
 
-Spree uses a pluggable search provider architecture. The default provider uses SQL (ILIKE + Ransack). For production catalogs with 1,000+ products, we recommend installing the `spree_meilisearch` gem and switching to [Meilisearch](/integrations/search/meilisearch) for typo tolerance, relevance ranking, and faster faceted search.
+Product search runs through a search provider. Spree picks one for you, and you can switch with one line. The same `q[search]`, filter params, and sort options work with every provider, so no client or API changes are needed.
+
+| Provider | Used when | What search does |
+| --- | --- | --- |
+| PostgreSQL full-text | Default on PostgreSQL | Matches words in any order and in other forms ("shirts" finds "shirt"), searches descriptions, and puts the best matches first |
+| Database | Default on MySQL and SQLite | Matches the text as typed, anywhere in a product name or SKU |
+| [Meilisearch](/integrations/search/meilisearch) | You install `spree_meilisearch` | A dedicated search engine for large catalogs, with synonyms and tunable relevance |
+
+To choose a provider yourself:
+
+```ruby server/config/initializers/spree.rb
+Spree.search_provider = 'Spree::SearchProvider::Database'
+```
+
+### PostgreSQL full-text search
+
+On PostgreSQL, search needs no setup and no extra service. A search matches products whose name or description contains every word of the query. Name matches rank above description matches, and the last word matches as you type it, so "blue jac" finds "Blue Jacket". Everything the Database provider finds (part of a name or SKU, searchable custom fields) is still found, listed after the better matches.
+
+When no `sort` is sent, results come back by relevance. An explicit `sort` is applied as usual.
+
+#### Languages
+
+Words are reduced to their base form using the language of the request locale: a German storefront finds "Schuhe" when the shopper types "Schuh". Languages PostgreSQL has no rules for match whole words.
+
+Spree ships the search index for English. Other languages work without one, and a store with thousands of products in another language gets faster searches with the same index for that language:
+
+```ruby server/db/migrate/20260101000000_add_german_product_search_index.rb
+class AddGermanProductSearchIndex < ActiveRecord::Migration[8.1]
+  disable_ddl_transaction!
+
+  def change
+    %i[spree_products spree_product_translations].each do |table|
+      add_index table,
+                "(setweight(to_tsvector('german', coalesce(#{table}.name, '')), 'A') || " \
+                "setweight(to_tsvector('german', coalesce(#{table}.description, '')), 'B'))",
+                using: :gin, name: "index_#{table}_on_search_vector_german", algorithm: :concurrently
+    end
+  end
+end
+```
+
+#### Typo tolerance
+
+With PostgreSQL's `pg_trgm` extension enabled, a search that finds nothing falls back to the products whose names are closest to the query, so "blendr" still finds "Blender". It catches a missing or wrong letter; a short word with two letters swapped can still be missed. Spree turns this on by itself when the extension is there. The official Docker image and the default project have it enabled.
+
+Spree enables the extension during installation where the database allows it. If yours did not (some managed databases need the extension allowed first), allow it and run:
+
+<CodeGroup>
+
+```bash Spree CLI
+spree task search:enable_typo_tolerance
+```
+
+```bash Without Spree CLI
+bundle exec rake spree:search:enable_typo_tolerance
+```
+
+</CodeGroup>
+
+Then restart the application. The Search section of the [diagnostics report](/developer/contributing/reporting-issues) shows the active provider, whether typo tolerance is on, and any missing index.
+
+### When to move to Meilisearch
+
+Choose [Meilisearch](/integrations/search/meilisearch) when you need synonyms, relevance you can tune, tolerance for typos inside longer queries, or fast search over tens of thousands of products.
 
 ```ruby server/config/initializers/spree.rb
 Spree.search_provider = 'SpreeMeilisearch::SearchProvider'
 ```
-
-No client-side or API changes are needed — the same `q[search]`, filter params, and sort options work with any provider.
 
 See [Build a Custom Search Provider](/developer/how-to/custom-search-provider) for architecture details and how to build custom providers.
 

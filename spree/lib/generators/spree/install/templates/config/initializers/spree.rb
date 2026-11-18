@@ -89,7 +89,8 @@ end
 # Spree.queues.variants = :default
 # Spree.queues.webhooks = :default
 
-# Search provider — requires the spree_meilisearch gem
+# Search provider — PostgreSQL full-text search on PostgreSQL, SQL search on other databases.
+# Meilisearch requires the spree_meilisearch gem.
 # Spree.search_provider = 'SpreeMeilisearch::SearchProvider'
 
 Spree.customer_class = <%= (options[:user_class].blank? ? 'Spree::Customer' : options[:user_class]).inspect %>

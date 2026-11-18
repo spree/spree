@@ -1,0 +1,44 @@
+---
+title: Upgrading to Spree 6.1
+description: Guide to upgrading a Spree 6.0 application to Spree 6.1
+---
+
+<Info>
+  Before proceeding to upgrade, please ensure you're at [Spree 6.0](/developer/upgrades/5.6-to-6.0).
+</Info>
+
+## How to upgrade
+
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree upgrade
+```
+
+```bash Without Spree CLI
+bundle update
+bundle exec rake spree:install:migrations && bin/rails db:migrate
+```
+
+</CodeGroup>
+
+## Behavioral changes
+
+### Product search uses PostgreSQL full-text search
+
+On PostgreSQL, storefront product search now uses [full-text search](/developer/core-concepts/search-filtering#postgresql-full-text-search) by default. Nothing needs to be reindexed: the migration adds the indexes it uses.
+
+What shoppers see:
+
+- Words match in any order, and in other forms: "shirts blue" finds "Blue Shirt".
+- Product descriptions are searched, so a query can return more products than before.
+- Without a `sort`, results come back by relevance instead of in no particular order.
+- With the `pg_trgm` extension enabled, a search that finds nothing falls back to the closest product names.
+
+Everything the previous search matched is still returned. Admin product search, MySQL and SQLite installations, and applications that set `Spree.search_provider` themselves (for example to Meilisearch) are not affected.
+
+To keep the previous behavior:
+
+```ruby server/config/initializers/spree.rb
+Spree.search_provider = 'Spree::SearchProvider::Database'
+```
