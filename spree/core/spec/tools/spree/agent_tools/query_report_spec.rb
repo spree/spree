@@ -86,6 +86,25 @@ RSpec.describe Spree::AgentTools::QueryReport do
     expect(range.last.to_date).to eq(Date.new(2026, 11, 30))
   end
 
+  # Returning the first 50 of 60 months would read as a complete series next
+  # to totals that cover all 60.
+  it 'refuses a date series longer than the row limit' do
+    result = report(metrics: ['orders'], dimensions: ['completed_at'], time_range: { 'since' => '2021-01-01', 'until' => '2025-12-31' })
+
+    expect(result[:error]).to eq('completed_at by month over this range is 60 rows, more than the limit of 50. ' \
+                                 'Shorten the range, use a coarser grain, or raise limit (up to 500).')
+
+    result = report(metrics: ['orders'], dimensions: ['completed_at'], limit: 60,
+                    time_range: { 'since' => '2021-01-01', 'until' => '2025-12-31' })
+    expect(result[:row_count]).to eq(60)
+  end
+
+  it 'refuses a preset given with dates' do
+    result = report(metrics: ['orders'], time_range: { 'preset' => 'last_month', 'since' => '2026-01-01' })
+
+    expect(result[:error]).to eq('time_range takes a preset or since and until, not both')
+  end
+
   it 'refuses a range given both as from and as since' do
     result = report(metrics: ['orders'], time_range: { 'since' => '2026-09-01', 'from' => '2026-10-01' })
 

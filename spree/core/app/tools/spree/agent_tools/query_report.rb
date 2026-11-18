@@ -48,7 +48,7 @@ module Spree
         query = build_query(metrics: metrics, dimensions: dimensions, time_range: time_range,
                             filters: filters, sort: sort, limit: limit, currency: currency)
 
-        refusal = unauthorized_members(query)
+        refusal = unauthorized_members(query) || truncated_series(query)
         return refusal if refusal
 
         shape(query.execute)
@@ -130,6 +130,19 @@ module Spree
         end
       end
 
+      # A date series longer than the row limit would lose its last buckets
+      # while the totals still cover the whole range, so it is refused instead.
+      def truncated_series(query)
+        entry = query.time_dimension
+        return if entry.nil? || query.limit.nil?
+
+        buckets = bucket_count(query, entry[:grain])
+        return if buckets.nil? || buckets <= query.limit
+
+        { error: "#{entry[:dimension].name} by #{entry[:grain]} over this range is #{buckets} rows, more than the " \
+                 "limit of #{query.limit}. Shorten the range, use a coarser grain, or raise limit (up to #{MAX_LIMIT})." }
+      end
+
       # A range in a shape the query does not read would be dropped there for
       # the last 30 days, and the model would report on the wrong period.
       def normalize_time_range(range)
@@ -141,6 +154,10 @@ module Spree
           raise Spree::Reporting::InvalidQuery, "time_range takes #{alias_key} or #{key}, not both" if range.key?(key)
 
           range[key] = range.delete(alias_key)
+        end
+
+        if range.key?('preset') && range.keys.intersect?(%w[since until])
+          raise Spree::Reporting::InvalidQuery, 'time_range takes a preset or since and until, not both'
         end
 
         unknown = range.keys - TIME_RANGE_KEYS
