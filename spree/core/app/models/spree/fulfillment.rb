@@ -521,6 +521,11 @@ module Spree
                          sort_by(&:uncaptured_amount).reverse
 
       shipment_to_pay = final_price_with_items
+      # The capture workflow refuses more than the order still owes, so a
+      # parcel priced above it (the total came down after authorization)
+      # takes the balance rather than failing the dispatch. A shared payment
+      # is bounded by this order's share instead, in #capture_from.
+      shipment_to_pay = [shipment_to_pay, owner.outstanding_balance].min if owner && !grouped_owner?
       payments_amount = 0
 
       payments_pool = pending_payments.each_with_object([]) do |payment, pool|

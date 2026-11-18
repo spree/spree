@@ -71,6 +71,16 @@ RSpec.describe Spree::Payments::Capture do
       expect(result.error.value).to eq(:capture_amount_not_positive)
     end
 
+    it 'refuses a zero-amount payment captured with no amount' do
+      payment.update_columns(amount: 0)
+      expect(gateway).not_to receive(:capture)
+
+      result = described_class.call(payment: payment)
+
+      expect(result).to be_failure
+      expect(result.error.value).to eq(:capture_amount_not_positive)
+    end
+
     it 'refuses to capture more than the payment amount' do
       expect(gateway).not_to receive(:capture)
 
@@ -108,6 +118,16 @@ RSpec.describe Spree::Payments::Capture do
         described_class.call(payment: payment, amount: BigDecimal('10'))
 
         expect(order.payments.pending.sole.amount).to eq(BigDecimal('20.25'))
+      end
+
+      it 'carries nothing another pending payment already holds' do
+        create(:payment, order: order, payment_method: gateway, source: card, status: 'pending', amount: BigDecimal('20.25'))
+        expect(gateway).to receive(:capture).with(money('10'), '123', anything).and_return(success_response)
+        expect(gateway).not_to receive(:authorize)
+
+        described_class.call(payment: payment, amount: BigDecimal('10'))
+
+        expect(order.payments.pending.sum(:amount)).to eq(BigDecimal('20.25'))
       end
 
       it 'refuses an amount above what the order still owes' do

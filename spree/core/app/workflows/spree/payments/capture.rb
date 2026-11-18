@@ -18,12 +18,13 @@ module Spree
       #   captures what the payment's owner still owes, up to the payment's
       #   amount. A smaller amount splits whatever is still owed into a new
       #   pending payment. An Integer is read as hundredths of the currency,
-      #   the pre-6.0 contract (deprecated, removed in 6.5).
+      #   the pre-6.0 contract (deprecated, removed in 6.3).
       def perform(payment:, amount: nil)
         super
         @amount = capture_amount(amount)
 
         step :ensure_capturable
+        step :read_outstanding_balance
         step :ensure_within_payment_amount
         step :ensure_within_outstanding_balance
         # Veto point — fraud holds, manual review. Before any money moves.
@@ -78,32 +79,34 @@ module Spree
       # takes exactly that. Read from a fresh copy of the owner, with its
       # payment total re-summed from the payment rows, so a stale instance or
       # a settlement that has not reached the order yet cannot widen it.
-      def ensure_within_outstanding_balance
-        # Settled concurrently — the claim answers this as a no-op success.
-        return if Spree::Payment.exists?(id: payment.id, status: 'completed')
+      def read_outstanding_balance
+        # Settled concurrently — the same no-op success the claim would give.
+        halt!(payment) if Spree::Payment.exists?(id: payment.id, status: 'completed')
 
         owner = payment.owner.class.find(payment.owner.id)
         owner.refresh_payment_total!
         @outstanding_balance = owner.outstanding_balance
 
         failure(payment, :nothing_to_capture) unless @outstanding_balance.positive?
-        @amount ||= [payment.amount, @outstanding_balance].min
-        return if @amount <= @outstanding_balance
-
-        failure(payment, :capture_exceeds_outstanding_balance)
+        @amount = [payment.amount, @outstanding_balance].min if @amount.nil?
       end
 
       # A capture takes some or all of what was authorized, never more: a
       # gateway may let a larger figure through, and the books would then
       # carry a capture the authorization never covered. Nor nothing, or less
-      # than nothing — every caller gets the same rule, not only the API.
+      # than nothing — every caller gets the same rule, not only the API,
+      # and a defaulted amount as much as an explicit one.
       def ensure_within_payment_amount
-        return if @amount.nil?
-
         failure(payment, :capture_amount_not_positive) unless @amount.positive?
         return if @amount <= payment.amount
 
         failure(payment, :capture_exceeds_payment_amount)
+      end
+
+      def ensure_within_outstanding_balance
+        return if @amount <= @outstanding_balance
+
+        failure(payment, :capture_exceeds_outstanding_balance)
       end
 
       def claim
@@ -148,13 +151,14 @@ module Spree
         halt!(payment) if already_captured
       end
 
-      # Only what the owner still owes is carried to a remainder and
-      # re-authorized; the rest of the authorization is released. A grouped
-      # payment carries every order's undrawn share, so it keeps all of it.
+      # Only what the owner still owes, beyond what its other pending payments
+      # already hold, is carried to a remainder and re-authorized; the rest of
+      # the authorization is released. A grouped payment carries every order's
+      # undrawn share, so it keeps all of it.
       def still_owed_after_capture
-        return if payment.grouped? || @outstanding_balance.nil?
+        return if payment.grouped?
 
-        @outstanding_balance - @amount
+        @outstanding_balance - @amount - payment.owner.payments.pending.where.not(id: payment.id).sum(:amount)
       end
 
       # The remainder's authorization is its own network call, so it stays
