@@ -1,123 +1,199 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { guardAgainstBrowserTranslation } from './browser-translation-guard'
+import {
+  guardAgainstBrowserTranslation,
+  recordTranslatorReplacements,
+} from './browser-translation-guard'
 
 // A minimal DOM: just enough parent/child bookkeeping to reproduce what a
 // translator does to React's nodes. The real methods throw like a browser does.
 class FakeNode {
   parentNode: FakeNode | null = null
   childNodes: FakeNode[] = []
+  readonly nodeName: string
+  readonly nodeType: number
+  private value: string | null
 
-  readonly name: string
+  constructor(nodeName: string, value: string | null = null) {
+    this.nodeName = nodeName
+    this.nodeType = nodeName === '#text' ? 3 : 1
+    this.value = value
+  }
 
-  constructor(name = '') {
-    this.name = name
+  get nodeValue(): string | null {
+    return this.value
+  }
+
+  set nodeValue(value: string | null) {
+    this.value = value
+  }
+
+  get textContent(): string {
+    return this.value ?? this.childNodes.map((c) => c.textContent).join('')
+  }
+
+  set textContent(value: string) {
+    for (const child of this.childNodes) child.parentNode = null
+    this.childNodes = []
+    this.appendChild(new FakeNode('#text', value))
   }
 
   appendChild<T>(node: T): T {
-    const child = node as unknown as FakeNode
-    child.parentNode?.detach(child)
-    this.childNodes.push(child)
-    child.parentNode = this
-    return node
+    return this.insertBefore(node, null)
   }
 
   removeChild<T>(node: T): T {
     const child = node as unknown as FakeNode
     if (child.parentNode !== this)
       throw new Error('NotFoundError: The object can not be found here.')
-    this.detach(child)
+    this.childNodes = this.childNodes.filter((c) => c !== child)
+    child.parentNode = null
     return node
   }
 
   insertBefore<T>(node: T, reference: unknown): T {
-    if (reference == null) return this.appendChild(node)
-    const ref = reference as FakeNode
-    if (ref.parentNode !== this) throw new Error('NotFoundError: The object can not be found here.')
+    const ref = reference as FakeNode | null
+    if (ref && ref.parentNode !== this)
+      throw new Error('NotFoundError: The object can not be found here.')
     const child = node as unknown as FakeNode
-    child.parentNode?.detach(child)
-    this.childNodes.splice(this.childNodes.indexOf(ref), 0, child)
+    if (child.parentNode) child.parentNode.removeChild(child)
+    const at = ref ? this.childNodes.indexOf(ref) : this.childNodes.length
+    this.childNodes.splice(at, 0, child)
     child.parentNode = this
     return node
   }
-
-  detach(child: FakeNode): void {
-    this.childNodes = this.childNodes.filter((c) => c !== child)
-    child.parentNode = null
-  }
 }
 
-// What Google Translate does: the text node React rendered is replaced in its
-// parent by a <font> wrapper, so React's node no longer has a parent.
-function translate(parent: FakeNode, text: FakeNode): FakeNode {
-  const font = new FakeNode('font')
+function setup(guarded = true) {
+  class Node extends FakeNode {}
+  if (guarded) guardAgainstBrowserTranslation(Node.prototype)
+  const el = (name: string, value?: string) => new Node(name, value)
+  return { el, text: (value: string) => el('#text', value) }
+}
+
+// Google Translate's two ways of swapping a text node for its translation,
+// each reported to the guard the way its MutationObserver would see it.
+function translate(text: FakeNode, translation: string, oneStep = false): FakeNode {
+  const parent = text.parentNode as FakeNode
+  const font = new (Object.getPrototypeOf(text).constructor)('FONT') as FakeNode
+  font.textContent = translation
   parent.insertBefore(font, text)
   parent.removeChild(text)
+  recordTranslatorReplacements([
+    oneStep
+      ? { removedNodes: [text], addedNodes: [font], previousSibling: null }
+      : { removedNodes: [text], addedNodes: [], previousSibling: font },
+  ])
   return font
 }
 
-function freshProto() {
-  class Node extends FakeNode {}
-  return Node
-}
+const texts = (parent: FakeNode) => parent.childNodes.map((c) => c.textContent)
 
 describe('guardAgainstBrowserTranslation', () => {
   afterEach(() => vi.restoreAllMocks())
 
   it('reproduces the crash without the guard', () => {
-    const Node = freshProto()
-    const parent = new Node('div')
-    const text = new Node('text')
-    parent.appendChild(text)
-    translate(parent, text)
+    const { el, text } = setup(false)
+    const parent = el('div')
+    const label = text('1 selected')
+    parent.appendChild(label)
+    translate(label, '1 sélectionné')
 
-    expect(() => parent.removeChild(text)).toThrow(/NotFoundError/)
+    expect(() => parent.removeChild(label)).toThrow(/NotFoundError/)
   })
 
-  it('lets React remove a node a translator already took out', () => {
-    vi.spyOn(console, 'warn').mockImplementation(() => {})
-    const Node = freshProto()
-    guardAgainstBrowserTranslation(Node.prototype)
-    const parent = new Node('div')
-    const text = new Node('text')
-    parent.appendChild(text)
-    const font = translate(parent, text)
+  it.each([false, true])(
+    'removes the translation with the text it replaced (one step: %s)',
+    (oneStep) => {
+      const { el, text } = setup()
+      const parent = el('div')
+      const label = text('Saving…')
+      const button = el('BUTTON')
+      parent.appendChild(label)
+      parent.appendChild(button)
+      translate(label, 'Enregistrement…', oneStep)
 
-    expect(parent.removeChild(text)).toBe(text)
+      expect(parent.removeChild(label)).toBe(label)
+      expect(parent.childNodes).toEqual([button])
+    },
+  )
+
+  it('inserts before the translation that replaced the reference node', () => {
+    const { el, text } = setup()
+    const parent = el('div')
+    const label = text('Save')
+    const button = el('BUTTON')
+    parent.appendChild(label)
+    parent.appendChild(button)
+    const font = translate(label, 'Enregistrer')
+    const spinner = el('SVG')
+
+    expect(parent.insertBefore(spinner, label)).toBe(spinner)
+    expect(parent.childNodes).toEqual([spinner, font, button])
+  })
+
+  it('follows a text node the translator moved into its wrapper', () => {
+    const { el, text } = setup()
+    const parent = el('div')
+    const label = text('Save')
+    parent.appendChild(label)
+    const font = el('FONT')
+    parent.insertBefore(font, label)
+    font.appendChild(label)
+    const spinner = el('SVG')
+
+    parent.insertBefore(spinner, label)
+    expect(parent.childNodes).toEqual([spinner, font])
+    parent.removeChild(label)
+    expect(parent.childNodes).toEqual([spinner])
+  })
+
+  it('shows React’s new text in place of a stale translation', () => {
+    const { el, text } = setup()
+    const parent = el('div')
+    const label = text('1 selected')
+    parent.appendChild(label)
+    const font = translate(label, '1 sélectionné')
+
+    label.nodeValue = '2 selected'
+    expect(texts(parent)).toEqual(['2 selected'])
     expect(parent.childNodes).toEqual([font])
   })
 
-  it('appends instead of throwing when the reference node was moved', () => {
-    vi.spyOn(console, 'warn').mockImplementation(() => {})
-    const Node = freshProto()
-    guardAgainstBrowserTranslation(Node.prototype)
-    const parent = new Node('div')
-    const text = new Node('text')
-    parent.appendChild(text)
-    const font = translate(parent, text)
-    const added = new Node('added')
+  it('does not redirect to an element a translator did not add', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const { el, text } = setup()
+    const parent = el('div')
+    const label = text('Save')
+    const span = el('SPAN')
+    parent.appendChild(span)
+    span.appendChild(label)
+    const added = el('SVG')
 
-    expect(parent.insertBefore(added, text)).toBe(added)
-    expect(parent.childNodes).toEqual([font, added])
+    expect(parent.removeChild(label)).toBe(label)
+    expect(parent.childNodes).toEqual([span])
+    parent.insertBefore(added, label)
+    expect(parent.childNodes).toEqual([span, added])
+    expect(warn).toHaveBeenCalledTimes(1)
   })
 
   it('leaves untranslated nodes on the original methods', () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-    const Node = freshProto()
-    guardAgainstBrowserTranslation(Node.prototype)
-    const parent = new Node('div')
-    const a = new Node('a')
-    const b = new Node('b')
+    const { el, text } = setup()
+    const parent = el('div')
+    const a = el('A')
+    const b = text('b')
     parent.appendChild(b)
     parent.insertBefore(a, b)
     expect(parent.childNodes).toEqual([a, b])
 
+    b.nodeValue = 'c'
     parent.removeChild(a)
-    expect(parent.childNodes).toEqual([b])
+    expect(texts(parent)).toEqual(['c'])
     expect(warn).not.toHaveBeenCalled()
   })
 
   it('patches a prototype only once', () => {
-    const Node = freshProto()
+    class Node extends FakeNode {}
     expect(guardAgainstBrowserTranslation(Node.prototype)).toBe(true)
     const patched = Node.prototype.removeChild
     expect(guardAgainstBrowserTranslation(Node.prototype)).toBe(false)
