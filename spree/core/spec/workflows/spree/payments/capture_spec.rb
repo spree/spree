@@ -81,6 +81,57 @@ RSpec.describe Spree::Payments::Capture do
       expect(payment.reload).to be_pending
     end
 
+    context 'when the order owes less than the payment authorized' do
+      # The payment was authorized at the old total; the order has since come down.
+      before do
+        payment
+        order.update_columns(total: BigDecimal('30.25'))
+      end
+
+      it 'captures only what the order still owes and releases the rest' do
+        expect(gateway).to receive(:capture).with(money('30.25'), '123', anything).and_return(success_response)
+        expect(gateway).not_to receive(:authorize)
+
+        result = described_class.call(payment: payment)
+
+        expect(result).to be_success
+        expect(payment.reload).to be_completed
+        expect(payment.amount).to eq(BigDecimal('30.25'))
+        expect(payment.captured_amount).to eq(BigDecimal('30.25'))
+        expect(order.payments.pending).to be_empty
+      end
+
+      it 'carries only what is still owed to the remainder of a partial capture' do
+        expect(gateway).to receive(:capture).with(money('10'), '123', anything).and_return(success_response)
+        expect(gateway).to receive(:authorize).and_return(Spree::PaymentResponse.new(true, nil, {}, authorization: '456'))
+
+        described_class.call(payment: payment, amount: BigDecimal('10'))
+
+        expect(order.payments.pending.sole.amount).to eq(BigDecimal('20.25'))
+      end
+
+      it 'refuses an amount above what the order still owes' do
+        expect(gateway).not_to receive(:capture)
+
+        result = described_class.call(payment: payment, amount: BigDecimal('40'))
+
+        expect(result).to be_failure
+        expect(result.error.value).to eq(:capture_exceeds_outstanding_balance)
+        expect(payment.reload).to be_pending
+      end
+
+      it 'refuses a capture when the order owes nothing' do
+        create(:payment, order: order, payment_method: gateway, source: card, status: 'completed', amount: BigDecimal('30.25'))
+        expect(gateway).not_to receive(:capture)
+
+        result = described_class.call(payment: payment)
+
+        expect(result).to be_failure
+        expect(result.error.value).to eq(:nothing_to_capture)
+        expect(payment.reload).to be_pending
+      end
+    end
+
     context 'with exact amounts' do
       %w[0.29 1.15 1234567.89].each do |amount|
         it "records a capture of #{amount} to the cent" do

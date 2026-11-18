@@ -15,7 +15,8 @@ module Spree
 
       # @param payment [Spree::Payment] a completed payment is a no-op
       # @param amount [BigDecimal, nil] in the currency's own units; nil
-      #   captures in full, a smaller amount splits the remainder into a new
+      #   captures what the payment's owner still owes, up to the payment's
+      #   amount. A smaller amount splits whatever is still owed into a new
       #   pending payment. An Integer is read as hundredths of the currency,
       #   the pre-6.0 contract (deprecated, removed in 6.5).
       def perform(payment:, amount: nil)
@@ -24,6 +25,7 @@ module Spree
 
         step :ensure_capturable
         step :ensure_within_payment_amount
+        step :ensure_within_outstanding_balance
         # Veto point — fraud holds, manual review. Before any money moves.
         run_hooks :validate
         run_hooks :before_capture
@@ -48,7 +50,7 @@ module Spree
       attr_reader :response, :remainder
 
       def capture_amount(amount)
-        return payment.amount if amount.nil?
+        return if amount.nil?
         return Spree::Money::Rounding.to_currency(amount, payment.currency) unless amount.is_a?(Integer)
 
         Spree::Deprecation.warn(
@@ -70,11 +72,34 @@ module Spree
         failure(payment, :payment_not_capturable)
       end
 
+      # An authorization can outlive the total it was taken for — a line
+      # removed from the order, a discount added after checkout — so a capture
+      # takes no more than the owner still owes, and a capture with no amount
+      # takes exactly that. Read from a fresh copy of the owner, with its
+      # payment total re-summed from the payment rows, so a stale instance or
+      # a settlement that has not reached the order yet cannot widen it.
+      def ensure_within_outstanding_balance
+        # Settled concurrently — the claim answers this as a no-op success.
+        return if Spree::Payment.exists?(id: payment.id, status: 'completed')
+
+        owner = payment.owner.class.find(payment.owner.id)
+        owner.refresh_payment_total!
+        @outstanding_balance = owner.outstanding_balance
+
+        failure(payment, :nothing_to_capture) unless @outstanding_balance.positive?
+        @amount ||= [payment.amount, @outstanding_balance].min
+        return if @amount <= @outstanding_balance
+
+        failure(payment, :capture_exceeds_outstanding_balance)
+      end
+
       # A capture takes some or all of what was authorized, never more: a
       # gateway may let a larger figure through, and the books would then
       # carry a capture the authorization never covered. Nor nothing, or less
       # than nothing — every caller gets the same rule, not only the API.
       def ensure_within_payment_amount
+        return if @amount.nil?
+
         failure(payment, :capture_amount_not_positive) unless @amount.positive?
         return if @amount <= payment.amount
 
@@ -116,11 +141,20 @@ module Spree
             payment.capture_events.create!(amount: @amount)
             # Split before completing, so payment.completed publishes with
             # the captured amount and the order recomputes from correct rows.
-            @remainder = payment.split_uncaptured_amount
+            @remainder = payment.split_uncaptured_amount(up_to: still_owed_after_capture)
             payment.handle_response(@response, :complete)
           end
         end
         halt!(payment) if already_captured
+      end
+
+      # Only what the owner still owes is carried to a remainder and
+      # re-authorized; the rest of the authorization is released. A grouped
+      # payment carries every order's undrawn share, so it keeps all of it.
+      def still_owed_after_capture
+        return if payment.grouped? || @outstanding_balance.nil?
+
+        @outstanding_balance - @amount
       end
 
       # The remainder's authorization is its own network call, so it stays

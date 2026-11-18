@@ -377,18 +377,23 @@ module Spree
     # payment and shrinks this one to what was captured. The caller authorizes
     # the returned remainder at the gateway afterwards, outside any lock.
     #
-    # @return [Spree::Payment, nil] the remainder payment, or nil when fully captured
-    def split_uncaptured_amount
+    # @param up_to [BigDecimal, nil] the most to carry to the remainder; the
+    #   rest is released. nil carries all of it.
+    # @return [Spree::Payment, nil] the remainder payment, or nil when nothing is carried
+    def split_uncaptured_amount(up_to: nil)
       return if uncaptured_amount <= 0
 
-      remainder = owner.payments.create!(
-        amount: uncaptured_amount,
-        payment_method: payment_method,
-        source: source,
-        status: 'pending',
-        capture_on_dispatch: true
-      )
-      carry_splits_to(remainder)
+      carried = up_to.nil? ? uncaptured_amount : [uncaptured_amount, up_to].min
+      if carried.positive?
+        remainder = owner.payments.create!(
+          amount: carried,
+          payment_method: payment_method,
+          source: source,
+          status: 'pending',
+          capture_on_dispatch: true
+        )
+        carry_splits_to(remainder)
+      end
       # Bang: a silent failure here would leave this payment at its full amount
       # beside a remainder that also exists, so the group would hold more money
       # than the customer was ever charged.
