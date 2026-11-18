@@ -334,11 +334,19 @@ RSpec.describe SpreeAdyen::Gateway, 'money verbs' do
   # by a run. Each reads the ids it needs from the environment named in
   # spec/support/vcr.rb.
   describe 'against Adyen', :vcr do
-    let(:psp_reference) { ENV.fetch('ADYEN_CAPTURE_PSP_REFERENCE', 'PSP_RECORDED_AUTHORISED') }
+    let(:psp_reference) { ENV.fetch('ADYEN_CAPTURE_PSP_REFERENCE', 'PSPAUTHORISED0001') }
     let(:payment) { adyen_session_payment(gateway: gateway, psp_reference: psp_reference, amount: BigDecimal('10')) }
     let(:captured) do
       adyen_session_payment(gateway: gateway, status: 'completed', amount: BigDecimal('10'),
-                            psp_reference: ENV.fetch('ADYEN_CAPTURED_PSP_REFERENCE', 'PSP_RECORDED_CAPTURED'))
+                            psp_reference: ENV.fetch('ADYEN_CAPTURED_PSP_REFERENCE', 'PSPCAPTURED000001'))
+    end
+
+    # Every example's payment has the same id, and Adyen answers an
+    # idempotency key it has seen with its first answer, so each example
+    # moves the key on through the refusal count the key includes.
+    def with_key(payment, action, count)
+      payment.update_columns(metadata: payment.metadata.merge('adyen_refusals' => { action => count }))
+      payment
     end
 
     it 'lists the configured merchant account', vcr: { cassette_name: 'merchants_reachable' } do
@@ -364,23 +372,28 @@ RSpec.describe SpreeAdyen::Gateway, 'money verbs' do
     end
 
     it 'has a capture received', vcr: { cassette_name: 'capture_received' } do
+      with_key(payment, 'capture', 1)
       response = gateway.capture(Spree::Money.new(BigDecimal('10'), currency: payment.currency), payment.response_code, {})
 
       expect(response).to be_requested
       expect(response.reference).to be_present
     end
 
-    it 'has a capture of a captured payment refused', vcr: { cassette_name: 'capture_refused' } do
-      expect { gateway.capture(Spree::Money.new(BigDecimal('10'), currency: captured.currency), captured.response_code, {}) }.
-        to raise_error(Spree::Core::GatewayError, /Adyen refused the request/)
+    # Adyen accepts it and refuses it later, in its CAPTURE webhook.
+    it 'has a capture of a captured payment received', vcr: { cassette_name: 'capture_captured_received' } do
+      response = gateway.capture(Spree::Money.new(BigDecimal('10'), currency: captured.currency), captured.response_code, {})
+
+      expect(response).to be_requested
     end
 
     it 'has a cancel received', vcr: { cassette_name: 'cancel_received' } do
+      with_key(payment, 'cancel', 1)
       expect(gateway.void(payment.response_code, nil, {})).to be_requested
     end
 
-    it 'has a cancel of a captured payment refused', vcr: { cassette_name: 'cancel_refused' } do
-      expect { gateway.void(captured.response_code, nil, {}) }.to raise_error(Spree::Core::GatewayError, /Adyen refused the request/)
+    # Adyen accepts it and refuses it later, in its CANCELLATION webhook.
+    it 'has a cancel of a captured payment received', vcr: { cassette_name: 'cancel_captured_received' } do
+      expect(gateway.void(captured.response_code, nil, {})).to be_requested
     end
 
     it 'has a full refund received', vcr: { cassette_name: 'refund_received' } do
@@ -391,12 +404,14 @@ RSpec.describe SpreeAdyen::Gateway, 'money verbs' do
     end
 
     it 'has a partial refund received', vcr: { cassette_name: 'refund_partial_received' } do
+      with_key(captured, 'refund', 1)
       expect(gateway.credit(Spree::Money.new(BigDecimal('4'), currency: captured.currency), nil, captured.response_code, {})).to be_requested
     end
 
-    it 'has a refund above the captured amount refused', vcr: { cassette_name: 'refund_refused_amount' } do
-      expect { gateway.credit(Spree::Money.new(BigDecimal('1000'), currency: captured.currency), nil, captured.response_code, {}) }.
-        to raise_error(Spree::Core::GatewayError, /Adyen refused the request/)
+    # Adyen accepts it and refuses it later, in its REFUND_FAILED webhook.
+    it 'has a refund above the captured amount received', vcr: { cassette_name: 'refund_above_captured_received' } do
+      with_key(captured, 'refund', 2)
+      expect(gateway.credit(Spree::Money.new(BigDecimal('1000'), currency: captured.currency), nil, captured.response_code, {})).to be_requested
     end
   end
 end

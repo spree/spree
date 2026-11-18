@@ -10,17 +10,18 @@ WebMock.disable_net_connect!(net_http_connect_on_start: true, allow_localhost: t
 #   ADYEN_LIMITED_API_KEY     a second credential without the Webhooks roles (credential_missing_role)
 #   ADYEN_UNREACHABLE_MERCHANT_ACCOUNT  a merchant account the first credential cannot reach (merchants_unreachable)
 #   ADYEN_CAPTURE_PSP_REFERENCE   an authorised manual-capture payment (capture_received, cancel_received)
-#   ADYEN_CAPTURED_PSP_REFERENCE  a payment already captured in full (capture_refused, cancel_refused, refund_*)
-#   ADYEN_PAID_SESSION_ID / ADYEN_PAID_SESSION_RESULT            a session paid by card through Drop-in
-#   ADYEN_SAVED_CARD_SESSION_ID / ADYEN_SAVED_CARD_SESSION_RESULT a session paid with "Save for my next payment" ticked
-#   ADYEN_PENDING_SESSION_ID / ADYEN_PENDING_SESSION_RESULT      a session paid by a method that pends
-#   ADYEN_REFUSED_SESSION_ID / ADYEN_REFUSED_SESSION_RESULT      a session refused until Adyen stopped it
-#   ADYEN_EXPIRED_SESSION_ID / ADYEN_EXPIRED_SESSION_RESULT      a session left past its expiry
-#   ADYEN_ACTIVE_SESSION_ID / ADYEN_ACTIVE_SESSION_RESULT        a session not paid
-#   ADYEN_PAYABLE_SESSION_ID / ADYEN_PAYABLE_SESSION_DATA        a session already made payable
-#   ADYEN_AUTHORISED_REDIRECT_RESULT / ADYEN_REFUSED_REDIRECT_RESULT  iDEAL test redirects, completed and cancelled
-#   ADYEN_SETUP_SESSION_ID / ADYEN_SETUP_SESSION_RESULT          a setup session completed through Drop-in
+#   ADYEN_CAPTURED_PSP_REFERENCE  a payment captured through a capture request (capture_captured_received,
+#                                 cancel_captured_received, refund_*); Adyen accepts all of these and
+#                                 answers the impossible ones later, by webhook
+#   ADYEN_PAID_SESSION_ID / ADYEN_PAID_SESSION_RESULT            a session paid by card through Drop-in, for 884.99
+#   ADYEN_SAVED_CARD_SESSION_ID / ADYEN_SAVED_CARD_SESSION_RESULT a session paid with "Save for my next payment" ticked, for 884.99
+#   ADYEN_PAYABLE_SESSION_ID / ADYEN_PAYABLE_SESSION_DATA        a session already made payable, for 124.99
+#   ADYEN_AUTHORISED_REDIRECT_RESULT / ADYEN_REFUSED_REDIRECT_RESULT  redirect results, an authorised one for
+#                                 94.99 under reference cart_p6klVeMgbn-3 and a refused one
 #   ADYEN_LEGACY_WEBHOOK_ID   a webhook on .../adyen/webhooks (configure_legacy_webhook_url)
+#
+# The amounts, references and ids a replay must match are pinned in the specs,
+# so a re-recording with other payments updates them there too.
 VCR.configure do |c|
   c.allow_http_connections_when_no_cassette = false
   c.cassette_library_dir = File.join(SpreeAdyen::Engine.root, 'spec', 'vcr')
@@ -49,12 +50,17 @@ VCR.configure do |c|
   end
 
   c.filter_sensitive_data('<ADYEN_API_KEY>') { ENV.fetch('ADYEN_API_KEY', nil) }
+  # Recorded as a placeholder and replayed as the factory's merchant account,
+  # since it travels in Management API paths the matcher compares.
+  c.filter_sensitive_data('<ADYEN_MERCHANT_ACCOUNT>') { ENV.fetch('ADYEN_MERCHANT_ACCOUNT', 'SpreeTestECOM') }
   c.filter_sensitive_data('<ADYEN_LIMITED_API_KEY>') { ENV.fetch('ADYEN_LIMITED_API_KEY', nil) }
 
   c.before_record do |interaction|
     # The API key travels in its own header, which the filters above only
     # catch when it is set in the environment.
     interaction.request.headers['X-Api-Key'] = ['<FILTERED>'] if interaction.request.headers.key?('X-Api-Key')
+    # A session result is read with GET /sessions/{id}?sessionResult=..., in the URL.
+    interaction.request.uri = interaction.request.uri.sub(/([?&]sessionResult=)[^&]+/, '\\1<FILTERED>')
 
     [interaction.request, interaction.response].each do |message|
       next if message.body.blank?

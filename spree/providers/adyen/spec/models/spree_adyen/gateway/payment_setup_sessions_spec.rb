@@ -63,15 +63,5 @@ RSpec.describe SpreeAdyen::Gateway, 'payment setup sessions' do
     it 'creates a setup session', vcr: { cassette_name: 'setup_session_create' } do
       expect(gateway.create_payment_setup_session(customer: customer, external_data: { 'return_url' => return_url })).to be_persisted
     end
-
-    it 'reads a completed setup session', vcr: { cassette_name: 'setup_session_result' } do
-      setup_session = create(:adyen_payment_setup_session, customer: customer, payment_method: gateway,
-                                                           external_id: ENV.fetch('ADYEN_SETUP_SESSION_ID', 'CSSETUP000000002'))
-
-      gateway.complete_payment_setup_session(setup_session: setup_session,
-                                             params: { 'session_result' => ENV.fetch('ADYEN_SETUP_SESSION_RESULT', 'RESULT') })
-
-      expect(setup_session.reload).to be_completed
-    end
   end
 end

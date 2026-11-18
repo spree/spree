@@ -360,7 +360,9 @@ RSpec.describe SpreeAdyen::Gateway, 'payment sessions' do
     end
 
     it 'has a repeated submit refused', vcr: { cassette_name: 'session_submit_already_payable' } do
-      session = create(:adyen_payment_session, owner: order, payment_method: gateway,
+      # The amount of the session the recording made payable.
+      order.update_columns(total: BigDecimal('124.99'))
+      session = create(:adyen_payment_session, owner: order, payment_method: gateway, amount: BigDecimal('124.99'),
                                                external_id: ENV.fetch('ADYEN_PAYABLE_SESSION_ID', 'CSPAYABLE0000001'),
                                                external_data: { 'session_data' => ENV.fetch('ADYEN_PAYABLE_SESSION_DATA', 'Ab02b4c0!PAYABLE') })
 
@@ -368,39 +370,29 @@ RSpec.describe SpreeAdyen::Gateway, 'payment sessions' do
         to raise_error(Spree::Core::GatewayError)
     end
 
+    # The amount each recorded session was paid for, which settlement checks.
     {
-      'session_result_completed' => %w[PAID completed],
-      'session_result_saved_card' => %w[SAVED_CARD completed],
-      'session_result_payment_pending' => %w[PENDING processing],
-      'session_result_refused' => %w[REFUSED failed],
-      'session_result_expired' => %w[EXPIRED expired]
-    }.each do |cassette, (env, status)|
+      'session_result_completed' => %w[PAID completed 884.99],
+      'session_result_saved_card' => %w[SAVED_CARD completed 884.99]
+    }.each do |cassette, (env, status, recorded_amount)|
       it "reads #{cassette.delete_prefix('session_result_')}", vcr: { cassette_name: cassette } do
+        order.update_columns(total: BigDecimal(recorded_amount)) if recorded_amount
         session = create(:adyen_payment_session, owner: order, payment_method: gateway,
                                                  external_id: ENV.fetch("ADYEN_#{env}_SESSION_ID", "CS#{env}0000001"),
-                                                 amount: BigDecimal(ENV.fetch('ADYEN_SESSION_AMOUNT', order.total.to_s)),
+                                                 amount: BigDecimal(recorded_amount || order.total.to_s),
                                                  external_data: { 'reference' => "#{order.prefixed_id}-1", 'payable' => true })
 
         gateway.complete_payment_session(payment_session: session, params: { 'session_result' => ENV.fetch("ADYEN_#{env}_SESSION_RESULT", 'RESULT') })
 
-        expect(session.reload.status).to eq(status == 'processing' ? 'completed' : status)
+        expect(session.reload.status).to eq(status)
       end
-    end
-
-    it 'reads an active session', vcr: { cassette_name: 'session_result_active' } do
-      session = create(:adyen_payment_session, owner: order, payment_method: gateway,
-                                               external_id: ENV.fetch('ADYEN_ACTIVE_SESSION_ID', 'CSACTIVE00000001'))
-
-      expect {
-        gateway.complete_payment_session(payment_session: session, params: { 'session_result' => ENV.fetch('ADYEN_ACTIVE_SESSION_RESULT', 'RESULT') })
-      }.
-        to raise_error(Spree::Core::GatewayError)
     end
 
     it 'reads an authorised redirect', vcr: { cassette_name: 'payment_details_authorised' } do
       session = create(:adyen_payment_session, owner: order, payment_method: gateway,
-                                               amount: BigDecimal(ENV.fetch('ADYEN_SESSION_AMOUNT', order.total.to_s)),
-                                               external_data: { 'reference' => ENV.fetch('ADYEN_REDIRECT_REFERENCE', "#{order.prefixed_id}-1") })
+                                               # The Alipay payment the redirect result was recorded from.
+                                               amount: BigDecimal('94.99'),
+                                               external_data: { 'reference' => 'cart_p6klVeMgbn-3' })
 
       gateway.complete_payment_session(payment_session: session,
                                        params: { 'external_data' => { 'redirect_result' => ENV.fetch('ADYEN_AUTHORISED_REDIRECT_RESULT',

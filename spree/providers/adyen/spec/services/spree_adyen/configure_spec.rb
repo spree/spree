@@ -82,7 +82,7 @@ RSpec.describe SpreeAdyen::Configure do
 
     expect(update).to have_been_requested
     expect(gateway.reload).to have_attributes(preferred_webhook_id: 'WBHKLEGACY000001', preferred_hmac_key: 'CD' * 32)
-    expect(a_request(:post, %r{generateHmac})).not_to have_been_made
+    expect(a_request(:post, /generateHmac/)).not_to have_been_made
   end
 
   it 'keeps the old key as the previous one when a new webhook gets a new key' do
@@ -92,7 +92,7 @@ RSpec.describe SpreeAdyen::Configure do
     described_class.call(gateway)
 
     expect(gateway.reload).to have_attributes(preferred_hmac_key: 'AB' * 32, preferred_previous_hmac_key: 'CD' * 32,
-                                               preferred_webhook_id: 'WBHKNEW000000001')
+                                              preferred_webhook_id: 'WBHKNEW000000001')
   end
 
   # Recorded against the test account by the author (Phase 15).
@@ -112,7 +112,7 @@ RSpec.describe SpreeAdyen::Configure do
     end
 
     it 'moves a legacy webhook to the 6.0 URL', vcr: { cassette_name: 'configure_legacy_webhook_url' } do
-      gateway.update!(preferred_webhook_id: ENV.fetch('ADYEN_LEGACY_WEBHOOK_ID', 'WBHKLEGACY000002'), preferred_hmac_key: 'EF' * 32)
+      gateway.update!(preferred_webhook_id: ENV.fetch('ADYEN_LEGACY_WEBHOOK_ID', 'WBHK42CX922322CM5QBDFDT99T3T6K'), preferred_hmac_key: 'EF' * 32)
 
       described_class.call(gateway)
 
