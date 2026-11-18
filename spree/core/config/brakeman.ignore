@@ -118,7 +118,7 @@
     },
     {
       "check_name": "SQL",
-      "code": "Arel.sql((typed_ids_sql(query) or \"#{typed_ids_sql(query)} UNION SELECT id FROM (#{product_ids_sql do\n \"#{similarity_sql(table, query)} >= #{0.5}\"\n end.join(\" UNION \")}) closest WHERE NOT EXISTS (#{scope.where(Spree::Product.arel_table[:id].in(Arel.sql(typed_ids_sql(query)))).except(:includes, :preload, :order).select(\"1\").to_sql})\"))",
+      "code": "Arel.sql((typed_ids_sql(query) or \"#{typed_ids_sql(query)} UNION SELECT id FROM (#{product_ids_sql do\n \"#{similarity_sql(table, query)} >= #{0.5}\"\n end.join(\" UNION \")}) closest WHERE NOT EXISTS (#{scope.where(Spree::Product.arel_table[:id].in(Arel.sql(typed_ids_sql(query)))).except(:order).select(\"1\").to_sql})\"))",
       "confidence": "Medium",
       "cwe_id": [
         89
