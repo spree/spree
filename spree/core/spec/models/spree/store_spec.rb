@@ -285,6 +285,21 @@ describe Spree::Store, type: :model, without_global_store: true do
     end
   end
 
+  describe '#admin_users' do
+    let(:store) { create(:store) }
+
+    it "returns the staff holding this store's admin role only" do
+      admin = create(:admin_user, :without_admin_role)
+      create(:role_user, user: admin, role: Spree::Role.default_admin_role(store))
+      staff = create(:admin_user, :without_admin_role)
+      create(:role_user, user: staff, role: create(:role, name: 'Manager', resource: store))
+      other_store_admin = create(:admin_user, :without_admin_role)
+      create(:role_user, user: other_store_admin, role: Spree::Role.default_admin_role(create(:store)))
+
+      expect(store.admin_users).to contain_exactly(admin)
+    end
+  end
+
   context 'Validations' do
     describe '#customer_support_email' do
       it 'is valid when blank' do

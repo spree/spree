@@ -74,6 +74,11 @@ module Spree
     validate :channel_immutable, if: -> { persisted? && channel_id_changed? }
 
     before_validation :generate_token, on: :create
+    after_create_commit :notify_store_admins, if: :secret?
+
+    # Where the creating request came from, set by the Admin API so the
+    # security notice sent to store admins can name it. Never persisted.
+    attr_accessor :request_ip
 
     scope :active, -> { where(revoked_at: nil) }
     scope :revoked, -> { where.not(revoked_at: nil) }
@@ -173,6 +178,15 @@ module Spree
         errors.add(:channel, :api_key_channel_publishable_only, message: I18n.t('spree.api_key_channel_publishable_only'))
       elsif channel && channel.store_id != store_id
         errors.add(:channel, :api_key_channel_must_belong_to_store, message: I18n.t('spree.api_key_channel_must_belong_to_store'))
+      end
+    end
+
+    # A secret key can do anything its scopes allow, so every admin hears
+    # about a new one — a key nobody recognizes is the first sign of a
+    # compromised account.
+    def notify_store_admins
+      store.admin_users.find_each do |admin_user|
+        Spree::ApiKeyMailer.secret_key_created(self, admin_user, ip_address: request_ip).deliver_later
       end
     end
 

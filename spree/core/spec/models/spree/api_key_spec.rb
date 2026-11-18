@@ -192,6 +192,31 @@ RSpec.describe Spree::ApiKey, type: :model do
     end
   end
 
+  describe 'admin notification' do
+    let!(:admin) { create(:admin_user, :without_admin_role).tap { |user| create(:role_user, user: user, role: Spree::Role.default_admin_role(store)) } }
+    let!(:second_admin) { create(:admin_user, :without_admin_role).tap { |user| create(:role_user, user: user, role: Spree::Role.default_admin_role(store)) } }
+
+    it 'emails every store admin when a secret key is created' do
+      expect {
+        create(:api_key, :secret, store: store, request_ip: '203.0.113.7')
+      }.to have_enqueued_mail(Spree::ApiKeyMailer, :secret_key_created).
+        with(an_instance_of(described_class), admin, ip_address: '203.0.113.7').
+        and have_enqueued_mail(Spree::ApiKeyMailer, :secret_key_created).
+        with(an_instance_of(described_class), second_admin, ip_address: '203.0.113.7')
+    end
+
+    it 'sends nothing for a publishable key' do
+      expect { create(:api_key, :publishable, store: store) }.not_to have_enqueued_mail(Spree::ApiKeyMailer)
+    end
+
+    it 'sends nothing when an existing secret key changes' do
+      key = create(:api_key, :secret, store: store)
+
+      expect { key.update!(name: 'Renamed') }.not_to have_enqueued_mail(Spree::ApiKeyMailer)
+      expect { key.revoke! }.not_to have_enqueued_mail(Spree::ApiKeyMailer)
+    end
+  end
+
   describe '#revoke!' do
     it 'sets revoked_at timestamp' do
       expect { api_key.revoke! }.to change { api_key.revoked_at }.from(nil)

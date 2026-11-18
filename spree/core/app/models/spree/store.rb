@@ -466,6 +466,13 @@ module Spree
       "#{Spree::Stores::DashboardUrl.call(store: self)}/setup?token=#{setup_token}"
     end
 
+    # Staff holding this store's admin role.
+    # @return [ActiveRecord::Relation]
+    def admin_users
+      Spree.admin_user_class.joins(:role_users).
+        where(Spree::RoleUser.table_name => { role_id: Spree::Role.admin.for_resource(self).select(:id) })
+    end
+
     #
     # Callbacks
     before_validation :set_default_code, on: :create

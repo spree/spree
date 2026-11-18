@@ -30,6 +30,15 @@ RSpec.describe Spree::Api::V3::Admin::ApiKeysController, type: :controller do
       expect(json_response['scopes']).to eq(['write_api_keys'])
     end
 
+    it 'tells store admins where the request came from' do
+      admin_user
+      request.env['REMOTE_ADDR'] = '203.0.113.7'
+
+      expect {
+        post :create, params: { name: 'notified', key_type: 'secret', scopes: ['write_api_keys'] }, as: :json
+      }.to have_enqueued_mail(Spree::ApiKeyMailer, :secret_key_created).with(anything, admin_user, ip_address: '203.0.113.7')
+    end
+
     it 'allows the implied read scope of a held write scope' do
       post :create, params: { name: 'reader', key_type: 'secret', scopes: ['read_api_keys'] }, as: :json
 
