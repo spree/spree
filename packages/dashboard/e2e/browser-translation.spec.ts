@@ -74,7 +74,10 @@ test.describe('browser translation', () => {
     await translatePage(page)
     await selectAll.click()
     await expect(selectAll).toHaveCount(0)
-    await expect(card.locator('[data-slot="card-title"]')).toHaveText('Media')
+    // The selection bar keeps a screen-reader-only title, so check it is shown.
+    const title = card.locator('[data-slot="card-title"]')
+    await expect(title).toHaveText('Media')
+    await expect(title).toBeVisible()
     await expect(tiles).toHaveCount(2)
 
     expect(errors).toEqual([])
