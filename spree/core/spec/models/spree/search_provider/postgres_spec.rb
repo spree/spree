@@ -55,6 +55,23 @@ module Spree
         expect(search('1.7 glass').products).to contain_exactly(kettle)
       end
 
+      it 'ranks a product matching every word above one found only by its SKU' do
+        jacket.default_variant.update!(sku: 'blue jacket waterproof')
+        full_match = create(:product, name: 'Parka', description: 'A blue and fully waterproof winter jacket')
+        jacket.update!(description: 'Shell')
+
+        expect(search('blue jacket waterproof').products.to_a).to eq([full_match, jacket])
+      end
+
+      it 'ranks when the sort is manual with nothing to order within' do
+        expect(search('jacket', sort: 'manual').products.to_a).to eq([jacket, pants])
+      end
+
+      it 'falls back to the plain match for a very long query' do
+        expect(search("shirt #{'blue ' * 50}").products).to be_empty
+        expect(search("Blue Shirt#{' ' * 200}").products).to contain_exactly(shirt)
+      end
+
       it 'returns the total count and pages' do
         result = search('blue', limit: 1)
 

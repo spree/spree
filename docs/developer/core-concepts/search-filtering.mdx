@@ -401,13 +401,13 @@ Spree.search_provider = 'Spree::SearchProvider::Database'
 
 ### PostgreSQL full-text search
 
-On PostgreSQL, search needs no setup and no extra service. A search matches products whose name or description contains every word of the query. Name matches rank above description matches, and the last word matches as you type it, so "blue jac" finds "Blue Jacket". Everything the Database provider finds (part of a name or SKU, searchable custom fields) is still found, listed after the better matches.
+On PostgreSQL, search needs no setup and no extra service. A search matches products whose name or description contains every word of the query. Name matches rank above description matches, and the last word matches as you type it, so "blue jac" finds "Blue Jacket". Everything the Database provider finds (part of a name or SKU, searchable custom fields) is still found, listed after the better matches. A query longer than 200 characters is matched only as typed.
 
 When no `sort` is sent, results come back by relevance. An explicit `sort` is applied as usual.
 
 #### Languages
 
-Words are reduced to their base form using the language of the request locale: a German storefront finds "Schuhe" when the shopper types "Schuh". Languages PostgreSQL has no rules for match whole words.
+Words are reduced to their base form using the language of the request locale: a German storefront finds "Schuhe" when the shopper types "Schuh". Languages PostgreSQL has no rules for are matched without stemming: words match as written, and the last word still matches as you type it.
 
 Spree ships the search index for English. Other languages work without one, and a store with thousands of products in another language gets faster searches with the same index for that language:
 
@@ -420,7 +420,7 @@ class AddGermanProductSearchIndex < ActiveRecord::Migration[8.1]
       add_index table,
                 "(setweight(to_tsvector('german', coalesce(#{table}.name, '')), 'A') || " \
                 "setweight(to_tsvector('german', coalesce(#{table}.description, '')), 'B'))",
-                using: :gin, name: "index_#{table}_on_search_vector_german", algorithm: :concurrently
+                using: :gin, name: "index_#{table}_on_search_vector_german", algorithm: :concurrently, if_not_exists: true
     end
   end
 end
@@ -428,23 +428,24 @@ end
 
 #### Typo tolerance
 
-With PostgreSQL's `pg_trgm` extension enabled, a search that finds nothing falls back to the products whose names are closest to the query, so "blendr" still finds "Blender". It catches a missing or wrong letter; a short word with two letters swapped can still be missed. Spree turns this on by itself when the extension is there. The official Docker image and the default project have it enabled.
+With PostgreSQL's `pg_trgm` extension enabled, a search that finds nothing falls back to the products whose names are closest to the query, so "blendr" still finds "Blender". It catches a missing or wrong letter; a short word with two letters swapped can still be missed. The fallback applies only when nothing in the catalog matches the query as typed, so narrowing a search with filters never brings in near misses. Spree turns this on by itself when the extension is there. The official Docker image and the default project have it enabled.
 
 Spree enables the extension during installation where the database allows it. If yours did not (some managed databases need the extension allowed first), allow it and run:
 
-<CodeGroup>
+<Tabs>
+  <Tab title="Spree CLI">
+    ```bash
+    spree task search:enable_typo_tolerance
+    ```
+  </Tab>
+  <Tab title="Without CLI">
+    ```bash
+    bundle exec rake spree:search:enable_typo_tolerance
+    ```
+  </Tab>
+</Tabs>
 
-```bash Spree CLI
-spree task search:enable_typo_tolerance
-```
-
-```bash Without Spree CLI
-bundle exec rake spree:search:enable_typo_tolerance
-```
-
-</CodeGroup>
-
-Then restart the application. The Search section of the [diagnostics report](/developer/contributing/reporting-issues) shows the active provider, whether typo tolerance is on, and any missing index.
+Then restart the application. If you create databases from the schema file, run `bin/rails db:schema:dump` as well so the file records the extension. The Search section of the [diagnostics report](/developer/contributing/reporting-issues) shows the active provider, whether typo tolerance is on, and any missing index.
 
 ### When to move to Meilisearch
 

@@ -11,7 +11,7 @@ module Spree
     class Postgres < Database
       # Request language => text search configuration, for the configurations
       # every supported PostgreSQL version ships. Anything else uses +simple+,
-      # which matches whole words without stemming.
+      # which matches words as written, without stemming.
       LANGUAGES = {
         'ar' => 'arabic', 'da' => 'danish', 'de' => 'german', 'el' => 'greek', 'en' => 'english',
         'es' => 'spanish', 'fi' => 'finnish', 'fr' => 'french', 'ga' => 'irish', 'hu' => 'hungarian',
@@ -19,7 +19,10 @@ module Spree
         'nl' => 'dutch', 'no' => 'norwegian', 'pt' => 'portuguese', 'ro' => 'romanian', 'ru' => 'russian',
         'sv' => 'swedish', 'ta' => 'tamil', 'tr' => 'turkish'
       }.freeze
-      MAX_QUERY_WORDS = 10
+      # Longer queries skip full-text search and the typo fallback, whose cost
+      # grows with the query, and keep only the plain match on the whole text.
+      MAX_QUERY_LENGTH = 200
+      MAX_TYPO_QUERY_LENGTH = 64
       # Lowest pg_trgm word similarity at which a name counts as a misspelling
       # of the query. A missing or wrong letter scores 0.5 or more; unrelated
       # names that merely share a few letters stay below it.
@@ -36,9 +39,12 @@ module Spree
         def typo_tolerance?
           return @typo_tolerance if defined?(@typo_tolerance)
 
-          # Asks for the function, not the extension: pg_trgm installed in a
-          # schema off the search path is enabled yet unusable.
-          @typo_tolerance = Spree::Product.connection.select_value("SELECT to_regproc('word_similarity') IS NOT NULL")
+          # Asks whether the function can be called, not whether the extension
+          # is enabled: pg_trgm in a schema off the search path, or closed to
+          # this role, is enabled yet unusable.
+          @typo_tolerance = Spree::Product.connection.select_value(
+            "SELECT has_function_privilege(to_regprocedure('word_similarity(text,text)'), 'EXECUTE')"
+          ) == true
         end
 
         # @return [Array<String>] names of the search indexes this database lacks
@@ -67,24 +73,27 @@ module Spree
         return filtered if query.blank?
 
         typed = typed_ids_sql(query)
-        if self.class.typo_tolerance?
+        if self.class.typo_tolerance? && query.to_s.length <= MAX_TYPO_QUERY_LENGTH
           # Misspellings are a fallback: offered only when nothing the shopper
           # may see matches as typed, whatever the filters, so they never pad
           # out a search that found what it asked for.
-          seen = scope.where("#{products_table}.id IN (#{typed})").except(:includes, :preload, :order).select('1').to_sql
+          seen = scope.where(Spree::Product.arel_table[:id].in(Arel.sql(typed))).except(:includes, :preload, :order).select('1').to_sql
           closest = product_ids_sql { |table| "#{similarity_sql(table, query)} >= #{TYPO_SIMILARITY}" }.join(' UNION ')
           typed = "#{typed} UNION SELECT id FROM (#{closest}) closest WHERE NOT EXISTS (#{seen})"
         end
 
-        filtered.where("#{products_table}.id IN (#{typed})")
+        filtered.where(Spree::Product.arel_table[:id].in(Arel.sql(typed)))
       end
 
       def apply_sort(scope, sort, grouping: nil)
-        return super if sort.present? || query_words(@ranked_query).empty?
+        # 'manual' with no category or collection to order within has no order
+        # of its own, so it ranks as well.
+        ranked = sort.blank? || (sort == 'manual' && grouping.nil?)
+        return super if !ranked || query_words(@ranked_query).empty?
 
         products = Spree::Product.arel_table
         scope = scope.select(products[Arel.star]).
-                select("#{best_sql { |table| "ts_rank(#{vector_sql(table)}, #{tsquery_sql(table, @ranked_query)})" }} AS search_rank")
+                select("#{best_sql { |table| rank_sql(table, @ranked_query) }} AS search_rank")
         order = [Arel.sql('search_rank DESC')]
         if self.class.typo_tolerance?
           scope = scope.select("#{best_sql { |table| similarity_sql(table, @ranked_query) }} AS search_similarity")
@@ -131,6 +140,13 @@ module Spree
           "setweight(to_tsvector(#{configuration(table)}, coalesce(#{table}.description, '')), 'B'))"
       end
 
+      # Zero unless every word matches: ts_rank alone also scores a partial
+      # match, which would lift a SKU-only hit above a full one.
+      def rank_sql(table, query)
+        tsquery = tsquery_sql(table, query)
+        "CASE WHEN #{vector_sql(table)} @@ #{tsquery} THEN ts_rank(#{vector_sql(table)}, #{tsquery}) ELSE 0 END"
+      end
+
       def similarity_sql(table, query)
         "word_similarity(#{quote(query.to_s.downcase)}, lower(coalesce(#{table}.name, '')))"
       end
@@ -143,7 +159,9 @@ module Spree
 
       # A decimal stays one word ("1.5"), the way PostgreSQL reads it in a name.
       def query_words(query)
-        query.to_s.scan(/[[:digit:]]+(?:\.[[:digit:]]+)+|[[:alnum:]]+/).first(MAX_QUERY_WORDS)
+        return [] if query.to_s.length > MAX_QUERY_LENGTH
+
+        query.to_s.scan(/[[:digit:]]+(?:\.[[:digit:]]+)+|[[:alnum:]]+/)
       end
 
       # Each row is read in the language it is written in: the product's own

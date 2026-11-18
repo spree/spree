@@ -22,6 +22,11 @@ namespace :spree do
       end
 
       connection.enable_extension('pg_trgm')
+      unless Spree::SearchProvider::Postgres.typo_tolerance?
+        abort 'pg_trgm is enabled, but the application cannot call word_similarity. ' \
+              'Check that the extension schema is on the search path and that the database role may execute the function.'
+      end
+
       puts 'Typo tolerance is on. Restart the application, and run `bin/rails db:schema:dump` so the schema file records the extension.'
     end
   end
