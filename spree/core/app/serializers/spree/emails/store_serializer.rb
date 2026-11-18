@@ -12,7 +12,7 @@ module Spree
       attribute :support_email, &:support_email_address
 
       attribute :logo_url do |store|
-        spree_image_url(store.email_logo, height: LOGO_HEIGHT)
+        spree_image_url(store.email_logo, height: LOGO_HEIGHT, format: 'png')
       end
 
       # The width the logo shows at, from its proportions. Nil until the file
