@@ -196,7 +196,9 @@
       "yes": "Ja",
       "done": "Fertig",
       "error": "Etwas ist schiefgelaufen.",
-      "unsaved_label": "Ungespeicherte Änderungen"
+      "unsaved_label": "Ungespeicherte Änderungen",
+      "scroll_to_end": "Zum Ende scrollen",
+      "scroll_to_start": "Zum Anfang scrollen"
     },
     "components": {
       "address_block": {
@@ -216,6 +218,7 @@
         "all_channels": "Alle Kanäle"
       },
       "command_palette": {
+        "ask_assistant": "Den Assistenten fragen: „{{query}}“",
         "create": {
           "heading": "Erstellen",
           "label": "Neu: {{noun}}",

@@ -15,7 +15,7 @@ import {
 } from '@spree/dashboard-ui'
 import { Link, useRouterState } from '@tanstack/react-router'
 import type { LucideIcon } from 'lucide-react'
-import { type ComponentType, useCallback, useEffect, useRef, useState } from 'react'
+import { type ComponentType, type ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import { isPathWithin } from '../lib/nav-registry'
 import type { ActionName, SubjectName } from '../lib/permissions'
 
@@ -350,12 +350,21 @@ export function NavMain({ items }: { items: NavItem[] }) {
 }
 
 /** The entries kept apart from the main list — Settings, and anything registered beside it. */
-export function NavBottom({ items, className }: { items: NavItem[]; className?: string }) {
+export function NavBottom({
+  items,
+  className,
+  children,
+}: {
+  items: NavItem[]
+  className?: string
+  /** Extra rows after the links, such as the assistant's toggle. */
+  children?: ReactNode
+}) {
   const currentPath = useRouterState().location.pathname
   const isCollapsed = useSidebar().state === 'collapsed'
   const handleLinkTap = useCloseDrawerOnLinkTap()
 
-  if (items.length === 0) return null
+  if (items.length === 0 && !children) return null
 
   return (
     // biome-ignore lint/a11y/noStaticElementInteractions: delegated link taps only
@@ -381,6 +390,7 @@ export function NavBottom({ items, className }: { items: NavItem[]; className?: 
               </SidebarMenuItem>
             )
           })}
+          {children}
         </SidebarMenu>
       </SidebarGroup>
     </div>

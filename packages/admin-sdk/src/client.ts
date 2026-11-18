@@ -14,6 +14,7 @@ import {
 } from '@spree/sdk-core'
 import { AdminClient } from './admin-client'
 import type { AdminExtension } from './extensions'
+import type { AssistantEvent } from './types/assistant'
 
 export interface AdminClientConfig {
   /** Base URL of the Spree API (e.g., 'https://api.mystore.com'). Use '' for relative URLs (Vite proxy). */
@@ -69,6 +70,16 @@ export interface Client extends AdminClient {
   extend<Name extends string, Namespace>(
     extension: AdminExtension<Name, Namespace>,
   ): Extended<this, Name, Namespace>
+  /**
+   * Streams one assistant turn, calling `onEvent` per server-sent event.
+   * Resolves when the stream closes.
+   */
+  streamAssistantTurn(
+    path: string,
+    body: Record<string, unknown> | undefined,
+    onEvent: (event: AssistantEvent) => void,
+    signal?: AbortSignal,
+  ): Promise<void>
 }
 
 export function createAdminClient(config: AdminClientConfig): Client {
@@ -164,5 +175,90 @@ export function createAdminClient(config: AdminClientConfig): Client {
     return extendClient(this, 'admin', dynamicRequestFn, extension)
   } as Client['extend']
 
+  /**
+   * Streams one assistant turn.
+   *
+   * Uses `fetch` rather than `EventSource`, which cannot send an
+   * `Authorization` header — and the assistant is JWT-only by design. Lives on
+   * the factory rather than the resource because it needs the token and store
+   * id that the request layer keeps private.
+   */
+  client.streamAssistantTurn = async (
+    path: string,
+    body: Record<string, unknown> | undefined,
+    onEvent: (event: AssistantEvent) => void,
+    signal?: AbortSignal,
+  ): Promise<void> => {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      Accept: 'text/event-stream',
+    }
+    if (currentStoreId) headers['X-Spree-Store-Id'] = currentStoreId
+    if (currentToken) headers.Authorization = `Bearer ${currentToken}`
+
+    const response = await fetchFn(`${baseUrl}${basePath}${path}`, {
+      method: 'POST',
+      headers,
+      body: body ? JSON.stringify(body) : undefined,
+      credentials: requestConfig.credentials,
+      signal,
+    })
+
+    if (!response.ok || !response.body) {
+      throw new SpreeError(
+        {
+          error: {
+            message: `Assistant turn failed with status ${response.status}`,
+            code: 'assistant_stream_failed',
+          },
+        },
+        response.status,
+      )
+    }
+
+    const reader = response.body.getReader()
+    const decoder = new TextDecoder()
+    let buffer = ''
+
+    while (true) {
+      const { done, value } = await reader.read()
+      if (done) break
+
+      buffer += decoder.decode(value, { stream: true })
+
+      // SSE frames are separated by a blank line; a partial frame stays in the
+      // buffer until its terminator arrives.
+      const frames = buffer.split('\n\n')
+      buffer = frames.pop() ?? ''
+
+      for (const frame of frames) {
+        const parsed = parseServerSentEvent(frame)
+        if (parsed) onEvent(parsed)
+      }
+    }
+  }
+
   return client
+}
+
+function parseServerSentEvent(frame: string): AssistantEvent | null {
+  let eventName: string | undefined
+  const dataLines: string[] = []
+
+  for (const line of frame.split('\n')) {
+    if (line.startsWith('event:')) eventName = line.slice(6).trim()
+    else if (line.startsWith('data:')) dataLines.push(line.slice(5).trim())
+  }
+
+  if (!eventName || dataLines.length === 0) return null
+
+  try {
+    return {
+      event: eventName as AssistantEvent['event'],
+      data: JSON.parse(dataLines.join('\n')),
+    }
+  } catch {
+    // A frame we cannot parse is dropped rather than killing the stream.
+    return null
+  }
 }

@@ -1146,3 +1146,47 @@
     animation-iteration-count: infinite;
   }
 }
+
+/* The message-scroller fades its top edge so a long transcript reads as
+   continuing rather than cut off. Scrollbar styling is not repeated here —
+   `themed-scrollbar` above already does it, theme-aware and with a reserved
+   gutter. */
+@utility scroll-fade-b {
+  mask-image: linear-gradient(to bottom, transparent 0, black 1.5rem, black 100%);
+}
+
+/* Text that is still being worked on — an assistant step while it runs. A
+   highlight sweeps across muted text, so it reads as the same words in
+   progress rather than a placeholder. The colours are named rather than
+   `currentColor`, which the transparent fill below would make invisible. */
+@utility shimmer {
+  background-image: linear-gradient(
+    90deg,
+    var(--muted-foreground) 0%,
+    var(--muted-foreground) 40%,
+    var(--foreground) 50%,
+    var(--muted-foreground) 60%,
+    var(--muted-foreground) 100%
+  );
+  background-size: 200% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 2s linear infinite;
+}
+
+@utility shimmer-none {
+  animation: none;
+  background-image: none;
+  -webkit-text-fill-color: currentColor;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}

@@ -64,6 +64,7 @@ module Spree
               description: 'Where prices come from: a registered provider key, or `internal`.'
             body.attribute :inventory_provider, :string,
               description: 'Where stock levels come from: a registered provider key, or `internal`.'
+            body.attribute :assistant_provider, :string, description: 'The dashboard assistant\'s AI vendor, such as `anthropic`.'
             body.attribute :pricing_provider_failure_policy, :string,
               choices: Spree::ProviderFailurePolicy::VALUES,
               description: '`strict` refuses to price when the provider cannot answer; `fallback` uses the catalog.'

@@ -6946,6 +6946,42 @@
       "open_discussion": "Open discussion on GitHub",
       "copied_to_paste": "Too long for a link, so it was copied. Paste it on GitHub.",
       "copy_failed": "Too long for a link, and copying it failed. Shorten the message, or copy the report from Settings → System info."
+    },
+    "assistant": {
+      "approve": "Approve",
+      "beta": "Beta",
+      "close": "Close",
+      "collapse": "Collapse",
+      "description": "Ask about your store, or ask for help getting something done.",
+      "disclaimer": "The assistant can make mistakes. Check anything important.",
+      "empty": "Ask a question about your store to get started.",
+      "expand": "Expand",
+      "new_chat": "New chat",
+      "placeholder": "Ask about products, orders, promotions…",
+      "reject": "Reject",
+      "send": "Send",
+      "status": {
+        "proposed": "Needs your approval",
+        "executed": "Done",
+        "rejected": "Rejected",
+        "failed": "Failed"
+      },
+      "suggestions": {
+        "products": "Which products are out of stock?",
+        "orders": "Show me recent orders",
+        "promotions": "What promotions are running?"
+      },
+      "thinking": "Working…",
+      "title": "Assistant",
+      "more_records_one": "{{count}} more not shown",
+      "more_records_other": "{{count}} more not shown",
+      "errors": {
+        "turn_failed": "The assistant could not finish that. Please try again."
+      },
+      "delete_chat": "Delete chat",
+      "delete_chat_confirm": "Delete \"{{name}}\"? This cannot be undone.",
+      "recent_chats": "Recent chats",
+      "untitled_chat": "Untitled chat"
     }
   }
 }

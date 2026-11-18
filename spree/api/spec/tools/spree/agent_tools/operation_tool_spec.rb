@@ -162,6 +162,14 @@ RSpec.describe Spree::AgentTools::OperationTool do
     it 'shows the operation and its record before running' do
       expect(tool('orders_cancel').summary(id: 'or_123')).to eq('Cancel an order or_123')
     end
+
+    # An approval card is drawn from the ids the model sent, before anything
+    # runs, so the line looks the record up to name it.
+    it 'names the record before running' do
+      product = create(:product, store: store, name: 'Blue Shirt')
+
+      expect(tool('products_draft').summary(id: product.prefixed_id)).to end_with('Blue Shirt')
+    end
   end
 
   # A read becomes a tool only when its spec opts it in; it then answers

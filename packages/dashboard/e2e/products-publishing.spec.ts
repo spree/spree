@@ -1,13 +1,6 @@
 import { expect, type Page, test } from '@playwright/test'
 import { FIXTURE_BULK_CHANNEL_NAME, gotoIndex, login } from './helpers'
-import {
-  card,
-  createProduct,
-  fillGridCell,
-  PRODUCTS_PATH,
-  pricesCard,
-  publishingCard,
-} from './products-helpers'
+import { card, fillGridCell, PRODUCTS_PATH, pricesCard, publishingCard } from './products-helpers'
 
 // Drive the New Product form just far enough to land on the edit page.
 // The point of this spec is the Publishing card, not the rest of the form.
@@ -197,7 +190,14 @@ test.describe('product publishing', () => {
     const creds = await login(page)
     const productName = `E2E Publish No Price ${Date.now()}`
 
-    await createProduct(page, creds.store_id, productName)
+    // The default channel is seeded once the channels load; creating before
+    // then saves a product listed nowhere.
+    await createMinimalProduct(page, creds.store_id, productName)
+    await expect(publishingCard(page).getByText(/online store/i)).toBeVisible({ timeout: 15_000 })
+    await page.getByRole('button', { name: /^create product$/i }).click()
+    await expect(page).toHaveURL(new RegExp(`/${creds.store_id}/products/prod_[^/]+$`), {
+      timeout: 15_000,
+    })
     const edit = publishingCard(page)
     await expect(edit.getByText(/online store/i)).toBeVisible({ timeout: 15_000 })
 

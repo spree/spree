@@ -6945,6 +6945,42 @@
       "open_discussion": "GitHub でディスカッションを開く",
       "copied_to_paste": "リンクには長すぎるためコピーしました。GitHub に貼り付けてください。",
       "copy_failed": "リンクには長すぎ、コピーにも失敗しました。メッセージを短くするか、設定 → システム情報 からレポートをコピーしてください。"
+    },
+    "assistant": {
+      "approve": "承認",
+      "beta": "ベータ",
+      "close": "閉じる",
+      "collapse": "折りたたむ",
+      "description": "ストアについて質問したり、作業の手伝いを頼んだりできます。",
+      "disclaimer": "アシスタントは間違えることがあります。重要な内容は必ず確認してください。",
+      "empty": "ストアについて質問して始めましょう。",
+      "expand": "展開",
+      "new_chat": "新しいチャット",
+      "placeholder": "商品、注文、プロモーションについて質問…",
+      "reject": "却下",
+      "send": "送信",
+      "status": {
+        "proposed": "承認が必要です",
+        "executed": "完了",
+        "rejected": "却下済み",
+        "failed": "失敗"
+      },
+      "suggestions": {
+        "products": "在庫切れの商品はどれですか？",
+        "orders": "最近の注文を表示して",
+        "promotions": "実施中のプロモーションは？"
+      },
+      "thinking": "処理中…",
+      "title": "アシスタント",
+      "more_records_one": "ほか{{count}}件は表示されていません",
+      "more_records_other": "ほか{{count}}件は表示されていません",
+      "errors": {
+        "turn_failed": "アシスタントは処理を完了できませんでした。もう一度お試しください。"
+      },
+      "delete_chat": "チャットを削除",
+      "delete_chat_confirm": "「{{name}}」を削除しますか？この操作は元に戻せません。",
+      "recent_chats": "最近のチャット",
+      "untitled_chat": "無題のチャット"
     }
   }
 }

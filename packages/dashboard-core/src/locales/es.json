@@ -73,7 +73,8 @@
         "no_results": "Sin resultados para «{{query}}».",
         "placeholder": "Buscar productos, pedidos, clientes…",
         "search_label": "Buscar cualquier cosa…",
-        "title": "Búsqueda y comandos"
+        "title": "Búsqueda y comandos",
+        "ask_assistant": "Pregunta al asistente: \"{{query}}\""
       },
       "confirm_dialog": {
         "title": "¿Estás seguro?"
@@ -1796,7 +1797,9 @@
       "yes": "Sí",
       "done": "Listo",
       "error": "Algo salió mal.",
-      "unsaved_label": "Cambios sin guardar"
+      "unsaved_label": "Cambios sin guardar",
+      "scroll_to_end": "Desplazar al final",
+      "scroll_to_start": "Desplazar al inicio"
     },
     "messages": {
       "address_removed": "Dirección eliminada",

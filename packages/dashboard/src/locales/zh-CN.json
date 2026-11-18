@@ -6931,6 +6931,41 @@
       "open_discussion": "在 GitHub 上发起讨论",
       "copied_to_paste": "内容太长无法放入链接，已复制。请粘贴到 GitHub。",
       "copy_failed": "内容太长无法放入链接，且复制失败。请缩短消息，或在 设置 → 系统信息 中复制报告。"
+    },
+    "assistant": {
+      "approve": "批准",
+      "beta": "测试版",
+      "close": "关闭",
+      "collapse": "收起",
+      "description": "询问您的店铺情况，或请求协助完成任务。",
+      "disclaimer": "助手可能会出错，请核实重要信息。",
+      "empty": "提出关于店铺的问题即可开始。",
+      "expand": "展开",
+      "new_chat": "新对话",
+      "placeholder": "询问商品、订单、促销…",
+      "reject": "拒绝",
+      "send": "发送",
+      "status": {
+        "proposed": "需要您批准",
+        "executed": "已完成",
+        "rejected": "已拒绝",
+        "failed": "失败"
+      },
+      "suggestions": {
+        "products": "哪些商品缺货？",
+        "orders": "显示最近的订单",
+        "promotions": "目前有哪些促销活动？"
+      },
+      "thinking": "处理中…",
+      "title": "助手",
+      "more_records_other": "另有 {{count}} 条未显示",
+      "errors": {
+        "turn_failed": "助手无法完成该操作，请重试。"
+      },
+      "delete_chat": "删除对话",
+      "delete_chat_confirm": "删除\"{{name}}\"？此操作无法撤销。",
+      "recent_chats": "最近的对话",
+      "untitled_chat": "未命名对话"
     }
   }
 }

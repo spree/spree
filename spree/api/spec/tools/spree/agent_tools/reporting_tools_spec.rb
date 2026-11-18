@@ -39,6 +39,12 @@ RSpec.describe 'agent reporting tools' do
   end
 
   describe 'query_report' do
+    # Shown to the merchant as a step of the answer.
+    it 'names its step by the labels the reports page uses' do
+      expect(tool('query_report').summary(metrics: ['net_sales'], dimensions: ['country'])).
+        to eq('Report net sales by shipping country')
+    end
+
     # A grouped row holds a raw primary key. Handing a model
     # `{"product" => 3}` answers "which products sell best" with a number it
     # cannot read, so the key is resolved the same way the Admin API

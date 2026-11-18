@@ -29,10 +29,17 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@spree/dashboard-ui'
-import { LogOutIcon, PackageIcon, PlusIcon, SettingsIcon } from '@spree/dashboard-ui/icons'
+import {
+  LogOutIcon,
+  PackageIcon,
+  PlusIcon,
+  SettingsIcon,
+  SparklesIcon,
+} from '@spree/dashboard-ui/icons'
 import { useNavigate, useParams } from '@tanstack/react-router'
 import type { LucideIcon } from 'lucide-react'
 import { type ReactNode, useMemo, useState } from 'react'
+import { useAssistant } from '../assistant/assistant-provider'
 
 export function CommandPalette() {
   const { t } = useTranslation()
@@ -152,6 +159,16 @@ function CommandPaletteContent({ setOpen }: { setOpen: (open: boolean) => void }
   const gotoLeads = q.length > 0 && gotoItems.some((c) => matchRank(c.label) === 0)
   const showLogout = matches(t('admin.auth.logout'))
 
+  // The assistant answers what the palette cannot look up. No attempt is made
+  // to tell a question from a destination: "orders" is a page and "how many
+  // orders shipped late" is a question, and any rule separating them would be
+  // wrong often enough to be annoying. So the row is always offered while
+  // something is typed, and sits last — it never outranks a real destination,
+  // and it is what remains when nothing else matched.
+  const assistant = useAssistant()
+  const askQuery = input.trim()
+  const showAsk = assistant.enabled && askQuery.length > 0
+
   // Rendered in one of two slots depending on `gotoLeads`, so it is built once
   // here rather than duplicated in both branches of the list below.
   const gotoGroup =
@@ -190,7 +207,9 @@ function CommandPaletteContent({ setOpen }: { setOpen: (open: boolean) => void }
           // "No results" must account for goto/create/logout commands too,
           // not just resource search — a query can match a nav command while
           // the API search returns nothing.
-          hasResults={hasResults || createMatches.length > 0 || gotoItems.length > 0 || showLogout}
+          hasResults={
+            hasResults || createMatches.length > 0 || gotoItems.length > 0 || showLogout || showAsk
+          }
           query={input}
         />
 
@@ -251,6 +270,24 @@ function CommandPaletteContent({ setOpen }: { setOpen: (open: boolean) => void }
               {t('admin.auth.logout')}
             </CommandItem>
           </CommandGroup>
+        )}
+
+        {showAsk && (
+          <>
+            <CommandSeparator />
+            <CommandGroup heading={t('admin.assistant.title')}>
+              <CommandItem
+                value="action-ask-assistant"
+                onSelect={() => {
+                  close()
+                  assistant.ask(askQuery)
+                }}
+              >
+                <SparklesIcon />
+                {t('admin.components.command_palette.ask_assistant', { query: askQuery })}
+              </CommandItem>
+            </CommandGroup>
+          </>
         )}
       </CommandList>
       <CommandFooter />

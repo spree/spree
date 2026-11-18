@@ -194,7 +194,9 @@
       "yes": "はい",
       "done": "完了",
       "error": "問題が起きました。",
-      "unsaved_label": "未保存の変更"
+      "unsaved_label": "未保存の変更",
+      "scroll_to_end": "末尾までスクロール",
+      "scroll_to_start": "先頭までスクロール"
     },
     "components": {
       "address_block": {
@@ -266,7 +268,8 @@
         "no_results": "「{{query}}」の結果はありません。",
         "placeholder": "商品・注文・顧客を検索…",
         "search_label": "何でも検索…",
-        "title": "検索とコマンド"
+        "title": "検索とコマンド",
+        "ask_assistant": "アシスタントに質問：「{{query}}」"
       },
       "confirm_dialog": {
         "title": "よろしいですか？"

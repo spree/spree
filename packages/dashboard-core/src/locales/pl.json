@@ -199,7 +199,9 @@
       "yes": "Tak",
       "done": "Gotowe",
       "error": "Coś poszło nie tak.",
-      "unsaved_label": "Niezapisane zmiany"
+      "unsaved_label": "Niezapisane zmiany",
+      "scroll_to_end": "Przewiń do końca",
+      "scroll_to_start": "Przewiń do początku"
     },
     "components": {
       "address_block": {
@@ -219,6 +221,7 @@
         "all_channels": "Wszystkie kanały"
       },
       "command_palette": {
+        "ask_assistant": "Zapytaj asystenta: „{{query}}”",
         "create": {
           "heading": "Utwórz",
           "label": "Utwórz: {{noun}}",

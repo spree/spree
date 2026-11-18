@@ -24,6 +24,10 @@ import { MobileBreadcrumbBar } from './top-bar-breadcrumbs'
  * seller panel previously hand-rolled its own `<header>`, which had already
  * drifted from the dashboard's (a different border, a translucent fill the
  * dashboard had deliberately abandoned). One frame means one place to fix.
+ *
+ * An optional third column sits beside the page for the assistant. It is a
+ * sibling of the content sheet rather than something inside it, so the two
+ * read as two cards on the same ground and each scrolls on its own.
  */
 export function AppShell({
   tenantId,
@@ -33,6 +37,8 @@ export function AppShell({
   onEditProfile,
   notifications,
   sidebarWidget,
+  asidePanel,
+  sidebarActions,
   children,
 }: {
   /** Prefix for the nav links. Defaults to the route's `storeId`. */
@@ -52,6 +58,15 @@ export function AppShell({
   notifications?: ReactNode
   /** A card pinned above the account menu, such as the store setup checklist. */
   sidebarWidget?: ReactNode
+  /**
+   * An optional panel rendered as a third column beside the page — the
+   * assistant in the operator dashboard. A node rather than a boolean because
+   * the panel lives in the app package: the frame decides where it goes, the
+   * app decides what it is.
+   */
+  asidePanel?: ReactNode
+  /** App-level rail actions — the control that opens `asidePanel`. */
+  sidebarActions?: ReactNode
   children: ReactNode
 }) {
   // The settings area brings a full-width nav of its own, and two stacked
@@ -94,6 +109,7 @@ export function AppShell({
         onEditProfile={onEditProfile}
         notifications={notifications}
         widget={sidebarWidget}
+        actions={sidebarActions}
       />
       {/* The sheet is exactly as tall as the viewport and scrolls internally,
           rather than growing with the page and letting the document scroll.
@@ -167,6 +183,14 @@ export function AppShell({
           )}
         </div>
       </SidebarInset>
+      {/* Outside the inset, not within it: as a third child of the shell's
+          flex row the panel is a card in its own right, sitting on the same
+          ground as the page with the same margin between them. Put inside the
+          inset it would share the page's sheet — one surface split by a rule,
+          which is not what a separate panel should look like — and it would
+          also sit inside the scroller the page owns, so a long page would
+          carry the conversation off the bottom of the screen. */}
+      {asidePanel}
     </>
   )
 }

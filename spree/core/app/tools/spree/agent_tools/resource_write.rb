@@ -100,6 +100,23 @@ module Spree
         }.compact
       end
 
+      # The record named the way a merchant knows it, for the confirmation
+      # line they approve. An id tells them nothing — "Delete product
+      # prod_86Rf07xd4z" is a card nobody can judge — so it is looked up through
+      # the same store-scoped relation every read uses, and falls back to the
+      # id only when the record cannot be seen.
+      #
+      # @param resource [String]
+      # @param id [String]
+      # @return [String]
+      def record_label(resource, id)
+        entry = ResourceMap.find(resource)
+        record = entry.scope_for(context).find_by_prefix_id(id.to_s) if entry&.readable_by?(context)
+        ResourceMap.record_name(record, id)
+      rescue StandardError
+        id.to_s
+      end
+
       def not_writable(entry, action)
         "#{entry.key} cannot be #{verb_for(action)} this way — call describe_resource to see what can."
       end

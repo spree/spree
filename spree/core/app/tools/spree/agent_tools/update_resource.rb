@@ -32,10 +32,23 @@ module Spree
       end
 
       def summary(arguments)
-        changed = arguments[:attributes].to_h.keys.map { |key| key.to_s.tr('_', ' ') }
+        changed = arguments[:attributes].to_h.map { |key, value| change_label(key, value) }
 
-        "Update #{arguments[:resource].to_s.singularize.tr('_', ' ')} #{arguments[:id]}" \
+        "Update #{arguments[:resource].to_s.singularize.tr('_', ' ')} " \
+          "#{record_label(arguments[:resource], arguments[:id])}" \
           "#{": #{changed.to_sentence}" if changed.any?}"
+      end
+
+      private
+
+      # A plain value is shown, since the new value is what the merchant is
+      # approving; a list or a nested record is only named, because spelling
+      # it out would bury the sentence.
+      def change_label(key, value)
+        name = key.to_s.tr('_', ' ')
+        return name if value.is_a?(Hash) || value.is_a?(Array)
+
+        "#{name} to #{value.to_s.truncate(60).inspect}"
       end
     end
   end

@@ -48259,6 +48259,7 @@ paths:
                 email_text_color:
                 email_heading_color:
                 email_font:
+                assistant_provider: anthropic
                 order_number_sequence_started: false
                 default_minimum_payout_amount: '0.00'
                 default_commission_tax_rate: '0'
@@ -48635,6 +48636,7 @@ paths:
                 email_text_color:
                 email_heading_color:
                 email_font:
+                assistant_provider: anthropic
                 order_number_sequence_started: false
                 default_minimum_payout_amount: '0.00'
                 default_commission_tax_rate: '0'
@@ -76107,6 +76109,8 @@ components:
           - roboto
           - lato
           - merriweather
+        assistant_provider:
+          type: string
         order_number_sequence_started:
           type: boolean
         default_minimum_payout_amount:
@@ -76790,6 +76794,7 @@ components:
       - email_text_color
       - email_heading_color
       - email_font
+      - assistant_provider
       - order_number_sequence_started
       - default_minimum_payout_amount
       - default_commission_tax_rate
@@ -87127,6 +87132,9 @@ components:
           type: string
           description: 'Where stock levels come from: a registered provider key, or
             `internal`.'
+        assistant_provider:
+          type: string
+          description: The dashboard assistant's AI vendor, such as `anthropic`.
         pricing_provider_failure_policy:
           type: string
           enum:

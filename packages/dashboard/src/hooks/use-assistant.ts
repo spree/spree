@@ -1,0 +1,280 @@
+import type {
+  AssistantChat,
+  AssistantEvent,
+  AssistantRecord,
+  AssistantStatus,
+  AssistantToolCall,
+} from '@spree/admin-sdk'
+import { adminClient, useStore } from '@spree/dashboard-core'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import i18n from 'i18next'
+import { useCallback, useEffect, useRef, useState } from 'react'
+
+/** What the panel renders: the conversation so far, plus anything in flight. */
+export interface AssistantTranscriptEntry {
+  id: string
+  kind: 'user' | 'assistant' | 'activity' | 'records' | 'proposal'
+  text?: string
+  toolCall?: AssistantToolCall
+  records?: AssistantRecord[]
+  resource?: string
+  /** Records that matched, which can exceed the rows shown. */
+  total?: number
+  /** Where a step the assistant took has got to. */
+  status?: 'running' | 'done' | 'error'
+  /** Why a step failed, in the API's own words. */
+  detail?: string
+}
+
+/**
+ * Settles the step still running, the one a result belongs to. Tools run one
+ * at a time within a turn, so the open step is the latest one.
+ */
+function settleStep(
+  entries: AssistantTranscriptEntry[],
+  status: 'done' | 'error',
+  detail?: string,
+): AssistantTranscriptEntry[] {
+  let index = entries.length - 1
+  while (index >= 0 && entries[index].status !== 'running') index -= 1
+  if (index === -1) return entries
+
+  const next = [...entries]
+  next[index] = { ...next[index], status, detail }
+  return next
+}
+
+/** Closes any step a turn ended without reporting on. */
+function settleAllSteps(entries: AssistantTranscriptEntry[]): AssistantTranscriptEntry[] {
+  return entries.some((entry) => entry.status === 'running')
+    ? entries.map((entry) => (entry.status === 'running' ? { ...entry, status: 'done' } : entry))
+    : entries
+}
+
+export function useAssistantStatus() {
+  const { storeId } = useStore()
+
+  return useQuery({
+    queryKey: ['assistant', 'status', storeId],
+    queryFn: async (): Promise<AssistantStatus> => (await adminClient.assistant.status()).data,
+    // The panel asks once per session; connecting a provider is a deliberate
+    // act elsewhere in the UI, and a refetch storm on every focus is noise.
+    staleTime: 5 * 60 * 1000,
+    retry: false,
+  })
+}
+
+export function useAssistantChats() {
+  const { storeId } = useStore()
+
+  return useQuery({
+    queryKey: ['assistant', 'chats', storeId],
+    queryFn: async (): Promise<AssistantChat[]> => (await adminClient.assistant.chats.list()).data,
+  })
+}
+
+export function useDeleteAssistantChat() {
+  const { storeId } = useStore()
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (id: string) => adminClient.assistant.chats.delete(id),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['assistant', 'chats', storeId] })
+    },
+  })
+}
+
+/**
+ * Drives one conversation: sending a message, streaming the turn, and
+ * resolving any change the assistant asks to make.
+ */
+export function useAssistantConversation() {
+  const { storeId } = useStore()
+  const queryClient = useQueryClient()
+  const [chatId, setChatId] = useState<string | null>(null)
+  const [chatTitle, setChatTitle] = useState<string | null>(null)
+  const [entries, setEntries] = useState<AssistantTranscriptEntry[]>([])
+  const [streaming, setStreaming] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const abortRef = useRef<AbortController | null>(null)
+  const counter = useRef(0)
+
+  const append = useCallback((entry: Omit<AssistantTranscriptEntry, 'id'>) => {
+    counter.current += 1
+    const id = `entry-${counter.current}`
+    setEntries((current) => [...current, { ...entry, id }])
+  }, [])
+
+  const handleEvent = useCallback(
+    (event: AssistantEvent) => {
+      switch (event.event) {
+        case 'tool_call.started':
+          // Only reads reach here; a mutation arrives as a proposal instead.
+          if (!event.data.mutating) {
+            append({
+              kind: 'activity',
+              text: event.data.summary || event.data.name,
+              status: 'running',
+            })
+          }
+          break
+        case 'tool_call.result':
+          setEntries((current) =>
+            event.data.error
+              ? settleStep(current, 'error', event.data.error)
+              : settleStep(current, 'done'),
+          )
+          if (event.data.records?.length) {
+            append({
+              kind: 'records',
+              records: event.data.records,
+              resource: event.data.resource,
+              total: event.data.total,
+            })
+          }
+          break
+        case 'tool_call.proposed':
+          if (event.data.tool_call) append({ kind: 'proposal', toolCall: event.data.tool_call })
+          break
+        case 'tool_call.resolved':
+          setEntries((current) =>
+            current.map((entry) =>
+              entry.kind === 'proposal' && entry.toolCall?.id === event.data.tool_call?.id
+                ? { ...entry, toolCall: event.data.tool_call }
+                : entry,
+            ),
+          )
+          break
+        case 'message.completed':
+          if (event.data.text) append({ kind: 'assistant', text: event.data.text })
+          break
+        case 'turn.failed':
+          setError(event.data.message ?? i18n.t('admin.assistant.errors.turn_failed'))
+          break
+        default:
+          break
+      }
+    },
+    [append],
+  )
+
+  /** Creates the chat lazily, so opening the panel does not litter history. */
+  const ensureChat = useCallback(async (): Promise<string> => {
+    if (chatId) return chatId
+
+    const created = (await adminClient.assistant.chats.create()).data
+    setChatId(created.id)
+    void queryClient.invalidateQueries({ queryKey: ['assistant', 'chats', storeId] })
+    return created.id
+  }, [chatId, queryClient, storeId])
+
+  const send = useCallback(
+    async (content: string) => {
+      setError(null)
+      append({ kind: 'user', text: content })
+      setStreaming(true)
+
+      try {
+        const id = await ensureChat()
+        setChatTitle((current) => current ?? content.trim().slice(0, 60))
+        abortRef.current = new AbortController()
+        await adminClient.streamAssistantTurn(
+          `/assistant/chats/${id}/messages`,
+          { content },
+          handleEvent,
+          abortRef.current.signal,
+        )
+      } catch (streamError) {
+        // A raw fetch/HTTP message is an untranslated internal; the merchant
+        // gets a sentence, and the detail goes to the console for us.
+        if ((streamError as Error).name !== 'AbortError') {
+          console.error('[assistant] turn failed', streamError)
+          setError(i18n.t('admin.assistant.errors.turn_failed'))
+        }
+      } finally {
+        setEntries(settleAllSteps)
+        setStreaming(false)
+      }
+    },
+    [append, ensureChat, handleEvent],
+  )
+
+  const resolve = useCallback(
+    async (toolCallId: string, approve: boolean) => {
+      if (!chatId) return
+      setError(null)
+      setStreaming(true)
+
+      try {
+        abortRef.current = new AbortController()
+        await adminClient.streamAssistantTurn(
+          `/assistant/chats/${chatId}/tool_calls/${toolCallId}/${approve ? 'approve' : 'reject'}`,
+          undefined,
+          handleEvent,
+          abortRef.current.signal,
+        )
+      } catch (streamError) {
+        if ((streamError as Error).name !== 'AbortError') {
+          console.error('[assistant] decision failed', streamError)
+          setError(i18n.t('admin.assistant.errors.turn_failed'))
+        }
+      } finally {
+        setEntries(settleAllSteps)
+        setStreaming(false)
+      }
+    },
+    [chatId, handleEvent],
+  )
+
+  const load = useCallback(async (id: string) => {
+    const chat = (await adminClient.assistant.chats.get(id)).data
+    setChatId(chat.id)
+    setChatTitle(chat.title ?? null)
+    counter.current = 0
+    setEntries(
+      (chat.messages ?? []).flatMap<AssistantTranscriptEntry>((message) => {
+        const rows: AssistantTranscriptEntry[] = []
+        if (message.content && message.role !== 'tool') {
+          rows.push({
+            id: `msg-${message.id}`,
+            kind: message.role === 'user' ? 'user' : 'assistant',
+            text: message.content,
+          })
+        }
+        for (const toolCall of message.tool_calls ?? []) {
+          // A completed read replays as the record list the merchant saw
+          // live; only an actual change replays as a decision card. Without
+          // this a reopened chat showed reads as raw argument dumps.
+          if (toolCall.records?.length) {
+            rows.push({
+              id: `tc-${toolCall.id}`,
+              kind: 'records',
+              records: toolCall.records as AssistantRecord[],
+              total: (toolCall.result?.total as number | undefined) ?? toolCall.records.length,
+            })
+          } else {
+            rows.push({ id: `tc-${toolCall.id}`, kind: 'proposal', toolCall })
+          }
+        }
+        return rows
+      }),
+    )
+  }, [])
+
+  // A turn can outlive the component that started it (the panel is closed, the
+  // admin navigates away). Without this the reader loop keeps running and sets
+  // state on a tree that is gone.
+  useEffect(() => () => abortRef.current?.abort(), [])
+
+  const reset = useCallback(() => {
+    abortRef.current?.abort()
+    setChatId(null)
+    setChatTitle(null)
+    setEntries([])
+    setError(null)
+    counter.current = 0
+  }, [])
+
+  return { chatId, chatTitle, entries, streaming, error, send, resolve, load, reset }
+}

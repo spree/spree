@@ -421,6 +421,16 @@ module Spree
         # @return [#call, nil]
         attr_accessor :deriver
 
+        # How an approval card names a record: as the dashboard does, by number
+        # or name, falling back to the id it was given.
+        #
+        # @param record [Object, nil]
+        # @param id [String]
+        # @return [String]
+        def record_name(record, id)
+          (record && (record.try(:number) || record.try(:name))).presence || id.to_s
+        end
+
         # @return [Array<Entry>] every registered resource, in registration order
         def all
           derive!

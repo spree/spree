@@ -196,7 +196,9 @@
       "yes": "Oui",
       "done": "Terminé",
       "error": "Une erreur s'est produite.",
-      "unsaved_label": "Modifications non enregistrées"
+      "unsaved_label": "Modifications non enregistrées",
+      "scroll_to_end": "Aller à la fin",
+      "scroll_to_start": "Aller au début"
     },
     "components": {
       "address_block": {
@@ -216,6 +218,7 @@
         "all_channels": "Tous les canaux"
       },
       "command_palette": {
+        "ask_assistant": "Demander à l'assistant : « {{query}} »",
         "create": {
           "heading": "Créer",
           "label": "Créer : {{noun}}",

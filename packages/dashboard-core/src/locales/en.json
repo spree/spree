@@ -196,7 +196,9 @@
       "yes": "Yes",
       "done": "Done",
       "error": "Something went wrong.",
-      "unsaved_label": "Unsaved changes"
+      "unsaved_label": "Unsaved changes",
+      "scroll_to_end": "Scroll to end",
+      "scroll_to_start": "Scroll to start"
     },
     "components": {
       "address_block": {
@@ -216,6 +218,7 @@
         "all_channels": "All channels"
       },
       "command_palette": {
+        "ask_assistant": "Ask the assistant: \"{{query}}\"",
         "create": {
           "heading": "Create",
           "label": "New {{noun}}",

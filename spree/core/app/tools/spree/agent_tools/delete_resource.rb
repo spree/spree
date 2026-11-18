@@ -18,14 +18,18 @@ module Spree
         path, missing = write_path(entry, :destroy, id: id, parent_id: parent_id)
         return missing if missing
 
+        # Named before the delete: afterwards the record is out of reach and
+        # the sentence would fall back to its id.
+        described = summary(resource: resource, id: id, parent_id: parent_id)
+
         response = dispatch.call(method: :delete, path: path)
         return { error: response.error_message } unless response.success?
 
-        { summary: summary(resource: resource, id: id, parent_id: parent_id) }
+        { summary: described }
       end
 
       def summary(arguments)
-        line = "Delete #{arguments[:resource].to_s.singularize.tr('_', ' ')} #{arguments[:id]}"
+        line = "Delete #{arguments[:resource].to_s.singularize.tr('_', ' ')} #{record_label(arguments[:resource], arguments[:id])}"
         # The approval card is all a merchant sees, so a nested delete names
         # the record it runs under, as a nested create does.
         nested = arguments[:parent_id].present? && ResourceMap.find(arguments[:resource])&.parent_param(:destroy)

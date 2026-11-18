@@ -6948,6 +6948,42 @@
       "open_discussion": "Abrir debate en GitHub",
       "copied_to_paste": "Demasiado largo para un enlace, así que se ha copiado. Pégalo en GitHub.",
       "copy_failed": "Demasiado largo para un enlace y no se ha podido copiar. Acorta el mensaje o copia el informe desde Ajustes → Información del sistema."
+    },
+    "assistant": {
+      "approve": "Aprobar",
+      "beta": "Beta",
+      "close": "Cerrar",
+      "collapse": "Contraer",
+      "description": "Pregunta sobre tu tienda o pide ayuda para hacer algo.",
+      "disclaimer": "El asistente puede cometer errores. Comprueba todo lo importante.",
+      "empty": "Haz una pregunta sobre tu tienda para empezar.",
+      "expand": "Expandir",
+      "new_chat": "Nuevo chat",
+      "placeholder": "Pregunta por productos, pedidos, promociones…",
+      "reject": "Rechazar",
+      "send": "Enviar",
+      "status": {
+        "proposed": "Necesita tu aprobación",
+        "executed": "Hecho",
+        "rejected": "Rechazado",
+        "failed": "Fallido"
+      },
+      "suggestions": {
+        "products": "¿Qué productos están agotados?",
+        "orders": "Muéstrame los pedidos recientes",
+        "promotions": "¿Qué promociones están activas?"
+      },
+      "thinking": "Trabajando…",
+      "title": "Asistente",
+      "more_records_one": "{{count}} más sin mostrar",
+      "more_records_other": "{{count}} más sin mostrar",
+      "errors": {
+        "turn_failed": "El asistente no pudo terminar. Inténtalo de nuevo."
+      },
+      "delete_chat": "Eliminar chat",
+      "delete_chat_confirm": "¿Eliminar \"{{name}}\"? Esta acción no se puede deshacer.",
+      "recent_chats": "Chats recientes",
+      "untitled_chat": "Chat sin título"
     }
   }
 }

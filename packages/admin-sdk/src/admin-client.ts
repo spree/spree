@@ -633,6 +633,8 @@ import type {
   AdminUser,
   AllowedOrigin,
   ApiKey,
+  AssistantChat,
+  AssistantStatus,
   Catalog,
   CatalogAssignment,
   CatalogOrderMinimum,
@@ -6619,6 +6621,33 @@ export class AdminClient {
   readonly permissions = {
     list: (options?: RequestOptions): Promise<{ data: Permission[]; meta: { count: number } }> =>
       this.request<{ data: Permission[]; meta: { count: number } }>('GET', '/permissions', options),
+  }
+
+  // ============================================
+  // Assistant (optional spree_assistant gem)
+  // ============================================
+  //
+  // Turns are streamed, not returned — see `streamAssistantTurn` on the client
+  // factory, which needs the auth token the request layer keeps private.
+
+  readonly assistant = {
+    /** Whether a chat can start at all. Drives whether the panel renders. */
+    status: (options?: RequestOptions): Promise<{ data: AssistantStatus }> =>
+      this.request<{ data: AssistantStatus }>('GET', '/assistant', options),
+
+    chats: {
+      list: (options?: RequestOptions): Promise<{ data: AssistantChat[] }> =>
+        this.request<{ data: AssistantChat[] }>('GET', '/assistant/chats', options),
+
+      get: (id: string, options?: RequestOptions): Promise<{ data: AssistantChat }> =>
+        this.request<{ data: AssistantChat }>('GET', `/assistant/chats/${id}`, options),
+
+      create: (options?: RequestOptions): Promise<{ data: AssistantChat }> =>
+        this.request<{ data: AssistantChat }>('POST', '/assistant/chats', options),
+
+      delete: (id: string, options?: RequestOptions): Promise<void> =>
+        this.request<void>('DELETE', `/assistant/chats/${id}`, options),
+    },
   }
 }
 

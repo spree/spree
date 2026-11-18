@@ -1,0 +1,14 @@
+require 'rubygems'
+require 'rake'
+require 'rake/testtask'
+require 'rspec/core/rake_task'
+require 'spree/testing_support/common_rake'
+
+RSpec::Core::RakeTask.new
+
+task default: :spec
+
+ENV['LIB_NAME'] = 'spree_assistant'
+
+desc 'Generates a dummy app for testing'
+task test_app: 'common:test_app'

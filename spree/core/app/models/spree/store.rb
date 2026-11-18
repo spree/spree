@@ -201,6 +201,12 @@ module Spree
     preference :order_number_suffix, :string, default: ''
     preference :order_number_sequence_start, :integer, default: 1001
 
+    # Which AI vendor the dashboard assistant talks to, by provider key. The
+    # vendor's own integration card supplies the credentials; this only picks
+    # between the vendors registered in Spree.assistant_providers. Has no
+    # effect unless the optional spree_assistant gem is installed.
+    preference :assistant_provider, :string, default: 'anthropic'
+
     # The settings the API reads and writes under their plain names.
     exposes_preferences :admin_locale, :timezone, :storefront_url, :weight_unit, :unit_system, :storefront_access, :guest_checkout,
                         :always_include_confirm_step, :company_field_enabled, :address_requires_company,
@@ -216,7 +222,8 @@ module Spree
                         :limit_digital_download_count, :digital_asset_authorized_clicks,
                         :limit_digital_download_days, :digital_asset_authorized_days,
                         :send_consumer_transactional_emails, :email_accent_color, :email_background_color,
-                        :email_card_color, :email_text_color, :email_heading_color, :email_font
+                        :email_card_color, :email_text_color, :email_heading_color, :email_font,
+                        :assistant_provider
 
     #
     # Associations
