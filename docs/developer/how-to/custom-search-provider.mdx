@@ -27,7 +27,8 @@ Store API Request (locale=de, currency=EUR)
   │   store.products.available(now, currency), narrowed to the channel/catalogs
   │
   └─ Search Provider (search + filter + facets)
-       ├─ Database (default): ILIKE + Ransack + FiltersAggregator
+       ├─ Postgres (default on PostgreSQL): full-text match, the rest inherited from Database
+       ├─ Database (default elsewhere): ILIKE + Ransack + FiltersAggregator
        ├─ Meilisearch (built-in): one API call with locale/currency filtering
        └─ Your Provider: implements the same interface
 ```
