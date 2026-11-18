@@ -79,6 +79,8 @@ Adyen follows the capture setting of the payment method, or the store's when the
 - **At checkout**: Adyen takes the money when the shopper pays.
 - **On dispatch** or **Manually**: Adyen authorises the payment at checkout, and Spree captures it when the order is dispatched or when staff capture it from the dashboard.
 
+Adyen holds Klarna, Riverty and Affirm payments for a capture request whatever its own capture delay says. With capture **At checkout**, Spree records them as authorised and asks Adyen to capture them as soon as the order is placed; the payment shows **Capture requested** until Adyen confirms. Leave these methods on manual capture in Adyen, as they come: if Adyen Support turns on automatic capture for one, Adyen takes the money itself, refuses Spree's capture request, and the payment shows as failed in Spree although it was paid.
+
 Some methods cannot be captured later, iDEAL and BLIK among them: Adyen takes the money at once whatever the setting, and Spree records those payments as paid. Adyen expires card authorisations after 28 days, and schemes may do so sooner; a capture after that fails with Adyen's reason.
 
 ## The storefront

@@ -202,6 +202,15 @@ RSpec.describe SpreeAdyen::Gateway, 'payment sessions' do
       expect(session.payment.source).to be_a(SpreeAdyen::PaymentSources::Ideal)
     end
 
+    it 'settles as authorized a method Adyen holds for a capture request, though the store captures at checkout' do
+      stub_request(:get, result_url).to_return(adyen_json(session_result(status: 'completed', variant: { 'type' => 'klarna' })))
+
+      complete
+
+      expect(session.reload.payment).to be_pending
+      expect(session.payment.capture_events).to be_empty
+    end
+
     it 'settles a pending payment as authorized' do
       stub_request(:get, result_url).to_return(adyen_json(session_result(status: 'paymentPending', result_code: 'Received')))
 

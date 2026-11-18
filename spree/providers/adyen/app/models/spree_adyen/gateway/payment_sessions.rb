@@ -116,15 +116,19 @@ module SpreeAdyen
         payment_session.cancel
       end
 
-      # Whether Adyen takes the money at once for this report, whatever the
-      # session asked (Key Decision 10 of the design).
+      # Whether Adyen took the money for this report: at once for some methods
+      # whatever the session asked (Key Decision 10 of the design), never for
+      # one it holds for a capture request, which CaptureHeldPaymentsSubscriber
+      # sends once the order is placed.
       #
       # @param payment_session [Spree::PaymentSessions::Adyen]
       # @param result [SpreeAdyen::Result]
       def captured?(payment_session, result)
         return false unless result.authorised?
 
-        !payment_session.manual_capture? || SpreeAdyen::Variants.captured_at_once?(result.variant)
+        return SpreeAdyen::Variants.captured_at_once?(result.variant) if payment_session.manual_capture?
+
+        !SpreeAdyen::Variants.held_for_capture?(result.variant)
       end
 
       # The checks every report must pass before it settles anything: one

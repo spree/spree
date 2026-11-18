@@ -37,6 +37,15 @@ RSpec.describe SpreeAdyen::Variants do
     expect(described_class.captured_at_once?('scalapay_3x')).to be(false)
   end
 
+  it 'marks the methods Adyen holds for a capture request whatever the account captures' do
+    %w[klarna klarna_paylater klarna_account riverty affirm].each do |variant|
+      expect(described_class.held_for_capture?(variant)).to be(true)
+    end
+    %w[visa mc_applepay afterpaytouch scalapay_3x ideal somethingnew].each do |variant|
+      expect(described_class.held_for_capture?(variant)).to be(false)
+    end
+  end
+
   it 'names each source class' do
     expect(described_class.display_name('Bancontact')).to eq('Bancontact')
     expect(described_class.display_name('Ideal')).to eq('iDEAL')

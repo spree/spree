@@ -9,6 +9,7 @@ module SpreeAdyen
     # appending has to happen in a later one — engine callbacks run in load order.
     config.after_initialize do
       Rails.application.config.spree.payment_methods << SpreeAdyen::Gateway
+      Spree.subscribers << SpreeAdyen::CaptureHeldPaymentsSubscriber
     end
   end
 end

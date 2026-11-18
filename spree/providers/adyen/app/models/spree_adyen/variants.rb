@@ -6,14 +6,16 @@ module SpreeAdyen
   #
   # Whether a method can be captured later follows Adyen's per-method pages
   # ("Separate captures"), checked 2026-11-16. A variant missing from the table
-  # is recorded as Unknown and settles as authorized.
+  # is recorded as Unknown and settles as authorized. Klarna, Riverty and Affirm
+  # are held for a capture request even on an account that captures
+  # immediately, per their pages (checked 2026-11-18).
   module Variants
     module_function
 
     # Source class name => display name and whether Adyen captures at once.
     SOURCES = {
       'AchDirectDebit' => { display_name: 'ACH Direct Debit', captured_at_once: false },
-      'Affirm' => { display_name: 'Affirm', captured_at_once: false },
+      'Affirm' => { display_name: 'Affirm', captured_at_once: false, held_for_capture: true },
       'Afterpay' => { display_name: 'Afterpay', captured_at_once: false },
       'Alipay' => { display_name: 'Alipay', captured_at_once: true },
       'AlipayHk' => { display_name: 'AlipayHK', captured_at_once: true },
@@ -42,7 +44,7 @@ module SpreeAdyen
       'Giropay' => { display_name: 'Giropay', captured_at_once: true },
       'Grabpay' => { display_name: 'GrabPay', captured_at_once: true },
       'Ideal' => { display_name: 'iDEAL', captured_at_once: true },
-      'Klarna' => { display_name: 'Klarna', captured_at_once: false },
+      'Klarna' => { display_name: 'Klarna', captured_at_once: false, held_for_capture: true },
       'Oney' => { display_name: 'Oney', captured_at_once: false },
       'OnlineBankingCzechRepublic' => { display_name: 'Online Banking Czech Republic', captured_at_once: true },
       'OnlineBankingPoland' => { display_name: 'Online Banking Poland', captured_at_once: true },
@@ -51,7 +53,7 @@ module SpreeAdyen
       'Paypo' => { display_name: 'PayPo', captured_at_once: false },
       'Paysafecard' => { display_name: 'PaySafeCard', captured_at_once: true },
       'RatePayDirectDebit' => { display_name: 'Ratepay Direct debit', captured_at_once: false },
-      'Riverty' => { display_name: 'Riverty', captured_at_once: false },
+      'Riverty' => { display_name: 'Riverty', captured_at_once: false, held_for_capture: true },
       'SamsungPay' => { display_name: 'Samsung Pay', captured_at_once: false },
       'Scalapay' => { display_name: 'Scalapay', captured_at_once: false },
       'SepaDirectDebit' => { display_name: 'SEPA Direct Debit', captured_at_once: false },
@@ -192,6 +194,14 @@ module SpreeAdyen
       return false if card?(variant)
 
       SOURCES.dig(source_class_name(variant), :captured_at_once) || false
+    end
+
+    # @return [Boolean] whether Adyen holds the money until a capture request
+    #   whatever the merchant account's capture delay says
+    def held_for_capture?(variant)
+      return false if card?(variant)
+
+      SOURCES.dig(source_class_name(variant), :held_for_capture) || false
     end
 
     # @param class_name [String] a source class's name without its namespace
