@@ -97,6 +97,12 @@ RSpec.describe 'agent reporting tools' do
       expect(result[:rows].size).to eq(Time.current.month)
     end
 
+    it 'refuses a grain that is not a name' do
+      result = tool('query_report').call(metrics: ['orders'], dimensions: [{ 'name' => 'completed_at', 'grain' => 5 }])
+
+      expect(result[:error]).to eq('grain for completed_at must be a string')
+    end
+
     # Hour grain is the reporting default, and over a year it is refused with
     # advice the model cannot follow without a grain of its own.
     it 'picks a grain that fits the range when given none' do
