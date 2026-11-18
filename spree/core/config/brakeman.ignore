@@ -115,6 +115,29 @@
       "user_input": "resolve_sql(filter[:metric].sql_for(:grouped => true))",
       "warning_code": 0,
       "warning_type": "SQL Injection"
+    },
+    {
+      "check_name": "SQL",
+      "code": "Arel.sql((typed_ids_sql(query) or \"#{typed_ids_sql(query)} UNION SELECT id FROM (#{product_ids_sql do\n \"#{similarity_sql(table, query)} >= #{0.5}\"\n end.join(\" UNION \")}) closest WHERE NOT EXISTS (#{scope.where(Spree::Product.arel_table[:id].in(Arel.sql(typed_ids_sql(query)))).except(:includes, :preload, :order).select(\"1\").to_sql})\"))",
+      "confidence": "Medium",
+      "cwe_id": [
+        89
+      ],
+      "file": "app/models/spree/search_provider/postgres.rb",
+      "fingerprint": "9b3a8166dc03ad3e40179e0dc8863fafab03e800171eecc8d6378026c9a4de2e",
+      "line": 85,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "location": {
+        "type": "method",
+        "class": "Spree::SearchProvider::Postgres",
+        "method": "apply_search_and_filters"
+      },
+      "message": "Possible SQL injection",
+      "note": "False positive: every value from the request is quoted with connection.quote (the query text, the locale) or reduced to alphanumeric words before quoting (the tsquery); the text search configuration comes from the LANGUAGES allowlist; table names come from quoted_table_name; the embedded subqueries are ActiveRecord to_sql output.",
+      "render_path": null,
+      "user_input": "typed_ids_sql(query)",
+      "warning_code": 0,
+      "warning_type": "SQL Injection"
     }
   ]
 }

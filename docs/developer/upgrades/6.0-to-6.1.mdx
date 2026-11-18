@@ -9,18 +9,21 @@ description: Guide to upgrading a Spree 6.0 application to Spree 6.1
 
 ## How to upgrade
 
-<CodeGroup>
+<Tabs>
+  <Tab title="Spree CLI">
+    ```bash
+    spree upgrade
+    ```
+  </Tab>
+  <Tab title="Without CLI">
+    Set the Spree gems in your `Gemfile` to `~> 6.1`, then run:
 
-```bash Spree CLI (Docker)
-spree upgrade
-```
-
-```bash Without Spree CLI
-bundle update
-bundle exec rake spree:install:migrations && bin/rails db:migrate
-```
-
-</CodeGroup>
+    ```bash
+    bundle update
+    bundle exec rake spree:install:migrations && bin/rails db:migrate
+    ```
+  </Tab>
+</Tabs>
 
 ## Behavioral changes
 
