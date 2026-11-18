@@ -45,13 +45,29 @@ module Spree
       TIME_RANGE_KEYS = %w[preset since until].freeze
 
       def call(metrics:, dimensions: nil, time_range: nil, filters: nil, sort: nil, limit: nil, currency: nil)
-        query = build_query(metrics: metrics, dimensions: dimensions, time_range: time_range,
-                            filters: filters, sort: sort, limit: limit, currency: currency)
+        row_limit = [(limit || DEFAULT_LIMIT).to_i, MAX_LIMIT].min
+        raise Spree::Reporting::InvalidQuery, "limit must be between 1 and #{MAX_LIMIT}" if row_limit < 1
 
-        refusal = unauthorized_members(query) || truncated_series(query)
+        # An unsorted date series is reported whole or not at all: cut at the
+        # limit, it would end early next to totals for the whole range. A
+        # sorted one ("the five best days") is a ranking, cut on purpose.
+        dimensions = Array(dimensions).map { |entry| entry.is_a?(Hash) ? entry.stringify_keys : entry }
+        series = sort.blank? && dimensions.any? { |entry| time_dimension_for(entry) }
+
+        query = build_query(metrics: metrics, dimensions: dimensions, time_range: time_range, filters: filters,
+                            sort: sort, currency: currency, limit: (row_limit unless series),
+                            target_points: series && dimensions.one? ? [TARGET_POINTS, row_limit].min : TARGET_POINTS)
+
+        refusal = unauthorized_members(query)
         return refusal if refusal
 
-        shape(query.execute)
+        result = query.execute
+        if series && Array(result.rows).size > row_limit
+          return { error: "This report has #{result.rows.size} rows, more than the limit of #{row_limit}. " \
+                          "Shorten the range, use a coarser grain, or raise limit (up to #{MAX_LIMIT})." }
+        end
+
+        shape(result)
       rescue Spree::Reporting::UnknownMember => e
         { error: e.message, valid: Array(e.valid).map(&:to_s) }
       rescue Spree::Reporting::InvalidQuery => e
@@ -67,17 +83,13 @@ module Spree
 
       private
 
-      def build_query(metrics:, dimensions:, time_range:, filters:, sort:, limit:, currency:)
-        parameters = {
-          'metrics' => Array(metrics),
-          'filters' => Array(filters),
-          'limit' => [(limit || DEFAULT_LIMIT).to_i, MAX_LIMIT].min
-        }
+      def build_query(metrics:, dimensions:, time_range:, filters:, sort:, currency:, limit:, target_points:)
+        parameters = { 'metrics' => Array(metrics), 'filters' => Array(filters) }
+        parameters['limit'] = limit if limit
         parameters['time_range'] = normalize_time_range(time_range) if time_range.present?
         parameters['sort'] = sort if sort.present?
         parameters['currency'] = currency if currency.present?
 
-        dimensions = Array(dimensions).map { |entry| entry.is_a?(Hash) ? entry.stringify_keys : entry }
         ungrained = dimensions.index { |entry| ungrained_time_dimension(entry) }
         return reporting_query(parameters.merge('dimensions' => dimensions)) if ungrained.nil?
 
@@ -91,7 +103,7 @@ module Spree
         draft[ungrained] = entry.merge('grain' => dimension.grains.last.to_s)
         query = reporting_query(parameters.merge('dimensions' => draft))
 
-        draft[ungrained] = entry.merge('grain' => fitting_grain(dimension, query).to_s)
+        draft[ungrained] = entry.merge('grain' => fitting_grain(dimension, query, target_points).to_s)
         reporting_query(parameters.merge('dimensions' => draft))
       end
 
@@ -99,11 +111,9 @@ module Spree
         Spree::Reporting::Query.new(store: context.store, params: parameters)
       end
 
-      # The registry's time dimension for an entry that names one without a
-      # grain, or nil. Anything else is left for the query to accept or refuse.
-      def ungrained_time_dimension(entry)
-        return if entry.is_a?(Hash) && ['', nil].exclude?(entry['grain'])
-
+      # The registry's time dimension an entry names, or nil. Anything else is
+      # left for the query to accept or refuse.
+      def time_dimension_for(entry)
         name = entry.is_a?(Hash) ? entry['name'] : entry
         return unless name.is_a?(String) || name.is_a?(Symbol)
 
@@ -111,8 +121,14 @@ module Spree
         dimension if dimension&.time?
       end
 
-      def fitting_grain(dimension, query)
-        dimension.grains.find { |grain| (bucket_count(query, grain) || Float::INFINITY) <= TARGET_POINTS } ||
+      def ungrained_time_dimension(entry)
+        return if entry.is_a?(Hash) && ['', nil].exclude?(entry['grain'])
+
+        time_dimension_for(entry)
+      end
+
+      def fitting_grain(dimension, query, target_points)
+        dimension.grains.find { |grain| (bucket_count(query, grain) || Float::INFINITY) <= target_points } ||
           dimension.grains.last
       end
 
@@ -128,19 +144,6 @@ module Spree
         when :week then ((last.to_date.beginning_of_week(:monday) - first.to_date.beginning_of_week(:monday)).to_i / 7) + 1
         when :month then ((last.year * 12) + last.month) - ((first.year * 12) + first.month) + 1
         end
-      end
-
-      # A date series longer than the row limit would lose its last buckets
-      # while the totals still cover the whole range, so it is refused instead.
-      def truncated_series(query)
-        entry = query.time_dimension
-        return if entry.nil? || query.limit.nil?
-
-        buckets = bucket_count(query, entry[:grain])
-        return if buckets.nil? || buckets <= query.limit
-
-        { error: "#{entry[:dimension].name} by #{entry[:grain]} over this range is #{buckets} rows, more than the " \
-                 "limit of #{query.limit}. Shorten the range, use a coarser grain, or raise limit (up to #{MAX_LIMIT})." }
       end
 
       # A range in a shape the query does not read would be dropped there for

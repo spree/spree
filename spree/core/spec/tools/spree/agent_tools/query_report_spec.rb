@@ -89,14 +89,38 @@ RSpec.describe Spree::AgentTools::QueryReport do
   # Returning the first 50 of 60 months would read as a complete series next
   # to totals that cover all 60.
   it 'refuses a date series longer than the row limit' do
-    result = report(metrics: ['orders'], dimensions: ['completed_at'], time_range: { 'since' => '2021-01-01', 'until' => '2025-12-31' })
+    five_years = { 'since' => '2021-01-01', 'until' => '2025-12-31' }
 
-    expect(result[:error]).to eq('completed_at by month over this range is 60 rows, more than the limit of 50. ' \
+    result = report(metrics: ['orders'], dimensions: ['completed_at'], time_range: five_years)
+    expect(result[:error]).to eq('This report has 60 rows, more than the limit of 50. ' \
                                  'Shorten the range, use a coarser grain, or raise limit (up to 500).')
 
-    result = report(metrics: ['orders'], dimensions: ['completed_at'], limit: 60,
+    expect(report(metrics: ['orders'], dimensions: ['completed_at'], limit: 60, time_range: five_years)[:row_count]).to eq(60)
+  end
+
+  # With a second dimension only the groups that sold become rows, so the
+  # calendar says nothing about the row count.
+  it 'counts the rows a report returns, not the periods in its range' do
+    create(:completed_order_with_totals, store: store).update_columns(completed_at: Time.zone.parse('2023-06-15 12:00'))
+
+    result = report(metrics: ['orders'], dimensions: [{ 'name' => 'completed_at', 'grain' => 'month' }, 'channel'],
                     time_range: { 'since' => '2021-01-01', 'until' => '2025-12-31' })
-    expect(result[:row_count]).to eq(60)
+
+    expect(result[:error]).to be_nil
+    expect(result[:row_count]).to eq(1)
+  end
+
+  # A sorted series is a ranking ("the five best days"), cut on purpose.
+  it 'cuts a sorted series at the limit' do
+    result = report(metrics: ['orders'], dimensions: ['completed_at'], sort: '-orders', limit: 5,
+                    time_range: { 'preset' => 'last_30_days' })
+
+    expect(result[:error]).to be_nil
+    expect(result[:row_count]).to eq(5)
+  end
+
+  it 'picks a grain that fits a smaller limit' do
+    expect(picked_grain(limit: 5, time_range: { 'since' => '2026-01-01', 'until' => '2026-01-10' })).to eq(:week)
   end
 
   it 'refuses a preset given with dates' do
