@@ -102,7 +102,7 @@ module Spree
       # The registry's time dimension for an entry that names one without a
       # grain, or nil. Anything else is left for the query to accept or refuse.
       def ungrained_time_dimension(entry)
-        return if entry.is_a?(Hash) && entry['grain'].present?
+        return if entry.is_a?(Hash) && ['', nil].exclude?(entry['grain'])
 
         name = entry.is_a?(Hash) ? entry['name'] : entry
         return unless name.is_a?(String) || name.is_a?(Symbol)
@@ -123,9 +123,9 @@ module Spree
         last = query.time_range.last.in_time_zone(query.time_zone)
 
         case grain
-        when :hour then ((last - first) / 1.hour).ceil
+        when :hour then ((last - first.beginning_of_hour) / 1.hour).floor + 1
         when :day then (last.to_date - first.to_date).to_i + 1
-        when :week then ((last.to_date.beginning_of_week - first.to_date.beginning_of_week).to_i / 7) + 1
+        when :week then ((last.to_date.beginning_of_week(:monday) - first.to_date.beginning_of_week(:monday)).to_i / 7) + 1
         when :month then ((last.year * 12) + last.month) - ((first.year * 12) + first.month) + 1
         end
       end

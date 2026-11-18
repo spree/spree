@@ -98,9 +98,11 @@ RSpec.describe 'agent reporting tools' do
     end
 
     it 'refuses a grain that is not a name' do
-      result = tool('query_report').call(metrics: ['orders'], dimensions: [{ 'name' => 'completed_at', 'grain' => 5 }])
+      [5, []].each do |grain|
+        result = tool('query_report').call(metrics: ['orders'], dimensions: [{ 'name' => 'completed_at', 'grain' => grain }])
 
-      expect(result[:error]).to eq('grain for completed_at must be a string')
+        expect(result[:error]).to eq('grain for completed_at must be a string')
+      end
     end
 
     # Hour grain is the reporting default, and over a year it is refused with
@@ -128,7 +130,7 @@ RSpec.describe 'agent reporting tools' do
     # A store whose clocks change inside the range still has 31 calendar days
     # in the last 30, so it stays daily.
     it 'counts days on the store calendar across a clock change' do
-      store.update!(preferred_timezone: 'America/New_York')
+      allow(store).to receive(:preferred_timezone).and_return('America/New_York')
 
       result = tool('query_report').call(metrics: ['orders'], dimensions: ['completed_at'],
                                          time_range: { 'since' => '2026-10-15', 'until' => '2026-11-14' })
