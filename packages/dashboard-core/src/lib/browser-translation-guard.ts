@@ -50,7 +50,10 @@ export type TranslatorMutation = {
 // Original text node → the translator's `<font>` that took its place. Weak, so
 // a node React has let go of is not kept alive.
 const replacements = new WeakMap<object, DomNode>()
-let observer: { takeRecords(): TranslatorMutation[] } | null = null
+/** The `MutationObserver` feeding {@link recordTranslatorReplacements}. */
+export type TranslatorWatcher = { takeRecords(): TranslatorMutation[] }
+
+let observer: TranslatorWatcher | null = null
 
 function isTranslatorWrapper(node: DomNode | null | undefined): node is DomNode {
   return node?.nodeName?.toUpperCase() === 'FONT'
@@ -76,6 +79,14 @@ export function recordTranslatorReplacements(records: Iterable<TranslatorMutatio
   }
 }
 
+// The translator's `<font>` for a text node it replaced. Records the observer
+// has queued but not yet delivered are read first: the translator and React can
+// both touch the node within one task, before the observer's callback runs.
+function replacementOf(node: DomNode): DomNode | undefined {
+  if (observer && !replacements.has(node)) recordTranslatorReplacements(observer.takeRecords())
+  return replacements.get(node)
+}
+
 // The translator's wrapper standing in for `node` among `parent`'s children:
 // the `<font>` that replaced it, or the `<font>` it was moved into.
 function standIn(node: DomNode | null | undefined, parent: unknown): DomNode | null {
@@ -83,8 +94,7 @@ function standIn(node: DomNode | null | undefined, parent: unknown): DomNode | n
   for (let n = node.parentNode as DomNode | null; n; n = n.parentNode as DomNode | null) {
     if (n.parentNode === parent) return isTranslatorWrapper(n) ? n : null
   }
-  if (observer && !replacements.has(node)) recordTranslatorReplacements(observer.takeRecords())
-  const replacement = replacements.get(node)
+  const replacement = replacementOf(node)
   return replacement && replacement.parentNode === parent ? replacement : null
 }
 
@@ -102,12 +112,15 @@ function ownDescriptor(proto: object, key: string): PropertyDescriptor | undefin
  * replacements. Safe to call more than once; only the first call patches.
  *
  * @param proto the prototype to patch — `Node.prototype` in a browser, a fake in tests
+ * @param watcher what reports the translator's replacements — a `MutationObserver`
+ *   on the document by default, a fake in tests
  * @returns whether this call installed the guard
  */
 export function guardAgainstBrowserTranslation(
   proto: GuardableNode | undefined = typeof Node === 'function'
     ? (Node.prototype as unknown as GuardableNode)
     : undefined,
+  watcher?: TranslatorWatcher | null,
 ): boolean {
   if (!proto) return false
   const marked = proto as GuardableNode & { [GUARDED]?: true }
@@ -142,22 +155,23 @@ export function guardAgainstBrowserTranslation(
       get,
       set(this: DomNode, value: string | null) {
         set.call(this, value)
-        const wrapper = replacements.get(this)
-        if (wrapper?.parentNode && !this.parentNode) wrapper.textContent = value
+        if (this.parentNode) return
+        const wrapper = replacementOf(this)
+        if (wrapper?.parentNode) wrapper.textContent = value
       },
     })
   }
 
   Object.defineProperty(marked, GUARDED, { value: true })
-  watchDocument()
+  observer = watcher === undefined ? watchDocument() : watcher
   return true
 }
 
-function watchDocument(): void {
-  if (typeof MutationObserver === 'undefined' || typeof document === 'undefined') return
+function watchDocument(): TranslatorWatcher | null {
+  if (typeof MutationObserver === 'undefined' || typeof document === 'undefined') return null
   const watcher = new MutationObserver((records) => recordTranslatorReplacements(records))
   watcher.observe(document.documentElement, { childList: true, subtree: true })
-  observer = watcher
+  return watcher
 }
 
 let warned = false

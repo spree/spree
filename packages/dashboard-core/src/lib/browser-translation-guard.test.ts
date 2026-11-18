@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import {
   guardAgainstBrowserTranslation,
   recordTranslatorReplacements,
+  type TranslatorMutation,
 } from './browser-translation-guard'
 
 // A minimal DOM: just enough parent/child bookkeeping to reproduce what a
@@ -63,9 +64,10 @@ class FakeNode {
   }
 }
 
-function setup(guarded = true) {
+function setup(guarded = true, pending: TranslatorMutation[] = []) {
   class Node extends FakeNode {}
-  if (guarded) guardAgainstBrowserTranslation(Node.prototype)
+  if (guarded)
+    guardAgainstBrowserTranslation(Node.prototype, { takeRecords: () => pending.splice(0) })
   const el = (name: string, value?: string) => new Node(name, value)
   return { el, text: (value: string) => el('#text', value) }
 }
@@ -157,6 +159,25 @@ describe('guardAgainstBrowserTranslation', () => {
     label.nodeValue = '2 selected'
     expect(texts(parent)).toEqual(['2 selected'])
     expect(parent.childNodes).toEqual([font])
+  })
+
+  it('reads replacements the observer has not delivered yet', () => {
+    // The translator swaps the text and React changes it within one task, so
+    // the record is still queued in the observer when the new text arrives.
+    const pending: TranslatorMutation[] = []
+    const { el, text } = setup(true, pending)
+    const parent = el('div')
+    const label = text('1 selected')
+    parent.appendChild(label)
+    const font = el('FONT')
+    font.textContent = '1 sélectionné'
+    parent.insertBefore(font, label)
+    parent.removeChild(label)
+    pending.push({ removedNodes: [label], addedNodes: [], previousSibling: font })
+
+    label.nodeValue = '2 selected'
+    expect(texts(parent)).toEqual(['2 selected'])
+    expect(pending).toEqual([])
   })
 
   it('does not redirect to an element a translator did not add', () => {

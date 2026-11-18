@@ -75,4 +75,27 @@ test.describe('browser translation', () => {
     expect(errors).toEqual([])
     await expect(page.getByText(/something went wrong/i)).toHaveCount(0)
   })
+
+  test('text React changes in the same task as the translation still shows', async ({ page }) => {
+    await login(page)
+
+    // The translator swaps the text and the new text lands before the
+    // document's MutationObserver has delivered the swap.
+    const shown = await page.evaluate(() => {
+      const holder = document.createElement('div')
+      const text = document.createTextNode('1 selected')
+      holder.appendChild(text)
+      document.body.appendChild(holder)
+      const font = document.createElement('font')
+      font.textContent = '«1 selected»'
+      holder.insertBefore(font, text)
+      holder.removeChild(text)
+      text.nodeValue = '2 selected'
+      const result = holder.textContent
+      holder.remove()
+      return result
+    })
+
+    expect(shown).toBe('2 selected')
+  })
 })
