@@ -9,6 +9,8 @@ description: Guide to upgrading a Spree 6.0 application to Spree 6.1
 
 ## How to upgrade
 
+If your `Gemfile` pins the Spree gems to 6.0 (for example `~> 6.0.0`), change the constraint to `~> 6.1` first. Otherwise the update stays on 6.0.
+
 <Tabs>
   <Tab title="Spree CLI">
     ```bash
@@ -16,8 +18,6 @@ description: Guide to upgrading a Spree 6.0 application to Spree 6.1
     ```
   </Tab>
   <Tab title="Without CLI">
-    Set the Spree gems in your `Gemfile` to `~> 6.1`, then run:
-
     ```bash
     bundle update
     bundle exec rake spree:install:migrations && bin/rails db:migrate
