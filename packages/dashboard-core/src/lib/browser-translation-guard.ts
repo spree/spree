@@ -20,8 +20,10 @@
 // - React changing a replaced text node's text writes the new text into the
 //   `<font>`, which the translator then translates again.
 //
-// Anything else — every node still where React put it, every page with no
-// translator — goes to the browser's own methods unchanged.
+// A node the guard cannot account for is skipped (removal) or appended
+// (insertion) only while the page is being translated. Otherwise — every node
+// still where React put it, every page with no translator — the browser's own
+// methods run unchanged, errors included.
 //
 // See https://github.com/facebook/react/issues/11538.
 
@@ -45,57 +47,67 @@ export type TranslatorMutation = {
   removedNodes: ArrayLike<DomNode>
   addedNodes: ArrayLike<DomNode>
   previousSibling: DomNode | null
+  nextSibling: DomNode | null
+}
+
+/** The `MutationObserver` feeding {@link recordTranslatorReplacements}. */
+export type TranslatorWatcher = { takeRecords(): TranslatorMutation[] }
+
+export type BrowserTranslationGuardOptions = {
+  /** What reports the translator's swaps — a `MutationObserver` on the document by default. */
+  watcher?: TranslatorWatcher | null
+  /** Whether the page is being translated — read from the document by default. */
+  isTranslated?: () => boolean
 }
 
 // Original text node → the translator's `<font>` that took its place. Weak, so
 // a node React has let go of is not kept alive.
 const replacements = new WeakMap<object, DomNode>()
-/** The `MutationObserver` feeding {@link recordTranslatorReplacements}. */
-export type TranslatorWatcher = { takeRecords(): TranslatorMutation[] }
+// Text node → the `<font>` inserted right before it: the first half of a
+// translator's insert-then-remove swap.
+const insertedBefore = new WeakMap<object, DomNode>()
+let replacementSeen = false
 
-let observer: TranslatorWatcher | null = null
+const isText = (node: DomNode | null | undefined): node is DomNode => node?.nodeType === TEXT_NODE
+const isFont = (node: DomNode | null | undefined): node is DomNode =>
+  node?.nodeName?.toUpperCase() === 'FONT'
 
-function isTranslatorWrapper(node: DomNode | null | undefined): node is DomNode {
-  return node?.nodeName?.toUpperCase() === 'FONT'
+function remember(text: DomNode, font: DomNode): void {
+  replacements.set(text, font)
+  replacementSeen = true
 }
 
 /**
  * Remembers each text node a translator swapped for a `<font>`. A translator
  * either replaces the node in one step (one record that removes the text and
- * adds the `<font>`) or inserts the `<font>` before it and then removes it (the
- * removal's previous sibling is the `<font>`).
+ * adds the `<font>`), or inserts the `<font>` right before the text and then
+ * removes the text. A `<font>` that merely sits next to a removed text node is
+ * not a swap.
  *
  * @param records mutation records from a `MutationObserver` on the document
  */
 export function recordTranslatorReplacements(records: Iterable<TranslatorMutation>): void {
-  for (const { removedNodes, addedNodes, previousSibling } of records) {
-    for (let i = 0; i < removedNodes.length; i++) {
-      const removed = removedNodes[i]
-      if (removed.nodeType !== TEXT_NODE) continue
-      const replacement =
-        addedNodes.length === removedNodes.length ? addedNodes[i] : i === 0 ? previousSibling : null
-      if (isTranslatorWrapper(replacement)) replacements.set(removed, replacement)
+  for (const { removedNodes, addedNodes, previousSibling, nextSibling } of records) {
+    if (removedNodes.length > 0 && addedNodes.length === removedNodes.length) {
+      for (let i = 0; i < removedNodes.length; i++) {
+        if (isText(removedNodes[i]) && isFont(addedNodes[i]))
+          remember(removedNodes[i], addedNodes[i])
+      }
+    } else if (removedNodes.length === 0 && addedNodes.length === 1) {
+      if (isFont(addedNodes[0]) && isText(nextSibling))
+        insertedBefore.set(nextSibling, addedNodes[0])
+    } else if (addedNodes.length === 0 && removedNodes.length === 1) {
+      const font = insertedBefore.get(removedNodes[0])
+      if (font && font === previousSibling) remember(removedNodes[0], font)
     }
   }
 }
 
-// The translator's `<font>` for a text node it replaced. Records the observer
-// has queued but not yet delivered are read first: the translator and React can
-// both touch the node within one task, before the observer's callback runs.
-function replacementOf(node: DomNode): DomNode | undefined {
-  if (observer && !replacements.has(node)) recordTranslatorReplacements(observer.takeRecords())
-  return replacements.get(node)
-}
-
-// The translator's wrapper standing in for `node` among `parent`'s children:
-// the `<font>` that replaced it, or the `<font>` it was moved into.
-function standIn(node: DomNode | null | undefined, parent: unknown): DomNode | null {
-  if (!node) return null
-  for (let n = node.parentNode as DomNode | null; n; n = n.parentNode as DomNode | null) {
-    if (n.parentNode === parent) return isTranslatorWrapper(n) ? n : null
-  }
-  const replacement = replacementOf(node)
-  return replacement && replacement.parentNode === parent ? replacement : null
+function translatedDocument(): boolean {
+  if (replacementSeen) return true
+  if (typeof document === 'undefined') return false
+  const { classList } = document.documentElement
+  return classList.contains('translated-ltr') || classList.contains('translated-rtl')
 }
 
 function ownDescriptor(proto: object, key: string): PropertyDescriptor | undefined {
@@ -112,19 +124,38 @@ function ownDescriptor(proto: object, key: string): PropertyDescriptor | undefin
  * replacements. Safe to call more than once; only the first call patches.
  *
  * @param proto the prototype to patch — `Node.prototype` in a browser, a fake in tests
- * @param watcher what reports the translator's replacements — a `MutationObserver`
- *   on the document by default, a fake in tests
+ * @param options the watcher and the translation check, replaced in tests
  * @returns whether this call installed the guard
  */
 export function guardAgainstBrowserTranslation(
   proto: GuardableNode | undefined = typeof Node === 'function'
     ? (Node.prototype as unknown as GuardableNode)
     : undefined,
-  watcher?: TranslatorWatcher | null,
+  options: BrowserTranslationGuardOptions = {},
 ): boolean {
   if (!proto) return false
   const marked = proto as GuardableNode & { [GUARDED]?: true }
   if (marked[GUARDED]) return false
+
+  const watcher = options.watcher === undefined ? watchDocument() : options.watcher
+  const isTranslated = options.isTranslated ?? translatedDocument
+
+  // The `<font>` that replaced a text node. When none is attached, read the
+  // records the observer has queued but not delivered yet: the translator and
+  // React can both touch the node within one task.
+  const replacementOf = (node: DomNode): DomNode | undefined => {
+    const known = replacements.get(node)
+    if (known?.parentNode || !watcher) return known
+    recordTranslatorReplacements(watcher.takeRecords())
+    return replacements.get(node)
+  }
+
+  // Only text nodes are replaced, and only by the `<font>` recorded for them.
+  const standIn = (node: DomNode | null | undefined, parent: unknown): DomNode | null => {
+    if (!isText(node)) return null
+    const replacement = replacementOf(node)
+    return replacement && replacement.parentNode === parent ? replacement : null
+  }
 
   const removeChild = proto.removeChild
   const insertBefore = proto.insertBefore
@@ -133,8 +164,12 @@ export function guardAgainstBrowserTranslation(
     const node = child as DomNode | null
     if (node?.parentNode === this) return removeChild.call(this, child) as T
     const wrapper = standIn(node, this)
-    if (wrapper) removeChild.call(this, wrapper)
-    else warnMoved('removeChild')
+    if (wrapper) {
+      removeChild.call(this, wrapper)
+      return child
+    }
+    if (!isTranslated()) return removeChild.call(this, child) as T
+    warnMoved('removeChild')
     return child
   }
 
@@ -142,8 +177,10 @@ export function guardAgainstBrowserTranslation(
     const ref = reference as DomNode | null
     if (!ref || ref.parentNode === this) return insertBefore.call(this, node, reference) as T
     const wrapper = standIn(ref, this)
-    if (!wrapper) warnMoved('insertBefore')
-    return insertBefore.call(this, node, wrapper) as T
+    if (wrapper) return insertBefore.call(this, node, wrapper) as T
+    if (!isTranslated()) return insertBefore.call(this, node, reference) as T
+    warnMoved('insertBefore')
+    return insertBefore.call(this, node, null) as T
   }
 
   const nodeValue = ownDescriptor(proto, 'nodeValue')
@@ -155,7 +192,7 @@ export function guardAgainstBrowserTranslation(
       get,
       set(this: DomNode, value: string | null) {
         set.call(this, value)
-        if (this.parentNode) return
+        if (this.parentNode || !isText(this)) return
         const wrapper = replacementOf(this)
         if (wrapper?.parentNode) wrapper.textContent = value
       },
@@ -163,7 +200,6 @@ export function guardAgainstBrowserTranslation(
   }
 
   Object.defineProperty(marked, GUARDED, { value: true })
-  observer = watcher === undefined ? watchDocument() : watcher
   return true
 }
 
