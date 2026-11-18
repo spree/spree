@@ -159,7 +159,7 @@ class AgentTool
       private
 
       def items_schema(items)
-        types = Array(items || :string).map { |type| { 'type' => json_type(type) } }
+        types = (Array(items).presence || [:string]).map { |type| { 'type' => json_type(type) } }
 
         types.one? ? types.first : { 'anyOf' => types }
       end

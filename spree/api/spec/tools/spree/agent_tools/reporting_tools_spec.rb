@@ -90,11 +90,11 @@ RSpec.describe 'agent reporting tools' do
     it 'groups a date dimension by the grain it is given' do
       result = tool('query_report').call(metrics: ['net_sales'],
                                          dimensions: [{ 'name' => 'completed_at', 'grain' => 'month' }],
-                                         time_range: { 'preset' => 'year_to_date' })
+                                         time_range: { 'since' => '2026-01-01', 'until' => '2026-03-31' })
 
       expect(result[:error]).to be_nil
       expect(result.dig(:meta, :dimensions)).to eq([{ name: :completed_at, grain: :month }])
-      expect(result[:rows].size).to eq(Time.current.month)
+      expect(result[:rows].size).to eq(3)
     end
 
     it 'refuses a grain that is not a name' do
@@ -123,6 +123,32 @@ RSpec.describe 'agent reporting tools' do
       range = result.dig(:meta, :time_range)
       expect(range.first.to_date).to eq(Date.new(2026, 9, 1))
       expect(range.last.to_date).to eq(Date.new(2026, 11, 30))
+    end
+
+    # A store whose clocks change inside the range still has 31 calendar days
+    # in the last 30, so it stays daily.
+    it 'counts days on the store calendar across a clock change' do
+      store.update!(preferred_timezone: 'America/New_York')
+
+      result = tool('query_report').call(metrics: ['orders'], dimensions: ['completed_at'],
+                                         time_range: { 'since' => '2026-10-15', 'until' => '2026-11-14' })
+
+      expect(result.dig(:meta, :dimensions, 0, :grain)).to eq(:day)
+    end
+
+    # Options the agent set on the dimension reach the query, which accepts or
+    # refuses them, rather than being dropped with the missing grain.
+    it 'keeps the options given with a date dimension' do
+      result = tool('query_report').call(metrics: ['orders'],
+                                         dimensions: [{ 'name' => 'completed_at', 'include_empty' => true }])
+
+      expect(result[:error]).to include('does not support include_empty')
+    end
+
+    it 'refuses a range given both as from and as since' do
+      result = tool('query_report').call(metrics: ['orders'], time_range: { 'since' => '2026-09-01', 'from' => '2026-10-01' })
+
+      expect(result[:error]).to eq('time_range takes from or since, not both')
     end
 
     it 'refuses a range it cannot read rather than reporting on another' do

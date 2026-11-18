@@ -40,7 +40,6 @@ module Spree
       # the series about this long: a month by day, a quarter by week, a year
       # by month. The reporting default, hour, fits almost no question.
       TARGET_POINTS = 31
-      GRAIN_LENGTHS = { hour: 1.hour, day: 1.day, week: 1.week, month: 1.month }.freeze
       # Models often write a range as from/to; both are read as since/until.
       TIME_RANGE_ALIASES = { 'from' => 'since', 'to' => 'until' }.freeze
       TIME_RANGE_KEYS = %w[preset since until].freeze
@@ -85,13 +84,14 @@ module Spree
         # The range decides the grain, and only the query resolves the range
         # (presets, the store's timezone), so it is built once at the coarsest
         # grain to read the range back, then again at the grain that fits.
-        dimension = ungrained_time_dimension(dimensions[ungrained])
-        name = dimension.name.to_s
+        entry = dimensions[ungrained]
+        dimension = ungrained_time_dimension(entry)
+        entry = { 'name' => entry } unless entry.is_a?(Hash)
         draft = dimensions.dup
-        draft[ungrained] = { 'name' => name, 'grain' => dimension.grains.last.to_s }
-        range = reporting_query(parameters.merge('dimensions' => draft)).time_range
+        draft[ungrained] = entry.merge('grain' => dimension.grains.last.to_s)
+        query = reporting_query(parameters.merge('dimensions' => draft))
 
-        draft[ungrained] = { 'name' => name, 'grain' => fitting_grain(dimension, range).to_s }
+        draft[ungrained] = entry.merge('grain' => fitting_grain(dimension, query).to_s)
         reporting_query(parameters.merge('dimensions' => draft))
       end
 
@@ -111,10 +111,23 @@ module Spree
         dimension if dimension&.time?
       end
 
-      def fitting_grain(dimension, range)
-        length = range.last - range.first
-        dimension.grains.find { |grain| GRAIN_LENGTHS[grain] && length / GRAIN_LENGTHS[grain] <= TARGET_POINTS } ||
+      def fitting_grain(dimension, query)
+        dimension.grains.find { |grain| (bucket_count(query, grain) || Float::INFINITY) <= TARGET_POINTS } ||
           dimension.grains.last
+      end
+
+      # Counted on the store's calendar, as the adapter buckets them, so a
+      # daylight saving change does not push 31 days over the target.
+      def bucket_count(query, grain)
+        first = query.time_range.first.in_time_zone(query.time_zone)
+        last = query.time_range.last.in_time_zone(query.time_zone)
+
+        case grain
+        when :hour then ((last - first) / 1.hour).ceil
+        when :day then (last.to_date - first.to_date).to_i + 1
+        when :week then ((last.to_date.beginning_of_week - first.to_date.beginning_of_week).to_i / 7) + 1
+        when :month then ((last.year * 12) + last.month) - ((first.year * 12) + first.month) + 1
+        end
       end
 
       # A range in a shape the query does not read would be dropped there for
@@ -122,7 +135,14 @@ module Spree
       def normalize_time_range(range)
         return range unless range.is_a?(Hash)
 
-        range = range.to_h.stringify_keys.transform_keys { |key| TIME_RANGE_ALIASES.fetch(key, key) }
+        range = range.to_h.stringify_keys
+        TIME_RANGE_ALIASES.each do |alias_key, key|
+          next unless range.key?(alias_key)
+          raise Spree::Reporting::InvalidQuery, "time_range takes #{alias_key} or #{key}, not both" if range.key?(key)
+
+          range[key] = range.delete(alias_key)
+        end
+
         unknown = range.keys - TIME_RANGE_KEYS
         if unknown.any?
           raise Spree::Reporting::InvalidQuery,
