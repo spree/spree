@@ -77,7 +77,7 @@ module Spree
           # Misspellings are a fallback: offered only when nothing the shopper
           # may see matches as typed, whatever the filters, so they never pad
           # out a search that found what it asked for.
-          seen = scope.where(Spree::Product.arel_table[:id].in(Arel.sql(typed))).except(:includes, :preload, :order).select('1').to_sql
+          seen = scope.where(Spree::Product.arel_table[:id].in(Arel.sql(typed))).except(:order).select('1').to_sql
           closest = product_ids_sql { |table| "#{similarity_sql(table, query)} >= #{TYPO_SIMILARITY}" }.join(' UNION ')
           typed = "#{typed} UNION SELECT id FROM (#{closest}) closest WHERE NOT EXISTS (#{seen})"
         end
@@ -151,10 +151,13 @@ module Spree
         "word_similarity(#{quote(query.to_s.downcase)}, lower(coalesce(#{table}.name, '')))"
       end
 
-      # Every word must match; the last one matches as a prefix, so results
-      # appear while the shopper is still typing it.
+      # Every word must match. Two readings of the query are accepted: the
+      # words as PostgreSQL splits them, which keeps a code or an address whole
+      # the way it is indexed, and our own split with the last word as a
+      # prefix, so results appear while the shopper is still typing it.
       def tsquery_sql(table, query)
-        "to_tsquery(#{configuration(table)}, #{quote("#{query_words(query).join(' & ')}:*")})"
+        "(plainto_tsquery(#{configuration(table)}, #{quote(query.to_s)}) || " \
+          "to_tsquery(#{configuration(table)}, #{quote("#{query_words(query).join(' & ')}:*")}))"
       end
 
       # A decimal stays one word ("1.5"), the way PostgreSQL reads it in a name.

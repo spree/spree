@@ -72,6 +72,13 @@ module Spree
         expect(search("Blue Shirt#{' ' * 200}").products).to contain_exactly(shirt)
       end
 
+      it 'matches a code or an address the way PostgreSQL indexes it' do
+        shirt.update!(name: 'Shirt AB-123', description: 'Questions: care@example.com')
+
+        expect(search('shirt ab-123').products).to contain_exactly(shirt)
+        expect(search('care@example.com').products).to contain_exactly(shirt)
+      end
+
       it 'returns the total count and pages' do
         result = search('blue', limit: 1)
 
