@@ -46,6 +46,10 @@ test.describe('browser translation', () => {
     // Found by attributes from here on: a translator rewrites text, not markup.
     const tiles = page.locator('[data-slot="media-thumbnail"]')
     await expect(tiles).toHaveCount(2)
+    const card = page.locator('[data-slot="card"]').filter({ has: tiles.first() })
+    const selectAll = card.getByRole('checkbox', { name: /select all media/i })
+    // The bar's count is the text beside its select-all checkbox.
+    const count = selectAll.locator('xpath=..')
     const tick = async (index: number) => {
       await tiles.nth(index).hover()
       await tiles.nth(index).getByRole('checkbox').click()
@@ -58,18 +62,19 @@ test.describe('browser translation', () => {
     // Selecting swaps the translated card title for the selection bar.
     await translatePage(page)
     await tick(0)
-    await expect(page.getByText(/1 selected/)).toBeVisible()
+    await expect(count).toHaveText('1 selected')
 
     // The count sits beside the bar's checkbox, so React updates its text node
     // in place: the page must show the new count, not the stale translation.
     await translatePage(page)
     await tick(1)
-    await expect(page.getByText(/2 selected/)).toBeVisible()
+    await expect(count).toHaveText('2 selected')
 
     // Clearing the selection removes the translated bar and restores the title.
     await translatePage(page)
-    await page.getByRole('checkbox', { name: /select all media/i }).click()
-    await expect(page.getByText(/^\W*\d+ selected\W*$/)).toHaveCount(0)
+    await selectAll.click()
+    await expect(selectAll).toHaveCount(0)
+    await expect(card.locator('[data-slot="card-title"]')).toHaveText('Media')
     await expect(tiles).toHaveCount(2)
 
     expect(errors).toEqual([])
