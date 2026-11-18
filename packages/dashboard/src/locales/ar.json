@@ -3377,6 +3377,7 @@
           "check": {
             "passed": "ناجح",
             "failed": "غير ناجح",
+            "unavailable": "غير متاح",
             "not_checked": "لم يتم التحقق"
           },
           "captures": "عمليات التحصيل",

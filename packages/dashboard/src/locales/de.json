@@ -3353,6 +3353,7 @@
           "check": {
             "passed": "Bestanden",
             "failed": "Nicht bestanden",
+            "unavailable": "Nicht verfügbar",
             "not_checked": "Nicht geprüft"
           },
           "captures": "Erfassungen",

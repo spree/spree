@@ -3353,6 +3353,7 @@
           "check": {
             "passed": "Passed",
             "failed": "Did not pass",
+            "unavailable": "Not available",
             "not_checked": "Not checked"
           },
           "captures": "Captures",

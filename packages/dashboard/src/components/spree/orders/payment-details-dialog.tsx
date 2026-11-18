@@ -22,22 +22,34 @@ import {
 import { ExternalLinkIcon } from '@spree/dashboard-ui/icons'
 import { useTranslation } from 'react-i18next'
 
-type CheckOutcome = 'passed' | 'failed' | 'not_checked'
+export type CheckOutcome = 'passed' | 'failed' | 'unavailable' | 'not_checked'
 
 const OUTCOME_VARIANTS = {
   passed: 'success',
   failed: 'destructive',
+  unavailable: 'warning',
   not_checked: 'outline',
 } as const
 
-function addressCheck(payment: Payment): CheckOutcome {
+// Results where the issuer did not run the check at all — the system was
+// down, the card or its issuer does not support it — as opposed to one it ran
+// and the details did not match. Spree still counts these as risky; only the
+// label differs. Meanings follow ActiveMerchant's AVSResult and CVVResult.
+const UNAVAILABLE_AVS_CODES = new Set(['E', 'G', 'I', 'R', 'S', 'U'])
+const UNAVAILABLE_CVV_CODES = new Set(['P', 'S', 'U', 'X'])
+
+export function addressCheck(payment: Pick<Payment, 'avs_response' | 'avs_risky'>): CheckOutcome {
   if (!payment.avs_response) return 'not_checked'
-  return payment.avs_risky ? 'failed' : 'passed'
+  if (!payment.avs_risky) return 'passed'
+  return UNAVAILABLE_AVS_CODES.has(payment.avs_response) ? 'unavailable' : 'failed'
 }
 
-function securityCodeCheck(payment: Payment): CheckOutcome {
+export function securityCodeCheck(
+  payment: Pick<Payment, 'cvv_response_code' | 'cvv_risky'>,
+): CheckOutcome {
   if (!payment.cvv_response_code) return 'not_checked'
-  return payment.cvv_risky ? 'failed' : 'passed'
+  if (!payment.cvv_risky) return 'passed'
+  return UNAVAILABLE_CVV_CODES.has(payment.cvv_response_code) ? 'unavailable' : 'failed'
 }
 
 /** What the card issuer reported about a payment, and each capture of its money. */

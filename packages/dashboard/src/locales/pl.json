@@ -3383,6 +3383,7 @@
           "check": {
             "passed": "Pozytywna",
             "failed": "Negatywna",
+            "unavailable": "Niedostępna",
             "not_checked": "Niesprawdzona"
           },
           "captures": "Pobrania środków",

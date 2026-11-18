@@ -3344,6 +3344,7 @@
           "check": {
             "passed": "通过",
             "failed": "未通过",
+            "unavailable": "不可用",
             "not_checked": "未验证"
           },
           "captures": "扣款记录",

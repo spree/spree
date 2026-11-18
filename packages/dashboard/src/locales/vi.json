@@ -3352,6 +3352,7 @@
           "check": {
             "passed": "Đã đậu",
             "failed": "Không vượt qua",
+            "unavailable": "Không khả dụng",
             "not_checked": "Chưa được kiểm tra"
           },
           "captures": "Ảnh chụp",

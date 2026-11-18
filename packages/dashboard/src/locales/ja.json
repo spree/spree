@@ -3352,6 +3352,7 @@
           "check": {
             "passed": "合格",
             "failed": "不合格",
+            "unavailable": "利用不可",
             "not_checked": "未確認"
           },
           "captures": "確定",

@@ -3354,6 +3354,7 @@
           "check": {
             "passed": "Réussie",
             "failed": "Échouée",
+            "unavailable": "Non disponible",
             "not_checked": "Non vérifiée"
           },
           "captures": "Captures",
