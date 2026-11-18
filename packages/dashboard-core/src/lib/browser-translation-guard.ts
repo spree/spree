@@ -55,6 +55,9 @@ export type TranslatorMutation = {
 /** The `MutationObserver` feeding {@link recordTranslatorReplacements}. */
 export type TranslatorWatcher = { takeRecords(): TranslatorMutation[] }
 
+/** Text node → the `<font>` inserted right before it, still waiting for the text's removal. */
+export type SwapCandidates = Map<DomNode, DomNode>
+
 export type BrowserTranslationGuardOptions = {
   /** What reports the translator's swaps — a `MutationObserver` on the document by default. */
   watcher?: TranslatorWatcher | null
@@ -76,12 +79,15 @@ function markedTranslated(): boolean {
   return classList.contains('translated-ltr') || classList.contains('translated-rtl')
 }
 
+// Google Translate gives every wrapper it creates `vertical-align: inherit`.
+// Read from the parsed style, so spacing or other declarations in the
+// attribute make no difference.
+const translatorStyled = (font: DomNode): boolean => font.style?.verticalAlign === 'inherit'
+
 // A `<font>` swapped in for text is a translator's only with evidence of one:
-// Google Translate marks the root element as translated and gives every
-// wrapper it creates `vertical-align: inherit`. Code formatting its own text
-// with a `<font>` has neither.
-const fromTranslator = (font: DomNode): boolean =>
-  font.style?.verticalAlign === 'inherit' || markedTranslated()
+// Google Translate marks the root element as translated and styles its
+// wrappers. Code formatting its own text with a `<font>` has neither.
+const fromTranslator = (font: DomNode): boolean => translatorStyled(font) || markedTranslated()
 
 function remember(text: DomNode, font: DomNode): void {
   if (!fromTranslator(font)) return
@@ -92,16 +98,20 @@ function remember(text: DomNode, font: DomNode): void {
  * Remembers each text node a translator swapped for a `<font>`. A translator
  * either replaces the node in one step (one record that removes the text and
  * adds the `<font>`), or inserts the `<font>` right before the text and then
- * removes the text. A translator does both halves in one task, so they arrive
- * in the same batch of records; an insertion is only paired with a removal from
- * that batch. A `<font>` that merely sits next to a removed text node, or was
+ * removes the text. A translator does both halves in one task, so an insertion
+ * is only paired with a removal from the same task: the same batch of records,
+ * or — when the guard reads records early, within the task — the candidates
+ * kept for it. A `<font>` that merely sits next to a removed text node, or was
  * inserted before it some time earlier, is not a swap.
  *
  * @param records mutation records from a `MutationObserver` on the document
+ * @param insertedBefore insertions still waiting for their removal; a fresh
+ *   map unless records of the same task were read before these
  */
-export function recordTranslatorReplacements(records: Iterable<TranslatorMutation>): void {
-  // Text node → the `<font>` inserted right before it in this batch.
-  const insertedBefore = new Map<DomNode, DomNode>()
+export function recordTranslatorReplacements(
+  records: Iterable<TranslatorMutation>,
+  insertedBefore: SwapCandidates = new Map(),
+): void {
   for (const { removedNodes, addedNodes, previousSibling, nextSibling } of records) {
     if (removedNodes.length > 0 && addedNodes.length === removedNodes.length) {
       for (let i = 0; i < removedNodes.length; i++) {
@@ -119,12 +129,24 @@ export function recordTranslatorReplacements(records: Iterable<TranslatorMutatio
 }
 
 // Whether the page is being translated now: marked as translated, or still
-// holding a wrapper Google Translate made. Both go away when the translation
-// is reverted, so the fallback below does too.
+// holding a wrapper Google Translate made — judged by the same style check
+// used when recording swaps. Both go away when the translation is reverted, so
+// the fallback below does too. Only read once a node is already missing.
 function translatedDocument(): boolean {
   if (markedTranslated()) return true
   if (typeof document === 'undefined') return false
-  return document.querySelector('font[style*="vertical-align: inherit"]') !== null
+  for (const font of Array.from(document.querySelectorAll<HTMLElement>('font[style]'))) {
+    if (translatorStyled(font)) return true
+  }
+  return false
+}
+
+// Whether `node` sits somewhere inside `ancestor`.
+function within(node: DomNode, ancestor: DomNode): boolean {
+  for (let p = node.parentNode as DomNode | null; p; p = p.parentNode as DomNode | null) {
+    if (p === ancestor) return true
+  }
+  return false
 }
 
 function ownDescriptor(proto: object, key: string): PropertyDescriptor | undefined {
@@ -154,7 +176,31 @@ export function guardAgainstBrowserTranslation(
   const marked = proto as GuardableNode & { [GUARDED]?: true }
   if (marked[GUARDED]) return false
 
-  const watcher = options.watcher === undefined ? watchDocument() : options.watcher
+  // Insertions read early, within a task, whose removal may still come in the
+  // same task. Cleared once the task's records have all been delivered, so a
+  // later task cannot adopt an unrelated `<font>`.
+  const candidates: SwapCandidates = new Map()
+  let clearing = false
+  const clearAfterDelivery = () => {
+    if (clearing || candidates.size === 0) return
+    clearing = true
+    // The observer's delivery was queued by the records just read, before
+    // this, so it still sees the candidates.
+    const later =
+      typeof queueMicrotask === 'function'
+        ? queueMicrotask
+        : (fn: () => void) => void Promise.resolve().then(fn)
+    later(() => {
+      clearing = false
+      candidates.clear()
+    })
+  }
+  const deliver = (records: Iterable<TranslatorMutation>) => {
+    recordTranslatorReplacements(records, candidates)
+    candidates.clear()
+  }
+
+  const watcher = options.watcher === undefined ? watchDocument(deliver) : options.watcher
   const isTranslated = options.isTranslated ?? translatedDocument
 
   // The `<font>` that replaced a text node. Records the observer has queued
@@ -162,7 +208,10 @@ export function guardAgainstBrowserTranslation(
   // touch the node within one task, and a newer swap replaces an older one.
   // Only reached for a node no longer where React put it.
   const replacementOf = (node: DomNode): DomNode | undefined => {
-    if (watcher) recordTranslatorReplacements(watcher.takeRecords())
+    if (watcher) {
+      recordTranslatorReplacements(watcher.takeRecords(), candidates)
+      clearAfterDelivery()
+    }
     return replacements.get(node)
   }
 
@@ -174,10 +223,15 @@ export function guardAgainstBrowserTranslation(
   }
 
   // React moving a text node the translator replaced moves its `<font>`, or
-  // the translation would stay behind and show next to the moved text.
+  // the translation would stay behind and show next to the moved text. The
+  // text is either detached or kept inside its own `<font>`; a text node
+  // anywhere else is an ordinary child and moves itself.
   const movedStandIn = (node: unknown, parent: unknown): DomNode | null => {
     const text = node as DomNode | null
-    return text && !text.parentNode ? standIn(text, parent) : null
+    if (!isText(text) || text.parentNode === parent) return null
+    const wrapper = standIn(text, parent)
+    if (!wrapper) return null
+    return !text.parentNode || within(text, wrapper) ? wrapper : null
   }
 
   const removeChild = proto.removeChild
@@ -246,9 +300,11 @@ export function guardAgainstBrowserTranslation(
   return true
 }
 
-function watchDocument(): TranslatorWatcher | null {
+function watchDocument(
+  deliver: (records: Iterable<TranslatorMutation>) => void,
+): TranslatorWatcher | null {
   if (typeof MutationObserver === 'undefined' || typeof document === 'undefined') return null
-  const watcher = new MutationObserver((records) => recordTranslatorReplacements(records))
+  const watcher = new MutationObserver(deliver)
   watcher.observe(document.documentElement, { childList: true, subtree: true })
   return watcher
 }

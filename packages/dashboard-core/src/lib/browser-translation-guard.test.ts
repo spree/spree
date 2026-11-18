@@ -39,8 +39,10 @@ class FakeNode {
     this.appendChild(new FakeNode('#text', value))
   }
 
+  // Like the browser's, appendChild and insertBefore share the insertion
+  // itself rather than calling each other, so each patch is tested on its own.
   appendChild<T>(node: T): T {
-    return this.insertBefore(node, null)
+    return this.place(node, null)
   }
 
   removeChild<T>(node: T): T {
@@ -53,15 +55,25 @@ class FakeNode {
   }
 
   insertBefore<T>(node: T, reference: unknown): T {
+    return this.place(node, reference)
+  }
+
+  private place<T>(node: T, reference: unknown): T {
     const ref = reference as FakeNode | null
     if (ref && ref.parentNode !== this)
       throw new Error('NotFoundError: The object can not be found here.')
     const child = node as unknown as FakeNode
-    if (child.parentNode) child.parentNode.removeChild(child)
+    if (child.parentNode) FakeNode.detach(child)
     const at = ref ? this.childNodes.indexOf(ref) : this.childNodes.length
     this.childNodes.splice(at, 0, child)
     child.parentNode = this
     return node
+  }
+
+  private static detach(child: FakeNode): void {
+    const parent = child.parentNode as FakeNode
+    parent.childNodes = parent.childNodes.filter((c) => c !== child)
+    child.parentNode = null
   }
 }
 
@@ -188,6 +200,49 @@ describe('guardAgainstBrowserTranslation', () => {
     expect(parent.childNodes).toEqual([spinner])
   })
 
+  it('moves the translation when React reorders text kept inside it', () => {
+    const { el, text } = setup()
+    const parent = el('div')
+    const label = text('Save')
+    const end = el('B')
+    parent.appendChild(label)
+    parent.appendChild(end)
+    const font = el('FONT')
+    font.style.verticalAlign = 'inherit'
+    parent.insertBefore(font, label)
+    const hidden = el('SPAN')
+    font.appendChild(hidden)
+    hidden.appendChild(label)
+    recordTranslatorReplacements([
+      { removedNodes: [], addedNodes: [font], previousSibling: null, nextSibling: label },
+      { removedNodes: [label], addedNodes: [], previousSibling: font, nextSibling: end },
+    ])
+
+    expect(parent.insertBefore(label, null)).toBe(label)
+    expect(parent.childNodes).toEqual([end, font])
+    expect(hidden.childNodes).toEqual([label])
+    parent.insertBefore(label, end)
+    expect(parent.childNodes).toEqual([font, end])
+  })
+
+  it('still moves an ordinary text node attached elsewhere', () => {
+    const { el, text } = setup()
+    const parent = el('div')
+    const other = el('div')
+    const label = text('Save')
+    other.appendChild(label)
+    const font = el('FONT')
+    font.style.verticalAlign = 'inherit'
+    parent.appendChild(font)
+    recordTranslatorReplacements([
+      { removedNodes: [label], addedNodes: [font], previousSibling: null, nextSibling: null },
+    ])
+
+    parent.insertBefore(label, font)
+    expect(parent.childNodes).toEqual([label, font])
+    expect(other.childNodes).toEqual([])
+  })
+
   it('shows React’s new text in place of a stale translation', () => {
     const { el, text } = setup()
     const parent = el('div')
@@ -248,6 +303,66 @@ describe('guardAgainstBrowserTranslation', () => {
     expect(parent.childNodes).toEqual([second])
     expect(texts(parent)).toEqual(['2 selected'])
     expect(first.textContent).toBe('1 sélectionné')
+  })
+
+  it('pairs a swap whose halves are read at different points of one task', () => {
+    // The translator inserts an empty wrapper, fills it — React's appendChild
+    // reads the queued insertion right then — and removes the text afterwards.
+    const pending: TranslatorMutation[] = []
+    const { el, text } = setup({ pending })
+    const parent = el('div')
+    const label = text('1 selected')
+    parent.appendChild(label)
+    const font = el('FONT')
+    font.style.verticalAlign = 'inherit'
+    parent.insertBefore(font, label)
+    pending.push({
+      removedNodes: [],
+      addedNodes: [font],
+      previousSibling: null,
+      nextSibling: label,
+    })
+    font.appendChild(text('1 sélectionné'))
+    expect(pending).toEqual([])
+    parent.removeChild(label)
+    pending.push({
+      removedNodes: [label],
+      addedNodes: [],
+      previousSibling: font,
+      nextSibling: null,
+    })
+
+    label.nodeValue = '2 selected'
+    expect(texts(parent)).toEqual(['2 selected'])
+  })
+
+  it('forgets an unpaired insertion once the task is over', async () => {
+    const pending: TranslatorMutation[] = []
+    const { el, text } = setup({ pending, translated: false })
+    const parent = el('div')
+    const label = text('Save')
+    parent.appendChild(label)
+    const font = el('FONT')
+    font.style.verticalAlign = 'inherit'
+    parent.insertBefore(font, label)
+    pending.push({
+      removedNodes: [],
+      addedNodes: [font],
+      previousSibling: null,
+      nextSibling: label,
+    })
+    font.appendChild(text('Help'))
+    await Promise.resolve()
+    parent.removeChild(label)
+    pending.push({
+      removedNodes: [label],
+      addedNodes: [],
+      previousSibling: font,
+      nextSibling: null,
+    })
+
+    label.nodeValue = 'Saved'
+    expect(texts(parent)).toEqual(['Help'])
   })
 
   it('does not take a <font> other code swapped in for its own text', () => {
@@ -363,10 +478,10 @@ describe('guardAgainstBrowserTranslation', () => {
 
   it('drops the translated-page fallback once the translation is reverted', () => {
     const marks = new Set(['translated-ltr'])
-    let styledFont = false
+    let fonts: { style: { verticalAlign: string } }[] = []
     vi.stubGlobal('document', {
       documentElement: { classList: { contains: (name: string) => marks.has(name) } },
-      querySelector: () => (styledFont ? {} : null),
+      querySelectorAll: () => fonts,
     })
     vi.spyOn(console, 'warn').mockImplementation(() => {})
     class Node extends FakeNode {}
@@ -378,9 +493,13 @@ describe('guardAgainstBrowserTranslation', () => {
 
     expect(() => parent.removeChild(label)).not.toThrow()
     marks.clear()
-    styledFont = true
+    // A wrapper left by the translator, however its style attribute is spelled.
+    fonts = [{ style: { verticalAlign: 'inherit' } }]
     expect(() => parent.removeChild(label)).not.toThrow()
-    styledFont = false
+    // A <font> whose style merely mentions the declaration, e.g. in a custom property.
+    fonts = [{ style: { verticalAlign: '' } }]
+    expect(() => parent.removeChild(label)).toThrow(/NotFoundError/)
+    fonts = []
     expect(() => parent.removeChild(label)).toThrow(/NotFoundError/)
     vi.unstubAllGlobals()
   })
