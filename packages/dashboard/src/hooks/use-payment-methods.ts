@@ -53,6 +53,16 @@ export function usePaymentMethods({
   })
 }
 
+/** Names of the store's payment methods containing `text`, in any case. */
+export function usePaymentMethodNames(text: string | undefined) {
+  return useQuery({
+    queryKey: useResourceKey('payment-methods', { name_i_cont: text }),
+    queryFn: () => adminClient.paymentMethods.list({ q: { name_i_cont: text }, limit: 100 }),
+    select: (response) => response.data.map((method) => method.name),
+    enabled: !!text,
+  })
+}
+
 export function usePaymentMethod(id: string | undefined) {
   return useQuery({
     queryKey: useResourceKey('payment-methods', id ?? 'noop'),

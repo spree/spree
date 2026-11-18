@@ -162,6 +162,35 @@ test.describe('payments', () => {
     await expect(updatedRow).toHaveCount(0, { timeout: 15_000 })
   })
 
+  test('prefills a name no method uses, once the names have loaded', async ({ page }) => {
+    const creds = await login(page)
+    // Hold the lookup of names like the provider's, so the sheet opens first.
+    let release: () => void = () => {}
+    const released = new Promise<void>((resolve) => {
+      release = resolve
+    })
+    await page.route(
+      (url) =>
+        url.pathname.endsWith('/api/v3/admin/payment_methods') &&
+        url.searchParams.has('q[name_i_cont]'),
+      async (route) => {
+        await released
+        await route.fulfill({
+          json: { data: [{ name: 'Check' }, { name: 'check 2' }], meta: {} },
+        })
+      },
+    )
+    await openPayments(page, creds.store_id)
+
+    await page.getByRole('button', { name: /add manual method/i }).click()
+    await page.locator('#type').click()
+    await page.getByRole('option', { name: 'Check' }).click()
+    await expect(page.locator('#name')).toHaveValue('')
+
+    release()
+    await expect(page.locator('#name')).toHaveValue('Check 3')
+  })
+
   test('adds checkout conditions to a payment method', async ({ page }) => {
     const creds = await login(page)
     const method = await seedCheck(page, creds, `E2E Conditions ${Date.now()}`)
