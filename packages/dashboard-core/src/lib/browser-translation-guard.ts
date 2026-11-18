@@ -68,6 +68,9 @@ export type BrowserTranslationGuardOptions = {
 // Original text node → the translator's `<font>` that took its place. Weak, so
 // a node React has let go of is not kept alive.
 const replacements = new WeakMap<object, DomNode>()
+// Every `<font>` recorded as a translation. The guard moves these itself, and
+// a move reads like a fresh insertion; a translator always makes a new one.
+const wrappers = new WeakSet<object>()
 
 const isText = (node: DomNode | null | undefined): node is DomNode => node?.nodeType === TEXT_NODE
 const isFont = (node: DomNode | null | undefined): node is DomNode =>
@@ -92,6 +95,7 @@ const fromTranslator = (font: DomNode): boolean => translatorStyled(font) || mar
 function remember(text: DomNode, font: DomNode): void {
   if (!fromTranslator(font)) return
   replacements.set(text, font)
+  wrappers.add(font)
 }
 
 /**
@@ -119,8 +123,11 @@ export function recordTranslatorReplacements(
           remember(removedNodes[i], addedNodes[i])
       }
     } else if (removedNodes.length === 0 && addedNodes.length === 1) {
-      if (isFont(addedNodes[0]) && isText(nextSibling))
-        insertedBefore.set(nextSibling, addedNodes[0])
+      // A recorded `<font>` landing before a text node is the guard moving a
+      // translation along with its text, not a translator swapping that node.
+      const font = addedNodes[0]
+      if (isFont(font) && !wrappers.has(font) && isText(nextSibling))
+        insertedBefore.set(nextSibling, font)
     } else if (addedNodes.length === 0 && removedNodes.length === 1) {
       const font = insertedBefore.get(removedNodes[0])
       if (font && font === previousSibling) remember(removedNodes[0], font)
@@ -174,6 +181,7 @@ export function guardAgainstBrowserTranslation(
 ): boolean {
   if (!proto) return false
   const marked = proto as GuardableNode & { [GUARDED]?: true }
+  const target: GuardableNode = proto
   if (marked[GUARDED]) return false
 
   // Insertions read early, within a task, whose removal may still come in the
@@ -237,67 +245,89 @@ export function guardAgainstBrowserTranslation(
   const removeChild = proto.removeChild
   const insertBefore = proto.insertBefore
   const appendChild = proto.appendChild
+  const nodeValue = ownDescriptor(proto, 'nodeValue')
 
-  proto.removeChild = function <T>(this: GuardableNode, child: T): T {
-    const node = child as DomNode | null
-    if (node?.parentNode === this) return removeChild.call(this, child) as T
-    const wrapper = standIn(node, this)
-    if (wrapper) {
-      removeChild.call(this, wrapper)
+  // A page that froze the DOM prototypes keeps the browser's methods: the
+  // guard backs out instead of failing the dashboard's start-up.
+  try {
+    patch()
+    Object.defineProperty(marked, GUARDED, { value: true })
+    return true
+  } catch {
+    restore()
+    ;(watcher as { disconnect?: () => void } | null)?.disconnect?.()
+    return false
+  }
+
+  function restore(): void {
+    try {
+      target.removeChild = removeChild
+      target.insertBefore = insertBefore
+      target.appendChild = appendChild
+      if (nodeValue) Object.defineProperty(target, 'nodeValue', nodeValue)
+    } catch {
+      // Frozen before anything was replaced: nothing to put back.
+    }
+  }
+
+  function patch(): void {
+    target.removeChild = function <T>(this: GuardableNode, child: T): T {
+      const node = child as DomNode | null
+      if (node?.parentNode === this) return removeChild.call(this, child) as T
+      const wrapper = standIn(node, this)
+      if (wrapper) {
+        removeChild.call(this, wrapper)
+        return child
+      }
+      if (!isTranslated()) return removeChild.call(this, child) as T
+      warnMoved('removeChild')
       return child
     }
-    if (!isTranslated()) return removeChild.call(this, child) as T
-    warnMoved('removeChild')
-    return child
-  }
 
-  proto.insertBefore = function <T>(this: GuardableNode, node: T, reference: unknown): T {
-    // Putting the text back before its own `<font>` is the translation being
-    // undone, not React moving it.
-    const standing = movedStandIn(node, this)
-    const moved = standing === reference ? null : standing
-    const inserted = moved ?? node
-    const ref = reference as DomNode | null
-    if (!ref || ref.parentNode === this) {
-      insertBefore.call(this, inserted, reference)
+    target.insertBefore = function <T>(this: GuardableNode, node: T, reference: unknown): T {
+      // Putting the text back before its own `<font>` is the translation being
+      // undone, not React moving it.
+      const standing = movedStandIn(node, this)
+      const moved = standing === reference ? null : standing
+      const inserted = moved ?? node
+      const ref = reference as DomNode | null
+      if (!ref || ref.parentNode === this) {
+        insertBefore.call(this, inserted, reference)
+        return node
+      }
+      const wrapper = standIn(ref, this)
+      if (wrapper) {
+        insertBefore.call(this, inserted, wrapper)
+        return node
+      }
+      if (!isTranslated()) return insertBefore.call(this, node, reference) as T
+      warnMoved('insertBefore')
+      insertBefore.call(this, inserted, null)
       return node
     }
-    const wrapper = standIn(ref, this)
-    if (wrapper) {
-      insertBefore.call(this, inserted, wrapper)
+
+    target.appendChild = function <T>(this: GuardableNode, node: T): T {
+      const moved = movedStandIn(node, this)
+      if (!moved) return appendChild.call(this, node) as T
+      appendChild.call(this, moved)
       return node
     }
-    if (!isTranslated()) return insertBefore.call(this, node, reference) as T
-    warnMoved('insertBefore')
-    insertBefore.call(this, inserted, null)
-    return node
-  }
 
-  proto.appendChild = function <T>(this: GuardableNode, node: T): T {
-    const moved = movedStandIn(node, this)
-    if (!moved) return appendChild.call(this, node) as T
-    appendChild.call(this, moved)
-    return node
+    if (nodeValue?.get && nodeValue.set) {
+      const { get, set } = nodeValue
+      Object.defineProperty(target, 'nodeValue', {
+        configurable: true,
+        enumerable: nodeValue.enumerable,
+        get,
+        set(this: DomNode, value: string | null) {
+          set.call(this, value)
+          if (this.parentNode || !isText(this)) return
+          const wrapper = replacementOf(this)
+          if (wrapper?.parentNode) wrapper.textContent = value
+        },
+      })
+    }
   }
-
-  const nodeValue = ownDescriptor(proto, 'nodeValue')
-  if (nodeValue?.get && nodeValue.set) {
-    const { get, set } = nodeValue
-    Object.defineProperty(proto, 'nodeValue', {
-      configurable: true,
-      enumerable: nodeValue.enumerable,
-      get,
-      set(this: DomNode, value: string | null) {
-        set.call(this, value)
-        if (this.parentNode || !isText(this)) return
-        const wrapper = replacementOf(this)
-        if (wrapper?.parentNode) wrapper.textContent = value
-      },
-    })
-  }
-
-  Object.defineProperty(marked, GUARDED, { value: true })
-  return true
 }
 
 function watchDocument(

@@ -365,6 +365,42 @@ describe('guardAgainstBrowserTranslation', () => {
     expect(texts(parent)).toEqual(['Help'])
   })
 
+  it('does not take its own move of a translation for a new swap', () => {
+    const pending: TranslatorMutation[] = []
+    const { el, text } = setup({ pending })
+    const parent = el('div')
+    const label = text('A')
+    const other = text('B')
+    const end = text('C')
+    parent.appendChild(label)
+    parent.appendChild(other)
+    parent.appendChild(end)
+    const { font } = translate(label, 'À')
+
+    // React moves A before C, so the guard moves A's translation there…
+    parent.insertBefore(label, end)
+    expect(parent.childNodes).toEqual([other, font, end])
+    pending.push(
+      { removedNodes: [font], addedNodes: [], previousSibling: null, nextSibling: other },
+      { removedNodes: [], addedNodes: [font], previousSibling: other, nextSibling: end },
+    )
+    // …and then drops C, which now sits right after it.
+    parent.removeChild(end)
+    pending.push({ removedNodes: [end], addedNodes: [], previousSibling: font, nextSibling: null })
+
+    end.nodeValue = 'D'
+    expect(font.textContent).toBe('À')
+    expect(texts(parent)).toEqual(['B', 'À'])
+  })
+
+  it('leaves a frozen prototype alone instead of failing', () => {
+    class Node extends FakeNode {}
+    Object.freeze(Node.prototype)
+
+    expect(guardAgainstBrowserTranslation(Node.prototype, { watcher: null })).toBe(false)
+    expect(Object.hasOwn(Node.prototype, 'removeChild')).toBe(false)
+  })
+
   it('does not take a <font> other code swapped in for its own text', () => {
     const { el, text } = setup({ translated: false })
     const parent = el('div')
