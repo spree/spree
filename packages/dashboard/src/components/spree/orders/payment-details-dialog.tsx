@@ -40,22 +40,24 @@ const OUTCOME_VARIANTS = {
 const UNAVAILABLE_AVS_CODES = new Set(['E', 'G', 'I', 'P', 'R', 'S', 'U'])
 const UNAVAILABLE_CVV_CODES = new Set(['P', 'U', 'X'])
 
-function riskyOutcome(code: string, unavailableCodes: Set<string>): CheckOutcome {
-  return unavailableCodes.has(code.trim().toUpperCase()) ? 'unavailable' : 'failed'
+// The backend's risk flag decides whether a check is risky; the code only
+// tells a failure from a check that was not run. A risky result always reads
+// as one of the two, even with a blank code, so its warning is never lost.
+function riskyOutcome(code: string | null, unavailableCodes: Set<string>): CheckOutcome {
+  const normalized = code?.trim().toUpperCase()
+  return normalized && unavailableCodes.has(normalized) ? 'unavailable' : 'failed'
 }
 
 export function addressCheck(payment: Pick<Payment, 'avs_response' | 'avs_risky'>): CheckOutcome {
-  if (!payment.avs_response) return 'not_checked'
-  if (!payment.avs_risky) return 'passed'
-  return riskyOutcome(payment.avs_response, UNAVAILABLE_AVS_CODES)
+  if (payment.avs_risky) return riskyOutcome(payment.avs_response, UNAVAILABLE_AVS_CODES)
+  return payment.avs_response ? 'passed' : 'not_checked'
 }
 
 export function securityCodeCheck(
   payment: Pick<Payment, 'cvv_response_code' | 'cvv_risky'>,
 ): CheckOutcome {
-  if (!payment.cvv_response_code) return 'not_checked'
-  if (!payment.cvv_risky) return 'passed'
-  return riskyOutcome(payment.cvv_response_code, UNAVAILABLE_CVV_CODES)
+  if (payment.cvv_risky) return riskyOutcome(payment.cvv_response_code, UNAVAILABLE_CVV_CODES)
+  return payment.cvv_response_code ? 'passed' : 'not_checked'
 }
 
 /**

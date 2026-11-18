@@ -13,6 +13,8 @@ describe('securityCodeCheck', () => {
     ['U', true, 'unavailable'],
     ['X', true, 'unavailable'],
     ['x ', true, 'unavailable'],
+    ['', true, 'failed'],
+    [null, true, 'failed'],
   ] as const)('reads %s (risky: %s) as %s', (code, risky, outcome) => {
     expect(securityCodeCheck({ cvv_response_code: code, cvv_risky: risky })).toBe(outcome)
   })
@@ -35,6 +37,7 @@ describe('addressCheck', () => {
     ['S', true, 'unavailable'],
     ['U', true, 'unavailable'],
     ['u', true, 'unavailable'],
+    ['', true, 'failed'],
   ] as const)('reads %s (risky: %s) as %s', (code, risky, outcome) => {
     expect(addressCheck({ avs_response: code, avs_risky: risky })).toBe(outcome)
   })
@@ -56,6 +59,10 @@ describe('riskyCardChecks', () => {
     expect(riskyCardChecks({ ...payment, cvv_response_code: 'P', cvv_risky: true })).toBe(
       'unavailable',
     )
+  })
+
+  it('is failed when a risky check has a blank code', () => {
+    expect(riskyCardChecks({ ...payment, cvv_response_code: '', cvv_risky: true })).toBe('failed')
   })
 
   it('is failed when either check failed, even if the other was not run', () => {
