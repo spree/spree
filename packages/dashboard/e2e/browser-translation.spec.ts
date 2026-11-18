@@ -1,8 +1,6 @@
 import { expect, type Page, test } from '@playwright/test'
-import { deleteSeededRecords, gotoIndex, login, searchList, seedRecord } from './helpers'
-
-const CTA = /add product/i
-const SEARCH = /^search…$/i
+import { login } from './helpers'
+import { createProduct, mediaCard } from './products-helpers'
 
 /**
  * Does to the page what Google Translate does: every text node in the app is
@@ -18,8 +16,7 @@ async function translatePage(page: Page) {
     const texts: Text[] = []
     while (walker.nextNode()) {
       const text = walker.currentNode as Text
-      const inFont = text.parentElement?.closest('font')
-      if (!inFont && text.nodeValue?.trim()) texts.push(text)
+      if (!text.parentElement?.closest('font') && text.nodeValue?.trim()) texts.push(text)
     }
     for (const text of texts) {
       const outer = document.createElement('font')
@@ -33,50 +30,47 @@ async function translatePage(page: Page) {
 }
 
 test.describe('browser translation', () => {
-  test.afterEach(({ page }) => deleteSeededRecords(page))
-
-  test('the products list keeps working while the browser translates it', async ({ page }) => {
+  // Sentry SANDBOX-V2-DASHBOARD-C: with the product page translated, ticking a
+  // media tile's checkbox crashed the dashboard to its error screen.
+  test('the product page keeps working while the browser translates it', async ({ page }) => {
     const errors: string[] = []
     page.on('pageerror', (error) => errors.push(error.message))
 
-    const session = await login(page)
-    const stamp = `E2E Translated ${Date.now()}`
-    for (const suffix of ['A', 'B']) {
-      await seedRecord(page, session, '/products', {
-        name: `${stamp} ${suffix}`,
-        status: 'active',
-        prices: [{ amount: '10.00', currency: 'USD' }],
-      })
+    const creds = await login(page)
+    await createProduct(page, creds.store_id, `E2E Translated ${Date.now()}`)
+
+    const media = mediaCard(page)
+    const attach = media.getByRole('button', { name: 'Probe attach video' })
+    await attach.click()
+    await attach.click()
+    // Found by attributes from here on: a translator rewrites text, not markup.
+    const tiles = page.locator('[data-slot="media-thumbnail"]')
+    await expect(tiles).toHaveCount(2)
+    const tick = async (index: number) => {
+      await tiles.nth(index).hover()
+      await tiles.nth(index).getByRole('checkbox').click()
+      // React's error boundary catches the crash, so it shows as the error
+      // screen rather than as a page error.
+      await expect(page.getByText(/something went wrong/i)).toHaveCount(0)
+      expect(errors).toEqual([])
     }
 
-    await gotoIndex(page, `/${session.store_id}/products`, CTA)
-    await searchList(page, SEARCH, stamp)
-    const rows = page.locator('tr').filter({ hasText: stamp })
-    await expect(rows).toHaveCount(2)
-
+    // Selecting swaps the translated card title for the selection bar.
     await translatePage(page)
+    await tick(0)
+    await expect(page.getByText(/1 selected/)).toBeVisible()
 
-    const checkbox = (suffix: string) =>
-      page
-        .locator('tr')
-        .filter({ hasText: `${stamp} ${suffix}` })
-        .getByRole('checkbox', { name: /select row/i })
-
-    // Selecting swaps the translated column headings for the bulk-action bar.
-    await checkbox('A').check()
-    await expect(page.getByText(/^1 selected$/)).toBeVisible()
-
-    // React now updates a count the translator has replaced: the page must
-    // show the new count, not the stale translation of the old one.
+    // The count sits beside the bar's checkbox, so React updates its text node
+    // in place: the page must show the new count, not the stale translation.
     await translatePage(page)
-    await checkbox('B').check()
+    await tick(1)
     await expect(page.getByText(/2 selected/)).toBeVisible()
 
-    // Clearing the selection removes translated text and brings the headings back.
-    await checkbox('A').uncheck()
-    await checkbox('B').uncheck()
+    // Clearing the selection removes the translated bar and restores the title.
+    await translatePage(page)
+    await page.getByRole('checkbox', { name: /select all media/i }).click()
     await expect(page.getByText(/^\W*\d+ selected\W*$/)).toHaveCount(0)
-    await expect(rows).toHaveCount(2)
+    await expect(tiles).toHaveCount(2)
 
     expect(errors).toEqual([])
     await expect(page.getByText(/something went wrong/i)).toHaveCount(0)
