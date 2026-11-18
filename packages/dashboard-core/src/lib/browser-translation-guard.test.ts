@@ -10,6 +10,7 @@ import {
 class FakeNode {
   parentNode: FakeNode | null = null
   childNodes: FakeNode[] = []
+  style: { verticalAlign?: string } = {}
   readonly nodeName: string
   readonly nodeType: number
   private value: string | null
@@ -88,6 +89,7 @@ function translate(
 ): { font: FakeNode; records: TranslatorMutation[] } {
   const parent = text.parentNode as FakeNode
   const font = new (Object.getPrototypeOf(text).constructor)('FONT') as FakeNode
+  font.style.verticalAlign = 'inherit'
   font.textContent = translation
   const after = parent.childNodes[parent.childNodes.indexOf(text) + 1] ?? null
   parent.insertBefore(font, text)
@@ -153,6 +155,7 @@ describe('guardAgainstBrowserTranslation', () => {
     const label = text('Save')
     parent.appendChild(label)
     const font = el('FONT')
+    font.style.verticalAlign = 'inherit'
     parent.insertBefore(font, label)
     font.appendChild(label)
     recordTranslatorReplacements([
@@ -209,6 +212,41 @@ describe('guardAgainstBrowserTranslation', () => {
 
     label.nodeValue = '2 selected'
     expect(texts(parent)).toEqual(['2 selected'])
+  })
+
+  it('follows a newer translation while the older one sits in a fragment', () => {
+    const pending: TranslatorMutation[] = []
+    const { el, text } = setup({ pending })
+    const parent = el('div')
+    const label = text('1 selected')
+    parent.appendChild(label)
+    const { font: first } = translate(label, '1 sélectionné')
+    parent.insertBefore(label, first)
+    el('#document-fragment').appendChild(first)
+    const { font: second, records } = translate(label, '1 sélectionné', { deliver: false })
+    pending.push(...records)
+
+    label.nodeValue = '2 selected'
+    expect(parent.childNodes).toEqual([second])
+    expect(texts(parent)).toEqual(['2 selected'])
+    expect(first.textContent).toBe('1 sélectionné')
+  })
+
+  it('does not take a <font> other code swapped in for its own text', () => {
+    const { el, text } = setup({ translated: false })
+    const parent = el('div')
+    const label = text('Save')
+    parent.appendChild(label)
+    const font = el('FONT')
+    font.textContent = 'Save'
+    parent.insertBefore(font, label)
+    parent.removeChild(label)
+    recordTranslatorReplacements([
+      { removedNodes: [label], addedNodes: [font], previousSibling: null, nextSibling: null },
+    ])
+
+    expect(() => parent.removeChild(label)).toThrow(/NotFoundError/)
+    expect(parent.childNodes).toEqual([font])
   })
 
   it('reads each installation’s own queued records', () => {

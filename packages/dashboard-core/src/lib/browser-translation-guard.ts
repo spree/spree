@@ -35,6 +35,7 @@ type DomNode = {
   nodeType?: number
   nodeName?: string
   textContent?: string | null
+  style?: { verticalAlign?: string }
 }
 
 type GuardableNode = {
@@ -69,7 +70,21 @@ const isText = (node: DomNode | null | undefined): node is DomNode => node?.node
 const isFont = (node: DomNode | null | undefined): node is DomNode =>
   node?.nodeName?.toUpperCase() === 'FONT'
 
+function markedTranslated(): boolean {
+  if (typeof document === 'undefined') return false
+  const { classList } = document.documentElement
+  return classList.contains('translated-ltr') || classList.contains('translated-rtl')
+}
+
+// A `<font>` swapped in for text is a translator's only with evidence of one:
+// Google Translate marks the root element as translated and gives every
+// wrapper it creates `vertical-align: inherit`. Code formatting its own text
+// with a `<font>` has neither.
+const fromTranslator = (font: DomNode): boolean =>
+  font.style?.verticalAlign === 'inherit' || markedTranslated()
+
 function remember(text: DomNode, font: DomNode): void {
+  if (!fromTranslator(font)) return
   replacements.set(text, font)
   replacementSeen = true
 }
@@ -104,12 +119,7 @@ export function recordTranslatorReplacements(records: Iterable<TranslatorMutatio
   }
 }
 
-function translatedDocument(): boolean {
-  if (replacementSeen) return true
-  if (typeof document === 'undefined') return false
-  const { classList } = document.documentElement
-  return classList.contains('translated-ltr') || classList.contains('translated-rtl')
-}
+const translatedDocument = (): boolean => replacementSeen || markedTranslated()
 
 function ownDescriptor(proto: object, key: string): PropertyDescriptor | undefined {
   for (let p: object | null = proto; p; p = Object.getPrototypeOf(p)) {
@@ -141,13 +151,12 @@ export function guardAgainstBrowserTranslation(
   const watcher = options.watcher === undefined ? watchDocument() : options.watcher
   const isTranslated = options.isTranslated ?? translatedDocument
 
-  // The `<font>` that replaced a text node. When none is attached, read the
-  // records the observer has queued but not delivered yet: the translator and
-  // React can both touch the node within one task.
+  // The `<font>` that replaced a text node. Records the observer has queued
+  // but not delivered yet are read first: the translator and React can both
+  // touch the node within one task, and a newer swap replaces an older one.
+  // Only reached for a node no longer where React put it.
   const replacementOf = (node: DomNode): DomNode | undefined => {
-    const known = replacements.get(node)
-    if (known?.parentNode || !watcher) return known
-    recordTranslatorReplacements(watcher.takeRecords())
+    if (watcher) recordTranslatorReplacements(watcher.takeRecords())
     return replacements.get(node)
   }
 

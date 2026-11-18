@@ -4,8 +4,8 @@ import { createProduct, mediaCard } from './products-helpers'
 
 /**
  * Does to the page what Google Translate does: every text node in the app is
- * swapped for `<font><font>translation</font></font>`, and the root element is
- * marked as translated. React keeps pointing at the original, now detached,
+ * swapped for `<font style="vertical-align: inherit"><font …>translation</font></font>`,
+ * and the root element is marked as translated. React keeps pointing at the original, now detached,
  * text nodes.
  */
 async function translatePage(page: Page) {
@@ -21,6 +21,8 @@ async function translatePage(page: Page) {
     for (const text of texts) {
       const outer = document.createElement('font')
       const inner = document.createElement('font')
+      outer.style.verticalAlign = 'inherit'
+      inner.style.verticalAlign = 'inherit'
       inner.textContent = `«${text.nodeValue}»`
       outer.appendChild(inner)
       text.parentNode?.insertBefore(outer, text)
@@ -97,6 +99,7 @@ test.describe('browser translation', () => {
       holder.appendChild(text)
       document.body.appendChild(holder)
       const font = document.createElement('font')
+      font.style.verticalAlign = 'inherit'
       font.textContent = '«1 selected»'
       holder.insertBefore(font, text)
       holder.removeChild(text)
