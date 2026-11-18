@@ -3291,7 +3291,8 @@
           "load_error": "Die Zahlungen für diese Bestellung konnten nicht geladen werden.",
           "view_at_gateway": "In {{gateway}} ansehen",
           "view_details": "Details ansehen",
-          "failed_card_checks": "Kartenprüfung fehlgeschlagen"
+          "failed_card_checks": "Kartenprüfung fehlgeschlagen",
+          "card_checks_unavailable": "Kartenprüfungen nicht verfügbar"
         },
         "priced_by": "Preis von {{name}}",
         "purchase_order": {
@@ -3353,6 +3354,7 @@
           "check": {
             "passed": "Bestanden",
             "failed": "Nicht bestanden",
+            "unavailable": "Nicht verfügbar",
             "not_checked": "Nicht geprüft"
           },
           "captures": "Erfassungen",

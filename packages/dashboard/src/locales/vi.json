@@ -3290,7 +3290,8 @@
           "load_error": "Không thể tải các khoản thanh toán cho đơn đặt hàng này.",
           "view_at_gateway": "Xem tại {{gateway}}",
           "view_details": "Xem chi tiết",
-          "failed_card_checks": "Kiểm tra thẻ không thành công"
+          "failed_card_checks": "Kiểm tra thẻ không thành công",
+          "card_checks_unavailable": "Không thể kiểm tra thẻ"
         },
         "priced_by": "Được định giá bởi {{name}}",
         "purchase_order": {
@@ -3352,6 +3353,7 @@
           "check": {
             "passed": "Đã đậu",
             "failed": "Không vượt qua",
+            "unavailable": "Không khả dụng",
             "not_checked": "Chưa được kiểm tra"
           },
           "captures": "Ảnh chụp",

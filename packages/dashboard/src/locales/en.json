@@ -3291,7 +3291,8 @@
           "load_error": "Could not load the payments for this order.",
           "view_at_gateway": "View at {{gateway}}",
           "view_details": "View details",
-          "failed_card_checks": "Failed card checks"
+          "failed_card_checks": "Failed card checks",
+          "card_checks_unavailable": "Card checks not available"
         },
         "priced_by": "Priced by {{name}}",
         "purchase_order": {
@@ -3353,6 +3354,7 @@
           "check": {
             "passed": "Passed",
             "failed": "Did not pass",
+            "unavailable": "Not available",
             "not_checked": "Not checked"
           },
           "captures": "Captures",
