@@ -114,6 +114,26 @@ RSpec.describe Spree::Api::V3::Webhooks::PaymentsController, type: :controller d
         expect(response).to have_http_status(:ok)
       end
 
+      it 'refuses the delivery when the job could not be queued, so the provider sends it again' do
+        allow(Spree::Payments::HandleWebhookJob).to receive(:set).and_raise(ActiveJob::EnqueueError, 'queue down')
+
+        post :create, params: { payment_method_id: payment_method.prefixed_id }
+
+        expect(response).to have_http_status(:service_unavailable)
+      end
+
+      it 'refuses an outcome the queue did not accept' do
+        allow_any_instance_of(Spree::PaymentMethod).to receive(:parse_webhook_event).and_return(
+          { action: :refund_failed, reference: 'PSP-REFUND-1', metadata: {} }
+        )
+        allow(Spree::Payments::HandleModificationWebhookJob).to receive(:perform_later)
+          .and_return(instance_double(Spree::Payments::HandleModificationWebhookJob, successfully_enqueued?: false))
+
+        post :create, params: { payment_method_id: payment_method.prefixed_id }
+
+        expect(response).to have_http_status(:service_unavailable)
+      end
+
       it 'enqueues HandleWebhookJob with a delay' do
         freeze_time do
           expect {
