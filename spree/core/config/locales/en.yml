@@ -327,8 +327,12 @@ en:
               price_list_required: Choose a price list to export.
         spree/gift_card:
           attributes:
+            amount:
+              cannot_change_once_used: can't be changed once the gift card has been used
             base:
               cannot_destroy_used_gift_card: Can't delete a used gift card
+            currency:
+              cannot_change_once_used: can't be changed once the gift card has been used
         spree/import:
           attributes:
             attachment:
