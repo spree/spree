@@ -21,6 +21,19 @@ RSpec.describe SpreeAdyen::Variants do
     expect(described_class.wallet('visa')).to be_nil
   end
 
+  it "reads a card's sub-variant as its brand, wallet suffixes included" do
+    {
+      'visadebit' => 'visa', 'visastandardcredit' => 'visa', 'electron' => 'visa', 'vpay' => 'visa',
+      'mccredit' => 'master', 'mcstandarddebit' => 'master', 'maestrouk' => 'master',
+      'amexcommercial' => 'american_express', 'visadebit_applepay' => 'visa'
+    }.each do |variant, brand|
+      expect(described_class.card?(variant)).to be(true)
+      expect(described_class.card_brand(variant)).to eq(brand)
+      expect(described_class.captured_at_once?(variant)).to be(false)
+    end
+    expect(described_class.wallet('visadebit_applepay')).to eq('apple_pay')
+  end
+
   it 'reads cards and card wallets as cards, captured later' do
     %w[visa mc_applepay googlepay applepay scheme].each do |variant|
       expect(described_class.card?(variant)).to be(true)

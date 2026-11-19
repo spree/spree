@@ -146,6 +146,12 @@ module SpreeAdyen
       'visa' => 'visa'
     }.freeze
 
+    # With "Include Subvariant" on, Adyen reports a card's detailed variant
+    # (`visadebit`, `mccredit`), which starts with its brand's key; Electron
+    # and V PAY are Visa's without the prefix.
+    SUBVARIANT_BRANDS = %w[visa mc maestro amex cup elo diners discover jcb].freeze
+    PREFIXLESS_SUBVARIANTS = { 'electron' => 'visa', 'vpay' => 'visa' }.freeze
+
     # A card paid through a wallet carries the wallet as a suffix
     # (`visa_applepay`), or is reported as the bare wallet.
     WALLETS = { 'applepay' => 'apple_pay', 'googlepay' => 'google_pay' }.freeze
@@ -156,7 +162,7 @@ module SpreeAdyen
       variant = variant.to_s
       return true if variant == 'scheme' || WALLETS.key?(variant)
 
-      CARD_BRANDS.key?(strip_wallet(variant))
+      brand_key(strip_wallet(variant)).present?
     end
 
     # @return [String, nil] Spree's card brand
@@ -165,7 +171,7 @@ module SpreeAdyen
       return WALLETS[variant] if WALLETS.key?(variant)
 
       brand = strip_wallet(variant)
-      CARD_BRANDS.fetch(brand, brand.presence)
+      CARD_BRANDS.fetch(brand_key(brand) || brand, brand.presence)
     end
 
     # @return [String, nil] 'apple_pay' or 'google_pay'
@@ -208,6 +214,13 @@ module SpreeAdyen
     # @return [String, nil]
     def display_name(class_name)
       SOURCES.dig(class_name.to_s, :display_name)
+    end
+
+    # @return [String, nil] the CARD_BRANDS key of a brand or its sub-variant
+    def brand_key(brand)
+      return brand if CARD_BRANDS.key?(brand)
+
+      PREFIXLESS_SUBVARIANTS[brand] || SUBVARIANT_BRANDS.find { |key| brand.start_with?(key) }
     end
 
     def strip_wallet(variant)
