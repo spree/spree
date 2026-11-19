@@ -272,6 +272,19 @@ RSpec.describe Spree::Collection, type: :model do
       expect(rule.match_policy).to eq('contains')
     end
 
+    it 'rematches the products when a rule changes type in place' do
+      on_sale = create(:product, price: 10, compare_at_price: 12)
+      coffee_products = create_list(:product, 3, tag_list: 'coffee')
+      rule = create(:sale_collection_rule, :is_equal_to, collection: collection)
+      expect(collection.reload.products).to contain_exactly(on_sale)
+
+      reloaded_collection.rules = [{ id: rule.prefixed_id, type: 'tag', value: 'coffee', match_policy: 'contains' }]
+      reloaded_collection.save!
+
+      expect(Spree::CollectionRule.find(rule.id)).to be_a(Spree::CollectionRules::Tag)
+      expect(collection.reload.products).to match_array(coffee_products)
+    end
+
     it 'destroys rules omitted from the payload' do
       keep = create(:tag_collection_rule, :is_equal_to, collection: collection, value: 'sale')
       drop = create(:tag_collection_rule, :is_equal_to, collection: collection, value: 'new')
