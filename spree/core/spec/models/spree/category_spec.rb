@@ -601,6 +601,31 @@ RSpec.describe Spree::Category, type: :model do
 
         Mobility.with_locale(:pl) do
           expect(category2.reload.permalink).to eq('dziecko')
+          expect(category2.pretty_name).to eq('Dziecko')
+        end
+      end
+
+      it 'suffixes the permalink when the top level already uses it' do
+        create(:category, name: 'Child', permalink: 'child', store: store)
+
+        category2.move_to_root
+
+        expect(category2.reload.permalink).to eq('child-2')
+      end
+
+      it 'keeps a permalink typed for a top-level category whole' do
+        expect(create(:category, name: 'Sale', permalink: 'summer/sale', store: store).permalink).to eq('summer-slash-sale')
+      end
+
+      it 'rebuilds translated permalinks of the moved subtree from the new path' do
+        grandchild = create(:category, name: 'Grandchild', parent: category2, permalink: 'grandchild')
+        Mobility.with_locale(:pl) { grandchild.update!(name: 'Wnuk') }
+
+        category2.move_to_root
+
+        expect(grandchild.reload.permalink).to eq('child/grandchild')
+        Mobility.with_locale(:pl) do
+          expect(grandchild.reload.permalink).to eq('dziecko/wnuk')
         end
       end
 
