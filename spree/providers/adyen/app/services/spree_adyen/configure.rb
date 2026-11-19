@@ -57,8 +57,8 @@ module SpreeAdyen
           gateway.adyen_call(:add_allowed_origin) do |client|
             client.management.my_api_credential_api.add_allowed_origin({ domain: origin })
           end
-        rescue Spree::Core::GatewayError => error
-          raise unless error.message.match?(/already exists/i)
+        rescue Spree::Core::GatewayError => e
+          raise unless e.message.match?(/already exists/i)
         end
       end
     end
@@ -66,18 +66,22 @@ module SpreeAdyen
     # A webhook this method created before, pointing elsewhere (5.x's
     # /adyen/webhooks), is moved in place: it keeps its HMAC key and delivers
     # what Adyen queued for it. Otherwise the merchant's standard webhook for
-    # the URL is found, or one is created.
+    # the URL is found, or one is created. Either way it is left active, since
+    # requested payments wait on what it delivers.
     #
     # @return [String] the webhook id
     def put_webhook
       stored = stored_webhook
       if stored
-        update_webhook_url(stored) if stored['url'] != gateway.webhook_url
+        update_webhook(stored) if stored['url'] != gateway.webhook_url || !stored['active']
         return stored['id']
       end
 
       found = Array(list_webhooks['data']).find { |webhook| webhook['type'] == 'standard' && webhook['url'] == gateway.webhook_url }
-      return found['id'] if found
+      if found
+        update_webhook(found) unless found['active']
+        return found['id']
+      end
 
       gateway.adyen_call(:create_webhook) do |client|
         client.management.webhooks_merchant_level_api.set_up_webhook(
@@ -92,13 +96,13 @@ module SpreeAdyen
       gateway.adyen_call(:read_webhook) do |client|
         client.management.webhooks_merchant_level_api.get_webhook(merchant_account, gateway.preferred_webhook_id)
       end
-    rescue Spree::Core::GatewayError => error
-      raise unless error.message.match?(/not found/i)
+    rescue Spree::Core::GatewayError => e
+      raise unless e.message.match?(/not found/i)
     end
 
-    def update_webhook_url(webhook)
+    def update_webhook(webhook)
       gateway.adyen_call(:update_webhook) do |client|
-        client.management.webhooks_merchant_level_api.update_webhook({ url: gateway.webhook_url }, merchant_account, webhook['id'])
+        client.management.webhooks_merchant_level_api.update_webhook({ url: gateway.webhook_url, active: true }, merchant_account, webhook['id'])
       end
     end
 

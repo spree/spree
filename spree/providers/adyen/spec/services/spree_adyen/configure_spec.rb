@@ -63,19 +63,45 @@ RSpec.describe SpreeAdyen::Configure do
 
   it 'finds the standard webhook already on the URL' do
     stub_request(:get, "#{webhooks_url}?pageSize=100").
-      to_return(adyen_json({ 'data' => [{ 'id' => 'WBHKFOUND0000001', 'type' => 'standard', 'url' => gateway.webhook_url }] }))
+      to_return(adyen_json({ 'data' => [{ 'id' => 'WBHKFOUND0000001', 'type' => 'standard', 'url' => gateway.webhook_url, 'active' => true }] }))
 
     described_class.call(gateway)
 
     expect(a_request(:post, webhooks_url)).not_to have_been_made
+    expect(a_request(:patch, %r{#{webhooks_url}/})).not_to have_been_made
     expect(gateway.reload.preferred_webhook_id).to eq('WBHKFOUND0000001')
   end
 
-  it 'moves a stored webhook pointing elsewhere in place, keeping its key' do
+  it 'activates the standard webhook found on the URL when it is inactive' do
+    stub_request(:get, "#{webhooks_url}?pageSize=100").
+      to_return(adyen_json({ 'data' => [{ 'id' => 'WBHKFOUND0000001', 'type' => 'standard', 'url' => gateway.webhook_url, 'active' => false }] }))
+    update = stub_request(:patch, "#{webhooks_url}/WBHKFOUND0000001").with(body: { url: gateway.webhook_url, active: true }.to_json).
+             to_return(adyen_json({ 'id' => 'WBHKFOUND0000001', 'active' => true }))
+
+    described_class.call(gateway)
+
+    expect(update).to have_been_requested
+    expect(gateway.reload.preferred_webhook_id).to eq('WBHKFOUND0000001')
+  end
+
+  it 'activates a stored webhook on the URL when it is inactive' do
+    gateway.update!(preferred_webhook_id: 'WBHKSTORED000001', preferred_hmac_key: 'CD' * 32)
+    stub_request(:get, "#{webhooks_url}/WBHKSTORED000001").
+      to_return(adyen_json({ 'id' => 'WBHKSTORED000001', 'url' => gateway.webhook_url, 'active' => false }))
+    update = stub_request(:patch, "#{webhooks_url}/WBHKSTORED000001").with(body: { url: gateway.webhook_url, active: true }.to_json).
+             to_return(adyen_json({ 'id' => 'WBHKSTORED000001', 'active' => true }))
+
+    described_class.call(gateway)
+
+    expect(update).to have_been_requested
+    expect(gateway.reload.preferred_hmac_key).to eq('CD' * 32)
+  end
+
+  it 'moves a stored webhook pointing elsewhere in place, active and keeping its key' do
     gateway.update!(preferred_webhook_id: 'WBHKLEGACY000001', preferred_hmac_key: 'CD' * 32)
     stub_request(:get, "#{webhooks_url}/WBHKLEGACY000001").
-      to_return(adyen_json({ 'id' => 'WBHKLEGACY000001', 'url' => 'https://shop.example.com/adyen/webhooks' }))
-    update = stub_request(:patch, "#{webhooks_url}/WBHKLEGACY000001").with(body: { url: gateway.webhook_url }.to_json).
+      to_return(adyen_json({ 'id' => 'WBHKLEGACY000001', 'url' => 'https://shop.example.com/adyen/webhooks', 'active' => false }))
+    update = stub_request(:patch, "#{webhooks_url}/WBHKLEGACY000001").with(body: { url: gateway.webhook_url, active: true }.to_json).
              to_return(adyen_json({ 'id' => 'WBHKLEGACY000001' }))
 
     described_class.call(gateway)
@@ -113,12 +139,13 @@ RSpec.describe SpreeAdyen::Configure do
       expect(gateway.reload.preferred_webhook_id).to be_present
     end
 
-    it 'moves a legacy webhook to the 6.0 URL', vcr: { cassette_name: 'configure_legacy_webhook_url' } do
-      gateway.update!(preferred_webhook_id: ENV.fetch('ADYEN_LEGACY_WEBHOOK_ID', 'WBHK42CX922322CM5QBDFDT99T3T6K'), preferred_hmac_key: 'EF' * 32)
+    it 'moves an inactive legacy webhook to the 6.0 URL and activates it', vcr: { cassette_name: 'configure_legacy_webhook_url' } do
+      gateway.update!(preferred_webhook_id: ENV.fetch('ADYEN_LEGACY_WEBHOOK_ID', 'WBHK42CPS22322CM5QBH3TCDG66BT2'), preferred_hmac_key: 'EF' * 32)
 
       described_class.call(gateway)
 
       expect(gateway.reload.preferred_hmac_key).to eq('EF' * 32)
+      expect(a_request(:patch, %r{/webhooks/}).with(body: hash_including('active' => true))).to have_been_made
     end
   end
 end

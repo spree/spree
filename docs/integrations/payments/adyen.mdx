@@ -64,9 +64,9 @@ When you save, Spree checks that the API key reaches the merchant account and ha
 
 - keeps the credential's client key, or generates one if it has none (an existing key is never replaced, so other stores sharing the credential keep working);
 - adds your store's allowed origins to the credential, so Drop-in loads on your storefront;
-- creates a webhook for this payment method on your Spree store's URL, with an HMAC key Spree keeps, and verifies every delivery with it.
+- creates a webhook for this payment method on your Spree store's URL, or turns its existing one back on, with an HMAC key Spree keeps, and verifies every delivery with it.
 
-It does this again whenever you change the API key, merchant account, test mode or live URL prefix. Allowed origins you add to the store later reach Adyen the next time you save the payment method.
+It does this again whenever you change the API key, merchant account, test mode or live URL prefix. Allowed origins you add to the store later do not reach Adyen on their own: run `bin/rails spree:upgrade:configure_adyen_gateways`, which configures every Adyen payment method again and is safe to repeat.
 
 <Warning>Your Spree store must be reachable from the internet for Adyen to deliver webhooks. Use a tunnel (for example ngrok) when testing locally.</Warning>
 
@@ -116,6 +116,6 @@ Turn on **Test mode**, use test credentials from Adyen's test Customer Area, and
 
 ### Common issues
 
-- **Drop-in does not load**: the storefront's origin is not among the credential's allowed origins. Add it to the store's allowed origins in Spree and save the payment method again.
+- **Drop-in does not load**: the storefront's origin is not among the credential's allowed origins. Add it to the store's allowed origins in Spree, then run `bin/rails spree:upgrade:configure_adyen_gateways`.
 - **Saving the payment method fails**: the message names the problem: an invalid key, a merchant account the credential cannot reach, or a missing role.
 - **Webhooks are refused**: Spree checks every delivery's HMAC signature, merchant account and environment. A webhook you created by hand is not signed with the key Spree holds; let Spree manage its own.
