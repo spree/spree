@@ -126,8 +126,16 @@ RSpec.describe Spree::Api::V3::Webhooks::PaymentsController, type: :controller d
         allow_any_instance_of(Spree::PaymentMethod).to receive(:parse_webhook_event).and_return(
           { action: :refund_failed, reference: 'PSP-REFUND-1', metadata: {} }
         )
-        allow(Spree::Payments::HandleModificationWebhookJob).to receive(:perform_later)
-          .and_return(instance_double(Spree::Payments::HandleModificationWebhookJob, successfully_enqueued?: false))
+        # What Active Job's perform_later answers when the adapter did not take the job.
+        allow(Spree::Payments::HandleModificationWebhookJob).to receive(:perform_later).and_return(false)
+
+        post :create, params: { payment_method_id: payment_method.prefixed_id }
+
+        expect(response).to have_http_status(:service_unavailable)
+      end
+
+      it 'refuses the delivery when the queue backend raises an error of its own' do
+        allow(Spree::Payments::HandleWebhookJob).to receive(:set).and_raise(IOError, 'connection refused')
 
         post :create, params: { payment_method_id: payment_method.prefixed_id }
 

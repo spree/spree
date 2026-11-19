@@ -38,9 +38,9 @@ module Spree
 
             # Process asynchronously — gateways have timeout limits and will
             # retry on timeouts, so we must return 200 quickly. A delivery that
-            # could not be queued is refused, so the provider sends it again.
-            job = enqueue(payment_method, result)
-            return head :service_unavailable unless job&.successfully_enqueued?
+            # could not be queued is refused, so the provider sends it again;
+            # perform_later answers false rather than the job when it was not.
+            return head :service_unavailable unless enqueue(payment_method, result)
 
             head :ok
           rescue Spree::PaymentMethod::WebhookSignatureError
@@ -67,7 +67,8 @@ module Spree
                 metadata: result[:metadata] || {}
               )
             end
-          rescue ActiveJob::EnqueueError, ActiveRecord::ActiveRecordError => e
+          # Any adapter error, not only Active Job's own, means nothing was queued.
+          rescue StandardError => e
             Rails.error.report(e, handled: true, source: 'spree.webhooks.payments')
             nil
           end
