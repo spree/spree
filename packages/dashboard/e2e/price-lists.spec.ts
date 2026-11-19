@@ -4,6 +4,7 @@ import {
   addQuantityBreak,
   csvFile,
   deleteCatalogPickerProducts,
+  deleteSeededRecords,
   FIXTURE_PROMO_PRODUCT,
   FIXTURE_PROMO_SKU,
   gotoIndex,
@@ -11,6 +12,8 @@ import {
   openRowMenu,
   rowButton,
   seedCatalogPickerProducts,
+  seedRecord,
+  switchAdminLocale,
 } from './helpers'
 
 const PRICE_LISTS_PATH = (storeId: string) => `/${storeId}/products/price-lists`
@@ -645,5 +648,33 @@ test.describe('price lists', () => {
       .click()
 
     await expect(rowButton(page, name)).toHaveCount(0, { timeout: 15_000 })
+  })
+  test.describe('in German', () => {
+    let restoreLocale: () => Promise<void> = async () => {}
+
+    test.afterEach(async ({ page }) => {
+      await restoreLocale()
+      await deleteSeededRecords(page)
+    })
+
+    test('names the scheduled start date in German when scheduling', async ({ page }) => {
+      const session = await login(page)
+      const name = `E2E PL Scheduled ${Date.now()}`
+      // Mid-month at noon UTC: March in every store timezone, so the month
+      // name alone shows which language the date was written in.
+      const priceList = await seedRecord(page, session, '/price_lists', {
+        name,
+        starts_at: '2030-03-15T12:00:00Z',
+      })
+      restoreLocale = await switchAdminLocale(page, 'de')
+      await page.goto(`${PRICE_LISTS_PATH(session.store_id)}/${priceList.id}`)
+
+      await page.getByRole('button', { name: /^planen$/i }).click({ timeout: 15_000 })
+
+      const dialog = page.getByRole('dialog')
+      await expect(dialog).toContainText(name)
+      await expect(dialog).toContainText(/März 2030/)
+      await expect(dialog).not.toContainText(/March/)
+    })
   })
 })
