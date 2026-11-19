@@ -25,11 +25,16 @@ module SpreeAdyen
         Spree::Payment.unscoped.where(payment_method_id: gateway_ids).where.not(response_code: [nil, '']).order(:id)
       end
 
+      # One transaction per payment, so a retry after a failure never finds a
+      # capture event written without the status change that goes with it.
       def process(payment)
-        changed = record_psp_reference(payment)
-        changed |= move_custom_fields(payment)
-        changed |= finish_pending_status(payment)
-        tally(:unchanged) unless changed
+        payment.transaction do
+          capture_reference = payment.get_custom_field(CAPTURE_FIELD)&.value.presence&.to_s
+          changed = record_psp_reference(payment)
+          changed |= move_custom_fields(payment)
+          changed |= finish_pending_status(payment, capture_reference)
+          tally(:unchanged) unless changed
+        end
       end
 
       # The two custom field definitions belong to merchants' data, so they go
@@ -69,6 +74,7 @@ module SpreeAdyen
         capture_field = payment.get_custom_field(CAPTURE_FIELD)
         cancellation_field = payment.get_custom_field(CANCELLATION_FIELD)
         return false if capture_field.nil? && cancellation_field.nil?
+
         if dry_run?
           tally(:would_move_references)
           return true
@@ -89,7 +95,7 @@ module SpreeAdyen
       end
 
       # Adyen's acceptance is counted as done for these legacy rows only.
-      def finish_pending_status(payment)
+      def finish_pending_status(payment, capture_reference)
         status = payment.read_attribute(:status)
         return false unless status.in?(%w[capture_pending void_pending])
 
@@ -101,13 +107,22 @@ module SpreeAdyen
 
         if status == 'capture_pending'
           payment.capture_events.create!(amount: payment.amount, status: 'completed',
-                                         transaction_id: payment.metadata['adyen_psp_reference'])
+                                         transaction_id: capture_reference || payment.metadata['adyen_psp_reference'])
           payment.update_columns(status: 'completed', updated_at: Time.current)
         else
           payment.update_columns(status: 'void', updated_at: Time.current)
         end
+        refresh_owner(payment)
         tally(:marked_done)
         true
+      end
+
+      # The column writes skip the payment events that keep the order's paid
+      # total and payment status current, so they are refreshed here instead.
+      def refresh_owner(payment)
+        owner = payment.owner
+        owner.refresh_payment_total! if owner.respond_to?(:refresh_payment_total!)
+        owner.update_statuses! if owner.is_a?(Spree::Order)
       end
     end
   end

@@ -72,6 +72,39 @@ RSpec.describe SpreeAdyen::MaintenanceTasks::MigratePayments do
     expect(run.tallies['marked_done']).to eq(2)
   end
 
+  it "records a capture_pending payment's capture reference on the capture event it creates" do
+    payment = legacy_payment(response_code: 'PSPLEGACY0000004')
+    payment.set_custom_field(custom_field_definition('capture_psp_reference'), 'PSPCAPTURE000002')
+    payment.save!
+    payment.update_columns(status: 'capture_pending')
+
+    run_task
+
+    expect(payment.reload.capture_events.sole.transaction_id).to eq('PSPCAPTURE000002')
+    expect(payment.custom_fields).to be_empty
+  end
+
+  it "refreshes the order's paid total and payment status after marking a payment captured" do
+    legacy_payment(response_code: 'PSPLEGACY0000005', status: 'capture_pending')
+    order.update_columns(payment_total: 0)
+
+    run_task
+
+    expect(order.reload.payment_total).to eq(10)
+    expect(order.payment_status).to eq('paid')
+  end
+
+  it 'leaves a payment as it was when migrating it fails part way' do
+    payment = legacy_payment(response_code: 'PSPLEGACY0000006', status: 'capture_pending')
+    allow_any_instance_of(described_class).to receive(:refresh_owner).and_raise(ActiveRecord::StatementInvalid)
+
+    run_task
+
+    expect(payment.reload.read_attribute(:status)).to eq('capture_pending')
+    expect(payment.capture_events).to be_empty
+    expect(payment.metadata).not_to have_key('adyen_psp_reference')
+  end
+
   it 'reports without writing in a dry run' do
     payment = legacy_payment(status: 'capture_pending')
 
