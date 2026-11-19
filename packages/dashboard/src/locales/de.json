@@ -3359,13 +3359,12 @@
             "unavailable": "Nicht verfügbar",
             "not_checked": "Nicht geprüft"
           },
+          "date": "Datum",
           "captures": "Erfassungen",
           "captures_empty": "Es wurde noch nichts erfasst.",
-          "captured_at": "Erfasst",
           "refunds": "Erstattungen",
           "refunds_empty": "Es wurde noch nichts erstattet.",
-          "refunded_at": "Erstattet",
-          "refund_statuses": {
+          "settlement_statuses": {
             "requested": "Angefordert",
             "completed": "Abgeschlossen",
             "failed": "Fehlgeschlagen"

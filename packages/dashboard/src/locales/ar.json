@@ -3383,13 +3383,12 @@
             "unavailable": "غير متاح",
             "not_checked": "لم يتم التحقق"
           },
+          "date": "التاريخ",
           "captures": "عمليات التحصيل",
           "captures_empty": "لم يتم تحصيل أي مبلغ بعد.",
-          "captured_at": "تاريخ التحصيل",
           "refunds": "المبالغ المستردة",
           "refunds_empty": "لم يُسترد أي مبلغ بعد.",
-          "refunded_at": "تاريخ الاسترداد",
-          "refund_statuses": {
+          "settlement_statuses": {
             "requested": "مطلوب",
             "completed": "مكتمل",
             "failed": "فشل"

@@ -3358,13 +3358,12 @@
             "unavailable": "Không khả dụng",
             "not_checked": "Chưa được kiểm tra"
           },
+          "date": "Ngày",
           "captures": "Ảnh chụp",
           "captures_empty": "Vẫn chưa có gì bị bắt.",
-          "captured_at": "Đã chụp",
           "refunds": "Hoàn tiền",
           "refunds_empty": "Chưa có khoản hoàn tiền nào.",
-          "refunded_at": "Đã hoàn tiền",
-          "refund_statuses": {
+          "settlement_statuses": {
             "requested": "Đã yêu cầu",
             "completed": "Hoàn tất",
             "failed": "Thất bại"

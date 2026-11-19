@@ -1,4 +1,4 @@
-import type { Payment, Refund } from '@spree/admin-sdk'
+import type { Payment } from '@spree/admin-sdk'
 import { Money } from '@spree/dashboard-core'
 import {
   Badge,
@@ -94,15 +94,16 @@ export function PaymentStatusBadge({ payment }: { payment: Payment }) {
   )
 }
 
-function RefundStatusBadge({ refund }: { refund: Refund }) {
+/** Where a capture or refund stands with the provider: requested until it answers. */
+function SettlementStatusBadge({ status }: { status: string }) {
   const { t } = useTranslation()
   const labels: Record<string, string> = {
-    requested: t('admin.orders.detail.payment_details.refund_statuses.requested'),
-    completed: t('admin.orders.detail.payment_details.refund_statuses.completed'),
-    failed: t('admin.orders.detail.payment_details.refund_statuses.failed'),
+    requested: t('admin.orders.detail.payment_details.settlement_statuses.requested'),
+    completed: t('admin.orders.detail.payment_details.settlement_statuses.completed'),
+    failed: t('admin.orders.detail.payment_details.settlement_statuses.failed'),
   }
 
-  return <StatusBadge status={refund.status} label={labels[refund.status]} />
+  return <StatusBadge status={status} label={labels[status]} />
 }
 
 /** What the card issuer reported about a payment, each capture of its money and each refund. */
@@ -180,15 +181,19 @@ export function PaymentDetailsDialog({
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>{t('admin.orders.detail.payment_details.captured_at')}</TableHead>
+                    <TableHead>{t('admin.orders.detail.payment_details.date')}</TableHead>
+                    <TableHead>{t('admin.orders.detail.payments_table.state')}</TableHead>
                     <TableHead className="text-right">{t('admin.fields.amount.label')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {captures.map((capture) => (
-                    <TableRow key={capture.id}>
+                    <TableRow key={capture.id} data-testid="payment-capture-row">
                       <TableCell>
                         <RelativeTime iso={capture.created_at} />
+                      </TableCell>
+                      <TableCell>
+                        <SettlementStatusBadge status={capture.status} />
                       </TableCell>
                       <TableCell className="text-right tabular-nums">
                         <Money amount={capture.amount} currency={currency} />
@@ -211,7 +216,7 @@ export function PaymentDetailsDialog({
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>{t('admin.orders.detail.payment_details.refunded_at')}</TableHead>
+                    <TableHead>{t('admin.orders.detail.payment_details.date')}</TableHead>
                     <TableHead>{t('admin.orders.detail.payments_table.state')}</TableHead>
                     <TableHead className="text-right">{t('admin.fields.amount.label')}</TableHead>
                   </TableRow>
@@ -224,7 +229,7 @@ export function PaymentDetailsDialog({
                       </TableCell>
                       <TableCell>
                         <div className="flex flex-col gap-1">
-                          <RefundStatusBadge refund={refund} />
+                          <SettlementStatusBadge status={refund.status} />
                           {refund.failure_reason && (
                             <span className="text-muted-foreground text-xs">
                               {t('admin.orders.detail.payment_details.failure_reason', {

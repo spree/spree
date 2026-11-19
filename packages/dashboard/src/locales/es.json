@@ -3065,13 +3065,12 @@
             "unavailable": "No disponible",
             "not_checked": "No verificada"
           },
+          "date": "Fecha",
           "captures": "Capturas",
           "captures_empty": "Aún no se ha capturado nada.",
-          "captured_at": "Capturado",
           "refunds": "Reembolsos",
           "refunds_empty": "Aún no se ha reembolsado nada.",
-          "refunded_at": "Reembolsado",
-          "refund_statuses": {
+          "settlement_statuses": {
             "requested": "Solicitado",
             "completed": "Completado",
             "failed": "Fallido"

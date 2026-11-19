@@ -3350,13 +3350,12 @@
             "unavailable": "不可用",
             "not_checked": "未验证"
           },
+          "date": "日期",
           "captures": "扣款记录",
           "captures_empty": "尚未扣款。",
-          "captured_at": "扣款时间",
           "refunds": "退款",
           "refunds_empty": "尚未退款。",
-          "refunded_at": "退款时间",
-          "refund_statuses": {
+          "settlement_statuses": {
             "requested": "已请求",
             "completed": "已完成",
             "failed": "失败"

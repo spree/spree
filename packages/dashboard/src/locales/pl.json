@@ -3389,13 +3389,12 @@
             "unavailable": "Niedostępna",
             "not_checked": "Niesprawdzona"
           },
+          "date": "Data",
           "captures": "Pobrania środków",
           "captures_empty": "Nie pobrano jeszcze żadnych środków.",
-          "captured_at": "Pobrano",
           "refunds": "Zwroty",
           "refunds_empty": "Nic jeszcze nie zwrócono.",
-          "refunded_at": "Zwrócono",
-          "refund_statuses": {
+          "settlement_statuses": {
             "requested": "Zażądano",
             "completed": "Zakończono",
             "failed": "Nieudany"
