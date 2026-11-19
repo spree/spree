@@ -198,7 +198,8 @@ module Spree
       # Two-state scope: see Spree::Base.ransack_flag? for why the cast is
       # opted out of here and done inside the scope instead.
       def self.ransackable_scopes_skip_sanitize_args
-        %i[anonymized]
+        # `search` too: this replaces Spree::RansackableAttributes' list.
+        %i[search anonymized]
       end
 
       # Whether an erasure has been carried out. A scope rather than a

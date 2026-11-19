@@ -54,6 +54,17 @@ module Spree::RansackableAttributes
       base - Array(private_ransackable_attributes[auth_object.to_sym])
     end
 
+    # Free-text scopes take what was typed, as it was typed. Ransack otherwise
+    # casts boolean-looking arguments: a search for "true" or "1" reached the
+    # scope as a bare `true` (or no argument at all) and "false" or "0" was
+    # dropped without filtering. A model that lists two-state scopes of its
+    # own adds them to `super`.
+    #
+    # @return [Array<Symbol>]
+    def self.ransackable_scopes_skip_sanitize_args
+      %i[search]
+    end
+
     def self.ransackable_scopes(auth_object = nil)
       base = (whitelisted_ransackable_scopes || []).map(&:to_s)
       base |= Spree.ransack.custom_scopes_for(self).map(&:to_s)

@@ -49,6 +49,19 @@ RSpec.describe Spree::RansackableAttributes do
       expect(Spree::Supplier.search).to include(supplier, other)
     end
 
+    it 'passes boolean-looking text through Ransack as the text typed' do
+      matching = create(:supplier, store: store, name: 'True North Trading')
+      other = create(:supplier, store: store, name: 'Globex')
+
+      expect(Spree::Supplier.ransack(search: 'true').result).to contain_exactly(matching)
+      expect(Spree::Supplier.ransack(search: 'false').result).not_to include(matching, other)
+    end
+
+    it 'keeps the uncast list when a model adds two-state scopes of its own' do
+      expect(Spree::StoreCredit.ransackable_scopes_skip_sanitize_args).to include(:search, :outstanding, :from_gift_card)
+      expect(Spree.customer_class.ransackable_scopes_skip_sanitize_args).to include(:search, :anonymized)
+    end
+
     it 'reaches through associations' do
       variant = create(:variant, sku: 'SEARCH-SKU-1')
 

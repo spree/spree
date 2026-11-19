@@ -270,7 +270,10 @@ module Spree
     # option-value presentation (e.g. "Red", "XL"). The 3-char floor
     # keeps single-letter queries from triggering a full scan.
     def self.search(query)
-      query = query.to_s
+      # A SKU can arrive as a number; anything else that isn't text
+      # (true, an array) is not a query and must not become one.
+      query = query.to_s if query.is_a?(Numeric) || query.is_a?(Symbol)
+      return none unless query.is_a?(String)
       return none if query.blank? || query.length < 3
 
       conditions = [
