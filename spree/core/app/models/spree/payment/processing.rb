@@ -93,6 +93,9 @@ module Spree
       # A provider that answers +requested?+ settles later by webhook: an
       # uncaptured payment waits on its void, and a completed one stays
       # completed while the refund the gateway requested carries the outcome.
+      # So a gateway answers +requested?+ for a completed payment only after
+      # recording that refund (through Refunds::Create), or the outcome finds
+      # nothing to settle.
       #
       # @param refund [Boolean] whether money already captured may be returned
       def cancel!(refund: true)

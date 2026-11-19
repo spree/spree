@@ -214,9 +214,14 @@ module Spree
     end
 
     # The provider accepted a void and answers by webhook, which voids the
-    # payment then.
+    # payment then. A payment already void, or already waiting, is left as it
+    # is: a second request's late answer must not reopen it.
     def request_void!
-      update!(status: 'requested')
+      updates = { status: 'requested', updated_at: Time.current }
+      return false unless self.class.where(id: id).where.not(status: %w[void requested]).update_all(updates) == 1
+
+      assign_attributes(updates.except(:updated_at))
+      clear_attribute_changes(%i[status])
       publish_event('payment.void_requested')
       true
     end

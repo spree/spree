@@ -32,6 +32,11 @@ module Spree
           expect(bogus.void('BGS-123', cc, {})).to be_requested
         end
 
+        it 'answers the cancel of an uncaptured payment as requested, and of a captured one at once' do
+          expect(bogus.cancel('BGS-123', build(:payment, status: 'pending'))).to be_requested
+          expect(bogus.cancel('BGS-123', build(:payment, status: 'completed'))).not_to be_requested
+        end
+
         it 'answers a refund as requested, with its reference as the authorization' do
           response = bogus.credit(1000, cc, 'BGS-123', {})
 

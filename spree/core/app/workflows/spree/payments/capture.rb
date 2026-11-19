@@ -109,11 +109,13 @@ module Spree
       # Locked because the webhook settling the same payment races this
       # request. The DB recheck — deliberately not a reload, which would
       # discard the in-memory source (card numbers never persist) — makes
-      # the capture event exactly-once.
+      # the capture event exactly-once: a payment no longer `processing` was
+      # moved by settlement, a provider outcome or another capture, and is
+      # not reopened.
       def record_capture
         already_captured = false
         payment.owner.with_lock do
-          if Spree::Payment.where(id: payment.id, status: 'completed').exists?
+          if Spree::Payment.where(id: payment.id).where.not(status: 'processing').exists?
             already_captured = true
           elsif response.requested?
             # The provider accepted the capture and answers by webhook: no

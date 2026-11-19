@@ -580,10 +580,12 @@ describe Spree::Payment, type: :model do
           end
 
           it 'records nothing when another caller already completed the payment' do
-            expect(payment.payment_method).to receive(:capture).and_return(success_response)
             # Simulates the concurrent winner committing between the gateway
             # call and the bookkeeping lock.
-            allow(Spree::Payment).to receive_message_chain(:where, :exists?).and_return(true)
+            expect(payment.payment_method).to receive(:capture) do
+              Spree::Payment.where(id: payment.id).update_all(status: 'completed')
+              success_response
+            end
 
             expect { payment.capture! }.not_to change { payment.capture_events.count }
           end
@@ -785,11 +787,32 @@ describe Spree::Payment, type: :model do
         expect(uncaptured.reload).to be_requested
       end
 
+      # A provider answers this only after recording the refund its outcome settles.
       it 'keeps a completed payment completed' do
+        allow(captured.payment_method).to receive(:cancel).and_return(Spree::PaymentResponse.new(true, 'Refund requested', {}, requested: true))
+
         captured.cancel!
 
         expect(captured.reload).to be_completed
       end
+    end
+  end
+
+  describe '#request_void!' do
+    it 'waits on the void of an authorized payment' do
+      payment = create(:payment, status: 'pending')
+      expect(payment).to receive(:publish_event).with('payment.void_requested')
+
+      expect(payment.request_void!).to be(true)
+      expect(payment.reload).to be_requested
+    end
+
+    it 'leaves a payment already void as it is, so a late answer cannot reopen it' do
+      payment = create(:payment, status: 'void')
+      expect(payment).not_to receive(:publish_event)
+
+      expect(payment.request_void!).to be(false)
+      expect(payment.reload).to be_void
     end
   end
 

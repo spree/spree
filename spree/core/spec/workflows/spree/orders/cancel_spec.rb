@@ -237,6 +237,19 @@ module Spree
       end
     end
 
+    describe 'a payment whose capture or void is in flight' do
+      let(:order) { create(:completed_order_with_totals) }
+      let!(:payment) { create(:payment, order: order, amount: order.total, status: 'processing') }
+
+      it 'refuses to cancel the order, since the provider may yet capture it' do
+        result = subject.call(order: order, canceler: user)
+
+        expect(result).to be_failure
+        expect(order.errors[:base]).to include(I18n.t('spree.payment_requested_awaiting_provider'))
+        expect(order.reload).not_to be_canceled
+      end
+    end
+
     describe 'a provider that answers a cancel later' do
       let(:order) { create(:completed_order_with_totals) }
 
@@ -256,7 +269,10 @@ module Spree
       context 'with a completed payment' do
         let!(:payment) { create(:payment, order: order, amount: order.total, status: 'completed') }
 
+        # A provider answers this only after recording the refund its outcome settles.
         it 'keeps the payment completed' do
+          allow_any_instance_of(Spree::Gateway::Bogus).to receive(:cancel).and_return(Spree::PaymentResponse.new(true, 'Refund requested', {}, requested: true))
+
           subject.call(order: order, canceler: user)
 
           expect(payment.reload).to be_completed

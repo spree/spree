@@ -167,7 +167,7 @@ RSpec.describe Spree::Payments::Capture do
   describe 'a provider that answers later' do
     let(:payment) do
       create(:payment, order: order, payment_method: gateway, source: card,
-                       status: 'pending', amount: 45.75, response_code: 'BGS-123')
+                       status: 'pending', amount: BigDecimal('45.75'), response_code: 'BGS-123')
     end
 
     before { gateway.update!(preferred_requested_mode: true) }
@@ -189,7 +189,18 @@ RSpec.describe Spree::Payments::Capture do
     it 'splits no remainder until the provider answers' do
       payment
       expect { described_class.call(payment: payment, amount: BigDecimal('10')) }.not_to(change { order.payments.count })
-      expect(payment.reload.amount).to eq(45.75)
+      expect(payment.reload.amount).to eq(BigDecimal('45.75'))
+    end
+
+    it 'does not reopen a payment another path moved while the provider answered' do
+      allow(payment.payment_method).to receive(:capture).and_wrap_original do |original, *args|
+        original.call(*args).tap { payment.update_columns(status: 'failed') }
+      end
+
+      described_class.call(payment: payment, amount: BigDecimal('10'))
+
+      expect(payment.reload).to be_failed
+      expect(payment.capture_events).to be_empty
     end
 
     it 'refuses a payment already waiting on its provider' do
@@ -205,7 +216,7 @@ RSpec.describe Spree::Payments::Capture do
   describe 'a provider that answers at once' do
     let(:payment) do
       create(:payment, order: order, payment_method: gateway, source: card,
-                       status: 'pending', amount: 45.75, response_code: 'BGS-123')
+                       status: 'pending', amount: BigDecimal('45.75'), response_code: 'BGS-123')
     end
 
     it 'records a completed capture event' do
