@@ -123,9 +123,14 @@ module Spree
 
       # Set once the tax is known, because what was paid includes the tax
       # charged on top. Left at zero, resolving without an amount would refund
-      # nothing.
+      # nothing. Rounded down to what the column holds, so a currency with more
+      # decimals than that never lands above the line's ceiling.
       def default_refund_amounts
-        @lines_without_amount.each { |line| line.update!(refund_amount: line.paid_amount) }
+        scale = Spree::ClaimLineItem.type_for_attribute(:refund_amount).scale || 2
+
+        @lines_without_amount.each do |line|
+          line.update!(refund_amount: Spree::Money::Rounding.quantize(line.paid_amount, scale, mode: :down))
+        end
       end
 
       # Checked once the tax is known, because a line's refund is entered tax
