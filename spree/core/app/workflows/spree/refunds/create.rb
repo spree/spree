@@ -32,7 +32,7 @@ module Spree
         super
 
         step :ensure_refundable
-        @amount_to_refund = amount || payment.credit_allowed
+        @amount_to_refund = amount || default_amount
         step :ensure_amount_within_balance
 
         # Veto point — before the refund record exists and before any money
@@ -57,9 +57,21 @@ module Spree
       def ensure_amount_within_balance
         amount = @amount_to_refund.to_d
         return if amount.positive? && amount <= payment.credit_allowed.to_d && amount <= refundable_share &&
-                  amount <= order_refundable_balance
+                  within_order_balance?(amount)
 
         failure(payment, :refund_amount_exceeds_balance)
+      end
+
+      # Everything this payment may still give back to the order, so a caller
+      # asking for "the full balance" — a cancellation, for one — gets what is
+      # actually refundable instead of a refusal once store credit was issued.
+      def default_amount
+        [payment.credit_allowed.to_d, refundable_share, order_refundable_balance].compact.min
+      end
+
+      def within_order_balance?(amount)
+        balance = order_refundable_balance
+        balance.nil? || amount <= balance
       end
 
       # What the order may still be given back across all its payments, once
@@ -70,12 +82,12 @@ module Spree
       # Without this bound a card refund could follow that credit and hand back
       # more than the order was paid.
       #
-      # @return [BigDecimal, Float] infinity when no credit was issued, so the
-      #   payment's own balance is the only bound
+      # Nil when no credit was issued, so the payment's own balance is the
+      # only bound.
       def order_refundable_balance
         target = refunded_order
-        credited = target ? target.store_credit_refunds.sum(:amount).to_d : 0
-        return Float::INFINITY unless credited.positive?
+        credited = target ? target.store_credit_refunds.sum(:amount).to_d : 0.to_d
+        return unless credited.positive?
 
         order_payments_balance(target) - credited
       end
@@ -83,8 +95,6 @@ module Spree
       # What the order's completed payments, or its shares of them in a split
       # checkout, took less what has been refunded from them. Counted in two
       # queries rather than per payment.
-      #
-      # @return [BigDecimal]
       def order_payments_balance(target)
         if target.grouped?
           splits = target.payment_splits.joins(:payment).merge(Spree::Payment.completed)
@@ -96,7 +106,7 @@ module Spree
         end
       end
 
-      # @return [Spree::Order, nil] the order this refund puts right
+      # The order this refund puts right.
       def refunded_order
         order || payment.order
       end
@@ -143,7 +153,7 @@ module Spree
       def lock_payment_and_create_refund
         payment.with_lock do
           ensure_share_still_available
-          failure(payment, :refund_amount_exceeds_balance) if @amount_to_refund.to_d > order_refundable_balance
+          failure(payment, :refund_amount_exceeds_balance) unless within_order_balance?(@amount_to_refund.to_d)
 
           @refund = payment.refunds.create!(
             amount: @amount_to_refund,

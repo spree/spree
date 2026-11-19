@@ -90,6 +90,13 @@ RSpec.describe Spree::Refunds::Create do
         expect(result.value.amount).to eq(BigDecimal('25.75'))
       end
 
+      it 'defaults to what the credit left when no amount is given' do
+        result = described_class.call(payment: payment)
+
+        expect(result).to be_success
+        expect(result.value.amount).to eq(BigDecimal('25.75'))
+      end
+
       it 'refuses when credit was issued after the pre-flight check' do
         allow_any_instance_of(described_class).to receive(:ensure_amount_within_balance).and_wrap_original do |original|
           original.call
