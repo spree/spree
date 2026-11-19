@@ -34,7 +34,9 @@ namespace :spree do
       end
 
       puts removed.zero? && failed.empty? ? '  Nothing to remove.' : "  Removed #{removed} orphaned product type custom field row(s)."
-      puts "  #{failed.size} row(s) could not be removed, see above." if failed.any?
+      # Fail the step, so `spree:upgrade` stops before recording the upgrade as
+      # done while a row that breaks product type responses is still there.
+      abort "  #{failed.size} row(s) could not be removed, see above." if failed.any?
     end
   end
 end

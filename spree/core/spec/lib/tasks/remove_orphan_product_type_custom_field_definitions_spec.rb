@@ -35,10 +35,12 @@ describe 'spree:upgrade:remove_orphan_product_type_custom_field_definitions' do
     expect { subject.invoke }.to output(/Nothing to remove/).to_stdout
   end
 
-  it 'lists a row a callback refused to remove instead of counting it' do
+  it 'lists a row a callback refused to remove and fails instead of counting it' do
     allow_any_instance_of(Spree::ProductTypeCustomFieldDefinition).to receive(:destroy).and_return(false)
 
-    expect { subject.invoke }.to output(/Could not remove product type custom field row #{orphan.id}.*1 row\(s\) could not be removed/m).to_stdout
+    expect {
+      expect { subject.invoke }.to raise_error(SystemExit, /1 row\(s\) could not be removed/)
+    }.to output(/Could not remove product type custom field row #{orphan.id}/).to_stdout.and output.to_stderr
     expect(Spree::ProductTypeCustomFieldDefinition.where(id: orphan.id)).to exist
   end
 
