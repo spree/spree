@@ -186,6 +186,52 @@ describe Spree::OrderMailer, type: :mailer do
     end
   end
 
+  context 'when store credit pays part of the order' do
+    before do
+      order.update_columns(item_total: 40, delivery_total: 5, additional_tax_total: 0, total: 45)
+      order.fulfillments.first.update_columns(cost: 5)
+      store_credit = create(:store_credit, amount: 10, store: store, customer: order.customer)
+      create(:store_credit_payment, order: order, amount: 10, source: store_credit)
+      create(:check_payment, order: order, amount: 35)
+    end
+
+    def row(label, value)
+      /#{Regexp.escape(label)}\s*#{Regexp.escape(value)}/
+    end
+
+    def summary_texts
+      email = described_class.confirm_email(order)
+      [email.text_part.body.to_s, email.html_part.body.to_s].map { |body| ActionView::Base.full_sanitizer.sanitize(body).squish }
+    end
+
+    it 'shows the store credit line, so the lines add up to the total' do
+      summary_texts.each do |text|
+        expect(text).to match(row(I18n.t('spree.order_mailer.subtotal'), '$40.00'))
+        expect(text).to match(/#{I18n.t('spree.shipping')}.*\$5\.00/)
+        expect(text).to match(row(I18n.t('spree.store_credit_name'), '-$10.00'))
+        expect(text).to match(row(I18n.t('spree.order_mailer.total'), '$35.00'))
+      end
+    end
+
+    context 'and a gift card pays part of it too' do
+      before do
+        gift_card = create(:gift_card, amount: 5, store: store)
+        gift_card_credit = create(:store_credit, amount: 5, store: store, customer: order.customer, originator: gift_card)
+        create(:store_credit_payment, order: order, amount: 5, source: gift_card_credit)
+        order.update_columns(gift_card_id: gift_card.id, item_total: 45, total: 50)
+      end
+
+      it 'takes each off once, on its own line' do
+        summary_texts.each do |text|
+          expect(text).to match(row(I18n.t('spree.order_mailer.subtotal'), '$45.00'))
+          expect(text).to match(row(I18n.t('spree.gift_card'), '-$5.00'))
+          expect(text).to match(row(I18n.t('spree.store_credit_name'), '-$10.00'))
+          expect(text).to match(row(I18n.t('spree.order_mailer.total'), '$35.00'))
+        end
+      end
+    end
+  end
+
   context 'displays unit costs from line item' do
     # Regression test for #2772
 
