@@ -39,5 +39,43 @@ RSpec.describe Spree::Api::V3::Admin::Orders::RefundsController, type: :controll
       expect(response).to have_http_status(:created)
       expect(json_response['amount']).to eq('5.00')
     end
+
+    # A return refunded as store credit writes no refund row, so the card
+    # payment's own balance still reads as if nothing had gone back.
+    context 'when part of the order was already returned as store credit' do
+      let!(:order) { create(:shipped_order, store: store) }
+      let(:credited) { BigDecimal('4.00') }
+
+      before do
+        return_record = create(:received_return, store: store, order: order)
+        result = Spree::Returns::Refund.call(return_record: return_record, amount: credited, refund_method: 'store_credit')
+        raise result.error.to_s unless result.success?
+      end
+
+      it 'refuses a card refund of the full payment' do
+        expect {
+          post :create, params: {
+            order_id: order.prefixed_id,
+            payment_id: payment.prefixed_id,
+            amount: payment.amount.to_s
+          }, as: :json
+        }.not_to change(Spree::Refund, :count)
+
+        expect(response).to have_http_status(:unprocessable_content)
+      end
+
+      it 'refunds what the store credit left' do
+        remaining = payment.amount - credited
+
+        post :create, params: {
+          order_id: order.prefixed_id,
+          payment_id: payment.prefixed_id,
+          amount: remaining.to_s
+        }, as: :json
+
+        expect(response).to have_http_status(:created)
+        expect(BigDecimal(json_response['amount'])).to eq(remaining)
+      end
+    end
   end
 end

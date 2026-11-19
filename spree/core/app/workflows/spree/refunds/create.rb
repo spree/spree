@@ -56,9 +56,49 @@ module Spree
 
       def ensure_amount_within_balance
         amount = @amount_to_refund.to_d
-        return if amount.positive? && amount <= payment.credit_allowed.to_d && amount <= refundable_share
+        return if amount.positive? && amount <= payment.credit_allowed.to_d && amount <= refundable_share &&
+                  amount <= order_refundable_balance
 
         failure(payment, :refund_amount_exceeds_balance)
+      end
+
+      # What the order may still be given back across all its payments, once
+      # store credit already issued for it is counted.
+      #
+      # A return, claim or exchange refunded as store credit writes no refund
+      # row, so the payment's own balance still reads as if nothing went back.
+      # Without this bound a card refund could follow that credit and hand back
+      # more than the order was paid.
+      #
+      # @return [BigDecimal, Float] infinity when no credit was issued, so the
+      #   payment's own balance is the only bound
+      def order_refundable_balance
+        target = refunded_order
+        credited = target ? target.store_credit_refunds.sum(:amount).to_d : 0
+        return Float::INFINITY unless credited.positive?
+
+        order_payments_balance(target) - credited
+      end
+
+      # What the order's completed payments, or its shares of them in a split
+      # checkout, took less what has been refunded from them. Counted in two
+      # queries rather than per payment.
+      #
+      # @return [BigDecimal]
+      def order_payments_balance(target)
+        if target.grouped?
+          splits = target.payment_splits.joins(:payment).merge(Spree::Payment.completed)
+          splits.sum("#{Spree::PaymentSplit.table_name}.captured_amount").to_d -
+            Spree::Refund.where(order_id: target.id, payment_id: splits.select(:payment_id)).sum(:amount).to_d
+        else
+          completed = target.payments.completed
+          completed.sum(:amount).to_d - Spree::Refund.where(payment_id: completed.select(:id)).sum(:amount).to_d
+        end
+      end
+
+      # @return [Spree::Order, nil] the order this refund puts right
+      def refunded_order
+        order || payment.order
       end
 
       # What the named order may take back from this payment.
@@ -89,9 +129,21 @@ module Spree
       # payment's balance and says nothing about whose money it is — so on a
       # shared payment the model cannot catch two refunds that each fit the
       # payment but together overdraw one child's share.
+      #
+      # The order row is locked first, as store credit issued for it is, so a
+      # credit and a refund racing on one order cannot both read the same
+      # headroom.
       def create_refund
+        ApplicationRecord.transaction do
+          Spree::Order.lock.find(refunded_order.id) if refunded_order
+          lock_payment_and_create_refund
+        end
+      end
+
+      def lock_payment_and_create_refund
         payment.with_lock do
           ensure_share_still_available
+          failure(payment, :refund_amount_exceeds_balance) if @amount_to_refund.to_d > order_refundable_balance
 
           @refund = payment.refunds.create!(
             amount: @amount_to_refund,

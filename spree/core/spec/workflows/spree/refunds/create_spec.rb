@@ -66,6 +66,44 @@ RSpec.describe Spree::Refunds::Create do
       expect(payment.refunds).to be_empty
     end
 
+    # Store credit issued for a return, claim or exchange writes no refund
+    # row, so the payment's own balance still reads as if nothing went back.
+    context 'when the order was already given store credit' do
+      let(:order) { payment.order }
+
+      before do
+        create(:store_credit, refunded_order: order, store: order.store, customer: order.customer, amount: 20)
+      end
+
+      it 'refuses a refund that would give back more than the order was paid' do
+        result = described_class.call(payment: payment, amount: payment.amount)
+
+        expect(result).to be_failure
+        expect(result.error.value).to eq(:refund_amount_exceeds_balance)
+        expect(payment.refunds.reload).to be_empty
+      end
+
+      it 'refunds what the credit left' do
+        result = described_class.call(payment: payment, amount: BigDecimal('25.75'))
+
+        expect(result).to be_success
+        expect(result.value.amount).to eq(BigDecimal('25.75'))
+      end
+
+      it 'refuses when credit was issued after the pre-flight check' do
+        allow_any_instance_of(described_class).to receive(:ensure_amount_within_balance).and_wrap_original do |original|
+          original.call
+          create(:store_credit, refunded_order: order, store: order.store, customer: order.customer, amount: 5)
+        end
+
+        result = described_class.call(payment: payment, amount: BigDecimal('25.75'))
+
+        expect(result).to be_failure
+        expect(result.error.value).to eq(:refund_amount_exceeds_balance)
+        expect(payment.refunds.reload).to be_empty
+      end
+    end
+
     it 'refuses a non-positive amount' do
       expect(described_class.call(payment: payment, amount: 0)).to be_failure
     end
@@ -171,9 +209,9 @@ RSpec.describe Spree::Refunds::Create do
     # together overdraw this child. `Spree::Refund` cannot catch it: it
     # validates `credit_allowed`, which is the whole payment's balance.
     it 'refuses when another refund claimed the share after the pre-flight check' do
-      allow(shared_payment).to receive(:with_lock).and_wrap_original do |original, &block|
+      allow_any_instance_of(described_class).to receive(:ensure_amount_within_balance).and_wrap_original do |original|
+        original.call
         create(:refund, payment: shared_payment, order: order, amount: 100)
-        original.call(&block)
       end
 
       result = described_class.call(payment: shared_payment, order: order, amount: 100)
