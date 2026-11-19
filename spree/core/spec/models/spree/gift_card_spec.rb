@@ -44,6 +44,56 @@ RSpec.describe Spree::GiftCard, type: :model do
     end
   end
 
+  describe 'Validations' do
+    describe 'amount and currency once the card has been used' do
+      let(:gift_card) { create(:gift_card, store: store, amount: 100, currency: 'USD') }
+
+      before { gift_card.update_columns(amount_used: 44, status: 'partially_redeemed') }
+
+      it 'refuses to raise the amount' do
+        gift_card.amount = 150
+
+        expect(gift_card).not_to be_valid
+        expect(gift_card.errors.details[:amount]).to include(error: :cannot_change_once_used)
+      end
+
+      it 'refuses to lower the amount' do
+        gift_card.amount = 40
+
+        expect(gift_card).not_to be_valid
+        expect(gift_card.errors.details[:amount]).to include(error: :cannot_change_once_used)
+      end
+
+      it 'refuses to change the currency' do
+        gift_card.currency = 'EUR'
+
+        expect(gift_card).not_to be_valid
+        expect(gift_card.errors.details[:currency]).to include(error: :cannot_change_once_used)
+      end
+
+      it 'accepts the same amount written differently' do
+        gift_card.amount = '100.00'
+
+        expect(gift_card).to be_valid
+      end
+
+      it 'still lets other attributes change' do
+        gift_card.expires_at = 1.year.from_now.to_date
+        gift_card.amount_used = 60
+
+        expect(gift_card).to be_valid
+      end
+
+      it 'lets an unused card change its amount and currency' do
+        gift_card.update_columns(amount_used: 0, status: 'active')
+        gift_card.amount = 150
+        gift_card.currency = 'EUR'
+
+        expect(gift_card).to be_valid
+      end
+    end
+  end
+
   describe 'Scopes' do
     let!(:active_gift_card) { create(:gift_card, status: :active) }
     let!(:redeemed_gift_card) { create(:gift_card, status: :redeemed) }
