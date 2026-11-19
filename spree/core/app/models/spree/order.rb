@@ -496,6 +496,8 @@ module Spree
     def partially_refunded?
       return false if total_quantity.zero?
       return false if payment_state.in?(%w[void failed]) || refunds.empty?
+      # A refund only requested or failed has given nothing back yet.
+      return false unless refunds_total.positive?
 
       refunds_total < total_minus_store_credits - additional_tax_total.abs
     end

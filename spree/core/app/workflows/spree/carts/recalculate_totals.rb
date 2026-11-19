@@ -143,8 +143,9 @@ module Spree
           return cart.payment_splits.reload.to_a.sum(&:net_captured_amount)
         end
 
-        completed = cart.payments.completed
-        completed.sum(:amount) - Spree::Refund.completed_or_unset.where(payment_id: completed.select(:id)).sum(:amount)
+        # Loaded once, so refunds are subtracted for exactly the payments summed.
+        completed = cart.payments.completed.to_a
+        completed.sum(0.to_d, &:amount) - Spree::Refund.completed_or_unset.where(payment_id: completed.map(&:id)).sum(:amount)
       end
 
       def refresh_grand_total

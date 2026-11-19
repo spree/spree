@@ -1687,6 +1687,16 @@ describe Spree::Order, type: :model do
         end
       end
 
+      context 'when the only refund is still waiting on the provider' do
+        let(:amount) { 50 }
+
+        before { refund.update_column(:status, 'requested') }
+
+        it 'returns false, since nothing has been given back yet' do
+          expect(order.reload.partially_refunded?).to be false
+        end
+      end
+
       context 'when sum of refunds is equal to max amount which could be refunded' do
         let(:amount) { 85 }
 
