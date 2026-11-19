@@ -13,7 +13,8 @@ module Spree
 
       # @param order [Spree::Order]
       # @param items [Array<Hash>] `[{ line_item:, quantity:, description:,
-      #   send_replacement:, replacement_variant:, refund_amount: }]`
+      #   send_replacement:, replacement_variant:, refund_amount: }]`. A line
+      #   given no refund_amount offers what the customer paid for its units.
       # @param reason [Spree::ClaimReason, nil]
       # @param memo [String, nil]
       # @param created_by [Object, nil] nil for customer self-service
@@ -27,6 +28,7 @@ module Spree
         ApplicationRecord.transaction do
           step :build_claim
           step :calculate_tax
+          step :default_refund_amounts
           step :ensure_refunds_within_paid
         end
 
@@ -95,8 +97,10 @@ module Spree
           status: Spree::Claim.default_status
         )
 
+        @lines_without_amount = []
+
         @normalized_items.each do |item|
-          @claim.claim_line_items.build(
+          line = @claim.claim_line_items.build(
             line_item: item[:line_item],
             variant: item[:line_item].variant,
             quantity: item[:quantity],
@@ -107,6 +111,7 @@ module Spree
             replacement_variant: item[:replacement_variant],
             refund_amount: item[:refund_amount] || 0
           )
+          @lines_without_amount << line if item[:refund_amount].nil?
         end
 
         failure(@claim) unless @claim.save
@@ -114,6 +119,13 @@ module Spree
 
       def calculate_tax
         with_tax_provider(claim) { claim.calculate_tax! }
+      end
+
+      # Set once the tax is known, because what was paid includes the tax
+      # charged on top. Left at zero, resolving without an amount would refund
+      # nothing.
+      def default_refund_amounts
+        @lines_without_amount.each { |line| line.update!(refund_amount: line.paid_amount) }
       end
 
       # Checked once the tax is known, because a line's refund is entered tax

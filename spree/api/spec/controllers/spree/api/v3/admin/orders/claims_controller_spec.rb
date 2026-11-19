@@ -100,9 +100,9 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ClaimsController, type: :controlle
       end
     end
 
-    # A claim opened without per-item amounts has nothing to refund; the
-    # dashboard collects them at creation, and the API says so plainly.
-    it 'refuses a refund when no amount was recorded on the claim' do
+    # A claim whose lines were given a refund of zero has nothing to refund,
+    # and the API says so plainly.
+    it 'refuses a refund when the claim was opened with a zero amount' do
       empty = create(:claim, store: store, order: order)
       empty.claim_line_items.each { |line| line.update!(refund_amount: 0) }
       Spree::Claims::Approve.call(claim: empty)
@@ -133,6 +133,37 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ClaimsController, type: :controlle
       expect(response).to have_http_status(:ok)
       expect(json_response['status']).to eq('resolved')
       expect(line.reload.send_replacement).to be(true)
+    end
+
+    # V-3828: a claim opened without amounts resolved with a refund of zero.
+    context 'when the claim was opened without a refund amount' do
+      let!(:order) { create(:shipped_order, store: store, line_items_count: 1, line_items_price: 30) }
+
+      it 'refunds what the customer paid and sends a replacement' do
+        line_item.variant.stock_levels.first&.set_count_on_hand(10)
+        replacements_before = order.fulfillment_items.where(replacement: true).count
+
+        post :create, params: {
+          order_id: order.prefixed_id,
+          items: [{ line_item_id: line_item.prefixed_id, quantity: 1, description: 'Arrived damaged' }]
+        }, as: :json
+        opened = Spree::Claim.find_by_prefix_id!(json_response['id'])
+        Spree::Claims::Approve.call(claim: opened)
+
+        patch :resolve, params: {
+          order_id: order.prefixed_id,
+          id: opened.prefixed_id,
+          resolution: 'refund_and_replacement',
+          refund_method: 'store_credit',
+          replacement_line_item_ids: [opened.claim_line_items.first.prefixed_id]
+        }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['status']).to eq('resolved')
+        expect(json_response['refund_total']).to eq('30.00')
+        expect(Spree::StoreCredit.where(originator: opened).pluck(:amount)).to eq([30])
+        expect(order.fulfillment_items.reload.where(replacement: true).count).to eq(replacements_before + 1)
+      end
     end
 
     it 'rejects an unknown resolution' do

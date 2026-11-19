@@ -185,7 +185,7 @@ await adminClient.orders.claims.approve('or_xxx', 'claim_xxx')
 await adminClient.orders.claims.resolve('or_xxx', 'claim_xxx', {
   resolution: 'refund_and_replacement',   // or 'refund', 'replacement'
   refund_method: 'store_credit',
-  replacement_line_item_ids: ['li_xxx'],
+  replacement_line_item_ids: ['cli_xxx'], // the claim's own lines, not the order's
 })
 ```
 
@@ -199,7 +199,7 @@ curl -X PATCH 'https://api.mystore.com/api/v3/admin/orders/or_xxx/claims/claim_x
   -d '{
     "resolution": "refund_and_replacement",
     "refund_method": "store_credit",
-    "replacement_line_item_ids": ["li_xxx"]
+    "replacement_line_item_ids": ["cli_xxx"]
   }'
 ```
 
@@ -234,7 +234,7 @@ curl -X POST 'https://api.mystore.com/api/v3/admin/orders/or_xxx/fulfillments' \
 
 </CodeGroup>
 
-A claim never refunds more than the customer paid for the claimed items after discounts, tax included. Each claim line reports that ceiling as `paid_amount`, and the `refund_amount` you enter for a line includes its tax. The tax goes back in proportion to the money: refunding half of what a line is worth gives back half its tax, and resolving with a replacement alone gives none back.
+A claim never refunds more than the customer paid for the claimed items after discounts, tax included. Each claim line reports that ceiling as `paid_amount`, and the `refund_amount` you enter for a line includes its tax. A line opened without a `refund_amount`, as every claim a customer opens is, offers its `paid_amount`, so resolving without an `amount` refunds what the customer paid for the claimed items. The tax goes back in proportion to the money: refunding half of what a line is worth gives back half its tax, and resolving with a replacement alone gives none back.
 
 ## Exchanges
 

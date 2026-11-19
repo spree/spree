@@ -24,6 +24,22 @@ RSpec.describe 'Spree::Claims workflows' do
       expect(result.value).to be_open
     end
 
+    # V-3828: left at zero, resolving without an amount refunded nothing.
+    it 'offers what the customer paid when a line is given no refund amount' do
+      claim = Spree::Claims::Create.call(order: order, items: [{ line_item: line_item, quantity: 1 }]).value
+      line = claim.claim_line_items.first
+
+      expect(line.refund_amount).to be_positive
+      expect(line.refund_amount).to eq(line.paid_amount)
+      expect(claim.refund_total).to eq(line.paid_amount)
+    end
+
+    it 'keeps a refund amount of zero it was given' do
+      claim = Spree::Claims::Create.call(order: order, items: [{ line_item: line_item, quantity: 1, refund_amount: 0 }]).value
+
+      expect(claim.refund_total).to eq(0)
+    end
+
     it 'records the reason it was given' do
       reason = create(:claim_reason, store: store)
 
