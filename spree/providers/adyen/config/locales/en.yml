@@ -15,6 +15,7 @@ en:
         already_paid: This cart has already been paid through Adyen.
         amount_locked: This Adyen session can no longer change its amount. Create a new payment session.
         amount_mismatch: Adyen reports a payment of %{paid} for a session of %{expected}, so it was not recorded.
+        amount_stale: The amount due has changed since this Adyen session was set up. Update its amount or create a new payment session.
         not_open: This Adyen payment session can no longer be paid.
         payments_count: Adyen reports %{count} payments for this session, so none was recorded. Check the session in your Adyen Customer Area.
         reference_mismatch: This Adyen payment belongs to another session.

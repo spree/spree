@@ -166,8 +166,14 @@ module SpreeAdyen
 
       private
 
+      # Refused while the session's amount differs from what the cart owes, so
+      # a submit that overtook a failed or superseded amount update never pays
+      # the old figure.
       def submit_payment_session(payment_session)
         raise Spree::Core::GatewayError, I18n.t('spree.adyen.payment_session_errors.not_open') unless payment_session.pending?
+        if payment_session.amount != payment_session.owner.amount_due
+          raise Spree::Core::GatewayError, I18n.t('spree.adyen.payment_session_errors.amount_stale')
+        end
         return payment_session if payment_session.payable?
 
         body = {

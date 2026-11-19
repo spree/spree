@@ -129,6 +129,22 @@ RSpec.describe SpreeAdyen::Gateway, 'payment sessions' do
         expect(a_request(:patch, update_url)).not_to have_been_made
       end
 
+      it 'refuses a session whose amount is not what the cart owes, before Adyen hears of it' do
+        session.update_columns(amount: session.amount - 1)
+
+        expect { gateway.update_payment_session(payment_session: session, external_data: { 'submit' => true }) }.
+          to raise_error(Spree::Core::GatewayError, /amount due has changed/)
+        expect(a_request(:patch, update_url)).not_to have_been_made
+      end
+
+      it 'refuses a payable session once the cart owes another amount' do
+        session.update!(external_data: session.external_data.merge('payable' => true))
+        order.update_columns(total: order.total + 5)
+
+        expect { gateway.update_payment_session(payment_session: session.reload, external_data: { 'submit' => true }) }.
+          to raise_error(Spree::Core::GatewayError, /amount due has changed/)
+      end
+
       it 'refuses a session that is not pending' do
         session.cancel
 
