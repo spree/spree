@@ -106,6 +106,8 @@ RSpec.describe SpreeAdyen::Configure do
     end
 
     it 'finds what is already in place', vcr: { cassette_name: 'configure_existing' } do
+      # The recorded webhook's URL names the method the recording ran with; ids differ between runs.
+      allow(gateway).to receive(:webhook_url).and_return('http://www.example.com:3000/api/v3/webhooks/payments/pm_UkLWZg9DAJ')
       described_class.call(gateway)
 
       expect(gateway.reload.preferred_webhook_id).to be_present
