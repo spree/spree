@@ -270,6 +270,26 @@ module Spree
         end
       end
 
+      context 'with a coupon code whose item total rule the items meet' do
+        let!(:promotion) do
+          create(:promotion_with_item_total_rule, :with_order_adjustment, code: 'BIG10', store: store, item_total_threshold_amount: 10)
+        end
+
+        let(:params) do
+          {
+            email: 'new@example.com',
+            items: [{ variant_id: variant.prefixed_id, quantity: 1 }],
+            coupon_code: 'BIG10'
+          }
+        end
+
+        it 'applies it' do
+          expect(subject).to be_success
+          expect(subject.value.promotions).to include(promotion)
+          expect(subject.value.discount_total).to eq(-10)
+        end
+      end
+
       context 'with an automatic free-shipping promotion (no coupon code)' do
         let!(:promotion) do
           create(:free_shipping_promotion, kind: :automatic)
@@ -292,6 +312,43 @@ module Spree
           expect(shipment.adjustment_total).to eq(-5)
           expect(order.fulfillment_discount).to eq(5)
           expect(order.total).to eq(order.item_total)
+        end
+      end
+
+      context 'with an automatic whole-order promotion for a customer group' do
+        let(:customer_group) { create(:customer_group, store: store) }
+        let!(:promotion) do
+          create(:promotion, code: nil, kind: :automatic, store: store).tap do |promotion|
+            Spree::Promotion::Rules::CustomerGroup.create!(promotion: promotion, preferred_customer_group_ids: [customer_group.id])
+            calculator = Spree::Calculator::FlatPercentItemTotal.new(preferred_flat_percent: 10)
+            Spree::Promotion::Actions::CreateAdjustment.create!(calculator: calculator, promotion: promotion)
+          end
+        end
+
+        let(:params) do
+          {
+            email: 'new@example.com',
+            items: [{ variant_id: variant.prefixed_id, quantity: 1 }]
+          }
+        end
+
+        it 'applies it to an order for a customer in the group' do
+          create(:customer_group_user, customer_group: customer_group, customer: user)
+
+          expect(subject).to be_success
+          order = subject.value
+
+          expect(order.promotions).to include(promotion)
+          expect(order.discount_total).to eq(-(order.item_total * 10 / 100).round(2))
+          expect(order.total).to eq(order.item_total + order.discount_total)
+        end
+
+        it 'leaves an order for a customer outside the group alone' do
+          expect(subject).to be_success
+          order = subject.value
+
+          expect(order.promotions).to be_empty
+          expect(order.discount_total).to eq(0)
         end
       end
 
