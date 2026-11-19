@@ -294,10 +294,11 @@ module Spree
 
     # Once part of the card has been spent, its amount and currency are what
     # that spending was measured against: changing either would invent a
-    # balance or leave a negative one. Keyed on the stored +amount_used+, so
-    # a workflow drawing the card down in the same save is unaffected.
+    # balance or leave a negative one. Keyed on the stored +amount_used+ and
+    # +amount_authorized+, so a workflow drawing the card down in the same
+    # save is unaffected.
     def amount_and_currency_unchanged_once_used
-      return unless amount_used_in_database.to_d.positive?
+      return unless (amount_used_in_database.to_d + amount_authorized_in_database.to_d).positive?
 
       errors.add(:amount, :cannot_change_once_used) if will_save_change_to_amount?
       errors.add(:currency, :cannot_change_once_used) if will_save_change_to_currency?

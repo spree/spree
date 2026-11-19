@@ -84,6 +84,14 @@ RSpec.describe Spree::GiftCard, type: :model do
         expect(gift_card).to be_valid
       end
 
+      it 'refuses to change the amount while part of the card is authorized' do
+        gift_card.update_columns(amount_used: 0, amount_authorized: 20, status: 'active')
+        gift_card.amount = 150
+
+        expect(gift_card).not_to be_valid
+        expect(gift_card.errors.details[:amount]).to include(error: :cannot_change_once_used)
+      end
+
       it 'lets an unused card change its amount and currency' do
         gift_card.update_columns(amount_used: 0, status: 'active')
         gift_card.amount = 150

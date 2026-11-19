@@ -33,6 +33,12 @@ module Spree
 
           before_action :resolve_customer, only: [:create, :update]
 
+          # Locked so a checkout drawing the card down cannot commit between
+          # the model's used-card check and this write.
+          def update
+            @resource.with_lock { super }
+          end
+
           protected
 
           def model_class
