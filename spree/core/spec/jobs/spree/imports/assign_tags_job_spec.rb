@@ -24,10 +24,10 @@ RSpec.describe Spree::Imports::AssignTagsJob, type: :job do
     end
 
     context "when the store's default locale differs from I18n.default_locale" do
+      let(:german_store) { create(:store).tap { |s| s.default_market.update!(default_locale: 'de', supported_locales: 'de,en') }.reload }
       let!(:product) do
-        store.update_columns(default_locale: 'de')
         # Imported in the store's locale, so the name lives in the base column.
-        Spree::Current.with_content_locale('de') { I18n.with_locale(:de) { create(:product, name: 'Hemd', store: store) } }
+        Spree::Current.with_content_locale('de') { I18n.with_locale(:de) { create(:product, name: 'Hemd', store: german_store) } }
       end
 
       it 'reads the product in the store locale and saves its tags' do
