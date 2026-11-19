@@ -285,6 +285,25 @@ RSpec.describe Spree::Collection, type: :model do
       expect(collection.reload.products).to match_array(coffee_products)
     end
 
+    it 'rematches the products when another rule saved before it changes value' do
+      collection.update!(rules_match_policy: 'any')
+      on_sale = create(:product, price: 10, compare_at_price: 12)
+      coffee_products = create_list(:product, 2, tag_list: 'coffee')
+      tea_products = create_list(:product, 2, tag_list: 'tea')
+      tag_rule = create(:tag_collection_rule, :is_equal_to, collection: collection, value: 'tea')
+      sale_rule = create(:sale_collection_rule, :is_equal_to, collection: collection)
+      Spree::Collection.find(collection.id).regenerate_products
+      expect(collection.reload.products).to match_array([on_sale, *tea_products])
+
+      reloaded_collection.rules = [
+        { id: tag_rule.prefixed_id, value: 'coffee', match_policy: 'is_equal_to' },
+        { id: sale_rule.prefixed_id, type: 'tag', value: 'tea', match_policy: 'is_equal_to' }
+      ]
+      reloaded_collection.save!
+
+      expect(collection.reload.products).to match_array(coffee_products + tea_products)
+    end
+
     it 'destroys rules omitted from the payload' do
       keep = create(:tag_collection_rule, :is_equal_to, collection: collection, value: 'sale')
       drop = create(:tag_collection_rule, :is_equal_to, collection: collection, value: 'new')

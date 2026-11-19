@@ -36,9 +36,10 @@ module Spree
     end
 
     def regenerate_collection_products
-      # A rule whose type changed in place is still loaded as its old class,
-      # so reload the rules to match each one by the type it was saved with.
-      collection.rules.reset if saved_change_to_type?
+      # A rule whose type changed in place is still loaded as its old class.
+      # Reload on every rule's commit: with only_once, the first rule to commit
+      # regenerates, and that may not be the retyped one.
+      collection.rules.reset
       collection.regenerate_products(only_once: true)
     end
   end
