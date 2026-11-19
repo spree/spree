@@ -3,6 +3,29 @@ require 'spec_helper'
 RSpec.describe Spree::CustomFieldDefinition, type: :model do
   let(:custom_field_definition) { build(:custom_field_definition) }
 
+  describe 'destroying' do
+    it 'removes the product type join rows that use it' do
+      definition = create(:custom_field_definition, resource_type: 'Spree::Product')
+      product_type = create(:product_type, store: definition.store)
+      join = Spree::ProductTypeCustomFieldDefinition.create!(product_type: product_type, custom_field_definition: definition)
+
+      definition.destroy!
+
+      expect(Spree::ProductTypeCustomFieldDefinition.exists?(join.id)).to be(false)
+    end
+
+    it 'removes the seller requirement rows that ask for it' do
+      definition = create(:custom_field_definition, resource_type: 'Spree::Seller')
+      requirement = create(:required_custom_fields_requirement, store: definition.store)
+      requirement.update!(custom_field_definitions: [definition])
+      row_ids = requirement.seller_requirement_custom_fields.ids
+
+      definition.destroy!
+
+      expect(Spree::SellerRequirementCustomField.where(id: row_ids)).to be_empty
+    end
+  end
+
   describe 'scopes' do
     let!(:visible_definition) { create(:custom_field_definition, storefront_visible: true) }
     let!(:admin_only_definition) { create(:custom_field_definition, :admin_only) }
