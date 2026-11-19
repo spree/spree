@@ -2131,6 +2131,7 @@ paths:
                     name: Spree Commerce
                     default: false
                     gateway_payment_profile_id:
+                    payment_method_id: pm_UkLWZg9DAJ
                   payment_method:
                     id: pm_UkLWZg9DAJ
                     name: Check 9
