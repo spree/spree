@@ -593,6 +593,17 @@ RSpec.describe Spree::Category, type: :model do
         end
       end
 
+      it 'keeps only the last permalink segment when moved to the top level' do
+        category2.move_to_root
+
+        expect(category2.reload.permalink).to eq('child')
+        expect(category2.pretty_name).to eq('Child')
+
+        Mobility.with_locale(:pl) do
+          expect(category2.reload.permalink).to eq('dziecko')
+        end
+      end
+
       it 'updates the pretty name and permalink when move is done inside different locales' do
         Mobility.with_locale(:pl) do
           category2.move_to_child_with_index(category, 0)

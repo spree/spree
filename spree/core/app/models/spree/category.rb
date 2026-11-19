@@ -318,13 +318,10 @@ module Spree
       private
 
       def generate_slug
-        if parent.present?
-          generate_permalink_including_parent
-        elsif permalink.blank?
-          name_with_fallback.to_url
-        else
-          permalink.to_url
-        end
+        own_segment = permalink.to_s.split('/').last
+        own_segment = own_segment.blank? ? name_with_fallback.to_url : own_segment.to_url
+
+        parent.present? ? [parent_permalink_with_fallback, own_segment].join('/') : own_segment
       end
 
       def generate_pretty_name
@@ -335,11 +332,6 @@ module Spree
         else
           pretty_name
         end
-      end
-
-      def generate_permalink_including_parent
-        [parent_permalink_with_fallback,
-         (permalink.blank? ? name_with_fallback.to_url : permalink.split('/').last.to_url)].join('/')
       end
 
       def generate_pretty_name_including_parent
@@ -378,14 +370,14 @@ module Spree
       [parent&.pretty_name, name].compact.join(' -> ')
     end
 
+    # The permalink is the full path, so only its last segment belongs to this
+    # category; the rest comes from the current parent. Keeping the old path at
+    # the top level would turn "kitchen/kettles" into "kitchen-slash-kettles".
     def generate_slug
-      if parent.present?
-        [parent.permalink, (permalink.blank? ? name.to_url : permalink.split('/').last.to_url)].join('/')
-      elsif permalink.blank?
-        name.to_url
-      else
-        permalink.to_url
-      end
+      own_segment = permalink.to_s.split('/').last
+      own_segment = own_segment.blank? ? name.to_url : own_segment.to_url
+
+      parent.present? ? [parent.permalink, own_segment].join('/') : own_segment
     end
 
     def set_permalink
