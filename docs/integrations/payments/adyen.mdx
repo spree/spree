@@ -103,7 +103,7 @@ A shopper can also save a card without buying anything, from their account, thro
 ## What to watch for
 
 - **Captures, voids and refunds wait for Adyen.** Adyen accepts each request and reports its outcome by webhook, usually within seconds. Until then the dashboard shows **Capture requested**, **Void requested** or a requested refund, and the payment takes no other action. If one waits long, check it in Adyen: Adyen retries an undelivered webhook for up to 30 days.
-- **A failure can come later.** Adyen can report a capture or refund as failed after accepting it, sometimes days later. Spree then marks it failed, with Adyen's reason, and takes the money back out of the order's totals.
+- **A failure can come later.** Adyen can report a capture or refund as failed after accepting it, sometimes days later. Spree then marks it failed, with Adyen's reason. A failed capture comes off what the order has paid; a failed refund comes off what it has refunded, so the order counts that money as paid again.
 - **Methods Adyen captures at once** read as paid even when the store captures on dispatch.
 - **Capture on dispatch takes the first parcel only.** Adyen cancels what a partial capture leaves, so later parcels of the same order find nothing left to capture. Take payment for multi-parcel orders at checkout, or capture them in full.
 - **A session canceled after the shopper pressed Pay** stays payable at Adyen until it expires, an hour after it opened. If the shopper pays it, for example by retrying a card in a tab left open, the order shows more paid than owed; refund the difference.
