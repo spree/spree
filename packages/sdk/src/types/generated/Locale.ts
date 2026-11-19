@@ -5,7 +5,7 @@ import type {LocaleCode} from '@/types'
 
 interface Locale {
   code: LocaleCode;
-  /** @deprecated Name the locale from `code` with `Intl.DisplayNames`. Removed in 6.1. */
+  /** @deprecated Name the locale from `code` with `Intl.DisplayNames`. Removed in 6.5. */
   name: string;
   default: boolean;
   rtl: boolean;

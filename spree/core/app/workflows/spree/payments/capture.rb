@@ -17,7 +17,7 @@ module Spree
       # @param amount [BigDecimal, nil] in the currency's own units; nil
       #   captures in full, a smaller amount splits the remainder into a new
       #   pending payment. An Integer is read as hundredths of the currency,
-      #   the pre-6.0 contract (deprecated, removed in 6.1).
+      #   the pre-6.0 contract (deprecated, removed in 6.5).
       def perform(payment:, amount: nil)
         super
         @amount = capture_amount(amount)
@@ -53,7 +53,7 @@ module Spree
 
         Spree::Deprecation.warn(
           'Passing an Integer amount to the payment capture workflow is deprecated and is read as hundredths of ' \
-          'the currency. Pass the amount in the currency\'s own units as a BigDecimal; removed in Spree 6.1.'
+          'the currency. Pass the amount in the currency\'s own units as a BigDecimal; removed in Spree 6.3.'
         )
         Spree::Money::Rounding.from_hundredths(amount)
       end

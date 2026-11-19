@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Shared helpers for the multi-worktree dev workflow (see CLAUDE.md "Worktrees").
+# Shared helpers for the multi-worktree dev workflow (see AGENTS.md "Development environment").
 # Everything derives from the current git branch, so the scripts work both from
 # worktrunk hooks and when run by hand. Pass a branch name as WT_BRANCH (or as
 # the first argument to the calling script) to operate on another worktree's

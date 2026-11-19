@@ -14,6 +14,8 @@ module Spree
         attribute :session_required, &:session_required?
 
         attribute :source_required, &:source_required?
+
+        expandable_custom_fields
       end
     end
   end

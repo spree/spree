@@ -1,8 +1,9 @@
 import {
-  adminClient,
   formatStoreDateTime,
   Money,
   PageHeader,
+  ReadRow,
+  RecordMetadataCard,
   Slot,
   Subject,
   usePermissions,
@@ -31,7 +32,6 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ResourceDetailSkeleton } from '../../../../../components/spree/route-pending'
 import { PayoutCompleteDialog } from '../../../../../components/spree/sellers/payout-complete-dialog'
-import { ReadRow } from '../../../../../components/spree/sellers/seller-read-row'
 import {
   OWED_PAYOUT_STATUSES,
   usePayout,
@@ -102,12 +102,8 @@ function PayoutDetailPage() {
                 </Button>
               ) : null
             }
-            resource={{ id: payout.id }}
-            jsonPreview={{
-              title: `Payout ${payout.id}`,
-              fetch: () => adminClient.sellerPayouts.get(payout.id),
-              endpoint: `/api/v3/admin/seller_payouts/${payout.id}`,
-            }}
+            resource={payout}
+            endpoint={`/api/v3/admin/seller_payouts/${payout.id}`}
           />
         }
         main={
@@ -129,11 +125,11 @@ function PayoutDetailPage() {
                   <Skeleton className="h-16 w-full" />
                 </div>
               ) : transfersFailed ? (
-                <p className="px-6 pb-6 text-sm text-destructive">
+                <p className="px-6 pb-6 text-base text-destructive">
                   {t('admin.payouts.detail.covers_error')}
                 </p>
               ) : rows.length === 0 ? (
-                <p className="px-6 pb-6 text-sm text-muted-foreground">
+                <p className="px-6 pb-6 text-base text-muted-foreground">
                   {t('admin.payouts.detail.covers_empty')}
                 </p>
               ) : (
@@ -180,6 +176,7 @@ function PayoutDetailPage() {
                 <Pagination meta={transfers.meta} onPageChange={setPage} />
               )}
             </Card>
+            <RecordMetadataCard metadata={payout.metadata} />
             <Slot name="seller_payout.form_main" context={{ payout }} />
           </>
         }

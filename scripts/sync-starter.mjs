@@ -6,6 +6,7 @@
 //   - `workspace:^` dependency ranges → floating ranges on the published
 //     packages (newest release through 1.x, floored at the version being
 //     released)
+//   - `catalog:` ranges → the version pnpm-workspace.yaml's catalog names
 //   - monorepo-only devDependencies dropped (the example plugin isn't on npm)
 //   - biome.json extends the workspace root config → replaced with a
 //     self-contained equivalent
@@ -29,6 +30,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { parse as parseYaml } from 'yaml'
 import { alignedPackages, majorFloorRange } from './version-packages.mjs'
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
@@ -92,6 +94,14 @@ function publishedRange(name) {
   return `^${version}`
 }
 
+const { catalog } = parseYaml(fs.readFileSync(path.join(repoRoot, 'pnpm-workspace.yaml'), 'utf8'))
+
+function catalogRange(name) {
+  if (!catalog?.[name])
+    throw new Error(`${name} uses catalog: but pnpm-workspace.yaml's catalog has no entry for it`)
+  return catalog[name]
+}
+
 const pkgPath = path.join(targetDir, 'package.json')
 const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'))
 for (const section of ['dependencies', 'devDependencies']) {
@@ -102,6 +112,8 @@ for (const section of ['dependencies', 'devDependencies']) {
       delete deps[name]
     } else if (typeof range === 'string' && range.startsWith('workspace:')) {
       deps[name] = publishedRange(name)
+    } else if (range === 'catalog:') {
+      deps[name] = catalogRange(name)
     }
   }
 }

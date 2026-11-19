@@ -29,15 +29,18 @@ vi.mock('../src/context', async (importOriginal) => ({
   detectProject: () => ({ mode: 'docker', projectDir, port: 3000 }),
 }))
 
+const packageManager = vi.hoisted(() => ({ name: 'pnpm' }))
+
 vi.mock('../src/commands/add', () => ({
   APP_DIRS: ['dashboard'],
-  detectPackageManager: () => 'pnpm',
+  detectPackageManager: () => packageManager.name,
   generateRouteTree: vi.fn(),
 }))
 
 vi.mock('@clack/prompts', () => ({
   log: { step: vi.fn(), info: vi.fn(), warn: vi.fn() },
   note: vi.fn(),
+  spinner: () => ({ start: vi.fn(), stop: vi.fn() }),
   confirm: vi.fn(),
   isCancel: () => false,
   cancel: vi.fn(),
@@ -50,7 +53,6 @@ import {
   detectSpreeGems,
   detectSpreePackages,
   isExactVersion,
-  isOlderVersion,
   moveToReleaseLine,
   packageAddArgs,
   packageDedupeArgs,
@@ -58,7 +60,7 @@ import {
   registerUpgradeCommand,
   sdkAdvisory,
 } from '../src/commands/upgrade'
-import { npmVersionOf, releaseLineFor } from '../src/lib/release-line'
+import { isOlderVersion, npmVersionOf, releaseLineFor } from '../src/lib/release-line'
 
 describe('npmVersionOf', () => {
   it('spells gem versions the way the packages are published', () => {
@@ -210,7 +212,7 @@ describe('detectSpreeGems', () => {
       if (args.includes('install')) return { stdout: '' }
       throw Object.assign(new Error('x'), { exitCode: 1, stderr: 'Could not find gem spree_core' })
     }) as never)
-    await expect(detectSpreeGems('/proj')).rejects.toThrow(/even after `bundle install`/)
+    await expect(detectSpreeGems('/proj')).rejects.toThrow(/even after reinstalling/)
     await expect(detectSpreeGems('/proj')).rejects.toThrow(/Could not find gem spree_core/)
   })
 })
@@ -331,6 +333,27 @@ describe('moveToReleaseLine', () => {
 
     expect(moveToReleaseLine(dir, LINE)).toEqual([])
     expect(readPackageJson()).toBe(source)
+  })
+
+  // Projects created before @spree/docs carried the Spree version depend on
+  // its `latest`, which can be ahead of the server.
+  it('moves a package on `latest` and older docs onto the line', () => {
+    writePackageJson(
+      JSON.stringify({
+        dependencies: { '@spree/docs': 'latest', '@spree/dashboard': 'latest' },
+      }),
+    )
+    expect(
+      moveToReleaseLine(dir, { ...LINE, packages: [...LINE.packages, '@spree/docs'] }),
+    ).toEqual([
+      { name: '@spree/docs', from: 'latest', to: '^6.0.0-rc.7' },
+      { name: '@spree/dashboard', from: 'latest', to: '^6.0.0-rc.7' },
+    ])
+
+    writePackageJson(JSON.stringify({ dependencies: { '@spree/docs': '^0.1.421' } }))
+    expect(moveToReleaseLine(dir, { ...LINE, packages: ['@spree/docs'] })).toEqual([
+      { name: '@spree/docs', from: '^0.1.421', to: '^6.0.0-rc.7' },
+    ])
   })
 
   it('gives release candidate pins a range once the line is a final version', () => {
@@ -510,12 +533,21 @@ describe('spree upgrade', () => {
   // `spreeVersion` is what the server's bundle reports for spree_core.
   function routeExeca({
     failOn,
+    failWith,
+    skillsStdout = '[]',
+    skillsTags = [],
     spreeVersion = '6.0.0.rc7',
   }: {
     failOn?: string
+    failWith?: { message?: string; stdout?: string }
+    skillsStdout?: string
+    skillsTags?: string[]
     spreeVersion?: string | null
   } = {}): void {
     mockExeca.mockImplementation((async (cmd: string, args: string[]) => {
+      if (args.includes('ls-remote')) {
+        return { stdout: skillsTags.map((tag) => `abc123\trefs/tags/${tag}`).join('\n') }
+      }
       if (args.includes('ps')) return { stdout: 'running' }
       if (args.includes('--name-only')) return { stdout: 'spree\nspree_core\n' }
       if (args.includes('list')) {
@@ -526,8 +558,12 @@ describe('spree upgrade', () => {
       if (args.includes('config')) return { stdout: 'web\n' }
       const command = `${cmd} ${args.join(' ')}`
       commands.push(command)
-      if (failOn && command.includes(failOn)) throw new Error(`${failOn} failed`)
-      return { stdout: '' }
+      if (failOn && command.includes(failOn)) {
+        throw Object.assign(new Error(failWith?.message ?? `${failOn} failed`), {
+          stdout: failWith?.stdout,
+        })
+      }
+      return { stdout: args.includes('skills') ? skillsStdout : '' }
     }) as never)
   }
 
@@ -587,7 +623,7 @@ describe('spree upgrade', () => {
       'pnpm update @spree/dashboard',
       'pnpm dedupe',
       'docker compose exec web bin/rails spree:install:migrations db:migrate',
-      'docker compose exec web bin/rake spree:upgrade',
+      'docker compose exec web bin/rails spree:upgrade',
       'docker compose restart web',
     ])
   })
@@ -605,7 +641,7 @@ describe('spree upgrade', () => {
       'pnpm dedupe',
       'docker compose up -d --no-deps web',
       'docker compose up -d --wait',
-      'docker compose exec web bin/rake spree:upgrade',
+      'docker compose exec web bin/rails spree:upgrade',
     ])
   })
 
@@ -641,7 +677,7 @@ describe('spree upgrade', () => {
       'pnpm add --save-exact @spree/dashboard@6.0.0-rc.7 @spree/dashboard-ui@6.0.0-rc.7',
       'pnpm dedupe',
       'docker compose exec web bin/rails spree:install:migrations db:migrate',
-      'docker compose exec web bin/rake spree:upgrade',
+      'docker compose exec web bin/rails spree:upgrade',
       'docker compose restart web',
     ])
   })
@@ -767,7 +803,7 @@ describe('spree upgrade', () => {
     await expect(runUpgrade()).rejects.toThrow(/spree:upgrade failed/)
 
     expect(commands).toContain('pnpm update @spree/dashboard')
-    expect(commands.at(-1)).toBe('docker compose exec web bin/rake spree:upgrade')
+    expect(commands.at(-1)).toBe('docker compose exec web bin/rails spree:upgrade')
   })
 
   describe('when `compose ps` fails', () => {
@@ -836,6 +872,270 @@ describe('spree upgrade', () => {
     })
   })
 
+  describe('agent skills', () => {
+    const update = 'pnpm dlx skills add spree/agent-skills --skill * --yes --json'
+
+    function writeSkillsLock(skills: Record<string, string>): void {
+      fs.writeFileSync(
+        path.join(projectDir, 'skills-lock.json'),
+        JSON.stringify({
+          version: 2,
+          skills: Object.fromEntries(
+            Object.entries(skills).map(([name, source]) => [
+              name,
+              { source, sourceType: 'github', skillPath: `skills/${name}/SKILL.md` },
+            ]),
+          ),
+        }),
+      )
+    }
+
+    function installSpreeSkills(): void {
+      writeSkillsLock({
+        'spree-api-v3': 'spree/agent-skills',
+        'release-notes': 'acme/skills',
+        'spree-checkout': 'https://github.com/spree/agent-skills.git',
+      })
+    }
+
+    async function runInteractively(confirm: (message: string) => boolean): Promise<void> {
+      vi.mocked(p.confirm).mockClear()
+      vi.mocked(p.confirm).mockImplementation((async ({ message }: { message: string }) =>
+        confirm(message)) as never)
+      const program = new Command()
+      registerUpgradeCommand(program)
+      await program.parseAsync(['upgrade'], { from: 'user' })
+    }
+
+    afterEach(() => {
+      packageManager.name = 'pnpm'
+    })
+
+    it('installs every Spree skill from the main branch, after the packages and before migrations', async () => {
+      writeProject({ ejected: true })
+      installSpreeSkills()
+
+      await runUpgrade()
+
+      expect(commands).toContain(update)
+      expect(commands.indexOf(update)).toBeGreaterThan(
+        commands.indexOf('pnpm update @spree/dashboard'),
+      )
+      expect(commands.indexOf(update)).toBeLessThan(
+        commands.indexOf('docker compose exec web bin/rails spree:install:migrations db:migrate'),
+      )
+    })
+
+    it("installs the skills release for the server's Spree version", async () => {
+      writeProject({ ejected: true })
+      installSpreeSkills()
+      routeExeca({
+        spreeVersion: '6.0.4',
+        skillsTags: ['v0.3.0', 'v6.0.0', 'v6.0.1', 'v6.0.5', 'v6.1.0'],
+      })
+
+      await runInteractively(() => true)
+
+      expect(commands).toContain(
+        'pnpm dlx skills add spree/agent-skills#v6.0.1 --skill * --yes --json',
+      )
+      expect(vi.mocked(p.confirm)).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: 'Update the Spree agent skills to v6.0.1, the release for Spree 6.0.4?',
+        }),
+      )
+    })
+
+    it('removes the Spree skills the new release no longer has, and no one else’s', async () => {
+      writeProject({ ejected: true })
+      installSpreeSkills()
+      routeExeca({
+        spreeVersion: '6.0.4',
+        skillsTags: ['v6.0.1'],
+        skillsStdout: JSON.stringify([{ name: 'spree-api-v3', status: 'installed' }]),
+      })
+
+      await runUpgrade()
+
+      const add = commands.indexOf(
+        'pnpm dlx skills add spree/agent-skills#v6.0.1 --skill * --yes --json',
+      )
+      const remove = commands.indexOf('pnpm dlx skills remove spree-checkout --yes')
+      expect(add).toBeGreaterThan(-1)
+      expect(remove).toBeGreaterThan(add)
+      expect(commands.filter((command) => command.includes('skills remove'))).toHaveLength(1)
+    })
+
+    it('removes nothing when the skills CLI reports no skills', async () => {
+      writeProject({ ejected: true })
+      installSpreeSkills()
+      routeExeca({ spreeVersion: '6.0.4', skillsTags: ['v6.0.1'] })
+
+      await runUpgrade()
+
+      expect(commands.some((command) => command.includes('skills remove'))).toBe(false)
+    })
+
+    it('keeps the Spree skills the lockfile already records at the new release', async () => {
+      writeProject({ ejected: true })
+      fs.writeFileSync(
+        path.join(projectDir, 'skills-lock.json'),
+        JSON.stringify({
+          version: 2,
+          skills: {
+            'spree-api-v3': { source: 'spree/agent-skills', ref: 'v6.0.1', sourceType: 'github' },
+          },
+        }),
+      )
+      routeExeca({
+        spreeVersion: '6.0.4',
+        skillsTags: ['v6.0.1'],
+        skillsStdout: JSON.stringify([{ name: 'spree-checkout', status: 'installed' }]),
+      })
+
+      await runUpgrade()
+
+      expect(commands.some((command) => command.includes('skills remove'))).toBe(false)
+    })
+
+    it('names the obsolete skills it could not remove', async () => {
+      writeProject({ ejected: true })
+      installSpreeSkills()
+      routeExeca({
+        spreeVersion: '6.0.4',
+        skillsTags: ['v6.0.1'],
+        skillsStdout: JSON.stringify([{ name: 'spree-api-v3', status: 'installed' }]),
+        failOn: 'skills remove',
+      })
+
+      await runUpgrade()
+
+      expect(
+        vi
+          .mocked(prompts.log.warn)
+          .mock.calls.some(([message]) =>
+            String(message).includes('pnpm dlx skills remove spree-checkout --yes'),
+          ),
+      ).toBe(true)
+    })
+
+    it('runs the skills CLI with npx in npm and Yarn projects', async () => {
+      writeProject({ ejected: true })
+      installSpreeSkills()
+      packageManager.name = 'yarn'
+
+      await runUpgrade()
+
+      expect(commands).toContain('npx --yes skills add spree/agent-skills --skill * --yes --json')
+    })
+
+    it('asks before updating the skills, and skips them when declined', async () => {
+      writeProject({ ejected: false })
+      installSpreeSkills()
+
+      await runInteractively((message) => !message.includes('agent skills'))
+
+      expect(vi.mocked(p.confirm)).toHaveBeenCalledWith(
+        expect.objectContaining({ message: expect.stringContaining('agent skills') }),
+      )
+      expect(commands.some((command) => command.includes('skills'))).toBe(false)
+      expect(commands).toContain('docker compose exec web bin/rails spree:upgrade')
+    })
+
+    it.each([
+      ['has no skills lockfile', () => {}],
+      [
+        'has only skills from other sources',
+        () => writeSkillsLock({ 'release-notes': 'acme/skills' }),
+      ],
+      [
+        'has an unreadable skills lockfile',
+        () => fs.writeFileSync(path.join(projectDir, 'skills-lock.json'), '{ not json'),
+      ],
+    ])('neither asks nor updates when the project %s', async (_case, setup) => {
+      writeProject({ ejected: true })
+      fs.mkdirSync(path.join(projectDir, '.agents', 'skills', 'release-notes'), {
+        recursive: true,
+      })
+      setup()
+
+      await runInteractively(() => true)
+
+      expect(vi.mocked(p.confirm)).not.toHaveBeenCalledWith(
+        expect.objectContaining({ message: expect.stringContaining('agent skills') }),
+      )
+      expect(commands.some((command) => command.includes('skills'))).toBe(false)
+    })
+
+    function lastWarning(): string | undefined {
+      return vi.mocked(prompts.log.warn).mock.calls.at(-1)?.[0]
+    }
+
+    it("warns with the skills CLI's reason and carries on when the update fails", async () => {
+      writeProject({ ejected: true })
+      installSpreeSkills()
+      routeExeca({
+        failOn: 'skills add',
+        failWith: {
+          message: 'Command failed with exit code 1: pnpm dlx skills add',
+          stdout: JSON.stringify([
+            { status: 'failed', error: 'Failed to clone repository\nAuthentication failed' },
+          ]),
+        },
+      })
+
+      await runUpgrade()
+
+      const warning = lastWarning()
+      expect(warning).toContain('The Spree agent skills were not updated')
+      expect(warning).toContain('pnpm dlx skills add spree/agent-skills --skill "*" --yes')
+      expect(warning).not.toContain('--json')
+      expect(warning).toContain('Failed to clone repository\nAuthentication failed')
+      expect(warning).not.toContain('Command failed')
+      expect(commands.at(-1)).toBe('docker compose restart web')
+    })
+
+    it('warns when a skill failed to install although the run exited with code 0', async () => {
+      writeProject({ ejected: true })
+      installSpreeSkills()
+      routeExeca({
+        skillsStdout: JSON.stringify([
+          { name: 'spree-api-v3', status: 'installed' },
+          { name: 'spree-checkout', status: 'failed', error: 'EACCES: permission denied' },
+        ]),
+      })
+
+      await runUpgrade()
+
+      const warning = lastWarning()
+      expect(warning).toContain('The Spree agent skills were not updated')
+      expect(warning).toContain('spree-checkout: EACCES: permission denied')
+      expect(warning).not.toContain('spree-api-v3')
+    })
+
+    it('shows only the last lines of a failure without colour codes', async () => {
+      writeProject({ ejected: true })
+      installSpreeSkills()
+      routeExeca({
+        failOn: 'skills add',
+        failWith: {
+          message: [
+            ...Array.from({ length: 20 }, (_, index) => `progress line ${index}`),
+            '\u001b[31mCommand timed out after 120000 milliseconds\u001b[39m',
+          ].join('\n'),
+        },
+      })
+
+      await runUpgrade()
+
+      const warning = lastWarning()
+      expect(warning).toContain('Command timed out after 120000 milliseconds')
+      expect(warning).not.toContain('\u001b[31m')
+      expect(warning).not.toContain('progress line 10')
+      expect(warning).toContain('progress line 19')
+    })
+  })
+
   it('skips only the upgrade tasks when the operator declines them', async () => {
     writeProject({ ejected: true })
     vi.mocked(p.confirm).mockImplementation(
@@ -849,7 +1149,7 @@ describe('spree upgrade', () => {
     expect(commands).toContain(
       'docker compose exec web bin/rails spree:install:migrations db:migrate',
     )
-    expect(commands).not.toContain('docker compose exec web bin/rake spree:upgrade')
+    expect(commands).not.toContain('docker compose exec web bin/rails spree:upgrade')
   })
 
   it('runs only the rake task with --plan or --step', async () => {
@@ -859,8 +1159,8 @@ describe('spree upgrade', () => {
     await runUpgrade(['--step', 'channels'])
 
     expect(commands).toEqual([
-      'docker compose exec -e DRY_RUN=1 web bin/rake spree:upgrade',
-      'docker compose exec -e STEP=channels web bin/rake spree:upgrade',
+      'docker compose exec -e DRY_RUN=1 web bin/rails spree:upgrade',
+      'docker compose exec -e STEP=channels web bin/rails spree:upgrade',
     ])
   })
 })

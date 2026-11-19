@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
+import { z } from 'zod/v4'
 import {
   EMPTY_PURCHASE_ORDER,
   PurchaseOrderForm,
@@ -10,7 +11,8 @@ import { useCreatePurchaseOrder } from '../../../../hooks/use-purchase-orders'
 import { prefilledLines, prefilledVariantSchema } from '../../../../lib/prefilled-variant'
 
 export const Route = createFileRoute('/_authenticated/$storeId/purchase-orders/new')({
-  validateSearch: prefilledVariantSchema,
+  // `supplier_id` arrives from a supplier's page, which raises orders to it.
+  validateSearch: prefilledVariantSchema.extend({ supplier_id: z.string().optional() }),
   component: NewPurchaseOrderPage,
 })
 
@@ -26,6 +28,7 @@ function NewPurchaseOrderPage() {
   const initial: PurchaseOrderFormValues = {
     ...EMPTY_PURCHASE_ORDER,
     destinationId: search.stock_location_id ?? '',
+    supplierId: search.supplier_id ?? '',
     lines: prefilledLines(search, true),
   }
 

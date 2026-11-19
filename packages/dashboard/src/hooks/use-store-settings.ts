@@ -6,6 +6,7 @@ import {
   useResourceMutation,
 } from '@spree/dashboard-core'
 import { useQuery } from '@tanstack/react-query'
+import { TRANSLATIONS_QUERY_RESOURCE } from './use-translations'
 
 // Reads the same cache entry `<StoreProvider>` maintains — settings pages and
 // the provider (nav badge, pickers, Getting Started) always agree.
@@ -47,7 +48,7 @@ export function usePayoutProviders() {
 export function useUpdateStoreSettings() {
   return useResourceMutation<unknown, Error, StoreUpdateParams>({
     mutationFn: (params) => adminClient.store.update(params),
-    invalidate: [[STORE_QUERY_RESOURCE]],
+    invalidate: [[STORE_QUERY_RESOURCE], [TRANSLATIONS_QUERY_RESOURCE, 'store']],
     successMessage: false,
     errorMessage: false,
   })

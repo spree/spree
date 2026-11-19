@@ -65,7 +65,7 @@ defineTable<WebhookEndpoint>('webhook-endpoints', {
           )
         }
         return (
-          <span className="text-sm text-muted-foreground">
+          <span className="text-base text-muted-foreground">
             {i18n.t('admin.pages.settings.webhooks.events_count', {
               count: endpoint.subscriptions.length,
             })}
@@ -166,7 +166,7 @@ defineTable<WebhookEndpoint>('webhook-endpoints', {
         endpoint.last_delivery_at ? (
           <RelativeTime iso={endpoint.last_delivery_at} />
         ) : (
-          <span className="text-sm text-muted-foreground">—</span>
+          <span className="text-base text-muted-foreground">—</span>
         ),
     },
   ],

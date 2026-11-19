@@ -1233,9 +1233,7 @@ describe Spree::Variant, type: :model do
     end
 
     it 'changes updated_at' do
-      Timecop.scale(1000) do
-        expect { variant.discontinue! }.to change(variant.reload, :updated_at)
-      end
+      expect { travel(1.second) { variant.discontinue! } }.to change(variant.reload, :updated_at)
     end
   end
 

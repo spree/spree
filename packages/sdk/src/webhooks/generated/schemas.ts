@@ -31,6 +31,8 @@ import {
   PaymentSetupSessionSchema,
   PriceSchema,
   ProductSchema,
+  ProductCategorySchema,
+  ProductCollectionSchema,
   ProductSubmissionSchema,
   PromotionSchema,
   PurchaseOrderEventSchema,
@@ -217,6 +219,10 @@ type WebhookEventName =
   | 'product.proposed'
   | 'product.rejected'
   | 'product.updated'
+  | 'product_category.created'
+  | 'product_category.deleted'
+  | 'product_collection.created'
+  | 'product_collection.deleted'
   | 'product_submission.created'
   | 'product_submission.deleted'
   | 'product_submission.updated'
@@ -480,6 +486,10 @@ export const webhookEventSchemas: Readonly<Record<WebhookEventName, z.ZodType>> 
   'product.proposed': ProductSchema,
   'product.rejected': ProductSchema,
   'product.updated': ProductSchema,
+  'product_category.created': ProductCategorySchema,
+  'product_category.deleted': ProductCategorySchema,
+  'product_collection.created': ProductCollectionSchema,
+  'product_collection.deleted': ProductCollectionSchema,
   'product_submission.created': ProductSubmissionSchema,
   'product_submission.deleted': ProductSubmissionSchema,
   'product_submission.updated': ProductSubmissionSchema,

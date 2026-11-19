@@ -47,7 +47,7 @@ function ResetPasswordPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="text-center">
-            <Link to="/forgot-password" className="link text-sm">
+            <Link to="/forgot-password" className="link text-base">
               {t('admin.auth.reset_password.request_new_link')}
             </Link>
           </CardContent>
@@ -101,7 +101,7 @@ function ResetPasswordForm({ token }: { token: string }) {
       <CardContent>
         <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-6">
           {errors.root && (
-            <p className="text-center text-sm text-destructive">{errors.root.message}</p>
+            <p className="text-center text-base text-destructive">{errors.root.message}</p>
           )}
           <div className="grid gap-2">
             <Label htmlFor="password">{t('admin.auth.reset_password.new_password_label')}</Label>
@@ -113,7 +113,7 @@ function ResetPasswordForm({ token }: { token: string }) {
               {...form.register('password')}
             />
             {errors.password && (
-              <p className="text-sm text-destructive">{errors.password.message}</p>
+              <p className="text-base text-destructive">{errors.password.message}</p>
             )}
           </div>
           <div className="grid gap-2">
@@ -127,7 +127,7 @@ function ResetPasswordForm({ token }: { token: string }) {
               {...form.register('password_confirmation')}
             />
             {errors.password_confirmation && (
-              <p className="text-sm text-destructive">{errors.password_confirmation.message}</p>
+              <p className="text-base text-destructive">{errors.password_confirmation.message}</p>
             )}
           </div>
           <Button type="submit" className="w-full" disabled={isLoading}>

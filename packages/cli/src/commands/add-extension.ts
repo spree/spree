@@ -3,8 +3,16 @@ import path from 'node:path'
 import * as p from '@clack/prompts'
 import { execa } from 'execa'
 import pc from 'picocolors'
+import {
+  addPackageCommand,
+  extensionInstallGenerator,
+  LIST_GENERATORS,
+  MIGRATE,
+  runGeneratorCommand,
+} from '../backend.js'
 import { findApiDir, isEjectedProject } from '../context.js'
 import { dockerComposeCapture, dockerComposeExecOrRun, restartAppServices } from '../docker.js'
+import { ejectFirst } from '../lib/eject-first.js'
 import {
   type Extension,
   gemfileDeclares,
@@ -12,14 +20,14 @@ import {
   lockfileIncludes,
   snapshotInstallFiles,
 } from '../lib/extensions.js'
-import { confirmOrExit } from '../lib/prompt.js'
 import type { ProjectContext } from '../types.js'
 import { detectPackageManager } from './add.js'
-import { ejectProject } from './eject.js'
 
 export interface AddExtensionOptions {
   /** Agree to every confirmation: ejecting, and installing outside the catalog. */
   yes: boolean
+  /** The exact command that agrees up front, when the caller is not `spree add`. */
+  retry?: string
 }
 
 // `dir` is both the folder under apps/ and the `spree add` name that creates it.
@@ -77,23 +85,11 @@ async function installGem(
       return false
     }
 
-    await confirmOrExit(
-      [
-        `This project runs the prebuilt Spree image, which cannot load new gems.`,
-        `Installing ${extension.label} ejects it first: the Rails app is then built from`,
-        `./${apiDir}, with a new development database that does not have your current data.`,
-        'Eject now?',
-      ].join('\n'),
-      opts.yes,
-    )
-    try {
-      await ejectProject(ctx.projectDir)
-    } catch (error) {
-      p.cancel(
-        `Ejecting failed, so ${extension.label} was not installed. Fix the problem above, run ${pc.bold('spree eject')}, then run this command again. ${error instanceof Error ? error.message : String(error)}`,
-      )
-      process.exit(1)
-    }
+    await ejectFirst(ctx.projectDir, {
+      task: `Installing ${extension.label}`,
+      retry: opts.retry,
+      yes: opts.yes,
+    })
   }
 
   const listed = gemfileDeclares(fs.readFileSync(gemfilePath, 'utf-8'), gem)
@@ -103,10 +99,7 @@ async function installGem(
     if (!listed) await bundleAdd(ctx.projectDir, apiPath, gem, extension.release)
     await runInstallGenerator(ctx.projectDir, gem, listed)
     p.log.step('Running migrations...')
-    await dockerComposeExecOrRun(
-      ['bin/rails', 'spree:install:migrations', 'db:migrate'],
-      ctx.projectDir,
-    )
+    await dockerComposeExecOrRun(MIGRATE, ctx.projectDir)
   } catch (error) {
     if (restore) {
       restore()
@@ -134,7 +127,7 @@ async function bundleAdd(
   gem: string,
   release: Extension['release'],
 ): Promise<void> {
-  const args = ['bundle', 'add', gem]
+  const args = addPackageCommand(gem)
   // Unpinned, Bundler picks the newest stable release, which for a gem that
   // moved into Spree is its old pre-6.0 line.
   if (release === 'spree') {
@@ -156,15 +149,15 @@ async function runInstallGenerator(
   gem: string,
   keepExisting: boolean,
 ): Promise<void> {
-  const generator = `${gem}:install`
-  const help = await dockerComposeCapture(['bin/rails', 'generate', '--help'], projectDir)
+  const generator = extensionInstallGenerator(gem)
+  const help = await dockerComposeCapture(LIST_GENERATORS, projectDir)
   const listed = help.split('\n').some((line) => line.trim() === generator)
   if (!listed) return
 
   p.log.step(`Running ${pc.bold(generator)}...`)
   // On a repair, files the first run wrote (and the developer may have
   // edited) are kept rather than stopping at Thor's overwrite prompt.
-  const args = ['bin/rails', 'generate', generator, ...(keepExisting ? ['--skip'] : [])]
+  const args = runGeneratorCommand(generator, keepExisting ? ['--skip'] : [])
   await dockerComposeExecOrRun(args, projectDir)
 }
 

@@ -251,10 +251,19 @@ html:not(.dark) h4 {
   }
 }
 
-/* The article itself is capped at max-w-xl (576px); a wider measure is what
-   actually gives tables, code blocks and API examples room. */
-#content-container .flex.flex-row-reverse > .max-w-xl {
-  max-width: 52rem;
+/* The article is capped at --content-width (576px) and centred, leaving wide
+   empty gutters beside it. Let it fill the space left of the table of
+   contents instead — tables, code blocks and API examples need the room. The
+   cap keeps prose readable on very wide screens. */
+#content-container #content-area {
+  flex: 1 1 0%;
+  max-width: 60rem;
+}
+
+/* The homepage has no table of contents and lays out its own grids, so it
+   takes the full width. */
+#content-container #content-area:has(.home-page) {
+  max-width: none;
 }
 
 /* --- Navbar --------------------------------------------------------------- */
@@ -334,12 +343,34 @@ html:not(.dark) h4 {
   color: var(--spree-accent-strong) !important;
 }
 
+/* Inside callouts Mintlify colours links like the callout's own text, so
+   without the underline they are indistinguishable from it. */
+#content-container [data-callout-type] .link {
+  font-weight: 500;
+  text-decoration: underline !important;
+  text-decoration-thickness: 1px !important;
+  text-underline-offset: 3px !important;
+}
+
 .dark #content-container .link {
   color: #4d9fff !important;
 }
 
 .dark #content-container .link:hover {
   color: #7fb8ff !important;
+}
+
+/* The homepage hero carries its own headline, so Mintlify's page title,
+   breadcrumb and description would repeat it. */
+#content-area:has(.home-page) > #header {
+  display: none;
+}
+
+/* Homepage cards and pills colour their own text, so the body link colour
+   must not reach them. */
+#content-container .home-plain.link,
+.dark #content-container .home-plain.link {
+  color: inherit !important;
 }
 
 /* --- Changelog ------------------------------------------------------------ */

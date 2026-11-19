@@ -104,7 +104,7 @@ ${run} spree eject
 This rebuilds the Docker image from \`server/\` and restarts services. You can then:
 
 - **Customize the API** by editing the files in \`server/\`
-- **Add gems** to \`server/Gemfile\`
+- **Add extensions** with \`spree add <extension>\`
 - **Add new resources** with \`spree generate model <name> <attributes>\`
 
 ## Spree CLI
@@ -122,13 +122,13 @@ This project uses [\`@spree/cli\`](https://spreecommerce.org/docs/developer/cli/
 | \`spree build --production\` | Build the production image — includes \`apps/dashboard\` when present |
 | \`spree logs\` | View web server logs |
 | \`spree logs worker\` | View background jobs logs |
-| \`spree console\` | Open Rails console |
+| \`spree console\` | Open an interactive backend console |
 
 ### Data
 
 | Command | Description |
 |---------|-------------|
-| \`spree migrate\` | Install pending Spree migrations from gems, then run them or just run your own migrations |
+| \`spree migrate\` | Install pending Spree migrations, then run them along with your own |
 | \`spree seed\` | Seed the database |
 | \`spree sample-data\` | Load sample products, categories, images |
 

@@ -4,13 +4,13 @@ import { join } from 'node:path'
 import { Command } from 'commander'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { parseFilterTables, registerFiltersCommand } from '../src/commands/filters'
-import { rakeTask } from '../src/docker'
+import { captureTask } from '../src/docker'
 
 let projectDir = '/proj'
 vi.mock('../src/context', () => ({
   detectProject: () => ({ mode: 'docker', projectDir, port: 3000 }),
 }))
-vi.mock('../src/docker', () => ({ rakeTask: vi.fn() }))
+vi.mock('../src/docker', () => ({ captureTask: vi.fn() }))
 vi.mock('@clack/prompts', () => ({ log: { success: vi.fn(), error: vi.fn(), info: vi.fn() } }))
 
 const predicates = {
@@ -77,11 +77,11 @@ describe('spree filters types', () => {
     projectDir = dir
     mkdirSync(join(dir, 'apps', 'storefront'), { recursive: true })
     mkdirSync(join(dir, 'apps', 'dashboard'), { recursive: true })
-    vi.mocked(rakeTask).mockResolvedValue(taskOutput)
+    vi.mocked(captureTask).mockResolvedValue(taskOutput)
 
     await run([])
 
-    expect(rakeTask).toHaveBeenCalledTimes(1)
+    expect(captureTask).toHaveBeenCalledTimes(1)
     const types = (app: string) => join(dir, 'apps', app, 'src', 'types', 'spree-filters.d.ts')
     expect(readFileSync(types('storefront'), 'utf8')).toContain("declare module '@spree/sdk'")
     expect(readFileSync(types('dashboard'), 'utf8')).toContain("declare module '@spree/admin-sdk'")
@@ -92,19 +92,19 @@ describe('spree filters types', () => {
     projectDir = dir
     await run([])
 
-    expect(rakeTask).not.toHaveBeenCalled()
+    expect(captureTask).not.toHaveBeenCalled()
     expect(process.exitCode).toBe(1)
     process.exitCode = undefined
   })
 
   it("declares the app's filters and sort fields for the chosen SDK", async () => {
-    vi.mocked(rakeTask).mockResolvedValue(taskOutput)
+    vi.mocked(captureTask).mockResolvedValue(taskOutput)
     const out = join(dir, 'spree-filters.d.ts')
 
     await run(['--api', 'admin', '--out', out])
 
     const file = readFileSync(out, 'utf8')
-    expect(rakeTask).toHaveBeenCalledWith('spree:api:filter_tables', '/proj')
+    expect(captureTask).toHaveBeenCalledWith('spree:api:filter_tables', '/proj')
     expect(file).toContain("declare module '@spree/admin-sdk'")
     expect(file).toContain("Filter.TextFilters<'erp_id' | 'name'>")
     expect(file).toContain('interface ProductFilterExtensions extends AppProductFilters {}')
@@ -119,7 +119,7 @@ describe('spree filters types', () => {
 
     await run(['--from', from, '--out', out])
 
-    expect(rakeTask).not.toHaveBeenCalled()
+    expect(captureTask).not.toHaveBeenCalled()
     expect(readFileSync(out, 'utf8')).toContain("declare module '@spree/sdk'")
   })
 

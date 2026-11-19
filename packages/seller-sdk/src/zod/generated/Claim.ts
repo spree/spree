@@ -1,6 +1,7 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
 import { ClaimLineItemSchema } from './ClaimLineItem';
+import { CustomFieldSchema } from './CustomField';
 import { ReasonSchema } from './Reason';
 
 export const ClaimSchema = z.object({
@@ -17,6 +18,7 @@ export const ClaimSchema = z.object({
   canceled_at: z.string().nullable(),
   reason: ReasonSchema.optional(),
   claim_line_items: z.array(ClaimLineItemSchema).optional(),
+  custom_fields: z.array(CustomFieldSchema).optional(),
   memo: z.string().nullable(),
 });
 

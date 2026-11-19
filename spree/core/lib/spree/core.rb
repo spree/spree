@@ -39,8 +39,6 @@ require 'ransack'
 require 'active_storage_validations'
 require 'wannabe_bool'
 require 'geocoder'
-
-require 'safely_block'
 require 'ar_lazy_preload'
 require 'sqids'
 
@@ -88,15 +86,23 @@ module Spree
     resolve_class_setting(:customer_class, @@customer_class, constantize)
   end
 
-  # @deprecated Spree.user_class was renamed to Spree.customer_class in 6.0; removed in 6.1.
+  # @deprecated Spree.user_class was renamed to Spree.customer_class in 6.0; removed in 6.3.
   def self.user_class(constantize: true)
-    Spree::Deprecation.warn('Spree.user_class is deprecated and will be removed in Spree 6.1. Use Spree.customer_class instead.') if defined?(Spree::Deprecation)
+    if defined?(Spree::Deprecation)
+      Spree::Deprecation.warn(
+        'Spree.user_class is deprecated and will be removed in Spree 6.3. Use Spree.customer_class instead.'
+      )
+    end
     customer_class(constantize: constantize)
   end
 
-  # @deprecated Spree.user_class= was renamed to Spree.customer_class= in 6.0; removed in 6.1.
+  # @deprecated Spree.user_class= was renamed to Spree.customer_class= in 6.0; removed in 6.3.
   def self.user_class=(value)
-    Spree::Deprecation.warn('Spree.user_class= is deprecated and will be removed in Spree 6.1. Use Spree.customer_class= instead.') if defined?(Spree::Deprecation)
+    if defined?(Spree::Deprecation)
+      Spree::Deprecation.warn(
+        'Spree.user_class= is deprecated and will be removed in Spree 6.3. Use Spree.customer_class= instead.'
+      )
+    end
     self.customer_class = value
   end
 
@@ -125,7 +131,6 @@ module Spree
       collections: :default,
       stock_location_stock_levels: :default,
       coupon_codes: :default,
-      themes: :default,
       addresses: :default,
       gift_cards: :default,
       webhooks: :default,
@@ -138,24 +143,38 @@ module Spree
       payouts: :default,
       maintenance_tasks: :default
     ).tap do |queues|
-      # @deprecated The taxons queue was renamed to categories in 6.0; removed in 6.1.
+      # @deprecated The taxons queue was renamed to categories in 6.0; removed in 6.3.
       queues.define_singleton_method(:taxons) do
-        Spree::Deprecation.warn('Spree.queues.taxons is deprecated and will be removed in Spree 6.1. Use Spree.queues.categories instead.') if defined?(Spree::Deprecation)
+        if defined?(Spree::Deprecation)
+          Spree::Deprecation.warn(
+            'Spree.queues.taxons is deprecated and will be removed in Spree 6.3. Use Spree.queues.categories instead.'
+          )
+        end
         categories
       end
 
-      # @deprecated Renamed with the stock level rename in 6.0; removed in 6.1.
+      # @deprecated Renamed with the stock level rename in 6.0; removed in 6.3.
       #
       # The writer matters as much as the reader here: these are ordered options, so
       # an existing initializer assigning the old name would quietly define a
       # field nobody reads and its jobs would fall back to the default queue.
       queues.define_singleton_method(:stock_location_stock_items) do
-        Spree::Deprecation.warn('Spree.queues.stock_location_stock_items is deprecated and will be removed in Spree 6.1. Use Spree.queues.stock_location_stock_levels instead.') if defined?(Spree::Deprecation)
+        if defined?(Spree::Deprecation)
+          Spree::Deprecation.warn(
+            'Spree.queues.stock_location_stock_items is deprecated and will be removed in Spree 6.3. ' \
+            'Use Spree.queues.stock_location_stock_levels instead.'
+          )
+        end
         stock_location_stock_levels
       end
 
       queues.define_singleton_method(:stock_location_stock_items=) do |value|
-        Spree::Deprecation.warn('Spree.queues.stock_location_stock_items= is deprecated and will be removed in Spree 6.1. Use Spree.queues.stock_location_stock_levels= instead.') if defined?(Spree::Deprecation)
+        if defined?(Spree::Deprecation)
+          Spree::Deprecation.warn(
+            'Spree.queues.stock_location_stock_items= is deprecated and will be removed in Spree 6.3. ' \
+            'Use Spree.queues.stock_location_stock_levels= instead.'
+          )
+        end
         self.stock_location_stock_levels = value
       end
     end
@@ -171,6 +190,17 @@ module Spree
 
   def self.search_provider=(value)
     @@search_provider = value.to_s
+  end
+
+  # Sections of the diagnostics report (see Spree::Diagnostics), as class
+  # names so an initializer can add one before its class is autoloaded.
+  #
+  #   Spree.diagnostics_sections << 'MyGem::DiagnosticsSection'
+  #
+  # @return [Array<String>]
+  def self.diagnostics_sections
+    @@diagnostics_sections ||= %w[Platform Runtime Infrastructure Preferences].
+                               map { |name| "Spree::Diagnostics::Sections::#{name}" }
   end
 
   # Tax ID validators, keyed by registration kind.
@@ -326,6 +356,22 @@ module Spree
   # @return [Array<Class>]
   singleton_class.delegate :tax_providers, :tax_providers=, to: :spree_config
 
+  # Extensions that copy their own cart data onto the order a cart becomes.
+  # Each entry is a class with a class-level +call(cart:, order:,
+  # line_item_map:)+ (a class, so it is re-resolved when code reloads in
+  # development; see {.refresh_provider_registries!}), where the map
+  # pairs each cart line item with its copy on the order. Both copies run them
+  # — checkout ({Spree::Carts::Complete}) and the draft-order copy
+  # ({Spree::Orders::CreateFromCart}) — inside their transaction, once the
+  # order's line items exist, so an entry that raises rolls the order back.
+  #
+  # Append, never assign, so an extension does not drop what another added:
+  #
+  #   Spree.cart_copiers << MyApp::CopyEngravings
+  #
+  # @return [Array<Class>]
+  singleton_class.delegate :cart_copiers, :cart_copiers=, to: :spree_config
+
   # Pricing engines a store can be pointed at. Connector gems append their own,
   # so a merchant picks from what is actually installed.
   #
@@ -403,7 +449,8 @@ module Spree
   def self.refresh_provider_registries!
     [Rails.application.config.spree.delivery_rate_providers,
      Rails.application.config.spree.fulfillment_providers,
-     Rails.application.config.spree.pickup_point_providers].compact.each do |registry|
+     Rails.application.config.spree.pickup_point_providers,
+     Rails.application.config.spree.cart_copiers].compact.each do |registry|
       registry.map! { |entry| entry.is_a?(Module) && entry.name ? entry.name.constantize : entry }
     end
   end
@@ -452,7 +499,11 @@ module Spree
   end
 
   def self.metafields
-    Spree::Deprecation.warn('Spree.metafields is deprecated and will be removed in Spree 6.1. Use Spree.custom_fields instead.') if defined?(Spree::Deprecation)
+    if defined?(Spree::Deprecation)
+      Spree::Deprecation.warn(
+        'Spree.metafields is deprecated and will be removed in Spree 6.3. Use Spree.custom_fields instead.'
+      )
+    end
     custom_fields
   end
 
@@ -606,7 +657,7 @@ module Spree
     def core_dependency?(name)
       return false unless defined?(Spree::Dependencies)
 
-      Spree::Dependencies.class::INJECTION_POINTS.include?(name) ||
+      Spree::Dependencies.injection_point?(name) ||
         Spree::Dependencies.class::LEGACY_WORKFLOW_KEYS.key?(name) ||
         Spree::Dependencies.class::LEGACY_SERVICE_KEYS.key?(name) ||
         Spree::Dependencies.class::RENAMED_SERVICE_KEYS.key?(name)
@@ -666,6 +717,7 @@ require 'spree/i18n'
 require 'spree/iso_data'
 require 'spree/localized_number'
 require 'spree/measurement'
+require 'spree/time_zones'
 require 'spree/translations'
 require 'spree/money'
 require 'spree/service_module'
@@ -675,6 +727,7 @@ require 'spree/agent_tool'
 require 'spree/agent_tools'
 require 'spree/events'
 require 'spree/store_scope_guard'
+require 'spree/removed_apis'
 require 'spree/uploads'
 
 # Not autoloaded from app/: the registry keeps registered steps in

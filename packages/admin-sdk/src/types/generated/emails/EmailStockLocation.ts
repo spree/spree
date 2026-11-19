@@ -13,9 +13,9 @@ interface EmailStockLocation {
   country_name: string | null;
   state_code: string | null;
   state_text: string | null;
-  /** @deprecated Use `country_code`. Removed in 6.1. */
+  /** @deprecated Use `country_code`. Removed in 6.5. */
   country_iso: string | null;
-  /** @deprecated Use `state_code`. Removed in 6.1. */
+  /** @deprecated Use `state_code`. Removed in 6.5. */
   state_abbr: string | null;
   pickup_ready_in_minutes: number | null;
   pickup_instructions: string | null;

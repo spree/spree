@@ -84,7 +84,8 @@ export function useApproveProduct() {
 
   return useResourceMutation<Product, Error, string>({
     mutationFn: (id) => adminClient.products.approve(id),
-    invalidate: [['products']],
+    // The seller's counts by status move with the review.
+    invalidate: [['products'], ['sellers']],
     successMessage: false,
     errorMessage: false,
     onSuccess: (_data, id) => {
@@ -99,7 +100,8 @@ export function useRejectProduct() {
 
   return useResourceMutation<Product, Error, { id: string; reason?: string }>({
     mutationFn: ({ id, reason }) => adminClient.products.reject(id, { reason }),
-    invalidate: [['products']],
+    // The seller's counts by status move with the review.
+    invalidate: [['products'], ['sellers']],
     successMessage: false,
     errorMessage: false,
     onSuccess: (_data, variables) => {

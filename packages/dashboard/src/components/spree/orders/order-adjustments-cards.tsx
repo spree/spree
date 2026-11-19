@@ -7,15 +7,21 @@ import {
   isZeroMoney,
   sumMoney,
 } from '@spree/core'
-import { adminClient, currencyParts, formatMoney, Money, percentOf } from '@spree/dashboard-core'
+import {
+  adminClient,
+  currencyParts,
+  formatMoney,
+  Money,
+  percentOf,
+  toastMutationError,
+  useMetadataSheet,
+  ViewMetadataMenuItem,
+} from '@spree/dashboard-core'
 import {
   Badge,
   Button,
   Card,
-  CardAction,
   CardContent,
-  CardHeader,
-  CardTitle,
   Dialog,
   DialogBody,
   DialogContent,
@@ -30,11 +36,16 @@ import {
   Field,
   FieldGroup,
   FieldLabel,
+  hasMetadata,
   Input,
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
   InputGroupText,
+  Section,
+  SectionActions,
+  SectionHeader,
+  SectionTitle,
   Select,
   SelectContent,
   SelectItem,
@@ -79,17 +90,21 @@ function feeKindLabel(kind: string) {
     : kind
 }
 
-/** Trailing action cell — renders empty (keeping column width) for undeletable rows. */
-function AdjustmentDeleteCell({
+/** Trailing action cell — renders empty (keeping column width) for rows with no actions. */
+function AdjustmentActionsCell({
+  metadata,
+  onViewMetadata,
   onDelete,
   deleting,
 }: {
+  metadata: Record<string, unknown> | null
+  onViewMetadata: () => void
   onDelete?: () => void
   deleting?: boolean
 }) {
   return (
     <TableCell className="w-10 text-right">
-      {onDelete && (
+      {(onDelete || hasMetadata(metadata)) && (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
@@ -102,10 +117,13 @@ function AdjustmentDeleteCell({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem variant="destructive" onClick={onDelete}>
-              <TrashIcon className="size-4" />
-              {i18n.t('admin.actions.delete')}
-            </DropdownMenuItem>
+            <ViewMetadataMenuItem metadata={metadata} onClick={onViewMetadata} />
+            {onDelete && (
+              <DropdownMenuItem variant="destructive" onClick={onDelete}>
+                <TrashIcon className="size-4" />
+                {i18n.t('admin.actions.delete')}
+              </DropdownMenuItem>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       )}
@@ -145,59 +163,60 @@ export function TaxLinesCard({ order }: { order: Order }) {
         : t('admin.orders.detail.adjustment_lines.taxes_empty')
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>
+    <Section>
+      <SectionHeader>
+        <SectionTitle>
           <ReceiptTextIcon className="size-4" />
           {t('admin.orders.detail.adjustment_lines.taxes')}
-        </CardTitle>
-      </CardHeader>
-
-      {taxGroups.length === 0 ? (
-        <CardContent>
-          <p className="text-sm text-muted-foreground">{emptyMessage}</p>
-        </CardContent>
-      ) : (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>{t('admin.orders.detail.adjustment_lines.column_label')}</TableHead>
-              <TableHead className="text-right">
-                {t('admin.orders.detail.adjustment_lines.column_amount')}
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {taxGroups.map((group) => {
-              const detail = taxExemptionDetail(group)
-              return (
-                <TableRow key={group.key}>
-                  <TableCell>
-                    <div className="flex flex-col gap-0.5">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span>{group.label}</span>
-                        {showsTaxabilityReason(group) && (
-                          <Badge variant="secondary">
-                            {t(
-                              `admin.orders.detail.adjustment_lines.taxability_reason.${group.taxabilityReason}`,
-                              { defaultValue: group.taxabilityReason ?? undefined },
-                            )}
-                          </Badge>
-                        )}
+        </SectionTitle>
+      </SectionHeader>
+      <Card>
+        {taxGroups.length === 0 ? (
+          <CardContent>
+            <p className="text-base text-muted-foreground">{emptyMessage}</p>
+          </CardContent>
+        ) : (
+          <Table roundedTop>
+            <TableHeader>
+              <TableRow>
+                <TableHead>{t('admin.orders.detail.adjustment_lines.column_label')}</TableHead>
+                <TableHead className="text-right">
+                  {t('admin.orders.detail.adjustment_lines.column_amount')}
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {taxGroups.map((group) => {
+                const detail = taxExemptionDetail(group)
+                return (
+                  <TableRow key={group.key}>
+                    <TableCell>
+                      <div className="flex flex-col gap-0.5">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span>{group.label}</span>
+                          {showsTaxabilityReason(group) && (
+                            <Badge variant="secondary">
+                              {t(
+                                `admin.orders.detail.adjustment_lines.taxability_reason.${group.taxabilityReason}`,
+                                { defaultValue: group.taxabilityReason ?? undefined },
+                              )}
+                            </Badge>
+                          )}
+                        </div>
+                        {detail && <span className="text-xs text-muted-foreground">{detail}</span>}
                       </div>
-                      {detail && <span className="text-xs text-muted-foreground">{detail}</span>}
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-right tabular-nums">
-                    <Money amount={group.amount} currency={order.currency} />
-                  </TableCell>
-                </TableRow>
-              )
-            })}
-          </TableBody>
-        </Table>
-      )}
-    </Card>
+                    </TableCell>
+                    <TableCell className="text-right tabular-nums">
+                      <Money amount={group.amount} currency={order.currency} />
+                    </TableCell>
+                  </TableRow>
+                )
+              })}
+            </TableBody>
+          </Table>
+        )}
+      </Card>
+    </Section>
   )
 }
 
@@ -206,6 +225,7 @@ export function OrderDiscountsCard({ order }: { order: Order }) {
   const orderId = order.id
   const confirm = useConfirm()
   const [addDiscountOpen, setAddDiscountOpen] = useState(false)
+  const metadataSheet = useMetadataSheet()
 
   const { data: discounts } = useOrderDiscounts(orderId)
   const deleteDiscountMutation = useOrderAdjustmentLinesMutation(orderId, (id: string) =>
@@ -228,68 +248,74 @@ export function OrderDiscountsCard({ order }: { order: Order }) {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>
+    <Section>
+      <SectionHeader>
+        <SectionTitle>
           <TagIcon className="size-4" />
           {t('admin.orders.detail.adjustment_lines.discounts')}
-        </CardTitle>
-        <CardAction>
+        </SectionTitle>
+        <SectionActions>
           <Button variant="outline" size="sm" onClick={() => setAddDiscountOpen(true)}>
             <PlusIcon className="size-4" />
             {t('admin.orders.detail.adjustment_lines.add_discount')}
           </Button>
-        </CardAction>
-      </CardHeader>
-
-      {discountRows.length === 0 ? (
-        <CardContent>
-          <p className="text-sm text-muted-foreground">
-            {t('admin.orders.detail.adjustment_lines.discounts_empty')}
-          </p>
-        </CardContent>
-      ) : (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>{t('admin.orders.detail.adjustment_lines.column_label')}</TableHead>
-              <TableHead>{t('admin.orders.detail.adjustment_lines.column_source')}</TableHead>
-              <TableHead>{t('admin.orders.detail.adjustment_lines.column_code')}</TableHead>
-              <TableHead className="text-right">
-                {t('admin.orders.detail.adjustment_lines.column_amount')}
-              </TableHead>
-              <TableHead className="w-10" />
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {discountRows.map((row) => (
-              <TableRow key={row.id}>
-                <TableCell>{row.label}</TableCell>
-                <TableCell>
-                  <Badge variant="secondary">
-                    {row.kind === 'promotion'
-                      ? t('admin.orders.detail.adjustment_lines.kind_promotion')
-                      : t('admin.orders.detail.adjustment_lines.kind_manual')}
-                  </Badge>
-                </TableCell>
-                <TableCell className="text-muted-foreground">
-                  {row.code ? <Badge variant="outline">{row.code}</Badge> : '—'}
-                </TableCell>
-                <TableCell className="text-right tabular-nums">
-                  <Money amount={row.amount} currency={order.currency} />
-                </TableCell>
-                <AdjustmentDeleteCell
-                  onDelete={row.kind === 'promotion' ? undefined : () => handleDeleteDiscount(row)}
-                  deleting={deleteDiscountMutation.isPending}
-                />
+        </SectionActions>
+      </SectionHeader>
+      <Card>
+        {discountRows.length === 0 ? (
+          <CardContent>
+            <p className="text-base text-muted-foreground">
+              {t('admin.orders.detail.adjustment_lines.discounts_empty')}
+            </p>
+          </CardContent>
+        ) : (
+          <Table roundedTop>
+            <TableHeader>
+              <TableRow>
+                <TableHead>{t('admin.orders.detail.adjustment_lines.column_label')}</TableHead>
+                <TableHead>{t('admin.orders.detail.adjustment_lines.column_source')}</TableHead>
+                <TableHead>{t('admin.orders.detail.adjustment_lines.column_code')}</TableHead>
+                <TableHead className="text-right">
+                  {t('admin.orders.detail.adjustment_lines.column_amount')}
+                </TableHead>
+                <TableHead className="w-10" />
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      )}
+            </TableHeader>
+            <TableBody>
+              {discountRows.map((row) => (
+                <TableRow key={row.id}>
+                  <TableCell>{row.label}</TableCell>
+                  <TableCell>
+                    <Badge variant="secondary">
+                      {row.kind === 'promotion'
+                        ? t('admin.orders.detail.adjustment_lines.kind_promotion')
+                        : t('admin.orders.detail.adjustment_lines.kind_manual')}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-muted-foreground">
+                    {row.code ? <Badge variant="outline">{row.code}</Badge> : '—'}
+                  </TableCell>
+                  <TableCell className="text-right tabular-nums">
+                    <Money amount={row.amount} currency={order.currency} />
+                  </TableCell>
+                  <AdjustmentActionsCell
+                    metadata={row.metadata}
+                    onViewMetadata={() => metadataSheet.show(row.metadata)}
+                    onDelete={
+                      row.kind === 'promotion' ? undefined : () => handleDeleteDiscount(row)
+                    }
+                    deleting={deleteDiscountMutation.isPending}
+                  />
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
 
-      <AddDiscountDialog order={order} open={addDiscountOpen} onOpenChange={setAddDiscountOpen} />
-    </Card>
+        <AddDiscountDialog order={order} open={addDiscountOpen} onOpenChange={setAddDiscountOpen} />
+        {metadataSheet.sheet}
+      </Card>
+    </Section>
   )
 }
 
@@ -298,6 +324,7 @@ export function FeesCard({ order }: { order: Order }) {
   const orderId = order.id
   const confirm = useConfirm()
   const [addFeeOpen, setAddFeeOpen] = useState(false)
+  const metadataSheet = useMetadataSheet()
 
   const { data: fees } = useOrderFees(orderId)
   const deleteFeeMutation = useOrderAdjustmentLinesMutation(orderId, (id: string) =>
@@ -317,60 +344,64 @@ export function FeesCard({ order }: { order: Order }) {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>
+    <Section>
+      <SectionHeader>
+        <SectionTitle>
           <BanknoteIcon className="size-4" />
           {t('admin.orders.detail.adjustment_lines.fees')}
-        </CardTitle>
-        <CardAction>
+        </SectionTitle>
+        <SectionActions>
           <Button variant="outline" size="sm" onClick={() => setAddFeeOpen(true)}>
             <PlusIcon className="size-4" />
             {t('admin.orders.detail.adjustment_lines.add_fee')}
           </Button>
-        </CardAction>
-      </CardHeader>
-
-      {feeRows.length === 0 ? (
-        <CardContent>
-          <p className="text-sm text-muted-foreground">
-            {t('admin.orders.detail.adjustment_lines.fees_empty')}
-          </p>
-        </CardContent>
-      ) : (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>{t('admin.orders.detail.adjustment_lines.column_label')}</TableHead>
-              <TableHead>{t('admin.orders.detail.adjustment_lines.column_kind')}</TableHead>
-              <TableHead className="text-right">
-                {t('admin.orders.detail.adjustment_lines.column_amount')}
-              </TableHead>
-              <TableHead className="w-10" />
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {feeRows.map((row) => (
-              <TableRow key={row.id}>
-                <TableCell>{row.label}</TableCell>
-                <TableCell className="text-muted-foreground">
-                  {row.kind ? <Badge variant="outline">{feeKindLabel(row.kind)}</Badge> : '—'}
-                </TableCell>
-                <TableCell className="text-right tabular-nums">
-                  <Money amount={row.amount} currency={order.currency} />
-                </TableCell>
-                <AdjustmentDeleteCell
-                  onDelete={() => handleDeleteFee(row)}
-                  deleting={deleteFeeMutation.isPending}
-                />
+        </SectionActions>
+      </SectionHeader>
+      <Card>
+        {feeRows.length === 0 ? (
+          <CardContent>
+            <p className="text-base text-muted-foreground">
+              {t('admin.orders.detail.adjustment_lines.fees_empty')}
+            </p>
+          </CardContent>
+        ) : (
+          <Table roundedTop>
+            <TableHeader>
+              <TableRow>
+                <TableHead>{t('admin.orders.detail.adjustment_lines.column_label')}</TableHead>
+                <TableHead>{t('admin.orders.detail.adjustment_lines.column_kind')}</TableHead>
+                <TableHead className="text-right">
+                  {t('admin.orders.detail.adjustment_lines.column_amount')}
+                </TableHead>
+                <TableHead className="w-10" />
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      )}
+            </TableHeader>
+            <TableBody>
+              {feeRows.map((row) => (
+                <TableRow key={row.id}>
+                  <TableCell>{row.label}</TableCell>
+                  <TableCell className="text-muted-foreground">
+                    {row.kind ? <Badge variant="outline">{feeKindLabel(row.kind)}</Badge> : '—'}
+                  </TableCell>
+                  <TableCell className="text-right tabular-nums">
+                    <Money amount={row.amount} currency={order.currency} />
+                  </TableCell>
+                  <AdjustmentActionsCell
+                    metadata={row.metadata}
+                    onViewMetadata={() => metadataSheet.show(row.metadata)}
+                    onDelete={() => handleDeleteFee(row)}
+                    deleting={deleteFeeMutation.isPending}
+                  />
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
 
-      <AddFeeDialog order={order} open={addFeeOpen} onOpenChange={setAddFeeOpen} />
-    </Card>
+        <AddFeeDialog order={order} open={addFeeOpen} onOpenChange={setAddFeeOpen} />
+        {metadataSheet.sheet}
+      </Card>
+    </Section>
   )
 }
 
@@ -424,6 +455,7 @@ function AddDiscountDialog({
           setValue('')
           onOpenChange(false)
         },
+        onError: toastMutationError,
       },
     )
   }
@@ -533,7 +565,7 @@ function AddDiscountDialog({
                 </Select>
               </Field>
               {previewAmount !== null && (
-                <p className="text-sm text-muted-foreground">
+                <p className="text-base text-muted-foreground">
                   {t('admin.orders.detail.adjustment_lines.percent_preview', {
                     amount: formatMoney(previewAmount, order.currency, i18n.language),
                   })}
@@ -596,7 +628,7 @@ function AddFeeDialog({
         kind,
         ...(target !== 'order' ? { line_item_id: target } : {}),
       },
-      { onSuccess: () => onOpenChange(false) },
+      { onSuccess: () => onOpenChange(false), onError: toastMutationError },
     )
   }
 

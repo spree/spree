@@ -7,8 +7,23 @@ module Spree
 
           request_params :store do |body|
             body.attribute :name, :string, example: 'My Store'
-            body.attribute :admin_locale, :string, example: 'en'
-            body.attribute :timezone, :string, example: 'Europe/Berlin'
+            body.attribute :seo_title, :string,
+              nullable: true,
+              description: "The storefront's default page title, in the store's default language. Translate it through the translations endpoints."
+            body.attribute :meta_description, :string,
+              nullable: true,
+              description: "The storefront's default meta description, in the store's default language."
+            body.attribute :meta_keywords, :string, nullable: true,
+                                                    description: "The storefront's default meta keywords, comma-separated, in the default language."
+            body.attribute :facebook, :string, nullable: true, example: 'https://facebook.com/mystore',
+                                               description: 'The Facebook page: a handle or a full URL.'
+            body.attribute :twitter, :string, nullable: true, example: 'mystore',
+                                              description: 'The X (Twitter) account: a handle or a full URL.'
+            body.attribute :instagram, :string, nullable: true, example: 'mystore',
+                                                description: 'The Instagram account: a handle or a full URL.'
+            body.attribute :admin_locale, :locale, nullable: true, example: 'en',
+              description: 'The language the dashboard opens in for every staff member; null lets each use their own.'
+            body.attribute :timezone, :time_zone, example: 'Europe/Berlin'
             body.attribute :weight_unit, :weight_unit
             body.attribute :unit_system, :string, choices: Spree::Store::UNIT_SYSTEMS
             body.attribute :storefront_access, :string,
@@ -136,24 +151,26 @@ module Spree
           # all, so every signed-in staff member can read it regardless of
           # their permissions. Secret keys still need `read_settings`: a
           # scope-limited integration has no business reading operational
-          # settings (support/notification emails, routing) it wasn't granted.
+          # settings (notification emails, routing) it wasn't granted.
           # Writing always requires `write_settings`.
           skip_scope_check! only: :show, jwt_only: true
 
           # GET /api/v3/admin/store
           def show
             authorize! :show, current_store
-            render json: serialize_store
+            render json: in_default_locale { serialize_store }
           end
 
           # PATCH /api/v3/admin/store
           def update
             authorize! :update, current_store
 
-            if current_store.update(permitted_params)
-              render json: serialize_store
-            else
-              render_validation_error(current_store.errors)
+            in_default_locale do
+              if current_store.update(permitted_params)
+                render json: serialize_store
+              else
+                render_validation_error(current_store.errors)
+              end
             end
           end
 
@@ -176,6 +193,13 @@ module Spree
           end
 
           private
+
+          # Settings hold the store's default-language values, whatever locale
+          # the request resolved to. Other languages are written through the
+          # translations endpoints.
+          def in_default_locale(&)
+            Mobility.with_locale(current_store.default_locale, &)
+          end
 
           def describe(provider_classes)
             provider_classes.map do |provider_class|

@@ -1,6 +1,8 @@
 module Spree
   module Emails
     class ReturnSerializer < Spree::Api::V3::ReturnSerializer
+      _attributes.delete(:custom_fields)
+
       without_display_money
 
       typelize refunded_total: :string

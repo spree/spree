@@ -142,7 +142,7 @@ meant for a person, and `step` is only a grouping hint.
 
 This is what lets you design your own checkout. Spree tells you what's missing; you decide how and when to ask for it — one long page, a few steps, or whatever suits your storefront.
 
-Seven checks run on every cart read:
+Eight checks run on every cart read:
 
 | `code` | `step` | Raised when |
 |---|---|---|
@@ -150,6 +150,7 @@ Seven checks run on every cart read:
 | `email_required` | `address` | No email address |
 | `ship_address_required` | `address` | Something needs shipping and there is no address |
 | `delivery_method_required` | `delivery` | A delivery method hasn't been chosen |
+| `delivery_unavailable` | `delivery` | Part of an item cannot be delivered to the shipping address |
 | `payment_required` | `payment` | The total isn't covered by payments |
 | `po_number_required` | `address` | A company requires a purchase-order number |
 | `order_minimum_not_met` | `cart` | Below the order minimum, with the shortfall in the message |

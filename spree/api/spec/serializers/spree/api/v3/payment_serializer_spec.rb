@@ -32,6 +32,15 @@ RSpec.describe Spree::Api::V3::PaymentSerializer do
       expect(subject).not_to have_key('updated_at')
     end
 
+    it "passes nested expands to the payment's source" do
+      definition = create(:custom_field_definition, resource_type: 'Spree::CreditCard')
+      create(:custom_field, resource: payment.source, custom_field_definition: definition, value: 'public')
+
+      result = described_class.new(payment, params: base_params.merge(expand: ['source.custom_fields'])).to_h
+
+      expect(result['source']['custom_fields'].pluck('value')).to eq(['public'])
+    end
+
     it 'includes payment_method association' do
       expect(subject['payment_method']).to be_a(Hash)
       expect(subject['payment_method']['id']).to eq(payment.payment_method.prefixed_id)

@@ -1,9 +1,17 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { type AdminUser, type Invitation, type Role, SpreeError } from '@spree/admin-sdk'
+import {
+  type AdminUser,
+  type AdminUserStatus,
+  type Invitation,
+  type Role,
+  type Session,
+  SpreeError,
+} from '@spree/admin-sdk'
 import {
   getInitials,
   mapSpreeErrorsToForm,
   PageHeader,
+  SettingsSection,
   Subject,
   usePermissions,
 } from '@spree/dashboard-core'
@@ -13,10 +21,7 @@ import {
   AvatarImage,
   Badge,
   Button,
-  Card,
   CardContent,
-  CardHeader,
-  CardTitle,
   Checkbox,
   Dialog,
   DialogBody,
@@ -34,6 +39,12 @@ import {
   FieldError,
   FieldLabel,
   Input,
+  Item,
+  ItemContent,
+  ItemDescription,
+  ItemGroup,
+  ItemMedia,
+  ItemTitle,
   RelativeTime,
   RowActions,
   requiredMessage,
@@ -49,6 +60,7 @@ import {
   SheetHeader,
   SheetTitle,
   Skeleton,
+  StatusBadge,
   Table,
   TableBody,
   TableCell,
@@ -57,23 +69,32 @@ import {
   TableRow,
   toastManager,
   useConfirm,
-  useCopyToClipboard,
 } from '@spree/dashboard-ui'
 import {
   BanIcon,
+  BrowserIcon,
   ClockIcon,
+  EyeIcon,
+  GlobeIcon,
   LinkIcon,
   MailIcon,
+  MonitorIcon,
   PlusIcon,
+  SmartphoneIcon,
+  TabletIcon,
+  TerminalIcon,
   UserMinusIcon,
+  UserPlusIcon,
+  UsersIcon,
   UsersRoundIcon,
 } from '@spree/dashboard-ui/icons'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import i18n from 'i18next'
-import { useState } from 'react'
+import { type ComponentType, type ReactNode, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
+import { useCopyInvitationLink } from '../../../../hooks/use-copy-invitation-link'
 import {
   useCreateInvitation,
   useDeleteInvitation,
@@ -83,8 +104,14 @@ import {
   useResendInvitation,
   useRoles,
   useStaff,
+  useStaffMember,
   useUpdateStaff,
 } from '../../../../hooks/use-staff'
+import {
+  type DeviceKind,
+  describeUserAgent,
+  type UserAgentDescription,
+} from '../../../../lib/user-agent'
 
 export const Route = createFileRoute('/_authenticated/$storeId/settings/staff')({
   component: StaffSettingsPage,
@@ -134,10 +161,7 @@ function StaffSettingsPage() {
 function StaffCard({ staff, loading }: { staff: AdminUser[]; loading: boolean }) {
   const { t } = useTranslation()
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('admin.pages.staff.members_section')}</CardTitle>
-      </CardHeader>
+    <SettingsSection title={t('admin.pages.staff.members_section')} icon={<UsersIcon />}>
       <CardContent className="p-0">
         {loading ? (
           <div className="flex flex-col gap-3 p-4">
@@ -155,11 +179,13 @@ function StaffCard({ staff, loading }: { staff: AdminUser[]; loading: boolean })
             </EmptyHeader>
           </Empty>
         ) : (
-          <Table>
+          <Table roundedTop>
             <TableHeader>
               <TableRow>
                 <TableHead>{t('admin.pages.staff.table.member')}</TableHead>
                 <TableHead>{t('admin.pages.staff.table.roles')}</TableHead>
+                <TableHead>{t('admin.pages.staff.table.status')}</TableHead>
+                <TableHead>{t('admin.pages.staff.table.last_active')}</TableHead>
                 <TableHead className="w-12" />
               </TableRow>
             </TableHeader>
@@ -171,13 +197,14 @@ function StaffCard({ staff, loading }: { staff: AdminUser[]; loading: boolean })
           </Table>
         )}
       </CardContent>
-    </Card>
+    </SettingsSection>
   )
 }
 
 function StaffRow({ member }: { member: AdminUser }) {
   const { t } = useTranslation()
   const [editOpen, setEditOpen] = useState(false)
+  const [detailsOpen, setDetailsOpen] = useState(false)
   const removeMutation = useRemoveStaff()
   const confirm = useConfirm()
 
@@ -226,7 +253,7 @@ function StaffRow({ member }: { member: AdminUser }) {
         </TableCell>
         <TableCell>
           {member.roles.length === 0 ? (
-            <span className="text-sm text-muted-foreground">—</span>
+            <span className="text-base text-muted-foreground">—</span>
           ) : (
             <div className="flex flex-wrap gap-1">
               {member.roles.map((role) => (
@@ -237,9 +264,21 @@ function StaffRow({ member }: { member: AdminUser }) {
             </div>
           )}
         </TableCell>
+        <TableCell>
+          <StaffStatusBadge status={member.status} />
+        </TableCell>
+        <TableCell className="text-base text-muted-foreground">
+          <RelativeTime iso={member.last_active_at} />
+        </TableCell>
         <TableCell className="text-right">
           <RowActions
             actions={[
+              {
+                key: 'view',
+                label: t('admin.actions.view_details'),
+                icon: <EyeIcon className="size-4" />,
+                onSelect: () => setDetailsOpen(true),
+              },
               { key: 'edit', onSelect: () => setEditOpen(true) },
               {
                 key: 'remove',
@@ -255,7 +294,122 @@ function StaffRow({ member }: { member: AdminUser }) {
       </TableRow>
 
       <EditStaffSheet open={editOpen} onOpenChange={setEditOpen} member={member} />
+      <StaffDetailsSheet open={detailsOpen} onOpenChange={setDetailsOpen} member={member} />
     </>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Staff details sheet
+// ---------------------------------------------------------------------------
+
+function StaffDetailsSheet({
+  open,
+  onOpenChange,
+  member,
+}: {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  member: AdminUser
+}) {
+  const { t } = useTranslation()
+  // The list row renders at once; the sheet adds what only it asks for.
+  const { data: details, isLoading, isError } = useStaffMember(member.id, open)
+
+  return (
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent>
+        <SheetHeader>
+          <SheetTitle>{member.full_name || member.email}</SheetTitle>
+          {member.full_name && <SheetDescription>{member.email}</SheetDescription>}
+        </SheetHeader>
+        <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
+          <StaffStatusBadge status={member.status} />
+          <dl className="flex flex-col gap-2 text-base">
+            <DetailRow label={t('admin.pages.staff.details.joined')}>
+              <RelativeTime iso={member.created_at} />
+            </DetailRow>
+            {!isError && (
+              <DetailRow label={t('admin.pages.staff.details.invited_by')}>
+                {isLoading ? <Skeleton className="h-4 w-32" /> : (details?.inviter?.label ?? '—')}
+              </DetailRow>
+            )}
+          </dl>
+          <section className="flex flex-col gap-2">
+            <h3 className="font-medium text-base">{t('admin.pages.staff.sessions.title')}</h3>
+            {isError ? (
+              <p className="text-base text-destructive" role="alert">
+                {t('admin.pages.staff.details.load_failed')}
+              </p>
+            ) : isLoading ? (
+              <Skeleton className="h-12 w-full" />
+            ) : details?.sessions?.length ? (
+              <ItemGroup className="gap-2">
+                {details.sessions.map((session) => (
+                  <SessionRow key={session.id} session={session} />
+                ))}
+              </ItemGroup>
+            ) : (
+              <p className="text-base text-muted-foreground">
+                {t('admin.pages.staff.sessions.empty')}
+              </p>
+            )}
+          </section>
+        </div>
+      </SheetContent>
+    </Sheet>
+  )
+}
+
+const DEVICE_ICONS: Record<DeviceKind, ComponentType<{ className?: string }>> = {
+  desktop: MonitorIcon,
+  mobile: SmartphoneIcon,
+  tablet: TabletIcon,
+  other: TerminalIcon,
+}
+
+function SessionDeviceIcon({ device }: { device: UserAgentDescription | null }) {
+  // Simple Icons, where the logos come from, has no Edge logo.
+  if (device?.browser && device.browser !== 'edge') return <BrowserIcon browser={device.browser} />
+
+  const Icon = device ? DEVICE_ICONS[device.device] : GlobeIcon
+  return <Icon className="size-4" />
+}
+
+function SessionRow({ session }: { session: Session }) {
+  const { t } = useTranslation()
+  const device = session.user_agent ? describeUserAgent(session.user_agent) : null
+
+  return (
+    <Item role="listitem" variant="outline" size="sm">
+      <ItemMedia className="size-9 rounded-md bg-muted text-muted-foreground">
+        <SessionDeviceIcon device={device} />
+      </ItemMedia>
+      <ItemContent className="min-w-0">
+        <ItemTitle className="truncate" title={session.user_agent ?? undefined}>
+          {device?.label ?? t('admin.pages.staff.sessions.unknown_device')}
+        </ItemTitle>
+        <ItemDescription className="flex items-center gap-1.5 text-xs">
+          <span className="font-mono">{session.ip_address ?? '—'}</span>
+          <span aria-hidden>·</span>
+          <RelativeTime iso={session.last_active_at} />
+        </ItemDescription>
+      </ItemContent>
+    </Item>
+  )
+}
+
+function StaffStatusBadge({ status }: { status: AdminUserStatus }) {
+  const { t } = useTranslation()
+  return <StatusBadge status={status} label={t(`admin.pages.staff.status.${status}`)} />
+}
+
+function DetailRow({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <div className="flex items-center justify-between gap-4">
+      <dt className="text-muted-foreground">{label}</dt>
+      <dd>{children}</dd>
+    </div>
   )
 }
 
@@ -272,17 +426,14 @@ function PendingInvitationsCard({
 }) {
   const { t } = useTranslation()
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('admin.pages.staff.invitations_section')}</CardTitle>
-      </CardHeader>
+    <SettingsSection title={t('admin.pages.staff.invitations_section')} icon={<UserPlusIcon />}>
       <CardContent className="p-0">
         {loading ? (
           <div className="p-4">
             <Skeleton className="h-10 w-full" />
           </div>
         ) : (
-          <Table>
+          <Table roundedTop>
             <TableHeader>
               <TableRow>
                 <TableHead>{t('admin.fields.email.label')}</TableHead>
@@ -299,7 +450,7 @@ function PendingInvitationsCard({
           </Table>
         )}
       </CardContent>
-    </Card>
+    </SettingsSection>
   )
 }
 
@@ -310,27 +461,7 @@ function InvitationRow({ invitation }: { invitation: Invitation }) {
   const confirm = useConfirm()
   const acceptanceLink = useInvitationAcceptanceLink()
   const { permissions } = usePermissions()
-  const { copy } = useCopyToClipboard()
-
-  async function handleCopyLink() {
-    try {
-      const { acceptance_url } = await acceptanceLink.mutateAsync(invitation.id)
-      // Path-only when no dashboard origin is configured; resolve against the SPA's origin.
-      const url = acceptance_url.startsWith('/')
-        ? `${window.location.origin}${acceptance_url}`
-        : acceptance_url
-      if (!(await copy(url))) {
-        toastManager.add({ type: 'error', title: t('admin.staff.errors.failed_to_copy_link') })
-        return
-      }
-      toastManager.add({ type: 'success', title: t('admin.staff.actions.invitation_link_copied') })
-    } catch (err) {
-      toastManager.add({
-        type: 'error',
-        title: err instanceof Error ? err.message : t('admin.staff.errors.failed_to_copy_link'),
-      })
-    }
-  }
+  const copyInvitationLink = useCopyInvitationLink(acceptanceLink.mutateAsync)
 
   async function handleResend() {
     try {
@@ -378,10 +509,10 @@ function InvitationRow({ invitation }: { invitation: Invitation }) {
             {invitation.role_name}
           </Badge>
         ) : (
-          <span className="text-sm text-muted-foreground">—</span>
+          <span className="text-base text-muted-foreground">—</span>
         )}
       </TableCell>
-      <TableCell className="text-sm text-muted-foreground">
+      <TableCell className="text-base text-muted-foreground">
         {invitation.expires_at ? (
           <span className="inline-flex items-center gap-1">
             <ClockIcon className="size-3.5" />
@@ -407,7 +538,7 @@ function InvitationRow({ invitation }: { invitation: Invitation }) {
               icon: <LinkIcon className="size-4" />,
               visible: permissions.can('update', Subject.Invitation),
               disabled: acceptanceLink.isPending,
-              onSelect: handleCopyLink,
+              onSelect: () => copyInvitationLink(invitation.id),
             },
             {
               key: 'revoke',
@@ -486,7 +617,7 @@ function InviteDialog({
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <DialogBody className="flex flex-col gap-4">
             {form.formState.errors.root?.message && (
-              <p className="text-sm text-destructive" role="alert">
+              <p className="text-base text-destructive" role="alert">
                 {form.formState.errors.root.message}
               </p>
             )}
@@ -648,7 +779,7 @@ function EditStaffSheet({
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
             {form.formState.errors.root?.message && (
-              <p className="text-sm text-destructive" role="alert">
+              <p className="text-base text-destructive" role="alert">
                 {form.formState.errors.root.message}
               </p>
             )}
@@ -733,11 +864,11 @@ function RoleCheckboxGroup({
   }
 
   if (roles.length === 0) {
-    return <p className="text-sm text-muted-foreground">{t('admin.staff.invite.no_roles')}</p>
+    return <p className="text-base text-muted-foreground">{t('admin.staff.invite.no_roles')}</p>
   }
 
   return (
-    <div className="flex flex-col gap-1.5 rounded-md border border-border p-3">
+    <Item variant="outline" className="flex-col items-stretch gap-1.5">
       {roles.map((role) => {
         const checked = value.includes(role.id)
         const id = `role-${role.id}`
@@ -745,13 +876,13 @@ function RoleCheckboxGroup({
           <label
             key={role.id}
             htmlFor={id}
-            className="flex cursor-pointer items-center gap-2 text-sm capitalize"
+            className="flex cursor-pointer items-center gap-2 text-base capitalize"
           >
             <Checkbox id={id} checked={checked} onCheckedChange={() => toggle(role.id)} />
             {role.name}
           </label>
         )
       })}
-    </div>
+    </Item>
   )
 }

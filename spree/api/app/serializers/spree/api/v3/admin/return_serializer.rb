@@ -11,7 +11,6 @@ module Spree
 
           typelize memo: [:string, nullable: true],
                    metadata: 'Record<string, unknown>',
-                   documents: "Array<{ kind: string; url: string }>",
                    stock_location_id: [:string, nullable: true],
                    created_by_id: [:string, nullable: true],
                    created_by_type: [:string, nullable: true, enum: Spree::Actor::BUILT_IN_KINDS, enum_type_name: 'ActorKind'],
@@ -39,6 +38,7 @@ module Spree
 
           # Paperwork the provider produced beside the label: a cross-border
           # return is declared like any other export.
+          typelize({ kind: :string, url: :string }, multi: true)
           attribute :documents do |return_record|
             return_record.provider.documents(return_record).map(&:as_json)
           end
@@ -49,6 +49,8 @@ module Spree
 
           # Where the inbound parcel is, as the carrier last reported it.
           many :deliveries, resource: proc { Spree.api.admin_delivery_serializer }
+
+          expandable_custom_fields admin: true
         end
       end
     end

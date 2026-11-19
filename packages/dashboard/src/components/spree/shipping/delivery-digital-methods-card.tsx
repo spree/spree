@@ -27,7 +27,7 @@ export function DeliveryDigitalMethodsCard({ methods }: { methods: DeliveryMetho
           <DeliveryMethodList methods={methods} icon={ZapIcon} />
         ) : (
           <div className="flex flex-col items-start gap-2">
-            <p className="text-muted-foreground text-sm">
+            <p className="text-muted-foreground text-base">
               {t('admin.delivery_profiles.detail.digital_empty')}
             </p>
             <Can I="create" a={Subject.DeliveryMethod}>

@@ -283,6 +283,21 @@ RSpec.describe Spree::Collection, type: :model do
       expect { drop.reload }.to raise_error(ActiveRecord::RecordNotFound)
     end
 
+    it 'refuses a rule with an unknown type, naming the accepted ones' do
+      expect {
+        reloaded_collection.rules = [{ type: 'Spree::CollectionRules::Tag', value: 'sale', match_policy: 'is_equal_to' }]
+      }.to raise_error(Spree::Preferences::InvalidPreferences) { |error|
+        expect(error.failures).to contain_exactly(hash_including(pointer: '/rules/0/type'))
+        expect(error.message).to include('is not a collection rule offered here', 'tag', 'sale')
+      }
+    end
+
+    it 'refuses a new rule with no type, naming the accepted ones' do
+      expect {
+        reloaded_collection.rules = [{ value: 'sale', match_policy: 'is_equal_to' }]
+      }.to raise_error(Spree::Preferences::InvalidPreferences, %r{/rules/0/type: is required \(expected one of: .*tag})
+    end
+
     it 'raises RecordNotFound for an unknown rule id' do
       expect {
         reloaded_collection.rules = [{ id: 'crule_nonexistent', value: 'x', match_policy: 'is_equal_to' }]

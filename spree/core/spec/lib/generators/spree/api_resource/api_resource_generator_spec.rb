@@ -98,24 +98,58 @@ RSpec.describe Spree::ApiResourceGenerator, type: :generator do
     end
 
     # Overriding permitted_params would drop the attributes extensions add
-    # through Spree::Brand.additional_permitted_attributes.
-    it 'declares writable attributes on the Admin controller without overriding permitted_params' do
-      result = run_generator(['Brand', 'name:string', 'active:boolean'])
+    # through Spree::Brand.additional_permitted_attributes; request_params
+    # feeds resource_permitted_attributes, which keeps them.
+    it 'declares writable attributes with request_params on the Admin controller' do
+      result = run_generator(['Brand', 'name:string', 'active:boolean', 'price:decimal', 'launched_on:date'])
 
-      expect(result[:admin_controller]).to include('def resource_permitted_attributes')
-      expect(result[:admin_controller]).to include('[:name, :active]')
+      expect(result[:admin_controller]).to include('request_params :brand do |body|')
+      expect(result[:admin_controller]).to include('body.attribute :name, :string')
+      expect(result[:admin_controller]).to include('body.attribute :active, :boolean')
+      expect(result[:admin_controller]).to include('body.attribute :price, :decimal')
+      expect(result[:admin_controller]).to include('body.attribute :launched_on, :date, required: true, on: :create')
+      # The model validates the presence of every attribute but booleans.
+      expect(result[:admin_controller]).to include('body.attribute :name, :string, required: true, on: :create')
+      expect(result[:admin_controller]).to include("body.attribute :active, :boolean\n")
+      expect(result[:admin_controller]).not_to include('resource_permitted_attributes')
       expect(result[:admin_controller]).not_to include('permitted_params')
     end
 
     it 'declares writable attributes on the Store controller only when --writable is set' do
       read_only = run_generator(['Brand', 'name:string'])
-      expect(read_only[:store_controller]).not_to include('resource_permitted_attributes')
+      expect(read_only[:store_controller]).not_to include('request_params')
 
       FileUtils.rm_rf(destination)
       FileUtils.mkdir_p(destination)
       writable = run_generator(['Brand', 'name:string', '--writable'])
-      expect(writable[:store_controller]).to include('def resource_permitted_attributes')
+      expect(writable[:store_controller]).to include('request_params :brand do |body|')
       expect(writable[:store_controller]).not_to include('permitted_params')
+    end
+  end
+
+  describe 'integration spec' do
+    it 'documents the Admin endpoints for openapi/admin.yaml' do
+      described_class.start(['Brand', 'name:string', '--skip-routes', '--force', '--migration'], destination_root: destination)
+      spec = File.read(File.join(destination, 'spec/integration/admin/brands_spec.rb'))
+
+      expect(spec).to include("RSpec.describe 'Brands Admin API', type: :request, swagger_doc: 'openapi/admin.yaml'")
+      expect(spec).to include("admin_operation :read, :brands")
+      expect(spec).to include('filter_parameters_for')
+      expect(spec.scan('request_body_for').size).to eq(2)
+      expect(spec).to include('attributes_for(:brand).slice(:name)')
+    end
+
+    it 'sends decimal attributes as decimal strings' do
+      described_class.start(['Brand', 'name:string', 'price:decimal', '--skip-routes', '--force', '--migration'], destination_root: destination)
+      spec = File.read(File.join(destination, 'spec/integration/admin/brands_spec.rb'))
+
+      expect(spec.scan("attributes_for(:brand).slice(:name, :price).merge(price: '1.00')").size).to eq(2)
+    end
+
+    it 'is skipped with the other specs' do
+      run_generator(['Brand', 'name:string'])
+
+      expect(File).not_to exist(File.join(destination, 'spec/integration/admin/brands_spec.rb'))
     end
   end
 

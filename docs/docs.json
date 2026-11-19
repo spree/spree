@@ -1,6 +1,7 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "name": "Spree Commerce documentation",
+  "description": "Spree Commerce is an open-source headless commerce platform. The backend runs as a Docker image (ghcr.io/spree/spree) and exposes REST Store and Admin APIs with OpenAPI specs, TypeScript SDKs (@spree/sdk, @spree/admin-sdk), webhooks and an MCP server with read and write tools, plus a React admin dashboard, a Next.js storefront, B2B and wholesale (companies, customer-specific catalogs and price lists) and a built-in multi-vendor marketplace. Start with `npx create-spree-app@latest my-store`: you need only Node.js, Git and Docker.",
   "theme": "almond",
   "colors": {
     "primary": "#0077ff",
@@ -32,6 +33,10 @@
     "library": "lucide"
   },
   "redirects": [
+    {
+      "source": "/api-reference/admin-api/delivery/:slug*",
+      "destination": "/api-reference/admin-api/delivery-settings/:slug*"
+    },
     {
       "source": "/user/settings/payouts",
       "destination": "/user/settings/marketplace"
@@ -490,7 +495,7 @@
     },
     {
       "source": "/user/vendors/vendor-management",
-      "destination": "/user/sellers/managing-sellers"
+      "destination": "/user/sellers/sellers"
     },
     {
       "source": "/user/vendors/vendor-onboarding-manual",
@@ -515,10 +520,6 @@
     {
       "source": "/user/vendors/multi-vendor-checkout",
       "destination": "/user/sellers/orders"
-    },
-    {
-      "source": "/user/settings/marketplace",
-      "destination": "/user/sellers/payouts"
     },
     {
       "source": "/use-case/b2b/b2b-admin-capabilities",
@@ -550,7 +551,7 @@
     },
     {
       "source": "/use-case/marketplace/admin-dashboard",
-      "destination": "/user/sellers/managing-sellers"
+      "destination": "/user/sellers/sellers"
     },
     {
       "source": "/use-case/marketplace/capabilities",
@@ -723,6 +724,10 @@
     {
       "source": "/developer/agentic/mcp",
       "destination": "/developer/agentic/docs-mcp"
+    },
+    {
+      "source": "/user/sellers/managing-sellers",
+      "destination": "/user/sellers/sellers"
     }
   ],
   "contextual": {
@@ -748,6 +753,7 @@
               {
                 "group": "Develop",
                 "pages": [
+                  "index",
                   {
                     "group": "Getting Started",
                     "pages": [
@@ -826,7 +832,7 @@
                     "icon": "book-open"
                   },
                   {
-                    "group": "AI-Assisted Development",
+                    "group": "Agentic Development",
                     "pages": [
                       "developer/agentic/overview",
                       "developer/agentic/agent-skills",
@@ -883,6 +889,7 @@
                         "pages": [
                           "developer/dashboard/recipes/attribute-end-to-end",
                           "developer/dashboard/recipes/custom-form-field",
+                          "developer/dashboard/recipes/error-tracking",
                           "developer/dashboard/recipes/page-action-button",
                           "developer/dashboard/recipes/sidebar-widget"
                         ]
@@ -1048,6 +1055,7 @@
                     "group": "Extending the Backend",
                     "pages": [
                       "developer/customization/quickstart",
+                      "developer/customization/extend-without-ruby",
                       "developer/customization/configuration",
                       "developer/customization/workflows",
                       "developer/customization/validations",
@@ -1121,6 +1129,7 @@
                         "pages": [
                           "developer/upgrades/quickstart",
                           "developer/upgrades/5.6-to-6.0",
+                          "developer/upgrades/removed-apis",
                           "v5/developer/upgrades/5.5-to-5.6",
                           "v5/developer/upgrades/5.4-to-5.5",
                           "v5/developer/upgrades/5.3-to-5.4",
@@ -1212,7 +1221,7 @@
               },
               {
                 "item": "Seller API",
-                "icon": "shop",
+                "icon": "handshake",
                 "description": "REST API for the marketplace seller panel",
                 "groups": [
                   {
@@ -1337,10 +1346,11 @@
                     "pages": [
                       "user/sellers/sellers",
                       "user/sellers/onboarding",
-                      "user/sellers/managing-sellers",
+                      "user/sellers/seller-panel",
                       "user/sellers/products",
                       "user/sellers/orders",
                       "user/sellers/commission-rates",
+                      "user/sellers/transfers",
                       "user/sellers/payouts"
                     ]
                   },
@@ -1386,6 +1396,7 @@
                         "icon": "store",
                         "pages": [
                           "user/settings/store-details",
+                          "user/settings/storefront",
                           "user/settings/emails",
                           "user/settings/policies",
                           "user/settings/sales-channels",
@@ -2488,6 +2499,7 @@
                 "pages": [
                   "developer/dashboard/recipes/attribute-end-to-end",
                   "developer/dashboard/recipes/custom-form-field",
+                  "developer/dashboard/recipes/error-tracking",
                   "developer/dashboard/recipes/page-action-button",
                   "developer/dashboard/recipes/sidebar-widget"
                 ]
@@ -2591,7 +2603,8 @@
                 "pages": [
                   "developer/contributing/quickstart",
                   "developer/contributing/developing-spree",
-                  "developer/contributing/creating-an-extension"
+                  "developer/contributing/creating-an-extension",
+                  "developer/contributing/reporting-issues"
                 ]
               },
               {
@@ -2759,7 +2772,7 @@
           },
           {
             "item": "Seller API",
-            "icon": "shop",
+            "icon": "handshake",
             "description": "REST API for the marketplace seller panel",
             "groups": [
               {
@@ -2987,10 +3000,11 @@
             "pages": [
               "user/sellers/sellers",
               "user/sellers/onboarding",
-              "user/sellers/managing-sellers",
+              "user/sellers/seller-panel",
               "user/sellers/products",
               "user/sellers/orders",
               "user/sellers/commission-rates",
+              "user/sellers/transfers",
               "user/sellers/payouts"
             ]
           },
@@ -3029,6 +3043,7 @@
             "group": "Settings",
             "pages": [
               "user/settings/store-details",
+              "user/settings/storefront",
               "user/settings/sales-channels",
               "user/settings/users",
               "user/settings/emails",
@@ -3099,7 +3114,12 @@
           "name": "discord"
         }
       }
-    ]
+    ],
+    "primary": {
+      "label": "Try Sandbox",
+      "href": "https://spree.sh",
+      "type": "button"
+    }
   },
   "footer": {
     "socials": {

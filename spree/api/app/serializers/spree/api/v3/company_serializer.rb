@@ -8,8 +8,7 @@ module Spree
       class CompanySerializer < BaseSerializer
         typelize name: :string,
                  kind: [:string, enum: Spree::Company::KINDS, enum_type_name: 'CompanyKind'], parent_id: [:string, nullable: true],
-                 po_number_required: :boolean,
-                 ancestors: 'Array<{id: string, name: string, kind: string}>'
+                 po_number_required: :boolean
 
         # `po_number_required` is buyer-facing by design: the checkout marks
         # the PO field required from it.
@@ -20,11 +19,14 @@ module Spree
         # The path above this node, root first — lets a client render
         # "Acme / EMEA / Berlin" without a request per level. Bounded by the
         # tree's depth cap.
+        typelize({ id: :string, name: :string, kind: :string }, multi: true)
         attribute :ancestors do |company|
           company.ancestors.reverse.map do |node|
             { 'id' => node.prefixed_id, 'name' => node.name, 'kind' => node.kind }
           end
         end
+
+        expandable_custom_fields
       end
     end
   end

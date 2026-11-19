@@ -21,6 +21,12 @@ as_root() { if [ "$(id -u)" = 0 ]; then "$@"; else sudo "$@"; fi; }
 
 : >"$LOG"
 
+# /security-review diffs against origin/HEAD, which a cloud clone does not set,
+# and the commit gate lints against main, which can lag the checked-out branch.
+step "Refreshing main"
+git fetch --quiet origin main:main >>"$LOG" 2>&1 || git fetch --quiet origin main >>"$LOG" 2>&1 || true
+git remote set-head origin main >>"$LOG" 2>&1 || true
+
 step "Starting Postgres"
 as_root service postgresql start >>"$LOG" 2>&1 || fail "Postgres did not start"
 for _ in $(seq 1 30); do pg_isready -q -h localhost && break; sleep 1; done
@@ -71,6 +77,8 @@ fi
 
 step "Installing gems"
 (cd server && { bundle check >/dev/null 2>&1 || bundle install --quiet; }) >>"$LOG" 2>&1 || fail "bundle install"
+# The commit gate runs RuboCop from the spree/ bundle (scripts/lint/rubocop).
+(cd spree && { bundle check >/dev/null 2>&1 || bundle install --quiet; }) >>"$LOG" 2>&1 || fail "bundle install (spree/)"
 
 if psql -h localhost -U postgres -lqt | cut -d'|' -f1 | tr -d ' ' | grep -qx "$DATABASE_NAME"; then
   step "Migrating $DATABASE_NAME"

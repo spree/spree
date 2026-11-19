@@ -11,7 +11,7 @@ interface Exchange {
   reason_id: string | null;
   price_difference: string | null;
   /** `price_difference` formatted with its currency symbol in the request's language.
-   * @deprecated Format `price_difference` with its currency instead. Removed in 6.1. */
+   * @deprecated Format `price_difference` with its currency instead. Removed in 6.5. */
   display_price_difference: string | null;
   approved_at: string | null;
   received_at: string | null;

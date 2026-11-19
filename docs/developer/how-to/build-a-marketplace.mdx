@@ -31,7 +31,7 @@ To try the flow quickly, you can seed a sample seller with an owner account, a p
 <CodeGroup>
 
 ```bash Spree CLI
-spree rake spree:sellers:sample_data
+spree task sellers:sample_data
 ```
 
 ```bash Without CLI
@@ -213,7 +213,7 @@ curl -X POST 'https://api.mystore.com/api/v3/admin/seller_requirements' \
 
 </CodeGroup>
 
-Each kind takes its own configuration through `preferences`. `accept_terms` carries `terms_body`, `terms_url` and `terms_effective_from` — setting that date is how you ask everyone again after rewriting the terms, since anyone who accepted before it falls back to unmet. `minimum_products` carries `minimum_count`. `complete_profile` carries `require_about`, `require_logo`, `require_cover_photo` and `require_contact_email`.
+Each kind takes its own configuration through `preferences`. `accept_terms` carries `terms_body`, `terms_url` and `terms_effective_from` — setting that date is how you ask everyone again after rewriting the terms, since anyone who accepted before it falls back to unmet. `minimum_products` carries `minimum_count`. `complete_profile` carries `require_about` and `require_logo` (both on by default), and `require_cover_photo` and `require_contact_email` (both off by default).
 
 Two flags govern every row regardless of kind. `required: false` makes a line advisory — it appears on the seller's checklist but does not gate approval. `active: false` retires it without deleting the submissions that answered it. Position is the order sellers work through, and the list is drag-ordered in the dashboard.
 
@@ -358,11 +358,13 @@ curl -X PATCH 'https://api.mystore.com/api/v3/admin/sellers/sel_xxx/approve' \
 
 Approval is refused while a required requirement is unmet, unless `override_requirements` says the operator means it. The override is recorded on the `seller.approved` event along with what was outstanding — the operator can step over the checklist, but not without saying so.
 
+The same flag admits a seller who never started onboarding — one you created and either never invited, or invited and nobody has accepted yet. Without it, a `pending` or `invited` seller cannot be approved.
+
 **Suspend and reject are not the same thing.** Reject turns away an applicant who never traded; it refuses an approved seller outright. Suspend halts a trading seller: their catalog stops selling, their record and history stay, and `approve` is the way back. A suspended seller being reinstated is not re-measured against the checklist, because they were admitted once already.
 
 A seller can also take themselves off sale without any operator involvement, by setting `holiday_mode_until`. The catalog stays visible; what stops is selling.
 
-**Read more:** [The seller lifecycle](/developer/core-concepts/sellers#the-seller-lifecycle), [Onboarding](/user/sellers/onboarding), [Managing sellers](/user/sellers/managing-sellers).
+**Read more:** [The seller lifecycle](/developer/core-concepts/sellers#the-seller-lifecycle), [Onboarding](/user/sellers/onboarding), [Sellers](/user/sellers/sellers).
 
 ## Review what sellers list
 
@@ -639,7 +641,7 @@ A connected provider confirms settlements through `POST /api/v3/webhooks/payouts
 **Read more:** [Payouts](/developer/core-concepts/sellers#payouts) for the ledger, [Stripe Connect for marketplaces](/integrations/payments/stripe-connect) for the shipped provider, [Seller payouts](/developer/providers/payouts) to write your own, and [Payouts settings](/user/settings/marketplace) for the operator's screen.
 
 <Note>
-Refund clawbacks and netting across settlements, reconciliation, KYC operations and seller tax reporting (DAC7) are Spree Enterprise.
+Reconciliation against provider statements, KYC operations and seller tax reporting (DAC7) are Spree Enterprise.
 </Note>
 
 ## Stand up the seller panel
@@ -795,7 +797,7 @@ The chosen seller travels as `X-Spree-Seller-Id`. The store is derived from the 
 | `balances`, `transfers`, `payouts` | Read-only — written by fulfilment and the sweep, never by the seller |
 | `deliveryMethods`, `packageTypes`, `stockLocations` | How and from where they ship |
 | `imports`, `exports`, `files` | Bulk listing by CSV, and CSV of what they sold |
-| `productTypes`, `deliveryProfiles`, `deliveryZones`, `returnReasons`, `claimReasons`, `trackingCarriers`, `countries` | Read-only marketplace vocabulary a seller picks from |
+| `productTypes`, `optionTypes`, `deliveryProfiles`, `deliveryZones`, `returnReasons`, `claimReasons`, `trackingCarriers`, `countries` | Read-only marketplace vocabulary a seller picks from |
 
 Two asymmetries are worth noticing, because both are deliberate:
 

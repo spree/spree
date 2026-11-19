@@ -411,11 +411,15 @@
         "add": "Regel hinzufügen",
         "description": "Produkte manuell auswählen oder die Kollektion per Regeln aktuell halten.",
         "remove": "Regel entfernen",
-        "title": "Zuordnung"
+        "title": "Zuordnung",
+        "on_sale": "Im Angebot",
+        "days": "Tage",
+        "days_label": "Veröffentlicht innerhalb von",
+        "tags_placeholder": "Tags auswählen…"
       },
       "rules_match_policies": {
-        "all": "alle Bedingungen",
-        "any": "eine Bedingung"
+        "all": "Alle Regeln müssen zutreffen",
+        "any": "Eine Regel genügt"
       },
       "search_placeholder": "Kollektionen suchen…",
       "seo": {
@@ -553,7 +557,10 @@
       },
       "roles_enterprise_help": "Hier hinzugefügte Mitglieder können für dieses Unternehmen einkaufen und sein Verzeichnis verwalten. Rollen, Freigabe-Workflows und Ausgabenlimits gibt es mit Spree Enterprise.",
       "roles_enterprise_title": "Rollen und Freigaben sind ein Enterprise-Feature",
-      "title": "Mitglieder"
+      "title": "Mitglieder",
+      "columns": {
+        "member": "Mitglied"
+      }
     },
     "components": {
       "adjustment_action_editor": {
@@ -625,14 +632,16 @@
         "delete_failed": "Kundengruppe konnte nicht gelöscht werden",
         "deleted": "Kundengruppe gelöscht",
         "update_failed": "Kundengruppe konnte nicht aktualisiert werden",
-        "updated": "Kundengruppe aktualisiert"
+        "updated": "Kundengruppe aktualisiert",
+        "load_failed": "Diese Kundengruppe konnte nicht geladen werden"
       }
     },
     "customers": {
       "autocomplete": {
         "empty": "Keine passenden Kunden",
         "empty_for_company": "Keine Kunden können für diese Firma einkaufen",
-        "placeholder": "Kunden suchen…"
+        "placeholder": "Kunden suchen…",
+        "add_new": "Neuen Kunden hinzufügen"
       },
       "columns": {
         "companies": "Firmen",
@@ -717,7 +726,26 @@
           "search_placeholder": "Nach Name suchen…",
           "title": "Kundengruppen"
         },
-        "view_members": "Mitglieder anzeigen"
+        "view_members": "Mitglieder anzeigen",
+        "detail": {
+          "details": "Details",
+          "members": "Mitglieder",
+          "customer": "Kunde",
+          "add_member": "Kunden hinzufügen",
+          "add_member_title": "Kunden zu dieser Gruppe hinzufügen",
+          "add_member_description": "Wähle einen bestehenden Kunden. Sonst ändert sich nichts; er tritt nur dieser Gruppe bei.",
+          "members_empty": "Noch keine Kunden in dieser Gruppe",
+          "remove_member": "Aus Gruppe entfernen",
+          "remove_confirm": {
+            "title": "Aus dieser Gruppe entfernen?",
+            "message": "{{name}} bleibt Kunde und verlässt nur diese Gruppe."
+          },
+          "messages": {
+            "member_added": "Kunde zur Gruppe hinzugefügt",
+            "member_removed": "Kunde aus der Gruppe entfernt",
+            "member_change_failed": "Die Mitglieder der Gruppe konnten nicht aktualisiert werden"
+          }
+        }
       },
       "new_sheet_description": "Hier angelegte Kunden haben kein Passwort festgelegt. Sie erhalten beim ersten Anmelden einen Magic Link.",
       "privacy": {
@@ -997,6 +1025,44 @@
           },
           "subtitle": "Sehen Sie, wer was in Ihrem Shop geändert hat und wann.",
           "title": "Änderungsprotokoll"
+        },
+        "category_mapper": {
+          "benefits": {
+            "current": {
+              "description": "Produkte landen in den richtigen Kategorien, wenn sie importiert werden, wenn der Verkäufer sie ändert und wenn Sie eine Zuordnung ändern.",
+              "title": "Immer aktuell"
+            },
+            "kept": {
+              "description": "Kategorien, die Sie von Hand hinzufügen oder entfernen, bleiben so, wie Sie sie gesetzt haben. Der Mapper entfernt nur, was er selbst hinzugefügt hat.",
+              "title": "Ihre Änderungen bleiben"
+            },
+            "once": {
+              "description": "Ordnen Sie eine Kategorie des Verkäufers einer Ihrer Kategorien zu, und jedes Produkt darin folgt. Ordnen Sie dieselbe Kategorie für viele Verkäufer auf einmal zu.",
+              "title": "Einmal zuordnen"
+            }
+          },
+          "intro": "Jeder Verkäufer organisiert seine Produkte auf seine eigene Weise. Ordnen Sie die Kategorien jedes Verkäufers einmal den Kategorien Ihres Marktplatzes zu, und seine Produkte werden beim Import und bei jeder Änderung Ihren Kategorien hinzugefügt.",
+          "nav": "Kategorie-Mapper",
+          "steps": {
+            "add": {
+              "description": "Produkte werden automatisch Ihren Kategorien hinzugefügt.",
+              "title": "Hinzufügen"
+            },
+            "import": {
+              "description": "Verkäuferprodukte kommen mit den eigenen Kategorien des Verkäufers an.",
+              "title": "Import"
+            },
+            "map": {
+              "description": "Sie ordnen jede Verkäuferkategorie einer Ihrer Kategorien zu.",
+              "title": "Zuordnen"
+            },
+            "review": {
+              "description": "Produkte erreichen Ihre Prüfung bereits in ihren Kategorien.",
+              "title": "Prüfen"
+            }
+          },
+          "subtitle": "Die Produkte aller Verkäufer automatisch in Ihre Kategorien einordnen.",
+          "title": "Kategorie-Mapper"
         },
         "company_onboarding": {
           "benefits": {
@@ -1367,7 +1433,8 @@
       },
       "company_membership": {
         "email": {
-          "help": "Ein bestehender Kunde tritt sofort bei; alle anderen erhalten eine Einladung per E-Mail.",
+          "label": "Oder per E-Mail einladen",
+          "help": "Wer noch kein Kunde ist, erhält eine Einladung per E-Mail.",
           "placeholder": "einkauf@beispiel.de"
         }
       },
@@ -1573,14 +1640,6 @@
         "quantity": {
           "help": "Bei 1 wird eine einzelne Karte ausgegeben. Bei mehr als 1 wird ein Stapel mit automatisch generierten Codes ausgegeben.",
           "label": "Menge"
-        }
-      },
-      "invitation_acceptance": {
-        "password": {
-          "label": "Passwort"
-        },
-        "password_confirmation": {
-          "label": "Passwort bestätigen"
         }
       },
       "issued_at": {
@@ -2007,22 +2066,8 @@
         "label": "Rollen"
       },
       "seller": {
-        "about": {
-          "help": "Wird im Storefront-Profil des Verkäufers angezeigt.",
-          "label": "Über"
-        },
-        "billing_email": {
-          "help": "Hierhin gehen Provisionsrechnungen und Auszahlungsmitteilungen, falls abweichend.",
-          "label": "Rechnungs-E-Mail"
-        },
         "contact_email": {
-          "help": "Hierhin gehen Einladungen und Mitteilungen des Marktplatzes.",
           "placeholder": "hallo@sparks.example"
-        },
-        "holiday_mode_until": {
-          "help": "Der Katalog bleibt sichtbar, es kann bis dahin aber nichts gekauft werden.",
-          "label": "Abwesend bis",
-          "placeholder": "Datum wählen"
         },
         "minimum_payout_amount": {
           "help": "Kleinere Beträge werden auf die nächste Auszahlung übertragen.",
@@ -2035,12 +2080,12 @@
           "help": "Wie oft dieser Verkäufer ausgezahlt wird.",
           "label": "Auszahlungsrhythmus"
         },
-        "slug": {
-          "help": "Teil der Storefront-Adresse des Verkäufers. Wird aus dem Namen abgeleitet, wenn leer."
-        },
         "tax_remittance": {
           "help": "Wer die Verbrauchsteuer auf die Verkäufe dieses Verkäufers abführt.",
           "label": "Steuer abgeführt von"
+        },
+        "slug": {
+          "help": "Teil der Storefront-Adresse des Verkäufers. Wird aus dem Namen abgeleitet, wenn leer."
         }
       },
       "state": {
@@ -2224,8 +2269,7 @@
           "label": "Transaktionale E-Mails an Kunden senden"
         },
         "timezone": {
-          "label": "Zeitzone",
-          "placeholder": "Zeitzone auswählen"
+          "label": "Zeitzone"
         },
         "unit_system": {
           "label": "Einheitensystem"
@@ -2234,7 +2278,7 @@
           "label": "Gewichtseinheit"
         },
         "show_products_without_price": {
-          "help": "Produkte listen, die in der Währung des Kunden keinen Preis haben.",
+          "help": "Wenn deaktiviert, werden Produkte ohne Preis in der Währung des Kunden im Shop ausgeblendet.",
           "label": "Produkte ohne Preis anzeigen"
         },
         "stock_reservations_enabled": {
@@ -2370,6 +2414,30 @@
         "email_font": {
           "label": "Schrift",
           "help": "E-Mail-Programme, die sie nicht laden können, verwenden eine ähnliche Schrift."
+        },
+        "seo_title": {
+          "label": "SEO-Titel",
+          "help": "Der Titel, den Suchmaschinen und Browser-Tabs für die Startseite Ihres Shops anzeigen."
+        },
+        "meta_description": {
+          "label": "Meta-Beschreibung",
+          "help": "Eine kurze Zusammenfassung, die Suchmaschinen unter dem Titel anzeigen."
+        },
+        "meta_keywords": {
+          "label": "Meta-Keywords",
+          "help": "Durch Kommas getrennte Keywords für Suchmaschinen."
+        },
+        "facebook": {
+          "label": "Facebook",
+          "placeholder": "https://facebook.com/yourstore"
+        },
+        "twitter": {
+          "label": "X (Twitter)",
+          "placeholder": "@yourstore"
+        },
+        "instagram": {
+          "label": "Instagram",
+          "placeholder": "@yourstore"
         }
       },
       "store_credit": {
@@ -2679,7 +2747,7 @@
         "shipping": "Versand",
         "tax": "Steuern"
       },
-      "manage_payment_methods": "Zahlungsmethoden verwalten",
+      "manage_payment_methods": "Zahlungen verwalten",
       "messages": {
         "connected": "Integration verbunden",
         "disconnected": "Integration getrennt",
@@ -2705,25 +2773,6 @@
       "title": "Integrationen",
       "toggle_label": "{{name}} ein- oder ausschalten",
       "view_cta": "Ansehen"
-    },
-    "invitation": {
-      "accepting": "Wird angenommen…",
-      "could_not_accept": "Einladung konnte nicht angenommen werden",
-      "create_and_accept": "Konto erstellen & annehmen",
-      "create_to_accept": ". Erstellen Sie Ihr Konto, um anzunehmen.",
-      "generic_error_message": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
-      "generic_error_title": "Einladung konnte nicht geladen werden",
-      "invited_as_role": " als {{role}}",
-      "invited_by": "{{email}} hat Sie eingeladen",
-      "invited_generic": "Sie wurden eingeladen",
-      "join_store": "{{store}} beitreten",
-      "loading": "Einladung wird geladen…",
-      "missing_token_message": "Dieser Link scheint unvollständig zu sein. Bitten Sie die Person, die Sie eingeladen hat, ihn erneut zu senden.",
-      "missing_token_title": "Einladungs-Token fehlt",
-      "not_found_message": "Diese Einladung ist abgelaufen, wurde widerrufen oder bereits angenommen. Bitten Sie die einladende Person, eine neue zu senden.",
-      "not_found_title": "Einladung nicht gefunden",
-      "sign_in_and_accept": "Anmelden & annehmen",
-      "sign_in_to_accept": ". Melden Sie sich an, um anzunehmen."
     },
     "jurisdiction": {
       "everywhere": "Überall"
@@ -2812,7 +2861,9 @@
     "markets": {
       "add_cta": "Markt hinzufügen",
       "columns": {
-        "default": "Standard"
+        "default": "Standard",
+        "locale": "Sprache",
+        "regions": "Regionen"
       },
       "create_description": "Fassen Sie Länder zu einer einzigen Preisregion mit eigener Währung und eigenen Sprachen zusammen.",
       "create_label": "Markt erstellen",
@@ -2832,12 +2883,14 @@
         "deleted": "Markt gelöscht",
         "updated": "Markt aktualisiert"
       },
+      "regions_count_one": "{{count}} Region",
+      "regions_count_other": "{{count}} Regionen",
       "search_placeholder": "Nach Name suchen…",
+      "search_regions": "Regionen suchen",
       "tax_exclusive": "Exklusive",
       "tax_inclusive": "Inklusive"
     },
     "media_library": {
-      "choose_from_library": "Aus Bibliothek wählen",
       "delete_confirm": {
         "in_use_message_one": "Beim Löschen von „{{name}}“ wird die Datei aus Ihrer Bibliothek und von der {{count}} Stelle entfernt, die sie verwendet. Beschreibungen, die sie einbetten, verlieren das Bild.",
         "in_use_message_other": "Beim Löschen von „{{name}}“ wird die Datei aus Ihrer Bibliothek und von allen {{count}} Stellen entfernt, die sie verwenden. Beschreibungen, die sie einbetten, verlieren das Bild.",
@@ -3238,7 +3291,8 @@
           "load_error": "Die Zahlungen für diese Bestellung konnten nicht geladen werden.",
           "view_at_gateway": "In {{gateway}} ansehen",
           "view_details": "Details ansehen",
-          "failed_card_checks": "Kartenprüfung fehlgeschlagen"
+          "failed_card_checks": "Kartenprüfung fehlgeschlagen",
+          "card_checks_unavailable": "Kartenprüfungen nicht verfügbar"
         },
         "priced_by": "Preis von {{name}}",
         "purchase_order": {
@@ -3274,6 +3328,7 @@
         "variant_search": {
           "description": "Suchen Sie nach einer Produktvariante, die diesem Auftrag hinzugefügt werden soll.",
           "empty": "Keine Varianten gefunden",
+          "no_permission": "Ihre Rolle darf keine Produkte ansehen und kann daher den Katalog nicht durchsuchen. Bitten Sie einen Administrator, Ihrer Rolle „Produkte ansehen“ hinzuzufügen.",
           "label": "Variante suchen",
           "placeholder": "Produktname oder SKU eingeben (min. 3 Zeichen)…",
           "sku_prefix": "SKU"
@@ -3299,6 +3354,7 @@
           "check": {
             "passed": "Bestanden",
             "failed": "Nicht bestanden",
+            "unavailable": "Nicht verfügbar",
             "not_checked": "Nicht geprüft"
           },
           "captures": "Erfassungen",
@@ -3340,6 +3396,7 @@
         "empty": "Diese Bestellung enthält keine Artikel.",
         "fully_fulfilled": "Diese Bestellung ist vollständig abgewickelt und kann nicht mehr bearbeitet werden.",
         "items_title": "Artikel",
+        "saved_not_reloaded": "Gespeichert, aber die Bestellung konnte nicht neu geladen werden. Aktualisiere die Seite, um die aktuellen Summen zu sehen.",
         "subtitle": "Bestellung {{number}}",
         "title": "Bestellung bearbeiten",
         "totals_hint": "Die Summen werden nach dem Speichern vom Server neu berechnet.",
@@ -3384,10 +3441,8 @@
       "item_count_one": "{{count}} Artikel",
       "item_count_other": "{{count}} Artikel",
       "new": {
-        "add_variant": "Variante hinzufügen",
         "creates_draft_note": "Erstellt einen Auftragsentwurf. Fügen Sie nach der Erstellung Zahlungen hinzu und schließen Sie ihn ab.",
         "items_table": {
-          "qty": "Anz.",
           "sku": "SKU",
           "variant": "Variante"
         },
@@ -3482,6 +3537,10 @@
         "new_cta": "Neuer Kunde"
       },
       "getting_started": {
+        "completed": {
+          "description": "Alle Schritte unter „Erste Schritte“ sind erledigt.",
+          "title": "Dein Shop ist eingerichtet"
+        },
         "description": "Schließen Sie diese Schritte ab, um Ihren Shop zu starten.",
         "progress": "{{done}} von {{total}} erledigt",
         "storefront_sheet": {
@@ -3519,6 +3578,7 @@
             "cta": "Adresse speichern",
             "description": "Ihre Versand- und Rücksendeadresse. Zusteller berechnen damit die Versandkosten, und Kundenrücksendungen gehen an diese Adresse.",
             "no_location": "Sie haben noch kein eigenes Lager — legen Sie in den Einstellungen eines an, um eine Adresse zu hinterlegen.",
+            "saved": "Versandadresse gespeichert",
             "title": "Versandadresse hinzufügen"
           },
           "setup_payment_method": {
@@ -3569,7 +3629,6 @@
           "previous": "Vorheriger Zeitraum"
         },
         "growth": {
-          "new": "Neu",
           "vs_previous": "vs. vorheriger Zeitraum"
         },
         "operations": {
@@ -3581,8 +3640,11 @@
             "low_stock_items": {
               "label": "Niedriger Bestand",
               "description_zero": "Deaktiviert. Legen Sie in den Shop-Einstellungen eine Schwelle fest.",
-              "description_one": "Höchstens 1 Einheit an einem Standort verkäuflich.",
-              "description_other": "Höchstens {{count}} Einheiten an einem Standort verkäuflich."
+              "description_one": "Höchstens 1 Einheit an allen Standorten zusammen verkäuflich.",
+              "description_other": "Höchstens {{count}} Einheiten an allen Standorten zusammen verkäuflich.",
+              "hint_zero": "Aus",
+              "hint_one": "≤ {{count}}",
+              "hint_other": "≤ {{count}}"
             },
             "open_claims": {
               "label": "Offene Reklamationen",
@@ -3602,12 +3664,19 @@
             },
             "out_of_stock_items": {
               "label": "Nicht vorrätig",
-              "description": "An diesem Standort ist nichts mehr verkäuflich."
+              "description": "An keinem Standort ist noch etwas verkäuflich."
             },
             "payments_to_collect": {
               "label": "Ausstehende Zahlungen",
               "description": "Aufgegebene Bestellungen, die noch nicht bezahlt sind."
             }
+          },
+          "all_clear": "Alles erledigt.",
+          "groups": {
+            "orders": "Bestellungen",
+            "post_sale": "Rücksendungen und Reklamationen",
+            "inventory": "Lagerbestand",
+            "other": "Sonstiges"
           }
         },
         "rankings": {
@@ -3638,7 +3707,8 @@
         },
         "currency": {
           "search": "Währungen suchen"
-        }
+        },
+        "chart_sparse": "Noch nicht genug Daten für einen Trend"
       },
       "orders": {
         "detail": {
@@ -3770,13 +3840,16 @@
           "company_addresses": "Firmenadressen",
           "company_help": "Diese Bestellung einem Unternehmen zuordnen. Die Kundenliste zeigt dann nur Personen, die dafür einkaufen dürfen.",
           "customer_addresses": "Kundenadressen",
+          "items_empty": {
+            "description": "Füge die Produkte dieser Bestellung hinzu.",
+            "title": "Noch keine Artikel"
+          },
           "reset_items": {
             "confirm": "Ändern und Artikel entfernen",
             "message_one": "Der ausgewählte Artikel ({{count}}) ist für diesen Käufer, Markt oder Kanal eventuell nicht verfügbar oder kostet etwas anderes. Er wird entfernt.",
             "message_other": "Die {{count}} ausgewählten Artikel sind für diesen Käufer, Markt oder Kanal eventuell nicht verfügbar oder kosten etwas anderes. Sie werden entfernt.",
             "title": "Ausgewählte Artikel entfernen?"
           },
-          "search_variant": "Variante suchen…",
           "section_billing": "Rechnung",
           "section_customer": "Kunde",
           "section_items": "Artikel",
@@ -3854,12 +3927,6 @@
           "bulk_prices": {
             "no_variants": "Fügen Sie mindestens eine Variante hinzu, um die Preisbearbeitung zu starten."
           }
-        },
-        "inventory": {
-          "in_stock": "{{count}} auf Lager",
-          "in_stock_short": "Auf Lager",
-          "on_backorder": "Im Rückstand",
-          "out_of_stock": "Nicht auf Lager"
         },
         "media_empty": "Noch keine Medien.",
         "media_upload": "Medien hochladen",
@@ -4020,6 +4087,8 @@
           "manage_cta": "Verwalten",
           "manage_description": "Wählen Sie aus, welche Verkaufskanäle dieses Produkt listen. Deaktivieren Sie einen Kanal, um es überall auszulisten.",
           "manage_title": "Verkaufskanäle verwalten",
+          "missing_price_description": "Kunden sehen nur Produkte mit einem Preis in ihrer Währung. Füge unter Preise einen hinzu und speichere, oder aktiviere Produkte ohne Preis anzeigen unter Einstellungen → Shop.",
+          "missing_price_title": "Ausgeblendet für Kunden, die in {{currencies}} bezahlen",
           "no_channels": "Keine Verkaufskanäle verfügbar. Erstellen Sie einen unter Einstellungen → Verkaufskanäle.",
           "status_hidden": "Ausgeblendet",
           "status_live": "Live",
@@ -4053,9 +4122,7 @@
           "section_to": "Nach",
           "sheet_title": "Neue Bestandsübertragung"
         },
-        "variants_empty": "Noch keine Varianten.",
-        "variants_one": "{{count}} Variante",
-        "variants_other": "{{count}} Varianten"
+        "variants_empty": "Noch keine Varianten."
       },
       "profile": {
         "load_failed_title": "Ihr Profil konnte nicht geladen werden",
@@ -4218,14 +4285,11 @@
         },
         "store": {
           "subtitle": "Allgemeine Konfiguration und shopweite Standardwerte.",
-          "tab_addresses": "Adressen",
           "tab_catalog": "Katalog",
           "tab_general": "Allgemein",
           "tab_inventory": "Lagerbestand",
           "tab_order_numbers": "Bestellnummern",
-          "tab_payments": "Zahlungen",
           "tab_standards": "Standards und Formate",
-          "tab_storefront_access": "Storefront-Zugriff",
           "title": "Shop-Einstellungen",
           "tab_downloads": "Digitale Downloads",
           "downloads_help": "Wie lange ein Download-Link gültig ist und wie oft er verwendet werden kann. Einzelne Dateien können diese Werte überschreiben.",
@@ -4333,6 +4397,8 @@
             "payment_setup_session": "Zahlungseinrichtungssitzung",
             "price": "Preis",
             "product": "Produkt",
+            "product_category": "Produktkategorie",
+            "product_collection": "Produktkollektion",
             "product_submission": "Produkteinreichung",
             "promotion": "Aktion",
             "purchase_order": "Bestellung beim Lieferanten",
@@ -4462,6 +4528,46 @@
             "description": "Registrieren Sie einen OAuth-Client, damit er mit diesem Shop verbunden werden kann."
           },
           "copy_client_id": "Client-ID kopieren"
+        },
+        "payments": {
+          "title": "Zahlungen",
+          "description": "Die Zahlungsanbieter und manuellen Methoden, mit denen Kunden bezahlen, und wann Zahlungen eingezogen werden.",
+          "providers_title": "Zahlungsanbieter",
+          "providers_empty": {
+            "title": "Keine Zahlungsanbieter verfügbar",
+            "description": "Installieren Sie eine Erweiterung für einen Zahlungsanbieter, um Karten und Wallets zu akzeptieren."
+          },
+          "manual_title": "Manuelle Zahlungsmethoden",
+          "add_manual": "Manuelle Methode hinzufügen",
+          "manual_empty": {
+            "title": "Keine manuellen Zahlungsmethoden",
+            "description": "Nehmen Sie Zahlungen außerhalb Ihres Shops an, etwa per Scheck, Überweisung oder Nachnahme."
+          },
+          "capture_title": "Zahlungseinzug",
+          "checkout_order": {
+            "cta": "Reihenfolge an der Kasse",
+            "title": "Reihenfolge an der Kasse",
+            "description": "Ziehen Sie die Zahlungsmethoden in die Reihenfolge, in der Kunden sie an der Kasse sehen. Aufgeführt sind nur aktive Methoden, die im Shop angezeigt werden.",
+            "empty": {
+              "title": "An der Kasse wird nichts angeboten",
+              "description": "Aktivieren Sie eine Zahlungsmethode und zeigen Sie sie im Shop an, damit sie hier erscheint."
+            }
+          },
+          "test_gateway": "Test-Gateway"
+        },
+        "storefront": {
+          "title": "Shop & Kasse",
+          "description": "Wo Ihr Shop zu finden ist, wer darin stöbern darf und was die Kasse von Kunden abfragt.",
+          "storefront_title": "Shop",
+          "checkout_title": "Kasse",
+          "addresses_title": "Adressen",
+          "url": {
+            "label": "Shop-URL",
+            "not_connected": "Noch nicht verbunden",
+            "connect": "Verbinden",
+            "change": "Ändern",
+            "help": "Wo Kunden einkaufen. Spree verlinkt ihn aus E-Mails und dem Dashboard und erlaubt ihm Aufrufe der Store API."
+          }
         }
       },
       "staff": {
@@ -4490,9 +4596,26 @@
         "table": {
           "member": "Mitglied",
           "role": "Rolle",
-          "roles": "Rollen"
+          "roles": "Rollen",
+          "status": "Status",
+          "last_active": "Zuletzt aktiv"
         },
-        "title": "Team"
+        "title": "Team",
+        "status": {
+          "active": "Aktiv",
+          "locked": "Gesperrt",
+          "deactivated": "Deaktiviert"
+        },
+        "details": {
+          "joined": "Beigetreten",
+          "invited_by": "Eingeladen von",
+          "load_failed": "Diese Details konnten nicht geladen werden. Schließe das Fenster und versuche es erneut."
+        },
+        "sessions": {
+          "title": "Sitzungen",
+          "empty": "Keine aktiven Sitzungen.",
+          "unknown_device": "Unbekanntes Gerät"
+        }
       },
       "translations": {
         "complete": "Vollständig übersetzt",
@@ -4529,10 +4652,6 @@
       }
     },
     "payment_methods": {
-      "add_cta": "Zahlungsmethode hinzufügen",
-      "columns": {
-        "storefront": "Onlineshop"
-      },
       "create_description": "Wählen Sie einen Anbieter und konfigurieren Sie dessen Zugangsdaten.",
       "create_label": "Zahlungsmethode erstellen",
       "delete_confirm": {
@@ -4540,22 +4659,19 @@
         "title": "Zahlungsmethode löschen?"
       },
       "edit_description": "Aktualisieren Sie Name, Sichtbarkeit oder Status.",
-      "empty": "Keine Zahlungsarten konfiguriert",
       "messages": {
         "created": "Zahlungsmethode erstellt",
         "deleted": "Zahlungsmethode gelöscht",
         "updated": "Zahlungsmethode aktualisiert"
       },
       "provider_description": "Anbieter: {{provider}}",
-      "search_placeholder": "Nach Name suchen…",
       "status": {
         "disabled": "Deaktiviert"
       },
       "storefront": {
         "admin_only": "Nur Administration",
         "visible": "Sichtbar"
-      },
-      "title": "Zahlungsarten"
+      }
     },
     "permissions": {
       "descriptions": {
@@ -4738,7 +4854,23 @@
       "terms_url": "URL der Bedingungen",
       "terms_url_description": "Optionale veröffentlichte Fassung derselben Bedingungen, öffnet in einem neuen Tab.",
       "webhook_secret": "Webhook-Signaturschlüssel",
-      "webhook_secret_description": "Das Geheimnis, das Sie im EasyPost-Webhook festgelegt haben. Ohne es werden Carrier-Updates abgelehnt."
+      "webhook_secret_description": "Das Geheimnis, das Sie im EasyPost-Webhook festgelegt haben. Ohne es werden Carrier-Updates abgelehnt.",
+      "operator_max": "Vergleich des Höchstbetrags",
+      "operator_max_description": "Wählen Sie, ob eine Bestellung genau am Höchstbetrag noch berechtigt ist.",
+      "operator_max_options": {
+        "lt": "Kleiner als (Höchstbetrag ausgeschlossen)",
+        "lte": "Kleiner oder gleich (Höchstbetrag eingeschlossen)"
+      },
+      "operator_min": "Vergleich des Mindestbetrags",
+      "operator_min_description": "Beispiel: Für kostenlosen Versand ab 150 setzen Sie den Mindestwarenwert auf 150 und wählen „Größer oder gleich“.",
+      "operator_min_options": {
+        "gt": "Größer als (Mindestbetrag ausgeschlossen)",
+        "gte": "Größer oder gleich (Mindestbetrag eingeschlossen)"
+      },
+      "amount_min": "Mindestwarenwert",
+      "amount_min_description": "Der Warenwert der Bestellung muss diesen Betrag erreichen, damit die Bestellung berechtigt ist.",
+      "amount_max": "Höchstwarenwert",
+      "amount_max_description": "Optionale Obergrenze. Leer lassen, wenn es kein Maximum gibt."
     },
     "product_types": {
       "add_cta": "Produkttyp hinzufügen",
@@ -4880,6 +5012,7 @@
         "reason_placeholder": "Was soll der Verkäufer ändern?",
         "reject": "Zurücksenden",
         "rejected": "An den Verkäufer zurückgesendet",
+        "save_first": "Speichern Sie zuerst Ihre Änderungen. Freigeben oder Zurücksenden speichert sie nicht.",
         "send_back": "Zurücksenden"
       },
       "save_label": "Produkt speichern",
@@ -5319,8 +5452,6 @@
       "add_cta": "Verkäufer hinzufügen",
       "add_sheet_title": "Neuer Verkäufer",
       "address": {
-        "filled": "Ausgefüllt",
-        "not_filled": "Nicht ausgefüllt",
         "not_provided_by_seller": "Vom Verkäufer noch nicht angegeben"
       },
       "approve_override_confirm": {
@@ -5339,29 +5470,21 @@
         "title": "Verkäufer löschen?"
       },
       "detail": {
-        "at_a_glance": "Auf einen Blick",
         "billing_address": "Rechnungsadresse",
-        "contact": "Kontakt",
         "delete_label": "Verkäufer löschen",
-        "edit_profile": "Profil bearbeiten",
-        "edit_profile_description": "Der Verkäufer pflegt das in seinem eigenen Bereich. Änderungen hier erfolgen in seinem Namen.",
         "edit_settlement": "Auszahlungen und Steuern bearbeiten",
-        "edit_settlement_description": "Nur Sie sehen und ändern diese Angaben. Der Verkäufer bearbeitet sie nie.",
+        "joined": "Beigetreten",
         "load_error": "Dieser Verkäufer konnte nicht geladen werden",
-        "no_about": "Dieser Verkäufer hat noch keine Beschreibung verfasst.",
         "returns_address": "Retourenadresse",
         "settlement": "Auszahlungen und Steuern",
-        "status": "Status"
+        "edit_cover": "Titelbild bearbeiten",
+        "edit_logo": "Logo bearbeiten",
+        "edit_profile": "Profil bearbeiten",
+        "no_about": "Dieser Verkäufer hat noch keine Beschreibung verfasst.",
+        "contact": "Kontakt",
+        "edit_contact": "Kontakt bearbeiten"
       },
       "empty": "Noch keine Verkäufer",
-      "images": {
-        "cover_photo_help": "Ein breites Banner oben auf dem Verkäuferprofil.",
-        "cover_photo_label": "Titelbild",
-        "logo_help": "Quadratisch passt am besten. Wird überall neben dem Verkäufer angezeigt.",
-        "logo_label": "Logo",
-        "square_logo_help": "Für Stellen, die ein enges Quadrat brauchen, etwa ein Profilbild.",
-        "square_logo_label": "Quadratisches Logo"
-      },
       "invite_sheet": {
         "description": "Mit der Annahme tritt die Person dem Verkäuferteam bei und kann sich in ihrem eigenen Bereich anmelden.",
         "email_help": "Die Einladung geht an diese Adresse.",
@@ -5384,8 +5507,6 @@
         "update_failed": "Verkäufer konnte nicht aktualisiert werden",
         "updated": "Verkäufer aktualisiert"
       },
-      "not_provided": "Nicht angegeben",
-      "on_holiday_notice": "Dieser Verkäufer ist abwesend. Sein Katalog bleibt sichtbar, es kann aber nichts gekauft werden.",
       "onboarding": {
         "actions": {
           "accept": "Annehmen",
@@ -5404,6 +5525,7 @@
         },
         "review_note": "Ihre Notiz: {{note}}",
         "seller_note": "Verkäufer: {{note}}",
+        "show_steps": "Schritte anzeigen",
         "status": {
           "complete": "Erledigt",
           "incomplete": "Ausstehend",
@@ -5419,6 +5541,9 @@
         "waived": "Erlassen"
       },
       "onboarding_column": "Einrichtung",
+      "orders": {
+        "to_fulfill": "Zu erfüllen"
+      },
       "payout_interval": {
         "biweekly": "Alle zwei Wochen",
         "daily": "Täglich",
@@ -5437,6 +5562,10 @@
         "title": "Zurück zur Einrichtung schicken?"
       },
       "search_placeholder": "Verkäufer suchen",
+      "stats": {
+        "commission": "Provision (30 Tage)",
+        "net_sales": "Nettoumsatz (30 Tage)"
+      },
       "status": {
         "approved": "Freigegeben",
         "canceled": "Abgebrochen",
@@ -5468,6 +5597,10 @@
       "team": {
         "empty": "Diesen Verkäufer betreibt noch niemand.",
         "invite": "Einladen",
+        "invite_sheet": {
+          "title": "Teammitglied einladen",
+          "description": "Die Person tritt dem Team dieses Verkäufers bei, sobald sie annimmt. Der Status des Verkäufers ändert sich nicht."
+        },
         "invited": "Eingeladen",
         "messages": {
           "invitation_resent": "Einladung erneut gesendet",
@@ -5487,7 +5620,13 @@
         },
         "title": "Team"
       },
-      "team_column": "Team"
+      "team_column": "Team",
+      "holiday": {
+        "title": "Urlaubsmodus",
+        "end": "Urlaubsmodus beenden",
+        "off": "Aus. Der Verkäufer nimmt wie gewohnt Bestellungen an."
+      },
+      "on_holiday_notice": "Dieser Verkäufer ist abwesend. Sein Katalog bleibt sichtbar, es kann aber nichts gekauft werden."
     },
     "settings": {
       "webhooks": {
@@ -5514,7 +5653,7 @@
         "integrations": "Versand-, Steuer- und andere Anbieter verbinden",
         "maintenance_tasks": "Nachbefüllungen, Neuindizierungen und Upgrade-Schritte samt Protokoll jedes Laufs",
         "markets": "Länder, in die Sie verkaufen, und ihre Währungen",
-        "payment_methods": "Zahlungsanbieter und wie Zahlungen eingezogen werden",
+        "payment_methods": "Zahlungsanbieter, manuelle Methoden und wann Zahlungen eingezogen werden",
         "policies": "AGB, Datenschutz, Rückgabe und Versand",
         "product_types": "Vorlagen, die neue Produkte vorbefüllen",
         "reasons": "Gründe für Retouren, Rückerstattungen und Reklamationen",
@@ -5522,14 +5661,16 @@
         "seller_requirements": "Checkliste, die Verkäufer vor der Freigabe erfüllen",
         "staff": "Personen mit Zugriff auf dieses Dashboard",
         "stock_locations": "Lager und Abholpunkte mit Beständen",
-        "store": "Shopname, Zeitzone, Einheiten und regionale Standards",
+        "store": "Shopname, SEO, Zeitzone, Einheiten und Bestellnummern",
         "webhooks": "Endpunkte, die bei Ereignissen benachrichtigt werden",
         "package_types": "Kartons, Paletten und Container",
         "suppliers": "Von wem Sie Ware einkaufen und wie Sie sie erreichen",
         "marketplace": "Auszahlungen, Verkäuferfreigabe, Verkäufer-E-Mails und Steuer auf Provision",
         "taxes": "Steuerkategorien, Steuersätze und Befreiungsgründe",
         "ai_agents": "KI-Agenten mit Zugriff auf diesen Shop",
-        "oauth_clients": "OAuth-Clients registrieren und konfigurieren"
+        "oauth_clients": "OAuth-Clients registrieren und konfigurieren",
+        "storefront": "Shop-URL, wer stöbern darf, Kasse und Adressfelder",
+        "system_info": "Versionen und Einrichtung für einen Fehlerbericht"
       },
       "groups": {
         "audit": "Audit",
@@ -5553,7 +5694,7 @@
         "integrations": "Integrationen",
         "maintenance_tasks": "Wartungsaufgaben",
         "markets": "Märkte",
-        "payment_methods": "Zahlungsmethoden",
+        "payment_methods": "Zahlungen",
         "policies": "Richtlinien",
         "product_types": "Produkttypen",
         "profile": "Profil",
@@ -5571,7 +5712,9 @@
         "marketplace": "Einstellungen",
         "taxes": "Steuern",
         "ai_agents": "KI-Agenten",
-        "oauth_clients": "OAuth-Clients"
+        "oauth_clients": "OAuth-Clients",
+        "storefront": "Shop & Kasse",
+        "system_info": "Systeminformationen"
       },
       "breadcrumbs": {
         "marketplace": "Marktplatz"
@@ -5661,7 +5804,9 @@
         "has_reserved": "Reserviert",
         "in_stock": "Auf Lager",
         "low_stock": "Niedriger Bestand",
-        "out_of_stock": "Nicht auf Lager"
+        "out_of_stock": "Nicht auf Lager",
+        "low_stock_overall": "Niedriger Bestand (alle Standorte)",
+        "out_of_stock_overall": "Nicht auf Lager (alle Standorte)"
       },
       "incoming": {
         "open_aria": "Eingehenden Bestand hinzufügen",
@@ -5708,7 +5853,8 @@
       "badges": {
         "default": "Standard",
         "enabled": "Aktiviert",
-        "inactive": "Inaktiv"
+        "inactive": "Inaktiv",
+        "seller_default": "Standard des Verkäufers"
       },
       "columns": {
         "default": "Standard",
@@ -5753,6 +5899,10 @@
         "unknown_product": "Unbekanntes Produkt",
         "variant_count_one": "{{count}} Variante",
         "variant_count_other": "{{count}} Varianten"
+      },
+      "views": {
+        "own": "Deine Standorte",
+        "sellers": "Standorte der Verkäufer"
       }
     },
     "stock_transfers": {
@@ -5882,6 +6032,17 @@
         "kg": "Kilogramm (kg)",
         "lb": "Pfund (lb)",
         "oz": "Unze (oz)"
+      },
+      "seo": {
+        "title": "Suchmaschinen-Eintrag"
+      },
+      "images": {
+        "logo_label": "Logo",
+        "logo_help": "Wird im Dashboard angezeigt und von deinem Storefront verwendet, zum Beispiel in Suchergebnissen. PNG, JPG oder WebP."
+      },
+      "social": {
+        "title": "Soziale Medien",
+        "description": "Dein Storefront verlinkt diese Konten und nennt sie Suchmaschinen. Gib einen Benutzernamen oder eine vollständige URL ein."
       }
     },
     "table_descriptions": {
@@ -5908,7 +6069,6 @@
       "markets": "Die Regionen, in die Sie verkaufen, jeweils mit eigener Währung, Steuer und Lieferung.",
       "orders": "Jede Bestellung in Ihrem Shop und ihr aktueller Stand.",
       "draft_orders": "Bestellungen, die Ihr Team im Namen eines Kunden anlegt und die noch nicht aufgegeben sind.",
-      "payment_methods": "Wie Kunden bezahlen können und welche Anbieter dahinterstehen.",
       "policies": "Ihre AGB sowie Datenschutz-, Rückgabe- und Versandrichtlinien, veröffentlicht im Storefront.",
       "products": "Alles, was Sie verkaufen, mit Varianten, Preisen und Bestand.",
       "promotions": "Rabatte und Angebote und die Regeln, die entscheiden, wann sie gelten.",
@@ -5974,7 +6134,11 @@
       },
       "title": "Freistellungsbescheinigungen",
       "verified_at": "Angenommen am",
-      "verify_action": "Annehmen"
+      "verify_action": "Annehmen",
+      "columns": {
+        "certificate": "Zertifikat",
+        "document": "Dokument"
+      }
     },
     "tax_identifiers": {
       "add_cta": "Nummer hinzufügen",
@@ -6354,6 +6518,12 @@
       "delete_confirm": {
         "title": "Diesen Lieferanten löschen?",
         "message": "{{name}} wird aus Ihrer Lieferantenliste entfernt."
+      },
+      "detail": {
+        "details": "Details",
+        "orders_empty": "Noch keine Bestellungen bei diesem Lieferanten",
+        "load_error": "Dieser Lieferant konnte nicht geladen werden",
+        "address": "Adresse"
       }
     },
     "stock_receipts": {
@@ -6742,6 +6912,42 @@
       "run_label": "Diesen Befehl ausführen",
       "copy_command": "Befehl kopieren",
       "cli_then_sign_in": "Es öffnet den Browser zum Anmelden und Genehmigen dessen, was der Agent tun darf."
+    },
+    "system_info": {
+      "title": "Systeminformationen",
+      "unavailable": "Du benötigst die Berechtigung, den Shop zu verwalten, um Systeminformationen zu sehen.",
+      "load_failed": "Der Bericht konnte nicht geladen werden.",
+      "copy": "Als Markdown kopieren",
+      "copied": "Kopiert",
+      "report_issue": "Problem auf GitHub melden"
+    },
+    "feedback": {
+      "title": "Feedback senden",
+      "description": "Geht an das Spree-Team auf GitHub. Es wird nichts gesendet, bis du es dort veröffentlichst.",
+      "kinds": {
+        "bug": "Fehler melden",
+        "idea": "Idee vorschlagen",
+        "other": "Etwas anderes"
+      },
+      "message": {
+        "bug": "Was ist passiert?",
+        "idea": "Was soll Spree können?",
+        "other": "Dein Feedback"
+      },
+      "placeholder": {
+        "bug": "Was wolltest du tun, und was ist schiefgelaufen?",
+        "idea": "Welches Problem würde es für dich lösen?",
+        "other": "Alles, was das Spree-Team wissen sollte"
+      },
+      "failed_requests": "Letzte fehlgeschlagene Anfragen einschließen ({{count}})",
+      "failed_requests_hint": "Nur Methode, Pfad, Status, Fehlercode und Request-ID. Niemals Anfrage- oder Antwortinhalte.",
+      "system_info_included": "Anonymisierte Systeminformationen sind enthalten.",
+      "system_info_unavailable": "Systeminformationen sind nicht enthalten: Dafür ist die Berechtigung zum Verwalten des Shops nötig.",
+      "review_system_info": "Systeminformationen ansehen",
+      "open_issue": "Issue auf GitHub öffnen",
+      "open_discussion": "Diskussion auf GitHub öffnen",
+      "copied_to_paste": "Zu lang für einen Link, daher kopiert. Füge es auf GitHub ein.",
+      "copy_failed": "Zu lang für einen Link, und das Kopieren ist fehlgeschlagen. Kürze die Nachricht oder kopiere den Bericht unter Einstellungen → Systeminfo."
     }
   }
 }

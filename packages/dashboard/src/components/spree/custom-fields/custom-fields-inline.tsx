@@ -43,6 +43,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
+  CollapsibleCard,
   Empty,
   EmptyContent,
   EmptyDescription,
@@ -72,7 +73,16 @@ import {
   TagIcon,
 } from '@spree/dashboard-ui/icons'
 import { Link, useParams } from '@tanstack/react-router'
-import { createContext, type ReactNode, useCallback, useContext, useMemo, useState } from 'react'
+import type { TFunction } from 'i18next'
+import {
+  createContext,
+  type ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import {
@@ -575,10 +585,12 @@ export function ApiCustomFieldsCard({
   ownerType,
   ownerId,
   hideWhenEmpty,
+  collapsible,
 }: {
   ownerType: CustomFieldOwnerType
   ownerId: string
   hideWhenEmpty?: boolean
+  collapsible?: boolean
 }) {
   return (
     <EditableApiCustomFieldsProvider
@@ -586,7 +598,7 @@ export function ApiCustomFieldsCard({
       ownerId={ownerId}
       resourceType={ownerType}
     >
-      <CustomFieldsInlineCard hideWhenEmpty={hideWhenEmpty} />
+      <CustomFieldsInlineCard hideWhenEmpty={hideWhenEmpty} collapsible={collapsible} />
     </EditableApiCustomFieldsProvider>
   )
 }
@@ -617,13 +629,32 @@ interface CustomFieldsInlineCardProps {
    * defined in Settings, which offers every resource with an edit surface.
    */
   hideWhenEmpty?: boolean
+  /**
+   * Folds the card to its header, with a count of filled fields. For a detail
+   * page that edits them behind the card's own Edit button; a page whose form
+   * saves them keeps them in view.
+   */
+  collapsible?: boolean
 }
 
-export function CustomFieldsInlineCard({ hideWhenEmpty = false }: CustomFieldsInlineCardProps) {
+export function CustomFieldsInlineCard({
+  hideWhenEmpty = false,
+  collapsible = false,
+}: CustomFieldsInlineCardProps) {
   const { t } = useTranslation()
   const [createOpen, setCreateOpen] = useState(false)
+  const [open, setOpen] = useState(false)
   const {
-    meta: { isLoading, definitions, resourceType, resourceLabel, canEdit, loadFailed },
+    state: { values },
+    meta: {
+      isLoading,
+      definitions,
+      resourceType,
+      resourceLabel,
+      canEdit,
+      loadFailed,
+      requiredDefinitionIds,
+    },
     mode,
   } = useCustomFieldsContext()
 
@@ -632,46 +663,92 @@ export function CustomFieldsInlineCard({ hideWhenEmpty = false }: CustomFieldsIn
   const hasDefinitions = definitions.length > 0
   const openCreate = useCallback(() => setCreateOpen(true), [])
 
+  const requiredMissing = definitions.some(
+    (definition) =>
+      requiredDefinitionIds?.includes(definition.id) && isBlankValue(values[definition.id]),
+  )
+
+  // Opens once rather than tracking the flags, so the card does not fold away
+  // the moment the merchant fills the last required field in. A failed load
+  // opens it too: the error lives in the body, out of sight while folded.
+  useEffect(() => {
+    if (requiredMissing || loadFailed) setOpen(true)
+  }, [requiredMissing, loadFailed])
+
   if (canEdit === false || (hideWhenEmpty && !hasDefinitions)) return null
+
+  const title = t('admin.components.custom_fields.section_title')
+  const icon = <SquareTextIcon className="size-4" />
+  const actions = !isLoading && !loadFailed && hasDefinitions && (
+    <EditableHeaderActions onStartEdit={() => setOpen(true)} />
+  )
+  const body = isLoading ? (
+    <LoadingRows />
+  ) : loadFailed ? (
+    <p className="text-base text-destructive" role="alert">
+      {t('admin.components.custom_fields.errors.failed_to_load')}
+    </p>
+  ) : !hasDefinitions ? (
+    <CustomFieldsEmptyState onSetUp={openCreate} />
+  ) : editing ? (
+    <FieldsEditor onSetUp={openCreate} />
+  ) : (
+    <FieldsDisplay />
+  )
+  const createSheet = (
+    <CreateDefinitionSheet
+      open={createOpen}
+      onOpenChange={setCreateOpen}
+      resourceType={resourceType}
+      resourceLabel={resourceLabel}
+    />
+  )
+
+  if (collapsible) {
+    return (
+      <>
+        <CollapsibleCard
+          title={title}
+          icon={icon}
+          count={definitions.filter((definition) => !isBlankValue(values[definition.id])).length}
+          actions={actions}
+          open={open}
+          onOpenChange={setOpen}
+        >
+          {body}
+        </CollapsibleCard>
+        {createSheet}
+      </>
+    )
+  }
 
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between gap-3 space-y-0">
         <CardTitle>
-          <SquareTextIcon className="size-4" />
-          {t('admin.components.custom_fields.section_title')}
+          {icon}
+          {title}
         </CardTitle>
-        {!isLoading && !loadFailed && hasDefinitions && <EditableHeaderActions />}
+        {actions}
       </CardHeader>
-      <CardContent>
-        {isLoading ? (
-          <LoadingRows />
-        ) : loadFailed ? (
-          <p className="text-sm text-destructive" role="alert">
-            {t('admin.components.custom_fields.errors.failed_to_load')}
-          </p>
-        ) : !hasDefinitions ? (
-          <CustomFieldsEmptyState onSetUp={openCreate} />
-        ) : editing ? (
-          <FieldsEditor onSetUp={openCreate} />
-        ) : (
-          <FieldsDisplay />
-        )}
-      </CardContent>
-
-      <CreateDefinitionSheet
-        open={createOpen}
-        onOpenChange={setCreateOpen}
-        resourceType={resourceType}
-        resourceLabel={resourceLabel}
-      />
+      <CardContent>{body}</CardContent>
+      {createSheet}
     </Card>
+  )
+}
+
+function isBlankValue(value: unknown) {
+  return (
+    value === null ||
+    value === undefined ||
+    (typeof value === 'string' && value.trim() === '') ||
+    (Array.isArray(value) && value.length === 0)
   )
 }
 
 // Edit / Cancel+Save buttons — only rendered in editable mode. Reads the mode
 // off context so the card body stays a thin selector.
-function EditableHeaderActions() {
+function EditableHeaderActions({ onStartEdit }: { onStartEdit: () => void }) {
   const { t } = useTranslation()
   const { mode } = useCustomFieldsContext()
   if (mode.kind !== 'editable') return null
@@ -682,7 +759,10 @@ function EditableHeaderActions() {
         variant="ghost"
         size="icon-sm"
         type="button"
-        onClick={mode.startEdit}
+        onClick={() => {
+          onStartEdit()
+          mode.startEdit()
+        }}
         aria-label={t('admin.actions.edit')}
       >
         <PencilIcon className="size-4" />
@@ -703,7 +783,7 @@ function EditableHeaderActions() {
       </Button>
       <Button type="button" size="sm" onClick={mode.save} disabled={mode.saving}>
         {mode.saving && <Loader2Icon className="size-4 animate-spin" />}
-        {t('admin.actions.save')}
+        <span>{t('admin.actions.save')}</span>
       </Button>
     </div>
   )
@@ -736,7 +816,7 @@ function CustomFieldsEmptyState({ onSetUp }: { onSetUp: () => void }) {
           <PlusIcon className="size-4" />
           {t('admin.components.custom_fields.set_up')}
         </Button>
-        <Button asChild type="button" variant="link" size="sm">
+        <Button asChild type="button" variant="ghost" size="sm">
           <Link to="/$storeId/settings/custom-field-definitions" params={{ storeId }}>
             {t('admin.components.custom_fields.manage_in_settings')}
           </Link>
@@ -787,7 +867,7 @@ function FieldsDisplay() {
     meta: { definitions },
   } = useCustomFieldsContext()
   return (
-    <dl className="grid grid-cols-[minmax(140px,1fr)_2fr] gap-x-4 gap-y-2 text-sm">
+    <dl className="grid grid-cols-[minmax(140px,1fr)_2fr] gap-x-4 gap-y-2 text-base">
       {definitions.map((def) => (
         <CustomFieldDisplayRow key={def.id} definition={def} value={values[def.id]} />
       ))}
@@ -824,7 +904,7 @@ function CustomFieldDisplayRow({
 }
 
 // Compact, read-only rendering of a stored value for the display grid.
-function formatDisplayValue(value: unknown, fieldType: string, t: (key: string) => string): string {
+function formatDisplayValue(value: unknown, fieldType: string, t: TFunction): string {
   const empty = t('admin.common.empty_value')
   if (value === null || value === undefined || value === '') return empty
   if (fieldType === 'boolean') return value ? t('admin.common.yes') : t('admin.common.no')
@@ -942,7 +1022,7 @@ function CreateDefinitionSheet({
             </Button>
             <Button type="submit" disabled={create.isPending}>
               {create.isPending && <Loader2Icon className="size-4 animate-spin" />}
-              {t('admin.custom_field_definitions.create_label')}
+              <span>{t('admin.custom_field_definitions.create_label')}</span>
             </Button>
           </SheetFooter>
         </form>

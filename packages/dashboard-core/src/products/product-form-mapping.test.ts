@@ -1,11 +1,12 @@
 import { describe, expect, it } from 'vitest'
 import {
+  omitUnchangedListFields,
   prepareVariantsTaxForProductSave,
   variantHasTaxCategoryOverride,
   variantToFormValues,
   variantToWirePayload,
 } from './product-form-mapping'
-import type { VariantFormValues } from './product-schema'
+import type { ProductFormValues, VariantFormValues } from './product-schema'
 import type { PanelVariant } from './product-types'
 
 // variantToFormValues reads a handful of fields; cast a minimal fixture rather
@@ -127,5 +128,45 @@ describe('variant tax category overrides', () => {
     expect(prepared[0].tax_category_id).toBeNull()
     expect(prepared[1].tax_category_id).toBe('taxcat_override')
     expect(variantToWirePayload(prepared[0], 0).tax_category_id).toBeNull()
+  })
+})
+
+describe('omitUnchangedListFields', () => {
+  const payload = {
+    name: 'Linen shirt',
+    category_ids: ['ctg_1'],
+    collection_ids: ['coll_1'],
+    tags: ['summer'],
+  }
+
+  it('sends a list when its field changed', () => {
+    expect(omitUnchangedListFields(payload, { category_ids: true })).toEqual({
+      name: 'Linen shirt',
+      category_ids: ['ctg_1'],
+    })
+    expect(omitUnchangedListFields(payload, { tags: true, collection_ids: true })).toEqual({
+      name: 'Linen shirt',
+      collection_ids: ['coll_1'],
+      tags: ['summer'],
+    })
+  })
+
+  // React Hook Form marks an array field dirty per item when it compares item by item.
+  it('reads a per-item dirty flag', () => {
+    expect(omitUnchangedListFields(payload, { category_ids: [false, true] })).toEqual({
+      name: 'Linen shirt',
+      category_ids: ['ctg_1'],
+    })
+    expect(omitUnchangedListFields(payload, { category_ids: [false] })).toEqual({
+      name: 'Linen shirt',
+    })
+  })
+
+  // Another tab, a bulk action or an import may have added to a list since the
+  // page loaded; sending the loaded list back would remove those additions.
+  it('leaves the lists out when their fields did not change', () => {
+    const dirtyFields: Partial<Record<keyof ProductFormValues, boolean>> = { name: true }
+
+    expect(omitUnchangedListFields(payload, dirtyFields)).toEqual({ name: 'Linen shirt' })
   })
 })

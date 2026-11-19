@@ -5,6 +5,9 @@ module Spree
     included do
       extend Mobility
       default_scope { i18n }
+
+      # Before the translations are autosaved, so it has to run first.
+      after_update :discard_blank_new_translations, prepend: true
     end
 
     class_methods do
@@ -177,6 +180,22 @@ module Spree
     end
 
     private
+
+    # Clearing a translation's last value deletes its row, and Mobility then
+    # rebuilds a blank one for that locale while it finalizes dirty tracking.
+    # Saved, that blank row is either junk or, where translation rows are soft
+    # deleted (stores), a duplicate of the deleted row.
+    def discard_blank_new_translations
+      return unless association(:translations).loaded?
+
+      columns = self.class.translatable_fields.map(&:to_s)
+      translations.each do |translation|
+        next unless translation.new_record?
+        next if columns.any? { |column| translation[column].present? }
+
+        translation.mark_for_destruction
+      end
+    end
 
     # @raise [ActiveRecord::RecordInvalid] if any locale isn't supported by the store
     def validate_translation_locales!(locales)

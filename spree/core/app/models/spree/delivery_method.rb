@@ -25,9 +25,9 @@ module Spree
     # Dispatch strategy used when +fulfillment_provider+ is blank.
     DEFAULT_FULFILLMENT_PROVIDER = 'Spree::FulfillmentProvider::Manual'.freeze
 
-    # @deprecated Use {STOREFRONT}/{BACKOFFICE}; removed in 6.1.
+    # @deprecated Use {STOREFRONT}/{BACKOFFICE}; removed in 6.3.
     DISPLAY_ON_FRONT_END = 1
-    # @deprecated Use {STOREFRONT}/{BACKOFFICE}; removed in 6.1.
+    # @deprecated Use {STOREFRONT}/{BACKOFFICE}; removed in 6.3.
     DISPLAY_ON_BACK_END = 2
 
     default_scope { where(deleted_at: nil) }
@@ -114,7 +114,7 @@ module Spree
       seller.nil? ? first_party : where(seller_id: seller.id).or(shared_with_sellers)
     }
 
-    # Legacy association names — removed in 6.1.
+    # Legacy association names — removed in 6.3.
     has_many :shipping_rates, class_name: 'Spree::DeliveryRate', foreign_key: :delivery_method_id, deprecated: true
     has_many :shipments, through: :delivery_rates, source: :fulfillment, deprecated: true
 
@@ -400,7 +400,7 @@ module Spree
     # rates — a typo must not narrow the offer set unnoticed.
     #
     # @param audience [Symbol, Integer] {STOREFRONT} or {BACKOFFICE}; the
-    #   legacy DISPLAY_ON_* integers are accepted until 6.1
+    #   legacy DISPLAY_ON_* integers are accepted until 6.3
     # @return [Boolean]
     def available_to?(audience)
       case self.class.normalize_audience(audience)
@@ -411,7 +411,7 @@ module Spree
 
     # Maps an audience onto {STOREFRONT}/{BACKOFFICE}, accepting the legacy
     # DISPLAY_ON_* integers so callers holding the old constants keep working
-    # until 6.1. Anything else raises — a typo must not silently quote
+    # until 6.3. Anything else raises — a typo must not silently quote
     # storefront-only rates.
     #
     # @param audience [Symbol, Integer]
@@ -420,7 +420,10 @@ module Spree
       case audience
       when STOREFRONT, BACKOFFICE then audience
       when DISPLAY_ON_FRONT_END, DISPLAY_ON_BACK_END
-        Spree::Deprecation.warn("Spree::DeliveryMethod::DISPLAY_ON_* audience filters are deprecated and will be removed in Spree 6.1. Use #{STOREFRONT.inspect} / #{BACKOFFICE.inspect} instead.")
+        Spree::Deprecation.warn(
+          'Spree::DeliveryMethod::DISPLAY_ON_* audience filters are deprecated and will be removed in Spree 6.3. ' \
+          "Use #{STOREFRONT.inspect} / #{BACKOFFICE.inspect} instead."
+        )
         audience == DISPLAY_ON_BACK_END ? BACKOFFICE : STOREFRONT
       else
         raise ArgumentError, "unknown delivery audience #{audience.inspect} (expected #{STOREFRONT.inspect} or #{BACKOFFICE.inspect})"
@@ -428,9 +431,12 @@ module Spree
     end
 
     # @deprecated Use {#available_to?} with {STOREFRONT}/{BACKOFFICE};
-    #   removed in 6.1.
+    #   removed in 6.3.
     def available_to_display?(display_filter)
-      Spree::Deprecation.warn('Spree::DeliveryMethod#available_to_display? is deprecated and will be removed in Spree 6.1. Use #available_to?(Spree::DeliveryMethod::STOREFRONT / BACKOFFICE) instead.')
+      Spree::Deprecation.warn(
+        'Spree::DeliveryMethod#available_to_display? is deprecated and will be removed in Spree 6.3. ' \
+        'Use #available_to?(Spree::DeliveryMethod::STOREFRONT / BACKOFFICE) instead.'
+      )
       available_to?(display_filter)
     end
 
@@ -440,7 +446,7 @@ module Spree
       if estimated_transit_business_days_min == estimated_transit_business_days_max
         estimated_transit_business_days_min.to_s
       else
-        [estimated_transit_business_days_min, estimated_transit_business_days_max].compact.join("-")
+        [estimated_transit_business_days_min, estimated_transit_business_days_max].compact.join('-')
       end
     end
 
@@ -476,15 +482,15 @@ module Spree
       provider_class.digital?
     end
 
-    # @deprecated Use {#storefront_visible}; removed in 6.1.
+    # @deprecated Use {#storefront_visible}; removed in 6.3.
     def display_on
-      Spree::Deprecation.warn('Spree::DeliveryMethod#display_on is deprecated and will be removed in Spree 6.1. Use #storefront_visible instead.')
+      Spree::Deprecation.warn('Spree::DeliveryMethod#display_on is deprecated and will be removed in Spree 6.3. Use #storefront_visible instead.')
       storefront_visible? ? 'both' : 'back_end'
     end
 
-    # @deprecated Use {#storefront_visible=}; removed in 6.1.
+    # @deprecated Use {#storefront_visible=}; removed in 6.3.
     def display_on=(value)
-      Spree::Deprecation.warn('Spree::DeliveryMethod#display_on= is deprecated and will be removed in Spree 6.1. Use #storefront_visible= instead.')
+      Spree::Deprecation.warn('Spree::DeliveryMethod#display_on= is deprecated and will be removed in Spree 6.3. Use #storefront_visible= instead.')
       self.storefront_visible = value.to_s != 'back_end'
     end
 
@@ -546,7 +552,7 @@ module Spree
         :fulfillment_provider, :profile_does_not_accept_provider,
         provider: provider_class.provider_name, profile: delivery_profile.name,
         message: I18n.t('spree.errors.messages.profile_does_not_accept_provider',
-                         provider: provider_class.provider_name, profile: delivery_profile.name)
+                        provider: provider_class.provider_name, profile: delivery_profile.name)
       )
     end
 
@@ -560,7 +566,7 @@ module Spree
         :rate_provider, :rate_provider_requires_shipping,
         provider: rate_provider_class.provider_name,
         message: I18n.t('spree.errors.messages.rate_provider_requires_shipping',
-                         provider: rate_provider_class.provider_name)
+                        provider: rate_provider_class.provider_name)
       )
     end
 

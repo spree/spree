@@ -10,7 +10,7 @@ interface Refund {
   refund_reason_id: string | null;
   originator_id: string | null;
   originator_type: string | null;
-  /** @deprecated Always null: reimbursements are gone. Use `originator_id`. Removed in 6.1. */
+  /** @deprecated Always null: reimbursements are gone. Use `originator_id`. Removed in 6.5. */
   reimbursement_id: string | null;
 }
 

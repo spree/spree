@@ -5,15 +5,15 @@ import {
   Button,
   cn,
   Input,
+  ProductIdentity,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-  Thumbnail,
 } from '@spree/dashboard-ui'
-import { PackageIcon, RotateCcwIcon, Undo2Icon, XIcon } from '@spree/dashboard-ui/icons'
+import { RotateCcwIcon, Undo2Icon, XIcon } from '@spree/dashboard-ui/icons'
 import { Controller, type FieldArrayWithId, type UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import {
@@ -27,18 +27,25 @@ import {
  * sent until the page's Save. `pricesEditable` is on for drafts only — a
  * negotiated price is a pre-placement gesture.
  *
- * The field array lives on the page because the catalog picker appends to it
- * too, and two `useFieldArray` calls on one name keep separate row lists.
+ * The field array lives in `useOrderItemsEditor` because the catalog picker
+ * appends to it too, and two `useFieldArray` calls on one name keep separate
+ * row lists.
  */
 export function OrderEditItemsTable({
   form,
   fields,
   pricesEditable = false,
+  disabled = false,
   currency,
 }: {
   form: UseFormReturn<OrderEditFormValues>
   fields: FieldArrayWithId<OrderEditFormValues, 'items', 'id'>[]
   pricesEditable?: boolean
+  /**
+   * Locks every control, e.g. while a save is in flight: the post-save reset
+   * would otherwise erase what is typed meanwhile.
+   */
+  disabled?: boolean
   /** Order currency, for formatting the projected line totals. */
   currency: string
 }) {
@@ -49,28 +56,34 @@ export function OrderEditItemsTable({
   }
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>{t('admin.orders.edit.columns.product')}</TableHead>
-          <TableHead className="text-right">{t('admin.orders.edit.columns.unit_price')}</TableHead>
-          <TableHead className="w-32 text-right">{t('admin.fields.quantity.label')}</TableHead>
-          <TableHead className="text-right">{t('admin.orders.edit.columns.line_total')}</TableHead>
-          <TableHead className="w-16" />
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {fields.map((field, index) => (
-          <OrderEditItemRow
-            key={field.id}
-            form={form}
-            index={index}
-            pricesEditable={pricesEditable}
-            currency={currency}
-          />
-        ))}
-      </TableBody>
-    </Table>
+    <fieldset disabled={disabled} className="contents">
+      <Table roundedTop>
+        <TableHeader>
+          <TableRow>
+            <TableHead>{t('admin.orders.edit.columns.product')}</TableHead>
+            <TableHead className="text-right">
+              {t('admin.orders.edit.columns.unit_price')}
+            </TableHead>
+            <TableHead className="w-32 text-right">{t('admin.fields.quantity.label')}</TableHead>
+            <TableHead className="text-right">
+              {t('admin.orders.edit.columns.line_total')}
+            </TableHead>
+            <TableHead className="w-16" />
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {fields.map((field, index) => (
+            <OrderEditItemRow
+              key={field.id}
+              form={form}
+              index={index}
+              pricesEditable={pricesEditable}
+              currency={currency}
+            />
+          ))}
+        </TableBody>
+      </Table>
+    </fieldset>
   )
 }
 
@@ -124,13 +137,14 @@ function OrderEditItemRow({
   return (
     <TableRow className={cn(row.removed && 'opacity-50')}>
       <TableCell>
-        <div className="flex items-center gap-3">
-          <Thumbnail src={row.thumbnail_url} size="lg" fallback={<PackageIcon />} />
-          <div className="min-w-0">
-            <div className="flex items-center gap-2">
-              <span className={cn('truncate text-sm font-medium', row.removed && 'line-through')}>
-                {row.name}
-              </span>
+        <ProductIdentity
+          name={row.name}
+          subtitle={row.options_text}
+          thumbnailUrl={row.thumbnail_url}
+          size="lg"
+          struckThrough={row.removed}
+          badges={
+            <>
               {row.added && !row.removed && (
                 <Badge variant="secondary">{t('admin.orders.edit.badges.pending')}</Badge>
               )}
@@ -144,12 +158,9 @@ function OrderEditItemRow({
                   })}
                 </Badge>
               )}
-            </div>
-            {row.options_text && (
-              <div className="truncate text-xs text-muted-foreground">{row.options_text}</div>
-            )}
-          </div>
-        </div>
+            </>
+          }
+        />
       </TableCell>
 
       <TableCell className="text-right">
@@ -182,7 +193,7 @@ function OrderEditItemRow({
                 </Button>
               )}
               {row.revert_price ? (
-                <span className="flex items-center gap-2 text-sm whitespace-nowrap">
+                <span className="flex items-center gap-2 text-base whitespace-nowrap">
                   <span className="text-muted-foreground line-through">{row.saved_price}</span>
                   <span className="font-medium">
                     {revertPreview === null
@@ -276,7 +287,7 @@ function OrderEditItemRow({
         {row.fulfilled_quantity === 0 && (
           <Button
             type="button"
-            variant="ghost"
+            variant={row.removed ? 'ghost' : 'destructive-ghost'}
             size="icon"
             onClick={toggleRemoved}
             aria-label={

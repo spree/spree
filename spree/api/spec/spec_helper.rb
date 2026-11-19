@@ -32,10 +32,6 @@ rescue LoadError
   exit
 end
 
-# Make Typelizer record `typelize` hints regardless of load order. Required here —
-# before any spec can autoload a serializer — so on-demand schema generation works.
-require 'spree/api/testing_support/always_register_type_hints'
-
 require 'rspec/rails'
 require 'ffaker'
 require 'webmock/rspec'
@@ -81,6 +77,7 @@ RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
   config.include Spree::TestingSupport::Preferences
   config.include Spree::TestingSupport::ImageHelpers
+  config.include ActiveSupport::Testing::TimeHelpers
 
   config.before(:suite) do
     Spree::Events.disable!
@@ -99,6 +96,17 @@ RSpec.configure do |config|
     I18n.locale = :en
 
     # Reset Spree::Current to avoid stale memoized values between tests
+    Spree::Current.reset
+  end
+
+  # The locale and the request context are per-thread globals, and a
+  # group's before(:all) runs after the previous example's hooks but before
+  # its own before(:each). Reset them on the way out too, so no group set up
+  # in before(:all) inherits what an earlier example left behind: a leaked
+  # German locale made the sample-data seed fail to validate the store's
+  # English name.
+  config.after(:each) do
+    I18n.locale = I18n.default_locale
     Spree::Current.reset
   end
 

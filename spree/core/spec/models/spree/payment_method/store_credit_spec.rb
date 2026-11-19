@@ -332,4 +332,34 @@ describe Spree::PaymentMethod::StoreCredit do
 
     it { expect(store_credit_payment_method.payment_source_class).to eq(Spree::StoreCredit) }
   end
+
+  describe '#can_void?' do
+    let(:store_credit_payment_method) { create(:store_credit_payment_method) }
+
+    it 'allows a pending payment' do
+      expect(store_credit_payment_method.can_void?(build_stubbed(:payment, status: 'pending'))).to be true
+    end
+
+    it 'allows a checkout payment while the order is incomplete' do
+      payment = build_stubbed(:payment, status: 'checkout', order: build_stubbed(:order, completed_at: nil))
+
+      expect(store_credit_payment_method.can_void?(payment)).to be true
+    end
+
+    it 'allows a checkout payment held by a cart, with no order' do
+      payment = build_stubbed(:payment, status: 'checkout', order: nil, cart: build_stubbed(:cart))
+
+      expect(store_credit_payment_method.can_void?(payment)).to be true
+    end
+
+    it 'refuses a checkout payment once the order is complete' do
+      payment = build_stubbed(:payment, status: 'checkout', order: build_stubbed(:order, completed_at: Time.current))
+
+      expect(store_credit_payment_method.can_void?(payment)).to be false
+    end
+
+    it 'refuses a completed payment' do
+      expect(store_credit_payment_method.can_void?(build_stubbed(:payment, status: 'completed'))).to be false
+    end
+  end
 end

@@ -1,11 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { Customer, GiftCard } from '@spree/admin-sdk'
+import type { GiftCard } from '@spree/admin-sdk'
 import {
   Can,
   CurrencySelect,
   currencyParts,
   mapSpreeErrorsToForm,
-  ResourceCombobox,
   ResourceTable,
   resourceSearchSchema,
   StoreDatePicker,
@@ -25,6 +24,7 @@ import {
   InputGroupAddon,
   InputGroupInput,
   InputGroupText,
+  Item,
   RowActions,
   Sheet,
   SheetContent,
@@ -41,7 +41,7 @@ import { useEffect, useRef } from 'react'
 import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
-import { customerAutocompleteProps } from '../../../../hooks/use-customers'
+import { CustomerCombobox } from '../../../../components/spree/customers/customer-combobox'
 import {
   listGiftCards,
   useCreateGiftCard,
@@ -229,7 +229,7 @@ function CreateGiftCardSheet({
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
             {form.formState.errors.root?.message && (
-              <p className="text-sm text-destructive" role="alert">
+              <p className="text-base text-destructive" role="alert">
                 {form.formState.errors.root.message}
               </p>
             )}
@@ -342,16 +342,16 @@ function EditGiftCardSheet({
           </SheetDescription>
         </SheetHeader>
         {isLoading ? (
-          <div className="p-4 text-sm text-muted-foreground">{t('admin.common.loading')}</div>
+          <div className="p-4 text-base text-muted-foreground">{t('admin.common.loading')}</div>
         ) : !giftCard ? (
-          <div className="p-4 text-sm text-muted-foreground">
+          <div className="p-4 text-base text-muted-foreground">
             {t('admin.pages.promotions.gift_cards.not_found')}
           </div>
         ) : (
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
               {form.formState.errors.root?.message && (
-                <p className="text-sm text-destructive" role="alert">
+                <p className="text-base text-destructive" role="alert">
                   {form.formState.errors.root.message}
                 </p>
               )}
@@ -405,22 +405,14 @@ function CustomerPickerController({
       control={form.control}
       render={({ field }) =>
         readOnly ? (
-          <div className="text-sm text-muted-foreground">
+          <div className="text-base text-muted-foreground">
             {field.value || t('admin.pages.promotions.gift_cards.no_customer')}
           </div>
         ) : (
-          <ResourceCombobox<Customer>
-            {...customerAutocompleteProps('customer-picker')}
-            value={field.value || undefined}
+          <CustomerCombobox
+            queryKey="gift-card-customer-picker"
+            value={field.value}
             onChange={(id) => field.onChange(id ?? '')}
-            renderOption={(c) => (
-              <div>
-                <div className="font-medium">{c.email}</div>
-                {(c.first_name || c.last_name) && (
-                  <div className="text-xs text-muted-foreground">{c.full_name}</div>
-                )}
-              </div>
-            )}
           />
         )
       }
@@ -616,8 +608,8 @@ function EditGiftCardFormFields({
 function GiftCardUsageSummary({ giftCard }: { giftCard: GiftCard }) {
   const { t } = useTranslation()
   return (
-    <div className="rounded-md border bg-muted/30 p-3 text-sm">
-      <div className="mb-2 font-medium">{t('admin.pages.promotions.gift_cards.usage.title')}</div>
+    <Item variant="muted" className="flex-col items-stretch gap-2">
+      <div className="font-medium">{t('admin.pages.promotions.gift_cards.usage.title')}</div>
       <div className="grid grid-cols-2 gap-1 text-muted-foreground">
         <span>{t('admin.fields.amount.label')}</span>
         <span className="text-right text-foreground tabular-nums">
@@ -638,6 +630,6 @@ function GiftCardUsageSummary({ giftCard }: { giftCard: GiftCard }) {
           </>
         )}
       </div>
-    </div>
+    </Item>
   )
 }

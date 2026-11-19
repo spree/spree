@@ -22,6 +22,9 @@ Spree::Core::Engine.add_routes do
         # Current channel context (never a list — see Store::ChannelController)
         resource :channel, only: [:show], controller: 'channel'
 
+        # Current store context (name and default SEO metadata, localized)
+        resource :store, only: [:show], controller: 'store'
+
         # Catalog
         resources :products, only: [:index, :show] do
           collection do
@@ -159,7 +162,7 @@ Spree::Core::Engine.add_routes do
         # customer's own request names, for the same reason.
         get 'data_requests/:token', to: 'data_requests#show', as: :data_request
         post 'data_requests/:token/confirmation', to: 'data_request_confirmations#create', as: :data_request_confirmation
-        # Legacy path — emailed and bookmarked URLs outlive the rename. Removed in 6.1.
+        # Legacy path — emailed and bookmarked URLs outlive the rename. Removed in 6.5.
         get 'digitals/:token', to: 'digital_links#show', as: :digital_download
 
         # Data Feeds (public, no auth required)
@@ -282,14 +285,15 @@ Spree::Core::Engine.add_routes do
         patch 'me', to: 'me#update'
 
         resource :updates, only: :show
+        resource :diagnostics, only: :show
 
         # Store Settings
         resource :store, only: [:show, :update], controller: 'store' do
           get :data_sources
         end
-        # The store's own custom fields, addressed by its id like every other
+        # The store's own custom fields and translations, addressed by its id like every other
         # parent. The controller only ever resolves the current store.
-        resources :stores, only: [], concerns: :custom_fieldable
+        resources :stores, only: [], concerns: [:custom_fieldable, :translatable]
 
         # Staff & access (invitations, admin users, roles, API keys)
         resources :admin_users, only: [:index, :show, :update, :destroy]
@@ -363,6 +367,11 @@ Spree::Core::Engine.add_routes do
             # (docs/plans/6.0-seller-product-submission.md).
             patch :approve
             patch :reject
+            # One product's status, through the workflow that publishes its
+            # event; bulk_status_update writes the column for many at once.
+            patch :activate
+            patch :archive
+            patch :draft
           end
           collection do
             post :bulk_status_update
@@ -602,7 +611,7 @@ Spree::Core::Engine.add_routes do
           # The operator is the only one who can repair a seller whose team
           # has locked itself out, which the seller's own panel cannot do.
           resources :team, only: [:index, :destroy], controller: 'sellers/team'
-          resources :invitations, only: [:index, :destroy], controller: 'sellers/invitations' do
+          resources :invitations, only: [:index, :create, :destroy], controller: 'sellers/invitations' do
             patch :resend, on: :member
             resource :acceptance_link, only: [:show], controller: 'sellers/invitations/acceptance_links'
           end
@@ -922,6 +931,7 @@ Spree::Core::Engine.add_routes do
 
           resources :digital_assets, controller: 'products/digital_assets',
                                      only: [:index, :create, :show, :update, :destroy]
+          resources :media, controller: 'products/media', only: [:destroy]
         end
 
 
@@ -1034,6 +1044,11 @@ Spree::Core::Engine.add_routes do
         # The types a seller may list against. Read only — defining a type is
         # the operator's (docs/plans/6.0-seller-product-submission.md).
         resources :product_types, only: [:index, :show]
+
+        # The option types and values a seller builds variants from. Read
+        # only: the vocabulary is the operator's, the variants are the seller's
+        # (docs/plans/6.0-multi-vendor-marketplace.md).
+        resources :option_types, only: [:index, :show]
 
         # The marketplace's delivery vocabulary, for the product form's picker.
         # Read only: a seller assigns a profile, never creates one

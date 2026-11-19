@@ -14,6 +14,13 @@ RSpec.describe Spree::Api::EnumTypes do
     expect(monorepo_root.join(described_class::PATH).read).to eq(described_class.new.render)
   end
 
+  it 'reads the serializers while another spec\'s unnamed serializer class is still alive' do
+    unnamed = Class.new(Spree::Api::V3::ProductSerializer)
+
+    expect(described_class.serializer_properties).to be_present
+    expect(unnamed.name).to be_nil
+  end
+
   it 'writes each open list once, as values and an open type, leaving out the code lists' do
     source = described_class.new([
       property('ProductStatus', %w[draft active]),
@@ -43,7 +50,7 @@ RSpec.describe Spree::Api::EnumTypes do
 
   it 'finds two attributes of one serializer that disagree, which Typelizer would collapse into one' do
     nested = property('ProductStatus', %w[draft])
-    parent = Typelizer::Property.new(name: :product, type: :object, nested_properties: [nested])
+    parent = Typelizer::Property.new(name: :product, type: Typelizer::Shape.new(properties: [nested]))
 
     expect(described_class.named_properties([property('ProductStatus', %w[draft active]), parent]).size).to eq(2)
   end

@@ -42,6 +42,8 @@ module Spree
         many :policies,
              resource: proc { Spree.api.policy_serializer },
              if: proc { expand?('policies') }
+
+        expandable_custom_fields
       end
     end
   end

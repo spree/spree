@@ -83,11 +83,64 @@ module Spree
         expect(order.email).to eq(other_customer.email)
       end
 
+      it "carries the buyer's purchase order number and document" do
+        cart.update!(po_number: 'PO-4471')
+        cart.po_document.attach(io: StringIO.new('%PDF-1.4 purchase order'), filename: 'po.pdf', content_type: 'application/pdf')
+
+        order = described_class.call(cart: cart).value
+
+        expect(order.po_number).to eq('PO-4471')
+        expect(order.po_document).to be_attached
+        expect(order.po_document.blob_id).to eq(cart.reload.po_document.blob_id)
+        expect(cart.po_document).to be_attached
+      end
+
+      it 'fails rather than silently dropping a document the order refuses' do
+        cart.po_document.attach(io: StringIO.new('%PDF-1.4 purchase order'), filename: 'po.pdf', content_type: 'application/pdf')
+        allow_any_instance_of(ActiveStorage::Attached::One).to receive(:attach).and_return(nil)
+
+        result = nil
+        expect { result = described_class.call(cart: cart) }.not_to change(Spree::Order, :count)
+
+        expect(result).to be_failure
+        expect(result.error.to_s).to be_present
+      end
+
       it 'fails without a cart' do
         result = described_class.call(cart: nil)
 
         expect(result).to be_failure
         expect(result.value).to eq(:cart_is_required)
+      end
+    end
+
+    describe 'cart copiers' do
+      let(:received) { [] }
+      let(:copier) { ->(**args) { received << args } }
+
+      before { allow(Spree).to receive(:cart_copiers).and_return([copier]) }
+
+      # Extensions keep their own records against cart lines; the map is how
+      # they find each line's copy on the draft.
+      it 'hands each copier the cart, the draft and every cart line paired with its copy' do
+        order = described_class.call(cart: cart).value
+
+        expect(received.size).to eq(1)
+        expect(received.first[:cart]).to eq(cart)
+        expect(received.first[:order]).to eq(order)
+
+        line_item_map = received.first[:line_item_map]
+        expect(line_item_map.keys).to match_array(cart.line_items.to_a)
+        line_item_map.each do |cart_line_item, order_line_item|
+          expect(order_line_item.order_id).to eq(order.id)
+          expect(order_line_item.variant_id).to eq(cart_line_item.variant_id)
+        end
+      end
+
+      it 'leaves no draft behind when a copier raises' do
+        allow(Spree).to receive(:cart_copiers).and_return([->(**) { raise ActiveRecord::RecordInvalid, Spree::Order.new }])
+
+        expect { described_class.call(cart: cart) }.not_to change(Spree::Order, :count)
       end
     end
   end

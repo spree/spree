@@ -65,7 +65,7 @@ export function PageTabs({ tabs, slotName = 'page.tabs', slotContext, className 
             params={tab.params}
             search={tab.search}
             className={cn(
-              'inline-flex items-center px-3 py-2 -mb-px text-sm font-medium border-b-2 transition-colors',
+              'inline-flex items-center px-3 py-2 -mb-px text-base font-medium border-b-2 transition-colors',
               active
                 ? 'border-foreground text-foreground'
                 : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border',

@@ -576,6 +576,7 @@ import type {
   SavedReportUpdateParams,
   SellerApproveParams,
   SellerCreateParams,
+  SellerInvitationCreateParams,
   SellerInviteParams,
   SellerOnboarding,
   SellerPayoutCompleteParams,
@@ -663,6 +664,7 @@ import type {
   DeliveryProfile,
   DeliveryRateProviderOption,
   DeliveryZone,
+  Diagnostics,
   DigitalAsset,
   DigitalLink,
   Discount,
@@ -1179,6 +1181,21 @@ export class AdminClient {
       this.request<UpdateStatus>('GET', '/updates', options),
   }
 
+  readonly diagnostics = {
+    /**
+     * An anonymised report on this installation to attach to a bug report,
+     * with `markdown` ready to paste into a GitHub issue. Needs a client
+     * created with `jwtToken` for an admin who can manage the store; a secret
+     * key gets a 404. `packages` lists the caller's own `@spree/*` packages
+     * as `name@version`, reported in a Dashboard section.
+     */
+    get: (params?: { packages?: string[] }, options?: RequestOptions): Promise<Diagnostics> =>
+      this.request<Diagnostics>('GET', '/diagnostics', {
+        ...options,
+        params: { packages: params?.packages?.join(',') },
+      }),
+  }
+
   // ============================================
   // Dashboard
   // ============================================
@@ -1252,6 +1269,8 @@ export class AdminClient {
       this.request<{ data: StoreDataSources }>('GET', '/store/data_sources', options).then(
         (r) => r.data,
       ),
+
+    translations: this.parentScopedTranslations('/stores'),
   }
 
   /** The locales a merchant can translate content into for the current store. */
@@ -1374,6 +1393,22 @@ export class AdminClient {
       options?: RequestOptions,
     ): Promise<Product> =>
       this.request<Product>('PATCH', `/products/${id}/reject`, { ...options, body: params }),
+
+    /**
+     * Put one product on sale, running its status workflow so the
+     * `product.activated` event fires. Refuses a product awaiting review,
+     * which is approved or rejected instead.
+     */
+    activate: (id: string, options?: RequestOptions): Promise<Product> =>
+      this.request<Product>('PATCH', `/products/${id}/activate`, options),
+
+    /** Archive one product, taking it off sale. Refuses a product awaiting review. */
+    archive: (id: string, options?: RequestOptions): Promise<Product> =>
+      this.request<Product>('PATCH', `/products/${id}/archive`, options),
+
+    /** Take one product off sale, back to a draft. Refuses a product awaiting review. */
+    draft: (id: string, options?: RequestOptions): Promise<Product> =>
+      this.request<Product>('PATCH', `/products/${id}/draft`, options),
 
     /**
      * Bulk-set `status` on a list of products. The server validates `status`
@@ -3396,6 +3431,17 @@ export class AdminClient {
     invitations: {
       list: (sellerId: string, options?: RequestOptions): Promise<{ data: Invitation[] }> =>
         this.request<{ data: Invitation[] }>('GET', `/sellers/${sellerId}/invitations`, options),
+
+      /** Invites someone to the seller's team without changing the seller's status. */
+      create: (
+        sellerId: string,
+        params: SellerInvitationCreateParams,
+        options?: RequestOptions,
+      ): Promise<Invitation> =>
+        this.request<Invitation>('POST', `/sellers/${sellerId}/invitations`, {
+          ...options,
+          body: params,
+        }),
 
       /** Withdraws an offer. */
       delete: (sellerId: string, id: string, options?: RequestOptions): Promise<void> =>

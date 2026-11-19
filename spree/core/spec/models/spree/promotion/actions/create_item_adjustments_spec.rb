@@ -29,6 +29,22 @@ describe Spree::Promotion::Actions::CreateItemAdjustments, type: :model do
       expect(action.perform(order: order, promotion: promotion)).to be(false)
       expect(order.discounts.reload).to be_empty
     end
+
+    context 'when the promotable is a cart' do
+      let(:cart) { create(:cart_with_line_items, line_items_count: 2, line_items_price: 10, store: promotion.store) }
+
+      it 'writes a discount per line item' do
+        expect(action.perform(order: cart, promotion: promotion)).to be(true)
+        expect(cart.discounts.reload.map(&:amount)).to eq([-3, -3])
+      end
+
+      it 'writes a discount per line item when the promotion has a usage limit' do
+        promotion.update!(usage_limit: 1)
+
+        expect(action.perform(order: cart, promotion: promotion)).to be(true)
+        expect(cart.discounts.reload.map(&:amount)).to eq([-3, -3])
+      end
+    end
   end
 
   describe '#compute_amount' do

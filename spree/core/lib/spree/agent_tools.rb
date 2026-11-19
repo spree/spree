@@ -3,10 +3,10 @@ require 'spree/agent_tools/context'
 require 'spree/agent_tools/resource_map'
 require 'spree/agent_tools/api_dispatch'
 require 'spree/agent_tools/membership_map'
-require 'spree/agent_tools/workflow_endpoints'
 require 'spree/agent_tools/record_summary'
-require 'spree/agent_tools/workflow_schema'
-require 'spree/agent_tools/workflow_tool'
+require 'spree/agent_tools/legacy_tools'
+require 'spree/agent_tools/operation_catalog'
+require 'spree/agent_tools/operation_tool'
 require 'spree/agent_tools/default_catalog'
 
 module Spree

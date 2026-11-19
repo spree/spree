@@ -176,6 +176,15 @@ RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
       expect(json_response['email']).to eq(user.email)
     end
 
+    it 'includes storefront visible custom fields on expand' do
+      definition = create(:custom_field_definition, resource_type: Spree.user_class.to_s)
+      create(:custom_field, resource: user, custom_field_definition: definition, value: 'public')
+
+      get :show, params: { expand: 'custom_fields' }
+
+      expect(json_response['custom_fields'].pluck('value')).to eq(['public'])
+    end
+
     it 'returns user attributes' do
       get :show
 

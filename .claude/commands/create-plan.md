@@ -9,7 +9,7 @@ Follow this process:
 4. **Resolve every open question interactively before finishing** — see below
 5. **Open the tracking issues in Linear and GitHub** and record them in the
    plan's `Tracking` header line — see below
-6. If the plan affects specific areas of the codebase, add cross-references in relevant directory-level CLAUDE.md files
+6. If the plan affects specific areas of the codebase, add cross-references in relevant directory-level AGENTS.md files
 
 The filename should follow the pattern: `{release}-{feature-slug}.md` 
 (e.g., `6.0-cart-order-split.md`, `future-mcp-server.md`)

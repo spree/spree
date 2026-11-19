@@ -112,9 +112,7 @@ module Spree
                resource: proc { Spree.api.admin_price_serializer },
                if: proc { expand?('prices') }
 
-          many :custom_fields,
-               resource: proc { Spree.api.admin_custom_field_serializer },
-               if: proc { expand?('custom_fields') }
+          expandable_custom_fields admin: true
 
           many :stock_levels,
                resource: proc { Spree.api.admin_stock_level_serializer },

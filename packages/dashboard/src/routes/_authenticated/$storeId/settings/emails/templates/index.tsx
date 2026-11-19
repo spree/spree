@@ -66,7 +66,7 @@ function EmailTemplatesPage() {
             <Skeleton className="h-96 w-full" />
           ) : data.data.length === 0 ? (
             <Card>
-              <CardContent className="py-10 text-center text-sm text-muted-foreground">
+              <CardContent className="py-10 text-center text-base text-muted-foreground">
                 {t('admin.email_templates.list.empty')}
               </CardContent>
             </Card>

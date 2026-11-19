@@ -10,10 +10,15 @@ API.
 spree add mcp   # or add gem 'spree_mcp' to the Gemfile
 ```
 
-The endpoint is `POST /api/v3/admin/mcp`, authenticated with a Spree secret API
-key sent as `X-Spree-API-Key: sk_…` or `Authorization: Bearer sk_…`. The key's
-scopes decide which tools the model is offered, so an agent is never told about
-a capability its credential does not carry.
+The endpoint is `POST /api/v3/admin/mcp`, authenticated with an OAuth token
+issued to a person: the client sends them to the store to sign in and approve
+what it may do. The token carries that admin's own permissions, narrowed to
+what they approved, and those decide which tools the model is offered, so an
+agent is never told about a capability its credential does not carry.
+
+A Spree secret API key (`sk_…`) is deliberately refused here. A nightly job or
+a server-side integration has no person behind it; it calls the Admin API with
+a key, or uses the `spree api` CLI.
 
 This gem is a protocol adapter and nothing more. The tools, their schemas and
 the permissions gating them live in `spree_core` as `Spree.admin_agent_tools`, which

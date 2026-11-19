@@ -27,6 +27,11 @@ module Spree
     INVALID_STATES      = INVALID_STATUSES
     deprecate_constant :INVALID_STATES
 
+    # Statuses a payment can be voided / captured from, before the payment
+    # method is consulted. Extend them to support gateways with other flows.
+    VOIDABLE_STATUSES   = %w[pending processing completed checkout].freeze
+    CAPTURABLE_STATUSES = %w[checkout pending].freeze
+
     with_options inverse_of: :payments do
       belongs_to :order, class_name: 'Spree::Order', touch: true, optional: true
       belongs_to :cart, class_name: 'Spree::Cart', optional: true
@@ -84,7 +89,7 @@ module Spree
     default_scope { order(:created_at) }
 
     scope :from_credit_card, -> { where(source_type: 'Spree::CreditCard') }
-    # @deprecated use the status scopes / +where(status:)+ — removed in 6.1
+    # @deprecated use the status scopes / +where(status:)+ — removed in 6.3
     scope :with_state, ->(s) { where(status: s.to_s) }
     # "offset" is reserved by activerecord
     scope :offset_payment, -> { where("source_type = 'Spree::Payment' AND amount < 0 AND status = 'completed'") }
@@ -100,7 +105,7 @@ module Spree
     scope :not_store_credits, -> { where(arel_table[:source_type].not_eq(Spree::StoreCredit.to_s).or(arel_table[:source_type].eq(nil))) }
 
     self.whitelisted_ransackable_associations = %w[payment_method order source]
-    ransack_alias :state, :status # @deprecated filter alias — removed in 6.1
+    ransack_alias :state, :status # @deprecated filter alias — removed in 6.5
     # `number` is deliberately absent: it is derived (its column is NULL on
     # 6.0 rows), so a filter on it silently matches nothing. The 6.1 payment
     # `reference` becomes the searchable identifier
@@ -219,19 +224,29 @@ module Spree
       status.in?(%w[checkout processing])
     end
 
+    # Whether the payment is in a status that can be voided and its payment
+    # method agrees. A gateway that cannot void a capture returns false from
+    # +can_void?(payment)+ for completed payments.
     def can_void?
-      status.in?(%w[pending processing completed checkout])
+      status.in?(VOIDABLE_STATUSES) &&
+        (!payment_method.respond_to?(:can_void?) || payment_method.can_void?(self))
     end
 
-    # @deprecated read +status+ — removed in 6.1
+    # Whether the payment can be captured from the back office.
+    def can_capture?
+      status.in?(CAPTURABLE_STATUSES) &&
+        (!payment_method.respond_to?(:can_capture?) || payment_method.can_capture?(self))
+    end
+
+    # @deprecated read +status+ — removed in 6.3
     def state
-      Spree::Deprecation.warn('Spree::Payment#state is deprecated and will be removed in Spree 6.1. Use #status instead.')
+      Spree::Deprecation.warn('Spree::Payment#state is deprecated and will be removed in Spree 6.3. Use #status instead.')
       status
     end
 
-    # @deprecated write +status+ — removed in 6.1
+    # @deprecated write +status+ — removed in 6.3
     def state=(value)
-      Spree::Deprecation.warn('Spree::Payment#state= is deprecated and will be removed in Spree 6.1. Use #status= instead.')
+      Spree::Deprecation.warn('Spree::Payment#state= is deprecated and will be removed in Spree 6.3. Use #status= instead.')
       self.status = value
     end
 
@@ -449,9 +464,9 @@ module Spree
       INVALID_STATUSES.include?(status)
     end
 
-    # @deprecated use {#has_invalid_status?} — removed in 6.1
+    # @deprecated use {#has_invalid_status?} — removed in 6.3
     def has_invalid_state?
-      Spree::Deprecation.warn('Spree::Payment#has_invalid_state? is deprecated and will be removed in Spree 6.1. Use #has_invalid_status? instead.')
+      Spree::Deprecation.warn('Spree::Payment#has_invalid_state? is deprecated and will be removed in Spree 6.3. Use #has_invalid_status? instead.')
       has_invalid_status?
     end
 

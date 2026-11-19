@@ -1,5 +1,6 @@
 import type { Collection } from '@spree/admin-sdk'
 import { COLLECTION_SORT_ORDERS } from '@spree/core'
+import { RecordMetadataCard } from '@spree/dashboard-core'
 import {
   Card,
   CardContent,
@@ -11,7 +12,7 @@ import {
   FieldGroup,
   FieldLabel,
   Input,
-  MetadataCard,
+  Item,
   Select,
   SelectContent,
   SelectItem,
@@ -54,7 +55,7 @@ export function CollectionMain({
   return (
     <>
       <Card>
-        <CardContent className="pt-6">
+        <CardContent>
           <FieldGroup>
             <Field>
               <FieldLabel htmlFor="collection-name">{t('admin.fields.name.label')}</FieldLabel>
@@ -93,16 +94,11 @@ export function CollectionMain({
       {collection && (
         <>
           <CollectionProductsCard collectionId={collection.id} automatic={automatic} />
+          <ResourceTranslationsCard resourceType="collection" resourceId={collection.id} />
           <FormBackedCustomFieldsProvider form={form} resourceType="collection">
             <CustomFieldsInlineCard />
           </FormBackedCustomFieldsProvider>
-          <ResourceTranslationsCard resourceType="collection" resourceId={collection.id} />
-          <MetadataCard
-            metadata={collection.metadata}
-            title={t('admin.components.metadata_card.title')}
-            emptyTitle={t('admin.components.metadata_card.empty_title')}
-            emptyDescription={t('admin.components.metadata_card.empty_description')}
-          />
+          <RecordMetadataCard metadata={collection.metadata} />
         </>
       )}
     </>
@@ -215,13 +211,13 @@ function CollectionSEOCard({ form }: { form: UseFormReturn<CollectionFormValues>
         <CardTitle>{t('admin.collections.seo.title')}</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        <div className="space-y-1 rounded-lg border border-border p-4">
-          <p className="truncate text-sm font-medium text-blue-700">{previewTitle}</p>
+        <Item variant="outline" className="flex-col items-stretch gap-1">
+          <p className="truncate text-base font-medium text-blue-700">{previewTitle}</p>
           <p className="truncate text-xs text-green-700">example.com/c/{previewSlug}</p>
           {metaDescription && (
             <p className="line-clamp-2 text-xs text-muted-foreground">{metaDescription}</p>
           )}
-        </div>
+        </Item>
 
         <Field>
           <FieldLabel htmlFor="collection-permalink">{t('admin.fields.slug.label')}</FieldLabel>

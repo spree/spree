@@ -1,7 +1,7 @@
 {
   "name": "@spree/admin-sdk",
-  "version": "6.0.0-rc.7",
-  "description": "Official TypeScript SDK for Spree Commerce Admin API",
+  "version": "6.0.5",
+  "description": "Official TypeScript SDK for the Spree Commerce Admin API: products, orders, customers and store setup for integrations on the open-source headless commerce platform",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -41,6 +41,7 @@
   "files": [
     "dist",
     "README.md",
+    "CHANGELOG.md",
     "LICENSE"
   ],
   "scripts": {
@@ -62,12 +63,23 @@
   },
   "keywords": [
     "spree",
-    "commerce",
+    "spree-commerce",
+    "headless-commerce",
     "ecommerce",
+    "ecommerce-api",
+    "commerce",
     "admin",
+    "marketplace",
     "api",
+    "rest",
+    "openapi",
     "sdk",
-    "typescript"
+    "typescript",
+    "headless",
+    "b2b-commerce",
+    "wholesale",
+    "multi-vendor",
+    "multi-seller"
   ],
   "author": "Vendo Connect Inc.",
   "license": "MIT",
@@ -82,15 +94,14 @@
   },
   "devDependencies": {
     "@spree/sdk-core": "workspace:*",
-    "@types/node": "^26.6.5",
-    "@vitest/coverage-v8": "^5.0.5",
-    "msw": "^3.0.3",
-    "tsup": "^9.0.0",
-    "tsx": "^4.0.0",
-    "typescript": "^7.0.2",
-    "vitest": "^5.0.5",
-    "yaml": "^2.8.4",
-    "zod": "^4.6.7"
+    "@types/node": "catalog:",
+    "msw": "catalog:",
+    "tsup": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:",
+    "yaml": "catalog:",
+    "zod": "catalog:"
   },
   "peerDependencies": {
     "typescript": ">=4.7.0",

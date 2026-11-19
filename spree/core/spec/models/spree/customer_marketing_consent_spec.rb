@@ -6,7 +6,7 @@ RSpec.describe 'Spree::Customer marketing consent' do
   it 'records when consent was given' do
     stamped_at = customer.email_marketing_consent_updated_at
 
-    Timecop.travel(1.hour.from_now) do
+    travel(1.hour) do
       customer.update!(accepts_email_marketing: true)
     end
 
@@ -17,7 +17,7 @@ RSpec.describe 'Spree::Customer marketing consent' do
     customer.update!(accepts_email_marketing: true)
     given_at = customer.email_marketing_consent_updated_at
 
-    Timecop.travel(1.hour.from_now) do
+    travel(1.hour) do
       customer.update!(accepts_email_marketing: false)
     end
 

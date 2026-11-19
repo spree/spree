@@ -45,7 +45,7 @@ export function DragHandle({ attributes, listeners, className, ...props }: DragH
       {...listeners}
       {...props}
     >
-      <GripVerticalIcon className="size-4" />
+      <GripVerticalIcon className="size-4 shrink-0" />
     </button>
   )
 }

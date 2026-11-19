@@ -6,6 +6,7 @@ import * as p from '@clack/prompts'
 import type { Command } from 'commander'
 import { execa } from 'execa'
 import pc from 'picocolors'
+import { SEED_TASK, spreeTask } from '../backend.js'
 import { mintProjectCredentials, writeAdminEmail, writeProjectSetupMarker } from '../config.js'
 import { DASHBOARD_PORT, STOREFRONT_PORT } from '../constants.js'
 import { detectProject, isEjectedProject, readSampleDataFromEnv } from '../context.js'
@@ -16,10 +17,10 @@ import {
   warnDashboardNotRunnable,
 } from '../dashboard-server.js'
 import {
+  captureTask,
   dockerCompose,
   prepareDatabase,
   primeBundleVolume,
-  rakeTask,
   streamLogs,
 } from '../docker.js'
 import { detectPackageManager, ensureDashboardDevEnv } from './add.js'
@@ -38,12 +39,17 @@ export function registerInitCommand(program: Command): void {
       'scripted installs only: seed an admin account instead of printing the setup link',
     )
     .option('--admin-password <password>', 'password for the admin account seeded by --admin-email')
+    .option(
+      '--detach',
+      'scripted installs: exit once setup is done, leaving the stack running, instead of starting the dashboard dev server and streaming logs',
+    )
     .action(
       async (flags: {
         sampleData: boolean
         open: boolean
         adminEmail?: string
         adminPassword?: string
+        detach?: boolean
       }) => {
         await runFirstRunSetup(flags)
       },
@@ -62,6 +68,7 @@ export async function runFirstRunSetup(flags: {
   open: boolean
   adminEmail?: string
   adminPassword?: string
+  detach?: boolean
 }): Promise<void> {
   const ctx = detectProject()
 
@@ -78,7 +85,11 @@ export async function runFirstRunSetup(flags: {
   const sampleData = flags.sampleData && (readSampleDataFromEnv(ctx.projectDir) ?? true)
 
   p.log.step('Pulling latest images...')
-  await dockerCompose(['pull'], ctx.projectDir, { stdio: 'inherit' })
+  // A registry that is down or rate limiting (Docker Hub's anonymous limit, a
+  // CI runner, a machine offline) must not stop init when the images are
+  // already here: compose then starts the local copies, and only an image it
+  // has never pulled fails, at `up`, with Docker's own message.
+  await dockerCompose(['pull', '--ignore-pull-failures'], ctx.projectDir, { stdio: 'inherit' })
 
   const s = p.spinner()
   // The prebuilt image prepares its database in its entrypoint; the dev
@@ -105,9 +116,9 @@ export async function runFirstRunSetup(flags: {
   s.start('Seeding database...')
   // Omitted entirely when unresolved — the seed treats blank values as "no
   // admin" and prints a setup link instead, which we surface on the card
-  // below (rakeTask captures stdout rather than streaming it).
-  const seedOutput = await rakeTask(
-    'db:seed',
+  // below (captureTask captures stdout rather than streaming it).
+  const seedOutput = await captureTask(
+    SEED_TASK,
     ctx.projectDir,
     adminEmail && adminPassword
       ? { ADMIN_EMAIL: adminEmail, ADMIN_PASSWORD: adminPassword }
@@ -143,7 +154,7 @@ export async function runFirstRunSetup(flags: {
   const sampleDataLoaded = sampleData && Boolean(adminEmail && adminPassword)
   if (sampleDataLoaded) {
     s.start('Loading sample data...')
-    await rakeTask('spree:load_sample_data', ctx.projectDir)
+    await captureTask(spreeTask('load_sample_data'), ctx.projectDir)
     s.stop('Sample data loaded.')
   } else if (sampleData) {
     p.log.info(
@@ -152,7 +163,7 @@ export async function runFirstRunSetup(flags: {
   }
 
   s.start('Indexing products for search...')
-  await rakeTask('spree:search:reindex', ctx.projectDir)
+  await captureTask(spreeTask('search:reindex'), ctx.projectDir)
   s.stop('Search index ready.')
 
   writeProjectSetupMarker(ctx.projectDir)
@@ -165,10 +176,13 @@ export async function runFirstRunSetup(flags: {
   // key off the same runnable check so they can't disagree — if the dev
   // server can't start (deps install failed above), the card says how to
   // install it instead of advertising a dead URL.
-  const dashboardRunnable = dashboardDevRunnable(ctx.projectDir)
-  if (hasDashboardApp(ctx.projectDir) && !dashboardRunnable) {
+  const devDashboardInstalled = dashboardDevRunnable(ctx.projectDir)
+  if (hasDashboardApp(ctx.projectDir) && !devDashboardInstalled) {
     warnDashboardNotRunnable(ctx.projectDir)
   }
+  // --detach returns before the dev server starts, so the card names the
+  // dashboard the API serves instead of a dev server that never comes up.
+  const dashboardRunnable = devDashboardInstalled && !flags.detach
   // No credentials means no admin was seeded — the operator creates one in
   // the browser through the seed's one-time setup link. Built against the
   // dashboard this card is advertising (the dev server `spree dev` starts, or
@@ -185,7 +199,7 @@ export async function runFirstRunSetup(flags: {
           `  ${pc.cyan(
             setupToken
               ? `${setupBase}/setup?token=${setupToken}`
-              : 'run `spree run bin/rails spree:setup:token` for the setup link',
+              : 'run `spree task setup:token` for the setup link',
           )}`,
         ]
 
@@ -238,6 +252,10 @@ export async function runFirstRunSetup(flags: {
     ].join('\n'),
     'Your Spree store is ready!',
   )
+
+  // A scripted install (CI, a benchmark, a provisioning script) needs init to
+  // return; the stack keeps running in Docker either way.
+  if (flags.detach) return
 
   // Co-run the dashboard's Vite dev server so the admin the card names is
   // actually running. Spawned after the card so its prefixed output doesn't
@@ -318,11 +336,11 @@ export async function waitForHealthy(port: number, signal?: AbortSignal): Promis
 }
 
 async function fetchApiKey(projectDir: string): Promise<string> {
-  const stdout = await rakeTask('spree:cli:ensure_api_key', projectDir)
+  const stdout = await captureTask(spreeTask('cli:ensure_api_key'), projectDir)
 
   const match = stdout.match(/pk_[A-Za-z0-9_-]+/)
   if (!match) {
-    throw new Error(`Could not extract API key from Rails output: ${stdout}`)
+    throw new Error(`Could not extract API key from the backend output: ${stdout}`)
   }
   return match[0]
 }

@@ -82,6 +82,7 @@ export type {
   Seller,
   State,
   StockLocation,
+  Store,
   StoreCredit,
   TaxLine,
   Variant,
@@ -90,17 +91,14 @@ export type {
 } from './generated'
 export type * from './params'
 
-// Checkout requirement — a single unsatisfied checkout prerequisite
-export interface CheckoutRequirement {
-  /** Checkout step this requirement belongs to (e.g. "address", "payment") */
-  step: string
-  /** Field that needs to be satisfied (e.g. "email", "shipping_address") */
-  field: string
-  /** Human-readable message describing what's needed */
-  message: string
-}
-
-// Cart warning type — convenience alias for the inline type from the generated Cart
+// Convenience aliases for the inline types of the generated Cart
+/**
+ * A single unsatisfied checkout prerequisite: the checkout `step` it belongs
+ * to (e.g. "address", "payment"), the `field` that needs to be satisfied
+ * (e.g. "email", "shipping_address"), a machine-readable `code` and a
+ * human-readable `message`.
+ */
+export type CheckoutRequirement = CartType['requirements'][number]
 export type CartWarning = CartType['warnings'][number]
 
 // Hand-written domain types
@@ -135,16 +133,16 @@ export type CollectionListParams = ListParams<CollectionFilters, CollectionSort>
 
 export type OrderListParams = ListParams<OrderFilters, OrderSort>
 
-/** @deprecated Renamed to `LineItemInputParams`. Removed in 6.1. */
+/** @deprecated Renamed to `LineItemInputParams`. Removed in 6.5. */
 export type LineItemInput = LineItemInputParams
 
-/** @deprecated Split by action: `AddressCreateParams` and `AddressUpdateParams`. Removed in 6.1. */
+/** @deprecated Split by action: `AddressCreateParams` and `AddressUpdateParams`. Removed in 6.5. */
 export type AddressParams = AddressUpdateParams
 
-/** @deprecated Split by action: `CompanyAddressCreateParams` and `CompanyAddressUpdateParams`. Removed in 6.1. */
+/** @deprecated Split by action: `CompanyAddressCreateParams` and `CompanyAddressUpdateParams`. Removed in 6.5. */
 export type CompanyAddressParams = CompanyAddressUpdateParams
 
-/** @deprecated Renamed to `AppliedPromotion`, the type of `cart.discounts` and `order.discounts`. Removed in 6.1. */
+/** @deprecated Renamed to `AppliedPromotion`, the type of `cart.discounts` and `order.discounts`. Removed in 6.5. */
 export type Discount = AppliedPromotion
 
 // Product filters: the names storefronts import, kept as aliases of the generated types

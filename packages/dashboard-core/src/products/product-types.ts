@@ -33,6 +33,8 @@ export interface PanelMedia {
   large_url?: string | null
   xlarge_url?: string | null
   download_url?: string | null
+  /** The file's own name; absent on a panel whose serializer omits it. */
+  filename?: string | null
 }
 
 export interface PanelVariant {

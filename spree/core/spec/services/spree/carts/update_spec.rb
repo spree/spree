@@ -33,6 +33,32 @@ module Spree
         expect(cart_under_test.reload.ship_address_id).not_to eq(address.id)
       end
 
+      describe 'attributes an extension made writable' do
+        around do |example|
+          original = Spree::Cart.additional_permitted_attributes
+          example.run
+          Spree::Cart.additional_permitted_attributes = original
+        end
+
+        it 'assigns a column declared with Spree::Cart.additional_permitted_attributes' do
+          Spree::Cart.additional_permitted_attributes += [:accept_marketing]
+
+          result = described_class.call(cart: cart, params: { accept_marketing: true })
+
+          expect(result).to be_success
+          expect(cart.reload.accept_marketing).to be(true)
+        end
+
+        it 'leaves core fields to their own handling' do
+          cart.update!(metadata: { 'source' => 'campaign' })
+          Spree::Cart.additional_permitted_attributes += [:metadata]
+
+          described_class.call(cart: cart, params: { metadata: { 'channel' => 'email' } })
+
+          expect(cart.reload.metadata).to include('source' => 'campaign', 'channel' => 'email')
+        end
+      end
+
       describe 'updating email' do
         let(:params) { { email: 'new@example.com' } }
 
@@ -955,11 +981,19 @@ module Spree
           it 'extends existing reservations' do
             original_expiry = Spree::StockReservation.where(cart_id: cart.id).maximum(:expires_at)
 
-            Timecop.freeze(2.minutes.from_now) do
+            travel_to(2.minutes.from_now) do
               described_class.call(cart: cart, params: params)
             end
 
             expect(Spree::StockReservation.where(cart_id: cart.id).maximum(:expires_at)).to be > original_expiry
+          end
+
+          it 'reserves again when the destination changes, since the units may ship from elsewhere' do
+            cart.line_items.first.variant.stock_levels.first.update!(backorderable: true)
+
+            described_class.call(cart: cart, params: { shipping_address: address_params.merge(city: 'Brooklyn', postal_code: '11201') })
+
+            expect(Spree::StockReservation.where(cart_id: cart.id)).to be_empty
           end
         end
 

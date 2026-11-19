@@ -2,17 +2,15 @@ module Spree
   module Api
     module V3
       module Admin
-        class StoreSerializer < V3::BaseSerializer
-          typelize name: :string, url: :string, code: :string, api_url: :string,
+        class StoreSerializer < V3::StoreSerializer
+          typelize url: :string, code: :string, api_url: :string,
                    default_currency: [:string, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'], default_locale: [:string, enum: Spree::Locales::ALL, enum_type_name: 'LocaleCode'],
-                   default_country_code: [:string, nullable: true],
+                   default_country_code: [:string, nullable: true, enum: Spree::IsoData.country_codes, enum_type_name: 'CountryCode'],
                    supported_currencies: [:string, multi: true, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'],
                    supported_locales: [:string, multi: true, enum: Spree::Locales::ALL, enum_type_name: 'LocaleCode'],
                    available_locales: [:string, multi: true, enum: Spree::Locales::ALL, enum_type_name: 'LocaleCode'],
-                   logo_url: [:string, nullable: true],
                    mailer_logo_url: [:string, nullable: true],
                    mail_from_address: [:string, nullable: true],
-                   customer_support_email: [:string, nullable: true],
                    new_order_notifications_email: [:string, nullable: true],
                    order_routing_strategy: [:string, comment: 'Order routing strategy. Built-in: rules. Extensions may register more.'],
                    payout_provider: [:string, nullable: true, comment: 'Payout provider; null uses the installation default. Built-in: system. Provider gems register more (e.g. stripe).'],
@@ -20,13 +18,11 @@ module Spree
                    metadata: 'Record<string, unknown>'
 
           attributes :metadata,
-                     :name,
                      :code,
                      :default_currency,
                      :default_locale,
                      :default_country_code,
                      :mail_from_address,
-                     :customer_support_email,
                      :new_order_notifications_email,
                      created_at: :iso8601, updated_at: :iso8601
 
@@ -77,10 +73,6 @@ module Spree
           # where a new locale can never be added). See `Spree::Locales::ALL`.
           attribute :available_locales do
             Spree::Locales::ALL
-          end
-
-          attribute :logo_url do |store|
-            image_url_for(store.logo)
           end
 
           attribute :mailer_logo_url do |store|

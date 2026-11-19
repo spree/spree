@@ -1,5 +1,5 @@
 import type { Variant } from '@spree/admin-sdk'
-import { adminClient, formatPrice } from '@spree/dashboard-core'
+import { adminClient, formatPrice, usePermissions, useResourceKey } from '@spree/dashboard-core'
 import {
   Button,
   Field,
@@ -9,8 +9,7 @@ import {
   Item,
   ItemActions,
   ItemContent,
-  ItemDescription,
-  ItemTitle,
+  ProductIdentity,
   Sheet,
   SheetContent,
   SheetDescription,
@@ -22,20 +21,25 @@ import { XCircleIcon } from '@spree/dashboard-ui/icons'
 import { useQuery } from '@tanstack/react-query'
 import { type FormEvent, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { VARIANT_SEARCH_MIN_LENGTH } from '../../../lib/variant-search'
 
 /**
- * Catalog picker for the order edit screen. It writes nothing — the chosen
- * variant and quantity are handed back to the caller, which stages them as a
- * pending row until the merchant saves the order.
+ * Catalog picker for an order's items, on the edit screen and the new-order
+ * form. It writes nothing — the chosen variant and quantity are handed back to
+ * the caller, which stages them until the merchant saves.
  */
 export function AddLineItemDialog({
-  orderId,
+  searchParams,
   open,
   onOpenChange,
   onSelect,
 }: {
-  /** Lists only what this order's buyer can be sold, priced as they would pay. */
-  orderId: string
+  /**
+   * Who is buying, where: `{ order_id }` for an existing order, or the market,
+   * channel, buyer and currency of one being created. Lists only what that
+   * buyer can be sold, priced as they would pay.
+   */
+  searchParams: Record<string, unknown>
   open: boolean
   onOpenChange: (open: boolean) => void
   onSelect: (variant: Variant, quantity: number) => void
@@ -44,11 +48,14 @@ export function AddLineItemDialog({
   const [search, setSearch] = useState('')
   const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null)
   const [quantity, setQuantity] = useState(1)
+  // Searching lists the catalog, which a role that manages orders may not
+  // be allowed to read; say so rather than reporting no matches.
+  const canSearch = usePermissions().permissionKeys.includes('read_products')
 
   const { data: variantsData } = useQuery({
-    queryKey: ['variants', 'search', orderId, search],
-    queryFn: () => adminClient.variants.list({ search, limit: 10, order_id: orderId }),
-    enabled: search.length >= 3,
+    queryKey: useResourceKey('variants', { picker: searchParams, search }),
+    queryFn: () => adminClient.variants.list({ search, limit: 10, ...searchParams }),
+    enabled: canSearch && search.length >= VARIANT_SEARCH_MIN_LENGTH,
     staleTime: 30_000,
   })
 
@@ -64,6 +71,15 @@ export function AddLineItemDialog({
     setSearch('')
     setQuantity(1)
   }
+
+  // A variant's options and SKU on one line, under its product's name.
+  const variantDetails = (variant: Variant) =>
+    [
+      variant.options_text,
+      `${t('admin.orders.detail.variant_search.sku_prefix')}: ${variant.sku || '—'}`,
+    ]
+      .filter(Boolean)
+      .join(' · ')
 
   return (
     <Sheet open={open} onOpenChange={(o) => onOpenChange(o as boolean)}>
@@ -84,52 +100,64 @@ export function AddLineItemDialog({
                     setSearch(e.target.value)
                     setSelectedVariant(null)
                   }}
+                  disabled={!canSearch}
                   autoFocus
                 />
-                {search.length >= 3 && variants.length > 0 && !selectedVariant && (
-                  <div className="mt-1 rounded-lg border border-border bg-popover text-popover-foreground shadow-xs max-h-[280px] overflow-y-auto">
-                    {variants.map((v) => (
-                      <button
-                        key={v.id}
-                        type="button"
-                        onClick={() => {
-                          setSelectedVariant(v)
-                          setSearch('')
-                        }}
-                        className="flex w-full items-center gap-3 px-3 py-2.5 text-left text-sm hover:bg-accent transition-colors border-b last:border-0"
-                      >
-                        <div className="min-w-0 flex-1">
-                          <div className="font-medium truncate">{v.product_name ?? v.sku}</div>
-                          <div className="text-xs text-muted-foreground">
-                            {v.options_text && <span>{v.options_text} · </span>}
-                            {t('admin.orders.detail.variant_search.sku_prefix')}: {v.sku || '—'}
-                          </div>
-                        </div>
-                        <div className="text-sm font-medium whitespace-nowrap">
-                          {formatPrice(v.price)}
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                )}
-                {search.length >= 3 && variants.length === 0 && !selectedVariant && (
+                {!canSearch && (
                   <p className="mt-1 text-xs text-muted-foreground">
-                    {t('admin.orders.detail.variant_search.empty')}
+                    {t('admin.orders.detail.variant_search.no_permission')}
                   </p>
                 )}
+                {canSearch && search.length > 0 && search.length < VARIANT_SEARCH_MIN_LENGTH && (
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {t('admin.common.search_min_length', { count: VARIANT_SEARCH_MIN_LENGTH })}
+                  </p>
+                )}
+                {search.length >= VARIANT_SEARCH_MIN_LENGTH &&
+                  variants.length > 0 &&
+                  !selectedVariant && (
+                    <div className="mt-1 rounded-xl border border-border bg-popover text-popover-foreground shadow-xs max-h-[280px] overflow-y-auto">
+                      {variants.map((v) => (
+                        <button
+                          key={v.id}
+                          type="button"
+                          onClick={() => {
+                            setSelectedVariant(v)
+                            setSearch('')
+                          }}
+                          className="flex w-full items-center gap-3 px-3 py-2.5 text-left text-base hover:bg-accent transition-colors border-b last:border-0"
+                        >
+                          <ProductIdentity
+                            name={v.product_name ?? v.sku}
+                            subtitle={variantDetails(v)}
+                            thumbnailUrl={v.thumbnail_url}
+                            className="flex-1"
+                          />
+                          <div className="text-base font-medium whitespace-nowrap">
+                            {formatPrice(v.price)}
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                {canSearch &&
+                  search.length >= VARIANT_SEARCH_MIN_LENGTH &&
+                  variants.length === 0 &&
+                  !selectedVariant && (
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {t('admin.orders.detail.variant_search.empty')}
+                    </p>
+                  )}
               </Field>
 
               {selectedVariant && (
                 <Item variant="outline" className="border-primary/30 bg-primary/5">
-                  <ItemContent>
-                    <ItemTitle>{selectedVariant.product_name ?? selectedVariant.sku}</ItemTitle>
-                    <ItemDescription className="text-xs">
-                      {selectedVariant.options_text && (
-                        <span>{selectedVariant.options_text} · </span>
-                      )}
-                      {t('admin.orders.detail.variant_search.sku_prefix')}:{' '}
-                      {selectedVariant.sku || '—'} · {formatPrice(selectedVariant.price)}
-                    </ItemDescription>
+                  <ItemContent className="min-w-0">
+                    <ProductIdentity
+                      name={selectedVariant.product_name ?? selectedVariant.sku}
+                      subtitle={`${variantDetails(selectedVariant)} · ${formatPrice(selectedVariant.price)}`}
+                      thumbnailUrl={selectedVariant.thumbnail_url}
+                    />
                   </ItemContent>
                   <ItemActions>
                     <Button

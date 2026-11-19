@@ -11,6 +11,8 @@ module Spree
 
           attributes :metadata,
                      created_at: :iso8601, updated_at: :iso8601
+
+          expandable_custom_fields admin: true
         end
       end
     end

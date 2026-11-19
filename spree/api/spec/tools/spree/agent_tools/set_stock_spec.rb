@@ -53,6 +53,24 @@ RSpec.describe 'agent stock setting' do
       expect { tool.call(rows: [row(count_on_hand: 40, reason: 'received')]) }.
         to change { level.reload.stock_movements.count }.by(1)
     end
+
+    it 'labels each movement with the reason given' do
+      level.update!(count_on_hand: 25)
+
+      tool.call(rows: [row(adjustment: 10, reason: 'received')])
+      tool.call(rows: [row(adjustment: -1, reason: 'damaged')])
+
+      expect(level.reload.count_on_hand).to eq(34)
+      expect(level.stock_movements.order(:id).last(2).map(&:reason)).to eq(%w[Received Damaged])
+    end
+
+    it 'labels a set figure with the reason given' do
+      level
+
+      tool.call(rows: [row(count_on_hand: 40, reason: 'count')])
+
+      expect(level.reload.stock_movements.order(:id).last.reason).to eq('Count')
+    end
   end
 
   describe 'refusals' do

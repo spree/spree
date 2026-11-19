@@ -2,7 +2,7 @@ import { useResourceKey } from '@spree/dashboard-core'
 import { useQuery } from '@tanstack/react-query'
 
 const RELEASES_API = 'https://api.github.com/repos/spree/spree/releases/tags/'
-const STORAGE_PREFIX = 'spree-release-notes:'
+const STORAGE_PREFIX = 'spree-release-notes-html:'
 
 function readStored(tag: string): string | null {
   try {
@@ -21,7 +21,8 @@ function writeStored(tag: string, notes: string) {
 }
 
 /**
- * The markdown notes GitHub publishes for a Spree release.
+ * The notes GitHub publishes for a Spree release, as the HTML GitHub renders
+ * for them.
  *
  * Fetched by the browser and kept per release in local storage: GitHub
  * allows 60 unauthenticated requests an hour per IP address, which a whole
@@ -39,14 +40,14 @@ export function useReleaseNotes(version: string | null | undefined, enabled: boo
       if (stored !== null) return stored
 
       const response = await fetch(RELEASES_API + encodeURIComponent(tag), {
-        headers: { Accept: 'application/vnd.github+json' },
+        headers: { Accept: 'application/vnd.github.html+json' },
       })
       if (!response.ok) throw new Error(`GitHub answered ${response.status}`)
 
-      const release = (await response.json()) as { body?: string | null }
-      const notes = release.body ?? ''
-      writeStored(tag, notes)
-      return notes
+      const release = (await response.json()) as { body_html?: unknown }
+      if (typeof release.body_html !== 'string') return ''
+      writeStored(tag, release.body_html)
+      return release.body_html
     },
     enabled: enabled && tag !== null,
     staleTime: Number.POSITIVE_INFINITY,

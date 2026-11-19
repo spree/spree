@@ -33,7 +33,9 @@ module Spree
         super
 
         unless restock_items.nil?
-          Spree::Deprecation.warn('Spree::Orders::Cancel no longer accepts restock_items — it never changed behavior and will be removed in Spree 6.1.')
+          Spree::Deprecation.warn(
+            'Spree::Orders::Cancel no longer accepts restock_items — it never changed behavior and will be removed in Spree 6.3.'
+          )
         end
 
         step :ensure_cancellable

@@ -191,7 +191,7 @@ export function RichTextEditor({
         // in a form beside them without reading as a different kind of control.
         // `focus-within` rather than `focus`: the element that takes the caret
         // is Tiptap's inner contenteditable, not this wrapper.
-        'rounded-md border border-border shadow-control bg-card text-foreground transition-[color,background-color,border-color,box-shadow] duration-100 ease-out focus-within:border-blue-500 focus-within:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)]',
+        'rounded-xl border border-field-border shadow-control bg-card text-foreground transition-[color,background-color,border-color,box-shadow] duration-100 ease-out focus-within:border-blue-500 focus-within:shadow-field-focus',
         disabled && 'pointer-events-none bg-muted text-muted-foreground shadow-none',
         className,
       )}
@@ -252,7 +252,7 @@ function EditorToolbar({
   return (
     <div
       data-slot="rich-text-editor-toolbar"
-      className="flex items-center gap-0.5 border-b border-border-subtle px-2 py-1.5"
+      className="flex items-center gap-0.5 rounded-t-[inherit] bg-secondary px-2 py-1.5"
     >
       <ToolbarButton
         active={toolbar.isBold}
@@ -375,7 +375,7 @@ function ToolbarButton({
       aria-label={title}
       aria-pressed={active}
       className={cn(
-        'inline-flex items-center justify-center rounded-md p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground transition-colors disabled:opacity-40 disabled:pointer-events-none',
+        'inline-flex items-center justify-center rounded-md p-1.5 text-muted-foreground hover:bg-accent-strong-hover hover:text-foreground transition-colors disabled:opacity-40 disabled:pointer-events-none',
         active && 'bg-accent-strong text-foreground',
       )}
     >

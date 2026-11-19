@@ -76,14 +76,14 @@ module Spree
     delegate :name, :label, to: :option_type, prefix: true, allow_nil: true
 
     # @deprecated The delegated name follows the renamed column since 6.0;
-    #   removed in 6.1.
+    #   removed in 6.3.
     alias option_type_presentation option_type_label
 
     # Using map here instead of pluck, as these values are translatable via Mobility gem
     # @deprecated Legacy Tom Select helper for the removed Rails admin. No replacement.
     # @return [Array<Hash>]
     def self.to_tom_select_json
-      Spree::Deprecation.warn('Spree::OptionValue.to_tom_select_json is deprecated and will be removed in Spree 6.1.')
+      Spree::Deprecation.warn('Spree::OptionValue.to_tom_select_json is deprecated and will be removed in Spree 6.3.')
 
       all.map do |ov|
         {
@@ -97,7 +97,7 @@ module Spree
     # @deprecated No replacement, build the label in the presentation layer instead.
     # @return [String]
     def display_presentation
-      Spree::Deprecation.warn('Spree::OptionValue#display_presentation is deprecated and will be removed in Spree 6.1.')
+      Spree::Deprecation.warn('Spree::OptionValue#display_presentation is deprecated and will be removed in Spree 6.3.')
 
       @display_presentation ||= "#{option_type.label}: #{label}"
     end

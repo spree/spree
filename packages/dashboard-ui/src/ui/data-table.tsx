@@ -35,16 +35,25 @@ interface TableProps extends React.ComponentProps<'table'> {
    */
   roundedBottom?: boolean
   /**
-   * Rounds the header's outer corners, for a table that starts a card. The
-   * header's own square corners otherwise sit on top of the card's radius and
-   * clip it — the mirror of the `roundedBottom` case, and unset by default
-   * because a table usually has a card header or some content above it.
+   * Rounds the header's outer corners, for a table that starts a card or any
+   * other bordered box. The header's own square corners otherwise sit on top
+   * of the card's radius and clip it — the mirror of the `roundedBottom` case,
+   * and unset by default because a table usually has a card header or some
+   * content above it. It also drops the header's top rule, which would double
+   * the box's own edge.
    *
    * Applied from `sm` up, matching where a full-bleed table gains its frame:
    * below that the table spans the page gutter with square edges, and curved
    * header cells there would round nothing.
    */
   roundedTop?: boolean
+  /**
+   * Draws the header as a free-standing rounded band, for a table with no
+   * card around it — a list page's main table. Rows then sit straight on the
+   * page, divided by their own rules; there is no frame for the header to
+   * round into, so this replaces `roundedTop`.
+   */
+  band?: boolean
   /**
    * Scrolls sideways at every width, not just on narrow viewports. For a table
    * in a bounded container — a card, a sheet, a dialog — where the default
@@ -83,6 +92,7 @@ function Table({
   stickyHeader = false,
   roundedBottom,
   roundedTop,
+  band = false,
   scrollX = false,
   ...props
 }: TableProps) {
@@ -148,14 +158,14 @@ function Table({
   // below that the table spans the page gutter with square edges, and rounded
   // cells there would round nothing.
   const alwaysRounded =
-    'sm:[&_tbody_tr:last-child_td:first-child]:rounded-bl-xl sm:[&_tbody_tr:last-child_td:last-child]:rounded-br-xl sm:[&_tbody_tr:last-child_td:only-child]:rounded-b-xl'
+    'sm:[&_tbody_tr:last-child_td:first-child]:rounded-bl-[calc(var(--radius-card)-1px)] sm:[&_tbody_tr:last-child_td:last-child]:rounded-br-[calc(var(--radius-card)-1px)] sm:[&_tbody_tr:last-child_td:only-child]:rounded-b-[calc(var(--radius-card)-1px)]'
   // Applied to the outermost wrapper, not the table: `in-[:last-child]` is
   // satisfied by *any* last-child ancestor, and the sticky variant nests two
   // more divs that are both last inside it. Gating on the wrapper the
   // pagination is actually a sibling of is the only test that means "nothing
   // follows this table".
   const roundedWhenLast =
-    'last:[&_tbody_tr:last-child_td:first-child]:rounded-bl-xl last:[&_tbody_tr:last-child_td:last-child]:rounded-br-xl last:[&_tbody_tr:last-child_td:only-child]:rounded-b-xl'
+    'last:[&_tbody_tr:last-child_td:first-child]:rounded-bl-[calc(var(--radius-card)-1px)] last:[&_tbody_tr:last-child_td:last-child]:rounded-br-[calc(var(--radius-card)-1px)] last:[&_tbody_tr:last-child_td:only-child]:rounded-b-[calc(var(--radius-card)-1px)]'
   // `true`/`false` decide on the table itself; unset defers to the wrapper's
   // own position among its siblings.
   // `thead` cells carry the header's background, so the radius belongs on the
@@ -169,9 +179,34 @@ function Table({
   // down to their order in the stylesheet — and the rounding did.
   const topRounded =
     roundedTop && !headerPinned
-      ? 'sm:[&_thead_tr:first-child_th:first-child]:rounded-tl-xl sm:[&_thead_tr:first-child_th:last-child]:rounded-tr-xl sm:[&_thead_tr:first-child_th:only-child]:rounded-t-xl'
+      ? '[&_thead_th]:shadow-[inset_0_-1px_0_0_var(--border-subtle)] sm:[&_thead_tr:first-child_th:first-child]:rounded-tl-[calc(var(--radius-card)-1px)] sm:[&_thead_tr:first-child_th:last-child]:rounded-tr-[calc(var(--radius-card)-1px)] sm:[&_thead_tr:first-child_th:only-child]:rounded-t-[calc(var(--radius-card)-1px)]'
       : undefined
-  const tableRoundedClasses = cn(roundedBottom === true ? alwaysRounded : undefined, topRounded)
+  // Both ends of the header band round, top and bottom, and the band drops
+  // the rule under it: it floats over the rows rather than capping a frame.
+  const bandClasses = band
+    ? cn(
+        '[&_thead_th]:shadow-none [&_thead_tr:first-child_th:first-child]:rounded-s-[10px] [&_thead_tr:first-child_th:last-child]:rounded-e-[10px] [&_thead_tr:first-child_th:only-child]:rounded-[10px]',
+        // Each row's fill and divider hang off its first cell — a row's own
+        // pseudo-element would become an extra table column — and stretch
+        // across the row, which is their positioning box. The divider runs
+        // along a row's top and the fill covers the rest; a filled row
+        // (hovered, selected, menu open) hides the dividers above and below
+        // it, so neighbouring filled rows read as separate rounded shapes
+        // split by a 2px gap.
+        '[&_tbody_tr]:relative [&_tbody_tr]:isolate [&_tbody_tr:hover]:bg-transparent [&_tbody_td]:border-b-0',
+        "[&_tbody_td:first-child]:before:absolute [&_tbody_td:first-child]:before:inset-x-0 [&_tbody_td:first-child]:before:top-0.5 [&_tbody_td:first-child]:before:bottom-0 [&_tbody_td:first-child]:before:-z-10 [&_tbody_td:first-child]:before:rounded-[10px] [&_tbody_td:first-child]:before:content-['']",
+        "[&_tbody_tr:not(:first-child)>td:first-child]:after:absolute [&_tbody_tr:not(:first-child)>td:first-child]:after:inset-x-0 [&_tbody_tr:not(:first-child)>td:first-child]:after:top-0 [&_tbody_tr:not(:first-child)>td:first-child]:after:h-px [&_tbody_tr:not(:first-child)>td:first-child]:after:bg-border-subtle [&_tbody_tr:not(:first-child)>td:first-child]:after:content-['']",
+        '[&_tbody_tr:hover>td:first-child]:before:bg-muted [&_tbody_tr:has([data-popup-open])>td:first-child]:before:bg-accent-strong/40',
+        '[&_tbody_tr[data-selected]>td:first-child]:before:bg-accent-strong/75 [&_tbody_tr[data-selected]:hover>td:first-child]:before:bg-accent-strong-hover',
+        '[&_tbody_tr:not(:first-child):is(:hover,[data-selected],:has([data-popup-open]))>td:first-child]:after:bg-transparent [&_tbody_tr:is(:hover,[data-selected],:has([data-popup-open]))+tr:not(:first-child)>td:first-child]:after:bg-transparent',
+        // A roomier header band with smaller labels.
+        'sm:[&_thead_th]:h-10 sm:[&_thead_th]:py-2.5 [&_thead_th]:font-medium [&_thead_th]:text-xs',
+      )
+    : undefined
+  const tableRoundedClasses = cn(
+    roundedBottom === true ? alwaysRounded : undefined,
+    band ? bandClasses : topRounded,
+  )
   const wrapperRoundedClasses = roundedBottom === undefined ? roundedWhenLast : undefined
 
   const kids = Children.toArray(children)
@@ -430,17 +465,21 @@ function TableRow({ className, ...props }: React.ComponentProps<'tr'>) {
 }
 
 /**
- * The bottom rule is an inset shadow rather than `border-b` so it stays flush
- * with the bulk action bar, which overlays this row and draws the same shadow.
- * Don't add a border alongside it — a border sits outside the padding box and
- * the shadow inside, so the two stack into a 2px line.
+ * The rules above and below are inset shadows rather than borders so they stay
+ * flush with the bulk action bar, which overlays this row and draws the same
+ * shadow. Don't add a border alongside them — a border sits outside the padding
+ * box and the shadow inside, so the two stack into a 2px line.
+ *
+ * The top rule separates the band from whatever sits above it in the card. A
+ * table that starts its card drops it (`roundedTop`), as the card's own edge is
+ * already there, and so does the free-standing `band`.
  */
 function TableHead({ className, ...props }: React.ComponentProps<'th'>) {
   return (
     <th
       className={cn(
-        'text-left text-sm font-normal text-muted-foreground bg-muted px-3 py-2.5 h-9 sm:p-2 whitespace-nowrap first:pl-4 last:pr-4',
-        'shadow-[inset_0_-1px_0_0_var(--border-subtle)]',
+        'text-left text-base font-normal text-muted-foreground bg-muted px-3 py-2.5 h-9 sm:p-2 whitespace-nowrap first:pl-4 last:pr-4',
+        'shadow-[inset_0_1px_0_0_var(--border-subtle),inset_0_-1px_0_0_var(--border-subtle)]',
         className,
       )}
       {...props}
@@ -471,7 +510,11 @@ function TableCell({ className, ...props }: React.ComponentProps<'td'>) {
         // `h-16` on touch is a floor, not a fixed height: a table cell treats
         // `height` as a minimum, so a row with a thumbnail or a wrapped
         // second line still grows past it.
-        'h-16 py-3 px-3 sm:h-auto sm:py-3 sm:px-2 border-b border-border-subtle align-middle first:pl-4 last:pr-4',
+        'h-16 py-3 px-3 sm:h-auto sm:py-3 sm:px-2 border-b border-border-subtle align-middle text-base first:pl-4 last:pr-4',
+        // Compact rows (the columns menu's density choice, set on <html>) fit
+        // about half as many again on a laptop screen. Desktop only: on touch
+        // the row stays a full-size target.
+        'sm:in-data-[table-density=compact]:py-1.5 sm:in-data-[table-density=compact]:[&_[data-slot=thumbnail]]:size-7',
         className,
       )}
       {...props}

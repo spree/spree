@@ -1,12 +1,12 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import * as p from '@clack/prompts'
-import { execa } from 'execa'
 import pc from 'picocolors'
 import { setupAgents } from './agents.js'
 import { DASHBOARD_PORT, SELLER_DASHBOARD_PORT, STOREFRONT_REPO } from './constants.js'
 import { scaffoldApp } from './dashboard.js'
 import { downloadServer } from './server.js'
+import { runUntilInterrupted } from './session.js'
 import { installRootDeps, scaffoldStorefront } from './storefront.js'
 import { agentsMdContent, claudeMdContent } from './templates/agents-md.js'
 import { dependabotContent } from './templates/dependabot.js'
@@ -16,6 +16,7 @@ import { rootPackageJsonContent } from './templates/package-json.js'
 import { readmeContent } from './templates/readme.js'
 import type { PackageManager, ScaffoldOptions } from './types.js'
 import {
+  cdTarget,
   generateEncryptionKeys,
   generateSecretKeyBase,
   installCommand,
@@ -24,9 +25,11 @@ import {
   storefrontPm,
 } from './utils.js'
 
-export async function scaffold(options: ScaffoldOptions): Promise<void> {
+/** Resolves `true` when the user stopped the started servers with Ctrl+C. */
+export async function scaffold(options: ScaffoldOptions): Promise<boolean> {
   const projectDir = path.resolve(options.directory)
   const projectName = path.basename(projectDir)
+  const cdDir = cdTarget(projectDir)
   const { port, storefront, dashboard, sellerDashboard } = options
 
   // Pre-flight checks
@@ -198,48 +201,47 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
     // The CLI still offers it on demand via `spree sample-data`.
     const initArgs = ['spree', 'init', '--no-sample-data']
 
+    let stopped: boolean
     try {
-      await execa(runCommand(options.packageManager), initArgs, {
-        cwd: projectDir,
-        stdio: 'inherit',
-      })
+      stopped = await runUntilInterrupted(runCommand(options.packageManager), initArgs, projectDir)
     } catch {
       // init streams its own output, so the underlying failure is already on
       // screen — what the operator needs from us is the recovery command.
       throw new Error(
-        `Setup did not finish. Start your app with: cd ${projectName} && ${options.packageManager} run dev — the first run completes setup automatically.`,
+        `Setup did not finish. Start your app with: cd ${cdDir} && ${options.packageManager} run dev — the first run completes setup automatically.`,
       )
     }
 
     if (storefrontReady) {
       p.log.info(
-        `${pc.bold('Storefront')}: ${pc.cyan(`cd ${projectName}/apps/storefront && ${storefrontPm(options.packageManager)} run dev`)}`,
+        `${pc.bold('Storefront')}: ${pc.cyan(`cd ${cdDir}/apps/storefront && ${storefrontPm(options.packageManager)} run dev`)}`,
       )
     }
     if (sellerDashboardReady) {
       p.log.info(
-        `${pc.bold('Seller Panel')}: ${pc.cyan(`cd ${projectName}/apps/seller-dashboard && ${options.packageManager} run dev`)} ${pc.dim(`→ http://localhost:${SELLER_DASHBOARD_PORT}`)}`,
+        `${pc.bold('Seller Panel')}: ${pc.cyan(`cd ${cdDir}/apps/seller-dashboard && ${options.packageManager} run dev`)} ${pc.dim(`→ http://localhost:${SELLER_DASHBOARD_PORT}`)}`,
       )
     }
     // No dashboard line here — with the dashboard chosen, `spree init`'s
     // summary already leads with it (served at /dashboard, plus the
     // customize command).
     if (!agentsReady) p.note(agentSetupHint(options.packageManager).join('\n'), 'AI coding agents')
-  } else {
-    printSuccessWithoutDocker(
-      projectName,
-      port,
-      storefrontReady,
-      dashboardReady,
-      sellerDashboardReady,
-      agentsReady,
-      options.packageManager,
-    )
+    return stopped
   }
+  printSuccessWithoutDocker(
+    cdDir,
+    port,
+    storefrontReady,
+    dashboardReady,
+    sellerDashboardReady,
+    agentsReady,
+    options.packageManager,
+  )
+  return false
 }
 
 function printSuccessWithoutDocker(
-  projectName: string,
+  cdDir: string,
   port: number,
   hasStorefront: boolean,
   hasDashboard: boolean,
@@ -251,7 +253,7 @@ function printSuccessWithoutDocker(
   const lines: string[] = [
     '',
     `${pc.bold('Next steps:')}`,
-    `  cd ${projectName}`,
+    `  cd ${cdDir}`,
     `  ${run} spree dev`,
     `  ${pc.dim('# First run completes setup automatically — pulls the latest image, seeds data, configures API keys.')}`,
   ]
@@ -260,7 +262,7 @@ function printSuccessWithoutDocker(
     lines.push(
       '',
       `  ${pc.dim('# In another terminal:')}`,
-      `  cd ${projectName}/apps/storefront`,
+      `  cd ${cdDir}/apps/storefront`,
       `  ${installCommand(pm)}`,
       `  ${pm} run dev`,
     )
@@ -292,7 +294,7 @@ function printSuccessWithoutDocker(
     lines.push(
       `${pc.bold('Seller Panel')}`,
       `  ${pc.dim('# In another terminal:')}`,
-      `  cd ${projectName}/apps/seller-dashboard`,
+      `  cd ${cdDir}/apps/seller-dashboard`,
       `  ${pm} run dev`,
       `  http://localhost:${SELLER_DASHBOARD_PORT}`,
       `  ${pc.dim('# sellers you invite from the Admin Dashboard sign in here')}`,

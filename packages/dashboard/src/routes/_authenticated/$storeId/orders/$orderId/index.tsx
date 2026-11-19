@@ -1,5 +1,5 @@
-import { Slot } from '@spree/dashboard-core'
-import { ErrorState, MetadataCard, ResourceLayout } from '@spree/dashboard-ui'
+import { RecordMetadataCard, Slot } from '@spree/dashboard-core'
+import { ErrorState, ResourceLayout } from '@spree/dashboard-ui'
 import { createFileRoute } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import {
@@ -65,6 +65,12 @@ function OrderDetailPage() {
         <>
           <FulfillmentsCard order={order} />
           <OrderDigitalLinksCard order={order} />
+          <PaymentsCard order={order} />
+          <TaxLinesCard order={order} />
+          <OrderDiscountsCard order={order} />
+          <FeesCard order={order} />
+          {/* The totals follow the payments and adjustments they add up. */}
+          <OrderSummaryCard order={order} />
           {/* Nothing can come back from an order that has not been placed:
               all three read fulfilled units, and a draft has none, so they
               would only ever render an empty card with a disabled action. */}
@@ -75,26 +81,19 @@ function OrderDetailPage() {
               <OrderClaimsCard order={order} />
             </>
           )}
-          <PaymentsCard order={order} />
-          <TaxLinesCard order={order} />
-          <OrderDiscountsCard order={order} />
-          <FeesCard order={order} />
           <CommissionLinesCard order={order} />
           <SellerTransfersCard order={order} />
-          <OrderSummaryCard order={order} />
           <EditableApiCustomFieldsProvider
             ownerType="order"
             ownerId={order.id}
             resourceType="order"
             resourceLabel={t('admin.nav.orders').toLowerCase()}
           >
-            <CustomFieldsInlineCard />
+            <CustomFieldsInlineCard collapsible />
           </EditableApiCustomFieldsProvider>
-          <MetadataCard
+          <RecordMetadataCard
             metadata={order.metadata}
-            title={t('admin.components.metadata_card.title')}
-            emptyTitle={t('admin.components.metadata_card.empty_title')}
-            emptyDescription={t('admin.components.metadata_card.empty_description')}
+            externalReferences={order.external_references}
           />
           <Slot name="order.form_main" context={{ order }} />
         </>

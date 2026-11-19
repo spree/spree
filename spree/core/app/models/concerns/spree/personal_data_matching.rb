@@ -90,11 +90,15 @@ module Spree
 
     # Rows of `model` whose `email` is this address, whatever its casing.
     #
+    # The exact match goes through the model, so a table whose email the app
+    # encrypts is still matched: SQL only ever sees its ciphertext.
+    #
     # @param model [Class]
     # @param email [String]
     # @return [ActiveRecord::Relation]
     def with_email(model, email)
-      model.where(model.arel_table[:email].lower.eq(email.to_s.downcase))
+      model.where(email: email.to_s).
+        or(model.where(model.arel_table[:email].lower.eq(email.to_s.downcase)))
     end
 
     # Rows at this address that no *other* person already owns.

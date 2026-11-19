@@ -31,10 +31,7 @@ export async function connectKnownClient(page: Page) {
  */
 export async function clearRegistrations(page: Page, storeId: string, accessToken: string) {
   const headers = { 'X-Spree-Store-Id': storeId, Authorization: `Bearer ${accessToken}` }
-  const res = await page.request.get('/api/v3/admin/oauth/applications?limit=100', { headers })
-  if (!res.ok()) throw new Error(`Listing clients failed: ${res.status()} ${await res.text()}`)
-
-  for (const client of (await res.json()).data ?? []) {
+  for (const client of await listClients(page, storeId, accessToken)) {
     const deleted = await page.request.delete(`/api/v3/admin/oauth/applications/${client.id}`, {
       headers,
     })
@@ -42,6 +39,38 @@ export async function clearRegistrations(page: Page, storeId: string, accessToke
       throw new Error(`Deleting ${client.id} failed: ${deleted.status()} ${await deleted.text()}`)
     }
   }
+}
+
+/** Every client this store has registered, read straight from the API. */
+export async function listClients(page: Page, storeId: string, accessToken: string) {
+  const headers = { 'X-Spree-Store-Id': storeId, Authorization: `Bearer ${accessToken}` }
+  const res = await page.request.get('/api/v3/admin/oauth/applications?limit=100', { headers })
+  if (!res.ok()) throw new Error(`Listing clients failed: ${res.status()} ${await res.text()}`)
+  return ((await res.json()).data ?? []) as {
+    id: string
+    name: string
+    client_id: string
+    redirect_uri: string
+  }[]
+}
+
+/** Registers a client straight through the API, as a store set up earlier would hold it. */
+export async function registerClient(
+  page: Page,
+  storeId: string,
+  accessToken: string,
+  data: { name: string; redirect_uri: string },
+) {
+  const registered = await page.request.post('/api/v3/admin/oauth/applications', {
+    headers: { 'X-Spree-Store-Id': storeId, Authorization: `Bearer ${accessToken}` },
+    data,
+  })
+  if (!registered.ok()) {
+    throw new Error(
+      `Registering ${data.name} failed: ${registered.status()} ${await registered.text()}`,
+    )
+  }
+  return registered.json()
 }
 
 /**
@@ -60,14 +89,10 @@ export async function seedConnection(
 ) {
   const headers = { 'X-Spree-Store-Id': storeId, Authorization: `Bearer ${accessToken}` }
 
-  const registered = await page.request.post('/api/v3/admin/oauth/applications', {
-    headers,
-    data: { name, redirect_uri: 'https://example.test/callback' },
+  const application = await registerClient(page, storeId, accessToken, {
+    name,
+    redirect_uri: 'https://example.test/callback',
   })
-  if (!registered.ok()) {
-    throw new Error(`Registering ${name} failed: ${registered.status()} ${await registered.text()}`)
-  }
-  const application = await registered.json()
 
   // A fixed verifier and its S256 challenge. The pair only has to be
   // self-consistent — the server checks one against the other.

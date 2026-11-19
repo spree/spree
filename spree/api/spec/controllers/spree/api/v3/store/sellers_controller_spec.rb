@@ -101,4 +101,43 @@ RSpec.describe Spree::Api::V3::Store::SellersController, type: :controller do
       expect(json_response['policies'].pluck('name')).not_to include('Someone Else')
     end
   end
+
+  # Merchant-managed values a storefront can use, such as a featured seller's
+  # position in navigation. Only fields marked storefront visible are shown.
+  describe 'custom_fields' do
+    let(:public_definition) { create(:custom_field_definition, resource_type: 'Spree::Seller', storefront_visible: true) }
+    let(:private_definition) { create(:custom_field_definition, :admin_only, resource_type: 'Spree::Seller') }
+    let!(:public_custom_field) { create(:custom_field, resource: seller, custom_field_definition: public_definition, value: 'public') }
+    let!(:private_custom_field) { create(:custom_field, resource: seller, custom_field_definition: private_definition, value: 'private') }
+
+    it 'omits custom fields unless they are asked for' do
+      get :show, params: { id: seller.slug }, as: :json
+
+      expect(json_response).not_to have_key('custom_fields')
+    end
+
+    it 'includes only storefront visible fields on show' do
+      get :show, params: { id: seller.slug, expand: 'custom_fields' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['custom_fields'].pluck('value')).to eq(['public'])
+    end
+
+    context 'on index' do
+      let!(:other_seller) { create(:seller, :approved, store: store) }
+
+      before { create(:custom_field, resource: other_seller, custom_field_definition: public_definition, value: 'other') }
+
+      it_behaves_like 'a list without N+1 queries' do
+        subject { get :index, params: { expand: 'custom_fields' }, as: :json }
+      end
+
+      it 'includes only storefront visible fields' do
+        get :index, params: { expand: 'custom_fields' }, as: :json
+
+        values = json_response['data'].to_h { |row| [row['id'], row['custom_fields'].pluck('value')] }
+        expect(values).to eq(seller.prefixed_id => ['public'], other_seller.prefixed_id => ['other'])
+      end
+    end
+  end
 end

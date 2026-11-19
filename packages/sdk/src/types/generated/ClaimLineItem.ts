@@ -15,7 +15,7 @@ interface ClaimLineItem {
   additional_tax_total: string | null;
   tax_total: string | null;
   /** `refund_amount` formatted with its currency symbol in the request's language.
-   * @deprecated Format `refund_amount` with its currency instead. Removed in 6.1. */
+   * @deprecated Format `refund_amount` with its currency instead. Removed in 6.5. */
   display_refund_amount: string | null;
   variant_id: string | null;
   replacement_variant_id: string | null;

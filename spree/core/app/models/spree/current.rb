@@ -96,6 +96,25 @@ module Spree
       super.presence || I18n.default_locale.name
     end
 
+    # Runs the block with +content_locale+ assigned, for work outside a request
+    # that reads a store's content in that store's own locales — an export, a
+    # mailer, a search document builder. Nothing assigns the content locale
+    # there, so base columns would be read as the application's default locale
+    # instead of the store's. Restores what was assigned before, which outside
+    # a request is nothing.
+    #
+    # @param locale [String, Symbol, nil] locale code
+    # @return [Object] the block's result
+    def with_content_locale(locale)
+      previous = attributes[:content_locale]
+      # A code, not a locale object: the Mobility column fallback compares it
+      # to the string form of the locale being read.
+      self.content_locale = locale&.to_s
+      yield
+    ensure
+      self.content_locale = previous
+    end
+
     # The country whose tax applies while browsing, before any address exists.
     # Fallback: the market being browsed -> the store's own country. An order
     # in hand answers this better (Spree::Purchase::Taxation#tax_country reads

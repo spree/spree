@@ -11,7 +11,8 @@
       "@spree/dashboard",
       "@spree/dashboard-core",
       "@spree/dashboard-ui",
-      "@spree/seller-dashboard"
+      "@spree/seller-dashboard",
+      "@spree/dashboard-sentry"
     ]
   ],
   "linked": [],

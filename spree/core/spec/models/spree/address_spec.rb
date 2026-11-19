@@ -39,7 +39,7 @@ describe Spree::Address, type: :model do
     end
   end
 
-  describe 'clone (deprecated, becomes the standard Ruby clone in 6.1)' do
+  describe 'clone (deprecated, becomes the standard Ruby clone in 6.3)' do
     before { allow(Spree::Deprecation).to receive(:warn) }
 
     it 'warns and points at #snapshot' do
@@ -705,6 +705,40 @@ describe Spree::Address, type: :model do
     end
   end
 
+  describe '#company' do
+    let(:company) { create(:company, name: 'Acme Logistics') }
+
+    it 'is the stored line' do
+      expect(create(:company_address, owner: company, company: 'Acme Logistics — Dock B').company).to eq('Acme Logistics — Dock B')
+    end
+
+    it "tracks the owning node's current name when nothing is stored" do
+      address = create(:company_address, owner: company, company: nil)
+      company.update!(name: 'Acme Freight')
+
+      expect(address.reload.company).to eq('Acme Freight')
+    end
+
+    it 'is nil when nothing is stored and no company owns the address' do
+      expect(create(:address, company: nil).company).to be_nil
+    end
+
+    # Stands in for a reader an app layers on the column, such as `encrypts :company, ignore_case: true`.
+    it 'reads through the attribute reader rather than the raw column' do
+      address = create(:address, company: 'acme logistics')
+      allow_any_instance_of(Spree::Address.send(:generated_attribute_methods)).to receive(:company).and_return('Acme Logistics')
+
+      expect(address.company).to eq('Acme Logistics')
+    end
+
+    it 'does not load a customer owner to find no company' do
+      address = Spree::Address.find(create(:address, user: create(:user), company: nil).id)
+
+      expect(address.company).to be_nil
+      expect(address.association(:owner)).not_to be_loaded
+    end
+  end
+
   describe '#to_s' do
     let(:address) { create(:address) }
 
@@ -887,7 +921,7 @@ describe Spree::Address, type: :model do
     end
   end
 
-  # The pre-6.0 names stay callable for one release. Nothing in core calls
+  # The pre-6.0 names stay callable until 6.3. Nothing in core calls
   # them, so without these they could break unnoticed.
   describe 'deprecated postal-code helpers' do
     it 'normalizes through the class-level shell' do
@@ -905,7 +939,7 @@ describe Spree::Address, type: :model do
   end
 
   describe '#require_postal_code?' do
-    # The pre-6.0 name stays overridable for one release: a decorator's
+    # The pre-6.0 name stays overridable until 6.3: a decorator's
     # require_zipcode? sits ahead of Spree::Address in the ancestry, so it
     # still decides. Otherwise the override would stop being called silently.
     it 'honors a host app override of the pre-6.0 require_zipcode?' do

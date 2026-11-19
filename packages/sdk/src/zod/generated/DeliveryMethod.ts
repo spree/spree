@@ -1,5 +1,6 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import { CustomFieldSchema } from './CustomField';
 
 export const DeliveryMethodSchema = z.object({
   id: z.string(),
@@ -10,6 +11,7 @@ export const DeliveryMethodSchema = z.object({
   digital: z.boolean(),
   pickup: z.boolean(),
   pickup_point: z.boolean(),
+  custom_fields: z.array(CustomFieldSchema).optional(),
 });
 
 export type DeliveryMethod = z.infer<typeof DeliveryMethodSchema>;

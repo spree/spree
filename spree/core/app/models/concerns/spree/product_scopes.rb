@@ -241,8 +241,8 @@ module Spree
       # (docs/plans/6.0-volume-pricing.md).
       def self.with_currency(currency)
         joins(variants: :prices).
-          where(Price.table_name => { currency: currency.upcase, price_list_id: nil }).
-          where.not(Price.table_name => { amount: nil }).
+          where(Price.table_name => { currency: currency.upcase }).
+          merge(Price.listing).
           distinct
       end
 

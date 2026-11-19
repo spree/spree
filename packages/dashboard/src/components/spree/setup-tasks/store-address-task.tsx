@@ -1,3 +1,4 @@
+import type { StockLocation } from '@spree/admin-sdk'
 import {
   AddressFormDialog,
   adminClient,
@@ -31,19 +32,57 @@ import type { SetupTaskSlotContext } from './types'
  */
 export function StoreAddressTask({ task }: SetupTaskSlotContext) {
   const { t } = useTranslation()
-  const queryClient = useQueryClient()
   const [editing, setEditing] = useState(false)
-  const update = useUpdateStockLocationById()
+  const { location, isLoading, failed } = usePrimaryStockLocation()
+  const hasAddress = Boolean(location?.address1)
 
-  // Two filtered requests rather than one page filtered in the browser, to
-  // match `Store#primary_location` exactly: a location that accepts returns
-  // wins outright, and only then default and name decide. The list also holds
-  // every seller's warehouse on a marketplace, so the operator's own
-  // returns-enabled row can sit well past any page we could fetch — and
-  // editing the wrong one means an address their parcels never come back to.
-  //
-  // The list endpoint cannot express the preference in one call: it orders by
-  // default then name, and its `sort` param collapses to a single key.
+  return (
+    <>
+      <p className="text-muted-foreground text-base">
+        {t('admin.pages.getting_started.tasks.setup_address.description')}
+      </p>
+
+      {isLoading ? (
+        <Skeleton className="h-9 w-64" />
+      ) : location ? (
+        <>
+          {hasAddress && <AddressBlock address={stockLocationToAddressBlock(location)} />}
+          <Button variant={task.done ? 'outline' : 'default'} onClick={() => setEditing(true)}>
+            {hasAddress ? <PencilIcon className="size-4" /> : <PlusIcon className="size-4" />}
+            {t('admin.pages.getting_started.tasks.setup_address.cta')}
+          </Button>
+        </>
+      ) : (
+        <p className={failed ? 'text-destructive text-base' : 'text-muted-foreground text-base'}>
+          {t(
+            failed
+              ? 'admin.errors.failed_to_load'
+              : 'admin.pages.getting_started.tasks.setup_address.no_location',
+          )}
+        </p>
+      )}
+
+      {editing && location && (
+        <StoreAddressDialog location={location} onClose={() => setEditing(false)} />
+      )}
+    </>
+  )
+}
+
+/**
+ * The location the store's address lives on.
+ *
+ * Two filtered requests rather than one page filtered in the browser, to
+ * match `Store#primary_location` exactly: a location that accepts returns
+ * wins outright, and only then default and name decide. The list also holds
+ * every seller's warehouse on a marketplace, so the operator's own
+ * returns-enabled row can sit well past any page we could fetch — and
+ * editing the wrong one means an address their parcels never come back to.
+ *
+ * The list endpoint cannot express the preference in one call: it orders by
+ * default then name, and its `sort` param collapses to a single key.
+ */
+export function usePrimaryStockLocation() {
   const firstParty = { seller_id_null: true, active_eq: true, limit: 1 }
   const {
     data: takesReturns,
@@ -64,62 +103,48 @@ export function StoreAddressTask({ task }: SetupTaskSlotContext) {
     enabled: !!takesReturns && !hasReturnsLocation,
   })
 
-  // `isFetching`, not `isLoading`: a disabled query stays pending forever, so
-  // the fallback request would hold the skeleton open once the first one hit.
-  const isLoading = fetchingReturns || fetchingAny
-  const location = takesReturns?.data[0] ?? anyActive?.data[0]
-  // A failed lookup must not read as "you have no warehouse" — that would
-  // send the merchant off to create a second one they do not need.
-  const failed = returnsFailed || anyFailed
+  return {
+    location: takesReturns?.data[0] ?? anyActive?.data[0],
+    // `isFetching`, not `isLoading`: a disabled query stays pending forever, so
+    // the fallback request would hold the skeleton open once the first one hit.
+    isLoading: fetchingReturns || fetchingAny,
+    // A failed lookup must not read as "you have no warehouse" — that would
+    // send the merchant off to create a second one they do not need.
+    failed: returnsFailed || anyFailed,
+  }
+}
 
-  const hasAddress = Boolean(location?.address1)
+export function StoreAddressDialog({
+  location,
+  onClose,
+}: {
+  location: StockLocation
+  onClose: () => void
+}) {
+  const { t } = useTranslation()
+  const queryClient = useQueryClient()
+  const update = useUpdateStockLocationById({
+    successMessage: t('admin.pages.getting_started.tasks.setup_address.saved'),
+  })
 
   return (
-    <>
-      <p className="text-muted-foreground text-sm">
-        {t('admin.pages.getting_started.tasks.setup_address.description')}
-      </p>
-
-      {isLoading ? (
-        <Skeleton className="h-9 w-64" />
-      ) : location ? (
-        <>
-          {hasAddress && <AddressBlock address={stockLocationToAddressBlock(location)} />}
-          <Button variant={task.done ? 'outline' : 'default'} onClick={() => setEditing(true)}>
-            {hasAddress ? <PencilIcon className="size-4" /> : <PlusIcon className="size-4" />}
-            {t('admin.pages.getting_started.tasks.setup_address.cta')}
-          </Button>
-        </>
-      ) : (
-        <p className={failed ? 'text-destructive text-sm' : 'text-muted-foreground text-sm'}>
-          {t(
-            failed
-              ? 'admin.errors.failed_to_load'
-              : 'admin.pages.getting_started.tasks.setup_address.no_location',
-          )}
-        </p>
-      )}
-
-      {editing && location && (
-        <AddressFormDialog
-          title={t('admin.pages.getting_started.tasks.setup_address.title')}
-          address={stockLocationToEditableAddress(location)}
-          open
-          business
-          onOpenChange={setEditing}
-          onSave={async (values) => {
-            await update.mutateAsync({
-              id: location.id,
-              params: editableAddressToStockLocationParams(values),
-            })
-            // The checklist reads this address off the store payload, so the
-            // tick and the nav badge only move once the store is re-read.
-            await queryClient.invalidateQueries({ queryKey: [STORE_QUERY_RESOURCE] })
-            setEditing(false)
-          }}
-          isPending={update.isPending}
-        />
-      )}
-    </>
+    <AddressFormDialog
+      title={t('admin.pages.getting_started.tasks.setup_address.title')}
+      address={stockLocationToEditableAddress(location)}
+      open
+      business
+      onOpenChange={(open) => !open && onClose()}
+      onSave={async (values) => {
+        await update.mutateAsync({
+          id: location.id,
+          params: editableAddressToStockLocationParams(values),
+        })
+        // The checklist reads this address off the store payload, so its tick
+        // only moves once the store is re-read.
+        await queryClient.invalidateQueries({ queryKey: [STORE_QUERY_RESOURCE] })
+        onClose()
+      }}
+      isPending={update.isPending}
+    />
   )
 }

@@ -13,7 +13,7 @@ const cart = await client.carts.fulfillments.update(
     selected_delivery_rate_id: 'dr_abc123',
   },
   {
-    token: '<token>',
+    spreeToken: '<cart-token>',
   },
 )
 

@@ -184,6 +184,115 @@ RSpec.describe SpreeStripe::PayoutProvider do
     end
   end
 
+  describe '#reverse!' do
+    let(:earning) do
+      create(:seller_transfer, :completed, seller: seller, order: order, amount: 42.5, currency: 'USD',
+                                           reference: 'tr_1')
+    end
+    let(:reversal) do
+      create(:seller_transfer, :reversal, seller: seller, order: order, reversed_from: earning,
+                                          amount: -10.25, currency: 'USD')
+    end
+
+    let(:reversals_made) { [] }
+
+    before do
+      allow(Stripe::Transfer).to receive(:create_reversal).and_return(Stripe::StripeObject.construct_from(id: 'trr_1'))
+      allow(Stripe::Transfer).to receive(:list_reversals) do
+        Stripe::ListObject.construct_from(object: 'list', data: reversals_made, has_more: false)
+      end
+    end
+
+    it "takes the seller's share back from the transfer that paid the earning" do
+      expect(Stripe::Transfer).to receive(:create_reversal).
+        with('tr_1', hash_including(amount: 1025), hash_including(idempotency_key: "spree-#{reversal.prefixed_id}")).
+        and_return(Stripe::StripeObject.construct_from(id: 'trr_1'))
+
+      described_class.new.reverse!(reversal)
+
+      expect(reversal.reload).to be_completed
+      expect(reversal.reference).to eq('trr_1')
+    end
+
+    # Until the earning is sent there is no transfer to take from, so the
+    # reversal stays owed and the pending-transfers job asks again.
+    it 'waits while the earning has not reached Stripe' do
+      earning.update!(status: 'processing', reference: nil)
+
+      expect(Stripe::Transfer).not_to receive(:create_reversal)
+
+      described_class.new.reverse!(reversal)
+
+      expect(reversal.reload).to be_pending
+    end
+
+    it 'takes nothing back from an earning that was never sent' do
+      earning.update!(status: 'failed', reference: nil)
+
+      expect(Stripe::Transfer).not_to receive(:create_reversal)
+
+      described_class.new.reverse!(reversal)
+
+      expect(reversal.reload).to be_completed
+    end
+
+    # Confirmed by hand, perhaps — the money may well be on the seller's
+    # account, so calling the reversal done would be a guess.
+    it 'leaves a confirmed earning with no transfer to a person' do
+      earning.update!(reference: nil)
+
+      expect { described_class.new.reverse!(reversal) }.to raise_error(Spree::Core::AmbiguousGatewayError)
+    end
+
+    # Written while the earning still read the sale's currency, then sent and
+    # converted on the way in.
+    it 'settles where its earning settled' do
+      earning.update!(settled_amount: 39.10, settled_currency: 'EUR')
+
+      described_class.new.reverse!(reversal)
+
+      expect(reversal.reload.settled_currency).to eq('EUR')
+      expect(reversal.settled_amount).to eq(-9.43)
+    end
+
+    it 'reports a lost answer as an outcome nobody knows' do
+      allow(Stripe::Transfer).to receive(:create_reversal).and_raise(Stripe::APIConnectionError, 'timed out')
+
+      expect { described_class.new.reverse!(reversal) }.to raise_error(Spree::Core::AmbiguousGatewayError)
+    end
+
+    # An earlier attempt reversed the transfer but never recorded it, and its
+    # idempotency key may have expired since — asking again would take the
+    # money twice.
+    context 'when an earlier attempt already made the reversal' do
+      let(:reversals_made) do
+        [
+          { id: 'trr_other', object: 'transfer_reversal', metadata: { spree_seller_transfer_id: '0' } },
+          { id: 'trr_made', object: 'transfer_reversal', metadata: { spree_seller_transfer_id: reversal.id.to_s } }
+        ]
+      end
+
+      it 'records that reversal instead of making another' do
+        expect(Stripe::Transfer).not_to receive(:create_reversal)
+
+        described_class.new.reverse!(reversal)
+
+        expect(reversal.reload).to be_completed
+        expect(reversal.reference).to eq('trr_made')
+      end
+    end
+
+    # Nothing moved, so the retry job may simply ask again.
+    it 'leaves a failed lookup to be retried' do
+      allow(Stripe::Transfer).to receive(:list_reversals).and_raise(Stripe::APIConnectionError, 'timed out')
+
+      expect { described_class.new.reverse!(reversal) }.to raise_error(Spree::Core::GatewayError) do |error|
+        expect(error).not_to be_a(Spree::Core::AmbiguousGatewayError)
+      end
+      expect(Stripe::Transfer).not_to have_received(:create_reversal)
+    end
+  end
+
   describe '#pay!' do
     let(:payout) { create(:seller_payout, seller: seller, amount: 42.5, currency: 'USD') }
 

@@ -6,6 +6,8 @@ module Spree
         # shopper also gets, plus the operational state and the settlement and
         # tax configuration only the operator sets.
         class SellerSerializer < V3::SellerSerializer
+          include Concerns::ExternalReferencesAttribute
+
           typelize status: [:string, enum: Spree::Seller.statuses, enum_type_name: 'SellerStatus'],
                    legal_name: [:string, nullable: true],
                    registration_number: [:string, nullable: true],
@@ -18,7 +20,6 @@ module Spree
                    deleted_at: [:string, nullable: true],
                    on_holiday: :boolean, sellable: :boolean,
                    products_count: :number, users_count: :number,
-                   onboarding_progress: '{ done: number; total: number }',
                    onboarding_complete: :boolean,
                    metadata: 'Record<string, unknown> | null'
 
@@ -54,6 +55,11 @@ module Spree
           # so the minimum-products requirement asks the same question free.
           attributes :products_count
 
+          # What is live and what waits on the operator's review, read in the
+          # same query as the total above.
+          typelize(Spree::Product::ALL_STATUSES.to_h { |status| [status.to_sym, :number] })
+          attribute :products_count_by_status, &:products_count_by_status
+
           attributes :users_count
 
           # How far through the marketplace's checklist this seller is — what
@@ -61,7 +67,8 @@ module Spree
           # requirements themselves, with their submissions, stay on the
           # heavier `onboarding` action; a list of sellers needs the number,
           # not the rows behind it.
-          attributes :onboarding_progress
+          typelize({ done: :number, total: :number })
+          attribute :onboarding_progress, &:onboarding_progress
 
           attribute :onboarding_complete, &:onboarding_complete?
 
@@ -75,6 +82,13 @@ module Spree
           one :returns_address,
               resource: proc { Spree.api.admin_address_serializer },
               if: proc { |seller| seller.returns_address.present? }
+
+          # The stock location the returns address is read from. The address
+          # is not the seller's own to write — it is edited on this location.
+          typelize returns_location_id: [:string, nullable: true]
+          prefixed_id_attributes :returns_location
+
+          expandable_custom_fields admin: true
         end
       end
     end

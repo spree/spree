@@ -30,7 +30,7 @@ export function SellerPicker() {
           <CardTitle>{t('seller_picker.title')}</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-2">
-          <p className="mb-2 text-muted-foreground text-sm">{t('seller_picker.subtitle')}</p>
+          <p className="mb-2 text-muted-foreground text-base">{t('seller_picker.subtitle')}</p>
           {sellers.map((seller) => (
             <Button key={seller.id} variant="outline" className="justify-between" asChild>
               <Link to="/$sellerId" params={{ sellerId: seller.id }}>

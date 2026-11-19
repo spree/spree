@@ -24,7 +24,7 @@ function EditStockTransferPage() {
     navigate({ to: '/$storeId/transfers/$transferId', params: { storeId, transferId } })
 
   if (isLoading || !transfer) {
-    return <div className="p-4 text-muted-foreground text-sm">{t('admin.common.loading')}</div>
+    return <div className="p-4 text-muted-foreground text-base">{t('admin.common.loading')}</div>
   }
 
   // The endpoint refuses the write past draft, so the screen says so rather

@@ -268,6 +268,7 @@ RSpec.describe 'Admin Collections API', type: :request, swagger_doc: 'api-refere
   path '/api/v3/admin/collections/{collection_id}/products/{id}/reposition' do
     patch 'Reposition a collection product' do
       tags 'Collections'
+      operationId 'collections_reposition_product'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]

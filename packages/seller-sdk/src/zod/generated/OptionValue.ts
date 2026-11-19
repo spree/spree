@@ -1,5 +1,6 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import { CustomFieldSchema } from './CustomField';
 
 export const OptionValueSchema = z.object({
   id: z.string(),
@@ -11,6 +12,7 @@ export const OptionValueSchema = z.object({
   option_type_name: z.string(),
   option_type_label: z.string(),
   image_url: z.string().nullable(),
+  custom_fields: z.array(CustomFieldSchema).optional(),
 });
 
 export type OptionValue = z.infer<typeof OptionValueSchema>;

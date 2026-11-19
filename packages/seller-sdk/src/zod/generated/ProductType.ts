@@ -4,6 +4,7 @@ import { z } from 'zod';
 export const ProductTypeSchema = z.object({
   id: z.string(),
   name: z.string(),
+  option_type_ids: z.array(z.string()),
   option_type_labels: z.array(z.string()),
 });
 

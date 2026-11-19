@@ -426,7 +426,7 @@ ru:
       not_locked: не был заблокирован
       not_saved:
         many: "%{count} ошибок препятствуют сохранению %{resource}:"
-        one: 'Одна ошибка препятствует сохранению %{resource}:'
+        one: "%{count} ошибка препятствует сохранению %{resource}:"
         other: "%{count} ошибки препятствуют сохранению %{resource}:"
   number:
     percentage:

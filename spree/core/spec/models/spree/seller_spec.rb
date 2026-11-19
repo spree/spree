@@ -128,6 +128,23 @@ describe Spree::Seller do
 
       expect(product.reload.seller_id).to be_nil
     end
+
+    it 'counts them by status, every status present' do
+      seller = create(:seller, :approved, store: store)
+      create_list(:product, 2, store: store, seller: seller, status: 'active')
+      create(:product, store: store, seller: seller, status: 'proposed')
+
+      expect(seller.products_count_by_status).to eq(
+        'draft' => 0, 'active' => 2, 'archived' => 0, 'proposed' => 1, 'rejected' => 0
+      )
+      expect(seller.products_count).to eq(3)
+    end
+
+    it "counts none for an unsaved seller, not the operator's own" do
+      create(:product, store: store, status: 'active')
+
+      expect(build(:seller, store: store).products_count).to eq(0)
+    end
   end
 
   describe 'translations' do
@@ -220,6 +237,64 @@ describe Spree::Seller do
       expect(reloaded.billing_address.owner).to eq(seller)
       expect(reloaded.billing_address.require_name?).to be(false)
       expect(reloaded.update(billing_address: { city: 'Manchester' })).to be(true)
+    end
+
+    describe 'returns address' do
+      let(:returns_address) do
+        { first_name: 'Ada', company: 'Sparks Returns', address1: '1 Returns Way', city: 'Leeds',
+          postal_code: 'LS1 1AA', country_code: 'GB' }
+      end
+
+      it "writes it onto the seller's returns location" do
+        location = create(:stock_location, store: store, seller: seller, returns_enabled: true)
+
+        seller.update!(returns_address: returns_address)
+
+        expect(location.reload).to have_attributes(address1: '1 Returns Way', zipcode: 'LS1 1AA',
+                                                   company: 'Sparks Returns')
+        expect(seller.reload.returns_address.address1).to eq('1 Returns Way')
+      end
+
+      it 'creates a returns location for a seller who has none' do
+        seller.update!(returns_address: returns_address)
+
+        location = seller.reload.returns_location
+        expect(location).to have_attributes(name: seller.name, store: store, returns_enabled: true,
+                                            address1: '1 Returns Way')
+        expect(seller.stock_locations.count).to eq(1)
+      end
+
+      it 'keeps the state when the same country comes in another case' do
+        location = create(:stock_location, store: store, seller: seller, returns_enabled: true,
+                                           country_code: 'US', state_code: 'NY')
+
+        seller.update!(returns_address: { country_code: 'us', address1: '2 Returns Way' })
+
+        expect(location.reload).to have_attributes(country_code: 'US', state_code: 'NY')
+      end
+
+      # Until the seller has an id, the location's name would be checked
+      # against the operator's own locations.
+      it "creates one named like an operator's own location" do
+        create(:stock_location, store: store, name: 'Sparks Audio')
+
+        seller = build(:seller, store: store, name: 'Sparks Audio')
+        seller.returns_address = returns_address
+
+        expect(seller.save).to be(true)
+        expect(seller.reload.returns_location.name).to eq('Sparks Audio')
+      end
+
+      # An inactive location is never the returns location, so a new one is
+      # made — under a name this seller already uses.
+      it "reports the location's errors under the address" do
+        create(:stock_location, store: store, seller: seller, name: seller.name, active: false)
+
+        seller.returns_address = returns_address
+
+        expect(seller).not_to be_valid
+        expect(seller.errors.attribute_names).to include(:'returns_address.name')
+      end
     end
 
     # A seller is paranoid, so destroy is a soft delete. Taking the addresses

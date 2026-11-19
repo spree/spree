@@ -243,6 +243,32 @@ RSpec.describe Spree::Current do
     end
   end
 
+  describe '.with_content_locale' do
+    it 'runs the block in the given locale' do
+      expect(described_class.with_content_locale('nl') { described_class.content_locale }).to eq('nl')
+    end
+
+    it 'restores an assigned content locale afterwards' do
+      described_class.content_locale = 'de'
+
+      described_class.with_content_locale('nl') { :noop }
+
+      expect(described_class.content_locale).to eq('de')
+    end
+
+    it 'accepts a symbol, which the column fallback compares as a string' do
+      expect(described_class.with_content_locale(:nl) { described_class.content_locale }).to eq('nl')
+    end
+
+    # Left assigned, one store's locale would answer for whatever this job or
+    # thread reads next.
+    it 'leaves the content locale unassigned where it was unassigned before' do
+      described_class.with_content_locale('nl') { :noop }
+
+      expect(described_class.attributes[:content_locale]).to be_nil
+    end
+  end
+
   describe '.reset' do
     let(:store) { create(:store) }
     let(:country) { create(:country) }

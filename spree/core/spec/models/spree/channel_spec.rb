@@ -197,7 +197,7 @@ RSpec.describe Spree::Channel, type: :model do
       channel.update_column(:updated_at, 1.day.ago)
       old_updated_at = channel.reload.updated_at
 
-      Timecop.travel(1.second) do
+      travel(1.second) do
         channel.add_products([product.id])
       end
 
@@ -228,7 +228,7 @@ RSpec.describe Spree::Channel, type: :model do
       channel.update_column(:updated_at, 1.day.ago)
       old_updated_at = channel.reload.updated_at
 
-      Timecop.travel(1.second) do
+      travel(1.second) do
         channel.remove_products([product.id])
       end
 

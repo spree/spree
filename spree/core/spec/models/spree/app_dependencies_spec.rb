@@ -37,6 +37,63 @@ describe Spree::Core::Dependencies, type: :model do
     end
   end
 
+  describe '#register' do
+    it 'adds a key an extension owns, resolved like a core one' do
+      deps.register(:extension_thing_workflow, 'MyCustomAddItemService')
+
+      expect(deps.extension_thing_workflow).to eq('MyCustomAddItemService')
+      expect(deps.extension_thing_workflow_class).to eq(MyCustomAddItemService)
+      expect(deps.injection_point?(:extension_thing_workflow)).to be(true)
+      expect(deps.injection_points).to include(:extension_thing_workflow)
+    end
+
+    it 'lets a host app replace the registered default, with the override tracked' do
+      deps.register(:extension_thing_workflow, 'Spree::Carts::AddItem')
+      deps.extension_thing_workflow = MyCustomAddItemService
+
+      expect(deps.extension_thing_workflow_class).to eq(MyCustomAddItemService)
+      expect(deps.overridden?(:extension_thing_workflow)).to be(true)
+      expect(deps.current_values.find { |dep| dep[:name] == :extension_thing_workflow }).
+        to include(default: 'Spree::Carts::AddItem', current: MyCustomAddItemService, overridden: true)
+    end
+
+    # Two gems claiming one name would otherwise replace each other in load
+    # order, with nothing to say so.
+    it 'refuses a key that already exists' do
+      deps.register(:extension_thing_workflow, 'MyCustomAddItemService')
+
+      expect { deps.register(:extension_thing_workflow, 'Spree::Carts::AddItem') }.to raise_error(ArgumentError)
+      expect { deps.register(:cart_add_item_workflow, 'MyCustomAddItemService') }.to raise_error(ArgumentError)
+    end
+
+    it 'refuses a key that would shadow an existing method' do
+      expect { deps.register(:cart_add_item_workflow_class, 'MyCustomAddItemService') }.to raise_error(ArgumentError)
+      expect(deps.cart_add_item_workflow_class).to eq(Spree::Carts::AddItem)
+      expect { deps.register(:search_provider, 'MyCustomAddItemService') }.to raise_error(ArgumentError)
+      deps.define_singleton_method(:extension_thing_workflow=) { |_value| nil }
+      expect { deps.register(:extension_thing_workflow, 'MyCustomAddItemService') }.to raise_error(ArgumentError)
+    end
+
+    it 'leaves nothing registered when the default raises' do
+      expect { deps.register(:extension_thing_workflow, -> { raise 'boom' }) }.to raise_error('boom')
+      expect(deps.injection_point?(:extension_thing_workflow)).to be(false)
+    end
+
+    it 'keeps the key on the instance it was registered on' do
+      deps.register(:extension_thing_workflow, 'MyCustomAddItemService')
+
+      expect(described_class.new.injection_point?(:extension_thing_workflow)).to be(false)
+    end
+
+    it 'is reachable as Spree.<key>' do
+      deps.register(:extension_thing_workflow, 'MyCustomAddItemService')
+      stub_const('Spree::Dependencies', deps)
+
+      expect(Spree.extension_thing_workflow).to eq(MyCustomAddItemService)
+      expect(Spree).to respond_to(:extension_thing_workflow)
+    end
+  end
+
   describe '#overrides' do
     it 'returns empty hash when no overrides' do
       expect(deps.overrides).to eq({})

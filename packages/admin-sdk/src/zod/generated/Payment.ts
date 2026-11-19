@@ -2,6 +2,7 @@
 import { z } from 'zod';
 import type Payment from '../../types/generated/Payment';
 import { CreditCardSchema } from './CreditCard';
+import { CustomFieldSchema } from './CustomField';
 import { OrderSchema } from './Order';
 import { PaymentCaptureEventSchema } from './PaymentCaptureEvent';
 import { PaymentMethodSchema } from './PaymentMethod';
@@ -21,6 +22,7 @@ export const PaymentSchema = z.object({
   source_id: z.string().nullable(),
   get source() { return z.union([CreditCardSchema, StoreCreditSchema, PaymentSourceSchema]).nullable(); },
   payment_method: PaymentMethodSchema.optional(),
+  custom_fields: z.array(CustomFieldSchema).optional(),
   metadata: z.record(z.string(), z.unknown()),
   avs_response: z.string().nullable(),
   cvv_response_code: z.string().nullable(),
@@ -30,6 +32,8 @@ export const PaymentSchema = z.object({
   updated_at: z.string(),
   avs_risky: z.boolean(),
   cvv_risky: z.boolean(),
+  can_void: z.boolean(),
+  can_capture: z.boolean(),
   captured_amount: z.string(),
   order_id: z.string().nullable(),
   capture_events: z.array(PaymentCaptureEventSchema).optional(),
@@ -47,6 +51,7 @@ export const PaymentSchema = z.object({
   source_id: z.ZodType<Payment['source_id']>;
   source: z.ZodType<Payment['source']>;
   payment_method: z.ZodOptional<z.ZodType<Exclude<Payment['payment_method'], undefined>>>;
+  custom_fields: z.ZodOptional<z.ZodType<Exclude<Payment['custom_fields'], undefined>>>;
   metadata: z.ZodType<Payment['metadata']>;
   avs_response: z.ZodType<Payment['avs_response']>;
   cvv_response_code: z.ZodType<Payment['cvv_response_code']>;
@@ -56,6 +61,8 @@ export const PaymentSchema = z.object({
   updated_at: z.ZodType<Payment['updated_at']>;
   avs_risky: z.ZodType<Payment['avs_risky']>;
   cvv_risky: z.ZodType<Payment['cvv_risky']>;
+  can_void: z.ZodType<Payment['can_void']>;
+  can_capture: z.ZodType<Payment['can_capture']>;
   captured_amount: z.ZodType<Payment['captured_amount']>;
   order_id: z.ZodType<Payment['order_id']>;
   capture_events: z.ZodOptional<z.ZodType<Exclude<Payment['capture_events'], undefined>>>;

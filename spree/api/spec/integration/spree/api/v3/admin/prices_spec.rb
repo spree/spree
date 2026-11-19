@@ -251,6 +251,7 @@ RSpec.describe 'Admin Prices API', type: :request, swagger_doc: 'api-reference/a
   path '/api/v3/admin/prices/bulk_destroy' do
     delete 'Bulk-delete prices' do
       tags 'Pricing'
+      agent_tool false, reason: 'Deletes many prices in one call behind a single confirmation; delete_resource removes them one at a time.'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]

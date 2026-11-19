@@ -411,11 +411,15 @@
         "add": "Add rule",
         "description": "Choose products by hand, or let rules keep the collection up to date.",
         "remove": "Remove rule",
-        "title": "Membership"
+        "title": "Membership",
+        "on_sale": "On sale",
+        "days": "days",
+        "days_label": "Published within",
+        "tags_placeholder": "Pick tags…"
       },
       "rules_match_policies": {
-        "all": "all conditions",
-        "any": "any condition"
+        "all": "All rules must match",
+        "any": "Any rule may match"
       },
       "search_placeholder": "Search collections…",
       "seo": {
@@ -553,7 +557,10 @@
       },
       "roles_enterprise_help": "Members you add here can buy for this company and manage its directory. Roles, approval workflows and spending limits come with Spree Enterprise.",
       "roles_enterprise_title": "Roles and approvals are an Enterprise feature",
-      "title": "Members"
+      "title": "Members",
+      "columns": {
+        "member": "Member"
+      }
     },
     "components": {
       "adjustment_action_editor": {
@@ -625,14 +632,16 @@
         "delete_failed": "Failed to delete customer group",
         "deleted": "Customer group deleted",
         "update_failed": "Failed to update customer group",
-        "updated": "Customer group updated"
+        "updated": "Customer group updated",
+        "load_failed": "Could not load this customer group"
       }
     },
     "customers": {
       "autocomplete": {
         "empty": "No customers match",
         "empty_for_company": "No customers can buy for this company",
-        "placeholder": "Search customers…"
+        "placeholder": "Search customers…",
+        "add_new": "Add new customer"
       },
       "columns": {
         "companies": "Companies",
@@ -717,7 +726,26 @@
           "search_placeholder": "Search by name…",
           "title": "Customer Groups"
         },
-        "view_members": "View members"
+        "view_members": "View members",
+        "detail": {
+          "details": "Details",
+          "members": "Members",
+          "customer": "Customer",
+          "add_member": "Add customer",
+          "add_member_title": "Add a customer to this group",
+          "add_member_description": "Pick an existing customer. They keep everything else; they just join this group.",
+          "members_empty": "No customers in this group yet",
+          "remove_member": "Remove from group",
+          "remove_confirm": {
+            "title": "Remove from this group?",
+            "message": "{{name}} stays a customer; they just leave this group."
+          },
+          "messages": {
+            "member_added": "Customer added to the group",
+            "member_removed": "Customer removed from the group",
+            "member_change_failed": "Couldn't update the group's members"
+          }
+        }
       },
       "new_sheet_description": "Customers created here have no password set. They'll get a magic link the first time they sign in.",
       "privacy": {
@@ -997,6 +1025,44 @@
           },
           "subtitle": "See who changed what in your store, and when.",
           "title": "Audit log"
+        },
+        "category_mapper": {
+          "benefits": {
+            "current": {
+              "description": "Products are added to the right categories when they are imported, when the seller changes them and when you change a mapping.",
+              "title": "Always up to date"
+            },
+            "kept": {
+              "description": "Categories you add or remove by hand stay as you left them. The mapper only takes out what it added.",
+              "title": "Your changes stay"
+            },
+            "once": {
+              "description": "Map a seller's category to one of yours and every product in it follows. Map the same category for many sellers at once.",
+              "title": "Map once"
+            }
+          },
+          "intro": "Every seller organizes their products their own way. Map each seller's categories to your marketplace's categories once, and their products are added to your categories when they are imported and whenever they change.",
+          "nav": "Category mapper",
+          "steps": {
+            "add": {
+              "description": "Products are added to your categories automatically.",
+              "title": "Add"
+            },
+            "import": {
+              "description": "Seller products arrive with the seller's own categories.",
+              "title": "Import"
+            },
+            "map": {
+              "description": "You map each seller category to one of your categories.",
+              "title": "Map"
+            },
+            "review": {
+              "description": "Products reach your review already in their categories.",
+              "title": "Review"
+            }
+          },
+          "subtitle": "Put every seller's products into your categories automatically.",
+          "title": "Category mapper"
         },
         "company_onboarding": {
           "benefits": {
@@ -1367,7 +1433,8 @@
       },
       "company_membership": {
         "email": {
-          "help": "An existing customer joins immediately; anyone else gets an emailed invitation.",
+          "label": "Or invite by email",
+          "help": "Someone who is not a customer yet gets an emailed invitation.",
           "placeholder": "buyer@example.com"
         }
       },
@@ -1573,14 +1640,6 @@
         "quantity": {
           "help": "1 issues a single card. More than 1 issues a batch with auto-generated codes.",
           "label": "Quantity"
-        }
-      },
-      "invitation_acceptance": {
-        "password": {
-          "label": "Password"
-        },
-        "password_confirmation": {
-          "label": "Confirm password"
         }
       },
       "issued_at": {
@@ -2007,22 +2066,8 @@
         "label": "Roles"
       },
       "seller": {
-        "about": {
-          "help": "Shown on the seller’s storefront profile.",
-          "label": "About"
-        },
-        "billing_email": {
-          "help": "Where commission invoices and payout notices go, if different.",
-          "label": "Billing email"
-        },
         "contact_email": {
-          "help": "Where invitations and marketplace notices go.",
           "placeholder": "hello@sparks.example"
-        },
-        "holiday_mode_until": {
-          "help": "The catalog stays visible but nothing can be bought until then.",
-          "label": "Away until",
-          "placeholder": "Pick a date"
         },
         "minimum_payout_amount": {
           "help": "Balances below this carry over to the next payout.",
@@ -2035,12 +2080,12 @@
           "help": "How often this seller is paid.",
           "label": "Payout schedule"
         },
-        "slug": {
-          "help": "Used in the seller’s storefront address. Derived from the name when left empty."
-        },
         "tax_remittance": {
           "help": "Who accounts for consumer tax on this seller’s sales.",
           "label": "Tax remitted by"
+        },
+        "slug": {
+          "help": "Used in the seller’s storefront address. Derived from the name when left empty."
         }
       },
       "state": {
@@ -2224,8 +2269,7 @@
           "label": "Send transactional emails to customers"
         },
         "timezone": {
-          "label": "Timezone",
-          "placeholder": "Select a timezone"
+          "label": "Timezone"
         },
         "unit_system": {
           "label": "Unit system"
@@ -2234,7 +2278,7 @@
           "label": "Weight unit"
         },
         "show_products_without_price": {
-          "help": "List products that have no price in the shopper’s currency.",
+          "help": "When off, products with no price in the shopper’s currency are hidden from the storefront.",
           "label": "Show products without a price"
         },
         "stock_reservations_enabled": {
@@ -2370,6 +2414,30 @@
         "email_font": {
           "label": "Font",
           "help": "Email apps that can't load it fall back to a similar font."
+        },
+        "seo_title": {
+          "label": "SEO title",
+          "help": "The title search engines and browser tabs show for your storefront's home page."
+        },
+        "meta_description": {
+          "label": "Meta description",
+          "help": "A short summary search engines show under the title."
+        },
+        "meta_keywords": {
+          "label": "Meta keywords",
+          "help": "Comma-separated keywords for search engines."
+        },
+        "facebook": {
+          "label": "Facebook",
+          "placeholder": "https://facebook.com/yourstore"
+        },
+        "twitter": {
+          "label": "X (Twitter)",
+          "placeholder": "@yourstore"
+        },
+        "instagram": {
+          "label": "Instagram",
+          "placeholder": "@yourstore"
         }
       },
       "store_credit": {
@@ -2679,7 +2747,7 @@
         "shipping": "Shipping",
         "tax": "Tax"
       },
-      "manage_payment_methods": "Manage payment methods",
+      "manage_payment_methods": "Manage payments",
       "messages": {
         "connected": "Integration connected",
         "disconnected": "Integration disconnected",
@@ -2705,25 +2773,6 @@
       "title": "Integrations",
       "toggle_label": "Turn {{name}} on or off",
       "view_cta": "View"
-    },
-    "invitation": {
-      "accepting": "Accepting…",
-      "could_not_accept": "Could not accept invitation",
-      "create_and_accept": "Create account & accept",
-      "create_to_accept": ". Create your account to accept.",
-      "generic_error_message": "Something went wrong. Please try again.",
-      "generic_error_title": "Could not load invitation",
-      "invited_as_role": " as {{role}}",
-      "invited_by": "{{email}} invited you",
-      "invited_generic": "You have been invited",
-      "join_store": "Join {{store}}",
-      "loading": "Loading invitation…",
-      "missing_token_message": "This link looks incomplete. Ask whoever invited you to send it again.",
-      "missing_token_title": "Missing invitation token",
-      "not_found_message": "This invitation has expired, been revoked, or already been accepted. Ask the inviter to send a new one.",
-      "not_found_title": "Invitation not found",
-      "sign_in_and_accept": "Sign in & accept",
-      "sign_in_to_accept": ". Sign in to accept."
     },
     "jurisdiction": {
       "everywhere": "Everywhere"
@@ -2812,7 +2861,9 @@
     "markets": {
       "add_cta": "Add market",
       "columns": {
-        "default": "Default"
+        "default": "Default",
+        "locale": "Locale",
+        "regions": "Regions"
       },
       "create_description": "Group countries into a single pricing region with its own currency and locales.",
       "create_label": "Create market",
@@ -2832,12 +2883,14 @@
         "deleted": "Market deleted",
         "updated": "Market updated"
       },
+      "regions_count_one": "{{count}} region",
+      "regions_count_other": "{{count}} regions",
       "search_placeholder": "Search by name…",
+      "search_regions": "Search regions",
       "tax_exclusive": "Exclusive",
       "tax_inclusive": "Inclusive"
     },
     "media_library": {
-      "choose_from_library": "Choose from library",
       "delete_confirm": {
         "in_use_message_one": "Deleting “{{name}}” removes it from your library and from the {{count}} place using it. Descriptions that embed it will lose the image.",
         "in_use_message_other": "Deleting “{{name}}” removes it from your library and from all {{count}} places using it. Descriptions that embed it will lose the image.",
@@ -3238,7 +3291,8 @@
           "load_error": "Could not load the payments for this order.",
           "view_at_gateway": "View at {{gateway}}",
           "view_details": "View details",
-          "failed_card_checks": "Failed card checks"
+          "failed_card_checks": "Failed card checks",
+          "card_checks_unavailable": "Card checks not available"
         },
         "priced_by": "Priced by {{name}}",
         "purchase_order": {
@@ -3274,6 +3328,7 @@
         "variant_search": {
           "description": "Search for a product variant to add to this order.",
           "empty": "No variants found",
+          "no_permission": "Your role cannot view products, so it cannot search the catalog. Ask an admin to add View products to your role.",
           "label": "Search variant",
           "placeholder": "Type product name or SKU (min 3 chars)…",
           "sku_prefix": "SKU"
@@ -3299,6 +3354,7 @@
           "check": {
             "passed": "Passed",
             "failed": "Did not pass",
+            "unavailable": "Not available",
             "not_checked": "Not checked"
           },
           "captures": "Captures",
@@ -3340,6 +3396,7 @@
         "empty": "This order has no items.",
         "fully_fulfilled": "This order is fully fulfilled and can no longer be edited.",
         "items_title": "Items",
+        "saved_not_reloaded": "Saved, but the order couldn't be reloaded. Refresh the page to see the latest totals.",
         "subtitle": "Order {{number}}",
         "title": "Edit order",
         "totals_hint": "Totals are recalculated by the server after you save.",
@@ -3384,10 +3441,8 @@
       "item_count_one": "{{count}} item",
       "item_count_other": "{{count}} items",
       "new": {
-        "add_variant": "Add a variant",
         "creates_draft_note": "Creates a draft order. Add payments and complete it after creation.",
         "items_table": {
-          "qty": "Qty",
           "sku": "SKU",
           "variant": "Variant"
         },
@@ -3482,6 +3537,10 @@
         "new_cta": "New Customer"
       },
       "getting_started": {
+        "completed": {
+          "description": "Every Getting Started step is done.",
+          "title": "Your store is set up"
+        },
         "description": "Finish these steps to launch your store.",
         "progress": "{{done}} of {{total}} completed",
         "storefront_sheet": {
@@ -3519,6 +3578,7 @@
             "cta": "Save address",
             "description": "Your shipping and returns address. Carriers use it to calculate delivery rates, and it is where customer returns are sent.",
             "no_location": "You have no stock location of your own yet — create one in Settings to add an address.",
+            "saved": "Shipping address saved",
             "title": "Add your shipping address"
           },
           "setup_payment_method": {
@@ -3569,7 +3629,6 @@
           "previous": "Previous period"
         },
         "growth": {
-          "new": "New",
           "vs_previous": "vs previous period"
         },
         "operations": {
@@ -3581,8 +3640,11 @@
             "low_stock_items": {
               "label": "Low stock",
               "description_zero": "Turned off. Set a low stock threshold in store settings to use this.",
-              "description_one": "1 unit or fewer left to sell at a location.",
-              "description_other": "{{count}} units or fewer left to sell at a location."
+              "description_one": "1 unit or fewer left to sell across all locations.",
+              "description_other": "{{count}} units or fewer left to sell across all locations.",
+              "hint_zero": "Off",
+              "hint_one": "≤ {{count}}",
+              "hint_other": "≤ {{count}}"
             },
             "open_claims": {
               "label": "Open claims",
@@ -3602,12 +3664,19 @@
             },
             "out_of_stock_items": {
               "label": "Out of stock",
-              "description": "Nothing left to sell at a location."
+              "description": "Nothing left to sell at any location."
             },
             "payments_to_collect": {
               "label": "Payments to collect",
               "description": "Placed orders still owed money."
             }
+          },
+          "all_clear": "You're all caught up.",
+          "groups": {
+            "orders": "Orders",
+            "post_sale": "Returns and claims",
+            "inventory": "Inventory",
+            "other": "Other"
           }
         },
         "rankings": {
@@ -3638,7 +3707,8 @@
         },
         "currency": {
           "search": "Search currencies"
-        }
+        },
+        "chart_sparse": "Not enough data yet to show a trend"
       },
       "orders": {
         "detail": {
@@ -3770,13 +3840,16 @@
           "company_addresses": "Company addresses",
           "company_help": "Attach this order to a business. The customer list then shows only people who can buy for it.",
           "customer_addresses": "Customer addresses",
+          "items_empty": {
+            "description": "Add the products this order is for.",
+            "title": "No items yet"
+          },
           "reset_items": {
             "confirm": "Change and remove items",
             "message_one": "The {{count}} item you picked may not be sold, or may cost something else, for this buyer, market or channel. It will be removed.",
             "message_other": "The {{count}} items you picked may not be sold, or may cost something else, for this buyer, market or channel. They will be removed.",
             "title": "Remove the picked items?"
           },
-          "search_variant": "Search variant…",
           "section_billing": "Billing",
           "section_customer": "Customer",
           "section_items": "Items",
@@ -3854,12 +3927,6 @@
           "bulk_prices": {
             "no_variants": "Add at least one variant to start editing prices."
           }
-        },
-        "inventory": {
-          "in_stock": "{{count}} in stock",
-          "in_stock_short": "In stock",
-          "on_backorder": "On backorder",
-          "out_of_stock": "Out of stock"
         },
         "media_empty": "No media yet.",
         "media_upload": "Upload media",
@@ -4020,6 +4087,8 @@
           "manage_cta": "Manage",
           "manage_description": "Pick which sales channels list this product. Toggle a channel off to unlist it everywhere.",
           "manage_title": "Manage sales channels",
+          "missing_price_description": "Shoppers only see products with a price in their currency. Add one under Prices and save, or turn on Show products without a price in Settings → Store.",
+          "missing_price_title": "Hidden from shoppers paying in {{currencies}}",
           "no_channels": "No sales channels available. Create one in Settings → Sales channels.",
           "status_hidden": "Hidden",
           "status_live": "Live",
@@ -4053,9 +4122,7 @@
           "section_to": "To",
           "sheet_title": "New stock transfer"
         },
-        "variants_empty": "No variants yet.",
-        "variants_one": "{{count}} variant",
-        "variants_other": "{{count}} variants"
+        "variants_empty": "No variants yet."
       },
       "profile": {
         "load_failed_title": "Couldn't load your profile",
@@ -4218,14 +4285,11 @@
         },
         "store": {
           "subtitle": "General configuration and store-wide defaults.",
-          "tab_addresses": "Addresses",
           "tab_catalog": "Catalog",
           "tab_general": "General",
           "tab_inventory": "Inventory",
           "tab_order_numbers": "Order numbers",
-          "tab_payments": "Payments",
           "tab_standards": "Standards and formats",
-          "tab_storefront_access": "Storefront access",
           "title": "Store settings",
           "tab_downloads": "Digital downloads",
           "downloads_help": "How long a download link works and how many times it can be used. Individual files can override these numbers.",
@@ -4333,6 +4397,8 @@
             "payment_setup_session": "Payment setup session",
             "price": "Price",
             "product": "Product",
+            "product_category": "Product category",
+            "product_collection": "Product collection",
             "product_submission": "Product submission",
             "promotion": "Promotion",
             "purchase_order": "Purchase order",
@@ -4462,6 +4528,46 @@
             "description": "Register an OAuth client so it can be connected to this store."
           },
           "copy_client_id": "Copy client ID"
+        },
+        "payments": {
+          "title": "Payments",
+          "description": "The payment providers and manual methods customers can pay with, and when payments are taken.",
+          "providers_title": "Payment providers",
+          "providers_empty": {
+            "title": "No payment providers available",
+            "description": "Install a payment provider extension to accept cards and wallets."
+          },
+          "manual_title": "Manual payment methods",
+          "add_manual": "Add manual method",
+          "manual_empty": {
+            "title": "No manual payment methods",
+            "description": "Take payments outside your store, such as checks, bank transfers or cash on delivery."
+          },
+          "capture_title": "Payment capture",
+          "checkout_order": {
+            "cta": "Checkout order",
+            "title": "Checkout order",
+            "description": "Drag to set the order customers see payment methods in at checkout. Only active methods shown on the storefront are listed.",
+            "empty": {
+              "title": "Nothing offered at checkout",
+              "description": "Activate a payment method and show it on the storefront to list it here."
+            }
+          },
+          "test_gateway": "Test gateway"
+        },
+        "storefront": {
+          "title": "Storefront & checkout",
+          "description": "Where your storefront lives, who can browse it, and what checkout asks customers for.",
+          "storefront_title": "Storefront",
+          "checkout_title": "Checkout",
+          "addresses_title": "Addresses",
+          "url": {
+            "label": "Storefront URL",
+            "not_connected": "Not connected yet",
+            "connect": "Connect",
+            "change": "Change",
+            "help": "Where customers shop. Spree links to it from emails and the dashboard, and allows it to call the Store API."
+          }
         }
       },
       "staff": {
@@ -4490,9 +4596,26 @@
         "table": {
           "member": "Member",
           "role": "Role",
-          "roles": "Roles"
+          "roles": "Roles",
+          "status": "Status",
+          "last_active": "Last active"
         },
-        "title": "Staff"
+        "title": "Staff",
+        "status": {
+          "active": "Active",
+          "locked": "Locked",
+          "deactivated": "Deactivated"
+        },
+        "details": {
+          "joined": "Joined",
+          "invited_by": "Invited by",
+          "load_failed": "Couldn't load these details. Close the sheet and try again."
+        },
+        "sessions": {
+          "title": "Sessions",
+          "empty": "No active sessions.",
+          "unknown_device": "Unknown device"
+        }
       },
       "translations": {
         "complete": "Fully translated",
@@ -4529,10 +4652,6 @@
       }
     },
     "payment_methods": {
-      "add_cta": "Add payment method",
-      "columns": {
-        "storefront": "Storefront"
-      },
       "create_description": "Pick a provider and configure its credentials.",
       "create_label": "Create payment method",
       "delete_confirm": {
@@ -4540,22 +4659,19 @@
         "title": "Delete payment method?"
       },
       "edit_description": "Update name, visibility, or status.",
-      "empty": "No payment methods configured",
       "messages": {
         "created": "Payment method created",
         "deleted": "Payment method deleted",
         "updated": "Payment method updated"
       },
       "provider_description": "Provider: {{provider}}",
-      "search_placeholder": "Search by name…",
       "status": {
         "disabled": "Disabled"
       },
       "storefront": {
         "admin_only": "Admin only",
         "visible": "Visible"
-      },
-      "title": "Payment Methods"
+      }
     },
     "permissions": {
       "descriptions": {
@@ -4738,7 +4854,23 @@
       "terms_url": "Terms URL",
       "terms_url_description": "Optional published copy of the same terms, opened in a new tab.",
       "webhook_secret": "Webhook signing secret",
-      "webhook_secret_description": "The secret you set on the EasyPost webhook. Carrier updates are refused without it."
+      "webhook_secret_description": "The secret you set on the EasyPost webhook. Carrier updates are refused without it.",
+      "operator_max": "Maximum comparison",
+      "operator_max_description": "Choose whether an order exactly at Amount Max qualifies.",
+      "operator_max_options": {
+        "lt": "Less than (excludes the maximum)",
+        "lte": "Less than or equal to (includes the maximum)"
+      },
+      "operator_min": "Minimum comparison",
+      "operator_min_description": "Example: for free shipping on item totals of 150 or more, set Minimum item total to 150 and choose “Greater than or equal to.”",
+      "operator_min_options": {
+        "gt": "Greater than (excludes the minimum)",
+        "gte": "Greater than or equal to (includes the minimum)"
+      },
+      "amount_min": "Minimum item total",
+      "amount_min_description": "The order item total must reach this amount to qualify.",
+      "amount_max": "Maximum item total",
+      "amount_max_description": "Optional upper limit. Leave blank for no maximum."
     },
     "product_types": {
       "add_cta": "Add product type",
@@ -4880,6 +5012,7 @@
         "reason_placeholder": "What should the seller change?",
         "reject": "Send back",
         "rejected": "Sent back to the seller",
+        "save_first": "Save your changes first. Approving or sending back does not save them.",
         "send_back": "Send back"
       },
       "save_label": "Save product",
@@ -5319,8 +5452,6 @@
       "add_cta": "Add seller",
       "add_sheet_title": "New seller",
       "address": {
-        "filled": "Filled",
-        "not_filled": "Not filled",
         "not_provided_by_seller": "Not yet provided by the seller"
       },
       "approve_override_confirm": {
@@ -5339,29 +5470,21 @@
         "title": "Delete seller?"
       },
       "detail": {
-        "at_a_glance": "At a glance",
         "billing_address": "Billing address",
-        "contact": "Contact",
         "delete_label": "Delete seller",
-        "edit_profile": "Edit profile",
-        "edit_profile_description": "The seller maintains this from their own panel. Edits here apply on their behalf.",
         "edit_settlement": "Edit payouts and tax",
-        "edit_settlement_description": "Only you can see or change these. The seller never edits them.",
+        "joined": "Joined",
         "load_error": "Could not load this seller",
-        "no_about": "This seller has not written a description yet.",
         "returns_address": "Returns address",
         "settlement": "Payouts and tax",
-        "status": "Status"
+        "edit_cover": "Edit cover photo",
+        "edit_logo": "Edit logo",
+        "edit_profile": "Edit profile",
+        "no_about": "This seller has not written a description yet.",
+        "contact": "Contact",
+        "edit_contact": "Edit contact"
       },
       "empty": "No sellers yet",
-      "images": {
-        "cover_photo_help": "A wide banner across the top of the seller profile.",
-        "cover_photo_label": "Cover photo",
-        "logo_help": "Square works best. Shown beside the seller everywhere they appear.",
-        "logo_label": "Logo",
-        "square_logo_help": "Used where a tight square is needed, such as an avatar.",
-        "square_logo_label": "Square logo"
-      },
       "invite_sheet": {
         "description": "They join the seller team when they accept and can then sign in to their own panel.",
         "email_help": "The invitation goes to this address.",
@@ -5384,8 +5507,6 @@
         "update_failed": "Could not update the seller",
         "updated": "Seller updated"
       },
-      "not_provided": "Not provided",
-      "on_holiday_notice": "This seller is away. Their catalog stays visible but nothing can be bought from them.",
       "onboarding": {
         "actions": {
           "accept": "Accept",
@@ -5404,6 +5525,7 @@
         },
         "review_note": "Your note: {{note}}",
         "seller_note": "Seller: {{note}}",
+        "show_steps": "Show steps",
         "status": {
           "complete": "Done",
           "incomplete": "Pending",
@@ -5419,6 +5541,9 @@
         "waived": "Waived"
       },
       "onboarding_column": "Onboarding",
+      "orders": {
+        "to_fulfill": "To fulfill"
+      },
       "payout_interval": {
         "biweekly": "Every two weeks",
         "daily": "Daily",
@@ -5437,6 +5562,10 @@
         "title": "Send back to onboarding?"
       },
       "search_placeholder": "Search sellers",
+      "stats": {
+        "commission": "Commission (30 days)",
+        "net_sales": "Net sales (30 days)"
+      },
       "status": {
         "approved": "Approved",
         "canceled": "Canceled",
@@ -5468,6 +5597,10 @@
       "team": {
         "empty": "Nobody runs this seller yet.",
         "invite": "Invite",
+        "invite_sheet": {
+          "title": "Invite team member",
+          "description": "They join this seller's team when they accept. The seller's status does not change."
+        },
         "invited": "Invited",
         "messages": {
           "invitation_resent": "Invitation sent again",
@@ -5487,7 +5620,13 @@
         },
         "title": "Team"
       },
-      "team_column": "Team"
+      "team_column": "Team",
+      "holiday": {
+        "title": "Holiday mode",
+        "end": "End holiday mode",
+        "off": "Off. The seller is taking orders as usual."
+      },
+      "on_holiday_notice": "This seller is away. Their catalog stays visible but nothing can be bought from them."
     },
     "settings": {
       "webhooks": {
@@ -5514,7 +5653,7 @@
         "integrations": "Connect shipping, tax and other providers",
         "maintenance_tasks": "Backfills, reindexes and upgrade steps, with a record of every run",
         "markets": "Countries you sell to and their currencies",
-        "payment_methods": "Payment gateways and how payments are captured",
+        "payment_methods": "Payment providers, manual methods and when payments are taken",
         "policies": "Terms, privacy, returns and shipping documents",
         "product_types": "Templates that pre-fill new products",
         "reasons": "Reasons offered for returns, refunds and claims",
@@ -5522,14 +5661,16 @@
         "seller_requirements": "Checklist sellers complete before approval",
         "staff": "People with access to this dashboard",
         "stock_locations": "Warehouses and pickup points that hold stock",
-        "store": "Store name, timezone, units and regional defaults",
+        "store": "Store name, SEO, timezone, units and order numbers",
         "webhooks": "Endpoints notified when events happen",
         "package_types": "Boxes, cartons, pallets and containers",
         "suppliers": "Who you buy stock from, and how to reach them",
         "marketplace": "Seller payouts, seller approval, seller emails and commission tax",
         "taxes": "Tax categories, rates and exemption reasons",
         "ai_agents": "AI agents with access to this store",
-        "oauth_clients": "Register and configure OAuth clients"
+        "oauth_clients": "Register and configure OAuth clients",
+        "storefront": "Storefront URL, who can browse, checkout and address fields",
+        "system_info": "Versions and setup to attach to a bug report"
       },
       "groups": {
         "audit": "Audit",
@@ -5553,7 +5694,7 @@
         "integrations": "Integrations",
         "maintenance_tasks": "Maintenance tasks",
         "markets": "Markets",
-        "payment_methods": "Payment methods",
+        "payment_methods": "Payments",
         "policies": "Policies",
         "product_types": "Product types",
         "profile": "Profile",
@@ -5571,7 +5712,9 @@
         "marketplace": "Settings",
         "taxes": "Taxes",
         "ai_agents": "AI Agents",
-        "oauth_clients": "OAuth clients"
+        "oauth_clients": "OAuth clients",
+        "storefront": "Storefront & checkout",
+        "system_info": "System info"
       },
       "breadcrumbs": {
         "marketplace": "Marketplace"
@@ -5661,7 +5804,9 @@
         "has_reserved": "Reserved",
         "in_stock": "In stock",
         "low_stock": "Low stock",
-        "out_of_stock": "Out of stock"
+        "out_of_stock": "Out of stock",
+        "low_stock_overall": "Low stock (all locations)",
+        "out_of_stock_overall": "Out of stock (all locations)"
       },
       "incoming": {
         "open_aria": "Add incoming stock",
@@ -5708,7 +5853,8 @@
       "badges": {
         "default": "Default",
         "enabled": "Enabled",
-        "inactive": "Inactive"
+        "inactive": "Inactive",
+        "seller_default": "Seller default"
       },
       "columns": {
         "default": "Default",
@@ -5753,6 +5899,10 @@
         "unknown_product": "Unknown product",
         "variant_count_one": "{{count}} variant",
         "variant_count_other": "{{count}} variants"
+      },
+      "views": {
+        "own": "Your locations",
+        "sellers": "Sellers' locations"
       }
     },
     "stock_transfers": {
@@ -5882,6 +6032,17 @@
         "kg": "Kilogram (kg)",
         "lb": "Pound (lb)",
         "oz": "Ounce (oz)"
+      },
+      "seo": {
+        "title": "Search engine listing"
+      },
+      "images": {
+        "logo_label": "Logo",
+        "logo_help": "Shown in the dashboard and used by your storefront, for example in search results. PNG, JPG or WebP."
+      },
+      "social": {
+        "title": "Social media",
+        "description": "Your storefront links to these accounts and lists them for search engines. Enter a handle or a full URL."
       }
     },
     "table_descriptions": {
@@ -5908,7 +6069,6 @@
       "markets": "The regions you sell to, each with its own currency, tax and delivery setup.",
       "orders": "Every order placed with your store, and where each one stands.",
       "draft_orders": "Orders your team is building on a customer's behalf, not yet placed.",
-      "payment_methods": "How customers can pay, and the providers behind each option.",
       "policies": "Your terms, privacy, returns and shipping policies, published on the storefront.",
       "products": "Everything you sell, with its variants, prices and stock.",
       "promotions": "Discounts and offers, and the rules that decide when they apply.",
@@ -5974,7 +6134,11 @@
       },
       "title": "Exemption certificates",
       "verified_at": "Accepted on",
-      "verify_action": "Accept"
+      "verify_action": "Accept",
+      "columns": {
+        "certificate": "Certificate",
+        "document": "Document"
+      }
     },
     "tax_identifiers": {
       "add_cta": "Add registration",
@@ -6354,6 +6518,12 @@
       "delete_confirm": {
         "title": "Delete this supplier?",
         "message": "{{name}} will be removed from your supplier list."
+      },
+      "detail": {
+        "details": "Details",
+        "orders_empty": "No purchase orders from this supplier yet",
+        "load_error": "Could not load this supplier",
+        "address": "Address"
       }
     },
     "stock_receipts": {
@@ -6742,6 +6912,42 @@
       "run_label": "Run this",
       "copy_command": "Copy command",
       "cli_then_sign_in": "It will open your browser to sign in and approve what the agent may do."
+    },
+    "system_info": {
+      "title": "System info",
+      "unavailable": "You need permission to manage the store to see system info.",
+      "load_failed": "The report could not be loaded.",
+      "copy": "Copy as Markdown",
+      "copied": "Copied",
+      "report_issue": "Report an issue on GitHub"
+    },
+    "feedback": {
+      "title": "Send feedback",
+      "description": "Goes to the Spree team on GitHub. Nothing is sent until you post it there.",
+      "kinds": {
+        "bug": "Report a bug",
+        "idea": "Suggest an idea",
+        "other": "Something else"
+      },
+      "message": {
+        "bug": "What happened?",
+        "idea": "What would you like Spree to do?",
+        "other": "Your feedback"
+      },
+      "placeholder": {
+        "bug": "What were you trying to do, and what went wrong?",
+        "idea": "What problem would it solve for you?",
+        "other": "Anything you'd like the Spree team to know"
+      },
+      "failed_requests": "Include recent failed requests ({{count}})",
+      "failed_requests_hint": "Method, path, status, error code and request ID only. Never the request or response bodies.",
+      "system_info_included": "Anonymised system info is included.",
+      "system_info_unavailable": "System info isn't included: it needs permission to manage the store.",
+      "review_system_info": "Review system info",
+      "open_issue": "Open issue on GitHub",
+      "open_discussion": "Open discussion on GitHub",
+      "copied_to_paste": "Too long for a link, so it was copied. Paste it on GitHub.",
+      "copy_failed": "Too long for a link, and copying it failed. Shorten the message, or copy the report from Settings → System info."
     }
   }
 }

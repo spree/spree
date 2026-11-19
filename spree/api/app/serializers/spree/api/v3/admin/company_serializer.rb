@@ -30,6 +30,8 @@ module Spree
           many :memberships,
                resource: proc { Spree.api.admin_company_membership_serializer },
                if: proc { expand?('memberships') }
+
+          expandable_custom_fields admin: true
         end
       end
     end

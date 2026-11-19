@@ -1,0 +1,156 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api-m.sandbox.paypal.com/v1/oauth2/token
+    body:
+      encoding: UTF-8
+      string: grant_type=client_credentials
+    headers:
+      User-Agent:
+      - 'PayPal REST API Ruby SDK, Version: 2.4.0, on OS arm64-darwin24'
+      Authorization:
+      - Basic <FILTERED>
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip,deflate
+      Connection:
+      - keep-alive
+      Keep-Alive:
+      - '30'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Connection:
+      - keep-alive
+      Http-X-Pp-Az-Locator:
+      - ccg18.slc
+      Pragma:
+      - no-cache
+      Cache-Control:
+      - max-age=0, no-cache, no-store, must-revalidate
+      Paypal-Debug-Id:
+      - f37927493509d
+      Server:
+      - nginx
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      Server-Timing:
+      - traceparent;desc="00-0000000000000000000f37927493509d-d5ee67b57f23f403-01"
+      X-Paypal-Token-Service:
+      - IAAS
+      Content-Type:
+      - application/json
+      Access-Control-Expose-Headers:
+      - Server-Timing
+      Edge-Control:
+      - max-age=0
+      Accept-Ranges:
+      - none
+      Date:
+      - Fri, 30 Oct 2026 14:40:31 GMT
+      Via:
+      - 1.1 varnish
+      X-Served-By:
+      - cache-fra-etou8220038-FRA, cache-fra-etou8220038-FRA
+      X-Cache:
+      - MISS, MISS
+      X-Cache-Hits:
+      - 0, 0
+      X-Timer:
+      - S1793371231.742208,VS0,VE646
+      Vary:
+      - Accept-Encoding
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"scope":"https://uri.paypal.com/services/invoicing https://uri.paypal.com/services/checkout/one-click-with-merchant-issued-token
+        https://uri.paypal.com/services/payments/futurepayments https://uri.paypal.com/services/vault/payment-tokens/read
+        https://uri.paypal.com/services/disputes/read-buyer https://uri.paypal.com/services/payments/realtimepayment
+        https://uri.paypal.com/services/subscriptions/confirm-payment https://uri.paypal.com/services/payments/client-payments-eligibility
+        https://api.paypal.com/v1/vault/credit-card https://api.paypal.com/v1/payments/.*
+        https://uri.paypal.com/services/vault/payment-tokens/readwrite https://uri.paypal.com/services/applications/webhooks
+        https://uri.paypal.com/services/pricing/exchange-currency/read https://uri.paypal.com/services/credit/client-offer-presentment/read
+        https://uri.paypal.com/services/disputes/update-seller https://uri.paypal.com/services/payments/payment/authcapture
+        openid Braintree:Vault https://uri.paypal.com/services/disputes/read-seller
+        https://uri.paypal.com/services/payments/orders/client_sdk_orders_api https://uri.paypal.com/services/payments/refund
+        https://uri.paypal.com/services/disputes/create https://uri.paypal.com/services/pricing/quote-exchange-rates/read
+        https://uri.paypal.com/services/documents/disputes/download https://uri.paypal.com/services/billing-agreements
+        https://uri.paypal.com/services/checkout/payment-resources https://uri.paypal.com/payments/payouts
+        https://api.paypal.com/v1/vault/credit-card/.* https://uri.paypal.com/services/subscriptions","access_token":"<PAYPAL_ACCESS_TOKEN>","token_type":"Bearer","app_id":"APP-2HH91388CU034731G","expires_in":30433,"nonce":"2026-10-30T14:07:44ZCC7GvBRi0IAoXEqH3bgOD5SxOUkY27pZlCpp3s8DSGs"}'
+    adapter_metadata:
+      vcr_decompressed: gzip
+  recorded_at: Fri, 30 Oct 2026 14:40:31 GMT
+- request:
+    method: patch
+    uri: https://api-m.sandbox.paypal.com/v2/checkout/orders/9J904164W8827750Y
+    body:
+      encoding: UTF-8
+      string: '[{"op":"replace","path":"/purchase_units/@reference_id==''default''","value":{"amount":{"currency_code":"USD","value":"21.00"},"custom_id":"cart_UkLWZg9DAJ","shipping":{"name":{"full_name":"John
+        Doe"},"address":{"address_line_1":"1 Lovely Street","address_line_2":"Northwest","admin_area_2":"New
+        York","admin_area_1":"AL","postal_code":"10118","country_code":"US"}}}}]'
+    headers:
+      User-Agent:
+      - 'PayPal REST API Ruby SDK, Version: 2.4.0, on OS arm64-darwin24'
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <FILTERED>
+      Accept-Encoding:
+      - gzip,deflate
+      Accept:
+      - "*/*"
+      Connection:
+      - keep-alive
+      Keep-Alive:
+      - '30'
+  response:
+    status:
+      code: 204
+      message: No Content
+    headers:
+      Connection:
+      - keep-alive
+      Server-Timing:
+      - traceparent;desc="00-0000000000000000000f37927437b45b-0bc3c009d8972948-01"
+      Paypal-Debug-Id:
+      - f37927437b45b
+      Cache-Control:
+      - max-age=0, no-cache, no-store, must-revalidate
+      Access-Control-Expose-Headers:
+      - Server-Timing
+      Server:
+      - nginx
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      Http-X-Pp-Az-Locator:
+      - ccg18.slc
+      Edge-Control:
+      - max-age=0
+      Accept-Ranges:
+      - bytes
+      Date:
+      - Fri, 30 Oct 2026 14:40:32 GMT
+      Via:
+      - 1.1 varnish
+      X-Served-By:
+      - cache-fra-etou8220038-FRA, cache-fra-etou8220038-FRA
+      X-Cache:
+      - MISS, MISS
+      X-Cache-Hits:
+      - 0, 0
+      X-Timer:
+      - S1793371231.420709,VS0,VE757
+      Vary:
+      - Accept-Encoding
+    body:
+      encoding: UTF-8
+      string: ''
+  recorded_at: Fri, 30 Oct 2026 14:40:32 GMT
+recorded_with: VCR 6.4.0

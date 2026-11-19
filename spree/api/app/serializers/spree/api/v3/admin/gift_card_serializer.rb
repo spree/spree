@@ -51,6 +51,8 @@ module Spree
           many :orders,
                resource: proc { Spree.api.admin_order_serializer },
                if: proc { expand?('orders') }
+
+          expandable_custom_fields admin: true
         end
       end
     end

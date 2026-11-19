@@ -1,5 +1,12 @@
 import type { InternalRequestOptions, RequestConfig, RequestFn, RetryConfig } from '@spree/sdk-core'
-import { createRequestFn, resolveRetryConfig, SpreeError } from '@spree/sdk-core'
+import {
+  createRequestFn,
+  type Extended,
+  extendClient,
+  resolveRetryConfig,
+  SpreeError,
+} from '@spree/sdk-core'
+import type { SellerExtension } from './extensions'
 import { SellerClient } from './seller-client'
 
 export interface SellerClientConfig {
@@ -42,6 +49,20 @@ export interface Client extends SellerClient {
    * Return `false` to let the error propagate.
    */
   onUnauthorized(handler: () => Promise<boolean>): void
+  /**
+   * Returns a client with a package's namespace added, built on this one
+   * (see `defineSellerExtension`). This client is left as it was; both share
+   * its settings, so a token or locale set on either applies to the other.
+   *
+   * @example
+   * ```ts
+   * const client = base.extend(quotes)
+   * await client.quotes.get('quote_1')
+   * ```
+   */
+  extend<Name extends string, Namespace>(
+    extension: SellerExtension<Name, Namespace>,
+  ): Extended<this, Name, Namespace>
 }
 
 export function createSellerClient(config: SellerClientConfig): Client {
@@ -122,6 +143,13 @@ export function createSellerClient(config: SellerClientConfig): Client {
   client.onUnauthorized = (handler: () => Promise<boolean>) => {
     unauthorizedHandler = handler
   }
+
+  client.extend = function <Name extends string, Namespace>(
+    this: Client,
+    extension: SellerExtension<Name, Namespace>,
+  ) {
+    return extendClient(this, 'seller', dynamicRequestFn, extension)
+  } as Client['extend']
 
   return client
 }

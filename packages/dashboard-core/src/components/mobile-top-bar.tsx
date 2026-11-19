@@ -59,7 +59,7 @@ export function MobileTopBar({
       {isLoading ? (
         <Skeleton className="h-4 w-28" />
       ) : (
-        <span className="min-w-0 flex-1 truncate font-medium text-sm">{label}</span>
+        <span className="min-w-0 flex-1 truncate font-medium text-base">{label}</span>
       )}
 
       {palette && (

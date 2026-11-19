@@ -900,6 +900,7 @@ en:
         invalid_status: Invalid status
         invalid_storefront_access: is not a valid storefront access level
         items_not_a_list: items must be a list of objects
+        missing_row_type: 'is required (expected one of: %{types})'
         money_preference_too_many_decimals: has more than %{count} decimal places for %{currency}
         must_be_greater_than_min_amount: must be greater than or equal to the minimum
         no_pickup_point_provider: this delivery method has no pickup point provider configured
@@ -909,6 +910,7 @@ en:
         oidc_missing_code: The identity provider did not return an authorization code.
         oidc_requires_redirect: This provider requires signing in through its own login page.
         pickup_point_not_found: pickup point could not be found with this provider
+        product_in_review: A product awaiting review is approved or rejected, not moved to another status
         product_not_in_store: must all belong to this store
         profile_does_not_accept_provider: "%{provider} deliveries cannot join the %{profile} profile"
         promotion_discount_not_editable: promotion discounts are managed by recalculation and cannot be edited
@@ -924,6 +926,9 @@ en:
         store_is_already_set: Store is already set
         unknown_calculator_type: "%{type} is not a calculator offered here"
         unknown_custom_field_type: 'is not a known custom field type (expected one of: %{types})'
+        unknown_option_type: names %{name}, which is not one of the marketplace's option types
+        unknown_option_value: names %{value}, which is not one of the values of %{option_type}
+        unknown_row_type: "%{type} is not a %{family} offered here (expected one of: %{types})"
         unknown_scopes: 'contains unknown scopes: %{scopes}'
         unregistered_actor: is not a registered actor class
         variant_product_mismatch: must belong to the same product as the variant
@@ -1018,6 +1023,7 @@ en:
         subject: Invitation to join %{resource_name}
     invitation_not_acceptable: Invitation not found, expired, or already accepted.
     invitation_role_resource_mismatch: must belong to the same store or seller as the invitation
+    invitation_seller_rejected: This seller was rejected, so nobody can join its team.
     iso: ISO Alpha-2
     item: Item
     items_cannot_be_shipped: We are unable to calculate shipping rates for the selected items.
@@ -1197,6 +1203,8 @@ en:
     privacy_policy: Privacy Policy
     processing: Processing
     product: Product
+    product_import_unknown_option_type: The marketplace has no option type named %{name}.
+    product_import_unknown_option_value: "%{option_type} has no value named %{value}."
     product_import_unknown_stock_location: You have no stock location named %{name}.
     product_translations: Product Translations
     products: Products
@@ -1651,6 +1659,13 @@ en:
         name: Billing address
       complete_profile:
         description: Fill in the public profile shoppers see
+        fields:
+          about: a description
+          contact_email: a contact email
+          cover_photo: a cover photo
+          logo: a logo
+          name: a name
+        missing: 'Still missing: %{fields}.'
         name: Complete profile
       delivery_method:
         description: Offer at least one way to ship your orders
@@ -1778,6 +1793,7 @@ en:
       credit: Credit
       eligible: Eligible
     store_credit_name: Store Credit
+    store_credit_not_applied: No Store Credit could be applied to this order.
     store_credit_payment_method:
       currency_mismatch: Store credit currency does not match order currency
       insufficient_authorized_amount: Unable to capture more than authorized amount

@@ -19,10 +19,18 @@ module Typelizer
   # the standard can add a country, a currency or a unit, and markets only
   # accept the locales `Spree::Locales::ALL` lists.
   module OpenEnums
+    class << self
+      # Where a named list's type is imported from. Spree's own SDKs re-export
+      # it from `@spree/sdk-core`; an extension's package (Spree::Api::SdkTypes)
+      # sets this to nil and defines its lists itself, open unless closed.
+      attr_accessor :source
+    end
+    self.source = '@spree/sdk-core'
+
     CLOSED_TYPE_NAMES = %w[CountryCode CurrencyCode LocaleCode WeightUnit DimensionUnit].freeze
 
     CLOSED_LIST_NAMES = %w[
-      ApiKeyType CaptureMethod CatalogAssignableType CatalogPriceSource ClaimResolution
+      AdminUserStatus ApiKeyType CaptureMethod CatalogAssignableType CatalogPriceSource ClaimResolution
       CollectionRuleMatchPolicy CollectionSortOrder CommissionKind CompanyInvitationStatus CompanyKind
       ConsentSource DataRequestKind DeliveryStatus DeliveryZoneMemberType DiscountKind DocumentNumberFormat
       EmailFont EmailTemplateKind FileUploadVisibility FulfillmentType MatchPolicy MediaType OptionTypeKind
@@ -34,6 +42,25 @@ module Typelizer
       TaxRemittance UnitSystem
     ].freeze
 
+    # Open lists whose values are suggestions rather than built-ins an
+    # extension adds to, described as such wherever the list is published.
+    DESCRIPTIONS = {
+      'TimeZone' => 'Common IANA time zones; any other IANA time zone identifier is accepted too.'
+    }.freeze
+
+    # @param name [String, nil] a list's `enum_type_name`
+    # @return [String, nil] what the list's values are, when they are not built-ins
+    def self.description(name)
+      DESCRIPTIONS[name]
+    end
+
+    # @param schema [Hash] the schema of any value in the list
+    # @param values [Array<String>] the values to suggest
+    # @return [Hash] a schema suggesting the values while accepting any other
+    def self.open_schema(schema, values)
+      { anyOf: [schema.merge(enum: values), schema] }
+    end
+
     # @param name [String, nil] a list's `enum_type_name`
     # @return [Boolean] whether the list is closed: no value outside it is valid
     def self.closed?(name)
@@ -42,7 +69,11 @@ module Typelizer
 
     module Property
       def enum_definition(...)
-        super && "type { #{enum_type_name} } from '@spree/sdk-core'"
+        definition = super
+        return definition unless definition
+        return "type { #{enum_type_name} } from '#{OpenEnums.source}'" if OpenEnums.source
+
+        OpenEnums.closed?(enum_type_name) ? definition : "#{definition} | (string & {})"
       end
 
       # Typelizer skips rewriting a file whose digest is unchanged, and the
@@ -63,7 +94,7 @@ module Typelizer
         return super unless property.enum_type_name && property.enum.is_a?(Array) && !property.multi
         return super if OpenEnums.closed?(property.enum_type_name)
 
-        open = { anyOf: [{ type: :string, enum: property.enum.compact }, { type: :string }] }
+        open = OpenEnums.open_schema({ type: :string }, property.enum.compact)
         # OpenAPI 3.0 ignores `nullable` beside `anyOf`, which is where
         # Typelizer puts it, so the free-string branch carries it instead.
         if property.nullable && !v31?(openapi_version)
@@ -72,7 +103,7 @@ module Typelizer
           apply_nullable(open, property, openapi_version: openapi_version)
         end
         apply_metadata(open, property)
-        open[:description] ||= OPEN_ENUM_DESCRIPTION
+        open[:description] ||= OpenEnums.description(property.enum_type_name) || OPEN_ENUM_DESCRIPTION
         open
       end
     end

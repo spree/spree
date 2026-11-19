@@ -79,12 +79,12 @@ export function CustomerInternalNoteCard({ customer }: { customer: Customer }) {
           </div>
         ) : customer.internal_note_html ? (
           <div
-            className="text-sm prose-sm"
+            className="text-base prose-sm"
             // biome-ignore lint/security/noDangerouslySetInnerHtml: HTML is sanitized server-side via the rich-text pipeline
             dangerouslySetInnerHTML={{ __html: customer.internal_note_html }}
           />
         ) : (
-          <p className="text-sm text-muted-foreground">
+          <p className="text-base text-muted-foreground">
             {t('admin.customers.detail.no_internal_notes')}
           </p>
         )}

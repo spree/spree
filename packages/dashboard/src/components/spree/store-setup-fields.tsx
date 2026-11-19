@@ -20,6 +20,7 @@ import {
   ComboboxSearch,
   ComboboxTriggerPlaceholder,
   CountryFlag,
+  CurrencyLabel,
   Input,
   Label,
   Select,
@@ -112,6 +113,7 @@ export function StoreSetupFields<Values extends StoreSetupValues>({
 
   const languageName = useDisplayName('language')
   const currencyLabel = useCurrencyLabel()
+  const currencyName = useDisplayName('currency')
   const countryCode = watch('country_code')
   const selectedCountry = useMemo(
     () => countries.find((country) => country.code === countryCode) ?? null,
@@ -173,7 +175,7 @@ export function StoreSetupFields<Values extends StoreSetupValues>({
           {...register('store_name')}
         />
         {errors.store_name && (
-          <p className="text-sm text-destructive">{errors.store_name.message}</p>
+          <p className="text-base text-destructive">{errors.store_name.message}</p>
         )}
       </div>
       <div className="grid gap-2">
@@ -226,7 +228,7 @@ export function StoreSetupFields<Values extends StoreSetupValues>({
           )}
         />
         {errors.country_code ? (
-          <p className="text-sm text-destructive">{errors.country_code.message}</p>
+          <p className="text-base text-destructive">{errors.country_code.message}</p>
         ) : (
           <p className="text-xs text-muted-foreground">
             {t('admin.fields.setup.country_code.help')}
@@ -285,7 +287,7 @@ export function StoreSetupFields<Values extends StoreSetupValues>({
                   aria-invalid={!!errors.currency || undefined}
                 >
                   {field.value ? (
-                    <span className="truncate">{currencyLabel(field.value)}</span>
+                    <CurrencyLabel code={field.value} name={currencyName(field.value)} />
                   ) : (
                     <ComboboxTriggerPlaceholder>
                       {t('admin.fields.setup.currency.placeholder')}
@@ -298,7 +300,7 @@ export function StoreSetupFields<Values extends StoreSetupValues>({
                   <ComboboxList>
                     {(code: string) => (
                       <ComboboxItem key={code} value={code}>
-                        {currencyLabel(code)}
+                        <CurrencyLabel code={code} name={currencyName(code)} />
                       </ComboboxItem>
                     )}
                   </ComboboxList>
@@ -309,7 +311,7 @@ export function StoreSetupFields<Values extends StoreSetupValues>({
           {/* Error replaces the help rather than joining it, so the column
               keeps exactly the three rows the subgrid expects. */}
           {errors.currency ? (
-            <p className="text-sm text-destructive">{errors.currency.message}</p>
+            <p className="text-base text-destructive">{errors.currency.message}</p>
           ) : (
             <p className="text-xs text-muted-foreground">{t('admin.fields.setup.currency.help')}</p>
           )}

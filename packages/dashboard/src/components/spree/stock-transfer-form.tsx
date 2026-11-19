@@ -1,5 +1,6 @@
 import { PageHeader, useStockLocations } from '@spree/dashboard-core'
 import {
+  Badge,
   Button,
   Card,
   CardContent,
@@ -12,6 +13,10 @@ import {
   FieldLabel,
   Input,
   ResourceLayout,
+  Section,
+  SectionActions,
+  SectionHeader,
+  SectionTitle,
   Select,
   SelectContent,
   SelectItem,
@@ -19,7 +24,7 @@ import {
   SelectValue,
   Textarea,
 } from '@spree/dashboard-ui'
-import { PlusIcon } from '@spree/dashboard-ui/icons'
+import { PackageIcon, PlusIcon } from '@spree/dashboard-ui/icons'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { type VariantLine, VariantLineEditor } from './variant-line-editor'
@@ -81,15 +86,14 @@ export function StockTransferForm({
   const [lines, setLines] = useState<VariantLine[]>(initial.lines)
   const [pickerOpen, setPickerOpen] = useState(false)
 
-  // Stock cannot move to where it already is.
-  const destinationItems = locationItems.filter((item) => item.value !== sourceId)
-
   const sameLocation = !!sourceId && sourceId === destinationId
   // Lines were picked for the shelf they are leaving, so the source is fixed
   // once there are any: changing it would silently keep SKUs the new source
   // may hold none of. Emptying the list frees it again. Applies while creating
-  // too — the picker filters by source there as well.
-  const sourceLocked = lines.length > 0
+  // too — the picker filters by source there as well. A line that arrived
+  // before any source was chosen (from an Inventory row) was picked for its
+  // destination, so it leaves an empty source open to choose.
+  const sourceLocked = lines.length > 0 && !!sourceId
   const canSubmit =
     !!sourceId && !!destinationId && !sameLocation && lines.every((line) => line.quantity > 0)
 
@@ -115,11 +119,15 @@ export function StockTransferForm({
                 <SelectValue placeholder={t('admin.stock_transfers.fields.source_placeholder')} />
               </SelectTrigger>
               <SelectContent>
-                {locations.map((location) => (
-                  <SelectItem key={location.id} value={location.id}>
-                    {location.name}
-                  </SelectItem>
-                ))}
+                {/* Stock cannot move to where it already is, whichever side
+                    was chosen first: To arrives set from an Inventory row. */}
+                {locations
+                  .filter((location) => location.id !== destinationId)
+                  .map((location) => (
+                    <SelectItem key={location.id} value={location.id}>
+                      {location.name}
+                    </SelectItem>
+                  ))}
               </SelectContent>
             </Select>
             {sourceLocked && (
@@ -131,7 +139,9 @@ export function StockTransferForm({
             <FieldLabel htmlFor="destination">
               {t('admin.stock_transfers.fields.destination')}
             </FieldLabel>
-            <Select items={destinationItems} value={destinationId} onValueChange={setDestinationId}>
+            {/* Every location in `items`, so the chosen one is named even
+                while the list below leaves it out. */}
+            <Select items={locationItems} value={destinationId} onValueChange={setDestinationId}>
               <SelectTrigger id="destination">
                 <SelectValue
                   placeholder={t('admin.stock_transfers.fields.destination_placeholder')}
@@ -174,23 +184,29 @@ export function StockTransferForm({
   )
 
   const itemsCard = (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>{t('admin.stock_transfers.items_title')}</CardTitle>
+    <Section>
+      <SectionHeader>
+        <SectionTitle>
+          <PackageIcon />
+          {t('admin.stock_transfers.items_title')}
+          {lines.length > 0 && <Badge variant="outline">{lines.length}</Badge>}
+        </SectionTitle>
         {lines.length > 0 && (
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            disabled={!sourceId}
-            onClick={() => setPickerOpen(true)}
-          >
-            <PlusIcon className="size-4" />
-            {t('admin.inventory_lines.add_label')}
-          </Button>
+          <SectionActions>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={!sourceId}
+              onClick={() => setPickerOpen(true)}
+            >
+              <PlusIcon className="size-4" />
+              {t('admin.inventory_lines.add_label')}
+            </Button>
+          </SectionActions>
         )}
-      </CardHeader>
-      <CardContent>
+      </SectionHeader>
+      <Card>
         {/* A draft may hold no lines at all and gain them as the merchant
               packs, so there is nothing to enforce here. The picker offers only
               what the source can send and stays shut until one is chosen. */}
@@ -203,8 +219,8 @@ export function StockTransferForm({
           pickerOpen={pickerOpen}
           onPickerOpenChange={setPickerOpen}
         />
-      </CardContent>
-    </Card>
+      </Card>
+    </Section>
   )
 
   return (

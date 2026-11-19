@@ -1,6 +1,7 @@
 import type { TaxRate, TaxRateCreateParams, TaxRateUpdateParams } from '@spree/admin-sdk'
 import {
   adminClient,
+  STORE_QUERY_RESOURCE,
   useResourceKey,
   useResourceKeyBuilder,
   useResourceMutation,
@@ -27,7 +28,8 @@ export function useTaxRate(id: string | undefined) {
 export function useCreateTaxRate() {
   return useResourceMutation<TaxRate, Error, TaxRateCreateParams>({
     mutationFn: (params) => adminClient.taxRates.create(params),
-    invalidate: [['tax-rates']],
+    // STORE_QUERY_RESOURCE refreshes the setup-task state (Getting Started + nav badge).
+    invalidate: [['tax-rates'], [STORE_QUERY_RESOURCE]],
     successMessage: i18n.t('admin.tax_rates.messages.created'),
     errorMessage: i18n.t('admin.errors.failed_to_create'),
   })
@@ -48,7 +50,7 @@ export function useDeleteTaxRate() {
 
   return useResourceMutation<void, Error, string>({
     mutationFn: (id) => adminClient.taxRates.delete(id),
-    invalidate: [['tax-rates']],
+    invalidate: [['tax-rates'], [STORE_QUERY_RESOURCE]],
     successMessage: i18n.t('admin.tax_rates.messages.deleted'),
     errorMessage: i18n.t('admin.errors.failed_to_delete'),
     onSuccess: (_data, id) => {

@@ -1,5 +1,5 @@
 import type { Seller } from '@spree/admin-sdk'
-import { isPositiveMoney, Money, Subject, usePermissions } from '@spree/dashboard-core'
+import { isPositiveMoney, Money, ReadRow, Subject, usePermissions } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -13,7 +13,6 @@ import {
 import { Link } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { useSellerBalances, useSettleSeller } from '../../../hooks/use-seller-ledger'
-import { ReadRow } from './seller-read-row'
 
 /**
  * What this seller has earned and what they are still owed, per currency.
@@ -99,7 +98,7 @@ export function SellerBalanceCard({ seller }: { seller: Seller }) {
           </div>
         ))}
 
-        <div className="flex gap-4 border-t pt-3 text-sm">
+        <div className="flex gap-4 border-t pt-3 text-base">
           <Link
             to={'/$storeId/sellers/transfers' as string}
             search={sellerFilter(seller.id, 'seller-transfers')}

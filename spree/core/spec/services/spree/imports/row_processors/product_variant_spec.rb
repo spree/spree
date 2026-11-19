@@ -423,6 +423,21 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
         expect(variant.option_values.map(&:label).sort).to contain_exactly('Blue', 'XS')
       end
 
+      it 'does not leave orphaned option value variants behind on re-import' do
+        subject.process!
+
+        expect(Spree::OptionValueVariant.where(variant_id: nil)).to be_empty
+        expect(variant.reload.option_values.map(&:label)).to contain_exactly('Blue', 'XS')
+      end
+
+      it 'still allows a new variant to reuse the same option values after a re-import' do
+        subject.process!
+
+        other_data = csv_row_hash(row_data.merge('sku' => 'DENIM-SHIRT-XS-BLUE-2'))
+        other_row = create(:import_row, import: import, data: other_data.to_json)
+        expect { described_class.new(other_row).process! }.not_to raise_error
+      end
+
       context 'when updating inventory values' do
         before do
           stock_level = variant.stock_levels.find_or_initialize_by(stock_location: store.default_stock_location)

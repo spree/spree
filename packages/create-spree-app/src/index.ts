@@ -1,3 +1,4 @@
+import path from 'node:path'
 import * as p from '@clack/prompts'
 import { Command, Option } from 'commander'
 import getPort, { portNumbers } from 'get-port'
@@ -6,7 +7,7 @@ import { DEFAULT_SPREE_PORT } from './constants.js'
 import { runPrompts } from './prompts.js'
 import { scaffold } from './scaffold.js'
 import type { PackageManager } from './types.js'
-import { detectPackageManager } from './utils.js'
+import { cdTarget, detectPackageManager, runCommand } from './utils.js'
 
 const program = new Command()
   .name('create-spree-app')
@@ -78,10 +79,29 @@ const program = new Command()
           )
         }
       }
+      if (mailpitSmtpPort !== 1025 || mailpitUiPort !== 8025) {
+        p.log.info(
+          `Another program is using those ports, often an earlier Spree project's mail catcher. ${pc.cyan('docker ps')} lists running containers; ${pc.cyan('docker compose down')} in that project's folder frees the ports.`,
+        )
+      }
 
-      await scaffold({ ...options, port, mailpitSmtpPort, mailpitUiPort })
+      const stopped = await scaffold({ ...options, port, mailpitSmtpPort, mailpitUiPort })
 
-      p.outro('Happy selling!')
+      if (stopped) {
+        // Ctrl+C can land at any stage of setup: `run dev` finishes whatever
+        // is left, and containers that already started keep running.
+        const cdDir = cdTarget(path.resolve(options.directory))
+        p.outro(
+          [
+            'Stopped. Next:',
+            `  ${pc.cyan(`cd ${cdDir}`)}`,
+            `  ${pc.cyan(`${options.packageManager} run dev`)}     ${pc.dim('# start the store, finishing setup if needed')}`,
+            `  ${pc.cyan(`${runCommand(options.packageManager)} spree stop`)}  ${pc.dim('# stop containers that are still running')}`,
+          ].join('\n'),
+        )
+      } else {
+        p.outro('Happy selling!')
+      }
     } catch (err) {
       if (err instanceof Error && err.message.includes('cancelled')) {
         p.cancel('Setup cancelled.')

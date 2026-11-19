@@ -42,6 +42,8 @@ module Spree
         many :claim_line_items,
              resource: proc { Spree.api.claim_line_item_serializer },
              if: proc { expand?('claim_line_items') }
+
+        expandable_custom_fields
       end
     end
   end

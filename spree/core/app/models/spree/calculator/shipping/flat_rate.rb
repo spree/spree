@@ -11,11 +11,13 @@ module Spree
       #   currency so upgraded stores quote unchanged.
       preference :currency, :string, format: :currency, default: -> { Spree::Store.default.default_currency }
 
-      preference :minimum_item_total, :money, default: nil, nullable: true, deprecated: 'Use a Spree::DeliveryMethodRules rule on the delivery method instead; removed in Spree 6.1.'
-      preference :maximum_item_total, :money, default: nil, nullable: true, deprecated: 'Use a Spree::DeliveryMethodRules rule on the delivery method instead; removed in Spree 6.1.'
+      RULE_DEPRECATION = 'Use a Spree::DeliveryMethodRules rule on the delivery method instead; removed in Spree 6.3.'.freeze
 
-      preference :minimum_weight, :decimal, default: nil, nullable: true, deprecated: 'Use a Spree::DeliveryMethodRules rule on the delivery method instead; removed in Spree 6.1.'
-      preference :maximum_weight, :decimal, default: nil, nullable: true, deprecated: 'Use a Spree::DeliveryMethodRules rule on the delivery method instead; removed in Spree 6.1.'
+      preference :minimum_item_total, :money, default: nil, nullable: true, deprecated: RULE_DEPRECATION
+      preference :maximum_item_total, :money, default: nil, nullable: true, deprecated: RULE_DEPRECATION
+
+      preference :minimum_weight, :decimal, default: nil, nullable: true, deprecated: RULE_DEPRECATION
+      preference :maximum_weight, :decimal, default: nil, nullable: true, deprecated: RULE_DEPRECATION
 
       def self.description
         I18n.t('spree.shipping_flat_rate_per_order')

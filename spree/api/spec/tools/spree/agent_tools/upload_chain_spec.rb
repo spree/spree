@@ -68,6 +68,26 @@ RSpec.describe 'agent tools that consume an upload' do
       expect(theirs.reload.media).to be_empty
     end
 
+    it 'treats a product id as one path segment, never a route' do
+      variant = create(:variant, product: product)
+
+      result = tool('media_create').call(file_id: upload_binary('x.png', png),
+                                         product_id: "#{product.prefixed_id}/variants/#{variant.prefixed_id}")
+
+      expect(result[:error]).to be_present
+      expect(variant.reload.images).to be_empty
+    end
+
+    it 'cannot smuggle a query string into another endpoint' do
+      product.update!(status: 'active')
+
+      result = tool('media_create').call(file_id: upload_binary('x.png', png),
+                                         product_id: "bulk_status_update?ids=#{product.prefixed_id}&status=archived&x=")
+
+      expect(result[:error]).to be_present
+      expect(product.reload.status).to eq('active')
+    end
+
     it 'is withheld from a caller who cannot write media' do
       no_media = Spree::AgentTools::Context.new(store: store, user: admin, granted_scopes: ['read_media'])
 

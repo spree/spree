@@ -1,0 +1,162 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api-m.sandbox.paypal.com/v1/oauth2/token
+    body:
+      encoding: UTF-8
+      string: grant_type=client_credentials
+    headers:
+      User-Agent:
+      - 'PayPal REST API Ruby SDK, Version: 2.4.0, on OS arm64-darwin24'
+      Authorization:
+      - Basic <FILTERED>
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip,deflate
+      Connection:
+      - keep-alive
+      Keep-Alive:
+      - '30'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Connection:
+      - keep-alive
+      Http-X-Pp-Az-Locator:
+      - ccg18.slc
+      Pragma:
+      - no-cache
+      Cache-Control:
+      - max-age=0, no-cache, no-store, must-revalidate
+      Paypal-Debug-Id:
+      - f386021249bb2
+      Server:
+      - nginx
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      Server-Timing:
+      - traceparent;desc="00-0000000000000000000f386021249bb2-fe2e4cdccc84b7eb-01"
+      X-Paypal-Token-Service:
+      - IAAS
+      Content-Type:
+      - application/json
+      Access-Control-Expose-Headers:
+      - Server-Timing
+      Edge-Control:
+      - max-age=0
+      Accept-Ranges:
+      - none
+      Date:
+      - Fri, 30 Oct 2026 14:40:34 GMT
+      Via:
+      - 1.1 varnish
+      X-Served-By:
+      - cache-fra-etou8220186-FRA, cache-fra-etou8220186-FRA
+      X-Cache:
+      - MISS, MISS
+      X-Cache-Hits:
+      - 0, 0
+      X-Timer:
+      - S1793371234.122050,VS0,VE315
+      Vary:
+      - Accept-Encoding
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"scope":"https://uri.paypal.com/services/invoicing https://uri.paypal.com/services/checkout/one-click-with-merchant-issued-token
+        https://uri.paypal.com/services/payments/futurepayments https://uri.paypal.com/services/vault/payment-tokens/read
+        https://uri.paypal.com/services/disputes/read-buyer https://uri.paypal.com/services/payments/realtimepayment
+        https://uri.paypal.com/services/subscriptions/confirm-payment https://uri.paypal.com/services/payments/client-payments-eligibility
+        https://api.paypal.com/v1/vault/credit-card https://api.paypal.com/v1/payments/.*
+        https://uri.paypal.com/services/vault/payment-tokens/readwrite https://uri.paypal.com/services/applications/webhooks
+        https://uri.paypal.com/services/pricing/exchange-currency/read https://uri.paypal.com/services/credit/client-offer-presentment/read
+        https://uri.paypal.com/services/disputes/update-seller https://uri.paypal.com/services/payments/payment/authcapture
+        openid Braintree:Vault https://uri.paypal.com/services/disputes/read-seller
+        https://uri.paypal.com/services/payments/orders/client_sdk_orders_api https://uri.paypal.com/services/payments/refund
+        https://uri.paypal.com/services/disputes/create https://uri.paypal.com/services/pricing/quote-exchange-rates/read
+        https://uri.paypal.com/services/documents/disputes/download https://uri.paypal.com/services/billing-agreements
+        https://uri.paypal.com/services/checkout/payment-resources https://uri.paypal.com/payments/payouts
+        https://api.paypal.com/v1/vault/credit-card/.* https://uri.paypal.com/services/subscriptions","access_token":"<PAYPAL_ACCESS_TOKEN>","token_type":"Bearer","app_id":"APP-2HH91388CU034731G","expires_in":30430,"nonce":"2026-10-30T14:07:44ZCC7GvBRi0IAoXEqH3bgOD5SxOUkY27pZlCpp3s8DSGs"}'
+    adapter_metadata:
+      vcr_decompressed: gzip
+  recorded_at: Fri, 30 Oct 2026 14:40:34 GMT
+- request:
+    method: post
+    uri: https://api-m.sandbox.paypal.com/v2/checkout/orders
+    body:
+      encoding: UTF-8
+      string: '{"intent":"AUTHORIZE","purchase_units":[{"amount":{"currency_code":"USD","value":"10.00","breakdown":{"item_total":{"currency_code":"USD","value":"10.00"},"shipping":{"currency_code":"USD","value":"0.00"},"handling":{"currency_code":"USD","value":"0.00"},"tax_total":{"currency_code":"USD","value":"0.00"},"discount":{"currency_code":"USD","value":"0.00"}}},"custom_id":"cart_UkLWZg9DAJ","items":[{"name":"Product
+        36644","unit_amount":{"currency_code":"USD","value":"10.00"},"quantity":"1","sku":"SKU-3","category":"PHYSICAL_GOODS"}]}],"application_context":{"brand_name":"Spree
+        Test Store","landing_page":"NO_PREFERENCE","shipping_preference":"NO_SHIPPING","user_action":"CONTINUE"}}'
+    headers:
+      User-Agent:
+      - 'PayPal REST API Ruby SDK, Version: 2.4.0, on OS arm64-darwin24'
+      Content-Type:
+      - application/json
+      Prefer:
+      - return=minimal
+      Accept:
+      - application/json
+      Authorization:
+      - Bearer <FILTERED>
+      Accept-Encoding:
+      - gzip,deflate
+      Connection:
+      - keep-alive
+      Keep-Alive:
+      - '30'
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '505'
+      Server:
+      - nginx
+      Cache-Control:
+      - max-age=0, no-cache, no-store, must-revalidate
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      Access-Control-Expose-Headers:
+      - Server-Timing
+      Server-Timing:
+      - traceparent;desc="00-0000000000000000000f386021b26fe0-58d0c81030c30635-01"
+      Content-Type:
+      - application/json
+      Paypal-Debug-Id:
+      - f386021b26fe0
+      Http-X-Pp-Az-Locator:
+      - ccg18.slc
+      Edge-Control:
+      - max-age=0
+      Accept-Ranges:
+      - bytes
+      Date:
+      - Fri, 30 Oct 2026 14:40:34 GMT
+      Via:
+      - 1.1 varnish
+      X-Served-By:
+      - cache-fra-etou8220072-FRA, cache-fra-etou8220186-FRA
+      X-Cache:
+      - MISS, MISS
+      X-Cache-Hits:
+      - 0, 0
+      X-Timer:
+      - S1793371234.473353,VS0,VE437
+      Vary:
+      - Accept-Encoding
+    body:
+      encoding: UTF-8
+      string: '{"id":"9XP308467E320225M","status":"CREATED","links":[{"href":"https://api.sandbox.paypal.com/v2/checkout/orders/9XP308467E320225M","rel":"self","method":"GET"},{"href":"https://www.sandbox.paypal.com/checkoutnow?token=9XP308467E320225M","rel":"approve","method":"GET"},{"href":"https://api.sandbox.paypal.com/v2/checkout/orders/9XP308467E320225M/authorize","rel":"authorize","method":"POST"},{"href":"https://api.sandbox.paypal.com/v2/checkout/orders/9XP308467E320225M","rel":"update","method":"PATCH"}]}'
+  recorded_at: Fri, 30 Oct 2026 14:40:34 GMT
+recorded_with: VCR 6.4.0

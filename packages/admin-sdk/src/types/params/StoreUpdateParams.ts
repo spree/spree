@@ -1,11 +1,29 @@
 // This file is auto-generated from the request schemas in docs/api-reference by `pnpm generate:params`. Do not edit directly.
 
+import type { LocaleCode } from '../generated'
+import type { TimeZone } from '../generated'
 import type { WeightUnit } from '../generated'
 
 export type StoreUpdateParams = {
   name?: string
-  admin_locale?: string
-  timezone?: string
+  /**
+   * The storefront's default page title, in the store's default language. Translate it through the
+   * translations endpoints.
+   */
+  seo_title?: string | null
+  /** The storefront's default meta description, in the store's default language. */
+  meta_description?: string | null
+  /** The storefront's default meta keywords, comma-separated, in the default language. */
+  meta_keywords?: string | null
+  /** The Facebook page: a handle or a full URL. */
+  facebook?: string | null
+  /** The X (Twitter) account: a handle or a full URL. */
+  twitter?: string | null
+  /** The Instagram account: a handle or a full URL. */
+  instagram?: string | null
+  /** The language the dashboard opens in for every staff member; null lets each use their own. */
+  admin_locale?: LocaleCode | null
+  timezone?: TimeZone
   weight_unit?: WeightUnit
   unit_system?: 'metric' | 'imperial'
   /**

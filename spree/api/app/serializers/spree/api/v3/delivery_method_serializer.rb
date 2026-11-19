@@ -15,6 +15,8 @@ module Spree
         attribute :digital, &:digital?
         attribute :pickup, &:pickup?
         attribute :pickup_point, &:pickup_point?
+
+        expandable_custom_fields
       end
     end
   end

@@ -1,6 +1,8 @@
 module Spree
   module Emails
     class FulfillmentSerializer < Spree::Api::V3::FulfillmentSerializer
+      _attributes.delete(:custom_fields)
+
       without_display_money
 
       typelize delivery_method_name: [:string, nullable: true]

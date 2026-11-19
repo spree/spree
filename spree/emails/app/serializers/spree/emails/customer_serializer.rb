@@ -1,6 +1,8 @@
 module Spree
   module Emails
     class CustomerSerializer < Spree::Api::V3::CustomerSerializer
+      _attributes.delete(:custom_fields)
+
       without_display_money
 
       many :addresses, resource: Spree::Emails::AddressSerializer

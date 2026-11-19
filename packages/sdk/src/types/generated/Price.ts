@@ -8,15 +8,15 @@ interface Price {
   currency: CurrencyCode | null;
   amount: string | null;
   compare_at_amount: string | null;
-  /** @deprecated Use `amount`. Removed in 6.1. */
+  /** @deprecated Use `amount`. Removed in 6.5. */
   amount_in_cents: number | null;
-  /** @deprecated Use `compare_at_amount`. Removed in 6.1. */
+  /** @deprecated Use `compare_at_amount`. Removed in 6.5. */
   compare_at_amount_in_cents: number | null;
   /** `amount` formatted with its currency symbol in the request's language.
-   * @deprecated Format `amount` with its currency instead. Removed in 6.1. */
+   * @deprecated Format `amount` with its currency instead. Removed in 6.5. */
   display_amount: string | null;
   /** `compare_at_amount` formatted with its currency symbol in the request's language.
-   * @deprecated Format `compare_at_amount` with its currency instead. Removed in 6.1. */
+   * @deprecated Format `compare_at_amount` with its currency instead. Removed in 6.5. */
   display_compare_at_amount: string | null;
   price_list_id: string | null;
 }

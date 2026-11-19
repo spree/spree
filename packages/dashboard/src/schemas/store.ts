@@ -1,5 +1,4 @@
 import {
-  CAPTURE_METHODS,
   DOCUMENT_NUMBER_FORMATS,
   PROVIDER_FAILURE_POLICIES,
   STOREFRONT_ACCESSES,
@@ -18,21 +17,26 @@ export const INTERNAL_PROVIDER_KEY = 'internal'
 
 export const storeSettingsFormSchema = z.object({
   name: z.string().min(1, { error: requiredMessage('store.name') }),
+  seo_title: z.string(),
+  meta_description: z.string(),
+  meta_keywords: z.string(),
+  facebook: z.string(),
+  twitter: z.string(),
+  instagram: z.string(),
+  // Image triple for the store logo. See ResourceImageField.
+  logo_signed_id: z.string().nullable(),
+  logo_preview_url: z.string().nullable(),
+  logo_cleared: z.boolean(),
+  // A language the server does not list is refused there, under this field,
+  // rather than here, where a stored one would block every other setting.
   admin_locale: z.string().nullable().optional(),
   timezone: z.string().min(1, { error: requiredMessage('store.timezone') }),
   unit_system: z.enum(UNIT_SYSTEMS),
   weight_unit: z.enum(WeightUnit),
-  storefront_access: z.enum(STOREFRONT_ACCESSES),
-  guest_checkout: z.boolean(),
-  always_include_confirm_step: z.boolean(),
-  company_field_enabled: z.boolean(),
-  address_requires_phone: z.boolean(),
-  capture_method: z.enum(CAPTURE_METHODS),
   pricing_provider: z.string(),
   inventory_provider: z.string(),
   pricing_provider_failure_policy: z.enum(PROVIDER_FAILURE_POLICIES),
   inventory_provider_failure_policy: z.enum(PROVIDER_FAILURE_POLICIES),
-  tax_using_ship_address: z.boolean(),
   track_inventory_levels: z.boolean(),
   stock_reservations_enabled: z.boolean(),
   low_stock_threshold: z.coerce
@@ -67,3 +71,14 @@ export const storeSettingsFormSchema = z.object({
 })
 
 export type StoreSettingsFormValues = z.infer<typeof storeSettingsFormSchema>
+
+/** The storefront, checkout and address settings, saved from their own page. */
+export const storefrontSettingsFormSchema = z.object({
+  storefront_access: z.enum(STOREFRONT_ACCESSES),
+  guest_checkout: z.boolean(),
+  always_include_confirm_step: z.boolean(),
+  company_field_enabled: z.boolean(),
+  address_requires_phone: z.boolean(),
+})
+
+export type StorefrontSettingsFormValues = z.infer<typeof storefrontSettingsFormSchema>

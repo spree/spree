@@ -44,25 +44,35 @@ module Spree
         package = build_package
 
         # Group by variant_id as grouping by variant fires cached query.
-        units_by_variant_id = inventory_units.index_by(&:variant_id)
+        units_by_variant_id = inventory_units.group_by(&:variant_id)
         # The package's variants and their levels here, each in one query
         # rather than one per variant. Lowest id first, as StockLocation#stock_level reads.
         variants = variants_for(units_by_variant_id)
         stock_levels = @stock_levels || stock_location.stock_levels.where(variant_id: units_by_variant_id.keys).order(:id).
                        group_by(&:variant_id).transform_values(&:first)
 
-        units_by_variant_id.each do |variant_id, inventory_unit|
+        units_by_variant_id.each do |variant_id, units|
           variant = variants[variant_id] || Spree::Variant.find(variant_id)
-          unit = inventory_unit.dup # Can be used by others, do not use directly
+          # Can be used by others, do not use directly
+          units = units.map(&:dup)
           if variant.should_track_inventory?
             stock_level = stock_levels[variant_id]
             next if stock_level.nil?
 
-            on_hand, backordered = stock_location.fill_status(variant, unit.quantity, stock_level: stock_level)
-            package.add(FulfillmentItem.split(unit, backordered), :backordered) if backordered.positive?
-            package.add(FulfillmentItem.split(unit, on_hand), :on_hand) if on_hand.positive?
+            on_hand, backordered = stock_location.fill_status(variant, units.sum(&:quantity), stock_level: stock_level)
+            # Two lines of one variant draw on one shelf, so it is split
+            # between them in order rather than offered to each in full.
+            units.each do |unit|
+              unit_on_hand = [on_hand, unit.quantity].min
+              unit_backordered = [backordered, unit.quantity - unit_on_hand].min
+              on_hand -= unit_on_hand
+              backordered -= unit_backordered
+
+              package.add(FulfillmentItem.split(unit, unit_backordered), :backordered) if unit_backordered.positive?
+              package.add(FulfillmentItem.split(unit, unit_on_hand), :on_hand) if unit_on_hand.positive?
+            end
           else
-            package.add unit
+            units.each { |unit| package.add unit }
           end
         end
 
@@ -84,8 +94,8 @@ module Spree
       # The units' own variants when they carry them, so a cart's variants are
       # read once however many locations are packed.
       def variants_for(units_by_variant_id)
-        variants = units_by_variant_id.each_with_object({}) do |(variant_id, unit), loaded|
-          loaded[variant_id] = unit.variant if unit.association(:variant).loaded?
+        variants = units_by_variant_id.each_with_object({}) do |(variant_id, units), loaded|
+          loaded[variant_id] = units.first.variant if units.first.association(:variant).loaded?
         end
         missing_ids = units_by_variant_id.keys - variants.keys
         missing_ids.empty? ? variants : variants.merge(Spree::Variant.where(id: missing_ids).index_by(&:id))

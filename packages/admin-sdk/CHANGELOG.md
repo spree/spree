@@ -1,5 +1,71 @@
 # @spree/admin-sdk
 
+## 6.0.5
+
+### Patch Changes
+
+- [#15216](https://github.com/spree/spree/pull/15216) [`40fe3a3`](https://github.com/spree/spree/commit/40fe3a3640c3964ddcf78842f7af36f31be059b1) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `client.store.update()` now accepts `meta_keywords`, `facebook`, `twitter` and `instagram`, and the store the Admin API returns includes `logo_url` and those fields. Social accounts must be a handle, a scheme-less address or an `http(s)` URL.
+
+## 6.0.4
+
+### Patch Changes
+
+- [#15136](https://github.com/spree/spree/pull/15136) [`b67452b`](https://github.com/spree/spree/commit/b67452b2ef9ca9802de1d6cab3c88d98da1ebe76) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Adding a company member takes `customer_id` for an existing customer, as an alternative to `customer_email`, so `CompanyMembershipCreateParams.customer_email` is now optional.
+
+- [#15136](https://github.com/spree/spree/pull/15136) [`7a5dca8`](https://github.com/spree/spree/commit/7a5dca8d999cc5132c083ce68476492165794521) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `CompanyMembership` can carry its `customer` when listed with `expand: ['customer']`, so a members list can show each member's name.
+
+- [#15176](https://github.com/spree/spree/pull/15176) [`8a1a876`](https://github.com/spree/spree/commit/8a1a8765c15209a60e4eb8bfc447fb90adfbebd9) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added `adminClient.diagnostics.get()`, which reads the anonymised diagnostics report behind the dashboard's Settings → System info. The client takes an optional `onRequestComplete` option, called after every request with its request ID, and gains `getStore()`. File downloads now send the store header.
+
+- [#15136](https://github.com/spree/spree/pull/15136) [`6f3de61`](https://github.com/spree/spree/commit/6f3de6138e6879caf065798ddd2462360d5b06f6) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Order line items carry `product_id`, so an order page can link each line to its product without expanding the variant.
+
+- [#15136](https://github.com/spree/spree/pull/15136) [`fd2364a`](https://github.com/spree/spree/commit/fd2364a3b8de751d4e115ea8786da47de91431ae) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Media can be filtered and sorted by file name and file size (`filename`, `byte_size`).
+
+- [#15145](https://github.com/spree/spree/pull/15145) [`6bb42c3`](https://github.com/spree/spree/commit/6bb42c3aa3a8feab481996580e8566ffd3f9624f) Thanks [@beobungbu](https://github.com/beobungbu)! - Avoid reading browser location when an explicit base URL is configured, and support native environments where window exists without location.
+
+- [#15177](https://github.com/spree/spree/pull/15177) [`ab8f82f`](https://github.com/spree/spree/commit/ab8f82fc5d4f91beb42447f84df9106d79e7a39a) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - A seller now carries `products_count_by_status`, how many of their products are in each status, read in the same query as `products_count`.
+
+- [#15177](https://github.com/spree/spree/pull/15177) [`ab8f82f`](https://github.com/spree/spree/commit/ab8f82fc5d4f91beb42447f84df9106d79e7a39a) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Updating a seller takes `returns_address`, written inline like `billing_address`. It is saved onto the seller's returns stock location, or a new one for a seller who has none, so the seller page edits it in place instead of opening the stock location. `@spree/dashboard-core` exports `EditStockLocationSheet`, so a record page can open a location's editor without leaving the page.
+
+- [#15136](https://github.com/spree/spree/pull/15136) [`c7ba0e1`](https://github.com/spree/spree/commit/c7ba0e18b28b17ef454e2e6dedae4ed4885ac794) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added `returns_location_id` to `Seller`: the stock location its `returns_address` is read from, which is where that address is edited.
+
+- [#15170](https://github.com/spree/spree/pull/15170) [`09b1cde`](https://github.com/spree/spree/commit/09b1cdefb6742aa9e293369b6f77e02bb5e6499b) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added `sellers.invitations.create`, which invites someone to a seller's team without changing the seller's status. The seller page's team card uses it, so an approved seller can get its first user, and each pending invitation now has a Copy invitation link action.
+
+## 6.0.3
+
+### Patch Changes
+
+- [#15092](https://github.com/spree/spree/pull/15092) [`54d3227`](https://github.com/spree/spree/commit/54d32275ed2254e1f1d09da67bb80b8073a154a1) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added `client.products.activate`, `archive` and `draft`, which move one product to that status through its workflow, so the status event fires. Unlike `bulkStatusUpdate`, they refuse a product awaiting review.
+
+- [#15087](https://github.com/spree/spree/pull/15087) [`5de3074`](https://github.com/spree/spree/commit/5de3074693359ad16623f9d522a6d5ab64d4b5f6) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The Admin API client now works in browsers on pages served over plain HTTP at an address other than `localhost`, for example a server's IP address. It used `crypto.randomUUID` for the key that makes a retried write safe, and browsers only provide that on secure pages; it now uses `randomUUID()` from `@spree/core`.
+
+- [#15113](https://github.com/spree/spree/pull/15113) [`41bbba3`](https://github.com/spree/spree/commit/41bbba3272d9ebd8817842456670db0b72cd3b34) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added `client.extend()` and `defineAdminExtension`, so a package can add a typed namespace for an extension's own endpoints to the client, such as `client.quotes`. The extension calls through the client's own request function, so it shares the client's auth, locale defaults and retries; `extend` returns a new client and refuses a name the client already has. An extension's `build` also gets `listParams` and `readParams`, which build list and read queries the way the built-in methods do, and the package now exports the `Extension` and `RequestFn` types its published declarations reference.
+
+## 6.0.2
+
+### Patch Changes
+
+- [#15057](https://github.com/spree/spree/pull/15057) [`ab0dec3`](https://github.com/spree/spree/commit/ab0dec332d93bf69deaa2ff794f5cfd7c2c75e79) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Admin API payments now return `can_void` and `can_capture`, which the payment method decides. The order page uses them to hide Void on captured payments that the gateway cannot void, such as Stripe. The dashboard no longer checks the payment status itself, so it needs a server that returns them.
+
+- [#15040](https://github.com/spree/spree/pull/15040) [`7416961`](https://github.com/spree/spree/commit/7416961c06767a0ab558b0f244b41eaaef831c3b) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The staff settings page shows each member's status (active, locked or deactivated) and when they were last active. A new "View details" action opens a sheet with when they joined, who invited them and their signed-in sessions, each with its browser, IP address and last use. The admin SDK types gain `status`, `last_active_at`, the `inviter` and `sessions` expands, and the `Session` and `AdminUserStatus` types; `@spree/dashboard-ui` adds `BrowserIcon`.
+
+## 6.0.1
+
+### Patch Changes
+
+- [#15006](https://github.com/spree/spree/pull/15006) [`f227994`](https://github.com/spree/spree/commit/f227994feffde925ee3a0b21c2b2c661d91c08c4) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The admin dashboard now shows external references (the keys an ERP, PIM or CRM knows a record by) in the Metadata card, each with a copy button. They appear on product, order, category, company and seller pages, in the metadata sheet of returns and fulfillments, and in the stock location edit panel. The Admin API now returns external references for sellers too.
+
+- [#14996](https://github.com/spree/spree/pull/14996) [`30493b4`](https://github.com/spree/spree/commit/30493b4f8e0e0f19b1c684fd8ac34bff24f51187) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added an optional `custom_fields` property to every record type that can carry custom fields, such as sellers, option types, media, orders, line items, addresses and customers. Request it with `expand: ['custom_fields']`. The Store API returns only fields marked storefront visible, and the Admin API returns every field.
+
+- [#15001](https://github.com/spree/spree/pull/15001) [`21dc28f`](https://github.com/spree/spree/commit/21dc28f68623bcd141a349b597b8b872fd57b9dd) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Typed the store's regional settings. The store's `default_country_code` is now `CountryCode`, its `admin_locale` is `LocaleCode` (send `null` to clear it), and its `timezone` — also on the seller profile — is the new `TimeZone` type, which suggests common IANA time zones while accepting any other. `TIME_ZONES` in `@spree/core` lists the suggested zones.
+
+- [#14997](https://github.com/spree/spree/pull/14997) [`730c9da`](https://github.com/spree/spree/commit/730c9daa414b19fd125c03aa095ae23ea2cc91ab) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added localized storefront SEO settings. Merchants edit the store's SEO title and meta description on Store Settings and translate them for each supported language. The Store SDK reads them with `client.store.get()`, and the Admin SDK reaches the store's translations with `client.store.translations.get()`.
+
+## 6.0.0
+
+### Minor Changes
+
+- [#14982](https://github.com/spree/spree/pull/14982) [`348c5bb`](https://github.com/spree/spree/commit/348c5bbeb94eb73dacbe3dbe10b8951eb469c553) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added maintenance task runs and upgrade steps. `upgradeSteps.list()` returns the data steps a Spree upgrade still needs, in the order they must run, each with its last run. `maintenanceTaskRuns` lists, gets and starts runs, and `maintenanceTaskRuns.cancel()` stops one. Runs belong to the whole installation, and a task is named by its short name (`capture_methods`), never a Ruby class name.
+
 ## 6.0.0-rc.7
 
 Released with Spree 6.0.0.rc7, with no changes of its own. From this release the version matches the version of the Spree gems.

@@ -78,7 +78,8 @@ export function OrderPage() {
                 )}
               </>
             }
-            resource={{ id: order.id, number: order.number }}
+            resource={order}
+            endpoint={`/api/v3/seller/orders/${order.id}`}
             destructiveItems={
               cancelable ? (
                 <DropdownMenuItem variant="destructive" onClick={() => setCanceling(true)}>

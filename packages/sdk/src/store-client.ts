@@ -78,6 +78,7 @@ import type {
   ReturnSort,
   Seller,
   StockLocation,
+  Store,
   StoreCredit,
   UpdateCartParams,
   UpdateCompanyParams,
@@ -124,7 +125,7 @@ interface ApplyStoreCredit {
    *   as the cart can use.
    */
   (cartId: string, amount?: string, options?: RequestOptions): Promise<Cart>
-  /** @deprecated Pass the amount as a decimal string (`'25.00'`). A number is refused from 6.1. */
+  /** @deprecated Pass the amount as a decimal string (`'25.00'`). A number is refused from 6.5. */
   (cartId: string, amount: number, options?: RequestOptions): Promise<Cart>
 }
 
@@ -386,6 +387,16 @@ export class StoreClient {
      */
     get: (options?: RequestOptions): Promise<Channel> =>
       this.request<Channel>('GET', '/channel', options),
+  }
+
+  readonly store = {
+    /**
+     * Get the current store's name and default SEO metadata (`seo_title`,
+     * `meta_description`) in the request locale. A field without a
+     * translation falls back to the store's default locale.
+     */
+    get: (options?: RequestOptions): Promise<Store> =>
+      this.request<Store>('GET', '/store', options),
   }
 
   // ============================================

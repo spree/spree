@@ -32,9 +32,8 @@ module Spree::RansackableAttributes
 
     class_attribute :default_ransackable_attributes
     # `position` is included so any `acts_as_list` model is sortable by it
-    # without each subclass having to opt in. Ransack ignores attributes
-    # the model doesn't actually expose, so this is a no-op for tables
-    # without a position column.
+    # without each subclass having to opt in. Each one is offered only where
+    # the model has it, since filtering on a missing column fails in SQL.
     self.default_ransackable_attributes = %w[id name updated_at created_at position]
 
     def self.ransackable_associations(auth_object = nil)
@@ -47,22 +46,12 @@ module Spree::RansackableAttributes
     end
 
     def self.ransackable_attributes(auth_object = nil)
-      base = default_ransackable_attributes | (whitelisted_ransackable_attributes || [])
+      base = default_ransackable_attributes.select { |attribute| ransack_attribute_defined?(attribute) }
+      base |= whitelisted_ransackable_attributes || []
       base |= Spree.ransack.custom_attributes_for(self)
       return base unless Spree::RansackableAttributes.restricted_audience?(auth_object)
 
       base - Array(private_ransackable_attributes[auth_object.to_sym])
-    end
-
-    # Free-text scopes take what was typed, as it was typed. Ransack otherwise
-    # casts boolean-looking arguments: a search for "true" or "1" reached the
-    # scope as a bare `true` (or no argument at all) and "false" or "0" was
-    # dropped without filtering. A model that lists two-state scopes of its
-    # own adds them to `super`.
-    #
-    # @return [Array<Symbol>]
-    def self.ransackable_scopes_skip_sanitize_args
-      %i[search]
     end
 
     def self.ransackable_scopes(auth_object = nil)
@@ -73,6 +62,12 @@ module Spree::RansackableAttributes
 
       base - Array(private_ransackable_scopes[auth_object.to_sym])
     end
+
+    def self.ransack_attribute_defined?(attribute)
+      attribute_names.include?(attribute) || _ransackers.key?(attribute) || attribute_aliases.key?(attribute) ||
+        (respond_to?(:translatable_fields) && translatable_fields.map(&:to_s).include?(attribute))
+    end
+    private_class_method :ransack_attribute_defined?
 
     # Declares the `search` filter (`q[search]=term`): a case-insensitive
     # partial match on any of the given attributes, which may reach through
@@ -85,8 +80,8 @@ module Spree::RansackableAttributes
     # @param attributes [Array<Symbol, String>]
     def self.search_by(*attributes)
       self.search_attributes = attributes.map(&:to_s).freeze
-      scope :search, ->(query = nil) {
-        [nil, true].include?(query) || query.blank? ? all : ransack("#{search_attributes.join('_or_')}_cont" => query.to_s.strip).result
+      scope :search, ->(query) {
+        query.blank? ? all : ransack("#{search_attributes.join('_or_')}_cont" => query.to_s.strip).result
       }
     end
 
@@ -109,6 +104,77 @@ module Spree::RansackableAttributes
         reflection.klass.ransackable_path?(path.delete_prefix("#{name}_"), auth_object, depth + 1)
       end
     end
+  end
+
+  # In `class_methods`, not `included`, so a model that opts a scope out of
+  # Ransack's cast can extend the list with `super`.
+  class_methods do
+    # The arguments a ransackable scope takes: what the model or
+    # `Spree.ransack.add_scope` declared, else what its signature shows. A
+    # `scope` lambda hides its signature, so an undeclared one reads as text.
+    #
+    # @param scope [String, Symbol]
+    # @return [String, Array<String>, Hash] one kind, a list of kinds
+    #   (positional arguments), or `{ 'list' => kind }` for any number of them
+    def ransackable_scope_type(scope)
+      declared_ransackable_scope_types.fetch(scope.to_s) do
+        Spree::RansackableAttributes.scope_type_from_signature(method(scope))
+      end
+    end
+
+    # Ransack turns `1`, `t` and `true` into `true`, and `0`, `f` and `false`
+    # into `false`, before calling a scope, and skips a scope given `false`.
+    # Only a flag wants that: a search for "1" must reach `search` as "1". A
+    # `scope` lambda declared without a type keeps the cast, since nothing
+    # shows whether it takes a value at all.
+    #
+    # @return [Array<String>]
+    def ransackable_scopes_skip_sanitize_args
+      declared = declared_ransackable_scope_types
+      ransackable_scopes.map(&:to_s).select do |scope|
+        next false unless respond_to?(scope)
+
+        signature = method(scope)
+        next false if !declared.key?(scope) && Spree::RansackableAttributes.signature_hidden?(signature)
+
+        declared.fetch(scope) { Spree::RansackableAttributes.scope_type_from_signature(signature) }.to_s != 'boolean'
+      end
+    end
+
+    private
+
+    def declared_ransackable_scope_types
+      declared = search_attributes.any? ? { 'search' => 'text' } : {}
+      declared.merge(ransackable_scope_types.stringify_keys, Spree.ransack.custom_scope_types_for(self).stringify_keys)
+    end
+  end
+
+  # What a method's signature says about the arguments a scope takes.
+  #
+  # @param method [Method]
+  # @return [String, Array<String>, Hash]
+  def self.scope_type_from_signature(method)
+    return 'text' if signature_hidden?(method)
+
+    parameters = method.parameters
+    return { 'list' => 'text' } if parameters.any? { |type, _| type == :rest }
+
+    required = parameters.count { |type, _| type == :req }
+    case required
+    when 0 then 'boolean'
+    when 1 then 'text'
+    else Array.new(required, 'text')
+    end
+  end
+
+  # A `scope` lambda is reached through a wrapper taking `(*args, **)`, which
+  # says nothing about the arguments the lambda takes. A named `**options` is
+  # a real signature.
+  #
+  # @param method [Method]
+  # @return [Boolean]
+  def self.signature_hidden?(method)
+    method.parameters.any? { |type, name| type == :keyrest && name == :** }
   end
 
   # @param auth_object [Symbol, nil] the Ransack auth object a search ran with

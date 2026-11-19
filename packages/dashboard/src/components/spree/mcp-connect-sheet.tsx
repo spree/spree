@@ -1,5 +1,4 @@
 import type { OauthApplication } from '@spree/admin-sdk'
-import { adminClient } from '@spree/dashboard-core'
 import {
   Alert,
   AlertDescription,
@@ -8,6 +7,7 @@ import {
   Field,
   FieldLabel,
   Input,
+  Item,
   Sheet,
   SheetContent,
   SheetDescription,
@@ -20,10 +20,9 @@ import {
   TabsTrigger,
 } from '@spree/dashboard-ui'
 import { CircleAlertIcon, InfoIcon } from '@spree/dashboard-ui/icons'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useOauthApplications } from '../../hooks/use-oauth'
+import { useOauthApplications, useSaveOauthApplication } from '../../hooks/use-oauth'
 import { ChoiceCardPicker } from './choice-card-picker'
 
 type McpConnectSheetProps = {
@@ -44,23 +43,37 @@ type McpConnectSheetProps = {
 /**
  * The loopback callback a terminal client listens on.
  *
- * Registered alongside the hosted one because Claude Code and Codex redirect
- * to a local port rather than the vendor's servers, and the port is chosen
- * at run time. RFC 8252 §7.3 says to compare loopback redirects ignoring the
- * port, which Doorkeeper does — but only for an IP literal, since it decides
- * by parsing the host as an address. `localhost` is a name, so it parses as
- * nothing and every ephemeral port is refused.
+ * Registered alongside the hosted one because terminal clients such as Codex
+ * redirect to a local port rather than the vendor's servers, and the port is
+ * chosen at run time. RFC 8252 §7.3 says to compare loopback redirects ignoring the
+ * port, which Doorkeeper does.
  */
 const LOOPBACK_CALLBACK = 'http://127.0.0.1/callback'
+
+/**
+ * Claude Code only ever calls back on `localhost`, never the IP literal. The
+ * command pins its port so the registered callback reads the same as the one
+ * Claude Code sends.
+ */
+const CLAUDE_CODE_PORT = 3118
+const CLAUDE_CODE_CALLBACK = `http://localhost:${CLAUDE_CODE_PORT}/callback`
 
 const KNOWN_CLIENTS = [
   {
     value: 'claude',
     name: 'Claude',
-    redirectUris: ['https://claude.ai/api/mcp/auth_callback', LOOPBACK_CALLBACK],
+    redirectUris: [
+      'https://claude.ai/api/mcp/auth_callback',
+      LOOPBACK_CALLBACK,
+      CLAUDE_CODE_CALLBACK,
+    ],
     surfaces: [
       { id: 'app', command: null },
-      { id: 'cli', command: (url: string) => `claude mcp add --transport http spree ${url}` },
+      {
+        id: 'cli',
+        command: (url: string, clientId: string) =>
+          `claude mcp add --transport http --client-id ${clientId} --callback-port ${CLAUDE_CODE_PORT} spree ${url}`,
+      },
     ],
   },
   {
@@ -78,7 +91,6 @@ const OTHER = 'other'
 
 export function McpConnectSheet({ open, onOpenChange }: McpConnectSheetProps) {
   const { t } = useTranslation()
-  const queryClient = useQueryClient()
   const [choice, setChoice] = useState<string>(KNOWN_CLIENTS[0].value)
   const [created, setCreated] = useState<OauthApplication | null>(null)
   const [customName, setCustomName] = useState('')
@@ -93,14 +105,7 @@ export function McpConnectSheet({ open, onOpenChange }: McpConnectSheetProps) {
   const endpoint = `${apiOrigin}/api/v3/admin/mcp`
   const selected = KNOWN_CLIENTS.find((client) => client.value === choice)
 
-  const register = useMutation({
-    mutationFn: (params: { name: string; redirect_uri: string }) =>
-      adminClient.oauth.applications.create(params),
-    onSuccess: (application) => {
-      queryClient.invalidateQueries({ queryKey: ['oauth-applications'] })
-      setCreated(application)
-    },
-  })
+  const register = useSaveOauthApplication()
 
   async function connect() {
     setFailure(null)
@@ -113,13 +118,32 @@ export function McpConnectSheet({ open, onOpenChange }: McpConnectSheetProps) {
     // second one — two rows with two ids would leave a merchant guessing
     // which to paste.
     const already = existing?.data?.find((candidate) => candidate.name === name)
-    if (already) {
-      setCreated(already)
-      return
-    }
 
     try {
-      await register.mutateAsync({ name, redirect_uri: redirectUri })
+      if (!already) {
+        setCreated(await register.mutateAsync({ name, redirect_uri: redirectUri }))
+        return
+      }
+
+      // A callback the registration lacks — added to a preset since, or
+      // typed in for a custom client — would be refused at sign-in, so
+      // reconnecting adds it.
+      const registered = (already.redirect_uri ?? '').split(/\s+/).filter(Boolean)
+      const offered: readonly string[] = selected
+        ? selected.redirectUris
+        : redirectUri.split(/\s+/).filter(Boolean)
+      const missing = offered.filter((uri) => !registered.includes(uri))
+      if (missing.length === 0) {
+        setCreated(already)
+        return
+      }
+      setCreated(
+        await register.mutateAsync({
+          id: already.id,
+          name,
+          redirect_uri: [...registered, ...missing].join('\n'),
+        }),
+      )
     } catch (error) {
       setFailure(error instanceof Error ? error.message : t('admin.common.error'))
     }
@@ -189,7 +213,7 @@ export function McpConnectSheet({ open, onOpenChange }: McpConnectSheetProps) {
               {/* Only once "Something else" is the choice: a merchant picking
                   a known client never sees a callback field. */}
               {selected ? null : (
-                <div className="flex flex-col gap-4 rounded-lg border p-4">
+                <Item variant="outline" className="flex-col items-stretch gap-4">
                   <Field>
                     <FieldLabel htmlFor="mcp-other-name">
                       {t('admin.fields.oauth_application.name.label')}
@@ -215,7 +239,7 @@ export function McpConnectSheet({ open, onOpenChange }: McpConnectSheetProps) {
                       {t('admin.fields.oauth_application.redirect_uri.help')}
                     </p>
                   </Field>
-                </div>
+                </Item>
               )}
             </>
           )}
@@ -272,7 +296,7 @@ function ConnectInstructions({
         value={clientId}
         copyLabel={t('admin.mcp_connect.copy_client_id')}
       />
-      <ol className="flex list-decimal flex-col gap-2 pl-5 text-sm">
+      <ol className="flex list-decimal flex-col gap-2 pl-5 text-base">
         <li>{t('admin.mcp_connect.step_paste')}</li>
         <li>{t('admin.mcp_connect.step_sign_in')}</li>
         <li>{t('admin.mcp_connect.step_approve')}</li>
@@ -298,10 +322,10 @@ function ConnectInstructions({
           <TabsContent value="cli" className="flex flex-col gap-4 pt-4">
             <CopyableValue
               label={t('admin.mcp_connect.run_label')}
-              value={cli.command(endpoint)}
+              value={cli.command(endpoint, clientId)}
               copyLabel={t('admin.mcp_connect.copy_command')}
             />
-            <p className="text-muted-foreground text-sm">
+            <p className="text-muted-foreground text-base">
               {t('admin.mcp_connect.cli_then_sign_in')}
             </p>
           </TabsContent>
@@ -331,7 +355,7 @@ function CopyableValue({
 }) {
   return (
     <div className="flex flex-col gap-2">
-      <p className="font-medium text-sm">{label}</p>
+      <p className="font-medium text-base">{label}</p>
       {help ? <p className="text-muted-foreground text-xs">{help}</p> : null}
       <div className="flex items-center gap-2 rounded-md bg-muted px-3 py-2">
         <code className="flex-1 truncate font-mono text-xs">{value}</code>

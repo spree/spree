@@ -1,13 +1,17 @@
 import type { Order, Payment } from '@spree/admin-sdk'
-import { adminClient, currencyParts, Money } from '@spree/dashboard-core'
+import {
+  adminClient,
+  currencyParts,
+  Money,
+  toastMutationError,
+  useMetadataSheet,
+  ViewMetadataMenuItem,
+} from '@spree/dashboard-core'
 import {
   Badge,
   Button,
   Card,
-  CardAction,
   CardContent,
-  CardHeader,
-  CardTitle,
   Dialog,
   DialogBody,
   DialogContent,
@@ -26,6 +30,10 @@ import {
   InputGroupAddon,
   InputGroupInput,
   InputGroupText,
+  Section,
+  SectionActions,
+  SectionHeader,
+  SectionTitle,
   Select,
   SelectContent,
   SelectItem,
@@ -57,7 +65,7 @@ import { type FormEvent, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useOrderMutation } from '../../../hooks/use-order'
 import { useOrderGroup } from '../../../hooks/use-seller-ledger'
-import { PaymentDetailsDialog } from './payment-details-dialog'
+import { PaymentDetailsDialog, riskyCardChecks } from './payment-details-dialog'
 
 export function PaymentsCard({ order }: { order: Order }) {
   const { t } = useTranslation()
@@ -89,15 +97,18 @@ export function PaymentsCard({ order }: { order: Order }) {
     adminClient.orders.payments.void(orderId, paymentId, {}),
   )
 
+  // Above the card rather than inside it, so the table starts the card.
+  const showSharedHelp = grouped && !awaitingGroup && !groupFailed && payments.length > 0
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>
+    <Section>
+      <SectionHeader>
+        <SectionTitle>
           <CreditCardIcon className="size-4" />
           {t('admin.pages.orders.detail.section_payments')}
           {payments.length > 0 && <Badge variant="outline">{payments.length}</Badge>}
-        </CardTitle>
-        <CardAction className="flex items-center gap-2">
+        </SectionTitle>
+        <SectionActions className="flex items-center gap-2">
           {order.payment_status && <StatusBadge status={order.payment_status} />}
           {/* Adding, capturing and voting a grouped payment acts on every
               order in the checkout, not just this one — so this order's page
@@ -108,35 +119,35 @@ export function PaymentsCard({ order }: { order: Order }) {
               {t('admin.actions.add')}
             </Button>
           )}
-        </CardAction>
-      </CardHeader>
-      {awaitingGroup ? (
-        <CardContent>
-          <Skeleton className="h-24 w-full" />
-        </CardContent>
-      ) : grouped && groupFailed ? (
-        // Distinct from the empty state below: a request that failed says
-        // nothing about whether this order was paid, and reading "no payments"
-        // off a network error is the misreading this branch exists to prevent.
-        <CardContent>
-          <p className="text-center text-destructive py-8">
-            {t('admin.orders.detail.payments_table.load_error')}
-          </p>
-        </CardContent>
-      ) : payments.length === 0 ? (
-        <CardContent>
-          <p className="text-center text-muted-foreground py-8">
-            {t('admin.pages.orders.detail.empty_payments')}
-          </p>
-        </CardContent>
-      ) : (
-        <>
-          {grouped && (
-            <p className="px-6 pb-2 text-sm text-muted-foreground">
-              {t('admin.orders.detail.payments_table.shared_help')}
+        </SectionActions>
+      </SectionHeader>
+      {showSharedHelp && (
+        <p className="text-muted-foreground text-base">
+          {t('admin.orders.detail.payments_table.shared_help')}
+        </p>
+      )}
+      <Card>
+        {awaitingGroup ? (
+          <CardContent>
+            <Skeleton className="h-24 w-full" />
+          </CardContent>
+        ) : grouped && groupFailed ? (
+          // Distinct from the empty state below: a request that failed says
+          // nothing about whether this order was paid, and reading "no payments"
+          // off a network error is the misreading this branch exists to prevent.
+          <CardContent>
+            <p className="text-center text-destructive py-8">
+              {t('admin.orders.detail.payments_table.load_error')}
             </p>
-          )}
-          <Table>
+          </CardContent>
+        ) : payments.length === 0 ? (
+          <CardContent>
+            <p className="text-center text-muted-foreground py-8">
+              {t('admin.pages.orders.detail.empty_payments')}
+            </p>
+          </CardContent>
+        ) : (
+          <Table roundedTop>
             <TableHeader>
               <TableRow>
                 <TableHead>{t('admin.orders.detail.payments_table.number')}</TableHead>
@@ -160,13 +171,18 @@ export function PaymentsCard({ order }: { order: Order }) {
                   </TableCell>
                   <TableCell>
                     <div className="flex flex-wrap items-center gap-1.5">
-                      <StatusBadge status={payment.status} />
-                      {(payment.avs_risky || payment.cvv_risky) && (
-                        <Badge variant="warning">
-                          <ShieldAlertIcon />
-                          {t('admin.orders.detail.payments_table.failed_card_checks')}
-                        </Badge>
+                      {/* A pending card payment that can be captured holds an
+                          authorization — the same thing the order's status
+                          calls it, so the two never disagree. */}
+                      {payment.status === 'pending' && payment.can_capture ? (
+                        <StatusBadge
+                          status="authorized"
+                          label={t('admin.orders.payment_statuses.authorized')}
+                        />
+                      ) : (
+                        <StatusBadge status={payment.status} />
                       )}
+                      <RiskyCardChecksBadge payment={payment} />
                     </div>
                   </TableCell>
                   <TableCell className="text-right font-medium whitespace-nowrap tabular-nums">
@@ -188,15 +204,8 @@ export function PaymentsCard({ order }: { order: Order }) {
                       currency={order.currency}
                       // Capturing or voiding a grouped payment acts on every
                       // order in the checkout, so this page only links out.
-                      canCapture={
-                        !grouped && (payment.status === 'checkout' || payment.status === 'pending')
-                      }
-                      canVoid={
-                        !grouped &&
-                        (payment.status === 'checkout' ||
-                          payment.status === 'pending' ||
-                          payment.status === 'completed')
-                      }
+                      canCapture={!grouped && payment.can_capture}
+                      canVoid={!grouped && payment.can_void}
                       onCapture={async () => {
                         if (
                           await confirm({
@@ -225,10 +234,10 @@ export function PaymentsCard({ order }: { order: Order }) {
               ))}
             </TableBody>
           </Table>
-        </>
-      )}
+        )}
+      </Card>
       <AddPaymentDialog order={order} open={addOpen} onOpenChange={setAddOpen} />
-    </Card>
+    </Section>
   )
 }
 
@@ -249,6 +258,7 @@ function PaymentActionsMenu({
 }) {
   const { t } = useTranslation()
   const [detailsOpen, setDetailsOpen] = useState(false)
+  const metadataSheet = useMetadataSheet()
   const dashboardUrl = payment.gateway_dashboard_payment_url
 
   return (
@@ -275,6 +285,10 @@ function PaymentActionsMenu({
               </a>
             </DropdownMenuItem>
           )}
+          <ViewMetadataMenuItem
+            metadata={payment.metadata}
+            onClick={() => metadataSheet.show(payment.metadata, payment.number)}
+          />
           {canCapture && (
             <DropdownMenuItem onClick={onCapture}>
               <CreditCardIcon className="size-4" />
@@ -295,6 +309,7 @@ function PaymentActionsMenu({
         open={detailsOpen}
         onOpenChange={setDetailsOpen}
       />
+      {metadataSheet.sheet}
     </>
   )
 }
@@ -367,6 +382,24 @@ function AddPaymentDialog({
     setCapture(false)
   }
 
+  // Drop a settled attempt's error when the dialog closes, so reopening it
+  // doesn't greet the admin with a refusal from a payment method they've since
+  // changed.
+  function handleOpenChange(next: boolean) {
+    if (!next && !mutation.isPending) mutation.reset()
+    onOpenChange(next)
+  }
+
+  function clearSettledError() {
+    if (mutation.isError) mutation.reset()
+  }
+
+  // Closing never resets an in-flight request, so one that fails after the
+  // dialog is gone keeps its error into the next open. Clear it while closed.
+  useEffect(() => {
+    if (!open && mutation.isError) mutation.reset()
+  }, [open, mutation.isError, mutation.reset])
+
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     if (!canSubmit) return
@@ -381,17 +414,24 @@ function AddPaymentDialog({
               onOpenChange(false)
               reset()
             },
+            // The payment exists by now; staying open would let a retry create a second one.
+            onError: (error) => {
+              toastMutationError(error)
+              onOpenChange(false)
+              reset()
+            },
           })
         } else {
           onOpenChange(false)
           reset()
         }
       },
+      onError: toastMutationError,
     })
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{t('admin.orders.detail.payment_form.title')}</DialogTitle>
@@ -409,6 +449,7 @@ function AddPaymentDialog({
                   onValueChange={(v) => {
                     setPaymentMethodId(v)
                     setSourceId('')
+                    clearSettledError()
                   }}
                 >
                   <SelectTrigger id="pay-method">
@@ -437,15 +478,21 @@ function AddPaymentDialog({
                     {t('admin.orders.detail.payment_form.source_label')}
                   </FieldLabel>
                   {!customerId ? (
-                    <p className="text-sm text-destructive">
+                    <p className="text-base text-destructive">
                       {t('admin.orders.detail.payment_form.source_requires_customer')}
                     </p>
                   ) : savedCards.length === 0 ? (
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-base text-muted-foreground">
                       {t('admin.orders.detail.payment_form.no_saved_cards')}
                     </p>
                   ) : (
-                    <Select value={sourceId} onValueChange={setSourceId}>
+                    <Select
+                      value={sourceId}
+                      onValueChange={(v) => {
+                        setSourceId(v)
+                        clearSettledError()
+                      }}
+                    >
                       <SelectTrigger id="pay-source">
                         <SelectValue
                           placeholder={t('admin.orders.detail.payment_form.source_placeholder')}
@@ -482,7 +529,10 @@ function AddPaymentDialog({
                     step="any"
                     placeholder={order.amount_due ?? '0.00'}
                     value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
+                    onChange={(e) => {
+                      setAmount(e.target.value)
+                      clearSettledError()
+                    }}
                   />
                 </InputGroup>
                 <p className="text-xs text-muted-foreground mt-1">
@@ -492,16 +542,22 @@ function AddPaymentDialog({
 
               {!isStoreCredit && (
                 <Field>
-                  <label className="flex items-center gap-2 text-sm" htmlFor="pay-capture">
+                  <label className="flex items-center gap-2 text-base" htmlFor="pay-capture">
                     <Switch id="pay-capture" checked={capture} onCheckedChange={setCapture} />
                     {t('admin.orders.detail.payment_form.capture_immediately')}
                   </label>
                 </Field>
               )}
+
+              {mutation.isError && (
+                <p className="text-base text-destructive" role="alert">
+                  {(mutation.error as Error).message}
+                </p>
+              )}
             </FieldGroup>
           </DialogBody>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <Button type="button" variant="outline" onClick={() => handleOpenChange(false)}>
               {t('admin.actions.cancel')}
             </Button>
             <Button
@@ -516,5 +572,21 @@ function AddPaymentDialog({
         </form>
       </DialogContent>
     </Dialog>
+  )
+}
+
+/** Warns of a card payment's risky address or security code check. */
+function RiskyCardChecksBadge({ payment }: { payment: Payment }) {
+  const { t } = useTranslation()
+  const risky = riskyCardChecks(payment)
+  if (!risky) return null
+
+  return (
+    <Badge variant="warning">
+      <ShieldAlertIcon />
+      {risky === 'failed'
+        ? t('admin.orders.detail.payments_table.failed_card_checks')
+        : t('admin.orders.detail.payments_table.card_checks_unavailable')}
+    </Badge>
   )
 }

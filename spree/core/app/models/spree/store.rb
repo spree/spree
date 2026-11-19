@@ -42,6 +42,11 @@ module Spree
       acts_as_paranoid
       # deleted translation values still need to be accessible - remove deleted_at scope
       default_scope { unscope(where: :deleted_at) }
+
+      # Mobility deletes a row once its last value is cleared. The soft delete
+      # stamps only `deleted_at`, and the row stays readable, so the cleared
+      # values have to be written too or the old translation keeps showing.
+      before_destroy { update_columns(changes_to_save.transform_values(&:last)) if has_changes_to_save? }
     end
 
     #
@@ -50,8 +55,9 @@ module Spree
     UNIT_SYSTEMS = %w[metric imperial].freeze
 
     # general preferences
-    preference :admin_locale, :string, format: :locale
-    preference :timezone, :string, format: :timezone, default: Time.zone.name
+    preference :admin_locale, :string, format: :locale, parse_on_set: ->(value) { Spree::Locales.listed(value) || value.presence }
+    preference :timezone, :string, format: :timezone, default: Spree::TimeZones.normalize(Time.zone.name),
+                                   parse_on_set: ->(value) { Spree::TimeZones.normalize(value) }
     preference :weight_unit, :string, default: 'lb', choices: -> { Spree::Variant::WEIGHT_UNITS }
     preference :unit_system, :string, default: 'imperial', choices: -> { UNIT_SYSTEMS }
     # Anonymous identifier of this installation, kept on the default store
@@ -256,7 +262,7 @@ module Spree
     has_many :store_credits, class_name: 'Spree::StoreCredit'
     has_many :store_credit_events, through: :store_credits, class_name: 'Spree::StoreCreditEvent'
 
-    # @deprecated Taxonomy is data-only in 6.0 and dropped in 6.1; use #categories.
+    # @deprecated Taxonomy is data-only in 6.0 and dropped in 6.3; use #categories.
     has_many :taxonomies, class_name: 'Spree::Taxonomy', deprecated: true
     has_many :categories, class_name: 'Spree::Category'
     has_many :collections, class_name: 'Spree::Collection', dependent: :destroy_async
@@ -270,20 +276,20 @@ module Spree
     has_many :custom_field_definitions, class_name: 'Spree::CustomFieldDefinition',
              inverse_of: :store, dependent: :destroy_async
 
-    # @deprecated Use #categories; removed in 6.1.
+    # @deprecated Use #categories; removed in 6.3.
     def taxons
-      Spree::Deprecation.warn('Spree::Store#taxons is deprecated and will be removed in Spree 6.1. Use #categories instead.')
+      Spree::Deprecation.warn('Spree::Store#taxons is deprecated and will be removed in Spree 6.3. Use #categories instead.')
       categories
     end
 
     def taxons=(value)
-      Spree::Deprecation.warn('Spree::Store#taxons= is deprecated and will be removed in Spree 6.1. Use #categories= instead.')
+      Spree::Deprecation.warn('Spree::Store#taxons= is deprecated and will be removed in Spree 6.3. Use #categories= instead.')
       self.categories = value
     end
 
-    # @deprecated Use {#stock_levels}; removed in 6.1.
+    # @deprecated Use {#stock_levels}; removed in 6.3.
     def stock_items
-      Spree::Deprecation.warn('Spree::Store#stock_items is deprecated and will be removed in Spree 6.1. Use #stock_levels instead.')
+      Spree::Deprecation.warn('Spree::Store#stock_items is deprecated and will be removed in Spree 6.3. Use #stock_levels instead.')
       stock_levels
     end
 
@@ -403,9 +409,31 @@ module Spree
                         message: :invalid_document_number_affix }
     validates :preferred_capture_method, inclusion: { in: Spree::CaptureMethod::CAPTURE_METHODS }
     validate :preferred_storefront_url_is_an_origin
+    validate :preferred_admin_locale_is_listed
+    validate :preferred_timezone_is_a_time_zone
     validate :order_number_sequence_start_unchanged_after_first_number, on: :update
     validates :mail_from_address, email: { allow_blank: false }
     validates :customer_support_email, email: { allow_blank: true }
+    # Storefronts render these as links, so only a handle, a scheme-less address
+    # or an http(s) URL is accepted, never another scheme, a space or an invisible
+    # character. Ruby's \s is ASCII-only, hence the Unicode classes.
+    # Checked only when the value changes, so a value saved before this rule
+    # does not block saving the store's other settings.
+    SOCIAL_FIELDS = %i[facebook twitter instagram].freeze
+    SOCIAL_FIELD_FORMAT = %r{
+      \A(?!(?:.*/)?\.\.(?:/|\z))                                   # no ".." path segment
+      (?:
+        https?://[\p{L}\p{N}.-]+(?::\d{1,5})?                      # a web address: a host (no userinfo) and an optional port
+        (?:[/?\#][^[:space:][:cntrl:]\p{Cf}]*)?                    # then a path, query or fragment
+      | (?://[\p{L}\p{N}.-]+(?::\d{1,5})?                          # a protocol-relative host, where a port is unambiguous
+        | @?[\p{L}\p{N}_.-]*[\p{L}\p{N}_][\p{L}\p{N}_.-]*)          # or a handle or bare host, never "name:"
+        (?:/[^[:space:][:cntrl:]\p{Cf}]*)?                         # and an optional path
+      )\z
+    }xi
+    normalizes(*SOCIAL_FIELDS, with: ->(value) { value.strip.presence })
+    SOCIAL_FIELDS.each do |field|
+      validates field, format: { with: SOCIAL_FIELD_FORMAT }, allow_blank: true, if: :"will_save_change_to_#{field}?"
+    end
     # FIXME: we should remove this condition in v5
     if !ENV['SPREE_DISABLE_DB_CONNECTION'] &&
        connected? &&
@@ -491,9 +519,11 @@ module Spree
       @default_country_for_market = country
     end
 
-    # @deprecated Use +default_country_code=+. Removed in 6.1.
+    # @deprecated Use +default_country_code=+. Removed in 6.3.
     def default_country_iso=(code)
-      Spree::Deprecation.warn('Spree::Store#default_country_iso= is deprecated, use #default_country_code= instead')
+      Spree::Deprecation.warn(
+        'Spree::Store#default_country_iso= is deprecated and will be removed in Spree 6.3. Use #default_country_code= instead.'
+      )
       self.default_country_code = code
     end
 
@@ -705,15 +735,15 @@ module Spree
       preferred_capture_method.presence || Spree::CaptureMethod::DEFAULT_CAPTURE_METHOD
     end
 
-    # @deprecated Use #preferred_capture_method; removed in 6.1.
+    # @deprecated Use #preferred_capture_method; removed in 6.3.
     def preferred_auto_capture
-      Spree::Deprecation.warn('Store#preferred_auto_capture is deprecated and will be removed in Spree 6.1. Use #preferred_capture_method instead.')
+      Spree::Deprecation.warn('Store#preferred_auto_capture is deprecated and will be removed in Spree 6.3. Use #preferred_capture_method instead.')
       capture_at_checkout?
     end
 
-    # @deprecated Use #preferred_capture_method=; removed in 6.1.
+    # @deprecated Use #preferred_capture_method=; removed in 6.3.
     def preferred_auto_capture=(value)
-      Spree::Deprecation.warn('Store#preferred_auto_capture= is deprecated and will be removed in Spree 6.1. Use #preferred_capture_method= instead.')
+      Spree::Deprecation.warn('Store#preferred_auto_capture= is deprecated and will be removed in Spree 6.3. Use #preferred_capture_method= instead.')
       # Turning it off only says "not at checkout" — it cannot distinguish
       # dispatch from manual, so an existing on_dispatch choice is preserved.
       self.preferred_capture_method = if value.to_b
@@ -725,15 +755,19 @@ module Spree
                                       end
     end
 
-    # @deprecated Use #preferred_capture_method; removed in 6.1.
+    # @deprecated Use #preferred_capture_method; removed in 6.3.
     def preferred_auto_capture_on_dispatch
-      Spree::Deprecation.warn('Store#preferred_auto_capture_on_dispatch is deprecated and will be removed in Spree 6.1. Use #preferred_capture_method instead.')
+      Spree::Deprecation.warn(
+        'Store#preferred_auto_capture_on_dispatch is deprecated and will be removed in Spree 6.3. Use #preferred_capture_method instead.'
+      )
       capture_on_dispatch?
     end
 
-    # @deprecated Use #preferred_capture_method=; removed in 6.1.
+    # @deprecated Use #preferred_capture_method=; removed in 6.3.
     def preferred_auto_capture_on_dispatch=(value)
-      Spree::Deprecation.warn('Store#preferred_auto_capture_on_dispatch= is deprecated and will be removed in Spree 6.1. Use #preferred_capture_method= instead.')
+      Spree::Deprecation.warn(
+        'Store#preferred_auto_capture_on_dispatch= is deprecated and will be removed in Spree 6.3. Use #preferred_capture_method= instead.'
+      )
       self.preferred_capture_method = if value.to_b
                                         'on_dispatch'
                                       elsif capture_on_dispatch?
@@ -834,6 +868,31 @@ module Spree
       return if Spree::AllowedOrigin.normalize_origin(raw)
 
       errors.add(:preferred_storefront_url, :invalid)
+    end
+
+    def preferred_admin_locale_is_listed
+      locale = preferred_admin_locale
+      return if locale.blank? || Spree::Locales::ALL.include?(locale)
+      return if awaiting_upgrade?(:admin_locale) { Spree::Locales.listed(locale) }
+
+      errors.add(:preferred_admin_locale, :inclusion)
+    end
+
+    def preferred_timezone_is_a_time_zone
+      return if Spree::TimeZones.valid?(preferred_timezone)
+      return if awaiting_upgrade?(:timezone) { Spree::TimeZones.valid?(Spree::TimeZones.normalize(preferred_timezone)) }
+
+      errors.add(:preferred_timezone, :invalid)
+    end
+
+    # A value saved before 6.0 that the store settings upgrade step converts
+    # must not block saving the store's other settings until the step runs.
+    # The block says whether the step can convert it.
+    def awaiting_upgrade?(name)
+      return false unless persisted?
+      return false unless public_send(:"preferred_#{name}") == (attribute_was('preferences') || {})[name]
+
+      yield.present?
     end
 
     # The starting value only shapes a counter that does not exist yet — once

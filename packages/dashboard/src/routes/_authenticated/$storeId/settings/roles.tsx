@@ -103,7 +103,7 @@ function RolesSettingsPage() {
               </EmptyHeader>
             </Empty>
           ) : (
-            <Table>
+            <Table roundedTop>
               <TableHeader>
                 <TableRow>
                   <TableHead>{t('admin.pages.roles.table.role')}</TableHead>
@@ -232,7 +232,7 @@ function PermissionSummary({ role }: { role: Role }) {
     return <Badge>{t('admin.roles.badges.full_access')}</Badge>
   }
   if (role.permissions.length === 0) {
-    return <span className="text-sm text-muted-foreground">{t('admin.roles.badges.none')}</span>
+    return <span className="text-base text-muted-foreground">{t('admin.roles.badges.none')}</span>
   }
 
   const preview = role.permissions.slice(0, PERMISSION_PREVIEW_COUNT)

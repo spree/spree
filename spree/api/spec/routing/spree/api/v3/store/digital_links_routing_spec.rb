@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 # Emailed and bookmarked download URLs outlive the 6.0 rename, so both paths
-# must reach the controller until the legacy one is dropped in 6.1.
+# must reach the controller until the legacy one is dropped in 6.5.
 RSpec.describe 'digital link download routing', type: :routing do
   routes { Spree::Core::Engine.routes }
 

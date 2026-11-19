@@ -85,7 +85,7 @@ export function CustomerPrivacyCard({ customer }: { customer: Customer }) {
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
         {customer.email_marketing_consent_updated_at && (
-          <p className="text-sm text-muted-foreground">
+          <p className="text-base text-muted-foreground">
             {t('admin.customers.privacy.consent_updated', {
               date: formatStoreDateTime(customer.email_marketing_consent_updated_at, timezone),
             })}
@@ -93,7 +93,7 @@ export function CustomerPrivacyCard({ customer }: { customer: Customer }) {
         )}
 
         {anonymized && (
-          <p className="text-sm text-muted-foreground">
+          <p className="text-base text-muted-foreground">
             {t('admin.customers.privacy.already_anonymized', {
               date: formatStoreDateTime(customer.anonymized_at as string, timezone),
             })}

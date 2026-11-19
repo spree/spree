@@ -1,4 +1,9 @@
-import type { OauthAuthorizationParams, OauthConsentRequest, OauthRedirect } from '@spree/admin-sdk'
+import type {
+  OauthApplication,
+  OauthAuthorizationParams,
+  OauthConsentRequest,
+  OauthRedirect,
+} from '@spree/admin-sdk'
 import { adminClient, useResourceKey, useResourceMutation } from '@spree/dashboard-core'
 import { useQuery } from '@tanstack/react-query'
 
@@ -52,6 +57,26 @@ export function useOauthRegistrations() {
     queryKey: useResourceKey('oauth-applications'),
     queryFn: () => adminClient.oauth.applications.list(),
     staleTime: 30 * 60 * 1000,
+  })
+}
+
+/**
+ * Registers a client, or replaces the callbacks of the registration `id`
+ * names. Failures are left to the caller, which shows them in place.
+ */
+export function useSaveOauthApplication() {
+  return useResourceMutation<
+    OauthApplication,
+    Error,
+    { id?: string; name: string; redirect_uri: string }
+  >({
+    mutationFn: ({ id, name, redirect_uri }) =>
+      id
+        ? adminClient.oauth.applications.update(id, { redirect_uri })
+        : adminClient.oauth.applications.create({ name, redirect_uri }),
+    invalidate: [['oauth-applications']],
+    successMessage: false,
+    errorMessage: false,
   })
 }
 

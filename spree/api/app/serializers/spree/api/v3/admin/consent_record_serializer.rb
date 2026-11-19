@@ -9,7 +9,7 @@ module Spree
                    email: [:string, nullable: true],
                    ip_address: [:string, nullable: true],
                    recorded_at: [:string, nullable: true],
-                   documents: 'Array<Record<string, unknown>>'
+                   documents: ['Record<string, unknown>', multi: true]
 
           attributes :purpose, :source, :accepted, :email, :ip_address,
                      created_at: :iso8601

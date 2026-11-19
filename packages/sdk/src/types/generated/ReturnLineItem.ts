@@ -10,17 +10,17 @@ interface ReturnLineItem {
   resellable: boolean;
   pre_tax_amount: string | null;
   /** `pre_tax_amount` formatted with its currency symbol in the request's language.
-   * @deprecated Format `pre_tax_amount` with its currency instead. Removed in 6.1. */
+   * @deprecated Format `pre_tax_amount` with its currency instead. Removed in 6.5. */
   display_pre_tax_amount: string | null;
   included_tax_total: string | null;
   additional_tax_total: string | null;
   tax_total: string | null;
   /** `tax_total` formatted with its currency symbol in the request's language.
-   * @deprecated Format `tax_total` with its currency instead. Removed in 6.1. */
+   * @deprecated Format `tax_total` with its currency instead. Removed in 6.5. */
   display_tax_total: string | null;
   refund_amount: string | null;
   /** `refund_amount` formatted with its currency symbol in the request's language.
-   * @deprecated Format `refund_amount` with its currency instead. Removed in 6.1. */
+   * @deprecated Format `refund_amount` with its currency instead. Removed in 6.5. */
   display_refund_amount: string | null;
   variant_id: string | null;
   line_item_id: string | null;

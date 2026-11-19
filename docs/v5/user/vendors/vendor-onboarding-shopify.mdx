@@ -55,10 +55,10 @@ Each Shopify vendor requires their own dedicated app, created from your Shopify 
       - The `<app-handle>` can be set arbitrarily but must be unique across all your Shopify apps. We recommend using the app name from step 3 (already in kebab-case).
    - **Embed app in Shopify admin** - leave unchecked.
    - **Preferences URL** - leave empty.
-   - **Webhooks API Version** - `2025-07`.
+   - **Webhooks API Version** - `2026-07`.
    - **Scopes** - paste the following list exactly:
      ```
-     write_orders,read_inventory,read_products,read_fulfillments,read_locations,read_translations,read_locales,read_shipping
+     write_orders,read_inventory,read_products,read_fulfillments,read_locations,read_translations,read_locales,read_shipping,read_markets,write_resource_feedbacks
      ```
    - **Optional scopes** - leave empty.
    - **Use legacy install flow** - leave unchecked.
@@ -82,7 +82,17 @@ Spree needs the app's Client ID and Secret to authenticate against Shopify.
 
 ![The app Settings page in the Shopify Dev Dashboard with the Client ID and Secret fields](/docs/images/user/vendors/vendor-onboarding-shopify/5-app-credentials.png)
 
-### 3. Register the App in Spree
+### 3. Restrict API Access with an IP Allowlist
+
+Shopify requires an IP allowlist on each vendor app before it can be installed on the vendor's store. Set it up now, before you generate the install link in step 5.
+
+1. In the **Shopify Dev Dashboard**, open the app's **Settings** page and click **Manage** in the **IP allowlist** section.
+2. Under **IP addresses or CIDR ranges**, enter the public outbound IP addresses of every server running your Spree instance — web **and** background workers — as CIDR ranges, one per line. Your hosting provider publishes these as "outbound IP addresses".
+3. Turn on **Enforcement** and click **Save**.
+
+See [<u>Shopify's IP allowlist documentation</u>](https://shopify.dev/docs/apps/build/dev-dashboard/ip-allowlist) for CIDR rules and the ASN fallback for hosts without stable outbound addresses.
+
+### 4. Register the App in Spree
 
 Now register the new Shopify app inside your Spree admin so the marketplace can communicate with it.
 
@@ -99,7 +109,7 @@ Now register the new Shopify app inside your Spree admin so the marketplace can 
 
 ![The New Shopify App form in Spree with Handle, Name, Client ID, and Secret fields](/docs/images/user/vendors/vendor-onboarding-shopify/7-new-shopify-app-form.png)
 
-### 4. Generate the Install Link
+### 5. Generate the Install Link
 
 With the app created and connected to Spree, the next step is to generate the install link the vendor will use to connect their store.
 
@@ -115,13 +125,13 @@ With the app created and connected to Spree, the next step is to generate the in
    - **Store domain** - the vendor's Shopify store domain, formatted as either `<shopify-domain>.myshopify.com` or `admin.shopify.com/store/<shopify-domain>` (e.g., `admin.shopify.com/store/jessicas-gym`).
    - **Allow multi-store install for one Plus organization** - leave this unchecked.
 4. Click **Generate link** and confirm in the modal.
-5. Copy the **install link** and save it — you'll send this to the vendor in step 5.
+5. Copy the **install link** and save it — you'll send this to the vendor in step 6.
 
 ![The generated install link displayed in the Shopify Dev Dashboard, ready to copy](/docs/images/user/vendors/vendor-onboarding-shopify/4-install-link.png)
 
-### 5. Share the Install Link with the Vendor
+### 6. Share the Install Link with the Vendor
 
-Send the install link you saved in step 4 to the vendor through any communication channel — email, Slack, or whatever you normally use. From here, the rest of the flow is on the vendor — see the **Vendor Onboarding** section below for what they'll experience.
+Send the install link you saved in step 5 to the vendor through any communication channel — email, Slack, or whatever you normally use. From here, the rest of the flow is on the vendor — see the **Vendor Onboarding** section below for what they'll experience.
 
 <Note>Vendor accounts are set up with the Shopify store owner's email address. If you're connecting multiple Shopify stores that share an owner email, each store will need a unique email set under **Shopify Store Settings → General → Store details**.</Note>
 

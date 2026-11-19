@@ -1,5 +1,5 @@
 import { expect, type Page, test } from '@playwright/test'
-import { gotoIndex, login, openRowMenu, rowButton } from './helpers'
+import { expandCustomFieldsCard, gotoIndex, login, openRowMenu, rowButton } from './helpers'
 
 const PATH = (storeId: string) => `/${storeId}/settings/custom-field-definitions`
 const CTA = /add custom field/i
@@ -153,6 +153,7 @@ test.describe('custom field definitions', () => {
     await expect(page.getByText(/custom fields saved/i)).toBeVisible({ timeout: 15_000 })
 
     await page.reload()
+    await expandCustomFieldsCard(page)
     await expect(customFields.getByText('Gold')).toBeVisible({ timeout: 15_000 })
   })
 

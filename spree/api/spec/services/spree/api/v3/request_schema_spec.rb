@@ -124,6 +124,16 @@ RSpec.describe Spree::Api::V3::RequestSchema do
       expect(schema.permit_list).to eq([:country_code, { currencies: [] }])
     end
 
+    it 'publishes the time zone list as suggestions that accept any other zone' do
+      schema = described_class.new { |schema| schema.attribute :timezone, :time_zone }
+
+      expect(schema.json_schema[:properties][:timezone]).to eq('$ref': '#/components/schemas/TimeZone')
+      expect(schema.code_lists['TimeZone']).to eq(
+        anyOf: [{ type: :string, enum: Spree::TimeZones::SUGGESTED }, { type: :string }],
+        description: Typelizer::OpenEnums.description('TimeZone')
+      )
+    end
+
     it 'sends decimals as canonical strings' do
       expect(price.json_schema[:properties][:amount]).to include(type: :string, format: :decimal)
     end

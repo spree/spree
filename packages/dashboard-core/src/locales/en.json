@@ -37,7 +37,6 @@
     },
     "account": {
       "community": "Community",
-      "contact_support": "Contact Support",
       "documentation": "Documentation",
       "edit_profile": "Edit Profile",
       "language": {
@@ -45,8 +44,8 @@
         "update_failed": "Could not save your language preference. Please try again."
       },
       "log_out": "Log out",
-      "preferences": "Preferences",
-      "view_store": "View store"
+      "report_issue": "Report an issue",
+      "send_feedback": "Send feedback"
     },
     "actions": {
       "actions_menu": "Actions",
@@ -102,7 +101,11 @@
       "default_shipping": "Default shipping",
       "inherited_from": "Inherited from {{name}}",
       "set_default_billing": "Set as default billing",
-      "set_default_shipping": "Set as default shipping"
+      "set_default_shipping": "Set as default shipping",
+      "columns": {
+        "address": "Address",
+        "defaults": "Default for"
+      }
     },
     "auth": {
       "back_to_login": "Back to sign in",
@@ -174,6 +177,8 @@
       "no_results": "No results",
       "combobox_more_results_one": "1 more result not shown. Type to search.",
       "combobox_more_results_other": "{{count}} more results not shown. Type to search.",
+      "search_min_length_one": "Type at least 1 character to search.",
+      "search_min_length_other": "Type at least {{count}} characters to search.",
       "none": "None",
       "optional": "Optional",
       "or": "or",
@@ -190,7 +195,8 @@
       "unsaved_changes": "You have unsaved changes.",
       "yes": "Yes",
       "done": "Done",
-      "error": "Something went wrong."
+      "error": "Something went wrong.",
+      "unsaved_label": "Unsaved changes"
     },
     "components": {
       "address_block": {
@@ -321,7 +327,8 @@
         "drop_label": "Drop a file here, or click to browse",
         "invalid_type": "This file type is not accepted (expected: {{accept}})",
         "upload_failed": "Upload failed: {{message}}",
-        "uploading": "Uploading…"
+        "uploading": "Uploading…",
+        "replace": "Replace file"
       },
       "import_button": {
         "delimiter_label": "Column separator",
@@ -344,7 +351,8 @@
       "json_preview_drawer": {
         "collapse_depth": "Collapse depth",
         "copied": "Copied",
-        "copy_all": "Copy all",
+        "copy_curl": "Copy as curl",
+        "copy_json": "Copy JSON",
         "depth": "Depth {{level}}",
         "failed_to_load": "Failed to load: {{message}}",
         "open_raw": "Open raw response",
@@ -368,9 +376,12 @@
         "video_title": "Video preview"
       },
       "metadata_card": {
+        "copy_reference": "Copy {{system}} key",
         "empty_description": "Apps and integrations populate this automatically.",
         "empty_title": "No metadata",
-        "title": "Metadata"
+        "external_references": "External references",
+        "title": "Metadata",
+        "view": "View metadata"
       },
       "page_header": {
         "copy_id": "Copy ID",
@@ -423,6 +434,7 @@
       },
       "table_toolbar": {
         "add_filter": "Add filter",
+        "any_field": "Any {{field}}",
         "ascending": "Ascending",
         "clear_all": "Clear all",
         "columns_tooltip": "Columns",
@@ -435,14 +447,13 @@
           "this_month": "This month",
           "today": "Today"
         },
-        "date_range_end": "End",
-        "date_range_start": "Start",
         "descending": "Descending",
         "filter_by": "Filter by…",
-        "filter_date_placeholder": "Pick a date",
         "filter_select_placeholder": "Select…",
         "filter_text_placeholder": "Filter…",
         "filter_to_placeholder": "Filter to…",
+        "n_selected": "{{count}} selected",
+        "only": "Only",
         "operators": {
           "after": "after",
           "before": "before",
@@ -468,9 +479,14 @@
         "remove_filter": "Remove filter",
         "reset_to_default": "Reset to default",
         "search_placeholder": "Search…",
+        "select_all": "Select all",
         "sort_by": "Sort by",
+        "sort_by_column": "Sort by {{column}}",
         "sort_tooltip": "Sort",
-        "visible_columns": "Visible columns"
+        "visible_columns": "Visible columns",
+        "row_density": "Row density",
+        "density_comfortable": "Comfortable",
+        "density_compact": "Compact"
       },
       "tag_combobox": {
         "create_option": "Create \"{{tag}}\"",
@@ -483,11 +499,58 @@
         "light": "Light",
         "system": "System"
       },
+      "timezone_combobox": {
+        "empty": "No timezones found",
+        "placeholder": "Select a timezone",
+        "search_placeholder": "Search timezones…"
+      },
       "wizard": {
         "discard_cancel": "Keep editing",
         "discard_confirm": "Discard",
         "discard_message": "Everything you have filled in so far will be lost. This cannot be undone.",
         "discard_title": "Discard this draft?"
+      },
+      "product_stock": {
+        "out_of_stock": "Out of stock",
+        "on_backorder": "On backorder",
+        "in_stock": "{{count}} in stock",
+        "in_stock_short": "In stock",
+        "variants_one": "{{count}} variant",
+        "variants_other": "{{count}} variants"
+      },
+      "developer_inspector": {
+        "title": "Developer tools",
+        "description": "Admin API requests from this tab, kept in memory only. Tokens and passwords are hidden.",
+        "system_info": "System info",
+        "clear": "Clear",
+        "tabs": {
+          "requests": "Requests",
+          "errors": "Errors"
+        },
+        "empty_requests": "No requests yet. Use the dashboard and they will appear here.",
+        "empty_errors": "No failed requests.",
+        "select_request": "Select a request to see its details.",
+        "network_error": "Network error",
+        "status": "Status",
+        "duration": "Duration",
+        "duration_ms": "{{value}} ms",
+        "request_id": "Request ID",
+        "error_code": "Error code",
+        "query": "Query parameters",
+        "request_body": "Request body",
+        "response_body": "Response body",
+        "no_body": "No body",
+        "copy_curl": "Copy as curl",
+        "copy_sdk": "Copy as SDK call",
+        "copy_response": "Copy response",
+        "copy_request_id": "Copy request ID",
+        "copied": "Copied",
+        "menu_open": "Developer Tools"
+      },
+      "server_error": {
+        "title": "Something went wrong on the server",
+        "request_id": "Request {{id}}",
+        "report": "Report"
       }
     },
     "currency_amounts": {
@@ -958,6 +1021,24 @@
         "digital_asset_authorized_days": {
           "label": "Days available"
         }
+      },
+      "seller": {
+        "about": {
+          "label": "About",
+          "help": "Shown on the seller’s storefront profile."
+        },
+        "holiday_mode_until": {
+          "label": "Away until",
+          "placeholder": "Pick a date",
+          "help": "The catalog stays visible but nothing can be bought until then."
+        },
+        "contact_email": {
+          "help": "Where invitations and marketplace notices go."
+        },
+        "billing_email": {
+          "label": "Billing email",
+          "help": "Where commission invoices and payout notices go, if different."
+        }
       }
     },
     "image_upload": {
@@ -1038,16 +1119,59 @@
       },
       "wizard_title": "Import"
     },
+    "invitation": {
+      "accept": "Accept invitation",
+      "accepting": "Accepting…",
+      "could_not_accept": "Could not accept invitation",
+      "create_and_accept": "Create account & accept",
+      "create_to_accept": ". Create your account to accept.",
+      "generic_error_message": "Something went wrong. Please try again.",
+      "generic_error_title": "Could not load invitation",
+      "invited_as_role": " as {{role}}",
+      "invited_by": "{{email}} invited you",
+      "invited_generic": "You have been invited",
+      "join_store": "Join {{store}}",
+      "loading": "Loading invitation…",
+      "missing_token_message": "This link looks incomplete. Ask whoever invited you to send it again.",
+      "missing_token_title": "Missing invitation token",
+      "not_found_message": "This invitation has expired, been revoked, or already been accepted. Ask the inviter to send a new one.",
+      "not_found_title": "Invitation not found",
+      "password_confirmation": "Confirm password",
+      "sign_in_and_accept": "Sign in & accept",
+      "sign_in_to_accept": ". Sign in to accept.",
+      "signed_in_as_another_account": "You are signed in as {{email}}, but this invitation is for {{invitee}}. Sign out to accept it.",
+      "signed_in_as_invitee": ". You are signed in as {{email}}."
+    },
     "media_picker": {
+      "any": "Any",
       "confirm": "Add selected",
       "description": "Pick files already in your library, or upload new ones.",
+      "drop_hint_images": "Or drag and drop images here",
+      "drop_hint_media": "Or drag and drop images and videos here",
       "empty": "Your library is empty. Upload a file to get started.",
+      "filter_type": "Type",
+      "filter_usage": "Usage",
       "no_results": "No files match your search.",
       "search_placeholder": "Search by name…",
       "selected_count_one": "{{count}} selected",
       "selected_count_other": "{{count}} selected",
+      "sort_date_added": "Date added",
+      "sort_file_name": "File name",
+      "sort_file_size": "File size",
       "title": "Media library",
-      "upload": "Upload"
+      "type_image": "Images",
+      "type_video": "Videos",
+      "upload": "Upload",
+      "usage_unused": "Not in use",
+      "usage_used": "In use",
+      "view": "View",
+      "view_grid": "Grid view",
+      "view_list": "List view"
+    },
+    "media_editor": {
+      "information": "Information",
+      "details": "Details",
+      "added": "Added {{date}}"
     },
     "messages": {
       "address_removed": "Address removed",
@@ -1540,12 +1664,18 @@
         "add_video_title": "Add a video link",
         "assigned_variants_help": "Pick the variants this image represents. Leave blank to apply to all variants.",
         "assigned_variants_label": "Assigned variants",
-        "delete_confirm": "Delete this media? This cannot be undone.",
+        "delete_confirm": "Remove this media? It is deleted when you save the product.",
+        "delete_selected_confirm_one": "Remove the selected media? It is deleted when you save the product.",
+        "delete_selected_confirm_other": "Remove the {{count}} selected media? They are deleted when you save the product.",
         "drop_hint": "Drag & drop media here, or click to browse",
         "edit_title": "Edit media",
         "file_types_hint": "Images (PNG, JPG, WebP) and video (MP4, WebM, MOV)",
         "focal_point_help": "Click the image to set what stays in frame when it is cropped.",
         "focal_point_reset": "Reset",
+        "select_all": "Select all media",
+        "select_item": "Select {{name}}",
+        "selected_count_one": "{{count}} selected",
+        "selected_count_other": "{{count}} selected",
         "unsupported_file_one": "{{count}} file was not added — only images and video are supported.",
         "unsupported_file_other": "{{count}} files were not added — only images and video are supported.",
         "upload_failed": "Failed to upload {{name}}: {{message}}",
@@ -1656,6 +1786,10 @@
           "failed_to_create_option_type": "Failed to create option type",
           "failed_to_create_value": "Failed to create value"
         },
+        "images_aria": "Images for {{name}}",
+        "images_description": "Tick the product images that show this variant. They are listed in the Media card’s order, and the first one ticked becomes its thumbnail — drag images in the Media card to change which.",
+        "images_title": "Images for {{name}}",
+        "images_unsaved": "Save the product to add images to this variant",
         "keep": "Keep all",
         "option_type_label": "Option type",
         "option_type_placeholder": "Pick an option type",
@@ -1677,6 +1811,7 @@
           "carton_placeholder": "No carton",
           "pending_save": "Changes here are saved with the product."
         },
+        "thumbnail_badge": "Thumbnail",
         "title": "Variants",
         "variant_label": "Variant"
       }
@@ -1759,7 +1894,8 @@
       "value_count_other": "{{count}} values"
     },
     "media_library": {
-      "download": "Download"
+      "download": "Download",
+      "choose_from_library": "Choose from library"
     },
     "catalogs": {
       "terms": {
@@ -2087,6 +2223,17 @@
       "replace": "Replace file",
       "replace_description": "\"{{name}}\" is removed and everyone who bought it downloads the new file from their existing links. This takes effect immediately.",
       "replace_title": "Replace this file?"
+    },
+    "sellers": {
+      "images": {
+        "cover_photo_label": "Cover photo",
+        "cover_photo_help": "A wide banner across the top of the seller profile.",
+        "logo_label": "Logo",
+        "logo_help": "Square works best. Shown beside the seller everywhere they appear.",
+        "square_logo_label": "Square logo",
+        "square_logo_help": "Used where a tight square is needed, such as an avatar."
+      },
+      "not_provided": "Not provided"
     }
   }
 }

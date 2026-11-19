@@ -10,7 +10,7 @@ const order = await client.orders.get(
   'or_abc123',
   {},
   {
-    token: '<token>',
+    spreeToken: '<order-token>',
   },
 )
 

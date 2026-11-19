@@ -11,16 +11,21 @@ import {
   Button,
   Card,
   CardAction,
+  CardContent,
   CardHeader,
   CardTitle,
+  CurrencyLabel,
   cn,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  Section,
+  SectionHeader,
+  SectionTitle,
   Separator,
 } from '@spree/dashboard-ui'
-import { EllipsisVerticalIcon, PencilIcon } from '@spree/dashboard-ui/icons'
+import { EllipsisVerticalIcon, PencilIcon, ReceiptTextIcon } from '@spree/dashboard-ui/icons'
 import type { Order, OrderAddressParams } from '@spree/seller-sdk'
 import { type ReactNode, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -33,21 +38,17 @@ function SummaryRow({
   value,
   bold,
   danger,
-  highlight,
 }: {
   label: string
   value: ReactNode
   bold?: boolean
   danger?: boolean
-  highlight?: boolean
 }) {
   return (
-    <div
-      className={cn('flex items-center justify-between px-5 py-2.5', highlight && 'bg-accent/50')}
-    >
-      <span className="text-sm">{label}</span>
+    <div className="flex items-center justify-between py-3 first:pt-0 last:pb-0">
+      <span className="text-base">{label}</span>
       <span
-        className={cn('text-sm tabular-nums', bold && 'font-bold', danger && 'text-destructive')}
+        className={cn('text-base tabular-nums', bold && 'font-bold', danger && 'text-destructive')}
       >
         {value}
       </span>
@@ -84,87 +85,96 @@ export function OrderSummaryCard({ order }: { order: Order }) {
   const placed = Boolean(order.completed_at)
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('orders.summary.title')}</CardTitle>
-      </CardHeader>
-
-      <div className="py-1">
-        <SummaryRow
-          label={t('orders.summary.created_at')}
-          value={formatDate(order.created_at, timezone)}
-        />
-        {order.completed_at && (
+    <Section>
+      <SectionHeader>
+        <SectionTitle>
+          <ReceiptTextIcon className="size-4" />
+          {t('orders.summary.title')}
+        </SectionTitle>
+      </SectionHeader>
+      <Card>
+        <CardContent className="flex flex-col">
           <SummaryRow
-            label={t('orders.summary.completed_at')}
-            value={formatDate(order.completed_at, timezone)}
+            label={t('orders.summary.created_at')}
+            value={formatDate(order.created_at, timezone)}
           />
-        )}
-
-        {order.canceled_at && (
-          <>
-            <Separator />
+          {order.completed_at && (
             <SummaryRow
-              label={t('orders.summary.canceled_at')}
-              value={formatDate(order.canceled_at, timezone)}
+              label={t('orders.summary.completed_at')}
+              value={formatDate(order.completed_at, timezone)}
             />
-            {order.cancel_reason_name && (
+          )}
+
+          {order.canceled_at && (
+            <>
+              <Separator />
               <SummaryRow
-                label={t('orders.summary.cancel_reason')}
-                value={order.cancel_reason_name}
+                label={t('orders.summary.canceled_at')}
+                value={formatDate(order.canceled_at, timezone)}
               />
-            )}
-            {order.cancel_note && (
-              <SummaryRow label={t('orders.summary.cancel_note')} value={order.cancel_note} />
-            )}
-          </>
-        )}
+              {order.cancel_reason_name && (
+                <SummaryRow
+                  label={t('orders.summary.cancel_reason')}
+                  value={order.cancel_reason_name}
+                />
+              )}
+              {order.cancel_note && (
+                <SummaryRow label={t('orders.summary.cancel_note')} value={order.cancel_note} />
+              )}
+            </>
+          )}
 
-        <Separator />
+          <Separator />
 
-        <SummaryRow label={t('orders.summary.currency')} value={order.currency} />
-
-        <Separator />
-
-        <SummaryRow label={t('orders.summary.subtotal')} value={money(order.item_total)} />
-
-        {isPositiveMoney(order.delivery_total) && (
-          <SummaryRow label={t('orders.summary.shipping')} value={money(order.delivery_total)} />
-        )}
-
-        {!isZeroMoney(order.discount_total) && (
-          <SummaryRow label={t('orders.summary.promotions')} value={money(order.discount_total)} />
-        )}
-
-        {!isZeroMoney(order.adjustment_total) && (
           <SummaryRow
-            label={t('orders.summary.adjustments')}
-            value={money(order.adjustment_total)}
+            label={t('orders.summary.currency')}
+            value={<CurrencyLabel code={order.currency} />}
           />
-        )}
 
-        {isPositiveMoney(order.included_tax_total) && (
-          <SummaryRow
-            label={t('orders.summary.tax_included')}
-            value={money(order.included_tax_total)}
-          />
-        )}
+          <Separator />
 
-        {/* Shown on a placed order even at zero, so "no tax was charged" reads
+          <SummaryRow label={t('orders.summary.subtotal')} value={money(order.item_total)} />
+
+          {isPositiveMoney(order.delivery_total) && (
+            <SummaryRow label={t('orders.summary.shipping')} value={money(order.delivery_total)} />
+          )}
+
+          {!isZeroMoney(order.discount_total) && (
+            <SummaryRow
+              label={t('orders.summary.promotions')}
+              value={money(order.discount_total)}
+            />
+          )}
+
+          {!isZeroMoney(order.adjustment_total) && (
+            <SummaryRow
+              label={t('orders.summary.adjustments')}
+              value={money(order.adjustment_total)}
+            />
+          )}
+
+          {isPositiveMoney(order.included_tax_total) && (
+            <SummaryRow
+              label={t('orders.summary.tax_included')}
+              value={money(order.included_tax_total)}
+            />
+          )}
+
+          {/* Shown on a placed order even at zero, so "no tax was charged" reads
             as an answer rather than a missing row. */}
-        {(isPositiveMoney(order.additional_tax_total) ||
-          (placed && isZeroMoney(order.included_tax_total))) && (
-          <SummaryRow
-            label={t('orders.summary.tax_additional')}
-            value={money(order.additional_tax_total)}
-          />
-        )}
+          {(isPositiveMoney(order.additional_tax_total) ||
+            (placed && isZeroMoney(order.included_tax_total))) && (
+            <SummaryRow
+              label={t('orders.summary.tax_additional')}
+              value={money(order.additional_tax_total)}
+            />
+          )}
 
-        <Separator />
+          <Separator />
 
-        <SummaryRow label={t('orders.summary.total')} value={money(order.total)} bold />
+          <SummaryRow label={t('orders.summary.total')} value={money(order.total)} bold />
 
-        {/* What the marketplace charged the seller on this sale. Below the
+          {/* What the marketplace charged the seller on this sale. Below the
             order total because it is not part of what the buyer paid — it is
             billed to the seller separately.
 
@@ -180,45 +190,48 @@ export function OrderSummaryCard({ order }: { order: Order }) {
             Shown on every placed order, including one whose fee came to
             zero: a zero-rated or exempt rate is an answer the seller needs,
             and every order here is a seller's by definition. */}
-        {placed && (
-          <>
-            <Separator />
+          {placed && (
+            <>
+              <Separator />
 
-            <SummaryRow
-              label={t('orders.summary.commission_fee')}
-              value={money(order.commission_amount_total)}
-            />
-
-            {isPositiveMoney(order.commission_tax_total) && (
               <SummaryRow
-                label={t('orders.summary.commission_tax')}
-                value={money(order.commission_tax_total)}
+                label={t('orders.summary.commission_fee')}
+                value={money(order.commission_amount_total)}
               />
-            )}
 
+              {isPositiveMoney(order.commission_tax_total) && (
+                <SummaryRow
+                  label={t('orders.summary.commission_tax')}
+                  value={money(order.commission_tax_total)}
+                />
+              )}
+
+              <SummaryRow
+                label={t('orders.summary.commission_total')}
+                value={money(order.commission_total)}
+                bold
+              />
+            </>
+          )}
+
+          <Separator />
+
+          {/* What has been paid and what is still owed, set apart together. */}
+
+          <div className="-mx-2 rounded-lg bg-accent/50 px-2 py-3">
             <SummaryRow
-              label={t('orders.summary.commission_total')}
-              value={money(order.commission_total)}
-              bold
+              label={t('orders.summary.payment_total')}
+              value={money(order.payment_total)}
             />
-          </>
-        )}
-
-        <Separator />
-
-        <SummaryRow
-          label={t('orders.summary.payment_total')}
-          value={money(order.payment_total)}
-          highlight
-        />
-        <SummaryRow
-          label={t('orders.summary.outstanding_balance')}
-          value={money(order.amount_due)}
-          highlight
-          danger={outstanding}
-        />
-      </div>
-    </Card>
+            <SummaryRow
+              label={t('orders.summary.outstanding_balance')}
+              value={money(order.amount_due)}
+              danger={outstanding}
+            />
+          </div>
+        </CardContent>
+      </Card>
+    </Section>
   )
 }
 

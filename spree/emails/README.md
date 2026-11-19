@@ -164,5 +164,5 @@ bundle exec rspec
 
 ## Documentation
 
-- [Email Customization Guide](https://docs.spreecommerce.org/developer/customization/emails)
-- [Events System](https://docs.spreecommerce.org/developer/core-concepts/events)
+- [Email Customization Guide](https://spreecommerce.org/docs/developer/customization/emails)
+- [Events System](https://spreecommerce.org/docs/developer/core-concepts/events)

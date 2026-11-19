@@ -7,7 +7,6 @@ module Spree
                  fulfillment_type: [:string, enum: %w[shipping digital pickup pickup_point], enum_type_name: 'FulfillmentType'],
                  tracking: [:string, nullable: true], tracking_url: [:string, nullable: true],
                  fulfilled_at: [:string, nullable: true], delivered_at: [:string, nullable: true], unpriced: :boolean,
-                 items: 'Array<{ item_id: string; variant_id: string; quantity: number }>',
                  pickup_point_data: ['Record<string, unknown>', nullable: true],
                  selected_delivery_rate_id: [:string, nullable: true]
 
@@ -40,6 +39,10 @@ module Spree
 
         # Which items (and how many) are in this fulfillment.
         # A line item can be split across fulfillments with different quantities.
+        typelize({ item_id: [:string, comment: 'Line item ID'],
+                   variant_id: [:string, comment: 'Variant ID'],
+                   quantity: [:number, comment: 'Quantity in this fulfillment'] },
+                 multi: true, comment: 'Which line items, and how many units of each, are in this fulfillment')
         attribute :items do |fulfillment|
           fulfillment.manifest.filter_map do |item|
             next unless item.line_item
@@ -59,6 +62,8 @@ module Spree
         one :stock_location, resource: proc { Spree.api.stock_location_serializer }
         many :delivery_rates, resource: proc { Spree.api.delivery_rate_serializer }
         many :tax_lines, resource: proc { Spree.api.tax_line_serializer }, if: proc { expand?('tax_lines') }
+
+        expandable_custom_fields
       end
     end
   end

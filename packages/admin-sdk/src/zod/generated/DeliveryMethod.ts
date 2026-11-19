@@ -1,5 +1,6 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import { CustomFieldSchema } from './CustomField';
 import { DeliveryMethodRuleSchema } from './DeliveryMethodRule';
 import { DeliveryMethodServiceSchema } from './DeliveryMethodService';
 
@@ -12,6 +13,7 @@ export const DeliveryMethodSchema = z.object({
   digital: z.boolean(),
   pickup: z.boolean(),
   pickup_point: z.boolean(),
+  custom_fields: z.array(CustomFieldSchema).optional(),
   admin_name: z.string().nullable(),
   storefront_visible: z.boolean(),
   tracking_url: z.string().nullable(),

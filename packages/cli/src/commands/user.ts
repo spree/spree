@@ -1,8 +1,9 @@
 import * as p from '@clack/prompts'
 import type { Command } from 'commander'
 import pc from 'picocolors'
+import { spreeTask } from '../backend.js'
 import { detectProject } from '../context.js'
-import { rakeTask } from '../docker.js'
+import { captureTask } from '../docker.js'
 
 export function registerUserCommand(program: Command): void {
   const user = program.command('user').description('Manage admin users')
@@ -53,7 +54,7 @@ export function registerUserCommand(program: Command): void {
       const s = p.spinner()
       s.start('Creating admin user...')
 
-      await rakeTask('spree:cli:create_admin', ctx.projectDir, {
+      await captureTask(spreeTask('cli:create_admin'), ctx.projectDir, {
         EMAIL: email,
         PASSWORD: password,
       })

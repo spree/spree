@@ -99,6 +99,8 @@ module Spree
           many :companies,
                resource: proc { Spree.api.admin_company_serializer },
                if: proc { expand?('companies') }
+
+          expandable_custom_fields admin: true
         end
       end
     end

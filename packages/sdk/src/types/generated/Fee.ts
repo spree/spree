@@ -12,7 +12,7 @@ interface Fee {
   fulfillment_id: string | null;
   amount: string | null;
   /** `amount` formatted with its currency symbol in the request's language.
-   * @deprecated Format `amount` with its currency instead. Removed in 6.1. */
+   * @deprecated Format `amount` with its currency instead. Removed in 6.5. */
   display_amount: string | null;
 }
 

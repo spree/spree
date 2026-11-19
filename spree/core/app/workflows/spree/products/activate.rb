@@ -5,6 +5,8 @@ module Spree
     # after_transition, so a handler can veto the change before anything is
     # written and see the product it applies to.
     class Activate < Spree::Workflow
+      include StatusTransition
+
       hooks :validate, :after_activate
 
       # @param product [Spree::Product]
@@ -14,12 +16,15 @@ module Spree
 
         run_hooks :validate
 
-        ApplicationRecord.transaction do
+        moved = ApplicationRecord.transaction do
+          next false if already_in?('active')
+
           step :mark_active
           run_hooks :after_activate
+          true
         end
 
-        product.publish_event('product.activated')
+        product.publish_event('product.activated') if moved
         success(product)
       end
 

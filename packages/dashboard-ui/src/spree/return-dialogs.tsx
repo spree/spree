@@ -64,7 +64,7 @@ export function ReturnReceiveDialog({
         <DialogBody className="flex flex-col gap-4">
           {lines.map((line) => (
             <div key={line.id} className="flex flex-col gap-3">
-              <span className="font-medium text-sm">{line.label}</span>
+              <span className="font-medium text-base">{line.label}</span>
               <div className="flex flex-col gap-3">
                 <Field>
                   <FieldLabel htmlFor={`qty-${line.id}`}>
@@ -193,7 +193,7 @@ export function ReturnRefundDialog({
         </DialogHeader>
         <DialogBody className="flex flex-col gap-4">
           {owesNothing ? (
-            <p className="text-muted-foreground text-sm">
+            <p className="text-muted-foreground text-base">
               {t('admin.pages.orders.detail.returns.nothing_owed')}
             </p>
           ) : (

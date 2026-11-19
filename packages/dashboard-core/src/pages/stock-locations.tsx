@@ -33,7 +33,8 @@ import type { PanelStockLocation } from '../api-client'
 import { Can } from '../components/can'
 import { CountryCombobox } from '../components/country-combobox'
 import { StateCombobox, useCountryStates } from '../components/country-state-fields'
-import { ResourceTable, resourceSearchSchema } from '../components/resource-table'
+import { RecordMetadataSection } from '../components/record-metadata'
+import { ResourceTable, resourceSearchSchema, type TableView } from '../components/resource-table'
 import { HostFormSlot } from '../components/slot'
 import {
   canDeleteStockLocations,
@@ -93,8 +94,11 @@ export function StockLocationsPage({
   stockLevelsPanel: StockLevelsPanel,
   activityPanel: ActivityPanel,
   formKey = 'stock_location',
+  views,
 }: {
   search: StockLocationsSearch
+  /** Tabs splitting the list — the operator's own locations and their sellers'. */
+  views?: TableView[]
   /** Names the sheets' slot and extension fields — `seller.stock_location` in the seller panel. */
   formKey?: string
   /** Rendered inside the edit sheet, below the form. Optional — see above. */
@@ -148,6 +152,7 @@ export function StockLocationsPage({
         queryKey="stock-locations"
         queryFn={(params) => listStockLocations(params)}
         searchParams={search}
+        views={views}
         rowActions={(location) => (
           <RowActions
             actions={[
@@ -272,16 +277,20 @@ function CreateStockLocationSheet({
 // Edit Sheet
 // ============================================================================
 
-function EditStockLocationSheet({
+/**
+ * One location's editor. Exported so a record page that lists locations (a
+ * seller's) opens it in place rather than sending the operator to settings.
+ */
+export function EditStockLocationSheet({
   id,
-  formKey,
+  formKey = 'stock_location',
   open,
   onOpenChange,
   stockLevelsPanel: StockLevelsPanel,
   activityPanel: ActivityPanel,
 }: {
   id: string
-  formKey: string
+  formKey?: string
   open: boolean
   onOpenChange: (open: boolean) => void
   stockLevelsPanel?: ComponentType<{ stockLocationId: string }>
@@ -329,7 +338,7 @@ function EditStockLocationSheet({
           <SheetDescription>{t('admin.stock_locations.edit_description')}</SheetDescription>
         </SheetHeader>
         {isLoading ? (
-          <div className="p-4 text-sm text-muted-foreground">{t('admin.common.loading')}</div>
+          <div className="p-4 text-base text-muted-foreground">{t('admin.common.loading')}</div>
         ) : (
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
@@ -341,6 +350,7 @@ function EditStockLocationSheet({
               />
               {StockLevelsPanel && <StockLevelsPanel stockLocationId={id} />}
               {ActivityPanel && <ActivityPanel stockLocationId={id} />}
+              <RecordMetadataSection externalReferences={stockLocation?.external_references} />
             </div>
             <SheetFooter>
               <Button
@@ -382,7 +392,7 @@ function StockLocationFormFields({ form }: { form: UseFormReturn<StockLocationFo
     // to as well as its own.
     <div className="flex flex-col gap-6">
       {errors.root?.message && (
-        <p className="text-sm text-destructive" role="alert">
+        <p className="text-base text-destructive" role="alert">
           {errors.root.message}
         </p>
       )}

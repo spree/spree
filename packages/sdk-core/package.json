@@ -27,6 +27,7 @@
     "build": "tsup",
     "dev": "tsup --watch",
     "typecheck": "tsc --noEmit",
+    "test": "vitest run",
     "lint": "biome check src",
     "lint:fix": "biome check --fix src",
     "format": "biome format --write src",
@@ -36,9 +37,10 @@
     "@spree/core": "workspace:*",
     "@types/spark-md5": "^3.0.5",
     "spark-md5": "^3.0.2",
-    "tsup": "^9.0.0",
-    "typescript": "^7.0.2",
-    "yaml": "^2.9.1"
+    "tsup": "catalog:",
+    "typescript": "catalog:",
+    "yaml": "catalog:",
+    "vitest": "catalog:"
   },
   "engines": {
     "node": ">=18.0.0"

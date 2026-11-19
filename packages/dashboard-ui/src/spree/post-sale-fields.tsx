@@ -3,12 +3,41 @@ import { Field, FieldLabel } from '../ui/field'
 import { Input } from '../ui/input'
 import { Item, ItemActions, ItemContent, ItemTitle } from '../ui/item'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
+import { ProductIdentity } from './product-identity'
 
 /** A unit on the order that a return, exchange or claim can name. */
 export type PostSaleUnit = {
   id: string
+  /** Also the quantity field's accessible name. */
   label: string
   quantity: number
+  /** Shown as the product it is — image, name, options — when known. */
+  product?: PostSaleUnitProduct
+}
+
+export type PostSaleUnitProduct = {
+  name: string
+  optionsText?: string | null
+  thumbnailUrl?: string | null
+}
+
+/**
+ * A unit as the product it is, the same row the order's item lists use, or
+ * its plain label when the caller has nothing more.
+ */
+export function PostSaleUnitLabel({ unit }: { unit: PostSaleUnit }) {
+  if (!unit.product) {
+    return <ItemTitle className="block truncate font-normal">{unit.label}</ItemTitle>
+  }
+
+  return (
+    <ProductIdentity
+      name={unit.product.name}
+      subtitle={unit.product.optionsText}
+      thumbnailUrl={unit.product.thumbnailUrl}
+      size="sm"
+    />
+  )
 }
 
 /** How many of each unit a record covers; zero means "not included". */
@@ -34,7 +63,7 @@ export function QuantityPicker({
       {units.map((unit) => (
         <Item key={unit.id} variant="outline" className="flex-nowrap border-border-subtle">
           <ItemContent className="min-w-0">
-            <ItemTitle className="block truncate font-normal">{unit.label}</ItemTitle>
+            <PostSaleUnitLabel unit={unit} />
           </ItemContent>
           <ItemActions>
             <Input

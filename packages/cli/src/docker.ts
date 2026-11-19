@@ -1,13 +1,41 @@
 import * as p from '@clack/prompts'
 import { type Options as ExecaOptions, execa } from 'execa'
 import pc from 'picocolors'
+import { backendTaskCommand, PREPARE_DATABASE } from './backend.js'
 import { hasMonorepoSpreePath } from './context.js'
 
 export async function dockerCompose(args: string[], projectDir: string, options?: ExecaOptions) {
-  return execa('docker', ['compose', ...args], {
-    cwd: projectDir,
-    ...options,
-  })
+  try {
+    return await execa('docker', ['compose', ...args], {
+      cwd: projectDir,
+      ...options,
+    })
+  } catch (error) {
+    throw withDockerHint(error)
+  }
+}
+
+// Docker's default address pools hold about 30 bridge networks, and every
+// compose project keeps its `<name>_default` network after its containers
+// stop — so a machine with many old projects fails to create a new one with
+// a daemon message that names neither the cause nor the fix.
+const ADDRESS_POOLS_EXHAUSTED = /all predefined address pools have been fully subnetted/i
+
+function isAddressPoolExhausted(error: unknown): boolean {
+  return ADDRESS_POOLS_EXHAUSTED.test(error instanceof Error ? error.message : String(error))
+}
+
+function withDockerHint(error: unknown): unknown {
+  if (!isAddressPoolExhausted(error)) return error
+
+  const message = error instanceof Error ? error.message : String(error)
+  return new Error(
+    `${message}\n\nDocker has no free network addresses left, usually because old projects left their networks behind. ` +
+      `List them with ${pc.cyan('docker network ls')} and remove the ones you no longer need with ${pc.cyan('docker network rm <name>')}. ` +
+      `${pc.cyan('docker network prune')} removes every network on this machine that no container is using, ` +
+      'including networks other tools created and still expect to find.',
+    { cause: error },
+  )
 }
 
 // web and worker share one bundle_cache named volume and, in the dev compose,
@@ -26,28 +54,33 @@ export async function dockerCompose(args: string[], projectDir: string, options?
 //
 // Best-effort: a failed prime (image not built yet, daemon hiccup) is swallowed
 // so the caller's real `up` builds/pulls and surfaces the genuine error — we
-// remove a race, we never mask a failure.
+// remove a race, we never mask a failure. The exception is a project network
+// Docker cannot create: this is the first `up`, and `spree dev`'s foreground
+// `up` streams stderr uncaptured, so this is the one place its hint can show.
 export async function primeBundleVolume(
   projectDir: string,
   options?: { stdio?: 'inherit' | 'pipe' | 'ignore' },
 ): Promise<void> {
+  const stdio = options?.stdio ?? 'inherit'
   try {
     await dockerCompose(['up', '-d', '--no-deps', 'web'], projectDir, {
-      stdio: options?.stdio ?? 'inherit',
+      stdin: stdio,
+      stdout: stdio,
+      stderr: stdio === 'inherit' ? ['pipe', 'inherit'] : 'pipe',
     })
-  } catch {
-    // fall through to the caller's `up`, which reports any real failure
+  } catch (error) {
+    if (isAddressPoolExhausted(error)) throw error
   }
 }
 
-export async function rakeTask(
+export async function captureTask(
   task: string,
   projectDir: string,
   env?: Record<string, string>,
 ): Promise<string> {
-  const stdout = await dockerComposeCapture(['bin/rails', task], projectDir, { env })
+  const stdout = await dockerComposeCapture(backendTaskCommand(task), projectDir, { env })
 
-  // Rails boot prints noise to stdout (e.g. "[Spree Events] ...") — strip it
+  // Backend boot prints noise to stdout (e.g. "[Spree Events] ...") — strip it
   return stdout
     .split('\n')
     .filter((line) => !line.startsWith('['))
@@ -153,7 +186,7 @@ export function dockerStackProblem(error: unknown, command: string): string[] {
     `  ${pc.dim(reason.trim())}`,
     '',
     `Run ${pc.bold(command)} from your project root (the directory holding the`,
-    '.env with SECRET_KEY_BASE), and make sure Docker is running.',
+    '.env file), and make sure Docker is running.',
   ]
 }
 
@@ -168,11 +201,11 @@ export interface DockerComposeExecOptions {
 }
 
 // Run a command inside a service container. The foundation for `spree exec`,
-// `spree rails`, `spree bundle`, `spree rake`, and `spree console`.
+// `spree task`, `spree test`, and `spree console`.
 //
 // Defaults to the `web` service and an interactive TTY. Pass `tty: false`
 // (which adds `-T`) for non-interactive callers that capture stdout — those
-// should use `rakeTask` above, which already does this.
+// should use `captureTask` above, which already does this.
 //
 // stdio is inherited so the command behaves transparently: a Rails console
 // stays interactive, a `bundle add` prints progress, an error exits with the
@@ -259,11 +292,12 @@ export async function dockerComposeRun(
 // carries compose's output on the thrown error.
 export async function prepareDatabase(
   projectDir: string,
-  options?: { stdio?: 'inherit' | 'pipe' | 'ignore' },
+  options?: { stdio?: 'inherit' | 'pipe' | 'ignore'; composeFile?: string },
 ): Promise<void> {
   const stdio = options?.stdio ?? 'pipe'
-  await dockerCompose(['up', '-d', '--wait', 'postgres'], projectDir, { stdio })
-  await dockerCompose(['run', '--rm', '--build', 'web', 'bin/rails', 'db:prepare'], projectDir, {
+  const file = options?.composeFile ? ['-f', options.composeFile] : []
+  await dockerCompose([...file, 'up', '-d', '--wait', 'postgres'], projectDir, { stdio })
+  await dockerCompose([...file, 'run', '--rm', '--build', 'web', ...PREPARE_DATABASE], projectDir, {
     stdio,
   })
 }
@@ -285,6 +319,7 @@ export interface DockerComposeExecOrRunOptions {
 async function resolveComposeMode(
   projectDir: string,
   options: DockerComposeExecOrRunOptions = {},
+  notify: (message: string) => void = p.log.info,
 ): Promise<'exec' | 'run'> {
   const { service = 'web', edgeHint } = options
 
@@ -300,7 +335,7 @@ async function resolveComposeMode(
     process.exit(1)
   }
 
-  p.log.info(
+  notify(
     `${service} container is not running — using a one-off container (\`docker compose run\`) instead.`,
   )
   return 'run'
@@ -309,7 +344,7 @@ async function resolveComposeMode(
 // Run a command in the service's container, transparently falling back to a
 // one-off `compose run` when the long-running container is down. This is the
 // shared shape behind every app-facing command (`spree migrate`, `spree
-// bundle`, `spree console`, `spree rake`, …): exec into the live container if
+// test`, `spree console`, `spree task`, …): exec into the live container if
 // it's up, otherwise boot a fresh one-off against the same warm DB/volumes.
 export async function dockerComposeExecOrRun(
   argv: string[],
@@ -326,7 +361,7 @@ export async function dockerComposeExecOrRun(
 }
 
 // Captured-output twin of dockerComposeExecOrRun, for callers that parse
-// stdout (rakeTask, `bundle list`). Non-interactive (`-T`) so a TTY never
+// stdout (captureTask, `bundle list`). Non-interactive (`-T`) so a TTY never
 // mangles the captured stream; compose's own progress noise goes to stderr,
 // which stays off stdout and is buffered onto ExecaError for failure paths.
 export async function dockerComposeCapture(
@@ -335,17 +370,12 @@ export async function dockerComposeCapture(
   options: DockerComposeExecOrRunOptions = {},
 ): Promise<string> {
   const { service = 'web', env } = options
-  const mode = await resolveComposeMode(projectDir, options)
+  // The notice goes to stderr so the captured stdout stays parseable.
+  const mode = await resolveComposeMode(projectDir, options, (message) =>
+    process.stderr.write(`${message}\n`),
+  )
 
-  const args = ['compose', mode]
-  if (mode === 'run') args.push('--rm')
-  args.push('-T')
-  if (env) {
-    for (const [key, value] of Object.entries(env)) {
-      args.push('-e', `${key}=${value}`)
-    }
-  }
-  args.push(service, ...argv)
+  const args = nonInteractiveArgs(mode, service, argv, env)
 
   // `compose up -d` can recreate a container moments before this runs — a
   // recovering project does exactly that — and `exec` into a container that
@@ -364,6 +394,57 @@ export async function dockerComposeCapture(
     }
   }
   throw lastError
+}
+
+function nonInteractiveArgs(
+  mode: 'exec' | 'run',
+  service: string,
+  argv: string[],
+  env?: Record<string, string>,
+): string[] {
+  const args = ['compose', mode]
+  if (mode === 'run') args.push('--rm')
+  args.push('-T')
+  for (const [key, value] of Object.entries(env ?? {})) {
+    args.push('-e', `${key}=${value}`)
+  }
+  args.push(service, ...argv)
+  return args
+}
+
+export interface DockerComposeStreamOptions extends DockerComposeExecOrRunOptions {
+  onOutput: (chunk: string, stream: 'stdout' | 'stderr') => void
+}
+
+/**
+ * Run a command like dockerComposeExecOrRun, but hand its stdout and stderr
+ * to `onOutput` as they arrive instead of printing them. Stdin stays attached
+ * (without a TTY), so the command can still read an answer to a prompt. The
+ * one-off container notice goes to `onOutput` too, as stderr. Throws the
+ * ExecaError when the command exits non-zero.
+ */
+export async function dockerComposeStream(
+  argv: string[],
+  projectDir: string,
+  options: DockerComposeStreamOptions,
+): Promise<void> {
+  const { service = 'web', env, onOutput } = options
+  const mode = await resolveComposeMode(projectDir, options, (message) =>
+    onOutput(`${message}\n`, 'stderr'),
+  )
+
+  const subprocess = execa('docker', nonInteractiveArgs(mode, service, argv, env), {
+    cwd: projectDir,
+    stdin: 'inherit',
+    stdout: 'pipe',
+    stderr: 'pipe',
+    buffer: false,
+  })
+  for (const stream of ['stdout', 'stderr'] as const) {
+    subprocess[stream]?.setEncoding('utf8')
+    subprocess[stream]?.on('data', (chunk: string) => onOutput(chunk, stream))
+  }
+  await subprocess
 }
 
 /**

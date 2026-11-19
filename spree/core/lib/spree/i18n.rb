@@ -5,9 +5,13 @@ module Spree
 
   class << self
     # @deprecated Use +I18n.t+ with the full key, e.g. +I18n.t('spree.free')+.
-    #   Will be removed in Spree 6.1.
+    #   Will be removed in Spree 6.3.
     def translate(key, options = {})
-      Spree::Deprecation.warn('Spree.t is deprecated and will be removed in Spree 6.1. Use I18n.t with the full key, e.g. I18n.t("spree.free").') if defined?(Spree::Deprecation)
+      if defined?(Spree::Deprecation)
+        Spree::Deprecation.warn(
+          'Spree.t is deprecated and will be removed in Spree 6.3. Use I18n.t with the full key, e.g. I18n.t("spree.free").'
+        )
+      end
 
       I18n.t(key, **options.symbolize_keys, scope: [:spree, *Array(options[:scope]).map(&:to_sym)].uniq)
     end

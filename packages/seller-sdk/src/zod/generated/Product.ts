@@ -51,6 +51,7 @@ export const ProductSchema = z.object({
   updated_at: z.string(),
   product_type_id: z.string().nullable(),
   delivery_profile_id: z.string().nullable(),
+  total_on_hand: z.number().nullable(),
   submission: ProductSubmissionSchema.nullable().optional(),
 });
 

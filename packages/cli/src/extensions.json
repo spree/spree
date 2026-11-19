@@ -3,7 +3,12 @@
     "mcp": { "label": "MCP server", "gem": "spree_mcp", "release": "spree" },
     "opentelemetry": { "label": "OpenTelemetry", "gem": "spree_opentelemetry", "release": "spree" },
     "stripe": { "label": "Stripe", "gem": "spree_stripe", "release": "spree" },
-    "paypal_checkout": { "label": "PayPal", "gem": "spree_paypal_checkout", "aliases": ["paypal"] },
+    "paypal_checkout": {
+      "label": "PayPal",
+      "gem": "spree_paypal_checkout",
+      "aliases": ["paypal"],
+      "release": "spree"
+    },
     "adyen": { "label": "Adyen", "gem": "spree_adyen" },
     "klaviyo": { "label": "Klaviyo", "gem": "spree_klaviyo" },
     "avatax_official": {

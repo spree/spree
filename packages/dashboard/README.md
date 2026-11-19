@@ -4,7 +4,7 @@ The Spree Commerce admin dashboard (the "React Dashboard") — a React single-pa
 
 Part of the three-package dashboard stack with [`@spree/dashboard-core`](https://github.com/spree/spree/tree/main/packages/dashboard-core) (the framework and extension API) and [`@spree/dashboard-ui`](https://github.com/spree/spree/tree/main/packages/dashboard-ui) (the design system).
 
-> **Developer Preview.** APIs may change between 0.x releases; in Spree 6 the React Dashboard becomes the default admin.
+The React Dashboard is the default admin from Spree 6.0. `@spree/dashboard` is released with Spree and carries its version: `@spree/dashboard@6.0.x` works with Spree 6.0.x.
 
 ## Tech stack
 

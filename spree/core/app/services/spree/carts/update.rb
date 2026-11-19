@@ -56,6 +56,13 @@ module Spree
         failure(cart, e.message)
       end
 
+      # Fields assign_cart_attributes handles itself; an extension can't
+      # reroute them through a plain assignment.
+      CORE_ATTRIBUTES = %i[
+        email customer_note po_number market_id currency locale metadata use_shipping
+        preferred_stock_location_id company_id po_document_signed_id
+      ].freeze
+
       private
 
       attr_reader :cart, :params
@@ -79,6 +86,7 @@ module Spree
       end
 
       def assign_cart_attributes
+        assign_additional_attributes
         cart.email = params[:email] if params[:email].present?
         cart.customer_note = params[:customer_note] if params.key?(:customer_note)
         cart.po_number = params[:po_number] if params.key?(:po_number)
@@ -91,6 +99,15 @@ module Spree
         assign_preferred_stock_location if params.key?(:preferred_stock_location_id)
         assign_company if params.key?(:company_id)
         assign_po_document if params.key?(:po_document_signed_id)
+      end
+
+      # Columns an extension made writable with
+      # `Spree::Cart.additional_permitted_attributes += [...]`.
+      def assign_additional_attributes
+        keys = Array(Spree::Cart.try(:additional_permitted_attributes)).
+               flat_map { |attribute| attribute.is_a?(Hash) ? attribute.keys : attribute }.
+               map(&:to_sym) - CORE_ATTRIBUTES
+        cart.assign_attributes(params.slice(*keys)) if keys.any?
       end
 
       # The buyer's purchase order as an ActiveStorage signed blob id — the
@@ -252,12 +269,13 @@ module Spree
 
       # Three-way dispatch on the cart→checkout transition:
       # entering checkout → Reserve, mid-checkout mutation → Extend, reverting to cart → Release.
+      # A new destination reserves again, because it can move the units to another origin.
       # A failed Reserve raises so the enclosing transaction rolls back and the
       # outer rescue surfaces the error to the API caller.
       def sync_stock_reservations(was_in_checkout:)
         if !cart.in_checkout?
           Spree::StockReservations::Release.call(cart: cart) if was_in_checkout
-        elsif was_in_checkout
+        elsif was_in_checkout && !@destination_changed && !@new_delivery_destination
           Spree::StockReservations::Extend.call(cart: cart)
         else
           result = Spree::StockReservations::Reserve.call(cart: cart)

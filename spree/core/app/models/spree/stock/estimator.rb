@@ -32,9 +32,9 @@ module Spree
         delivery_methods(package, audience).any?
       end
 
-      # @deprecated Use {#delivery_rates}; removed in 6.1.
+      # @deprecated Use {#delivery_rates}; removed in 6.3.
       def shipping_rates(package, audience = DeliveryMethod::STOREFRONT)
-        Spree::Deprecation.warn('Spree::Stock::Estimator#shipping_rates is deprecated and will be removed in Spree 6.1. Use #delivery_rates instead.')
+        Spree::Deprecation.warn('Spree::Stock::Estimator#shipping_rates is deprecated and will be removed in Spree 6.3. Use #delivery_rates instead.')
         delivery_rates(package, audience)
       end
 
@@ -141,7 +141,7 @@ module Spree
       # their own rules.
       #
       # Dispatches through the legacy +shipping_methods+ name so overrides
-      # written against it keep running until 6.1 — without this, a host
+      # written against it keep running until 6.3 — without this, a host
       # override would be silently skipped and checkout could quote rates
       # the host meant to filter out.
       def delivery_methods(package, audience)
@@ -150,11 +150,13 @@ module Spree
         filter_delivery_methods(package, audience)
       end
 
-      # @deprecated Call or override {#delivery_methods}; removed in 6.1.
+      # @deprecated Call or override {#delivery_methods}; removed in 6.3.
       # Only reached when a caller uses the old name directly — the override
       # dispatch above goes straight to the override's own definition.
       def shipping_methods(package, audience)
-        Spree::Deprecation.warn('Spree::Stock::Estimator#shipping_methods is deprecated and will be removed in Spree 6.1. Use #delivery_methods instead.')
+        Spree::Deprecation.warn(
+          'Spree::Stock::Estimator#shipping_methods is deprecated and will be removed in Spree 6.3. Use #delivery_methods instead.'
+        )
         filter_delivery_methods(package, audience)
       end
 

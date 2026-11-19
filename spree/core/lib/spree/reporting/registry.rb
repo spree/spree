@@ -1,5 +1,29 @@
 module Spree
   module Reporting
+    # Every association path a joins spec reaches, in ActiveRecord's joins
+    # format: `[{ variant: { product: :product_categories } }]` reaches
+    # [:variant], [:variant, :product] and [:variant, :product, :product_categories].
+    # Comparing paths rather than top-level names keeps a nested join from
+    # passing for its first hop alone.
+    #
+    # @param joins [Symbol, String, Hash, Array, nil]
+    # @return [Array<Array<Symbol>>]
+    def self.join_paths(joins, prefix = [])
+      case joins
+      when Hash
+        joins.flat_map { |name, nested| [prefix + [name.to_sym]] + join_paths(nested, prefix + [name.to_sym]) }
+      when Array then joins.flat_map { |join| join_paths(join, prefix) }
+      when Symbol, String then [prefix + [joins.to_sym]]
+      else []
+      end.uniq
+    end
+
+    # Whether the joins carried cover every association path the required
+    # joins reach.
+    def self.joins_cover?(carried, required)
+      (join_paths(required) - join_paths(carried)).empty?
+    end
+
     # A metric aggregates rows into one number.
     #
     # @!attribute sql
@@ -26,16 +50,35 @@ module Spree
     # @!attribute grouped_sql
     #   Optional aggregate used only for the grouped query, where dimension
     #   joins are present. See #sql_for.
+    # @!attribute grouped_joins
+    #   The dimension joins grouped_sql reads from. The grouped query carries
+    #   only the joins of the dimensions it groups by, so grouped_sql applies
+    #   only when one of them brought these in; any other grouping falls back
+    #   to `sql`. Required with grouped_sql. A `sql` that reads the same rows
+    #   through a subquery may embed `%{dimension_filters}`, which receives the
+    #   filters on dimensions joining those rows as extra AND conditions.
     # @!attribute suggests
     #   Metric to reach for instead when this one is refused for a breakdown
     #   it cannot answer — named in the error so a caller learns the
     #   vocabulary from the refusal rather than by trial.
     Metric = Struct.new(:name, :sql, :base, :format, :ratio, :subject, :key_scope,
-                        :requires_grouping, :suggests, :grouped_sql, keyword_init: true) do
+                        :requires_grouping, :suggests, :grouped_sql, :grouped_joins, keyword_init: true) do
       # The aggregate to use when the query carries its dimension joins. A
       # metric whose money lives on a joined row reads it directly there, and
-      # falls back to `sql` for the dimensionless total, which has no joins.
-      def sql_for(grouped:) = (grouped && grouped_sql.presence) || sql
+      # falls back to `sql` when that row is not joined: for the dimensionless
+      # total, which has no joins, and for a breakdown by a dimension that does
+      # not join it (promotion discounts by seller), where the joined table is
+      # not in the FROM clause at all.
+      #
+      # @param grouped [Boolean] whether this is the grouped query
+      # @param joins [Array<Symbol, Hash>] the joins the grouped query carries,
+      #   in ActiveRecord's joins format
+      # @return [String]
+      def sql_for(grouped:, joins: [])
+        return sql unless grouped && grouped_sql.present? && grouped_joins.present?
+
+        Reporting.joins_cover?(joins, grouped_joins) ? grouped_sql : sql
+      end
 
       def derived? = ratio.present?
 
@@ -228,6 +271,10 @@ module Spree
         raise ArgumentError, "metric #{name} already registered (pass replace: true to override)" if @metrics.key?(name) && !replace
         if opts[:subject] && opts[:key_scope].blank?
           raise ArgumentError, "metric #{name} declares a subject and must also declare its key_scope"
+        end
+
+        if opts[:grouped_sql].present? && opts[:grouped_joins].blank?
+          raise ArgumentError, "metric #{name} declares grouped_sql and must also declare the grouped_joins it reads"
         end
 
         opts[:format] ||= :integer

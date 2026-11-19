@@ -157,7 +157,7 @@ function BoundaryCard({
           </div>
 
           <div className="flex items-center gap-3">
-            <span className="text-muted-foreground text-sm tabular-nums">
+            <span className="text-muted-foreground text-base tabular-nums">
               {superseded
                 ? t('admin.maintenance_tasks.upgrade.already_completed')
                 : t('admin.maintenance_tasks.upgrade.progress', { done, total: steps.length })}
@@ -276,7 +276,7 @@ function StepRow({
               expanded ? 'size-3 rotate-90 text-muted-foreground' : 'size-3 text-muted-foreground'
             }
           />
-          <span className={succeeded ? 'text-muted-foreground text-sm' : 'text-sm'}>
+          <span className={succeeded ? 'text-muted-foreground text-base' : 'text-base'}>
             {step.name}
           </span>
         </button>

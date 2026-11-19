@@ -68,7 +68,7 @@ steps:
       polymorphic type column an extension points at media rows.
 
       Run immediately after db:migrate. Spree::Asset stays readable as a
-      deprecated alias until 6.1, so code referencing it keeps working either
+      deprecated alias until 6.3, so code referencing it keeps working either
       way; this step is about the stored strings.
 
       Idempotent — rows already saying Spree::Media are left alone.
@@ -205,14 +205,15 @@ steps:
 
       Only copies where an Action Text row exists, so content already in the
       column is never overwritten. Source rows are left in place as the rollback
-      path and are dropped with the Action Text tables in 6.1. Idempotent.
+      path and are dropped with the Action Text tables in 6.3. Idempotent.
 
   - id: migrate_shipping_to_delivery
     name: "Backfill fulfillment & delivery naming"
     task: "spree:migrate_shipping_to_delivery"
     notes: |
       Rewrites stored 'Spree::Shipment' class-name strings (state changes,
-      stock movements, legacy adjustments), renames the terminal fulfillment
+      stock movements, legacy adjustments) and the calculators' 'Spree::ShippingMethod'
+      calculable type (so delivery methods find their calculator), renames the terminal fulfillment
       status 'shipped' -> 'fulfilled', backfills the fulfillment provider on
       delivery methods (DigitalDelivery calculators become the Digital
       provider) and copies the provider-derived type onto existing
@@ -246,7 +247,7 @@ steps:
       inside the other profile if both links were intended. Run after
       migrate_shipping_to_delivery (it reads the backfilled fulfillment
       providers). Idempotent — processed rows gain a store_id and drop out of
-      the work set. spree_shipping_method_categories survives to 6.1 as the
+      the work set. spree_shipping_method_categories survives to 6.3 as the
       source and rollback reference.
 
   - id: migrate_fulfillment_statuses
@@ -387,7 +388,7 @@ steps:
       Reads the legacy tables by name (the legacy models are gone in 6.0) and
       writes history without validation, so rows referencing deleted variants
       or stock locations still copy. The legacy tables stay in place as a
-      safety net and are dropped in 6.1.
+      safety net and are dropped in 6.3.
 
       Resumable by construction: the legacy number is copied onto the new
       record and uniquely indexed there, so the task scopes itself to the
@@ -436,7 +437,7 @@ steps:
       a fulfillment shipped before the task runs never gets an allocation,
       and dispatch only ships allocated units, so its stock is never
       decremented twice. originator_type and originator_id stay in place as
-      the rollback path and are dropped in 6.1. Tune the load size with
+      the rollback path and are dropped in 6.3. Tune the load size with
       BATCH_SIZE (default 5000).
 
   - id: backfill_delivery_and_stock_store_ids
@@ -445,7 +446,7 @@ steps:
     notes: |
       Delivery methods and stock locations carry a store_id in Spree 6.
       Unassigned rows go to the default store; additional stores manage
-      their own records afterwards. The NOT NULL constraints land in 6.1.
+      their own records afterwards. The NOT NULL constraints land in 6.3.
       Idempotent.
 
   - id: migrate_tax_zones
@@ -475,7 +476,7 @@ steps:
       afterwards. Category names become unique per store rather than globally,
       so installs that relied on global names may need to reconcile duplicates
       once several stores hold tax configuration. The NOT NULL constraints land
-      in 6.1. Idempotent.
+      in 6.3. Idempotent.
 
   - id: backfill_market_tax_inclusive
     name: "Decide whether each market's prices include tax"
@@ -523,7 +524,7 @@ steps:
       orders that predate markets. Channel needs no step here — the 5.4→5.5
       manifest's channels step already backfills channel_id on every upgrade
       path. Run before the cart conversion so converted carts inherit
-      resolved values. The NOT NULL constraints on spree_orders land in 6.1.
+      resolved values. The NOT NULL constraints on spree_orders land in 6.3.
       Idempotent.
 
   - id: migrate_incomplete_orders_to_carts
@@ -572,7 +573,7 @@ steps:
       a non-default value of its own.
 
       Remove the settings from your initializer afterwards — the globals are
-      deprecated and are deleted in 6.1.
+      deprecated and are deleted in 6.3.
 
       Idempotent: each store is visited at most once, recorded in its metadata,
       so a later run never undoes a change made in the dashboard after the
@@ -593,9 +594,22 @@ steps:
       own setting. Run after store_settings_backfill_from_config so the store
       they inherit from already holds the right value.
 
-      The auto_capture column stays readable as a fallback for one release and
-      is dropped in 6.1. Idempotent — only rows without a capture_method are
+      The auto_capture column stays readable as a fallback until 6.3 and
+      is dropped in 6.3. Idempotent — only rows without a capture_method are
       written.
+
+  - id: store_regional_settings
+    name: "Convert store time zones and admin languages to standard codes"
+    task_class: "Spree::MaintenanceTasks::Upgrade::StoreRegionalSettings"
+    notes: |
+      A store's time zone is now always an IANA name such as America/New_York,
+      and its admin language a locale code Spree lists, the forms the API
+      accepts and browsers understand. Rails time zone names such as
+      "Eastern Time (US & Canada)" and locale spellings such as en_US are
+      converted. A time zone that names no zone is reset to the store default,
+      which is what the store already ran on; an admin language Spree does not
+      list is cleared, so staff see their own language. Idempotent — stores
+      already on standard codes are skipped.
 
   - id: product_types_backfill
     name: "Backfill product type store ownership"
@@ -628,7 +642,7 @@ steps:
       originator (return, exchange, claim, gift card) plus the memo, so this
       copies each legacy category name into the memo of credits that have
       none. Admin-written memos are never overwritten. Idempotent, and a
-      no-op once the legacy tables are dropped in 6.1.
+      no-op once the legacy tables are dropped in 6.3.
 
   - id: migrate_stripe_webhook_keys
     name: "Move Stripe webhook signing secrets onto the gateway"
@@ -646,7 +660,41 @@ steps:
       Until this runs, a gateway carrying a pre-6.0 endpoint has no signing
       secret and rejects incoming webhooks. Idempotent — gateways that already
       hold a secret are skipped, and the legacy tables stay in place as a
-      rollback path until they are dropped in 6.1.
+      rollback path until they are dropped in 6.3.
+
+  - id: migrate_paypal_payments
+    name: "Give PayPal payments taken before 6.0 the PayPal order id"
+    task_class: "SpreePaypalCheckout::MaintenanceTasks::MigratePayments"
+    optional: true
+    notes: |
+      Only runs when spree_paypal_checkout is installed; skipped otherwise.
+
+      The 0.x gem stored a PayPal payment's capture id as its response code.
+      In 6.0 the response code is always the PayPal order id, which is how a
+      payment session finds its payment, and the capture id lives in the
+      payment's metadata. This step rewrites each older payment to that shape,
+      finding its order through the payment session that took it or, for the
+      older checkout flow, through spree_paypal_checkout_orders.
+
+      Run it before dropping spree_paypal_checkout_orders: that table is the
+      only link from those older payments to their PayPal order. A payment it
+      cannot match is logged by id, counted, and left as it was; refund it in
+      PayPal. Supports a dry run, and is idempotent.
+
+  - id: register_paypal_webhooks
+    name: "Register each PayPal payment method's webhook"
+    task: "spree:upgrade:register_paypal_webhooks"
+    optional: true
+    notes: |
+      Only runs when spree_paypal_checkout is installed; skipped otherwise.
+
+      PayPal webhooks register themselves in 6.0 and are always verified with
+      the webhook's id. This finds or creates the webhook for each PayPal
+      method's URL, replaces the events of one created by hand under the 0.x
+      guide, and stores its id. Until it runs, methods created before the
+      upgrade reject every webhook delivery.
+
+      Idempotent.
 
   - id: backfill_import_export_tenancy
     name: "Place every import in a store, and a seller where one ran it"
@@ -663,7 +711,7 @@ steps:
       are invisible to every scoped query, including the admin list.
 
       The owner_type/owner_id columns stay in place as this step's source and
-      its rollback path; they are dropped in 6.1, along with the deprecated
+      its rollback path; they are dropped in 6.3, along with the deprecated
       Import#owner reader. Exports need no data step — they have always had a
       store, and their seller_id column is new for everyone.
 

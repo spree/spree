@@ -42,7 +42,7 @@ namespace :spree do
       puts "\n[#{name}]"
 
       # Calculate max width for alignment
-      max_name_width = deps.class::INJECTION_POINTS.map(&:length).max
+      max_name_width = deps.injection_points.map(&:length).max
 
       deps.current_values.each do |dep|
         status = dep[:overridden] ? ' [OVERRIDDEN]' : ''
@@ -63,7 +63,7 @@ namespace :spree do
 
     def validate_dependencies(name, deps)
       errors = []
-      deps.class::INJECTION_POINTS.each do |point|
+      deps.injection_points.each do |point|
         deps.send("#{point}_class")
         print "\e[32m.\e[0m"
       rescue NameError => e

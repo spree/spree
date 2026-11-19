@@ -11,7 +11,7 @@ interface EmailMarket {
   tax_inclusive: boolean;
   default: boolean;
   country_codes: Array<CountryCode>;
-  /** @deprecated Use `country_codes`. Removed in 6.1. */
+  /** @deprecated Use `country_codes`. Removed in 6.5. */
   country_isos: Array<string>;
   supported_locales: Array<LocaleCode>;
 }

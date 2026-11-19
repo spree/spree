@@ -1,6 +1,7 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
 import { AddressSchema } from './Address';
+import { CustomFieldSchema } from './CustomField';
 
 export const SellerSchema = z.object({
   id: z.string(),
@@ -11,6 +12,8 @@ export const SellerSchema = z.object({
   logo_url: z.string().nullable(),
   square_logo_url: z.string().nullable(),
   cover_photo_url: z.string().nullable(),
+  custom_fields: z.array(CustomFieldSchema).optional(),
+  external_references: z.record(z.string(), z.string()),
   status: z.string(),
   contact_email: z.string().nullable(),
   billing_email: z.string().nullable(),
@@ -26,6 +29,7 @@ export const SellerSchema = z.object({
   on_holiday: z.boolean(),
   sellable: z.boolean(),
   products_count: z.number(),
+  products_count_by_status: z.object({ draft: z.number(), active: z.number(), archived: z.number(), proposed: z.number(), rejected: z.number() }),
   users_count: z.number(),
   onboarding_progress: z.object({ done: z.number(), total: z.number() }),
   onboarding_complete: z.boolean(),
@@ -33,6 +37,7 @@ export const SellerSchema = z.object({
   registration_number: z.string().nullable(),
   billing_address: AddressSchema.optional(),
   returns_address: AddressSchema.optional(),
+  returns_location_id: z.string().nullable(),
 });
 
 export type Seller = z.infer<typeof SellerSchema>;

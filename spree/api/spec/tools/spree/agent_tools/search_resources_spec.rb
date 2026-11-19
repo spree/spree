@@ -41,6 +41,65 @@ RSpec.describe Spree::AgentTools::SearchResources do
     end
   end
 
+  describe 'pagination' do
+    it 'returns more than 25 records when asked for them' do
+      create_list(:product, 27, store: store, status: 'active')
+
+      result = tool.call(resource: 'products', limit: 100)
+
+      expect(result[:total]).to eq(30)
+      expect(result[:records].size).to eq(30)
+      expect(result[:next_page]).to be_nil
+    end
+
+    it 'names the next page and reaches the records past the first one' do
+      first = tool.call(resource: 'products', limit: 2)
+      expect(first).to include(page: 1, pages: 2, next_page: 2)
+
+      second = tool.call(resource: 'products', limit: 2, page: first[:next_page])
+      expect(second[:records].size).to eq(1)
+      expect(second[:next_page]).to be_nil
+      expect(second[:records].pluck(:id)).not_to include(*first[:records].pluck(:id))
+    end
+  end
+
+  describe 'a page past the last one' do
+    it 'returns no records rather than an error' do
+      result = tool.call(resource: 'products', limit: 2, page: 5)
+
+      expect(result[:error]).to be_nil
+      expect(result[:records]).to be_empty
+      expect(result[:next_page]).to be_nil
+    end
+  end
+
+  describe 'sorting' do
+    before do
+      products.each_with_index { |product, index| product.update_columns(created_at: index.days.ago) }
+    end
+
+    it 'sorts descending whether written as -field or field desc' do
+      newest = products.first.prefixed_id
+
+      expect(tool.call(resource: 'products', sort: '-created_at', limit: 1)[:records].first[:id]).to eq(newest)
+      expect(tool.call(resource: 'products', sort: 'created_at desc', limit: 1)[:records].first[:id]).to eq(newest)
+      expect(tool.call(resource: 'products', sort: 'created_at', limit: 1)[:records].first[:id]).to eq(products.last.prefixed_id)
+    end
+  end
+
+  describe 'stock levels' do
+    it 'carries the quantity and location on each row' do
+      stock_level = products.first.default_variant.stock_levels.first
+      stock_level.set_count_on_hand(42)
+
+      result = tool.call(resource: 'stock_levels', filters: { 'count_on_hand_gteq' => 40 })
+      record = result[:records].find { |r| r[:id] == stock_level.prefixed_id }
+
+      expect(record[:title]).to eq(products.first.name)
+      expect(record[:details]).to include('count_on_hand' => 42, 'stock_location_name' => stock_level.stock_location.name)
+    end
+  end
+
   describe 'records' do
     it 'carries a title and a dashboard path for each row' do
       record = tool.call(resource: 'products', limit: 1)[:records].first
@@ -67,6 +126,78 @@ RSpec.describe Spree::AgentTools::SearchResources do
       expect(result[:error]).to include('imaginary_field_eq')
       expect(result[:filterable_fields]).to include('name')
       expect(result[:records]).to be_nil
+    end
+  end
+
+  # parent_id used to be dropped for a resource also listed at the top
+  # level, so every claim in the store was reported as one order's.
+  describe 'under a parent' do
+    it "lists only the order's claims" do
+      claim = create(:claim, store: store, order: create(:shipped_order, store: store))
+      create(:approved_claim, store: store, order: create(:shipped_order, store: store))
+
+      result = tool.call(resource: 'claims', parent_id: claim.order.prefixed_id)
+
+      expect(result[:total]).to eq(1)
+      expect(result[:records].pluck(:id)).to eq([claim.prefixed_id])
+    end
+
+    it "lists only the category's products" do
+      category = create(:category, store: store)
+      create(:product_category, category: category, product: products.first, position: 1)
+
+      result = tool.call(resource: 'products', parent_id: category.prefixed_id)
+
+      expect(result[:total]).to eq(1)
+      expect(result[:records].pluck(:id)).to eq([products.first.prefixed_id])
+    end
+
+    it "counts pages for the collection's products" do
+      collection = create(:collection, store: store)
+      products.first(2).each { |product| create(:product_collection, collection: collection, product: product) }
+
+      result = tool.call(resource: 'products', parent_id: collection.prefixed_id, limit: 1, page: 2)
+
+      expect(result).to include(total: 2, pages: 2, count: 1)
+      expect(products.first(2).map(&:prefixed_id)).to include(result[:records].first[:id])
+    end
+
+    it "lists only the product's variants" do
+      product = create(:product, store: store)
+      create_list(:variant, 2, product: product)
+      create(:variant, product: products.first)
+
+      result = tool.call(resource: 'variants', parent_id: product.prefixed_id)
+
+      expected = product.reload.variants.map(&:prefixed_id)
+      expect(result[:total]).to eq(expected.size)
+      expect(result[:records].pluck(:id)).to match_array(expected)
+    end
+
+    it 'refuses a parent the resource is not listed under' do
+      result = tool.call(resource: 'products', parent_id: create(:shipped_order, store: store).prefixed_id)
+
+      expect(result[:error]).to include('cannot be listed under')
+      expect(result[:parents]).to include('categories', 'collections')
+    end
+
+    it 'is named by describe_resource' do
+      described = Spree::AgentTools::DescribeResource.new(context).call(resource: 'products')[:resources].first
+
+      expect(described[:listed_under]).to include('categories', 'collections', 'catalogs', 'price_lists')
+    end
+
+    it 'keeps the nested refusal for a resource listed only two levels deep' do
+      result = tool.call(resource: 'deliveries', parent_id: create(:shipped_order, store: store).prefixed_id)
+
+      expect(result[:error]).not_to include('cannot be listed under')
+      expect(Spree::AgentTools::ResourceMap.find('deliveries').index_parents).to be_empty
+    end
+
+    it 'refuses a parent for a resource never listed under one' do
+      result = tool.call(resource: 'orders', parent_id: products.first.prefixed_id)
+
+      expect(result[:error]).to include('not listed under another record')
     end
   end
 

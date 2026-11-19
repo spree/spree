@@ -56,7 +56,7 @@ Reserved and incoming are kept as counters rather than worked out on every read,
 <CodeGroup>
 
 ```bash Spree CLI (Docker)
-spree rake spree:stock:recount_levels
+spree task stock:recount_levels
 ```
 
 ```bash Without Spree CLI
@@ -216,6 +216,8 @@ A reservation is a short, time-limited hold placed when a customer enters checko
 | They abandon it | The hold expires and stock returns |
 
 Reservations never touch `count_on_hand` — they're a separate layer consulted when availability is read, and their total per stock level is what `reserved_count` shows. A backorderable item is skipped entirely, since unlimited supply needs no holding.
+
+Stock is held at the location the order will ship from — the same choice that builds the cart's delivery options — so a cart drawing on two warehouses holds at both. Once the customer gives an address, a warehouse that cannot deliver there holds nothing; units no other warehouse can supply are reported as undeliverable instead. When an edit to the cart or a new address moves an item to another warehouse, its hold moves with it.
 
 How long the hold lasts is a **store setting**, because it's a decision about the checkout experience rather than a property of a warehouse. Reservations can also be switched off entirely.
 

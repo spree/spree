@@ -1,13 +1,15 @@
 import type { Supplier } from '@spree/admin-sdk'
-import { type CurrencyCode, isDecimalString } from '@spree/core'
+import { type CurrencyCode, currencyParts, isDecimalString, normalizeMoneyInput } from '@spree/core'
 import {
   CurrencySelect,
   PageHeader,
   ResourceCombobox,
   StoreDatePicker,
+  useMoneyLocale,
   useStockLocations,
 } from '@spree/dashboard-core'
 import {
+  Badge,
   Button,
   Card,
   CardContent,
@@ -19,6 +21,10 @@ import {
   FieldLabel,
   Input,
   ResourceLayout,
+  Section,
+  SectionActions,
+  SectionHeader,
+  SectionTitle,
   Select,
   SelectContent,
   SelectItem,
@@ -26,7 +32,7 @@ import {
   SelectValue,
   Textarea,
 } from '@spree/dashboard-ui'
-import { PlusIcon } from '@spree/dashboard-ui/icons'
+import { PackageIcon, PlusIcon } from '@spree/dashboard-ui/icons'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { supplierAutocompleteProps } from '../../hooks/use-suppliers'
@@ -49,15 +55,16 @@ export interface PurchaseOrderSubmitValues extends PurchaseOrderFormValues {
 }
 
 // A cleared cost input is not zero — it is nothing, which the server rejects
-// field-by-field. Trimmed here so the value checked is the value sent.
-function costedLine(line: VariantLine): CostedVariantLine | undefined {
-  const unitCost = line.unitCost?.trim()
+// field-by-field. Read in the admin's own format, so the value checked is the
+// canonical value sent.
+function costedLine(line: VariantLine, locale: string): CostedVariantLine | undefined {
+  const unitCost = normalizeMoneyInput(line.unitCost, locale)
   if (line.quantity <= 0 || !isDecimalString(unitCost) || unitCost.startsWith('-')) return undefined
   return { ...line, unitCost }
 }
 
-function costedLines(lines: VariantLine[]): CostedVariantLine[] | undefined {
-  const costed = lines.map(costedLine).filter((line) => line !== undefined)
+function costedLines(lines: VariantLine[], locale: string): CostedVariantLine[] | undefined {
+  const costed = lines.map((line) => costedLine(line, locale)).filter((line) => line !== undefined)
   return costed.length === lines.length ? costed : undefined
 }
 
@@ -119,11 +126,19 @@ export function PurchaseOrderForm({
   const [cancelBy, setCancelBy] = useState<string | undefined>(initial.cancelBy)
   const [reference, setReference] = useState(initial.reference)
   const [notes, setNotes] = useState(initial.notes)
-  const [lines, setLines] = useState<VariantLine[]>(initial.lines)
+  // Saved costs arrive canonical ("3.80") and are shown with the admin's own
+  // decimal mark, so an untouched cost reads back unchanged.
+  const moneyLocale = useMoneyLocale()
+  const [lines, setLines] = useState<VariantLine[]>(() => {
+    const { decimal } = currencyParts(initial.currency ?? 'USD', moneyLocale)
+    return initial.lines.map((line) =>
+      line.unitCost ? { ...line, unitCost: line.unitCost.replace('.', decimal) } : line,
+    )
+  })
   const [creatingSupplier, setCreatingSupplier] = useState(false)
   const [pickerOpen, setPickerOpen] = useState(false)
 
-  const submitLines = costedLines(lines)
+  const submitLines = costedLines(lines, moneyLocale)
   const canSubmit = !!supplierId && !!destinationId && !!submitLines
 
   const detailsCard = (
@@ -240,17 +255,23 @@ export function PurchaseOrderForm({
   )
 
   const itemsCard = (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>{t('admin.purchase_orders.items_title')}</CardTitle>
+    <Section>
+      <SectionHeader>
+        <SectionTitle>
+          <PackageIcon />
+          {t('admin.purchase_orders.items_title')}
+          {lines.length > 0 && <Badge variant="outline">{lines.length}</Badge>}
+        </SectionTitle>
         {lines.length > 0 && (
-          <Button type="button" variant="outline" size="sm" onClick={() => setPickerOpen(true)}>
-            <PlusIcon className="size-4" />
-            {t('admin.inventory_lines.add_label')}
-          </Button>
+          <SectionActions>
+            <Button type="button" variant="outline" size="sm" onClick={() => setPickerOpen(true)}>
+              <PlusIcon className="size-4" />
+              {t('admin.inventory_lines.add_label')}
+            </Button>
+          </SectionActions>
         )}
-      </CardHeader>
-      <CardContent>
+      </SectionHeader>
+      <Card>
         {/* No warehouse filter, unlike a transfer: buying stock in is how a
             merchant gets what they do not have. */}
         <VariantLineEditor
@@ -262,8 +283,8 @@ export function PurchaseOrderForm({
           pickerOpen={pickerOpen}
           onPickerOpenChange={setPickerOpen}
         />
-      </CardContent>
-    </Card>
+      </Card>
+    </Section>
   )
 
   return (

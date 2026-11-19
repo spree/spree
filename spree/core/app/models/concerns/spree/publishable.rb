@@ -207,8 +207,9 @@ module Spree
       return unless Spree::Events.enabled?
 
       @_current_event_name = event_name
-      payload ||= event_payload_for(event_name)
-      Spree::Events.publish(event_name, payload, metadata)
+      publish_in_event_store do
+        Spree::Events.publish(event_name, payload || event_payload_for(event_name), metadata)
+      end
     ensure
       @_current_event_name = nil
     end
@@ -389,7 +390,29 @@ module Spree
     end
 
     def capture_pre_destroy_payload
-      @_pre_destroy_payload = event_payload
+      @_pre_destroy_payload = in_event_store { event_payload }
+    end
+
+    # Publishes with the record's own store, so the event is
+    # attributed to it rather than to whatever store the caller happens to
+    # be in — the default store, in a job or a rake task.
+    #
+    # Spree::Event reads Spree::Current lazily, so store_id is settled here
+    # while the context is still open: a subscriber job or a webhook
+    # delivery reads it long after.
+    def publish_in_event_store
+      in_event_store do
+        published = yield
+        published.store_id if published.is_a?(Spree::Event)
+        published
+      end
+    end
+
+    def in_event_store(&block)
+      store = (respond_to?(:store) ? self.store : nil) || Spree::Current.store
+      return block.call if store.nil? || store == Spree::Current.store
+
+      Spree::Current.with_store(store, &block)
     end
   end
 end

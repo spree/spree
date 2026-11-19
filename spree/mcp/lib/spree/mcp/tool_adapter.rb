@@ -24,36 +24,35 @@ module Spree
           ) { |**arguments| adapter.respond(tool, arguments) }
         end
 
-        # The tool's declared params as JSON Schema.
+        # The tool's arguments as the gem's schema object, built once per tool
+        # class. Building one deep-copies and validates the schema, and an
+        # action tool's schema is a whole request body: done on every request
+        # for every tool, it was most of what answering `tools/list` cost.
+        # Keyed weakly by the tool class, so a class replaced on a code reload
+        # is let go with its schema.
         #
         # @param tool [Spree::AgentTool]
-        # @return [Hash]
+        # @return [MCP::Tool::InputSchema]
         def input_schema(tool)
-          properties = tool.params.to_h do |name, options|
-            property = { type: json_type(options[:type]) }
-            property[:description] = options[:description] if options[:description].present?
-            # An array must say what it holds: a client validating arguments
-            # against the schema refuses the call otherwise.
-            property[:items] = { type: json_type(options[:items] || :string) } if property[:type] == 'array'
-
-            [name.to_s, property]
-          end
-
-          {
-            type: 'object',
-            properties: properties,
-            required: tool.params.select { |_name, options| options[:required] }.keys.map(&:to_s)
-          }
+          schemas[tool.class] ||= ::MCP::Tool::InputSchema.new(tool.class.input_schema)
         end
 
         # Clients that gate confirmation on annotations rather than on a
-        # server's word need both hints set explicitly: the gem defaults
-        # `destructiveHint` to true, so a read tool that says nothing would be
-        # confirmed like a deletion.
+        # server's word need every hint set explicitly: the protocol defaults
+        # `destructiveHint` and `openWorldHint` to true, so a tool that says
+        # nothing would be confirmed like a deletion that leaves the store.
+        # Every write runs the same workflow the dashboard does, which can
+        # email, charge a gateway or fire webhooks, so writes are open-world
+        # and reads are not.
         #
         # @return [Hash]
         def annotations(tool)
-          { read_only_hint: !tool.mutating?, destructive_hint: tool.mutating?, idempotent_hint: !tool.mutating? }
+          {
+            read_only_hint: !tool.mutating?,
+            destructive_hint: tool.destructive?,
+            idempotent_hint: !tool.mutating?,
+            open_world_hint: tool.mutating?
+          }
         end
 
         # A tool answers with a plain hash. A hash carrying `:error` is the
@@ -88,17 +87,8 @@ module Spree
 
         private
 
-        # A tool declares Ruby-ish types; JSON Schema wants its own names, and
-        # anything unrecognised is a string, which every client can render.
-        def json_type(type)
-          case type&.to_sym
-          when :boolean then 'boolean'
-          when :integer then 'integer'
-          when :number, :float, :decimal then 'number'
-          when :object, :hash then 'object'
-          when :array then 'array'
-          else 'string'
-          end
+        def schemas
+          @schemas ||= ObjectSpace::WeakKeyMap.new
         end
 
         # A line the client can show beside its confirmation prompt, and the

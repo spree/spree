@@ -8,6 +8,7 @@ import {
   ComboboxList,
   ComboboxSearch,
   ComboboxTriggerPlaceholder,
+  CurrencyLabel,
 } from '@spree/dashboard-ui'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -58,8 +59,9 @@ interface CurrencySelectProps {
  * current store's markets (the default market's first), so callers
  * choosing among already-configured currencies don't have to wire anything up.
  * Pass `options` (e.g. `ALL_CURRENCY_CODES`) when the merchant may pick any
- * currency, such as a market's currency. Each option reads `CODE — Full Name`
- * (e.g. `USD — US Dollar`), with the name localized to the admin UI language.
+ * currency, such as a market's currency. Each option shows the currency's
+ * symbol, code and name (`[$] USD US Dollar`), the name localized to the admin
+ * UI language.
  *
  * Always searchable, whatever the list length. The picker used to fall back to
  * a plain `<Select>` under a dozen options, which meant the same field behaved
@@ -158,7 +160,7 @@ export function CurrencySelect({
           aria-invalid={invalid || undefined}
         >
           {value ? (
-            <span className="truncate">{renderOption(value)}</span>
+            <CurrencyLabel code={value} name={displayNameFor(value)} />
           ) : (
             <ComboboxTriggerPlaceholder>
               {t('admin.components.currency_select.placeholder')}
@@ -175,7 +177,7 @@ export function CurrencySelect({
           <ComboboxList>
             {(code: CurrencyCode) => (
               <ComboboxItem key={code} value={code}>
-                {renderOption(code)}
+                <CurrencyLabel code={code} name={displayNameFor(code)} />
               </ComboboxItem>
             )}
           </ComboboxList>

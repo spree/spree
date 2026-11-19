@@ -6,10 +6,10 @@ module Spree
                  address1: [:string, nullable: true], address2: [:string, nullable: true],
                  city: [:string, nullable: true], postal_code: [:string, nullable: true], phone: [:string, nullable: true],
                  company: [:string, nullable: true], state_code: [:string, nullable: true],
-                 state_abbr: [:string, nullable: true, deprecated: 'Use `state_code`. Removed in 6.1.'],
+                 state_abbr: [:string, nullable: true, deprecated: 'Use `state_code`. Removed in 6.5.'],
                  state_name: [:string, nullable: true],
                  state_text: [:string, nullable: true], country_code: [:string, enum: Spree::IsoData.country_codes, enum_type_name: 'CountryCode'],
-                 country_iso: [:string, deprecated: 'Use `country_code`. Removed in 6.1.'],
+                 country_iso: [:string, deprecated: 'Use `country_code`. Removed in 6.5.'],
                  country_name: :string,
                  quick_checkout: :boolean, is_default_billing: :boolean, is_default_shipping: :boolean,
                  label: [:string, nullable: true], owner: { nullable: true }
@@ -23,7 +23,7 @@ module Spree
                    :state_code, :quick_checkout, :is_default_billing, :is_default_shipping
 
         # @deprecated Storefronts shipped against these names; use +state_code+
-        #   and +country_code+. Removed in 6.1.
+        #   and +country_code+. Removed in 6.5.
         attribute :state_abbr, &:state_code
         attribute :country_iso, &:country_code
 
@@ -35,6 +35,8 @@ module Spree
         # The address book the entry belongs to. Null for an address in no
         # book: one a guest typed in, or the copy a placed order keeps.
         one :owner, resource: proc { Spree.api.address_owner_serializer }
+
+        expandable_custom_fields
       end
     end
   end

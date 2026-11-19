@@ -1,40 +1,187 @@
 ---
 title: "Sellers"
-description: "Run a marketplace — other businesses list on your store, ship their own orders, and get paid their share."
+description: "Learn how to add the third-party sellers trading on your marketplace, review where each one stands, and approve or suspend them."
 ---
 
-A seller is another business selling through your store. They list their own products, ship their own orders from their own locations, and are paid their share of each sale, less the commission you charge. Everything a seller does happens in their own **seller panel** — they never see your dashboard, other sellers, or anything belonging to the store at large.
+A seller is a third-party business trading on your marketplace. Each one lists its own products, fulfills its own orders and is paid for what it sells, less the commission you charge.
 
-A marketplace can sell its own stock too. A product with no seller is yours, so a store that is part shop, part marketplace is a normal setup.
+Every seller has a record holding everything about that business in one place: the people who run it, how much of your onboarding checklist it has completed, its contact and address details, and what it has earned and is owed. The sellers list gathers those records onto one screen, so every seller and its current state can be seen together.
 
-## What a seller owns
+Sellers maintain their own profile, catalog and orders from their own panel, so most of the work on this screen is deciding who may trade, correcting details on a seller's behalf, and setting the commercial terms that only the marketplace operator controls.
 
-| Theirs | Yours |
+To manage sellers, navigate to **Sellers** in the admin dashboard.
+
+## Reviewing Your Sellers
+
+![The Sellers list, showing each seller's status and onboarding progress](/docs/images/user/sellers/sellers/1-sellers-list.png)
+
+The list shows one row per seller.
+
+| Column | What it means |
 |---|---|
-| Their products — listed by them, approved by you | The catalog as a whole, categories, collections, pricing rules |
-| Their stock locations, delivery methods and packaging | Delivery profiles and zones, which sellers pick from |
-| Their orders, fulfilled from their own locations | The customer, the payment, the order group that ties a checkout together |
-| Their team, their profile page, their policies | Commission rates, payouts, the onboarding checklist |
+| **Name** | What the business is called. |
+| **Status** | Where the seller stands with you, described below. |
+| **Contact email** | Where marketplace notices are sent, and the address an invitation is offered to by default. |
+| **Onboarding** | How much of your checklist they have completed, such as 3 of 7 done. |
+| **Products** | How many products the seller has, drafts and products in review included. |
+| **Team** | How many people can sign in and run the seller. |
+| **Created at** | When the seller record was added. |
 
-## Where things live
+Which columns appear is yours to choose, so a marketplace that never looks at team size can hide that column and keep the list to what it reads every day. Filtering by **Status** is the quickest way to bring up everyone waiting on a decision from you.
 
-Sellers has its own section of the dashboard, and two settings pages beside it:
+### Seller Statuses
 
-- **Sellers** — every seller, their status, and their page: [Managing sellers](/user/sellers/managing-sellers)
-- **Commission rates** — what you charge on each sale: [Commission rates](/user/sellers/commission-rates)
-- **Transfers** and **Payouts** — what each seller has earned and been paid: [Payouts](/user/sellers/payouts)
-- **Settings → Seller requirements** — the checklist a seller completes before you approve them: [Onboarding](/user/sellers/onboarding)
-- **Settings → Marketplace** — how and when sellers are paid
+A status indicates the point a seller has reached between being created and trading. The status is never typed in or updated manually. It changes in response to what you and the seller each do, and it governs what the seller can do next as well as which actions are offered to you on their page.
 
-## The shape of a marketplace sale
+| Status | What it means |
+|---|---|
+| **Pending** | The record exists, but nobody has been invited to run it yet. |
+| **Invited** | An invitation has been sent and nobody has accepted it. |
+| **Canceled** | The seller withdrew before joining. |
+| **Onboarding** | Somebody has accepted the invitation and is working through the checklist. |
+| **Ready for review** | The checklist is finished and the seller is waiting on your decision. |
+| **Approved** | The seller can trade on your marketplace. |
+| **Rejected** | The seller was turned down and cannot trade. |
+| **Suspended** | An approved seller has been stopped from trading, and can be reinstated later. |
 
-1. A seller [lists a product](/user/sellers/products) and you approve it.
-2. A customer buys it — possibly alongside products from other sellers — in one checkout. Spree splits that into [one order per seller](/user/sellers/orders), under one order group, paid once.
-3. The seller ships their order from their panel.
-4. Shipping records what they earned, less [commission](/user/sellers/commission-rates), on their ledger.
-5. On schedule, those earnings settle into a [payout](/user/sellers/payouts).
+## How to Add a Seller
 
-## Related
+Adding a seller creates the record. Inviting the people who will run it, and approving them, both happen afterwards from the seller's own page.
 
-- [Onboarding](/user/sellers/onboarding) — inviting a seller and the checklist they complete
-- [Managing sellers](/user/sellers/managing-sellers) — the list, statuses, and a seller's page
+1. Click **Add seller**.
+2. Enter the business's **Name**.
+3. Enter a **Contact email**, which is where marketplace notices are sent.
+4. Click **Create seller**.
+
+The seller's page opens, with the status **Pending** and nothing on the checklist done.
+
+<Note>The contact email is not an invitation. Nobody can sign in to the seller account until somebody has been invited and has accepted, which is covered in [<u>Onboarding</u>](/user/sellers/onboarding).</Note>
+
+## Reading a Seller's Page
+
+![A seller's page, with its onboarding checklist and status](/docs/images/user/sellers/sellers/2-seller-page.png)
+
+The header shows the seller's name, its status, how much of the checklist has been completed, and the main action available at that point, which is **Invite** before the seller has accepted and **Approve** once they are ready for review. The rest of the seller data sits on cards below.
+
+- **Profile** - The cover photo, logo, name, storefront address and public description, which together are what a shopper sees.
+- **Onboarding** - Every requirement on your checklist with the state of each one, and a link to **Manage requirements**, which opens the checklist itself. See [<u>Seller Requirements</u>](/user/settings/seller-requirements).
+- **Team** - The people who can sign in and run this seller, and any invitations still outstanding.
+- **Status** - The current status with a sentence explaining it.
+- **At a glance** - How many products and team members the seller has, and when the record was created.
+- **Balance** - What the seller has earned, been paid and is owed. This card appears only once the seller has earned something. See [<u>Payouts</u>](/user/sellers/payouts).
+- **Contact** - The contact email and the billing email.
+- **Billing address** - Where the seller is invoiced for commission.
+- **Returns address** - Where customer returns are sent.
+- **Payouts and tax** - Who remits tax, and this seller's own payout schedule and minimum payout where they differ from your marketplace defaults.
+- **Custom fields** - Any extra fields your marketplace records against sellers. See [<u>Custom Fields</u>](/user/settings/custom-fields).
+
+Cards are not hidden when the seller has not filled them in yet. A card with no data simply shows blank fields, so you can see at a glance where a seller has got to without opening their checklist.
+
+## Editing a Seller's Details
+
+Almost everything on a seller's record belongs to the seller, who maintains it from their own panel. The same fields can be edited here on their behalf, which is what you need when a seller cannot correct something themselves, such as before anyone has accepted the invitation.
+
+Two things work differently. The payout and tax settings are yours alone, and the seller never sees them. The returns address is the seller's alone, and can be read here but changed only by them.
+
+### Seller Profile
+
+The edit button on the profile card, and the one on the **Contact** card, both open the same panel:
+
+- **Logo** - Shown beside the seller wherever they appear. A square image works best.
+- **Square logo** - Used where a tight square is needed, such as an avatar.
+- **Cover photo** - The wide banner across the top of the seller's profile.
+- **Name** - What the business is called.
+- **Slug** - The seller's address on your storefront.
+- **Contact email** - Where marketplace notices are sent, and the address an invitation is offered to by default.
+- **Billing email** - Where commission invoices are sent, when that differs from the contact email.
+- **About** - The public description shown on the seller's profile.
+
+The seller maintains all of these from their own panel except the slug, which only the marketplace operator can change. A seller renaming their own storefront address would break every link already pointing at it.
+
+### Payouts and Tax
+
+These are set from the **Payouts and tax** card and are not shown to the seller:
+
+- **Tax remittance** - Whether the seller or the marketplace remits consumer tax on that seller's sales.
+- **Payout schedule** - How often this seller is paid, or **Use store default** to follow your marketplace setting.
+- **Minimum payout** - How much has to build up before this seller is paid.
+- **Holiday mode until** - A date the seller is away until. Their products stay visible on your storefront but cannot be bought until that date passes, so the seller keeps their listings and their search ranking instead of taking everything down and putting it back.
+
+The defaults these fall back on are under [<u>Marketplace Settings</u>](/user/settings/marketplace). Setting a value here applies to this seller only.
+
+### Addresses
+
+The **Billing address** is edited from its own card, and is the address a commission invoice is made out to.
+
+The **Returns address** is read-only on this screen. It comes from the seller's default stock location, so it changes when the seller changes the address on that location in their own panel.
+
+### Custom Fields
+
+![A seller's Custom fields card](/docs/images/user/sellers/sellers/3-custom-fields.png)
+
+Any custom fields your marketplace records against sellers are shown and edited on the **Custom fields** card. A field the seller was asked to fill in on their checklist shows their answer here, which is where you read what they told you, and a field only your own team uses is filled in here. See [<u>Custom Fields</u>](/user/settings/custom-fields) for creating the fields themselves, and [<u>Seller Requirements</u>](/user/settings/seller-requirements) for asking a seller to complete one.
+
+### Team
+
+The **Team** card lists everyone who can sign in and run this seller, together with invitations that have been sent and not yet accepted. Four things can be done from it:
+
+- **Invite** adds somebody to the seller's team. They join when they accept.
+- **Resend** sends an outstanding invitation again.
+- **Revoke** stops an outstanding invitation working.
+- **Remove** takes a team member's access to the seller away.
+
+Inviting the first person is what starts a seller's onboarding, which is covered in [<u>Onboarding</u>](/user/sellers/onboarding).
+
+### What Cannot Be Edited Directly
+
+A seller's **status** is never typed in or picked from a list. It moves only through the actions below, each of which sends the right notification, provisions what the new status needs and records who decided it.
+
+**Products cannot be created for a seller.** A product belongs to whoever submitted it, and there is no way to add one on a seller's behalf or to move one of your own products over to them. Reviewing, approving and listing what a seller submits is the extent of it. See [<u>Seller Products</u>](/user/sellers/products).
+
+**A payout account cannot be swapped by you.** Where your marketplace pays through Stripe Connect, the account a seller is paid into is the one that seller connected, and a seller who needs to be paid somewhere else has to connect the new account themselves. See [<u>Payouts</u>](/user/sellers/payouts).
+
+**Delivery methods cannot be added for a seller.** The methods a seller has set up can be read and edited under [<u>Delivery Profiles</u>](/user/settings/delivery-profiles), but a new one cannot be created on their behalf. A seller needing another way to ship adds it from their own panel. The alternative is a delivery method of your own shared with sellers, which reaches every seller at once rather than one.
+
+## How to Approve a Seller
+
+Approving lets a seller trade. The **Approve** button appears in the header once somebody has accepted an invitation and the seller is working through the checklist.
+
+1. Open the seller and read the **Onboarding** card.
+2. Settle anything waiting on you, such as a document to read or a manual check to mark done.
+3. Click **Approve**.
+
+A seller who has finished the checklist is approved straight away. A seller who has not finished brings up a confirmation naming the requirements still outstanding, and approving from there admits them regardless. The decision is recorded along with what was outstanding at the time.
+
+![The confirmation shown when approving a seller whose checklist is unfinished](/docs/images/user/sellers/sellers/4-approve-anyway.png)
+
+<Note>Where **Approve sellers automatically** is switched on under [<u>Marketplace Settings</u>](/user/settings/marketplace), a seller is approved as soon as they submit a finished checklist for review, and never waits on you.</Note>
+
+## How to Reject or Send Back a Seller
+
+![The More actions menu on a seller's page](/docs/images/user/sellers/sellers/5-more-actions.png)
+
+Both decisions are made from **More actions** on the seller's page, and both apply before a seller has been approved.
+
+**Reject** turns down an applicant. The seller is not admitted and cannot trade. A rejection is not final, because the **Approve** button is still offered on a rejected seller if the decision needs reversing.
+
+**Send back to onboarding** is offered on a seller who is waiting for review. It returns them to the checklist so they can correct their details and ask for review again, rather than deciding either way.
+
+## How to Suspend or Reinstate a Seller
+
+**Suspend** is found under **More actions** on an approved seller. Suspending stops them selling immediately while keeping their catalog, their order history and everything they have earned, so money already owed can still be settled.
+
+A suspended seller is reinstated with the **Reinstate** button in the header, which returns them to approved and lets them trade again.
+
+## How to Delete a Seller
+
+**Delete seller** removes the record entirely and cannot be undone. Products the seller listed stay in your catalog without a seller attached.
+
+<Warning>Deleting is not the way to stop a seller trading. Suspending keeps the record, its orders and its earnings, which is what lets you settle what is already owed and reinstate the seller later. Delete only a record that should never have existed.</Warning>
+
+## Further Reading
+
+- [<u>Onboarding</u>](/user/sellers/onboarding) - Inviting a seller and getting them through the checklist
+- [<u>Seller Requirements</u>](/user/settings/seller-requirements) - The checklist itself
+- [<u>The Seller Panel</u>](/user/sellers/seller-panel) - What a seller sees and does on their side
+- [<u>Marketplace Settings</u>](/user/settings/marketplace) - Payouts, admission and commission tax
+- [<u>Payouts</u>](/user/sellers/payouts) - Settling what a seller is owed

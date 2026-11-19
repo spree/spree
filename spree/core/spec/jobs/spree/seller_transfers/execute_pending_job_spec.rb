@@ -75,7 +75,39 @@ RSpec.describe Spree::SellerTransfers::ExecutePendingJob do
 
     described_class.perform_now(seller.id)
 
-    expect(reversal.reload).to be_processing
+    expect(reversal.reload).to be_completed
+  end
+
+  # A reversal can only be taken from an earning that was sent, so the earning
+  # goes first and the reversal finds it done.
+  it 'reverses a refused reversal after sending its earning' do
+    earning = pending_earning
+    reversal = create(:seller_transfer, :reversal, seller: seller, order: earning.order, reversed_from: earning,
+                                                   status: 'processing')
+    allow_any_instance_of(Spree::PayoutProvider::System).to receive(:reverse!).and_wrap_original do |original, row|
+      raise Spree::Core::GatewayError, 'earning not sent' unless row.reversed_from.reload.completed?
+
+      original.call(row)
+    end
+
+    described_class.perform_now(seller.id)
+
+    expect(reversal.reload).to be_completed
+  end
+
+  # A seller suspended after a wave of refunds is the one whose money most
+  # needs to come back.
+  it 'reverses for a seller who can no longer be paid' do
+    earning = create(:seller_transfer, :completed, seller: seller, amount: 40,
+                                                   order: create(:order, store: store, seller: seller))
+    reversal = create(:seller_transfer, :reversal, seller: seller, order: earning.order, reversed_from: earning,
+                                                   status: 'processing')
+    allow(Spree::PayoutProvider::System).to receive(:requires_payout_account?).and_return(true)
+    seller.update!(payouts_enabled_at: nil)
+
+    described_class.perform_now(seller.id)
+
+    expect(reversal.reload).to be_completed
   end
 
   it 'does nothing for a seller the provider still will not accept' do

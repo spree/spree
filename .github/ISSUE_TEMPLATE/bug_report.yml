@@ -1,0 +1,45 @@
+name: Bug report
+description: Something in Spree doesn't work as it should
+labels: ['Needs Confirmation']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug. The diagnostics report at the end is what lets us reproduce it on our side, so please don't skip it.
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: What were you trying to do, and what went wrong?
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect to happen?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Error message and stack trace
+      description: The full error from your logs, if there is one. Remove anything private before pasting.
+      render: shell
+  - type: textarea
+    id: environment
+    attributes:
+      label: Diagnostics report
+      description: |
+        Paste the output of `spree info`, or use **Copy as Markdown** in Dashboard → Settings → System info. It contains no names, emails, URLs or error messages.
+    validations:
+      required: true

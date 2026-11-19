@@ -116,6 +116,19 @@ describe Spree::PaymentMethod, type: :model do
     end
   end
 
+  describe '#webhook_url' do
+    let(:payment_method) { create(:credit_card_payment_method) }
+
+    it 'is an absolute url when the store url is a bare host' do
+      store.update!(url: 'shop.example.com')
+
+      url = payment_method.webhook_url
+
+      expect(URI.parse(url).scheme).to be_present
+      expect(url).to end_with("/api/v3/webhooks/payments/#{payment_method.prefixed_id}")
+    end
+  end
+
   describe '#gateway_amount' do
     it 'hands a method that takes money amounts the amount with its currency' do
       method = Spree::Gateway::Bogus.new

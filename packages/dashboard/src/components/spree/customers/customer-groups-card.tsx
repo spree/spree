@@ -52,7 +52,7 @@ export function CustomerGroupsCard({ customer }: { customer: Customer }) {
         </CardHeader>
         <CardContent>
           {groups.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-base text-muted-foreground">
               {t('admin.customers.detail.groups.empty')}
             </p>
           ) : (
@@ -129,7 +129,7 @@ function EditGroupsSheet({
         </SheetHeader>
         <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
           {error && (
-            <p className="text-sm text-destructive" role="alert">
+            <p className="text-base text-destructive" role="alert">
               {error}
             </p>
           )}

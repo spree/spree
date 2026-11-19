@@ -22,22 +22,55 @@ import {
 import { ExternalLinkIcon } from '@spree/dashboard-ui/icons'
 import { useTranslation } from 'react-i18next'
 
-type CheckOutcome = 'passed' | 'failed' | 'not_checked'
+export type CheckOutcome = 'passed' | 'failed' | 'unavailable' | 'not_checked'
 
 const OUTCOME_VARIANTS = {
   passed: 'success',
   failed: 'destructive',
+  unavailable: 'warning',
   not_checked: 'outline',
 } as const
 
-function addressCheck(payment: Payment): CheckOutcome {
-  if (!payment.avs_response) return 'not_checked'
-  return payment.avs_risky ? 'failed' : 'passed'
+// Results where the check was not run, or only in part — the issuer's system
+// was down, the card or its issuer does not support it, or the street line was
+// not verified — as opposed to one that was run and did not match. Spree still
+// counts these as risky; only the label differs. Meanings follow
+// ActiveMerchant's AVSResult and CVVResult. CVV `S` (a code is on the card but
+// none was sent) is the merchant's omission, so it stays a failure.
+const UNAVAILABLE_AVS_CODES = new Set(['E', 'G', 'I', 'P', 'R', 'S', 'U'])
+const UNAVAILABLE_CVV_CODES = new Set(['P', 'U', 'X'])
+
+// The backend's risk flag decides whether a check is risky; the code only
+// tells a failure from a check that was not run. A risky result always reads
+// as one of the two, even with a blank code, so its warning is never lost.
+function riskyOutcome(code: string | null, unavailableCodes: Set<string>): CheckOutcome {
+  const normalized = code?.trim().toUpperCase()
+  return normalized && unavailableCodes.has(normalized) ? 'unavailable' : 'failed'
 }
 
-function securityCodeCheck(payment: Payment): CheckOutcome {
-  if (!payment.cvv_response_code) return 'not_checked'
-  return payment.cvv_risky ? 'failed' : 'passed'
+export function addressCheck(payment: Pick<Payment, 'avs_response' | 'avs_risky'>): CheckOutcome {
+  if (payment.avs_risky) return riskyOutcome(payment.avs_response, UNAVAILABLE_AVS_CODES)
+  return payment.avs_response ? 'passed' : 'not_checked'
+}
+
+export function securityCodeCheck(
+  payment: Pick<Payment, 'cvv_response_code' | 'cvv_risky'>,
+): CheckOutcome {
+  if (payment.cvv_risky) return riskyOutcome(payment.cvv_response_code, UNAVAILABLE_CVV_CODES)
+  return payment.cvv_response_code ? 'passed' : 'not_checked'
+}
+
+/**
+ * The worst of a card payment's two checks when either is risky, for the
+ * warning on the payments table — so the table and this dialog agree.
+ */
+export function riskyCardChecks(
+  payment: Pick<Payment, 'avs_response' | 'avs_risky' | 'cvv_response_code' | 'cvv_risky'>,
+): 'failed' | 'unavailable' | null {
+  const outcomes = [addressCheck(payment), securityCodeCheck(payment)]
+  if (outcomes.includes('failed')) return 'failed'
+  if (outcomes.includes('unavailable')) return 'unavailable'
+  return null
 }
 
 /** What the card issuer reported about a payment, and each capture of its money. */
@@ -67,7 +100,7 @@ export function PaymentDetailsDialog({
           </DialogDescription>
         </DialogHeader>
         <DialogBody className="flex flex-col gap-6">
-          <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
+          <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-base">
             <dt className="text-muted-foreground">
               {t('admin.orders.detail.payments_table.method')}
             </dt>
@@ -103,11 +136,11 @@ export function PaymentDetailsDialog({
             )}
           </dl>
           <section className="flex flex-col gap-2">
-            <h3 className="font-medium text-sm">
+            <h3 className="font-medium text-base">
               {t('admin.orders.detail.payment_details.captures')}
             </h3>
             {captures.length === 0 ? (
-              <p className="text-muted-foreground text-sm">
+              <p className="text-muted-foreground text-base">
                 {t('admin.orders.detail.payment_details.captures_empty')}
               </p>
             ) : (
