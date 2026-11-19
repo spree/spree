@@ -201,11 +201,6 @@ export const SELLER_PANEL = `http://localhost:${process.env.E2E_SELLER_VITE_PORT
 export const FIXTURE_BOGUS_GATEWAY = 'E2E Bogus Gateway'
 export const FIXTURE_BOGUS_ORDER_EMAIL = 'e2e-gateway-link@example.com'
 export const FIXTURE_BOGUS_TRANSACTION_ID = 'BGS-E2E-PAYMENT'
-// Placed orders with an authorized Bogus payment, captured or voided by
-// payment-requested.spec while the gateway answers the way a provider that
-// reports outcomes by webhook does.
-export const FIXTURE_REQUESTED_CAPTURE_ORDER_EMAIL = 'e2e-requested-capture@example.com'
-export const FIXTURE_REQUESTED_VOID_ORDER_EMAIL = 'e2e-requested-void@example.com'
 
 export const FIXTURE_PROMO_CUSTOMER_EMAIL = 'e2e-promo-customer@example.com'
 export const FIXTURE_PROMO_CUSTOMER_FIRST_NAME = 'Promo'

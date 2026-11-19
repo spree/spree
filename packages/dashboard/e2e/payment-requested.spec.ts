@@ -1,12 +1,7 @@
+import { resolve } from 'node:path'
 import { expect, type Page, test } from '@playwright/test'
-import {
-  adminRequest,
-  type E2ELoginSession,
-  FIXTURE_BOGUS_GATEWAY,
-  FIXTURE_REQUESTED_CAPTURE_ORDER_EMAIL,
-  FIXTURE_REQUESTED_VOID_ORDER_EMAIL,
-  login,
-} from './helpers'
+import { adminRequest, type E2ELoginSession, FIXTURE_BOGUS_GATEWAY, login } from './helpers'
+import { API_GEM_DIR, runRailsBootstrap } from './rails'
 
 // A provider such as Adyen accepts a capture, void or refund and reports the
 // outcome later by webhook. The seeded Bogus gateway answers that way, and its
@@ -19,16 +14,36 @@ type RequestedPayment = {
   capture_events?: { transaction_id: string | null }[]
 }
 
-async function openOrder(page: Page, email: string) {
+const railsEnv = {
+  ...process.env,
+  RAILS_ENV: 'test',
+  DATABASE_URL: `sqlite3:${resolve(API_GEM_DIR, 'spec/dummy/db/spree_test_e2e.sqlite3')}`,
+}
+
+// A placed order of the test's own with an authorized payment on the comma
+// store's Bogus gateway, which global setup puts in requested mode. Written
+// directly: authorizing a card needs a full checkout.
+function seedAuthorizedOrder() {
+  const stamp = Date.now()
+  return JSON.parse(
+    runRailsBootstrap(
+      `
+      store = Spree::Store.find_by!(code: 'e2e-nl')
+      bogus = store.payment_methods.find_by!(name: '${FIXTURE_BOGUS_GATEWAY}')
+      card = Spree::CreditCard.find_by!(payment_method: bogus, gateway_customer_profile_id: 'BGS-E2E')
+      order = Spree::Order.create!(store: store, currency: 'EUR', email: 'e2e-requested-${stamp}@example.com', status: 'placed', completed_at: Time.current, total: 20)
+      order.payments.create!(payment_method: bogus, source: card, amount: 20, status: 'pending', response_code: 'BGS-E2E-${stamp}')
+      puts({ order_id: order.prefixed_id }.to_json)
+    `,
+      railsEnv,
+    ),
+  ) as { order_id: string }
+}
+
+async function openOrder(page: Page) {
+  const { order_id: orderId } = seedAuthorizedOrder()
   const creds = await login(page)
   const session: E2ELoginSession = { ...creds, store_id: creds.comma_store_id }
-  const orders = await adminRequest<{ data: { id: string }[] }>(
-    page,
-    session,
-    'get',
-    `/orders?q[email_eq]=${encodeURIComponent(email)}`,
-  )
-  const orderId = orders.data[0].id
   await page.goto(`/${creds.comma_store_id}/orders/${orderId}`)
   return { session, orderId }
 }
@@ -82,8 +97,11 @@ async function confirmAction(page: Page, name: RegExp) {
 }
 
 test.describe('a payment waiting on its provider', () => {
+  // Seeding boots Rails once per test.
+  test.describe.configure({ timeout: 90_000 })
+
   test('captures and refunds once the provider answers', async ({ page }) => {
-    const { session, orderId } = await openOrder(page, FIXTURE_REQUESTED_CAPTURE_ORDER_EMAIL)
+    const { session, orderId } = await openOrder(page)
 
     await openActions(page)
     await page.getByRole('menuitem', { name: 'Capture' }).click()
@@ -133,7 +151,7 @@ test.describe('a payment waiting on its provider', () => {
   })
 
   test('voids once the provider answers', async ({ page }) => {
-    const { session, orderId } = await openOrder(page, FIXTURE_REQUESTED_VOID_ORDER_EMAIL)
+    const { session, orderId } = await openOrder(page)
 
     await openActions(page)
     await page.getByRole('menuitem', { name: 'Void' }).click()

@@ -39,8 +39,6 @@ import {
   FIXTURE_PROMO_SKU,
   FIXTURE_PROMO_TAXON,
   FIXTURE_PROMO_TAXON_PERMALINK,
-  FIXTURE_REQUESTED_CAPTURE_ORDER_EMAIL,
-  FIXTURE_REQUESTED_VOID_ORDER_EMAIL,
   FIXTURE_SELLER_PASSWORD,
   FIXTURE_SELLER_USER_EMAIL,
   FIXTURE_SELLER_WRITER_EMAIL,
@@ -218,10 +216,8 @@ const BOOTSTRAP_RUBY = [
   `gateway_order.payments.create!(payment_method: comma_bogus, source: gateway_card, amount: 10, status: 'completed', response_code: '${FIXTURE_BOGUS_TRANSACTION_ID}', avs_response: 'N', cvv_response_code: 'N', cvv_response_message: 'CVV does not match').capture_events.create!(amount: 10) unless gateway_order.payments.exists?`,
   // The same gateway answers captures, voids and refunds as requested, the
   // way a provider that reports their outcome by webhook does; the payment
-  // above is already captured, so it is unaffected. Two placed orders hold an
-  // authorized payment each, for payment-requested.spec to capture and void.
+  // above is already captured, so it is unaffected.
   'comma_bogus.update!(preferred_requested_mode: true) unless comma_bogus.preferred_requested_mode',
-  `[['${FIXTURE_REQUESTED_CAPTURE_ORDER_EMAIL}', 'BGS-E2E-CAPTURE'], ['${FIXTURE_REQUESTED_VOID_ORDER_EMAIL}', 'BGS-E2E-VOID']].each { |email, code| requested_order = comma_store.orders.find_by(email: email) || Spree::Order.create!(store: comma_store, currency: 'EUR', email: email, status: 'placed', completed_at: Time.current, total: 20); requested_order.payments.create!(payment_method: comma_bogus, source: gateway_card, amount: 20, status: 'pending', response_code: code) unless requested_order.payments.exists? }`,
   'port = ENV.fetch("PORT", 3010)',
   'puts JSON.generate(api_url: "http://localhost:#{port}", admin_email: admin.email, admin_password: "spree123", store_id: s.prefixed_id, store_name: s.name, comma_store_id: comma_store.prefixed_id)',
 ].join('; ')
