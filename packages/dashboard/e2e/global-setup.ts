@@ -1,26 +1,21 @@
 import { writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
+import { type Client as AdminClient, createAdminClient } from '@spree/admin-sdk'
+import {
+  deploySeeds,
+  loadSeeds,
+  provisionStore,
+  renderReport,
+  reportHasFailures,
+} from '@spree/seeds/node'
+import { createSellerClient } from '@spree/seller-sdk'
 import {
   FIXTURE_BOGUS_GATEWAY,
   FIXTURE_BOGUS_ORDER_EMAIL,
   FIXTURE_BOGUS_TRANSACTION_ID,
-  FIXTURE_BULK_CATEGORY,
   FIXTURE_BULK_CATEGORY_PERMALINK,
   FIXTURE_BULK_CHANNEL_CODE,
-  FIXTURE_BULK_CHANNEL_NAME,
   FIXTURE_BULK_PRODUCT_A,
-  FIXTURE_BULK_PRODUCT_B,
-  FIXTURE_BULK_PRODUCT_C,
-  FIXTURE_BULK_PRODUCT_D,
-  FIXTURE_BULK_PRODUCT_E,
-  FIXTURE_BULK_PRODUCT_F,
-  FIXTURE_BULK_PRODUCT_G,
-  FIXTURE_BULK_PRODUCT_H,
-  FIXTURE_BULK_PRODUCT_I,
-  FIXTURE_BULK_PRODUCT_J,
-  FIXTURE_BULK_PRODUCT_K,
-  FIXTURE_BULK_PRODUCT_L,
-  FIXTURE_BULK_PRODUCT_M,
   FIXTURE_BULK_PRODUCT_N,
   FIXTURE_INVENTORY_PRODUCT,
   FIXTURE_INVENTORY_RESERVED,
@@ -37,7 +32,6 @@ import {
   FIXTURE_PROMO_CUSTOMER_GROUP,
   FIXTURE_PROMO_PRODUCT,
   FIXTURE_PROMO_SKU,
-  FIXTURE_PROMO_TAXON,
   FIXTURE_PROMO_TAXON_PERMALINK,
   FIXTURE_SELLER_PASSWORD,
   FIXTURE_SELLER_USER_EMAIL,
@@ -51,16 +45,19 @@ import {
 import {
   ASYNC_JOBS_INITIALIZER,
   CREDENTIALS_FILE,
+  E2E_DIR,
   RAILS_PID_FILE,
   SLOT_PROBES_INITIALIZER,
   TEST_INTEGRATION_INITIALIZER,
 } from './paths'
-import { API_GEM_DIR, rmIfExists, runRailsBootstrap, startRails } from './rails'
+import { API_GEM_DIR, rmIfExists, runRails, runRailsBootstrap, startRails } from './rails'
 
 const PORT = process.env.E2E_RAILS_PORT || '3010'
 // A database of its own, so the seeded data left behind after a run never
 // reaches the API gem's RSpec suite, which shares the dummy app.
 const TEST_SQLITE = resolve(API_GEM_DIR, 'spec/dummy/db/spree_test_e2e.sqlite3')
+const STORE_CONFIG = resolve(E2E_DIR, 'fixtures/store.yml')
+const COMMA_STORE_CONFIG = resolve(E2E_DIR, 'fixtures/comma-store.yml')
 
 const RAILS_ENV = {
   ...process.env,
@@ -70,13 +67,15 @@ const RAILS_ENV = {
   DATABASE_URL: `sqlite3:${TEST_SQLITE}`,
 }
 
-// Customer's last name is derived from the full name so the seeder and the
-// matching `full_name` assertion in promotions.spec stay in sync.
+// The last name follows from the full name, so the fixture file and the
+// `full_name` assertion in promotions.spec stay in step.
 const FIXTURE_PROMO_CUSTOMER_LAST_NAME = FIXTURE_PROMO_CUSTOMER_FULL_NAME.replace(
   `${FIXTURE_PROMO_CUSTOMER_FIRST_NAME} `,
   '',
 )
 
+// What has no Admin API by design (docs/plans/6.0-store-context-and-first-run-setup.md):
+// the seeds, the first admin, and a secret key for the deploy that follows.
 const BOOTSTRAP_RUBY = [
   "load Rails.root.join('db', 'schema.rb').to_s",
   'Spree::Seeds::All.call',
@@ -85,138 +84,265 @@ const BOOTSTRAP_RUBY = [
   'admin = Spree.admin_user_class.first || Spree.admin_user_class.create!(email: "admin@example.com", password: "spree123", password_confirmation: "spree123")',
   'admin.update!(password: "spree123", password_confirmation: "spree123")',
   's.add_user(admin, Spree::Role.default_admin_role(s)) unless s.role_users.exists?(user: admin)',
-  // Idempotent fixtures for promotion rule/action editor specs. Customer
-  // groups have no admin UI yet, so this is the only path to seed one.
-  // Looked up by permalink, not name: category names are not unique, so a name
-  // lookup could match an unrelated (or child) category.
-  `category = s.categories.where(permalink: '${FIXTURE_PROMO_TAXON_PERMALINK}').first_or_create!(name: '${FIXTURE_PROMO_TAXON}', parent: nil)`,
-  `product = Spree::Product.where(name: '${FIXTURE_PROMO_PRODUCT}').first_or_create!(store: s, status: 'active')`,
-  `product.default_variant.set_price(s.default_currency, 19.99)`,
-  // Published on the default channel, so the new-order item search — which
-  // lists only what the order's channel sells — offers it.
-  `Spree::ProductPublication.find_or_create_by!(product: product, channel: s.default_channel)`,
-  `product.default_variant.update!(sku: '${FIXTURE_PROMO_SKU}') if product.default_variant.sku != '${FIXTURE_PROMO_SKU}'`,
-  `product.categories << category unless product.categories.include?(category)`,
-  // Stock the promo product on the store's default stock location so
-  // order-creation tests can add it to a draft order without the
-  // +"Quantity not available"+ validation kicking in.
-  `default_location = s.default_stock_location`,
-  `product.variants.each { |v| default_location.stock_levels.where(variant: v).first_or_create!.update!(count_on_hand: 100, backorderable: true) }`,
-  // Disjoint product fixtures for products-bulk.spec.ts. Each test owns its
-  // own pair (A/B → status, C/D → categories, E/F → tags, G/H → delete,
-  // I → row-action clone/delete) so the serial suite can mutate them in any
-  // order without poisoning siblings. All start `active` so the status spec
-  // sees a clean transition.
-  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_A}').first_or_create!(store: s, status: 'active').tap { |p| p.default_variant.set_price(s.default_currency, 9.99); p.update!(status: 'active') }`,
-  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_B}').first_or_create!(store: s, status: 'active').tap { |p| p.default_variant.set_price(s.default_currency, 9.99); p.update!(status: 'active') }`,
-  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_C}').first_or_create!(store: s, status: 'active').tap { |p| p.default_variant.set_price(s.default_currency, 9.99); p.update!(status: 'active') }`,
-  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_D}').first_or_create!(store: s, status: 'active').tap { |p| p.default_variant.set_price(s.default_currency, 9.99); p.update!(status: 'active') }`,
-  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_E}').first_or_create!(store: s, status: 'active').tap { |p| p.default_variant.set_price(s.default_currency, 9.99); p.update!(status: 'active') }`,
-  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_F}').first_or_create!(store: s, status: 'active').tap { |p| p.default_variant.set_price(s.default_currency, 9.99); p.update!(status: 'active') }`,
-  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_G}').first_or_create!(store: s, status: 'active').tap { |p| p.default_variant.set_price(s.default_currency, 9.99); p.update!(status: 'active') }`,
-  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_H}').first_or_create!(store: s, status: 'active').tap { |p| p.default_variant.set_price(s.default_currency, 9.99); p.update!(status: 'active') }`,
-  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_I}').first_or_create!(store: s, status: 'active').tap { |p| p.default_variant.set_price(s.default_currency, 9.99); p.update!(status: 'active') }`,
-  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_J}').first_or_create!(store: s, status: 'active').tap { |p| p.default_variant.set_price(s.default_currency, 9.99); p.update!(status: 'active') }`,
-  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_K}').first_or_create!(store: s, status: 'active').tap { |p| p.default_variant.set_price(s.default_currency, 9.99); p.update!(status: 'active') }`,
-  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_L}').first_or_create!(store: s, status: 'active').tap { |p| p.default_variant.set_price(s.default_currency, 9.99); p.update!(status: 'active') }`,
-  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_M}').first_or_create!(store: s, status: 'active').tap { |p| p.default_variant.set_price(s.default_currency, 9.99); p.update!(status: 'active') }`,
-  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_N}').first_or_create!(store: s, status: 'active').tap { |p| p.default_variant.set_price(s.default_currency, 9.99); p.update!(status: 'active') }`,
-  // Second channel beyond the seeded default; the channels bulk-action
-  // and filter specs need a non-default channel to add/remove against.
-  `bulk_channel = s.channels.where(code: '${FIXTURE_BULK_CHANNEL_CODE}').first_or_create!(name: '${FIXTURE_BULK_CHANNEL_NAME}')`,
-  // Pre-list M/N on the bulk channel so the remove-from-channels test
-  // has something to undo.
-  `bulk_channel.add_products([Spree::Product.find_by(name: '${FIXTURE_BULK_PRODUCT_M}').id, Spree::Product.find_by(name: '${FIXTURE_BULK_PRODUCT_N}').id])`,
-  // Category used by the bulk-add-to-categories test, found by permalink for the
-  // same reason as the promo category above.
-  `s.categories.where(permalink: '${FIXTURE_BULK_CATEGORY_PERMALINK}').first_or_create!(name: '${FIXTURE_BULK_CATEGORY}', parent: nil)`,
-  `Spree.customer_class.where(email: '${FIXTURE_PROMO_CUSTOMER_EMAIL}').first_or_create! { |u| u.password = 'customer123'; u.password_confirmation = 'customer123'; u.first_name = '${FIXTURE_PROMO_CUSTOMER_FIRST_NAME}'; u.last_name = '${FIXTURE_PROMO_CUSTOMER_LAST_NAME}' }`,
-  `s.customer_groups.where(name: '${FIXTURE_PROMO_CUSTOMER_GROUP}').first_or_create!`,
-  // Make the store multi-currency so the money-entry forms (store credit,
-  // refunds, manual prices) offer EUR alongside the USD default. Markets own
-  // currency + locale (the legacy Store#supported_currencies column is dead),
-  // and in markets mode the supported-currency list is exactly the markets'
-  // currencies. The store already has a default US/USD market via
-  // Store#ensure_default_market, so we add a EUR market here, anchored to
-  // Germany. `MarketCountry#country_unique_per_store` forbids reusing a
-  // country across markets — the markets specs draw from other EU countries
-  // (see the note atop markets.spec.ts).
-  // Fail fast (find_by_iso!) if Germany can't be resolved — a missing EUR
-  // market would otherwise surface later as opaque multi-currency failures.
-  `germany = Spree::Country.find_by_iso!('DE')`,
-  `s.markets.find_or_create_by!(name: 'Europe') { |m| m.currency = 'EUR'; m.default_locale = 'de'; m.countries = [germany] } unless s.markets.exists?(currency: 'EUR')`,
-  // An order's locale has to be one its market offers, so the orders list can
-  // show a German-language order in the default US market.
-  `s.default_market.update!(supported_locales: s.default_market.supported_locales_list | ['de']) unless s.default_market.supported_locales_list.include?('de')`,
-  // A seller with one settled earning and one payout still owed, so the
-  // marketplace ledger screens have rows to read and a settlement to mark
-  // paid. Written directly: both are produced by fulfilment and the payout
-  // sweep, neither of which an E2E run can reach.
-  `ledger_seller = s.sellers.where(name: '${FIXTURE_LEDGER_SELLER}').first_or_create! { |v| v.status = 'approved' }`,
-  `ledger_payout = ledger_seller.seller_payouts.where(amount: ${FIXTURE_LEDGER_PAYOUT_AMOUNT}).first_or_create!(store: s, currency: s.default_currency, provider: Spree::PayoutProvider::System.provider_key, status: 'pending')`,
-  `ledger_seller.seller_payouts.where(amount: ${FIXTURE_LEDGER_OWED_AMOUNT}).first_or_create!(store: s, currency: s.default_currency, provider: Spree::PayoutProvider::System.provider_key, status: 'pending')`,
-  `ledger_order = s.orders.where(seller: ledger_seller).first || Spree::Order.create!(store: s, seller: ledger_seller, currency: s.default_currency, email: 'e2e-ledger@example.com', status: 'placed', completed_at: Time.current)`,
-  `ledger_seller.seller_transfers.first_or_create!(store: s, order: ledger_order, payout: ledger_payout, amount: ${FIXTURE_LEDGER_PAYOUT_AMOUNT}, currency: s.default_currency, kind: 'earning', provider: Spree::PayoutProvider::System.provider_key, status: 'completed')`,
-  // In review on every run: a spec approves it, and update_columns skips the
-  // review workflow that would otherwise be the only way back.
-  `Spree::Product.where(name: '${FIXTURE_LEDGER_PRODUCT_IN_REVIEW}').first_or_create!(store: s, seller: ledger_seller, status: 'draft').tap { |p| p.default_variant.set_price(s.default_currency, 25); p.update_columns(status: 'proposed') }`,
-  // Where the ledger seller takes returns: a postable location, so the
-  // seller page shows a returns address and links to the location behind it.
-  `ledger_seller.stock_locations.where(name: '${FIXTURE_LEDGER_RETURNS_LOCATION}').first_or_create!(store: s, active: true, returns_enabled: true, address1: '1 Returns Way', city: 'Albany', zipcode: '12207', country_code: 'US', state_code: 'NY')`,
-  // Seller panel accounts. One runs the ledger seller, whose sale and payouts
-  // give the read-only panel screens something to show; the other runs a
-  // seller of its own that the specs editing a profile, policy or team may
-  // change freely. One seller each, so neither lands on the seller picker.
-  `seller_user = Spree.admin_user_class.where(email: '${FIXTURE_SELLER_USER_EMAIL}').first_or_create! { |u| u.password = '${FIXTURE_SELLER_PASSWORD}'; u.password_confirmation = '${FIXTURE_SELLER_PASSWORD}'; u.first_name = 'Lee'; u.last_name = 'Ledger' }`,
-  'ledger_seller.add_user(seller_user)',
-  `panel_seller = s.sellers.where(name: '${FIXTURE_PANEL_SELLER}').first_or_create!`,
-  `seller_writer = Spree.admin_user_class.where(email: '${FIXTURE_SELLER_WRITER_EMAIL}').first_or_create! { |u| u.password = '${FIXTURE_SELLER_PASSWORD}'; u.password_confirmation = '${FIXTURE_SELLER_PASSWORD}'; u.first_name = 'Pat'; u.last_name = 'Panel' }`,
-  'panel_seller.add_user(seller_writer)',
-  // Inventory operations: a second warehouse to transfer into, a stocked
-  // product to send, and a supplier to order from. A transfer cannot be
-  // created from its own screens without two warehouses.
-  `transfer_source = s.stock_locations.where(name: '${FIXTURE_TRANSFER_SOURCE}').first_or_create!(active: true)`,
-  `transfer_destination = s.stock_locations.where(name: '${FIXTURE_TRANSFER_DESTINATION}').first_or_create!(active: true)`,
-  `transfer_product = Spree::Product.where(name: '${FIXTURE_TRANSFER_PRODUCT}').first_or_create!(store: s, status: 'active')`,
-  `transfer_product.default_variant.update!(sku: '${FIXTURE_TRANSFER_SKU}')`,
-  `transfer_product.default_variant.set_price(s.default_currency, 24.99)`,
-  // Deep enough that the serial suite can ship from it repeatedly.
-  'transfer_source.stock_levels.where(variant: transfer_product.default_variant).first_or_create!.update!(count_on_hand: 5000)',
-  `s.suppliers.where(name: '${FIXTURE_SUPPLIER}').first_or_create!(email: 'e2e@supplier.test')`,
-  // The Inventory page: its own SKU, stocked at the source so a transfer can
-  // leave, and held by one checkout at the destination. The hold is a
-  // reservation row written directly — the row keeps the level's counter
-  // itself — because a real checkout needs reservations switched on
-  // store-wide, which the order specs must not inherit.
-  `inventory_product = Spree::Product.where(name: '${FIXTURE_INVENTORY_PRODUCT}').first_or_create!(store: s, status: 'active')`,
-  `inventory_product.default_variant.update!(sku: '${FIXTURE_INVENTORY_SKU}')`,
-  `inventory_product.default_variant.set_price(s.default_currency, 19.99)`,
-  'transfer_source.stock_levels.where(variant: inventory_product.default_variant).first_or_create!.update!(count_on_hand: 500)',
-  'inventory_level = transfer_destination.stock_levels.where(variant: inventory_product.default_variant).first_or_create!',
-  `unless inventory_level.stock_reservations.exists?; inventory_cart = Spree::Cart.create!(store: s, currency: s.default_currency, email: 'e2e-inventory@example.com'); inventory_line = inventory_cart.line_items.create!(variant: inventory_product.default_variant, quantity: ${FIXTURE_INVENTORY_RESERVED}); inventory_level.stock_reservations.create!(cart: inventory_cart, line_item: inventory_line, quantity: ${FIXTURE_INVENTORY_RESERVED}, expires_at: 10.years.from_now); end`,
+  // The deploy key: write_all so every section of the fixture file can be
+  // written, printed once and never persisted anywhere else.
+  'deploy_key = s.api_keys.create!(name: "e2e seeds", key_type: "secret", scopes: ["write_all"])',
   // A store whose market writes a comma decimal (Dutch) and prices in EUR: the
   // server reads every request in the market's language, so this is where a
   // price is misread if anything parses money by locale. Its name sorts after
   // the default store's, so signing in still opens the default store first, and
   // its dashboard stays in English so the specs' labels match.
   `comma_store = Spree::Store.find_by(code: 'e2e-nl') || Spree::Store.create!(code: 'e2e-nl', name: 'Winkel', url: 'nl.example.com', mail_from_address: 'no-reply@example.com', preferred_admin_locale: 'en')`,
-  'Spree::Seeds::StoreResources.call(store: comma_store); Spree::Stores::ProvisionDefaults.call(store: comma_store, country: Spree::Country.find_by_iso!("NL"), locale: "nl", currency: "EUR") unless comma_store.stock_locations.exists?',
-  // A second market in USD, so the store sells in a currency written with a
-  // period as well as its own.
-  `comma_store.markets.find_or_create_by!(name: 'United States') { |m| m.currency = 'USD'; m.default_locale = 'en'; m.countries = [Spree::Country.find_by_iso!('US')] } unless comma_store.markets.exists?(currency: 'USD')`,
+  // Placed in the Netherlands the way first-run setup places a store; its
+  // defaults are deployed through the Admin API once the server is up.
+  'comma_store.relocate(country: Spree::Country.find_by_iso!("NL"), locale: "nl", currency: "EUR") unless comma_store.read_attribute(:default_country_code) == "NL"',
+  'comma_deploy_key = comma_store.api_keys.create!(name: "e2e seeds", key_type: "secret", scopes: ["write_all"])',
   'comma_store.add_user(admin, Spree::Role.default_admin_role(comma_store)) unless comma_store.role_users.exists?(user: admin)',
-  // A card payment the Bogus gateway has charged, so its page at the gateway's
-  // dashboard has an address, and whose card failed both of the issuer's
-  // checks. On this store because the payment method specs install Bogus on the
-  // default one, and a store holds each provider once. Written directly:
-  // charging a card needs a full checkout.
-  `comma_bogus = comma_store.payment_methods.where(type: 'Spree::Gateway::Bogus').first_or_create!(name: '${FIXTURE_BOGUS_GATEWAY}', active: true, storefront_visible: false)`,
-  `gateway_order = comma_store.orders.find_by(email: '${FIXTURE_BOGUS_ORDER_EMAIL}') || Spree::Order.create!(store: comma_store, currency: 'EUR', email: '${FIXTURE_BOGUS_ORDER_EMAIL}', status: 'placed', completed_at: Time.current, total: 10)`,
-  "gateway_card = Spree::CreditCard.where(payment_method: comma_bogus, gateway_customer_profile_id: 'BGS-E2E').first_or_create!(number: '4111111111111111', verification_value: '123', month: 12, year: 1.year.from_now.year, name: 'E2E Customer', cc_type: 'visa')",
-  `gateway_order.payments.create!(payment_method: comma_bogus, source: gateway_card, amount: 10, status: 'completed', response_code: '${FIXTURE_BOGUS_TRANSACTION_ID}', avs_response: 'N', cvv_response_code: 'N', cvv_response_message: 'CVV does not match').capture_events.create!(amount: 10) unless gateway_order.payments.exists?`,
   'port = ENV.fetch("PORT", 3010)',
-  'puts JSON.generate(api_url: "http://localhost:#{port}", admin_email: admin.email, admin_password: "spree123", store_id: s.prefixed_id, store_name: s.name, comma_store_id: comma_store.prefixed_id)',
+  'puts JSON.generate(api_url: "http://localhost:#{port}", admin_email: admin.email, admin_password: "spree123", store_id: s.prefixed_id, store_name: s.name, comma_store_id: comma_store.prefixed_id, deploy_token: deploy_key.plaintext_token, comma_deploy_token: comma_deploy_key.plaintext_token)',
 ].join('; ')
+
+// What no API writes: the ledger's settled and owed payouts, a payment
+// carrying the issuer's answers and a checkout's reservation. Written directly once the deployed records exist, keyed on the
+// same natural keys the files declare.
+const transactionsRuby = (ledgerSellerSlug: string) =>
+  [
+    's = Spree::Store.default',
+    // A seller with one settled earning and one payout still owed, so the
+    // marketplace ledger screens have rows to read and a settlement to mark
+    // paid. The sweep settles whatever a seller has earned, so no request can
+    // ask for a payout of a given amount.
+    `ledger_seller = s.sellers.find_by!(slug: '${ledgerSellerSlug}')`,
+    `ledger_payout = ledger_seller.seller_payouts.where(amount: ${FIXTURE_LEDGER_PAYOUT_AMOUNT}).first_or_create!(store: s, currency: s.default_currency, provider: Spree::PayoutProvider::System.provider_key, status: 'pending')`,
+    `ledger_seller.seller_payouts.where(amount: ${FIXTURE_LEDGER_OWED_AMOUNT}).first_or_create!(store: s, currency: s.default_currency, provider: Spree::PayoutProvider::System.provider_key, status: 'pending')`,
+    `ledger_order = s.orders.where(seller: ledger_seller).first || Spree::Order.create!(store: s, seller: ledger_seller, currency: s.default_currency, email: 'e2e-ledger@example.com', status: 'placed', completed_at: Time.current)`,
+    `ledger_seller.seller_transfers.first_or_create!(store: s, order: ledger_order, payout: ledger_payout, amount: ${FIXTURE_LEDGER_PAYOUT_AMOUNT}, currency: s.default_currency, kind: 'earning', provider: Spree::PayoutProvider::System.provider_key, status: 'completed')`,
+    // A card payment the test gateway has charged, so its page at the gateway's
+    // dashboard has an address, and whose card failed both of the issuer's
+    // checks. Written directly: what the issuer answered comes from the
+    // gateway, and no request can set it.
+    "comma_store = Spree::Store.find_by!(code: 'e2e-nl')",
+    `comma_bogus = comma_store.payment_methods.find_by!(name: '${FIXTURE_BOGUS_GATEWAY}')`,
+    `gateway_order = comma_store.orders.find_by(email: '${FIXTURE_BOGUS_ORDER_EMAIL}') || Spree::Order.create!(store: comma_store, currency: 'EUR', email: '${FIXTURE_BOGUS_ORDER_EMAIL}', status: 'placed', completed_at: Time.current, total: 10)`,
+    "gateway_card = Spree::CreditCard.where(payment_method: comma_bogus, gateway_customer_profile_id: 'BGS-E2E').first_or_create!(number: '4111111111111111', verification_value: '123', month: 12, year: 1.year.from_now.year, name: 'E2E Customer', cc_type: 'visa')",
+    `gateway_order.payments.create!(payment_method: comma_bogus, source: gateway_card, amount: 10, status: 'completed', response_code: '${FIXTURE_BOGUS_TRANSACTION_ID}', avs_response: 'N', cvv_response_code: 'N', cvv_response_message: 'CVV does not match').capture_events.create!(amount: 10) unless gateway_order.payments.exists?`,
+    // The Inventory page's SKU, held by one checkout at the destination. The
+    // hold is a reservation row written directly — the row keeps the level's
+    // counter itself — because a real checkout needs reservations switched on
+    // store-wide, which the order specs must not inherit.
+    `inventory_variant = Spree::Variant.find_by!(sku: '${FIXTURE_INVENTORY_SKU}')`,
+    `transfer_destination = s.stock_locations.find_by!(name: '${FIXTURE_TRANSFER_DESTINATION}')`,
+    'inventory_level = transfer_destination.stock_levels.where(variant: inventory_variant).first_or_create!',
+    `unless inventory_level.stock_reservations.exists?; inventory_cart = Spree::Cart.create!(store: s, currency: s.default_currency, email: 'e2e-inventory@example.com'); inventory_line = inventory_cart.line_items.create!(variant: inventory_variant, quantity: ${FIXTURE_INVENTORY_RESERVED}); inventory_level.stock_reservations.create!(cart: inventory_cart, line_item: inventory_line, quantity: ${FIXTURE_INVENTORY_RESERVED}, expires_at: 10.years.from_now); end`,
+  ].join('; ')
+
+type StoreSeeds = ReturnType<typeof loadSeeds>['config']
+
+/**
+ * The specs reference fixtures through the constants in `helpers.ts`; the
+ * file is what creates them. Refuse to start when they disagree, which is
+ * cheaper than a spec failing on a record that was never seeded. Checked on
+ * the keys the specs and the setup steps below resolve by.
+ */
+function assertFixturesDeclared(config: StoreSeeds, commaConfig: StoreSeeds): void {
+  const gateway = (commaConfig.payment_methods ?? []).some(
+    (method) => method.name === FIXTURE_BOGUS_GATEWAY,
+  )
+  if (!gateway) {
+    throw new Error(
+      `e2e/fixtures/comma-store.yml does not declare payment method "${FIXTURE_BOGUS_GATEWAY}"`,
+    )
+  }
+  const expected: [keyof StoreSeeds, string, string][] = [
+    ['channels', 'code', FIXTURE_BULK_CHANNEL_CODE],
+    ['categories', 'permalink', FIXTURE_PROMO_TAXON_PERMALINK],
+    ['categories', 'permalink', FIXTURE_BULK_CATEGORY_PERMALINK],
+    ['customer_groups', 'name', FIXTURE_PROMO_CUSTOMER_GROUP],
+    ['customers', 'email', FIXTURE_PROMO_CUSTOMER_EMAIL],
+    ['customers', 'first_name', FIXTURE_PROMO_CUSTOMER_FIRST_NAME],
+    ['customers', 'last_name', FIXTURE_PROMO_CUSTOMER_LAST_NAME],
+    ['suppliers', 'name', FIXTURE_SUPPLIER],
+    ['sellers', 'name', FIXTURE_LEDGER_SELLER],
+    ['sellers', 'name', FIXTURE_PANEL_SELLER],
+    ['stock_locations', 'name', FIXTURE_TRANSFER_SOURCE],
+    ['stock_locations', 'name', FIXTURE_TRANSFER_DESTINATION],
+    ['products', 'name', FIXTURE_PROMO_PRODUCT],
+    ['products', 'sku', FIXTURE_PROMO_SKU],
+    ['products', 'name', FIXTURE_BULK_PRODUCT_A],
+    ['products', 'name', FIXTURE_BULK_PRODUCT_N],
+    ['products', 'name', FIXTURE_TRANSFER_PRODUCT],
+    ['products', 'sku', FIXTURE_TRANSFER_SKU],
+    ['products', 'name', FIXTURE_INVENTORY_PRODUCT],
+    ['products', 'sku', FIXTURE_INVENTORY_SKU],
+  ]
+  const missing = expected
+    .filter(([section, attribute, value]) => {
+      const entries = (config[section] ?? []) as Record<string, unknown>[]
+      return !entries.some((entry) => entry[attribute] === value)
+    })
+    .map(([section, attribute, value]) => `${section} with ${attribute} "${value}"`)
+  if (missing.length) {
+    throw new Error(
+      `e2e/fixtures/store.yml does not declare: ${missing.join(', ')} (helpers.ts and the fixture file drifted apart)`,
+    )
+  }
+}
+
+/** The ledger seller's slug as the file states it, to find the record the deploy created. */
+function ledgerSellerSlug(config: StoreSeeds): string {
+  const seller = (config.sellers ?? []).find(
+    (candidate) => candidate.name === FIXTURE_LEDGER_SELLER,
+  )
+  if (!seller)
+    throw new Error(`e2e/fixtures/store.yml does not declare seller "${FIXTURE_LEDGER_SELLER}"`)
+  return seller.slug
+}
+
+/** Deploys one fixture file, and stops the run when any record fails. */
+async function deployFixtures(
+  file: string,
+  config: StoreSeeds,
+  client: AdminClient,
+  prune?: string[],
+) {
+  const report = await deploySeeds(config, client, prune ? { prune } : undefined)
+  if (reportHasFailures(report)) {
+    throw new Error(`Deploying ${file} failed:\n${renderReport(report)}`)
+  }
+}
+
+/**
+ * The store's admin, signed in. An invitation records who sent it, so it
+ * cannot be sent with the deploy key, which belongs to no person.
+ */
+async function signInOperator(credentials: Record<string, string>): Promise<AdminClient> {
+  const operator = createAdminClient({
+    baseUrl: credentials.api_url,
+    storeId: credentials.store_id,
+    retry: false,
+  })
+  const session = await operator.auth.login({
+    email: credentials.admin_email,
+    password: credentials.admin_password,
+  })
+  operator.setToken(session.token)
+  return operator
+}
+
+/**
+ * A seller panel account, made the way a real one is: the operator invites
+ * the address onto the seller's team, and the invitee accepts with the token
+ * from the invitation's link, which creates the account.
+ */
+async function inviteSellerAccount(
+  client: AdminClient,
+  apiUrl: string,
+  sellerId: string,
+  account: { email: string; first_name: string; last_name: string },
+) {
+  const invitation = await client.sellers.invitations.create(sellerId, { email: account.email })
+  const link = await client.sellers.invitations.acceptanceLink(sellerId, invitation.id)
+  // The link is a path when the app has no origin configured.
+  const token = new URL(link.acceptance_url, apiUrl).searchParams.get('token')
+  if (!token) throw new Error(`The invitation link for ${account.email} carries no token`)
+
+  await createSellerClient({ baseUrl: apiUrl, retry: false }).auth.acceptInvitation(
+    invitation.id,
+    token,
+    {
+      password: FIXTURE_SELLER_PASSWORD,
+      password_confirmation: FIXTURE_SELLER_PASSWORD,
+      first_name: account.first_name,
+      last_name: account.last_name,
+    },
+  )
+}
+
+/**
+ * What the operator does to the deployed records: the default market offers
+ * German, so the orders list can show a German-language order in the US
+ * market, the ledger seller is approved without an onboarding checklist, and
+ * each seller gets its panel account. One runs the ledger seller, whose sale
+ * and payouts give the read-only panel screens something to show; the other
+ * runs a seller of its own that the specs editing a profile, policy or team
+ * may change freely. One seller each, so neither lands on the seller picker.
+ *
+ * @returns The ledger seller's id.
+ */
+async function prepareStore(
+  client: AdminClient,
+  credentials: Record<string, string>,
+  sellerSlug: string,
+): Promise<string> {
+  const apiUrl = credentials.api_url
+  const markets = await client.markets.list({ limit: 100 })
+  const market = markets.data.find((candidate) => candidate.default)
+  if (!market) throw new Error('The e2e store has no default market')
+  if (!market.supported_locales.includes('de')) {
+    await client.markets.update(market.id, {
+      supported_locales: [...market.supported_locales, 'de'],
+    })
+  }
+
+  const sellers = await client.sellers.list({ limit: 100 })
+  const seller = sellers.data.find((candidate) => candidate.slug === sellerSlug)
+  if (!seller) throw new Error(`The deploy did not create seller "${sellerSlug}"`)
+  await client.sellers.approve(seller.id, { override_requirements: true })
+
+  const operator = await signInOperator(credentials)
+  await inviteSellerAccount(operator, apiUrl, seller.id, {
+    email: FIXTURE_SELLER_USER_EMAIL,
+    first_name: 'Lee',
+    last_name: 'Ledger',
+  })
+
+  const panelSeller = sellers.data.find((candidate) => candidate.name === FIXTURE_PANEL_SELLER)
+  if (!panelSeller) throw new Error(`The deploy did not create seller "${FIXTURE_PANEL_SELLER}"`)
+  await inviteSellerAccount(operator, apiUrl, panelSeller.id, {
+    email: FIXTURE_SELLER_WRITER_EMAIL,
+    first_name: 'Pat',
+    last_name: 'Panel',
+  })
+  return seller.id
+}
+
+/**
+ * What the ledger seller does in their own panel, through the Seller API: a
+ * postable location that takes their returns, so the seller page shows a
+ * returns address, and a product sent for review, which a spec approves.
+ */
+async function prepareLedgerSeller(apiUrl: string, sellerId: string, currency: string) {
+  const seller = createSellerClient({ baseUrl: apiUrl, retry: false })
+  const session = await seller.auth.login({
+    email: FIXTURE_SELLER_USER_EMAIL,
+    password: FIXTURE_SELLER_PASSWORD,
+  })
+  seller.setToken(session.token)
+  seller.setSeller(sellerId)
+
+  // The location created with the seller has no address, so it stops taking
+  // returns once the postable one exists.
+  const existing = await seller.stockLocations.list({ limit: 100 })
+  await seller.stockLocations.create({
+    name: FIXTURE_LEDGER_RETURNS_LOCATION,
+    active: true,
+    returns_enabled: true,
+    address1: '1 Returns Way',
+    city: 'Albany',
+    zipcode: '12207',
+    country_code: 'US',
+    state_code: 'NY',
+  })
+  for (const location of existing.data) {
+    await seller.stockLocations.update(location.id, { returns_enabled: false })
+  }
+
+  const product = await seller.products.create({
+    name: FIXTURE_LEDGER_PRODUCT_IN_REVIEW,
+    prices: [{ currency, amount: '25' }],
+  })
+  await seller.products.submit(product.id)
+}
 
 export default async function globalSetup() {
   rmIfExists(TEST_SQLITE)
@@ -278,8 +404,49 @@ export default async function globalSetup() {
     ].join('\n'),
   )
 
-  const credentials = runRailsBootstrap(BOOTSTRAP_RUBY, RAILS_ENV)
-  writeFileSync(CREDENTIALS_FILE, credentials)
+  const { config } = loadSeeds(STORE_CONFIG)
+  const { config: commaConfig } = loadSeeds(COMMA_STORE_CONFIG)
+  assertFixturesDeclared(config, commaConfig)
+
+  const {
+    deploy_token: deployToken,
+    comma_deploy_token: commaDeployToken,
+    ...credentials
+  } = JSON.parse(runRailsBootstrap(BOOTSTRAP_RUBY, RAILS_ENV)) as Record<string, string>
+  writeFileSync(CREDENTIALS_FILE, JSON.stringify(credentials))
 
   await startRails(PORT, RAILS_ENV, RAILS_PID_FILE)
+
+  // The fixtures, through the same Admin API write paths the dashboard uses,
+  // so every CI run exercises them before the first spec starts. Prune keeps
+  // the products list exactly what the file says across reruns.
+  const client = createAdminClient({
+    baseUrl: credentials.api_url,
+    secretKey: deployToken,
+    retry: false,
+  })
+  // The defaults every store starts with, as first-run setup deploys them;
+  // the country-shaped ones are left out, since the fixtures declare the
+  // warehouses the specs use.
+  const defaults = await provisionStore(client, { country: false })
+  if (reportHasFailures(defaults)) {
+    throw new Error(`Deploying the store defaults failed:\n${renderReport(defaults)}`)
+  }
+  // The Dutch store gets every default, the country-shaped ones included.
+  const commaClient = createAdminClient({
+    baseUrl: credentials.api_url,
+    secretKey: commaDeployToken,
+    retry: false,
+  })
+  const commaDefaults = await provisionStore(commaClient)
+  if (reportHasFailures(commaDefaults)) {
+    throw new Error(`Deploying the Dutch store's defaults failed:\n${renderReport(commaDefaults)}`)
+  }
+  await deployFixtures('e2e/fixtures/store.yml', config, client, ['products'])
+  await deployFixtures('e2e/fixtures/comma-store.yml', commaConfig, commaClient)
+
+  const sellerSlug = ledgerSellerSlug(config)
+  const sellerId = await prepareStore(client, credentials, sellerSlug)
+  runRails(transactionsRuby(sellerSlug), RAILS_ENV, 'Transaction fixtures runner')
+  await prepareLedgerSeller(credentials.api_url, sellerId, 'USD')
 }

@@ -213,7 +213,14 @@ module Spree
           end
 
           def permitted_params
-            normalize_params(params.permit(*declared_permitted_attributes))
+            normalize_params(params.permit(*declared_permitted_attributes)).tap do |attributes|
+              # `normalize_params` rewrites `custom_fields` to the
+              # nested-attributes key, whose writer builds a row every time.
+              # Handed back under its own name, the model upserts by
+              # definition, so a value already saved can be changed.
+              values = attributes.delete(:custom_fields_attributes)
+              attributes[:custom_fields] = values if values
+            end
           end
 
           # Creating a seller provisions their stock location too, so it goes

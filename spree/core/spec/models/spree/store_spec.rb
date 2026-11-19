@@ -1339,6 +1339,174 @@ describe Spree::Store, type: :model, without_global_store: true do
       it { is_expected.to be false }
     end
   end
+  describe '#relocate' do
+    subject { store.relocate(country: country, locale: locale) }
+
+    let(:store) { create(:store) }
+    let(:country) { Spree::Country.by_iso('DE') }
+    let(:locale) { 'de' }
+
+    describe 'the default market' do
+      it 're-points the bootstrap market at the chosen country' do
+        subject
+
+        market = store.reload.default_market
+        expect(market.country_codes).to eq(['DE'])
+        expect(market.name).to eq('Germany')
+        expect(market.currency).to eq('EUR')
+        expect(market.default_locale).to eq('de')
+      end
+
+      # The market is authoritative for these readers, so this is what proves
+      # the store actually presents as German rather than just storing 'DE'.
+      it 'makes the store read as the chosen country' do
+        subject
+
+        store.reload
+        expect(store.default_country_code).to eq('DE')
+        expect(store.default_currency).to eq('EUR')
+        expect(store.default_locale).to eq('de')
+      end
+
+      it 'does not create a second market' do
+        expect { subject }.not_to change { store.reload.markets.count }
+      end
+    end
+
+    # The storefront language and the back-office language are separate
+    # settings, and setup only asks once — so the answer has to reach both.
+    describe 'the admin language' do
+      it 'puts the back office in the chosen language too' do
+        subject
+
+        expect(store.reload.preferred_admin_locale).to eq('de')
+      end
+
+      it 'leaves an existing choice alone' do
+        store.update!(preferred_admin_locale: 'fr')
+
+        expect { subject }.not_to change { store.reload.preferred_admin_locale }
+      end
+
+      # The dashboard ships its own set of admin translations, which this side
+      # cannot check; it ignores a code it has no bundle for.
+      it 'records the language even when it has no admin translations' do
+        store.relocate(country: Spree::Country.by_iso('AL'), locale: 'sq')
+
+        expect(store.reload.preferred_admin_locale).to eq('sq')
+      end
+    end
+
+    describe 'currency and locale derivation' do
+      context 'when no locale is given' do
+        let(:locale) { nil }
+
+        it "falls back to the country's own language" do
+          subject
+
+          expect(store.reload.default_market.default_locale).to eq('de')
+        end
+      end
+
+      # Shipping from one country and pricing in another currency is ordinary —
+      # a Polish merchant selling to the eurozone, say.
+      context 'when a currency is given explicitly' do
+        it 'overrides the country default everywhere' do
+          store.relocate(country: Spree::Country.by_iso('PL'), locale: 'pl', currency: 'EUR')
+
+          store.reload
+          expect(store.default_currency).to eq('EUR')
+          expect(store.default_market.currency).to eq('EUR')
+        end
+
+        it 'falls back to the country currency when the code is unknown' do
+          store.relocate(country: country, locale: locale, currency: 'NOTACURRENCY')
+
+          expect(store.reload.default_currency).to eq('EUR')
+        end
+      end
+
+      context 'when the given locale is not one Spree lists' do
+        let(:locale) { 'de-LU' }
+
+        it 'uses its listed language, since a market accepts nothing else' do
+          subject
+
+          expect(store.reload.default_market.default_locale).to eq('de')
+        end
+      end
+
+      context 'when the given locale is one Spree cannot place' do
+        let(:locale) { 'xx' }
+
+        it "uses the country's own language" do
+          subject
+
+          expect(store.reload.default_market.default_locale).to eq('de')
+        end
+      end
+
+      # A store's locale is a content locale: the country's own language is
+      # used whether or not Spree ships translations for it.
+      context "when the country's own language has no translations" do
+        let(:locale) { nil }
+        let(:country) { Spree::Country.by_iso('AL') } # Albania → Albanian
+
+        it 'uses that language' do
+          subject
+
+          expect(store.reload.default_market.default_locale).to eq('sq')
+        end
+      end
+
+      context 'for a country with several official languages' do
+        let(:country) { Spree::Country.by_iso('CH') }
+        let(:locale) { 'fr' }
+
+        it 'derives the currency from the country and honors the chosen locale' do
+          subject
+
+          market = store.reload.default_market
+          expect(market.currency).to eq('CHF')
+          expect(market.default_locale).to eq('fr')
+        end
+      end
+    end
+  end
+
+  describe '#provisioned?' do
+    let(:store) { create(:store) }
+
+    it 'is false until the store has its default warehouse' do
+      expect(store).not_to be_provisioned
+
+      create(:stock_location, store: store, default: true)
+
+      expect(store.reload).to be_provisioned
+    end
+  end
+
+  describe 'built-in reports' do
+    let(:store) { create(:store) }
+
+    it 'gives a new store the preset report set, read-only' do
+      expect(store.saved_reports.seeded.count).to eq(described_class::REPORTS.size)
+      expect(store.saved_reports.find_by(name: 'Top products').reporting_query.dimensions.first[:dimension].name).to eq(:product)
+    end
+
+    # Stores upgraded from before saved reports existed get them from the
+    # upgrade step, which must not bring back a built-in the merchant deleted.
+    it 'adds the presets to a store that has none, and leaves one that has any alone' do
+      store.saved_reports.delete_all
+
+      expect { store.create_built_in_reports }.to change { store.saved_reports.seeded.count }.
+        from(0).to(described_class::REPORTS.size)
+
+      store.saved_reports.seeded.first.destroy!
+      expect { store.create_built_in_reports }.not_to change { store.saved_reports.count }
+    end
+  end
+
   describe '#payout_provider_instance' do
     let(:payouts_store) { create(:store) }
 
