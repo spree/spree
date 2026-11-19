@@ -22,7 +22,7 @@ describe 'spree:upgrade:remove_orphan_product_type_custom_field_definitions' do
   before { Spree::CustomFieldDefinition.unscoped.where(id: deleted_definition.id).delete_all }
 
   it 'removes rows whose definition is gone and keeps the rest' do
-    expect { subject.invoke }.to output(/Removed 1 orphaned/).to_stdout
+    expect { subject.invoke }.to output(/Removed 1 orphaned custom field row/).to_stdout
 
     expect(Spree::ProductTypeCustomFieldDefinition.where(id: orphan.id)).to be_empty
     expect(Spree::ProductTypeCustomFieldDefinition.where(id: kept.id)).to exist
@@ -40,8 +40,18 @@ describe 'spree:upgrade:remove_orphan_product_type_custom_field_definitions' do
 
     expect {
       expect { subject.invoke }.to raise_error(SystemExit, /1 row\(s\) could not be removed/)
-    }.to output(/Could not remove product type custom field row #{orphan.id}/).to_stdout.and output.to_stderr
+    }.to output(/Could not remove Spree::ProductTypeCustomFieldDefinition row #{orphan.id} \(product type #{product_type.id}/).to_stdout.and output.to_stderr
     expect(Spree::ProductTypeCustomFieldDefinition.where(id: orphan.id)).to exist
+  end
+
+  it 'removes seller requirement rows whose definition is gone' do
+    definition = create(:custom_field_definition, store: store, resource_type: 'Spree::Seller')
+    requirement = create(:required_custom_fields_requirement, store: store)
+    row = Spree::SellerRequirementCustomField.create!(seller_requirement: requirement, custom_field_definition: definition)
+    Spree::CustomFieldDefinition.unscoped.where(id: definition.id).delete_all
+
+    expect { subject.invoke }.to output(/Removed 2 orphaned custom field row/).to_stdout
+    expect(Spree::SellerRequirementCustomField.where(id: row.id)).to be_empty
   end
 
   it 'is a step of the 6.0 upgrade' do

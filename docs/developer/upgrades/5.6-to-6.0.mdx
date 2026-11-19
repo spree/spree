@@ -254,7 +254,7 @@ bundle exec rake spree:upgrade:remove_orphan_product_type_custom_field_definitio
 </CodeGroup>
 
 Deleting a custom field definition left the rows attaching it to product types
-behind, and a product type with such a row failed to load in the Admin API and
+and seller requirements behind, and a product type with such a row failed to load in the Admin API and
 the dashboard. Deleting a definition now removes them; this clears the ones
 left by earlier deletions. If you already ran `spree:upgrade` for 6.0, run it
 again after updating, or run this task on its own. Any row it cannot remove is
