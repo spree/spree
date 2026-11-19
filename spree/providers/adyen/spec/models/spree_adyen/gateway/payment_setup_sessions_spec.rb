@@ -52,8 +52,9 @@ RSpec.describe SpreeAdyen::Gateway, 'payment setup sessions' do
     it 'fails without a stored payment method id, naming the token' do
       stub_request(:get, result_url).to_return(adyen_json(result(nil)))
 
-      gateway.complete_payment_setup_session(setup_session: setup_session, params: { 'session_result' => 'RESULT' })
+      completed = gateway.complete_payment_setup_session(setup_session: setup_session, params: { 'session_result' => 'RESULT' })
 
+      expect(completed.errors[:base]).to include(I18n.t('spree.adyen.payment_session_errors.token_missing'))
       expect(setup_session.reload).to be_failed
       expect(setup_session.payment_source).to be_nil
     end
