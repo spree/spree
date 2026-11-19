@@ -582,16 +582,24 @@ describe Spree::Promotion, type: :model do
       end
 
       # Discount calculation asks once per line item.
-      it 'checks the products once while the contents stay the same' do
+      it 'checks the products once within a calculation' do
         promotable
         product_checks = 0
         counter = ->(*, payload) { product_checks += 1 if payload[:sql].start_with?('SELECT') && payload[:sql].include?('promotionable') }
 
         ActiveSupport::Notifications.subscribed(counter, 'sql.active_record') do
-          3.times { promotion.eligible?(promotable) }
+          described_class.caching_exclusions { 3.times { promotion.eligible?(promotable) } }
         end
 
         expect(product_checks).to eq(1)
+      end
+
+      it 'checks the products again outside a calculation, even for the same promotion' do
+        expect(promotion.eligible?(promotable)).to be true
+
+        Spree::Product.where(id: promotable.line_items.map(&:product_id)).update_all(promotionable: false)
+
+        expect(promotion.eligible?(promotable)).to be false
       end
 
       it 'checks again once the contents change' do

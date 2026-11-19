@@ -21,16 +21,24 @@ module Spree
       end
 
       def update
-        apply_line_item_discounts
-        apply_fulfillment_discounts
-        apply_order_level_discount
-        sync_coupon_promotion_joins
-        cleanup_stale_rows
+        Spree::Promotion.caching_exclusions do
+          apply_line_item_discounts
+          apply_fulfillment_discounts
+          apply_order_level_discount
+          sync_coupon_promotion_joins
+          cleanup_stale_rows
+        end
       end
 
       # @param action [Spree::PromotionAction]
       # @return [Boolean] whether the action currently yields any candidate
       def candidate_for?(action)
+        Spree::Promotion.caching_exclusions { candidate_in_scope?(action) }
+      end
+
+      private
+
+      def candidate_in_scope?(action)
         case action.discount_scope
         when :line_item
           order.line_items.any? { |line_item| line_item_candidates(line_item).any? { |c| c[:action].id == action.id } }
@@ -42,8 +50,6 @@ module Spree
           false
         end
       end
-
-      private
 
       attr_reader :extra_promotions
 
