@@ -7,7 +7,7 @@ RSpec.describe SpreeAdyen::CaptureHeldPaymentsSubscriber do
   let(:gateway) { create(:adyen_gateway, :configured, store: store) }
   let(:payment) { adyen_session_payment(gateway: gateway) }
   let(:event) { instance_double(Spree::Event, payload: { 'id' => payment.order.prefixed_id }) }
-  let(:capture_workflow) { class_double(Spree::Payments::Capture, call: nil) }
+  let(:capture_workflow) { class_double(Spree::Payments::Capture, call: Spree::ServiceModule::Result.new(true, nil, nil)) }
 
   before { allow(Spree).to receive(:payment_capture_workflow).and_return(capture_workflow) }
 
@@ -21,6 +21,20 @@ RSpec.describe SpreeAdyen::CaptureHeldPaymentsSubscriber do
     handle
 
     expect(capture_workflow).to have_received(:call).with(payment: payment)
+  end
+
+  it 'reports a capture Adyen refused, so someone captures it again' do
+    held_by_adyen('klarna')
+    refused = Spree::ServiceModule::Result.new(false, payment, Spree::ServiceModule::ResultError.new('Refused'))
+    allow(capture_workflow).to receive(:call).and_return(refused)
+    allow(Rails.error).to receive(:report)
+
+    handle
+
+    expect(Rails.error).to have_received(:report).with(
+      an_instance_of(Spree::Core::GatewayError).and(having_attributes(message: 'Refused')),
+      handled: true, context: { payment_id: payment.prefixed_id, order_id: payment.order.prefixed_id }
+    )
   end
 
   it 'leaves a card, which Adyen captured itself' do

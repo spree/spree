@@ -15,11 +15,22 @@ module SpreeAdyen
 
         # A payment already claimed by another capture is refused by the
         # workflow's own claim, so a redelivered event captures nothing twice.
-        Spree.payment_capture_workflow.call(payment: payment)
+        result = Spree.payment_capture_workflow.call(payment: payment)
+        report_failed_capture(payment, result) if result.failure?
       end
     end
 
     private
+
+    # A refused capture leaves the payment failed, which the order's payment
+    # menu captures again, so the report tells someone it needs doing.
+    def report_failed_capture(payment, result)
+      Rails.error.report(
+        Spree::Core::GatewayError.new(result.error.to_s),
+        handled: true,
+        context: { payment_id: payment.prefixed_id, order_id: payment.order&.prefixed_id }
+      )
+    end
 
     def held_for_capture?(payment)
       payment.payment_method.is_a?(SpreeAdyen::Gateway) &&
