@@ -414,6 +414,36 @@ module Spree
               end
             end
 
+            # The promotion is weighed when the items go in, but free shipping
+            # has no delivery to cover until the address builds one.
+            context 'when the cart already qualifies for an automatic free-shipping promotion' do
+              let!(:standard) do
+                create(:delivery_method, name: 'Standard', store: store).tap { |method| method.calculator.update!(preferred_amount: 5) }
+              end
+              let(:cart) do
+                create(:cart_with_line_items, store: store, customer: nil, email: 'guest@example.com', currency: 'USD',
+                                              line_items_count: 3, line_items_price: BigDecimal('44.99')).tap do |cart|
+                  cart.line_items.each { |line_item| line_item.variant.set_price('USD', BigDecimal('44.99')) }
+                end
+              end
+
+              before do
+                promotion = create(:free_shipping_promotion, store: store, kind: :automatic, code: nil)
+                Spree::Promotion::Rules::ItemTotal.create!(promotion: promotion, preferred_operator_min: 'gt', preferred_amount_min: 100)
+                Spree::Carts::Recalculate.call(cart: cart)
+              end
+
+              it 'covers the delivery price as soon as the address is set' do
+                expect(subject).to be_success
+
+                cart.reload
+                expect(cart.item_total).to eq(BigDecimal('134.97'))
+                expect(cart.delivery_total).to eq(5)
+                expect(cart.discount_total).to eq(-5)
+                expect(cart.total).to eq(BigDecimal('134.97'))
+              end
+            end
+
             # A guest's edit updates the address row in place, so only the
             # fields a quote reads can tell a new destination from a correction.
             context 'when a guest who chose a rate edits the address' do
