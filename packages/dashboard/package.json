@@ -69,7 +69,7 @@
     "@tanstack/virtual-file-routes": "catalog:",
     "date-fns": "catalog:",
     "date-fns-tz": "catalog:",
-    "dompurify": "^3.4.17",
+    "dompurify": "^3.4.18",
     "lucide-react": "catalog:",
     "recharts": "catalog:",
     "zod": "catalog:"
