@@ -20,8 +20,6 @@ module Spree
 
       private
 
-      # A parcel item's own variant, which differs from its line item's for an
-      # exchange replacement.
       def purchased_variant(item)
         item.variant || item.line_item.variant
       end

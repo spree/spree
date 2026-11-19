@@ -474,7 +474,17 @@ module Spree
       fulfillment_items.includes(:line_item).map(&:line_item).uniq
     end
 
-    ManifestItem = Struct.new(:line_item, :variant, :quantity, :states)
+    ManifestItem = Struct.new(:line_item, :variant, :quantity, :states) do
+      # An exchange replacement rides on the original line item, so it is priced
+      # as its own variant rather than at the line's price.
+      #
+      # @return [BigDecimal]
+      def price
+        return line_item.price if variant.nil? || variant.id == line_item.variant_id
+
+        variant.price_in(line_item.currency).amount || line_item.price
+      end
+    end
 
     def manifest
       # Grouping by the ID means that we don't have to call out to the association accessor

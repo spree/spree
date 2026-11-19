@@ -135,7 +135,7 @@ describe Spree::FulfillmentMailer, type: :mailer do
       let(:black) { create(:option_value, option_type: color, name: 'black', label: 'Black') }
       let(:product) { create(:product, name: 'Electric Kettle 1.7L', store: store) }
       let(:white_kettle) { create(:variant, product: product, option_values: [white], sku: 'KETTLE-WHITE') }
-      let(:black_kettle) { create(:variant, product: product, option_values: [black], sku: 'KETTLE-BLACK') }
+      let(:black_kettle) { create(:variant, product: product, option_values: [black], sku: 'KETTLE-BLACK', price: 55) }
       let(:order) do
         create(:shipped_order, store: store, email: 'test@example.com', customer: nil, variants: [white_kettle])
       end
@@ -154,6 +154,7 @@ describe Spree::FulfillmentMailer, type: :mailer do
           expect(body).to include('Electric Kettle 1.7L')
           expect(body).to include('Color: Black')
           expect(body).not_to include('Color: White')
+          expect(body).to include('1 x $55.00')
         end
       end
     end
