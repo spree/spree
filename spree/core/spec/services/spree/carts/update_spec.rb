@@ -443,6 +443,18 @@ module Spree
                 expect(cart.discount_total).to eq(-5)
                 expect(cart.total).to eq(BigDecimal('134.97'))
               end
+
+              it 'gives no free shipping on products excluded from promotions' do
+                Spree::Product.where(id: cart.line_items.map(&:product_id)).update_all(promotionable: false)
+
+                expect(subject).to be_success
+
+                cart.reload
+                expect(cart.delivery_total).to eq(5)
+                expect(cart.discount_total).to eq(0)
+                expect(cart.promotions).to be_empty
+                expect(cart.total).to eq(BigDecimal('139.97'))
+              end
             end
 
             # A guest's edit updates the address row in place, so only the

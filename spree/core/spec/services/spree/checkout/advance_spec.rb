@@ -36,6 +36,24 @@ module Spree
       expect(cart.total).to eq(cart.item_total)
     end
 
+    # An earlier advance can build the delivery and then stop at a rate the
+    # cart cannot use, so the retry finds the delivery already there.
+    it 'applies an automatic free-shipping promotion when the delivery was built by an earlier call' do
+      create(:free_shipping_promotion, store: store, kind: :automatic, code: nil)
+      cart.fulfillments.destroy_all
+      cart.recalculate_totals!
+      cart.reload
+
+      expect(described_class.call(order: cart, shipping_method_id: 0)).to be_failure
+      expect(cart.reload.promotions).to be_empty
+
+      expect(subject).to be_success
+
+      cart.reload
+      expect(cart.discount_total).to eq(-cart.delivery_total)
+      expect(cart.total).to eq(cart.item_total)
+    end
+
     it 'proposes fulfillments for a pure-pickup cart with no shipping address' do
       pickup_location = create(:stock_location, pickup_enabled: true, pickup_stock_policy: 'any', store: store)
       create(:pickup_delivery_method, store: store)
