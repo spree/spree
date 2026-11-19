@@ -132,7 +132,6 @@ module Spree
         return unless record.requested?
 
         record.update!(status: 'completed')
-        @refund_moved = true
         @events << [payment, 'payment.refunded', { refund_id: record.prefixed_id }]
       end
 
@@ -140,7 +139,6 @@ module Spree
         return if record.failed?
 
         record.update!(status: 'failed', failure_reason: reason)
-        @refund_moved = true
         @events << [record, 'refund.failed']
       end
 
@@ -195,10 +193,12 @@ module Spree
                            handled: true, context: { payment_id: remainder.id }, source: 'spree.payments.modification_webhook')
       end
 
-      # Money that was counted moved back (a late capture failure) or a refund
-      # settled, so the orders' totals and statuses are derived again.
+      # A refund settled or a capture failed, so the orders' totals and
+      # statuses are derived again. Decided by the outcome, not by whether this
+      # delivery moved the record, so a redelivery or a retried job repairs a
+      # refresh that failed after the outcome committed; deriving is idempotent.
       def rederive_order_figures
-        return unless @late_failure || @refund_moved
+        return unless record.is_a?(Spree::Refund) || action.to_sym == :capture_failed
 
         orders = record.is_a?(Spree::Refund) ? [record.order] : payment_orders
         orders.compact.each do |order|

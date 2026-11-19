@@ -171,6 +171,19 @@ RSpec.describe Spree::Payments::HandleModificationWebhook do
       expect { outcome(:refund_succeeded, refund) }.not_to(change { refund.reload.updated_at })
     end
 
+    it 'derives the order figures again on a repeat delivery, so a refresh that failed is repaired' do
+      refund
+      allow_any_instance_of(Spree::Order).to receive(:recalculate_totals!).and_raise(ActiveRecord::StatementInvalid, 'lost connection')
+      expect { outcome(:refund_succeeded, refund) }.to raise_error(ActiveRecord::StatementInvalid)
+      expect(refund.reload).to be_completed
+      expect(order.reload.payment_total).to eq(order.total)
+
+      allow_any_instance_of(Spree::Order).to receive(:recalculate_totals!).and_call_original
+      outcome(:refund_succeeded, refund)
+
+      expect(order.reload.payment_total).to eq(order.total - 10)
+    end
+
     it 'fails the refund and releases its balance when it fails' do
       outcome(:refund_failed, refund, 'reason' => 'Account closed')
 
