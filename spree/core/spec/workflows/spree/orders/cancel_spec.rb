@@ -191,6 +191,36 @@ module Spree
 
         expect(payment.reload).to be_void
       end
+
+      # Stripe and PayPal cannot void a drawn charge: they refund it or, when
+      # the operator keeps the money, leave it standing. The order must then
+      # still read as paid.
+      context 'on a gateway that cannot void a captured charge' do
+        before do
+          allow_any_instance_of(Spree::Gateway::Bogus).to receive(:can_void?) { |_gateway, payment| !payment.completed? }
+          allow_any_instance_of(Spree::Gateway::Bogus).to receive(:cancel).and_wrap_original do |original, response_code, payment, refund:|
+            next original.call(response_code, payment, refund: refund) unless refund
+
+            Spree.refund_create_workflow.call(payment: payment, reason: Spree::RefundReason.order_canceled_reason(payment.owner.store))
+            Spree::PaymentResponse.new(true, 'refunded', {}, authorization: payment.response_code)
+          end
+        end
+
+        it 'keeps the payment completed and the order paid when the money is kept' do
+          subject.call(order: order, canceler: user)
+
+          expect(payment.reload).to be_completed
+          expect(order.reload.payment_total).to eq(payment.amount)
+        end
+
+        it 'keeps the payment completed with the refund recorded when the money is given back' do
+          subject.call(order: order, canceler: user, refund_payments: true)
+
+          expect(payment.reload).to be_completed
+          expect(payment.refunds.sum(:amount)).to eq(payment.amount)
+          expect(order.reload.payment_total).to eq(0)
+        end
+      end
     end
 
     describe 'a capped refund on an ordinary order' do

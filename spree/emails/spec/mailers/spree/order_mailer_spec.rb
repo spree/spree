@@ -186,6 +186,54 @@ describe Spree::OrderMailer, type: :mailer do
     end
   end
 
+  context 'when store credit pays part of the order' do
+    before do
+      order.update_columns(item_total: 40, delivery_total: 5, additional_tax_total: 0, total: 45)
+      order.fulfillments.first.update_columns(cost: 5)
+      store_credit = create(:store_credit, amount: 10, store: store, customer: order.customer)
+      create(:store_credit_payment, order: order, amount: 10, source: store_credit)
+      create(:check_payment, order: order, amount: 35)
+    end
+
+    def row(label, value)
+      /#{Regexp.escape(label)}\s*#{Regexp.escape(value)}/
+    end
+
+    def summary_texts
+      email = described_class.confirm_email(order)
+      [email.text_part.body.to_s, email.html_part.body.to_s].map { |body| ActionView::Base.full_sanitizer.sanitize(body).squish }
+    end
+
+    it 'shows the store credit line, so the lines add up to the total' do
+      summary_texts.each do |text|
+        expect(text).to match(row(I18n.t('spree.order_mailer.subtotal'), '$40.00'))
+        expect(text).to match(/#{Regexp.escape(I18n.t('spree.shipping'))}[^$]*\$5\.00/)
+        expect(text).to match(row(I18n.t('spree.store_credit_name'), '-$10.00'))
+        expect(text).to match(row(I18n.t('spree.order_mailer.total'), '$35.00'))
+      end
+    end
+
+    # A gift card is redeemed as store credit, but an order takes either a
+    # gift card or store credit, never both.
+    context 'when a gift card pays instead' do
+      before do
+        order.payments.store_credits.each(&:invalidate!)
+        gift_card = create(:gift_card, amount: 10, store: store)
+        gift_card_credit = create(:store_credit, amount: 10, store: store, customer: order.customer, originator: gift_card)
+        create(:store_credit_payment, order: order, amount: 10, source: gift_card_credit)
+        order.update_columns(gift_card_id: gift_card.id)
+      end
+
+      it 'shows only the gift card line, so it is not taken off twice' do
+        summary_texts.each do |text|
+          expect(text).to match(row(I18n.t('spree.gift_card'), '-$10.00'))
+          expect(text).not_to include(I18n.t('spree.store_credit_name'))
+          expect(text).to match(row(I18n.t('spree.order_mailer.total'), '$35.00'))
+        end
+      end
+    end
+  end
+
   context 'displays unit costs from line item' do
     # Regression test for #2772
 

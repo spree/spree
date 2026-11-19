@@ -355,7 +355,11 @@ function ProductForm({ product }: { product: Product }) {
                   // whether to render these from the same value, and reading
                   // a different one left the buttons up against a product
                   // that had already been approved.
-                  <ProductReviewActions productId={productId} status={formStatus ?? ''} />
+                  <ProductReviewActions
+                    productId={productId}
+                    status={formStatus ?? ''}
+                    hasUnsavedChanges={form.formState.isDirty}
+                  />
                 }
               />
               <PublishingCard form={form} />

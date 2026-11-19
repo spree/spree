@@ -51,9 +51,11 @@ module Spree
 
     # Overdue and past-cancel-by read the calendar date in the server's zone;
     # a supplier's promise is a day, and a few hours either side of midnight
-    # is not what a merchant is filtering for.
-    scope :overdue, -> { open.where(arel_table[:expected_at].lt(Date.current)) }
-    scope :past_cancel_by, -> { open.where(arel_table[:cancel_by].lt(Date.current)) }
+    # is not what a merchant is filtering for. Two-state scopes (see
+    # Spree::Base.ransack_flag): the false side is the open orders not yet
+    # late, so a closed order is on neither side.
+    scope :overdue, ->(*values) { open_by_date(:expected_at, Spree::Base.ransack_flag(*values)) }
+    scope :past_cancel_by, ->(*values) { open_by_date(:cancel_by, Spree::Base.ransack_flag(*values)) }
 
     self.whitelisted_ransackable_attributes = %w[number status currency reference expected_at
                                                  cancel_by ordered_at received_at closed_short_at
@@ -61,6 +63,21 @@ module Spree
     search_by :number, :reference
     self.whitelisted_ransackable_scopes = %w[open closed overdue past_cancel_by]
     self.ransackable_scope_types = %w[open closed overdue past_cancel_by].index_with('boolean')
+
+    def self.ransackable_scopes_skip_sanitize_args
+      %i[overdue past_cancel_by]
+    end
+
+    # @param column [Symbol] the date the supplier promised against
+    # @param late [Boolean, nil] true for open orders past it, false for open
+    #   orders not past it (or without one), nil for every order
+    # @return [ActiveRecord::Relation]
+    def self.open_by_date(column, late)
+      return all if late.nil?
+
+      date = arel_table[column]
+      late ? open.where(date.lt(Date.current)) : open.where(date.gteq(Date.current).or(date.eq(nil)))
+    end
     self.whitelisted_ransackable_associations = %w[supplier destination_location items]
 
     # What the supplier will invoice for everything ordered.

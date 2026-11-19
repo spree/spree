@@ -3291,7 +3291,8 @@
           "view_at_gateway": "{{gateway}}で見る",
           "view_details": "詳細を見る",
           "failed_card_checks": "カードの確認に失敗",
-          "refund": "返金"
+          "refund": "返金",
+          "card_checks_unavailable": "カード確認は利用不可"
         },
         "priced_by": "{{name}}による価格",
         "purchase_order": {
@@ -3328,6 +3329,7 @@
         "variant_search": {
           "description": "この注文に追加する商品バリアントを検索してください。",
           "empty": "バリアントが見つかりません",
+          "no_permission": "このロールには商品の閲覧権限がないため、カタログを検索できません。管理者にロールへ「商品の閲覧」を追加するよう依頼してください。",
           "label": "バリアントを検索",
           "placeholder": "商品名か SKU を入力（3 文字以上）…",
           "sku_prefix": "SKU"
@@ -3353,6 +3355,7 @@
           "check": {
             "passed": "合格",
             "failed": "不合格",
+            "unavailable": "利用不可",
             "not_checked": "未確認"
           },
           "captures": "確定",
@@ -5010,6 +5013,7 @@
         "reason_placeholder": "販売者に何を直してほしいですか？",
         "reject": "差し戻す",
         "rejected": "販売者に差し戻しました",
+        "save_first": "先に変更を保存してください。承認や差し戻しでは変更は保存されません。",
         "send_back": "差し戻す"
       },
       "save_label": "商品を保存",

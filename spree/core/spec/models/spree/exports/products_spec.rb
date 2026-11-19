@@ -44,6 +44,16 @@ RSpec.describe Spree::Exports::Products, type: :model do
       rows = CSV.parse(export.attachment.download, headers: true)
       expect(rows.map { |row| row.values_at('sku', 'inventory_count', 'stock_location') }).to eq [['SHED-MUG', '7', nil]]
     end
+
+    it "writes the product's gallery images so a re-import keeps them" do
+      media = create(:media, viewable: product)
+      export = described_class.new(store: store)
+      export.save!
+      export.generate
+
+      row = CSV.parse(export.attachment.download, headers: true).find { |csv_row| csv_row['sku'] == 'SHED-MUG' }
+      expect(row['image1_src']).to end_with(media.filename.to_s)
+    end
   end
 
   # The job runs in the locale of whatever asked for the export — a request in

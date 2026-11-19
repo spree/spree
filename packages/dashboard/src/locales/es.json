@@ -2998,7 +2998,8 @@
           "view_at_gateway": "Ver en {{gateway}}",
           "view_details": "Ver detalles",
           "failed_card_checks": "Verificaciones de tarjeta fallidas",
-          "refund": "Reembolso"
+          "refund": "Reembolso",
+          "card_checks_unavailable": "Verificaciones de tarjeta no disponibles"
         },
         "priced_by": "Precio según {{name}}",
         "purchase_order": {
@@ -3035,6 +3036,7 @@
         "variant_search": {
           "description": "Buscá una variante de producto para agregar a este pedido.",
           "empty": "No se encontraron variantes",
+          "no_permission": "Tu rol no puede ver productos, así que no puede buscar en el catálogo. Pide a un administrador que añada Ver productos a tu rol.",
           "label": "Buscar variante",
           "placeholder": "Escribí el nombre del producto o el SKU (mínimo 3 caracteres)…",
           "sku_prefix": "SKU"
@@ -3060,6 +3062,7 @@
           "check": {
             "passed": "Superada",
             "failed": "No superada",
+            "unavailable": "No disponible",
             "not_checked": "No verificada"
           },
           "captures": "Capturas",
@@ -3281,6 +3284,7 @@
         "reason_placeholder": "¿Qué debería cambiar el vendedor?",
         "reject": "Devolver",
         "rejected": "Devuelto al vendedor",
+        "save_first": "Guarda primero tus cambios. Aprobar o devolver no los guarda.",
         "send_back": "Devolver"
       },
       "save_label": "Guardar producto",

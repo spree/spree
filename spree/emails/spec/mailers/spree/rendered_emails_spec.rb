@@ -12,6 +12,7 @@ describe 'rendered emails', type: :mailer do
       order.bill_address.update_columns(first_name: payload)
       order.line_items.first.product.update_columns(name: payload)
       order.update_columns(po_number: payload)
+      create(:store_credit_payment, order: order, amount: 1)
     end
   end
 

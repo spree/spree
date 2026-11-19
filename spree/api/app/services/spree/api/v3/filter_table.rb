@@ -173,12 +173,15 @@ module Spree
         #   one kind, a list of kinds (positional arguments), or
         #   `{ 'list' => kind }` for any number of arguments
         def scopes
-          @scopes ||= begin
-            declared = (model.respond_to?(:ransackable_scope_types) ? model.ransackable_scope_types : {}).
-                       merge(Spree.ransack.custom_scope_types_for(model)).stringify_keys
-            model.ransackable_scopes(audience).map(&:to_s).sort.index_with do |scope|
-              normalize_scope_type(declared.fetch(scope) { inferred_scope_type(scope) })
-            end
+          @scopes ||= model.ransackable_scopes(audience).map(&:to_s).sort.index_with do |scope|
+            # A model reached through an association may be an app's own,
+            # without Spree's allowlists.
+            type = if model.respond_to?(:ransackable_scope_type)
+                     model.ransackable_scope_type(scope)
+                   else
+                     Spree::RansackableAttributes.scope_type_from_signature(model.method(scope))
+                   end
+            normalize_scope_type(type)
           end
         end
 
@@ -218,9 +221,8 @@ module Spree
           @kinds ||= model.ransackable_attributes(audience).map(&:to_s).uniq.sort.index_with { |attribute| attribute_kind(attribute) }
         end
 
-        # @return [String, Hash, Symbol, nil] the kind; nil for a default
-        #   attribute the model does not have (`position` on a table without
-        #   one), `:unclassified` for one the contract cannot describe
+        # @return [String, Hash, Symbol] the kind; `:unclassified` for one the
+        #   contract cannot describe
         def attribute_kind(attribute)
           if (code_type = code_type(attribute))
             return { 'code' => code_type }
@@ -239,7 +241,6 @@ module Spree
           column = model.columns_hash[attribute]
           return COLUMN_KINDS.fetch(column.type, :unclassified) if column
           return 'text' if translated_attribute?(attribute)
-          return nil if model.default_ransackable_attributes.include?(attribute)
 
           :unclassified
         end
@@ -271,22 +272,6 @@ module Spree
 
         def translated_attribute?(attribute)
           model.respond_to?(:translatable_fields) && model.translatable_fields.map(&:to_s).include?(attribute)
-        end
-
-        # What a class method's signature says about its arguments. A `scope`
-        # lambda hides its signature behind `(*args, **)`, so an undeclared one
-        # is published as taking one text value.
-        def inferred_scope_type(scope)
-          parameters = model.method(scope).parameters
-          return 'text' if parameters.any? { |type, _| type == :keyrest }
-          return { 'list' => 'text' } if parameters.any? { |type, _| type == :rest }
-
-          required = parameters.count { |type, _| type == :req }
-          case required
-          when 0 then 'boolean'
-          when 1 then 'text'
-          else Array.new(required, 'text')
-          end
         end
 
         def normalize_scope_type(type)

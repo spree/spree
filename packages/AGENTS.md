@@ -25,7 +25,7 @@ pnpm workspace + Turbo, Biome for lint and format (`pnpm lint`, `pnpm lint:fix`,
 - **A record shown over several lines is one link.** In a list or table, when a record takes more than one line (avatar, name and email; title and subtitle), the whole block is the link — never a link on one line of it. People are shown with `PersonIdentity` (`components/spree/person-identity.tsx`) — `CustomerIdentity` for a customer — which does this when given a link.
 - **Destructive actions** that fire straight from a click confirm through `useConfirm({ variant: 'destructive' })`, naming the record or the count. Actions behind a picker sheet or dialog are already confirmed. If the write is immediate inside a dirty-tracked form, the copy says so.
 - **Ordering:** a model with `acts_as_list` is reordered by drag and drop (dnd-kit), never a position input. Tables pass `reorder` to `<ResourceTable>` (reference: `settings/markets.tsx`); nested editors follow `products/options.tsx`.
-- **Inputs:** dates use `<StoreDatePicker>` (store time zone; pass `inline` inside a Sheet), never `<input type="date">`. Currencies use `CurrencySelect`, countries `CountryCombobox`. Amounts and percentages are `type="number"` inside an `<InputGroup>` showing the currency or `%`. Show and read money in the admin's own format with `useMoneyLocale()`; never `parseFloat` or `Number()` a money string.
+- **Inputs:** dates use `<StoreDatePicker>` (store time zone; pass `inline` inside a Sheet), never `<input type="date">`. Currencies use `CurrencySelect`, countries `CountryCombobox`. Amounts are `type="text"` with `inputMode="decimal"` inside an `<InputGroup>` showing the currency, read with `normalizeMoneyInput(value, useMoneyLocale())` and shown with the locale's decimal mark: in a `type="number"` input Safari in English reads "3,80" as 380. Percentages are `type="number"` with `%`. Never `parseFloat` or `Number()` a money string.
 - **Base UI quirks:** `<SelectValue>` renders the raw value, so pass `items` to `<Select>` or a render function to `<SelectValue>`. `<Popover>` can fail to open inside a `<Sheet>`; render the panel inline instead (see `dashboard-ui/src/spree/color-picker.tsx`).
 - **Detail pages pass the record to `PageHeader`** (`resource` plus its Admin API endpoint, or `jsonPreview` today) so it gets "View as JSON" (`docs/plans/6.0-diagnostics-and-issue-reporting.md`).
 - Shell components shared with the seller panel must not require providers the seller panel doesn't mount (it has no `StoreProvider`).
@@ -38,6 +38,8 @@ pnpm workspace + Turbo, Biome for lint and format (`pnpm lint`, `pnpm lint:fix`,
 ## Releases
 
 Changesets live in the root `.changeset/` (`pnpm changeset`). The API-facing packages version together with the Spree gem version; release with `pnpm version:packages`, never plain `changeset version`.
+
+**One changeset per package.** Changesets copies a changeset's text into every package it names, so a change to several packages adds one changeset for each, saying what changed in that package for its users: the SDK's entry names the SDK method, the dashboard's names the screen. A package with no changes of its own needs none; the release gives it a "Released with Spree" entry. CI fails on a changeset naming more than one package (`pnpm changeset:check`). The changelog ships inside each package, so an agent reading `node_modules` sees what its version changed.
 
 ## End-to-end tests (Playwright)
 

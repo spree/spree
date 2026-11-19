@@ -231,6 +231,12 @@ module SpreePaypalCheckout
       success(order_id, result)
     end
 
+    # A captured payment cannot be voided (#void refuses it); it has to be
+    # refunded instead.
+    def can_void?(payment)
+      !payment.completed?
+    end
+
     # A completed payment can no longer be voided, so cancellation refunds it
     # instead, unless the operator asked to keep the money. Refunds for a
     # fulfillment are skipped; the delivery cost is refunded as a whole

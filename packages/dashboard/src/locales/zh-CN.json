@@ -3283,7 +3283,8 @@
           "view_at_gateway": "在 {{gateway}} 中查看",
           "view_details": "查看详情",
           "failed_card_checks": "银行卡验证未通过",
-          "refund": "退款"
+          "refund": "退款",
+          "card_checks_unavailable": "银行卡校验不可用"
         },
         "priced_by": "定价来自 {{name}}",
         "purchase_order": {
@@ -3320,6 +3321,7 @@
         "variant_search": {
           "description": "搜索要添加到此订单的商品变体。",
           "empty": "未找到变体",
+          "no_permission": "您的角色无权查看商品，因此无法搜索商品目录。请联系管理员为您的角色添加“查看商品”权限。",
           "label": "搜索变体",
           "placeholder": "输入商品名称或 SKU（至少 3 个字符）…",
           "sku_prefix": "SKU"
@@ -3345,6 +3347,7 @@
           "check": {
             "passed": "通过",
             "failed": "未通过",
+            "unavailable": "不可用",
             "not_checked": "未验证"
           },
           "captures": "扣款记录",
@@ -4998,6 +5001,7 @@
         "reason_placeholder": "卖家需要修改什么？",
         "reject": "退回",
         "rejected": "已退回给卖家",
+        "save_first": "请先保存更改。批准或退回不会保存这些更改。",
         "send_back": "退回"
       },
       "save_label": "保存产品",
