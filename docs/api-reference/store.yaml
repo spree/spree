@@ -6805,6 +6805,7 @@ paths:
                   name: Spree Commerce
                   default: false
                   gateway_payment_profile_id:
+                  payment_method_id: pm_UkLWZg9DAJ
                 meta:
                   page: 1
                   limit: 25
@@ -6894,6 +6895,7 @@ paths:
                 name: Spree Commerce
                 default: false
                 gateway_payment_profile_id:
+                payment_method_id: pm_UkLWZg9DAJ
               schema:
                 "$ref": "#/components/schemas/CreditCard"
         '404':
@@ -15715,6 +15717,10 @@ components:
         gateway_payment_profile_id:
           type: string
           nullable: true
+        payment_method_id:
+          type: string
+          description: The payment method the card was saved with; a card is offered
+            only for it.
         custom_fields:
           type: array
           items:
@@ -15728,6 +15734,7 @@ components:
       - name
       - default
       - gateway_payment_profile_id
+      - payment_method_id
       x-typelizer: true
     Currency:
       type: object
