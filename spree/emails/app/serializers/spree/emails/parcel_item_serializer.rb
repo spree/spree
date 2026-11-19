@@ -3,6 +3,10 @@ module Spree
     # One line as it travels in one parcel. A line packed from two warehouses
     # rides in two parcels, so the quantity and amount are the parcel's share
     # rather than the whole line's.
+    #
+    # The parcel's units name what is in the box: an exchange ships its
+    # replacement against the original line item, so the line item's variant
+    # is not always the one sent.
     class ParcelItemSerializer < Spree::Emails::BaseSerializer
       include Spree::Emails::PurchasedItemAttributes
 
@@ -11,17 +15,17 @@ module Spree
       end
 
       attribute :name do |item|
-        item.line_item.name
+        purchased_variant(item).name
       end
 
       attributes :quantity
 
       attribute :sku do |item|
-        item.line_item.sku
+        purchased_variant(item).sku
       end
 
       attribute :options_text do |item|
-        item.line_item.options_text
+        purchased_variant(item).options_text
       end
 
       attribute :price do |item|
