@@ -34,6 +34,19 @@ module Spree
       expect(collection.reload.products).to contain_exactly(matching_product)
     end
 
+    context 'when the store was deleted after the collection was loaded' do
+      let(:other_store) { create(:store) }
+      let!(:collection) { create(:automatic_collection, store: other_store) }
+
+      it 'leaves the collection untouched instead of crashing' do
+        loaded = Spree::Collection.find(collection.id)
+        other_store.destroy
+
+        expect { described_class.call(collection: loaded) }.not_to raise_error
+        expect(loaded.products_matching_rules).to be_empty
+      end
+    end
+
     context 'with a manual collection' do
       let!(:collection) { create(:collection, store: store) }
       let!(:rule) { nil }

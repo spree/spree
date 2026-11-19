@@ -11,6 +11,10 @@ module Spree
         return if collection.nil?
         return if collection.destroyed?
         return if collection.manual?
+        # The store can be soft-deleted after a sweep picked the collection up
+        # (or between the event that enqueued this and now). Its collections are
+        # dead weight: leave their membership as is rather than rebuild it.
+        return if collection.store.nil?
 
         previous_products_ids = collection.product_collections.order(position: :asc).pluck(:product_id)
 
