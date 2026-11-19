@@ -145,12 +145,14 @@ module SpreeAdyen
         end
       end
 
-      # A saved card, from a report that carries Adyen's stored payment method id.
+      # A saved card, from a report that carries Adyen's stored payment method
+      # id. Found among the customer's own cards only, so a token reported for
+      # someone else never hands over their card's details.
       #
       # @return [Spree::CreditCard]
       def credit_card_from(result, customer:)
-        Spree::CreditCard.find_or_create_by!(payment_method: self, gateway_payment_profile_id: result.stored_payment_method_id) do |card|
-          card.customer = customer
+        Spree::CreditCard.find_or_create_by!(payment_method: self, customer: customer,
+                                             gateway_payment_profile_id: result.stored_payment_method_id) do |card|
           card.gateway_customer_profile_id = "customer_#{customer.id}"
           card.cc_type = SpreeAdyen::Variants.card_brand(result.variant)
           card.last_digits = result.card_summary

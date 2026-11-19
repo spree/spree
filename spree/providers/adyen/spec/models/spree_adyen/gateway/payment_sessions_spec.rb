@@ -304,6 +304,19 @@ RSpec.describe SpreeAdyen::Gateway, 'payment sessions' do
                                         cc_type: 'visa', last_digits: '1111', customer: order.customer)
       end
 
+      it "never adopts another customer's card with the same token" do
+        others = create(:credit_card, payment_method: gateway, customer: create(:user), gateway_payment_profile_id: 'STORED00000003')
+        result = session_result(status: 'completed')
+        result['payments'][0]['additionalData']['tokenization.storedPaymentMethodId'] = 'STORED00000003'
+        stub_request(:get, result_url).to_return(adyen_json(result))
+
+        complete
+
+        card = session.reload.payment.source
+        expect(card).not_to eq(others)
+        expect(card).to have_attributes(customer: order.customer, last_digits: '1111')
+      end
+
       it 'records a wallet on the saved card' do
         result = session_result(status: 'completed', variant: { 'type' => 'applepay', 'brand' => 'mc' })
         result['payments'][0]['additionalData']['tokenization.storedPaymentMethodId'] = 'STORED00000002'
