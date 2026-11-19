@@ -11,8 +11,10 @@ module Spree
       def call(order:, state: nil, shipping_method_id: nil)
         cart = order
 
+        built_deliveries = false
         if cart.fulfillments.empty? && cart.delivery_step_required? && cart.can_propose_deliveries? && cart.respond_to?(:rebuild_fulfillments!)
           cart.rebuild_fulfillments!
+          built_deliveries = true
         end
 
         if shipping_method_id.present? && cart.fulfillments.count == 1 &&
@@ -22,6 +24,9 @@ module Spree
         end
 
         cart.recalculate_totals!
+        # A saved address copied on sign-in builds the first delivery here, so
+        # free shipping the cart already qualifies for has something to cover.
+        cart.apply_free_shipping_promotions if built_deliveries && cart.respond_to?(:apply_free_shipping_promotions)
         success(cart)
       end
 

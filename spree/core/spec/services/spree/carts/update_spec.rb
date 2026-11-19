@@ -431,6 +431,7 @@ module Spree
                 promotion = create(:free_shipping_promotion, store: store, kind: :automatic, code: nil)
                 Spree::Promotion::Rules::ItemTotal.create!(promotion: promotion, preferred_operator_min: 'gt', preferred_amount_min: 100)
                 Spree::Carts::Recalculate.call(cart: cart)
+                expect(cart.reload.promotions).to be_empty
               end
 
               it 'covers the delivery price as soon as the address is set' do

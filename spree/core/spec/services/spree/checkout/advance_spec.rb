@@ -20,6 +20,22 @@ module Spree
       expect(cart.reload.fulfillments).to be_present
     end
 
+    # A saved address copied onto the cart at sign-in builds no delivery, so
+    # free shipping the cart already qualifies for first has something to cover here.
+    it 'applies an automatic free-shipping promotion once it proposes the first delivery' do
+      create(:free_shipping_promotion, store: store, kind: :automatic, code: nil)
+      cart.fulfillments.destroy_all
+      cart.recalculate_totals!
+      cart.reload
+
+      expect(subject).to be_success
+
+      cart.reload
+      expect(cart.delivery_total).to be_positive
+      expect(cart.discount_total).to eq(-cart.delivery_total)
+      expect(cart.total).to eq(cart.item_total)
+    end
+
     it 'proposes fulfillments for a pure-pickup cart with no shipping address' do
       pickup_location = create(:stock_location, pickup_enabled: true, pickup_stock_policy: 'any', store: store)
       create(:pickup_delivery_method, store: store)
