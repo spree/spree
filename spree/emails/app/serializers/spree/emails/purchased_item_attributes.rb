@@ -9,19 +9,19 @@ module Spree
 
       included do
         attribute :url do |item|
-          product = purchased_line_item(item).product
+          product = purchased_variant(item).product
           "#{params[:storefront_url]}/products/#{product.slug}" if product
         end
 
         attribute :image_url do |item|
-          spree_image_url(purchased_line_item(item).thumbnail, variant: :small)
+          spree_image_url(purchased_variant(item).thumbnail, variant: :small)
         end
       end
 
       private
 
-      def purchased_line_item(item)
-        item.is_a?(Spree::LineItem) ? item : item.line_item
+      def purchased_variant(item)
+        item.variant || item.line_item.variant
       end
     end
   end
