@@ -207,7 +207,7 @@ describe Spree::OrderMailer, type: :mailer do
     it 'shows the store credit line, so the lines add up to the total' do
       summary_texts.each do |text|
         expect(text).to match(row(I18n.t('spree.order_mailer.subtotal'), '$40.00'))
-        expect(text).to match(/#{I18n.t('spree.shipping')}.*\$5\.00/)
+        expect(text).to match(/#{Regexp.escape(I18n.t('spree.shipping'))}[^$]*\$5\.00/)
         expect(text).to match(row(I18n.t('spree.store_credit_name'), '-$10.00'))
         expect(text).to match(row(I18n.t('spree.order_mailer.total'), '$35.00'))
       end
