@@ -285,6 +285,18 @@ RSpec.describe Spree::Collection, type: :model do
       expect(collection.reload.products).to match_array(coffee_products)
     end
 
+    it 'rematches the products when only the rule type changes' do
+      on_sale = create(:product, price: 10, compare_at_price: 12)
+      tagged_products = create_list(:product, 2, tag_list: 'true')
+      rule = create(:sale_collection_rule, :is_equal_to, collection: collection)
+      expect(collection.reload.products).to contain_exactly(on_sale)
+
+      reloaded_collection.rules = [{ id: rule.prefixed_id, type: 'tag', value: 'true', match_policy: 'is_equal_to' }]
+      reloaded_collection.save!
+
+      expect(collection.reload.products).to match_array(tagged_products)
+    end
+
     it 'rematches the products when another rule saved before it changes value' do
       collection.update!(rules_match_policy: 'any')
       on_sale = create(:product, price: 10, compare_at_price: 12)
