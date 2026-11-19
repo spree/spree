@@ -443,8 +443,14 @@ module Spree
       when Spree::LineItem
         !promotable.product.promotionable?
       when Spree::Order, Spree::Cart
-        (promotable.total_quantity.positive? || promotable.line_items.any?) &&
-          promotable.line_items.joins(:product).where(spree_products: { promotionable: true }).none?
+        # Asked once per line item while discounts are calculated, so the
+        # answer is kept for as long as the contents stay the same.
+        @blacklisted_promotables ||= {}
+        key = [promotable.class.name, promotable.id, promotable.updated_at, promotable.total_quantity, promotable.item_total]
+        return @blacklisted_promotables[key] if @blacklisted_promotables.key?(key)
+
+        @blacklisted_promotables[key] = (promotable.total_quantity.positive? || promotable.line_items.any?) &&
+                                        promotable.line_items.joins(:product).where(spree_products: { promotionable: true }).none?
       end
     end
 

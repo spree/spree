@@ -571,6 +571,39 @@ describe Spree::Promotion, type: :model do
         end
       end
     end
+
+    context 'when promotable is a Spree::Cart' do
+      let(:promotable) { create(:cart_with_line_items, line_items_count: 2) }
+
+      it 'is not eligible when every product is excluded from promotions' do
+        Spree::Product.where(id: promotable.line_items.map(&:product_id)).update_all(promotionable: false)
+
+        expect(subject).to be false
+      end
+
+      # Discount calculation asks once per line item.
+      it 'checks the products once while the contents stay the same' do
+        promotable
+        product_checks = 0
+        counter = ->(*, payload) { product_checks += 1 if payload[:sql].start_with?('SELECT') && payload[:sql].include?('promotionable') }
+
+        ActiveSupport::Notifications.subscribed(counter, 'sql.active_record') do
+          3.times { promotion.eligible?(promotable) }
+        end
+
+        expect(product_checks).to eq(1)
+      end
+
+      it 'checks again once the contents change' do
+        expect(promotion.eligible?(promotable)).to be true
+
+        Spree::Product.where(id: promotable.line_items.map(&:product_id)).update_all(promotionable: false)
+        create(:line_item, cart: promotable, order: nil, product: create(:product, promotionable: false))
+        promotable.recalculate_totals!
+
+        expect(promotion.eligible?(promotable)).to be false
+      end
+    end
   end
 
   context '#eligible_rules' do
