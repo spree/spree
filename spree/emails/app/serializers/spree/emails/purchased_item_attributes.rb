@@ -2,7 +2,7 @@ module Spree
   module Emails
     # What an email shows for a purchased line besides its Store API fields: a
     # link to the product on the storefront and a thumbnail. Shared by the line
-    # item and parcel item serializers.
+    # item, parcel item and returned item serializers.
     module PurchasedItemAttributes
       extend ActiveSupport::Concern
       include Spree::ImagesHelper
