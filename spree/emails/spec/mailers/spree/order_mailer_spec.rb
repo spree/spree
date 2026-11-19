@@ -213,19 +213,21 @@ describe Spree::OrderMailer, type: :mailer do
       end
     end
 
-    context 'and a gift card pays part of it too' do
+    # A gift card is redeemed as store credit, but an order takes either a
+    # gift card or store credit, never both.
+    context 'when a gift card pays instead' do
       before do
-        gift_card = create(:gift_card, amount: 5, store: store)
-        gift_card_credit = create(:store_credit, amount: 5, store: store, customer: order.customer, originator: gift_card)
-        create(:store_credit_payment, order: order, amount: 5, source: gift_card_credit)
-        order.update_columns(gift_card_id: gift_card.id, item_total: 45, total: 50)
+        order.payments.store_credits.each(&:invalidate!)
+        gift_card = create(:gift_card, amount: 10, store: store)
+        gift_card_credit = create(:store_credit, amount: 10, store: store, customer: order.customer, originator: gift_card)
+        create(:store_credit_payment, order: order, amount: 10, source: gift_card_credit)
+        order.update_columns(gift_card_id: gift_card.id)
       end
 
-      it 'takes each off once, on its own line' do
+      it 'shows only the gift card line, so it is not taken off twice' do
         summary_texts.each do |text|
-          expect(text).to match(row(I18n.t('spree.order_mailer.subtotal'), '$45.00'))
-          expect(text).to match(row(I18n.t('spree.gift_card'), '-$5.00'))
-          expect(text).to match(row(I18n.t('spree.store_credit_name'), '-$10.00'))
+          expect(text).to match(row(I18n.t('spree.gift_card'), '-$10.00'))
+          expect(text).not_to include(I18n.t('spree.store_credit_name'))
           expect(text).to match(row(I18n.t('spree.order_mailer.total'), '$35.00'))
         end
       end
