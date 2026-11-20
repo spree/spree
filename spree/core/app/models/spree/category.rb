@@ -292,7 +292,7 @@ module Spree
       end
 
       def set_permalink
-        self.permalink = generate_slug
+        self.permalink = persisted? && !will_save_change_to_permalink? ? unique_permalink(generate_slug) : generate_slug
       end
 
       def set_pretty_name
@@ -307,39 +307,45 @@ module Spree
         pretty_name.blank? ? translated_model[:pretty_name] : pretty_name
       end
 
+      # Ordered parent-first, so each child builds its path from its parent's
+      # already regenerated permalink and pretty name.
       def regenerate_pretty_name_and_permalink
-        Spree::Category::Translation.where(spree_category_id: translated_model.cached_self_and_descendants_ids).each(&:update_pretty_name_and_permalink)
+        category_ids = translated_model.cached_self_and_descendants_ids
+        Spree::Category::Translation.where(spree_category_id: category_ids).
+          in_order_of(:spree_category_id, category_ids).
+          each(&:update_pretty_name_and_permalink)
       end
 
       def update_pretty_name_and_permalink
-        update_columns(pretty_name: generate_pretty_name, permalink: generate_slug, updated_at: Time.current)
+        update_columns(pretty_name: generate_pretty_name, permalink: unique_permalink(generate_slug), updated_at: Time.current)
       end
 
       private
 
       def generate_slug
-        if parent.present?
-          generate_permalink_including_parent
-        elsif permalink.blank?
-          name_with_fallback.to_url
-        else
-          permalink.to_url
-        end
+        own_segment = parent.blank? && will_save_change_to_permalink? ? permalink : permalink.to_s.split('/').last
+        own_segment = own_segment.blank? ? name_with_fallback.to_url : own_segment.to_url
+
+        parent.present? ? [parent_permalink_with_fallback, own_segment].join('/') : own_segment
+      end
+
+      # A move can land on a path another category in the store already uses
+      # in this locale, so suffix it rather than share a permalink. Compared
+      # without case, like the category's own permalink.
+      def unique_permalink(candidate)
+        taken = Spree::Category::Translation.
+                joins(:translated_model).
+                where(locale: locale).
+                where(Spree::Category.table_name => { store_id: translated_model.store_id }).
+                where.not(id: id)
+        permalink_taken = ->(option) { taken.where(self.class.arel_table[:permalink].lower.eq(option.downcase)).exists? }
+        return candidate unless permalink_taken.call(candidate)
+
+        (2..).lazy.map { |suffix| "#{candidate}-#{suffix}" }.find { |option| !permalink_taken.call(option) }
       end
 
       def generate_pretty_name
-        if parent.present?
-          generate_pretty_name_including_parent
-        elsif pretty_name.blank?
-          name_with_fallback
-        else
-          pretty_name
-        end
-      end
-
-      def generate_permalink_including_parent
-        [parent_permalink_with_fallback,
-         (permalink.blank? ? name_with_fallback.to_url : permalink.split('/').last.to_url)].join('/')
+        parent.present? ? generate_pretty_name_including_parent : name_with_fallback
       end
 
       def generate_pretty_name_including_parent
@@ -378,27 +384,30 @@ module Spree
       [parent&.pretty_name, name].compact.join(' -> ')
     end
 
+    # The permalink is the full path, so only its last segment belongs to this
+    # category and the rest comes from the current parent. A permalink typed for
+    # a top-level category is kept whole.
     def generate_slug
-      if parent.present?
-        [parent.permalink, (permalink.blank? ? name.to_url : permalink.split('/').last.to_url)].join('/')
-      elsif permalink.blank?
-        name.to_url
-      else
-        permalink.to_url
-      end
+      # Mobility's dirty tracking hides the change from will_save_change_to_permalink?
+      own_segment = parent.blank? && attribute_changed?(:permalink) ? permalink : permalink.to_s.split('/').last
+      own_segment = own_segment.blank? ? name.to_url : own_segment.to_url
+
+      parent.present? ? [parent.permalink, own_segment].join('/') : own_segment
     end
 
     def set_permalink
       if Spree.use_translations?
         translations.each(&:set_permalink)
       else
-        self.permalink = generate_slug
+        # An existing category whose own permalink is not being edited only has
+        # its path rebuilt, which can land on one another category holds.
+        self.permalink = persisted? && !attribute_changed?(:permalink) ? unique_permalink(generate_slug) : generate_slug
       end
     end
 
     def regenerate_pretty_name_and_permalink
       Mobility.with_locale(nil) do
-        update_columns(pretty_name: generate_pretty_name, permalink: generate_slug, updated_at: Time.current)
+        update_columns(pretty_name: generate_pretty_name, permalink: unique_permalink(generate_slug), updated_at: Time.current)
       end
 
       children.reload.each(&:regenerate_pretty_name_and_permalink_as_child)
@@ -406,7 +415,7 @@ module Spree
 
     def regenerate_pretty_name_and_permalink_as_child
       Mobility.with_locale(nil) do
-        update_columns(pretty_name: generate_pretty_name, permalink: generate_slug, updated_at: Time.current)
+        update_columns(pretty_name: generate_pretty_name, permalink: unique_permalink(generate_slug), updated_at: Time.current)
       end
 
       children.reload.each(&:regenerate_pretty_name_and_permalink_as_child)
@@ -432,6 +441,17 @@ module Spree
 
     def should_regenerate_pretty_name_and_permalink?
       saved_changes.key?(:name) || saved_changes.key?(:permalink)
+    end
+
+    # A move can land on a path another category in the store already holds,
+    # which the unique index rejects, so suffix it instead. Compared without
+    # case, like the permalink uniqueness validation.
+    def unique_permalink(candidate)
+      taken = self.class.unscoped.where(store_id: store_id).where.not(id: id)
+      permalink_taken = ->(option) { taken.where(self.class.arel_table[:permalink].lower.eq(option.downcase)).exists? }
+      return candidate unless permalink_taken.call(candidate)
+
+      (2..).lazy.map { |suffix| "#{candidate}-#{suffix}" }.find { |option| !permalink_taken.call(option) }
     end
 
     # Refresh the moved subtree's products in the search index (their ancestor
@@ -502,8 +522,9 @@ module Spree
       self.store = parent&.store || Spree::Store.current
     end
 
+    # One translation's rebuild already covers every locale of the whole subtree.
     def regenerate_translations_pretty_name_and_permalink
-      translations.each(&:regenerate_pretty_name_and_permalink)
+      translations.first&.regenerate_pretty_name_and_permalink
     end
   end
 end
