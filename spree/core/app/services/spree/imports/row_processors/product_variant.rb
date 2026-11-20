@@ -11,9 +11,11 @@ module Spree
         def initialize(row, **)
           super
           ensure_decimals!
+          ensure_price_within_limits!
           @store = row.store
           @seller = import.seller
           ensure_seller_options_exist! if seller.present?
+          ensure_price_for_new_variant!
           # Before the product is saved: rows are not wrapped in a transaction,
           # so an unknown location must fail the row with nothing written.
           @stock_location = import_stock_location if attributes['inventory_count'].present?
@@ -96,6 +98,58 @@ module Spree
           end
         end
 
+        # A price that reads as a number can still be one the Price model
+        # refuses, such as a negative one. Judged by the model's own rules
+        # before the product is written, or the row would fail on the price
+        # write and leave an unpriced product behind. A compare-at price is
+        # only written alongside a price, so it is judged only then too.
+        def ensure_price_within_limits!
+          return if attributes['price'].blank?
+
+          price = Spree::Price.new(amount: attributes['price'].strip, compare_at_amount: attributes['compare_at_price'].presence&.strip)
+          price.validate
+          { amount: 'price', compare_at_amount: 'compare_at_price' }.each do |attribute, column|
+            error = price.errors.where(attribute).first
+            next if error.nil?
+
+            raise ArgumentError, I18n.t('spree.product_import_invalid_price', column: column, message: error.message,
+                                                                              value: attributes[column].strip)
+          end
+        end
+
+        # A row that creates a product or a variant must price it, or the
+        # import reports it done and leaves something nobody can buy. A blank
+        # price on a row that only updates an existing variant keeps the price
+        # it has. Checked before anything is written, so the failed row leaves
+        # nothing behind and a retry with a price creates the product.
+        def ensure_price_for_new_variant!
+          return if attributes['price'].present?
+
+          # A variant row for an unknown product fails on the product lookup instead.
+          return if existing_product.nil? && !product_row?
+          return if existing_product.present? && find_existing_variant(existing_product).present?
+
+          raise ArgumentError, I18n.t('spree.product_import_price_missing')
+        end
+
+        # The product the row's slug names, if this import may edit it.
+        def existing_product
+          return @existing_product if defined?(@existing_product)
+
+          @existing_product = (product_scope.find_by(slug: attributes['slug'].strip.downcase) if attributes['slug'].present?)
+        end
+
+        # The variant the row updates, picked as process! picks it: the one
+        # with its SKU, or for an option-less row without one, the product's
+        # default. Nil when the row creates a variant.
+        def find_existing_variant(product)
+          if attributes['sku'].present?
+            product.variants.find_by(Spree::Variant.arel_table[:sku].lower.eq(attributes['sku'].strip.downcase))
+          elsif options.empty?
+            product.default_variant
+          end
+        end
+
         # A product-header (options-empty) row creates an option-less default
         # variant to hold product-level attributes. Once an option-bearing
         # variant exists, that placeholder is a leftover — remove it and
@@ -119,11 +173,7 @@ module Spree
 
         def ensure_product_exists
           if product_row?
-            product = Spree::Product.new
-            if attributes['slug'].present?
-              existing_product = product_scope.find_by(slug: attributes['slug'].strip.downcase)
-              product = existing_product if existing_product.present?
-            end
+            product = existing_product || Spree::Product.new
 
             # Store is touched when the import completes
             Spree::Store.no_touching do
@@ -140,11 +190,9 @@ module Spree
             product
           else
             # For variant rows (with options), only look up the product
-            if attributes['slug'].present?
-              product_scope.find_by!(slug: attributes['slug'].strip.downcase)
-            else
-              raise ActiveRecord::RecordNotFound, 'Product slug is required for variant rows'
-            end
+            raise ActiveRecord::RecordNotFound, 'Product slug is required for variant rows' if attributes['slug'].blank?
+
+            existing_product || product_scope.find_by!(slug: attributes['slug'].strip.downcase)
           end
         end
 

@@ -51,6 +51,36 @@ RSpec.describe 'Spree::Imports pipeline workflows' do
       expect(import.rows.failed.count).to eq(0)
       expect(import.rows.completed.count).to eq(import.rows.count)
     end
+
+    context 'when a new product row has no price' do
+      let(:import) do
+        create(:import, store: store, type: 'Spree::Imports::Products').tap do |import|
+          rows = (1..5).map { |index| "box-#{index},BOX-#{index},Box #{index},#{'12.50' unless index == 3}" }
+          csv = ['slug,sku,name,price', *rows].join("\n")
+          import.attachment.attach(io: StringIO.new(csv), filename: 'boxes.csv', content_type: 'text/csv')
+        end
+      end
+
+      it 'fails that row, creates no product for it, and creates it when retried with a price' do
+        import.set_preference(:inline, true)
+        import.save!
+
+        Spree.import_start_mapping_workflow.call(import: import)
+        Spree.import_complete_mapping_workflow.call(import: import)
+
+        expect(import.reload.status).to eq('completed')
+        expect(import.rows.completed.count).to eq(4)
+        failed_row = import.rows.failed.sole
+        expect(failed_row.validation_errors).to start_with('price is missing')
+        expect(store.products.find_by(slug: 'box-3')).to be_nil
+
+        failed_row.update!(data: failed_row.data_json.merge('price' => '12.50').to_json)
+        expect(Spree.import_retry_failed_rows_workflow.call(import: import)).to be_success
+
+        expect(import.reload.rows.completed.count).to eq(5)
+        expect(store.products.find_by!(slug: 'box-3').default_variant.price_in(store.default_market.currency).amount).to eq(BigDecimal('12.50'))
+      end
+    end
   end
 
   describe Spree::Imports::StartProcessing do
