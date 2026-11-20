@@ -574,7 +574,7 @@ The product `promotionable` flag is deprecated. It used to keep a promotion off 
 
 - The Admin API keeps accepting `promotionable` on product create and update until 6.5, and it keeps working. It was never returned.
 - `Spree::Product#promotionable=` logs a deprecation warning. It and the column are removed in 6.5, with the API field.
-- Exclude products with a product or category rule set to **None of these** instead.
+- Exclude products with a product or category rule set to **None of these** instead. The flag kept a product out of every promotion, but a rule only covers the promotion it belongs to. Add the rule to every promotion that should skip the product, including ones you create later.
 
 ## Dependency injection changes
 
