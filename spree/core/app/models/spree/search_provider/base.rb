@@ -5,6 +5,14 @@ module Spree
       # attributes. `price` also sorts descending as `-price`.
       SORT_FIELDS = %w[price best_selling manual].freeze
 
+      # Facts about this provider's setup for the diagnostics report. They end
+      # up in public bug reports: never a name, URL or credential.
+      #
+      # @return [Hash{String => Proc}] label => reader
+      def self.diagnostics
+        {}
+      end
+
       attr_reader :store, :audience
 
       # Whether this provider requires background indexing jobs.

@@ -72,6 +72,23 @@ module Spree
         end
       end
 
+      class Search < Section
+        # Only the providers Spree ships are named: another one is the
+        # merchant's own, and its class name doesn't belong in a public issue.
+        PROVIDERS = {
+          'Spree::SearchProvider::Postgres' => 'postgres',
+          'Spree::SearchProvider::Database' => 'database',
+          'SpreeMeilisearch::SearchProvider' => 'meilisearch'
+        }.freeze
+
+        def title = 'Search'
+
+        def rows
+          { 'Provider' => -> { PROVIDERS.fetch(::Spree.search_provider, 'custom') } }.
+            merge(::Spree.search_provider.safe_constantize.try(:diagnostics) || {})
+        end
+      end
+
       # Settings changed from their defaults. Only flags, numbers and
       # fixed-choice strings are shown: free-form strings can hold URLs,
       # names or credentials, so they are never reported, whatever they are.

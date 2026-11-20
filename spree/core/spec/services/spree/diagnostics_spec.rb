@@ -26,6 +26,18 @@ RSpec.describe Spree::Diagnostics do
     expect(value('infrastructure', 'Database')).to start_with('postgresql').or start_with('mysql').or start_with('sqlite')
   end
 
+  it 'names the search provider without its class name' do
+    allow(Spree).to receive(:search_provider).and_return('Spree::SearchProvider::Database')
+
+    expect(section('search')[:rows]).to eq([{ label: 'Provider', value: 'database' }])
+  end
+
+  it 'describes the PostgreSQL full-text search setup', if: ActiveRecord::Base.connection.adapter_name == 'PostgreSQL' do
+    expect(value('search', 'Provider')).to eq('postgres')
+    expect(value('search', 'Typo tolerance')).to eq('yes').or eq('no')
+    expect(value('search', 'Missing indexes')).to eq('none')
+  end
+
   it 'never includes names, emails or URLs' do
     markdown = report.to_markdown
 
