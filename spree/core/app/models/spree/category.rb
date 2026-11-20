@@ -292,7 +292,7 @@ module Spree
       end
 
       def set_permalink
-        self.permalink = generate_slug
+        self.permalink = persisted? && !will_save_change_to_permalink? ? unique_permalink(generate_slug) : generate_slug
       end
 
       def set_pretty_name
@@ -397,7 +397,9 @@ module Spree
       if Spree.use_translations?
         translations.each(&:set_permalink)
       else
-        self.permalink = generate_slug
+        # An existing category whose own permalink is not being edited only has
+        # its path rebuilt, which can land on one another category holds.
+        self.permalink = persisted? && !attribute_changed?(:permalink) ? unique_permalink(generate_slug) : generate_slug
       end
     end
 
@@ -411,7 +413,7 @@ module Spree
 
     def regenerate_pretty_name_and_permalink_as_child
       Mobility.with_locale(nil) do
-        update_columns(pretty_name: generate_pretty_name, permalink: generate_slug, updated_at: Time.current)
+        update_columns(pretty_name: generate_pretty_name, permalink: unique_permalink(generate_slug), updated_at: Time.current)
       end
 
       children.reload.each(&:regenerate_pretty_name_and_permalink_as_child)
@@ -440,12 +442,14 @@ module Spree
     end
 
     # A move can land on a path another category in the store already holds,
-    # which the unique index rejects, so suffix it instead.
+    # which the unique index rejects, so suffix it instead. Compared without
+    # case, like the permalink uniqueness validation.
     def unique_permalink(candidate)
       taken = self.class.unscoped.where(store_id: store_id).where.not(id: id)
-      return candidate unless taken.exists?(permalink: candidate)
+      permalink_taken = ->(option) { taken.where(self.class.arel_table[:permalink].lower.eq(option.downcase)).exists? }
+      return candidate unless permalink_taken.call(candidate)
 
-      (2..).lazy.map { |suffix| "#{candidate}-#{suffix}" }.find { |option| !taken.exists?(permalink: option) }
+      (2..).lazy.map { |suffix| "#{candidate}-#{suffix}" }.find { |option| !permalink_taken.call(option) }
     end
 
     # Refresh the moved subtree's products in the search index (their ancestor
@@ -516,8 +520,9 @@ module Spree
       self.store = parent&.store || Spree::Store.current
     end
 
+    # One translation's rebuild already covers every locale of the whole subtree.
     def regenerate_translations_pretty_name_and_permalink
-      translations.each(&:regenerate_pretty_name_and_permalink)
+      translations.first&.regenerate_pretty_name_and_permalink
     end
   end
 end

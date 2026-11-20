@@ -613,6 +613,15 @@ RSpec.describe Spree::Category, type: :model do
         expect(category2.reload.permalink).to eq('child-2')
       end
 
+      it 'suffixes a descendant permalink another category already holds' do
+        grandchild = create(:category, name: 'Grandchild', parent: category2, permalink: 'grandchild')
+        create(:category, name: 'Legacy', store: store).update_columns(permalink: 'child/grandchild')
+
+        category2.move_to_root
+
+        expect(grandchild.reload.permalink).to eq('child/grandchild-2')
+      end
+
       it 'keeps a permalink typed for a top-level category whole' do
         expect(create(:category, name: 'Sale', permalink: 'summer/sale', store: store).permalink).to eq('summer-slash-sale')
       end
