@@ -39,5 +39,41 @@ RSpec.describe Spree::Api::V3::Admin::Orders::RefundsController, type: :controll
       expect(response).to have_http_status(:created)
       expect(json_response['amount']).to eq('5.00')
     end
+
+    # Store credit is its own ledger and writes no refund row, so a card refund
+    # bounded by the payment alone gave back money the credit already had
+    # (V-3832).
+    context 'after a return was refunded as store credit' do
+      let(:return_record) { create(:received_return, store: store) }
+      let(:order) { return_record.order }
+      let(:payment) { order.payments.completed.first }
+      let(:credited) { return_record.refund_total }
+
+      before do
+        allow_any_instance_of(Spree::Refund).to receive(:perform!).and_return(true)
+        result = Spree::Returns::Refund.call(return_record: return_record, amount: credited, refund_method: 'store_credit')
+        expect(result).to be_success
+      end
+
+      def refund(amount)
+        post :create, params: {
+          order_id: order.prefixed_id,
+          payment_id: payment.prefixed_id,
+          amount: Spree::Money::Rounding.format(amount, 'USD')
+        }, as: :json
+      end
+
+      it 'refuses to refund the whole payment and records nothing' do
+        expect { refund(payment.amount) }.not_to change(Spree::Refund, :count)
+
+        expect(response).to have_http_status(:unprocessable_content)
+      end
+
+      it 'refunds what the store credit left' do
+        expect { refund(payment.amount - credited) }.to change(Spree::Refund, :count).by(1)
+
+        expect(response).to have_http_status(:created)
+      end
+    end
   end
 end

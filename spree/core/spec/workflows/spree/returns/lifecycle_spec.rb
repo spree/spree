@@ -382,6 +382,22 @@ RSpec.describe 'Spree::Returns workflows' do
         end
       end
 
+      # Credit writes no refund row, so the card's own balance cannot tell the
+      # order already gave this money back (V-3832).
+      it 'leaves the card only what the credit did not give back' do
+        allow_any_instance_of(Spree::Refund).to receive(:perform!).and_return(true)
+        payment = return_record.order.payments.completed.first
+        credited = return_record.refund_total
+
+        Spree::Returns::Refund.call(return_record: return_record, amount: credited, refund_method: 'store_credit')
+
+        refused = Spree.refund_create_workflow.call(payment: payment, amount: payment.amount)
+        expect(refused.error.value).to eq(:refund_amount_exceeds_balance)
+        expect(payment.refunds).to be_empty
+
+        expect(Spree.refund_create_workflow.call(payment: payment, amount: payment.amount - credited)).to be_success
+      end
+
       it 'lets a validate handler veto before any credit is issued' do
         Spree.hooks.register('returns.refund.validate') { |flow| flow.reject!('refunds on hold') }
 

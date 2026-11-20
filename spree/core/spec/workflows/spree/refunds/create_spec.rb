@@ -66,6 +66,50 @@ RSpec.describe Spree::Refunds::Create do
       expect(payment.refunds).to be_empty
     end
 
+    # Store credit is its own ledger and writes no refund row, so the payment's
+    # balance alone would let the card give back money the credit already did
+    # (V-3832).
+    context 'when the order was already given store credit' do
+      before do
+        create(:store_credit, refunded_order: payment.order, customer: payment.order.customer,
+                              store: payment.order.store, amount: 20)
+      end
+
+      it 'refuses an amount above what the order has not yet given back' do
+        result = described_class.call(payment: payment, amount: payment.amount)
+
+        expect(result).to be_failure
+        expect(result.error.value).to eq(:refund_amount_exceeds_balance)
+        expect(payment.refunds).to be_empty
+      end
+
+      it 'refunds what the credit left' do
+        result = described_class.call(payment: payment, amount: BigDecimal('25.75'))
+
+        expect(result).to be_success
+        expect(result.value.amount).to eq(BigDecimal('25.75'))
+      end
+
+      it 'defaults to what the credit left' do
+        expect(described_class.call(payment: payment).value.amount).to eq(BigDecimal('25.75'))
+      end
+
+      # The pre-flight check reads the order's headroom before its row is
+      # locked; credit landing in between must still be counted.
+      it 'refuses when credit was issued after the pre-flight check' do
+        Spree.hooks.register('refunds.create.before_refund') do
+          create(:store_credit, refunded_order: payment.order, customer: payment.order.customer,
+                                store: payment.order.store, amount: 10)
+        end
+
+        result = described_class.call(payment: payment, amount: BigDecimal('25.75'))
+
+        expect(result).to be_failure
+        expect(result.error.value).to eq(:refund_amount_exceeds_balance)
+        expect(payment.refunds.reload).to be_empty
+      end
+    end
+
     it 'refuses a non-positive amount' do
       expect(described_class.call(payment: payment, amount: 0)).to be_failure
     end
@@ -203,9 +247,8 @@ RSpec.describe Spree::Refunds::Create do
     # together overdraw this child. `Spree::Refund` cannot catch it: it
     # validates `credit_allowed`, which is the whole payment's balance.
     it 'refuses when another refund claimed the share after the pre-flight check' do
-      allow(shared_payment).to receive(:with_lock).and_wrap_original do |original, &block|
+      Spree.hooks.register('refunds.create.before_refund') do
         create(:refund, payment: shared_payment, order: order, amount: 100)
-        original.call(&block)
       end
 
       result = described_class.call(payment: shared_payment, order: order, amount: 100)
