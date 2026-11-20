@@ -3,6 +3,7 @@ import {
   omitUnchangedListFields,
   prepareVariantsTaxForProductSave,
   variantHasTaxCategoryOverride,
+  variantTaxCategoryDiffersFromProduct,
   variantToFormValues,
   variantToWirePayload,
 } from './product-form-mapping'
@@ -115,6 +116,15 @@ describe('variant tax category overrides', () => {
       true,
     )
     expect(variantHasTaxCategoryOverride(baseVariant())).toBe(false)
+  })
+
+  it('only counts an override that differs from the product category', () => {
+    const variant = { ...baseVariant(), tax_category_id: 'taxcat_1' }
+
+    expect(variantTaxCategoryDiffersFromProduct(variant, 'taxcat_2')).toBe(true)
+    expect(variantTaxCategoryDiffersFromProduct(variant, null)).toBe(true)
+    expect(variantTaxCategoryDiffersFromProduct(variant, 'taxcat_1')).toBe(false)
+    expect(variantTaxCategoryDiffersFromProduct(baseVariant(), 'taxcat_1')).toBe(false)
   })
 
   it('clears inheriting variants and keeps overrides on save prep', () => {
