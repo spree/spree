@@ -376,8 +376,7 @@ describe Spree::OrderMailer, type: :mailer do
   end
 
   # https://github.com/spree/spree/issues/15257 — a store written in Dutch sent
-  # its emails with blank product names and option values ("<name>" and
-  # ": , :"), because mail jobs read the base columns as the application's
+  # its emails with a blank product name and its options as ": , :", because mail jobs read the base columns as the application's
   # default locale rather than the language the store's content is written in.
   context "when the store's content is written in a locale other than the application's" do
     # A store of its own: the shared default store memoizes its supported
@@ -399,15 +398,8 @@ describe Spree::OrderMailer, type: :mailer do
 
       order = create(:completed_order_with_totals, email: 'klant@example.com', store: dutch_store, locale: 'nl')
       order.line_items.destroy_all
-      create(:line_item, variant: variant, order: order, quantity: 1, price: 12.50)
+      create(:line_item, variant: variant, order: order, quantity: 1, price: BigDecimal('12.50'))
       order.reload
-    end
-
-    before { I18n.enforce_available_locales = false }
-
-    after do
-      I18n.enforce_available_locales = true
-      I18n.locale = :en
     end
 
     it 'shows the product name and options with the default line item template' do
@@ -420,7 +412,7 @@ describe Spree::OrderMailer, type: :mailer do
     it "shows the product name and options with a store's localised line item template" do
       dutch_order # the template's locale must be one the store supports
       item_template = <<~LIQUID
-        <mj-text><a href="{{ item.url }}" class="item_name">{{ item.name }}</a>
+        <mj-text>Artikel: <a href="{{ item.url }}" class="item_name">{{ item.name }}</a>
         {%- if item.options_text != blank -%}<p class="item_meta">{{ item.options_text }}</p>{%- endif -%}</mj-text>
       LIQUID
       create(:email_template, store: dutch_store, key: 'spree/shared/line_item', locale: 'nl',
@@ -428,6 +420,7 @@ describe Spree::OrderMailer, type: :mailer do
 
       body = email_body(described_class.confirm_email(dutch_order))
 
+      expect(body).to include('Artikel:') # the store's template, not the default partial
       expect(body).to include('Template binder')
       expect(body).to include('Kleur: Donker blauw, Formaat: 4-Pocket')
       expect(body).not_to include(': , :')
