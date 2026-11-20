@@ -34,7 +34,10 @@ module Spree
       # process, and an unsupported card brand invalidates the payment.
       def ensure_processable
         halt!(payment) if payment.processing?
-        return unless payment.payment_method&.source_required?
+        # A deleted method still settles the money it already holds, but takes
+        # no new charge — a cart still pointing at one must choose another.
+        failure(payment, I18n.t('spree.payment_method_not_supported')) if payment.payment_method.nil? || payment.payment_method.deleted?
+        return unless payment.payment_method.source_required?
 
         failure(payment, I18n.t('spree.payment_processing_failed')) if payment.source.blank?
 

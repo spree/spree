@@ -68,6 +68,26 @@ RSpec.describe Spree::Payments::Process do
       expect(result.error.value).to eq(I18n.t('spree.payment_processing_failed'))
     end
 
+    it 'takes no new charge through a deleted payment method' do
+      payment
+      gateway.destroy!
+
+      result = described_class.call(payment: payment.reload)
+
+      expect(result).to be_failure
+      expect(result.error.value).to eq(I18n.t('spree.payment_method_not_supported'))
+      expect(payment.reload.status).to eq('checkout')
+    end
+
+    it 'fails cleanly when the payment has no payment method' do
+      payment.update_column(:payment_method_id, nil)
+
+      result = described_class.call(payment: payment.reload)
+
+      expect(result).to be_failure
+      expect(payment.reload.status).to eq('checkout')
+    end
+
     it 'invalidates the payment when the card brand is not supported' do
       allow(gateway).to receive(:supports?).and_return(false)
       allow(payment).to receive(:token_based?).and_return(false)

@@ -50,8 +50,11 @@ module Spree
 
       private
 
+      # A payment whose method is gone cannot be credited at any gateway —
+      # refuse before the refund row exists rather than crash after it.
       def ensure_refundable
         failure(payment, :payment_not_refundable) unless payment.completed?
+        failure(payment, :payment_method_missing) if payment.payment_method.nil?
       end
 
       def ensure_amount_within_balance

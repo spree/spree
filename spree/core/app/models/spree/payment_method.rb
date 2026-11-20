@@ -67,8 +67,10 @@ module Spree
     validates :storefront_visible, inclusion: { in: [true, false] }
     normalizes :name, with: ->(value) { value&.to_s&.squish&.presence }
 
-
-    has_many :payments, class_name: 'Spree::Payment', inverse_of: :payment_method, dependent: :nullify
+    # Left alone when the method is deleted: it is only soft deleted, and a
+    # payment reads it back with_deleted to capture, void or refund. Nullifying
+    # would strand the money already taken with it.
+    has_many :payments, class_name: 'Spree::Payment', inverse_of: :payment_method, dependent: nil
     has_many :credit_cards, class_name: 'Spree::CreditCard', dependent: :destroy # CCs are soft deleted
 
     has_many :payment_sessions, class_name: 'Spree::PaymentSession', dependent: :destroy

@@ -58,6 +58,26 @@ RSpec.describe Spree::Refunds::Create do
       expect(pending_payment.refunds).to be_empty
     end
 
+    it 'refuses a payment whose payment method is gone, writing nothing' do
+      payment.update_column(:payment_method_id, nil)
+      expect_any_instance_of(Spree::Refund).not_to receive(:perform!)
+
+      result = described_class.call(payment: payment.reload, amount: 5)
+
+      expect(result).to be_failure
+      expect(result.error.value).to eq(:payment_method_missing)
+      expect(payment.refunds).to be_empty
+    end
+
+    it 'refunds a payment whose payment method was deleted' do
+      payment.payment_method.destroy!
+
+      result = described_class.call(payment: payment.reload, amount: 5)
+
+      expect(result).to be_success
+      expect(result.value.amount).to eq(5)
+    end
+
     it 'refuses an amount above the creditable balance' do
       result = described_class.call(payment: payment, amount: payment.amount + 10)
 
