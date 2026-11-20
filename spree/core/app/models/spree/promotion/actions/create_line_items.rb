@@ -123,7 +123,7 @@ module Spree
         # @param line_item [Spree::LineItem]
         # @return [Integer]
         def gifted_quantity_of(line_item)
-          gifted = promotion_action_line_items.detect { |item| item.variant_id == line_item.variant_id }
+          gifted = giftable_items.detect { |item| item.variant_id == line_item.variant_id }
           return 0 if gifted.nil?
 
           [[line_item.quantity, gifted.quantity.to_i].min, 0].max
@@ -151,8 +151,14 @@ module Spree
           end
         end
 
+        # A product no promotion may discount, such as a gift card, is never
+        # given away either.
+        def giftable_items
+          promotion_action_line_items.select { |item| item.variant.product.discountable? }
+        end
+
         def add_missing_line_items(order)
-          added_results = promotion_action_line_items.map do |item|
+          added_results = giftable_items.map do |item|
             missing = item.quantity.to_i - order.quantity_of(item.variant)
             next false unless missing.positive? && item_available?(item, missing)
 
