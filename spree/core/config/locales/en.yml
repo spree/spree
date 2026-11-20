@@ -837,7 +837,6 @@ en:
     draft: Draft
     eligibility_errors:
       messages:
-        has_excluded_product: Your cart contains a product that prevents this coupon code from being applied.
         item_total_less_than: This coupon code can't be applied to orders less than %{amount}.
         item_total_less_than_or_equal: This coupon code can't be applied to orders less than or equal to %{amount}.
         item_total_more_than: This coupon code can't be applied to orders higher than %{amount}.
@@ -852,6 +851,7 @@ en:
         no_user_or_email_specified: You need to login or provide your email before applying this coupon code.
         no_user_specified: You need to login before applying this coupon code.
         not_first_order: This coupon code can only be applied to your first order.
+        only_excluded_products: This coupon code doesn't apply to the products in your cart.
         wrong_country: This coupon code is not eligible in your country
         wrong_currency: This coupon code is not eligible for orders in this currency.
     email: Email

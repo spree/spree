@@ -241,6 +241,16 @@ module Spree
       specific_rules = rules.select { |rule| rule.applicable?(promotable) }
       return [] if specific_rules.none?
 
+      # Exclusion rules only narrow a promotion: each must hold whatever the
+      # match policy, and none counts towards it or picks the lines to discount.
+      exclusion_rules, specific_rules = specific_rules.partition(&:exclusion?)
+      failed_exclusion_rule = exclusion_rules.find { |rule| !rule.eligible?(promotable, options) }
+      if failed_exclusion_rule
+        @eligibility_errors = failed_exclusion_rule.eligibility_errors
+        return nil
+      end
+      return [] if specific_rules.none?
+
       rule_eligibility = Hash[specific_rules.map do |rule|
         [rule, rule.eligible?(promotable, options)]
       end]
@@ -302,7 +312,20 @@ module Spree
       checkouts_credited(credits)
     end
 
+    # Whether this promotion's discounts stay off +line_item+: its product is
+    # never discounted, or one of the promotion's rules excludes it.
+    def excludes_line_item?(line_item)
+      !line_item.product.discountable? || rules.any? { |rule| rule.excludes?(line_item) }
+    end
+
+    # The order lines this promotion may discount.
+    def discountable_line_items(order)
+      order.line_items.reject { |line_item| excludes_line_item?(line_item) }
+    end
+
     def line_item_actionable?(order, line_item, options = {})
+      return false if excludes_line_item?(line_item)
+
       if eligible?(order, options)
         rules = eligible_rules(order, options)
         if rules.blank?
@@ -441,10 +464,10 @@ module Spree
     def blacklisted?(promotable)
       case promotable
       when Spree::LineItem
-        !promotable.product.promotionable?
-      when Spree::Order
-        (promotable.total_quantity.positive? || promotable.line_items.any?) &&
-          promotable.line_items.joins(:product).where(spree_products: { promotionable: true }).none?
+        !promotable.product.discountable?
+      when Spree::Order, Spree::Cart
+        # Each exclusion rule may leave a line the others exclude.
+        promotable.line_items.any? && discountable_line_items(promotable).empty?
       end
     end
 

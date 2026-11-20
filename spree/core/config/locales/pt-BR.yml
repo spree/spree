@@ -353,7 +353,6 @@ pt-BR:
     discontinued_variants_present: Alguns itens deste pedido não estão mais disponíveis.
     eligibility_errors:
       messages:
-        has_excluded_product: O carrinho possui um produto que não deixa o cupom ser aplicado.
         item_total_less_than: Este código de cupom não pode ser aplicado em perdidos menores que %{amount}.
         item_total_less_than_or_equal: Este código de cupom não pode ser aplicado em pedidos menores ou igual a %{amount}.
         item_total_more_than: Este código de cupom não pode ser aplicado em pedidos maiores que %{amount}.
@@ -368,6 +367,7 @@ pt-BR:
         no_user_or_email_specified: É necessário fazer login ou fornecer seu email antes de aplicar este código de cupom.
         no_user_specified: É necessário fazer login antes de aplicar este código de cupom.
         not_first_order: Este cupom só pode ser aplicado na primeira compra.
+        only_excluded_products: Este código de cupom não se aplica aos produtos do seu carrinho.
         wrong_country: Este código de cupom não é válido no seu país
     error: Erro
     error_user_destroy_with_orders: Um usuário que já realizou pedidos não pode ser apagado

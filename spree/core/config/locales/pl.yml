@@ -523,7 +523,6 @@ pl:
     draft: Wersja robocza
     eligibility_errors:
       messages:
-        has_excluded_product: Twój koszyk zawiera produkt, który zapobiega zastosowaniu tego kodu kuponu.
         item_total_less_than: Tego kodu kuponu nie można zastosować do zamówień mniejszych niż %{amount}.
         item_total_less_than_or_equal: tego kodu kuponu nie można zastosować do zamówień mniejszych lub równych %{amount}.
         item_total_more_than: Tego kodu kuponu nie można zastosować do zamówień wyższych niż %{amount}.
@@ -538,6 +537,7 @@ pl:
         no_user_or_email_specified: Musisz się zalogować lub podać swój adres e-mail przed zastosowaniem tego kodu kuponu.
         no_user_specified: Musisz się zalogować przed zastosowaniem tego kodu kuponu.
         not_first_order: Ten kod kuponu można zastosować tylko do pierwszego zamówienia.
+        only_excluded_products: Ten kod kuponu nie dotyczy produktów w Twoim koszyku.
         wrong_country: Ten kod kuponu nie obowiązuje w Twoim kraju
     email: E-mail
     error: błąd

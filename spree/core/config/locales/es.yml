@@ -520,7 +520,6 @@ es:
     draft: Borrador
     eligibility_errors:
       messages:
-        has_excluded_product: Su carrito contiene un producto que evita que se aplique el cupón.
         item_total_less_than: Este cupón no se puede aplicar a los pedidos de menos de %{amount}.
         item_total_less_than_or_equal: Este cupón no se puede aplicar a los pedidos inferiores o iguales a %{amount}.
         item_total_more_than: Este cupón no se puede aplicar a pedidos superiores a %{amount}.
@@ -535,6 +534,7 @@ es:
         no_user_or_email_specified: Tienes que iniciar sesión o proporcionar su correo electrónico antes de usar este cupón.
         no_user_specified: Usted tiene que iniciar sesión antes de usar un cupón.
         not_first_order: Este cupón sólo se puede aplicar a su primer pedido.
+        only_excluded_products: Este código de cupón no se aplica a los productos de tu carrito.
         wrong_country: Este código de cupón no es válido en tu país
     email: Email
     error: error

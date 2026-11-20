@@ -515,7 +515,6 @@ lt:
     draft: Juodraštis
     eligibility_errors:
       messages:
-        has_excluded_product: produktas neįtrauktas
         limit_once_per_user: leisti tik kartą kiekvienam vartotojui
         missing_product: nerasta prekė
         missing_taxon: nerasta prekių kategorija
@@ -526,6 +525,7 @@ lt:
         no_user_or_email_specified: nepasirinktas vartotojas ar el. paštas
         no_user_specified: nepasirinktas vartotojas
         not_first_order: ne pirmas užsakymas.
+        only_excluded_products: Šis kupono kodas netaikomas jūsų krepšelyje esančioms prekėms.
         wrong_country: Šis kupono kodas negalioja jūsų šalyje
     email: El. paštas
     error: klaida

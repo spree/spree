@@ -106,6 +106,28 @@ describe Spree::Adjusters::Promotion, type: :model do
       expect(amounts).to match_array([BigDecimal('-4'), BigDecimal('-3'), BigDecimal('-3')])
     end
 
+    # A promotion that could only land on an already discounted line must
+    # not beat one that discounts more.
+    it 'compares candidates by what their lines have left' do
+      discounted, *excluded = order.line_items.to_a
+      excluded.each { |line_item| line_item.update_column(:price, 45) }
+      discounted.update_column(:price, 10)
+      create(:discount, order: order, line_item: discounted, amount: -8)
+
+      narrow = create(:promotion, kind: :automatic, code: nil, store: store)
+      Spree::Promotion::Actions::CreateAdjustment.create!(promotion: narrow, calculator: Spree::Calculator::FlatRate.new(preferred_amount: 10))
+      create(:promotion_rule_product, promotion: narrow, preferred_match_policy: 'none', product_ids_to_add: excluded.map(&:product_id))
+      wide = create(:promotion, kind: :automatic, code: nil, store: store)
+      Spree::Promotion::Actions::CreateAdjustment.create!(promotion: wide, calculator: Spree::Calculator::FlatRate.new(preferred_amount: 5))
+      narrow.activate(order: order)
+      wide.activate(order: order)
+      described_class.adjust(order)
+
+      rows = order.discounts.reload.select(&:promotion?)
+      expect(rows.map(&:promotion_id).uniq).to eq([wide.id])
+      expect(rows.sum(&:amount)).to eq(-5)
+    end
+
     it 'never distributes more than the remaining line bases' do
       promo = create(:promotion_with_order_adjustment, weighted_order_adjustment_amount: 9_999, code: nil, kind: :automatic, store: store)
       promo.activate(order: order)

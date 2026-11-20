@@ -6,8 +6,8 @@ import { EditorShell } from './editor-shell'
 import { MatchPolicyPicker } from './match-policy-picker'
 import type { PromotionRuleEditorContext } from './types'
 
-type MatchPolicy = 'any' | 'all'
-const MATCH_POLICY_VALUES: readonly MatchPolicy[] = ['any', 'all']
+type MatchPolicy = 'any' | 'all' | 'none'
+const MATCH_POLICY_VALUES: readonly MatchPolicy[] = ['any', 'all', 'none']
 
 /**
  * Surfaced as "Category(ies)" per the 6.0 Taxon→Category rename.

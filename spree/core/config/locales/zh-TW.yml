@@ -522,7 +522,6 @@ zh-TW:
     draft: 草稿
     eligibility_errors:
       messages:
-        has_excluded_product: 你的購物車中有商品導致此優惠無法使用
         item_total_less_than: 此優惠代碼無法使用於訂單金額少於 %{amount} 的情況。
         item_total_less_than_or_equal: 此優惠代碼無法使用於訂單金額少於或等於 %{amount} 的情況。
         item_total_more_than: 此優惠代碼無法使用於訂單金額高於 %{amount} 的情況。
@@ -537,6 +536,7 @@ zh-TW:
         no_user_or_email_specified: 你必須登入或是提供 Email ，才能使用此優惠代碼
         no_user_specified: 你必須登入才能使用此優惠代碼
         not_first_order: 此優惠代碼只適用於首購
+        only_excluded_products: 此優惠券代碼不適用於您購物車中的商品。
         wrong_country: 此優惠代碼在您的國家不適用
     email: Email
     error: 錯誤

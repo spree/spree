@@ -522,7 +522,6 @@ it:
     draft: Bozza
     eligibility_errors:
       messages:
-        has_excluded_product: Il carrello contiene un prodotto che non permette l'applicazione di questo codice coupon.
         item_total_less_than: Questo codice coupon non può essere applicato a ordini di importo inferiore a %{amount}.
         item_total_less_than_or_equal: Questo codice coupon non può essere applicato a ordini di importo inferiore o uguale a %{amount}.
         item_total_more_than: Questo codice coupon non può essere applicato a ordini di importo maggiore di %{amount}.
@@ -537,6 +536,7 @@ it:
         no_user_or_email_specified: Devi fare il login o fornire una email prima di applicare questo codice coupon.
         no_user_specified: Devi fare il login prima di applicare questo codice coupon.
         not_first_order: Questo codice coupon può essere applicato solo al tuo primo ordine.
+        only_excluded_products: Questo codice coupon non si applica ai prodotti nel tuo carrello.
         wrong_country: Questo codice coupon non è valido nel tuo Paese
     email: Email
     error: errore

@@ -16,6 +16,60 @@ describe Spree::Promotion::Actions::CreateAdjustment, type: :model do
       expect(rows.sum(&:amount)).to eq(-4)
     end
 
+    context 'when a rule excludes one of the products' do
+      let(:order) { create(:order_with_line_items, line_items_count: 2, line_items_price: 30) }
+      let(:excluded_line_item) { order.line_items.first }
+      let(:action) do
+        described_class.create!(promotion: promotion, calculator: Spree::Calculator::FlatPercentItemTotal.new(preferred_flat_percent: 10))
+      end
+
+      before do
+        excluded_line_item.update_column(:price, 70)
+        create(:promotion_rule_product, promotion: promotion, preferred_match_policy: 'none',
+                                        product_ids_to_add: [excluded_line_item.product_id])
+        promotion.reload
+      end
+
+      it 'takes the percentage of the other lines and lands it on them only' do
+        action.perform(order: order, promotion: promotion)
+
+        rows = order.discounts.reload
+        expect(rows.map(&:line_item_id)).to eq([order.line_items.last.id])
+        expect(rows.sum(&:amount)).to eq(-3)
+      end
+
+      # An exclusion never qualifies an order on its own, so it cannot widen
+      # a promotion whose rules only need one match.
+      it 'does not count the exclusion towards an any-rule match' do
+        promotion.update!(match_policy: 'any')
+        create(:promotion_rule_taxon, promotion: promotion, preferred_match_policy: 'any',
+                                      category_ids_to_add: [create(:category).id])
+        promotion.reload
+
+        expect(action.perform(order: order, promotion: promotion)).to be(false)
+        expect(order.discounts.reload).to be_empty
+      end
+
+      it 'refuses an order every line of which one exclusion rule or another leaves out' do
+        category = create(:category)
+        order.line_items.last.product.categories << category
+        create(:promotion_rule_taxon, promotion: promotion, preferred_match_policy: 'none', category_ids_to_add: [category.id])
+        promotion.reload
+
+        expect(promotion.eligible?(order)).to be(false)
+      end
+    end
+
+    it 'leaves a line whose product is not discountable out of the discount' do
+      order.line_items.first.product.update_column(:promotionable, false)
+
+      action.perform(order: order, promotion: promotion)
+
+      rows = order.discounts.reload
+      expect(rows.map(&:line_item_id)).to eq([order.line_items.last.id])
+      expect(rows.sum(&:amount)).to eq(-4)
+    end
+
     it 'reports no action at zero amount' do
       zero = described_class.create!(promotion: promotion, calculator: Spree::Calculator::FlatRate.new(preferred_amount: 0))
       expect(zero.perform(order: order, promotion: promotion)).to be(false)
@@ -40,9 +94,48 @@ describe Spree::Promotion::Actions::CreateAdjustment, type: :model do
   end
 
   describe '#compute_amount' do
-    it 'caps at the order total' do
+    # The discount lands on line items only, so delivery never raises the cap.
+    it 'caps at the item total' do
       huge = described_class.create!(promotion: promotion, calculator: Spree::Calculator::FlatRate.new(preferred_amount: 99_999))
-      expect(huge.compute_amount(order)).to eq(-action.order_total(order))
+      expect(huge.compute_amount(order)).to eq(-order.item_total)
+    end
+
+    context 'when a line is excluded' do
+      let(:excluded_line_item) { order.line_items.first }
+
+      before do
+        allow(promotion).to receive(:excludes_line_item?) { |line_item| line_item.id == excluded_line_item.id }
+      end
+
+      it 'caps at the lines it can land on' do
+        huge = described_class.create!(promotion: promotion, calculator: Spree::Calculator::FlatRate.new(preferred_amount: 99_999))
+
+        expect(huge.compute_amount(order)).to eq(-order.line_items.last.amount)
+      end
+
+      # The order amount calculators see already leaves gift units out, so a
+      # gifted excluded line must not be taken off a second time.
+      it 'takes a gifted excluded line out once' do
+        half_off = described_class.create!(promotion: promotion,
+                                           calculator: Spree::Calculator::FlatPercentItemTotal.new(preferred_flat_percent: 50))
+        allow(order).to receive(:gift_amount).and_return(excluded_line_item.amount)
+
+        expect(half_off.compute_amount(order)).to eq(-order.line_items.last.amount / 2)
+      end
+    end
+  end
+
+  describe Spree::Promotion::Actions::CreateAdjustment::DiscountableOrder do
+    let(:discountable_order) { described_class.new(order, BigDecimal(5), excluded_quantity: 1) }
+
+    it 'reports the order amount and quantity less the excluded lines' do
+      expect(discountable_order.amount).to eq(order.amount - 5)
+      expect(discountable_order.quantity).to eq(order.quantity - 1)
+    end
+
+    it 'answers as the order it wraps, so calculators dispatch on it' do
+      expect(discountable_order.class).to eq(Spree::Order)
+      expect(discountable_order).to be_a(Spree::Order)
     end
   end
 end

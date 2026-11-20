@@ -34,7 +34,7 @@ module Spree
         #
         # Preferences
         #
-        MATCH_POLICIES = %w(any all)
+        MATCH_POLICIES = %w[any all none].freeze
         preference :match_policy, :string, default: MATCH_POLICIES.first, choices: MATCH_POLICIES
 
         #
@@ -54,6 +54,13 @@ module Spree
         def eligible?(order, _options = {})
           return true if eligible_category_ids.empty?
 
+          if exclusion?
+            if order.line_items.any? && order.line_items.all? { |line_item| in_categories?(line_item) }
+              eligibility_errors.add(:base, eligibility_error_message(:only_excluded_products))
+            end
+            return eligibility_errors.empty?
+          end
+
           order_category_ids_with_ancestors = category_ids_in_order_including_ancestors(order)
 
           if preferred_match_policy == 'all'
@@ -70,7 +77,11 @@ module Spree
         end
 
         def actionable?(line_item)
-          Spree::ProductCategory.where(category_id: eligible_category_ids_including_children, product_id: line_item.product_id).exists?
+          exclusion? ? !in_categories?(line_item) : in_categories?(line_item)
+        end
+
+        def excludes?(line_item)
+          exclusion? && in_categories?(line_item)
         end
 
         #
@@ -151,6 +162,15 @@ module Spree
           promotion.store.categories
         end
 
+        def in_categories?(line_item)
+          @in_categories ||= {}
+          @in_categories.fetch(line_item.product_id) do
+            @in_categories[line_item.product_id] = Spree::ProductCategory.exists?(
+              category_id: eligible_category_ids_including_children, product_id: line_item.product_id
+            )
+          end
+        end
+
         def categories_belong_to_store
           return if promotion.nil? || category_ids.empty?
           return if (category_ids - promotion_categories_scope.where(id: category_ids).ids).empty?
@@ -192,6 +212,7 @@ module Spree
           # Clear memoized values
           @eligible_category_ids = nil
           @eligible_category_ids_including_children = nil
+          @in_categories = nil
         end
       end
     end

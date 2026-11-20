@@ -36,6 +36,10 @@ export type ProductUpdateParams = {
    * default.
    */
   delivery_profile_id?: string | null
+  /**
+   * @deprecated Add a product or category rule whose `match_policy` is `none` to every promotion
+   * that should skip the product. Removed in 6.5.
+   */
   promotionable?: boolean
   tags?: string[]
   category_ids?: string[]

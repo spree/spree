@@ -543,7 +543,6 @@ cs:
     draft: Koncept
     eligibility_errors:
       messages:
-        has_excluded_product: Váš košík obsahuje produkt, který znemožňuje použití kupónu.
         item_total_less_than: Kupón nemůže být použit na objednávky s hodnotou nižší než %{amount}.
         item_total_less_than_or_equal: Kupón nemůže být použit na objednávky s hodnotou nižší nebo stejnou jako %{amount}.
         item_total_more_than: Kupón nemůže být použit na objednávky s hodnotou vyšší než %{amount}.
@@ -558,6 +557,7 @@ cs:
         no_user_or_email_specified: Musíte poskytnout svůj email pro použití tohoto kupónu.
         no_user_specified: Musíte se zaregistrovat nebo přihlásit pro použití tohoto kupónu.
         not_first_order: Tento kupón může být použit pouze pro první objednávku.
+        only_excluded_products: Tento kód kupónu se nevztahuje na produkty ve vašem košíku.
         wrong_country: Tento slevový kód není ve vaší zemi platný
     email: Email
     error: Chyba

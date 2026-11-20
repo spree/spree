@@ -515,7 +515,6 @@ nb:
     draft: Utkast
     eligibility_errors:
       messages:
-        has_excluded_product: Handlekurven din inneholder et produkt som forhindrer at denne kupongkoden blir brukt.
         item_total_more_than_or_equal: This coupon code can't be applied to orders higher than or equal to %{amount}.
         limit_once_per_user: Denne kupongkoden kan bare brukes én gang per bruker.
         missing_product: Denne kupongkoden kan ikke brukes fordi du ikke har alle nødvendige produkter i handlekurven.
@@ -527,6 +526,7 @@ nb:
         no_user_or_email_specified: Du må logge på eller oppgi e-posten din før du bruker denne kupongkoden.
         no_user_specified: Du må logge på før du bruker denne kupongkoden.
         not_first_order: Denne kupongkoden kan bare brukes på din første bestilling.
+        only_excluded_products: Denne kupongkoden gjelder ikke for produktene i handlekurven din.
         wrong_country: Denne rabattkoden gjelder ikke i landet ditt
     email: Epost
     error: feil

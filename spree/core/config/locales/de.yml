@@ -523,7 +523,6 @@ de:
     draft: Entwurf
     eligibility_errors:
       messages:
-        has_excluded_product: Der Warenkorb enthält Produkt/e, welche die Zuweisung des Gutschein-Codes verhindern.
         item_total_less_than: Für Bestellungen unter einem Gesamtwert von %{amount} kann dieser Gutschein-Code nicht verwendet werden.
         item_total_less_than_or_equal: Für Bestellungen von/unter einem Gesamtwert von %{amount} kann dieser Gutschein-Code nicht verwendet werden.
         item_total_more_than: Der Gutschein-Code ist nur für Bestellungen mit einer Gesamtsumme bis %{amount} gültig.
@@ -538,6 +537,7 @@ de:
         no_user_or_email_specified: Für das Hinzufügen des Gutschein-Codes müssen Sie angemeldet/eingeloggt sein.
         no_user_specified: Für das Hinzufügen des Gutschein-Codes müssen sie eingeloggt sein.
         not_first_order: Dieser Gutschein-Code ist nur für die Erstbestellung eines Benutzers gültig.
+        only_excluded_products: Dieser Gutscheincode gilt nicht für die Produkte in Ihrem Warenkorb.
         wrong_country: Dieser Gutscheincode ist in Ihrem Land nicht gültig
     email: E-Mail
     error: Fehler
