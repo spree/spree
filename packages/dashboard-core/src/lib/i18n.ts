@@ -4,6 +4,7 @@ import { initReactI18next } from 'react-i18next'
 // Relative path, not `@/...`: dashboard-core ships source; the consuming
 // project's `@/*` alias is theirs alone (see Phase 1's rationale).
 import en from '../locales/en.json'
+import { guardAgainstBrowserTranslation } from './browser-translation-guard'
 
 // localStorage key for the admin's chosen UI language. Shared by the login
 // screen (pre-auth), the top-bar switcher, and the profile form so a choice
@@ -267,6 +268,12 @@ function applyDocumentLanguage(code: string): void {
 }
 
 applyDocumentLanguage(i18n.language || readStoredLocale())
+
+// An admin reading the dashboard through the browser's translator (a language
+// it does not ship, or one they have not picked yet) must not crash it. Both
+// panels boot through this module before React renders, so this is the one
+// place the guard is guaranteed to be in before the first commit.
+guardAgainstBrowserTranslation()
 
 /** Document text direction for a locale (`ltr` or `rtl`). */
 export function uiDirection(locale?: string): 'ltr' | 'rtl' {
