@@ -241,6 +241,49 @@ RSpec.describe Spree::Payments::Capture do
     end
   end
 
+  describe 'a payment changed by another run after this capture read it' do
+    let(:order) { create(:order, store: store, total: BigDecimal('49.99')) }
+    let(:payment) do
+      create(:payment, order: order, payment_method: gateway, source: card, status: 'pending', amount: 40, response_code: '123')
+    end
+
+    it 'captures the amount the row now holds when a processing run resized it' do
+      # The validate hook runs after the early checks and before the claim.
+      Spree.hooks.register('payments.capture.validate') { |_flow| Spree::Payment.find(payment.id).update_columns(amount: BigDecimal('9.99')) }
+      expect(gateway).to receive(:capture).with(money('9.99'), '123', anything).and_return(success_response)
+
+      result = described_class.call(payment: payment)
+
+      expect(result).to be_success
+      expect(payment.reload.amount).to eq(BigDecimal('9.99'))
+      expect(payment.capture_events.sum(:amount)).to eq(BigDecimal('9.99'))
+    end
+
+    it 'refuses an explicit amount larger than what the row now holds' do
+      Spree.hooks.register('payments.capture.validate') { |_flow| Spree::Payment.find(payment.id).update_columns(amount: BigDecimal('9.99')) }
+      expect(gateway).not_to receive(:capture)
+
+      result = described_class.call(payment: payment, amount: BigDecimal('40'))
+
+      expect(result).to be_failure
+      expect(result.error.value).to eq(I18n.t('spree.capture_exceeds_payment_amount'))
+      expect(payment.reload).to be_pending
+    end
+
+    it 'reports success for a payment another request already captured, even past what is owed' do
+      # The split-off rest of a partial capture, captured too: with this
+      # payment completed, only 29.99 is owed beside it.
+      create(:payment, order: order, payment_method: gateway, source: create(:credit_card), status: 'completed', amount: BigDecimal('20'))
+      Spree::Payment.find(payment.id).update_columns(status: 'completed')
+      expect(gateway).not_to receive(:capture)
+
+      result = described_class.call(payment: payment, amount: BigDecimal('40')) # stale: still reads pending
+
+      expect(result).to be_success
+      expect(payment.reload).to be_completed
+    end
+  end
+
   describe 'an authorization larger than the order now owes' do
     # Authorized for 100, then line items changed and the order total dropped
     # to 80: the dashboard's capture sends no amount.

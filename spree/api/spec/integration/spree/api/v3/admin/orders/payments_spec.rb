@@ -123,8 +123,9 @@ RSpec.describe 'Admin Order Payments API', type: :request, swagger_doc: 'api-ref
       description 'Captures an authorized (`pending`) payment, in full or for part of its amount. An uncaptured (`checkout`) ' \
                   'payment can be captured only when its payment method needs no authorization first. A capture may take at ' \
                   'most what the order still owes after its other captured payments. A larger `amount` is refused. With no ' \
-                  '`amount`, the capture takes what is owed and releases the rest of the authorization. Any capture is ' \
-                  'refused once nothing is owed. A captured payment counts towards the order\'s paid total.'
+                  '`amount`, the capture takes the authorized amount, or what is owed when that is less, and releases the ' \
+                  'rest of the authorization. Any capture is refused once nothing is owed. A captured payment counts ' \
+                  'towards the order\'s paid total.'
       admin_scope :write, :payments
 
       admin_sdk_example 'order-payments/capture'

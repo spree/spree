@@ -87,6 +87,10 @@ module Spree
       # already, or the order total may have dropped since this payment was
       # authorized; this one may take only what is left owing.
       def ensure_within_amount_owed
+        # Another request may have captured this payment since it was loaded:
+        # that is a success, whatever is owed now.
+        halt!(payment) if refresh_from_row == 'completed'
+
         limit_to_amount_owed(payment.amount_owed_by_order(including_in_flight: false))
       end
 
@@ -95,9 +99,16 @@ module Spree
       # recorded, and here it counts as taken: of two captures racing on one
       # order, the second reads after the first has claimed, so both cannot
       # pass a check made before either moved money.
+      #
+      # The row is read again here, with its amount: a processing run may have
+      # resized this payment since it was loaded, and the claim reserves the
+      # row's amount, so the capture must not take more than that.
       def claim
         outcome = with_order_lock do
-          refusal = amount_owed_refusal(payment.amount_owed_by_order(including_in_flight: false, including_processing: true))
+          next false if refresh_from_row == 'completed'
+
+          refusal = amount_within_payment_refusal ||
+                    amount_owed_refusal(payment.amount_owed_by_order(including_in_flight: false, including_processing: true))
           next refusal if refusal
 
           payment.started_processing!
@@ -106,6 +117,29 @@ module Spree
         halt!(payment) unless outcome
       rescue Spree::Core::GatewayError => error
         failure(payment, error.message)
+      end
+
+      # Reads the status and amount another run may have written since this
+      # instance was loaded. Deliberately not a reload, which would discard the
+      # in-memory source (card numbers never persist).
+      def refresh_from_row
+        return payment.status unless payment.persisted?
+
+        status, amount = Spree::Payment.unscoped.where(id: payment.id).pick(:status, :amount)
+        payment.amount = amount
+        payment.clear_attribute_changes(%i[amount])
+        status
+      end
+
+      # The payment's own amount may have shrunk since the early check. An
+      # amount the caller asked for is then refused; with none asked for, the
+      # capture shrinks with it.
+      def amount_within_payment_refusal
+        return if @amount <= payment.amount
+        return I18n.t('spree.capture_exceeds_payment_amount') if @amount_requested
+
+        @amount = payment.amount
+        nil
       end
 
       def limit_to_amount_owed(owed)
