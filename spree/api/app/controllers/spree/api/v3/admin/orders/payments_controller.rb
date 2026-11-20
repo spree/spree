@@ -9,15 +9,16 @@ module Spree
             request_params :payment do |body|
               body.attribute :payment_method_id, :id, required: true, on: :create
               body.attribute :amount, :decimal,
-                description: 'Defaults to what the order still owes after the payments already recorded on it ' \
-                             '(failed, invalid and void payments are not counted).'
+                             description: 'Defaults to what the order still owes after the payments already recorded on it ' \
+                                          '(failed, invalid and void payments are not counted).'
               body.attribute :source_id, :id,
                 description: "A saved payment source of the order's customer (a credit card), for an off-session charge. Used only by payment methods that require a source."
             end
 
             request_params 'PaymentCaptureParams', action: :capture do |body|
               body.attribute :amount, :decimal,
-                description: 'Captures part of the authorized amount. Defaults to all of it.'
+                             description: 'Captures part of the authorized amount. Defaults to all of it, ' \
+                                          'or to what the order still owes when that is less.'
             end
 
             before_action :set_resource, only: [:show, :capture, :void]

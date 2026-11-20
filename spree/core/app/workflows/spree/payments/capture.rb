@@ -20,6 +20,7 @@ module Spree
       #   the pre-6.0 contract (deprecated, removed in 6.5).
       def perform(payment:, amount: nil)
         super
+        @amount_requested = !amount.nil?
         @amount = capture_amount(amount)
 
         step :ensure_capturable
@@ -83,12 +84,10 @@ module Spree
       end
 
       # Other payments on the order may have captured some of its total
-      # already; this one may take only what they left owing.
+      # already, or the order total may have dropped since this payment was
+      # authorized; this one may take only what is left owing.
       def ensure_within_amount_owed
-        owed = payment.amount_owed_by_order(including_in_flight: false)
-        return if owed.nil? || @amount <= owed
-
-        failure(payment, I18n.t('spree.capture_exceeds_amount_owed', amount: Spree::Money.new(owed, currency: payment.currency).to_s))
+        limit_to_amount_owed(payment.amount_owed_by_order(including_in_flight: false))
       end
 
       # The owed check again, under the order's row lock and together with
@@ -97,19 +96,38 @@ module Spree
       # order, the second reads after the first has claimed, so both cannot
       # pass a check made before either moved money.
       def claim
-        owed = nil
-        claimed = with_order_lock do
-          owed = payment.amount_owed_by_order(including_in_flight: false, including_processing: true)
-          next :over if owed && @amount > owed
+        outcome = with_order_lock do
+          refusal = amount_owed_refusal(payment.amount_owed_by_order(including_in_flight: false, including_processing: true))
+          next refusal if refusal
 
           payment.started_processing!
         end
-        if claimed == :over
-          failure(payment, I18n.t('spree.capture_exceeds_amount_owed', amount: Spree::Money.new(owed, currency: payment.currency).to_s))
-        end
-        halt!(payment) unless claimed
+        failure(payment, outcome) if outcome.is_a?(String)
+        halt!(payment) unless outcome
       rescue Spree::Core::GatewayError => error
         failure(payment, error.message)
+      end
+
+      def limit_to_amount_owed(owed)
+        refusal = amount_owed_refusal(owed)
+        failure(payment, refusal) if refusal
+      end
+
+      # An amount the caller asked for is refused when it exceeds what is
+      # owed. With no amount asked for — the dashboard's capture — the capture
+      # shrinks to what is owed, and record_capture splits off the rest of the
+      # authorization, which authorize_remainder then releases. Returns the
+      # refusal message, or nil.
+      def amount_owed_refusal(owed)
+        return if owed.nil? || @amount <= owed
+        return I18n.t('spree.order_payment_already_covered') if !@amount_requested && !owed.positive?
+
+        unless @amount_requested
+          @amount = owed
+          return
+        end
+
+        I18n.t('spree.capture_exceeds_amount_owed', amount: Spree::Money.new(owed, currency: payment.currency).to_s)
       end
 
       def with_order_lock(&)
