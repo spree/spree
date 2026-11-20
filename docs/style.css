@@ -55,12 +55,18 @@
 
 /* --- Surfaces ------------------------------------------------------------ */
 
-html:not(.dark) body {
-  background: var(--spree-sand-50);
+/* The hosted almond theme forces `html { background: <3% grey> !important }`
+   and `html body { background: transparent !important }`, which the local
+   `mint dev` does not ship. Paint both so the sand survives either renderer;
+   `:root` keeps the specificity above Mintlify's `html.dark`. */
+:root:not(.dark),
+:root:not(.dark) body {
+  background: var(--spree-sand-50) !important;
 }
 
-html.dark body {
-  background: var(--spree-dark-sand-800);
+:root.dark,
+:root.dark body {
+  background: var(--spree-dark-sand-800) !important;
 }
 
 /* Headings pick up the site's navy rather than pure black. */
