@@ -132,6 +132,17 @@ describe Spree::Promotion::Actions::CreateLineItems, type: :model do
       expect(gift_line_item).to be_nil
     end
 
+    it 'never gives away a product the promotion excludes' do
+      create(:promotion_rule_product, promotion: promotion, preferred_match_policy: 'none', product_ids_to_add: [gift.product_id])
+      promotion.reload
+      Spree.cart_add_item_workflow.call(cart: cart, variant: create(:variant, price: 20), quantity: 1)
+
+      promotion.activate(order: cart)
+      Spree.cart_recalculate_totals_workflow.call(cart: cart)
+
+      expect(gift_line_item).to be_nil
+    end
+
     it 'skips a gift whose variant has been deleted' do
       gift.destroy
       Spree.cart_add_item_workflow.call(cart: cart, variant: create(:variant, price: 20), quantity: 1)
