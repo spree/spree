@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { PaymentMethodType, PreferenceSchema } from '@spree/admin-sdk'
+import type { PaymentMethod, PaymentMethodType, PreferenceSchema } from '@spree/admin-sdk'
 import {
+  adminClient,
   defaultPreferences,
   mapSpreeErrorsToForm,
   RecordMetadataSection,
@@ -25,10 +26,12 @@ import {
   useCreatePaymentMethod,
   useDeletePaymentMethod,
   usePaymentMethod,
+  usePaymentMethodNames,
   usePaymentMethodTypes,
   useUpdatePaymentMethod,
 } from '../../../hooks/use-payment-methods'
 import {
+  defaultPaymentMethodName,
   filterPaymentMethodProviderTypes,
   PAYMENT_METHOD_BASE_DEFAULTS,
   PAYMENT_METHOD_CREATE_DEFAULTS,
@@ -59,12 +62,15 @@ export function CreatePaymentMethodSheet({
   onOpenChange,
   initialType,
   manualOnly = false,
+  providersOnly = false,
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
   initialType?: PaymentMethodType
   /** Offers only the methods the store handles itself, not outside providers. */
   manualOnly?: boolean
+  /** Offers only outside providers, for adding another account of one. */
+  providersOnly?: boolean
 }) {
   const { t } = useTranslation()
   const createMutation = useCreatePaymentMethod()
@@ -72,17 +78,18 @@ export function CreatePaymentMethodSheet({
   const providerTypes = useMemo(
     () =>
       filterPaymentMethodProviderTypes(typesResponse?.data ?? []).filter(
-        (entry) => !manualOnly || !entry.third_party,
+        (entry) =>
+          (!manualOnly || !entry.third_party) &&
+          (!providersOnly || (entry.third_party && !entry.superseded)),
       ),
-    [typesResponse, manualOnly],
+    [typesResponse, manualOnly, providersOnly],
   )
   // Seed `currency`-typed preferences with the store default so the merchant
   // sees and submits a real value — `CurrencySelect` only displays the
   // fallback now (it no longer commits via onChange).
   const { defaultCurrency } = useStore()
-
   const createDefaults: PaymentMethodFormValues = initialType
-    ? { ...PAYMENT_METHOD_CREATE_DEFAULTS, type: initialType.type, name: initialType.label }
+    ? { ...PAYMENT_METHOD_CREATE_DEFAULTS, type: initialType.type }
     : PAYMENT_METHOD_CREATE_DEFAULTS
   const initialPreferences = () =>
     initialType ? defaultPreferences(initialType.schema, { currency: defaultCurrency }) : {}
@@ -100,9 +107,19 @@ export function CreatePaymentMethodSheet({
     [providerTypes, providerType],
   )
 
+  // Prefill the Name field from the provider, numbered past the names the
+  // store already uses, once those have loaded — unless the admin typed one.
+  const providerLabel =
+    initialType?.label ?? providerTypes.find((t) => t.type === providerType)?.label
+  const { data: takenNames } = usePaymentMethodNames(providerLabel)
+  useEffect(() => {
+    if (!providerLabel || !takenNames || form.getFieldState('name').isDirty) return
+    form.setValue('name', defaultPaymentMethodName(providerLabel, takenNames))
+  }, [providerLabel, takenNames, form])
+
   function handleProviderTypeChange(next: string) {
-    const nextSchema = providerTypes.find((t) => t.type === next)?.schema
-    setPreferences(defaultPreferences(nextSchema, { currency: defaultCurrency }))
+    const entry = providerTypes.find((t) => t.type === next)
+    setPreferences(defaultPreferences(entry?.schema, { currency: defaultCurrency }))
   }
 
   async function onSubmit(values: PaymentMethodFormValues) {
@@ -181,6 +198,15 @@ export function CreatePaymentMethodSheet({
   )
 }
 
+function rulesFromRecord(paymentMethod: PaymentMethod): PaymentMethodFormValues['rules'] {
+  return (paymentMethod.rules ?? []).map((rule) => ({
+    id: rule.id,
+    type: rule.type,
+    active: rule.active,
+    preferences: rule.preferences ?? {},
+  }))
+}
+
 export function EditPaymentMethodSheet({
   id,
   open,
@@ -226,6 +252,7 @@ export function EditPaymentMethodSheet({
       storefront_visible: paymentMethod.storefront_visible ?? true,
       active: paymentMethod.active,
       capture_method: paymentMethod.capture_method ?? '',
+      rules: rulesFromRecord(paymentMethod),
     })
     const initialPreferences = (paymentMethod.preferences as Record<string, unknown>) ?? {}
     setPreferences(initialPreferences)
@@ -239,7 +266,20 @@ export function EditPaymentMethodSheet({
   )
 
   async function onSubmit(values: PaymentMethodFormValues) {
-    const params = paymentMethodValuesToUpdateParams(values)
+    // Compared with what was loaded rather than read from `dirtyFields`,
+    // which a field array only fills in when something subscribes to it.
+    const loadedRules = JSON.stringify(form.formState.defaultValues?.rules ?? [])
+    const rulesChanged = JSON.stringify(values.rules) !== loadedRules
+    // `rules` replaces the whole set, so a condition someone else saved since
+    // this sheet opened would be deleted without a word. Refuse instead.
+    if (rulesChanged) {
+      const current = await adminClient.paymentMethods.get(id)
+      if (JSON.stringify(rulesFromRecord(current)) !== loadedRules) {
+        form.setError('root', { message: t('admin.payment_methods.conditions.changed_elsewhere') })
+        return
+      }
+    }
+    const params = paymentMethodValuesToUpdateParams(values, { rulesChanged })
     // Read from the ref rather than the memo: a retry runs before the next
     // render recomputes it.
     const prefsDirty = JSON.stringify(preferences) !== originalPreferencesRef.current
@@ -249,8 +289,10 @@ export function EditPaymentMethodSheet({
       // custom field save sends only the custom fields.
       const savesRecord = form.formState.isDirty || prefsDirty
       if (savesRecord) {
-        await updateMutation.mutateAsync(params)
-        form.reset(values)
+        const saved = await updateMutation.mutateAsync(params)
+        // The saved rules carry the ids the server gave new ones, so the next
+        // save updates them rather than replacing them.
+        form.reset({ ...values, rules: rulesFromRecord(saved) })
         originalPreferencesRef.current = JSON.stringify(preferences)
       }
       if (!(await customFields.save({ announce: !savesRecord }))) return

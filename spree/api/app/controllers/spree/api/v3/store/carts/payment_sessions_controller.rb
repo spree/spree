@@ -34,13 +34,9 @@ module Spree
                 payment_method = current_store.payment_methods.active.storefront_visible.
                                  find_by_prefix_id!(permitted_params[:payment_method_id])
 
-                unless payment_method.available_for_order?(@cart)
-                  return render_error(
-                    code: 'payment_method_unavailable',
-                    message: I18n.t('spree.api.v3.payments.method_unavailable'),
-                    status: :unprocessable_content
-                  )
-                end
+                # Rules apply here too, so a method they exclude cannot be
+                # reached by naming its id.
+                return render_payment_method_unavailable unless payment_method.eligible_for_order?(@cart)
 
                 @payment_session = payment_method.create_payment_session(
                   order: @cart,
@@ -65,6 +61,9 @@ module Spree
             def update
               with_order_lock do
                 @payment_session.reload
+                # The cart may have changed since the session was created, and
+                # a new amount must still be one the rules allow.
+                return render_payment_method_unavailable unless @payment_session.payment_method.eligible_for_order?(@cart)
 
                 @payment_session.payment_method.update_payment_session(
                   payment_session: @payment_session,
@@ -128,6 +127,14 @@ module Spree
 
             def serialize_resource(resource)
               serializer_class.new(resource, params: serializer_params).to_h
+            end
+
+            def render_payment_method_unavailable
+              render_error(
+                code: 'payment_method_unavailable',
+                message: I18n.t('spree.api.v3.payments.method_unavailable'),
+                status: :unprocessable_content
+              )
             end
 
             protected

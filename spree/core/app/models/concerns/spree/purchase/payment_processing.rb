@@ -37,8 +37,8 @@ module Spree
       #
       # @return [Array<Spree::PaymentMethod>]
       def payment_methods
-        store.payment_methods.active.storefront_visible.select do |payment_method|
-          !payment_method.store_credit? && payment_method.available_for_order?(self)
+        store.payment_methods.active.storefront_visible.includes(:payment_method_rules).select do |payment_method|
+          !payment_method.store_credit? && payment_method.eligible_for_order?(self)
         end
       end
 

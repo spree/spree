@@ -47,7 +47,7 @@ module Spree
       end
 
       def completion_requirements
-        errors = stock_errors + quantity_rule_errors + assortment_errors
+        errors = stock_errors + quantity_rule_errors + assortment_errors + payment_rule_errors
         errors << req('address', 'email', I18n.t('spree.guest_checkout_not_allowed'), code: 'guest_checkout_not_allowed') if @cart.guest_checkout_disallowed?
         errors
       end
@@ -140,6 +140,24 @@ module Spree
 
       def completion_line_items
         @completion_line_items ||= @cart.line_items.includes(STOCK_CHECK_ASSOCIATIONS).to_a
+      end
+
+      # Rules are checked when a payment is added, but the cart can change
+      # afterwards — grow past an order-total limit, move market — so a payment
+      # not yet processed on a method the rules no longer offer is refused
+      # here. One a provider has already taken or reserved money for is left
+      # alone: refusing it would strand the money on a cart. Staff keying an
+      # order in bypass rules, as they do everywhere else.
+      def payment_rule_errors
+        return [] if keyed_in_by_staff?
+
+        excluded = @cart.payments.checkout.includes(payment_method: :payment_method_rules).filter_map(&:payment_method).
+                   uniq.reject { |method| method.rules_pass?(@cart) }
+        return [] if excluded.empty?
+
+        [req('payment', 'payment', I18n.t('spree.checkout_requirements.payment_method_unavailable',
+                                          name: excluded.map(&:name).to_sentence),
+             code: 'payment_method_unavailable')]
       end
 
       def delivery_step_required?

@@ -4538,6 +4538,7 @@
             "description": "Installieren Sie eine Erweiterung für einen Zahlungsanbieter, um Karten und Wallets zu akzeptieren."
           },
           "manual_title": "Manuelle Zahlungsmethoden",
+          "add_account": "Konto hinzufügen",
           "add_manual": "Manuelle Methode hinzufügen",
           "manual_empty": {
             "title": "Keine manuellen Zahlungsmethoden",
@@ -4652,6 +4653,18 @@
       }
     },
     "payment_methods": {
+      "conditions": {
+        "active": "{{name}} ein- oder ausschalten",
+        "add": "Bedingung hinzufügen",
+        "changed_elsewhere": "Jemand anderes hat diese Bedingungen geändert, seit Sie diese Zahlungsart geöffnet haben. Schließen Sie sie und öffnen Sie sie erneut, um die Änderungen zu sehen.",
+        "description": "Diese Zahlungsart wird im Shop-Checkout nur angeboten, wenn alle aktiven Bedingungen erfüllt sind. Zahlungen im Dashboard ignorieren sie.",
+        "empty": "Keine Bedingungen – diese Zahlungsart wird bei jedem Checkout angeboten.",
+        "fields": {
+          "max_totals": "Höchstbestellwert",
+          "min_totals": "Mindestbestellwert"
+        },
+        "title": "Checkout-Bedingungen"
+      },
       "create_description": "Wählen Sie einen Anbieter und konfigurieren Sie dessen Zugangsdaten.",
       "create_label": "Zahlungsmethode erstellen",
       "delete_confirm": {
@@ -4665,6 +4678,7 @@
         "updated": "Zahlungsmethode aktualisiert"
       },
       "provider_description": "Anbieter: {{provider}}",
+      "provider_installed": "{{provider}} · {{count}} installiert",
       "status": {
         "disabled": "Deaktiviert"
       },

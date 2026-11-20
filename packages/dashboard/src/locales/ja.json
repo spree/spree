@@ -4537,6 +4537,7 @@
             "description": "カードやウォレットを受け付けるには、決済プロバイダーの拡張機能をインストールしてください。"
           },
           "manual_title": "手動の決済方法",
+          "add_account": "アカウントを追加",
           "add_manual": "手動の決済方法を追加",
           "manual_empty": {
             "title": "手動の決済方法はありません",
@@ -4651,6 +4652,18 @@
       }
     },
     "payment_methods": {
+      "conditions": {
+        "active": "{{name}} のオン/オフ",
+        "add": "条件を追加",
+        "changed_elsewhere": "この支払い方法を開いた後に、他のユーザーがこれらの条件を変更しました。閉じてからもう一度開き、変更内容を確認してください。",
+        "description": "有効な条件をすべて満たす場合にのみ、ストアのチェックアウトでこの支払い方法を表示します。ダッシュボードで受け付ける支払いには適用されません。",
+        "empty": "条件なし — この支払い方法はすべてのチェックアウトで表示されます。",
+        "fields": {
+          "max_totals": "最高注文金額",
+          "min_totals": "最低注文金額"
+        },
+        "title": "チェックアウト条件"
+      },
       "create_description": "プロバイダーを選び、認証情報を設定します。",
       "create_label": "支払い方法を作成",
       "delete_confirm": {
@@ -4664,6 +4677,7 @@
         "updated": "支払い方法を更新しました"
       },
       "provider_description": "プロバイダー: {{provider}}",
+      "provider_installed": "{{provider}} · {{count}} 件インストール済み",
       "status": {
         "disabled": "無効"
       },
