@@ -5318,7 +5318,7 @@
               "label": "Dowolna z tych kategorii"
             },
             "none": {
-              "description": "Produkty z tych kategorii nigdy nie są objęte rabatem. Reszta zamówienia tak.",
+              "description": "Produkty z tych kategorii nigdy nie są objęte rabatem. Inne kwalifikujące się produkty mogą być.",
               "label": "Żadna z tych kategorii"
             }
           },
@@ -5363,7 +5363,7 @@
               "label": "Dowolny z tych produktów"
             },
             "none": {
-              "description": "Te produkty nigdy nie są objęte rabatem. Reszta zamówienia tak.",
+              "description": "Te produkty nigdy nie są objęte rabatem. Inne kwalifikujące się produkty mogą być.",
               "label": "Żaden z tych produktów"
             }
           },

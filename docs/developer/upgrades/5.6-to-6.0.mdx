@@ -572,9 +572,9 @@ The category rule gains the same **None of these categories** option. Products i
 
 The product `promotionable` flag is deprecated. It used to keep a promotion off an order only when every product in it was flagged. It now works per product, like an excluded product above, until it is removed.
 
-- The Admin API keeps accepting `promotionable` on product create and update until 6.5. It was never returned.
-- `Spree::Product#promotionable=` logs a deprecation warning and is removed in 6.3, with the column.
-- Exclude products with a product or category rule set to **None of these** instead. To find the products you flagged, run `Spree::Product.where(promotionable: false).pluck(:name)` in a console.
+- The Admin API keeps accepting `promotionable` on product create and update until 6.5, and it keeps working. It was never returned.
+- `Spree::Product#promotionable=` logs a deprecation warning. It and the column are removed in 6.5, with the API field.
+- Exclude products with a product or category rule set to **None of these** instead.
 
 ## Dependency injection changes
 

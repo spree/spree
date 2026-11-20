@@ -393,7 +393,7 @@ test.describe('promotions', () => {
         page,
         creds,
         'get',
-        `/categories?name_cont=${encodeURIComponent(FIXTURE_PROMO_TAXON)}`,
+        `/categories?q[name_cont]=${encodeURIComponent(FIXTURE_PROMO_TAXON)}`,
       ),
       adminRequest<{ data: { id: string }[] }>(
         page,

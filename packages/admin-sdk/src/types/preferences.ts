@@ -407,7 +407,7 @@ export type TypedPromotionCalculator = {
 
 /** Settings of the `category` promotion rule. */
 export type PromotionRuleCategoryPreferences = {
-  match_policy: 'any' | 'all'
+  match_policy: 'any' | 'all' | 'none'
 }
 
 /** Settings of the `channel` promotion rule. */
