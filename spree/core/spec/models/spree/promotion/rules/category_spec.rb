@@ -121,6 +121,15 @@ describe Spree::Promotion::Rules::Category, type: :model do
         end
       end
 
+      it 'answers from the new categories after they change' do
+        expect(rule.excludes?(excluded_line_item)).to be false
+
+        excluded_line_item.product.categories << category2
+        rule.update!(category_ids_to_add: [category2.id])
+
+        expect(rule.reload.excludes?(excluded_line_item)).to be true
+      end
+
       it 'excludes products filed in a child of an excluded category' do
         category.children << category2
         excluded_line_item.product.categories << category2

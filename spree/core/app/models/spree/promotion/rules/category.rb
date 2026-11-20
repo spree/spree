@@ -55,10 +55,7 @@ module Spree
           return true if eligible_category_ids.empty?
 
           if exclusion?
-            excluded_product_ids = Spree::ProductCategory.where(
-              product_id: order.product_ids, category_id: eligible_category_ids_including_children
-            ).distinct.pluck(:product_id)
-            if order.product_ids.any? && (order.product_ids - excluded_product_ids).empty?
+            if order.line_items.any? && order.line_items.all? { |line_item| in_categories?(line_item) }
               eligibility_errors.add(:base, eligibility_error_message(:only_excluded_products))
             end
             return eligibility_errors.empty?
@@ -85,10 +82,6 @@ module Spree
 
         def excludes?(line_item)
           exclusion? && in_categories?(line_item)
-        end
-
-        def exclusion?
-          preferred_match_policy == 'none'
         end
 
         #
@@ -219,6 +212,7 @@ module Spree
           # Clear memoized values
           @eligible_category_ids = nil
           @eligible_category_ids_including_children = nil
+          @in_categories = nil
         end
       end
     end

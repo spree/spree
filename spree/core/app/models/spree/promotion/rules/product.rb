@@ -84,10 +84,6 @@ module Spree
           exclusion? && eligible_product_ids.include?(line_item.variant.product_id)
         end
 
-        def exclusion?
-          preferred_match_policy == 'none'
-        end
-
         def product_ids_string
           ActiveSupport::Deprecation.warn(
             'Please use `product_ids=` instead.'
