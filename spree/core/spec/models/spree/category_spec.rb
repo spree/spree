@@ -613,6 +613,18 @@ RSpec.describe Spree::Category, type: :model do
         expect(category2.reload.permalink).to eq('child-2')
       end
 
+      it 'suffixes a translated permalink another category holds in a different case' do
+        other = create(:category, name: 'Other', store: store)
+        Mobility.with_locale(:pl) { other.update!(name: 'Inny') }
+        other.translations.find_by!(locale: 'pl').update_columns(permalink: 'DZIECKO')
+
+        category2.move_to_root
+
+        Mobility.with_locale(:pl) do
+          expect(category2.reload.permalink).to eq('dziecko-2')
+        end
+      end
+
       it 'suffixes a descendant permalink another category already holds' do
         grandchild = create(:category, name: 'Grandchild', parent: category2, permalink: 'grandchild')
         create(:category, name: 'Legacy', store: store).update_columns(permalink: 'child/grandchild')

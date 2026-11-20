@@ -330,16 +330,18 @@ module Spree
       end
 
       # A move can land on a path another category in the store already uses
-      # in this locale, so suffix it rather than share a permalink.
+      # in this locale, so suffix it rather than share a permalink. Compared
+      # without case, like the category's own permalink.
       def unique_permalink(candidate)
         taken = Spree::Category::Translation.
                 joins(:translated_model).
-                where(locale: locale, permalink: candidate).
+                where(locale: locale).
                 where(Spree::Category.table_name => { store_id: translated_model.store_id }).
                 where.not(id: id)
-        return candidate unless taken.exists?
+        permalink_taken = ->(option) { taken.where(self.class.arel_table[:permalink].lower.eq(option.downcase)).exists? }
+        return candidate unless permalink_taken.call(candidate)
 
-        (2..).lazy.map { |suffix| "#{candidate}-#{suffix}" }.find { |option| !taken.unscope(where: :permalink).exists?(permalink: option) }
+        (2..).lazy.map { |suffix| "#{candidate}-#{suffix}" }.find { |option| !permalink_taken.call(option) }
       end
 
       def generate_pretty_name
