@@ -22,7 +22,8 @@ module Spree
       #   money already taken is its own decision — the shape Shopify, Vendure,
       #   Saleor and WooCommerce all settled on.
       # @param refund_amount [BigDecimal, Numeric, nil] defaults to
-      #   order.payment_total when refund_payments is true
+      #   what the order was paid and has not already given back as store
+      #   credit, when refund_payments is true
       # @param notify_customer [Boolean] hint for subscribers
       # @param restock_items [Boolean, nil] deprecated and ignored — items
       #   always return to stock when their fulfillment is canceled
@@ -52,7 +53,8 @@ module Spree
         # compared against money further down — `[amount, remaining].min`
         # raises on a String.
         @amount_to_refund = refund_amount&.to_d
-        @amount_to_refund ||= amount_paid if refund_payments
+        @amount_to_refund ||= amount_refundable if refund_payments
+        step :ensure_refund_within_order_balance
 
         ApplicationRecord.transaction do
           # The row lock a capture takes to record its answer, so a capture
@@ -95,6 +97,15 @@ module Spree
 
         order.errors.add(:base, :refund_amount_requires_shared_payment, message: I18n.t('spree.errors.messages.refund_amount_requires_shared_payment'))
         failure(order)
+      end
+
+      # An amount the order has already given back, as refunds or store
+      # credit, is refused before anything is canceled, rather than once the
+      # order reads canceled and its payments are half settled.
+      def ensure_refund_within_order_balance
+        return if refund_amount.blank? || @amount_to_refund <= amount_refundable
+
+        failure(order, :refund_exceeds_order_balance)
       end
 
       # Voiding a payment whose capture or void is in flight, or that the
@@ -185,8 +196,33 @@ module Spree
       # caller's decision, carried to the adapter: one that can void the charge
       # does so regardless, and one that cannot — Stripe, on a captured
       # PaymentIntent — refunds only when `refund_payments` allows it.
+      #
+      # Once refunds and store credit have given back all the order was paid,
+      # a payment's own balance is no longer the customer's to take, so the
+      # money is kept rather than refunded a second time.
       def settle_completed_payments
-        order.payments.completed.each { |payment| payment.cancel!(refund: refund_payments) }
+        order.payments.completed.each do |payment|
+          payment.cancel!(refund: refund_payments && amount_left_to_give_back.positive?)
+        end
+      end
+
+      # What the order's payments can still refund, less store credit already
+      # issued for it — which writes no refund row (V-3832).
+      #
+      # @return [BigDecimal]
+      def amount_left_to_give_back
+        order.payments.completed.to_a.sum(0.to_d) { |payment| payment.credit_allowed.to_d } - store_credit_given_back
+      end
+
+      # What the order was paid and has not already given back as store credit.
+      #
+      # @return [BigDecimal]
+      def amount_refundable
+        amount_paid - store_credit_given_back
+      end
+
+      def store_credit_given_back
+        order.store_credit_refunds.sum(:amount).to_d
       end
 
       # What this order has actually been paid. An order placed in a split

@@ -201,7 +201,9 @@ module Spree
           allow_any_instance_of(Spree::Gateway::Bogus).to receive(:cancel).and_wrap_original do |original, response_code, payment, refund:|
             next original.call(response_code, payment, refund: refund) unless refund
 
-            Spree.refund_create_workflow.call(payment: payment, reason: Spree::RefundReason.order_canceled_reason(payment.owner.store))
+            result = Spree.refund_create_workflow.call(payment: payment, reason: Spree::RefundReason.order_canceled_reason(payment.owner.store))
+            raise Spree::Core::GatewayError, result.error.value.to_s if result.failure?
+
             Spree::PaymentResponse.new(true, 'refunded', {}, authorization: payment.response_code)
           end
         end
@@ -219,6 +221,26 @@ module Spree
           expect(payment.reload).to be_completed
           expect(payment.refunds.sum(:amount)).to eq(payment.amount)
           expect(order.reload.payment_total).to eq(0)
+        end
+
+        # Store credit writes no refund row, so the payment's own balance
+        # cannot tell the order already gave its money back (V-3832).
+        it 'refunds nothing when store credit already gave everything back' do
+          create(:store_credit, refunded_order: order, customer: order.customer, store: order.store, amount: payment.amount)
+
+          result = subject.call(order: order, canceler: user, refund_payments: true)
+
+          expect(result).to be_success
+          expect(order.reload).to be_canceled
+          expect(payment.refunds).to be_empty
+        end
+
+        it 'refunds only what store credit left' do
+          create(:store_credit, refunded_order: order, customer: order.customer, store: order.store, amount: 10)
+
+          subject.call(order: order, canceler: user, refund_payments: true)
+
+          expect(payment.refunds.sum(:amount)).to eq(payment.amount - 10)
         end
       end
     end

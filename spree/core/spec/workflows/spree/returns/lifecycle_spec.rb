@@ -392,7 +392,7 @@ RSpec.describe 'Spree::Returns workflows' do
         Spree::Returns::Refund.call(return_record: return_record, amount: credited, refund_method: 'store_credit')
 
         refused = Spree.refund_create_workflow.call(payment: payment, amount: payment.amount)
-        expect(refused.error.value).to eq(:refund_amount_exceeds_balance)
+        expect(refused.error.value).to eq(:refund_exceeds_order_balance)
         expect(payment.refunds).to be_empty
 
         expect(Spree.refund_create_workflow.call(payment: payment, amount: payment.amount - credited)).to be_success

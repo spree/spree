@@ -79,7 +79,7 @@ RSpec.describe Spree::Refunds::Create do
         result = described_class.call(payment: payment, amount: payment.amount)
 
         expect(result).to be_failure
-        expect(result.error.value).to eq(:refund_amount_exceeds_balance)
+        expect(result.error.value).to eq(:refund_exceeds_order_balance)
         expect(payment.refunds).to be_empty
       end
 
@@ -105,7 +105,7 @@ RSpec.describe Spree::Refunds::Create do
         result = described_class.call(payment: payment, amount: BigDecimal('25.75'))
 
         expect(result).to be_failure
-        expect(result.error.value).to eq(:refund_amount_exceeds_balance)
+        expect(result.error.value).to eq(:refund_exceeds_order_balance)
         expect(payment.refunds.reload).to be_empty
       end
     end
@@ -247,16 +247,18 @@ RSpec.describe Spree::Refunds::Create do
     # together overdraw this child. `Spree::Refund` cannot catch it: it
     # validates `credit_allowed`, which is the whole payment's balance.
     it 'refuses when another refund claimed the share after the pre-flight check' do
-      Spree.hooks.register('refunds.create.before_refund') do
+      # Injected once the payment row is locked, past the order-level check,
+      # so only the share re-read can catch it. The competing row shares this
+      # connection's transaction and rolls back with the refusal.
+      allow(shared_payment).to receive(:with_lock).and_wrap_original do |original, &block|
         create(:refund, payment: shared_payment, order: order, amount: 100)
+        original.call(&block)
       end
 
       result = described_class.call(payment: shared_payment, order: order, amount: 100)
 
       expect(result).to be_failure
       expect(result.error.value).to eq(:refund_amount_exceeds_balance)
-      # Only the refund that got there first survives.
-      expect(Spree::Refund.where(order_id: order.id).sum(:amount)).to eq(100)
     end
   end
 end

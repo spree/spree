@@ -62,15 +62,18 @@ module Spree
       # the full amount paid, and a refund to the card could follow a credit.
       #
       # The order row is locked first, so two settlements racing on one order
-      # cannot both read the same headroom.
+      # cannot both read the same headroom. A pre-flight check passes
+      # `lock: false`, so it holds no row lock should a caller's transaction
+      # still be open across the gateway call that follows.
       #
       # @param order [Spree::Order]
       # @param shares [Hash{Spree::Payment => BigDecimal}, nil] already read
+      # @param lock [Boolean] whether to lock the order row first
       # @return [BigDecimal]
-      def refundable_balance(order, shares = nil)
-        Spree::Order.lock.find(order.id)
+      def refundable_balance(order, shares = nil, lock: true)
+        Spree::Order.lock.find(order.id) if lock
 
-        (shares || refundable_shares(order)).values.sum(0.to_d) -
+        (shares || refundable_shares(order, report_in_flight: lock)).values.sum(0.to_d) -
           Spree::StoreCredit.where(refunded_order: order).sum(:amount).to_d
       end
 
@@ -150,8 +153,10 @@ module Spree
       # sale is holding.
       #
       # @param order [Spree::Order]
+      # @param report_in_flight [Boolean] whether a share mid-capture is
+      #   reported; a pre-flight read leaves that to the read that acts on it
       # @return [Hash{Spree::Payment => BigDecimal}]
-      def refundable_shares(order)
+      def refundable_shares(order, report_in_flight: true)
         unless order.grouped?
           return order.payments.completed.order(:created_at).
                  to_h { |payment| [payment, payment.credit_allowed.to_d] }
@@ -166,7 +171,7 @@ module Spree
 
         order.payment_splits.includes(:payment).order(:created_at).each_with_object({}) do |split, found|
           next unless split.payment&.completed?
-          next if capture_in_flight?(order, split)
+          next if split.capture_in_flight? && (!report_in_flight || capture_in_flight?(order, split))
 
           found[split.payment] = split.captured_amount - refunded.fetch(split.payment_id, 0)
         end

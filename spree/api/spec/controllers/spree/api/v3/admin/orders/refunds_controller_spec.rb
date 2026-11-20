@@ -67,6 +67,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::RefundsController, type: :controll
         expect { refund(payment.amount) }.not_to change(Spree::Refund, :count)
 
         expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['message']).to eq(I18n.t('spree.refund_exceeds_order_balance'))
       end
 
       it 'refunds what the store credit left' do

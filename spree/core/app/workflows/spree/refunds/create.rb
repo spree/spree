@@ -34,7 +34,7 @@ module Spree
         super
 
         step :ensure_refundable
-        @amount_to_refund = amount || [payment.credit_allowed.to_d, refundable_share, order_refundable_balance].min
+        @amount_to_refund = amount || [payment.credit_allowed.to_d, refundable_share, order_refundable_balance(lock: false)].min
         step :ensure_amount_within_balance
 
         # Veto point — before the refund record exists and before any money
@@ -64,10 +64,10 @@ module Spree
 
       def ensure_amount_within_balance
         amount = @amount_to_refund.to_d
-        return if amount.positive? && amount <= payment.credit_allowed.to_d && amount <= refundable_share &&
-                  amount <= order_refundable_balance
-
-        failure(payment, :refund_amount_exceeds_balance)
+        unless amount.positive? && amount <= payment.credit_allowed.to_d && amount <= refundable_share
+          failure(payment, :refund_amount_exceeds_balance)
+        end
+        failure(payment, :refund_exceeds_order_balance) if amount > order_refundable_balance(lock: false)
       end
 
       # What the order has not yet given back on any channel: what its payments
@@ -76,12 +76,13 @@ module Spree
       # alone would let a card refund hand back money a return had already
       # given as credit.
       #
+      # @param lock [Boolean] whether to lock the order row (see #refundable_balance)
       # @return [BigDecimal]
-      def order_refundable_balance
+      def order_refundable_balance(lock: true)
         refunded_order = order || payment.order
         return payment.credit_allowed.to_d if refunded_order.nil?
 
-        refundable_balance(refunded_order)
+        refundable_balance(refunded_order, lock: lock)
       end
 
       # What the named order may take back from this payment.
@@ -117,7 +118,7 @@ module Spree
       # payment but together overdraw one child's share.
       def create_refund
         ApplicationRecord.transaction do
-          failure(payment, :refund_amount_exceeds_balance) if @amount_to_refund.to_d > order_refundable_balance
+          failure(payment, :refund_exceeds_order_balance) if @amount_to_refund.to_d > order_refundable_balance
 
           payment.with_lock do
             ensure_share_still_available
