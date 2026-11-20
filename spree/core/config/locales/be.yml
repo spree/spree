@@ -555,7 +555,7 @@ be:
         no_matching_channel: Гэты прамакод не дзейнічае для дадзенага канала продажаў.
         no_matching_market: Гэты прамакод не дзейнічае на вашым рынку.
         no_matching_taxons: Дадайце тавар з акцыйнай катэгорыі, каб прымяніць гэты код купона.
-        no_user_or_email_specified: Увайдзiце або увядзіце e-mail, каб прымяніць гэты код купона.
+        no_user_or_email_specified: Увайдзіце або увядзіце e-mail, каб прымяніць гэты код купона.
         no_user_specified: Каб прымяніць гэты купон.
         not_first_order: Гэты код купона можна ўжыць толькі да вашай першай замовы.
         wrong_country: Гэты купонны код не дзейнічае ў вашай краіне
@@ -812,7 +812,7 @@ be:
       unable_to_credit: 'Немагчыма залічыць код: %{auth_code}'
       unable_to_find: Не ўдалося знайсці крэдыт крамы
       unable_to_find_for_action: 'Не ўдалося знайсці крэдыт крамы для кода аўтарызацыі: %{auth_code} для дзеяння: %{action}'
-      unable_to_void: 'Немагчыма анулiраваць код: %{auth_code}'
+      unable_to_void: 'Немагчыма ануліраваць код: %{auth_code}'
     success: Поспех
     tags: Тэгі
     tax: Падатак
