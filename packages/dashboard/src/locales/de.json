@@ -5219,7 +5219,7 @@
               "label": "Beliebige dieser Kategorien"
             },
             "none": {
-              "description": "Produkte aus diesen Kategorien werden nie rabattiert. Der Rest der Bestellung schon.",
+              "description": "Produkte aus diesen Kategorien werden nie rabattiert. Andere berechtigte Produkte können es weiterhin werden.",
               "label": "Keine dieser Kategorien"
             }
           },
@@ -5264,7 +5264,7 @@
               "label": "Beliebige dieser Produkte"
             },
             "none": {
-              "description": "Diese Produkte werden nie rabattiert. Der Rest der Bestellung schon.",
+              "description": "Diese Produkte werden nie rabattiert. Andere berechtigte Produkte können es weiterhin werden.",
               "label": "Keines dieser Produkte"
             }
           },

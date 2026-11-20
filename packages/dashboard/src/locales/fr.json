@@ -5221,7 +5221,7 @@
               "label": "L'une de ces catégories"
             },
             "none": {
-              "description": "Les produits de ces catégories ne sont jamais remisés. Le reste de la commande l'est.",
+              "description": "Les produits de ces catégories ne sont jamais remisés. Les autres produits éligibles peuvent l'être.",
               "label": "Aucune de ces catégories"
             }
           },
@@ -5266,7 +5266,7 @@
               "label": "L'un de ces produits"
             },
             "none": {
-              "description": "Ces produits ne sont jamais remisés. Le reste de la commande l'est.",
+              "description": "Ces produits ne sont jamais remisés. Les autres produits éligibles peuvent l'être.",
               "label": "Aucun de ces produits"
             }
           },

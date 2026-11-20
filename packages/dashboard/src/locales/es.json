@@ -3854,7 +3854,7 @@
               "label": "Cualquiera de estas categorías"
             },
             "none": {
-              "description": "Los productos de estas categorías nunca tienen descuento. El resto del pedido sí.",
+              "description": "Los productos de estas categorías nunca tienen descuento. Otros productos elegibles pueden tenerlo.",
               "label": "Ninguna de estas categorías"
             }
           },
@@ -3899,7 +3899,7 @@
               "label": "Cualquiera de estos productos"
             },
             "none": {
-              "description": "Estos productos nunca tienen descuento. El resto del pedido sí.",
+              "description": "Estos productos nunca tienen descuento. Otros productos elegibles pueden tenerlo.",
               "label": "Ninguno de estos productos"
             }
           },

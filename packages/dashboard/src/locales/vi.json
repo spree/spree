@@ -5185,7 +5185,7 @@
               "label": "Bất kỳ danh mục nào trong số này"
             },
             "none": {
-              "description": "Sản phẩm trong các danh mục này không bao giờ được giảm giá. Phần còn lại của đơn hàng vẫn được giảm.",
+              "description": "Sản phẩm trong các danh mục này không bao giờ được giảm giá. Các sản phẩm đủ điều kiện khác vẫn có thể được giảm.",
               "label": "Không có danh mục nào trong số này"
             }
           },
@@ -5230,7 +5230,7 @@
               "label": "Bất kỳ sản phẩm nào trong số này"
             },
             "none": {
-              "description": "Các sản phẩm này không bao giờ được giảm giá. Phần còn lại của đơn hàng vẫn được giảm.",
+              "description": "Các sản phẩm này không bao giờ được giảm giá. Các sản phẩm đủ điều kiện khác vẫn có thể được giảm.",
               "label": "Không có sản phẩm nào trong số này"
             }
           },

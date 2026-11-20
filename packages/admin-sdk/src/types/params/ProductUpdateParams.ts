@@ -37,8 +37,8 @@ export type ProductUpdateParams = {
    */
   delivery_profile_id?: string | null
   /**
-   * @deprecated Exclude products from a promotion with a product or category rule whose
-   * `match_policy` is `none`. Removed in 6.5.
+   * @deprecated Use a product or category promotion rule whose `match_policy` is `none`. Removed in
+   * 6.5.
    */
   promotionable?: boolean
   tags?: string[]

@@ -5219,7 +5219,7 @@
               "label": "Any of these categories"
             },
             "none": {
-              "description": "Products in these categories are never discounted. The rest of the order still is.",
+              "description": "Products in these categories are never discounted. Other eligible products can still be.",
               "label": "None of these categories"
             }
           },
@@ -5264,7 +5264,7 @@
               "label": "Any of these products"
             },
             "none": {
-              "description": "These products are never discounted. The rest of the order still is.",
+              "description": "These products are never discounted. Other eligible products can still be.",
               "label": "None of these products"
             }
           },

@@ -466,7 +466,8 @@ module Spree
       when Spree::LineItem
         !promotable.product.discountable?
       when Spree::Order, Spree::Cart
-        promotable.line_items.any? && promotable.line_items.none? { |line_item| line_item.product.discountable? }
+        # Each exclusion rule may leave a line the others exclude.
+        promotable.line_items.any? && discountable_line_items(promotable).empty?
       end
     end
 

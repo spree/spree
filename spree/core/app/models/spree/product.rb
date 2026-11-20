@@ -144,16 +144,16 @@ module Spree
     # Whether promotions may discount this product at all: the one place a
     # product opts out of every promotion. Purchasable gift cards switch it off
     # here (docs/plans/6.0-6.1-loyalty-gift-cards-store-credits.md), not through
-    # the deprecated `promotionable` column it reads until 6.3.
+    # the deprecated `promotionable` column it reads until 6.5.
     def discountable?
       promotionable?
     end
 
     # @deprecated Exclude products with a product or category promotion rule
-    #   set to `none`; removed in 6.3.
+    #   set to `none`. Kept until 6.5 with the Admin API field that writes it.
     def promotionable=(value)
       Spree::Deprecation.warn(
-        'Spree::Product#promotionable= is deprecated and will be removed in Spree 6.3. ' \
+        'Spree::Product#promotionable= is deprecated and will be removed in Spree 6.5. ' \
         'Exclude products from a promotion with a product or category rule set to "none" instead.'
       )
       super
