@@ -152,9 +152,9 @@ module Spree
         end
 
         # A product no promotion may discount, such as a gift card, is never
-        # given away either.
+        # given away either, nor is a variant deleted since.
         def giftable_items
-          promotion_action_line_items.select { |item| item.variant.product.discountable? }
+          promotion_action_line_items.select { |item| item.variant&.product&.discountable? }
         end
 
         def add_missing_line_items(order)

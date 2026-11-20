@@ -127,7 +127,9 @@ module Spree
 
       def order_level_candidates
         @order_level_candidates ||= discount_actions(:order).filter_map do |action|
-          amount = action.compute_amount(order)
+          # Capped at what distribution can persist, so selection compares
+          # the amounts the shopper would actually get.
+          amount = clamp(action.compute_amount(order), order_level_base(action.promotion))
           next if amount.zero?
 
           candidate(action, amount)
@@ -137,6 +139,13 @@ module Spree
       def apply_order_level_discount
         select_applicable(order_level_candidates).each do |chosen|
           distribute_over_line_items(chosen)
+        end
+      end
+
+      # What the promotion's lines have left after earlier discounts.
+      def order_level_base(promotion)
+        promotion.discountable_line_items(order).sum(BigDecimal(0)) do |line_item|
+          [discountable_base(line_item), BigDecimal(0)].max
         end
       end
 
