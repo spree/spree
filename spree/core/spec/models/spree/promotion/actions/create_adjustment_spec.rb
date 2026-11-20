@@ -89,5 +89,43 @@ describe Spree::Promotion::Actions::CreateAdjustment, type: :model do
       huge = described_class.create!(promotion: promotion, calculator: Spree::Calculator::FlatRate.new(preferred_amount: 99_999))
       expect(huge.compute_amount(order)).to eq(-action.order_total(order))
     end
+
+    context 'when a line is excluded' do
+      let(:excluded_line_item) { order.line_items.first }
+
+      before do
+        allow(promotion).to receive(:excludes_line_item?) { |line_item| line_item.id == excluded_line_item.id }
+      end
+
+      it 'never turns the cap into a charge' do
+        huge = described_class.create!(promotion: promotion, calculator: Spree::Calculator::FlatRate.new(preferred_amount: 99_999))
+        allow(huge).to receive(:order_total).and_return(BigDecimal(5))
+
+        expect(huge.compute_amount(order)).to eq(0)
+      end
+
+      # The order amount calculators see already leaves gift units out, so a
+      # gifted excluded line must not be taken off a second time.
+      it 'takes a gifted excluded line out once' do
+        half_off = described_class.create!(promotion: promotion,
+                                           calculator: Spree::Calculator::FlatPercentItemTotal.new(preferred_flat_percent: 50))
+        allow(order).to receive(:gift_amount).and_return(excluded_line_item.amount)
+
+        expect(half_off.compute_amount(order)).to eq(-order.line_items.last.amount / 2)
+      end
+    end
+  end
+
+  describe Spree::Promotion::Actions::CreateAdjustment::DiscountableOrder do
+    let(:discountable_order) { described_class.new(order, BigDecimal(5)) }
+
+    it 'reports the order amount less the excluded lines' do
+      expect(discountable_order.amount).to eq(order.amount - 5)
+    end
+
+    it 'answers as the order it wraps, so calculators dispatch on it' do
+      expect(discountable_order.class).to eq(Spree::Order)
+      expect(discountable_order).to be_a(Spree::Order)
+    end
   end
 end

@@ -41,9 +41,10 @@ module Spree
       false
     end
 
-    # Whether this rule only excludes lines rather than qualifying an order.
+    # Whether this rule only excludes lines rather than qualifying an order:
+    # one whose match policy is `none`.
     def exclusion?
-      false
+      has_preference?(:match_policy) && preferred_match_policy == 'none'
     end
 
     def eligibility_errors
