@@ -429,6 +429,18 @@ describe Spree::Store, type: :model, without_global_store: true do
       expect(published).to eq(['store.updated'])
     end
 
+    it 'is attributed to the store that changed, whichever store the caller is in' do
+      events = []
+      allow(Spree::Events).to receive(:publish).and_wrap_original do |original, *args|
+        original.call(*args).tap { |event| events << event }
+      end
+      other_store = create(:store)
+
+      Spree::Current.with_store(other_store) { store.update!(facebook: 'mystore') }
+
+      expect(events.map(&:store_id)).to eq([store.id])
+    end
+
     it 'is not published when a related record only touches the store' do
       store.touch
 

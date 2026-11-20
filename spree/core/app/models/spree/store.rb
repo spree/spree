@@ -786,10 +786,20 @@ module Spree
     # the change was written in: a translation saved under `de` still
     # announces the store as storefronts show it by default.
     def event_payload_for(event_name, **params)
-      ::Mobility.with_locale(default_locale) { super }
+      Spree::Current.with_content_locale(default_locale) do
+        ::Mobility.with_locale(default_locale) { super }
+      end
     end
 
     private
+
+    # A store's events belong to it, whichever store the caller is working in,
+    # so they reach this store's webhook endpoints.
+    def in_event_store(&block)
+      return block.call if Spree::Current.store == self
+
+      Spree::Current.with_store(self, &block)
+    end
 
     # Products without a profile fall back to this one, so it must exist
     # from the store's first moment.
