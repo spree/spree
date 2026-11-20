@@ -4416,6 +4416,7 @@
             "stock_receipt": "入荷",
             "stock_reservation": "在庫の引き当て",
             "stock_transfer": "在庫の移動",
+            "store": "ストア",
             "store_credit": "ストアクレジット",
             "supplier": "仕入れ先",
             "tax_exemption_certificate": "免税証明書",

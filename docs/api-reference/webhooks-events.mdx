@@ -770,6 +770,27 @@ Events: `newsletter_subscriber.created`, `newsletter_subscriber.updated`, `newsl
 }
 ```
 
+## Store Events
+
+Events: `store.updated`
+
+Sent when the store's settings change in Spree Admin, including a translation in any language and the logo. The payload is the store as the Store API's `GET /store` returns it, in the store's default language. Headless storefronts use it to expire the store data they cache. There is no `store.created` or `store.deleted`: an installation runs one store.
+
+```json
+{
+  "id": "store_2wMn9xPq",
+  "name": "My Store",
+  "seo_title": "My Store | Sustainable fashion",
+  "meta_description": "Sustainable fashion, shipped worldwide.",
+  "meta_keywords": "fashion, sustainable",
+  "logo_url": "https://cdn.example.com/logo.png",
+  "facebook": "mystore",
+  "twitter": "mystore",
+  "instagram": "mystore",
+  "customer_support_email": "support@example.com"
+}
+```
+
 ## Digital Asset Events
 
 Events: `digital_asset.created`, `digital_asset.updated`, `digital_asset.deleted`

@@ -46,6 +46,7 @@ import {
   StockReceiptEventSchema,
   StockReservationSchema,
   StockTransferSchema,
+  StoreSchema,
   StoreCreditSchema,
   SupplierEventSchema,
   TaxIdentifierSchema,
@@ -302,6 +303,7 @@ type WebhookEventName =
   | 'stock_transfer.received'
   | 'stock_transfer.shipped'
   | 'stock_transfer.updated'
+  | 'store.updated'
   | 'store_credit.created'
   | 'store_credit.deleted'
   | 'store_credit.updated'
@@ -569,6 +571,7 @@ export const webhookEventSchemas: Readonly<Record<WebhookEventName, z.ZodType>> 
   'stock_transfer.received': StockTransferSchema,
   'stock_transfer.shipped': StockTransferSchema,
   'stock_transfer.updated': StockTransferSchema,
+  'store.updated': StoreSchema,
   'store_credit.created': StoreCreditSchema,
   'store_credit.deleted': StoreCreditSchema,
   'store_credit.updated': StoreCreditSchema,
