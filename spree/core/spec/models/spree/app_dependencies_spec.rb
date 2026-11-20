@@ -30,6 +30,10 @@ describe Spree::Core::Dependencies, type: :model do
       expect(deps.cart_add_item_workflow_class).to eq Spree::Carts::AddItem
     end
 
+    it 'resolves the modification webhook workflow' do
+      expect(deps.payments_handle_modification_webhook_workflow_class).to eq Spree::Payments::HandleModificationWebhook
+    end
+
     it 'returns the class directly when set as class, even after resolving the previous value' do
       deps.cart_add_item_workflow_class
       deps.cart_add_item_workflow = MyCustomAddItemService

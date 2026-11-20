@@ -112,6 +112,7 @@ export type { default as EmailParcelItem } from './generated/emails/EmailParcelI
 export type { default as EmailPayment } from './generated/emails/EmailPayment'
 export type { default as EmailPaymentMethod } from './generated/emails/EmailPaymentMethod'
 export type { default as EmailReturn } from './generated/emails/EmailReturn'
+export type { default as EmailReturnedItem } from './generated/emails/EmailReturnedItem'
 export type { default as EmailStockLocation } from './generated/emails/EmailStockLocation'
 export type { default as EmailStore } from './generated/emails/EmailStore'
 export type { default as Fee } from './generated/Fee'

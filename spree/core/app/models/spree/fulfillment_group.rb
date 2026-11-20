@@ -103,8 +103,8 @@ module Spree
     #
     # @return [Array<Spree::Fulfillment::ManifestItem>]
     def manifest
-      fulfillments.flat_map(&:manifest).group_by(&:line_item).map do |line_item, items|
-        Spree::Fulfillment::ManifestItem.new(line_item, line_item.variant, items.sum(&:quantity), nil)
+      fulfillments.flat_map(&:manifest).group_by { |item| [item.line_item, item.variant] }.map do |(line_item, variant), items|
+        Spree::Fulfillment::ManifestItem.new(line_item, variant, items.sum(&:quantity), nil)
       end
     end
 

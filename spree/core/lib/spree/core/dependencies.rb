@@ -262,6 +262,7 @@ module Spree
         seller_payout_sweep_workflow: 'Spree::SellerPayouts::Sweep',
         seller_payout_complete_workflow: 'Spree::SellerPayouts::Complete',
         payments_handle_webhook_workflow: 'Spree::Payments::HandleWebhook',
+        payments_handle_modification_webhook_workflow: 'Spree::Payments::HandleModificationWebhook',
         payment_session_complete_workflow: 'Spree::PaymentSessions::Complete',
         email_template_save_draft_workflow: 'Spree::EmailTemplates::SaveDraft',
         email_template_publish_workflow: 'Spree::EmailTemplates::Publish',

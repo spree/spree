@@ -1,0 +1,70 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://checkout-test.adyen.com/v72/payments/details
+    body:
+      encoding: UTF-8
+      string: '{"details":{"redirectResult":"<FILTERED>"}}'
+    headers:
+      Content-Type:
+      - application/json
+      User-Agent:
+      - adyen-ruby-api-library/12.0.0
+      X-Api-Key:
+      - "<FILTERED>"
+      Adyen-Library-Name:
+      - adyen-ruby-api-library
+      Adyen-Library-Version:
+      - 12.0.0
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 18 Nov 2026 17:43:02 GMT
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Traceparent:
+      - 00-702b43db49da2fc4fe8dffbfddaff6e4-712f91d8cfc9e1f8-01
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Cache-Control:
+      - no-cache, no-store, private, must-revalidate, max-age=0
+      Pragma:
+      - no-cache
+      Expires:
+      - '0'
+      Set-Cookie:
+      - JSESSIONID=6A58C67FE145CDC8CD29240B2EA06115; Path=/checkout; Secure; HttpOnly
+      - __cf_bm=P3ZWpwCOZ5hfYI1Gv54aRpoIWX3WcMdb2keIthy14r0-1795023781.964938-1.0.1.1-F1E5iIzzQrNCLQcheD.PKo9.gRWfGmib9t96C8T7_JkBQzNPHtbnKOWU.y04B25mcgVOF.nfbSanyISJFcEA70FqpCHxVXmABLEhRWkcBHX8vd20o7auVFPvdjpyi2Xg;
+        HttpOnly; SameSite=None; Partitioned; Secure; Path=/; Domain=adyen.com; Expires=Wed,
+        18 Nov 2026 18:13:02 GMT
+      - _cfuvid=k15uJdLF3btIwMIqqoKILK8KbgCgCK9vdIfp8fss124-1795023781.964938-1.0.1.1-gCGdpDnk5Akd6WDLGaoFrX07Mk3WBW0SUMl2YjqCipk;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=adyen.com
+      Pspreference:
+      - H7C6WR4Q9P99M6V5
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a5c8c66d49277057-WAW
+    body:
+      encoding: ASCII-8BIT
+      string: '{"additionalData":{"pspref":"L4RWF7V38897JFV5","klarnapayments.session_id":"8ab8d6f3-ff03-78e7-92ac-52fa21dc3f18"},"pspReference":"L4RWF7V38897JFV5","resultCode":"Cancelled","merchantReference":"cart_VqXmZF31wY-3"}'
+  recorded_at: Wed, 18 Nov 2026 17:43:02 GMT
+recorded_with: VCR 6.4.1

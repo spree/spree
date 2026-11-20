@@ -127,6 +127,38 @@ describe Spree::FulfillmentMailer, type: :mailer do
       expect(fulfilled_email).to have_body_text("Dear #{order.name}")
     end
 
+    # V-3834: an exchange ships its replacement against the original line item,
+    # so only the fulfillment's units name what is actually in the parcel.
+    context 'for an exchange replacement parcel' do
+      let(:color) { create(:option_type, name: 'color', label: 'Color') }
+      let(:white) { create(:option_value, option_type: color, name: 'white', label: 'White') }
+      let(:black) { create(:option_value, option_type: color, name: 'black', label: 'Black') }
+      let(:product) { create(:product, name: 'Electric Kettle 1.7L', store: store) }
+      let(:white_kettle) { create(:variant, product: product, option_values: [white], sku: 'KETTLE-WHITE') }
+      let(:black_kettle) { create(:variant, product: product, option_values: [black], sku: 'KETTLE-BLACK', price: 55) }
+      let(:order) do
+        create(:shipped_order, store: store, email: 'test@example.com', customer: nil, variants: [white_kettle])
+      end
+      let(:exchange) { create(:received_exchange, order: order, store: store, replacement_variant: black_kettle) }
+      let(:fulfillment) do
+        black_kettle.stock_levels.each { |stock_level| stock_level.set_count_on_hand(10) }
+        Spree::Exchanges::Fulfill.call(exchange: exchange)
+        order.fulfillment_items.find_by!(variant: black_kettle).fulfillment
+      end
+
+      it 'names the replacement variant in both parts' do
+        message = described_class.fulfilled_email(fulfillment)
+
+        [message.html_part, message.text_part].each do |part|
+          body = part.body.to_s
+          expect(body).to include('Electric Kettle 1.7L')
+          expect(body).to include('Color: Black')
+          expect(body).not_to include('Color: White')
+          expect(body).to include('1 x $55.00')
+        end
+      end
+    end
+
     # Every order-facing document renders the buyer's reference when present —
     # and both parts of it, not just the HTML one.
     context 'when the order carries a purchase order number' do

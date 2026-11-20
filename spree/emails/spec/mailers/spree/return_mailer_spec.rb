@@ -32,6 +32,36 @@ describe Spree::ReturnMailer, type: :mailer do
     expect(email_body(message)).to include(variant.product.name)
   end
 
+  it 'states how many units were returned, not how many were ordered' do
+    line_item = order.line_items.first
+    line_item.update_columns(quantity: 3)
+    order.fulfillment_items.sole.update_columns(quantity: 3)
+
+    return_line = return_record.return_line_items.sole
+    expect(return_line.credited_quantity).to eq(1)
+
+    text = described_class.refunded_email(return_record).text_part.body.to_s
+
+    expect(text).to include('1 x')
+    expect(text).not_to include('3 x')
+    expect(line_item.reload.quantity).to eq(3)
+  end
+
+  it 'omits a returned line the warehouse counted as none' do
+    order = create(:shipped_order, store: store, email: 'test@example.com', customer: nil, line_items_count: 2)
+    return_record = create(:received_return, order: order, store: store, line_items_count: 2)
+    kept, dropped = return_record.return_line_items.to_a
+    kept.line_item.product.update!(name: 'Kept Item')
+    dropped.line_item.product.update!(name: 'Dropped Item')
+    dropped.update!(received_quantity: 0)
+
+    text = described_class.refunded_email(return_record).text_part.body.to_s
+
+    expect(text).to include('Kept Item')
+    expect(text).not_to include('Dropped Item')
+    expect(text).not_to include('0 x')
+  end
+
   it 'accepts an id as well as a record' do
     expect(described_class.refunded_email(return_record.id).to).to eq([order.email])
   end

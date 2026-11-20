@@ -28,6 +28,7 @@ export const PaymentSchema = z.object({
   cvv_response_code: z.string().nullable(),
   cvv_response_message: z.string().nullable(),
   gateway_dashboard_payment_url: z.string().nullable(),
+  requested_action: z.string().nullable(),
   created_at: z.string(),
   updated_at: z.string(),
   avs_risky: z.boolean(),
@@ -57,6 +58,7 @@ export const PaymentSchema = z.object({
   cvv_response_code: z.ZodType<Payment['cvv_response_code']>;
   cvv_response_message: z.ZodType<Payment['cvv_response_message']>;
   gateway_dashboard_payment_url: z.ZodType<Payment['gateway_dashboard_payment_url']>;
+  requested_action: z.ZodType<Payment['requested_action']>;
   created_at: z.ZodType<Payment['created_at']>;
   updated_at: z.ZodType<Payment['updated_at']>;
   avs_risky: z.ZodType<Payment['avs_risky']>;

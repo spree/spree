@@ -1,0 +1,74 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://checkout-test.adyen.com/v72/payments/XHL52DJVLGKLJJV5/captures
+    body:
+      encoding: UTF-8
+      string: '{"merchantAccount":"<ADYEN_MERCHANT_ACCOUNT>","amount":{"value":1000,"currency":"USD"},"reference":"R1001-spree-py_UkLWZg9DAJ-capture-0"}'
+    headers:
+      Content-Type:
+      - application/json
+      User-Agent:
+      - adyen-ruby-api-library/12.0.0
+      X-Api-Key:
+      - "<FILTERED>"
+      Idempotency-Key:
+      - spree-py_UkLWZg9DAJ-capture-0
+      Adyen-Library-Name:
+      - adyen-ruby-api-library
+      Adyen-Library-Version:
+      - 12.0.0
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Date:
+      - Wed, 18 Nov 2026 17:41:15 GMT
+      Content-Type:
+      - application/json;charset=UTF-8
+      Content-Length:
+      - '225'
+      Connection:
+      - keep-alive
+      Traceparent:
+      - 00-8bafbbfc30840c051d2846dedfb7bc60-4a01f6744f60d3bc-01
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Cache-Control:
+      - no-cache, no-store, private, must-revalidate, max-age=0
+      Pragma:
+      - no-cache
+      Expires:
+      - '0'
+      Set-Cookie:
+      - JSESSIONID=840B9181DCF7FFB6ACEFFC0E9723B1E9; Path=/checkout; Secure; HttpOnly
+      - __cf_bm=fge8OrGdM4KHvHQRCmOLfGFIQFnCiO9b2g5_EYpaXRQ-1795023675.2991412-1.0.1.1-UYrm2vVG7nyNuvQgAzsqLOWhy0uWygtiqKs_TTOZ1n6IYNFmTU30Y9OXWzL9ACw58p6Qd8qqNgGQLCfmoM8cbc.8woKCmO7dPoR2AYXcubZDMYa.M.zYPq090g5eORJs;
+        HttpOnly; SameSite=None; Partitioned; Secure; Path=/; Domain=adyen.com; Expires=Wed,
+        18 Nov 2026 18:11:15 GMT
+      - _cfuvid=ht47jMn9DAcSbXm1HyCtQSWo1nO.4VOojRsze1Hnqws-1795023675.2991412-1.0.1.1-UzFxNtw5T_tWffElBbGxPFfe.9bC64o9X52OxK_e23s;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=adyen.com
+      Idempotency-Key:
+      - spree-py_UkLWZg9DAJ-capture-0
+      Pspreference:
+      - LPXXNN9Q979WVLV5
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a5c8c3d29c636ced-WAW
+    body:
+      encoding: UTF-8
+      string: '{"merchantAccount":"<ADYEN_MERCHANT_ACCOUNT>","paymentPspReference":"XHL52DJVLGKLJJV5","pspReference":"TDJ8T9B64J78NHW5","reference":"R1001-spree-py_UkLWZg9DAJ-capture-0","status":"received","amount":{"currency":"USD","value":1000}}'
+  recorded_at: Wed, 18 Nov 2026 17:41:15 GMT
+recorded_with: VCR 6.4.1

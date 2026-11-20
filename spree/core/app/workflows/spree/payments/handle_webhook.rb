@@ -60,7 +60,7 @@ module Spree
           # earlier delivery) while the order is not, and a redelivery or job
           # retry must still place the order or the buyer stays charged
           # without one.
-          step :ensure_payment unless payment_session.reload.payment&.completed?
+          step :ensure_payment unless payment_settled?
           step :complete_session
           step :complete_owner unless order.reload.completed?
         end
@@ -73,6 +73,12 @@ module Spree
           source: 'spree.payments.webhook'
         )
         failure(payment_session, error.message)
+      end
+
+      # A requested payment waits on its provider's answer to a capture or
+      # void, so a redelivered authorization leaves it alone.
+      def payment_settled?
+        payment_session.reload.payment&.status.in?(Spree::Payment::SETTLED_OR_WAITING_STATUSES)
       end
 
       # :captured means the gateway reports the funds as moved, so the payment

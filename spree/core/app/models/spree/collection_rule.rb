@@ -16,7 +16,7 @@ module Spree
     validates :match_policy, inclusion: { in: MATCH_POLICIES }, presence: true
 
     after_commit :regenerate_collection_products,
-                 if: -> { saved_change_to_value? || destroyed? || saved_change_to_match_policy? }
+                 if: -> { saved_change_to_value? || destroyed? || saved_change_to_match_policy? || saved_change_to_type? }
 
     delegate :store, to: :collection
 
@@ -36,6 +36,10 @@ module Spree
     end
 
     def regenerate_collection_products
+      # A rule whose type changed in place is still loaded as its old class.
+      # Reload on every rule's commit: with only_once, the first rule to commit
+      # regenerates, and that may not be the retyped one.
+      collection.rules.reset
       collection.regenerate_products(only_once: true)
     end
   end

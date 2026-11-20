@@ -119,7 +119,7 @@ module Spree
         (own + others.to_a).uniq(&:id)
       end
 
-      # Completed payments less their refunds, as a scalar subquery so the
+      # Completed payments less their completed refunds, as a scalar subquery so the
       # sum and the write are one statement.
       #
       # @return [Arel::Nodes::Grouping]
@@ -136,7 +136,8 @@ module Spree
                    where(payments_table[:status].eq('completed'))
 
         refunded = refunds_table.project(refunds_table[:amount].sum).
-                   where(refunds_table[:payment_id].in(settled))
+                   where(refunds_table[:payment_id].in(settled)).
+                   where(refunds_table[:status].eq(nil).or(refunds_table[:status].eq('completed')))
 
         Arel::Nodes::NamedFunction.new(
           'COALESCE',
