@@ -261,7 +261,7 @@ Beyond tools, the server offers MCP **resources** — files a client can fetch r
 | --- | --- |
 | `spree+export://<id>` | A finished export, as CSV. Reading one costs the same permission as reading the records in it, and an export of gift cards or coupon codes is never readable here. |
 
-A product's media, an order's purchase order and an import's own file are things an assistant *puts* there rather than reads back, so they are uploads rather than files it can fetch.
+A product's media, an order's purchase order and an import's own file are things an assistant *puts* there rather than reads back, so they are uploads rather than files it can fetch. The same goes for any other document attached to a record, such as a shipping label or a tax exemption certificate: the assistant gives you the record's download link instead of reading the file.
 
 ## What no tool will do
 
