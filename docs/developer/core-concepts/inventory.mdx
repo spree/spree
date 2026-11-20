@@ -189,7 +189,7 @@ const product = await client.products.get('spree-tote')
 
 product.variants.forEach((variant) => {
   variant.in_stock     // can it be bought right now
-  variant.purchasable  // in stock, or backorderable
+  variant.purchasable  // has a price for this shopper, and is in stock or backorderable
 })
 ```
 
@@ -390,7 +390,7 @@ The on-hand figure is corrected in place — set it to a count, or adjust it by 
 
 ## Turning tracking off
 
-Some things don't need counting — a service, a made-to-order item, a digital download. Tracking can be switched off, and those variants are always purchasable.
+Some things don't need counting — a service, a made-to-order item, a digital download. Tracking can be switched off, and those variants always count as in stock; they can be bought as long as they have a price.
 
 This is a store-level setting, so a store that sells only digital goods needn't manage stock at all.
 
