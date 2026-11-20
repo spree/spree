@@ -3291,7 +3291,9 @@
           "view_at_gateway": "{{gateway}}で見る",
           "view_details": "詳細を見る",
           "failed_card_checks": "カードの確認に失敗",
-          "card_checks_unavailable": "カード確認は利用不可"
+          "card_checks_unavailable": "カード確認は利用不可",
+          "capture_requested": "キャプチャ依頼中",
+          "void_requested": "取消依頼中"
         },
         "priced_by": "{{name}}による価格",
         "purchase_order": {
@@ -3356,9 +3358,17 @@
             "unavailable": "利用不可",
             "not_checked": "未確認"
           },
+          "date": "日付",
           "captures": "確定",
           "captures_empty": "まだ確定したものはありません。",
-          "captured_at": "確定済み"
+          "refunds": "返金",
+          "refunds_empty": "まだ返金はありません。",
+          "settlement_statuses": {
+            "requested": "依頼中",
+            "completed": "完了",
+            "failed": "失敗"
+          },
+          "failure_reason": "理由: {{reason}}"
         },
         "customer_edit": {
           "title": "顧客を編集",
@@ -4798,6 +4808,9 @@
       "amount": "金額",
       "api_key": "API キー",
       "api_key_description": "EasyPost のダッシュボードにあります。テスト用と本番用のキーは動作が違い、キーによってモードが決まります。",
+      "merchant_account": "マーチャントアカウント",
+      "test_mode": "テストモード",
+      "live_url_prefix": "本番 URL プレフィックス",
       "base_amount": "基本額",
       "base_percent": "基本の割合",
       "company_orders_only": "会社の注文のみ",

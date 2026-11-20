@@ -72,10 +72,12 @@ module Spree
         credited = order.store_credit_refunds.sum(:amount)
 
         unless order.order_group_id.present?
+          # A payment waiting on its provider's answer to a capture or void
+          # still holds its authorization.
           return [
             order.payments.valid.completed.sum(:amount),
-            order.payments.valid.pending.sum(:amount),
-            order.refunds.sum(:amount) + credited
+            order.payments.valid.with_status(:pending, :requested).sum(:amount),
+            order.refunds.completed_or_unset.sum(:amount) + credited
           ]
         end
 

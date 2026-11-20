@@ -1101,6 +1101,7 @@ en:
     payment_method_not_supported: That payment method is unsupported. Please choose another one.
     payment_methods: Payment Methods
     payment_processing_failed: Payment could not be processed, please check the details you entered
+    payment_requested_awaiting_provider: The payment provider has not answered yet. Try again once it has.
     payment_source: Payment source
     pending: Pending
     percent: Percent

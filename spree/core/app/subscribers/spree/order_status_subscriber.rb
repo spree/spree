@@ -14,7 +14,7 @@ module Spree
   class OrderStatusSubscriber < Spree::Subscriber
     subscribes_to 'payment.created', 'payment.updated', 'payment.deleted',
                   'payment.completed', 'payment.captured', 'payment.voided',
-                  'refund.created', 'refund.updated',
+                  'refund.created', 'refund.updated', 'payment.refunded', 'refund.failed',
                   'store_credit.created', 'store_credit.updated', 'store_credit.deleted',
                   'fulfillment.created', 'fulfillment.updated', 'fulfillment.deleted',
                   'return.received', 'return.refunded', 'return.canceled',
@@ -23,10 +23,11 @@ module Spree
     # Events whose payload changes what the customer has actually paid, so
     # payment_total has to be re-summed before statuses derive from it.
     # Store credit is not one of them: the money stayed with the store, and
-    # payment_total is what came in through payments.
+    # payment_total is what came in through payments. A refund counts once it
+    # completes (payment.refunded) and stops counting if it fails.
     MONEY_EVENTS = %w[
       payment.created payment.updated payment.deleted payment.completed
-      payment.voided refund.created refund.updated
+      payment.voided refund.created refund.updated payment.refunded refund.failed
       return.refunded
     ].freeze
 

@@ -1,0 +1,26 @@
+{
+  "live": "false",
+  "notificationItems": [
+    {
+      "NotificationRequestItem": {
+        "additionalData": {
+          "checkoutSessionId": "CS0000000000SESSION",
+          "cardSummary": "1111",
+          "expiryDate": "03/2030",
+          "paymentMethodVariant": "visa",
+          "recurring.recurringDetailReference": "STORED0000000001"
+        },
+        "amount": { "currency": "EUR", "value": 1000 },
+        "eventCode": "AUTHORISATION",
+        "eventDate": "2026-11-16T12:00:00+01:00",
+        "merchantAccountCode": "SpreeTestECOM",
+        "merchantReference": "cart_reference-1",
+        "operations": ["CANCEL", "CAPTURE", "REFUND"],
+        "paymentMethod": "visa",
+        "pspReference": "PSPAUTH000000001",
+        "reason": "033899:1111:03/2030",
+        "success": "true"
+      }
+    }
+  ]
+}

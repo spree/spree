@@ -3316,7 +3316,9 @@
           "view_at_gateway": "عرض في {{gateway}}",
           "view_details": "عرض التفاصيل",
           "failed_card_checks": "فشل التحقق من البطاقة",
-          "card_checks_unavailable": "فحوصات البطاقة غير متاحة"
+          "card_checks_unavailable": "فحوصات البطاقة غير متاحة",
+          "capture_requested": "تم طلب التحصيل",
+          "void_requested": "تم طلب الإلغاء"
         },
         "priced_by": "التسعير من {{name}}",
         "purchase_order": {
@@ -3381,9 +3383,17 @@
             "unavailable": "غير متاح",
             "not_checked": "لم يتم التحقق"
           },
+          "date": "التاريخ",
           "captures": "عمليات التحصيل",
           "captures_empty": "لم يتم تحصيل أي مبلغ بعد.",
-          "captured_at": "تاريخ التحصيل"
+          "refunds": "المبالغ المستردة",
+          "refunds_empty": "لم يُسترد أي مبلغ بعد.",
+          "settlement_statuses": {
+            "requested": "مطلوب",
+            "completed": "مكتمل",
+            "failed": "فشل"
+          },
+          "failure_reason": "السبب: {{reason}}"
         },
         "customer_edit": {
           "title": "تعديل العميل",
@@ -4835,6 +4845,9 @@
       "amount": "كمية",
       "api_key": "مفتاح API",
       "api_key_description": "يوجد في لوحة تحكم EasyPost. مفتاح الاختبار والمفتاح الحي يعملان بشكل مختلف — المفتاح نفسه يحدد الوضع.",
+      "merchant_account": "حساب التاجر",
+      "test_mode": "وضع الاختبار",
+      "live_url_prefix": "بادئة عنوان URL للبيئة الحية",
       "base_amount": "Base Amount",
       "base_percent": "Base Percent",
       "company_orders_only": "لطلبات الشركات فقط",

@@ -102,6 +102,18 @@ RSpec.describe 'refunding a child order of a split checkout' do
       expect(Spree::Refund.where(order_id: order.id)).to be_empty
     end
 
+    # A refund the provider has not answered yet still holds its money, so the
+    # share it came from cannot be refunded again; a failed one gives it back.
+    it 'counts a requested refund against the share and not a failed one' do
+      create(:refund, :requested, payment: payment, order: order, amount: 95)
+      create(:refund, :failed, payment: payment, order: order, amount: 50)
+
+      result = described_class.call(return_record: return_record, amount: 10)
+
+      expect(result).to be_failure
+      expect(Spree::Refund.where(order_id: order.id, originator: return_record)).to be_empty
+    end
+
     # A parcel reserves what it is about to draw before asking the gateway, so
     # a share can read captured while the charge is still in flight. Refunding
     # through it would hand back money nobody has taken.

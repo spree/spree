@@ -1,0 +1,148 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://checkout-test.adyen.com/v72/sessions
+    body:
+      encoding: UTF-8
+      string: '{"merchantAccount":"<ADYEN_MERCHANT_ACCOUNT>","returnUrl":"https://shop.example.com/checkout/return","channel":"Web","expiresAt":"2026-11-18T18:43:02Z","applicationInfo":{"externalPlatform":{"name":"Spree
+        Commerce","version":"6.0.5","integrator":"Vendo Sp. z o.o."},"merchantApplication":{"name":"spree_adyen","version":"6.0.5"}},"amount":{"value":11000,"currency":"USD"},"reference":"or_UkLWZg9DAJ-1","merchantOrderReference":"or_UkLWZg9DAJ","countryCode":"US","shopperName":{"firstName":"John","lastName":"Doe"},"shopperEmail":"kaylee@bergemuller.biz","payable":false,"shopperReference":"customer_1","storePaymentMethodMode":"askForConsent","recurringProcessingModel":"CardOnFile","shopperInteraction":"Ecommerce","lineItems":[{"id":"li_UkLWZg9DAJ","description":"Product
+        72754","sku":"SKU-7","quantity":1,"amountIncludingTax":1000},{"id":"delivery","description":"Delivery","quantity":1,"amountIncludingTax":10000}]}'
+    headers:
+      Content-Type:
+      - application/json
+      User-Agent:
+      - adyen-ruby-api-library/12.0.0
+      X-Api-Key:
+      - "<FILTERED>"
+      Idempotency-Key:
+      - spree-or_UkLWZg9DAJ-1-session-8e433da8a64c
+      Adyen-Library-Name:
+      - adyen-ruby-api-library
+      Adyen-Library-Version:
+      - 12.0.0
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Date:
+      - Wed, 18 Nov 2026 17:43:02 GMT
+      Content-Type:
+      - application/json;charset=UTF-8
+      Content-Length:
+      - '3471'
+      Connection:
+      - keep-alive
+      Traceparent:
+      - 00-e19a65dd976100d12054fa7e93e08eac-21ed71bfbddb80d4-01
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Cache-Control:
+      - no-cache, no-store, private, must-revalidate, max-age=0
+      Pragma:
+      - no-cache
+      Expires:
+      - '0'
+      Idempotency-Key:
+      - spree-or_UkLWZg9DAJ-1-session-8e433da8a64c
+      Pspreference:
+      - SHD8R95V27XN4MW5
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      Cf-Cache-Status:
+      - DYNAMIC
+      Set-Cookie:
+      - JSESSIONID=ABADC9C1E6396E7B1F6801182201861B; Path=/checkout; Secure; HttpOnly
+      - __cf_bm=9Ajov_shN0ZZdYZ6kzq95BEZ4eyyIBNXdnAdo1tm1Ak-1795023782.8491178-1.0.1.1-iLsHe2DHaimLQLXjgxof.sVEckna3pcXQuDxmmjww6Au89JqaoCwBIXKzGIDLugcNtJvNyf6vfwh9TXXi6pILhcgxDNUMUfx39RRCAT5ZBEEmqQK1coGc6eWebPOhyxX;
+        HttpOnly; SameSite=None; Partitioned; Secure; Path=/; Domain=adyen.com; Expires=Wed,
+        18 Nov 2026 18:13:02 GMT
+      - _cfuvid=.zw7SeZb5D1vaZovbKwB8IVKuQZW.eZ2gAVRYF8AaFY-1795023782.8491178-1.0.1.1-xpA7txvs1kZijDa7PGAAJYwA6A.x3.epuVK6bdv3kys;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=adyen.com
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a5c8c672cab3b8f5-WAW
+    body:
+      encoding: UTF-8
+      string: '{"amount":{"currency":"USD","value":11000},"applicationInfo":{"externalPlatform":{"name":"Spree
+        Commerce","version":"6.0.5","integrator":"Vendo Sp. z o.o."},"merchantApplication":{"name":"spree_adyen","version":"6.0.5"}},"channel":"Web","countryCode":"US","expiresAt":"2026-11-18T19:43:02+01:00","id":"CSC2FE9E4798F1EDF6FDB32FE","lineItems":[{"amountExcludingTax":0,"amountIncludingTax":1000,"description":"Product
+        72754","id":"li_UkLWZg9DAJ","quantity":1,"sku":"SKU-7","taxAmount":0,"taxPercentage":0},{"amountExcludingTax":0,"amountIncludingTax":10000,"description":"Delivery","id":"delivery","quantity":1,"taxAmount":0,"taxPercentage":0}],"merchantAccount":"<ADYEN_MERCHANT_ACCOUNT>","merchantOrderReference":"or_UkLWZg9DAJ","payable":false,"recurringProcessingModel":"CardOnFile","reference":"or_UkLWZg9DAJ-1","returnUrl":"https:\/\/shop.example.com\/checkout\/return","shopperEmail":"kaylee@bergemuller.biz","shopperInteraction":"Ecommerce","shopperLocale":"en-US","shopperName":{"firstName":"John","lastName":"Doe"},"shopperReference":"customer_1","storePaymentMethodMode":"askForConsent","mode":"embedded","sessionData":"<FILTERED>"}'
+  recorded_at: Wed, 18 Nov 2026 17:43:02 GMT
+- request:
+    method: patch
+    uri: https://checkout-test.adyen.com/v72/sessions/CSC2FE9E4798F1EDF6FDB32FE
+    body:
+      encoding: UTF-8
+      string: '{"sessionData":"<FILTERED>","amount":{"value":11000,"currency":"USD"},"payable":true}'
+    headers:
+      Content-Type:
+      - application/json
+      User-Agent:
+      - adyen-ruby-api-library/12.0.0
+      X-Api-Key:
+      - "<FILTERED>"
+      Adyen-Library-Name:
+      - adyen-ruby-api-library
+      Adyen-Library-Version:
+      - 12.0.0
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 18 Nov 2026 17:43:03 GMT
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Traceparent:
+      - 00-e61a79ea148bd22d5e4050f3aeb7aa96-af141d725ef7f04d-01
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Cache-Control:
+      - no-cache, no-store, private, must-revalidate, max-age=0
+      Pragma:
+      - no-cache
+      Expires:
+      - '0'
+      Pspreference:
+      - D2QDWR4Q9P99M6V5
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      Cf-Cache-Status:
+      - DYNAMIC
+      Set-Cookie:
+      - JSESSIONID=A72E4B789850B36F137776FF42672C89; Path=/checkout; Secure; HttpOnly
+      - __cf_bm=w71fre5Wn8Rb19DYLOuAiNrqDdDlsXpjda_LqIxe0lc-1795023782.9775386-1.0.1.1-3oYLjs7vlH1w81UkJ9aU_bKehf7OB_L1htQzm5eE0IPqKF9EUshiBx1lyiLo_uH.Ux7j3WUUPL2wRxtCOZSNcqA_kWhWzjXij97u0UlMFLzDE9aAabfudHm8bDwYuUTd;
+        HttpOnly; SameSite=None; Partitioned; Secure; Path=/; Domain=adyen.com; Expires=Wed,
+        18 Nov 2026 18:13:03 GMT
+      - _cfuvid=lywHM_G.UNs_xYYR0lLu2b4eI3tFQeVahUd3rogFREU-1795023782.9775386-1.0.1.1-Je3VDZBFGrMFiwTDOwiW0NxtCHqKxJD3BWOejjoITnk;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=adyen.com
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a5c8c6739f3957b7-WAW
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        {
+          "sessionData":"<FILTERED>"
+        }
+  recorded_at: Wed, 18 Nov 2026 17:43:03 GMT
+recorded_with: VCR 6.4.1

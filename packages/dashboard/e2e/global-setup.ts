@@ -214,6 +214,10 @@ const BOOTSTRAP_RUBY = [
   `gateway_order = comma_store.orders.find_by(email: '${FIXTURE_BOGUS_ORDER_EMAIL}') || Spree::Order.create!(store: comma_store, currency: 'EUR', email: '${FIXTURE_BOGUS_ORDER_EMAIL}', status: 'placed', completed_at: Time.current, total: 10)`,
   "gateway_card = Spree::CreditCard.where(payment_method: comma_bogus, gateway_customer_profile_id: 'BGS-E2E').first_or_create!(number: '4111111111111111', verification_value: '123', month: 12, year: 1.year.from_now.year, name: 'E2E Customer', cc_type: 'visa')",
   `gateway_order.payments.create!(payment_method: comma_bogus, source: gateway_card, amount: 10, status: 'completed', response_code: '${FIXTURE_BOGUS_TRANSACTION_ID}', avs_response: 'N', cvv_response_code: 'N', cvv_response_message: 'CVV does not match').capture_events.create!(amount: 10) unless gateway_order.payments.exists?`,
+  // The same gateway answers captures, voids and refunds as requested, the
+  // way a provider that reports their outcome by webhook does; the payment
+  // above is already captured, so it is unaffected.
+  'comma_bogus.update!(preferred_requested_mode: true) unless comma_bogus.preferred_requested_mode',
   'port = ENV.fetch("PORT", 3010)',
   'puts JSON.generate(api_url: "http://localhost:#{port}", admin_email: admin.email, admin_password: "spree123", store_id: s.prefixed_id, store_name: s.name, comma_store_id: comma_store.prefixed_id)',
 ].join('; ')

@@ -75,6 +75,22 @@ RSpec.describe Spree::Purchase::Totals do
     it_behaves_like 'a purchase totals host'
   end
 
+  describe '#refresh_payment_total!' do
+    let(:order) { create(:completed_order_with_totals, store: store) }
+    let(:payment) { create(:payment, order: order, amount: order.total, status: 'completed') }
+
+    it 'nets out completed and empty refunds only' do
+      create(:refund, payment: payment, amount: 5)
+      create(:refund, payment: payment, amount: 3).update_column(:status, nil)
+      create(:refund, :requested, payment: payment, amount: 2)
+      create(:refund, :failed, payment: payment, amount: 1)
+
+      order.refresh_payment_total!
+
+      expect(order.reload.payment_total).to eq(payment.amount - 8)
+    end
+  end
+
   context 'included in Spree::Order' do
     def new_record(**attributes)
       build(:order, store: @default_store, **attributes)

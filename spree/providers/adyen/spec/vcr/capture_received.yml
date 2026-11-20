@@ -1,0 +1,61 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://checkout-test.adyen.com/v72/payments/VBDD9F8HFCWD2HV5/captures
+    body:
+      encoding: UTF-8
+      string: '{"merchantAccount":"<ADYEN_MERCHANT_ACCOUNT>","amount":{"value":1000,"currency":"USD"},"reference":"R1001-spree-py_UkLWZg9DAJ-capture-1"}'
+    headers:
+      Content-Type:
+      - application/json
+      User-Agent:
+      - adyen-ruby-api-library/12.0.0
+      X-Api-Key:
+      - "<FILTERED>"
+      Idempotency-Key:
+      - spree-py_UkLWZg9DAJ-capture-1
+      Adyen-Library-Name:
+      - adyen-ruby-api-library
+      Adyen-Library-Version:
+      - 12.0.0
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Traceparent:
+      - 00-3356fa8285a064948ef323ae33ddb3e7-5f9dbdf5c16200ff-01
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Cache-Control:
+      - no-cache, no-store, private, must-revalidate, max-age=0
+      Pragma:
+      - no-cache
+      Expires:
+      - '0'
+      Set-Cookie:
+      - JSESSIONID=0CE2C93D5D6CF8787ECFC64F6987FC4C; Path=/checkout; Secure; HttpOnly
+      Idempotency-Key:
+      - spree-py_UkLWZg9DAJ-capture-1
+      Pspreference:
+      - P8P4DBLH7TJ2PF75
+      Content-Type:
+      - application/json;charset=UTF-8
+      Content-Length:
+      - '225'
+      Date:
+      - Wed, 18 Nov 2026 17:58:54 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+    body:
+      encoding: UTF-8
+      string: '{"merchantAccount":"<ADYEN_MERCHANT_ACCOUNT>","paymentPspReference":"VBDD9F8HFCWD2HV5","pspReference":"PGDW2DVNGQB45G75","reference":"R1001-spree-py_UkLWZg9DAJ-capture-1","status":"received","amount":{"currency":"USD","value":1000}}'
+  recorded_at: Wed, 18 Nov 2026 17:58:54 GMT
+recorded_with: VCR 6.4.1
