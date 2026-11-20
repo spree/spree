@@ -268,6 +268,22 @@ RSpec.describe Spree::Api::V3::Admin::CategoriesController, type: :controller do
         expect(nested.reload.parent).to be_nil
       end
 
+      it 'keeps only the last permalink segment when moving to the top level and back' do
+        kitchen = create(:category, name: 'Kitchen', store: store)
+        kettles = create(:category, name: 'Kettles', parent: kitchen, store: store)
+        expect(kettles.permalink).to eq('kitchen/kettles')
+
+        patch :reposition, params: { id: kettles.prefixed_id, new_parent_id: nil, new_position: 0 }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(kettles.reload.permalink).to eq('kettles')
+
+        patch :reposition, params: { id: kettles.prefixed_id, new_parent_id: kitchen.prefixed_id, new_position: 0 }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(kettles.reload.permalink).to eq('kitchen/kettles')
+      end
+
       it 'returns 422 for an impossible move (into its own descendant)' do
         child = create(:category, name: 'Child', parent: first)
 

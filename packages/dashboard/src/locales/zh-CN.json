@@ -3282,7 +3282,10 @@
           "load_error": "无法加载此订单的付款信息。",
           "view_at_gateway": "在 {{gateway}} 中查看",
           "view_details": "查看详情",
-          "failed_card_checks": "银行卡验证未通过"
+          "failed_card_checks": "银行卡验证未通过",
+          "card_checks_unavailable": "银行卡校验不可用",
+          "capture_requested": "已请求扣款",
+          "void_requested": "已请求作废"
         },
         "priced_by": "定价来自 {{name}}",
         "purchase_order": {
@@ -3344,11 +3347,20 @@
           "check": {
             "passed": "通过",
             "failed": "未通过",
+            "unavailable": "不可用",
             "not_checked": "未验证"
           },
+          "date": "日期",
           "captures": "扣款记录",
           "captures_empty": "尚未扣款。",
-          "captured_at": "扣款时间"
+          "refunds": "退款",
+          "refunds_empty": "尚未退款。",
+          "settlement_statuses": {
+            "requested": "已请求",
+            "completed": "已完成",
+            "failed": "失败"
+          },
+          "failure_reason": "原因：{{reason}}"
         },
         "customer_edit": {
           "title": "编辑客户",
@@ -4403,6 +4415,7 @@
             "stock_receipt": "入库单",
             "stock_reservation": "库存预留",
             "stock_transfer": "库存调拨",
+            "store": "店铺",
             "store_credit": "店铺积分",
             "supplier": "供应商",
             "tax_exemption_certificate": "免税证书",
@@ -4785,6 +4798,9 @@
       "amount": "金额",
       "api_key": "API 密钥",
       "api_key_description": "在您的 EasyPost 控制台中获取。测试密钥与正式密钥行为不同——密钥本身决定模式。",
+      "merchant_account": "商户账户",
+      "test_mode": "测试模式",
+      "live_url_prefix": "正式环境 URL 前缀",
       "base_amount": "基础金额",
       "base_percent": "基础百分比",
       "company_orders_only": "仅限公司订单",

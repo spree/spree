@@ -76,6 +76,15 @@ RSpec.describe 'the upgrade manifest' do
       expect(ids.index('migrate_rich_text_to_columns')).
         to be > ids.index('migrate_taxons_to_categories_and_collections')
     end
+
+    it 'backfills settlement statuses as a required step right after the PayPal steps' do
+      ids = manifest['steps'].pluck('id')
+      step = manifest['steps'].find { |entry| entry['id'] == 'backfill_settlement_statuses' }
+
+      expect(step['optional']).to be_falsey
+      expect(step['task_class']).to eq('Spree::MaintenanceTasks::Upgrade::BackfillSettlementStatuses')
+      expect(ids.index('backfill_settlement_statuses')).to eq(ids.index('register_paypal_webhooks') + 1)
+    end
   end
 
   describe 'released manifests' do

@@ -381,6 +381,73 @@ describe Spree::Store, type: :model, without_global_store: true do
     end
   end
 
+  # Saving through the settings page, a translation in another language, or
+  # the logo alone each commit an update on the store row, so each publishes
+  # once. The payload is covered in spree_api, where the serializer lives.
+  describe 'store.updated', :events do
+    let!(:store) { create(:store).tap { |store| store.default_market.update!(supported_locales: 'en,de') } }
+    let(:logo) do
+      ActiveStorage::Blob.create_and_upload!(
+        io: File.open(Spree::Core::Engine.root.join('spec', 'fixtures', 'thinking-cat.jpg')),
+        filename: 'logo.jpg',
+        content_type: 'image/jpeg'
+      )
+    end
+    let(:published) { [] }
+
+    before do
+      allow(Spree::Events).to receive(:publish).and_wrap_original do |original, name, *rest|
+        published << name if name.start_with?('store.')
+        original.call(name, *rest)
+      end
+    end
+
+    it 'is published once when a setting changes' do
+      store.update!(facebook: 'mystore')
+
+      expect(published).to eq(['store.updated'])
+    end
+
+    it 'is published once when only a translation in another language changes' do
+      store.reload.upsert_translations('de' => { 'name' => 'Laden', 'seo_title' => 'Laden SEO' })
+
+      expect(published).to eq(['store.updated'])
+    end
+
+    it 'is published once when the logo is attached' do
+      store.update!(logo_signed_id: logo.signed_id)
+
+      expect(published).to eq(['store.updated'])
+    end
+
+    it 'is published once when the logo is removed' do
+      store.update!(logo_signed_id: logo.signed_id)
+      published.clear
+
+      store.reload.update!(logo_signed_id: nil)
+
+      expect(published).to eq(['store.updated'])
+    end
+
+    it 'is attributed to the store that changed, whichever store the caller is in' do
+      events = []
+      allow(Spree::Events).to receive(:publish).and_wrap_original do |original, *args|
+        original.call(*args).tap { |event| events << event }
+      end
+      other_store = create(:store)
+
+      Spree::Current.with_store(other_store) { store.update!(facebook: 'mystore') }
+
+      expect(events.map(&:store_id)).to eq([store.id])
+    end
+
+    it 'is not published when a related record only touches the store' do
+      store.touch
+
+      expect(published).to be_empty
+    end
+  end
+
   describe 'seller digital asset content types' do
     let(:store) { build(:store) }
 

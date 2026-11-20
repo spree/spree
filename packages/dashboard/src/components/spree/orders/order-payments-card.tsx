@@ -66,7 +66,7 @@ import { type FormEvent, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useOrderMutation } from '../../../hooks/use-order'
 import { useOrderGroup } from '../../../hooks/use-seller-ledger'
-import { PaymentDetailsDialog } from './payment-details-dialog'
+import { PaymentDetailsDialog, PaymentStatusBadge, riskyCardChecks } from './payment-details-dialog'
 
 export function PaymentsCard({ order }: { order: Order }) {
   const { t } = useTranslation()
@@ -181,14 +181,9 @@ export function PaymentsCard({ order }: { order: Order }) {
                           label={t('admin.orders.payment_statuses.authorized')}
                         />
                       ) : (
-                        <StatusBadge status={payment.status} />
+                        <PaymentStatusBadge payment={payment} />
                       )}
-                      {(payment.avs_risky || payment.cvv_risky) && (
-                        <Badge variant="warning">
-                          <ShieldAlertIcon />
-                          {t('admin.orders.detail.payments_table.failed_card_checks')}
-                        </Badge>
-                      )}
+                      <RiskyCardChecksBadge payment={payment} />
                     </div>
                   </TableCell>
                   <TableCell className="text-right font-medium whitespace-nowrap tabular-nums">
@@ -584,5 +579,21 @@ function AddPaymentDialog({
         </form>
       </DialogContent>
     </Dialog>
+  )
+}
+
+/** Warns of a card payment's risky address or security code check. */
+function RiskyCardChecksBadge({ payment }: { payment: Payment }) {
+  const { t } = useTranslation()
+  const risky = riskyCardChecks(payment)
+  if (!risky) return null
+
+  return (
+    <Badge variant="warning">
+      <ShieldAlertIcon />
+      {risky === 'failed'
+        ? t('admin.orders.detail.payments_table.failed_card_checks')
+        : t('admin.orders.detail.payments_table.card_checks_unavailable')}
+    </Badge>
   )
 }

@@ -68,11 +68,12 @@ module Spree
     # instead of the denormalized column, because that column is written by a
     # subscriber after the fact: two refunds landing together would each read a
     # share that still looked unrefunded. {Spree::Refunds::Create} bounds every
-    # refund by this under the payment's lock.
+    # refund by this under the payment's lock. A refund still waiting on its
+    # provider counts, so its amount cannot be refunded twice.
     #
     # @return [BigDecimal]
     def refundable_amount
-      already_refunded = Spree::Refund.where(payment_id: payment_id, order_id: order_id).sum(:amount)
+      already_refunded = Spree::Refund.not_failed.where(payment_id: payment_id, order_id: order_id).sum(:amount)
       captured_amount - already_refunded
     end
 
@@ -85,6 +86,17 @@ module Spree
     # @return [BigDecimal]
     def undrawn_amount
       authorized_amount - captured_amount - claimed_amount
+    end
+
+    # Turns a claim into what it turned out to be: money the gateway took, or
+    # nothing at all.
+    #
+    # @param amount [BigDecimal] how much of the claim settles
+    # @param captured [Boolean] whether the gateway took it
+    def settle_claim!(amount, captured:)
+      attributes = { claimed_amount: claimed_amount - amount }
+      attributes[:captured_amount] = captured_amount + amount if captured
+      update!(attributes)
     end
 
     # @return [Boolean] whether a charge for this share is still in flight —

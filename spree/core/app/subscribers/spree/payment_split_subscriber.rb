@@ -14,36 +14,34 @@ module Spree
   # order's payment status is derived from: an order that still read as
   # unpaid until a job ran would be showing the wrong thing to the merchant
   # and to the seller.
+  #
+  # A share's refunded amount moves when a refund completes (payment.refunded,
+  # whether the provider answered at once or by webhook) or fails after it
+  # completed (refund.failed), never when the row is created: a provider may
+  # still refuse a requested refund.
   class PaymentSplitSubscriber < Spree::Subscriber
-    subscribes_to 'refund.created', 'payment.completed', async: false
+    subscribes_to 'payment.refunded', 'refund.failed', 'payment.completed', async: false
 
-    on 'refund.created', :handle_refund
+    on 'payment.refunded', :handle_refund
+    on 'refund.failed', :handle_refund_failed
     on 'payment.completed', :handle_capture
 
+    # The payload names the payment, not the refund, so every share of it is
+    # recomputed; each is derived from the rows, so the others do not move.
     def handle_refund(event)
-      refund = Spree::Refund.find_by_prefix_id(event.payload['id'])
-      return unless refund
+      payment = Spree::Payment.find_by_prefix_id(event.payload['id'])
+      return if payment.nil? || !payment.grouped?
 
-      order = refund.order
+      payment.payment_splits.includes(:order).find_each { |split| refresh_refunded_amount(split) }
+    end
+
+    def handle_refund_failed(event)
+      refund = Spree::Refund.find_by_prefix_id(event.payload['id'])
+      order = refund&.order
       return if order.nil? || !order.grouped?
 
       split = order.payment_split_for(refund.payment)
-      return if split.nil?
-
-      # Recomputed from the refunds rather than incremented, so a replayed
-      # event cannot count the same money twice — and read and written under
-      # the row's lock, so two refunds landing together cannot each total the
-      # rows before the other's has committed.
-      split.with_lock do
-        refunded = Spree::Refund.where(payment_id: refund.payment_id, order_id: order.id).sum(:amount)
-        split.update!(refunded_amount: refunded)
-      end
-
-      # Deliberately re-derived here even though OrderStatusSubscriber also
-      # answers refund.created: subscriber order is not guaranteed, and a
-      # status derived before this share was written would describe the refund
-      # as not having happened.
-      Spree::Orders::UpdateStatuses.call(order: order)
+      refresh_refunded_amount(split) if split
     end
 
     # The whole payment settled, so every share it covers is captured in full.
@@ -66,6 +64,26 @@ module Spree
 
         Spree::Orders::UpdateStatuses.call(order: split.order) if settled && split.order
       end
+    end
+
+    private
+
+    def refresh_refunded_amount(split)
+      order = split.order
+      # Recomputed from the completed refunds rather than incremented, so a
+      # replayed event cannot count the same money twice — and read and
+      # written under the row's lock, so two refunds landing together cannot
+      # each total the rows before the other's has committed.
+      split.with_lock do
+        refunded = Spree::Refund.completed_or_unset.where(payment_id: split.payment_id, order_id: split.order_id).sum(:amount)
+        split.update!(refunded_amount: refunded)
+      end
+
+      # Deliberately re-derived here even though OrderStatusSubscriber also
+      # answers these events: subscriber order is not guaranteed, and a status
+      # derived before this share was written would describe the refund as
+      # not having happened.
+      Spree::Orders::UpdateStatuses.call(order: order) if order
     end
   end
 end

@@ -25,4 +25,12 @@ RSpec.describe I18n do
                     "Run `i18n-tasks check-consistent-interpolations' to show them"
     expect(inconsistent_interpolations).to be_empty, error_message
   end
+
+  it 'does not mix letters from different alphabets in one word' do
+    mixed = Dir[File.expand_path('../config/locales/*.yml', __dir__)].flat_map do |path|
+      words = File.read(path).scan(/[[:alpha:]]+/)
+      words.select { |word| word.match?(/\p{Latin}/) && word.match?(/[\p{Cyrillic}\p{Greek}]/) }.map { |word| "#{File.basename(path)}: #{word}" }
+    end
+    expect(mixed).to be_empty, "These words mix letters from different alphabets:\n#{mixed.uniq.join("\n")}"
+  end
 end

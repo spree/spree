@@ -10,6 +10,27 @@ describe Spree::Refund, type: :model do
     it_behaves_like 'lifecycle events'
   end
 
+  describe 'status' do
+    let(:payment) { create(:payment, status: 'completed', amount: 100) }
+    let!(:completed) { create(:refund, payment: payment, amount: 10) }
+    let!(:unset) { create(:refund, payment: payment, amount: 10).tap { |refund| refund.update_column(:status, nil) } }
+    let!(:requested) { create(:refund, :requested, payment: payment, amount: 10) }
+    let!(:failed) { create(:refund, :failed, payment: payment, amount: 10) }
+
+    it 'reads an empty status as completed' do
+      expect(unset.reload.status).to eq('completed')
+      expect(unset).to be_completed
+    end
+
+    it 'returns completed and empty rows from completed_or_unset' do
+      expect(described_class.completed_or_unset).to contain_exactly(completed, unset)
+    end
+
+    it 'returns every row that has not failed from not_failed' do
+      expect(described_class.not_failed).to contain_exactly(completed, unset, requested)
+    end
+  end
+
   describe '#amount=' do
     let(:refund) { build(:refund) }
 

@@ -17,7 +17,7 @@ RSpec.describe Spree::Api::V3::CreditCardSerializer do
 
   it 'includes all expected attributes' do
     expect(subject.keys).to match_array(%w[
-      id brand last4 month year name default gateway_payment_profile_id
+      id brand last4 month year name default gateway_payment_profile_id payment_method_id
     ])
   end
 
@@ -32,6 +32,11 @@ RSpec.describe Spree::Api::V3::CreditCardSerializer do
     expect(subject['year']).to eq(1.year.from_now.year)
     expect(subject['name']).to eq('John Doe')
     expect(subject['default']).to be true
+  end
+
+  # A storefront offers a saved card only for the payment method that saved it.
+  it 'names the payment method the card was saved with' do
+    expect(subject['payment_method_id']).to eq(credit_card.payment_method.prefixed_id)
   end
 
   it 'exposes gateway_payment_profile_id for saved card flows' do

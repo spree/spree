@@ -32,6 +32,11 @@ module Spree
     acts_as_paranoid
     friendly_id :code, use: [:slugged], slug_column: :code, routes: :normal
 
+    # Headless storefronts cache the store's name, SEO fields and logo, and
+    # expire them on `store.updated`. An installation runs one store, which is
+    # never created or deleted while live, so those events are left out.
+    publishes_lifecycle_events only: [:update]
+
     #
     # Translations
     #
@@ -777,7 +782,24 @@ module Spree
                                       end
     end
 
+    # The payload is the store in its default language, whichever language
+    # the change was written in: a translation saved under `de` still
+    # announces the store as storefronts show it by default.
+    def event_payload_for(event_name, **params)
+      Spree::Current.with_content_locale(default_locale) do
+        ::Mobility.with_locale(default_locale) { super }
+      end
+    end
+
     private
+
+    # A store's events belong to it, whichever store the caller is working in,
+    # so they reach this store's webhook endpoints.
+    def in_event_store(&block)
+      return block.call if Spree::Current.store == self
+
+      Spree::Current.with_store(self, &block)
+    end
 
     # Products without a profile fall back to this one, so it must exist
     # from the store's first moment.

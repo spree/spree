@@ -3,6 +3,7 @@
 {%- endcomment -%}
 {%- assign tax_total = purchase.additional_tax_total | plus: 0 -%}
 {%- assign gift_card_total = purchase.gift_card_total | plus: 0 -%}
+{%- assign store_credit_total = purchase.store_credit_total | plus: 0 -%}
 <mj-table css-class="summary" padding="16px 0 0">
   {%- assign value = purchase.item_total | money -%}
   {% render 'spree/shared/summary_row', label: 'order_mailer.subtotal', translate: true, value: value %}
@@ -21,6 +22,10 @@
   {%- if gift_card_total > 0 -%}
     {%- assign gift_card_value = purchase.gift_card_total | money | prepend: '-' -%}
     {% render 'spree/shared/summary_row', label: 'gift_card', translate: true, value: gift_card_value %}
+  {%- endif -%}
+  {%- if store_credit_total > 0 -%}
+    {%- assign store_credit_value = purchase.store_credit_total | money | prepend: '-' -%}
+    {% render 'spree/shared/summary_row', label: 'store_credit_name', translate: true, value: store_credit_value %}
   {%- endif -%}
   {%- for line in purchase.manual_discounts -%}
     {%- assign value = line.amount | money -%}

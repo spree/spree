@@ -3292,7 +3292,10 @@
           "load_error": "Impossible de charger les paiements de cette commande.",
           "view_at_gateway": "Voir sur {{gateway}}",
           "view_details": "Voir les détails",
-          "failed_card_checks": "Vérifications de carte échouées"
+          "failed_card_checks": "Vérifications de carte échouées",
+          "card_checks_unavailable": "Vérifications de carte non disponibles",
+          "capture_requested": "Capture demandée",
+          "void_requested": "Annulation demandée"
         },
         "priced_by": "Tarifé par {{name}}",
         "purchase_order": {
@@ -3354,11 +3357,20 @@
           "check": {
             "passed": "Réussie",
             "failed": "Échouée",
+            "unavailable": "Non disponible",
             "not_checked": "Non vérifiée"
           },
+          "date": "Date",
           "captures": "Captures",
           "captures_empty": "Rien n'a encore été capturé.",
-          "captured_at": "Capturé"
+          "refunds": "Remboursements",
+          "refunds_empty": "Rien n'a encore été remboursé.",
+          "settlement_statuses": {
+            "requested": "Demandé",
+            "completed": "Terminé",
+            "failed": "Échoué"
+          },
+          "failure_reason": "Motif : {{reason}}"
         },
         "customer_edit": {
           "title": "Modifier le client",
@@ -4417,6 +4429,7 @@
             "stock_receipt": "Réception de stock",
             "stock_reservation": "Réservation de stock",
             "stock_transfer": "Transfert de stock",
+            "store": "Boutique",
             "store_credit": "Avoir en boutique",
             "supplier": "Fournisseur",
             "tax_exemption_certificate": "Certificat d'exonération fiscale",
@@ -4799,6 +4812,9 @@
       "amount": "Montant",
       "api_key": "Clé API",
       "api_key_description": "Disponible dans votre tableau de bord EasyPost. Une clé de test et une clé live se comportent différemment — la clé détermine le mode.",
+      "merchant_account": "Compte marchand",
+      "test_mode": "Mode test",
+      "live_url_prefix": "Préfixe d'URL de production",
       "base_amount": "Montant de base",
       "base_percent": "Pourcentage de base",
       "company_orders_only": "Réservée aux commandes d'entreprise",

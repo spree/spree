@@ -109,6 +109,7 @@ RSpec.describe 'Admin Order Payments API', type: :request, swagger_doc: 'api-ref
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data['id']).to eq(payment.prefixed_id)
+          expect(data).to have_key('requested_action')
         end
       end
     end

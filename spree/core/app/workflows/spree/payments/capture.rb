@@ -41,7 +41,9 @@ module Spree
         external_step :authorize_remainder
 
         run_hooks :after_capture
-        payment.publish_event('payment.captured')
+        # A requested capture is confirmed by the provider's webhook, which
+        # publishes payment.captured then.
+        payment.publish_event(response.requested? ? 'payment.capture_requested' : 'payment.captured')
         success(payment.reload)
       end
 
@@ -67,6 +69,7 @@ module Spree
       # this workflow again.
       def ensure_capturable
         halt!(payment) if payment.completed?
+        failure(payment, I18n.t('spree.payment_requested_awaiting_provider')) if payment.requested?
         return if payment.pending? || payment.checkout? || payment.processing? || payment.failed?
 
         failure(payment, :payment_not_capturable)
@@ -187,14 +190,21 @@ module Spree
       # Locked because the webhook settling the same payment races this
       # request. The DB recheck — deliberately not a reload, which would
       # discard the in-memory source (card numbers never persist) — makes
-      # the capture event exactly-once.
+      # the capture event exactly-once: a payment no longer `processing` was
+      # moved by settlement, a provider outcome or another capture, and is
+      # not reopened.
       def record_capture
         already_captured = false
         payment.owner.with_lock do
-          if Spree::Payment.where(id: payment.id, status: 'completed').exists?
+          if Spree::Payment.where(id: payment.id).where.not(status: 'processing').exists?
             already_captured = true
+          elsif response.requested?
+            # The provider accepted the capture and answers by webhook: no
+            # remainder and no completion until it does.
+            payment.capture_events.create!(amount: @amount, status: 'requested', transaction_id: response.reference)
+            payment.update!(status: 'requested')
           else
-            payment.capture_events.create!(amount: @amount)
+            payment.capture_events.create!(amount: @amount, status: 'completed')
             # Split before completing, so payment.completed publishes with
             # the captured amount and the order recomputes from correct rows.
             @remainder = payment.split_uncaptured_amount
