@@ -32,6 +32,15 @@ RSpec.describe Spree::Return do
       expect(return_record.refundable_total).to eq(return_record.refund_total)
     end
 
+    it 'counts a refund the provider has not answered and not one that failed' do
+      payment = return_record.order.payments.completed.first
+      create(:refund, :requested, payment: payment, amount: 3, originator: return_record)
+      create(:refund, :failed, payment: payment, amount: 5, originator: return_record)
+
+      expect(return_record.reload.refunded_total).to eq(3)
+      expect(described_class.includes(:refunds).find(return_record.id).refunded_total).to eq(3)
+    end
+
     # The refund dialog offers refundable_total, so a figure still counting
     # units that never arrived is money out of the door (V-3654).
     context 'when the warehouse counted fewer units than were announced' do

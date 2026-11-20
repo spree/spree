@@ -1,0 +1,20 @@
+{
+  "live": "false",
+  "notificationItems": [
+    {
+      "NotificationRequestItem": {
+        "additionalData": {},
+        "amount": { "currency": "EUR", "value": 1000 },
+        "eventCode": "REFUND_FAILED",
+        "eventDate": "2026-11-16T12:00:00+01:00",
+        "merchantAccountCode": "SpreeTestECOM",
+        "merchantReference": "cart_reference-1",
+        "originalReference": "PSPAUTH000000001",
+        "paymentMethod": "visa",
+        "pspReference": "PSPMODIFICATION1",
+        "reason": "",
+        "success": "true"
+      }
+    }
+  ]
+}

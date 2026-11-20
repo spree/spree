@@ -1,6 +1,6 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
-import { EmailLineItemSchema } from './EmailLineItem';
+import { EmailReturnedItemSchema } from './EmailReturnedItem';
 
 export const EmailReturnSchema = z.object({
   id: z.string(),
@@ -15,7 +15,7 @@ export const EmailReturnSchema = z.object({
   refunded_at: z.string().nullable(),
   canceled_at: z.string().nullable(),
   refunded_total: z.string(),
-  returned_items: z.array(EmailLineItemSchema),
+  returned_items: z.array(EmailReturnedItemSchema),
 });
 
 export type EmailReturn = z.infer<typeof EmailReturnSchema>;

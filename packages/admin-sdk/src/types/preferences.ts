@@ -216,6 +216,7 @@ export type PaymentMethodBogusPreferences = {
   dummy_key: string
   /** Masked when read (`••••1234`); send it back unchanged to keep it, `null` to clear it. */
   dummy_secret_key: string | null
+  requested_mode: boolean
 }
 
 /** Settings of the `check` payment method: none. */

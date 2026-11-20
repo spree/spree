@@ -24,6 +24,18 @@ RSpec.describe Spree::PaymentSplit, type: :model do
     end
   end
 
+  describe '#refundable_amount' do
+    let(:payment) { create(:payment, order: nil, cart: nil, order_group: group, amount: 40, status: 'completed') }
+
+    it 'reserves a requested refund and releases a failed one' do
+      split = create(:payment_split, payment: payment, order: order, authorized_amount: 40, captured_amount: 40)
+      create(:refund, :requested, payment: payment, order: order, amount: 10)
+      create(:refund, :failed, payment: payment, order: order, amount: 5)
+
+      expect(split.refundable_amount).to eq(30)
+    end
+  end
+
   describe '#net_captured_amount' do
     it 'is what is left after refunds' do
       split = create(:payment_split, payment: payment, order: order, captured_amount: 20, refunded_amount: 5)

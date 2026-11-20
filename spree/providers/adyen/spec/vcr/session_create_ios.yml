@@ -1,0 +1,78 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://checkout-test.adyen.com/v72/sessions
+    body:
+      encoding: UTF-8
+      string: '{"merchantAccount":"<ADYEN_MERCHANT_ACCOUNT>","returnUrl":"https://shop.example.com/checkout/return","channel":"iOS","expiresAt":"2026-11-18T18:43:03Z","blockedPaymentMethods":["googlepay"],"applicationInfo":{"externalPlatform":{"name":"Spree
+        Commerce","version":"6.0.5","integrator":"Vendo Sp. z o.o."},"merchantApplication":{"name":"spree_adyen","version":"6.0.5"}},"amount":{"value":11000,"currency":"USD"},"reference":"or_UkLWZg9DAJ-1","merchantOrderReference":"or_UkLWZg9DAJ","countryCode":"US","shopperName":{"firstName":"John","lastName":"Doe"},"shopperEmail":"tonie.funk@olson.ca","payable":false,"shopperReference":"customer_1","storePaymentMethodMode":"askForConsent","recurringProcessingModel":"CardOnFile","shopperInteraction":"Ecommerce","lineItems":[{"id":"li_UkLWZg9DAJ","description":"Product
+        99244","sku":"SKU-9","quantity":1,"amountIncludingTax":1000},{"id":"delivery","description":"Delivery","quantity":1,"amountIncludingTax":10000}]}'
+    headers:
+      Content-Type:
+      - application/json
+      User-Agent:
+      - adyen-ruby-api-library/12.0.0
+      X-Api-Key:
+      - "<FILTERED>"
+      Idempotency-Key:
+      - spree-or_UkLWZg9DAJ-1-session-f881165d33ff
+      Adyen-Library-Name:
+      - adyen-ruby-api-library
+      Adyen-Library-Version:
+      - 12.0.0
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Date:
+      - Wed, 18 Nov 2026 17:43:03 GMT
+      Content-Type:
+      - application/json;charset=UTF-8
+      Content-Length:
+      - '3541'
+      Connection:
+      - keep-alive
+      Traceparent:
+      - 00-9898aa37a913f20842ca16e861b62968-7274e4e3fed9835c-01
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Cache-Control:
+      - no-cache, no-store, private, must-revalidate, max-age=0
+      Pragma:
+      - no-cache
+      Expires:
+      - '0'
+      Set-Cookie:
+      - JSESSIONID=97A9D87376F084030625C4237F087643; Path=/checkout; Secure; HttpOnly
+      - __cf_bm=PRglWZMEn.jIifNvgxRxSoaCO9N48kBOejkxdEBOPTs-1795023783.4645605-1.0.1.1-_uW7EEWHcPzajbDofifA4BLH1i7nRN.OAZrZbGT40Xx8rpPVoeJMrYrIjcaGMYlIHqvb5geS_NZY0nbKt77r_WOP5rBdutPRVCt2NB9CGxUFsiz5V6i60iExr0IOEi6t;
+        HttpOnly; SameSite=None; Partitioned; Secure; Path=/; Domain=adyen.com; Expires=Wed,
+        18 Nov 2026 18:13:03 GMT
+      - _cfuvid=rDnj20ETAz.FMVSzA0zrDblHptq7Dp2JcZK3bG__1uM-1795023783.4645605-1.0.1.1-MPQWTcFX836ShBscVAzXt6kyCwQzPy.DEsT0LjclkCk;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=adyen.com
+      Idempotency-Key:
+      - spree-or_UkLWZg9DAJ-1-session-f881165d33ff
+      Pspreference:
+      - H6QDWR4Q9P99M6V5
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a5c8c676ada40254-WAW
+    body:
+      encoding: UTF-8
+      string: '{"amount":{"currency":"USD","value":11000},"applicationInfo":{"externalPlatform":{"name":"Spree
+        Commerce","version":"6.0.5","integrator":"Vendo Sp. z o.o."},"merchantApplication":{"name":"spree_adyen","version":"6.0.5"}},"blockedPaymentMethods":["googlepay"],"channel":"iOS","countryCode":"US","expiresAt":"2026-11-18T19:43:03+01:00","id":"CS1E9F28467048E20773AE2F9","lineItems":[{"amountExcludingTax":0,"amountIncludingTax":1000,"description":"Product
+        99244","id":"li_UkLWZg9DAJ","quantity":1,"sku":"SKU-9","taxAmount":0,"taxPercentage":0},{"amountExcludingTax":0,"amountIncludingTax":10000,"description":"Delivery","id":"delivery","quantity":1,"taxAmount":0,"taxPercentage":0}],"merchantAccount":"<ADYEN_MERCHANT_ACCOUNT>","merchantOrderReference":"or_UkLWZg9DAJ","payable":false,"recurringProcessingModel":"CardOnFile","reference":"or_UkLWZg9DAJ-1","returnUrl":"https:\/\/shop.example.com\/checkout\/return","shopperEmail":"tonie.funk@olson.ca","shopperInteraction":"Ecommerce","shopperLocale":"en-US","shopperName":{"firstName":"John","lastName":"Doe"},"shopperReference":"customer_1","storePaymentMethodMode":"askForConsent","mode":"embedded","sessionData":"<FILTERED>"}'
+  recorded_at: Wed, 18 Nov 2026 17:43:03 GMT
+recorded_with: VCR 6.4.1

@@ -17,8 +17,22 @@ RSpec.describe Spree::Payments::HandleWebhookJob, type: :job do
       expect(handler).to receive(:call).with(
         payment_method: payment_method,
         action: :captured,
-        payment_session: payment_session
+        payment_session: payment_session,
+        metadata: { 'psp_reference' => 'PSP123' }
       )
+
+      described_class.new.perform(
+        payment_method_id: payment_method.id,
+        action: 'captured',
+        payment_session_id: payment_session.id,
+        metadata: { 'psp_reference' => 'PSP123' }
+      )
+    end
+
+    it 'passes empty metadata when enqueued without it' do
+      handler = instance_double(Spree::Payments::HandleWebhook)
+      allow(Spree::Payments::HandleWebhook).to receive(:new).and_return(handler)
+      expect(handler).to receive(:call).with(hash_including(metadata: {}))
 
       described_class.new.perform(
         payment_method_id: payment_method.id,

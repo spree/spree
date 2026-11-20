@@ -327,8 +327,12 @@ en:
               price_list_required: Choose a price list to export.
         spree/gift_card:
           attributes:
+            amount:
+              cannot_change_once_used: can't be changed once the gift card has been used
             base:
               cannot_destroy_used_gift_card: Can't delete a used gift card
+            currency:
+              cannot_change_once_used: can't be changed once the gift card has been used
         spree/import:
           attributes:
             attachment:
@@ -1097,6 +1101,7 @@ en:
     payment_method_not_supported: That payment method is unsupported. Please choose another one.
     payment_methods: Payment Methods
     payment_processing_failed: Payment could not be processed, please check the details you entered
+    payment_requested_awaiting_provider: The payment provider has not answered yet. Try again once it has.
     payment_source: Payment source
     pending: Pending
     percent: Percent

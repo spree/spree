@@ -230,6 +230,17 @@ export function variantHasTaxCategoryOverride(variant: VariantFormValues): boole
 }
 
 /**
+ * An override that changes the variant's tax: one naming the product's own
+ * category is stored, but taxes the variant exactly as the product does.
+ */
+export function variantTaxCategoryDiffersFromProduct(
+  variant: VariantFormValues,
+  productTaxCategoryId: string | null | undefined,
+): boolean {
+  return variantHasTaxCategoryOverride(variant) && variant.tax_category_id !== productTaxCategoryId
+}
+
+/**
  * Before PATCH, keep overrides as-is and leave inheriting variants at null so
  * the product-level tax category applies through Variant#tax_category.
  */

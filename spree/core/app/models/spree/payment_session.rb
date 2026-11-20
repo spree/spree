@@ -115,6 +115,16 @@ module Spree
       payment.metadata.merge!(metadata.stringify_keys) if metadata.present?
     end
 
+    # The provider's id for the capture when the payment settles as captured,
+    # written on its capture event so a late capture failure can find it.
+    # Called inside the settlement lock, so it must not perform provider I/O.
+    #
+    # @param payment [Spree::Payment] the payment being settled
+    # @return [String, nil]
+    def capture_reference_for_settlement(_payment)
+      nil
+    end
+
     # Fetches whatever settlement will need from the provider, so a caller
     # that settles inside a lock (the webhook path) holds it across no
     # provider I/O. Gateway session subclasses override; no-op by default.
@@ -149,10 +159,12 @@ module Spree
           # been cached on this instance before the lock (a concurrent
           # settlement could have completed it), but reload would discard
           # in-memory state like skip_source_requirement.
-          already_completed = settled_payment.completed? ||
-                              Spree::Payment.where(id: settled_payment.id, status: 'completed').exists?
+          # A requested payment waits on its provider's answer to a capture or
+          # void, so a redelivered authorization must not move it.
+          already_settled = settled_payment.status.in?(Spree::Payment::SETTLED_OR_WAITING_STATUSES) ||
+                            Spree::Payment.exists?(id: settled_payment.id, status: Spree::Payment::SETTLED_OR_WAITING_STATUSES)
 
-          settled_payment.confirm!(captured: captured) unless already_completed
+          settled_payment.confirm!(captured: captured, capture_reference: capture_reference_for_settlement(settled_payment)) unless already_settled
         end
 
         settled_payment

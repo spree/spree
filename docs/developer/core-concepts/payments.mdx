@@ -538,6 +538,67 @@ end
 
 Supported actions: `:captured`, `:authorized`, `:failed`, `:canceled`.
 
+A gateway may also return `metadata:` with a session outcome. It reaches the
+session's settlement (`apply_settlement_metadata`) through a background job, so
+it must be JSON-safe with string keys.
+
+#### Providers that answer later
+
+Some providers, Adyen among them, accept a capture, void or refund and report
+the outcome later by webhook. A gateway for such a provider answers the request
+with `requested: true`:
+
+```ruby server/app/models/my_gateway.rb
+Spree::PaymentResponse.new(true, 'Capture requested', {}, requested: true, authorization: session_id, reference: capture_reference)
+```
+
+- A capture writes a capture event in status `requested`, with the provider's
+  reference for the capture (`reference:`) as its `transaction_id`, and leaves
+  the payment `requested`.
+- A void, or the cancel of an uncaptured payment, leaves the payment
+  `requested`. `Payment#requested_action` answers `capture` or `void`.
+- A refund stays `requested`, with the provider's refund reference as its
+  `transaction_id`.
+
+Nothing else can start on a `requested` payment: capture, void, refund and
+order cancellation refuse it, and settlement leaves it alone. The provider's
+outcome arrives through the same webhook endpoint. `parse_webhook_event` returns
+it with the `reference:` of the record it settles, and a background job finds
+the record with the payment method's `modification_record(action, reference)`:
+
+| Action | Record | Effect |
+|---|---|---|
+| `:capture_succeeded` | Capture event | Capture event `completed`, payment `completed`, `payment.captured` |
+| `:capture_failed` | Capture event | Capture event and payment `failed`, `payment.capture_failed`; after a success, the money is taken back |
+| `:void_succeeded` | Payment | Payment `void`, `payment.voided` |
+| `:void_failed` | Payment | Payment back to `pending`, `payment.void_failed` |
+| `:refund_succeeded` | Refund | Refund `completed`, `payment.refunded` |
+| `:refund_failed` | Refund | Refund `failed` with `failure_reason`, `refund.failed`; its amount can be refunded again |
+
+By default `modification_record` matches the reference against a capture
+event's or refund's `transaction_id`, and for a void against the response code
+of a payment waiting on it. Override it when the provider names records
+otherwise.
+
+An outcome can arrive before Spree has written its record: the request is
+still finishing, or its answer never reached Spree and a retry writes the record
+later. The job looks again, quickly at first and then every few hours, for 7
+days (how long a retried request still gets the provider's first answer), and
+then reports the outcome as never recorded. A capture outcome may also name the
+`payment:` its capture was asked for and the amount taken
+(`metadata: { 'amount' => ... }`): if the capture's answer never reached Spree,
+the payment is left `processing`, and once no request can still be running the
+outcome records the capture on it.
+
+Pass the provider's reason for a failure as `metadata: { 'reason' => ... }`. A
+repeat delivery changes nothing. A gateway that answers `requested?` must
+report these outcomes; one that answers at once never does.
+
+When a session settles as captured, the session's
+`capture_reference_for_settlement(payment)` hook (nil by default) names the
+provider's reference for that capture, written on its capture event so a late
+capture failure can find it.
+
 ### Payment
 
 Once a payment session completes, Spree creates a payment to record the result,
@@ -570,6 +631,7 @@ These are the fields the Store API returns:
 | `checkout` | Created, not yet processed. |
 | `processing` | Being processed. Brief, and it stops a double submission. |
 | `pending` | Authorized but not captured. Waiting for capture. |
+| `requested` | The provider accepted a capture or void and has not answered yet. Counts as authorized. |
 | `completed` | Captured. Only these count towards the order total. |
 | `failed` | The gateway rejected it. |
 | `void` | Voided; it no longer counts against the order. |
@@ -628,6 +690,15 @@ await adminClient.orders.refunds.create(orderId, {
 
 A refund publishes `payment.refunded` and moves the order's `payment_status` to
 `partially_refunded` or `refunded`.
+
+Refunds and capture events have a status: `completed`, or `requested` while a
+provider that answers later has not answered, or `failed`. Captured and
+refunded money counts completed rows only. A balance check counts every refund
+that has not failed, so a requested refund keeps its amount reserved. A
+`requested` refund publishes `refund.requested`; `payment.refunded` follows
+when the provider confirms it. Rows written before the 6.0 patch release that
+added the status read as completed until the `backfill_settlement_statuses`
+upgrade step fills their status in.
 
 ## Payment Sources
 
@@ -834,6 +905,12 @@ Spree publishes events throughout the payment lifecycle that you can subscribe t
 | `payment.captured` | An authorized payment was captured |
 | `payment.voided` | Payment was voided |
 | `payment.refunded` | Payment was refunded |
+| `payment.capture_requested` | The provider accepted a capture and will answer later |
+| `payment.capture_failed` | The provider refused a capture, or reversed one |
+| `payment.void_requested` | The provider accepted a void and will answer later |
+| `payment.void_failed` | The provider refused a void; the payment is authorized again |
+| `refund.requested` | The provider accepted a refund and will answer later |
+| `refund.failed` | The provider refused a refund, or reversed one |
 | `order.paid` | Order is fully paid |
 
 ### Payment Session Events

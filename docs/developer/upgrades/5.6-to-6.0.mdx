@@ -761,6 +761,53 @@ STEP=register_paypal_webhooks bundle exec rake spree:upgrade
 
 </CodeGroup>
 
+## Adyen
+
+`spree_adyen` 0.x does not run on Spree 6.0. Adyen now ships with Spree as a provider gem of the same name, released with Spree and pinned to its version (`spree add adyen` pins it for you). It needs **Ruby 3.3 or newer**, because Adyen's current library does; move a store on Ruby 3.2 to 3.3 before adding it. It keeps every stored class name, so existing payment methods, payment sessions and the payment sources 0.x wrote carry over.
+
+| 0.x | 6.0 |
+|---|---|
+| Payments from the legacy checkout, whose response code is the PSP reference | The `migrate_adyen_payments` upgrade step copies the PSP reference into the payment's metadata, where captures, cancels, refunds and the dashboard link read it. The response code stays |
+| Payments from the payment-session path, keyed on the session ID with no PSP reference | Cannot be recovered: Adyen has no lookup from a session ID. The step counts and logs them by ID; capture, cancel and refund them in Adyen's Customer Area |
+| Capture and cancellation references in the `adyen.capture_psp_reference` and `adyen.cancellation_psp_reference` custom fields | Moved by the same step onto the capture event and the payment's metadata. The values and their two definitions are removed |
+| Payments in `capture_pending` or `void_pending` | Marked captured (with a capture event) or void by the same step, and logged by ID. Adyen will not send their outcome again, so check those IDs in Adyen |
+| The previous HMAC key in the payment method's metadata, which the Admin API returns | Moved into a secret setting by the `configure_adyen_gateways` step |
+| A webhook on `/adyen/webhooks` | Moved to the 6.0 URL in place by `configure_adyen_gateways`, keeping its HMAC key and the deliveries Adyen queued |
+| One Adyen payment method shared by several stores, its merchant account taken from the credential's first account | The 6.0 upgrade gives the method to the store with the lowest ID. Each other store creates its own Adyen method, typing its merchant account; the credential can be shared. Check that the kept method's merchant account is the one you mean, since 0.x picked it for you |
+| `spree_adyen_payment_sessions` table and `SpreeAdyen::PaymentSession` | The model is gone. The table stays until you drop it; nothing reads it |
+| `SpreeAdyen::Config`, the event handlers and their jobs, the decorators, the permitted-attributes initializer | Gone. Core's `requested` payment status replaces the decorator's pending statuses, and `Spree::PaymentMethod.where(type: 'SpreeAdyen::Gateway')` replaces the scopes |
+| Rails storefront assets, admin views, the redirect and webhook controllers, the Apple Pay file upload and route | Gone. Host Apple Pay's domain association file in your storefront **before upgrading**, at `/.well-known/apple-developer-merchantid-domain-association` |
+| Storefront API v2 `adyen/payment_sessions` routes | Gone. Move to the Store API's payment sessions before upgrading |
+| `NEXT_PUBLIC_ADYEN_CLIENT_KEY` / `NEXT_PUBLIC_ADYEN_ENVIRONMENT` in the storefront | Still read as fallbacks. The storefront takes both from the payment session |
+
+Three upgrade steps cover Adyen:
+
+- **`backfill_settlement_statuses`**, from core, runs for every store. Captures and refunds gained a status in a 6.0 patch release (a provider such as Adyen may accept one and confirm it later), and this marks every existing one completed. It supports a preview.
+- **`migrate_adyen_payments`** runs when the gem is installed and is skipped otherwise. It gives Adyen payments taken before the upgrade the 6.0 shape, as the table describes, and supports a preview.
+- **`configure_adyen_gateways`** runs when the gem is installed. It moves each Adyen method's previous HMAC key out of its metadata and configures the method: client key, allowed origins and a webhook on the 6.0 URL. Your store must be reachable from the internet.
+
+Then update the Next.js storefront to a version that makes Adyen sessions payable through Spree. Without it no Adyen session can be paid: see [The storefront](/integrations/payments/adyen#the-storefront).
+
+### Already on 6.0 before installing the gem
+
+A store already recorded as upgraded to 6.0 does not see these steps on the dashboard's upgrade page. Run them by name:
+
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree upgrade --step backfill_settlement_statuses
+spree upgrade --step migrate_adyen_payments
+spree upgrade --step configure_adyen_gateways
+```
+
+```bash Without Spree CLI
+STEP=backfill_settlement_statuses bundle exec rake spree:upgrade
+STEP=migrate_adyen_payments bundle exec rake spree:upgrade
+STEP=configure_adyen_gateways bundle exec rake spree:upgrade
+```
+
+</CodeGroup>
+
 ## Removed in 6.0
 
 These were deprecated in 5.x and are **gone now** — there is no bridge, so calls raise `NoMethodError`. Most were one-line delegations to a replacement that already exists.

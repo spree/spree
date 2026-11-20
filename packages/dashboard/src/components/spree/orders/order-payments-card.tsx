@@ -65,7 +65,7 @@ import { type FormEvent, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useOrderMutation } from '../../../hooks/use-order'
 import { useOrderGroup } from '../../../hooks/use-seller-ledger'
-import { PaymentDetailsDialog, riskyCardChecks } from './payment-details-dialog'
+import { PaymentDetailsDialog, PaymentStatusBadge, riskyCardChecks } from './payment-details-dialog'
 
 export function PaymentsCard({ order }: { order: Order }) {
   const { t } = useTranslation()
@@ -180,7 +180,7 @@ export function PaymentsCard({ order }: { order: Order }) {
                           label={t('admin.orders.payment_statuses.authorized')}
                         />
                       ) : (
-                        <StatusBadge status={payment.status} />
+                        <PaymentStatusBadge payment={payment} />
                       )}
                       <RiskyCardChecksBadge payment={payment} />
                     </div>
