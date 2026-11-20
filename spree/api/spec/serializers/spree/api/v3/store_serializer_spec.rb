@@ -44,8 +44,15 @@ RSpec.describe Spree::Api::V3::StoreSerializer do
       store.reload.upsert_translations('de' => { 'name' => 'Alter Laden' })
       store.update_column(:name, 'Laden')
       store.default_market.update!(default_locale: 'de')
+      store.reload
+      read_in = []
+      allow(store).to receive(:name).and_wrap_original do |original|
+        read_in << [Mobility.locale.to_s, Spree::Current.content_locale]
+        original.call
+      end
 
-      expect(store.reload.event_payload_for('store.updated')['name']).to eq('Laden')
+      expect(store.event_payload_for('store.updated')['name']).to eq('Laden')
+      expect(read_in).to eq([%w[de de]])
     end
   end
 end
