@@ -141,9 +141,10 @@ module Spree
       self.category_ids = ids
     end
 
-    # Whether promotions may discount this product at all. The one place a
-    # product opts out of every promotion, so purchasable gift cards can
-    # switch it off (docs/plans/6.0-6.1-loyalty-gift-cards-store-credits.md).
+    # Whether promotions may discount this product at all: the one place a
+    # product opts out of every promotion. Purchasable gift cards switch it off
+    # here (docs/plans/6.0-6.1-loyalty-gift-cards-store-credits.md), not through
+    # the deprecated `promotionable` column it reads until 6.3.
     def discountable?
       promotionable?
     end

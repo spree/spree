@@ -855,7 +855,6 @@ en:
     draft: Draft
     eligibility_errors:
       messages:
-        has_excluded_product: Your cart contains a product that prevents this coupon code from being applied.
         item_total_less_than: This coupon code can't be applied to orders less than %{amount}.
         item_total_less_than_or_equal: This coupon code can't be applied to orders less than or equal to %{amount}.
         item_total_more_than: This coupon code can't be applied to orders higher than %{amount}.

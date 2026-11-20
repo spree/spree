@@ -107,7 +107,7 @@ Rules decide when a promotion is eligible. You can combine multiple rules and co
 | **Channel** | The order was placed through one of the configured [channels](/developer/core-concepts/channels) |
 | **Market** | The order belongs to one of the configured [markets](/developer/core-concepts/markets) |
 
-A rule with the `none` match policy excludes products rather than requiring them. Excluded lines get no item discount, and a whole-order discount is calculated on the other lines and shared among them only. The rule fails only when every product in the order is excluded. A custom rule can exclude lines the same way by overriding `excludes?(line_item)`.
+A rule with the `none` match policy excludes products rather than requiring them. Excluded lines get no item discount, and a whole-order discount is calculated on the other lines and shared among them only. The rule fails only when every product in the order is excluded. An exclusion always applies, whatever the promotion's own match policy, and never counts as a matched rule on its own. A custom rule can exclude lines the same way by overriding `exclusion?` and `excludes?(line_item)`.
 
 You can also [build your own rules](/developer/how-to/custom-promotion) for business-specific conditions.
 

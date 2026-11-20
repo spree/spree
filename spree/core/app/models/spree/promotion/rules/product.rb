@@ -81,7 +81,11 @@ module Spree
         end
 
         def excludes?(line_item)
-          preferred_match_policy == 'none' && eligible_product_ids.include?(line_item.variant.product_id)
+          exclusion? && eligible_product_ids.include?(line_item.variant.product_id)
+        end
+
+        def exclusion?
+          preferred_match_policy == 'none'
         end
 
         def product_ids_string

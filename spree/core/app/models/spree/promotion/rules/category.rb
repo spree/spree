@@ -34,7 +34,7 @@ module Spree
         #
         # Preferences
         #
-        MATCH_POLICIES = %w(any all none)
+        MATCH_POLICIES = %w[any all none].freeze
         preference :match_policy, :string, default: MATCH_POLICIES.first, choices: MATCH_POLICIES
 
         #
@@ -54,7 +54,7 @@ module Spree
         def eligible?(order, _options = {})
           return true if eligible_category_ids.empty?
 
-          if preferred_match_policy == 'none'
+          if exclusion?
             excluded_product_ids = Spree::ProductCategory.where(
               product_id: order.product_ids, category_id: eligible_category_ids_including_children
             ).distinct.pluck(:product_id)
@@ -80,11 +80,15 @@ module Spree
         end
 
         def actionable?(line_item)
-          preferred_match_policy == 'none' ? !in_categories?(line_item) : in_categories?(line_item)
+          exclusion? ? !in_categories?(line_item) : in_categories?(line_item)
         end
 
         def excludes?(line_item)
-          preferred_match_policy == 'none' && in_categories?(line_item)
+          exclusion? && in_categories?(line_item)
+        end
+
+        def exclusion?
+          preferred_match_policy == 'none'
         end
 
         #
@@ -166,7 +170,12 @@ module Spree
         end
 
         def in_categories?(line_item)
-          Spree::ProductCategory.where(category_id: eligible_category_ids_including_children, product_id: line_item.product_id).exists?
+          @in_categories ||= {}
+          @in_categories.fetch(line_item.product_id) do
+            @in_categories[line_item.product_id] = Spree::ProductCategory.exists?(
+              category_id: eligible_category_ids_including_children, product_id: line_item.product_id
+            )
+          end
         end
 
         def categories_belong_to_store

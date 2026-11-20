@@ -37,6 +37,18 @@ describe Spree::Promotion::Actions::CreateAdjustment, type: :model do
         expect(rows.map(&:line_item_id)).to eq([order.line_items.last.id])
         expect(rows.sum(&:amount)).to eq(-3)
       end
+
+      # An exclusion never qualifies an order on its own, so it cannot widen
+      # a promotion whose rules only need one match.
+      it 'does not count the exclusion towards an any-rule match' do
+        promotion.update!(match_policy: 'any')
+        create(:promotion_rule_taxon, promotion: promotion, preferred_match_policy: 'any',
+                                      category_ids_to_add: [create(:category).id])
+        promotion.reload
+
+        expect(action.perform(order: order, promotion: promotion)).to be(false)
+        expect(order.discounts.reload).to be_empty
+      end
     end
 
     it 'leaves a line whose product is not discountable out of the discount' do
