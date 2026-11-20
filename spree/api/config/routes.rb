@@ -859,6 +859,13 @@ Spree::Core::Engine.add_routes do
           resources :discount_codes, controller: 'orders/discount_codes', only: [:create, :destroy]
           resources :fees, controller: 'orders/fees', only: [:index, :show, :create, :update, :destroy]
           resources :gift_cards, controller: 'orders/gift_cards', only: [:create, :destroy]
+          resources :order_changes, controller: 'orders/order_changes', only: [:index, :show, :create] do
+            post :preview, on: :collection
+            member do
+              patch :confirm
+              patch :cancel
+            end
+          end
           resource :store_credits, controller: 'orders/store_credits', only: [:create, :destroy]
         end
       end

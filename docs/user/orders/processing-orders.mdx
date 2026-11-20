@@ -124,11 +124,17 @@ The editor lists one row per product, with its **Unit price**, **Quantity** and 
 - **Remove** takes a line off.
 - Change a line's **Quantity** to match what the customer now wants.
 
-**Save** stays disabled until you change something. Totals are recalculated once you save, rather than as you type.
+**Save** stays disabled until you change something.
+
+On a placed order, the **Totals** card works out the new figures as you edit, with shipping, tax and promotions included, and nothing is saved until you click **Save**. When the edit changes what the customer has to pay, a **Balance change** row shows by how much the total moves, and a note under it says whether, after saving, the customer has a balance to pay or is owed money back. The note counts what the customer has already paid, so an unpaid order can still have a balance to pay after an edit that lowers its total.
+
+If the store cannot take the edit, for example because an added product has sold out, the card says why before you save.
+
+Each saved edit is kept on the order as a record of what changed and who changed it. Only one change can be in progress on an order at a time. If one was started elsewhere, for example through the API, and not finished, saving shows **Another change to this order is in progress** until that change is confirmed or canceled.
 
 <Note>Unit prices cannot be changed on a placed order. Setting a price per line is part of building a [<u>draft order</u>](/user/orders/draft-orders), where a price can be agreed with a business buyer before the order is placed. To take money off an order that is already placed, add a discount instead.</Note>
 
-<Warning>Editing an order does not change a payment already taken. Compare the new **Total** with the **Payment total** in the Summary afterwards, and settle any difference with the customer.</Warning>
+<Warning>Editing an order does not change a payment already taken. When the note says the customer has a balance to pay, collect it from the order's payments after saving; when they are owed money back, refund it.</Warning>
 
 ### How to Update an Address
 
@@ -176,6 +182,8 @@ On the **Discounts** card, click **Add discount**. This creates a discount by ha
 | **Applies to** | The whole order, or one line. |
 
 A discount applied to the whole order is spread across its items rather than sitting on one of them.
+
+On a placed order, adding or removing a discount is kept with the order's other changes, and waits like an edit does: while another change to the order is in progress, it shows **Another change to this order is in progress**.
 
 ### How to Add a Fee
 

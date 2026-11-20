@@ -14,7 +14,7 @@ module Spree
     class Fulfill < Spree::Workflow
       include Spree::Refunds::OrderPayments
       include Spree::Refunds::TaxCredit
-      include Spree::Fulfillments::Replacements
+      include Spree::OrderChanges::Replacements
 
       hooks :validate, :before_settle, :after_fulfill
 
@@ -87,6 +87,10 @@ module Spree
 
       def ensure_received
         failure(exchange, :not_received) unless exchange.received?
+        # Asked before settle_tax writes the rows, which run outside the
+        # transaction a refused replacement would roll back.
+        refusal = Spree::OrderChanges::Begin.refusal_for(exchange.order)
+        failure(exchange, refusal) if refusal
       end
 
       # Rewrites both halves' rows for the units that arrived, before any money
@@ -115,7 +119,7 @@ module Spree
 
         failure(exchange, :nothing_to_fulfill) if items.empty?
 
-        @fulfillments = build_replacements(exchange, items)
+        @fulfillments = ship_replacements(exchange, items, requested_by: refunder)
       end
 
       def issue_store_credit

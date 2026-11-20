@@ -5,9 +5,10 @@ module Spree
         module Orders
           # Typed Spree::Discount rows on an order. Manual rows have full CRUD;
           # promotion-sourced rows are read-only (recalculation owns them) and
-          # respond 422 to update/destroy. Mutations re-sum the order totals —
-          # this is the sanctioned post-placement discount path and works on
-          # completed orders.
+          # respond 422 to update/destroy. Mutations re-sum the order totals.
+          # On a placed order each write is a one-action order change, so it is
+          # recorded and waits for no other open change; a draft's rows are
+          # written directly.
           class DiscountsController < BaseController
             scoped_resource :orders
 
@@ -40,6 +41,15 @@ module Spree
                 # A flat discount is money in the order's currency; a percentage is a rate.
                 value = value_type == 'percent' ? decimal_param(:value) : money_param(:value, @parent.currency)
 
+                if @parent.completed?
+                  existing_ids = @parent.discounts.ids
+                  result = apply_change(kind: 'add_discount', label: params[:label], value: value,
+                                        value_type: value_type, line_item: line_item)
+                  next render_change_error(result) if result.failure?
+
+                  next render json: { data: serialize_collection(@parent.discounts.manual.where.not(id: existing_ids)) }, status: :created
+                end
+
                 result = Spree.order_discount_create_service.call(
                   order: @parent,
                   label: params[:label],
@@ -59,6 +69,17 @@ module Spree
             # PATCH /api/v3/admin/orders/:order_id/discounts/:id
             def update
               with_order_lock do
+                if @parent.completed?
+                  next render_promotion_row_error if @resource.promotion?
+
+                  amount = money_param(:amount, @parent.currency) if params.key?(:amount)
+                  # Read as a draft's update reads it: a blank label is refused,
+                  # and anything but a string is dropped rather than stringified.
+                  label = permitted_params[:label]
+                  result = apply_change(kind: 'update_discount', discount: @resource, label: label, amount: amount)
+                  next result.success? ? render(json: serialize_resource(@resource.reload)) : render_change_error(result)
+                end
+
                 result = Spree.order_discount_update_service.call(order: @parent, discount: @resource, attributes: permitted_params)
 
                 if result.success?
@@ -74,6 +95,13 @@ module Spree
             # DELETE /api/v3/admin/orders/:order_id/discounts/:id
             def destroy
               with_order_lock do
+                if @parent.completed?
+                  next render_promotion_row_error if @resource.promotion?
+
+                  result = apply_change(kind: 'remove_discount', discount: @resource)
+                  next result.success? ? head(:no_content) : render_change_error(result)
+                end
+
                 result = Spree.order_discount_destroy_service.call(order: @parent, discount: @resource)
 
                 if result.success?
@@ -107,6 +135,15 @@ module Spree
             end
 
             private
+
+            def apply_change(**action)
+              Spree.order_change_apply_service.call(order: @parent, actions: [action.compact], requested_by: current_actor)
+            end
+
+            # A refusal reads as it does on a draft, whichever path wrote the discount.
+            def render_change_error(result)
+              render_result_error(result, code: ERROR_CODES[:validation_error])
+            end
 
             def render_promotion_row_error
               render_error(
