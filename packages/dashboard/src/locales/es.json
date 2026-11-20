@@ -3852,6 +3852,10 @@
             "any": {
               "description": "El pedido debe contener un producto de al menos una.",
               "label": "Cualquiera de estas categorías"
+            },
+            "none": {
+              "description": "Los productos de estas categorías nunca tienen descuento. El resto del pedido sí.",
+              "label": "Ninguna de estas categorías"
             }
           },
           "search_placeholder": "Buscar categorías…"
@@ -3895,7 +3899,7 @@
               "label": "Cualquiera de estos productos"
             },
             "none": {
-              "description": "El pedido no debe contener ninguno de ellos.",
+              "description": "Estos productos nunca tienen descuento. El resto del pedido sí.",
               "label": "Ninguno de estos productos"
             }
           },

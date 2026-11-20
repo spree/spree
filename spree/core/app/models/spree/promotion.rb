@@ -302,7 +302,20 @@ module Spree
       checkouts_credited(credits)
     end
 
+    # Whether this promotion's discounts stay off +line_item+: its product is
+    # never discounted, or one of the promotion's rules excludes it.
+    def excludes_line_item?(line_item)
+      !line_item.product.discountable? || rules.any? { |rule| rule.excludes?(line_item) }
+    end
+
+    # The order lines this promotion may discount.
+    def discountable_line_items(order)
+      order.line_items.reject { |line_item| excludes_line_item?(line_item) }
+    end
+
     def line_item_actionable?(order, line_item, options = {})
+      return false if excludes_line_item?(line_item)
+
       if eligible?(order, options)
         rules = eligible_rules(order, options)
         if rules.blank?
@@ -441,10 +454,9 @@ module Spree
     def blacklisted?(promotable)
       case promotable
       when Spree::LineItem
-        !promotable.product.promotionable?
-      when Spree::Order
-        (promotable.total_quantity.positive? || promotable.line_items.any?) &&
-          promotable.line_items.joins(:product).where(spree_products: { promotionable: true }).none?
+        !promotable.product.discountable?
+      when Spree::Order, Spree::Cart
+        promotable.line_items.any? && promotable.line_items.none? { |line_item| line_item.product.discountable? }
       end
     end
 

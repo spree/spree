@@ -532,7 +532,7 @@ describe Spree::Promotion, type: :model do
       let(:product) { promotable.product }
 
       before do
-        product.promotionable = promotionable
+        product[:promotionable] = promotionable
       end
 
       context 'and product is promotionable' do
@@ -681,9 +681,9 @@ describe Spree::Promotion, type: :model do
     subject { promotion.line_item_actionable?(order, line_item) }
 
     let(:order) { double Spree::Order }
-    let(:line_item) { double Spree::LineItem }
-    let(:true_rule) { double Spree::PromotionRule, eligible?: true, applicable?: true, actionable?: true }
-    let(:false_rule) { double Spree::PromotionRule, eligible?: true, applicable?: true, actionable?: false }
+    let(:line_item) { double Spree::LineItem, product: double(Spree::Product, discountable?: true) }
+    let(:true_rule) { double Spree::PromotionRule, eligible?: true, applicable?: true, actionable?: true, excludes?: false }
+    let(:false_rule) { double Spree::PromotionRule, eligible?: true, applicable?: true, actionable?: false, excludes?: false }
     let(:rules) { [] }
 
     before do
@@ -729,6 +729,15 @@ describe Spree::Promotion, type: :model do
           end
         end
       end
+    end
+
+    context 'when a rule excludes the line item' do
+      let(:excluding_rule) { double Spree::PromotionRule, eligible?: true, applicable?: true, actionable?: false, excludes?: true }
+      let(:rules) { [true_rule, excluding_rule] }
+
+      before { allow(promotion).to receive(:match_policy).and_return('any') }
+
+      it { is_expected.to be false }
     end
 
     context 'when the order is not eligible for the promotion' do

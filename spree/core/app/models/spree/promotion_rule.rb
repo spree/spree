@@ -35,6 +35,12 @@ module Spree
       true
     end
 
+    # Whether this rule keeps every discount of its promotion off +line_item+,
+    # whatever the promotion's other rules say — order-wide discounts included.
+    def excludes?(_line_item)
+      false
+    end
+
     def eligibility_errors
       @eligibility_errors ||= ActiveModel::Errors.new(self)
     end

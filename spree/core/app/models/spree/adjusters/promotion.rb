@@ -144,7 +144,7 @@ module Spree
       # each line's remaining discounted base, so shares always sum exactly to
       # the promotion amount and no line goes below zero.
       def distribute_over_line_items(chosen)
-        line_items = order.line_items.to_a
+        line_items = chosen[:promotion].discountable_line_items(order)
         bases = line_items.map { |line_item| [discountable_base(line_item), BigDecimal(0)].max }
         bases_sum = bases.sum
         return if bases_sum <= 0

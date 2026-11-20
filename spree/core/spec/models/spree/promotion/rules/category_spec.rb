@@ -98,6 +98,47 @@ describe Spree::Promotion::Rules::Category, type: :model do
         it { expect(rule).to be_eligible(order) }
       end
     end
+
+    context 'with none match policy' do
+      let(:order) { create :order_with_line_items, line_items_count: 2, store: store }
+      let(:excluded_line_item) { order.line_items.first }
+      let(:other_line_item) { order.line_items.last }
+
+      before do
+        rule.preferred_match_policy = 'none'
+        rule.categories << category
+      end
+
+      context 'when only some products are in an excluded category' do
+        before { excluded_line_item.product.categories << category }
+
+        it 'stays eligible, and excludes only those lines' do
+          expect(rule).to be_eligible(order)
+          expect(rule.excludes?(excluded_line_item)).to be true
+          expect(rule).not_to be_actionable(excluded_line_item)
+          expect(rule.excludes?(other_line_item)).to be false
+          expect(rule).to be_actionable(other_line_item)
+        end
+      end
+
+      it 'excludes products filed in a child of an excluded category' do
+        category.children << category2
+        excluded_line_item.product.categories << category2
+
+        expect(rule.excludes?(excluded_line_item)).to be true
+      end
+
+      context 'when every product is in an excluded category' do
+        before { order.products.each { |product| product.categories << category } }
+
+        it { expect(rule).not_to be_eligible(order) }
+        it 'sets an error message' do
+          rule.eligible?(order)
+          expect(rule.eligibility_errors.full_messages.first).
+            to eq "This coupon code doesn't apply to the products in your cart."
+        end
+      end
+    end
   end
 
   describe '#category_ids_to_add=' do

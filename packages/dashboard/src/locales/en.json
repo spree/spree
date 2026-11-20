@@ -5217,6 +5217,10 @@
             "any": {
               "description": "Order must contain a product in at least one.",
               "label": "Any of these categories"
+            },
+            "none": {
+              "description": "Products in these categories are never discounted. The rest of the order still is.",
+              "label": "None of these categories"
             }
           },
           "search_placeholder": "Search categories…"
@@ -5260,7 +5264,7 @@
               "label": "Any of these products"
             },
             "none": {
-              "description": "Order must not contain any of them.",
+              "description": "These products are never discounted. The rest of the order still is.",
               "label": "None of these products"
             }
           },

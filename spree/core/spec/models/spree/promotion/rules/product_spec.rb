@@ -73,9 +73,20 @@ describe Spree::Promotion::Rules::Product, type: :model do
         expect(rule).to be_eligible(order)
       end
 
-      context "when any of the order's products are in eligible products" do
+      it 'stays eligible when the order also holds an excluded product' do
+        allow(order).to receive_messages(product_ids: [product1.id, product2.id])
+        allow(rule).to receive_messages(eligible_product_ids: [product2.id, product3.id])
+        expect(rule).to be_eligible(order)
+      end
+
+      it 'is eligible for an empty order' do
+        allow(rule).to receive_messages(eligible_product_ids: [product2.id])
+        expect(rule).to be_eligible(order)
+      end
+
+      context "when all of the order's products are excluded" do
         before do
-          allow(order).to receive_messages(product_ids: [product1.id, product2.id])
+          allow(order).to receive_messages(product_ids: [product2.id])
           allow(rule).to receive_messages(eligible_product_ids: [product2.id, product3.id])
         end
 
@@ -83,9 +94,30 @@ describe Spree::Promotion::Rules::Product, type: :model do
         it 'sets an error message' do
           rule.eligible?(order)
           expect(rule.eligibility_errors.full_messages.first).
-            to eq 'Your cart contains a product that prevents this coupon code from being applied.'
+            to eq "This coupon code doesn't apply to the products in your cart."
         end
       end
+    end
+  end
+
+  describe '#excludes?' do
+    let(:rule_product) { create(:product) }
+    let(:rule_line_item) { build(:line_item, variant: rule_product.default_variant) }
+    let(:other_line_item) { build(:line_item, variant: create(:product).default_variant) }
+
+    before { allow(rule).to receive(:eligible_product_ids).and_return([rule_product.id]) }
+
+    it 'excludes the rule products under the none policy' do
+      rule.preferred_match_policy = 'none'
+
+      expect(rule.excludes?(rule_line_item)).to be true
+      expect(rule.excludes?(other_line_item)).to be false
+    end
+
+    it 'excludes nothing under the any policy' do
+      rule.preferred_match_policy = 'any'
+
+      expect(rule.excludes?(rule_line_item)).to be false
     end
   end
 

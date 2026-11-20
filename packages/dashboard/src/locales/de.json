@@ -5217,6 +5217,10 @@
             "any": {
               "description": "Die Bestellung muss ein Produkt aus mindestens einer enthalten.",
               "label": "Beliebige dieser Kategorien"
+            },
+            "none": {
+              "description": "Produkte aus diesen Kategorien werden nie rabattiert. Der Rest der Bestellung schon.",
+              "label": "Keine dieser Kategorien"
             }
           },
           "search_placeholder": "Kategorien suchen…"
@@ -5260,7 +5264,7 @@
               "label": "Beliebige dieser Produkte"
             },
             "none": {
-              "description": "Die Bestellung darf keines davon enthalten.",
+              "description": "Diese Produkte werden nie rabattiert. Der Rest der Bestellung schon.",
               "label": "Keines dieser Produkte"
             }
           },

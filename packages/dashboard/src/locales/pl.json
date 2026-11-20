@@ -5283,6 +5283,10 @@
             "any": {
               "description": "Zamówienie musi zawierać produkt z co najmniej jednej.",
               "label": "Dowolna z tych kategorii"
+            },
+            "none": {
+              "description": "Produkty z tych kategorii nigdy nie są objęte rabatem. Reszta zamówienia tak.",
+              "label": "Żadna z tych kategorii"
             }
           },
           "search_placeholder": "Szukaj kategorii…"
@@ -5326,7 +5330,7 @@
               "label": "Dowolny z tych produktów"
             },
             "none": {
-              "description": "Zamówienie nie może zawierać żadnego z nich.",
+              "description": "Te produkty nigdy nie są objęte rabatem. Reszta zamówienia tak.",
               "label": "Żaden z tych produktów"
             }
           },

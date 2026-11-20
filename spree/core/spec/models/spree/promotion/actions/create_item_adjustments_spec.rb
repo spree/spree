@@ -24,6 +24,30 @@ describe Spree::Promotion::Actions::CreateItemAdjustments, type: :model do
       expect(order.discounts.reload.size).to eq(2)
     end
 
+    context 'when a rule excludes one of the products' do
+      let(:excluded_line_item) { order.line_items.first }
+
+      before do
+        create(:promotion_rule_product, promotion: promotion, preferred_match_policy: 'none',
+                                        product_ids_to_add: [excluded_line_item.product_id])
+        promotion.reload
+      end
+
+      it 'discounts only the other lines' do
+        action.perform(order: order, promotion: promotion)
+
+        expect(order.discounts.reload.map(&:line_item_id)).to eq([order.line_items.last.id])
+      end
+    end
+
+    it 'skips a line whose product is not discountable' do
+      order.line_items.first.product.update_column(:promotionable, false)
+
+      action.perform(order: order, promotion: promotion)
+
+      expect(order.discounts.reload.map(&:line_item_id)).to eq([order.line_items.last.id])
+    end
+
     it 'reports no action when nothing is actionable' do
       allow(promotion).to receive(:line_item_actionable?).and_return(false)
       expect(action.perform(order: order, promotion: promotion)).to be(false)

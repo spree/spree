@@ -5183,6 +5183,10 @@
             "any": {
               "description": "Đơn hàng phải có ít nhất một sản phẩm.",
               "label": "Bất kỳ danh mục nào trong số này"
+            },
+            "none": {
+              "description": "Sản phẩm trong các danh mục này không bao giờ được giảm giá. Phần còn lại của đơn hàng vẫn được giảm.",
+              "label": "Không có danh mục nào trong số này"
             }
           },
           "search_placeholder": "Tìm kiếm danh mục…"
@@ -5226,7 +5230,7 @@
               "label": "Bất kỳ sản phẩm nào trong số này"
             },
             "none": {
-              "description": "Đơn hàng không được chứa bất kỳ thứ nào trong số đó.",
+              "description": "Các sản phẩm này không bao giờ được giảm giá. Phần còn lại của đơn hàng vẫn được giảm.",
               "label": "Không có sản phẩm nào trong số này"
             }
           },

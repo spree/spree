@@ -5219,6 +5219,10 @@
             "any": {
               "description": "La commande doit contenir un produit appartenant à au moins une.",
               "label": "L'une de ces catégories"
+            },
+            "none": {
+              "description": "Les produits de ces catégories ne sont jamais remisés. Le reste de la commande l'est.",
+              "label": "Aucune de ces catégories"
             }
           },
           "search_placeholder": "Rechercher des catégories…"
@@ -5262,7 +5266,7 @@
               "label": "L'un de ces produits"
             },
             "none": {
-              "description": "La commande ne doit en contenir aucun.",
+              "description": "Ces produits ne sont jamais remisés. Le reste de la commande l'est.",
               "label": "Aucun de ces produits"
             }
           },
