@@ -34,6 +34,12 @@ RSpec.describe 'Spree::Claims workflows' do
       expect(claim.refund_total).to eq(line.paid_amount)
     end
 
+    it 'treats a blank refund amount as none given' do
+      claim = Spree::Claims::Create.call(order: order, items: [{ line_item: line_item, quantity: 1, refund_amount: '' }]).value
+
+      expect(claim.refund_total).to eq(claim.claim_line_items.first.paid_amount)
+    end
+
     it 'keeps a refund amount of zero it was given' do
       claim = Spree::Claims::Create.call(order: order, items: [{ line_item: line_item, quantity: 1, refund_amount: 0 }]).value
 

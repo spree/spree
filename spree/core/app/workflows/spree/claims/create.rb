@@ -109,9 +109,10 @@ module Spree
             # must not write NULL over the column default.
             send_replacement: item[:send_replacement].to_b,
             replacement_variant: item[:replacement_variant],
-            refund_amount: item[:refund_amount] || 0
+            refund_amount: item[:refund_amount].presence || 0
           )
-          @lines_without_amount << line if item[:refund_amount].nil?
+          # Blank, as a form or a JSON client may send it, means "no amount".
+          @lines_without_amount << line if item[:refund_amount].blank?
         end
 
         failure(@claim) unless @claim.save
@@ -123,12 +124,15 @@ module Spree
 
       # Set once the tax is known, because what was paid includes the tax
       # charged on top. Left at zero, resolving without an amount would refund
-      # nothing. Rounded down to what the column holds, so a currency with more
-      # decimals than that never lands above the line's ceiling.
+      # nothing. Rounded down to the currency's minor unit (or what the column
+      # holds, if that is less), so the refund offered is one money can move
+      # and never lands above the line's ceiling.
       def default_refund_amounts
-        scale = Spree::ClaimLineItem.type_for_attribute(:refund_amount).scale || 2
+        column_scale = Spree::ClaimLineItem.type_for_attribute(:refund_amount).scale
+        scale = [Spree::Money::Rounding.precision(claim.currency), column_scale].compact.min
 
-        @lines_without_amount.each do |line|
+        # Array(): a subclass that replaces #build_claim may never set it.
+        Array(@lines_without_amount).each do |line|
           line.update!(refund_amount: Spree::Money::Rounding.quantize(line.paid_amount, scale, mode: :down))
         end
       end

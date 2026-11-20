@@ -23,7 +23,8 @@ module Spree
                 item.attribute :description, :string
                 item.attribute :send_replacement, :boolean
                 item.attribute :replacement_variant_id, :id, description: 'Defaults to the variant that was bought.'
-                item.attribute :refund_amount, :decimal
+                item.attribute :refund_amount, :decimal,
+                  description: 'Tax included. What the customer paid for these units when left out.'
               end
               body.attribute :reason_id, :id, description: "One of the store's claim reasons."
               body.attribute :memo, :string
