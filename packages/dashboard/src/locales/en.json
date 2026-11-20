@@ -3293,7 +3293,9 @@
           "view_details": "View details",
           "failed_card_checks": "Failed card checks",
           "refund": "Refund",
-          "card_checks_unavailable": "Card checks not available"
+          "card_checks_unavailable": "Card checks not available",
+          "capture_requested": "Capture requested",
+          "void_requested": "Void requested"
         },
         "priced_by": "Priced by {{name}}",
         "purchase_order": {
@@ -3359,9 +3361,17 @@
             "unavailable": "Not available",
             "not_checked": "Not checked"
           },
+          "date": "Date",
           "captures": "Captures",
           "captures_empty": "Nothing has been captured yet.",
-          "captured_at": "Captured"
+          "refunds": "Refunds",
+          "refunds_empty": "Nothing has been refunded yet.",
+          "settlement_statuses": {
+            "requested": "Requested",
+            "completed": "Completed",
+            "failed": "Failed"
+          },
+          "failure_reason": "Reason: {{reason}}"
         },
         "customer_edit": {
           "title": "Edit customer",
@@ -4801,6 +4811,9 @@
       "amount": "Amount",
       "api_key": "API key",
       "api_key_description": "Found in your EasyPost dashboard. A test key and a live key behave differently — the key itself decides the mode.",
+      "merchant_account": "Merchant account",
+      "test_mode": "Test mode",
+      "live_url_prefix": "Live URL prefix",
       "base_amount": "Base Amount",
       "base_percent": "Base Percent",
       "company_orders_only": "Only for company orders",

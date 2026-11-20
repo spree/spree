@@ -26,6 +26,7 @@ export function useOrder(orderId: string) {
           // Keyed on the order rather than read off each payment, so a grouped
           // order gets its own refunds against the group's payments.
           'refunds',
+          'payments.refunds',
           // An order from a split checkout has no payments of its own; what
           // it has is a share of each payment made against its group.
           'payment_splits',

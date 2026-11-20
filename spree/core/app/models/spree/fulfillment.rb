@@ -474,7 +474,17 @@ module Spree
       fulfillment_items.includes(:line_item).map(&:line_item).uniq
     end
 
-    ManifestItem = Struct.new(:line_item, :variant, :quantity, :states)
+    ManifestItem = Struct.new(:line_item, :variant, :quantity, :states) do
+      # An exchange replacement rides on the original line item, so it is priced
+      # as its own variant rather than at the line's price.
+      #
+      # @return [BigDecimal]
+      def price
+        return line_item.price if variant.nil? || variant.id == line_item.variant_id
+
+        variant.price_in(line_item.currency).amount || line_item.price
+      end
+    end
 
     def manifest
       # Grouping by the ID means that we don't have to call out to the association accessor
@@ -874,6 +884,9 @@ module Spree
 
       begin
         capture_at_gateway(payment, bounded)
+        # The provider answers by webhook: the claim stays until then, which
+        # records the share as captured or releases it.
+        return bounded if payment.reload.requested?
       rescue StandardError
         # Released only when the money truly never moved. The capture workflow
         # keeps working after the charge commits — it authorizes the remainder
@@ -893,11 +906,7 @@ module Spree
     # caller in the rescue path is already raising the reason the capture
     # failed, and losing that to a bookkeeping error would hide it.
     def settle_share(split, amount, captured:)
-      split.with_lock do
-        attributes = { claimed_amount: split.claimed_amount - amount }
-        attributes[:captured_amount] = split.captured_amount + amount if captured
-        split.update!(attributes)
-      end
+      split.with_lock { split.settle_claim!(amount, captured: captured) }
     rescue StandardError => e
       Rails.error.report(e, handled: true, context: { payment_split_id: split.id }, source: 'spree.core')
     end

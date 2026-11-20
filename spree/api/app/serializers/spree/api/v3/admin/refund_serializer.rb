@@ -11,9 +11,12 @@ module Spree
                    refunder_id: [:string, nullable: true],
                    refunder_type: [:string, nullable: true, enum: Spree::Actor::BUILT_IN_KINDS, enum_type_name: 'ActorKind'],
                    refund_reason_name: [:string, nullable: true],
-                   metadata: 'Record<string, unknown>'
+                   metadata: 'Record<string, unknown>',
+                   status: [:string, enum: Spree::Refund.statuses, enum_type_name: 'RefundStatus',
+                                     comment: '`requested` until the payment provider answers a refund it accepted.'],
+                   failure_reason: [:string, nullable: true, comment: "The payment provider's reason, when the refund failed."]
 
-          attributes :metadata,
+          attributes :metadata, :status, :failure_reason,
                      created_at: :iso8601, updated_at: :iso8601
 
           attribute :refund_reason_name do |refund|

@@ -5,7 +5,11 @@ module Spree
         # Serializes Spree::PaymentCaptureEvent — one capture of money a
         # payment had authorized. A payment captured in parts has one per part.
         class PaymentCaptureEventSerializer < V3::BaseSerializer
-          attributes created_at: :iso8601, updated_at: :iso8601
+          typelize status: [:string, enum: Spree::PaymentCaptureEvent.statuses, enum_type_name: 'PaymentCaptureEventStatus',
+                                     comment: '`requested` until the payment provider answers a capture it accepted.'],
+                   transaction_id: [:string, nullable: true, comment: "The payment provider's reference for this capture, when it gave one."]
+
+          attributes :status, :transaction_id, created_at: :iso8601, updated_at: :iso8601
 
           money_attributes :amount
           typelize amount: [:string, nullable: false]

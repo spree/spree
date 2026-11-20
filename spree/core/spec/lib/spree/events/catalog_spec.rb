@@ -88,6 +88,13 @@ RSpec.describe Spree::Events::Catalog do
       expect(entries.map(&:name)).to include('order.created', 'order.placed', 'fulfillment.fulfilled', 'customer.anonymized')
     end
 
+    it 'declares the events of a provider that answers later' do
+      expect(entries.map(&:name)).to include(
+        'payment.capture_requested', 'payment.capture_failed', 'payment.void_requested', 'payment.void_failed',
+        'refund.requested', 'refund.failed'
+      )
+    end
+
     it 'marks the events carrying a customer credential' do
       expect(Spree::Events.catalog.credential_events.map(&:name)).
         to contain_exactly('customer.password_reset_requested', 'data_request.confirmation_requested')

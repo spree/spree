@@ -6,6 +6,16 @@ FactoryBot.define do
     transaction_id { generate(:refund_transaction_id) }
     association(:payment, status: 'completed')
     association(:reason, factory: :refund_reason)
+    status { 'completed' }
+
+    trait :requested do
+      status { 'requested' }
+    end
+
+    trait :failed do
+      status { 'failed' }
+      failure_reason { 'Refused by the provider' }
+    end
   end
 
   factory :default_refund_reason, class: Spree::RefundReason do

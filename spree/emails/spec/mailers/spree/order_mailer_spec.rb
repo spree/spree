@@ -375,6 +375,58 @@ describe Spree::OrderMailer, type: :mailer do
     end
   end
 
+  # https://github.com/spree/spree/issues/15257 — a store written in Dutch sent
+  # its emails with a blank product name and its options as ": , :", because mail jobs read the base columns as the application's
+  # default locale rather than the language the store's content is written in.
+  context "when the store's content is written in a locale other than the application's" do
+    # A store of its own: the shared default store memoizes its supported
+    # locales, which an earlier example may already have read.
+    let(:dutch_store) do
+      created = create(:store, name: 'Dutch Store', url: 'nl.example.com')
+      created.default_market.update!(default_locale: 'nl', supported_locales: 'nl')
+      Spree::Store.find(created.id)
+    end
+
+    let(:dutch_order) do
+      kleur = create(:option_type, store: dutch_store, name: 'kleur', label: 'Kleur', position: 1)
+      formaat = create(:option_type, store: dutch_store, name: 'formaat', label: 'Formaat', position: 2)
+      product = create(:product, name: 'Template binder', store: dutch_store, option_types: [kleur, formaat])
+      variant = create(:variant, product: product, option_values: [
+        create(:option_value, option_type: kleur, name: 'donker-blauw', label: 'Donker blauw'),
+        create(:option_value, option_type: formaat, name: '4-pocket', label: '4-Pocket')
+      ])
+
+      order = create(:completed_order_with_totals, email: 'klant@example.com', store: dutch_store, locale: 'nl')
+      order.line_items.destroy_all
+      create(:line_item, variant: variant, order: order, quantity: 1, price: BigDecimal('12.50'))
+      order.reload
+    end
+
+    it 'shows the product name and options with the default line item template' do
+      body = email_body(described_class.confirm_email(dutch_order))
+
+      expect(body).to include('Template binder')
+      expect(body).to include('Kleur: Donker blauw, Formaat: 4-Pocket')
+    end
+
+    it "shows the product name and options with a store's localised line item template" do
+      dutch_order # the template's locale must be one the store supports
+      item_template = <<~LIQUID
+        <mj-text>Artikel: <a href="{{ item.url }}" class="item_name">{{ item.name }}</a>
+        {%- if item.options_text != blank -%}<p class="item_meta">{{ item.options_text }}</p>{%- endif -%}</mj-text>
+      LIQUID
+      create(:email_template, store: dutch_store, key: 'spree/shared/line_item', locale: 'nl',
+                              subject: nil, base_subject: nil, body: item_template, base_body: item_template)
+
+      body = email_body(described_class.confirm_email(dutch_order))
+
+      expect(body).to include('Artikel:') # the store's template, not the default partial
+      expect(body).to include('Template binder')
+      expect(body).to include('Kleur: Donker blauw, Formaat: 4-Pocket')
+      expect(body).not_to include(': , :')
+    end
+  end
+
   context 'locale is not leaked after sending' do
     before do
       I18n.enforce_available_locales = false

@@ -91,7 +91,7 @@ import { AddVideoDialog } from './add-video-dialog'
 import { InventorySection } from './inventory-section'
 import { MediaEditSheet } from './media-edit-sheet'
 import { ProductBulkPriceEditor } from './product-bulk-price-editor'
-import { variantHasTaxCategoryOverride } from './product-form-mapping'
+import { variantTaxCategoryDiffersFromProduct } from './product-form-mapping'
 import {
   ASSIGNABLE_PRODUCT_STATUSES,
   type MediaFormValues,
@@ -1345,12 +1345,15 @@ export function TaxCard({ form }: FormCardProps) {
   const variants = useWatch({ control: form.control, name: 'variants' }) ?? []
   const { dirtyFields } = useFormState({ control: form.control, name: 'tax_category_id' })
   const showApplyToVariantsNotice = Boolean(dirtyFields.tax_category_id) && variants.length > 1
+  const productTaxCategoryId = useWatch({ control: form.control, name: 'tax_category_id' })
   const overrides = useMemo(
     () =>
       variants
         .map((variant, index) => ({ variant, index }))
-        .filter(({ variant }) => variantHasTaxCategoryOverride(variant)),
-    [variants],
+        .filter(({ variant }) =>
+          variantTaxCategoryDiffersFromProduct(variant, productTaxCategoryId),
+        ),
+    [variants, productTaxCategoryId],
   )
 
   const clearVariantTaxOverride = (variantIndex: number) => {

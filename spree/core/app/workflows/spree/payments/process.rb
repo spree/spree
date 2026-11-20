@@ -66,7 +66,7 @@ module Spree
         payment.handle_response(response, verb == :purchase ? :complete : :pend)
         # Only reached when handle_response accepted the response — a
         # purchase moved the funds, so the capture is recorded.
-        payment.capture_events.create!(amount: payment.amount) if verb == :purchase
+        payment.capture_events.create!(amount: payment.amount, status: 'completed') if verb == :purchase
       rescue Spree::Core::GatewayError => error
         failure(payment, error.message)
       end

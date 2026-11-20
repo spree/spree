@@ -32,6 +32,7 @@ module Spree
       # surface as errors.
       def ensure_voidable
         halt!(payment) if payment.void?
+        failure(payment, I18n.t('spree.payment_requested_awaiting_provider')) if payment.requested?
         failure(payment, :payment_not_voidable) unless payment.can_void?
       end
 
@@ -54,7 +55,9 @@ module Spree
           end
         end
 
-        if response.success?
+        if response.success? && response.requested?
+          payment.request_void!
+        elsif response.success?
           # Payment#void! is the compare-and-swap — of two racing voids only
           # one moves the row and publishes. There is no pre-gateway claim
           # here, unlike capture: the gateway is the authority on whether

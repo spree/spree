@@ -1,0 +1,70 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://checkout-test.adyen.com/v72/payments/details
+    body:
+      encoding: UTF-8
+      string: '{"details":{"redirectResult":"<FILTERED>"}}'
+    headers:
+      Content-Type:
+      - application/json
+      User-Agent:
+      - adyen-ruby-api-library/12.0.0
+      X-Api-Key:
+      - "<FILTERED>"
+      Adyen-Library-Name:
+      - adyen-ruby-api-library
+      Adyen-Library-Version:
+      - 12.0.0
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 18 Nov 2026 17:43:02 GMT
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Traceparent:
+      - 00-5c87f6961c0b0fc746901cbd3ad50b4a-523309282b61c2f6-01
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Cache-Control:
+      - no-cache, no-store, private, must-revalidate, max-age=0
+      Pragma:
+      - no-cache
+      Expires:
+      - '0'
+      Set-Cookie:
+      - JSESSIONID=E474409B9A00FAF0C5AD383454F17B3F; Path=/checkout; Secure; HttpOnly
+      - __cf_bm=YUdy2fUCUIj3TuuqFpL68yFEPiO8ZVLMSPjKyiZ2lzA-1795023782.4907448-1.0.1.1-mafLgnazR2R0DwTvbu9zqVNXoxshlHA3cb6mQzhSqFgCBE2U.QrqaaPHW9DX1oCOCQNGAILOWuBibAj589b67EIUysBeJADYDkC7ADhTev5YxUoA4RBoP_cBSUFVBxpB;
+        HttpOnly; SameSite=None; Partitioned; Secure; Path=/; Domain=adyen.com; Expires=Wed,
+        18 Nov 2026 18:13:02 GMT
+      - _cfuvid=3lOrcP6e7CMu831GS6x7JOOROwqT3WXRQZUzjcqZ2fg-1795023782.4907448-1.0.1.1-CSDteWsOMvCakVLWUOynIdL6lg4m4QNHOYeSuMadGx8;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=adyen.com
+      Pspreference:
+      - XL6DKP9Q979WVLV5
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a5c8c6708fde5779-WAW
+    body:
+      encoding: ASCII-8BIT
+      string: '{"pspReference":"ZHRSFQ7344FGD975","resultCode":"Authorised","amount":{"currency":"USD","value":9499},"merchantReference":"cart_p6klVeMgbn-3","paymentMethod":{"type":"alipay"}}'
+  recorded_at: Wed, 18 Nov 2026 17:43:02 GMT
+recorded_with: VCR 6.4.1

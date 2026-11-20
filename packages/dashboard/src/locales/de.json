@@ -3293,7 +3293,9 @@
           "view_details": "Details ansehen",
           "failed_card_checks": "Kartenprüfung fehlgeschlagen",
           "refund": "Rückerstattung",
-          "card_checks_unavailable": "Kartenprüfungen nicht verfügbar"
+          "card_checks_unavailable": "Kartenprüfungen nicht verfügbar",
+          "capture_requested": "Erfassung angefordert",
+          "void_requested": "Stornierung angefordert"
         },
         "priced_by": "Preis von {{name}}",
         "purchase_order": {
@@ -3359,9 +3361,17 @@
             "unavailable": "Nicht verfügbar",
             "not_checked": "Nicht geprüft"
           },
+          "date": "Datum",
           "captures": "Erfassungen",
           "captures_empty": "Es wurde noch nichts erfasst.",
-          "captured_at": "Erfasst"
+          "refunds": "Erstattungen",
+          "refunds_empty": "Es wurde noch nichts erstattet.",
+          "settlement_statuses": {
+            "requested": "Angefordert",
+            "completed": "Abgeschlossen",
+            "failed": "Fehlgeschlagen"
+          },
+          "failure_reason": "Grund: {{reason}}"
         },
         "customer_edit": {
           "title": "Kunde bearbeiten",
@@ -4801,6 +4811,9 @@
       "amount": "Betrag",
       "api_key": "API-Schlüssel",
       "api_key_description": "In Ihrem EasyPost-Dashboard zu finden. Test- und Live-Schlüssel verhalten sich unterschiedlich — der Schlüssel bestimmt den Modus.",
+      "merchant_account": "Händlerkonto",
+      "test_mode": "Testmodus",
+      "live_url_prefix": "Live-URL-Präfix",
       "base_amount": "Grundbetrag",
       "base_percent": "Grundprozentsatz",
       "company_orders_only": "Nur für Firmenbestellungen",
