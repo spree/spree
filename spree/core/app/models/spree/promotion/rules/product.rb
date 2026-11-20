@@ -1,5 +1,7 @@
 # A rule to limit a promotion based on products in the order.
-# Can require all or any of the products to be present.
+# Can require all or any of the products to be present, or exclude them
+# (`none`): excluded products are never discounted, and the rest of the order
+# still is.
 # Valid products either come from assigned product group or are assigned directly to the rule.
 module Spree
   class Promotion
@@ -60,10 +62,8 @@ module Spree
             unless order.product_ids.any? { |p| eligible_product_ids.include?(p) }
               eligibility_errors.add(:base, eligibility_error_message(:no_applicable_products))
             end
-          else
-            unless order.product_ids.none? { |p| eligible_product_ids.include?(p) }
-              eligibility_errors.add(:base, eligibility_error_message(:has_excluded_product))
-            end
+          elsif order.product_ids.any? && (order.product_ids - eligible_product_ids).empty?
+            eligibility_errors.add(:base, eligibility_error_message(:only_excluded_products))
           end
 
           eligibility_errors.empty?
@@ -78,6 +78,10 @@ module Spree
           else
             raise "unexpected match policy: #{preferred_match_policy.inspect}"
           end
+        end
+
+        def excludes?(line_item)
+          preferred_match_policy == 'none' && eligible_product_ids.include?(line_item.variant.product_id)
         end
 
         def product_ids_string

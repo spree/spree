@@ -95,8 +95,8 @@ Rules decide when a promotion is eligible. You can combine multiple rules and co
 |---|---|
 | **FirstOrder** | It's the customer's first order (checked by account and email) |
 | **ItemTotal** | The order subtotal, not counting free gifts, is within configured minimum/maximum thresholds |
-| **Product** | Specific products are in the order (`any` / `all` / `none` match policy) |
-| **Category** | Products from specific categories are in the order — child categories count |
+| **Product** | Specific products are in the order (`any` / `all`), or excludes them (`none`) |
+| **Category** | Products from specific categories are in the order — child categories count (`any` / `all`), or excludes them (`none`) |
 | **OptionValue** | Products with specific option values (size, color) are in the order |
 | **User** | The customer is one of the listed accounts |
 | **UserLoggedIn** | The customer is logged in |
@@ -106,6 +106,8 @@ Rules decide when a promotion is eligible. You can combine multiple rules and co
 | **Currency** | The order is in a specific currency |
 | **Channel** | The order was placed through one of the configured [channels](/developer/core-concepts/channels) |
 | **Market** | The order belongs to one of the configured [markets](/developer/core-concepts/markets) |
+
+A rule with the `none` match policy excludes products rather than requiring them. Excluded lines get no item discount, and a whole-order discount is calculated on the other lines and shared among them only. The rule fails only when every product in the order is excluded. A custom rule can exclude lines the same way by overriding `excludes?(line_item)`.
 
 You can also [build your own rules](/developer/how-to/custom-promotion) for business-specific conditions.
 

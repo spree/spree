@@ -558,6 +558,24 @@ Two further changes come with it. A customer who already has the gift variant in
 
 A gift also no longer counts toward spend thresholds or toward the amount a percentage-off order discount is taken from. That includes the gift promotion's own threshold, so a "spend over a set amount, get a gift" promotion now takes the gift back once the paid items fall below the threshold.
 
+## Excluded products are never discounted
+
+A product or category rule set to **None of these** (`match_policy: none`) now leaves only the excluded products at full price. The rest of the order is still discounted. Before, an excluded product anywhere in the cart blocked the whole promotion. Item discounts skip the excluded lines, and a whole-order discount is taken from the other lines and shared among them only. The promotion is refused only when every product in the cart is excluded.
+
+The category rule gains the same **None of these categories** option. Products in a child of an excluded category are excluded too.
+
+<Warning>
+  **Check promotions that used "None of these products".** One that used to stop applying when an excluded product was in the cart now applies to the other products. If you relied on the old behaviour to refuse such orders, there is no rule for that any more.
+</Warning>
+
+### `promotionable` is deprecated
+
+The product `promotionable` flag is deprecated. It used to keep a promotion off an order only when every product in it was flagged. It now works per product, like an excluded product above, until it is removed.
+
+- The Admin API keeps accepting `promotionable` on product create and update until 6.5. It was never returned.
+- `Spree::Product#promotionable=` logs a deprecation warning and is removed in 6.3, with the column.
+- Exclude products with a product or category rule set to **None of these** instead. To find the products you flagged, run `Spree::Product.where(promotionable: false).pluck(:name)` in a console.
+
 ## Dependency injection changes
 
 6.0 introduces `*_workflow` keys for the flows that graduated to the workflow tier. The old `*_service` keys **stay settable and readable until 6.3 so applications don't crash at boot — but a legacy write is stashed, not applied**: a class written against the old service contract is not interchangeable with the workflow the new call sites consume. Reads return your stashed class (legacy code calling its own override keeps working), falling back to the workflow. Removed in 6.3.
