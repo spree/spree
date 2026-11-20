@@ -4415,6 +4415,7 @@
             "stock_receipt": "入库单",
             "stock_reservation": "库存预留",
             "stock_transfer": "库存调拨",
+            "store": "店铺",
             "store_credit": "店铺积分",
             "supplier": "供应商",
             "tax_exemption_certificate": "免税证书",
