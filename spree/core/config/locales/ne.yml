@@ -515,7 +515,6 @@ ne:
     draft: मस्यौदा
     eligibility_errors:
       messages:
-        has_excluded_product: बहिष्कार गरिएको उत्पादनलाई हटाइएको छैन
         limit_once_per_user: प्रति प्रयोगकर्ता एक पटक सीमित गर्नुहोस्
         missing_product: हराइरहेको उत्पाद
         missing_taxon: हराइरहेको ट्याक्सन
@@ -526,6 +525,7 @@ ne:
         no_user_or_email_specified: कुनै प्रयोगकर्ता वा ईमेल निर्दिष्ट गरिएको छैन
         no_user_specified: कुनै प्रयोगकर्ता निर्दिष्ट गरिएको छैन
         not_first_order: पहिलो अर्डर छैन
+        only_excluded_products: यो कुपन कोड तपाईंको कार्टमा भएका उत्पादनहरूमा लागू हुँदैन।
         wrong_country: यो कुपन कोड तपाईंको देशमा योग्य छैन
     email: ईमेल
     error: त्रुटि

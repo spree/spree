@@ -515,7 +515,6 @@ nl:
     draft: Concept
     eligibility_errors:
       messages:
-        has_excluded_product: Je winkelwagen bevat procuten waardoor deze kortingscode niet gebruikt kan worden.
         item_total_less_than: Deze kortingscode kan niet gebruikt worden op bestellingen minder dan %{amount}.
         item_total_less_than_or_equal: Deze kortingscode kan niet gebruikt worden op bestellingen minder of gelijk aan %{amount}.
         item_total_more_than: Deze kortingscode kan niet gebruikt worden op bestellingen meer dan %{amount}.
@@ -530,6 +529,7 @@ nl:
         no_user_or_email_specified: Login of e-mail moet worden opgegeven voordat deze kortingscode kan worden gebruikt.
         no_user_specified: Login is noodzakelijk om deze kortingscode te kunenn gebruiken
         not_first_order: Deze kortingscode is alleen toepasbaar op de eerste order
+        only_excluded_products: Deze kortingscode geldt niet voor de producten in je winkelwagen.
         wrong_country: Deze couponcode is niet geldig in jouw land
     email: E-mail
     error: fout

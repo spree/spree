@@ -28,16 +28,17 @@ module Spree
       # @param own_gift_only [Boolean] true while deciding whether another
       #   promotion gives its gift, so two gift promotions with spend
       #   thresholds do not each wait on the other
+      # @param among [Array<Spree::LineItem>] the lines to measure; all of them by default
       # @return [BigDecimal]
-      def gift_amount(promotion: nil, own_gift_only: false)
-        return BigDecimal('0') if line_items.empty?
+      def gift_amount(promotion: nil, own_gift_only: false, among: line_items)
+        return BigDecimal('0') if among.empty?
 
         excluded_gift_promo_actions = gift_promo_actions(promotion, own_gift_only).select do |action|
           action.promotion_id == promotion&.id || action.gives_away?(self)
         end
         return BigDecimal('0') if excluded_gift_promo_actions.empty?
 
-        line_items.sum(BigDecimal('0')) do |line_item|
+        among.sum(BigDecimal('0')) do |line_item|
           gifted_quantity = excluded_gift_promo_actions.sum { |action| action.gifted_quantity_of(line_item) }
           Spree::Money::Rounding.to_currency(line_item.price * [gifted_quantity, line_item.quantity].min, line_item.currency)
         end

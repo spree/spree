@@ -440,7 +440,6 @@ fa:
     draft: پیش‌نویس
     eligibility_errors:
       messages:
-        has_excluded_product: سبد خرید شما محصولی دارد که مانع اعمال این کد تخفیف می‌شود.
         item_total_less_than: این کد تخفیف برای سفارش‌های کمتر از %{amount} قابل اعمال نیست.
         item_total_less_than_or_equal: این کد تخفیف برای سفارش‌های کمتر یا مساوی %{amount} قابل اعمال نیست.
         item_total_more_than: این کد تخفیف برای سفارش‌های بیشتر از %{amount} قابل اعمال نیست.
@@ -455,6 +454,7 @@ fa:
         no_user_or_email_specified: پیش از اعمال این کد تخفیف باید وارد شوید یا ایمیل خود را وارد کنید.
         no_user_specified: پیش از اعمال این کد تخفیف باید وارد شوید.
         not_first_order: این کد تخفیف فقط برای نخستین سفارش شما قابل اعمال است.
+        only_excluded_products: این کد تخفیف شامل محصولات سبد خرید شما نمی‌شود.
         wrong_country: این کد تخفیف در کشور شما واجد شرایط نیست
     email: ایمیل
     error: ایراد

@@ -17,6 +17,9 @@ module Spree
           def amount
             [__getobj__.amount - @excluded_amount, BigDecimal(0)].max
           end
+
+          # Calculators dispatch on the class (`compute_order`) and may type-check it.
+          delegate :class, :is_a?, :kind_of?, to: :__getobj__
         end
 
         include Spree::CalculatedAdjustments
@@ -37,7 +40,7 @@ module Spree
           excluded = excluded_amount(order)
           computable = excluded.zero? ? order : DiscountableOrder.new(order, excluded)
 
-          [order_total(order) - excluded, compute(computable)].min * -1
+          [(order_total(order) - excluded).clamp(BigDecimal(0)..), compute(computable)].min * -1
         end
 
         def order_total(order)
@@ -46,8 +49,13 @@ module Spree
 
         private
 
+        # What the excluded lines add to +order.amount+: their gift units are
+        # already left out of it.
         def excluded_amount(order)
-          (order.line_items - promotion.discountable_line_items(order)).sum(BigDecimal(0), &:amount)
+          excluded_line_items = order.line_items.select { |line_item| promotion.excludes_line_item?(line_item) }
+          return BigDecimal(0) if excluded_line_items.empty?
+
+          excluded_line_items.sum(BigDecimal(0), &:amount) - order.gift_amount(among: excluded_line_items)
         end
       end
     end

@@ -543,7 +543,6 @@ be:
     draft: Чарнавік
     eligibility_errors:
       messages:
-        has_excluded_product: У кошыку ёсць тавар, які не дазваляе прымяніць код купона.
         item_total_less_than: Гэты код купона нельга прымяніць да заказах на суму да %{amount}.
         item_total_less_than_or_equal: Гэты купон нельга прымяніць да заказаў на суму да %{amount}.
         item_total_more_than: Гэты код купона нельга прымяніць да заказаў на суму больш %{amount}.
@@ -558,6 +557,7 @@ be:
         no_user_or_email_specified: Увайдзіце або увядзіце e-mail, каб прымяніць гэты код купона.
         no_user_specified: Каб прымяніць гэты купон.
         not_first_order: Гэты код купона можна ўжыць толькі да вашай першай замовы.
+        only_excluded_products: Гэты код купона не распаўсюджваецца на тавары ў вашым кошыку.
         wrong_country: Гэты купонны код не дзейнічае ў вашай краіне
     email: Электронная пошта
     error: памылка

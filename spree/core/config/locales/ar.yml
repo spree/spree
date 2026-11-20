@@ -504,7 +504,6 @@ ar:
     draft: مسودة
     eligibility_errors:
       messages:
-        has_excluded_product: " تحتوي سلة التسوق على منتج يمنع تطبيق رمز القسيمة هذا "
         item_total_less_than: " لا يمكن تطبيق رمز القسيمة على الطلبات الأقل من %{amount} "
         item_total_less_than_or_equal: " لا يمكن تطبيق رمز القسيمة على الطلبات التي تقل عن أو تساوي %{amount} "
         item_total_more_than: " لا يمكن تطبيق رمز القسيمة على الطلبات الأعلى من %{amount} "
@@ -519,6 +518,7 @@ ar:
         no_user_or_email_specified: " تحتاج إلى تسجيل الدخول أو تقديم بريدك الإلكتروني قبل تطبيق رمز القسيمة "
         no_user_specified: " تحتاج إلى تسجيل الدخول قبل تطبيق رمز القسيمة هذا "
         not_first_order: " لا يمكن تطبيق رمز القسيمة إلا على طلبك الأول "
+        only_excluded_products: لا ينطبق رمز القسيمة هذا على المنتجات الموجودة في سلة التسوق.
         wrong_country: رمز القسيمة هذا غير صالح في بلدك
     email: البريد الإلكتروني
     error: خطأ

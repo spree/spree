@@ -682,8 +682,8 @@ describe Spree::Promotion, type: :model do
 
     let(:order) { double Spree::Order }
     let(:line_item) { double Spree::LineItem, product: double(Spree::Product, discountable?: true) }
-    let(:true_rule) { double Spree::PromotionRule, eligible?: true, applicable?: true, actionable?: true, excludes?: false }
-    let(:false_rule) { double Spree::PromotionRule, eligible?: true, applicable?: true, actionable?: false, excludes?: false }
+    let(:true_rule) { double Spree::PromotionRule, eligible?: true, applicable?: true, actionable?: true, excludes?: false, exclusion?: false }
+    let(:false_rule) { double Spree::PromotionRule, eligible?: true, applicable?: true, actionable?: false, excludes?: false, exclusion?: false }
     let(:rules) { [] }
 
     before do
@@ -732,7 +732,7 @@ describe Spree::Promotion, type: :model do
     end
 
     context 'when a rule excludes the line item' do
-      let(:excluding_rule) { double Spree::PromotionRule, eligible?: true, applicable?: true, actionable?: false, excludes?: true }
+      let(:excluding_rule) { double Spree::PromotionRule, eligible?: true, applicable?: true, actionable?: false, excludes?: true, exclusion?: true }
       let(:rules) { [true_rule, excluding_rule] }
 
       before { allow(promotion).to receive(:match_policy).and_return('any') }

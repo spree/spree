@@ -523,7 +523,6 @@ fr:
     draft: Brouillon
     eligibility_errors:
       messages:
-        has_excluded_product: Le panier contient des produits qui empêchent l'attribution du code de bon.
         item_total_less_than: Ce code de bon ne peut pas être utilisé pour les commandes inférieures à une valeur totale de %{amount}.
         item_total_less_than_or_equal: Ce code de bon ne peut pas être utilisé pour les commandes d'une valeur totale inférieure ou égale à %{amount}.
         item_total_more_than: Le code du bon n'est valable que pour les commandes d'un montant total jusqu'à %{amount}.
@@ -538,6 +537,7 @@ fr:
         no_user_or_email_specified: Vous devez être inscrit / connecté pour ajouter le code du bon.
         no_user_specified: Vous devez être connecté pour ajouter le code du bon.
         not_first_order: Ce code de bon d'achat n'est valable que pour la première commande d'un utilisateur.
+        only_excluded_products: Ce code promo ne s'applique pas aux produits de votre panier.
         wrong_country: Ce code promo n'est pas valable dans votre pays
     email: Courriel
     error: erreur

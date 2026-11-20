@@ -522,7 +522,6 @@ sv:
     draft: Utkast
     eligibility_errors:
       messages:
-        has_excluded_product: Din varukorg innehåller en produkt som förhindrar detta kupongkod från att tillämpas.
         item_total_less_than: Denna kupongkod kan inte tillämpas på ordrar med färre än %{amount}.
         item_total_less_than_or_equal: Denna kupongkod kan inte tillämpas på ordrar med färre än eller lika med %{amount}.
         item_total_more_than: Denna kupongkod kan inte tillämpas på ordrar högre än %{amount}.
@@ -537,6 +536,7 @@ sv:
         no_user_or_email_specified: Du måste logga in eller lämna din e-post innan tillämpa denna kupongkod.
         no_user_specified: Du måste logga in innan du applicerar denna kupongkod.
         not_first_order: Denna kupongkod kan endast tillämpas på din första order.
+        only_excluded_products: Den här kupongkoden gäller inte för produkterna i din varukorg.
         wrong_country: Denna rabattkod är inte giltig i ditt land
     email: Epost
     error: fel

@@ -510,7 +510,6 @@ vi:
     draft: Bản nháp
     eligibility_errors:
       messages:
-        has_excluded_product: Có Sản Phẩm Bị Loại Trừ
         limit_once_per_user: Giới Hạn Một Lần Cho Mỗi Người Dùng
         missing_product: Thiếu Sản Phẩm
         missing_taxon: Thiếu Phân Loại
@@ -521,6 +520,7 @@ vi:
         no_user_or_email_specified: Không Có Người Dùng Hoặc Email Được Chỉ Định
         no_user_specified: Không Có Người Dùng Được Chỉ Định
         not_first_order: Không Phải Đơn Hàng Đầu Tiên
+        only_excluded_products: Mã phiếu giảm giá này không áp dụng cho các sản phẩm trong giỏ hàng của bạn.
         wrong_country: Mã giảm giá này không hợp lệ tại quốc gia của bạn
     email: Email
     error: lỗi

@@ -241,6 +241,16 @@ module Spree
       specific_rules = rules.select { |rule| rule.applicable?(promotable) }
       return [] if specific_rules.none?
 
+      # Exclusion rules only narrow a promotion: each must hold whatever the
+      # match policy, and none counts towards it or picks the lines to discount.
+      exclusion_rules, specific_rules = specific_rules.partition(&:exclusion?)
+      failed_exclusion_rule = exclusion_rules.find { |rule| !rule.eligible?(promotable, options) }
+      if failed_exclusion_rule
+        @eligibility_errors = failed_exclusion_rule.eligibility_errors
+        return nil
+      end
+      return [] if specific_rules.none?
+
       rule_eligibility = Hash[specific_rules.map do |rule|
         [rule, rule.eligible?(promotable, options)]
       end]

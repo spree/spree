@@ -41,6 +41,11 @@ module Spree
       false
     end
 
+    # Whether this rule only excludes lines rather than qualifying an order.
+    def exclusion?
+      false
+    end
+
     def eligibility_errors
       @eligibility_errors ||= ActiveModel::Errors.new(self)
     end
