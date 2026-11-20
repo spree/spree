@@ -774,7 +774,7 @@ Events: `newsletter_subscriber.created`, `newsletter_subscriber.updated`, `newsl
 
 Events: `store.updated`
 
-Sent when the store's settings change in Spree Admin, including a translation in any language and the logo. The payload is the store as the Store API's `GET /store` returns it, in the store's default language. Headless storefronts use it to expire the store data they cache. There is no `store.created` or `store.deleted`: an installation runs one store.
+Sent each time the store's settings are saved in Spree Admin, including a translation in any language or the logo alone. A save that changes nothing still sends it. The payload is the store as the Store API's `GET /store` returns it, in the store's default language. Headless storefronts use it to expire the store data they cache. There is no `store.created` or `store.deleted`: an installation runs one store.
 
 ```json
 {

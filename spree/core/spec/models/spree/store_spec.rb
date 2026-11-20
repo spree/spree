@@ -385,7 +385,7 @@ describe Spree::Store, type: :model, without_global_store: true do
   # the logo alone each commit an update on the store row, so each publishes
   # once. The payload is covered in spree_api, where the serializer lives.
   describe 'store.updated', :events do
-    let!(:store) { create(:store, supported_locales: 'en,de') }
+    let!(:store) { create(:store).tap { |store| store.default_market.update!(supported_locales: 'en,de') } }
     let(:logo) do
       ActiveStorage::Blob.create_and_upload!(
         io: File.open(Spree::Core::Engine.root.join('spec', 'fixtures', 'thinking-cat.jpg')),
