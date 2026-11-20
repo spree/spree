@@ -224,6 +224,23 @@ module Spree
       action_taken
     end
 
+    EXCLUSIONS_CACHE_KEY = :spree_promotion_exclusions
+
+    # Within the block, whether an order or cart holds only products excluded
+    # from promotions is checked once, not once per line item. Outside it the
+    # check always reads the products, so a held promotion never answers from
+    # an earlier calculation.
+    def self.caching_exclusions
+      return yield if ActiveSupport::IsolatedExecutionState[EXCLUSIONS_CACHE_KEY]
+
+      begin
+        ActiveSupport::IsolatedExecutionState[EXCLUSIONS_CACHE_KEY] = {}
+        yield
+      ensure
+        ActiveSupport::IsolatedExecutionState.delete(EXCLUSIONS_CACHE_KEY)
+      end
+    end
+
     # called anytime order.recalculate_totals! happens
     def eligible?(promotable, options = {})
       return false if expired? || usage_limit_exceeded?(promotable) || blacklisted?(promotable) || !code_held_by?(promotable)
@@ -442,10 +459,17 @@ module Spree
       case promotable
       when Spree::LineItem
         !promotable.product.promotionable?
-      when Spree::Order
-        (promotable.total_quantity.positive? || promotable.line_items.any?) &&
-          promotable.line_items.joins(:product).where(spree_products: { promotionable: true }).none?
+      when Spree::Order, Spree::Cart
+        exclusions = ActiveSupport::IsolatedExecutionState[EXCLUSIONS_CACHE_KEY]
+        return only_excluded_products?(promotable) unless exclusions
+
+        exclusions.fetch([promotable.class.name, promotable.id]) { |key| exclusions[key] = only_excluded_products?(promotable) }
       end
+    end
+
+    def only_excluded_products?(promotable)
+      (promotable.total_quantity.positive? || promotable.line_items.any?) &&
+        promotable.line_items.joins(:product).where(spree_products: { promotionable: true }).none?
     end
 
     def match_all?

@@ -269,6 +269,19 @@ module Spree
       Spree::Carts::PriceItems.apply(result.value)
       rebuild_fulfillments!(keep_selection: keep_selection)
       recalculate_totals!
+      apply_free_shipping_promotions
+    end
+
+    # Free shipping is weighed whenever the items change, but until the cart
+    # has a delivery there is nothing for it to cover, so it is never
+    # connected. Once delivery proposals exist, connect the free-shipping
+    # promotions the cart qualifies for and total again if one was added.
+    def apply_free_shipping_promotions
+      return if fulfillments.empty?
+
+      connected_count = order_promotions.count
+      Spree::PromotionHandler::FreeShipping.new(self).activate
+      recalculate_totals! if order_promotions.count > connected_count
     end
 
     # Binds a signing-in customer to the cart through the swappable associate
