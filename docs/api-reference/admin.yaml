@@ -29373,6 +29373,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   payment_total: '0.00'
+                  refunds_total: '0.00'
                   commission_amount_total: '0.00'
                   commission_tax_total: '0.00'
                   commission_total: '0.00'
@@ -29599,6 +29600,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 payment_total: '0.00'
+                refunds_total: '0.00'
                 commission_amount_total: '0.00'
                 commission_tax_total: '0.00'
                 commission_total: '0.00'
@@ -29756,6 +29758,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 payment_total: '0.00'
+                refunds_total: '0.00'
                 commission_amount_total: '0.00'
                 commission_tax_total: '0.00'
                 commission_total: '0.00'
@@ -29903,6 +29906,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 payment_total: '0.00'
+                refunds_total: '0.00'
                 commission_amount_total: '0.00'
                 commission_tax_total: '0.00'
                 commission_total: '0.00'
@@ -30694,6 +30698,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 payment_total: '0.00'
+                refunds_total: '0.00'
                 commission_amount_total: '0.00'
                 commission_tax_total: '0.00'
                 commission_total: '0.00'
@@ -69145,6 +69150,10 @@ components:
           type: string
         payment_total:
           type: string
+        refunds_total:
+          type: string
+          description: What has been refunded to payments, from returns or from the
+            order. Store credit refunds are not included.
         commission_amount_total:
           type: string
         commission_tax_total:
@@ -69237,6 +69246,10 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/PaymentSplit"
+        refunds:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Refund"
         cart:
           "$ref": "#/components/schemas/Cart"
         channel:
@@ -69318,6 +69331,7 @@ components:
       - created_at
       - updated_at
       - payment_total
+      - refunds_total
       - commission_amount_total
       - commission_tax_total
       - commission_total
@@ -71695,6 +71709,9 @@ components:
           type: string
         updated_at:
           type: string
+        refund_reason_name:
+          type: string
+          nullable: true
         tax_amount:
           type: string
         refunder_id:
@@ -71725,6 +71742,7 @@ components:
       - metadata
       - created_at
       - updated_at
+      - refund_reason_name
       - tax_amount
       - refunder_id
       - refunder_type

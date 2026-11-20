@@ -3292,6 +3292,7 @@
           "view_at_gateway": "In {{gateway}} ansehen",
           "view_details": "Details ansehen",
           "failed_card_checks": "Kartenprüfung fehlgeschlagen",
+          "refund": "Rückerstattung",
           "card_checks_unavailable": "Kartenprüfungen nicht verfügbar",
           "capture_requested": "Erfassung angefordert",
           "void_requested": "Stornierung angefordert"
@@ -3321,7 +3322,8 @@
           "payment_total": "Zahlungssumme",
           "promotions": "Aktionen",
           "tax_additional": "Steuer (zusätzlich)",
-          "tax_included": "Steuer (inklusive)"
+          "tax_included": "Steuer (inklusive)",
+          "refunded": "Erstattet"
         },
         "tracking": {
           "fulfilled_prefix": "Erfüllt",

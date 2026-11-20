@@ -74,6 +74,48 @@ test.describe('post-sale', () => {
     })
   })
 
+  test("lists a return's refund on the payments card and in the summary", async ({ page }) => {
+    const creds = await login(page)
+    const order = await createShippedOrder(page, creds.accessToken)
+    await page.goto(`/${creds.store_id}/orders/${order.id}`)
+
+    const returns = card(page, /^returns/i)
+    await expect(returns.getByText(/no returns for this order/i)).toBeVisible({ timeout: 15_000 })
+    await returns.getByRole('button', { name: /new return/i }).click()
+
+    const dialog = page.getByRole('dialog')
+    await dialog.getByRole('spinbutton', { name: new RegExp(FIXTURE_PROMO_PRODUCT) }).fill('1')
+    await dialog.locator('#reason-return-reasons').click()
+    await page.getByRole('option', { name: 'Damaged/Defective' }).click()
+    await dialog.getByRole('button', { name: /new return/i }).click()
+    await expect(returns.getByText(/^requested$/i)).toBeVisible({ timeout: 15_000 })
+
+    await recordAction(page, /^returns/i, /^approve$/i)
+    await expect(returns.getByText(/^approved$/i)).toBeVisible({ timeout: 15_000 })
+    await recordAction(page, /^returns/i, /receive items/i)
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: /receive items/i })
+      .click()
+    await expect(returns.getByText(/^received$/i)).toBeVisible({ timeout: 15_000 })
+
+    await recordAction(page, /^returns/i, /^refund$/i)
+    await page.locator('#refund-method').click()
+    await page.getByRole('option', { name: /original payment/i }).click()
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: /^refund$/i })
+      .click()
+    await expect(
+      returns.locator('[data-slot="status-badge"]').filter({ hasText: /^refunded$/i }),
+    ).toBeVisible({ timeout: 15_000 })
+
+    await expect(card(page, /^payments/i).getByText(/^Refund · /)).toBeVisible({
+      timeout: 15_000,
+    })
+    await expect(card(page, /^summary/i).getByText(/^refunded$/i)).toBeVisible()
+  })
+
   test('opens a claim for a missing item, denies it, and lists it store-wide', async ({ page }) => {
     const creds = await login(page)
     const order = await createShippedOrder(page, creds.accessToken, 1)

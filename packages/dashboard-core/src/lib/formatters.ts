@@ -1,5 +1,6 @@
 import type { Price } from '@spree/admin-sdk'
 import { formatMoney } from '@spree/core'
+import { activeDateLocale } from '@spree/dashboard-ui/lib/date-locale'
 import { parseISO } from 'date-fns'
 import { formatInTimeZone } from 'date-fns-tz'
 import i18n from 'i18next'
@@ -33,12 +34,13 @@ export function formatAmount(
   return formatMoney(amount, currency, locale) || fallback
 }
 
+// In the store's timezone, with month names and order in the admin UI language.
 export function formatStoreDateTime(iso: string, timezone: string) {
-  return formatInTimeZone(parseISO(iso), timezone, 'PPP p')
+  return formatInTimeZone(parseISO(iso), timezone, 'PPP p', { locale: activeDateLocale() })
 }
 
 export function formatStoreDate(iso: string, timezone: string) {
-  return formatInTimeZone(parseISO(iso), timezone, 'PP')
+  return formatInTimeZone(parseISO(iso), timezone, 'PP', { locale: activeDateLocale() })
 }
 
 export function getInitials(fullName: string | null | undefined, fallback: string): string {

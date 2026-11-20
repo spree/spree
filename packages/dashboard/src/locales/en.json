@@ -3292,6 +3292,7 @@
           "view_at_gateway": "View at {{gateway}}",
           "view_details": "View details",
           "failed_card_checks": "Failed card checks",
+          "refund": "Refund",
           "card_checks_unavailable": "Card checks not available",
           "capture_requested": "Capture requested",
           "void_requested": "Void requested"
@@ -3321,7 +3322,8 @@
           "payment_total": "Payment total",
           "promotions": "Promotions",
           "tax_additional": "Tax (additional)",
-          "tax_included": "Tax (included)"
+          "tax_included": "Tax (included)",
+          "refunded": "Refunded"
         },
         "tracking": {
           "fulfilled_prefix": "Fulfilled",

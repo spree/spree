@@ -159,6 +159,12 @@ export function OrderSummaryCard({ order }: { order: Order }) {
               label={t('admin.orders.detail.summary.payment_total')}
               value={<Money amount={order.payment_total} currency={order.currency} />}
             />
+            {isPositiveMoney(order.refunds_total) && (
+              <SummaryRow
+                label={t('admin.orders.detail.summary.refunded')}
+                value={<Money amount={order.refunds_total} currency={order.currency} />}
+              />
+            )}
             <SummaryRow
               label={t('admin.orders.detail.summary.outstanding_balance')}
               value={<Money amount={order.amount_due} currency={order.currency} />}

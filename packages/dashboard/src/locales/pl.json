@@ -3322,6 +3322,7 @@
           "view_at_gateway": "Zobacz w {{gateway}}",
           "view_details": "Zobacz szczegóły",
           "failed_card_checks": "Nieudana weryfikacja karty",
+          "refund": "Zwrot",
           "card_checks_unavailable": "Weryfikacja karty niedostępna",
           "capture_requested": "Zażądano pobrania",
           "void_requested": "Zażądano anulowania"
@@ -3351,7 +3352,8 @@
           "payment_total": "Suma płatności",
           "promotions": "Promocje",
           "tax_additional": "Podatek (dodatkowy)",
-          "tax_included": "Podatek (wliczony)"
+          "tax_included": "Podatek (wliczony)",
+          "refunded": "Zwrócono"
         },
         "tracking": {
           "fulfilled_prefix": "Zrealizowano",
