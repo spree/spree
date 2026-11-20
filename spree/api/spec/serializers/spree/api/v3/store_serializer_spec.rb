@@ -42,9 +42,8 @@ RSpec.describe Spree::Api::V3::StoreSerializer do
     it 'reads a default language other than the application default from the store itself' do
       store.default_market.update!(supported_locales: 'en,de')
       store.reload.upsert_translations('de' => { 'name' => 'Alter Laden' })
-      store.reload
-      allow(store).to receive(:default_locale).and_return('de')
-      Spree::Current.with_content_locale('de') { Mobility.with_locale(:de) { store.update!(name: 'Laden') } }
+      store.update_column(:name, 'Laden')
+      store.default_market.update!(default_locale: 'de')
 
       expect(store.reload.event_payload_for('store.updated')['name']).to eq('Laden')
     end
