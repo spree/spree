@@ -1,5 +1,10 @@
 import { isNotFound, isRedirect } from '@tanstack/react-router'
 import type { ErrorInfo } from 'react'
+import {
+  isReloadingForStaleChunk,
+  isStaleChunkError,
+  reloadForStaleChunk,
+} from './stale-chunk-recovery'
 
 /**
  * Called with every render or loader error a panel's error screens catch. An
@@ -26,10 +31,16 @@ export function addErrorReporter(id: string, reporter: ErrorReporter): () => voi
 /**
  * Hands a caught error to every registered reporter. The router's
  * `notFound()` and `redirect()` are control flow, not errors, so they are
- * skipped. A reporter that throws doesn't stop the others.
+ * skipped. A chunk left behind by a deploy reloads the page onto the current
+ * build instead of being reported, and so does anything caught while that
+ * reload is under way; a chunk still missing right after a reload is a broken
+ * build and is reported (see `reloadForStaleChunk`). A reporter that throws
+ * doesn't stop the others.
  */
 export function reportCaughtError(error: unknown, errorInfo?: ErrorInfo): void {
   if (isNotFound(error) || isRedirect(error)) return
+  if (isReloadingForStaleChunk()) return
+  if (isStaleChunkError(error) && reloadForStaleChunk()) return
   for (const reporter of reporters.values()) {
     try {
       reporter(error, errorInfo)

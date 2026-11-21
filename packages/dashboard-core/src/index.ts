@@ -141,6 +141,11 @@ export * from './lib/route-registry'
 export * from './lib/search-registry'
 export * from './lib/settings-nav-registry'
 export * from './lib/slot-registry'
+export {
+  installStaleChunkRecovery,
+  isStaleChunkError,
+  reloadForStaleChunk,
+} from './lib/stale-chunk-recovery'
 export * from './lib/store-config'
 export * from './lib/table-registry'
 export { ensureTimestampColumns } from './lib/timestamp-columns'
