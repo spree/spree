@@ -93,15 +93,24 @@ describe('reloadForStaleChunk', () => {
 
   it('reports again when the reload is cancelled, such as at an unsaved-changes prompt', () => {
     vi.useFakeTimers()
+    const reporter = vi.fn()
+    const removeReporter = addErrorReporter('reporter', reporter)
     try {
       const reload = vi.fn()
       expect(reloadForStaleChunk({ storage: memoryStorage(), reload })).toBe(true)
       expect(isReloadingForStaleChunk()).toBe(true)
+      reportCaughtError(new Error('while the reload is pending'))
+      expect(reporter).not.toHaveBeenCalled()
 
+      // The page did not unload: the prompt was dismissed.
       vi.advanceTimersByTime(3_000)
 
       expect(isReloadingForStaleChunk()).toBe(false)
+      const later = new Error('after the reload was cancelled')
+      reportCaughtError(later)
+      expect(reporter).toHaveBeenCalledExactlyOnceWith(later, undefined)
     } finally {
+      removeReporter()
       vi.useRealTimers()
     }
   })
