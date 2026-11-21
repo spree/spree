@@ -143,6 +143,8 @@ module Spree
     # @return [ActiveRecord::Relation]
     def products_matching_rules(opts = {})
       return Spree::Product.none if manual? || rules.empty?
+      # A soft-deleted store's collections have no store to read currency or products from.
+      return Spree::Product.none if store.nil?
 
       currency = opts[:currency] || store.default_currency
       storefront = opts[:storefront] || false

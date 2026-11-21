@@ -11,6 +11,10 @@ module Spree
         return if collection.nil?
         return if collection.destroyed?
         return if collection.manual?
+        # The store can be soft-deleted after a sweep picked the collection up
+        # (or between the event that enqueued this and now). Its collections are
+        # dead weight: leave their membership as is rather than rebuild it.
+        return if collection.store.nil?
 
         # Loaded rather than plucked: a row dropped below is gone by the time
         # its deleted event can be published, so it has to be held.
