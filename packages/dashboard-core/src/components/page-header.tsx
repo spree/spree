@@ -19,13 +19,14 @@ import {
   TrashIcon,
 } from '@spree/dashboard-ui/icons'
 import type { JsonPreviewDrawerProps } from '@spree/dashboard-ui/spree/json-preview-drawer'
-import { lazy, type ReactNode, Suspense, useState } from 'react'
+import { type ReactNode, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { getApiClient, hasApiClient } from '../api-client'
 import { buildCurlCommand } from '../lib/curl'
 import { docsUrl } from '../lib/docs'
 import { useJsonLinkResolver } from '../providers/json-link-resolver-provider'
 import { useRegisterPageHeader, useStickyHeaderOffset } from '../providers/sticky-header-provider'
+import { IsolatedLazy } from './isolated-lazy'
 import { Slot } from './slot'
 
 // JSON drawer is a developer-only feature; pulling its tree (which includes
@@ -33,11 +34,8 @@ import { Slot } from './slot'
 // Lazy-load on first open so the chunk only ships to admins who use it.
 // Deep subpath import bypasses the dashboard-ui barrel so the JSON view
 // libs only live in the chunk Rollup splits off here.
-const JsonPreviewDrawer = lazy(() =>
-  import('@spree/dashboard-ui/spree/json-preview-drawer').then((m) => ({
-    default: m.JsonPreviewDrawer,
-  })),
-)
+const loadJsonPreviewDrawer = () =>
+  import('@spree/dashboard-ui/spree/json-preview-drawer').then((m) => m.JsonPreviewDrawer)
 
 /** Subset of `JsonPreviewDrawerProps` callers supply; PageHeader manages open state. */
 export type PageHeaderJsonPreview = Pick<
@@ -184,9 +182,12 @@ export function PageHeader({
   // doesn't mount until the user actually invokes it, but stays mounted
   // afterwards so the close animation plays.
   const [jsonEverOpened, setJsonEverOpened] = useState(false)
+  // Counts opens, so a drawer whose chunk failed to load tries again.
+  const [jsonOpens, setJsonOpens] = useState(0)
   const openJson = () => {
     setJsonEverOpened(true)
     setJsonOpen(true)
+    setJsonOpens((count) => count + 1)
   }
   const scrolled = useScrolled()
   // Publishes this header's measured height as the sticky offset every other
@@ -301,14 +302,16 @@ export function PageHeader({
       </div>
 
       {json && jsonEverOpened && (
-        <Suspense fallback={null}>
-          <JsonPreviewDrawer
-            open={jsonOpen}
-            onOpenChange={setJsonOpen}
-            {...json}
-            curl={json.endpoint ? curlFor(json.endpoint) : undefined}
-          />
-        </Suspense>
+        <IsolatedLazy
+          load={loadJsonPreviewDrawer}
+          retryKey={jsonOpens}
+          props={{
+            open: jsonOpen,
+            onOpenChange: setJsonOpen,
+            ...json,
+            curl: json.endpoint ? curlFor(json.endpoint) : undefined,
+          }}
+        />
       )}
     </header>
   )

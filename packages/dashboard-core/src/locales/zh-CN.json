@@ -549,6 +549,12 @@
         "title": "服务器出现错误",
         "request_id": "请求 {{id}}",
         "report": "报告"
+      },
+      "isolated_lazy": {
+        "load_failed": "无法加载此内容",
+        "load_failed_description": "请检查网络连接后重试。",
+        "updated_description": "控制台已更新。请重新加载页面以继续。",
+        "reload": "重新加载页面"
       }
     },
     "currency_amounts": {
