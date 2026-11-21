@@ -54,6 +54,16 @@ export function isStaleChunkError(error: unknown, depth = 0): boolean {
   return cause !== undefined && depth < 3 && isStaleChunkError(cause, depth + 1)
 }
 
+/**
+ * Runs `callback` now, or, while a reload for a stale chunk is under way,
+ * once it is clear the page stayed (the reload was cancelled). A page that
+ * does unload never runs it.
+ */
+export function unlessReloadingForStaleChunk(callback: () => void): void {
+  if (reloading) setTimeout(callback, RELOAD_CANCELLED_AFTER_MS)
+  else callback()
+}
+
 /** Whether a reload for a stale chunk is under way in this page. */
 export function isReloadingForStaleChunk(): boolean {
   return reloading

@@ -8,6 +8,7 @@ import {
   resetStaleChunkRecoveryForTests,
   STALE_CHUNK_RELOAD_WINDOW_MS,
   STALE_CHUNK_RELOADED_AT_KEY,
+  unlessReloadingForStaleChunk,
 } from './stale-chunk-recovery'
 
 function memoryStorage(initial: Record<string, string> = {}): Storage {
@@ -111,6 +112,25 @@ describe('reloadForStaleChunk', () => {
       expect(reporter).toHaveBeenCalledExactlyOnceWith(later, undefined)
     } finally {
       removeReporter()
+      vi.useRealTimers()
+    }
+  })
+
+  it('runs a deferred callback only once a reload turns out to be cancelled', () => {
+    vi.useFakeTimers()
+    try {
+      const now = vi.fn()
+      unlessReloadingForStaleChunk(now)
+      expect(now).toHaveBeenCalledOnce()
+
+      reloadForStaleChunk({ storage: memoryStorage(), reload: vi.fn() })
+      const deferred = vi.fn()
+      unlessReloadingForStaleChunk(deferred)
+      expect(deferred).not.toHaveBeenCalled()
+
+      vi.advanceTimersByTime(3_000)
+      expect(deferred).toHaveBeenCalledOnce()
+    } finally {
       vi.useRealTimers()
     }
   })

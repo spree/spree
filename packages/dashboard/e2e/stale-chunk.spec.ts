@@ -89,6 +89,8 @@ test.describe('a tab left open across a deploy', () => {
 
     await expect(storeName).toHaveValue(edited)
     expect(loads()).toBe(0)
+    // The page stayed, so the user is told the drawer could not load.
+    await expect(page.getByText("Couldn't load this")).toBeVisible()
 
     // Within the minute it does not ask again.
     let promptedAgain = false

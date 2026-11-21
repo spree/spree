@@ -3,7 +3,7 @@ import { CatchBoundary } from '@tanstack/react-router'
 import { type ComponentType, lazy, type ReactNode, Suspense, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { reportCaughtError } from '../lib/error-reporting'
-import { isReloadingForStaleChunk } from '../lib/stale-chunk-recovery'
+import { unlessReloadingForStaleChunk } from '../lib/stale-chunk-recovery'
 
 interface IsolatedLazyProps<P extends object> {
   /** Imports the component. Define it once at module level. */
@@ -79,14 +79,16 @@ export function IsolatedLazy<P extends object>({
       onCatch={(error, errorInfo) => {
         setAttempt((current) => ({ ...current, failed: true, retryKey }))
         reportCaughtError(error, errorInfo)
-        // A reload onto the current build is under way; the page is leaving.
-        if (failure === 'toast' && !isReloadingForStaleChunk()) {
+        if (failure !== 'toast') return
+        // While a reload onto the current build is under way the page is
+        // leaving; the toast shows only if the reload was cancelled.
+        unlessReloadingForStaleChunk(() =>
           toastManager.add({
             type: 'error',
             title: t('admin.components.isolated_lazy.load_failed'),
             description: t('admin.components.isolated_lazy.load_failed_description'),
-          })
-        }
+          }),
+        )
       }}
     >
       <Suspense fallback={fallback}>
