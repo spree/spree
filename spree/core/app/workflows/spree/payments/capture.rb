@@ -79,16 +79,13 @@ module Spree
       # An authorization can outlive the total it was taken for — a line
       # removed from the order, a discount added after checkout — so a capture
       # takes no more than the owner still owes, and a capture with no amount
-      # takes exactly that. Read from a fresh copy of the owner, with its
-      # payment total re-summed from the payment rows, so a stale instance or
-      # a settlement that has not reached the order yet cannot widen it.
+      # takes exactly that. Captures another payment has sent to its
+      # provider count as collected already.
       def read_outstanding_balance
         # Settled concurrently — the same no-op success the claim would give.
         halt!(payment) if Spree::Payment.exists?(id: payment.id, status: 'completed')
 
-        owner = payment.owner.class.find(payment.owner.id)
-        owner.refresh_payment_total!
-        @outstanding_balance = owner.outstanding_balance
+        @outstanding_balance = Spree::Payment.balance_open_for_capture(payment.owner, except: payment)
 
         failure(payment, :nothing_to_capture) unless @outstanding_balance.positive?
         @amount = [payment.amount, @outstanding_balance].min if @amount.nil?
@@ -154,21 +151,13 @@ module Spree
             payment.capture_events.create!(amount: @amount, status: 'completed')
             # Split before completing, so payment.completed publishes with
             # the captured amount and the order recomputes from correct rows.
-            @remainder = payment.split_uncaptured_amount(up_to: still_owed_after_capture)
+            @remainder = payment.split_uncaptured_amount(
+              up_to: payment.uncaptured_amount_still_owed(captured: @amount, balance: @outstanding_balance)
+            )
             payment.handle_response(@response, :complete)
           end
         end
         halt!(payment) if already_captured
-      end
-
-      # Only what the owner still owes, beyond what its other pending payments
-      # already hold, is carried to a remainder and re-authorized; the rest of
-      # the authorization is released. A grouped payment carries every order's
-      # undrawn share, so it keeps all of it.
-      def still_owed_after_capture
-        return if payment.grouped?
-
-        @outstanding_balance - @amount - payment.owner.payments.pending.where.not(id: payment.id).sum(:amount)
       end
 
       # The remainder's authorization is its own network call, so it stays

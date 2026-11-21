@@ -109,6 +109,23 @@ RSpec.describe Spree::Payments::HandleModificationWebhook do
     end
   end
 
+  describe 'a partial capture after the order total came down' do
+    let!(:capture_event) { request_capture(BigDecimal('10')) }
+
+    before do
+      allow_any_instance_of(Spree::Gateway::Bogus).to receive(:authorize).
+        and_return(Spree::PaymentResponse.new(true, 'ok', {}, authorization: 'BGS-REMAINDER'))
+      order.update_columns(total: BigDecimal('30'))
+    end
+
+    it 'carries only what the order still owes to the remainder' do
+      outcome(:capture_succeeded, capture_event)
+
+      remainder = order.payments.where.not(id: payment.id).sole
+      expect(remainder).to have_attributes(amount: BigDecimal('20'), status: 'pending')
+    end
+  end
+
   describe 'a void' do
     before { Spree::Payments::Void.call(payment: payment) }
 

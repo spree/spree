@@ -21,4 +21,16 @@ RSpec.describe Spree::Fulfillment, 'capture on dispatch after the order total ca
     expect(payment.captured_amount).to eq(80)
     expect(order.payments.pending).to be_empty
   end
+
+  it 'reads the balance afresh when an earlier capture has not reached the loaded order' do
+    create(:payment, order: order, amount: 50, status: 'completed', payment_method: payment_method)
+    fulfillment = create(:fulfillment, order: order, cart: nil)
+    allow(fulfillment).to receive(:final_price_with_items).and_return(BigDecimal('50'))
+    expect(fulfillment.order.payment_total).to eq(0)
+
+    fulfillment.send(:process_order_payments)
+
+    expect(payment.reload).to be_completed
+    expect(payment.captured_amount).to eq(30)
+  end
 end

@@ -535,7 +535,9 @@ module Spree
       # parcel priced above it (the total came down after authorization)
       # takes the balance rather than failing the dispatch. A shared payment
       # is bounded by this order's share instead, in #capture_from.
-      shipment_to_pay = [shipment_to_pay, owner.outstanding_balance].min if owner && !grouped_owner?
+      # Read from a fresh copy, as the workflow does: an owner loaded before an
+      # earlier parcel captured still carries that parcel's balance.
+      shipment_to_pay = [shipment_to_pay, Spree::Payment.balance_open_for_capture(owner)].min if owner && !grouped_owner?
       payments_amount = 0
 
       payments_pool = pending_payments.each_with_object([]) do |payment, pool|

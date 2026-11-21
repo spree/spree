@@ -130,6 +130,16 @@ RSpec.describe Spree::Payments::Capture do
         expect(order.payments.pending.sum(:amount)).to eq(BigDecimal('20.25'))
       end
 
+      it 'counts a capture another payment is waiting on its provider to confirm as collected' do
+        other = create(:payment, order: order, payment_method: gateway, source: card, status: 'requested', amount: BigDecimal('10'))
+        other.capture_events.create!(amount: BigDecimal('10'), status: 'requested')
+        expect(gateway).to receive(:capture).with(money('20.25'), '123', anything).and_return(success_response)
+
+        described_class.call(payment: payment)
+
+        expect(payment.reload.captured_amount).to eq(BigDecimal('20.25'))
+      end
+
       it 'refuses an amount above what the order still owes' do
         expect(gateway).not_to receive(:capture)
 
