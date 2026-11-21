@@ -7,6 +7,7 @@ import type {
 import {
   adminClient,
   Can,
+  IsolatedLazy,
   mapSpreeErrorsToForm,
   PageHeader,
   type ResourceSearch,
@@ -43,7 +44,6 @@ import {
 } from '@spree/dashboard-ui'
 import { CircleAlertIcon, PencilIcon, PlayIcon, RotateCcwIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { lazy, Suspense } from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
@@ -69,9 +69,8 @@ import { toastManager } from '@spree/dashboard-ui'
 // `<JsonValueView>` pulls in `@uiw/react-json-view` (~30 KB gzip). Lazy-loading
 // it keeps the route's entry chunk small — the renderer only matters when an
 // admin opens a delivery detail.
-const JsonValueView = lazy(() =>
-  import('@spree/dashboard-ui/spree/json-value-view').then((m) => ({ default: m.JsonValueView })),
-)
+const loadJsonValueView = () =>
+  import('@spree/dashboard-ui/spree/json-value-view').then((m) => m.JsonValueView)
 
 // The route shares its URL with the embedded deliveries `<ResourceTable>` —
 // `page`/`sort`/`filters`/`search` come from `resourceSearchSchema`; `delivery`
@@ -675,9 +674,12 @@ function DeliveryDetailSheet({
                   />
                 </CardHeader>
                 <CardContent>
-                  <Suspense fallback={<Skeleton className="h-40 w-full rounded-md" />}>
-                    <JsonValueView value={delivery.payload ?? {}} />
-                  </Suspense>
+                  <IsolatedLazy
+                    load={loadJsonValueView}
+                    retryKey={delivery.id}
+                    fallback={<Skeleton className="h-40 w-full rounded-md" />}
+                    props={{ value: delivery.payload ?? {} }}
+                  />
                 </CardContent>
               </Card>
 

@@ -45,7 +45,7 @@ test.describe('a tab left open across a deploy', () => {
     await expect(page.getByRole('dialog').getByText(`"${creds.store_id}"`).first()).toBeVisible()
   })
 
-  test('shows the error screen instead of reloading again when the chunk is still missing', async ({
+  test('does not reload again, and keeps the page, when the chunk is still missing', async ({
     page,
   }) => {
     const creds = await login(page)
@@ -59,7 +59,54 @@ test.describe('a tab left open across a deploy', () => {
 
     await openJsonPreview(page)
 
-    await expect(page.getByText('Something went wrong')).toBeVisible()
+    // Only the drawer is lost: the page stays, with no error screen in its place.
+    await expect(page.locator('#store-name')).toBeVisible()
+    await expect(page.getByRole('dialog')).toHaveCount(0)
+    await expect(page.getByText('Something went wrong')).toHaveCount(0)
     expect(loads()).toBe(0)
+  })
+
+  test('keeps the page and its unsaved edits when the reload is cancelled, and reloads again after a minute', async ({
+    page,
+  }) => {
+    await page.clock.install()
+    const creds = await login(page)
+    await page.goto(`/${creds.store_id}/settings/store`)
+    const storeName = page.locator('#store-name')
+    await expect(storeName).toBeVisible({ timeout: 15_000 })
+    const edited = `Unsaved ${Date.now()}`
+    await storeName.fill(edited)
+    await serveChunkAsIndexHtml(page, Number.POSITIVE_INFINITY)
+    const loads = countPageLoads(page)
+
+    // The unsaved-changes guard asks before the reload; stay on the page.
+    const prompt = page.waitForEvent('dialog')
+    page.once('dialog', (dialog) => dialog.dismiss())
+    await openJsonPreview(page)
+    expect((await prompt).type()).toBe('beforeunload')
+
+    await expect(storeName).toHaveValue(edited)
+    expect(loads()).toBe(0)
+
+    // Within the minute it does not ask again.
+    let promptedAgain = false
+    page.on('dialog', (dialog) => {
+      promptedAgain = true
+      void dialog.dismiss()
+    })
+    await openJsonPreview(page)
+    await expect(storeName).toHaveValue(edited)
+    expect(promptedAgain).toBe(false)
+
+    // A minute later, recovery tries again.
+    await page.clock.fastForward(61_000)
+    page.removeAllListeners('dialog')
+    const promptAfterCooldown = page.waitForEvent('dialog')
+    page.once('dialog', (dialog) => dialog.accept())
+    const reloaded = page.waitForEvent('load')
+    await openJsonPreview(page)
+    expect((await promptAfterCooldown).type()).toBe('beforeunload')
+    await reloaded
+    expect(loads()).toBe(1)
   })
 })

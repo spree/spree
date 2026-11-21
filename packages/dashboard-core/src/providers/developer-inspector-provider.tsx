@@ -2,9 +2,7 @@ import { toastManager } from '@spree/dashboard-ui'
 import { useHotkey } from '@tanstack/react-hotkeys'
 import {
   createContext,
-  lazy,
   type ReactNode,
-  Suspense,
   useContext,
   useEffect,
   useMemo,
@@ -12,6 +10,7 @@ import {
   useSyncExternalStore,
 } from 'react'
 import { useTranslation } from 'react-i18next'
+import { IsolatedLazy } from '../components/isolated-lazy'
 import {
   getDeveloperInspectorEntries,
   subscribeDeveloperInspector,
@@ -19,11 +18,8 @@ import {
 
 // Developer-only, so the drawer and its JSON viewer ship in their own chunk,
 // fetched the first time an admin opens it.
-const DeveloperInspectorDrawer = lazy(() =>
-  import('../components/developer-inspector-drawer').then((m) => ({
-    default: m.DeveloperInspectorDrawer,
-  })),
-)
+const loadDeveloperInspectorDrawer = () =>
+  import('../components/developer-inspector-drawer').then((m) => m.DeveloperInspectorDrawer)
 
 export const DEVELOPER_INSPECTOR_HOTKEY = 'Mod+Shift+D'
 
@@ -62,12 +58,17 @@ export function DeveloperInspectorProvider({
   // Latches on first open so the lazy chunk loads only for admins who use it,
   // and the drawer keeps its state between openings.
   const [mounted, setMounted] = useState(false)
+  // Counts opens, so a drawer whose chunk failed to load tries again.
+  const [opens, setOpens] = useState(0)
 
   const value = useMemo<DeveloperInspectorState>(
     () => ({
       open,
       setOpen: (next) => {
-        if (next) setMounted(true)
+        if (next) {
+          setMounted(true)
+          setOpens((count) => count + 1)
+        }
         setOpen(next)
       },
       sendFeedback: onSendFeedback,
@@ -83,13 +84,11 @@ export function DeveloperInspectorProvider({
     <DeveloperInspectorContext.Provider value={value}>
       {children}
       {mounted && (
-        <Suspense fallback={null}>
-          <DeveloperInspectorDrawer
-            open={value.open}
-            onOpenChange={value.setOpen}
-            systemInfoPath={systemInfoPath}
-          />
-        </Suspense>
+        <IsolatedLazy
+          load={loadDeveloperInspectorDrawer}
+          retryKey={opens}
+          props={{ open: value.open, onOpenChange: value.setOpen, systemInfoPath }}
+        />
       )}
     </DeveloperInspectorContext.Provider>
   )
