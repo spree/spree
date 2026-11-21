@@ -31,10 +31,14 @@ const STALE_CHUNK_MESSAGES = [
   'unable to preload css',
 ]
 
+// A reload that has not unloaded the page by now was cancelled, for example
+// at an unsaved-changes prompt; the page goes on and reports errors again.
+const RELOAD_CANCELLED_AFTER_MS = 3_000
+
 let reloading = false
 
 /** Whether `error` is a failed load of a code-split chunk. */
-export function isStaleChunkError(error: unknown): boolean {
+export function isStaleChunkError(error: unknown, depth = 0): boolean {
   const message =
     error instanceof Error
       ? error.message
@@ -47,7 +51,7 @@ export function isStaleChunkError(error: unknown): boolean {
   if (STALE_CHUNK_MESSAGES.some((text) => normalized.includes(text))) return true
   // An error wrapping the failed import, such as a router's.
   const cause = error instanceof Error ? error.cause : undefined
-  return cause !== undefined && cause !== error && isStaleChunkError(cause)
+  return cause !== undefined && depth < 3 && isStaleChunkError(cause, depth + 1)
 }
 
 /** Whether a reload for a stale chunk is under way in this page. */
@@ -97,6 +101,9 @@ export function reloadForStaleChunk({
     return false
   }
   reloading = true
+  setTimeout(() => {
+    reloading = false
+  }, RELOAD_CANCELLED_AFTER_MS)
   reload()
   return true
 }

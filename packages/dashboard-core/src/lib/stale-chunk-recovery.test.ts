@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { addErrorReporter, reportCaughtError } from './error-reporting'
 import {
   installStaleChunkRecovery,
+  isReloadingForStaleChunk,
   isStaleChunkError,
   reloadForStaleChunk,
   resetStaleChunkRecoveryForTests,
@@ -54,6 +55,9 @@ describe('isStaleChunkError', () => {
     expect(isStaleChunkError(new TypeError('Failed to fetch'))).toBe(false)
     expect(isStaleChunkError(new Error('boom'))).toBe(false)
     expect(isStaleChunkError(undefined)).toBe(false)
+    const cyclic = new Error('outer')
+    cyclic.cause = cyclic
+    expect(isStaleChunkError(cyclic)).toBe(false)
   })
 })
 
@@ -85,6 +89,21 @@ describe('reloadForStaleChunk', () => {
       reloadForStaleChunk({ storage, reload, now: 1_000_000 + STALE_CHUNK_RELOAD_WINDOW_MS }),
     ).toBe(true)
     expect(reload).toHaveBeenCalledOnce()
+  })
+
+  it('reports again when the reload is cancelled, such as at an unsaved-changes prompt', () => {
+    vi.useFakeTimers()
+    try {
+      const reload = vi.fn()
+      expect(reloadForStaleChunk({ storage: memoryStorage(), reload })).toBe(true)
+      expect(isReloadingForStaleChunk()).toBe(true)
+
+      vi.advanceTimersByTime(3_000)
+
+      expect(isReloadingForStaleChunk()).toBe(false)
+    } finally {
+      vi.useRealTimers()
+    }
   })
 
   it('does nothing without session storage, where a loop could not be detected', () => {
