@@ -385,6 +385,20 @@ describe Spree::Variant, type: :model do
       # presentation. Backed by `Spree::Searchable#search_condition`, so
       # LIKE-wildcard escaping is handled centrally.
       let(:product) { create(:product, name: 'Crewneck Sweater') }
+
+      context 'with a product whose name reads like a boolean' do
+        let!(:true_product) { create(:product, name: 'True Religion Jeans') }
+
+        it 'returns nothing for a non-text query instead of searching its string form' do
+          expect(described_class.search(true)).to be_empty
+          expect(described_class.search(['true'])).to be_empty
+        end
+
+        it 'searches the words typed through Ransack, uncast' do
+          expect(described_class.ransack(search: 'true').result).to include(true_product.default_variant)
+        end
+      end
+
       let(:color_type) do
         Spree::OptionType.find_by(name: 'spec-color') ||
           create(:option_type, name: 'spec-color', label: 'Color')
