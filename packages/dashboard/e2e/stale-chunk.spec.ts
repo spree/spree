@@ -69,6 +69,11 @@ test.describe('a tab left open across a deploy', () => {
     await expect(page.getByRole('dialog')).toHaveCount(0)
     await expect(page.getByText('Something went wrong')).toHaveCount(0)
     expect(loads()).toBe(0)
+
+    // The toast offers the reload the tab will not do again by itself.
+    const reloadedByUser = page.waitForEvent('load')
+    await page.getByRole('button', { name: 'Reload page' }).click()
+    await reloadedByUser
   })
 
   test('keeps the page and its unsaved edits when the reload is cancelled, and reloads again after a minute', async ({

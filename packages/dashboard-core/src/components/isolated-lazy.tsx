@@ -106,6 +106,12 @@ export function IsolatedLazy<P extends object>({
             description: stale
               ? t('admin.components.isolated_lazy.updated_description')
               : t('admin.components.isolated_lazy.load_failed_description'),
+            actionProps: stale
+              ? {
+                  children: t('admin.components.isolated_lazy.reload'),
+                  onClick: () => window.location.reload(),
+                }
+              : undefined,
           }),
         )
       }}
