@@ -71,18 +71,21 @@ end
 # Quantity breaks on a few lines, loaded through the price-list CSV import —
 # the very file the import sheet offers as its example, so the example is a
 # working ladder. The import merges, so re-running converges like the rest.
-breaks = Spree::SampleData::ImportRunner.call(
-  csv_path: Spree::Core::Engine.root.join('db', 'sample_data', 'price_list_prices.csv'),
-  import_class: Spree::Imports::PriceListPrices,
-  store: store,
-  inline: true,
-  attributes: { price_list: price_list }
-)
-# A row that failed means the example file and products.csv have drifted
-# apart, which the import reports per row rather than by failing the run.
-raise "Sample price-list import failed: #{breaks.error}" if breaks.failure?
-failed_rows = breaks.value.rows.failed.pluck(:validation_errors)
-raise "Sample price-list rows failed: #{failed_rows.join('; ')}" if failed_rows.any?
+# The file prices in USD, so a store that does not sell in USD skips it.
+if store.supported_currencies_list.map(&:iso_code).include?('USD')
+  breaks = Spree::SampleData::ImportRunner.call(
+    csv_path: Spree::Core::Engine.root.join('db', 'sample_data', 'price_list_prices.csv'),
+    import_class: Spree::Imports::PriceListPrices,
+    store: store,
+    inline: true,
+    attributes: { price_list: price_list }
+  )
+  # A row that failed means the example file and products.csv have drifted
+  # apart, which the import reports per row rather than by failing the run.
+  raise "Sample price-list import failed: #{breaks.error}" if breaks.failure?
+  failed_rows = breaks.value.rows.failed.pluck(:validation_errors)
+  raise "Sample price-list rows failed: #{failed_rows.join('; ')}" if failed_rows.any?
+end
 
 Spree.price_list_activate_workflow.call(price_list: price_list) unless price_list.active?
 
