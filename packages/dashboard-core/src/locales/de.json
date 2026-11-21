@@ -549,6 +549,10 @@
         "title": "Auf dem Server ist ein Fehler aufgetreten",
         "request_id": "Anfrage {{id}}",
         "report": "Melden"
+      },
+      "isolated_lazy": {
+        "load_failed": "Konnte nicht geladen werden",
+        "load_failed_description": "Prüfe deine Verbindung und versuche es erneut."
       }
     },
     "currency_amounts": {

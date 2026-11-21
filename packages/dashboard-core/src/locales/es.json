@@ -356,6 +356,10 @@
         "title": "Algo ha fallado en el servidor",
         "request_id": "Solicitud {{id}}",
         "report": "Informar"
+      },
+      "isolated_lazy": {
+        "load_failed": "No se pudo cargar",
+        "load_failed_description": "Comprueba tu conexión e inténtalo de nuevo."
       }
     },
     "currency_amounts": {

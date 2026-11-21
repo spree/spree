@@ -59,7 +59,9 @@ test.describe('a tab left open across a deploy', () => {
 
     await openJsonPreview(page)
 
-    // Only the drawer is lost: the page stays, with no error screen in its place.
+    // Only the drawer is lost, and the user is told: the page stays, with no
+    // error screen in its place.
+    await expect(page.getByText("Couldn't load this")).toBeVisible()
     await expect(page.locator('#store-name')).toBeVisible()
     await expect(page.getByRole('dialog')).toHaveCount(0)
     await expect(page.getByText('Something went wrong')).toHaveCount(0)

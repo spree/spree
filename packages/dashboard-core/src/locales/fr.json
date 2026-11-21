@@ -549,6 +549,10 @@
         "title": "Une erreur s'est produite sur le serveur",
         "request_id": "Requête {{id}}",
         "report": "Signaler"
+      },
+      "isolated_lazy": {
+        "load_failed": "Impossible de charger ce contenu",
+        "load_failed_description": "Vérifiez votre connexion et réessayez."
       }
     },
     "currency_amounts": {

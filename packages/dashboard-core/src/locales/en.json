@@ -551,6 +551,10 @@
         "title": "Something went wrong on the server",
         "request_id": "Request {{id}}",
         "report": "Report"
+      },
+      "isolated_lazy": {
+        "load_failed": "Couldn't load this",
+        "load_failed_description": "Check your connection and try again."
       }
     },
     "currency_amounts": {

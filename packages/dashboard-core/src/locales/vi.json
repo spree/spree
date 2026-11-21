@@ -549,6 +549,10 @@
         "title": "Đã xảy ra lỗi trên máy chủ",
         "request_id": "Yêu cầu {{id}}",
         "report": "Báo cáo"
+      },
+      "isolated_lazy": {
+        "load_failed": "Không thể tải nội dung này",
+        "load_failed_description": "Kiểm tra kết nối và thử lại."
       }
     },
     "currency_amounts": {

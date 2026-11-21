@@ -554,6 +554,10 @@
         "title": "Na serwerze wystąpił błąd",
         "request_id": "Żądanie {{id}}",
         "report": "Zgłoś"
+      },
+      "isolated_lazy": {
+        "load_failed": "Nie udało się wczytać",
+        "load_failed_description": "Sprawdź połączenie i spróbuj ponownie."
       }
     },
     "currency_amounts": {

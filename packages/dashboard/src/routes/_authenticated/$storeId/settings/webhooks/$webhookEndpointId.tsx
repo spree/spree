@@ -677,6 +677,7 @@ function DeliveryDetailSheet({
                   <IsolatedLazy
                     load={loadJsonValueView}
                     retryKey={delivery.id}
+                    failure="inline"
                     fallback={<Skeleton className="h-40 w-full rounded-md" />}
                     props={{ value: delivery.payload ?? {} }}
                   />
