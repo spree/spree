@@ -408,22 +408,58 @@ module Spree
       amount - captured_amount
     end
 
+    # What +owner+ still owes that no other payment is already collecting:
+    # the balance re-summed from the payment rows (so a stale instance or a
+    # settlement that has not reached the owner yet cannot widen it), less
+    # captures sent to a provider that confirms them by webhook.
+    #
+    # @param owner [Spree::Order, Spree::Cart, Spree::OrderGroup]
+    # @param except [Spree::Payment, nil] a payment whose own captures are not counted
+    # @return [BigDecimal]
+    def self.balance_open_for_capture(owner, except: nil)
+      fresh_owner = owner.class.find(owner.id)
+      fresh_owner.refresh_payment_total!
+      others = fresh_owner.payments.where.not(id: except&.id)
+      awaiting = Spree::PaymentCaptureEvent.where(status: 'requested', payment_id: others.select(:id)).sum(:amount)
+
+      fresh_owner.outstanding_balance - awaiting
+    end
+
+    # How much of the uncaptured amount a capture should carry to a new
+    # pending payment: what the owner still owes after +captured+, beyond what
+    # its other pending payments already hold. A grouped payment carries
+    # every order's undrawn share, so it keeps all of it (nil).
+    #
+    # @param captured [BigDecimal] the amount this capture takes
+    # @param balance [BigDecimal] the owner's balance before the capture
+    # @return [BigDecimal, nil]
+    def uncaptured_amount_still_owed(captured:, balance:)
+      return if grouped?
+
+      balance - captured - owner.payments.pending.where.not(id: id).sum(:amount)
+    end
+
     # Row work only — moves the uncaptured remainder onto a new pending
     # payment and shrinks this one to what was captured. The caller authorizes
     # the returned remainder at the gateway afterwards, outside any lock.
     #
-    # @return [Spree::Payment, nil] the remainder payment, or nil when fully captured
-    def split_uncaptured_amount
+    # @param up_to [BigDecimal, nil] the most to carry to the remainder; the
+    #   rest is released. nil carries all of it.
+    # @return [Spree::Payment, nil] the remainder payment, or nil when nothing is carried
+    def split_uncaptured_amount(up_to: nil)
       return if uncaptured_amount <= 0
 
-      remainder = owner.payments.create!(
-        amount: uncaptured_amount,
-        payment_method: payment_method,
-        source: source,
-        status: 'pending',
-        capture_on_dispatch: true
-      )
-      carry_splits_to(remainder)
+      carried = up_to.nil? ? uncaptured_amount : [uncaptured_amount, up_to].min
+      if carried.positive?
+        remainder = owner.payments.create!(
+          amount: carried,
+          payment_method: payment_method,
+          source: source,
+          status: 'pending',
+          capture_on_dispatch: true
+        )
+        carry_splits_to(remainder)
+      end
       # Bang: a silent failure here would leave this payment at its full amount
       # beside a remainder that also exists, so the group would hold more money
       # than the customer was ever charged.

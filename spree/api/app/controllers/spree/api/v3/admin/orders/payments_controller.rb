@@ -15,7 +15,8 @@ module Spree
 
             request_params 'PaymentCaptureParams', action: :capture do |body|
               body.attribute :amount, :decimal,
-                description: 'Captures part of the authorized amount. Defaults to all of it.'
+                             description: 'Captures part of the authorized amount, never more than the order still owes. ' \
+                                          'Defaults to what the order still owes, up to the authorized amount.'
             end
 
             before_action :set_resource, only: [:show, :capture, :void]

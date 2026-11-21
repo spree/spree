@@ -285,6 +285,40 @@ RSpec.describe Spree::Api::V3::Admin::Orders::PaymentsController, type: :control
       end
     end
 
+    context 'when the order total came down after the payment was authorized' do
+      let!(:order_with_payment) { create(:order_with_line_items, store: store, line_items_count: 2) }
+      let!(:payment) { create(:payment, order: order_with_payment, amount: order_with_payment.total, status: 'pending') }
+
+      before do
+        removed_item = order_with_payment.line_items.last
+        Spree.order_remove_line_item_service.call(order: order_with_payment, line_item: removed_item)
+        expect(order_with_payment.reload.total).to be < payment.amount
+      end
+
+      it 'captures only what the order still owes, and the order reads paid' do
+        patch :capture, params: { order_id: order_with_payment.prefixed_id, id: payment.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(BigDecimal(json_response['amount'])).to eq(order_with_payment.total)
+        expect(payment.reload.captured_amount).to eq(order_with_payment.total)
+        expect(order_with_payment.payments.pending).to be_empty
+
+        Spree::Orders::UpdateStatuses.new.call(order: order_with_payment)
+        expect(order_with_payment.reload.payment_status).to eq('paid')
+      end
+
+      it 'refuses an amount above what the order still owes, capturing nothing' do
+        patch :capture, params: {
+          order_id: order_with_payment.prefixed_id, id: payment.prefixed_id, amount: payment.amount.to_s
+        }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['message']).to eq('The capture amount cannot exceed what the order still owes.')
+        expect(payment.reload).to be_pending
+        expect(payment.captured_amount).to eq(0)
+      end
+    end
+
     context 'when payment is already completed' do
       before { payment.update_column(:status, 'completed') }
 
