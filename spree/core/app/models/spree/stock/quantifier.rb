@@ -93,7 +93,11 @@ module Spree
                                end
                              else
                                reservations = Spree::StockReservation.active.where(stock_level_id: persisted_stock_level_ids)
-                               reservations = reservations.where.not(excluded_owner_key => excluded_owner_id) if excluded_owner_id
+                               if excluded_owner_id
+                                 other_owners = reservations.where.not(excluded_owner_key => excluded_owner_id)
+                                 opposite_owners = reservations.where(excluded_owner_key => nil)
+                                 reservations = other_owners.or(opposite_owners)
+                               end
                                reservations.sum(:quantity)
                              end
       end
