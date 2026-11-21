@@ -3,7 +3,11 @@ import { CatchBoundary } from '@tanstack/react-router'
 import { type ComponentType, lazy, type ReactNode, Suspense, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { reportCaughtError } from '../lib/error-reporting'
-import { unlessReloadingForStaleChunk } from '../lib/stale-chunk-recovery'
+import {
+  isReloadingForStaleChunk,
+  isStaleChunkError,
+  unlessReloadingForStaleChunk,
+} from '../lib/stale-chunk-recovery'
 
 interface IsolatedLazyProps<P extends object> {
   /** Imports the component. Define it once at module level. */
@@ -52,21 +56,31 @@ export function IsolatedLazy<P extends object>({
   const [attempt, setAttempt] = useState(() => ({
     Component: lazyFrom(load),
     failed: false,
+    // A chunk a deploy removed: loading it again cannot help, a reload can.
+    stale: false,
     retryKey,
   }))
-  const retry = () => setAttempt({ Component: lazyFrom(load), failed: false, retryKey })
+  const retry = () =>
+    setAttempt({ Component: lazyFrom(load), failed: false, stale: false, retryKey })
+  const description = attempt.stale
+    ? t('admin.components.isolated_lazy.updated_description')
+    : t('admin.components.isolated_lazy.load_failed_description')
   if (attempt.failed && attempt.retryKey !== retryKey) retry()
 
   if (attempt.failed) {
     if (failure === 'toast') return null
     return (
       <div className="flex flex-col items-start gap-2 text-sm" role="alert">
-        <p className="text-muted-foreground">
-          {t('admin.components.isolated_lazy.load_failed_description')}
-        </p>
-        <Button variant="outline" size="sm" onClick={retry}>
-          {t('admin.components.error_state.retry')}
-        </Button>
+        <p className="text-muted-foreground">{description}</p>
+        {attempt.stale ? (
+          <Button variant="outline" size="sm" onClick={() => window.location.reload()}>
+            {t('admin.components.isolated_lazy.reload')}
+          </Button>
+        ) : (
+          <Button variant="outline" size="sm" onClick={retry}>
+            {t('admin.components.error_state.retry')}
+          </Button>
+        )}
       </div>
     )
   }
@@ -77,7 +91,10 @@ export function IsolatedLazy<P extends object>({
       getResetKey={() => 0}
       errorComponent={() => null}
       onCatch={(error, errorInfo) => {
-        setAttempt((current) => ({ ...current, failed: true, retryKey }))
+        // A recovery reload prevents the failed import, so the component
+        // receives a different error; the chunk is just as stale.
+        const stale = isStaleChunkError(error) || isReloadingForStaleChunk()
+        setAttempt((current) => ({ ...current, failed: true, stale, retryKey }))
         reportCaughtError(error, errorInfo)
         if (failure !== 'toast') return
         // While a reload onto the current build is under way the page is
@@ -86,7 +103,9 @@ export function IsolatedLazy<P extends object>({
           toastManager.add({
             type: 'error',
             title: t('admin.components.isolated_lazy.load_failed'),
-            description: t('admin.components.isolated_lazy.load_failed_description'),
+            description: stale
+              ? t('admin.components.isolated_lazy.updated_description')
+              : t('admin.components.isolated_lazy.load_failed_description'),
           }),
         )
       }}

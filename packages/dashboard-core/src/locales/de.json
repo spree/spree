@@ -552,7 +552,9 @@
       },
       "isolated_lazy": {
         "load_failed": "Konnte nicht geladen werden",
-        "load_failed_description": "Prüfe deine Verbindung und versuche es erneut."
+        "load_failed_description": "Prüfe deine Verbindung und versuche es erneut.",
+        "updated_description": "Das Dashboard wurde aktualisiert. Lade die Seite neu, um fortzufahren.",
+        "reload": "Seite neu laden"
       }
     },
     "currency_amounts": {

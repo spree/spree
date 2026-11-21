@@ -557,7 +557,9 @@
       },
       "isolated_lazy": {
         "load_failed": "Nie udało się wczytać",
-        "load_failed_description": "Sprawdź połączenie i spróbuj ponownie."
+        "load_failed_description": "Sprawdź połączenie i spróbuj ponownie.",
+        "updated_description": "Panel został zaktualizowany. Odśwież stronę, aby kontynuować.",
+        "reload": "Odśwież stronę"
       }
     },
     "currency_amounts": {

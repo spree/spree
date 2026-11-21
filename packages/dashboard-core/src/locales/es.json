@@ -359,7 +359,9 @@
       },
       "isolated_lazy": {
         "load_failed": "No se pudo cargar",
-        "load_failed_description": "Comprueba tu conexión e inténtalo de nuevo."
+        "load_failed_description": "Comprueba tu conexión e inténtalo de nuevo.",
+        "updated_description": "El panel se ha actualizado. Recarga la página para continuar.",
+        "reload": "Recargar página"
       }
     },
     "currency_amounts": {

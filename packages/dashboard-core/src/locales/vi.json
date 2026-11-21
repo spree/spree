@@ -552,7 +552,9 @@
       },
       "isolated_lazy": {
         "load_failed": "Không thể tải nội dung này",
-        "load_failed_description": "Kiểm tra kết nối và thử lại."
+        "load_failed_description": "Kiểm tra kết nối và thử lại.",
+        "updated_description": "Bảng điều khiển đã được cập nhật. Tải lại trang để tiếp tục.",
+        "reload": "Tải lại trang"
       }
     },
     "currency_amounts": {
