@@ -44,7 +44,13 @@ module Spree
         external_step :credit_at_gateway
 
         run_hooks :after_refund
-        payment.publish_event('payment.refunded')
+        # A requested refund is confirmed by the provider's webhook, which
+        # publishes payment.refunded then.
+        if refund.requested?
+          refund.publish_event('refund.requested')
+        else
+          payment.publish_event('payment.refunded', nil, refund_id: refund.prefixed_id)
+        end
         success(refund)
       end
 
@@ -93,7 +99,10 @@ module Spree
         payment.with_lock do
           ensure_share_still_available
 
+          # Requested until the gateway answers, so a crash before then leaves
+          # a visible requested row, not one that reads as completed.
           @refund = payment.refunds.create!(
+            status: 'requested',
             amount: @amount_to_refund,
             order: order || payment.order,
             reason: reason || Spree::RefundReason.return_processing_reason(refund_store),

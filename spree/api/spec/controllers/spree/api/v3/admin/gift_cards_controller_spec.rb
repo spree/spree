@@ -243,6 +243,44 @@ RSpec.describe Spree::Api::V3::Admin::GiftCardsController, type: :controller do
       patch :update, params: { id: other_card.prefixed_id, amount: '5.00' }, as: :json
       expect(response).to have_http_status(:not_found)
     end
+
+    context 'when the card has been used' do
+      let!(:redeemed_card) { create(:gift_card, store: store, amount: 44, currency: 'USD') }
+      let!(:partly_used_card) { create(:gift_card, store: store, amount: 100, currency: 'USD') }
+
+      before do
+        redeemed_card.update_columns(amount_used: 44, status: 'redeemed')
+        partly_used_card.update_columns(amount_used: 44, status: 'partially_redeemed')
+      end
+
+      it 'refuses to change the amount and leaves the balance alone' do
+        patch :update, params: { id: redeemed_card.prefixed_id, amount: '100.00' }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['details']).to have_key('amount')
+        redeemed_card.reload
+        expect(redeemed_card.amount).to eq(44)
+        expect(redeemed_card.amount_remaining).to eq(0)
+      end
+
+      it 'refuses to change the currency and amount and leaves the balance alone' do
+        patch :update, params: { id: partly_used_card.prefixed_id, amount: '40.00', currency: 'EUR' }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['details'].keys).to include('amount', 'currency')
+        partly_used_card.reload
+        expect(partly_used_card.amount).to eq(100)
+        expect(partly_used_card.currency).to eq('USD')
+        expect(partly_used_card.amount_remaining).to eq(56)
+      end
+
+      it 'still updates other attributes when the amount is sent unchanged' do
+        patch :update, params: { id: partly_used_card.prefixed_id, amount: '100.00', expires_at: '2030-12-31' }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['expires_at']).to eq('2030-12-31')
+      end
+    end
   end
 
   describe 'DELETE #destroy' do

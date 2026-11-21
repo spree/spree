@@ -1,0 +1,78 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://checkout-test.adyen.com/v72/sessions
+    body:
+      encoding: UTF-8
+      string: '{"merchantAccount":"<ADYEN_MERCHANT_ACCOUNT>","returnUrl":"https://shop.example.com/checkout/return","channel":"Web","expiresAt":"2026-11-18T18:43:01Z","applicationInfo":{"externalPlatform":{"name":"Spree
+        Commerce","version":"6.0.5","integrator":"Vendo Sp. z o.o."},"merchantApplication":{"name":"spree_adyen","version":"6.0.5"}},"amount":{"value":11000,"currency":"USD"},"reference":"or_UkLWZg9DAJ-1","merchantOrderReference":"or_UkLWZg9DAJ","countryCode":"US","shopperName":{"firstName":"John","lastName":"Doe"},"shopperEmail":"buddy@hodkiewicz.co.uk","payable":false,"lineItems":[{"id":"li_UkLWZg9DAJ","description":"Product
+        26489","sku":"SKU-2","quantity":1,"amountIncludingTax":1000},{"id":"delivery","description":"Delivery","quantity":1,"amountIncludingTax":10000}]}'
+    headers:
+      Content-Type:
+      - application/json
+      User-Agent:
+      - adyen-ruby-api-library/12.0.0
+      X-Api-Key:
+      - "<FILTERED>"
+      Idempotency-Key:
+      - spree-or_UkLWZg9DAJ-1-session-c3a58d7f0a95
+      Adyen-Library-Name:
+      - adyen-ruby-api-library
+      Adyen-Library-Version:
+      - 12.0.0
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Date:
+      - Wed, 18 Nov 2026 17:43:01 GMT
+      Content-Type:
+      - application/json;charset=UTF-8
+      Content-Length:
+      - '3138'
+      Connection:
+      - keep-alive
+      Traceparent:
+      - 00-9112c4b2d543228cc3e20a58bc5262a7-e75439b0984e52b5-01
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Cache-Control:
+      - no-cache, no-store, private, must-revalidate, max-age=0
+      Pragma:
+      - no-cache
+      Expires:
+      - '0'
+      Set-Cookie:
+      - JSESSIONID=A6F78FCA58ABDBAEC1F04E5C51C3A246; Path=/checkout; Secure; HttpOnly
+      - __cf_bm=5DxAZEekaSXK13rlfhZ13qQ7VsH.9oZSPoqhUAGVHis-1795023781.4875143-1.0.1.1-s53GDM.rtwr5vgnLMxL4skyZimHdWCiD6BEf9kpj2co2_8RankM_Zm1ZZHEkDvT7hZEQiMg_XNP9iTZ27nkwgxL_RQqPlO9LYR_vgBocTC2tcQ6Pn8II1LYlToQb.wJd;
+        HttpOnly; SameSite=None; Partitioned; Secure; Path=/; Domain=adyen.com; Expires=Wed,
+        18 Nov 2026 18:13:01 GMT
+      - _cfuvid=G0t5rTrmjmnDeEK5rK_N7qjBfcueFOfuBVeK_t8tMkY-1795023781.4875143-1.0.1.1-oKEh2MFO77Rgt7.0d2V8qk.zr2nCJ6gLjA5j.SzldfA;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=adyen.com
+      Idempotency-Key:
+      - spree-or_UkLWZg9DAJ-1-session-c3a58d7f0a95
+      Pspreference:
+      - VHZZQ95V27XN4MW5
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      Cf-Cache-Status:
+      - DYNAMIC
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a5c8c66a49c6b607-WAW
+    body:
+      encoding: UTF-8
+      string: '{"amount":{"currency":"USD","value":11000},"applicationInfo":{"externalPlatform":{"name":"Spree
+        Commerce","version":"6.0.5","integrator":"Vendo Sp. z o.o."},"merchantApplication":{"name":"spree_adyen","version":"6.0.5"}},"channel":"Web","countryCode":"US","expiresAt":"2026-11-18T19:43:01+01:00","id":"CSC8ED972ADD1F6927C7CF2EB","lineItems":[{"amountExcludingTax":0,"amountIncludingTax":1000,"description":"Product
+        26489","id":"li_UkLWZg9DAJ","quantity":1,"sku":"SKU-2","taxAmount":0,"taxPercentage":0},{"amountExcludingTax":0,"amountIncludingTax":10000,"description":"Delivery","id":"delivery","quantity":1,"taxAmount":0,"taxPercentage":0}],"merchantAccount":"<ADYEN_MERCHANT_ACCOUNT>","merchantOrderReference":"or_UkLWZg9DAJ","payable":false,"reference":"or_UkLWZg9DAJ-1","returnUrl":"https:\/\/shop.example.com\/checkout\/return","shopperEmail":"buddy@hodkiewicz.co.uk","shopperLocale":"en-US","shopperName":{"firstName":"John","lastName":"Doe"},"mode":"embedded","sessionData":"<FILTERED>"}'
+  recorded_at: Wed, 18 Nov 2026 17:43:01 GMT
+recorded_with: VCR 6.4.1

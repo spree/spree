@@ -78,6 +78,14 @@ test.describe('product tax category', () => {
     await saveProduct(page)
 
     await expect(page.getByText(/variants with their own tax category/i)).toBeVisible()
+
+    // A variant whose own category is the product's is taxed like the rest,
+    // so it is only listed once the two differ.
+    await selectProductTaxCategory(page, variantCategory)
+    await expect(page.getByText(/variants with their own tax category/i)).toHaveCount(0)
+    await selectProductTaxCategory(page, productCategory)
+    await expect(page.getByText(/variants with their own tax category/i)).toBeVisible()
+
     await page.getByRole('button', { name: /use product category/i }).click()
     await expect(page.getByText(/variants with their own tax category/i)).toHaveCount(0)
 

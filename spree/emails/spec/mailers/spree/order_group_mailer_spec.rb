@@ -41,6 +41,17 @@ describe Spree::OrderGroupMailer, type: :mailer do
       end
     end
 
+    it 'takes store credit off on its own row, so the rows add up to the total' do
+      store_credit = create(:store_credit, store: store, customer: group.customer, amount: 1)
+      create(:store_credit_payment, order: nil, order_group: group, source: store_credit, amount: 1)
+
+      parts_of(described_class.confirm_email(group)).each do |body|
+        text = ActionView::Base.full_sanitizer.sanitize(body).squish
+        expect(text).to match(/#{Regexp.escape(I18n.t('spree.store_credit_name'))}\s*-\$1\.00/)
+        expect(text).to include(group.display_total_minus_store_credits.to_s)
+      end
+    end
+
     it 'names who sold what' do
       parts_of(described_class.confirm_email(group)).each do |body|
         group.sellers.each { |seller| expect(body).to include(seller.name) }

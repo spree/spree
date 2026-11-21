@@ -13,6 +13,9 @@ module Spree
 
     preference :dummy_key, :string, default: 'PUBLICKEY123'
     preference :dummy_secret_key, :password, default: 'SECRETKEY123'
+    # Answers captures, voids and refunds the way a provider that reports
+    # their outcome by webhook does, so core can test that path without one.
+    preference :requested_mode, :boolean, default: false
 
     def provider_class
       self.class
@@ -50,23 +53,39 @@ module Spree
     end
 
     def credit(_money, _credit_card, _response_code, _options = {})
+      if preferred_requested_mode
+        return Spree::PaymentResponse.new(true, 'Bogus Gateway: Refund requested', {},
+                                          test: true, requested: true, authorization: "BGS-refund-#{SecureRandom.hex(6)}")
+      end
+
       Spree::PaymentResponse.new(true, 'Bogus Gateway: Forced success', {}, test: true, authorization: generate_authorization)
     end
 
     def capture(_money, authorization, _gateway_options)
       if authorization&.start_with?('BGS-')
-        Spree::PaymentResponse.new(true, 'Bogus Gateway: Forced success', {}, test: true)
+        return Spree::PaymentResponse.new(true, 'Bogus Gateway: Forced success', {}, test: true) unless preferred_requested_mode
+
+        Spree::PaymentResponse.new(true, 'Bogus Gateway: Capture requested', {},
+                                   test: true, requested: true, reference: "BGS-capture-#{SecureRandom.hex(6)}")
       else
         Spree::PaymentResponse.new(false, 'Bogus Gateway: Forced failure', error: 'Bogus Gateway: Forced failure', test: true)
       end
     end
 
     def void(_response_code, _credit_card, _options = {})
+      return Spree::PaymentResponse.new(true, 'Bogus Gateway: Void requested', {}, test: true, requested: true) if preferred_requested_mode
+
       Spree::PaymentResponse.new(true, 'Bogus Gateway: Forced success', {}, test: true, authorization: "void-#{generate_authorization}")
     end
 
     # Voids outright, so there is no captured charge for `refund:` to govern.
-    def cancel(_response_code, _payment = nil, refund: true)
+    # In requested mode only an uncaptured payment waits: a captured one has no
+    # refund recorded for an outcome to settle.
+    def cancel(_response_code, payment = nil, refund: true)
+      if preferred_requested_mode && !payment&.completed?
+        return Spree::PaymentResponse.new(true, 'Bogus Gateway: Cancel requested', {}, test: true, requested: true)
+      end
+
       Spree::PaymentResponse.new(true, 'Bogus Gateway: Forced success', {}, test: true, authorization: generate_authorization)
     end
 
@@ -165,6 +184,26 @@ module Spree
 
     def actions
       %w(capture void credit)
+    end
+
+    # In requested mode, accepts a plain JSON outcome naming the action and the
+    # record's reference, so specs and the dashboard's end-to-end test can
+    # answer a requested capture, void or refund through the webhook endpoint:
+    #   { "action": "capture_succeeded", "reference": "<capture event transaction id>" }
+    #   { "action": "void_failed", "reference": "<payment response code>", "reason": "..." }
+    #   { "action": "refund_succeeded", "reference": "<refund transaction id>" }
+    def parse_webhook_event(raw_body, headers)
+      return super unless preferred_requested_mode
+
+      body = JSON.parse(raw_body)
+      action = body['action'].to_s
+      reference = body['reference'].to_s
+      return if reference.blank? || Spree::Payments::HandleModificationWebhook::OUTCOME_RECORDS.keys.map(&:to_s).exclude?(action)
+
+      metadata = body['reason'].present? ? { 'reason' => body['reason'].to_s } : {}
+      { action: action.to_sym, reference: reference, metadata: metadata }
+    rescue JSON::ParserError
+      raise WebhookSignatureError
     end
 
     private

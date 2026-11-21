@@ -35,6 +35,7 @@ module Spree
     validates :currency, presence: true
     validates :amount, presence: true, numericality: { greater_than: 0 }
     validates :amount_used, :amount_authorized, presence: true, numericality: { greater_than_or_equal_to: 0 }
+    validate :amount_and_currency_unchanged_once_used, on: :update
 
     #
     # Associations
@@ -94,8 +95,7 @@ module Spree
     end
 
     # What the card can still give towards an order: nothing once it has
-    # expired, been redeemed or been cancelled, and never less than zero,
-    # since an admin can lower the amount below what is already in use.
+    # expired, been redeemed or been cancelled, and never less than zero.
     #
     # @return [BigDecimal]
     def spendable_amount
@@ -290,6 +290,18 @@ module Spree
 
     def set_currency
       self.currency ||= store&.default_currency
+    end
+
+    # Once part of the card has been spent, its amount and currency are what
+    # that spending was measured against: changing either would invent a
+    # balance or leave a negative one. Keyed on the stored +amount_used+ and
+    # +amount_authorized+, so a workflow drawing the card down in the same
+    # save is unaffected.
+    def amount_and_currency_unchanged_once_used
+      return unless (amount_used_in_database.to_d + amount_authorized_in_database.to_d).positive?
+
+      errors.add(:amount, :cannot_change_once_used) if will_save_change_to_amount?
+      errors.add(:currency, :cannot_change_once_used) if will_save_change_to_currency?
     end
   end
 end

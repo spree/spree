@@ -16,7 +16,8 @@ module Spree
 
       retry_on SettlementFailed, wait: :polynomially_longer, attempts: 5
 
-      def perform(payment_method_id:, action:, payment_session_id:)
+      # metadata defaults to {} so jobs enqueued before it was passed still run.
+      def perform(payment_method_id:, action:, payment_session_id:, metadata: {})
         payment_method = Spree::PaymentMethod.find(payment_method_id)
         Spree::Current.store = payment_method.store
         payment_session = Spree::PaymentSession.find(payment_session_id)
@@ -24,7 +25,8 @@ module Spree
         result = Spree.payments_handle_webhook_workflow.call(
           payment_method: payment_method,
           action: action.to_sym,
-          payment_session: payment_session
+          payment_session: payment_session,
+          metadata: metadata
         )
 
         raise SettlementFailed, "Payment session #{payment_session.id}: #{result.error}" if result&.failure?

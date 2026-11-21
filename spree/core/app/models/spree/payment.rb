@@ -19,7 +19,8 @@ module Spree
     include Spree::Payment::CustomEvents
 
     publishes_lifecycle_events
-    publishes_events :captured, :completed, :paid, :refunded, :voided
+    publishes_events :captured, :completed, :paid, :refunded, :voided,
+                     :capture_requested, :capture_failed, :void_requested, :void_failed
 
     NON_RISKY_AVS_CODES = ['B', 'D', 'H', 'J', 'M', 'Q', 'T', 'V', 'X', 'Y'].freeze
     RISKY_AVS_CODES     = ['A', 'C', 'E', 'F', 'G', 'I', 'K', 'L', 'N', 'O', 'P', 'R', 'S', 'U', 'W', 'Z'].freeze
@@ -31,6 +32,9 @@ module Spree
     # method is consulted. Extend them to support gateways with other flows.
     VOIDABLE_STATUSES   = %w[pending processing completed checkout].freeze
     CAPTURABLE_STATUSES = %w[checkout pending].freeze
+    # A payment settlement must leave alone: captured, or waiting on its
+    # provider's answer to a capture or void.
+    SETTLED_OR_WAITING_STATUSES = %w[completed requested].freeze
 
     with_options inverse_of: :payments do
       belongs_to :order, class_name: 'Spree::Order', touch: true, optional: true
@@ -125,7 +129,11 @@ module Spree
     # `invalid` status deliberately generates no predicate or scope: `invalid?`
     # is ActiveModel's, use +has_invalid_status?+.
     include Spree::HasStatus
-    has_status :checkout, :processing, :pending, :completed, :failed, :void, :invalid,
+    # `requested` waits on the provider's webhook after it accepted a capture
+    # or void (a gateway answering `requested?`). It is in none of the
+    # claimable, voidable or capturable lists: nothing may start on the
+    # payment until the provider answers.
+    has_status :checkout, :processing, :pending, :requested, :completed, :failed, :void, :invalid,
                default: :checkout
 
     # Status writes, called from the payments workflows and Processing. The
@@ -205,6 +213,19 @@ module Spree
       true
     end
 
+    # The provider accepted a void and answers by webhook, which voids the
+    # payment then. A payment already void, or already waiting, is left as it
+    # is: a second request's late answer must not reopen it.
+    def request_void!
+      updates = { status: 'requested', updated_at: Time.current }
+      return false unless self.class.where(id: id).where.not(status: %w[void requested]).update_all(updates) == 1
+
+      assign_attributes(updates.except(:updated_at))
+      clear_attribute_changes(%i[status])
+      publish_event('payment.void_requested')
+      true
+    end
+
     def failure!
       update!(status: 'failed')
     end
@@ -236,6 +257,19 @@ module Spree
     def can_capture?
       status.in?(CAPTURABLE_STATUSES) &&
         (!payment_method.respond_to?(:can_capture?) || payment_method.can_capture?(self))
+    end
+
+    # What the provider is still answering for a `requested` payment: a capture
+    # leaves a capture event waiting, a void leaves none.
+    #
+    # @return [String, nil] 'capture', 'void', or nil when nothing is requested
+    def requested_action
+      return unless requested?
+
+      # Read off the loaded rows when a list preloaded them, so serializing one
+      # costs no query per payment.
+      waiting = capture_events.loaded? ? capture_events.any?(&:requested?) : capture_events.requested.exists?
+      waiting ? 'capture' : 'void'
     end
 
     # @deprecated read +status+ — removed in 6.3
@@ -290,8 +324,9 @@ module Spree
       offsets.sum(:amount)
     end
 
+    # A requested refund keeps its amount reserved until the provider answers.
     def credit_allowed
-      amount - (offsets_total.abs + refunds.sum(:amount))
+      amount - (offsets_total.abs + refunds.not_failed.sum(:amount))
     end
 
     def can_credit?
@@ -366,7 +401,7 @@ module Spree
     end
 
     def captured_amount
-      capture_events.sum(:amount)
+      capture_events.completed_or_unset.sum(:amount)
     end
 
     def uncaptured_amount

@@ -235,6 +235,69 @@ RSpec.describe Spree::Payments::Capture do
     end
   end
 
+  describe 'a provider that answers later' do
+    let(:payment) do
+      create(:payment, order: order, payment_method: gateway, source: card,
+                       status: 'pending', amount: BigDecimal('45.75'), response_code: 'BGS-123')
+    end
+
+    before { gateway.update!(preferred_requested_mode: true) }
+
+    it 'records a requested capture event and leaves the payment requested' do
+      expect(payment).to receive(:publish_event).with('payment.capture_requested')
+      expect(payment).not_to receive(:publish_event).with('payment.captured')
+
+      result = described_class.call(payment: payment, amount: BigDecimal('10'))
+
+      expect(result).to be_success
+      expect(payment.reload).to be_requested
+      expect(payment.requested_action).to eq('capture')
+      event = payment.capture_events.sole
+      expect(event).to have_attributes(status: 'requested', amount: 10)
+      expect(event.transaction_id).to start_with('BGS-capture-')
+    end
+
+    it 'splits no remainder until the provider answers' do
+      payment
+      expect { described_class.call(payment: payment, amount: BigDecimal('10')) }.not_to(change { order.payments.count })
+      expect(payment.reload.amount).to eq(BigDecimal('45.75'))
+    end
+
+    it 'does not reopen a payment another path moved while the provider answered' do
+      allow(payment.payment_method).to receive(:capture).and_wrap_original do |original, *args|
+        original.call(*args).tap { payment.update_columns(status: 'failed') }
+      end
+
+      described_class.call(payment: payment, amount: BigDecimal('10'))
+
+      expect(payment.reload).to be_failed
+      expect(payment.capture_events).to be_empty
+    end
+
+    it 'refuses a payment already waiting on its provider' do
+      payment.update!(status: 'requested')
+
+      result = described_class.call(payment: payment)
+
+      expect(result).to be_failure
+      expect(result.error.value).to eq(I18n.t('spree.payment_requested_awaiting_provider'))
+    end
+  end
+
+  describe 'a provider that answers at once' do
+    let(:payment) do
+      create(:payment, order: order, payment_method: gateway, source: card,
+                       status: 'pending', amount: BigDecimal('45.75'), response_code: 'BGS-123')
+    end
+
+    it 'records a completed capture event' do
+      described_class.call(payment: payment)
+
+      expect(payment.reload).to be_completed
+      expect(payment.capture_events.sole.read_attribute(:status)).to eq('completed')
+    end
+  end
+
   describe 'racing a concurrent settlement' do
     # The stale-instance race: the webhook settles the payment while an
     # admin's already-loaded copy still reads pending. The claim must

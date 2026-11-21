@@ -70,6 +70,18 @@ module Spree
         expect(order.reload.payment_total).to eq(payment.amount - 5)
       end
 
+      it 'nets out only refunds the provider completed' do
+        order = create(:completed_order_with_totals, store: store)
+        payment = create(:payment, order: order, amount: order.total, status: 'completed')
+        create(:refund, payment: payment, amount: 5)
+        create(:refund, :requested, payment: payment, amount: 2)
+        create(:refund, :failed, payment: payment, amount: 1)
+
+        described_class.call(cart: order)
+
+        expect(order.reload.payment_total).to eq(payment.amount - 5)
+      end
+
       it 'leaves the derived statuses alone, so a stale instance cannot undo them' do
         order = create(:completed_order_with_totals, store: store)
         Spree::Order.where(id: order.id).update_all(payment_status: 'refunded', fulfillment_status: 'fulfilled')
