@@ -1409,5 +1409,13 @@ describe Spree::Payment, type: :model do
       expect(remainder.trim_remainder_to_amount_owed!).to be(false)
       expect(remainder.reload).to be_void
     end
+
+    it 'leaves a remainder another run claimed alone when the order owes nothing' do
+      order.update_columns(total: 170)
+      remainder.update_column(:status, 'processing')
+
+      expect(remainder.trim_remainder_to_amount_owed!).to be(false)
+      expect(remainder.reload).to be_processing
+    end
   end
 end

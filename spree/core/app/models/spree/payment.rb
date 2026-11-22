@@ -349,6 +349,22 @@ module Spree
       true
     end
 
+    # Voids this payment while nobody has claimed it. One conditional UPDATE,
+    # so a payment another run is charging (processing) is not overwritten
+    # and its capture can still be recorded. The caller publishes
+    # payment.voided, outside any lock it holds.
+    #
+    # @return [Boolean] false when the payment was claimed or settled meanwhile
+    def void_if_unclaimed!
+      voided = self.class.unscoped.where(id: id, status: RESIZABLE_STATUSES).
+               update_all(status: 'void', updated_at: Time.current)
+      return false if voided.zero?
+
+      self.status = 'void'
+      clear_attribute_changes(%i[status])
+      true
+    end
+
     def offsets_total
       offsets.sum(:amount)
     end
@@ -486,14 +502,18 @@ module Spree
     #
     # @return [Boolean] whether the remainder still needs authorizing
     def trim_remainder_to_amount_owed!
+      voided = false
       outcome = with_order_lock do
         owed = amount_owed_by_order(including_in_flight: true)
-        next :void if owed&.zero?
+        if owed&.zero?
+          voided = void_if_unclaimed!
+          next :released
+        end
         next :authorize if owed.nil? || owed >= amount || resize_if_unclaimed!(owed)
 
         :claimed
       end
-      void! if outcome == :void
+      publish_event('payment.voided') if voided
       outcome == :authorize
     end
 

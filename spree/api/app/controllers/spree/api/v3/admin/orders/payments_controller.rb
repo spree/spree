@@ -18,7 +18,8 @@ module Spree
             request_params 'PaymentCaptureParams', action: :capture do |body|
               body.attribute :amount, :decimal,
                              description: 'Captures part of the authorized amount. Defaults to all of it, ' \
-                                          'or to what the order still owes when that is less.'
+                                          'or to what the order still owes when that is less. A capture another ' \
+                                          'payment is waiting on its provider to confirm counts as paid.'
             end
 
             before_action :set_resource, only: [:show, :capture, :void]
