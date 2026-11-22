@@ -6,14 +6,18 @@ require 'spec_helper'
 RSpec.describe 'Admin store update and the default market', type: :request do
   include_context 'API v3 Admin'
 
-  let(:market) { store.default_market }
+  # Loaded by query rather than through the shared store's association, so
+  # nothing on the shared `@default_store` instance is changed.
+  let(:market) { Spree::Market.find_by!(store_id: store.id, default: true) }
 
   before do
-    store.update_columns(default_currency: 'USD', default_locale: 'en', supported_locales: nil)
     market.update!(currency: 'EUR', default_locale: 'nl', supported_locales: 'en,nl')
   end
 
   it 'leaves the default market currency and locales untouched' do
+    stored = Spree::Store.where(id: store.id).pick(:default_currency, :default_locale)
+    expect(stored).not_to eq(%w[EUR nl])
+
     patch '/api/v3/admin/store',
           params: { mail_from_address: 'shop@example.com' },
           headers: bearer_headers,
