@@ -62,14 +62,13 @@ describe Spree::FulfillmentMailer, type: :mailer do
         I18n.enforce_available_locales = false
         pt_br_fulfilled_email = { spree: { fulfillment_mailer: { fulfilled_email: { dear_customer: 'Caro Cliente,' } } } }
         I18n.backend.store_translations :'pt-BR', pt_br_fulfilled_email
-        store.update(default_locale: 'pt-BR')
+        store.default_market.update!(default_locale: 'pt-BR', supported_locales: 'en,pt-BR')
         order.update_column(:locale, 'pt-BR')
       end
 
       after do
         I18n.enforce_available_locales = true
         I18n.locale = :en
-        store.update(default_locale: 'en')
       end
 
       specify do
