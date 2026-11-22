@@ -6,8 +6,10 @@ require 'spec_helper'
 RSpec.describe 'Admin store update and the default market', type: :request do
   include_context 'API v3 Admin'
 
-  # Loaded by query rather than through the shared store's association, so
-  # nothing on the shared `@default_store` instance is changed.
+  # The shared context stubs `current_store` to `store`, and the PATCH saves
+  # it. A freshly loaded copy of the default store keeps the request on the
+  # same record (and API key) without touching the shared `@default_store`.
+  let(:store) { Spree::Store.find(@default_store.id) }
   let(:market) { Spree::Market.find_by!(store_id: store.id, default: true) }
 
   before do
