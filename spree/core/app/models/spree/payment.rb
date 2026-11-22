@@ -479,18 +479,23 @@ module Spree
     # owes beyond its other live payments: voids it when nothing is, so the
     # hold on the customer's money is released, and shrinks it when less is.
     #
+    # Read and resized under the order's lock, which a capture holds while it
+    # moves a sibling from processing to requested and a dispatch holds while
+    # it claims a payment: the owed figure cannot count a sibling twice, and a
+    # remainder another run claimed meanwhile keeps the amount it was claimed at.
+    #
     # @return [Boolean] whether the remainder still needs authorizing
     def trim_remainder_to_amount_owed!
-      owed = amount_owed_by_order(including_in_flight: true)
-      return true if owed.nil? || owed >= amount
-
-      if owed.zero?
-        void!
-        return false
+      outcome = with_order_lock do
+        owed = amount_owed_by_order(including_in_flight: true)
+        if owed.nil? || owed >= amount then :authorize
+        elsif owed.zero? then :void
+        elsif resize_if_unclaimed!(owed) then :authorize
+        else :claimed
+        end
       end
-
-      update!(amount: owed)
-      true
+      void! if outcome == :void
+      outcome == :authorize
     end
 
     # Row work only — moves the uncaptured remainder onto a new pending
@@ -671,6 +676,10 @@ module Spree
 
     def set_amount
       self.amount = owner.total - owner.payment_total
+    end
+
+    def with_order_lock(&)
+      order_id ? Spree::Order.find(order_id).with_lock(&) : yield
     end
 
     def amount_must_be_less_than_or_equal_to_max_amount

@@ -1383,4 +1383,31 @@ describe Spree::Payment, type: :model do
       end
     end
   end
+
+  describe '#trim_remainder_to_amount_owed!' do
+    let(:remainder) do
+      create(:payment, order: order, payment_method: gateway, source: card, status: 'pending', amount: 50)
+    end
+
+    before { create(:payment, order: order, payment_method: gateway, source: card, status: 'completed', amount: 170) }
+
+    it 'shrinks a remainder to what the order still owes' do
+      expect(remainder.trim_remainder_to_amount_owed!).to be(true)
+      expect(remainder.reload.amount).to eq(30)
+    end
+
+    it 'leaves a remainder another run claimed at the amount it was claimed at' do
+      remainder.update_column(:status, 'processing')
+
+      expect(remainder.trim_remainder_to_amount_owed!).to be(false)
+      expect(remainder.reload.amount).to eq(50)
+    end
+
+    it 'voids a remainder when the order owes nothing' do
+      order.update_columns(total: 170)
+
+      expect(remainder.trim_remainder_to_amount_owed!).to be(false)
+      expect(remainder.reload).to be_void
+    end
+  end
 end
