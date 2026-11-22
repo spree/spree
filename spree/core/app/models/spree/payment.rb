@@ -320,6 +320,35 @@ module Spree
       create_eligible_credit_event
     end
 
+    # Statuses a payment can be resized from: nobody has claimed it for the
+    # gateway yet, and it has not settled.
+    RESIZABLE_STATUSES = %w[checkout pending failed].freeze
+
+    # Shrinks this payment to +new_amount+ while nobody has claimed it. One
+    # conditional UPDATE, so a payment another run is charging (processing)
+    # or one that settled since the caller read it keeps the amount the
+    # gateway sees. An unsaved payment is resized in memory and saved with
+    # its claim. Store credit gets an eligibility event for the new amount,
+    # as {#update_store_credit_amount!} records one.
+    #
+    # @param new_amount [BigDecimal]
+    # @return [Boolean] false when the payment was claimed or completed meanwhile
+    def resize_if_unclaimed!(new_amount)
+      if new_record?
+        self.amount = new_amount
+        return true
+      end
+
+      resized = self.class.unscoped.where(id: id, status: RESIZABLE_STATUSES).
+                update_all(amount: new_amount, updated_at: Time.current)
+      return false if resized.zero?
+
+      self.amount = new_amount
+      clear_attribute_changes(%i[amount])
+      create_eligible_credit_event if store_credit?
+      true
+    end
+
     def offsets_total
       offsets.sum(:amount)
     end
@@ -406,6 +435,41 @@ module Spree
 
     def uncaptured_amount
       amount - captured_amount
+    end
+
+    # What the order still owes besides this payment: its total less what its
+    # other payments captured and, with +including_in_flight+, what they hold
+    # authorized. An order can carry several live payments, so this is the
+    # most any one of them may take. Read from the payment rows rather than
+    # the order's cached totals, which trail the payments settling.
+    #
+    # @param including_in_flight [Boolean] also count other pending and
+    #   processing payments
+    # @param including_processing [Boolean] also count other processing
+    #   payments — the ones being charged at the gateway right now
+    # @return [BigDecimal, nil] nil for a payment not made against an order
+    def amount_owed_by_order(including_in_flight:, including_processing: false)
+      return if order_id.nil?
+
+      fresh_order = Spree::Order.find(order_id)
+      return BigDecimal('0') if fresh_order.canceled?
+
+      others = fresh_order.payments.where.not(id: id)
+      # One statement for both sums, so a sibling settling between two reads
+      # can't drop out of the completed sum and the in-flight sum at once.
+      # reorder(nil): the default created_at ordering is not grouped, which
+      # MySQL's only_full_group_by refuses.
+      by_status = others.where(status: %w[completed pending processing]).reorder(nil).group(:status).sum(:amount)
+      captured = others.where(status: 'completed')
+      owed = fresh_order.total - by_status.fetch('completed', 0) + Spree::Refund.where(payment_id: captured.select(:id)).sum(:amount) -
+             fresh_order.returned_items_refund_total
+      if including_in_flight
+        owed -= by_status.fetch('pending', 0) + by_status.fetch('processing', 0)
+      elsif including_processing
+        owed -= by_status.fetch('processing', 0)
+      end
+
+      [owed, BigDecimal('0')].max
     end
 
     # Row work only — moves the uncaptured remainder onto a new pending
@@ -638,9 +702,14 @@ module Spree
                                 action_authorization_code: response_code)
     end
 
+    # A buyer who picks another way to pay at checkout replaces the attempt
+    # they started, so a cart keeps one live payment. An order is paid from
+    # the back office, where each payment recorded is money the merchant
+    # means to collect alongside the others.
     def invalidate_old_payments
       # invalid payment or store_credit payment shouldn't invalidate other payment types
       return if has_invalid_status? || store_credit?
+      return unless owner.is_a?(Spree::Cart)
 
       owner.payments.with_state('checkout').where.not(id: id).each do |payment|
         payment.invalidate! unless payment.store_credit?

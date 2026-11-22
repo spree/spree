@@ -33,6 +33,61 @@ module Spree
       expect(line_item.price_source).to eq('manual')
     end
 
+    it 'processes every payment recorded on a draft, not only the last one' do
+      draft = create(:order_with_line_items, store: store)
+      draft.update_columns(status: 'draft', completed_at: nil)
+      check_method = create(:check_payment_method, store: store)
+      first = create(:payment, order: draft, payment_method: check_method, amount: 4, response_code: nil)
+      second = create(:payment, order: draft, payment_method: check_method, amount: draft.total - 4, response_code: nil)
+
+      result = described_class.call(order: draft)
+
+      expect(result).to be_success
+      expect([first.reload.status, second.reload.status]).to all(be_in(%w[pending completed]))
+    end
+
+    it 'never charges more than the order total across its payments' do
+      draft = create(:order_with_line_items, store: store)
+      draft.update_columns(status: 'draft', completed_at: nil, total: BigDecimal('49.99'))
+      check_method = create(:check_payment_method, store: store)
+      first = create(:payment, order: draft, payment_method: check_method, amount: 40, response_code: nil)
+      second = create(:payment, order: draft, payment_method: check_method, amount: 40, response_code: nil)
+
+      result = described_class.call(order: draft)
+
+      expect(result).to be_success
+      expect(first.reload.amount + second.reload.amount).to eq(BigDecimal('49.99'))
+      expect(draft.payments.where(status: %w[pending completed]).sum(:amount)).to eq(BigDecimal('49.99'))
+    end
+
+    it 'charges a payment for what a refund on a captured one left owing' do
+      draft = create(:order_with_line_items, store: store)
+      draft.update_columns(status: 'draft', completed_at: nil)
+      check_method = create(:check_payment_method, store: store)
+      captured = create(:payment, order: draft, payment_method: check_method, amount: draft.total, status: 'completed', response_code: nil)
+      create(:refund, payment: captured, amount: 10)
+      draft.update_columns(payment_total: draft.total - 10)
+      top_up = create(:payment, order: draft, payment_method: check_method, amount: 10, response_code: nil)
+
+      result = described_class.call(order: draft)
+
+      expect(result).to be_success
+      expect(top_up.reload.status).to be_in(%w[pending completed])
+    end
+
+    it 'leaves a payment uncharged once the others cover the order' do
+      draft = create(:order_with_line_items, store: store)
+      draft.update_columns(status: 'draft', completed_at: nil)
+      check_method = create(:check_payment_method, store: store)
+      create(:payment, order: draft, payment_method: check_method, amount: draft.total, response_code: nil)
+      spare = create(:payment, order: draft, payment_method: check_method, amount: 1, response_code: nil)
+
+      result = described_class.call(order: draft)
+
+      expect(result).to be_success
+      expect(spare.reload).to be_checkout
+    end
+
     # The path company certificates take: unpinned, it resolves live at credit.
     describe 'tax exemptions' do
       let(:draft) { create(:order_ready_to_ship, store: store).tap { |o| o.update_columns(status: 'draft', completed_at: nil) } }

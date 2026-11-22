@@ -80,6 +80,7 @@ export const OrderSchema = z.object({
   created_at: z.string(),
   updated_at: z.string(),
   payment_total: z.string(),
+  amount_left_to_pay: z.string(),
   commission_amount_total: z.string(),
   commission_tax_total: z.string(),
   commission_total: z.string(),
@@ -172,6 +173,7 @@ export const OrderSchema = z.object({
   created_at: z.ZodType<Order['created_at']>;
   updated_at: z.ZodType<Order['updated_at']>;
   payment_total: z.ZodType<Order['payment_total']>;
+  amount_left_to_pay: z.ZodType<Order['amount_left_to_pay']>;
   commission_amount_total: z.ZodType<Order['commission_amount_total']>;
   commission_tax_total: z.ZodType<Order['commission_tax_total']>;
   commission_total: z.ZodType<Order['commission_total']>;

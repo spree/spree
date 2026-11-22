@@ -1,4 +1,5 @@
 import type { Order, Payment } from '@spree/admin-sdk'
+import { isPositiveMoney } from '@spree/core'
 import {
   adminClient,
   currencyParts,
@@ -328,14 +329,20 @@ function AddPaymentDialog({
   const customerId = order.customer_id ?? undefined
   const [paymentMethodId, setPaymentMethodId] = useState<string>('')
   const [sourceId, setSourceId] = useState<string>('')
-  const [amount, setAmount] = useState<string>(order.amount_due ?? '')
+  // The server works out what is left to pay; nothing here repeats which payment statuses count.
+  const defaultAmount = isPositiveMoney(order.amount_left_to_pay) ? order.amount_left_to_pay : ''
+  const [amount, setAmount] = useState<string>(defaultAmount)
   const [capture, setCapture] = useState(false)
   const { symbol: currencySymbol } = currencyParts(order.currency, i18n.language)
 
-  // Re-seed amount from outstanding balance whenever the dialog opens.
-  useEffect(() => {
-    if (open) setAmount(order.amount_due ?? '')
-  }, [open, order.amount_due])
+  // Seed the amount from what is left to pay each time the dialog opens, and
+  // only then: an order refreshing while it is open must not overwrite what
+  // the merchant typed.
+  const [seededOpen, setSeededOpen] = useState(false)
+  if (open !== seededOpen) {
+    setSeededOpen(open)
+    if (open) setAmount(defaultAmount)
+  }
 
   const { data: methodsData } = useQuery({
     queryKey: ['payment-methods'],
@@ -527,7 +534,7 @@ function AddPaymentDialog({
                     id="pay-amount"
                     type="number"
                     step="any"
-                    placeholder={order.amount_due ?? '0.00'}
+                    placeholder={defaultAmount || '0.00'}
                     value={amount}
                     onChange={(e) => {
                       setAmount(e.target.value)
