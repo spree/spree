@@ -98,19 +98,6 @@ RSpec.describe Spree::Payments::Capture do
         order.update_columns(total: BigDecimal('30.25'))
       end
 
-      it 'captures only what the order still owes and releases the rest' do
-        expect(gateway).to receive(:capture).with(money('30.25'), '123', anything).and_return(success_response)
-        expect(gateway).not_to receive(:authorize)
-
-        result = described_class.call(payment: payment)
-
-        expect(result).to be_success
-        expect(payment.reload).to be_completed
-        expect(payment.amount).to eq(BigDecimal('30.25'))
-        expect(payment.captured_amount).to eq(BigDecimal('30.25'))
-        expect(order.payments.pending).to be_empty
-      end
-
       it 'carries only what is still owed to the remainder of a partial capture' do
         expect(gateway).to receive(:capture).with(money('10'), '123', anything).and_return(success_response)
         expect(gateway).to receive(:authorize).and_return(Spree::PaymentResponse.new(true, nil, {}, authorization: '456'))
@@ -138,27 +125,6 @@ RSpec.describe Spree::Payments::Capture do
         described_class.call(payment: payment)
 
         expect(payment.reload.captured_amount).to eq(BigDecimal('20.25'))
-      end
-
-      it 'refuses an amount above what the order still owes' do
-        expect(gateway).not_to receive(:capture)
-
-        result = described_class.call(payment: payment, amount: BigDecimal('40'))
-
-        expect(result).to be_failure
-        expect(result.error.value).to eq(:capture_exceeds_outstanding_balance)
-        expect(payment.reload).to be_pending
-      end
-
-      it 'refuses a capture when the order owes nothing' do
-        create(:payment, order: order, payment_method: gateway, source: card, status: 'completed', amount: BigDecimal('30.25'))
-        expect(gateway).not_to receive(:capture)
-
-        result = described_class.call(payment: payment)
-
-        expect(result).to be_failure
-        expect(result.error.value).to eq(:nothing_to_capture)
-        expect(payment.reload).to be_pending
       end
     end
 
@@ -242,6 +208,173 @@ RSpec.describe Spree::Payments::Capture do
       expect(result.error.value).to eq('card declined')
       expect(payment.reload).to be_failed
       expect(payment.capture_events.count).to eq(0)
+    end
+  end
+
+  describe 'an order carrying other payments' do
+    let(:order) { create(:order, store: store, total: 49.99) }
+    let(:payment) do
+      create(:payment, order: order, payment_method: gateway, source: card, status: 'pending', amount: 40, response_code: '123')
+    end
+
+    before do
+      create(:payment, order: order, payment_method: gateway, source: create(:credit_card), status: 'completed', amount: 40)
+    end
+
+    it 'refuses an amount larger than the order still owes' do
+      expect(gateway).not_to receive(:capture)
+
+      result = described_class.call(payment: payment, amount: BigDecimal('40'))
+
+      expect(result).to be_failure
+      expect(result.error.value).to eq(I18n.t('spree.capture_exceeds_amount_owed', amount: money('9.99').to_s))
+      expect(payment.reload).to be_pending
+    end
+
+    it 'captures only what the order still owes when no amount is given, and releases the rest' do
+      expect(gateway).to receive(:capture).with(money('9.99'), '123', anything).and_return(success_response)
+
+      result = described_class.call(payment: payment)
+
+      expect(result).to be_success
+      expect(payment.reload).to be_completed
+      expect(payment.amount).to eq(BigDecimal('9.99'))
+      expect(payment.capture_events.sum(:amount)).to eq(BigDecimal('9.99'))
+      expect(order.payments.where(status: %w[pending completed]).sum(:amount)).to eq(BigDecimal('49.99'))
+    end
+
+    it 'captures what is owed and releases the rest' do
+      allow(gateway).to receive(:capture).and_return(success_response)
+
+      result = described_class.call(payment: payment, amount: BigDecimal('9.99'))
+
+      expect(result).to be_success
+      expect(payment.reload.amount).to eq(BigDecimal('9.99'))
+      expect(order.payments.where(status: %w[pending completed]).sum(:amount)).to eq(BigDecimal('49.99'))
+    end
+  end
+
+  describe 'racing another capture on the same order' do
+    let(:order) { create(:order, store: store, total: BigDecimal('49.99')) }
+    let(:payment) do
+      create(:payment, order: order, payment_method: gateway, source: card, status: 'pending', amount: 40, response_code: '123')
+    end
+    let!(:sibling) do
+      create(:payment, order: order, payment_method: gateway, source: create(:credit_card), status: 'pending', amount: 40,
+                       response_code: '456')
+    end
+
+    it 'refuses once the other has claimed between the first check and this claim' do
+      # The validate hook runs after the early owed check and before the
+      # claim — the window another request's claim can land in.
+      Spree.hooks.register('payments.capture.validate') { |_flow| sibling.update_columns(status: 'processing') }
+      expect(gateway).not_to receive(:capture)
+
+      result = described_class.call(payment: payment, amount: BigDecimal('40'))
+
+      expect(result).to be_failure
+      expect(result.error.value).to eq(I18n.t('spree.capture_exceeds_amount_owed', amount: money('9.99').to_s))
+      expect(payment.reload).to be_pending
+    end
+
+    it 'captures only what the other leaves owing when no amount is given' do
+      Spree.hooks.register('payments.capture.validate') { |_flow| sibling.update_columns(status: 'processing') }
+      expect(gateway).to receive(:capture).with(money('9.99'), '123', anything).and_return(success_response)
+
+      result = described_class.call(payment: payment)
+
+      expect(result).to be_success
+      expect(payment.reload.capture_events.sum(:amount)).to eq(BigDecimal('9.99'))
+    end
+  end
+
+  describe 'a payment changed by another run after this capture read it' do
+    let(:order) { create(:order, store: store, total: BigDecimal('49.99')) }
+    let(:payment) do
+      create(:payment, order: order, payment_method: gateway, source: card, status: 'pending', amount: 40, response_code: '123')
+    end
+
+    it 'captures the amount the row now holds when a processing run resized it' do
+      # The validate hook runs after the early checks and before the claim.
+      Spree.hooks.register('payments.capture.validate') { |_flow| Spree::Payment.find(payment.id).update_columns(amount: BigDecimal('9.99')) }
+      expect(gateway).to receive(:capture).with(money('9.99'), '123', anything).and_return(success_response)
+
+      result = described_class.call(payment: payment)
+
+      expect(result).to be_success
+      expect(payment.reload.amount).to eq(BigDecimal('9.99'))
+      expect(payment.capture_events.sum(:amount)).to eq(BigDecimal('9.99'))
+    end
+
+    it 'refuses an explicit amount larger than what the row now holds' do
+      Spree.hooks.register('payments.capture.validate') { |_flow| Spree::Payment.find(payment.id).update_columns(amount: BigDecimal('9.99')) }
+      expect(gateway).not_to receive(:capture)
+
+      result = described_class.call(payment: payment, amount: BigDecimal('40'))
+
+      expect(result).to be_failure
+      expect(result.error.value).to eq(I18n.t('spree.capture_exceeds_payment_amount'))
+      expect(payment.reload).to be_pending
+    end
+
+    it 'reports success for a payment another request already captured, even past what is owed' do
+      # The split-off rest of a partial capture, captured too: with this
+      # payment completed, only 29.99 is owed beside it.
+      create(:payment, order: order, payment_method: gateway, source: create(:credit_card), status: 'completed', amount: BigDecimal('20'))
+      Spree::Payment.find(payment.id).update_columns(status: 'completed')
+      expect(gateway).not_to receive(:capture)
+
+      result = described_class.call(payment: payment, amount: BigDecimal('40')) # stale: still reads pending
+
+      expect(result).to be_success
+      expect(payment.reload).to be_completed
+    end
+  end
+
+  describe 'an authorization larger than the order now owes' do
+    # Authorized for 100, then line items changed and the order total dropped
+    # to 80: the dashboard's capture sends no amount.
+    let(:order) { create(:order, store: store, total: BigDecimal('100')) }
+    let(:payment) do
+      create(:payment, order: order, payment_method: gateway, source: card, status: 'pending', amount: 100, response_code: '123')
+    end
+
+    before do
+      payment
+      order.update_columns(total: BigDecimal('80'))
+    end
+
+    it 'captures the 80 owed and releases the other 20' do
+      expect(gateway).to receive(:capture).with(money('80'), '123', anything).and_return(success_response)
+
+      result = described_class.call(payment: payment)
+
+      expect(result).to be_success
+      expect(payment.reload).to be_completed
+      expect(payment.capture_events.sum(:amount)).to eq(BigDecimal('80'))
+      remainder = order.payments.where.not(id: payment.id).sole
+      expect(remainder.amount).to eq(BigDecimal('20'))
+      expect(remainder).to be_void
+    end
+
+    it 'still refuses an explicit amount above what is owed' do
+      expect(gateway).not_to receive(:capture)
+
+      result = described_class.call(payment: payment, amount: BigDecimal('100'))
+
+      expect(result).to be_failure
+      expect(result.error.value).to eq(I18n.t('spree.capture_exceeds_amount_owed', amount: money('80').to_s))
+    end
+
+    it 'refuses when the order is already covered by another payment' do
+      create(:payment, order: order, payment_method: gateway, source: create(:credit_card), status: 'completed', amount: 80)
+      expect(gateway).not_to receive(:capture)
+
+      result = described_class.call(payment: payment)
+
+      expect(result).to be_failure
+      expect(result.error.value).to eq(I18n.t('spree.order_payment_already_covered'))
+      expect(payment.reload).to be_pending
     end
   end
 

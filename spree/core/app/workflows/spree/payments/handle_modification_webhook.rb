@@ -90,13 +90,7 @@ module Spree
         record.update!(status: 'completed')
         # Split before completing, so payment.completed publishes with the
         # captured amount, as the capture workflow does for an answer given at once.
-        # Only what the owner still owes is carried and re-authorized; the
-        # rest of the authorization is released.
-        @remainder = payment.split_uncaptured_amount(
-          up_to: payment.uncaptured_amount_still_owed(
-            captured: record.amount, balance: Spree::Payment.balance_open_for_capture(payment.owner, except: payment)
-          )
-        )
+        @remainder = payment.split_uncaptured_amount
         payment.complete!
         settle_claimed_share(record.amount, captured: true)
         @events << [payment, 'payment.captured']
@@ -191,6 +185,9 @@ module Spree
       # not change.
       def authorize_remainder
         return if remainder.blank?
+        # Holding more than the order still owes would only keep the
+        # customer's money tied up.
+        return unless remainder.trim_remainder_to_amount_owed!
 
         result = Spree.payment_process_workflow.call(payment: remainder, action: :authorize)
         return if result.success?

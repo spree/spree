@@ -224,6 +224,30 @@ describe Spree::Payment, type: :model do
       end
     end
 
+    describe 'invalidating earlier payments' do
+      let(:check_method) { create(:check_payment_method, store: store) }
+
+      context 'on a cart' do
+        let(:cart) { create(:cart_with_line_items, store: store) }
+
+        it 'invalidates the payment the new one replaces' do
+          replaced = create(:payment, cart: cart, order: nil, payment_method: check_method, amount: 10)
+          create(:payment, cart: cart, order: nil, payment_method: check_method, amount: 10)
+
+          expect(replaced.reload.status).to eq('invalid')
+        end
+      end
+
+      context 'on an order' do
+        it "leaves the order's other unprocessed payments live" do
+          first = create(:payment, order: order, payment_method: check_method, amount: 40)
+          create(:payment, order: order, payment_method: check_method, amount: 10)
+
+          expect(first.reload.status).to eq('checkout')
+        end
+      end
+    end
+
     describe '#create_payment_profile' do
       context 'when payment method supports profiles' do
         context 'when source is a credit card' do
@@ -573,7 +597,9 @@ describe Spree::Payment, type: :model do
         context 'if successful' do
           it 'records the capture under the owner row lock' do
             expect(payment.payment_method).to receive(:capture).and_return(success_response)
-            expect(payment.owner).to receive(:with_lock).and_call_original
+            # Twice: the claim checks what is owed under the lock, then the
+            # capture is recorded under it.
+            expect(payment.owner).to receive(:with_lock).twice.and_call_original
 
             payment.capture!
             expect(Spree::Deprecation).to have_received(:warn).with(/Payment#capture! is deprecated/)

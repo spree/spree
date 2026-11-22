@@ -15,18 +15,17 @@ module Spree
 
       # @param payment [Spree::Payment] a completed payment is a no-op
       # @param amount [BigDecimal, nil] in the currency's own units; nil
-      #   captures what the payment's owner still owes, up to the payment's
-      #   amount. A smaller amount splits whatever is still owed into a new
+      #   captures in full, a smaller amount splits the remainder into a new
       #   pending payment. An Integer is read as hundredths of the currency,
-      #   the pre-6.0 contract (deprecated, removed in 6.3).
+      #   the pre-6.0 contract (deprecated, removed in 6.5).
       def perform(payment:, amount: nil)
         super
+        @amount_requested = !amount.nil?
         @amount = capture_amount(amount)
 
         step :ensure_capturable
-        step :read_outstanding_balance
         step :ensure_within_payment_amount
-        step :ensure_within_outstanding_balance
+        step :ensure_within_amount_owed
         # Veto point — fraud holds, manual review. Before any money moves.
         run_hooks :validate
         run_hooks :before_capture
@@ -53,7 +52,7 @@ module Spree
       attr_reader :response, :remainder
 
       def capture_amount(amount)
-        return if amount.nil?
+        return payment.amount if amount.nil?
         return Spree::Money::Rounding.to_currency(amount, payment.currency) unless amount.is_a?(Integer)
 
         Spree::Deprecation.warn(
@@ -76,26 +75,10 @@ module Spree
         failure(payment, :payment_not_capturable)
       end
 
-      # An authorization can outlive the total it was taken for — a line
-      # removed from the order, a discount added after checkout — so a capture
-      # takes no more than the owner still owes, and a capture with no amount
-      # takes exactly that. Captures another payment has sent to its
-      # provider count as collected already.
-      def read_outstanding_balance
-        # Settled concurrently — the same no-op success the claim would give.
-        halt!(payment) if Spree::Payment.exists?(id: payment.id, status: 'completed')
-
-        @outstanding_balance = Spree::Payment.balance_open_for_capture(payment.owner, except: payment)
-
-        failure(payment, :nothing_to_capture) unless @outstanding_balance.positive?
-        @amount = [payment.amount, @outstanding_balance].min if @amount.nil?
-      end
-
       # A capture takes some or all of what was authorized, never more: a
       # gateway may let a larger figure through, and the books would then
       # carry a capture the authorization never covered. Nor nothing, or less
-      # than nothing — every caller gets the same rule, not only the API,
-      # and a defaulted amount as much as an explicit one.
+      # than nothing — every caller gets the same rule, not only the API.
       def ensure_within_payment_amount
         failure(payment, :capture_amount_not_positive) unless @amount.positive?
         return if @amount <= payment.amount
@@ -103,16 +86,89 @@ module Spree
         failure(payment, :capture_exceeds_payment_amount)
       end
 
-      def ensure_within_outstanding_balance
-        return if @amount <= @outstanding_balance
+      # Other payments on the order may have captured some of its total
+      # already, or the order total may have dropped since this payment was
+      # authorized; this one may take only what is left owing.
+      def ensure_within_amount_owed
+        # Another request may have captured this payment since it was loaded:
+        # that is a success, whatever is owed now.
+        halt!(payment) if refresh_from_row == 'completed'
 
-        failure(payment, :capture_exceeds_outstanding_balance)
+        limit_to_amount_owed(payment.amount_owed_by_order(including_in_flight: false))
       end
 
+      # The owed check again, under the order's row lock and together with
+      # the claim. A payment being charged sits in processing until it is
+      # recorded, and here it counts as taken: of two captures racing on one
+      # order, the second reads after the first has claimed, so both cannot
+      # pass a check made before either moved money.
+      #
+      # The row is read again here, with its amount: a processing run may have
+      # resized this payment since it was loaded, and the claim reserves the
+      # row's amount, so the capture must not take more than that.
       def claim
-        halt!(payment) unless payment.started_processing!
+        outcome = with_order_lock do
+          next false if refresh_from_row == 'completed'
+
+          refusal = amount_within_payment_refusal ||
+                    amount_owed_refusal(payment.amount_owed_by_order(including_in_flight: false, including_processing: true))
+          next refusal if refusal
+
+          payment.started_processing!
+        end
+        failure(payment, outcome) if outcome.is_a?(String)
+        halt!(payment) unless outcome
       rescue Spree::Core::GatewayError => error
         failure(payment, error.message)
+      end
+
+      # Reads the status and amount another run may have written since this
+      # instance was loaded. Deliberately not a reload, which would discard the
+      # in-memory source (card numbers never persist).
+      def refresh_from_row
+        return payment.status unless payment.persisted?
+
+        status, amount = Spree::Payment.unscoped.where(id: payment.id).pick(:status, :amount)
+        payment.amount = amount
+        payment.clear_attribute_changes(%i[amount])
+        status
+      end
+
+      # The payment's own amount may have shrunk since the early check. An
+      # amount the caller asked for is then refused; with none asked for, the
+      # capture shrinks with it.
+      def amount_within_payment_refusal
+        return if @amount <= payment.amount
+        return I18n.t('spree.capture_exceeds_payment_amount') if @amount_requested
+
+        @amount = payment.amount
+        nil
+      end
+
+      def limit_to_amount_owed(owed)
+        refusal = amount_owed_refusal(owed)
+        failure(payment, refusal) if refusal
+      end
+
+      # An amount the caller asked for is refused when it exceeds what is
+      # owed. With no amount asked for — the dashboard's capture — the capture
+      # shrinks to what is owed, and record_capture splits off the rest of the
+      # authorization, which authorize_remainder then releases. Returns the
+      # refusal message, or nil.
+      def amount_owed_refusal(owed)
+        return if owed.nil? || @amount <= owed
+        return I18n.t('spree.order_payment_already_covered') if !@amount_requested && !owed.positive?
+
+        unless @amount_requested
+          @amount = owed
+          return
+        end
+
+        I18n.t('spree.capture_exceeds_amount_owed', amount: Spree::Money.new(owed, currency: payment.currency).to_s)
+      end
+
+      def with_order_lock(&)
+        payment.order_id ? payment.owner.with_lock(&) : yield
       end
 
       def capture_at_gateway
@@ -151,9 +207,7 @@ module Spree
             payment.capture_events.create!(amount: @amount, status: 'completed')
             # Split before completing, so payment.completed publishes with
             # the captured amount and the order recomputes from correct rows.
-            @remainder = payment.split_uncaptured_amount(
-              up_to: payment.uncaptured_amount_still_owed(captured: @amount, balance: @outstanding_balance)
-            )
+            @remainder = payment.split_uncaptured_amount
             payment.handle_response(@response, :complete)
           end
         end
@@ -164,6 +218,9 @@ module Spree
       # outside the lock.
       def authorize_remainder
         return if remainder.blank?
+        # Holding more than the order still owes would only keep the
+        # customer's money tied up.
+        return unless remainder.trim_remainder_to_amount_owed!
 
         result = Spree.payment_process_workflow.call(payment: remainder, action: :authorize)
         failure(remainder, result.error.value.to_s) if result.failure?

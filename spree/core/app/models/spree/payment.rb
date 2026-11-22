@@ -320,6 +320,35 @@ module Spree
       create_eligible_credit_event
     end
 
+    # Statuses a payment can be resized from: nobody has claimed it for the
+    # gateway yet, and it has not settled.
+    RESIZABLE_STATUSES = %w[checkout pending failed].freeze
+
+    # Shrinks this payment to +new_amount+ while nobody has claimed it. One
+    # conditional UPDATE, so a payment another run is charging (processing)
+    # or one that settled since the caller read it keeps the amount the
+    # gateway sees. An unsaved payment is resized in memory and saved with
+    # its claim. Store credit gets an eligibility event for the new amount,
+    # as {#update_store_credit_amount!} records one.
+    #
+    # @param new_amount [BigDecimal]
+    # @return [Boolean] false when the payment was claimed or completed meanwhile
+    def resize_if_unclaimed!(new_amount)
+      if new_record?
+        self.amount = new_amount
+        return true
+      end
+
+      resized = self.class.unscoped.where(id: id, status: RESIZABLE_STATUSES).
+                update_all(amount: new_amount, updated_at: Time.current)
+      return false if resized.zero?
+
+      self.amount = new_amount
+      clear_attribute_changes(%i[amount])
+      create_eligible_credit_event if store_credit?
+      true
+    end
+
     def offsets_total
       offsets.sum(:amount)
     end
@@ -408,57 +437,86 @@ module Spree
       amount - captured_amount
     end
 
-    # What +owner+ still owes that no other payment is already collecting:
-    # the balance re-summed from the payment rows (so a stale instance or a
-    # settlement that has not reached the owner yet cannot widen it), less
-    # captures sent to a provider that confirms them by webhook.
+    # What the order still owes besides this payment: its total less what its
+    # other payments captured and, with +including_in_flight+, what they hold
+    # authorized. An order can carry several live payments, so this is the
+    # most any one of them may take. Read from the payment rows rather than
+    # the order's cached totals, which trail the payments settling.
     #
-    # @param owner [Spree::Order, Spree::Cart, Spree::OrderGroup]
-    # @param except [Spree::Payment, nil] a payment whose own captures are not counted
-    # @return [BigDecimal]
-    def self.balance_open_for_capture(owner, except: nil)
-      fresh_owner = owner.class.find(owner.id)
-      fresh_owner.refresh_payment_total!
-      others = fresh_owner.payments.where.not(id: except&.id)
-      awaiting = Spree::PaymentCaptureEvent.where(status: 'requested', payment_id: others.select(:id)).sum(:amount)
+    # @param including_in_flight [Boolean] also count other pending and
+    #   processing payments
+    # @param including_processing [Boolean] also count other processing
+    #   payments — the ones being charged at the gateway right now
+    # @return [BigDecimal, nil] nil for a payment not made against an order
+    def amount_owed_by_order(including_in_flight:, including_processing: false)
+      return if order_id.nil?
 
-      fresh_owner.outstanding_balance - awaiting
+      fresh_order = Spree::Order.find(order_id)
+      return BigDecimal('0') if fresh_order.canceled?
+
+      others = fresh_order.payments.where.not(id: id)
+      # One statement for both sums, so a sibling settling between two reads
+      # can't drop out of the completed sum and the in-flight sum at once.
+      # reorder(nil): the default created_at ordering is not grouped, which
+      # MySQL's only_full_group_by refuses.
+      by_status = others.where(status: %w[completed pending processing]).reorder(nil).group(:status).sum(:amount)
+      captured = others.where(status: 'completed')
+      # A capture sent to a provider that confirms it by webhook is money on
+      # its way in, so it counts as collected already.
+      awaiting = Spree::PaymentCaptureEvent.where(status: 'requested', payment_id: others.select(:id)).sum(:amount)
+      owed = fresh_order.total - by_status.fetch('completed', 0) - awaiting +
+             Spree::Refund.where(payment_id: captured.select(:id)).sum(:amount) - fresh_order.returned_items_refund_total
+      if including_in_flight
+        owed -= by_status.fetch('pending', 0) + by_status.fetch('processing', 0)
+      elsif including_processing
+        owed -= by_status.fetch('processing', 0)
+      end
+
+      [owed, BigDecimal('0')].max
     end
 
-    # How much of the uncaptured amount a capture should carry to a new
-    # pending payment: what the owner still owes after +captured+, beyond what
-    # its other pending payments already hold. A grouped payment carries
-    # every order's undrawn share, so it keeps all of it (nil).
+    # Sizes a remainder split off a partial capture to what its order still
+    # owes beyond its other live payments: voids it when nothing is, so the
+    # hold on the customer's money is released, and shrinks it when less is.
     #
-    # @param captured [BigDecimal] the amount this capture takes
-    # @param balance [BigDecimal] the owner's balance before the capture
-    # @return [BigDecimal, nil]
-    def uncaptured_amount_still_owed(captured:, balance:)
-      return if grouped?
+    # @return [Boolean] whether the remainder still needs authorizing
+    def trim_remainder_to_amount_owed!
+      owed = amount_owed_by_order(including_in_flight: true)
+      return true if owed.nil? || owed >= amount
 
-      balance - captured - owner.payments.pending.where.not(id: id).sum(:amount)
+      if owed.zero?
+        void!
+        return false
+      end
+
+      update!(amount: owed)
+      true
     end
 
     # Row work only — moves the uncaptured remainder onto a new pending
     # payment and shrinks this one to what was captured. The caller authorizes
     # the returned remainder at the gateway afterwards, outside any lock.
     #
-    # @param up_to [BigDecimal, nil] the most to carry to the remainder; the
-    #   rest is released. nil carries all of it.
-    # @return [Spree::Payment, nil] the remainder payment, or nil when nothing is carried
-    def split_uncaptured_amount(up_to: nil)
+    # @return [Spree::Payment, nil] the remainder payment, or nil when fully
+    #   captured or when the order can take no more
+    def split_uncaptured_amount
       return if uncaptured_amount <= 0
 
-      carried = up_to.nil? ? uncaptured_amount : [uncaptured_amount, up_to].min
-      if carried.positive?
-        remainder = owner.payments.create!(
-          amount: carried,
-          payment_method: payment_method,
-          source: source,
-          status: 'pending',
-          capture_on_dispatch: true
-        )
+      remainder = owner.payments.new(
+        amount: uncaptured_amount,
+        payment_method: payment_method,
+        source: source,
+        status: 'pending',
+        capture_on_dispatch: true
+      )
+      # The order may now take less than the authorization left over, when its
+      # total came down after the payment was authorized.
+      remainder.amount = [remainder.amount, remainder.max_amount].min unless grouped?
+      if remainder.amount.positive?
+        remainder.save!
         carry_splits_to(remainder)
+      else
+        remainder = nil
       end
       # Bang: a silent failure here would leave this payment at its full amount
       # beside a remainder that also exists, so the group would hold more money
@@ -674,9 +732,14 @@ module Spree
                                 action_authorization_code: response_code)
     end
 
+    # A buyer who picks another way to pay at checkout replaces the attempt
+    # they started, so a cart keeps one live payment. An order is paid from
+    # the back office, where each payment recorded is money the merchant
+    # means to collect alongside the others.
     def invalidate_old_payments
       # invalid payment or store_credit payment shouldn't invalidate other payment types
       return if has_invalid_status? || store_credit?
+      return unless owner.is_a?(Spree::Cart)
 
       owner.payments.with_state('checkout').where.not(id: id).each do |payment|
         payment.invalidate! unless payment.store_credit?

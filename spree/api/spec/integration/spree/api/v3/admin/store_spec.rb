@@ -96,4 +96,31 @@ RSpec.describe 'Admin Store API', type: :request, swagger_doc: 'api-reference/ad
       end
     end
   end
+
+  # Saving a settings page PATCHes the whole store. The store's legacy currency
+  # and locale columns lag behind the default market once it is edited in
+  # Settings → Markets, and that save must not write them back onto it.
+  describe 'updating the store' do
+    # The shared context stubs `current_store` to `store` and the PATCH saves
+    # it, so use a freshly loaded copy rather than the shared `@default_store`.
+    let(:store) { Spree::Store.find(@default_store.id) }
+    let(:default_market) { Spree::Market.find_by!(store_id: store.id, default: true) }
+
+    before { default_market.update!(currency: 'EUR', default_locale: 'nl', supported_locales: 'en,nl') }
+
+    it 'leaves the default market currency and locales untouched' do
+      expect(Spree::Store.where(id: store.id).pick(:default_currency, :default_locale)).not_to eq(%w[EUR nl])
+
+      patch '/api/v3/admin/store',
+            params: { mail_from_address: 'shop@example.com' },
+            headers: bearer_headers,
+            as: :json
+
+      expect(response).to have_http_status(:ok)
+      default_market.reload
+      expect(default_market.currency).to eq('EUR')
+      expect(default_market.default_locale).to eq('nl')
+      expect(default_market.supported_locales_list).to eq(%w[en nl])
+    end
+  end
 end

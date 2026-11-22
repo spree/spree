@@ -47,6 +47,7 @@ RSpec.shared_examples 'a payment processing host' do
       context 'when there is other unprocessed payment' do
         let(:other_payment) { create_payment(record, amount: 5, status: 'checkout') }
         let(:unprocessed_payments) { [other_payment] }
+        let(:total) { 15 }
 
         before do
           record.payments << other_payment
@@ -128,13 +129,37 @@ RSpec.shared_examples 'a payment processing host' do
     let(:record) { new_record_with_line_items }
 
     it 'partitions payments by state' do
-      # Pending first — creating a new payment invalidates existing
+      # Pending first — on a cart, creating a new payment invalidates existing
       # checkout-state payments (Payment#invalidate_old_payments).
       pending_payment = create_payment(record, amount: 5, status: 'pending')
       checkout_payment = create_payment(record, amount: 5, status: 'checkout')
 
       expect(record.pending_payments).to contain_exactly(pending_payment)
       expect(record.unprocessed_payments).to contain_exactly(checkout_payment)
+    end
+  end
+
+  describe '#amount_left_to_pay' do
+    let(:record) { new_record_with_line_items }
+
+    before { record.update_columns(total: BigDecimal('49.99'), payment_total: 0) }
+
+    it 'is the outstanding balance when nothing is recorded' do
+      expect(record.amount_left_to_pay).to eq(BigDecimal('49.99'))
+    end
+
+    it 'takes off live payments not yet settled, and leaves out invalid ones' do
+      create_payment(record, amount: 40, status: 'pending')
+      create_payment(record, amount: 5, status: 'void')
+
+      expect(record.amount_left_to_pay).to eq(BigDecimal('9.99'))
+    end
+
+    it 'is never negative' do
+      create_payment(record, amount: 40, status: 'pending')
+      record.update_columns(payment_total: 20)
+
+      expect(record.amount_left_to_pay).to eq(0)
     end
   end
 

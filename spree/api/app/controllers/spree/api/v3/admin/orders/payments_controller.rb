@@ -8,15 +8,17 @@ module Spree
 
             request_params :payment do |body|
               body.attribute :payment_method_id, :id, required: true, on: :create
-              body.attribute :amount, :decimal, description: "Defaults to the order total left after store credit."
+              body.attribute :amount, :decimal,
+                             description: 'Defaults to what the order still owes after the payments already recorded on it ' \
+                                          '(failed, invalid and void payments are not counted).'
               body.attribute :source_id, :id,
                 description: "A saved payment source of the order's customer (a credit card), for an off-session charge. Used only by payment methods that require a source."
             end
 
             request_params 'PaymentCaptureParams', action: :capture do |body|
               body.attribute :amount, :decimal,
-                             description: 'Captures part of the authorized amount, never more than the order still owes. ' \
-                                          'Defaults to what the order still owes, up to the authorized amount.'
+                             description: 'Captures part of the authorized amount. Defaults to all of it, ' \
+                                          'or to what the order still owes when that is less.'
             end
 
             before_action :set_resource, only: [:show, :capture, :void]
@@ -29,10 +31,10 @@ module Spree
             def create
               with_order_lock do
                 payment_method = current_store.payment_methods.accessible_by(current_ability, :show).find_by_prefix_id!(params[:payment_method_id])
-                # The default is what the order still owes, which is nothing
-                # once store credit covers it — a zero payment is refused the
-                # same way a zero amount is.
-                amount = money_param(:amount, @parent.currency) || @parent.order_total_after_store_credit
+                # The default is what the order still owes beside the payments
+                # already recorded, which is nothing once they cover it — a zero
+                # payment is refused the same way a zero amount is.
+                amount = money_param(:amount, @parent.currency) || @parent.amount_left_to_pay
                 raise Spree::Money::InvalidFormat.new('must be greater than 0', field: :amount) unless amount.positive?
 
                 @resource = @parent.payments.build(amount: amount, payment_method: payment_method)
