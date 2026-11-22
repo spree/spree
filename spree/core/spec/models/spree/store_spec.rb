@@ -698,6 +698,48 @@ describe Spree::Store, type: :model, without_global_store: true do
     end
   end
 
+  describe 'syncing the legacy locale and currency columns onto the default market' do
+    let!(:store) { create(:store, default_currency: 'USD', default_locale: 'en') }
+    let(:market) { store.default_market }
+
+    before do
+      # The market moved on through Settings → Markets; the store columns kept
+      # their values from setup.
+      market.update!(currency: 'EUR', default_locale: 'nl', supported_locales: 'en,nl')
+    end
+
+    it 'leaves the market alone when a save does not write those columns' do
+      expect { store.update!(name: 'Renamed') }.not_to(change { market.reload.attributes.slice('currency', 'default_locale', 'supported_locales') })
+    end
+
+    it 'leaves the market alone when a fresh instance saves another setting' do
+      expect { Spree::Store.find(store.id).update!(customer_support_email: 'help@example.com') }.
+        not_to(change { market.reload.attributes.slice('currency', 'default_locale') })
+    end
+
+    it 'propagates a written currency onto the default market' do
+      store.update!(default_currency: 'GBP')
+
+      expect(market.reload.currency).to eq('GBP')
+      expect(market.default_locale).to eq('nl')
+    end
+
+    it 'propagates a written locale onto the default market' do
+      store.update!(default_locale: 'de')
+
+      expect(market.reload.default_locale).to eq('de')
+      expect(market.currency).to eq('EUR')
+    end
+
+    it 'does not carry a failed write into a later save' do
+      expect(store.update(default_currency: 'GBP', name: '')).to be(false)
+      store.restore_attributes
+      store.update!(name: 'Renamed')
+
+      expect(market.reload.currency).to eq('EUR')
+    end
+  end
+
   describe '#default_locale' do
     context 'with markets' do
       let!(:store) { create(:store, default_locale: 'en') }

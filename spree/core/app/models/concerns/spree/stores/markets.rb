@@ -162,9 +162,15 @@ module Spree
       # Store-level locale/currency edits keep steering the storefront: the
       # legacy columns stay writable and propagate onto the default market
       # (which is what readers delegate to).
-      # Diffs against the market rather than dirty-tracking — long-lived store
-      # instances (spec globals, app singletons) can carry stale change state.
+      # Only a column this save changed is propagated. The columns are not kept
+      # in step with the market when it is edited directly, so copying them on
+      # every save would let saving any unrelated setting silently roll the
+      # market back to whatever the store was set up with.
       def sync_default_market_settings
+        sync_locale = saved_change_to_default_locale?
+        sync_currency = saved_change_to_default_currency?
+        return unless sync_locale || sync_currency
+
         association(:default_market).reset
         market = default_market
         return if market.blank?
@@ -172,8 +178,8 @@ module Spree
         updates = {}
         new_locale = read_attribute(:default_locale)
         new_currency = read_attribute(:default_currency)
-        updates[:default_locale] = new_locale if new_locale.present? && market.default_locale != new_locale
-        updates[:currency] = new_currency if new_currency.present? && market.currency != new_currency
+        updates[:default_locale] = new_locale if sync_locale && new_locale.present? && market.default_locale != new_locale
+        updates[:currency] = new_currency if sync_currency && new_currency.present? && market.currency != new_currency
         return if updates.empty?
 
         market.update_columns(updates.merge(updated_at: Time.current))
