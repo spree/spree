@@ -471,15 +471,8 @@ module Spree
       return BigDecimal('0') if fresh_order.canceled?
 
       others = fresh_order.payments.where.not(id: id)
-      # One statement for both sums, so a sibling settling between two reads
-      # can't drop out of the completed sum and the in-flight sum at once.
-      # reorder(nil): the default created_at ordering is not grouped, which
-      # MySQL's only_full_group_by refuses.
-      by_status = others.where(status: %w[completed pending processing]).reorder(nil).group(:status).sum(:amount)
+      by_status, awaiting = sibling_amounts(others)
       captured = others.where(status: 'completed')
-      # A capture sent to a provider that confirms it by webhook is money on
-      # its way in, so it counts as collected already.
-      awaiting = Spree::PaymentCaptureEvent.where(status: 'requested', payment_id: others.select(:id)).sum(:amount)
       owed = fresh_order.total - by_status.fetch('completed', 0) - awaiting +
              Spree::Refund.where(payment_id: captured.select(:id)).sum(:amount) - fresh_order.returned_items_refund_total
       if including_in_flight
@@ -695,6 +688,30 @@ module Spree
 
     def set_amount
       self.amount = owner.total - owner.payment_total
+    end
+
+    # One statement for every sum, so a sibling moving between statuses
+    # between two reads is counted once: not dropped from both the completed
+    # and the in-flight sums, nor counted both as in flight (processing) and
+    # as awaiting its provider (requested).
+    #
+    # @return [Array(Hash{String => BigDecimal}, BigDecimal)] the amounts by
+    #   status, and the captures sent to a provider that confirms them by
+    #   webhook, which count as collected already
+    def sibling_amounts(others)
+      events = Spree::PaymentCaptureEvent.arel_table
+      awaiting_sql = events.project(events[:amount].sum).
+                     where(events[:payment_id].eq(Spree::Payment.arel_table[:id]).and(events[:status].eq('requested')))
+      rows = others.where(status: %w[completed pending processing requested]).
+             pluck(:status, :amount, Arel::Nodes::Grouping.new(awaiting_sql))
+
+      by_status = Hash.new(BigDecimal('0'))
+      awaiting = BigDecimal('0')
+      rows.each do |status, amount, requested|
+        by_status[status] += amount unless status == 'requested'
+        awaiting += BigDecimal(requested.to_s) if requested
+      end
+      [by_status, awaiting]
     end
 
     def with_order_lock(&)

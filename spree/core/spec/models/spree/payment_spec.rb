@@ -1418,4 +1418,16 @@ describe Spree::Payment, type: :model do
       expect(remainder.reload).to be_processing
     end
   end
+
+  describe '#amount_owed_by_order' do
+    let(:payment) { create(:payment, order: order, payment_method: gateway, source: card, status: 'pending', amount: 50) }
+
+    it 'counts a sibling waiting on its provider by what it asked to capture, once' do
+      sibling = create(:payment, order: order, payment_method: gateway, source: card, status: 'requested', amount: 100)
+      sibling.capture_events.create!(amount: 40, status: 'requested')
+      create(:payment, order: order, payment_method: gateway, source: card, status: 'completed', amount: 20)
+
+      expect(payment.amount_owed_by_order(including_in_flight: true)).to eq(140)
+    end
+  end
 end
