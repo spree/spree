@@ -41,38 +41,6 @@ module Spree
         default_country_code
       end
 
-      # Copies the store's legacy +default_currency+ / +default_locale+ columns
-      # onto the default market. It used to run after every store update, which
-      # let saving any unrelated setting roll the market back to the values the
-      # store was set up with; it no longer runs on its own.
-      #
-      # @deprecated Update the default market instead:
-      #   +store.default_market.update!(currency: ..., default_locale: ...)+.
-      #   Removed in 6.3.
-      # @return [void]
-      def sync_default_market_settings
-        Spree::Deprecation.warn(
-          'Spree::Store#sync_default_market_settings is deprecated and will be removed in Spree 6.3. ' \
-          'Update the default market instead: store.default_market.update!(currency: ..., default_locale: ...).'
-        )
-
-        association(:default_market).reset
-        market = default_market
-        return if market.blank?
-
-        updates = {}
-        new_locale = read_attribute(:default_locale)
-        new_currency = read_attribute(:default_currency)
-        updates[:default_locale] = new_locale if new_locale.present? && market.default_locale != new_locale
-        updates[:currency] = new_currency if new_currency.present? && market.currency != new_currency
-        market.update!(updates) if updates.any?
-
-        association(:default_market).reset
-        @supported_currencies_list = nil
-        @supported_locales_list = nil
-        @supported_locales = nil
-      end
-
       # Returns the default locale, delegating to the default market when markets exist
       # Falls back to the store's own default_locale column
       # @return [String, nil]

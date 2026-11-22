@@ -718,24 +718,6 @@ describe Spree::Store, type: :model, without_global_store: true do
         not_to(change { market.reload.attributes.slice('currency', 'default_locale') })
     end
 
-    describe '#sync_default_market_settings' do
-      it 'is deprecated' do
-        expect(Spree::Deprecation).to receive(:warn).with(/sync_default_market_settings is deprecated/)
-
-        store.sync_default_market_settings
-      end
-
-      it 'copies the legacy columns onto the default market when called' do
-        allow(Spree::Deprecation).to receive(:warn)
-        store.update!(default_currency: 'GBP', default_locale: 'de')
-
-        store.sync_default_market_settings
-
-        expect(market.reload.currency).to eq('GBP')
-        expect(market.default_locale).to eq('de')
-      end
-    end
-
     it 'keeps answering from the default market' do
       store.update!(default_currency: 'GBP', default_locale: 'de')
       reloaded = Spree::Store.find(store.id)
