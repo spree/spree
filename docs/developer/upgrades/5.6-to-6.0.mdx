@@ -1154,6 +1154,7 @@ Before 6.0 a cart was an incomplete order, so extensions written for 5.x (paymen
 | Deprecated | Use instead |
 |---|---|
 | `Order#finalize!` | `Spree.order_complete_workflow` |
+| `Store#sync_default_market_settings` (no longer runs after every store update) | Update the default market: `store.default_market.update!(currency: ..., default_locale: ...)` |
 | `Order#updater`, `Spree::OrderUpdater`, `Spree::CartUpdater` | `#recalculate_totals!` / `#update_statuses!` |
 | `Order#shipping_discount` (Order and Cart) | `#fulfillment_discount` |
 | `Order#special_instructions` (Order and Cart) | `#customer_note` (column renamed) |
