@@ -698,7 +698,7 @@ describe Spree::Store, type: :model, without_global_store: true do
     end
   end
 
-  describe 'syncing the legacy locale and currency columns onto the default market' do
+  describe 'the legacy locale and currency columns' do
     let!(:store) { create(:store, default_currency: 'USD', default_locale: 'en') }
     let(:market) { store.default_market }
 
@@ -708,35 +708,22 @@ describe Spree::Store, type: :model, without_global_store: true do
       market.update!(currency: 'EUR', default_locale: 'nl', supported_locales: 'en,nl')
     end
 
-    it 'leaves the market alone when a save does not write those columns' do
-      expect { store.update!(name: 'Renamed') }.not_to(change { market.reload.attributes.slice('currency', 'default_locale', 'supported_locales') })
+    it 'leaves the market alone when another setting is saved' do
+      expect { Spree::Store.find(store.id).update!(customer_support_email: 'help@example.com') }.
+        not_to(change { market.reload.attributes.slice('currency', 'default_locale', 'supported_locales') })
     end
 
-    it 'leaves the market alone when a fresh instance saves another setting' do
-      expect { Spree::Store.find(store.id).update!(customer_support_email: 'help@example.com') }.
+    it 'leaves the market alone when the columns themselves are written' do
+      expect { store.update!(default_currency: 'GBP', default_locale: 'de') }.
         not_to(change { market.reload.attributes.slice('currency', 'default_locale') })
     end
 
-    it 'propagates a written currency onto the default market' do
-      store.update!(default_currency: 'GBP')
+    it 'keeps answering from the default market' do
+      store.update!(default_currency: 'GBP', default_locale: 'de')
+      reloaded = Spree::Store.find(store.id)
 
-      expect(market.reload.currency).to eq('GBP')
-      expect(market.default_locale).to eq('nl')
-    end
-
-    it 'propagates a written locale onto the default market' do
-      store.update!(default_locale: 'de')
-
-      expect(market.reload.default_locale).to eq('de')
-      expect(market.currency).to eq('EUR')
-    end
-
-    it 'does not carry a failed write into a later save' do
-      expect(store.update(default_currency: 'GBP', name: '')).to be(false)
-      store.restore_attributes
-      store.update!(name: 'Renamed')
-
-      expect(market.reload.currency).to eq('EUR')
+      expect(reloaded.default_currency).to eq('EUR')
+      expect(reloaded.default_locale).to eq('nl')
     end
   end
 
