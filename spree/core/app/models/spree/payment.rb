@@ -488,11 +488,10 @@ module Spree
     def trim_remainder_to_amount_owed!
       outcome = with_order_lock do
         owed = amount_owed_by_order(including_in_flight: true)
-        if owed.nil? || owed >= amount then :authorize
-        elsif owed.zero? then :void
-        elsif resize_if_unclaimed!(owed) then :authorize
-        else :claimed
-        end
+        next :void if owed&.zero?
+        next :authorize if owed.nil? || owed >= amount || resize_if_unclaimed!(owed)
+
+        :claimed
       end
       void! if outcome == :void
       outcome == :authorize
