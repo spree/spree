@@ -189,7 +189,7 @@ module Spree
     # about a new one — a key nobody recognizes is the first sign of a
     # compromised account.
     def notify_store_admins
-      store.admin_users.find_each do |admin_user|
+      store.users.merge(Spree::Role.admin).find_each do |admin_user|
         Spree::ApiKeyMailer.secret_key_created(self, admin_user, ip_address: request_ip).deliver_later
       rescue StandardError => e
         # The key already exists; one admin's failed enqueue must neither

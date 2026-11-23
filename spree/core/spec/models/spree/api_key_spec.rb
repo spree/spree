@@ -217,6 +217,15 @@ RSpec.describe Spree::ApiKey, type: :model do
       expect(Rails.error).to have_received(:report).with(error, source: 'spree.api_keys')
     end
 
+    it 'skips staff without the admin role and admins of other stores' do
+      create(:role_user, user: create(:admin_user, :without_admin_role), role: create(:role, name: 'Manager', resource: store))
+      create(:role_user, user: create(:admin_user, :without_admin_role), role: Spree::Role.default_admin_role(create(:store)))
+
+      expect {
+        create(:api_key, :secret, store: store)
+      }.to have_enqueued_mail(Spree::ApiKeyMailer, :secret_key_created).twice
+    end
+
     it 'sends nothing for a key minted while setting up the store' do
       expect {
         create(:api_key, :secret, store: store, skip_admin_notification: true)
