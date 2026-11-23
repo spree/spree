@@ -73,6 +73,7 @@ import {
   TagIcon,
 } from '@spree/dashboard-ui/icons'
 import { Link, useParams } from '@tanstack/react-router'
+import type { TFunction } from 'i18next'
 import {
   createContext,
   type ReactNode,
@@ -684,7 +685,7 @@ export function CustomFieldsInlineCard({
   const body = isLoading ? (
     <LoadingRows />
   ) : loadFailed ? (
-    <p className="text-sm text-destructive" role="alert">
+    <p className="text-base text-destructive" role="alert">
       {t('admin.components.custom_fields.errors.failed_to_load')}
     </p>
   ) : !hasDefinitions ? (
@@ -815,7 +816,7 @@ function CustomFieldsEmptyState({ onSetUp }: { onSetUp: () => void }) {
           <PlusIcon className="size-4" />
           {t('admin.components.custom_fields.set_up')}
         </Button>
-        <Button asChild type="button" variant="link" size="sm">
+        <Button asChild type="button" variant="ghost" size="sm">
           <Link to="/$storeId/settings/custom-field-definitions" params={{ storeId }}>
             {t('admin.components.custom_fields.manage_in_settings')}
           </Link>
@@ -866,7 +867,7 @@ function FieldsDisplay() {
     meta: { definitions },
   } = useCustomFieldsContext()
   return (
-    <dl className="grid grid-cols-[minmax(140px,1fr)_2fr] gap-x-4 gap-y-2 text-sm">
+    <dl className="grid grid-cols-[minmax(140px,1fr)_2fr] gap-x-4 gap-y-2 text-base">
       {definitions.map((def) => (
         <CustomFieldDisplayRow key={def.id} definition={def} value={values[def.id]} />
       ))}
@@ -903,7 +904,7 @@ function CustomFieldDisplayRow({
 }
 
 // Compact, read-only rendering of a stored value for the display grid.
-function formatDisplayValue(value: unknown, fieldType: string, t: (key: string) => string): string {
+function formatDisplayValue(value: unknown, fieldType: string, t: TFunction): string {
   const empty = t('admin.common.empty_value')
   if (value === null || value === undefined || value === '') return empty
   if (fieldType === 'boolean') return value ? t('admin.common.yes') : t('admin.common.no')

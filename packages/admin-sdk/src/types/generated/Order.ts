@@ -72,6 +72,8 @@ interface Order {
   created_at: string;
   updated_at: string;
   payment_total: string;
+  /** What a new payment should be for, the amount due less the payments recorded and not yet captured. Failed, invalid and void payments don't count. Never negative. */
+  amount_left_to_pay: string;
   commission_amount_total: string;
   commission_tax_total: string;
   commission_total: string;

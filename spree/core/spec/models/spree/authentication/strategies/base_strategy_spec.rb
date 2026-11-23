@@ -61,6 +61,45 @@ describe Spree::Authentication::Strategies::BaseStrategy do
         expect(strategy.send(:find_user_by_email, 'ADA@EXAMPLE.COM')).to eq(user)
       end
     end
+
+    # Older data can hold two accounts differing only in case; the casing
+    # typed must not choose between them.
+    context 'when two accounts differ only in case' do
+      let!(:user) { create(:user, email: 'ada@example.com') }
+
+      before do
+        # MySQL's default collation compares case-insensitively, so its unique
+        # index can't hold such accounts, and the case cannot arise there.
+        skip 'the email index is case-insensitive on MySQL' if ActiveRecord::Base.connection.adapter_name.match?(/mysql/i)
+
+        other = create(:user, email: 'other@example.com')
+        other.update_columns(email: 'Ada@Example.com')
+      end
+
+      it 'finds the same account whatever the casing' do
+        expect(strategy.send(:find_user_by_email, 'Ada@Example.com')).to eq(strategy.send(:find_user_by_email, 'ada@example.com'))
+      end
+    end
+
+    # An app may encrypt the column, deterministically so it can still be
+    # looked up. SQL then only ever sees ciphertext.
+    context 'when the app encrypts email' do
+      let(:user_class) do
+        stub_const('EncryptedEmailUser', Class.new(Spree.customer_class) do
+          self.table_name = Spree.customer_class.table_name
+          encrypts :email, deterministic: true, downcase: true
+        end)
+      end
+      let!(:user) { user_class.create!(email: 'Ada@Example.com', password: 'secret123', password_confirmation: 'secret123') }
+
+      it 'finds the user, whatever the case' do
+        stored = user_class.connection.select_value(user_class.unscoped.where(id: user.id).select(:email).to_sql)
+        expect(stored).not_to include('example.com')
+
+        expect(strategy.send(:find_user_by_email, 'ada@example.com')).to eq(user)
+        expect(strategy.send(:find_user_by_email, 'ADA@EXAMPLE.COM')).to eq(user)
+      end
+    end
   end
 
   describe '#find_or_create_user_from_oauth' do

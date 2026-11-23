@@ -195,7 +195,7 @@ function ImportWizard({
           {imp && (
             <>
               <span aria-hidden className="h-4 w-px shrink-0 bg-border" />
-              <span className="truncate text-muted-foreground text-sm">
+              <span className="truncate text-muted-foreground text-base">
                 {`${importTypeLabel(imp.type)} · ${imp.number}`}
               </span>
             </>
@@ -243,7 +243,7 @@ function ImportWizard({
           {isError ? (
             <div className="flex flex-col items-center gap-3 py-12 text-center">
               <AlertTriangleIcon className="size-8 text-destructive" />
-              <p className="text-muted-foreground text-sm">{t('admin.imports.load_failed')}</p>
+              <p className="text-muted-foreground text-base">{t('admin.imports.load_failed')}</p>
               <Button variant="outline" onClick={() => refetch()}>
                 {t('admin.imports.try_again')}
               </Button>
@@ -279,7 +279,7 @@ function ImportWizard({
           button below the fold. */}
       {(isMapping || isCompleted) && imp && (
         <DialogFooter className="h-16 shrink-0 flex-row items-center justify-between border-border-subtle bg-background px-4 py-0 sm:justify-between">
-          <span className="text-muted-foreground text-sm">
+          <span className="text-muted-foreground text-base">
             {isMapping && missingRequired.length > 0
               ? t('admin.imports.mapping.missing_required', {
                   fields: missingRequired.map((f) => f.label).join(', '),
@@ -401,7 +401,7 @@ function MappingStep({
     <Card>
       <CardHeader>
         <CardTitle>{t('admin.imports.mapping.title')}</CardTitle>
-        <p className="text-muted-foreground text-sm">
+        <p className="text-muted-foreground text-base">
           {t('admin.imports.mapping.description', { type: importTypeLabel(imp.type) })}
         </p>
       </CardHeader>
@@ -458,7 +458,7 @@ function MappingStep({
                         </SelectContent>
                       </Select>
                     </TableCell>
-                    <TableCell className="max-w-48 truncate text-muted-foreground text-sm">
+                    <TableCell className="max-w-48 truncate text-muted-foreground text-base">
                       {sample}
                     </TableCell>
                   </TableRow>
@@ -503,7 +503,7 @@ function ProcessingCard({ imp, retryPass }: { imp: PanelImport; retryPass: boole
         {/* value={null} = Base UI's indeterminate state while rows are created */}
         <Progress value={preparing ? null : percent} />
 
-        <p className="text-sm">
+        <p className="text-base">
           {preparing ? (
             t('admin.imports.processing.preparing')
           ) : retryPass && imp.failed_rows_count > 0 ? (
@@ -524,7 +524,7 @@ function ProcessingCard({ imp, retryPass }: { imp: PanelImport; retryPass: boole
           )}
         </p>
 
-        <p className="text-muted-foreground text-sm">{t('admin.imports.processing.note')}</p>
+        <p className="text-muted-foreground text-base">{t('admin.imports.processing.note')}</p>
       </CardContent>
     </Card>
   )
@@ -542,7 +542,7 @@ function ResultsCard({ imp }: { imp: PanelImport }) {
       <CardContent className="flex flex-col items-center gap-3 py-8 text-center">
         <CheckCircle2Icon className="size-10 text-success" />
         <p className="font-medium">{t('admin.imports.results.completed_title')}</p>
-        <p className="text-muted-foreground text-sm">
+        <p className="text-muted-foreground text-base">
           {t('admin.imports.results.summary', {
             completed: imp.completed_rows_count.toLocaleString(),
             failed: imp.failed_rows_count.toLocaleString(),
@@ -561,7 +561,7 @@ function FailedCard({ imp }: { imp: PanelImport }) {
       <CardContent className="flex flex-col items-center gap-3 py-8 text-center">
         <AlertTriangleIcon className="size-10 text-destructive" />
         <p className="font-medium">{t('admin.imports.failed.title')}</p>
-        <p className="text-muted-foreground text-sm">{t('admin.imports.failed.description')}</p>
+        <p className="text-muted-foreground text-base">{t('admin.imports.failed.description')}</p>
         {imp.processing_errors && (
           <code className="max-w-full overflow-x-auto rounded-md bg-muted p-3 text-left text-xs">
             {imp.processing_errors}
@@ -609,7 +609,9 @@ function FailedRowsCard({ imp }: { imp: PanelImport }) {
         {isError ? (
           <div className="flex items-center gap-3 p-4">
             <AlertTriangleIcon className="size-4 shrink-0 text-destructive" />
-            <span className="text-muted-foreground text-sm">{t('admin.imports.load_failed')}</span>
+            <span className="text-muted-foreground text-base">
+              {t('admin.imports.load_failed')}
+            </span>
             <Button variant="outline" size="sm" onClick={() => refetch()}>
               {t('admin.imports.try_again')}
             </Button>
@@ -651,7 +653,7 @@ function FailedRowsCard({ imp }: { imp: PanelImport }) {
                 >
                   <ChevronLeftIcon className="size-4" />
                 </Button>
-                <span className="text-muted-foreground text-sm">
+                <span className="text-muted-foreground text-base">
                   {page} / {meta.pages}
                 </span>
                 <Button
@@ -680,7 +682,7 @@ function FailedRow({ row }: { row: PanelImportRow }) {
     <>
       <TableRow>
         <TableCell className="text-muted-foreground">{row.row_number}</TableCell>
-        <TableCell className="text-destructive text-sm">
+        <TableCell className="text-destructive text-base">
           {String(row.validation_errors ?? '')}
         </TableCell>
         <TableCell className="text-right">

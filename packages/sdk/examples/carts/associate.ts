@@ -8,6 +8,7 @@ const client = createClient({
 // region:example
 const cart = await client.carts.associate('cart_abc123', {
   token: '<token>',
+  spreeToken: '<cart-token>',
 })
 
 // endregion:example

@@ -224,6 +224,30 @@ describe Spree::Payment, type: :model do
       end
     end
 
+    describe 'invalidating earlier payments' do
+      let(:check_method) { create(:check_payment_method, store: store) }
+
+      context 'on a cart' do
+        let(:cart) { create(:cart_with_line_items, store: store) }
+
+        it 'invalidates the payment the new one replaces' do
+          replaced = create(:payment, cart: cart, order: nil, payment_method: check_method, amount: 10)
+          create(:payment, cart: cart, order: nil, payment_method: check_method, amount: 10)
+
+          expect(replaced.reload.status).to eq('invalid')
+        end
+      end
+
+      context 'on an order' do
+        it "leaves the order's other unprocessed payments live" do
+          first = create(:payment, order: order, payment_method: check_method, amount: 40)
+          create(:payment, order: order, payment_method: check_method, amount: 10)
+
+          expect(first.reload.status).to eq('checkout')
+        end
+      end
+    end
+
     describe '#create_payment_profile' do
       context 'when payment method supports profiles' do
         context 'when source is a credit card' do
@@ -573,17 +597,21 @@ describe Spree::Payment, type: :model do
         context 'if successful' do
           it 'records the capture under the owner row lock' do
             expect(payment.payment_method).to receive(:capture).and_return(success_response)
-            expect(payment.owner).to receive(:with_lock).and_call_original
+            # Twice: the claim checks what is owed under the lock, then the
+            # capture is recorded under it.
+            expect(payment.owner).to receive(:with_lock).twice.and_call_original
 
             payment.capture!
             expect(Spree::Deprecation).to have_received(:warn).with(/Payment#capture! is deprecated/)
           end
 
           it 'records nothing when another caller already completed the payment' do
-            expect(payment.payment_method).to receive(:capture).and_return(success_response)
             # Simulates the concurrent winner committing between the gateway
             # call and the bookkeeping lock.
-            allow(Spree::Payment).to receive_message_chain(:where, :exists?).and_return(true)
+            expect(payment.payment_method).to receive(:capture) do
+              Spree::Payment.where(id: payment.id).update_all(status: 'completed')
+              success_response
+            end
 
             expect { payment.capture! }.not_to change { payment.capture_events.count }
           end
@@ -687,6 +715,150 @@ describe Spree::Payment, type: :model do
           expect(payment.status).to eq('completed')
         end
       end
+    end
+  end
+
+  describe '#can_void?' do
+    let(:payment) { build_stubbed(:payment, status: 'completed') }
+
+    it 'is true for a completed payment by default' do
+      expect(payment.can_void?).to be true
+    end
+
+    it 'is false when the payment method cannot void the payment' do
+      allow(payment.payment_method).to receive(:can_void?).with(payment).and_return(false)
+
+      expect(payment.can_void?).to be false
+    end
+
+    it 'is false for a failed payment whatever the payment method says' do
+      payment.status = 'failed'
+
+      expect(payment.can_void?).to be false
+    end
+  end
+
+  describe '#can_capture?' do
+    it 'is true for a checkout or pending payment and false for a completed one' do
+      expect(build_stubbed(:payment, status: 'checkout').can_capture?).to be true
+      expect(build_stubbed(:payment, status: 'pending').can_capture?).to be true
+      expect(build_stubbed(:payment, status: 'completed').can_capture?).to be false
+    end
+
+    it 'is false when the payment method refuses' do
+      payment = build_stubbed(:payment, status: 'pending')
+      allow(payment.payment_method).to receive(:can_capture?).with(payment).and_return(false)
+
+      expect(payment.can_capture?).to be false
+    end
+  end
+
+  describe 'a requested payment' do
+    let(:requested_payment) { create(:payment, order: order, status: 'requested') }
+
+    it 'cannot be claimed, voided or captured' do
+      expect { requested_payment.started_processing! }.to raise_error(Spree::Core::GatewayError, /requested/)
+      expect(requested_payment.can_void?).to be false
+      expect(requested_payment.can_capture?).to be false
+    end
+
+    describe '#requested_action' do
+      it 'is capture when a capture event waits on the provider' do
+        create(:payment_capture_event, :requested, payment: requested_payment)
+
+        expect(requested_payment.requested_action).to eq('capture')
+      end
+
+      it 'is void when no capture event waits' do
+        create(:payment_capture_event, payment: requested_payment)
+
+        expect(requested_payment.requested_action).to eq('void')
+      end
+
+      it 'reads preloaded capture events without a query' do
+        create(:payment_capture_event, :requested, payment: requested_payment)
+        loaded = Spree::Payment.includes(:capture_events).find(requested_payment.id)
+
+        expect(loaded.capture_events).not_to receive(:requested)
+        expect(loaded.requested_action).to eq('capture')
+      end
+
+      it 'is nil for a payment that is not requested' do
+        expect(build_stubbed(:payment, status: 'pending').requested_action).to be_nil
+      end
+    end
+  end
+
+  describe '#cancel!' do
+    let(:bogus) { create(:credit_card_payment_method, store: store) }
+    let(:uncaptured) { create(:payment, order: order, payment_method: bogus, status: 'pending') }
+    let(:captured) { create(:payment, order: order, payment_method: bogus, status: 'completed') }
+
+    context 'when the provider answers at once' do
+      it 'voids the payment' do
+        uncaptured.cancel!
+
+        expect(uncaptured.reload).to be_void
+      end
+    end
+
+    context 'when the provider answers later' do
+      before { bogus.update!(preferred_requested_mode: true) }
+
+      it 'leaves an uncaptured payment requested, waiting on the void' do
+        expect(uncaptured).to receive(:publish_event).with('payment.void_requested')
+
+        uncaptured.cancel!
+
+        expect(uncaptured.reload).to be_requested
+      end
+
+      # A provider answers this only after recording the refund its outcome settles.
+      it 'keeps a completed payment completed' do
+        allow(captured.payment_method).to receive(:cancel).and_return(Spree::PaymentResponse.new(true, 'Refund requested', {}, requested: true))
+
+        captured.cancel!
+
+        expect(captured.reload).to be_completed
+      end
+    end
+  end
+
+  describe '#request_void!' do
+    it 'waits on the void of an authorized payment' do
+      payment = create(:payment, status: 'pending')
+      expect(payment).to receive(:publish_event).with('payment.void_requested')
+
+      expect(payment.request_void!).to be(true)
+      expect(payment.reload).to be_requested
+    end
+
+    it 'leaves a payment already void as it is, so a late answer cannot reopen it' do
+      payment = create(:payment, status: 'void')
+      expect(payment).not_to receive(:publish_event)
+
+      expect(payment.request_void!).to be(false)
+      expect(payment.reload).to be_void
+    end
+  end
+
+  describe 'money waiting on the provider' do
+    let(:settled) { create(:payment, order: order, amount: 100, status: 'completed') }
+
+    it 'counts completed and empty capture events as captured, not requested or failed ones' do
+      create(:payment_capture_event, payment: settled, amount: 40)
+      create(:payment_capture_event, payment: settled, amount: 10).update_column(:status, nil)
+      create(:payment_capture_event, :requested, payment: settled, amount: 30)
+      create(:payment_capture_event, :failed, payment: settled, amount: 20)
+
+      expect(settled.captured_amount).to eq(50)
+    end
+
+    it 'reserves the balance of a requested refund and releases a failed one' do
+      create(:refund, :requested, payment: settled, amount: 30)
+      create(:refund, :failed, payment: settled, amount: 20)
+
+      expect(settled.credit_allowed).to eq(70)
     end
   end
 

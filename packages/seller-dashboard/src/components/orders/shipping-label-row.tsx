@@ -88,7 +88,7 @@ export function ShippingLabelRow({
   }
 
   return (
-    <CardContent className="flex flex-wrap items-center justify-between gap-2 border-border-subtle border-b py-3 text-sm">
+    <CardContent className="mx-4 px-0 flex flex-wrap items-center justify-between gap-2 border-border-subtle border-b py-3.5 text-base">
       <div className="flex flex-wrap items-center gap-2">
         <ReceiptTextIcon className="size-4 text-muted-foreground" />
         <span className="text-muted-foreground">{t('orders.fulfillments.label_title')}</span>

@@ -1,5 +1,11 @@
 import { CLAIM_STATUSES, EXCHANGE_STATUSES, subsetOf, sumMoney } from '@spree/core'
-import { currencyParts, formatMoney, isPositiveMoney, useMoneyLocale } from '@spree/dashboard-core'
+import {
+  currencyParts,
+  formatMoney,
+  isPositiveMoney,
+  postSaleItemRow,
+  useMoneyLocale,
+} from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -13,6 +19,11 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  FulfillmentItemList,
+  Section,
+  SectionActions,
+  SectionHeader,
+  SectionTitle,
   StatusBadge,
   useConfirm,
 } from '@spree/dashboard-ui'
@@ -35,6 +46,7 @@ import {
 } from '../../hooks/use-post-sale'
 import { lineLabel } from './line-label'
 import { CreateClaimDialog } from './post-sale-create-dialogs'
+import { useProductLink } from './use-product-link'
 
 const EXCHANGE_ACTIONABLE = subsetOf(EXCHANGE_STATUSES, ['requested', 'approved', 'received'])
 const CLAIM_ACTIONABLE = subsetOf(CLAIM_STATUSES, ['open', 'approved'])
@@ -47,6 +59,7 @@ const CLAIM_ACTIONABLE = subsetOf(CLAIM_STATUSES, ['open', 'approved'])
  * is opened by the operator or the customer and worked here.
  */
 export function ExchangesCard({ order }: { order: Order }) {
+  const productLink = useProductLink()
   const { t } = useTranslation()
   const locale = useMoneyLocale()
   const confirm = useConfirm()
@@ -68,19 +81,19 @@ export function ExchangesCard({ order }: { order: Order }) {
   }
 
   return (
-    <Card variant="container">
-      <CardHeader>
-        <CardTitle>
+    <Section>
+      <SectionHeader>
+        <SectionTitle>
           <ArrowLeftRightIcon className="size-4" />
           {t('orders.post_sale.exchanges.title')}
-        </CardTitle>
-      </CardHeader>
+        </SectionTitle>
+      </SectionHeader>
 
-      <CardContent className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4">
         {exchanges.map((exchange) => (
-          <Card key={exchange.id} variant="nested">
+          <Card key={exchange.id}>
             <CardHeader>
-              <CardTitle className="text-sm font-medium">{exchange.number}</CardTitle>
+              <CardTitle className="text-base font-medium">{exchange.number}</CardTitle>
               <CardAction className="flex items-center gap-2">
                 <StatusBadge
                   status={exchange.status}
@@ -142,17 +155,38 @@ export function ExchangesCard({ order }: { order: Order }) {
               </CardAction>
             </CardHeader>
 
+            <FulfillmentItemList
+              productLink={productLink}
+              rows={(exchange.exchange_line_items ?? []).map((line) => {
+                const row = postSaleItemRow(
+                  line.id,
+                  {
+                    line_item_id: line.line_item_id,
+                    variant_id: line.original_variant_id,
+                    name: line.name,
+                    variant: line.original_variant,
+                    quantity: line.quantity,
+                  },
+                  order.items ?? [],
+                )
+                return {
+                  ...row,
+                  replacement: {
+                    name:
+                      line.new_variant_name || line.new_variant?.sku || line.new_variant_id || '',
+                    optionsText: line.new_variant?.options_text,
+                    thumbnailUrl: line.new_variant?.thumbnail_url,
+                    productId: line.new_variant?.product_id,
+                    displayPrice: formatMoney(line.new_variant_price, order.currency, locale, {
+                      unitPrice: true,
+                    }),
+                    label: t('admin.pages.orders.detail.claims.resolutions.replacement'),
+                  },
+                }
+              })}
+            />
             <CardContent className="flex flex-col gap-1.5">
-              {exchange.exchange_line_items?.map((line) => (
-                <div key={line.id} className="flex items-center justify-between gap-3 text-sm">
-                  <span className="truncate">
-                    {lineLabel(line.name, line.original_variant, line.original_variant_id)} →{' '}
-                    {lineLabel(line.new_variant_name, line.new_variant, line.new_variant_id)}
-                  </span>
-                  <span className="shrink-0 text-muted-foreground">× {line.quantity}</span>
-                </div>
-              ))}
-              <p className="text-muted-foreground text-sm">
+              <p className="text-muted-foreground text-base">
                 {t('orders.post_sale.exchanges.price_difference', {
                   amount: formatMoney(exchange.price_difference, order.currency, locale),
                 })}
@@ -160,13 +194,14 @@ export function ExchangesCard({ order }: { order: Order }) {
             </CardContent>
           </Card>
         ))}
-      </CardContent>
-    </Card>
+      </div>
+    </Section>
   )
 }
 
 /** Something went wrong with a delivery, and the seller puts it right. */
 export function ClaimsCard({ order }: { order: Order }) {
+  const productLink = useProductLink()
   const { t } = useTranslation()
   const confirm = useConfirm()
   const { data } = useOrderClaims(order.id)
@@ -201,30 +236,30 @@ export function ClaimsCard({ order }: { order: Order }) {
   }
 
   return (
-    <Card variant="container">
-      <CardHeader>
-        <CardTitle>
+    <Section>
+      <SectionHeader>
+        <SectionTitle>
           <ShieldAlertIcon className="size-4" />
           {t('orders.post_sale.claims.title')}
-        </CardTitle>
+        </SectionTitle>
         {canCreate && (
-          <CardAction>
+          <SectionActions>
             <Button variant="outline" size="sm" onClick={() => setCreateOpen(true)}>
               <PlusIcon className="size-4" />
               {t('orders.post_sale.claims.create')}
             </Button>
-          </CardAction>
+          </SectionActions>
         )}
-      </CardHeader>
+      </SectionHeader>
 
-      <CardContent className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4">
         {claims.length === 0 ? (
-          <p className="text-muted-foreground text-sm">{t('orders.post_sale.claims.empty')}</p>
+          <p className="text-muted-foreground text-base">{t('orders.post_sale.claims.empty')}</p>
         ) : (
           claims.map((claim) => (
-            <Card key={claim.id} variant="nested">
+            <Card key={claim.id}>
               <CardHeader>
-                <CardTitle className="text-sm font-medium">{claim.number}</CardTitle>
+                <CardTitle className="text-base font-medium">{claim.number}</CardTitle>
                 <CardAction className="flex items-center gap-2">
                   <StatusBadge
                     status={claim.status}
@@ -268,23 +303,20 @@ export function ClaimsCard({ order }: { order: Order }) {
                 </CardAction>
               </CardHeader>
 
-              <CardContent className="flex flex-col gap-1.5">
-                {claim.claim_line_items?.map((line) => (
-                  <div key={line.id} className="flex items-center justify-between gap-3 text-sm">
-                    <span className="min-w-0 truncate">
-                      {lineLabel(line.name, line.variant, line.variant_id)}
-                      {line.description && (
-                        <span className="text-muted-foreground"> — {line.description}</span>
-                      )}
-                    </span>
-                    <span className="shrink-0 text-muted-foreground">× {line.quantity}</span>
-                  </div>
-                ))}
-              </CardContent>
+              <FulfillmentItemList
+                productLink={productLink}
+                rows={(claim.claim_line_items ?? []).map((line) => {
+                  const row = postSaleItemRow(line.id, line, order.items ?? [])
+                  return {
+                    ...row,
+                    optionsText: [row.optionsText, line.description].filter(Boolean).join(' — '),
+                  }
+                })}
+              />
             </Card>
           ))
         )}
-      </CardContent>
+      </div>
 
       <CreateClaimDialog order={order} open={createOpen} onOpenChange={setCreateOpen} />
       {resolving && (
@@ -295,7 +327,7 @@ export function ClaimsCard({ order }: { order: Order }) {
           onOpenChange={() => setResolving(null)}
         />
       )}
-    </Card>
+    </Section>
   )
 }
 

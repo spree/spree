@@ -13,8 +13,7 @@ module Spree
                    role_name: :string,
                    inviter_email: :string,
                    expires_at: :string,
-                   invitee_exists: :boolean,
-                   store: '{ id: string; name: string }'
+                   invitee_exists: :boolean
 
           attributes :email, :status,
                      created_at: :iso8601, updated_at: :iso8601, expires_at: :iso8601
@@ -37,12 +36,13 @@ module Spree
           # Looked up by email so an admin who's already on another store sees
           # the password prompt, not a fresh account form.
           attribute :invitee_exists do |invitation|
-            Spree.admin_user_class.exists?(email: invitation.email)
+            invitation.invitee_account.present?
           end
 
           # Minimal store identity for the unauthenticated acceptance page's
           # title ("Join <store>"). Full Store would over-expose internals to
           # a public landing page; this is the smallest shape that renders.
+          typelize({ id: :string, name: :string })
           attribute :store do |invitation|
             { id: invitation.store.prefixed_id, name: invitation.store.name }
           end

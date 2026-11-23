@@ -7,6 +7,6 @@ const client = createClient({
 
 // region:example
 await client.carts.delete('cart_abc123', {
-  token: '<token>',
+  spreeToken: '<cart-token>',
 })
 // endregion:example

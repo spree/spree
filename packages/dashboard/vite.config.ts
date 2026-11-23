@@ -6,7 +6,7 @@ import { defineConfig, loadEnv } from 'vite'
 // generator, so the shell's committed routeTree.gen.ts is produced by the
 // exact machinery hosts use (with VITE_EXAMPLE_PLUGIN=true, including the
 // example plugin's file routes).
-import { spreeDashboardPlugin } from './src/vite'
+import { spreeDashboardPlugin } from './src/vite/index.ts'
 
 export default defineConfig(({ mode }) => {
   // loadEnv, not process.env: Vite doesn't load .env files before evaluating
@@ -38,7 +38,7 @@ export default defineConfig(({ mode }) => {
     ],
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, './src'),
+        '@': path.resolve(import.meta.dirname, './src'),
       },
     },
     // Proxy /api to the Rails server so the SPA is same-origin with the API in

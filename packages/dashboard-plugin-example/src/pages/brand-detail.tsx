@@ -31,7 +31,7 @@ export function BrandDetailPage({ brandId }: BrandDetailPageProps) {
         <CardHeader>
           <CardTitle>{t('admin.brands_plugin.detail.about')}</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-2 text-sm">
+        <CardContent className="space-y-2 text-base">
           <p>{brand.description ?? t('admin.brands_plugin.detail.no_description')}</p>
           <p className="text-muted-foreground">
             {t('admin.brands_plugin.fields.products_count')}: {brand.products_count}

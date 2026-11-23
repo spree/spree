@@ -22,7 +22,7 @@ module Spree
         # clamped against its line's remaining discounted base, so the order net
         # can never go below zero.
         def compute_amount(line_item)
-          return 0 unless promotion.line_item_actionable?(line_item.order, line_item)
+          return 0 unless promotion.line_item_actionable?(line_item.owner, line_item)
 
           [line_item.amount, compute(line_item)].min * -1
         end

@@ -19,6 +19,38 @@ RSpec.describe Spree::Api::V3::Admin::GiftCardsController, type: :controller do
       expect(json_response['data'].map { |g| g['id'] }).to include(gift_card.prefixed_id)
     end
 
+    # The issuer is an admin user, whose sessions and inviter are staff data.
+    context 'when expanding the issuer\'s staff data without staff permission' do
+      let(:gift_cards_role) { create(:role, name: 'gift_cards_only', permissions: %w[read_gift_cards]) }
+      let(:caller) { create(:admin_user, :without_admin_role).tap { |u| create(:role_user, user: u, role: gift_cards_role) } }
+      let(:headers) do
+        api_key_headers.merge('Authorization' => "Bearer #{Spree::Api::V3::TestingSupport.generate_jwt(caller, audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_ADMIN)}")
+      end
+
+      before do
+        gift_card.update!(created_by: admin_user)
+        create(:refresh_token, :for_admin, user: admin_user, ip_address: '203.0.113.7')
+      end
+
+      it 'leaves the sessions out' do
+        get :index, params: { expand: 'created_by.sessions' }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).not_to include('203.0.113.7')
+      end
+
+      it 'leaves the inviter out' do
+        inviter = create(:admin_user, first_name: 'Ada', last_name: 'Inviter')
+        create(:invitation, resource: store, inviter: inviter).
+          update_columns(invitee_type: admin_user.class.polymorphic_name, invitee_id: admin_user.id, status: 'accepted')
+
+        get :index, params: { expand: 'created_by.inviter' }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).not_to include(inviter.prefixed_id)
+      end
+    end
+
     it 'excludes gift cards from other stores' do
       other_store = create(:store)
       other_card = create(:gift_card, store: other_store, amount: 25, currency: 'USD')
@@ -210,6 +242,44 @@ RSpec.describe Spree::Api::V3::Admin::GiftCardsController, type: :controller do
       other_card = create(:gift_card, store: create(:store))
       patch :update, params: { id: other_card.prefixed_id, amount: '5.00' }, as: :json
       expect(response).to have_http_status(:not_found)
+    end
+
+    context 'when the card has been used' do
+      let!(:redeemed_card) { create(:gift_card, store: store, amount: 44, currency: 'USD') }
+      let!(:partly_used_card) { create(:gift_card, store: store, amount: 100, currency: 'USD') }
+
+      before do
+        redeemed_card.update_columns(amount_used: 44, status: 'redeemed')
+        partly_used_card.update_columns(amount_used: 44, status: 'partially_redeemed')
+      end
+
+      it 'refuses to change the amount and leaves the balance alone' do
+        patch :update, params: { id: redeemed_card.prefixed_id, amount: '100.00' }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['details']).to have_key('amount')
+        redeemed_card.reload
+        expect(redeemed_card.amount).to eq(44)
+        expect(redeemed_card.amount_remaining).to eq(0)
+      end
+
+      it 'refuses to change the currency and amount and leaves the balance alone' do
+        patch :update, params: { id: partly_used_card.prefixed_id, amount: '40.00', currency: 'EUR' }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['details'].keys).to include('amount', 'currency')
+        partly_used_card.reload
+        expect(partly_used_card.amount).to eq(100)
+        expect(partly_used_card.currency).to eq('USD')
+        expect(partly_used_card.amount_remaining).to eq(56)
+      end
+
+      it 'still updates other attributes when the amount is sent unchanged' do
+        patch :update, params: { id: partly_used_card.prefixed_id, amount: '100.00', expires_at: '2030-12-31' }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['expires_at']).to eq('2030-12-31')
+      end
     end
   end
 

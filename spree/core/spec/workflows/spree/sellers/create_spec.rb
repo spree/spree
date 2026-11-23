@@ -35,6 +35,18 @@ RSpec.describe Spree::Sellers::Create do
     expect(seller.returns_location).to eq(seller.stock_locations.first)
   end
 
+  it 'puts a returns address given at creation on that one location' do
+    seller = described_class.call(
+      store: store,
+      attributes: { name: 'Sparks', returns_address: { address1: '1 Returns Way', city: 'Leeds',
+                                                       postal_code: 'LS1 1AA', country_code: 'GB' } }
+    ).value
+
+    expect(seller.stock_locations.count).to eq(1)
+    expect(seller.stock_locations.first).to have_attributes(default: true, address1: '1 Returns Way',
+                                                            zipcode: 'LS1 1AA')
+  end
+
   # The default flag is per owner, so a seller's default must not demote the
   # marketplace's own.
   it 'leaves the operator default alone' do

@@ -11,9 +11,7 @@ module Spree
           # person was invited — which a seller by definition cannot do from
           # inside their own panel.
           #
-          # Inviting is not here: it is the `invite` action on the seller
-          # itself, which is a lifecycle workflow rather than bookkeeping on a
-          # team.
+          # Inviting someone is the invitations endpoint next to this one.
           class TeamController < Admin::BaseController
             scoped_resource :sellers
 

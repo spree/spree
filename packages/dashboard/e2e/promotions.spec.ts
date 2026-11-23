@@ -450,7 +450,7 @@ test.describe('promotions', () => {
 
   // Money goes to the API as an exact decimal string; each value must read
   // back as typed after the promotion is saved and reloaded.
-  test('keeps a flat rate amount and an item total minimum exactly', async ({ page }) => {
+  test('keeps item total comparisons and exact amounts after reload', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, PROMOTIONS_PATH(creds.store_id), CTA)
 
@@ -458,7 +458,29 @@ test.describe('promotions', () => {
     await startNewPromotion(page, creds.store_id, name)
 
     await pickRule(page, /^item total\b/i)
-    await page.getByRole('dialog').locator('#preference-amount_min').fill('50.25')
+    const ruleDialog = page.getByRole('dialog')
+    await ruleDialog.locator('#preference-amount_min').fill('50.25')
+    await ruleDialog.locator('#preference-amount_max').fill('250.75')
+
+    const minimumComparison = ruleDialog.locator('#preference-operator_min')
+    await minimumComparison.click()
+    await page
+      .getByRole('option', { name: /greater than or equal to \(includes the minimum\)/i })
+      .click()
+    await expect(minimumComparison).toContainText(/greater than or equal to/i)
+
+    const maximumComparison = ruleDialog.locator('#preference-operator_max')
+    await maximumComparison.click()
+    await page
+      .getByRole('option', { name: /less than or equal to \(includes the maximum\)/i })
+      .click()
+    await expect(maximumComparison).toContainText(/less than or equal to/i)
+
+    await expect(ruleDialog.getByText(/^minimum comparison$/i)).toBeVisible()
+    await expect(ruleDialog.getByText(/^maximum comparison$/i)).toBeVisible()
+    await expect(
+      ruleDialog.getByText(/for free shipping on item totals of 150 or more/i),
+    ).toBeVisible()
     await saveEditor(page)
 
     await pickAction(page, /^create whole-order adjustment\b/i)
@@ -486,9 +508,19 @@ test.describe('promotions', () => {
       .getByRole('button')
       .first()
       .click()
-    await expect(page.getByRole('dialog').locator('#preference-amount_min')).toHaveValue('50.25', {
+    const savedRuleDialog = page.getByRole('dialog')
+    await expect(savedRuleDialog.locator('#preference-amount_min')).toHaveValue('50.25', {
       timeout: 5_000,
     })
+    await expect(savedRuleDialog.locator('#preference-amount_max')).toHaveValue('250.75')
+    await expect(savedRuleDialog.locator('#preference-operator_min')).toContainText(
+      /greater than or equal to/i,
+    )
+    await expect(savedRuleDialog.locator('#preference-operator_max')).toContainText(
+      /less than or equal to/i,
+    )
+    await expect(savedRuleDialog.getByText(/^minimum comparison$/i)).toBeVisible()
+    await expect(savedRuleDialog.getByText(/^maximum comparison$/i)).toBeVisible()
   })
 
   test('keeps a flat percent discount exactly', async ({ page }) => {

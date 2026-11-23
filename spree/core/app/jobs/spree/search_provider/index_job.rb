@@ -3,6 +3,14 @@ module Spree
     class IndexJob < Spree::BaseJob
       queue_as Spree.queues.search
 
+      # A bulk write (CSV import, sample data) enqueues thousands of these at
+      # once; run in parallel they flood the search service with requests and
+      # it answers 429 Too Many Requests. Run one search job per store at a
+      # time; the rest wait as blocked executions, so no update is lost. Shared
+      # with RemoveJob. The duration only has to outlive one job; expiry lifts
+      # the cap, it doesn't drop jobs. Solid Queue only (no-op elsewhere).
+      limits_concurrency to: 1, key: ->(*, store_id) { store_id }, group: 'spree_search', duration: 5.minutes if respond_to?(:limits_concurrency)
+
       # Search providers are external services (Meilisearch, etc.); a transient 5xx or
       # network blip should not drop the index update.
       retry_on StandardError, wait: :polynomially_longer, attempts: 5

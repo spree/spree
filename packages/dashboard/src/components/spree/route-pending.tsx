@@ -12,7 +12,7 @@ import { useTranslation } from 'react-i18next'
 export function RoutePending() {
   const { t } = useTranslation()
   return (
-    <div className="flex flex-col gap-4 p-4 lg:p-6" aria-busy="true">
+    <div className="flex flex-col gap-4 p-4" aria-busy="true">
       {/* `aria-busy` marks the region pending but announces nothing on its own —
           screen readers need actual text to read out. */}
       <span role="status" className="sr-only">

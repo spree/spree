@@ -11,4 +11,6 @@ export type StockLevelBulkUpsertRowParams = {
    */
   adjustment?: number | null
   backorderable?: boolean | null
+  /** Labels the movement in the stock history. Defaults to "Inventory feed". */
+  reason?: string | null
 }

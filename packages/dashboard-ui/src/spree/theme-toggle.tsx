@@ -21,7 +21,7 @@ export function ThemeMenuItems() {
 
   return (
     <div className="flex items-center justify-between gap-2 px-2.5 py-1.5">
-      <span className="text-sm text-foreground">{t('admin.components.theme_toggle.label')}</span>
+      <span className="text-base text-foreground">{t('admin.components.theme_toggle.label')}</span>
       <div className="flex items-center gap-0.5 rounded-lg border border-border bg-muted/40 p-0.5">
         {OPTIONS.map(({ value, icon: Icon, labelKey }) => {
           const active = mode === value

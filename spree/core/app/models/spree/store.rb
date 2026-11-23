@@ -32,6 +32,11 @@ module Spree
     acts_as_paranoid
     friendly_id :code, use: [:slugged], slug_column: :code, routes: :normal
 
+    # Headless storefronts cache the store's name, SEO fields and logo, and
+    # expire them on `store.updated`. An installation runs one store, which is
+    # never created or deleted while live, so those events are left out.
+    publishes_lifecycle_events only: [:update]
+
     #
     # Translations
     #
@@ -262,7 +267,7 @@ module Spree
     has_many :store_credits, class_name: 'Spree::StoreCredit'
     has_many :store_credit_events, through: :store_credits, class_name: 'Spree::StoreCreditEvent'
 
-    # @deprecated Taxonomy is data-only in 6.0 and dropped in 6.1; use #categories.
+    # @deprecated Taxonomy is data-only in 6.0 and dropped in 6.3; use #categories.
     has_many :taxonomies, class_name: 'Spree::Taxonomy', deprecated: true
     has_many :categories, class_name: 'Spree::Category'
     has_many :collections, class_name: 'Spree::Collection', dependent: :destroy_async
@@ -276,20 +281,20 @@ module Spree
     has_many :custom_field_definitions, class_name: 'Spree::CustomFieldDefinition',
              inverse_of: :store, dependent: :destroy_async
 
-    # @deprecated Use #categories; removed in 6.1.
+    # @deprecated Use #categories; removed in 6.3.
     def taxons
-      Spree::Deprecation.warn('Spree::Store#taxons is deprecated and will be removed in Spree 6.1. Use #categories instead.')
+      Spree::Deprecation.warn('Spree::Store#taxons is deprecated and will be removed in Spree 6.3. Use #categories instead.')
       categories
     end
 
     def taxons=(value)
-      Spree::Deprecation.warn('Spree::Store#taxons= is deprecated and will be removed in Spree 6.1. Use #categories= instead.')
+      Spree::Deprecation.warn('Spree::Store#taxons= is deprecated and will be removed in Spree 6.3. Use #categories= instead.')
       self.categories = value
     end
 
-    # @deprecated Use {#stock_levels}; removed in 6.1.
+    # @deprecated Use {#stock_levels}; removed in 6.3.
     def stock_items
-      Spree::Deprecation.warn('Spree::Store#stock_items is deprecated and will be removed in Spree 6.1. Use #stock_levels instead.')
+      Spree::Deprecation.warn('Spree::Store#stock_items is deprecated and will be removed in Spree 6.3. Use #stock_levels instead.')
       stock_levels
     end
 
@@ -414,6 +419,26 @@ module Spree
     validate :order_number_sequence_start_unchanged_after_first_number, on: :update
     validates :mail_from_address, email: { allow_blank: false }
     validates :customer_support_email, email: { allow_blank: true }
+    # Storefronts render these as links, so only a handle, a scheme-less address
+    # or an http(s) URL is accepted, never another scheme, a space or an invisible
+    # character. Ruby's \s is ASCII-only, hence the Unicode classes.
+    # Checked only when the value changes, so a value saved before this rule
+    # does not block saving the store's other settings.
+    SOCIAL_FIELDS = %i[facebook twitter instagram].freeze
+    SOCIAL_FIELD_FORMAT = %r{
+      \A(?!(?:.*/)?\.\.(?:/|\z))                                   # no ".." path segment
+      (?:
+        https?://[\p{L}\p{N}.-]+(?::\d{1,5})?                      # a web address: a host (no userinfo) and an optional port
+        (?:[/?\#][^[:space:][:cntrl:]\p{Cf}]*)?                    # then a path, query or fragment
+      | (?://[\p{L}\p{N}.-]+(?::\d{1,5})?                          # a protocol-relative host, where a port is unambiguous
+        | @?[\p{L}\p{N}_.-]*[\p{L}\p{N}_][\p{L}\p{N}_.-]*)          # or a handle or bare host, never "name:"
+        (?:/[^[:space:][:cntrl:]\p{Cf}]*)?                         # and an optional path
+      )\z
+    }xi
+    normalizes(*SOCIAL_FIELDS, with: ->(value) { value.strip.presence })
+    SOCIAL_FIELDS.each do |field|
+      validates field, format: { with: SOCIAL_FIELD_FORMAT }, allow_blank: true, if: :"will_save_change_to_#{field}?"
+    end
     # FIXME: we should remove this condition in v5
     if !ENV['SPREE_DISABLE_DB_CONNECTION'] &&
        connected? &&
@@ -499,9 +524,11 @@ module Spree
       @default_country_for_market = country
     end
 
-    # @deprecated Use +default_country_code=+. Removed in 6.1.
+    # @deprecated Use +default_country_code=+. Removed in 6.3.
     def default_country_iso=(code)
-      Spree::Deprecation.warn('Spree::Store#default_country_iso= is deprecated, use #default_country_code= instead')
+      Spree::Deprecation.warn(
+        'Spree::Store#default_country_iso= is deprecated and will be removed in Spree 6.3. Use #default_country_code= instead.'
+      )
       self.default_country_code = code
     end
 
@@ -713,15 +740,15 @@ module Spree
       preferred_capture_method.presence || Spree::CaptureMethod::DEFAULT_CAPTURE_METHOD
     end
 
-    # @deprecated Use #preferred_capture_method; removed in 6.1.
+    # @deprecated Use #preferred_capture_method; removed in 6.3.
     def preferred_auto_capture
-      Spree::Deprecation.warn('Store#preferred_auto_capture is deprecated and will be removed in Spree 6.1. Use #preferred_capture_method instead.')
+      Spree::Deprecation.warn('Store#preferred_auto_capture is deprecated and will be removed in Spree 6.3. Use #preferred_capture_method instead.')
       capture_at_checkout?
     end
 
-    # @deprecated Use #preferred_capture_method=; removed in 6.1.
+    # @deprecated Use #preferred_capture_method=; removed in 6.3.
     def preferred_auto_capture=(value)
-      Spree::Deprecation.warn('Store#preferred_auto_capture= is deprecated and will be removed in Spree 6.1. Use #preferred_capture_method= instead.')
+      Spree::Deprecation.warn('Store#preferred_auto_capture= is deprecated and will be removed in Spree 6.3. Use #preferred_capture_method= instead.')
       # Turning it off only says "not at checkout" — it cannot distinguish
       # dispatch from manual, so an existing on_dispatch choice is preserved.
       self.preferred_capture_method = if value.to_b
@@ -733,15 +760,19 @@ module Spree
                                       end
     end
 
-    # @deprecated Use #preferred_capture_method; removed in 6.1.
+    # @deprecated Use #preferred_capture_method; removed in 6.3.
     def preferred_auto_capture_on_dispatch
-      Spree::Deprecation.warn('Store#preferred_auto_capture_on_dispatch is deprecated and will be removed in Spree 6.1. Use #preferred_capture_method instead.')
+      Spree::Deprecation.warn(
+        'Store#preferred_auto_capture_on_dispatch is deprecated and will be removed in Spree 6.3. Use #preferred_capture_method instead.'
+      )
       capture_on_dispatch?
     end
 
-    # @deprecated Use #preferred_capture_method=; removed in 6.1.
+    # @deprecated Use #preferred_capture_method=; removed in 6.3.
     def preferred_auto_capture_on_dispatch=(value)
-      Spree::Deprecation.warn('Store#preferred_auto_capture_on_dispatch= is deprecated and will be removed in Spree 6.1. Use #preferred_capture_method= instead.')
+      Spree::Deprecation.warn(
+        'Store#preferred_auto_capture_on_dispatch= is deprecated and will be removed in Spree 6.3. Use #preferred_capture_method= instead.'
+      )
       self.preferred_capture_method = if value.to_b
                                         'on_dispatch'
                                       elsif capture_on_dispatch?
@@ -751,7 +782,24 @@ module Spree
                                       end
     end
 
+    # The payload is the store in its default language, whichever language
+    # the change was written in: a translation saved under `de` still
+    # announces the store as storefronts show it by default.
+    def event_payload_for(event_name, **params)
+      Spree::Current.with_content_locale(default_locale) do
+        ::Mobility.with_locale(default_locale) { super }
+      end
+    end
+
     private
+
+    # A store's events belong to it, whichever store the caller is working in,
+    # so they reach this store's webhook endpoints.
+    def in_event_store(&block)
+      return block.call if Spree::Current.store == self
+
+      Spree::Current.with_store(self, &block)
+    end
 
     # Products without a profile fall back to this one, so it must exist
     # from the store's first moment.

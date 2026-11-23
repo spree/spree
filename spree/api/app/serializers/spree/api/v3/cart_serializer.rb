@@ -4,7 +4,8 @@ module Spree
       # Store API Cart Serializer
       # Pre-purchase cart data with checkout progression info
       class CartSerializer < BaseSerializer
-        typelize number: [:string, deprecated: 'Use `id`; a cart has no order number. Removed in 6.1.'], current_step: :string, completed_steps: 'string[]', token: :string,
+        typelize number: [:string, deprecated: 'Use `id`; a cart has no order number. Removed in 6.5.'],
+                 current_step: :string, completed_steps: 'string[]', token: :string,
                  email: [:string, nullable: true], customer_note: [:string, nullable: true],
                  market_id: [:string, nullable: true], channel_id: [:string, nullable: true], currency: [:string, enum: Spree::Money::Rounding::CURRENCY_CODES, enum_type_name: 'CurrencyCode'],
                  locale: [:string, nullable: true, enum: Spree::Locales::ALL, enum_type_name: 'LocaleCode'], total_quantity: :number, coupon_code: [:string, nullable: true],
@@ -14,9 +15,7 @@ module Spree
                  po_document_byte_size: ['number | null'], order_minimum: [:string, nullable: true],
                  order_minimum_shortfall: [:string, nullable: true], below_order_minimum: ['boolean | null'],
                  freight_summary: [:FreightSummary, nullable: true],
-                 requirements: 'Array<{step: string, field: string, code: string, message: string}>',
                  shipping_eq_billing_address: :boolean,
-                 warnings: 'Array<{code: string, message: string, line_item_id?: string, variant_id?: string, item_index?: number}>',
                  billing_address: { nullable: true }, shipping_address: { nullable: true },
                  gift_card: { nullable: true }, market: { nullable: true }
 
@@ -52,9 +51,19 @@ module Spree
         end
 
         # @deprecated `number` mirrors `id` (carts have no order-style
-        #   number) — kept one release for 5.x clients; removed in 6.1.
+        #   number) — kept until 6.5 for 5.x clients.
         attributes :number, :token, :email, :customer_note, :po_number,
-                   :currency, :locale, :total_quantity, :warnings, :coupon_code
+                   :currency, :locale, :total_quantity
+
+        typelize({ code: [:string, comment: 'Machine-readable warning code, e.g. line_item_removed'],
+                   message: [:string, comment: 'Human-readable warning message'],
+                   line_item_id?: [:string, comment: 'Line item the warning is about, when there is one'],
+                   variant_id?: [:string, comment: 'Variant the warning is about, when there is one'],
+                   item_index?: [:number, comment: 'Position in the submitted items, for a warning raised while applying a batch of item changes'] },
+                 multi: true, comment: 'Problems found with the cart, such as an item removed after a stock change')
+        attribute(:warnings, &:warnings)
+
+        attributes :coupon_code
 
         # Nulled for gated (prices_hidden) guests so the cart can't leak the
         # prices that product/variant serializers already withhold.
@@ -73,9 +82,14 @@ module Spree
         # The order-minimum requirement names both amounts in its message, so
         # it is dropped rather than redacted for a gated guest: a requirement
         # with its numbers stripped tells them nothing they can act on.
+        typelize({ step: [:string, comment: 'Checkout step this requirement belongs to, e.g. payment'],
+                   field: [:string, comment: 'Field that needs to be satisfied'],
+                   code: [:string, comment: 'Machine-readable requirement code, e.g. order_minimum_not_met'],
+                   message: [:string, comment: 'Human-readable requirement message'] },
+                 multi: true, comment: 'What is still missing before the cart can be completed')
         attribute :requirements do |order|
           # 5.6 storefronts matched the delivery requirement by its field, so
-          # it keeps the old name until 6.1; `code` already carries the new one.
+          # it keeps the old name until 6.5; `code` already carries the new one.
           requirements = Spree::Checkout::Requirements.new(order).call.map do |requirement|
             requirement[:field] == 'delivery_method' ? requirement.merge(field: 'shipping_method') : requirement
           end

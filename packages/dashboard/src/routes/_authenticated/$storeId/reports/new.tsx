@@ -46,7 +46,7 @@ function NewReportPage() {
     return (
       <ResourceLayout
         header={<PageHeader title={t('admin.reports.new_title')} backTo="reports" />}
-        main={<div className="text-sm text-muted-foreground">{t('admin.common.loading')}</div>}
+        main={<div className="text-base text-muted-foreground">{t('admin.common.loading')}</div>}
       />
     )
   }

@@ -24,7 +24,7 @@ module Spree
     # Spree::Money (amount and currency) and convert it to the provider's own
     # unit. Methods that have not opted in receive an integer in hundredths of
     # the currency, which is wrong for yen and dinar; that bridge is removed in
-    # Spree 6.1.
+    # Spree 6.5.
     class_attribute :accepts_money_amounts, default: false, instance_writer: false
 
     # Blank falls back to the store, so a method only overrides when a merchant
@@ -163,7 +163,8 @@ module Spree
     # longer take money against it. Called for the sessions left pending when
     # an order is placed. The default leaves the session untouched: a
     # gateway that cannot cancel at the provider must not report as canceled
-    # a session that can still be paid.
+    # a session that can still be paid. Adyen is the one exception: it cancels
+    # locally, which is a real cancel only for a session never made payable.
     #
     # Raise Spree::Core::GatewayError only for a refusal, such as a session
     # that was already paid. A timeout, a rate limit, an outage, or rejected
@@ -183,13 +184,54 @@ module Spree
     #
     # @param raw_body [String] the raw request body
     # @param headers [Hash] the request headers
-    # @return [Hash, nil] normalized result or nil for unsupported events
+    # @return [Hash, nil] normalized result or nil for unsupported events.
+    #   A session outcome:
     #   { action: :captured/:authorized/:failed/:canceled,
     #     payment_session: <Spree::PaymentSession>,
     #     metadata: {} }
+    #   or the outcome of a capture, void or refund the gateway answered
+    #   +requested?+ for, naming its record by the reference
+    #   {#modification_record} finds it with:
+    #   { action: :capture_succeeded/:capture_failed/:void_succeeded/:void_failed/
+    #             :refund_succeeded/:refund_failed,
+    #     reference: 'the provider reference',
+    #     metadata: { 'reason' => ... } }
+    #   The record is not looked up here: the outcome can arrive before the
+    #   request that writes it has finished, so the job looks it up and waits.
+    #   A capture outcome may also name the payment its capture was asked
+    #   for (+payment:+) and the amount taken (metadata 'amount'), so a
+    #   capture whose answer never reached Spree is still recorded.
+    #   A gateway that answers +requested?+ must report those outcomes here.
+    #   metadata crosses a background job, so it must be JSON-safe with
+    #   string keys; a failure's reason goes under 'reason'.
     # @raise [Spree::PaymentMethod::WebhookSignatureError] if signature is invalid
     def parse_webhook_event(raw_body, headers)
       raise ::NotImplementedError, 'You must implement parse_webhook_event method for this gateway.'
+    end
+
+    # The record a modification outcome settles, or nil while it is not
+    # written yet. Reads only this method's payments.
+    #
+    # The default matches the reference against what core records from a
+    # +requested?+ answer: a capture event's or refund's +transaction_id+, and
+    # for a void the response code of a payment waiting on it (or already
+    # void, for a repeated delivery). Override when the provider names
+    # records otherwise.
+    #
+    # @param action [Symbol] one of the six modification outcomes
+    # @param reference [String] the reference from #parse_webhook_event
+    # @return [Spree::PaymentCaptureEvent, Spree::Payment, Spree::Refund, nil]
+    def modification_record(action, reference)
+      own_payments = Spree::Payment.where(payment_method_id: id)
+
+      case action.to_sym
+      when :capture_succeeded, :capture_failed
+        Spree::PaymentCaptureEvent.where(payment_id: own_payments.select(:id)).find_by(transaction_id: reference)
+      when :void_succeeded, :void_failed
+        own_payments.where(status: %w[requested void]).find_by(response_code: reference)
+      when :refund_succeeded, :refund_failed
+        Spree::Refund.where(payment_id: own_payments.select(:id)).find_by(transaction_id: reference)
+      end
     end
 
     # Returns the webhook URL for this payment method.
@@ -197,7 +239,7 @@ module Spree
     def webhook_url
       return nil unless store
 
-      "#{store.url_or_custom_domain}/api/v3/webhooks/payments/#{prefixed_id}"
+      "#{store.formatted_url_or_custom_domain}/api/v3/webhooks/payments/#{prefixed_id}"
     end
 
     class WebhookSignatureError < StandardError; end
@@ -286,7 +328,7 @@ module Spree
       store_preference(:capture_method).presence || Spree::CaptureMethod::DEFAULT_CAPTURE_METHOD
     end
 
-    # @deprecated Use #capture_at_checkout?; removed in 6.1. Deliberately does
+    # @deprecated Use #capture_at_checkout?; removed in 6.3. Deliberately does
     #   not warn — it runs on every payment and would flood the logs.
     def auto_capture?
       capture_at_checkout?
@@ -309,6 +351,29 @@ module Spree
       raise ::NotImplementedError, 'You must implement cancel method for this payment method.'
     end
 
+    # Whether #cancel voids the payment. A gateway that cannot void a
+    # captured charge refunds it through Refunds::Create instead, or leaves it
+    # standing when `refund:` is false, so the payment stays completed with
+    # any refund recorded against it.
+    #
+    # @param payment [Spree::Payment]
+    def cancel_voids?(payment)
+      can_void?(payment)
+    end
+
+    # Whether the payment can be voided in its current state. Gateways that
+    # cannot void a captured payment override this.
+    # @param _payment [Spree::Payment]
+    def can_void?(_payment)
+      true
+    end
+
+    # Whether the payment can be captured in its current state.
+    # @param _payment [Spree::Payment]
+    def can_capture?(_payment)
+      true
+    end
+
     def store_credit?
       self.class == Spree::PaymentMethod::StoreCredit
     end
@@ -329,21 +394,23 @@ module Spree
       public_preference_keys.index_with { |key| get_preference(key) }
     end
 
-    # @deprecated Use {#storefront_visible?}; removed in 6.1.
+    # @deprecated Use {#storefront_visible?}; removed in 6.3.
     def available_on_front_end?
-      Spree::Deprecation.warn('Spree::PaymentMethod#available_on_front_end? is deprecated and will be removed in Spree 6.1. Use #storefront_visible? instead.')
+      Spree::Deprecation.warn(
+        'Spree::PaymentMethod#available_on_front_end? is deprecated and will be removed in Spree 6.3. Use #storefront_visible? instead.'
+      )
       storefront_visible?
     end
 
-    # @deprecated Use {#storefront_visible}; removed in 6.1.
+    # @deprecated Use {#storefront_visible}; removed in 6.3.
     def display_on
-      Spree::Deprecation.warn('Spree::PaymentMethod#display_on is deprecated and will be removed in Spree 6.1. Use #storefront_visible instead.')
+      Spree::Deprecation.warn('Spree::PaymentMethod#display_on is deprecated and will be removed in Spree 6.3. Use #storefront_visible instead.')
       storefront_visible? ? 'both' : 'back_end'
     end
 
-    # @deprecated Use {#storefront_visible=}; removed in 6.1.
+    # @deprecated Use {#storefront_visible=}; removed in 6.3.
     def display_on=(value)
-      Spree::Deprecation.warn('Spree::PaymentMethod#display_on= is deprecated and will be removed in Spree 6.1. Use #storefront_visible= instead.')
+      Spree::Deprecation.warn('Spree::PaymentMethod#display_on= is deprecated and will be removed in Spree 6.3. Use #storefront_visible= instead.')
       self.storefront_visible = value.to_s != 'back_end'
     end
 
@@ -385,7 +452,7 @@ module Spree
       Spree::Deprecation.warn(
         "#{self.class.name} receives amounts as an integer in hundredths, which is wrong for currencies " \
         'without two decimals. Set `self.accepts_money_amounts = true` and take a Spree::Money ' \
-        '(amount and currency); hundredths are removed in Spree 6.1.'
+        '(amount and currency); hundredths are removed in Spree 6.5.'
       )
     end
   end

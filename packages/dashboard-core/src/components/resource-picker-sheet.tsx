@@ -42,6 +42,8 @@ export interface ResourcePickerSheetProps<T extends PickerOption> {
   onConfirm: (ids: string[], options: T[]) => void | Promise<void>
   /** Paginated async search. Called with the trimmed query (empty = initial list) and page. */
   search: (query: string, page: number) => Promise<ResourcePickerSearchResult<T>>
+  /** Shortest query worth sending, for an endpoint that finds nothing below it. */
+  minSearchLength?: number
   getOptionLabel: (option: T) => string
   /** Optional thumbnail URL shown as an avatar. */
   getOptionImageUrl?: (option: T) => string | null | undefined
@@ -73,6 +75,7 @@ export function ResourcePickerSheet<T extends PickerOption>({
   selectedIds,
   onConfirm,
   search,
+  minSearchLength = 0,
   getOptionLabel,
   getOptionImageUrl,
   getOptionSubtitle,
@@ -88,6 +91,7 @@ export function ResourcePickerSheet<T extends PickerOption>({
   const [input, setInput] = useState('')
   const deferredInput = useDeferredValue(input)
   const trimmedQuery = deferredInput.trim()
+  const searchTooShort = trimmedQuery.length > 0 && trimmedQuery.length < minSearchLength
 
   const [selectAllMeta, setSelectAllMeta] = useState<PaginationMeta | undefined>()
   const selectAllGenerationRef = useRef(0)
@@ -119,7 +123,7 @@ export function ResourcePickerSheet<T extends PickerOption>({
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages) =>
       lastPage.meta?.next != null ? allPages.length + 1 : undefined,
-    enabled: open,
+    enabled: open && !searchTooShort,
     staleTime: 30_000,
   })
 
@@ -267,8 +271,10 @@ export function ResourcePickerSheet<T extends PickerOption>({
               <Loader2Icon className="size-5 animate-spin" />
             </div>
           ) : results.length === 0 ? (
-            <p className="p-6 text-center text-muted-foreground text-sm">
-              {t('admin.resource_picker.empty')}
+            <p className="p-6 text-center text-muted-foreground text-base">
+              {searchTooShort
+                ? t('admin.common.search_min_length', { count: minSearchLength })
+                : t('admin.resource_picker.empty')}
             </p>
           ) : (
             <>
@@ -285,7 +291,7 @@ export function ResourcePickerSheet<T extends PickerOption>({
                       disabled={selectableOnPage.length === 0 || selectingAll}
                       className="pointer-events-none"
                     />
-                    <span className="truncate text-sm">
+                    <span className="truncate text-base">
                       {t('admin.resource_picker.select_page', { count: selectableOnPage.length })}
                     </span>
                   </button>

@@ -2,7 +2,7 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import * as React from 'react'
 import { cn } from '../lib/utils'
 import { Button } from './button'
-import { Input } from './input'
+import { Input, NumberInput } from './input'
 import { Textarea } from './textarea'
 
 function InputGroup({ className, ...props }: React.ComponentProps<'div'>) {
@@ -11,7 +11,7 @@ function InputGroup({ className, ...props }: React.ComponentProps<'div'>) {
       data-slot="input-group"
       role="group"
       className={cn(
-        'group/input-group relative flex w-full min-w-0 items-center rounded-md border border-border shadow-control bg-card text-foreground transition-[color,background-color,border-color,box-shadow] duration-100 ease-out outline-none in-data-[slot=combobox-content]:focus-within:border-inherit in-data-[slot=combobox-content]:focus-within:shadow-none has-disabled:bg-muted has-disabled:cursor-not-allowed has-disabled:text-muted-foreground has-[[data-slot=input-group-control]:focus-visible]:border-blue-500 has-[[data-slot=input-group-control]:focus-visible]:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)] has-[[data-slot][aria-invalid=true]]:border-destructive has-[>[data-align=block-end]]:h-auto has-[>[data-align=block-end]]:flex-col has-[>[data-align=block-start]]:h-auto has-[>[data-align=block-start]]:flex-col has-[>textarea]:h-auto has-[>[data-align=block-end]]:[&>input]:pt-3 has-[>[data-align=block-start]]:[&>input]:pb-3 has-[>[data-align=inline-end]]:[&>input]:pr-1.5 has-[>[data-align=inline-start]]:[&>input]:pl-1.5',
+        'group/input-group relative flex w-full min-w-0 items-center rounded-xl border border-field-border shadow-control bg-card text-foreground transition-[color,background-color,border-color,box-shadow] duration-100 ease-out outline-none in-data-[slot=combobox-content]:focus-within:border-inherit in-data-[slot=combobox-content]:focus-within:shadow-none not-has-disabled:not-focus-within:hover:bg-field-hover has-disabled:bg-muted has-disabled:cursor-not-allowed has-disabled:text-muted-foreground has-[[data-slot=input-group-control]:focus-visible]:border-blue-500 has-[[data-slot=input-group-control]:focus-visible]:shadow-field-focus has-[[data-slot][aria-invalid=true]]:border-destructive has-[>[data-align=block-end]]:h-auto has-[>[data-align=block-end]]:flex-col has-[>[data-align=block-start]]:h-auto has-[>[data-align=block-start]]:flex-col has-[>textarea]:h-auto has-[>[data-align=block-end]]:[&>input]:pt-3 has-[>[data-align=block-start]]:[&>input]:pb-3 has-[>[data-align=inline-end]]:[&>input]:pr-1.5 has-[>[data-align=inline-start]]:[&>input]:pl-1.5',
         className,
       )}
       {...props}
@@ -20,7 +20,7 @@ function InputGroup({ className, ...props }: React.ComponentProps<'div'>) {
 }
 
 const inputGroupAddonVariants = cva(
-  "flex h-auto cursor-text items-center justify-center gap-2 py-1.5 text-sm font-medium text-muted-foreground select-none group-data-[disabled=true]/input-group:opacity-50 [&>kbd]:rounded-[calc(var(--radius)-5px)] [&>svg:not([class*='size-'])]:size-4",
+  "flex h-auto cursor-default group-focus-within/input-group:cursor-text items-center justify-center gap-2 py-1.5 text-base font-medium text-muted-foreground select-none group-data-[disabled=true]/input-group:opacity-50 [&>kbd]:rounded-[calc(var(--radius)-5px)] [&>svg:not([class*='size-'])]:size-4",
   {
     variants: {
       align: {
@@ -60,7 +60,7 @@ function InputGroupAddon({
   )
 }
 
-const inputGroupButtonVariants = cva('flex items-center gap-2 text-sm shadow-none', {
+const inputGroupButtonVariants = cva('flex items-center gap-2 text-base shadow-none', {
   variants: {
     size: {
       xs: "h-6 gap-1 rounded-[calc(var(--radius)-3px)] px-1.5 [&>svg:not([class*='size-'])]:size-3.5",
@@ -97,7 +97,7 @@ function InputGroupText({ className, ...props }: React.ComponentProps<'span'>) {
   return (
     <span
       className={cn(
-        "flex items-center gap-2 text-sm text-muted-foreground [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4",
+        "flex items-center gap-2 text-base text-muted-foreground [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       {...props}
@@ -106,11 +106,22 @@ function InputGroupText({ className, ...props }: React.ComponentProps<'span'>) {
 }
 
 function InputGroupInput({ className, ...props }: React.ComponentProps<'input'>) {
+  if (props.type === 'number') {
+    return (
+      <NumberInput
+        bare
+        data-slot="input-group-control"
+        className={cn('flex-1 self-stretch', className)}
+        {...props}
+      />
+    )
+  }
+
   return (
     <Input
       data-slot="input-group-control"
       className={cn(
-        'flex-1 rounded-none border-0 bg-transparent shadow-none ring-0 focus:border-0 focus:shadow-none focus-visible:ring-0 disabled:bg-transparent aria-invalid:ring-0',
+        'flex-1 rounded-none border-0 bg-transparent not-disabled:not-read-only:not-focus:hover:bg-transparent shadow-none ring-0 focus:border-0 focus:shadow-none focus-visible:ring-0 disabled:bg-transparent aria-invalid:ring-0',
         className,
       )}
       {...props}

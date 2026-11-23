@@ -10,7 +10,7 @@ RSpec.describe 'Admin Delivery Settings API', type: :request, swagger_doc: 'api-
 
   path '/api/v3/admin/delivery_methods' do
     get 'List delivery methods' do
-      tags 'Delivery'
+      tags 'Delivery Settings'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Returns all delivery methods with calculator and zone configuration.'
@@ -33,7 +33,7 @@ RSpec.describe 'Admin Delivery Settings API', type: :request, swagger_doc: 'api-
     end
 
     post 'Create delivery method' do
-      tags 'Delivery'
+      tags 'Delivery Settings'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -69,7 +69,7 @@ RSpec.describe 'Admin Delivery Settings API', type: :request, swagger_doc: 'api-
     let(:id) { delivery_method.prefixed_id }
 
     patch 'Update delivery method' do
-      tags 'Delivery'
+      tags 'Delivery Settings'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -95,7 +95,7 @@ RSpec.describe 'Admin Delivery Settings API', type: :request, swagger_doc: 'api-
 
   path '/api/v3/admin/delivery_methods/calculators' do
     get 'List delivery calculators' do
-      tags 'Delivery'
+      tags 'Delivery Settings'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Registered delivery calculator classes with preference schemas for building configuration forms.'
@@ -117,7 +117,7 @@ RSpec.describe 'Admin Delivery Settings API', type: :request, swagger_doc: 'api-
 
   path '/api/v3/admin/delivery_zones' do
     get 'List delivery zones' do
-      tags 'Delivery'
+      tags 'Delivery Settings'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Returns the areas delivery methods ship to, each made of countries, states or postal code ranges.'
@@ -142,7 +142,7 @@ RSpec.describe 'Admin Delivery Settings API', type: :request, swagger_doc: 'api-
     end
 
     post 'Create delivery zone' do
-      tags 'Delivery'
+      tags 'Delivery Settings'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -184,7 +184,7 @@ RSpec.describe 'Admin Delivery Settings API', type: :request, swagger_doc: 'api-
     let(:id) { delivery_zone.prefixed_id }
 
     patch 'Update delivery zone' do
-      tags 'Delivery'
+      tags 'Delivery Settings'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -225,7 +225,7 @@ RSpec.describe 'Admin Delivery Settings API', type: :request, swagger_doc: 'api-
     let(:delivery_method_id) { delivery_method.prefixed_id }
 
     get 'List delivery method rules' do
-      tags 'Delivery'
+      tags 'Delivery Settings'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Returns the conditions a delivery method must meet to be offered at checkout, such as an order total or weight range.'
@@ -253,7 +253,7 @@ RSpec.describe 'Admin Delivery Settings API', type: :request, swagger_doc: 'api-
     end
 
     post 'Create a delivery method rule' do
-      tags 'Delivery'
+      tags 'Delivery Settings'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -302,7 +302,7 @@ RSpec.describe 'Admin Delivery Settings API', type: :request, swagger_doc: 'api-
     let(:id) { rule.prefixed_id }
 
     patch 'Update a delivery method rule' do
-      tags 'Delivery'
+      tags 'Delivery Settings'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]

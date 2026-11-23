@@ -1,6 +1,6 @@
 module Spree
   module Pricing
-    # @deprecated Use {Spree::Pricing::PriceResolution}; removed in 6.1.
+    # @deprecated Use {Spree::Pricing::PriceResolution}; removed in 6.3.
     #
     # Answering a price used to mean walking the store's price lists and
     # falling back to the variant's base price. That is now one engine among
@@ -22,7 +22,7 @@ module Spree
       # @return [Spree::Price, nil]
       def resolve
         Spree::Deprecation.warn(
-          'Spree::Pricing::Resolver is deprecated and will be removed in Spree 6.1. ' \
+          'Spree::Pricing::Resolver is deprecated and will be removed in Spree 6.3. ' \
           'Use Spree::Pricing::PriceResolution.call(context) instead.'
         )
 

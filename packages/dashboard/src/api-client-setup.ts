@@ -13,6 +13,12 @@ setApiClient({
   setToken: (token: string) => adminClient.setToken(token),
   onUnauthorized: (handler) => adminClient.onUnauthorized(handler),
   clearTenant: () => adminClient.setStore(''),
+  // A download is a bare fetch, so it names the store itself, as every SDK
+  // call does.
+  downloadHeaders: (): Record<string, string> => {
+    const storeId = adminClient.getStore()
+    return storeId ? { 'X-Spree-Store-Id': storeId } : {}
+  },
   fetchPermissions: async () => {
     const response = await adminClient.me.get()
 
@@ -93,7 +99,10 @@ setApiClient({
     delete: (productId, id) => adminClient.products.digitalAssets.delete(productId, id),
     providers: (productId) => adminClient.products.digitalAssets.providers(productId),
   },
-  mediaLibrary: { list: (params) => adminClient.media.list(runtimeListParams(params)) },
+  mediaLibrary: {
+    list: (params) => adminClient.media.list(runtimeListParams(params)),
+    create: (params) => adminClient.media.create(params),
+  },
   tags: {
     list: (params) => adminClient.tags.list(params as { taggable_type: string; q?: string }),
   },

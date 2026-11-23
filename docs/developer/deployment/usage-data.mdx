@@ -48,15 +48,4 @@ Two switches, both environment variables. See [Environment Variables](/developer
 | `SPREE_TELEMETRY_DISABLED=1` | Stops the usage data. The daily check still runs, but sends only `version`, so the update notice keeps working. `DO_NOT_TRACK=1` does the same. |
 | `SPREE_UPDATE_CHECK_DISABLED=1` | Stops the daily request entirely. Nothing is sent and the update notice never appears. |
 
-You can set the same switches from Ruby instead:
-
-```ruby server/config/initializers/spree.rb
-Spree.config do |config|
-  config.telemetry_enabled = false     # send the version only
-  config.update_check_enabled = false  # send nothing at all
-end
-```
-
-Either way, turning a switch off wins over the other method: an environment variable cannot turn back on what the initializer turned off, and the reverse.
-
 The check never runs in the `test` environment or on a CI server (any machine with the `CI` environment variable set, which GitHub Actions, GitLab CI, CircleCI and most other services do), so test runs send nothing.

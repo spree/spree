@@ -18,7 +18,7 @@ import {
   useResourceKey,
   useStore,
 } from '@spree/dashboard-core'
-import { Alert, AlertDescription, DropdownMenuItem, useConfirm } from '@spree/dashboard-ui'
+import { Alert, AlertDescription, DropdownMenuItem, Item, useConfirm } from '@spree/dashboard-ui'
 import {
   CalendarOffIcon,
   CircleAlertIcon,
@@ -30,6 +30,7 @@ import {
   TrashIcon,
 } from '@spree/dashboard-ui/icons'
 import { useQueryClient } from '@tanstack/react-query'
+import type { TFunction } from 'i18next'
 import { useEffect, useState } from 'react'
 import {
   Controller,
@@ -39,7 +40,6 @@ import {
   useForm,
 } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { spreeJsonLinkResolver } from '../../../lib/json-link-resolver'
 import { BulkPriceEditorDialog } from '../bulk-price-editor/bulk-price-editor-dialog'
 import { catalogPriceColumns, catalogVariantRows } from '../catalog-price-columns'
 import { DeferredProductMembershipCard } from '../deferred-product-membership-card'
@@ -219,7 +219,7 @@ export function PriceListForm({
     return (
       <ResourceLayout
         header={<PageHeader title={t('admin.common.loading')} backTo="products/price-lists" />}
-        main={<div className="text-sm text-muted-foreground">{t('admin.common.loading')}</div>}
+        main={<div className="text-base text-muted-foreground">{t('admin.common.loading')}</div>}
       />
     )
   }
@@ -260,7 +260,6 @@ export function PriceListForm({
                         title: `Price list ${priceList.name}`,
                         fetch: () => adminClient.priceLists.get(priceList.id),
                         endpoint: `/api/v3/admin/price_lists/${priceList.id}`,
-                        resolveLink: spreeJsonLinkResolver(storeId),
                       }
                     : undefined
                 }
@@ -608,7 +607,7 @@ function RulesCard({
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <CardTitle>{t('admin.pages.products.price_lists.rules_section')}</CardTitle>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-base text-muted-foreground">
               {t('admin.pages.products.price_lists.rules_help')}
             </p>
           </div>
@@ -641,7 +640,7 @@ function RulesCard({
       <CardContent>
         <div className="space-y-2">
           {rulesArray.fields.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-base text-muted-foreground">
               {t('admin.pages.products.price_lists.rules_empty')}
             </p>
           ) : (
@@ -739,14 +738,14 @@ function RuleRow({
   }
 
   return (
-    <div className="flex w-full items-stretch rounded-md border bg-card hover:bg-accent/50">
+    <Item variant="outline" className="items-stretch gap-0 p-0 hover:bg-muted">
       <button
         type="button"
         onClick={onEdit}
-        className="min-w-0 flex-1 px-3 py-2 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-l-md"
+        className="min-w-0 flex-1 rounded-s-card px-3.5 py-3 text-left outline-none focus-visible:shadow-field-focus"
       >
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium">
+          <span className="text-base font-medium">
             {typeLabel('price_rule', draft.type, definition?.label)}
           </span>
           <PencilIcon className="size-3 text-muted-foreground" />
@@ -754,7 +753,7 @@ function RuleRow({
         <RuleSummary draft={draft} definition={definition} />
       </button>
       <Can I="destroy" a={Subject.PriceRule}>
-        <div className="flex items-center pr-1.5">
+        <div className="flex items-center pe-3">
           <Button type="button" size="icon-xs" variant="destructive-ghost" onClick={handleRemove}>
             <TrashIcon className="size-4" />
             {/* "Remove rule", not "Remove": the confirm dialog this opens has
@@ -764,7 +763,7 @@ function RuleRow({
           </Button>
         </div>
       </Can>
-    </div>
+    </Item>
   )
 }
 
@@ -848,12 +847,10 @@ function RuleSummary({
  * when the embed is missing/empty — caller falls back to the preferences
  * dump.
  */
-type Translator = (key: string, options?: Record<string, unknown>) => string
-
 function nameList<T>(
   items: T[] | undefined,
   getLabel: (item: T) => string,
-  t: Translator,
+  t: TFunction,
 ): string | null {
   if (!items?.length) return null
   const labels = items.map(getLabel).filter(Boolean)
@@ -865,7 +862,7 @@ function nameList<T>(
   })
 }
 
-function formatPreferenceValue(value: unknown, t: Translator): string {
+function formatPreferenceValue(value: unknown, t: TFunction): string {
   if (Array.isArray(value)) return value.join(', ')
   if (typeof value === 'boolean') return t(value ? 'admin.common.yes' : 'admin.common.no')
   return String(value)
@@ -946,7 +943,7 @@ function DefaultRuleEditor({ draft, onSave, onClose }: PriceRuleEditorContext) {
       {hasPreferences ? (
         <PreferencesForm schema={schema} values={values} onChange={setValues} />
       ) : (
-        <p className="text-sm text-muted-foreground">
+        <p className="text-base text-muted-foreground">
           {t('admin.pages.products.price_lists.rule_no_options')}
         </p>
       )}

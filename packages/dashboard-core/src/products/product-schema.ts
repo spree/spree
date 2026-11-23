@@ -129,6 +129,8 @@ export const mediaFormSchema = z
     focal_point_y: z.number().min(0).max(1).nullable().optional(),
     // UI-only — strip at submit.
     previewUrl: z.string().optional(),
+    // The file's name, to tell rows apart where alt text is blank. UI-only.
+    filename: z.string().nullable().optional(),
     // Larger rendition for the edit sheet; previewUrl is grid-sized and
     // visibly pixelates when blown up. Absent before save, where the blob URL
     // in previewUrl is full resolution anyway.
@@ -225,6 +227,11 @@ export const productFormSchema = z.object({
   // new uploads ride the same product PATCH.
   media: z.array(mediaFormSchema).optional(),
 
+  // Saved media the merchant removed. The product save leaves omitted media
+  // alone, so these go through the media DELETE endpoint once the save
+  // succeeds — removal stays an unsaved change, undone by Discard.
+  removed_media_ids: z.array(z.string()).optional(),
+
   // Downloadable files, staged pre-save on the new product page and shipped in
   // the product POST. Edit uses the live API-driven card instead, so this stays
   // empty there.
@@ -274,6 +281,7 @@ export function newProductFormDefaults(): ProductFormValues {
     ],
     custom_fields: [],
     media: [],
+    removed_media_ids: [],
     digital_assets: [],
     product_publications: [],
   }

@@ -5,6 +5,7 @@ import { nav, pluginRoutes, Subject, settingsNav } from '@spree/dashboard-core'
 import {
   Building2Icon,
   FileTextIcon,
+  FolderTreeIcon,
   HistoryIcon,
   LayersIcon,
   StoreIcon,
@@ -50,6 +51,16 @@ const PREVIEWS: EnterprisePreview[] = [
     icon: StoreIcon,
     benefits: ['catalog', 'orders', 'control'],
     steps: ['connect', 'install', 'sync', 'sell'],
+  },
+  {
+    key: 'sellers.category-mapper',
+    id: 'category_mapper',
+    path: '/sellers/category-mapper',
+    placement: { nav: 'sellers', position: 400 },
+    subject: Subject.Seller,
+    icon: FolderTreeIcon,
+    benefits: ['once', 'current', 'kept'],
+    steps: ['import', 'map', 'add', 'review'],
   },
   {
     key: 'inventory.lots',

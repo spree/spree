@@ -34,7 +34,7 @@ export function LanguageMenuItems({ label, locales, value, onSelect }: LanguageM
     // Not a DropdownMenuItem: the row is a container for the select, and menu
     // items steal the pointer and close the menu on click.
     <div className="flex items-center justify-between gap-2 rounded-lg px-2 py-1.5">
-      <span className="text-sm text-foreground">{label}</span>
+      <span className="text-base text-foreground">{label}</span>
       {/* The select is transparent and stretched over the pill, so the hit area
           tracks the pill's width whatever the locale name is. `focus-within`
           carries the focus ring, since `opacity-0` hides the native one. */}

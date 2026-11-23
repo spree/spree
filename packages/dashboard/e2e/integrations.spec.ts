@@ -5,7 +5,7 @@ const INTEGRATIONS_PATH = (storeId: string) => `/${storeId}/settings/integration
 
 // Seeds its own payment method rather than toggling a shared one. Bogus is the
 // only third-party gateway the test app ships, and only third-party methods
-// are listed here. payment-methods.spec.ts installs Bogus through its picker
+// are listed here. payment-methods.spec.ts installs Bogus from its card
 // too, so every test deletes the one it seeded — a deleted method no longer
 // counts as installed.
 async function seedPaymentMethod(page: Page, storeId: string, accessToken: string, name: string) {
@@ -42,8 +42,10 @@ test.describe('integrations', () => {
       timeout: 15_000,
     })
     await expect(page.getByRole('heading', { name: /^payments$/i })).toBeVisible()
-    await expect(page.getByRole('link', { name: /manage payment methods/i })).toBeVisible()
+    await expect(page.getByRole('link', { name: /manage payments/i })).toBeVisible()
     await expect(page.getByRole('switch', { name: /store credit/i })).toHaveCount(0)
+    // Bogus only simulates payments, and its card says so.
+    await expect(page.getByText(/^test gateway$/i).first()).toBeVisible()
   })
 
   // `E2E Relay` is registered by global-setup for this test: one setting of

@@ -125,6 +125,55 @@ RSpec.describe 'Admin Catalogs API', type: :request, swagger_doc: 'api-reference
       end
     end
   end
+
+  path '/api/v3/admin/catalogs/{id}/import_products' do
+    parameter name: :id, in: :path, type: :string, required: true
+
+    post 'Import price list products into a catalog' do
+      tags 'Catalogs'
+      admin_sdk_example 'catalogs/import-products'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        Adds every product on the catalog's price list to its assortment. Products
+        already in it stay, even ones the list does not price. Refused for a
+        catalog without a price list; the count reports what was added.
+      DESC
+      admin_scope :write, :products
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+
+      response '200', 'products imported' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:id) { catalog.prefixed_id }
+        let!(:product) { create(:product, store: store) }
+
+        before do
+          price_list = create(:price_list, store: store).tap { |list| list.add_products([product.id]) }
+          catalog.update!(price_list: price_list)
+        end
+
+        schema type: :object,
+               properties: { added_count: { type: :integer } },
+               required: %w[added_count]
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['added_count']).to eq(1)
+        end
+      end
+
+      response '422', 'the catalog has no price list' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:id) { catalog.prefixed_id }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
+      end
+    end
+  end
+
   path '/api/v3/admin/catalogs/{catalog_id}/products' do
     get 'List catalog products' do
       tags 'Catalogs'

@@ -55,6 +55,16 @@ module Spree
             Spree::Media
           end
 
+          # Sorting by file name or size orders by a subquery on the blob,
+          # which PostgreSQL rejects under SELECT DISTINCT. Nothing here can
+          # repeat a row: the filename filter joins each media row to its one
+          # attachment and that attachment's one blob, and every other filter,
+          # like the product scope's legacy default-variant branch, reads this
+          # table's own columns. The library inherits this.
+          def collection_distinct?
+            false
+          end
+
           def serializer_class
             Spree.api.admin_media_serializer
           end

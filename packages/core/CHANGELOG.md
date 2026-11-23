@@ -1,5 +1,31 @@
 # @spree/core
 
+## 6.0.5
+
+Released with Spree 6.0.5, with no changes of its own.
+
+## 6.0.4
+
+Released with Spree 6.0.4, with no changes of its own.
+
+## 6.0.3
+
+### Patch Changes
+
+- [#15087](https://github.com/spree/spree/pull/15087) [`5de3074`](https://github.com/spree/spree/commit/5de3074693359ad16623f9d522a6d5ab64d4b5f6) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added `randomUUID()`, which uses `crypto.randomUUID` where the browser provides it and falls back to `crypto.getRandomValues` elsewhere. Browsers only provide `crypto.randomUUID` on secure pages, so code that called it failed with "crypto.randomUUID is not a function" on a dashboard opened over plain HTTP at an address other than `localhost`. The SDKs and dashboards now use this function.
+
+## 6.0.2
+
+### Patch Changes
+
+- [#15040](https://github.com/spree/spree/pull/15040) [`7416961`](https://github.com/spree/spree/commit/7416961c06767a0ab558b0f244b41eaaef831c3b) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The staff settings page shows each member's status (active, locked or deactivated) and when they were last active. A new "View details" action opens a sheet with when they joined, who invited them and their signed-in sessions, each with its browser, IP address and last use. The admin SDK types gain `status`, `last_active_at`, the `inviter` and `sessions` expands, and the `Session` and `AdminUserStatus` types; `@spree/dashboard-ui` adds `BrowserIcon`.
+
+## 6.0.1
+
+### Patch Changes
+
+- [#15001](https://github.com/spree/spree/pull/15001) [`21dc28f`](https://github.com/spree/spree/commit/21dc28f68623bcd141a349b597b8b872fd57b9dd) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Typed the store's regional settings. The store's `default_country_code` is now `CountryCode`, its `admin_locale` is `LocaleCode` (send `null` to clear it), and its `timezone` — also on the seller profile — is the new `TimeZone` type, which suggests common IANA time zones while accepting any other. `TIME_ZONES` in `@spree/core` lists the suggested zones.
+
 ## 6.0.0
 
 ### Minor Changes

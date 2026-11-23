@@ -1,6 +1,13 @@
 import { expect, type Page, test } from '@playwright/test'
 import { FIXTURE_BULK_CHANNEL_NAME, gotoIndex, login } from './helpers'
-import { PRODUCTS_PATH, publishingCard } from './products-helpers'
+import {
+  card,
+  createProduct,
+  fillGridCell,
+  PRODUCTS_PATH,
+  pricesCard,
+  publishingCard,
+} from './products-helpers'
 
 // Drive the New Product form just far enough to land on the edit page.
 // The point of this spec is the Publishing card, not the rest of the form.
@@ -182,5 +189,32 @@ test.describe('product publishing', () => {
     await expect(publishingCard(page).getByText(/^scheduled$/i)).toBeVisible({
       timeout: 15_000,
     })
+  })
+
+  test('warns that an active product with no price is hidden from the storefront', async ({
+    page,
+  }) => {
+    const creds = await login(page)
+    const productName = `E2E Publish No Price ${Date.now()}`
+
+    await createProduct(page, creds.store_id, productName)
+    const edit = publishingCard(page)
+    await expect(edit.getByText(/online store/i)).toBeVisible({ timeout: 15_000 })
+
+    // A draft is hidden anyway, so the price warning waits for Active. Other
+    // specs can add currencies to the shared store, so assert on USD alone.
+    const usdWarning = edit.getByText(/hidden from shoppers paying in .*\bUSD\b/i)
+    await expect(usdWarning).not.toBeVisible()
+    await card(page, /^Status$/)
+      .getByRole('combobox')
+      .click()
+    await page.getByRole('option', { name: /^active$/i }).click()
+    await expect(usdWarning).toBeVisible()
+
+    await fillGridCell(
+      pricesCard(page).getByRole('textbox', { name: /^price for default$/i }),
+      '12.50',
+    )
+    await expect(usdWarning).not.toBeVisible()
   })
 })

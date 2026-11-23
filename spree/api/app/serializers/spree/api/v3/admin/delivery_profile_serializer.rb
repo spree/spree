@@ -8,7 +8,6 @@ module Spree
                    digital: :boolean,
                    offers_pickup: :boolean, offers_shipping: :boolean,
                    stock_location_ids: [:string, multi: true],
-                   origin_groups: ['Array<{ id: string; name: string | null; position: number | null; stock_location_ids: Array<string> }>'],
                    products_count: :number, delivery_methods_count: :number,
                    delivery_zones_count: :number
 
@@ -36,6 +35,8 @@ module Spree
 
           # Origin groups partition the profile's fulfillment origins; zones
           # and methods reference one. A null name renders as "All locations".
+          typelize({ id: :string, name: [:string, { nullable: true }], position: [:number, { nullable: true }],
+                    stock_location_ids: 'string[]' }, multi: true)
           attribute :origin_groups do |record|
             record.delivery_origin_groups.map do |group|
               {

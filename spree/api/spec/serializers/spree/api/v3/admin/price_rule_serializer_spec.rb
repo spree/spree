@@ -59,9 +59,16 @@ RSpec.describe Spree::Api::V3::Admin::PriceRuleSerializer do
       r
     end
 
-    it 'embeds the related customers under the `customers` key' do
-      ids = payload['customers'].map { |c| c['id'] }
-      expect(ids).to contain_exactly(user.prefixed_id)
+    # The records ride along only for a caller who may read customers; the
+    # controller sets the param from that permission.
+    it 'embeds the related customers under the `customers` key for a caller who may read them' do
+      payload = described_class.new(rule, params: base_params.merge(customer_records: true)).to_h
+
+      expect(payload['customers'].map { |c| c['id'] }).to contain_exactly(user.prefixed_id)
+    end
+
+    it 'leaves the customer records out for everyone else' do
+      expect(payload).not_to have_key('customers')
     end
 
     it 'does not embed unrelated associations' do

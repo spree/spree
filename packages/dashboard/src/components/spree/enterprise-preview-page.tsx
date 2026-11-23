@@ -52,7 +52,7 @@ export function EnterprisePreviewPage({ preview }: { preview: EnterprisePreview 
           <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
             <Icon className="size-5" aria-hidden />
           </span>
-          <p className="max-w-prose text-sm text-muted-foreground">{t(`${base}.intro`)}</p>
+          <p className="max-w-prose text-base text-muted-foreground">{t(`${base}.intro`)}</p>
         </CardContent>
       </Card>
 
@@ -81,8 +81,8 @@ export function EnterprisePreviewPage({ preview }: { preview: EnterprisePreview 
                   {index + 1}
                 </span>
                 <span className="flex flex-col gap-1">
-                  <span className="text-sm font-medium">{t(`${base}.steps.${step}.title`)}</span>
-                  <span className="text-sm text-muted-foreground">
+                  <span className="text-base font-medium">{t(`${base}.steps.${step}.title`)}</span>
+                  <span className="text-base text-muted-foreground">
                     {t(`${base}.steps.${step}.description`)}
                   </span>
                 </span>
@@ -94,7 +94,7 @@ export function EnterprisePreviewPage({ preview }: { preview: EnterprisePreview 
 
       <Card>
         <CardContent className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <p className="max-w-prose text-sm text-muted-foreground">
+          <p className="max-w-prose text-base text-muted-foreground">
             {t('admin.enterprise.footer')}
           </p>
           {cta}

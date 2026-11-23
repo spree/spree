@@ -21,6 +21,7 @@ module Spree
       # tool from a caller who may import one kind of record but not another.
       permission nil
       mutating!
+      additive!
 
       param :resource, description: 'What the file holds: products, customers, purchase_orders',
                        required: true

@@ -563,6 +563,22 @@ describe Spree::Media, type: :model do
         asset.external_url = 'https://example.com/Example-Image-001.png'
         expect(asset.external_url).to eq('https://example.com/Example-Image-001.png')
       end
+
+      it 'sets the external URL on an unsaved media, which the job does before saving it' do
+        asset = build(:media)
+        asset.external_url = 'https://example.com/Example-Image-001.png'
+        asset.save!
+
+        expect(asset.reload.external_url).to eq('https://example.com/Example-Image-001.png')
+      end
+
+      # `has_many_inversing` is an app-level setting, so rely on the association itself rather
+      # than on it: a custom field built on an unsaved owner must know that owner.
+      it 'declares the inverse of custom_fields explicitly' do
+        reflection = described_class.reflect_on_association(:custom_fields)
+
+        expect(reflection.options[:inverse_of]).to eq(:resource)
+      end
     end
   end
 end

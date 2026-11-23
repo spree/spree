@@ -7,7 +7,7 @@ const client = createClient({
 
 // region:example
 const cart = await client.carts.discountCodes.apply('cart_abc123', 'SAVE10', {
-  token: '<token>',
+  spreeToken: '<cart-token>',
 })
 
 // endregion:example

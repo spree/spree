@@ -72,6 +72,11 @@ test.describe
     test('creates the admin account, sets up the store and signs the merchant in', async ({
       page,
     }) => {
+      // Browsers leave out crypto.randomUUID on plain-HTTP pages, such as a
+      // dashboard opened at a server's IP address. Setup must still work there.
+      await page.addInitScript(() => {
+        delete (Crypto.prototype as { randomUUID?: unknown }).randomUUID
+      })
       await page.goto(setupUrl)
       await fillSetupForm(page)
       await page.getByRole('button', { name: 'Complete setup' }).click()

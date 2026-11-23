@@ -6,6 +6,14 @@ module Spree
     let(:categories) { create_list(:category, 2) }
     let(:products) { create_list(:product, 3) }
 
+    def events_named(name)
+      published = []
+      Spree::Events.subscribe(name, async: false) { |event| published << event }
+      Spree::Events.activate!
+      yield
+      published
+    end
+
     describe '#call' do
       subject { service.call(categories: categories, products: products) }
 
@@ -46,6 +54,48 @@ module Spree
       it 'updates categories_count on products' do
         expect { subject }.to change { products.first.reload.categories_count }.from(0).to(categories.size)
           .and change { products.second.reload.categories_count }.from(0).to(categories.size)
+      end
+
+      context 'events', events: true do
+        before { Spree::Events.reset! }
+        after { Spree::Events.reset! }
+
+        it 'publishes product_category.created once per new membership' do
+          published = events_named('product_category.created') { subject }
+
+          expect(published.size).to eq(categories.size * products.size)
+        end
+
+        it 'identifies the membership each event is about' do
+          published = events_named('product_category.created') { subject }
+          memberships = Spree::ProductCategory.where(category_id: categories.map(&:id))
+
+          expect(published.map { |event| event.payload['id'] }).
+            to match_array(memberships.map(&:prefixed_id))
+        end
+
+        it 'says nothing about a membership that was already there' do
+          service.call(categories: categories, products: products)
+
+          published = events_named('product_category.created') do
+            service.call(categories: categories, products: [products.first])
+          end
+
+          expect(published).to be_empty
+        end
+
+        it 'has the counters settled by the time a subscriber sees the event' do
+          observed = []
+          Spree::Events.subscribe('product_category.created', async: false) do |_event|
+            observed << [categories.first.reload.products_count, products.first.reload.categories_count]
+          end
+          Spree::Events.activate!
+
+          subject
+
+          expect(observed.size).to eq(categories.size * products.size)
+          expect(observed).to all(eq([products.size, categories.size]))
+        end
       end
     end
   end

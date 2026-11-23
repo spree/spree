@@ -32,13 +32,13 @@ module Spree
            exchange exchange_line_item claim claim_line_item package_type policy tax_category tax_rate
            tax_identifier company company_membership company_invitation catalog catalog_price catalog_price_tier
            catalog_product price_list_product catalog_assignment catalog_quantity_rule catalog_product_term
-           catalog_order_minimum tax_exemption_certificate tax_exemption_reason admin_user actor seller_team_member product_submission
+           catalog_order_minimum tax_exemption_certificate tax_exemption_reason admin_user actor session seller_team_member product_submission
            seller seller_requirement seller_requirement_submission seller_requirement_status commission_rate
            commission_rule commission_line seller_transfer seller_payout seller_balance payment_split payment_capture_event address address_owner
            channel order_routing_rule product_publication market delivery_method delivery_method_service
            stock_location stock_reservation delivery_rate freight_summary freight_summary_line payment_method
            credit_card store_credit store_credit_event customer_group payment_source digital_asset digital_link
-           store setup_task update_status api_key oauth_application oauth_access_token oauth_consent_request oauth_redirect
+           store setup_task update_status diagnostics api_key oauth_application oauth_access_token oauth_consent_request oauth_redirect
            oauth_protected_resource allowed_origin webhook_endpoint webhook_event webhook_delivery invitation
            invitation_acceptance_link role permission export saved_report import import_row import_mapping promotion
            maintenance_task_run
@@ -48,7 +48,7 @@ module Spree
 
       SELLER_SERIALIZERS =
         %i[address country state profile policy team_member account invitation invitation_acceptance_link product product_type
-           delivery_profile delivery_method delivery_method_rule delivery_zone variant media stock_level order
+           option_type delivery_profile delivery_method delivery_method_rule delivery_zone variant media stock_level order
            order_line_item fulfillment fulfillment_item delivery delivery_rate shipping_label return
            return_line_item exchange exchange_line_item claim claim_line_item reason package_type stock_location
            requirement_custom_field tax_identifier requirement_status import import_row import_mapping
@@ -75,7 +75,7 @@ module Spree
       # legacy workflow keys in core, these forward instead of stashing: a
       # serializer renders the same model under a new class name, so an
       # override written against the old key is still the class the host app
-      # wants used. Removed in 6.1.
+      # wants used. Removed in 6.3.
       LEGACY_SERIALIZER_KEYS = {
         stock_item_serializer: :stock_level_serializer,
         admin_stock_item_serializer: :admin_stock_level_serializer,
@@ -85,17 +85,17 @@ module Spree
 
       LEGACY_SERIALIZER_KEYS.each do |legacy, current|
         define_method("#{legacy}=") do |value|
-          Spree::Deprecation.warn("Spree.api.#{legacy}= is deprecated and will be removed in Spree 6.1. Use #{current}= instead.")
+          Spree::Deprecation.warn("Spree.api.#{legacy}= is deprecated and will be removed in Spree 6.3. Use #{current}= instead.")
           send("#{current}=", value)
         end
 
         define_method(legacy) do
-          Spree::Deprecation.warn("Spree.api.#{legacy} is deprecated and will be removed in Spree 6.1. Use #{current} instead.")
+          Spree::Deprecation.warn("Spree.api.#{legacy} is deprecated and will be removed in Spree 6.3. Use #{current} instead.")
           send(current)
         end
 
         define_method("#{legacy}_class") do
-          Spree::Deprecation.warn("Spree.api.#{legacy}_class is deprecated and will be removed in Spree 6.1. Use #{current}_class instead.")
+          Spree::Deprecation.warn("Spree.api.#{legacy}_class is deprecated and will be removed in Spree 6.3. Use #{current}_class instead.")
           send("#{current}_class")
         end
       end

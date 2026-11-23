@@ -40,7 +40,7 @@ export function WebhookEndpointFormFields({
   return (
     <>
       {errors.root?.message && (
-        <p className="text-sm text-destructive" role="alert">
+        <p className="text-base text-destructive" role="alert">
           {errors.root.message}
         </p>
       )}
@@ -179,7 +179,7 @@ function EventPicker({ value, onChange }: { value: string[]; onChange: (next: st
                   <label
                     key={event.name}
                     htmlFor={checkboxId}
-                    className="flex cursor-pointer items-center gap-2 rounded p-1 text-sm hover:bg-accent"
+                    className="flex cursor-pointer items-center gap-2 rounded p-1 text-base hover:bg-accent"
                   >
                     <Checkbox
                       id={checkboxId}

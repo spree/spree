@@ -1,16 +1,23 @@
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { expect, type Page, test } from '@playwright/test'
+import { subtractMoney } from '@spree/core'
 import {
+  addNewOrderItem,
   adminRequest,
   createPlacedOrder,
+  deleteSeededRecords,
+  type E2ELoginSession,
   FIXTURE_BOGUS_GATEWAY,
   FIXTURE_BOGUS_ORDER_EMAIL,
   FIXTURE_BOGUS_TRANSACTION_ID,
   FIXTURE_PROMO_CUSTOMER_EMAIL,
   FIXTURE_PROMO_PRODUCT,
+  FIXTURE_PROMO_SKU,
   fillAddressForm,
   login,
+  section,
+  seedRecord,
 } from './helpers'
 
 // A PNG is in the PO document allowlist, so the shared fixture works and no
@@ -46,6 +53,31 @@ test.describe('orders', () => {
     await expect(page).toHaveURL(new RegExp(`/${creds.store_id}/orders/new$`), { timeout: 15_000 })
     await expect(page.getByRole('heading', { name: CTA })).toBeVisible()
   })
+
+  test('filters by a date range picked on the calendar', async ({ page }) => {
+    const creds = await login(page)
+    await gotoOrdersIndex(page, ORDERS_PATH(creds.store_id))
+    const trigger = page.getByRole('button', { name: /^date/i })
+
+    // A preset applies at once and shows as the trigger's value.
+    await trigger.click()
+    await page.getByRole('button', { name: /^last 30 days$/i }).click()
+    await expect(trigger).toContainText(/last 30 days/i)
+
+    // A range picked last month leaves out every order placed by this run.
+    await trigger.click()
+    const lastMonth = page.getByRole('grid').first()
+    await lastMonth.getByRole('button', { name: /\b10(st|nd|rd|th)\b/ }).click()
+    // The second day completes the range and applies it, like a preset.
+    await lastMonth.getByRole('button', { name: /\b12(st|nd|rd|th)\b/ }).click()
+    await expect(trigger).toContainText(/10 – \w+ 12/)
+    await expect(page.getByText(/no orders found/i)).toBeVisible({ timeout: 15_000 })
+
+    await trigger.click()
+    await page.getByRole('button', { name: /^any date$/i }).click()
+    await expect(trigger).toContainText(/any date/i)
+    await expect(page.getByText(/no orders found/i)).toBeHidden({ timeout: 15_000 })
+  })
 })
 
 test.describe('draft orders', () => {
@@ -73,16 +105,33 @@ async function fillNewOrderForm(page: Page, email: string) {
   // service needs (no addresses required for a draft).
   await page.locator('#order-email').fill(email)
 
-  // Variant typeahead is a combobox: results are `role="option"`, so they are
-  // reachable by keyboard as well as click.
-  await page.getByPlaceholder(/search variant/i).fill(FIXTURE_PROMO_PRODUCT)
-  await page
-    .getByRole('option', { name: new RegExp(FIXTURE_PROMO_PRODUCT, 'i') })
-    .first()
-    .click()
+  await addNewOrderItem(page, FIXTURE_PROMO_PRODUCT)
 }
 
 test.describe('new order', () => {
+  test('lists items like the edit screen, from an empty state', async ({ page }) => {
+    const creds = await login(page)
+    await page.goto(NEW_ORDER_PATH(creds.store_id))
+    await expect(page.getByRole('heading', { name: CTA })).toBeVisible({ timeout: 15_000 })
+
+    await expect(page.getByText(/^no items yet$/i)).toBeVisible()
+
+    await addNewOrderItem(page, FIXTURE_PROMO_PRODUCT)
+
+    const quantity = page.getByRole('spinbutton', {
+      name: new RegExp(`^quantity of ${FIXTURE_PROMO_PRODUCT}`, 'i'),
+    })
+    await expect(quantity).toHaveValue('1')
+    // Picking the same product again adds to its row rather than a second one.
+    await addNewOrderItem(page, FIXTURE_PROMO_PRODUCT)
+    await expect(quantity).toHaveValue('2')
+
+    await page
+      .getByRole('button', { name: new RegExp(`^remove ${FIXTURE_PROMO_PRODUCT}`, 'i') })
+      .click()
+    await expect(page.getByText(/^no items yet$/i)).toBeVisible()
+  })
+
   test('creates a draft order with email + variant and lands on the detail page', async ({
     page,
   }) => {
@@ -123,7 +172,8 @@ test.describe('new order', () => {
     await expect(page.getByRole('heading', { name: CTA })).toBeVisible({ timeout: 15_000 })
 
     await fillNewOrderForm(page, `e2e-context-${Date.now()}@example.com`)
-    const itemRow = page.getByRole('cell', { name: new RegExp(FIXTURE_PROMO_PRODUCT, 'i') })
+    // Anchored: the quantity and remove cells name the product too.
+    const itemRow = page.getByRole('cell', { name: new RegExp(`^${FIXTURE_PROMO_PRODUCT}`, 'i') })
     await expect(itemRow).toBeVisible()
 
     await page.locator('#order-market').click()
@@ -343,6 +393,156 @@ test.describe('order editing', () => {
     await expect(page.getByText(/^negotiated$/i)).toBeVisible()
     await expect(page.getByRole('button', { name: /reset .* to catalog price/i })).toBeVisible()
   })
+
+  // The save replaces the lines when it finishes, so a variant picked during
+  // it would be dropped without a word: Mod+S does nothing while the product
+  // picker is open.
+  test('does not save from the keyboard while the product picker is open', async ({ page }) => {
+    const creds = await login(page)
+    await page.goto(NEW_ORDER_PATH(creds.store_id))
+    await expect(page.getByRole('heading', { name: CTA })).toBeVisible({ timeout: 15_000 })
+
+    await fillNewOrderForm(page, `e2e-order-picker-${Date.now()}@example.com`)
+    await page.locator('button[type="submit"]').click()
+    await expect(page).toHaveURL(new RegExp(`/${creds.store_id}/orders/or_[^/]+$`), {
+      timeout: 15_000,
+    })
+
+    const editUrl = `${page.url()}/edit`
+    await page.goto(editUrl)
+    await expect(page.getByRole('heading', { name: /edit order/i })).toBeVisible({
+      timeout: 15_000,
+    })
+
+    // A dirty form is what the shortcut would otherwise save.
+    const quantity = page.locator('input[type="number"]').first()
+    await expect(quantity).toBeVisible({ timeout: 15_000 })
+    await quantity.fill('2')
+
+    await page.getByRole('button', { name: /^add product$/i }).click()
+    const picker = page.getByRole('dialog', { name: /add line item/i })
+    await expect(picker).toBeVisible()
+
+    const updates: string[] = []
+    page.on('request', (request) => {
+      if (request.method() === 'PATCH' && /\/orders\/or_[^/]+$/.test(request.url())) {
+        updates.push(request.url())
+      }
+    })
+    await page.keyboard.press('ControlOrMeta+s')
+
+    // Give a save that should not happen the time it would need to be sent.
+    await page.waitForTimeout(1_000)
+    expect(updates).toEqual([])
+    await expect(picker).toBeVisible()
+    await expect(page).toHaveURL(editUrl)
+  })
+})
+
+// A draft order of 2 × 24.50 and 1 × 18.00 (67.00), on products of its own
+// so the names are unique in the order view.
+async function seedTwoLineDraftOrder(page: Page, session: E2ELoginSession) {
+  const locations = await adminRequest<{ data: { id: string }[] }>(
+    page,
+    session,
+    'get',
+    '/stock_locations',
+  )
+  // A draft order only takes products its channel sells.
+  const channels = await adminRequest<{ data: { id: string; default: boolean }[] }>(
+    page,
+    session,
+    'get',
+    '/channels',
+  )
+  const channelId = channels.data.find((channel) => channel.default)?.id
+  const stamp = Date.now()
+  const lines = [
+    { name: `Kept line ${stamp}`, sku: `E2E-KEPT-${stamp}`, amount: '24.50', quantity: 2 },
+    { name: `Removed line ${stamp}`, sku: `E2E-REMOVED-${stamp}`, amount: '18.00', quantity: 1 },
+  ]
+
+  const items = []
+  for (const line of lines) {
+    await seedRecord(page, session, '/products', {
+      name: line.name,
+      status: 'active',
+      prices: [{ amount: line.amount, currency: 'USD' }],
+      product_publications: [{ channel_id: channelId }],
+      variants: [
+        {
+          options: [],
+          sku: line.sku,
+          track_inventory: true,
+          stock_levels: [{ stock_location_id: locations.data[0].id, count_on_hand: 10 }],
+        },
+      ],
+    })
+    const variants = await adminRequest<{ data: { id: string }[] }>(
+      page,
+      session,
+      'get',
+      `/variants?q[sku_eq]=${line.sku}`,
+    )
+    items.push({ variant_id: variants.data[0].id, quantity: line.quantity })
+  }
+
+  const order = await adminRequest<{ id: string }>(page, session, 'post', '/orders', {
+    email: `e2e-remove-line-${stamp}@example.com`,
+    items,
+  })
+  return { orderId: order.id, kept: lines[0].name, removed: lines[1].name }
+}
+
+// The order the merchant opens must add up to the lines that are left.
+async function expectOnlyKeptLine(page: Page, kept: string, removed: string) {
+  await expect(page.getByText(kept)).toBeVisible({ timeout: 15_000 })
+  await expect(page.getByText(removed)).toHaveCount(0)
+
+  const summary = section(page, /^summary$/i)
+  await expect(summary.getByText(/^subtotal$/i).locator('..')).toContainText('$49.00')
+  await expect(summary.getByText(/^total$/i).locator('..')).toContainText('$49.00')
+}
+
+test.describe('removing a draft order line', () => {
+  test.afterEach(async ({ page }) => deleteSeededRecords(page))
+
+  test('from the edit screen leaves the totals of the lines that are left', async ({ page }) => {
+    const session = await login(page)
+    const { orderId, kept, removed } = await seedTwoLineDraftOrder(page, session)
+
+    const orderUrl = `/${session.store_id}/orders/${orderId}`
+    await page.goto(`${orderUrl}/edit`)
+    await expect(page.getByRole('heading', { name: /edit order/i })).toBeVisible({
+      timeout: 15_000,
+    })
+
+    await page.getByRole('button', { name: `Remove ${removed}` }).click()
+    await page.getByRole('button', { name: /^save$/i }).click()
+    await expect(page).toHaveURL(new RegExp(`${orderUrl}$`), { timeout: 15_000 })
+
+    await expectOnlyKeptLine(page, kept, removed)
+  })
+
+  // Connected agents and API clients remove a line on its own, through the
+  // item endpoint the dashboard does not use.
+  test('through the Admin API leaves the totals of the lines that are left', async ({ page }) => {
+    const session = await login(page)
+    const { orderId, kept, removed } = await seedTwoLineDraftOrder(page, session)
+
+    const items = await adminRequest<{ data: { id: string; name: string }[] }>(
+      page,
+      session,
+      'get',
+      `/orders/${orderId}/items`,
+    )
+    const line = items.data.find((item) => item.name === removed)
+    expect(line, 'the 18.00 line').toBeTruthy()
+    await adminRequest(page, session, 'delete', `/orders/${orderId}/items/${line?.id}`)
+
+    await page.goto(`/${session.store_id}/orders/${orderId}`)
+    await expectOnlyKeptLine(page, kept, removed)
+  })
 })
 
 test.describe('order addresses', () => {
@@ -424,12 +624,48 @@ test.describe('order customer', () => {
 
     await page.goto(`${ORDERS_PATH(creds.store_id)}/${order.id}`)
     await page.getByRole('button', { name: /edit customer/i }).click()
-    const dialog = page.getByRole('dialog', { name: /edit customer/i })
-    await dialog.getByLabel(/email/i).fill(newEmail)
-    await dialog.getByRole('button', { name: /^save$/i }).click()
+    const editor = page.getByRole('form', { name: /edit customer/i })
+    await editor.getByLabel(/email/i).fill(newEmail)
+    await editor.getByRole('button', { name: /^save$/i }).click()
 
-    await expect(dialog).toBeHidden({ timeout: 15_000 })
+    await expect(editor).toBeHidden({ timeout: 15_000 })
     await expect(page.getByText(newEmail)).toBeVisible({ timeout: 15_000 })
+  })
+
+  test('lists customers by name and adds a new one from the picker', async ({ page }) => {
+    const creds = await login(page)
+    const order = await adminRequest<{ id: string }>(page, creds, 'post', '/orders', {
+      email: `e2e-guest-${Date.now()}@example.com`,
+    })
+    const stamp = Date.now()
+    const email = `e2e-new-customer-${stamp}@example.com`
+
+    await page.goto(`${ORDERS_PATH(creds.store_id)}/${order.id}`)
+    await page.getByRole('button', { name: /edit customer/i }).click()
+    const editor = page.getByRole('form', { name: /edit customer/i })
+    const picker = editor.locator('#order-customer-picker')
+
+    // Existing customers read by name, with the email under it.
+    await picker.fill('Promo')
+    const promo = page.getByRole('option').filter({ hasText: 'Promo Customer' })
+    await expect(promo).toBeVisible({ timeout: 15_000 })
+    await expect(promo).toContainText(FIXTURE_PROMO_CUSTOMER_EMAIL)
+
+    // One not on file is created from the picker and chosen straight away.
+    await page.getByRole('button', { name: /^add new customer$/i }).click()
+    const sheet = page.getByRole('dialog', { name: /new customer/i })
+    await sheet.getByLabel(/^email$/i).fill(email)
+    await sheet.getByLabel(/^first name$/i).fill('Ada')
+    await sheet.getByLabel(/^last name$/i).fill(`Picker ${stamp}`)
+    await sheet.getByRole('button', { name: /^create customer$/i }).click()
+    await expect(sheet).toBeHidden({ timeout: 15_000 })
+    await expect(picker).toHaveValue(`Ada Picker ${stamp}`)
+
+    await editor.getByRole('button', { name: /^save$/i }).click()
+    await expect(editor).toBeHidden({ timeout: 15_000 })
+    await expect(page.getByRole('link', { name: `Ada Picker ${stamp}`, exact: true })).toBeVisible({
+      timeout: 15_000,
+    })
   })
 
   test('detaches the customer, leaving a guest order', async ({ page }) => {
@@ -449,12 +685,12 @@ test.describe('order customer', () => {
     await expect(customerLink).toBeVisible({ timeout: 15_000 })
 
     await page.getByRole('button', { name: /edit customer/i }).click()
-    const dialog = page.getByRole('dialog', { name: /edit customer/i })
-    await dialog.locator('[data-slot="combobox-clear"]').click()
-    await expect(dialog.getByLabel(/email/i)).toHaveValue(FIXTURE_PROMO_CUSTOMER_EMAIL)
-    await dialog.getByRole('button', { name: /^save$/i }).click()
+    const editor = page.getByRole('form', { name: /edit customer/i })
+    await editor.locator('[data-slot="combobox-clear"]').click()
+    await expect(editor.getByLabel(/email/i)).toHaveValue(FIXTURE_PROMO_CUSTOMER_EMAIL)
+    await editor.getByRole('button', { name: /^save$/i }).click()
 
-    await expect(dialog).toBeHidden({ timeout: 15_000 })
+    await expect(editor).toBeHidden({ timeout: 15_000 })
     await expect(customerLink).toBeHidden({ timeout: 15_000 })
     await expect(page.getByText(FIXTURE_PROMO_CUSTOMER_EMAIL)).toBeVisible()
   })
@@ -468,13 +704,13 @@ test.describe('order customer', () => {
     await expect(customerLink).toBeVisible({ timeout: 15_000 })
 
     await page.getByRole('button', { name: /edit customer/i }).click()
-    const dialog = page.getByRole('dialog', { name: /edit customer/i })
-    await dialog.locator('[data-slot="combobox-clear"]').click()
-    await dialog.getByRole('button', { name: /^save$/i }).click()
+    const editor = page.getByRole('form', { name: /edit customer/i })
+    await editor.locator('[data-slot="combobox-clear"]').click()
+    await editor.getByRole('button', { name: /^save$/i }).click()
 
     await page.getByRole('button', { name: /^remove customer$/i }).click()
 
-    await expect(dialog).toBeHidden({ timeout: 15_000 })
+    await expect(editor).toBeHidden({ timeout: 15_000 })
     await expect(customerLink).toBeHidden({ timeout: 15_000 })
   })
 })
@@ -575,5 +811,219 @@ test.describe('order payments', () => {
     await expect(dialog.getByText('Did not pass')).toHaveCount(2)
     await expect(dialog.getByText('CVV does not match')).toBeVisible()
     await expect(dialog.getByRole('row').filter({ hasText: '€10.00' })).toBeVisible()
+  })
+
+  test('offers capturing an authorized payment from the order header', async ({ page }) => {
+    const creds = await login(page)
+    const orders = await adminRequest<{ data: { id: string }[] }>(
+      page,
+      { ...creds, store_id: creds.comma_store_id },
+      'get',
+      `/orders?q[email_eq]=${encodeURIComponent(FIXTURE_BOGUS_ORDER_EMAIL)}`,
+    )
+    const orderId = orders.data[0].id
+
+    // Capturing for real would change the fixture other specs read, so the
+    // order payload reports one payment still waiting to be captured.
+    await page.route(`**/api/v3/admin/orders/${orderId}**`, async (route) => {
+      const url = new URL(route.request().url())
+      if (route.request().method() !== 'GET' || !url.pathname.endsWith(`/orders/${orderId}`)) {
+        return route.fallback()
+      }
+      const response = await route.fetch()
+      const order = await response.json()
+      order.payments = order.payments
+        .slice(0, 1)
+        .map((payment: object) => ({ ...payment, status: 'pending', can_capture: true }))
+      await route.fulfill({ response, json: order })
+    })
+
+    await page.goto(`/${creds.comma_store_id}/orders/${orderId}`)
+
+    // The payment row names the hold the way the order's status does.
+    const row = page.locator('tr').filter({ hasText: FIXTURE_BOGUS_GATEWAY })
+    await expect(row.getByText('Authorized')).toBeVisible({ timeout: 15_000 })
+
+    await page.getByRole('button', { name: /^capture .*10\.00/i }).click()
+    const dialog = page.getByRole('alertdialog').or(page.getByRole('dialog'))
+    await expect(dialog.getByText('Capture this payment?')).toBeVisible()
+    await page.keyboard.press('Escape')
+    await expect(dialog).toBeHidden()
+  })
+
+  test('offers Void on a payment the gateway can void', async ({ page }) => {
+    const creds = await login(page)
+    const orders = await adminRequest<{ data: { id: string }[] }>(
+      page,
+      { ...creds, store_id: creds.comma_store_id },
+      'get',
+      `/orders?q[email_eq]=${encodeURIComponent(FIXTURE_BOGUS_ORDER_EMAIL)}`,
+    )
+    await page.goto(`/${creds.comma_store_id}/orders/${orders.data[0].id}`)
+
+    await page
+      .locator('tr')
+      .filter({ hasText: FIXTURE_BOGUS_GATEWAY })
+      .getByRole('button', { name: /^actions$/i })
+      .click({ timeout: 15_000 })
+
+    await expect(page.getByRole('menuitem', { name: 'Void' })).toBeVisible()
+  })
+
+  test('hides Void when the gateway cannot void the payment', async ({ page }) => {
+    const creds = await login(page)
+    const orders = await adminRequest<{ data: { id: string }[] }>(
+      page,
+      { ...creds, store_id: creds.comma_store_id },
+      'get',
+      `/orders?q[email_eq]=${encodeURIComponent(FIXTURE_BOGUS_ORDER_EMAIL)}`,
+    )
+    const orderId = orders.data[0].id
+
+    // The fixture gateway can void, so the order payload reports a gateway
+    // that cannot (as Stripe does for a captured payment).
+    await page.route(`**/api/v3/admin/orders/${orderId}**`, async (route) => {
+      const url = new URL(route.request().url())
+      if (route.request().method() !== 'GET' || !url.pathname.endsWith(`/orders/${orderId}`)) {
+        return route.fallback()
+      }
+      const response = await route.fetch()
+      const order = await response.json()
+      order.payments = order.payments.map((payment: object) => ({ ...payment, can_void: false }))
+      await route.fulfill({ response, json: order })
+    })
+
+    await page.goto(`/${creds.comma_store_id}/orders/${orderId}`)
+
+    await page
+      .locator('tr')
+      .filter({ hasText: FIXTURE_BOGUS_GATEWAY })
+      .getByRole('button', { name: /^actions$/i })
+      .click({ timeout: 15_000 })
+
+    await expect(page.getByRole('menuitem', { name: 'View details' })).toBeVisible()
+    await expect(page.getByRole('menuitem', { name: 'Void' })).toHaveCount(0)
+  })
+})
+
+test.describe('recording several payments on a draft order', () => {
+  test.afterEach(async ({ page }) => deleteSeededRecords(page))
+
+  test('suggests what is left to pay and keeps the earlier payment', async ({ page }) => {
+    const creds = await login(page)
+    const methodName = `E2E Bank transfer ${Date.now()}`
+    await seedRecord(page, creds, '/payment_methods', {
+      type: 'check',
+      name: methodName,
+      active: true,
+    })
+    const variants = await adminRequest<{ data: { id: string }[] }>(
+      page,
+      creds,
+      'get',
+      `/variants?q[sku_eq]=${FIXTURE_PROMO_SKU}`,
+    )
+    const order = await adminRequest<{ id: string; total: string; currency: string }>(
+      page,
+      creds,
+      'post',
+      '/orders',
+      {
+        email: `e2e-two-payments-${Date.now()}@example.com`,
+        items: [{ variant_id: variants.data[0].id, quantity: 1 }],
+      },
+    )
+
+    await page.goto(`/${creds.store_id}/orders/${order.id}`)
+    const payments = section(page, /^payments/i)
+
+    const addPayment = async (amount?: string) => {
+      await payments.getByRole('button', { name: /^add$/i }).click({ timeout: 15_000 })
+      const dialog = page.getByRole('dialog')
+      await dialog.locator('#pay-method').click()
+      await page.getByRole('option', { name: methodName }).click()
+      if (amount) await dialog.locator('#pay-amount').fill(amount)
+      return dialog
+    }
+
+    let dialog = await addPayment('5')
+    await dialog.getByRole('button', { name: /^add$/i }).click()
+    await expect(dialog).toBeHidden()
+    await expect(payments.locator('tr').filter({ hasText: methodName })).toHaveCount(1)
+
+    // The second payment is offered what the first leaves unpaid, and
+    // recording it leaves the first one live.
+    dialog = await addPayment()
+    await expect(dialog.locator('#pay-amount')).toHaveValue(
+      subtractMoney(order.total, '5', order.currency),
+    )
+    await dialog.getByRole('button', { name: /^add$/i }).click()
+    await expect(dialog).toBeHidden()
+
+    await expect(payments.locator('tr').filter({ hasText: methodName })).toHaveCount(2)
+    await expect(payments.getByText(/^invalid$/i)).toHaveCount(0)
+  })
+
+  test('captures what is still owed after the order total dropped below the payment', async ({
+    page,
+  }) => {
+    const creds = await login(page)
+    const methodName = `E2E Bank transfer ${Date.now()}`
+    const method = await seedRecord(page, creds, '/payment_methods', {
+      type: 'check',
+      name: methodName,
+      active: true,
+    })
+    const variants = await adminRequest<{ data: { id: string }[] }>(
+      page,
+      creds,
+      'get',
+      `/variants?q[sku_eq]=${FIXTURE_PROMO_SKU}`,
+    )
+    const order = await adminRequest<{ id: string; total: string; currency: string }>(
+      page,
+      creds,
+      'post',
+      '/orders',
+      {
+        email: `e2e-shrunk-order-${Date.now()}@example.com`,
+        items: [{ variant_id: variants.data[0].id, quantity: 2 }],
+      },
+    )
+    // Paid for both units, then one is taken off the order.
+    await adminRequest(page, creds, 'post', `/orders/${order.id}/payments`, {
+      payment_method_id: method.id,
+    })
+    const items = await adminRequest<{ data: { id: string }[] }>(
+      page,
+      creds,
+      'get',
+      `/orders/${order.id}/items`,
+    )
+    await adminRequest(page, creds, 'patch', `/orders/${order.id}/items/${items.data[0].id}`, {
+      quantity: 1,
+    })
+    const shrunk = await adminRequest<{ total: string }>(page, creds, 'get', `/orders/${order.id}`)
+
+    await page.goto(`/${creds.store_id}/orders/${order.id}`)
+    const payments = section(page, /^payments/i)
+    const rows = payments.locator('tr').filter({ hasText: methodName })
+    await rows
+      .first()
+      .getByRole('button', { name: /^actions$/i })
+      .click({ timeout: 15_000 })
+    await page.getByRole('menuitem', { name: /^capture$/i }).click()
+    await page
+      .getByRole('alertdialog')
+      .or(page.getByRole('dialog'))
+      .getByRole('button', { name: /^capture$/i })
+      .click()
+
+    // The capture takes the new total and releases the rest of the payment.
+    await expect(rows).toHaveCount(2, { timeout: 15_000 })
+    const captured = rows.filter({ hasText: /completed/i })
+    await expect(captured).toHaveCount(1)
+    await expect(captured).toContainText(shrunk.total.replace(/\.?0+$/, ''))
+    await expect(rows.filter({ hasText: /^.*void/i })).toHaveCount(1)
   })
 })

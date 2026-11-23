@@ -909,7 +909,7 @@ describe Spree::Fulfillment, type: :model do
     end
   end
 
-  # Legacy writer — removed in 6.1. Host code assigning tracking the old way
+  # Legacy writer — removed in 6.3. Host code assigning tracking the old way
   # still lands it where every reader looks.
   describe '#tracking= (deprecated)' do
     before { allow(Spree::Deprecation).to receive(:warn) }
@@ -1016,7 +1016,7 @@ describe Spree::Fulfillment, type: :model do
       expect(subject).not_to include(*fulfilled_shipments)
     end
 
-    # ready_or_pending survives one release as an alias, since the two statuses
+    # ready_or_pending survives until 6.3 as an alias, since the two statuses
     # it named both became unfulfilled.
     it 'is what the deprecated ready_or_pending scope returns' do
       expect(described_class.ready_or_pending).to match_array(subject)

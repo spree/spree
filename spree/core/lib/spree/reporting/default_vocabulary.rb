@@ -84,13 +84,18 @@ module Spree
       # off: a subquery over the line gives both rows the combined figure, and
       # the breakdown then adds up to double what the store discounted.
       #
-      # The grouped query is the only one that carries the join (Decision 13),
-      # so the dimensionless total uses the subquery form below instead.
+      # Only a query grouped by a promotion dimension carries the join
+      # (Decision 13), so the dimensionless total and breakdowns by any other
+      # dimension use the subquery form below instead (see grouped_joins).
       PROMOTION_DISCOUNTS_JOINED = 'SUM(-COALESCE(%{discounts}.amount, 0))'.freeze
 
+      # Unaliased so a promotion or coupon filter (%{dimension_filters}, which
+      # names %{discounts}.promotion_id) narrows these rows: filtered to one
+      # promotion, a line carrying two must count only that promotion's money.
       PROMOTION_DISCOUNTS_SUBQUERY = <<~SQL.squish.freeze
-        SUM(COALESCE((SELECT -SUM(d.amount) FROM %{discounts} d
-                      WHERE d.line_item_id = %{line_items}.id AND d.kind = 'promotion'), 0))
+        SUM(COALESCE((SELECT -SUM(%{discounts}.amount) FROM %{discounts}
+                      WHERE %{discounts}.line_item_id = %{line_items}.id AND %{discounts}.kind = 'promotion'
+                      %{dimension_filters}), 0))
       SQL
 
       # Checkouts that used a promotion. Counted in checkouts rather than
@@ -406,6 +411,7 @@ module Spree
 
           metric :promotion_discounts, sql: PROMOTION_DISCOUNTS_SUBQUERY,
                                        grouped_sql: PROMOTION_DISCOUNTS_JOINED,
+                                       grouped_joins: [:promotion_discounts],
                                        base: :line_items, format: :money,
                                        subject: -> { Spree::Promotion }, key_scope: 'read_promotions'
           # Counted in checkouts, not orders: a basket spanning several sellers
@@ -429,13 +435,21 @@ module Spree
           metric :orders_lifetime, sql: LIFETIME_ORDERS_SUBQUERY, base: :orders, format: :integer,
                                    requires_grouping: :customer,
                                    subject: -> { Spree.customer_class }, key_scope: 'read_customers'
+        end
+        install_dimensions(registry)
+        install_axes(registry)
+        install_counters(registry)
+      end
 
+      # Dimensions of the orders and line items bases.
+      def self.install_dimensions(registry)
+        registry.instance_eval do
           dimension :completed_at, base: :orders, column: :completed_at, type: :time,
                     grains: %i[hour day week month]
           dimension :payment_status, base: :orders, column: :payment_status,
                     values: -> { Spree::Order::PAYMENT_STATUSES }
           # The rollup values Orders::UpdateStatuses writes today; the model
-          # constant still carries the legacy machine states until 6.1.
+          # constant still carries the legacy machine states until 6.3.
           dimension :fulfillment_status, base: :orders, column: :fulfillment_status,
                     values: -> { %w[backorder canceled partial unfulfilled fulfilled delivered] }
 
@@ -555,7 +569,12 @@ module Spree
                         }]
                       end
                     }
+        end
+      end
 
+      # Dimensions of the carts, promotions, payments and stock bases.
+      def self.install_axes(registry)
+        registry.instance_eval do
           # ---- cart axes ----
 
           dimension :started_at, base: :carts, column: :created_at, type: :time,
@@ -650,7 +669,11 @@ module Spree
                         [location.id, { id: location.prefixed_id, label: location.name, meta: {} }]
                       end
                     }
+        end
+      end
 
+      def self.install_counters(registry)
+        registry.instance_eval do
           # ---- counters ----
           #
           # What needs attention right now. Order counters honour the channel
@@ -697,19 +720,22 @@ module Spree
                   link: { resource: 'claims',
                           filters: [{ field: 'status', operator: 'in', value: OPEN_CLAIM_STATUSES.join(',') }] }
 
+          # Variants, not stock levels: a SKU stocked in one warehouse and
+          # absent from another is not out of stock, and counting one row per
+          # location would report every such pair as a problem.
           counter :low_stock_items,
                   subject: -> { Spree::StockLevel }, key_scope: 'read_stock',
-                  count: lambda { |store, channel:|
-                    STORE_STOCK.call(store).low_stock(store.preferred_low_stock_threshold).count
+                  count: lambda { |store, **|
+                    STORE_STOCK.call(store).low_stock_overall(store.preferred_low_stock_threshold).distinct.count(:variant_id)
                   },
                   link: { resource: 'inventory',
-                          filters: [{ field: 'stock_status', operator: 'in', value: 'low_stock' }] }
+                          filters: [{ field: 'stock_status', operator: 'in', value: 'low_stock_overall' }] }
 
           counter :out_of_stock_items,
                   subject: -> { Spree::StockLevel }, key_scope: 'read_stock',
-                  count: ->(store, channel:) { STORE_STOCK.call(store).out_of_stock.count },
+                  count: ->(store, **) { STORE_STOCK.call(store).out_of_stock_overall.distinct.count(:variant_id) },
                   link: { resource: 'inventory',
-                          filters: [{ field: 'stock_status', operator: 'in', value: 'out_of_stock' }] }
+                          filters: [{ field: 'stock_status', operator: 'in', value: 'out_of_stock_overall' }] }
         end
       end
     end

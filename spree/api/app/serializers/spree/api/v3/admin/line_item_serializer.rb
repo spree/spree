@@ -28,7 +28,8 @@ module Spree
                    price_list_id: [:string, nullable: true],
                    price_list_name: [:string, nullable: true],
                    catalog_id: [:string, nullable: true],
-                   catalog_name: [:string, nullable: true]
+                   catalog_name: [:string, nullable: true],
+                   product_id: [:string, nullable: true]
 
           # price_source is operational provenance — admin-only, never on the
           # store serializer.
@@ -65,6 +66,10 @@ module Spree
           money_attributes :cost_price, unit_price: true
 
           prefixed_id_attributes :tax_category
+
+          # So an order page can link each line to its product without
+          # expanding the variant.
+          prefixed_id_attributes :product
 
           # Override inherited associations to use admin serializers
           many :option_values, resource: proc { Spree.api.admin_option_value_serializer }

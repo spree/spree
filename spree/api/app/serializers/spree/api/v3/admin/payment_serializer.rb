@@ -16,14 +16,21 @@ module Spree
                    cvv_response_message: [:string, nullable: true],
                    gateway_dashboard_payment_url: [:string, nullable: true],
                    avs_risky: [:boolean, comment: 'Whether the card issuer reported that the billing address did not match.'],
-                   cvv_risky: [:boolean, comment: 'Whether the card issuer reported that the security code did not match.']
+                   cvv_risky: [:boolean, comment: 'Whether the card issuer reported that the security code did not match.'],
+                   can_void: [:boolean, comment: 'Whether the payment can be voided now, as decided by its payment method.'],
+                   can_capture: [:boolean, comment: 'Whether the payment can be captured now, as decided by its payment method.'],
+                   requested_action: [:string, nullable: true,
+                                               comment: 'What the payment provider is still answering for a `requested` payment: ' \
+                                                        '`capture` or `void`. Null otherwise.']
 
           attributes :metadata, :avs_response, :cvv_response_code, :cvv_response_message,
-                     :gateway_dashboard_payment_url,
+                     :gateway_dashboard_payment_url, :requested_action,
                      created_at: :iso8601, updated_at: :iso8601
 
           attribute(:avs_risky, &:is_avs_risky?)
           attribute(:cvv_risky, &:is_cvv_risky?)
+          attribute(:can_void, &:can_void?)
+          attribute(:can_capture, &:can_capture?)
 
           money_attributes :captured_amount
           typelize captured_amount: [:string, nullable: false]

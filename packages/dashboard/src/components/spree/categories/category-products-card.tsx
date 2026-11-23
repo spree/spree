@@ -1,4 +1,4 @@
-import { useParams } from '@tanstack/react-router'
+import { useStore } from '@spree/dashboard-core'
 import {
   listCategoryProductsPage,
   useCategoryProducts,
@@ -11,13 +11,12 @@ import { DeferredProductMembershipCard } from '../deferred-product-membership-ca
  * into the category form and persist on its Save; reordering writes through on
  * drop, since a category's position drives storefront display order.
  *
- * Only rendered for a persisted category (needs an id to list or mutate).
+ * On a new category (`categoryId` unset) the picks stage into the form and
+ * are added once the category is created; reordering waits until then.
  */
-export function CategoryProductsCard({ categoryId }: { categoryId: string }) {
-  const { storeId } = useParams({
-    from: '/_authenticated/$storeId/products/categories/$categoryId',
-  })
-  const reposition = useRepositionCategoryProduct(categoryId)
+export function CategoryProductsCard({ categoryId }: { categoryId?: string }) {
+  const { storeId } = useStore()
+  const reposition = useRepositionCategoryProduct(categoryId ?? '')
 
   return (
     <DeferredProductMembershipCard
@@ -25,7 +24,11 @@ export function CategoryProductsCard({ categoryId }: { categoryId: string }) {
       storeId={storeId}
       useProducts={useCategoryProducts}
       listMembersPage={listCategoryProductsPage}
-      onReorder={(productId, new_position) => reposition.mutateAsync({ productId, new_position })}
+      onReorder={
+        categoryId
+          ? (productId, new_position) => reposition.mutateAsync({ productId, new_position })
+          : undefined
+      }
       translationNamespace="admin.categories"
     />
   )

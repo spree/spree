@@ -110,6 +110,6 @@ bundle exec rspec
 
 ## Documentation
 
-- [Official Documentation](https://docs.spreecommerce.org)
+- [Official Documentation](https://spreecommerce.org/docs)
 - [API Reference](https://api.spreecommerce.org)
-- [Guides](https://docs.spreecommerce.org/developer)
+- [Guides](https://spreecommerce.org/docs/developer)

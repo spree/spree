@@ -21,7 +21,20 @@ import {
   primeBundleVolume,
   restartAppServices,
 } from '../docker.js'
-import { RELEASE_LINE, type ReleaseLine, releaseLineFor } from '../lib/release-line.js'
+import {
+  hasSpreeAgentSkills,
+  installAgentSkills,
+  installSkillsArgs,
+  obsoleteSkillsMessage,
+  resolveAgentSkillsRef,
+  skillsFailureMessage,
+} from '../lib/ai.js'
+import {
+  isOlderVersion,
+  RELEASE_LINE,
+  type ReleaseLine,
+  releaseLineFor,
+} from '../lib/release-line.js'
 import { APP_DIRS, detectPackageManager, generateRouteTree } from './add.js'
 
 interface UpgradeFlags {
@@ -37,14 +50,18 @@ interface UpgradeFlags {
 // bumps the Spree gems and migrates itself. The @spree/* packages of the root
 // and the admin apps are bumped right after the server, before migrations and
 // the spree:upgrade rake backfills, so a failing backfill can't leave the
-// dashboards on the old release. Flags map to env vars on the rake task:
+// dashboards on the old release. The agent skills, when the project has them,
+// move to the spree/agent-skills release for the server's Spree version right
+// after the packages, for the same reason. Flags map to env vars on the rake task:
 // --plan → DRY_RUN, --step → STEP, --to → TO. --plan and --step run the rake
 // task alone.
 export function registerUpgradeCommand(program: Command): void {
   withUpgradeOptions(
     program
       .command('upgrade')
-      .description('Upgrade Spree: the server, @spree/* packages, migrations and data backfills'),
+      .description(
+        'Upgrade Spree: the server, @spree/* packages, agent skills, migrations and data backfills',
+      ),
   ).action(upgrade)
 
   // `update` predates the merge and only pulled the image. Kept one release
@@ -88,6 +105,7 @@ async function upgrade(flags: UpgradeFlags): Promise<void> {
     const gemsUpdated = await runBundleUpdate(ctx.projectDir, flags)
     line = await serverReleaseLine(ctx.projectDir, { fromNewImage: false })
     await updateSpreePackages(ctx.projectDir, flags, line)
+    await updateSpreeAgentSkills(ctx.projectDir, flags, line)
     await runMigrate(ctx.projectDir, flags)
     await runRakeUpgrade(ctx.projectDir, flags)
     // Puma loaded the old gems at boot; the rake steps ran in fresh processes.
@@ -100,6 +118,7 @@ async function upgrade(flags: UpgradeFlags): Promise<void> {
     const imagePulled = await pullImage(ctx.projectDir, flags)
     line = await serverReleaseLine(ctx.projectDir, { fromNewImage: imagePulled })
     await updateSpreePackages(ctx.projectDir, flags, line)
+    await updateSpreeAgentSkills(ctx.projectDir, flags, line)
     if (imagePulled) await recreateContainers(ctx.projectDir)
     await runRakeUpgrade(ctx.projectDir, flags)
   }
@@ -350,8 +369,11 @@ function isOlderLine(spec: string, line: ReleaseLine): boolean {
  * - a release candidate pin, once the server is on a final version: pnpm 11's
  *   `update` writes a prerelease back as an exact version, so the pin is
  *   pnpm's rather than the operator's, and `6.0.0-rc.7` becomes `^6.0.0`
+ * - `latest`, which follows npm rather than the server: projects created
+ *   before `@spree/docs` carried the Spree version depend on
+ *   `"@spree/docs": "latest"` (`next` is left as the operator's choice)
  *
- * Both become a `^` range on the server's version, which a locked prerelease
+ * Each becomes a `^` range on the server's version, which a locked prerelease
  * never satisfies, so the update installs it. Other exact versions are left
  * for the upgrade to install by name, so they stay exact. The file is edited
  * as text so its formatting is kept.
@@ -378,7 +400,9 @@ export function moveToReleaseLine(
   const moved = Object.entries({ ...pkg.dependencies, ...pkg.devDependencies })
     .filter(([name, spec]) => line.packages.includes(name) && REGISTRY_SPEC.test(spec))
     .filter(([, spec]) =>
-      isExactVersion(spec) ? isReleasedPin(spec, line) : isOlderLine(spec, line),
+      isExactVersion(spec)
+        ? isReleasedPin(spec, line)
+        : spec === 'latest' || isOlderLine(spec, line),
     )
     .map(([name, from]) => ({ name, from, to }))
 
@@ -443,42 +467,6 @@ function isYarnBerry(projectDir: string, dir: string): boolean {
   })
 }
 
-function compareIdentifiers(left: string, right: string): number {
-  const leftNumeric = /^\d+$/.test(left)
-  const rightNumeric = /^\d+$/.test(right)
-  if (leftNumeric && rightNumeric) return Number(left) - Number(right)
-  if (leftNumeric !== rightNumeric) return leftNumeric ? -1 : 1
-  return left < right ? -1 : left > right ? 1 : 0
-}
-
-/**
- * Whether one exact version sorts before another under semver precedence: the
- * release numbers first, then a prerelease (`6.0.0-rc.7`) before its release,
- * then prerelease identifiers one by one.
- */
-export function isOlderVersion(version: string, than: string): boolean {
-  const [leftRelease, leftPrerelease] = splitVersion(version)
-  const [rightRelease, rightPrerelease] = splitVersion(than)
-  for (let index = 0; index < 3; index++) {
-    const difference = leftRelease[index] - rightRelease[index]
-    if (difference !== 0) return difference < 0
-  }
-  if (leftPrerelease.length === 0 || rightPrerelease.length === 0) {
-    return leftPrerelease.length > rightPrerelease.length
-  }
-  for (let index = 0; index < Math.min(leftPrerelease.length, rightPrerelease.length); index++) {
-    const difference = compareIdentifiers(leftPrerelease[index], rightPrerelease[index])
-    if (difference !== 0) return difference < 0
-  }
-  return leftPrerelease.length < rightPrerelease.length
-}
-
-function splitVersion(version: string): [number[], string[]] {
-  const [release, ...prerelease] = version.split('-')
-  const identifiers = prerelease.join('-')
-  return [release.split('.').map(Number), identifiers ? identifiers.split('.') : []]
-}
-
 // `update` leaves an exact version where it is, so a pinned app would stay on
 // the old release while the server moves on. A pin on a package released with
 // Spree that is older than the server's Spree version moves to it. A newer pin
@@ -538,6 +526,38 @@ async function updateSpreePackages(
     // An updated dashboard can ship new routes; regenerate now so the next
     // dev start doesn't rewrite the file and reload the open page.
     if (target.relative !== '.') await generateRouteTree(target.dir)
+  }
+}
+
+// The skills move to the release tagged for the Spree version the server now
+// runs (the newest tag on its minor line), or to the main branch when that
+// line has none yet. Every Spree skill of that release is installed, so skills
+// it adds are picked up (skills the developer removed come back too). Projects
+// whose skills-lock.json lists no Spree skills are not asked. A failed
+// download only warns, since the server and packages are already done.
+async function updateSpreeAgentSkills(
+  projectDir: string,
+  flags: UpgradeFlags,
+  line: ReleaseLine,
+): Promise<void> {
+  if (!hasSpreeAgentSkills(projectDir)) return
+  const ref = await resolveAgentSkillsRef(line.version)
+  const target = ref ? `${ref}, the release for Spree ${line.version}` : 'the latest version'
+  if (!(await confirmStep(`Update the Spree agent skills to ${target}?`, flags))) {
+    p.log.info('Skipping the agent skills.')
+    return
+  }
+
+  const packageManager = detectPackageManager(projectDir, projectDir)
+  const s = p.spinner()
+  s.start('Updating the Spree agent skills...')
+  try {
+    const leftover = await installAgentSkills(projectDir, packageManager, ref)
+    s.stop(`Spree agent skills updated to ${ref ?? 'the main branch'}.`)
+    if (leftover.length > 0) p.log.warn(obsoleteSkillsMessage(packageManager, leftover))
+  } catch (err) {
+    s.stop(pc.yellow('Spree agent skills were not updated.'))
+    p.log.warn(skillsFailureMessage('updated', packageManager, installSkillsArgs(ref), err))
   }
 }
 

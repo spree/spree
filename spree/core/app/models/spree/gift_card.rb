@@ -35,6 +35,7 @@ module Spree
     validates :currency, presence: true
     validates :amount, presence: true, numericality: { greater_than: 0 }
     validates :amount_used, :amount_authorized, presence: true, numericality: { greater_than_or_equal_to: 0 }
+    validate :amount_and_currency_unchanged_once_used, on: :update
 
     #
     # Associations
@@ -64,10 +65,10 @@ module Spree
     #
     # Ransack
     #
-    ransack_alias :state, :status # @deprecated filter alias — removed in 6.1
+    ransack_alias :state, :status # @deprecated filter alias — removed in 6.5
     self.whitelisted_ransackable_attributes = %w[code customer_id status state gift_card_batch_id created_by_id currency expires_at]
     search_by :code
-    # `users` is the pre-6.0 name for `customers` — removed in 6.1.
+    # `users` is the pre-6.0 name for `customers` — removed in 6.3.
     self.whitelisted_ransackable_associations = %w[customers users orders batch]
     self.whitelisted_ransackable_scopes = %w[active expired redeemed partially_redeemed]
     self.ransackable_scope_types = %w[active expired redeemed partially_redeemed].index_with('boolean')
@@ -94,8 +95,7 @@ module Spree
     end
 
     # What the card can still give towards an order: nothing once it has
-    # expired, been redeemed or been cancelled, and never less than zero,
-    # since an admin can lower the amount below what is already in use.
+    # expired, been redeemed or been cancelled, and never less than zero.
     #
     # @return [BigDecimal]
     def spendable_amount
@@ -189,36 +189,36 @@ module Spree
       end.to_s
     end
 
-    # @deprecated use +display_status+ — removed in 6.1
+    # @deprecated use +display_status+ — removed in 6.3
     def display_state
-      Spree::Deprecation.warn('Spree::GiftCard#display_state is deprecated and will be removed in Spree 6.1. Use #display_status instead.')
+      Spree::Deprecation.warn('Spree::GiftCard#display_state is deprecated and will be removed in Spree 6.3. Use #display_status instead.')
       display_status
     end
 
-    # @deprecated read +status+ — removed in 6.1
+    # @deprecated read +status+ — removed in 6.3
     def state
-      Spree::Deprecation.warn('Spree::GiftCard#state is deprecated and will be removed in Spree 6.1. Use #status instead.')
+      Spree::Deprecation.warn('Spree::GiftCard#state is deprecated and will be removed in Spree 6.3. Use #status instead.')
       status
     end
 
-    # @deprecated write +status+ — removed in 6.1
+    # @deprecated write +status+ — removed in 6.3
     def state=(value)
-      Spree::Deprecation.warn('Spree::GiftCard#state= is deprecated and will be removed in Spree 6.1. Use #status= instead.')
+      Spree::Deprecation.warn('Spree::GiftCard#state= is deprecated and will be removed in Spree 6.3. Use #status= instead.')
       self.status = value
     end
 
-    # @deprecated Call Spree.gift_card_redeem_workflow — removed in 6.1.
+    # @deprecated Call Spree.gift_card_redeem_workflow — removed in 6.3.
     #   The workflow decides full versus partial redemption from the balance,
     #   so both old verbs land on it.
     def redeem!
-      Spree::Deprecation.warn('Spree::GiftCard#redeem! is deprecated and will be removed in Spree 6.1. Call Spree.gift_card_redeem_workflow instead.')
+      Spree::Deprecation.warn('Spree::GiftCard#redeem! is deprecated and will be removed in Spree 6.3. Call Spree.gift_card_redeem_workflow instead.')
       run_gift_card_workflow(Spree.gift_card_redeem_workflow)
     end
     alias partial_redeem! redeem!
 
-    # @deprecated Call Spree.gift_card_cancel_workflow — removed in 6.1.
+    # @deprecated Call Spree.gift_card_cancel_workflow — removed in 6.3.
     def cancel!
-      Spree::Deprecation.warn('Spree::GiftCard#cancel! is deprecated and will be removed in Spree 6.1. Call Spree.gift_card_cancel_workflow instead.')
+      Spree::Deprecation.warn('Spree::GiftCard#cancel! is deprecated and will be removed in Spree 6.3. Call Spree.gift_card_cancel_workflow instead.')
       run_gift_card_workflow(Spree.gift_card_cancel_workflow)
     end
 
@@ -290,6 +290,18 @@ module Spree
 
     def set_currency
       self.currency ||= store&.default_currency
+    end
+
+    # Once part of the card has been spent, its amount and currency are what
+    # that spending was measured against: changing either would invent a
+    # balance or leave a negative one. Keyed on the stored +amount_used+ and
+    # +amount_authorized+, so a workflow drawing the card down in the same
+    # save is unaffected.
+    def amount_and_currency_unchanged_once_used
+      return unless (amount_used_in_database.to_d + amount_authorized_in_database.to_d).positive?
+
+      errors.add(:amount, :cannot_change_once_used) if will_save_change_to_amount?
+      errors.add(:currency, :cannot_change_once_used) if will_save_change_to_currency?
     end
   end
 end

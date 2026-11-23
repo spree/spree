@@ -55,12 +55,18 @@
 
 /* --- Surfaces ------------------------------------------------------------ */
 
-html:not(.dark) body {
-  background: var(--spree-sand-50);
+/* The hosted almond theme forces `html { background: <3% grey> !important }`
+   and `html body { background: transparent !important }`, which the local
+   `mint dev` does not ship. Paint both so the sand survives either renderer;
+   `:root` keeps the specificity above Mintlify's `html.dark`. */
+:root:not(.dark),
+:root:not(.dark) body {
+  background: var(--spree-sand-50) !important;
 }
 
-html.dark body {
-  background: var(--spree-dark-sand-800);
+:root.dark,
+:root.dark body {
+  background: var(--spree-dark-sand-800) !important;
 }
 
 /* Headings pick up the site's navy rather than pure black. */
@@ -251,10 +257,19 @@ html:not(.dark) h4 {
   }
 }
 
-/* The article itself is capped at max-w-xl (576px); a wider measure is what
-   actually gives tables, code blocks and API examples room. */
-#content-container .flex.flex-row-reverse > .max-w-xl {
-  max-width: 52rem;
+/* The article is capped at --content-width (576px) and centred, leaving wide
+   empty gutters beside it. Let it fill the space left of the table of
+   contents instead — tables, code blocks and API examples need the room. The
+   cap keeps prose readable on very wide screens. */
+#content-container #content-area {
+  flex: 1 1 0%;
+  max-width: 60rem;
+}
+
+/* The homepage has no table of contents and lays out its own grids, so it
+   takes the full width. */
+#content-container #content-area:has(.home-page) {
+  max-width: none;
 }
 
 /* --- Navbar --------------------------------------------------------------- */
@@ -332,6 +347,15 @@ html:not(.dark) h4 {
 
 #content-container .link:hover {
   color: var(--spree-accent-strong) !important;
+}
+
+/* Inside callouts Mintlify colours links like the callout's own text, so
+   without the underline they are indistinguishable from it. */
+#content-container [data-callout-type] .link {
+  font-weight: 500;
+  text-decoration: underline !important;
+  text-decoration-thickness: 1px !important;
+  text-underline-offset: 3px !important;
 }
 
 .dark #content-container .link {

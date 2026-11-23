@@ -110,6 +110,7 @@ export function mediaToFormValues(media: PanelMedia, index: number, formKey = 'p
     // on a video row resolves to its poster, so none of them work here.
     videoUrl: media.video_url,
     downloadUrl: media.download_url,
+    filename: media.filename ?? null,
   }
 }
 
@@ -195,6 +196,25 @@ export function withExtensionRowValues(
   }
 }
 
+// The API replaces each of these lists with what a save sends.
+const LIST_FIELDS = ['category_ids', 'collection_ids', 'tags'] as const
+
+/**
+ * The save payload without the category, collection and tag lists the merchant
+ * left unchanged, so a save keeps what something else added since the page loaded.
+ */
+export function omitUnchangedListFields(
+  payload: Record<string, unknown>,
+  dirtyFields: Partial<Record<(typeof LIST_FIELDS)[number], unknown>>,
+): Record<string, unknown> {
+  const trimmed = { ...payload }
+  for (const field of LIST_FIELDS) {
+    const dirty = dirtyFields[field]
+    if (!(Array.isArray(dirty) ? dirty.some(Boolean) : dirty)) delete trimmed[field]
+  }
+  return trimmed
+}
+
 // Strip UI-only fields (stock_location_name) and undefined entries so the
 // PATCH body matches the Admin API VariantUpdateParams shape exactly. The
 // Spree::Product#variants= setter reconciles by id, creates new entries,
@@ -207,6 +227,17 @@ export function withExtensionRowValues(
 /** Variants with a non-null tax category id carry their own category on save. */
 export function variantHasTaxCategoryOverride(variant: VariantFormValues): boolean {
   return variant.tax_category_id != null && variant.tax_category_id !== ''
+}
+
+/**
+ * An override that changes the variant's tax: one naming the product's own
+ * category is stored, but taxes the variant exactly as the product does.
+ */
+export function variantTaxCategoryDiffersFromProduct(
+  variant: VariantFormValues,
+  productTaxCategoryId: string | null | undefined,
+): boolean {
+  return variantHasTaxCategoryOverride(variant) && variant.tax_category_id !== productTaxCategoryId
 }
 
 /**

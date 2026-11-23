@@ -19,13 +19,22 @@ module Spree
     include Spree::Payment::CustomEvents
 
     publishes_lifecycle_events
-    publishes_events :captured, :completed, :paid, :refunded, :voided
+    publishes_events :captured, :completed, :paid, :refunded, :voided,
+                     :capture_requested, :capture_failed, :void_requested, :void_failed
 
     NON_RISKY_AVS_CODES = ['B', 'D', 'H', 'J', 'M', 'Q', 'T', 'V', 'X', 'Y'].freeze
     RISKY_AVS_CODES     = ['A', 'C', 'E', 'F', 'G', 'I', 'K', 'L', 'N', 'O', 'P', 'R', 'S', 'U', 'W', 'Z'].freeze
     INVALID_STATUSES    = %w(failed invalid void).freeze
     INVALID_STATES      = INVALID_STATUSES
     deprecate_constant :INVALID_STATES
+
+    # Statuses a payment can be voided / captured from, before the payment
+    # method is consulted. Extend them to support gateways with other flows.
+    VOIDABLE_STATUSES   = %w[pending processing completed checkout].freeze
+    CAPTURABLE_STATUSES = %w[checkout pending].freeze
+    # A payment settlement must leave alone: captured, or waiting on its
+    # provider's answer to a capture or void.
+    SETTLED_OR_WAITING_STATUSES = %w[completed requested].freeze
 
     with_options inverse_of: :payments do
       belongs_to :order, class_name: 'Spree::Order', touch: true, optional: true
@@ -84,7 +93,7 @@ module Spree
     default_scope { order(:created_at) }
 
     scope :from_credit_card, -> { where(source_type: 'Spree::CreditCard') }
-    # @deprecated use the status scopes / +where(status:)+ — removed in 6.1
+    # @deprecated use the status scopes / +where(status:)+ — removed in 6.3
     scope :with_state, ->(s) { where(status: s.to_s) }
     # "offset" is reserved by activerecord
     scope :offset_payment, -> { where("source_type = 'Spree::Payment' AND amount < 0 AND status = 'completed'") }
@@ -100,7 +109,7 @@ module Spree
     scope :not_store_credits, -> { where(arel_table[:source_type].not_eq(Spree::StoreCredit.to_s).or(arel_table[:source_type].eq(nil))) }
 
     self.whitelisted_ransackable_associations = %w[payment_method order source]
-    ransack_alias :state, :status # @deprecated filter alias — removed in 6.1
+    ransack_alias :state, :status # @deprecated filter alias — removed in 6.5
     # `number` is deliberately absent: it is derived (its column is NULL on
     # 6.0 rows), so a filter on it silently matches nothing. The 6.1 payment
     # `reference` becomes the searchable identifier
@@ -120,7 +129,11 @@ module Spree
     # `invalid` status deliberately generates no predicate or scope: `invalid?`
     # is ActiveModel's, use +has_invalid_status?+.
     include Spree::HasStatus
-    has_status :checkout, :processing, :pending, :completed, :failed, :void, :invalid,
+    # `requested` waits on the provider's webhook after it accepted a capture
+    # or void (a gateway answering `requested?`). It is in none of the
+    # claimable, voidable or capturable lists: nothing may start on the
+    # payment until the provider answers.
+    has_status :checkout, :processing, :pending, :requested, :completed, :failed, :void, :invalid,
                default: :checkout
 
     # Status writes, called from the payments workflows and Processing. The
@@ -200,6 +213,19 @@ module Spree
       true
     end
 
+    # The provider accepted a void and answers by webhook, which voids the
+    # payment then. A payment already void, or already waiting, is left as it
+    # is: a second request's late answer must not reopen it.
+    def request_void!
+      updates = { status: 'requested', updated_at: Time.current }
+      return false unless self.class.where(id: id).where.not(status: %w[void requested]).update_all(updates) == 1
+
+      assign_attributes(updates.except(:updated_at))
+      clear_attribute_changes(%i[status])
+      publish_event('payment.void_requested')
+      true
+    end
+
     def failure!
       update!(status: 'failed')
     end
@@ -219,19 +245,42 @@ module Spree
       status.in?(%w[checkout processing])
     end
 
+    # Whether the payment is in a status that can be voided and its payment
+    # method agrees. A gateway that cannot void a capture returns false from
+    # +can_void?(payment)+ for completed payments.
     def can_void?
-      status.in?(%w[pending processing completed checkout])
+      status.in?(VOIDABLE_STATUSES) &&
+        (!payment_method.respond_to?(:can_void?) || payment_method.can_void?(self))
     end
 
-    # @deprecated read +status+ — removed in 6.1
+    # Whether the payment can be captured from the back office.
+    def can_capture?
+      status.in?(CAPTURABLE_STATUSES) &&
+        (!payment_method.respond_to?(:can_capture?) || payment_method.can_capture?(self))
+    end
+
+    # What the provider is still answering for a `requested` payment: a capture
+    # leaves a capture event waiting, a void leaves none.
+    #
+    # @return [String, nil] 'capture', 'void', or nil when nothing is requested
+    def requested_action
+      return unless requested?
+
+      # Read off the loaded rows when a list preloaded them, so serializing one
+      # costs no query per payment.
+      waiting = capture_events.loaded? ? capture_events.any?(&:requested?) : capture_events.requested.exists?
+      waiting ? 'capture' : 'void'
+    end
+
+    # @deprecated read +status+ — removed in 6.3
     def state
-      Spree::Deprecation.warn('Spree::Payment#state is deprecated and will be removed in Spree 6.1. Use #status instead.')
+      Spree::Deprecation.warn('Spree::Payment#state is deprecated and will be removed in Spree 6.3. Use #status instead.')
       status
     end
 
-    # @deprecated write +status+ — removed in 6.1
+    # @deprecated write +status+ — removed in 6.3
     def state=(value)
-      Spree::Deprecation.warn('Spree::Payment#state= is deprecated and will be removed in Spree 6.1. Use #status= instead.')
+      Spree::Deprecation.warn('Spree::Payment#state= is deprecated and will be removed in Spree 6.3. Use #status= instead.')
       self.status = value
     end
 
@@ -271,12 +320,42 @@ module Spree
       create_eligible_credit_event
     end
 
+    # Statuses a payment can be resized from: nobody has claimed it for the
+    # gateway yet, and it has not settled.
+    RESIZABLE_STATUSES = %w[checkout pending failed].freeze
+
+    # Shrinks this payment to +new_amount+ while nobody has claimed it. One
+    # conditional UPDATE, so a payment another run is charging (processing)
+    # or one that settled since the caller read it keeps the amount the
+    # gateway sees. An unsaved payment is resized in memory and saved with
+    # its claim. Store credit gets an eligibility event for the new amount,
+    # as {#update_store_credit_amount!} records one.
+    #
+    # @param new_amount [BigDecimal]
+    # @return [Boolean] false when the payment was claimed or completed meanwhile
+    def resize_if_unclaimed!(new_amount)
+      if new_record?
+        self.amount = new_amount
+        return true
+      end
+
+      resized = self.class.unscoped.where(id: id, status: RESIZABLE_STATUSES).
+                update_all(amount: new_amount, updated_at: Time.current)
+      return false if resized.zero?
+
+      self.amount = new_amount
+      clear_attribute_changes(%i[amount])
+      create_eligible_credit_event if store_credit?
+      true
+    end
+
     def offsets_total
       offsets.sum(:amount)
     end
 
+    # A requested refund keeps its amount reserved until the provider answers.
     def credit_allowed
-      amount - (offsets_total.abs + refunds.sum(:amount))
+      amount - (offsets_total.abs + refunds.not_failed.sum(:amount))
     end
 
     def can_credit?
@@ -351,11 +430,46 @@ module Spree
     end
 
     def captured_amount
-      capture_events.sum(:amount)
+      capture_events.completed_or_unset.sum(:amount)
     end
 
     def uncaptured_amount
       amount - captured_amount
+    end
+
+    # What the order still owes besides this payment: its total less what its
+    # other payments captured and, with +including_in_flight+, what they hold
+    # authorized. An order can carry several live payments, so this is the
+    # most any one of them may take. Read from the payment rows rather than
+    # the order's cached totals, which trail the payments settling.
+    #
+    # @param including_in_flight [Boolean] also count other pending and
+    #   processing payments
+    # @param including_processing [Boolean] also count other processing
+    #   payments — the ones being charged at the gateway right now
+    # @return [BigDecimal, nil] nil for a payment not made against an order
+    def amount_owed_by_order(including_in_flight:, including_processing: false)
+      return if order_id.nil?
+
+      fresh_order = Spree::Order.find(order_id)
+      return BigDecimal('0') if fresh_order.canceled?
+
+      others = fresh_order.payments.where.not(id: id)
+      # One statement for both sums, so a sibling settling between two reads
+      # can't drop out of the completed sum and the in-flight sum at once.
+      # reorder(nil): the default created_at ordering is not grouped, which
+      # MySQL's only_full_group_by refuses.
+      by_status = others.where(status: %w[completed pending processing]).reorder(nil).group(:status).sum(:amount)
+      captured = others.where(status: 'completed')
+      owed = fresh_order.total - by_status.fetch('completed', 0) + Spree::Refund.where(payment_id: captured.select(:id)).sum(:amount) -
+             fresh_order.returned_items_refund_total
+      if including_in_flight
+        owed -= by_status.fetch('pending', 0) + by_status.fetch('processing', 0)
+      elsif including_processing
+        owed -= by_status.fetch('processing', 0)
+      end
+
+      [owed, BigDecimal('0')].max
     end
 
     # Row work only — moves the uncaptured remainder onto a new pending
@@ -449,9 +563,9 @@ module Spree
       INVALID_STATUSES.include?(status)
     end
 
-    # @deprecated use {#has_invalid_status?} — removed in 6.1
+    # @deprecated use {#has_invalid_status?} — removed in 6.3
     def has_invalid_state?
-      Spree::Deprecation.warn('Spree::Payment#has_invalid_state? is deprecated and will be removed in Spree 6.1. Use #has_invalid_status? instead.')
+      Spree::Deprecation.warn('Spree::Payment#has_invalid_state? is deprecated and will be removed in Spree 6.3. Use #has_invalid_status? instead.')
       has_invalid_status?
     end
 
@@ -588,9 +702,14 @@ module Spree
                                 action_authorization_code: response_code)
     end
 
+    # A buyer who picks another way to pay at checkout replaces the attempt
+    # they started, so a cart keeps one live payment. An order is paid from
+    # the back office, where each payment recorded is money the merchant
+    # means to collect alongside the others.
     def invalidate_old_payments
       # invalid payment or store_credit payment shouldn't invalidate other payment types
       return if has_invalid_status? || store_credit?
+      return unless owner.is_a?(Spree::Cart)
 
       owner.payments.with_state('checkout').where.not(id: id).each do |payment|
         payment.invalidate! unless payment.store_credit?

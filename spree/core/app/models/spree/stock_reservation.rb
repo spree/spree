@@ -28,7 +28,7 @@ module Spree
       joins(:order).where(spree_orders: { store_id: store.id })
     }
 
-    # `stock_item_id` rides along for one release beside the name that replaced
+    # `stock_item_id` rides along until 6.5 beside the name that replaced
     # it — see the same allowlist on Spree::StockMovement.
     self.whitelisted_ransackable_attributes = %w[stock_level_id stock_item_id line_item_id order_id
                                                  quantity expires_at]
@@ -73,15 +73,15 @@ module Spree
       order || cart
     end
 
-    # @deprecated Use {#stock_level}; removed in 6.1.
+    # @deprecated Use {#stock_level}; removed in 6.3.
     def stock_item
-      Spree::Deprecation.warn('Spree::StockReservation#stock_item is deprecated and will be removed in Spree 6.1. Use #stock_level instead.')
+      Spree::Deprecation.warn('Spree::StockReservation#stock_item is deprecated and will be removed in Spree 6.3. Use #stock_level instead.')
       stock_level
     end
 
-    # @deprecated Use {#stock_level=}; removed in 6.1.
+    # @deprecated Use {#stock_level=}; removed in 6.3.
     def stock_item=(record)
-      Spree::Deprecation.warn('Spree::StockReservation#stock_item= is deprecated and will be removed in Spree 6.1. Use #stock_level= instead.')
+      Spree::Deprecation.warn('Spree::StockReservation#stock_item= is deprecated and will be removed in Spree 6.3. Use #stock_level= instead.')
       self.stock_level = record
     end
 

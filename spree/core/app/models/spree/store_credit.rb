@@ -43,9 +43,9 @@ module Spree
 
     # Redemption order: the oldest credit is spent first.
     scope :oldest_first, -> { order(:created_at, :id) }
-    # @deprecated Removed in Spree 6.1 — store credit types are gone; use {.oldest_first}.
+    # @deprecated Removed in Spree 6.3 — store credit types are gone; use {.oldest_first}.
     scope :order_by_priority, lambda {
-      Spree::Deprecation.warn('Spree::StoreCredit.order_by_priority is deprecated and will be removed in Spree 6.1. Use .oldest_first instead.')
+      Spree::Deprecation.warn('Spree::StoreCredit.order_by_priority is deprecated and will be removed in Spree 6.3. Use .oldest_first instead.')
       oldest_first
     }
 
@@ -118,7 +118,7 @@ module Spree
     # Two-state scopes: see Spree::Base.ransack_flag? for why the cast is
     # opted out of here and done inside each scope instead.
     def self.ransackable_scopes_skip_sanitize_args
-      %i[outstanding from_gift_card]
+      super | %w[outstanding from_gift_card]
     end
 
     def amount_remaining

@@ -2,15 +2,22 @@
 
 Rails 8.1 engines, everything namespaced under `Spree::`. Follow Rails conventions and the Rails Security Guide; below is only what Spree does differently.
 
+## Style
+
+- New and changed Ruby lines pass RuboCop with rubocop-rails (`spree/.rubocop.yml`): single quotes, trailing dots on multi-line chains, nested `module` blocks, lines up to 150 characters. Hooks report offenses on the lines you wrote after each edit and block a commit or push until they are fixed. Check by hand with `scripts/lint/rubocop [--fix] [files]`.
+- Leave existing code alone: don't reformat lines you didn't need to change. Never add `rubocop:disable` comments to get past the check.
+
 ## Architecture
 
 - Logic lives in models, concerns and workflows — not controllers or serializers. Add a service only when a model or concern won't do.
 - Per-request context: `Spree::Current.store`, `.currency`, `.locale`.
 - Customers and staff: `Spree.customer_class` and `Spree.admin_user_class`, never a user model constant (`Spree.user_class` is deprecated).
 - Swappable classes are registered in `Spree::Dependencies` (`Spree::Dependencies.cart_add_item_workflow = 'MyApp::AddItem'`). The old `*_service` keys are deprecated, and some are no longer consulted at all.
+- Removing a public Ruby API (a class, a method or a scope, once its deprecation shim is gone) adds it to `Spree::RemovedApis::REMOVED` in `core/lib/spree/removed_apis.rb`, under the release that removed it, with what replaced it. The `NoMethodError` or `NameError` then names the replacement, so coding agents and upgraders working from old Spree knowledge are pointed to the current API. Then regenerate the docs page that lists them: `UPDATE_DOCS=1 pnpm test:rspec core spec/lib/spree/removed_apis_spec.rb`.
 - YARD comments (`@param`, `@return`) on classes and non-obvious public methods only; never on private helpers.
 - Descriptive variable names, no abbreviations.
 - Jobs that iterate over records use `ActiveJob::Continuable`.
+- Report errors with `Rails.error.report(error, source: 'spree.<area>')`, not `Rails.logger.error`, so they reach the diagnostics error log (`docs/plans/6.0-diagnostics-and-issue-reporting.md`).
 
 ## Models
 
@@ -54,6 +61,7 @@ end
 - **Scope every lookup to the store** — including incidental ones like a `reason_id` or `stock_location_id` from params. `current_store.<association>` turns a foreign id into a 404. `accessible_by` filters by role, not tenant, so it is no substitute.
 - Override `model_class`, `serializer_class` (`Spree.api.<name>_serializer`), `scope` (call `super`), `collection_includes`. A resource written through a workflow overrides `create_workflow` / `update_workflow` (and `*_workflow_arguments`) instead of re-implementing the action, so it keeps the base class's record-level authorization.
 - RESTful actions only; promote anything else to a nested controller.
+- Store API reads of collections go through `Store::CollectionsController#scope`, never `current_store.collections` directly — 6.1 adds per-channel collection publishing there (`docs/plans/6.1-collections-merchandising.md`).
 - **Request bodies are flat and declared with `request_params`**, which drives permitting, OpenAPI and the SDK request types (`pnpm generate:params`). Never hand-write a request body in an rswag spec or a request type in an SDK. Money is `:decimal`, countries and currencies are `:country` / `:currency`. A shape used by two or more endpoints is a class in `app/request_schemas/`.
 - Extensions add writable attributes with `Spree::Product.additional_permitted_attributes += [...]` (always `+=`). Override `resource_permitted_attributes`, never `permitted_attributes`, or extension attributes are dropped. Seller controllers splat `additional_seller_permitted_attributes` instead.
 - `normalize_params` decodes anything shaped like a prefixed ID inside nested hashes — don't enable it on controllers that carry opaque provider values (see `Admin::PaymentMethodsController`).
@@ -75,13 +83,24 @@ Admin serializers extend Store serializers; every serializer an Admin one refere
 - **Store** (customer-facing): public data and display values only — no timestamps, `metadata`, cost prices, internal statuses or back-office relations.
 - **Admin**: adds `created_at`, `updated_at`, `deleted_at` (when paranoid), `metadata` and back-office fields.
 - Associations are their own serializers, never hand-built hashes. Keep serializers lean; logic goes on the model. Never use `typelize_from`.
+- An attribute block only reads: a method call, a format or a one-line fallback. Branching, lookups and queries go on the model (`user.status`, `user.invited_by(store)`), where they are tested once and reused outside the API.
 - Value lists: **closed** lists use `enum:` + `enum_type_name:` and are added to `Typelizer::OpenEnums::CLOSED_LIST_NAMES`; **open** lists (`has_status`, kinds extensions can add) use `enum_type_name:` alone; registry-driven `type` attributes stay `:string` with a `comment:` listing the built-ins. Both named kinds are generated into `@spree/core`.
-- Deprecated fields are marked (`deprecated: 'Use X. Removed in 6.1.'`), not just described.
+- Deprecated fields are marked (`deprecated: 'Use X. Removed in 6.5.'`), not just described.
 - After a serializer change run the type pipeline: `cd spree/api && bundle exec rake typelizer:generate`, then `pnpm generate:zod` from the root (the Lefthook pre-commit hook does both), then integration specs and `bundle exec rake rswag:specs:swaggerize`. Restart Rails — Alba caches definitions at boot.
 
 ## Events and webhooks
 
 `record.publish_event('order.completed')`; subscribers in `app/subscribers/spree/` subclass `Spree::Subscriber`. Payloads use Store serializers only — never a hand-built hash or an Admin serializer; extras go in `metadata` (`docs/plans/6.0-typed-webhook-events.md`).
+
+## MCP and agent tools
+
+**Every new back-office workflow or feature also ships in the MCP server** — anything a merchant can do in the admin dashboard or Admin API, an agent can do too. Tools live in `spree_core` (`Spree.admin_agent_tools`, `app/tools/spree/agent_tools/`), not in `spree_mcp`, so the dashboard assistant gets them as well (`docs/plans/6.0-mcp-server.md`).
+
+- Every Admin API action that isn't plain create, update or destroy is a tool on its own, built from its OpenAPI operation (`docs/plans/6.0-agent-tools-from-openapi.md`): name from the resource and action, description from the summary and description, arguments from the path and request body, permission from the controller's `scoped_resource`. So a new back-office action needs an endpoint and an rswag spec, nothing else. Don't add `expose_workflows` calls (deprecated) or `Spree::Dependencies` keys to reach agents.
+- Plain CRUD on a new resource goes through the generic `search_resources` / `get_resource` / `create_resource` / `update_resource` / `delete_resource` tools. These reach a resource only through its Admin API controller (`Spree::AgentTools::ResourceMap`), so a back-office resource needs one. A nested resource takes its parent's id as `parent_id`.
+- Anything that is not an Admin API operation (reports, imports, files) gets its own `Spree::AgentTool` subclass, registered in `DefaultCatalog::TOOLS`.
+- Leaving an action out takes `agent_tool false, reason: '…'` in its rswag spec. Irreversible, platform-wide or wizard-only steps qualify; "not done yet" doesn't. A custom GET is a tool only with `agent_tool true`. `spree/api/spec/lib/spree/api/agent_tools_contract_spec.rb` fails on an admin action with no operation, an opt-out with no reason, or two actions deriving one tool name; give one an `operationId`.
+- An operation's summary and description are how an agent learns the feature: say what it does and when to use it. Update `docs/developer/mcp/tools.mdx` with the new tool.
 
 ## Emails (Liquid + MJML)
 
@@ -95,7 +114,9 @@ See `docs/plans/6.0-liquid-mjml-emails.md` and `docs/developer/customization/ema
 
 ## Money, time and translations
 
+- A store's locale and currency come from its default market: `store.default_market.default_locale`, `store.default_market.currency`. The store's own `default_locale`, `supported_locales` and `default_currency` attributes are legacy — never read or set them in new code or specs; give a spec's store its locale by updating its default market.
 - Money: `BigDecimal` only — no `.to_f`, `Float()` or float literals on amounts. Use `Spree::Money::Rounding`: `to_currency` to round (only when persisting, serializing or calling a gateway), `to_minor_units` / `from_minor_units`, `parse_canonical` for request input (canonical decimal strings, no locale parsing), `format` for output. A third party that needs a JSON number gets `.to_f` once, with a comment.
+- A payment whose gateway answered `requested?` waits in `requested` for the provider's webhook (`docs/plans/6.0-adyen-payment-provider.md`). Code that moves money refuses it, settlement leaves it alone, and code that sums money counts it as authorized. Captured and refunded money counts completed capture events and refunds only (an empty, not yet backfilled status counts as completed); balance checks subtract every refund that has not failed.
 - Store dates use the store's zone: `Time.find_zone(store.preferred_timezone) || Time.zone`. Never `Time.zone.parse` operator input meant as a fixed instant — use `iso8601`.
 - `I18n.t('spree.<key>')` with the full key (`Spree.t` is deprecated). Keys live in `config/locales/en.yml`. Before removing a key `i18n-tasks unused` reports, check it isn't built dynamically.
 

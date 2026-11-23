@@ -6,7 +6,7 @@ const TIMESTAMP_KEYS = ['created_at', 'updated_at'] as const
 
 type TimestampKey = (typeof TIMESTAMP_KEYS)[number]
 
-const TIMESTAMP_CLASS = 'text-sm text-muted-foreground whitespace-nowrap'
+const TIMESTAMP_CLASS = 'text-base text-muted-foreground whitespace-nowrap'
 
 function createTimestampColumn(key: TimestampKey, visibleByDefault = false): ColumnDef {
   return {

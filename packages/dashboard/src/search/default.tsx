@@ -13,6 +13,7 @@ import {
   adminClient,
   defineSearchEntry,
   formatAmount,
+  productInStock,
   Subject,
   searchRegistry,
   useMoneyLocale,
@@ -167,9 +168,7 @@ searchRegistry.add(
         .list({ name_cont: search, limit, sort: 'name' })
         .then((r) => r.data),
     getKey: (g) => g.id,
-    // Groups have no detail page — they are edited in a sheet on the groups
-    // page, which `?edit=` opens directly.
-    getRoute: (g, storeId) => ({ to: `/${storeId}/customers/groups`, search: { edit: g.id } }),
+    getRoute: (g, storeId) => ({ to: `/${storeId}/customers/groups/${g.id}` }),
     renderRow: (g) => (
       <>
         <Thumbnail size="xs" fallback={<UsersRoundIcon />} />
@@ -247,11 +246,11 @@ searchRegistry.add(
 function ProductMeta({ product }: { product: Product }) {
   const { t } = useTranslation()
   const moneyLocale = useMoneyLocale()
-  const stock = product.in_stock
-    ? t('admin.pages.products.inventory.in_stock_short')
+  const stock = productInStock(product)
+    ? t('admin.components.product_stock.in_stock_short')
     : product.backorderable
-      ? t('admin.pages.products.inventory.on_backorder')
-      : t('admin.pages.products.inventory.out_of_stock')
+      ? t('admin.components.product_stock.on_backorder')
+      : t('admin.components.product_stock.out_of_stock')
   const price = formatAmount(product.price?.amount, product.price?.currency, moneyLocale, '')
 
   return (

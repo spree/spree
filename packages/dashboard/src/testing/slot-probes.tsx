@@ -31,7 +31,7 @@ function probe<TContext>(component: ComponentType<TContext>): SlotEntry[] {
 function marker(slot: string) {
   return probe(({ mode }: { mode?: string }) => (
     <Card>
-      <CardContent className="text-muted-foreground text-sm">
+      <CardContent className="text-muted-foreground text-base">
         Slot probe: {slot}
         {mode ? ` (${mode})` : ''}
       </CardContent>

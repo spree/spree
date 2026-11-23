@@ -39,6 +39,12 @@ export type SellerCreateParams = {
    * belongs to whoever it was created for, so it is never referenced by id.
    */
   billing_address?: SellerAddressParams
+  /**
+   * Where customers send returns, written inline. It is the address of the seller's returns stock
+   * location, so it updates that location, or creates one for a seller who has none. Names and
+   * `label` are ignored: a location has none.
+   */
+  returns_address?: SellerAddressParams
   /** Custom field values, each validated against its definition. */
   custom_fields?: CustomFieldValueParams[]
 }

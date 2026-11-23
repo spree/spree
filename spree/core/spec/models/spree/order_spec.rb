@@ -86,12 +86,37 @@ describe Spree::Order, type: :model do
       let!(:order_4) { create(:order, number: 'R300', customer: create(:user, email: 'johndoe@example.com'), bill_address: create(:address, first_name: 'Ayn', last_name: 'Rand')) }
       let!(:order_5) { create(:order, number: 'R400', customer: create(:user, email: 'john_doe@example.com'), bill_address: create(:address, first_name: 'John', last_name: 'Doe')) }
 
+      it 'returns no orders for a non-string query' do
+        expect(described_class.search(true)).to be_empty
+        expect(described_class.search(nil)).to be_empty
+      end
+
       it 'returns orders based on an email' do
         expect(described_class.search('don.roe@example.com')).to eq([order_1])
         expect(described_class.search('jane.gone@example.com')).to eq([order_2])
         expect(described_class.search('johndoe@example.com')).to eq([order_4])
         expect(described_class.search('john_doe@example.com')).to eq([order_5])
         expect(described_class.search('mary.moe@')).to eq([])
+      end
+
+      # An app may encrypt the column, deterministically so it can still be
+      # looked up. SQL then only ever sees ciphertext.
+      context 'when the app encrypts email' do
+        let(:order_class) do
+          stub_const('EncryptedEmailOrder', Class.new(described_class) do
+            self.table_name = Spree::Order.table_name
+            encrypts :email, deterministic: true, downcase: true
+          end)
+        end
+
+        before { order_class.find(order_1.id).update_columns(email: 'don.roe@example.com') }
+
+        it 'returns orders based on an email, whatever the case' do
+          stored = order_class.connection.select_value(order_class.unscoped.where(id: order_1.id).select(:email).to_sql)
+          expect(stored).not_to include('example.com')
+
+          expect(order_class.search('Don.Roe@Example.com').ids).to eq([order_1.id])
+        end
       end
 
       it 'returns orders based on the first name' do
@@ -258,7 +283,7 @@ describe Spree::Order, type: :model do
 
     context 'when canceled_at is not given' do
       it 'saves canceled_at to Time.current' do
-        Timecop.freeze(Time.current) do
+        freeze_time do
           subject
           expect(order.reload.canceled_at.to_s).to eq Time.current.to_s
           expect(Spree::Deprecation).to have_received(:warn).with(/Order#canceled_by is deprecated/)
@@ -268,7 +293,7 @@ describe Spree::Order, type: :model do
 
     context 'when canceled_at is given' do
       it 'saves canceled_at to given time' do
-        Timecop.freeze(Time.current) do
+        freeze_time do
           order.canceled_by(admin_user, Time.current - 1.day)
           expect(order.reload.canceled_at.to_s).to eq (Time.current - 1.day).to_s
         end
@@ -406,6 +431,31 @@ describe Spree::Order, type: :model do
     end
   end
 
+  describe '#refunds_total' do
+    let(:order) { create(:shipped_order) }
+    let(:payment) { order.payments.completed.first }
+    let(:returned) { create(:return, order: order, store: order.store) }
+
+    before do
+      create(:refund, payment: payment, amount: 5, originator: returned)
+      create(:refund, payment: payment, amount: 3, originator: returned).update_column(:status, nil)
+      create(:refund, :requested, payment: payment, amount: 2, originator: returned)
+      create(:refund, :failed, payment: payment, amount: 1, originator: returned)
+    end
+
+    it 'counts completed and empty refunds only' do
+      expect(order.refunds_total).to eq(8)
+      expect(order.returned_items_refund_total).to eq(8)
+    end
+
+    it 'reads the same from refunds a list already loaded' do
+      loaded = Spree::Order.includes(:refunds).find(order.id)
+
+      expect(loaded.refunds_total).to eq(8)
+      expect(loaded.returned_items_refund_total).to eq(8)
+    end
+  end
+
   describe '#display_total' do
     it 'returns the value as a spree money' do
       order.total = 10.55
@@ -436,7 +486,7 @@ describe Spree::Order, type: :model do
   end
 
   # The deprecated twin of #payment_methods; it must keep matching its
-  # replacement until it is removed in 6.1.
+  # replacement until it is removed in 6.3.
   describe '#collect_payment_methods' do
     it 'includes an active storefront-visible method' do
       payment_method = store.payment_methods.create!(name: 'Fake', active: true, storefront_visible: true)
@@ -1634,6 +1684,16 @@ describe Spree::Order, type: :model do
 
         it 'returns true' do
           expect(subject).to be true
+        end
+      end
+
+      context 'when the only refund is still waiting on the provider' do
+        let(:amount) { 50 }
+
+        before { refund.update_column(:status, 'requested') }
+
+        it 'returns false, since nothing has been given back yet' do
+          expect(order.reload.partially_refunded?).to be false
         end
       end
 

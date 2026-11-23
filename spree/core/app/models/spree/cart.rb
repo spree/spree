@@ -79,7 +79,7 @@ module Spree
       end
     end
     has_many :fulfillment_items, through: :fulfillments, class_name: 'Spree::FulfillmentItem'
-    # Legacy name (5.x carts were orders) — removed in 6.1
+    # Legacy name (5.x carts were orders) — removed in 6.3
     has_many :shipments, -> { order(:created_at, :id) }, class_name: 'Spree::Fulfillment', inverse_of: :cart, deprecated: true
     has_many :order_promotions, class_name: 'Spree::OrderPromotion', inverse_of: :cart, dependent: :destroy
     has_many :promotions, through: :order_promotions, class_name: 'Spree::Promotion'
@@ -107,7 +107,7 @@ module Spree
     delegate :name, to: :customer, prefix: true, allow_nil: true
 
     # @deprecated Store API bridge — carts have no order-style number; the
-    #   prefixed ID is the identifier. Removed from the API in 6.1.
+    #   prefixed ID is the identifier. Removed from the API in 6.5.
     # @return [String]
     def number
       prefixed_id
@@ -141,11 +141,16 @@ module Spree
 
     # Whether a live completion attempt holds this cart — its totals are fixed
     # and money may be moving, so mutations must wait until it finishes or the
-    # claim goes stale.
+    # claim goes stale. A payment-covered draft or a divided checkout resumes
+    # its existing result instead of editing the cart that supplied it.
     #
     # @return [Boolean]
     def completion_claimed?
-      completing_at.present? && completing_at > COMPLETING_CLAIM_TTL.ago
+      return false if completing_at.blank?
+      return true if completing_at > COMPLETING_CLAIM_TTL.ago || order_group.present?
+      return false if order.nil?
+
+      order.payments.valid.where(status: %w[pending processing completed]).sum(:amount) >= order.amount_due_at_checkout
     end
 
     # Recomputes and persists money totals (item, tax, promotion, delivery)

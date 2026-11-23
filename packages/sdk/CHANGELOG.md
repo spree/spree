@@ -1,5 +1,37 @@
 # @spree/sdk
 
+## 6.0.5
+
+### Patch Changes
+
+- [#15216](https://github.com/spree/spree/pull/15216) [`40fe3a3`](https://github.com/spree/spree/commit/40fe3a3640c3964ddcf78842f7af36f31be059b1) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `client.store.get()` now also returns the store's `meta_keywords`, `logo_url`, social accounts (`facebook`, `twitter`, `instagram`) and `customer_support_email`, so a storefront can read its logo and structured data from the Store API instead of environment variables.
+
+## 6.0.4
+
+### Patch Changes
+
+- [#15145](https://github.com/spree/spree/pull/15145) [`6bb42c3`](https://github.com/spree/spree/commit/6bb42c3aa3a8feab481996580e8566ffd3f9624f) Thanks [@beobungbu](https://github.com/beobungbu)! - Avoid reading browser location when an explicit base URL is configured, and support native environments where window exists without location.
+
+## 6.0.3
+
+### Patch Changes
+
+- [#15087](https://github.com/spree/spree/pull/15087) [`5de3074`](https://github.com/spree/spree/commit/5de3074693359ad16623f9d522a6d5ab64d4b5f6) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The Store API client now works in browsers on pages served over plain HTTP at an address other than `localhost`, for example a server's IP address. It used `crypto.randomUUID` for the key that makes a retried write safe, and browsers only provide that on secure pages; it now uses `randomUUID()` from `@spree/core`.
+
+- [#15113](https://github.com/spree/spree/pull/15113) [`41bbba3`](https://github.com/spree/spree/commit/41bbba3272d9ebd8817842456670db0b72cd3b34) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added `client.extend()` and `defineStoreExtension`, so a package can add a typed namespace for an extension's own endpoints to the client, such as `client.loyaltyPoints`. The extension calls through the client's own request function, so it shares the client's publishable key, customer token, locale defaults and retries; `extend` returns a new client and refuses a name the client already has. An extension's `build` also gets `listParams` and `readParams`, which build list and read queries the way the built-in methods do, and the package now exports the `Extension` and `RequestFn` types its published declarations reference.
+
+## 6.0.2
+
+Released with Spree 6.0.2, with no changes of its own.
+
+## 6.0.1
+
+### Patch Changes
+
+- [#14996](https://github.com/spree/spree/pull/14996) [`30493b4`](https://github.com/spree/spree/commit/30493b4f8e0e0f19b1c684fd8ac34bff24f51187) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added an optional `custom_fields` property to every record type that can carry custom fields, such as sellers, option types, media, orders, line items, addresses and customers. Request it with `expand: ['custom_fields']`. The Store API returns only fields marked storefront visible, and the Admin API returns every field.
+
+- [#14997](https://github.com/spree/spree/pull/14997) [`730c9da`](https://github.com/spree/spree/commit/730c9daa414b19fd125c03aa095ae23ea2cc91ab) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added localized storefront SEO settings. Merchants edit the store's SEO title and meta description on Store Settings and translate them for each supported language. The Store SDK reads them with `client.store.get()`, and the Admin SDK reaches the store's translations with `client.store.translations.get()`.
+
 ## 6.0.0
 
 ### Minor Changes

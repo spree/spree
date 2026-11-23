@@ -289,6 +289,7 @@ RSpec.describe 'Admin Categories API', type: :request, swagger_doc: 'api-referen
   path '/api/v3/admin/categories/{category_id}/products/{id}/reposition' do
     patch 'Reposition a category product' do
       tags 'Categories'
+      operationId 'categories_reposition_product'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]

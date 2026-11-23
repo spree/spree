@@ -583,7 +583,7 @@ RSpec.describe Spree::Api::V3::Admin::AuthController, type: :controller do
       end
 
       it 'rejects an expired state' do
-        expired = Timecop.travel(20.minutes.ago) { state_for('entra') }
+        expired = travel_to(20.minutes.ago) { state_for('entra') }
 
         get :callback, params: { provider: 'entra', code: 'auth-code', state: expired }
 

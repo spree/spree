@@ -10,6 +10,15 @@ RSpec.describe 'OAuth redirect URIs' do
                                  confidential: false, redirect_uri: redirect_uri)
   end
 
+  def authorizable?(redirect_uri)
+    ::Doorkeeper::OAuth::PreAuthorization.new(
+      ::Doorkeeper.config,
+      { client_id: application.uid, response_type: 'code', redirect_uri: redirect_uri,
+        scope: 'read_products', code_challenge: 'c' * 43, code_challenge_method: 'S256' },
+      create(:admin_user)
+    ).authorizable?
+  end
+
   # A plain-http callback hands codes to anyone on the path — except a
   # loopback one, which never leaves the machine. A terminal client listens on
   # a local port and has no certificate for it.
@@ -32,11 +41,21 @@ RSpec.describe 'OAuth redirect URIs' do
       expect(build_with('http://example.test/callback')).not_to be_valid
     end
 
-    # Doorkeeper decides loopback by parsing the host as an address, so a name
-    # is not loopback — and a registration using one would have every
-    # ephemeral port refused at authorization anyway.
-    it 'refuses localhost by name' do
-      expect(build_with('http://localhost/callback')).not_to be_valid
+    # Claude Code calls back on `http://localhost:<port>` and never on the IP
+    # literal, so it can only be registered by name.
+    it 'accepts localhost by name, with or without a port' do
+      expect(build_with('http://localhost:3118/callback')).to be_valid
+      expect(build_with('http://localhost/callback')).to be_valid
+    end
+
+    # Doorkeeper matches a `localhost` callback exactly, and clients send it
+    # lowercase.
+    it 'refuses localhost written in capitals' do
+      expect(build_with('http://LocalHost:3118/callback')).not_to be_valid
+    end
+
+    it 'refuses a host that only starts with localhost' do
+      expect(build_with('http://localhost.example.test:3118/callback')).not_to be_valid
     end
   end
 
@@ -50,15 +69,6 @@ RSpec.describe 'OAuth redirect URIs' do
       )
     end
 
-    def authorizable?(redirect_uri)
-      ::Doorkeeper::OAuth::PreAuthorization.new(
-        ::Doorkeeper.config,
-        { client_id: application.uid, response_type: 'code', redirect_uri: redirect_uri,
-          scope: 'read_products', code_challenge: 'c' * 43, code_challenge_method: 'S256' },
-        create(:admin_user)
-      ).authorizable?
-    end
-
     it 'is authorized whatever port it chose' do
       expect(authorizable?('http://127.0.0.1:49821/callback')).to be(true)
       expect(authorizable?('http://127.0.0.1:60007/callback')).to be(true)
@@ -66,6 +76,27 @@ RSpec.describe 'OAuth redirect URIs' do
 
     it 'still refuses a host that was never registered' do
       expect(authorizable?('https://evil.test/callback')).to be(false)
+    end
+  end
+
+  describe 'a terminal client calling back on localhost' do
+    let(:application) do
+      store.oauth_applications.create!(
+        name: 'Claude Code', confidential: false, redirect_uri: 'http://localhost:3118/callback'
+      )
+    end
+
+    it 'is authorized on the registered port' do
+      expect(authorizable?('http://localhost:3118/callback')).to be(true)
+    end
+
+    # RFC 8252 §7.3: the port of a loopback callback varies at run time.
+    it 'is authorized on any other port' do
+      expect(authorizable?('http://localhost:49821/callback')).to be(true)
+    end
+
+    it 'still refuses another host on the registered port' do
+      expect(authorizable?('http://localhost.example.test:3118/callback')).to be(false)
     end
   end
 end

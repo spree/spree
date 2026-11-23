@@ -236,7 +236,7 @@ function DataGridShell<T extends RowData>({
           // key after it lands on nothing (docs/plans/6.0-volume-pricing.md).
           tabIndex={-1}
           className={cn(
-            'w-full border-collapse text-sm outline-none [&_td]:border [&_th]:border [&_td]:border-border [&_th]:border-border',
+            'w-full border-collapse text-base outline-none [&_td]:border [&_th]:border [&_td]:border-border [&_th]:border-border',
             // Internal rules only. `border` on every cell also draws the grid's
             // outer edge — `border-collapse` merges neighbours, so the outermost
             // cells' outer sides become the table's own frame, doubling the
@@ -347,7 +347,7 @@ function DataGridRow<T extends RowData>({
   if (headerContent) {
     return (
       <tr>
-        <td colSpan={columnCount} className="bg-muted/60 px-3 py-2 text-sm">
+        <td colSpan={columnCount} className="bg-muted/60 px-3 py-2 text-base">
           {headerContent}
         </td>
       </tr>

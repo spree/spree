@@ -613,7 +613,7 @@ RSpec.describe Spree::Reporting::Query do
       end
 
       it 'ranks categories by net revenue' do
-        category = create(:category, store: store)
+        category = create(:category)
         order1.products.each { |product| product.categories << category }
 
         result = run(metrics: %w[net_sales units_sold], dimensions: %w[category], sort: '-net_sales')
@@ -737,7 +737,7 @@ RSpec.describe Spree::Reporting::Query do
       # back, never with a neighbour. Frozen on the last day of a quarter,
       # where the range is three whole months and a plain day shift would
       # start the previous period on March 31.
-      around { |example| Timecop.freeze(Time.zone.parse('2026-09-30 12:00')) { example.run } }
+      around { |example| travel_to(Time.zone.parse('2026-09-30 12:00')) { example.run } }
 
       let(:from) { 2.months.ago.beginning_of_month.to_date }
       let!(:recent_order) { create(:completed_order_with_totals, store: store, completed_at: (from + 45).in_time_zone.change(hour: 12)) }
@@ -924,7 +924,7 @@ RSpec.describe Spree::Reporting::Query do
     let!(:order) { create(:completed_order_with_totals, store: store, completed_at: midday) }
 
     it 'buckets sales by hour in the store timezone' do
-      result = Timecop.freeze(midday + 1.hour) do
+      result = travel_to(midday + 1.hour) do
         run(metrics: %w[orders], dimensions: [{ name: 'completed_at', grain: 'hour' }],
             time_range: { preset: 'today' })
       end
@@ -1061,6 +1061,116 @@ RSpec.describe Spree::Reporting::Query do
       result = run(metrics: %w[promotion_discounts])
 
       expect(result.totals[:promotion_discounts][:value]).to eq(5.0)
+    end
+
+    # Only the promotion dimensions join the discount rows. Grouped by
+    # anything else, the joined aggregate named a table missing from the FROM
+    # clause and the query failed outright.
+    it 'breaks discounts down by a dimension that does not join them' do
+      result = run(metrics: %w[promotion_discounts], dimensions: %w[product])
+
+      expect(result.rows.size).to eq(1)
+      expect(result.rows.first[:metrics][:promotion_discounts][:value]).to eq(5.0)
+      expect(result.totals[:promotion_discounts][:value]).to eq(5.0)
+    end
+
+    it 'sorts and filters discounts grouped by a dimension that does not join them' do
+      result = run(metrics: %w[promotion_discounts net_sales], dimensions: %w[product],
+                   sort: '-promotion_discounts', limit: 5,
+                   metric_filters: [{ metric: 'promotion_discounts', op: 'gt', value: 0 }])
+
+      expect(result.rows.size).to eq(1)
+      expect(result.rows.first[:metrics][:promotion_discounts][:value]).to eq(5.0)
+    end
+
+    context 'with a line carrying two promotions' do
+      let!(:second) { create(:promotion, store: store, name: 'Summer Sale') }
+
+      before do
+        Spree::Discount.create!(order: order, line_item: order.line_items.first, promotion: second,
+                                kind: 'promotion', label: 'Summer Sale', amount: -2)
+      end
+
+      it 'credits the line its combined discount once when grouped by product' do
+        result = run(metrics: %w[promotion_discounts], dimensions: %w[product])
+
+        expect(result.rows.size).to eq(1)
+        expect(result.rows.first[:metrics][:promotion_discounts][:value]).to eq(7.0)
+        expect(result.totals[:promotion_discounts][:value]).to eq(7.0)
+      end
+
+      # Filtered to one promotion, the line must contribute only that
+      # promotion's money, not the line's combined discount.
+      it 'counts only the filtered promotion when grouped by product' do
+        result = run(metrics: %w[promotion_discounts], dimensions: %w[product],
+                     filters: [{ dimension: 'promotion', op: 'eq', value: promotion.prefixed_id }])
+
+        expect(result.rows.first[:metrics][:promotion_discounts][:value]).to eq(5.0)
+        expect(result.totals[:promotion_discounts][:value]).to eq(5.0)
+      end
+
+      # A quoted `?` inside the discount subquery used to be counted as a bind
+      # placeholder for the HAVING value, and the statement was refused.
+      it 'filters on discount money while filtered by a code containing a question mark' do
+        Spree::Discount.where(promotion: promotion).update_all(code: 'SAVE?10')
+
+        result = run(metrics: %w[promotion_discounts], dimensions: %w[product],
+                     filters: [{ dimension: 'coupon_code', op: 'eq', value: 'SAVE?10' }],
+                     metric_filters: [{ metric: 'promotion_discounts', op: 'gte', value: 1 }])
+
+        expect(result.rows.size).to eq(1)
+        expect(result.rows.first[:metrics][:promotion_discounts][:value]).to eq(5.0)
+
+        excluded = run(metrics: %w[promotion_discounts], dimensions: %w[product],
+                       filters: [{ dimension: 'coupon_code', op: 'eq', value: 'SAVE?10' }],
+                       metric_filters: [{ metric: 'promotion_discounts', op: 'gt', value: 5 }])
+
+        expect(excluded.rows).to be_empty
+      end
+
+      it 'reports only the filtered promotion when grouped by promotion' do
+        result = run(metrics: %w[promotion_discounts], dimensions: %w[promotion],
+                     filters: [{ dimension: 'promotion', op: 'eq', value: promotion.prefixed_id }])
+
+        expect(result.rows.map { |row| row[:dimensions][:promotion] }).to eq([promotion.id])
+        expect(result.rows.first[:metrics][:promotion_discounts][:value]).to eq(5.0)
+        expect(result.totals[:promotion_discounts][:value]).to eq(5.0)
+      end
+
+      # The product dimension joins the variant, the first hop of the category
+      # path; the category's own table must not be assumed joined from that.
+      it 'filters by category while grouped by product' do
+        category = create(:category)
+        order.line_items.first.product.categories << category
+
+        result = run(metrics: %w[promotion_discounts net_sales], dimensions: %w[product],
+                     filters: [{ dimension: 'category', op: 'eq', value: category.prefixed_id }])
+
+        expect(result.rows.size).to eq(1)
+        expect(result.rows.first[:metrics][:promotion_discounts][:value]).to eq(7.0)
+      end
+
+      # A filter dimension joining past the discount rows names a table the
+      # per-line subquery never reads, so it narrows through the outer
+      # query's id filter instead of inside the subquery.
+      it 'filters by a dimension that joins past the discount rows' do
+        registry = Spree::Reporting::Registry.new
+        Spree::Reporting::DefaultVocabulary.install(registry)
+        registry.dimension :promotion_name, base: :line_items,
+                                            column: '%{promotions}.name',
+                                            joins: [{ promotion_discounts: :promotion }]
+        query = described_class.new(store: store, registry: registry,
+                                    params: { metrics: %w[promotion_discounts],
+                                              filters: [{ dimension: 'promotion_name', op: 'eq', value: 'Spring Sale' }] })
+
+        expect(query.execute.totals[:promotion_discounts][:value]).to eq(7.0)
+      end
+
+      it 'counts only the filtered code in the dimensionless total' do
+        result = run(metrics: %w[promotion_discounts], filters: [{ dimension: 'coupon_code', op: 'eq', value: 'SPRING' }])
+
+        expect(result.totals[:promotion_discounts][:value]).to eq(5.0)
+      end
     end
 
     it 'breaks discounts down by the redeemed code' do

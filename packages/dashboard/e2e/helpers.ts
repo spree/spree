@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs'
-import { expect, type Locator, type Page } from '@playwright/test'
+import { request as apiRequest, expect, type Locator, type Page } from '@playwright/test'
 import { CREDENTIALS_FILE } from './paths'
 
 /** A CSV to hand to a file input, one row per entry. */
@@ -169,6 +169,10 @@ export const FIXTURE_BULK_CHANNEL_NAME = 'E2E Bulk Channel'
  * screens have rows without a spec having to place and fulfil an order first.
  */
 export const FIXTURE_LEDGER_SELLER = 'E2E Ledger Seller'
+/** A product the ledger seller submitted, waiting on the operator's review. */
+export const FIXTURE_LEDGER_PRODUCT_IN_REVIEW = 'E2E Ledger Product In Review'
+/** The ledger seller's returns location, whose address the seller page shows. */
+export const FIXTURE_LEDGER_RETURNS_LOCATION = 'E2E Ledger Returns'
 /** The settled payout the read-only specs assert against. */
 export const FIXTURE_LEDGER_PAYOUT_AMOUNT = '120.0'
 /**
@@ -629,6 +633,74 @@ export async function invitationAcceptancePath(
   return acceptance_url.replace(/^https?:\/\/[^/]+/, '')
 }
 
+/** The password `addTeammate` gives the teammate it puts on the store. */
+export const TEAMMATE_PASSWORD = 'e2e-password-123'
+
+/**
+ * Puts a second teammate on the store through the API: an invitation, then
+ * its acceptance. Accepting signs the invitee in, so it happens in a request
+ * context of its own — sharing the page's would swap the admin's session
+ * cookie for the invitee's. Without `roleId` the teammate gets the first role
+ * listed.
+ */
+export async function addTeammate(
+  page: Page,
+  session: E2ELoginSession,
+  email: string,
+  roleId?: string,
+) {
+  const headers = { Authorization: `Bearer ${session.accessToken}` }
+  const roles = await page.request.get('/api/v3/admin/roles', { headers }).then((res) => res.json())
+  const created = await page.request.post('/api/v3/admin/invitations', {
+    headers,
+    data: { email, role_id: roleId ?? roles.data[0].id },
+  })
+  expect(created.status(), await created.text()).toBe(201)
+  const invitation = (await created.json()) as { id: string }
+
+  const acceptance = new URL(
+    await invitationAcceptancePath(page, session, `/api/v3/admin/invitations/${invitation.id}`),
+    'http://localhost',
+  )
+  const invitee = await apiRequest.newContext({ baseURL: new URL(page.url()).origin })
+  try {
+    const accepted = await invitee.post(`/api/v3/admin/auth/invitations/${invitation.id}/accept`, {
+      data: {
+        token: acceptance.searchParams.get('token'),
+        password: TEAMMATE_PASSWORD,
+        password_confirmation: TEAMMATE_PASSWORD,
+        first_name: 'Robin',
+        last_name: 'Teammate',
+      },
+    })
+    expect(accepted.ok(), await accepted.text()).toBeTruthy()
+  } finally {
+    await invitee.dispose()
+  }
+}
+
+/**
+ * Clicks Send invitation in the seller's invite dialog and returns the API path
+ * of the invitation it created. The page's own first read of the invitation
+ * list can still be in flight when Send is clicked, and it comes back empty, so
+ * this waits for the list that holds the invitation just sent.
+ */
+export async function sendSellerInvitation(page: Page): Promise<string> {
+  const [listResponse] = await Promise.all([
+    page.waitForResponse(
+      async (res) =>
+        /\/api\/v3\/admin\/sellers\/[^/]+\/invitations$/.test(res.url()) &&
+        res.request().method() === 'GET' &&
+        res.status() === 200 &&
+        ((await res.json()) as { data: unknown[] }).data.length > 0,
+      { timeout: 20_000 },
+    ),
+    page.getByRole('button', { name: /send invitation/i }).click(),
+  ])
+  const { data } = (await listResponse.json()) as { data: Array<{ id: string }> }
+  return `${new URL(listResponse.url()).pathname}/${data[0].id}`
+}
+
 /**
  * A placed, paid and shipped order for the fixture customer, built through the
  * API — returns and claims can only be raised against goods that left. Paid
@@ -857,4 +929,54 @@ export async function deleteSeededRecords(page: Page) {
     await adminRequest(page, session, 'delete', path).catch(() => undefined)
   }
   seededRecords = []
+}
+
+/** A titled `Section` on a detail page, found by its heading. */
+export function section(page: Page, title: RegExp) {
+  return page
+    .locator('[data-slot="section"]')
+    .filter({ has: page.getByRole('heading', { name: title }) })
+}
+
+/** Creates a tax rate in the Default category from the tax rates page. */
+export async function createTaxRate(
+  page: Page,
+  attrs: { name: string; ratePercent: string; country?: string },
+) {
+  await page.getByRole('button', { name: /add tax rate/i }).click()
+  await expect(page.getByRole('heading', { name: /new tax rate/i })).toBeVisible()
+
+  await page.locator('#name').fill(attrs.name)
+  await page.locator('#rate_percent').fill(attrs.ratePercent)
+  // The seeded store always carries a `Default` tax category.
+  await page.locator('#tax_category_id').click()
+  await page.getByRole('option', { name: /^default$/i }).click()
+
+  if (attrs.country) {
+    await page.getByRole('combobox', { name: /^country$/i }).click()
+    await page.getByPlaceholder(/^search countries/i).fill(attrs.country)
+    await page.getByRole('option', { name: attrs.country }).first().click()
+  }
+
+  await page.getByRole('button', { name: /create tax rate/i }).click()
+}
+
+/**
+ * Adds one unit of a product on the New order form, through the same "Add
+ * product" sheet the order edit screen uses.
+ */
+export async function addNewOrderItem(page: Page, productName: string) {
+  await page
+    .getByRole('button', { name: /^add product$/i })
+    .first()
+    .click()
+  const sheet = page.getByRole('dialog', { name: /add line item/i })
+  await expect(sheet).toBeVisible()
+  await sheet.getByPlaceholder(/product name or sku/i).fill(productName)
+  await sheet
+    .getByRole('button', { name: new RegExp(escapeRegex(productName), 'i') })
+    .first()
+    .click()
+  await sheet.getByRole('button', { name: /^add$/i }).click()
+  await expect(sheet).toBeHidden()
 }

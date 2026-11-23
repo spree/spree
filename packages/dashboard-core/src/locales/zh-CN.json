@@ -37,7 +37,6 @@
     },
     "account": {
       "community": "社区",
-      "contact_support": "联系支持",
       "documentation": "文档",
       "edit_profile": "编辑个人资料",
       "language": {
@@ -45,8 +44,8 @@
         "update_failed": "无法保存您的语言偏好。请重试。"
       },
       "log_out": "退出登录",
-      "preferences": "偏好设置",
-      "view_store": "查看店铺"
+      "report_issue": "报告问题",
+      "send_feedback": "发送反馈"
     },
     "actions": {
       "actions_menu": "操作",
@@ -102,7 +101,11 @@
       "default_shipping": "默认收货",
       "inherited_from": "继承自 {{name}}",
       "set_default_billing": "设为默认账单地址",
-      "set_default_shipping": "设为默认收货地址"
+      "set_default_shipping": "设为默认收货地址",
+      "columns": {
+        "address": "地址",
+        "defaults": "默认用于"
+      }
     },
     "auth": {
       "back_to_login": "返回登录",
@@ -174,6 +177,8 @@
       "no_results": "无结果",
       "combobox_more_results_one": "还有 1 个结果未显示。输入以搜索。",
       "combobox_more_results_other": "还有 {{count}} 个结果未显示。输入以搜索。",
+      "search_min_length_one": "请至少输入 1 个字符以搜索。",
+      "search_min_length_other": "请至少输入 {{count}} 个字符以搜索。",
       "none": "无",
       "optional": "可选",
       "or": "或",
@@ -190,7 +195,8 @@
       "unsaved_changes": "您有未保存的更改。",
       "yes": "是",
       "done": "完成",
-      "error": "出了点问题。"
+      "error": "出了点问题。",
+      "unsaved_label": "未保存的更改"
     },
     "components": {
       "address_block": {
@@ -321,7 +327,8 @@
         "drop_label": "将文件拖放到此处，或点击浏览",
         "invalid_type": "不接受此文件类型（应为：{{accept}}）",
         "upload_failed": "上传失败：{{message}}",
-        "uploading": "正在上传…"
+        "uploading": "正在上传…",
+        "replace": "替换文件"
       },
       "import_button": {
         "delimiter_label": "列分隔符",
@@ -342,7 +349,8 @@
       "json_preview_drawer": {
         "collapse_depth": "折叠层级",
         "copied": "已复制",
-        "copy_all": "全部复制",
+        "copy_curl": "复制为 curl",
+        "copy_json": "复制 JSON",
         "depth": "层级 {{level}}",
         "failed_to_load": "加载失败：{{message}}",
         "open_raw": "打开原始响应",
@@ -437,11 +445,8 @@
           "this_month": "本月",
           "today": "今天"
         },
-        "date_range_end": "结束",
-        "date_range_start": "开始",
         "descending": "降序",
         "filter_by": "筛选依据…",
-        "filter_date_placeholder": "选择日期",
         "filter_select_placeholder": "选择…",
         "filter_text_placeholder": "筛选…",
         "filter_to_placeholder": "筛选至…",
@@ -474,8 +479,12 @@
         "search_placeholder": "搜索…",
         "select_all": "全选",
         "sort_by": "排序方式",
+        "sort_by_column": "按{{column}}排序",
         "sort_tooltip": "排序",
-        "visible_columns": "可见列"
+        "visible_columns": "可见列",
+        "row_density": "行密度",
+        "density_comfortable": "宽松",
+        "density_compact": "紧凑"
       },
       "tag_combobox": {
         "create_option": "创建“{{tag}}”",
@@ -488,11 +497,58 @@
         "light": "浅色",
         "system": "系统"
       },
+      "timezone_combobox": {
+        "empty": "未找到时区",
+        "placeholder": "选择时区",
+        "search_placeholder": "搜索时区…"
+      },
       "wizard": {
         "discard_cancel": "继续编辑",
         "discard_confirm": "放弃",
         "discard_message": "已填写的内容将全部丢失，且无法恢复。",
         "discard_title": "放弃此草稿？"
+      },
+      "product_stock": {
+        "out_of_stock": "缺货",
+        "on_backorder": "可延期交货",
+        "in_stock": "库存 {{count}} 件",
+        "in_stock_short": "有库存",
+        "variants_one": "{{count}} 个变体",
+        "variants_other": "{{count}} 个变体"
+      },
+      "developer_inspector": {
+        "title": "开发者工具",
+        "description": "来自此标签页的 Admin API 请求，仅保存在内存中。令牌和密码已隐藏。",
+        "system_info": "系统信息",
+        "clear": "清除",
+        "tabs": {
+          "requests": "请求",
+          "errors": "错误"
+        },
+        "empty_requests": "暂无请求。使用后台后，请求会显示在这里。",
+        "empty_errors": "没有失败的请求。",
+        "select_request": "选择一个请求以查看详情。",
+        "network_error": "网络错误",
+        "status": "状态",
+        "duration": "耗时",
+        "duration_ms": "{{value}} 毫秒",
+        "request_id": "请求 ID",
+        "error_code": "错误代码",
+        "query": "查询参数",
+        "request_body": "请求体",
+        "response_body": "响应体",
+        "no_body": "无内容",
+        "copy_curl": "复制为 curl",
+        "copy_sdk": "复制为 SDK 调用",
+        "copy_response": "复制响应",
+        "copy_request_id": "复制请求 ID",
+        "copied": "已复制",
+        "menu_open": "开发者工具"
+      },
+      "server_error": {
+        "title": "服务器出现错误",
+        "request_id": "请求 {{id}}",
+        "report": "报告"
       }
     },
     "currency_amounts": {
@@ -963,6 +1019,24 @@
         "digital_asset_authorized_days": {
           "label": "可用天数"
         }
+      },
+      "seller": {
+        "about": {
+          "label": "简介",
+          "help": "显示在卖家的店铺资料页。"
+        },
+        "holiday_mode_until": {
+          "label": "休假至",
+          "placeholder": "选择日期",
+          "help": "在此之前商品仍然可见，但无法购买。"
+        },
+        "contact_email": {
+          "help": "邀请和市场通知会发送到这里。"
+        },
+        "billing_email": {
+          "label": "账单邮箱",
+          "help": "佣金发票和结算通知的接收邮箱（如果不同）。"
+        }
       }
     },
     "image_upload": {
@@ -1043,16 +1117,59 @@
       },
       "wizard_title": "导入"
     },
+    "invitation": {
+      "accept": "接受邀请",
+      "accepting": "正在接受…",
+      "could_not_accept": "无法接受邀请",
+      "create_and_accept": "创建账户并接受",
+      "create_to_accept": "。创建账户以接受。",
+      "generic_error_message": "出现了一些问题。请重试。",
+      "generic_error_title": "无法加载邀请",
+      "invited_as_role": "，担任 {{role}}",
+      "invited_by": "{{email}} 邀请了你",
+      "invited_generic": "你已被邀请",
+      "join_store": "加入 {{store}}",
+      "loading": "正在加载邀请…",
+      "missing_token_message": "此链接似乎不完整。请让邀请你的人重新发送一次。",
+      "missing_token_title": "缺少邀请令牌",
+      "not_found_message": "此邀请已过期、被撤销或已被接受。请让邀请人发送一个新的邀请。",
+      "not_found_title": "未找到邀请",
+      "password_confirmation": "确认密码",
+      "sign_in_and_accept": "登录并接受",
+      "sign_in_to_accept": "。登录以接受。",
+      "signed_in_as_another_account": "你当前以 {{email}} 登录，但此邀请发送给 {{invitee}}。请退出登录后再接受。",
+      "signed_in_as_invitee": "。你当前以 {{email}} 登录。"
+    },
     "media_picker": {
+      "any": "全部",
       "confirm": "添加所选",
       "description": "从媒体库中选择文件，或上传新文件。",
+      "drop_hint_images": "或将图片拖放到此处",
+      "drop_hint_media": "或将图片和视频拖放到此处",
       "empty": "媒体库为空。请上传文件以开始。",
+      "filter_type": "类型",
+      "filter_usage": "使用情况",
       "no_results": "没有文件符合您的搜索。",
       "search_placeholder": "按名称搜索…",
       "selected_count_one": "已选择 {{count}} 个",
       "selected_count_other": "已选择 {{count}} 个",
+      "sort_date_added": "添加日期",
+      "sort_file_name": "文件名",
+      "sort_file_size": "文件大小",
       "title": "媒体库",
-      "upload": "上传"
+      "type_image": "图片",
+      "type_video": "视频",
+      "upload": "上传",
+      "usage_unused": "未使用",
+      "usage_used": "使用中",
+      "view": "视图",
+      "view_grid": "网格视图",
+      "view_list": "列表视图"
+    },
+    "media_editor": {
+      "information": "信息",
+      "details": "详情",
+      "added": "添加于 {{date}}"
     },
     "messages": {
       "address_removed": "地址已移除",
@@ -1545,12 +1662,18 @@
         "add_video_title": "添加视频链接",
         "assigned_variants_help": "选择此图片所代表的变体。留空则应用于所有变体。",
         "assigned_variants_label": "关联的变体",
-        "delete_confirm": "删除此媒体？此操作无法撤销。",
+        "delete_confirm": "移除此媒体？保存商品时将被删除。",
+        "delete_selected_confirm_one": "移除所选媒体？保存商品时将被删除。",
+        "delete_selected_confirm_other": "移除所选的 {{count}} 个媒体？保存商品时将被删除。",
         "drop_hint": "将媒体拖放到此处，或点击浏览",
         "edit_title": "编辑媒体",
         "file_types_hint": "图片（PNG、JPG、WebP）和视频（MP4、WebM、MOV）",
         "focal_point_help": "点击图片，设置裁剪时需要保留的画面位置。",
         "focal_point_reset": "重置",
+        "select_all": "选择所有媒体",
+        "select_item": "选择 {{name}}",
+        "selected_count_one": "已选择 {{count}} 个",
+        "selected_count_other": "已选择 {{count}} 个",
         "unsupported_file": "有 {{count}} 个文件未添加 — 仅支持图片和视频。",
         "upload_failed": "上传 {{name}} 失败：{{message}}",
         "upload_status_failed": "失败",
@@ -1660,6 +1783,10 @@
           "failed_to_create_option_type": "创建选项类型失败",
           "failed_to_create_value": "创建值失败"
         },
+        "images_aria": "{{name}} 的图片",
+        "images_description": "勾选展示此变体的商品图片。图片按媒体卡片中的顺序排列，第一张勾选的图片将作为缩略图——在媒体卡片中拖动图片即可更改。",
+        "images_title": "{{name}} 的图片",
+        "images_unsaved": "保存商品后才能为此变体添加图片",
         "keep": "全部保留",
         "option_type_label": "选项类型",
         "option_type_placeholder": "请选择选项类型",
@@ -1681,6 +1808,7 @@
           "carton_placeholder": "未装箱",
           "pending_save": "此处的更改随商品一并保存。"
         },
+        "thumbnail_badge": "缩略图",
         "title": "变体",
         "variant_label": "变体"
       }
@@ -1763,7 +1891,8 @@
       "value_count_other": "{{count}} 个值"
     },
     "media_library": {
-      "download": "下载"
+      "download": "下载",
+      "choose_from_library": "从媒体库选择"
     },
     "catalogs": {
       "terms": {
@@ -2091,6 +2220,17 @@
       "replace": "替换文件",
       "replace_description": "“{{name}}”将被移除，所有买家将通过现有链接下载新文件。立即生效。",
       "replace_title": "替换此文件？"
+    },
+    "sellers": {
+      "images": {
+        "cover_photo_label": "封面图",
+        "cover_photo_help": "卖家资料页顶部的宽幅横幅。",
+        "logo_label": "标志",
+        "logo_help": "建议使用正方形。会在卖家出现的各处显示在其旁边。",
+        "square_logo_label": "方形标志",
+        "square_logo_help": "用于需要严格正方形的位置，例如头像。"
+      },
+      "not_provided": "未填写"
     }
   }
 }

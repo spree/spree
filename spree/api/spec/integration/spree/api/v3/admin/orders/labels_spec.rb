@@ -50,6 +50,7 @@ RSpec.describe 'Admin Shipping Labels API', type: :request, swagger_doc: 'api-re
 
     post 'Buy or record a shipping label' do
       tags 'Shipping Labels'
+      operationId 'shipping_labels_purchase'
       consumes 'application/json'
       produces 'application/json'
       security [{ api_key: [], bearer_auth: [] }]

@@ -248,7 +248,7 @@ export function ReceiveDeliveryCard({
         </Table>
       </CardContent>
       <CardFooter className="flex items-center justify-between">
-        <p className="text-muted-foreground text-sm tabular-nums">
+        <p className="text-muted-foreground text-base tabular-nums">
           {t('admin.stock_receipts.delivery_total', { accepted, rejected })}
         </p>
         <Can I="update" a={subject}>

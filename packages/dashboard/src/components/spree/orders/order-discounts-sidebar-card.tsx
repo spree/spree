@@ -28,7 +28,7 @@ import {
 } from '@spree/dashboard-ui'
 import { PlusIcon } from '@spree/dashboard-ui/icons'
 import { useQuery } from '@tanstack/react-query'
-import { type FormEvent, useState } from 'react'
+import { type FormEvent, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useOrderMutation } from '../../../hooks/use-order'
 
@@ -59,7 +59,7 @@ export function DiscountsCard({ order }: { order: Order }) {
           {/* Discount code — editable on drafts; frozen after completion */}
           <div className="flex items-center justify-between gap-2">
             <div className="flex flex-col">
-              <span className="text-sm font-medium">
+              <span className="text-base font-medium">
                 {t('admin.orders.detail.discount_section.label')}
               </span>
               {order.coupon_code ? (
@@ -105,7 +105,7 @@ export function DiscountsCard({ order }: { order: Order }) {
           {/* Gift card */}
           <div className="flex items-center justify-between gap-2">
             <div className="flex flex-col">
-              <span className="text-sm font-medium">
+              <span className="text-base font-medium">
                 {t('admin.orders.detail.gift_card_section.gift_card_label')}
               </span>
               {order.gift_card ? (
@@ -247,7 +247,9 @@ function CouponCodeDialog({
                 </Field>
               )}
               {mutation.isError && (
-                <p className="text-sm text-destructive">{(mutation.error as Error).message}</p>
+                <p className="text-base text-destructive" role="alert">
+                  {(mutation.error as Error).message}
+                </p>
               )}
             </FieldGroup>
           </DialogBody>
@@ -275,20 +277,45 @@ function ApplyGiftCardDialog({
   onOpenChange: (open: boolean) => void
 }) {
   const { t } = useTranslation()
+  const [code, setCode] = useState('')
   const mutation = useOrderMutation(orderId, (params: { code: string }) =>
     adminClient.orders.giftCards.apply(orderId, params),
   )
 
+  // Drop a settled attempt's error when the dialog closes, so reopening it
+  // doesn't greet the user with a stale "not found".
+  function handleOpenChange(next: boolean) {
+    if (!next && !mutation.isPending) mutation.reset()
+    onOpenChange(next)
+  }
+
+  function clearSettledError() {
+    if (mutation.isError) mutation.reset()
+  }
+
+  // Closing never resets an in-flight request, so one that fails after the
+  // dialog is gone keeps its error into the next open. Clear it while closed.
+  useEffect(() => {
+    if (!open && mutation.isError) mutation.reset()
+  }, [open, mutation.isError, mutation.reset])
+
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    const fd = new FormData(e.currentTarget)
-    const code = (fd.get('code') as string).trim()
-    if (!code) return
-    mutation.mutate({ code }, { onSuccess: () => onOpenChange(false) })
+    const trimmed = code.trim()
+    if (!trimmed) return
+    mutation.mutate(
+      { code: trimmed },
+      {
+        onSuccess: () => {
+          setCode('')
+          handleOpenChange(false)
+        },
+      },
+    )
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{t('admin.orders.detail.gift_card_section.apply_dialog_title')}</DialogTitle>
@@ -304,15 +331,25 @@ function ApplyGiftCardDialog({
                 <Input
                   id="gift-card-code"
                   name="code"
+                  value={code}
+                  onChange={(e) => {
+                    setCode(e.target.value)
+                    clearSettledError()
+                  }}
                   placeholder={t('admin.orders.detail.gift_card_section.code_placeholder')}
                   required
                   autoFocus
                 />
               </Field>
+              {mutation.isError && (
+                <p className="text-base text-destructive" role="alert">
+                  {(mutation.error as Error).message}
+                </p>
+              )}
             </FieldGroup>
           </DialogBody>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <Button type="button" variant="outline" onClick={() => handleOpenChange(false)}>
               {t('admin.actions.cancel')}
             </Button>
             <Button type="submit" disabled={mutation.isPending}>

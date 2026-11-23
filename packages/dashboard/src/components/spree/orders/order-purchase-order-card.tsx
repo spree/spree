@@ -167,9 +167,9 @@ export function OrderPurchaseOrderCard({ order }: { order: Order }) {
         ) : (
           <>
             {order.po_number ? (
-              <p className="text-sm font-medium tabular-nums">{order.po_number}</p>
+              <p className="text-base font-medium tabular-nums">{order.po_number}</p>
             ) : (
-              <p className="text-sm text-muted-foreground">{t('admin.common.none')}</p>
+              <p className="text-base text-muted-foreground">{t('admin.common.none')}</p>
             )}
 
             {order.po_document_url && (

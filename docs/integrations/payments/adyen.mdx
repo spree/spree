@@ -1,14 +1,14 @@
 ---
 title: "Connect Adyen payments to Spree Commerce"
 sidebarTitle: "Adyen"
-description: "Set up Spree's native Adyen integration to accept global payments across multiple methods, with built-in fraud protection and a seamless checkout experience."
+description: "Accept cards, wallets and local payment methods through Adyen's Drop-in on Spree, with captures, cancels and refunds confirmed by Adyen's webhooks."
 ---
 
-Adyen is a global payment platform that enables businesses to accept payments across multiple channels and markets. It supports a wide range of payment methods, provides advanced fraud protection, and offers seamless checkout experiences for customers worldwide.
+Adyen is a global payment platform. Spree's Adyen integration takes payments through Adyen's Sessions flow and its Drop-in component, so your shoppers see every payment method you enable in Adyen that pays a checkout in one payment: cards, Apple Pay and Google Pay, buy now pay later methods such as Klarna, bank and local methods such as iDEAL, BLIK and Bancontact.
 
 ## Installation
 
-Before you can enable Adyen, it must be installed. To do so, you need to run the following command:
+The integration ships with Spree as the `spree_adyen` gem and needs Ruby 3.3 or newer.
 
 <CodeGroup>
 
@@ -16,158 +16,106 @@ Before you can enable Adyen, it must be installed. To do so, you need to run the
 spree add adyen
 ```
 
-```bash Without Spree CLI
-bundle add spree_adyen && bin/rails g spree_adyen:install && bin/rails db:migrate
+```ruby Without Spree CLI
+# server/Gemfile — use the same version requirement as your `spree` gem, then run `bundle install`
+gem 'spree_adyen', '>= 6.0.0'
 ```
 
 </CodeGroup>
 
-The Spree CLI also runs the migrations and restarts the server for you. Without it, restart the server yourself after the commands finish.
+The Spree CLI restarts the server for you. Without it, restart the server yourself. The gateway registers itself, so there is nothing to generate and no migrations to run.
 
-## Connect Adyen
+## Set up Adyen
 
-Sign in to your Spree admin dashboard and navigate to **Settings → Payments**.
+### 1. Create an API credential
 
-![Adyen listed under Available Payment Methods on the Payments settings page](/docs/images/integrations/adyen/1-payment-method-list.png)
+In the [Adyen Customer Area](https://ca-live.adyen.com/), select the merchant account you take payments with, then go to **Developers → API credentials** and create a **Web service user** credential. Under **Server settings**, generate an **API key** and copy it: Adyen shows it only once.
 
-Find Adyen under Available Payment Methods and click **Add**.
+Give the credential these roles, under **Roles**:
 
-This will redirect you to the Adyen setup form.
+- **Checkout webservice role**, to take payments
+- **Management API — API credentials read and write**, so Spree can generate the client key and add your storefront's allowed origins
+- **Management API — Webhooks read and write**, so Spree can set up its webhook
+- **Management API — Accounts read**, so Spree can check the credential reaches your merchant account
 
-![The Adyen setup form with fields for Merchant Account, API Key, Client Key, HMAC Key, Webhook, and Live URL Prefix](/docs/images/integrations/adyen/2-setup-form.png)
+Spree generates the client key and adds the allowed origins itself, so you do not need to under **Client settings**. A company-level credential can serve several stores and merchant accounts; each payment method in Spree names its own merchant account.
 
-You only need to provide the **API Key**, **Client Key**, and (for live payments) **Live URL Prefix** to get started. Spree automatically populates the **Merchant Account**, **Hmac Key**, and **Webhook** fields after you create the payment method.
+### 2. Turn on Additional data
 
-<Warning>Don't enter values into the **Merchant Account**, **Hmac Key**, or **Webhook** fields manually. Spree fills these in automatically after creation — entering values yourself can block the auto-population process.</Warning>
+Spree records the card brand, last four digits, expiry and saved-card token Adyen reports. Adyen sends them only when asked:
 
-The following steps walk through generating the credentials you need from inside the [Adyen Customer Area](https://ca-live.adyen.com/).
+- In **Developers → Additional data**, turn on **Card summary**, **Expiry date** and **Recurring contract information** (the saved card's token). Leave the two deprecated recurring contract settings off.
+- In **Developers → Webhooks**, after Spree has created its webhook (step 4), click the pencil icon next to it to edit it. Under **Additional settings → Card**, turn on **Include card info for recurring contract events** (the last four digits and expiry), then save the configuration. This covers payments Spree records from Adyen's webhook, when the shopper does not return to the storefront after paying. The **Webhooks settings** page lists extra event codes Spree does not use; leave it as it is.
 
-### 1. Select your Merchant Account
+### 3. Leave Adyen's capture delay at immediate
 
-Log into the [Adyen Customer Area](https://ca-live.adyen.com/) and select the **merchant account** you're configuring. A company account can contain multiple merchant accounts — if so, pick the one tied to the store you're setting up.
+Spree decides when money is taken (see [Capturing payments](#capturing-payments)). Leave **Capture delay**, under **Settings → Merchant account settings**, at **Immediate**, its default. With a delay there, Spree records as captured at checkout money Adyen takes days later.
 
-All subsequent steps (generating API credentials, retrieving the Live URL Prefix) happen inside this merchant account.
+### 4. Add the payment method in Spree
 
-### 2. Generate API credentials
+In the Spree admin go to **Settings → Payments**, find Adyen under **Payment providers** and click **Connect**. Fill in:
 
-Inside the merchant account you selected, Adyen groups your Client Key and API Key under a single "API credential" record.
+- **API key** — from step 1
+- **Merchant account** — the merchant account's name, exactly as Adyen shows it
+- **Test mode** — on for test credentials, off for live
+- **Live URL prefix** — live only: **Developers → API URLs → Prefix** in the Customer Area
 
-1. Navigate to **Developers → API credentials**.
-2. Click **Create new credential** and select **Web service user**.
-3. On the next page, go to **Server Settings** and click **Generate API key**.
-4. Scroll down to **Client Settings** and click **Generate client key**.
-5. Still in **Client Settings**, add your Spree storefront URL under **Allowed origins** (e.g., `https://your-store.com`). Without this, the Drop-in checkout component won't load on your storefront.
-6. Click **Save changes**.
+When you save, Spree checks that the API key reaches the merchant account and has the roles above, and names what is missing if it does not. It then configures Adyen in the background:
 
-<Warning>Copy your API Key and Client Key as soon as they're generated and store them somewhere safe. Adyen displays the API Key **only once** — if you navigate away without copying it, you'll need to generate a new credential. The process is quick, but it's an avoidable annoyance.</Warning>
+- keeps the credential's client key, or generates one if it has none (an existing key is never replaced, so other stores sharing the credential keep working);
+- adds your store's allowed origins to the credential, so Drop-in loads on your storefront;
+- creates a webhook for this payment method on your Spree store's URL, or turns its existing one back on, with an HMAC key Spree keeps, and verifies every delivery with it.
 
-### 3. Get your Live URL Prefix (live only)
+It does this again whenever you change the API key, merchant account, test mode or live URL prefix. Allowed origins you add to the store later do not reach Adyen on their own: run `bin/rails spree:upgrade:configure_adyen_gateways`, which configures every Adyen payment method again and is safe to repeat.
 
-If you're configuring Adyen for live (non-test) payments, you'll need your unique API URL prefix. In the Adyen Customer Area, navigate to **Developers → API URLs** and copy the value under **Prefix**.
+<Warning>Your Spree store must be reachable from the internet for Adyen to deliver webhooks. Use a tunnel (for example ngrok) when testing locally.</Warning>
 
-This field is not needed for test mode.
+![Adyen listed under Payment providers on the Payments settings page](/docs/images/integrations/adyen/1-payment-method-list.png)
 
-### 4. Paste credentials into Spree and create the payment method
+## Capturing payments
 
-Back in the Spree admin form, paste each value into its matching field:
+Adyen follows the capture setting of the payment method, or the store's when the method has none:
 
-1. **API Key** — from step 2 (Server Settings)
-2. **Client Key** — from step 2 (Client Settings)
-3. **Live URL Prefix** — from step 3 (required for live sites only)
+- **At checkout**: Adyen takes the money when the shopper pays.
+- **On dispatch** or **Manually**: Adyen authorises the payment at checkout, and Spree captures it when the order is dispatched or when staff capture it from the dashboard.
 
-Leave the **Merchant Account**, **Hmac Key**, and **Webhook** fields blank — Spree populates them automatically once the payment method is created.
+Adyen holds Klarna, Riverty and Affirm payments for a capture request whatever its own capture delay says. With capture **At checkout**, Spree records them as authorised and asks Adyen to capture them as soon as the order is placed; the payment shows **Capture requested** until Adyen confirms. Leave these methods on manual capture in Adyen, as they come: if Adyen Support turns on automatic capture for one, Adyen takes the money itself, refuses Spree's capture request, and the payment shows as failed in Spree although it was paid.
 
-Tick **Test Mode** if you're using test credentials, then click **Create** to enable Adyen as a payment method on your store.
+Some methods cannot be captured later, iDEAL and BLIK among them: Adyen takes the money at once whatever the setting, and Spree records those payments as paid. Adyen expires card authorisations after 28 days, and schemes may do so sooner; a capture after that fails with Adyen's reason.
 
-![Adyen enabled as a payment method in Spree](/docs/images/integrations/adyen/3-adyen-enabled.png)
+## The storefront
 
-## Storefront Configuration
+The Next.js storefront renders Adyen's Drop-in and needs no Adyen keys of its own: each payment session carries the client key and environment. `NEXT_PUBLIC_ADYEN_CLIENT_KEY` and `NEXT_PUBLIC_ADYEN_ENVIRONMENT` are read only as fallbacks for older backends.
 
-For the Adyen Drop-in SDK to initialize on the Next.js storefront, set the following environment variables in your storefront's hosting platform or `.env` file:
+- **Return URLs.** A payment method that redirects the shopper (a bank, a 3D Secure check) returns them to the URL the storefront sends, which must be on one of your store's allowed origins. A native app returns through a universal or app link on an allowed origin, never a custom URL scheme.
+- **Apple Pay.** Apple Pay needs Adyen's domain association file at `/.well-known/apple-developer-merchantid-domain-association` on every storefront domain. Download it from Adyen and host it in your storefront, then register the domains with Adyen as its Apple Pay guide describes.
+- **Google Pay.** Register your storefront domains in the Google Pay & Wallet Console.
+- **Paying a session.** A session opens unpayable. When the shopper presses Pay, Drop-in asks Spree to make it payable at the amount Spree holds, and only then pays it. A method that skips that step fails instead of slipping past Spree.
 
-- **`NEXT_PUBLIC_ADYEN_CLIENT_KEY`** — Your Adyen **Client Key** (test or live, matching the environment you're running). This is the same value you pasted into the Spree admin.
-- **`NEXT_PUBLIC_ADYEN_ENVIRONMENT`** — Either `test` or `live`. Determines which Adyen environment the Drop-in SDK connects to. Defaults to `test` if unset.
+If you build your own storefront, follow the same flow with the Store API's payment sessions: create a session with a `return_url`, mount Drop-in with the `session_data`, `client_key` and `environment` from its `external_data`, update the session with `external_data.submit` in Drop-in's `beforeSubmit` and resolve with the `session_data` it returns, then complete it with Drop-in's `sessionResult` or the redirect's `redirectResult`.
 
-The `NEXT_PUBLIC_` prefix makes the variables available to client-side code so the Adyen JS SDK can initialize in the browser. The Client Key is safe to expose publicly.
+## Saved cards
 
-<Note>If `NEXT_PUBLIC_ADYEN_CLIENT_KEY` isn't set, the Adyen payment option won't render on the storefront even if Adyen is configured in the Spree admin.</Note>
+A signed-in shopper sees a **Save for my next payment** checkbox on card payments. Cards are saved only when they tick it, and are offered again inside Drop-in at their next checkout. Guests' cards are never saved. Cards saved under the 5.x integration keep showing.
 
-## Additional Settings
+A shopper can also save a card without buying anything, from their account, through a payment setup session. Spree saves the card from the token Adyen returns with the session's result.
 
-![The Adyen Additional Settings panel after the payment method is created](/docs/images/integrations/adyen/4-additional-settings.png)
+## What to watch for
 
-You can optionally configure the following settings for your Adyen payment method:
+- **Captures, voids and refunds wait for Adyen.** Adyen accepts each request and reports its outcome by webhook, usually within seconds. Until then the dashboard shows **Capture requested**, **Void requested** or a requested refund, and the payment takes no other action. If one waits long, check it in Adyen: Adyen retries an undelivered webhook for up to 30 days.
+- **A failure can come later.** Adyen can report a capture or refund as failed after accepting it, sometimes days later. Spree then marks it failed, with Adyen's reason. A failed capture comes off what the order has paid; a failed refund comes off what it has refunded, so the order counts that money as paid again.
+- **Methods Adyen captures at once** read as paid even when the store captures on dispatch.
+- **Capture on dispatch takes the first parcel only.** Adyen cancels what a partial capture leaves, so later parcels of the same order find nothing left to capture. Take payment for multi-parcel orders at checkout, or capture them in full.
+- **A session canceled after the shopper pressed Pay** stays payable at Adyen until it expires, an hour after it opened. If the shopper pays it, for example by retrying a card in a tab left open, the order shows more paid than owed; refund the difference.
+- **A pending payment Adyen later refuses** stays pending in Spree. You see the refusal in Adyen.
+- **Actions in Adyen's Customer Area** (captures, cancels, refunds made there) are not synced to Spree.
 
-- **Name**: Customize the display name shown for this payment method on the storefront.
-- **Display**: Choose where Adyen should be available:
-  - Storefront only
-  - Admin panel only
-  - Both (recommended)
-- **Auto Capture**: Decide whether payments should be automatically captured at the time of authorization (recommended), or manually captured later.
-- **Active Status**: Enable or disable the payment method. Inactive methods are hidden from checkout but not removed.
+## Testing
 
-## Test Mode
+Turn on **Test mode**, use test credentials from Adyen's test Customer Area, and pay with Adyen's [test card numbers](https://docs.adyen.com/development-resources/testing/test-card-numbers/), for example Visa `4111 1111 1111 1111` with CVC `737` and any future expiry. Test transactions appear in the test Customer Area under **Transactions**.
 
-If you'd like to test your checkout flow without processing real payments, Adyen's test environment is a safe and effective way to simulate transactions. To enable it:
+### Common issues
 
-1. Tick the **Test Mode** checkbox in the Adyen payment method settings in Spree.
-2. Switch your Adyen Customer Area to **Test** mode using the environment switcher in the top-right.
-3. Generate separate test credentials (API Key, Client Key) from your test environment following the same steps above.
-4. Paste the test credentials into Spree. The **Live URL Prefix** field is not used in test mode.
-
-See [Testing Adyen payments](#testing-adyen-payments) below for a walkthrough of simulating transactions with Adyen's test card numbers.
-
-## Testing Adyen payments
-
-Once Test Mode is set up, you can simulate real payments using Adyen's published test card numbers.
-
-### 1. Use Adyen's test cards
-
-At checkout on your Spree store, Adyen's Drop-in component will present payment options. Use one of Adyen's [official test card numbers](https://docs.adyen.com/development-resources/testing/test-card-numbers/) to simulate:
-
-- **Successful payments** — e.g. Visa `4111 1111 1111 1111`
-- **3D Secure authentication flows**
-- **Declined payments** — specific test cards trigger different decline reasons
-- **Refunds and chargebacks**
-
-For CVC and expiry, any valid-format values work (e.g. `737` CVC, a future expiry date).
-
-### 2. View test transactions in Adyen
-
-To see transactions from Adyen's side, log in to the Adyen Customer Area with **Test** selected in the environment switcher. Navigate to **Transactions → All transactions** to view captures, authorizations, refunds, and webhook delivery attempts.
-
-### Common Issues
-
-- **Drop-in not loading on the storefront**: make sure your storefront URL is in the **Allowed origins** list on the Adyen API credential (Client Settings).
-- **Auto-populated fields not filling in**: if the **Merchant Account**, **Hmac Key**, or **Webhook** fields stay empty after creating the payment method, check that you didn't enter values into them manually before saving — any pre-filled input can block the auto-population process. Delete the payment method and re-create it with only the API Key, Client Key, and (if live) Live URL Prefix filled in.
-- **Wrong environment**: credentials are environment-specific. Test-mode credentials won't work against the Live URL Prefix, and vice versa.
-
-## Features
-
-Spree's native Adyen integration supports a comprehensive range of features and payment methods to help you offer a fast, secure, and flexible checkout experience:
-
-- Support for 3D Secure and other security standards
-- Support for off-session payments
-- Support for Storefront API integration (see the API docs [here](/api-reference/storefront/adyen/create-an-adyen-payment-session))
-- Accept payments in over 150 currencies
-- Accept Credit Cards, Debit Cards, and Digital Wallets
-- Accept Buy Now, Pay Later (BNPL) payments
-- Accept Bank transfers and Direct Debit
-- Accept Local payment methods (iDEAL, SOFORT, Bancontact, etc.)
-- Accept Mobile payments (Apple Pay, Google Pay, Samsung Pay)
-- Accept Cryptocurrency payments
-- Advanced fraud protection and risk management
-- Real-time payment status updates
-- Comprehensive reporting and analytics
-
-### Storefront Display
-
-Spree's Adyen integration enhances the customer experience with dynamic, context-aware payment options across the storefront:
-
-- Dynamic payment method selection based on customer location
-- Real-time payment method availability
-- Seamless checkout experience with Adyen's Drop-in component
-- Support for one-click payments and saved payment methods
-- Mobile-optimized payment flows
-
-Feel free to [reach out](https://spreecommerce.org/contact) to learn more.
+- **Drop-in does not load**: the storefront's origin is not among the credential's allowed origins. Add it to the store's allowed origins in Spree, then run `bin/rails spree:upgrade:configure_adyen_gateways`.
+- **Saving the payment method fails**: the message names the problem: an invalid key, a merchant account the credential cannot reach, or a missing role.
+- **Webhooks are refused**: Spree checks every delivery's HMAC signature, merchant account and environment. A webhook you created by hand is not signed with the key Spree holds; let Spree manage its own.

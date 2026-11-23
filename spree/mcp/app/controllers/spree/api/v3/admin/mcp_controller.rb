@@ -29,6 +29,13 @@ module Spree
           # client is misconfigured.
           prepend_before_action :require_oauth_token!
 
+          # The body is a JSON-RPC envelope, not an Admin API payload, so a
+          # key named `price` in it may be anything: the column an import
+          # mapping reads prices from, say. Amounts are still checked where
+          # they are written — by the Admin API a tool dispatches to, or by
+          # the model's own canonical decimal setters.
+          skip_before_action :refuse_noncanonical_decimals
+
           def create
             render json: server.handle_json(request.body.read), content_type: 'application/json'
           end

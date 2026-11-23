@@ -53,14 +53,17 @@ module Spree
       # location in the marketplace needs to see. `default` is per-owner, so
       # this is the default among *this seller's* locations and leaves the
       # operator's own alone.
+      #
+      # A seller created with a returns address already has its location, so
+      # that one becomes the default rather than a second being made.
       def provision_stock_location
-        @stock_location = seller.stock_locations.new(
+        @stock_location = seller.stock_locations.first || seller.stock_locations.new(
           store: seller.store,
           name: seller.name,
-          default: true,
           active: true,
           country_code: seller.store.default_country_code
         )
+        @stock_location.default = true
         # A new seller has no catalog, so there is nothing to propagate — the
         # levels arrive with their products.
         @stock_location.propagate_all_variants = false

@@ -11,10 +11,10 @@ module Spree
           typelize type: [:string, comment: 'Rule type. Built-in: currency, country, channel, market, item_total, product, customer, customer_group, first_order, customer_logged_in, one_use_per_user, category, option_value. Extensions may register more.'],
                    promotion_id: :string,
                    preferences: 'Record<string, unknown>',
-                   product_ids: 'Array<string> | null',
-                   category_ids: 'Array<string> | null',
-                   customer_ids: 'Array<string> | null',
-                   option_value_ids: 'Array<string> | null'
+                   product_ids: [:string, multi: true, nullable: true],
+                   category_ids: [:string, multi: true, nullable: true],
+                   customer_ids: [:string, multi: true, nullable: true],
+                   option_value_ids: [:string, multi: true, nullable: true]
 
           attributes created_at: :iso8601, updated_at: :iso8601
 
@@ -61,9 +61,12 @@ module Spree
                resource: proc { Spree.api.admin_category_serializer },
                if: proc { |rule| rule.respond_to?(:categories) }
 
+          # Only for a caller who may read customers: a promotion is readable
+          # under `read_promotions`, and a customer rule would otherwise carry
+          # every targeted customer's email and notes along with it.
           many :customers,
                resource: proc { Spree.api.admin_customer_serializer },
-               if: proc { |rule| rule.respond_to?(:customers) }
+               if: proc { |rule| rule.respond_to?(:customers) && params[:customer_records] }
 
           many :customer_groups,
                resource: proc { Spree.api.admin_customer_group_serializer },

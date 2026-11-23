@@ -272,6 +272,50 @@ RSpec.describe Spree::Collection, type: :model do
       expect(rule.match_policy).to eq('contains')
     end
 
+    it 'rematches the products when a rule changes type in place' do
+      on_sale = create(:product, price: 10, compare_at_price: 12)
+      coffee_products = create_list(:product, 3, tag_list: 'coffee')
+      rule = create(:sale_collection_rule, :is_equal_to, collection: collection)
+      expect(collection.reload.products).to contain_exactly(on_sale)
+
+      reloaded_collection.rules = [{ id: rule.prefixed_id, type: 'tag', value: 'coffee', match_policy: 'contains' }]
+      reloaded_collection.save!
+
+      expect(Spree::CollectionRule.find(rule.id)).to be_a(Spree::CollectionRules::Tag)
+      expect(collection.reload.products).to match_array(coffee_products)
+    end
+
+    it 'rematches the products when only the rule type changes' do
+      on_sale = create(:product, price: 10, compare_at_price: 12)
+      tagged_products = create_list(:product, 2, tag_list: 'true')
+      rule = create(:sale_collection_rule, :is_equal_to, collection: collection)
+      expect(collection.reload.products).to contain_exactly(on_sale)
+
+      reloaded_collection.rules = [{ id: rule.prefixed_id, type: 'tag', value: 'true', match_policy: 'is_equal_to' }]
+      reloaded_collection.save!
+
+      expect(collection.reload.products).to match_array(tagged_products)
+    end
+
+    it 'rematches the products when another rule saved before it changes value' do
+      collection.update!(rules_match_policy: 'any')
+      on_sale = create(:product, price: 10, compare_at_price: 12)
+      coffee_products = create_list(:product, 2, tag_list: 'coffee')
+      tea_products = create_list(:product, 2, tag_list: 'tea')
+      tag_rule = create(:tag_collection_rule, :is_equal_to, collection: collection, value: 'tea')
+      sale_rule = create(:sale_collection_rule, :is_equal_to, collection: collection)
+      Spree::Collection.find(collection.id).regenerate_products
+      expect(collection.reload.products).to match_array([on_sale, *tea_products])
+
+      reloaded_collection.rules = [
+        { id: tag_rule.prefixed_id, value: 'coffee', match_policy: 'is_equal_to' },
+        { id: sale_rule.prefixed_id, type: 'tag', value: 'tea', match_policy: 'is_equal_to' }
+      ]
+      reloaded_collection.save!
+
+      expect(collection.reload.products).to match_array(coffee_products + tea_products)
+    end
+
     it 'destroys rules omitted from the payload' do
       keep = create(:tag_collection_rule, :is_equal_to, collection: collection, value: 'sale')
       drop = create(:tag_collection_rule, :is_equal_to, collection: collection, value: 'new')
@@ -281,6 +325,21 @@ RSpec.describe Spree::Collection, type: :model do
 
       expect(reloaded_collection.reload.rules).to contain_exactly(keep)
       expect { drop.reload }.to raise_error(ActiveRecord::RecordNotFound)
+    end
+
+    it 'refuses a rule with an unknown type, naming the accepted ones' do
+      expect {
+        reloaded_collection.rules = [{ type: 'Spree::CollectionRules::Tag', value: 'sale', match_policy: 'is_equal_to' }]
+      }.to raise_error(Spree::Preferences::InvalidPreferences) { |error|
+        expect(error.failures).to contain_exactly(hash_including(pointer: '/rules/0/type'))
+        expect(error.message).to include('is not a collection rule offered here', 'tag', 'sale')
+      }
+    end
+
+    it 'refuses a new rule with no type, naming the accepted ones' do
+      expect {
+        reloaded_collection.rules = [{ value: 'sale', match_policy: 'is_equal_to' }]
+      }.to raise_error(Spree::Preferences::InvalidPreferences, %r{/rules/0/type: is required \(expected one of: .*tag})
     end
 
     it 'raises RecordNotFound for an unknown rule id' do

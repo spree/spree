@@ -88,6 +88,7 @@ RSpec.describe 'Admin Company Tax Identifiers API', type: :request, swagger_doc:
 
     post 'Re-check a company tax registration' do
       tags 'Companies'
+      operationId 'company_tax_identifiers_validate'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description <<~DESC

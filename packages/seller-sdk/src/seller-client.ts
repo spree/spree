@@ -31,6 +31,7 @@ import type {
   ImportSort,
   Invitation,
   InvitationAcceptanceLink,
+  OptionType,
   Order,
   PackageType,
   Payout,
@@ -57,6 +58,8 @@ import type {
   DeliveryProfileSort,
   DigitalAssetFilters,
   DigitalAssetSort,
+  OptionTypeFilters,
+  OptionTypeSort,
   OrderFilters,
   OrderSort,
   PackageTypeFilters,
@@ -546,6 +549,15 @@ export class SellerClient {
 
       delete: (productId: string, id: string, options?: RequestOptions): Promise<void> =>
         this.request<void>('DELETE', `/products/${productId}/digital_assets/${id}`, options),
+    },
+
+    /**
+     * The product's gallery. Files are added and updated through the
+     * product's own `media`; removing one is its own call.
+     */
+    media: {
+      delete: (productId: string, id: string, options?: RequestOptions): Promise<void> =>
+        this.request<void>('DELETE', `/products/${productId}/media/${id}`, options),
     },
   }
 
@@ -1103,6 +1115,32 @@ export class SellerClient {
 
     get: (id: string, options?: RequestOptions): Promise<ProductType> =>
       this.request<ProductType>('GET', `/product_types/${id}`, options),
+  }
+
+  /**
+   * The marketplace's option types (Size, Colour), which a seller builds
+   * their variants from. Read only — the vocabulary is the operator's. Pass
+   * `expand: ['option_values']` for the values a variant may take.
+   */
+  readonly optionTypes = {
+    list: (
+      params?: ListParams<OptionTypeFilters, OptionTypeSort>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<OptionType>> =>
+      this.request<PaginatedResponse<OptionType>>('GET', '/option_types', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (
+      id: string,
+      params?: { expand?: string[] },
+      options?: RequestOptions,
+    ): Promise<OptionType> =>
+      this.request<OptionType>('GET', `/option_types/${id}`, {
+        ...options,
+        params: params?.expand?.length ? { expand: params.expand.join(',') } : undefined,
+      }),
   }
 
   /**

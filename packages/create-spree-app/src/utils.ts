@@ -1,4 +1,5 @@
 import crypto from 'node:crypto'
+import path from 'node:path'
 import { execa } from 'execa'
 import type { PackageManager } from './types.js'
 
@@ -102,4 +103,20 @@ export function globalAddCommand(pm: PackageManager): string {
   if (pm === 'npm') return 'npm install -g'
   if (pm === 'yarn') return 'yarn global add'
   return 'pnpm add -g'
+}
+
+/**
+ * The `cd` argument that reaches `dir` from where the user ran the command —
+ * `my-store`, `projects/my-store` or an absolute path — quoted for the shell
+ * when it holds anything beyond plain path characters.
+ */
+export function cdTarget(dir: string, cwd = process.cwd()): string {
+  const target = path.relative(cwd, dir) || '.'
+  if (process.platform === 'win32') {
+    // PowerShell and cmd give meaning to `,`, `@`, `%` and more, so only
+    // plain path characters (and a drive letter's `:`) stay unquoted.
+    return /^[\w.:\\/-]+$/.test(target) ? target : `"${target}"`
+  }
+  if (/^[\w@%+=:,./-]+$/.test(target)) return target
+  return `'${target.replace(/'/g, `'\\''`)}'`
 }

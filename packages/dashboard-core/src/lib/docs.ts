@@ -7,10 +7,11 @@
 export const DOCS_BASE_URL = 'https://spreecommerce.org/docs'
 
 /**
- * The other two destinations the account menu offers, kept here for the same
- * reason as the docs base: one edit if a domain moves.
+ * The community link the account menu offers, kept here for the same reason
+ * as the docs base: one edit if a domain moves.
  */
 export const COMMUNITY_URL = 'https://discord.spreecommerce.org'
+/** No longer linked from the account menu; kept for plugins that import it. */
 export const CONTACT_URL = 'https://spreecommerce.org/contact'
 
 /**

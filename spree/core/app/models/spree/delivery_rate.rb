@@ -10,7 +10,7 @@ module Spree
     belongs_to :fulfillment, class_name: 'Spree::Fulfillment'
     belongs_to :tax_rate, -> { with_deleted }, class_name: 'Spree::TaxRate', optional: true
     belongs_to :delivery_method, -> { with_deleted }, class_name: 'Spree::DeliveryMethod', inverse_of: :delivery_rates
-    # Legacy names — removed in 6.1.
+    # Legacy names — removed in 6.3.
     belongs_to :shipment, class_name: 'Spree::Fulfillment', foreign_key: :fulfillment_id, optional: true, deprecated: true
     belongs_to :shipping_method, -> { with_deleted }, class_name: 'Spree::DeliveryMethod', foreign_key: :delivery_method_id, optional: true, deprecated: true
     alias_attribute :shipment_id, :fulfillment_id

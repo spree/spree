@@ -8,6 +8,10 @@ export type ActorKind = (typeof ACTOR_KINDS)[number] | (string & {})
 export const ADDRESS_OWNER_TYPES = ['customer', 'company', 'seller'] as const
 export type AddressOwnerType = (typeof ADDRESS_OWNER_TYPES)[number] | (string & {})
 
+/** Every value of `AdminUserStatus`. */
+export const ADMIN_USER_STATUSES = ['active', 'locked', 'deactivated'] as const
+export type AdminUserStatus = (typeof ADMIN_USER_STATUSES)[number]
+
 /** Every value of `ApiKeyType`. */
 export const API_KEY_TYPES = ['publishable', 'secret'] as const
 export type ApiKeyType = (typeof API_KEY_TYPES)[number]
@@ -265,6 +269,12 @@ export type OrderStatus = (typeof ORDER_STATUSES)[number]
 export const PACKAGE_TYPE_KINDS = ['box', 'envelope', 'carton', 'pallet', 'container'] as const
 export type PackageTypeKind = (typeof PACKAGE_TYPE_KINDS)[number]
 
+/** The built-in values of `PaymentCaptureEventStatus`. Extensions may add more. */
+export const PAYMENT_CAPTURE_EVENT_STATUSES = ['requested', 'completed', 'failed'] as const
+export type PaymentCaptureEventStatus =
+  | (typeof PAYMENT_CAPTURE_EVENT_STATUSES)[number]
+  | (string & {})
+
 /** The built-in values of `PaymentSessionStatus`. Extensions may add more. */
 export const PAYMENT_SESSION_STATUSES = [
   'pending',
@@ -298,6 +308,7 @@ export const PAYMENT_STATUSES = [
   'checkout',
   'processing',
   'pending',
+  'requested',
   'completed',
   'failed',
   'void',
@@ -353,6 +364,10 @@ export type PurchaseOrderStatus = (typeof PURCHASE_ORDER_STATUSES)[number] | (st
 /** Every value of `PurchaseUnit`. */
 export const PURCHASE_UNITS = ['unit', 'carton'] as const
 export type PurchaseUnit = (typeof PURCHASE_UNITS)[number]
+
+/** The built-in values of `RefundStatus`. Extensions may add more. */
+export const REFUND_STATUSES = ['requested', 'completed', 'failed'] as const
+export type RefundStatus = (typeof REFUND_STATUSES)[number] | (string & {})
 
 /** The built-in values of `ReturnStatus`. Extensions may add more. */
 export const RETURN_STATUSES = [
@@ -675,6 +690,7 @@ export type UnitSystem = (typeof UNIT_SYSTEMS)[number]
 
 /** Every built-in value of every status list above. */
 export type BuiltInStatus =
+  | (typeof ADMIN_USER_STATUSES)[number]
   | (typeof CLAIM_STATUSES)[number]
   | (typeof COMPANY_INVITATION_STATUSES)[number]
   | (typeof DATA_REQUEST_STATUSES)[number]
@@ -690,6 +706,7 @@ export type BuiltInStatus =
   | (typeof ORDER_FULFILLMENT_STATUSES)[number]
   | (typeof ORDER_PAYMENT_STATUSES)[number]
   | (typeof ORDER_STATUSES)[number]
+  | (typeof PAYMENT_CAPTURE_EVENT_STATUSES)[number]
   | (typeof PAYMENT_SESSION_STATUSES)[number]
   | (typeof PAYMENT_SETUP_SESSION_STATUSES)[number]
   | (typeof PAYMENT_STATUSES)[number]
@@ -697,6 +714,7 @@ export type BuiltInStatus =
   | (typeof PRODUCT_STATUSES)[number]
   | (typeof PRODUCT_SUBMISSION_STATUSES)[number]
   | (typeof PURCHASE_ORDER_STATUSES)[number]
+  | (typeof REFUND_STATUSES)[number]
   | (typeof RETURN_STATUSES)[number]
   | (typeof SELLER_PAYOUT_STATUSES)[number]
   | (typeof SELLER_REQUIREMENT_SUBMISSION_STATUSES)[number]

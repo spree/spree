@@ -24,6 +24,7 @@ import {
   Alert,
   AlertDescription,
   Button,
+  CurrencyLabel,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -37,6 +38,7 @@ import {
   InputGroupAddon,
   InputGroupInput,
   InputGroupText,
+  Item,
   RowActions,
   Select,
   SelectContent,
@@ -297,7 +299,7 @@ function EditCommissionRateSheet({
           <SheetDescription>{t('admin.commission_rates.edit_description')}</SheetDescription>
         </SheetHeader>
         {isLoading ? (
-          <div className="p-4 text-sm text-muted-foreground">{t('admin.common.loading')}</div>
+          <div className="p-4 text-base text-muted-foreground">{t('admin.common.loading')}</div>
         ) : (
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
@@ -349,7 +351,7 @@ function CommissionRateFormFields({ form }: { form: UseFormReturn<CommissionRate
   return (
     <FieldGroup>
       {errors.root?.message && (
-        <p className="text-sm text-destructive" role="alert">
+        <p className="text-base text-destructive" role="alert">
           {errors.root.message}
         </p>
       )}
@@ -552,7 +554,7 @@ function FlatFeeAmountsField({ form }: { form: UseFormReturn<CommissionRateFormV
       <div className="flex flex-col gap-2 pt-1">
         {currencies.map((currency) => (
           <div key={currency} className="flex items-center gap-2">
-            <span className="w-12 shrink-0 text-sm text-muted-foreground">{currency}</span>
+            <CurrencyLabel code={currency} className="w-16 shrink-0 text-base" />
             <Controller
               control={form.control}
               name="amounts"
@@ -603,7 +605,7 @@ function FlatFeeCapField({ form }: { form: UseFormReturn<CommissionRateFormValue
       <div className="flex flex-col gap-2 pt-1">
         {cappedCurrencies.map((currency) => (
           <div key={currency} className="flex items-center gap-2">
-            <span className="w-12 shrink-0 text-sm text-muted-foreground">{currency}</span>
+            <CurrencyLabel code={currency} className="w-16 shrink-0 text-base" />
             <Controller
               control={form.control}
               name="bounds"
@@ -660,7 +662,7 @@ function PercentageBoundsField({ form }: { form: UseFormReturn<CommissionRateFor
       <div className="flex flex-col gap-2 pt-1">
         {currencies.map((currency) => (
           <div key={currency} className="flex items-center gap-2">
-            <span className="w-12 shrink-0 text-sm text-muted-foreground">{currency}</span>
+            <CurrencyLabel code={currency} className="w-16 shrink-0 text-base" />
             <Controller
               control={form.control}
               name="bounds"
@@ -680,7 +682,7 @@ function PercentageBoundsField({ form }: { form: UseFormReturn<CommissionRateFor
                       value={bound.min_amount}
                       onChange={(event) => write('min_amount', event.target.value)}
                     />
-                    <span className="text-sm text-muted-foreground">–</span>
+                    <span className="text-base text-muted-foreground">–</span>
                     <Input
                       type="number"
                       step="any"
@@ -819,10 +821,10 @@ function CommissionRuleRow({
   )?.[0]
 
   return (
-    <div className="flex flex-col gap-2 rounded-md border p-3">
+    <Item variant="outline" className="flex-col items-stretch gap-2">
       <div className="flex items-center justify-between">
         <div className="flex flex-col">
-          <span className="text-sm">
+          <span className="text-base">
             {ruleType ? typeLabel('commission_rule', ruleType.type, ruleType.name) : fallbackLabel}
           </span>
           {ruleType && typeDescription('commission_rule', ruleType.type, ruleType.description) && (
@@ -833,7 +835,7 @@ function CommissionRuleRow({
         </div>
         <Button
           type="button"
-          variant="ghost"
+          variant="destructive-ghost"
           size="icon-sm"
           onClick={onRemove}
           aria-label={t('admin.actions.delete')}
@@ -877,6 +879,6 @@ function CommissionRuleRow({
           )}
         />
       )}
-    </div>
+    </Item>
   )
 }

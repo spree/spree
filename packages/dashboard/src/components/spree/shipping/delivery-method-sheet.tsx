@@ -245,7 +245,7 @@ export function DeliveryMethodSheet({
           <SheetDescription>{profile.name}</SheetDescription>
         </SheetHeader>
         {loading ? (
-          <div className="p-4 text-sm text-muted-foreground">{t('admin.common.loading')}</div>
+          <div className="p-4 text-base text-muted-foreground">{t('admin.common.loading')}</div>
         ) : (
           <form
             onSubmit={(event) => {

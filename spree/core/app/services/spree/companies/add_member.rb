@@ -11,7 +11,10 @@ module Spree
       prepend Spree::ServiceModule::Base
 
       # @param company [Spree::Company]
-      # @param email [String]
+      # @param email [String, nil] who to add, when no +customer+ is given
+      # @param customer [Spree.customer_class, nil] an existing customer, who
+      #   becomes a member immediately — for a caller that picked them rather
+      #   than typed an address
       # @param inviter [Object, nil] the inviting customer, nil when staff
       # @param metadata [Hash, nil] extension payload — carried on the
       #   invitation only, where Enterprise reads it back on acceptance
@@ -26,9 +29,11 @@ module Spree
       #   whoever happens to hold that email.
       # @return [Spree::ServiceModule::Result] value is the created
       #   Spree::CompanyMembership or Spree::CompanyInvitation
-      def call(company:, email:, inviter: nil, metadata: nil, require_acceptance: false)
-        normalized_email = email.to_s.strip.downcase
-        customer = Spree.customer_class.find_by(email: normalized_email) unless require_acceptance
+      def call(company:, email: nil, customer: nil, inviter: nil, metadata: nil, require_acceptance: false)
+        normalized_email = (email.presence || customer&.email).to_s.strip.downcase
+        # Acceptance outranks a customer handed in: they are invited by their
+        # address like anyone else, so only the holder can agree to join.
+        customer = require_acceptance ? nil : (customer || Spree.customer_class.find_by(email: normalized_email))
 
         record =
           if customer

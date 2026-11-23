@@ -1,5 +1,6 @@
-import { expect, type Page, test } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 import {
+  createTaxRate,
   gotoIndex,
   login,
   openRowMenu,
@@ -10,28 +11,6 @@ import {
 
 const TAX_RATES_PATH = (storeId: string) => `/${storeId}/settings/taxes/rates`
 const CTA = /add tax rate/i
-
-async function createTaxRate(
-  page: Page,
-  attrs: { name: string; ratePercent: string; country?: string },
-) {
-  await page.getByRole('button', { name: CTA }).click()
-  await expect(page.getByRole('heading', { name: /new tax rate/i })).toBeVisible()
-
-  await page.locator('#name').fill(attrs.name)
-  await page.locator('#rate_percent').fill(attrs.ratePercent)
-  // The seeded store always carries a `Default` tax category.
-  await page.locator('#tax_category_id').click()
-  await page.getByRole('option', { name: /^default$/i }).click()
-
-  if (attrs.country) {
-    await page.getByRole('combobox', { name: /^country$/i }).click()
-    await page.getByPlaceholder(/^search countries/i).fill(attrs.country)
-    await page.getByRole('option', { name: attrs.country }).first().click()
-  }
-
-  await page.getByRole('button', { name: /create tax rate/i }).click()
-}
 
 test.describe('tax rates', () => {
   test('asks for a tax category before creating a rate', async ({ page }) => {

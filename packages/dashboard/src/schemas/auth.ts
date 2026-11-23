@@ -27,12 +27,6 @@ export const loginFormSchema = z.object({
 })
 export type LoginFormValues = z.infer<typeof loginFormSchema>
 
-/** Existing invitee confirming with their current password. */
-export const acceptInvitationSignInFormSchema = z.object({
-  password: z.string().min(1, { error: passwordRequired }),
-})
-export type AcceptInvitationSignInFormValues = z.infer<typeof acceptInvitationSignInFormSchema>
-
 /** Forgot-password request — just the email; the server never reveals whether it matched. */
 export const forgotPasswordFormSchema = z.object({
   email: z.email(),
@@ -50,20 +44,6 @@ export const resetPasswordFormSchema = z
     path: ['password_confirmation'],
   })
 export type ResetPasswordFormValues = z.infer<typeof resetPasswordFormSchema>
-
-/** New invitee creating an account inline — mirrors the server's `AdminUser` validations. */
-export const acceptInvitationSignUpFormSchema = z
-  .object({
-    first_name: z.string().min(1, { error: firstNameRequired }),
-    last_name: z.string().min(1, { error: lastNameRequired }),
-    password: z.string().min(8, { error: passwordMinLength }),
-    password_confirmation: z.string(),
-  })
-  .refine((data) => data.password === data.password_confirmation, {
-    error: passwordsDontMatch,
-    path: ['password_confirmation'],
-  })
-export type AcceptInvitationSignUpFormValues = z.infer<typeof acceptInvitationSignUpFormSchema>
 
 /** First-run setup — the first admin account plus the store's name. */
 export const setupFormSchema = z

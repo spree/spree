@@ -189,8 +189,8 @@ Print, in one block the user can act on directly:
 
 ## 10. Open the pull request and monitor it
 
-- Squash fixups, make sure the branch is pushed to `spree/spree`, then open the
-  PR with `gh pr create --repo spree/spree --base main`. The title ends with
+- Squash fixups, then run `/open-pr`. It runs the security review, records
+  the reviewed commit, opens the PR and starts monitoring it. The title ends with
   the Linear id in parentheses, the way the repository already does it:
   `Add order stages to the dashboard (V-1234)`. The body: what the
   change does and why, which plan it implements and which phases, the
@@ -207,8 +207,8 @@ Print, in one block the user can act on directly:
   reader coming from the Roadmap finds the code. When the PR merges, the
   plan's status becomes `Implemented` through `/project:update-plan`, which
   moves the trackers to Done and closes the GitHub issue.
-- Run `/autofix-pr` to watch review comments (humans, Bugbot, CodeRabbit) and
-  CI, fix what comes back, and push. Stop and report clearly if something
+- `/open-pr` ends by running `/autofix-pr`, which watches review comments
+  (humans, Bugbot, CodeRabbit) and CI. Stop and report clearly if something
   needs the user — a required review, a failing check you cannot reproduce
   locally, a permission error.
 

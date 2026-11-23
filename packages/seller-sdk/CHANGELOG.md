@@ -1,5 +1,45 @@
 # @spree/seller-sdk
 
+## 6.0.5
+
+### Patch Changes
+
+- [#15219](https://github.com/spree/spree/pull/15219) [`8092164`](https://github.com/spree/spree/commit/8092164492d6f006adb766d6f309255a6cf8c26f) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added `client.optionTypes.list()` and `client.optionTypes.get()` for the new read-only `GET /api/v3/seller/option_types` endpoint. Pass `expand: ['option_values']` for the values. Product types now carry `option_type_ids` next to `option_type_labels`. A product or variant written through `/api/v3/seller/products` that names an option type or value the store does not already have is now refused with a 422 naming `variants` instead of creating it.
+
+## 6.0.4
+
+### Patch Changes
+
+- [#15136](https://github.com/spree/spree/pull/15136) [`6f3de61`](https://github.com/spree/spree/commit/6f3de6138e6879caf065798ddd2462360d5b06f6) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Order line items carry `product_id`, so an order page can link each line to its product without expanding the variant.
+
+- [#15145](https://github.com/spree/spree/pull/15145) [`6bb42c3`](https://github.com/spree/spree/commit/6bb42c3aa3a8feab481996580e8566ffd3f9624f) Thanks [@beobungbu](https://github.com/beobungbu)! - Avoid reading browser location when an explicit base URL is configured, and support native environments where window exists without location.
+
+- [#15190](https://github.com/spree/spree/pull/15190) [`f9db63d`](https://github.com/spree/spree/commit/f9db63d5f25d75938bd813d14e5edf57580c470c) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `profile.update` accepts `holiday_mode_until`, so a seller can set or end their own holiday mode.
+
+- [#15136](https://github.com/spree/spree/pull/15136) [`fd2364a`](https://github.com/spree/spree/commit/fd2364a3b8de751d4e115ea8786da47de91431ae) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added `products.media.delete` for removing a file from a product's gallery. A product update never removes a file it was not sent, so this is the only way to take one off; the `media` description on product create and update now says so.
+
+## 6.0.3
+
+### Patch Changes
+
+- [#15087](https://github.com/spree/spree/pull/15087) [`5de3074`](https://github.com/spree/spree/commit/5de3074693359ad16623f9d522a6d5ab64d4b5f6) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The Seller API client now works in browsers on pages served over plain HTTP at an address other than `localhost`, for example a server's IP address. It used `crypto.randomUUID` for the key that makes a retried write safe, and browsers only provide that on secure pages; it now uses `randomUUID()` from `@spree/core`.
+
+- [#15113](https://github.com/spree/spree/pull/15113) [`41bbba3`](https://github.com/spree/spree/commit/41bbba3272d9ebd8817842456670db0b72cd3b34) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added `client.extend()` and `defineSellerExtension`, so a package can add a typed namespace for an extension's own endpoints to the client, such as `client.quotes`. The extension calls through the client's own request function, so it shares the client's auth, seller, locale defaults and retries; `extend` returns a new client and refuses a name the client already has. An extension's `build` also gets `listParams` and `readParams`, which build list and read queries the way the built-in methods do, and the package now exports the `Extension` and `RequestFn` types its published declarations reference.
+
+## 6.0.2
+
+Released with Spree 6.0.2, with no changes of its own.
+
+## 6.0.1
+
+### Patch Changes
+
+- [#15015](https://github.com/spree/spree/pull/15015) [`29d95e3`](https://github.com/spree/spree/commit/29d95e388efb42568cf16ccadbe7a106195ece7e) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Fixed the invitation link redirecting anyone already signed in to the dashboard instead of letting them accept. Someone signed in as the invited account now accepts with one click, and someone signed in as another account is asked to sign out first. The seller panel's acceptance page shares these screens: an existing account confirms its password instead of being asked to set a new one, and the seller invitation lookup now says whether the invitee has an account.
+
+- [#14996](https://github.com/spree/spree/pull/14996) [`30493b4`](https://github.com/spree/spree/commit/30493b4f8e0e0f19b1c684fd8ac34bff24f51187) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added an optional `custom_fields` property to every record type that can carry custom fields, such as sellers, option types, media, orders, line items, addresses and customers. Request it with `expand: ['custom_fields']`. The Store API returns only fields marked storefront visible, and the Admin API returns every field.
+
+- [#15001](https://github.com/spree/spree/pull/15001) [`21dc28f`](https://github.com/spree/spree/commit/21dc28f68623bcd141a349b597b8b872fd57b9dd) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Typed the store's regional settings. The store's `default_country_code` is now `CountryCode`, its `admin_locale` is `LocaleCode` (send `null` to clear it), and its `timezone` — also on the seller profile — is the new `TimeZone` type, which suggests common IANA time zones while accepting any other. `TIME_ZONES` in `@spree/core` lists the suggested zones.
+
 ## 6.0.0
 
 No changes in this release.

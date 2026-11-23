@@ -171,6 +171,42 @@ test.describe('product edit', () => {
     await expect(chips).toHaveCount(2)
   })
 
+  test('keeps a category and tag added elsewhere when the page saves only its name', async ({
+    page,
+  }) => {
+    const session = await login(page)
+    const suffix = Date.now()
+    const tag = `e2e-elsewhere-${suffix}`
+    await createProduct(page, session.store_id, `E2E Product Elsewhere ${suffix}`)
+    const productId = new URL(page.url()).pathname.split('/').pop()
+    const headers = { Authorization: `Bearer ${session.accessToken}` }
+
+    // While the page is open, another tab or an import adds a category and a tag.
+    const categories = await page.request
+      .get('/api/v3/admin/categories', { headers, params: { 'q[name_eq]': FIXTURE_PROMO_TAXON } })
+      .then((res) => res.json())
+    const changed = await page.request.patch(`/api/v3/admin/products/${productId}`, {
+      headers,
+      data: { category_ids: [categories.data[0].id], tags: [tag] },
+    })
+    expect(changed.status(), await changed.text()).toBe(200)
+
+    await page.getByLabel(/^name$/i).fill(`E2E Product Elsewhere ${suffix} (renamed)`)
+    await page.getByRole('button', { name: /save product/i }).click()
+    await expect(page.getByRole('button', { name: /save product/i })).toBeDisabled({
+      timeout: 15_000,
+    })
+
+    await page.reload()
+    const categoriesField = page
+      .locator('[data-slot="field"]')
+      .filter({ has: page.getByText('Categories', { exact: true }) })
+    await expect(categoriesField.locator('[data-slot="combobox-chip"]')).toHaveText([
+      new RegExp(FIXTURE_PROMO_TAXON),
+    ])
+    await expect(categorizationCard(page).getByText(tag, { exact: true })).toBeVisible()
+  })
+
   test('lists a product on an additional channel via the publishing card', async ({ page }) => {
     const creds = await login(page)
     const name = `E2E Product Publish ${Date.now()}`

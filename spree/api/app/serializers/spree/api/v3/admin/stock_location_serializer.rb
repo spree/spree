@@ -3,7 +3,7 @@ module Spree
     module V3
       module Admin
         class StockLocationSerializer < V3::StockLocationSerializer
-          # The Store API keeps these deprecated names until 6.1.
+          # The Store API keeps these deprecated names until 6.5.
           %i[country_iso state_abbr].each { |key| _attributes.delete(key) }
 
           include Concerns::ExternalReferencesAttribute

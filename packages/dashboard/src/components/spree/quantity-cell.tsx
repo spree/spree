@@ -46,7 +46,7 @@ export function QuantityCell({
           max={max}
           value={value}
           onChange={(event) => onChange(Number(event.target.value))}
-          className="ml-auto w-20 text-right tabular-nums [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+          className="ml-auto w-20 text-right tabular-nums"
           aria-label={label}
         />
       ) : (

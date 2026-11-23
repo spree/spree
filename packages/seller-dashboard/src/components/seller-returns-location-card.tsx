@@ -90,18 +90,13 @@ export function SellerReturnsLocationCard({ headless = false }: { headless?: boo
     hasAddress && location ? (
       <AddressBlock address={stockLocationToAddressBlock(location)} />
     ) : (
-      <p className={failed ? 'text-destructive text-sm' : 'text-muted-foreground text-sm'}>
+      <p className={failed ? 'text-destructive text-base' : 'text-muted-foreground text-base'}>
         {t(failed ? 'common.error' : 'profile.address_not_provided')}
       </p>
     )
 
   const editButton = (
-    <Button
-      variant={hasAddress ? 'outline' : 'default'}
-      size="sm"
-      disabled={!location}
-      onClick={() => setEditing(true)}
-    >
+    <Button variant="outline" size="sm" disabled={!location} onClick={() => setEditing(true)}>
       {hasAddress ? <PencilIcon className="size-4" /> : <PlusIcon className="size-4" />}
       {hasAddress ? t('profile.edit') : t('profile.add_address')}
     </Button>

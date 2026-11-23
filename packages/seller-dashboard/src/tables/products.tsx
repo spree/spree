@@ -1,6 +1,6 @@
 import { PRODUCT_STATUSES } from '@spree/core'
-import { defineTable, formatPrice } from '@spree/dashboard-core'
-import { ResourceNameCell, StatusBadge, Thumbnail } from '@spree/dashboard-ui'
+import { defineTable, formatPrice, ProductStockSummary } from '@spree/dashboard-core'
+import { ProductIdentity, StatusBadge } from '@spree/dashboard-ui'
 import { PackageIcon } from '@spree/dashboard-ui/icons'
 import type { Product } from '@spree/seller-sdk'
 import i18n from 'i18next'
@@ -19,10 +19,11 @@ defineTable<Product>('seller-products', {
       sortable: true,
       default: true,
       render: (product) => (
-        <div className="flex items-center gap-3">
-          <Thumbnail src={product.thumbnail_url} alt={product.name} />
-          <ResourceNameCell id={product.id} dataAttr="data-product-id" name={product.name} />
-        </div>
+        <ProductIdentity
+          name={product.name}
+          thumbnailUrl={product.thumbnail_url}
+          render={<button type="button" data-product-id={product.id} />}
+        />
       ),
     },
     {
@@ -43,6 +44,12 @@ defineTable<Product>('seller-products', {
           label={i18n.t(`products.statuses.${product.status}`)}
         />
       ),
+    },
+    {
+      key: 'inventory',
+      label: i18n.t('products.columns.inventory'),
+      default: true,
+      render: (product) => <ProductStockSummary product={product} />,
     },
     {
       key: 'price',

@@ -17,7 +17,7 @@ export function StorefrontConnectTask({ task, store }: SetupTaskSlotContext) {
 
   return (
     <>
-      <p className="text-muted-foreground text-sm">
+      <p className="text-muted-foreground text-base">
         {t('admin.pages.getting_started.tasks.setup_storefront.description')}
       </p>
       <Button variant={task.done ? 'outline' : 'default'} onClick={() => setSheetOpen(true)}>

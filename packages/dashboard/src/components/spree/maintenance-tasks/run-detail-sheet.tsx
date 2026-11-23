@@ -64,7 +64,7 @@ export function RunDetailSheet({
         <div className="flex min-h-0 flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-6 overflow-y-auto p-4">
             {isLoading && !run && (
-              <p className="text-muted-foreground text-sm">
+              <p className="text-muted-foreground text-base">
                 {t('admin.maintenance_tasks.run.loading')}
               </p>
             )}
@@ -98,10 +98,10 @@ export function RunDetailSheet({
 
                 {Object.keys(run.tallies).length > 0 && (
                   <section className="flex flex-col gap-2">
-                    <h3 className="font-medium text-sm">
+                    <h3 className="font-medium text-base">
                       {t('admin.maintenance_tasks.run.results')}
                     </h3>
-                    <dl className="flex flex-col gap-1 text-sm">
+                    <dl className="flex flex-col gap-1 text-base">
                       {Object.entries(run.tallies).map(([key, count]) => (
                         <div key={key} className="flex justify-between gap-4">
                           <dt className="text-muted-foreground">{humanizeName(key)}</dt>
@@ -114,10 +114,10 @@ export function RunDetailSheet({
 
                 {run.error_message && (
                   <section className="flex flex-col gap-2">
-                    <h3 className="font-medium text-destructive text-sm">
+                    <h3 className="font-medium text-destructive text-base">
                       {run.error_class ?? t('admin.maintenance_tasks.run.error')}
                     </h3>
-                    <p className="text-sm">{run.error_message}</p>
+                    <p className="text-base">{run.error_message}</p>
                     {run.error_backtrace && (
                       <details className="text-muted-foreground text-xs">
                         <summary className="cursor-pointer">
@@ -133,10 +133,10 @@ export function RunDetailSheet({
 
                 {Object.keys(run.arguments).length > 0 && (
                   <section className="flex flex-col gap-2">
-                    <h3 className="font-medium text-sm">
+                    <h3 className="font-medium text-base">
                       {t('admin.maintenance_tasks.run.arguments')}
                     </h3>
-                    <dl className="flex flex-col gap-1 text-sm">
+                    <dl className="flex flex-col gap-1 text-base">
                       {Object.entries(run.arguments).map(([key, value]) => (
                         <div key={key} className="flex justify-between gap-4">
                           <dt className="text-muted-foreground">{key}</dt>
@@ -181,7 +181,7 @@ function DetailRows({
   const { t } = useTranslation()
 
   return (
-    <dl className="flex flex-col gap-1 text-sm">
+    <dl className="flex flex-col gap-1 text-base">
       {run.admin_user && (
         <Row label={t('admin.maintenance_tasks.run.initiated_by')}>{run.admin_user.email}</Row>
       )}

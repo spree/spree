@@ -1,0 +1,102 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://checkout-test.adyen.com/v72/sessions/CS30FE859DCEBB3B0925122BA?sessionResult=<FILTERED>
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Content-Type:
+      - application/json
+      User-Agent:
+      - adyen-ruby-api-library/12.0.0
+      X-Api-Key:
+      - "<FILTERED>"
+      Adyen-Library-Name:
+      - adyen-ruby-api-library
+      Adyen-Library-Version:
+      - 12.0.0
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 18 Nov 2026 17:43:03 GMT
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Traceparent:
+      - 00-ef769563709ad77e94e6793b78072ddb-bb9dfcf5098b8ce1-01
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Cache-Control:
+      - no-cache, no-store, private, must-revalidate, max-age=0
+      Pragma:
+      - no-cache
+      Expires:
+      - '0'
+      Pspreference:
+      - Q5RGR95V27XN4MW5
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      Cf-Cache-Status:
+      - DYNAMIC
+      Set-Cookie:
+      - JSESSIONID=C43B1C7BC4743BA3F00739DE7E0011F3; Path=/checkout; Secure; HttpOnly
+      - __cf_bm=l36i1ExvuMiGp_DGnZWI2oNq9j6vYMWtmPHU1Zm6VFs-1795023783.2157924-1.0.1.1-8KlNYboZD.53dSo8kN.hANLtue0ouUvvDvmea4Nrn.IWGljFLm5RaWGSL1ui_li6reXhfPb967yAWoFTjsqKUvM5eerM5LiwHSxED6tJUlVsh5Q1YYmDJexQGxnTkZzG;
+        HttpOnly; SameSite=None; Partitioned; Secure; Path=/; Domain=adyen.com; Expires=Wed,
+        18 Nov 2026 18:13:03 GMT
+      - _cfuvid=osYh.dk7a.rex2HMfyJFV1KXtca9u7hn_Hw5bBCEU.Y-1795023783.2157924-1.0.1.1-DHXasA_dXWKUUV_0h3pQwP01P9LdA4ciH18lcD_HcX8;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=adyen.com
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a5c8c67509843232-WAW
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        {
+          "id" : "CS30FE859DCEBB3B0925122BA",
+          "status" : "completed",
+          "reference" : "cart_xhoCpeNMWu-3",
+          "payments" : [ {
+            "resultCode" : "Authorised",
+            "pspReference" : "H8NKVW8K9MV5MNV5",
+            "amount" : {
+              "value" : 88499,
+              "currency" : "USD"
+            },
+            "paymentMethod" : {
+              "type" : "scheme",
+              "brand" : "visa"
+            }
+          } ],
+          "additionalData" : {
+            "cardSummary" : "1142",
+            "isCardCommercial" : "unknown",
+            "networkTxReference" : "307838657592590",
+            "tokenization.shopperReference" : "customer_22",
+            "recurring.firstPspReference" : "V3QZWSGVLGKLJJV5",
+            "tokenization.storedPaymentMethodId" : "TN2MCXV3L47Q3BV5",
+            "expiryDate" : "3/2030",
+            "merchantAdviceCode" : "24 : Retry after 1 hour",
+            "recurring.contractTypes" : "ONECLICK,RECURRING",
+            "recurring.recurringDetailReference" : "TN2MCXV3L47Q3BV5",
+            "recurringProcessingModel" : "CardOnFile",
+            "paymentMethod" : "visa",
+            "recurring.shopperReference" : "customer_22"
+          }
+        }
+  recorded_at: Wed, 18 Nov 2026 17:43:03 GMT
+recorded_with: VCR 6.4.1

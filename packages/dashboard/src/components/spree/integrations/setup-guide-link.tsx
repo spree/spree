@@ -15,7 +15,7 @@ export function SetupGuideLink({ url }: { url: string | null | undefined }) {
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className="link inline-flex w-fit items-center gap-1 text-sm"
+      className="link inline-flex w-fit items-center gap-1 text-base"
     >
       {t('admin.integrations.setup_guide')}
       <ExternalLinkIcon className="size-3.5" />

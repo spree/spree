@@ -25,15 +25,15 @@ module Spree
     delegate :store, to: :line_item
     delegate :order, to: :line_item
 
-    # @deprecated Use {#digital_asset}; removed in 6.1.
+    # @deprecated Use {#digital_asset}; removed in 6.3.
     def digital
-      Spree::Deprecation.warn('Spree::DigitalLink#digital is deprecated and will be removed in Spree 6.1. Use #digital_asset instead.')
+      Spree::Deprecation.warn('Spree::DigitalLink#digital is deprecated and will be removed in Spree 6.3. Use #digital_asset instead.')
       digital_asset
     end
 
-    # @deprecated Use {#digital_asset=}; removed in 6.1.
+    # @deprecated Use {#digital_asset=}; removed in 6.3.
     def digital=(value)
-      Spree::Deprecation.warn('Spree::DigitalLink#digital= is deprecated and will be removed in Spree 6.1. Use #digital_asset= instead.')
+      Spree::Deprecation.warn('Spree::DigitalLink#digital= is deprecated and will be removed in Spree 6.3. Use #digital_asset= instead.')
       self.digital_asset = value
     end
 

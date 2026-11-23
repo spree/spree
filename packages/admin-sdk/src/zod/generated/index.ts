@@ -47,6 +47,7 @@ export { DeliveryProfileSchema, type DeliveryProfile } from './DeliveryProfile';
 export { DeliveryRateSchema, type DeliveryRate } from './DeliveryRate';
 export { DeliveryZoneSchema, type DeliveryZone } from './DeliveryZone';
 export { DeliveryZoneMemberSchema, type DeliveryZoneMember } from './DeliveryZoneMember';
+export { DiagnosticsSchema, type Diagnostics } from './Diagnostics';
 export { DigitalAssetSchema, type DigitalAsset } from './DigitalAsset';
 export { DigitalLinkSchema, type DigitalLink } from './DigitalLink';
 export { DiscountSchema, type Discount } from './Discount';
@@ -130,6 +131,7 @@ export { SellerRequirementStatusSchema, type SellerRequirementStatus } from './S
 export { SellerRequirementSubmissionSchema, type SellerRequirementSubmission } from './SellerRequirementSubmission';
 export { SellerTeamMemberSchema, type SellerTeamMember } from './SellerTeamMember';
 export { SellerTransferSchema, type SellerTransfer } from './SellerTransfer';
+export { SessionSchema, type Session } from './Session';
 export { SetupTaskSchema, type SetupTask } from './SetupTask';
 export { ShippingLabelSchema, type ShippingLabel } from './ShippingLabel';
 export { StateSchema, type State } from './State';

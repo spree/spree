@@ -7,6 +7,11 @@ module Spree
         owner = line_item.owner
         return if owner.nil?
 
+        # A completed cart is a read-only audit record; the order it became
+        # owns the lines now. The cart can complete between this job being
+        # enqueued and running, and there is nothing left to remove from it.
+        return if owner.is_a?(Spree::Cart) && owner.readonly?
+
         # Carts and draft orders have different contracts: the cart side turns
         # a vetoed removal into a warning and still succeeds, the order side
         # fails outright. Routing an order-owned line through the cart

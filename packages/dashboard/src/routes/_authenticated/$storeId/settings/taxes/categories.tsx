@@ -148,7 +148,7 @@ function TaxCategoriesPage() {
                 </TableCell>
                 <TableCell>
                   {taxCategory.tax_code ? (
-                    <code className="text-sm">{taxCategory.tax_code}</code>
+                    <code className="text-base">{taxCategory.tax_code}</code>
                   ) : (
                     '—'
                   )}
@@ -311,7 +311,7 @@ function EditTaxCategorySheet({
           <SheetDescription>{t('admin.tax_categories.edit_description')}</SheetDescription>
         </SheetHeader>
         {isLoading ? (
-          <div className="p-4 text-sm text-muted-foreground">{t('admin.common.loading')}</div>
+          <div className="p-4 text-base text-muted-foreground">{t('admin.common.loading')}</div>
         ) : (
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
@@ -351,7 +351,7 @@ function TaxCategoryFormFields({ form }: { form: UseFormReturn<TaxCategoryFormVa
   return (
     <FieldGroup>
       {errors.root?.message && (
-        <p className="text-sm text-destructive" role="alert">
+        <p className="text-base text-destructive" role="alert">
           {errors.root.message}
         </p>
       )}

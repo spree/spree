@@ -135,3 +135,24 @@ export function useCancelPurchaseOrder(id: string) {
     showValidationErrors: true,
   })
 }
+
+/** One supplier's purchase orders, newest first, a page at a time. */
+export function useSupplierPurchaseOrders(supplierId: string | undefined, page = 1, limit = 25) {
+  return useQuery({
+    queryKey: useResourceKey(
+      'purchase-orders',
+      'supplier',
+      supplierId ?? 'noop',
+      `${page}:${limit}`,
+    ),
+    queryFn: () =>
+      adminClient.purchaseOrders.list({
+        supplier_id_eq: supplierId as string,
+        sort: '-created_at',
+        page,
+        limit,
+      }),
+    enabled: !!supplierId,
+    placeholderData: (previous) => previous,
+  })
+}

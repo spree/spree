@@ -247,7 +247,7 @@ controller, the reference and the TypeScript types cannot drift apart.
 | `choices:` | The values it takes; add `open: true` when extensions may add more |
 | `nullable: true` | Accepts `null`, usually to clear a value |
 | `description:`, `example:`, `format:` | Documentation for the API reference and the SDK types |
-| `deprecated: 'Use x. Removed in 6.1.'` | Keeps it working while the reference and the types flag it |
+| `deprecated: 'Use x. Removed in 6.5.'` | Keeps it working while the reference and the types flag it |
 | `permit: false` | Documented, but read by the action itself rather than permitted |
 
 A custom action declares its own body with a name ending in `Params`:
@@ -291,8 +291,14 @@ To make a new column writable on a Spree model without decorating the
 controllers that write it, append to the model's permitted attributes:
 
 ```ruby config/initializers/spree.rb
-Spree::Product.additional_permitted_attributes += [:brand_id]
+Rails.application.config.to_prepare do
+  Spree::Product.additional_permitted_attributes += [:brand_id]
+end
 ```
+
+Declare it inside `to_prepare`: Spree's models are not loaded yet when the
+initializer file itself runs, so a bare `Spree::Product` there fails at boot
+with `uninitialized constant Spree::Product`.
 
 Standard resource endpoints append these to their own allowlist, so one
 declaration covers the model's create and update endpoints.
@@ -303,7 +309,9 @@ media column writable both through the media endpoints and as part of a product
 save:
 
 ```ruby config/initializers/spree.rb
-Spree::Media.additional_permitted_attributes += [:photo_credit]
+Rails.application.config.to_prepare do
+  Spree::Media.additional_permitted_attributes += [:photo_credit]
+end
 ```
 
 Use `+=`, never `=` — assigning replaces what another extension added — and
@@ -335,6 +343,13 @@ Only declare attributes a seller may safely set on their own records.
 Two endpoints deliberately ignore this hook because their parameters are
 authorization data rather than resource data: API keys and invitations.
 
-## Consuming Custom Endpoints with the SDK
+## From an endpoint to agent tools and an SDK client
 
-See the [SDK tutorial](/developer/tutorial/storefront) for how to call custom endpoints from TypeScript and extend the generated types.
+An endpoint you add reaches the Admin MCP and a typed SDK client through one path: document it, and generate the rest from the document.
+
+1. **Scaffold it.** `spree generate api_resource Brand name:string` writes the model, the controllers with their `request_params`, the serializers, the routes, the permission and the specs, including an Admin integration spec that documents the endpoints.
+2. **Document it.** The integration specs are [rswag](https://github.com/rswag/rswag) specs using Spree's helpers: `admin_operation` for authentication and the permission, `request_body_for` for the body `request_params` declares, `filter_parameters_for` for list filters. `spree task openapi:generate` (`bundle exec rake spree:openapi:generate` in an extension) writes them into `openapi/admin.yaml`, and `openapi/store.yaml` for Store API endpoints. See [documenting your endpoints](/developer/mcp/custom-tools#your-admin-endpoints-are-already-tools).
+3. **Agent tools follow.** Every documented admin action other than create, read, update and delete is an [agent tool](/developer/mcp/custom-tools) in the Admin MCP and the dashboard assistant, with nothing to register. `spec/agent_tools_spec.rb` fails when an action is added undocumented.
+4. **Generate the client.** In an npm package for the extension, `spree sdk generate` writes one SDK extension per resource, with a method per documented operation, and the request, filter and response types. An app adds them to its client with `extendAdminClient(createAdminClient(…))` or `extendStoreClient(createClient(…))`. See [shipping a client for an extension](/developer/sdk/extending#shipping-a-client-for-an-extension).
+
+For a single endpoint an app calls itself, `client.request` is enough; see the [SDK tutorial](/developer/tutorial/storefront).

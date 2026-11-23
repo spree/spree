@@ -405,5 +405,11 @@ RSpec.describe SpreeStripe::Gateway::Connect do
       expect(gateway.connect_webhook_url).to end_with("/api/v3/webhooks/payouts/#{gateway.prefixed_id}")
       expect(gateway.connect_webhook_url).not_to eq(gateway.webhook_url)
     end
+
+    it 'is an absolute url when the store url is a bare host' do
+      gateway.store.update!(url: 'shop.example.com')
+
+      expect(URI.parse(gateway.connect_webhook_url).scheme).to be_present
+    end
   end
 end

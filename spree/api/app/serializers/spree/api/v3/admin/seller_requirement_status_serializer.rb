@@ -14,10 +14,11 @@ module Spree
                    description: [:string, nullable: true],
                    required: :boolean, position: :number, status: [:string, enum: Spree::SellerRequirementStatus::STATUSES, enum_type_name: 'SellerRequirementState'],
                    blocking: :boolean, action_url: [:string, nullable: true],
-                   blocker: ['{ state: string; message: string | null } | null'],
                    required_policy_name: [:string, nullable: true]
 
-          attributes :id, :kind, :name, :description, :required, :position, :status, :action_url, :blocker
+          attributes :id, :kind, :name, :description, :required, :position, :status, :action_url
+          typelize({ state: :string, message: [:string, { nullable: true }] }, nullable: true)
+          attribute :blocker, &:blocker
 
           # Whether this stands between the seller and approval. Serialized
           # rather than left to each client to derive, so the dashboard's

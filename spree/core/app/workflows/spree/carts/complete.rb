@@ -110,7 +110,7 @@ module Spree
         end
 
         finalize!(cart, result)
-        halt!(result)
+        halt!(order_group || result)
       end
 
       # The split already ran, so the money and the division are settled — what
@@ -233,6 +233,7 @@ module Spree
         ApplicationRecord.transaction do
           order.payments.update_all(order_id: nil, cart_id: cart.id)
           order.payment_sessions.update_all(order_id: nil, cart_id: cart.id)
+          repoint_reservation_lines!(order, @copied_line_items.invert)
           order.stock_reservations.update_all(order_id: nil, cart_id: cart.id)
           Spree::CouponCode.where(order_id: order.id).update_all(order_id: nil, cart_id: cart.id)
           order.reload.destroy!
@@ -284,14 +285,19 @@ module Spree
           )
           order.save!
 
+          # Copied lines validate against the new order, so its own holds must already belong to it.
+          cart.stock_reservations.update_all(order_id: order.id, cart_id: nil)
           line_item_map = copy_line_items!(cart, order)
+          @copied_line_items = line_item_map
+          repoint_reservation_lines!(order, line_item_map)
           fulfillment_map = copy_fulfillments!(cart, order, line_item_map)
           fee_map = copy_typed_lines!(cart, order, line_item_map, fulfillment_map)
           copy_promotions!(cart, order)
           copy_tax_identifier!(cart, order)
           copy_tax_exemptions!(cart, order, line_item_map, fulfillment_map, fee_map)
-          copy_po_document!(cart, order)
+          order.copy_po_document_from!(cart)
           repoint_money_records!(cart, order)
+          Spree.cart_copiers.each { |copier| copier.call(cart: cart, order: order, line_item_map: line_item_map) }
 
           order.update_columns(
             item_total: cart.item_total,
@@ -309,6 +315,14 @@ module Spree
           )
         end
         order
+      end
+
+      # Seller splitting follows the copied line ids. Compensation applies the
+      # inverse map before deleting those copies, keeping the cart's holds alive.
+      def repoint_reservation_lines!(order, line_item_map)
+        line_item_map.each do |source, target|
+          order.stock_reservations.where(line_item_id: source.id).update_all(line_item_id: target.id)
+        end
       end
 
       # Freezes the buyer's tax registration onto the order, stamped with which
@@ -387,24 +401,6 @@ module Spree
           context: { item_id: override['item_id'] },
           source: 'spree.core'
         )
-      end
-
-      # The buyer's purchase order follows the number onto the order. The same
-      # blob is attached to both records rather than uploaded twice — the cart
-      # keeps its copy so a completion that rolls back leaves the buyer's
-      # upload where they left it.
-      #
-      # The order is persisted and unchanged here, so `attach` saves
-      # immediately and answers nil instead of raising when the save is
-      # refused. Left unchecked the placed order would simply have no
-      # paperwork, silently — so the failure is raised into the completion
-      # transaction rather than dropped.
-      def copy_po_document!(cart, order)
-        return unless cart.po_document.attached?
-
-        return if order.po_document.attach(cart.po_document.blob)
-
-        raise ActiveRecord::RecordInvalid, order
       end
 
       # Which link of the chain produced the snapshot, so a placed order's tax
@@ -523,7 +519,6 @@ module Spree
       def repoint_money_records!(cart, order)
         cart.payments.update_all(order_id: order.id, cart_id: nil)
         cart.payment_sessions.update_all(order_id: order.id, cart_id: nil)
-        cart.stock_reservations.update_all(order_id: order.id, cart_id: nil)
         Spree::CouponCode.where(cart_id: cart.id).update_all(order_id: order.id, cart_id: nil)
         order.payments.reset
       end
@@ -560,7 +555,9 @@ module Spree
       # its children is the order this checkout carries on with. No child holds
       # the confirmation: the customer is confirmed from the group.
       def complete_orders
-        result = Spree.order_complete_workflow.call(order: order, payment_pending: payment_pending)
+        # carts.complete.validate ran before the payment was taken; a veto now
+        # would leave the customer charged for an order that never places.
+        result = Spree.order_complete_workflow.call(order: order, payment_pending: payment_pending, validated: true)
         failure(cart, code: 'completion_failed', message: result.error) if result.failure?
 
         return unless result.value.is_a?(Spree::OrderGroup)

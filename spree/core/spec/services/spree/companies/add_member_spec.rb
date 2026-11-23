@@ -31,6 +31,26 @@ describe Spree::Companies::AddMember do
     end
   end
 
+  context 'when given a customer' do
+    let(:customer) { create(:customer) }
+
+    it 'creates the membership immediately, without an email' do
+      result = described_class.call(company: company, customer: customer)
+
+      expect(result).to be_success
+      expect(result.value).to be_a(Spree::CompanyMembership)
+      expect(result.value.customer).to eq(customer)
+    end
+
+    it 'invites them instead when acceptance is required' do
+      result = described_class.call(company: company, customer: customer, require_acceptance: true)
+
+      expect(result.value).to be_a(Spree::CompanyInvitation)
+      expect(result.value.email).to eq(customer.email)
+      expect(company.memberships).to be_empty
+    end
+  end
+
   context 'when the email is unknown' do
     it 'creates an invitation instead' do
       result = described_class.call(company: company, email: 'new@example.com')

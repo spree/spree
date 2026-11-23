@@ -62,13 +62,21 @@ RSpec.describe Spree::Mcp::Server do
         expect(search.dig('annotations', 'destructiveHint')).to be(false)
       end
 
+      it 'marks a search as staying inside the store' do
+        search = tools.find { |tool| tool['name'] == 'search_resources' }
+
+        expect(search.dig('annotations', 'openWorldHint')).to be(false)
+      end
+
       # An export changes nothing, but it produces a file of store data and
       # mails a link to it — that leaves the building, so it is annotated for
       # confirmation even though the key only reads.
-      it 'still marks an export for confirmation' do
+      it 'still marks an export for confirmation, as additive and leaving the store' do
         export = tools.find { |tool| tool['name'] == 'create_export' }
 
-        expect(export.dig('annotations', 'destructiveHint')).to be(true)
+        expect(export.dig('annotations', 'readOnlyHint')).to be(false)
+        expect(export.dig('annotations', 'destructiveHint')).to be(false)
+        expect(export.dig('annotations', 'openWorldHint')).to be(true)
       end
     end
 
@@ -92,22 +100,36 @@ RSpec.describe Spree::Mcp::Server do
 
         expect(cancel.dig('annotations', 'destructiveHint')).to be(true)
         expect(cancel.dig('annotations', 'readOnlyHint')).to be(false)
+        expect(cancel.dig('annotations', 'openWorldHint')).to be(true)
       end
 
-      it 'derives each workflow tool\'s schema from the workflow itself' do
+      it 'tells an upload apart from a delete' do
+        upload = tools.find { |tool| tool['name'] == 'upload_file' }
+        delete = tools.find { |tool| tool['name'] == 'delete_resource' }
+
+        expect(upload.dig('annotations', 'destructiveHint')).to be(false)
+        expect(delete.dig('annotations', 'destructiveHint')).to be(true)
+      end
+
+      # A create reaches every writable resource, refunds and payments
+      # among them, so it is warned about like any other write.
+      it 'keeps the generic create destructive' do
+        create = tools.find { |tool| tool['name'] == 'create_resource' }
+
+        expect(create.dig('annotations', 'destructiveHint')).to be(true)
+      end
+
+      it 'builds each action tool\'s schema from its Admin API operation' do
         cancel = tools.find { |tool| tool['name'] == 'orders_cancel' }
         properties = cancel.dig('inputSchema', 'properties')
 
-        expect(properties).to include('order', 'refund_payments', 'note')
-        expect(cancel.dig('inputSchema', 'required')).to eq(['order'])
+        expect(properties).to include('id', 'refund_payments', 'cancel_note')
       end
 
       it 'never offers the principal or the store as a parameter' do
-        cancel = tools.find { |tool| tool['name'] == 'orders_cancel' }
-        create = tools.find { |tool| tool['name'] == 'variants_create' }
+        offered = tools.flat_map { |tool| tool.dig('inputSchema', 'properties').to_h.keys }
 
-        expect(cancel.dig('inputSchema', 'properties')).not_to have_key('canceler')
-        expect(create.dig('inputSchema', 'properties')).not_to have_key('store')
+        expect(offered).not_to include('canceler', 'store', 'store_id')
       end
 
       it 'hides a deprecated parameter the allowlist excludes' do

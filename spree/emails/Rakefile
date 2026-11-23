@@ -18,8 +18,7 @@ namespace :typelizer do
   desc 'Generate TypeScript types for every SDK, the email template types included'
   task :generate do
     ENV['RAILS_ENV'] ||= 'test'
-    ENV['DISABLE_TYPELIZER'] = 'false'
-    ENV['ENABLE_TYPELIZER'] = '1'
+    ENV['TYPELIZER'] = 'true'
 
     dummy = File.expand_path('spec/dummy/config/environment.rb', __dir__)
     abort 'Build the test app first: cd spree/emails && bundle exec rake test_app' unless File.exist?(dummy)

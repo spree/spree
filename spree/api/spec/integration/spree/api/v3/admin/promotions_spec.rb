@@ -146,6 +146,8 @@ RSpec.describe 'Admin Promotions API', type: :request, swagger_doc: 'api-referen
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true
+      parameter name: :expand, in: :query, type: :string, required: false,
+                description: 'Comma-separated associations to expand: `rules`, `actions` (each under the same shape the write accepts), `custom_fields`.'
 
       response '200', 'promotion found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

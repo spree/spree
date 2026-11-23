@@ -61,7 +61,7 @@ RSpec.describe Spree::Customers::Anonymize do
       described_class.call(customer: customer, store: store)
       first_erased_at = customer.reload.anonymized_at
 
-      Timecop.travel(1.day.from_now) do
+      travel(1.day) do
         described_class.call(customer: customer.reload, store: store)
       end
 

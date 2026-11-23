@@ -153,7 +153,7 @@ export function DeliveryZoneSheet({
           </SheetDescription>
         </SheetHeader>
         {loading ? (
-          <div className="p-4 text-sm text-muted-foreground">{t('admin.common.loading')}</div>
+          <div className="p-4 text-base text-muted-foreground">{t('admin.common.loading')}</div>
         ) : (
           <form
             onSubmit={(event) => {
@@ -222,7 +222,7 @@ function DeliveryZoneFormFields({
   return (
     <FieldGroup>
       {errors.root?.message && (
-        <p className="text-sm text-destructive" role="alert">
+        <p className="text-base text-destructive" role="alert">
           {errors.root.message}
         </p>
       )}

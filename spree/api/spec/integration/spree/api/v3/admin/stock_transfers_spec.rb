@@ -354,6 +354,7 @@ RSpec.describe 'Admin Stock Transfers API', type: :request, swagger_doc: 'api-re
 
     post 'Count a delivery in' do
       tags 'Stock Transfers'
+      operationId 'stock_transfers_receive'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]

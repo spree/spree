@@ -24,7 +24,7 @@ RSpec.describe Spree::VariantMedia, type: :model do
       link = described_class.create!(variant: variant, asset: asset)
       # MySQL stores DATETIME at second precision, so touching within the same
       # second as create wouldn't move updated_at. Advance the clock first.
-      Timecop.travel(Time.current + 1.second) do
+      travel(1.second) do
         expect { link.touch }.to change { variant.reload.updated_at }
       end
     end

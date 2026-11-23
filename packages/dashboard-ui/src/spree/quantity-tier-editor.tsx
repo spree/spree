@@ -123,7 +123,7 @@ export function QuantityTierEditor({
               ) : (
                 <Button
                   type="button"
-                  variant="ghost"
+                  variant="destructive-ghost"
                   size="icon"
                   className="size-8 shrink-0"
                   disabled={disabled}

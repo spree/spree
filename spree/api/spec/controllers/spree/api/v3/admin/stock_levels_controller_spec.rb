@@ -182,6 +182,20 @@ RSpec.describe Spree::Api::V3::Admin::StockLevelsController, type: :controller d
       expect(stock_level.stock_movements.adjusted.last.reason).to eq('Damaged in transit')
     end
 
+    it 'refuses a reason longer than 255 characters and writes nothing' do
+      stock_level.update!(backorderable: false)
+
+      expect {
+        patch :update, params: { id: stock_level.prefixed_id, backorderable: true, count_on_hand: 42, reason: 'a' * 256 },
+                       as: :json
+      }.not_to change { stock_level.reload.count_on_hand }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['details']['reason']).to be_present
+      expect(stock_level.stock_movements.adjusted).to be_empty
+      expect(stock_level.backorderable).to be(false)
+    end
+
     it 'labels an unlabelled correction in English' do
       patch :update, params: { id: stock_level.prefixed_id, count_on_hand: 42 }, as: :json
 
@@ -314,6 +328,31 @@ RSpec.describe Spree::Api::V3::Admin::StockLevelsController, type: :controller d
 
       expect(response).to have_http_status(:unprocessable_content)
       expect(json_response['error']['details']['rows'].first['missing']).to include('count_on_hand')
+    end
+
+    it 'refuses a row whose reason is too long, names it, and writes nothing' do
+      second = create(:variant)
+      second.stock_levels.destroy_all
+      create(:stock_level, variant: second, stock_location: stock_location, count_on_hand: 0,
+                           adjust_count_on_hand: false)
+
+      expect do
+        post :bulk_upsert, params: {
+          stock_levels: [
+            { variant_id: second.prefixed_id, stock_location_id: stock_location.prefixed_id, count_on_hand: 2 },
+            { variant_id: variant.prefixed_id, stock_location_id: stock_location.prefixed_id,
+              count_on_hand: 12, reason: 'a' * 256 }
+          ]
+        }, as: :json
+      end.not_to change(Spree::StockMovement, :count)
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['code']).to eq('invalid_stock_levels')
+      row = json_response['error']['details']['rows'].first
+      expect(row['index']).to eq(1)
+      expect(row['errors']['reason']).to be_present
+      expect(stock_level.count_on_hand).to eq(5)
+      expect(second.stock_levels.find_by(stock_location: stock_location).count_on_hand).to eq(0)
     end
 
     it 'refuses to write another store stock' do

@@ -61,7 +61,7 @@ RSpec.describe Spree::SellerMailer do
         :de,
         spree: { seller_mailer: { approved_email: { subject: 'DE-SUBJECT', heading: 'DE-HEADING' } } }
       )
-      store.update!(default_locale: 'de', supported_locales: 'en,de')
+      store.default_market.update!(default_locale: 'de', supported_locales: 'en,de')
     end
 
     it 'renders the subject in the store locale, not the job locale' do

@@ -44,6 +44,45 @@ RSpec.describe Spree::StockLevels::BulkUpsert do
         ])
       }.to change { level.reload.stock_movements.count }.by(1)
     end
+
+    it 'labels the movement as the feed when the row gives no reason' do
+      level = level_for(variant, location, 5)
+
+      described_class.call(store: store, rows: [
+        { variant_id: variant.prefixed_id, stock_location_id: location.prefixed_id, count_on_hand: 40 }
+      ])
+
+      expect(level.reload.stock_movements.last.reason).to eq('Inventory feed')
+    end
+
+    it 'labels the movement with the reason the row gives' do
+      level = level_for(variant, location, 5)
+
+      described_class.call(store: store, rows: [
+        { variant_id: variant.prefixed_id, stock_location_id: location.prefixed_id, adjustment: 3, reason: 'received' }
+      ])
+
+      expect(level.reload.stock_movements.last.reason).to eq('Received')
+    end
+
+    it 'fails naming the row a record refused, and writes no row' do
+      first = level_for(create(:variant), location, 5)
+      level = level_for(variant, location, 5)
+
+      count_before = first.count_on_hand
+
+      result = described_class.call(store: store, rows: [
+        { variant_id: first.variant.prefixed_id, stock_location_id: location.prefixed_id, count_on_hand: 9 },
+        { variant_id: variant.prefixed_id, stock_location_id: location.prefixed_id, count_on_hand: 9, reason: 'a' * 256 }
+      ])
+
+      expect(result).to be_failure
+      expect(result.error.value[:rows]).to contain_exactly(a_hash_including(index: 1))
+      expect(result.error.to_s).to start_with('Row 1:')
+      expect(first.reload.count_on_hand).to eq(count_before)
+      expect(first.stock_movements).to be_empty
+      expect(level.reload.stock_movements).to be_empty
+    end
   end
 
   # The scoping lives here rather than in the one controller that used to do

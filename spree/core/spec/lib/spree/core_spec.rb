@@ -170,5 +170,18 @@ describe Spree do
       expect(registry).not_to include(stale)
       expect(registry).to include(anonymous)
     end
+
+    it 'refreshes cart copiers, which are called on every checkout' do
+      stale_copier = Class.new.tap { |klass| klass.define_singleton_method(:name) { 'Spree::Orders::CreateFromCart' } }
+      original = Spree.cart_copiers.dup
+      Spree.cart_copiers << stale_copier
+
+      Spree.refresh_provider_registries!
+
+      expect(Spree.cart_copiers).to include(Spree::Orders::CreateFromCart)
+      expect(Spree.cart_copiers).not_to include(stale_copier)
+    ensure
+      Spree.cart_copiers.replace(original)
+    end
   end
 end

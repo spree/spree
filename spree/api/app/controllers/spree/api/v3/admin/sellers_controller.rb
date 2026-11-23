@@ -18,6 +18,11 @@ module Spree
 
           before_action :set_resource, only: [:show, :update, :destroy, :invite, :approve, :suspend, :reject,
                                               :onboarding, :reopen_onboarding]
+          before_action :authorize_returns_address!, only: [:create, :update]
+
+          RETURNS_ADDRESS_DESCRIPTION = "Where customers send returns, written inline. It is the address of the seller's " \
+                                        'returns stock location, so it updates that location, or creates one for a seller ' \
+                                        'who has none. Names and `label` are ignored: a location has none.'.freeze
 
           # Enumerated rather than borrowing the legacy global list, which
           # permits :id, :user_id and :deleted_at — the first of which would
@@ -64,6 +69,11 @@ module Spree
               description: "The seller's own billing address, written inline. There is no `billing_address_id`: an address belongs to whoever it was created for, so it is never referenced by id." do |billing_address|
               billing_address.include_attributes Spree::Api::V3::AddressRequestSchema
             end
+            body.attribute :returns_address, :object,
+                           as: 'SellerAddressParams',
+                           description: RETURNS_ADDRESS_DESCRIPTION do |returns_address|
+              returns_address.include_attributes Spree::Api::V3::AddressRequestSchema
+            end
             body.attribute :custom_fields, :array, of: Spree::Api::V3::CustomFieldValueRequestSchema,
               description: 'Custom field values, each validated against its definition.'
           end
@@ -78,7 +88,10 @@ module Spree
 
           request_params 'SellerApproveParams', action: :approve do |body|
             body.attribute :override_requirements, :boolean,
-              description: 'Admits a seller whose onboarding checklist is unfinished: the operator\'s deliberate exception, which the `seller.approved` event records along with what was outstanding.'
+                           description: "Admits a seller whose onboarding checklist is unfinished: the operator's " \
+                                        'deliberate exception, which the `seller.approved` event records along with ' \
+                                        'what was outstanding. Also admits a `pending` or `invited` seller who never ' \
+                                        'started onboarding, which is refused without it.'
           end
 
           request_params 'SellerReopenOnboardingParams', action: :reopen_onboarding do |body|
@@ -234,6 +247,16 @@ module Spree
             return nil if params[:role_id].blank?
 
             @resource.roles.find_by_prefix_id!(params[:role_id])
+          end
+
+          # The returns address is a stock location's, and writing a location
+          # needs `write_settings` (see StockLocationsController), which the
+          # `sellers` scope does not grant.
+          def authorize_returns_address!
+            return unless params.key?(:returns_address)
+            return if holds_permission?('write_settings')
+
+            render_missing_permission('write_settings')
           end
         end
       end

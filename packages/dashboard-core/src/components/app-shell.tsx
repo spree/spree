@@ -32,6 +32,7 @@ export function AppShell({
   uiLocales,
   onEditProfile,
   notifications,
+  sidebarWidget,
   children,
 }: {
   /** Prefix for the nav links. Defaults to the route's `storeId`. */
@@ -49,6 +50,8 @@ export function AppShell({
    * notifications bell. The seller panel passes none.
    */
   notifications?: ReactNode
+  /** A card pinned above the account menu, such as the store setup checklist. */
+  sidebarWidget?: ReactNode
   children: ReactNode
 }) {
   // The settings area brings a full-width nav of its own, and two stacked
@@ -90,6 +93,7 @@ export function AppShell({
         uiLocales={uiLocales}
         onEditProfile={onEditProfile}
         notifications={notifications}
+        widget={sidebarWidget}
       />
       {/* The sheet is exactly as tall as the viewport and scrolls internally,
           rather than growing with the page and letting the document scroll.
@@ -99,10 +103,11 @@ export function AppShell({
           a scroll container of its own to pin inside, so it can never ride up
           over the rail's switcher.
 
-          `flex-row` so the secondary sidebar sits flush against the primary and
-          spans the sheet's full height. */}
+          `flex-row` so the page's own columns sit side by side. */}
+      {/* The settings nav sits in the chrome between the rail and the sheet,
+          on the sidebar's ground, so the sheet holds only the page. */}
+      <SettingsSidebar open={inSettings} tenantId={tenantId} />
       <SidebarInset className="min-h-0 flex-row overflow-hidden">
-        <SettingsSidebar open={inSettings} tenantId={tenantId} />
         {/* `tabIndex={-1}`: Page Up/Down, Home and End act on the focused
             element, and this is the element that scrolls. Without it focus
             stays on <body>, which has nothing to scroll now that the sheet
@@ -134,7 +139,7 @@ export function AppShell({
         <div
           ref={scrollerRef}
           tabIndex={-1}
-          className="themed-scrollbar flex min-w-0 flex-1 flex-col overflow-y-auto me-[5px] outline-none"
+          className="themed-scrollbar flex min-w-0 flex-1 flex-col overflow-y-auto outline-none"
         >
           <MobileTopBar
             uiLocales={uiLocales}

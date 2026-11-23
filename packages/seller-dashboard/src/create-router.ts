@@ -1,3 +1,4 @@
+import { RouteErrorScreen, reportCaughtError } from '@spree/dashboard-core'
 import type { AnyRoute, RouterConstructorOptions, RouterHistory } from '@tanstack/react-router'
 import { createRouter } from '@tanstack/react-router'
 
@@ -28,5 +29,13 @@ export function createSellerRouter<TRouteTree extends AnyRoute>(
     Record<string, unknown>
   >
 
-  return createRouter(options)
+  return createRouter({
+    ...options,
+    // A thrown render or loader error shows the message and a retry inside
+    // the panel instead of the router's bare fallback, and reaches
+    // error-tracking plugins: the error screen stops it before
+    // window.onerror would see it.
+    defaultErrorComponent: RouteErrorScreen,
+    defaultOnCatch: reportCaughtError,
+  })
 }

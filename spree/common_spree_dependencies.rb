@@ -37,8 +37,6 @@ group :test do
   gem 'simplecov', '~> 0.22.0'
   gem 'simplecov-cobertura'
   gem 'webmock'
-  gem 'timecop'
-  gem 'rails-controller-testing'
   # N+1 tripwire for API requests (see Spree::Api::V3::BaseController).
   # pg_query is Prosopite's SQL fingerprinter for every adapter but MySQL.
   # It has a C extension and no JRuby build, so it is scoped like the
@@ -50,20 +48,17 @@ group :test do
 end
 
 group :test, :development do
-  gem 'awesome_print'
   gem 'brakeman'
   gem 'bundler-audit'
   gem 'gem-release'
   gem 'i18n-tasks'
   gem 'license_finder'
   gem 'rubocop', '~> 1.0', require: false
+  gem 'rubocop-rails', require: false
   gem 'rubocop-rspec', require: false
   gem 'pry-byebug'
   gem 'puma'
   gem 'ffaker'
-
-  # Ruby 3.4+ removed observer from stdlib
-  gem 'observer'
 end
 
 group :development do

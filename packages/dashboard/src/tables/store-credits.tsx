@@ -1,6 +1,6 @@
 import type { StoreCredit } from '@spree/admin-sdk'
 import { defineTable, Money } from '@spree/dashboard-core'
-import { Badge, RelativeTime, ResourceNameCell } from '@spree/dashboard-ui'
+import { Badge, CurrencyLabel, RelativeTime, ResourceNameCell } from '@spree/dashboard-ui'
 import { BanknoteIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
 import { ActorLabel } from '../components/spree/actor-label'
@@ -114,7 +114,7 @@ defineTable<StoreCredit>('store-credits', {
       filterable: true,
       filterType: 'currency',
       default: true,
-      render: (credit) => credit.currency,
+      render: (credit) => <CurrencyLabel code={credit.currency} />,
     },
     {
       key: 'originator_type',
@@ -150,7 +150,7 @@ defineTable<StoreCredit>('store-credits', {
       filterable: true,
       filterType: 'date',
       default: true,
-      className: 'text-sm text-muted-foreground whitespace-nowrap',
+      className: 'text-base text-muted-foreground whitespace-nowrap',
       render: (credit) => <RelativeTime iso={credit.created_at} />,
     },
   ],

@@ -37,6 +37,16 @@ RSpec.describe Spree::Payment::CustomEvents do
       expect(Spree::Events).to have_received(:publish).with('order.paid', anything, anything)
     end
 
+    it 'does not count a refund the provider has not completed as given back' do
+      payment.update_columns(amount: order.total)
+      create(:refund, :requested, payment: payment, amount: 1)
+      create(:refund, :failed, payment: payment, amount: 1)
+
+      payment.update!(status: 'completed')
+
+      expect(Spree::Events).to have_received(:publish).with('order.paid', anything, anything)
+    end
+
     it 'does not publish order.paid when order still has outstanding balance' do
       payment.update!(amount: order.total - 1)
 

@@ -1,0 +1,67 @@
+name: Dependabot dedupe
+
+# Dependabot updates pnpm-lock.yaml with the smallest possible change, so a
+# package that depends on a bumped dependency can keep resolving the old copy.
+# The Frontend workflow then fails `pnpm dedupe --check`. This job runs
+# `pnpm dedupe` on Dependabot's npm pull requests and pushes the result back.
+#
+# The push uses DEPENDABOT_PUSH_TOKEN (a Dependabot secret holding a
+# fine-grained personal access token with contents: write on this repository),
+# because a push made with GITHUB_TOKEN does not trigger CI. A GitHub App
+# installation token does not work here: it expires after an hour. Once this job has pushed,
+# Dependabot stops rebasing the branch; comment `@dependabot recreate` to
+# rebuild it, and this job runs again.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dependabot-dedupe-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  dedupe:
+    # Only Dependabot's own pushes, so the push below does not trigger this job.
+    if: >-
+      github.actor == 'dependabot[bot]' &&
+      startsWith(github.head_ref, 'dependabot/npm_and_yarn/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.head_ref }}
+          persist-credentials: false
+
+      - uses: pnpm/action-setup@008330803749db0355799c700092d9a85fd074e9 # v6.0.9
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: pnpm
+
+      # No lifecycle scripts: the updated packages have not been reviewed yet,
+      # and the push token must never be reachable from their code.
+      - name: Dedupe the lockfile
+        run: pnpm dedupe --ignore-scripts
+
+      - name: Push the deduplicated lockfile
+        env:
+          PUSH_TOKEN: ${{ secrets.DEPENDABOT_PUSH_TOKEN }}
+          BRANCH: ${{ github.head_ref }}
+        run: |
+          if git diff --quiet -- pnpm-lock.yaml; then
+            echo "Lockfile has no duplicates."
+            exit 0
+          fi
+          if [ -z "$PUSH_TOKEN" ]; then
+            echo "::error::pnpm dedupe changed the lockfile, but the DEPENDABOT_PUSH_TOKEN Dependabot secret is not set. Run pnpm dedupe on this branch and push."
+            exit 1
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Fixed duplicate packages in the lockfile" -- pnpm-lock.yaml
+          git push "https://x-access-token:${PUSH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:${BRANCH}"

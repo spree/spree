@@ -292,6 +292,7 @@ RSpec.describe 'Admin Purchase Orders API', type: :request, swagger_doc: 'api-re
 
     post 'Book in a delivery' do
       tags 'Purchase Orders'
+      operationId 'purchase_orders_receive'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]

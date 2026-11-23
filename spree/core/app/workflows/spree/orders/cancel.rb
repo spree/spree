@@ -33,7 +33,9 @@ module Spree
         super
 
         unless restock_items.nil?
-          Spree::Deprecation.warn('Spree::Orders::Cancel no longer accepts restock_items — it never changed behavior and will be removed in Spree 6.1.')
+          Spree::Deprecation.warn(
+            'Spree::Orders::Cancel no longer accepts restock_items — it never changed behavior and will be removed in Spree 6.3.'
+          )
         end
 
         step :ensure_cancellable
@@ -53,6 +55,11 @@ module Spree
         @amount_to_refund ||= amount_paid if refund_payments
 
         ApplicationRecord.transaction do
+          # The row lock a capture takes to record its answer, so a capture
+          # cannot be recorded between this check and the cancel. Taken by
+          # query: the order may carry figures not yet saved.
+          Spree::Order.lock.find(order.id)
+          step :ensure_no_payment_in_flight
           step :mark_canceled
           step :cancel_fulfillments
           run_hooks :after_cancel
@@ -87,6 +94,20 @@ module Spree
         return if refund_amount.blank? || order.grouped?
 
         order.errors.add(:base, :refund_amount_requires_shared_payment, message: I18n.t('spree.errors.messages.refund_amount_requires_shared_payment'))
+        failure(order)
+      end
+
+      # Voiding a payment whose capture or void is in flight, or that the
+      # provider is still answering, would release a hold it may be capturing.
+      def ensure_no_payment_in_flight
+        payments = if order.grouped?
+                     Spree::Payment.where(id: order.payment_splits.select(:payment_id))
+                   else
+                     order.payments
+                   end
+        return unless payments.with_status(:processing, :requested).exists?
+
+        order.errors.add(:base, :payment_requested, message: I18n.t('spree.payment_requested_awaiting_provider'))
         failure(order)
       end
 

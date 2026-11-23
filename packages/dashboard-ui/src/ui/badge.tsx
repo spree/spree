@@ -78,6 +78,9 @@ type StatusTone = 'success' | 'warning' | 'destructive' | 'info' | 'neutral'
  */
 const statusToneMap: Record<string, StatusTone> = {
   active: 'success',
+  // Staff accounts: locked after too many failed sign-ins, deactivated by an admin.
+  locked: 'warning',
+  deactivated: 'neutral',
   authorized: 'info',
   complete: 'success',
   completed: 'success',
@@ -269,7 +272,7 @@ function StatusBadge({
       data-slot="status-badge"
       data-status={status}
       className={cn(
-        'inline-flex w-fit shrink-0 items-center gap-1.5 whitespace-nowrap text-sm capitalize',
+        'inline-flex w-fit shrink-0 items-center gap-1.5 whitespace-nowrap text-base capitalize',
         className,
       )}
     >

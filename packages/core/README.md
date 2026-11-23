@@ -19,6 +19,7 @@ npm install @spree/core
 - [Money](#money) — exact arithmetic, percentages and formatting for decimal-string amounts
 - [Reading typed amounts](#reading-typed-amounts) — turning "1.234,56" into "1234.56"
 - [Filters](#filters) — types for the queries Spree list endpoints accept
+- [Random IDs](#random-ids) — UUIDs that also work on plain-HTTP pages
 - [Compatibility](#compatibility)
 
 ## Code lists
@@ -260,11 +261,22 @@ const query: ProductQuery = {
 
 Amounts in `RangeFilters` are decimal strings, like everywhere else in Spree. `FILTER_PREDICATES` lists the conditions for each kind of value, if you need them at runtime, for example to build a filter editor, and `FilterPredicate` is the type of any one of them.
 
+## Random IDs
+
+`randomUUID()` returns a version 4 UUID. Browsers only provide `crypto.randomUUID` on secure pages (HTTPS or `localhost`), so code that runs on a page served over plain HTTP, for example at a server's IP address, should use this instead. It falls back to `crypto.getRandomValues`, which every browser provides.
+
+```typescript
+import { randomUUID } from '@spree/core';
+
+randomUUID(); // '3b241101-e2bb-4255-8caf-4136c566a962'
+```
+
 ## Compatibility
 
 - ES modules and CommonJS, with TypeScript types included.
 - Node.js 18 or later, and every current browser.
 - `formatMoney` uses the built-in `Intl.NumberFormat`.
+- `randomUUID` needs the Web Crypto API as the global `crypto`: built into browsers and Node.js 19 or later. Node.js 18 needs the `--experimental-global-webcrypto` flag, and React Native needs a polyfill.
 
 ## Links
 

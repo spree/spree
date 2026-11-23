@@ -1,5 +1,65 @@
 # @spree/cli
 
+## 3.8.0
+
+### Minor Changes
+
+- [#15196](https://github.com/spree/spree/pull/15196) [`78b297e`](https://github.com/spree/spree/commit/78b297e65e95d278dae6e6375c1875ea542ef6c0) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `spree generate` now ejects a project still on the prebuilt image before running, after asking, because the prebuilt image never loads files written to `server/`. With no terminal to ask in, it stops and prints the exact `spree generate --yes …` command to run once the developer agrees. The deprecated `spree bundle add <gem>` now installs the gem through `spree add`, and `spree bundle add|remove|install|update|lock` refuses on a project that is not ejected instead of changing nothing. New projects' agent instructions describe this in one line instead of a section.
+  
+  `spree eject` now switches `docker-compose.yml` over only after the development database is prepared and the stack is up, so an eject that stops part-way no longer leaves a project that looks ejected but still runs the prebuilt image. The next command that needs an ejected project ejects it again.
+  
+  `spree add dashboard --template` and its environment variables now accept only a local directory or an `https://`, `ssh://`, `git://` or `user@host:path` git URL, so a value like `ext::…` can no longer reach git transports that run commands.
+
+- [#15202](https://github.com/spree/spree/pull/15202) [`7e92938`](https://github.com/spree/spree/commit/7e9293894062290133d16bc89bd44579cd48144e) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `spree generate` now prints a short summary instead of the generator's full output: the files it created, changed or skipped (as paths from where you ran it, so `server/app/...` from a project root), anything the generator says on its own, and the next commands to run, such as `spree restart` after an initializer changed, `spree migrate` after a new migration and `spree test` for new specs. Rails boot and Docker output stay hidden unless the generator fails, when everything it printed is shown and the command exits with its exit code. Pass `--verbose` before the generator name for the full output. A generator that asks a question, such as whether to overwrite a file, still shows the question and reads the answer.
+
+- [#15205](https://github.com/spree/spree/pull/15205) [`92394a3`](https://github.com/spree/spree/commit/92394a31735510bbb1097f0c80ea9e944ddf3554) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - New projects now depend on `@spree/docs` on the Spree major (`^6.0.0-0`) instead of `latest`, since the docs package now carries the Spree version: `@spree/docs@6.0.4` documents Spree 6.0.4. `spree upgrade` moves it with the server like the dashboard packages, and rewrites the `latest` spec of older projects to the server's version.
+  
+  `spree add ai` and `spree upgrade` now install the Spree agent skills from the `spree/agent-skills` release tagged for the Spree version (the newest tag on its minor line that is not newer), instead of the main branch. `skills-lock.json` records that release. When the line has no release yet, the skills still come from the main branch. Moving to another release removes the Spree skills it no longer has; skills from other sources are left alone.
+  
+  New projects' `AGENTS.md` describes the local docs and the skills as matched to the project's Spree version, tells agents to compare the installed docs version with the server's in `spree info`, and no longer recommends the deprecated `spree rspec`, `spree routes`, `spree rails` and `spree rake` commands.
+
+### Patch Changes
+
+- [#15215](https://github.com/spree/spree/pull/15215) [`b63350e`](https://github.com/spree/spree/commit/b63350e16bb7b0a8fa7c40c0f0624e951eba6026) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `spree dev` and `spree init` now stop the dashboard dev server when the terminal closes or the CLI receives SIGTERM, instead of leaving it running and holding its port.
+
+- [#15209](https://github.com/spree/spree/pull/15209) [`a93b8d5`](https://github.com/spree/spree/commit/a93b8d5e52345e374cc45494eb7fb6cf084dabc4) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `spree init` no longer stops when pulling the latest images fails, for example on Docker Hub's anonymous rate limit or without network. It starts the images already on the machine; only an image that was never pulled still fails.
+  
+  `spree init --detach` exits once setup is done and leaves the stack running, instead of starting the dashboard dev server and streaming logs, so scripted installs can continue.
+
+## 3.7.0
+
+### Minor Changes
+
+- [#15171](https://github.com/spree/spree/pull/15171) [`42c7a92`](https://github.com/spree/spree/commit/42c7a92e56290a585938556e1becc3f1ce7c9974) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `spree upgrade` now offers to update the Spree agent skills. When `skills-lock.json` lists skills from `spree/agent-skills`, it asks, then installs every skill from the main branch right after the `@spree/*` packages, so installed skills move to the newest version and new ones are added. A failed download only warns, now with the `skills` CLI's own reason, and `--yes` accepts the update.
+
+### Patch Changes
+
+- [#15176](https://github.com/spree/spree/pull/15176) [`8a1a876`](https://github.com/spree/spree/commit/8a1a8765c15209a60e4eb8bfc447fb90adfbebd9) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added `spree info`, which prints the anonymised diagnostics report a Spree server gives for bug reports: Spree and gem versions, runtime, infrastructure, settings changed from their defaults and recent Spree errors. `--json` prints it as JSON and `--issue` opens a GitHub issue with the report filled in.
+
+- [#15127](https://github.com/spree/spree/pull/15127) [`9495a16`](https://github.com/spree/spree/commit/9495a16c22fe379cf41734f6320910a299d88ec2) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `spree sdk generate` now types a response whose schema is declared inline, such as `{ data: [...] }`, from that schema, as `<Namespace><Method>Response`, instead of as the resource's record; a list declared that way is not wrapped in `PaginatedResponse` again. `x-spree-sdk-method` and `x-spree-sdk-namespace` (`sdk_method` in an rswag spec) name a method and its namespace without an `operationId`, which also names the operation's agent tool, so a path nested under one of the SDK's resources, such as `/carts/{cart_id}/quote_attachments`, can go in a namespace of the extension's own instead of `carts`, which `extend` refuses. A namespace that is not an identifier, and two inline response types of one name, are refused with the path to fix instead of writing a client that does not compile.
+
+## 3.6.3
+
+### Patch Changes
+
+- [#15031](https://github.com/spree/spree/pull/15031) [`d102fb7`](https://github.com/spree/spree/commit/d102fb703abcd184064637015e4b60f46e050bdb) Thanks [@mad-eel](https://github.com/mad-eel)! - `spree add paypal` now asks for `spree_paypal_checkout` at the project's Spree version or newer, since PayPal is released with Spree from 6.0.3. Before, it resolved to the 0.x gem, which does not run on Spree 6. A project on Spree 6.0.0 to 6.0.2 must upgrade Spree to 6.0.3 first.
+
+- [#15113](https://github.com/spree/spree/pull/15113) [`41bbba3`](https://github.com/spree/spree/commit/41bbba3272d9ebd8817842456670db0b72cd3b34) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Added `spree sdk generate`, which writes the whole client of a package that extends Spree's SDKs from the extension it is for: it runs the extension's `rake spree:openapi:generate` and `rake spree:sdk:serializer_types`, then writes one SDK extension per resource, with a method per documented operation, and the request, filter and response types. The extension is named in the package's `package.json` (`"spree": { "extension": "../my_extension" }`); `--check` fails when the generated files are out of date, and `--no-backend` uses the committed documents.
+
+## 3.6.2
+
+### Patch Changes
+
+- [#15063](https://github.com/spree/spree/pull/15063) [`f114556`](https://github.com/spree/spree/commit/f114556b7bfa7d3b649c035aaea8dadd855d2010) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The `spree` command now starts from `bin/spree.js`, which loads the built `dist/index.js`. Running `spree` works the same as before.
+
+- [#15022](https://github.com/spree/spree/pull/15022) [`8890e33`](https://github.com/spree/spree/commit/8890e33bae96e6edc9e66d92b90feb012561a740) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Removed the CLI's leftover Changesets dev dependencies and scripts; releases run from the repository root. Nothing changes for users of the `spree` command.
+
+## 3.6.1
+
+### Patch Changes
+
+- [#14989](https://github.com/spree/spree/pull/14989) [`70ab2cd`](https://github.com/spree/spree/commit/70ab2cd786ea4395c1669563fcb4b942267c7080) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - When Docker runs out of network addresses, `spree init`, `spree dev` and the other commands that start containers now explain why and how to remove the old networks, instead of showing only the raw Docker error.
+
 ## 3.6.0
 
 ### Minor Changes

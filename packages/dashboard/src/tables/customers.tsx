@@ -68,7 +68,7 @@ defineTable('customers', {
       key: 'last_order_completed_at',
       label: i18n.t('admin.customers.columns.last_order'),
       default: true,
-      className: 'text-sm text-muted-foreground whitespace-nowrap',
+      className: 'text-base text-muted-foreground whitespace-nowrap',
       render: (c) => <RelativeTime iso={c.last_order_completed_at} />,
     },
     {

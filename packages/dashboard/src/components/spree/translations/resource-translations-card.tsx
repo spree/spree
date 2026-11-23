@@ -56,9 +56,9 @@ export function ResourceTranslationsCard({
       </CardHeader>
       <CardContent>
         {targetLocales.length === 0 ? (
-          <p className="text-sm text-muted-foreground">{t('admin.translations.no_locales')}</p>
+          <p className="text-base text-muted-foreground">{t('admin.translations.no_locales')}</p>
         ) : (
-          <p className="text-sm text-muted-foreground">
+          <p className="text-base text-muted-foreground">
             {t('admin.translations.coverage_summary', {
               translated: translatedCount,
               total: targetLocales.length,

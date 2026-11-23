@@ -29,9 +29,21 @@ describe Spree::StockReservations::Reserve do
       expect(reservation.quantity).to eq(3)
     end
 
+    it 'skips a stock level deleted after the allocation was read' do
+      allow_any_instance_of(described_class).to receive(:build_targets) do
+        stale = [line_item, stock_level, 3]
+        stock_level.delete
+        [stale]
+      end
+
+      expect { result }.not_to raise_error
+      expect(result).to be_success
+      expect(Spree::StockReservation.count).to eq(0)
+    end
+
     it 'sets expires_at according to the store TTL' do
       store.update!(preferred_stock_reservation_ttl_minutes: 7)
-      Timecop.freeze do
+      freeze_time do
         result
         expect(Spree::StockReservation.last.expires_at).to be_within(1.second).of(7.minutes.from_now)
       end
@@ -85,6 +97,32 @@ describe Spree::StockReservations::Reserve do
 
       # Only 1 unit free; line_item wants 3
       expect(result).to be_failure
+    end
+
+    %i[cart order].each do |owner_type|
+      it "counts the opposite owner's holds after a stale #{owner_type} allocation" do
+        owner = create(owner_type, store: store)
+        other_type = owner_type == :cart ? :order : :cart
+        other = create(other_type, store: store)
+        own_attributes = { cart: owner_type == :cart ? owner : nil, order: owner_type == :order ? owner : nil }
+        other_attributes = { cart: other_type == :cart ? other : nil, order: other_type == :order ? other : nil }
+        own_line = create(:line_item, **own_attributes, variant: variant, quantity: 3)
+        other_line = create(:line_item, **other_attributes, variant: variant, quantity: 4)
+        own_hold = create(:stock_reservation, **own_attributes, line_item: own_line, stock_level: stock_level, quantity: 1)
+        other_hold = create(:stock_reservation, **other_attributes, line_item: other_line, stock_level: stock_level, quantity: 4)
+        stock_level.set_count_on_hand(5)
+        service = described_class.new
+        # Packing is optimistic; the locked recheck must see a draft order or
+        # cart that acquired its hold after these targets were chosen.
+        allow(service).to receive(:build_targets).and_return([[own_line, stock_level, 3]])
+
+        reservation = service.call(cart: owner)
+
+        expect(reservation).to be_failure
+        expect(own_hold.reload.quantity).to eq(1)
+        expect(other_hold.reload.quantity).to eq(4)
+        expect(stock_level.reload.reserved_count).to eq(5)
+      end
     end
 
     it 'accumulates per stock_level across line items so the same SKU twice cannot oversell' do

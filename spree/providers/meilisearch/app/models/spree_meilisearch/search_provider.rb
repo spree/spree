@@ -7,8 +7,15 @@ module SpreeMeilisearch
   class SearchProvider < Spree::SearchProvider::Base
     PREFIXED_ID_PATTERN = /\A[a-z]+_[A-Za-z0-9]+\z/
     ALLOWED_STATUSES = %w[active draft archived paused].freeze
-    BUILT_IN_FILTERABLE_ATTRIBUTES = %w[product_id status in_stock preorder store_ids channel_ids locale currency available_on discontinue_on price category_ids collection_ids grouping_id tags option_value_ids option_value_combination_ids].freeze
+    BUILT_IN_FILTERABLE_ATTRIBUTES = %w[product_id status in_stock preorder store_ids channel_ids locale currency available_on discontinue_on price category_ids collection_ids grouping_id tags option_value_ids option_value_combination_ids in_stock_option_value_ids in_stock_option_value_combination_ids].freeze
     CUSTOM_FIELD_RANGE_OPERATORS = { 'gt' => '>', 'gteq' => '>=', 'lt' => '<', 'lteq' => '<=' }.freeze
+    # How long a settings push is remembered. The entry holds a digest of the
+    # settings last applied, so a schema change pushes at once; the expiry only
+    # bounds how long an index recreated outside Spree stays unconfigured.
+    SETTINGS_CACHE_TTL = 1.hour
+    SETTINGS_TASK_TIMEOUT_MS = 5_000
+    # The client's default of 50ms is 20 requests a second per waiting job.
+    SETTINGS_TASK_POLL_INTERVAL_MS = 250
 
     def self.indexing_required?
       true
@@ -31,7 +38,7 @@ module SpreeMeilisearch
       # Intersect with AR scope for security/visibility, preserving Meilisearch sort order.
       # When the index could only pre-filter the option values, the database
       # answers the same-variant question exactly here.
-      scope = scope.with_option_value_ids(@inexact_option_value_ids) if @inexact_option_value_ids.present?
+      scope = scope.with_option_value_ids(@inexact_option_value_ids, variants: option_filter_variants(filters)) if @inexact_option_value_ids.present?
       products = if raw_ids.any?
                    records = scope.where(id: raw_ids).reorder(nil).index_by(&:id)
                    raw_ids.filter_map { |id| records[id] }
@@ -131,22 +138,43 @@ module SpreeMeilisearch
     # subsequent add_documents calls use the correct filterable/sortable attributes.
     def ensure_index_settings!
       index = client.index(index_name)
+      # Forget the last applied settings first: a push that raises partway
+      # leaves the index in between, and the next job must push again.
+      Rails.cache.delete(index_settings_cache_key)
       tasks = []
       tasks << index.update_filterable_attributes(filterable_attributes)
       tasks << index.update_sortable_attributes(sortable_attributes)
       tasks << index.update_searchable_attributes(searchable_attributes)
       tasks << index.update_distinct_attribute(distinct_attribute)
-      tasks.each { |task| task&.await }
+      tasks.each { |task| task&.await(SETTINGS_TASK_TIMEOUT_MS, SETTINGS_TASK_POLL_INTERVAL_MS) }
       @index_settings_configured = true
+      # Only a push Meilisearch applied counts: a failed, cancelled or missing
+      # task must be pushed again by the next job.
+      return unless tasks.all? { |task| task&.succeeded? }
+
+      Rails.cache.write(index_settings_cache_key, index_settings_digest, expires_in: SETTINGS_CACHE_TTL)
     end
 
-    # Lightweight guard — configures index settings once per provider instance.
-    # Meilisearch settings updates are idempotent, so repeated calls are safe
-    # but we avoid the overhead by memoizing.
+    # Lightweight guard for single-product writes. Every index job builds a new
+    # provider, so a per-instance memo alone made each product write push four
+    # settings tasks and poll Meilisearch until they finished; a bulk write
+    # (import, sample data) then flooded it into 429 Too Many Requests. The
+    # digest of the settings last applied is remembered in Rails.cache per
+    # index, so the push repeats only when the settings differ from what the
+    # index holds or the entry expires.
     def ensure_index_settings_once!
       return if @index_settings_configured
+      return @index_settings_configured = true if Rails.cache.read(index_settings_cache_key) == index_settings_digest
 
       ensure_index_settings!
+    end
+
+    # The index is the storefront's: shoppers search it and the back office
+    # never does, so its vocabulary is the storefront schema whatever audience
+    # this provider was built for. A back-office reindex must not teach the
+    # shared index about admin-only fields.
+    def custom_field_schema
+      @custom_field_schema ||= storefront_custom_field_schema
     end
 
     private
@@ -183,6 +211,7 @@ module SpreeMeilisearch
       filters = filters.to_unsafe_h if filters.respond_to?(:to_unsafe_h)
       filters = (filters || {}).stringify_keys
 
+      @in_stock_options = in_stock_filter?(filters)
       option_value_ids = extract_and_delete(filters, 'with_option_value_ids')
       grouped_options = group_option_values_by_type(Array(option_value_ids))
       # Handed back to the caller so it can narrow the record scope exactly
@@ -202,7 +231,7 @@ module SpreeMeilisearch
         facets: return_facets ? facet_attributes : nil,
         sort: build_sort(sort),
         page: page,
-        hitsPerPage: limit
+        hits_per_page: limit
       }.compact
 
       Rails.logger.debug { "[Meilisearch] index=#{index_name} query=#{query.inspect} #{search_params.compact.inspect}" }
@@ -210,11 +239,14 @@ module SpreeMeilisearch
       settings_refreshed = false
       begin
         if return_facets && grouped_options.any?
-          queries = [{ indexUid: index_name, q: query.to_s, **search_params }]
+          queries = [{ index_uid: index_name, q: query.to_s, **search_params }]
           option_type_ids_ordered = grouped_options.keys
           option_type_ids_ordered.each do |option_type_id|
             without_this = build_grouped_option_conditions(grouped_options.except(option_type_id))
-            queries << { indexUid: index_name, q: query.to_s, filter: base_conditions + without_this, facets: ['option_value_ids'], page: 1, hitsPerPage: 0 }
+            queries << {
+              index_uid: index_name, q: query.to_s, filter: base_conditions + without_this,
+              facets: [option_value_field], page: 1, hits_per_page: 0
+            }
           end
 
           results = client.multi_search(queries)
@@ -246,12 +278,12 @@ module SpreeMeilisearch
     end
 
     def merge_disjunctive_facets(ms_result, disjunctive_results, option_type_ids_ordered)
-      main_ov_dist = ms_result.dig('facetDistribution', 'option_value_ids') || {}
+      main_ov_dist = ms_result.dig('facetDistribution', option_value_field) || {}
 
       all_ov_prefixed_ids = Set.new
       disjunctive_dists = {}
       disjunctive_results.each_with_index do |r, idx|
-        dist = r.dig('facetDistribution', 'option_value_ids') || {}
+        dist = r.dig('facetDistribution', option_value_field) || {}
         disjunctive_dists[option_type_ids_ordered[idx]] = dist
         all_ov_prefixed_ids.merge(dist.keys)
       end
@@ -270,7 +302,15 @@ module SpreeMeilisearch
         end
       end
 
-      (ms_result['facetDistribution'] || {}).merge('option_value_ids' => merged_ov_dist)
+      (ms_result['facetDistribution'] || {}).merge(option_value_field => merged_ov_dist)
+    end
+
+    def option_value_field
+      @in_stock_options ? 'in_stock_option_value_ids' : 'option_value_ids'
+    end
+
+    def option_combination_field
+      @in_stock_options ? 'in_stock_option_value_combination_ids' : 'option_value_combination_ids'
     end
 
     def presenter_class
@@ -285,12 +325,14 @@ module SpreeMeilisearch
       "#{store.code}_products"
     end
 
-    # The index is the storefront's: shoppers search it and the back office
-    # never does, so its vocabulary is the storefront schema whatever audience
-    # this provider was built for. A back-office reindex must not teach the
-    # shared index about admin-only fields.
-    def custom_field_schema
-      @custom_field_schema ||= storefront_custom_field_schema
+    def index_settings_cache_key
+      "spree_meilisearch/index_settings/#{index_name}"
+    end
+
+    # Searchable attributes keep their order: Meilisearch ranks by it.
+    def index_settings_digest
+      settings = [filterable_attributes.sort, sortable_attributes.sort, searchable_attributes, distinct_attribute]
+      Digest::SHA256.hexdigest(settings.to_json)
     end
 
     def storefront_custom_field_schema
@@ -310,9 +352,10 @@ module SpreeMeilisearch
     end
 
     # Facets stay built-in only — cf_* distributions aren't consumed by
-    # +build_facet_response+, so requesting them would be wasted work.
+    # +build_facet_response+, so requesting them would be wasted work; of the
+    # option fields only the one this request reads is asked for.
     def facet_attributes
-      BUILT_IN_FILTERABLE_ATTRIBUTES
+      BUILT_IN_FILTERABLE_ATTRIBUTES.grep_v(/option_value/) + [option_value_field]
     end
 
     # Collapses the per-grouping membership docs to one row per product on
@@ -404,7 +447,7 @@ module SpreeMeilisearch
         price_bound = price_filter_value(value)
         "price <= #{price_bound}" if price_bound
       when 'in_stock'
-        'in_stock = true' if value.to_s != '0'
+        'in_stock = true' if in_stock_filter?(key => value)
       when 'out_of_stock'
         'in_stock = false' if value.to_s != '0'
       when 'in_category'
@@ -530,7 +573,7 @@ module SpreeMeilisearch
     # the sanitizer would strip it.
     def option_combination_condition(prefixed_ids)
       token = prefixed_ids.map { |id| sanitize_prefixed_id(id) }.sort.join('|')
-      "option_value_combination_ids = '#{token}'"
+      "#{option_combination_field} = '#{token}'"
     end
 
     # Read off the presenter, since it is what decides how deep the tokens go.
@@ -546,7 +589,7 @@ module SpreeMeilisearch
 
     def single_axis_option_conditions(grouped)
       grouped.map do |_, prefixed_ids|
-        parts = prefixed_ids.map { |id| "option_value_ids = '#{sanitize_prefixed_id(id)}'" }
+        parts = prefixed_ids.map { |id| "#{option_value_field} = '#{sanitize_prefixed_id(id)}'" }
         parts.length > 1 ? "(#{parts.join(' OR ')})" : parts.first
       end
     end
@@ -591,7 +634,7 @@ module SpreeMeilisearch
       facets = []
       facets << build_price_facet(facet_distribution['price'], facet_stats['price']) if facet_distribution['price'].present?
       facets << build_availability_facet(facet_distribution['in_stock']) if facet_distribution['in_stock'].present?
-      facets.concat(build_option_facets(facet_distribution['option_value_ids'])) if facet_distribution['option_value_ids'].present?
+      facets.concat(build_option_facets(facet_distribution[option_value_field])) if facet_distribution[option_value_field].present?
       facets << build_category_facet(facet_distribution['category_ids']) if facet_distribution['category_ids'].present?
       facets.compact
     end

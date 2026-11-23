@@ -162,7 +162,9 @@ RSpec.describe 'Admin Invitations API', type: :request, swagger_doc: 'api-refere
 
         `password` is required when no account exists for the invited address,
         in which case it sets one. When an account already exists, the same
-        field is how the person proves the account is theirs.
+        field is how the person proves the account is theirs — unless the
+        request carries that account's own access token, which proves it
+        already.
       DESC
 
       admin_sdk_example 'auth/accept-invitation'

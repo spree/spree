@@ -4,22 +4,36 @@ import {
   Badge,
   Button,
   Card,
-  CardAction,
   CardContent,
-  CardHeader,
-  CardTitle,
+  Empty,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
   RowActions,
+  Section,
+  SectionActions,
+  SectionHeader,
+  SectionTitle,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
   useConfirm,
 } from '@spree/dashboard-ui'
-import { UserPlusIcon } from '@spree/dashboard-ui/icons'
+import { UserPlusIcon, UsersIcon } from '@spree/dashboard-ui/icons'
 import { useTranslation } from 'react-i18next'
+import { useCopyInvitationLink } from '../../../hooks/use-copy-invitation-link'
 import {
   useRemoveSellerTeamMember,
   useResendSellerInvitation,
   useRevokeSellerInvitation,
+  useSellerInvitationAcceptanceLink,
   useSellerInvitations,
   useSellerTeam,
 } from '../../../hooks/use-sellers'
+import { PersonIdentity } from '../person-identity'
 
 /**
  * Who runs this seller, and the offers nobody has accepted yet.
@@ -39,6 +53,8 @@ export function SellerTeamCard({ seller, onInvite }: { seller: Seller; onInvite:
   const removeMember = useRemoveSellerTeamMember(seller.id)
   const revokeInvitation = useRevokeSellerInvitation(seller.id)
   const resendInvitation = useResendSellerInvitation(seller.id)
+  const acceptanceLink = useSellerInvitationAcceptanceLink(seller.id)
+  const copyInvitationLink = useCopyInvitationLink(acceptanceLink.mutateAsync)
 
   const canManage = permissions.can('update', Subject.Seller)
   const members = team?.data ?? []
@@ -67,85 +83,130 @@ export function SellerTeamCard({ seller, onInvite }: { seller: Seller; onInvite:
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('admin.sellers.team.title')}</CardTitle>
+    <Section>
+      <SectionHeader>
+        <SectionTitle>
+          <UsersIcon />
+          {t('admin.sellers.team.title')}
+          {members.length > 0 && <Badge variant="outline">{members.length}</Badge>}
+        </SectionTitle>
         {canManage && (
-          <CardAction>
+          <SectionActions>
             <Button variant="outline" size="sm" onClick={onInvite}>
               <UserPlusIcon className="size-4" />
               {t('admin.sellers.team.invite')}
             </Button>
-          </CardAction>
+          </SectionActions>
         )}
-      </CardHeader>
-      <CardContent className="flex flex-col gap-4">
-        {loadingTeam ? (
-          <p className="text-muted-foreground text-sm">{t('admin.common.loading')}</p>
-        ) : members.length === 0 && pending.length === 0 ? (
-          <p className="text-muted-foreground text-sm">{t('admin.sellers.team.empty')}</p>
+      </SectionHeader>
+
+      {/* One card: the members as a table, then any pending invitations. */}
+      <Card>
+        {loadingTeam || (members.length === 0 && pending.length === 0) ? (
+          <CardContent>
+            {loadingTeam ? (
+              <p className="text-muted-foreground text-base">{t('admin.common.loading')}</p>
+            ) : (
+              <Empty className="p-4">
+                <EmptyHeader>
+                  <EmptyMedia variant="icon">
+                    <UsersIcon />
+                  </EmptyMedia>
+                  <EmptyTitle>{t('admin.sellers.team.empty')}</EmptyTitle>
+                </EmptyHeader>
+              </Empty>
+            )}
+          </CardContent>
         ) : null}
 
-        {members.map((member) => (
-          <div key={member.id} className="flex items-center justify-between gap-3">
-            <div className="min-w-0">
-              <div className="truncate text-sm font-medium">{member.full_name || member.email}</div>
-              {member.full_name && (
-                <div className="truncate text-muted-foreground text-xs">{member.email}</div>
-              )}
-            </div>
-            {canManage && (
-              <RowActions
-                actions={[
-                  {
-                    key: 'remove',
-                    label: t('admin.actions.remove'),
-                    destructive: true,
-                    disabled: removeMember.isPending,
-                    onSelect: () => handleRemove(member.id, member.full_name || member.email),
-                  },
-                ]}
-              />
-            )}
-          </div>
-        ))}
+        {members.length > 0 && (
+          <Table roundedTop>
+            <TableHeader>
+              <TableRow>
+                <TableHead>{t('admin.company_memberships.columns.member')}</TableHead>
+                {canManage && <TableHead className="w-10" />}
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {members.map((member) => (
+                <TableRow key={member.id}>
+                  <TableCell>
+                    <PersonIdentity name={member.full_name} email={member.email} />
+                  </TableCell>
+                  {canManage && (
+                    <TableCell className="w-10 text-right">
+                      <RowActions
+                        actions={[
+                          {
+                            key: 'remove',
+                            label: t('admin.actions.remove'),
+                            destructive: true,
+                            disabled: removeMember.isPending,
+                            onSelect: () =>
+                              handleRemove(member.id, member.full_name || member.email),
+                          },
+                        ]}
+                      />
+                    </TableCell>
+                  )}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
 
         {pending.length > 0 && (
-          <div className="flex flex-col gap-3 border-t border-border pt-4">
-            <h3 className="text-muted-foreground text-xs font-medium">
+          <div className={members.length > 0 ? 'border-border-subtle border-t' : undefined}>
+            <p className="px-3.5 pt-3 pb-1 font-medium text-muted-foreground text-xs">
               {t('admin.sellers.team.pending')}
-            </h3>
-            {pending.map((invitation) => (
-              <div key={invitation.id} className="flex items-center justify-between gap-3">
-                <div className="flex min-w-0 items-center gap-2">
-                  <span className="truncate text-sm">{invitation.email}</span>
-                  <Badge variant="secondary">{t('admin.sellers.team.invited')}</Badge>
-                </div>
-                {canManage && (
-                  <RowActions
-                    actions={[
-                      {
-                        key: 'resend',
-                        label: t('admin.sellers.team.resend'),
-                        disabled: resendInvitation.isPending,
-                        onSelect: () =>
-                          resendInvitation.mutateAsync(invitation.id).catch(() => undefined),
-                      },
-                      {
-                        key: 'revoke',
-                        label: t('admin.sellers.team.revoke'),
-                        destructive: true,
-                        disabled: revokeInvitation.isPending,
-                        onSelect: () => handleRevoke(invitation.id, invitation.email),
-                      },
-                    ]}
-                  />
-                )}
-              </div>
-            ))}
+            </p>
+            <Table>
+              <TableBody>
+                {pending.map((invitation) => (
+                  <TableRow key={invitation.id}>
+                    <TableCell>
+                      <PersonIdentity email={invitation.email} />
+                    </TableCell>
+                    <TableCell className="w-px whitespace-nowrap text-right">
+                      <span className="inline-flex items-center gap-2">
+                        <Badge variant="secondary">{t('admin.sellers.team.invited')}</Badge>
+                        {canManage && (
+                          <RowActions
+                            actions={[
+                              {
+                                key: 'resend',
+                                label: t('admin.sellers.team.resend'),
+                                disabled: resendInvitation.isPending,
+                                onSelect: () =>
+                                  resendInvitation
+                                    .mutateAsync(invitation.id)
+                                    .catch(() => undefined),
+                              },
+                              {
+                                key: 'copy-link',
+                                label: t('admin.staff.actions.copy_invitation_link'),
+                                disabled: acceptanceLink.isPending,
+                                onSelect: () => copyInvitationLink(invitation.id),
+                              },
+                              {
+                                key: 'revoke',
+                                label: t('admin.sellers.team.revoke'),
+                                destructive: true,
+                                disabled: revokeInvitation.isPending,
+                                onSelect: () => handleRevoke(invitation.id, invitation.email),
+                              },
+                            ]}
+                          />
+                        )}
+                      </span>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
         )}
-      </CardContent>
-    </Card>
+      </Card>
+    </Section>
   )
 }

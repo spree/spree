@@ -67,7 +67,7 @@ export function OrderCancelDialog({
 
           <DialogBody>
             {errors.root?.message && (
-              <p className="text-destructive text-sm" role="alert">
+              <p className="text-destructive text-base" role="alert">
                 {errors.root.message}
               </p>
             )}
@@ -94,7 +94,7 @@ export function OrderCancelDialog({
                   render={({ field }) => (
                     <label
                       htmlFor="order-cancel-refund"
-                      className="flex cursor-pointer items-start gap-2 text-sm"
+                      className="flex cursor-pointer items-start gap-2 text-base"
                     >
                       <Checkbox
                         id="order-cancel-refund"
@@ -119,7 +119,7 @@ export function OrderCancelDialog({
                   render={({ field }) => (
                     <label
                       htmlFor="order-cancel-notify"
-                      className="flex cursor-pointer items-center gap-2 text-sm"
+                      className="flex cursor-pointer items-center gap-2 text-base"
                     >
                       <Checkbox
                         id="order-cancel-notify"

@@ -15,6 +15,7 @@ import { registerEncryptionCommand } from './commands/encryption.js'
 import { registerExecCommand } from './commands/exec.js'
 import { registerFiltersCommand } from './commands/filters.js'
 import { registerGenerateCommand } from './commands/generate.js'
+import { registerInfoCommand } from './commands/info.js'
 import { registerInitCommand } from './commands/init.js'
 import { registerLogsCommand } from './commands/logs.js'
 import { registerMigrateCommand } from './commands/migrate.js'
@@ -25,6 +26,7 @@ import { registerRakeCommand } from './commands/rake.js'
 import { registerRestartCommand } from './commands/restart.js'
 import { registerRoutesCommand } from './commands/routes.js'
 import { registerSampleDataCommand } from './commands/sample-data.js'
+import { registerSdkCommand } from './commands/sdk.js'
 import { registerSeedCommand } from './commands/seed.js'
 import { registerShellCommand } from './commands/shell.js'
 import { registerStopCommand } from './commands/stop.js'
@@ -69,6 +71,7 @@ registerDevCommand(program)
 registerStopCommand(program)
 registerRestartCommand(program)
 registerLogsCommand(program)
+registerInfoCommand(program)
 registerEjectCommand(program)
 registerBuildCommand(program)
 
@@ -99,6 +102,7 @@ registerOpenCommand(program)
 registerSeedCommand(program)
 registerSampleDataCommand(program)
 registerFiltersCommand(program)
+registerSdkCommand(program)
 registerPluginCommand(program)
 
 // Admin API access (works against any Spree 5.5+ instance, not just local projects)

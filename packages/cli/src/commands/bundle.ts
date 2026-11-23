@@ -1,9 +1,15 @@
+import * as p from '@clack/prompts'
 import type { Command } from 'commander'
+import pc from 'picocolors'
 import { bundleCommand } from '../backend.js'
-import { detectProject } from '../context.js'
+import { detectProject, findApiDir, runsFromSource } from '../context.js'
 import { warnDeprecated } from '../deprecation.js'
 import { dockerComposeExecOrRun } from '../docker.js'
-import { addCommandFor } from '../lib/extensions.js'
+import { addCommandFor, EXTENSIONS } from '../lib/extensions.js'
+import { addUncataloguedExtension } from './add.js'
+
+// Subcommands that change the bundle, which the prebuilt image never reads.
+const BUNDLE_WRITES = new Set(['add', 'remove', 'install', 'update', 'lock'])
 
 // Deprecated: extensions are installed with `spree add`, anything else goes
 // through `spree exec bundle …`.
@@ -20,15 +26,40 @@ export function registerBundleCommand(program: Command): void {
     .allowUnknownOption(true)
     .passThroughOptions(true)
     .action(async (args: string[]) => {
-      // A bare `bundle add <gem>` maps onto `spree add`; any extra option
-      // (a version, a source) only survives through `spree exec`.
+      // A bare `bundle add <gem>` is `spree add`; any extra option (a
+      // version, a source) only survives through `spree exec`.
       const gem =
         args[0] === 'add' && args.length === 2 && !args[1].startsWith('-') ? args[1] : undefined
-      warnDeprecated(
-        'spree bundle',
-        gem ? addCommandFor(gem) : `spree exec bundle ${args.join(' ')}`,
-      )
+      // Only an exact gem name means a catalogued extension here: `bundle add
+      // stripe` asks for the Stripe gem, not the `stripe` extension.
+      const catalogued = gem && Object.values(EXTENSIONS).some((entry) => entry.gem === gem)
+      const replacement = gem
+        ? catalogued
+          ? addCommandFor(gem)
+          : `spree add --gem ${gem}`
+        : `spree exec bundle ${args.join(' ')}`
+      warnDeprecated('spree bundle', replacement)
       const ctx = detectProject()
+
+      if (gem) {
+        await addUncataloguedExtension(gem, undefined, {
+          yes: false,
+          retry: `${replacement} --yes`,
+        })
+        return
+      }
+
+      if (BUNDLE_WRITES.has(args[0]) && !runsFromSource(ctx.projectDir)) {
+        p.cancel(
+          [
+            `This project runs the prebuilt Spree image, which does not load gems from ./${findApiDir(ctx.projectDir)}, so ${pc.bold(`bundle ${args[0]}`)} would change nothing.`,
+            `Install extensions with ${pc.bold('spree add <extension>')}, which ejects the project first.`,
+            `For anything else, ask the developer to agree to ${pc.bold('spree eject')} before running it.`,
+          ].join('\n'),
+        )
+        process.exit(1)
+      }
+
       await dockerComposeExecOrRun(bundleCommand(args), ctx.projectDir, {
         edgeHint: 'the edge stack heals gem drift on boot',
       })

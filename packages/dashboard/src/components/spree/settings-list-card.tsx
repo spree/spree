@@ -51,7 +51,7 @@ export function SettingsListCard({
       <CardHeader className="flex flex-row items-start justify-between gap-3 space-y-0">
         <div>
           <CardTitle>{title}</CardTitle>
-          {description && <p className="mt-1 text-sm text-muted-foreground">{description}</p>}
+          {description && <p className="mt-1 text-base text-muted-foreground">{description}</p>}
         </div>
         {action}
       </CardHeader>

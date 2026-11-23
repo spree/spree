@@ -597,7 +597,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
         expect(response).to have_http_status(:ok)
         expect(json_response['fulfillments']).to be_empty
         expect(json_response['warnings'].map { |warning| warning['code'] }).to include('delivery_unavailable')
-        # The field keeps its 5.6 name until 6.1, so 5.6 storefronts still match it.
+        # The field keeps its 5.6 name until 6.5, so 5.6 storefronts still match it.
         expect(json_response['requirements']).to include(
           a_hash_including('step' => 'delivery', 'field' => 'shipping_method', 'code' => 'delivery_method_required')
         )
@@ -1003,7 +1003,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
         patch :update, params: { id: order.prefixed_id, email: 'customer@example.com', shipping_address: address_params }
         original_expiry = Spree::StockReservation.for_order(order).maximum(:expires_at)
 
-        Timecop.freeze(2.minutes.from_now) do
+        travel_to(2.minutes.from_now) do
           patch :update, params: { id: order.prefixed_id, customer_note: 'please ring bell' }
         end
 
@@ -1163,6 +1163,43 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
 
       it 'deletes the cart' do
         delete :destroy, params: { id: cart.prefixed_id }
+
+        expect(response).to have_http_status(:no_content)
+      end
+
+      it 'rejects deletion while completion holds a live claim' do
+        cart.update_column(:completing_at, Time.current)
+
+        expect { delete :destroy, params: { id: cart.prefixed_id } }.not_to change(Spree::Cart, :count)
+
+        expect(response).to have_http_status(:conflict)
+        expect(json_response['error']['code']).to eq('completion_in_progress')
+        expect(cart.reload.completion_claimed?).to be(true)
+      end
+
+      it 'checks a claim acquired after deletion starts but before the cart lock' do
+        cart_id = cart.id
+        claim_acquired = false
+        allow_any_instance_of(Spree::Cart).to receive(:with_lock).and_wrap_original do |original, *args, &block|
+          if original.receiver.id == cart_id && !claim_acquired
+            Spree::Cart.find(cart_id).update_column(:completing_at, Time.current)
+            claim_acquired = true
+          end
+          original.call(*args, &block)
+        end
+
+        expect { delete :destroy, params: { id: cart.prefixed_id } }.not_to change(Spree::Cart, :count)
+
+        expect(claim_acquired).to be(true)
+        expect(response).to have_http_status(:conflict)
+        expect(json_response['error']['code']).to eq('completion_in_progress')
+        expect(cart.reload.completion_claimed?).to be(true)
+      end
+
+      it 'allows deletion after a completion claim expires' do
+        cart.update_column(:completing_at, 1.hour.ago)
+
+        expect { delete :destroy, params: { id: cart.prefixed_id } }.to change(Spree::Cart, :count).by(-1)
 
         expect(response).to have_http_status(:no_content)
       end

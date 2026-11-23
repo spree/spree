@@ -1,0 +1,234 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api-m.sandbox.paypal.com/v1/oauth2/token
+    body:
+      encoding: UTF-8
+      string: grant_type=client_credentials
+    headers:
+      User-Agent:
+      - 'PayPal REST API Ruby SDK, Version: 2.4.0, on OS arm64-darwin24'
+      Authorization:
+      - Basic <FILTERED>
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip,deflate
+      Connection:
+      - keep-alive
+      Keep-Alive:
+      - '30'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Connection:
+      - keep-alive
+      Http-X-Pp-Az-Locator:
+      - ccg18.slc
+      Server-Timing:
+      - traceparent;desc="00-0000000000000000000f9762139b07c7-575b19480447f123-01"
+      Access-Control-Expose-Headers:
+      - Server-Timing
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      Cache-Control:
+      - max-age=0, no-cache, no-store, must-revalidate
+      Paypal-Debug-Id:
+      - f9762139b07c7
+      Pragma:
+      - no-cache
+      Content-Type:
+      - application/json
+      Server:
+      - nginx
+      X-Paypal-Token-Service:
+      - IAAS
+      Edge-Control:
+      - max-age=0
+      Accept-Ranges:
+      - none
+      Date:
+      - Fri, 30 Oct 2026 14:40:38 GMT
+      Via:
+      - 1.1 varnish
+      X-Served-By:
+      - cache-fra-etou8220153-FRA, cache-fra-etou8220153-FRA
+      X-Cache:
+      - MISS, MISS
+      X-Cache-Hits:
+      - 0, 0
+      X-Timer:
+      - S1793371238.857830,VS0,VE499
+      Vary:
+      - Accept-Encoding
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"scope":"https://uri.paypal.com/services/invoicing https://uri.paypal.com/services/checkout/one-click-with-merchant-issued-token
+        https://uri.paypal.com/services/payments/futurepayments https://uri.paypal.com/services/vault/payment-tokens/read
+        https://uri.paypal.com/services/disputes/read-buyer https://uri.paypal.com/services/payments/realtimepayment
+        https://uri.paypal.com/services/subscriptions/confirm-payment https://uri.paypal.com/services/payments/client-payments-eligibility
+        https://api.paypal.com/v1/vault/credit-card https://api.paypal.com/v1/payments/.*
+        https://uri.paypal.com/services/vault/payment-tokens/readwrite https://uri.paypal.com/services/applications/webhooks
+        https://uri.paypal.com/services/pricing/exchange-currency/read https://uri.paypal.com/services/credit/client-offer-presentment/read
+        https://uri.paypal.com/services/disputes/update-seller https://uri.paypal.com/services/payments/payment/authcapture
+        openid Braintree:Vault https://uri.paypal.com/services/disputes/read-seller
+        https://uri.paypal.com/services/payments/orders/client_sdk_orders_api https://uri.paypal.com/services/payments/refund
+        https://uri.paypal.com/services/disputes/create https://uri.paypal.com/services/pricing/quote-exchange-rates/read
+        https://uri.paypal.com/services/documents/disputes/download https://uri.paypal.com/services/billing-agreements
+        https://uri.paypal.com/services/checkout/payment-resources https://uri.paypal.com/payments/payouts
+        https://api.paypal.com/v1/vault/credit-card/.* https://uri.paypal.com/services/subscriptions","access_token":"<PAYPAL_ACCESS_TOKEN>","token_type":"Bearer","app_id":"APP-2HH91388CU034731G","expires_in":30426,"nonce":"2026-10-30T14:07:44ZCC7GvBRi0IAoXEqH3bgOD5SxOUkY27pZlCpp3s8DSGs"}'
+    adapter_metadata:
+      vcr_decompressed: gzip
+  recorded_at: Fri, 30 Oct 2026 14:40:38 GMT
+- request:
+    method: get
+    uri: https://api-m.sandbox.paypal.com/v2/checkout/orders/2DK58549RR0989845
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - 'PayPal REST API Ruby SDK, Version: 2.4.0, on OS arm64-darwin24'
+      Accept:
+      - application/json
+      Authorization:
+      - Bearer <FILTERED>
+      Accept-Encoding:
+      - gzip,deflate
+      Connection:
+      - keep-alive
+      Keep-Alive:
+      - '30'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Connection:
+      - keep-alive
+      Http-X-Pp-Az-Locator:
+      - ccg18.slc
+      Cache-Control:
+      - max-age=0, no-cache, no-store, must-revalidate
+      Server:
+      - nginx
+      Server-Timing:
+      - traceparent;desc="00-0000000000000000000f976213796e41-5a42d271740940e0-01"
+      Paypal-Debug-Id:
+      - f976213796e41
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      Content-Type:
+      - application/json
+      Access-Control-Expose-Headers:
+      - Server-Timing
+      Edge-Control:
+      - max-age=0
+      Accept-Ranges:
+      - none
+      Date:
+      - Fri, 30 Oct 2026 14:40:39 GMT
+      Via:
+      - 1.1 varnish
+      X-Served-By:
+      - cache-fra-etou8220153-FRA, cache-fra-etou8220153-FRA
+      X-Cache:
+      - MISS, MISS
+      X-Cache-Hits:
+      - 0, 0
+      X-Timer:
+      - S1793371238.392087,VS0,VE844
+      Vary:
+      - Accept-Encoding
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"2DK58549RR0989845","intent":"CAPTURE","status":"APPROVED","payment_source":{"paypal":{"email_address":"sb-lrbf551543582@personal.example.com","account_id":"SYLKDNJXHRS3J","account_status":"VERIFIED","name":{"given_name":"John","surname":"Doe"},"address":{"country_code":"US"}}},"purchase_units":[{"reference_id":"default","amount":{"currency_code":"USD","value":"10.00","breakdown":{}},"payee":{"email_address":"sb-b0lh4751587966@business.example.com","merchant_id":"D999PXWY4A6GS","display_data":{"brand_name":"Spree
+        VCR approved_capture"}}}],"payer":{"name":{"given_name":"John","surname":"Doe"},"email_address":"sb-lrbf551543582@personal.example.com","payer_id":"SYLKDNJXHRS3J","address":{"country_code":"US"}},"create_time":"2026-10-30T14:36:08Z","links":[{"href":"https://api.sandbox.paypal.com/v2/checkout/orders/2DK58549RR0989845","rel":"self","method":"GET"},{"href":"https://api.sandbox.paypal.com/v2/checkout/orders/2DK58549RR0989845","rel":"update","method":"PATCH"},{"href":"https://api.sandbox.paypal.com/v2/checkout/orders/2DK58549RR0989845/capture","rel":"capture","method":"POST"}]}'
+    adapter_metadata:
+      vcr_decompressed: gzip
+  recorded_at: Fri, 30 Oct 2026 14:40:39 GMT
+- request:
+    method: post
+    uri: https://api-m.sandbox.paypal.com/v2/checkout/orders/2DK58549RR0989845/capture
+    body:
+      encoding: UTF-8
+      string: ''
+    headers:
+      User-Agent:
+      - 'PayPal REST API Ruby SDK, Version: 2.4.0, on OS arm64-darwin24'
+      Content-Type:
+      - application/json
+      Paypal-Request-Id:
+      - ps_UkLWZg9DAJ-capture-1
+      Prefer:
+      - return=representation
+      Accept:
+      - application/json
+      Authorization:
+      - Bearer <FILTERED>
+      Accept-Encoding:
+      - gzip,deflate
+      Content-Length:
+      - '0'
+      Connection:
+      - keep-alive
+      Keep-Alive:
+      - '30'
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1948'
+      Access-Control-Expose-Headers:
+      - Server-Timing
+      Http-X-Pp-Az-Locator:
+      - ccg18.slc
+      Cache-Control:
+      - max-age=0, no-cache, no-store, must-revalidate
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      Server-Timing:
+      - traceparent;desc="00-0000000000000000000f970113a11904-f569d274fe2ce9c3-01"
+      Paypal-Debug-Id:
+      - f970113a11904
+      Server:
+      - nginx
+      Content-Type:
+      - application/json
+      Edge-Control:
+      - max-age=0
+      Accept-Ranges:
+      - bytes
+      Date:
+      - Fri, 30 Oct 2026 14:40:40 GMT
+      Via:
+      - 1.1 varnish
+      X-Served-By:
+      - cache-fra-etou8220153-FRA, cache-fra-etou8220153-FRA
+      X-Cache:
+      - MISS, MISS
+      X-Cache-Hits:
+      - 0, 0
+      X-Timer:
+      - S1793371239.277837,VS0,VE1258
+      Vary:
+      - Accept-Encoding
+    body:
+      encoding: UTF-8
+      string: '{"id":"2DK58549RR0989845","intent":"CAPTURE","status":"COMPLETED","payment_source":{"paypal":{"email_address":"sb-lrbf551543582@personal.example.com","account_id":"SYLKDNJXHRS3J","account_status":"VERIFIED","name":{"given_name":"John","surname":"Doe"},"address":{"country_code":"US"}}},"purchase_units":[{"reference_id":"default","amount":{"currency_code":"USD","value":"10.00"},"payee":{"email_address":"sb-b0lh4751587966@business.example.com","merchant_id":"D999PXWY4A6GS","display_data":{"brand_name":"Spree
+        VCR approved_capture"}},"soft_descriptor":"PAYPAL *TEST STORE","payments":{"captures":[{"id":"8AP74263DE801601K","status":"COMPLETED","amount":{"currency_code":"USD","value":"10.00"},"final_capture":true,"seller_protection":{"status":"ELIGIBLE","dispute_categories":["ITEM_NOT_RECEIVED","UNAUTHORIZED_TRANSACTION"]},"seller_receivable_breakdown":{"gross_amount":{"currency_code":"USD","value":"10.00"},"paypal_fee":{"currency_code":"USD","value":"0.69"},"net_amount":{"currency_code":"USD","value":"9.31"},"receivable_amount":{"currency_code":"PLN","value":"35.11"},"exchange_rate":{"source_currency":"USD","target_currency":"PLN","value":"3.77072475"}},"links":[{"href":"https://api.sandbox.paypal.com/v2/payments/captures/8AP74263DE801601K","rel":"self","method":"GET"},{"href":"https://api.sandbox.paypal.com/v2/payments/captures/8AP74263DE801601K/refund","rel":"refund","method":"POST"},{"href":"https://api.sandbox.paypal.com/v2/checkout/orders/2DK58549RR0989845","rel":"up","method":"GET"}],"create_time":"2026-10-30T14:40:39Z","update_time":"2026-10-30T14:40:39Z"}]}}],"payer":{"name":{"given_name":"John","surname":"Doe"},"email_address":"sb-lrbf551543582@personal.example.com","payer_id":"SYLKDNJXHRS3J","address":{"country_code":"US"}},"create_time":"2026-10-30T14:36:08Z","update_time":"2026-10-30T14:40:39Z","links":[{"href":"https://api.sandbox.paypal.com/v2/checkout/orders/2DK58549RR0989845","rel":"self","method":"GET"}]}'
+  recorded_at: Fri, 30 Oct 2026 14:40:40 GMT
+recorded_with: VCR 6.4.0

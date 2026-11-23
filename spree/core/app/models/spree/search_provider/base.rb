@@ -27,9 +27,9 @@ module Spree
         @custom_field_schema ||= CustomFieldSchema.new(store, audience: audience)
       end
 
-      # Deprecated 6.0 name, removed in 6.1.
+      # Deprecated 6.0 name, removed in 6.3.
       def metafield_schema
-        Spree::Deprecation.warn('#metafield_schema is deprecated and will be removed in Spree 6.1. Use #custom_field_schema instead.')
+        Spree::Deprecation.warn('#metafield_schema is deprecated and will be removed in Spree 6.3. Use #custom_field_schema instead.')
         custom_field_schema
       end
 
@@ -107,6 +107,16 @@ module Spree
 
       def currency
         Spree::Current.currency || store.default_market&.currency
+      end
+
+      def in_stock_filter?(filters)
+        ActiveModel::Type::Boolean.new.cast(filters['in_stock'] || filters[:in_stock]) == true
+      end
+
+      def option_filter_variants(filters)
+        return unless audience == :store
+
+        Spree::Variant.for_option_filters(currency, in_stock: in_stock_filter?(filters), store: store)
       end
     end
   end

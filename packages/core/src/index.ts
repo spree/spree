@@ -56,6 +56,8 @@ export {
 export { currencyParts, normalizeMoneyInput } from './money-input'
 // Units
 export { UNIT_SYSTEM_WEIGHT_UNITS } from './unit-systems'
+// Identifiers
+export { randomUUID } from './uuid'
 // Webhooks
 export {
   isWebhookEventPattern,

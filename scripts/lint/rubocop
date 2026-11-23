@@ -1,0 +1,99 @@
+#!/usr/bin/env bash
+# RuboCop for the Spree gems, configured by spree/.rubocop.yml. Only lines this
+# branch added or changed count, so existing code is never flagged or rewritten.
+#
+#   scripts/lint/rubocop                 Ruby files this branch changed against main,
+#                                        committed or not
+#   scripts/lint/rubocop FILE...         only these files (others are skipped)
+#   scripts/lint/rubocop --fix [FILE...] same, first autocorrecting files that are
+#                                        new on this branch (existing files are
+#                                        never rewritten as a whole)
+#
+# Exits 0 when there is nothing to report, 1 on offenses, 3 when RuboCop is not
+# installed for spree/.
+
+# Hooks run under parents whose PATH may predate the version manager's setup.
+if command -v mise >/dev/null; then
+  eval "$(mise activate bash --shims)"
+fi
+exec ruby -x "$0" "$@"
+
+#!ruby
+require 'json'
+require 'open3'
+require 'set'
+
+Encoding.default_external = Encoding::UTF_8 # file names and RuboCop output
+
+# Paths are passed as arguments, never through a shell: file names are untrusted.
+git = ->(*args) { Open3.capture2('git', *args, err: File::NULL).first }
+
+root = git.call('-C', __dir__, 'rev-parse', '--show-toplevel').strip
+Dir.chdir(root)
+
+fix = ARGV.delete('--fix')
+base = ['origin/main', 'main'].lazy.map { |ref| git.call('merge-base', 'HEAD', ref).strip }.find { |sha| !sha.empty? } || 'HEAD'
+
+candidates =
+  if ARGV.any?
+    ARGV.map { |path| File.expand_path(path).delete_prefix("#{root}/") }
+  else
+    (git.call('diff', '-z', '--name-only', '--diff-filter=d', base) + git.call('ls-files', '-z', '--others', '--exclude-standard')).split("\0")
+  end
+
+ruby_file = %r{\Aspree/(.*\.(rb|rake|gemspec)|(.*/)?(Gemfile|Rakefile))\z}
+files = candidates.map(&:strip).uniq.select { |path| path.match?(ruby_file) && File.file?(path) }
+exit 0 if files.empty?
+
+# A renamed file is diffed against its old path, so it isn't treated as new.
+renamed_from = git.call('diff', '-z', '--name-status', '-M', '--diff-filter=R', base).split("\0").
+  each_slice(3).to_h { |_status, old_path, new_path| [new_path, old_path] }
+
+# Changed line numbers per file; nil means the whole file is new.
+changed = files.to_h do |path|
+  previous = renamed_from.fetch(path, path)
+  next [path, nil] unless system('git', 'cat-file', '-e', "#{base}:#{previous}", err: File::NULL)
+
+  lines = Set.new
+  git.call('diff', '-U0', '-M', '--no-ext-diff', base, '--', previous, path).scan(/^@@ -\S+ \+(\d+)(?:,(\d+))? @@/) do |start, count|
+    lines.merge(start.to_i...(start.to_i + (count || 1).to_i))
+  end
+  [path, lines]
+end
+changed.reject! { |_, lines| lines&.empty? }
+exit 0 if changed.empty?
+
+Dir.chdir('spree')
+ENV['PATH'] = "#{Gem.bindir}:#{ENV['PATH']}" # bundle exec needs the gems' bin dir
+rubocop = %w[bundle exec rubocop --force-exclusion]
+unless system('bundle', 'exec', 'ruby', '-e', 'require "rubocop"', out: File::NULL, err: File::NULL)
+  warn 'RuboCop is not installed for spree/. Run: (cd spree && bundle install)'
+  exit 3
+end
+
+# Absolute paths, so a file named like an option (`--require=x.rb`) stays a path.
+absolute = ->(path) { File.join(root, path) }
+new_files = changed.select { |_, lines| lines.nil? }.keys
+system(*rubocop, '--autocorrect', '--format', 'quiet', *new_files.map(&absolute), out: File::NULL) if fix && new_files.any?
+
+out, error, status = Open3.capture3(*rubocop, '--format', 'json', *changed.keys.map(&absolute))
+# Exit 1 means offenses (maybe only on unchanged lines); anything above is a crash or bad config.
+if status.exitstatus.to_i > 1
+  warn error
+  exit 1
+end
+offenses = JSON.parse(out)['files'].flat_map do |file|
+  path = "spree/#{file['path']}"
+  lines = changed[path]
+  file['offenses'].filter_map do |offense|
+    location = offense['location']
+    next if lines && (location['start_line']..location['last_line']).none? { |line| lines.include?(line) }
+
+    note = offense['correctable'] ? ' [Correctable]' : ''
+    "#{path}:#{location['start_line']}:#{location['start_column']}: #{offense['cop_name']}: #{offense['message']}#{note}"
+  end
+end
+
+exit 0 if offenses.empty?
+puts offenses, '', "#{offenses.size} RuboCop offense(s) on lines this branch added or changed."
+exit 1

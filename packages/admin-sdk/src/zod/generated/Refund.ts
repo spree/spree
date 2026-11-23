@@ -13,6 +13,8 @@ export const RefundSchema = z.object({
   originator_id: z.string().nullable(),
   originator_type: z.string().nullable(),
   metadata: z.record(z.string(), z.unknown()),
+  status: z.string(),
+  failure_reason: z.string().nullable(),
   created_at: z.string(),
   updated_at: z.string(),
   tax_amount: z.string(),
@@ -29,6 +31,8 @@ export const RefundSchema = z.object({
   originator_id: z.ZodType<Refund['originator_id']>;
   originator_type: z.ZodType<Refund['originator_type']>;
   metadata: z.ZodType<Refund['metadata']>;
+  status: z.ZodType<Refund['status']>;
+  failure_reason: z.ZodType<Refund['failure_reason']>;
   created_at: z.ZodType<Refund['created_at']>;
   updated_at: z.ZodType<Refund['updated_at']>;
   tax_amount: z.ZodType<Refund['tax_amount']>;

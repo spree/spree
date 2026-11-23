@@ -46,7 +46,7 @@ module Spree
         # own words. This check only avoids offering a tool that cannot work
         # — a resource the caller cannot even read.
         return [nil, { error: "You do not have permission to change #{entry.key}." }] unless
-          context.permitted?(entry.permission)
+          entry.readable_by?(context)
 
         [entry, nil]
       end
@@ -77,6 +77,17 @@ module Spree
                 accepted_attributes: accepted }]
       end
 
+      # The path for this write, or the refusal saying which record a nested
+      # resource needs.
+      #
+      # @return [Array(String, nil), Array(nil, Hash)]
+      def write_path(entry, action, id: nil, parent_id: nil)
+        path = entry.path_for(action, id: id, parent_id: parent_id)
+        return [path, nil] if path
+
+        [nil, nested_resource_error(entry, verb_for(action), action)]
+      end
+
       def result_for(response, entry, summary:)
         return { error: response.error_message } unless response.success?
 
@@ -90,9 +101,11 @@ module Spree
       end
 
       def not_writable(entry, action)
-        verb = { create: 'created', update: 'updated', destroy: 'deleted' }.fetch(action, 'changed')
+        "#{entry.key} cannot be #{verb_for(action)} this way — call describe_resource to see what can."
+      end
 
-        "#{entry.key} cannot be #{verb} this way — call describe_resource to see what can."
+      def verb_for(action)
+        { create: 'created', update: 'updated', destroy: 'deleted' }.fetch(action, 'changed')
       end
     end
   end

@@ -88,6 +88,36 @@ RSpec.describe Spree::ProductTypes::ApplyToProducts do
       expect(product.reload.categories).to eq([category])
       expect(category.reload.products_count).to eq(1)
     end
+
+    context 'events', events: true do
+      before { Spree::Events.reset! }
+      after { Spree::Events.reset! }
+
+      def created_events
+        published = []
+        Spree::Events.subscribe('product_category.created', async: false) { |event| published << event }
+        Spree::Events.activate!
+        yield
+        published
+      end
+
+      it 'publishes product_category.created for each product it categorises' do
+        products = create_list(:product, 2)
+        products.each { |product| product.update_column(:product_type_id, product_type.id) }
+
+        published = created_events { apply }
+
+        memberships = Spree::ProductCategory.where(category_id: category.id, product_id: products.map(&:id))
+        expect(published.map { |event| event.payload['id'] }).to match_array(memberships.map(&:prefixed_id))
+      end
+
+      it 'says nothing about a product already in the category' do
+        product = create(:product, categories: [category])
+        product.update_column(:product_type_id, product_type.id)
+
+        expect(created_events { apply }).to be_empty
+      end
+    end
   end
 
   describe 'when the type defines nothing' do

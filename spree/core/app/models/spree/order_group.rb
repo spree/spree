@@ -230,7 +230,7 @@ module Spree
     def payment_total
       @payment_total ||= begin
         settled = payments.completed.to_a
-        settled.sum(&:amount) - Spree::Refund.where(payment_id: settled.map(&:id)).sum(:amount)
+        settled.sum(&:amount) - Spree::Refund.completed_or_unset.where(payment_id: settled.map(&:id)).sum(:amount)
       end
     end
 
@@ -271,7 +271,7 @@ module Spree
     # @return [BigDecimal] what refunds for returns, claims and exchanges on
     #   this checkout's payments have given back
     def returned_items_refund_total
-      Spree::Refund.for_returned_items.where(payment_id: payments.completed.select(:id)).sum(:amount)
+      Spree::Refund.for_returned_items.completed_or_unset.where(payment_id: payments.completed.select(:id)).sum(:amount)
     end
 
     # @return [Boolean]

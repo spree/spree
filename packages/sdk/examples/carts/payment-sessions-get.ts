@@ -7,7 +7,7 @@ const client = createClient({
 
 // region:example
 const session = await client.carts.paymentSessions.get('cart_abc123', 'ps_abc123', {
-  token: '<token>',
+  spreeToken: '<cart-token>',
 })
 
 // endregion:example

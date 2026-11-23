@@ -5,7 +5,9 @@ module Spree
 
       def call(cart: nil, order: nil)
         if order
-          Spree::Deprecation.warn('Calling Spree::StockReservations::Reserve with order: is deprecated and will be removed in Spree 6.1. Pass cart: instead.')
+          Spree::Deprecation.warn(
+            'Calling Spree::StockReservations::Reserve with order: is deprecated and will be removed in Spree 6.3. Pass cart: instead.'
+          )
           cart ||= order
         end
         return success(cart) unless Spree::StorePreferences.read(cart&.store, :stock_reservations_enabled)
@@ -33,8 +35,12 @@ module Spree
 
           this_order_used = Hash.new(0)
 
-          reservations = targets.map do |line_item, stock_level, quantity|
-            stock_level = locked_stock_levels.fetch(stock_level.id)
+          reservations = targets.filter_map do |line_item, stock_level, quantity|
+            # A shelf deleted since the allocation was read (a variant being
+            # discontinued removes its stock) has nothing left to hold.
+            stock_level = locked_stock_levels[stock_level.id]
+            next if stock_level.nil?
+
             available = stock_level.available_count - held.fetch(stock_level.id, 0) - this_order_used[stock_level.id]
 
             raise_insufficient_stock(line_item, available) if available < quantity
@@ -135,16 +141,19 @@ module Spree
         )
       end
 
+      # Handoff to a draft clears the cart reference. A SQL inequality alone
+      # drops those holds instead of counting them against competing checkouts.
       def held_by_others(stock_level_ids, owner)
         return {} if stock_level_ids.empty?
 
         owner_column = owner.is_a?(Spree::Cart) ? :cart_id : :order_id
-        Spree::StockReservation
-          .active
-          .where(stock_level_id: stock_level_ids)
-          .where.not(owner_column => owner.id)
-          .group(:stock_level_id)
-          .sum(:quantity)
+        owner_reference = Spree::StockReservation.arel_table[owner_column]
+        Spree::StockReservation.
+          active.
+          where(stock_level_id: stock_level_ids).
+          where(owner_reference.eq(nil).or(owner_reference.not_eq(owner.id))).
+          group(:stock_level_id).
+          sum(:quantity)
       end
 
       # One SELECT for all (stock_level_id, line_item_id) pairs we need to

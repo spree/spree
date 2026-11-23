@@ -6,7 +6,9 @@ import {
   CONNECT_CTA,
   clearRegistrations,
   connectKnownClient,
+  listClients,
   REGISTER_CTA,
+  registerClient,
   seedConnection,
 } from './oauth-helpers'
 
@@ -55,6 +57,45 @@ test.describe('connecting an agent', () => {
     await expect(sheet.getByText(/claude mcp add/i)).toBeVisible()
   })
 
+  // Claude Code calls back on `localhost` and the store only accepts the
+  // registered port, so the command has to carry the client id and pin it.
+  test('gives Claude Code a command with its client id and callback port', async ({ page }) => {
+    const creds = await login(page)
+    await clearRegistrations(page, creds.store_id, creds.accessToken)
+    await gotoIndex(page, AGENTS_PATH(creds.store_id), CONNECT_CTA)
+
+    const sheet = await connectKnownClient(page)
+    await expect(sheet.getByText(/ready to connect/i)).toBeVisible({ timeout: 15_000 })
+    await sheet.getByRole('tab', { name: /claude code/i }).click()
+    const [client] = await listClients(page, creds.store_id, creds.accessToken)
+    await expect(
+      sheet.getByText(`--client-id ${client.client_id} --callback-port 3118`),
+    ).toBeVisible()
+  })
+
+  // A Claude registration made before Claude Code's callback was added would
+  // refuse it at sign-in, so connecting Claude again brings it up to date.
+  test('adds the Claude Code callback to an older Claude registration', async ({ page }) => {
+    const creds = await login(page)
+    await clearRegistrations(page, creds.store_id, creds.accessToken)
+    await registerClient(page, creds.store_id, creds.accessToken, {
+      name: 'Claude',
+      redirect_uri: 'https://claude.ai/api/mcp/auth_callback\nhttp://127.0.0.1/callback',
+    })
+
+    await gotoIndex(page, AGENTS_PATH(creds.store_id), CONNECT_CTA)
+    const sheet = await connectKnownClient(page)
+    await expect(sheet.getByText(/ready to connect/i)).toBeVisible({ timeout: 15_000 })
+    await sheet.getByRole('button', { name: /^done$/i }).click()
+
+    // The missing callback is added and the ones already registered stay.
+    await gotoIndex(page, CLIENTS_PATH(creds.store_id), REGISTER_CTA)
+    const row = page.getByRole('row', { name: /Claude/ })
+    await expect(row.getByText(/localhost:3118\/callback/)).toBeVisible({ timeout: 15_000 })
+    await expect(row.getByText(/claude\.ai\/api\/mcp\/auth_callback/)).toBeVisible()
+    await expect(row.getByText(/127\.0\.0\.1\/callback/)).toBeVisible()
+  })
+
   // Revoking keeps the registration so the same client can be connected
   // again — which is exactly why the card has to say who holds access now.
   test('says who is connected through a registration', async ({ page }) => {
@@ -101,6 +142,33 @@ test.describe('connecting a client we do not know', () => {
 
     await sheet.getByRole('button', { name: /^done$/i }).click()
     await expect(page.getByText(name).first()).toBeVisible({ timeout: 15_000 })
+  })
+  // Reconnecting under the same name is how a developer adds a callback
+  // their client now uses; the ones already registered stay.
+  test('adds a new callback when the same client connects again', async ({ page }) => {
+    const creds = await login(page)
+    const name = `CI reconnect ${Date.now()}`
+    await registerClient(page, creds.store_id, creds.accessToken, {
+      name,
+      redirect_uri: 'https://old.example.com/oauth/callback',
+    })
+    await gotoIndex(page, AGENTS_PATH(creds.store_id), CONNECT_CTA)
+
+    await page.getByRole('button', { name: CONNECT_CTA }).click()
+    const sheet = page.getByRole('dialog')
+    await sheet.getByText(/any other client that speaks mcp/i).click()
+    await sheet.locator('#mcp-other-name').fill(name)
+    await sheet.locator('#mcp-other-uri').fill('https://new.example.com/oauth/callback')
+    await sheet.getByRole('button', { name: /^continue$/i }).click()
+    await expect(sheet.getByText(/ready to connect/i)).toBeVisible({ timeout: 15_000 })
+
+    const client = (await listClients(page, creds.store_id, creds.accessToken)).find(
+      (candidate) => candidate.name === name,
+    )
+    expect(client?.redirect_uri.split(/\s+/)).toEqual([
+      'https://old.example.com/oauth/callback',
+      'https://new.example.com/oauth/callback',
+    ])
   })
 })
 

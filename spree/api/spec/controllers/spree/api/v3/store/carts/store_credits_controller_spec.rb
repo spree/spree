@@ -31,7 +31,7 @@ RSpec.describe Spree::Api::V3::Store::Carts::StoreCreditsController, type: :cont
         expect(order.reload.payments.store_credits.sum(:amount)).to eq(BigDecimal('5.05'))
       end
 
-      # 5.6 storefronts sent a number; it keeps working until 6.1.
+      # 5.6 storefronts sent a number; it keeps working until 6.5.
       it 'still applies a JSON number exactly, with a deprecation warning' do
         expect(Spree::Deprecation).to receive(:warn).with(/JSON number is deprecated/)
 

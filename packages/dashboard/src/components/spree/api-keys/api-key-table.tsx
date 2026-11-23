@@ -114,7 +114,7 @@ function ApiKeyTableFrame({
     <Card>
       <CardHeader>
         <CardTitle>{title}</CardTitle>
-        <p className="text-sm text-muted-foreground">{description}</p>
+        <p className="text-base text-muted-foreground">{description}</p>
       </CardHeader>
       <CardContent className="p-0">
         {loading ? (
@@ -160,7 +160,7 @@ function ApiKeyTableFrame({
 function ChannelCell({ channelName }: { channelName: string | undefined }) {
   const { t } = useTranslation()
   return (
-    <TableCell className="text-sm whitespace-nowrap">
+    <TableCell className="text-base whitespace-nowrap">
       {/* The name may not have loaded yet (channels query pending) — fall back
           to the store-wide label rather than the raw ID. */}
       {channelName ?? (
@@ -258,7 +258,7 @@ function ApiKeyRow({
         </div>
       </TableCell>
       {children}
-      <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
+      <TableCell className="text-base text-muted-foreground whitespace-nowrap">
         {/* `last_used_at` is throttled to update at most hourly (see
             ApiKeyAuthentication#touch_api_key_if_needed), so the timestamp
             won't be perfectly fresh — but it's accurate enough for "is this
@@ -270,7 +270,7 @@ function ApiKeyRow({
           }
         />
       </TableCell>
-      <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
+      <TableCell className="text-base text-muted-foreground whitespace-nowrap">
         <RelativeTime iso={apiKey.created_at} />
         {apiKey.created_by_label && (
           <div className="text-xs">
@@ -339,7 +339,7 @@ export function ScopeList({
     return <Badge>{t('admin.pages.settings.api_keys.scope_badge.read_all')}</Badge>
   }
   if (scopes.length === 0) {
-    return <span className="text-sm text-muted-foreground">—</span>
+    return <span className="text-base text-muted-foreground">—</span>
   }
 
   const preview = scopes.slice(0, previewCount)

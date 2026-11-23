@@ -14,6 +14,9 @@ module Spree
           response.headers['X-Content-Type-Options'] = 'nosniff'
           response.headers['X-Frame-Options'] = 'DENY'
           response.headers['X-Request-Id'] = request.request_id
+          # A dashboard on another origin reads the request ID for its
+          # developer inspector; browsers hide unlisted headers from scripts.
+          response.headers['Access-Control-Expose-Headers'] = 'X-Request-Id'
           response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
           response.headers['Permissions-Policy'] = 'camera=(), microphone=(), geolocation=()'
           response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains' if request.ssl?

@@ -29,6 +29,9 @@ export function useCountryStates(countryCode: string | null | undefined) {
   return {
     states: ((country?.states ?? []) as StateOption[]).filter((s) => Boolean(s.abbr)),
     statesRequired: country?.states_required ?? false,
+    // Assumed required until the country list loads, as the server does for
+    // an address without a country.
+    postalCodeRequired: country?.zipcode_required ?? true,
   }
 }
 

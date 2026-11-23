@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.metadata = {
     "bug_tracker_uri"   => "https://github.com/spree/spree/issues",
     "changelog_uri"     => "https://github.com/spree/spree/releases/tag/v#{s.version}",
-    "documentation_uri" => "https://docs.spreecommerce.org/",
+    "documentation_uri" => "https://spreecommerce.org/docs/",
     "source_code_uri"   => "https://github.com/spree/spree/tree/v#{s.version}",
   }
 
@@ -34,10 +34,9 @@ Gem::Specification.new do |s|
 
 
   s.add_dependency 'acts_as_list', '>= 0.8'
-  s.add_dependency 'alba', '~> 3.0'
+  s.add_dependency 'alba', '~> 4.0'
   s.add_dependency 'acts-as-taggable-on'
   s.add_dependency 'awesome_nested_set', '~> 3.3', '>= 3.3.1'
-  s.add_dependency 'benchmark' # needed for ruby 4.0 and benchmark gem
   s.add_dependency 'cancancan', '~> 3.2'
   s.add_dependency 'countries'
   # OAuth 2.1 authorization server. Pinned to a release candidate because it
@@ -45,10 +44,9 @@ Gem::Specification.new do |s|
   # authorization spec requires and which cannot be added from outside — the
   # audience has to be bound when the token is issued. Relax to '~> 6.0' once
   # 6.0.0 is final.
-  s.add_dependency 'doorkeeper', '~> 6.0.0.rc2'
+  s.add_dependency 'doorkeeper', '~> 6.0.0.rc3'
   s.add_dependency 'friendly_id', '~> 5.2', '>= 5.2.1'
   s.add_dependency 'geocoder'
-  s.add_dependency 'highline', '>= 2', '< 4' # Necessary for the install generator
   # json 3 removed the positional options hash, which ActiveSupport::JSON.decode
   # still passes (`::JSON.parse(json, options)`). Rolling a transaction back
   # restores JSON attributes through that path, so on json 3 any rollback
@@ -56,6 +54,11 @@ Gem::Specification.new do |s|
   # once activesupport passes those options as keywords.
   s.add_dependency 'json', '< 3'
   s.add_dependency 'json_schemer', '~> 2.4'
+  # regexp_parser 2.13.2 dropped Regexp::Syntax#implements, which json_schemer
+  # 2.5.0's ECMA regexp syntax still calls, so requiring json_schemer (done
+  # when spree_core loads) raises NoMethodError and the app does not boot.
+  # Unpin once json_schemer ships a release that supports it.
+  s.add_dependency 'regexp_parser', '< 2.13.2'
   s.add_dependency 'jwt', '~> 3.1'
   s.add_dependency 'liquid', '~> 5.14'
   s.add_dependency 'money', '~> 6.13'
@@ -70,9 +73,10 @@ Gem::Specification.new do |s|
   s.add_dependency 'rails-i18n', '~> 8.0'
   s.add_dependency 'ransack', '>= 4.1'
   s.add_dependency 'request_store', '~> 1.5'
-  s.add_dependency 'rexml'
 
   s.add_dependency 'stringex'
+  # stringex requires ostruct without declaring it; ostruct is no longer a default gem since Ruby 4.0
+  s.add_dependency 'ostruct'
   s.add_dependency 'tracking_number'
   s.add_dependency 'validates_zipcode'
   s.add_dependency 'valvat', '~> 2.0'
@@ -82,7 +86,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'mobility-ransack', '~> 1.2'
   s.add_dependency 'friendly_id-mobility', '~> 1.0'
   s.add_dependency 'wannabe_bool'
-  s.add_dependency 'safely_block', '>= 0.4', '< 2.0'
   s.add_dependency 'phonelib', '~> 0.10'
   s.add_dependency 'ar_lazy_preload', '~> 2.1'
   s.add_dependency 'bcrypt', '~> 3.1'

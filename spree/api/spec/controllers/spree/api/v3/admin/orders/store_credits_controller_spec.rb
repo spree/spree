@@ -59,6 +59,27 @@ RSpec.describe Spree::Api::V3::Admin::Orders::StoreCreditsController, type: :con
 
         expect(response).to have_http_status(:unprocessable_content)
       end
+
+      it 'says the customer has no store credit' do
+        post :create, params: { order_id: order.prefixed_id }, as: :json
+
+        expect(json_response['error']['message']).to eq(
+          I18n.t('spree.error_user_does_not_have_any_store_credits')
+        )
+      end
+    end
+
+    context 'when the customer has a store credit that is fully used' do
+      let!(:store_credit) do
+        create(:store_credit, store: store, customer: customer, amount: 50.00, amount_used: 50.00)
+      end
+
+      it 'returns 422 with a message rather than an empty one' do
+        post :create, params: { order_id: order.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['message']).to eq(I18n.t('spree.store_credit_not_applied'))
+      end
     end
 
     context 'when the order has no customer' do

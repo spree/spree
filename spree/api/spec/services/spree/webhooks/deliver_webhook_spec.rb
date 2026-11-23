@@ -46,7 +46,7 @@ module Spree
           end
 
           it 'signs the body that was actually sent' do
-            Timecop.freeze do
+            freeze_time do
               described_class.call(delivery: delivery, secret_key: secret_key)
 
               expect(WebMock).to have_requested(:post, delivery.url).with { |req|
@@ -93,7 +93,7 @@ module Spree
           end
 
           it 'includes HMAC signature with timestamp in headers' do
-            Timecop.freeze do
+            freeze_time do
               timestamp = Time.current.to_i
               payload_json = delivery.payload.to_json
               expected_signature = OpenSSL::HMAC.hexdigest('SHA256', secret_key, "#{timestamp}.#{payload_json}")
@@ -324,7 +324,7 @@ module Spree
           end
 
           it 'signs the body that was actually sent' do
-            Timecop.freeze do
+            freeze_time do
               described_class.call(delivery: delivery, secret_key: secret_key)
 
               expect(WebMock).to have_requested(:post, delivery.url).with { |req|

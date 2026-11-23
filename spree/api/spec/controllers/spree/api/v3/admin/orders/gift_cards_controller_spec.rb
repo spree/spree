@@ -113,6 +113,13 @@ RSpec.describe Spree::Api::V3::Admin::Orders::GiftCardsController, type: :contro
 
         expect(response).to have_http_status(:unprocessable_content)
       end
+
+      it 'reports the refusal in prose rather than as the raw reason symbol' do
+        post :create, params: { order_id: order.prefixed_id, code: gift_card.code }, as: :json
+
+        expect(json_response['error']['message']).to eq(I18n.t('spree.gift_card_mismatched_customer'))
+        expect(json_response['error']['message']).not_to include('gift_card_mismatched_customer')
+      end
     end
 
     context 'when order belongs to a different store' do

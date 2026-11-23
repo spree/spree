@@ -3,9 +3,10 @@ module Spree
     module V3
       module Store
         # Exposes the store the request resolved to, so a storefront can render
-        # its name and default SEO metadata in the requested locale.
+        # its name, branding and default SEO metadata in the requested locale.
         class StoreController < Store::BaseController
-          # A gated storefront still needs a page title on its sign-in wall.
+          # A gated storefront still needs its name, logo and page metadata on
+          # its sign-in wall. Every field here is public by nature.
           allow_guest_storefront_access!
 
           # GET /api/v3/store/store

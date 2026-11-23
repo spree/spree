@@ -18,10 +18,9 @@ module Spree
     # of their own — they are gated per resource instead — so the registry
     # cannot be the only thing keeping them apart.
     #
-    # Writes are not registered as classes. A back-office write already is a
-    # workflow, so the registry exposes workflows by their `Spree::Dependencies`
-    # key and derives each tool from the workflow's own `perform` signature —
-    # see {#expose_workflows}.
+    # Writes are not registered as classes. Every Admin API action an admin
+    # key may call is already a tool, built from its OpenAPI operation by
+    # {OperationCatalog} — see docs/plans/6.0-agent-tools-from-openapi.md.
     class Registry
       include Enumerable
 
@@ -61,38 +60,54 @@ module Spree
         to_a.each(&)
       end
 
-      # Exposes workflows as write tools, keyed by `Spree::Dependencies` key so
-      # the tool follows whatever class the host app has registered:
-      #
-      #   Spree.admin_agent_tools.expose_workflows(
-      #     order_cancel_workflow: 'write_orders',
-      #     product_activate_workflow: 'write_products'
-      #   )
-      #
-      # A value may be the permission key on its own, or a hash carrying it
-      # alongside `except:` (parameters to hide, such as a deprecated one) and
-      # `summary:` (a callable overriding the generated confirmation line).
+      # @deprecated Admin API operations are agent tools on their own, built
+      #   from the OpenAPI document, so there is nothing to expose. A
+      #   workflow behind a documented endpoint is that endpoint's tool; one
+      #   without is not offered. Recorded and otherwise ignored, and removed
+      #   in 7.0.
       #
       # @param exposures [Hash{Symbol => String, Hash}]
       # @return [self]
       def expose_workflows(**exposures)
-        exposures.each do |dependency_key, options|
-          options = { permission: options } if options.is_a?(String) || options.is_a?(Symbol)
-          @exposed_workflows[dependency_key.to_sym] = {
-            permission: options.fetch(:permission).to_s,
-            except: Array(options[:except]).map(&:to_sym),
-            summary: options[:summary]
-          }
-        end
+        Spree::Deprecation.warn(
+          'Spree.admin_agent_tools.expose_workflows is deprecated and has no effect: every documented ' \
+          'Admin API action is an agent tool, built from its OpenAPI operation. A workflow reaches agents ' \
+          'through an admin endpoint whose rswag spec is generated into the openapi/admin.yaml your gem ships. ' \
+          'See docs/plans/6.0-agent-tools-from-openapi.md.'
+        )
+
+        @exposed_workflows.merge!(exposures.transform_keys(&:to_sym))
         self
       end
 
-      # @return [Hash{Symbol => Hash}] every exposed workflow, by dependency key
+      # @deprecated see {#expose_workflows}
+      # @return [Hash{Symbol => Hash}] what was passed to {#expose_workflows}
       attr_reader :exposed_workflows
 
       # @return [Array<Class<Spree::AgentTool>>]
       def to_a
-        registered_classes + workflow_tool_classes
+        registered = registered_classes
+        registered + operation_tool_classes(registered.map(&:tool_name))
+      end
+
+      # A tool this caller may use, by name — including a 6.0.0 name that is
+      # no longer listed but still answers through 6.0.x, so a client that
+      # learned it keeps working.
+      #
+      # @param name [String]
+      # @param context [Spree::AgentTools::Context]
+      # @return [Spree::AgentTool, nil]
+      def find_for(name, context)
+        name = name.to_s
+        tool_class = registered_classes.find { |klass| klass.tool_name == name }
+        if tool_class.nil? && operations?
+          entry = Spree::AgentTools::OperationCatalog.find(name)
+          tool_class = entry && Spree::AgentTools::OperationTool.for(entry)
+        end
+        return if tool_class.nil? || (tool_class.try(:audience) && tool_class.audience != audience)
+
+        tool = tool_class.new(context)
+        tool if tool.permitted?
       end
 
       # Tools this caller may actually use, instantiated for their context.
@@ -118,13 +133,32 @@ module Spree
         end
       end
 
-      # One generated tool class per exposed workflow whose dependency key
-      # still resolves. A key an extension removed simply stops being offered
-      # rather than breaking the whole catalog.
-      def workflow_tool_classes
-        @exposed_workflows.filter_map do |dependency_key, options|
-          Spree::AgentTools::WorkflowTool.for(dependency_key, **options)
+      # One tool per operation the catalog lists. Operations are back-office
+      # actions, so only the admin surface offers them.
+      #
+      # A registered tool keeps its name: an operation claiming the same one
+      # would make an MCP server refuse the whole list. The contract spec
+      # fails on such a clash; at runtime it is logged, once per name.
+      def operation_tool_classes(taken)
+        return [] unless operations?
+
+        Spree::AgentTools::OperationCatalog.all.filter_map do |entry|
+          next Spree::AgentTools::OperationTool.for(entry) unless taken.include?(entry.name)
+
+          warn_shadowed(entry.name)
+          nil
         end
+      end
+
+      def warn_shadowed(name)
+        @shadowed ||= Set.new
+        return unless @shadowed.add?(name)
+
+        Rails.logger.warn("[Spree] agent tool #{name} is registered by hand; the operation of that name is not offered")
+      end
+
+      def operations?
+        audience == :admin
       end
     end
   end

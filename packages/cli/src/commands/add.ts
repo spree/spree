@@ -9,11 +9,13 @@ import { isNotFound } from '../config.js'
 import { DASHBOARD_PORT, SELLER_DASHBOARD_PORT } from '../constants.js'
 import { detectProject } from '../context.js'
 import {
-  AGENT_SKILLS_REPO,
   addDocsMcpServer,
   addDocsSectionToAgentInstructions,
-  dlxCommand,
   installAgentSkills,
+  installSkillsArgs,
+  obsoleteSkillsMessage,
+  resolveAgentSkillsRef,
+  skillsFailureMessage,
 } from '../lib/ai.js'
 import {
   EXTENSIONS,
@@ -23,6 +25,7 @@ import {
   resolveExtension,
 } from '../lib/extensions.js'
 import { confirmOrExit } from '../lib/prompt.js'
+import { RELEASE_LINE } from '../lib/release-line.js'
 import type { ProjectContext } from '../types.js'
 import { type AddExtensionOptions, addExtension } from './add-extension.js'
 
@@ -174,7 +177,7 @@ function usageError(message: string): never {
  * through the catalog. Names are checked so neither can be read as a flag,
  * and the developer confirms, since nothing vouches for the package.
  */
-async function addUncataloguedExtension(
+export async function addUncataloguedExtension(
   gem: string | undefined,
   npm: string | undefined,
   opts: AddExtensionOptions,
@@ -193,6 +196,7 @@ async function addUncataloguedExtension(
     await confirmOrExit(
       `${uncatalogued.join(' and ')} ${uncatalogued.length > 1 ? 'are' : 'is'} not in the Spree extension catalog. Install anyway?`,
       opts.yes,
+      { retry: opts.retry },
     )
   }
   await addExtension(
@@ -239,19 +243,21 @@ export async function addAi(ctx: ProjectContext, opts: AddAiOptions): Promise<bo
     }
   }
 
+  // The release of the skills written for the Spree version this CLI was
+  // built with, which `spree upgrade` later moves along with the server.
   if (opts.skills) {
     const packageManager = detectPackageManager(ctx.projectDir, ctx.projectDir)
     const s = p.spinner()
     s.start('Installing Spree agent skills...')
+    const ref = await resolveAgentSkillsRef(RELEASE_LINE.version)
     try {
-      await installAgentSkills(ctx.projectDir, packageManager)
-      s.stop('Spree agent skills installed.')
+      const leftover = await installAgentSkills(ctx.projectDir, packageManager, ref)
+      s.stop(`Spree agent skills ${ref ?? 'from the main branch'} installed.`)
+      if (leftover.length > 0) p.log.warn(obsoleteSkillsMessage(packageManager, leftover))
     } catch (err) {
       ready = false
       s.stop(pc.yellow('Spree agent skills were not installed.'))
-      p.log.warn(
-        `Install them later with ${pc.bold(`${dlxCommand(packageManager).join(' ')} skills add ${AGENT_SKILLS_REPO}`)}.\n${err instanceof Error ? err.message : String(err)}`,
-      )
+      p.log.warn(skillsFailureMessage('installed', packageManager, installSkillsArgs(ref), err))
     }
   }
 
@@ -403,6 +409,8 @@ function restoreGitignore(dir: string): void {
   if (fs.existsSync(template)) fs.renameSync(template, path.join(dir, '.gitignore'))
 }
 
+const GIT_URL = /^(?:(?:https|ssh|git):\/\/[^\s]+|[\w.-]+@[\w.-]+:[^\s:][^\s]*)$/
+
 /** Git-clone a URL template, or copy a local directory (used in tests/CI). */
 async function fetchTemplate(template: string, dst: string): Promise<void> {
   if (fs.existsSync(template) && fs.statSync(template).isDirectory()) {
@@ -416,6 +424,13 @@ async function fetchTemplate(template: string, dst: string): Promise<void> {
     return
   }
 
+  // Only plain network URLs: git's other transports (`ext::`, `fd::`) can
+  // run commands.
+  if (!GIT_URL.test(template)) {
+    throw new Error(
+      `Not a template: ${template}. Pass a local directory, or an https://, ssh://, git:// or user@host:path git URL.`,
+    )
+  }
   await execa('git', ['clone', '--depth', '1', '--', template, dst])
   fs.rmSync(path.join(dst, '.git'), { recursive: true, force: true })
 }

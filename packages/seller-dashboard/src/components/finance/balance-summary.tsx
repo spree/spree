@@ -51,7 +51,7 @@ export function BalanceSummary({ balances }: { balances: Balance[] }) {
             </CardHeader>
             <CardContent className="flex flex-col gap-3">
               <span className="text-2xl font-semibold tabular-nums">{held(balance.balance)}</span>
-              <dl className="flex flex-col gap-1 text-sm">
+              <dl className="flex flex-col gap-1 text-base">
                 <Figure label={t('earnings.balance.earned')} value={sold(balance.earned)} />
                 {balance.converted && (
                   <Figure label={t('earnings.balance.payable')} value={held(balance.payable)} />

@@ -1,6 +1,14 @@
+import { CatchBoundary } from '@tanstack/react-router'
 import { Fragment } from 'react'
 import { FormProvider, type UseFormReturn } from 'react-hook-form'
-import { type SlotAmbientContext, useSlotEntries } from '../lib/slot-registry'
+import { reportCaughtError } from '../lib/error-reporting'
+import {
+  APP_ROOT_SLOT,
+  type AppRootSlotContext,
+  type SlotAmbientContext,
+  type SlotEntry,
+  useSlotEntries,
+} from '../lib/slot-registry'
 
 export interface SlotProps<TContext> {
   /** Slot name, e.g. "product.form_sidebar" or "order.dropdown". */
@@ -48,6 +56,38 @@ export function Slot<TContext extends object = object>({
       })}
     </>
   )
+}
+
+/**
+ * The `app.root` slot, mounted once per panel above the router. Nothing above
+ * it catches errors, so each entry gets its own boundary: one that throws is
+ * reported and dropped, and the others keep running.
+ */
+export function AppRootSlot({ panel }: AppRootSlotContext) {
+  const entries = useSlotEntries(APP_ROOT_SLOT) as readonly SlotEntry<AppRootSlotContext>[]
+  return (
+    <>
+      {entries.map((entry) => (
+        <CatchBoundary
+          key={entry.id}
+          getResetKey={() => panel}
+          errorComponent={() => null}
+          onCatch={reportCaughtError}
+        >
+          <AppRootEntry entry={entry} panel={panel} />
+        </CatchBoundary>
+      ))}
+    </>
+  )
+}
+
+// Inside the entry's boundary, so a throwing `if` drops only this entry.
+function AppRootEntry({
+  entry: { if: visible, component: Component },
+  panel,
+}: AppRootSlotContext & { entry: SlotEntry<AppRootSlotContext> }) {
+  if (visible && !visible({ panel })) return null
+  return <Component panel={panel} />
 }
 
 /**

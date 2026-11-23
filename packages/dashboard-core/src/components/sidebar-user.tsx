@@ -5,8 +5,8 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuShortcut,
   DropdownMenuTrigger,
   LanguageMenuItems,
   SidebarMenu,
@@ -16,21 +16,24 @@ import {
 } from '@spree/dashboard-ui'
 import {
   BookOpenIcon,
-  ExternalLinkIcon,
   LogOutIcon,
-  MailIcon,
   MessageCircleIcon,
+  MessageSquareIcon,
   MoreHorizontalIcon,
-  UserIcon,
+  TerminalIcon,
+  UserPenIcon,
 } from '@spree/dashboard-ui/icons'
+import { useFormatForDisplay } from '@tanstack/react-hotkeys'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../hooks/use-auth'
 import { useSwitchAdminLocale } from '../hooks/use-switch-admin-locale'
-import { COMMUNITY_URL, CONTACT_URL, DOCS_BASE_URL } from '../lib/docs'
+import { COMMUNITY_URL, DOCS_BASE_URL } from '../lib/docs'
 import { getInitials } from '../lib/formatters'
 import { i18n } from '../lib/i18n'
-import { storefrontHref } from '../lib/storefront'
-import { useOptionalStore } from '../providers/store-provider'
+import {
+  DEVELOPER_INSPECTOR_HOTKEY,
+  useOptionalDeveloperInspector,
+} from '../providers/developer-inspector-provider'
 
 /**
  * The account menu, sitting at the foot of the primary sidebar.
@@ -39,10 +42,6 @@ import { useOptionalStore } from '../providers/store-provider'
  * language, the support links and sign out — because removing that bar left
  * the account with nowhere else to live, and the foot of the nav is where a
  * merchant already looks for it.
- *
- * `useOptionalStore` rather than `useStore`: the seller panel mounts this
- * under a `TenantProvider` with no store at all, and a hard `useStore` would
- * throw there. A panel without a store simply gets no "View store" entry.
  */
 export function SidebarUser({
   uiLocales = [],
@@ -62,8 +61,9 @@ export function SidebarUser({
   const { isMobile, state } = useSidebar()
   const { user, logout } = useAuth()
   const switchAdminLocale = useSwitchAdminLocale()
-  const store = useOptionalStore()?.store ?? null
-  const viewStoreHref = storefrontHref(store)
+  // Only panels that mount the inspector offer it.
+  const inspector = useOptionalDeveloperInspector()
+  const formatHotkey = useFormatForDisplay()
 
   // The desktop rail's icon mode. The mobile drawer is full width whatever
   // that says, so honouring it there would hide the name for no reason.
@@ -100,7 +100,7 @@ export function SidebarUser({
         </Avatar>
         {!inBar && !isCollapsed && (
           <>
-            <span className="min-w-0 flex-1 truncate text-left font-medium text-sm text-foreground">
+            <span className="min-w-0 flex-1 truncate text-left font-medium text-base text-foreground">
               {user.full_name || user.email}
             </span>
             <MoreHorizontalIcon className="size-4 shrink-0 text-muted-foreground" />
@@ -129,7 +129,7 @@ export function SidebarUser({
               {initials}
             </AvatarFallback>
           </Avatar>
-          <div className="grid min-w-0 flex-1 text-sm leading-tight">
+          <div className="grid min-w-0 flex-1 text-base leading-tight">
             <span className="truncate font-medium text-foreground">
               {user.full_name || user.email}
             </span>
@@ -139,9 +139,15 @@ export function SidebarUser({
           </div>
         </div>
         <DropdownMenuSeparator />
-        <DropdownMenuLabel className="font-medium text-muted-foreground text-xs uppercase tracking-wide">
-          {t('admin.account.preferences')}
-        </DropdownMenuLabel>
+        {onEditProfile && (
+          <>
+            <DropdownMenuItem onClick={onEditProfile}>
+              <UserPenIcon className="size-4" />
+              {t('admin.account.edit_profile')}
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+          </>
+        )}
         <ThemeMenuItems />
         {/* Select-style pill; self-hides when < 2 languages are installed. */}
         <LanguageMenuItems
@@ -150,30 +156,19 @@ export function SidebarUser({
           value={i18n.language}
           onSelect={handleSelectLocale}
         />
-        <DropdownMenuSeparator />
-        {onEditProfile && (
+        {inspector && (
           <>
-            <DropdownMenuItem onClick={onEditProfile}>
-              <UserIcon className="size-4" />
-              {t('admin.account.edit_profile')}
-            </DropdownMenuItem>
             <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => inspector.setOpen(true)}>
+              <TerminalIcon className="size-4" />
+              {t('admin.components.developer_inspector.menu_open')}
+              <DropdownMenuShortcut>
+                {formatHotkey(DEVELOPER_INSPECTOR_HOTKEY)}
+              </DropdownMenuShortcut>
+            </DropdownMenuItem>
           </>
         )}
-        {/* The storefront link lost its home when the top bar went, and it
-                belongs with the other outbound links rather than as a button
-                competing with the nav. */}
-        {viewStoreHref && (
-          <DropdownMenuItem asChild>
-            <a href={viewStoreHref} target="_blank" rel="noopener noreferrer">
-              <ExternalLinkIcon className="size-4" />
-              {t('admin.account.view_store')}
-            </a>
-          </DropdownMenuItem>
-        )}
-        {/* All three carried over from the old top bar as inert rows — they
-            looked like links and did nothing. Destinations live in `lib/docs`
-            beside the docs base so a domain move is one edit. */}
+        <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
           <a href={DOCS_BASE_URL} target="_blank" rel="noopener noreferrer">
             <BookOpenIcon className="size-4" />
@@ -186,12 +181,12 @@ export function SidebarUser({
             {t('admin.account.community')}
           </a>
         </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <a href={CONTACT_URL} target="_blank" rel="noopener noreferrer">
-            <MailIcon className="size-4" />
-            {t('admin.account.contact_support')}
-          </a>
-        </DropdownMenuItem>
+        {inspector?.sendFeedback && (
+          <DropdownMenuItem onClick={() => inspector.sendFeedback?.()}>
+            <MessageSquareIcon className="size-4" />
+            {t('admin.account.send_feedback')}
+          </DropdownMenuItem>
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={logout}>
           <LogOutIcon className="size-4" />

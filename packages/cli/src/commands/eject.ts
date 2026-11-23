@@ -13,6 +13,8 @@ import { dockerCompose, prepareDatabase } from '../docker.js'
 // Image rebuilds (`spree build`) are only required for Dockerfile or
 // .ruby-version changes; extensions go through `spree add` and persist in
 // the bundle_cache volume.
+const DEV_COMPOSE = 'docker-compose.dev.yml'
+
 export function registerEjectCommand(program: Command) {
   program
     .command('eject')
@@ -34,7 +36,7 @@ export async function ejectProject(projectDir: string): Promise<void> {
     process.exit(1)
   }
 
-  const devCompose = path.join(projectDir, 'docker-compose.dev.yml')
+  const devCompose = path.join(projectDir, DEV_COMPOSE)
   if (!fs.existsSync(devCompose)) {
     console.error(`\n${pc.red('Error:')} No docker-compose.dev.yml found.\n`)
     process.exit(1)
@@ -61,7 +63,6 @@ export async function ejectProject(projectDir: string): Promise<void> {
     )
     fs.writeFileSync(devCompose, composeContent)
   }
-  fs.writeFileSync(path.join(projectDir, 'docker-compose.yml'), composeContent)
 
   console.log(`\n${pc.bold(`Switching to dev compose (bind-mounts ./${apiDir})...`)}\n`)
 
@@ -69,10 +70,20 @@ export async function ejectProject(projectDir: string): Promise<void> {
   // app server exits when it is missing — create and migrate it first.
   // The dev compose has `build:` defined, so this first `run` also builds
   // the image — no separate explicit build step needed.
+  //
+  // Both steps run against the dev compose directly, and docker-compose.yml
+  // is swapped only once they succeed: the swapped file is what marks a
+  // project ejected, so an interrupted eject still reads as prebuilt and
+  // the next command that needs it ejects again.
   console.log(`${pc.bold('Preparing the development database...')}\n`)
-  await prepareDatabase(projectDir, { stdio: 'inherit' })
+  await prepareDatabase(projectDir, { stdio: 'inherit', composeFile: DEV_COMPOSE })
+  await dockerCompose(['-f', DEV_COMPOSE, 'up', '-d'], projectDir, { stdio: 'inherit' })
 
-  await dockerCompose(['up', '-d'], projectDir, { stdio: 'inherit' })
+  // Written beside it and renamed over it, so an interrupted write never
+  // leaves a half-written compose file.
+  const compose = path.join(projectDir, 'docker-compose.yml')
+  fs.writeFileSync(`${compose}.tmp`, composeContent)
+  fs.renameSync(`${compose}.tmp`, compose)
 
   p.note(
     [
