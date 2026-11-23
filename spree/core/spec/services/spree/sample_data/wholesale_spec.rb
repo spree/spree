@@ -32,6 +32,20 @@ RSpec.describe 'Wholesale sample data' do
     end
 
     it 'imports only the rows in those currencies' do
+      # A mixed file, so filtering has to keep some rows and drop others
+      # rather than take or skip the whole file.
+      example_rows = CSV.parse(<<~CSV, headers: true)
+        sku,currency,min_quantity,price,compare_at_price
+        SKU-A,USD,12,9.99,
+        SKU-A,EUR,12,8.99,
+        SKU-B,usd,24,4.99,
+        SKU-B,EUR,24,3.99,
+      CSV
+      allow(CSV).to receive(:read).and_call_original
+      allow(CSV).to receive(:read).
+        with(satisfy { |path| path.to_s.end_with?('db/sample_data/price_list_prices.csv') }, headers: true).
+        and_return(example_rows)
+
       imported = nil
       runner = double(Spree::SampleData::ImportRunner)
       allow(Spree::SampleData::ImportRunner).to receive(:new).and_return(runner)
@@ -42,8 +56,7 @@ RSpec.describe 'Wholesale sample data' do
 
       load_wholesale
 
-      expect(imported).to be_present
-      expect(imported['currency'].uniq).to eq(['USD'])
+      expect(imported.map { |row| [row['sku'], row['currency']] }).to eq([%w[SKU-A USD], %w[SKU-B usd]])
     end
   end
 end
