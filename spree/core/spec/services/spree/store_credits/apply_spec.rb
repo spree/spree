@@ -335,4 +335,97 @@ describe Spree::StoreCredits::Apply, type: :service do
       expect(gift_card_order.reload.payments.store_credits).to be_empty
     end
   end
+
+  # V-3807: a store credit payment on a draft order puts its amount on hold at
+  # once, so a second order cannot spend the same credit.
+  context 'on a draft order' do
+    let(:customer) { create(:customer) }
+    let!(:credit) { create(:store_credit, customer: customer, amount: 10, store: store, created_at: 2.days.ago) }
+
+    def draft_with_total(total)
+      create(:order_with_line_items, store: store, customer: customer).tap do |draft|
+        draft.update_columns(status: 'draft', completed_at: nil, total: total, payment_total: 0)
+      end
+    end
+
+    before { create(:store_credit_payment_method, store: store) }
+
+    it 'holds the applied amount on the credit' do
+      described_class.call(order: draft_with_total(BigDecimal('44.99')))
+
+      expect(credit.reload.amount_authorized).to eq(10)
+      expect(credit.amount_remaining).to eq(0)
+    end
+
+    it 'draws a second order on a free credit, not on the held one' do
+      described_class.call(order: draft_with_total(BigDecimal('44.99')))
+      free_credit = create(:store_credit, customer: customer, amount: 30, store: store, created_at: 1.day.ago)
+      second = draft_with_total(BigDecimal('20'))
+
+      described_class.call(order: second, amount: 5)
+
+      expect(second.reload.payments.store_credits.valid.map(&:source)).to eq([free_credit])
+      expect(free_credit.reload.amount_authorized).to eq(5)
+      expect(credit.reload.amount_authorized).to eq(10)
+    end
+
+    it 'draws on what a partly held credit has left' do
+      described_class.call(order: draft_with_total(BigDecimal('4')))
+      newer_credit = create(:store_credit, customer: customer, amount: 3, store: store, created_at: 1.day.ago)
+      second = draft_with_total(BigDecimal('20'))
+
+      expect(described_class.call(order: second)).to be_success
+
+      by_credit = second.reload.payments.store_credits.valid.to_h { |payment| [payment.source, payment.amount] }
+      expect(by_credit).to eq(credit => 6, newer_credit => 3)
+    end
+
+    it 'holds each credit a payment is drawn on' do
+      credit.update!(amount: 6)
+      other_credit = create(:store_credit, customer: customer, amount: 8, store: store, created_at: 1.day.ago)
+
+      described_class.call(order: draft_with_total(BigDecimal('11.80')))
+
+      expect(credit.reload.amount_authorized).to eq(6)
+      expect(other_credit.reload.amount_authorized).to eq(BigDecimal('5.80'))
+    end
+
+    it 'moves the hold when the payment is resized' do
+      draft = draft_with_total(BigDecimal('8'))
+      described_class.call(order: draft)
+      draft.update_column(:total, BigDecimal('6'))
+
+      described_class.call(order: draft.reload)
+
+      expect(draft.reload.payments.store_credits.valid.sum(:amount)).to eq(6)
+      expect(credit.reload.amount_authorized).to eq(6)
+    end
+
+    it 'releases the hold when the store credit is removed' do
+      draft = draft_with_total(BigDecimal('44.99'))
+      described_class.call(order: draft)
+
+      Spree::StoreCredits::Remove.call(order: draft.reload)
+
+      expect(credit.reload.amount_authorized).to eq(0)
+    end
+
+    it 'releases the hold when the draft is deleted' do
+      draft = draft_with_total(BigDecimal('44.99'))
+      described_class.call(order: draft)
+
+      draft.reload.destroy!
+
+      expect(credit.reload.amount_authorized).to eq(0)
+    end
+
+    it 'does not hold credit applied to a cart' do
+      cart = create(:cart_with_line_items, customer: customer, store: store)
+
+      described_class.call(order: cart)
+
+      expect(cart.reload.payments.store_credits.valid).to be_present
+      expect(credit.reload.amount_authorized).to eq(0)
+    end
+  end
 end

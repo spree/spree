@@ -19,6 +19,9 @@ module Spree
         return failure(nil, I18n.t('spree.error_user_does_not_have_any_store_credits')) unless spendable_store_credits.exists?
 
         ApplicationRecord.transaction do
+          # A draft order holds what it applies, so two orders applying at once
+          # must read each credit's free amount one after the other.
+          spendable_store_credits.order(:id).lock.load if @order.is_a?(Spree::Order)
           existing = @order.payments.store_credits.where(status: :checkout)
 
           if existing.any?
@@ -43,7 +46,7 @@ module Spree
       # creating unnecessary invalid payment records on every recalculation.
       def update_existing_payments(payments, remaining_total)
         payments.each do |payment|
-          new_amount = store_credit_amount(payment.source, remaining_total)
+          new_amount = store_credit_amount(payment.source, remaining_total, payment)
 
           if new_amount.positive?
             payment.update_store_credit_amount!(new_amount)
@@ -86,17 +89,22 @@ module Spree
       end
 
       def create_store_credit_payment(payment_method, credit, amount)
-        @order.payments.create!(
+        payment = @order.payments.create!(
           source: credit,
           payment_method: payment_method,
           amount: amount,
           status: 'checkout',
           response_code: credit.generate_authorization_code
         )
+        raise ActiveRecord::RecordInvalid, credit unless payment.hold_store_credit!
       end
 
-      def store_credit_amount(credit, total)
-        [credit.amount_remaining, total].min
+      # What a credit can give: its free amount, plus what +payment+ already
+      # holds on it, since resizing that payment releases its own hold.
+      def store_credit_amount(credit, total, payment = nil)
+        available = credit.amount_remaining
+        available += payment.amount if payment&.store_credit_held?
+        [available, total].min
       end
     end
   end

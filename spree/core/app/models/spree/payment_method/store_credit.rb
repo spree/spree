@@ -27,6 +27,11 @@ module Spree
     def authorize(money, store_credit, gateway_options = {})
       if store_credit.nil?
         Spree::PaymentResponse.new(false, I18n.t('spree.store_credit_payment_method.unable_to_find'), {}, {})
+      elsif (held_code = held_authorization_code(store_credit, gateway_options))
+        # A draft order's payment holds its amount from the moment it is
+        # added; authorizing again would hold it twice.
+        Spree::PaymentResponse.new(true, I18n.t('spree.store_credit_payment_method.successful_action', action: :authorize), {},
+                                   authorization: held_code)
       else
         action = lambda do |store_credit|
           store_credit.authorize(
@@ -52,6 +57,9 @@ module Spree
     end
 
     def purchase(money, store_credit, gateway_options = {})
+      held_code = held_authorization_code(store_credit, gateway_options)
+      return capture(money, held_code, gateway_options) if held_code
+
       eligible_events = store_credit.store_credit_events.where(
         amount: money.to_d,
         action: Spree::StoreCredit::ELIGIBLE_ACTION
@@ -118,6 +126,15 @@ module Spree
     end
 
     private
+
+    # The code of the hold the paying payment already has on this credit.
+    def held_authorization_code(store_credit, gateway_options)
+      payment_id = gateway_options[:payment_prefixed_id]
+      return if store_credit.nil? || payment_id.blank?
+
+      payment = store_credit.payments.find_by_prefix_id(payment_id)
+      payment.response_code if payment&.store_credit_held?
+    end
 
     def handle_action_call(store_credit, action, action_name, auth_code = nil)
       store_credit.with_lock do

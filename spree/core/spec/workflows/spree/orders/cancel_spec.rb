@@ -290,6 +290,33 @@ module Spree
       end
     end
 
+    # V-3807: store credit authorizes on its own ledger, so voiding the payment
+    # alone would leave the amount held on the credit.
+    describe 'a store credit payment authorized but not captured' do
+      let(:customer) { create(:customer) }
+      let(:credit) { create(:store_credit, customer: customer, amount: 10, store: order.store) }
+      let(:order) do
+        create(:order_ready_to_ship, line_items_count: 1).tap do |placed|
+          placed.update_columns(customer_id: customer.id, payment_total: 0)
+        end
+      end
+
+      it 'gives the held amount back to the credit' do
+        method = create(:store_credit_payment_method, store: order.store, capture_method: 'on_dispatch')
+        order.payments.destroy_all
+        payment = order.payments.create!(payment_method: method, source: credit, amount: 10, status: 'checkout',
+                                         response_code: credit.generate_authorization_code)
+        payment.hold_store_credit!
+        Spree.payment_process_workflow.call(payment: payment)
+        expect(payment.reload).to be_pending
+
+        result
+
+        expect(payment.reload).to be_void
+        expect(credit.reload.amount_authorized).to eq(0)
+      end
+    end
+
     describe 'reason and note' do
       it 'records the canceler and leaves the reason unset when none is given' do
         result

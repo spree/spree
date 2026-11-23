@@ -88,6 +88,60 @@ module Spree
       expect(spare.reload).to be_checkout
     end
 
+    # V-3807: store credit applied to a draft is held on the credit, and
+    # completing the draft takes the held amount.
+    describe 'store credit held by a draft' do
+      let(:customer) { create(:customer) }
+      let!(:store_credit_method) { create(:store_credit_payment_method, store: store) }
+      let!(:credit) { create(:store_credit, customer: customer, amount: 10, store: store, created_at: 2.days.ago) }
+
+      def draft_with_total(total)
+        create(:order_with_line_items, store: store, customer: customer).tap do |draft|
+          draft.update_columns(status: 'draft', completed_at: nil, total: total, payment_total: 0)
+        end
+      end
+
+      it 'takes the held amount when the draft completes' do
+        draft = draft_with_total(BigDecimal('10'))
+        Spree::StoreCredits::Apply.call(order: draft)
+
+        result = described_class.call(order: draft.reload)
+
+        expect(result).to be_success
+        expect(draft.reload.payments.store_credits.first).to be_completed
+        expect(credit.reload.amount_used).to eq(10)
+        expect(credit.amount_authorized).to eq(0)
+      end
+
+      it 'keeps the hold, without holding twice, when the method captures on dispatch' do
+        store_credit_method.update!(capture_method: 'on_dispatch')
+        draft = draft_with_total(BigDecimal('10'))
+        Spree::StoreCredits::Apply.call(order: draft)
+
+        result = described_class.call(order: draft.reload)
+
+        expect(result).to be_success
+        expect(draft.reload.payments.store_credits.first).to be_pending
+        expect(credit.reload.amount_authorized).to eq(10)
+        expect(credit.amount_used).to eq(0)
+      end
+
+      it 'completes each of two drafts paid from different credits' do
+        first = draft_with_total(BigDecimal('10'))
+        Spree::StoreCredits::Apply.call(order: first)
+        free_credit = create(:store_credit, customer: customer, amount: 30, store: store, created_at: 1.day.ago)
+        second = draft_with_total(BigDecimal('5'))
+        Spree::StoreCredits::Apply.call(order: second)
+
+        expect(described_class.call(order: second.reload)).to be_success
+        expect(described_class.call(order: first.reload)).to be_success
+
+        expect(credit.reload.amount_used).to eq(10)
+        expect(free_credit.reload.amount_used).to eq(5)
+        expect([credit.amount_authorized, free_credit.amount_authorized]).to all(be_zero)
+      end
+    end
+
     # The path company certificates take: unpinned, it resolves live at credit.
     describe 'tax exemptions' do
       let(:draft) { create(:order_ready_to_ship, store: store).tap { |o| o.update_columns(status: 'draft', completed_at: nil) } }

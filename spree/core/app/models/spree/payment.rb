@@ -73,6 +73,7 @@ module Spree
     # invalidate previously entered payments
     after_create :invalidate_old_payments
     after_create :create_eligible_credit_event
+    before_destroy :release_store_credit_hold!
     # Every other change reaches the order through payment events, which the
     # order status subscriber answers. Destruction cannot: Payment is not
     # paranoid, so the row is gone by the time payment.deleted lands and its
@@ -232,6 +233,7 @@ module Spree
     alias failure failure!
 
     def invalidate!
+      release_store_credit_hold!
       update!(status: 'invalid')
     end
 
@@ -299,7 +301,12 @@ module Spree
       # this the order would accept a fresh charge for goods it took back.
       amount_from_order -= owner.returned_items_refund_total if owner.respond_to?(:returned_items_refund_total)
 
-      if payment_method&.store_credit?
+      if payment_method&.store_credit? && source.is_a?(Spree::StoreCredit)
+        # A payment draws on its own credit: what that credit has free, plus
+        # what this payment already holds on it.
+        held = store_credit_held? ? amount_in_database.to_d : BigDecimal('0')
+        [source.amount_remaining + held, amount_from_order].min
+      elsif payment_method&.store_credit?
         store_credits = owner.available_store_credits
         store_credits.any? ? [store_credits.first.amount_remaining, amount_from_order].min : amount_from_order
       else
@@ -315,9 +322,48 @@ module Spree
     # @return [void]
     def update_store_credit_amount!(new_amount)
       return if amount == new_amount
+      return move_store_credit_hold!(new_amount) if store_credit_held?
 
       update_column(:amount, new_amount)
       create_eligible_credit_event
+    end
+
+    # Whether this payment holds its amount on a store credit: the credit
+    # authorized it under the payment's code, and nothing has captured or
+    # released that authorization since.
+    #
+    # @return [Boolean]
+    def store_credit_held?
+      return false unless response_code.present? && source.is_a?(Spree::StoreCredit)
+
+      events = source.store_credit_events.where(authorization_code: response_code)
+      events.exists?(action: Spree::StoreCredit::AUTHORIZE_ACTION) &&
+        !events.exists?(action: [Spree::StoreCredit::CAPTURE_ACTION, Spree::StoreCredit::VOID_ACTION])
+    end
+
+    # Puts this payment's amount on hold on the customer's store credit, so no
+    # other order can spend it. Only a draft order's payment is held: a cart
+    # takes its credit when it completes, moments later, and a hold left by an
+    # abandoned cart would never be released. Gift card credit is drawn down
+    # on the card itself.
+    #
+    # @return [Boolean] false when the credit no longer has the amount free
+    def hold_store_credit!
+      return true unless owner.is_a?(Spree::Order) && store_credit? && source.is_a?(Spree::StoreCredit)
+      return true if source.originator_type == 'Spree::GiftCard' || store_credit_held?
+
+      source.with_lock do
+        source.authorize(amount, currency, action_authorization_code: response_code, action_originator: self).present?
+      end
+    end
+
+    # Gives a held amount back to the store credit. A no-op when nothing is held.
+    #
+    # @return [void]
+    def release_store_credit_hold!
+      return unless store_credit_held?
+
+      source.with_lock { source.void(response_code, action_originator: self) }
     end
 
     # Statuses a payment can be resized from: nobody has claimed it for the
@@ -343,9 +389,14 @@ module Spree
                 update_all(amount: new_amount, updated_at: Time.current)
       return false if resized.zero?
 
+      held = store_credit? && store_credit_held?
       self.amount = new_amount
       clear_attribute_changes(%i[amount])
-      create_eligible_credit_event if store_credit?
+      if held
+        move_store_credit_hold!(new_amount)
+      elsif store_credit?
+        create_eligible_credit_event
+      end
       true
     end
 
@@ -667,6 +718,15 @@ module Spree
     end
 
     private
+
+    # Moves a held payment to a new amount. The credit voids an authorization
+    # by its code, so the new hold takes a code of its own.
+    def move_store_credit_hold!(new_amount)
+      release_store_credit_hold!
+      update_columns(amount: new_amount, response_code: source.generate_authorization_code)
+      create_eligible_credit_event
+      raise ActiveRecord::RecordInvalid, source unless hold_store_credit!
+    end
 
     # Session-created payments never pass through the gateway response path
     # that normally sets these codes, so the gateway gets asked at creation.
