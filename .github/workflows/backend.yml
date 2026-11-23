@@ -114,7 +114,7 @@ jobs:
           - {
               project: optional-gems,
               dirs: 'emails dashboard mcp opentelemetry',
-              flags: 'emails,dashboard',
+              flags: dashboard,
               shard: 1,
               total_shards: 1,
               procs: 2,
@@ -234,6 +234,26 @@ jobs:
               bash -c "cd '$suite_dir' && bundle exec rake parallel_shard" || status=1
           done
           exit "$status"
+
+      # Codecov reports one blended figure for every flag on an upload, so the
+      # emails reports leave the shared lane's directory and go up on their own.
+      - name: Set emails coverage apart
+        if: always() && matrix.project == 'optional-gems'
+        run: |
+          mkdir -p coverage-emails
+          if compgen -G 'coverage/emails_*' > /dev/null; then
+            mv coverage/emails_* coverage-emails/
+          fi
+
+      - name: Upload emails coverage to Codecov
+        if: always() && matrix.project == 'optional-gems' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+        uses: codecov/codecov-action@v7
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: ${{ github.workspace }}/coverage-emails
+          flags: emails
+          name: emails-shard-${{ matrix.shard }}
+          fail_ci_if_error: false
 
       - name: Upload coverage to Codecov
         if: always() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
