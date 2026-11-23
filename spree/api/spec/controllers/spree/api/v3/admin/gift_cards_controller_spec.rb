@@ -297,7 +297,8 @@ RSpec.describe Spree::Api::V3::Admin::GiftCardsController, type: :controller do
       expect(Spree::GiftCard.exists?(redeemed.id)).to be(true)
     end
 
-    # V-3836: a $30 card applied to a $20 draft order.
+    # V-3836: deleting a card that an open cart or draft order holds takes it
+    # off that record first, so no store credit or payment from it survives.
     context 'when a draft order holds the card' do
       let(:customer) { create(:user) }
       let!(:held_card) { create(:gift_card, store: store, amount: 30, currency: 'USD') }
@@ -306,25 +307,50 @@ RSpec.describe Spree::Api::V3::Admin::GiftCardsController, type: :controller do
       before do
         draft.update_columns(total: 20, currency: 'USD')
         expect(Spree.gift_card_apply_workflow.call(gift_card: held_card, order: draft)).to be_success
+        expect(draft.reload.payments.store_credits.checkout.sum(:amount)).to eq(20)
       end
 
-      it 'refuses the delete and leaves the draft as it was' do
+      it 'takes the card off the draft and deletes it' do
         expect { delete :destroy, params: { id: held_card.prefixed_id }, as: :json }.
-          not_to change(Spree::GiftCard, :count)
+          to change(Spree::GiftCard, :count).by(-1)
 
-        expect(response).to have_http_status(:unprocessable_content)
-        expect(draft.reload.gift_card).to eq(held_card)
-        expect(draft.payments.store_credits.checkout.sum(:amount)).to eq(20)
+        expect(response).to have_http_status(:no_content)
+        draft.reload
+        expect(draft.gift_card_id).to be_nil
+        expect(draft.payments.store_credits.checkout).to be_empty
+        expect(Spree::StoreCredit.where(originator_type: 'Spree::GiftCard', originator_id: held_card.id)).to be_empty
+      end
+    end
+
+    context 'when an abandoned guest cart holds the card' do
+      let!(:held_card) { create(:gift_card, store: store, amount: 60, currency: 'USD') }
+      let!(:cart) { create(:cart_with_line_items, store: store, line_items_price: 60) }
+
+      before do
+        cart.update_columns(total: 60, currency: 'USD')
+        expect(Spree.gift_card_apply_workflow.call(gift_card: held_card, order: cart)).to be_success
       end
 
-      it 'deletes the card once it is taken off the draft' do
-        expect(Spree.gift_card_remove_workflow.call(order: draft.reload)).to be_success
-
+      it 'releases the cart and deletes the card' do
         delete :destroy, params: { id: held_card.prefixed_id }, as: :json
 
         expect(response).to have_http_status(:no_content)
-        expect(draft.reload.payments.store_credits.checkout).to be_empty
-        expect(Spree::StoreCredit.where(originator: held_card)).to be_empty
+        expect(Spree::GiftCard.exists?(held_card.id)).to be(false)
+        expect(cart.reload.gift_card_id).to be_nil
+        expect(cart.payments.store_credits.checkout).to be_empty
+      end
+
+      context 'while the cart is being completed' do
+        before { cart.update_column(:completing_at, Time.current) }
+
+        it 'refuses the delete and leaves the cart holding the card' do
+          delete :destroy, params: { id: held_card.prefixed_id }, as: :json
+
+          expect(response).to have_http_status(:unprocessable_content)
+          expect(Spree::GiftCard.exists?(held_card.id)).to be(true)
+          expect(cart.reload.gift_card_id).to eq(held_card.id)
+          expect(cart.payments.store_credits.checkout.sum(:amount)).to eq(60)
+        end
       end
     end
   end
