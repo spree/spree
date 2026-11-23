@@ -32,8 +32,15 @@ export default defineConfig({
 
   // `github` gives inline PR annotations; `html` is what the failure-artifact
   // upload ships (with the plain `github` reporter alone, playwright-report/
-  // stays empty and the artifact is useless).
-  reporter: process.env.CI ? [['github'], ['html', { open: 'never' }]] : 'list',
+  // stays empty and the artifact is useless). `json` feeds the per-spec
+  // timings CI prints after each shard (e2e/spec-timings.mjs).
+  reporter: process.env.CI
+    ? [
+        ['github'],
+        ['html', { open: 'never' }],
+        ['json', { outputFile: 'test-results/report.json' }],
+      ]
+    : 'list',
   retries: process.env.CI ? 2 : 0,
   timeout: 30_000,
   expect: { timeout: 10_000 },

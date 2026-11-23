@@ -366,6 +366,11 @@ jobs:
           mapfile -t specs <<< "$list"
           pnpm test:e2e "${specs[@]}"
 
+      - name: Print spec timings
+        if: ${{ !cancelled() }}
+        working-directory: packages/dashboard
+        run: node e2e/spec-timings.mjs test-results/report.json
+
       # First-run setup needs a stack with no admin, which the main suite's
       # never has — it brings up its own Rails and database. One shard is
       # enough; it runs even when the main suite failed.
