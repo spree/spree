@@ -205,6 +205,18 @@ RSpec.describe Spree::ApiKey, type: :model do
         with(an_instance_of(described_class), second_admin, ip_address: '203.0.113.7')
     end
 
+    it 'still notifies the other admins when one enqueue fails, reporting the error' do
+      error = StandardError.new('queue down')
+      allow(Spree::ApiKeyMailer).to receive(:secret_key_created).and_call_original
+      allow(Spree::ApiKeyMailer).to receive(:secret_key_created).with(anything, admin, anything).and_raise(error)
+      allow(Rails.error).to receive(:report)
+
+      expect {
+        create(:api_key, :secret, store: store)
+      }.to have_enqueued_mail(Spree::ApiKeyMailer, :secret_key_created).with(anything, second_admin, anything)
+      expect(Rails.error).to have_received(:report).with(error, source: 'spree.api_keys')
+    end
+
     it 'sends nothing for a key minted while setting up the store' do
       expect {
         create(:api_key, :secret, store: store, skip_admin_notification: true)

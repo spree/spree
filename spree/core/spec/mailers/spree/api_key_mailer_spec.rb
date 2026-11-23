@@ -34,6 +34,13 @@ describe Spree::ApiKeyMailer, type: :mailer do
       expect(email_body(message)).to include("https://admin.example.com/#{store.prefixed_id}/settings/api-keys")
     end
 
+    it "shows the creation time in the store's time zone" do
+      la_store = create(:store, preferred_timezone: 'America/Los_Angeles')
+      key = create(:api_key, :secret, store: la_store, name: 'LA key', created_at: Time.utc(2026, 11, 23, 1, 30))
+
+      expect(email_body(described_class.secret_key_created(key, admin_user))).to include('2026-11-22 17:30 PST')
+    end
+
     it 'still reads well without a creator or an IP address' do
       api_key.update_columns(created_by_id: nil, created_by_type: nil)
 

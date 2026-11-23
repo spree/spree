@@ -191,6 +191,10 @@ module Spree
     def notify_store_admins
       store.admin_users.find_each do |admin_user|
         Spree::ApiKeyMailer.secret_key_created(self, admin_user, ip_address: request_ip).deliver_later
+      rescue StandardError => e
+        # The key already exists; one admin's failed enqueue must neither
+        # fail the request nor cost the other admins their notice.
+        Rails.error.report(e, source: 'spree.api_keys')
       end
     end
 
