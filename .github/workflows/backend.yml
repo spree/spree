@@ -11,8 +11,12 @@ permissions:
   contents: read
 
 jobs:
+  # Keeps the gem cache the other jobs restore, and nothing waits for it. On
+  # most runs the cache already exists and this ends after the lookup. It is
+  # the only job that saves: it alone installs every gem's bundle, so a test
+  # lane saving its own would leave the shared cache incomplete.
   build-postgres:
-    name: 'Build (PostgreSQL)'
+    name: 'Gem cache (PostgreSQL)'
     runs-on: ubuntu-latest
     env:
       DB: postgres
@@ -22,15 +26,27 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '4.0'
-
       - name: Read runner image
         id: runner-image
         run: echo "os=$ImageOS" >> "$GITHUB_OUTPUT"
 
+      - name: Look up gem cache
+        id: gems
+        uses: actions/cache/restore@v6
+        with:
+          path: vendor/bundle
+          key: gems-${{ runner.os }}-${{ steps.runner-image.outputs.os }}-ruby4.0-postgres-${{ hashFiles('spree/**/*.gemspec', 'spree/**/Gemfile') }}
+          lookup-only: true
+
+      - uses: ruby/setup-ruby@v1
+        if: steps.gems.outputs.cache-hit != 'true'
+        with:
+          ruby-version: '4.0'
+
+      # Starts from the newest earlier cache, so only changed gems install,
+      # and saves under the new key when the job ends.
       - name: Cache Ruby gems
+        if: steps.gems.outputs.cache-hit != 'true'
         uses: actions/cache@v6
         with:
           path: vendor/bundle
@@ -39,18 +55,21 @@ jobs:
             gems-${{ runner.os }}-${{ steps.runner-image.outputs.os }}-ruby4.0-postgres-
 
       - name: Install libvips
+        if: steps.gems.outputs.cache-hit != 'true'
         uses: awalsh128/cache-apt-pkgs-action@v1
         with:
           packages: libvips42t64
           version: 1
 
       - name: Install root dependencies
+        if: steps.gems.outputs.cache-hit != 'true'
         working-directory: spree
         run: |
           bundle config set --local path ${{ github.workspace }}/vendor/bundle
           bundle install
 
       - name: Install all project dependencies
+        if: steps.gems.outputs.cache-hit != 'true'
         run: |
           for project in core api emails providers/adyen providers/easypost providers/meilisearch providers/paypal providers/stripe dashboard mcp opentelemetry; do
             echo "--- Installing gems for $project ---"
@@ -62,7 +81,6 @@ jobs:
 
   test-postgres:
     name: 'Test ${{ matrix.project }} (PostgreSQL, ${{ matrix.shard }}/${{ matrix.total_shards }})'
-    needs: build-postgres
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -151,7 +169,7 @@ jobs:
         run: echo "os=$ImageOS" >> "$GITHUB_OUTPUT"
 
       - name: Restore gem cache
-        uses: actions/cache@v6
+        uses: actions/cache/restore@v6
         with:
           path: vendor/bundle
           key: gems-${{ runner.os }}-${{ steps.runner-image.outputs.os }}-ruby4.0-postgres-${{ hashFiles('spree/**/*.gemspec', 'spree/**/Gemfile') }}
@@ -245,7 +263,6 @@ jobs:
 
   brakeman:
     name: 'Security scan (Brakeman)'
-    needs: build-postgres
     runs-on: ubuntu-latest
     env:
       DB: postgres
@@ -263,7 +280,7 @@ jobs:
         run: echo "os=$ImageOS" >> "$GITHUB_OUTPUT"
 
       - name: Restore gem cache
-        uses: actions/cache@v6
+        uses: actions/cache/restore@v6
         with:
           path: vendor/bundle
           key: gems-${{ runner.os }}-${{ steps.runner-image.outputs.os }}-ruby4.0-postgres-${{ hashFiles('spree/**/*.gemspec', 'spree/**/Gemfile') }}
