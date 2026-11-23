@@ -51013,7 +51013,11 @@ paths:
       - api_key: []
         bearer_auth: []
       description: |-
-        Issues a fresh token and dispatches the invitation email again.
+        Issues a fresh token and dispatches the invitation email again. The
+        invitation's `expires_at` moves to 14 days after the resend. An
+        invitation that has expired or was already accepted is refused with
+        422, so invite the person again instead.
+
 
         **Required scope:** `write_staff` (for API-key authentication).
       x-codeSamples:
@@ -51066,6 +51070,17 @@ paths:
                 store:
                   id: store_UkLWZg9DAJ
                   name: Spree Test Store
+        '422':
+          description: the invitation has expired
+          content:
+            application/json:
+              example:
+                error:
+                  code: processing_error
+                  message: This invitation has expired. Invite them again to send
+                    a new one.
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/admin/permissions":
     get:
       summary: List the permission catalog

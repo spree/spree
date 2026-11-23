@@ -124,7 +124,12 @@ RSpec.describe 'Admin Invitations API', type: :request, swagger_doc: 'api-refere
       tags 'Staff'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Issues a fresh token and dispatches the invitation email again.'
+      description <<~DESC
+        Issues a fresh token and dispatches the invitation email again. The
+        invitation's `expires_at` moves to 14 days after the resend. An
+        invitation that has expired or was already accepted is refused with
+        422, so invite the person again instead.
+      DESC
       admin_scope :write, :staff
 
       admin_sdk_example 'invitations/resend'
@@ -135,6 +140,16 @@ RSpec.describe 'Admin Invitations API', type: :request, swagger_doc: 'api-refere
 
       response '200', 'invitation resent' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+
+        run_test!
+      end
+
+      response '422', 'the invitation has expired' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+
+        before { invitation.update_column(:expires_at, 1.day.ago) }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
 
         run_test!
       end

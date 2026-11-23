@@ -30,12 +30,28 @@ module Spree
           end
 
           # PATCH /api/v3/admin/invitations/:id/resend
-          # Issues a fresh token + email for an existing pending invitation.
-          # The model's `resend!` is responsible for resetting `expires_at`
-          # and dispatching the mailer.
+          # Issues a fresh token + email for an existing pending invitation, and
+          # starts its expiry window again. An invitation that has expired or was
+          # already accepted is refused with a reason, the way the seller
+          # invitation endpoints refuse one, rather than answering success
+          # without sending anything.
           def resend
             @resource = find_resource
             authorize!(:update, @resource)
+
+            refusal = if @resource.accepted?
+                        I18n.t('spree.invitation_already_accepted')
+                      elsif @resource.expired?
+                        I18n.t('spree.invitation_expired')
+                      end
+
+            if refusal
+              return render_error(
+                code: ErrorHandler::ERROR_CODES[:processing_error],
+                message: refusal,
+                status: :unprocessable_content
+              )
+            end
 
             @resource.resend!
             render json: serialize_resource(@resource)

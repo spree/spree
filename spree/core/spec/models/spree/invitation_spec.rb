@@ -129,6 +129,24 @@ RSpec.describe Spree::Invitation, type: :model do
 
       expect { invitation.resend! }.not_to change { invitation.reload.token }
     end
+
+    # The new email carries a link good for the full window, not whatever was
+    # left of the first one.
+    it 'starts the expiry window again from the resend' do
+      invitation.update_column(:expires_at, 1.hour.from_now)
+
+      freeze_time do
+        invitation.resend!
+
+        expect(invitation.reload.expires_at).to eq(2.weeks.from_now)
+      end
+    end
+
+    it 'leaves the expiry of an expired invitation alone' do
+      invitation.update_column(:expires_at, 1.hour.ago)
+
+      expect { invitation.resend! }.not_to change { invitation.reload.expires_at }
+    end
   end
 
   describe '#acceptance_url' do

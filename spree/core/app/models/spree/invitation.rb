@@ -4,6 +4,9 @@ module Spree
 
     has_prefix_id :inv
 
+    # How long an invitation link works, from the email that carries it.
+    VALID_FOR = 2.weeks
+
     has_secure_token
     acts_as_paranoid
 
@@ -112,11 +115,13 @@ module Spree
 
     # Resends the invitation email if the invitation is pending and not expired.
     # The token is rotated first, so a link that leaked with the earlier email
-    # stops working.
+    # stops working, and the invitee gets the full window again from the new
+    # email rather than whatever was left of the old one.
     def resend!
       return if expired? || deleted? || accepted?
 
-      regenerate_token
+      self.expires_at = VALID_FOR.from_now
+      regenerate_token # saves the new expiry along with the token
       publish_event('invitation.resent')
     end
 
@@ -146,7 +151,7 @@ module Spree
     end
 
     def set_defaults
-      self.expires_at ||= 2.weeks.from_now
+      self.expires_at ||= VALID_FOR.from_now
     end
 
     # A role names what it governs, so the invitation follows it — one carrying
