@@ -140,6 +140,48 @@ module Spree
         expect(credit.reload.amount_used).to eq(6)
       end
 
+      it 'gives the credit back when other payments already covered the draft' do
+        draft = draft_with_total(BigDecimal('10'))
+        check = create(:payment, order: draft, payment_method: create(:check_payment_method, store: store),
+                                 amount: 10, response_code: nil)
+        Spree::StoreCredits::Apply.call(order: draft, amount: 10)
+        store_credit_payment = draft.reload.payments.store_credits.first
+        draft.update_columns(total: BigDecimal('10'))
+
+        expect(described_class.call(order: draft.reload)).to be_success
+
+        expect(check.reload.status).to be_in(%w[pending completed])
+        expect(store_credit_payment.reload.status).to eq('invalid')
+        expect(credit.reload.amount_authorized).to eq(0)
+        expect(credit.amount_used).to eq(0)
+      end
+
+      it 'keeps the hold for a draft placed to be paid later, and captures it then' do
+        draft = draft_with_total(BigDecimal('10'))
+        Spree::StoreCredits::Apply.call(order: draft)
+
+        expect(described_class.call(order: draft.reload, payment_pending: true)).to be_success
+        payment = draft.reload.payments.store_credits.first
+        expect(payment).to be_checkout
+        expect(credit.reload.amount_authorized).to eq(10)
+
+        expect(Spree.payment_capture_workflow.call(payment: payment)).to be_success
+        expect(credit.reload.amount_used).to eq(10)
+        expect(credit.amount_authorized).to eq(0)
+      end
+
+      it 'keeps the draft and its hold when completion is refused' do
+        draft = draft_with_total(BigDecimal('10'))
+        Spree::StoreCredits::Apply.call(order: draft)
+        Spree.hooks.register('orders.complete.validate') { |workflow| workflow.reject!('refused') }
+
+        expect(described_class.call(order: draft.reload)).to be_failure
+
+        expect(draft.reload.status).to eq('draft')
+        expect(draft.payments.store_credits.first).to be_checkout
+        expect(credit.reload.amount_authorized).to eq(10)
+      end
+
       it 'completes each of two drafts paid from different credits' do
         first = draft_with_total(BigDecimal('10'))
         Spree::StoreCredits::Apply.call(order: first)
