@@ -144,10 +144,24 @@ module Spree
       active?
     end
 
-    # Checks if the gift card can be deleted
+    # Checks if the gift card can be deleted. Besides a redeemed card, this
+    # refuses one an open cart or draft order still holds: Apply draws the
+    # card down and pays with a store credit made from it while the card keeps
+    # the active status, so deleting it would leave that store credit and its
+    # payment funding the order with no card behind them.
     # @return [Boolean]
     def can_be_deleted?
-      !redeemed? && !partially_redeemed?
+      return false if redeemed? || partially_redeemed?
+      return false if amount_used.to_d.positive? || amount_authorized.to_d.positive?
+
+      !held?
+    end
+
+    # Whether an open cart or draft order has this card applied, including one
+    # in the middle of being completed.
+    # @return [Boolean]
+    def held?
+      carts.incomplete.exists? || orders.incomplete.where.not(status: 'canceled').exists?
     end
 
     # Displays the code in uppercase, eg. ABC1234

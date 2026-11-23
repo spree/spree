@@ -261,6 +261,11 @@ publishes its own event.
 Cancelling is refused once a card has been spent against, so cancellation can
 never take back value a customer has already used.
 
+Deleting a card is refused the same way, and also while the card is applied
+to an open cart or draft order: the store credit made from it would otherwise
+keep paying for that order with no card behind it. Take the card off the cart
+or draft order first.
+
 <Note>
 Gift cards can also be `expired` if `expires_at` date has passed and the card hasn't been fully redeemed.
 </Note>

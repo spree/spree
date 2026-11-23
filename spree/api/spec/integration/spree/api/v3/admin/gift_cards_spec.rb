@@ -175,7 +175,8 @@ RSpec.describe 'Admin Gift Cards API', type: :request, swagger_doc: 'api-referen
       security [api_key: [], bearer_auth: []]
       description <<~DESC
         Deletes an unused gift card. Cards that have been redeemed or
-        partially redeemed cannot be deleted and return 422.
+        partially redeemed, or that are applied to an open cart or draft
+        order, cannot be deleted and return 422.
       DESC
       admin_scope :write, :gift_cards
 

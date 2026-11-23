@@ -39,6 +39,13 @@ module Spree
             @resource.with_lock { super }
           end
 
+          # Locked for the same reason: a checkout applying the card between
+          # the held-card check and the delete would keep paying with a store
+          # credit from a card that no longer exists.
+          def destroy
+            @resource.with_lock { super }
+          end
+
           protected
 
           def model_class

@@ -296,5 +296,36 @@ RSpec.describe Spree::Api::V3::Admin::GiftCardsController, type: :controller do
       expect(response).to have_http_status(:unprocessable_content)
       expect(Spree::GiftCard.exists?(redeemed.id)).to be(true)
     end
+
+    # V-3836: a $30 card applied to a $20 draft order.
+    context 'when a draft order holds the card' do
+      let(:customer) { create(:user) }
+      let!(:held_card) { create(:gift_card, store: store, amount: 30, currency: 'USD') }
+      let!(:draft) { create(:order_with_totals, store: store, customer: customer, line_items_price: 20) }
+
+      before do
+        draft.update_columns(total: 20, currency: 'USD')
+        expect(Spree.gift_card_apply_workflow.call(gift_card: held_card, order: draft)).to be_success
+      end
+
+      it 'refuses the delete and leaves the draft as it was' do
+        expect { delete :destroy, params: { id: held_card.prefixed_id }, as: :json }.
+          not_to change(Spree::GiftCard, :count)
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(draft.reload.gift_card).to eq(held_card)
+        expect(draft.payments.store_credits.checkout.sum(:amount)).to eq(20)
+      end
+
+      it 'deletes the card once it is taken off the draft' do
+        expect(Spree.gift_card_remove_workflow.call(order: draft.reload)).to be_success
+
+        delete :destroy, params: { id: held_card.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:no_content)
+        expect(draft.reload.payments.store_credits.checkout).to be_empty
+        expect(Spree::StoreCredit.where(originator: held_card)).to be_empty
+      end
+    end
   end
 end
