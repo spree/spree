@@ -98,8 +98,9 @@ jobs:
           - { project: core, shard: 1, total_shards: 3, procs: 4 }
           - { project: core, shard: 2, total_shards: 3, procs: 4 }
           - { project: core, shard: 3, total_shards: 3, procs: 4 }
-          # api: 1 runner × 4 procs
-          - { project: api, shard: 1, total_shards: 1, procs: 4 }
+          # api: 2 runners × 4 procs = 8-way
+          - { project: api, shard: 1, total_shards: 2, procs: 4 }
+          - { project: api, shard: 2, total_shards: 2, procs: 4 }
           # providers: 1 runner × 2 procs — every provider gem shares a lane.
           # No Meilisearch service here, so spree_meilisearch's integration spec
           # skips itself; its unit specs still run against MySQL.
