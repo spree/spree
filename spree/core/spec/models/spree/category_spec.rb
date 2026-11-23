@@ -593,6 +593,63 @@ RSpec.describe Spree::Category, type: :model do
         end
       end
 
+      it 'keeps only the last permalink segment when moved to the top level' do
+        category2.move_to_root
+
+        expect(category2.reload.permalink).to eq('child')
+        expect(category2.pretty_name).to eq('Child')
+
+        Mobility.with_locale(:pl) do
+          expect(category2.reload.permalink).to eq('dziecko')
+          expect(category2.pretty_name).to eq('Dziecko')
+        end
+      end
+
+      it 'suffixes the permalink when the top level already uses it' do
+        create(:category, name: 'Child', permalink: 'child', store: store)
+
+        category2.move_to_root
+
+        expect(category2.reload.permalink).to eq('child-2')
+      end
+
+      it 'suffixes a translated permalink another category holds in a different case' do
+        other = create(:category, name: 'Other', store: store)
+        Mobility.with_locale(:pl) { other.update!(name: 'Inny') }
+        other.translations.find_by!(locale: 'pl').update_columns(permalink: 'DZIECKO')
+
+        category2.move_to_root
+
+        Mobility.with_locale(:pl) do
+          expect(category2.reload.permalink).to eq('dziecko-2')
+        end
+      end
+
+      it 'suffixes a descendant permalink another category already holds' do
+        grandchild = create(:category, name: 'Grandchild', parent: category2, permalink: 'grandchild')
+        create(:category, name: 'Legacy', store: store).update_columns(permalink: 'child/grandchild')
+
+        category2.move_to_root
+
+        expect(grandchild.reload.permalink).to eq('child/grandchild-2')
+      end
+
+      it 'keeps a permalink typed for a top-level category whole' do
+        expect(create(:category, name: 'Sale', permalink: 'summer/sale', store: store).permalink).to eq('summer-slash-sale')
+      end
+
+      it 'rebuilds translated permalinks of the moved subtree from the new path' do
+        grandchild = create(:category, name: 'Grandchild', parent: category2, permalink: 'grandchild')
+        Mobility.with_locale(:pl) { grandchild.update!(name: 'Wnuk') }
+
+        category2.move_to_root
+
+        expect(grandchild.reload.permalink).to eq('child/grandchild')
+        Mobility.with_locale(:pl) do
+          expect(grandchild.reload.permalink).to eq('dziecko/wnuk')
+        end
+      end
+
       it 'updates the pretty name and permalink when move is done inside different locales' do
         Mobility.with_locale(:pl) do
           category2.move_to_child_with_index(category, 0)

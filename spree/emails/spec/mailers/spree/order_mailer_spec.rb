@@ -299,13 +299,12 @@ describe Spree::OrderMailer, type: :mailer do
           order
 
           I18n.locale = :'pt-BR'
-          store.update(default_locale: 'pt-BR')
+          store.default_market.update!(default_locale: 'pt-BR', supported_locales: 'en,pt-BR')
           order.update_column(:locale, 'pt-BR')
         end
 
         after do
           I18n.locale = :en
-          store.update(default_locale: 'en')
         end
 
         it_behaves_like 'translates emails'
@@ -314,13 +313,12 @@ describe Spree::OrderMailer, type: :mailer do
       context 'via Store locale' do
         before do
           order
-          order.store.update!(default_locale: 'pt-BR')
+          order.store.default_market.update!(default_locale: 'pt-BR', supported_locales: 'en,pt-BR')
           order.update_column(:locale, 'pt-BR')
         end
 
         after do
           I18n.locale = :en
-          order.store.reload.update(default_locale: 'en')
         end
 
         it_behaves_like 'translates emails'

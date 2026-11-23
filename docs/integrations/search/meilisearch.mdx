@@ -202,7 +202,7 @@ The Meilisearch provider automatically configures these filterable attributes:
 
 - `product_id` — prefixed product ID (for bulk deletion of locale/currency variants)
 - `status` — product status (always filtered to `active` for Store API)
-- `in_stock` — boolean stock availability
+- `in_stock` — whether any variant is in stock or backorderable
 - `store_ids` — which stores the product belongs to
 - `locale` — document locale (filtered per request)
 - `currency` — document currency (filtered per request)
@@ -210,7 +210,11 @@ The Meilisearch provider automatically configures these filterable attributes:
 - `price` — price in the document's currency
 - `category_ids` — prefixed category IDs
 - `tags` — product tags
-- `option_value_ids` — prefixed option value IDs
+- `option_value_ids` — prefixed option value IDs of the variants that are not discontinued and are priced in the document's currency (every variant that is not discontinued when the store shows products without a price; reindex after changing that setting)
+- `in_stock_option_value_ids` — the same, limited to variants in stock or backorderable; used instead when the shopper filters for stock
+- `option_value_combination_ids` and `in_stock_option_value_combination_ids` — the option values each of those variants carries together, so a filter on two option types matches one variant that has both
+
+See [what an option count means](/developer/core-concepts/search-filtering#what-an-option-count-means).
 
 ## Sortable Attributes
 
