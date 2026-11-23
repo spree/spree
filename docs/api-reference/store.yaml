@@ -708,7 +708,7 @@ paths:
           content:
             application/json:
               example:
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--e14a0c6b710457247d4fc1adf284afb15281bfc2
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwiZXhwIjoiMjAyNi0wMS0xNlQxMjowMDowMC4wMDBaIiwicHVyIjoiYmxvYl9pZCJ9fQ==--cdc3c189cf300471608fa6cf8fb876400b32121c
                 filename: purchase-order.pdf
                 content_type: application/pdf
                 byte_size: 48210
@@ -716,7 +716,7 @@ paths:
                 expires_at: '2026-01-16T12:00:00.000Z'
                 upload:
                   method: PUT
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiIwc3NuNW5kM3RneWtwcWJndXdybGprZjNwbjc4IiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjQ4MjEwLCJjaGVja3N1bSI6IjVXMjhrY2ZxcDlLMGY1djRZN2VyUkE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--4287d62400e3cccf21777864f0c3fd6493c284e6
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiIwc3NuNW5kM3RneWtwcWJndXdybGprZjNwbjc4IiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjQ4MjEwLCJjaGVja3N1bSI6IjVXMjhrY2ZxcDlLMGY1djRZN2VyUkE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--f8439e98e58b83e016ba8bbbb3cfeb99b19a8c18
                   headers:
                     Content-Type: application/pdf
               schema:
@@ -2077,7 +2077,7 @@ paths:
                     name: Spree Commerce
                     default: false
                     gateway_payment_profile_id:
-                    payment_method_id: pm_UkLWZg9DAJ
+                    payment_method_id: pm_gbHJdmfrXB
                   payment_method:
                     id: pm_UkLWZg9DAJ
                     name: Check 9
@@ -2153,8 +2153,8 @@ paths:
                   deliveries: []
                   delivery_method:
                     id: dm_UkLWZg9DAJ
-                    name: UPS Ground 185
-                    code: UPS_GROUND_203
+                    name: UPS Ground 186
+                    code: UPS_GROUND_204
                     estimated_transit_business_days_min:
                     estimated_transit_business_days_max:
                     digital: false
@@ -2177,7 +2177,7 @@ paths:
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
                     delivery_method_id: dm_UkLWZg9DAJ
-                    name: UPS Ground 185
+                    name: UPS Ground 186
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -2196,8 +2196,8 @@ paths:
                     display_tax_total: "$0.00"
                     delivery_method:
                       id: dm_UkLWZg9DAJ
-                      name: UPS Ground 185
-                      code: UPS_GROUND_203
+                      name: UPS Ground 186
+                      code: UPS_GROUND_204
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -2858,8 +2858,8 @@ paths:
                   deliveries: []
                   delivery_method:
                     id: dm_UkLWZg9DAJ
-                    name: UPS Ground 206
-                    code: UPS_GROUND_225
+                    name: UPS Ground 207
+                    code: UPS_GROUND_226
                     estimated_transit_business_days_min:
                     estimated_transit_business_days_max:
                     digital: false
@@ -2882,7 +2882,7 @@ paths:
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
                     delivery_method_id: dm_UkLWZg9DAJ
-                    name: UPS Ground 206
+                    name: UPS Ground 207
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -2901,8 +2901,8 @@ paths:
                     display_tax_total: "$0.00"
                     delivery_method:
                       id: dm_UkLWZg9DAJ
-                      name: UPS Ground 206
-                      code: UPS_GROUND_225
+                      name: UPS Ground 207
+                      code: UPS_GROUND_226
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -5898,8 +5898,8 @@ paths:
                       delivered_at:
                     delivery_method:
                       id: dm_UkLWZg9DAJ
-                      name: UPS Ground 189
-                      code: UPS_GROUND_207
+                      name: UPS Ground 190
+                      code: UPS_GROUND_208
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -5922,7 +5922,7 @@ paths:
                     delivery_rates:
                     - id: dr_gbHJdmfrXB
                       delivery_method_id: dm_UkLWZg9DAJ
-                      name: UPS Ground 189
+                      name: UPS Ground 190
                       selected: true
                       cost: '10.00'
                       total: '10.00'
@@ -5941,8 +5941,8 @@ paths:
                       display_tax_total: "$0.00"
                       delivery_method:
                         id: dm_UkLWZg9DAJ
-                        name: UPS Ground 189
-                        code: UPS_GROUND_207
+                        name: UPS Ground 190
+                        code: UPS_GROUND_208
                         estimated_transit_business_days_min:
                         estimated_transit_business_days_max:
                         digital: false
@@ -7210,8 +7210,8 @@ paths:
                       delivered_at:
                     delivery_method:
                       id: dm_UkLWZg9DAJ
-                      name: UPS Ground 198
-                      code: UPS_GROUND_216
+                      name: UPS Ground 199
+                      code: UPS_GROUND_217
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -7234,7 +7234,7 @@ paths:
                     delivery_rates:
                     - id: dr_gbHJdmfrXB
                       delivery_method_id: dm_UkLWZg9DAJ
-                      name: UPS Ground 198
+                      name: UPS Ground 199
                       selected: true
                       cost: '10.00'
                       total: '10.00'
@@ -7253,8 +7253,8 @@ paths:
                       display_tax_total: "$0.00"
                       delivery_method:
                         id: dm_UkLWZg9DAJ
-                        name: UPS Ground 198
-                        code: UPS_GROUND_216
+                        name: UPS Ground 199
+                        code: UPS_GROUND_217
                         estimated_transit_business_days_min:
                         estimated_transit_business_days_max:
                         digital: false
@@ -7539,8 +7539,8 @@ paths:
                     delivered_at:
                   delivery_method:
                     id: dm_UkLWZg9DAJ
-                    name: UPS Ground 200
-                    code: UPS_GROUND_218
+                    name: UPS Ground 201
+                    code: UPS_GROUND_219
                     estimated_transit_business_days_min:
                     estimated_transit_business_days_max:
                     digital: false
@@ -7563,7 +7563,7 @@ paths:
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
                     delivery_method_id: dm_UkLWZg9DAJ
-                    name: UPS Ground 200
+                    name: UPS Ground 201
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -7582,8 +7582,8 @@ paths:
                     display_tax_total: "$0.00"
                     delivery_method:
                       id: dm_UkLWZg9DAJ
-                      name: UPS Ground 200
-                      code: UPS_GROUND_218
+                      name: UPS Ground 201
+                      code: UPS_GROUND_219
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -10800,8 +10800,8 @@ paths:
                     delivered_at:
                   delivery_method:
                     id: dm_UkLWZg9DAJ
-                    name: UPS Ground 220
-                    code: UPS_GROUND_239
+                    name: UPS Ground 221
+                    code: UPS_GROUND_240
                     estimated_transit_business_days_min:
                     estimated_transit_business_days_max:
                     digital: false
@@ -10824,7 +10824,7 @@ paths:
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
                     delivery_method_id: dm_UkLWZg9DAJ
-                    name: UPS Ground 220
+                    name: UPS Ground 221
                     selected: true
                     cost: '10.00'
                     total: '10.00'
@@ -10843,8 +10843,8 @@ paths:
                     display_tax_total: "$0.00"
                     delivery_method:
                       id: dm_UkLWZg9DAJ
-                      name: UPS Ground 220
-                      code: UPS_GROUND_239
+                      name: UPS Ground 221
+                      code: UPS_GROUND_240
                       estimated_transit_business_days_min:
                       estimated_transit_business_days_max:
                       digital: false
@@ -11181,7 +11181,7 @@ paths:
                   slug: privacy-policy
                   body: ''
                   body_html: ''
-                  updated_at: '2026-11-12T20:14:36.779Z'
+                  updated_at: '2026-11-23T09:11:54.125Z'
                 - id: pol_OIJLhNcSbf
                   name: Privacy Policy
                   slug: privacy-policy-f4e5666d-52c2-4d89-aec5-cc55d69c7174
@@ -11199,19 +11199,19 @@ paths:
                   slug: returns-policy
                   body: ''
                   body_html: ''
-                  updated_at: '2026-11-12T20:14:36.786Z'
+                  updated_at: '2026-11-23T09:11:54.128Z'
                 - id: pol_VqXmZF31wY
                   name: Shipping Policy
                   slug: shipping-policy
                   body: ''
                   body_html: ''
-                  updated_at: '2026-11-12T20:14:36.791Z'
+                  updated_at: '2026-11-23T09:11:54.131Z'
                 - id: pol_UkLWZg9DAJ
                   name: Terms of Service
                   slug: terms-of-service
                   body: ''
                   body_html: ''
-                  updated_at: '2026-11-12T20:14:36.772Z'
+                  updated_at: '2026-11-23T09:11:54.120Z'
                 meta:
                   page: 1
                   limit: 25
@@ -20675,13 +20675,14 @@ components:
             - checkout
             - processing
             - pending
+            - requested
             - completed
             - failed
             - void
             - invalid
           - type: string
-          description: The values listed are the built-in ones; extensions may add
-            more.
+          description: "`requested` means the payment provider accepted a capture
+            or void and has not answered yet. Extensions may add statuses."
         amount:
           type: string
           nullable: true
