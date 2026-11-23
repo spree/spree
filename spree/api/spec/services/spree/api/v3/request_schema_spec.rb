@@ -149,9 +149,7 @@ RSpec.describe Spree::Api::V3::RequestSchema do
     end
 
     it 'refuses blank: on a field that is not a decimal' do
-      declare = -> { described_class.shape('TestBlankParams') { |s| s.attribute :name, :string, blank: true } }
-
-      expect(declare).to raise_error(ArgumentError, /blank:/)
+      expect { described_class.shape('TestBlankParams') { |s| s.attribute :name, :string, blank: true } }.to raise_error(ArgumentError, /blank:/)
     end
   end
 
