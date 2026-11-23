@@ -59,7 +59,7 @@ RSpec.describe Spree::Api::V3::Admin::GiftCardBatchesController, type: :controll
       Spree::Events.subscribe('gift_card.created', async: false) { |event| published << event.payload['id'] }
       Spree::Events.activate!
 
-      post :create, params: base_params.merge(codes_count: 3), as: :json
+      perform_enqueued_jobs { post :create, params: base_params.merge(codes_count: 3), as: :json }
 
       expect(response).to have_http_status(:created)
       expect(published).to match_array(Spree::GiftCardBatch.last.gift_cards.map(&:prefixed_id))
@@ -74,7 +74,7 @@ RSpec.describe Spree::Api::V3::Admin::GiftCardBatchesController, type: :controll
       Spree::Events.subscribe('gift_card.created', async: false) { |event| payloads[event.payload['id']] = event.payload }
       Spree::Events.activate!
 
-      post :create, params: base_params.merge(codes_count: 1), as: :json
+      perform_enqueued_jobs { post :create, params: base_params.merge(codes_count: 1), as: :json }
       batch_card = Spree::GiftCardBatch.last.gift_cards.first
       single_card = create(:gift_card, store: store, amount: 25)
 

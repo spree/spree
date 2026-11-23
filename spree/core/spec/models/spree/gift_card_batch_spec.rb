@@ -17,6 +17,9 @@ RSpec.describe Spree::GiftCardBatch, type: :model do
     describe 'gift_card.created' do
       let(:published) { [] }
 
+      # The events are published by a job enqueued once the cards commit.
+      around { |example| perform_enqueued_jobs { example.run } }
+
       before do
         Spree::Events.subscribe('gift_card.created', async: false) { |event| published << event.payload['id'] }
         Spree::Events.activate!

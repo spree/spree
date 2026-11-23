@@ -13,6 +13,8 @@ describe Spree::GiftCards::BulkGenerateJob, type: :job do
     context 'with events', events: true do
       let(:published) { [] }
 
+      around { |example| perform_enqueued_jobs { example.run } }
+
       before do
         gift_card_batch.update_column(:codes_count, 4)
         Spree::Events.subscribe('gift_card.created', async: false) { |event| published << event.payload['id'] }
