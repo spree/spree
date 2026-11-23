@@ -3291,7 +3291,10 @@
           "load_error": "Could not load the payments for this order.",
           "view_at_gateway": "View at {{gateway}}",
           "view_details": "View details",
-          "failed_card_checks": "Failed card checks"
+          "failed_card_checks": "Failed card checks",
+          "card_checks_unavailable": "Card checks not available",
+          "capture_requested": "Capture requested",
+          "void_requested": "Void requested"
         },
         "priced_by": "Priced by {{name}}",
         "purchase_order": {
@@ -3327,6 +3330,7 @@
         "variant_search": {
           "description": "Search for a product variant to add to this order.",
           "empty": "No variants found",
+          "no_permission": "Your role cannot view products, so it cannot search the catalog. Ask an admin to add View products to your role.",
           "label": "Search variant",
           "placeholder": "Type product name or SKU (min 3 chars)…",
           "sku_prefix": "SKU"
@@ -3352,11 +3356,20 @@
           "check": {
             "passed": "Passed",
             "failed": "Did not pass",
+            "unavailable": "Not available",
             "not_checked": "Not checked"
           },
+          "date": "Date",
           "captures": "Captures",
           "captures_empty": "Nothing has been captured yet.",
-          "captured_at": "Captured"
+          "refunds": "Refunds",
+          "refunds_empty": "Nothing has been refunded yet.",
+          "settlement_statuses": {
+            "requested": "Requested",
+            "completed": "Completed",
+            "failed": "Failed"
+          },
+          "failure_reason": "Reason: {{reason}}"
         },
         "customer_edit": {
           "title": "Edit customer",
@@ -4414,6 +4427,7 @@
             "stock_receipt": "Stock receipt",
             "stock_reservation": "Stock reservation",
             "stock_transfer": "Stock transfer",
+            "store": "Store",
             "store_credit": "Store credit",
             "supplier": "Supplier",
             "tax_exemption_certificate": "Tax exemption certificate",
@@ -4796,6 +4810,9 @@
       "amount": "Amount",
       "api_key": "API key",
       "api_key_description": "Found in your EasyPost dashboard. A test key and a live key behave differently — the key itself decides the mode.",
+      "merchant_account": "Merchant account",
+      "test_mode": "Test mode",
+      "live_url_prefix": "Live URL prefix",
       "base_amount": "Base Amount",
       "base_percent": "Base Percent",
       "company_orders_only": "Only for company orders",
@@ -5009,6 +5026,7 @@
         "reason_placeholder": "What should the seller change?",
         "reject": "Send back",
         "rejected": "Sent back to the seller",
+        "save_first": "Save your changes first. Approving or sending back does not save them.",
         "send_back": "Send back"
       },
       "save_label": "Save product",

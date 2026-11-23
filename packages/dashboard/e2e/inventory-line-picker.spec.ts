@@ -22,9 +22,10 @@ const PICKED = 3
 test.describe('inventory line picker', () => {
   let productIds: string[] = []
   let prefix = ''
+  let creds: Awaited<ReturnType<typeof login>>
 
   test.beforeEach(async ({ page }) => {
-    const creds = await login(page)
+    creds = await login(page)
     // Unique per test: the suite runs serially against one database, and a
     // shared name would let an earlier run's rows widen the match count this
     // spec asserts on.
@@ -147,6 +148,32 @@ test.describe('inventory line picker', () => {
     await expect(page.getByText(productName(prefix, 1))).toBeVisible()
     await expect(page.getByText(productName(prefix, 2))).toBeVisible()
     await expect(quantityInputs(page)).toHaveCount(2)
+  })
+
+  test('asks for three characters, and searches "true" as a word', async ({ page }) => {
+    // "1" and "true" both used to reach the server as a yes/no flag and fail
+    // the request. The first is now too short to send; the second matches.
+    const truthyPrefix = `E2E True Value ${Date.now()}`
+    productIds.push(
+      ...(await seedCatalogPickerProducts(
+        page,
+        creds.store_id,
+        truthyPrefix,
+        creds.accessToken,
+        1,
+      )),
+    )
+
+    await openPicker(page)
+    const sheet = page.getByRole('dialog')
+    await sheet.getByRole('searchbox').fill('1')
+    await expect(sheet.getByText(/type at least 3 characters to search/i)).toBeVisible()
+    await expect(anyResult(page)).toHaveCount(0)
+
+    await sheet.getByRole('searchbox').fill('true')
+    await expect(sheet.getByRole('button', { name: productName(truthyPrefix, 1) })).toBeVisible({
+      timeout: 15_000,
+    })
   })
 })
 

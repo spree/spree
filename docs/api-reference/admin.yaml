@@ -28147,6 +28147,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 payment_total: '0.00'
+                amount_left_to_pay: '0.00'
                 commission_amount_total: '0.00'
                 commission_tax_total: '0.00'
                 commission_total: '0.00'
@@ -29020,6 +29021,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 payment_total: '0.00'
+                amount_left_to_pay: '0.00'
                 commission_amount_total: '0.00'
                 commission_tax_total: '0.00'
                 commission_total: '0.00'
@@ -29373,6 +29375,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   payment_total: '0.00'
+                  amount_left_to_pay: '0.00'
                   commission_amount_total: '0.00'
                   commission_tax_total: '0.00'
                   commission_total: '0.00'
@@ -29599,6 +29602,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 payment_total: '0.00'
+                amount_left_to_pay: '0.00'
                 commission_amount_total: '0.00'
                 commission_tax_total: '0.00'
                 commission_total: '0.00'
@@ -29756,6 +29760,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 payment_total: '0.00'
+                amount_left_to_pay: '0.00'
                 commission_amount_total: '0.00'
                 commission_tax_total: '0.00'
                 commission_total: '0.00'
@@ -29903,6 +29908,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 payment_total: '0.00'
+                amount_left_to_pay: '0.00'
                 commission_amount_total: '0.00'
                 commission_tax_total: '0.00'
                 commission_total: '0.00'
@@ -30102,6 +30108,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 payment_total: '110.00'
+                amount_left_to_pay: '0.00'
                 commission_amount_total: '0.00'
                 commission_tax_total: '0.00'
                 commission_total: '0.00'
@@ -30281,6 +30288,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 payment_total: '0.00'
+                amount_left_to_pay: '0.00'
                 commission_amount_total: '0.00'
                 commission_tax_total: '0.00'
                 commission_total: '0.00'
@@ -30421,6 +30429,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 payment_total: '0.00'
+                amount_left_to_pay: '0.00'
                 commission_amount_total: '0.00'
                 commission_tax_total: '0.00'
                 commission_total: '0.00'
@@ -30555,6 +30564,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 payment_total: '0.00'
+                amount_left_to_pay: '0.00'
                 commission_amount_total: '0.00'
                 commission_tax_total: '0.00'
                 commission_total: '0.00'
@@ -30694,6 +30704,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 payment_total: '0.00'
+                amount_left_to_pay: '0.00'
                 commission_amount_total: '0.00'
                 commission_tax_total: '0.00'
                 commission_total: '0.00'
@@ -33109,7 +33120,7 @@ paths:
       - api_key: []
         bearer_auth: []
       description: |-
-        Creates a new payment for the order.
+        Records a payment on the order, for the amount given or, by default, what the order still owes after the payments already recorded on it (failed, invalid and void payments don't count). The order's other payments are left as they are. The payment starts uncaptured (`checkout`) and counts towards the paid total once it is captured.
 
         **Required scope:** `write_payments` (for API-key authentication).
       x-codeSamples:
@@ -33298,7 +33309,7 @@ paths:
       - api_key: []
         bearer_auth: []
       description: |-
-        Captures a pending payment, in full or for part of the authorized amount.
+        Captures an authorized (`pending`) payment, in full or for part of its amount. An uncaptured (`checkout`) payment can be captured only when its payment method needs no authorization first. A capture may take at most what the order still owes after its other captured payments. A larger `amount` is refused. With no `amount`, the capture takes the authorized amount, or what is owed when that is less, and releases the rest of the authorization. Any capture is refused once nothing is owed. A captured payment counts towards the order's paid total.
 
         **Required scope:** `write_payments` (for API-key authentication).
       x-codeSamples:
@@ -59992,132 +60003,6 @@ components:
       - actions
       - subjects
       - has_conditions
-    ImportSchemaField:
-      type: object
-      description: A canonical column of an import type, including per-store custom
-        field columns
-      properties:
-        name:
-          type: string
-          description: Canonical field name used in mappings
-          example: slug
-        label:
-          type: string
-          description: Human-readable label
-          example: Slug
-        required:
-          type: boolean
-          description: Whether the field must be mapped before processing
-      required:
-      - name
-      - label
-      - required
-    CheckoutRequirement:
-      type: object
-      properties:
-        step:
-          type: string
-          description: Checkout step this requirement belongs to
-          example: payment
-        field:
-          type: string
-          description: Field that needs to be satisfied
-          example: payment
-        message:
-          type: string
-          description: Human-readable requirement message
-          example: Add a payment method
-      required:
-      - step
-      - field
-      - message
-    CartWarning:
-      type: object
-      description: A warning about a cart issue (e.g., item removed due to stock change)
-      properties:
-        code:
-          type: string
-          description: Machine-readable warning code
-          example: line_item_removed
-        message:
-          type: string
-          description: Human-readable warning message
-          example: Blue T-Shirt was removed because it was sold out
-        line_item_id:
-          type: string
-          nullable: true
-          description: Prefixed line item ID (when applicable)
-          example: li_abc123
-        variant_id:
-          type: string
-          nullable: true
-          description: Prefixed variant ID (when applicable)
-          example: variant_abc123
-        item_index:
-          type: integer
-          nullable: true
-          description: Position in the submitted items array, for warnings raised
-            while applying a batch of item changes
-          example: 1
-      required:
-      - code
-      - message
-    FulfillmentManifestItem:
-      type: object
-      description: An item within a fulfillment — which line item and how many units
-        are in this fulfillment
-      properties:
-        item_id:
-          type: string
-          description: Line item ID
-          example: li_abc123
-        variant_id:
-          type: string
-          description: Variant ID
-          example: variant_abc123
-        quantity:
-          type: integer
-          description: Quantity in this fulfillment
-          example: 2
-      required:
-      - item_id
-      - variant_id
-      - quantity
-    AdminUserRoleAssignment:
-      type: object
-      description: A role assignment for the current store on a staff member
-      properties:
-        id:
-          type: string
-          description: Prefixed role ID
-          example: role_abc123
-        name:
-          type: string
-          description: Role name
-          example: admin
-      required:
-      - id
-      - name
-    AdminUserStore:
-      type: object
-      description: A store the staff member can access through a role assignment
-      properties:
-        id:
-          type: string
-          description: Prefixed store ID
-          example: store_abc123
-        name:
-          type: string
-          description: Store name
-          example: My Store
-        code:
-          type: string
-          description: Store code
-          example: my-store
-      required:
-      - id
-      - name
-      - code
     PreferenceSchema:
       type: object
       description: 'The JSON Schema (draft 2020-12) of a type''s `preferences`: one
@@ -60133,20 +60018,6 @@ components:
             format: money
             default: '0.0'
         additionalProperties: false
-    PromotionActionLineItem:
-      type: object
-      description: One row in a `create_line_items` action — the variant added to
-        the order and how many
-      properties:
-        variant_id:
-          type: string
-          example: variant_abc123
-        quantity:
-          type: integer
-          example: 1
-      required:
-      - variant_id
-      - quantity
     MeResponse:
       type: object
       description: Current admin user profile and serialized permissions
@@ -60596,11 +60467,37 @@ components:
         roles:
           type: array
           items:
-            "$ref": "#/components/schemas/AdminUserRoleAssignment"
+            type: object
+            properties:
+              id:
+                type: string
+                description: Role ID
+              name:
+                type: string
+                description: Role name, e.g. admin
+            required:
+            - id
+            - name
+          description: Role assignments on the current store
         stores:
           type: array
           items:
-            "$ref": "#/components/schemas/AdminUserStore"
+            type: object
+            properties:
+              id:
+                type: string
+                description: Store ID
+              name:
+                type: string
+                description: Store name
+              code:
+                type: string
+                description: Store code
+            required:
+            - id
+            - name
+            - code
+          description: Stores the staff member can access through a role assignment
       required:
       - id
       - email
@@ -61162,7 +61059,29 @@ components:
         warnings:
           type: array
           items:
-            "$ref": "#/components/schemas/CartWarning"
+            type: object
+            properties:
+              code:
+                type: string
+                description: Machine-readable warning code, e.g. line_item_removed
+              message:
+                type: string
+                description: Human-readable warning message
+              line_item_id:
+                type: string
+                description: Line item the warning is about, when there is one
+              variant_id:
+                type: string
+                description: Variant the warning is about, when there is one
+              item_index:
+                type: number
+                description: Position in the submitted items, for a warning raised
+                  while applying a batch of item changes
+            required:
+            - code
+            - message
+          description: Problems found with the cart, such as an item removed after
+            a stock change
         coupon_code:
           type: string
           nullable: true
@@ -61229,7 +61148,26 @@ components:
         requirements:
           type: array
           items:
-            "$ref": "#/components/schemas/CheckoutRequirement"
+            type: object
+            properties:
+              step:
+                type: string
+                description: Checkout step this requirement belongs to, e.g. payment
+              field:
+                type: string
+                description: Field that needs to be satisfied
+              code:
+                type: string
+                description: Machine-readable requirement code, e.g. order_minimum_not_met
+              message:
+                type: string
+                description: Human-readable requirement message
+            required:
+            - step
+            - field
+            - code
+            - message
+          description: What is still missing before the cart can be completed
         order_minimum:
           type: string
           nullable: true
@@ -63085,6 +63023,17 @@ components:
           type: array
           items:
             type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+              kind:
+                type: string
+            required:
+            - id
+            - name
+            - kind
         custom_fields:
           type: array
           items:
@@ -65459,7 +65408,22 @@ components:
         items:
           type: array
           items:
-            "$ref": "#/components/schemas/FulfillmentManifestItem"
+            type: object
+            properties:
+              item_id:
+                type: string
+                description: Line item ID
+              variant_id:
+                type: string
+                description: Variant ID
+              quantity:
+                type: number
+                description: Quantity in this fulfillment
+            required:
+            - item_id
+            - variant_id
+            - quantity
+          description: Which line items, and how many units of each, are in this fulfillment
         deliveries:
           type: array
           items:
@@ -66163,7 +66127,23 @@ components:
         schema_fields:
           type: array
           items:
-            "$ref": "#/components/schemas/ImportSchemaField"
+            type: object
+            properties:
+              name:
+                type: string
+                description: Canonical field name used in mappings, e.g. slug
+              label:
+                type: string
+                description: Human-readable label
+              required:
+                type: boolean
+                description: Whether the field must be mapped before processing
+            required:
+            - name
+            - label
+            - required
+          description: Canonical columns of this import type, including per-store
+            custom field columns
         csv_headers:
           type: array
           items:
@@ -69176,6 +69156,11 @@ components:
           type: string
         payment_total:
           type: string
+        amount_left_to_pay:
+          type: string
+          description: What a new payment should be for, the amount due less the
+            payments recorded and not yet captured. Failed, invalid and void payments
+            don't count. Never negative.
         commission_amount_total:
           type: string
         commission_tax_total:
@@ -69349,6 +69334,7 @@ components:
       - created_at
       - updated_at
       - payment_total
+      - amount_left_to_pay
       - commission_amount_total
       - commission_tax_total
       - commission_total
@@ -70946,7 +70932,17 @@ components:
         line_items:
           type: array
           items:
-            "$ref": "#/components/schemas/PromotionActionLineItem"
+            type: object
+            properties:
+              variant_id:
+                type: string
+              quantity:
+                type: number
+            required:
+            - variant_id
+            - quantity
+          description: 'Rows of a `create_line_items` action: the variant added to
+            the order and how many'
           nullable: true
       required:
       - id
@@ -84471,7 +84467,8 @@ components:
           format: decimal
           pattern: "^-?\\d+(\\.\\d+)?$"
           description: Captures part of the authorized amount. Defaults to all of
-            it.
+            it, or to what the order still owes when that is less. A capture another
+            payment is waiting on its provider to confirm counts as paid.
     PaymentCreateParams:
       type: object
       properties:
@@ -84481,7 +84478,8 @@ components:
           type: string
           format: decimal
           pattern: "^-?\\d+(\\.\\d+)?$"
-          description: Defaults to the order total left after store credit.
+          description: Defaults to what the order still owes after the payments already
+            recorded on it (failed, invalid and void payments are not counted).
         source_id:
           type: string
           description: A saved payment source of the order's customer (a credit card),

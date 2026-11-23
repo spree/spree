@@ -160,7 +160,9 @@ module Spree
         # One query for the whole run rather than one per share — this runs
         # ahead of a gateway round trip per payment, and there is no reason to
         # add N more of its own.
-        refunded = Spree::Refund.where(order_id: order.id).group(:payment_id).sum(:amount)
+        # Every refund that has not failed, so one still requested keeps its
+        # amount reserved.
+        refunded = Spree::Refund.not_failed.where(order_id: order.id).group(:payment_id).sum(:amount)
 
         order.payment_splits.includes(:payment).order(:created_at).each_with_object({}) do |split, found|
           next unless split.payment&.completed?

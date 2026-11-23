@@ -1,0 +1,74 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://checkout-test.adyen.com/v72/payments/XHL52DJVLGKLJJV5/cancels
+    body:
+      encoding: UTF-8
+      string: '{"merchantAccount":"<ADYEN_MERCHANT_ACCOUNT>","reference":"R1001-spree-py_UkLWZg9DAJ-cancel-0"}'
+    headers:
+      Content-Type:
+      - application/json
+      User-Agent:
+      - adyen-ruby-api-library/12.0.0
+      X-Api-Key:
+      - "<FILTERED>"
+      Idempotency-Key:
+      - spree-py_UkLWZg9DAJ-cancel-0
+      Adyen-Library-Name:
+      - adyen-ruby-api-library
+      Adyen-Library-Version:
+      - 12.0.0
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Date:
+      - Wed, 18 Nov 2026 17:41:15 GMT
+      Content-Type:
+      - application/json;charset=UTF-8
+      Content-Length:
+      - '183'
+      Connection:
+      - keep-alive
+      Traceparent:
+      - 00-613b74db78b5ade57630be5cbfaa46b2-3d73854217f1d57c-01
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      Cache-Control:
+      - no-cache, no-store, private, must-revalidate, max-age=0
+      Pragma:
+      - no-cache
+      Expires:
+      - '0'
+      Idempotency-Key:
+      - spree-py_UkLWZg9DAJ-cancel-0
+      Pspreference:
+      - J5T337TNDHJ6TNV5
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      Cf-Cache-Status:
+      - DYNAMIC
+      Set-Cookie:
+      - JSESSIONID=77A749420C474D0253C85576D760CB35; Path=/checkout; Secure; HttpOnly
+      - __cf_bm=pn.VNIPq8BSWV.SYTPJP6Vt9UkImcepvGX8ZlIpWW9g-1795023674.9842882-1.0.1.1-OixgB.zmA3Ut3nz_ne62nuHIvol4asWCz7xa9E2KbbxGX_W.GNOfEgK3OJChSbdRNFU0z5d_rRUITSJLO3OZxK604XIcGnuFYwtpMb8NNbszR9VzqWTffaVXK3kAFsOg;
+        HttpOnly; SameSite=None; Partitioned; Secure; Path=/; Domain=adyen.com; Expires=Wed,
+        18 Nov 2026 18:11:15 GMT
+      - _cfuvid=CyLUKYLQGYPK3xAzrmwpXfCYS8RUkGN8PgBcd6wUPJ0-1795023674.9842882-1.0.1.1-fWpaR5sZhpxGZDJ8vbGd400y3EInqU_OJ5P2RbnUA90;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=adyen.com
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - a5c8c3d09d2f70dc-WAW
+    body:
+      encoding: UTF-8
+      string: '{"merchantAccount":"<ADYEN_MERCHANT_ACCOUNT>","paymentPspReference":"XHL52DJVLGKLJJV5","pspReference":"VFPFSKF8WTG3ZMV5","reference":"R1001-spree-py_UkLWZg9DAJ-cancel-0","status":"received"}'
+  recorded_at: Wed, 18 Nov 2026 17:41:15 GMT
+recorded_with: VCR 6.4.1

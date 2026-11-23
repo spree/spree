@@ -632,6 +632,12 @@ steps:
       do not carry it, so a filter naming two or more option types matches
       nothing until the index is rebuilt.
 
+      Option values are now indexed only from variants that are not
+      discontinued and have a price (unless the store shows products without
+      one), with a second set for the "in stock" filter, and `in_stock` counts
+      backorderable stock as the database provider does. Until the rebuild,
+      an option filter combined with "in stock" matches nothing.
+
       Safe to run at any time and safe to repeat; it re-enqueues every product.
 
   - id: fold_store_credit_categories
@@ -694,6 +700,57 @@ steps:
       guide, and stores its id. Until it runs, methods created before the
       upgrade reject every webhook delivery.
 
+      Idempotent.
+
+  - id: backfill_settlement_statuses
+    name: "Mark existing capture events and refunds as completed"
+    task_class: "Spree::MaintenanceTasks::Upgrade::BackfillSettlementStatuses"
+    notes: |
+      Capture events and refunds gained a status in a 6.0 patch release: a
+      payment provider may now accept a capture or refund and report its
+      outcome later by webhook, and the row waits as requested until it does.
+      The migration adds the column empty. This marks every existing row
+      completed, since that money already moved. Until it runs, an empty status
+      reads as completed, so no total changes.
+
+      Stores already on 6.0 run it after updating to that patch release, with
+      `spree upgrade --step backfill_settlement_statuses`.
+
+      Idempotent, and supports a dry run.
+
+  - id: migrate_adyen_payments
+    name: "Give Adyen payments taken before 6.0 their PSP reference"
+    task_class: "SpreeAdyen::MaintenanceTasks::MigratePayments"
+    optional: true
+    notes: |
+      Only runs when spree_adyen is installed; skipped otherwise.
+
+      In 6.0 an Adyen payment keeps its PSP reference in its metadata, where
+      captures, cancels, refunds and the dashboard link read it. This copies it
+      there for payments from the 5.x legacy checkout, moves the capture and
+      cancellation references 5.x kept in custom fields, and marks payments
+      left in 5.x's capture_pending or void_pending as captured or void.
+      Payment-session payments 5.x never gave a PSP reference cannot be
+      recovered: they are counted and logged by id, to handle in Adyen, as are
+      the payments it marks done.
+
+      Stores already on 6.0 run it with `spree upgrade --step migrate_adyen_payments`.
+      Supports a dry run, and is idempotent.
+
+  - id: configure_adyen_gateways
+    name: "Configure each Adyen payment method's webhook and keys"
+    task: "spree:upgrade:configure_adyen_gateways"
+    optional: true
+    notes: |
+      Only runs when spree_adyen is installed; skipped otherwise.
+
+      Moves each Adyen method's previous HMAC key out of its metadata, which
+      the Admin API returns, into a secret preference, then configures the
+      method: client key, allowed origins, and a webhook on the 6.0 URL. A
+      webhook 5.x left on /adyen/webhooks is moved in place, keeping its key
+      and the deliveries Adyen queued for it.
+
+      Stores already on 6.0 run it with `spree upgrade --step configure_adyen_gateways`.
       Idempotent.
 
   - id: backfill_import_export_tenancy

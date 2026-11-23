@@ -1,0 +1,26 @@
+---
+en:
+  spree:
+    adyen:
+      errors:
+        invalid_api_key: Adyen rejected this API key. Check it in your Customer Area under Developers, API credentials.
+        merchant_account_unreachable: This API key cannot reach the merchant account %{merchant_account}. Check the account name, or use a credential that has access to it.
+        no_answer: 'Adyen did not answer: %{message}'
+        payment_not_found: No Adyen payment matches this session.
+        psp_reference_missing: Adyen cannot be asked to capture, cancel or refund this payment without its PSP reference, which Spree never recorded. Handle it in your Adyen Customer Area.
+        refused: 'Adyen refused the request: %{message}'
+        role_missing: This API key lacks a role the integration needs. Give it API credentials read and write, and Webhooks read and write, in your Customer Area.
+        session_required: Adyen payments are taken through a payment session.
+      payment_session_errors:
+        already_paid: This cart has already been paid through Adyen.
+        amount_locked: This Adyen session can no longer change its amount. Create a new payment session.
+        amount_mismatch: Adyen reports a payment of %{paid} for a session of %{expected}, so it was not recorded.
+        amount_stale: The amount due has changed since this Adyen session was set up. Update its amount or create a new payment session.
+        not_open: This Adyen payment session can no longer be paid.
+        payments_count: Adyen reports %{count} payments for this session, so none was recorded. Check the session in your Adyen Customer Area.
+        reference_mismatch: This Adyen payment belongs to another session.
+        refused: 'Adyen did not accept the payment: %{reason}'
+        result_missing: Adyen's session result or redirect result is required to complete the session.
+        return_url_not_allowed: The return URL must be on one of the store's allowed origins.
+        token_missing: Adyen did not return a stored card for this session, so no card was saved.
+        zero_amount: Payment session amount must be greater than zero

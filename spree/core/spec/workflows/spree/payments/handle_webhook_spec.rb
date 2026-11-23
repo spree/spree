@@ -43,11 +43,36 @@ RSpec.describe Spree::Payments::HandleWebhook do
       end
     end
 
+    context 'when the payment is waiting on its provider' do
+      before do
+        subject.call(payment_method: payment_method, action: :authorized, payment_session: payment_session)
+        order.payments.last.update_column(:status, 'requested')
+      end
+
+      it 'leaves it alone on a redelivered authorization' do
+        result = subject.call(payment_method: payment_method, action: :captured, payment_session: payment_session.reload)
+
+        expect(result).to be_success
+        expect(order.payments.reload.last).to be_requested
+        expect(order.payments.last.capture_events).to be_empty
+      end
+    end
+
     context 'with :captured action' do
       it 'fetches provider data before taking the order lock' do
         expect(payment_session).to receive(:prepare_for_settlement!).and_call_original
 
         subject.call(payment_method: payment_method, action: :captured, payment_session: payment_session)
+      end
+
+      it 'passes the metadata to the settlement' do
+        expect(payment_session).to receive(:settle_payment!).
+          with(captured: true, metadata: { 'psp_reference' => 'PSP123' }).and_call_original
+
+        subject.call(
+          payment_method: payment_method, action: :captured, payment_session: payment_session,
+          metadata: { 'psp_reference' => 'PSP123' }
+        )
       end
 
       it 'creates a payment record' do

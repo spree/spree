@@ -1,10 +1,12 @@
 import type { StockLevel } from '@spree/admin-sdk'
+import { useServerErrors } from '@spree/dashboard-core'
 import {
   Button,
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
   cn,
+  FieldError,
   Input,
   Switch,
   Table,
@@ -195,7 +197,12 @@ function ProductGroup({ group, defaultOpen }: { group: StockLevelGroup; defaultO
 function StockLevelRow({ item }: { item: StockLevel }) {
   const { t } = useTranslation()
   const { storeId } = useParams({ from: '/_authenticated/$storeId' })
-  const updateMutation = useUpdateStockLevel(item.id)
+  // In a sheet: a rejected count shows beside its input, not in a toast.
+  const updateMutation = useUpdateStockLevel(item.id, [], { showValidationErrors: false })
+  const serverErrors = useServerErrors()
+  // The count is the row's only error slot, so a message for any other field lands there too.
+  const countError =
+    serverErrors.errors.count_on_hand ?? serverErrors.offscreenSummary(['count_on_hand'])
   const [count, setCount] = useState<number>(item.count_on_hand)
   const [backorderable, setBackorderable] = useState<boolean>(item.backorderable)
 
@@ -214,10 +221,10 @@ function StockLevelRow({ item }: { item: StockLevel }) {
 
   function save() {
     if (!dirty) return
-    updateMutation.mutate({
-      count_on_hand: count,
-      backorderable,
-    })
+    updateMutation.mutate(
+      { count_on_hand: count, backorderable },
+      { onError: serverErrors.capture, onSuccess: serverErrors.reset },
+    )
   }
 
   return (
@@ -243,10 +250,15 @@ function StockLevelRow({ item }: { item: StockLevel }) {
         <Input
           type="number"
           value={count}
-          onChange={(e) => setCount(Number(e.target.value))}
+          onChange={(e) => {
+            setCount(Number(e.target.value))
+            serverErrors.clear('count_on_hand')
+          }}
+          aria-invalid={!!countError || undefined}
           className={`ml-auto w-20 text-right ${isLowStock ? 'border-amber-500' : ''}`}
           aria-label={`On hand for ${variantLabel}`}
         />
+        <FieldError className="text-right">{countError}</FieldError>
       </TableCell>
       <TableCell>
         <Switch

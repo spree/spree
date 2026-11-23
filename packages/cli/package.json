@@ -1,6 +1,6 @@
 {
   "name": "@spree/cli",
-  "version": "3.8.0",
+  "version": "3.8.1",
   "description": "CLI for Spree Commerce, the open-source headless commerce platform: runs the Docker image locally, generators, API keys and an Admin API client for scripts and AI agents",
   "type": "module",
   "bin": {
@@ -10,6 +10,7 @@
     "bin",
     "dist",
     "README.md",
+    "CHANGELOG.md",
     "LICENSE"
   ],
   "scripts": {

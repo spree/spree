@@ -1,0 +1,68 @@
+name: Release on merge
+
+# Publishes a patch release (X.Y.Z, Z above zero) when CI passes on the squash
+# merge of its release pull request, a commit titled "Released Spree <version>
+# (#<number>)" on main. scripts/release/publish-on-merge.mjs tags the commit,
+# runs release.yml on each tag, creates the GitHub release from the notes in
+# the pull request's description and posts it to Discord. A minor, major or
+# prerelease is left to a human.
+#
+# A failed run is re-run as it is: every step skips what already exists. When
+# CI on the release commit fails and is re-run, this starts again once it passes.
+#
+# The run's own commit is main's newest, not the release commit, so the name
+# carries the release commit for finding the run.
+run-name: Release on merge of ${{ github.event.workflow_run.head_sha }}
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    name: Publish the patch release
+    # A fork's pull request can be on a branch named main, so only pushes to
+    # this repository count.
+    if: >-
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_repository.full_name == github.repository &&
+      startsWith(github.event.workflow_run.head_commit.message, 'Released Spree ')
+    # One release at a time, so a release never reads which one is latest while
+    # another is being created. On the job, so CI runs on other commits never
+    # queue here.
+    # `queue: max` keeps every waiting release instead of only the newest; it
+    # postdates actionlint 1.7.12, which reports it as unknown.
+    concurrency:
+      group: release-on-merge
+      cancel-in-progress: false
+      queue: max
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    permissions:
+      actions: write
+      contents: write
+      pull-requests: read
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          persist-credentials: false
+
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: 22
+
+      - name: Tag, publish and announce the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ github.event.workflow_run.head_sha }}
+          CI_RUN_ID: ${{ github.event.workflow_run.id }}
+          SUBJECT: ${{ github.event.workflow_run.head_commit.message }}
+        run: node scripts/release/publish-on-merge.mjs

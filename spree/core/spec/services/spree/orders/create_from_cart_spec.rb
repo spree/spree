@@ -83,6 +83,29 @@ module Spree
         expect(order.email).to eq(other_customer.email)
       end
 
+      it "carries the buyer's purchase order number and document" do
+        cart.update!(po_number: 'PO-4471')
+        cart.po_document.attach(io: StringIO.new('%PDF-1.4 purchase order'), filename: 'po.pdf', content_type: 'application/pdf')
+
+        order = described_class.call(cart: cart).value
+
+        expect(order.po_number).to eq('PO-4471')
+        expect(order.po_document).to be_attached
+        expect(order.po_document.blob_id).to eq(cart.reload.po_document.blob_id)
+        expect(cart.po_document).to be_attached
+      end
+
+      it 'fails rather than silently dropping a document the order refuses' do
+        cart.po_document.attach(io: StringIO.new('%PDF-1.4 purchase order'), filename: 'po.pdf', content_type: 'application/pdf')
+        allow_any_instance_of(ActiveStorage::Attached::One).to receive(:attach).and_return(nil)
+
+        result = nil
+        expect { result = described_class.call(cart: cart) }.not_to change(Spree::Order, :count)
+
+        expect(result).to be_failure
+        expect(result.error.to_s).to be_present
+      end
+
       it 'fails without a cart' do
         result = described_class.call(cart: nil)
 

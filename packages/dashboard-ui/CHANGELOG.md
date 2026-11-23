@@ -1,5 +1,13 @@
 # @spree/dashboard-ui
 
+## 6.0.6
+
+### Patch Changes
+
+- [#15236](https://github.com/spree/spree/pull/15236) [`321d9f0`](https://github.com/spree/spree/commit/321d9f0b0d00e71e0354a686b1dcf2a95d99bd54) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `@spree/dashboard-ui` now ships its `CHANGELOG.md`, so what changed in the installed version can be read in `node_modules/@spree/dashboard-ui/`.
+
+- [#15195](https://github.com/spree/spree/pull/15195) [`2999886`](https://github.com/spree/spree/commit/2999886a21188c5e0e701ea57907d5179b26e12b) Thanks [@mad-eel](https://github.com/mad-eel)! - A toast raised while a sheet or dialog is open shows above it: at the top left beside a right-hand sheet, and top centre over a dialog. It used to render underneath, unseen.
+
 ## 6.0.5
 
 ### Patch Changes

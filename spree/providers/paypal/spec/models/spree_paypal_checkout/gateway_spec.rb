@@ -33,6 +33,11 @@ RSpec.describe SpreePaypalCheckout::Gateway do
     expect(gateway.payment_session_class).to eq(Spree::PaymentSessions::PaypalCheckout)
   end
 
+  it 'cannot void a captured payment, which has to be refunded instead' do
+    expect(gateway.can_void?(build_stubbed(:payment, status: 'completed'))).to be false
+    expect(gateway.can_void?(build_stubbed(:payment, status: 'pending'))).to be true
+  end
+
   it 'saves no payment profiles' do
     expect(gateway.payment_profiles_supported?).to be(false)
   end
@@ -500,6 +505,21 @@ RSpec.describe SpreePaypalCheckout::Gateway do
 
       it 'leaves the money when the caller asked to keep it' do
         expect { gateway.cancel(order_id, payment, refund: false) }.not_to change(Spree::Refund, :count)
+      end
+
+      # PayPal cannot void a capture, so the payment is never recorded as void:
+      # a refund is recorded against it, or the money stays taken.
+      it 'keeps the payment completed when the order is canceled with a refund' do
+        payment.cancel!(refund: true)
+
+        expect(payment.reload).to be_completed
+        expect(payment.refunds.sum(:amount)).to eq(10)
+      end
+
+      it 'keeps the payment completed when the money is kept' do
+        payment.cancel!(refund: false)
+
+        expect(payment.reload).to be_completed
       end
     end
 

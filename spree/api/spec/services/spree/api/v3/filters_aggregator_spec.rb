@@ -138,6 +138,18 @@ RSpec.describe Spree::Api::V3::FiltersAggregator do
         expect(s_option[:image_url]).to be_nil
       end
 
+      context 'when counting only the variants a shopper can buy' do
+        subject { described_class.new(scope: scope, currency: currency, variants: Spree::Variant.for_option_filters(currency)) }
+
+        before { product1.variants.detect { |variant| variant.option_values.include?(option_value_s) }.prices.delete_all }
+
+        it 'leaves out a value only an unpriced variant carries' do
+          size_filter = result[:filters].find { |f| f[:name] == 'size' }
+
+          expect(size_filter[:options].map { |o| o[:label] }).to contain_exactly('M')
+        end
+      end
+
       context 'with color swatch option type' do
         let(:color_type) { create(:option_type, :color_swatch, filterable: true) }
         let(:red) { create(:option_value, option_type: color_type, name: 'red', label: 'Red', color_code: '#FF0000') }

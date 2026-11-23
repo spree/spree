@@ -486,7 +486,9 @@ module Spree
     end
 
     def refunds_total
-      read_association_in_memory?(:refunds) ? refunds.sum(0.to_d, &:amount) : refunds.sum(:amount)
+      return refunds.select(&:completed?).sum(0.to_d, &:amount) if read_association_in_memory?(:refunds)
+
+      refunds.completed_or_unset.sum(:amount)
     end
 
     # Checks if the order is partially refunded
@@ -494,6 +496,8 @@ module Spree
     def partially_refunded?
       return false if total_quantity.zero?
       return false if payment_state.in?(%w[void failed]) || refunds.empty?
+      # A refund only requested or failed has given nothing back yet.
+      return false unless refunds_total.positive?
 
       refunds_total < total_minus_store_credits - additional_tax_total.abs
     end
@@ -735,9 +739,11 @@ module Spree
     #
     # @return [BigDecimal]
     def returned_items_refund_total
-      return refunds.select(&:for_returned_items?).sum(0.to_d, &:amount) if read_association_in_memory?(:refunds)
+      if read_association_in_memory?(:refunds)
+        return refunds.select { |refund| refund.for_returned_items? && refund.completed? }.sum(0.to_d, &:amount)
+      end
 
-      refunds.for_returned_items.sum(:amount)
+      refunds.for_returned_items.completed_or_unset.sum(:amount)
     end
 
 
@@ -1314,7 +1320,7 @@ module Spree
               message: I18n.t('spree.cart_line_item.delivery_unavailable', li_name: line_item.name),
               line_item_id: line_item.prefixed_id,
               variant_id: line_item.variant&.prefixed_id
-            }
+            }.compact
           end
         else
           errors.add(:base, :items_cannot_be_shipped, message: I18n.t('spree.items_cannot_be_shipped'))

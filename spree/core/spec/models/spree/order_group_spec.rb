@@ -50,6 +50,17 @@ RSpec.describe Spree::OrderGroup, type: :model do
       expect(settled.amount_due).to eq(total)
     end
 
+    it 'counts only refunds the provider completed' do
+      payment = create(:payment, order: nil, order_group: group, amount: total, status: 'completed')
+      child = group.orders.first
+      create(:payment_split, payment: payment, order: child, authorized_amount: child.total, captured_amount: child.total)
+      create(:refund, :requested, payment: payment, order: child, amount: 5)
+      create(:refund, :failed, payment: payment, order: child, amount: 5)
+
+      expect(settled.payment_total).to eq(total)
+      expect(settled.amount_due).to eq(0)
+    end
+
     it 'is nothing once the payment the group holds covers it' do
       create(:payment, order: nil, order_group: group, amount: total, status: 'completed')
 
@@ -188,6 +199,19 @@ RSpec.describe Spree::OrderGroup, type: :model do
     # each would show the customer more goods than they bought.
     it 'tells each parcel only what it carries' do
       expect(group.fulfillment_groups.map { |parcel| parcel.manifest.sum(&:quantity) }).to contain_exactly(2, 1)
+    end
+
+    # An exchange ships its replacement against the original line item.
+    it 'keeps a replacement apart from the line it rides on, summing each variant across fulfillments' do
+      replacement = create(:variant, product: line_item.product)
+      fulfillments = order.fulfillments.order(:id).to_a
+      fulfillments.last.fulfillment_items.create!(
+        order_id: order.id, variant_id: replacement.id, line_item_id: line_item.id, quantity: 1, replacement: true
+      )
+      parcel = Spree::FulfillmentGroup.new(fulfillments: fulfillments.each(&:reload))
+
+      expect(parcel.manifest.map { |item| [item.variant, item.quantity] }).
+        to contain_exactly([line_item.variant, 3], [replacement, 1])
     end
 
     it 'still counts the line once as fulfilled' do

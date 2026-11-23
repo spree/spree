@@ -2,7 +2,9 @@ module Spree
   module Api
     module V3
       class PaymentSerializer < BaseSerializer
-        typelize status: [:string, enum: Spree::Payment.statuses, enum_type_name: 'PaymentStatus'],
+        typelize status: [:string, enum: Spree::Payment.statuses, enum_type_name: 'PaymentStatus',
+                                   comment: '`requested` means the payment provider accepted a capture or void and has not answered yet. ' \
+                                            'Extensions may add statuses.'],
                  payment_method_id: :string, response_code: [:string, nullable: true], number: :string,
                  source_type: [:string, nullable: true, enum: %w[credit_card store_credit payment_source], enum_type_name: 'PaymentSourceType'],
                  source_id: [:string, nullable: true], source: 'CreditCard | StoreCredit | PaymentSource | null'

@@ -11,25 +11,25 @@ module Spree
       end
 
       attribute :name do |item|
-        item.line_item.name
+        purchased_variant(item).name
       end
 
       attributes :quantity
 
       attribute :sku do |item|
-        item.line_item.sku
+        purchased_variant(item).sku
       end
 
       attribute :options_text do |item|
-        item.line_item.options_text
+        purchased_variant(item).options_text
       end
 
       attribute :price do |item|
-        Spree::Money::Rounding.format(item.line_item.price, item.line_item.currency, unit_price: true)
+        Spree::Money::Rounding.format(item.price, item.line_item.currency, unit_price: true)
       end
 
       attribute :amount do |item|
-        Spree::Money::Rounding.format(item.line_item.price * item.quantity, item.line_item.currency)
+        Spree::Money::Rounding.format(item.price * item.quantity, item.line_item.currency)
       end
     end
   end
