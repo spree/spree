@@ -205,6 +205,7 @@ export function CreateClaimDialog({
                             step="any"
                             min="0"
                             value={amounts[line.id] ?? ''}
+                            placeholder={line.paidFor?.(chosenQuantity)}
                             onChange={(event) => {
                               setAmounts({ ...amounts, [line.id]: event.target.value })
                               // Clearing the field hands it back to the quantity.

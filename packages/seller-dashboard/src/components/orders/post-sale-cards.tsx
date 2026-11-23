@@ -353,7 +353,7 @@ function ResolveClaimDialog({
   const lines = claim.claim_line_items ?? []
   const { symbol: currencySymbol } = currencyParts(order.currency, i18n.language)
 
-  // A claim opened without per-item amounts has a refund_total of zero, and
+  // A claim opened with zero per-item amounts has a refund_total of zero, and
   // the workflow refuses to refund nothing — offer what the customer paid for
   // the claimed items instead, which is also the ceiling it enforces.
   const paid = sumMoney(lines.map((line) => line.paid_amount))

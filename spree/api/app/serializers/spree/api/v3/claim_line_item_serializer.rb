@@ -14,8 +14,8 @@ module Spree
         attributes :quantity, :send_replacement, :description
 
         # paid_amount is what the customer actually paid for these units, tax
-        # included — the ceiling the resolve workflow enforces, and what the
-        # dashboard offers when the claim carries no explicit amount.
+        # included — the ceiling the resolve workflow enforces, and what a line
+        # opened without an explicit amount records as its refund_amount.
         money_attributes :refund_amount, :paid_amount, :pre_tax_amount, :included_tax_total,
                          :additional_tax_total, :tax_total, :display_refund_amount
         prefixed_id_attributes :variant, :replacement_variant, :line_item

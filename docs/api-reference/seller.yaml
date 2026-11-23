@@ -32120,8 +32120,7 @@ components:
                 type: string
                 format: decimal
                 pattern: "^-?\\d+(\\.\\d+)?$"
-                description: Tax included. What the customer paid for these units
-                  when left out.
+                description: Tax included. Defaults to what was paid for these units.
                 nullable: true
             required:
             - line_item_id
