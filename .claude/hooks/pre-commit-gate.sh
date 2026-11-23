@@ -246,8 +246,14 @@ while IFS= read -r segment; do
       rest="${rest:1}"
     fi
   done
+  # The flags are read from the first `create` in the line, which a quoted
+  # value given to a flag before `pr` can hold, so a skip needs `pr create`
+  # right after `gh`. A `--` ends the flags the gate reads but not the ones gh
+  # does, so a command with one is never skipped either.
   if [[ "$repo_name" =~ ^[a-z0-9_.-]+/[a-z0-9_.-]+$ ]] && [ "$repo_name" != "spree/spree" ]; then
-    if [ $flags_read -eq 0 ] && [[ "$unquoted" =~ ^[[:alnum:]\ $'\t'_./:=@,+%-]*$ ]]; then
+    if [ $flags_read -eq 0 ] && [[ "$unquoted" =~ ^[[:alnum:]\ $'\t'_./:=@,+%-]*$ ]] \
+      && [[ "$LAUNCHED" =~ ^gh[[:space:]]+pr[[:space:]]+create[[:space:]] ]] \
+      && ! [[ " $unquoted " =~ [[:space:]]--[[:space:]] ]]; then
       continue
     fi
     echo "Blocked: $seg" >&2
