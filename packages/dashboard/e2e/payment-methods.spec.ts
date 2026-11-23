@@ -162,7 +162,7 @@ test.describe('payments', () => {
     await expect(updatedRow).toHaveCount(0, { timeout: 15_000 })
   })
 
-  test('prefills a name no method uses, once the names have loaded', async ({ page }) => {
+  test('prefills a name no method uses, once every matching name has loaded', async ({ page }) => {
     const creds = await login(page)
     // Hold the lookup of names like the provider's, so the sheet opens first.
     let release: () => void = () => {}
@@ -175,8 +175,10 @@ test.describe('payments', () => {
         url.searchParams.has('q[name_i_cont]'),
       async (route) => {
         await released
+        // Two pages, so a name only the second one holds still counts.
+        const page = Number(new URL(route.request().url()).searchParams.get('page') ?? 1)
         await route.fulfill({
-          json: { data: [{ name: 'Check' }, { name: 'check 2' }], meta: {} },
+          json: { data: [{ name: page === 1 ? 'Check' : 'check 2' }], meta: { page, pages: 2 } },
         })
       },
     )

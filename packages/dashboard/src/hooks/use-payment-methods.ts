@@ -5,6 +5,7 @@ import type {
 } from '@spree/admin-sdk'
 import {
   adminClient,
+  listEveryPage,
   STORE_QUERY_RESOURCE,
   useResourceKey,
   useResourceKeyBuilder,
@@ -57,7 +58,10 @@ export function usePaymentMethods({
 export function usePaymentMethodNames(text: string | undefined) {
   return useQuery({
     queryKey: useResourceKey('payment-methods', { name_i_cont: text }),
-    queryFn: () => adminClient.paymentMethods.list({ q: { name_i_cont: text }, limit: 100 }),
+    queryFn: () =>
+      listEveryPage((page) =>
+        adminClient.paymentMethods.list({ q: { name_i_cont: text }, page, limit: 100 }),
+      ),
     select: (response) => response.data.map((method) => method.name),
     enabled: !!text,
   })
