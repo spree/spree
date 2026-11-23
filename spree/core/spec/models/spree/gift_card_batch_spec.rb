@@ -93,6 +93,18 @@ RSpec.describe Spree::GiftCardBatch, type: :model do
       expect(gift_card_batch.gift_cards.pluck(:expires_at).uniq).to eq [gift_card_batch.expires_at]
       expect(gift_card_batch.gift_cards.take.code).to match(/batch_/)
     end
+
+    it 'tops the batch up when a code is taken between the check and the insert' do
+      existing = create(:gift_card, code: 'batch_taken')
+      allow(gift_card_batch).to receive(:generate_codes).and_wrap_original do |original, count, **opts|
+        opts[:taken].empty? ? ['batch_taken', *original.call(count - 1, **opts)] : original.call(count, **opts)
+      end
+
+      gift_card_batch.save!
+
+      expect(gift_card_batch.gift_cards.count).to eq(2)
+      expect(gift_card_batch.gift_cards).not_to include(existing)
+    end
   end
 
   describe '#generate_codes' do
@@ -129,7 +141,7 @@ RSpec.describe Spree::GiftCardBatch, type: :model do
       before { gift_card_batch.codes_count = 501 }
 
       it 'enqueues a job' do
-        expect(Spree::GiftCards::BulkGenerateJob).to receive(:perform_later)
+        expect(Spree::GiftCards::BulkGenerateJob).to receive(:perform_later).with(kind_of(Integer), publish_events: false)
 
         gift_card_batch.save
       end

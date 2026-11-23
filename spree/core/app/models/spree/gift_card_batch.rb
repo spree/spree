@@ -10,6 +10,8 @@ module Spree
 
     publishes_lifecycle_events
 
+    CODE_LOOKUP_BATCH_SIZE = 1_000
+
     #
     # Associations
     #
@@ -43,20 +45,29 @@ module Spree
       if codes_count < Spree::Config[:gift_card_batch_web_limit].to_i
         create_gift_cards
       else
-        Spree::GiftCards::BulkGenerateJob.perform_later(id)
+        # The job runs outside this write, so it carries whether lifecycle
+        # events were on when the batch was created.
+        Spree::GiftCards::BulkGenerateJob.perform_later(id, publish_events: Spree::Events.lifecycle_enabled?)
       end
     end
 
-    CODE_LOOKUP_BATCH_SIZE = 1_000
+    # @param publish_events [Boolean] false to skip the cards' gift_card.created events
+    def create_gift_cards(publish_events: true)
+      @gift_cards_to_insert = []
 
-    def create_gift_cards
       Spree::GiftCard.transaction do
-        @gift_cards_to_insert = generate_codes(codes_count - gift_cards.count).map { |code| gift_card_hash(code) }
+        # `insert_all` silently skips a row whose code was taken after it was
+        # checked, so top the batch up until it holds every card.
+        missing = codes_count - gift_cards.count
 
-        if @gift_cards_to_insert.any?
-          Spree::GiftCard.insert_all @gift_cards_to_insert
-          publish_gift_card_created_events(@gift_cards_to_insert.pluck(:code))
+        while missing.positive?
+          rows = generate_codes(missing, taken: @gift_cards_to_insert.pluck(:code)).map { |code| gift_card_hash(code) }
+          Spree::GiftCard.insert_all rows
+          @gift_cards_to_insert.concat(rows)
+          missing = codes_count - Spree::GiftCard.where(gift_card_batch_id: id).count
         end
+
+        publish_gift_card_created_events(@gift_cards_to_insert.pluck(:code)) if publish_events && @gift_cards_to_insert.any?
       end
     end
 
@@ -94,12 +105,13 @@ module Spree
     # committed, honouring a write made while lifecycle events were silenced.
     def publish_gift_card_created_events(codes)
       return unless Spree::GiftCard.publish_events && Spree::Events.lifecycle_enabled?
+      return unless Spree::GiftCard.lifecycle_event_actions.include?(:created)
 
       event_name = "#{Spree::GiftCard.event_prefix}.created"
 
       ActiveRecord.after_all_transactions_commit do
         codes.each_slice(CODE_LOOKUP_BATCH_SIZE) do |slice|
-          Spree::GiftCard.where(store_id: store_id, code: slice).includes(:store).find_each do |gift_card|
+          Spree::GiftCard.where(store_id: store_id, gift_card_batch_id: id, code: slice).includes(:store).find_each do |gift_card|
             gift_card.publish_event(event_name)
           end
         end
