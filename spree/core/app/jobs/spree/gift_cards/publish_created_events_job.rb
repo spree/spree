@@ -11,15 +11,6 @@ module Spree
     class PublishCreatedEventsJob < ::Spree::BaseJob
       include ActiveJob::Continuable
 
-      # Infrastructure errors retried by {Spree::BaseJob}: let them raise so the
-      # run resumes from the cursor instead of skipping the card.
-      RETRYABLE_ERRORS = [
-        ActiveRecord::Deadlocked,
-        ActiveRecord::LockWaitTimeout,
-        ActiveRecord::ConnectionNotEstablished,
-        ActiveRecord::ConnectionFailed
-      ].freeze
-
       queue_as Spree.queues.gift_cards
 
       # @param batch_id [Integer] the gift card batch
@@ -44,7 +35,8 @@ module Spree
 
       def publish_created(gift_card)
         gift_card.publish_event("#{Spree::GiftCard.event_prefix}.created")
-      rescue *RETRYABLE_ERRORS
+      # Retried by Spree::BaseJob, resuming from the cursor instead of skipping the card.
+      rescue *TRANSIENT_ERRORS
         raise
       rescue StandardError => e
         Rails.error.report(e, handled: true, context: { gift_card_id: gift_card.id }, source: 'spree.core')
