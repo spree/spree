@@ -389,6 +389,7 @@ module Spree
 
       product_collections.each do |membership|
         if picked_ids.include?(membership.collection_id)
+          membership.reload if membership.marked_for_destruction?
           membership.source = 'manual'
         elsif membership.hand_picked?
           membership.mark_for_destruction
@@ -898,14 +899,21 @@ module Spree
       return if store.nil?
 
       # Fails open: an unreachable cache reads as no pending job.
-      return if Rails.cache.read("spree/auto_match_collections/#{store_id}/#{id}")
+      return if Rails.cache.read(auto_match_collections_pending_key)
 
       collections = store.collections.automatic
       collections = collections.with_rule_types(rule_types) if rule_types
       return unless collections.exists?
 
       Spree::Products::AutoMatchCollectionsJob.set(wait: 30.seconds).perform_later(id)
-      Rails.cache.write("spree/auto_match_collections/#{store_id}/#{id}", true, expires_in: 30.seconds)
+      Rails.cache.write(auto_match_collections_pending_key, true, expires_in: 30.seconds)
+    end
+
+    # Marks a queued re-match job; the job clears it before reading the
+    # product, so an edit made after that read queues a job of its own.
+    # @return [String]
+    def auto_match_collections_pending_key
+      "spree/auto_match_collections/#{store_id}/#{id}"
     end
 
     # @param seller [Spree::Seller, nil] the seller exporting their own

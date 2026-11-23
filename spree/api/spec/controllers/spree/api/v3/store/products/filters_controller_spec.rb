@@ -255,6 +255,14 @@ RSpec.describe Spree::Api::V3::Store::Products::FiltersController, type: :contro
 
         expect(json_response['default_sort']).to eq('price')
       end
+
+      it 'counts nothing for an unpublished collection rather than the whole store' do
+        collection.publications.delete_all
+
+        get :index, params: { collection_id: collection.prefixed_id }
+
+        expect(json_response['total_count']).to eq(0)
+      end
     end
 
     context 'with ransack query params' do

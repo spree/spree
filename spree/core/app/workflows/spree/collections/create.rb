@@ -24,8 +24,11 @@ module Spree
           run_hooks :after_create
         end
 
-        @published_channels&.each do |channel|
-          collection.publish_event('collection.published', nil, { channel_id: channel.prefixed_id })
+        # Deferred so a caller's transaction that rolls back announces nothing.
+        ActiveRecord.after_all_transactions_commit do
+          @published_channels&.each do |channel|
+            collection.publish_event('collection.published', nil, { channel_id: channel.prefixed_id })
+          end
         end
 
         success(collection)

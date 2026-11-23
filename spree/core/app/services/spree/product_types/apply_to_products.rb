@@ -56,7 +56,8 @@ module Spree
 
         changed = add_option_types(store, product_ids, product_type.option_type_ids)
         categorized = add_categories(store, product_ids, category_ids)
-        Spree::Product.bulk_auto_match_collections(store, categorized, rule_types: [Spree::CollectionRules::Category]) if categorized.any?
+        # From the whole batch, so a rerun after a crash still re-matches products categorized before it.
+        Spree::Product.bulk_auto_match_collections(store, product_ids, rule_types: [Spree::CollectionRules::Category]) if category_ids.any?
 
         { changed_ids: changed | categorized, categorized_ids: categorized }
       end

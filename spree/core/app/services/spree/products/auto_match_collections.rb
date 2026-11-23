@@ -31,9 +31,15 @@ module Spree
         end
 
         # A row from before 6.1 has no source; on an automatic collection its rules made it.
-        removed = Spree::ProductCollection.where(product_id: product.id, collection_id: to_remove.map(&:id), source: [nil, 'rule']).to_a
-        Spree::ProductCollection.where(id: removed.map(&:id)).delete_all if removed.any?
-        add(product, to_add)
+        removed = []
+        ApplicationRecord.transaction do
+          # Locked so a hand-pick made meanwhile either lands first and is
+          # skipped here, or waits until these rule rows are gone.
+          removed = Spree::ProductCollection.where(product_id: product.id, collection_id: to_remove.map(&:id), source: [nil, 'rule']).
+                    order(:id).lock.to_a
+          Spree::ProductCollection.where(id: removed.map(&:id)).delete_all if removed.any?
+          add(product, to_add)
+        end
 
         affected_ids = (to_remove + to_add).map(&:id)
         return success(product) if affected_ids.empty?

@@ -57,6 +57,44 @@ type CollectionRuleType = ResourceTypeDefinition & {
 
 type MatchPolicy = CollectionRuleFormValues['match_policy']
 
+/** The conditions a custom field rule accepts per field type, as `CollectionRules::CustomField` validates them. */
+const CUSTOM_FIELD_POLICIES: Record<string, readonly string[]> = {
+  number: ['is_equal_to', 'is_not_equal_to', 'greater_than', 'less_than'],
+  boolean: ['is_equal_to', 'is_not_equal_to'],
+  text: [
+    'is_equal_to',
+    'is_not_equal_to',
+    'contains',
+    'does_not_contain',
+    'starts_with',
+    'ends_with',
+  ],
+}
+
+function customFieldPolicies(fieldType: string | undefined): readonly string[] | undefined {
+  if (!fieldType) return undefined
+  return CUSTOM_FIELD_POLICIES[fieldType] ?? CUSTOM_FIELD_POLICIES.text
+}
+
+/** The definition a custom field rule names, loaded through the picker's query. */
+function useRuleCustomFieldDefinition(
+  form: UseFormReturn<CollectionFormValues>,
+  index: number,
+  picked: CustomFieldDefinition | null = null,
+) {
+  const preferences = form.watch(`rules.${index}.preferences`)
+  const definitionId = (preferences?.custom_field_definition_id as string | undefined) ?? null
+  const picker = customFieldDefinitionPicker(`collection-rule-custom-field-${index}`)
+  const tenantId = useTenantId()
+  const { data: hydrated } = useQuery({
+    queryKey: [picker.queryKey, tenantId, 'hydrate', definitionId],
+    queryFn: () => picker.hydrate([definitionId as string]),
+    enabled: !!definitionId && picked?.id !== definitionId,
+    staleTime: 60_000,
+  })
+  return picked?.id === definitionId ? picked : hydrated?.data[0]
+}
+
 /** Rule types whose value names a record, and the picker that finds it. */
 const RECORD_PICKERS = {
   category: categoryAutocompleteProps,
@@ -218,10 +256,14 @@ function RuleRow({
   const { t } = useTranslation()
   const type = form.watch(`rules.${index}.type`)
   const ruleType = ruleTypes.find((entry) => entry.type === type)
-  const matchPolicyOptions = policiesFor(ruleTypes, type).map((value) => ({
-    value,
-    label: t(`admin.collections.rule_match_policies.${value}`),
-  }))
+  const customFieldType = useRuleCustomFieldDefinition(form, index)?.field_type
+  const fieldPolicies = type === 'custom_field' ? customFieldPolicies(customFieldType) : undefined
+  const matchPolicyOptions = policiesFor(ruleTypes, type)
+    .filter((value) => !fieldPolicies || fieldPolicies.includes(value))
+    .map((value) => ({
+      value,
+      label: t(`admin.collections.rule_match_policies.${value}`),
+    }))
 
   return (
     <div className="flex flex-col gap-3 py-3 first:pt-0 last:pb-0">
@@ -409,9 +451,8 @@ function RuleValueField({
         <InputGroup>
           <InputGroupInput
             id={inputId}
-            type="number"
+            type="text"
             inputMode="decimal"
-            step="0.01"
             placeholder="50.00"
             aria-invalid={!!error || undefined}
             {...form.register(`rules.${index}.value`)}
@@ -500,15 +541,7 @@ function CustomFieldValueField({
   // The picked record carries the field type. On load the same query the
   // picker hydrates its label from answers it, so this is no extra request.
   const [picked, setPicked] = useState<CustomFieldDefinition | null>(null)
-  const tenantId = useTenantId()
-  const { data: hydrated } = useQuery({
-    queryKey: [picker.queryKey, tenantId, 'hydrate', definitionId],
-    queryFn: () => picker.hydrate([definitionId as string]),
-    enabled: !!definitionId && picked?.id !== definitionId,
-    staleTime: 60_000,
-  })
-  const definition = picked?.id === definitionId ? picked : hydrated?.data[0]
-  const fieldType = definition?.field_type
+  const fieldType = useRuleCustomFieldDefinition(form, index, picked)?.field_type
   const booleanOptions = ['true', 'false'].map((value) => ({
     value,
     label: t(`admin.collections.rules.boolean_${value}`),
@@ -535,6 +568,10 @@ function CustomFieldValueField({
             // A value typed for the previous field means nothing for this one.
             if (next !== definitionId)
               form.setValue(`rules.${index}.value`, '', { shouldDirty: true })
+            // Keep the condition only when the new field's type accepts it.
+            const allowed = customFieldPolicies(record?.field_type)
+            if (allowed && !allowed.includes(form.getValues(`rules.${index}.match_policy`)))
+              form.setValue(`rules.${index}.match_policy`, 'is_equal_to', { shouldDirty: true })
           }}
         />
       </Field>
@@ -565,6 +602,7 @@ function CustomFieldValueField({
           <Input
             id={`collection-rule-value-${index}`}
             type={fieldType === 'number' ? 'number' : 'text'}
+            step={fieldType === 'number' ? 'any' : undefined}
             placeholder={t('admin.collections.fields.rule_value.placeholder')}
             aria-invalid={!!error || undefined}
             {...form.register(`rules.${index}.value`)}

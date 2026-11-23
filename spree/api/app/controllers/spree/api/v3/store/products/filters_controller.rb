@@ -75,7 +75,10 @@ module Spree
               # included) — narrowed to the buyer's catalogs like the listing.
               scope = storefront_products
               scope = scope.in_category(category) if category.present?
-              scope = scope.in_collection(collection) if collection.present?
+              if params[:collection_id].present?
+                # An unpublished collection narrows to nothing, never to the whole store.
+                scope = collection.present? ? scope.in_collection(collection) : scope.none
+              end
               scope
             end
 

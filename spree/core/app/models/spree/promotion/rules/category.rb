@@ -26,6 +26,7 @@ module Spree
         # quietly linking — the promotion would otherwise discount against a
         # catalog its store cannot see.
         def category_ids=(ids)
+          @eligible_category_ids = @eligible_category_ids_including_children = nil
           super(ids_within_store(ids, promotion && promotion_categories_scope))
         end
 

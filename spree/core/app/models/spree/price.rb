@@ -264,7 +264,10 @@ module Spree
         variant&.product&.auto_match_collections
       elsif saved_change_to_price_list_id? ||
             (price_list_id.nil? && (destroyed? || saved_change_to_amount? || saved_change_to_currency?))
-        variant&.product&.auto_match_collections(rule_types: [Spree::CollectionRules::Price])
+        rule_types = [Spree::CollectionRules::Price]
+        # Sale rules read the price in their own currency too.
+        rule_types << Spree::CollectionRules::Sale if price_list_id.nil? && saved_change_to_currency?
+        variant&.product&.auto_match_collections(rule_types: rule_types)
       end
     end
 

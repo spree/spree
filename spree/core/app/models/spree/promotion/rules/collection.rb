@@ -27,6 +27,7 @@ module Spree
         # Resolved through the promotion's own store, prefixed and raw ids
         # alike, so another store's collection raises instead of linking.
         def collection_ids=(ids)
+          @eligible_collection_ids = nil
           super(ids_within_store(ids, promotion&.store&.collections))
         end
 

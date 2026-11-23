@@ -19,8 +19,7 @@ module Spree
     validate :field_type_input_must_be_recognized
     validate :field_type_must_be_available
     validate :collection_condition_must_suit_field, if: :collection_condition?
-    after_commit :regenerate_custom_field_collections,
-                 if: -> { destroyed? ? collection_condition? : saved_change_to_collection_condition? }
+    after_commit :regenerate_custom_field_collections, if: :collection_rules_affected?
 
     #
     # Scopes
@@ -162,6 +161,13 @@ module Spree
     end
 
     private
+
+    # A field type change alters how a rule compares the stored values.
+    def collection_rules_affected?
+      return collection_condition? if destroyed?
+
+      saved_change_to_collection_condition? || (collection_condition? && saved_change_to_field_type?)
+    end
 
     def regenerate_custom_field_collections
       Spree::Collection.automatic.where(store_id: store_id).with_rule_types([Spree::CollectionRules::CustomField]).

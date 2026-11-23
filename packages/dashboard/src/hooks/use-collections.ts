@@ -2,6 +2,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import type { Collection, CollectionCreateParams, CollectionUpdateParams } from '@spree/admin-sdk'
 import {
   adminClient,
+  normalizeMoneyInput,
+  useMoneyLocale,
   useResourceKey,
   useResourceKeyBuilder,
   useResourceMutation,
@@ -25,7 +27,8 @@ export function useCollections() {
  * The collection form's resolver. Which rule types take no value is a fact
  * of the types endpoint, read at validation time so a resolver created before
  * the types load still sees them. Until they load no rule needs a value, so a
- * saved In Stock rule never blocks Save; the API still validates.
+ * saved In Stock rule never blocks Save; the API still validates. Price
+ * amounts typed in the merchant's locale are read into canonical decimals.
  */
 export function useCollectionFormResolver(): Resolver<CollectionFormValues> {
   const { data } = useCollectionRuleTypes()
@@ -36,11 +39,21 @@ export function useCollectionFormResolver(): Resolver<CollectionFormValues> {
         .map((ruleType) => ruleType.type)
     : null
 
-  return useCallback<Resolver<CollectionFormValues>>(
-    (values, context, options) =>
-      zodResolver(collectionFormSchema(valuelessTypes.current))(values, context, options),
-    [],
-  )
+  const moneyLocale = useRef('')
+  moneyLocale.current = useMoneyLocale()
+
+  return useCallback<Resolver<CollectionFormValues>>((values, context, options) => {
+    const rules = values.rules.map((rule) =>
+      rule.type === 'price'
+        ? { ...rule, value: normalizeMoneyInput(rule.value, moneyLocale.current) }
+        : rule,
+    )
+    return zodResolver(collectionFormSchema(valuelessTypes.current))(
+      { ...values, rules },
+      context,
+      options,
+    )
+  }, [])
 }
 
 // The rule-kind registry is static at runtime — cache forever, not store-scoped.

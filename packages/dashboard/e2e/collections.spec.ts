@@ -290,9 +290,15 @@ test.describe('collections management', () => {
         .or(page.getByRole('dialog'))
         .getByRole('button', { name: /^exclude$/i })
         .click()
-      const excluded = page.getByText(/^excluded products/i)
-      await expect(excluded).toBeVisible({ timeout: 15_000 })
-      await expect(ruleRow.getByRole('button', { name: /remove from collection/i })).toHaveCount(0)
+      // Only membership rows offer Exclude, and only exclusion rows offer Remove exclusion.
+      await expect(
+        page.getByRole('button', {
+          name: new RegExp(`^remove exclusion of .*${FIXTURE_PROMO_PRODUCT}`, 'i'),
+        }),
+      ).toBeVisible({ timeout: 15_000 })
+      await expect(
+        page.getByRole('button', { name: new RegExp(`^exclude .*${FIXTURE_PROMO_PRODUCT}`, 'i') }),
+      ).toHaveCount(0)
 
       // Lifting the exclusion empties the list.
       await page.getByRole('button', { name: /^remove exclusion of/i }).click()
@@ -301,7 +307,7 @@ test.describe('collections management', () => {
         .or(page.getByRole('dialog'))
         .getByRole('button', { name: /^remove exclusion$/i })
         .click()
-      await expect(excluded).toHaveCount(0, { timeout: 15_000 })
+      await expect(page.getByText(/^excluded products/i)).toHaveCount(0, { timeout: 15_000 })
     } finally {
       await deleteCatalogPickerProducts(page, creds.store_id, creds.accessToken, productIds)
     }

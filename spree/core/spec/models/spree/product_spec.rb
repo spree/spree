@@ -1180,6 +1180,16 @@ describe Spree::Product, type: :model do
       expect(product.reload.collections).to include(collection)
     end
 
+    it 'keeps a collection that a later assignment picks again' do
+      product.update!(collection_ids: [collection.prefixed_id])
+      product.reload
+      product.collection_ids = []
+      product.collection_ids = [collection.prefixed_id]
+      product.save!
+
+      expect(product.reload.collections).to include(collection)
+    end
+
     it 'ignores collections from another store' do
       foreign = create(:collection, store: create(:store))
 

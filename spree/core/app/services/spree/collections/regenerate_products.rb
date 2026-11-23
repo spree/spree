@@ -27,12 +27,15 @@ module Spree
         new_ids = matched_ids - sources.keys
 
         removed = []
+        # Counters and touches commit with the membership, so a run that fails
+        # rolls back whole and its retry sees the same changes again.
         ApplicationRecord.transaction do
           removed = remove(memberships, stale_ids, excluded_ids)
           append(collection, memberships, new_ids)
+          refresh(collection, stale_ids + new_ids)
         end
 
-        refresh(collection, stale_ids + new_ids)
+        Spree::Product.where(id: stale_ids + new_ids).find_each(&:enqueue_search_index)
         publish_events(removed, 'deleted')
         publish_events(memberships.where(product_id: new_ids), 'created') if new_ids.any?
         success(collection)
@@ -85,9 +88,7 @@ module Spree
         return if changed_product_ids.empty?
 
         Spree::Product.reset_counters_in_bulk(changed_product_ids, :product_collections)
-        products = Spree::Product.where(id: changed_product_ids)
-        products.touch_all
-        products.each(&:enqueue_search_index)
+        Spree::Product.where(id: changed_product_ids).touch_all
       end
 
       def publish_events(memberships, action)
