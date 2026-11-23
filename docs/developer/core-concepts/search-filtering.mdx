@@ -401,7 +401,7 @@ Spree.search_provider = 'Spree::SearchProvider::Database'
 
 ### PostgreSQL full-text search
 
-On PostgreSQL, search needs no setup and no extra service. A search matches products whose name or description contains every word of the query, apart from filler words such as "the" that the language ignores. Name matches rank above description matches, and the last word matches as you type it, so "blue jac" finds "Blue Jacket". Everything the Database provider finds (part of a name or SKU, searchable custom fields) is still found, listed after the better matches. A query longer than 200 characters is matched only as typed.
+On PostgreSQL, search needs no setup and no extra service. A search matches products whose name or description contains every word of the query, apart from filler words such as "the" that the language ignores. A match in the name counts for more than one in the description, and the last word matches as you type it, so "blue jac" finds "Blue Jacket". Everything the Database provider finds (part of a name or SKU, searchable custom fields) is still found, listed after the better matches. A query longer than 200 characters is matched only as typed.
 
 When no `sort` is sent, results come back by relevance. An explicit `sort` is applied as usual.
 
@@ -415,12 +415,23 @@ Spree ships the search index for English. Other languages work without one, and 
 class AddGermanProductSearchIndex < ActiveRecord::Migration[8.1]
   disable_ddl_transaction!
 
-  def change
-    %i[spree_products spree_product_translations].each do |table|
+  TABLES = %i[spree_products spree_product_translations].freeze
+
+  def up
+    TABLES.each do |table|
+      name = "index_#{table}_on_search_vector_german"
+      # An interrupted concurrent build leaves an invalid index behind.
+      remove_index table, name: name, algorithm: :concurrently if indexes(table).any? { |index| index.name == name && !index.valid? }
       add_index table,
                 "(setweight(to_tsvector('german', coalesce(#{table}.name, '')), 'A') || " \
                 "setweight(to_tsvector('german', coalesce(#{table}.description, '')), 'B'))",
-                using: :gin, name: "index_#{table}_on_search_vector_german", algorithm: :concurrently, if_not_exists: true
+                using: :gin, name: name, algorithm: :concurrently, if_not_exists: true
+    end
+  end
+
+  def down
+    TABLES.each do |table|
+      remove_index table, name: "index_#{table}_on_search_vector_german", algorithm: :concurrently, if_exists: true
     end
   end
 end
