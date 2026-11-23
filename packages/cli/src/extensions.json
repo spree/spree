@@ -9,7 +9,7 @@
       "aliases": ["paypal"],
       "release": "spree"
     },
-    "adyen": { "label": "Adyen", "gem": "spree_adyen" },
+    "adyen": { "label": "Adyen", "gem": "spree_adyen", "release": "spree" },
     "klaviyo": { "label": "Klaviyo", "gem": "spree_klaviyo" },
     "avatax_official": {
       "label": "Avalara AvaTax",

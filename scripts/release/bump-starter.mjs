@@ -16,8 +16,8 @@ const lockfile = () => fs.readFileSync(path.join(dir, 'Gemfile.lock'), 'utf8')
 const locked = (gem) => lockfile().match(new RegExp(`^ {4}${gem} \\(([^)]+)\\)`, 'm'))?.[1]
 
 // The gems this repository releases that the starter installs. `spree_dev_tools`
-// has its own version, and a provider gem the starter does not use (such as
-// spree_paypal_checkout) is left out rather than added.
+// has its own version, and a provider gem the starter does not install is left
+// out rather than added.
 const subdirectories = (dir) =>
   fs
     .readdirSync(path.join(repoRoot, dir), { withFileTypes: true })
