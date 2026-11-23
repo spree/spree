@@ -380,8 +380,9 @@ RSpec.describe Spree::Collection, type: :model do
       reloaded_collection.rules = [{ id: rule.prefixed_id, type: 'tag', value: 'coffee', match_policy: 'contains' }]
       reloaded_collection.save!
 
-      expect(Spree::CollectionRule.find(rule.id)).to be_a(Spree::CollectionRules::Tag)
-      expect(collection.reload.products).to match_array(coffee_products)
+      # A new type replaces the rule, so the new class decodes its own value.
+      expect(collection.reload.rules.map(&:class)).to eq([Spree::CollectionRules::Tag])
+      expect(collection.products).to match_array(coffee_products)
     end
 
     it 'rematches the products when only the rule type changes' do
