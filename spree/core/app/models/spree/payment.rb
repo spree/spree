@@ -352,13 +352,20 @@ module Spree
     # Puts this payment's amount on hold on the customer's store credit, so no
     # other order can spend it. An order's payment is held, a cart's never
     # is: a cart takes its credit when it completes, moments later, and a hold
-    # left by an abandoned cart would never be released. Gift card credit is drawn down
-    # on the card itself.
+    # left by an abandoned cart would never be released. Gift card credit is
+    # drawn down on the card itself.
     #
     # @return [Boolean] false when the credit no longer has the amount free
     def hold_store_credit!
       return true unless owner.is_a?(Spree::Order) && store_credit? && source.is_a?(Spree::StoreCredit)
       return true if source.originator_type == 'Spree::GiftCard' || store_credit_held?
+
+      # The hold is found and released by the payment's code, so a payment
+      # recorded without one (an admin payment) gets one before it is held.
+      if response_code.blank?
+        update_column(:response_code, source.generate_authorization_code)
+        create_eligible_credit_event
+      end
 
       source.with_lock do
         source.authorize(amount, currency, action_authorization_code: response_code, action_originator: self).present?

@@ -412,6 +412,23 @@ describe Spree::StoreCredits::Apply, type: :service do
       expect(draft.payments.store_credits.valid.sum(:amount)).to eq(10)
     end
 
+    it 'holds a payment recorded without a code under one it can release' do
+      draft = draft_with_total(BigDecimal('10'))
+      payment = draft.payments.create!(payment_method: Spree::PaymentMethod::StoreCredit.last, source: credit, amount: 10,
+                                       status: 'checkout', response_code: nil)
+
+      described_class.call(order: draft.reload)
+      described_class.call(order: draft.reload)
+
+      expect(payment.reload.response_code).to be_present
+      expect(payment.store_credit_held?).to be(true)
+      expect(credit.reload.amount_authorized).to eq(10)
+
+      Spree::StoreCredits::Remove.call(order: draft.reload)
+
+      expect(credit.reload.amount_authorized).to eq(0)
+    end
+
     it 'releases the hold when the payment fails' do
       draft = draft_with_total(BigDecimal('10'))
       described_class.call(order: draft)
