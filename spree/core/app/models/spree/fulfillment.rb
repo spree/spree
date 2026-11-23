@@ -271,6 +271,23 @@ module Spree
       delivery_method&.digital? || false
     end
 
+    # How the goods reach the customer. Nothing writes the column for a new
+    # fulfillment, so it falls back to the selected delivery method's provider
+    # the way the 6.0 upgrade backfill does.
+    #
+    # @return [String] shipping, digital, pickup or pickup_point
+    def fulfillment_type
+      stored = super
+      return stored if stored.present?
+
+      provider_class = delivery_method&.provider_class
+      if provider_class&.digital? then 'digital'
+      elsif provider_class&.pickup_point? then 'pickup_point'
+      elsif provider_class&.pickup? then 'pickup'
+      else 'shipping'
+      end
+    end
+
     # @deprecated Use {#delivery_method}; removed in 6.3.
     def shipping_method
       Spree::Deprecation.warn('Spree::Fulfillment#shipping_method is deprecated and will be removed in Spree 6.3. Use #delivery_method instead.')

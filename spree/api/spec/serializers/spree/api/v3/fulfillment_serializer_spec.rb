@@ -13,6 +13,20 @@ RSpec.describe Spree::Api::V3::FulfillmentSerializer do
     }
   end
 
+  describe '#fulfillment_type' do
+    let(:order) { create(:order_ready_to_ship, store: store) }
+    let(:shipment) { order.fulfillments.first }
+
+    it 'says pickup, with the location to collect from, for a pickup delivery' do
+      shipment.selected_delivery_rate.delivery_method.update!(fulfillment_provider: 'Spree::FulfillmentProvider::Pickup')
+
+      result = described_class.new(shipment.reload, params: params).to_h
+
+      expect(result['fulfillment_type']).to eq('pickup')
+      expect(result['stock_location']['name']).to eq(shipment.stock_location.name)
+    end
+  end
+
   describe '#items' do
     let(:order) { create(:order_ready_to_ship, store: store) }
     let(:shipment) { order.fulfillments.first }

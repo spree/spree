@@ -29,11 +29,7 @@ module Spree
 
         attributes :status
 
-        # Column-backed since 6.0; the fallback covers rows created before the
-        # fulfillment_type backfill ran.
-        attribute :fulfillment_type do |fulfillment|
-          fulfillment.fulfillment_type.presence || (fulfillment.digital? ? 'digital' : 'shipping')
-        end
+        attributes :fulfillment_type
 
         attributes fulfilled_at: :iso8601, delivered_at: :iso8601
 

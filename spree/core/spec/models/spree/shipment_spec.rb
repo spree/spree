@@ -41,6 +41,29 @@ describe Spree::Fulfillment, type: :model do
     end
   end
 
+  describe '#fulfillment_type' do
+    it 'reads the kind from the delivery method when none is stored' do
+      { 'Spree::FulfillmentProvider::Pickup' => 'pickup', 'Spree::FulfillmentProvider::PickupPoint' => 'pickup_point',
+        'Spree::FulfillmentProvider::Digital' => 'digital', 'Spree::FulfillmentProvider::Manual' => 'shipping' }.each do |provider, kind|
+        shipment.delivery_method.fulfillment_provider = provider
+        expect(shipment.fulfillment_type).to eq(kind), provider
+      end
+    end
+
+    it 'keeps a stored kind' do
+      shipment.fulfillment_type = 'digital'
+      expect(shipment.fulfillment_type).to eq('digital')
+    end
+
+    context 'when there is no delivery method' do
+      let(:shipping_method) { nil }
+
+      it 'is shipping' do
+        expect(shipment.fulfillment_type).to eq('shipping')
+      end
+    end
+  end
+
   describe '#name' do
     it 'returns the shipment number and shipping method name' do
       expect(shipment.name).to eq('H21265865494 UPS')

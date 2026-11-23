@@ -9,4 +9,5 @@ subject: "{% if resend %}[{{ 'resend' | t }}] {% endif %}{{ store.name }} {{ 'or
     <mj-text mj-class="lead">{{ 'order_mailer.confirm_email.instructions' | t }}</mj-text>
   </mj-column>
 </mj-section>
+{% render 'spree/shared/pickup_locations', fulfillments: order.fulfillments %}
 {% render 'spree/shared/order_summary', heading: heading, purchase: order, items: order.items, totals: true %}

@@ -1,0 +1,30 @@
+{%- comment -%}
+  Where the buyer collects a pickup order: each location once, with its
+  address and the merchant's collection instructions.
+  Arguments: fulfillments.
+{%- endcomment -%}
+{%- assign shown = '' -%}
+{%- for fulfillment in fulfillments -%}
+  {%- if fulfillment.delivery_method == nil or fulfillment.stock_location == nil -%}{%- continue -%}{%- endif -%}
+  {%- unless fulfillment.delivery_method.pickup -%}{%- continue -%}{%- endunless -%}
+  {%- assign location = fulfillment.stock_location -%}
+  {%- assign key = location.id | prepend: '|' | append: '|' -%}
+  {%- if shown contains key -%}{%- continue -%}{%- endif -%}
+  {%- assign shown = shown | append: key -%}
+<mj-section padding="48px 0 0">
+  <mj-column>
+    <mj-text mj-class="section-heading" padding="0 0 16px">{{ 'order_mailer.pickup_location' | t }}</mj-text>
+    <mj-text mj-class="body" padding="0">
+      <strong>{{ location.name }}</strong>
+      {%- if location.address1 != blank -%}<br />{{ location.address1 }}{%- endif -%}
+      {%- if location.city != blank or location.zipcode != blank -%}
+        <br />{{ location.city }}{% if location.state_code != blank %}, {{ location.state_code }}{% endif %} {{ location.zipcode }}
+      {%- endif -%}
+      {%- if location.country_name != blank -%}<br />{{ location.country_name }}{%- endif -%}
+    </mj-text>
+    {%- if location.pickup_instructions != blank -%}
+      <mj-text mj-class="note" align="left" padding="16px 0 0">{{ location.pickup_instructions }}</mj-text>
+    {%- endif -%}
+  </mj-column>
+</mj-section>
+{%- endfor -%}
