@@ -50,7 +50,7 @@ RSpec.describe SpreeAvalara::RefundPresenter do
   # The credit belongs to the period the money went back in, while its tax
   # follows the sale it reverses.
   it 'dates the credit on the refund day and taxes it as of the original supply' do
-    Timecop.freeze(Time.utc(2026, 7, 3, 12, 0, 0)) do
+    travel_to(Time.utc(2026, 7, 3, 12, 0, 0)) do
       payload = present.call
 
       expect(payload[:date]).to eq('2026-07-03')

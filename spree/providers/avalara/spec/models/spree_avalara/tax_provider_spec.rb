@@ -135,7 +135,7 @@ RSpec.describe SpreeAvalara::TaxProvider do
       expect(SpreeAvalara::EstimateCacheKey::EXPIRES_IN).to be <= 15.minutes
 
       provider.estimate(cart)
-      Timecop.travel(Time.current + SpreeAvalara::EstimateCacheKey::EXPIRES_IN + 1.minute) do
+      travel_to(Time.current + SpreeAvalara::EstimateCacheKey::EXPIRES_IN + 1.minute) do
         provider.estimate(cart)
       end
 

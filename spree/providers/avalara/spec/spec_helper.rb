@@ -45,6 +45,7 @@ RSpec.configure do |config|
   config.use_transactional_fixtures = true
 
   config.include FactoryBot::Syntax::Methods
+  config.include ActiveSupport::Testing::TimeHelpers
 
   # Same as core's spec_helper: Spree::Current must not leak between examples —
   # under SQLite, rolled-back transactions reuse row ids, so a stale cache entry
