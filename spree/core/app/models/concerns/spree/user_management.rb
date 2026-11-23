@@ -61,7 +61,9 @@ module Spree
       matching = pending.where(invitee: user)
       matching = matching.or(by_email) if by_email
 
-      matching.destroy_all
+      # A locking read sees invitations committed after this transaction began,
+      # which MySQL's repeatable-read snapshot would otherwise hide.
+      matching.lock.destroy_all
     end
   end
 end

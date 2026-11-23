@@ -173,6 +173,55 @@ test.describe('staff', () => {
     })
   })
 
+  // A second invitation sent before the first was accepted stays pending;
+  // removing the teammate must revoke it, or its link would let them rejoin.
+  test('removing a teammate revokes their other pending invitation', async ({ page, browser }) => {
+    const session = await login(page)
+    const email = `e2e-rejoin-${Date.now()}@example.com`
+    const headers = { Authorization: `Bearer ${session.accessToken}` }
+    const roles = await page.request
+      .get('/api/v3/admin/roles', { headers })
+      .then((res) => res.json())
+    const second = await page.request.post('/api/v3/admin/invitations', {
+      headers,
+      data: { email, role_id: roles.data[0].id },
+    })
+    expect(second.status(), await second.text()).toBe(201)
+    const { id: secondId } = (await second.json()) as { id: string }
+    const secondLink = await invitationAcceptancePath(
+      page,
+      session,
+      `/api/v3/admin/invitations/${secondId}`,
+    )
+    await addTeammate(page, session, email)
+
+    // The list shows the teammate and, beside them, the invitation still pending.
+    await page.goto(STAFF_PATH(session.store_id))
+    const rows = page.getByRole('row').filter({ hasText: email })
+    await expect(rows).toHaveCount(2, { timeout: 15_000 })
+    await rows
+      .filter({ hasText: 'Robin Teammate' })
+      .getByRole('button', { name: /open actions/i })
+      .click()
+    await page.getByRole('menuitem', { name: /remove from staff/i }).click()
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: /^remove$/i })
+      .click()
+    // Both go: the teammate and their pending invitation.
+    await expect(rows).toHaveCount(0, { timeout: 15_000 })
+
+    // Opened by the invitee, signed out, as the emailed link would be.
+    const inviteeContext = await browser.newContext({ baseURL: new URL(page.url()).origin })
+    try {
+      const inviteePage = await inviteeContext.newPage()
+      await inviteePage.goto(secondLink)
+      await expect(inviteePage.getByText(/invitation not found/i)).toBeVisible({ timeout: 15_000 })
+    } finally {
+      await inviteeContext.close()
+    }
+  })
+
   // Every teammate reads the store's markets and channels — the dashboard's
   // currencies and languages come from the markets — while the settings pages
   // that change them stay with the roles that may.
