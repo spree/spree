@@ -263,6 +263,16 @@ RSpec.describe Spree::Api::V3::Store::Products::FiltersController, type: :contro
 
         expect(json_response['total_count']).to eq(0)
       end
+
+      it 'does not share cached facets with the unfiltered request', :caching do
+        collection.publications.delete_all
+        allow(Rails).to receive(:cache).and_return(ActiveSupport::Cache::MemoryStore.new)
+
+        get :index
+        get :index, params: { collection_id: collection.prefixed_id }
+
+        expect(json_response['total_count']).to eq(0)
+      end
     end
 
     context 'with ransack query params' do

@@ -46,6 +46,8 @@ module Spree
                 buyer_catalog_fragment,
                 category&.cache_key_with_version,
                 collection&.cache_key_with_version,
+                # An unresolved collection narrows to nothing; never share the store-wide entry.
+                ('collection_unresolved' if params[:collection_id].present? && collection.nil?),
                 search_query,
                 search_filters&.sort_by(&:first)&.to_json,
                 max_updated,

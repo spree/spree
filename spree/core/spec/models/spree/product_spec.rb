@@ -1180,6 +1180,23 @@ describe Spree::Product, type: :model do
       expect(product.reload.collections).to include(collection)
     end
 
+    it 'keeps a collection picked, dropped and picked again before the first save' do
+      product.collection_ids = [collection.prefixed_id]
+      product.collection_ids = []
+      product.collection_ids = [collection.prefixed_id]
+      product.save!
+
+      expect(product.reload.collections).to eq([collection])
+    end
+
+    it 'drops an unsaved pick that a later assignment leaves out' do
+      product.collection_ids = [collection.prefixed_id]
+      product.collection_ids = []
+      product.save!
+
+      expect(product.reload.collections).to be_empty
+    end
+
     it 'keeps a collection that a later assignment picks again' do
       product.update!(collection_ids: [collection.prefixed_id])
       product.reload
