@@ -77,7 +77,11 @@ module Spree
           rows = generate_codes(missing, taken: @gift_cards_to_insert.pluck(:code)).map { |code| gift_card_hash(code) }
           Spree::GiftCard.insert_all rows
           @gift_cards_to_insert.concat(rows)
-          missing = codes_count - Spree::GiftCard.where(gift_card_batch_id: id).count
+          still_missing = codes_count - Spree::GiftCard.where(gift_card_batch_id: id).count
+          # A round that inserted nothing will not do better next time.
+          break if still_missing == missing
+
+          missing = still_missing
         end
         raise CodeGenerationError, "Gift card batch #{prefixed_id} is #{missing} card(s) short of #{codes_count}" if missing.positive?
 

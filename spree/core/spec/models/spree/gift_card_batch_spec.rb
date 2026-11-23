@@ -154,8 +154,17 @@ RSpec.describe Spree::GiftCardBatch, type: :model do
       allow(Spree::GiftCard).to receive(:insert_all)
 
       expect { gift_card_batch.save! }.to raise_error(described_class::CodeGenerationError, /2 card\(s\) short/)
-      expect(Spree::GiftCard).to have_received(:insert_all).exactly(described_class::MAX_CODE_ATTEMPTS).times
+      # A round that inserts nothing stops at once rather than using every attempt.
+      expect(Spree::GiftCard).to have_received(:insert_all).once
       expect(described_class.count).to eq(0)
+    end
+
+    it 'gives up after MAX_CODE_ATTEMPTS rounds that each insert only part of the batch' do
+      gift_card_batch.codes_count = described_class::MAX_CODE_ATTEMPTS + 2
+      allow(Spree::GiftCard).to(receive(:insert_all).and_wrap_original { |original, rows| original.call(rows.first(1)) })
+
+      expect { gift_card_batch.save! }.to raise_error(described_class::CodeGenerationError, /2 card\(s\) short/)
+      expect(Spree::GiftCard).to have_received(:insert_all).exactly(described_class::MAX_CODE_ATTEMPTS).times
     end
 
     it 'raises instead of spinning when every generated code is taken' do
