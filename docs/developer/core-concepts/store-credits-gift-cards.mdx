@@ -264,10 +264,11 @@ never take back value a customer has already used.
 Deleting a card is refused the same way. A card applied to an open cart or
 draft order cannot be deleted from the model directly, because the store
 credit made from it would keep paying for that order with no card behind it.
-The Admin API delete takes the card off those carts and draft orders first
-(through `Spree.gift_card_remove_workflow`, which voids the store credit
-payment), so a card left on an abandoned cart can still be deleted. It refuses
-only while a checkout is completing with the card.
+Delete a card with `Spree::GiftCards::Destroy` (`Spree.gift_card_destroy_workflow`),
+which the Admin API delete uses. It takes the card off those carts and draft
+orders first (through `Spree.gift_card_remove_workflow`, which voids the store
+credit payment), so a card left on an abandoned cart can still be deleted. It
+refuses only while a checkout is completing with the card.
 
 <Note>
 Gift cards can also be `expired` if `expires_at` date has passed and the card hasn't been fully redeemed.
