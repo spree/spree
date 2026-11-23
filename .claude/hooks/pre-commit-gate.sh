@@ -224,7 +224,10 @@ while IFS= read -r segment; do
   # or a URL, so every spelling of this repository is gated. Expansions,
   # comments and redirections change which arguments gh gets without the gate
   # seeing it, so only a command made of plain words and quotes, read to its
-  # end, can skip the gate.
+  # end, can skip the gate. The shell expands nothing in single quotes, nor in
+  # double quotes without `$` or a backtick (a backslash is refused above), so
+  # those are dropped before the check and may hold any text, such as a title
+  # with `^6.0.6` or `(#123)`.
   repo_name=$(tr '[:upper:]' '[:lower:]' <<<"$REPO_FLAG")
   repo_name="${repo_name#*://}"
   repo_name="${repo_name#git@}"
@@ -232,9 +235,24 @@ while IFS= read -r segment; do
   repo_name="${repo_name#github.com[:/]}"
   repo_name="${repo_name%/}"
   repo_name="${repo_name%.git}"
-  if [ $flags_read -eq 0 ] && [[ "$LAUNCHED" =~ ^[[:alnum:]\ $'\t'\"\'_./:=@,+%-]*$ ]] \
-    && [[ "$repo_name" =~ ^[a-z0-9_.-]+/[a-z0-9_.-]+$ ]] && [ "$repo_name" != "spree/spree" ]; then
-    continue
+  unquoted=""
+  rest="$LAUNCHED"
+  inert_quote="^('[^']*'|\"[^\"\$\`]*\")"
+  while [ -n "$rest" ]; do
+    if [[ "$rest" =~ $inert_quote ]]; then
+      rest="${rest:${#BASH_REMATCH[0]}}"
+    else
+      unquoted+="${rest:0:1}"
+      rest="${rest:1}"
+    fi
+  done
+  if [[ "$repo_name" =~ ^[a-z0-9_.-]+/[a-z0-9_.-]+$ ]] && [ "$repo_name" != "spree/spree" ]; then
+    if [ $flags_read -eq 0 ] && [[ "$unquoted" =~ ^[[:alnum:]\ $'\t'_./:=@,+%-]*$ ]]; then
+      continue
+    fi
+    echo "Blocked: $seg" >&2
+    echo "A pull request on $REPO_FLAG is not gated, but the gate must read the whole command to know that: keep it on one line, pass the body with --body-file, and quote any text with \$ or a backtick in single quotes." >&2
+    exit 2
   fi
   review_dir="$pr_dir"
   head_owner=""

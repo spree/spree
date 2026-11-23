@@ -94,14 +94,30 @@ function dispatch(workflow, ref, inputs = {}) {
   return response.workflow_run_id
 }
 
+/**
+ * Waits for a run to finish and stops when it did not succeed. `gh run watch`
+ * also exits non-zero when GitHub does not serve a run it has just started
+ * (the run and its jobs answer 404 for a few seconds), so the run's own
+ * conclusion decides.
+ */
 function watch(id, what) {
   const url = `https://github.com/${repo}/actions/runs/${id}`
   console.log(`Waiting for ${what}: ${url}`)
-  try {
-    run('gh', ['run', 'watch', String(id), '--repo', repo, '--exit-status', '--interval', '30'])
-  } catch {
-    throw new Error(`${what} failed. Re-run its failed jobs (${url}), then re-run this job.`)
+  for (let attempt = 1; attempt <= 10; attempt++) {
+    try {
+      run('gh', ['run', 'watch', String(id), '--repo', repo, '--exit-status', '--interval', '30'])
+      return
+    } catch {
+      const workflowRun = apiOrNull(`repos/${repo}/actions/runs/${id}`)
+      if (workflowRun?.status === 'completed') {
+        if (workflowRun.conclusion === 'success') return
+        break
+      }
+      console.log(`${what} is not finished yet, watching it again (${attempt}/10).`)
+      execFileSync('sleep', ['30'])
+    }
   }
+  throw new Error(`${what} failed. Re-run its failed jobs (${url}), then re-run this job.`)
 }
 
 /** Runs release.yml on `tag` unless a run on it already succeeded; waits for one in progress. */

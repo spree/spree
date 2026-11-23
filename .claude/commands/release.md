@@ -21,7 +21,8 @@ the command usually stops after phase 4 and is run again to publish.
 
 Pull requests on other repositories (agent-skills, spree-starter,
 storefront) open with plain `gh pr create --repo <owner/name>`: the
-`/open-pr` gate covers only this repository.
+`/open-pr` gate covers only this repository. Keep the command on one line and
+pass the description with `--body-file`, so the gate can read it to its end.
 
 Work on a branch named `chore/release-<version>` with the workspace installed
 (`node_modules` present), never on `main`.
