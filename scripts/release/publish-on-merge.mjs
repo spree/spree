@@ -111,13 +111,13 @@ function watch(id, what) {
       const workflowRun = apiOrNull(`repos/${repo}/actions/runs/${id}`)
       if (workflowRun?.status === 'completed') {
         if (workflowRun.conclusion === 'success') return
-        break
+        throw new Error(`${what} failed. Re-run its failed jobs (${url}), then re-run this job.`)
       }
       console.log(`${what} is not finished yet, watching it again (${attempt}/10).`)
       execFileSync('sleep', ['30'])
     }
   }
-  throw new Error(`${what} failed. Re-run its failed jobs (${url}), then re-run this job.`)
+  throw new Error(`Lost track of ${what} before it finished. Re-run this job once it has (${url}).`)
 }
 
 /** Runs release.yml on `tag` unless a run on it already succeeded; waits for one in progress. */
