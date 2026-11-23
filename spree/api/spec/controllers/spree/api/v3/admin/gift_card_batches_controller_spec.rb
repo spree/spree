@@ -45,13 +45,26 @@ RSpec.describe Spree::Api::V3::Admin::GiftCardBatchesController, type: :controll
     end
 
     it 'auto-generates the gift cards inline for small batches' do
-      expect { post :create, params: base_params.merge(codes_count: 3), as: :json }
-        .to change(Spree::GiftCard, :count).by(3)
+      expect { post :create, params: base_params.merge(codes_count: 3), as: :json }.
+        to change(Spree::GiftCard, :count).by(3)
 
       batch = Spree::GiftCardBatch.last
       expect(batch.gift_cards.count).to eq(3)
       expect(batch.gift_cards.all? { |g| g.code.start_with?('welcome') }).to be(true)
       expect(batch.gift_cards.all? { |g| g.currency == 'USD' && g.amount == 25 }).to be(true)
+    end
+
+    it 'publishes gift_card.created for every generated card', events: true do
+      published = []
+      Spree::Events.subscribe('gift_card.created', async: false) { |event| published << event.payload['id'] }
+      Spree::Events.activate!
+
+      post :create, params: base_params.merge(codes_count: 3), as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(published).to match_array(Spree::GiftCardBatch.last.gift_cards.map(&:prefixed_id))
+    ensure
+      Spree::Events.reset!
     end
 
     it 'returns 422 when prefix is blank' do

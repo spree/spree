@@ -33,7 +33,7 @@ module Spree
     before_validation :set_currency
     after_create :generate_gift_cards
 
-    normalizes :prefix, with: ->(value) { value&.to_s&.squish&.presence }
+    normalizes :prefix, with: ->(value) { value.to_s.squish.presence }
 
     money_methods :amount
 
@@ -47,33 +47,72 @@ module Spree
       end
     end
 
-    def create_gift_cards
-      @gift_cards_to_insert = []
+    CODE_LOOKUP_BATCH_SIZE = 1_000
 
+    def create_gift_cards
       Spree::GiftCard.transaction do
-        (codes_count - gift_cards.count).times do
-          @gift_cards_to_insert << gift_card_hash
+        @gift_cards_to_insert = generate_codes(codes_count - gift_cards.count).map { |code| gift_card_hash(code) }
+
+        if @gift_cards_to_insert.any?
+          Spree::GiftCard.insert_all @gift_cards_to_insert
+          publish_gift_card_created_events(@gift_cards_to_insert.pluck(:code))
         end
-        Spree::GiftCard.insert_all @gift_cards_to_insert if @gift_cards_to_insert.any?
       end
     end
 
     def generate_code
-      loop do
-        code = "#{prefix.downcase}#{SecureRandom.hex(8).downcase}"
-        break code unless Spree::GiftCard.exists?(code: code) || @gift_cards_to_insert.detect { |gc| gc[:code] == code }
+      generate_codes(1, taken: Array(@gift_cards_to_insert).pluck(:code)).first
+    end
+
+    # Unique codes not yet used by any gift card, checked against the database
+    # a slice at a time rather than one query per code.
+    #
+    # @param count [Integer] how many codes to generate
+    # @param taken [Array<String>] codes to avoid besides the stored ones
+    # @return [Array<String>]
+    def generate_codes(count, taken: [])
+      codes = Set.new
+      taken = taken.to_set
+
+      while codes.size < count
+        candidates = Array.new(count - codes.size) { "#{prefix.downcase}#{SecureRandom.hex(8).downcase}" }
+        candidates = candidates.uniq.reject { |code| codes.include?(code) || taken.include?(code) }
+
+        candidates.each_slice(CODE_LOOKUP_BATCH_SIZE) do |slice|
+          stored = Spree::GiftCard.where(code: slice).pluck(:code).to_set
+          codes.merge(slice.reject { |code| stored.include?(code) })
+        end
       end
+
+      codes.to_a
     end
 
     private
 
-    def gift_card_hash
+    # `insert_all` skips callbacks, so the cards' own `gift_card.created`
+    # lifecycle events never fire. Publish one per card once the cards are
+    # committed, honouring a write made while lifecycle events were silenced.
+    def publish_gift_card_created_events(codes)
+      return unless Spree::GiftCard.publish_events && Spree::Events.lifecycle_enabled?
+
+      event_name = "#{Spree::GiftCard.event_prefix}.created"
+
+      ActiveRecord.after_all_transactions_commit do
+        codes.each_slice(CODE_LOOKUP_BATCH_SIZE) do |slice|
+          Spree::GiftCard.where(store_id: store_id, code: slice).includes(:store).find_each do |gift_card|
+            gift_card.publish_event(event_name)
+          end
+        end
+      end
+    end
+
+    def gift_card_hash(code)
       {
         status: :active,
         gift_card_batch_id: id,
         amount: amount,
         currency: currency,
-        code: generate_code,
+        code: code,
         store_id: store_id,
         created_by_id: created_by_id,
         expires_at: expires_at

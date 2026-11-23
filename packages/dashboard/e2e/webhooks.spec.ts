@@ -1,5 +1,5 @@
 import { expect, type Page, test } from '@playwright/test'
-import { gotoIndex, login, openRowMenu, rowButton } from './helpers'
+import { adminRequest, gotoIndex, login, openRowMenu, rowButton } from './helpers'
 
 const WEBHOOKS_PATH = (storeId: string) => `/${storeId}/settings/webhooks`
 const CTA = /new endpoint/i
@@ -156,6 +156,58 @@ test.describe('webhooks', () => {
     await expect(page.getByText('webhook.test', { exact: true }).first()).toBeVisible({
       timeout: 15_000,
     })
+  })
+
+  test('delivers gift_card.created for every card in a batch', async ({ page }) => {
+    // Two pages and a background delivery job.
+    test.slow()
+    const creds = await login(page)
+    await gotoIndex(page, WEBHOOKS_PATH(creds.store_id), CTA)
+
+    const suffix = Date.now()
+    const name = `E2E Gift Card Batch ${suffix}`
+    const url = `https://gcb-${suffix}.example.com/hook`
+
+    await createEndpoint(page, { name, url, pickEvents: ['gift_card.created'] })
+    await page.getByRole('button', { name: /^done$/i }).click()
+    await expect(page.getByRole('heading', { name })).toBeVisible({ timeout: 15_000 })
+    const endpointUrl = page.url()
+
+    // Quantity > 1 issues a batch, whose cards are bulk-inserted.
+    await gotoIndex(page, `/${creds.store_id}/loyalty/gift-cards`, /new gift card/i)
+    await page.getByRole('button', { name: /new gift card/i }).click()
+    await expect(page.getByRole('heading', { name: /new gift card/i })).toBeVisible()
+    await page.locator('#quantity').fill('3')
+    await page.locator('#code').fill(`E2EW${suffix.toString().slice(-6)}`)
+    await page.locator('#amount').fill('10.00')
+    await page.getByRole('button', { name: /create 3 gift cards/i }).click()
+    await expect(page.getByRole('heading', { name: /new gift card/i })).toHaveCount(0, {
+      timeout: 15_000,
+    })
+
+    // Deliveries are written by a background job: wait for them through the
+    // API rather than reloading, which can race the session refresh.
+    const endpointId = new URL(endpointUrl).pathname.split('/').pop()
+    await expect
+      .poll(
+        async () => {
+          const { data } = await adminRequest<{ data: { event_name: string }[] }>(
+            page,
+            creds,
+            'get',
+            `/webhook_endpoints/${endpointId}/deliveries`,
+          )
+          return data.filter((delivery) => delivery.event_name === 'gift_card.created').length
+        },
+        { timeout: 30_000 },
+      )
+      .toBe(3)
+
+    await page.goto(endpointUrl)
+    await expect(page.getByRole('button', { name: 'gift_card.created', exact: true })).toHaveCount(
+      3,
+      { timeout: 15_000 },
+    )
   })
 
   test('refuses a custom event that is not an event name or pattern', async ({ page }) => {
