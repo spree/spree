@@ -43,18 +43,19 @@ module Spree
         step :ensure_reason_belongs_to_store
         step :ensure_refund_amount_is_settleable
 
-        # Veto point — seller policy, already-dispatched guards. Before the
-        # transaction: nothing is written yet, and payment settlement has
-        # not run.
-        run_hooks :before_cancel
-
-        @decided_at = canceled_at || Time.current
         # Coerced because the amount arrives from JSON as a string, and it is
         # compared against money further down — `[amount, remaining].min`
         # raises on a String.
         @amount_to_refund = refund_amount&.to_d
         @amount_to_refund ||= amount_refundable if refund_payments
         step :ensure_refund_within_order_balance
+
+        # Veto point — seller policy, already-dispatched guards. Before the
+        # transaction: nothing is written yet, and payment settlement has
+        # not run.
+        run_hooks :before_cancel
+
+        @decided_at = canceled_at || Time.current
 
         ApplicationRecord.transaction do
           # The row lock a capture takes to record its answer, so a capture
@@ -101,9 +102,10 @@ module Spree
 
       # An amount the order has already given back, as refunds or store
       # credit, is refused before anything is canceled, rather than once the
-      # order reads canceled and its payments are half settled.
+      # order reads canceled and its payments are half settled. An amount
+      # that will not be refunded at all is not checked.
       def ensure_refund_within_order_balance
-        return if refund_amount.blank? || @amount_to_refund <= amount_refundable
+        return if !refund_payments || refund_amount.blank? || @amount_to_refund <= amount_refundable
 
         failure(order, :refund_exceeds_order_balance)
       end
@@ -275,7 +277,7 @@ module Spree
           # what they asked for, exactly as the ungrouped path does.
           next unless refund_payments
 
-          refundable = [split.net_captured_amount, remaining].compact.min
+          refundable = [split.net_captured_amount, remaining, grouped_balance_left].compact.min
           next if refundable <= 0
 
           result = Spree.refund_create_workflow.call(
@@ -285,6 +287,19 @@ module Spree
 
           remaining -= refundable if remaining
         end
+      end
+
+      # What Refunds::Create will still let this order take back: its settled
+      # shares, counted from refund rows and leaving out any mid-capture, less
+      # store credit already issued for it. Bounding each refund by it keeps
+      # one the workflow would refuse from failing after the order already
+      # reads canceled — the in-flight share is the operator's to settle.
+      #
+      # @return [BigDecimal]
+      def grouped_balance_left
+        order.payment_splits.includes(:payment).
+          select { |split| split.payment&.completed? && !split.capture_in_flight? }.
+          sum(0.to_d, &:refundable_amount) - store_credit_given_back
       end
 
       # Whether a charge against this share is still in flight.

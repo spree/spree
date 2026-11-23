@@ -69,11 +69,12 @@ module Spree
       # @param order [Spree::Order]
       # @param shares [Hash{Spree::Payment => BigDecimal}, nil] already read
       # @param lock [Boolean] whether to lock the order row first
+      # @param report_in_flight [Boolean] see #refundable_shares
       # @return [BigDecimal]
-      def refundable_balance(order, shares = nil, lock: true)
+      def refundable_balance(order, shares = nil, lock: true, report_in_flight: lock)
         Spree::Order.lock.find(order.id) if lock
 
-        (shares || refundable_shares(order, report_in_flight: lock)).values.sum(0.to_d) -
+        (shares || refundable_shares(order, report_in_flight: report_in_flight)).values.sum(0.to_d) -
           Spree::StoreCredit.where(refunded_order: order).sum(:amount).to_d
       end
 

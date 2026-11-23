@@ -156,6 +156,8 @@ module Spree
       let(:order) { create(:completed_order_with_totals, order_group: create(:order_group)) }
       let!(:split) do
         create(:payment_split, order: order, currency: order.currency,
+                               payment: create(:payment, order: nil, cart: nil, order_group: order.order_group,
+                                                         amount: 30, status: 'completed'),
                                authorized_amount: BigDecimal(30), captured_amount: BigDecimal(30))
       end
 

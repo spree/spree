@@ -82,7 +82,10 @@ module Spree
         refunded_order = order || payment.order
         return payment.credit_allowed.to_d if refunded_order.nil?
 
-        refundable_balance(refunded_order, lock: lock)
+        # A share mid-capture is left out without a report: whoever settles
+        # the order (a return, a claim, a cancellation) reports it, and a
+        # refund that leaves it alone has nothing to add.
+        refundable_balance(refunded_order, lock: lock, report_in_flight: false)
       end
 
       # What the named order may take back from this payment.
