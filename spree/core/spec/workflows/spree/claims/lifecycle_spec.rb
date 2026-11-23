@@ -261,12 +261,13 @@ RSpec.describe 'Spree::Claims workflows' do
       line = claim.claim_line_items.first
       line.variant.stock_levels.first&.set_count_on_hand(10)
       snapshot = nil
+      paused = false
 
       allow_any_instance_of(Spree::Claims::Resolve).to receive(:ensure_resolvable).and_wrap_original do |original|
         original.call
-        next if snapshot
+        next if paused
 
-        snapshot = {}
+        paused = true
         winner = Spree::Claims::Resolve.call(claim: Spree::Claim.find(claim.id), resolution: 'refund_and_replacement',
                                              amount: 10, replacement_line_item_ids: [line.id])
         expect(winner).to be_success
@@ -277,6 +278,49 @@ RSpec.describe 'Spree::Claims workflows' do
 
       expect(loser).to be_failure
       expect(race_state(claim)).to eq(snapshot)
+    end
+
+    it 'refuses a resolve while another holds the claim, and writes nothing' do
+      claim = approved_claim(refund_amount: 27.5)
+      claim.update_columns(resolution: 'refund', updated_at: Time.current)
+      before = race_state(claim)
+
+      result = Spree::Claims::Resolve.call(claim: claim, resolution: 'refund')
+
+      expect(result.error.value).to eq(:resolution_in_progress)
+      expect(race_state(claim)).to eq(before)
+      expect(claim.reload.resolution).to eq('refund')
+    end
+
+    it 'takes over a hold left by a resolve that died' do
+      claim = approved_claim(refund_amount: 27.5)
+      claim.update_columns(resolution: 'refund', updated_at: (Spree::Claims::Resolve::RESERVATION_TTL + 1.minute).ago)
+
+      expect(Spree::Claims::Resolve.call(claim: claim, resolution: 'refund')).to be_success
+    end
+
+    it 'hands the claim back when the resolve fails' do
+      claim = approved_claim(refund_amount: 27.5)
+      before = race_state(claim)
+
+      expect(Spree::Claims::Resolve.call(claim: claim, resolution: 'replacement')).to be_failure
+      expect(claim.reload).to have_attributes(status: 'approved', resolution: nil)
+      expect(race_state(claim)).to eq(before)
+    end
+
+    # The provider may quote the credit over the network, which must never
+    # happen inside a transaction the workflow opened.
+    it 'asks the tax provider outside the transaction' do
+      claim = approved_claim(refund_amount: 27.5)
+      depth_outside = ApplicationRecord.connection.open_transactions
+      depths = []
+      allow_any_instance_of(order.tax_provider.class).to receive(:estimate_refund).and_wrap_original do |original, *args, **kwargs|
+        depths << ApplicationRecord.connection.open_transactions
+        original.call(*args, **kwargs)
+      end
+
+      expect(Spree::Claims::Resolve.call(claim: claim, resolution: 'refund')).to be_success
+      expect(depths).to eq([depth_outside])
     end
 
     def race_state(claim)

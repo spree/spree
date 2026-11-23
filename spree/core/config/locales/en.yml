@@ -1625,6 +1625,7 @@ en:
           voided: Voided
     resellable: Resellable
     resend: Resend
+    resolution_in_progress: This claim is already being resolved. Try again in a moment.
     response_code: Response Code
     return: return
     return_errors:
