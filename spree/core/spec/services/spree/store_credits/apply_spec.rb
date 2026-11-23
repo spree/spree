@@ -421,6 +421,22 @@ describe Spree::StoreCredits::Apply, type: :service do
       expect(credit.reload.amount_authorized).to eq(0)
     end
 
+    # Two orders holding the same credit at once: the hold re-reads the credit
+    # under its row lock, so a copy loaded before the other order's hold
+    # cannot authorize past what is free.
+    it 'refuses a hold from a stale copy of a credit another order already holds' do
+      stale_credit = Spree::StoreCredit.find(credit.id)
+      second = draft_with_total(BigDecimal('10'))
+      payment = second.payments.create!(payment_method: Spree::PaymentMethod::StoreCredit.last, source: stale_credit,
+                                        amount: 10, status: 'checkout', response_code: stale_credit.generate_authorization_code)
+      described_class.call(order: draft_with_total(BigDecimal('10')))
+
+      expect(stale_credit.amount_authorized).to eq(0)
+      expect(payment.hold_store_credit!).to be(false)
+      expect(credit.reload.amount_authorized).to eq(10)
+      expect(credit.amount_remaining).to eq(0)
+    end
+
     it 'releases the hold when the store credit is removed' do
       draft = draft_with_total(BigDecimal('44.99'))
       described_class.call(order: draft)
