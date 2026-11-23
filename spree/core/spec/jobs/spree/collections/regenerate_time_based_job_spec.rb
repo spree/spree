@@ -20,6 +20,24 @@ module Spree
       expect(collection.reload.products).not_to include(product)
     end
 
+    context 'when a soft-deleted store has a time-based collection' do
+      let(:deleted_store) { create(:store) }
+      let!(:deleted_collection) { create(:automatic_collection, store: deleted_store) }
+
+      before do
+        create(:available_on_collection_rule, :is_equal_to, collection: deleted_collection, value: 30)
+        deleted_store.update_columns(deleted_at: Time.current)
+      end
+
+      it 'skips it and still regenerates the live stores' do
+        product.update_columns(created_at: 90.days.ago, available_on: 90.days.ago, updated_at: 90.days.ago)
+
+        expect { described_class.perform_now }.not_to raise_error
+
+        expect(collection.reload.products).not_to include(product)
+      end
+    end
+
     context 'when another store has a time-based collection' do
       let(:other_store) { create(:store) }
       let!(:other_collection) { create(:automatic_collection, store: other_store) }
