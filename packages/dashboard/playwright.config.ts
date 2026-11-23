@@ -24,7 +24,7 @@ export default defineConfig({
   // shared across specs, and the suite mutates server state (store settings,
   // the admin profile, creating + accepting invitations), so concurrent
   // workers against one backend would interfere. CI still parallelizes by
-  // sharding (`--shard=n/m`): each shard is a separate machine with its own
+  // sharding (`e2e/shard.mjs`): each shard is a separate machine with its own
   // Rails + DB + Vite stack, and specs are self-contained (fixtures come from
   // global-setup; dynamic records use `Date.now()` suffixes).
   fullyParallel: false,
